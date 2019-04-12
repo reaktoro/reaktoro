@@ -42,10 +42,13 @@ def find_locales():
 def set_locale():
     available_locales = find_locales()
     for loc in available_locales:
-        locale.setlocale(locale.LC_NUMERIC, loc)
-        convention = locale.localeconv()
-        if convention['decimal_point'] == ',':
-            return True
+        try:
+            locale.setlocale(locale.LC_NUMERIC, loc)
+            convention = locale.localeconv()
+            if convention['decimal_point'] == ',':
+                return True
+        except:
+            pass
     return False
 
 def test_elements_molar_mass():
