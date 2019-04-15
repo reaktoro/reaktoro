@@ -30,7 +30,7 @@ class AqueousSpecies;
 class GaseousSpecies;
 class MineralSpecies;
 
-/// Provides operations to retrive physical and thermodynamic data of chemical species.
+/// Provides operations to retrieve physical and thermodynamic data of chemical species.
 ///
 /// The Database class is used to retrieve information of chemical species. It is initialized
 /// from a `xml` database file, which must satisfy some format conditions. Once it is initialized,
@@ -70,7 +70,7 @@ public:
     /// If `filename` does not point to a valid database file or the
     /// database file is not found, then a default built-in database
     /// with the same name will be tried. If no default built-in database
-    /// exist with given name, an exception will be thrown.
+    /// exists with a given name, an exception will be thrown.
     /// @param filename The name of the database file
     explicit Database(std::string filename);
 

@@ -107,7 +107,7 @@ Databases`.
 .. tip::
 
     If you are using a customized version of a thermodynamic database, consider
-    changing its name (e.g., ``custom-supcrt98.xml``) to avoid an accidental
+    changing its name (e.g., ``custom-supcrt98.xml``) to avoid accidental
     use of an embedded database. This can happen if you do not give a correct
     path to your custom database file.
 
@@ -117,7 +117,7 @@ Defining the chemical system
 
 Reaktoro is a general-purpose chemical solver that avoids as much as possible
 presuming specific assumptions about your problems. Thus, you need to specify
-how your chemical system should be defined. This encompass the specification of
+how your chemical system should be defined. This encompasses the specification of
 all phases in the system as well as the chemical species that compose each
 phase. By using the ``ChemicalEditor`` class, you can conveniently achieve
 this as shown below:
@@ -179,9 +179,9 @@ phase is defined with only one gaseous species: |CO2g|.
 .. caution::
 
     If you manually specify the chemical species in a phase, you need to make
-    sure that they exist in the thermodynamic database with **exact same
+    sure that they exist in the thermodynamic database with the **exact same
     name**! Replacing ``'CO2(g)'`` above with ``'CO2'`` will cause an error if
-    the database has no gaseous species with such name.
+    the database has no gaseous species with such a name.
 
 Constructing the chemical system
 --------------------------------
@@ -197,7 +197,7 @@ chemical system definition details stored in the object ``editor``.
 
     ``ChemicalSystem`` is perhaps the main class in Reaktoro. An object of this
     class stores the phases, species and elements in our defined chemical
-    system, as wel as provides the means to compute many types of thermodynamic
+    system, as well as provides the means to compute many types of thermodynamic
     properties, such as *standard thermodynamic properties* (e.g., standard
     Gibbs energies, standard enthalpies, and standard volumes of species), and
     *thermo-chemical properties* (e.g., activity and activity coefficients of
@@ -230,7 +230,7 @@ solubility of |CO2| at 60 °C and 100 bar in a 1 molal NaCl brine.
     its coefficient in the formula. The amounts of elements you provide are
     then used as constraints for the Gibbs energy minimization calculation when
     computing the state of chemical equilibrium (i.e., when we try to find the
-    amounts of all species in the system that correspond to a state of minimum
+    amounts of all species in the system that corresponds to a state of minimum
     Gibbs energy and at the same time satisfying the *element amounts
     constraints*).
 
@@ -267,7 +267,7 @@ solubility of |CO2| at 60 °C and 100 bar in a 1 molal NaCl brine.
     result in feasible initial species amounts.
 
 .. tip::
-    The substance formulas given in the ``EquilibriumProblem.add`` method
+    The substance formulas are given in the ``EquilibriumProblem.add`` method
     **can, but do not need to**, correspond to names of chemical species in the
     thermodynamic database. Even unusual, if not strange, substance formulas,
     such as HCl3(NaO)4C13, would be understood by that method. *We do not
@@ -275,9 +275,9 @@ solubility of |CO2| at 60 °C and 100 bar in a 1 molal NaCl brine.
     state with unrealistic conditions!*
 
 .. note::
-    In Reaktoro, the word *element* is used as a synonym of components of
+    In Reaktoro, the word *element* is used as a synonym of *components* of
     chemical species, and not necessarily chemical elements. Electric charge
-    is, for example, an element, even though it is not a not a chemical
+    is, for example, an element, even though it is not a chemical
     element. Thus, we say the ionic species CO\ :sub:`3`\ :sup:`2-` is composed
     of elements C, O, and Z, with coefficients 1, 3, and -2 respectively, where
     Z is the symbol we use to denote the electric charge element.
@@ -387,7 +387,7 @@ phases:
 .. literalinclude:: ../../../../demos/python/demo-equilibrium-co2-solubility-nacl-brine.py
     :start-at: Step 9
 
-In this specific case in which there were no initial element C in the aqueous
+In this specific case in which there was no initial element C in the aqueous
 phase, the value corresponding to the amount of element C in the aqueous phase
 is our solubility of CO2 in the NaCl brine with the previously prescribed
 conditions.
