@@ -25,6 +25,9 @@ add_dependencies(reaktoro PyReaktoro)
 if(NOT DEFINED REAKTORO_PYTHON_INSTALL_PREFIX)
     set(REAKTORO_PYTHON_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
 endif()
+# If the path is already in Windows format (with backslashes), it can't be added directly
+# to the string below, otherwise CMake will later complain about "Invalid escape sequence".
+file(TO_CMAKE_PATH "${REAKTORO_PYTHON_INSTALL_PREFIX}" REAKTORO_PYTHON_INSTALL_PREFIX)
 
 # Install the reaktoro python package using setuptools
 install(CODE
