@@ -19,38 +19,63 @@ from reaktoro import Database
 import pytest
 
 import locale
-import subprocess
 import platform
 
-def treat_locales_by_platform(locales):
-    system = platform.system()
-    if system == 'Java':
-        return []
-    elif system == 'Linux':
-        return locales
-    locales = [locale for locale in locales if not 'utf8' in locale and not '@' in locale and not 'POSIX' in locale]
-    locales = [locale.replace('_', '-') for locale in locales]
-    return locales
+LANGUAGES = {
+    'bg_BG': 'Bulgarian',
+    'cs_CZ': 'Czech',
+    'da_DK': 'Danish',
+    'de_DE': 'German',
+    'el_GR': 'Greek',
+    'en_US': 'English',
+    'es_ES': 'Spanish',
+    'et_EE': 'Estonian',
+    'fi_FI': 'Finnish',
+    'fr_FR': 'French',
+    'hr_HR': 'Croatian',
+    'hu_HU': 'Hungarian',
+    'it_IT': 'Italian',
+    'lt_LT': 'Lithuanian',
+    'lv_LV': 'Latvian',
+    'nl_NL': 'Dutch',
+    'no_NO': 'Norwegian',
+    'pl_PL': 'Polish',
+    'pt_PT': 'Portuguese',
+    'ro_RO': 'Romanian',
+    'ru_RU': 'Russian',
+    'sk_SK': 'Slovak',
+    'sl_SI': 'Slovenian',
+    'sv_SE': 'Swedish',
+    'tr_TR': 'Turkish',
+    'zh_CN': 'Chinese',
+}
 
-def find_locales():
-    out = subprocess.run(['locale', '-a'], stdout=subprocess.PIPE).stdout
+def is_locale_working(loc):
     try:
-        res = out.decode('utf-8')
+        locale.setlocale(locale.LC_NUMERIC, loc)
+        return True
     except:
-        res = out.decode('latin-1')
-    return res.rstrip('\n').splitlines()
+        return False
 
-def set_locale():
-    available_locales = treat_locales_by_platform(find_locales())
-    for loc in available_locales:
-        try:
-            locale.setlocale(locale.LC_NUMERIC, loc)
-            convention = locale.localeconv()
-            if convention['decimal_point'] == ',':
-                return True
-        except:
-            pass
-    return False
+
+def treat_windows_locales():
+    return [lang for lang in LANGUAGES.values() if is_locale_working(lang)]
+
+
+def treat_linux_locales():
+    locales = list(LANGUAGES.keys())
+    locales += [loc + '.utf8' for loc in locales]
+    return [loc for loc in locales if is_locale_working(loc)]
+
+
+def find_valid_locales():
+    system = platform.system()
+    if system == 'Windows':
+        return treat_windows_locales()
+    elif system == 'Linux':
+        return treat_linux_locales()
+    return []
+
 
 def check_molar_mass(molar_mass_map):
     assert pytest.approx(0.00100794) == molar_mass_map['H']
@@ -62,21 +87,27 @@ def check_molar_mass(molar_mass_map):
     assert pytest.approx(0.035453) == molar_mass_map['Cl']
     assert pytest.approx(0.08762) == molar_mass_map['Sr']
 
+
+def test_locale_problem_with_pugixml():
+    old_locale = locale.setlocale(locale.LC_NUMERIC)
+    locales = find_valid_locales()
+    if not locales:
+        locale.setlocale(locale.LC_NUMERIC, old_locale)
+        assert False, "Couldn't find any valid locale to test"
+
+    for loc in locales:
+        locale.setlocale(locale.LC_NUMERIC, loc)
+        database = Database("supcrt07.xml")
+        locale.setlocale(locale.LC_NUMERIC, old_locale)
+        check_molar_mass({element.name(): element.molarMass() for element in database.elements()})
+
+
 def test_elements_molar_mass():
     old_locale = locale.setlocale(locale.LC_NUMERIC)
     database = Database("supcrt07.xml")
     assert old_locale == locale.setlocale(locale.LC_NUMERIC)
     check_molar_mass({element.name(): element.molarMass() for element in database.elements()})
 
-def test_locale_problem_with_pugixml():
-    old_locale = locale.setlocale(locale.LC_NUMERIC)
-    if not set_locale():
-        locale.setlocale(locale.LC_NUMERIC, old_locale)
-        pytest.skip("Couldn't find any valid locale to test")
-
-    database = Database("supcrt07.xml")
-    locale.setlocale(locale.LC_NUMERIC, old_locale)
-    check_molar_mass({element.name(): element.molarMass() for element in database.elements()})
 
 def test_invariant_database():
     database = Database("supcrt07.xml")
