@@ -18,6 +18,7 @@
 #include "Database.hpp"
 
 // C++ includes
+#include <clocale>
 #include <map>
 #include <set>
 #include <string>
@@ -379,6 +380,25 @@ auto speciesWithElements(const std::vector<std::string>& elements, const std::ma
 
 } // namespace
 
+//A guard object to guarantee the return of original locale
+class ChangeLocale
+{
+public:
+    ChangeLocale() = delete;
+    explicit ChangeLocale(const char* new_locale) : old_locale(std::setlocale(LC_NUMERIC, nullptr))
+    {
+        std::setlocale(LC_NUMERIC, new_locale);
+    }
+    ~ChangeLocale()
+    {
+        std::setlocale(LC_NUMERIC, old_locale.c_str());
+    }
+
+private:
+    const std::string old_locale;
+
+};
+
 struct Database::Impl
 {
     /// The set of all elements in the database
@@ -393,11 +413,12 @@ struct Database::Impl
     /// The set of all mineral species in the database
     MineralSpeciesMap mineral_species_map;
 
-    Impl()
-    {}
+    Impl() = default;
 
     Impl(std::string filename)
     {
+        const auto guard = ChangeLocale("C");
+
         // Create the XML document
         xml_document doc;
 
@@ -458,9 +479,18 @@ struct Database::Impl
         mineral_species_map.insert({species.name(), species});
     }
 
-    auto elements() -> std::vector<Element>
+    auto elements() const-> std::vector<Element>
     {
-        return collectValues(element_map);
+        std::vector<Element> elements{};
+        elements.resize(element_map.size());
+        for(const auto& element : element_map) {
+            auto element_copy = Element();
+            element_copy.setName(element.second.name());
+            element_copy.setMolarMass(element.second.molarMass());
+            elements.push_back(element_copy);
+        }
+
+        return elements;
     }
 
     auto aqueousSpecies() -> std::vector<AqueousSpecies>
@@ -732,7 +762,7 @@ auto Database::addMineralSpecies(const MineralSpecies& species) -> void
     pimpl->addMineralSpecies(species);
 }
 
-auto Database::elements() -> std::vector<Element>
+auto Database::elements() const -> std::vector<Element>
 {
     return pimpl->elements();
 }

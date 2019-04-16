@@ -87,7 +87,7 @@ public:
     auto addMineralSpecies(const MineralSpecies& species) -> void;
 
     /// Return all elements in the database
-    auto elements() -> std::vector<Element>;
+    auto elements() const -> std::vector<Element>;
 
     /// Return all aqueous species in the database
     auto aqueousSpecies() -> std::vector<AqueousSpecies>;
