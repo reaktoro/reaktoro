@@ -19,7 +19,7 @@ from reaktoro import Database
 import pytest
 
 import locale
-import platform
+import sys
 
 LANGUAGES = {
     'bg_BG': 'Bulgarian',
@@ -50,7 +50,8 @@ LANGUAGES = {
     'zh_CN': 'Chinese',
 }
 
-def is_locale_working(loc):
+
+def try_set_locale(loc):
     try:
         locale.setlocale(locale.LC_NUMERIC, loc)
         return True
@@ -58,23 +59,26 @@ def is_locale_working(loc):
         return False
 
 
-def treat_windows_locales():
-    return [lang for lang in LANGUAGES.values() if is_locale_working(lang)]
+def get_windows_locales():
+    return [lang for lang in LANGUAGES.values() if try_set_locale(lang)]
 
 
-def treat_linux_locales():
+def get_linux_locales():
     locales = list(LANGUAGES.keys())
     locales += [loc + '.utf8' for loc in locales]
-    return [loc for loc in locales if is_locale_working(loc)]
+    return [loc for loc in locales if try_set_locale(loc)]
 
 
-def find_valid_locales():
-    system = platform.system()
-    if system == 'Windows':
-        return treat_windows_locales()
-    elif system == 'Linux':
-        return treat_linux_locales()
-    return []
+def get_locales():
+    system = sys.platform
+    if 'win32' in system:
+        return get_windows_locales()
+
+    return get_linux_locales()
+
+
+def locale_has_comma_for_decimal_point():
+    return locale.localeconv()['decimal_point'] == ','
 
 
 def check_molar_mass(molar_mass_map):
@@ -90,16 +94,22 @@ def check_molar_mass(molar_mass_map):
 
 def test_locale_problem_with_pugixml():
     old_locale = locale.setlocale(locale.LC_NUMERIC)
-    locales = find_valid_locales()
-    if not locales:
-        locale.setlocale(locale.LC_NUMERIC, old_locale)
-        assert False, "Couldn't find any valid locale to test"
 
+    locales = get_locales()
+    at_least_one_locale_has_comma_for_decimal_separator = False
+    at_least_one_valid_locale = False
     for loc in locales:
-        locale.setlocale(locale.LC_NUMERIC, loc)
-        database = Database("supcrt07.xml")
-        locale.setlocale(locale.LC_NUMERIC, old_locale)
-        check_molar_mass({element.name(): element.molarMass() for element in database.elements()})
+        if try_set_locale(loc):
+            at_least_one_valid_locale = True
+            locale.setlocale(locale.LC_NUMERIC, loc)
+            if not at_least_one_locale_has_comma_for_decimal_separator:
+                at_least_one_locale_has_comma_for_decimal_separator = locale_has_comma_for_decimal_point()
+            database = Database("supcrt07.xml")
+            locale.setlocale(locale.LC_NUMERIC, old_locale)
+            check_molar_mass({element.name(): element.molarMass() for element in database.elements()})
+
+    assert at_least_one_valid_locale, "Couldn't find any valid locale to test"
+    assert at_least_one_locale_has_comma_for_decimal_separator, "Couldn't find any locale with comma fot decimal separator"
 
 
 def test_elements_molar_mass():
