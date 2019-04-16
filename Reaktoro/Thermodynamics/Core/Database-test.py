@@ -97,7 +97,6 @@ def test_locale_problem_with_pugixml():
     for loc in locales:
         if try_set_locale(loc):
             at_least_one_valid_locale = True
-            locale.setlocale(locale.LC_NUMERIC, loc)
             if not at_least_one_locale_has_comma_for_decimal_separator:
                 at_least_one_locale_has_comma_for_decimal_separator = locale_has_comma_for_decimal_point()
             database = Database("supcrt07.xml")
