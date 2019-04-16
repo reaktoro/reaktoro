@@ -155,7 +155,7 @@ phase is defined with only one gaseous species: |CO2g|.
 
     .. code-block:: python
 
-        editor.addAqueousPhase([
+        editor.addAqueousPhaseWithElements([
             'H2O(l)',
             'H+',
             'OH-',
