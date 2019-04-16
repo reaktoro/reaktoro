@@ -59,20 +59,16 @@ def try_set_locale(loc):
         return False
 
 
-def get_windows_locales():
-    return [lang for lang in LANGUAGES.values() if try_set_locale(lang)]
-
-
 def get_linux_locales():
     locales = list(LANGUAGES.keys())
     locales += [loc + '.utf8' for loc in locales]
-    return [loc for loc in locales if try_set_locale(loc)]
+    return locales
 
 
 def get_locales():
     system = sys.platform
     if 'win32' in system:
-        return get_windows_locales()
+        return list(LANGUAGES.values())
 
     return get_linux_locales()
 
