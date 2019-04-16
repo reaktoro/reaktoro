@@ -51,6 +51,13 @@ LANGUAGES = {
 }
 
 
+@pytest.fixture
+def guard_locale():
+    old_locale = locale.setlocale(locale.LC_NUMERIC)
+    yield old_locale
+    locale.setlocale(locale.LC_NUMERIC, old_locale)
+
+
 def try_set_locale(loc):
     try:
         locale.setlocale(locale.LC_NUMERIC, loc)
@@ -73,7 +80,7 @@ def get_locales():
     return get_linux_locales()
 
 
-def locale_has_comma_for_decimal_point():
+def locale_has_comma_for_decimal_separator():
     return locale.localeconv()['decimal_point'] == ','
 
 
@@ -88,8 +95,8 @@ def check_molar_mass(molar_mass_map):
     assert pytest.approx(0.08762) == molar_mass_map['Sr']
 
 
-def test_locale_problem_with_pugixml():
-    old_locale = locale.setlocale(locale.LC_NUMERIC)
+def test_locale_problem_with_pugixml(guard_locale):
+    guard_locale
 
     locales = get_locales()
     at_least_one_locale_has_comma_for_decimal_separator = False
@@ -98,17 +105,16 @@ def test_locale_problem_with_pugixml():
         if try_set_locale(loc):
             at_least_one_valid_locale = True
             if not at_least_one_locale_has_comma_for_decimal_separator:
-                at_least_one_locale_has_comma_for_decimal_separator = locale_has_comma_for_decimal_point()
+                at_least_one_locale_has_comma_for_decimal_separator = locale_has_comma_for_decimal_separator()
             database = Database("supcrt07.xml")
-            locale.setlocale(locale.LC_NUMERIC, old_locale)
             check_molar_mass({element.name(): element.molarMass() for element in database.elements()})
 
     assert at_least_one_valid_locale, "Couldn't find any valid locale to test"
     assert at_least_one_locale_has_comma_for_decimal_separator, "Couldn't find any locale with comma for decimal separator"
 
 
-def test_elements_molar_mass():
-    old_locale = locale.setlocale(locale.LC_NUMERIC)
+def test_elements_molar_mass(guard_locale):
+    old_locale = guard_locale
     database = Database("supcrt07.xml")
     assert old_locale == locale.setlocale(locale.LC_NUMERIC)
     check_molar_mass({element.name(): element.molarMass() for element in database.elements()})
