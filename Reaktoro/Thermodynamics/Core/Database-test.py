@@ -95,9 +95,8 @@ def check_molar_mass(molar_mass_map):
     assert pytest.approx(0.08762) == molar_mass_map['Sr']
 
 
-def test_locale_problem_with_pugixml(guard_locale):
-    guard_locale
-
+@pytest.mark.usefixtures("guard_locale")
+def test_locale_problem_with_pugixml():
     locales = get_locales()
     at_least_one_locale_has_comma_for_decimal_separator = False
     at_least_one_valid_locale = False
