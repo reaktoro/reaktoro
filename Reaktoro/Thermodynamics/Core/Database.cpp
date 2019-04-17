@@ -482,7 +482,7 @@ struct Database::Impl
     auto elements() const-> std::vector<Element>
     {
         std::vector<Element> elements{};
-        elements.resize(element_map.size());
+        elements.reserve(element_map.size());
         for(const auto& element : element_map) {
             auto element_copy = Element();
             element_copy.setName(element.second.name());
