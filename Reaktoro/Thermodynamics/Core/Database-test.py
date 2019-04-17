@@ -123,7 +123,7 @@ def test_invariant_database():
     database = Database("supcrt07.xml")
 
     elements = {element.name(): element for element in database.elements()}
-    assert elements.__len__() == 117
+    assert len(elements) == 117
 
     elements['H'].setMolarMass(10)
     assert 10 == elements['H'].molarMass()
