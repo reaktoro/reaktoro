@@ -5,29 +5,34 @@ print('These can be installed with pip:')
 print('     pip install numpy matplotlib joblib')
 print('============================================================')
 
+# Step 1: importing the required python packages
 from reaktoro import *
 from numpy import *
 import matplotlib.pyplot as plt
 from joblib import Parallel, delayed
-import os, sys
+import os, time
 
-# Auxiliary time related constants
+# Step 2: Auxiliary time related constants
 second = 1
 minute = 60
 hour = 60 * minute
 day = 24 * hour
 year = 365 * day
 
-# Parameters for the reactive transport simulation
+# Step 3: Parameters for the reactive transport simulation
+xl = 0.0          # the x-coordinate of the left boundary
+xr = 1.0          # the x-coordinate of the right boundary
 nsteps = 100      # the number of steps in the reactive transport simulation
 ncells = 100      # the number of cells in the discretization
-D  = 1.0e-9       # the diffusion coefficinet (in units of m2/s)
+D  = 1.0e-9       # the diffusion coefficient (in units of m2/s)
 v  = 1.0/day      # the fluid pore velocity (in units of m/s)
+dirichlet = False # the parameter that defines whether Dirichlet BC must be used
 dt = 10*minute    # the time step (in units of s)
 T = 60.0 + 273.15 # the temperature (in units of K)
 P = 100 * 1e5     # the pressure (in units of Pa)
+smrt_solv = False # the parameter that defines whether classic or smart EquilibriumSolver must be used
 
-# The list of quantities to be output for each mesh cell, each time step
+# Step 4: The list of quantities to be output for each mesh cell, each time step
 output_quantities = """
     pH
     speciesMolality(H+)
@@ -39,27 +44,36 @@ output_quantities = """
     phaseVolume(Dolomite)
 """.split()
 
-
-# Perform the reactive transport simulation
+# Step 7: Perform the reactive transport simulation
 def simulate():
-    # Construct the chemical system with its phases and species
+
+    # Step 7.1: Construct the chemical system with its phases and species
     editor = ChemicalEditor()
-    editor.addAqueousPhase(['H2O(l)', 'H+', 'OH-', 'Na+', 'Cl-', 'Ca++', 'Mg++', 'HCO3-', 'CO2(aq)', 'CO3--']) # Aqueous species individually selected for performance reasons
+    editor.addAqueousPhase(['H2O(l)',
+                            'H+',
+                            'OH-',
+                            'Na+',
+                            'Cl-',
+                            'Ca++',
+                            'Mg++',
+                            'HCO3-',
+                            'CO2(aq)',
+                            'CO3--']) # Aqueous species individually selected for performance reasons
     editor.addMineralPhase('Quartz')
     editor.addMineralPhase('Calcite')
     editor.addMineralPhase('Dolomite')
 
-    # Create the ChemicalSystem object using the configured editor
+    # Step 7.2: Create the ChemicalSystem object using the configured editor
     system = ChemicalSystem(editor)
 
-    # Define the inicial condition of the reactive transport modeling problem
+    # Step 7.3: Define the initial condition of the reactive transport modeling problem
     problem_ic = EquilibriumProblem(system)
     problem_ic.add('H2O', 1.0, 'kg')
     problem_ic.add('NaCl', 0.7, 'mol')
     problem_ic.add('CaCO3', 10, 'mol')
     problem_ic.add('SiO2', 10, 'mol')
 
-    # Define the boundary condition of the reactive transport modeling problem
+    # Step 7.4: Define the boundary condition of the reactive transport modeling problem
     problem_bc = EquilibriumProblem(system)
     problem_bc.add('H2O', 1.0, 'kg')
     problem_bc.add('NaCl', 0.90, 'mol')
@@ -67,11 +81,11 @@ def simulate():
     problem_bc.add('CaCl2', 0.01, 'mol')
     problem_bc.add('CO2', 0.75, 'mol')
 
-    # Calculate the equilibrium states for the initial and boundary conditions
+    # Step 7.5: Calculate the equilibrium states for the initial and boundary conditions
     state_ic = equilibrate(problem_ic)
     state_bc = equilibrate(problem_bc)
 
-    # Scale the phases in the initial condition as required
+    # Step 7.6: Scale the phases in the initial condition as required
     state_ic.scalePhaseVolume('Aqueous', 0.1, 'm3')
     state_ic.scalePhaseVolume('Quartz', 0.88, 'm3')
     state_ic.scalePhaseVolume('Calcite', 0.02, 'm3')
@@ -79,21 +93,26 @@ def simulate():
     # Scale the boundary condition state to 1 m3
     state_bc.scaleVolume(1.0)
 
+    # Step 7.7: Specifying discretization structures needed for the reactive transport
+
+    # Get the number of the element in the chemical system
+    nelems = system.numElements()
+
     # The indices of the fluid and solid species
     ifluid_species = system.indicesFluidSpecies()
     isolid_species = system.indicesSolidSpecies()
 
-    # The concentrations of each element in each mesh cell
-    b = zeros((ncells, system.numElements()))
+    # The concentrations of each element in each mesh cell (in the current time step)
+    b = zeros((ncells, nelems))
+
+    # The concentrations of each element in each mesh cell (in the previous time step)
+    bprev = zeros((ncells, nelems))
 
     # The concentrations of each element in the fluid partition, in each mesh cell
-    bfluid = zeros((ncells, system.numElements()))
+    bfluid = zeros((ncells, nelems))
 
     # The concentrations of each element in the solid partition, in each mesh cell
-    bsolid = zeros((ncells, system.numElements()))
-
-    # The concentrations of each element in each mesh cell in the previous time step
-    bprev = zeros((ncells, system.numElements()))
+    bsolid = zeros((ncells, nelems))
 
     # Initialize the concentrations of the elements in each mesh cell
     b[:] = state_ic.elementAmounts()
@@ -104,40 +123,47 @@ def simulate():
     # The list of chemical states, one for each cell, initialized to initial state
     states = [state_ic.clone() for _ in range(ncells)]
 
-    # The interval [0, 1] split into ncells
-    x = linspace(0.0, 1.0, ncells + 1)
+    # The interval [xl, xr] split into ncells
+    x = linspace(xl, xr, ncells + 1)
 
     # The length of each mesh cell (in units of m)
-    dx = 1.0/ncells
+    dx = (xr - xl)/ncells
 
-    # Create the equilibrium solver object for repeated equilibrium calculation
-    solver = EquilibriumSolver(system)
+    # Step 7.8: Create the equilibrium solver object for the repeated equilibrium calculation
+    if smrt_solv:   solver = SmartEquilibriumSolver(system)
+    else:           solver = EquilibriumSolver(system)
 
-    # The current step number
-    step = 0
-
-    # The current time (in seconds)
-    t = 0.0
-
-    # The auxiliary function to create an output file each time step
+    # Step 7.9: The auxiliary function to create an output file each time step
     def outputstate():
-        ndigits = len(str(nsteps))
+        # Create the instance of ChemicalOutput class
         output = ChemicalOutput(system)
+        # Provide the output file name, which will correspond
         output.filename('results/{}.txt'.format(str(step).zfill(ndigits)))
+        # We defined the columns' tags filled with name of the quantities
+        # The first column has a tag 'x' (which corresponds to center coordinates of the cells )
         output.add('tag', 'x') # The value of the center coordinates of the cells
+        # The rest of the columns correspond to the requested properties
         for quantity in output_quantities:
             output.add(quantity)
+
         output.open()
+        # We update the file with states that correspond to the cells' coordinates stored in x
         for state, tag in zip(states, x):
             output.update(state, tag)
         output.close()
 
-    # Start the reactive transport simulation loop
+    # Step 7.10: Running the reactive transport simulation loop
+    # Initialize the current step number
+    step = 0
+    # Initialize the current time (in seconds)
+    t = 0.0
+    # Number of digits in the predefined amount of steps (for the reactive transport)
+    ndigits = len(str(nsteps))
     while step <= nsteps:
         # Print the progress of the simulation
         print("Progress: {}/{} steps, {} min".format(step, nsteps, t/minute))
 
-        # Ouput the current state of the reactive transport calculation
+        # Output the current state of the reactive transport calculation
         outputstate()
 
         # Collect the amounts of elements from fluid and solid partitions
@@ -146,17 +172,17 @@ def simulate():
             bsolid[icell] = states[icell].elementAmountsInSpecies(isolid_species)
 
         # Transport each element in the fluid phase
-        for j in range(system.numElements()):
+        for j in range(nelems):
             transport(bfluid[:, j], dt, dx, v, D, b_bc[j])
 
         # Update the amounts of elements in both fluid and solid partitions
         b[:] = bsolid + bfluid
 
-        # Equilibrate all cells with the updated element amounts
+        # Equilibrating all cells with the updated element amounts
         for icell in range(ncells):
             solver.solve(states[icell], T, P, b[icell])
 
-        # Update the amounts of elements at previous time step
+        # Update the amounts of elements at the previous time step
         bprev[:] = b
 
         # Increment time step and number of time steps
@@ -166,7 +192,7 @@ def simulate():
     print("Finished!")
 
 
-# Return a string for the title of a figure in the format Time: #h##m
+# Step 10: Return a string for the title of a figure in the format Time: #h##m
 def titlestr(t):
     t = t / minute   # Convert from seconds to minutes
     h = int(t) / 60  # The number of hours
@@ -174,7 +200,7 @@ def titlestr(t):
     return 'Time: {:>3}h{:>2}m'.format(h, str(m).zfill(2))
 
 
-# Generate figures for a result file
+# Step 9: Generate figures for a result file
 def plotfile(file):
     step = int(file.split('.')[0])
 
@@ -228,31 +254,18 @@ def plotfile(file):
     plt.close('all')
 
 
-# Plot all result files and generate a video
+# Step 8: Plot all result files and generate a video
 def plot():
     # Plot all result files
     files = sorted(os.listdir('results'))
     Parallel(n_jobs=16)(delayed(plotfile)(file) for file in files)
-
     # Create videos for the figures
     ffmpegstr = 'ffmpeg -y -r 30 -i figures/{0}/%03d.png -codec:v mpeg4 -flags:v +qscale -global_quality:v 0 videos/{0}.mp4'
     os.system(ffmpegstr.format('calcite-dolomite'))
     os.system(ffmpegstr.format('aqueous-species'))
     os.system(ffmpegstr.format('ph'))
 
-
-# Define the main function
-def main():
-    os.system('mkdir -p results')
-    os.system('mkdir -p figures/ph')
-    os.system('mkdir -p figures/aqueous-species')
-    os.system('mkdir -p figures/calcite-dolomite')
-    os.system('mkdir -p videos')
-    simulate()
-    plot()
-
-
-# Solve a tridiagonal matrix equation using Thomas algorithm.
+# Step 7.10.2: Solve a tridiagonal matrix equation using Thomas algorithm (or TriDiagonal Matrix Algorithm (TDMA))
 def thomas(a, b, c, d):
     n = len(d)
     c[0] /= b[0]
@@ -266,27 +279,47 @@ def thomas(a, b, c, d):
         x[i] -= c[i]*x[i + 1]
     return x
 
-
-# Perform a transport step
+# Step 7.10.1: Perform a transport step
 def transport(u, dt, dx, v, D, g):
+    # Number of DOFs
     n = len(u)
     alpha = D*dt/dx**2
     beta = v*dt/dx
     a = full(n, -beta - alpha)
     b = full(n, 1 + beta + 2*alpha)
     c = full(n, -alpha)
-    # Uncomment for Dirichlet boundary conditions
-    # b[0] = 1.0
-    # c[0] = 0.0
-    # u[0] = g
-    #---------------------------------------------
-    # Uncomment for flux boundary conditions
-    u[0] += beta*g
-    b[0] = 1 + beta + alpha
-    b[-1] = 1 + beta + alpha
-    #---------------------------------------------
+    # Set the boundary condition
+    if dirichlet:
+        # Use Dirichlet BC boundary conditions
+        b[0] = 1.0
+        c[0] = 0.0
+        u[0] = g
+    else:
+        # Use flux boundary conditions
+        u[0] += beta*g
+        b[0] = 1 + beta + alpha
+        b[-1] = 1 + beta + alpha
+    # Solve a tridiagonal matrix equation
     thomas(a, b, c, u)
 
+# Step 6: Creating folders for the results' output
+def make_results_folders():
+    os.system('mkdir -p results')
+    os.system('mkdir -p figures/ph')
+    os.system('mkdir -p figures/aqueous-species')
+    os.system('mkdir -p figures/calcite-dolomite')
+    os.system('mkdir -p videos')
 
+# Step 5: Define the main function
 if __name__ == '__main__':
-    main()
+
+    t1 = time.time()
+
+    # Create folders for the results
+    make_results_folders()
+    # Run the reactive transport simulations
+    simulate()
+    # Plotting the result
+    # plot()
+
+    print('total time = ', time.time()-t1)
