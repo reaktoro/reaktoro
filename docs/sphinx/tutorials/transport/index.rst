@@ -10,3 +10,5 @@ transport) simulations are what you need.
    :maxdepth: 1
    :glob:
 
+    Reactive Transport with ReactiveTransportSolver <reactivetransportsolver-calcite-brine>
+    Reactive Transport Calcite Dolomite <reactive-transport-calcite-dolomite-custom>

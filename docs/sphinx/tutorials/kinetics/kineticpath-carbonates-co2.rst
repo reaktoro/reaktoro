@@ -9,6 +9,7 @@
 .. |CaCO3| replace:: CaCO\ :sub:`3`
 .. |NaCl| replace:: CaCl
 .. |CaMg(CO3)2| replace:: CaMg(CO\ :sub:`3`)\ :sub:`2`
+.. |MgCO3| replace:: MgCO\ :sub:`3`
 
 .. |H+| replace:: H\ :sup:`+`
 .. |Ca++| replace:: Ca\ :sup:`2+`
@@ -16,13 +17,22 @@
 .. |HCO3-| replace:: HC0\ :sub:`3`\ :sup:`-`
 .. |CO2(aq)| replace:: C0\ :sub:`2` (aq)
 
-Kinetic modelling of |CO2| injection into carbone saline aquifers
+Kinetic modelling of |CO2| injection into carbon saline aquifers
 =================================================================
 
-In this tutorial, we show how Reaktoro can be used for to compute ...
+In this tutorial, we show how Reaktoro can be used to model
+water–gas–rock interactions produced by the carbon dioxide injection,
+we applying both chemical kinetics and chemical equilibrium methodologies.
 
-We proceed with the step-by-step explanation of the script that can be found in a full length at
-the very end.
+The injection of carbon dioxide in saline aquifers perturbs
+the reservoir and initiates several physical and chemical phenomena
+due to the interactions of the injected gas with the resident fluid
+and the reservoir rock.
+
+.. literalinclude:: ../../../../demos/python/demo-equilibrium-co2-solubility-nacl-brine.py
+    :start-at: Step
+
+You find next a step-by-step explanation of the above script.
 
 Importing python packages
 -------------------------
@@ -54,89 +64,122 @@ We start from defining the chemical system using the ``ChemicalEditor`` class:
     :start-at: Step 2
     :end-before: Step 3
 
-In particular, we specify **aqueous**, **gaseous**, and **mineral** phases that should be considered in the chemical system.
+In particular, we specify **aqueous**, **gaseous**, and **mineral** phases
+that should be considered in the chemical system.
 The aqueous phase is defined by mixing of |H2O|, |NaCl|, |CaCO3|, and |MgCO3|.
+The gaseous phase is represented by |H2Og| and |CO2g| gases.
 The mineral phase contains four mineral species:
 calcite |CaCO3|, magnesite |MgCO3|, dolomite |CaMg(CO3)2|, and halite |Nacl|.
 
-Creating the chemical system
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step 7.2
-    :end-before: Step 7.3
-
-This step is where we create an object of class ``ChemicalSystem`` using the
-chemical system definition details stored in the object ``editor``.
-
-Defining the initial condition (IC) of the reactive transport modeling problem
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-After constructing the chemical system of interest, we can proceed to *defining the
-chemical reaction problem*. First, we specify its **initial condition** with already
-prescribed equilibrium conditions for *temperature*, *pressure*, and *amounts
-of elements* that are consistent with an intention of modeling reactive transport
-of injected |NaCl|-|MgCl2|-|CaCl2| brine into the rock-fluid composition of quartz
-and calcite at 60 °C and 100 bar. In particular, we consider resident fluid is a 0.7
-molal |NaCl| brine in equilibrium with the rock minerals with a calculated pH of 10.0.
-
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step 7.3
-    :end-before: Step 7.4
+.. |supcrt98| replace:: :download:`supcrt98.xml <../../../../databases/supcrt/supcrt98.xml>`
+.. |slop98| replace:: :download:`slop98.dat <../../../../databases/supcrt/slop98.dat>`
 
 .. note::
-    Our **0.7 molal NaCl brine** is here represented by the mixture of
-    1 kg of |H2O| and 0.7 mol of |NaCl|.
+    The default database used by the ``editor`` is the |supcrt98| database.
+    It was generated from the original SUPCRT92 database file |slop98|.
+    You are welcome to inspect these files and learn more about the
+    chemical species available in them. You can also read more about the available
+    thermodynamic databases supported in Reaktoro at :ref:`Thermodynamic Databases`.
+
+    All SUPCRT92 thermodynamic databases have been embedded into Reaktoro.
+    Thus, you don't actually need to have a database file named ``supcrt98.xml``
+    in a local directory when initializing the ``Database``
+    object. If you want to use a customized database file, however, also named
+    ``supcrt98.xml``, then your local file will be used instead.
+
+Add reactions to the chemical reactions of the system
+-----------------------------------------------------
+
+Next, we define minerals' reactions involving calcite, magnesite, and dolomite mineral phases.
+
+.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
+    :start-at: Step 3
+    :end-before: Step 4
+
+In particular, we set the equations of the reaction by ``setEquation()`` function. Then, we add
+the ``MineralMechanism`` to the ``editor``. For all three phases, neutral and acidic mechanisms
+of the mineral reactions are prescribed. Finally, we provide the surface area, which appropriate
+units are checked and correspondingly set by function ``setSpecificSurfaceArea()``.
 
 .. note::
-    After providing the amounts of substances
-    |H2O|, |NaCl|, quartz |SiO2|, and calcite |CaCO3| in the above code, Reaktoro parses
-    these chemical formulas and determines the elements and their coefficients.
-    Once this is done, the amount of each element stored inside the object
-    ``problem_ic`` is incremented according to the given amount of substance and
-    its coefficient in the formula. The amounts of elements you provide are
-    then used as constraints for the Gibbs energy minimization calculation when
-    computing the state of chemical equilibrium (i.e., when we try to find the
-    amounts of all species in the system that corresponds to a state of minimum
-    Gibbs energy and at the same time satisfying the *element amounts
-    constraints*).
+    Here, **logk** is the kinetic rate constant of the reaction in log scale, whereas
+     **Ea** is the Arrhenius activation energy. The units of both constants must be provided.
 
-Defining the boundary condition (BC) of the reactive transport modeling problem
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Create the chemical and reaction systems
+----------------------------------------
 
-Next, we define the **boundary condition** of the constructed chemical system with
-its *temperature*, *pressure*, and *amounts of elements*.
+Create instances of ``ChemicalSystem`` and ``ReactionSystem``.
 
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step 7.4
-    :end-before: Step 7.5
+.. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
+    :start-at: Step 4
+    :end-before: Step 5
 
-In particular, we prescribe the amount of injected aqueous fluid resulting from
-the mixture of
-1 kg of water with
-0.90 moles of |NaCl|,
-0.05 moles of |MgCl2|,
-0.01 moles of |CaCl2|, and
-0.75 moles of |CO2|, in a state very close to |CO2| saturation.
-The temperature and the pressure stay the same, i.e., 60 °C and 100 bar,
-respectively.
+Here, ``ChemicalSystem`` is a class that represents a system and its attributes and properties, such as
+phases (in our case aqueous and mineral ones), species, elements (5 in total, i.e., *H*, *0*, *Ca*, *C*, *Cl*),
+formula matrix, as well as chemical and thermodynamical model.
+Class ``ReactionSystem`` represents a system of the chemical reaction by a collection of Reaction instances.
+It provides convenient methods that calculate the equilibrium constants, reaction quotients,
+and rates of the reactions.
 
-Calculate the equilibrium states for the initial and boundary conditions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step 7.5
-    :end-before: Step 7.6
+Define the partition of the system to the kinetic and equilibrium species
+-------------------------------------------------------------------------
+
+For the partition of a chemical system, we use corresponding class ``Partition``.
+
+.. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
+    :start-at: Step 5
+    :end-before: Step 6
+
+In this example, the mineral reaction is specified to be under kinetic control by the
+``setKineticPhases`` method. The aqueous species are assumed to be in the chemical
+equilibrium at all times (capable of reacting instantaneously to a new state of equilibrium).
+
+.. note::
+    In general, the system can be partitioned into *equilibrium*, *kinetic* and *inert species*.
+    For the *equilibrium* species, the composition is governed by the chemical equilibrium
+    (calculated by the minimization of their Gibbs energy subject to some equilibrium constraints).
+    The *kinetic* species are the species whose composition is governed by chemical kinetics.
+    (by solving a system of ordinary differential equations that model the kinetics of a system of reactions).
+    The *inert* species are the species whose composition is invariable.
+
+Since the aqueous species react among themselves at much faster rates than
+mineral dissolution reactions, and thus this *partial equilibrium assumption* is
+plausible, and fairly accurate in most cases.
+
+Defining the chemical equilibrium problem
+-----------------------------------------
+
+After constructing the chemical system and specifying the partitioning of the species,
+we can proceed to the *equilibrium problem*.
+
+.. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
+    :start-at: Step 6
+    :end-before: Step 7
+
+We specify the above-defined partition of the system to the problem by `setPartition``` method.
+We prescribe the amount of injected aqueous fluid resulting from
+the mixture of 1 kg of water with 1 mole of |NaCl|. The amount of injected |CO2| is set to be
+1 mol. The default temperature and the pressure are set to 298.15 K and 1 MPa.
+
+Calculate the chemical equilibrium state
+-----------------------------------------
+
+To calculate the equilibrium state of the system comprised of the injected supercritical carbon
+dioxide, subsurface fluid, and the rock-forming minerals.
+
+.. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
+    :start-at: Step 7
+    :end-before: Step 8
 
 In this step, we use the ``equilibrate`` function to calculate the chemical
-equilibrium state of the system with the given initial and boundary equilibrium
-conditions stored in the object ``problem_ic`` and ``problem_bc``.
-For this calculation, Reaktoro uses an efficient
-**Gibbs energy minimization** computation to determine the species amounts that
+equilibrium state of the system. For this calculation, Reaktoro uses an efficient
+**Gibbs energy minimization** computation to determine the species' amounts that
 correspond to a state of minimum Gibbs energy in the system, while satisfying
 the prescribed amount conditions for temperature, pressure, and element
-amounts. The result is stored in the objects ``state_ic`` and ``state_bc`` of
-class ``ChemicalState``.
+amounts. The result is stored in the objects ``state0`` of class ``ChemicalState``,
+a computational representation of the state of a multiphase chemical system defined
+by its temperature (*T*), pressure (*P*), and molar composition (*n*).
 
 .. attention::
 
@@ -145,131 +188,53 @@ class ``ChemicalState``.
     states of the chemical system. Reaktoro differentiates these two independent concepts:
     *chemical system definition* and *chemical system state*.
 
+Setting the mass of mineral
+----------------------------
 
-Scaling the phases in the IC as required and BC
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Prescription of the mass of the rock-forming minerals that are in disequilibrium with the
+|CO2| saturated subsurface fluid.
 
-Here, we scale the phases in the initial condition according to the following composition, i.e.,
-98|%vol| |SiO2| (quartz) and 2|%vol| |CaCO3| (calcite) with the porosity of 10%. Moreover,
-the boundary condition state is scaled to 1 m3.
-
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step 7.6
-    :end-before: Step 7.7
-
-
-
-Specifying discretization structures needed for the reactive transport
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In the next block of code, we provide some structures needed for the discretization of
-the problem and reactive transport simulation.
-
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step 7.7
-    :end-before: Step 7.8
-
-We start by fetching the indices of the fluid and solid species to the ``ifluid_species``
-and ``isolid_species`` lists, respectively. Then, we defined the numpy arrays ``b``,
-``bprev``, ``bfluid``, ``bsolid``, that will store concentrations of each element
-in each mesh cell for the whole system at the current and previous time step as well as
-its fluid and solid partitions.
-
-The arrays corresponding to the current step of the reactive transport is initialized by
-concentrations of the elements at the initial chemical state using ``state_ic.elementAmounts()``.
-The array ``b_bc`` will store the concentrations of each element on the boundary.
-List ``states`` (of the size ``ncells``) contains chemical states for each cell.
-
-Next, we generate the set of degrees of freedom (DOFs) discretizing the domain represented
-by the interval *[xr, xl]* (can be regarded as a mesh). The corresponding spacial mesh size
-is defined by ``dx``.
-
-
-Creating the equilibrium solver
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-For the repeated equilibrium calculation, we define an equilibrium solver object using
-the class ``EquilibriumSolver``, which is initialized by a considered chemical system.
-
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step 7.8
-    :end-before: Step 7.9
-
-In reactive transport simulations, we have to perform many equilibrium calculations in sequence.
-The usage of ``EquilibriumSolver`` becomes more practical because  each call of ``equilibrate``
-method has a computational overhead from creating a new object of class ``EquilibriumSolver``.
-Therefore, we create this object only once and then used subsequently for all other equilibrium
-calculations.
-
-Define auxiliary function for creating the output file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The auxiliary routine ``outputstate`` is a function that uses the class ``ChemicalOutput``
-to output requested by the user information into the output file.
-
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step 7.9
-    :end-before: Step 7.10
-
-Running the reactive transport simulation loop
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Before proceeding to the simulation of reactive transport on the considered interval,
-we set the initial time and a counter for the step considered in this cycle. Besides,
-in ``ndigits`` we store the number of digits in the selected amount of steps
-(for the reactive transport)
-
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step 7.10
-    :end-before: Step 7.11
-
-The cycle for the reactive transport simulation proceeds until we haven't made all the steps
-in time. At each time step, we output the progress of the simulations by auxiliary routine
-``outputstate()``.
-
-Then, we collect the amounts of elements from fluid and solid partition. This is done according
-to the **operator splitting procedure**. First, we update the amounts of elements the fluid partition
-using transport equation.
-
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step 7.10.1
-    :end-before: Step 6
-
-The transport is performed by the ``transport()`` routine that excepts the amounts *j*-th element,
-current time and space discretization step, parameters of the reactive transport velocity and
-diffusion coefficient, and amounts of *j*-th element on the boundary. The routine has the following
-structure. It defines the discretization constants ``alpha`` and ``beta`` that correspond
-to the diffusion and advection terms in the equation, i.e., ``D*dt/dx**2`` and ``v*dt/dx``,
-respectively. Arrays ``a``, ``b``, ``c`` follow from the the finite difference discretization of
-of the reaction-advection equation (TODO: specify, which finite differences are used). Finally,
-the obtained system of equation is solved by the tridiagonal matrix algorithm, also known as the
-Thomas algorithm.
-
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step 7.10.2
-    :end-before: Step 7.10.1
-
-The second step of **operator splitting procedure** is to update the total amounts of elements
-by accounting the earlier reconstructed fluid partition and solid partition (that stays constant
-with respect to time).
-
-At last, we perform equilibrating for all the cells with the updated element amounts. Obtained
-amount are stored in the ``bprev`` in order to (TODO: for what ?).
-
-Plotting of the results
------------------------
-
-The last block of the main routine is plotting of the results.
-
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
+.. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
     :start-at: Step 8
-    :end-before: Step Step 7.10.2
+    :end-before: Step 9
 
+Setting the  kinetic path calculations
+--------------------------------------
 
-The above step-by-step explanation is summarized in a script.
+To be able to run the simulation of a kinetic process
+of mineral dissolution/precipitation, we introduce the instance
+of the class ``KineticPath`` that enables this functionality.
 
-.. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
-    :start-at: Step
+.. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
+    :start-at: Step 9
+    :end-before: Step 10
 
+The instance of kinetic path solver is provided with the partition to the equilibrium,
+kinetic, and inert species defined above.
+
+Plotting of evolution of different properties of the chemical system
+--------------------------------------------------------------------
+
+Usage of the ``ChemicalPlot`` allows us to create plots from the sequence of chemical states.
+
+.. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
+    :start-at: Step 10
+    :end-before: Step 11
+
+The code above plots four different graphics with evolution of
+concentration of calcium, mass of calcite, pH, and concetration of |Ca++| and |HCO3-|.
+
+Solve the chemical kinetics problem
+-----------------------------------
+
+Finally, we calculate the transient state of the entire system compromised of the
+rock-forming minerals, the subsurface fluid, and the emerged |CO2|-rich phase. This
+is performed by using the method ``solve`` provided the
+initial state (here, ``state0``), the initial and final time of the kinetic path, and
+time units those specified time (e.g., `s`, `minute`, `hour`, `day`, `year`, etc.).
+
+.. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
+    :start-at: Step 11
+    :end-before: Step 12
 
 .. _ChemicalState: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html

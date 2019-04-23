@@ -22,11 +22,13 @@ Kinetic path of calcite and |HCl|
 
 In this tutorial, we show how Reaktoro can be used to compute chemical kinetic calculations
 with both equilibrium-controlled and kinetically-controlled reactions. The C++ example below
-demonstrate this for a simple mineral dissolution modeling, in which CaCO3(s, calcite) reacts
-with a ??? aqueous solution.
+demonstrate this for a simple mineral dissolution modeling, in which |CaCO3| (s, calcite) reacts
+with a |HCl|-brine.
 
-We proceed with the step-by-step explanation of the script that can be found in a full length at
-the very end.
+.. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
+    :start-at: Step
+
+You find next a step-by-step explanation of the above script.
 
 Importing python packages
 -------------------------
@@ -89,7 +91,7 @@ calcite |CaCO3|.
 Add reactions to the chemical reactions of the system
 -----------------------------------------------------
 
-Next, we define a mineral reaction involving the mineral phase and the aqueous phase. In particular,
+Next, we define a mineral reaction. In particular,
 we  set the equation of the reaction by ``setEquation()`` function. Then, we add the ``MineralMechanism``
 to the ``editor``. In this example, neutral and acidic mechanisms of the calcite reaction
 ``Calcite = Ca++ + CO3--`` are prescribed. Finally, we provide the surface area, which appropriate units are

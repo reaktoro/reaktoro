@@ -20,4 +20,5 @@ which this combined chemical kinetics and equilibrium approach is valuable.
    :maxdepth: 1
    :glob:
 
-
+   kineticpath-carbonates-co2
+   kineticpath-calcite-hcl
