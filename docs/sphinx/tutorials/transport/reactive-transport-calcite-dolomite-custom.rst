@@ -24,11 +24,15 @@
 Reactive transport modelling
 ============================
 
-In this tutorial, we show how Reaktoro can be used for sequential calculations of the
-reactive transport of a rock core after injecting the fluid and rock composition. Unlike
-the tutorial :ref:`Reactive transport modelling (using  ReactiveTrasportSolver class)`,
-we provide here the detailed implementation of the reactive transport (without exploitation
-of the predefined class ``ReactiveTransportSolver``).
+In this tutorial, we show how Reaktoro can be used in the context of
+reactive transport modeling, in which a fluid is continuously injected on
+the left side of a rock core, which will be transported and react with
+existing rock minerals. The goal of this tutorial is to illustrate how
+
+Reaktoro can be coupled with other reactive transport simulators, since,
+unlike the tutorial :ref:`Reactive transport modelling (using  ReactiveTrasportSolver class)`,
+we provide here the detailed implementation of the solution of the reactive transport
+equations, without using the class ``ReactiveTransportSolver``.
 
 We proceed first with the step-by-step explanation of the script that can be found in a
 full length at the very end.
@@ -59,8 +63,8 @@ In addition to the **reaktoro** package, we need to import numpy package for wor
 lightweight pipelining in Python (simple parallel computing), and, finally, **os** that provides a
 portable way of using operating system dependent functionality.
 
-Initializing an auxiliary time-related constants
-------------------------------------------------
+Initializing auxiliary time-related constants
+---------------------------------------------
 
 In this step
 
@@ -68,7 +72,7 @@ In this step
     :start-at: Step 2
     :end-before: Step 3
 
-we initialize an auxiliary time-related constants from seconds up to years.
+we initialize auxiliary time-related constants from seconds up to years.
 
 Defining parameters for the reactive transport simulation
 ---------------------------------------------------------
@@ -84,13 +88,13 @@ boundaries to 0.0 and 100.0, respectively. The discretization parameters, i.e., 
 of cells and steps in time, are both set to 100. The reactive transport modelling procedure
 assumes a constant fluid velocity of *v* = 1 *m/day* (1.16 · |10e-5| *m/s*) and the same
 diffusion coefficient *D* = |10e-9| *m2/s* for all fluid species, without dispersivity.
-The size of the time-step is set to be 10 minutes. The temperature is set to 333.15 K (Kevin),
-whereas the pressure is fixed to 100 MPa (Megapascal). Parameter ``dirichlet`` is initialized
+The size of the time-step is set to be 10 minutes. The temperature is set to 333.15 K (60),
+whereas the pressure is fixed to 100 bar. Parameter ``dirichlet`` is initialized
 by **True** or **False** depending on which boundary conditions are considered in the numerical
 test. If it is set to **False**,  the natural flux conditions are considered, and Dirichlet
 otherwise. The last paramenter ``smrt_solv`` is initialized by **True** or **False** depending
 on which equilibrium solver are used in the numerical test. Setting it to **True** enables the
-usage of the ``EquilibriumSolver``, which exploits on-demand learning of the new states of the
+usage of the ``SmartEquilibriumSolver``, which exploits on-demand learning of the new states of the
 chemical system.
 
 Defining the list of the output quantities
@@ -140,9 +144,10 @@ system using the``ChemicalEditor`` class:
     :end-before: Step 7.2
 
 In particular, we specify **aqueous** and **mineral** phases that should be considered in
-the chemical system. The aqueous phase is defined by manually specifying the chemical species
-(for the performance reasons). The mineral phase contains three mineral species:
-quartz |SiO2|, calcite |CaCO3|, and dolomite |CaMg(CO3)2|.
+the chemical system. The aqueous phase is defined by manually specifying the chemical species,
+instead of automatic collection of many species from database (for performance reasons).
+There are three pure mineral phase considered:
+quartz (|SiO2|), calcite (|CaCO3|), and dolomite (|CaMg(CO3)2|).
 
 Creating the chemical system
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -218,7 +223,7 @@ conditions stored in the object ``problem_ic`` and ``problem_bc``.
 For this calculation, Reaktoro uses an efficient
 **Gibbs energy minimization** computation to determine the species amounts that
 correspond to a state of minimum Gibbs energy in the system, while satisfying
-the prescribed amount conditions for temperature, pressure, and element
+the prescribed conditions for temperature, pressure, and element
 amounts. The result is stored in the objects ``state_ic`` and ``state_bc`` of
 class ``ChemicalState``.
 
@@ -230,12 +235,13 @@ class ``ChemicalState``.
     *chemical system definition* and *chemical system state*.
 
 
-Scaling the phases in the IC as required and BC
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Scaling the volumes of the phases
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Here, we scale the phases in the initial condition according to the following composition, i.e.,
-97.73 |%vol| |SiO2| (quartz) and 2.27 |%vol| |CaCO3| (calcite) with the porosity of 10%. Moreover,
-the boundary condition state is scaled to 1 m3.
+Here, we scale the volumes of the phases in the initial condition according to the following
+composition, i.e., 97.73 |%vol| |SiO2| (quartz) and 2.27 |%vol| |CaCO3| (calcite) with the
+porosity of 10%. Moreover, the volume of the fluid in the boundary condition state is scaled to 1 m3.
+This is done so that the amounts of the species in the fluid is consistent with a mol/m3 scale.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 7.6
@@ -252,14 +258,14 @@ the problem and reactive transport simulation.
     :end-before: Step 7.8
 
 We start by fetching the indices of the fluid and solid species to the ``ifluid_species``
-and ``isolid_species`` lists, respectively. Then, we defined the numpy arrays ``b``, ``bprev``,
+and ``isolid_species`` lists, respectively. Then, we define the numpy arrays ``b``, ``bprev``,
 ``bfluid``, ``bsolid``, that will store concentrations of each element in each mesh cell for
 the whole system at the current and previous time step as well as its fluid and solid partitions.
 
 The arrays corresponding to the current step of the reactive transport is initialized by
 concentrations of the elements at the initial chemical state using ``state_ic.elementAmounts()``.
 The array ``b_bc`` will store the concentrations of each element on the boundary.
-List ``states`` (of the size ``ncells``) contains chemical states for each cell.
+The list ``states`` (of length ``ncells``) contains chemical states for each cell.
 
 Next, we generate the set of degrees of freedom (DOFs) discretizing the domain represented
 by the interval *[xr, xl]* (can be regarded as a mesh). The corresponding spacial mesh size
@@ -311,17 +317,17 @@ The cycle for the reactive transport simulation proceeds until we haven't made a
 in time. At each time step, we output the progress of the simulations by auxiliary routine
 ``outputstate()``. Then, we collect the amounts of elements from fluid and solid partition.
 This is done according to the **operator splitting procedure**. First, we update the amounts
-of elements the fluid partition using transport equation.
+of elements in the fluid partition using the transport equations.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 7.10.1
     :end-before: Step 6
 
-The transport is performed by the routine ``transport()`` that excepts the amounts *j*-th element,
+The transport is performed by the function ``transport()`` that expects the amounts of the *j*th element,
 current time and space discretization step, parameters of the reactive transport velocity and
-diffusion coefficient, and amounts of *j*-th element on the boundary. The routine has the following
-structure. It defines the discretization constants ``alpha`` and ``beta`` that correspond
-to the diffusion and advection terms in the equation, i.e., ``D*dt/dx**2`` and ``v*dt/dx``,
+diffusion coefficient, and the amounts of *j*th element on the boundary. This transport solver
+function has the following structure. It defines the discretization constants ``alpha`` and ``beta``
+that correspond to the diffusion and advection terms in the equation, i.e., ``D*dt/dx**2`` and ``v*dt/dx``,
 respectively. Arrays ``a``, ``b``, ``c`` follow from the the finite difference discretization of
 of the reaction-advection equation. Finally, the obtained system of equation is solved by the
 tridiagonal matrix algorithm, also known as the Thomas algorithm.
