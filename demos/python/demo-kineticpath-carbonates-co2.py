@@ -67,7 +67,6 @@ problem.add("CO2", 1, "mol")
 
 # Step 7: Calculate the chemical equilibrium state
 state0 = equilibrate(problem)
-print(state0)
 
 # Step 8: Setting the mass of mineral
 state0.setSpeciesMass("Calcite", 100, "g")
@@ -84,7 +83,6 @@ plot0.y("pH")
 plot0.xlabel("Time [hour]")
 plot0.ylabel("pH")
 plot0.showlegend(False)
-plot0.open()
 
 plot1 = path.plot()
 plot1.x("time(units=hour)")
@@ -107,7 +105,7 @@ plot3.xlabel("Time [hour]")
 plot3.ylabel("Mass [g]")
 
 # Step 11: Solve the kinetic paths
-t0, t1 = 0, 25
+t0, t1 = 0.0, 25.0
 path.solve(state0, t0, t1, "hours")
 # Print the result state
 print(state0)

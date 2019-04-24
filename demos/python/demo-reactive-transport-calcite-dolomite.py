@@ -24,12 +24,14 @@ xl = 0.0          # the x-coordinate of the left boundary
 xr = 1.0          # the x-coordinate of the right boundary
 nsteps = 100      # the number of steps in the reactive transport simulation
 ncells = 100      # the number of cells in the discretization
+
 D  = 1.0e-9       # the diffusion coefficient (in units of m2/s)
 v  = 1.0/day      # the fluid pore velocity (in units of m/s)
-dirichlet = False # the parameter that defines whether Dirichlet BC must be used
 dt = 10*minute    # the time step (in units of s)
 T = 60.0 + 273.15 # the temperature (in units of K)
 P = 100 * 1e5     # the pressure (in units of Pa)
+
+dirichlet = False # the parameter that defines whether Dirichlet BC must be used
 smrt_solv = False # the parameter that defines whether classic or smart EquilibriumSolver must be used
 
 # Step 4: The list of quantities to be output for each mesh cell, each time step
@@ -87,8 +89,8 @@ def simulate():
 
     # Step 7.6: Scale the phases in the initial condition as required
     state_ic.scalePhaseVolume('Aqueous', 0.1, 'm3')
-    state_ic.scalePhaseVolume('Quartz', 0.88, 'm3')
-    state_ic.scalePhaseVolume('Calcite', 0.02, 'm3')
+    state_ic.scalePhaseVolume('Quartz', 0.882, 'm3')
+    state_ic.scalePhaseVolume('Calcite', 0.018, 'm3')
 
     # Scale the boundary condition state to 1 m3
     state_bc.scaleVolume(1.0)
@@ -106,7 +108,7 @@ def simulate():
     b = zeros((ncells, nelems))
 
     # The concentrations of each element in each mesh cell (in the previous time step)
-    bprev = zeros((ncells, nelems))
+    # bprev = zeros((ncells, nelems))
 
     # The concentrations of each element in the fluid partition, in each mesh cell
     bfluid = zeros((ncells, nelems))
@@ -159,6 +161,7 @@ def simulate():
     t = 0.0
     # Number of digits in the predefined amount of steps (for the reactive transport)
     ndigits = len(str(nsteps))
+
     while step <= nsteps:
         # Print the progress of the simulation
         print("Progress: {}/{} steps, {} min".format(step, nsteps, t/minute))
@@ -183,7 +186,7 @@ def simulate():
             solver.solve(states[icell], T, P, b[icell])
 
         # Update the amounts of elements at the previous time step
-        bprev[:] = b
+        #bprev[:] = b
 
         # Increment time step and number of time steps
         t += dt
@@ -313,13 +316,9 @@ def make_results_folders():
 # Step 5: Define the main function
 if __name__ == '__main__':
 
-    t1 = time.time()
-
     # Create folders for the results
     make_results_folders()
     # Run the reactive transport simulations
     simulate()
     # Plotting the result
-    # plot()
-
-    print('total time = ', time.time()-t1)
+    plot()

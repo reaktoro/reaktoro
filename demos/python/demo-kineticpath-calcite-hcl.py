@@ -49,10 +49,10 @@ problem.add("HCl", 1, "mmol")
 
 # Step 7: Calculate the chemical equilibrium state
 state0 = equilibrate(problem)
+print(state0)
 
 # Step 8: Specify the mass of the species
 state0.setSpeciesMass("Calcite", 100, "g")
-print(state0)
 
 # Step 9: Model the kinetics' path of the reactions of the chemical system
 path = KineticPath(reactions)
@@ -72,21 +72,22 @@ plot2.y("phaseMass(Calcite units=g)", "Calcite")
 plot2.xlabel("Time [minute]")
 plot2.ylabel("Mass [g]")
 
-plot3 = path.plot();
-plot3.x("time(units=minute)");
-plot3.y("pH");
-plot3.xlabel("Time [minute]");
-plot3.ylabel("pH");
+plot3 = path.plot()
+plot3.x("time(units=minute)")
+plot3.y("pH")
+plot3.xlabel("Time [minute]")
+plot3.ylabel("pH")
+plot3.legend("right center")
 
-plot4 = path.plot();
-plot4.x("time(units=minute)");
-plot4.y("speciesMolality(Ca++ units=mmolal)", "Ca++");
-plot4.y("speciesMolality(HCO3- units=mmolal)", "HCO3-");
-plot4.xlabel("Time [minute]");
-plot4.ylabel("Concentration [mmolal]");
+plot4 = path.plot()
+plot4.x("time(units=minute)")
+plot4.y("speciesMolality(Ca++ units=mmolal)", "Ca++")
+plot4.y("speciesMolality(HCO3- units=mmolal)", "HCO3-")
+plot4.xlabel("Time [minute]")
+plot4.ylabel("Concentration [mmolal]")
+plot4.legend("right center")
 
 # Step 11: Solve the kinetic paths
 t0, t1 = 0.0, 5.0
 path.solve(state0, t0, t1, "minute")
-
 print(state0)

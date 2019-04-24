@@ -7,7 +7,7 @@
 .. |%vol| replace:: %\ :sub:`vol`
 .. |SiO2| replace:: Si0\ :sub:`2`
 .. |CaCO3| replace:: CaCO\ :sub:`3`
-.. |NaCl| replace:: CaCl
+.. |NaCl| replace:: NaCl
 .. |CaMg(CO3)2| replace:: CaMg(CO\ :sub:`3`)\ :sub:`2`
 
 .. |H+| replace:: H\ :sup:`+`
@@ -18,16 +18,20 @@
 
 .. |slop98| replace:: :download:`slop98.dat <../../../../databases/supcrt/slop98.dat>`
 
-Reactive transport modelling of a rock core after brine injection (manual)
-==========================================================================
+.. |10e-9| replace:: 10\ :sup:`-9`
+.. |10e-5| replace:: 10\ :sup:`-5`
+
+Reactive transport modelling
+============================
 
 In this tutorial, we show how Reaktoro can be used for sequential calculations of the
 reactive transport of a rock core after injecting the fluid and rock composition. Unlike
-in the tutorial Reactive Transport with ReactiveTransportSolver, we provide here the detailed implementation of the
-reactive transport (without exploitation of the predefined class ``ReactiveTransportSolver``).
+the tutorial :ref:`Reactive transport modelling (using  ReactiveTrasportSolver class)`,
+we provide here the detailed implementation of the reactive transport (without exploitation
+of the predefined class ``ReactiveTransportSolver``).
 
-We proceed with the step-by-step explanation of the script that can be found in a full length at
-the very end.
+We proceed first with the step-by-step explanation of the script that can be found in a
+full length at the very end.
 
 Importing python packages
 -------------------------
@@ -39,7 +43,7 @@ Importing python packages
 Using Reaktoro in Python requires first an import of the python package
 **reaktoro**. From this point on, we are able to use the library components of
 Reaktoro (classes, methods, constants), which are needed to define our chemical
-system and chemical reaction modeling problems.
+system and chemical reaction modelling problems.
 
 .. note::
 
@@ -58,7 +62,7 @@ portable way of using operating system dependent functionality.
 Initializing an auxiliary time-related constants
 ------------------------------------------------
 
-In this step,
+In this step
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 2
@@ -75,16 +79,19 @@ Next, we define reactive transport and numerical discretization parameters.
     :start-at: Step 3
     :end-before: Step 4
 
-We specify the considered rock domain by setting the coordinate of its left boundary to
-0.0 and right boundary to 100.0. The discretization parameters, i.e., both the number of cells and
-steps in time, are set to 100. The reactive transport modeling procedure assumes a constant
-fluid velocity of v = 1 m/day (1.16 · 10−5 m/s) and a constant diffusion coefficient D = 10−9 m2/s.
-Parameter ``dirichlet`` is initialized by **True** or **False** depending on which boundary
-conditions are considered in the numerical test. If it is set to **False**,  the natural flux conditions
-are considered, and Dirichlet otherwise. The size of the time-step is set to be 10 minutes.
-The temperature is set to 333.15 K (Kevin), whereas the pressure is fixed to 100 MPa (Megapascal).
-The last parementer ``smrt_solv`` is initialized by **True** or **False** depending on which
-equilibrium solver are used in the numerical test.
+We specify the considered rock domain by setting the coordinate of its left and right
+boundaries to 0.0 and 100.0, respectively. The discretization parameters, i.e., the number
+of cells and steps in time, are both set to 100. The reactive transport modelling procedure
+assumes a constant fluid velocity of *v* = 1 *m/day* (1.16 · |10e-5| *m/s*) and the same
+diffusion coefficient *D* = |10e-9| *m2/s* for all fluid species, without dispersivity.
+The size of the time-step is set to be 10 minutes. The temperature is set to 333.15 K (Kevin),
+whereas the pressure is fixed to 100 MPa (Megapascal). Parameter ``dirichlet`` is initialized
+by **True** or **False** depending on which boundary conditions are considered in the numerical
+test. If it is set to **False**,  the natural flux conditions are considered, and Dirichlet
+otherwise. The last paramenter ``smrt_solv`` is initialized by **True** or **False** depending
+on which equilibrium solver are used in the numerical test. Setting it to **True** enables the
+usage of the ``EquilibriumSolver``, which exploits on-demand learning of the new states of the
+chemical system.
 
 Defining the list of the output quantities
 ------------------------------------------
@@ -97,21 +104,15 @@ as well as phase volume of calcite and dolomite.
     :start-at: Step 4
     :end-before: Step 7
 
-We provide the name of the file ``reativetransport.txt``, where the data should be collected.
-We all have to specify the parameters that we are interested to output. In this case, it is
-pH, molality of |H+|, |Ca++|, |Mg++|, |HCO3-|, |CO2(aq)|, as well as phase volume of calcite
-and dolomite.
-
 Defining the structure of the numerical experiment
 --------------------------------------------------
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 5
 
-To provide the entry point of the python script, we use ``if __name__ == '__main__':``, which
-"replaces" the call of ``main()`` function. The structure of the numerical experiment contains
-three main blocks, i.e., creating the required folders for the results, running the simulations,
-and plotting the obtained results.
+To provide the entry point of the python script, we use ``if __name__ == '__main__':``.
+The structure of the numerical experiment contains three main blocks, i.e., creating the
+required folders for the results, running the simulations, and plotting the obtained results.
 
 Creating folders for the results' output
 ----------------------------------------
@@ -120,24 +121,27 @@ Creating folders for the results' output
     :start-at: Step 6
     :end-before: Step 5
 
-Using **os** package, create requireв folders for outputting the obtained results.
+Using **os** package, create required folders for outputting the obtained results.
 
 Perform the reactive transport simulation
 -----------------------------------------
+
+The reactive transport simulation is presented by the correponding method ``simulate()``.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 7
     :end-before: Step 10
 
-We start from defining the chemical system using the ``ChemicalEditor`` class:
+Its content will be explained below step-by-step. We begin from defining the chemical
+system using the``ChemicalEditor`` class:
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 7.1
     :end-before: Step 7.2
 
-In particular, we specify **aqueous** and **mineral** phases that should be considered in the chemical system.
-The aqueous phase is defined by manually specifying the chemical species (for the performance reasons).
-The mineral phase contains three mineral species:
+In particular, we specify **aqueous** and **mineral** phases that should be considered in
+the chemical system. The aqueous phase is defined by manually specifying the chemical species
+(for the performance reasons). The mineral phase contains three mineral species:
 quartz |SiO2|, calcite |CaCO3|, and dolomite |CaMg(CO3)2|.
 
 Creating the chemical system
@@ -150,16 +154,16 @@ Creating the chemical system
 This step is where we create an object of class ``ChemicalSystem`` using the
 chemical system definition details stored in the object ``editor``.
 
-Defining the initial condition (IC) of the reactive transport modeling problem
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Initial condition (IC) of the reactive transport problem
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 After constructing the chemical system of interest, we can proceed to *defining the
 chemical reaction problem*. First, we specify its **initial condition** with already
 prescribed equilibrium conditions for *temperature*, *pressure*, and *amounts
-of elements* that are consistent with an intention of modeling reactive transport
+of elements* that are consistent with an intention of modelling reactive transport
 of injected |NaCl|-|MgCl2|-|CaCl2| brine into the rock-fluid composition of quartz
-and calcite at 60 °C and 100 bar. In particular, we consider resident fluid is a 0.7
-molal |NaCl| brine in equilibrium with the rock minerals with a calculated pH of 10.0.
+and calcite at 60 °C and 100 bar. In particular, we consider a 0.7 molal |NaCl| brine
+in equilibrium with the rock minerals (with a calculated pH of 10.0).
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 7.3
@@ -182,8 +186,8 @@ molal |NaCl| brine in equilibrium with the rock minerals with a calculated pH of
     Gibbs energy and at the same time satisfying the *element amounts
     constraints*).
 
-Defining the boundary condition (BC) of the reactive transport modeling problem
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Boundary condition (BC) of the reactive transport problem
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Next, we define the **boundary condition** of the constructed chemical system with
 its *temperature*, *pressure*, and *amounts of elements*.
@@ -199,8 +203,7 @@ the mixture of
 0.05 moles of |MgCl2|,
 0.01 moles of |CaCl2|, and
 0.75 moles of |CO2|, in a state very close to |CO2| saturation.
-The temperature and the pressure stay the same, i.e., 60 °C and 100 bar,
-respectively.
+The temperature and the pressure stay the same, i.e., 60 °C and 100 bar, respectively.
 
 Calculate the equilibrium states for the initial and boundary conditions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -231,19 +234,17 @@ Scaling the phases in the IC as required and BC
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Here, we scale the phases in the initial condition according to the following composition, i.e.,
-98|%vol| |SiO2| (quartz) and 2|%vol| |CaCO3| (calcite) with the porosity of 10%. Moreover,
+97.73 |%vol| |SiO2| (quartz) and 2.27 |%vol| |CaCO3| (calcite) with the porosity of 10%. Moreover,
 the boundary condition state is scaled to 1 m3.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 7.6
     :end-before: Step 7.7
 
-
-
 Specifying discretization structures needed for the reactive transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the next block of code, we provide some structures needed for the discretization of
+In the next block of code, we provide structures needed for the discretization of
 the problem and reactive transport simulation.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
@@ -251,10 +252,9 @@ the problem and reactive transport simulation.
     :end-before: Step 7.8
 
 We start by fetching the indices of the fluid and solid species to the ``ifluid_species``
-and ``isolid_species`` lists, respectively. Then, we defined the numpy arrays ``b``,
-``bprev``, ``bfluid``, ``bsolid``, that will store concentrations of each element
-in each mesh cell for the whole system at the current and previous time step as well as
-its fluid and solid partitions.
+and ``isolid_species`` lists, respectively. Then, we defined the numpy arrays ``b``, ``bprev``,
+``bfluid``, ``bsolid``, that will store concentrations of each element in each mesh cell for
+the whole system at the current and previous time step as well as its fluid and solid partitions.
 
 The arrays corresponding to the current step of the reactive transport is initialized by
 concentrations of the elements at the initial chemical state using ``state_ic.elementAmounts()``.
@@ -271,8 +271,8 @@ Creating the equilibrium solver
 
 For the repeated equilibrium calculation, we define an equilibrium solver object using
 either ``EquilibriumSolver`` or ``SmartEquilibriumSolver`` classes, which are initialized
-by a considered chemical system. Here, if parameter ``smrt_solv`` is set to **False**, the
-classical approach performed by the class ``EquilibriumSolver`` is considered, and otherwise
+by a considered chemical system. Here, if the parameter ``smrt_solv`` is set to **False**, the
+classical approach (performed by the class ``EquilibriumSolver``) is considered, and otherwise
 the class ``SmartEquilibriumSolver`` is used.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
@@ -301,33 +301,30 @@ Running the reactive transport simulation loop
 Before proceeding to the simulation of reactive transport on the considered interval,
 we set the initial time and a counter for the step considered in this cycle. Besides,
 in ``ndigits`` we store the number of digits in the selected amount of steps
-(for the reactive transport)
+(for the reactive transport) needed for the naming the files with chemical properties.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 7.10
-    :end-before: Step 7.11
+    :end-before: Step 10
 
 The cycle for the reactive transport simulation proceeds until we haven't made all the steps
 in time. At each time step, we output the progress of the simulations by auxiliary routine
-``outputstate()``.
-
-Then, we collect the amounts of elements from fluid and solid partition. This is done according
-to the **operator splitting procedure**. First, we update the amounts of elements the fluid partition
-using transport equation.
+``outputstate()``. Then, we collect the amounts of elements from fluid and solid partition.
+This is done according to the **operator splitting procedure**. First, we update the amounts
+of elements the fluid partition using transport equation.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 7.10.1
     :end-before: Step 6
 
-The transport is performed by the ``transport()`` routine that excepts the amounts *j*-th element,
+The transport is performed by the routine ``transport()`` that excepts the amounts *j*-th element,
 current time and space discretization step, parameters of the reactive transport velocity and
 diffusion coefficient, and amounts of *j*-th element on the boundary. The routine has the following
 structure. It defines the discretization constants ``alpha`` and ``beta`` that correspond
 to the diffusion and advection terms in the equation, i.e., ``D*dt/dx**2`` and ``v*dt/dx``,
 respectively. Arrays ``a``, ``b``, ``c`` follow from the the finite difference discretization of
-of the reaction-advection equation (TODO: specify, which finite differences are used). Finally,
-the obtained system of equation is solved by the tridiagonal matrix algorithm, also known as the
-Thomas algorithm.
+of the reaction-advection equation. Finally, the obtained system of equation is solved by the
+tridiagonal matrix algorithm, also known as the Thomas algorithm.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 7.10.2
@@ -337,8 +334,10 @@ The second step of **operator splitting procedure** is to update the total amoun
 by accounting the earlier reconstructed fluid partition and solid partition (that stays constant
 with respect to time).
 
-At last, we perform equilibrating for all the cells with the updated element amounts. Obtained
-amount are stored in the ``bprev`` in order to (TODO: for what ?).
+ .. code-block:: python
+
+    # Update the amounts of elements in both fluid and solid partitions
+        b[:] = bsolid + bfluid
 
 Plotting of the results
 -----------------------
@@ -347,7 +346,7 @@ The last block of the main routine is plotting of the results.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 8
-    :end-before: Step Step 7.10.2
+    :end-before: Step 7.10.2
 
 
 The above step-by-step explanation is summarized in a script.

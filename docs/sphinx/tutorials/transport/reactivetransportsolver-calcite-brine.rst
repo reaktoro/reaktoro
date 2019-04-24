@@ -7,7 +7,7 @@
 .. |%vol| replace:: %\ :sub:`vol`
 .. |SiO2| replace:: Si0\ :sub:`2`
 .. |CaCO3| replace:: CaCO\ :sub:`3`
-.. |NaCl| replace:: CaCl
+.. |NaCl| replace:: NaCl
 .. |CaMg(CO3)2| replace:: CaMg(CO\ :sub:`3`)\ :sub:`2`
 
 .. |H+| replace:: H\ :sup:`+`
@@ -16,21 +16,25 @@
 .. |HCO3-| replace:: HC0\ :sub:`3`\ :sup:`-`
 .. |CO2(aq)| replace:: C0\ :sub:`2` (aq)
 
+.. |10e-9| replace:: 10\ :sup:`-9`
+.. |10e-5| replace:: 10\ :sup:`-5`
+
 .. |slop98| replace:: :download:`slop98.dat <../../../../databases/supcrt/slop98.dat>`
 
-Reactive transport modelling of a rock core after brine injection (using  ReactiveTrasportSolver class)
-=======================================================================================================
+Reactive transport modelling (using  ReactiveTrasportSolver class)
+==================================================================
 
 In this tutorial, we show how Reaktoro can be used for sequential calculations of the
-reactive transport of a rock core after injecting the fluid and rock composition. To do that,
+reactive transport of a rock core after injecting the fluid-rock composition. To do that,
 we exploit a predefined class ``ReactiveTransportSolver`` that provides the functionality of
-solving advection-diffusion equation on the each step of the time-stepping cycle and logs the
-results (customised by the user) into the sequence of txt file (corresponding to each time-step).
+solving advection-diffusion equation on each step of the time-stepping cycle and logs the
+(customised by the user) results into the sequence of txt-files (corresponding to each
+time-step).
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step
 
-You find next a step-by-step explanation of the above script.
+Below, you find a step-by-step explanation of the above script.
 
 Importing the reaktoro package
 ------------------------------
@@ -42,27 +46,27 @@ Importing the reaktoro package
 Using Reaktoro in Python requires first an import of the python package
 **reaktoro**. From this point on, we are able to use the library components of
 Reaktoro (classes, methods, constants), which are needed to define our chemical
-system and chemical reaction modeling problems.
+system and chemical reaction modelling problems.
 
 .. note::
 
-    To simplify the tutorials, we use ``from reaktoro import *``, which imports
-    all components of the **reaktoro** package into the default Python
-    namespace. We note that this can potentially create name conflicts when used
-    in bigger projects. For your applications, consider using ``import reaktoro as rkt``
-    instead, and call classes and methods as ``rkt.Database``, ``rkt.ChemicalSystem``,
-    ``rkt.equilibrate``, and etc.
+    To simplify the tutorials, we import all components of the **reaktoro** package
+    into the default Python namespace by the line ``from reaktoro import *``. We note
+    that this can potentially create name conflicts when used in bigger projects.
+    For larger applications, we recommend using ``import reaktoro as rkt`` instead
+    (to avoid conflicts with other libraries) and call classes and methods as
+    ``rkt.Database``, ``rkt.ChemicalSystem``, ``rkt.equilibrate``, and etc.
 
 Initializing an auxiliary time-related constants
 ------------------------------------------------
 
-In this step:
+In this step
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 2
     :end-before: Step 3
 
-we initialize an auxiliary time-related constants from seconds up to years.
+we initialize an auxiliary time-related constants from the seconds up to years.
 
 Define parameters for the reactive transport simulation
 -------------------------------------------------------
@@ -73,12 +77,13 @@ Next, we define reactive transport and numerical discretization parameters.
     :start-at: Step 3
     :end-before: Step 4
 
-First, we define the considered rock domain by setting the coordinate of its left boundary to
-0.0 and right boundary to 100.0. The discretization parameters, i.e., both the number of cells and
-steps in time, are set to 100. The reactive transport modeling procedure assumes a constant
-fluid velocity of v = 1 m/day (1.16 · 10−5 m/s) and the same diffusion coefficient D = 10−9 m2/s
-for all fluid species, without dispersivity. The size of the time-step is set to be half a day.
-The temperature and pressure of the fluids are 60 °C and 100 bar, respectively.
+First, we define the considered rock domain by setting the coordinate of its left and right
+boundaries to 0.0 and 100.0, respectively. The discretization parameters, i.e., the number
+of cells and steps in time, are both set to 100. The reactive transport modelling procedure
+assumes a constant fluid velocity of *v* = 1 *m/day* (1.16 · |10e-5| *m/s*) and the same
+diffusion coefficient *D* = |10e-9| *m2/s* for all fluid species, without dispersivity.
+The size of the time-step is set to be half a day. The temperature and pressure of the fluids
+are 60 °C and 100 bar, respectively.
 
 Defining the chemical system using chemical editor class
 --------------------------------------------------------
@@ -94,7 +99,7 @@ this as shown below:
     :start-at: Step 4
     :end-before: Step 5
 
-In this step, we create an object of class ``ChemicalEditor`` and specify two phases,
+In this step, we create an object of the class ``ChemicalEditor`` and specify two phases,
 an **aqueous** and a **mineral** one, should be considered in the chemical system.
 The aqueous phase is defined by using a list of compounds, which will be broken
 into a list of element names, and the database will then be searched for all species that
@@ -146,7 +151,7 @@ chemical system definition details stored in the object ``editor``.
     *thermochemical properties* (e.g., activity and activity coefficients of
     species; density, enthalpy and internal energy of phases). As you learn
     more about other Reaktoro's classes, you will note that an object of class
-    ``ChemicalSystem`` is almost always needed for their initialization!
+    ``ChemicalSystem`` is almost always needed for their initialization.
 
 .. note::
 
@@ -154,46 +159,42 @@ chemical system definition details stored in the object ``editor``.
     *HKF extended Debye-Hückel model* for solvent water and ionic species, except
     for the aqueous species |CO2| (aq), for which the *Drummond model* is used.
 
-    The *standard chemical potentials* of the species are calculated using the equations
-    of state of
-    Helgeson and Kirkham,
-    Helgeson et al.,
-    Tanger and Helgeson [51],
-    Shock and Helgeson [52] and
-    Shock et al. [53].
+    The *standard chemical potentials* of the species are calculated using the
+    equations of state of Helgeson and Kirkham (1974), Helgeson et al. (1978),
+    Tanger and Helgeson (1988), Shock and Helgeson (1988) and Shock et al. (1992).
 
-    The database file |slop98| from the software SUPCRT92 [54] is used to obtain
+    The database file |slop98| from the software SUPCRT92 is used to obtain
     the parameters for the equations of state.
 
-    The equation of state of Wagner and Pruss [55] is used to calculate the
+    The equation of state of Wagner and Pruss (2002) is used to calculate the
     *density of water* and its temperature and pressure derivatives. Kinetics of
-    *dissolution* and *precipitation* of both calcite and dolomite is neglected, i.e.,
-    the local equilibrium assumption is employed.
+    *dissolution* and *precipitation* of both calcite and dolomite is neglected,
+    i.e., the local equilibrium assumption is employed.
 
 
-Defining the initial condition of the reactive transport modeling problem
--------------------------------------------------------------------------
+Initial condition (IC) of the reactive transport problem
+--------------------------------------------------------
 
 We have now defined and constructed our chemical system of interest, enabling
-us to move on to the next step in Reaktoro's modeling workflow: *defining our
+us to move on to the next step in Reaktoro's modelling workflow: *defining our
 chemical reaction problems*. Below we define its **initial condition** with already
 prescribed equilibrium conditions for *temperature*, *pressure*, and *amounts
-of elements* that are consistent with an intention of modeling reactive transport
+of elements* that are consistent with an intention of modelling reactive transport
 of injected |NaCl|-|MgCl2|-|CaCl2| brine into the rock-fluid composition of quartz
-and calcite at 60 °C and 100 bar. In particular, we consider resident fluid is a 0.7
-molal |NaCl| brine in equilibrium with the rock minerals with a calculated pH of 10.0.
+and calcite at 60 °C and 100 bar. In particular, we consider a 0.7 molal |NaCl| brine
+in equilibrium with the rock minerals (with a pH of 10.0).
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 6
     :end-before: Step 7
 
 .. note::
-    Our **0.7 molal NaCl brine** is here represented by the mixture of
-    1 kg of |H2O| and 0.7 mol of |NaCl|.
+    Our **0.7 molal NaCl brine** is represented by the mixture of 1 kg of |H2O| and
+    0.7 mol of |NaCl|.
 
 .. note::
-    After providing the amounts of substances
-    |H2O|, |NaCl|, quartz |SiO2|, and calcite |CaCO3| in the above code, Reaktoro parses
+    After providing the amounts of substances |H2O|, |NaCl|, quartz |SiO2|, and
+    calcite |CaCO3| in the above code, Reaktoro parses
     these chemical formulas and determines the elements and their coefficients.
     Once this is done, the amount of each element stored inside the object
     ``problem_ic`` is incremented according to the given amount of substance and
@@ -204,19 +205,9 @@ molal |NaCl| brine in equilibrium with the rock minerals with a calculated pH of
     Gibbs energy and at the same time satisfying the *element amounts
     constraints*).
 
-.. note::
-    Please note that we are not condemning the input form shown above in terms
-    of element amounts, but only telling you to be attentive with the values
-    you input. If you are using Reaktoro as a chemical reaction solver in a
-    reactive transport simulator, for example, you'll most likely need to work
-    directly with given amounts of elements, which shows that this input form
-    is required in certain cases. For such time-dependent modeling problems, you
-    often only need to ensure that the initial conditions for elements amounts
-    result in feasible initial species amounts.
 
-
-Defining the boundary condition of the reactive transport modeling problem
---------------------------------------------------------------------------
+Boundary condition (BC) of the reactive transport problem
+---------------------------------------------------------
 
 Next, we define the **boundary condition** of the constructed chemical system with
 its *temperature*, *pressure*, and *amounts of elements*.
@@ -235,8 +226,8 @@ the mixture of
 The temperature and the pressure stay the same, i.e., 60 °C and 100 bar,
 respectively.
 
-Calculate the equilibrium states for the initial and boundary conditions
-------------------------------------------------------------------------
+Calculate the equilibrium states with given IC and BC
+-----------------------------------------------------
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 8
@@ -246,9 +237,9 @@ In this step, we use the ``equilibrate`` function to calculate the chemical
 equilibrium state of the system with the given initial and boundary equilibrium
 conditions stored in the object ``problem_ic`` and ``problem_bc``.
 For this calculation, Reaktoro uses an efficient
-**Gibbs energy minimization** computation to determine the species amounts that
+**Gibbs energy minimization** computation to determine the species' amounts that
 correspond to a state of minimum Gibbs energy in the system, while satisfying
-the prescribed amount conditions for temperature, pressure, and element
+the prescribed amount conditions for the temperature, pressure, and element
 amounts. The result is stored in the objects ``state_ic`` and ``state_bc`` of
 class ``ChemicalState``.
 
@@ -260,19 +251,19 @@ class ``ChemicalState``.
     *chemical system definition* and *chemical system state*.
 
 
-Scaling the phases in the initial condition as required
--------------------------------------------------------
+Scaling the phases in the initial condition
+-------------------------------------------
 
 Here, we scale the phases in the initial condition according to the following composition:
-98|%vol| |SiO2| (quartz) and 2|%vol| |CaCO3| (calcite) with the porosity of 10%.
+97.73 |%vol| |SiO2| (quartz) and 2.27 |%vol| |CaCO3| (calcite) with the porosity of 10%.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 9
     :end-before: Step 10
 
 
-Scaling the boundary condition state to 1 m3
---------------------------------------------
+Scaling the boundary condition state
+------------------------------------
 
 Next, we scale the boundary condition state to 1 m3
 
@@ -280,39 +271,39 @@ Next, we scale the boundary condition state to 1 m3
     :start-at: Step 10
     :end-before: Step 11
 
-Creating the mesh for the column
---------------------------------
+Creating the mesh
+-----------------
 
-To define the mesh a class ``Mesh`` to initialize it for a class ``ReactiveTransportSolver``.
+We define the mesh with the class ``Mesh`` in order to use in the initialization of a class
+``ReactiveTransportSolver``.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 11
     :end-before: Step 12
 
-The class accepts the number of cells on the computational domain as well as x-coordinates
+This class accepts the number of cells on the computational domain as well as x-coordinates
 of the left and right boundaries (in m). By default, the number of cells is set to 10, whereas
 the domain is set to the unit interval.
 
 Creating a chemical field object
 --------------------------------
 
-For initializing the reactive transport modelling class, we need to define an object
-of a class ``ChemicalField`` with every cell having a state given by state_ic.
+For initializing the reactive transport modelling class, we also need to define an object
+of a class ``ChemicalField`` with every cell having a state given by the object ``state_ic``.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 12
     :end-before: Step 13
-
 
 .. note::
    Alternatively, the chemical field can be initialized by the chemical system common to all
    degrees of freedom in the chemical field.
 
 
-Defining the reactive transport modeling
-----------------------------------------
+Defining the reactive transport modelling
+-----------------------------------------
 
-Finally, we defined the object responsible for the solving reactive transport problem, which
+Finally, we define the object responsible for the solving reactive transport problem, which
 is handled by the class ``ReactiveTransportSolver``.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
@@ -321,7 +312,7 @@ is handled by the class ``ReactiveTransportSolver``.
 
 The object is initialized by the chemical system common to all degrees of freedom in the chemical
 field. We also provide it with other discretization parameters such as mesh, velocity, diffusion
-coefficient, state on the boundary condition, and size of the step for incremental time stepping.
+coefficient, the state on the boundary condition, and size of the step for incremental time stepping.
 Lastly, we initialize the reactive solver object with the chemical field object specified on the
 previous step.
 
@@ -335,14 +326,14 @@ Before running time-dependent simulations, we defined another object provided by
     :start-at: Step 14
     :end-before: Step 15
 
-We provide the name of the file ``reativetransport.txt``, where the data should be collected.
-We all have to specify the parameters that we are interested to output. In this case, it is
+We provide the name of the file ``reactive-transport.txt``, where the data will be collected.
+We also have to specify the parameters that we are interested in outputting. In this case, it is
 pH, molality of |H+|, |Ca++|, |Mg++|, |HCO3-|, |CO2(aq)|, as well as phase volume of calcite
 and dolomite.
 
 
-Running the reactive transport simulations in the cycle
--------------------------------------------------------
+Running the reactive transport simulations
+------------------------------------------
 
 Before proceeding to the simulation of reactive transport in the considered interval,
 we set the initial time and a counter for the step considered in this cycle.
@@ -356,9 +347,9 @@ in time. At each time step, we print the progress of the simulations, which are 
 the class ``ReactiveTransportSolver``. Each call of function ``rt.step`` performs one reactive
 transport time-step, i.e., solving of the advection-diffusion problem using ``ReactiveTransport``
 class and writing the results in the file ``reativetransport-step.txt``, where ``step`` indicates
-the number of the step in the cycle over the considered time interval. In each such file, rows
-correspond thes cell (on the spacial domain), whereas the columns correspond to the requested for
-the output properties, i.e., pH, molality of |H+|, |Ca++|, |Mg++|, |HCO3-|, |CO2(aq)|, as well as
-phase volume of calcite and dolomite.
+the number of the step in the cycle (over the considered time interval). In each such file, rows
+correspond cells (degrees of freedom on the spatial domain), whereas the columns correspond to
+the requested (for the output) properties, i.e., pH, molality of |H+|, |Ca++|, |Mg++|, |HCO3-|,
+|CO2(aq)|, as well as phase volume of calcite and dolomite.
 
 .. _ChemicalState: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html

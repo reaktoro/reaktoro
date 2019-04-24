@@ -71,12 +71,12 @@ problem_bc.add('CO2', 0.75, 'mol')
 state_ic = equilibrate(problem_ic)
 state_bc = equilibrate(problem_bc)
  
-# Step 9: Scale the phases in the initial condition as required
+# Step 9: Scale the phases in the initial condition
 state_ic.scalePhaseVolume('Aqueous', 0.1, 'm3') # corresponds to the initial porosity of 10%.
-state_ic.scalePhaseVolume('Quartz', 0.88, 'm3') # 0.98 ??? Does this corresponds to the 98%vol SiO2 (quartz)
-state_ic.scalePhaseVolume('Calcite', 0.02, 'm3') # 2%vol CaCO3(calcite)
+state_ic.scalePhaseVolume('Quartz', 0.882, 'm3')
+state_ic.scalePhaseVolume('Calcite', 0.018, 'm3')
 
-# Step 10: Scale the boundary condition state to 1 m3
+# Step 10: Scale the boundary condition state
 state_bc.scaleVolume(1.0)
 
 # Step 11: Create the mesh for the column
@@ -109,7 +109,7 @@ output.add('phaseVolume(Dolomite)')
 # Create the folder for the output text-files
 os.system('mkdir -p results')
 # Defined the name of the output files
-output.filename('results/reativetransport.txt')
+output.filename('results/reactive-transport.txt')
 
 # Step 15: Set initial time and counter of steps in time
 t = 0.0
