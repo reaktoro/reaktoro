@@ -126,7 +126,7 @@ Using **os** package, create required folders for outputting the obtained result
 Perform the reactive transport simulation
 -----------------------------------------
 
-The reactive transport simulation is presented by the correponding method ``simulate()``.
+The reactive transport simulation is presented by the corresponding method ``simulate()``.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-at: Step 7
@@ -157,7 +157,7 @@ chemical system definition details stored in the object ``editor``.
 Initial condition (IC) of the reactive transport problem
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-After constructing the chemical system of interest, we can proceed to *defining the
+After constructing the chemical system of interest, we can proceed to *definition of the
 chemical reaction problem*. First, we specify its **initial condition** with already
 prescribed equilibrium conditions for *temperature*, *pressure*, and *amounts
 of elements* that are consistent with an intention of modelling reactive transport
@@ -272,7 +272,7 @@ Creating the equilibrium solver
 For the repeated equilibrium calculation, we define an equilibrium solver object using
 either ``EquilibriumSolver`` or ``SmartEquilibriumSolver`` classes, which are initialized
 by a considered chemical system. Here, if the parameter ``smrt_solv`` is set to **False**, the
-classical approach (performed by the class ``EquilibriumSolver``) is considered, and otherwise
+classical approach (performed by the class ``EquilibriumSolver``) is considered, and otherwise,
 the class ``SmartEquilibriumSolver`` is used.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
@@ -280,13 +280,13 @@ the class ``SmartEquilibriumSolver`` is used.
     :end-before: Step 7.9
 
 In reactive transport simulations, we have to perform many equilibrium calculations in sequence.
-The usage of ``EquilibriumSolver`` becomes more practical because  each call of ``equilibrate``
+The usage of ``EquilibriumSolver`` becomes more practical because  each call of ``equilibrate()``
 method has a computational overhead from creating a new object of class ``EquilibriumSolver``.
 Therefore, we create this object only once and then used subsequently for all other equilibrium
 calculations.
 
-Define auxiliary function for creating the output file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Define an auxiliary function for creating the output file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The auxiliary routine ``outputstate`` is a function that uses the class ``ChemicalOutput``
 to output requested by the user information into the output file.
