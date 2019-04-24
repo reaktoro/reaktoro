@@ -24,12 +24,12 @@ In this tutorial, we show how Reaktoro can be used to compute chemical kinetic
 calculations with both equilibrium- and kinetically-controlled reactions.
 An example below demonstrate this for a simple mineral dissolution modelling,
 in which calcite reacts with a 1 molal |HCl|-brine at temperature 298.15 K and
-pressure 1 MPa
+pressure 1 MPa:
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
     :start-at: Step
 
-Below, you find next a step-by-step explanation of the above script.
+Below, you find a step-by-step explanation of the above script.
 
 Importing python packages
 -------------------------
@@ -52,10 +52,10 @@ reaction modelling problems.
     classes and methods as ``rkt.Database``, ``rkt.ChemicalSystem``, ``rkt.equilibrate``,
     and etc.
 
-Add phases to the chemical system
----------------------------------
+Defining the phases in the chemical system
+------------------------------------------
 
-The class ``ChemicalEditor`` is used later to conveniently create instances of classes
+The class ``ChemicalEditor`` is used to conveniently create instances of classes
 ``ChemicalSystem`` and ``ReactionSystem``.
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
@@ -64,7 +64,9 @@ The class ``ChemicalEditor`` is used later to conveniently create instances of c
 
 In particular, we specify **aqueous** and **mineral** phases that should be
 considered in the chemical system. The aqueous phase is defined by the mixing
-of |H2O|, |HCl|, and |CaCO3|. The mineral phase is defined with only calcite.
+of |H2O|, |HCl|, and |CaCO3| (effectively, collecting all aqueous species in the 
+database that contains elements H, O, C, Cl, and Ca, which are the elements in this 
+list of compounds). There is only one pure mineral phase: the calcite phase.
 
 .. |supcrt98| replace:: :download:`supcrt98.xml <../../../../databases/supcrt/supcrt98.xml>`
 .. |slop98| replace:: :download:`slop98.dat <../../../../databases/supcrt/slop98.dat>`
@@ -87,8 +89,8 @@ of |H2O|, |HCl|, and |CaCO3|. The mineral phase is defined with only calcite.
     use of an embedded database. This can happen if you do not give a correct
     path to your custom database file.
 
-Add reactions to the chemical reactions of the system
------------------------------------------------------
+Defining kinetically-controlled reactions
+-----------------------------------------
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
     :start-at: Step 3
@@ -102,8 +104,12 @@ correspondingly set by function ``setSpecificSurfaceArea()``. Here, **logk** is
 the kinetic rate constant of the reaction in log scale, whereas **Ea** is the
 Arrhenius activation energy. The units of both constants must be provided.
 
-Create chemical and reaction systems
-------------------------------------
+.. note::
+    The need for setting a reaction equation for mineral reactions will 
+    be removed in the future, which will simplify the setup of the problem.
+
+Creating the chemical and reaction systems
+------------------------------------------
 
 Create instances of ``ChemicalSystem`` and ``ReactionSystem``.
 
@@ -113,16 +119,16 @@ Create instances of ``ChemicalSystem`` and ``ReactionSystem``.
 
 ``ChemicalSystem`` is a class that represents a system and its attributes and properties,
 such as phases (in our case aqueous and mineral ones), species, elements (5 in total, i.e.,
-*H*, *0*, *Ca*, *C*, *Cl*), formula matrix, as well as chemical and thermodynamical model.
+*H*, *O*, *Ca*, *C*, *Cl*), formula matrix, as well as chemical and thermodynamical model.
 Class ``ReactionSystem`` represents a system of the chemical reaction by a collection of
 ``Reaction`` class instances. It provides convenient methods that calculate the equilibrium
 constants, reaction quotients, and rates of the reactions.
 
 
-Define the partition of the system
-----------------------------------
+Defining the partition of the system
+------------------------------------
 
-For the partition of a chemical system, we use corresponding class ``Partition``.
+For the partition of a chemical system, we use the class ``Partition``.
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
     :start-at: Step 5
@@ -135,13 +141,12 @@ equilibrium).
 
 .. note::
     In general, the system can be partitioned into *equilibrium*, *kinetic* and
-    *inert species*. For the *equilibrium* species, the composition is governed
-    by the chemical equilibrium (calculated by the minimization of their Gibbs
-    energy subject to some equilibrium constraints). The *kinetic* species are
-    the species whose composition is governed by chemical kinetics (by solving a
-    system of ordinary differential equations that model the kinetics of a system
-    of reactions). The *inert* species are the species whose composition is
-    invariable.
+    *inert species*. For the *equilibrium species*, their amounts are governed
+    by chemical equilibrium (calculated by solving a Gibbs energy minimization 
+    problem). The *kinetic species* are the species whose amounts are governed 
+    by chemical kinetics (calculated by solving a system of ordinary differential 
+    equations that model the kinetics of a system of reactions). 
+    The *inert species* are the species whose amounts are constant.
 
 In general, the aqueous species react among themselves at much faster rates than
 mineral dissolution reactions, and thus this *partial equilibrium assumption* is
@@ -163,8 +168,8 @@ method applied to ``EquilibriumProblem``. We prescribe the amount of injected
 aqueous fluid resulting from the mixture of 1 kg of water with 1 mole of |HCl|.
 The default temperature and the pressure are set to 298.15 K and 1 MPa.
 
-Calculate the chemical equilibrium state
-----------------------------------------
+Calculating the chemical equilibrium state
+------------------------------------------
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
     :start-at: Step 7
@@ -172,12 +177,18 @@ Calculate the chemical equilibrium state
 
 In this step, we use the function ``equilibrate`` to calculate the chemical equilibrium
 state of the system. For this calculation, Reaktoro uses an efficient **Gibbs energy
-minimization** computation to determine the species' amounts that correspond to a
-state of minimum Gibbs energy in the system, while satisfying the prescribed amount
-conditions for the temperature, pressure, and element amounts. The result is stored in
-the objects ``state0`` of class ``ChemicalState``, a computational representation of
-the state of a multiphase chemical system defined by its temperature (*T*), pressure
-(*P*), and molar composition (*n*).
+minimization** computation to determine the species amounts that correspond to a
+state of minimum Gibbs energy in the system at given conditions of temperature, 
+pressure, and element amounts. The result is stored in the object ``state0`` of 
+class ``ChemicalState``, a computational representation of the state of a multiphase
+chemical system defined by its temperature (*T*), pressure (*P*), and vector 
+of species amounts (*n*).
+
+.. note::
+    Consider using class ``EquilibriumSolver`` instead of method ``equilibrate`` 
+    when a sequence of chemical equilibrium calculations are needed for increased performance. 
+    The method ``equilibrate`` is a convenient function for solving chemical equilibrium problems
+    that has some overhead (e.g., an object of class ``EquilibriumSolver`` is created in each call).
 
 .. attention::
 
@@ -186,8 +197,8 @@ the state of a multiphase chemical system defined by its temperature (*T*), pres
     states of the chemical system. Reaktoro differentiates these two independent
     concepts: *chemical system definition* and *chemical system state*.
 
-Setting the mass of mineral
-----------------------------
+Setting the initial mass of mineral
+-----------------------------------
 
 Prescription of the mass of calcite is performed as follows:
 
@@ -195,8 +206,8 @@ Prescription of the mass of calcite is performed as follows:
     :start-at: Step 8
     :end-before: Step 9
 
-Kinetic path calculations
--------------------------
+Performing the kinetic path calculation
+---------------------------------------
 
 To be able to run the simulation of the chemical kinetic path, we introduce the
 instance of the class ``KineticPath`` that enables this functionality.
@@ -208,27 +219,36 @@ instance of the class ``KineticPath`` that enables this functionality.
 The instance of kinetic path solver is provided with the partition to the equilibrium,
 kinetic, and inert species defined above.
 
-Plotting of evolution of different properties of the chemical system
---------------------------------------------------------------------
+.. attention::
+    For repeated chemical kinetics calculations (e.g., in a reactive transport 
+    simulation, where kinetics is performed for each mesh cell/node), consider 
+    using the class ``KineticSolver`` instead for avoiding some overhead of 
+    class ``KineticPath``. 
+    
+Plotting the evolution of different properties of the chemical system
+---------------------------------------------------------------------
 
-Usage of the ``ChemicalPlot`` allows us to create plots illustrating the evolution of
-different properties of the chemical system over the time interval.
+Usage of the ``ChemicalPlot`` allows us to create plots that show the evolution of
+different properties of the chemical system during the reactive process.
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
     :start-at: Step 10
     :end-before: Step 11
 
-The code above plots four different graphics with evolution of
-concentration of calcium, mass of calcite, pH, and concentration of |Ca++| and |HCO3-|.
-In particular, instance `plot4` illustrates the depiction of two concentrations with
-respect to the time (in hours). Methods ``plot4.x()`` and ``plot4.y()`` fetch properties
-that are meant to be plotted on x and y axises, respectively.
+The code above plots four different graphics that show the concentration of calcium, 
+mass of calcite, pH, and concentration of ions |Ca++| and |HCO3-| over time.
+In particular, `plot4` shows the concentrations of ions |Ca++| and |HCO3-| with respect to the time (in hours). 
+Methods ``plot4.x()`` and ``plot4.y()`` fetch properties
+that are meant to be plotted on x and y axes, respectively.
 The arguments of the function ``plot1.y(""speciesMolality(Ca++ units=mmolal)", "Ca++")``
-stand for the name of the property we want to fetch from the chemical state and the tag,
-we want to illustrate it with.
+stand for the name of the property from the chemical state we want to plot and the 
+label to be used in the plot.
 
-Solve the chemical kinetics problem
------------------------------------
+.. note::
+    A list of all possible quantities that can be plotted is shown `_ChemicalQuantity`_.
+
+Solving the chemical kinetics problem
+-------------------------------------
 
 Finally, we solve the kinetic path problem using the method ``solve`` provided the
 initial state (here, ``state0``), the initial and final time of the kinetic path, and
@@ -240,3 +260,4 @@ time units of the specified time (e.g., `s`, `minute`, `day`, `year`, etc.).
 
 
 .. _ChemicalState: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html
+.. _ChemicalQuantity: https://www.reaktoro.org/cpp/classReaktoro_1_1ChemicalQuantity.html
