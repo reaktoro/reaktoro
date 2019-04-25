@@ -20,8 +20,7 @@ from reaktoro import *
 
 # Step 2: Add the phases of the chemical system
 editor = ChemicalEditor()
-editor.addAqueousPhase("H2O NaCl CaCO3 MgCO3")
-#editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3 MgCO3")
+editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3 MgCO3")
 editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
 editor.addMineralPhase("Calcite")
 editor.addMineralPhase("Magnesite")
@@ -67,6 +66,7 @@ problem.add("CO2", 1, "mol")
 
 # Step 7: Calculate the chemical equilibrium state
 state0 = equilibrate(problem)
+state0.output('demo-kineticpath-carbonates-co2-before-kinetics')
 
 # Step 8: Setting the mass of mineral
 state0.setSpeciesMass("Calcite", 100, "g")
@@ -108,5 +108,5 @@ plot3.ylabel("Mass [g]")
 t0, t1 = 0.0, 25.0
 path.solve(state0, t0, t1, "hours")
 # Print the result state
-print(state0)
+state0.output('demo-kineticpath-carbonates-co2-after-kinetics')
 

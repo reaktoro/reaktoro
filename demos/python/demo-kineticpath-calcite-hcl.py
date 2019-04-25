@@ -20,8 +20,7 @@ from reaktoro import *
 
 # Step 2: Define a chemical system with an aqueous and a mineral phase
 editor = ChemicalEditor()
-editor.addAqueousPhase("H2O HCl CaCO3")
-#editor.addAqueousPhaseWithElementsOf("H2O HCl CaCO3")
+editor.addAqueousPhaseWithElementsOf("H2O HCl CaCO3")
 editor.addMineralPhase("Calcite")
 
 # Step 3: Define a mineral reactions
@@ -49,7 +48,7 @@ problem.add("HCl", 1, "mmol")
 
 # Step 7: Calculate the chemical equilibrium state
 state0 = equilibrate(problem)
-print(state0)
+state0.output('demo-kineticpath-calcite-hcl-before-kinetics')
 
 # Step 8: Specify the mass of the species
 state0.setSpeciesMass("Calcite", 100, "g")
@@ -90,4 +89,4 @@ plot4.legend("right center")
 # Step 11: Solve the kinetic paths
 t0, t1 = 0.0, 5.0
 path.solve(state0, t0, t1, "minute")
-print(state0)
+state0.output('demo-kineticpath-calcite-hcl-after-kinetics')

@@ -51,7 +51,7 @@ def simulate():
 
     # Step 7.1: Construct the chemical system with its phases and species
     editor = ChemicalEditor()
-    editor.addAqueousPhase(['H2O(l)',
+    editor.addAqueousPhaseWithElementsOf(['H2O(l)',
                             'H+',
                             'OH-',
                             'Na+',
@@ -87,7 +87,7 @@ def simulate():
     state_ic = equilibrate(problem_ic)
     state_bc = equilibrate(problem_bc)
 
-    # Step 7.6: Scale the phases in the initial condition as required
+    # Step 7.6: Scale the volumes of the phases in the initial condition
     state_ic.scalePhaseVolume('Aqueous', 0.1, 'm3')
     state_ic.scalePhaseVolume('Quartz', 0.882, 'm3')
     state_ic.scalePhaseVolume('Calcite', 0.018, 'm3')
@@ -106,9 +106,6 @@ def simulate():
 
     # The concentrations of each element in each mesh cell (in the current time step)
     b = zeros((ncells, nelems))
-
-    # The concentrations of each element in each mesh cell (in the previous time step)
-    # bprev = zeros((ncells, nelems))
 
     # The concentrations of each element in the fluid partition, in each mesh cell
     bfluid = zeros((ncells, nelems))
@@ -184,9 +181,6 @@ def simulate():
         # Equilibrating all cells with the updated element amounts
         for icell in range(ncells):
             solver.solve(states[icell], T, P, b[icell])
-
-        # Update the amounts of elements at the previous time step
-        #bprev[:] = b
 
         # Increment time step and number of time steps
         t += dt

@@ -39,8 +39,7 @@ P = 100           # the pressure (in units of bar)
 
 # Step 4: Construct the chemical system with its phases and species
 editor = ChemicalEditor()
-editor.addAqueousPhase('H2O NaCl CaCl2 MgCl2 CO2')
-#editor.addAqueousPhaseWithElementsOf('H2O NaCl CaCl2 MgCl2 CO2')
+editor.addAqueousPhaseWithElementsOf('H2O NaCl CaCl2 MgCl2 CO2')
 editor.addMineralPhase('Quartz')
 editor.addMineralPhase('Calcite')
 editor.addMineralPhase('Dolomite')
@@ -71,7 +70,7 @@ problem_bc.add('CO2', 0.75, 'mol')
 state_ic = equilibrate(problem_ic)
 state_bc = equilibrate(problem_bc)
  
-# Step 9: Scale the phases in the initial condition
+# Step 9: Scale the volumes of the phases in the initial condition
 state_ic.scalePhaseVolume('Aqueous', 0.1, 'm3') # corresponds to the initial porosity of 10%.
 state_ic.scalePhaseVolume('Quartz', 0.882, 'm3')
 state_ic.scalePhaseVolume('Calcite', 0.018, 'm3')
