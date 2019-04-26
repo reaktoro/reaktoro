@@ -1,3 +1,4 @@
+.. |degC| replace:: °C
 .. |H2O| replace:: H\ :sub:`2`\ O
 .. |H2Og| replace:: H\ :sub:`2`\ O\ (g)
 .. |CO2| replace:: CO\ :sub:`2`
@@ -8,9 +9,8 @@
 .. |SiO2| replace:: Si0\ :sub:`2`
 .. |CaCO3| replace:: CaCO\ :sub:`3`
 .. |NaCl| replace:: NaCl
+.. |HCl| replace:: HCl
 .. |CaMg(CO3)2| replace:: CaMg(CO\ :sub:`3`)\ :sub:`2`
-.. |MgCO3| replace:: MgCO\ :sub:`3`
-
 .. |H+| replace:: H\ :sup:`+`
 .. |Ca++| replace:: Ca\ :sup:`2+`
 .. |Mg++| replace:: Mg\ :sup:`2+`
@@ -61,7 +61,7 @@ could potentially appear later as the calculations proceed.
     which should contain the excess of |CO2|, was not considered in the
     chemical system.
 
-The code below uses class ``ChemicalEditor`` to define our chemical system with
+The code below uses class `ChemicalEditor`_ to define our chemical system with
 the phases of interest and their species:
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
@@ -103,12 +103,22 @@ below:
     :start-at: Step 3
     :end-before: Step 4
 
-In particular, we set the equations of the reaction by ``setEquation()`` method. We add
-the ``MineralMechanism`` to the ``editor`` to prescribe neutral and acidic mechanisms
-of the mineral reactions. Here, ``logk`` is the kinetic rate constant of the reaction in log scale, whereas
-``Ea`` is the Arrhenius activation energy. The units of both constants must be provided
-as shown in the example. Finally, we provide the surface area, which appropriate
-units are checked and correspondingly set by function ``setSpecificSurfaceArea()``.
+We set the equation of each mineral reaction using method ``setEquation`` of
+class `MineralReaction`_.
+
+.. todo::
+    The current need for setting a reaction equation for mineral reactions will
+    be removed in the future, which will simplify the setup of the problem.
+
+We then prescribe neutral and acidic mechanisms for each mineral reaction using
+the method ``addMechanism`` of class `MineralMechanism`_, using values for
+``logk``, the kinetic rate constant of the reaction in log scale, and ``Ea``,
+the Arrhenius activation energy. The units of both parameters must be provided
+as shown in the example, and other compatible units are allowed.
+
+Finally, we specify the specific surface area of the mineral using method
+``setSpecificSurfaceArea`` of class `MineralReaction`_. Any units compatible to
+``m2/kg`` or ``m2/m3`` are allowed (e.g., ``cm2/g``, ``mm2/mm3``).
 
 .. note::
     The values shown for ``logk`` and ``Ea`` were collected from: *Palandri,
@@ -120,13 +130,13 @@ units are checked and correspondingly set by function ``setSpecificSurfaceArea()
 Creating the chemical and reaction systems
 ------------------------------------------
 
-Create instances of ``ChemicalSystem`` and ``ReactionSystem``.
+Create instances of `ChemicalSystem`_ and `ReactionSystem`_.
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
     :start-at: Step 4
     :end-before: Step 5
 
-Class ``ChemicalSystem`` is used to represent a chemical system, containing one
+Class `ChemicalSystem`_ is used to represent a chemical system, containing one
 or more phases  (in this problem, aqueous, gaseous, and mineral phases), each
 phase containing one or more species (the aqueous phase containing many aqueous
 species, the gaseous phase containing two, and each mineral phase containing a
@@ -135,7 +145,7 @@ is also used to calculate thermodynamic properties of the phases and species
 (standard thermodynamic properties, activities, chemical potentials, phase
 molar volume, etc.).
 
-Class ``ReactionSystem`` is a collection of ``Reaction`` objects used to
+Class `ReactionSystem`_ is a collection of `Reaction`_ objects used to
 represent a system of chemical reactions that are controlled by chemical
 kinetics. These classes provides convenient methods for the calculation of
 equilibrium constants, reaction quotients, and rates of the reactions.
@@ -156,7 +166,7 @@ of ordinary differential equations that models the kinetics of a system of
 reactions). The *inert species* maintain their amounts constant in all chemical
 equilibrium or kinetics calculations.
 
-This classification of species can be done using class ``Partition``. By
+This classification of species can be done using class `Partition`_. By
 default, all species are considered to be equilibrium species in this class.
 Thus, we only need to specify which ones are kinetic species:
 
@@ -165,10 +175,10 @@ Thus, we only need to specify which ones are kinetic species:
     :end-before: Step 6
 
 The mineral species calcite, magnesite and dolomite are specified to be
-*kinetic species* using method ``setKineticSpecies`` of class ``Partition``.
+*kinetic species* using method ``setKineticSpecies`` of class `Partition`_.
 
 .. note::
-    Method ``setKineticPhases`` of class ``Partition`` could also be used here.
+    Method ``setKineticPhases`` of class `Partition`_ could also be used here.
     This method sets all species in the given phases to be kinetic species, and
     it is more convenient if a phase has many species. However, since each of
     the mineral phases considered here only contain a single mineral species,
@@ -180,12 +190,12 @@ Defining the initial state of the equilibrium species
 In a chemical kinetics calculation, an *initial condition* is needed for the
 amounts of both equilibrium and kinetic species.
 
-The calculation below is formulated so that the initial condition for the
-amounts of each equilibrium species result from the solution of a chemical
-equilibrium problem in which 1 kg of water is mixed with 1 mol of |NaCl| and 1
-mol of |CO2| at 298.15 K and 1 bar (default temperature and pressure conditions
-if none provided). This amount of |CO2| is sufficient to saturate the brine
-solution. The excess will exist in the |CO2|-rich gaseous phase. so that a
+The equilibrium problem formulated below, using class `EquilibriumProblem`_, is
+done so that the initial condition for the amounts of each equilibrium species
+result from the solution of a chemical equilibrium problem in which 1 kg of
+water is mixed with 1 mol of |NaCl| and 1 mol of |CO2| at 60 |degC| and 100
+bar. This amount of |CO2| is sufficient to saturate the brine solution. The
+excess will exist in the |CO2|-rich gaseous phase.
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
     :start-at: Step 6
@@ -212,7 +222,7 @@ Calculating the initial amounts of the equilibrium species
 We now use the convenient ``equilibrate`` function to calculate the amounts of
 the equilibrium species by minimizing the Gibbs energy of the equilibrium
 partition only, and not of the entire system. The result is stored in the
-object ``state0`` of class ``ChemicalState``, a computational representation of
+object ``state0`` of class `ChemicalState`_, a computational representation of
 the state of a multiphase chemical system defined by its temperature (*T*),
 pressure (*P*), and vector of species amounts (*n*). We then output this
 chemical state to a file.
@@ -237,7 +247,7 @@ Setting the kinetic path calculations
 
 To be able to run the simulation of the kinetic process of mineral
 dissolution/precipitation, we introduce the instance of the class
-``KineticPath`` that enables this functionality.
+`KineticPath`_ that enables this functionality.
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-carbonates-co2.py
     :start-at: Step 9
@@ -249,14 +259,14 @@ equilibrium, kinetic, and inert species defined above.
 .. attention::
     For repeated chemical kinetics calculations (e.g., in a reactive transport
     simulation, where kinetics is performed for each mesh cell/node), consider
-    using the class ``KineticSolver`` instead for avoiding some overhead of
-    class ``KineticPath``. Consider also the class ``EquilibriumSolver``,
+    using the class `KineticSolver`_ instead for avoiding some overhead of
+    class `KineticPath`_. Consider also the class `EquilibriumSolver`_,
     instead of method ``equilibrate``, for similar reasons.
 
 Plotting the evolution of thermochemical properties
 ---------------------------------------------------
 
-Usage of the ``ChemicalPlot`` allows us to create plots illustrating the
+Usage of the `ChemicalPlot`_ allows us to create plots illustrating the
 evolution of different properties of the chemical system over the time interval
 in which kinetics is calculated.
 
@@ -281,7 +291,7 @@ Solving the chemical kinetics problem
 
 Finally, we calculate the transient state of the entire system comprised of the
 carbonate minerals, the |CO2|-saturated brine fluid, and the |CO2|-rich gaseous
-phase. This is performed by using the method ``solve`` of the ``KineticPath``
+phase. This is performed by using the method ``solve`` of the `KineticPath`_
 class, which expects the initial state (``state0``), the initial and final
 times (``t0`` and ``t1`` respectively) of the kinetic path, and time units of
 the specified time (e.g., `s`, `minute`, `hour`, `day`, `year`, etc.).
@@ -290,5 +300,17 @@ the specified time (e.g., `s`, `minute`, `hour`, `day`, `year`, etc.).
     :start-at: Step 11
     :end-before: Step 12
 
-.. _ChemicalState: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html
+.. _ChemicalEditor: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalEditor.html
+.. _ChemicalPlot: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalPlot.html
 .. _ChemicalQuantity: https://www.reaktoro.org/cpp/classReaktoro_1_1ChemicalQuantity.html
+.. _ChemicalState: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html
+.. _ChemicalSystem: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalSystem.html
+.. _EquilibriumProblem: https://reaktoro.org/cpp/classReaktoro_1_1EquilibriumProblem.html
+.. _EquilibriumSolver: https://reaktoro.org/cpp/classReaktoro_1_1EquilibriumSolver.html
+.. _KineticPath: https://reaktoro.org/cpp/classReaktoro_1_1KineticPath.html
+.. _KineticSolver: https://reaktoro.org/cpp/classReaktoro_1_1KineticSolver.html
+.. _MineralMechanism: https://reaktoro.org/cpp/structReaktoro_1_1MineralMechanism.html
+.. _MineralReaction: https://reaktoro.org/cpp/classReaktoro_1_1MineralReaction.html
+.. _Partition: https://reaktoro.org/cpp/classReaktoro_1_1Partition.html
+.. _Reaction: https://reaktoro.org/cpp/classReaktoro_1_1Reaction.html
+.. _ReactionSystem: https://reaktoro.org/cpp/classReaktoro_1_1ReactionSystem.html

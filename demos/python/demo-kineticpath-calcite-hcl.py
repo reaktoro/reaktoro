@@ -34,15 +34,15 @@ editor.addMineralReaction("Calcite") \
 system = ChemicalSystem(editor)
 reactions = ReactionSystem(editor)
 
-# Step 5: Define the partition of the chemical system to the kinetics and equilibrium species
+# Step 5: Specify the equilibrium and kinetic species
 partition = Partition(system)
-# Set the kinetics species
-partition.setKineticPhases(["Calcite"])
+partition.setKineticSpecies(["Calcite"])
 
 # Step 6: Define the chemical equilibrium problem
 problem = EquilibriumProblem(system)
-# Provide the partition of the equilibrium problem
 problem.setPartition(partition)
+problem.setTemperature(30, "celsius")
+problem.setPressure(1, "bar")
 problem.add("H2O", 1, "kg")
 problem.add("HCl", 1, "mmol")
 
@@ -89,4 +89,6 @@ plot4.legend("right center")
 # Step 11: Solve the kinetic paths
 t0, t1 = 0.0, 5.0
 path.solve(state0, t0, t1, "minute")
+
+# Step 12: Output the final state of the chemical system
 state0.output('demo-kineticpath-calcite-hcl-after-kinetics')

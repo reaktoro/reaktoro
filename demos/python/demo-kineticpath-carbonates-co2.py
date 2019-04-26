@@ -57,6 +57,8 @@ partition.setKineticSpecies(["Calcite", "Magnesite", "Dolomite"])
 # Step 6: Define the initial chemical equilibrium state
 problem = EquilibriumProblem(system)
 problem.setPartition(partition)
+problem.setTemperature(60, "celsius")
+problem.setPressure(100, "bar")
 problem.add("H2O", 1, "kg")
 problem.add("NaCl", 1, "mol")
 problem.add("CO2", 1, "mol")
