@@ -67,7 +67,7 @@ problem.add("CO2", 1, "mol")
 state0 = equilibrate(problem)
 state0.output('demo-kineticpath-carbonates-co2-before-kinetics')
 
-# Step 8: Setting initial mass of kinetic species before the kinetics calculation
+# Step 8: Set the initial mass of the kinetic species
 state0.setSpeciesMass("Calcite", 100, "g")
 state0.setSpeciesMass("Dolomite", 50, "g")
 
@@ -103,7 +103,7 @@ plot3.y("phaseMass(Dolomite units=grams)", "Dolomite")
 plot3.xlabel("Time [hour]")
 plot3.ylabel("Mass [g]")
 
-# Step 11: Solve the kinetic path
+# Step 11: Perform the kinetic path calculation
 t0, t1 = 0.0, 25.0
 path.solve(state0, t0, t1, "hours")
 

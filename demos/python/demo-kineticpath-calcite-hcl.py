@@ -23,7 +23,7 @@ editor = ChemicalEditor()
 editor.addAqueousPhaseWithElementsOf("H2O HCl CaCO3")
 editor.addMineralPhase("Calcite")
 
-# Step 3: Define a mineral reactions
+# Step 3: Define mineral reaction for Calcite
 editor.addMineralReaction("Calcite") \
     .setEquation("Calcite = Ca++ + CO3--") \
     .addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol") \
@@ -38,7 +38,7 @@ reactions = ReactionSystem(editor)
 partition = Partition(system)
 partition.setKineticSpecies(["Calcite"])
 
-# Step 6: Define the chemical equilibrium problem
+# Step 6: Define the chemical equilibrium problem for the equilibrium partition
 problem = EquilibriumProblem(system)
 problem.setPartition(partition)
 problem.setTemperature(30, "celsius")
@@ -46,18 +46,18 @@ problem.setPressure(1, "bar")
 problem.add("H2O", 1, "kg")
 problem.add("HCl", 1, "mmol")
 
-# Step 7: Calculate the chemical equilibrium state
+# Step 7: Calculate the chemical equilibrium state in the equilibrium partition
 state0 = equilibrate(problem)
 state0.output('demo-kineticpath-calcite-hcl-before-kinetics')
 
-# Step 8: Specify the mass of the species
+# Step 8: Set the initial mass of the kinetic species
 state0.setSpeciesMass("Calcite", 100, "g")
 
-# Step 9: Model the kinetics' path of the reactions of the chemical system
+# Step 9: Define the kinetic path problem
 path = KineticPath(reactions)
 path.setPartition(partition)
 
-# Step 10: Plotting of evolution of different properties of the chemical system
+# Step 10: Plot different properties of the chemical system during kinetics
 plot1 = path.plot()
 plot1.x("time(units=minute)")
 plot1.y("elementMolality(Ca units=mmolal)", "Ca")
@@ -86,7 +86,7 @@ plot4.xlabel("Time [minute]")
 plot4.ylabel("Concentration [mmolal]")
 plot4.legend("right center")
 
-# Step 11: Solve the kinetic paths
+# Step 11: Perform the kinetic path calculation
 t0, t1 = 0.0, 5.0
 path.solve(state0, t0, t1, "minute")
 
