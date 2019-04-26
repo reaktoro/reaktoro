@@ -38,7 +38,7 @@ Qatar Petroleum and Qatar Science & Technology Park (2011-2014)
 Reaktoro is also especially thankful for software development contributions
 from the following companies:
 
-ESSS (2019-current)
+ESSS (2018-current)
     `Engineering Simulation and Scientific Software <ESSS_>`_
 
 Government Institutions
@@ -83,7 +83,7 @@ of modern software engineering practices into the project. We thank them below:
 * Alexandre Barbosa *(ESSS, Brazil)* *(2018-present)*
 * Bruno Oliveira *(ESSS, Brazil)* *(2018-present)*
 * Armando A. S. C. Neto *(ESSS, Brazil)* *(2018-present)*
-* Svetlana Matculevich, Dr. *(ETH Zurich, Switzerland)* *(2018-present)*
+* Svetlana Kyas, Dr. *(ETH Zurich, Switzerland)* *(2018-present)*
 
 Have we forgotten you?
 ----------------------
