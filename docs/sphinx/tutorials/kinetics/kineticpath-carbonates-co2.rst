@@ -10,6 +10,7 @@
 .. |CaCO3| replace:: CaCO\ :sub:`3`
 .. |NaCl| replace:: NaCl
 .. |HCl| replace:: HCl
+.. |MgCO3| replace:: MgCO\ :sub:`3`
 .. |CaMg(CO3)2| replace:: CaMg(CO\ :sub:`3`)\ :sub:`2`
 .. |H+| replace:: H\ :sup:`+`
 .. |Ca++| replace:: Ca\ :sup:`2+`
@@ -46,9 +47,9 @@ Defining the chemical system
 ----------------------------
 
 In this simulation, we consider an *aqueous phase* (to model the brine
-solution), a *gaseous phase* (to model the |CO2|-rich phase with water vapor),
+solution), a *gaseous phase* (to model the |CO2|-rich phase with water vapour),
 and four pure *mineral phases*: halite, calcite, magnesite, and dolomite. These
-are phases that will either exist initially during the simulation, or that
+are the phases that will either exist initially during the simulation, or that
 could potentially appear later as the calculations proceed.
 
 .. attention::
@@ -79,14 +80,14 @@ Defining the kinetically-controlled reactions
 
 A *partial equilibrium assumption* is considered in this simulation. This
 simplifies the problem by assuming that those species that react at much faster
-rates are *continually in chemical equilibrium*. These are here referred to
+rates are *continually in chemical equilibrium*. They are referred to as
 *equilibrium species*. The remaining species (those reacting at relatively
-slower rates) are referred to *kinetic species*.
+slower rates) are referred to as *kinetic species*.
 
-Because aqueous and gaseous species, and also halite species, react at
-relatively fast rates, they are reasonable candidates in this problem for being
-equilibrium species. The kinetic species, are thus the carbonate minerals:
-calcite, magnesite and dolomite.
+Because aqueous and gaseous species, as well as halite, react at relatively
+fast rates, they are reasonable candidates in this problem for being equilibrium
+species. The kinetic species are thus the carbonate minerals: calcite, magnesite,
+and dolomite.
 
 With this partial equilibrium assumption, there is no need to specify kinetic
 rate laws for the fast reacting equilibrium species. For these species,
@@ -116,12 +117,14 @@ the method ``addMechanism`` of class `MineralMechanism`_, using values for
 the Arrhenius activation energy. The units of both parameters must be provided
 as shown in the example, and other compatible units are allowed.
 
-Finally, we specify the specific surface area of the mineral using method
+Finally, we define the specific surface area of the mineral using method
 ``setSpecificSurfaceArea`` of class `MineralReaction`_. Any units compatible to
 ``m2/kg`` or ``m2/m3`` are allowed (e.g., ``cm2/g``, ``mm2/mm3``).
 
 .. note::
-    The values shown for ``logk`` and ``Ea`` were collected from: *Palandri,
+    The values shown for ``logk`` and ``Ea`` were collected from
+
+    *Palandri,
     J.L., Kharaka, Y.K. (2004). A compilation of rate parameters of
     water-mineral interaction kinetics for application to geochemical modeling.
     U.S. Geological Survey Open File Report (Vol. 2004–1068). Menlo Park,
@@ -147,7 +150,7 @@ molar volume, etc.).
 
 Class `ReactionSystem`_ is a collection of `Reaction`_ objects used to
 represent a system of chemical reactions that are controlled by chemical
-kinetics. These classes provides convenient methods for the calculation of
+kinetics. These classes provide convenient methods for the calculation of
 equilibrium constants, reaction quotients, and rates of the reactions.
 
 Specifying equilibrium and kinetic species
@@ -155,13 +158,13 @@ Specifying equilibrium and kinetic species
 
 In Reaktoro, the species in a chemical system can be partitioned into groups of:
 
-* *equilibrium species*;
-* *kinetic species*; and
+* *equilibrium species*,
+* *kinetic species*, and
 * *inert species*.
 
 For the *equilibrium species*, their amounts are governed by chemical
-equilibrium (calculated via a Gibbs energy minimization). For the *kinetic
-species*, their amounts are governed by chemical kinetics (by solving a system
+equilibrium (calculated via a Gibbs energy minimization). The amount of *kinetic
+species* are controlled by chemical kinetics (by solving a system
 of ordinary differential equations that models the kinetics of a system of
 reactions). The *inert species* maintain their amounts constant in all chemical
 equilibrium or kinetics calculations.
@@ -174,15 +177,15 @@ Thus, we only need to specify which ones are kinetic species:
     :start-at: Step 5
     :end-before: Step 6
 
-The mineral species calcite, magnesite and dolomite are specified to be
-*kinetic species* using method ``setKineticSpecies`` of class `Partition`_.
+In this case, the mineral species calcite, magnesite and dolomite are specified
+to be *kinetic species* using method ``setKineticSpecies`` of class `Partition`_.
 
 .. note::
     Method ``setKineticPhases`` of class `Partition`_ could also be used here.
     This method sets all species in the given phases to be kinetic species, and
     it is more convenient if a phase has many species. However, since each of
-    the mineral phases considered here only contain a single mineral species,
-    method ``setKineticSpecies`` is as convenient as its alternative.
+    the mineral phases considered here only contains a single mineral species,
+    method ``setKineticSpecies`` is a convenient alternative.
 
 Defining the initial state of the equilibrium species
 -----------------------------------------------------
@@ -203,7 +206,7 @@ excess will exist in the |CO2|-rich gaseous phase.
 
 .. attention::
     To ensure that that the equilibrium calculation performed in the next step
-    ignores the kinetic species in the system, so that we maintain a
+    ignores the kinetic species in the system so that we maintain a
     disequilibrium state between equilibrium and kinetic species, it is
     important not to forget the following command:
 
@@ -213,7 +216,7 @@ excess will exist in the |CO2|-rich gaseous phase.
 
     Ignoring this step will produce an initial condition for the amounts of
     equilibrium and kinetic species that correspond to a complete equilibrium
-    state in the system, so that no kinetics calculation makes sense
+    state in the system so that no kinetics calculation makes sense
     afterwards!
 
 Calculating the initial amounts of the equilibrium species
@@ -284,7 +287,8 @@ respectively. The arguments of the function ``plot1.y("elementMolality(Ca)",
 state and the tag, we want to illustrate it with.
 
 .. note::
-    A list of all possible quantities that can be plotted is shown `ChemicalQuantity`_.
+    A list of all possible quantities that can be plotted is shown in the class
+    `ChemicalQuantity`_.
 
 Solving the chemical kinetics problem
 -------------------------------------

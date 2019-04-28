@@ -20,10 +20,10 @@
 Dissolution of calcite in an acidic |HCl|-solution
 ==================================================
 
-This tutorial demonstrate how Reaktoro can be used for modeling the dissolution
+This tutorial demonstrates how Reaktoro can be used for modelling the dissolution
 of calcite in an acidic |HCl|-solution at temperature 30 |degC| and pressure 1
 bar using chemical kinetics. A partial equilibrium assumption is considered
-here, so that aqueous species react using a chemical equilibrium model, while
+here so that aqueous species react using a chemical equilibrium model, while
 calcite reacts with the aqueous solution using a chemical kinetics model.
 
 The full script for the calculation is shown below, followed by a step-by-step
@@ -39,7 +39,7 @@ Importing reaktoro Python package
     :start-at: Step 1
     :end-before: Step 2
 
-Here we again import the **reaktoro** Python package so that we can use its
+Here, we again import the **reaktoro** Python package so that we can use its
 classes and methods for performing the chemical reaction calculations.
 
 Defining the phases in the chemical system
@@ -106,7 +106,7 @@ Create instances of `ChemicalSystem`_ and `ReactionSystem`_.
 `ChemicalSystem`_ is a class that represents a system and its attributes and properties,
 such as phases (in our case aqueous and mineral ones), species, elements (5 in total, i.e.,
 *H*, *O*, *Ca*, *C*, *Cl*), formula matrix, as well as chemical and thermodynamical model.
-Class `ReactionSystem`_ represents a system of the chemical reaction by a collection of
+Class `ReactionSystem`_ serves as a system of the chemical reaction by a collection of
 `Reaction`_ class instances. It provides convenient methods that calculate the equilibrium
 constants, reaction quotients, and rates of the reactions.
 
@@ -161,8 +161,8 @@ simulate the dissolution of calcite in this aqueous fluid.
 By mixing 1 kg of |H2O| and 1 mmol of |HCl| at 30 |degC| and 1 bar, we should
 produce a chemical equilibrium state that corresponds to an acidic aqueous
 fluid. The species in this fluid will be in disequilibrium with ``Calcite``
-(our single kinetic species in this setup), since only equilibrium species
-(i.e., the aqueous species) will considered during the next chemical
+(our single kinetic species in this setup) since only equilibrium species
+(i.e., the aqueous species) are considered during the next chemical
 equilibrium calculation.
 
 Calculating the initial chemical equilibrium state of the fluid
@@ -188,14 +188,14 @@ species amounts (*n*).
     Consider using class `EquilibriumSolver`_ instead of method ``equilibrate``
     when a sequence of chemical equilibrium calculations are needed for
     increased performance. The method ``equilibrate`` is a convenient function
-    for solving chemical equilibrium problems that has some overhead (e.g., an
+    for solving chemical equilibrium problems, but has some overhead (e.g., an
     object of class `EquilibriumSolver`_ is created in each call).
 
 Setting the initial mass of calcite
 -----------------------------------
 
 To simulate the kinetic dissolution of calcite in the aqueous fluid we defined
-before, we need to specify its initial amount. Below, set set the initial mass
+before, we need to specify its initial amount. Below, we set the initial mass
 of species ``Calcite`` to 100 g.
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
@@ -212,7 +212,7 @@ To be able to run the simulation of the chemical kinetic path, we use class
     :start-at: Step 9
     :end-before: Step 10
 
-Note that here again we need to specify the partitioning of the chemical system
+Note that here again, we need to specify the partitioning of the chemical system
 into equilibrium, kinetic, and inert species.
 
 .. attention::
@@ -241,24 +241,24 @@ units=mmolal)", "Ca++")`` stand for the name of the property from the chemical
 state we want to plot and the label to be used in the plot.
 
 .. note::
-    A list of all possible quantities that can be plotted is shown
-    `ChemicalQuantity`_.
+    A list of all possible quantities that can be plotted is shown in the class
+    `ChemicalQuantity`_, which provides an interface for convenient ways of their
+    retrieval.
 
 Solving the chemical kinetics problem
 -------------------------------------
 
 Finally, we solve the kinetic path problem.
-`KineticPath`_.
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
     :start-at: Step 11
     :end-before: Step 12
 
-This step requires the use of method ``solve`` of class `KineticPath`_, which
+This step executes the method ``solve`` of class `KineticPath`_, which
 requires the initial state of the system (100 g of calcite in disequilibrium
 with a 1 mmolal HCl aqueous solution at 30 |degC| and 1 bar, represented with
 the object ``state0``), the initial and final time of the kinetic path
-calculation (``t0`` and ``t1`` respectively), and the time unit of the
+calculation (``t0`` and ``t1``, respectively), and the time unit of the
 specified time parameters (e.g., `s`, `minute`, `day`, `year`, etc.).
 
 
