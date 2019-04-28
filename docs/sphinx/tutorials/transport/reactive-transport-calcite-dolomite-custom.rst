@@ -211,7 +211,6 @@ and ``state_bc`` of class `ChemicalState`_.
 Scaling the volumes of the phases
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
--------------------------------------------------------------------------------
 We scale the volumes of the phases in the initial condition according to the
 following composition, i.e., 97.73 |%vol| |SiO2| (quartz) and 2.27 |%vol| |CaCO3|
 (calcite) with the porosity of 10%. Moreover, the volume of the fluid in the
