@@ -20,6 +20,7 @@
 // C++ includes
 #include <memory>
 #include <vector>
+#include <chrono>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
@@ -29,7 +30,9 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Core/ChemicalPlot.hpp>
 
 namespace Reaktoro {
 
@@ -54,6 +57,34 @@ namespace Reaktoro {
 //private:
 //};
 
+// Use this enum type to initialize profilers
+enum Profiling{
+    ReactiveTransort = 1,
+    Equilibrium = 2,
+    ChemicalKinetics = 3,
+};
+
+/// Use this class for profiling reactive transport components
+class Profiler{
+
+public:
+    Profiler(Profiling what);
+    auto startProfiling() -> void;
+    auto endProfiling() -> void;
+    auto getTimes() const -> std::vector<double>;
+    auto getProfilingSubject() const -> Profiling;
+    auto operator==(const Profiler& p) const -> bool;
+
+private:
+    /// Enum indicating which part of the reactive transport is profiled
+    Profiling subject;
+    /// The start and finish time of profiling
+    std::chrono::time_point<std::chrono::high_resolution_clock> start;
+    std::chrono::time_point<std::chrono::high_resolution_clock> finish;
+
+    /// The vector of the elapsed CPU times
+    std::vector<double> times;
+};
 
 class ChemicalField
 {
@@ -204,7 +235,7 @@ private:
 };
 
 /// A class for solving advection-diffusion problem.
-/// Eq: du/dt + v*du/dx = D*d²u/dx²
+/// Eq: du/dt + v*du/dx = D*dï¿½u/dxï¿½
 ///     u - amount
 ///     v - velocity
 ///     D - diffusion coefficient
@@ -277,12 +308,13 @@ private:
     Vector u0;
 };
 
+
 /// Use this class for solving reactive transport problems.
 class ReactiveTransportSolver
 {
 public:
     /// Construct a default ReactiveTransportSolver instance.
-    ReactiveTransportSolver(const ChemicalSystem& system);
+    ReactiveTransportSolver(const ChemicalSystem& system, bool is_smart = false);
 
     auto setMesh(const Mesh& mesh) -> void;
 
@@ -298,9 +330,11 @@ public:
 
     auto output() -> ChemicalOutput;
 
-    auto initialize(const ChemicalField& field) -> void;
+    auto profile(Profiling what) -> Profiler;
 
-    auto step(ChemicalField& field) -> void;
+    auto initialize() -> void;
+
+    auto step(ChemicalField& field, bool is_smart = false) -> void;
 
 private:
     /// The chemical system common to all degrees of freedom in the chemical field.
@@ -309,8 +343,11 @@ private:
     /// The solver for solving the transport equations
     TransportSolver transportsolver;
 
-    /// The solver for solving the equilibrium equations
+    /// The solver for solving the equilibrium equations using classical approach
     EquilibriumSolver equilibriumsolver;
+
+    /// The solver for solving the equilibrium equations using smart on-demand learning algorithm
+    SmartEquilibriumSolver smart_equilibriumsolver;
 
     /// The list of chemical output objects
     std::vector<ChemicalOutput> outputs;
@@ -329,6 +366,13 @@ private:
 
     /// The current number of steps in the solution of the reactive transport equations.
     Index steps = 0;
+
+    /// The classes to profile reactive transport computations
+    std::vector<Profiler> profilers;
+
+    /// The plots of the kinetic path calculation
+    std::vector<ChemicalPlot> plots;
+
 };
 
 } // namespace Reaktoro
