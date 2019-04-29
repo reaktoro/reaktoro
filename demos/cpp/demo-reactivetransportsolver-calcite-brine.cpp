@@ -15,15 +15,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+// C++ includes
+#include <chrono>
+
+// Reaktoro includes
 #include <Reaktoro/Reaktoro.hpp>
-#include <Reaktoro/Transport/TransportSolver.hpp>
 
 //#include <boost/filesystem.hpp>
 //#include <sys/stat.h>
-#include <cstdlib>
+//#include <cstdlib>
 
 using namespace Reaktoro;
 
+
+void print_collection(std::vector<double> values){
+    for(double val : values)
+        std::cout << val << std::endl;
+}
 int main()
 {
     // Step 1: Initialise auxiliary time-related constants
@@ -39,7 +47,7 @@ int main()
     double dt(0.5 * day);               // the time step (in units of s)
     double T(60.0);                     // the temperature (in units of degC)
     double P(100);                      // the pressure (in units of bar)
-    double smart_solver(true);          // the parameter that defines whether classic or smart EquilibriumSolver must be used
+    double is_smrtsolv(true);          // the parameter that defines whether classic or smart EquilibriumSolver must be used
 
     // Step 3: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
@@ -90,7 +98,7 @@ int main()
     ChemicalField field(mesh.numCells(), state_ic);
 
     // Step 12: Define the reactive transport modeling
-    ReactiveTransportSolver rtsolver(system);
+    ReactiveTransportSolver rtsolver(system, is_smrtsolv);
     rtsolver.setMesh(mesh);
     rtsolver.setVelocity(v);
     rtsolver.setDiffusionCoeff(D);
@@ -108,23 +116,36 @@ int main()
     output.add("speciesMolality(CO2(aq))");
     output.add("phaseVolume(Calcite)");
     output.add("phaseVolume(Dolomite)");
-    output.filename("TEST.txt");
+    output.filename("test.txt");
+
+    Profiler rt_profiler(rtsolver.profile(Profiling::ReactiveTransort));
+    Profiler eq_profiler(rtsolver.profile(Profiling::Equilibrium));
 
     // Step 15: Set initial time and counter of steps in time
     double t(0.0);
     int step(0);
-
+    auto start = std::chrono::high_resolution_clock::now();
     // Reactive transport simulations in the cycle
     while (step <= nsteps){
         // Print the progress of the simulation
         std::cout << "Progress: " << step << " / " << nsteps << " "  << t/minute << " min" << std::endl;
 
         // Perform one reactive transport time step
-        rtsolver.step(field);
+        rtsolver.step(field, is_smrtsolv);
 
         // Increment time step and number of time steps
         t += dt;
         step += 1;
     }
+
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = finish - start;
+    std::cout << "Elapsed time: " << elapsed.count() << " s" << std::endl;
+    std::cout << rt_profiler.getTimes().size() << std:: endl;
+
+    std::cout << "Reactive transport time: " << std::endl;
+    print_collection(rt_profiler.getTimes());
+    std::cout << "Equilibration time: " << std::endl;
+    print_collection(eq_profiler.getTimes());
 
 }
