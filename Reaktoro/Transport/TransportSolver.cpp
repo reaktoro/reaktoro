@@ -21,6 +21,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -187,9 +188,10 @@ auto Mesh::setDiscretization(Index num_cells, double xl, double xr) -> void
     m_xcells = linspace(num_cells, xl + 0.5*m_dx, xr - 0.5*m_dx);
 }
 
-
 // Implementation of class Profiler
-Profiler::Profiler(Reaktoro::Profiling what_): subject(what_){}
+Profiler::Profiler(Reaktoro::Profiling what_): subject(what_){
+    filename = "profiling";
+}
 auto Profiler::startProfiling()  -> void
 {
     start = std::chrono::high_resolution_clock::now();
@@ -199,18 +201,52 @@ auto Profiler::endProfiling() -> void
     finish = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = finish - start;
     times.emplace_back(elapsed.count());
+    //std::cout <<  times.size() << std:: endl;
 }
-auto Profiler::getTimes() const -> std::vector<double>
+auto Profiler::output() -> void
 {
-    return times;
+    /// The output stream of the data file
+    std::ofstream datafile;
+
+    /// The suffix of the datafile
+    std::string suffix;
+
+    /// The flag that indicates if scientific format should be used.
+    bool scientific = true;
+
+    /// The floating-point precision in the output.
+    int precision = 6;
+
+    switch (this->getProfilingSubject())
+    {
+        case 1: suffix = "RT"; break;
+        case 2: suffix = "EQ"; break;
+        case 3: suffix = "CK"; break;
+    }
+    /*
+    std::for_each(begin(times), end(times),
+                  [&](const double & value){ std::cout << value << "\t"; });
+    std::cout << std::endl;
+    */
+    // Open the data file
+    if(!filename.empty())
+        datafile.open(filename + "-" + suffix + ".txt",
+                      std::ofstream::out | std::ofstream::trunc);
+    // Output the header of the data file
+    if(datafile.is_open()) {
+        // Set scientific mode and defined precision
+        datafile << std::scientific << std::setprecision(precision);
+        // Output times collected while profiling
+        for (double time : times)
+            datafile << time << "\n";
+    }
 }
 auto Profiler::getProfilingSubject() const -> Profiling {
     return subject;
 }
 auto Profiler::operator==(const Profiler& p) const -> bool{
-    return p.getProfilingSubject() == subject;
+    return p.getProfilingSubject() == this->subject;
 }
-
 
 TransportSolver::TransportSolver()
 {
@@ -394,10 +430,29 @@ auto ReactiveTransportSolver::output() -> ChemicalOutput
 
 auto ReactiveTransportSolver::profile(Profiling what) -> Profiler
 {
-    profilers.emplace_back(Profiler(what));
+    profilers.push_back(Profiler(what));
     return profilers.back();
 }
 
+auto ReactiveTransportSolver::addProfiler(Profiler& profiler) -> void
+{
+    profilers.emplace_back(profiler);
+}
+
+auto ReactiveTransportSolver::getProfilers() -> const std::vector<Profiler> &
+{
+    return profilers;
+}
+
+auto ReactiveTransportSolver:: outputProfiling() -> void
+{
+    auto eq_profiler = find(begin(profilers), end(profilers), Profiling::EQ);
+    if (eq_profiler != end(profilers)) eq_profiler->output();
+
+    auto rt_profiler = std::find(begin(profilers), end(profilers), Profiling::RT);
+    if (rt_profiler != end(profilers)) rt_profiler->output();
+
+}
 auto ReactiveTransportSolver::initialize() -> void
 {
     const Mesh& mesh = transportsolver.mesh();
@@ -425,12 +480,10 @@ auto ReactiveTransportSolver::step(ChemicalField& field, bool is_smart) -> void
         bf.row(icell) = field[icell].elementAmountsInSpecies(ifs);
         bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
     }
-
-
-    auto rt_profiler = std::find(begin(profilers), end(profilers),
-            Profiling::ReactiveTransort);
-    if (rt_profiler != profilers.end())
-        rt_profiler->startProfiling();
+    
+    // 
+    auto rt_profiler = std::find(begin(profilers), end(profilers),Profiling::RT);
+    if (rt_profiler != end(profilers)) rt_profiler->startProfiling();
 
     // Transport the elements in the fluid species
     for(Index ielement = 0; ielement < num_elements; ++ielement)
@@ -443,6 +496,7 @@ auto ReactiveTransportSolver::step(ChemicalField& field, bool is_smart) -> void
 
     rt_profiler->endProfiling();
 
+
     for(auto output : outputs)
     {
         output.suffix("-" + std::to_string(steps));
@@ -450,8 +504,9 @@ auto ReactiveTransportSolver::step(ChemicalField& field, bool is_smart) -> void
     }
 
     auto eq_profiler = find(begin(profilers), end(profilers),
-            Profiling::Equilibrium);
-    eq_profiler->startProfiling();
+            Profiling::EQ);
+    //std::cout << "eq:" << &eq_profiler << std::endl;
+    if (eq_profiler != end(profilers)) eq_profiler->startProfiling();
 
     for(Index icell = 0; icell < num_cells; ++icell)
     {

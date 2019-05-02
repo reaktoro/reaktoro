@@ -25,13 +25,9 @@
 //#include <sys/stat.h>
 //#include <cstdlib>
 
+
 using namespace Reaktoro;
 
-
-void print_collection(std::vector<double> values){
-    for(double val : values)
-        std::cout << val << std::endl;
-}
 int main()
 {
     // Step 1: Initialise auxiliary time-related constants
@@ -40,7 +36,8 @@ int main()
 
     // Step 2: Define parameters for the reactive transport simulation
     double xl(0.0), xr(100.0);          // the x-coordinates of the left and right boundaries
-    int nsteps(100);                    // the number of steps in the reactive transport simulation
+    int nsteps(10);                    // the number of steps in the reactive
+    // transport simulation
     int ncells(100);                    // the number of cells in the spacial discretization
     double D(1.0e-9);                   // the diffusion coefficient (in units of m2/s)
     double v(1.0 / day);                // the fluid pore velocity (in units of m/s)
@@ -118,13 +115,18 @@ int main()
     output.add("phaseVolume(Dolomite)");
     output.filename("test.txt");
 
-    Profiler rt_profiler(rtsolver.profile(Profiling::ReactiveTransort));
-    Profiler eq_profiler(rtsolver.profile(Profiling::Equilibrium));
+    // Step **: Create two profilers
+    Profiler rt_profiler(rtsolver.profile(Profiling::RT));
+    Profiler eq_profiler(rtsolver.profile(Profiling::EQ));
+    Profiler total_profiler(Profiling::Total);
 
     // Step 15: Set initial time and counter of steps in time
     double t(0.0);
     int step(0);
-    auto start = std::chrono::high_resolution_clock::now();
+
+    // Step **: Start profiling total simulation
+    total_profiler.startProfiling();
+
     // Reactive transport simulations in the cycle
     while (step <= nsteps){
         // Print the progress of the simulation
@@ -137,15 +139,14 @@ int main()
         t += dt;
         step += 1;
     }
+    // Step **: End profiling total simulation
+    total_profiler.endProfiling();
 
-    auto finish = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = finish - start;
-    std::cout << "Elapsed time: " << elapsed.count() << " s" << std::endl;
-    std::cout << rt_profiler.getTimes().size() << std:: endl;
+    // Step **: Output the total time of the simulations
+    std::cout << "Elapsed time: ";
+    total_profiler.output();
+    std::cout << std::endl;
 
-    std::cout << "Reactive transport time: " << std::endl;
-    print_collection(rt_profiler.getTimes());
-    std::cout << "Equilibration time: " << std::endl;
-    print_collection(eq_profiler.getTimes());
-
+    // Output profiling results
+    rtsolver.outputProfiling();
 }
