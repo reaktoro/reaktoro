@@ -75,6 +75,12 @@ Maier--Kelly heat capacity polynomial equation.
     aqueous phase containing an extremely long list of organic species that
     will only serve to decrease the performance of the calculations.
 
+.. note::
+
+    The equation of state of Wagner and Pruss (2002) is used to calculate the
+    thermodynamic properties of water and its temperature and pressure
+    derivatives.
+
 PHREEQC Databases
 -----------------
 

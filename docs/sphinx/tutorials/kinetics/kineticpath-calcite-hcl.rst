@@ -142,11 +142,13 @@ are updated over time using chemical equilibrium calculations).
     dissolution reactions in general, and thus this *partial equilibrium
     assumption* is plausible and reasonably accurate.
 
-Defining the chemical equilibrium problem
------------------------------------------
+Defining the initial state of the equilibrium species
+-----------------------------------------------------
 
 After constructing the chemical system and specifying the partitioning of the
-species, we proceed to the definition of the `EquilibriumProblem`_.
+species, we proceed to a chemical equilibrium calculation to set the initial
+state of the equilibrium species. For this, we use class `EquilibriumProblem`_,
+as shown below:
 
 .. literalinclude:: ../../../../demos/python/demo-kineticpath-calcite-hcl.py
     :start-at: Step 6

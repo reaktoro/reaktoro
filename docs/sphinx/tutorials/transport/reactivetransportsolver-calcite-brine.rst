@@ -1,4 +1,6 @@
 .. |degC| replace:: °C
+.. |m2| replace:: m\ :sup:`2`\
+.. |m3| replace:: m\ :sup:`3`\
 .. |H2O| replace:: H\ :sub:`2`\ O
 .. |H2Og| replace:: H\ :sub:`2`\ O\ (g)
 .. |CO2| replace:: CO\ :sub:`2`
@@ -6,7 +8,7 @@
 .. |MgCl2| replace:: MgCl\ :sub:`2`
 .. |CaCl2| replace:: CaCl\ :sub:`2`
 .. |%vol| replace:: %\ :sub:`vol`
-.. |SiO2| replace:: Si0\ :sub:`2`
+.. |SiO2| replace:: SiO\ :sub:`2`
 .. |CaCO3| replace:: CaCO\ :sub:`3`
 .. |NaCl| replace:: NaCl
 .. |CaMg(CO3)2| replace:: CaMg(CO\ :sub:`3`)\ :sub:`2`
@@ -17,24 +19,55 @@
 .. |HCO3-| replace:: HC0\ :sub:`3`\ :sup:`-`
 .. |CO2(aq)| replace:: C0\ :sub:`2` (aq)
 
+.. |10e-21| replace:: 10\ :sup:`-21`
 .. |10e-9| replace:: 10\ :sup:`-9`
 .. |10e-5| replace:: 10\ :sup:`-5`
 
 .. |slop98| replace:: :download:`slop98.dat <../../../../databases/supcrt/slop98.dat>`
 
-Reactive transport using ReactiveTransportSolver
-================================================
+Reactive transport of |CO2|-saturated brine along a porous rock column
+======================================================================
 
-In this tutorial, we show how Reaktoro can be used for sequential calculations
-of the reactive transport of a rock core after injecting the fluid-rock
-composition. To do that, we exploit a predefined class `ReactiveTransportSolver`_
-that provides the functionality of solving advection-diffusion equation together
-with equilibration of the chemical system on each step of the discretized time
-interval. Simultaneously, it logs the (customised by the user) results into the
-sequence of txt-files (corresponding to each time-step).
+In this tutorial, we show how Reaktoro can be used for one-dimensional reactive
+transport calculations for modeling the geochemical reactions that occur along
+a porous rock column as an aqueous fluid is continuously injected on its left
+side.
 
-The full script for the calculation is shown below, followed by a step-by-step
-explanation afterwards.
+The injected fluid is a brine with 0.9 molal NaCl, 0.05 molal |MgCl2|, 0.01
+molal |CaCl2| and almost |CO2|-saturated, with 0.75 molal of |CO2| dissolved.
+
+The porous rock is initially composed of minerals quartz (|SiO2|) and calcite
+(|CaCO3|). The initial porosity is 10 %, and the initial volume percentages of
+the minerals are: 98 |%vol| of quartz, 2 |%vol| calcite. The initial conditions
+for the fluid in the rock is a 0.7 molal |NaCl| brine in equilibrium with the
+existing rock minerals calcite and quartz. These initial fluid and rock
+composition conditions are uniform throughout the rock core. We assume a rock
+column length of 100 m at temperature 60 |degC| and 100 bar throughout.
+
+.. admonition:: Assumptions
+
+    To simplify this tutorial, the following assumptions are made:
+
+    * Chemical equilibrium is used for modeling the chemical reactions
+      in this problem, not only for reactions between aqueous-aqueous species,
+      but also for those between mineral and aqueous species.
+    * A uniform and constant velocity field is imposed and it is not updated
+      by solving, for example, Darcy equation.
+    * Both temperature and pressure are also kept constant along the rock.
+
+
+.. todo::
+
+    Create other more complicated tutorials that do not consider the previous
+    assumptions so that chemical kinetics is considered for mineral dissolution
+    and precipitation reactions and the partial chemical equilibrium assumption
+    is assumed for aqueous and gaseous species. Also create tutorials in which
+    velocity and pressure fields are physically consistent with each other and
+    computed via the solution of Darcy equation for porous media flow coupled
+    with mass transport equations.
+
+More details about the problem setup can be found in the script below, and also
+in the step-by-step explanation that follows it.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step
@@ -53,16 +86,16 @@ methods for performing the chemical reaction calculations.
 Initializing an auxiliary time-related constants
 ------------------------------------------------
 
-In this step
-
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 2
     :end-before: Step 3
 
-we initialize an auxiliary time-related constants from the seconds up to years.
+In this step we initialize auxiliary time-related constants from seconds to
+years. This is only done for convenience, so that we can specify later, for
+example, fluid velocity as 1 m/day.
 
-Define parameters for the reactive transport simulation
--------------------------------------------------------
+Defining parameters for the reactive transport simulation
+---------------------------------------------------------
 
 Next, we define reactive transport and numerical discretization parameters.
 
@@ -71,71 +104,34 @@ Next, we define reactive transport and numerical discretization parameters.
     :end-before: Step 4
 
 First, we define the considered rock domain by setting coordinates of its left
-and right boundaries to 0.0 and 100.0, respectively. The number of cells and
-steps in time are both set to 100. The reactive transport modelling procedure
-assumes a constant fluid velocity of *v* = 1 *m/day* (1.16 · |10e-5| *m/s*) and
-the same diffusion coefficient *D* = |10e-9| *m2/s* for all fluid species. The
-size of the time-step is set to be a half of day. The temperature and pressure
-of the fluids are selected to be 60 |degC| and 100 bar, respectively.
+and right boundaries to 0.0 m and 100.0 m, respectively. The number of cells
+and steps in time are both set to 100. The reactive transport modelling
+procedure assumes a constant fluid velocity of *v* = 1 m/day (1.16 · |10e-5|
+m/s) and the same diffusion coefficient *D* = |10e-9| |m2|/s for all fluid
+species. The size of the time-step is set to be half of day. The temperature
+and pressure of the fluids are selected to be 60 |degC| and 100 bar,
+respectively.
 
-Defining the chemical system using chemical editor class
---------------------------------------------------------
+Defining the chemical system
+----------------------------
 
-Reaktoro is a general-purpose chemical solver that avoids as much as possible
-presuming specific assumptions about your problems. Thus, one needs to specify
-how the chemical system should be defined. This encompasses the specification
-of all phases in the system as well as the chemical species that compose each
-phase. By using the `ChemicalEditor`_ class, you can conveniently achieve
-this as shown below:
+We need to define a chemical system that can represent both our fluid and rock.
+We use class `ChemicalEditor`_ below to define a system with an aqueous phase
+and three mineral phases: quartz, calcite and dolomite. Initially, our rock has
+no dolomite (|CaMg(CO3)2|), but since this is a mineral that could potentially
+precipitate given the fluid composition injected (containing |CaCl2| and
+|MgCl2| dissolved), we add it here in the chemical system to ensure that the
+calculations are able to model dolomite precipitation.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 4
     :end-before: Step 5
 
-In this step, we create an object of the class `ChemicalEditor`_ and specify
-two phases, an **aqueous** and a **mineral** one, should be considered in the
-chemical system. The aqueous phase is defined by using a list of compounds.
-The latter is broken into a list of element names, and the database is searched
-for all the species that could be formed out of those elements. There are three
-mineral phases represented by quartz |SiO2|, calcite |CaCO3|, and dolomite
-|CaMg(CO3)2|.
-
 .. note::
-
-    An automatic search for chemical species can result in a large number of
-    species in the phase, potentially causing the chemical reaction calculations
-    to be more computationally expensive. If Reaktoro is used in rather demanding
-    applications (e.g., as a chemical solver in a reactive transport simulator),
-    manual specification of the chemical species of each phase in the chemical
-    system must be performed. This can be achieved by providing a list of species
-    names as shown below:
-
-    .. code-block:: python
-
-        editor.addAqueousPhaseWithElements([
-            'H2O(l)',
-            'H+',
-            'OH-',
-            'Na+',
-            'Cl-',
-            'Ca++',
-            'Mg++',
-            'HCO3-',
-            'CO2(aq)',
-            'CO3--'
-            ])
-
-.. attention::
-
-    Three different mineral phases must be added by three different functions
-    ``editor.addMineralPhase()`` corresponding to each mineral. The code
-
-    .. code-block:: python
-
-         editor.addMineralPhase(["Calcite", "Magnesite", "Dolomite"]);
-
-    creates a single mineral phase Calcite-Magnesite-Dolomite representing
-    the mixture of three minerals, which is different from the initial goal.
+    The aqueous phase is defined above by using a list of compounds, which is
+    then broken automatically by Reaktoro into a list of element names. These
+    element names are then used to find in the database all the aqueous species
+    that could be formed out of them.
 
 Constructing the chemical system
 --------------------------------
@@ -147,110 +143,94 @@ chemical system definition details stored in the object ``editor``.
     :start-at: Step 5
     :end-before: Step 6
 
-.. note::
 
-    `ChemicalSystem`_ is perhaps the main class in Reaktoro. An object of this
-    class stores the phases, species and elements in the defined chemical
-    system, as well as provides the means to compute many types of thermodynamic
-    properties, such as *standard thermodynamic properties* (e.g., standard
-    Gibbs energies, standard enthalpies, and standard volumes of species), and
-    *thermochemical properties* (e.g., activity and activity coefficients of
-    species; density, enthalpy and internal energy of phases).
+Initial condition (IC) for the fluid composition
+---------------------------------------------------------------
 
-.. note::
-
-    The *activity coefficients* of the aqueous species are calculated using the
-    *HKF extended Debye-Hückel model* for solvent water and ionic species, except
-    for the aqueous species |CO2| (aq), for which the *Drummond model* is used.
-
-    The *standard chemical potentials* of the species are calculated using the
-    equations of state of Helgeson and Kirkham (1974), Helgeson et al. (1978),
-    Tanger and Helgeson (1988), Shock and Helgeson (1988) and Shock et al. (1992).
-
-    The database file |slop98| from the software SUPCRT92 is used to obtain
-    the parameters for the equations of state.
-
-    The equation of state of Wagner and Pruss (2002) is used to calculate the
-    *density of water* and its temperature and pressure derivatives. Kinetics of
-    *dissolution* and *precipitation* of both calcite and dolomite is neglected,
-    i.e., the local equilibrium assumption is employed.
-
-
-Initial condition (IC) of the reactive transport problem
---------------------------------------------------------
-
-We have defined and constructed our chemical system of interest, enabling to
-move on to the next step in Reaktoro's modelling workflow: *defining the chemical
-reaction problems*. Below, we define its **initial condition** with already
-prescribed equilibrium conditions for the *temperature*, the *pressure*, and *amounts
-of elements* that are consistent with an intention of modelling reactive transport
-of injected |NaCl|-|MgCl2|-|CaCl2| brine into the rock-fluid composition of quartz
-and calcite at 60 °C and 100 bar. In particular, we consider a 0.7 molal |NaCl|
-brine in equilibrium with the rock minerals (with a pH of 10.0).
+Below, we define the **initial condition** for the fluid composition in the
+rock. We want an aqueous fluid that is 0.7 molal of NaCl and in equilibrium
+(saturated) with calcite (|CaCO3|) and quartz (|SiO2|). To achieve this, we mix
+1 kg of |H2O|, 0.7 mol of NaCl, and plenty of calcite and quartz (10 mol each) to
+ensure that the aqueous solution is saturated with respect to these minerals.
+Temperature and pressure are set to 60 °C and 100 bar respectively.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 6
     :end-before: Step 7
 
-Boundary condition (BC) of the reactive transport problem
----------------------------------------------------------
 
-Next, we define the **boundary condition** of the constructed chemical system
-with its *temperature*, *pressure*, and *amounts of elements*.
+Boundary condition (BC) for the fluid composition
+-------------------------------------------------
+
+Next, we define the **boundary condition** for the fluid composition on the
+left side of the rock, which should be the one that represents the fluid being
+continuously injected: 0.9 molal NaCl, 0.05 molal |MgCl2|, 0.01 molal |CaCl2|
+and almost |CO2|-saturated, with 0.75 molal of |CO2| dissolved. To achieve
+this, we mix 1 kg of |H2O| with 0.9 mol of NaCl, 0.05 mol of |MgCl2|, 0.01 mol
+of |CaCl2|, and 0.75 mol of |CO2|. Temperature and pressure are also set to 60
+°C and 100 bar respectively.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 7
     :end-before: Step 8
 
-In particular, we prescribe the amount of injected aqueous fluid resulting
-from the mixture of 1 kg of water with 0.90 moles of |NaCl|, 0.05 moles of
-|MgCl2|, 0.01 moles of |CaCl2|, and 0.75 moles of |CO2|, in a state very close
-to |CO2| saturation. The temperature and the pressure stay the same, i.e., 60
-|degC| and 100 bar, respectively.
 
-Calculate the equilibrium states with given IC and BC
------------------------------------------------------
+Calculating the IC and BC fluid compositions
+--------------------------------------------
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 8
     :end-before: Step 9
 
-In this step, we use the ``equilibrate()`` function to calculate the chemical
+In this step, we use the ``equilibrate`` function to calculate the chemical
 equilibrium state of the system with the given initial and boundary equilibrium
-conditions stored in the object ``problem_ic`` and ``problem_bc``.
-For this calculation, Reaktoro uses an efficient **Gibbs energy minimization**
-computation to determine the species' amounts that correspond to a state of
-minimum Gibbs energy in the system, while satisfying the prescribed amount
-conditions for the temperature, pressure, and element amounts. The result is
-stored in the objects ``state_ic`` and ``state_bc`` of class `ChemicalState`_.
+conditions stored in the object ``problem_ic`` and ``problem_bc``.  The result
+is stored in the objects ``state_ic`` and ``state_bc`` of class
+`ChemicalState`_.
 
 
 Scaling the phases in the initial condition
 -------------------------------------------
 
-Here, we scale the phases in the initial condition according to the following
-composition: 97.73 |%vol| |SiO2| (quartz) and 2.27 |%vol| |CaCO3| (calcite)
-with the porosity of 10%.
+The initial chemical state ``state_ic`` computed before has, at this point,
+phases with volumes that do not correspond to our desired porosity of 10 % and
+rock mineral composition of 98 |%vol| of quartz and 2 |%vol| of calcite.
+
+To obtain this, we scale the volumes of the aqueous and mineral phases as shown
+below:
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 9
     :end-before: Step 10
 
+.. note::
+
+    After this scaling step, the sum of the phase volumes in ``state_ic`` is 1
+    |m3|. This also ensures that the amounts of the species in the chemical
+    system are normalized by |m3|, and thus they can be regarded as
+    concentrations in unit of mol/|m3| (*bulk volume, not fluid volume!*).
+
 
 Scaling the boundary condition state
 ------------------------------------
 
-Next, we scale the boundary condition state to 1 m3
+Next, we scale the boundary condition state to 1 |m3|, so that we have the
+amounts of fluid species in ``state_bc`` also normalized by |m3|.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 10
     :end-before: Step 11
 
+.. note::
+    The chemical state represented by ``state_bc`` has no other stable phase
+    than the aqueous phase (i.e., all mineral phases have zero or negligible
+    amounts such as |10e-21| mol).
+
 Creating the mesh
 -----------------
 
 We define the mesh with the class `Mesh`_ in order to use in the initialization
-of a class `ReactiveTransportSolver`_.
+of class `ReactiveTransportSolver`_ later.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 11
@@ -272,8 +252,9 @@ the object ``state_ic``.
     :end-before: Step 13
 
 .. note::
-   Alternatively, the chemical field can be initialized by the chemical system common to all
-   degrees of freedom in the chemical field.
+    Different initial conditions across the mesh cells is possible by assigning
+    different chemical states to each mesh cell. Here, the same chemical state
+    in ``state_ic`` is used for all cells.
 
 
 Defining the reactive transport modelling
