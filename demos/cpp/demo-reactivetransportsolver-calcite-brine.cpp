@@ -62,7 +62,8 @@ int main()
     double dt(0.5 * day);               // the time step (in units of s)
     double T(60.0);                     // the temperature (in units of degC)
     double P(100);                      // the pressure (in units of bar)
-    double is_smrtsolv(true);          // the parameter that defines whether classic or smart EquilibriumSolver must be used
+    double is_smrtsolv(false);          // the parameter that defines whether
+    // classic or smart EquilibriumSolver must be used
 
     // Step 3: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
@@ -134,8 +135,12 @@ int main()
 
     // Step **: Create the results folder
     struct stat status = {0};               // structure to get the file status
-    std::string test_tag = "-ncells-" + std::to_string(ncells) + "-nsteps-" + std::to_string(nsteps);      // name of the folder with results
+    // Name of the folder with results
+    std::string test_tag = "-ncells-" + std::to_string(ncells) +
+                           "-nsteps-" + std::to_string(nsteps) +
+                           "-ismart-" + (is_smrtsolv == true ? "1" : "0");
     std::string folder = "../results" + test_tag;
+
     if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str()); // create the
     output.filename(folder + "/" + "test.txt");
 
