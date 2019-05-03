@@ -304,6 +304,21 @@ the specified time (e.g., `s`, `minute`, `hour`, `day`, `year`, etc.).
     :start-at: Step 11
     :end-before: Step 12
 
+
+Have you got an issue?
+----------------------
+
+Have you found any issue or error in this tutorial? Do you have any
+recommendations or you think something is not clear enough? Please, let us know
+by filling a new issue here:
+
+.. centered::
+    `Reaktoro's GitHub Issues`_
+
+You'll need a GitHub account - but this is easy to sort out if you don't have
+one yet!
+
+
 .. _ChemicalEditor: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalEditor.html
 .. _ChemicalPlot: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalPlot.html
 .. _ChemicalQuantity: https://www.reaktoro.org/cpp/classReaktoro_1_1ChemicalQuantity.html
@@ -318,3 +333,4 @@ the specified time (e.g., `s`, `minute`, `hour`, `day`, `year`, etc.).
 .. _Partition: https://reaktoro.org/cpp/classReaktoro_1_1Partition.html
 .. _Reaction: https://reaktoro.org/cpp/classReaktoro_1_1Reaction.html
 .. _ReactionSystem: https://reaktoro.org/cpp/classReaktoro_1_1ReactionSystem.html
+.. _Reaktoro's GitHub Issues: https://github.com/reaktoro/reaktoro/issues/new

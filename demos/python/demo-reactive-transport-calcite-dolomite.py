@@ -31,8 +31,12 @@ dt = 10*minute    # the time step (in units of s)
 T = 60.0 + 273.15 # the temperature (in units of K)
 P = 100 * 1e5     # the pressure (in units of Pa)
 
-dirichlet = False # the parameter that defines whether Dirichlet BC must be used
-smrt_solv = False # the parameter that defines whether classic or smart EquilibriumSolver must be used
+smart = True  # the parameter that determines whether classic or smart EquilibriumSolver must be used
+
+dirichlet = False  # the parameter that determines whether Dirichlet BC must be used
+
+options = EquilibriumOptions()
+options.smart.reltol = 1e-3  # todo: need to check which value used in the past for better performance (not this one)
 
 # Step 4: The list of quantities to be output for each mesh cell, each time step
 output_quantities = """
@@ -50,17 +54,21 @@ output_quantities = """
 def simulate():
 
     # Step 7.1: Construct the chemical system with its phases and species
-    editor = ChemicalEditor()
-    editor.addAqueousPhaseWithElementsOf(['H2O(l)',
-                            'H+',
-                            'OH-',
-                            'Na+',
-                            'Cl-',
-                            'Ca++',
-                            'Mg++',
-                            'HCO3-',
-                            'CO2(aq)',
-                            'CO3--']) # Aqueous species individually selected for performance reasons
+    db = Database('supcrt98.xml')
+
+    editor = ChemicalEditor(db)
+
+    editor.addAqueousPhase([
+        'H2O(l)',
+        'H+',
+        'OH-',
+        'Na+',
+        'Cl-',
+        'Ca++',
+        'Mg++',
+        'HCO3-',
+        'CO2(aq)',
+        'CO3--'])  # aqueous species are individually selected for performance reasons
     editor.addMineralPhase('Quartz')
     editor.addMineralPhase('Calcite')
     editor.addMineralPhase('Dolomite')
@@ -70,6 +78,8 @@ def simulate():
 
     # Step 7.3: Define the initial condition of the reactive transport modeling problem
     problem_ic = EquilibriumProblem(system)
+    problem_ic.setTemperature(T)
+    problem_ic.setPressure(P)
     problem_ic.add('H2O', 1.0, 'kg')
     problem_ic.add('NaCl', 0.7, 'mol')
     problem_ic.add('CaCO3', 10, 'mol')
@@ -77,6 +87,8 @@ def simulate():
 
     # Step 7.4: Define the boundary condition of the reactive transport modeling problem
     problem_bc = EquilibriumProblem(system)
+    problem_bc.setTemperature(T)
+    problem_bc.setPressure(P)
     problem_bc.add('H2O', 1.0, 'kg')
     problem_bc.add('NaCl', 0.90, 'mol')
     problem_bc.add('MgCl2', 0.05, 'mol')
@@ -93,11 +105,11 @@ def simulate():
     state_ic.scalePhaseVolume('Calcite', 0.018, 'm3')
 
     # Scale the boundary condition state to 1 m3
-    state_bc.scaleVolume(1.0)
+    state_bc.scaleVolume(1.0, 'm3')
 
-    # Step 7.7: Specifying discretization structures needed for the reactive transport
+    # Step 7.7: Partitioning fluid and solid species
 
-    # Get the number of the element in the chemical system
+    # The number of elements in the chemical system
     nelems = system.numElements()
 
     # The indices of the fluid and solid species
@@ -107,20 +119,24 @@ def simulate():
     # The concentrations of each element in each mesh cell (in the current time step)
     b = zeros((ncells, nelems))
 
-    # The concentrations of each element in the fluid partition, in each mesh cell
+    # The concentrations (mol/m3) of each element in the fluid partition, in each mesh cell
     bfluid = zeros((ncells, nelems))
 
-    # The concentrations of each element in the solid partition, in each mesh cell
+    # The concentrations (mol/m3) of each element in the solid partition, in each mesh cell
     bsolid = zeros((ncells, nelems))
 
-    # Initialize the concentrations of the elements in each mesh cell
+    # Initialize the concentrations (mol/m3) of the elements in each mesh cell
     b[:] = state_ic.elementAmounts()
 
-    # Initialize the concentrations of each element on the boundary
+    # Initialize the concentrations (mol/m3) of each element on the boundary
     b_bc = state_bc.elementAmounts()
 
-    # The list of chemical states, one for each cell, initialized to initial state
+    # Step 7.8: Create a list of chemical states for the mesh cells
+
+    # The list of chemical states, one for each cell, initialized to state_ic
     states = [state_ic.clone() for _ in range(ncells)]
+
+    # Step 7.9: Create the equilibrium solver object for the repeated equilibrium calculation
 
     # The interval [xl, xr] split into ncells
     x = linspace(xl, xr, ncells + 1)
@@ -128,36 +144,38 @@ def simulate():
     # The length of each mesh cell (in units of m)
     dx = (xr - xl)/ncells
 
-    # Step 7.8: Create the equilibrium solver object for the repeated equilibrium calculation
-    if smrt_solv:   solver = SmartEquilibriumSolver(system)
-    else:           solver = EquilibriumSolver(system)
+    # Step 7.10: Create the equilibrium solver object for the repeated equilibrium calculation
+    solver = SmartEquilibriumSolver(system) if smart else EquilibriumSolver(system)
+    solver.setOptions(options)
 
-    # Step 7.9: The auxiliary function to create an output file each time step
+    # Step 7.11: The auxiliary function to create an output file each time step
     def outputstate():
         # Create the instance of ChemicalOutput class
         output = ChemicalOutput(system)
+
+        # The number of digits in number of steps (e.g., 100 has 3 digits)
+        ndigits = len(str(nsteps))
+
         # Provide the output file name, which will correspond
         output.filename('results/{}.txt'.format(str(step).zfill(ndigits)))
+
         # We defined the columns' tags filled with name of the quantities
         # The first column has a tag 'x' (which corresponds to center coordinates of the cells )
         output.add('tag', 'x') # The value of the center coordinates of the cells
+
         # The rest of the columns correspond to the requested properties
         for quantity in output_quantities:
             output.add(quantity)
 
-        output.open()
         # We update the file with states that correspond to the cells' coordinates stored in x
+        output.open()
         for state, tag in zip(states, x):
             output.update(state, tag)
         output.close()
 
-    # Step 7.10: Running the reactive transport simulation loop
-    # Initialize the current step number
-    step = 0
-    # Initialize the current time (in seconds)
-    t = 0.0
-    # Number of digits in the predefined amount of steps (for the reactive transport)
-    ndigits = len(str(nsteps))
+    # Step 7.12: Running the reactive transport simulation loop
+    step = 0  # the current step number
+    t = 0.0  # the current time (in seconds)
 
     while step <= nsteps:
         # Print the progress of the simulation
@@ -285,6 +303,7 @@ def transport(u, dt, dx, v, D, g):
     a = full(n, -beta - alpha)
     b = full(n, 1 + beta + 2*alpha)
     c = full(n, -alpha)
+
     # Set the boundary condition
     if dirichlet:
         # Use Dirichlet BC boundary conditions
@@ -296,6 +315,7 @@ def transport(u, dt, dx, v, D, g):
         u[0] += beta*g
         b[0] = 1 + beta + alpha
         b[-1] = 1 + beta + alpha
+
     # Solve a tridiagonal matrix equation
     thomas(a, b, c, u)
 
@@ -312,7 +332,9 @@ if __name__ == '__main__':
 
     # Create folders for the results
     make_results_folders()
+
     # Run the reactive transport simulations
     simulate()
+
     # Plotting the result
     plot()

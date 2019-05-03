@@ -404,6 +404,21 @@ conditions.
     amount of element C in the aqueous phase by 2 to obtain the solubility in
     molal (mol per kg of |H2O|).
 
+
+Have you got an issue?
+----------------------
+
+Have you found any issue or error in this tutorial? Do you have any
+recommendations or you think something is not clear enough? Please, let us know
+by filling a new issue here:
+
+.. centered::
+    `Reaktoro's GitHub Issues`_
+
+You'll need a GitHub account - but this is easy to sort out if you don't have
+one yet!
+
+
 .. _Database: https://reaktoro.org/cpp/classReaktoro_1_1Database.html
 .. _ChemicalEditor: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalEditor.html
 .. _ChemicalState: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html
@@ -413,3 +428,4 @@ conditions.
 .. _Partition: https://reaktoro.org/cpp/classReaktoro_1_1Partition.html
 .. _AqueousPhase: https://reaktoro.org/cpp/classReaktoro_1_1AqueousPhase.html
 .. _GaseousPhase: https://reaktoro.org/cpp/classReaktoro_1_1GaseousPhase.html
+.. _Reaktoro's GitHub Issues: https://github.com/reaktoro/reaktoro/issues/new
