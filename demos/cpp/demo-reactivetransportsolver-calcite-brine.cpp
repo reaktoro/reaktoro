@@ -16,17 +16,35 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 // C++ includes
-#include <chrono>
+#include <algorithm>    // for using transform
+
+#if defined _WIN32      // for creating a new folder
+#include <windows.h>
+#ifdef __MINGW32__
+#include <sys/stat.h>
+#endif
+#else
+#include <sys/stat.h>
+#endif
 
 // Reaktoro includes
 #include <Reaktoro/Reaktoro.hpp>
 
-//#include <boost/filesystem.hpp>
-//#include <sys/stat.h>
-//#include <cstdlib>
-
-
 using namespace Reaktoro;
+
+/// Make directory for Windows and Linux
+bool mkdir(const std::string & folder)
+{
+#if defined _WIN32
+    // Replace slash by backslash
+    std::transform(begin(folder), end(folder), begin(folder),
+                   [](char ch) { return ch == '/' ? '\\' : ch; });
+    return 0 != CreateDirectory(folder.c_str(), NULL);
+#else
+    // Create the directory with Read + Write + Execute rights for user, group, and others
+    return ::mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+#endif
+}
 
 int main()
 {
@@ -36,7 +54,7 @@ int main()
 
     // Step 2: Define parameters for the reactive transport simulation
     double xl(0.0), xr(100.0);          // the x-coordinates of the left and right boundaries
-    int nsteps(10);                    // the number of steps in the reactive
+    int nsteps(100);                    // the number of steps in the reactive
     // transport simulation
     int ncells(100);                    // the number of cells in the spacial discretization
     double D(1.0e-9);                   // the diffusion coefficient (in units of m2/s)
@@ -113,7 +131,13 @@ int main()
     output.add("speciesMolality(CO2(aq))");
     output.add("phaseVolume(Calcite)");
     output.add("phaseVolume(Dolomite)");
-    output.filename("test.txt");
+
+    // Step **: Create the results folder
+    struct stat status = {0};               // structure to get the file status
+    std::string test_tag = "-ncells-" + std::to_string(ncells) + "-nsteps-" + std::to_string(nsteps);      // name of the folder with results
+    std::string folder = "../results" + test_tag;
+    if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str()); // create the
+    output.filename(folder + "/" + "test.txt");
 
     // Step **: Create two profilers
     Profiler rt_profiler(rtsolver.profile(Profiling::RT));
@@ -144,9 +168,9 @@ int main()
 
     // Step **: Output the total time of the simulations
     std::cout << "Elapsed time: ";
-    total_profiler.output();
+    total_profiler.consoleOutput();
     std::cout << std::endl;
 
     // Output profiling results
-    rtsolver.outputProfiling();
+    rtsolver.outputProfiling(folder + "/profiling");
 }

@@ -73,7 +73,8 @@ public:
     Profiler(Profiling what);
     auto startProfiling() -> void;
     auto endProfiling() -> void;
-    auto output()-> void;
+    auto fileOutput(const std::string & file)-> void;
+    auto consoleOutput()-> void;
     auto getProfilingSubject() const -> Profiling;
     auto operator==(const Profiler& p) const -> bool;
 
@@ -87,9 +88,6 @@ private:
 
     /// The vector of the elapsed CPU times
     std::vector<double> times;
-
-    /// The name of the output file
-    std::string filename;
 
 };
 
@@ -338,11 +336,7 @@ public:
 
     auto profile(Profiling what) -> Profiler;
 
-    auto addProfiler(Profiler& profiler) -> void;
-
-    auto getProfilers() -> const std::vector<Profiler> & ;
-
-    auto outputProfiling() -> void;
+    auto outputProfiling(const std::string & folder) -> void;
 
     auto initialize() -> void;
 

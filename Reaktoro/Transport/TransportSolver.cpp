@@ -189,8 +189,8 @@ auto Mesh::setDiscretization(Index num_cells, double xl, double xr) -> void
 }
 
 // Implementation of class Profiler
-Profiler::Profiler(Reaktoro::Profiling what_): subject(what_){
-    filename = "profiling";
+Profiler::Profiler(Reaktoro::Profiling subject_)
+        : subject(subject_){
 }
 auto Profiler::startProfiling()  -> void
 {
@@ -203,7 +203,7 @@ auto Profiler::endProfiling() -> void
     times.emplace_back(elapsed.count());
     //std::cout <<  times.size() << std:: endl;
 }
-auto Profiler::output() -> void
+auto Profiler::fileOutput(const std::string & file) -> void
 {
     /// The output stream of the data file
     std::ofstream datafile;
@@ -219,9 +219,10 @@ auto Profiler::output() -> void
 
     switch (this->getProfilingSubject())
     {
-        case 1: suffix = "RT"; break;
-        case 2: suffix = "EQ"; break;
-        case 3: suffix = "CK"; break;
+        case Profiling::RT:     suffix = "RT"; break;
+        case Profiling::EQ:     suffix = "EQ"; break;
+        case Profiling::CK:     suffix = "CK";  break;
+        case Profiling::Total:  suffix = "Total"; break;
     }
     /*
     std::for_each(begin(times), end(times),
@@ -229,8 +230,8 @@ auto Profiler::output() -> void
     std::cout << std::endl;
     */
     // Open the data file
-    if(!filename.empty())
-        datafile.open(filename + "-" + suffix + ".txt",
+    if(!file.empty())
+        datafile.open(file + "-" + suffix + ".txt",
                       std::ofstream::out | std::ofstream::trunc);
     // Output the header of the data file
     if(datafile.is_open()) {
@@ -240,6 +241,11 @@ auto Profiler::output() -> void
         for (double time : times)
             datafile << time << "\n";
     }
+}
+auto Profiler::consoleOutput() -> void
+{
+    std::for_each(begin(times), end(times),
+                  [&](const double & value){ std::cout << value << "\t"; });
 }
 auto Profiler::getProfilingSubject() const -> Profiling {
     return subject;
@@ -427,30 +433,18 @@ auto ReactiveTransportSolver::output() -> ChemicalOutput
     outputs.emplace_back(ChemicalOutput(system_));
     return outputs.back();
 }
-
-auto ReactiveTransportSolver::profile(Profiling what) -> Profiler
+auto ReactiveTransportSolver::profile(Profiling subject) -> Profiler
 {
-    profilers.push_back(Profiler(what));
+    profilers.push_back(Profiler(subject));
     return profilers.back();
 }
-
-auto ReactiveTransportSolver::addProfiler(Profiler& profiler) -> void
-{
-    profilers.emplace_back(profiler);
-}
-
-auto ReactiveTransportSolver::getProfilers() -> const std::vector<Profiler> &
-{
-    return profilers;
-}
-
-auto ReactiveTransportSolver:: outputProfiling() -> void
+auto ReactiveTransportSolver:: outputProfiling(const std::string & folder) -> void
 {
     auto eq_profiler = find(begin(profilers), end(profilers), Profiling::EQ);
-    if (eq_profiler != end(profilers)) eq_profiler->output();
+    if (eq_profiler != end(profilers)) eq_profiler->fileOutput(folder);
 
     auto rt_profiler = std::find(begin(profilers), end(profilers), Profiling::RT);
-    if (rt_profiler != end(profilers)) rt_profiler->output();
+    if (rt_profiler != end(profilers)) rt_profiler->fileOutput(folder);
 
 }
 auto ReactiveTransportSolver::initialize() -> void
