@@ -29,7 +29,7 @@ Reactive transport of |CO2|-saturated brine along a porous rock column
 ======================================================================
 
 In this tutorial, we show how Reaktoro can be used for one-dimensional reactive
-transport calculations for modelling the geochemical reactions that occur along
+transport calculations for modeling the geochemical reactions that occur along
 a porous rock column as an aqueous fluid is continuously injected on its left
 side.
 
@@ -48,7 +48,7 @@ column length of 100 m at temperature 60 |degC| and 100 bar throughout.
 
     To simplify this tutorial, the following assumptions are made:
 
-    * Chemical equilibrium is used for modelling the chemical reactions
+    * Chemical equilibrium is used for modeling the chemical reactions
       in this problem, not only for reactions between aqueous-aqueous species
       but also for those between mineral and aqueous species.
     * A uniform constant velocity field is imposed and it is not updated
@@ -105,7 +105,7 @@ Next, we define reactive transport and numerical discretization parameters.
 
 First, we define the considered rock domain by setting coordinates of its left
 and right boundaries to 0.0 m and 100.0 m, respectively. The number of cells
-and steps in time are both set to 100. The reactive transport modelling
+and steps in time are both set to 100. The reactive transport modeling
 procedure assumes a constant fluid velocity of *v* = 1 m/day (1.16 · |10e-5|
 m/s) and the same diffusion coefficient *D* = |10e-9| |m2|/s for all fluid
 species. The size of the time-step is set to be half of the day. As highlighted

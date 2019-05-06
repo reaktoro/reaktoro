@@ -13,7 +13,7 @@ In this tutorial, we show how Reaktoro can be used to compute the solubility of
 show no *magical function* to perform such calculation in a single line of
 code, but instead a sequence of steps using Reaktoro's components (classes,
 methods) to enrich your understanding of how Reaktoro can be used for solving
-this and many other different chemical reaction modelling problems.
+this and many other different chemical reaction modeling problems.
 
 To calculate the solubility of |CO2| in the NaCl brine, we need two phases in
 chemical system: an *aqueous phase* to represent our NaCl brine, and a *gaseous
@@ -59,7 +59,7 @@ Importing the reaktoro Python package
 Using Reaktoro in Python requires first an import of the python package
 **reaktoro**. From this point on, we are able to use the library components of
 Reaktoro (classes, methods, constants), which are needed to define our chemical
-system and chemical reaction modelling problems.
+system and chemical reaction modeling problems.
 
 .. note::
 
@@ -73,7 +73,7 @@ system and chemical reaction modelling problems.
 Initializing a thermodynamic database
 -------------------------------------
 
-Thermodynamic databases are essential for modelling chemically reactive systems
+Thermodynamic databases are essential for modeling chemically reactive systems
 using Reaktoro. We need a database from where we collect data of substances
 that will compose our phases of interest in a multi-phase chemical system. A
 thermodynamic database also contains model parameters for the evaluation of
@@ -174,7 +174,7 @@ phase is defined with only one gaseous species: |CO2g|.
         editor.addGaseousPhase('C O')
 
     then other gases would be considered, such as CO(g) and O2(g), which are
-    not of interest in our modelling problem.
+    not of interest in our modeling problem.
 
 .. caution::
 
@@ -218,7 +218,7 @@ Defining the chemical equilibrium problem
 -----------------------------------------
 
 We have now defined and constructed our chemical system of interest, enabling
-us to move on to the next step in Reaktoro's modelling workflow: *defining our
+us to move on to the next step in Reaktoro's modeling workflow: *defining our
 chemical reaction problems*. Below we create an equilibrium problem with our
 prescribed equilibrium conditions for *temperature*, *pressure*, and *amounts
 of elements* that are consistent with our intention of calculating the
@@ -271,7 +271,7 @@ solubility of |CO2| at 60 °C and 100 bar in a 1 molal NaCl brine.
     you input. If you are using Reaktoro as a chemical reaction solver in a
     reactive transport simulator, for example, you'll most likely need to work
     directly with given amounts of elements, which shows that this input form
-    is required in certain cases. For such time-dependent modelling problems, you
+    is required in certain cases. For such time-dependent modeling problems, you
     often only need to ensure that the initial conditions for elements amounts
     result in feasible initial species' amounts.
 

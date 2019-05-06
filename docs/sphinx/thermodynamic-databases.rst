@@ -62,7 +62,7 @@ Maier--Kelly heat capacity polynomial equation.
     The thermodynamic databases ``supcrt98.xml`` and ``supcrt07.xml``, in XML
     format, were derived, respectively, from the original SUPCRT92 database
     files |slop98| and |slop07|. In the process, **all organic aqueous species
-    were removed**! If you need them in your modelling problem, you should then
+    were removed**! If you need them in your modeling problem, you should then
     use instead ``supcrt98-organics.xml`` and ``supcrt07-organics.xml``.
 
 .. tip::

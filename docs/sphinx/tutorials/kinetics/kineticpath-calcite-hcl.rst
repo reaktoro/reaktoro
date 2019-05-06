@@ -20,7 +20,7 @@
 Dissolution of calcite in an acidic |HCl|-solution
 ==================================================
 
-This tutorial demonstrates how Reaktoro can be used for modelling the dissolution
+This tutorial demonstrates how Reaktoro can be used for modeling the dissolution
 of calcite in an acidic |HCl|-solution at temperature 30 |degC| and pressure 1
 bar using chemical kinetics. A partial equilibrium assumption is considered
 here so that aqueous species react using a chemical equilibrium model, while

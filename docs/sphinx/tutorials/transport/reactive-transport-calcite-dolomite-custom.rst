@@ -29,7 +29,7 @@ Coupling Reaktoro into other reactive transport codes
 =====================================================
 
 In this tutorial, we show how Reaktoro can be used in other codes for reactive
-transport modelling. Here, you will find that we have split the mass transport
+transport modeling. Here, you will find that we have split the mass transport
 and chemical reaction calculations so that you can clearly see how a dedicated
 and advanced transport solver could be combined with Reaktoro's solvers for
 chemical reaction calculations. A basic transport solver is used here instead
@@ -79,17 +79,14 @@ Next, we define reactive transport and numerical discretization parameters.
 We specify the considered rock domain by setting coordinates of its left and
 right boundaries to 0.0 m and 100.0 m, respectively. The discretization parameters,
 i.e., the number of cells and steps in time, are both set to 100. The reactive
-transport modelling procedure assumes a constant fluid velocity of 1 m/day
+transport modeling procedure assumes a constant fluid velocity of 1 m/day
 (1.16 · |10e-5| m/s) and the same diffusion coefficient of |10e-9| m2/s for all
 fluid species (without dispersivity). The size of the time-step is set to 10
 minutes. Temperature and pressure are set to 60 |degC| and 100 bar, respectively,
 throughout the whole tutorial.
-
 The chemical equilibrium calculations performed in each mesh cell, at every
-time step, can be done using a *conventional algorithm* (provided by class
-`EquilibriumSolver`_) or using a *smart algorithm* (provided by class
-`SmartEquilibriumSolver`_). Set the boolean flag ``smart`` to ``True`` if the
-smart equilibrium algorithm is to be used.
+time step, using *Gibbs energy minimisation* algorithm (provided by the class
+`EquilibriumSolver`_).
 
 The boolean variable ``dirichlet`` is set to ``True`` or ``False`` depending on
 which boundary condition is considered in the numerical calculation. Set to
@@ -170,7 +167,7 @@ Initial condition (IC) of the reactive transport problem
 After constructing the chemical system of interest, we can proceed to the
 definition of a chemical equilibrium problem to set the **initial condition**
 for the fluid and rock composition that is consistent with our intention of
-modelling reactive transport in a porous rock column composed of quartz and
+modeling reactive transport in a porous rock column composed of quartz and
 calcite, at 60 |degC| and 100 bar, with a 0.7 NaCl molal brine in equilibrium
 with the rock minerals. To ensure equilibrium with both quartz and calcite, the
 equilibrium problem setup below considers a relatively large amount for these
@@ -290,11 +287,7 @@ Creating the equilibrium solver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For the repeated equilibrium calculation, we define an equilibrium solver
-object using either `EquilibriumSolver`_ or `SmartEquilibriumSolver`_ classes.
-Here, if boolean variable ``smart`` is set to ``False``, a conventional Gibbs
-energy minimization algorithm (provided by class `EquilibriumSolver`_) is
-considered. Otherwise, class `SmartEquilibriumSolver`_ is used, and previous
-equilibrium calculations may be used for quick predictions of subsequent ones.
+object using `EquilibriumSolver`_  class.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-after: Step 7.10
@@ -419,7 +412,6 @@ one yet!
 .. _ChemicalSystem: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalSystem.html
 .. _ChemicalState: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html
 .. _ReactiveTransportSolver: https://reaktoro.org/cpp/classReaktoro_1_1ReactiveTransportSolver.html
-.. _SmartEquilibriumSolver: https://reaktoro.org/cpp/classReaktoro_1_1SmartEquilibriumSolver.html
 .. _ChemicalOutput: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalOutput.html
 .. _KineticPath: https://reaktoro.org/cpp/classReaktoro_1_1KineticPath.html
 .. _KineticSolver: https://reaktoro.org/cpp/classReaktoro_1_1KineticSolver.html

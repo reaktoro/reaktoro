@@ -31,12 +31,7 @@ dt = 10*minute    # the time step (in units of s)
 T = 60.0 + 273.15 # the temperature (in units of K)
 P = 100 * 1e5     # the pressure (in units of Pa)
 
-smart = True  # the parameter that determines whether classic or smart EquilibriumSolver must be used
-
 dirichlet = False  # the parameter that determines whether Dirichlet BC must be used
-
-options = EquilibriumOptions()
-options.smart.reltol = 1e-3  # todo: need to check which value used in the past for better performance (not this one)
 
 # Step 4: The list of quantities to be output for each mesh cell, each time step
 output_quantities = """
@@ -145,8 +140,7 @@ def simulate():
     dx = (xr - xl)/ncells
 
     # Step 7.10: Create the equilibrium solver object for the repeated equilibrium calculation
-    solver = SmartEquilibriumSolver(system) if smart else EquilibriumSolver(system)
-    solver.setOptions(options)
+    solver = EquilibriumSolver(system)
 
     # Step 7.11: The auxiliary function to create an output file each time step
     def outputstate():
