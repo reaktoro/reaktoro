@@ -71,7 +71,8 @@ public:
     /// Estimate the equilibrium state using sensitivity derivatives.
     auto estimate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
 
-    /// Solve an equilibrium calculation either by
+    /// Solve an equilibrium calculation either by learning (i.e., triggering the convention approach)
+    /// or estimating (smart predition using sensitivity derivatives) of the chemical state
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given equilibrium problem.

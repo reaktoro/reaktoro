@@ -54,15 +54,22 @@ int main()
 
     // Step 2: Define parameters for the reactive transport simulation
     double xl(0.0), xr(100.0);          // the x-coordinates of the left and right boundaries
-    int nsteps(100);                    // the number of steps in the reactive
+    int nsteps(5);                    // the number of steps in the reactive
     // transport simulation
     int ncells(100);                    // the number of cells in the spacial discretization
     double D(1.0e-9);                   // the diffusion coefficient (in units of m2/s)
     double v(1.0 / day);                // the fluid pore velocity (in units of m/s)
-    double dt(0.5 * day);               // the time step (in units of s)
+    double dt(10 * minute);               // the time step (in units of s)
     double T(60.0);                     // the temperature (in units of degC)
     double P(100);                      // the pressure (in units of bar)
     double is_smrtsolv(true);          // the parameter that defines whether classic or smart EquilibriumSolver must be used
+
+
+    // Step **: Create the results folder
+    struct stat status = {0};               // structure to get the file status
+    std::string test_tag = "-ncells-" + std::to_string(ncells) + "-nsteps-" + std::to_string(nsteps);      // name of the folder with results
+    std::string folder = "../results" + test_tag;
+    if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str()); // create the
 
     // Step 3: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
@@ -120,6 +127,7 @@ int main()
     rtsolver.setBoundaryState(state_bc);
     rtsolver.setTimeStep(dt);
     rtsolver.initialize();
+    rtsolver.setResultFolder(folder);
 
     // Step 13: Define the quantities that should be output for every cell, every time step
     ChemicalOutput output(rtsolver.output());
@@ -131,12 +139,6 @@ int main()
     output.add("speciesMolality(CO2(aq))");
     output.add("phaseVolume(Calcite)");
     output.add("phaseVolume(Dolomite)");
-
-    // Step **: Create the results folder
-    struct stat status = {0};               // structure to get the file status
-    std::string test_tag = "-ncells-" + std::to_string(ncells) + "-nsteps-" + std::to_string(nsteps);      // name of the folder with results
-    std::string folder = "../results" + test_tag;
-    if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str()); // create the
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create two profilers
@@ -154,7 +156,7 @@ int main()
     // Reactive transport simulations in the cycle
     while (step <= nsteps){
         // Print the progress of the simulation
-        std::cout << "Progress: " << step << " / " << nsteps << " "  << t/minute << " min" << std::endl;
+        // std::cout << "Progress: " << step << " / " << nsteps << " "  << t/minute << " min" << std::endl;
 
         // Perform one reactive transport time step
         rtsolver.step(field, is_smrtsolv);

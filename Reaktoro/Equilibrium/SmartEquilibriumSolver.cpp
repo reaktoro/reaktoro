@@ -196,12 +196,14 @@ struct SmartEquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
+        // Attempt to estimate the result by on-demand learning
         EquilibriumResult res = estimate(state, T, P, be);
 
+        // If the obtained result satisfies the accuracy criterion, we accept it
         if(res.optimum.succeeded) return res;
 
+        // Otherwise, trigger learning (conventional approach)
         res += learn(state, T, P, be);
-
         return res;
     }
 };

@@ -338,6 +338,10 @@ public:
 
     auto outputProfiling(const std::string & folder) -> void;
 
+    auto setResultFolder(const std::string & folder) -> void;
+
+    auto outputSmart(const std::string & file) -> void;
+
     auto initialize() -> void;
 
     auto step(ChemicalField& field, bool is_smart = false) -> void;
@@ -354,6 +358,12 @@ private:
 
     /// The solver for solving the equilibrium equations using smart on-demand learning algorithm
     SmartEquilibriumSolver smart_equilibriumsolver;
+
+    /// The list of bools indicating weather smart estimation was triggered
+    std::vector<bool> smart_estimations;
+
+    /// The results folder
+    std::string results_folder;
 
     /// The list of chemical output objects
     std::vector<ChemicalOutput> outputs;
