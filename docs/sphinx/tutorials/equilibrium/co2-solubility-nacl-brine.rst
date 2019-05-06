@@ -13,14 +13,14 @@ In this tutorial, we show how Reaktoro can be used to compute the solubility of
 show no *magical function* to perform such calculation in a single line of
 code, but instead a sequence of steps using Reaktoro's components (classes,
 methods) to enrich your understanding of how Reaktoro can be used for solving
-this and many other different chemical reaction modeling problems.
+this and many other different chemical reaction modelling problems.
 
-To calculate the solubility of |CO2| in a NaCl brine, we need two phases in our
+To calculate the solubility of |CO2| in the NaCl brine, we need two phases in
 chemical system: an *aqueous phase* to represent our NaCl brine, and a *gaseous
-phase* to represent our |CO2| gas. Next, we formulate and solve a *chemical
+phase* for |CO2| gas. Next, we formulate and solve a *chemical
 equilibrium problem*, in which 10 mol of |CO2| is mixed with 1 kg of |H2O| and
 1 mol of NaCl, at 60°C and 100 bar. The solution to this problem is a *chemical
-equilibrium state* from which we can inspect how much |CO2| exist in the
+equilibrium state*, from which we can inspect how much |CO2| exists in the
 gaseous phase and compare this with the initial amount of |CO2| we used to mix
 with |H2O| and NaCl.
 
@@ -59,7 +59,7 @@ Importing the reaktoro Python package
 Using Reaktoro in Python requires first an import of the python package
 **reaktoro**. From this point on, we are able to use the library components of
 Reaktoro (classes, methods, constants), which are needed to define our chemical
-system and chemical reaction modeling problems.
+system and chemical reaction modelling problems.
 
 .. note::
 
@@ -73,7 +73,7 @@ system and chemical reaction modeling problems.
 Initializing a thermodynamic database
 -------------------------------------
 
-Thermodynamic databases are essential for modeling chemically reactive systems
+Thermodynamic databases are essential for modelling chemically reactive systems
 using Reaktoro. We need a database from where we collect data of substances
 that will compose our phases of interest in a multi-phase chemical system. A
 thermodynamic database also contains model parameters for the evaluation of
@@ -174,7 +174,7 @@ phase is defined with only one gaseous species: |CO2g|.
         editor.addGaseousPhase('C O')
 
     then other gases would be considered, such as CO(g) and O2(g), which are
-    not of interest in our modeling problem.
+    not of interest in our modelling problem.
 
 .. caution::
 
@@ -218,7 +218,7 @@ Defining the chemical equilibrium problem
 -----------------------------------------
 
 We have now defined and constructed our chemical system of interest, enabling
-us to move on to the next step in Reaktoro's modeling workflow: *defining our
+us to move on to the next step in Reaktoro's modelling workflow: *defining our
 chemical reaction problems*. Below we create an equilibrium problem with our
 prescribed equilibrium conditions for *temperature*, *pressure*, and *amounts
 of elements* that are consistent with our intention of calculating the
@@ -271,9 +271,9 @@ solubility of |CO2| at 60 °C and 100 bar in a 1 molal NaCl brine.
     you input. If you are using Reaktoro as a chemical reaction solver in a
     reactive transport simulator, for example, you'll most likely need to work
     directly with given amounts of elements, which shows that this input form
-    is required in certain cases. For such time-dependent modeling problems, you
+    is required in certain cases. For such time-dependent modelling problems, you
     often only need to ensure that the initial conditions for elements amounts
-    result in feasible initial species amounts.
+    result in feasible initial species' amounts.
 
 .. tip::
     The substance formulas given in the method ``add`` of class
@@ -285,9 +285,9 @@ solubility of |CO2| at 60 °C and 100 bar in a 1 molal NaCl brine.
 
 .. note::
     In Reaktoro, the word *element* is used as a synonym of *components* of
-    chemical species, and not necessarily chemical elements. Electric charge
-    is, for example, an element, even though it is not a chemical
-    element. Thus, we say the ionic species CO\ :sub:`3`\ :sup:`2-` is composed
+    chemical species, and not necessarily chemical elements. Electric charge,
+    for example, is considered as an element, even though it is technically not.
+    Thus, we say the ionic species CO\ :sub:`3`\ :sup:`2-` is composed
     of elements C, O, and Z, with coefficients 1, 3, and -2 respectively, where
     Z is the symbol we use to denote the electric charge element.
 
@@ -325,7 +325,7 @@ equilibrium state of the system with the given equilibrium conditions stored in
 the object ``problem``. For this calculation, Reaktoro uses an efficient
 **Gibbs energy minimization** computation to determine the species amounts that
 correspond to a state of minimum Gibbs energy in the system, while satisfying
-the prescribed amount conditions for temperature, pressure, and element
+the prescribed amount conditions for the temperature, pressure, and element
 amounts. The result is stored in the object ``state``, of class
 `ChemicalState`_.
 
@@ -394,16 +394,15 @@ phases:
 .. literalinclude:: ../../../../demos/python/demo-equilibrium-co2-solubility-nacl-brine.py
     :start-at: Step 9
 
-In this specific case in which there was no initial element C in the aqueous
+In this specific case, in which there was no initial element C in the aqueous
 phase, the value corresponding to the amount of element C in the aqueous phase
-is our solubility of CO2 in the NaCl brine with the previously prescribed
+is our solubility of |CO2| in the NaCl brine with the previously prescribed
 conditions.
 
 .. tip::
     If we had used 2 kg of |H2O|, we would have needed to divide the calculated
     amount of element C in the aqueous phase by 2 to obtain the solubility in
     molal (mol per kg of |H2O|).
-
 
 Have you got an issue?
 ----------------------
@@ -417,7 +416,6 @@ by filling a new issue here:
 
 You'll need a GitHub account - but this is easy to sort out if you don't have
 one yet!
-
 
 .. _Database: https://reaktoro.org/cpp/classReaktoro_1_1Database.html
 .. _ChemicalEditor: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalEditor.html

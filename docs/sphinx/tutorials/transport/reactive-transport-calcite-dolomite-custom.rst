@@ -38,8 +38,7 @@ for the sake of software coupling demonstration.
 The reactive transport problem we consider here is also relatively simple,
 similar to the one presented in the tutorial
 :any:`reactivetransportsolver-calcite-brine`.
-
-Differently from the other tutorials, we proceed here first with a step-by-step
+Unlike other tutorials, we proceed here first with a step-by-step
 explanation of the full script found at the end of this tutorial.
 
 Importing python packages
@@ -61,7 +60,7 @@ operating system dependent functionality.
 Initializing auxiliary time-related constants
 ---------------------------------------------
 
-In this step we initialize auxiliary time-related constants from seconds up to
+In this step, we initialize auxiliary time-related constants from seconds up to
 years used in the rest of the code.
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
@@ -78,13 +77,13 @@ Next, we define reactive transport and numerical discretization parameters.
     :end-before: Step 4
 
 We specify the considered rock domain by setting coordinates of its left and
-right boundaries to 0.0 and 100.0, respectively. The discretization parameters,
+right boundaries to 0.0 m and 100.0 m, respectively. The discretization parameters,
 i.e., the number of cells and steps in time, are both set to 100. The reactive
 transport modelling procedure assumes a constant fluid velocity of 1 m/day
 (1.16 · |10e-5| m/s) and the same diffusion coefficient of |10e-9| m2/s for all
 fluid species (without dispersivity). The size of the time-step is set to 10
-minutes. Temperature and pressure are set to 60 |degC| and 100 bar
-respectively.
+minutes. Temperature and pressure are set to 60 |degC| and 100 bar, respectively,
+throughout the whole tutorial.
 
 The chemical equilibrium calculations performed in each mesh cell, at every
 time step, can be done using a *conventional algorithm* (provided by class
@@ -119,7 +118,7 @@ represented by a Python function documented in the next sections:
     :start-after: Step 5
 
 Here, we first create the required folders for the results, we then run the
-reactive transport simulation, and finally plot the outputted results.
+reactive transport simulation, and, finally, plot the outputted results.
 
 Creating folders for the outputted results
 ------------------------------------------
@@ -135,7 +134,7 @@ Perform the reactive transport simulation
 -----------------------------------------
 
 The reactive transport simulation is performed in the function ``simulate``
-(you may want to have have a quick look in the code below and move to a
+(you may want to have a quick look in the code below and move to a
 detailed explanation in the subsequent sections):
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
@@ -201,7 +200,6 @@ close to |CO2| saturation.
 The composition of the injected aqueous fluid results from the solution of the
 above equilibrium problem, in which 1 kg of |H2O| is mixed with 0.90 moles of
 |NaCl|, 0.05 moles of |MgCl2|, 0.01 moles of |CaCl2|, and 0.75 moles of |CO2|.
-Temperature and pressure are again set to 60 |degC| and 100 bar, respectively.
 
 Calculate the equilibrium states for the initial and boundary conditions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -212,8 +210,8 @@ Calculate the equilibrium states for the initial and boundary conditions
 
 In this step, we use method ``equilibrate`` to calculate the chemical
 equilibrium state of the system with the given initial and boundary equilibrium
-conditions stored in the object ``problem_ic`` and ``problem_bc``. The
-numerical solution of each problem results in the in the objects ``state_ic``
+conditions stored in the objects ``problem_ic`` and ``problem_bc``. The
+numerical solution of each problem results in the objects ``state_ic``
 and ``state_bc``, respectively, of class `ChemicalState`_, which stores the
 temperature, pressure, and the amounts of every species in the system.
 
@@ -223,7 +221,7 @@ Scaling the volumes of the phases
 
 We scale the volumes of the phases in the initial condition according to the
 condition that porosity is 10 % (ratio of fluid volume to total volume), and
-the volume fractions of minerals are: 98 |%vol| of quartz (|SiO2|) and 2 |%vol|
+the volume fractions of minerals are 98 |%vol| of quartz (|SiO2|) and 2 |%vol|
 of calcite (ratio of mineral volume to solid volume).
 
 For the chemical state representing the boundary condition for the injected
@@ -268,9 +266,8 @@ Create a list of chemical states for the mesh cells
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Every mesh cell needs a `ChemicalState`_ object, which is done below with the
-creation of list ``states`` of length ``ncells``, initialized with ``state_ic``
-for all cells (i.e., all cells have initially the same fluid and rock
-composition).
+creation of a list ``states`` of length ``ncells``, initialized with ``state_ic``
+for each cell (i.e., all cells have initially the same fluid and rock composition).
 
 .. literalinclude:: ../../../../demos/python/demo-reactive-transport-calcite-dolomite.py
     :start-after: Step 7.8
@@ -325,9 +322,9 @@ time and a counter for the number of time steps.
     :end-before: Step 10
 
 The reactive transport simulation continues until the maximum number of time
-steps are achieved. At each time step, we output the progress of the simulation
+steps is achieved. At each time step, we output the progress of the simulation
 using function ``outputstate``. Then, we collect the amounts of elements from
-fluid and solid partition. We now apply an *operator splitting procedure* in
+fluid and solid partition. We now apply an *operator splitting procedure*, in
 which we first update the amounts of elements in the fluid partition
 (``bfluid``) using the transport equations (without reactions). These updated
 amounts of elements in the fluid partition are now summed with the amounts of
@@ -337,9 +334,9 @@ system (``b``). We now use these updated amounts of elements in the cell
 (``b``) to evaluate its new chemical equilibrium state, thus producing new
 amounts of the species in both the fluid and solid phases (available in the
 list ``states`` of `ChemicalState`_ objects). This chemical reaction
-equilibrium calculation step, at each mesh cell, will permit, for example,
-aqueous species and minerals to react, and thus causing mineral dissolution or
-precipitation, depending on how much the amount of mineral species change. This
+equilibrium calculation step, at each mesh cell, permits, for example,
+aqueous species and minerals to react, and thus causes mineral dissolution or
+precipitation, depending on how much the amount of mineral species changes. This
 can then be used, for example, to compute new porosity value for the cell.
 
 

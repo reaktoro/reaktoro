@@ -159,8 +159,8 @@ def simulate():
         # Provide the output file name, which will correspond
         output.filename('results/{}.txt'.format(str(step).zfill(ndigits)))
 
-        # We defined the columns' tags filled with name of the quantities
-        # The first column has a tag 'x' (which corresponds to center coordinates of the cells )
+        # We define the columns' tags filled with the name of the quantities
+        # The first column has a tag 'x' (which corresponds to the center coordinates of the cells )
         output.add('tag', 'x') # The value of the center coordinates of the cells
 
         # The rest of the columns correspond to the requested properties
