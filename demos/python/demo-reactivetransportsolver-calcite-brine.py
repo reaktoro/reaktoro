@@ -111,7 +111,7 @@ os.system('mkdir -p results')  # Ensure a results folder exist
 t = 0.0  # current time variable
 step = 0  # current number of steps
 
-while step <= nsteps:  # step until number of steps are achieved
+while step <= nsteps:  # step until the number of steps are achieved
     # Print the progress of the simulation
     print("Progress: {}/{} steps, {} min".format(step, nsteps, t/minute))
 

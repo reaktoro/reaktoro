@@ -16,8 +16,8 @@
 .. |H+| replace:: H\ :sup:`+`
 .. |Ca++| replace:: Ca\ :sup:`2+`
 .. |Mg++| replace:: Mg\ :sup:`2+`
-.. |HCO3-| replace:: HC0\ :sub:`3`\ :sup:`-`
-.. |CO2(aq)| replace:: C0\ :sub:`2` (aq)
+.. |HCO3-| replace:: HCO\ :sub:`3`\ :sup:`-`
+.. |CO2(aq)| replace:: CO\ :sub:`2` (aq)
 
 .. |10e-21| replace:: 10\ :sup:`-21`
 .. |10e-9| replace:: 10\ :sup:`-9`
@@ -38,7 +38,7 @@ molal |CaCl2| and almost |CO2|-saturated, with 0.75 molal of |CO2| dissolved.
 
 The porous rock is initially composed of minerals quartz (|SiO2|) and calcite
 (|CaCO3|). The initial porosity is 10 %, and the initial volume percentages of
-the minerals are: 98 |%vol| of quartz, 2 |%vol| calcite. The initial conditions
+the minerals are 98 |%vol| of quartz, 2 |%vol| calcite. The initial conditions
 for the fluid in the rock is a 0.7 molal |NaCl| brine in equilibrium with the
 existing rock minerals calcite and quartz. These initial fluid and rock
 composition conditions are uniform throughout the rock core. We assume a rock
@@ -49,9 +49,9 @@ column length of 100 m at temperature 60 |degC| and 100 bar throughout.
     To simplify this tutorial, the following assumptions are made:
 
     * Chemical equilibrium is used for modeling the chemical reactions
-      in this problem, not only for reactions between aqueous-aqueous species,
+      in this problem, not only for reactions between aqueous-aqueous species
       but also for those between mineral and aqueous species.
-    * A uniform and constant velocity field is imposed and it is not updated
+    * A uniform constant velocity field is imposed and it is not updated
       by solving, for example, Darcy equation.
     * Both temperature and pressure are also kept constant along the rock.
 
@@ -61,7 +61,7 @@ column length of 100 m at temperature 60 |degC| and 100 bar throughout.
     Create other more complicated tutorials that do not consider the previous
     assumptions so that chemical kinetics is considered for mineral dissolution
     and precipitation reactions and the partial chemical equilibrium assumption
-    is assumed for aqueous and gaseous species. Also create tutorials in which
+    is assumed for aqueous and gaseous species. Also, create tutorials in which
     velocity and pressure fields are physically consistent with each other and
     computed via the solution of Darcy equation for porous media flow coupled
     with mass transport equations.
@@ -80,17 +80,17 @@ Importing the reaktoro package
     :start-at: Step 1
     :end-before: Step 2
 
-First, we import the **reaktoro** Python package so that we can use its classes and
-methods for performing the chemical reaction calculations.
+First, we import the **reaktoro** Python package so that we can use its classes
+and methods for performing the chemical reaction calculations.
 
-Initializing an auxiliary time-related constants
-------------------------------------------------
+Defining auxiliary time-related constants
+-----------------------------------------
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 2
     :end-before: Step 3
 
-In this step we initialize auxiliary time-related constants from seconds to
+In this step, we initialize auxiliary time-related constants from seconds to
 years. This is only done for convenience, so that we can specify later, for
 example, fluid velocity as 1 m/day.
 
@@ -105,12 +105,12 @@ Next, we define reactive transport and numerical discretization parameters.
 
 First, we define the considered rock domain by setting coordinates of its left
 and right boundaries to 0.0 m and 100.0 m, respectively. The number of cells
-and steps in time are both set to 100. The reactive transport modelling
+and steps in time are both set to 100. The reactive transport modeling
 procedure assumes a constant fluid velocity of *v* = 1 m/day (1.16 · |10e-5|
 m/s) and the same diffusion coefficient *D* = |10e-9| |m2|/s for all fluid
-species. The size of the time-step is set to be half of day. The temperature
-and pressure of the fluids are selected to be 60 |degC| and 100 bar,
-respectively.
+species. The size of the time-step is set to be half of the day. As highlighted
+earlier, the temperature and pressure of the fluids are selected to be 60 |degC|
+and 100 bar, respectively.
 
 Defining the chemical system
 ----------------------------
@@ -149,10 +149,9 @@ Initial condition (IC) for the fluid composition
 
 Below, we define the **initial condition** for the fluid composition in the
 rock. We want an aqueous fluid that is 0.7 molal of NaCl and in equilibrium
-(saturated) with calcite (|CaCO3|) and quartz (|SiO2|). To achieve this, we mix
-1 kg of |H2O|, 0.7 mol of NaCl, and plenty of calcite and quartz (10 mol each) to
-ensure that the aqueous solution is saturated with respect to these minerals.
-Temperature and pressure are set to 60 °C and 100 bar respectively.
+with calcite (|CaCO3|) and quartz (|SiO2|). To achieve this, we mix 1 kg of |H2O|,
+0.7 mol of NaCl, and plenty of calcite and quartz (10 mol each) to ensure that
+the aqueous solution is saturated with respect to these minerals.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 6
@@ -165,10 +164,9 @@ Boundary condition (BC) for the fluid composition
 Next, we define the **boundary condition** for the fluid composition on the
 left side of the rock, which should be the one that represents the fluid being
 continuously injected: 0.9 molal NaCl, 0.05 molal |MgCl2|, 0.01 molal |CaCl2|
-and almost |CO2|-saturated, with 0.75 molal of |CO2| dissolved. To achieve
-this, we mix 1 kg of |H2O| with 0.9 mol of NaCl, 0.05 mol of |MgCl2|, 0.01 mol
-of |CaCl2|, and 0.75 mol of |CO2|. Temperature and pressure are also set to 60
-°C and 100 bar respectively.
+and almost |CO2|-saturated, with 0.75 molal of |CO2| dissolved. To provide that,
+we mix 1 kg of |H2O| with 0.9 mol of NaCl, 0.05 mol of |MgCl2|, 0.01 mol
+of |CaCl2|, and 0.75 mol of |CO2|.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 7
@@ -184,9 +182,9 @@ Calculating the IC and BC fluid compositions
 
 In this step, we use the ``equilibrate`` function to calculate the chemical
 equilibrium state of the system with the given initial and boundary equilibrium
-conditions stored in the object ``problem_ic`` and ``problem_bc``.  The result
-is stored in the objects ``state_ic`` and ``state_bc`` of class
-`ChemicalState`_.
+conditions stored in the object ``problem_ic`` and ``problem_bc``, respectively.
+The result is stored in the corresponding instances of the class `ChemicalState`_,
+i.e., ``state_ic`` and ``state_bc``.
 
 
 Scaling the phases in the initial condition
@@ -208,7 +206,7 @@ below:
     After this scaling step, the sum of the phase volumes in ``state_ic`` is 1
     |m3|. This also ensures that the amounts of the species in the chemical
     system are normalized by |m3|, and thus they can be regarded as
-    concentrations in unit of mol/|m3| (*bulk volume, not fluid volume!*).
+    concentrations in a unit of mol/|m3| (*bulk volume, not fluid volume!*).
 
 
 Scaling the boundary condition state
@@ -236,80 +234,97 @@ of class `ReactiveTransportSolver`_ later.
     :start-at: Step 11
     :end-before: Step 12
 
-This class accepts the number of cells on the computational domain as well as
-x-coordinates of the left and right boundaries (in m). By default, the number
-of cells is set to 10, whereas the domain is set to the unit interval.
+Here, we specify the number of cells in the mesh and the x-coordinates of the
+left and right boundaries (in m).
 
 Creating a chemical field object
 --------------------------------
 
-For initializing the reactive transport modelling class, we also need to define
-an instance of class `ChemicalField`_ with every cell having a state given by
-the object ``state_ic``.
+We have been using class `ChemicalState`_ to represent an individual chemical
+state. We will now use class `ChemicalField`_ to represent a collection of
+chemical states: one for each mesh cell.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 12
     :end-before: Step 13
 
 .. note::
-    Different initial conditions across the mesh cells is possible by assigning
+    Different initial conditions across the mesh cells are possible by assigning
     different chemical states to each mesh cell. Here, the same chemical state
     in ``state_ic`` is used for all cells.
 
 
-Defining the reactive transport modelling
------------------------------------------
+Initializing the reactive transport solver
+------------------------------------------
 
-At last, we define the object responsible for the solving reactive transport
-problem, which is handled by the class `ReactiveTransportSolver`_.
+At last, we define the object responsible for solving the reactive
+transport problem, which is handled by the class `ReactiveTransportSolver`_.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 13
     :end-before: Step 14
 
-The object is initialized by the chemical system common to all degrees of freedom
-(DOFs) in the chemical field. Moreover, we provide other discretization parameters
-such as mesh, velocity, diffusion coefficient, the state on the boundary condition,
-and size of the step for incremental time stepping. Lastly, we initialize the
-reactive solver object with the chemical field object specified on the previous step.
+Here, we set the mesh and problem parameters such as velocity, diffusion
+coefficient, the chemical state representing the boundary condition, and the
+time step. We also initialize the reactive solver object with the chemical
+field object specified on the previous step, at this point containing the
+initial condition for the chemical state of each mesh cell.
 
-Define the output quantities
-----------------------------
+Defining the output quantities
+------------------------------
 
-Before running time-dependent simulations, we define an object provided by the
-class `ChemicalOutput`_ to output the state for every cell, every time step.
+Before starting the reactive transport calculations, we define the quantities
+that will be output for every mesh cell, at every time step. For this, we use
+an object of the class `ChemicalOutput`_:
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 14
     :end-before: Step 15
 
 The name of the output file is to ``reactive-transport.txt``. We specify the
-parameters that we are interested in saving. In this case, it is pH, molality of
-|H+|, |Ca++|, |Mg++|, |HCO3-|, |CO2(aq)|, as well as a phase volume of calcite
-and dolomite.
+parameters that we are interested in outputting. In this case, it is pH,
+molality of |H+|, |Ca++|, |Mg++|, |HCO3-|, |CO2(aq)|, as well as a phase volume
+of calcite and dolomite.
 
 
-Running the reactive transport simulations
-------------------------------------------
+Running the reactive transport simulation
+-----------------------------------------
 
-Before proceeding to the simulation of reactive transport in the considered
-interval, we set the initial time and a counter for the step considered in
-this cycle.
+As shown below, we perform a sequence of reactive transport calculations, one
+for each time step, during which the chemical state of each mesh cell is
+updated. The iterations continue until the maximum number of steps is
+achieved.
 
 .. literalinclude:: ../../../../demos/python/demo-reactivetransportsolver-calcite-brine.py
     :start-at: Step 15
-    :end-before: Step 16
 
-The cycle for the reactive transport simulation proceeds until we haven't made
-all the steps in time. At each time step, we print the progress of the simulations,
-which are performed by the class `ReactiveTransportSolver`_. Each call of function
-``rt.step`` performs one reactive transport time-step, i.e., solving of the
-advection-diffusion problem using `TransportSolver`_ class and writing the results
-in the file ``reativetransport-step.txt``, where ``step`` indicates the number of
-the step in the cycle (over the considered time interval). In each such file, rows
-correspond cells (DOFs on the spatial domain), whereas the columns correspond to
-the requested (for the output) properties, i.e., pH, molality of |H+|, |Ca++|,
-|Mg++|, |HCO3-|, |CO2(aq)|, as well as the phase volume of calcite and dolomite.
+At each time step, we print the progress of the simulation. We then use the method
+``step`` of class `ReactiveTransportSolver`_ to perform a single reactive
+transport time-stepping. This method also produces a new output file containing
+the requested output properties for every mesh cell. In each such file, rows
+correspond to cells, whereas the columns correspond to the requested output
+properties, i.e., pH, molality of |H+|, |Ca++|, |Mg++|, |HCO3-|, |CO2(aq)|, as
+well as the phase volume of calcite and dolomite.
+
+.. todo::
+
+    Use the result files to general plots and videos, and add them here in the
+    tutorial.
+
+
+Have you got an issue?
+----------------------
+
+Have you found any issue or error in this tutorial? Do you have any
+recommendations or you think something is not clear enough? Please, let us know
+by filling a new issue here:
+
+.. centered::
+    `Reaktoro's GitHub Issues`_
+
+You'll need a GitHub account - but this is easy to sort out if you don't have
+one yet!
+
 
 .. _ChemicalEditor: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalEditor.html
 .. _ChemicalSystem: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalSystem.html
@@ -320,3 +335,4 @@ the requested (for the output) properties, i.e., pH, molality of |H+|, |Ca++|,
 .. _ChemicalOutput: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalOutput.html
 .. _Mesh: https://reaktoro.org/cpp/classReaktoro_1_1Mesh.html
 .. _ChemicalField: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalField.html
+.. _Reaktoro's GitHub Issues: https://github.com/reaktoro/reaktoro/issues/new

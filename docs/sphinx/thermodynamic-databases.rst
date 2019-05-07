@@ -71,7 +71,7 @@ Maier--Kelly heat capacity polynomial equation.
     are using an automatic initialization scheme for its construction (e.g.,
     creating an aqueous phase with all species in the database whose elements
     are H, O, C, or Ca), then make sure you are using one of the SUPCRT92
-    databases **without organic species**! Otherwise you might end up with an
+    databases **without organic species**! Otherwise, you might end up with an
     aqueous phase containing an extremely long list of organic species that
     will only serve to decrease the performance of the calculations.
 
