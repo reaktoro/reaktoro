@@ -66,6 +66,24 @@ enum Profiling{
     Total = 4,
 };
 
+struct SolverStatus{
+
+    //SolverStatus();
+
+    //SolverStatus(const SolverStatus & other);
+
+    SolverStatus(const std::string & results_folder, const std::string & file);
+
+    /// Update the output stream with collected statuses
+    auto output(const Index & i) -> void;
+
+    std::string file;
+    std::string folder;
+
+    /// The list of bools indicating weather smart estimation was triggered
+    std::vector<bool> statuses;
+};
+
 /// Use this class for profiling reactive transport components
 class Profiler{
 
@@ -78,17 +96,16 @@ public:
     auto getProfilingSubject() const -> Profiling;
     auto operator==(const Profiler& p) const -> bool;
 
-
 private:
     /// Enum indicating which part of the reactive transport is profiled
     Profiling subject;
+
     /// The start and finish time of profiling
     std::chrono::time_point<std::chrono::high_resolution_clock> start;
     std::chrono::time_point<std::chrono::high_resolution_clock> finish;
 
     /// The vector of the elapsed CPU times
     std::vector<double> times;
-
 };
 
 class ChemicalField
@@ -336,11 +353,9 @@ public:
 
     auto profile(Profiling what) -> Profiler;
 
+    auto trackStatus(const std::string & folder, const std::string & file) -> SolverStatus;
+
     auto outputProfiling(const std::string & folder) -> void;
-
-    auto setResultFolder(const std::string & folder) -> void;
-
-    auto outputSmart(const std::string & file) -> void;
 
     auto initialize() -> void;
 
@@ -386,6 +401,8 @@ private:
     /// The classes to profile reactive transport computations
     std::vector<Profiler> profilers;
 
+    /// The smart solver tracker
+    std::vector<SolverStatus> status_trackers;
 };
 
 } // namespace Reaktoro

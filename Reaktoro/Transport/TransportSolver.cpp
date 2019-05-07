@@ -224,11 +224,6 @@ auto Profiler::fileOutput(const std::string & file) -> void
         case Profiling::CK:     suffix = "CK";  break;
         case Profiling::Total:  suffix = "Total"; break;
     }
-    /*
-    std::for_each(begin(times), end(times),
-                  [&](const double & value){ std::cout << value << "\t"; });
-    std::cout << std::endl;
-    */
     // Open the data file
     if(!file.empty())
         datafile.open(file + "-" + suffix + ".txt",
@@ -252,6 +247,43 @@ auto Profiler::getProfilingSubject() const -> Profiling {
 }
 auto Profiler::operator==(const Profiler& p) const -> bool{
     return p.getProfilingSubject() == this->subject;
+}
+
+// Default constructor
+//SolverStatus::SolverStatus() : folder("../"), file("smart-status"){};
+
+// Copy constructor
+//SolverStatus::SolverStatus(const SolverStatus & other) :
+//            folder(other.folder), file(other.file){}
+
+// Class for tracking the statuses of SmartEquilibriumSolver
+SolverStatus::SolverStatus(const std::string & folder, const std::string & file) :
+    folder(folder), file(file) {}
+
+auto SolverStatus::output(const Index & i) -> void
+{
+    /// The output stream of the data file
+    std::ofstream datafile;
+
+    /// Statusses for openning of the file
+    auto opt = std::ofstream::out;
+
+    /// Depending on the step, open new file or append to existing one
+    if(i != 0 && !file.empty())         opt |= std::ofstream::app;
+    else if(i == 0 && !file.empty())    opt |= std::ofstream::trunc;
+    datafile.open(folder + "/" + file + ".txt", opt);
+
+    if(datafile.is_open()) {
+        // Output statuses collected while stepping with RT
+        for (bool est : statuses)
+            datafile << std::to_string(est) << "\t";
+        datafile << "\n";
+    }
+    // Clear collected statusses
+    statuses.clear();
+
+    // Close the data file
+    datafile.close();
 }
 
 TransportSolver::TransportSolver()
@@ -438,6 +470,11 @@ auto ReactiveTransportSolver::profile(Profiling subject) -> Profiler
     profilers.push_back(Profiler(subject));
     return profilers.back();
 }
+auto ReactiveTransportSolver::trackStatus(const std::string & folder, const std::string & file) -> SolverStatus
+{
+    status_trackers.push_back(SolverStatus(folder, file));
+    return status_trackers.back();
+}
 auto ReactiveTransportSolver:: outputProfiling(const std::string & folder) -> void
 {
     auto eq_profiler = find(begin(profilers), end(profilers), Profiling::EQ);
@@ -445,13 +482,8 @@ auto ReactiveTransportSolver:: outputProfiling(const std::string & folder) -> vo
 
     auto rt_profiler = std::find(begin(profilers), end(profilers), Profiling::RT);
     if (rt_profiler != end(profilers)) rt_profiler->fileOutput(folder);
-
 }
 
-auto ReactiveTransportSolver::setResultFolder(const std::string &folder) -> void
-{
-    results_folder = folder;
-}
 auto ReactiveTransportSolver::initialize() -> void
 {
     const Mesh& mesh = transportsolver.mesh();
@@ -516,7 +548,7 @@ auto ReactiveTransportSolver::step(ChemicalField& field, bool is_smart) -> void
             // Solve with a smart equilibrium solver
             EquilibriumResult res = smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
             // Save the states of the cells depending on whether smart estimation or learning was triggered
-            smart_estimations.emplace_back(res.smart.succeeded);
+            status_trackers[0].statuses.emplace_back(res.smart.succeeded);
         }
         else {
             // Solve with a conventional equilibrium solver
@@ -525,32 +557,17 @@ auto ReactiveTransportSolver::step(ChemicalField& field, bool is_smart) -> void
         for(auto output : outputs)
             output.update(field[icell], icell);
     }
+    // End profiling for the equllibrium calculations
     eq_profiler->endProfiling();
 
     // Output the states of the smart equilibrium algorithm to the file
-    if (is_smart) {
-        outputSmart("smart-status-" + std::to_string(steps));
-        smart_estimations.clear();
-    }
+    if (is_smart)   status_trackers[0].output(steps);
+
+    // Output chemical states in the output files
     for(auto output : outputs)
         output.close();
 
     ++steps;
 }
 
-auto ReactiveTransportSolver::outputSmart(const std::string & file) -> void
-{
-    /// The output stream of the data file
-    std::ofstream datafile;
-
-    // Open the data file
-    if(!file.empty())
-        datafile.open(results_folder + "/" + file + ".txt", std::ofstream::out | std::ofstream::trunc);
-    // Output the header of the data file
-    if(datafile.is_open()) {
-        // Output times collected while profiling
-        for (double est : smart_estimations)
-            datafile << est << "\n";
-    }
-}
 } // namespace Reaktoro
