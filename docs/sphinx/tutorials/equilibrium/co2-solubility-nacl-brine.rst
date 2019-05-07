@@ -15,12 +15,12 @@ code, but instead a sequence of steps using Reaktoro's components (classes,
 methods) to enrich your understanding of how Reaktoro can be used for solving
 this and many other different chemical reaction modeling problems.
 
-To calculate the solubility of |CO2| in a NaCl brine, we need two phases in our
+To calculate the solubility of |CO2| in the NaCl brine, we need two phases in
 chemical system: an *aqueous phase* to represent our NaCl brine, and a *gaseous
-phase* to represent our |CO2| gas. Next, we formulate and solve a *chemical
+phase* for |CO2| gas. Next, we formulate and solve a *chemical
 equilibrium problem*, in which 10 mol of |CO2| is mixed with 1 kg of |H2O| and
 1 mol of NaCl, at 60°C and 100 bar. The solution to this problem is a *chemical
-equilibrium state* from which we can inspect how much |CO2| exist in the
+equilibrium state*, from which we can inspect how much |CO2| exists in the
 gaseous phase and compare this with the initial amount of |CO2| we used to mix
 with |H2O| and NaCl.
 
@@ -89,7 +89,7 @@ In this step:
 .. |supcrt98| replace:: :download:`supcrt98.xml <../../../../databases/supcrt/supcrt98.xml>`
 .. |slop98| replace:: :download:`slop98.dat <../../../../databases/supcrt/slop98.dat>`
 
-we initialize a ``Database`` object with the |supcrt98| database
+we initialize a `Database`_ object with the |supcrt98| database
 file. This database was generated from the original SUPCRT92 database file
 |slop98|. You are welcome to inspect these files and learn more about the
 chemical species available in them. You can also read more about the available
@@ -100,14 +100,14 @@ Databases`.
 
     All SUPCRT92 thermodynamic databases have been embedded into Reaktoro.
     Thus, you don't actually need to have a database file named
-    ``supcrt98.xml`` in a local directory when initializing the ``Database``
+    ``supcrt98.xml`` in a local directory when initializing the `Database`_
     object. If you want to use a customized database file, however, also named
     ``supcrt98.xml``, then your local file will be used instead.
 
 .. tip::
 
     If you are using a customized version of a thermodynamic database, consider
-    changing its name (e.g., ``custom-supcrt98.xml``) to avoid an accidental
+    changing its name (e.g., ``custom-supcrt98.xml``) to avoid accidental
     use of an embedded database. This can happen if you do not give a correct
     path to your custom database file.
 
@@ -117,16 +117,16 @@ Defining the chemical system
 
 Reaktoro is a general-purpose chemical solver that avoids as much as possible
 presuming specific assumptions about your problems. Thus, you need to specify
-how your chemical system should be defined. This encompass the specification of
+how your chemical system should be defined. This encompasses the specification of
 all phases in the system as well as the chemical species that compose each
-phase. By using the ``ChemicalEditor`` class, you can conveniently achieve
+phase. By using the `ChemicalEditor`_ class, you can conveniently achieve
 this as shown below:
 
 .. literalinclude:: ../../../../demos/python/demo-equilibrium-co2-solubility-nacl-brine.py
     :start-at: Step 3
     :end-before: Step 4
 
-In this step, we create an object of class ``ChemicalEditor`` and specify that
+In this step, we create an object of class `ChemicalEditor`_ and specify that
 an **aqueous phase** and a **gaseous phase** should be considered in the
 chemical system. The aqueous phase is defined such that its species are all
 those aqueous species in the selected thermodynamic database that can be
@@ -155,7 +155,7 @@ phase is defined with only one gaseous species: |CO2g|.
 
     .. code-block:: python
 
-        editor.addAqueousPhase([
+        editor.addAqueousPhaseWithElements([
             'H2O(l)',
             'H+',
             'OH-',
@@ -179,9 +179,18 @@ phase is defined with only one gaseous species: |CO2g|.
 .. caution::
 
     If you manually specify the chemical species in a phase, you need to make
-    sure that they exist in the thermodynamic database with **exact same
+    sure that they exist in the thermodynamic database with the **exact same
     name**! Replacing ``'CO2(g)'`` above with ``'CO2'`` will cause an error if
-    the database has no gaseous species with such name.
+    the database has no gaseous species with such a name.
+
+.. note::
+
+    By default, *activities* of the aqueous species are calculated using the
+    *HKF extended Debye-Hückel model* for solvent water and ionic species,
+    except for the aqueous species |CO2| (aq), for which the *Drummond model*
+    is used. For gases, Peng-Robinson equation of state is used. For different
+    activity models (e.g., Pitzer), consider inspecting the documentation of
+    classes `AqueousPhase`_ and `GaseousPhase`_.
 
 Constructing the chemical system
 --------------------------------
@@ -190,20 +199,20 @@ Constructing the chemical system
     :start-at: Step 4
     :end-before: Step 5
 
-This step is where we create an object of class ``ChemicalSystem`` using the
+This step is where we create an object of class `ChemicalSystem`_ using the
 chemical system definition details stored in the object ``editor``.
 
 .. note::
 
-    ``ChemicalSystem`` is perhaps the main class in Reaktoro. An object of this
+    `ChemicalSystem`_ is perhaps the main class in Reaktoro. An object of this
     class stores the phases, species and elements in our defined chemical
-    system, as wel as provides the means to compute many types of thermodynamic
+    system, as well as provides the means to compute many types of thermodynamic
     properties, such as *standard thermodynamic properties* (e.g., standard
     Gibbs energies, standard enthalpies, and standard volumes of species), and
     *thermo-chemical properties* (e.g., activity and activity coefficients of
     species; density, enthalpy and internal energy of phases). As you learn
     more about other Reaktoro's classes, you will note that an object of class
-    ``ChemicalSystem`` is almost always needed for their initialization!
+    `ChemicalSystem`_ is almost always needed for their initialization!
 
 Defining the chemical equilibrium problem
 -----------------------------------------
@@ -230,7 +239,7 @@ solubility of |CO2| at 60 °C and 100 bar in a 1 molal NaCl brine.
     its coefficient in the formula. The amounts of elements you provide are
     then used as constraints for the Gibbs energy minimization calculation when
     computing the state of chemical equilibrium (i.e., when we try to find the
-    amounts of all species in the system that correspond to a state of minimum
+    amounts of all species in the system that corresponds to a state of minimum
     Gibbs energy and at the same time satisfying the *element amounts
     constraints*).
 
@@ -264,28 +273,28 @@ solubility of |CO2| at 60 °C and 100 bar in a 1 molal NaCl brine.
     directly with given amounts of elements, which shows that this input form
     is required in certain cases. For such time-dependent modeling problems, you
     often only need to ensure that the initial conditions for elements amounts
-    result in feasible initial species amounts.
+    result in feasible initial species' amounts.
 
 .. tip::
-    The substance formulas given in the ``EquilibriumProblem.add`` method
-    **can, but do not need to**, correspond to names of chemical species in the
-    thermodynamic database. Even unusual, if not strange, substance formulas,
-    such as HCl3(NaO)4C13, would be understood by that method. *We do not
-    promise, however, that you will obtain a feasible chemical equilibrium
-    state with unrealistic conditions!*
+    The substance formulas given in the method ``add`` of class
+    `EquilibriumProblem`_ **can, but do not need to**, correspond to names of
+    chemical species in the thermodynamic database. Even unusual, if not
+    strange, substance formulas, such as HCl3(NaO)4C13, would be understood by
+    that method. *We do not promise, however, that you will obtain a feasible
+    chemical equilibrium state with unrealistic conditions!*
 
 .. note::
-    In Reaktoro, the word *element* is used as a synonym of components of
-    chemical species, and not necessarily chemical elements. Electric charge
-    is, for example, an element, even though it is not a not a chemical
-    element. Thus, we say the ionic species CO\ :sub:`3`\ :sup:`2-` is composed
+    In Reaktoro, the word *element* is used as a synonym of *components* of
+    chemical species, and not necessarily chemical elements. Electric charge,
+    for example, is considered as an element, even though it is technically not.
+    Thus, we say the ionic species CO\ :sub:`3`\ :sup:`2-` is composed
     of elements C, O, and Z, with coefficients 1, 3, and -2 respectively, where
     Z is the symbol we use to denote the electric charge element.
 
 .. warning::
-    Prefer the use of neutral substances when using the method
-    ``EquilibriumProblem.add``, unless you definitely need to add a
-    charged, ionic species in the recipe. The following code:
+    Prefer the use of neutral substances when using the method ``add`` of class
+    `EquilibriumProblem`_, unless you definitely need to add a charged, ionic
+    species in the recipe. The following code:
 
     .. code-block:: python
 
@@ -316,25 +325,25 @@ equilibrium state of the system with the given equilibrium conditions stored in
 the object ``problem``. For this calculation, Reaktoro uses an efficient
 **Gibbs energy minimization** computation to determine the species amounts that
 correspond to a state of minimum Gibbs energy in the system, while satisfying
-the prescribed amount conditions for temperature, pressure, and element
+the prescribed amount conditions for the temperature, pressure, and element
 amounts. The result is stored in the object ``state``, of class
-``ChemicalState``.
+`ChemicalState`_.
 
 .. attention::
 
     In the vast majority of cases, you'll only have one object of class
-    ``ChemicalSystem`` in your code and one or more objects of class
-    ``ChemicalState`` describing different states of your chemical system!
+    `ChemicalSystem`_ in your code and one or more objects of class
+    `ChemicalState`_ describing different states of your chemical system!
     Reaktoro differentiates these two independent concepts: *chemical system
     definition* and *chemical system state*.
 
 .. tip::
 
     The method ``equilibrate`` is a convenient function in Reaktoro. Consider
-    using the class ``EquilibriumSolver`` for more advanced requirements. For
+    using the class `EquilibriumSolver`_ for more advanced requirements. For
     example, if you have to perform many equilibrium calculations in sequence.
     The ``equilibrate`` method has a computational overhead because every call
-    creates a new object of class ``EquilibriumSolver``. Preferably, this
+    creates a new object of class `EquilibriumSolver`_. Preferably, this
     object should be created only once, and then used subsequently for all
     other equilibrium calculations. Here is a demonstration:
 
@@ -350,8 +359,6 @@ amounts. The result is stored in the object ``state``, of class
 
         solver.solve(state, problem)  # Subsequent equilibrium calculation
         state.output('state-modified.txt')  # Output the modified equilibrium state
-
-
 
 
 Outputting the calculated chemical state to a file
@@ -370,9 +377,9 @@ Printing the amounts of some aqueous species
 --------------------------------------------
 
 Here is just a small demonstration of getting species amount information from a
-``ChemicalState`` object using the method ``ChemicalState.speciesAmount`` to
-extract the amount of a few chemical species. Please inspect the API of
-`ChemicalState`_ class to learn more about its methods.
+`ChemicalState`_ object using the method ``speciesAmount`` of class
+`ChemicalState`_ to extract the amount of a few chemical species. Please
+inspect the API of `ChemicalState`_ class to learn more about its methods.
 
 .. literalinclude:: ../../../../demos/python/demo-equilibrium-co2-solubility-nacl-brine.py
     :start-at: Step 8
@@ -387,9 +394,9 @@ phases:
 .. literalinclude:: ../../../../demos/python/demo-equilibrium-co2-solubility-nacl-brine.py
     :start-at: Step 9
 
-In this specific case in which there were no initial element C in the aqueous
+In this specific case, in which there was no initial element C in the aqueous
 phase, the value corresponding to the amount of element C in the aqueous phase
-is our solubility of CO2 in the NaCl brine with the previously prescribed
+is our solubility of |CO2| in the NaCl brine with the previously prescribed
 conditions.
 
 .. tip::
@@ -397,4 +404,26 @@ conditions.
     amount of element C in the aqueous phase by 2 to obtain the solubility in
     molal (mol per kg of |H2O|).
 
+Have you got an issue?
+----------------------
+
+Have you found any issue or error in this tutorial? Do you have any
+recommendations or you think something is not clear enough? Please, let us know
+by filling a new issue here:
+
+.. centered::
+    `Reaktoro's GitHub Issues`_
+
+You'll need a GitHub account - but this is easy to sort out if you don't have
+one yet!
+
+.. _Database: https://reaktoro.org/cpp/classReaktoro_1_1Database.html
+.. _ChemicalEditor: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalEditor.html
 .. _ChemicalState: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html
+.. _ChemicalSystem: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalSystem.html
+.. _EquilibriumProblem: https://reaktoro.org/cpp/classReaktoro_1_1EquilibriumProblem.html
+.. _EquilibriumSolver: https://reaktoro.org/cpp/classReaktoro_1_1EquilibriumSolver.html
+.. _Partition: https://reaktoro.org/cpp/classReaktoro_1_1Partition.html
+.. _AqueousPhase: https://reaktoro.org/cpp/classReaktoro_1_1AqueousPhase.html
+.. _GaseousPhase: https://reaktoro.org/cpp/classReaktoro_1_1GaseousPhase.html
+.. _Reaktoro's GitHub Issues: https://github.com/reaktoro/reaktoro/issues/new

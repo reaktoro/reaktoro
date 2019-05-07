@@ -42,7 +42,7 @@ y2 = [thermo.logEquilibriumConstant(T, P, reaction2).val for T in x]
 x = x - 273.15
 
 # Plot the log(K) of the reactions
-plt.xlim(xmin=25, xmax=300)
+plt.xlim(left=25, right=300)
 plt.xlabel('Temperature [C]')
 plt.ylabel('log(K)')
 plt.plot(x, y1, label=reaction1)

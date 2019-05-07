@@ -19,7 +19,7 @@ equilibrium calculation:
     int main()
     {
         ChemicalEditor editor;
-        editor.addAqueousPhase("H2O NaCl CaCO3 CO2");
+        editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3 CO2");
         editor.addGaseousPhase("CO2(g)");
         editor.addMineralPhase("Calcite");
 

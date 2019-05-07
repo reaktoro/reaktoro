@@ -15,8 +15,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+# Step 1: Import the reaktoro Python package
 from reaktoro import *
 
+# Step 2: Specify the phases in the chemical system and their species
 editor = ChemicalEditor()
 editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3 MgCO3")
 editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
@@ -25,6 +27,7 @@ editor.addMineralPhase("Magnesite")
 editor.addMineralPhase("Dolomite")
 editor.addMineralPhase("Halite")
 
+# Step 3: Define the kinetically-controlled reactions
 editor.addMineralReaction("Calcite") \
     .setEquation("Calcite = Ca++ + CO3--") \
     .addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol") \
@@ -43,26 +46,36 @@ editor.addMineralReaction("Dolomite") \
     .addMechanism("logk = -3.19 mol/(m2*s); Ea = 36.1 kJ/mol; a[H+] = 0.5") \
     .setSpecificSurfaceArea(10, "cm2/g")
 
+# Step 4: Construct the chemical system
 system = ChemicalSystem(editor)
 reactions = ReactionSystem(editor)
 
+# Step 5: Specify the equilibrium and kinetic species
 partition = Partition(system)
 partition.setKineticSpecies(["Calcite", "Magnesite", "Dolomite"])
 
+# Step 6: Define the initial chemical equilibrium state
 problem = EquilibriumProblem(system)
 problem.setPartition(partition)
+problem.setTemperature(60, "celsius")
+problem.setPressure(100, "bar")
 problem.add("H2O", 1, "kg")
 problem.add("NaCl", 1, "mol")
 problem.add("CO2", 1, "mol")
 
+# Step 7: Calculate the initial chemical equilibrium state
 state0 = equilibrate(problem)
+state0.output('demo-kineticpath-carbonates-co2-before-kinetics')
 
+# Step 8: Set the initial mass of the kinetic species
 state0.setSpeciesMass("Calcite", 100, "g")
 state0.setSpeciesMass("Dolomite", 50, "g")
 
+# Step 9: Create a kinetic path solver
 path = KineticPath(reactions)
 path.setPartition(partition)
 
+# Step 10: Create plots for the kinetic path calculation
 plot0 = path.plot()
 plot0.x("time(units=hour)")
 plot0.y("pH")
@@ -90,7 +103,9 @@ plot3.y("phaseMass(Dolomite units=grams)", "Dolomite")
 plot3.xlabel("Time [hour]")
 plot3.ylabel("Mass [g]")
 
-path.solve(state0, 0, 25, "hours")
+# Step 11: Perform the kinetic path calculation
+t0, t1 = 0.0, 25.0
+path.solve(state0, t0, t1, "hours")
 
-print state0
-
+# Step 12: Output the final chemical state of the system
+state0.output('demo-kineticpath-carbonates-co2-after-kinetics')

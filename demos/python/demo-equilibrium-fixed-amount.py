@@ -32,4 +32,4 @@ problem.fixSpeciesAmount("CO2(g)", 1.0, "mol")
 
 state = equilibrate(problem)
 
-print state
+print(state)

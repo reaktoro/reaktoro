@@ -29,14 +29,14 @@ namespace Reaktoro {
 class MineralMixture;
 class MineralSpecies;
 
-/// Class that defines an mineral phase
+/// Class that defines a mineral phase
 class MineralPhase : public Phase
 {
 public:
     /// Construct a default MineralPhase instance.
     MineralPhase();
 
-    /// Construct a MineralPhase instance with given mineral mixture.
+    /// Construct a MineralPhase instance with a given mineral mixture.
     explicit MineralPhase(const MineralMixture& mixture);
 
     /// Construct a MineralPhase instance with given species.
@@ -50,7 +50,7 @@ public:
     /// solid solution using the equations:
     /// @f[\ln\gamma_{1}=x_{2}^{2}[a_{0}+a_{1}(3x_{1}-x_{2})+a_{2}(x_{1}-x_{2})(5x_{1}-x_{2})]@f]
     /// and
-    /// @f[\ln\gamma_{2}=x_{1}^{2}[a_{0}-a_{1}(3x_{2}-x_{1})+a_{2}(x_{2}-x_{1})(5x_{2}-x_{1})]@f].
+    /// @f[\ln\gamma_{2}=x_{1}^{2}[a_{0}-a_{1}(3x_{2}-x_{1})+a_{2}(x_{2}-x_{1})(5x_{2}-x_{1})].@f]
     /// The parameters @f$a_0@f$, @f$a_1@f$, and @f$a_2@f$ must be provided.
     /// Set them to zero if not needed.
     /// @param a0 The Redlich-Kister parameter a0

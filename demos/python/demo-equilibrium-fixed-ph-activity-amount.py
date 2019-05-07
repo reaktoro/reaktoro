@@ -34,4 +34,4 @@ problem.fixSpeciesActivity("O2(g)", 0.20)
 
 state = equilibrate(problem)
 
-print state
+print(state)

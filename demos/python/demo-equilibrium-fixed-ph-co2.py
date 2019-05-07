@@ -32,4 +32,4 @@ problem.pH(4.0, "CO2")
 
 state = equilibrate(problem)
 
-print state
+print(state)

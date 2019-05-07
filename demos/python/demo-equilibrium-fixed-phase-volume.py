@@ -33,4 +33,4 @@ problem.fixPhaseVolume("Calcite", 0.5, "m3", "CaCO3")
 
 state = equilibrate(problem)
 
-print state
+print(state)

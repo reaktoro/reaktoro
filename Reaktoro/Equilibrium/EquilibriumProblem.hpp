@@ -82,12 +82,12 @@ public:
 
     /// Set the mole amount of an element for the equilibrium calculation (in units of mol)
     /// @param ielement The index of the element
-    /// @param amount The same mole amount for the all elements (in units of mol)
+    /// @param amount The same mole amount for all elements (in units of mol)
     auto setElementAmount(Index ielement, double amount) -> EquilibriumProblem&;
 
     /// Set the mole amount of an element for the equilibrium calculation (in units of mol)
     /// @param element The name of the element
-    /// @param amount The same mole amount for the all elements (in units of mol)
+    /// @param amount The same mole amount for all elements (in units of mol)
     auto setElementAmount(std::string element, double amount) -> EquilibriumProblem&;
 
     /// Set the mole amount of electrical charge.
@@ -103,7 +103,7 @@ public:
     auto add(std::string name, double amount, std::string units) -> EquilibriumProblem&;
 
     /// Add the mole amounts of the equilibrium species in a ChemicalState instance to the equilibrium recipe.
-    /// This method only extract the mole amounts of equilibrium species in the given chemical state.
+    /// This method only extracts the mole amounts of equilibrium species in the given chemical state.
     /// If not all species in the system is under equilibrium assumption for this equilibrium calculation,
     /// ensure you set the partition of the chemical system before calling this method.
     /// @note If a multiplication factor is needed, for example `2.0`, use `add(2.0*state)`.
@@ -126,7 +126,7 @@ public:
     auto addSpecies(std::string name, double amount, std::string unit) -> EquilibriumProblem&;
 
     /// Add the mole amounts of the equilibrium species in a ChemicalState instance to the equilibrium recipe.
-    /// This method only extract the mole amounts of equilibrium species in the given chemical state.
+    /// This method only extracts the mole amounts of equilibrium species in the given chemical state.
     /// If not all species in the system is under equilibrium assumption for this equilibrium calculation,
     /// ensure you set the partition of the chemical system before calling this method.
     /// @note If a multiplication factor is needed, for example `2.0`, use `addState(2.0*state)`.
