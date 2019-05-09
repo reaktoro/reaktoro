@@ -279,7 +279,7 @@ auto SolverStatus::output(const Index & i) -> void
             datafile << std::to_string(est) << "\t";
         datafile << "\n";
     }
-    // Clear collected statusses
+    // Clear collected statuses
     statuses.clear();
 
     // Close the data file
@@ -427,12 +427,19 @@ auto TransportSolver::step(VectorRef u) -> void
     step(u, zeros(u.size()));
 }
 
-ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem& system, bool is_smart)
-: system_(system)
+ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem& system, const bool& is_smart)
+: system_(system), smart(is_smart)
 {
-    if(is_smart)    smart_equilibriumsolver = SmartEquilibriumSolver(system);
-    else            equilibriumsolver       = EquilibriumSolver(system);
+    if(smart)   smart_equilibriumsolver = SmartEquilibriumSolver(system);
+    else        equilibriumsolver = EquilibriumSolver(system);
+
     setBoundaryState(ChemicalState(system));
+}
+
+auto ReactiveTransportSolver::setEquilibriumOptions(const EquilibriumOptions &options) -> void
+{
+    if(smart)   equilibriumsolver.setOptions(options);
+    else        smart_equilibriumsolver.setOptions(options);
 }
 
 auto ReactiveTransportSolver::setMesh(const Mesh& mesh) -> void
@@ -497,7 +504,7 @@ auto ReactiveTransportSolver::initialize() -> void
     transportsolver.initialize();
 }
 
-auto ReactiveTransportSolver::step(ChemicalField& field, bool is_smart) -> void
+auto ReactiveTransportSolver::step(ChemicalField& field) -> void
 {
     const auto& mesh = transportsolver.mesh();
     const auto& num_elements = system_.numElements();
@@ -512,6 +519,56 @@ auto ReactiveTransportSolver::step(ChemicalField& field, bool is_smart) -> void
         bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
     }
     
+    // Transport the elements in the fluid species
+    for(Index ielement = 0; ielement < num_elements; ++ielement)
+    {
+        transportsolver.setBoundaryValue(bbc[ielement]);
+        transportsolver.step(bf.col(ielement));
+    }
+    // Sum the amounts of elements distributed among fluid and solid species
+    b.noalias() = bf + bs;
+
+    // Open the the file for outputting chemical states
+    for(auto output : outputs)
+    {
+        output.suffix("-" + std::to_string(steps));
+        output.open();
+    }
+
+    for(Index icell = 0; icell < num_cells; ++icell)
+    {
+        const double T = field[icell].temperature();
+        const double P = field[icell].pressure();
+
+        // Solve with a smart or conventional equilibrium solver
+        equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+
+        for(auto output : outputs)
+            output.update(field[icell], icell);
+    }
+
+    // Output chemical states in the output files
+    for(auto output : outputs)
+        output.close();
+
+    ++steps;
+}
+
+auto ReactiveTransportSolver::step_tracked(ChemicalField& field) -> void
+{
+    const auto& mesh = transportsolver.mesh();
+    const auto& num_elements = system_.numElements();
+    const auto& num_cells = mesh.numCells();
+    const auto& ifs = system_.indicesFluidSpecies();
+    const auto& iss = system_.indicesSolidSpecies();
+
+    // Collect the amounts of elements in the solid and fluid species
+    for(Index icell = 0; icell < num_cells; ++icell)
+    {
+        bf.row(icell) = field[icell].elementAmountsInSpecies(ifs);
+        bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
+    }
+
     // Find profiler for the reactive transort and start profiling
     auto rt_profiler = std::find(begin(profilers), end(profilers),Profiling::RT);
     if (rt_profiler != end(profilers)) rt_profiler->startProfiling();
@@ -526,7 +583,7 @@ auto ReactiveTransportSolver::step(ChemicalField& field, bool is_smart) -> void
     b.noalias() = bf + bs;
 
     // End profiling for the reactive transpor
-    rt_profiler->endProfiling();
+    if (rt_profiler != end(profilers)) rt_profiler->endProfiling();
 
     // Open the the file for outputting chemical states
     for(auto output : outputs)
@@ -544,11 +601,11 @@ auto ReactiveTransportSolver::step(ChemicalField& field, bool is_smart) -> void
         const double T = field[icell].temperature();
         const double P = field[icell].pressure();
 
-        if (is_smart) {
+        if (smart) {
             // Solve with a smart equilibrium solver
             EquilibriumResult res = smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
             // Save the states of the cells depending on whether smart estimation or learning was triggered
-            status_trackers[0].statuses.emplace_back(res.smart.succeeded);
+            if (!status_trackers.empty()) status_trackers[0].statuses.emplace_back(res.smart.succeeded);
         }
         else {
             // Solve with a conventional equilibrium solver
@@ -558,10 +615,10 @@ auto ReactiveTransportSolver::step(ChemicalField& field, bool is_smart) -> void
             output.update(field[icell], icell);
     }
     // End profiling for the equllibrium calculations
-    eq_profiler->endProfiling();
+    if (eq_profiler != end(profilers)) eq_profiler->endProfiling();
 
     // Output the states of the smart equilibrium algorithm to the file
-    if (is_smart)   status_trackers[0].output(steps);
+    if (smart && !status_trackers.empty())   status_trackers[0].output(steps);
 
     // Output chemical states in the output files
     for(auto output : outputs)

@@ -49,24 +49,30 @@ bool mkdir(const std::string & folder)
 int main()
 {
     // Step 1: Initialise auxiliary time-related constants
-    int second(1), minute(60);
-    int hour(60 * minute), day(24 * hour), year(365 * day);
+    int second(1);
+    int minute(60);
+    int hour(60 * minute);
+    int day(24 * hour);
+    int year(365 * day);
 
     // Step 2: Define parameters for the reactive transport simulation
-    double xl(0.0), xr(100.0);          // the x-coordinates of the left and right boundaries
-    int nsteps(5);                    // the number of steps in the reactive
-    // transport simulation
-    int ncells(100);                    // the number of cells in the spacial discretization
+    double xl(0.0), xr(1.0);            // the x-coordinates of the left and right boundaries
+    int nsteps(600);                    // the number of steps in the reactive transport simulation
+    int ncells(100);                     // the number of cells in the spacial discretization
     double D(1.0e-9);                   // the diffusion coefficient (in units of m2/s)
     double v(1.0 / day);                // the fluid pore velocity (in units of m/s)
+    double dx((xr - xl) / ncells);       // the time step (in units of s)
     double dt(10 * minute);             // the time step (in units of s)
     double T(60.0);                     // the temperature (in units of degC)
     double P(100);                      // the pressure (in units of bar)
-    double is_smrtsolv(true);           // the parameter that defines whether classic or smart EquilibriumSolver must be used
+    double is_smrtsolv(true);          // the parameter that defines whether classic or smart EquilibriumSolver must be used
+    double CFL(v * dt * ncells / (xr - xl));
 
     // Step **: Create the results folder
     struct stat status = {0};               // structure to get the file status
-    std::string test_tag = "-ncells-" + std::to_string(ncells) + "-nsteps-" + std::to_string(nsteps);      // name of the folder with results
+    std::string test_tag = "-ncells-" + std::to_string(ncells) +
+                           "-nsteps-" + std::to_string(nsteps) +
+                           "-smart-"  + (is_smrtsolv == true ? "1" : "0");      // name of the folder with results
     std::string folder = "../results" + test_tag;
     if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str()); // create the
 
@@ -103,7 +109,6 @@ int main()
     ChemicalState state_ic = equilibrate(problem_ic);
     ChemicalState state_bc = equilibrate(problem_bc);
 
-
     // Step 8: Scale the volumes of the phases in the initial condition
     state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");
     state_ic.scalePhaseVolume("Quartz", 0.882, "m3");
@@ -118,6 +123,11 @@ int main()
     // Step 11: Create a chemical field object with every cell having state given by state_ic
     ChemicalField field(mesh.numCells(), state_ic);
 
+
+    EquilibriumOptions options;
+    options.smart.reltol = 1e-1;
+    options.smart.abstol = 1e-1;
+
     // Step 12: Define the reactive transport modeling
     ReactiveTransportSolver rtsolver(system, is_smrtsolv);
     rtsolver.setMesh(mesh);
@@ -126,6 +136,7 @@ int main()
     rtsolver.setBoundaryState(state_bc);
     rtsolver.setTimeStep(dt);
     rtsolver.initialize();
+    rtsolver.setEquilibriumOptions(options);
 
     // Step 13: Define the quantities that should be output for every cell, every time step
     ChemicalOutput output(rtsolver.output());
@@ -151,16 +162,21 @@ int main()
     double t(0.0);
     int step(0);
 
+    std::cout << "CFL         : " << CFL << std::endl;
+    std::cout << "abstol      : " << options.smart.abstol << std::endl;
+    std::cout << "reltol      : " << options.smart.reltol << std::endl;
+
     // Step **: Start profiling total simulation
     total_profiler.startProfiling();
 
     // Reactive transport simulations in the cycle
     while (step <= nsteps){
         // Print the progress of the simulation
-        // std::cout << "Progress: " << step << " / " << nsteps << " "  << t/minute << " min" << std::endl;
+        std::cout << "Progress: " << step << " / " << nsteps << " "  << t/minute << " min" << std::endl;
 
         // Perform one reactive transport time step
-        rtsolver.step(field, is_smrtsolv);
+        // rtsolver.step(field);
+        rtsolver.step_tracked(field);
 
         // Increment time step and number of time steps
         t += dt;

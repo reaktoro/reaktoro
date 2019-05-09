@@ -335,7 +335,7 @@ class ReactiveTransportSolver
 {
 public:
     /// Construct a default ReactiveTransportSolver instance.
-    ReactiveTransportSolver(const ChemicalSystem& system, bool is_smart = false);
+    ReactiveTransportSolver(const ChemicalSystem& system, const bool& is_smart = false);
 
     auto setMesh(const Mesh& mesh) -> void;
 
@@ -351,15 +351,19 @@ public:
 
     auto output() -> ChemicalOutput;
 
+    auto initialize() -> void;
+
+    auto step(ChemicalField& field) -> void;
+
+    auto step_tracked(ChemicalField& field) -> void;
+
     auto profile(Profiling what) -> Profiler;
 
     auto trackStatus(const std::string & folder, const std::string & file) -> SolverStatus;
 
     auto outputProfiling(const std::string & folder) -> void;
 
-    auto initialize() -> void;
-
-    auto step(ChemicalField& field, bool is_smart = false) -> void;
+    auto setEquilibriumOptions(const EquilibriumOptions& options) -> void;
 
 private:
     /// The chemical system common to all degrees of freedom in the chemical field.
@@ -374,11 +378,8 @@ private:
     /// The solver for solving the equilibrium equations using smart on-demand learning algorithm
     SmartEquilibriumSolver smart_equilibriumsolver;
 
-    /// The list of bools indicating weather smart estimation was triggered
-    std::vector<bool> smart_estimations;
-
-    /// The results folder
-    std::string results_folder;
+    /// The bool parameter indicating weather smart equilibrium solver is initialized
+    bool smart;
 
     /// The list of chemical output objects
     std::vector<ChemicalOutput> outputs;
