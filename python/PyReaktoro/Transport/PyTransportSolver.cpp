@@ -21,6 +21,7 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Transport/TransportSolver.hpp>
+#include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
 
 namespace Reaktoro {
 

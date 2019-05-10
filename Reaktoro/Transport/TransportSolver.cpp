@@ -25,7 +25,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 
 namespace Reaktoro {
 namespace internal {
@@ -42,7 +41,13 @@ auto row(TridiagonalMatrixType&& mat, Index index) -> ReturnType
 
 } // namespace internal
 
-// Implementation of class ChemicalField
+ChemicalField::ChemicalField(Index size, const ChemicalSystem& system)
+: m_size(size),
+  m_system(system),
+  m_states(size, ChemicalState(system)),
+  m_properties(size, ChemicalProperties(system))
+{}
+
 ChemicalField::ChemicalField(Index size, const ChemicalState& state)
 : m_size(size),
   m_system(state.system()),
@@ -344,7 +349,7 @@ TransportSolver::TransportSolver()
 auto TransportSolver::initialize() -> void
 {
     const auto dx = mesh_.dx();
-    const auto beta = diffusion*dt/(dx * dx);
+    const auto beta = diffusion*dt_/(dx * dx);
     const auto num_cells = mesh_.numCells();
     const auto icell0 = 0;
     const auto icelln = num_cells - 1;
@@ -375,12 +380,9 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
     // Solving advection problem with time explicit approach
     const auto dx = mesh_.dx();
     const auto num_cells = mesh_.numCells();
-    const auto alpha = velocity*dt/dx;
+    const auto alpha = velocity_*dt_/dx;
     const auto icell0 = 0;
     const auto icelln = num_cells - 1;
-
-    Assert(alpha <= 1, "Could not solve the advection problem explicitly.",
-        "alpha > 1, try to decrease time step ");
 
     u0 = u;
 
@@ -410,13 +412,13 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 
     // Handle the left boundary cell
     const double aux = 1 + 0.5 * phi[0];
-    u[icell0] += aux * alpha * (ul - u0[0]) + (3.0*diffusion*ul*dt/(dx*dx)); // prescribed amount on the wall and approximation derived by forward difference approximation with second order error
+    u[icell0] += aux * alpha * (ul - u0[0]) + (3.0*diffusion*ul*dt_/(dx*dx)); // prescribed amount on the wall and approximation derived by forward difference approximation with second order error
 
     // Handle the right boundary cell
     u[icelln] += alpha * (u0[icelln - 1] - u0[icelln]); // du/dx = 0 at the right boundary
 
     // Add the source contribution
-    u += dt * q;
+    u += dt_ * q;
 
     // Solving the diffusion problem with time implicit approach
     A.solve(u);
@@ -425,206 +427,6 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 auto TransportSolver::step(VectorRef u) -> void
 {
     step(u, zeros(u.size()));
-}
-
-ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem& system, const bool& is_smart)
-: system_(system), smart(is_smart)
-{
-    if(smart)   smart_equilibriumsolver = SmartEquilibriumSolver(system);
-    else        equilibriumsolver = EquilibriumSolver(system);
-
-    setBoundaryState(ChemicalState(system));
-}
-
-auto ReactiveTransportSolver::setEquilibriumOptions(const EquilibriumOptions &options) -> void
-{
-    if(smart)   equilibriumsolver.setOptions(options);
-    else        smart_equilibriumsolver.setOptions(options);
-}
-
-auto ReactiveTransportSolver::setMesh(const Mesh& mesh) -> void
-{
-    transportsolver.setMesh(mesh);
-}
-
-auto ReactiveTransportSolver::setVelocity(double val) -> void
-{
-    transportsolver.setVelocity(val);
-}
-
-auto ReactiveTransportSolver::setDiffusionCoeff(double val) -> void
-{
-    transportsolver.setDiffusionCoeff(val);
-}
-
-auto ReactiveTransportSolver::setBoundaryState(const ChemicalState& state) -> void
-{
-    bbc = state.elementAmounts();
-}
-
-auto ReactiveTransportSolver::setTimeStep(double val) -> void
-{
-    transportsolver.setTimeStep(val);
-}
-
-auto ReactiveTransportSolver::output() -> ChemicalOutput
-{
-    outputs.emplace_back(ChemicalOutput(system_));
-    return outputs.back();
-}
-auto ReactiveTransportSolver::profile(Profiling subject) -> Profiler
-{
-    profilers.push_back(Profiler(subject));
-    return profilers.back();
-}
-auto ReactiveTransportSolver::trackStatus(const std::string & folder, const std::string & file) -> SolverStatus
-{
-    status_trackers.push_back(SolverStatus(folder, file));
-    return status_trackers.back();
-}
-auto ReactiveTransportSolver:: outputProfiling(const std::string & folder) -> void
-{
-    auto eq_profiler = find(begin(profilers), end(profilers), Profiling::EQ);
-    if (eq_profiler != end(profilers)) eq_profiler->fileOutput(folder);
-
-    auto rt_profiler = std::find(begin(profilers), end(profilers), Profiling::RT);
-    if (rt_profiler != end(profilers)) rt_profiler->fileOutput(folder);
-}
-
-auto ReactiveTransportSolver::initialize() -> void
-{
-    const Mesh& mesh = transportsolver.mesh();
-    const Index num_elements = system_.numElements();
-    const Index num_cells = mesh.numCells();
-
-    bf.resize(num_cells, num_elements);
-    bs.resize(num_cells, num_elements);
-    b.resize(num_cells, num_elements);
-
-    transportsolver.initialize();
-}
-
-auto ReactiveTransportSolver::step(ChemicalField& field) -> void
-{
-    const auto& mesh = transportsolver.mesh();
-    const auto& num_elements = system_.numElements();
-    const auto& num_cells = mesh.numCells();
-    const auto& ifs = system_.indicesFluidSpecies();
-    const auto& iss = system_.indicesSolidSpecies();
-
-    // Collect the amounts of elements in the solid and fluid species
-    for(Index icell = 0; icell < num_cells; ++icell)
-    {
-        bf.row(icell) = field[icell].elementAmountsInSpecies(ifs);
-        bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
-    }
-    
-    // Transport the elements in the fluid species
-    for(Index ielement = 0; ielement < num_elements; ++ielement)
-    {
-        transportsolver.setBoundaryValue(bbc[ielement]);
-        transportsolver.step(bf.col(ielement));
-    }
-    // Sum the amounts of elements distributed among fluid and solid species
-    b.noalias() = bf + bs;
-
-    // Open the the file for outputting chemical states
-    for(auto output : outputs)
-    {
-        output.suffix("-" + std::to_string(steps));
-        output.open();
-    }
-
-    for(Index icell = 0; icell < num_cells; ++icell)
-    {
-        const double T = field[icell].temperature();
-        const double P = field[icell].pressure();
-
-        // Solve with a smart or conventional equilibrium solver
-        equilibriumsolver.solve(field[icell], T, P, b.row(icell));
-
-        for(auto output : outputs)
-            output.update(field[icell], icell);
-    }
-
-    // Output chemical states in the output files
-    for(auto output : outputs)
-        output.close();
-
-    ++steps;
-}
-
-auto ReactiveTransportSolver::step_tracked(ChemicalField& field) -> void
-{
-    const auto& mesh = transportsolver.mesh();
-    const auto& num_elements = system_.numElements();
-    const auto& num_cells = mesh.numCells();
-    const auto& ifs = system_.indicesFluidSpecies();
-    const auto& iss = system_.indicesSolidSpecies();
-
-    // Collect the amounts of elements in the solid and fluid species
-    for(Index icell = 0; icell < num_cells; ++icell)
-    {
-        bf.row(icell) = field[icell].elementAmountsInSpecies(ifs);
-        bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
-    }
-
-    // Find profiler for the reactive transort and start profiling
-    auto rt_profiler = std::find(begin(profilers), end(profilers),Profiling::RT);
-    if (rt_profiler != end(profilers)) rt_profiler->startProfiling();
-
-    // Transport the elements in the fluid species
-    for(Index ielement = 0; ielement < num_elements; ++ielement)
-    {
-        transportsolver.setBoundaryValue(bbc[ielement]);
-        transportsolver.step(bf.col(ielement));
-    }
-    // Sum the amounts of elements distributed among fluid and solid species
-    b.noalias() = bf + bs;
-
-    // End profiling for the reactive transpor
-    if (rt_profiler != end(profilers)) rt_profiler->endProfiling();
-
-    // Open the the file for outputting chemical states
-    for(auto output : outputs)
-    {
-        output.suffix("-" + std::to_string(steps));
-        output.open();
-    }
-
-    // Find profiler for the chemical equilibrium and start profiling
-    auto eq_profiler = find(begin(profilers), end(profilers), Profiling::EQ);
-    if (eq_profiler != end(profilers)) eq_profiler->startProfiling();
-
-    for(Index icell = 0; icell < num_cells; ++icell)
-    {
-        const double T = field[icell].temperature();
-        const double P = field[icell].pressure();
-
-        if (smart) {
-            // Solve with a smart equilibrium solver
-            EquilibriumResult res = smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
-            // Save the states of the cells depending on whether smart estimation or learning was triggered
-            if (!status_trackers.empty()) status_trackers[0].statuses.emplace_back(res.smart.succeeded);
-        }
-        else {
-            // Solve with a conventional equilibrium solver
-            equilibriumsolver.solve(field[icell], T, P, b.row(icell));
-        }
-        for(auto output : outputs)
-            output.update(field[icell], icell);
-    }
-    // End profiling for the equllibrium calculations
-    if (eq_profiler != end(profilers)) eq_profiler->endProfiling();
-
-    // Output the states of the smart equilibrium algorithm to the file
-    if (smart && !status_trackers.empty())   status_trackers[0].output(steps);
-
-    // Output chemical states in the output files
-    for(auto output : outputs)
-        output.close();
-
-    ++steps;
 }
 
 } // namespace Reaktoro

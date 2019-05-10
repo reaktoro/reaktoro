@@ -26,14 +26,10 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/StringList.hpp>
-#include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Core/ChemicalPlot.hpp>
+#include <Reaktoro/Core/ChemicalOutput.hpp>
 
 namespace Reaktoro {
 
@@ -272,7 +268,7 @@ public:
 
     /// Set the velocity for the transport problem.
     /// @param val The velocity (in m/s)
-    auto setVelocity(double val) -> void { velocity = val; }
+    auto setVelocity(double val) -> void { velocity_ = val; }
 
     /// Set the diffusion coefficient for the transport problem.
     /// @param val The diffusion coefficient (in m^2/s)
@@ -283,10 +279,16 @@ public:
     auto setBoundaryValue(double val) -> void { ul = val; };
 
     /// Set the time step for the numerical solution of the transport problem.
-    auto setTimeStep(double val) -> void { dt = val; }
+    auto setTimeStep(double val) -> void { dt_ = val; }
 
     /// Return the mesh.
     auto mesh() const -> const Mesh& { return mesh_; }
+
+    /// Return the time step.
+    auto dt() const -> const double & { return dt_; }
+
+    /// Return the time step.
+    auto velocity() const -> const double & { return velocity_; }
 
     /// Initialize the transport solver before method @ref step is executed.
     /// Setup coefficient matrix of the diffusion problem and factorize.
@@ -309,10 +311,10 @@ private:
     Mesh mesh_;
 
     /// The time step used to solve the transport problem (in s).
-    double dt = 0.0;
+    double dt_ = 0.0;
 
     /// The velocity in the transport problem (in m/s).
-    double velocity = 0.0;
+    double velocity_ = 0.0;
 
     /// The diffusion coefficient in the transport problem (in m^2/s).
     double diffusion = 0.0;
@@ -328,82 +330,6 @@ private:
 
     /// The previous state of the variables.
     Vector u0;
-};
-
-/// Use this class for solving reactive transport problems.
-class ReactiveTransportSolver
-{
-public:
-    /// Construct a default ReactiveTransportSolver instance.
-    ReactiveTransportSolver(const ChemicalSystem& system, const bool& is_smart = false);
-
-    auto setMesh(const Mesh& mesh) -> void;
-
-    auto setVelocity(double val) -> void;
-
-    auto setDiffusionCoeff(double val) -> void;
-
-    auto setBoundaryState(const ChemicalState& state) -> void;
-
-    auto setTimeStep(double val) -> void;
-
-    auto system() const -> const ChemicalSystem& { return system_; }
-
-    auto output() -> ChemicalOutput;
-
-    auto initialize() -> void;
-
-    auto step(ChemicalField& field) -> void;
-
-    auto step_tracked(ChemicalField& field) -> void;
-
-    auto profile(Profiling what) -> Profiler;
-
-    auto trackStatus(const std::string & folder, const std::string & file) -> SolverStatus;
-
-    auto outputProfiling(const std::string & folder) -> void;
-
-    auto setEquilibriumOptions(const EquilibriumOptions& options) -> void;
-
-private:
-    /// The chemical system common to all degrees of freedom in the chemical field.
-    ChemicalSystem system_;
-
-    /// The solver for solving the transport equations
-    TransportSolver transportsolver;
-
-    /// The solver for solving the equilibrium equations using classical approach
-    EquilibriumSolver equilibriumsolver;
-
-    /// The solver for solving the equilibrium equations using smart on-demand learning algorithm
-    SmartEquilibriumSolver smart_equilibriumsolver;
-
-    /// The bool parameter indicating weather smart equilibrium solver is initialized
-    bool smart;
-
-    /// The list of chemical output objects
-    std::vector<ChemicalOutput> outputs;
-
-    /// The amounts of fluid elements on the boundary.
-    Vector bbc;
-
-    /// The amounts of a fluid element on each cell of the mesh.
-    Matrix bf;
-
-    /// The amounts of a solid element on each cell of the mesh.
-    Matrix bs;
-
-    /// The amounts of an element on each cell of the mesh.
-    Matrix b;
-
-    /// The current number of steps in the solution of the reactive transport equations.
-    Index steps = 0;
-
-    /// The classes to profile reactive transport computations
-    std::vector<Profiler> profilers;
-
-    /// The smart solver tracker
-    std::vector<SolverStatus> status_trackers;
 };
 
 } // namespace Reaktoro
