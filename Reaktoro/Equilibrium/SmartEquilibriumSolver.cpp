@@ -87,32 +87,37 @@ struct SmartEquilibriumSolver::Impl
         tree.emplace_back(be, state, solver.properties(), solver.sensitivity());
         return res;
     }
-
+    /// Estimate equilibrium state using sensitivity derivatives
     auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
+        // If the tree is empty abort estimation
         if(tree.empty())
             return {};
 
         using TreeNodeType = std::tuple<Vector, ChemicalState, ChemicalProperties, EquilibriumSensitivity>;
 
+        // Class that stores info about the equilibrium computations
         EquilibriumResult res;
 
+        // Comparison function based on the Euclidean distance
         auto comp = [&](const TreeNodeType& a, const TreeNodeType& b)
         {
             const auto& be_a = std::get<0>(a);
             const auto& be_b = std::get<0>(b);
             return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();
         };
-
+        // Find the reference element (closest to the new state be)
         auto it = std::min_element(tree.begin(), tree.end(), comp);
 
+        // Get all the data stored in the reference element
         const auto& be0 = std::get<0>(*it);
         const ChemicalState& state0 = std::get<1>(*it);
         const ChemicalProperties& properties0 = std::get<2>(*it);
         const EquilibriumSensitivity& sensitivity0 = std::get<3>(*it);
         const auto& n0 = state0.speciesAmounts();
 
-        MatrixConstRef dlnadn = properties0.lnActivities().ddn; // TODO this line is assuming all species are equilibrium specie! get the rows and columns corresponding to equilibrium species
+        // Get the sensitivity derivatives dln(a) / dn
+        MatrixConstRef dlnadn = properties0.lnActivities().ddn; // TODO: this line is assuming all species are equilibrium specie! get the rows and columns corresponding to equilibrium species
         const auto& lna0 = properties0.lnActivities().val;
 
         // TODO Fixing negative amounts
@@ -131,6 +136,8 @@ struct SmartEquilibriumSolver::Impl
         const auto abstol = options.smart.abstol;
 
 //        n = n0 + sensitivity0.dnedbe * (be - be0);
+
+        // Calculate pertubation of n
         dn.noalias() = sensitivity0.dndb * (be - be0); // n is actually delta(n)
 
         n.noalias() = n0 + dn;

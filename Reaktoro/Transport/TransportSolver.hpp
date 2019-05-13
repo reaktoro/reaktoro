@@ -18,10 +18,7 @@
 #pragma once
 
 // C++ includes
-#include <memory>
 #include <vector>
-#include <chrono>
-#include <fstream>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
@@ -53,56 +50,6 @@ namespace Reaktoro {
 //
 //private:
 //};
-
-// Use this enum type to initialize profilers
-enum Profiling{
-    RT = 1,
-    EQ = 2,
-    CK = 3,
-    Total = 4,
-};
-
-struct SolverStatus{
-
-    //SolverStatus();
-
-    //SolverStatus(const SolverStatus & other);
-
-    SolverStatus(const std::string & results_folder, const std::string & file);
-
-    /// Update the output stream with collected statuses
-    auto output(const Index & i) -> void;
-
-    std::string file;
-    std::string folder;
-
-    /// The list of bools indicating weather smart estimation was triggered
-    std::vector<bool> statuses;
-};
-
-/// Use this class for profiling reactive transport components
-class Profiler{
-
-public:
-    Profiler(Profiling what);
-    auto startProfiling() -> void;
-    auto endProfiling() -> void;
-    auto fileOutput(const std::string & file)-> void;
-    auto consoleOutput()-> void;
-    auto getProfilingSubject() const -> Profiling;
-    auto operator==(const Profiler& p) const -> bool;
-
-private:
-    /// Enum indicating which part of the reactive transport is profiled
-    Profiling subject;
-
-    /// The start and finish time of profiling
-    std::chrono::time_point<std::chrono::high_resolution_clock> start;
-    std::chrono::time_point<std::chrono::high_resolution_clock> finish;
-
-    /// The vector of the elapsed CPU times
-    std::vector<double> times;
-};
 
 class ChemicalField
 {

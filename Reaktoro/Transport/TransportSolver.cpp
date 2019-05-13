@@ -18,10 +18,7 @@
 #include "TransportSolver.hpp"
 
 // C++ includes
-#include <iomanip>
-#include <algorithm>
-#include <iostream>
-#include <fstream>
+//#include <iomanip>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -191,104 +188,6 @@ auto Mesh::setDiscretization(Index num_cells, double xl, double xr) -> void
     m_xr = xr;
     m_dx = (xr - xl) / num_cells;
     m_xcells = linspace(num_cells, xl + 0.5*m_dx, xr - 0.5*m_dx);
-}
-
-// Implementation of class Profiler
-Profiler::Profiler(Reaktoro::Profiling subject_)
-        : subject(subject_){
-}
-auto Profiler::startProfiling()  -> void
-{
-    start = std::chrono::high_resolution_clock::now();
-}
-auto Profiler::endProfiling() -> void
-{
-    finish = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = finish - start;
-    times.emplace_back(elapsed.count());
-    //std::cout <<  times.size() << std:: endl;
-}
-auto Profiler::fileOutput(const std::string & file) -> void
-{
-    /// The output stream of the data file
-    std::ofstream datafile;
-
-    /// The suffix of the datafile
-    std::string suffix;
-
-    /// The flag that indicates if scientific format should be used.
-    bool scientific = true;
-
-    /// The floating-point precision in the output.
-    int precision = 6;
-
-    switch (this->getProfilingSubject())
-    {
-        case Profiling::RT:     suffix = "RT"; break;
-        case Profiling::EQ:     suffix = "EQ"; break;
-        case Profiling::CK:     suffix = "CK";  break;
-        case Profiling::Total:  suffix = "Total"; break;
-    }
-    // Open the data file
-    if(!file.empty())
-        datafile.open(file + "-" + suffix + ".txt",
-                      std::ofstream::out | std::ofstream::trunc);
-    // Output the header of the data file
-    if(datafile.is_open()) {
-        // Set scientific mode and defined precision
-        datafile << std::scientific << std::setprecision(precision);
-        // Output times collected while profiling
-        for (double time : times)
-            datafile << time << "\n";
-    }
-}
-auto Profiler::consoleOutput() -> void
-{
-    std::for_each(begin(times), end(times),
-                  [&](const double & value){ std::cout << value << "\t"; });
-}
-auto Profiler::getProfilingSubject() const -> Profiling {
-    return subject;
-}
-auto Profiler::operator==(const Profiler& p) const -> bool{
-    return p.getProfilingSubject() == this->subject;
-}
-
-// Default constructor
-//SolverStatus::SolverStatus() : folder("../"), file("smart-status"){};
-
-// Copy constructor
-//SolverStatus::SolverStatus(const SolverStatus & other) :
-//            folder(other.folder), file(other.file){}
-
-// Class for tracking the statuses of SmartEquilibriumSolver
-SolverStatus::SolverStatus(const std::string & folder, const std::string & file) :
-    folder(folder), file(file) {}
-
-auto SolverStatus::output(const Index & i) -> void
-{
-    /// The output stream of the data file
-    std::ofstream datafile;
-
-    /// Statusses for openning of the file
-    auto opt = std::ofstream::out;
-
-    /// Depending on the step, open new file or append to existing one
-    if(i != 0 && !file.empty())         opt |= std::ofstream::app;
-    else if(i == 0 && !file.empty())    opt |= std::ofstream::trunc;
-    datafile.open(folder + "/" + file + ".txt", opt);
-
-    if(datafile.is_open()) {
-        // Output statuses collected while stepping with RT
-        for (bool est : statuses)
-            datafile << std::to_string(est) << "\t";
-        datafile << "\n";
-    }
-    // Clear collected statuses
-    statuses.clear();
-
-    // Close the data file
-    datafile.close();
 }
 
 TransportSolver::TransportSolver()
