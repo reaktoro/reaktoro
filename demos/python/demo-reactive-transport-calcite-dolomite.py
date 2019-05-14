@@ -21,13 +21,15 @@ year = 365 * day
 
 # Step 3: Parameters for the reactive transport simulation
 xl = 0.0          # the x-coordinate of the left boundary
-xr = 1.0          # the x-coordinate of the right boundary
-nsteps = 100      # the number of steps in the reactive transport simulation
-ncells = 100      # the number of cells in the discretization
+xr = 0.5          # the x-coordinate of the right boundary
+nsteps = 1200      # the number of steps in the reactive transport simulation
+ncells = 50      # the number of cells in the discretization
 
+#D  = 0.0       # the diffusion coefficient (in units of m2/s)
 D  = 1.0e-9       # the diffusion coefficient (in units of m2/s)
-v  = 1.0/day      # the fluid pore velocity (in units of m/s)
-dt = 10*minute    # the time step (in units of s)
+# v  = 1.0/day      # the fluid pore velocity (in units of m/s)
+v = 0.0
+dt = minute    # the time step (in units of s)
 T = 60.0 + 273.15 # the temperature (in units of K)
 P = 100 * 1e5     # the pressure (in units of Pa)
 
@@ -192,6 +194,13 @@ def simulate():
 
         # Equilibrating all cells with the updated element amounts
         for icell in range(ncells):
+            """
+            print("b[icell] = ")
+            for elem in b[icell]:
+                print("%12.6e"% elem)
+
+            print("states[icell] = ", states[icell])
+            """
             solver.solve(states[icell], T, P, b[icell])
 
         # Increment time step and number of time steps
@@ -211,6 +220,7 @@ def titlestr(t):
 
 # Step 9: Generate figures for a result file
 def plotfile(file):
+
     step = int(file.split('.')[0])
 
     print('Plotting figure', step, '...')
@@ -269,7 +279,7 @@ def plot():
     files = sorted(os.listdir('results'))
     Parallel(n_jobs=16)(delayed(plotfile)(file) for file in files)
     # Create videos for the figures
-    ffmpegstr = 'ffmpeg -y -r 30 -i figures/{0}/%03d.png -codec:v mpeg4 -flags:v +qscale -global_quality:v 0 videos/{0}.mp4'
+    ffmpegstr = 'ffmpeg -y -r 30 -i figures/{0}/%04d.png -codec:v mpeg4 -flags:v +qscale -global_quality:v 0 videos/{0}.mp4'
     os.system(ffmpegstr.format('calcite-dolomite'))
     os.system(ffmpegstr.format('aqueous-species'))
     os.system(ffmpegstr.format('ph'))

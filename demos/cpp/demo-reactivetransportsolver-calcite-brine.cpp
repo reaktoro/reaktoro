@@ -62,10 +62,11 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
 
     // Step 2: Define parameters for the reactive transport simulation
     double xl(0.0), xr(0.5);            // the x-coordinates of the left and right boundaries
-    int nsteps(600);                    // the number of steps in the reactive transport simulation
-    int ncells(50);                    // the number of cells in the spacial discretization
+    int nsteps(9600);                   // the number of steps in the reactive transport simulation
+    int ncells(50);                     // the number of cells in the spacial discretization
     double D(1.0e-9);                   // the diffusion coefficient (in units of m2/s)
-    double v(1.0 / day);                // the fluid pore velocity (in units of m/s)
+    //double v(1.0 / day);              // the fluid pore velocity (in units of m/s)
+    double v(0.0);                      // the fluid pore velocity (in units of m/s)
     double dx((xr - xl) / ncells);      // the time step (in units of s)
     double dt(minute);                  // the time step (in units of s)
     double T(60.0);                     // the temperature (in units of degC)
@@ -114,6 +115,9 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     ChemicalState state_ic = equilibrate(problem_ic);
     ChemicalState state_bc = equilibrate(problem_bc);
 
+    // std::cout << "state_ic = \n " << state_ic << std::endl;
+    // std::cout << "state_bc = \n " << state_bc << std::endl;
+
     // Step 8: Scale the volumes of the phases in the initial condition
     state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");
     state_ic.scalePhaseVolume("Quartz", 0.882, "m3");
@@ -121,6 +125,9 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
 
     // Step 9: Scale the boundary condition state
     state_bc.scaleVolume(1.0);
+
+    // std::cout << "state_ic_scaled = \n " << state_ic << std::endl;
+    // std::cout << "state_bc_scaled = \n " << state_bc << std::endl;
 
     // Step 10: Create the mesh for the column
     Mesh mesh(ncells, xl, xr);
