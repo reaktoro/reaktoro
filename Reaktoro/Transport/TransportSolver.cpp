@@ -245,6 +245,35 @@ TransportSolver::TransportSolver()
 //    A.solve(u);
 //}
 
+auto TransportSolver::initializeFullImplicit() -> void
+{
+    const auto dx = mesh_.dx();
+    const auto alpha = velocity_*dt_/dx;
+    const auto beta = diffusion*dt_/(dx * dx);
+    const auto num_cells = mesh_.numCells();
+    const auto icell0 = 0;
+    const auto icelln = num_cells - 1;
+
+    A.resize(num_cells);
+    phi.resize(num_cells);
+
+    // Assemble the coefficient matrix A for the interior cells
+    for(Index icell = 1; icell < icelln; ++icell)
+    {
+        const double a = -beta - alpha;
+        const double b = 1 + beta + 2*beta;
+        const double c = -alpha;
+        A.row(icell) << a, b, c;
+    }
+
+    // Assemble the coefficient matrix A for the boundary cells
+    A.row(icell0) << 0.0, 1.0 + alpha + beta, 0.0;      // left boundary
+    A.row(icelln) << -beta, 1.0 + beta, 0.0;            // right boundary
+
+    // Factorize A into LU factors for future uses in method step
+    A.factorize();
+}
+
 auto TransportSolver::initialize() -> void
 {
     const auto dx = mesh_.dx();
@@ -266,8 +295,9 @@ auto TransportSolver::initialize() -> void
     }
 
     // Assemble the coefficient matrix A for the boundary cells
-    A.row(icell0) << 0.0, 1.0 + 4.5*beta, -1.5*beta; // prescribed amount on the wall and approximatin deriveted by forward diference approximation with second order error
-    A.row(icelln) << -beta, 1.0 + beta, 0.0;   // du/dx = 0 at the right boundary
+    A.row(icell0) << 0.0, 1.0 + beta, -beta;            // prescribed amount on the wall and forward difference approximation with first order error
+    // A.row(icell0) << 0.0, 1.0 + 4.5*beta, -1.5*beta;    // prescribed amount on the wall and approximation derived by forward difference approximation with second order error
+    A.row(icelln) << -beta, 1.0 + beta, 0.0;            // d/dx = 0 (zero flux) at the right boundary
 
     // Factorize A into LU factors for future uses in method step
     A.factorize();
@@ -311,10 +341,47 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 
     // Handle the left boundary cell
     const double aux = 1 + 0.5 * phi[0];
-    u[icell0] += aux * alpha * (ul - u0[0]) + (3.0*diffusion*ul*dt_/(dx*dx)); // prescribed amount on the wall and approximation derived by forward difference approximation with second order error
+    u[icell0] += aux * alpha * (ul - u0[0]);
+    // u[icell0] += aux * alpha * (ul - u0[0]) + (3.0*diffusion*ul*dt_/(dx*dx)); // prescribed amount on the wall and approximation derived by forward difference approximation with second order error
 
     // Handle the right boundary cell
     u[icelln] += alpha * (u0[icelln - 1] - u0[icelln]); // du/dx = 0 at the right boundary
+
+    // Add the source contribution
+    u += dt_ * q;
+
+    // Solving the diffusion problem with time implicit approach
+    A.solve(u);
+}
+
+auto TransportSolver::stepFullImplicit(Reaktoro::VectorRef u, Reaktoro::VectorConstRef q) -> void
+{
+    // TODO: Implement Kurganov-Tadmor method as detailed in their 2000 paper (not as in Wikipedia)
+    // Solving advection problem with time explicit approach
+    const auto dx = mesh_.dx();
+    const auto num_cells = mesh_.numCells();
+    const auto alpha = velocity_*dt_/dx;
+    const auto icell0 = 0;
+    const auto icelln = num_cells - 1;
+
+    u0 = u;
+
+    phi[0] = 2.0; //  this is very important to ensure correct flux limiting behavior for boundary cell.
+
+    // Compute advection contributions to u for the interior cells
+    for(Index icell = 1; icell < icelln; ++icell)
+    {
+        const double phiW = phi[icell - 1];
+        const double phiP = phi[icell];
+        const double aux = 1.0 + 0.5 * (phiP - phiW);
+
+        const double uW = u0[icell - 1];
+        const double uP = u0[icell];
+        u[icell] += alpha * (uW - uP);
+    }
+
+    // Handle the left boundary cell
+    u[icell0] += dt_ / dx * ul;
 
     // Add the source contribution
     u += dt_ * q;

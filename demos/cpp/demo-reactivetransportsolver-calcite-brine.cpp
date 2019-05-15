@@ -62,13 +62,13 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
 
     // Step 2: Define parameters for the reactive transport simulation
     double xl(0.0), xr(0.5);            // the x-coordinates of the left and right boundaries
-    int nsteps(9600);                   // the number of steps in the reactive transport simulation
+    int nsteps(2200);                   // the number of steps in the reactive transport simulation
     int ncells(50);                     // the number of cells in the spacial discretization
-    double D(1.0e-9);                   // the diffusion coefficient (in units of m2/s)
+    double D(1.0e-6);                   // the diffusion coefficient (in units of m2/s)
     //double v(1.0 / day);              // the fluid pore velocity (in units of m/s)
     double v(0.0);                      // the fluid pore velocity (in units of m/s)
     double dx((xr - xl) / ncells);      // the time step (in units of s)
-    double dt(minute);                  // the time step (in units of s)
+    double dt(5 * minute);                  // the time step (in units of s)
     double T(60.0);                     // the temperature (in units of degC)
     double P(100);                      // the pressure (in units of bar)
     double CFL(v * dt * ncells / (xr - xl));

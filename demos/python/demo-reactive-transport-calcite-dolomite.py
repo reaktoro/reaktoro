@@ -21,15 +21,14 @@ year = 365 * day
 
 # Step 3: Parameters for the reactive transport simulation
 xl = 0.0          # the x-coordinate of the left boundary
-xr = 0.5          # the x-coordinate of the right boundary
-nsteps = 1200      # the number of steps in the reactive transport simulation
-ncells = 50      # the number of cells in the discretization
+xr = 1.0          # the x-coordinate of the right boundary
+nsteps = 100      # the number of steps in the reactive transport simulation
+ncells = 100      # the number of cells in the discretization
 
-#D  = 0.0       # the diffusion coefficient (in units of m2/s)
-D  = 1.0e-9       # the diffusion coefficient (in units of m2/s)
-# v  = 1.0/day      # the fluid pore velocity (in units of m/s)
-v = 0.0
-dt = minute    # the time step (in units of s)
+D = 1.0e-6       # the diffusion coefficient (in units of m2/s)
+#v = 0
+v  = 1.0/day      # the fluid pore velocity (in units of m/s)
+dt = 5*minute     # the time step (in units of s)
 T = 60.0 + 273.15 # the temperature (in units of K)
 P = 100 * 1e5     # the pressure (in units of Pa)
 
@@ -232,7 +231,7 @@ def plotfile(file):
     ndigits = len(str(nsteps))
 
     plt.figure()
-    plt.xlim(left=-0.02, right=0.52)
+    plt.xlim(left=-0.02, right=xr+0.02)
     plt.ylim(bottom=2.5, top=10.5)
     plt.title(titlestr(t))
     plt.xlabel('Distance [m]')
@@ -242,7 +241,7 @@ def plotfile(file):
     plt.savefig('figures/ph/{}.png'.format(str(step).zfill(ndigits)))
 
     plt.figure()
-    plt.xlim(left=-0.02, right=0.52)
+    plt.xlim(left=-0.02, right=xr+0.02)
     plt.ylim(bottom=-0.1, top=2.1)
     plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     plt.title(titlestr(t))
@@ -256,7 +255,7 @@ def plotfile(file):
 
     plt.figure()
     plt.yscale('log')
-    plt.xlim(left=-0.02, right=0.52)
+    plt.xlim(left=-0.02, right=xr+0.02)
     plt.ylim(bottom=0.5e-5, top=2)
     plt.title(titlestr(t))
     plt.xlabel('Distance [m]')
@@ -279,7 +278,7 @@ def plot():
     files = sorted(os.listdir('results'))
     Parallel(n_jobs=16)(delayed(plotfile)(file) for file in files)
     # Create videos for the figures
-    ffmpegstr = 'ffmpeg -y -r 30 -i figures/{0}/%04d.png -codec:v mpeg4 -flags:v +qscale -global_quality:v 0 videos/{0}.mp4'
+    ffmpegstr = 'ffmpeg -y -r 30 -i figures/{0}/%03d.png -codec:v mpeg4 -flags:v +qscale -global_quality:v 0 videos/{0}.mp4'
     os.system(ffmpegstr.format('calcite-dolomite'))
     os.system(ffmpegstr.format('aqueous-species'))
     os.system(ffmpegstr.format('ph'))
@@ -300,25 +299,48 @@ def thomas(a, b, c, d):
 
 # Step 7.10.1: Perform a transport step
 def transport(u, dt, dx, v, D, g):
+
     # Number of DOFs
     n = len(u)
     alpha = D*dt/dx**2
     beta = v*dt/dx
+
+    # Upwind finite-volume scheme
     a = full(n, -beta - alpha)
     b = full(n, 1 + beta + 2*alpha)
     c = full(n, -alpha)
 
-    # Set the boundary condition
+    # Set the boundary condition on the left cell
     if dirichlet:
         # Use Dirichlet BC boundary conditions
         b[0] = 1.0
         c[0] = 0.0
         u[0] = g
+
+        # Right boundary
+        a[-1] = -beta
+        b[-1] = 1 + beta
     else:
-        # Use flux boundary conditions
-        u[0] += beta*g
-        b[0] = 1 + beta + alpha
-        b[-1] = 1 + beta + alpha
+        # Use flux boundary conditions (explicit scheme for the advection)
+        '''
+        # Left boundary
+        u[0] += -beta*u[0] + dt/dx*g
+        b[0] = 1 + alpha
+        c[0] = -alpha 
+        # Right boundary
+        u[-1] = (1 - beta)*u[-1] + beta*u[-2]  
+        b[-1] = 1
+        a[-1] = 0
+        '''
+        # Flux boundary conditions (implicit scheme for the advection)
+        # Left boundary
+        u[0] += dt/dx*g
+        b[0] = 1 + alpha + beta
+        # c[0] = -alpha # stays the same as it is defined -alpha
+
+        # Right boundary
+        a[-1] = -beta
+        b[-1] = 1 + beta
 
     # Solve a tridiagonal matrix equation
     thomas(a, b, c, u)

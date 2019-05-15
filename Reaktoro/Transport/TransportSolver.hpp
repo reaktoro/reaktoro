@@ -241,6 +241,10 @@ public:
     /// Setup coefficient matrix of the diffusion problem and factorize.
     auto initialize() -> void;
 
+    /// Initialize the transport solver before method @ref step is executed.
+    /// Setup coefficient matrix of the diffusion-advection problem and factorize.
+    auto initializeFullImplicit() -> void;
+
     /// Step the transport solver.
     /// This method solve one step of the transport solver equation, using an explicit approach for
     /// advection and total implicit for diffusion. The amount resulted from the advection it is 
@@ -248,6 +252,14 @@ public:
     /// @param[in,out] u The solution vector
     /// @param q The source rates vector ([same unit considered for u]/m)
     auto step(VectorRef u, VectorConstRef q) -> void;
+
+    /// Step the transport solver.
+    /// This method solve one step of the transport solver equation, using an explicit approach for
+    /// advection and total implicit for diffusion. The amount resulted from the advection it is
+    /// passed to diffusion problem as a "source".
+    /// @param[in,out] u The solution vector
+    /// @param q The source rates vector ([same unit considered for u]/m)
+    auto stepFullImplicit(VectorRef u, VectorConstRef q) -> void;
 
     /// Step the transport solver.
     /// @param[in,out] u The solution vector
