@@ -215,7 +215,7 @@ public:
 
     /// Set the velocity for the transport problem.
     /// @param val The velocity (in m/s)
-    auto setVelocity(double val) -> void { velocity_ = val; }
+    auto setVelocity(double val) -> void { velocity = val; }
 
     /// Set the diffusion coefficient for the transport problem.
     /// @param val The diffusion coefficient (in m^2/s)
@@ -226,16 +226,10 @@ public:
     auto setBoundaryValue(double val) -> void { ul = val; };
 
     /// Set the time step for the numerical solution of the transport problem.
-    auto setTimeStep(double val) -> void { dt_ = val; }
+    auto setTimeStep(double val) -> void { dt = val; }
 
     /// Return the mesh.
     auto mesh() const -> const Mesh& { return mesh_; }
-
-    /// Return the time step.
-    auto dt() const -> const double & { return dt_; }
-
-    /// Return the time step.
-    auto velocity() const -> const double & { return velocity_; }
 
     /// Initialize the transport solver before method @ref step is executed.
     /// Setup coefficient matrix of the diffusion problem and factorize.
@@ -270,10 +264,10 @@ private:
     Mesh mesh_;
 
     /// The time step used to solve the transport problem (in s).
-    double dt_ = 0.0;
+    double dt = 0.0;
 
     /// The velocity in the transport problem (in m/s).
-    double velocity_ = 0.0;
+    double velocity = 0.0;
 
     /// The diffusion coefficient in the transport problem (in m^2/s).
     double diffusion = 0.0;

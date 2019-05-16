@@ -161,12 +161,10 @@ auto ReactiveTransportSolver::trackStatus(const std::string &folder,
 
 auto ReactiveTransportSolver::outputProfiling(
         const std::string &folder) -> void {
-    auto eq_profiler = find(begin(profilers), end(profilers),
-                            Profiling::EQ);
+    auto eq_profiler = find(begin(profilers), end(profilers), Profiling::EQ);
     if (eq_profiler != end(profilers)) eq_profiler->fileOutput(folder);
 
-    auto rt_profiler = std::find(begin(profilers), end(profilers),
-                                 Profiling::RT);
+    auto rt_profiler = std::find(begin(profilers), end(profilers), Profiling::RT);
     if (rt_profiler != end(profilers)) rt_profiler->fileOutput(folder);
 }
 
@@ -176,18 +174,12 @@ auto ReactiveTransportSolver::initialize() -> void {
     const Index num_elements = system_.numElements();
     const Index num_cells = mesh.numCells();
 
-    Assert(transportsolver.velocity() * transportsolver.dt() / mesh.dx() <
-           0.5,
-           "Could not run reactive-transport calculation reliably.",
-           "The CFL number ( = velocity * dt / dx ) must be less then 0.5. "
-           "Try to decrease the time step or coarsen the spatial discretization"
-           "(increase the number of cells)");
-
     bf.resize(num_cells, num_elements);
     bs.resize(num_cells, num_elements);
     b.resize(num_cells, num_elements);
 
-    transportsolver.initialize();
+    //transportsolver.initialize();
+    transportsolver.initializeFullImplicit();
 }
 
 auto ReactiveTransportSolver::step(ChemicalField &field) -> void {

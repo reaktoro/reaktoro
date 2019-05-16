@@ -22,15 +22,13 @@ year = 365 * day
 # Step 3: Parameters for the reactive transport simulation
 xl = 0.0          # the x-coordinate of the left boundary
 xr = 1.0          # the x-coordinate of the right boundary
-nsteps = 100      # the number of steps in the reactive transport simulation
 ncells = 100      # the number of cells in the discretization
-
-D = 1.0e-6       # the diffusion coefficient (in units of m2/s)
-#v = 0
+nsteps = 600      # the number of steps in the reactive transport simulation
+D  = 1.0e-9       # the diffusion coefficient (in units of m2/s)
 v  = 1.0/day      # the fluid pore velocity (in units of m/s)
-dt = 5*minute     # the time step (in units of s)
-T = 60.0 + 273.15 # the temperature (in units of K)
-P = 100 * 1e5     # the pressure (in units of Pa)
+dt = 10*minute     # the time step (in units of s)
+T = 60.0         # the temperature (in units of K)
+P = 100          # the pressure (in units of Pa)
 
 dirichlet = False  # the parameter that determines whether Dirichlet BC must be used
 
@@ -54,17 +52,7 @@ def simulate():
 
     editor = ChemicalEditor(db)
 
-    editor.addAqueousPhase([
-        'H2O(l)',
-        'H+',
-        'OH-',
-        'Na+',
-        'Cl-',
-        'Ca++',
-        'Mg++',
-        'HCO3-',
-        'CO2(aq)',
-        'CO3--'])  # aqueous species are individually selected for performance reasons
+    editor.addAqueousPhase(['H2O(l)', 'H+', 'OH-', 'Na+', 'Cl-', 'Ca++', 'Mg++', 'HCO3-', 'CO2(aq)', 'CO3--'])  # aqueous species are individually selected for performance reasons
     editor.addMineralPhase('Quartz')
     editor.addMineralPhase('Calcite')
     editor.addMineralPhase('Dolomite')
@@ -74,8 +62,8 @@ def simulate():
 
     # Step 7.3: Define the initial condition of the reactive transport modeling problem
     problem_ic = EquilibriumProblem(system)
-    problem_ic.setTemperature(T)
-    problem_ic.setPressure(P)
+    problem_ic.setTemperature(T, "celsius")
+    problem_ic.setPressure(P, "bar")
     problem_ic.add('H2O', 1.0, 'kg')
     problem_ic.add('NaCl', 0.7, 'mol')
     problem_ic.add('CaCO3', 10, 'mol')
@@ -83,13 +71,19 @@ def simulate():
 
     # Step 7.4: Define the boundary condition of the reactive transport modeling problem
     problem_bc = EquilibriumProblem(system)
-    problem_bc.setTemperature(T)
-    problem_bc.setPressure(P)
+    problem_bc.setTemperature(T, "celsius")
+    problem_bc.setPressure(P, "bar")
     problem_bc.add('H2O', 1.0, 'kg')
     problem_bc.add('NaCl', 0.90, 'mol')
     problem_bc.add('MgCl2', 0.05, 'mol')
     problem_bc.add('CaCl2', 0.01, 'mol')
     problem_bc.add('CO2', 0.75, 'mol')
+
+    options = EquilibriumOptions()
+    # options.smart.reltol = 0.50
+    # options.smart.abstol = 0.25
+    options.smart.reltol = 0.1
+    options.smart.abstol = 0.1
 
     # Step 7.5: Calculate the equilibrium states for the initial and boundary conditions
     state_ic = equilibrate(problem_ic)
@@ -102,6 +96,7 @@ def simulate():
 
     # Scale the boundary condition state to 1 m3
     state_bc.scaleVolume(1.0, 'm3')
+
 
     # Step 7.7: Partitioning fluid and solid species
 
@@ -186,7 +181,8 @@ def simulate():
 
         # Transport each element in the fluid phase
         for j in range(nelems):
-            transport(bfluid[:, j], dt, dx, v, D, b_bc[j])
+            transport_fullimplicit(bfluid[:, j], dt, dx, v, D, b_bc[j])
+            #transport_implicit_explicit(bfluid[:, j], dt, dx, v, D, b_bc[j])
 
         # Update the amounts of elements in both fluid and solid partitions
         b[:] = bsolid + bfluid
@@ -298,7 +294,8 @@ def thomas(a, b, c, d):
     return x
 
 # Step 7.10.1: Perform a transport step
-def transport(u, dt, dx, v, D, g):
+# Both diffusion and convection are treated implicitly
+def transport_fullimplicit(u, dt, dx, v, D, ul):
 
     # Number of DOFs
     n = len(u)
@@ -315,32 +312,91 @@ def transport(u, dt, dx, v, D, g):
         # Use Dirichlet BC boundary conditions
         b[0] = 1.0
         c[0] = 0.0
-        u[0] = g
+        u[0] = ul
 
-        # Right boundary
-        a[-1] = -beta
-        b[-1] = 1 + beta
     else:
-        # Use flux boundary conditions (explicit scheme for the advection)
-        '''
-        # Left boundary
-        u[0] += -beta*u[0] + dt/dx*g
-        b[0] = 1 + alpha
-        c[0] = -alpha 
-        # Right boundary
-        u[-1] = (1 - beta)*u[-1] + beta*u[-2]  
-        b[-1] = 1
-        a[-1] = 0
-        '''
         # Flux boundary conditions (implicit scheme for the advection)
         # Left boundary
-        u[0] += dt/dx*g
         b[0] = 1 + alpha + beta
-        # c[0] = -alpha # stays the same as it is defined -alpha
+        c[0] = -alpha # stays the same as it is defined -alpha
+        u[0] += beta * ul # = dt/dx * v * g, flux that we prescribe is equal v * ul
 
-        # Right boundary
-        a[-1] = -beta
-        b[-1] = 1 + beta
+    # Right boundary is free
+    a[-1] = - beta
+    b[-1] = 1 + beta
+
+    # Solve a tridiagonal matrix equation
+    thomas(a, b, c, u)
+
+# Step 7.10.1: Perform a transport step
+# Both diffusion and convection are treated implicitly
+def transport_fullimplicit_left_zeroflux(u, dt, dx, v, D, ul):
+
+    # Number of DOFs
+    n = len(u)
+    alpha = D*dt/dx**2
+    beta = v*dt/dx
+
+    # Upwind finite-volume scheme
+    a = full(n, -beta - alpha)
+    b = full(n, 1 + beta + 2*alpha)
+    c = full(n, -alpha)
+
+    # Set the boundary condition on the left cell
+    if dirichlet:
+        # Use Dirichlet BC boundary conditions
+        b[0] = 1.0
+        c[0] = 0.0
+        u[0] = ul
+    else:
+        # Flux boundary conditions (implicit scheme for the advection)
+        # Left boundary
+        u[0] += beta * ul
+        b[0] = 1 + alpha + beta
+        c[0] = -alpha # stays the same as it is defined -alpha
+
+    # Right boundary
+    a[-1] = - beta - alpha
+    b[-1] = 1 + alpha
+
+    # Solve a tridiagonal matrix equation
+    thomas(a, b, c, u)
+
+# Diffusion is treated implicitly and convection explicitly
+def transport_implicit_explicit(u, dt, dx, v, D, ul):
+
+    # Number of DOFs
+    n = len(u)
+    alpha = D*dt/dx**2
+    beta = v*dt/dx
+
+    # Upwind finite-volume scheme
+    a = full(n, - alpha)
+    b = full(n, 1 + 2*alpha)
+    c = full(n, - alpha)
+
+    # Set the boundary condition on the left cell
+    if dirichlet:
+        # Use Dirichlet BC boundary conditions
+        b[0] = 1.0
+        c[0] = 0.0
+        u[0] = ul
+
+    else:
+        # Use flux boundary conditions (explicit scheme for the advection)
+        # Left boundary
+        b[0] = 1 + alpha
+        c[0] = -alpha
+        u[0] += -beta * u[0] + beta * ul
+
+    # Contribution of the explicit advection to the RHS
+    for i in range(1, n-1):
+        u[i] += beta * (u[i] + u[i-1])
+
+    # Right boundary
+    a[-1] = 0
+    b[-1] = 1
+    u[-1] += beta*u[-2] - beta*u[-1]
 
     # Solve a tridiagonal matrix equation
     thomas(a, b, c, u)
