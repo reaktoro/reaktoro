@@ -63,31 +63,29 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     // Step 2: Define parameters for the reactive transport simulation
     double xl(0.0), xr(1.0);            // the x-coordinates of the left and right boundaries
     int ncells(100);                     // the number of cells in the spacial discretization
-    int nsteps(600);                   // the number of steps in the reactive transport simulation
-    //double D(0.0);
+    int nsteps(1000);                   // the number of steps in the reactive transport simulation
     double D(1.0e-9);                   // the diffusion coefficient (in units of m2/s)
     double v(1.0 / day);              // the fluid pore velocity (in units of m/s)
-    //double v(0.0);                      // the fluid pore velocity (in units of m/s)
     double dx((xr - xl) / ncells);      // the time step (in units of s)
     double dt(10 * minute);                  // the time step (in units of s)
     double T(60.0);                     // the temperature (in units of degC)
     double P(100);                      // the pressure (in units of bar)
-    double CFL(v * dt * ncells / (xr - xl));
+    double CFL(v * dt / dx);
     std::cout << "CFL number   : " << CFL << std::endl;
 
     // Step **: Define chemical equilibrium options
     EquilibriumOptions options;
     options.smart.reltol = 1e-1;
-    options.smart.abstol = 1e-1;
+    options.smart.abstol = 1e-12;
 
     // Step **: Create the results folder
     auto folder = makeResultsFolder(std::make_tuple(ncells, nsteps, is_smart_solver), options);
 
     // Step 3: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
-    editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "Ca++", "Mg++", "HCO3-", "CO2(aq)", "CO3--"});
-    editor.addMineralPhase("Calcite");
+    editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCl2 MgCl2 CO2");
     editor.addMineralPhase("Quartz");
+    editor.addMineralPhase("Calcite");
     editor.addMineralPhase("Dolomite");
 
     // Step 4: Create the ChemicalSystem object using the configured editor
@@ -100,7 +98,7 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     problem_ic.add("H2O",   1.0, "kg");
     problem_ic.add("NaCl",  0.7, "mol");
     problem_ic.add("CaCO3", 10,  "mol");
-    problem_ic.add("Si02",  10,  "mol");
+    problem_ic.add("SiO2",  10,  "mol");
 
     // Step 6: Define the boundary condition (BC)  of the reactive transport modeling problem
     EquilibriumProblem problem_bc(system);
@@ -116,19 +114,13 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     ChemicalState state_ic = equilibrate(problem_ic);
     ChemicalState state_bc = equilibrate(problem_bc);
 
-    // std::cout << "state_ic = \n " << state_ic << std::endl;
-    // std::cout << "state_bc = \n " << state_bc << std::endl;
-
     // Step 8: Scale the volumes of the phases in the initial condition
     state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");
     state_ic.scalePhaseVolume("Quartz", 0.882, "m3");
     state_ic.scalePhaseVolume("Calcite", 0.018, "m3");
 
     // Step 9: Scale the boundary condition state
-    state_bc.scaleVolume(1.0);
-
-    // std::cout << "state_ic_scaled = \n " << state_ic << std::endl;
-    // std::cout << "state_bc_scaled = \n " << state_bc << std::endl;
+    state_bc.scaleVolume(1.0, "m3");
 
     // Step 10: Create the mesh for the column
     Mesh mesh(ncells, xl, xr);

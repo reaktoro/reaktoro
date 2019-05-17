@@ -268,15 +268,14 @@ auto TransportSolver::initializeFullImplicit() -> void
 
     // Assemble the coefficient matrix A for the boundary cells
     A.row(icell0) << 0.0, 1.0 + alpha + beta, -alpha;   // left boundary (flux = v * ul)
-    // A.row(icell0) << 0.0, 1.0, 0;                    // left boundary (u = ul)
     A.row(icelln) << - beta, 1.0 + beta, 0.0;           // right boundary (free)
 
-    std::cout << A.data() << std::endl;
     // Factorize A into LU factors for future uses in method step
     A.factorize();
 
 }
-auto TransportSolver::stepFullImplicit(Reaktoro::VectorRef u, Reaktoro::VectorConstRef q) -> void
+auto TransportSolver::step_implicit_fvm(Reaktoro::VectorRef u,
+                                        Reaktoro::VectorConstRef q) -> void
 {
     // Solving advection problem with time explicit approach
     const auto dx = mesh_.dx();
@@ -285,7 +284,6 @@ auto TransportSolver::stepFullImplicit(Reaktoro::VectorRef u, Reaktoro::VectorCo
 
     // Handle the left boundary cell
     u[icell0] += beta * ul; // left boundary (flux = v * ul)
-    //u[icell0] = ul;       // left boundary (u = ul)
 
     // Add the source contribution
     u += dt * q;
@@ -323,19 +321,16 @@ auto TransportSolver::initialize() -> void
 
     // Assemble the coefficient matrix A for the boundary cells
     // Our derivation
-    A.row(icell0) << 0.0, 1.0 + alpha, -alpha;            // forward difference approximation with first order error
-    A.row(icelln) << 0.0, 1.0, 0.0;                     // d/dx = 0 (zero flux) at the right boundary
+    // A.row(icell0) << 0.0, 1.0 + alpha, -alpha;            // forward difference approximation with first order error
+    // A.row(icelln) << 0.0, 1.0, 0.0;                       // d/dx = 0 (zero flux) at the right boundary
 
-    // A.row(icell0) << 0.0, 1.0 + 4.5*alpha, -1.5*alpha;    // forward difference approximation with second order error
-    // A.row(icelln) << 0.0, 1.0, 0.0;            // d/dx = 0 (zero flux) at the right boundary
-
-    // Allan
+    // Allan version ealier
     // A.row(icell0) << 0.0, 1.0 + alpha, -alpha;            // forward difference approximation with second order error
     // A.row(icelln) << -alpha, 1.0 + alpha, 0.0;            // d/dx = 0 (zero flux) at the right boundary
 
     // ESSS
-    //A.row(icell0) << 0.0, 1.0 + 4.5*alpha, -1.5*alpha;    // forward difference approximation with second order error
-    //A.row(icelln) << -alpha, 1.0 + alpha, 0.0;            // d/dx = 0 (zero flux) at the right boundary
+    A.row(icell0) << 0.0, 1.0 + 4.5*alpha, -1.5*alpha;    // forward difference approximation with second order error
+    A.row(icelln) << -alpha, 1.0 + alpha, 0.0;            // d/dx = 0 (zero flux) at the right boundary
 
     // Factorize A into LU factors for future uses in method step
     A.factorize();
@@ -380,21 +375,8 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
     // Handle the left boundary cell
     const double aux = 1 + 0.5 * phi[0];
     u[icell0] += aux * beta * (ul - u0[0]) + (3.0*diffusion*ul*dt/(dx*dx)); // prescribed amount on the wall and approximation derived by forward difference approximation with second order error
-    // u[icell0] += aux * beta * (- u0[0]) + dt/dx * ul + (3.0*diffusion*ul*dt/(dx*dx)); // prescribed amount on the wall and approximation derived by forward difference approximation with second order error
     // Handle the right boundary cell
     u[icelln] += beta * (u0[icelln - 1] - u0[icelln]); // du/dx = 0 at the right boundary
-
-    /*
-    // Allan
-    u[icell0] += aux * beta * (- u0[0]) + aux * dt/dx * ul; // prescribed amount on the wall and approximation derived by forward difference approximation with second order error
-    // Handle the right boundary cell
-    u[icelln] += beta * (u0[icelln - 1] - u0[icelln]); // du/dx = 0 at the right boundary
-    */
-
-    // Our / Corrected
-    //u[icell0] = u[icell0] - aux * beta * u0[0] + aux * dt/dx * ul; // prescribed amount on the wall and approximation derived by forward difference approximation with second order error
-    // Handle the right boundary cell
-    //u[icelln] = (1 - beta) * u[icelln] + beta * u0[icelln - 1]; // du/dx = 0 at the right boundary
 
     // Add the source contribution
     u += dt * q;
@@ -405,8 +387,8 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 
 auto TransportSolver::step(VectorRef u) -> void
 {
-    //step(u, zeros(u.size()));
-    stepFullImplicit(u, zeros(u.size()));
+    //step(u, zeros(u.size()));             // flux-limiters scheme
+    step_implicit_fvm(u, zeros(u.size()));  // implicit fvl scheme
 }
 
 } // namespace Reaktoro

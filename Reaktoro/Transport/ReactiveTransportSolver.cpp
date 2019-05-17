@@ -197,6 +197,7 @@ auto ReactiveTransportSolver::step(ChemicalField &field) -> void {
 
     // Transport the elements in the fluid species
     for (Index ielement = 0; ielement < num_elements; ++ielement) {
+
         transportsolver.setBoundaryValue(bbc[ielement]);
         transportsolver.step(bf.col(ielement));
     }
@@ -247,6 +248,10 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
 
     // Transport the elements in the fluid species
     for (Index ielement = 0; ielement < num_elements; ++ielement) {
+
+        //std::cout << "bbc[ielement] = " << bbc[ielement] << std::endl;
+        //std::cout << "bbf.col(ielement) = " << bf.col(ielement) << std::endl;
+
         transportsolver.setBoundaryValue(bbc[ielement]);
         transportsolver.step(bf.col(ielement));
     }
@@ -271,34 +276,26 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
     for (Index icell = 0; icell < num_cells; ++icell) {
         const double T = field[icell].temperature();
         const double P = field[icell].pressure();
-        /*
-        using VectorConstRef   = Eigen::Ref<const Eigen::VectorXd>;           /// < Alias to Eigen type Ref<const VectorXd>.
-        std::cout << "b(icell) = \n";
-        VectorConstRef vector = b.row(icell);
-        int len = vector.size();
-        std::cout << std::scientific;
-        for (auto i = 0; i < len; i++)
-            std::cout << vector[i] << "\n";
-        std::cout << std::endl;
 
-        std::cout << " field[icell] = \n";
-        std::cout << field[icell] << std::endl;
-        */
+        // std::cout << "b.row(icell) = \n" << b.row(icell) << std::endl;
+        // std::cout << "field[icell] = \n" << field[icell] << std::endl;
+
         if (smart) {
             // Solve with a smart equilibrium solver
-            EquilibriumResult res = smart_equilibriumsolver.solve(
-                    field[icell], T, P, b.row(icell));
+            EquilibriumResult res = smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
             // Save the states of the cells depending on whether smart estimation or learning was triggered
             if (!status_trackers.empty())
-                status_trackers[0].statuses.emplace_back(
-                        res.smart.succeeded);
+                status_trackers[0].statuses.emplace_back(res.smart.succeeded);
         } else {
             // Solve with a conventional equilibrium solver
             equilibriumsolver.solve(field[icell], T, P, b.row(icell));
         }
+
         for (auto output : outputs)
             output.update(field[icell], icell);
     }
+    //std::cout << "field[num_cells - 1] = \n" << field[num_cells - 1] << std::endl;
+
     // End profiling for the equllibrium calculations
     if (eq_profiler != end(profilers)) eq_profiler->endProfiling();
 

@@ -23,12 +23,15 @@ year = 365 * day
 xl = 0.0          # the x-coordinate of the left boundary
 xr = 1.0          # the x-coordinate of the right boundary
 ncells = 100      # the number of cells in the discretization
-nsteps = 600      # the number of steps in the reactive transport simulation
+nsteps = 1200      # the number of steps in the reactive transport simulation
 D  = 1.0e-9       # the diffusion coefficient (in units of m2/s)
 v  = 1.0/day      # the fluid pore velocity (in units of m/s)
-dt = 10*minute     # the time step (in units of s)
-T = 60.0         # the temperature (in units of K)
-P = 100          # the pressure (in units of Pa)
+dx = (xr - xl)/ncells
+dt = 5*minute     # the time step (in units of s)
+T = 60.0 + 273.15  # the temperature (in units of K)
+P = 100 * 1e5      # the pressure (in units of Pa)
+
+alpha = v*dt/dx
 
 dirichlet = False  # the parameter that determines whether Dirichlet BC must be used
 
@@ -52,7 +55,8 @@ def simulate():
 
     editor = ChemicalEditor(db)
 
-    editor.addAqueousPhase(['H2O(l)', 'H+', 'OH-', 'Na+', 'Cl-', 'Ca++', 'Mg++', 'HCO3-', 'CO2(aq)', 'CO3--'])  # aqueous species are individually selected for performance reasons
+    #editor.addAqueousPhase(['H2O(l)', 'H+', 'OH-', 'Na+', 'Cl-', 'Ca++', 'Mg++', 'HCO3-', 'CO2(aq)', 'CO3--'])  # aqueous species are individually selected for performance reasons
+    editor.addAqueousPhaseWithElementsOf('H2O NaCl CaCl2 MgCl2 CO2 SiO2 CaCO3')
     editor.addMineralPhase('Quartz')
     editor.addMineralPhase('Calcite')
     editor.addMineralPhase('Dolomite')
@@ -62,8 +66,8 @@ def simulate():
 
     # Step 7.3: Define the initial condition of the reactive transport modeling problem
     problem_ic = EquilibriumProblem(system)
-    problem_ic.setTemperature(T, "celsius")
-    problem_ic.setPressure(P, "bar")
+    problem_ic.setTemperature(T)
+    problem_ic.setPressure(P)
     problem_ic.add('H2O', 1.0, 'kg')
     problem_ic.add('NaCl', 0.7, 'mol')
     problem_ic.add('CaCO3', 10, 'mol')
@@ -71,8 +75,8 @@ def simulate():
 
     # Step 7.4: Define the boundary condition of the reactive transport modeling problem
     problem_bc = EquilibriumProblem(system)
-    problem_bc.setTemperature(T, "celsius")
-    problem_bc.setPressure(P, "bar")
+    problem_bc.setTemperature(T)
+    problem_bc.setPressure(P)
     problem_bc.add('H2O', 1.0, 'kg')
     problem_bc.add('NaCl', 0.90, 'mol')
     problem_bc.add('MgCl2', 0.05, 'mol')
@@ -171,9 +175,6 @@ def simulate():
         # Print the progress of the simulation
         print("Progress: {}/{} steps, {} min".format(step, nsteps, t/minute))
 
-        # Output the current state of the reactive transport calculation
-        outputstate()
-
         # Collect the amounts of elements from fluid and solid partitions
         for icell in range(ncells):
             bfluid[icell] = states[icell].elementAmountsInSpecies(ifluid_species)
@@ -181,22 +182,18 @@ def simulate():
 
         # Transport each element in the fluid phase
         for j in range(nelems):
-            transport_fullimplicit(bfluid[:, j], dt, dx, v, D, b_bc[j])
-            #transport_implicit_explicit(bfluid[:, j], dt, dx, v, D, b_bc[j])
+            #transport_fullimplicit(bfluid[:, j], dt, dx, v, D, b_bc[j])
+            transport_implicit_explicit(bfluid[:, j], dt, dx, v, D, b_bc[j])
 
         # Update the amounts of elements in both fluid and solid partitions
         b[:] = bsolid + bfluid
 
         # Equilibrating all cells with the updated element amounts
         for icell in range(ncells):
-            """
-            print("b[icell] = ")
-            for elem in b[icell]:
-                print("%12.6e"% elem)
-
-            print("states[icell] = ", states[icell])
-            """
             solver.solve(states[icell], T, P, b[icell])
+
+        # Output the current state of the reactive transport calculation
+        outputstate()
 
         # Increment time step and number of time steps
         t += dt
@@ -210,8 +207,7 @@ def titlestr(t):
     t = t / minute   # Convert from seconds to minutes
     h = int(t) / 60  # The number of hours
     m = int(t) % 60  # The number of remaining minutes
-    return 'Time: {:>3}h{:>2}m'.format(h, str(m).zfill(2))
-
+    return 'Time: %2dh %2dm' % (h, m)
 
 # Step 9: Generate figures for a result file
 def plotfile(file):
@@ -227,8 +223,8 @@ def plotfile(file):
     ndigits = len(str(nsteps))
 
     plt.figure()
-    plt.xlim(left=-0.02, right=xr+0.02)
-    plt.ylim(bottom=2.5, top=10.5)
+    plt.xlim(left=xl-0.02, right=xr+0.02)
+    plt.ylim(bottom=2-0.1, top=9.0)
     plt.title(titlestr(t))
     plt.xlabel('Distance [m]')
     plt.ylabel('pH')
@@ -237,7 +233,7 @@ def plotfile(file):
     plt.savefig('figures/ph/{}.png'.format(str(step).zfill(ndigits)))
 
     plt.figure()
-    plt.xlim(left=-0.02, right=xr+0.02)
+    plt.xlim(left=xl-0.02, right=xr+0.02)
     plt.ylim(bottom=-0.1, top=2.1)
     plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     plt.title(titlestr(t))
@@ -251,7 +247,7 @@ def plotfile(file):
 
     plt.figure()
     plt.yscale('log')
-    plt.xlim(left=-0.02, right=xr+0.02)
+    plt.xlim(left=xl-0.02, right=xr+0.02)
     plt.ylim(bottom=0.5e-5, top=2)
     plt.title(titlestr(t))
     plt.xlabel('Distance [m]')
@@ -272,7 +268,10 @@ def plotfile(file):
 def plot():
     # Plot all result files
     files = sorted(os.listdir('results'))
+    #for file in files:
+    #    plotfile(file);
     Parallel(n_jobs=16)(delayed(plotfile)(file) for file in files)
+
     # Create videos for the figures
     ffmpegstr = 'ffmpeg -y -r 30 -i figures/{0}/%03d.png -codec:v mpeg4 -flags:v +qscale -global_quality:v 0 videos/{0}.mp4'
     os.system(ffmpegstr.format('calcite-dolomite'))
@@ -375,6 +374,8 @@ def transport_implicit_explicit(u, dt, dx, v, D, ul):
     b = full(n, 1 + 2*alpha)
     c = full(n, - alpha)
 
+    u0 = u
+
     # Set the boundary condition on the left cell
     if dirichlet:
         # Use Dirichlet BC boundary conditions
@@ -387,16 +388,16 @@ def transport_implicit_explicit(u, dt, dx, v, D, ul):
         # Left boundary
         b[0] = 1 + alpha
         c[0] = -alpha
-        u[0] += -beta * u[0] + beta * ul
+        u[0] = (1 - beta) * u0[0] + beta * ul
 
     # Contribution of the explicit advection to the RHS
     for i in range(1, n-1):
-        u[i] += beta * (u[i] + u[i-1])
+        u[i] = beta * u0[i-1] + (1 + beta) * u0[i]
 
     # Right boundary
     a[-1] = 0
     b[-1] = 1
-    u[-1] += beta*u[-2] - beta*u[-1]
+    u[-1] = beta*u0[-2] + (1 - beta)*u0[-1]
 
     # Solve a tridiagonal matrix equation
     thomas(a, b, c, u)

@@ -253,7 +253,7 @@ public:
     /// passed to diffusion problem as a "source".
     /// @param[in,out] u The solution vector
     /// @param q The source rates vector ([same unit considered for u]/m)
-    auto stepFullImplicit(VectorRef u, VectorConstRef q) -> void;
+    auto step_implicit_fvm(VectorRef u, VectorConstRef q) -> void;
 
     /// Step the transport solver.
     /// @param[in,out] u The solution vector

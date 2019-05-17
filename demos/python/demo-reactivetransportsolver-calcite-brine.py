@@ -35,12 +35,12 @@ year = 365 * day
 
 # Step 3: Define parameters for the reactive transport simulation
 xl = 0.0          # the x-coordinate of the left boundary
-xr = 0.5          # the x-coordinate of the right boundary
-nsteps = 2400      # the number of steps in the reactive transport simulation
-ncells = 50      # the number of cells in the discretization
+xr = 0.1          # the x-coordinate of the right boundary
+ncells = 10      # the number of cells in the discretization
+nsteps = 600      # the number of steps in the reactive transport simulation
 D  = 1.0e-9       # the diffusion coefficient (in units of m2/s)
 v  = 1.0/day      # the fluid pore velocity (1 m/day in units of m/s)
-dt = minute    # the time step (0.5 day in units of s)
+dt = 10*minute    # the time step (0.5 day in units of s)
 T = 60.0          # the temperature (in units of degC)
 P = 100           # the pressure (in units of bar)
 
@@ -151,8 +151,10 @@ def plotfile(file):
 #------------------------------------------------------------------------------#
 
 # Step 4: Construct the chemical system with its phases and species
-editor = ChemicalEditor()
-editor.addAqueousPhaseWithElementsOf('H2O NaCl CaCl2 MgCl2 CO2')
+db = Database('supcrt98.xml')
+editor = ChemicalEditor(db)
+#editor.addAqueousPhase(['H2O(l)', 'H+', 'OH-', 'Na+', 'Cl-', 'Ca++', 'Mg++', 'HCO3-', 'CO2(aq)', 'CO3--'])
+editor.addAqueousPhase('H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--')
 #editor.addAqueousPhaseWithElementsOf('H2O NaCl CaCl2 MgCl2 CO2')
 editor.addMineralPhase('Quartz')
 editor.addMineralPhase('Calcite')
