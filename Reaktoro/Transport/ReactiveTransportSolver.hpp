@@ -21,6 +21,7 @@
 #include <chrono>
 #include <iostream>
 #include <fstream>
+#include <list>
 
 // Reaktoro's includes
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
@@ -58,35 +59,52 @@ struct SolverStatus{
 };
 
 /// Use this class for profiling reactive transport components
-class Profiler{
+struct Profiler{
 
-public:
+    using timepoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
+    using clock     = std::chrono::high_resolution_clock;
+
     Profiler(Profiling what);
+
     auto startProfiling() -> void;
     auto endProfiling() -> void;
     auto fileOutput(const std::string & file)-> void;
-    auto consoleOutput()-> void;
+    virtual auto consoleOutput()-> void;
     auto getProfilingSubject() const -> Profiling;
     auto operator==(const Profiler& p) const -> bool;
 
-private:
-    /// Enum indicating which part of the reactive transport is profiled
+    // Enum indicating which part of the reactive transport is profiled
     Profiling subject;
 
     /// The start and finish time of profiling
-    std::chrono::time_point<std::chrono::high_resolution_clock> start;
-    std::chrono::time_point<std::chrono::high_resolution_clock> finish;
+    timepoint start;
 
     /// The vector of the elapsed CPU times
     std::vector<double> times;
 
-    /// The start and finish time of profiling
-    std::chrono::seconds start_;
-    std::chrono::seconds finish_;
+};
 
-    /// The vector of the elapsed CPU times
-    std::vector<std::chrono::seconds> times_;
+struct EquilibriumProfiler : public Profiler {
 
+    // Type that contains the pair
+    // 0 - total time for estimation
+    // 1 - time for ref.element search
+    // 2 - time for data fetching
+    // 3 - time for matrix-vector manipulation
+    using times = std::vector<std::vector<double>>;
+
+    EquilibriumProfiler(Profiling what);
+    auto updateLearning(int step) -> void;
+    auto updateEstimating(int step, std::vector<double> time_partition) -> void;
+    auto consoleOutput() -> void;
+    auto outputEstimateTime(int step) -> void;
+
+    /// The vector of the elapsed CPU times for learning and estimating time
+    std::vector<double> learn_times;
+    times estimate_times;
+
+    /// The height of the tree storing the reference states
+    int tree_height = 0;
 };
 
 /// Use this class for solving reactive transport problems.
@@ -117,6 +135,8 @@ public:
     auto step_tracked(ChemicalField& field) -> void;
 
     auto profile(Profiling what) -> Profiler;
+
+    auto cellprofile(Profiling what) -> EquilibriumProfiler;
 
     auto trackStatus(const std::string & folder, const std::string & file) -> SolverStatus;
 
@@ -160,6 +180,9 @@ private:
 
     /// The classes to profile reactive transport computations
     std::vector<Profiler> profilers;
+
+    /// The classes to profile reactive transport computations
+    std::unique_ptr<EquilibriumProfiler> eq_cell_profiler = nullptr;
 
     /// The smart solver tracker
     std::vector<SolverStatus> status_trackers;

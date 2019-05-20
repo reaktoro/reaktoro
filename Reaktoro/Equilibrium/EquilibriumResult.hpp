@@ -17,6 +17,9 @@
 
 #pragma once
 
+#include <chrono>
+#include <vector>
+
 // Reaktoro includes
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 
@@ -27,6 +30,12 @@ struct SmartEquilibriumResult
 {
     /// The boolean flag that indicates if smart equilibrium calculation was used.
     bool succeeded = false;
+
+    /// Times required for
+    /// '0' - search for reference element (minimum element)
+    /// '1' - fetching data (including sensitivities) in reference element
+    /// '2' - matrix -vector manipulations
+    std::vector<double> times = {0, 0, 0};
 };
 
 /// A type used to describe the result of an equilibrium calculation
@@ -41,6 +50,7 @@ struct EquilibriumResult
 
     /// Apply an addition assignment to this instance
     auto operator+=(const EquilibriumResult& other) -> EquilibriumResult&;
+
 };
 
 } // namespace Reaktoro

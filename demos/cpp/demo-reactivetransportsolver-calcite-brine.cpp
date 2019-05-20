@@ -44,7 +44,8 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void;
 int main()
 {
 
-    std::vector<bool> solvers{0, 1};
+    // std::vector<bool> solvers{0, 1};
+    std::vector<bool> solvers{1};
 
     // Run over all possible solvers
     std::for_each(solvers.begin(), solvers.end(), [](const bool& elem){ runReactiveTransport(elem);});
@@ -61,8 +62,10 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     int year(365 * day);
 
     // Step 2: Define parameters for the reactive transport simulation
-    double xl(0.0), xr(1.0);            // the x-coordinates of the left and right boundaries
-    int ncells(100);                     // the number of cells in the spacial discretization
+    //double xl(0.0), xr(1.0);            // the x-coordinates of the left and right boundaries
+    //int ncells(100);                     // the number of cells in the spacial discretization
+    double xl(0.0), xr(0.1);            // the x-coordinates of the left and right boundaries
+    int ncells(10);                     // the number of cells in the spacial discretization
     int nsteps(1000);                   // the number of steps in the reactive transport simulation
     double D(1.0e-9);                   // the diffusion coefficient (in units of m2/s)
     double v(1.0 / day);              // the fluid pore velocity (in units of m/s)
@@ -83,7 +86,8 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
 
     // Step 3: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
-    editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCl2 MgCl2 CO2");
+    //editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCl2 MgCl2 CO2");
+    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
     editor.addMineralPhase("Quartz");
     editor.addMineralPhase("Calcite");
     editor.addMineralPhase("Dolomite");
@@ -155,6 +159,8 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     Profiler eq_profiler(rtsolver.profile(Profiling::EQ));
     Profiler total_profiler(Profiling::Total);
 
+    EquilibriumProfiler eq_cell_profiler(rtsolver.cellprofile(Profiling::EQ));
+
     // Step **: Create status tracker
     SolverStatus tracker(rtsolver.trackStatus(folder, "status-tracker"));
 
@@ -185,6 +191,8 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     std::cout << "CPU time     : ";
     total_profiler.consoleOutput();
     std::cout << std::endl << std::endl;
+
+    eq_cell_profiler.consoleOutput();
 
     // Output profiling results
     rtsolver.outputProfiling(folder + "/profiling");

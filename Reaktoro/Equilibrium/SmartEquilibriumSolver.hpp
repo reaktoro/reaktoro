@@ -69,6 +69,9 @@ public:
     auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
 
     /// Estimate the equilibrium state using sensitivity derivatives.
+    auto estimate_tracked(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
+
+    /// Estimate the equilibrium state using sensitivity derivatives.
     auto estimate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
 
     /// Solve an equilibrium calculation either by learning (i.e., triggering the convention approach)

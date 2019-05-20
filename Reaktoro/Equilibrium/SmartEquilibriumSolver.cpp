@@ -21,6 +21,7 @@
 #include <iostream> // todo remove
 #include <list>
 #include <tuple>
+#include <chrono>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -201,16 +202,100 @@ struct SmartEquilibriumSolver::Impl
         return res;
     }
 
+    /// Estimate equilibrium state using sensitivity derivatives
+    auto estimate_tracked(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
+    {
+
+        // Declare the alias for the declare type
+        using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
+        using clock = std::chrono::high_resolution_clock;
+        using duration = std::chrono::duration<double>;
+
+        time_point start;
+        duration elapsed_time;
+
+        // If the tree is empty abort estimation
+        if(tree.empty())
+            return {};
+
+        using TreeNodeType = std::tuple<Vector, ChemicalState, ChemicalProperties, EquilibriumSensitivity>;
+
+        // Class that stores info about the equilibrium computations
+        EquilibriumResult res;
+        res.smart.times;
+
+        // Comparison function based on the Euclidean distance
+        auto comp = [&](const TreeNodeType& a, const TreeNodeType& b)
+        {
+            const auto& be_a = std::get<0>(a);
+            const auto& be_b = std::get<0>(b);
+            return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();
+        };
+
+        start = clock::now();
+        // Find the reference element (closest to the new state be)
+        auto it = std::min_element(tree.begin(), tree.end(), comp);
+        elapsed_time = clock::now() - start;
+        res.smart.times[0] = elapsed_time.count(); // Profiling ref. element search
+
+        start = clock::now();
+        // Get all the data stored in the reference element
+        const auto& be0 = std::get<0>(*it);
+        const ChemicalState& state0 = std::get<1>(*it);
+        const ChemicalProperties& properties0 = std::get<2>(*it);
+        const EquilibriumSensitivity& sensitivity0 = std::get<3>(*it);
+        const auto& n0 = state0.speciesAmounts();
+
+        // Get the sensitivity derivatives dln(a) / dn
+        MatrixConstRef dlnadn = properties0.lnActivities().ddn; // TODO: this line is assuming all species are equilibrium specie! get the rows and columns corresponding to equilibrium species
+        const auto& lna0 = properties0.lnActivities().val;
+
+        elapsed_time = clock::now() - start;
+        res.smart.times[1] = elapsed_time.count(); // Profiling data fetch
+
+        const auto reltol = options.smart.reltol;
+        const auto abstol = options.smart.abstol;
+
+        start = clock::now();
+        // Calculate pertubation of n
+        dn.noalias() = sensitivity0.dndb * (be - be0); // n is actually delta(n)
+        n.noalias() = n0 + dn;
+        delta_lna.noalias() = dlnadn * dn;
+
+        elapsed_time = clock::now() - start;
+        res.smart.times[2] = elapsed_time.count();  // Profiling matrix-vector manipulations
+
+        // The estimated ln(a[i]) of each species must not be
+        // too far away from the reference value ln(aref[i])
+        const bool variation_check
+            = (delta_lna.array().abs() <= abstol + reltol * lna0.array().abs()).all();
+
+        // The estimated activity of all species must be positive.
+        const bool amount_check = n.minCoeff() > -1e-5;
+        if(variation_check && amount_check)
+        {
+            n.noalias() = abs(n);
+            state.setSpeciesAmounts(n);
+            res.optimum.succeeded = true;
+            res.smart.succeeded = true;
+            return res;
+        }
+
+        return res;
+    }
+
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
         // Attempt to estimate the result by on-demand learning
-        EquilibriumResult res = estimate(state, T, P, be);
+        //EquilibriumResult res = estimate(state, T, P, be);
+        EquilibriumResult res = estimate_tracked(state, T, P, be);
 
         // If the obtained result satisfies the accuracy criterion, we accept it
         if(res.optimum.succeeded) return res;
 
         // Otherwise, trigger learning (conventional approach)
         res += learn(state, T, P, be);
+
         return res;
     }
 };
