@@ -37,9 +37,10 @@ namespace Reaktoro {
 // Use this enum type to initialize profilers
 enum Profiling{
     RT = 1,
-    EQ = 2,
+    EQ = 2,     // step-precision
     CK = 3,
     Total = 4,
+    EQ_CW = 5   // cell-precition
 };
 
 struct SolverStatus{
@@ -64,16 +65,19 @@ struct Profiler{
     using timepoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
     using clock     = std::chrono::high_resolution_clock;
 
+    Profiler();
     Profiler(Profiling what);
+    virtual ~Profiler();
 
     auto startProfiling() -> void;
     auto endProfiling() -> void;
-    auto fileOutput(const std::string & file)-> void;
-    virtual auto consoleOutput()-> void;
     auto getProfilingSubject() const -> Profiling;
     auto operator==(const Profiler& p) const -> bool;
+    auto consoleOutput() -> void;
 
-    // Enum indicating which part of the reactive transport is profiled
+    virtual auto fileOutput(const std::string & file) -> void;
+
+    /// Enum indicating which part of the reactive transport is profiled
     Profiling subject;
 
     /// The start and finish time of profiling
@@ -86,24 +90,24 @@ struct Profiler{
 
 struct EquilibriumProfiler : public Profiler {
 
-    // Type that contains the pair
+    EquilibriumProfiler();
+    EquilibriumProfiler(Profiling what);
+    virtual ~EquilibriumProfiler();
+    auto updateLearning(int step) -> void;
+    auto updateEstimating(int step, std::vector<double> time_partition) -> void;
+
+    auto consoleOutput(int step) -> void;
+    auto fileOutput(const std::string & file)-> void;
+
+    /// The vector of the elapsed CPU times for learning and estimating time
+    std::vector<double> learn_times;
     // 0 - total time for estimation
     // 1 - time for ref.element search
     // 2 - time for data fetching
     // 3 - time for matrix-vector manipulation
-    using times = std::vector<std::vector<double>>;
+    std::vector<std::vector<double>> estimate_times;
 
-    EquilibriumProfiler(Profiling what);
-    auto updateLearning(int step) -> void;
-    auto updateEstimating(int step, std::vector<double> time_partition) -> void;
-    auto consoleOutput() -> void;
-    auto outputEstimateTime(int step) -> void;
-
-    /// The vector of the elapsed CPU times for learning and estimating time
-    std::vector<double> learn_times;
-    times estimate_times;
-
-    /// The height of the tree storing the reference states
+        /// The height of the tree storing the reference states
     int tree_height = 0;
 };
 
@@ -141,6 +145,8 @@ public:
     auto trackStatus(const std::string & folder, const std::string & file) -> SolverStatus;
 
     auto outputProfiling(const std::string & folder) -> void;
+
+    auto outputProfiling() -> void;
 
     auto setEquilibriumOptions(const EquilibriumOptions& options) -> void;
 
@@ -183,6 +189,7 @@ private:
 
     /// The classes to profile reactive transport computations
     std::unique_ptr<EquilibriumProfiler> eq_cell_profiler = nullptr;
+
 
     /// The smart solver tracker
     std::vector<SolverStatus> status_trackers;

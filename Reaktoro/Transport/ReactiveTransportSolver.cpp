@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iomanip>
 #include <tuple>
+#include <numeric>
 
 namespace Reaktoro {
 
@@ -16,7 +17,9 @@ namespace Reaktoro {
 
 // Implementation of class Profiler
 
+EquilibriumProfiler::EquilibriumProfiler(){};
 EquilibriumProfiler::EquilibriumProfiler(Profiling what): Profiler(what){}
+EquilibriumProfiler::~EquilibriumProfiler(){};
 
 auto EquilibriumProfiler::updateLearning(int step) -> void
 {
@@ -26,49 +29,78 @@ auto EquilibriumProfiler::updateLearning(int step) -> void
     else
         learn_times.emplace_back(elapsed.count());
 
+    if (estimate_times.size() == step)
+        estimate_times.emplace_back(std::vector<double>(4, 0.0));
+
     tree_height ++;
 }
 
 auto EquilibriumProfiler::updateEstimating(int step, std::vector<double> time_partition) -> void{
 
     std::chrono::duration<double> elapsed = clock::now() - start;
-    std::cout << elapsed.count() << "\t"
-              << time_partition[0] << "\t"
-              << time_partition[1] << "\t"
-              << time_partition[2] << "\n";
-
-    estimate_times.at(step)[0] += elapsed.count();
+    double est_time = elapsed.count();
+    /*
+    std::cout << step << "step " << "incr.: "
+              << " ref.element search : " << time_partition[0] / est_time * 100 << "% "
+              << " data fetching : " << time_partition[1] / est_time * 100 << "% "
+              << " matrix-vector oper. : " << time_partition[2] / est_time * 100 << "% \n";
+    */
+    if (estimate_times.size() == step) estimate_times.push_back(std::vector<double>(4, 0.0));
+    estimate_times.at(step)[0] += est_time;
     estimate_times.at(step)[1] += time_partition[0];
     estimate_times.at(step)[2] += time_partition[1];
     estimate_times.at(step)[3] += time_partition[2];
+
+    if (learn_times.size() == step) learn_times.emplace_back(0.0);
 }
-auto EquilibriumProfiler::consoleOutput() -> void
-{
-    std::cout << "Step \t Learning \t Estimating";
-    unsigned length = learn_times.size();
-    for (unsigned i = 0; i < length; i++)
-        std::cout << i + 1 << "\t" << learn_times[i] << "\t" << estimate_times[i][0];
-}
-auto EquilibriumProfiler::outputEstimateTime(int step) -> void
+
+/// Summary output to the consol
+auto EquilibriumProfiler::consoleOutput(int step) -> void
 {
     if (!estimate_times.empty())
         // 1 - time for ref.element search
         // 2 - time for data fetching
         // 3 - time for matrix-vector manipulation
-        std::cout << "out of total time " << estimate_times[step][0] << ": \n"
-                  << "\t - ref.element search  : " << estimate_times[step][1] << "\n"
-                  << "\t - data fetching       : " << estimate_times[step][2] << "\n"
-                  << "\t - matrix-vector oper. : " << estimate_times[step][3] << "\n";
-    else
-        estimate_times.emplace_back(std::vector<double>(4, 0.0));
+        std::cout << "total estimate time : " << estimate_times[step][0] << ""
+                  << " - ref.element search : " << estimate_times[step][1] / estimate_times[step][0] * 100 << "% "
+                  << " - data fetching : " << estimate_times[step][2] / estimate_times[step][0] * 100 << "% "
+                  << " - matrix-vector oper. : " << estimate_times[step][3] / estimate_times[step][0] * 100 << "% \n";
+    else estimate_times.emplace_back(std::vector<double>(4, 0.0));
+
+    if (learn_times.size() == step) learn_times.emplace_back(0.0);
+    else std::cout << "total learning time : " << learn_times[step] << " \n\n";
 }
 
+auto EquilibriumProfiler::fileOutput(const std::string & file) -> void
+{
+    /// The output stream of the data file
+    std::ofstream datafile;
+
+    /// The floating-point precision in the output.
+    int precision = 6;
+
+    // Open the data file
+    if(!file.empty())
+        datafile.open(file + "-EQ-CW.txt", std::ofstream::out | std::ofstream::trunc);
+    // Output the header of the data file
+    if(datafile.is_open()) {
+        // Set scientific mode and defined precision
+        datafile << std::scientific << std::setprecision(precision);
+        // Output times collected while profiling
+        unsigned int length = learn_times.size();
+        for (unsigned int i = 0; i < length; i++)
+            datafile << learn_times[i] + estimate_times[i][0] << "\t "
+                      << learn_times[i] + estimate_times[i][0] - estimate_times[i][1] << "\n";
+    }
+}
+Profiler::Profiler() {}
 Profiler::Profiler(Reaktoro::Profiling subject_) : subject(subject_){}
+Profiler::~Profiler() {}
+
 auto Profiler::startProfiling()  -> void { start = clock::now(); }
 auto Profiler::endProfiling() -> void
 {
     std::chrono::duration<double> elapsed = clock::now() - start;
-
     times.emplace_back(elapsed.count());
 }
 auto Profiler::fileOutput(const std::string & file) -> void
@@ -79,9 +111,6 @@ auto Profiler::fileOutput(const std::string & file) -> void
     /// The suffix of the datafile
     std::string suffix;
 
-    /// The flag that indicates if scientific format should be used.
-    bool scientific = true;
-
     /// The floating-point precision in the output.
     int precision = 6;
 
@@ -91,6 +120,7 @@ auto Profiler::fileOutput(const std::string & file) -> void
         case Profiling::EQ:     suffix = "EQ"; break;
         case Profiling::CK:     suffix = "CK";  break;
         case Profiling::Total:  suffix = "Total"; break;
+        case Profiling::EQ_CW:  suffix = "EQ-CW"; break;
     }
     // Open the data file
     if(!file.empty())
@@ -101,8 +131,7 @@ auto Profiler::fileOutput(const std::string & file) -> void
         // Set scientific mode and defined precision
         datafile << std::scientific << std::setprecision(precision);
         // Output times collected while profiling
-        for (double time : times)
-            datafile << time << "\n";
+        for (double time : times)   datafile << time << "\n";
     }
 
 }
@@ -111,6 +140,7 @@ auto Profiler::consoleOutput() -> void
     std::for_each(begin(times), end(times),
                   [&](const double & value){ std::cout << value << "\t"; });
 }
+
 auto Profiler::getProfilingSubject() const -> Profiling {
     return subject;
 }
@@ -205,13 +235,43 @@ auto ReactiveTransportSolver::trackStatus(const std::string &folder,
     return status_trackers.back();
 }
 
-auto ReactiveTransportSolver::outputProfiling(
-        const std::string &folder) -> void {
+auto ReactiveTransportSolver::outputProfiling(const std::string &folder) -> void {
     auto eq_profiler = find(begin(profilers), end(profilers), Profiling::EQ);
     if (eq_profiler != end(profilers)) eq_profiler->fileOutput(folder);
 
     auto rt_profiler = std::find(begin(profilers), end(profilers), Profiling::RT);
     if (rt_profiler != end(profilers)) rt_profiler->fileOutput(folder);
+
+    if (eq_cell_profiler) eq_cell_profiler->fileOutput(folder);
+}
+
+auto ReactiveTransportSolver::outputProfiling() -> void
+{
+    unsigned length = eq_cell_profiler->learn_times.size();
+
+    double learn_time = 0;
+    double minsearch_time = 0;
+    double estimate_time = 0 ;
+
+    for (unsigned i = 0; i < length; i++) learn_time += eq_cell_profiler->learn_times[i];
+    for (unsigned i = 0; i < length; i++) minsearch_time += eq_cell_profiler->estimate_times[i][1];
+    for (unsigned i = 0; i < length; i++) estimate_time += eq_cell_profiler->estimate_times[i][0];
+
+    std::cout << "learning time                 : " << learn_time << "\n";
+    std::cout << "estimating time               : " << estimate_time << "\n";
+    std::cout << "estimating time (ideal search): " << estimate_time - minsearch_time << "\n";
+    std::cout << "total time                    : " << learn_time + estimate_time << "\n";
+    std::cout << "total time (ideal search)     : " << learn_time + estimate_time - minsearch_time << "\n\n";
+
+    /*
+    std::cout << "Step \t Smart solver \t Smart solver (without ref. search) \t Ratio \n";
+    for (unsigned i = 0; i < length; i++)
+        std::cout << i + 1 << "\t & "
+        << eq_cell_profiler->learn_times[i] + eq_cell_profiler->estimate_times[i][0] << "\t & "
+        << eq_cell_profiler->learn_times[i] + eq_cell_profiler->estimate_times[i][0] - eq_cell_profiler->estimate_times[i][1] << "\t & "
+        << (eq_cell_profiler->learn_times[i] + eq_cell_profiler->estimate_times[i][0]) / (eq_cell_profiler->learn_times[i] + eq_cell_profiler->estimate_times[i][0] - eq_cell_profiler->estimate_times[i][1]) << "\\\\\n";
+
+    */
 }
 
 auto ReactiveTransportSolver::initialize() -> void {
@@ -281,12 +341,11 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
     const auto &ifs = system_.indicesFluidSpecies();
     const auto &iss = system_.indicesSolidSpecies();
 
-    if (steps) std::cout << "system_ = " << system_ << std::endl;
+    //if (steps) std::cout << "system_ = " << system_ << std::endl;
 
     // Collect the amounts of elements in the solid and fluid species
     for (Index icell = 0; icell < num_cells; ++icell) {
         bf.row(icell) = field[icell].elementAmountsInSpecies(ifs);
-        std::cout << "bf.row(icell) = " << bf.row(icell) << std::endl;
         bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
     }
 
@@ -297,17 +356,8 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
 
     // Transport the elements in the fluid species
     for (Index ielement = 0; ielement < num_elements; ++ielement) {
-
-        if (ielement == num_elements - 1) {
-            std::cout << "bbc[ielement] = " << bbc[ielement] << std::endl;
-            std::cout << "bf.col(ielement) = " << bf.col(ielement) << std::endl;
-        }
         transportsolver.setBoundaryValue(bbc[ielement]);
         transportsolver.step(bf.col(ielement));
-
-        if (ielement == num_elements - 1)
-            std::cout << "bbf.col(ielement) = " << bf.col(ielement) << std::endl;
-
     }
     // Sum the amounts of elements distributed among fluid and solid species
     b.noalias() = bf + bs;
@@ -330,11 +380,12 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
         const double T = field[icell].temperature();
         const double P = field[icell].pressure();
 
-        std::cout << "b.row(icell) = \n" << b.row(icell) << std::endl;
-        std::cout << "field[icell] = \n" << field[icell] << std::endl;
+        //std::cout << "b.row(icell) = \n" << b.row(icell) << std::endl;
+        //std::cout << "field[icell] = \n" << field[icell] << std::endl;
+
+        eq_cell_profiler->startProfiling();
 
         if (smart) {
-            eq_cell_profiler->startProfiling();
             // Solve with a smart equilibrium solver
             EquilibriumResult res = smart_equilibriumsolver.solve(field[icell],
                                                                   T, P,
@@ -350,27 +401,25 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
             else
                 eq_cell_profiler->updateLearning(steps);
 
-            std::cout << "icell               : " << icell << "\n";
-            if (res.smart.succeeded) {
-                std::cout << "ref.element search  : " << res.smart.times[0] << "\n"
-                          << "data fetching       : " << res.smart.times[1] << "\n"
-                          << "matrix-vector oper. : " << res.smart.times[2] << "\n";
-            }
-            else {
-                std::cout << "learning time       : " << eq_cell_profiler->learn_times[steps] << "\n";
-            }
-            std::cout << "b.row(icell)        :\n" << b.row(icell) << std::endl;
-            std::cout << "field[icell]        :\n" << field[icell] << std::endl;
-
+            /*
+            std::cout << "steps : " << steps << ", icell : " << icell  << " smart.succeeded : " << res.smart.succeeded;
+            if (res.smart.succeeded)
+                std::cout << ", estimate (s) : " << eq_cell_profiler->estimate_times[steps][0] << "\n";
+            else
+                std::cout << ", learning (s) : " << eq_cell_profiler->learn_times[steps] << "\n";
+            */
+            //std::cout << "b.row(icell)        :\n" << b.row(icell) << std::endl;
+            //std::cout << "field[icell]        :\n" << field[icell] << std::endl;
         } else {
             // Solve with a conventional equilibrium solver
             equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+            eq_cell_profiler->updateLearning(steps);
         }
 
         for (auto output : outputs)
             output.update(field[icell], icell);
     }
-    eq_cell_profiler->outputEstimateTime(steps);
+    //eq_cell_profiler->consoleOutput(steps);
 
     //std::cout << "field[num_cells - 1] = \n" << field[num_cells - 1] << std::endl;
 
@@ -385,10 +434,12 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
         output.close();
 
     // Collect the amounts of elements in the solid and fluid species
+    /*
     for (Index icell = 0; icell < num_cells; ++icell) {
         bf.row(icell) = field[icell].elementAmountsInSpecies(ifs);
-        std::cout << "Z(icell) = " << bf.row(icell)[8] << std::endl;
+        std::cout << icell << " icell = " << std::scientific << bf.row(icell) << std::defaultfloat << std::endl;
     }
+    */
     ++steps;
 }
 }

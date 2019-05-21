@@ -44,8 +44,9 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void;
 int main()
 {
 
-    // std::vector<bool> solvers{0, 1};
-    std::vector<bool> solvers{1};
+
+    std::vector<bool> solvers{0, 1};
+    // std::vector<bool> solvers{1};
 
     // Run over all possible solvers
     std::for_each(solvers.begin(), solvers.end(), [](const bool& elem){ runReactiveTransport(elem);});
@@ -62,23 +63,23 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     int year(365 * day);
 
     // Step 2: Define parameters for the reactive transport simulation
-    //double xl(0.0), xr(1.0);            // the x-coordinates of the left and right boundaries
-    //int ncells(100);                     // the number of cells in the spacial discretization
-    double xl(0.0), xr(0.1);            // the x-coordinates of the left and right boundaries
-    int ncells(10);                     // the number of cells in the spacial discretization
-    int nsteps(1000);                   // the number of steps in the reactive transport simulation
+    double xl(0.0), xr(1.0);            // the x-coordinates of the left and right boundaries
+    int ncells(100);                     // the number of cells in the spacial discretization
+    //double xl(0.0), xr(0.1);            // the x-coordinates of the left and right boundaries
+    //int ncells(10);                     // the number of cells in the spacial discretization
+    int nsteps(2400);                   // the number of steps in the reactive transport simulation
     double D(1.0e-9);                   // the diffusion coefficient (in units of m2/s)
     double v(1.0 / day);              // the fluid pore velocity (in units of m/s)
     double dx((xr - xl) / ncells);      // the time step (in units of s)
-    double dt(10 * minute);                  // the time step (in units of s)
+    double dt(5 * minute);                  // the time step (in units of s)
     double T(60.0);                     // the temperature (in units of degC)
     double P(100);                      // the pressure (in units of bar)
     double CFL(v * dt / dx);
-    std::cout << "CFL number   : " << CFL << std::endl;
+    //std::cout << "CFL number   : " << CFL << std::endl;
 
     // Step **: Define chemical equilibrium options
     EquilibriumOptions options;
-    options.smart.reltol = 1e-1;
+    options.smart.reltol = 1e-2;
     options.smart.abstol = 1e-12;
 
     // Step **: Create the results folder
@@ -154,12 +155,12 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     output.add("phaseVolume(Dolomite)");
     output.filename(folder + "/" + "test.txt");
 
-    // Step **: Create two profilers
+    // Step **: Create two profilers on the step level and one general profiler
     Profiler rt_profiler(rtsolver.profile(Profiling::RT));
     Profiler eq_profiler(rtsolver.profile(Profiling::EQ));
-    Profiler total_profiler(Profiling::Total);
 
-    EquilibriumProfiler eq_cell_profiler(rtsolver.cellprofile(Profiling::EQ));
+    // Step **: Create a profiler on a cell level
+    EquilibriumProfiler eq_cell_profiler(rtsolver.cellprofile(Profiling::EQ_CW));
 
     // Step **: Create status tracker
     SolverStatus tracker(rtsolver.trackStatus(folder, "status-tracker"));
@@ -167,9 +168,6 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     // Step 15: Set initial time and counter of steps in time
     double t(0.0);
     int step(0);
-
-    // Step **: Start profiling total simulation
-    total_profiler.startProfiling();
 
     // Reactive transport simulations in the cycle
     while (step <= nsteps){
@@ -184,15 +182,9 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
         t += dt;
         step += 1;
     }
-    // Step **: End profiling total simulation
-    total_profiler.endProfiling();
 
     // Step **: Output the total time of the simulations
-    std::cout << "CPU time     : ";
-    total_profiler.consoleOutput();
-    std::cout << std::endl << std::endl;
-
-    eq_cell_profiler.consoleOutput();
+    rtsolver.outputProfiling();
 
     // Output profiling results
     rtsolver.outputProfiling(folder + "/profiling");
