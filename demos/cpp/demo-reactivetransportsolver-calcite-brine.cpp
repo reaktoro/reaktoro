@@ -113,9 +113,10 @@ auto runReactiveTransport(const Params & params) -> void
     ChemicalEditor editor;
     //editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCl2 MgCl2 CO2");
     //editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
-    editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C");
-    //        .setChemicalModelPitzerHMW()
-    //        .setActivityModelDrummondCO2();
+    //editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C");
+    editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
+            .setChemicalModelPitzerHMW()
+            .setActivityModelDrummondCO2();
     editor.addMineralPhase("Quartz");
     editor.addMineralPhase("Calcite");
     editor.addMineralPhase("Dolomite");

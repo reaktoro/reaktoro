@@ -109,6 +109,7 @@ struct EquilibriumProfiler : public Profiler {
     // 1 - time for ref.element search
     // 2 - time for data fetching
     // 3 - time for matrix-vector manipulation
+    // 4 - time for ...
     std::vector<std::vector<double>> estimate_times;
 
     /// The height of the tree storing the reference states

@@ -111,6 +111,21 @@ auto EquilibriumProfiler::fileOutput(const std::string & file) -> void
     }
     datafile.close();
 
+    // Open the date file for the estimation time analysis
+    if(!file.empty())
+        datafile.open(file + "-EQ-MV.txt", std::ofstream::out | std::ofstream::trunc);
+    // Output the header of the data file
+    if(datafile.is_open()) {
+        // Set scientific mode and defined precision
+        datafile << std::scientific << std::setprecision(precision);
+        // Output times collected while profiling
+        unsigned int length = learn_times.size();
+        for (unsigned int i = 0; i < length; i++)
+            /// Output estimate time, search time, and the tree height
+            datafile << estimate_times[i][2] << "\t "
+                     << estimate_times[i][3] << "\n";
+    }
+    datafile.close();
 }
 Profiler::Profiler() {}
 Profiler::Profiler(Reaktoro::Profiling subject_) : subject(subject_){}
