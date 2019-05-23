@@ -30,7 +30,7 @@ auto EquilibriumProfiler::updateLearning(int step) -> void
         learn_times.emplace_back(elapsed.count());
 
     if (estimate_times.size() == step)
-        estimate_times.emplace_back(std::vector<double>(4, 0.0));
+        estimate_times.emplace_back(std::vector<double>(estimate_data, 0.0));
 
     tree_height ++;
 }
@@ -50,6 +50,7 @@ auto EquilibriumProfiler::updateEstimating(int step, std::vector<double> time_pa
     estimate_times.at(step)[1] += time_partition[0];
     estimate_times.at(step)[2] += time_partition[1];
     estimate_times.at(step)[3] += time_partition[2];
+    estimate_times.at(step)[4] = tree_height;
 
     if (learn_times.size() == step) learn_times.emplace_back(0.0);
 }
@@ -79,9 +80,25 @@ auto EquilibriumProfiler::fileOutput(const std::string & file) -> void
     /// The floating-point precision in the output.
     int precision = 6;
 
-    // Open the data file
+    /// Open the data file
     if(!file.empty())
         datafile.open(file + "-EQ-CW.txt", std::ofstream::out | std::ofstream::trunc);
+    /// Output the header of the data file
+    if(datafile.is_open()) {
+        /// Set scientific mode and defined precision
+        datafile << std::scientific << std::setprecision(precision);
+        /// Output times collected while profiling
+        unsigned int length = learn_times.size();
+        for (unsigned int i = 0; i < length; i++)
+            datafile << learn_times[i] + estimate_times[i][0] << "\t "
+                      << learn_times[i] + estimate_times[i][0] - estimate_times[i][1] << "\n";
+    }
+
+    datafile.close();
+
+    // Open the date file for the estimation time analysis
+    if(!file.empty())
+        datafile.open(file + "-EQ-EST.txt", std::ofstream::out | std::ofstream::trunc);
     // Output the header of the data file
     if(datafile.is_open()) {
         // Set scientific mode and defined precision
@@ -89,9 +106,13 @@ auto EquilibriumProfiler::fileOutput(const std::string & file) -> void
         // Output times collected while profiling
         unsigned int length = learn_times.size();
         for (unsigned int i = 0; i < length; i++)
-            datafile << learn_times[i] + estimate_times[i][0] << "\t "
-                      << learn_times[i] + estimate_times[i][0] - estimate_times[i][1] << "\n";
+            /// Output estimate time, search time, and the tree height
+            datafile << estimate_times[i][0] << "\t "
+                     << estimate_times[i][1] << "\t "
+                     << estimate_times[i][4] << "\n";
     }
+    datafile.close();
+
 }
 Profiler::Profiler() {}
 Profiler::Profiler(Reaktoro::Profiling subject_) : subject(subject_){}
@@ -133,6 +154,7 @@ auto Profiler::fileOutput(const std::string & file) -> void
         // Output times collected while profiling
         for (double time : times)   datafile << time << "\n";
     }
+    datafile.close();
 
 }
 auto Profiler::consoleOutput() -> void
@@ -301,10 +323,15 @@ auto ReactiveTransportSolver::step(ChemicalField &field) -> void {
         bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
     }
 
+    // Porosity in the boundary cell
+    unsigned int icell_bc = 0;
+    double phi_bc = field[icell_bc].properties().fluidVolume().val
+                    / field[icell_bc].properties().volume().val;
+
     // Transport the elements in the fluid species
     for (Index ielement = 0; ielement < num_elements; ++ielement) {
 
-        transportsolver.setBoundaryValue(bbc[ielement]);
+        transportsolver.setBoundaryValue(phi_bc * bbc[ielement]);
         transportsolver.step(bf.col(ielement));
     }
     // Sum the amounts of elements distributed among fluid and solid species
@@ -349,14 +376,32 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
         bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
     }
 
+    // Porosity in the boundary cell
+
+    std::vector<double> phi(num_cells, 0.0);
+
+    for (Index icell = 0; icell < num_cells; ++icell) {
+        phi[icell] = field[icell].properties().fluidVolume().val
+                 / field[icell].properties().volume().val;
+    }
+    unsigned int icell_bc = 0;
+    double phi_bc = field[icell_bc].properties().fluidVolume().val
+                    / field[icell_bc].properties().volume().val;
+
     // Find profiler for the reactive transort and start profiling
-    auto rt_profiler = std::find(begin(profilers), end(profilers),
-                                 Profiling::RT);
+    auto rt_profiler = std::find(begin(profilers), end(profilers), Profiling::RT);
     if (rt_profiler != end(profilers)) rt_profiler->startProfiling();
 
     // Transport the elements in the fluid species
     for (Index ielement = 0; ielement < num_elements; ++ielement) {
+
+        std::cout << "phi_bc = \n" << phi_bc << std::endl;
+        std::cout << "bbc[ielement] = \n" << bbc[ielement] << std::endl;
+        std::cout << "bf.col(ielement) = \n" << bf.col(ielement) << std::endl;
+
         transportsolver.setBoundaryValue(bbc[ielement]);
+        // Scale BC with a porousity of the boundary cell
+        //transportsolver.setBoundaryValue(phi_bc * bbc[ielement]);
         transportsolver.step(bf.col(ielement));
     }
     // Sum the amounts of elements distributed among fluid and solid species
@@ -372,8 +417,7 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
     }
 
     // Find profiler for the chemical equilibrium and start profiling
-    auto eq_profiler = find(begin(profilers), end(profilers),
-                            Profiling::EQ);
+    auto eq_profiler = find(begin(profilers), end(profilers),Profiling::EQ);
     if (eq_profiler != end(profilers)) eq_profiler->startProfiling();
 
     for (Index icell = 0; icell < num_cells; ++icell) {
@@ -404,7 +448,8 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
             /*
             std::cout << "steps : " << steps << ", icell : " << icell  << " smart.succeeded : " << res.smart.succeeded;
             if (res.smart.succeeded)
-                std::cout << ", estimate (s) : " << eq_cell_profiler->estimate_times[steps][0] << "\n";
+                std::cout << ", estimate (s) : " << eq_cell_profiler->estimate_times[steps][0]
+                          << ", tree height : " << eq_cell_profiler->tree_height << "\n";
             else
                 std::cout << ", learning (s) : " << eq_cell_profiler->learn_times[steps] << "\n";
             */

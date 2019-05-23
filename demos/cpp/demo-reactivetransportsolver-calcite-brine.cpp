@@ -44,7 +44,6 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void;
 int main()
 {
 
-
     std::vector<bool> solvers{0, 1};
     // std::vector<bool> solvers{1};
 
@@ -63,24 +62,24 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     int year(365 * day);
 
     // Step 2: Define parameters for the reactive transport simulation
-    double xl(0.0), xr(1.0);            // the x-coordinates of the left and right boundaries
-    int ncells(100);                     // the number of cells in the spacial discretization
-    //double xl(0.0), xr(0.1);            // the x-coordinates of the left and right boundaries
-    //int ncells(10);                     // the number of cells in the spacial discretization
-    int nsteps(2400);                   // the number of steps in the reactive transport simulation
+    // double xl(0.0), xr(1.0);            // the x-coordinates of the left and right boundaries
+    // int ncells(100);                     // the number of cells in the spacial discretization
+    double xl(0.0), xr(0.1);            // the x-coordinates of the left and right boundaries
+    int ncells(10);                     // the number of cells in the spacial discretization
+    int nsteps(240);                   // the number of steps in the reactive transport simulation
     double D(1.0e-9);                   // the diffusion coefficient (in units of m2/s)
-    double v(1.0 / day);              // the fluid pore velocity (in units of m/s)
+    double v(1.0 / day);                // the Darcy velocity (in units of m/s)
     double dx((xr - xl) / ncells);      // the time step (in units of s)
     double dt(5 * minute);                  // the time step (in units of s)
     double T(60.0);                     // the temperature (in units of degC)
     double P(100);                      // the pressure (in units of bar)
     double CFL(v * dt / dx);
-    //std::cout << "CFL number   : " << CFL << std::endl;
+    std::cout << "CFL number   : " << CFL << std::endl;
 
     // Step **: Define chemical equilibrium options
     EquilibriumOptions options;
-    options.smart.reltol = 1e-2;
-    options.smart.abstol = 1e-12;
+    options.smart.reltol = 1e-1;
+    options.smart.abstol = 1e-15;
 
     // Step **: Create the results folder
     auto folder = makeResultsFolder(std::make_tuple(ncells, nsteps, is_smart_solver), options);
