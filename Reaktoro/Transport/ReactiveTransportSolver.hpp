@@ -57,6 +57,9 @@ struct SolverStatus{
 
     /// The list of booleans indicating weather smart estimation was triggered
     std::vector<bool> statuses;
+
+    int smart_counter = 0;
+    int total_counter = 0;
 };
 
 /// Use this class for profiling reactive transport components
@@ -64,6 +67,7 @@ struct Profiler{
 
     using timepoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
     using clock     = std::chrono::high_resolution_clock;
+    //using clock     = std::chrono::steady_clock;
 
     Profiler();
     Profiler(Profiling what);
@@ -107,8 +111,12 @@ struct EquilibriumProfiler : public Profiler {
     // 3 - time for matrix-vector manipulation
     std::vector<std::vector<double>> estimate_times;
 
-        /// The height of the tree storing the reference states
+    /// The height of the tree storing the reference states
     int tree_height = 0;
+
+    /// The size of the data stored to analyse estimating time
+    unsigned int estimate_data = 5;
+
 };
 
 /// Use this class for solving reactive transport problems.
@@ -189,7 +197,6 @@ private:
 
     /// The classes to profile reactive transport computations
     std::unique_ptr<EquilibriumProfiler> eq_cell_profiler = nullptr;
-
 
     /// The smart solver tracker
     std::vector<SolverStatus> status_trackers;

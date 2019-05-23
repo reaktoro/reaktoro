@@ -13,8 +13,6 @@
 
 namespace Reaktoro {
 
-
-
 // Implementation of class Profiler
 
 EquilibriumProfiler::EquilibriumProfiler(){};
@@ -37,7 +35,7 @@ auto EquilibriumProfiler::updateLearning(int step) -> void
 
 auto EquilibriumProfiler::updateEstimating(int step, std::vector<double> time_partition) -> void{
 
-    std::chrono::duration<double> elapsed = clock::now() - start;
+    std::chrono::duration<double> elapsed =clock::now() - start;
     double est_time = elapsed.count();
     /*
     std::cout << step << "step " << "incr.: "
@@ -279,12 +277,20 @@ auto ReactiveTransportSolver::outputProfiling() -> void
     for (unsigned i = 0; i < length; i++) minsearch_time += eq_cell_profiler->estimate_times[i][1];
     for (unsigned i = 0; i < length; i++) estimate_time += eq_cell_profiler->estimate_times[i][0];
 
-    std::cout << "learning time                 : " << learn_time << "\n";
-    std::cout << "estimating time               : " << estimate_time << "\n";
-    std::cout << "estimating time (ideal search): " << estimate_time - minsearch_time << "\n";
-    std::cout << "total time                    : " << learn_time + estimate_time << "\n";
-    std::cout << "total time (ideal search)     : " << learn_time + estimate_time - minsearch_time << "\n\n";
-
+    if (smart) {
+        std::cout << std::setprecision(2)
+                  << 100.00 *
+                     double(status_trackers[0].total_counter - status_trackers[0].smart_counter) /
+                     double(status_trackers[0].total_counter) << "% of training : "
+                  << status_trackers[0].total_counter - status_trackers[0].smart_counter << " cells out of "
+                  << status_trackers[0].total_counter << "\n";
+        std::cout << std::setprecision(4);
+        std::cout << "learning time                  : " << learn_time << "\n";
+        std::cout << "estimating time (ideal search) : " << estimate_time - minsearch_time << "\n";
+        std::cout << "total time (ideal search)      : " << learn_time + estimate_time - minsearch_time << "\n\n";
+        std::cout << "estimating time                : " << estimate_time  << "\n";
+    }
+    std::cout << "total time                     : " << learn_time + estimate_time << "\n\n";
     /*
     std::cout << "Step \t Smart solver \t Smart solver (without ref. search) \t Ratio \n";
     for (unsigned i = 0; i < length; i++)
@@ -325,12 +331,10 @@ auto ReactiveTransportSolver::step(ChemicalField &field) -> void {
 
     // Porosity in the boundary cell
     unsigned int icell_bc = 0;
-    double phi_bc = field[icell_bc].properties().fluidVolume().val
-                    / field[icell_bc].properties().volume().val;
+    double phi_bc = field[icell_bc].properties().fluidVolume().val;
 
     // Transport the elements in the fluid species
     for (Index ielement = 0; ielement < num_elements; ++ielement) {
-
         transportsolver.setBoundaryValue(phi_bc * bbc[ielement]);
         transportsolver.step(bf.col(ielement));
     }
@@ -379,14 +383,20 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
     // Porosity in the boundary cell
 
     std::vector<double> phi(num_cells, 0.0);
-
     for (Index icell = 0; icell < num_cells; ++icell) {
-        phi[icell] = field[icell].properties().fluidVolume().val
-                 / field[icell].properties().volume().val;
+        phi[icell] = field[icell].properties().fluidVolume().val;
     }
+    /*
+    std::cout << "phi = \n";
+    for (auto phi_i : phi)
+        std::cout << phi_i << "\t";
+    std::cout << std::endl;
+    */
+
     unsigned int icell_bc = 0;
-    double phi_bc = field[icell_bc].properties().fluidVolume().val
-                    / field[icell_bc].properties().volume().val;
+    double phi_bc = field[icell_bc].properties().fluidVolume().val;
+
+    //std::cout << "field[icell].properties().volume().val = " << field[0].properties().volume().val << std::endl;
 
     // Find profiler for the reactive transort and start profiling
     auto rt_profiler = std::find(begin(profilers), end(profilers), Profiling::RT);
@@ -395,13 +405,9 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
     // Transport the elements in the fluid species
     for (Index ielement = 0; ielement < num_elements; ++ielement) {
 
-        std::cout << "phi_bc = \n" << phi_bc << std::endl;
-        std::cout << "bbc[ielement] = \n" << bbc[ielement] << std::endl;
-        std::cout << "bf.col(ielement) = \n" << bf.col(ielement) << std::endl;
-
-        transportsolver.setBoundaryValue(bbc[ielement]);
+        // transportsolver.setBoundaryValue(bbc[ielement]);
         // Scale BC with a porousity of the boundary cell
-        //transportsolver.setBoundaryValue(phi_bc * bbc[ielement]);
+        transportsolver.setBoundaryValue(phi_bc * bbc[ielement]);
         transportsolver.step(bf.col(ielement));
     }
     // Sum the amounts of elements distributed among fluid and solid species
@@ -438,10 +444,11 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
             // Save the statuses of the cells depending on whether smart estimation or learning was triggered
             if (!status_trackers.empty())
                 status_trackers[0].statuses.emplace_back(res.smart.succeeded);
-
             // Update the time spend for either for learnign or estimating
-            if (res.smart.succeeded)
+            if (res.smart.succeeded) {
                 eq_cell_profiler->updateEstimating(steps, res.smart.times);
+                status_trackers[0].smart_counter++;
+            }
             else
                 eq_cell_profiler->updateLearning(steps);
 
@@ -464,6 +471,9 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
         for (auto output : outputs)
             output.update(field[icell], icell);
     }
+    // Counter all the statuses
+    status_trackers[0].total_counter += num_cells;
+
     //eq_cell_profiler->consoleOutput(steps);
 
     //std::cout << "field[num_cells - 1] = \n" << field[num_cells - 1] << std::endl;

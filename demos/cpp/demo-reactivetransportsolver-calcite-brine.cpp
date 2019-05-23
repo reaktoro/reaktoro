@@ -34,26 +34,38 @@
 #include <Reaktoro/Reaktoro.hpp>
 
 using namespace Reaktoro;
-using Params = std::tuple<int, int, bool>;
+struct Params{
+
+    // Discretisation params
+    int ncells; // the number of cells in the spacial discretization
+    int nsteps; // the number of steps in the reactive transport simulation
+    double xl; // the x-coordinates of the left boundaries
+    double xr; // the x-coordinates of the right boundaries
+    double dx; // the space step (in units of m)
+    double dt; // the time step (in units of s)
+
+    // Physical params
+    double D; // the diffusion coefficient (in units of m2/s)
+    double v; // the Darcy velocity (in units of m/s)
+    double T; // the temperature (in units of degC)
+    double P; // the pressure (in units of bar)
+
+    // Solver params
+    bool is_smart_solver;
+    double smart_reltol;
+    double smart_abstol;
+
+};
 
 /// Forward declaration
 auto mkdir(const std::string & folder) -> bool;
-auto makeResultsFolder(const Params & params, const EquilibriumOptions& options) -> std::string;
-auto runReactiveTransport(const bool& is_smart_solver) -> void;
+auto outputConsole(const Params & params) -> void;
+auto makeResultsFolder(const Params & params) -> std::string;
+auto runReactiveTransport(const Params & params) -> void;
 
 int main()
 {
 
-    std::vector<bool> solvers{0, 1};
-    // std::vector<bool> solvers{1};
-
-    // Run over all possible solvers
-    std::for_each(solvers.begin(), solvers.end(), [](const bool& elem){ runReactiveTransport(elem);});
-
-    return 0;
-}
-auto runReactiveTransport(const bool& is_smart_solver) -> void
-{
     // Step 1: Initialise auxiliary time-related constants
     int second(1);
     int minute(60);
@@ -62,32 +74,48 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     int year(365 * day);
 
     // Step 2: Define parameters for the reactive transport simulation
-    // double xl(0.0), xr(1.0);            // the x-coordinates of the left and right boundaries
-    // int ncells(100);                     // the number of cells in the spacial discretization
-    double xl(0.0), xr(0.1);            // the x-coordinates of the left and right boundaries
-    int ncells(10);                     // the number of cells in the spacial discretization
-    int nsteps(240);                   // the number of steps in the reactive transport simulation
-    double D(1.0e-9);                   // the diffusion coefficient (in units of m2/s)
-    double v(1.0 / day);                // the Darcy velocity (in units of m/s)
-    double dx((xr - xl) / ncells);      // the time step (in units of s)
-    double dt(5 * minute);                  // the time step (in units of s)
-    double T(60.0);                     // the temperature (in units of degC)
-    double P(100);                      // the pressure (in units of bar)
-    double CFL(v * dt / dx);
-    std::cout << "CFL number   : " << CFL << std::endl;
+    Params params;
+    params.xl = 0.0; // the x-coordinates of the left boundaries
+    params.xr = 1.0; // the x-coordinates of the right boundaries
+    params.ncells = 100; // the number of cells in the spacial discretization
+    params.nsteps = 4800; // the number of steps in the reactive transport simulation
+    params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
+    params.dt = 2 * minute; // the time step (in units of s)
+
+
+    params.D = 1.0e-9; // the diffusion coefficient (in units of m2/s)
+    params.v = 1.0 / day; // the Darcy velocity (in units of m/s)
+    params.T = 60.0;                     // the temperature (in units of degC)
+    params.P = 100;                      // the pressure (in units of bar)
+
+    params.smart_reltol = 1e-1;
+    params.smart_abstol = 1e-12;
+
+    outputConsole(params);
+
+    params.is_smart_solver = 1; runReactiveTransport(params);
+    params.is_smart_solver = 0; runReactiveTransport(params);
+
+    return 0;
+}
+auto runReactiveTransport(const Params & params) -> void
+{
+
+    // Step **: Create the results folder
+    auto folder = makeResultsFolder(params);
 
     // Step **: Define chemical equilibrium options
     EquilibriumOptions options;
-    options.smart.reltol = 1e-1;
-    options.smart.abstol = 1e-15;
-
-    // Step **: Create the results folder
-    auto folder = makeResultsFolder(std::make_tuple(ncells, nsteps, is_smart_solver), options);
+    options.smart.reltol = params.smart_reltol;
+    options.smart.abstol = params.smart_abstol;
 
     // Step 3: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
     //editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCl2 MgCl2 CO2");
-    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
+    //editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
+    editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C");
+    //        .setChemicalModelPitzerHMW()
+    //        .setActivityModelDrummondCO2();
     editor.addMineralPhase("Quartz");
     editor.addMineralPhase("Calcite");
     editor.addMineralPhase("Dolomite");
@@ -97,8 +125,8 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
 
     // Step 5: Define the initial condition (IC) of the reactive transport modeling problem
     EquilibriumProblem problem_ic(system);
-    problem_ic.setTemperature(T, "celsius");
-    problem_ic.setPressure(P, "bar");
+    problem_ic.setTemperature(params.T, "celsius");
+    problem_ic.setPressure(params.P, "bar");
     problem_ic.add("H2O",   1.0, "kg");
     problem_ic.add("NaCl",  0.7, "mol");
     problem_ic.add("CaCO3", 10,  "mol");
@@ -106,8 +134,8 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
 
     // Step 6: Define the boundary condition (BC)  of the reactive transport modeling problem
     EquilibriumProblem problem_bc(system);
-    problem_bc.setTemperature(T, "celsius");
-    problem_bc.setPressure(P, "bar");
+    problem_bc.setTemperature(params.T, "celsius");
+    problem_bc.setPressure(params.P, "bar");
     problem_bc.add("H2O",   1.00, "kg");
     problem_bc.add("NaCl",  0.90, "mol");
     problem_bc.add("MgCl2", 0.05, "mol");
@@ -119,7 +147,7 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     ChemicalState state_bc = equilibrate(problem_bc);
 
     // Step 8: Scale the volumes of the phases in the initial condition
-    state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");
+    state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");    //
     state_ic.scalePhaseVolume("Quartz", 0.882, "m3");
     state_ic.scalePhaseVolume("Calcite", 0.018, "m3");
 
@@ -127,18 +155,18 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     state_bc.scaleVolume(1.0, "m3");
 
     // Step 10: Create the mesh for the column
-    Mesh mesh(ncells, xl, xr);
+    Mesh mesh(params.ncells, params.xl, params.xr);
 
     // Step 11: Create a chemical field object with every cell having state given by state_ic
     ChemicalField field(mesh.numCells(), state_ic);
 
     // Step 12: Define the reactive transport modeling
-    ReactiveTransportSolver rtsolver(system, is_smart_solver);
+    ReactiveTransportSolver rtsolver(system, params.is_smart_solver);
     rtsolver.setMesh(mesh);
-    rtsolver.setVelocity(v);
-    rtsolver.setDiffusionCoeff(D);
+    rtsolver.setVelocity(params.v);
+    rtsolver.setDiffusionCoeff(params.D);
     rtsolver.setBoundaryState(state_bc);
-    rtsolver.setTimeStep(dt);
+    rtsolver.setTimeStep(params.dt);
     rtsolver.initialize();
     rtsolver.setEquilibriumOptions(options);
 
@@ -169,7 +197,7 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
     int step(0);
 
     // Reactive transport simulations in the cycle
-    while (step <= nsteps){
+    while (step <= params.nsteps){
         // Print the progress of the simulation
         // std::cout << "Progress: " << step << " / " << nsteps << " "  << t/minute << " min" << std::endl;
 
@@ -178,7 +206,7 @@ auto runReactiveTransport(const bool& is_smart_solver) -> void
         rtsolver.step_tracked(field);
 
         // Increment time step and number of time steps
-        t += dt;
+        t += params.dt;
         step += 1;
     }
 
@@ -205,29 +233,43 @@ auto mkdir(const std::string & folder) -> bool
 
 
 /// Create results file with parameters of the test
-auto makeResultsFolder(const Params & params, const EquilibriumOptions& options) -> std::string
+auto makeResultsFolder(const Params & params) -> std::string
 {
     struct stat status = {0};               // structure to get the file status
 
-    std::ostringstream reltol_stream, abstol_stream;
-    reltol_stream << std::scientific << std::setprecision(1) << options.smart.reltol;
-    abstol_stream << std::scientific << std::setprecision(1) << options.smart.abstol;
+    std::ostringstream reltol_stream, abstol_stream, dt_stream;
+    dt_stream << params.dt;
+    reltol_stream << std::scientific << std::setprecision(1) << params.smart_reltol;
+    abstol_stream << std::scientific << std::setprecision(1) <<  params.smart_abstol;
 
-    std::string test_tag = "-ncells-" + std::to_string(std::get<0>(params)) +
-                           "-nsteps-" + std::to_string(std::get<1>(params)) +
+    //std::string test_tag = "-dt-" + std::to_string(params.dt) +
+    std::string test_tag = "-dt-" + dt_stream.str() +
+                           "-ncells-" + std::to_string(params.ncells) +
+                           "-nsteps-" + std::to_string(params.nsteps) +
                            "-reltol-" + reltol_stream.str() +
                            "-abstol-" + abstol_stream.str() +
-                           (std::get<2>(params) == true ? "-smart" : "-reference");      // name of the folder with results
+                           (params.is_smart_solver == true ? "-smart" : "-reference");      // name of the folder with results
     std::string folder = "../results" + test_tag;
     if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str());
 
-
-    // Log the parameters in the console
-    std::cout << "solver       : " << (std::get<2>(params) == true ? "smart" : "conventional") << std::endl;
-    std::cout << "ncells       : " << std::get<0>(params) << std::endl;
-    std::cout << "nsteps       : " << std::get<1>(params) << std::endl;
-    std::cout << "abstol       : " << options.smart.abstol << std::endl;
-    std::cout << "reltol       : " << options.smart.reltol << std::endl;
+    std::cout << "\nsolver                         : " << (params.is_smart_solver == true ? "smart" : "conventional") << std::endl;
 
     return folder;
 }
+
+auto outputConsole(const Params & params) -> void {
+
+    // Log the parameters in the console
+    std::cout << "dt      : " << params.dt << std::endl;
+    std::cout << "ncells  : " << params.ncells << std::endl;
+    std::cout << "nsteps  : " << params.nsteps << std::endl;
+    std::cout << "D       : " << params.D << std::endl;
+    std::cout << "v       : " << params.v << std::endl;
+    std::cout << "CFD     : " << params.v * params.dt / params.dx << std::endl;
+    std::cout << "T       : " << params.T << std::endl;
+    std::cout << "P       : " << params.P << std::endl;
+    std::cout << "abstol  : " << params.smart_abstol << std::endl;
+    std::cout << "reltol  : " << params.smart_reltol << std::endl;
+
+}
+

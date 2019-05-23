@@ -180,10 +180,14 @@ def simulate():
             bfluid[icell] = states[icell].elementAmountsInSpecies(ifluid_species)
             bsolid[icell] = states[icell].elementAmountsInSpecies(isolid_species)
 
+        # Get the porosity of t
+        bc_cell = 0
+        phi_bc = states[bc_cell].properties().fluidVolume().val;
+
         # Transport each element in the fluid phase
         for j in range(nelems):
             #transport_fullimplicit(bfluid[:, j], dt, dx, v, D, b_bc[j])
-            transport_implicit_explicit(bfluid[:, j], dt, dx, v, D, b_bc[j])
+            transport_implicit_explicit(bfluid[:, j], dt, dx, v, D, phi_bc * b_bc[j])
 
         # Update the amounts of elements in both fluid and solid partitions
         b[:] = bsolid + bfluid
