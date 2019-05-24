@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <tuple>
 #include <numeric>
+#include <Reaktoro/deps/eigen3/Eigen/Dense>
 
 namespace Reaktoro {
 
@@ -285,36 +286,42 @@ auto ReactiveTransportSolver::outputProfiling() -> void
     unsigned length = eq_cell_profiler->learn_times.size();
 
     double learn_time = 0;
+    double matrix_vector_time = 0;
+    double data_retreaval_time = 0;
     double minsearch_time = 0;
     double estimate_time = 0 ;
 
-    for (unsigned i = 0; i < length; i++) learn_time += eq_cell_profiler->learn_times[i];
-    for (unsigned i = 0; i < length; i++) minsearch_time += eq_cell_profiler->estimate_times[i][1];
-    for (unsigned i = 0; i < length; i++) estimate_time += eq_cell_profiler->estimate_times[i][0];
+    for (unsigned i = 0; i < length; i++)
+    {
+        learn_time += eq_cell_profiler->learn_times[i];
+        minsearch_time += eq_cell_profiler->estimate_times[i][1];
+        estimate_time += eq_cell_profiler->estimate_times[i][0];
+        data_retreaval_time += eq_cell_profiler->estimate_times[i][2];
+        matrix_vector_time += eq_cell_profiler->estimate_times[i][3];
+    }
 
     if (smart) {
+        std::cout << std::setprecision(4);
+        std::cout << "learning time                  : " << learn_time << " (" << learn_time / (learn_time + estimate_time) * 100 << "% of total time)\n";
+        std::cout << "estimating time                : " << estimate_time  << " (" << estimate_time / (learn_time + estimate_time) * 100 << "% of total time)\n";
+        std::cout << "   - search time               : " << minsearch_time << " (" << minsearch_time / estimate_time * 100 << "% of estimate time)\n";
+        std::cout << "   - matrix-vector mult. time  : " << matrix_vector_time << " (" << matrix_vector_time / estimate_time * 100 << "% of estimate time)\n\n";
+
+        std::cout << "total time                     : " << learn_time + estimate_time << "\n\n";
+
+        std::cout << "estimating time (ideal search) : " << estimate_time - minsearch_time << "\n";
+        std::cout << "total time (ideal search)      : " << learn_time + estimate_time - minsearch_time << "\n\n";
         std::cout << std::setprecision(2)
                   << 100.00 *
                      double(status_trackers[0].total_counter - status_trackers[0].smart_counter) /
                      double(status_trackers[0].total_counter) << "% of training : "
                   << status_trackers[0].total_counter - status_trackers[0].smart_counter << " cells out of "
-                  << status_trackers[0].total_counter << "\n";
-        std::cout << std::setprecision(4);
-        std::cout << "learning time                  : " << learn_time << "\n";
-        std::cout << "estimating time (ideal search) : " << estimate_time - minsearch_time << "\n";
-        std::cout << "total time (ideal search)      : " << learn_time + estimate_time - minsearch_time << "\n\n";
-        std::cout << "estimating time                : " << estimate_time  << "\n";
-    }
-    std::cout << "total time                     : " << learn_time + estimate_time << "\n\n";
-    /*
-    std::cout << "Step \t Smart solver \t Smart solver (without ref. search) \t Ratio \n";
-    for (unsigned i = 0; i < length; i++)
-        std::cout << i + 1 << "\t & "
-        << eq_cell_profiler->learn_times[i] + eq_cell_profiler->estimate_times[i][0] << "\t & "
-        << eq_cell_profiler->learn_times[i] + eq_cell_profiler->estimate_times[i][0] - eq_cell_profiler->estimate_times[i][1] << "\t & "
-        << (eq_cell_profiler->learn_times[i] + eq_cell_profiler->estimate_times[i][0]) / (eq_cell_profiler->learn_times[i] + eq_cell_profiler->estimate_times[i][0] - eq_cell_profiler->estimate_times[i][1]) << "\\\\\n";
+                  << status_trackers[0].total_counter << "\n\n";
 
-    */
+    }
+    else
+        std::cout << "total time                     : " << learn_time + estimate_time << "\n\n";
+
 }
 
 auto ReactiveTransportSolver::initialize() -> void {
@@ -459,7 +466,7 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
             // Save the statuses of the cells depending on whether smart estimation or learning was triggered
             if (!status_trackers.empty())
                 status_trackers[0].statuses.emplace_back(res.smart.succeeded);
-            // Update the time spend for either for learnign or estimating
+            // Update the time spend for either for learning or estimating
             if (res.smart.succeeded) {
                 eq_cell_profiler->updateEstimating(steps, res.smart.times);
                 status_trackers[0].smart_counter++;

@@ -75,24 +75,29 @@ int main()
 
     // Step 2: Define parameters for the reactive transport simulation
     Params params;
+
+    // Define discretization parameters
     params.xl = 0.0; // the x-coordinates of the left boundaries
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
-    params.nsteps = 4800; // the number of steps in the reactive transport simulation
+    params.nsteps = 9600; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 2 * minute; // the time step (in units of s)
 
-
+    // Define physical and chemical parameters
     params.D = 1.0e-9; // the diffusion coefficient (in units of m2/s)
     params.v = 1.0 / day; // the Darcy velocity (in units of m/s)
     params.T = 60.0;                     // the temperature (in units of degC)
     params.P = 100;                      // the pressure (in units of bar)
 
+    // Define parameters of the equilirium solvers
     params.smart_reltol = 1e-1;
-    params.smart_abstol = 1e-12;
+    params.smart_abstol = 1e-10;
 
+    // Output
     outputConsole(params);
 
+    // Execute reactive transport with different solvers
     params.is_smart_solver = 1; runReactiveTransport(params);
     params.is_smart_solver = 0; runReactiveTransport(params);
 
@@ -109,11 +114,13 @@ auto runReactiveTransport(const Params & params) -> void
     options.smart.reltol = params.smart_reltol;
     options.smart.abstol = params.smart_abstol;
 
-    // Step 3: Construct the chemical system with its phases and species (using ChemicalEditor)
+    // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
-    //editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCl2 MgCl2 CO2");
-    //editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
-    //editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C");
+    // Default chemical model (HKF extended Debye-Hückel model)
+    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
+    // Create aqueous phase with all possible elements
+    // Set a chemical model of the phase with the Pitzer equation of state
+    // With an exception for the CO2, for which Drummond model is set
     editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
             .setChemicalModelPitzerHMW()
             .setActivityModelDrummondCO2();
@@ -121,10 +128,11 @@ auto runReactiveTransport(const Params & params) -> void
     editor.addMineralPhase("Calcite");
     editor.addMineralPhase("Dolomite");
 
-    // Step 4: Create the ChemicalSystem object using the configured editor
+    // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
+    //if (params.is_smart_solver) std::cout << "system = \n" << system << std:: endl;
 
-    // Step 5: Define the initial condition (IC) of the reactive transport modeling problem
+    // Step **: Define the initial condition (IC) of the reactive transport modeling problem
     EquilibriumProblem problem_ic(system);
     problem_ic.setTemperature(params.T, "celsius");
     problem_ic.setPressure(params.P, "bar");
@@ -133,7 +141,7 @@ auto runReactiveTransport(const Params & params) -> void
     problem_ic.add("CaCO3", 10,  "mol");
     problem_ic.add("SiO2",  10,  "mol");
 
-    // Step 6: Define the boundary condition (BC)  of the reactive transport modeling problem
+    // Step **: Define the boundary condition (BC)  of the reactive transport modeling problem
     EquilibriumProblem problem_bc(system);
     problem_bc.setTemperature(params.T, "celsius");
     problem_bc.setPressure(params.P, "bar");
@@ -143,25 +151,25 @@ auto runReactiveTransport(const Params & params) -> void
     problem_bc.add("CaCl2", 0.01, "mol");
     problem_bc.add("CO2",   0.75, "mol");
 
-    // Step 7: Calculate the equilibrium states for the IC and BC
+    // Step **: Calculate the equilibrium states for the IC and BC
     ChemicalState state_ic = equilibrate(problem_ic);
     ChemicalState state_bc = equilibrate(problem_bc);
 
-    // Step 8: Scale the volumes of the phases in the initial condition
+    // Step **: Scale the volumes of the phases in the initial condition
     state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");    //
     state_ic.scalePhaseVolume("Quartz", 0.882, "m3");
     state_ic.scalePhaseVolume("Calcite", 0.018, "m3");
 
-    // Step 9: Scale the boundary condition state
+    // Step **: Scale the boundary condition state
     state_bc.scaleVolume(1.0, "m3");
 
-    // Step 10: Create the mesh for the column
+    // Step **: Create the mesh for the column
     Mesh mesh(params.ncells, params.xl, params.xr);
 
-    // Step 11: Create a chemical field object with every cell having state given by state_ic
+    // Step **: Create a chemical field object with every cell having state given by state_ic
     ChemicalField field(mesh.numCells(), state_ic);
 
-    // Step 12: Define the reactive transport modeling
+    // Step **: Define the reactive transport modeling
     ReactiveTransportSolver rtsolver(system, params.is_smart_solver);
     rtsolver.setMesh(mesh);
     rtsolver.setVelocity(params.v);
@@ -171,7 +179,7 @@ auto runReactiveTransport(const Params & params) -> void
     rtsolver.initialize();
     rtsolver.setEquilibriumOptions(options);
 
-    // Step 13: Define the quantities that should be output for every cell, every time step
+    // Step **: Define the quantities that should be output for every cell, every time step
     ChemicalOutput output(rtsolver.output());
     output.add("pH");
     output.add("speciesMolality(H+)");
@@ -193,17 +201,14 @@ auto runReactiveTransport(const Params & params) -> void
     // Step **: Create status tracker
     SolverStatus tracker(rtsolver.trackStatus(folder, "status-tracker"));
 
-    // Step 15: Set initial time and counter of steps in time
+    // Step **: Set initial time and counter of steps in time
     double t(0.0);
     int step(0);
 
     // Reactive transport simulations in the cycle
     while (step <= params.nsteps){
-        // Print the progress of the simulation
-        // std::cout << "Progress: " << step << " / " << nsteps << " "  << t/minute << " min" << std::endl;
 
-        // Perform one reactive transport time step
-        // rtsolver.step(field);
+        // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
         rtsolver.step_tracked(field);
 
         // Increment time step and number of time steps
@@ -243,7 +248,6 @@ auto makeResultsFolder(const Params & params) -> std::string
     reltol_stream << std::scientific << std::setprecision(1) << params.smart_reltol;
     abstol_stream << std::scientific << std::setprecision(1) <<  params.smart_abstol;
 
-    //std::string test_tag = "-dt-" + std::to_string(params.dt) +
     std::string test_tag = "-dt-" + dt_stream.str() +
                            "-ncells-" + std::to_string(params.ncells) +
                            "-nsteps-" + std::to_string(params.nsteps) +
