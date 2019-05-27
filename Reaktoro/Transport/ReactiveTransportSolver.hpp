@@ -34,15 +34,16 @@
 
 namespace Reaktoro {
 
-// Use this enum type to initialize profilers
+/// Enum type to initialize profilers
 enum Profiling{
     RT = 1,
     EQ = 2,     // step-precision
     CK = 3,
     Total = 4,
-    EQ_CW = 5   // cell-precition
+    EQ_CW = 5   // cell-precision
 };
 
+/// Use this class to track, count, and document the equilibrium solver statuses
 struct SolverStatus{
 
     SolverStatus(const std::string & results_folder, const std::string & file);
@@ -50,34 +51,28 @@ struct SolverStatus{
     /// Update the output stream with collected statuses
     auto output(const Index & i) -> void;
 
-    // Name of the file with a status output
-    std::string file;
-    // Name of the folder with a status output
-    std::string folder;
+    /// Name of the file and folder with a status output
+    std::string file, folder;
 
     /// The list of booleans indicating weather smart estimation was triggered
     std::vector<bool> statuses;
 
-    int smart_counter = 0;
-    int total_counter = 0;
+    /// Counters for the smart and total statuses
+    int smart_counter{0}, total_counter{0};
 };
 
-/// Use this class for profiling reactive transport components
+/// Use this class for profiling reactive transport solver components (on the step level)
 struct Profiler{
 
     using timepoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
     using clock     = std::chrono::high_resolution_clock;
-    //using clock     = std::chrono::steady_clock;
 
-    Profiler();
     Profiler(Profiling what);
-    virtual ~Profiler();
 
     auto startProfiling() -> void;
     auto endProfiling() -> void;
     auto getProfilingSubject() const -> Profiling;
     auto operator==(const Profiler& p) const -> bool;
-    auto consoleOutput() -> void;
 
     virtual auto fileOutput(const std::string & file) -> void;
 
@@ -92,11 +87,11 @@ struct Profiler{
 
 };
 
+/// Use this class for profiling reactive transport components (on the cell level)
 struct EquilibriumProfiler : public Profiler {
 
-    EquilibriumProfiler();
     EquilibriumProfiler(Profiling what);
-    virtual ~EquilibriumProfiler();
+
     auto updateLearning(int step) -> void;
     auto updateEstimating(int step, std::vector<double> time_partition) -> void;
 

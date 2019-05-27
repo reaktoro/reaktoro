@@ -14,63 +14,70 @@
 
 namespace Reaktoro {
 
-// Implementation of class Profiler
-
-EquilibriumProfiler::EquilibriumProfiler(){};
+/// Implementation of class EquilibriumProfiler
+///
+/// Constructor for the EquilibriumProfiler class
 EquilibriumProfiler::EquilibriumProfiler(Profiling what): Profiler(what){}
-EquilibriumProfiler::~EquilibriumProfiler(){};
 
+/// Update vector with learning times
 auto EquilibriumProfiler::updateLearning(int step) -> void
 {
+    /// Stop profiling
     std::chrono::duration<double> elapsed = clock::now() - start;
-    if (!learn_times.empty() && learn_times.size() > step)
-        learn_times.at(step) += elapsed.count();
-    else
-        learn_times.emplace_back(elapsed.count());
+    double learn_time = elapsed.count();
 
+    /// If the vector already has been initialized (on the current step), add the time to the existing value
+    /// otherwise, emplace back the value to the vector as a new time on the current step
+    if (!learn_times.empty() && learn_times.size() > step)
+        learn_times.at(step) += learn_time;
+    else
+        learn_times.emplace_back(learn_time);
+
+    /// If the vector with estimate_times has not been initialized at the current step
+    /// add the zeros vector
     if (estimate_times.size() == step)
         estimate_times.emplace_back(std::vector<double>(estimate_data, 0.0));
 
+    /// Increase the size of the current tree (storing reference states)
     tree_height ++;
 }
 
+/// Update vector with estimating times
 auto EquilibriumProfiler::updateEstimating(int step, std::vector<double> time_partition) -> void{
 
+    /// Stop profiling
     std::chrono::duration<double> elapsed =clock::now() - start;
     double est_time = elapsed.count();
-    /*
-    std::cout << step << "step " << "incr.: "
-              << " ref.element search : " << time_partition[0] / est_time * 100 << "% "
-              << " data fetching : " << time_partition[1] / est_time * 100 << "% "
-              << " matrix-vector oper. : " << time_partition[2] / est_time * 100 << "% \n";
-    */
-    if (estimate_times.size() == step) estimate_times.push_back(std::vector<double>(4, 0.0));
-    estimate_times.at(step)[0] += est_time;
-    estimate_times.at(step)[1] += time_partition[0];
-    estimate_times.at(step)[2] += time_partition[1];
-    estimate_times.at(step)[3] += time_partition[2];
-    estimate_times.at(step)[4] = tree_height;
 
+
+    /// If the vector with estimate_times has not been initialized at the current step add the zeros vector
+    if (estimate_times.size() == step) estimate_times.push_back(std::vector<double>(4, 0.0));
+    /// Update statistics
+    estimate_times.at(step)[0] += est_time;             // estimate time
+    estimate_times.at(step)[1] += time_partition[0];    // search time
+    estimate_times.at(step)[2] += time_partition[1];    // data fetch time
+    estimate_times.at(step)[3] += time_partition[2];    // matrix-vector time
+    estimate_times.at(step)[4] = tree_height;           // reference states tree
+
+    /// If the vector with learn_times has not been initialized at the current step add zero to the vector
     if (learn_times.size() == step) learn_times.emplace_back(0.0);
 }
 
-/// Summary output to the consol
+/// Summary output to the console
 auto EquilibriumProfiler::consoleOutput(int step) -> void
 {
-    if (!estimate_times.empty())
-        // 1 - time for ref.element search
-        // 2 - time for data fetching
-        // 3 - time for matrix-vector manipulation
-        std::cout << "total estimate time : " << estimate_times[step][0] << ""
-                  << " - ref.element search : " << estimate_times[step][1] / estimate_times[step][0] * 100 << "% "
-                  << " - data fetching : " << estimate_times[step][2] / estimate_times[step][0] * 100 << "% "
-                  << " - matrix-vector oper. : " << estimate_times[step][3] / estimate_times[step][0] * 100 << "% \n";
-    else estimate_times.emplace_back(std::vector<double>(4, 0.0));
-
-    if (learn_times.size() == step) learn_times.emplace_back(0.0);
-    else std::cout << "total learning time : " << learn_times[step] << " \n\n";
+    // 0 - time for estimating
+    // 1 - time for ref.element search
+    // 2 - time for data fetching
+    // 3 - time for matrix-vector manipulation
+    std::cout << "total estimate time : " << estimate_times[step][0] << ""
+              << " - ref.element search : " << estimate_times[step][1] / estimate_times[step][0] * 100 << "% "
+              << " - data fetching : " << estimate_times[step][2] / estimate_times[step][0] * 100 << "% "
+              << " - matrix-vector oper. : " << estimate_times[step][3] / estimate_times[step][0] * 100 << "% \n";
+    std::cout << "total learning time : " << learn_times[step] << " \n\n";
 }
 
+/// Output the profiling results to the file
 auto EquilibriumProfiler::fileOutput(const std::string & file) -> void
 {
     /// The output stream of the data file
@@ -82,27 +89,30 @@ auto EquilibriumProfiler::fileOutput(const std::string & file) -> void
     /// Open the data file
     if(!file.empty())
         datafile.open(file + "-EQ-CW.txt", std::ofstream::out | std::ofstream::trunc);
+
     /// Output the header of the data file
-    if(datafile.is_open()) {
+    if(datafile.is_open())
+    {
         /// Set scientific mode and defined precision
         datafile << std::scientific << std::setprecision(precision);
+
         /// Output times collected while profiling
         unsigned int length = learn_times.size();
         for (unsigned int i = 0; i < length; i++)
             datafile << learn_times[i] + estimate_times[i][0] << "\t "
                       << learn_times[i] + estimate_times[i][0] - estimate_times[i][1] << "\n";
     }
-
     datafile.close();
 
-    // Open the date file for the estimation time analysis
+    /// Open the date file for the estimation time analysis
     if(!file.empty())
         datafile.open(file + "-EQ-EST.txt", std::ofstream::out | std::ofstream::trunc);
-    // Output the header of the data file
-    if(datafile.is_open()) {
-        // Set scientific mode and defined precision
+    /// Output the header of the data file
+    if(datafile.is_open())
+    {
+        /// Set scientific mode and defined precision
         datafile << std::scientific << std::setprecision(precision);
-        // Output times collected while profiling
+        /// Output times collected while profiling
         unsigned int length = learn_times.size();
         for (unsigned int i = 0; i < length; i++)
             /// Output estimate time, search time, and the tree height
@@ -112,35 +122,44 @@ auto EquilibriumProfiler::fileOutput(const std::string & file) -> void
     }
     datafile.close();
 
-    // Open the date file for the estimation time analysis
+    /// Open the date file for the estimation time analysis
     if(!file.empty())
         datafile.open(file + "-EQ-MV.txt", std::ofstream::out | std::ofstream::trunc);
-    // Output the header of the data file
-    if(datafile.is_open()) {
-        // Set scientific mode and defined precision
+    /// Output the header of the data file
+    if(datafile.is_open())
+    {
+        /// Set scientific mode and defined precision
         datafile << std::scientific << std::setprecision(precision);
-        // Output times collected while profiling
+
+        /// Output times collected while profiling
         unsigned int length = learn_times.size();
         for (unsigned int i = 0; i < length; i++)
             /// Output estimate time, search time, and the tree height
-            datafile << estimate_times[i][2] << "\t "
-                     << estimate_times[i][3] << "\n";
+            datafile << estimate_times[i][2] << "\t " << estimate_times[i][3] << "\n";
     }
     datafile.close();
 }
-Profiler::Profiler() {}
-Profiler::Profiler(Reaktoro::Profiling subject_) : subject(subject_){}
-Profiler::~Profiler() {}
 
-auto Profiler::startProfiling()  -> void { start = clock::now(); }
+/// Implementation of class EquilibriumProfiler
+///
+/// Constructors and destructors for the Profiler class
+Profiler::Profiler(Reaktoro::Profiling subject_) : subject(subject_){}
+
+/// Method to start profiling
+auto Profiler::startProfiling() -> void
+{
+    start = clock::now();
+}
+/// Method to stop profiling
 auto Profiler::endProfiling() -> void
 {
     std::chrono::duration<double> elapsed = clock::now() - start;
     times.emplace_back(elapsed.count());
 }
+/// Method to output profiling results to the file
 auto Profiler::fileOutput(const std::string & file) -> void
 {
-    /// The output stream of the data file
+    /// The output filestream
     std::ofstream datafile;
 
     /// The suffix of the datafile
@@ -149,6 +168,7 @@ auto Profiler::fileOutput(const std::string & file) -> void
     /// The floating-point precision in the output.
     int precision = 6;
 
+    /// The suffix of the output file is dependent on Profiling
     switch (this->getProfilingSubject())
     {
         case Profiling::RT:     suffix = "RT"; break;
@@ -157,38 +177,38 @@ auto Profiler::fileOutput(const std::string & file) -> void
         case Profiling::Total:  suffix = "Total"; break;
         case Profiling::EQ_CW:  suffix = "EQ-CW"; break;
     }
-    // Open the data file
+    /// Open the data file
     if(!file.empty())
         datafile.open(file + "-" + suffix + ".txt",
                       std::ofstream::out | std::ofstream::trunc);
-    // Output the header of the data file
+    /// Output the header of the data file
     if(datafile.is_open()) {
-        // Set scientific mode and defined precision
+        /// Set scientific mode and defined precision
         datafile << std::scientific << std::setprecision(precision);
-        // Output times collected while profiling
+        /// Output times collected while profiling
         for (double time : times)   datafile << time << "\n";
     }
+    /// Close output filestream
     datafile.close();
 
 }
-auto Profiler::consoleOutput() -> void
+/// Get profiling subject
+auto Profiler::getProfilingSubject() const -> Profiling
 {
-    std::for_each(begin(times), end(times),
-                  [&](const double & value){ std::cout << value << "\t"; });
-}
-
-auto Profiler::getProfilingSubject() const -> Profiling {
     return subject;
 }
-// Operator == overwritten for fetching needed profiler from the vector profilers
-auto Profiler::operator==(const Profiler& p) const -> bool{
+/// Operator == overwritten for fetching needed profiler from the vector profilers
+auto Profiler::operator==(const Profiler& p) const -> bool
+{
     return p.getProfilingSubject() == this->subject;
 }
 
-// Class for tracking the statuses of SmartEquilibriumSolver
+/// Implementation of class SolverStatus
+///
+/// Class for tracking the statuses of SmartEquilibriumSolver
 SolverStatus::SolverStatus(const std::string & folder, const std::string & file) :
-        folder(folder), file(file) {}
-// Output statuses of all steps and all cells to a file
+        folder(folder), file(file){}
+/// Output statuses of all steps and all cells to a file
 auto SolverStatus::output(const Index & i) -> void
 {
     /// The output stream of the data file
@@ -202,30 +222,32 @@ auto SolverStatus::output(const Index & i) -> void
     else if(i == 0 && !file.empty())    opt |= std::ofstream::trunc;
     datafile.open(folder + "/" + file + ".txt", opt);
 
-    // Output statuses such that
-    // vertically we have steps' number and horizontally we cells
+    /// Output statuses such that steps' go vertically and cells horizontally
     if(datafile.is_open()) {
-        // Output statuses collected while stepping with RT
-        for (bool est : statuses)   datafile << std::to_string(est) << "\t";
+        /// Output statuses collected while stepping with ReactiveTransportSolver
+        for (bool est : statuses) datafile << std::to_string(est) << "\t";
         datafile << "\n";
     }
-    // Clear collected statuses
+    /// Clear collected statuses
     statuses.clear();
 
-    // Close the data file
+    /// Close the data file
     datafile.close();
 }
-
+/// Constructor for ReactiveTransportSolver class
 ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem &system, const bool &is_smart)
-        : system_(system), smart(is_smart) {
+        : system_(system), smart(is_smart)
+{
+    /// Define equilibrium solver based on the parameter
     if (smart)  smart_equilibriumsolver = SmartEquilibriumSolver(system);
     else        equilibriumsolver = EquilibriumSolver(system);
 
+    /// Set boundary condition
     setBoundaryState(ChemicalState(system));
 }
 
-auto ReactiveTransportSolver::setEquilibriumOptions(
-        const EquilibriumOptions &options) -> void {
+/// Set options of the Equlilibrium solver
+auto ReactiveTransportSolver::setEquilibriumOptions(const EquilibriumOptions &options) -> void {
     if (smart)  smart_equilibriumsolver.setOptions(options);
     else        equilibriumsolver.setOptions(options);
 }

@@ -80,9 +80,9 @@ int main()
     params.xl = 0.0; // the x-coordinates of the left boundaries
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
-    params.nsteps = 9600; // the number of steps in the reactive transport simulation
+    params.nsteps = 7200; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
-    params.dt = 2 * minute; // the time step (in units of s)
+    params.dt = 5 * minute; // the time step (in units of s)
 
     // Define physical and chemical parameters
     params.D = 1.0e-9; // the diffusion coefficient (in units of m2/s)
@@ -90,9 +90,9 @@ int main()
     params.T = 60.0;                     // the temperature (in units of degC)
     params.P = 100;                      // the pressure (in units of bar)
 
-    // Define parameters of the equilirium solvers
+    // Define parameters of the equilibrium solvers
     params.smart_reltol = 1e-1;
-    params.smart_abstol = 1e-10;
+    params.smart_abstol = 1e-1;
 
     // Output
     outputConsole(params);
