@@ -1,16 +1,18 @@
 #include "ReactiveTransportSolver.hpp"
 
-// Reaktoro's includes
-#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
-#include <Reaktoro/Common/Exception.hpp>
-
 // C++ includes
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
-#include <tuple>
 #include <numeric>
+#include <tuple>
+
+// Eigen includes
 #include <Reaktoro/deps/eigen3/Eigen/Dense>
+
+// Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 
 namespace Reaktoro {
 
@@ -515,6 +517,7 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
         for (auto output : outputs)
             output.update(field[icell], icell);
     }
+    
     // Counter all the statuses
     status_trackers[0].total_counter += num_cells;
 
@@ -541,4 +544,5 @@ auto ReactiveTransportSolver::step_tracked(ChemicalField &field) -> void {
     */
     ++steps;
 }
-}
+
+} // namespace Reaktoro
