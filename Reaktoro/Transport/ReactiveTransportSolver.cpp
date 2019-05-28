@@ -1,3 +1,18 @@
+// This file is part of Reaktoro (https://reaktoro.org).
+//
+// Reaktoro is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// Reaktoro is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
+
 #include "ReactiveTransportSolver.hpp"
 
 // C++ includes
@@ -51,7 +66,6 @@ auto EquilibriumProfiler::updateEstimating(int step, std::vector<double> time_pa
     std::chrono::duration<double> elapsed =clock::now() - start;
     double est_time = elapsed.count();
 
-
     /// If the vector with estimate_times has not been initialized at the current step add the zeros vector
     if (estimate_times.size() == step) estimate_times.push_back(std::vector<double>(4, 0.0));
     /// Update statistics
@@ -104,11 +118,13 @@ auto EquilibriumProfiler::fileOutput(const std::string & file) -> void
             datafile << learn_times[i] + estimate_times[i][0] << "\t "
                       << learn_times[i] + estimate_times[i][0] - estimate_times[i][1] << "\n";
     }
+    
     datafile.close();
 
     /// Open the date file for the estimation time analysis
     if(!file.empty())
         datafile.open(file + "-EQ-EST.txt", std::ofstream::out | std::ofstream::trunc);
+
     /// Output the header of the data file
     if(datafile.is_open())
     {
@@ -122,11 +138,13 @@ auto EquilibriumProfiler::fileOutput(const std::string & file) -> void
                      << estimate_times[i][1] << "\t "
                      << estimate_times[i][4] << "\n";
     }
+
     datafile.close();
 
     /// Open the date file for the estimation time analysis
     if(!file.empty())
         datafile.open(file + "-EQ-MV.txt", std::ofstream::out | std::ofstream::trunc);
+
     /// Output the header of the data file
     if(datafile.is_open())
     {
@@ -139,6 +157,7 @@ auto EquilibriumProfiler::fileOutput(const std::string & file) -> void
             /// Output estimate time, search time, and the tree height
             datafile << estimate_times[i][2] << "\t " << estimate_times[i][3] << "\n";
     }
+
     datafile.close();
 }
 
@@ -152,12 +171,14 @@ auto Profiler::startProfiling() -> void
 {
     start = clock::now();
 }
+
 /// Method to stop profiling
 auto Profiler::endProfiling() -> void
 {
     std::chrono::duration<double> elapsed = clock::now() - start;
     times.emplace_back(elapsed.count());
 }
+
 /// Method to output profiling results to the file
 auto Profiler::fileOutput(const std::string & file) -> void
 {
@@ -192,13 +213,14 @@ auto Profiler::fileOutput(const std::string & file) -> void
     }
     /// Close output filestream
     datafile.close();
-
 }
+
 /// Get profiling subject
 auto Profiler::getProfilingSubject() const -> Profiling
 {
     return subject;
 }
+
 /// Operator == overwritten for fetching needed profiler from the vector profilers
 auto Profiler::operator==(const Profiler& p) const -> bool
 {
@@ -208,8 +230,10 @@ auto Profiler::operator==(const Profiler& p) const -> bool
 /// Implementation of class SolverStatus
 ///
 /// Class for tracking the statuses of SmartEquilibriumSolver
-SolverStatus::SolverStatus(const std::string & folder, const std::string & file) :
-        folder(folder), file(file){}
+SolverStatus::SolverStatus(const std::string & folder, const std::string & file) 
+: folder(folder), file(file)
+{}
+
 /// Output statuses of all steps and all cells to a file
 auto SolverStatus::output(const Index & i) -> void
 {
@@ -230,6 +254,7 @@ auto SolverStatus::output(const Index & i) -> void
         for (bool est : statuses) datafile << std::to_string(est) << "\t";
         datafile << "\n";
     }
+    
     /// Clear collected statuses
     statuses.clear();
 
@@ -238,7 +263,7 @@ auto SolverStatus::output(const Index & i) -> void
 }
 /// Constructor for ReactiveTransportSolver class
 ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem &system, const bool &is_smart)
-        : system_(system), smart(is_smart)
+: system_(system), smart(is_smart)
 {
     /// Define equilibrium solver based on the parameter
     if (smart)  smart_equilibriumsolver = SmartEquilibriumSolver(system);
