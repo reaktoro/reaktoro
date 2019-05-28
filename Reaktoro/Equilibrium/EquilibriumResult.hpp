@@ -17,6 +17,7 @@
 
 #pragma once
 
+// C++ includes
 #include <chrono>
 #include <vector>
 
@@ -50,7 +51,6 @@ struct EquilibriumResult
 
     /// Apply an addition assignment to this instance
     auto operator+=(const EquilibriumResult& other) -> EquilibriumResult&;
-
 };
 
 } // namespace Reaktoro
