@@ -149,7 +149,8 @@ public:
     /// @param units The units of the mass
     auto setSpeciesMass(std::string name, double mass, std::string units) -> void;
 
-    /// Set the dual potentials of the species (in units of J/mol)
+    /// Set the dual potentials of the species (in units of J/mol).
+    ///
     /// The dual potentials of the species are the Lagrange multipliers with
     /// respect to the positive bound constraints on the molar amounts of the
     /// species in a chemical equilibrium calculation. They can be seen as
@@ -158,10 +159,11 @@ public:
     /// @param z The Lagrange multipliers with respect to the positive constraints.
     auto setSpeciesDualPotentials(VectorConstRef z) -> void;
 
-    /// Set the dual potentials of the elements (in units of J/mol)
+    /// Set the dual potentials of the elements (in units of J/mol).
+    ///
     /// The dual potentials of the elements are the Lagrange multipliers with
     /// respect to the balance constraints on the molar amounts of the elements.
-    /// They can be seen as dual chemical potential of elements.
+    /// They can be seen as a dual chemical potential of elements.
     /// @param values The Lagrange multipliers with respect to the balance constraints.
     auto setElementDualPotentials(VectorConstRef y) -> void;
 
@@ -199,14 +201,14 @@ public:
     /// Scale the fluid volume of the chemical system.
     /// This method scales each fluid phase by the same factor.
     /// This factor is defined as the prescribed volume divided by
-    /// current volume of the fluid phases.
+    /// the current volume of the fluid phases.
     /// @param volume The scaled fluid volume (in units of m3)
     auto scaleFluidVolume(double volume) -> void;
 
     /// Scale the fluid volume of the chemical system with given units.
     /// This method scales each fluid phase by the same factor.
     /// This factor is defined as the prescribed volume divided by
-    /// current volume of the fluid phases.
+    /// the current volume of the fluid phases.
     /// @param volume The scaled fluid volume
     /// @param units The volume units
     auto scaleFluidVolume(double volume, std::string units) -> void;
@@ -214,14 +216,14 @@ public:
     /// Scale the solid volume of the chemical system.
     /// This method scales each solid phase by the same factor.
     /// This factor is defined as the prescribed volume divided by
-    /// current volume of the solid phases.
+    /// the current volume of the solid phases.
     /// @param volume The scaled solid volume (in units of m3)
     auto scaleSolidVolume(double volume) -> void;
 
     /// Scale the solid volume of the chemical system with given units.
     /// This method scales each solid phase by the same factor.
     /// This factor is defined as the prescribed volume divided by
-    /// current volume of the solid phases.
+    /// the current volume of the solid phases.
     /// @param volume The scaled solid volume
     /// @param units The volume units
     auto scaleSolidVolume(double volume, std::string units) -> void;
@@ -291,39 +293,39 @@ public:
     /// @param name The name of the element
     auto elementAmount(std::string name) const -> double;
 
-    /// Return the amount of an element with given units
+    /// Return the amount of an element with given units.
     /// @param index The index of the element
     /// @param units The units of the element amount
     auto elementAmount(Index index, std::string units) const -> double;
 
-    /// Return the amount of an element with given units
+    /// Return the amount of an element with given units.
     /// @param name The name of the element
     /// @param units The units of the element amount
     auto elementAmount(std::string name, std::string units) const -> double;
 
-    /// Return the molar amount of an element in a given phase (in units of mol)
+    /// Return the molar amount of an element in a given phase (in units of mol).
     /// @param ielement The index of the element
     /// @param iphase The index of the phase
     auto elementAmountInPhase(Index ielement, Index iphase) const -> double;
 
-    /// Return the molar amount of an element in a given phase (in units of mol)
+    /// Return the molar amount of an element in a given phase (in units of mol).
     /// @param element The name of the element
     /// @param phase The name of the phase
     auto elementAmountInPhase(std::string element, std::string phase) const -> double;
 
-    /// Return the amount of an element in a given phase with given units
+    /// Return the amount of an element in a given phase with given units.
     /// @param ielement The index of the element
     /// @param iphase The index of the phase
     /// @param units The units of the element amount
     auto elementAmountInPhase(Index ielement, Index iphase, std::string units) const -> double;
 
-    /// Return the amount of an element in a given phase with given units
+    /// Return the amount of an element in a given phase with given units.
     /// @param element The name of the element
     /// @param phase The name of the phase
     /// @param units The units of the element amount
     auto elementAmountInPhase(std::string element, std::string phase, std::string units) const -> double;
 
-    /// Return the molar amount of an element in a set of species (in units of mol)
+    /// Return the molar amount of an element in a set of species (in units of mol).
     /// @param ielement The index of the element
     /// @param ispecies The indices of the species
     auto elementAmountInSpecies(Index ielement, const Indices& ispecies) const -> double;
@@ -334,28 +336,29 @@ public:
     /// @param units The units of the element amount
     auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double;
 
-    /// Return the dual potentials of the elements (in units of J/mol)
+    /// Return the dual potentials of the elements (in units of J/mol).
     auto elementDualPotentials() const -> VectorConstRef;
 
-    /// Return the molar amount of a phase (in units of mol)
+    /// Return the molar amount of a phase (in units of mol).
     /// @param index The index of the phase
     auto phaseAmount(Index index) const -> double;
 
-    /// Return the molar amount of a phase (in units of mol)
+    /// Return the molar amount of a phase (in units of mol).
     /// @param name The name of the phase
     auto phaseAmount(std::string name) const -> double;
 
-    /// Return the molar amount of a phase with given units
+    /// Return the molar amount of a phase with given units.
     /// @param index The index of the phase
     /// @param units The units of the phase amount
     auto phaseAmount(Index index, std::string units) const -> double;
 
-    /// Return the molar amount of a phase with given units
+    /// Return the molar amount of a phase with given units.
     /// @param name The name of the phase
     /// @param units The units of the phase amount
     auto phaseAmount(std::string name, std::string units) const -> double;
 
     /// Return the stability indices of the phases with respect to chemical equilibrium.
+    ///
     /// The stability index of a stable phase at chemical equilibrium should
     /// be zero or very close to zero. A negative stability index indicates
     /// that the corresponding phase is under-saturated, while a positive index

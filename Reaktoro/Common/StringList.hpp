@@ -63,11 +63,16 @@ public:
     /// Construct a StringList instance with a vector of strings.
     StringList(const std::vector<std::string>& strings);
 
+    /// Construct a StringList with a initializer list
+    StringList(std::initializer_list<std::string> strings);
+
     /// Destroy this StringList instance.
     virtual ~StringList();
 
     /// Return a vector of strings.
     auto strings() const -> const std::vector<std::string>&;
+
+    operator const std::vector<std::string>&() const;
 
 private:
     std::vector<std::string> _strings;

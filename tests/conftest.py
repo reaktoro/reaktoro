@@ -21,7 +21,7 @@ def equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar():
     database = Database("supcrt98.xml")
 
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase("H2O NaCl CO2")
+    editor.addAqueousPhaseWithElementsOf("H2O NaCl CO2")
     editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
     editor.addMineralPhase("Halite")
 
@@ -46,12 +46,10 @@ def equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar():
     database = Database("supcrt98.xml")
 
     editor = ChemicalEditor(database)
-    aqueous = editor.addAqueousPhase(
-        ["H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--", "CO(aq)"]
-    )
-    aqueous.setActivityModelDrummondCO2()
-    gaseous = editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
-    gaseous.setChemicalModelSpycherPruessEnnis()
+    editor.addAqueousPhase(
+        ["CO(aq)", "CO2(aq)", "CO3--", "Cl-", "ClO-", "ClO2-", "ClO3-", "ClO4-", "H+", "H2(aq)", "H2O(l)", "H2O2(aq)", "HCO3-", "HCl(aq)", "HClO(aq)", "HClO2(aq)", "HO2-", "Na+", "NaCl(aq)", "NaOH(aq)", "O2(aq)", "OH-"]
+    ).setActivityModelDrummondCO2()
+    editor.addGaseousPhase(["H2O(g)", "CO2(g)"]).setChemicalModelSpycherPruessEnnis()
     editor.addMineralPhase("Halite")
 
     system = ChemicalSystem(editor)
@@ -74,8 +72,8 @@ def equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite():
     database = Database("supcrt98.xml")
 
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase("H2O Fe(OH)2 Fe(OH)3 NH3")
-    editor.addGaseousPhase("NH3(g)")
+    editor.addAqueousPhaseWithElementsOf("H2O Fe(OH)2 Fe(OH)3 NH3")
+    editor.addGaseousPhaseWithElementsOf("NH3")
     editor.addMineralPhase("Magnetite")
 
     system = ChemicalSystem(editor)
@@ -99,8 +97,8 @@ def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity():
     database = Database("supcrt98.xml")
 
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase("H O Na Cl Ca Mg C")
-    editor.addGaseousPhase("H O C")
+    editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
+    editor.addGaseousPhaseWithElements("H O C")
 
     system = ChemicalSystem(editor)
 
@@ -124,8 +122,8 @@ def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph():
     database = Database("supcrt98.xml")
 
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase("H O Na Cl Ca Mg C")
-    editor.addGaseousPhase("H O C")
+    editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
+    editor.addGaseousPhaseWithElements("H O C")
 
     system = ChemicalSystem(editor)
 
@@ -148,7 +146,7 @@ def equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts():
     database = Database("supcrt98.xml")
 
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase("H O Na Cl Ca C")
+    editor.addAqueousPhaseWithElements("H O Na Cl Ca C")
     editor.addMineralPhase("Calcite")
 
     system = ChemicalSystem(editor)
@@ -171,7 +169,7 @@ def equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass():
     database = Database("supcrt98.xml")
 
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase("H2O NaCl CaCO3")
+    editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3")
     editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
     editor.addMineralPhase("Calcite")
 
@@ -193,7 +191,7 @@ def equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity
     with fixed values of Species Mass, Amount and alkalinity 
     """
     editor = ChemicalEditor()
-    editor.addAqueousPhase("H2O NaCl CaCO3")
+    editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3")
     editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
     editor.addMineralPhase("Calcite")
 
@@ -216,7 +214,7 @@ def equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume():
     with fixed values of phase volume 
     """
     editor = ChemicalEditor()
-    editor.addAqueousPhase("H2O NaCl CaCO3")
+    editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3")
     editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
     editor.addMineralPhase("Calcite")
 

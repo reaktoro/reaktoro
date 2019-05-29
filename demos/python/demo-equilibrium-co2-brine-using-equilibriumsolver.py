@@ -24,7 +24,7 @@ database = Database("supcrt98.xml")
 # Define which phases and species the chemical system should have using a
 # ChemicalEditor object.
 editor = ChemicalEditor(database)
-editor.addAqueousPhase("H2O NaCl CO2")
+editor.addAqueousPhaseWithElementsOf("H2O NaCl CO2")
 editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
 editor.addMineralPhase("Halite")
 
@@ -57,7 +57,7 @@ state = ChemicalState(system)
 solver.solve(state, T, P, b)
 
 # Print the calculated chemical equilibrium state.
-print state
+print(state)
 
 # Calculate the new equilibrium state when temperature is increased.
 # Use the previous equilibrium state as an initial guess for improved
@@ -65,4 +65,4 @@ print state
 solver.solve(state, T + 10.0, P, b)
 
 # Print the new calculated chemical equilibrium state.
-print state
+print(state)

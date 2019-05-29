@@ -18,7 +18,7 @@
 from reaktoro import *
 
 editor = ChemicalEditor()
-editor.addAqueousPhase("H2O NaCl CaCO3")
+editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3")
 editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
 editor.addMineralPhase("Calcite")
 
@@ -33,4 +33,4 @@ problem.fixPhaseVolume("Calcite", 0.5, "m3", "CaCO3")
 
 state = equilibrate(problem)
 
-print state
+print(state)

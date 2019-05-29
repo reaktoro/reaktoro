@@ -21,7 +21,7 @@ def test_equilibrium_path(table_regression, tmpdir):
     database = Database("supcrt98.xml")
 
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase("H O C Na Cl")
+    editor.addAqueousPhaseWithElements("H O C Na Cl")
 
     system = ChemicalSystem(editor)
 

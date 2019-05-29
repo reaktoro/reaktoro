@@ -59,7 +59,6 @@ to a terminal and execute:
 .. code::
 
     conda config --append channels conda-forge
-    conda config --append channels conda-forge/label/gcc7
 
 to add the conda-forge channels required to find the Reaktoro package.
 

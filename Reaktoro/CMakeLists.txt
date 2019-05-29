@@ -22,6 +22,9 @@ link_directories(${REAKTORO_THIRDPARTY_LIBRARY_PATH})
 # Build a Reaktoro C++ library
 add_library(Reaktoro ${HEADER_FILES} ${SOURCE_FILES})
 
+# Add an alias Reaktoro::Reaktoro to the target library Reaktoro
+add_library(Reaktoro::Reaktoro ALIAS Reaktoro)
+
 # Specify the external dependencies of Reaktoro to ensure proper build sequence
 add_dependencies(Reaktoro ${THIRDPARTY_TARGETS})
 
@@ -47,5 +50,8 @@ install(TARGETS Reaktoro
 # Install Reaktoro header files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers
-    PATTERN "*.cpp" EXCLUDE
-    PATTERN "CMakeLists.txt" EXCLUDE)
+    FILES_MATCHING PATTERN "*.hpp")
+
+# Install deps header files
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro/deps
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro COMPONENT headers)

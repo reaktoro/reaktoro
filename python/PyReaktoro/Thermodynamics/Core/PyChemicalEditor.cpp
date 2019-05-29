@@ -15,12 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// pybind11 includes
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-namespace py = pybind11;
+#include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
@@ -28,10 +26,10 @@ namespace py = pybind11;
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 
 namespace Reaktoro {
 
@@ -40,21 +38,6 @@ void exportChemicalEditor(py::module& m)
     auto addPhase1 = static_cast<AqueousPhase&(ChemicalEditor::*)(const AqueousPhase&)>(&ChemicalEditor::addPhase);
     auto addPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(const GaseousPhase&)>(&ChemicalEditor::addPhase);
     auto addPhase3 = static_cast<MineralPhase&(ChemicalEditor::*)(const MineralPhase&)>(&ChemicalEditor::addPhase);
-
-    //Need to be this order so that pybind do not see a python string as C++ std::string not a C++ std::vector<std::string> 
-    //with each leter as an elemento of that vetor 
-    auto addAqueousPhase1 = static_cast<AqueousPhase&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addAqueousPhase);
-    auto addAqueousPhase2 = static_cast<AqueousPhase&(ChemicalEditor::*)(std::vector<std::string>)>(&ChemicalEditor::addAqueousPhase);
-
-    //Need to be this order so that pybind do not see a python string as C++ std::string not a C++ std::vector<std::string> 
-    //with each leter as an elemento of that vetor 
-    auto addGaseousPhase1 = static_cast<GaseousPhase&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addGaseousPhase);
-    auto addGaseousPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(std::vector<std::string>)>(&ChemicalEditor::addGaseousPhase);
-
-    //Need to be this order so that pybind do not see a python string as C++ std::string not a C++ std::vector<std::string> 
-    //with each leter as an elemento of that vetor 
-    auto addMineralPhase1 = static_cast<MineralPhase&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addMineralPhase);
-    auto addMineralPhase2 = static_cast<MineralPhase&(ChemicalEditor::*)(std::vector<std::string>)>(&ChemicalEditor::addMineralPhase);
 
     auto addMineralReaction1 = static_cast<MineralReaction&(ChemicalEditor::*)(const MineralReaction&)>(&ChemicalEditor::addMineralReaction);
     auto addMineralReaction2 = static_cast<MineralReaction&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addMineralReaction);
@@ -77,12 +60,19 @@ void exportChemicalEditor(py::module& m)
         .def("addPhase", addPhase2, py::return_value_policy::reference_internal)
         .def("addPhase", addPhase3, py::return_value_policy::reference_internal)
         .def("addReaction", &ChemicalEditor::addReaction, py::return_value_policy::reference_internal)
-        .def("addAqueousPhase", addAqueousPhase1, py::return_value_policy::reference_internal)
-        .def("addAqueousPhase", addAqueousPhase2, py::return_value_policy::reference_internal)
-        .def("addGaseousPhase", addGaseousPhase1, py::return_value_policy::reference_internal)
-        .def("addGaseousPhase", addGaseousPhase2, py::return_value_policy::reference_internal)
-        .def("addMineralPhase", addMineralPhase1, py::return_value_policy::reference_internal)
-        .def("addMineralPhase", addMineralPhase2, py::return_value_policy::reference_internal)
+        
+        .def("addAqueousPhase", &ChemicalEditor::addAqueousPhase, py::return_value_policy::reference_internal)
+        .def("addAqueousPhaseWithElements", &ChemicalEditor::addAqueousPhaseWithElements, py::return_value_policy::reference_internal)
+        .def("addAqueousPhaseWithElementsOf", &ChemicalEditor::addAqueousPhaseWithElementsOf, py::return_value_policy::reference_internal)
+
+        .def("addGaseousPhase", &ChemicalEditor::addGaseousPhase, py::return_value_policy::reference_internal)
+        .def("addGaseousPhaseWithElements", &ChemicalEditor::addGaseousPhaseWithElements, py::return_value_policy::reference_internal)
+        .def("addGaseousPhaseWithElementsOf", &ChemicalEditor::addGaseousPhaseWithElementsOf, py::return_value_policy::reference_internal)
+
+        .def("addMineralPhase", &ChemicalEditor::addMineralPhase, py::return_value_policy::reference_internal)
+        .def("addMineralPhaseWithElements", &ChemicalEditor::addMineralPhaseWithElements, py::return_value_policy::reference_internal)
+        .def("addMineralPhaseWithElementsOf", &ChemicalEditor::addMineralPhaseWithElementsOf, py::return_value_policy::reference_internal)
+
         .def("addMineralReaction", addMineralReaction1, py::return_value_policy::reference_internal)
         .def("addMineralReaction", addMineralReaction2, py::return_value_policy::reference_internal)
         .def("aqueousPhase", aqueousPhase1, py::return_value_policy::reference_internal)

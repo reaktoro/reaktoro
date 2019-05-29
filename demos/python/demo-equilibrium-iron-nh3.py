@@ -20,7 +20,7 @@ from reaktoro import *
 database = Database("supcrt98.xml")
 
 editor = ChemicalEditor(database)
-editor.addAqueousPhase("H2O Fe(OH)2 Fe(OH)3 NH3")
+editor.addAqueousPhaseWithElementsOf("H2O Fe(OH)2 Fe(OH)3 NH3")
 editor.addGaseousPhase("NH3(g)")
 editor.addMineralPhase("Magnetite")
 
@@ -34,5 +34,5 @@ problem.add("NH3", 1, "mmol")
 
 state = equilibrate(problem)
 
-print state
+print(state)
 

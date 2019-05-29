@@ -8,10 +8,10 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CCache)
 
 # Set the name of the project
-project(Reaktoro VERSION 1.0.0 LANGUAGES CXX)
+project(Reaktoro VERSION 1.0.2 LANGUAGES CXX)
 
 # Check if a conda environment is active
-include(CondaRecognizer)
+include(CondaAware)
 
 # Include this module to enable testing with CTest and dashboard submissions to CDash
 include(CTest)

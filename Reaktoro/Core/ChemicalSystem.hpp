@@ -205,18 +205,18 @@ public:
     /// @param n The molar amounts of the species (in units of mol)
     auto elementAmountsInSpecies(const Indices& ispecies, VectorConstRef n) const -> Vector;
 
-    /// Calculate the molar amount of an elements (in units of mol)
+    /// Calculate the molar amount of elements (in units of mol)
     /// @param ielement The index of the element
     /// @param n The molar amounts of the species (in units of mol)
     auto elementAmount(Index ielement, VectorConstRef n) const -> double;
 
-    /// Calculate the molar amounts of the elements in a given phase (in units of mol)
+    /// Calculate the molar amounts of elements in a given phase (in units of mol)
     /// @param ielement The index of the element
     /// @param iphase The index of the phase
     /// @param n The molar amounts of the species (in units of mol)
     auto elementAmountInPhase(Index ielement, Index iphase, VectorConstRef n) const -> double;
 
-    /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
+    /// Calculate the molar amounts of elements in a given set of species (in units of mol)
     /// @param ielement The index of the element
     /// @param ispecies The indices of the species in the set
     /// @param n The molar amounts of the species (in units of mol)

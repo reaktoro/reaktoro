@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from reaktoro import ChemicalState, equilibrate, EquilibriumSolver
+from reaktoro import ChemicalState, equilibrate, EquilibriumSolver, EquilibriumOptions
 
 
 @pytest.mark.parametrize(
@@ -228,15 +228,14 @@ def test_equilibrium_solver_approx_overload_1(setup, state_regression):
     (system, problem) = setup
 
     state = equilibrate(problem)
-    state.setTemperature(problem.temperature() + 30)
-    state.setPressure(problem.pressure() + 40)
+    state.setTemperature(problem.temperature() + 10)
+    state.setPressure(problem.pressure() + 10)
 
     solver = EquilibriumSolver(system)
 
     solver.approximate(state)
 
     state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
-
 
 @pytest.mark.parametrize(
     "setup",

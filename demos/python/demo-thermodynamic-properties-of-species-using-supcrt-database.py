@@ -55,6 +55,6 @@ for name in species:
 # 3rd column: standard partial molar enthalpy (in units of J/mol)
 for name in species:
     f = open('calculated-standard-species-properties-' + name + '.txt', 'w')
-    print >> f, 'T(K), G0(J/mol), H0(J/mol)'
+    print('T(K), G0(J/mol), H0(J/mol)', file=f)
     for Tval, G0val, H0val in zip(temperatures, G0[name], H0[name]):
-        print >> f, '{0}, {1}, {2}'.format(Tval, G0val, H0val)
+        print('{0}, {1}, {2}'.format(Tval, G0val, H0val), file=f)

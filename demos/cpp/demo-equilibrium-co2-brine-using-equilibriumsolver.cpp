@@ -25,7 +25,7 @@ int main()
 
     // Define which phases and species the chemical system should have using a ChemicalEditor object.
     ChemicalEditor editor(database);
-    editor.addAqueousPhase("H2O NaCl CO2");
+    editor.addAqueousPhaseWithElementsOf("H2O NaCl CO2");
     editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
     editor.addMineralPhase("Halite");
 

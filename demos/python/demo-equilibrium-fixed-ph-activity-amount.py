@@ -18,8 +18,8 @@
 from reaktoro import *
 
 editor = ChemicalEditor()
-editor.addAqueousPhase("H O Na Cl Ca Mg C")
-editor.addGaseousPhase("H O C")
+editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
+editor.addGaseousPhaseWithElements("H O C")
 
 system = ChemicalSystem(editor)
 
@@ -34,4 +34,4 @@ problem.fixSpeciesActivity("O2(g)", 0.20)
 
 state = equilibrate(problem)
 
-print state
+print(state)

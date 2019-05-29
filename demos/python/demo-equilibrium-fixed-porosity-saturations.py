@@ -18,7 +18,7 @@
 from reaktoro import *
 
 editor = ChemicalEditor()
-editor.addAqueousPhase("H O Na Cl C Ca Mg Si")
+editor.addAqueousPhaseWithElements("H O Na Cl C Ca Mg Si")
 editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
 editor.addMineralPhase("Calcite")
 editor.addMineralPhase("Magnesite")
@@ -42,5 +42,5 @@ composition.setPorosity(0.3)
 
 state = equilibrate(composition, options)
 
-print state
+print(state)
 
