@@ -449,6 +449,147 @@ struct Database::Impl
         parse(doc, filename);
     }
 
+// ThermoFun intergation BEGIN
+    Impl(const ThermoFun::Database& fundatabase)
+    {
+
+    }
+
+    auto setSpecies (const ThermoFun::Database &db) -> void
+    {
+        // set elements??
+
+        for (auto pair : db.mapSubstances())
+        {
+            auto substance = pair.second;
+            auto type = substance.aggregateState();
+
+            if (type == ThermoFun::AggregateState::type::AQUEOUS)
+            {
+                AqueousSpecies species = getAqueousSpecies(substance);
+                if(valid(species))
+                    aqueous_species_map[species.name()] = species;
+            } else if (type == ThermoFun::AggregateState::type::GAS)
+            {
+                GaseousSpecies species = getGaseousSpecies(substance);
+                if(valid(species))
+                    gaseous_species_map[species.name()] = species;
+            } else if (type == ThermoFun::AggregateState::type::CRYSTAL)
+            {
+                MineralSpecies species = getMineralSpecies(substance);
+                if(valid(species))
+                    mineral_species_map[species.name()] = species;
+
+            } /*else RuntimeError("Could not parse the species `" +
+                              name + "` with type `" + type + "` in the database `" +
+                              databasename + "`.", "The type of the species is unknown.");*/
+        }
+    }
+
+    auto parseElementalFormula(const std::string& formula) -> std::map<Element, double>
+    {
+        std::map<Element, double> elements;
+/*        database.parseSubstanceFormula(formula);
+        std::map<ThermoFun::Element, double> mapElements = thermofun.parseSubstanceFormula(formula);
+
+        for (auto &e : mapElements)
+        {
+            Element element;
+            if (e.first.symbol() == "Zz")
+                element.setName("Z");
+            else
+                element.setName(e.first.symbol());
+            element.setMolarMass(e.first.molarMass());
+            elements[element] = e.second;
+            element_map[element.name()] = element;
+        }
+*/
+        return elements;
+    }
+
+    auto getSpecies(const ThermoFun::Substance& substance) -> Species
+    {
+        // The species instance
+        Species species;
+
+        // Set the name of the species
+        species.setName(substance.symbol());
+
+        // Set the chemical formula of the species
+        species.setFormula(substance.formula());
+
+        // Set the elements of the species
+        species.setElements(parseElementalFormula(substance.formula()));
+
+        return species;
+    }
+
+    auto getAqueousSpecies(const ThermoFun::Substance& substance) -> AqueousSpecies
+    {
+        // The aqueous species instance
+        AqueousSpecies species = getSpecies(substance);
+
+        // Set the elemental charge of the species
+        species.setCharge(substance.charge());
+
+        // Parse the complex formula of the aqueous species (if any)
+//        species.setDissociation(parseDissociation(node.child("Dissociation").text().get()));
+
+        // Parse the thermodynamic data of the aqueous species
+//        species.setThermoData(parseAqueousSpeciesThermoData(node.child("Thermo")));
+
+        return species;
+    }
+
+    auto getGaseousSpecies(const ThermoFun::Substance& substance) -> GaseousSpecies
+    {
+        // The gaseous species instance
+        GaseousSpecies species = getSpecies(substance);
+
+        ThermoFun::ThermoParametersSubstance param = substance.thermoParameters();
+
+        if (param.critical_parameters.size() >= 3)
+        {
+            if (param.critical_parameters[0]>0.0)
+            species.setCriticalTemperature(param.critical_parameters[0]);
+
+            if (param.critical_parameters[1]>0.0)
+            species.setCriticalPressure(param.critical_parameters[1]*1e05); // from bar to Pa
+
+            species.setAcentricFactor(param.critical_parameters[2]);
+        }
+
+
+        // Set the critical temperature of the gaseous species (in units of K)
+//        if(!node.child("CriticalTemperature").empty())
+//            species.setCriticalTemperature(node.child("CriticalTemperature").text().as_double());
+
+        // Set the critical pressure of the gaseous species (in units of Pa)
+//        if(!node.child("CriticalPressure").empty())
+//            species.setCriticalPressure(node.child("CriticalPressure").text().as_double() * 1e5); // convert from bar to Pa
+
+        // Set the acentric factor of the gaseous species
+//        if(!node.child("AcentricFactor").empty())
+//            species.setAcentricFactor(node.child("AcentricFactor").text().as_double());
+
+        // Parse the thermodynamic data of the gaseous species
+//        species.setThermoData(parseGaseousSpeciesThermoData(node.child("Thermo")));
+
+        return species;
+    }
+
+    auto getMineralSpecies(const ThermoFun::Substance& substance) -> MineralSpecies
+    {
+        // The mineral species instance
+        MineralSpecies species = getSpecies(substance);
+
+        // Parse the thermodynamic data of the mineral species
+//        species.setThermoData(parseMineralSpeciesThermoData(node.child("Thermo")));
+
+        return species;
+    }
+// ThermoFun Integration END
+
     template<typename Key, typename Value>
     auto collectValues(const std::map<Key, Value>& map) -> std::vector<Value>
     {
@@ -740,6 +881,10 @@ Database::Database()
 
 Database::Database(std::string filename)
 : pimpl(new Impl(filename))
+{}
+
+Database::Database(const ThermoFun::Database& fundatabase)
+: pimpl(new Impl(fundatabase))
 {}
 
 auto Database::addElement(const Element& element) -> void

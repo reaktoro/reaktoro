@@ -22,6 +22,9 @@
 #include <string>
 #include <vector>
 
+// ThermoFun includes
+#include <thermofun/ThermoFun.h>
+
 namespace Reaktoro {
 
 // Forward declarations
@@ -73,6 +76,8 @@ public:
     /// exists with a given name, an exception will be thrown.
     /// @param filename The name of the database file
     explicit Database(std::string filename);
+
+    Database(const ThermoFun::Database& fundatabase);
 
     /// Add an Element instance in the database.
     auto addElement(const Element& element) -> void;
