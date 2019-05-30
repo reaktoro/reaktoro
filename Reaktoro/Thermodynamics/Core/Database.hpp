@@ -22,8 +22,9 @@
 #include <string>
 #include <vector>
 
-// ThermoFun includes
-#include <thermofun/ThermoFun.h>
+namespace ThermoFun {
+    class Database;
+}
 
 namespace Reaktoro {
 

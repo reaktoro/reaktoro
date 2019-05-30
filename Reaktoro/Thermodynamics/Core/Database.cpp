@@ -39,6 +39,9 @@
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
+// ThermoFun includes
+#include <thermofun/ThermoFun.h>
+
 // miniz includes
 #include <miniz/zip_file.hpp>
 
@@ -413,6 +416,9 @@ struct Database::Impl
     /// The set of all mineral species in the database
     MineralSpeciesMap mineral_species_map;
 
+    /// ThermoFun database
+    ThermoFun::Database fundb;
+
     Impl() = default;
 
     Impl(std::string filename)
@@ -452,13 +458,11 @@ struct Database::Impl
 // ThermoFun intergation BEGIN
     Impl(const ThermoFun::Database& fundatabase)
     {
-
+        fundb = fundatabase;
     }
 
     auto setSpecies (const ThermoFun::Database &db) -> void
     {
-        // set elements??
-
         for (auto pair : db.mapSubstances())
         {
             auto substance = pair.second;
@@ -489,8 +493,8 @@ struct Database::Impl
     auto parseElementalFormula(const std::string& formula) -> std::map<Element, double>
     {
         std::map<Element, double> elements;
-/*        database.parseSubstanceFormula(formula);
-        std::map<ThermoFun::Element, double> mapElements = thermofun.parseSubstanceFormula(formula);
+        fundb.parseSubstanceFormula(formula);
+        std::map<ThermoFun::Element, double> mapElements = fundb.parseSubstanceFormula(formula);
 
         for (auto &e : mapElements)
         {
@@ -503,7 +507,7 @@ struct Database::Impl
             elements[element] = e.second;
             element_map[element.name()] = element;
         }
-*/
+
         return elements;
     }
 
@@ -551,14 +555,14 @@ struct Database::Impl
         if (param.critical_parameters.size() >= 3)
         {
             if (param.critical_parameters[0]>0.0)
-            species.setCriticalTemperature(param.critical_parameters[0]);
+                species.setCriticalTemperature(param.critical_parameters[0]);
 
             if (param.critical_parameters[1]>0.0)
-            species.setCriticalPressure(param.critical_parameters[1]*1e05); // from bar to Pa
+                species.setCriticalPressure(param.critical_parameters[1]*1e05); // from bar to Pa
 
-            species.setAcentricFactor(param.critical_parameters[2]);
+            if (param.critical_parameters[2]>0.0)
+                species.setAcentricFactor(param.critical_parameters[2]);
         }
-
 
         // Set the critical temperature of the gaseous species (in units of K)
 //        if(!node.child("CriticalTemperature").empty())
