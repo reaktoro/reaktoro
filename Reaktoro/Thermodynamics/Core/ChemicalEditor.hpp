@@ -24,6 +24,10 @@
 
 // Reaktoro includes
 
+namespace ThermoFun {
+    class Database;
+}
+
 namespace Reaktoro {
 
 // Forward declarations
@@ -86,6 +90,8 @@ public:
 
     /// Construct a ChemicalEditor instance with the provided database.
     explicit ChemicalEditor(const Database& database);
+
+    ChemicalEditor(const ThermoFun::Database& fundatabase);
 
     /// Construct a copy of the provided ChemicalEditor instance.
     ChemicalEditor(const ChemicalEditor& other);

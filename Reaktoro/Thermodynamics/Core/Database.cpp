@@ -459,11 +459,8 @@ struct Database::Impl
     Impl(const ThermoFun::Database& fundatabase)
     {
         fundb = fundatabase;
-    }
 
-    auto setSpecies (const ThermoFun::Database &db) -> void
-    {
-        for (auto pair : db.mapSubstances())
+        for (auto pair : fundb.mapSubstances())
         {
             auto substance = pair.second;
             auto type = substance.aggregateState();

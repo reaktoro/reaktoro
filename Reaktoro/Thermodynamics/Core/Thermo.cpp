@@ -93,10 +93,9 @@ struct Thermo::Impl
     : engine(ThermoFun::Database())
     {}
 
-    Impl(const ThermoFun::Database& database)
-    : engine(database)
+    Impl(const ThermoFun::Database& fundb)
+    : engine(fundb), fundatabase(fundb), database(fundb)
     {
-        fundatabase = database;
 //        // Initialize the Haar--Gallagher--Kell (1984) equation of state for water
 //        water_thermo_state_hgk_fn = [](Temperature T, Pressure P)
 //        {
@@ -170,12 +169,13 @@ struct Thermo::Impl
         species_thermo_state_hkf_fn = memoize(species_thermo_state_hkf_fn);
     }
 
-    auto convertScalar(Reaktoro_::ThermoScalar funscalar) ->ThermoScalar
+    auto convertScalar(Reaktoro_::ThermoScalar funscalar) -> ThermoScalar
     {
         ThermoScalar ts;
         ts.val = funscalar.val;
         ts.ddP = funscalar.ddp;
         ts.ddT = funscalar.ddp;
+        return ts;
     }
 
     auto speciesThermoStateFUN(double T, double P, std::string species) -> SpeciesThermoState
@@ -192,6 +192,7 @@ struct Thermo::Impl
             sts.volume = convertScalar(tps.volume*1e-05); // from J/bar to m3/mol
             sts.helmholtz_energy = convertScalar(tps.helmholtz_energy);
             sts.internal_energy = convertScalar(tps.internal_energy);
+            return sts;
         }
         errorNonExistentSpecies(species);
         return {};
