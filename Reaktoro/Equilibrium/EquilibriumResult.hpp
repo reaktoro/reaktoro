@@ -32,11 +32,41 @@ struct SmartEquilibriumResult
     /// The boolean flag that indicates if smart equilibrium calculation was used.
     bool succeeded = false;
 
-    /// Times required for
-    /// '0' - search for reference element (minimum element)
-    /// '1' - fetching data (including sensitivities) in reference element
-    /// '2' - matrix -vector manipulations
-    std::vector<double> times = {0, 0, 0};
+    /// Used to store statistics information about the smart equilibrium algorithm.
+    struct LearnStatistics
+    {
+        /// Time for reconstructing reference state
+        double time_gibbs_minimization = 0.0;
+
+        /// Time for storing reference state
+        double time_store = 0.0;
+
+        /// Apply an addition assignment to this instance
+        auto operator+=(const LearnStatistics& other) -> LearnStatistics&;
+    };
+    struct EstimateStatistics
+    {
+        /// Time for search operations
+        double time_search = 0.0;
+
+        /// Time for matrix-vector multiplications
+        double time_matrix_vector_mult = 0.0;
+
+        /// Time for acceptance test
+        double time_acceptance_test = 0.0;
+
+        /// Apply an addition assignment to this instance
+        auto operator+=(const EstimateStatistics& other) -> EstimateStatistics&;
+
+    };
+
+    /// The statistics information of the smart equilibrium algorithm.
+    LearnStatistics learn_stats;
+    EstimateStatistics estimate_stats;
+
+    /// Apply an addition assignment to this instance
+    auto operator+=(const SmartEquilibriumResult& other) -> SmartEquilibriumResult&;
+
 };
 
 /// A type used to describe the result of an equilibrium calculation

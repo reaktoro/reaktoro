@@ -52,6 +52,7 @@ struct Params{
 
     // Solver params
     bool is_smart_solver;
+    bool track_statistics;
     double smart_reltol;
     double smart_abstol;
 
@@ -71,6 +72,8 @@ int main()
     int minute(60);
     int hour(60 * minute);
     int day(24 * hour);
+    int week(7 * day);
+    int month(30 * day);
     int year(365 * day);
 
     // Step 2: Define parameters for the reactive transport simulation
@@ -80,19 +83,20 @@ int main()
     params.xl = 0.0; // the x-coordinates of the left boundaries
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
-    params.nsteps = 7200; // the number of steps in the reactive transport simulation
+    params.nsteps = 10; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
-    params.dt = 5 * minute; // the time step (in units of s)
+    params.dt = 2 * minute; // the time step (in units of s)
 
     // Define physical and chemical parameters
     params.D = 1.0e-9; // the diffusion coefficient (in units of m2/s)
-    params.v = 1.0 / day; // the Darcy velocity (in units of m/s)
+    params.v = 1.0 / week; // the Darcy velocity (in units of m/s)
     params.T = 60.0;                     // the temperature (in units of degC)
     params.P = 100;                      // the pressure (in units of bar)
 
     // Define parameters of the equilibrium solvers
     params.smart_reltol = 1e-1;
-    params.smart_abstol = 1e-1;
+    params.smart_abstol = 1e-8;
+    params.track_statistics = true;
 
     // Output
     outputConsole(params);
@@ -113,6 +117,7 @@ auto runReactiveTransport(const Params & params) -> void
     EquilibriumOptions options;
     options.smart.reltol = params.smart_reltol;
     options.smart.abstol = params.smart_abstol;
+    options.smart.track_statistics = params.track_statistics;
 
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
@@ -130,7 +135,7 @@ auto runReactiveTransport(const Params & params) -> void
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
-    //if (params.is_smart_solver) std::cout << "system = \n" << system << std:: endl;
+    // if (params.is_smart_solver) std::cout << "system = \n" << system << std:: endl;
 
     // Step **: Define the initial condition (IC) of the reactive transport modeling problem
     EquilibriumProblem problem_ic(system);

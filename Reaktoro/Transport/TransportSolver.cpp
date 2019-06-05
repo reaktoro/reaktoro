@@ -15,16 +15,13 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TransportSolver.hpp"
-
-// C++ includes
-//#include <iomanip>
-#include <iostream>
-
 // Reaktoro includes
-#include <Reaktoro/Common/Exception.hpp>
+#include "Reaktoro/Common/Exception.hpp"
+#include "Reaktoro/Transport/TransportSolver.hpp"
+
 
 namespace Reaktoro {
+
 namespace internal {
 
 template<typename ReturnType, typename TridiagonalMatrixType>
@@ -38,6 +35,7 @@ auto row(TridiagonalMatrixType&& mat, Index index) -> ReturnType
 }
 
 } // namespace internal
+
 
 ChemicalField::ChemicalField(Index size, const ChemicalSystem& system)
 : m_size(size),
@@ -246,137 +244,129 @@ TransportSolver::TransportSolver()
 //    A.solve(u);
 //}
 
-auto TransportSolver::initializeFullImplicit() -> void
-{
-    const auto dx = mesh_.dx();
-    const auto alpha = diffusion*dt/(dx * dx);
-    const auto beta = velocity*dt/dx;
-    const auto num_cells = mesh_.numCells();
-    const auto icell0 = 0;
-    const auto icelln = num_cells - 1;
-
-    A.resize(num_cells);
-
-    // Assemble the coefficient matrix A for the interior cells
-    for(Index icell = 1; icell < icelln; ++icell)
-    {
-        const double a = -beta - alpha;
-        const double b = 1 + beta + 2*alpha;
-        const double c = -alpha;
-        A.row(icell) << a, b, c;
-    }
-
-    // Assemble the coefficient matrix A for the boundary cells
-    A.row(icell0) << 0.0, 1.0 + alpha + beta, -alpha;   // left boundary (flux = v * ul)
-    A.row(icelln) << - beta, 1.0 + beta, 0.0;           // right boundary (free)
-
-    // Factorize A into LU factors for future uses in method step
-    A.factorize();
-
-}
-auto TransportSolver::step_implicit_fvm(Reaktoro::VectorRef u,
-                                        Reaktoro::VectorConstRef q) -> void
-{
-    // Solving advection problem with time explicit approach
-    const auto dx = mesh_.dx();
-    const auto beta = velocity*dt/dx;
-    const auto icell0 = 0;
-
-    // Handle the left boundary cell
-    u[icell0] += beta * ul; // left boundary (flux = v * ul)
-
-    // Add the source contribution
-    u += dt * q;
-
-    // Solving the diffusion problem with time implicit approach
-    A.solve(u);
-}
-
-
 auto TransportSolver::initialize() -> void
 {
     const auto dx = mesh_.dx();
     const auto alpha = diffusion*dt/(dx * dx);
+    const auto beta = velocity*dt/dx;
     const auto num_cells = mesh_.numCells();
     const auto icell0 = 0;
     const auto icelln = num_cells - 1;
 
-    Assert(velocity * dt / dx < 0.5,
-           "Could not run reactive-transport calculation reliably.",
-           "The CFL number ( = velocity * dt / dx ) must be less then 0.5. "
-           "Try to decrease the time step or coarsen the spatial discretization"
-           "(increase the number of cells)");
-
+    // Initialize A vector
     A.resize(num_cells);
-    phi.resize(num_cells);
+
+    // If the Flux limiters scheme is considered, initialize phi vector
+    if (options.fvm == FiniteVolumeMethod::FluxLimitersImplicitExplicit) {
+        Assert(velocity * dt / dx < 0.5,
+               "Could not run reactive-transport calculation reliably.",
+               "The CFL number ( = velocity * dt / dx ) must be less then 0.5. "
+               "Try to decrease the time step or coarsen the spatial discretization"
+               "(increase the number of cells)");
+        phi.resize(num_cells);
+    }
+
+    // Coeffitiens of the system's matrix
+    double a(0.0), b(0.0), c(0.0);
 
     // Assemble the coefficient matrix A for the interior cells
-    for(Index icell = 1; icell < icelln; ++icell)
-    {
-        const double a = -alpha;
-        const double b = 1 + 2*alpha;
-        const double c = -alpha;
+    for(Index icell = 1; icell < icelln; ++icell) {
+        // Depending on the initialized FV scheme, initialize coeffitients
+        switch (options.fvm) {
+            case (FiniteVolumeMethod::FullImplicit) :
+                a = -beta - alpha;
+                b = 1 + beta + 2 * alpha;
+                c = -alpha;
+            case (FiniteVolumeMethod::FluxLimitersImplicitExplicit) :
+                a = -alpha;
+                b = 1 + 2*alpha;
+                c = -alpha;
+        }
         A.row(icell) << a, b, c;
     }
 
-    // Assemble the coefficient matrix A for the boundary cells
-    // Our derivation
-    // A.row(icell0) << 0.0, 1.0 + alpha, -alpha;            // forward difference approximation with first order error
-    // A.row(icelln) << 0.0, 1.0, 0.0;                       // d/dx = 0 (zero flux) at the right boundary
+    // Initialize cells on the left and right BCs
+    switch (options.fvm) {
+        case (FiniteVolumeMethod::FullImplicit) :
+            // Assemble the coefficient matrix A for the boundary cells
+            A.row(icell0) << 0.0, 1.0 + alpha + beta, -alpha;   // left boundary (flux = v * ul)
+            A.row(icelln) << - beta, 1.0 + beta, 0.0;           // right boundary (free)
 
-    // Allan version ealier
-    // A.row(icell0) << 0.0, 1.0 + alpha, -alpha;            // forward difference approximation with second order error
-    // A.row(icelln) << -alpha, 1.0 + alpha, 0.0;            // d/dx = 0 (zero flux) at the right boundary
+            break;
 
-    // ESSS
-    A.row(icell0) << 0.0, 1.0 + 4.5*alpha, -1.5*alpha;    // forward difference approximation with second order error
-    A.row(icelln) << -alpha, 1.0 + alpha, 0.0;            // d/dx = 0 (zero flux) at the right boundary
+        case (FiniteVolumeMethod::FluxLimitersImplicitExplicit) :
+            // Assemble the coefficient matrix A for the boundary cells
+            // Our derivation
+            // A.row(icell0) << 0.0, 1.0 + alpha, -alpha;            // forward difference approximation with first order error
+            // A.row(icelln) << 0.0, 1.0, 0.0;                       // d/dx = 0 (zero flux) at the right boundary
+
+            // Allan version ealier
+            // A.row(icell0) << 0.0, 1.0 + alpha, -alpha;            // forward difference approximation with second order error
+            // A.row(icelln) << -alpha, 1.0 + alpha, 0.0;            // d/dx = 0 (zero flux) at the right boundary
+
+            // ESSS
+            A.row(icell0) << 0.0, 1.0 + 4.5*alpha, -1.5*alpha;    // forward difference approximation with second order error
+            A.row(icelln) << -alpha, 1.0 + alpha, 0.0;            // d/dx = 0 (zero flux) at the right boundary
+
+            break;
+    }
 
     // Factorize A into LU factors for future uses in method step
     A.factorize();
+
 }
 
-auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
+auto TransportSolver::step(Reaktoro::VectorRef u, Reaktoro::VectorConstRef q) -> void
 {
-    // TODO: Implement Kurganov-Tadmor method as detailed in their 2000 paper (not as in Wikipedia)
     // Solving advection problem with time explicit approach
     const auto dx = mesh_.dx();
-    const auto num_cells = mesh_.numCells();
     const auto beta = velocity*dt/dx;
     const auto icell0 = 0;
-    const auto icelln = num_cells - 1;
 
-    u0 = u;
+    switch (options.fvm) {
+        case (FiniteVolumeMethod::FullImplicit) :
+            // Handle the left boundary cell
+            u[icell0] += beta * ul; // left boundary (flux = v * ul)
+            break;
 
-    phi[0] = 2.0; //  this is very important to ensure correct flux limiting behavior for boundary cell.
+        case (FiniteVolumeMethod::FluxLimitersImplicitExplicit) :
 
-    // Calculate the flux limiters in the interior cells
-    for(Index icell = 1; icell < icelln; ++icell)
-    {
-        // Calculate the variation index `r = (uP - uW)/(uE - uP)` on current cell
-        const double r = (u[icell] - u[icell - 1])/(u[icell + 1] - u[icell]);
+            const auto num_cells = mesh_.numCells();
+            const auto icelln = num_cells - 1;
 
-        // Calculate the flux limiter phi based on the superbee limiter (https://en.wikipedia.org/wiki/Flux_limiter)
-        phi[icell] = std::max(0.0, std::max(std::min(2 * r, 1.0), std::min(r, 2.0)));
+            u0 = u;
+
+            phi[0] = 2.0; //  this is very important to ensure correct flux limiting behavior for boundary cell.
+
+            // Calculate the flux limiters in the interior cells
+            for(Index icell = 1; icell < icelln; ++icell)
+            {
+                // Calculate the variation index `r = (uP - uW)/(uE - uP)` on current cell
+                const double r = (u[icell] - u[icell - 1])/(u[icell + 1] - u[icell]);
+
+                // Calculate the flux limiter phi based on the superbee limiter (https://en.wikipedia.org/wiki/Flux_limiter)
+                phi[icell] = std::max(0.0, std::max(std::min(2 * r, 1.0), std::min(r, 2.0)));
+            }
+
+            // Compute advection contributions to u for the interior cells
+            for(Index icell = 1; icell < icelln; ++icell)
+            {
+                const double phiW = phi[icell - 1];
+                const double phiP = phi[icell];
+                const double aux = 1.0 + 0.5 * (phiP - phiW);
+
+                const double uW = u0[icell - 1];
+                const double uP = u0[icell];
+                u[icell] += aux*beta * (uW - uP);
+            }
+
+            // Handle the left boundary cell
+            const double aux = 1 + 0.5 * phi[0];
+            u[icell0] += aux * beta * (ul - u0[0]) + (3.0*diffusion*ul*dt/(dx*dx)); // prescribed amount on the wall and approximation derived by forward difference approximation with second order error
+            // Handle the right boundary cell
+            u[icelln] += beta * (u0[icelln - 1] - u0[icelln]); // du/dx = 0 at the right boundary
+            break;
     }
-
-    // Compute advection contributions to u for the interior cells
-    for(Index icell = 1; icell < icelln; ++icell)
-    {
-        const double phiW = phi[icell - 1];
-        const double phiP = phi[icell];
-        const double aux = 1.0 + 0.5 * (phiP - phiW);
-
-        const double uW = u0[icell - 1];
-        const double uP = u0[icell];
-        u[icell] += aux*beta * (uW - uP);
-    }
-
-    // Handle the left boundary cell
-    const double aux = 1 + 0.5 * phi[0];
-    u[icell0] += aux * beta * (ul - u0[0]) + (3.0*diffusion*ul*dt/(dx*dx)); // prescribed amount on the wall and approximation derived by forward difference approximation with second order error
-    // Handle the right boundary cell
-    u[icelln] += beta * (u0[icelln - 1] - u0[icelln]); // du/dx = 0 at the right boundary
 
     // Add the source contribution
     u += dt * q;
@@ -387,8 +377,7 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 
 auto TransportSolver::step(VectorRef u) -> void
 {
-    //step(u, zeros(u.size()));             // flux-limiters scheme
-    step_implicit_fvm(u, zeros(u.size()));  // implicit fvl scheme
+    step(u, zeros(u.size()));
 }
 
 } // namespace Reaktoro

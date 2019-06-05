@@ -19,9 +19,32 @@
 
 namespace Reaktoro {
 
+auto SmartEquilibriumResult::EstimateStatistics::operator+=(const SmartEquilibriumResult::EstimateStatistics& other)
+-> SmartEquilibriumResult::EstimateStatistics&
+{
+    time_search += other.time_search;
+    time_matrix_vector_mult += other.time_matrix_vector_mult;
+    time_acceptance_test += other.time_acceptance_test;
+    return *this;
+}
+auto SmartEquilibriumResult::LearnStatistics::operator+=(const SmartEquilibriumResult::LearnStatistics& other)
+        -> SmartEquilibriumResult::LearnStatistics&
+{
+    time_store += other.time_store;
+    time_gibbs_minimization += other.time_gibbs_minimization;
+    return *this;
+}
+
+auto SmartEquilibriumResult::operator+=(const SmartEquilibriumResult& other) -> SmartEquilibriumResult&
+{
+    learn_stats     += other.learn_stats;
+    estimate_stats  += other.estimate_stats;
+    return *this;
+}
 auto EquilibriumResult::operator+=(const EquilibriumResult& other) -> EquilibriumResult&
 {
     optimum += other.optimum;
+    smart   += other.smart;
     return *this;
 }
 

@@ -51,6 +51,12 @@ namespace Reaktoro {
 //private:
 //};
 
+enum FiniteVolumeMethod{
+    FullImplicit = 1,
+    ImpliciteExpilcit = 2,
+    FluxLimitersImplicitExplicit = 3
+};
+
 class ChemicalField
 {
 public:
@@ -200,7 +206,7 @@ private:
 };
 
 /// A class for solving advection-diffusion problem.
-/// Eq: du/dt + v*du/dx = D*d�u/dx�
+/// Eq: du/dt + v*du/dx = D*d2u/dx2
 ///     u - amount
 ///     v - velocity
 ///     D - diffusion coefficient
@@ -228,16 +234,15 @@ public:
     /// Set the time step for the numerical solution of the transport problem.
     auto setTimeStep(double val) -> void { dt = val; }
 
+    /// Set the time step for the numerical solution of the transport problem.
+    auto setOptions() -> void { options.fvm = FullImplicit; }
+
     /// Return the mesh.
     auto mesh() const -> const Mesh& { return mesh_; }
 
     /// Initialize the transport solver before method @ref step is executed.
     /// Setup coefficient matrix of the diffusion problem and factorize.
     auto initialize() -> void;
-
-    /// Initialize the transport solver before method @ref step is executed.
-    /// Setup coefficient matrix of the diffusion-advection problem and factorize.
-    auto initializeFullImplicit() -> void;
 
     /// Step the transport solver.
     /// This method solve one step of the transport solver equation, using an explicit approach for
@@ -246,14 +251,6 @@ public:
     /// @param[in,out] u The solution vector
     /// @param q The source rates vector ([same unit considered for u]/m)
     auto step(VectorRef u, VectorConstRef q) -> void;
-
-    /// Step the transport solver.
-    /// This method solve one step of the transport solver equation, using an explicit approach for
-    /// advection and total implicit for diffusion. The amount resulted from the advection it is
-    /// passed to diffusion problem as a "source".
-    /// @param[in,out] u The solution vector
-    /// @param q The source rates vector ([same unit considered for u]/m)
-    auto step_implicit_fvm(VectorRef u, VectorConstRef q) -> void;
 
     /// Step the transport solver.
     /// @param[in,out] u The solution vector
@@ -283,6 +280,14 @@ private:
 
     /// The previous state of the variables.
     Vector u0;
+
+    struct Options{
+
+        /// Flag for the FV scheme
+        FiniteVolumeMethod fvm = FullImplicit;
+    };
+
+    Options options;
 };
 
 } // namespace Reaktoro
