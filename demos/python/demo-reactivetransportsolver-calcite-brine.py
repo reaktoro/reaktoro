@@ -153,9 +153,7 @@ def plotfile(file):
 # Step 4: Construct the chemical system with its phases and species
 db = Database('supcrt98.xml')
 editor = ChemicalEditor(db)
-#editor.addAqueousPhase(['H2O(l)', 'H+', 'OH-', 'Na+', 'Cl-', 'Ca++', 'Mg++', 'HCO3-', 'CO2(aq)', 'CO3--'])
 editor.addAqueousPhase('H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--')
-#editor.addAqueousPhaseWithElementsOf('H2O NaCl CaCl2 MgCl2 CO2')
 editor.addMineralPhase('Quartz')
 editor.addMineralPhase('Calcite')
 editor.addMineralPhase('Dolomite')

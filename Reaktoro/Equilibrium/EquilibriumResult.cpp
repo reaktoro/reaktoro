@@ -41,6 +41,12 @@ auto SmartEquilibriumResult::operator+=(const SmartEquilibriumResult& other) -> 
     estimate_stats  += other.estimate_stats;
     return *this;
 }
+
+auto SmartEquilibriumResult::addLearningIndex(const Index & index) -> void{
+
+    learning_states_indx.emplace_back(index);
+}
+
 auto EquilibriumResult::operator+=(const EquilibriumResult& other) -> EquilibriumResult&
 {
     optimum += other.optimum;

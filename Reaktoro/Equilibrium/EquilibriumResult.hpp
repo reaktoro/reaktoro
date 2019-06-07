@@ -23,6 +23,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Optimization/OptimumResult.hpp>
+#include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
 
 namespace Reaktoro {
 
@@ -31,6 +33,9 @@ struct SmartEquilibriumResult
 {
     /// The boolean flag that indicates if smart equilibrium calculation was used.
     bool succeeded = false;
+
+    /// Counter for the smart statuses
+    std::vector<Index> learning_states_indx;
 
     /// Used to store statistics information about the smart equilibrium algorithm.
     struct LearnStatistics
@@ -66,7 +71,10 @@ struct SmartEquilibriumResult
 
     /// Apply an addition assignment to this instance
     auto operator+=(const SmartEquilibriumResult& other) -> SmartEquilibriumResult&;
+    auto addLearningIndex(const Index & index) -> void;
 
+    /// Timer to track cell-wise time for estimation / learning
+    Timer timer;
 };
 
 /// A type used to describe the result of an equilibrium calculation

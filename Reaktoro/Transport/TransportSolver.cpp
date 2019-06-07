@@ -295,14 +295,15 @@ auto TransportSolver::initialize() -> void
             break;
 
         case (FiniteVolumeMethod::FluxLimitersImplicitExplicit) :
+
             // Assemble the coefficient matrix A for the boundary cells
             // Our derivation
             // A.row(icell0) << 0.0, 1.0 + alpha, -alpha;            // forward difference approximation with first order error
-            // A.row(icelln) << 0.0, 1.0, 0.0;                       // d/dx = 0 (zero flux) at the right boundary
+            // A.row(icelln) << 0.0, 1.0, 0.0;                       // right boundary (free)
 
             // Allan version ealier
             // A.row(icell0) << 0.0, 1.0 + alpha, -alpha;            // forward difference approximation with second order error
-            // A.row(icelln) << -alpha, 1.0 + alpha, 0.0;            // d/dx = 0 (zero flux) at the right boundary
+            // A.row(icelln) << -alpha, 1.0 + alpha, 0.0;            // d/dx = 0 (zero flux) at the right boundary (to be fixed)
 
             // ESSS
             A.row(icell0) << 0.0, 1.0 + 4.5*alpha, -1.5*alpha;    // forward difference approximation with second order error

@@ -35,15 +35,6 @@
 
 namespace Reaktoro {
 
-/// Enum type to initialize profilers
-enum Profiling{
-    RT = 1,
-    EQ = 2,     // step-precision
-    CK = 3,
-    Total = 4,
-    EQ_CW = 5   // cell-precision
-};
-
 /// A wrapper class of chrono library to CPU time tracking
 struct Timer{
 
@@ -59,10 +50,42 @@ struct Timer{
     auto stopTimer() -> double;
 };
 
-/// Use this class to track, count, and document the equilibrium solver statuses
-struct SolverStatus{
+/// Use this class to collect modeling results per one step of reactive transport.
+struct ReactiveTransportResult{
 
-    SolverStatus(const std::string & results_folder, const std::string & file);
+    /// Total cpu times for reaktive transport and equilibrium
+    double rt_time;
+    double eq_time;
+
+    //EquilibriumResult equilibrium;
+
+    /// Timer to profile CPU time of the reactive transport components
+    Timer timer;
+
+};
+
+/// Use this class to postprocess and analyse accumulated results of reactive transport.
+    class ReactiveTransportProfiler{
+
+        auto process(ReactiveTransportResult & rt_result) -> void;
+        auto output(const std::string & file) -> void;
+
+    };
+
+/// Enum type to initialize profilers
+enum Profiling{
+    RT = 1,
+    EQ = 2,     // step-precision
+    CK = 3,
+    Total = 4,
+    EQ_CW = 5   // cell-precision
+};
+
+
+/// Use this class to track, count, and document the equilibrium solver statuses
+struct SmartSolverStatus{
+
+    SmartSolverStatus(const std::string & results_folder, const std::string & file);
 
     /// Update the output stream with collected statuses
     auto output(const Index & i) -> void;
@@ -73,8 +96,12 @@ struct SolverStatus{
     /// The list of booleans indicating weather smart estimation was triggered
     std::vector<bool> statuses;
 
-    /// Counters for the smart and total statuses
-    int smart_counter{0}, total_counter{0};
+    /// Counter for the smart statuses
+    int smart_counter = 0;
+
+    /// Counter for the total statuses
+    int total_counter = 0;
+
 };
 
 /// Use this class for profiling reactive transport solver components (on the step level)
@@ -152,12 +179,23 @@ struct EquilibriumProfiler : public Profiler {
 
 };
 
+
 /// Use this class for solving reactive transport problems.
 class ReactiveTransportSolver
 {
 public:
     /// Construct a default ReactiveTransportSolver instance.
-    ReactiveTransportSolver(const ChemicalSystem& system, const bool& is_smart = false);
+    ReactiveTransportSolver(const ChemicalSystem& system);
+
+    /// Set options of the reactive transport modeling
+    /// TODO: make with variadic
+    /// priving parameter string and value
+    auto setOptions() -> void;
+
+    /// Temporary:
+    auto setSmartSolver(const bool & smart) -> void;
+
+    auto setProfiling(const bool & profiling) -> void;
 
     /// Initialize the mesh discretizing the computational domain for reactive transport.
     auto setMesh(const Mesh& mesh) -> void;
@@ -196,11 +234,11 @@ public:
 
     /// Make a step of the reactive transport time-stepping scheme
     /// @see ChemicalField
-    auto step(ChemicalField& field) -> void;
+    /// auto step(ChemicalField& field) -> void;
 
-    /// Make a step (with profiling) of the reactive transport time-stepping scheme
+    /// Make a step of the reactive transport time-stepping scheme
     /// @see ChemicalField
-    auto step_tracked(ChemicalField& field) -> void;
+    auto step(ChemicalField& field) -> ReactiveTransportResult&;
 
     /// Add a profiler on the time step level
     /// @see Profiler,
@@ -211,7 +249,7 @@ public:
     auto cellprofile(Profiling what) -> EquilibriumProfiler;
 
     /// Add a tracker for the smart equilibrium statuses
-    auto trackStatus(const std::string & folder, const std::string & file) -> SolverStatus;
+    auto trackStatus(const std::string & folder, const std::string & file) -> SmartSolverStatus;
 
     /// Output profiling results to the file
     auto outputProfiling(const std::string & folder) -> void;
@@ -223,6 +261,16 @@ public:
     /// @see EquilibriumOptions
     auto setEquilibriumOptions(const EquilibriumOptions& options) -> void;
 
+    /// Options to customize the modelling of the reaktive transport
+    struct Options{
+
+        /// The flag indicating weather smart or conventional equilibrium solver is initialized
+        bool smart = false;
+
+        /// The flag indicating weather profiling of the reactive trasport is on or off
+        bool profiling = false;
+    };
+    Options options;
 private:
     /// The chemical system common to all degrees of freedom in the chemical field.
     ChemicalSystem system_;
@@ -231,13 +279,10 @@ private:
     TransportSolver transportsolver;
 
     /// The solver for solving the equilibrium equations using classical approach
-    EquilibriumSolver equilibriumsolver;
+    std::unique_ptr<EquilibriumSolver> equilibriumsolver;
 
     /// The solver for solving the equilibrium equations using smart on-demand learning algorithm
-    SmartEquilibriumSolver smart_equilibriumsolver;
-
-    /// The bool parameter indicating weather smart equilibrium solver is initialized
-    bool smart;
+    std::unique_ptr<SmartEquilibriumSolver> smart_equilibriumsolver;
 
     /// The list of chemical output objects
     std::vector<ChemicalOutput> outputs;
@@ -264,7 +309,7 @@ private:
     std::unique_ptr<EquilibriumProfiler> eq_cell_profiler = nullptr;
 
     /// The smart solver tracker
-    std::vector<SolverStatus> status_trackers;
+    std::vector<SmartSolverStatus> status_trackers;
 };
 
 } // namespace Reaktoro

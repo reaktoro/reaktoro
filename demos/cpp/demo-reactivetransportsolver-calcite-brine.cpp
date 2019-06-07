@@ -19,7 +19,6 @@
 #include <algorithm>    // for using transform
 #include <sstream>      // for using stringstream
 #include <iomanip>      // for setprecition
-#include <tuple>
 
 #if defined _WIN32      // for creating a new folder
 #include <windows.h>
@@ -160,13 +159,13 @@ auto runReactiveTransport(const Params & params) -> void
     ChemicalState state_ic = equilibrate(problem_ic);
     ChemicalState state_bc = equilibrate(problem_bc);
 
-    // Step **: Scale the volumes of the phases in the initial condition
-    state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");    //
-    state_ic.scalePhaseVolume("Quartz", 0.882, "m3");
-    state_ic.scalePhaseVolume("Calcite", 0.018, "m3");
-
     // Step **: Scale the boundary condition state
     state_bc.scaleVolume(1.0, "m3");
+
+    // Step **: Scale the volumes of the phases in the initial condition
+    state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");    // 10% if the 1.0m3
+    state_ic.scalePhaseVolume("Quartz", 0.882, "m3");   // 0.882 = 0.98 * 0.9 (0.9 is 90% of 1.0m3, 0.98 is 98% quartz of the rock)
+    state_ic.scalePhaseVolume("Calcite", 0.018, "m3");  // 0.018 = 0.02 * 0.9 (0.9 is 90% of 1.0m3, 0.02 is 2% calcite of the rock)
 
     // Step **: Create the mesh for the column
     Mesh mesh(params.ncells, params.xl, params.xr);
@@ -175,7 +174,10 @@ auto runReactiveTransport(const Params & params) -> void
     ChemicalField field(mesh.numCells(), state_ic);
 
     // Step **: Define the reactive transport modeling
-    ReactiveTransportSolver rtsolver(system, params.is_smart_solver);
+    ReactiveTransportSolver rtsolver(system);
+    rtsolver.options.smart = true;
+    rtsolver.options.profiling = params.track_statistics;
+
     rtsolver.setMesh(mesh);
     rtsolver.setVelocity(params.v);
     rtsolver.setDiffusionCoeff(params.D);
@@ -204,7 +206,11 @@ auto runReactiveTransport(const Params & params) -> void
     EquilibriumProfiler eq_cell_profiler(rtsolver.cellprofile(Profiling::EQ_CW));
 
     // Step **: Create status tracker
-    SolverStatus tracker(rtsolver.trackStatus(folder, "status-tracker"));
+    SmartSolverStatus tracker(rtsolver.trackStatus(folder, "status-tracker"));
+
+    // Step **: Create result
+    ReactiveTransportResult rt_result;
+    ReactiveTransportProfiler profiler;
 
     // Step **: Set initial time and counter of steps in time
     double t(0.0);
@@ -214,7 +220,7 @@ auto runReactiveTransport(const Params & params) -> void
     while (step <= params.nsteps){
 
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
-        rtsolver.step_tracked(field);
+        rt_result = rtsolver.step(field);
 
         // Increment time step and number of time steps
         t += params.dt;
@@ -241,7 +247,6 @@ auto mkdir(const std::string & folder) -> bool
     return ::mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
 #endif
 }
-
 
 /// Create results file with parameters of the test
 auto makeResultsFolder(const Params & params) -> std::string
