@@ -19,19 +19,27 @@
 
 namespace Reaktoro {
 
+/// Implementation of a wrapper class of chrono library to CPU time tracking
+///
+auto Timer::startTimer() -> void { start = clock::now(); }
+auto Timer::stopTimer() -> double {
+    elapsed_time = clock::now() - start;
+    return elapsed_time.count();
+}
+
 auto SmartEquilibriumResult::EstimateStatistics::operator+=(const SmartEquilibriumResult::EstimateStatistics& other)
 -> SmartEquilibriumResult::EstimateStatistics&
 {
     time_search += other.time_search;
-    time_matrix_vector_mult += other.time_matrix_vector_mult;
-    time_acceptance_test += other.time_acceptance_test;
+    time_mat_vect_mult += other.time_mat_vect_mult;
+    time_acceptance += other.time_acceptance;
     return *this;
 }
 auto SmartEquilibriumResult::LearnStatistics::operator+=(const SmartEquilibriumResult::LearnStatistics& other)
         -> SmartEquilibriumResult::LearnStatistics&
 {
     time_store += other.time_store;
-    time_gibbs_minimization += other.time_gibbs_minimization;
+    time_gibbs_min += other.time_gibbs_min;
     return *this;
 }
 
@@ -43,7 +51,6 @@ auto SmartEquilibriumResult::operator+=(const SmartEquilibriumResult& other) -> 
 }
 
 auto SmartEquilibriumResult::addLearningIndex(const Index & index) -> void{
-
     learning_states_indx.emplace_back(index);
 }
 
@@ -51,6 +58,7 @@ auto EquilibriumResult::operator+=(const EquilibriumResult& other) -> Equilibriu
 {
     optimum += other.optimum;
     smart   += other.smart;
+    stats   += other.stats;
     return *this;
 }
 

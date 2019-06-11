@@ -49,8 +49,6 @@ struct SmartEquilibriumOptions
     /// The absolute tolerance for estimated species mole amounts.
     double abstol = 1e-14;
 
-    /// Flag that enables to track statistics related to the SmartEquilibriumSolver
-    bool track_statistics = false;
 };
 
 /// The options for the equilibrium calculations
@@ -90,6 +88,10 @@ struct EquilibriumOptions
 
     /// The options for the smart equilibrium calculation.
     SmartEquilibriumOptions smart;
+
+    /// Flag that enables to track statistics related to the SmartEquilibriumSolver
+    bool track_statistics = false;
+
 };
 
 } // namespace Reaktoro

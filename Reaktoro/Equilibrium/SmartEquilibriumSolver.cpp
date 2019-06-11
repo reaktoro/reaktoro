@@ -54,6 +54,18 @@ struct SmartEquilibriumSolver::Impl
     /// The tree used to save the calculated equilibrium states and respective sensitivities
     std::list<std::tuple<Vector, ChemicalState, ChemicalProperties, EquilibriumSensitivity>> tree;
 
+    struct TreeNode{
+        Vector be;
+        ChemicalState state;
+        ChemicalProperties properties;
+        EquilibriumSensitivity sensitivity;
+
+        Index num_predicted = 0;
+    };
+
+    /// The tree used to save the calculated equilibrium states and respective sensitivities
+    std::list<TreeNode> tree_;
+
     /// The vector of amounts of species
     Vector n;
 
@@ -84,18 +96,25 @@ struct SmartEquilibriumSolver::Impl
     auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
         Timer timer;
+        EquilibriumResult res;
 
-        if (this->options.smart.track_statistics) timer.startTimer();
+        // Start profiling learning
+        if (this->options.track_statistics) timer.startTimer();
+
+        if (this->options.track_statistics) res.smart.timer.startTimer();
         // Construct chemical state by the conventional approach
-        EquilibriumResult res = solver.solve(state, T, P, be);
-        if (this->options.smart.track_statistics)
-            res.smart.learn_stats.time_gibbs_minimization = timer.stopTimer(); // Profiling gibbs minimization
+        res = solver.solve(state, T, P, be);
+        if (this->options.track_statistics)
+            res.smart.learn_stats.time_gibbs_min = res.smart.timer.stopTimer(); // Profiling gibbs minimization
 
-        if (this->options.smart.track_statistics) timer.startTimer();
+        if (this->options.track_statistics) res.smart.timer.startTimer();
         // Add the reference state into the storage
         tree.emplace_back(be, state, solver.properties(), solver.sensitivity());
-        if (this->options.smart.track_statistics)
-            res.smart.learn_stats.time_store = timer.stopTimer(); // Profiling ref. element store
+        if (this->options.track_statistics)
+            res.smart.learn_stats.time_store = res.smart.timer.stopTimer(); // Profiling ref. element store
+
+        // Stop profiling learning
+        if (this->options.track_statistics) res.smart.learn_stats.time_learn = timer.stopTimer();
 
         return res;
     }
@@ -110,9 +129,14 @@ struct SmartEquilibriumSolver::Impl
 
         using TreeNodeType = std::tuple<Vector, ChemicalState, ChemicalProperties, EquilibriumSensitivity>;
 
+
         // Class that stores info about the equilibrium computations
         EquilibriumResult res;
         Timer timer;
+
+        // Start profiling estimating
+        if (this->options.track_statistics) timer.startTimer();
+
 
         // Comparison function based on the Euclidean distance
         auto comp = [&](const TreeNodeType& a, const TreeNodeType& b)
@@ -122,22 +146,37 @@ struct SmartEquilibriumSolver::Impl
             return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();
         };
 
+        auto comp_ = [&](const TreeNode& a, const TreeNode& b)
+        {
+            const auto& be_a = a.be;
+            const auto& be_b = b.be;
+            return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();
+        };
+
         // Step 1: search for the reference element (closest to the new state be)
 
         // Profiling ref. element search
-        if (this->options.smart.track_statistics) timer.startTimer();
+        if (this->options.track_statistics) res.smart.timer.startTimer();
 
         // Find the reference element (closest to the new state be)
         auto it = std::min_element(tree.begin(), tree.end(), comp);
+        auto it_ = std::min_element(tree_.begin(), tree_.end(), comp_);
 
-        if (this->options.smart.track_statistics)
-            res.smart.estimate_stats.time_search = timer.stopTimer();
+        if (this->options.track_statistics)
+            res.smart.estimate_stats.time_search = res.smart.timer.stopTimer();
 
         // Get all the data stored in the reference element
         const auto& be0 = std::get<0>(*it);
         const ChemicalState& state0 = std::get<1>(*it);
         const ChemicalProperties& properties0 = std::get<2>(*it);
         const EquilibriumSensitivity& sensitivity0 = std::get<3>(*it);
+
+        const auto& be0_ = it_->be;
+        const ChemicalState& state0_ = it_->state;
+        const ChemicalProperties& properties0_ = it_->properties;
+        const EquilibriumSensitivity& sensitivity0_ = it_->sensitivity;
+        const Index& num_predicted = it_->num_predicted;
+
         const auto& n0 = state0.speciesAmounts();
 
         // Get the sensitivity derivatives dln(a) / dn
@@ -162,7 +201,7 @@ struct SmartEquilibriumSolver::Impl
         // Step 2: calculate predicted state
 
         // Profiling matrix-vector manipulations
-        if (this->options.smart.track_statistics) timer.startTimer();
+        if (this->options.track_statistics) res.smart.timer.startTimer();
 
         // Calculate perturbation of n
         // n = n0 + sensitivity0.dnedbe * (be - be0);
@@ -170,13 +209,13 @@ struct SmartEquilibriumSolver::Impl
         n.noalias() = n0 + dn;
         delta_lna.noalias() = dlnadn * dn;
 
-        if (this->options.smart.track_statistics)
-            res.smart.estimate_stats.time_matrix_vector_mult = timer.stopTimer();
+        if (this->options.track_statistics)
+            res.smart.estimate_stats.time_mat_vect_mult = res.smart.timer.stopTimer();
 
         // Step 3: checking the acceptance criterion
 
         // Profiling acceptance test
-        if (this->options.smart.track_statistics) timer.startTimer();
+        if (this->options.track_statistics) res.smart.timer.startTimer();
 
         // The estimated ln(a[i]) of each species must not be
         // too far away from the reference value ln(aref[i])
@@ -202,10 +241,15 @@ struct SmartEquilibriumSolver::Impl
             state.setSpeciesAmounts(n);
             res.optimum.succeeded = true;
             res.smart.succeeded = true;
+            it_->num_predicted ++;
         }
 
-        if (this->options.smart.track_statistics) timer.startTimer();
-            res.smart.estimate_stats.time_acceptance_test = timer.stopTimer();
+        if (this->options.track_statistics) res.smart.timer.startTimer();
+            res.smart.estimate_stats.time_acceptance = res.smart.timer.stopTimer();
+
+        // Stop profiling learning
+        if (this->options.track_statistics)
+            res.smart.estimate_stats.time_estimate = timer.stopTimer();
 
         // std::cout << "=======================" << std::endl;
         // std::cout << "Smart Estimation Failed" << std::endl;

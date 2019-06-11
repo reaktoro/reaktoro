@@ -80,8 +80,12 @@ int main()
 
     // Define discretization parameters
     params.xl = 0.0; // the x-coordinates of the left boundaries
+    params.xr = 0.1; // the x-coordinates of the right boundaries
+    params.ncells = 10; // the number of cells in the spacial discretization
+    /*
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
+    */
     params.nsteps = 10; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 2 * minute; // the time step (in units of s)
@@ -116,7 +120,7 @@ auto runReactiveTransport(const Params & params) -> void
     EquilibriumOptions options;
     options.smart.reltol = params.smart_reltol;
     options.smart.abstol = params.smart_abstol;
-    options.smart.track_statistics = params.track_statistics;
+    options.track_statistics = params.track_statistics;
 
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
@@ -177,7 +181,6 @@ auto runReactiveTransport(const Params & params) -> void
     ReactiveTransportSolver rtsolver(system);
     rtsolver.options.smart = true;
     rtsolver.options.profiling = params.track_statistics;
-
     rtsolver.setMesh(mesh);
     rtsolver.setVelocity(params.v);
     rtsolver.setDiffusionCoeff(params.D);
@@ -198,19 +201,8 @@ auto runReactiveTransport(const Params & params) -> void
     output.add("phaseVolume(Dolomite)");
     output.filename(folder + "/" + "test.txt");
 
-    // Step **: Create two profilers on the step level and one general profiler
-    Profiler rt_profiler(rtsolver.profile(Profiling::RT));
-    Profiler eq_profiler(rtsolver.profile(Profiling::EQ));
-
-    // Step **: Create a profiler on a cell level
-    EquilibriumProfiler eq_cell_profiler(rtsolver.cellprofile(Profiling::EQ_CW));
-
-    // Step **: Create status tracker
-    SmartSolverStatus tracker(rtsolver.trackStatus(folder, "status-tracker"));
-
     // Step **: Create result
-    ReactiveTransportResult rt_result;
-    ReactiveTransportProfiler profiler;
+    ReactiveTransportProfiler profiler(folder, params.is_smart_solver);
 
     // Step **: Set initial time and counter of steps in time
     double t(0.0);
@@ -220,18 +212,23 @@ auto runReactiveTransport(const Params & params) -> void
     while (step <= params.nsteps){
 
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
-        rt_result = rtsolver.step(field);
+        ReactiveTransportResult rt_result = rtsolver.step(field);
+        profiler.process(rt_result);
+        profiler.output("profiling", step);
+        profiler.console(step);
 
         // Increment time step and number of time steps
         t += params.dt;
         step += 1;
     }
 
+    profiler.summarize();
+
     // Step **: Output the total time of the simulations
-    rtsolver.outputProfiling();
+    // rtsolver.outputProfiling();
 
     // Output profiling results
-    rtsolver.outputProfiling(folder + "/profiling");
+    //rtsolver.outputProfiling(folder + "/profiling");
 }
 
 /// Make directory for Windows and Linux

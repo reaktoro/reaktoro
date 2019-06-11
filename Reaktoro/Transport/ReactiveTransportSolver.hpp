@@ -35,43 +35,95 @@
 
 namespace Reaktoro {
 
-/// A wrapper class of chrono library to CPU time tracking
-struct Timer{
-
-    // Declare the alias for the declare type
-    using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
-    using clock = std::chrono::high_resolution_clock;
-    using duration = std::chrono::duration<double>;
-
-    time_point start;
-    duration elapsed_time;
-
-    auto startTimer() -> void;
-    auto stopTimer() -> double;
-};
-
 /// Use this class to collect modeling results per one step of reactive transport.
 struct ReactiveTransportResult{
 
-    /// Total cpu times for reaktive transport and equilibrium
-    double rt_time;
-    double eq_time;
+    /// Total cpu times for reactive transport and equilibrium
+    double rt_time = 0.0;
+    double eq_time = 0.0;
 
-    //EquilibriumResult equilibrium;
+    /// Number of cells
+    int ncells;
+
+    /// Struct that contains reactive transport tracking results
+    EquilibriumResult equilibrium;
 
     /// Timer to profile CPU time of the reactive transport components
     Timer timer;
 
+public:
+
+    ReactiveTransportResult(const int & ncells) : ncells(ncells){}
+
 };
 
 /// Use this class to postprocess and analyse accumulated results of reactive transport.
-    class ReactiveTransportProfiler{
+class ReactiveTransportProfiler{
 
-        auto process(ReactiveTransportResult & rt_result) -> void;
-        auto output(const std::string & file) -> void;
+    /// Name of the file and folder with a status output
+    std::string folder;
+
+    /// Used to store statistics information about the smart equilibrium algorithm.
+    struct Statistics
+    {
+        /// Total time for search operations
+        double time_estimate = 0.0;
+
+        /// Time for search operations (part of estimation)
+        double time_search = 0.0;
+
+        /// Time for matrix-vector multiplications (part of estimation)
+        double time_mat_vect_mult = 0.0;
+
+        /// Time for acceptance test (part of estimation)
+        double time_acceptance = 0.0;
+
+        /// Total time for learn operations
+        double time_learn = 0.0;
+
+        /// Time for store operations (part of learning)
+        double time_store = 0.0;
+
+        /// Time for search operations (part of learning)
+        double time_gibbs_min = 0.0;
+
+        /// The size of the search tree
+        Index tree_size = 0;
+
+        /// Counter for the smart statuses
+        int smart_counter = 0;
+
+        /// Counter for the smart statuses
+        int total_counter = 0;
 
     };
 
+    /// The vector of the  CPU times for learning and estimating time
+    Statistics total_stats;
+
+    /// The vector of the  CPU times for learning and estimating time
+    std::vector<Statistics> step_stats;
+
+    /// The vector of the  CPU times for learning and estimating time
+    std::vector<bool> statuses;
+
+    /// Vector of rective transport times and equilibrium times
+    std::vector<double> rt_times;
+    std::vector<double> eq_times;
+
+    /// Flag whether smart of conventional solver was used
+    bool smart;
+
+public:
+
+    ReactiveTransportProfiler(const std::string & results_folder, const bool & smart);
+    auto process(const ReactiveTransportResult & rt_result) -> void;
+    auto output(const std::string & file, const Index & step) -> void;
+    auto console(const Index & step) -> void;
+    auto summarize() -> void;
+
+};
+/*
 /// Enum type to initialize profilers
 enum Profiling{
     RT = 1,
@@ -135,10 +187,6 @@ struct EquilibriumProfiler : public Profiler {
 
     EquilibriumProfiler(Profiling what);
 
-    auto updateLearning(int step) -> void;
-    auto updateLearning(int step, SmartEquilibriumResult::LearnStatistics stats) -> void;
-    auto updateEstimating(int step, SmartEquilibriumResult::EstimateStatistics stats) -> void;
-
     auto consoleOutput(int step) -> void;
     auto fileOutput(const std::string & file)-> void;
 
@@ -178,7 +226,7 @@ struct EquilibriumProfiler : public Profiler {
     int tree_height = 0;
 
 };
-
+*/
 
 /// Use this class for solving reactive transport problems.
 class ReactiveTransportSolver
@@ -240,17 +288,6 @@ public:
     /// @see ChemicalField
     auto step(ChemicalField& field) -> ReactiveTransportResult&;
 
-    /// Add a profiler on the time step level
-    /// @see Profiler,
-    auto profile(Profiling what) -> Profiler;
-
-    /// Add a profiler on the cell level
-    /// @see EquilibriumProfiler
-    auto cellprofile(Profiling what) -> EquilibriumProfiler;
-
-    /// Add a tracker for the smart equilibrium statuses
-    auto trackStatus(const std::string & folder, const std::string & file) -> SmartSolverStatus;
-
     /// Output profiling results to the file
     auto outputProfiling(const std::string & folder) -> void;
 
@@ -302,14 +339,6 @@ private:
     /// The current number of steps in the solution of the reactive transport equations.
     Index steps = 0;
 
-    /// The classes to profile reactive transport computations
-    std::vector<Profiler> profilers;
-
-    /// The classes to profile reactive transport computations
-    std::unique_ptr<EquilibriumProfiler> eq_cell_profiler = nullptr;
-
-    /// The smart solver tracker
-    std::vector<SmartSolverStatus> status_trackers;
 };
 
 } // namespace Reaktoro

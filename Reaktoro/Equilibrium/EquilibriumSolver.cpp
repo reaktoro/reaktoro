@@ -467,6 +467,7 @@ struct EquilibriumSolver::Impl
 
         // The result of the equilibrium calculation
         EquilibriumResult result;
+        if (options.track_statistics) result.timer.startTimer();
 
         // Update the optimum options
         updateOptimumOptions();
@@ -499,6 +500,9 @@ struct EquilibriumSolver::Impl
 
         // Update the chemical state from the optimum state
         updateChemicalState(state);
+
+        if (options.track_statistics)
+            result.stats.time_learn += result.timer.stopTimer();
 
         return result;
     }

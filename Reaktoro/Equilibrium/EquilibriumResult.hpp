@@ -24,9 +24,22 @@
 // Reaktoro includes
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
-
 namespace Reaktoro {
+
+/// A wrapper class of chrono library to CPU time tracking
+struct Timer{
+
+    // Declare the alias for the declare type
+    using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
+    using clock = std::chrono::high_resolution_clock;
+    using duration = std::chrono::duration<double>;
+
+    time_point start;
+    duration elapsed_time;
+
+    auto startTimer() -> void;
+    auto stopTimer() -> double;
+};
 
 /// A type used to describe the result of a smart equilibrium calculation.
 struct SmartEquilibriumResult
@@ -40,8 +53,11 @@ struct SmartEquilibriumResult
     /// Used to store statistics information about the smart equilibrium algorithm.
     struct LearnStatistics
     {
+        /// Time for learning new state
+        double time_learn = 0.0;
+
         /// Time for reconstructing reference state
-        double time_gibbs_minimization = 0.0;
+        double time_gibbs_min = 0.0;
 
         /// Time for storing reference state
         double time_store = 0.0;
@@ -51,14 +67,17 @@ struct SmartEquilibriumResult
     };
     struct EstimateStatistics
     {
+        /// Time for estimating new state
+        double time_estimate = 0.0;
+
         /// Time for search operations
         double time_search = 0.0;
 
         /// Time for matrix-vector multiplications
-        double time_matrix_vector_mult = 0.0;
+        double time_mat_vect_mult = 0.0;
 
         /// Time for acceptance test
-        double time_acceptance_test = 0.0;
+        double time_acceptance = 0.0;
 
         /// Apply an addition assignment to this instance
         auto operator+=(const EstimateStatistics& other) -> EstimateStatistics&;
@@ -75,17 +94,36 @@ struct SmartEquilibriumResult
 
     /// Timer to track cell-wise time for estimation / learning
     Timer timer;
+
+    /// Counter for the smart statuses
+    int smart_counter = 0;
+
+    // The height of the tree storing the reference states
+    int tree_size = 0;
+
 };
 
 /// A type used to describe the result of an equilibrium calculation
 /// @see ChemicalState
-struct EquilibriumResult
-{
+struct EquilibriumResult {
     /// The result of the optimisation calculation
     OptimumResult optimum;
 
     /// The boolean flag that indicates if smart equilibrium calculation was used.
     SmartEquilibriumResult smart;
+
+    struct Statistics{
+        /// Time for learning new state
+        double time_learn = 0.0;
+        auto operator+=(const Statistics& other) -> Statistics&{
+            time_learn     += other.time_learn;
+            return *this;
+        }
+    };
+    Statistics stats;
+
+    /// Timer to track cell-wise time for estimation / learning
+    Timer timer;
 
     /// Apply an addition assignment to this instance
     auto operator+=(const EquilibriumResult& other) -> EquilibriumResult&;
