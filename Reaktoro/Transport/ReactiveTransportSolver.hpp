@@ -35,7 +35,15 @@
 
 namespace Reaktoro {
 
-/// Use this class to collect modeling results per one step of reactive transport.
+struct Results{
+    double smart_total;
+    double smart_total_ideal_search;
+    double smart_total_ideal_search_store;
+
+    double conv_total;
+};
+
+    /// Use this class to collect modeling results per one step of reactive transport.
 struct ReactiveTransportResult{
 
     /// Total cpu times for reactive transport and equilibrium
@@ -44,17 +52,18 @@ struct ReactiveTransportResult{
 
     /// Number of cells
     int ncells;
+    int nsteps;
 
-    /// Struct that contains reactive transport tracking results
+    /// Flag for the smart equilibirum
+    bool is_smart;
+
+    /// Contains reactive transport tracking results
     EquilibriumResult equilibrium;
-
-    /// Timer to profile CPU time of the reactive transport components
-    Timer timer;
 
 public:
 
-    ReactiveTransportResult(const int & ncells) : ncells(ncells){}
-
+    ReactiveTransportResult(const int & ncells, const int & nsteps, const bool & is_smart);
+    auto resetTime() -> void;
 };
 
 /// Use this class to postprocess and analyse accumulated results of reactive transport.
@@ -117,10 +126,10 @@ class ReactiveTransportProfiler{
 public:
 
     ReactiveTransportProfiler(const std::string & results_folder, const bool & smart);
-    auto process(const ReactiveTransportResult & rt_result) -> void;
+    auto process(ReactiveTransportResult & rt_result) -> void;
     auto output(const std::string & file, const Index & step) -> void;
     auto console(const Index & step) -> void;
-    auto summarize() -> void;
+    auto summarize(Results& results) -> void;
 
 };
 /*
@@ -286,7 +295,7 @@ public:
 
     /// Make a step of the reactive transport time-stepping scheme
     /// @see ChemicalField
-    auto step(ChemicalField& field) -> ReactiveTransportResult&;
+    auto step(ChemicalField& field, ReactiveTransportResult & result) -> void;
 
     /// Output profiling results to the file
     auto outputProfiling(const std::string & folder) -> void;
@@ -308,6 +317,7 @@ public:
         bool profiling = false;
     };
     Options options;
+
 private:
     /// The chemical system common to all degrees of freedom in the chemical field.
     ChemicalSystem system_;
@@ -338,6 +348,9 @@ private:
 
     /// The current number of steps in the solution of the reactive transport equations.
     Index steps = 0;
+
+    /// Name of the file and folder with a status output
+    std::string folder;
 
 };
 

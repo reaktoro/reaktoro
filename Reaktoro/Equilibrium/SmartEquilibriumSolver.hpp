@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <memory>
+#include <list>
 
 // Reaktoro includes
 #include <Reaktoro/Math/Matrix.hpp>
@@ -29,6 +30,7 @@ namespace Reaktoro {
 class ChemicalProperties;
 class ChemicalState;
 class ChemicalSystem;
+class EquilibriumSensitivity;
 class Partition;
 struct EquilibriumOptions;
 class EquilibriumProblem;
@@ -60,7 +62,7 @@ public:
     auto setPartition(const Partition& partition) -> void;
 
     /// Learn how to perform a full equilibrium calculation.
-    auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
+    auto learn(ChemicalState& state, double T, double P, VectorConstRef be, Index step = 0, Index cell = 0) -> EquilibriumResult;
 
     /// Learn how to perform a full equilibrium calculation.
     auto learn(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
@@ -76,7 +78,7 @@ public:
     /// learning (i.e., triggering the convention approach of Gibbs' minimization problem)
     /// or estimating (i.e., smart prediction of the new states using sensitivity derivatives)
     /// of the chemical state
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef be, Index step = 0, Index cell = 0) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
@@ -85,6 +87,9 @@ public:
 
     /// Return the chemical properties of the calculated equilibrium state.
     auto properties() const -> const ChemicalProperties&;
+
+    /// Return the chemical properties of the calculated equilibrium state.
+    auto showTree(const Index & step) const -> void;
 
 private:
     struct Impl;

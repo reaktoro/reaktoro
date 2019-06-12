@@ -22,24 +22,48 @@
 #include <Reaktoro/deps/eigen3/Eigen/Dense>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
-#include "Reaktoro/Transport/ReactiveTransportSolver.hpp"
 #include "Reaktoro/Common/Exception.hpp"
+#include "Reaktoro/Transport/ReactiveTransportSolver.hpp"
+#include "Reaktoro/Common/TimeUtils.hpp"
 
 namespace Reaktoro {
 
+/// Implementation of a ReactiveTransportResult that collects information per one step of the reactive transport
+///
+ReactiveTransportResult::ReactiveTransportResult(const int & ncells, const int & nsteps, const bool& smart ) : ncells(ncells), nsteps(nsteps), is_smart(smart){}
+auto ReactiveTransportResult::resetTime() -> void
+{
+
+    if (is_smart) {
+        // Reset the CPU times
+        equilibrium.smart.estimate_stats.time_estimate = 0.0;
+        equilibrium.smart.estimate_stats.time_search = 0;
+        equilibrium.smart.estimate_stats.time_mat_vect_mult = 0;
+        equilibrium.smart.estimate_stats.time_acceptance = 0;
+        equilibrium.smart.learn_stats.time_learn = 0;
+        equilibrium.smart.learn_stats.time_store = 0;
+        equilibrium.smart.learn_stats.time_gibbs_min = 0;
+        equilibrium.smart.tree_size = 0;
+        equilibrium.smart.smart_counter = 0;
+
+        // Clear the indices of the learned states
+        equilibrium.smart.learning_states_indx.clear();
+    } else{
+        equilibrium.stats.time_learn = 0;
+    }
+    eq_time = 0;
+    rt_time = 0;
+
+}
 
 /// Implementation of a ReactiveTranportProfiler that collects information accumulated during the reactive transport
 ///
-
 ReactiveTransportProfiler::ReactiveTransportProfiler(const std::string &folder, const bool & smart)
     : folder(folder), smart(smart) {}
 
 /// Process results collected per each step of reactive transort
 /// \param rt_class that stores the results of the reactive transport
-auto ReactiveTransportProfiler::process(
-        const ReactiveTransportResult &rt_result) -> void {
+auto ReactiveTransportProfiler::process(ReactiveTransportResult &rt_result) -> void {
     if (smart) {
         SmartEquilibriumResult smart_res = rt_result.equilibrium.smart;
         Statistics stats;
@@ -78,6 +102,9 @@ auto ReactiveTransportProfiler::process(
                 statuses.emplace_back(true);
         }
 
+        // Null the CUP time
+        rt_result.resetTime();
+
     }
     else{
         EquilibriumResult res = rt_result.equilibrium;
@@ -87,6 +114,7 @@ auto ReactiveTransportProfiler::process(
         stats.time_learn = res.stats.time_learn;
         step_stats.emplace_back(stats);
 
+        rt_result.resetTime();
         // Accumulate the step-wise results
         total_stats.time_learn += res.stats.time_learn;
     }
@@ -112,19 +140,21 @@ auto ReactiveTransportProfiler::output(const std::string &file,
     if (step != 0 && !file.empty()) opt |= std::ofstream::app;
     else if (step == 0 && !file.empty()) opt |= std::ofstream::trunc;
 
-    // Document statuses
-    // ----------------------------------------------------------------------
-    datafile.open(folder + "/" + file + "-statuses.txt", opt);
-    // Output statuses such that steps' go vertically and cells horizontally
-    if (datafile.is_open()) {
-        // Output statuses collected while stepping with ReactiveTransportSolver
-        for (bool st : statuses) datafile << std::to_string(st) << "\t";
-        datafile << "\n";
+    if (smart) {
+        // Document statuses
+        // ----------------------------------------------------------------------
+        datafile.open(folder + "/" + file + "-statuses.txt", opt);
+        // Output statuses such that steps' go vertically and cells horizontally
+        if (datafile.is_open()) {
+            // Output statuses collected while stepping with ReactiveTransportSolver
+            for (bool st : statuses) datafile << std::to_string(st) << "\t";
+            datafile << "\n";
+        }
+        statuses.clear();
+
+        // Close the data file
+        datafile.close();
     }
-
-    // Close the data file
-    datafile.close();
-
 
     // Document times
     // ----------------------------------------------------------------------
@@ -148,7 +178,7 @@ auto ReactiveTransportProfiler::output(const std::string &file,
 
         } else{
             Statistics stats = step_stats.back();
-
+            datafile << stats.time_learn << "\n";
         }
     }
 
@@ -159,19 +189,24 @@ auto ReactiveTransportProfiler::output(const std::string &file,
 
 auto ReactiveTransportProfiler::console(const Index & step) -> void
 {
-    std::cout << "total estimate time : " << step_stats[step].time_estimate << ""
-    << " - ref.element search : " << step_stats[step].time_search / step_stats[step].time_estimate * 100 << "% "
-    << " - matrix-vector oper. : " << step_stats[step].time_mat_vect_mult / step_stats[step].time_estimate * 100 << "% \n";
-    std::cout << "total learning time : " << step_stats[step].time_learn << " \n\n";
-    std::cout << " - gibbs min. : " << step_stats[step].time_gibbs_min << " \n\n";
-    std::cout << " - ref.element store : " << step_stats[step].time_store << " \n\n";
+    if (smart){
+        std::cout << "total estimate time : " << step_stats[step].time_estimate << ": "
+        << " - ref.element search : " << step_stats[step].time_search / step_stats[step].time_estimate * 100 << "%, "
+        << " - matrix-vector oper. : " << step_stats[step].time_mat_vect_mult / step_stats[step].time_estimate * 100 << "%, "
+        << " - acceptance. : " << step_stats[step].time_acceptance / step_stats[step].time_estimate * 100 << "% \n";
+        std::cout << "total learning time : " << step_stats[step].time_learn << ": "
+        << " - gibbs min. : " << step_stats[step].time_gibbs_min / step_stats[step].time_learn * 100 << "%, "
+        << " - ref.element store : " << step_stats[step].time_store / step_stats[step].time_learn * 100 << "%\n";
+    } else{
+        std::cout << "total learning time : " << step_stats[step].time_learn;
+    }
 }
-auto ReactiveTransportProfiler::summarize() -> void
+auto ReactiveTransportProfiler::summarize(Results& results) -> void
 {
-   if (smart) {
+    if (smart) {
         std::cout << std::setprecision(6);
 
-        std::cout << "learning time                  : " << total_stats.time_learn << " (" << total_stats.time_learn / (total_stats.time_learn + total_stats.time_estimate) * 100 << "% of total time)\n";
+        std::cout << "\nlearning time                  : " << total_stats.time_learn << " (" << total_stats.time_learn / (total_stats.time_learn + total_stats.time_estimate) * 100 << "% of total time)\n";
         std::cout << "   - gibbs minimization time   : " << total_stats.time_gibbs_min << " (" << total_stats.time_gibbs_min / total_stats.time_learn * 100 << "% of learning time)\n";
         std::cout << "   - store time                : " << total_stats.time_store << " (" << total_stats.time_store / total_stats.time_learn * 100 << "% of learning time)\n";
         std::cout << "estimating time                : " << total_stats.time_estimate  << " (" << total_stats.time_estimate / (total_stats.time_learn + total_stats.time_estimate) * 100 << "% of total time)\n";
@@ -179,22 +214,30 @@ auto ReactiveTransportProfiler::summarize() -> void
         std::cout << "   - matrix-vector mult. time  : " << total_stats.time_mat_vect_mult << " (" << total_stats.time_mat_vect_mult / total_stats.time_estimate * 100 << "% of estimate time)\n";
         std::cout << "   - acceptance test time      : " << total_stats.time_acceptance << " (" << total_stats.time_acceptance / total_stats.time_estimate * 100 << "% of estimate time)\n\n";
 
-        std::cout << "total time                     : " << total_stats.time_learn + total_stats.time_estimate << "\n\n";
+        results.smart_total = total_stats.time_learn + total_stats.time_estimate;
+        results.smart_total_ideal_search = total_stats.time_learn + total_stats.time_estimate - total_stats.time_search;
+        results.smart_total_ideal_search_store = total_stats.time_learn + total_stats.time_estimate - total_stats.time_search - total_stats.time_store;
 
-        std::cout << "estimating time (ideal search) : " << total_stats.time_estimate - total_stats.time_search << "\n";
-        std::cout << "total time (ideal search)      : " << total_stats.time_learn + total_stats.time_estimate - total_stats.time_search << "\n\n";
+        std::cout << "total time (ideal search)               : " << total_stats.time_learn + total_stats.time_estimate - total_stats.time_search << "\n";
+        std::cout << "total time (ideal store + ideal search) : " << total_stats.time_learn + total_stats.time_estimate - total_stats.time_search - total_stats.time_store << "\n\n";
+        std::cout << "total time                              : " << results.smart_total << "\n\n";
 
         std::cout << std::setprecision(2)
-                  << 100.00 *
-                     double(total_stats.total_counter - total_stats.smart_counter) /
-                     double(total_stats.total_counter ) << "% of training : "
-                  << total_stats.total_counter - total_stats.smart_counter << " cells out of "
-                  << total_stats.total_counter << "\n\n";
+              << 100.00 *
+                 double(total_stats.total_counter - total_stats.smart_counter) /
+                 double(total_stats.total_counter ) << "% of training : "
+              << total_stats.total_counter - total_stats.smart_counter << " cells out of "
+              << total_stats.total_counter << "\n\n";
+
 
     }
-    else
+    else{
+        results.conv_total = total_stats.time_learn + total_stats.time_estimate;
+
         std::cout << std::setprecision(6)
-                  <<  "total time                     : " << total_stats.time_learn + total_stats.time_estimate << "\n\n";
+                  <<  "total time                     : "
+                  << results.conv_total << "\n\n";
+    }
 
 }
 /*
@@ -724,7 +767,7 @@ auto ReactiveTransportSolver::step(ChemicalField &field) -> void {
     ++steps;
 }
 */
-auto ReactiveTransportSolver::step(ChemicalField &field) -> ReactiveTransportResult& {
+auto ReactiveTransportSolver::step(ChemicalField &field, ReactiveTransportResult& rt_result) -> void {
 
 
     const auto &mesh = transportsolver.mesh();
@@ -733,9 +776,23 @@ auto ReactiveTransportSolver::step(ChemicalField &field) -> ReactiveTransportRes
     const auto &ifs = system_.indicesFluidSpecies();
     const auto &iss = system_.indicesSolidSpecies();
 
-    ReactiveTransportResult rt_result(num_cells);
+    Time start;
 
-        // Collect the amounts of elements in the solid and fluid species
+    if (options.smart){
+        std::cout << "learning time                  : " << rt_result.equilibrium.smart.learn_stats.time_learn << std:: endl;
+        std::cout << "   - gibbs minimization time   : " << rt_result.equilibrium.smart.learn_stats.time_gibbs_min << std:: endl;
+        std::cout << "   - store time                : " << rt_result.equilibrium.smart.learn_stats.time_store << std:: endl;
+        std::cout << "estimating time                : " << rt_result.equilibrium.smart.estimate_stats.time_estimate << std:: endl;
+        std::cout << "   - search time               : " << rt_result.equilibrium.smart.estimate_stats.time_search << std:: endl;
+        std::cout << "   - matrix-vector mult. time  : " << rt_result.equilibrium.smart.estimate_stats.time_mat_vect_mult << std:: endl;
+        std::cout << "   - acceptance test time      : " << rt_result.equilibrium.smart.estimate_stats.time_acceptance << std:: endl;
+        std::cout << "total equilibrium time         : " << rt_result.equilibrium.smart.learn_stats.time_learn
+                                                            + rt_result.equilibrium.smart.estimate_stats.time_estimate << std:: endl << std:: endl;
+    }
+    else{
+        std::cout << "learning time                  : " << std::setprecision(6) << rt_result.equilibrium.stats.time_learn << std:: endl;
+    }
+    // Collect the amounts of elements in the solid and fluid species
     for (Index icell = 0; icell < num_cells; ++icell) {
         bf.row(icell) = field[icell].elementAmountsInSpecies(ifs);
         bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
@@ -746,7 +803,7 @@ auto ReactiveTransportSolver::step(ChemicalField &field) -> ReactiveTransportRes
     double phi_bc = field[icell_bc].properties().fluidVolume().val;
 
     // Start profiling reactive transport
-    if (options.profiling) rt_result.timer.startTimer();
+    if (options.profiling) start = time();
 
     // Transport the elements in the fluid species
     for (Index ielement = 0; ielement < num_elements; ++ielement) {
@@ -759,7 +816,7 @@ auto ReactiveTransportSolver::step(ChemicalField &field) -> ReactiveTransportRes
     b.noalias() = bf + bs;
 
     // End profiling for the reactive transport
-    if (options.profiling)  rt_result.rt_time = rt_result.timer.stopTimer();
+    if (options.profiling)  rt_result.rt_time = elapsed(start);
 
     // Open the the file for outputting chemical states
     for (auto output : outputs) {
@@ -773,15 +830,14 @@ auto ReactiveTransportSolver::step(ChemicalField &field) -> ReactiveTransportRes
         const double P = field[icell].pressure();
 
         // Start profiling equlibrium
-        if (options.profiling) rt_result.timer.startTimer();
+        if (options.profiling) start = time();
 
         if (options.smart) {
             // Solve with a smart equilibrium solver
-            rt_result.equilibrium += smart_equilibriumsolver->solve(field[icell], T, P, b.row(icell));
+            rt_result.equilibrium += smart_equilibriumsolver->solve(field[icell], T, P, b.row(icell), steps, icell);
 
-            // End profiling for the equllibrium calculations (accumulate cell-wise)
-            if (options.profiling)  rt_result.eq_time += rt_result.timer.stopTimer();
-
+            // End profiling for the equilibrium calculations (accumulate cell-wise)
+            if (options.profiling)  rt_result.eq_time += elapsed(start);
 
             // Update the time spend for either for learning or estimating
             if (rt_result.equilibrium.smart.succeeded)
@@ -790,25 +846,14 @@ auto ReactiveTransportSolver::step(ChemicalField &field) -> ReactiveTransportRes
                 rt_result.equilibrium.smart.addLearningIndex(icell);
                 rt_result.equilibrium.smart.tree_size++;
             }
-
-            //std::cout << "b.row(icell)        :\n" << b.row(icell) << std::endl;
-            //std::cout << "field[icell]        :\n" << field[icell] << std::endl;
         } else {
             // Solve with a conventional equilibrium solver
             rt_result.equilibrium += equilibriumsolver->solve(field[icell], T, P, b.row(icell));
 
             // End profiling for the conventional equilibrium calculations (accumulate cell-wise)
-            if (options.profiling)  rt_result.eq_time += rt_result.timer.stopTimer();
+            if (options.profiling)  rt_result.eq_time += elapsed(start);
 
         }
-
-        std::cout << "learning time                  : " << rt_result.equilibrium.smart.learn_stats.time_learn << std:: endl;
-        std::cout << "   - gibbs minimization time   : " << rt_result.equilibrium.smart.learn_stats.time_gibbs_min << std:: endl;
-        std::cout << "   - store time                : " << rt_result.equilibrium.smart.learn_stats.time_store << std:: endl;
-        std::cout << "estimating time                : " << rt_result.equilibrium.smart.estimate_stats.time_estimate << std:: endl;
-        std::cout << "   - search time               : " << rt_result.equilibrium.smart.estimate_stats.time_search << std:: endl;
-        std::cout << "   - matrix-vector mult. time  : " << rt_result.equilibrium.smart.estimate_stats.time_mat_vect_mult << std:: endl;
-        std::cout << "   - acceptance test time      : " << rt_result.equilibrium.smart.estimate_stats.time_acceptance << std:: endl;
 
         for (auto output : outputs)
             output.update(field[icell], icell);
@@ -817,6 +862,30 @@ auto ReactiveTransportSolver::step(ChemicalField &field) -> ReactiveTransportRes
     // Output chemical states in the output files
     for (auto output : outputs)
         output.close();
+
+    if (options.smart && steps == rt_result.nsteps - 1)    smart_equilibriumsolver->showTree(steps);
+
+    if (options.smart){
+        for (auto indx : rt_result.equilibrium.smart.learning_states_indx)
+            std::cout << indx << "\t";
+
+        std::cout << std::endl << std::endl;
+
+        std::cout << "learning time                  : " << rt_result.equilibrium.smart.learn_stats.time_learn << std:: endl;
+        std::cout << "   - gibbs minimization time   : " << rt_result.equilibrium.smart.learn_stats.time_gibbs_min << std:: endl;
+        std::cout << "   - store time                : " << rt_result.equilibrium.smart.learn_stats.time_store << std:: endl;
+        std::cout << "estimating time                : " << rt_result.equilibrium.smart.estimate_stats.time_estimate << std:: endl;
+        std::cout << "   - search time               : " << rt_result.equilibrium.smart.estimate_stats.time_search << std:: endl;
+        std::cout << "   - matrix-vector mult. time  : " << rt_result.equilibrium.smart.estimate_stats.time_mat_vect_mult << std:: endl;
+        std::cout << "   - acceptance test time      : " << rt_result.equilibrium.smart.estimate_stats.time_acceptance << std:: endl;
+        std::cout << "total equilibrium time         : " << rt_result.equilibrium.smart.learn_stats.time_learn
+                                                            + rt_result.equilibrium.smart.estimate_stats.time_estimate << std:: endl << std:: endl;
+    }
+    else{
+        std::cout << "learning time                  : " << std::setprecision(6) << rt_result.equilibrium.stats.time_learn << std:: endl;
+    }
+    std::cout << "equilibrium time               : " << std::setprecision(6) << rt_result.eq_time << std:: endl;
+    std::cout << "transport time                 : " << std::setprecision(6) << rt_result.rt_time << std:: endl << std:: endl;
 
     // Collect the amounts of elements in the solid and fluid species
     ++steps;

@@ -22,6 +22,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -467,7 +468,8 @@ struct EquilibriumSolver::Impl
 
         // The result of the equilibrium calculation
         EquilibriumResult result;
-        if (options.track_statistics) result.timer.startTimer();
+        Time start;
+        if (options.track_statistics) start = time();
 
         // Update the optimum options
         updateOptimumOptions();
@@ -502,7 +504,7 @@ struct EquilibriumSolver::Impl
         updateChemicalState(state);
 
         if (options.track_statistics)
-            result.stats.time_learn += result.timer.stopTimer();
+            result.stats.time_learn += elapsed(start);
 
         return result;
     }

@@ -61,7 +61,7 @@ struct Params{
 auto mkdir(const std::string & folder) -> bool;
 auto outputConsole(const Params & params) -> void;
 auto makeResultsFolder(const Params & params) -> std::string;
-auto runReactiveTransport(const Params & params) -> void;
+auto runReactiveTransport(const Params & params, Results& results) -> void;
 
 int main()
 {
@@ -80,8 +80,10 @@ int main()
 
     // Define discretization parameters
     params.xl = 0.0; // the x-coordinates of the left boundaries
+    //*
     params.xr = 0.1; // the x-coordinates of the right boundaries
     params.ncells = 10; // the number of cells in the spacial discretization
+    //*/
     /*
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
@@ -104,13 +106,24 @@ int main()
     // Output
     outputConsole(params);
 
+    // Results
+    Results results;
+
     // Execute reactive transport with different solvers
-    params.is_smart_solver = 1; runReactiveTransport(params);
-    params.is_smart_solver = 0; runReactiveTransport(params);
+    params.is_smart_solver = 1; runReactiveTransport(params, results);
+    params.is_smart_solver = 0; runReactiveTransport(params, results);
+
+    // Output speed-us
+    std::cout << "speed up                            : "
+    << results.conv_total / results.smart_total << std::endl;
+    std::cout << "speed up (with ideal search)        : "
+    << results.conv_total / results.smart_total_ideal_search << std::endl;
+    std::cout << "speed up (with ideal search & store): "
+    << results.conv_total / results.smart_total_ideal_search_store << std::endl;
 
     return 0;
 }
-auto runReactiveTransport(const Params & params) -> void
+auto runReactiveTransport(const Params & params, Results & results) -> void
 {
 
     // Step **: Create the results folder
@@ -138,7 +151,7 @@ auto runReactiveTransport(const Params & params) -> void
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
-    // if (params.is_smart_solver) std::cout << "system = \n" << system << std:: endl;
+    //if (params.is_smart_solver) std::cout << "system = \n" << system << std:: endl;
 
     // Step **: Define the initial condition (IC) of the reactive transport modeling problem
     EquilibriumProblem problem_ic(system);
@@ -179,7 +192,7 @@ auto runReactiveTransport(const Params & params) -> void
 
     // Step **: Define the reactive transport modeling
     ReactiveTransportSolver rtsolver(system);
-    rtsolver.options.smart = true;
+    rtsolver.options.smart = params.is_smart_solver;
     rtsolver.options.profiling = params.track_statistics;
     rtsolver.setMesh(mesh);
     rtsolver.setVelocity(params.v);
@@ -203,26 +216,28 @@ auto runReactiveTransport(const Params & params) -> void
 
     // Step **: Create result
     ReactiveTransportProfiler profiler(folder, params.is_smart_solver);
-
+    ReactiveTransportResult rt_result(params.ncells, params.nsteps, params.is_smart_solver);
     // Step **: Set initial time and counter of steps in time
     double t(0.0);
     int step(0);
 
     // Reactive transport simulations in the cycle
-    while (step <= params.nsteps){
+    while (step < params.nsteps){
 
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
-        ReactiveTransportResult rt_result = rtsolver.step(field);
+        // std::unique_ptr<
+        rtsolver.step(field, rt_result);
         profiler.process(rt_result);
         profiler.output("profiling", step);
-        profiler.console(step);
+        //profiler.console(step);
 
         // Increment time step and number of time steps
         t += params.dt;
         step += 1;
     }
 
-    profiler.summarize();
+    profiler.summarize(results);
+
 
     // Step **: Output the total time of the simulations
     // rtsolver.outputProfiling();

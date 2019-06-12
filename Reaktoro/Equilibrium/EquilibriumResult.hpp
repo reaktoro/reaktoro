@@ -92,9 +92,6 @@ struct SmartEquilibriumResult
     auto operator+=(const SmartEquilibriumResult& other) -> SmartEquilibriumResult&;
     auto addLearningIndex(const Index & index) -> void;
 
-    /// Timer to track cell-wise time for estimation / learning
-    Timer timer;
-
     /// Counter for the smart statuses
     int smart_counter = 0;
 
@@ -115,15 +112,12 @@ struct EquilibriumResult {
     struct Statistics{
         /// Time for learning new state
         double time_learn = 0.0;
-        auto operator+=(const Statistics& other) -> Statistics&{
+        auto operator+=(const Statistics& other) -> Statistics& {
             time_learn     += other.time_learn;
             return *this;
         }
     };
     Statistics stats;
-
-    /// Timer to track cell-wise time for estimation / learning
-    Timer timer;
 
     /// Apply an addition assignment to this instance
     auto operator+=(const EquilibriumResult& other) -> EquilibriumResult&;
