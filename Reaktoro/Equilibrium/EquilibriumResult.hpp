@@ -92,9 +92,6 @@ struct SmartEquilibriumResult
     auto operator+=(const SmartEquilibriumResult& other) -> SmartEquilibriumResult&;
     auto addLearningIndex(const Index & index) -> void;
 
-    /// Counter for the smart statuses
-    int smart_counter = 0;
-
     // The height of the tree storing the reference states
     int tree_size = 0;
 

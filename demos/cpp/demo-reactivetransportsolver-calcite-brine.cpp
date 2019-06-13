@@ -1,7 +1,5 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2018 Allan Leal
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -65,6 +63,7 @@ auto runReactiveTransport(const Params & params, Results& results) -> void;
 
 int main()
 {
+    Time start;
 
     // Step 1: Initialise auxiliary time-related constants
     int second(1);
@@ -80,21 +79,21 @@ int main()
 
     // Define discretization parameters
     params.xl = 0.0; // the x-coordinates of the left boundaries
-    //*
+    /*
     params.xr = 0.1; // the x-coordinates of the right boundaries
     params.ncells = 10; // the number of cells in the spacial discretization
-    //*/
-    /*
+    */
+    ///*
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
-    */
-    params.nsteps = 10; // the number of steps in the reactive transport simulation
+    //*/
+    params.nsteps = 12000; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
-    params.dt = 2 * minute; // the time step (in units of s)
+    params.dt = 5 * minute; // the time step (in units of s)
 
     // Define physical and chemical parameters
     params.D = 1.0e-9; // the diffusion coefficient (in units of m2/s)
-    params.v = 1.0 / week; // the Darcy velocity (in units of m/s)
+    params.v = 1.0 / day; // the Darcy velocity (in units of m/s)
     params.T = 60.0;                     // the temperature (in units of degC)
     params.P = 100;                      // the pressure (in units of bar)
 
@@ -119,7 +118,10 @@ int main()
     std::cout << "speed up (with ideal search)        : "
     << results.conv_total / results.smart_total_ideal_search << std::endl;
     std::cout << "speed up (with ideal search & store): "
-    << results.conv_total / results.smart_total_ideal_search_store << std::endl;
+    << results.conv_total / results.smart_total_ideal_search_store << std::endl << std::endl;
+
+    std::cout << "total time                          : "
+              << elapsed(start) << std::endl;
 
     return 0;
 }
@@ -215,8 +217,9 @@ auto runReactiveTransport(const Params & params, Results & results) -> void
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create result
-    ReactiveTransportProfiler profiler(folder, params.is_smart_solver);
+    ReactiveTransportProfiler profiler(folder, "profiling", params.is_smart_solver);
     ReactiveTransportResult rt_result(params.ncells, params.nsteps, params.is_smart_solver);
+
     // Step **: Set initial time and counter of steps in time
     double t(0.0);
     int step(0);
@@ -228,22 +231,15 @@ auto runReactiveTransport(const Params & params, Results & results) -> void
         // std::unique_ptr<
         rtsolver.step(field, rt_result);
         profiler.process(rt_result);
-        profiler.output("profiling", step);
-        //profiler.console(step);
+        profiler.output(step);
 
         // Increment time step and number of time steps
         t += params.dt;
         step += 1;
     }
 
-    profiler.summarize(results);
-
-
     // Step **: Output the total time of the simulations
-    // rtsolver.outputProfiling();
-
-    // Output profiling results
-    //rtsolver.outputProfiling(folder + "/profiling");
+    profiler.summarize(results);
 }
 
 /// Make directory for Windows and Linux

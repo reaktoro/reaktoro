@@ -1,7 +1,5 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2018 Allan Leal
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -79,7 +77,7 @@ struct SmartEquilibriumSolver::Impl
     };
 
     /// The tree used to save the calculated equilibrium states and respective sensitivities
-    std::list<TreeNode> tree_;
+    std::list<TreeNode> tree;
 
     /// The vector of amounts of species
     Vector n;
@@ -140,7 +138,7 @@ struct SmartEquilibriumSolver::Impl
         if (datafile.is_open()) {
 
             // Output tree
-            for(auto node : tree_)
+            for(auto node : tree)
             {
                 const auto be0_ = node.be;
                 const ChemicalState state0_ = node.state;
@@ -178,9 +176,7 @@ struct SmartEquilibriumSolver::Impl
 
         if (options.track_statistics) start_parts = time();
         // Add the reference state into the storage
-        //tree.emplace_back(be, state, solver.properties(), solver.sensitivity());
-        //TreeNode new_state(be, state, solver.properties(), solver.sensitivity(), 0, step, cell);
-        tree_.emplace_back(be, state, solver.properties(), solver.sensitivity(), 0, step, cell);
+        tree.emplace_back(be, state, solver.properties(), solver.sensitivity(), 0, step, cell);
         if (options.track_statistics)
             res.smart.learn_stats.time_store = elapsed(start_parts); // Profiling ref. element store
 
@@ -195,13 +191,8 @@ struct SmartEquilibriumSolver::Impl
     {
 
         // If the tree is empty abort estimation
-        //if(tree.empty())
-        //    return {};
-        if(tree_.empty())
+        if(tree.empty())
             return {};
-
-        //using TreeNodeType = std::tuple<Vector, ChemicalState, ChemicalProperties, EquilibriumSensitivity>;
-
 
         // Class that stores info about the equilibrium computations
         EquilibriumResult res;
@@ -212,14 +203,6 @@ struct SmartEquilibriumSolver::Impl
 
 
         // Comparison function based on the Euclidean distance
-        /*
-        auto comp = [&](const TreeNodeType& a, const TreeNodeType& b)
-        {
-            const auto& be_a = std::get<0>(a);
-            const auto& be_b = std::get<0>(b);
-            return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();
-        };
-        */
         auto comp_ = [&](const TreeNode& a, const TreeNode& b)
         {
             const auto& be_a = a.be;
@@ -233,34 +216,23 @@ struct SmartEquilibriumSolver::Impl
         if (this->options.track_statistics) start_parts = time();
 
         // Find the reference element (closest to the new state be)
-        //auto it = std::min_element(tree.begin(), tree.end(), comp);
-        auto it_ = std::min_element(tree_.begin(), tree_.end(), comp_);
+        auto it = std::min_element(tree.begin(), tree.end(), comp_);
 
         if (this->options.track_statistics)
             res.smart.estimate_stats.time_search = elapsed(start_parts);
 
         // Get all the data stored in the reference element
-        /*
-        const auto& be0 = std::get<0>(*it);
-        const ChemicalState& state0 = std::get<1>(*it);
-        const ChemicalProperties& properties0 = std::get<2>(*it);
-        const EquilibriumSensitivity& sensitivity0 = std::get<3>(*it);
-        */
-        const auto& be0_ = it_->be;
-        const ChemicalState& state0_ = it_->state;
-        const ChemicalProperties& properties0_ = it_->properties;
-        const EquilibriumSensitivity& sensitivity0_ = it_->sensitivity;
-        const Index& num_predicted = it_->num_predicted;
+        const auto& be0 = it->be;
+        const ChemicalState& state0 = it->state;
+        const ChemicalProperties& properties0 = it->properties;
+        const EquilibriumSensitivity& sensitivity0 = it->sensitivity;
 
         // const auto& n0 = state0.speciesAmounts();
-        const auto& n0 = state0_.speciesAmounts();
+        const auto& n0 = state0.speciesAmounts();
 
         // Get the sensitivity derivatives dln(a) / dn
-        // MatrixConstRef dlnadn = properties0.lnActivities().ddn; // TODO: this line is assuming all species are equilibrium specie! get the rows and columns corresponding to equilibrium species
-        // const auto& lna0 = properties0.lnActivities().val;
-
-        MatrixConstRef dlnadn = properties0_.lnActivities().ddn; // TODO: this line is assuming all species are equilibrium specie! get the rows and columns corresponding to equilibrium species
-        const auto& lna0 = properties0_.lnActivities().val;
+        MatrixConstRef dlnadn = properties0.lnActivities().ddn; // TODO: this line is assuming all species are equilibrium specie! get the rows and columns corresponding to equilibrium species
+        const auto& lna0 = properties0.lnActivities().val;
 
         // TODO Fixing negative amounts
         // Once some species are found to have negative values, first check
@@ -283,20 +255,11 @@ struct SmartEquilibriumSolver::Impl
         if (this->options.track_statistics) start_parts = time();
 
         // Calculate perturbation of n
-        // n = n0 + sensitivity0.dnedbe * (be - be0);
-        //dn.noalias() = sensitivity0.dndb * (be - be0); // n is actually delta(n)
-        dn.noalias() = sensitivity0_.dndb * (be - be0_); // n is actually delta(n)
-        n.noalias() = n0 + dn;
-        delta_lna.noalias() = dlnadn * dn;
+        dn.noalias() = sensitivity0.dndb * (be - be0);    // delta(n) = dn/db * (b - b0)
+        n.noalias() = n0 + dn;                              // n = n0 + delta(n)
+        delta_lna.noalias() = dlnadn * dn;                  // delta(ln(a)) = d(lna)/dn * delta(n)
 
-        const auto total_amount = sum(n);
-        const auto mole_fractions = n / total_amount;
-
-        /*
-        std::cout << "total: " << total_amount << std::endl;
-        std::cout << "mole fraction: \n " << mole_fractions << std::endl;
-        std::cout << "amounts: \n " << n << std::endl;
-        */
+        const auto& x = properties0.moleFractions();
 
         if (this->options.track_statistics)
             res.smart.estimate_stats.time_mat_vect_mult = elapsed(start_parts);
@@ -306,24 +269,50 @@ struct SmartEquilibriumSolver::Impl
         // Profiling acceptance test
         if (this->options.track_statistics) start_parts = time();
 
-        // The estimated ln(a[i]) of each species must not be
-        // too far away from the reference value ln(aref[i])
-        const bool variation_check = (delta_lna.array().abs() <= abstol + reltol * lna0.array().abs()).all();
-        //const auto variation_check_vector = delta_lna.array().abs() <= abstol + reltol * lna0.array().abs();
-        //std::cout << variation_check_vector << std::endl;
-
         // The estimated activity of all species must be positive.
         // This results in the need to check delta(ln(a[i])) > -1 for all species.
-        const bool activity_check = delta_lna.minCoeff() > -1.0;
-        const bool amount_check = n.minCoeff() > -1e-5;
-        const bool moll_fraction_check = mole_fractions.minCoeff() > -1e-5;
-        //
-        //        for(int i = 0; i < n.size(); ++i)
-        //        {
-        //            if(n[i] > 0.0) continue;
-        //            if(n[i] > -1e-5) n[i] = abstol;
-        //        }
 
+        // Perform the check for the negative amounts
+        const double cutoff = -1e-5;    // relaxation parameter
+        const bool amount_check = n.minCoeff() > cutoff;
+
+        // Assign small values to all the amount in the interval [cutoff, 0]
+        // (instead of mirroring bellow)
+        // for(int i = 0; i < n.size(); ++i) if(n[i] > cutoff && n[i] < 0) n[i] = options.epsilon;
+
+        // The estimated ln(a[i]) of each species must not be
+        // too far away from the reference value ln(aref[i])
+        //const bool variation_check = (delta_lna.array().abs() <= abstol + reltol * lna0.array().abs()).all();
+        ///*
+        // Check in the loop mole fractions and variations of the ln(a)
+        ///*
+        bool variation_check = true;
+        const double fraction_tol = abstol * 1e-2;
+        for(int i = 0; i < n.size(); ++i)
+        {
+            // If the fraction is too small, skip the variational check
+            if(x[i] < fraction_tol) continue;
+
+            // Perform the variational check
+            if(std::abs(delta_lna[i]) > abstol + reltol * std::abs(lna0[i])) {
+                variation_check = false;    // variation test failed
+                /*
+                // Info about the failed species
+                std::cout << "i: " << i << std::endl;
+                std::cout << "Species: " << system.species(i).name() << std::endl;
+                std::cout << "Amount(new): " << n[i] << std::endl;
+                std::cout << "Amount(old): " << n0[i] << std::endl;
+                std::cout << "logActivity(new): " << lna0[i] + delta_lna[i] << std::endl;
+                std::cout << "logActivity(old): " << lna0[i] << std::endl;
+                std::cout << "RelativeDifference(Amount): " << std::abs((n[i] - n0[i])/n0[i]) << std::endl;
+                std::cout << "RelativeDifference(lnActivity): " << std::abs(delta_lna[i])/(std::abs(lna0[i]) + 1.0) << std::endl;
+                std::cout << "VariationCheck: " << variation_check << std::endl;
+                std::cout << "AmountCheck: " << amount_check << std::endl;
+                */
+            }
+        }
+        //*/
+        //*/
         /*
         std::cout << "=======================" << std::endl;
         std::cout << "Smart Estimation Failed" << std::endl;
@@ -358,11 +347,11 @@ struct SmartEquilibriumSolver::Impl
 
         if(variation_check && amount_check)
         {
-            n.noalias() = abs(n);
+            n.noalias() = abs(n); // this mirroring is replaced by setting a very small mole amount
             state.setSpeciesAmounts(n);
             res.optimum.succeeded = true;
             res.smart.succeeded = true;
-            it_->num_predicted ++;
+            it->num_predicted ++;
         }
 
         if (this->options.track_statistics)
@@ -374,22 +363,7 @@ struct SmartEquilibriumSolver::Impl
 
         return res;
     }
-    /*
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
-    {
-        // Attempt to estimate the result by on-demand learning
-        EquilibriumResult res = estimate(state, T, P, be);
 
-        // If the obtained result satisfies the accuracy criterion, we accept it
-        if(res.optimum.succeeded) return res;
-
-        // Otherwise, trigger learning (conventional approach)
-        res += learn(state, T, P, be);
-
-        showTree();
-        return res;
-    }
-    */
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be, Index step, Index cell) -> EquilibriumResult
     {
         // Attempt to estimate the result by on-demand learning
