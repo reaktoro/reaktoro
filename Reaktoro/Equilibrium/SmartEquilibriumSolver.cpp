@@ -201,7 +201,6 @@ struct SmartEquilibriumSolver::Impl
         // Start profiling estimating
         if (this->options.track_statistics) start_estimate = time();
 
-
         // Comparison function based on the Euclidean distance
         auto comp_ = [&](const TreeNode& a, const TreeNode& b)
         {
@@ -282,7 +281,7 @@ struct SmartEquilibriumSolver::Impl
 
         // The estimated ln(a[i]) of each species must not be
         // too far away from the reference value ln(aref[i])
-        //const bool variation_check = (delta_lna.array().abs() <= abstol + reltol * lna0.array().abs()).all();
+        // const bool variation_check = (delta_lna.array().abs() <= abstol + reltol * lna0.array().abs()).all();
         ///*
         // Check in the loop mole fractions and variations of the ln(a)
         ///*

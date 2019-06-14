@@ -87,13 +87,13 @@ int main()
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
     //*/
-    params.nsteps = 12000; // the number of steps in the reactive transport simulation
+    params.nsteps = 10000; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
-    params.dt = 5 * minute; // the time step (in units of s)
+    params.dt = 30 * minute; // the time step (in units of s)
 
     // Define physical and chemical parameters
-    params.D = 1.0e-9; // the diffusion coefficient (in units of m2/s)
-    params.v = 1.0 / day; // the Darcy velocity (in units of m/s)
+    params.D = 1.0e-9;     // the diffusion coefficient (in units of m2/s)
+    params.v = 1.0 / week; // the Darcy velocity (in units of m/s)
     params.T = 60.0;                     // the temperature (in units of degC)
     params.P = 100;                      // the pressure (in units of bar)
 

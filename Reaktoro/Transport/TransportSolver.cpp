@@ -277,10 +277,13 @@ auto TransportSolver::initialize() -> void
                 a = -beta - alpha;
                 b = 1 + beta + 2 * alpha;
                 c = -alpha;
+                break;
+
             case (FiniteVolumeMethod::FluxLimitersImplicitExplicit) :
                 a = -alpha;
                 b = 1 + 2*alpha;
                 c = -alpha;
+                break;
         }
         A.row(icell) << a, b, c;
     }
