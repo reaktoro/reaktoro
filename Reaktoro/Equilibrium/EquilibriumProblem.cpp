@@ -64,13 +64,18 @@ struct EquilibriumProblem::Impl
 
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system)
-    : system(system), T(298.15), P(1.0e+5)
+    : system(system), T(298.15), P(1.0e+5), partition(system)
     {
         // Initialize the amounts of the elements
         b = zeros(system.numElements());
+    }
 
-        // Set the partition of the chemical system as all species in equilibrium
-        setPartition(Partition(system));
+    /// Construct a EquilibriumProblem::Impl instance
+    Impl(const Partition& partition)
+    : system(partition.system()), T(298.15), P(1.0e+5), partition(partition)
+    {
+        // Initialize the amounts of the elements
+        b = zeros(system.numElements());
     }
 
     /// Set the partition of the chemical system
@@ -82,6 +87,10 @@ struct EquilibriumProblem::Impl
 
 EquilibriumProblem::EquilibriumProblem(const ChemicalSystem& system)
 : pimpl(new Impl(system))
+{}
+
+EquilibriumProblem::EquilibriumProblem(const Partition& partition)
+: pimpl(new Impl(partition))
 {}
 
 EquilibriumProblem::EquilibriumProblem(const EquilibriumProblem& other)

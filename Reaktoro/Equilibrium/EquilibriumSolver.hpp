@@ -45,6 +45,9 @@ public:
     /// Construct an EquilibriumSolver instance
     explicit EquilibriumSolver(const ChemicalSystem& system);
 
+    /// Construct an EquilibriumSolver instance with given partition
+    explicit EquilibriumSolver(const Partition& partition);
+
     /// Construct a copy of an EquilibriumSolver instance
     EquilibriumSolver(const EquilibriumSolver& other);
 
