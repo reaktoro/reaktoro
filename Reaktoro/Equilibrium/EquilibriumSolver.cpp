@@ -234,7 +234,7 @@ struct EquilibriumSolver::Impl
             n(ies) = ne;
 
             // Update the chemical properties of the chemical system
-            properties.update(T, P, n);
+            properties.update(n);
 
             // Set the scaled chemical potentials of the species
             u = u0 + properties.lnActivities();
