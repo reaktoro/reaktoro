@@ -20,16 +20,16 @@ day = 24 * hour
 year = 365 * day
 
 # Step 3: Parameters for the reactive transport simulation
-xl = 0.0          # the x-coordinate of the left boundary
-xr = 1.0          # the x-coordinate of the right boundary
-ncells = 100      # the number of cells in the discretization
-nsteps = 1200      # the number of steps in the reactive transport simulation
-D  = 1.0e-9       # the diffusion coefficient (in units of m2/s)
-v  = 1.0/day      # the fluid pore velocity (in units of m/s)
-dx = (xr - xl)/ncells
-dt = 5*minute     # the time step (in units of s)
-T = 60.0 + 273.15  # the temperature (in units of K)
-P = 100 * 1e5      # the pressure (in units of Pa)
+xl = 0.0               # the x-coordinate of the left boundary
+xr = 1.0               # the x-coordinate of the right boundary
+ncells = 100           # the number of cells in the discretization
+nsteps = 1200          # the number of steps in the reactive transport simulation
+D  = 1.0e-9            # the diffusion coefficient (in units of m2/s)
+v  = 1.0/day           # the fluid pore velocity (in units of m/s)
+dx = (xr - xl)/ncells  # the length of the mesh cells
+dt = 30*minute         # the time step (30 minutes in in units of s)
+T = 60.0 + 273.15      # the temperature (in units of K)
+P = 100 * 1e5          # the pressure (in units of Pa)
 
 alpha = v*dt/dx
 
@@ -55,8 +55,7 @@ def simulate():
 
     editor = ChemicalEditor(db)
 
-    #editor.addAqueousPhase(['H2O(l)', 'H+', 'OH-', 'Na+', 'Cl-', 'Ca++', 'Mg++', 'HCO3-', 'CO2(aq)', 'CO3--'])  # aqueous species are individually selected for performance reasons
-    editor.addAqueousPhaseWithElementsOf('H2O NaCl CaCl2 MgCl2 CO2 SiO2 CaCO3')
+    editor.addAqueousPhaseWithElements('H O Na Cl Ca Mg C Si Ca')
     editor.addMineralPhase('Quartz')
     editor.addMineralPhase('Calcite')
     editor.addMineralPhase('Dolomite')
@@ -84,8 +83,6 @@ def simulate():
     problem_bc.add('CO2', 0.75, 'mol')
 
     options = EquilibriumOptions()
-    # options.smart.reltol = 0.50
-    # options.smart.abstol = 0.25
     options.smart.reltol = 0.1
     options.smart.abstol = 0.1
 
@@ -100,7 +97,6 @@ def simulate():
 
     # Scale the boundary condition state to 1 m3
     state_bc.scaleVolume(1.0, 'm3')
-
 
     # Step 7.7: Partitioning fluid and solid species
 
@@ -182,7 +178,7 @@ def simulate():
 
         # Get the porosity of t
         bc_cell = 0
-        phi_bc = states[bc_cell].properties().fluidVolume().val;
+        phi_bc = states[bc_cell].properties().fluidVolume().val
 
         # Transport each element in the fluid phase
         for j in range(nelems):

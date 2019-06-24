@@ -27,8 +27,8 @@ editor.addAqueousPhase(["H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)",
     .setActivityModelDrummondCO2()
 editor.addGaseousPhase(["CO2(g)", "H2O(g)"]) \
     .setChemicalModelSpycherPruessEnnis()
-editor.addMineralPhase("Calcite");
-editor.addMineralPhase("Halite");
+editor.addMineralPhase("Calcite")
+editor.addMineralPhase("Halite")
 
 system = ChemicalSystem(editor)
 reactions = ReactionSystem(editor)
