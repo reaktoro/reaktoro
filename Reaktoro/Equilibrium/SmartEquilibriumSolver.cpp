@@ -22,8 +22,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/TimeUtils.hpp>
-
+#include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -163,25 +162,31 @@ struct SmartEquilibriumSolver::Impl
     auto learn(ChemicalState& state, double T, double P, VectorConstRef be, Index step, Index cell) -> EquilibriumResult
     {
         EquilibriumResult res;
-        Time start_learn, start_parts;
+
+        // Profiling time variables
+        profiling( Time start_learn; );
+        profiling( Time start_parts; );
 
         // Start profiling learning
-        if (options.track_statistics) start_learn = time();
+        profiling( start_learn = time(); );
+        profiling( start_parts = time(); );
 
-        if (options.track_statistics) start_parts = time();
         // Construct chemical state by the conventional approach
         res = solver.solve(state, T, P, be);
-        if (options.track_statistics)
-            res.smart.learn_stats.time_gibbs_min = elapsed(start_parts); // Profiling gibbs minimization
 
-        if (options.track_statistics) start_parts = time();
+        // Profiling gibbs minimization
+        profiling( res.smart.learn_stats.time_gibbs_min = elapsed(start_parts); );
+
+        profiling( start_parts = time(); );
+
         // Add the reference state into the storage
         tree.emplace_back(be, state, solver.properties(), solver.sensitivity(), 0, step, cell);
-        if (options.track_statistics)
-            res.smart.learn_stats.time_store = elapsed(start_parts); // Profiling ref. element store
+
+        // Profiling ref. element store
+        profiling( res.smart.learn_stats.time_store = elapsed(start_parts); );
 
         // Stop profiling learning
-        if (options.track_statistics) res.smart.learn_stats.time_learn = elapsed(start_learn);
+        profiling( res.smart.learn_stats.time_learn = elapsed(start_learn); );
 
         return res;
     }
@@ -189,17 +194,19 @@ struct SmartEquilibriumSolver::Impl
     /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
     auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
-
-        // If the tree is empty abort estimation
+        // If the tree is empty skip estimation
         if(tree.empty())
             return {};
 
         // Class that stores info about the equilibrium computations
         EquilibriumResult res;
-        Time start_estimate, start_parts;
+
+        // Profiling time variables
+        profiling( Time start_estimate; );
+        profiling( Time start_parts; );
 
         // Start profiling estimating
-        if (this->options.track_statistics) start_estimate = time();
+        profiling( start_estimate = time(); );
 
         // Comparison function based on the Euclidean distance
         auto comp_ = [&](const TreeNode& a, const TreeNode& b)
@@ -212,13 +219,12 @@ struct SmartEquilibriumSolver::Impl
         // Step 1: search for the reference element (closest to the new state be)
 
         // Profiling ref. element search
-        if (this->options.track_statistics) start_parts = time();
+        profiling( start_parts = time(); );
 
         // Find the reference element (closest to the new state be)
         auto it = std::min_element(tree.begin(), tree.end(), comp_);
 
-        if (this->options.track_statistics)
-            res.smart.estimate_stats.time_search = elapsed(start_parts);
+        profiling( res.smart.estimate_stats.time_search = elapsed(start_parts); );
 
         // Get all the data stored in the reference element
         const auto& be0 = it->be;
@@ -251,7 +257,7 @@ struct SmartEquilibriumSolver::Impl
         // Step 2: calculate predicted state
 
         // Profiling matrix-vector manipulations
-        if (this->options.track_statistics) start_parts = time();
+        profiling( start_parts = time(); );
 
         // Calculate perturbation of n
         dn.noalias() = sensitivity0.dndb * (be - be0);    // delta(n) = dn/db * (b - b0)
@@ -260,13 +266,12 @@ struct SmartEquilibriumSolver::Impl
 
         const auto& x = properties0.moleFractions();
 
-        if (this->options.track_statistics)
-            res.smart.estimate_stats.time_mat_vect_mult = elapsed(start_parts);
+        profiling( res.smart.estimate_stats.time_mat_vect_mult = elapsed(start_parts); );
 
         // Step 3: checking the acceptance criterion
 
         // Profiling acceptance test
-        if (this->options.track_statistics) start_parts = time();
+        profiling( start_parts = time(); );
 
         // The estimated activity of all species must be positive.
         // This results in the need to check delta(ln(a[i])) > -1 for all species.
@@ -353,12 +358,10 @@ struct SmartEquilibriumSolver::Impl
             it->num_predicted ++;
         }
 
-        if (this->options.track_statistics)
-            res.smart.estimate_stats.time_acceptance = elapsed(start_parts);
+        profiling( res.smart.estimate_stats.time_acceptance = elapsed(start_parts); );
 
         // Stop profiling learning
-        if (this->options.track_statistics)
-            res.smart.estimate_stats.time_estimate = elapsed(start_estimate);
+        profiling( res.smart.estimate_stats.time_estimate = elapsed(start_estimate); );
 
         return res;
     }
@@ -444,7 +447,8 @@ auto SmartEquilibriumSolver::properties() const -> const ChemicalProperties&
     RuntimeError("Could not calculate the chemical properties.",
             "This method has not been implemented yet.");
 }
-auto SmartEquilibriumSolver::showTree(const Index & step) const -> void{
+auto SmartEquilibriumSolver::showTree(const Index & step) const -> void
+{
     return pimpl->showTree(step);
 }
 
