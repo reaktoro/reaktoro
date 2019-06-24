@@ -31,16 +31,17 @@ second = 1
 minute = 60
 hour = 60 * minute
 day = 24 * hour
+week = 7 * day
 year = 365 * day
 
 # Step 3: Define parameters for the reactive transport simulation
 xl = 0.0          # the x-coordinate of the left boundary
-xr = 0.1          # the x-coordinate of the right boundary
-ncells = 10      # the number of cells in the discretization
+xr = 1.0          # the x-coordinate of the right boundary
+ncells = 100      # the number of cells in the discretization
 nsteps = 600      # the number of steps in the reactive transport simulation
 D  = 1.0e-9       # the diffusion coefficient (in units of m2/s)
-v  = 1.0/day      # the fluid pore velocity (1 m/day in units of m/s)
-dt = 10*minute    # the time step (0.5 day in units of s)
+v  = 1.0/week     # the fluid pore velocity (1 m/week in units of m/s)
+dt = 30*minute    # the time step (30 minutes in units of s)
 T = 60.0          # the temperature (in units of degC)
 P = 100           # the pressure (in units of bar)
 
@@ -102,9 +103,9 @@ def plotfile(file):
     data = filearray.T
 
     ndigits = len(str(nsteps))
-    
+
     x = linspace(xl, xr, ncells)
-    
+
     plt.figure()
     plt.xlim(left=-0.02, right=0.52)
     plt.ylim(bottom=2.5, top=10.5)
