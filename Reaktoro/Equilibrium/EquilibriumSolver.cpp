@@ -146,16 +146,8 @@ struct EquilibriumSolver::Impl
 
     /// Construct a Impl instance with given Partition
     Impl(const Partition& partition)
-    : system(partition.system()), properties(partition.system())
+    : Impl(partition.system())
     {
-        // Initialize the formula matrix
-        A = system.formulaMatrix();
-
-        // Initialize the number of species and elements in the system
-        N = system.numSpecies();
-        E = system.numElements();
-
-        setPartition(partition);
     }
 
     /// Set the partition of the chemical system
