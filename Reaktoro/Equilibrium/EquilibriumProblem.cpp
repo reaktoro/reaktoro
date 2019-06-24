@@ -63,14 +63,6 @@ struct EquilibriumProblem::Impl
     Vector b;
 
     /// Construct a EquilibriumProblem::Impl instance
-    Impl(const ChemicalSystem& system)
-    : system(system), T(298.15), P(1.0e+5), partition(system)
-    {
-        // Initialize the amounts of the elements
-        b = zeros(system.numElements());
-    }
-
-    /// Construct a EquilibriumProblem::Impl instance
     Impl(const Partition& partition)
     : system(partition.system()), T(298.15), P(1.0e+5), partition(partition)
     {
@@ -86,7 +78,7 @@ struct EquilibriumProblem::Impl
 };
 
 EquilibriumProblem::EquilibriumProblem(const ChemicalSystem& system)
-: pimpl(new Impl(system))
+: pimpl(new Impl(Partition(system)))
 {}
 
 EquilibriumProblem::EquilibriumProblem(const Partition& partition)
