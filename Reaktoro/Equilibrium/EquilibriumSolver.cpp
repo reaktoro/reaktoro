@@ -22,7 +22,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/TimeUtils.hpp>
+#include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -468,8 +468,12 @@ struct EquilibriumSolver::Impl
 
         // The result of the equilibrium calculation
         EquilibriumResult result;
-        Time start;
-        if (options.track_statistics) start = time();
+
+        // Profiling time variables
+        profiling( Time start; );
+
+        // Start profiling equilibrium calculation
+        profiling( start = time(); );
 
         // Update the optimum options
         updateOptimumOptions();
@@ -503,8 +507,8 @@ struct EquilibriumSolver::Impl
         // Update the chemical state from the optimum state
         updateChemicalState(state);
 
-        if (options.track_statistics)
-            result.stats.time_learn += elapsed(start);
+        // End profiling of the equilibrium calculation
+        profiling( result.stats.time_learn += elapsed(start); );
 
         return result;
     }
