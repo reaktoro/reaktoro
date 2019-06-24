@@ -101,6 +101,7 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportGaseousSpecies(m);
     exportMineralSpecies(m);
     exportWater(m);
+	exportOil(m);
 
     // Transport module
     exportChemicalField(m);
