@@ -19,14 +19,6 @@
 
 namespace Reaktoro {
 
-/// Implementation of a wrapper class of chrono library to CPU time tracking
-///
-auto Timer::startTimer() -> void { start = clock::now(); }
-auto Timer::stopTimer() -> double {
-    elapsed_time = clock::now() - start;
-    return elapsed_time.count();
-}
-
 auto SmartEquilibriumResult::EstimateStatistics::operator+=(const SmartEquilibriumResult::EstimateStatistics& other)
 -> SmartEquilibriumResult::EstimateStatistics&
 {

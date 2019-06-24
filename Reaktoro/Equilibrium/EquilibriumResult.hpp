@@ -18,28 +18,13 @@
 #pragma once
 
 // C++ includes
-#include <chrono>
 #include <vector>
 
 // Reaktoro includes
-#include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Optimization/OptimumResult.hpp>
+
 namespace Reaktoro {
-
-/// A wrapper class of chrono library to CPU time tracking
-struct Timer{
-
-    // Declare the alias for the declare type
-    using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
-    using clock = std::chrono::high_resolution_clock;
-    using duration = std::chrono::duration<double>;
-
-    time_point start;
-    duration elapsed_time;
-
-    auto startTimer() -> void;
-    auto stopTimer() -> double;
-};
 
 /// A type used to describe the result of a smart equilibrium calculation.
 struct SmartEquilibriumResult
@@ -65,6 +50,7 @@ struct SmartEquilibriumResult
         /// Apply an addition assignment to this instance
         auto operator+=(const LearnStatistics& other) -> LearnStatistics&;
     };
+
     struct EstimateStatistics
     {
         /// Time for estimating new state
@@ -94,26 +80,29 @@ struct SmartEquilibriumResult
 
     // The height of the tree storing the reference states
     int tree_size = 0;
-
 };
 
 /// A type used to describe the result of an equilibrium calculation
 /// @see ChemicalState
-struct EquilibriumResult {
-    /// The result of the optimisation calculation
+struct EquilibriumResult
+{
+    /// The result of the optimisation calculation.
     OptimumResult optimum;
 
-    /// The boolean flag that indicates if smart equilibrium calculation was used.
+    /// The result of a smart equilibrium calculation.
     SmartEquilibriumResult smart;
 
-    struct Statistics{
+    struct Statistics
+    {
         /// Time for learning new state
         double time_learn = 0.0;
+
         auto operator+=(const Statistics& other) -> Statistics& {
             time_learn     += other.time_learn;
             return *this;
         }
     };
+
     Statistics stats;
 
     /// Apply an addition assignment to this instance
