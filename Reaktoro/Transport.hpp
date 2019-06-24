@@ -18,5 +18,6 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Transport/TransportSolver.hpp>
+#include <Reaktoro/Transport/ReactiveTransportProfiler.hpp>
 #include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
+#include <Reaktoro/Transport/TransportSolver.hpp>
