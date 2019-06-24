@@ -17,24 +17,25 @@
 
 // C++ includes
 #include <chrono>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <list>
 
 // Reaktoro's includes
-#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Transport/TransportSolver.hpp>
+#include <Reaktoro/Transport/ReactiveTransportOptions.hpp>
 
 namespace Reaktoro {
 
-struct Results{
-
+struct Results
+{
     /// Total CPU time required by smart equilibrium scheme
     double smart_total;
 
@@ -50,9 +51,9 @@ struct Results{
     double conv_total;
 };
 
-    /// Use this class to collect modeling results per one step of reactive transport.
-struct ReactiveTransportResult{
-
+/// Use this class to collect modeling results per one step of reactive transport.
+struct ReactiveTransportResult
+{
     /// Total cpu times for reactive transport and equilibrium
     double rt_time = 0.0;
     double eq_time = 0.0;
@@ -66,95 +67,6 @@ struct ReactiveTransportResult{
 
     /// Contains reactive transport tracking results
     EquilibriumResult equilibrium;
-
-public:
-
-    /// Construct ReactiveTransportResult instance
-    /// @param ncells number of cells on the discretized domain
-    /// @param nsteps number of steps of reactive transport
-    /// @param is_smart flag on whether the smart or conventional method is tested
-    ReactiveTransportResult(const int & ncells, const int & nsteps, const bool & is_smart);
-
-    /// Reset the time measured per step of reactive transport
-    auto resetTime() -> void;
-};
-
-/// Use this class to postprocess and analyse accumulated results of reactive transport.
-class ReactiveTransportProfiler{
-
-    /// Name of the file and folder with a status output
-    std::string folder;
-    std::string file;
-
-    /// Used to store statistics information about the smart equilibrium algorithm.
-    struct Statistics
-    {
-        /// Total time for search operations
-        double time_estimate = 0.0;
-
-        /// Time for search operations (part of estimation)
-        double time_search = 0.0;
-
-        /// Time for matrix-vector multiplications (part of estimation)
-        double time_mat_vect_mult = 0.0;
-
-        /// Time for acceptance test (part of estimation)
-        double time_acceptance = 0.0;
-
-        /// Total time for learn operations
-        double time_learn = 0.0;
-
-        /// Time for store operations (part of learning)
-        double time_store = 0.0;
-
-        /// Time for search operations (part of learning)
-        double time_gibbs_min = 0.0;
-
-        /// The size of the search tree
-        Index tree_size = 0;
-
-        /// Counter for the smart statuses
-        int learning_counter = 0;
-
-        /// Counter for the smart statuses
-        int total_counter = 0;
-
-    };
-
-    /// The vector of the  CPU times for learning and estimating time
-    Statistics total_stats;
-
-    /// The vector of the  CPU times for learning and estimating time
-    std::vector<Statistics> step_stats;
-
-    /// The vector of the  CPU times for learning and estimating time
-    std::vector<bool> statuses;
-
-    /// Vector of reactive transport times and equilibrium times
-    std::vector<double> rt_times;
-    std::vector<double> eq_times;
-
-    /// Flag whether smart of conventional solver was used
-    bool smart;
-
-public:
-
-    /// Construct ReactiveTransportResult instance
-    ReactiveTransportProfiler(const std::string & results_folder,
-            const std::string & file, const bool & smart);
-
-    /// Process results collected on one step of reactive transport
-    /// \param rt_results that stores the results of the reactive transport
-    /// @see ReactiveTransportResult
-    auto process(ReactiveTransportResult & rt_result) -> void;
-
-    /// Update the file with results results collected on one step of reactive transport
-    /// \param step number of step of reactive transport to be added to the file with results
-    auto output(const Index & step) -> void;
-
-    /// Summarize the profiling results of reactive transport
-    auto summarize(Results& results) -> void;
-
 };
 
 /// Use this class for solving reactive transport problems.
@@ -165,8 +77,8 @@ public:
     /// @see ChemicalSystem
     ReactiveTransportSolver(const ChemicalSystem& system);
 
-    /// Set options of the reactive transport modeling priving parameter string and value.
-    auto setOptions() -> void;
+    /// Set the options for the reactive transport calculations.
+    auto setOptions(const ReactiveTransportOptions& options) -> void;
 
     /// Initialize the mesh discretizing the computational domain for reactive transport.
     /// @see Mesh
@@ -189,7 +101,7 @@ public:
 
     /// Get the chemical system initialized to the reactive transport model.
     /// @see ChemicalSystem
-    auto system() const -> const ChemicalSystem& { return system_; }
+    auto system() const -> const ChemicalSystem&;
 
     /// Add the output to the reactive transport modelling
     /// This method add new chemical output to the list of existing outputs
@@ -206,25 +118,10 @@ public:
 
     /// Make a step of the reactive transport time-stepping scheme
     /// @see ChemicalField
-    auto step(ChemicalField& field, ReactiveTransportResult & result) -> void;
+    auto step(ChemicalField& field) -> ReactiveTransportResult;
 
     /// Output profiling results to the file
-    auto outputProfiling(const std::string & folder) -> void;
-
-    /// Set equilibrium options to the equilibrium solvers
-    /// @see EquilibriumOptions
-    auto setEquilibriumOptions(const EquilibriumOptions& options) -> void;
-
-    /// Options to customize the modelling of the reaktive transport
-    struct Options{
-
-        /// The flag indicating weather smart or conventional equilibrium solver is initialized
-        bool smart = false;
-
-        /// The flag indicating weather profiling of the reactive transport is on or off
-        bool profiling = false;
-    };
-    Options options;
+    auto outputProfiling(const std::string& folder) -> void;
 
 private:
     /// The chemical system common to all degrees of freedom in the chemical field.
@@ -233,11 +130,14 @@ private:
     /// The solver for solving the transport equations
     TransportSolver transportsolver;
 
-    /// The solver for solving the equilibrium equations using classical approach
-    std::unique_ptr<EquilibriumSolver> equilibriumsolver;
+    /// The options for the reactive transport calculations.
+    ReactiveTransportOptions options;
 
-    /// The solver for solving the equilibrium equations using smart on-demand learning algorithm
-    std::unique_ptr<SmartEquilibriumSolver> smart_equilibriumsolver;
+    /// The equilibrium solver using conventional Gibbs energy minimization approach.
+    EquilibriumSolver equilibriumsolver;
+
+    /// The equilibrium solver using a smart on-demand learning strategy.
+    SmartEquilibriumSolver smart_equilibriumsolver;
 
     /// The list of chemical output objects
     std::vector<ChemicalOutput> outputs;
@@ -259,7 +159,6 @@ private:
 
     /// Name of the file and folder with a status output
     std::string folder;
-
 };
 
 } // namespace Reaktoro
