@@ -19,7 +19,6 @@
 #include "Reaktoro/Common/Exception.hpp"
 #include "Reaktoro/Transport/TransportSolver.hpp"
 
-
 namespace Reaktoro {
 
 namespace internal {
@@ -257,7 +256,8 @@ auto TransportSolver::initialize() -> void
     A.resize(num_cells);
 
     // If the Flux limiters scheme is considered, initialize phi vector
-    if (options.fvm == FiniteVolumeMethod::FluxLimitersImplicitExplicit) {
+    if(options.fvm == FiniteVolumeMethod::FluxLimitersImplicitExplicit)
+    {
         Assert(velocity * dt / dx < 0.5,
                "Could not run reactive-transport calculation reliably.",
                "The CFL number ( = velocity * dt / dx ) must be less then 0.5. "
@@ -270,16 +270,18 @@ auto TransportSolver::initialize() -> void
     double a(0.0), b(0.0), c(0.0);
 
     // Assemble the coefficient matrix A for the interior cells
-    for(Index icell = 1; icell < icelln; ++icell) {
+    for(Index icell = 1; icell < icelln; ++icell)
+    {
         // Depending on the initialized FV scheme, initialize coeffitients
-        switch (options.fvm) {
-            case (FiniteVolumeMethod::FullImplicit) :
+        switch(options.fvm)
+        {
+            case FiniteVolumeMethod::FullImplicit:
                 a = -beta - alpha;
                 b = 1 + beta + 2 * alpha;
                 c = -alpha;
                 break;
 
-            case (FiniteVolumeMethod::FluxLimitersImplicitExplicit) :
+            case FiniteVolumeMethod::FluxLimitersImplicitExplicit:
                 a = -alpha;
                 b = 1 + 2*alpha;
                 c = -alpha;
@@ -289,15 +291,16 @@ auto TransportSolver::initialize() -> void
     }
 
     // Initialize cells on the left and right BCs
-    switch (options.fvm) {
-        case (FiniteVolumeMethod::FullImplicit) :
+    switch(options.fvm)
+    {
+        case FiniteVolumeMethod::FullImplicit:
             // Assemble the coefficient matrix A for the boundary cells
             A.row(icell0) << 0.0, 1.0 + alpha + beta, -alpha;   // left boundary (flux = v * ul)
             A.row(icelln) << - beta, 1.0 + beta, 0.0;           // right boundary (free)
 
             break;
 
-        case (FiniteVolumeMethod::FluxLimitersImplicitExplicit) :
+        case FiniteVolumeMethod::FluxLimitersImplicitExplicit:
 
             // Assemble the coefficient matrix A for the boundary cells
             // Our derivation
@@ -317,7 +320,6 @@ auto TransportSolver::initialize() -> void
 
     // Factorize A into LU factors for future uses in method step
     A.factorize();
-
 }
 
 auto TransportSolver::step(Reaktoro::VectorRef u, Reaktoro::VectorConstRef q) -> void
@@ -327,13 +329,14 @@ auto TransportSolver::step(Reaktoro::VectorRef u, Reaktoro::VectorConstRef q) ->
     const auto beta = velocity*dt/dx;
     const auto icell0 = 0;
 
-    switch (options.fvm) {
-        case (FiniteVolumeMethod::FullImplicit) :
+    switch(options.fvm)
+    {
+        case FiniteVolumeMethod::FullImplicit:
             // Handle the left boundary cell
             u[icell0] += beta * ul; // left boundary (flux = v * ul)
             break;
 
-        case (FiniteVolumeMethod::FluxLimitersImplicitExplicit) :
+        case FiniteVolumeMethod::FluxLimitersImplicitExplicit:
 
             const auto num_cells = mesh_.numCells();
             const auto icelln = num_cells - 1;
