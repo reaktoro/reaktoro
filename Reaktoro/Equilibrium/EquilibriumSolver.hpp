@@ -23,6 +23,8 @@
 // Reaktoro includes
 #include <Reaktoro/Math/Matrix.hpp>
 
+#include "W:\release\Projects\Reaktoro\demos\cpp\phaseid.hpp"
+
 namespace Reaktoro {
 
 // Forward declarations
@@ -89,7 +91,7 @@ public:
     /// Solve an equilibrium problem with given equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param problem The equilibrium problem with given temperature, pressure, and element amounts.
-    auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
+    auto solve(ChemicalState& state, const EquilibriumProblem& problem, phaseIdentificationMethod phaseid, double _quantity) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
