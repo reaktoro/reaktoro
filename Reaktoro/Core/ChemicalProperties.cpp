@@ -36,7 +36,8 @@ ChemicalProperties::ChemicalProperties(const ChemicalSystem& system)
 auto ChemicalProperties::update(double T_, double P_) -> void
 {
     // Update both temperature and pressure
-    if(T != T_ || P != P_){
+    if(T != T_ || P != P_)
+    {
         T = T_;
         P = P_;
         system.thermoModel()(tres, T, P);
