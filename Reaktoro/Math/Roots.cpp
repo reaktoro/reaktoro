@@ -117,4 +117,16 @@ auto newton(const std::function<void(VectorConstRef, VectorRef, MatrixRef)>& f,
     return x;
 }
 
+auto bhaskara(double a, double b, double c)->SquareRoots
+{
+	if ((b*b - 4.0*a*c) < 0) {
+		return std::make_tuple(-10000, -10000);
+	}
+	auto delta = std::sqrt(b*b - 4 * a*c);
+	auto x1 = (-b - delta) / (2.0*a);
+	auto x2 = (-b + delta) / (2.0*a);
+
+	return std::make_tuple(x1, x2);
+}
+
 } // namespace Reaktoro

@@ -30,6 +30,7 @@ namespace Reaktoro {
 /// Define a type that describes the roots of a cubic equation
 using CubicRoots = std::tuple<std::complex<double>, std::complex<double>, std::complex<double>>;
 
+using SquareRoots = std::tuple<double, double>;
 /// Calculate the roots of a cubic equation using Cardano's method.
 /// The calculation uses the approach presented in:
 /// *Nickalls, R. W. D. (2012). A New Approach to Solving
@@ -60,4 +61,6 @@ auto newton(const std::function<std::tuple<double,double>(double)>& f,
 auto newton(const std::function<void(VectorConstRef, VectorRef, MatrixRef)>& f,
             VectorConstRef x0, double epsilon, unsigned maxiter) -> Vector;
 
+
+auto bhaskara(double a, double b, double c) -> SquareRoots;
 } // namespace Reaktoro
