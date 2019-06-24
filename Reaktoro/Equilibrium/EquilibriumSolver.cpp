@@ -40,6 +40,9 @@
 #include <Reaktoro/Optimization/OptimumSolverRefiner.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 
+phaseIdentificationMethod phaseidMethod;
+extern int quantity;
+
 namespace Reaktoro {
 
 struct EquilibriumSolver::Impl
@@ -624,8 +627,10 @@ auto EquilibriumSolver::solve(ChemicalState& state) -> EquilibriumResult
     return solve(state, state.temperature(), state.pressure(), state.elementAmounts());
 }
 
-auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
+auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem, phaseIdentificationMethod phaseid, double _quantity) -> EquilibriumResult
 {
+	quantity = _quantity;
+	phaseidMethod = phaseid;
     return solve(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 }
 
