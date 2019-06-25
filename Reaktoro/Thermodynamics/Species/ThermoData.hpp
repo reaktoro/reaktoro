@@ -129,8 +129,8 @@ struct AqueousSpeciesThermoParamsHKF
     double wref;
 };
 
-/// A type for storing the parameters of the HKF equation of state for a gaseous species
-struct GaseousSpeciesThermoParamsHKF
+/// A type for storing the parameters of the HKF equation of state for a fluid (gaseous or hydrocarbon) species
+struct FluidSpeciesThermoParamsHKF
 {
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
     double Gf;
@@ -141,43 +141,22 @@ struct GaseousSpeciesThermoParamsHKF
     /// The standard molal entropy of the species at reference temperature and pressure (in units of cal/(mol�K))
     double Sr;
 
-    /// The coefficient a of the HKF equation of state of the gaseous species (in units of cal/(mol�K))
+    /// The coefficient a of the HKF equation of state of the fluid species (in units of cal/(mol�K))
     double a;
 
-    /// The coefficient b of the HKF equation of state of the gaseous species (in units of cal/(mol�K^2))
+    /// The coefficient b of the HKF equation of state of the fluid species (in units of cal/(mol�K^2))
     double b;
 
-    /// The coefficient c of the HKF equation of state of the gaseous species (in units of (cal�K)/mol)
+    /// The coefficient c of the HKF equation of state of the fluid species (in units of (cal�K)/mol)
     double c;
 
     /// The maximum temperature at which the HKF equation of state can be applied for the gaseous species (in units of K)
     double Tmax;
 };
 
-/// A type for storing the parameters of the HKF equation of state for a hydrocarbon species
-struct HydrocarbonSpeciesThermoParamsHKF
-{
-	/// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
-	double Gf;
+using GaseousSpeciesThermoParamsHKF = FluidSpeciesThermoParamsHKF;
 
-	/// The apparent standard molal enthalpy of formation of the species from its elements (in units of cal/mol)
-	double Hf;
-
-	/// The standard molal entropy of the species at reference temperature and pressure (in units of cal/(mol�K))
-	double Sr;
-
-	/// The coefficient a of the HKF equation of state of the hydrocarbon species (in units of cal/(mol�K))
-	double a;
-
-	/// The coefficient b of the HKF equation of state of the hydrocarbon species (in units of cal/(mol�K^2))
-	double b;
-
-	/// The coefficient c of the HKF equation of state of the hydrocarbon species (in units of (cal�K)/mol)
-	double c;
-
-	/// The maximum temperature at which the HKF equation of state can be applied for the gaseous species (in units of K)
-	double Tmax;
-};
+using HydrocarbonSpeciesThermoParamsHKF = FluidSpeciesThermoParamsHKF;
 
 /// A type for storing the parameters of the HKF equation of state for a mineral species
 struct MineralSpeciesThermoParamsHKF
@@ -267,24 +246,8 @@ struct AqueousSpeciesThermoData
     Optional<SpeciesThermoParamsPhreeqc> phreeqc;
 };
 
-/// A type for storing the thermodynamic data of a gaseous species
-struct GaseousSpeciesThermoData
-{
-    /// The interpolated thermodynamic properties of a gaseous species
-    Optional<SpeciesThermoInterpolatedProperties> properties;
-
-    /// The interpolated thermodynamic properties of a gaseous species given in terms of reaction
-    Optional<ReactionThermoInterpolatedProperties> reaction;
-
-    /// The thermodynamic parameters of the HKF model for a gaseous species
-    Optional<GaseousSpeciesThermoParamsHKF> hkf;
-
-    /// The thermodynamic parameters of the species from a Phreeqc database
-    Optional<SpeciesThermoParamsPhreeqc> phreeqc;
-};
-
-/// A type for storing the thermodynamic data of a hydrocarbon species
-struct HydrocarbonSpeciesThermoData
+/// A type for storing the thermodynamic data of fluid (gaseous or hydrocarbon) species
+struct FluidSpeciesThermoData
 {
 	/// The interpolated thermodynamic properties of a gaseous species
 	Optional<SpeciesThermoInterpolatedProperties> properties;
@@ -292,12 +255,16 @@ struct HydrocarbonSpeciesThermoData
 	/// The interpolated thermodynamic properties of a gaseous species given in terms of reaction
 	Optional<ReactionThermoInterpolatedProperties> reaction;
 
-	/// The thermodynamic parameters of the HKF model for a hydrocarbon species
-	Optional<HydrocarbonSpeciesThermoParamsHKF> hkf;
+	/// The thermodynamic parameters of the HKF model for a gaseous species
+	Optional<FluidSpeciesThermoParamsHKF> hkf;
 
 	/// The thermodynamic parameters of the species from a Phreeqc database
 	Optional<SpeciesThermoParamsPhreeqc> phreeqc;
 };
+
+using GaseousSpeciesThermoData = FluidSpeciesThermoData;
+
+using HydrocarbonSpeciesThermoData = FluidSpeciesThermoData;
 
 /// A type for storing the thermodynamic data of a mineral species
 struct MineralSpeciesThermoData
