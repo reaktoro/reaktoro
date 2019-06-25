@@ -36,22 +36,10 @@ namespace Reaktoro {
 		m.def("convertPhase", &convertPhase<GaseousPhase>);
 		m.def("convertPhase", &convertPhase<AqueousPhase>);
 
-		py::class_<OilSpecies, Species>(m, "OilSpecies")
+
+		py::class_<GeneralMixture<HydrocarbonSpecies>>(m, "_GeneralMixture_oil")
 			.def(py::init<>())
-			.def(py::init<const GaseousSpecies&>())
-			.def("setCriticalTemperature", &OilSpecies::setCriticalTemperature)
-			.def("setCriticalPressure", &OilSpecies::setCriticalPressure)
-			.def("setAcentricFactor", &OilSpecies::setAcentricFactor)
-			.def("setThermoData", &OilSpecies::setThermoData)
-			.def("criticalTemperature", &OilSpecies::criticalTemperature)
-			.def("criticalPressure", &OilSpecies::criticalPressure)
-			.def("acentricFactor", &OilSpecies::acentricFactor)
-			.def("thermoData", &OilSpecies::thermoData, py::return_value_policy::reference_internal)
-			;
-		
-		py::class_<GeneralMixture<OilSpecies>>(m, "_GeneralMixture_oil")
-			.def(py::init<>())
-			.def(py::init<const std::vector<OilSpecies>&>())
+			.def(py::init<const std::vector<HydrocarbonSpecies>&>())
 			;
 
 		py::class_<GeneralMixture<GaseousSpecies>>(m, "_GeneralMixture_gas")
@@ -59,9 +47,9 @@ namespace Reaktoro {
 			.def(py::init<const std::vector<GaseousSpecies>&>())
 			;
 
-		py::class_<OilMixture, GeneralMixture<OilSpecies>>(m, "OilMixture")
+		py::class_<OilMixture, GeneralMixture<HydrocarbonSpecies>>(m, "OilMixture")
 			.def(py::init<>())
-			.def(py::init<const std::vector<OilSpecies>>())
+			.def(py::init<const std::vector<HydrocarbonSpecies>>())
 			;
 		
 		py::class_<GaseousMixture, GeneralMixture<GaseousSpecies>>(m, "GaseousMixture")

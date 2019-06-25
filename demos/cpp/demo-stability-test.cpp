@@ -50,7 +50,7 @@ int main()
 	}
 
 	{
-		auto oil_species = std::vector<OilSpecies>{
+		auto oil_species = std::vector<HydrocarbonSpecies>{
 			OilSpecies(db.gaseousSpecies("CO2(oil)")),
 		};
 

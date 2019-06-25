@@ -18,7 +18,7 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/HydrocarbonSpecies.hpp>
 
 namespace Reaktoro {
 
@@ -26,6 +26,7 @@ namespace Reaktoro {
 	{
 		py::class_<HydrocarbonSpecies, Species>(m, "HydrocarbonSpecies")
 			.def(py::init<>())
+			.def(py::init<const GaseousSpecies&>())
 			.def("setCriticalTemperature", &HydrocarbonSpecies::setCriticalTemperature)
 			.def("setCriticalPressure", &HydrocarbonSpecies::setCriticalPressure)
 			.def("setAcentricFactor", &HydrocarbonSpecies::setAcentricFactor)

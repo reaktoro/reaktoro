@@ -45,6 +45,30 @@ HydrocarbonSpecies::HydrocarbonSpecies(const Species& species)
 	: Species(species), pimpl(new Impl())
 {}
 
+HydrocarbonSpecies::HydrocarbonSpecies(const GaseousSpecies& species)
+	: Species(species) , pimpl(new Impl())
+{
+	this->setCriticalTemperature(species.criticalTemperature());
+	this->setCriticalPressure(species.criticalPressure());
+	this->setAcentricFactor(species.acentricFactor());
+
+	auto const& gas_thermo_data = species.thermoData();
+
+	Optional<HydrocarbonSpeciesThermoParamsHKF> oil_hkf;
+	if (!gas_thermo_data.hkf.empty()) {
+		GaseousSpeciesThermoParamsHKF const& hkf = gas_thermo_data.hkf.get();
+		oil_hkf = HydrocarbonSpeciesThermoParamsHKF{ hkf.Gf, hkf.Hf, hkf.Sr, hkf.a, hkf.b, hkf.c, hkf.Tmax };
+	}
+
+	this->setThermoData(HydrocarbonSpeciesThermoData{
+		gas_thermo_data.properties,
+		gas_thermo_data.reaction,
+		oil_hkf,
+		gas_thermo_data.phreeqc
+		});
+}
+
+
 auto HydrocarbonSpecies::setCriticalTemperature(double val) -> void
 {
 	Assert(val > 0.0, "Cannot set the critical temperature of the hydrocarbon specie `" + name() + "`.",

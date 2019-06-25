@@ -8,50 +8,6 @@ using namespace Reaktoro;
 // NOTE: Copied (and modified) from GaseousPhase, GaseousMixture, GaseousSpecies, etc.:
 
 
-/// A type for storing the parameters of the HKF equation of state for a gaseous species
-struct OilSpeciesThermoParamsHKF
-{
-    /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
-    double Gf;
-
-    /// The apparent standard molal enthalpy of formation of the species from its elements (in units of cal/mol)
-    double Hf;
-
-    /// The standard molal entropy of the species at reference temperature and pressure (in units of cal/(mol�K))
-    double Sr;
-
-    /// The coefficient a of the HKF equation of state of the gaseous species (in units of cal/(mol�K))
-    double a;
-
-    /// The coefficient b of the HKF equation of state of the gaseous species (in units of cal/(mol�K^2))
-    double b;
-
-    /// The coefficient c of the HKF equation of state of the gaseous species (in units of (cal�K)/mol)
-    double c;
-
-    /// The maximum temperature at which the HKF equation of state can be applied for the gaseous species (in units of K)
-    double Tmax;
-};
-
-/// A type for storing the thermodynamic data of a gaseous species
-struct OilSpeciesThermoData
-{
-    /// The interpolated thermodynamic properties of a gaseous species
-    Optional<SpeciesThermoInterpolatedProperties> properties;
-
-    /// The interpolated thermodynamic properties of a gaseous species given in terms of reaction
-    Optional<ReactionThermoInterpolatedProperties> reaction;
-
-    /// The thermodynamic parameters of the HKF model for a gaseous species
-    Optional<OilSpeciesThermoParamsHKF> hkf;
-
-    /// The thermodynamic parameters of the species from a Phreeqc database
-    Optional<SpeciesThermoParamsPhreeqc> phreeqc;
-};
-
-
-
-
 /// A type to describe the attributes of a gaseous species
 class OilSpecies : public Species
 {
@@ -68,7 +24,7 @@ private:
         double acentric_factor = 0.0;
 
         /// The thermodynamic data of the gaseous species.
-        OilSpeciesThermoData thermo;
+        HydrocarbonSpeciesThermoData thermo;
     };
 
 public:
@@ -90,13 +46,13 @@ public:
 
         auto const& gas_thermo_data = species.thermoData();
         
-        Optional<OilSpeciesThermoParamsHKF> oil_hkf;
+        Optional<HydrocarbonSpeciesThermoParamsHKF> oil_hkf;
         if (!gas_thermo_data.hkf.empty()) {
             GaseousSpeciesThermoParamsHKF const& hkf = gas_thermo_data.hkf.get();
-            oil_hkf = OilSpeciesThermoParamsHKF{ hkf.Gf, hkf.Hf, hkf.Sr, hkf.a, hkf.b, hkf.c, hkf.Tmax };
+            oil_hkf = HydrocarbonSpeciesThermoParamsHKF { hkf.Gf, hkf.Hf, hkf.Sr, hkf.a, hkf.b, hkf.c, hkf.Tmax };
         }
 
-        this->setThermoData(OilSpeciesThermoData{
+        this->setThermoData(HydrocarbonSpeciesThermoData{
             gas_thermo_data.properties,
             gas_thermo_data.reaction,
             oil_hkf,
@@ -116,7 +72,7 @@ public:
     auto setAcentricFactor(double val) -> void;
 
     /// Set the thermodynamic data of the gaseous species.
-    auto setThermoData(const OilSpeciesThermoData& thermo) -> void;
+    auto setThermoData(const HydrocarbonSpeciesThermoData& thermo) -> void;
 
     /// Return the critical temperature of the gaseous species (in units of K)
     auto criticalTemperature() const -> double;
@@ -128,7 +84,7 @@ public:
     auto acentricFactor() const -> double;
 
     /// Return the thermodynamic data of the gaseous species.
-    auto thermoData() const -> const OilSpeciesThermoData&;
+    auto thermoData() const -> const HydrocarbonSpeciesThermoData&;
 
 private:
     std::shared_ptr<Impl> pimpl;
@@ -162,7 +118,7 @@ auto OilSpecies::setAcentricFactor(double val) -> void
     pimpl->acentric_factor = val;
 }
 
-auto OilSpecies::setThermoData(const OilSpeciesThermoData& thermo) -> void
+auto OilSpecies::setThermoData(const HydrocarbonSpeciesThermoData& thermo) -> void
 {
     pimpl->thermo = thermo;
 }
@@ -182,7 +138,7 @@ auto OilSpecies::acentricFactor() const -> double
     return pimpl->acentric_factor;
 }
 
-auto OilSpecies::thermoData() const -> const OilSpeciesThermoData&
+auto OilSpecies::thermoData() const -> const HydrocarbonSpeciesThermoData&
 {
     return pimpl->thermo;
 }
@@ -195,7 +151,7 @@ auto OilSpecies::thermoData() const -> const OilSpeciesThermoData&
 /// species.
 /// @see OilSpecies
 /// @ingroup Mixtures
-class OilMixture : public GeneralMixture<OilSpecies>
+class OilMixture : public GeneralMixture<HydrocarbonSpecies>
 {
 public:
     /// Construct a default OilMixture instance.
@@ -203,7 +159,7 @@ public:
 
     /// Construct a OilMixture instance with given species.
     /// @param species The species that compose the gaseous mixture
-    explicit OilMixture(const std::vector<OilSpecies>& species);
+    explicit OilMixture(const std::vector<HydrocarbonSpecies>& species);
 
     /// Destroy the OilMixture instance.
     virtual ~OilMixture();
@@ -216,11 +172,11 @@ public:
 };
 
 OilMixture::OilMixture()
-: GeneralMixture<OilSpecies>()
+: GeneralMixture<HydrocarbonSpecies>()
 {}
 
-OilMixture::OilMixture(const std::vector<OilSpecies>& species)
-: GeneralMixture<OilSpecies>(species)
+OilMixture::OilMixture(const std::vector<HydrocarbonSpecies>& species)
+: GeneralMixture<HydrocarbonSpecies>(species)
 {}
 
 OilMixture::~OilMixture()
@@ -319,9 +275,9 @@ OilPhase::OilPhase()
 OilPhase::OilPhase(const OilMixture& mixture)
     : pimpl(new Impl(mixture))
 {
-    // Convert the OilSpecies instances to Species instances
+    // Convert the HydrocarbonSpecies instances to Species instances
     std::vector<Species> species;
-    for (const OilSpecies& x : mixture.species())
+    for (const HydrocarbonSpecies& x : mixture.species())
         species.push_back(x);
 
     // Set the Phase attributes
@@ -368,7 +324,7 @@ auto oilChemicalModelCubicEOS(const OilMixture& mixture, CubicEOS::Model modelty
 
     // Get the the critical temperatures, pressures and acentric factors of the gases
     std::vector<double> Tc, Pc, omega;
-    for(OilSpecies species : mixture.species())
+    for(HydrocarbonSpecies species : mixture.species())
     {
         Tc.push_back(species.criticalTemperature());
         Pc.push_back(species.criticalPressure());

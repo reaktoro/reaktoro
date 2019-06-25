@@ -24,6 +24,8 @@
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Thermodynamics/Species/ThermoData.hpp>
 
+#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+
 namespace Reaktoro {
 
 	/// A type to describe the attributes of a hydrocarbon species
@@ -35,6 +37,9 @@ namespace Reaktoro {
 
 		/// Construct an HydrocarbonSpecies instance from a Species instance
 		HydrocarbonSpecies(const Species& species);
+
+		/// A temporary constructor based on gaseous species - TODO: REMOVE AT THE END
+		HydrocarbonSpecies(const GaseousSpecies& species);
 
 		/// Set the critical temperature of the hydrocarbon species (in units of K)
 		auto setCriticalTemperature(double val) -> void;

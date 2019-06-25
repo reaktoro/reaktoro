@@ -139,7 +139,7 @@ int main()
 	}
 
 	{
-		auto oil_species = std::vector<OilSpecies>{
+		auto oil_species = std::vector<HydrocarbonSpecies>{
 			OilSpecies(db.gaseousSpecies("CH4(oil)")),
 			OilSpecies(db.gaseousSpecies("CO2(oil)")),
 			OilSpecies(db.gaseousSpecies("H2S(oil)")),
