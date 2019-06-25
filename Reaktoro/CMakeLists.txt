@@ -22,6 +22,11 @@ link_directories(${REAKTORO_THIRDPARTY_LIBRARY_PATH})
 # Build a Reaktoro C++ library
 add_library(Reaktoro ${HEADER_FILES} ${SOURCE_FILES})
 
+# Check if profiling is enabled
+if(REAKTORO_ENABLE_PROFILING)
+    target_compile_definitions(Reaktoro PUBLIC REAKTORO_PROFILING)
+endif()
+
 # Add an alias Reaktoro::Reaktoro to the target library Reaktoro
 add_library(Reaktoro::Reaktoro ALIAS Reaktoro)
 
