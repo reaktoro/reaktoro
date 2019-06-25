@@ -24,8 +24,8 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
@@ -34,8 +34,6 @@
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 
 namespace Reaktoro {
-
-
 
 struct SmartEquilibriumSolver::Impl
 {
@@ -55,24 +53,12 @@ struct SmartEquilibriumSolver::Impl
     //std::list<std::tuple<Vector, ChemicalState, ChemicalProperties, EquilibriumSensitivity>> tree;
 
     /// A class used to store the node of tree for smart equilibrium calculations.
-    struct TreeNode{
-
+    struct TreeNode
+    {
         Vector be;
         ChemicalState state;
         ChemicalProperties properties;
         EquilibriumSensitivity sensitivity;
-
-        Index num_predicted;
-        Index step;
-        Index cell;
-
-        TreeNode(Vector be,
-                 ChemicalState state,
-                 ChemicalProperties properties,
-                 EquilibriumSensitivity sensitivity,
-                 Index num_predicted, Index step, Index cell)
-                : be(be), state(state), properties(properties), sensitivity(sensitivity),
-                  num_predicted(num_predicted), step(step), cell(cell){}
     };
 
     /// The tree used to save the calculated equilibrium states and respective sensitivities
@@ -81,6 +67,7 @@ struct SmartEquilibriumSolver::Impl
     /// The vector of amounts of species
     Vector n;
 
+    /// Auxiliary vectors delta(n) and delta(lna)
     Vector dn, delta_lna;
 
     /// Construct a default SmartEquilibriumSolver::Impl instance.
@@ -104,62 +91,62 @@ struct SmartEquilibriumSolver::Impl
         solver.setPartition(partition);
     }
 
-    auto showTree(const Index& step) -> void
-    {
-        /*
-        std::cout << "\nTree: " << std::endl;
-        for(auto node : tree_)
-        {
-            const auto be0_ = node.be;
-            const ChemicalState state0_ = node.state;
-            const ChemicalProperties properties0_ = node.properties;
-            const EquilibriumSensitivity sensitivity0_ = node.sensitivity;
-            const Index num_predicted = node.num_predicted;
-            const Index step = node.step;
-            const Index cell = node.cell;
-            std::cout << "node ( step " << node.step
-                      << ", cell " <<  node.cell << ") : "
-                      << num_predicted << " predicted states" <<  std::endl;
+    // auto showTree(const Index& step) -> void
+    // {
+    //     /*
+    //     std::cout << "\nTree: " << std::endl;
+    //     for(auto node : tree_)
+    //     {
+    //         const auto be0_ = node.be;
+    //         const ChemicalState state0_ = node.state;
+    //         const ChemicalProperties properties0_ = node.properties;
+    //         const EquilibriumSensitivity sensitivity0_ = node.sensitivity;
+    //         const Index num_predicted = node.num_predicted;
+    //         const Index step = node.step;
+    //         const Index cell = node.cell;
+    //         std::cout << "node ( step " << node.step
+    //                   << ", cell " <<  node.cell << ") : "
+    //                   << num_predicted << " predicted states" <<  std::endl;
 
-        }
-        std::cout <<  std::endl;
-        */
+    //     }
+    //     std::cout <<  std::endl;
+    //     */
 
-        // Document times
-        // ----------------------------------------------------------------------
-        // ----------------------------------------------------------------------
-        // The output stream of the data file
-        std::ofstream datafile;
-        std::string file = "../tree-" + std::to_string(step) + ".txt";
-        //datafile.open("tree-" + std::to_string(step) + ".txt", std::ofstream::out | std::ofstream::trunc);
-        datafile.open(file, std::ofstream::out | std::ofstream::trunc);
-        // Output statuses such that steps' go vertically and cells horizontally
-        if (datafile.is_open()) {
+    //     // Document times
+    //     // ----------------------------------------------------------------------
+    //     // ----------------------------------------------------------------------
+    //     // The output stream of the data file
+    //     std::ofstream datafile;
+    //     std::string file = "../tree-" + std::to_string(step) + ".txt";
+    //     //datafile.open("tree-" + std::to_string(step) + ".txt", std::ofstream::out | std::ofstream::trunc);
+    //     datafile.open(file, std::ofstream::out | std::ofstream::trunc);
+    //     // Output statuses such that steps' go vertically and cells horizontally
+    //     if (datafile.is_open()) {
 
-            // Output tree
-            for(auto node : tree)
-            {
-                const auto be0_ = node.be;
-                const ChemicalState state0_ = node.state;
-                const ChemicalProperties properties0_ = node.properties;
-                const EquilibriumSensitivity sensitivity0_ = node.sensitivity;
-                const Index num_predicted = node.num_predicted;
-                const Index step = node.step;
-                const Index cell = node.cell;
-                datafile << "node ( step " << node.step
-                         << ", cell " <<  node.cell << ") : "
-                         << num_predicted << " predicted states" <<  std::endl;
+    //         // Output tree
+    //         for(auto node : tree)
+    //         {
+    //             const auto be0_ = node.be;
+    //             const ChemicalState state0_ = node.state;
+    //             const ChemicalProperties properties0_ = node.properties;
+    //             const EquilibriumSensitivity sensitivity0_ = node.sensitivity;
+    //             const Index num_predicted = node.num_predicted;
+    //             const Index step = node.step;
+    //             const Index cell = node.cell;
+    //             datafile << "node ( step " << node.step
+    //                      << ", cell " <<  node.cell << ") : "
+    //                      << num_predicted << " predicted states" <<  std::endl;
 
-            }
-            datafile <<  std::endl;
-        }
+    //         }
+    //         datafile <<  std::endl;
+    //     }
 
-        // Close the data file
-        datafile.close();
-    }
+    //     // Close the data file
+    //     datafile.close();
+    // }
 
     /// Learn how to perform a full equilibrium calculation (with tracking)
-    auto learn(ChemicalState& state, double T, double P, VectorConstRef be, Index step, Index cell) -> EquilibriumResult
+    auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
         EquilibriumResult res;
 
@@ -180,7 +167,7 @@ struct SmartEquilibriumSolver::Impl
         profiling( start_parts = time(); );
 
         // Add the reference state into the storage
-        tree.emplace_back(be, state, solver.properties(), solver.sensitivity(), 0, step, cell);
+        tree.push_back({be, state, solver.properties(), solver.sensitivity()});
 
         // Profiling ref. element store
         profiling( res.smart.learn_stats.time_store = elapsed(start_parts); );
@@ -355,18 +342,15 @@ struct SmartEquilibriumSolver::Impl
             state.setSpeciesAmounts(n);
             res.optimum.succeeded = true;
             res.smart.succeeded = true;
-            it->num_predicted ++;
         }
 
         profiling( res.smart.estimate_stats.time_acceptance = elapsed(start_parts); );
-
-        // Stop profiling learning
         profiling( res.smart.estimate_stats.time_estimate = elapsed(start_estimate); );
 
         return res;
     }
 
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be, Index step, Index cell) -> EquilibriumResult
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
         // Attempt to estimate the result by on-demand learning
         EquilibriumResult res = estimate(state, T, P, be);
@@ -375,7 +359,7 @@ struct SmartEquilibriumSolver::Impl
         if(res.optimum.succeeded) return res;
 
         // Otherwise, trigger learning (conventional approach)
-        res += learn(state, T, P, be, step, cell);
+        res += learn(state, T, P, be);
 
         return res;
     }
@@ -412,9 +396,9 @@ auto SmartEquilibriumSolver::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto SmartEquilibriumSolver::learn(ChemicalState& state, double T, double P, VectorConstRef be, Index step, Index cell) -> EquilibriumResult
+auto SmartEquilibriumSolver::learn(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
 {
-    return pimpl->learn(state, T, P, be, step, cell);
+    return pimpl->learn(state, T, P, be);
 }
 
 auto SmartEquilibriumSolver::learn(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
@@ -432,9 +416,9 @@ auto SmartEquilibriumSolver::estimate(ChemicalState& state, const EquilibriumPro
     return estimate(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 }
 
-auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be, Index step, Index cell) -> EquilibriumResult
+auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
 {
-    return pimpl->solve(state, T, P, be, step, cell);
+    return pimpl->solve(state, T, P, be);
 }
 
 auto SmartEquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
@@ -446,10 +430,6 @@ auto SmartEquilibriumSolver::properties() const -> const ChemicalProperties&
 {
     RuntimeError("Could not calculate the chemical properties.",
             "This method has not been implemented yet.");
-}
-auto SmartEquilibriumSolver::showTree(const Index & step) const -> void
-{
-    return pimpl->showTree(step);
 }
 
 } // namespace Reaktoro

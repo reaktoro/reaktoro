@@ -155,7 +155,7 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
         if(options.use_smart_equilibrium_solver)
         {
             // Solve with a smart equilibrium solver
-            rt_result.equilibrium += smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell), steps, icell);
+            rt_result.equilibrium += smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
 
             // End profiling for the equilibrium calculations (accumulate cell-wise)
             profiling( rt_result.eq_time += elapsed(start); );

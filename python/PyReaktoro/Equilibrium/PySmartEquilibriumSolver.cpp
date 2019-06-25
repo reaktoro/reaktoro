@@ -31,13 +31,13 @@ namespace Reaktoro {
 
 void exportSmartEquilibriumSolver(py::module& m)
 {
-    auto learn1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef, Index, Index)>(&SmartEquilibriumSolver::learn);
+    auto learn1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolver::learn);
     auto learn2 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::learn);
 
     auto estimate1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolver::estimate);
     auto estimate2 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::estimate);
 
-    auto solve1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef, Index, Index)>(&SmartEquilibriumSolver::solve);
+    auto solve1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolver::solve);
     auto solve2 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::solve);
 
     py::class_<SmartEquilibriumSolver>(m, "SmartEquilibriumSolver")

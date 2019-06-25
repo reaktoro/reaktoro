@@ -15,7 +15,7 @@
 
 #pragma once
 
-// Reaktoro's includes
+// Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 
 namespace Reaktoro {
