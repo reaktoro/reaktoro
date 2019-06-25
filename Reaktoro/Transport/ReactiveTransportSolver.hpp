@@ -21,7 +21,7 @@
 #include <iostream>
 #include <list>
 
-// Reaktoro's includes
+// Reaktoro includes
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -29,45 +29,11 @@
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Transport/TransportSolver.hpp>
 #include <Reaktoro/Transport/ReactiveTransportOptions.hpp>
+#include <Reaktoro/Transport/ReactiveTransportResult.hpp>
+#include <Reaktoro/Transport/TransportSolver.hpp>
 
 namespace Reaktoro {
-
-struct Results
-{
-    /// Total CPU time required by smart equilibrium scheme
-    double smart_total;
-
-    /// Total CPU time required by smart equilibrium scheme
-    /// excluding the costs for the search of the closest reference states.
-    double smart_total_ideal_search;
-
-    /// Total CPU time required by smart equilibrium scheme
-    /// excluding the costs for the search and storage of the closest reference states.
-    double smart_total_ideal_search_store;
-
-    /// Total CPU time required by conventional equilibrium scheme
-    double conv_total;
-};
-
-/// Use this class to collect modeling results per one step of reactive transport.
-struct ReactiveTransportResult
-{
-    /// Total cpu times for reactive transport and equilibrium
-    double rt_time = 0.0;
-    double eq_time = 0.0;
-
-    /// Number of cells and number of steps
-    int ncells;
-    int nsteps;
-
-    /// Flag for the smart equilibrium
-    bool smart;
-
-    /// Contains reactive transport tracking results
-    EquilibriumResult equilibrium;
-};
 
 /// Use this class for solving reactive transport problems.
 class ReactiveTransportSolver

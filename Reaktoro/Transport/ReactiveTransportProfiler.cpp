@@ -27,6 +27,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Transport/ReactiveTransportResult.hpp>
 #include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
 
 namespace Reaktoro {

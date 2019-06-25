@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-// Reaktoro's includes
+// Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 
 namespace Reaktoro {
