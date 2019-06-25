@@ -106,10 +106,10 @@ void exportGaseousPhase(py::module& m);
 void exportMineralPhase(py::module& m);
 void exportAqueousSpecies(py::module& m);
 void exportGaseousSpecies(py::module& m);
+void exportHydrocarbonSpecies(py::module& m);
 void exportMineralSpecies(py::module& m);
 void exportWater(py::module& m);
 void exportOil(py::module& m);
-void exportHydrocarbonSpecies(py::module& m);
 
 // Transport module
 void exportChemicalField(py::module& m);
