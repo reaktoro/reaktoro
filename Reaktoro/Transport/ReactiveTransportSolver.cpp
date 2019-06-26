@@ -114,7 +114,7 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
     }
 
     // Left boundary condition cell
-    unsigned int icell_bc = 0;
+    Index icell_bc = 0;
     double phi_bc = field[icell_bc].properties().fluidVolume().val;
 
     // Profiling time variables
@@ -161,11 +161,8 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
             profiling( rt_result.eq_time += elapsed(start); );
 
             // Update the time spend for either for learning or estimating
-            if(!rt_result.equilibrium.smart.succeeded)
-            {
-                rt_result.equilibrium.smart.addLearningIndex(icell);
-                rt_result.equilibrium.smart.tree_size++;
-            }
+            if(rt_result.equilibrium.smart.succeeded)
+                rt_result.equilibrium_smart_successfull_cells.push_back(icell);
         }
         else
         {
