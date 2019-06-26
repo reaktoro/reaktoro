@@ -51,7 +51,7 @@ int main()
 
 	{
 		auto oil_species = std::vector<HydrocarbonSpecies>{
-			OilSpecies(db.gaseousSpecies("CO2(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("CO2(oil)")),
 		};
 
 		//OilSpecies C2H6;
@@ -74,7 +74,7 @@ int main()
 
 		//oil_species.push_back(C2H6);
 
-		auto mixture = OilMixture(oil_species);
+		auto mixture = HydrocarbonMixture(oil_species);
 		auto oil = OilPhase(mixture);
 
 		//oil.setChemicalModelSoaveRedlichKwong();

@@ -260,9 +260,9 @@ void run_mixture_Huang_1984() {
 
 	{
 		auto oil_species = std::vector<HydrocarbonSpecies>{
-			OilSpecies(db.gaseousSpecies("CO2(oil)")),
-			OilSpecies(db.gaseousSpecies("CH4(oil)")),
-			OilSpecies(db.gaseousSpecies("H2S(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("CO2(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("CH4(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("H2S(oil)")),
 		};
 
 		//OilSpecies C2H6;
@@ -285,7 +285,7 @@ void run_mixture_Huang_1984() {
 
 		//oil_species.push_back(C2H6);
 
-		auto mixture = OilMixture(oil_species);
+		auto mixture = HydrocarbonMixture(oil_species);
 		auto oil = OilPhase(mixture);
 
 		//oil.setChemicalModelRedlichKwong();
@@ -449,8 +449,8 @@ void run_alghafri2014_bubble_and_dew_point_CO2_C7H16() {
 
 	{
 		auto oil_species = std::vector<HydrocarbonSpecies>{
-			OilSpecies(db.gaseousSpecies("CO2(oil)")),
-			OilSpecies(db.gaseousSpecies("CH4(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("CO2(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("CH4(oil)")),
 			//OilSpecies(db.gaseousSpecies("H2S(oil)")),
 			//OilSpecies(db.gaseousSpecies("H2O(oil)")),
 		};
@@ -475,7 +475,7 @@ void run_alghafri2014_bubble_and_dew_point_CO2_C7H16() {
 
 		//oil_species.push_back(C2H6);
 
-		auto mixture = OilMixture(oil_species);
+		auto mixture = HydrocarbonMixture(oil_species);
 		auto oil = OilPhase(mixture);
 
 		//oil.setChemicalModelRedlichKwong();
@@ -550,10 +550,10 @@ int main()
 
     {
         auto oil_species = std::vector<HydrocarbonSpecies>{
-			OilSpecies(db.gaseousSpecies("CH4(oil)")),
-			OilSpecies(db.gaseousSpecies("CO2(oil)")),
-			OilSpecies(db.gaseousSpecies("H2S(oil)")),
-			OilSpecies(db.gaseousSpecies("H2O(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("CH4(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("CO2(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("H2S(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("H2O(oil)")),
         };
 
         //OilSpecies C2H6;
@@ -576,7 +576,7 @@ int main()
 
         //oil_species.push_back(C2H6);
 
-        auto mixture = OilMixture(oil_species);
+        auto mixture = HydrocarbonMixture(oil_species);
         auto oil = OilPhase(mixture);
 
 		oil.setChemicalModelRedlichKwong();

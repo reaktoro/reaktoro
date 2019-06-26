@@ -27,6 +27,7 @@ namespace py = pybind11;
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 #include "W:\release\Projects\Reaktoro\demos\cpp\phaseid.hpp"
+#include <reaktoro/Thermodynamics/Mixtures/HydrocarbonMixture.hpp>
 
 namespace Reaktoro {
 
@@ -47,7 +48,7 @@ namespace Reaktoro {
 			.def(py::init<const std::vector<GaseousSpecies>&>())
 			;
 
-		py::class_<OilMixture, GeneralMixture<HydrocarbonSpecies>>(m, "OilMixture")
+		py::class_<HydrocarbonMixture, GeneralMixture<HydrocarbonSpecies>>(m, "OilMixture")
 			.def(py::init<>())
 			.def(py::init<const std::vector<HydrocarbonSpecies>>())
 			;
@@ -59,7 +60,7 @@ namespace Reaktoro {
 
 		py::class_<OilPhase, Phase>(m, "OilPhase")
 			.def(py::init<>())
-			.def(py::init<const OilMixture&>())
+			.def(py::init<const HydrocarbonMixture&>())
 			.def("setChemicalModelRedlichKwong", &OilPhase::setChemicalModelRedlichKwong, py::return_value_policy::reference_internal)
 			.def("setChemicalModelSoaveRedlichKwong", &OilPhase::setChemicalModelSoaveRedlichKwong, py::return_value_policy::reference_internal)
 			.def("setChemicalModelPengRobinson", &OilPhase::setChemicalModelPengRobinson, py::return_value_policy::reference_internal)			

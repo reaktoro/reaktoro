@@ -140,17 +140,17 @@ int main()
 
 	{
 		auto oil_species = std::vector<HydrocarbonSpecies>{
-			OilSpecies(db.gaseousSpecies("CH4(oil)")),
-			OilSpecies(db.gaseousSpecies("CO2(oil)")),
-			OilSpecies(db.gaseousSpecies("H2S(oil)")),
-			//OilSpecies(db.gaseousSpecies("H2O(oil)")),
-			//OilSpecies(db.gaseousSpecies("C1(oil)")),
-			//OilSpecies(db.gaseousSpecies("C2(oil)")),
-			//OilSpecies(db.gaseousSpecies("C3(oil)")),
-			//OilSpecies(db.gaseousSpecies("C4(oil)")),
-			//OilSpecies(db.gaseousSpecies("C5(oil)")),
-			//OilSpecies(db.gaseousSpecies("C6(oil)")),
-			//OilSpecies(db.gaseousSpecies("C7(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("CH4(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("CO2(oil)")),
+			HydrocarbonSpecies(db.gaseousSpecies("H2S(oil)")),
+			//HydrocarbonSpecies(db.gaseousSpecies("H2O(oil)")),
+			//HydrocarbonSpecies(db.gaseousSpecies("C1(oil)")),
+			//HydrocarbonSpecies(db.gaseousSpecies("C2(oil)")),
+			//HydrocarbonSpecies(db.gaseousSpecies("C3(oil)")),
+			//HydrocarbonSpecies(db.gaseousSpecies("C4(oil)")),
+			//HydrocarbonSpecies(db.gaseousSpecies("C5(oil)")),
+			//HydrocarbonSpecies(db.gaseousSpecies("C6(oil)")),
+			//HydrocarbonSpecies(db.gaseousSpecies("C7(oil)")),
 
 		};
 
@@ -174,7 +174,7 @@ int main()
 
 		//oil_species.push_back(C2H6);
 
-		auto mixture = OilMixture(oil_species);
+		auto mixture = HydrocarbonMixture(oil_species);
 		auto oil = OilPhase(mixture);
 
 		oil.setChemicalModelSoaveRedlichKwong();

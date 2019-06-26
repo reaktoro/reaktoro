@@ -2,196 +2,6 @@
 
 using namespace Reaktoro;
 
-
-// -------------------------------------------------------------------------------------------------
-
-// NOTE: Copied (and modified) from GaseousPhase, GaseousMixture, GaseousSpecies, etc.:
-
-
-/// A type to describe the attributes of a gaseous species
-class OilSpecies : public Species
-{
-private:
-    struct Impl
-    {
-        // The critical temperature of the gaseous species (in units of K)
-        double critical_temperature = 0.0;
-
-        // The critical pressure of the gaseous species (in units of Pa)
-        double critical_pressure = 0.0;
-
-        // The acentric factor of the gaseous species
-        double acentric_factor = 0.0;
-
-        /// The thermodynamic data of the gaseous species.
-        HydrocarbonSpeciesThermoData thermo;
-    };
-
-public:
-    /// Construct a default OilSpecies instance
-    OilSpecies();
-
-    /// Construct an OilSpecies instance from a Species instance
-    OilSpecies(const Species& species);
-
-    // [Prototyping: added now]
-    /// Copies data from a GaseousSpecies
-    explicit OilSpecies(const GaseousSpecies& species)
-        : Species(species)
-        , pimpl(new Impl())
-    {
-        this->setCriticalTemperature(species.criticalTemperature());
-        this->setCriticalPressure(species.criticalPressure());
-        this->setAcentricFactor(species.acentricFactor());
-
-        auto const& gas_thermo_data = species.thermoData();
-        
-        Optional<HydrocarbonSpeciesThermoParamsHKF> oil_hkf;
-        if (!gas_thermo_data.hkf.empty()) {
-            GaseousSpeciesThermoParamsHKF const& hkf = gas_thermo_data.hkf.get();
-            oil_hkf = HydrocarbonSpeciesThermoParamsHKF { hkf.Gf, hkf.Hf, hkf.Sr, hkf.a, hkf.b, hkf.c, hkf.Tmax };
-        }
-
-        this->setThermoData(HydrocarbonSpeciesThermoData{
-            gas_thermo_data.properties,
-            gas_thermo_data.reaction,
-            oil_hkf,
-            gas_thermo_data.phreeqc
-        });
-    }
-
-    // [End]
-
-    /// Set the critical temperature of the gaseous species (in units of K)
-    auto setCriticalTemperature(double val) -> void;
-
-    /// Set the critical pressure of the gaseous species (in units of Pa)
-    auto setCriticalPressure(double val) -> void;
-
-    /// Set the acentric factor of the gaseous species
-    auto setAcentricFactor(double val) -> void;
-
-    /// Set the thermodynamic data of the gaseous species.
-    auto setThermoData(const HydrocarbonSpeciesThermoData& thermo) -> void;
-
-    /// Return the critical temperature of the gaseous species (in units of K)
-    auto criticalTemperature() const -> double;
-
-    /// Return the critical pressure of the gaseous species (in units of Pa)
-    auto criticalPressure() const -> double;
-
-    /// Return the acentric factor of the gaseous species
-    auto acentricFactor() const -> double;
-
-    /// Return the thermodynamic data of the gaseous species.
-    auto thermoData() const -> const HydrocarbonSpeciesThermoData&;
-
-private:
-    std::shared_ptr<Impl> pimpl;
-};
-
-
-OilSpecies::OilSpecies()
-: pimpl(new Impl())
-{}
-
-OilSpecies::OilSpecies(const Species& species)
-: Species(species), pimpl(new Impl())
-{}
-
-auto OilSpecies::setCriticalTemperature(double val) -> void
-{
-    Assert(val > 0.0, "Cannot set the critical temperature of the gas `" + name() + "`.",
-        "The given critical temperature `" + std::to_string(val) + "` is not positive.");
-    pimpl->critical_temperature = val;
-}
-
-auto OilSpecies::setCriticalPressure(double val) -> void
-{
-    Assert(val > 0.0, "Cannot set the critical pressure of the gas `" + name() + "`.",
-        "The given critical pressure `" + std::to_string(val) + "` is not positive.");
-    pimpl->critical_pressure = val;
-}
-
-auto OilSpecies::setAcentricFactor(double val) -> void
-{
-    pimpl->acentric_factor = val;
-}
-
-auto OilSpecies::setThermoData(const HydrocarbonSpeciesThermoData& thermo) -> void
-{
-    pimpl->thermo = thermo;
-}
-
-auto OilSpecies::criticalTemperature() const -> double
-{
-    return pimpl->critical_temperature;
-}
-
-auto OilSpecies::criticalPressure() const -> double
-{
-    return pimpl->critical_pressure;
-}
-
-auto OilSpecies::acentricFactor() const -> double
-{
-    return pimpl->acentric_factor;
-}
-
-auto OilSpecies::thermoData() const -> const HydrocarbonSpeciesThermoData&
-{
-    return pimpl->thermo;
-}
-
-
-/// Provides a computational representation of a gaseous mixture.
-/// The OilMixture class is defined as a collection of OilSpecies objects,
-/// representing, therefore, a mixture of gaseous species. Its main purpose is to
-/// provide the necessary operations in the calculation of activities of gaseous
-/// species.
-/// @see OilSpecies
-/// @ingroup Mixtures
-class OilMixture : public GeneralMixture<HydrocarbonSpecies>
-{
-public:
-    /// Construct a default OilMixture instance.
-    OilMixture();
-
-    /// Construct a OilMixture instance with given species.
-    /// @param species The species that compose the gaseous mixture
-    explicit OilMixture(const std::vector<HydrocarbonSpecies>& species);
-
-    /// Destroy the OilMixture instance.
-    virtual ~OilMixture();
-
-    /// Calculate the state of the gaseous mixture.
-    /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of Pa)
-    /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(Temperature T, Pressure P, VectorConstRef n) const -> MixtureState;
-};
-
-OilMixture::OilMixture()
-: GeneralMixture<HydrocarbonSpecies>()
-{}
-
-OilMixture::OilMixture(const std::vector<HydrocarbonSpecies>& species)
-: GeneralMixture<HydrocarbonSpecies>(species)
-{}
-
-OilMixture::~OilMixture()
-{}
-
-auto OilMixture::state(Temperature T, Pressure P, VectorConstRef n) const -> MixtureState
-{
-    MixtureState res;
-    res.T = T;
-    res.P = P;
-    res.x = moleFractions(n);
-    return res;
-}
-
-
 /// Class that defines a gaseous phase
 class OilPhase : public Phase
 {
@@ -202,7 +12,7 @@ public:
     /// Construct an OilPhase instance with given gaseous mixture.
     /// The Peng-Robinson equation of state is chosen by default to calculate the
     /// thermodynamic and chemical properties of this OilPhase object.
-    explicit OilPhase(const OilMixture& mixture);
+    explicit OilPhase(const HydrocarbonMixture& mixture);
 
     /// Set the chemical model of the phase with the ideal gas equation of state.
     auto setChemicalModelIdeal() -> OilPhase&;
@@ -241,7 +51,7 @@ public:
     auto setChemicalModelSpycherReed() -> OilPhase&;
 
     /// Return the OilMixture instance
-    auto mixture() const -> const OilMixture&;
+    auto mixture() const -> const HydrocarbonMixture&;
 
 private:
     struct Impl;
@@ -253,7 +63,7 @@ private:
 struct OilPhase::Impl
 {
     /// The gaseous mixture instance
-    OilMixture mixture;
+	HydrocarbonMixture mixture;
 
     /// Construct a default Impl instance
     Impl()
@@ -261,7 +71,7 @@ struct OilPhase::Impl
     }
 
     /// Construct a custom Impl instance
-    Impl(const OilMixture& mixture)
+    Impl(const HydrocarbonMixture& mixture)
         : mixture(mixture)
     {
     }
@@ -272,7 +82,7 @@ OilPhase::OilPhase()
 {
 }
 
-OilPhase::OilPhase(const OilMixture& mixture)
+OilPhase::OilPhase(const HydrocarbonMixture& mixture)
     : pimpl(new Impl(mixture))
 {
     // Convert the HydrocarbonSpecies instances to Species instances
@@ -316,7 +126,7 @@ OilPhase::OilPhase(const OilMixture& mixture)
 //}
 //
 
-auto oilChemicalModelCubicEOS(const OilMixture& mixture, CubicEOS::Model modeltype)->PhaseChemicalModel
+auto oilChemicalModelCubicEOS(const HydrocarbonMixture& mixture, CubicEOS::Model modeltype)->PhaseChemicalModel
 {
     // Copy & Paste
     // The number of gases in the mixture
@@ -405,7 +215,7 @@ auto oilChemicalModelCubicEOS(const OilMixture& mixture, CubicEOS::Model modelty
 
 
 
-auto oilChemicalModelPengRobinson(const OilMixture& mixture) -> PhaseChemicalModel
+auto oilChemicalModelPengRobinson(const HydrocarbonMixture& mixture) -> PhaseChemicalModel
 {
     return oilChemicalModelCubicEOS(mixture, CubicEOS::PengRobinson);
 }
@@ -419,7 +229,7 @@ auto OilPhase::setChemicalModelPengRobinson() -> OilPhase&
     return *this;
 }
 
-auto oilChemicalModelRedlichKwong(const OilMixture& mixture) -> PhaseChemicalModel
+auto oilChemicalModelRedlichKwong(const HydrocarbonMixture& mixture) -> PhaseChemicalModel
 {
 	return oilChemicalModelCubicEOS(mixture, CubicEOS::RedlichKwong);
 }
@@ -433,7 +243,7 @@ auto OilPhase::setChemicalModelRedlichKwong() -> OilPhase&
 	return *this;
 }
 
-auto oilChemicalModelSoaveRedlichKwong(const OilMixture& mixture) -> PhaseChemicalModel
+auto oilChemicalModelSoaveRedlichKwong(const HydrocarbonMixture& mixture) -> PhaseChemicalModel
 {
 	return oilChemicalModelCubicEOS(mixture, CubicEOS::SoaveRedlichKwong);
 }
@@ -463,7 +273,7 @@ auto OilPhase::setChemicalModelSoaveRedlichKwong() -> OilPhase&
 //    return *this;
 //}
 
-auto OilPhase::mixture() const -> const OilMixture&
+auto OilPhase::mixture() const -> const HydrocarbonMixture&
 {
     return pimpl->mixture;
 }
