@@ -29,3 +29,38 @@
 #define profiling(expr) ((void) (0))
 
 #endif // REAKTORO_PROFILING
+
+
+#ifdef REAKTORO_PROFILING
+
+namespace Reaktoro {
+
+/// A global time variable for profiling codes.
+static Time __profiling_timer;
+
+/// Macro to time the execution of an expression.
+#define tic(expr) __profiling_timer = time(); expr
+
+/// Get the elapsed time since the last call to timeit(expr) (in units of s)
+inline auto toc(double& time) -> void
+{
+    time = elapsed(__profiling_timer);
+}
+
+} // namespace Reaktoro
+
+#else // NOT REAKTORO_PROFILING
+
+namespace Reaktoro {
+
+/// Macro to time the execution of an expression.
+#define tic(expr) expr
+
+/// Get the elapsed time since the last call to timeit(expr) (in units of s)
+constexpr auto toc(double& time) -> void
+{
+}
+
+} // namespace Reaktoro
+
+#endif // REAKTORO_PROFILING

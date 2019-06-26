@@ -40,13 +40,8 @@ struct Results
 /// Use this class to collect modeling results per one step of reactive transport.
 struct ReactiveTransportResult
 {
-    /// Total cpu times for reactive transport and equilibrium
-    double rt_time = 0.0;
-    double eq_time = 0.0;
-
-    /// Number of cells and number of steps
-    int ncells;
-    int nsteps;
+    /// The boolean flag that indicates if the reactive transport time step was successful.
+    bool successful = false;
 
     /// Flag for the smart equilibrium
     bool smart;

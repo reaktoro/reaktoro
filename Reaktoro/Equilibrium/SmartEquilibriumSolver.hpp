@@ -30,8 +30,11 @@ class ChemicalSystem;
 class EquilibriumProblem;
 class EquilibriumSensitivity;
 class Partition;
-struct EquilibriumOptions;
-struct EquilibriumResult;
+struct SmartEquilibriumOptions;
+struct SmartEquilibriumResult;
+struct SmartEquilibriumResultDuringEstimate;
+struct SmartEquilibriumResultDuringLearning;
+struct SmartEquilibriumProfiling;
 
 /// A class used to perform equilibrium calculations using machine learning scheme.
 class SmartEquilibriumSolver
@@ -53,37 +56,40 @@ public:
     virtual ~SmartEquilibriumSolver();
 
     /// Set the options for the equilibrium calculation.
-    auto setOptions(const EquilibriumOptions& options) -> void;
+    auto setOptions(const SmartEquilibriumOptions& options) -> void;
 
     /// Set the partition of the chemical system.
     auto setPartition(const Partition& partition) -> void;
 
     /// Learn how to perform a full equilibrium calculation.
-    auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
+    auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResultDuringLearning;
 
     /// Learn how to perform a full equilibrium calculation.
-    auto learn(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
+    auto learn(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResultDuringLearning;
 
     /// Estimate the equilibrium state using sensitivity derivatives.
-    auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
+    auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResultDuringEstimate;
 
     /// Estimate the equilibrium state using sensitivity derivatives.
-    auto estimate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
+    auto estimate(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResultDuringEstimate;
 
     /// Solve an equilibrium state.
     /// Solving of the SmartEquilibriumSolver consists of two possible stages:
     /// learning (i.e., triggering the convention approach of Gibbs' minimization problem)
     /// or estimating (i.e., smart prediction of the new states using sensitivity derivatives)
     /// of the chemical state
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult;
 
     /// Solve an equilibrium problem with given equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param problem The equilibrium problem with given temperature, pressure, and element amounts.
-    auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
+    auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResult;
 
     /// Return the chemical properties of the calculated equilibrium state.
     auto properties() const -> const ChemicalProperties&;
+
+    /// Return the profiling information of the operations during a smart equilibrium calculation.
+    auto profiling() const -> const SmartEquilibriumProfiling&;
 
 private:
     struct Impl;

@@ -31,6 +31,7 @@
 #include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Transport/ReactiveTransportOptions.hpp>
 #include <Reaktoro/Transport/ReactiveTransportResult.hpp>
+#include <Reaktoro/Transport/ReactiveTransportProfiling.hpp>
 #include <Reaktoro/Transport/TransportSolver.hpp>
 
 namespace Reaktoro {
@@ -98,6 +99,9 @@ private:
 
     /// The options for the reactive transport calculations.
     ReactiveTransportOptions options;
+
+    /// The profiling information of the operations in a reactive transport time step calculation.
+    ReactiveTransportProfiling profiling;
 
     /// The equilibrium solver using conventional Gibbs energy minimization approach.
     EquilibriumSolver equilibriumsolver;

@@ -1,5 +1,7 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
+// Copyright (C) 2014-2018 Allan Leal
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -17,21 +19,21 @@
 
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
 
 namespace Reaktoro {
 
-/// The options for the reactive transport calculations.
-struct ReactiveTransportOptions
+/// The options for the smart equilibrium calculations.
+/// @see SmartEquilibriumSolver
+struct SmartEquilibriumOptions
 {
-    /// The options for the equilibrium calculations.
-    EquilibriumOptions equilibrium;
+    /// The equilibrium options to be used during learning operations.
+    EquilibriumOptions learning;
 
-    /// The options for the equilibrium calculations.
-    SmartEquilibriumOptions smart_equilibrium;
+    /// The relative tolerance for estimated species mole amounts.
+    double reltol = 1.0;
 
-    /// The boolean flag that indicates whether SmartEquilibriumSolver should be used.
-    bool use_smart_equilibrium_solver = false;
+    /// The absolute tolerance for estimated species mole amounts.
+    double abstol = 1e-14;
 };
 
 } // namespace Reaktoro

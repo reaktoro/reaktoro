@@ -26,86 +26,13 @@
 
 namespace Reaktoro {
 
-/// A type used to describe the result of a smart equilibrium calculation.
-struct SmartEquilibriumResult
-{
-    /// The boolean flag that indicates if smart equilibrium calculation was used.
-    bool succeeded = false;
-
-    /// Counter for the smart statuses
-    std::vector<Index> learning_states_indx;
-
-    /// Used to store statistics information about the smart equilibrium algorithm.
-    struct LearnStatistics
-    {
-        /// Time for learning new state
-        double time_learn = 0.0;
-
-        /// Time for reconstructing reference state
-        double time_gibbs_min = 0.0;
-
-        /// Time for storing reference state
-        double time_store = 0.0;
-
-        /// Apply an addition assignment to this instance
-        auto operator+=(const LearnStatistics& other) -> LearnStatistics&;
-    };
-
-    struct EstimateStatistics
-    {
-        /// Time for estimating new state
-        double time_estimate = 0.0;
-
-        /// Time for search operations
-        double time_search = 0.0;
-
-        /// Time for matrix-vector multiplications
-        double time_mat_vect_mult = 0.0;
-
-        /// Time for acceptance test
-        double time_acceptance = 0.0;
-
-        /// Apply an addition assignment to this instance
-        auto operator+=(const EstimateStatistics& other) -> EstimateStatistics&;
-
-    };
-
-    /// The statistics information of the smart equilibrium algorithm.
-    LearnStatistics learn_stats;
-    EstimateStatistics estimate_stats;
-
-    /// Apply an addition assignment to this instance
-    auto operator+=(const SmartEquilibriumResult& other) -> SmartEquilibriumResult&;
-    auto addLearningIndex(const Index & index) -> void;
-
-    // The height of the tree storing the reference states
-    int tree_size = 0;
-};
-
 /// A type used to describe the result of an equilibrium calculation
-/// @see ChemicalState
 struct EquilibriumResult
 {
     /// The result of the optimisation calculation.
     OptimumResult optimum;
 
-    /// The result of a smart equilibrium calculation.
-    SmartEquilibriumResult smart;
-
-    struct Statistics
-    {
-        /// Time for learning new state
-        double time_learn = 0.0;
-
-        auto operator+=(const Statistics& other) -> Statistics& {
-            time_learn     += other.time_learn;
-            return *this;
-        }
-    };
-
-    Statistics stats;
-
-    /// Apply an addition assignment to this instance
+    /// Self addition assignment to accumulate results.
     auto operator+=(const EquilibriumResult& other) -> EquilibriumResult&;
 };
 

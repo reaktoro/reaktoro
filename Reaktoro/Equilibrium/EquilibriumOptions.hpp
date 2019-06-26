@@ -40,16 +40,6 @@ enum class GibbsHessian
     ApproximationDiagonal,
 };
 
-/// The options for the smart equilibrium calculations.
-struct SmartEquilibriumOptions
-{
-    /// The relative tolerance for estimated species mole amounts.
-    double reltol = 1.0;
-
-    /// The absolute tolerance for estimated species mole amounts.
-    double abstol = 1e-14;
-};
-
 /// The options for the equilibrium calculations
 struct EquilibriumOptions
 {
@@ -84,9 +74,6 @@ struct EquilibriumOptions
 
     /// The options for the nonlinear solver.
     NonlinearOptions nonlinear;
-
-    /// The options for the smart equilibrium calculation.
-    SmartEquilibriumOptions smart;
 };
 
 } // namespace Reaktoro

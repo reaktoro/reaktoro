@@ -31,6 +31,7 @@
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProfiling.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
@@ -53,6 +54,9 @@ struct EquilibriumSolver::Impl
 
     /// The options of the equilibrium solver
     EquilibriumOptions options;
+
+    /// The profiling information of the operations during an equilibrium calculation.
+    EquilibriumProfiling profiling;
 
     /// The solver for the optimisation calculations
     OptimumSolver solver;
@@ -469,12 +473,6 @@ struct EquilibriumSolver::Impl
         // The result of the equilibrium calculation
         EquilibriumResult result;
 
-        // Profiling time variables
-        profiling( Time start; );
-
-        // Start profiling equilibrium calculation
-        profiling( start = time(); );
-
         // Update the optimum options
         updateOptimumOptions();
 
@@ -506,9 +504,6 @@ struct EquilibriumSolver::Impl
 
         // Update the chemical state from the optimum state
         updateChemicalState(state);
-
-        // End profiling of the equilibrium calculation
-        profiling( result.stats.time_learn += elapsed(start); );
 
         return result;
     }

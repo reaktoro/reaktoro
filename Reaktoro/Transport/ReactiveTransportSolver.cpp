@@ -26,6 +26,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Profiling.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
 
 namespace Reaktoro {
 
@@ -38,7 +39,7 @@ ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem& system)
 auto ReactiveTransportSolver::setOptions(const ReactiveTransportOptions& options) -> void
 {
     equilibriumsolver.setOptions(options.equilibrium);
-    smart_equilibriumsolver.setOptions(options.equilibrium);
+    smart_equilibriumsolver.setOptions(options.smart_equilibrium);
 }
 
 auto ReactiveTransportSolver::setMesh(const Mesh& mesh) -> void
@@ -106,6 +107,18 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
     const auto& ifs = system_.indicesFluidSpecies();
     const auto& iss = system_.indicesSolidSpecies();
 
+    // Open the the file for outputting chemical states
+    for(auto output : outputs)
+    {
+        output.suffix("-" + std::to_string(steps));
+        output.open();
+    }
+
+    //---------------------------------------------------------------------------
+    // Step 1: Perform a time step transport calculation for each fluid element
+    //---------------------------------------------------------------------------
+    tic();
+
     // Collect the amounts of elements in the solid and fluid species
     for(Index icell = 0; icell < num_cells; ++icell)
     {
@@ -115,13 +128,7 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
 
     // Left boundary condition cell
     Index icell_bc = 0;
-    double phi_bc = field[icell_bc].properties().fluidVolume().val;
-
-    // Profiling time variables
-    profiling( Time start; );
-
-    // Start profiling the reactive transport step
-    profiling( start = time(); );
+    const auto phi_bc = field[icell_bc].properties().fluidVolume().val;
 
     // Transport the elements in the fluid species
     for(Index ielement = 0; ielement < num_elements; ++ielement)
@@ -134,48 +141,90 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
     // Sum the amounts of elements distributed among fluid and solid species
     b.noalias() = bf + bs;
 
-    // End profiling for the reactive transport
-    profiling( rt_result.rt_time = elapsed(start); );
+    toc( profiling.time_transport );
 
-    // Open the the file for outputting chemical states
-    for(auto output : outputs)
+    //---------------------------------------------------------------------------
+    // Step 1: Perform a time step transport calculation for each fluid element
+    //---------------------------------------------------------------------------
+    tic();
+
+    if(options.use_smart_equilibrium_solver)
     {
-        output.suffix("-" + std::to_string(steps));
-        output.open();
+        SmartEquilibriumResult eqres;
+
+        profiling( profiling.successful_smart_equilibrium_estimation_at_cell.resize(num_cells); );
+
+        for(Index icell = 0; icell < num_cells; ++icell)
+        {
+            const auto T = field[icell].temperature();
+            const auto P = field[icell].pressure();
+
+            // Solve with a smart equilibrium solver
+            eqres = smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+
+            // Save whether the smart equilibrium estimation was successful for this cell.
+            profiling( profiling.successful_smart_equilibrium_estimation_at_cell[icell] = eqres.estimate.successful; );
+        }
     }
+    else
+    {
+        EquilibriumResult eqres;
+
+        for(Index icell = 0; icell < num_cells; ++icell)
+        {
+            const auto T = field[icell].temperature();
+            const auto P = field[icell].pressure();
+
+            // Solve with a smart equilibrium solver
+            eqres = smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+
+            // Save whether the smart equilibrium estimation was successful for this cell.
+            profiling( profiling.successful_smart_equilibrium_estimation_at_cell[icell] = eqres.estimate.successful; );
+        }
+
+        // Solve with a conventional equilibrium solver
+        rt_result.equilibrium += equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+
+        // End profiling for the conventional equilibrium calculations (accumulate cell-wise)
+        profiling( rt_result.eq_time += elapsed(start); );
+    }
+
+    toc( timing.equilibrium );
+
+
+    // for(Index icell = 0; icell < num_cells; ++icell)
+    // {
+    //     const double T = field[icell].temperature();
+    //     const double P = field[icell].pressure();
+
+    //     // Start profiling equlibrium
+    //     profiling( start = time(); );
+
+    //     if(options.use_smart_equilibrium_solver)
+    //     {
+    //         // Solve with a smart equilibrium solver
+    //         rt_result.equilibrium += smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+
+    //         // End profiling for the equilibrium calculations (accumulate cell-wise)
+    //         profiling( rt_result.eq_time += elapsed(start); );
+
+    //         // Update the time spend for either for learning or estimating
+    //         if(rt_result.equilibrium.smart.succeeded)
+    //             rt_result.equilibrium_smart_successfull_cells.push_back(icell);
+    //     }
+    //     else
+    //     {
+    //         // Solve with a conventional equilibrium solver
+    //         rt_result.equilibrium += equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+
+    //         // End profiling for the conventional equilibrium calculations (accumulate cell-wise)
+    //         profiling( rt_result.eq_time += elapsed(start); );
+    //     }
+    // }
 
     for(Index icell = 0; icell < num_cells; ++icell)
-    {
-        const double T = field[icell].temperature();
-        const double P = field[icell].pressure();
-
-        // Start profiling equlibrium
-        profiling( start = time(); );
-
-        if(options.use_smart_equilibrium_solver)
-        {
-            // Solve with a smart equilibrium solver
-            rt_result.equilibrium += smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
-
-            // End profiling for the equilibrium calculations (accumulate cell-wise)
-            profiling( rt_result.eq_time += elapsed(start); );
-
-            // Update the time spend for either for learning or estimating
-            if(rt_result.equilibrium.smart.succeeded)
-                rt_result.equilibrium_smart_successfull_cells.push_back(icell);
-        }
-        else
-        {
-            // Solve with a conventional equilibrium solver
-            rt_result.equilibrium += equilibriumsolver.solve(field[icell], T, P, b.row(icell));
-
-            // End profiling for the conventional equilibrium calculations (accumulate cell-wise)
-            profiling( rt_result.eq_time += elapsed(start); );
-        }
-
         for(auto output : outputs)
             output.update(field[icell], icell);
-    }
 
     // Output chemical states in the output files
     for(auto output : outputs)
