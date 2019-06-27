@@ -224,7 +224,7 @@ struct EquilibriumSolver::Impl
         n = state.speciesAmounts();
 
         // Update the standard thermodynamic properties of the chemical system
-        properties.update(T, P);
+        timeit( properties.update(T, P) ) >> profiling.time_standard_properties;
 
         // Update the normalized standard Gibbs energies of the species
         u0 = properties.standardPartialMolarGibbsEnergies()/RT;
@@ -239,7 +239,7 @@ struct EquilibriumSolver::Impl
             n(ies) = ne;
 
             // Update the chemical properties of the chemical system
-            properties.update(T, P, n);
+            timeit( properties.update(T, P, n) ).accumulate(profiling.time_chemical_properties);
 
             // Set the scaled chemical potentials of the species
             u = u0 + properties.lnActivities();
@@ -459,6 +459,11 @@ struct EquilibriumSolver::Impl
     /// Solve the equilibrium problem
     auto solve(ChemicalState& state, double T, double P, const double* b) -> EquilibriumResult
     {
+        tic();
+
+        // Reset profiling object.
+        profiling = {};
+
         // Set the molar amounts of the elements
         be = Vector::Map(b, Ee);
 
@@ -505,12 +510,16 @@ struct EquilibriumSolver::Impl
         // Update the chemical state from the optimum state
         updateChemicalState(state);
 
+        toc() >> profiling.time_solve;
+
         return result;
     }
 
     /// Return the sensitivity of the equilibrium state.
     auto sensitivity() -> const EquilibriumSensitivity&
     {
+        tic();
+
         zerosEe = zeros(Ee);
         zerosNe = zeros(Ne);
         unitjEe = zeros(Ee);
@@ -526,6 +535,8 @@ struct EquilibriumSolver::Impl
             unitjEe = unit(Ee, j);
             sensitivities.dndb.col(j) = solver.dxdp(zerosNe, unitjEe);
         }
+
+        toc() >> profiling.time_sensitivity;
 
         return sensitivities;
     }
