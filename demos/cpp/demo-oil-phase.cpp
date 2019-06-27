@@ -286,7 +286,7 @@ void run_mixture_Huang_1984() {
 		//oil_species.push_back(C2H6);
 
 		auto mixture = HydrocarbonMixture(oil_species);
-		auto oil = OilPhase(mixture);
+		auto oil = HydrocarbonPhase(mixture);
 
 		//oil.setChemicalModelRedlichKwong();
 
@@ -476,7 +476,7 @@ void run_alghafri2014_bubble_and_dew_point_CO2_C7H16() {
 		//oil_species.push_back(C2H6);
 
 		auto mixture = HydrocarbonMixture(oil_species);
-		auto oil = OilPhase(mixture);
+		auto oil = HydrocarbonPhase(mixture);
 
 		//oil.setChemicalModelRedlichKwong();
 
@@ -577,7 +577,7 @@ int main()
         //oil_species.push_back(C2H6);
 
         auto mixture = HydrocarbonMixture(oil_species);
-        auto oil = OilPhase(mixture);
+        auto oil = HydrocarbonPhase(mixture);
 
 		oil.setChemicalModelRedlichKwong();
 

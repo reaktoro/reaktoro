@@ -39,6 +39,7 @@
 #include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelIdeal.hpp>
 #include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherPruessEnnis.hpp>
 #include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherReed.hpp>
+#include <Reaktoro/Thermodynamics/Models/LiquidChemicalModelCubicEOS.hpp>
 #include <Reaktoro/Thermodynamics/Models/MineralChemicalModelIdeal.hpp>
 #include <Reaktoro/Thermodynamics/Models/MineralChemicalModelRedlichKister.hpp>
 #include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
@@ -53,6 +54,7 @@
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/HydrocarbonPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralCatalyst.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralMechanism.hpp>

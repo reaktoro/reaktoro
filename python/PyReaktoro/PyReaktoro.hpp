@@ -103,6 +103,7 @@ void exportThermo(py::module& m);
 void exportAqueousChemicalModelDebyeHuckel(py::module& m);
 void exportAqueousPhase(py::module& m);
 void exportGaseousPhase(py::module& m);
+void exportHydrocarbonPhase(py::module& m);
 void exportMineralPhase(py::module& m);
 void exportAqueousSpecies(py::module& m);
 void exportGaseousSpecies(py::module& m);

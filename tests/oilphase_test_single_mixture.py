@@ -65,7 +65,7 @@ def test_liquid_like_with_CH4(temperature, pressure, result):
     oil_species.append(HydrocarbonSpecies(db.gaseousSpecies("CH4(oil)")))
     
     oil_mixture = OilMixture(oil_species)
-    oil_phase = OilPhase(oil_mixture)
+    oil_phase = HydrocarbonPhase(oil_mixture)
     oil_phase.setChemicalModelSoaveRedlichKwong()
     
     phases.append(convertPhase(oil_phase, db))
@@ -159,7 +159,7 @@ def test_liquid_like_with_H2S(temperature, pressure, result):
     oil_species.append(HydrocarbonSpecies(db.gaseousSpecies("H2S(oil)")))
     
     oil_mixture = OilMixture(oil_species)
-    oil_phase = OilPhase(oil_mixture)
+    oil_phase = HydrocarbonPhase(oil_mixture)
     oil_phase.setChemicalModelSoaveRedlichKwong()
     
     phases.append(convertPhase(oil_phase, db))
@@ -253,7 +253,7 @@ def test_liquid_like_with_CO2(temperature, pressure, result):
     oil_species.append(HydrocarbonSpecies(db.gaseousSpecies("CO2(oil)")))
     
     oil_mixture = OilMixture(oil_species)
-    oil_phase = OilPhase(oil_mixture)
+    oil_phase = HydrocarbonPhase(oil_mixture)
     oil_phase.setChemicalModelSoaveRedlichKwong()
     
     phases.append(convertPhase(oil_phase, db))

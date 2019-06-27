@@ -58,15 +58,6 @@ namespace Reaktoro {
 			.def(py::init<const std::vector<GaseousSpecies>>())
 			;
 
-		py::class_<OilPhase, Phase>(m, "OilPhase")
-			.def(py::init<>())
-			.def(py::init<const HydrocarbonMixture&>())
-			.def("setChemicalModelRedlichKwong", &OilPhase::setChemicalModelRedlichKwong, py::return_value_policy::reference_internal)
-			.def("setChemicalModelSoaveRedlichKwong", &OilPhase::setChemicalModelSoaveRedlichKwong, py::return_value_policy::reference_internal)
-			.def("setChemicalModelPengRobinson", &OilPhase::setChemicalModelPengRobinson, py::return_value_policy::reference_internal)			
-			.def("mixture", &OilPhase::mixture, py::return_value_policy::reference_internal)
-			;
-			
 		py::enum_<phaseIdentificationMethod>(m, "phaseIdentificationMethod")
 			.value("VolumeMethod", phaseIdentificationMethod::VolumeMethod)
 			.value("CriticalPointMethods", phaseIdentificationMethod::CriticalPointMethods)

@@ -128,7 +128,7 @@ def test_equilibrium_CH4_H2S_CO2_H2O(temperature, pressure, result):
     
     
     oil_mixture = OilMixture(oil_species)
-    oil_phase = OilPhase(oil_mixture)
+    oil_phase = HydrocarbonPhase(oil_mixture)
     oil_phase.setChemicalModelPengRobinson()
     
     phases.append(convertPhase(oil_phase, db))

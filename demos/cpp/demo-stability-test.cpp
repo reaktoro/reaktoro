@@ -75,7 +75,7 @@ int main()
 		//oil_species.push_back(C2H6);
 
 		auto mixture = HydrocarbonMixture(oil_species);
-		auto oil = OilPhase(mixture);
+		auto oil = HydrocarbonPhase(mixture);
 
 		//oil.setChemicalModelSoaveRedlichKwong();
 
