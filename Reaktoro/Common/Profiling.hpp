@@ -17,35 +17,42 @@
 
 #pragma once
 
+#ifdef REAKTORO_PROFILING
+
+// C++ includes
+#include <stack>
+
 // Reaktoro includes
 #include <Reaktoro/Common/TimeUtils.hpp>
 
-#ifdef REAKTORO_PROFILING
-
-#define profiling(expr) expr
-
-#else // NOT REAKTORO_PROFILING
-
-#define profiling(expr) ((void) (0))
-
-#endif // REAKTORO_PROFILING
-
-
-#ifdef REAKTORO_PROFILING
-
 namespace Reaktoro {
 
-/// A global time variable for profiling codes.
-static Time __profiling_timer;
+/// The global stack of collected stated time using macro tic(expr).
+static std::stack<Time> __tics;
 
-/// Macro to time the execution of an expression.
-#define tic(expr) __profiling_timer = time(); expr
+/// The global auxiliary time variable used in macro toc().
+static Time __tic;
 
-/// Get the elapsed time since the last call to timeit(expr) (in units of s)
-inline auto toc(double& time) -> void
+/// Provide operator>> to transfer toc() result to a double time variable.
+struct __ElapsedTime
 {
-    time = elapsed(__profiling_timer);
-}
+	double secs;
+	inline auto operator>>(double& out) const { out = secs; }
+    inline operator double() const { return secs; }
+	inline auto accumulate(double& out) const { out += secs; }
+};
+
+/// Macro to start the timing of an expression execution.
+#define tic(expr) __tics.push( time() ); expr;
+
+/// Macro to get the execution time since last call to tic(expr) macro.
+#define toc() __tic = __tics.top(); __tics.pop(); __ElapsedTime{elapsed(__tic)}
+
+/// Macro to measure the elapsed time of an expression execution.
+#define timeit(expr) tic(); expr; toc()
+
+/// Macro that disables an expression if profiling is disabled.
+#define ifprofiling(expr) expr
 
 } // namespace Reaktoro
 
@@ -53,13 +60,25 @@ inline auto toc(double& time) -> void
 
 namespace Reaktoro {
 
-/// Macro to time the execution of an expression.
-#define tic(expr) expr
-
-/// Get the elapsed time since the last call to timeit(expr) (in units of s)
-constexpr auto toc(double& time) -> void
+/// Provide operator>> to transfer toc() result to a double time variable.
+struct __ElapsedTime
 {
-}
+	inline auto operator>>(double& out) const { out = 0.0; }
+    inline operator double() const { return 0.0; }
+    inline auto accumulate(double& out) const { }
+};
+
+/// Macro to start the timing of an expression execution.
+#define tic(expr) ((void) (0))
+
+/// Macro to get the execution time since last call to tic(expr) macro.
+#define toc() __ElapsedTime{}
+
+/// Macro to measure the elapsed time of an expression execution.
+#define timeit(expr) expr; toc()
+
+/// Macro that disables an expression if profiling is disabled.
+#define ifprofiling(expr) ((void) (0))
 
 } // namespace Reaktoro
 
