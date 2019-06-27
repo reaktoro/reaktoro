@@ -22,18 +22,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/StringList.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Core/ChemicalOutput.hpp>
+#include <Reaktoro/Transport/Mesh.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-//class ChemicalProperties;
-//class ChemicalState;
-//class ChemicalSystem;
 
 //class BoundaryState
 //{
@@ -57,64 +49,8 @@ enum FiniteVolumeMethod{
     FluxLimitersImplicitExplicit = 3
 };
 
-class ChemicalField
-{
-public:
-    using Iterator = std::vector<ChemicalState>::iterator;
-
-    using ConstIterator = std::vector<ChemicalState>::const_iterator;
-
-    ChemicalField(Index size, const ChemicalSystem& system);
-
-    ChemicalField(Index size, const ChemicalState& state);
-
-    auto size() const -> Index { return m_size; }
-
-    auto begin() const -> ConstIterator { return m_states.cbegin(); }
-
-    auto begin() -> Iterator { return m_states.begin(); }
-
-    auto end() const -> ConstIterator { return m_states.cend(); }
-
-    auto end() -> Iterator { return m_states.end(); }
-
-    auto operator[](Index index) const -> const ChemicalState& { return m_states[index]; }
-
-    auto operator[](Index index) -> ChemicalState& { return m_states[index]; }
-
-    auto set(const ChemicalState& state) -> void;
-
-    auto temperature(VectorRef values) -> void;
-
-    auto pressure(VectorRef values) -> void;
-
-    auto elementAmounts(VectorRef values) -> void;
-
-    auto output(std::string filename, StringList quantities) -> void;
-
-private:
-    /// The number of degrees of freedom in the chemical field.
-    Index m_size;
-
-//    Vector temperatures;
-//
-//    Vector pressures;
-//
-//    /// The matrix of amounts for every element (
-//    Matrix element_amounts;
-
-    /// The chemical system common to all degrees of freedom in the chemical field.
-    ChemicalSystem m_system;
-
-    /// The chemical states in the chemical field
-    std::vector<ChemicalState> m_states;
-
-    /// The chemical states in the chemical field
-    std::vector<ChemicalProperties> m_properties;
-};
-
 /// A class that defines a Tridiagonal Matrix used on TransportSolver.
-/// it stores data in a Eigen::VectorXd like, M = {a[0][0], a[0][1], a[0][2], 
+/// it stores data in a Eigen::VectorXd like, M = {a[0][0], a[0][1], a[0][2],
 ///                                                a[1][0], a[1][1], a[1][2],
 ///                                                a[2][0], a[2][1], a[2][2]}
 class TridiagonalMatrix
@@ -168,43 +104,6 @@ private:
     Vector m_data;
 };
 
-/// A class that defines the mesh for TransportSolver.
-class Mesh
-{
-public:
-    Mesh();
-
-    Mesh(Index num_cells, double xl = 0.0, double xr = 1.0);
-
-    auto setDiscretization(Index num_cells, double xl = 0.0, double xr = 1.0) -> void;
-
-    auto numCells() const -> Index { return m_num_cells; }
-
-    auto xl() const -> double { return m_xl; }
-
-    auto xr() const -> double { return m_xr; }
-
-    auto dx() const -> double { return m_dx; }
-
-    auto xcells() const -> VectorConstRef { return m_xcells; }
-
-private:
-    /// The number of cells in the discretization.
-    Index m_num_cells = 10;
-
-    /// The x-coordinate of the left boundary (in m).
-    double m_xl = 0.0;
-
-    /// The x-coordinate of the right boundary (in m).
-    double m_xr = 1.0;
-
-    /// The length of the cells (in m).
-    double m_dx = 0.1;
-
-    /// The x-coordinate of the center of the cells.
-    Vector m_xcells;
-};
-
 /// A class for solving advection-diffusion problem.
 /// Eq: du/dt + v*du/dx = D*d2u/dx2
 ///     u - amount
@@ -246,7 +145,7 @@ public:
 
     /// Step the transport solver.
     /// This method solve one step of the transport solver equation, using an explicit approach for
-    /// advection and total implicit for diffusion. The amount resulted from the advection it is 
+    /// advection and total implicit for diffusion. The amount resulted from the advection it is
     /// passed to diffusion problem as a "source".
     /// @param[in,out] u The solution vector
     /// @param q The source rates vector ([same unit considered for u]/m)
