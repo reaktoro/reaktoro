@@ -670,4 +670,9 @@ auto EquilibriumSolver::dndb() -> VectorConstRef
     return pimpl->dndb();
 }
 
+auto EquilibriumSolver::profiling() const -> const EquilibriumProfiling&
+{
+    return pimpl->profiling;
+}
+
 } // namespace Reaktoro

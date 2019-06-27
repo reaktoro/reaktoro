@@ -25,12 +25,14 @@
 
 namespace Reaktoro {
 
-// Forward declarations
+// Forward declarations (classes)
 class ChemicalProperties;
 class ChemicalState;
 class ChemicalSystem;
 class EquilibriumProblem;
 class Partition;
+
+// Forward declarations (structs)
 struct EquilibriumOptions;
 struct EquilibriumProfiling;
 struct EquilibriumResult;
