@@ -23,18 +23,20 @@
 
 namespace Reaktoro {
 
-// Forward declarations
+// Forward declarations (classes)
 class ChemicalProperties;
 class ChemicalState;
 class ChemicalSystem;
 class EquilibriumProblem;
 class EquilibriumSensitivity;
 class Partition;
+
+// Forward declarations (structs)
 struct SmartEquilibriumOptions;
+struct SmartEquilibriumProfiling;
 struct SmartEquilibriumResult;
 struct SmartEquilibriumResultDuringEstimate;
 struct SmartEquilibriumResultDuringLearning;
-struct SmartEquilibriumProfiling;
 
 /// A class used to perform equilibrium calculations using machine learning scheme.
 class SmartEquilibriumSolver

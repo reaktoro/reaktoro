@@ -152,12 +152,12 @@ struct SmartEquilibriumSolver::Impl
         SmartEquilibriumResultDuringLearning res;
 
         // Calculate the equilibrium state using conventional Gibbs energy minimization approach
-        tic( res.gibbs_energy_minimization = solver.solve(state, T, P, be) );
-        toc( profiling.time_learning_gibbs_energy_minimization );
+        timeit( res.gibbs_energy_minimization = solver.solve(state, T, P, be); )
+            >> profiling.time_learning_gibbs_energy_minimization;
 
         // Store the computed solution into the knowledge tree
-        tic( tree.push_back({be, state, solver.properties(), solver.sensitivity()}); );
-        toc( profiling.time_learning_storage );
+        timeit( tree.push_back({be, state, solver.properties(), solver.sensitivity()}); )
+            >> profiling.time_learning_storage;
 
         return res;
     }
@@ -205,7 +205,7 @@ struct SmartEquilibriumSolver::Impl
         // Find the entry with minimum "input" distance
         auto it = std::min_element(tree.begin(), tree.end(), distancefn);
 
-        toc( profiling.time_estimate_search );
+        toc() >> profiling.time_estimate_search;
 
         //----------------------------------------------------------------------------
         // Step 2: Calculate predicted state with a first-order Taylor approximation
@@ -229,7 +229,7 @@ struct SmartEquilibriumSolver::Impl
         n.noalias() = n0 + dn;                         // n = n0 + delta(n)
         delta_lna.noalias() = dlnadn * dn;             // delta(ln(a)) = d(lna)/dn * delta(n)
 
-        toc( profiling.time_estimate_mat_vec_mul );
+        toc() >> profiling.time_estimate_mat_vec_mul;
 
         //----------------------------------------------
         // Step 3: Checking the acceptance criterion
@@ -282,6 +282,9 @@ struct SmartEquilibriumSolver::Impl
             }
         }
 
+        toc() >> profiling.time_estimate_acceptance;
+
+
         //*/
         //*/
         /*
@@ -316,8 +319,6 @@ struct SmartEquilibriumSolver::Impl
 
         */
 
-        toc( profiling.time_estimate_acceptance );
-
         // Check if smart estimation failed with respect to variation of chemical potentials or amounts
         if(!variation_check || !amount_check)
             return res;
@@ -333,19 +334,21 @@ struct SmartEquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
     {
+        tic();
+
         SmartEquilibriumResult res;
 
         // Attempt to estimate the result by on-demand learning
-        tic( res.estimate = estimate(state, T, P, be); );
-        toc( profiling.time_estimate );
+        timeit( res.estimate = estimate(state, T, P, be); ) >> profiling.time_estimate;
 
         // If the obtained result satisfies the accuracy criterion, we accept it
         if(res.estimate.successful)
             return res;
 
         // Otherwise, trigger learning (conventional approach)
-        tic( res.learning = learn(state, T, P, be); );
-        toc( profiling.time_learning );
+        timeit( res.learning = learn(state, T, P, be); ) >> profiling.time_learning;
+
+        toc() >> profiling.time_solve;
 
         return res;
     }
@@ -418,9 +421,9 @@ auto SmartEquilibriumSolver::properties() const -> const ChemicalProperties&
             "This method has not been implemented yet.");
 }
 
-auto SmartEquilibriumSolver::timing() const -> const SmartEquilibriumTiming&
+auto SmartEquilibriumSolver::profiling() const -> const SmartEquilibriumProfiling&
 {
-    return pimpl->timing;
+    return pimpl->profiling;
 }
 
 } // namespace Reaktoro
