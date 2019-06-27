@@ -18,7 +18,7 @@
 #include "Mesh.hpp"
 
 // Reaktoro includes
-#include "Reaktoro/Common/Exception.hpp"
+#include <Reaktoro/Common/Exception.hpp>
 
 namespace Reaktoro {
 
