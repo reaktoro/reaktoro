@@ -22,7 +22,6 @@ namespace py = pybind11;
 
 // Reaktoro includes
 
-#include <Reaktoro/Oilphase/oilphase.cpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
@@ -33,11 +32,6 @@ namespace Reaktoro {
 
 	void exportOil(py::module& m)
 	{
-		m.def("convertPhase", &convertPhase<OilPhase>);
-		m.def("convertPhase", &convertPhase<GaseousPhase>);
-		m.def("convertPhase", &convertPhase<AqueousPhase>);
-
-
 		py::class_<GeneralMixture<HydrocarbonSpecies>>(m, "_GeneralMixture_oil")
 			.def(py::init<>())
 			.def(py::init<const std::vector<HydrocarbonSpecies>&>())

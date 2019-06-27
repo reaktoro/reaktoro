@@ -38,6 +38,7 @@
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/HydrocarbonPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
@@ -57,31 +58,10 @@ auto collectElementsInCompounds(const std::vector<std::string>& compounds) -> st
     return {elemset.begin(), elemset.end()};
 }
 
-auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
+template<typename PhaseType>
+auto lnActivityConstants(const PhaseType& phase) -> ThermoVectorFunction
 {
-    // The ln activity constants of the aqueous species
-    ThermoVector ln_c(phase.numSpecies());
-
-    // The index of solvent water species
-    const Index iH2O = phase.indexSpeciesAnyWithError(alternativeWaterNames());
-
-    // Set the ln activity constants of aqueous species to ln(55.508472)
-    ln_c = std::log(1.0/waterMolarMass);
-
-    // Set the ln activity constant of water to zero
-    ln_c[iH2O] = 0.0;
-
-    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
-    {
-        return ln_c;
-    };
-
-    return f;
-}
-
-auto lnActivityConstants(const GaseousPhase& phase) -> ThermoVectorFunction
-{
-    // The ln activity constants of the gaseous species
+    // The ln activity constants of the generic species
     ThermoVector ln_c(phase.numSpecies());
 
     ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
@@ -93,6 +73,30 @@ auto lnActivityConstants(const GaseousPhase& phase) -> ThermoVectorFunction
     return f;
 }
 
+template<>
+auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
+{
+	// The ln activity constants of the aqueous species
+	ThermoVector ln_c(phase.numSpecies());
+
+	// The index of solvent water species
+	const Index iH2O = phase.indexSpeciesAnyWithError(alternativeWaterNames());
+
+	// Set the ln activity constants of aqueous species to ln(55.508472)
+	ln_c = std::log(1.0 / waterMolarMass);
+
+	// Set the ln activity constant of water to zero
+	ln_c[iH2O] = 0.0;
+
+	ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
+	{
+		return ln_c;
+	};
+
+	return f;
+}
+
+template<>
 auto lnActivityConstants(const MineralPhase& phase) -> ThermoVectorFunction
 {
     // The ln activity constants of the mineral species
@@ -353,7 +357,7 @@ public:
     }
 
     template<typename PhaseType>
-    auto convertPhase(const PhaseType& phase) const -> Phase
+    auto convertPhase(const PhaseType& phase) const -> PhaseType
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
@@ -402,7 +406,7 @@ public:
         };
 
         // Create the Phase instance
-        Phase converted = phase;
+		PhaseType converted = phase;
         converted.setThermoModel(thermo_model);
 
         return converted;
@@ -596,6 +600,21 @@ ChemicalEditor::operator ChemicalSystem() const
 ChemicalEditor::operator ReactionSystem() const
 {
     return createReactionSystem();
+}
+
+auto ChemicalEditor::convertAqueousPhase(const AqueousPhase& phase) const -> AqueousPhase
+{
+	return pimpl->convertPhase<AqueousPhase>(phase);
+}
+
+auto ChemicalEditor::convertHydrocarbonPhase(const HydrocarbonPhase& phase) const -> HydrocarbonPhase
+{
+	return pimpl->convertPhase<HydrocarbonPhase>(phase);
+}
+
+auto ChemicalEditor::convertGaseousPhase(const GaseousPhase& phase) const -> GaseousPhase
+{
+	return pimpl->convertPhase<GaseousPhase>(phase);
 }
 
 } // namespace Reaktoro

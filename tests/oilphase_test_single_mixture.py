@@ -48,7 +48,7 @@ def test_liquid_like_with_CH4(temperature, pressure, result):
     
     phases = []
     
-    phases.append(convertPhase(editor.aqueousPhase(), db))
+    phases.append(editor.convertAqueousPhase(editor.aqueousPhase()))
     
     #Add gas phase
     gas_species = []
@@ -58,7 +58,7 @@ def test_liquid_like_with_CH4(temperature, pressure, result):
     gas_phase = GaseousPhase(gas_mixture)
     gas_phase.setChemicalModelSoaveRedlichKwong()
     
-    phases.append(convertPhase(gas_phase, db))
+    phases.append(editor.convertGaseousPhase(gas_phase))
     
     #Add oil phase
     oil_species = [] #OilSpecies_vector()
@@ -68,7 +68,7 @@ def test_liquid_like_with_CH4(temperature, pressure, result):
     oil_phase = HydrocarbonPhase(oil_mixture)
     oil_phase.setChemicalModelSoaveRedlichKwong()
     
-    phases.append(convertPhase(oil_phase, db))
+    phases.append(editor.convertHydrocarbonPhase(oil_phase))
     
     system = ChemicalSystem(phases)
     
@@ -142,7 +142,7 @@ def test_liquid_like_with_H2S(temperature, pressure, result):
     
     phases = []
     
-    phases.append(convertPhase(editor.aqueousPhase(), db))
+    phases.append(editor.convertAqueousPhase(editor.aqueousPhase()))
     
     #Add gas phase
     gas_species = []
@@ -152,7 +152,7 @@ def test_liquid_like_with_H2S(temperature, pressure, result):
     gas_phase = GaseousPhase(gas_mixture)
     gas_phase.setChemicalModelSoaveRedlichKwong()
     
-    phases.append(convertPhase(gas_phase, db))
+    phases.append(editor.convertGaseousPhase(gas_phase))
     
     #Add oil phase
     oil_species = [] #OilSpecies_vector()
@@ -162,7 +162,7 @@ def test_liquid_like_with_H2S(temperature, pressure, result):
     oil_phase = HydrocarbonPhase(oil_mixture)
     oil_phase.setChemicalModelSoaveRedlichKwong()
     
-    phases.append(convertPhase(oil_phase, db))
+    phases.append(editor.convertHydrocarbonPhase(oil_phase))
     
     system = ChemicalSystem(phases)
     
@@ -236,7 +236,7 @@ def test_liquid_like_with_CO2(temperature, pressure, result):
     
     phases = []
     
-    phases.append(convertPhase(editor.aqueousPhase(), db))
+    phases.append(editor.convertAqueousPhase(editor.aqueousPhase()))
     
     #Add gas phase
     gas_species = []
@@ -246,7 +246,7 @@ def test_liquid_like_with_CO2(temperature, pressure, result):
     gas_phase = GaseousPhase(gas_mixture)
     gas_phase.setChemicalModelSoaveRedlichKwong()
     
-    phases.append(convertPhase(gas_phase, db))
+    phases.append(editor.convertGaseousPhase(gas_phase))
     
     #Add oil phase
     oil_species = [] #OilSpecies_vector()
@@ -256,7 +256,7 @@ def test_liquid_like_with_CO2(temperature, pressure, result):
     oil_phase = HydrocarbonPhase(oil_mixture)
     oil_phase.setChemicalModelSoaveRedlichKwong()
     
-    phases.append(convertPhase(oil_phase, db))
+    phases.append(editor.convertHydrocarbonPhase(oil_phase))
     
     system = ChemicalSystem(phases)
     

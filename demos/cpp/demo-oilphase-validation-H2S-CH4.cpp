@@ -3,7 +3,6 @@
 
 
 #include "W:\release\Projects\Reaktoro\demos\cpp\phaseid.hpp"
-#include <Reaktoro/Oilphase/oilphase.cpp>
 
 using namespace Reaktoro;
 
@@ -112,7 +111,8 @@ int main()
 
 	// Approach 2:
 	std::vector<Phase> phases;
-	phases.push_back(convertPhase(editor.aqueousPhase(), db));
+	
+	phases.push_back(editor.convertAqueousPhase(editor.aqueousPhase()));
 
 	{
 		auto gas_species = std::vector<GaseousSpecies>{
@@ -134,7 +134,7 @@ int main()
 		gas.setChemicalModelSoaveRedlichKwong();
 		//gas.setChemicalModelPengRobinson();
 
-		phases.push_back(convertPhase(gas, db));
+		phases.push_back(editor.convertGaseousPhase(gas));
 
 	}
 
@@ -183,7 +183,7 @@ int main()
 		
 		//oil.setChemicalModelPengRobinson();
 
-		phases.push_back(convertPhase(oil, db));
+		phases.push_back(editor.convertHydrocarbonPhase(oil));
 	}
 
 

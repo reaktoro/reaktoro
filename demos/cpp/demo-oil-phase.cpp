@@ -20,7 +20,6 @@
 
 
 #include "W:\release\Projects\Reaktoro\demos\cpp\phaseid.hpp"
-#include <Reaktoro/Oilphase/oilphase.cpp>
 
 using namespace Reaktoro;
 
@@ -240,7 +239,7 @@ void run_mixture_Huang_1984() {
 
 	// Approach 2:
 	std::vector<Phase> phases;
-	phases.push_back(convertPhase(editor.aqueousPhase(), db));
+	phases.push_back(editor.convertAqueousPhase(editor.aqueousPhase()));
 
 	{
 		auto gas_species = std::vector<GaseousSpecies>{
@@ -255,7 +254,7 @@ void run_mixture_Huang_1984() {
 		auto gas = GaseousPhase(mixture);
 		//gas.setChemicalModelRedlichKwong();
 
-		phases.push_back(convertPhase(gas, db));
+		phases.push_back(editor.convertGaseousPhase(gas));
 	}
 
 	{
@@ -290,7 +289,7 @@ void run_mixture_Huang_1984() {
 
 		//oil.setChemicalModelRedlichKwong();
 
-		phases.push_back(convertPhase(oil, db));
+		phases.push_back(editor.convertHydrocarbonPhase(oil));
 	}
 
 
@@ -444,7 +443,7 @@ void run_alghafri2014_bubble_and_dew_point_CO2_C7H16() {
 		auto gas = GaseousPhase(mixture);
 		//gas.setChemicalModelRedlichKwong();
 
-		phases.push_back(convertPhase(gas, db));
+		phases.push_back(editor.convertGaseousPhase(gas));
 	}
 
 	{
@@ -480,7 +479,7 @@ void run_alghafri2014_bubble_and_dew_point_CO2_C7H16() {
 
 		//oil.setChemicalModelRedlichKwong();
 
-		phases.push_back(convertPhase(oil, db));
+		phases.push_back(editor.convertHydrocarbonPhase(oil));
 	}
 
 
@@ -529,7 +528,7 @@ int main()
 	
     // Approach 2:
     std::vector<Phase> phases;
-    phases.push_back(convertPhase(editor.aqueousPhase(), db));
+    phases.push_back(editor.convertAqueousPhase(editor.aqueousPhase()));
 
     {
         auto gas_species = std::vector<GaseousSpecies>{
@@ -545,7 +544,7 @@ int main()
         auto gas = GaseousPhase(mixture);
 		gas.setChemicalModelRedlichKwong();
 
-        phases.push_back(convertPhase(gas, db));
+        phases.push_back(editor.convertGaseousPhase(gas));
     }
 
     {
@@ -581,7 +580,7 @@ int main()
 
 		oil.setChemicalModelRedlichKwong();
 
-        phases.push_back(convertPhase(oil, db));
+        phases.push_back(editor.convertHydrocarbonPhase(oil));
     }
 
 

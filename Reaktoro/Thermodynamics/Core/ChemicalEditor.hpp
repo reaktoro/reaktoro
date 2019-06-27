@@ -27,6 +27,7 @@
 namespace Reaktoro {
 
 // Forward declarations
+class HydrocarbonPhase;
 class AqueousPhase;
 class ChemicalSystem;
 class Database;
@@ -411,6 +412,12 @@ public:
 
     /// Convert this ChemicalEditor instance to a ReactionSystem instance
     operator ReactionSystem() const;
+
+	auto convertAqueousPhase(const AqueousPhase& phase) const ->AqueousPhase;
+
+	auto convertHydrocarbonPhase(const HydrocarbonPhase& phase) const ->HydrocarbonPhase;
+
+	auto convertGaseousPhase(const GaseousPhase& phase) const ->GaseousPhase;
 
 private:
     struct Impl;
