@@ -22,7 +22,10 @@ namespace Reaktoro {
 /// Provide profiling information of the operations during a smart equilibrium calculation.
 struct SmartEquilibriumProfiling
 {
-    /// The total time spent for learning a new chemical equilibrium calculation.
+    /// The time spent for solving the chemical equilibrium problem.
+    double time_solve = 0.0;
+
+    /// The time spent for learning a new chemical equilibrium calculation.
     double time_learning = 0.0;
 
     /// The time spent for a conventional Gibbs energy minimization calculation during learning operation.
@@ -37,7 +40,7 @@ struct SmartEquilibriumProfiling
     /// The time spent for storing the computed chemical state into the tree of knowledge.
     double time_learning_storage = 0.0;
 
-    /// The total time spent for the smart chemical equilibrium state estimation.
+    /// The time spent for the smart chemical equilibrium state estimation.
     double time_estimate = 0.0;
 
     /// The time spent for the search operation during a smart estimation.
