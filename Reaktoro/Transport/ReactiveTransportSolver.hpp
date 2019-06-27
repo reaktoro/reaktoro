@@ -25,13 +25,14 @@
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProfiling.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Transport/ReactiveTransportOptions.hpp>
-#include <Reaktoro/Transport/ReactiveTransportResult.hpp>
 #include <Reaktoro/Transport/ReactiveTransportProfiling.hpp>
+#include <Reaktoro/Transport/ReactiveTransportResult.hpp>
 #include <Reaktoro/Transport/TransportSolver.hpp>
 
 namespace Reaktoro {
@@ -104,10 +105,10 @@ private:
     ReactiveTransportProfiling profiling;
 
     /// The equilibrium solver using conventional Gibbs energy minimization approach.
-    EquilibriumSolver equilibriumsolver;
+    EquilibriumSolver equilibrium_solver;
 
     /// The equilibrium solver using a smart on-demand learning strategy.
-    SmartEquilibriumSolver smart_equilibriumsolver;
+    SmartEquilibriumSolver smart_equilibrium_solver;
 
     /// The list of chemical output objects
     std::vector<ChemicalOutput> outputs;

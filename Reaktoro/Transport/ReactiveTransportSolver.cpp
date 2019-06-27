@@ -31,15 +31,15 @@
 namespace Reaktoro {
 
 ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem& system)
-: system_(system), equilibriumsolver(system), smart_equilibriumsolver(system)
+: system_(system), equilibrium_solver(system), smart_equilibrium_solver(system)
 {
     setBoundaryState(ChemicalState(system));
 }
 
 auto ReactiveTransportSolver::setOptions(const ReactiveTransportOptions& options) -> void
 {
-    equilibriumsolver.setOptions(options.equilibrium);
-    smart_equilibriumsolver.setOptions(options.smart_equilibrium);
+    equilibrium_solver.setOptions(options.equilibrium);
+    smart_equilibrium_solver.setOptions(options.smart_equilibrium);
 }
 
 auto ReactiveTransportSolver::setMesh(const Mesh& mesh) -> void
@@ -141,7 +141,7 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
     // Sum the amounts of elements distributed among fluid and solid species
     b.noalias() = bf + bs;
 
-    toc( profiling.time_transport );
+    toc() >> profiling.time_transport;
 
     //---------------------------------------------------------------------------
     // Step 1: Perform a time step transport calculation for each fluid element
@@ -152,7 +152,9 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
     {
         SmartEquilibriumResult eqres;
 
-        profiling( profiling.successful_smart_equilibrium_estimation_at_cell.resize(num_cells); );
+        // Ensure the result and profiling info of each cell's smart equilibrium calculation can be saved.
+        ifprofiling( profiling.smart_equilibrium_result_at_cell.resize(num_cells); );
+        ifprofiling( profiling.smart_equilibrium_profiling_at_cell.resize(num_cells); );
 
         for(Index icell = 0; icell < num_cells; ++icell)
         {
@@ -160,36 +162,36 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
             const auto P = field[icell].pressure();
 
             // Solve with a smart equilibrium solver
-            eqres = smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+            eqres = smart_equilibrium_solver.solve(field[icell], T, P, b.row(icell));
 
-            // Save whether the smart equilibrium estimation was successful for this cell.
-            profiling( profiling.successful_smart_equilibrium_estimation_at_cell[icell] = eqres.estimate.successful; );
+            // Store the result and profiling info of this cell's smart equilibrium calculation.
+            ifprofiling( profiling.smart_equilibrium_result_at_cell[icell] = eqres; );
+            ifprofiling( profiling.smart_equilibrium_profiling_at_cell[icell] = smart_equilibrium_solver.profiling(); );
         }
     }
     else
     {
         EquilibriumResult eqres;
 
+        // Ensure the result and profiling info of each cell's equilibrium calculation can be saved.
+        ifprofiling( profiling.equilibrium_result_at_cell.resize(num_cells); );
+        ifprofiling( profiling.equilibrium_profiling_at_cell.resize(num_cells); );
+
         for(Index icell = 0; icell < num_cells; ++icell)
         {
             const auto T = field[icell].temperature();
             const auto P = field[icell].pressure();
 
-            // Solve with a smart equilibrium solver
-            eqres = smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+            // Solve with a conventional equilibrium solver
+            eqres = equilibrium_solver.solve(field[icell], T, P, b.row(icell));
 
-            // Save whether the smart equilibrium estimation was successful for this cell.
-            profiling( profiling.successful_smart_equilibrium_estimation_at_cell[icell] = eqres.estimate.successful; );
+            // Store the result and profiling info of this cell's smart equilibrium calculation.
+            ifprofiling( profiling.equilibrium_result_at_cell[icell] = eqres; );
+            ifprofiling( profiling.equilibrium_profiling_at_cell[icell] = equilibrium_solver.profiling(); );
         }
-
-        // Solve with a conventional equilibrium solver
-        rt_result.equilibrium += equilibriumsolver.solve(field[icell], T, P, b.row(icell));
-
-        // End profiling for the conventional equilibrium calculations (accumulate cell-wise)
-        profiling( rt_result.eq_time += elapsed(start); );
     }
 
-    toc( timing.equilibrium );
+    toc() >> profiling.time_equilibrium;
 
 
     // for(Index icell = 0; icell < num_cells; ++icell)
@@ -198,15 +200,15 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
     //     const double P = field[icell].pressure();
 
     //     // Start profiling equlibrium
-    //     profiling( start = time(); );
+    //     ifprofiling( start = time(); );
 
     //     if(options.use_smart_equilibrium_solver)
     //     {
     //         // Solve with a smart equilibrium solver
-    //         rt_result.equilibrium += smart_equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+    //         rt_result.equilibrium += smart_equilibrium_solver.solve(field[icell], T, P, b.row(icell));
 
     //         // End profiling for the equilibrium calculations (accumulate cell-wise)
-    //         profiling( rt_result.eq_time += elapsed(start); );
+    //         ifprofiling( rt_result.eq_time += elapsed(start); );
 
     //         // Update the time spend for either for learning or estimating
     //         if(rt_result.equilibrium.smart.succeeded)
@@ -215,10 +217,10 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
     //     else
     //     {
     //         // Solve with a conventional equilibrium solver
-    //         rt_result.equilibrium += equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+    //         rt_result.equilibrium += equilibrium_solver.solve(field[icell], T, P, b.row(icell));
 
     //         // End profiling for the conventional equilibrium calculations (accumulate cell-wise)
-    //         profiling( rt_result.eq_time += elapsed(start); );
+    //         ifprofiling( rt_result.eq_time += elapsed(start); );
     //     }
     // }
 

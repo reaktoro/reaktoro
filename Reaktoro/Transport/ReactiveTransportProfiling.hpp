@@ -19,9 +19,10 @@
 #include <vector>
 
 // Reaktoro includes
+#include <Reaktoro/Equilibrium/EquilibriumProfiling.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumProfiling.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
 
 namespace Reaktoro {
 
@@ -34,14 +35,17 @@ struct ReactiveTransportProfiling
     /// The time spent for performing all chemical equilibrium calculations.
     double time_equilibrium = 0.0;
 
-    /// The boolean flags that tell if a cell had a successful smart equilibrium calculation without learning.
-    std::vector<bool> successful_smart_equilibrium_estimation_at_cell;
+    /// The result of each cell equilibrium calculation using EquilibriumSolver in a time step.
+    std::vector<EquilibriumResult> equilibrium_result_at_cell;
 
-    /// The boolean flags that tell if a cell had a successful smart equilibrium calculation without learning.
-    std::vector<EquilibriumResult> successful_smart_equilibrium_estimation_at_cell;
+    /// The result of each cell equilibrium calculation using SmartEquilibriumSolver in a time step.
+    std::vector<SmartEquilibriumResult> smart_equilibrium_result_at_cell;
 
-    /// The boolean flags that tell if a cell had a successful smart equilibrium calculation without learning.
-    std::vector<SmartEquilibriumResult> successful_smart_equilibrium_estimation_at_cell;
+    /// The result of each cell equilibrium calculation using EquilibriumSolver in a time step.
+    std::vector<EquilibriumProfiling> equilibrium_profiling_at_cell;
+
+    /// The result of each cell equilibrium calculation using SmartEquilibriumSolver in a time step.
+    std::vector<SmartEquilibriumProfiling> smart_equilibrium_profiling_at_cell;
 };
 
 } // namespace Reaktoro
