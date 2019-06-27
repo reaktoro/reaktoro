@@ -25,20 +25,23 @@
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumProfiling.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 
 namespace Reaktoro {
 
 void exportSmartEquilibriumSolver(py::module& m)
 {
-    auto learn1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolver::learn);
-    auto learn2 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::learn);
+    auto learn1 = static_cast<SmartEquilibriumResultDuringLearning(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolver::learn);
+    auto learn2 = static_cast<SmartEquilibriumResultDuringLearning(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::learn);
 
-    auto estimate1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolver::estimate);
-    auto estimate2 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::estimate);
+    auto estimate1 = static_cast<SmartEquilibriumResultDuringEstimate(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolver::estimate);
+    auto estimate2 = static_cast<SmartEquilibriumResultDuringEstimate(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::estimate);
 
-    auto solve1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolver::solve);
-    auto solve2 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::solve);
+    auto solve1 = static_cast<SmartEquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolver::solve);
+    auto solve2 = static_cast<SmartEquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::solve);
 
     py::class_<SmartEquilibriumSolver>(m, "SmartEquilibriumSolver")
         .def(py::init<const ChemicalSystem&>())
@@ -51,6 +54,7 @@ void exportSmartEquilibriumSolver(py::module& m)
         .def("solve", solve1)
         .def("solve", solve2)
         .def("properties", &SmartEquilibriumSolver::properties, py::return_value_policy::reference_internal)
+        .def("profiling", &SmartEquilibriumSolver::profiling, py::return_value_policy::reference_internal)
         ;
 }
 

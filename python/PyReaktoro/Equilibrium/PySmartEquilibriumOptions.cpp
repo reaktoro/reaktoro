@@ -19,26 +19,16 @@
 
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
 
 namespace Reaktoro {
 
-void exportEquilibriumOptions(py::module& m)
+void exportSmartEquilibriumOptions(py::module& m)
 {
-    py::enum_<GibbsHessian>(m, "GibbsHessian")
-        .value("Exact", GibbsHessian::Exact)
-        .value("ExactDiagonal", GibbsHessian::ExactDiagonal)
-        .value("Approximation", GibbsHessian::Approximation)
-        .value("ApproximationDiagonal", GibbsHessian::ApproximationDiagonal)
-        ;
-
-    py::class_<EquilibriumOptions>(m, "EquilibriumOptions")
-        .def(py::init<>())
-        .def_readwrite("epsilon", &EquilibriumOptions::epsilon)
-        .def_readwrite("warmstart", &EquilibriumOptions::warmstart)
-        .def_readwrite("hessian", &EquilibriumOptions::hessian)
-        .def_readwrite("method", &EquilibriumOptions::method)
-        .def_readwrite("optimum", &EquilibriumOptions::optimum)
-        .def_readwrite("nonlinear", &EquilibriumOptions::nonlinear)
+    py::class_<SmartEquilibriumOptions>(m, "SmartEquilibriumOptions")
+        .def_readwrite("learning", &SmartEquilibriumOptions::learning)
+        .def_readwrite("reltol", &SmartEquilibriumOptions::reltol)
+        .def_readwrite("abstol", &SmartEquilibriumOptions::abstol)
         ;
 }
 

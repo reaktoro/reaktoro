@@ -57,6 +57,8 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportEquilibriumSensitivity(m);
     exportEquilibriumSolver(m);
     exportEquilibriumUtils(m);
+    exportSmartEquilibriumOptions(m);
+    exportSmartEquilibriumResult(m);
     exportSmartEquilibriumSolver(m);
 
     // Backends module

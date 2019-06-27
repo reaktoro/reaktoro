@@ -64,6 +64,8 @@ void exportEquilibriumResult(py::module& m);
 void exportEquilibriumSensitivity(py::module& m);
 void exportEquilibriumSolver(py::module& m);
 void exportEquilibriumUtils(py::module& m);
+void exportSmartEquilibriumOptions(py::module& m);
+void exportSmartEquilibriumResult(py::module& m);
 void exportSmartEquilibriumSolver(py::module& m);
 
 // Backends module

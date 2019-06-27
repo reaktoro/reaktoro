@@ -24,6 +24,7 @@
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProfiling.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
@@ -54,9 +55,7 @@ void exportEquilibriumSolver(py::module& m)
         .def("solve", solve4)
         .def("properties", &EquilibriumSolver::properties, py::return_value_policy::reference_internal)
         .def("sensitivity", &EquilibriumSolver::sensitivity, py::return_value_policy::reference_internal)
-//        .def("dndT", &EquilibriumSolver::dndT, py::return_value_policy::reference_internal)
-//        .def("dndP", &EquilibriumSolver::dndP, py::return_value_policy::reference_internal)
-//        .def("dndb", &EquilibriumSolver::dndb, py::return_value_policy::reference_internal)
+        .def("profiling", &EquilibriumSolver::profiling, py::return_value_policy::reference_internal)
         ;
 }
 
