@@ -22,6 +22,17 @@ namespace Reaktoro {
 /// Provide profiling information of the operations during an equilibrium calculation.
 struct EquilibriumProfiling
 {
+    /// The time spent for solving the chemical equilibrium problem.
+    double time_solve = 0.0;
+
+    /// The time spent for computing the standard thermochemical properties of the system.
+    double time_standard_properties = 0.0;
+
+    /// The time spent for computing the chemical properties of the system.
+    double time_chemical_properties = 0.0;
+
+    /// The time spent for computing the sensitivity derivatives of the chemical state.
+    double time_sensitivity = 0.0;
 };
 
 } // namespace Reaktoro
