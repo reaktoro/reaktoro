@@ -18,26 +18,17 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Transport/TransportSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProfiling.hpp>
 
 namespace Reaktoro {
 
-void exportTransportSolver(py::module& m)
+void exportEquilibriumProfiling(py::module& m)
 {
-    auto step1 = static_cast<void(TransportSolver::*)(VectorRef, VectorConstRef)>(&TransportSolver::step);
-    auto step2 = static_cast<void(TransportSolver::*)(VectorRef)>(&TransportSolver::step);
-
-    py::class_<TransportSolver>(m, "TransportSolver")
-        .def(py::init<>())
-        .def("setMesh", &TransportSolver::setMesh)
-        .def("setVelocity", &TransportSolver::setVelocity)
-        .def("setDiffusionCoeff", &TransportSolver::setDiffusionCoeff)
-        .def("setBoundaryValue", &TransportSolver::setBoundaryValue)
-        .def("setTimeStep", &TransportSolver::setTimeStep)
-        .def("mesh", &TransportSolver::mesh, py::return_value_policy::reference_internal)
-        .def("initialize", &TransportSolver::initialize)
-        .def("step", step1)
-        .def("step", step2)
+    py::class_<EquilibriumProfiling>(m, "EquilibriumProfiling")
+        .def_readwrite("time_solve", &EquilibriumProfiling::time_solve)
+        .def_readwrite("time_standard_properties", &EquilibriumProfiling::time_standard_properties)
+        .def_readwrite("time_chemical_properties", &EquilibriumProfiling::time_chemical_properties)
+        .def_readwrite("time_sensitivity", &EquilibriumProfiling::time_sensitivity)
         ;
 }
 

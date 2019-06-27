@@ -53,11 +53,13 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportEquilibriumOptions(m);
     exportEquilibriumPath(m);
     exportEquilibriumProblem(m);
+    exportEquilibriumProfiling(m);
     exportEquilibriumResult(m);
     exportEquilibriumSensitivity(m);
     exportEquilibriumSolver(m);
     exportEquilibriumUtils(m);
     exportSmartEquilibriumOptions(m);
+    exportSmartEquilibriumProfiling(m);
     exportSmartEquilibriumResult(m);
     exportSmartEquilibriumSolver(m);
 
@@ -107,5 +109,9 @@ PYBIND11_MODULE(PyReaktoro, m)
     // Transport module
     exportChemicalField(m);
     exportMesh(m);
+    exportReactiveTransportOptions(m);
+    exportReactiveTransportProfiling(m);
+    exportReactiveTransportResult(m);
+    exportReactiveTransportSolver(m);
     exportTransportSolver(m);
-    exportReactiveTransportSolver(m);}
+}
