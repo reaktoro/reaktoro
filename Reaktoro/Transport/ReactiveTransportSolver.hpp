@@ -30,6 +30,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Transport/ChemicalField.hpp>
 #include <Reaktoro/Transport/ReactiveTransportOptions.hpp>
 #include <Reaktoro/Transport/ReactiveTransportProfiling.hpp>
 #include <Reaktoro/Transport/ReactiveTransportResult.hpp>

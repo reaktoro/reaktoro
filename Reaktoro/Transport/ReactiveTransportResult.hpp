@@ -20,37 +20,9 @@
 
 namespace Reaktoro {
 
-struct Results
-{
-    /// Total CPU time required by smart equilibrium scheme
-    double smart_total;
-
-    /// Total CPU time required by smart equilibrium scheme
-    /// excluding the costs for the search of the closest reference states.
-    double smart_total_ideal_search;
-
-    /// Total CPU time required by smart equilibrium scheme
-    /// excluding the costs for the search and storage of the closest reference states.
-    double smart_total_ideal_search_store;
-
-    /// Total CPU time required by conventional equilibrium scheme
-    double conv_total;
-};
-
-/// Use this class to collect modeling results per one step of reactive transport.
+/// Provide result information of a reactive transport time step calculation.
 struct ReactiveTransportResult
 {
-    /// The boolean flag that indicates if the reactive transport time step was successful.
-    bool successful = false;
-
-    /// Flag for the smart equilibrium
-    bool smart;
-
-    /// Contains reactive transport tracking results
-    EquilibriumResult equilibrium;
-
-    /// The indices of the cells where smart equilibrium calculation was successful
-    std::vector<Index> equilibrium_smart_successfull_cells;
 };
 
 } // namespace Reaktoro
