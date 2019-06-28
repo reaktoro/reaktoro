@@ -22,7 +22,6 @@
 #include <Reaktoro/Transport/Mesh.hpp>
 #include <Reaktoro/Transport/ReactiveTransportOptions.hpp>
 #include <Reaktoro/Transport/ReactiveTransportProfiler.hpp>
-#include <Reaktoro/Transport/ReactiveTransportProfiling.hpp>
 #include <Reaktoro/Transport/ReactiveTransportResult.hpp>
 #include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
 #include <Reaktoro/Transport/TransportSolver.hpp>

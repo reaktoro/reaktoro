@@ -24,9 +24,15 @@ namespace Reaktoro {
 
 void exportEquilibriumResult(py::module& m)
 {
+    py::class_<EquilibriumTiming>(m, "EquilibriumTiming")
+        .def_readwrite("solve", &EquilibriumTiming::solve)
+        .def_readwrite("standard_thermodynamic_properties", &EquilibriumTiming::standard_thermodynamic_properties)
+        .def_readwrite("chemical_properties", &EquilibriumTiming::chemical_properties)
+        ;
+
     py::class_<EquilibriumResult>(m, "EquilibriumResult")
-        .def(py::init<>())
         .def_readwrite("optimum", &EquilibriumResult::optimum)
+        .def_readwrite("timing", &EquilibriumResult::timing)
         ;
 }
 

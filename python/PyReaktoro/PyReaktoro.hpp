@@ -60,13 +60,11 @@ void exportEquilibriumInverseProblem(py::module& m);
 void exportEquilibriumOptions(py::module& m);
 void exportEquilibriumPath(py::module& m);
 void exportEquilibriumProblem(py::module& m);
-void exportEquilibriumProfiling(py::module& m);
 void exportEquilibriumResult(py::module& m);
 void exportEquilibriumSensitivity(py::module& m);
 void exportEquilibriumSolver(py::module& m);
 void exportEquilibriumUtils(py::module& m);
 void exportSmartEquilibriumOptions(py::module& m);
-void exportSmartEquilibriumProfiling(py::module& m);
 void exportSmartEquilibriumResult(py::module& m);
 void exportSmartEquilibriumSolver(py::module& m);
 
@@ -118,7 +116,6 @@ void exportChemicalField(py::module& m);
 void exportMesh(py::module& m);
 void exportTransportSolver(py::module& m);
 void exportReactiveTransportOptions(py::module& m);
-void exportReactiveTransportProfiling(py::module& m);
 void exportReactiveTransportResult(py::module& m);
 void exportReactiveTransportSolver(py::module& m);
 

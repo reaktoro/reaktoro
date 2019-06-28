@@ -24,12 +24,10 @@
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumPath.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumProfiling.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumReactions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumProfiling.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>

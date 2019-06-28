@@ -16,8 +16,10 @@
 // #pragma once
 
 // // C++ includes
+// #include <iostream>
 // #include <string>
 // #include <vector>
+// #include <memory>
 
 // // Reaktoro includes
 // #include <Reaktoro/Common/Index.hpp>
@@ -25,86 +27,94 @@
 // namespace Reaktoro {
 
 // // Forward declarations
-// struct Results;
-// struct ReactiveTransportResult;
+// class ReactiveTransportProfiling;
 
-// /// Use this class to postprocess and analyse accumulated results of reactive transport.
+// /// Provide mechanisms for postprocessing and analysis of accumulated profiling/results of a reactive transport simulation.
 // class ReactiveTransportProfiler
 // {
 // public:
-//     /// Construct ReactiveTransportResult instance
-//     ReactiveTransportProfiler(
-//         const std::string& results_folder,
-//         const std::string& file,
-//         const bool& smart);
+//     /// Construct a default instance of ReactiveTransportProfiler.
+//     ReactiveTransportProfiler();
 
-//     /// Process results collected on one step of reactive transport
-//     /// \param rt_results that stores the results of the reactive transport
-//     /// @see ReactiveTransportResult
-//     auto process(ReactiveTransportResult& rt_result) -> void;
+//     /// Construct a copy of a ReactiveTransportProfiler instance.
+//     ReactiveTransportProfiler(const ReactiveTransportProfiler& other);
 
-//     /// Update the file with results results collected on one step of reactive transport
-//     /// \param step number of step of reactive transport to be added to the file with results
-//     auto output(const Index& step) -> void;
+//     /// Destroy this ReactiveTransportProfiler instance.
+//     virtual ~ReactiveTransportProfiler();
 
-//     /// Summarize the profiling results of reactive transport
-//     auto summarize(Results& results) -> void;
+//     /// Assign a copy of an ReactiveTransportProfiler instance.
+//     auto operator=(ReactiveTransportProfiler other) -> ReactiveTransportProfiler&;
+
+//     /// Update the profiler with a new reactive transport time step profiling data.
+//     auto update(const ReactiveTransportProfiling& profiling) -> void;
 
 // private:
-//     /// Name of the file and folder with a status output
-//     std::string folder;
-//     std::string file;
+//     struct Impl;
 
-//     /// Used to store statistics information about the smart equilibrium algorithm.
-//     struct Statistics
-//     {
-//         /// Total time for search operations
-//         double time_estimate = 0.0;
-
-//         /// Time for search operations (part of estimation)
-//         double time_search = 0.0;
-
-//         /// Time for matrix-vector multiplications (part of estimation)
-//         double time_mat_vect_mult = 0.0;
-
-//         /// Time for acceptance test (part of estimation)
-//         double time_acceptance = 0.0;
-
-//         /// Total time for learn operations
-//         double time_learn = 0.0;
-
-//         /// Time for store operations (part of learning)
-//         double time_store = 0.0;
-
-//         /// Time for search operations (part of learning)
-//         double time_gibbs_min = 0.0;
-
-//         /// The size of the search tree
-//         Index tree_size = 0;
-
-//         /// Counter for the smart statuses
-//         int learning_counter = 0;
-
-//         /// Counter for the smart statuses
-//         int total_counter = 0;
-
-//     };
-
-//     /// The vector of the  CPU times for learning and estimating time
-//     Statistics total_stats;
-
-//     /// The vector of the  CPU times for learning and estimating time
-//     std::vector<Statistics> step_stats;
-
-//     /// The vector of the  CPU times for learning and estimating time
-//     std::vector<bool> statuses;
-
-//     /// Vector of reactive transport times and equilibrium times
-//     std::vector<double> rt_times;
-//     std::vector<double> eq_times;
-
-//     /// Flag whether smart of conventional solver was used
-//     bool smart;
+//     std::unique_ptr<Impl> pimpl;
 // };
+
+// struct ReactiveTransportAccumulatedProfiling
+// {
+//     EquilibriumProfiling
+// };
+
+// //     /// Name of the file and folder with a status output
+// //     std::string folder;
+// //     std::string file;
+
+// //     /// Used to store statistics information about the smart equilibrium algorithm.
+// //     struct Statistics
+// //     {
+// //         /// Total time for search operations
+// //         double time_estimate = 0.0;
+
+// //         /// Time for search operations (part of estimation)
+// //         double time_search = 0.0;
+
+// //         /// Time for matrix-vector multiplications (part of estimation)
+// //         double time_mat_vect_mult = 0.0;
+
+// //         /// Time for acceptance test (part of estimation)
+// //         double time_acceptance = 0.0;
+
+// //         /// Total time for learn operations
+// //         double time_learn = 0.0;
+
+// //         /// Time for store operations (part of learning)
+// //         double time_store = 0.0;
+
+// //         /// Time for search operations (part of learning)
+// //         double time_gibbs_min = 0.0;
+
+// //         /// The size of the search tree
+// //         Index tree_size = 0;
+
+// //         /// Counter for the smart statuses
+// //         int learning_counter = 0;
+
+// //         /// Counter for the smart statuses
+// //         int total_counter = 0;
+
+// //     };
+
+// //     /// The vector of the  CPU times for learning and estimating time
+// //     Statistics total_stats;
+
+// //     /// The vector of the  CPU times for learning and estimating time
+// //     std::vector<Statistics> step_stats;
+
+// //     /// The vector of the  CPU times for learning and estimating time
+// //     std::vector<bool> statuses;
+
+// //     /// Vector of reactive transport times and equilibrium times
+// //     std::vector<double> rt_times;
+// //     std::vector<double> eq_times;
+
+// //     /// Flag whether smart of conventional solver was used
+// //     bool smart;
+// // };
+
+// auto operator<<(std::ostream& out, const ReactiveTransportProfiler& profiler);
 
 // } // namespace Reaktoro

@@ -24,7 +24,16 @@ namespace Reaktoro {
 
 void exportReactiveTransportResult(py::module& m)
 {
+    py::class_<ReactiveTransportTiming>(m, "ReactiveTransportTiming")
+        .def_readwrite("step", &ReactiveTransportTiming::step)
+        .def_readwrite("transport", &ReactiveTransportTiming::transport)
+        .def_readwrite("equilibrium", &ReactiveTransportTiming::equilibrium)
+        ;
+
     py::class_<ReactiveTransportResult>(m, "ReactiveTransportResult")
+        .def_readwrite("equilibrium_result_at_cell", &ReactiveTransportResult::equilibrium_result_at_cell)
+        .def_readwrite("smart_equilibrium_result_at_cell", &ReactiveTransportResult::smart_equilibrium_result_at_cell)
+        .def_readwrite("timing", &ReactiveTransportResult::timing)
         ;
 }
 

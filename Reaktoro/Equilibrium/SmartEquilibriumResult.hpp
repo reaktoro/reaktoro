@@ -17,13 +17,44 @@
 
 #pragma once
 
-// C++ includes
-#include <optional>
-
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 
 namespace Reaktoro {
+
+/// Provide timing information of the operations during a smart equilibrium calculation.
+struct SmartEquilibriumTiming
+{
+    /// The time spent for solving the chemical equilibrium problem.
+    double solve = 0.0;
+
+    /// The time spent for learning a new chemical equilibrium calculation.
+    double learning = 0.0;
+
+    /// The time spent for a conventional Gibbs energy minimization calculation during learning operation.
+    double learning_gibbs_energy_minimization = 0.0;
+
+    /// The time spent for computing the chemical properties during learning operation.
+    double learning_chemical_properties = 0.0;
+
+    /// The time spent for computing the sensitivity matrix during learning operation.
+    double learning_sensitivity_matrix = 0.0;
+
+    /// The time spent for storing the computed chemical state into the tree of knowledge.
+    double learning_storage = 0.0;
+
+    /// The time spent for the smart chemical equilibrium state estimation.
+    double estimate = 0.0;
+
+    /// The time spent for the search operation during a smart estimation.
+    double estimate_search = 0.0;
+
+    /// The time spent for the matrix-vector multiplication during a smart estimation.
+    double estimate_mat_vec_mul = 0.0;
+
+    /// The time spent for the acceptance test during a smart estimation.
+    double estimate_acceptance = 0.0;
+};
 
 /// A type used to define the result status of a smart estimation operation in a smart equilibrium calculation.
 /// @see SmartEquilibriumResult
@@ -57,7 +88,10 @@ struct SmartEquilibriumResult
     SmartEquilibriumResultDuringEstimate estimate;
 
     /// The result of the learning operation (if there was learning).
-    std::optional<SmartEquilibriumResultDuringLearning> learning;
+    SmartEquilibriumResultDuringLearning learning;
+
+    /// The timing information of the operations during a smart equilibrium calculation.
+    SmartEquilibriumTiming timing;
 };
 
 } // namespace Reaktoro

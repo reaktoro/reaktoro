@@ -34,7 +34,6 @@ class Partition;
 
 // Forward declarations (structs)
 struct EquilibriumOptions;
-struct EquilibriumProfiling;
 struct EquilibriumResult;
 struct EquilibriumSensitivity;
 
@@ -116,8 +115,8 @@ public:
     /// Compute the sensitivity of the species amounts with respect to element amounts.
     auto dndb() -> VectorConstRef;
 
-    /// Return the profiling information of the operations during an equilibrium calculation.
-    auto profiling() const -> const EquilibriumProfiling&;
+    /// Return the result of the last equilibrium calculation.
+    auto result() const -> const EquilibriumResult&;
 
 private:
     struct Impl;

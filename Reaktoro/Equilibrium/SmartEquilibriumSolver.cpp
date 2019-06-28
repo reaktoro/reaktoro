@@ -32,7 +32,6 @@
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumProfiling.hpp>
 
 namespace Reaktoro {
 
@@ -47,11 +46,11 @@ struct SmartEquilibriumSolver::Impl
     /// The options for the smart equilibrium calculation
     SmartEquilibriumOptions options;
 
+    /// The result of the last smart equilibrium calculation.
+    SmartEquilibriumResult result;
+
     /// The solver for the equilibrium calculations
     EquilibriumSolver solver;
-
-    /// The profiling information of the operations during a smart equilibrium calculation.
-    SmartEquilibriumProfiling profiling;
 
     /// A class used to store the node of tree for smart equilibrium calculations.
     struct TreeNode
@@ -147,30 +146,26 @@ struct SmartEquilibriumSolver::Impl
     // }
 
     /// Learn how to perform a full equilibrium calculation (with tracking)
-    auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResultDuringLearning
+    auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> void
     {
-        SmartEquilibriumResultDuringLearning res;
-
         // Calculate the equilibrium state using conventional Gibbs energy minimization approach
-        timeit( res.gibbs_energy_minimization = solver.solve(state, T, P, be); )
-            >> profiling.time_learning_gibbs_energy_minimization;
+        timeit( solver.solve(state, T, P, be); )
+            >> result.timing.learning_gibbs_energy_minimization;
+
+        // Store the result of the Gibbs energy minimization calculation performed during learning
+        result.learning.gibbs_energy_minimization = solver.result();
 
         // Store the computed solution into the knowledge tree
         timeit( tree.push_back({be, state, solver.properties(), solver.sensitivity()}); )
-            >> profiling.time_learning_storage;
-
-        return res;
+            >> result.timing.learning_storage;
     }
 
     /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
-    auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResultDuringEstimate
+    auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> void
     {
-        // The result of the smart estimate operation
-        SmartEquilibriumResultDuringEstimate res;
-
         // Skip estimation if no previous full computation has been done
         if(tree.empty())
-            return res;
+            return;
 
         // TODO Fixing negative amounts
         // Once some species are found to have negative values, first check
@@ -205,7 +200,7 @@ struct SmartEquilibriumSolver::Impl
         // Find the entry with minimum "input" distance
         auto it = std::min_element(tree.begin(), tree.end(), distancefn);
 
-        toc() >> profiling.time_estimate_search;
+        toc() >> result.timing.estimate_search;
 
         //----------------------------------------------------------------------------
         // Step 2: Calculate predicted state with a first-order Taylor approximation
@@ -229,7 +224,7 @@ struct SmartEquilibriumSolver::Impl
         n.noalias() = n0 + dn;                         // n = n0 + delta(n)
         delta_lna.noalias() = dlnadn * dn;             // delta(ln(a)) = d(lna)/dn * delta(n)
 
-        toc() >> profiling.time_estimate_mat_vec_mul;
+        toc() >> result.timing.estimate_mat_vec_mul;
 
         //----------------------------------------------
         // Step 3: Checking the acceptance criterion
@@ -282,7 +277,7 @@ struct SmartEquilibriumSolver::Impl
             }
         }
 
-        toc() >> profiling.time_estimate_acceptance;
+        toc() >> result.timing.estimate_acceptance;
 
 
         //*/
@@ -321,36 +316,33 @@ struct SmartEquilibriumSolver::Impl
 
         // Check if smart estimation failed with respect to variation of chemical potentials or amounts
         if(!variation_check || !amount_check)
-            return res;
+            return;
 
         // Set the output chemical state to the approximate amounts of species
         n.noalias() = abs(n); // TODO: this mirroring should be replaced by setting a very small mole amount for negative small amounts
         state.setSpeciesAmounts(n);
 
-        res.successful = true;
-
-        return res;
+        // Set the estimate status to success
+        result.estimate.successful = true;
     }
 
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
     {
         tic();
 
-        SmartEquilibriumResult res;
+        // Reset the result of the last smart equilibrium calculation
+        result = {};
 
-        // Attempt to estimate the result by on-demand learning
-        timeit( res.estimate = estimate(state, T, P, be); ) >> profiling.time_estimate;
+        // Perform a smart estimate of the chemical state
+        timeit( estimate(state, T, P, be); ) >> result.timing.estimate;
 
-        // If the obtained result satisfies the accuracy criterion, we accept it
-        if(res.estimate.successful)
-            return res;
+        // Perform a learning step if the smart prediction is not sactisfatory
+        if(!result.estimate.successful)
+            timeit( learn(state, T, P, be); ) >> result.timing.learning;
 
-        // Otherwise, trigger learning (conventional approach)
-        timeit( res.learning = learn(state, T, P, be); ) >> profiling.time_learning;
+        toc() >> result.timing.solve;
 
-        toc() >> profiling.time_solve;
-
-        return res;
+        return result;
     }
 };
 
@@ -385,26 +377,6 @@ auto SmartEquilibriumSolver::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto SmartEquilibriumSolver::learn(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResultDuringLearning
-{
-    return pimpl->learn(state, T, P, be);
-}
-
-auto SmartEquilibriumSolver::learn(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResultDuringLearning
-{
-    return learn(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
-}
-
-auto SmartEquilibriumSolver::estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResultDuringEstimate
-{
-    return pimpl->estimate(state, T, P, be);
-}
-
-auto SmartEquilibriumSolver::estimate(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResultDuringEstimate
-{
-    return estimate(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
-}
-
 auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
@@ -421,9 +393,9 @@ auto SmartEquilibriumSolver::properties() const -> const ChemicalProperties&
             "This method has not been implemented yet.");
 }
 
-auto SmartEquilibriumSolver::profiling() const -> const SmartEquilibriumProfiling&
+auto SmartEquilibriumSolver::result() const -> const SmartEquilibriumResult&
 {
-    return pimpl->profiling;
+    return pimpl->result;
 }
 
 } // namespace Reaktoro

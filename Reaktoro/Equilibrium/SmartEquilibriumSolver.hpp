@@ -33,10 +33,7 @@ class Partition;
 
 // Forward declarations (structs)
 struct SmartEquilibriumOptions;
-struct SmartEquilibriumProfiling;
 struct SmartEquilibriumResult;
-struct SmartEquilibriumResultDuringEstimate;
-struct SmartEquilibriumResultDuringLearning;
 
 /// A class used to perform equilibrium calculations using machine learning scheme.
 class SmartEquilibriumSolver
@@ -63,26 +60,14 @@ public:
     /// Set the partition of the chemical system.
     auto setPartition(const Partition& partition) -> void;
 
-    /// Learn how to perform a full equilibrium calculation.
-    auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResultDuringLearning;
-
-    /// Learn how to perform a full equilibrium calculation.
-    auto learn(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResultDuringLearning;
-
-    /// Estimate the equilibrium state using sensitivity derivatives.
-    auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResultDuringEstimate;
-
-    /// Estimate the equilibrium state using sensitivity derivatives.
-    auto estimate(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResultDuringEstimate;
-
-    /// Solve an equilibrium state.
-    /// Solving of the SmartEquilibriumSolver consists of two possible stages:
-    /// learning (i.e., triggering the convention approach of Gibbs' minimization problem)
-    /// or estimating (i.e., smart prediction of the new states using sensitivity derivatives)
-    /// of the chemical state
+    /// Solve a chemical equilibrium problem.
+    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of Pa)
+    /// @param be The amounts of the elements in the equilibrium partition
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult;
 
-    /// Solve an equilibrium problem with given equilibrium problem.
+    /// Solve a chemical equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param problem The equilibrium problem with given temperature, pressure, and element amounts.
     auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResult;
@@ -90,8 +75,8 @@ public:
     /// Return the chemical properties of the calculated equilibrium state.
     auto properties() const -> const ChemicalProperties&;
 
-    /// Return the profiling information of the operations during a smart equilibrium calculation.
-    auto profiling() const -> const SmartEquilibriumProfiling&;
+    /// Return the result of the last smart equilibrium calculation.
+    auto result() const -> const SmartEquilibriumResult&;
 
 private:
     struct Impl;

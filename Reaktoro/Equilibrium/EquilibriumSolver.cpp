@@ -31,7 +31,6 @@
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumProfiling.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
@@ -55,8 +54,8 @@ struct EquilibriumSolver::Impl
     /// The options of the equilibrium solver
     EquilibriumOptions options;
 
-    /// The profiling information of the operations during an equilibrium calculation.
-    EquilibriumProfiling profiling;
+    /// The result of the last equilibrium calculation.
+    EquilibriumResult result;
 
     /// The solver for the optimisation calculations
     OptimumSolver solver;
@@ -224,13 +223,13 @@ struct EquilibriumSolver::Impl
         n = state.speciesAmounts();
 
         // Update the standard thermodynamic properties of the chemical system
-        timeit( properties.update(T, P) ) >> profiling.time_standard_properties;
+        timeit( properties.update(T, P) ) >> result.timing.standard_thermodynamic_properties;
 
         // Update the normalized standard Gibbs energies of the species
         u0 = properties.standardPartialMolarGibbsEnergies()/RT;
 
         // The result of the objective evaluation
-        ObjectiveResult res;
+        ObjectiveResult obj;
 
         // The Gibbs energy function to be minimized
         optimum_problem.objective = [=](VectorConstRef ne) mutable
@@ -239,7 +238,7 @@ struct EquilibriumSolver::Impl
             n(ies) = ne;
 
             // Update the chemical properties of the chemical system
-            timeit( properties.update(T, P, n) ).accumulate(profiling.time_chemical_properties);
+            timeit( properties.update(T, P, n) ).accumulate(result.timing.chemical_properties);
 
             // Set the scaled chemical potentials of the species
             u = u0 + properties.lnActivities();
@@ -251,31 +250,31 @@ struct EquilibriumSolver::Impl
             xe = rows(properties.moleFractions(), ies, ies);
 
             // Set the objective result
-            res.val = dot(ne, ue.val);
-            res.grad = ue.val;
+            obj.val = dot(ne, ue.val);
+            obj.grad = ue.val;
 
             // Set the Hessian of the objective function
             switch(options.hessian)
             {
             case GibbsHessian::Exact:
-                res.hessian.mode = Hessian::Dense;
-                res.hessian.dense = ue.ddn;
+                obj.hessian.mode = Hessian::Dense;
+                obj.hessian.dense = ue.ddn;
                 break;
             case GibbsHessian::ExactDiagonal:
-                res.hessian.mode = Hessian::Diagonal;
-                res.hessian.diagonal = diagonal(ue.ddn);
+                obj.hessian.mode = Hessian::Diagonal;
+                obj.hessian.diagonal = diagonal(ue.ddn);
                 break;
             case GibbsHessian::Approximation:
-                res.hessian.mode = Hessian::Dense;
-                res.hessian.dense = diag(inv(xe.val)) * xe.ddn;
+                obj.hessian.mode = Hessian::Dense;
+                obj.hessian.dense = diag(inv(xe.val)) * xe.ddn;
                 break;
             case GibbsHessian::ApproximationDiagonal:
-                res.hessian.mode = Hessian::Diagonal;
-                res.hessian.diagonal = diagonal(xe.ddn)/xe.val;
+                obj.hessian.mode = Hessian::Diagonal;
+                obj.hessian.diagonal = diagonal(xe.ddn)/xe.val;
                 break;
             }
 
-            return res;
+            return obj;
         };
 
         optimum_problem.c.resize(0);
@@ -461,8 +460,8 @@ struct EquilibriumSolver::Impl
     {
         tic();
 
-        // Reset profiling object.
-        profiling = {};
+        // Reset the result of last equilibrium calculation
+        result = {};
 
         // Set the molar amounts of the elements
         be = Vector::Map(b, Ee);
@@ -474,9 +473,6 @@ struct EquilibriumSolver::Impl
         // Check if a simplex cold-start approximation must be performed
         if(coldstart(state))
             initialguess(state, T, P, be);
-
-        // The result of the equilibrium calculation
-        EquilibriumResult result;
 
         // Update the optimum options
         updateOptimumOptions();
@@ -510,7 +506,7 @@ struct EquilibriumSolver::Impl
         // Update the chemical state from the optimum state
         updateChemicalState(state);
 
-        toc() >> profiling.time_solve;
+        toc() >> result.timing.solve;
 
         return result;
     }
@@ -518,8 +514,6 @@ struct EquilibriumSolver::Impl
     /// Return the sensitivity of the equilibrium state.
     auto sensitivity() -> const EquilibriumSensitivity&
     {
-        tic();
-
         zerosEe = zeros(Ee);
         zerosNe = zeros(Ne);
         unitjEe = zeros(Ee);
@@ -535,8 +529,6 @@ struct EquilibriumSolver::Impl
             unitjEe = unit(Ee, j);
             sensitivities.dndb.col(j) = solver.dxdp(zerosNe, unitjEe);
         }
-
-        toc() >> profiling.time_sensitivity;
 
         return sensitivities;
     }
@@ -670,9 +662,9 @@ auto EquilibriumSolver::dndb() -> VectorConstRef
     return pimpl->dndb();
 }
 
-auto EquilibriumSolver::profiling() const -> const EquilibriumProfiling&
+auto EquilibriumSolver::result() const -> const EquilibriumResult&
 {
-    return pimpl->profiling;
+    return pimpl->result;
 }
 
 } // namespace Reaktoro
