@@ -81,7 +81,7 @@ public:
     /// Solve the path of equilibrium states between two chemical states
     auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult;
 
-    /// Return a ChemicalPlot instance.
+    /// Return a ChemicalOutput instance.
     /// The returned ChemicalOutput instance must be properly configured
     /// before the method EquilibriumPath::solve is called.
     /// Changes in this ChemicalOutput instance are observed by the
