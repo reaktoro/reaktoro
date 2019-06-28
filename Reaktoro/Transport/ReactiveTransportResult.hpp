@@ -18,6 +18,7 @@
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
+#include <Reaktoro/Transport/TransportResult.hpp>
 
 namespace Reaktoro {
 
@@ -37,11 +38,14 @@ struct ReactiveTransportTiming
 /// Provide result information of a reactive transport time step calculation.
 struct ReactiveTransportResult
 {
-    /// The result of each cell equilibrium calculation using EquilibriumSolver in a time step.
-    std::vector<EquilibriumResult> equilibrium_result_at_cell;
+    /// The result of each fluid element transport calculation during the last time step.
+    std::vector<TransportResult> transport_of_element;
 
-    /// The result of each cell equilibrium calculation using SmartEquilibriumSolver in a time step.
-    std::vector<SmartEquilibriumResult> smart_equilibrium_result_at_cell;
+    /// The result of the equilibrium calculation in each cell during the last time step.
+    std::vector<EquilibriumResult> equilibrium_at_cell;
+
+    /// The result of the smart equilibrium calculation in each cell during the last time step.
+    std::vector<SmartEquilibriumResult> smart_equilibrium_at_cell;
 
     /// The timing information of the operations in a reactive transport time step calculation.
     ReactiveTransportTiming timing;

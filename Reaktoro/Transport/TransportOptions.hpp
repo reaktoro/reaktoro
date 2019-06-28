@@ -1,6 +1,4 @@
-// Reaktoro is a unified framework for modeling chemically reactive systems.
-//
-// Copyright (C) 2014-2018 Allan Leal
+// Reaktoro is a unified framework for modeling chemically systems.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -17,13 +15,21 @@
 
 #pragma once
 
-// Reaktoro includes
-#include <Reaktoro/Transport/ChemicalField.hpp>
-#include <Reaktoro/Transport/Mesh.hpp>
-#include <Reaktoro/Transport/ReactiveTransportOptions.hpp>
-#include <Reaktoro/Transport/ReactiveTransportProfiler.hpp>
-#include <Reaktoro/Transport/ReactiveTransportResult.hpp>
-#include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
-#include <Reaktoro/Transport/TransportOptions.hpp>
-#include <Reaktoro/Transport/TransportResult.hpp>
-#include <Reaktoro/Transport/TransportSolver.hpp>
+namespace Reaktoro {
+
+/// Options for finite volume methods.
+enum class FiniteVolumeMethod
+{
+    FullImplicit,
+    ImplicitExplicit,
+    FluxLimitersImplicitExplicit
+};
+
+/// The options for the transport calculations.
+struct TransportOptions
+{
+    /// The option for the finite volume scheme.
+    FiniteVolumeMethod finite_volume_method = FiniteVolumeMethod::FullImplicit;
+};
+
+} // namespace Reaktoro

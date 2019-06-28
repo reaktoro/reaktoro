@@ -27,6 +27,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
+#include <Reaktoro/Transport/Mesh.hpp>
 
 namespace Reaktoro {
 
@@ -36,12 +37,12 @@ struct ReactiveTransportSolver::Impl
     ChemicalSystem system_;
 
     /// The solver for solving the transport equations
-    TransportSolver transportsolver;
+    TransportSolver transport_solver;
 
     /// The options for the reactive transport calculations.
     ReactiveTransportOptions options;
 
-    /// The result information of the last reactive transport time step calculation.
+    /// The resultrmation of the last reactive transport time step calculation.
     ReactiveTransportResult result;
 
     /// The equilibrium solver using conventional Gibbs energy minimization approach.
@@ -88,19 +89,19 @@ struct ReactiveTransportSolver::Impl
     /// Initialize the mesh discretizing the computational domain for reactive transport.
     auto setMesh(const Mesh& mesh) -> void
     {
-        transportsolver.setMesh(mesh);
+        transport_solver.setMesh(mesh);
     }
 
     /// Initialize the velocity of the reactive transport model.
     auto setVelocity(double val) -> void
     {
-        transportsolver.setVelocity(val);
+        transport_solver.setVelocity(val);
     }
 
     /// Initialize the diffusion of the reactive transport model.
     auto setDiffusionCoeff(double val) -> void
     {
-        transportsolver.setDiffusionCoeff(val);
+        transport_solver.setDiffusionCoeff(val);
     }
 
     /// Initialize boundary conditions of the reactive transport model.
@@ -112,7 +113,7 @@ struct ReactiveTransportSolver::Impl
     /// Initialize time step of the reactive transport sequential algorithm.
     auto setTimeStep(double val) -> void
     {
-        transportsolver.setTimeStep(val);
+        transport_solver.setTimeStep(val);
     }
 
     /// Add the output to the reactive transport modelling.
@@ -126,7 +127,7 @@ struct ReactiveTransportSolver::Impl
     auto initialize() -> void
     {
         // Initialize mesh and corresponding amount e
-        const Mesh& mesh = transportsolver.mesh();
+        const Mesh& mesh = transport_solver.mesh();
         const Index num_elements = system_.numElements();
         const Index num_cells = mesh.numCells();
 
@@ -136,8 +137,8 @@ struct ReactiveTransportSolver::Impl
         b.resize(num_cells, num_elements);
 
         // Initialize equilibrium solver based on the parameter
-        transportsolver.setOptions();
-        transportsolver.initialize();
+        transport_solver.setOptions(options.transport);
+        transport_solver.initialize();
     }
 
     /// Perform one time step of a reactive transport calculation.
@@ -147,7 +148,7 @@ struct ReactiveTransportSolver::Impl
         ReactiveTransportResult rt_result;
 
         // Auxiliary variables
-        const auto& mesh = transportsolver.mesh();
+        const auto& mesh = transport_solver.mesh();
         const auto& num_elements = system_.numElements();
         const auto& num_cells = mesh.numCells();
         const auto& ifs = system_.indicesFluidSpecies();
@@ -176,12 +177,18 @@ struct ReactiveTransportSolver::Impl
         Index icell_bc = 0;
         const auto phi_bc = field[icell_bc].properties().fluidVolume().val;
 
+        // Ensure the result of each fluid element transport calculation can be saved.
+        result.transport_of_element.resize(num_elements);
+
         // Transport the elements in the fluid species
         for(Index ielement = 0; ielement < num_elements; ++ielement)
         {
             // Scale BC with a porosity of the boundary cell
-            transportsolver.setBoundaryValue(phi_bc * bbc[ielement]);
-            transportsolver.step(bf.col(ielement));
+            transport_solver.setBoundaryValue(phi_bc * bbc[ielement]);
+            transport_solver.step(bf.col(ielement));
+
+            // Save the result of this element transport calculation.
+            result.transport_of_element[ielement] = transport_solver.result();
         }
 
         // Sum the amounts of elements distributed among fluid and solid species
@@ -197,7 +204,7 @@ struct ReactiveTransportSolver::Impl
         if(options.use_smart_equilibrium_solver)
         {
             // Ensure the result of each cell's smart equilibrium calculation can be saved.
-            result.smart_equilibrium_result_at_cell.resize(num_cells);
+            result.smart_equilibrium_at_cell.resize(num_cells);
 
             for(Index icell = 0; icell < num_cells; ++icell)
             {
@@ -207,14 +214,14 @@ struct ReactiveTransportSolver::Impl
                 // Solve with a smart equilibrium solver
                 smart_equilibrium_solver.solve(field[icell], T, P, b.row(icell));
 
-                // Store the result and profiling info of this cell's smart equilibrium calculation.
-                result.smart_equilibrium_result_at_cell[icell] = smart_equilibrium_solver.result();
+                // Save the result of this cell's smart equilibrium calculation.
+                result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver.result();
             }
         }
         else
         {
             // Ensure the result of each cell's equilibrium calculation can be saved.
-            result.equilibrium_result_at_cell.resize(num_cells);
+            result.equilibrium_at_cell.resize(num_cells);
 
             for(Index icell = 0; icell < num_cells; ++icell)
             {
@@ -224,8 +231,8 @@ struct ReactiveTransportSolver::Impl
                 // Solve with a conventional equilibrium solver
                 equilibrium_solver.solve(field[icell], T, P, b.row(icell));
 
-                // Store the result and profiling info of this cell's smart equilibrium calculation.
-                result.equilibrium_result_at_cell[icell] = equilibrium_solver.result();
+                // Save the result of this cell's smart equilibrium calculation.
+                result.equilibrium_at_cell[icell] = equilibrium_solver.result();
             }
         }
 

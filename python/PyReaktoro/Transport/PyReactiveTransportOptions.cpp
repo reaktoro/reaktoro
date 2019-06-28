@@ -25,6 +25,7 @@ namespace Reaktoro {
 void exportReactiveTransportOptions(py::module& m)
 {
     py::class_<ReactiveTransportOptions>(m, "ReactiveTransportOptions")
+        .def_readwrite("transport", &ReactiveTransportOptions::transport)
         .def_readwrite("equilibrium", &ReactiveTransportOptions::equilibrium)
         .def_readwrite("smart_equilibrium", &ReactiveTransportOptions::smart_equilibrium)
         .def_readwrite("use_smart_equilibrium_solver", &ReactiveTransportOptions::use_smart_equilibrium_solver)

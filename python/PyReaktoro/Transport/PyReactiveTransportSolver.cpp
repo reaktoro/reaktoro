@@ -18,7 +18,9 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
+#include <Reaktoro/Transport/Mesh.hpp>
 
 namespace Reaktoro {
 

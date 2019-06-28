@@ -18,14 +18,17 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Transport/Mesh.hpp>
+#include <Reaktoro/Transport/TransportOptions.hpp>
+#include <Reaktoro/Transport/TransportResult.hpp>
 #include <Reaktoro/Transport/TransportSolver.hpp>
 
 namespace Reaktoro {
 
 void exportTransportSolver(py::module& m)
 {
-    auto step1 = static_cast<void(TransportSolver::*)(VectorRef, VectorConstRef)>(&TransportSolver::step);
-    auto step2 = static_cast<void(TransportSolver::*)(VectorRef)>(&TransportSolver::step);
+    auto step1 = static_cast<TransportResult(TransportSolver::*)(VectorRef, VectorConstRef)>(&TransportSolver::step);
+    auto step2 = static_cast<TransportResult(TransportSolver::*)(VectorRef)>(&TransportSolver::step);
 
     py::class_<TransportSolver>(m, "TransportSolver")
         .def(py::init<>())

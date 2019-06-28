@@ -16,25 +16,59 @@
 // #pragma once
 
 // // C++ includes
-// #include <iostream>
-// #include <string>
-// #include <vector>
+// #include <ostream>
 // #include <memory>
-
-// // Reaktoro includes
-// #include <Reaktoro/Common/Index.hpp>
 
 // namespace Reaktoro {
 
 // // Forward declarations
-// class ReactiveTransportProfiling;
+// class ReactiveTransportResult;
+// class ReactiveTransportSolver;
+
+// struct ReactiveTransportTimingAccumulated
+// {
+//     /// The accumulated times for the operations during reactive transport calculations.
+//     ReactiveTransportTiming timing_reactive_transport;
+
+//     /// The accumulated times for the operations during equilibrium calculations.
+//     EquilibriumTiming timing_equilibrium;
+
+//     /// The accumulated times for the operations during smart equilibrium calculations.
+//     SmartEquilibriumTiming timing_smart_equilibrium;
+// };
+
+// struct ReactiveTransportProfilingSummary
+// {
+//     /// The accumulated times for the operations during reactive transport calculations.
+//     ReactiveTransportTiming timing_reactive_transport;
+
+//     /// The accumulated times for the operations during equilibrium calculations.
+//     EquilibriumTiming timing_equilibrium;
+
+//     /// The accumulated times for the operations during smart equilibrium calculations.
+//     SmartEquilibriumTiming timing_smart_equilibrium;
+
+//     /// The total number of chemical equilibrium calculations.
+//     Index num_equilibrium_calculations = 0;
+
+//     /// The total number of full chemical equilibrium calculations.
+//     Index num_full_equilibrium_calculations = 0;
+
+//     /// The total number of successful smart chemical equilibrium calculations.
+//     Index num_smart_equilibrium_calculations = 0;
+// };
+
+// struct SmartEquilibriumSuccessTable
+// {
+//     std::vector<std::vector<bool>> table;
+// };
 
 // /// Provide mechanisms for postprocessing and analysis of accumulated profiling/results of a reactive transport simulation.
 // class ReactiveTransportProfiler
 // {
 // public:
 //     /// Construct a default instance of ReactiveTransportProfiler.
-//     ReactiveTransportProfiler();
+//     ReactiveTransportProfiler(const ReactiveTransportSolver& solver);
 
 //     /// Construct a copy of a ReactiveTransportProfiler instance.
 //     ReactiveTransportProfiler(const ReactiveTransportProfiler& other);
@@ -46,7 +80,13 @@
 //     auto operator=(ReactiveTransportProfiler other) -> ReactiveTransportProfiler&;
 
 //     /// Update the profiler with a new reactive transport time step profiling data.
-//     auto update(const ReactiveTransportProfiling& profiling) -> void;
+//     auto update() -> void;
+
+//     /// Return all collected results of the reactive transport calculations.
+//     auto results() const -> const std::deque<ReactiveTransportResult>&
+
+//     /// Return a summary of the profiling of the reactive transport calculations.
+//     auto summary() const -> ReactiveTransportProfilingSummary;
 
 // private:
 //     struct Impl;
@@ -54,10 +94,8 @@
 //     std::unique_ptr<Impl> pimpl;
 // };
 
-// struct ReactiveTransportAccumulatedProfiling
-// {
-//     EquilibriumProfiling
-// };
+// /// Output a summary of the profiling info collected for a reactive transport simulation.
+// auto operator<<(std::ostream& out, const ReactiveTransportProfiler& profiler);
 
 // //     /// Name of the file and folder with a status output
 // //     std::string folder;
@@ -114,7 +152,5 @@
 // //     /// Flag whether smart of conventional solver was used
 // //     bool smart;
 // // };
-
-// auto operator<<(std::ostream& out, const ReactiveTransportProfiler& profiler);
 
 // } // namespace Reaktoro

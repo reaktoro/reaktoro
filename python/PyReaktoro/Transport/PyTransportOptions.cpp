@@ -18,22 +18,20 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Transport/ReactiveTransportResult.hpp>
+#include <Reaktoro/Transport/TransportOptions.hpp>
 
 namespace Reaktoro {
 
-void exportReactiveTransportResult(py::module& m)
+void exportTransportOptions(py::module& m)
 {
-    py::class_<ReactiveTransportTiming>(m, "ReactiveTransportTiming")
-        .def_readwrite("step", &ReactiveTransportTiming::step)
-        .def_readwrite("transport", &ReactiveTransportTiming::transport)
-        .def_readwrite("equilibrium", &ReactiveTransportTiming::equilibrium)
+    py::enum_<FiniteVolumeMethod>(m, "FiniteVolumeMethod")
+        .value("FullImplicit", FiniteVolumeMethod::FullImplicit)
+        .value("ImplicitExplicit", FiniteVolumeMethod::ImplicitExplicit)
+        .value("FluxLimitersImplicitExplicit", FiniteVolumeMethod::FluxLimitersImplicitExplicit)
         ;
 
-    py::class_<ReactiveTransportResult>(m, "ReactiveTransportResult")
-        .def_readwrite("equilibrium_at_cell", &ReactiveTransportResult::equilibrium_at_cell)
-        .def_readwrite("smart_equilibrium_at_cell", &ReactiveTransportResult::smart_equilibrium_at_cell)
-        .def_readwrite("timing", &ReactiveTransportResult::timing)
+    py::class_<TransportOptions>(m, "TransportOptions")
+        .def("finite_volume_method", &TransportOptions::finite_volume_method)
         ;
 }
 

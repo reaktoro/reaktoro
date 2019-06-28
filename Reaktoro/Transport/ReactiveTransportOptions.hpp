@@ -18,12 +18,16 @@
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
+#include <Reaktoro/Transport/TransportOptions.hpp>
 
 namespace Reaktoro {
 
 /// The options for the reactive transport calculations.
 struct ReactiveTransportOptions
 {
+    /// The options for the transport calculations.
+    TransportOptions transport;
+
     /// The options for the equilibrium calculations.
     EquilibriumOptions equilibrium;
 

@@ -110,5 +110,7 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportReactiveTransportOptions(m);
     exportReactiveTransportResult(m);
     exportReactiveTransportSolver(m);
+    exportTransportOptions(m);
+    exportTransportResult(m);
     exportTransportSolver(m);
 }

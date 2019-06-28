@@ -17,26 +17,20 @@
 
 // // C++ includes
 // #include <algorithm>
+// #include <deque>
 // #include <iomanip>
+// #include <iostream>
 
 // // Reaktoro includes
 // #include <Reaktoro/Common/Exception.hpp>
+// #include <Reaktoro/Transport/ReactiveTransportResult.hpp>
 
 // namespace Reaktoro {
-// namespace internal {
-
-// std::vector<ReactiveTransportProfiling> profilings;
-
-// } // namespace internal
 
 // struct ReactiveTransportProfiler::Impl
 // {
-//     /// The collected reactive transport profiling data during a simulation.
-//     std::vector<ReactiveTransportProfiling> profilings;
-
-//     ///
-//     auto accumulatedProfiling()
-//     ReactiveTransportProfiling accumulated_profiling;
+//     /// The collected results of the reactive transport time step calculations.
+//     std::deque<ReactiveTransportResult> results;
 // };
 
 // /// Implementation of a ReactiveTranportProfiler that collects information accumulated during the reactive transport

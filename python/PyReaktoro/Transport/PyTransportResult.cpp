@@ -18,22 +18,21 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Transport/ReactiveTransportResult.hpp>
+#include <Reaktoro/Transport/TransportResult.hpp>
 
 namespace Reaktoro {
 
-void exportReactiveTransportResult(py::module& m)
+void exportTransportResult(py::module& m)
 {
-    py::class_<ReactiveTransportTiming>(m, "ReactiveTransportTiming")
-        .def_readwrite("step", &ReactiveTransportTiming::step)
-        .def_readwrite("transport", &ReactiveTransportTiming::transport)
-        .def_readwrite("equilibrium", &ReactiveTransportTiming::equilibrium)
+    py::class_<TransportTiming>(m, "TransportTiming")
+        .def_readwrite("step", &TransportTiming::step)
+        .def_readwrite("matrix_equation_assembly", &TransportTiming::matrix_equation_assembly)
+        .def_readwrite("matrix_equation_solve", &TransportTiming::matrix_equation_solve)
         ;
 
-    py::class_<ReactiveTransportResult>(m, "ReactiveTransportResult")
-        .def_readwrite("equilibrium_at_cell", &ReactiveTransportResult::equilibrium_at_cell)
-        .def_readwrite("smart_equilibrium_at_cell", &ReactiveTransportResult::smart_equilibrium_at_cell)
-        .def_readwrite("timing", &ReactiveTransportResult::timing)
+    py::class_<TransportResult>(m, "TransportResult")
+        .def_readwrite("successful", &TransportResult::successful)
+        .def_readwrite("timing", &TransportResult::timing)
         ;
 }
 
