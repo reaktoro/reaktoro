@@ -193,37 +193,7 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
 
     toc() >> profiling.time_equilibrium;
 
-
-    // for(Index icell = 0; icell < num_cells; ++icell)
-    // {
-    //     const double T = field[icell].temperature();
-    //     const double P = field[icell].pressure();
-
-    //     // Start profiling equlibrium
-    //     ifprofiling( start = time(); );
-
-    //     if(options.use_smart_equilibrium_solver)
-    //     {
-    //         // Solve with a smart equilibrium solver
-    //         rt_result.equilibrium += smart_equilibrium_solver.solve(field[icell], T, P, b.row(icell));
-
-    //         // End profiling for the equilibrium calculations (accumulate cell-wise)
-    //         ifprofiling( rt_result.eq_time += elapsed(start); );
-
-    //         // Update the time spend for either for learning or estimating
-    //         if(rt_result.equilibrium.smart.succeeded)
-    //             rt_result.equilibrium_smart_successfull_cells.push_back(icell);
-    //     }
-    //     else
-    //     {
-    //         // Solve with a conventional equilibrium solver
-    //         rt_result.equilibrium += equilibrium_solver.solve(field[icell], T, P, b.row(icell));
-
-    //         // End profiling for the conventional equilibrium calculations (accumulate cell-wise)
-    //         ifprofiling( rt_result.eq_time += elapsed(start); );
-    //     }
-    // }
-
+    // Update the output files with the chemical state of every cell
     for(Index icell = 0; icell < num_cells; ++icell)
         for(auto output : outputs)
             output.update(field[icell], icell);
