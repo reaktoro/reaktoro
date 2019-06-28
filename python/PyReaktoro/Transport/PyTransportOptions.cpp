@@ -31,7 +31,7 @@ void exportTransportOptions(py::module& m)
         ;
 
     py::class_<TransportOptions>(m, "TransportOptions")
-        .def("finite_volume_method", &TransportOptions::finite_volume_method)
+        .def_readwrite("finite_volume_method", &TransportOptions::finite_volume_method)
         ;
 }
 
