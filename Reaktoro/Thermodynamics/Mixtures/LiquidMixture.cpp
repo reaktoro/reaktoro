@@ -15,24 +15,24 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HydrocarbonMixture.hpp"
+#include "LiquidMixture.hpp"
 
 namespace Reaktoro {
 
-	HydrocarbonMixture::HydrocarbonMixture()
-		: GeneralMixture<HydrocarbonSpecies>()
+	LiquidMixture::LiquidMixture()
+		: GeneralMixture<LiquidSpecies>()
 	{}
 
-	HydrocarbonMixture::HydrocarbonMixture(const std::vector<HydrocarbonSpecies>& species)
-		: GeneralMixture<HydrocarbonSpecies>(species)
+	LiquidMixture::LiquidMixture(const std::vector<LiquidSpecies>& species)
+		: GeneralMixture<LiquidSpecies>(species)
 	{}
 
-	HydrocarbonMixture::~HydrocarbonMixture()
+	LiquidMixture::~LiquidMixture()
 	{}
 
-	auto HydrocarbonMixture::state(Temperature T, Pressure P, VectorConstRef n) const -> HydrocarbonMixtureState
+	auto LiquidMixture::state(Temperature T, Pressure P, VectorConstRef n) const -> LiquidMixtureState
 	{
-		HydrocarbonMixtureState res;
+		LiquidMixtureState res;
 		res.T = T;
 		res.P = P;
 		res.x = moleFractions(n);

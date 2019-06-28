@@ -26,15 +26,15 @@ namespace py = pybind11;
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 #include "W:\release\Projects\Reaktoro\demos\cpp\phaseid.hpp"
-#include <reaktoro/Thermodynamics/Mixtures/HydrocarbonMixture.hpp>
+#include <reaktoro/Thermodynamics/Mixtures/LiquidMixture.hpp>
 
 namespace Reaktoro {
 
 	void exportOil(py::module& m)
 	{
-		py::class_<GeneralMixture<HydrocarbonSpecies>>(m, "_GeneralMixture_oil")
+		py::class_<GeneralMixture<LiquidSpecies>>(m, "_GeneralMixture_oil")
 			.def(py::init<>())
-			.def(py::init<const std::vector<HydrocarbonSpecies>&>())
+			.def(py::init<const std::vector<LiquidSpecies>&>())
 			;
 
 		py::class_<GeneralMixture<GaseousSpecies>>(m, "_GeneralMixture_gas")
@@ -42,9 +42,9 @@ namespace Reaktoro {
 			.def(py::init<const std::vector<GaseousSpecies>&>())
 			;
 
-		py::class_<HydrocarbonMixture, GeneralMixture<HydrocarbonSpecies>>(m, "OilMixture")
+		py::class_<LiquidMixture, GeneralMixture<LiquidSpecies>>(m, "OilMixture")
 			.def(py::init<>())
-			.def(py::init<const std::vector<HydrocarbonSpecies>>())
+			.def(py::init<const std::vector<LiquidSpecies>>())
 			;
 		
 		py::class_<GaseousMixture, GeneralMixture<GaseousSpecies>>(m, "GaseousMixture")

@@ -15,40 +15,40 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HydrocarbonPhase.hpp"
+#include "LiquidPhase.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/HydrocarbonMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/LiquidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/LiquidChemicalModelCubicEOS.hpp>
 
 namespace Reaktoro {
 
-	struct HydrocarbonPhase::Impl
+	struct LiquidPhase::Impl
 	{
-		/// The hydrocarbon mixture instance
-		HydrocarbonMixture mixture;
+		/// The liquid mixture instance
+		LiquidMixture mixture;
 
 		/// Construct a default Impl instance
 		Impl()
 		{}
 
 		/// Construct a custom Impl instance
-		Impl(const HydrocarbonMixture& mixture)
+		Impl(const LiquidMixture& mixture)
 			: mixture(mixture)
 		{}
 	};
 
-	HydrocarbonPhase::HydrocarbonPhase()
+	LiquidPhase::LiquidPhase()
 		: Phase(), pimpl(new Impl())
 	{}
 
-	HydrocarbonPhase::HydrocarbonPhase(const HydrocarbonMixture& mixture)
+	LiquidPhase::LiquidPhase(const LiquidMixture& mixture)
 		: pimpl(new Impl(mixture))
 	{
-		// Convert the HydrocarbonSpecies instances to Species instances
+		// Convert the LiquidSpecies instances to Species instances
 		std::vector<Species> species;
-		for (const HydrocarbonSpecies& x : mixture.species())
+		for (const LiquidSpecies& x : mixture.species())
 			species.push_back(x);
 
 		// Set the Phase attributes
@@ -58,35 +58,35 @@ namespace Reaktoro {
 		setChemicalModelPengRobinson();
 	}
 
-	auto HydrocarbonPhase::setChemicalModelVanDerWaals() -> HydrocarbonPhase&
+	auto LiquidPhase::setChemicalModelVanDerWaals() -> LiquidPhase&
 	{
 		PhaseChemicalModel model = liquidChemicalModelVanDerWaals(mixture());
 		setChemicalModel(model);
 		return *this;
 	}
 
-	auto HydrocarbonPhase::setChemicalModelRedlichKwong() -> HydrocarbonPhase&
+	auto LiquidPhase::setChemicalModelRedlichKwong() -> LiquidPhase&
 	{
 		PhaseChemicalModel model = liquidChemicalModelRedlichKwong(mixture());
 		setChemicalModel(model);
 		return *this;
 	}
 
-	auto HydrocarbonPhase::setChemicalModelSoaveRedlichKwong() -> HydrocarbonPhase&
+	auto LiquidPhase::setChemicalModelSoaveRedlichKwong() -> LiquidPhase&
 	{
 		PhaseChemicalModel model = liquidChemicalModelSoaveRedlichKwong(mixture());
 		setChemicalModel(model);
 		return *this;
 	}
 
-	auto HydrocarbonPhase::setChemicalModelPengRobinson() -> HydrocarbonPhase&
+	auto LiquidPhase::setChemicalModelPengRobinson() -> LiquidPhase&
 	{
 		PhaseChemicalModel model = liquidChemicalModelPengRobinson(mixture());
 		setChemicalModel(model);
 		return *this;
 	}
 
-	auto HydrocarbonPhase::mixture() const -> const HydrocarbonMixture&
+	auto LiquidPhase::mixture() const -> const LiquidMixture&
 	{
 		return pimpl->mixture;
 	}

@@ -67,10 +67,10 @@ def test_equilibrium_with_CH4_CO2(temperature, pressure, result):
     oil_species.append(HydrocarbonSpecies(db.gaseousSpecies("CO2(oil)")))
     
     oil_mixture = OilMixture(oil_species)
-    oil_phase = HydrocarbonPhase(oil_mixture)
+    oil_phase = LiquidPhase(oil_mixture)
     oil_phase.setChemicalModelSoaveRedlichKwong()
     
-    phases.append(editor.convertHydrocarbonPhase(oil_phase))
+    phases.append(editor.convertLiquidPhase(oil_phase))
     
     system = ChemicalSystem(phases)
     
@@ -162,10 +162,10 @@ def test_equilibrium_with_CH4_H2S(temperature, pressure, result):
     oil_species.append(HydrocarbonSpecies(db.gaseousSpecies("H2S(oil)")))
     
     oil_mixture = OilMixture(oil_species)
-    oil_phase = HydrocarbonPhase(oil_mixture)
+    oil_phase = LiquidPhase(oil_mixture)
     oil_phase.setChemicalModelSoaveRedlichKwong()
     
-    phases.append(editor.convertHydrocarbonPhase(oil_phase))
+    phases.append(editor.convertLiquidPhase(oil_phase))
     
     system = ChemicalSystem(phases)
     
@@ -263,10 +263,10 @@ def test_equilibrium_with_CH4_CO2_H2S(temperature, pressure, result):
     oil_species.append(HydrocarbonSpecies(db.gaseousSpecies("CO2(oil)")))
     
     oil_mixture = OilMixture(oil_species)
-    oil_phase = HydrocarbonPhase(oil_mixture)
+    oil_phase = LiquidPhase(oil_mixture)
     oil_phase.setChemicalModelSoaveRedlichKwong()
     
-    phases.append(editor.convertHydrocarbonPhase(oil_phase))
+    phases.append(editor.convertLiquidPhase(oil_phase))
     
     system = ChemicalSystem(phases)
     

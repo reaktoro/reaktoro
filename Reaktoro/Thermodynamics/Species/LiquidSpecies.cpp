@@ -15,37 +15,37 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HydrocarbonSpecies.hpp"
+#include "LiquidSpecies.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 
 namespace Reaktoro {
 
-struct HydrocarbonSpecies::Impl
+struct LiquidSpecies::Impl
 {
-	// The critical temperature of the hydrocarbon species (in units of K)
+	// The critical temperature of the liquid species (in units of K)
 	double critical_temperature = 0.0;
 
-	// The critical pressure of the hydrocarbon species (in units of Pa)
+	// The critical pressure of the liquid species (in units of Pa)
 	double critical_pressure = 0.0;
 
-	// The acentric factor of the hydrocarbon species
+	// The acentric factor of the liquid species
 	double acentric_factor = 0.0;
 
-	/// The termidynamic data of the hydrocarbon species
-	HydrocarbonSpeciesThermoData thermo;
+	/// The termidynamic data of the liquid species
+	LiquidSpeciesThermoData thermo;
 };
 
-HydrocarbonSpecies::HydrocarbonSpecies()
+LiquidSpecies::LiquidSpecies()
 	: pimpl(new Impl())
 {}
 
-HydrocarbonSpecies::HydrocarbonSpecies(const Species& species)
+LiquidSpecies::LiquidSpecies(const Species& species)
 	: Species(species), pimpl(new Impl())
 {}
 
-HydrocarbonSpecies::HydrocarbonSpecies(const GaseousSpecies& species)
+LiquidSpecies::LiquidSpecies(const GaseousSpecies& species)
 	: Species(species) , pimpl(new Impl())
 {
 	this->setCriticalTemperature(species.criticalTemperature());
@@ -54,13 +54,13 @@ HydrocarbonSpecies::HydrocarbonSpecies(const GaseousSpecies& species)
 
 	auto const& gas_thermo_data = species.thermoData();
 
-	Optional<HydrocarbonSpeciesThermoParamsHKF> oil_hkf;
+	Optional<LiquidSpeciesThermoParamsHKF> oil_hkf;
 	if (!gas_thermo_data.hkf.empty()) {
 		GaseousSpeciesThermoParamsHKF const& hkf = gas_thermo_data.hkf.get();
-		oil_hkf = HydrocarbonSpeciesThermoParamsHKF{ hkf.Gf, hkf.Hf, hkf.Sr, hkf.a, hkf.b, hkf.c, hkf.Tmax };
+		oil_hkf = LiquidSpeciesThermoParamsHKF{ hkf.Gf, hkf.Hf, hkf.Sr, hkf.a, hkf.b, hkf.c, hkf.Tmax };
 	}
 
-	this->setThermoData(HydrocarbonSpeciesThermoData{
+	this->setThermoData(LiquidSpeciesThermoData{
 		gas_thermo_data.properties,
 		gas_thermo_data.reaction,
 		oil_hkf,
@@ -69,46 +69,46 @@ HydrocarbonSpecies::HydrocarbonSpecies(const GaseousSpecies& species)
 }
 
 
-auto HydrocarbonSpecies::setCriticalTemperature(double val) -> void
+auto LiquidSpecies::setCriticalTemperature(double val) -> void
 {
-	Assert(val > 0.0, "Cannot set the critical temperature of the hydrocarbon specie `" + name() + "`.",
+	Assert(val > 0.0, "Cannot set the critical temperature of the liquid specie `" + name() + "`.",
 		"The given critical temperature `" + std::to_string(val) + "` is not positive.");
 	pimpl->critical_temperature = val;
 }
 
-auto HydrocarbonSpecies::setCriticalPressure(double val) -> void
+auto LiquidSpecies::setCriticalPressure(double val) -> void
 {
-	Assert(val > 0.0, "Cannot set the critical pressure of the hydrocarbon specie `" + name() + "`.",
+	Assert(val > 0.0, "Cannot set the critical pressure of the liquid specie `" + name() + "`.",
 		"The given critical pressure `" + std::to_string(val) + "` is not positive.");
 	pimpl->critical_pressure = val;
 }
 
-auto HydrocarbonSpecies::setAcentricFactor(double val) -> void
+auto LiquidSpecies::setAcentricFactor(double val) -> void
 {
 	pimpl->acentric_factor = val;
 }
 
-auto HydrocarbonSpecies::setThermoData(const HydrocarbonSpeciesThermoData& thermo) -> void
+auto LiquidSpecies::setThermoData(const LiquidSpeciesThermoData& thermo) -> void
 {
 	pimpl->thermo = thermo;
 }
 
-auto HydrocarbonSpecies::criticalTemperature() const -> double
+auto LiquidSpecies::criticalTemperature() const -> double
 {
 	return pimpl->critical_temperature;
 }
 
-auto HydrocarbonSpecies::criticalPressure() const -> double
+auto LiquidSpecies::criticalPressure() const -> double
 {
 	return pimpl->critical_pressure;
 }
 
-auto HydrocarbonSpecies::acentricFactor() const -> double
+auto LiquidSpecies::acentricFactor() const -> double
 {
 	return pimpl->acentric_factor;
 }
 
-auto HydrocarbonSpecies::thermoData() const -> const HydrocarbonSpeciesThermoData&
+auto LiquidSpecies::thermoData() const -> const LiquidSpeciesThermoData&
 {
 	return pimpl->thermo;
 }

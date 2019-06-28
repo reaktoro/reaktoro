@@ -18,23 +18,22 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Species/HydrocarbonSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/LiquidMixture.hpp>
+#include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>
+#include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 
 namespace Reaktoro {
 
-	void exportHydrocarbonSpecies(py::module& m)
+	void exportLiquidPhase(py::module& m)
 	{
-		py::class_<HydrocarbonSpecies, Species>(m, "HydrocarbonSpecies")
+		py::class_<LiquidPhase, Phase>(m, "LiquidPhase")
 			.def(py::init<>())
-			.def(py::init<const GaseousSpecies&>())
-			.def("setCriticalTemperature", &HydrocarbonSpecies::setCriticalTemperature)
-			.def("setCriticalPressure", &HydrocarbonSpecies::setCriticalPressure)
-			.def("setAcentricFactor", &HydrocarbonSpecies::setAcentricFactor)
-			.def("setThermoData", &HydrocarbonSpecies::setThermoData)
-			.def("criticalTemperature", &HydrocarbonSpecies::criticalTemperature)
-			.def("criticalPressure", &HydrocarbonSpecies::criticalPressure)
-			.def("acentricFactor", &HydrocarbonSpecies::acentricFactor)
-			.def("thermoData", &HydrocarbonSpecies::thermoData, py::return_value_policy::reference_internal)
+			.def(py::init<const LiquidMixture&>())
+			.def("setChemicalModelVanDerWaals", &LiquidPhase::setChemicalModelVanDerWaals, py::return_value_policy::reference_internal)
+			.def("setChemicalModelRedlichKwong", &LiquidPhase::setChemicalModelRedlichKwong, py::return_value_policy::reference_internal)
+			.def("setChemicalModelSoaveRedlichKwong", &LiquidPhase::setChemicalModelSoaveRedlichKwong, py::return_value_policy::reference_internal)
+			.def("setChemicalModelPengRobinson", &LiquidPhase::setChemicalModelPengRobinson, py::return_value_policy::reference_internal)
+			.def("mixture", &LiquidPhase::mixture, py::return_value_policy::reference_internal)
 			;
 	}
 

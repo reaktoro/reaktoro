@@ -27,7 +27,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class HydrocarbonPhase;
+class LiquidPhase;
 class AqueousPhase;
 class ChemicalSystem;
 class Database;
@@ -415,7 +415,7 @@ public:
 
 	auto convertAqueousPhase(const AqueousPhase& phase) const ->AqueousPhase;
 
-	auto convertHydrocarbonPhase(const HydrocarbonPhase& phase) const ->HydrocarbonPhase;
+	auto convertLiquidPhase(const LiquidPhase& phase) const ->LiquidPhase;
 
 	auto convertGaseousPhase(const GaseousPhase& phase) const ->GaseousPhase;
 

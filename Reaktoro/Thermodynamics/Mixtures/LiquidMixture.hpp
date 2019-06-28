@@ -19,39 +19,39 @@
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
-#include <Reaktoro/Thermodynamics/Species/HydrocarbonSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 
 namespace Reaktoro {
 
-	/// A type used to describe the state of a hydrocarbon mixture
-	struct HydrocarbonMixtureState : public MixtureState
+	/// A type used to describe the state of a liquid mixture
+	struct LiquidMixtureState : public MixtureState
 	{};
 
-	/// Provides a computational representation of a hydrocarbon mixture.
-	/// The HydrocarbonMixture class is defined as a collection of HydrocarbonSpecies objects,
-	/// representing, therefore, a mixture of hydrocarbon species. Its main purpose is to
-	/// provide the necessary operations in the calculation of activities of hydrocarbon
+	/// Provides a computational representation of a liquid mixture.
+	/// The LiquidMixture class is defined as a collection of LiquidSpecies objects,
+	/// representing, therefore, a mixture of liquid species. Its main purpose is to
+	/// provide the necessary operations in the calculation of activities of liquid
 	/// species.
-	/// @see HydrocarbonSpecies
+	/// @see LiquidSpecies
 	/// @ingroup Mixtures
-	class HydrocarbonMixture : public GeneralMixture<HydrocarbonSpecies>
+	class LiquidMixture : public GeneralMixture<LiquidSpecies>
 	{
 	public:
-		/// Construct a default HydrocarbonMixture instance.
-		HydrocarbonMixture();
+		/// Construct a default LiquidMixture instance.
+		LiquidMixture();
 
-		/// Construct a HydrocarbonMixture instance with given species.
-		/// @param species The species that compose the hydrocarbon mixture
-		explicit HydrocarbonMixture(const std::vector<HydrocarbonSpecies>& species);
+		/// Construct a LiquidMixture instance with given species.
+		/// @param species The species that compose the liquid mixture
+		explicit LiquidMixture(const std::vector<LiquidSpecies>& species);
 
-		/// Destroy the HydrocarbonMixture instance.
-		virtual ~HydrocarbonMixture();
+		/// Destroy the LiquidMixture instance.
+		virtual ~LiquidMixture();
 
-		/// Calculate the state of the hydrocarbon mixture.
+		/// Calculate the state of the liquid mixture.
 		/// @param T The temperature (in units of K)
 		/// @param P The pressure (in units of Pa)
 		/// @param n The molar amounts of the species in the mixture (in units of mol)
-		auto state(Temperature T, Pressure P, VectorConstRef n) const->HydrocarbonMixtureState;
+		auto state(Temperature T, Pressure P, VectorConstRef n) const->LiquidMixtureState;
 	};
 
 } // namespace Reaktoro

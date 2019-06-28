@@ -129,7 +129,7 @@ struct AqueousSpeciesThermoParamsHKF
     double wref;
 };
 
-/// A type for storing the parameters of the HKF equation of state for a fluid (gaseous or hydrocarbon) species
+/// A type for storing the parameters of the HKF equation of state for a fluid (gaseous or liquid) species
 struct FluidSpeciesThermoParamsHKF
 {
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
@@ -156,7 +156,7 @@ struct FluidSpeciesThermoParamsHKF
 
 using GaseousSpeciesThermoParamsHKF = FluidSpeciesThermoParamsHKF;
 
-using HydrocarbonSpeciesThermoParamsHKF = FluidSpeciesThermoParamsHKF;
+using LiquidSpeciesThermoParamsHKF = FluidSpeciesThermoParamsHKF;
 
 /// A type for storing the parameters of the HKF equation of state for a mineral species
 struct MineralSpeciesThermoParamsHKF
@@ -246,7 +246,7 @@ struct AqueousSpeciesThermoData
     Optional<SpeciesThermoParamsPhreeqc> phreeqc;
 };
 
-/// A type for storing the thermodynamic data of fluid (gaseous or hydrocarbon) species
+/// A type for storing the thermodynamic data of fluid (gaseous or liquid) species
 struct FluidSpeciesThermoData
 {
 	/// The interpolated thermodynamic properties of a gaseous species
@@ -264,7 +264,7 @@ struct FluidSpeciesThermoData
 
 using GaseousSpeciesThermoData = FluidSpeciesThermoData;
 
-using HydrocarbonSpeciesThermoData = FluidSpeciesThermoData;
+using LiquidSpeciesThermoData = FluidSpeciesThermoData;
 
 /// A type for storing the thermodynamic data of a mineral species
 struct MineralSpeciesThermoData

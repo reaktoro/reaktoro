@@ -23,19 +23,19 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Thermodynamics/EOS/CubicEOS.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/HydrocarbonMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/LiquidMixture.hpp>
 
 namespace Reaktoro {
 	namespace {
 
-		auto liquidChemicalModelCubicEOS(const HydrocarbonMixture& mixture, CubicEOS::Model modeltype) -> PhaseChemicalModel
+		auto liquidChemicalModelCubicEOS(const LiquidMixture& mixture, CubicEOS::Model modeltype) -> PhaseChemicalModel
 		{
 			// The number of gases in the mixture
 			const unsigned nspecies = mixture.numSpecies();
 
-			// Get the the critical temperatures, pressures and acentric factors of the hydrocarbons
+			// Get the the critical temperatures, pressures and acentric factors of the liquid species
 			std::vector<double> Tc, Pc, omega;
-			for (HydrocarbonSpecies species : mixture.species())
+			for (LiquidSpecies species : mixture.species())
 			{
 				Tc.push_back(species.criticalTemperature());
 				Pc.push_back(species.criticalPressure());
@@ -51,12 +51,12 @@ namespace Reaktoro {
 			eos.setModel(modeltype);
 
 			// The state of the gaseous mixture
-			HydrocarbonMixtureState state;
+			LiquidMixtureState state;
 
-			// Define the chemical model function of the Hydrocarbon phase
+			// Define the chemical model function of the liquid phase
 			PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
 			{
-				// Evaluate the state of the gaseous mixture
+				// Evaluate the state of the liquid mixture
 				state = mixture.state(T, P, n);
 
 				// The mole fractions of the species
@@ -74,7 +74,7 @@ namespace Reaktoro {
 				// Create an alias to the ln fugacity coefficients
 				const auto& ln_phi = eosres.ln_fugacity_coefficients;
 
-				// Fill the chemical properties of the gaseous phase
+				// Fill the chemical properties of the liquid phase
 				res.ln_activity_coefficients = ln_phi;
 				res.ln_activities = ln_phi + ln_x + ln_Pbar;
 				res.molar_volume = eosres.molar_volume;
@@ -89,22 +89,22 @@ namespace Reaktoro {
 
 	} // namespace
 
-	auto liquidChemicalModelVanDerWaals(const HydrocarbonMixture& mixture) -> PhaseChemicalModel
+	auto liquidChemicalModelVanDerWaals(const LiquidMixture& mixture) -> PhaseChemicalModel
 	{
 		return liquidChemicalModelCubicEOS(mixture, CubicEOS::VanDerWaals);
 	}
 
-	auto liquidChemicalModelRedlichKwong(const HydrocarbonMixture& mixture) -> PhaseChemicalModel
+	auto liquidChemicalModelRedlichKwong(const LiquidMixture& mixture) -> PhaseChemicalModel
 	{
 		return liquidChemicalModelCubicEOS(mixture, CubicEOS::RedlichKwong);
 	}
 
-	auto liquidChemicalModelSoaveRedlichKwong(const HydrocarbonMixture& mixture) -> PhaseChemicalModel
+	auto liquidChemicalModelSoaveRedlichKwong(const LiquidMixture& mixture) -> PhaseChemicalModel
 	{
 		return liquidChemicalModelCubicEOS(mixture, CubicEOS::SoaveRedlichKwong);
 	}
 
-	auto liquidChemicalModelPengRobinson(const HydrocarbonMixture& mixture) -> PhaseChemicalModel
+	auto liquidChemicalModelPengRobinson(const LiquidMixture& mixture) -> PhaseChemicalModel
 	{
 		return liquidChemicalModelCubicEOS(mixture, CubicEOS::PengRobinson);
 	}

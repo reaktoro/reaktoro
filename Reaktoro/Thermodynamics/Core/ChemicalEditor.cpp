@@ -38,7 +38,7 @@
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
-#include <Reaktoro/Thermodynamics/Phases/HydrocarbonPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
@@ -607,9 +607,9 @@ auto ChemicalEditor::convertAqueousPhase(const AqueousPhase& phase) const -> Aqu
 	return pimpl->convertPhase<AqueousPhase>(phase);
 }
 
-auto ChemicalEditor::convertHydrocarbonPhase(const HydrocarbonPhase& phase) const -> HydrocarbonPhase
+auto ChemicalEditor::convertLiquidPhase(const LiquidPhase& phase) const -> LiquidPhase
 {
-	return pimpl->convertPhase<HydrocarbonPhase>(phase);
+	return pimpl->convertPhase<LiquidPhase>(phase);
 }
 
 auto ChemicalEditor::convertGaseousPhase(const GaseousPhase& phase) const -> GaseousPhase

@@ -25,7 +25,7 @@
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
-#include <Reaktoro/Thermodynamics/Phases/HydrocarbonPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
@@ -87,7 +87,7 @@ void exportChemicalEditor(py::module& m)
 
 		.def("convertGaseousPhase", &ChemicalEditor::convertGaseousPhase)
 		.def("convertAqueousPhase", &ChemicalEditor::convertAqueousPhase)
-		.def("convertHydrocarbonPhase", &ChemicalEditor::convertHydrocarbonPhase)
+		.def("convertLiquidPhase", &ChemicalEditor::convertLiquidPhase)
         ;
 }
 

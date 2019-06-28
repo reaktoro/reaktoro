@@ -29,7 +29,7 @@
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/HydrocarbonMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/LiquidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelDebyeHuckel.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
@@ -54,14 +54,14 @@
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
-#include <Reaktoro/Thermodynamics/Phases/HydrocarbonPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralCatalyst.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralMechanism.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/HydrocarbonSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/ThermoData.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>

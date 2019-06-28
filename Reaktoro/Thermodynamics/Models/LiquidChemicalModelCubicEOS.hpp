@@ -23,22 +23,22 @@
 namespace Reaktoro {
 
 	// Forward declarations
-	class HydrocarbonMixture;
+	class LiquidMixture;
 
 	/// Set the chemical model of the phase with the van der Waals equation of state.
 	/// Reference: *van der Waals, J.D. (1910). The equation of state for gases and liquids. Nobel Lectures in Physics. pp. 254-265*.
-	auto liquidChemicalModelVanDerWaals(const HydrocarbonMixture& mixture)->PhaseChemicalModel;
+	auto liquidChemicalModelVanDerWaals(const LiquidMixture& mixture)->PhaseChemicalModel;
 
 	/// Set the chemical model of the phase with the Redlich-Kwong equation of state.
 	/// Reference: *Redlich, O., Kwong, J.N.S. (1949). On The Thermodynamics of Solutions. Chem. Rev. 44(1) 233–244*.
-	auto liquidChemicalModelRedlichKwong(const HydrocarbonMixture& mixture)->PhaseChemicalModel;
+	auto liquidChemicalModelRedlichKwong(const LiquidMixture& mixture)->PhaseChemicalModel;
 
 	/// Set the chemical model of the phase with the Soave-Redlich-Kwong equation of state.
 	/// Reference: *Soave, G. (1972). Equilibrium constants from a modified Redlich-Kwong equation of state, Chem. Eng. Sci., 27, 1197-1203*.
-	auto liquidChemicalModelSoaveRedlichKwong(const HydrocarbonMixture& mixture)->PhaseChemicalModel;
+	auto liquidChemicalModelSoaveRedlichKwong(const LiquidMixture& mixture)->PhaseChemicalModel;
 
 	/// Set the chemical model of the phase with the Peng-Robinson equation of state.
 	/// Reference: *Peng, D.Y., Robinson, D.B. (1976). A New Two-Constant Equation of State. Industrial and Engineering Chemistry: Fundamentals 15: 59–64*.
-	auto liquidChemicalModelPengRobinson(const HydrocarbonMixture& mixture)->PhaseChemicalModel;
+	auto liquidChemicalModelPengRobinson(const LiquidMixture& mixture)->PhaseChemicalModel;
 
 } // namespace Reaktoro

@@ -13,17 +13,6 @@ int main()
 	//Database db("supcrt98.xml");
 	auto db = Database("W:\\release\\Projects\\Reaktoro\\databases\\supcrt\\supcrt98.xml");
 
-	// NOTE: Copy & Pasted from ChemicalEditor {
-	// The default temperatures for the interpolation of the thermodynamic properties (in units of celsius)
-	std::vector<double> temperatures{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300 };
-
-	// The default pressures for the interpolation of the thermodynamic properties (in units of bar)
-	std::vector<double> pressures{ 1, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000 };
-
-	// Convert the temperatures and pressures to units of kelvin and pascal respectively
-	for (auto& x : temperatures) { x = x + 273.15; }
-	for (auto& x : pressures) { x = x * 1.0e+5; }
-
 	auto editor = ChemicalEditor(db);
 
 	editor.addAqueousPhase({ "H2O(l)" });
@@ -49,8 +38,8 @@ int main()
 	}
 
 	{
-		auto oil_species = std::vector<HydrocarbonSpecies>{
-			HydrocarbonSpecies(db.gaseousSpecies("CO2(oil)")),
+		auto oil_species = std::vector<LiquidSpecies>{
+			LiquidSpecies(db.gaseousSpecies("CO2(oil)")),
 		};
 
 		//OilSpecies C2H6;
@@ -73,14 +62,14 @@ int main()
 
 		//oil_species.push_back(C2H6);
 
-		auto mixture = HydrocarbonMixture(oil_species);
-		auto oil = HydrocarbonPhase(mixture);
+		auto mixture = LiquidMixture(oil_species);
+		auto oil = LiquidPhase(mixture);
 
 		//oil.setChemicalModelSoaveRedlichKwong();
 
 		//oil.setChemicalModelRedlichKwong();
 
-		phases.push_back(editor.convertHydrocarbonPhase(oil));
+		phases.push_back(editor.convertLiquidPhase(oil));
 	}
 
 

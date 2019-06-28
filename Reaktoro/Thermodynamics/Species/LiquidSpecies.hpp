@@ -28,42 +28,42 @@
 
 namespace Reaktoro {
 
-	/// A type to describe the attributes of a hydrocarbon species
-	class HydrocarbonSpecies : public Species
+	/// A type to describe the attributes of a liquid species
+	class LiquidSpecies : public Species
 	{
 	public:
-		/// Construct a default HydrocarbonSpecies instance
-		HydrocarbonSpecies();
+		/// Construct a default LiquidSpecies instance
+		LiquidSpecies();
 
-		/// Construct an HydrocarbonSpecies instance from a Species instance
-		HydrocarbonSpecies(const Species& species);
+		/// Construct an LiquidSpecies instance from a Species instance
+		LiquidSpecies(const Species& species);
 
 		/// A temporary constructor based on gaseous species - TODO: REMOVE AT THE END
-		HydrocarbonSpecies(const GaseousSpecies& species);
+		LiquidSpecies(const GaseousSpecies& species);
 
-		/// Set the critical temperature of the hydrocarbon species (in units of K)
+		/// Set the critical temperature of the liquid species (in units of K)
 		auto setCriticalTemperature(double val) -> void;
 
-		/// Set the critical pressure of the hydrocarbon species (in units of Pa)
+		/// Set the critical pressure of the liquid species (in units of Pa)
 		auto setCriticalPressure(double val) -> void;
 
-		/// Set the acentric factor of the hydrocarbon species
+		/// Set the acentric factor of the liquid species
 		auto setAcentricFactor(double val) -> void;
 
-		/// Set the thermodynamic data of the hydrocarbon species.
-		auto setThermoData(const HydrocarbonSpeciesThermoData& thermo) -> void;
+		/// Set the thermodynamic data of the liquid species.
+		auto setThermoData(const LiquidSpeciesThermoData& thermo) -> void;
 
-		/// Return the critical temperature of the hydrocarbon species (in units of K)
+		/// Return the critical temperature of the liquid species (in units of K)
 		auto criticalTemperature() const -> double;
 
-		/// Return the critical pressure of the hydrocarbon species (in units of Pa)
+		/// Return the critical pressure of the liquid species (in units of Pa)
 		auto criticalPressure() const -> double;
 
-		/// Return the acentric factor of the hydrocarbon species
+		/// Return the acentric factor of the liquid species
 		auto acentricFactor() const -> double;
 
-		/// Return the thermodynamic data of the hydrocarbon species.
-		auto thermoData() const -> const HydrocarbonSpeciesThermoData&;
+		/// Return the thermodynamic data of the liquid species.
+		auto thermoData() const -> const LiquidSpeciesThermoData&;
 
 	private:
 		struct Impl;
