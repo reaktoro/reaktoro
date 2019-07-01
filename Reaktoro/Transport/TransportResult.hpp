@@ -28,14 +28,14 @@ struct TransportTiming
 
     /// The time spent during the last time step for solving the discrete transport matrix equation.
     double matrix_equation_solve = 0.0;
+
+    /// Self addition of another TransportTiming instance to this one.
+    auto operator+=(const TransportTiming& other) -> TransportTiming&;
 };
 
 /// Provide result information of a transport time step calculation.
 struct TransportResult
 {
-    /// The boolean flag that indicates if the transport step calculation was successful.
-    bool successful = false;
-
     /// The timing information of the operations in a transport time step calculation.
     TransportTiming timing;
 };

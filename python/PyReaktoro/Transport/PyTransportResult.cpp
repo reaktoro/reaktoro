@@ -28,10 +28,10 @@ void exportTransportResult(py::module& m)
         .def_readwrite("step", &TransportTiming::step)
         .def_readwrite("matrix_equation_assembly", &TransportTiming::matrix_equation_assembly)
         .def_readwrite("matrix_equation_solve", &TransportTiming::matrix_equation_solve)
+        .def(py::self += py::self)
         ;
 
     py::class_<TransportResult>(m, "TransportResult")
-        .def_readwrite("successful", &TransportResult::successful)
         .def_readwrite("timing", &TransportResult::timing)
         ;
 }

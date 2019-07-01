@@ -37,6 +37,9 @@ struct EquilibriumTiming
 
     /// The time spent for computing the chemical properties of the system.
     double chemical_properties = 0.0;
+
+    /// Self addition of another EquilibriumTiming instance to this one.
+    auto operator+=(const EquilibriumTiming& other) -> EquilibriumTiming&;
 };
 
 /// A type used to describe the result of an equilibrium calculation

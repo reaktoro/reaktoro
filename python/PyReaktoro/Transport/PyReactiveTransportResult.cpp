@@ -28,6 +28,7 @@ void exportReactiveTransportResult(py::module& m)
         .def_readwrite("step", &ReactiveTransportTiming::step)
         .def_readwrite("transport", &ReactiveTransportTiming::transport)
         .def_readwrite("equilibrium", &ReactiveTransportTiming::equilibrium)
+        .def(py::self += py::self)
         ;
 
     py::class_<ReactiveTransportResult>(m, "ReactiveTransportResult")

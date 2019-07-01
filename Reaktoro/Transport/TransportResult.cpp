@@ -15,22 +15,15 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "EquilibriumResult.hpp"
+#include "TransportResult.hpp"
 
 namespace Reaktoro {
 
-auto EquilibriumTiming::operator+=(const EquilibriumTiming& other) -> EquilibriumTiming&
+auto TransportTiming::operator+=(const TransportTiming& other) -> TransportTiming&
 {
-    solve += other.solve;
-    standard_thermodynamic_properties += other.standard_thermodynamic_properties;
-    chemical_properties += other.chemical_properties;
-    return *this;
-}
-
-auto EquilibriumResult::operator+=(const EquilibriumResult& other) -> EquilibriumResult&
-{
-    timing += other.timing;
-    optimum += other.optimum;
+    step += other.step;
+    matrix_equation_assembly += other.matrix_equation_assembly;
+    matrix_equation_solve += other.matrix_equation_solve;
     return *this;
 }
 

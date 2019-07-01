@@ -33,6 +33,9 @@ struct ReactiveTransportTiming
 
     /// The time spent during the last time step for performing chemical equilibrium calculations.
     double equilibrium = 0.0;
+
+    /// Self addition of another ReactiveTransportTiming instance to this one.
+    auto operator+=(const ReactiveTransportTiming& other) -> ReactiveTransportTiming&;
 };
 
 /// Provide result information of a reactive transport time step calculation.

@@ -1,37 +1,101 @@
-// // This file is part of Reaktoro (https://reaktoro.org).
-// //
-// // Reaktoro is free software; you can redistribute it and/or
-// // modify it under the terms of the GNU Lesser General Public
-// // License as published by the Free Software Foundation; either
-// // version 2.1 of the License, or (at your option) any later version.
-// //
-// // Reaktoro is distributed in the hope that it will be useful,
-// // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// // Lesser General Public License for more details.
-// //
-// // You should have received a copy of the GNU Lesser General Public License
-// // along with this library. If not, see <http://www.gnu.org/licenses/>.
+// This file is part of Reaktoro (https://reaktoro.org).
+//
+// Reaktoro is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// Reaktoro is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// #include "ReactiveTransportProfiler.hpp"
+#include "ReactiveTransportProfiler.hpp"
 
-// // C++ includes
-// #include <algorithm>
-// #include <deque>
-// #include <iomanip>
-// #include <iostream>
+// C++ includes
+#include <algorithm>
+#include <iomanip>
+#include <iostream>
 
-// // Reaktoro includes
-// #include <Reaktoro/Common/Exception.hpp>
-// #include <Reaktoro/Transport/ReactiveTransportResult.hpp>
+// Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
 
-// namespace Reaktoro {
+namespace Reaktoro {
 
-// struct ReactiveTransportProfiler::Impl
-// {
-//     /// The collected results of the reactive transport time step calculations.
-//     std::deque<ReactiveTransportResult> results;
-// };
+struct ReactiveTransportProfiler::Impl
+{
+    /// The reference to the reactive transport solver.
+    const ReactiveTransportSolver& solver;
+
+    /// The collected results of the reactive transport time step calculations.
+    std::deque<ReactiveTransportResult> results;
+
+    /// The summary of the performance analysis of the operations in a reactive transport calculation.
+    ReactiveTransportProfilingSummary summary;
+
+    /// Construct an instance of ReactiveTransportProfiler::Impl.
+    Impl(const ReactiveTransportSolver& solver)
+    : solver(solver)
+    {
+    }
+
+    /// Update the profiler with a new reactive transport time step profiling data.
+    auto update() -> void
+    {
+        results.push_back(solver.result());
+
+        // summary.
+
+
+    }
+
+    // /// Return a summary of the performance analysis of the operations in a reactive transport calculation.
+    // auto summary() const -> ReactiveTransportProfilingSummary
+    // {
+
+    //     ReactiveTransportProfilingSummary sum;
+
+    //     sum
+    // }
+};
+
+
+ReactiveTransportProfiler::ReactiveTransportProfiler(const ReactiveTransportSolver& solver)
+: pimpl(new Impl(solver))
+{}
+
+ReactiveTransportProfiler::ReactiveTransportProfiler(const ReactiveTransportProfiler& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+ReactiveTransportProfiler::~ReactiveTransportProfiler()
+{}
+
+auto ReactiveTransportProfiler::operator=(ReactiveTransportProfiler other) -> ReactiveTransportProfiler&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
+
+auto ReactiveTransportProfiler::update() -> void
+{
+    pimpl->update();
+}
+
+auto ReactiveTransportProfiler::summary() const -> ReactiveTransportProfilingSummary
+{
+    return pimpl->summary;
+}
+
+auto ReactiveTransportProfiler::results() const -> const std::deque<ReactiveTransportResult>&
+{
+    return pimpl->results;
+}
+
 
 // /// Implementation of a ReactiveTranportProfiler that collects information accumulated during the reactive transport
 // ReactiveTransportProfiler::ReactiveTransportProfiler(
@@ -236,4 +300,4 @@
 //     datafile.close();
 // }
 
-// } // namespace Reaktoro
+} // namespace Reaktoro

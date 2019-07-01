@@ -17,6 +17,9 @@
 
 #pragma once
 
+// C++ includes
+#include <string>
+
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 
@@ -54,14 +57,17 @@ struct SmartEquilibriumTiming
 
     /// The time spent for the acceptance test during a smart estimation.
     double estimate_acceptance = 0.0;
+
+    /// Self addition of another SmartEquilibriumTiming instance to this one.
+    auto operator+=(const SmartEquilibriumTiming& other) -> SmartEquilibriumTiming&;
 };
 
 /// A type used to define the result status of a smart estimation operation in a smart equilibrium calculation.
 /// @see SmartEquilibriumResult
 struct SmartEquilibriumResultDuringEstimate
 {
-    /// The boolean flag that indicates if the smart estimation operation was successful.
-    bool successful = false;
+    /// The indication whether the smart equilibrium estimate was accepted.
+    bool accepted = false;
 
     /// The name of the species that caused the smart approximation to fail.
     std::string failed_with_species;

@@ -15,22 +15,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "EquilibriumResult.hpp"
+#include "SmartEquilibriumResult.hpp"
 
 namespace Reaktoro {
 
-auto EquilibriumTiming::operator+=(const EquilibriumTiming& other) -> EquilibriumTiming&
+auto SmartEquilibriumTiming::operator+=(const SmartEquilibriumTiming& other) -> SmartEquilibriumTiming&
 {
     solve += other.solve;
-    standard_thermodynamic_properties += other.standard_thermodynamic_properties;
-    chemical_properties += other.chemical_properties;
-    return *this;
-}
-
-auto EquilibriumResult::operator+=(const EquilibriumResult& other) -> EquilibriumResult&
-{
-    timing += other.timing;
-    optimum += other.optimum;
+    learning += other.learning;
+    learning_gibbs_energy_minimization += other.learning_gibbs_energy_minimization;
+    learning_chemical_properties += other.learning_chemical_properties;
+    learning_sensitivity_matrix += other.learning_sensitivity_matrix;
+    learning_storage += other.learning_storage;
+    estimate += other.estimate;
+    estimate_search += other.estimate_search;
+    estimate_mat_vec_mul += other.estimate_mat_vec_mul;
+    estimate_acceptance += other.estimate_acceptance;
     return *this;
 }
 

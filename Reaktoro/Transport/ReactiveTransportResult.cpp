@@ -1,7 +1,5 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2018 Allan Leal
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -15,22 +13,15 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "EquilibriumResult.hpp"
+#include "ReactiveTransportResult.hpp"
 
 namespace Reaktoro {
 
-auto EquilibriumTiming::operator+=(const EquilibriumTiming& other) -> EquilibriumTiming&
+auto ReactiveTransportTiming::operator+=(const ReactiveTransportTiming& other) -> ReactiveTransportTiming&
 {
-    solve += other.solve;
-    standard_thermodynamic_properties += other.standard_thermodynamic_properties;
-    chemical_properties += other.chemical_properties;
-    return *this;
-}
-
-auto EquilibriumResult::operator+=(const EquilibriumResult& other) -> EquilibriumResult&
-{
-    timing += other.timing;
-    optimum += other.optimum;
+    step += other.step;
+    transport += other.transport;
+    equilibrium += other.equilibrium;
     return *this;
 }
 

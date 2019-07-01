@@ -28,6 +28,7 @@ void exportEquilibriumResult(py::module& m)
         .def_readwrite("solve", &EquilibriumTiming::solve)
         .def_readwrite("standard_thermodynamic_properties", &EquilibriumTiming::standard_thermodynamic_properties)
         .def_readwrite("chemical_properties", &EquilibriumTiming::chemical_properties)
+        .def(py::self += py::self)
         ;
 
     py::class_<EquilibriumResult>(m, "EquilibriumResult")

@@ -322,8 +322,8 @@ struct SmartEquilibriumSolver::Impl
         n.noalias() = abs(n); // TODO: this mirroring should be replaced by setting a very small mole amount for negative small amounts
         state.setSpeciesAmounts(n);
 
-        // Set the estimate status to success
-        result.estimate.successful = true;
+        // Set the estimate accepted status to true
+        result.estimate.accepted = true;
     }
 
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
@@ -337,7 +337,7 @@ struct SmartEquilibriumSolver::Impl
         timeit( estimate(state, T, P, be); ) >> result.timing.estimate;
 
         // Perform a learning step if the smart prediction is not sactisfatory
-        if(!result.estimate.successful)
+        if(!result.estimate.accepted)
             timeit( learn(state, T, P, be); ) >> result.timing.learning;
 
         toc() >> result.timing.solve;

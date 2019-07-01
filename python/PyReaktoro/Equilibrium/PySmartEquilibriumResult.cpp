@@ -35,10 +35,11 @@ void exportSmartEquilibriumResult(py::module& m)
         .def_readwrite("estimate_search", &SmartEquilibriumTiming::estimate_search)
         .def_readwrite("estimate_mat_vec_mul", &SmartEquilibriumTiming::estimate_mat_vec_mul)
         .def_readwrite("estimate_acceptance", &SmartEquilibriumTiming::estimate_acceptance)
+        .def(py::self += py::self)
         ;
 
     py::class_<SmartEquilibriumResultDuringEstimate>(m, "SmartEquilibriumResultDuringEstimate")
-        .def_readwrite("successful", &SmartEquilibriumResultDuringEstimate::successful)
+        .def_readwrite("accepted", &SmartEquilibriumResultDuringEstimate::accepted)
         .def_readwrite("failed_with_species", &SmartEquilibriumResultDuringEstimate::failed_with_species)
         .def_readwrite("failed_with_amount", &SmartEquilibriumResultDuringEstimate::failed_with_amount)
         .def_readwrite("failed_with_chemical_potential", &SmartEquilibriumResultDuringEstimate::failed_with_chemical_potential)
