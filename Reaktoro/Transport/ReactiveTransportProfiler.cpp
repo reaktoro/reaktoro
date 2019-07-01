@@ -22,6 +22,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/OutputUtils.hpp>
 #include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
 
 namespace Reaktoro {
@@ -48,9 +49,37 @@ struct ReactiveTransportProfiler::Impl
     {
         results.push_back(solver.result());
 
-        // summary.
+        const auto& last = results.back();
 
+        // Accummulate the timings for each fluid element transport calculation in the last time step.
+        for(const auto& item : last.transport_of_element)
+            summary.timing.transport += item.timing;
 
+        // Accummulate the timings for each cell chemical equilibrium calculation in the last time step.
+        for(const auto& item : last.equilibrium_at_cell)
+            summary.timing.equilibrium += item.timing;
+
+        // Accummulate the timings for each cell smart chemical equilibrium calculation in the last time step.
+        for(const auto& item : last.smart_equilibrium_at_cell)
+            summary.timing.smart_equilibrium += item.timing;
+
+        // Accummulate the timings for the main operations in the last reactive transport step calculation.
+        summary.timing.reactive_transport += last.timing;
+
+        // Update the counting of chemical equilibrium calculations
+        summary.num_equilibrium_calculations += last.equilibrium_at_cell.size();
+
+        // Update the counting of accepted smart equilibrium estimates
+        for(const auto& item : last.smart_equilibrium_at_cell)
+            if(item.estimate.accepted) ++summary.num_smart_equilibrium_accepted_estimates;
+            else ++summary.num_smart_equilibrium_required_learnings;
+
+        /// Update the success rate at which smart equilibrium estimates were accepted.
+        summary.smart_equilibrium_estimate_acceptance_rate =
+            summary.num_smart_equilibrium_accepted_estimates / summary.num_equilibrium_calculations;
+
+        /// The indication whether a smart equilibrium estimate was accepted at a cell in a time step.
+        std::vector<std::vector<bool>> smart_equilibrium_estimate_accepted_in_step_at_cell;
     }
 
     // /// Return a summary of the performance analysis of the operations in a reactive transport calculation.
@@ -96,6 +125,46 @@ auto ReactiveTransportProfiler::results() const -> const std::deque<ReactiveTran
     return pimpl->results;
 }
 
+auto operator<<(std::ostream& out, const ReactiveTransportProfiler::SmartEquilibriumProfiling& smartprof) -> std::ostream&
+{
+    out << "# num_equilibrium_calculations               = " << smartprof.num_equilibrium_calculations << std::endl;
+    out << "# num_smart_equilibrium_accepted_estimates   = " << smartprof.num_smart_equilibrium_accepted_estimates << std::endl;
+    out << "# num_smart_equilibrium_required_learnings   = " << smartprof.num_smart_equilibrium_required_learnings << std::endl;
+    out << "# smart_equilibrium_estimate_acceptance_rate = " << smartprof.smart_equilibrium_estimate_acceptance_rate * 100 << "%" << std::endl;
+    out << "# smart_equilibrium_estimate_accepted_in_step_at_cell = \n" << smartprof.smart_equilibrium_estimate_accepted_in_step_at_cell << std::endl;
+}
+
+auto operator<<(std::ostream& out, const ReactiveTransportProfiler::ComputingCostsPerTimeStep& costs) -> std::ostream&
+{
+    // Print the names of the collected computing costs in the header
+    out << "t" << ",";
+    out << "transport" << ",";
+    out << "equilibrium" << ",";
+    out << "smart_equilibrium" << ",";
+    out << "smart_equilibrium_with_ideal_search" << ",";
+    out << "smart_equilibrium_estimate" << ",";
+    out << "smart_equilibrium_nearest_neighbor_search" << ",";
+    out << "smart_equilibrium_gibbs_energy_minimization" << ",";
+    out << "smart_equilibrium_storage";
+    out << std::endl;
+
+    // Print the values of the collected computing costs in each subsequent row
+    for(std::size_t i = 0; i < costs.t.size(); ++i)
+    {
+        out << costs.t[i] << ",";
+        out << costs.transport[i] << ",";
+        out << costs.equilibrium[i] << ",";
+        out << costs.smart_equilibrium[i] << ",";
+        out << costs.smart_equilibrium_with_ideal_search[i] << ",";
+        out << costs.smart_equilibrium_estimate[i] << ",";
+        out << costs.smart_equilibrium_nearest_neighbor_search[i] << ",";
+        out << costs.smart_equilibrium_gibbs_energy_minimization[i] << ",";
+        out << costs.smart_equilibrium_storage[i];
+        out << std::endl;
+    }
+
+    return out;
+}
 
 // /// Implementation of a ReactiveTranportProfiler that collects information accumulated during the reactive transport
 // ReactiveTransportProfiler::ReactiveTransportProfiler(
