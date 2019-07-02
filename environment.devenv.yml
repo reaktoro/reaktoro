@@ -11,6 +11,7 @@ dependencies:
   - ninja
   - numpy
   - pandas
+  - pip
   - pip:
     - sphinx
     - sphinx-autobuild

@@ -432,7 +432,7 @@ struct Database::Impl
             std::string builtin = database(filename);
 
             // If not empty, use the built-in database to create the xml doc
-            if(!builtin.empty()) result = doc.load(builtin.c_str());
+            if(!builtin.empty()) result = doc.load_string(builtin.c_str());
         }
 
         // Ensure either a database file path was correctly given, or a built-in database
