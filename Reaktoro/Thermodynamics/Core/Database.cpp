@@ -23,7 +23,6 @@
 #include <set>
 #include <string>
 #include <vector>
-#include <fstream>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
