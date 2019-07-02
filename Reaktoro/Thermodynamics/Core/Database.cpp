@@ -431,10 +431,9 @@ struct Database::Impl
         {
             // Search for a built-in database
             std::string builtin = database(filename);
-            std::ifstream stream(builtin);
 
             // If not empty, use the built-in database to create the xml doc
-            if(!builtin.empty()) result = doc.load(stream);
+            if(!builtin.empty()) result = doc.load_string(builtin.c_str());
         }
 
         // Ensure either a database file path was correctly given, or a built-in database
