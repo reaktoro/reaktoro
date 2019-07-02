@@ -5,7 +5,7 @@ name: reaktoro
 {% set python_version = os.environ.get("PY_VER", "3.7") %}
 
 dependencies:
-  - boost=1.67
+  - boost=1.70
   - cmake>=3.13
   - invoke
   - ninja
@@ -17,6 +17,7 @@ dependencies:
     - sphinx_rtd_theme
     - sphinxcontrib-images
   - pugixml
+  - pybind11=2.3.0
   - pytest
   - pytest-cpp
   - pytest-datadir

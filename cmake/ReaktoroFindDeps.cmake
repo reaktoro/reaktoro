@@ -8,7 +8,7 @@ if(REAKTORO_BUILD_PYTHON)
         find_package(PythonInterp REQUIRED) # PYTHON_EXECUTABLE gets set here
     endif()
 
-    find_package(pybind11 REQUIRED HINTS ${PROJECT_SOURCE_DIR}/thirdparty/pybind11)
+    find_package(pybind11 REQUIRED)
 
     if(NOT pybind11_FOUND)
         message(WARNING "Could not find pybind11 - the Python module `reaktoro` will not be built.")
@@ -18,4 +18,3 @@ if(REAKTORO_BUILD_PYTHON)
     endif()
 
 endif()
-
