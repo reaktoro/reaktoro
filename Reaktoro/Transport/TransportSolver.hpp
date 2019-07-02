@@ -96,6 +96,9 @@ public:
     /// Return the mesh.
     auto mesh() const -> const Mesh&;
 
+    /// Return the last time step length used.
+    auto timeStep() const -> double;
+
 private:
     struct Impl;
 

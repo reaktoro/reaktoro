@@ -90,6 +90,9 @@ public:
     /// Return the chemical system used in the reactive transport solver.
     auto system() const -> const ChemicalSystem&;
 
+    /// Return the last time step length used.
+    auto timeStep() const -> double;
+
 private:
     struct Impl;
 

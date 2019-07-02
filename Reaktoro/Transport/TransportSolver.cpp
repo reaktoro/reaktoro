@@ -329,6 +329,11 @@ auto TransportSolver::mesh() const -> const Mesh&
     return pimpl->mesh;
 }
 
+auto TransportSolver::timeStep() const -> double
+{
+    return pimpl->dt;
+}
+
 //auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 //{
 //    // TODO: Implement Kurganov-Tadmor method as detailed in their 2000 paper (not as in Wikipedia)

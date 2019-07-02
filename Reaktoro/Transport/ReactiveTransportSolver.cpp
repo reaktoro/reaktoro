@@ -304,11 +304,6 @@ auto ReactiveTransportSolver::setTimeStep(double val) -> void
     pimpl->setTimeStep(val);
 }
 
-auto ReactiveTransportSolver::system() const -> const ChemicalSystem&
-{
-    return pimpl->system_;
-}
-
 auto ReactiveTransportSolver::output() -> ChemicalOutput
 {
     return pimpl->output();
@@ -327,6 +322,16 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> ReactiveTransportRes
 auto ReactiveTransportSolver::result() const -> const ReactiveTransportResult&
 {
     return pimpl->result;
+}
+
+auto ReactiveTransportSolver::system() const -> const ChemicalSystem&
+{
+    return pimpl->system_;
+}
+
+auto ReactiveTransportSolver::timeStep() const -> double
+{
+    return pimpl->transport_solver.timeStep();
 }
 
 } // namespace Reaktoro
