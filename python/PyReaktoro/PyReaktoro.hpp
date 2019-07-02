@@ -118,6 +118,7 @@ void exportTransportOptions(py::module& m);
 void exportTransportResult(py::module& m);
 void exportTransportSolver(py::module& m);
 void exportReactiveTransportOptions(py::module& m);
+void exportReactiveTransportProfiler(py::module& m);
 void exportReactiveTransportResult(py::module& m);
 void exportReactiveTransportSolver(py::module& m);
 

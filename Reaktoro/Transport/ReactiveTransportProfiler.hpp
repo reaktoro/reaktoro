@@ -31,64 +31,10 @@ namespace Reaktoro {
 // Forward declarations
 class ReactiveTransportSolver;
 
-/// Provide an accumulated account of the timings of operations in a reactive transport calculation.
-struct ReactiveTransportProfilingAccumulatedTiming
-{
-    /// The accumulated timing for the operations during reactive transport calculations.
-    ReactiveTransportTiming reactive_transport;
-
-    /// The accumulated timing for the operations during fluid element transport calculations.
-    TransportTiming transport;
-
-    /// The accumulated timing for the operations during equilibrium calculations.
-    EquilibriumTiming equilibrium;
-
-    /// The accumulated timing for the operations during smart equilibrium calculations.
-    SmartEquilibriumTiming smart_equilibrium;
-};
-
-/// Provide a summary of the performance analysis of the operations in a reactive transport calculation.
-struct ReactiveTransportProfilingSummary
-{
-    /// The accumulated timing for the operations during reactive transport calculations.
-    ReactiveTransportProfilingAccumulatedTiming timing;
-
-    /// The total number of chemical equilibrium calculations.
-    Index num_equilibrium_calculations = 0;
-
-    /// The total number of accepted smart chemical equilibrium estimates.
-    Index num_smart_equilibrium_accepted_estimates = 0;
-
-    /// The total number of required smart chemical equilibrium trainings.
-    Index num_smart_equilibrium_required_learnings = 0;
-
-    /// The success rate at which smart equilibrium estimates were accepted.
-    double smart_equilibrium_estimate_acceptance_rate = 0.0;
-
-    /// The indication whether a smart equilibrium estimate was accepted at a cell in a time step.
-    std::vector<std::vector<bool>> smart_equilibrium_estimate_accepted_in_step_at_cell;
-};
-
 /// Provide mechanisms for analysing accumulated profiling/results of a reactive transport calculation.
 class ReactiveTransportProfiler
 {
 public:
-    /// Provide accumulated timing information of the operations in a reactive transport calculation.
-    struct AccumulatedTiming
-    {
-        /// The accumulated timing for the operations during reactive transport calculations.
-        ReactiveTransportTiming reactive_transport;
-
-        /// The accumulated timing for the operations during fluid element transport calculations.
-        TransportTiming transport;
-
-        /// The accumulated timing for the operations during equilibrium calculations.
-        EquilibriumTiming equilibrium;
-
-        /// The accumulated timing for the operations during smart equilibrium calculations.
-        SmartEquilibriumTiming smart_equilibrium;
-    };
-
     /// Provide accumulated timing information in each time step for the operations in a reactive transport calculation.
     struct ComputingCostsPerTimeStep
     {
@@ -120,7 +66,7 @@ public:
         std::vector<double> smart_equilibrium_storage;
     };
 
-    /// Provide a summary of the performance analysis of the operations in a reactive transport calculation.
+    /// Provide a summary of the performance analysis of the smart equilibrium operations in a reactive transport calculation.
     struct SmartEquilibriumProfiling
     {
         /// The accumulated timing for the operations during smart equilibrium calculations.
@@ -138,8 +84,8 @@ public:
         /// The success rate at which smart equilibrium estimates were accepted.
         double smart_equilibrium_estimate_acceptance_rate = 0.0;
 
-        /// The indication whether a smart equilibrium estimate was accepted at a cell in a time step.
-        std::vector<std::vector<bool>> smart_equilibrium_estimate_accepted_in_step_at_cell;
+        /// The indices of the cell at each time step where learning was required.
+        std::vector<std::vector<Index>> cells_where_learning_was_required_at_step;
     };
 
     /// Construct a default instance of ReactiveTransportProfiler.
@@ -157,17 +103,17 @@ public:
     /// Update the profiler with a new reactive transport time step profiling data.
     auto update() -> void;
 
-    /// Return a summary of the performance analysis of the operations in a reactive transport calculation.
-    auto summary() const -> ReactiveTransportProfilingSummary;
+    /// Return the computing costs of all operations during a reactive transport calculation.
+    auto computingCostsPerTimeStep() const -> ComputingCostsPerTimeStep;
+
+    /// Return a summary of the performance analysis of the smart equilibrium operations in a reactive transport calculation.
+    auto smartEquilibriumProfiling() const -> SmartEquilibriumProfiling;
+
+    /// Output the complete analysis of the performance of reactive transport simulation.
+    auto output(std::string filename) -> void;
 
     /// Return all collected results of the reactive transport calculations.
     auto results() const -> const std::deque<ReactiveTransportResult>&;
-
-    /// Output the computing costs (in seconds) of transport, equilibrium cost (in sec)
-    auto outputComputingTimingCosts(std::string filename) -> void;
-
-    /// Output the computing costs (in seconds) of all operations during a reactive transport calculation.
-    auto outputComputingCostsPerTimeStep(std::string filename) -> void;
 
 private:
     struct Impl;

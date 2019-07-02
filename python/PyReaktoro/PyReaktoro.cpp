@@ -108,6 +108,7 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportChemicalField(m);
     exportMesh(m);
     exportReactiveTransportOptions(m);
+    exportReactiveTransportProfiler(m);
     exportReactiveTransportResult(m);
     exportReactiveTransportSolver(m);
     exportTransportOptions(m);
