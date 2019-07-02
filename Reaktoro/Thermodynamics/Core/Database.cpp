@@ -23,6 +23,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <fstream>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
@@ -430,9 +431,10 @@ struct Database::Impl
         {
             // Search for a built-in database
             std::string builtin = database(filename);
+            std::ifstream stream(builtin);
 
             // If not empty, use the built-in database to create the xml doc
-            if(!builtin.empty()) result = doc.load(builtin.c_str());
+            if(!builtin.empty()) result = doc.load(stream);
         }
 
         // Ensure either a database file path was correctly given, or a built-in database
