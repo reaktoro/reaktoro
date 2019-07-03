@@ -616,35 +616,31 @@ struct Database::Impl
         {
             std::string type = node.child("Type").text().get();
             std::string name = node.child("Name").text().get();
-            if (type == "Gaseous-liquid" || type == "Liquid-gaseous")
-            {
-                GaseousSpecies species_gas = parseFluidSpecies<GaseousSpecies>(node);
+            if (type == "Gaseous")
+			{
                 LiquidSpecies species_liq = parseFluidSpecies<LiquidSpecies>(node);
-                if (species_gas.name().find("(g)") == std::string::npos && species_liq.name().find("(liq)") == std::string::npos)
+                GaseousSpecies species_gas = parseFluidSpecies<GaseousSpecies>(node);
+                if (valid(species_gas))
                 {
-                    if (valid(species_gas))
-                        gaseous_species_map[species_gas.name()] = species_gas;
-                    if (valid(species_liq))
-                        liquid_species_map[species_liq.name()] = species_liq;
-                }
-            }
-            else if (type == "Liquid")
-			{
-                LiquidSpecies species = parseFluidSpecies<LiquidSpecies>(node);
-                if (species.name().find("(liq)") != std::string::npos)
-                {
-                    if (valid(species))
-                        liquid_species_map[species.name()] = species;
-                }
-			} 
-            else if (type == "Gaseous")
-			{
-                GaseousSpecies species = parseFluidSpecies<GaseousSpecies>(node);
-                if (species.name().find("(g)") != std::string::npos)
-                {
-                    if (valid(species))
-                        gaseous_species_map[species.name()] = species;
-                }
+                    auto gas_name = species_gas.name();
+                    if (name.find("(g)") != std::string::npos)
+                    {
+                        auto gas_name = name;
+                        auto liq_name = name.substr(0, name.size() - 3) + "(liq)";
+                        species_liq.setName(liq_name);
+                        gaseous_species_map[gas_name] = species_gas;
+                        liquid_species_map[liq_name] = species_liq;
+                    }
+                    else
+                    {
+                        auto gas_name = name + "(g)";
+                        auto liq_name = name + "(liq)";
+                        species_liq.setName(liq_name);
+                        species_gas.setName(gas_name);
+                        gaseous_species_map[gas_name] = species_gas;
+                        liquid_species_map[liq_name] = species_liq;
+                    }
+                }   
 			}
             else if (type == "Aqueous")
             {
