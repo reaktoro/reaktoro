@@ -31,8 +31,9 @@
 #include <Reaktoro/Reaktoro.hpp>
 
 using namespace Reaktoro;
-struct Params{
 
+struct Params
+{
     // Discretisation params
     int ncells; // the number of cells in the spacial discretization
     int nsteps; // the number of steps in the reactive transport simulation
@@ -55,24 +56,41 @@ struct Params{
 
 };
 
+struct Results
+{
+    /// Total CPU time required by smart equilibrium scheme
+    double smart_total;
+
+    /// Total CPU time required by smart equilibrium scheme
+    /// excluding the costs for the search of the closest reference states.
+    double smart_total_ideal_search;
+
+    /// Total CPU time required by smart equilibrium scheme
+    /// excluding the costs for the search and storage of the closest reference states.
+    double smart_total_ideal_search_store;
+
+    /// Total CPU time required by conventional equilibrium scheme
+    double conv_total;
+};
+
 /// Forward declaration
-auto mkdir(const std::string & folder) -> bool;
-auto outputConsole(const Params & params) -> void;
-auto makeResultsFolder(const Params & params) -> std::string;
-auto runReactiveTransport(const Params & params, Results& results) -> void;
+auto mkdir(const std::string& folder) -> bool;
+auto outputConsole(const Params& params) -> void;
+auto makeResultsFolder(const Params& params) -> std::string;
+auto runReactiveTransport(const Params& params, Results& results) -> void;
 
 int main()
 {
     Time start;
 
     // Step 1: Initialise auxiliary time-related constants
-    int second(1);
-    int minute(60);
-    int hour(60 * minute);
-    int day(24 * hour);
-    int week(7 * day);
-    int month(30 * day);
-    int year(365 * day);
+    int second = 1;
+    int minute = 60;
+    int hour = 60 * minute;
+    int day = 24 * hour;
+    int week = 7 * day;
+    int month = 30 * day;
+    int year = 365 * day;
 
     // Step 2: Define parameters for the reactive transport simulation
     Params params;
@@ -125,22 +143,23 @@ int main()
 
     return 0;
 }
-auto runReactiveTransport(const Params & params, Results & results) -> void
+auto runReactiveTransport(const Params& params, Results& results) -> void
 {
-
     // Step **: Create the results folder
     auto folder = makeResultsFolder(params);
 
-    // Step **: Define chemical equilibrium options
-    EquilibriumOptions options;
-    options.smart.reltol = params.smart_reltol;
-    options.smart.abstol = params.smart_abstol;
-    options.track_statistics = params.track_statistics;
+    // Step **: Define chemical equilibrium solver options
+    EquilibriumOptions equilibrium_options;
+
+    // Step **: Define smart chemical equilibrium solver options
+    SmartEquilibriumOptions smart_equilibrium_options;
+    smart_equilibrium_options.reltol = params.smart_reltol;
+    smart_equilibrium_options.abstol = params.smart_abstol;
 
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
     // Default chemical model (HKF extended Debye-Hückel model)
-    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
+    // editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
     // Create aqueous phase with all possible elements
     // Set a chemical model of the phase with the Pitzer equation of state
     // With an exception for the CO2, for which Drummond model is set
@@ -192,17 +211,21 @@ auto runReactiveTransport(const Params & params, Results & results) -> void
     // Step **: Create a chemical field object with every cell having state given by state_ic
     ChemicalField field(mesh.numCells(), state_ic);
 
+    // Step **: Define the options for the reactive transport solver
+    ReactiveTransportOptions reactive_transport_options;
+    reactive_transport_options.use_smart_equilibrium_solver = params.is_smart_solver;
+    reactive_transport_options.equilibrium = equilibrium_options;
+    reactive_transport_options.smart_equilibrium = smart_equilibrium_options;
+
     // Step **: Define the reactive transport modeling
     ReactiveTransportSolver rtsolver(system);
-    rtsolver.options.smart = params.is_smart_solver;
-    rtsolver.options.profiling = params.track_statistics;
+    rtsolver.setOptions(reactive_transport_options);
     rtsolver.setMesh(mesh);
     rtsolver.setVelocity(params.v);
     rtsolver.setDiffusionCoeff(params.D);
     rtsolver.setBoundaryState(state_bc);
     rtsolver.setTimeStep(params.dt);
     rtsolver.initialize();
-    rtsolver.setEquilibriumOptions(options);
 
     // Step **: Define the quantities that should be output for every cell, every time step
     ChemicalOutput output(rtsolver.output());
@@ -217,33 +240,36 @@ auto runReactiveTransport(const Params & params, Results & results) -> void
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create result
-    ReactiveTransportProfiler profiler(folder, "profiling", params.is_smart_solver);
-    ReactiveTransportResult rt_result(params.ncells, params.nsteps, params.is_smart_solver);
+    ReactiveTransportProfiler profiler(rtsolver);
 
     // Step **: Set initial time and counter of steps in time
-    double t(0.0);
-    int step(0);
+    double t = 0.0;
+    int step = 0;
 
     // Reactive transport simulations in the cycle
-    while (step < params.nsteps){
-
+    while (step < params.nsteps)
+    {
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
         // std::unique_ptr<
-        rtsolver.step(field, rt_result);
-        profiler.process(rt_result);
-        profiler.output(step);
+        rtsolver.step(field);
+
+        // Update the profiler after every call to step method
+        profiler.update();
 
         // Increment time step and number of time steps
         t += params.dt;
+
         step += 1;
     }
 
     // Step **: Output the total time of the simulations
-    profiler.summarize(results);
+    profiler.output();
+
+    results.conv_total = pro
 }
 
 /// Make directory for Windows and Linux
-auto mkdir(const std::string & folder) -> bool
+auto mkdir(const std::string& folder) -> bool
 {
 #if defined _WIN32
     // Replace slash by backslash
@@ -257,7 +283,7 @@ auto mkdir(const std::string & folder) -> bool
 }
 
 /// Create results file with parameters of the test
-auto makeResultsFolder(const Params & params) -> std::string
+auto makeResultsFolder(const Params& params) -> std::string
 {
     struct stat status = {0};               // structure to get the file status
 
@@ -280,7 +306,7 @@ auto makeResultsFolder(const Params & params) -> std::string
     return folder;
 }
 
-auto outputConsole(const Params & params) -> void {
+auto outputConsole(const Params& params) -> void {
 
     // Log the parameters in the console
     std::cout << "dt      : " << params.dt << std::endl;
