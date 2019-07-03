@@ -41,7 +41,10 @@ namespace Reaktoro {
 
 	LiquidPhase::LiquidPhase()
 		: Phase(), pimpl(new Impl())
-	{}
+	{
+        setName("Liquid");
+        setType(PhaseType::Liquid);
+    }
 
 	LiquidPhase::LiquidPhase(const LiquidMixture& mixture)
 		: pimpl(new Impl(mixture))

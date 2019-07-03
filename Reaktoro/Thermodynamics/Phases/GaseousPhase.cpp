@@ -44,7 +44,10 @@ struct GaseousPhase::Impl
 
 GaseousPhase::GaseousPhase()
 : Phase(), pimpl(new Impl())
-{}
+{
+    setName("Gaseous");
+    setType(PhaseType::Gas);
+}
 
 GaseousPhase::GaseousPhase(const GaseousMixture& mixture)
 : pimpl(new Impl(mixture))
