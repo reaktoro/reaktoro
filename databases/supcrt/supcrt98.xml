@@ -5749,30 +5749,6 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CH4(oil)</Name>
-    <Formula>CH4</Formula>
-    <Elements>C(1)H(4)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">16.04246</MolarMass>
-    <Gas>Methane</Gas>
-    <CriticalTemperature units="K">190.6</CriticalTemperature>
-    <CriticalPressure units="bar">45.99</CriticalPressure>
-    <AcentricFactor>0.012</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
     <Name>C2H6(g)</Name>
     <Formula>C2H6</Formula>
     <Elements>C(2)H(6)</Elements>
@@ -5894,30 +5870,6 @@
   </Species>
   <Species>
     <Name>H2O(g)</Name>
-    <Formula>H2O</Formula>
-    <Elements>H(2)O(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">18.01528</MolarMass>
-    <Gas>Steam</Gas>
-    <CriticalTemperature units="K">647.1</CriticalTemperature>
-    <CriticalPressure units="bar">220.55</CriticalPressure>
-    <AcentricFactor>0.345</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>17</References>
-        <Date>24.Mar.90</Date>
-        <Gf units="cal/mol">-54524.8</Gf>
-        <Hf units="cal/mol">-57935.1</Hf>
-        <Sr units="cal/(mol*K)">44.763</Sr>
-        <a units="cal/(mol*K)">12.6647</a>
-        <b units="cal/(mol*K^2)">-0.0104041</b>
-        <c units="(cal*K)/mol">1307.8</c>
-        <Tmax units="K">2523.15</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>H2O(oil)</Name>
     <Formula>H2O</Formula>
     <Elements>H(2)O(1)</Elements>
     <Type>Gaseous</Type>
@@ -24620,366 +24572,6 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LampOil(oil)</Name>
-    <Formula>LampOil</Formula>
-    <Elements>LampOil(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">746</CriticalTemperature>
-    <CriticalPressure units="bar">13</CriticalPressure>
-    <AcentricFactor>0.812</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C1(oil)</Name>
-    <Formula>C1</Formula>
-    <Elements>C1(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">190.738889</CriticalTemperature>
-    <CriticalPressure units="bar">45.946663</CriticalPressure>
-    <AcentricFactor>0.0104</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C2(oil)</Name>
-    <Formula>C2</Formula>
-    <Elements>C2(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">305.511111</CriticalTemperature>
-    <CriticalPressure units="bar">48.71146</CriticalPressure>
-    <AcentricFactor>0.0979</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C3(oil)</Name>
-    <Formula>C3</Formula>
-    <Elements>C3(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">370.033333</CriticalTemperature>
-    <CriticalPressure units="bar">42.4717</CriticalPressure>
-    <AcentricFactor>0.1522</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C4(oil)</Name>
-    <Formula>C4</Formula>
-    <Elements>C4(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">425.344444</CriticalTemperature>
-    <CriticalPressure units="bar">36.397424</CriticalPressure>
-    <AcentricFactor>0.1852</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C5(oil)</Name>
-    <Formula>C5</Formula>
-    <Elements>C5(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">469.88889</CriticalTemperature>
-    <CriticalPressure units="bar">33.687784</CriticalPressure>
-    <AcentricFactor>0.2280</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C6(oil)</Name>
-    <Formula>C6</Formula>
-    <Elements>C6(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">512.778</CriticalTemperature>
-    <CriticalPressure units="bar">31.2333</CriticalPressure>
-    <AcentricFactor>0.2500</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C7(oil)</Name>
-    <Formula>C7</Formula>
-    <Elements>C7(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">644.4444</CriticalTemperature>
-    <CriticalPressure units="bar">19.6501</CriticalPressure>
-    <AcentricFactor>0.5200</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C1(g)</Name>
-    <Formula>C1</Formula>
-    <Elements>C1(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">190.738889</CriticalTemperature>
-    <CriticalPressure units="bar">45.946663</CriticalPressure>
-    <AcentricFactor>0.0104</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C2(g)</Name>
-    <Formula>C2</Formula>
-    <Elements>C2(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">305.511111</CriticalTemperature>
-    <CriticalPressure units="bar">48.71146</CriticalPressure>
-    <AcentricFactor>0.0979</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C3(g)</Name>
-    <Formula>C3</Formula>
-    <Elements>C3(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">370.033333</CriticalTemperature>
-    <CriticalPressure units="bar">42.4717</CriticalPressure>
-    <AcentricFactor>0.1522</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C4(g)</Name>
-    <Formula>C4</Formula>
-    <Elements>C4(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">425.344444</CriticalTemperature>
-    <CriticalPressure units="bar">36.397424</CriticalPressure>
-    <AcentricFactor>0.1852</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C5(g)</Name>
-    <Formula>C5</Formula>
-    <Elements>C5(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">469.88889</CriticalTemperature>
-    <CriticalPressure units="bar">33.687784</CriticalPressure>
-    <AcentricFactor>0.2280</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C6(g)</Name>
-    <Formula>C6</Formula>
-    <Elements>C6(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">512.778</CriticalTemperature>
-    <CriticalPressure units="bar">31.2333</CriticalPressure>
-    <AcentricFactor>0.2500</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C7(g)</Name>
-    <Formula>C7</Formula>
-    <Elements>C7(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">644.4444</CriticalTemperature>
-    <CriticalPressure units="bar">19.6501</CriticalPressure>
-    <AcentricFactor>0.5200</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
     <Name>LampOil(g)</Name>
     <Formula>LampOil</Formula>
     <Elements>LampOil(1)</Elements>
@@ -25004,50 +24596,170 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CO2(oil)</Name>
-    <Formula>CO2</Formula>
-    <Elements>C(1)O(2)</Elements>
+    <Name>C1(g)</Name>
+    <Formula>C1</Formula>
+    <Elements>C1(1)</Elements>
     <Type>Gaseous</Type>
-    <MolarMass units="g/mol">44.0095</MolarMass>
-    <Gas>Carbon-Dioxide</Gas>
-    <CriticalTemperature units="K">304.2</CriticalTemperature>
-    <CriticalPressure units="bar">73.83</CriticalPressure>
-    <AcentricFactor>0.224</AcentricFactor>
+    <MolarMass units="g/mol">252.48</MolarMass>
+    <Gas>C1</Gas>
+    <CriticalTemperature units="K">190.738889</CriticalTemperature>
+    <CriticalPressure units="bar">45.946663</CriticalPressure>
+    <AcentricFactor>0.0104</AcentricFactor>
     <Thermo>
       <HKF>
         <References>6,8</References>
-        <Date>27.Dec.89</Date>
-        <Gf units="cal/mol">-94254.0</Gf>
-        <Hf units="cal/mol">-94051.0</Hf>
-        <Sr units="cal/(mol*K)">51.085</Sr>
-        <a units="cal/(mol*K)">10.57</a>
-        <b units="cal/(mol*K^2)">0.0021</b>
-        <c units="(cal*K)/mol">-206000.0</c>
-        <Tmax units="K">2500.0</Tmax>
+        <Date>15.Dec.87</Date>
+        <Gf units="cal/mol">-12122.4</Gf>
+        <Hf units="cal/mol">-17880.0</Hf>
+        <Sr units="cal/(mol*K)">44.518</Sr>
+        <a units="cal/(mol*K)">5.65</a>
+        <b units="cal/(mol*K^2)">0.01144</b>
+        <c units="(cal*K)/mol">-46000.0</c>
+        <Tmax units="K">1500.0</Tmax>
       </HKF>
     </Thermo>
   </Species>
   <Species>
-    <Name>H2S(oil)</Name>
-    <Formula>H2S</Formula>
-    <Elements>H(2)S(1)</Elements>
+    <Name>C2(g)</Name>
+    <Formula>C2</Formula>
+    <Elements>C2(1)</Elements>
     <Type>Gaseous</Type>
-    <MolarMass units="g/mol">34.08088</MolarMass>
-    <Gas>Hydrogen-Sulfide</Gas>
-    <CriticalTemperature units="K">373.5</CriticalTemperature>
-    <CriticalPressure units="bar">89.63</CriticalPressure>
-    <AcentricFactor>0.094</AcentricFactor>
+    <MolarMass units="g/mol">252.48</MolarMass>
+    <Gas>C2</Gas>
+    <CriticalTemperature units="K">305.511111</CriticalTemperature>
+    <CriticalPressure units="bar">48.71146</CriticalPressure>
+    <AcentricFactor>0.0979</AcentricFactor>
     <Thermo>
       <HKF>
         <References>6,8</References>
-        <Date>27.Dec.89</Date>
-        <Gf units="cal/mol">-8021.0</Gf>
-        <Hf units="cal/mol">-4931.0</Hf>
-        <Sr units="cal/(mol*K)">49.185</Sr>
-        <a units="cal/(mol*K)">7.81</a>
-        <b units="cal/(mol*K^2)">0.00296</b>
+        <Date>15.Dec.87</Date>
+        <Gf units="cal/mol">-12122.4</Gf>
+        <Hf units="cal/mol">-17880.0</Hf>
+        <Sr units="cal/(mol*K)">44.518</Sr>
+        <a units="cal/(mol*K)">5.65</a>
+        <b units="cal/(mol*K^2)">0.01144</b>
         <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">2300.0</Tmax>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>C3(g)</Name>
+    <Formula>C3</Formula>
+    <Elements>C3(1)</Elements>
+    <Type>Gaseous</Type>
+    <MolarMass units="g/mol">252.48</MolarMass>
+    <Gas>C3</Gas>
+    <CriticalTemperature units="K">370.033333</CriticalTemperature>
+    <CriticalPressure units="bar">42.4717</CriticalPressure>
+    <AcentricFactor>0.1522</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>6,8</References>
+        <Date>15.Dec.87</Date>
+        <Gf units="cal/mol">-12122.4</Gf>
+        <Hf units="cal/mol">-17880.0</Hf>
+        <Sr units="cal/(mol*K)">44.518</Sr>
+        <a units="cal/(mol*K)">5.65</a>
+        <b units="cal/(mol*K^2)">0.01144</b>
+        <c units="(cal*K)/mol">-46000.0</c>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>C4(g)</Name>
+    <Formula>C4</Formula>
+    <Elements>C4(1)</Elements>
+    <Type>Gaseous</Type>
+    <MolarMass units="g/mol">252.48</MolarMass>
+    <Gas>C4</Gas>
+    <CriticalTemperature units="K">425.344444</CriticalTemperature>
+    <CriticalPressure units="bar">36.397424</CriticalPressure>
+    <AcentricFactor>0.1852</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>6,8</References>
+        <Date>15.Dec.87</Date>
+        <Gf units="cal/mol">-12122.4</Gf>
+        <Hf units="cal/mol">-17880.0</Hf>
+        <Sr units="cal/(mol*K)">44.518</Sr>
+        <a units="cal/(mol*K)">5.65</a>
+        <b units="cal/(mol*K^2)">0.01144</b>
+        <c units="(cal*K)/mol">-46000.0</c>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>C5(g)</Name>
+    <Formula>C5</Formula>
+    <Elements>C5(1)</Elements>
+    <Type>Gaseous</Type>
+    <MolarMass units="g/mol">252.48</MolarMass>
+    <Gas>C5</Gas>
+    <CriticalTemperature units="K">469.88889</CriticalTemperature>
+    <CriticalPressure units="bar">33.687784</CriticalPressure>
+    <AcentricFactor>0.2280</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>6,8</References>
+        <Date>15.Dec.87</Date>
+        <Gf units="cal/mol">-12122.4</Gf>
+        <Hf units="cal/mol">-17880.0</Hf>
+        <Sr units="cal/(mol*K)">44.518</Sr>
+        <a units="cal/(mol*K)">5.65</a>
+        <b units="cal/(mol*K^2)">0.01144</b>
+        <c units="(cal*K)/mol">-46000.0</c>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>C6(g)</Name>
+    <Formula>C6</Formula>
+    <Elements>C6(1)</Elements>
+    <Type>Gaseous</Type>
+    <MolarMass units="g/mol">252.48</MolarMass>
+    <Gas>C6</Gas>
+    <CriticalTemperature units="K">512.778</CriticalTemperature>
+    <CriticalPressure units="bar">31.2333</CriticalPressure>
+    <AcentricFactor>0.2500</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>6,8</References>
+        <Date>15.Dec.87</Date>
+        <Gf units="cal/mol">-12122.4</Gf>
+        <Hf units="cal/mol">-17880.0</Hf>
+        <Sr units="cal/(mol*K)">44.518</Sr>
+        <a units="cal/(mol*K)">5.65</a>
+        <b units="cal/(mol*K^2)">0.01144</b>
+        <c units="(cal*K)/mol">-46000.0</c>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>C7(g)</Name>
+    <Formula>C7</Formula>
+    <Elements>C7(1)</Elements>
+    <Type>Gaseous</Type>
+    <MolarMass units="g/mol">252.48</MolarMass>
+    <Gas>C7</Gas>
+    <CriticalTemperature units="K">644.4444</CriticalTemperature>
+    <CriticalPressure units="bar">19.6501</CriticalPressure>
+    <AcentricFactor>0.5200</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>6,8</References>
+        <Date>15.Dec.87</Date>
+        <Gf units="cal/mol">-12122.4</Gf>
+        <Hf units="cal/mol">-17880.0</Hf>
+        <Sr units="cal/(mol*K)">44.518</Sr>
+        <a units="cal/(mol*K)">5.65</a>
+        <b units="cal/(mol*K^2)">0.01144</b>
+        <c units="(cal*K)/mol">-46000.0</c>
+        <Tmax units="K">1500.0</Tmax>
       </HKF>
     </Thermo>
   </Species>
