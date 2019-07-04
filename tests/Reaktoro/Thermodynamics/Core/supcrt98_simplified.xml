@@ -80,30 +80,6 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>H2S(liq)</Name>
-    <Formula>H2S</Formula>
-    <Elements>H(2)S(1)</Elements>
-    <Type>Liquid</Type>
-    <MolarMass units="g/mol">34.08088</MolarMass>
-    <Gas>Hydrogen-Sulfide</Gas>
-    <CriticalTemperature units="K">373.5</CriticalTemperature>
-    <CriticalPressure units="bar">89.63</CriticalPressure>
-    <AcentricFactor>0.094</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>27.Dec.89</Date>
-        <Gf units="cal/mol">-8021.0</Gf>
-        <Hf units="cal/mol">-4931.0</Hf>
-        <Sr units="cal/(mol*K)">49.185</Sr>
-        <a units="cal/(mol*K)">7.81</a>
-        <b units="cal/(mol*K^2)">0.00296</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">2300.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
     <Name>H2S(aq)</Name>
     <Formula>H2S</Formula>
     <Elements>H(2)S(1)</Elements>

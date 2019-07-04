@@ -160,22 +160,19 @@ def test_database_elements_Adding_and_getting():
 
 def test_databae_parse():
     """
-    Test the fact that liquid species should end with (liq), gaseous 
-    speceis should end with (g) and "Gaseous-liquid" and
-    "Liquid-gaseous" can not have (g) or (liq). 
+    Test the fact that species should be added as
+    liquid species even if the Type is Gaseous 
     expected result:
-    - liquid_species[0] = "H2S" -- added because is a Gaseous-liquid
-    - gaseous_species[0] = "H2S" -- added because is a Gaseous-liquid
-    - gaseous_species[1] = "H2S(g)" -- added because is a Gaseous
+    - liquid_species[0] = "H2S(liq)" -- added as liquid
+    - gaseous_species[1] = "H2S(g)" -- added as gas
     """
-    database = Database("supcrt98_parse_test.xml")
+    database = Database("supcrt98_simplified.xml")
     
     gaseous_species = database.gaseousSpecies()
     liquid_species = database.liquidSpecies()
     
-    assert gaseous_species[0].name() == "H2S"
-    assert gaseous_species[1].name() == "H2S(g)"
-    assert liquid_species[0].name() == "H2S"
+    assert gaseous_species[0].name() == "H2S(g)"
+    assert liquid_species[0].name() == "H2S(liq)"
     
     
     

@@ -47,8 +47,8 @@ def test_add_phases_right_use():
     # Check adding phase by giving an string with all species
     editor1 = ChemicalEditor(database)
     editor1.addAqueousPhase("H2O(l) H+ OH- HCO3- CO2(aq) CO3--")
-    editor1.addGaseousPhase("H2O CO2")
-    editor1.addLiquidPhase("H2O CO2")
+    editor1.addGaseousPhase("H2O(g) CO2(g)")
+    editor1.addLiquidPhase("H2O(liq) CO2(liq)")
     editor1.addMineralPhase("Graphite")
     
     aqueous_phase_1 = editor1.aqueousPhase()
@@ -62,15 +62,15 @@ def test_add_phases_right_use():
     mineral_species_added_1 = _getting_species_names(mineral_phases_1[0])
         
     assert re.match(r"H2O\(l\)\s*H\+\s*OH-\s*HCO3-\s*CO2\(aq\)\s*CO3--\s*", aqueous_species_added_1)
-    assert re.match(r"H2O\s*CO2\s*", gaseous_species_added_1)
-    assert re.match(r"H2O\s*CO2\s*", liquid_species_added_1)
+    assert re.match(r"H2O\(g\)\s*CO2\(g\)\s*", gaseous_species_added_1)
+    assert re.match(r"H2O\(liq\)\s*CO2\(liq\)\s*", liquid_species_added_1)
     assert re.match(r"Graphite\s*", mineral_species_added_1)
     
     # Check adding phase by giving a list of string with all species
     editor2 = ChemicalEditor(database)
     editor2.addAqueousPhase(["H2O(l)", "H+", "OH-", "HCO3-", "CO2(aq)", "CO3--"])
-    editor2.addGaseousPhase(["H2O", "CO2"])
-    editor2.addLiquidPhase(["H2O", "CO2"])
+    editor2.addGaseousPhase(["H2O(g)", "CO2(g)"])
+    editor2.addLiquidPhase(["H2O(liq)", "CO2(liq)"])
     editor2.addMineralPhase(["Graphite"]) 
 
     aqueous_phase_2 = editor2.aqueousPhase()
@@ -84,8 +84,8 @@ def test_add_phases_right_use():
     mineral_species_added_2 = _getting_species_names(mineral_phases_2[0])
     
     assert re.match(r"H2O\(l\)\s*H\+\s*OH-\s*HCO3-\s*CO2\(aq\)\s*CO3--\s*", aqueous_species_added_2)
-    assert re.match(r"H2O\s*CO2\s*", gaseous_species_added_2)
-    assert re.match(r"H2O\s*CO2\s*", liquid_species_added_2)
+    assert re.match(r"H2O\(g\)\s*CO2\(g\)\s*", gaseous_species_added_2)
+    assert re.match(r"H2O\(liq\)\s*CO2\(liq\)\s*", liquid_species_added_2)
     assert re.match(r"Graphite\s*", mineral_species_added_2)
     
 def test_add_phases_wrong_use():
@@ -176,8 +176,8 @@ def test_chemical_editor_adding_and_getting_phases():
     assert editor.mineralPhases()[0].name() == mineral_phase.name()
 
 def test_chemical_editor_create_system():
-    expected = ["H2O(l)", "H+", "OH-", "H2O(1)",
-                 "CO2(1)", "H2O(2)", "CO2(2)",
+    expected = ["H2O(l)", "H+", "OH-", "H2O(g)",
+                 "CO2(g)", "H2O(liq)", "CO2(liq)",
                  "Graphite" ]
         
     database = Database("supcrt98.xml")
@@ -185,8 +185,8 @@ def test_chemical_editor_create_system():
     editor = ChemicalEditor(database)
     
     editor.addAqueousPhase("H2O(l) H+ OH-")
-    editor.addGaseousPhase("H2O CO2")
-    editor.addLiquidPhase("H2O CO2")
+    editor.addGaseousPhase("H2O(g) CO2(g)")
+    editor.addLiquidPhase("H2O(liq) CO2(liq)")
     editor.addMineralPhase("Graphite")    
     
     system = ChemicalSystem(editor)
