@@ -20,10 +20,11 @@ from reaktoro import (
     Element,
 )
     
-import pytest
-
 import locale
+import os
+import pytest
 import sys
+
 
 LANGUAGES = {
     'bg_BG': 'Bulgarian',
@@ -140,11 +141,14 @@ def test_database_instanciation_with_wrong_filename():
         database = Database("wrong_name.xml")
 
 def test_database_elements_Adding_and_getting():
+    direatory_path = os.path.dirname(os.path.abspath(__file__))
+
+    database = Database(direatory_path+"\\supcrt98_simplified.xml") 
+
     new_element = Element()
     new_element.setName("He")
     new_element.setMolarMass(4.002602e-3)
 
-    database = Database("supcrt98_simplified.xml") 
     database.addElement(new_element)
     
     elements = database.elements()
@@ -166,7 +170,9 @@ def test_databae_parse():
     - liquid_species[0] = "H2S(liq)" -- added as liquid
     - gaseous_species[1] = "H2S(g)" -- added as gas
     """
-    database = Database("supcrt98_simplified.xml")
+    direatory_path = os.path.dirname(os.path.abspath(__file__))
+    
+    database = Database(direatory_path+"\\supcrt98_simplified.xml")
     
     gaseous_species = database.gaseousSpecies()
     liquid_species = database.liquidSpecies()
@@ -177,8 +183,10 @@ def test_databae_parse():
     
     
 def test_database_species_adding_and_getting():
-    database = Database("supcrt98_simplified.xml")
-    no_species_database = Database("supcrt98_no_species.xml")
+    direatory_path = os.path.dirname(os.path.abspath(__file__))
+    
+    database = Database(direatory_path+"\\supcrt98_simplified.xml")
+    no_species_database = Database(direatory_path+"\\supcrt98_no_species.xml")
     
     aqueous_species = database.aqueousSpecies()
     gaseous_species = database.gaseousSpecies()
@@ -206,7 +214,9 @@ def test_database_species_adding_and_getting():
 
 
 def test_database_contains():
-    database = Database("supcrt98_simplified.xml")
+    direatory_path = os.path.dirname(os.path.abspath(__file__))
+    
+    database = Database(direatory_path+"\\supcrt98_simplified.xml")
     
     aqueous_species = database.aqueousSpecies()
     gaseous_species = database.gaseousSpecies()
@@ -220,7 +230,9 @@ def test_database_contains():
     
         
 def test_database_looking_for_species_with_element():
-    database = Database("supcrt98_simplified.xml")
+    direatory_path = os.path.dirname(os.path.abspath(__file__))
+    
+    database = Database(direatory_path+"\\supcrt98_simplified.xml")
     
     aqueous_species_with_H_or_Fe = database.aqueousSpeciesWithElements(["H", "S"])
     gaseous_species_with_H_or_Fe = database.gaseousSpeciesWithElements(["H", "S"])
