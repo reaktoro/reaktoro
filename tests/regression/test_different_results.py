@@ -32,7 +32,7 @@ def get_reaktoro_case():
     )
 
 
-def test_different_results(state_regression):
+def test_different_results(file_regression, num_regression):
     from reaktoro import ChemicalEditor, ChemicalState, ChemicalSystem, Database, EquilibriumProblem, EquilibriumSolver, Partition
 
     database = Database('supcrt07.xml')
@@ -73,19 +73,29 @@ def test_different_results(state_regression):
         assert index == species_index[name]
         chemical_state_1.setSpeciesAmount(index, molar_amount)
 
+    out = []
+    out.append('\n*** chemical_state_1 BEFORE')
+    out.append(str(chemical_state_1))
+
     equilibrium_problem.addState(chemical_state_1)
+
+    out.append('\n*** equilibrium_problem.elementAmounts():')
+    out.append('\n'.join(repr(x) for x in equilibrium_problem.elementAmounts()))
 
     solver = EquilibriumSolver(chemical_system)
     solver.setPartition(partition)
 
-    print('\n*** BEFORE')
-    print(chemical_state_0)
+    out.append('\n*** chemical_state_0 BEFORE')
+    out.append(str(chemical_state_0))
 
     result = solver.solve(chemical_state_0, equilibrium_problem)
 
-    print('\n*** AFTER')
-    print(chemical_state_0)
+    out.append('\n*** chemical_state_0 AFTER')
+    out.append(str(chemical_state_0))
 
     assert result.optimum.succeeded
 
-    state_regression.check(chemical_state_0, default_tol=dict(atol=1e-50, rtol=1e-16))
+    # state_regression.check(chemical_state_0, default_tol=dict(atol=1e-50, rtol=1e-16))
+    print('\n'.join(out))
+    file_regression.check('\n'.join(out))
+    num_regression.check({'elementAmounts': equilibrium_problem.elementAmounts()})
