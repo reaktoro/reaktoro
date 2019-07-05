@@ -97,26 +97,26 @@ Sr++                     0.20095330786840615      8.8693884219738291e-06   0.243
 SrCO3(aq)                0                        0                        1                        0                        -inf                     0                        
 SrCl+                    0                        0                        1                        0                        -inf                     0                        
 SrOH+                    0                        0                        1                        0                        -inf                     0                        
-CO2(g)                   0                        -nan(ind)                1                        0                        -inf                     0                        
-H2S(g)                   0                        -nan(ind)                1                        0                        -inf                     0                        
-CH4(g)                   0                        -nan(ind)                1                        0                        -inf                     0                        
-Anhydrite                0                        -nan(ind)                1                        1                        -1321.8301999999999      0                        
-Barite                   0                        -nan(ind)                1                        1                        -1362.1555919999998      0                        
+CO2(g)                   0                        -nan                     1                        0                        -inf                     0                        
+H2S(g)                   0                        -nan                     1                        0                        -inf                     0                        
+CH4(g)                   0                        -nan                     1                        0                        -inf                     0                        
+Anhydrite                0                        -nan                     1                        1                        -1321.8301999999999      0                        
+Barite                   0                        -nan                     1                        1                        -1362.1555919999998      0                        
 Calcite                  999131754.50533485       1                        1                        1                        -1129.1779200000001      0                        
-Celestite                0                        -nan(ind)                1                        1                        -1340.7000399999999      0                        
+Celestite                0                        -nan                     1                        1                        -1340.7000399999999      0                        
 Siderite                 0.01795172676219817      1                        1                        1                        -679.54017599999997      0                        
-Pyrrhotite               0                        -nan(ind)                1                        1                        -100.76745600000002      0                        
+Pyrrhotite               0                        -nan                     1                        1                        -100.76745600000002      0                        
 ==========================================================================================================================================================================================================================================================
 Phase                    Amount [mol]             Stability                Stability Index [-]      Mass [kg]                Volume [m3]              Density [kg/m3]          Molar Volume [m3/mol]    Volume Fraction [m3/m3]  
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Aqueous                  22656.952013799077       stable                    0                       412.94126445618508       0.40793532816188877      1012.2713968335435       1.8004863492381424e-05   -nan(ind)                
-Gaseous                  0                        stable                    0                       0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
-Anhydrite                0                        stable                    -0                      0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
-Barite                   0                        stable                    -0                      0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
-Calcite                  999131754.50533485       stable                    -0                      100000000                36901.932220900024       2709.8852006281486       3.6933999999999989e-05   -nan(ind)                
-Celestite                0                        stable                    -0                      0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
-Siderite                 0.01795172676219817      stable                    -0                      0.0020797775571350309    5.2738582881985787e-07   3943.5598066580437       2.9378000000000002e-05   -nan(ind)                
-Pyrrhotite               0                        stable                    -0                      0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
+Aqueous                  22656.952013799077       stable                    0                       412.94126445618508       0.40793532816188877      1012.2713968335435       1.8004863492381424e-05   -nan                     
+Gaseous                  0                        stable                    0                       0                        -nan                     -nan                     -nan                     -nan                     
+Anhydrite                0                        stable                    -0                      0                        -nan                     -nan                     -nan                     -nan                     
+Barite                   0                        stable                    -0                      0                        -nan                     -nan                     -nan                     -nan                     
+Calcite                  999131754.50533485       stable                    -0                      100000000                36901.932220900024       2709.8852006281486       3.6933999999999989e-05   -nan                     
+Celestite                0                        stable                    -0                      0                        -nan                     -nan                     -nan                     -nan                     
+Siderite                 0.01795172676219817      stable                    -0                      0.0020797775571350309    5.2738582881985787e-07   3943.5598066580437       2.9378000000000002e-05   -nan                     
+Pyrrhotite               0                        stable                    -0                      0                        -nan                     -nan                     -nan                     -nan                     
 ==========================================================================================================================================================================================================================================================
 Ionic Strength [molal]   pH                       pE                       Reduction Potential [V]  Alkalinity [eq/L]        
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -159,106 +159,106 @@ Z                        0                        0                        0    
 ==========================================================================================================================================================================================================================================================
 Species                  Amount [mol]             Mole Fraction [mol/mol]  Activity Coefficient [-] Activity [-]             Potential [kJ/mol]       Dual Potential [kJ/mol]  
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Ba(HCO3)+                0                        -nan(ind)                1                        0                        -inf                     0                        
-Ba++                     0                        -nan(ind)                1                        0                        -inf                     0                        
-BaCO3(aq)                0                        -nan(ind)                1                        0                        -inf                     0                        
-BaCl+                    0                        -nan(ind)                1                        0                        -inf                     0                        
-BaOH+                    0                        -nan(ind)                1                        0                        -inf                     0                        
-CO(aq)                   0                        -nan(ind)                1                        0                        -inf                     0                        
-CO2(aq)                  0                        -nan(ind)                1                        0                        -inf                     0                        
-CO3--                    0                        -nan(ind)                1                        0                        -inf                     0                        
-Ca(HCO3)+                0                        -nan(ind)                1                        0                        -inf                     0                        
-Ca++                     0                        -nan(ind)                1                        0                        -inf                     0                        
-CaCO3(aq)                0                        -nan(ind)                1                        0                        -inf                     0                        
-CaCl+                    0                        -nan(ind)                1                        0                        -inf                     0                        
-CaCl2(aq)                0                        -nan(ind)                1                        0                        -inf                     0                        
-CaOH+                    0                        -nan(ind)                1                        0                        -inf                     0                        
-CaSO4(aq)                0                        -nan(ind)                1                        0                        -inf                     0                        
-Cl-                      0                        -nan(ind)                1                        0                        -inf                     0                        
-ClO-                     0                        -nan(ind)                1                        0                        -inf                     0                        
-ClO2-                    0                        -nan(ind)                1                        0                        -inf                     0                        
-ClO3-                    0                        -nan(ind)                1                        0                        -inf                     0                        
-ClO4-                    0                        -nan(ind)                1                        0                        -inf                     0                        
-Fe++                     0                        -nan(ind)                1                        0                        -inf                     0                        
-Fe+++                    0                        -nan(ind)                1                        0                        -inf                     0                        
-FeCl+                    0                        -nan(ind)                1                        0                        -inf                     0                        
-FeCl++                   0                        -nan(ind)                1                        0                        -inf                     0                        
-FeCl2(aq)                0                        -nan(ind)                1                        0                        -inf                     0                        
-FeO(aq)                  0                        -nan(ind)                1                        0                        -inf                     0                        
-FeO+                     0                        -nan(ind)                1                        0                        -inf                     0                        
-FeO2-                    0                        -nan(ind)                1                        0                        -inf                     0                        
-FeOH+                    0                        -nan(ind)                1                        0                        -inf                     0                        
-FeOH++                   0                        -nan(ind)                1                        0                        -inf                     0                        
-H+                       0                        -nan(ind)                1                        0                        -inf                     0                        
-H2(aq)                   0                        -nan(ind)                1                        0                        -inf                     0                        
-H2O(l)                   0                        -nan(ind)                inf                      1                        -237.18171580971838      0                        
-H2O2(aq)                 0                        -nan(ind)                1                        0                        -inf                     0                        
-H2S(aq)                  0                        -nan(ind)                1                        0                        -inf                     0                        
-H2S2O3(aq)               0                        -nan(ind)                1                        0                        -inf                     0                        
-H2S2O4(aq)               0                        -nan(ind)                1                        0                        -inf                     0                        
-HCO3-                    0                        -nan(ind)                1                        0                        -inf                     0                        
-HCl(aq)                  0                        -nan(ind)                1                        0                        -inf                     0                        
-HClO(aq)                 0                        -nan(ind)                1                        0                        -inf                     0                        
-HClO2(aq)                0                        -nan(ind)                1                        0                        -inf                     0                        
-HFeO2(aq)                0                        -nan(ind)                1                        0                        -inf                     0                        
-HFeO2-                   0                        -nan(ind)                1                        0                        -inf                     0                        
-HO2-                     0                        -nan(ind)                1                        0                        -inf                     0                        
-HS-                      0                        -nan(ind)                1                        0                        -inf                     0                        
-HS2O3-                   0                        -nan(ind)                1                        0                        -inf                     0                        
-HS2O4-                   0                        -nan(ind)                1                        0                        -inf                     0                        
-HSO3-                    0                        -nan(ind)                1                        0                        -inf                     0                        
-HSO4-                    0                        -nan(ind)                1                        0                        -inf                     0                        
-HSO5-                    0                        -nan(ind)                1                        0                        -inf                     0                        
-Na+                      0                        -nan(ind)                1                        0                        -inf                     0                        
-NaCl(aq)                 0                        -nan(ind)                1                        0                        -inf                     0                        
-NaOH(aq)                 0                        -nan(ind)                1                        0                        -inf                     0                        
-NaSO4-                   0                        -nan(ind)                1                        0                        -inf                     0                        
-O2(aq)                   0                        -nan(ind)                1                        0                        -inf                     0                        
-OH-                      0                        -nan(ind)                1                        0                        -inf                     0                        
-S2--                     0                        -nan(ind)                1                        0                        -inf                     0                        
-S2O3--                   0                        -nan(ind)                1                        0                        -inf                     0                        
-S2O4--                   0                        -nan(ind)                1                        0                        -inf                     0                        
-S2O5--                   0                        -nan(ind)                1                        0                        -inf                     0                        
-S2O6--                   0                        -nan(ind)                1                        0                        -inf                     0                        
-S2O8--                   0                        -nan(ind)                1                        0                        -inf                     0                        
-S3--                     0                        -nan(ind)                1                        0                        -inf                     0                        
-S3O6--                   0                        -nan(ind)                1                        0                        -inf                     0                        
-S4--                     0                        -nan(ind)                1                        0                        -inf                     0                        
-S4O6--                   0                        -nan(ind)                1                        0                        -inf                     0                        
-S5--                     0                        -nan(ind)                1                        0                        -inf                     0                        
-S5O6--                   0                        -nan(ind)                1                        0                        -inf                     0                        
-SO2(aq)                  0                        -nan(ind)                1                        0                        -inf                     0                        
-SO3--                    0                        -nan(ind)                1                        0                        -inf                     0                        
-SO4--                    0                        -nan(ind)                1                        0                        -inf                     0                        
-Sr(HCO3)+                0                        -nan(ind)                1                        0                        -inf                     0                        
-Sr++                     0                        -nan(ind)                1                        0                        -inf                     0                        
-SrCO3(aq)                0                        -nan(ind)                1                        0                        -inf                     0                        
-SrCl+                    0                        -nan(ind)                1                        0                        -inf                     0                        
-SrOH+                    0                        -nan(ind)                1                        0                        -inf                     0                        
-CO2(g)                   0                        -nan(ind)                1                        0                        -inf                     0                        
-H2S(g)                   0                        -nan(ind)                1                        0                        -inf                     0                        
-CH4(g)                   0                        -nan(ind)                1                        0                        -inf                     0                        
-Anhydrite                0                        -nan(ind)                1                        1                        -1321.8301999999999      0                        
-Barite                   0                        -nan(ind)                1                        1                        -1362.1555919999998      0                        
-Calcite                  0                        -nan(ind)                1                        1                        -1129.1779200000001      0                        
-Celestite                0                        -nan(ind)                1                        1                        -1340.7000399999999      0                        
-Siderite                 0                        -nan(ind)                1                        1                        -679.54017599999997      0                        
-Pyrrhotite               0                        -nan(ind)                1                        1                        -100.76745600000002      0                        
+Ba(HCO3)+                0                        -nan                     1                        0                        -inf                     0                        
+Ba++                     0                        -nan                     1                        0                        -inf                     0                        
+BaCO3(aq)                0                        -nan                     1                        0                        -inf                     0                        
+BaCl+                    0                        -nan                     1                        0                        -inf                     0                        
+BaOH+                    0                        -nan                     1                        0                        -inf                     0                        
+CO(aq)                   0                        -nan                     1                        0                        -inf                     0                        
+CO2(aq)                  0                        -nan                     1                        0                        -inf                     0                        
+CO3--                    0                        -nan                     1                        0                        -inf                     0                        
+Ca(HCO3)+                0                        -nan                     1                        0                        -inf                     0                        
+Ca++                     0                        -nan                     1                        0                        -inf                     0                        
+CaCO3(aq)                0                        -nan                     1                        0                        -inf                     0                        
+CaCl+                    0                        -nan                     1                        0                        -inf                     0                        
+CaCl2(aq)                0                        -nan                     1                        0                        -inf                     0                        
+CaOH+                    0                        -nan                     1                        0                        -inf                     0                        
+CaSO4(aq)                0                        -nan                     1                        0                        -inf                     0                        
+Cl-                      0                        -nan                     1                        0                        -inf                     0                        
+ClO-                     0                        -nan                     1                        0                        -inf                     0                        
+ClO2-                    0                        -nan                     1                        0                        -inf                     0                        
+ClO3-                    0                        -nan                     1                        0                        -inf                     0                        
+ClO4-                    0                        -nan                     1                        0                        -inf                     0                        
+Fe++                     0                        -nan                     1                        0                        -inf                     0                        
+Fe+++                    0                        -nan                     1                        0                        -inf                     0                        
+FeCl+                    0                        -nan                     1                        0                        -inf                     0                        
+FeCl++                   0                        -nan                     1                        0                        -inf                     0                        
+FeCl2(aq)                0                        -nan                     1                        0                        -inf                     0                        
+FeO(aq)                  0                        -nan                     1                        0                        -inf                     0                        
+FeO+                     0                        -nan                     1                        0                        -inf                     0                        
+FeO2-                    0                        -nan                     1                        0                        -inf                     0                        
+FeOH+                    0                        -nan                     1                        0                        -inf                     0                        
+FeOH++                   0                        -nan                     1                        0                        -inf                     0                        
+H+                       0                        -nan                     1                        0                        -inf                     0                        
+H2(aq)                   0                        -nan                     1                        0                        -inf                     0                        
+H2O(l)                   0                        -nan                     inf                      1                        -237.18171580971838      0                        
+H2O2(aq)                 0                        -nan                     1                        0                        -inf                     0                        
+H2S(aq)                  0                        -nan                     1                        0                        -inf                     0                        
+H2S2O3(aq)               0                        -nan                     1                        0                        -inf                     0                        
+H2S2O4(aq)               0                        -nan                     1                        0                        -inf                     0                        
+HCO3-                    0                        -nan                     1                        0                        -inf                     0                        
+HCl(aq)                  0                        -nan                     1                        0                        -inf                     0                        
+HClO(aq)                 0                        -nan                     1                        0                        -inf                     0                        
+HClO2(aq)                0                        -nan                     1                        0                        -inf                     0                        
+HFeO2(aq)                0                        -nan                     1                        0                        -inf                     0                        
+HFeO2-                   0                        -nan                     1                        0                        -inf                     0                        
+HO2-                     0                        -nan                     1                        0                        -inf                     0                        
+HS-                      0                        -nan                     1                        0                        -inf                     0                        
+HS2O3-                   0                        -nan                     1                        0                        -inf                     0                        
+HS2O4-                   0                        -nan                     1                        0                        -inf                     0                        
+HSO3-                    0                        -nan                     1                        0                        -inf                     0                        
+HSO4-                    0                        -nan                     1                        0                        -inf                     0                        
+HSO5-                    0                        -nan                     1                        0                        -inf                     0                        
+Na+                      0                        -nan                     1                        0                        -inf                     0                        
+NaCl(aq)                 0                        -nan                     1                        0                        -inf                     0                        
+NaOH(aq)                 0                        -nan                     1                        0                        -inf                     0                        
+NaSO4-                   0                        -nan                     1                        0                        -inf                     0                        
+O2(aq)                   0                        -nan                     1                        0                        -inf                     0                        
+OH-                      0                        -nan                     1                        0                        -inf                     0                        
+S2--                     0                        -nan                     1                        0                        -inf                     0                        
+S2O3--                   0                        -nan                     1                        0                        -inf                     0                        
+S2O4--                   0                        -nan                     1                        0                        -inf                     0                        
+S2O5--                   0                        -nan                     1                        0                        -inf                     0                        
+S2O6--                   0                        -nan                     1                        0                        -inf                     0                        
+S2O8--                   0                        -nan                     1                        0                        -inf                     0                        
+S3--                     0                        -nan                     1                        0                        -inf                     0                        
+S3O6--                   0                        -nan                     1                        0                        -inf                     0                        
+S4--                     0                        -nan                     1                        0                        -inf                     0                        
+S4O6--                   0                        -nan                     1                        0                        -inf                     0                        
+S5--                     0                        -nan                     1                        0                        -inf                     0                        
+S5O6--                   0                        -nan                     1                        0                        -inf                     0                        
+SO2(aq)                  0                        -nan                     1                        0                        -inf                     0                        
+SO3--                    0                        -nan                     1                        0                        -inf                     0                        
+SO4--                    0                        -nan                     1                        0                        -inf                     0                        
+Sr(HCO3)+                0                        -nan                     1                        0                        -inf                     0                        
+Sr++                     0                        -nan                     1                        0                        -inf                     0                        
+SrCO3(aq)                0                        -nan                     1                        0                        -inf                     0                        
+SrCl+                    0                        -nan                     1                        0                        -inf                     0                        
+SrOH+                    0                        -nan                     1                        0                        -inf                     0                        
+CO2(g)                   0                        -nan                     1                        0                        -inf                     0                        
+H2S(g)                   0                        -nan                     1                        0                        -inf                     0                        
+CH4(g)                   0                        -nan                     1                        0                        -inf                     0                        
+Anhydrite                0                        -nan                     1                        1                        -1321.8301999999999      0                        
+Barite                   0                        -nan                     1                        1                        -1362.1555919999998      0                        
+Calcite                  0                        -nan                     1                        1                        -1129.1779200000001      0                        
+Celestite                0                        -nan                     1                        1                        -1340.7000399999999      0                        
+Siderite                 0                        -nan                     1                        1                        -679.54017599999997      0                        
+Pyrrhotite               0                        -nan                     1                        1                        -100.76745600000002      0                        
 ==========================================================================================================================================================================================================================================================
 Phase                    Amount [mol]             Stability                Stability Index [-]      Mass [kg]                Volume [m3]              Density [kg/m3]          Molar Volume [m3/mol]    Volume Fraction [m3/m3]  
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Aqueous                  0                        stable                   -1.9286549331065747e-16  0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
-Gaseous                  0                        stable                    0                       0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
-Anhydrite                0                        stable                    -0                      0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
-Barite                   0                        stable                    -0                      0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
-Calcite                  0                        stable                    -0                      0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
-Celestite                0                        stable                    -0                      0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
-Siderite                 0                        stable                    -0                      0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
-Pyrrhotite               0                        stable                    -0                      0                        -nan(ind)                -nan(ind)                -nan(ind)                -nan(ind)                
+Aqueous                  0                        stable                   -1.9286549331065747e-16  0                        -nan                     -nan                     -nan                     -nan                     
+Gaseous                  0                        stable                    0                       0                        -nan                     -nan                     -nan                     -nan                     
+Anhydrite                0                        stable                    -0                      0                        -nan                     -nan                     -nan                     -nan                     
+Barite                   0                        stable                    -0                      0                        -nan                     -nan                     -nan                     -nan                     
+Calcite                  0                        stable                    -0                      0                        -nan                     -nan                     -nan                     -nan                     
+Celestite                0                        stable                    -0                      0                        -nan                     -nan                     -nan                     -nan                     
+Siderite                 0                        stable                    -0                      0                        -nan                     -nan                     -nan                     -nan                     
+Pyrrhotite               0                        stable                    -0                      0                        -nan                     -nan                     -nan                     -nan                     
 ==========================================================================================================================================================================================================================================================
 Ionic Strength [molal]   pH                       pE                       Reduction Potential [V]  Alkalinity [eq/L]        
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--nan(ind)                inf                      0                        0                        -nan(ind)                
+-nan                     inf                      0                        0                        -nan                     
 ==========================================================================================================================================================================================================================================================
 
 

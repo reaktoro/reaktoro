@@ -75,7 +75,7 @@ def test_different_results(file_regression, num_regression):
 
     out = []
     out.append('\n*** chemical_state_1 BEFORE')
-    out.append(str(chemical_state_1))
+    out.append(str(chemical_state_1).replace('nan(ind)', 'nan     '))
 
     equilibrium_problem.addState(chemical_state_1)
 
@@ -86,12 +86,12 @@ def test_different_results(file_regression, num_regression):
     solver.setPartition(partition)
 
     out.append('\n*** chemical_state_0 BEFORE')
-    out.append(str(chemical_state_0))
+    out.append(str(chemical_state_0).replace('nan(ind)', 'nan     '))
 
     result = solver.solve(chemical_state_0, equilibrium_problem)
 
     out.append('\n*** chemical_state_0 AFTER')
-    out.append(str(chemical_state_0))
+    out.append(str(chemical_state_0).replace('nan(ind)', 'nan     '))
 
     assert result.optimum.succeeded
 
