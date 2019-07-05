@@ -822,7 +822,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 
     // Set output in scientific notation
     auto flags = out.flags();
-    out << std::setprecision(6);
+    out << std::setprecision(17);
 
     // Output the table of the element-related state
     out << bar1 << std::endl;
