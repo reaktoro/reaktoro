@@ -45,7 +45,7 @@ def test_different_results(state_regression):
     mineral_species = ["Anhydrite", "Barite", "Calcite", "Celestite", "Siderite", "Pyrrhotite"]
     for mineral in mineral_species:
         editor.addMineralPhase(mineral)
-        
+
     gaseous_species = ["CO2(g)", "H2S(g)", "CH4(g)"]
     editor.addGaseousPhase(gaseous_species)
 
@@ -57,6 +57,8 @@ def test_different_results(state_regression):
 
     reaktoro_case = get_reaktoro_case()
 
+    chemical_state_0 = ChemicalState(chemical_system)
+
     equilibrium_problem = EquilibriumProblem(chemical_system)
     equilibrium_problem.setTemperature(reaktoro_case.temperature_in_K)
     equilibrium_problem.setPressure(reaktoro_case.pressure_in_Pa)
@@ -66,18 +68,24 @@ def test_different_results(state_regression):
 
     equilibrium_problem.setPartition(partition)
 
-    chemical_state = ChemicalState(chemical_system)
+    chemical_state_1 = ChemicalState(chemical_system)
     for name, index, molar_amount in reaktoro_case.species_amounts:
         assert index == species_index[name]
-        chemical_state.setSpeciesAmount(index, molar_amount)
-        
-    equilibrium_problem.addState(chemical_state)
+        chemical_state_1.setSpeciesAmount(index, molar_amount)
+
+    equilibrium_problem.addState(chemical_state_1)
 
     solver = EquilibriumSolver(chemical_system)
     solver.setPartition(partition)
 
-    result = solver.solve(chemical_state, equilibrium_problem)
+    print('\n*** BEFORE')
+    print(chemical_state_0)
+
+    result = solver.solve(chemical_state_0, equilibrium_problem)
+
+    print('\n*** AFTER')
+    print(chemical_state_0)
 
     assert result.optimum.succeeded
 
-    state_regression.check(chemical_state, default_tol=dict(atol=1e-50, rtol=1e-16))
+    state_regression.check(chemical_state_0, default_tol=dict(atol=1e-50, rtol=1e-16))
