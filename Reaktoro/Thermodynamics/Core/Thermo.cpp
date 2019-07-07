@@ -42,7 +42,7 @@ using namespace std::placeholders;
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 
 // ThermoFun includes
-#include <thermofun/ThermoFun.h>
+#include <ThermoFun/ThermoFun.h>
 
 namespace Reaktoro {
 namespace {

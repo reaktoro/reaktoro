@@ -40,7 +40,7 @@
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // ThermoFun includes
-#include <thermofun/ThermoFun.h>
+#include <ThermoFun/ThermoFun.h>
 
 // miniz includes
 #include <miniz/zip_file.hpp>

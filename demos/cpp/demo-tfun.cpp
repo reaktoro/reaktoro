@@ -1,5 +1,5 @@
 #include "Reaktoro/Reaktoro.hpp"
-#include "thermofun/ThermoFun.h"
+#include "ThermoFun/ThermoFun.h"
 
 using namespace Reaktoro;
 

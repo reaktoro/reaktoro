@@ -6,4 +6,4 @@ foreach(CPPFILE ${CPPFILES})
     target_link_libraries(${CPPNAME} Reaktoro::Reaktoro)
 endforeach()
 
-target_link_libraries(demo-tfun thermofun)
+target_link_libraries(demo-tfun ThermoFun)
