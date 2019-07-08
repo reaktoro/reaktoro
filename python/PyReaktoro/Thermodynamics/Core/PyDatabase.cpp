@@ -22,6 +22,7 @@
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 #include <reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
@@ -32,11 +33,14 @@ void exportDatabase(py::module& m)
     auto aqueousSpecies1 = static_cast<std::vector<AqueousSpecies>(Database::*)()>(&Database::aqueousSpecies);
     auto aqueousSpecies2 = static_cast<const AqueousSpecies&(Database::*)(std::string) const>(&Database::aqueousSpecies);
 
-    auto gaseousSpecies1 = static_cast<std::vector<GaseousSpecies>(Database::*)()>(&Database::gaseousSpecies);
-    auto gaseousSpecies2 = static_cast<const GaseousSpecies&(Database::*)(std::string) const>(&Database::gaseousSpecies);
+    auto fluidSpecies1 = static_cast<std::vector<FluidSpecies>(Database::*)()>(&Database::liquidSpecies);
+    auto fluidSpecies2 = static_cast<const FluidSpecies&(Database::*)(std::string) const>(&Database::liquidSpecies);
 
-    auto liquidSpecies1 = static_cast<std::vector<LiquidSpecies>(Database::*)()>(&Database::liquidSpecies);
-    auto liquidSpecies2 = static_cast<const LiquidSpecies&(Database::*)(std::string) const>(&Database::liquidSpecies);
+    auto gaseousSpecies1 = static_cast<std::vector<FluidSpecies>(Database::*)()>(&Database::gaseousSpecies);
+    auto gaseousSpecies2 = static_cast<const FluidSpecies&(Database::*)(std::string) const>(&Database::gaseousSpecies);
+
+    auto liquidSpecies1 = static_cast<std::vector<FluidSpecies>(Database::*)()>(&Database::liquidSpecies);
+    auto liquidSpecies2 = static_cast<const FluidSpecies&(Database::*)(std::string) const>(&Database::liquidSpecies);
 
     auto mineralSpecies1 = static_cast<std::vector<MineralSpecies>(Database::*)()>(&Database::mineralSpecies);
     auto mineralSpecies2 = static_cast<const MineralSpecies&(Database::*)(std::string) const>(&Database::mineralSpecies);
@@ -49,6 +53,9 @@ void exportDatabase(py::module& m)
         .def("aqueousSpecies", aqueousSpecies1)
         .def("aqueousSpecies", aqueousSpecies2, py::return_value_policy::reference_internal)
 		.def("addAqueousSpecies", &Database::addAqueousSpecies)
+        .def("fluidSpecies", fluidSpecies1)
+        .def("fluidSpecies", fluidSpecies2)
+        .def("addFluidSpecies", &Database::addFluidSpecies)
         .def("gaseousSpecies", gaseousSpecies1)
         .def("gaseousSpecies", gaseousSpecies2, py::return_value_policy::reference_internal)
 		.def("addGaseousSpecies", &Database::addGaseousSpecies)
@@ -59,10 +66,12 @@ void exportDatabase(py::module& m)
         .def("mineralSpecies", mineralSpecies2, py::return_value_policy::reference_internal)
 		.def("addMineralSpecies", &Database::addMineralSpecies)
         .def("containsAqueousSpecies", &Database::containsAqueousSpecies)
+        .def("containsFluidSpecies", &Database::containsFluidSpecies)
         .def("containsGaseousSpecies", &Database::containsGaseousSpecies)
         .def("containsLiquidSpecies", &Database::containsLiquidSpecies)
         .def("containsMineralSpecies", &Database::containsMineralSpecies)
         .def("aqueousSpeciesWithElements", &Database::aqueousSpeciesWithElements)
+        .def("fluidSpeciesWithElements", &Database::fluidSpeciesWithElements)
         .def("gaseousSpeciesWithElements", &Database::gaseousSpeciesWithElements)
         .def("liquidSpeciesWithElements", &Database::liquidSpeciesWithElements)
         .def("mineralSpeciesWithElements", &Database::mineralSpeciesWithElements)

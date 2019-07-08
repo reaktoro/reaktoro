@@ -38,6 +38,7 @@
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // miniz includes
@@ -50,11 +51,10 @@ using namespace pugi;
 namespace Reaktoro {
 namespace {
 
-/// Auxiliary types for a map of aqueous, gaseous, and mineral species
+/// Auxiliary types for a map of aqueous, fluid, and mineral species
 using ElementMap        = std::map<std::string, Element>;
 using AqueousSpeciesMap = std::map<std::string, AqueousSpecies>;
-using GaseousSpeciesMap = std::map<std::string, GaseousSpecies>;
-using LiquidSpeciesMap  = std::map<std::string, LiquidSpecies>;
+using FluidSpeciesMap   = std::map<std::string, FluidSpecies>;
 using MineralSpeciesMap = std::map<std::string, MineralSpecies>;
 
 auto errorNonExistentSpecies(std::string type, std::string name) -> void
@@ -250,9 +250,9 @@ auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<Aqueou
     return hkf;
 }
 
-auto parseGaseousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<GaseousSpeciesThermoParamsHKF>
+auto parseFluidSpeciesThermoParamsHKF(const xml_node& node)->Optional<FluidSpeciesThermoParamsHKF>
 {
-    GaseousSpeciesThermoParamsHKF hkf;
+    FluidSpeciesThermoParamsHKF hkf;
     hkf.Gf   = as_double(node, "Gf");
     hkf.Hf   = as_double(node, "Hf");
     hkf.Sr   = as_double(node, "Sr");
@@ -323,9 +323,9 @@ auto parseAqueousSpeciesThermoData(const xml_node& node) -> AqueousSpeciesThermo
     return thermo;
 }
 
-auto parseGaseousSpeciesThermoData(const xml_node& node) -> GaseousSpeciesThermoData
+auto parseFluidSpeciesThermoData(const xml_node& node) -> FluidSpeciesThermoData
 {
-    GaseousSpeciesThermoData thermo;
+    FluidSpeciesThermoData thermo;
 
     if(!node.child("Properties").empty())
         thermo.properties = parseSpeciesInterpolatedThermoProperties(node.child("Properties"));
@@ -334,7 +334,7 @@ auto parseGaseousSpeciesThermoData(const xml_node& node) -> GaseousSpeciesThermo
         thermo.reaction = parseReactionInterpolatedThermoProperties(node.child("Reaction"));
 
     if(!node.child("HKF").empty())
-        thermo.hkf = parseGaseousSpeciesThermoParamsHKF(node.child("HKF"));
+        thermo.hkf = parseFluidSpeciesThermoParamsHKF(node.child("HKF"));
 
     return thermo;
 }
@@ -409,11 +409,8 @@ struct Database::Impl
     /// The set of all aqueous species in the database
     AqueousSpeciesMap aqueous_species_map;
 
-    /// The set of all gaseous species in the database
-    GaseousSpeciesMap gaseous_species_map;
-
-    /// The set of all liquid species in the database
-    LiquidSpeciesMap liquid_species_map;
+    /// The set of all fluid species in the database
+    FluidSpeciesMap fluid_species_map;
 
     /// The set of all mineral species in the database
     MineralSpeciesMap mineral_species_map;
@@ -474,14 +471,9 @@ struct Database::Impl
         aqueous_species_map.insert({species.name(), species});
     }
 
-    auto addGaseousSpecies(const GaseousSpecies& species) -> void
+    auto addFluidSpecies(const FluidSpecies& species) -> void
     {
-        gaseous_species_map.insert({species.name(), species});
-    }
-
-    auto addLiquidSpecies(const LiquidSpecies& species) -> void
-    {
-    liquid_species_map.insert({ species.name(), species });
+        fluid_species_map.insert({ species.name(), species });
     }
 
     auto addMineralSpecies(const MineralSpecies& species) -> void
@@ -516,30 +508,17 @@ struct Database::Impl
         return aqueous_species_map.find(name)->second;
     }
 
-    auto gaseousSpecies() -> std::vector<GaseousSpecies>
+    auto fluidSpecies() -> std::vector<FluidSpecies>
     {
-        return collectValues(gaseous_species_map);
+        return collectValues(fluid_species_map);
     }
 
-    auto gaseousSpecies(std::string name) const -> const GaseousSpecies&
+    auto fluidSpecies(std::string name) const -> const FluidSpecies&
     {
-        if(gaseous_species_map.count(name) == 0)
-            errorNonExistentSpecies("gaseous", name);
+        if (fluid_species_map.count(name) == 0)
+            errorNonExistentSpecies("fluid", name);
 
-        return gaseous_species_map.find(name)->second;
-    }
-
-    auto liquidSpecies() -> std::vector<LiquidSpecies>
-    {
-        return collectValues(liquid_species_map);
-    }
-
-    auto liquidSpecies(std::string name) const -> const LiquidSpecies&
-    {
-        if (liquid_species_map.count(name) == 0)
-            errorNonExistentSpecies("liquid", name);
-
-        return liquid_species_map.find(name)->second;
+        return fluid_species_map.find(name)->second;
     }
 
     auto mineralSpecies() -> std::vector<MineralSpecies>
@@ -560,15 +539,10 @@ struct Database::Impl
         return aqueous_species_map.count(species) != 0;
     }
 
-    auto containsGaseousSpecies(std::string species) const -> bool
+    auto containsFluidSpecies(std::string species) const -> bool
     {
-        return gaseous_species_map.count(species) != 0;
-    }
-
-    auto containsLiquidSpecies(std::string species) const -> bool
-    {
-        return liquid_species_map.count(species) != 0;
-    }
+        return fluid_species_map.count(species) != 0;
+    }    
 
     auto containsMineralSpecies(std::string species) const -> bool
     {
@@ -580,14 +554,9 @@ struct Database::Impl
         return speciesWithElements(elements, aqueous_species_map);
     }
 
-    auto gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<GaseousSpecies>
+    auto fluidSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<FluidSpecies>
     {
-        return speciesWithElements(elements, gaseous_species_map);
-    }
-
-    auto liquidSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<LiquidSpecies>
-    {
-        return speciesWithElements(elements, liquid_species_map);
+        return speciesWithElements(elements, fluid_species_map);
     }
 
     auto mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<MineralSpecies>
@@ -618,29 +587,9 @@ struct Database::Impl
             std::string name = node.child("Name").text().get();
             if (type == "Gaseous")
 			{
-                LiquidSpecies species_liq = parseFluidSpecies<LiquidSpecies>(node);
-                GaseousSpecies species_gas = parseFluidSpecies<GaseousSpecies>(node);
-                if (valid(species_gas))
-                {
-                    auto gas_name = species_gas.name();
-                    if (name.find("(g)") != std::string::npos)
-                    {
-                        auto gas_name = name;
-                        auto liq_name = name.substr(0, name.size() - 3) + "(liq)";
-                        species_liq.setName(liq_name);
-                        gaseous_species_map[gas_name] = species_gas;
-                        liquid_species_map[liq_name] = species_liq;
-                    }
-                    else
-                    {
-                        auto gas_name = name + "(g)";
-                        auto liq_name = name + "(liq)";
-                        species_liq.setName(liq_name);
-                        species_gas.setName(gas_name);
-                        gaseous_species_map[gas_name] = species_gas;
-                        liquid_species_map[liq_name] = species_liq;
-                    }
-                }   
+                FluidSpecies species = parseFluidSpecies(node);
+                if (valid(species))
+                    fluid_species_map[species.name()] = species;
 			}
             else if (type == "Aqueous")
             {
@@ -721,12 +670,11 @@ struct Database::Impl
 
         return species;
     }
-    // DO TO - VERIFY IF I CAN REPLACE THIS WHEN I USE FLUIDSPECIE AS BASE CLASSE FOR GASSPECIE AND FLUIDSPECIES
-    template <typename FluidSpecie>
-    auto parseFluidSpecies(const xml_node& node) -> FluidSpecie
+    
+    auto parseFluidSpecies(const xml_node& node) -> FluidSpecies
     {
         // The gaseous species instance
-		FluidSpecie species = parseSpecies(node);
+		FluidSpecies species = parseSpecies(node);
 
         // Set the critical temperature of the fluid (gaseous or liquid) species (in units of K)
         if(!node.child("CriticalTemperature").empty())
@@ -741,7 +689,7 @@ struct Database::Impl
             species.setAcentricFactor(node.child("AcentricFactor").text().as_double());
 
         // Parse the thermodynamic data of the fluid (gaseous or liquid) species
-        species.setThermoData(parseGaseousSpeciesThermoData(node.child("Thermo")));
+        species.setThermoData(parseFluidSpeciesThermoData(node.child("Thermo")));
 
         return species;
     }
@@ -804,14 +752,19 @@ auto Database::addAqueousSpecies(const AqueousSpecies& species) -> void
     pimpl->addAqueousSpecies(species);
 }
 
-auto Database::addGaseousSpecies(const GaseousSpecies& species) -> void
+auto Database::addGaseousSpecies(const FluidSpecies& species) -> void
 {
-    pimpl->addGaseousSpecies(species);
+    addFluidSpecies(species);
 }
 
-auto Database::addLiquidSpecies(const LiquidSpecies& species) -> void
+auto Database::addLiquidSpecies(const FluidSpecies& species) -> void
 {
-    pimpl->addLiquidSpecies(species);
+    addFluidSpecies(species);
+}
+
+auto Database::addFluidSpecies(const FluidSpecies& species) -> void
+{
+    pimpl->addFluidSpecies(species);
 }
 
 auto Database::addMineralSpecies(const MineralSpecies& species) -> void
@@ -834,24 +787,34 @@ auto Database::aqueousSpecies(std::string name) const -> const AqueousSpecies&
     return pimpl->aqueousSpecies(name);
 }
 
-auto Database::gaseousSpecies() -> std::vector<GaseousSpecies>
+auto Database::gaseousSpecies() -> std::vector<FluidSpecies>
 {
-    return pimpl->gaseousSpecies();
+    return fluidSpecies();
 }
 
-auto Database::gaseousSpecies(std::string name) const -> const GaseousSpecies&
+auto Database::gaseousSpecies(std::string name) const -> const FluidSpecies&
 {
-    return pimpl->gaseousSpecies(name);
+    return fluidSpecies(name);
 }
 
-auto Database::liquidSpecies() -> std::vector<LiquidSpecies>
+auto Database::liquidSpecies() -> std::vector<FluidSpecies>
 {
-    return pimpl->liquidSpecies();
+    return fluidSpecies();
 }
 
-auto Database::liquidSpecies(std::string name) const -> const LiquidSpecies&
+auto Database::liquidSpecies(std::string name) const -> const FluidSpecies&
 {
-    return pimpl->liquidSpecies(name);
+    return fluidSpecies(name);
+}
+
+auto Database::fluidSpecies() -> std::vector<FluidSpecies>
+{
+    return pimpl->fluidSpecies();
+}
+
+auto Database::fluidSpecies(std::string name) const -> const FluidSpecies&
+{
+    return pimpl->fluidSpecies(name);
 }
 
 auto Database::mineralSpecies() -> std::vector<MineralSpecies>
@@ -871,12 +834,17 @@ auto Database::containsAqueousSpecies(std::string species) const -> bool
 
 auto Database::containsGaseousSpecies(std::string species) const -> bool
 {
-    return pimpl->containsGaseousSpecies(species);
+    return containsFluidSpecies(species);
 }
 
 auto Database::containsLiquidSpecies(std::string species) const -> bool
 {
-    return pimpl->containsLiquidSpecies(species);
+    return containsFluidSpecies(species);
+}
+
+auto Database::containsFluidSpecies(std::string species) const -> bool
+{
+    return pimpl->containsFluidSpecies(species);
 }
 
 auto Database::containsMineralSpecies(std::string species) const -> bool
@@ -889,14 +857,19 @@ auto Database::aqueousSpeciesWithElements(const std::vector<std::string>& elemen
     return pimpl->aqueousSpeciesWithElements(elements);
 }
 
-auto Database::gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<GaseousSpecies>
+auto Database::gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<FluidSpecies>
 {
-    return pimpl->gaseousSpeciesWithElements(elements);
+    return fluidSpeciesWithElements(elements);
 }
 
-auto Database::liquidSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<LiquidSpecies>
+auto Database::liquidSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<FluidSpecies>
 {
-    return pimpl->liquidSpeciesWithElements(elements);
+    return fluidSpeciesWithElements(elements);
+}
+
+auto Database::fluidSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<FluidSpecies>
+{
+    return pimpl->fluidSpeciesWithElements(elements);
 }
 
 auto Database::mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<MineralSpecies>
