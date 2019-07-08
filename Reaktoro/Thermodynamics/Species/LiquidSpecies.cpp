@@ -34,7 +34,7 @@ struct LiquidSpecies::Impl
 	double acentric_factor = 0.0;
 
 	/// The termidynamic data of the liquid species
-	LiquidSpeciesThermoData thermo;
+    FluidSpeciesThermoData thermo;
 };
 
 LiquidSpecies::LiquidSpecies()
@@ -54,13 +54,13 @@ LiquidSpecies::LiquidSpecies(const GaseousSpecies& species)
 
 	auto const& gas_thermo_data = species.thermoData();
 
-	Optional<LiquidSpeciesThermoParamsHKF> oil_hkf;
+	Optional<FluidSpeciesThermoParamsHKF> oil_hkf;
 	if (!gas_thermo_data.hkf.empty()) {
-		GaseousSpeciesThermoParamsHKF const& hkf = gas_thermo_data.hkf.get();
-		oil_hkf = LiquidSpeciesThermoParamsHKF{ hkf.Gf, hkf.Hf, hkf.Sr, hkf.a, hkf.b, hkf.c, hkf.Tmax };
+        FluidSpeciesThermoParamsHKF const& hkf = gas_thermo_data.hkf.get();
+		oil_hkf = FluidSpeciesThermoParamsHKF{ hkf.Gf, hkf.Hf, hkf.Sr, hkf.a, hkf.b, hkf.c, hkf.Tmax };
 	}
 
-	this->setThermoData(LiquidSpeciesThermoData{
+	this->setThermoData(FluidSpeciesThermoData{
 		gas_thermo_data.properties,
 		gas_thermo_data.reaction,
 		oil_hkf,
@@ -88,7 +88,7 @@ auto LiquidSpecies::setAcentricFactor(double val) -> void
 	pimpl->acentric_factor = val;
 }
 
-auto LiquidSpecies::setThermoData(const LiquidSpeciesThermoData& thermo) -> void
+auto LiquidSpecies::setThermoData(const FluidSpeciesThermoData& thermo) -> void
 {
 	pimpl->thermo = thermo;
 }
@@ -108,7 +108,7 @@ auto LiquidSpecies::acentricFactor() const -> double
 	return pimpl->acentric_factor;
 }
 
-auto LiquidSpecies::thermoData() const -> const LiquidSpeciesThermoData&
+auto LiquidSpecies::thermoData() const -> const FluidSpeciesThermoData&
 {
 	return pimpl->thermo;
 }

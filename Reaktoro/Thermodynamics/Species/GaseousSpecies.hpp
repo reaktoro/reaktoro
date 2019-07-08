@@ -46,7 +46,7 @@ public:
     auto setAcentricFactor(double val) -> void;
 
     /// Set the thermodynamic data of the gaseous species.
-    auto setThermoData(const GaseousSpeciesThermoData& thermo) -> void;
+    auto setThermoData(const FluidSpeciesThermoData& thermo) -> void;
 
     /// Return the critical temperature of the gaseous species (in units of K)
     auto criticalTemperature() const -> double;
@@ -58,7 +58,7 @@ public:
     auto acentricFactor() const -> double;
 
     /// Return the thermodynamic data of the gaseous species.
-    auto thermoData() const -> const GaseousSpeciesThermoData&;
+    auto thermoData() const -> const FluidSpeciesThermoData&;
 
 private:
     struct Impl;

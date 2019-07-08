@@ -98,9 +98,9 @@ auto zeroAqueousSpeciesThermoData() -> AqueousSpeciesThermoData
     return data;
 }
 
-auto zeroGaseousSpeciesThermoData() -> GaseousSpeciesThermoData
+auto zeroGaseousSpeciesThermoData() -> FluidSpeciesThermoData
 {
-    GaseousSpeciesThermoData data;
+    FluidSpeciesThermoData data;
     data.phreeqc.set(SpeciesThermoParamsPhreeqc());
     data.properties.set(zeroThermoPropertiesInterpolated());
     return data;
@@ -131,7 +131,7 @@ auto aqueousSpeciesThermoData(const PhreeqcSpecies* species) -> AqueousSpeciesTh
     return zeroAqueousSpeciesThermoData();
 }
 
-auto gaseousSpeciesThermoData(const PhreeqcPhase* phase) -> GaseousSpeciesThermoData
+auto gaseousSpeciesThermoData(const PhreeqcPhase* phase) -> FluidSpeciesThermoData
 {
     // Get the PHREEQC thermodynamic params of the species
     SpeciesThermoParamsPhreeqc params = speciesThermoParamsPhreeqc(phase);
@@ -139,7 +139,7 @@ auto gaseousSpeciesThermoData(const PhreeqcPhase* phase) -> GaseousSpeciesThermo
     // Check if the species has reaction info
     if(!params.reaction.equation.empty())
     {
-        GaseousSpeciesThermoData data;
+        FluidSpeciesThermoData data;
         data.phreeqc.set(params);
         return data;
     }
@@ -568,7 +568,7 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
         if(primary_species.count(species.name()))
         {
             GaseousSpecies refspecies = reference_database.gaseousSpecies(species.name());
-            GaseousSpeciesThermoData data = refspecies.thermoData();
+            FluidSpeciesThermoData data = refspecies.thermoData();
             data.phreeqc.set(species.thermoData().phreeqc.get());
             data.phreeqc.get().reaction = {};
             refspecies.setThermoData(data);

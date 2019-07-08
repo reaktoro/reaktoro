@@ -34,7 +34,7 @@ struct GaseousSpecies::Impl
     double acentric_factor = 0.0;
 
     /// The thermodynamic data of the gaseous species.
-    GaseousSpeciesThermoData thermo;
+    FluidSpeciesThermoData thermo;
 };
 
 GaseousSpecies::GaseousSpecies()
@@ -64,7 +64,7 @@ auto GaseousSpecies::setAcentricFactor(double val) -> void
     pimpl->acentric_factor = val;
 }
 
-auto GaseousSpecies::setThermoData(const GaseousSpeciesThermoData& thermo) -> void
+auto GaseousSpecies::setThermoData(const FluidSpeciesThermoData& thermo) -> void
 {
     pimpl->thermo = thermo;
 }
@@ -84,7 +84,7 @@ auto GaseousSpecies::acentricFactor() const -> double
     return pimpl->acentric_factor;
 }
 
-auto GaseousSpecies::thermoData() const -> const GaseousSpeciesThermoData&
+auto GaseousSpecies::thermoData() const -> const FluidSpeciesThermoData&
 {
     return pimpl->thermo;
 }

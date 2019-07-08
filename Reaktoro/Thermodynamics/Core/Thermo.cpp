@@ -115,7 +115,7 @@ struct Thermo::Impl
 
         water_eletro_state_fn = memoize(water_eletro_state_fn);
 
-        // Initialize the HKF equation of state for the thermodynamic state of aqueous, gaseous and mineral species
+        // Initialize the HKF equation of state for the thermodynamic state of aqueous, fluid and mineral species
         species_thermo_state_hkf_fn = [=](double T, double P, std::string species)
         {
             return speciesThermoStateHKF(T, P, species);

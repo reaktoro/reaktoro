@@ -154,10 +154,6 @@ struct FluidSpeciesThermoParamsHKF
     double Tmax;
 };
 
-using GaseousSpeciesThermoParamsHKF = FluidSpeciesThermoParamsHKF;
-
-using LiquidSpeciesThermoParamsHKF = FluidSpeciesThermoParamsHKF;
-
 /// A type for storing the parameters of the HKF equation of state for a mineral species
 struct MineralSpeciesThermoParamsHKF
 {
@@ -261,10 +257,6 @@ struct FluidSpeciesThermoData
 	/// The thermodynamic parameters of the species from a Phreeqc database
 	Optional<SpeciesThermoParamsPhreeqc> phreeqc;
 };
-
-using GaseousSpeciesThermoData = FluidSpeciesThermoData;
-
-using LiquidSpeciesThermoData = FluidSpeciesThermoData;
 
 /// A type for storing the thermodynamic data of a mineral species
 struct MineralSpeciesThermoData

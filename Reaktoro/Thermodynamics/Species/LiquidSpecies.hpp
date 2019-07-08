@@ -51,7 +51,7 @@ namespace Reaktoro {
 		auto setAcentricFactor(double val) -> void;
 
 		/// Set the thermodynamic data of the liquid species.
-		auto setThermoData(const LiquidSpeciesThermoData& thermo) -> void;
+		auto setThermoData(const FluidSpeciesThermoData& thermo) -> void;
 
 		/// Return the critical temperature of the liquid species (in units of K)
 		auto criticalTemperature() const -> double;
@@ -63,7 +63,7 @@ namespace Reaktoro {
 		auto acentricFactor() const -> double;
 
 		/// Return the thermodynamic data of the liquid species.
-		auto thermoData() const -> const LiquidSpeciesThermoData&;
+		auto thermoData() const -> const FluidSpeciesThermoData&;
 
 	private:
 		struct Impl;
