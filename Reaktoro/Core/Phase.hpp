@@ -44,6 +44,9 @@ public:
     /// Construct a default Phase instance.
     Phase();
 
+    /// Construct a Phase instance with given fluid name and PhaseType.
+    Phase(std::string name, PhaseType type);
+
     /// Set the name of the phase.
     auto setName(std::string name) -> void;
 
