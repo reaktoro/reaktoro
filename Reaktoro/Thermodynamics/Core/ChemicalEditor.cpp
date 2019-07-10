@@ -46,7 +46,7 @@
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 // ThermoFun includes
-#include <thermofun/ThermoFun.h>
+#include <ThermoFun/ThermoFun.h>
 
 namespace Reaktoro {
 namespace {
