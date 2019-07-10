@@ -44,7 +44,10 @@ namespace Reaktoro {
 
             // Initialize the CubicEOS instance
             CubicEOS eos(nspecies);
-            eos.setPhaseAsVapor();
+            if (mixture.species()[0].name().find("(liq)") != std::string::npos)
+                eos.setPhaseAsLiquid();
+            else
+                eos.setPhaseAsVapor();
             eos.setCriticalTemperatures(Tc);
             eos.setCriticalPressures(Pc);
             eos.setAcentricFactors(omega);

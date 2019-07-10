@@ -34,6 +34,7 @@
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
@@ -255,7 +256,7 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const AqueousSpecies& spec
     return speciesThermoStateSoluteHKF(T, P, species, aes, wes);
 }
 
-auto speciesThermoStateHKF(Temperature T, Pressure P, const GaseousSpecies& species) -> SpeciesThermoState
+auto speciesThermoStateHKF(Temperature T, Pressure P, const FluidSpecies& species) -> SpeciesThermoState
 {
     // Check temperature range validity
     checkTemperatureValidityHKF(T, species);
@@ -301,59 +302,6 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const GaseousSpecies& spec
     state.enthalpy         = H;
     state.entropy          = S;
     state.internal_energy  = U;
-    state.helmholtz_energy = A;
-    state.heat_capacity_cp = Cp;
-    state.heat_capacity_cv = state.heat_capacity_cp - R;
-
-    return state;
-}
-
-auto speciesThermoStateHKF(Temperature T, Pressure P, const LiquidSpecies& species) -> SpeciesThermoState
-{
-    // Check temperature range validity
-    checkTemperatureValidityHKF(T, species);
-
-    // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermoData().hkf.get();
-
-    // Auxiliary variables
-    const auto R = universalGasConstant;
-    const auto Pbar = P * 1.0e-5;
-    const auto Tr = referenceTemperature;
-    const auto Gf = hkf.Gf;
-    const auto Hf = hkf.Hf;
-    const auto Sr = hkf.Sr;
-    const auto a = hkf.a;
-    const auto b = hkf.b;
-    const auto c = hkf.c;
-
-    // Calculate the integrals of the heal capacity function of the gas from Tr to T at constant pressure Pr
-    const auto CpdT = a * (T - Tr) + 0.5*b*(T*T - Tr * Tr) - c * (1.0 / T - 1.0 / Tr);
-    const auto CpdlnT = a * log(T / Tr) + b * (T - Tr) - 0.5*c*(1.0 / (T*T) - 1.0 / (Tr*Tr));
-
-    // Calculate the standard molal thermodynamic properties of the gas
-    auto V = R * T / P; // the ideal gas molar volume (in units of m3/mol)
-    auto G = Gf - Sr * (T - Tr) + CpdT - T * CpdlnT;
-    auto H = Hf + CpdT;
-    auto S = Sr + CpdlnT;
-    auto U = H - Pbar * V;
-    auto A = U - T * S;
-    auto Cp = a + b * T + c / (T*T);
-
-    // Convert the thermodynamic properties of the gas to the standard units
-    G *= calorieToJoule;
-    H *= calorieToJoule;
-    S *= calorieToJoule;
-    U *= calorieToJoule;
-    A *= calorieToJoule;
-    Cp *= calorieToJoule;
-
-    SpeciesThermoState state;
-    state.volume = V;
-    state.gibbs_energy = G;
-    state.enthalpy = H;
-    state.entropy = S;
-    state.internal_energy = U;
     state.helmholtz_energy = A;
     state.heat_capacity_cp = Cp;
     state.heat_capacity_cv = state.heat_capacity_cp - R;
