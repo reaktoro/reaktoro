@@ -32,26 +32,6 @@ namespace Reaktoro {
 
 	void exportOil(py::module& m)
 	{
-		py::class_<GeneralMixture<LiquidSpecies>>(m, "_GeneralMixture_oil")
-			.def(py::init<>())
-			.def(py::init<const std::vector<LiquidSpecies>&>())
-			;
-
-		py::class_<GeneralMixture<GaseousSpecies>>(m, "_GeneralMixture_gas")
-			.def(py::init<>())
-			.def(py::init<const std::vector<GaseousSpecies>&>())
-			;
-
-		py::class_<LiquidMixture, GeneralMixture<LiquidSpecies>>(m, "OilMixture")
-			.def(py::init<>())
-			.def(py::init<const std::vector<LiquidSpecies>>())
-			;
-		
-		py::class_<GaseousMixture, GeneralMixture<GaseousSpecies>>(m, "GaseousMixture")
-			.def(py::init<>())
-			.def(py::init<const std::vector<GaseousSpecies>>())
-			;
-
 		py::enum_<phaseIdentificationMethod>(m, "phaseIdentificationMethod")
 			.value("VolumeMethod", phaseIdentificationMethod::VolumeMethod)
 			.value("CriticalPointMethods", phaseIdentificationMethod::CriticalPointMethods)
