@@ -30,6 +30,7 @@
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/LiquidMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelDebyeHuckel.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
@@ -39,6 +40,10 @@
 #include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelIdeal.hpp>
 #include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherPruessEnnis.hpp>
 #include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherReed.hpp>
+#include <Reaktoro/Thermodynamics/Models/FluidChemicalModelCubicEOS.hpp>
+#include <Reaktoro/Thermodynamics/Models/FluidChemicalModelIdeal.hpp>
+#include <Reaktoro/Thermodynamics/Models/FluidChemicalModelSpycherPruessEnnis.hpp>
+#include <Reaktoro/Thermodynamics/Models/FluidChemicalModelSpycherReed.hpp>
 #include <Reaktoro/Thermodynamics/Models/LiquidChemicalModelCubicEOS.hpp>
 #include <Reaktoro/Thermodynamics/Models/MineralChemicalModelIdeal.hpp>
 #include <Reaktoro/Thermodynamics/Models/MineralChemicalModelRedlichKister.hpp>
@@ -55,6 +60,7 @@
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/FluidPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralCatalyst.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralMechanism.hpp>
@@ -62,6 +68,7 @@
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/ThermoData.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>

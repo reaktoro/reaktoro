@@ -95,12 +95,14 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportThermo(m);
     exportAqueousChemicalModelDebyeHuckel(m);
     exportAqueousPhase(m);
+    exportFluidPhase(m);
     exportGaseousPhase(m);
 	exportLiquidPhase(m);
     exportMineralPhase(m);
     exportAqueousSpecies(m);
     exportGaseousSpecies(m);
-	exportLiquidSpecies(m);
+    exportLiquidSpecies(m);
+    exportFluidSpecies(m);
 	exportMineralSpecies(m);
     exportWater(m);
 	exportOil(m);
