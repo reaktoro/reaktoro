@@ -107,6 +107,14 @@ public:
     /// @param name The name of the aqueous species
     auto aqueousSpecies(std::string name) const -> const AqueousSpecies&;
 
+    /// Return all fluid species in the database
+    auto fluidSpecies()->std::vector<FluidSpecies>;
+
+    /// Return a fluid species in the database.
+    /// **Note:** An exception is thrown if the database does not contain the species.
+    /// @param name The name of the fluid species
+    auto fluidSpecies(std::string name) const -> const FluidSpecies&;
+
     /// Return all gaseous species in the database
     auto gaseousSpecies() -> std::vector<FluidSpecies>;
 
@@ -122,14 +130,6 @@ public:
     /// **Note:** An exception is thrown if the database does not contain the species.
     /// @param name The name of the liquid species
     auto liquidSpecies(std::string name) const -> const FluidSpecies&;
-
-    /// Return all fluid species in the database
-    auto fluidSpecies()->std::vector<FluidSpecies>;
-
-    /// Return a fluid species in the database.
-    /// **Note:** An exception is thrown if the database does not contain the species.
-    /// @param name The name of the fluid species
-    auto fluidSpecies(std::string name) const -> const FluidSpecies&;
 
     /// Return all mineral species in the database
     auto mineralSpecies() -> std::vector<MineralSpecies>;

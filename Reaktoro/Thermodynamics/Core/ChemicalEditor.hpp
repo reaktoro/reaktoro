@@ -30,12 +30,15 @@ namespace Reaktoro {
 class AqueousPhase;
 class ChemicalSystem;
 class Database;
+class FluidPhase;
 class GaseousPhase;
 class LiquidPhase;
 class MineralPhase;
 class MineralReaction;
 class ReactionSystem;
 class StringList;
+
+enum class PhaseType;
 
 /// Provides convenient operations to initialize ChemicalSystem and ReactionSystem instances.
 /// The ChemicalEditor class is used to conveniently create instances of classes ChemicalSystem and ReactionSystem.
@@ -73,8 +76,8 @@ class StringList;
 /// ReactionSystem reactions = editor;
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
-/// @see Database, ChemicalSystem, ReactionSystem, AqueousPhase, GaseousPhase,
-/// LiquidPhase, MineralPhase, AqueousSpecies, GaseousSpecies, LiquidSpecies, 
+/// @see Database, ChemicalSystem, ReactionSystem, AqueousPhase, FluidPhase,
+/// GaseousPhase, LiquidPhase, MineralPhase, AqueousSpecies, FluidSpecies,
 /// MineralSpecies, MineralReaction
 ///
 /// @ingroup Core
@@ -120,6 +123,15 @@ public:
     /// @return A reference to the created AqueousPhase object.
     auto addPhase(const AqueousPhase& phase) -> AqueousPhase&;
 
+    /// Add an fluid phase in the chemical editor.
+    /// Note that only one gaseous and one liquid phase can exist in the chemical editor.
+    /// So whenever this method is called, it has the effect of updating the
+    /// current state on gaseous phase or liquid phase in the editor.
+    /// @param phase The FluidPhase instance
+    /// @return A reference to the created FluidPhase object.
+    auto addPhase(const FluidPhase& phase) -> FluidPhase&;
+    
+    /*
     /// Add a gaseous phase in the chemical editor.
     /// Note that only one gaseous phase can exist in the chemical editor.
     /// So whenever this method is called, it has the effect of updating the
@@ -135,6 +147,8 @@ public:
     /// @param phase The LiquidPhase instance
     /// @return A reference to the created LiquidPhase object.
     auto addPhase(const LiquidPhase& phase)->LiquidPhase&;
+
+    */
 
     /// Add a mineral phase in the chemical editor.
     /// If a mineral phase with the same name already exists, then
@@ -172,7 +186,7 @@ public:
     ///
     /// @param species A StringList containing the names of the species.
     /// @return A reference to the created AqueousPhase object.
-    /// @see addGaseousPhase, addMineralPhase
+    /// @see addGaseousPhase, addLiquidPhase, addMineralPhase
     ///
     /// @note The old use of this function to add elements and/or compounds was removed. To use these
     /// functionalities, use addAqueousPhaseWitElements to add elements and addAqueousPhaseWitElementsOf
@@ -250,7 +264,7 @@ public:
     /// @note The old use of this function to add elements and/or compounds was removed. To use these
     /// functionalities, use addGaseousPhaseWitElements to add elements and addGaseousPhaseWitElementsOf
     /// to add compounds.
-    auto addGaseousPhase(const StringList& species) -> GaseousPhase&;
+    auto addGaseousPhase(const StringList& species) -> FluidPhase&;
 
     /// Add a gaseous phase in the chemical editor.
     /// This method constructs a GaseousPhase object that represents a gaseous phase in the system.
@@ -270,7 +284,7 @@ public:
     /// @param elements A StringList containing a list of chemical element names.
     /// @return A reference to the created GaseousPhase object.
     /// @see addAqueousPhaseWithElements, addLiquidPhaseWithElements, addMineralPhaseWithElements
-    auto addGaseousPhaseWithElements(const StringList& elements) -> GaseousPhase&;
+    auto addGaseousPhaseWithElements(const StringList& elements) -> FluidPhase&;
 
     /// Add a gaseous phase in the chemical editor.
     /// This method constructs a GaseousPhase object that represents a gaseous phase in the system.
@@ -291,7 +305,7 @@ public:
     /// @param compounds A StringList containing a list of compound names.
     /// @return A reference to the created GaseousPhase object.
     /// @see addAqueousPhaseWithElements, addMineralPhaseWithElements
-    auto addGaseousPhaseWithElementsOf(const StringList& compounds)->GaseousPhase&;
+    auto addGaseousPhaseWithElementsOf(const StringList& compounds) -> FluidPhase&;
 
     /// Add a liquid phase in the chemical editor.
     /// This method constructs a LiquidPhase object that represents a liquid phase in the system.
@@ -317,7 +331,7 @@ public:
     /// @note The old use of this function to add elements and/or compounds was removed. To use these
     /// functionalities, use addGaseousPhaseWitElements to add elements and addGaseousPhaseWitElementsOf
     /// to add compounds.
-    auto addLiquidPhase(const StringList& species)->LiquidPhase&;
+    auto addLiquidPhase(const StringList& species) -> FluidPhase&;
 
     /// Add a liquid phase in the chemical editor.
     /// This method constructs a LiquidPhase object that represents a liquid phase in the system.
@@ -337,7 +351,7 @@ public:
     /// @param elements A StringList containing a list of chemical element names.
     /// @return A reference to the created LiquidPhase object.
     /// @see addAqueousPhaseWithElements, addGaseousPhaseWithElements, addMineralPhaseWithElements
-    auto addLiquidPhaseWithElements(const StringList& elements)->LiquidPhase&;
+    auto addLiquidPhaseWithElements(const StringList& elements) -> FluidPhase&;
 
     /// Add a liquid phase in the chemical editor.
     /// This method constructs a LiquidPhase object that represents a liquid phase in the system.
@@ -358,7 +372,7 @@ public:
     /// @param compounds A StringList containing a list of compound names.
     /// @return A reference to the created LiquidPhase object.
     /// @see addAqueousPhaseWithElements, addGaseousPhaseWithElementsOf, addMineralPhaseWithElements
-    auto addLiquidPhaseWithElementsOf(const StringList& compounds)->LiquidPhase&;
+    auto addLiquidPhaseWithElementsOf(const StringList& compounds) -> FluidPhase&;
 
     /// Add a mineral phase in the chemical editor.
     /// This method constructs a MineralPhase object that represents a mineral phase in the system.
@@ -466,16 +480,16 @@ public:
     auto aqueousPhase() -> AqueousPhase&;
 
     /// Return the gaseous phase in the chemical editor.
-    auto gaseousPhase() const -> const GaseousPhase&;
+    auto gaseousPhase() const -> const FluidPhase&;
 
     /// Return the gaseous phase in the chemical editor.
-    auto gaseousPhase() -> GaseousPhase&;
+    auto gaseousPhase() ->FluidPhase&;
 
     /// Return the liquid phase in the chemical editor.
-    auto liquidPhase() const -> const LiquidPhase&;
+    auto liquidPhase() const -> const FluidPhase&;
 
     /// Return the gaseous phase in the chemical editor.
-    auto liquidPhase() -> LiquidPhase&;
+    auto liquidPhase() ->FluidPhase&;
 
     /// Return the mineral phases in the chemical editor.
     auto mineralPhases() const -> const std::vector<MineralPhase>&;
@@ -500,6 +514,8 @@ public:
 	auto convertLiquidPhase(const LiquidPhase& phase) const ->LiquidPhase;
 
 	auto convertGaseousPhase(const GaseousPhase& phase) const ->GaseousPhase;
+
+    auto convertFluidPhase(const FluidPhase& phase) const->FluidPhase;
 
 private:
     struct Impl;

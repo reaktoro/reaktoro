@@ -28,18 +28,18 @@ int main()
 	phases.push_back(editor.convertAqueousPhase(editor.aqueousPhase()));
 
 	{
-		auto gas_species = std::vector<GaseousSpecies>{
+		auto gas_species = std::vector<FluidSpecies>{
 			db.gaseousSpecies("CO2(g)"),
 		};
-		auto mixture = GaseousMixture(gas_species);
-		auto gas = GaseousPhase(mixture);
+		auto mixture = FluidMixture(gas_species);
+		auto gas = FluidPhase(mixture, "Gaseous", PhaseType::Gas);
 
-		phases.push_back(editor.convertGaseousPhase(gas));
+		phases.push_back(editor.convertFluidPhase(gas));
 	}
 
 	{
-		auto oil_species = std::vector<LiquidSpecies>{
-			LiquidSpecies(db.gaseousSpecies("CO2(oil)")),
+		auto oil_species = std::vector<FluidSpecies>{
+            FluidSpecies(db.gaseousSpecies("CO2(oil)")),
 		};
 
 		//OilSpecies C2H6;
@@ -62,14 +62,14 @@ int main()
 
 		//oil_species.push_back(C2H6);
 
-		auto mixture = LiquidMixture(oil_species);
-		auto oil = LiquidPhase(mixture);
+		auto mixture = FluidMixture(oil_species);
+		auto oil = FluidPhase(mixture, "Liquid", PhaseType::Liquid);
 
 		//oil.setChemicalModelSoaveRedlichKwong();
 
 		//oil.setChemicalModelRedlichKwong();
 
-		phases.push_back(editor.convertLiquidPhase(oil));
+		phases.push_back(editor.convertFluidPhase(oil));
 	}
 
 

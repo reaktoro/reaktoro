@@ -25,7 +25,7 @@
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // Phreeqc includes
@@ -184,9 +184,9 @@ auto createAqueousSpecies(const PhreeqcSpecies* s) -> AqueousSpecies
 	return species;
 }
 
-auto createGaseousSpecies(const PhreeqcPhase* p) -> GaseousSpecies
+auto createGaseousSpecies(const PhreeqcPhase* p) -> FluidSpecies
 {
-	GaseousSpecies species;
+    FluidSpecies species;
 	species.setName(p->name);
 	species.setElements(elementsInPhase(p));
 	species.setThermoData(gaseousSpeciesThermoData(p));
@@ -215,8 +215,8 @@ struct PhreeqcDatabase::Impl
 	/// The list of aqueous species in the database
 	std::vector<AqueousSpecies> aqueous_species;
 
-	/// The list of gaseous species in the database
-	std::vector<GaseousSpecies> gaseous_species;
+	/// The list of fluid species in the database
+	std::vector<FluidSpecies> gaseous_species;
 
 	/// The list of mineral species in the database
 	std::vector<MineralSpecies> mineral_species;
@@ -375,12 +375,12 @@ auto PhreeqcDatabase::aqueousSpecies() const -> const std::vector<AqueousSpecies
 	return pimpl->aqueous_species;
 }
 
-auto PhreeqcDatabase::gaseousSpecies(Index index) const -> GaseousSpecies
+auto PhreeqcDatabase::gaseousSpecies(Index index) const -> FluidSpecies
 {
 	return pimpl->gaseous_species[index];
 }
 
-auto PhreeqcDatabase::gaseousSpecies(std::string name) const -> GaseousSpecies
+auto PhreeqcDatabase::gaseousSpecies(std::string name) const -> FluidSpecies
 {
     const Index i = index(name, pimpl->gaseous_species);
     Assert(i < numGaseousSpecies(),
@@ -389,7 +389,7 @@ auto PhreeqcDatabase::gaseousSpecies(std::string name) const -> GaseousSpecies
 	return gaseousSpecies(i);
 }
 
-auto PhreeqcDatabase::gaseousSpecies() const -> const std::vector<GaseousSpecies>&
+auto PhreeqcDatabase::gaseousSpecies() const -> const std::vector<FluidSpecies>&
 {
 	return pimpl->gaseous_species;
 }
@@ -561,13 +561,13 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
         return species;
     };
 
-    // Return a GaseousSpecies instance with appropriate thermodynamic data.
-    auto construct_gaseous_species = [&](const GaseousSpecies& species)
+    // Return a FluidSpecies instance with appropriate thermodynamic data.
+    auto construct_gaseous_species = [&](const FluidSpecies& species)
     {
         // Check if the gaseous species is a product species that is being promoted as master species
         if(primary_species.count(species.name()))
         {
-            GaseousSpecies refspecies = reference_database.gaseousSpecies(species.name());
+            FluidSpecies refspecies = reference_database.gaseousSpecies(species.name());
             FluidSpeciesThermoData data = refspecies.thermoData();
             data.phreeqc.set(species.thermoData().phreeqc.get());
             data.phreeqc.get().reaction = {};
