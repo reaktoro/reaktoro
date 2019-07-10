@@ -35,10 +35,13 @@ namespace Reaktoro {
         /// Construct a default FluidPhase instance.
         FluidPhase();
 
+        ///Construct an FluidPhase instance with given name and PhaseType
+        FluidPhase(const std::string& name, PhaseType type);
+
         /// Construct an FluidPhase instance with given fluid (gaseous or liquid) mixture, name and type.
         /// The Peng-Robinson equation of state is chosen by default to calculate the
         /// thermodynamic and chemical properties of this FluidPhase object.
-        explicit FluidPhase(const FluidMixture& mixture, std::string name, PhaseType type);
+        explicit FluidPhase(const FluidMixture& mixture, const std::string& name, PhaseType type);
 
         /// Set the chemical model of the phase with the ideal gas equation of state.
         /// This model only supports a gaseous phase. Using it in a FluidPhase that it not

@@ -47,7 +47,11 @@ namespace Reaktoro {
         : Phase("Fluid", PhaseType::Fluid), pimpl(new Impl())
     {}
 
-    FluidPhase::FluidPhase(const FluidMixture& mixture, std::string name, PhaseType type)
+    FluidPhase::FluidPhase(const std::string& name, PhaseType type)
+        : Phase(name, type), pimpl(new Impl())
+    {}
+
+    FluidPhase::FluidPhase(const FluidMixture& mixture, const std::string& name, PhaseType type)
         : Phase(name, type), pimpl(new Impl(mixture))
     {
         // Convert the FluidSpecies instances to Species instances

@@ -24,8 +24,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class AqueousSpecies;
-class GaseousSpecies;
-class LiquidSpecies;
+class FluidSpecies;
 class MineralSpecies;
 struct SpeciesElectroState;
 struct SpeciesThermoState;
@@ -41,11 +40,8 @@ auto speciesThermoStateSoluteHKF(Temperature T, Pressure P, const AqueousSpecies
 /// Calculate the thermodynamic state of an aqueous species using the HKF model.
 auto speciesThermoStateHKF(Temperature T, Pressure P, const AqueousSpecies& species) -> SpeciesThermoState;
 
-/// Calculate the thermodynamic state of a gaseous species using the HKF model.
-auto speciesThermoStateHKF(Temperature T, Pressure P, const GaseousSpecies& species) -> SpeciesThermoState;
-
-/// Calculate the thermodynamic state of a liquid species using the HKF model.
-auto speciesThermoStateHKF(Temperature T, Pressure P, const LiquidSpecies& species)->SpeciesThermoState;
+/// Calculate the thermodynamic state of a fluid species using the HKF model.
+auto speciesThermoStateHKF(Temperature T, Pressure P, const FluidSpecies& species) -> SpeciesThermoState;
 
 /// Calculate the thermodynamic state of a mineral species using the HKF model.
 auto speciesThermoStateHKF(Temperature T, Pressure P, const MineralSpecies& species) -> SpeciesThermoState;
