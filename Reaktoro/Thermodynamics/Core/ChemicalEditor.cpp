@@ -36,17 +36,14 @@
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/LiquidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/FluidPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
-#include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -314,7 +311,7 @@ public:
 
     auto addLiquidPhaseWithSpecies(const std::vector<std::string>& species) -> FluidPhase&
     {
-        Assert(species.size(), "Could not create the LiquidPhase object.",
+        Assert(species.size(), "Could not create the FluidPhase object that represents a liquid.",
             "Expecting at least one species name.");
         std::vector<FluidSpecies> liquid_species(species.size());
         for (unsigned i = 0; i < species.size(); ++i)
@@ -324,7 +321,7 @@ public:
 
     auto addLiquidPhaseWithElements(const std::vector<std::string>& elements) -> FluidPhase&
     {
-        Assert(elements.size(), "Could not create the LiquidPhase object.",
+        Assert(elements.size(), "Could not create the FluidPhase object that represents a liquid.",
             "Expecting at least one chemical element or compound name.");
         return addLiquidPhaseHelper(database.liquidSpeciesWithElements(elements));
     }
@@ -723,9 +720,9 @@ auto ChemicalEditor::convertAqueousPhase(const AqueousPhase& phase) const -> Aqu
 	return pimpl->convertPhase<AqueousPhase>(phase);
 }
 
-auto ChemicalEditor::convertLiquidPhase(const LiquidPhase& phase) const -> LiquidPhase
+auto ChemicalEditor::convertLiquidPhase(const FluidPhase& phase) const -> FluidPhase
 {
-	return pimpl->convertPhase<LiquidPhase>(phase);
+    return pimpl->convertPhase<FluidPhase>(phase);
 }
 
 auto ChemicalEditor::convertGaseousPhase(const GaseousPhase& phase) const -> GaseousPhase

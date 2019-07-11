@@ -32,7 +32,6 @@ class ChemicalSystem;
 class Database;
 class FluidPhase;
 class GaseousPhase;
-class LiquidPhase;
 class MineralPhase;
 class MineralReaction;
 class ReactionSystem;
@@ -77,7 +76,7 @@ enum class PhaseType;
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// @see Database, ChemicalSystem, ReactionSystem, AqueousPhase, FluidPhase,
-/// GaseousPhase, LiquidPhase, MineralPhase, AqueousSpecies, FluidSpecies,
+/// GaseousPhase, MineralPhase, AqueousSpecies, FluidSpecies,
 /// MineralSpecies, MineralReaction
 ///
 /// @ingroup Core
@@ -308,8 +307,8 @@ public:
     auto addGaseousPhaseWithElementsOf(const StringList& compounds) -> FluidPhase&;
 
     /// Add a liquid phase in the chemical editor.
-    /// This method constructs a LiquidPhase object that represents a liquid phase in the system.
-    /// The LiquidPhase object is created by specifying the names of the species one by one. These
+    /// This method constructs a FluidPhase object that represents a liquid phase in the system.
+    /// The FluidPhase object is created by specifying the names of the species one by one. These
     /// species names must conform to those used in the database that was specified during the
     /// initialization of the ChemicalEditor object, otherwise, an exception will be thrown.
     /// The example below describes the usage of this method for a liquid phase that could be
@@ -325,7 +324,7 @@ public:
     /// @ref addLiquidPhaseWithElements(std::string elements).
     /// @ref addLiquidPhaseWithElementsOf(std::string compounds).
     /// @param species A StringList containing the names of the species.
-    /// @return A reference to the created LiquidPhase object.
+    /// @return A reference to the created FluidPhase object.
     /// @see addAqueousPhase, addGaseousPhase, addMineralPhase
     ///
     /// @note The old use of this function to add elements and/or compounds was removed. To use these
@@ -334,13 +333,13 @@ public:
     auto addLiquidPhase(const StringList& species) -> FluidPhase&;
 
     /// Add a liquid phase in the chemical editor.
-    /// This method constructs a LiquidPhase object that represents a liquid phase in the system.
+    /// This method constructs a FluidPhase object that represents a liquid phase in the system.
     /// Instead of listing the names of the species one by one, which might require prior knowledge
-    /// of the species names in the database, this method permits the LiquidPhase object to be
+    /// of the species names in the database, this method permits the FluidPhase object to be
     /// constructed by using a list of chemical element names and the database will then be searched for all
     /// species that could be formed out of those elements. These species will then be used to
-    /// construct the LiquidPhase object.
-    /// The example below describes three equivalent alternatives to construct a LiquidPhase
+    /// construct the FluidPhase object.
+    /// The example below describes three equivalent alternatives to construct a FluidPhase
     /// object that represents a liquid phase that could be formed by mixing H2S and CO2.
     /// ~~~
     /// ChemicalEditor editor;
@@ -349,19 +348,19 @@ public:
     /// editor.addLiquidPhaseWithElements({"HOCS"});
     /// ~~~
     /// @param elements A StringList containing a list of chemical element names.
-    /// @return A reference to the created LiquidPhase object.
+    /// @return A reference to the created FluidPhase object.
     /// @see addAqueousPhaseWithElements, addGaseousPhaseWithElements, addMineralPhaseWithElements
     auto addLiquidPhaseWithElements(const StringList& elements) -> FluidPhase&;
 
     /// Add a liquid phase in the chemical editor.
-    /// This method constructs a LiquidPhase object that represents a liquid phase in the system.
+    /// This method constructs a FluidPhase object that represents a liquid phase in the system.
     /// Instead of listing the names of the species one by one, which might require prior knowledge
-    /// of the species names in the database, this method permits the LiquidPhase object to be
+    /// of the species names in the database, this method permits the FluidPhase object to be
     /// constructed by using a list of compound or substance names that might not represent names of
     /// species in the database. The list of compounds will be broken into a list of element names,
     /// and the database will then be searched for all species that could be formed out of those elements.
-    // These species will then be used to construct the LiquidPhase object.
-    /// The example below describes three equivalent alternatives to construct a LiquidPhase
+    // These species will then be used to construct the FluidPhase object.
+    /// The example below describes three equivalent alternatives to construct a FluidPhase
     /// object that represents a liquid phase that could be formed by mixing H2S and CO2.
     /// ~~~
     /// ChemicalEditor editor;
@@ -370,7 +369,7 @@ public:
     /// editor.addLiquidPhaseWithElementsOf({"HOCS"});
     /// ~~~
     /// @param compounds A StringList containing a list of compound names.
-    /// @return A reference to the created LiquidPhase object.
+    /// @return A reference to the created FluidPhase object.
     /// @see addAqueousPhaseWithElements, addGaseousPhaseWithElementsOf, addMineralPhaseWithElements
     auto addLiquidPhaseWithElementsOf(const StringList& compounds) -> FluidPhase&;
 
@@ -511,7 +510,7 @@ public:
 
 	auto convertAqueousPhase(const AqueousPhase& phase) const ->AqueousPhase;
 
-	auto convertLiquidPhase(const LiquidPhase& phase) const ->LiquidPhase;
+	auto convertLiquidPhase(const FluidPhase& phase) const ->FluidPhase;
 
 	auto convertGaseousPhase(const GaseousPhase& phase) const ->GaseousPhase;
 

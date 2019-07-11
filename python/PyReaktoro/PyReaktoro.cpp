@@ -97,11 +97,9 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportAqueousPhase(m);
     exportFluidPhase(m);
     exportGaseousPhase(m);
-	exportLiquidPhase(m);
     exportMineralPhase(m);
     exportAqueousSpecies(m);
     exportGaseousSpecies(m);
-    exportLiquidSpecies(m);
     exportFluidSpecies(m);
 	exportMineralSpecies(m);
     exportWater(m);

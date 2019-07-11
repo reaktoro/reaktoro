@@ -29,7 +29,6 @@ class Element;
 class AqueousSpecies;
 class FluidSpecies;
 class GaseousSpecies;
-class LiquidSpecies;
 class MineralSpecies;
 
 /// Provides operations to retrieve physical and thermodynamic data of chemical species.
@@ -87,7 +86,7 @@ public:
     /// Add a GaseousSpecies instance in the database.
     auto addGaseousSpecies(const FluidSpecies& species) -> void;
 
-    /// Add a LiquidSpecies instance in the database
+    /// Add a FluidSpecies that emulate liquid instance in the database
     auto addLiquidSpecies(const FluidSpecies& species) -> void;
 
     /// Add a FluidSpecies instance in the database

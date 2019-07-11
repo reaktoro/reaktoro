@@ -26,7 +26,6 @@ namespace py = pybind11;
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 #include "W:\release\Projects\Reaktoro\demos\cpp\phaseid.hpp"
-#include <reaktoro/Thermodynamics/Mixtures/LiquidMixture.hpp>
 
 namespace Reaktoro {
 
