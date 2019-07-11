@@ -226,52 +226,39 @@ struct SpeciesThermoParamsPhreeqc
     ReactionParams reaction;
 };
 
-/// A type for storing the thermodynamic data of an aqueous species
-struct AqueousSpeciesThermoData
+/// A type for storing the thermodynamic data of general species
+struct SpeciesThermoData
 {
-    /// The interpolated thermodynamic properties of an aqueous species
+    /// The interpolated thermodynamic properties of general species
     Optional<SpeciesThermoInterpolatedProperties> properties;
 
-    /// The interpolated thermodynamic properties of an aqueous species given in terms of reaction
+    /// The interpolated thermodynamic properties of general species given in terms of reaction
     Optional<ReactionThermoInterpolatedProperties> reaction;
-
-    /// The thermodynamic parameters of the HKF model for an aqueous species
-    Optional<AqueousSpeciesThermoParamsHKF> hkf;
 
     /// The thermodynamic parameters of the species from a Phreeqc database
     Optional<SpeciesThermoParamsPhreeqc> phreeqc;
+};
+
+
+/// A type for storing the thermodynamic data of an aqueous species
+struct AqueousSpeciesThermoData : public SpeciesThermoData
+{
+    /// The thermodynamic parameters of the HKF model for an aqueous species
+    Optional<AqueousSpeciesThermoParamsHKF> hkf;
 };
 
 /// A type for storing the thermodynamic data of fluid (gaseous or liquid) species
-struct FluidSpeciesThermoData
+struct FluidSpeciesThermoData : public SpeciesThermoData
 {
-	/// The interpolated thermodynamic properties of a gaseous species
-	Optional<SpeciesThermoInterpolatedProperties> properties;
-
-	/// The interpolated thermodynamic properties of a gaseous species given in terms of reaction
-	Optional<ReactionThermoInterpolatedProperties> reaction;
-
-	/// The thermodynamic parameters of the HKF model for a gaseous species
+	/// The thermodynamic parameters of the HKF model for a fluid (gaseous or liquid) species
 	Optional<FluidSpeciesThermoParamsHKF> hkf;
-
-	/// The thermodynamic parameters of the species from a Phreeqc database
-	Optional<SpeciesThermoParamsPhreeqc> phreeqc;
 };
 
 /// A type for storing the thermodynamic data of a mineral species
-struct MineralSpeciesThermoData
+struct MineralSpeciesThermoData : public SpeciesThermoData
 {
-    /// The interpolated thermodynamic properties of a mineral species
-    Optional<SpeciesThermoInterpolatedProperties> properties;
-
-    /// The interpolated thermodynamic properties of a mineral species given in terms of reaction
-    Optional<ReactionThermoInterpolatedProperties> reaction;
-
     /// The thermodynamic parameters of the HKF model for a mineral species
     Optional<MineralSpeciesThermoParamsHKF> hkf;
-
-    /// The thermodynamic parameters of the species from a Phreeqc database
-    Optional<SpeciesThermoParamsPhreeqc> phreeqc;
 };
 
 } // namespace Reaktoro
