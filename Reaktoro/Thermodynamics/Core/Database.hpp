@@ -28,7 +28,6 @@ namespace Reaktoro {
 class Element;
 class AqueousSpecies;
 class FluidSpecies;
-class GaseousSpecies;
 class MineralSpecies;
 
 /// Provides operations to retrieve physical and thermodynamic data of chemical species.
@@ -83,10 +82,10 @@ public:
     /// Add an AqueousSpecies instance in the database.
     auto addAqueousSpecies(const AqueousSpecies& species) -> void;
 
-    /// Add a GaseousSpecies instance in the database.
+    /// Add a FluidSpecies instance that can emulate gas in the database.
     auto addGaseousSpecies(const FluidSpecies& species) -> void;
 
-    /// Add a FluidSpecies that emulate liquid instance in the database
+    /// Add a FluidSpecies instance that emulate liquid in the database
     auto addLiquidSpecies(const FluidSpecies& species) -> void;
 
     /// Add a FluidSpecies instance in the database

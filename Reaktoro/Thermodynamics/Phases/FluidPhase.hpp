@@ -87,7 +87,7 @@ namespace Reaktoro {
         /// hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739–749*.
         auto setChemicalModelSpycherReed()->FluidPhase&;
 
-        /// Return the GaseousMixture instance
+        /// Return the FluidMixture instance
         auto mixture() const -> const FluidMixture&;
 
     private:

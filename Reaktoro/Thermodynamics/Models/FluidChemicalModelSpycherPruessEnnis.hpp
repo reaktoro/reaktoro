@@ -31,7 +31,7 @@ namespace Reaktoro {
     /// geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100°C
     /// and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031*.
     /// @param mixture The gaseous mixture instance
-    /// @see GaseousMixture, PhaseChemicalModel
+    /// @see FluidMixture, PhaseChemicalModel
     auto fluidChemicalModelSpycherPruessEnnis(const FluidMixture& mixture)->PhaseChemicalModel;
 
 } // namespace Reaktoro
