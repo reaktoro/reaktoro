@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-import pytest
-
 from reaktoro import ChemicalState, EquilibriumProblem
 
 
@@ -32,11 +30,9 @@ def test_equilibrium_problem_add_by_chemical_state(partition_with_inert_gaseous_
     assert problem.partition().numInertSpecies() == 2
 
 
-@pytest.mark.xfail(reason='fix add function to work as same on addState')
 def test_equilibrium_problem_add(partition_with_inert_gaseous_phase):
     problem = EquilibriumProblem(partition_with_inert_gaseous_phase)
-    problem.add("CO2(g)", 10.0, 'mol')
+    problem.add("CO2", 10.0, 'mol')
 
-    for element in problem.elementAmounts():
-        assert element == 0.0
+    assert sum(problem.elementAmounts()) == 30.0
     assert problem.partition().numInertSpecies() == 2

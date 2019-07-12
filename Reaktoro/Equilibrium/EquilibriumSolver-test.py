@@ -15,36 +15,50 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-import pytest
-
-from reaktoro import EquilibriumSolver, ChemicalState, EquilibriumProblem
+from reaktoro import EquilibriumSolver, ChemicalState, EquilibriumProblem, equilibrate
 
 
-@pytest.mark.xfail(reason='fix equilibrium solver state with only inert species')
-def test_equilibrium_solver_with_inert_gaseous_phase_using_chemical_state(partition_with_inert_gaseous_phase, chemical_system):
-    solver = EquilibriumSolver(partition_with_inert_gaseous_phase)
-
-    state = ChemicalState(chemical_system)
-    state.setSpeciesAmount("CO2(g)", 10.0)
-    element_amounts_before_solver = state.elementAmounts()
-    solver.approximate(state)
-    for (element_before, element_after) in zip(element_amounts_before_solver, state.elementAmounts()):
-        assert element_before == pytest.approx(element_after)
-
-
-@pytest.mark.xfail(reason='fix equilibrium solver with inert species')
-def test_equilibrium_solver_with_inert_gaseous_phase_using_equilibrium_problem(partition_with_inert_gaseous_phase, chemical_system):
+def _create_equilibrium_problem(partition_with_inert_gaseous_phase):
+    # Equilibrate 1 kg of H2O and 1 mol of CO2, but CO2(g) and H2O(g) are inert
     problem = EquilibriumProblem(partition_with_inert_gaseous_phase)
-    solver = EquilibriumSolver(partition_with_inert_gaseous_phase)
+    problem.add('H2O', 1, 'kg')
+    problem.add('CO2', 1, 'mol')
 
+    return problem
+
+
+def _create_chemical_state(chemical_system):
+    # Set the initial amounts of CO2(g) and H2O(g)
     state = ChemicalState(chemical_system)
 
-    state.setSpeciesAmount("CO2(g)", 10.0)
-    state.setSpeciesAmount("CO2(aq)", 10.0)
-    problem.add(state)
+    # Set the initial amounts of CO2(g) and H2O(g)
+    state.setSpeciesAmount('CO2(g)', 1, 'mol')
+    state.setSpeciesAmount('H2O(g)', 1, 'mmol')
 
-    element_amounts_before_solver = problem.elementAmounts()
-    solver.approximate(state, problem)
+    return state
 
-    for (element_before, element_after) in zip(element_amounts_before_solver, state.elementAmounts()):
-        assert element_before == pytest.approx(element_after)
+
+def test_equilibrium_problem_with_equilibrate(partition_with_inert_gaseous_phase, chemical_system):
+    problem = _create_equilibrium_problem(partition_with_inert_gaseous_phase)
+    state = _create_chemical_state(chemical_system)
+
+    # Compute equilibrium state; the amounts of CO2(g) and H2O(g) should remain the same
+    equilibrate(state, problem)
+
+    # Assert the amounts of CO2(g) and H2O(g) are the same as initially set
+    assert state.speciesAmount('CO2(g)') == 1.0
+    assert state.speciesAmount('H2O(g)') == 0.001
+
+
+def test_equilibrium_problem_with_equilibrium_solver(partition_with_inert_gaseous_phase, chemical_system):
+    problem = _create_equilibrium_problem(partition_with_inert_gaseous_phase)
+    state = _create_chemical_state(chemical_system)
+
+    # Compute equilibrium state; the amounts of CO2(g) and H2O(g) should remain the same
+    solver = EquilibriumSolver(chemical_system)
+    solver.setPartition(problem.partition())
+    solver.solve(state, problem)
+
+    # Assert the amounts of CO2(g) and H2O(g) are the same as initially set
+    assert state.speciesAmount('CO2(g)') == 1.0
+    assert state.speciesAmount('H2O(g)') == 0.001
