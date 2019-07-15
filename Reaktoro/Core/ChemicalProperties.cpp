@@ -46,6 +46,11 @@ auto ChemicalProperties::update(double T_, double P_) -> void
 
 auto ChemicalProperties::update(VectorConstRef n_) -> void
 {
+    Assert(!std::isnan(T) && !std::isnan(P),
+           "Cannot proceed with method ChemicalProperties::update.",
+           "The temperature or pressure values are invalid (NAN). "
+           "Update the these properties before calling this method!")
+
     n = n_;
     system.chemicalModel()(cres, T, P, n);
 
