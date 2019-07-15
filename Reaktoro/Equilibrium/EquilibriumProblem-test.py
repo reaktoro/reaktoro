@@ -15,24 +15,24 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-
-import pytest
-
-import numpy as np
-from reaktoro import ChemicalProperties
+from reaktoro import ChemicalState, EquilibriumProblem
 
 
-def test_chemical_properties_subvolume(chemical_properties):
-    phases = [0]
-    volume = chemical_properties.subvolume(phases)
-    assert volume.val == pytest.approx(0.0010136929)
+def test_equilibrium_problem_add_by_chemical_state(partition_with_inert_gaseous_phase, chemical_system):
+    state = ChemicalState(chemical_system)
+    state.setSpeciesAmount("CO2(g)", 10.0)
+
+    problem = EquilibriumProblem(partition_with_inert_gaseous_phase)
+    problem.add(state)
+
+    for element in problem.elementAmounts():
+        assert element == 0.0
+    assert problem.partition().numInertSpecies() == 2
 
 
-def test_chemical_properties_not_updated(chemical_system):
-    chemical_properties = ChemicalProperties(chemical_system)
-    assert np.isnan(chemical_properties.temperature().val)
-    assert np.isnan(chemical_properties.pressure().val)
+def test_equilibrium_problem_add(partition_with_inert_gaseous_phase):
+    problem = EquilibriumProblem(partition_with_inert_gaseous_phase)
+    problem.add("CO2", 10.0, 'mol')
 
-    with pytest.raises(RuntimeError, match=r"Cannot proceed with method ChemicalProperties::update."):
-        chemical_properties.update(np.array([55, 1e-7, 1e-7, 0.1, 0.5, 0.01, 1.0, 0.001, 1.0]))
-
+    assert sum(problem.elementAmounts()) == 30.0
+    assert problem.partition().numInertSpecies() == 2
