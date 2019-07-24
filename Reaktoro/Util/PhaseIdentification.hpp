@@ -33,7 +33,7 @@ namespace PhaseIdentification {
     /// @return The type of the phase
     /// 
     /// Reference: Bennett, J. and Schmidt, K.A., 2016. Comparison of Phase Identification Methods Used in Oil Industry Flow Simulations. Energy & Fuels, 31(4), pp.3370-3379.
-    auto volumeMethod(ThermoScalar Volume, ThermoScalar b)->PhaseType;
+    auto volumeMethod(ChemicalScalar& Volume, ChemicalScalar& b)->PhaseType;
 
     /// Return a PhaseType that says if the phase is a Liquid or Gas based on Isothermal Compressibility
     /// @param Temperature Phase temperature
@@ -42,20 +42,22 @@ namespace PhaseIdentification {
     /// @return The type of the phase
     /// 
     /// Reference: Bennett, J. and Schmidt, K.A., 2016. Comparison of Phase Identification Methods Used in Oil Industry Flow Simulations. Energy & Fuels, 31(4), pp.3370-3379.
-    auto isothermalCompressibilityMethod(ThermoScalar Temperature, ThermoScalar Pressure, ChemicalScalar Z)->PhaseType;
+    auto isothermalCompressibilityMethod(const ThermoScalar& Temperature, const ThermoScalar& Pressure, const ChemicalScalar& Z)->PhaseType;
     
     /// Return a PhaseType that says if the phase is a Liquid or Gas based on gibbs residual energy and equation of state
     /// if size(Z) > 2, the values od Gibbs residual energy is compared. It is a liquid phase if Gibbs residual energy of Z_min is the smallest and gaseous if 
     /// Gibbs residual energy of Z_max is the smallest.
     /// if size(Z) == 1, the pressue is compared with the local P_min e local P_max of the EoS. It is a liquid phase if P \textgreater P_min and gaseous if P \textless Pmax
     /// @param Pressure Phase pressure
-    /// @param  Phase pressure
+    /// @param Temperature Phase temperature
+    /// @param amix attractive parameter
     /// @param Z Phase compressibility 
     /// @return The type of the phase
     /// 
     /// Reference: Bennett, J. and Schmidt, K.A., 2016. Comparison of Phase Identification Methods Used in Oil Industry Flow Simulations. Energy & Fuels, 31(4), pp.3370-3379.
-    auto gibbsEnergyAndEquationOfStateMethod(ThermoScalar Pressure, ThermoScalar Temperature, ChemicalScalar amix, ChemicalScalar bmix, ChemicalScalar A,
-        ChemicalScalar B, ChemicalScalar C, ChemicalScalar Z, const double epsilon, const double sigma)->PhaseType;
+    auto gibbsEnergyAndEquationOfStateMethod(const ThermoScalar& Pressure, const ThermoScalar& Temperature, const ChemicalScalar& amix, 
+                                             const ChemicalScalar& bmix, const ChemicalScalar& A, const ChemicalScalar& B, const ChemicalScalar& C, 
+                                             std::vector<ChemicalScalar> Z, const double epsilon, const double sigma)->PhaseType;
 
 
 }
