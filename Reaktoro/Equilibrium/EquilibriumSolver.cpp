@@ -41,7 +41,6 @@
 #include <Reaktoro/Optimization/OptimumState.hpp>
 
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
-#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 
 phaseIdentificationMethod phaseidMethod;
 extern int quantity;
@@ -444,7 +443,7 @@ struct EquilibriumSolver::Impl
                 { zero = false; break; }
         return zero || !options.warmstart;
     }
-
+    /*
 	/// Return true if the system has the need to run the phase identification to remove an inaproriet phase
 	auto necessityofphaseidentification(const ChemicalState& state) -> bool
 	{
@@ -468,7 +467,7 @@ struct EquilibriumSolver::Impl
 		}
 		return false;
 	}
-
+    */
 	
 	/// Return a vector with the total amount of species without count Aqueous phase
 	// the currently version only works when all species in oil phase are also in gas
@@ -491,6 +490,7 @@ struct EquilibriumSolver::Impl
 		return z;
 	}
 
+    /*
 	/// Return the number os possible stable phase of the system and the vector of element amounts
 	auto stabitytest_TPD(const ChemicalSystem& system, Vector Z, double temperature, double pressure) -> int {
 		auto numberofspecies = system.species().size();
@@ -628,6 +628,7 @@ struct EquilibriumSolver::Impl
 		}
 		return 4;
 	}
+    */
     /// Solve the equilibrium problem
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {

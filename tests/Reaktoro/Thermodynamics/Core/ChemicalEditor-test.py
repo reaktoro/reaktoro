@@ -22,9 +22,10 @@ from reaktoro import (
     ChemicalSystem,
     Database,
     AqueousPhase, 
+    FluidPhase,
     GaseousPhase,
-    LiquidPhase,
     MineralPhase,
+    PhaseType
 )
 
 
@@ -163,8 +164,8 @@ def test_chemical_editor_adding_and_getting_phases():
     
     editor = ChemicalEditor(database)
     
-    gaseous_phase = GaseousPhase()
-    liquid_phase = LiquidPhase()
+    gaseous_phase = FluidPhase("gaseous", PhaseType.Gas)
+    liquid_phase = FluidPhase("liquid", PhaseType.Liquid)
     mineral_phase = MineralPhase()
     
     editor.addPhase(gaseous_phase)

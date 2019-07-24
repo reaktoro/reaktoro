@@ -31,6 +31,7 @@ void exportPhase(py::module& m)
         .value("Solid", PhaseType::Solid)
         .value("Liquid", PhaseType::Liquid)
         .value("Gas", PhaseType::Gas)
+        .value("Fluid", PhaseType::Fluid)
         .value("Plasma", PhaseType::Plasma)
         ;
 
