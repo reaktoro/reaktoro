@@ -78,4 +78,9 @@ auto newton(const std::function<void(VectorConstRef, VectorRef, MatrixRef)>& f,
 /// @return The four roots \f$ (r_1, r_2, r_3, r_4) \f$ that
 auto ferrari(double a, double b, double c, double d, double e) -> QuarticRoots;
 
+/// Return all real roots values of a group of roots
+/// @param roots QuarticRoots with of complex roots
+/// @return The group of roots that has no imaginary parameter
+auto realRoots(const QuarticRoots& roots)->std::vector<double>;
+
 } // namespace Reaktoro

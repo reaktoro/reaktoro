@@ -161,4 +161,19 @@ auto ferrari(double a, double b, double c, double d, double e)->QuarticRoots
     return std::make_tuple(x1, x2, x3, x4);
 }
 
+auto realRoots(const QuarticRoots& roots) -> std::vector<double>
+{
+    std::vector<double> real_roots;
+    if (std::get<0>(roots).imag() == 0)
+        real_roots.push_back(std::get<0>(roots).real());
+    if (std::get<1>(roots).imag() == 0)
+        real_roots.push_back(std::get<1>(roots).real());
+    if (std::get<2>(roots).imag() == 0)
+        real_roots.push_back(std::get<2>(roots).real());
+    if (std::get<3>(roots).imag() == 0)
+        real_roots.push_back(std::get<3>(roots).real());
+    
+    return real_roots;
+}
+
 } // namespace Reaktoro
