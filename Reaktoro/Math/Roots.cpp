@@ -117,7 +117,7 @@ auto newton(const std::function<void(VectorConstRef, VectorRef, MatrixRef)>& f,
     return x;
 }
 
-auto ferrari(double a, double b, double c, double d, double e)->QuarticRoots 
+auto ferrari(const double a, const double b, const double c, const double d, const double e)->QuarticRoots
 {
     const double Delta = 256.0 * std::pow(a*e, 3.0) - 192.0 * std::pow(a*e, 2.0) * b * d
                         - 128.0 * std::pow(a*c*e, 2.0) + 144.0 * std::pow(a*d, 2.0) * c*e 
@@ -173,6 +173,19 @@ auto realRoots(const QuarticRoots& roots) -> std::vector<double>
     if (std::get<3>(roots).imag() == 0)
         real_roots.push_back(std::get<3>(roots).real());
     
+    return real_roots;
+}
+
+auto realRoots(const CubicRoots& roots) -> std::vector<double>
+{
+    std::vector<double> real_roots;
+    if (std::get<0>(roots).imag() == 0)
+        real_roots.push_back(std::get<0>(roots).real());
+    if (std::get<1>(roots).imag() == 0)
+        real_roots.push_back(std::get<1>(roots).real());
+    if (std::get<2>(roots).imag() == 0)
+        real_roots.push_back(std::get<2>(roots).real());
+
     return real_roots;
 }
 
