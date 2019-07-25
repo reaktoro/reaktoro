@@ -25,8 +25,9 @@
 namespace Reaktoro {
 namespace PhaseIdentification {
 
-auto volumeMethod(ChemicalScalar& Volume, ChemicalScalar& b) -> PhaseType
+auto volumeMethod(const ThermoScalar& Temperature, const ThermoScalar& Pressure, const ChemicalScalar& Z, ChemicalScalar& b) -> PhaseType
 {
+    auto Volume = Z * universalGasConstant * Temperature / Pressure;
     if ((Volume.val / b.val) > 1.75)
         return PhaseType::Gas;
 
@@ -35,8 +36,8 @@ auto volumeMethod(ChemicalScalar& Volume, ChemicalScalar& b) -> PhaseType
 
 auto isothermalCompressibilityMethod(const ThermoScalar& Temperature, const ThermoScalar& Pressure, const ChemicalScalar& Z) -> PhaseType
 {
-    auto V = Z * universalGasConstant*Temperature / Pressure;
-    auto dkdt = (1.0 / (V.val*V.val))*V.ddP*V.ddT;
+    auto Volume = Z * universalGasConstant*Temperature / Pressure;
+    auto dkdt = (1.0 / (Volume.val*Volume.val))*Volume.ddP*Volume.ddT;
     
     if (dkdt <= 0.0)
         return PhaseType::Gas;
@@ -126,7 +127,7 @@ auto gibbsResidualEnergyComparison(const ThermoScalar& Pressure, const ThermoSca
         Gs.push_back(universalGasConstant*Temperature*(Z - 1 - log(Z - beta) - q * I));
     }
     
-    if ((*Gs.begin()).val > (*Gs.end()).val)
+    if (Gs[0].val < Gs[1].val)
         return PhaseType::Gas;
     else
        return PhaseType::Liquid;
@@ -136,15 +137,15 @@ auto gibbsResidualEnergyComparison(const ThermoScalar& Pressure, const ThermoSca
 
 auto gibbsEnergyAndEquationOfStateMethod(const ThermoScalar& Pressure, const ThermoScalar& Temperature, const ChemicalScalar& amix,
                                          const ChemicalScalar& bmix, const ChemicalScalar& A, const ChemicalScalar& B, const ChemicalScalar& C,
-                                         std::vector<ChemicalScalar> Z, const double epsilon, const double sigma) -> PhaseType
+                                         std::vector<ChemicalScalar> Zs, const double epsilon, const double sigma) -> PhaseType
 {
-    if (Z.size() == 1)
+    if (Zs.size() == 1)
     {
         return pressureComparison(Pressure, Temperature, amix, bmix, A, B, C, epsilon, sigma);
     }
     else
     {
-        return gibbsResidualEnergyComparison(Pressure, Temperature, amix, bmix, A, B, Z, epsilon, sigma);
+        return gibbsResidualEnergyComparison(Pressure, Temperature, amix, bmix, A, B, Zs, epsilon, sigma);
     }
 }
 
