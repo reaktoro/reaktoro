@@ -43,6 +43,7 @@ void exportEquilibriumSolver(py::module& m)
 
     py::class_<EquilibriumSolver>(m, "EquilibriumSolver")
         .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const Partition&>())
         .def("setOptions", &EquilibriumSolver::setOptions)
         .def("setPartition", &EquilibriumSolver::setPartition)
         .def("approximate", approximate1)
