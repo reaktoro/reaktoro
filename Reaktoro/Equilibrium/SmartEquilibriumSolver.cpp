@@ -149,15 +149,15 @@ struct SmartEquilibriumSolver::Impl
     auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> void
     {
         // Calculate the equilibrium state using conventional Gibbs energy minimization approach
-        timeit( solver.solve(state, T, P, be); )
-            >> result.timing.learning_gibbs_energy_minimization;
+        timeit( solver.solve(state, T, P, be),
+            result.timing.learning_gibbs_energy_minimization);
 
         // Store the result of the Gibbs energy minimization calculation performed during learning
         result.learning.gibbs_energy_minimization = solver.result();
 
         // Store the computed solution into the knowledge tree
-        timeit( tree.push_back({be, state, solver.properties(), solver.sensitivity()}); )
-            >> result.timing.learning_storage;
+        timeit( tree.push_back({be, state, solver.properties(), solver.sensitivity()}),
+            result.timing.learning_storage);
     }
 
     /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
@@ -200,7 +200,7 @@ struct SmartEquilibriumSolver::Impl
         // Find the entry with minimum "input" distance
         auto it = std::min_element(tree.begin(), tree.end(), distancefn);
 
-        toc() >> result.timing.estimate_search;
+        toc(result.timing.estimate_search);
 
         //----------------------------------------------------------------------------
         // Step 2: Calculate predicted state with a first-order Taylor approximation
@@ -224,7 +224,7 @@ struct SmartEquilibriumSolver::Impl
         n.noalias() = n0 + dn;                         // n = n0 + delta(n)
         delta_lna.noalias() = dlnadn * dn;             // delta(ln(a)) = d(lna)/dn * delta(n)
 
-        toc() >> result.timing.estimate_mat_vec_mul;
+        toc(result.timing.estimate_mat_vec_mul);
 
         //----------------------------------------------
         // Step 3: Checking the acceptance criterion
@@ -277,7 +277,7 @@ struct SmartEquilibriumSolver::Impl
             }
         }
 
-        toc() >> result.timing.estimate_acceptance;
+        toc(result.timing.estimate_acceptance);
 
 
         //*/
@@ -334,13 +334,14 @@ struct SmartEquilibriumSolver::Impl
         result = {};
 
         // Perform a smart estimate of the chemical state
-        timeit( estimate(state, T, P, be); ) >> result.timing.estimate;
+        timeit( estimate(state, T, P, be),
+            result.timing.estimate);
 
         // Perform a learning step if the smart prediction is not sactisfatory
         if(!result.estimate.accepted)
-            timeit( learn(state, T, P, be); ) >> result.timing.learning;
+            timeit( learn(state, T, P, be), result.timing.learning );
 
-        toc() >> result.timing.solve;
+        toc(result.timing.solve);
 
         return result;
     }

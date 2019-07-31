@@ -223,7 +223,8 @@ struct EquilibriumSolver::Impl
         n = state.speciesAmounts();
 
         // Update the standard thermodynamic properties of the chemical system
-        timeit( properties.update(T, P) ) >> result.timing.standard_thermodynamic_properties;
+        timeit( properties.update(T, P),
+            result.timing.standard_thermodynamic_properties );
 
         // Update the normalized standard Gibbs energies of the species
         u0 = properties.standardPartialMolarGibbsEnergies()/RT;
@@ -238,7 +239,8 @@ struct EquilibriumSolver::Impl
             n(ies) = ne;
 
             // Update the chemical properties of the chemical system
-            timeit( properties.update(T, P, n) ).accumulate(result.timing.chemical_properties);
+            timeit( properties.update(T, P, n),
+                result.timing.chemical_properties );
 
             // Set the scaled chemical potentials of the species
             u = u0 + properties.lnActivities();
@@ -458,7 +460,7 @@ struct EquilibriumSolver::Impl
     /// Solve the equilibrium problem
     auto solve(ChemicalState& state, double T, double P, const double* b) -> EquilibriumResult
     {
-        tic();
+        longtic();
 
         // Reset the result of last equilibrium calculation
         result = {};
@@ -506,7 +508,7 @@ struct EquilibriumSolver::Impl
         // Update the chemical state from the optimum state
         updateChemicalState(state);
 
-        toc() >> result.timing.solve;
+        toc(result.timing.solve);
 
         return result;
     }

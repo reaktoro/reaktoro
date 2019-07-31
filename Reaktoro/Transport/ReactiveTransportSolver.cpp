@@ -195,7 +195,7 @@ struct ReactiveTransportSolver::Impl
         // Sum the amounts of elements distributed among fluid and solid species
         b.noalias() = bf + bs;
 
-        toc() >> result.timing.transport;
+        toc(result.timing.transport);
 
         //---------------------------------------------------------------------------
         // Step 1: Perform a time step transport calculation for each fluid element
@@ -237,7 +237,7 @@ struct ReactiveTransportSolver::Impl
             }
         }
 
-        toc() >> result.timing.equilibrium;
+        toc(result.timing.equilibrium);
 
         // Update the output files with the chemical state of every cell
         for(Index icell = 0; icell < num_cells; ++icell)

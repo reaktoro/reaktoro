@@ -183,7 +183,7 @@ struct TransportSolver::Impl
     /// Perform one transport time step calculation.
     auto step(VectorRef u, VectorConstRef q) -> TransportResult
     {
-        tic();
+        longtic();
 
         // Reset the result of the last transport calculation
         result = {};
@@ -243,9 +243,9 @@ struct TransportSolver::Impl
         u += dt * q;
 
         // Solving the diffusion problem with time implicit approach
-        timeit( A.solve(u); ) >> result.timing.matrix_equation_solve;
+        timeit( A.solve(u), result.timing.matrix_equation_solve );
 
-        toc() >> result.timing.step;
+        longtoc(result.timing.step);
 
         return result;
     }
