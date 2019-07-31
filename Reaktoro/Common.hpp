@@ -33,6 +33,7 @@
 #include <Reaktoro/Common/Optional.hpp>
 #include <Reaktoro/Common/Outputter.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
+#include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/ScalarTypes.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
