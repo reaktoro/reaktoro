@@ -32,14 +32,14 @@ template<typename ResultType>
 auto accumulateTimingsFromResults(const std::vector<ResultType>& results)
 {
     using TimingType = decltype(results.front().timing);
-    auto accumulated_timing = results.front().timing;
+    if(results.empty()) return TimingType{};
+    TimingType accumulated_timing = results.front().timing;
     for(const auto& result : results)
         accumulated_timing += result.timing;
     return accumulated_timing;
 }
 
 } // namespace internal
-
 
 struct ReactiveTransportProfiler::Impl
 {
