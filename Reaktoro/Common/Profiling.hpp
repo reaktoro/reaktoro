@@ -19,40 +19,34 @@
 
 #ifdef REAKTORO_PROFILING
 
-// C++ includes
-#include <stack>
-
 // Reaktoro includes
 #include <Reaktoro/Common/TimeUtils.hpp>
 
 namespace Reaktoro {
 
-/// The global stack of collected stated time using macro tic(expr).
-static std::stack<Time> __tics;
-
-/// The global auxiliary time variable used in macro toc().
+/// The global auxiliary time variable used by macros tic and toc.
 static Time __tic;
 
-/// Provide operator>> to transfer toc() result to a double time variable.
-struct __ElapsedTime
-{
-	double secs;
-	inline auto operator>>(double& out) const { out = secs; }
-    inline operator double() const { return secs; }
-	inline auto accumulate(double& out) const { out += secs; }
-};
+/// The global auxiliary time variable used by macros longtic and longtoc.
+static Time __longtic;
 
-/// Macro to start the timing of an expression execution.
-#define tic(expr) __tics.push( time() ); expr;
+/// Macro to start timing of a sequence of statements.
+#define tic(expr) { __tic = time(); expr; }
+
+/// Macro to start timing of a sequence of statements.
+#define longtic(expr) { __longtic = time(); expr; }
 
 /// Macro to get the execution time since last call to tic(expr) macro.
-#define toc() __tic = __tics.top(); __tics.pop(); __ElapsedTime{elapsed(__tic)}
+#define toc(res) { res += elapsed(__tic); }
+
+/// Macro to get the execution time since last call to longtic(expr) macro.
+#define longtoc(res) { res += elapsed(__longtic); }
 
 /// Macro to measure the elapsed time of an expression execution.
-#define timeit(expr) tic(); expr; toc()
+#define timeit(expr, res) { tic(); expr; toc(res); }
 
 /// Macro that disables an expression if profiling is disabled.
-#define ifprofiling(expr) expr
+#define profiling(expr) expr
 
 } // namespace Reaktoro
 
@@ -60,25 +54,23 @@ struct __ElapsedTime
 
 namespace Reaktoro {
 
-/// Provide operator>> to transfer toc() result to a double time variable.
-struct __ElapsedTime
-{
-	inline auto operator>>(double& out) const { out = 0.0; }
-    inline operator double() const { return 0.0; }
-    inline auto accumulate(double& out) const { }
-};
+/// Macro to start timing of a sequence of statements.
+#define tic(expr)
 
-/// Macro to start the timing of an expression execution.
-#define tic(expr) ((void) (0))
+/// Macro to start timing of a sequence of statements.
+#define longtic(expr)
 
 /// Macro to get the execution time since last call to tic(expr) macro.
-#define toc() __ElapsedTime{}
+#define toc(res)
+
+/// Macro to get the execution time since last call to longtic(expr) macro.
+#define longtoc(res)
 
 /// Macro to measure the elapsed time of an expression execution.
-#define timeit(expr) expr; toc()
+#define timeit(expr, res) expr
 
 /// Macro that disables an expression if profiling is disabled.
-#define ifprofiling(expr) ((void) (0))
+#define profiling(expr)
 
 } // namespace Reaktoro
 
