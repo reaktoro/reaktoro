@@ -59,13 +59,7 @@ struct ReactiveTransportProfiler::Impl
     std::deque<SmartEquilibriumTiming> timing_smart_equilibrium_at_step;
 
     /// The accumulated timing for the operations during fluid element transport calculations.
-    TransportTiming accumulated_timing_transport;
-
-    /// The accumulated timing for the operations during equilibrium calculations.
-    EquilibriumTiming accumulated_timing_equilibrium;
-
-    /// The accumulated timing for the operations during smart equilibrium calculations.
-    SmartEquilibriumTiming accumulated_timing_smart_equilibrium;
+    AccumulatedTimings accumulated_timings;
 
     /// Construct an instance of ReactiveTransportProfiler::Impl.
     Impl(const ReactiveTransportSolver& solver)
@@ -84,9 +78,9 @@ struct ReactiveTransportProfiler::Impl
         timing_equilibrium_at_step.push_back( internal::accumulateTimingsFromResults(last_result.equilibrium_at_cell) );
         timing_smart_equilibrium_at_step.push_back( internal::accumulateTimingsFromResults(last_result.smart_equilibrium_at_cell) );
 
-        accumulated_timing_transport += timing_transport_at_step.back();
-        accumulated_timing_equilibrium += timing_equilibrium_at_step.back();
-        accumulated_timing_smart_equilibrium += timing_smart_equilibrium_at_step.back();
+        accumulated_timings.transport += timing_transport_at_step.back();
+        accumulated_timings.equilibrium += timing_equilibrium_at_step.back();
+        accumulated_timings.smart_equilibrium += timing_smart_equilibrium_at_step.back();
     }
 
     /// Return the computing costs of all operations during a reactive transport calculation.
@@ -130,7 +124,7 @@ struct ReactiveTransportProfiler::Impl
     {
         SmartEquilibriumProfiling prof;
 
-        prof.timing = accumulated_timing_smart_equilibrium;
+        prof.timing = accumulated_timings.smart_equilibrium;
 
         // Count the accepted smart equilibrium estimates and required learning operations
         for(const auto& result : results)
@@ -145,7 +139,7 @@ struct ReactiveTransportProfiler::Impl
 
         // Set the success rate at which smart equilibrium estimates were accepted.
         prof.smart_equilibrium_estimate_acceptance_rate =
-            prof.num_smart_equilibrium_accepted_estimates / prof.num_equilibrium_calculations;
+            static_cast<double>(prof.num_smart_equilibrium_accepted_estimates) / prof.num_equilibrium_calculations;
 
         // The number of time steps (= the number of collected ReactiveTransportResult objects)
         const auto num_time_steps = results.size();
@@ -159,7 +153,7 @@ struct ReactiveTransportProfiler::Impl
             // For each cell, check if the smart estimation was accepted at current time step number
             const auto num_cells = results[i].smart_equilibrium_at_cell.size();
             for(Index j = 0; j < num_cells; ++j)
-                if(results[i].smart_equilibrium_at_cell[j].estimate.accepted)
+                if(results[i].smart_equilibrium_at_cell[j].estimate.accepted == false)
                     prof.cells_where_learning_was_required_at_step[i].push_back(j);
         }
 
@@ -172,7 +166,6 @@ struct ReactiveTransportProfiler::Impl
 
     }
 };
-
 
 ReactiveTransportProfiler::ReactiveTransportProfiler(const ReactiveTransportSolver& solver)
 : pimpl(new Impl(solver))
@@ -201,6 +194,11 @@ auto ReactiveTransportProfiler::results() const -> const std::deque<ReactiveTran
     return pimpl->results;
 }
 
+auto ReactiveTransportProfiler::accumulatedTimings() const -> AccumulatedTimings
+{
+    return pimpl->accumulated_timings;
+}
+
 auto ReactiveTransportProfiler::computingCostsPerTimeStep() const -> ComputingCostsPerTimeStep
 {
     return pimpl->computingCostsPerTimeStep();
@@ -213,7 +211,7 @@ auto ReactiveTransportProfiler::smartEquilibriumProfiling() const -> SmartEquili
 
 auto ReactiveTransportProfiler::output(std::string filename) -> void
 {
-
+    pimpl->output(filename);
 }
 
 auto operator<<(std::ostream& out, const ReactiveTransportProfiler::SmartEquilibriumProfiling& prof) -> std::ostream&

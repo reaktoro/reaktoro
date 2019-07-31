@@ -35,10 +35,23 @@ class ReactiveTransportSolver;
 class ReactiveTransportProfiler
 {
 public:
-    /// Provide accumulated timing information in each time step for the operations in a reactive transport calculation.
+    /// Provide accumulated timing information for the operations in a reactive transport calculation.
+    struct AccumulatedTimings
+    {
+        /// The accumulated timing for the operations during fluid element transport calculations.
+        TransportTiming transport;
+
+        /// The accumulated timing for the operations during equilibrium calculations.
+        EquilibriumTiming equilibrium;
+
+        /// The accumulated timing for the operations during smart equilibrium calculations.
+        SmartEquilibriumTiming smart_equilibrium;
+    };
+
+    /// Provide computing costs (in seconds) for the operations in a reactive transport calculation for each time step.
     struct ComputingCostsPerTimeStep
     {
-        /// The time (in s) for each time step.
+        /// The time (in s) in each time step.
         std::vector<double> t;
 
         /// The time spent (in s) in each time step for fluid element transport calculations.
@@ -102,6 +115,9 @@ public:
 
     /// Update the profiler with a new reactive transport time step profiling data.
     auto update() -> void;
+
+    /// Return the accumulated timing information for the operations in a reactive transport calculation.
+    auto accumulatedTimings() const -> AccumulatedTimings;
 
     /// Return the computing costs of all operations during a reactive transport calculation.
     auto computingCostsPerTimeStep() const -> ComputingCostsPerTimeStep;
