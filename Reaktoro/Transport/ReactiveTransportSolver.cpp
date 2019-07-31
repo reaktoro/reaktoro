@@ -82,6 +82,7 @@ struct ReactiveTransportSolver::Impl
     /// Set the options for the reactive transport calculations.
     auto setOptions(const ReactiveTransportOptions& options) -> void
     {
+        this->options = options;
         equilibrium_solver.setOptions(options.equilibrium);
         smart_equilibrium_solver.setOptions(options.smart_equilibrium);
     }
