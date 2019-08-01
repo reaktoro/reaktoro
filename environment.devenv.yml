@@ -18,6 +18,7 @@ dependencies:
     - sphinx_rtd_theme
     - sphinxcontrib-images
   - pugixml
+  - nlohmann_json
   - pybind11=2.3.0
   - pytest
   - pytest-cpp
