@@ -21,88 +21,17 @@
 #include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
+#include <Reaktoro/Transport/ReactiveTransportAnalysis.hpp>
 #include <Reaktoro/Transport/ReactiveTransportResult.hpp>
-#include <Reaktoro/Transport/TransportResult.hpp>
 
 namespace Reaktoro {
 
-// Forward declarations
-class ReactiveTransportSolver;
-
-/// Provide mechanisms for analysing accumulated profiling/results of a reactive transport calculation.
+/// Provide mechanisms for analysing the operations in a reactive transport simulation.
 class ReactiveTransportProfiler
 {
 public:
-    /// Provide accumulated timing information for the operations in a reactive transport calculation.
-    struct AccumulatedTimings
-    {
-        /// The accumulated timing for the operations during fluid element transport calculations.
-        TransportTiming transport;
-
-        /// The accumulated timing for the operations during equilibrium calculations.
-        EquilibriumTiming equilibrium;
-
-        /// The accumulated timing for the operations during smart equilibrium calculations.
-        SmartEquilibriumTiming smart_equilibrium;
-    };
-
-    /// Provide computing costs (in seconds) for the operations in a reactive transport calculation for each time step.
-    struct ComputingCostsPerTimeStep
-    {
-        /// The time (in s) in each time step.
-        std::vector<double> t;
-
-        /// The time spent (in s) in each time step for fluid element transport calculations.
-        std::vector<double> transport;
-
-        /// The time spent (in s) in each time step for chemical equilibrium calculations.
-        std::vector<double> equilibrium;
-
-        /// The time spent (in s) in each time step for smart chemical equilibrium calculations.
-        std::vector<double> smart_equilibrium;
-
-        /// The time spent (in s) in each time step for smart chemical equilibrium calculations without the computing costs of nearest neighbor search operations.
-        std::vector<double> smart_equilibrium_with_ideal_search;
-
-        /// The time spent (in s) in each time step for smart chemical equilibrium estimation calculations.
-        std::vector<double> smart_equilibrium_estimate;
-
-        /// The time spent (in s) in each time step for nearest neighbor search operations during smart chemical equilibrium calculations.
-        std::vector<double> smart_equilibrium_nearest_neighbor_search;
-
-        /// The time spent (in s) in each time step for Gibbs energy minimization calculations during smart equilibrium learning operations.
-        std::vector<double> smart_equilibrium_gibbs_energy_minimization;
-
-        /// The time spent (in s) in each time step for storing a new learned chemical state in smart chemical equilibrium calculations.
-        std::vector<double> smart_equilibrium_storage;
-    };
-
-    /// Provide a summary of the performance analysis of the smart equilibrium operations in a reactive transport calculation.
-    struct SmartEquilibriumProfiling
-    {
-        /// The accumulated timing for the operations during smart equilibrium calculations.
-        SmartEquilibriumTiming timing;
-
-        /// The total number of chemical equilibrium calculations.
-        Index num_equilibrium_calculations = 0;
-
-        /// The total number of accepted smart chemical equilibrium estimates.
-        Index num_smart_equilibrium_accepted_estimates = 0;
-
-        /// The total number of required smart chemical equilibrium trainings.
-        Index num_smart_equilibrium_required_learnings = 0;
-
-        /// The success rate at which smart equilibrium estimates were accepted.
-        double smart_equilibrium_estimate_acceptance_rate = 0.0;
-
-        /// The indices of the cell at each time step where learning was required.
-        std::vector<std::vector<Index>> cells_where_learning_was_required_at_step;
-    };
-
     /// Construct a default instance of ReactiveTransportProfiler.
-    ReactiveTransportProfiler(const ReactiveTransportSolver& solver);
+    ReactiveTransportProfiler();
 
     /// Construct a copy of a ReactiveTransportProfiler instance.
     ReactiveTransportProfiler(const ReactiveTransportProfiler& other);
@@ -113,22 +42,13 @@ public:
     /// Assign a copy of an ReactiveTransportProfiler instance.
     auto operator=(ReactiveTransportProfiler other) -> ReactiveTransportProfiler&;
 
-    /// Update the profiler with a new reactive transport time step profiling data.
-    auto update() -> void;
+    /// Update the profiler with the result of the last reactive transport time step.
+    auto update(const ReactiveTransportResult& result) -> void;
 
-    /// Return the accumulated timing information for the operations in a reactive transport calculation.
-    auto accumulatedTimings() const -> AccumulatedTimings;
+    /// Return the performance analysis of all operations in the reactive transport simulation.
+    auto analysis() const -> ReactiveTransportAnalysis;
 
-    /// Return the computing costs of all operations during a reactive transport calculation.
-    auto computingCostsPerTimeStep() const -> ComputingCostsPerTimeStep;
-
-    /// Return a summary of the performance analysis of the smart equilibrium operations in a reactive transport calculation.
-    auto smartEquilibriumProfiling() const -> SmartEquilibriumProfiling;
-
-    /// Output the complete analysis of the performance of reactive transport simulation.
-    auto output(std::string filename) -> void;
-
-    /// Return all collected results of the reactive transport calculations.
+    /// Return all collected results of the reactive transport simulation.
     auto results() const -> const std::deque<ReactiveTransportResult>&;
 
 private:
@@ -136,16 +56,6 @@ private:
 
     std::unique_ptr<Impl> pimpl;
 };
-
-/// Output a summary of the profiling info collected for a reactive transport simulation.
-auto operator<<(std::ostream& out, const ReactiveTransportProfiler& profiler);
-
-/// Output the collected profiling information of the smart chemical equilibrium calculations in a reactive transport simulation.
-auto operator<<(std::ostream& out, const ReactiveTransportProfiler::SmartEquilibriumProfiling& smartprof) -> std::ostream&;
-
-/// Output the table of computing costs per time step of the operations in a reactive transport simulation.
-auto operator<<(std::ostream& out, const ReactiveTransportProfiler::ComputingCostsPerTimeStep& costs) -> std::ostream&;
-
 
 
 

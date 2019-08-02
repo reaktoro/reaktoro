@@ -17,11 +17,35 @@
 
 #pragma once
 
+// C++ includes
+#include <fstream>
+
 // json includes
 #include <nlohmann/json.hpp>
 
 namespace Reaktoro {
 
+/// A type alias for nlohmann::json
 using json = nlohmann::json;
+
+/// Provides a convenient mechanism for outputing json files.
+class JsonOutput
+{
+public:
+    /// Construct a JsonOutput object.
+    JsonOutput(std::string filename)
+    : file(filename)
+    {}
+
+    /// Output a value (converted to json object) to a file.
+    template<typename T>
+    auto operator<<(const T& val) -> JsonOutput&
+    {
+        file << json(val);
+    }
+
+private:
+    std::ofstream file;
+};
 
 } // namespace Reaktoro

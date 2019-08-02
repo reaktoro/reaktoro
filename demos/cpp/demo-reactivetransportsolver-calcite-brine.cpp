@@ -71,6 +71,18 @@ struct Results
 
     /// Total CPU time required by conventional equilibrium scheme
     double conv_total;
+
+    /// The total time taken to perform all time steps using conventional equilibrium algorithm
+    double time_reactive_transport_conventional;
+
+    /// The total time taken to perform all time steps using smart equilibrium algorithm
+    double time_reactive_transport_smart;
+
+    /// The accumulated timing information of all equilibrium calculations.
+    EquilibriumTiming equilibrium_timing;
+
+    /// The accumulated timing information of all smart equilibrium calculations.
+    SmartEquilibriumTiming smart_equilibrium_timing;
 };
 
 /// Forward declaration
@@ -81,7 +93,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void;
 
 int main()
 {
-    Time start;
+    Time start = time();
 
     // Step 1: Initialise auxiliary time-related constants
     int second = 1;
@@ -105,7 +117,7 @@ int main()
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
     //*/
-    params.nsteps = 10000; // the number of steps in the reactive transport simulation
+    params.nsteps = 1000; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 30 * minute; // the time step (in units of s)
 
@@ -130,6 +142,11 @@ int main()
     params.is_smart_solver = 1; runReactiveTransport(params, results);
     params.is_smart_solver = 0; runReactiveTransport(params, results);
 
+    results.conv_total = results.equilibrium_timing.solve;
+    results.smart_total = results.smart_equilibrium_timing.solve;
+    results.smart_total_ideal_search = results.smart_equilibrium_timing.solve - results.smart_equilibrium_timing.estimate_search;
+    results.smart_total_ideal_search_store = results.smart_equilibrium_timing.solve - results.smart_equilibrium_timing.estimate_search - results.smart_equilibrium_timing.learning_storage;
+
     // Output speed-us
     std::cout << "speed up                            : "
     << results.conv_total / results.smart_total << std::endl;
@@ -137,6 +154,10 @@ int main()
     << results.conv_total / results.smart_total_ideal_search << std::endl;
     std::cout << "speed up (with ideal search & store): "
     << results.conv_total / results.smart_total_ideal_search_store << std::endl << std::endl;
+
+    std::cout << "time_reactive_transport_conventional: " << results.time_reactive_transport_conventional << std::endl;
+    std::cout << "time_reactive_transport_smart       : " << results.time_reactive_transport_smart << std::endl;
+    std::cout << "reactive_transport_speedup          : " << results.time_reactive_transport_conventional / results.time_reactive_transport_smart << std::endl;
 
     std::cout << "total time                          : "
               << elapsed(start) << std::endl;
@@ -240,21 +261,25 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create result
-    ReactiveTransportProfiler profiler(rtsolver);
+    ReactiveTransportProfiler profiler;
 
     // Step **: Set initial time and counter of steps in time
     double t = 0.0;
     int step = 0;
 
+    tic(0);
+
     // Reactive transport simulations in the cycle
     while (step < params.nsteps)
     {
+        // Print some progress
+        std::cout << "Step " << step << " of " << params.nsteps << std::endl;
+
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
-        // std::unique_ptr<
         rtsolver.step(field);
 
         // Update the profiler after every call to step method
-        profiler.update();
+        profiler.update(rtsolver.result());
 
         // Increment time step and number of time steps
         t += params.dt;
@@ -262,10 +287,21 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
         step += 1;
     }
 
-    // Step **: Output the total time of the simulations
-    profiler.output();
+    toc(0, (params.is_smart_solver ? results.time_reactive_transport_smart : results.time_reactive_transport_conventional) );
 
-    results.conv_total = pro
+    // Step **: Output the total time of the simulations
+//     profiler.output();
+//
+    auto analysis = profiler.analysis();
+
+    if(params.is_smart_solver)
+        JsonOutput("analysis-smart.json") << analysis;
+    else
+        JsonOutput("analysis-conventional.json") << analysis;
+
+    if(params.is_smart_solver)
+        results.smart_equilibrium_timing = analysis.smart_equilibrium.timing;
+    else results.equilibrium_timing = analysis.equilibrium.timing;
 }
 
 /// Make directory for Windows and Linux
@@ -298,7 +334,7 @@ auto makeResultsFolder(const Params& params) -> std::string
                            "-reltol-" + reltol_stream.str() +
                            "-abstol-" + abstol_stream.str() +
                            (params.is_smart_solver == true ? "-smart" : "-reference");      // name of the folder with results
-    std::string folder = "../results" + test_tag;
+    std::string folder = "results" + test_tag;
     if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str());
 
     std::cout << "\nsolver                         : " << (params.is_smart_solver == true ? "smart" : "conventional") << std::endl;

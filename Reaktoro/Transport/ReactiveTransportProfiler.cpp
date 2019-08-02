@@ -23,7 +23,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/OutputUtils.hpp>
-#include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
 
 namespace Reaktoro {
 namespace internal {
@@ -32,8 +31,8 @@ template<typename ResultType>
 auto accumulateTimingsFromResults(const std::vector<ResultType>& results)
 {
     using TimingType = decltype(results.front().timing);
-    if(results.empty()) return TimingType{};
-    TimingType accumulated_timing = results.front().timing;
+    TimingType accumulated_timing = TimingType{};
+    if(results.empty()) return accumulated_timing;
     for(const auto& result : results)
         accumulated_timing += result.timing;
     return accumulated_timing;
@@ -43,9 +42,6 @@ auto accumulateTimingsFromResults(const std::vector<ResultType>& results)
 
 struct ReactiveTransportProfiler::Impl
 {
-    /// The reference to the reactive transport solver.
-    const ReactiveTransportSolver& solver;
-
     /// The collected results of the reactive transport time step calculations.
     std::deque<ReactiveTransportResult> results;
 
@@ -58,94 +54,107 @@ struct ReactiveTransportProfiler::Impl
     /// The accumulated timing for the operations during smart equilibrium calculations per time step.
     std::deque<SmartEquilibriumTiming> timing_smart_equilibrium_at_step;
 
-    /// The accumulated timing for the operations during fluid element transport calculations.
-    AccumulatedTimings accumulated_timings;
+    /// The total accumulated timing for fluid element transport calculations.
+    TransportTiming accumulated_timing_transport;
+
+    /// The total accumulated timing for equilibrium calculations.
+    EquilibriumTiming accumulated_timing_equilibrium;
+
+    /// The total accumulated timing for smart equilibrium calculations.
+    SmartEquilibriumTiming accumulated_timing_smart_equilibrium;
 
     /// Construct an instance of ReactiveTransportProfiler::Impl.
-    Impl(const ReactiveTransportSolver& solver)
-    : solver(solver)
+    Impl()
     {
     }
 
-    /// Update the profiler with a new reactive transport time step profiling data.
-    auto update() -> void
+    /// Update the profiler with the result of the last reactive transport time step.
+    auto update(const ReactiveTransportResult& result) -> void
     {
-        results.push_back(solver.result());
+        results.push_back(result);
 
-        const auto& last_result = results.back();
+        timing_transport_at_step.push_back( internal::accumulateTimingsFromResults(result.transport_of_element) );
+        timing_equilibrium_at_step.push_back( internal::accumulateTimingsFromResults(result.equilibrium_at_cell) );
+        timing_smart_equilibrium_at_step.push_back( internal::accumulateTimingsFromResults(result.smart_equilibrium_at_cell) );
 
-        timing_transport_at_step.push_back( internal::accumulateTimingsFromResults(last_result.transport_of_element) );
-        timing_equilibrium_at_step.push_back( internal::accumulateTimingsFromResults(last_result.equilibrium_at_cell) );
-        timing_smart_equilibrium_at_step.push_back( internal::accumulateTimingsFromResults(last_result.smart_equilibrium_at_cell) );
-
-        accumulated_timings.transport += timing_transport_at_step.back();
-        accumulated_timings.equilibrium += timing_equilibrium_at_step.back();
-        accumulated_timings.smart_equilibrium += timing_smart_equilibrium_at_step.back();
+        accumulated_timing_transport += timing_transport_at_step.back();
+        accumulated_timing_equilibrium += timing_equilibrium_at_step.back();
+        accumulated_timing_smart_equilibrium += timing_smart_equilibrium_at_step.back();
     }
 
     /// Return the computing costs of all operations during a reactive transport calculation.
-    auto computingCostsPerTimeStep() const -> ComputingCostsPerTimeStep
+    auto computingCostsPerTimeStep() const -> ReactiveTransportAnalysis::ComputingCostsPerTimeStep
     {
+        ReactiveTransportAnalysis::ComputingCostsPerTimeStep info;
+
         const auto num_time_steps = results.size();
-        const auto dt = solver.timeStep();
 
-        ComputingCostsPerTimeStep costs;
-        costs.t.resize(num_time_steps);
-        costs.transport.resize(num_time_steps);
-        costs.equilibrium.resize(num_time_steps);
-        costs.smart_equilibrium.resize(num_time_steps);
-        costs.smart_equilibrium_with_ideal_search.resize(num_time_steps);
-        costs.smart_equilibrium_estimate.resize(num_time_steps);
-        costs.smart_equilibrium_nearest_neighbor_search.resize(num_time_steps);
-        costs.smart_equilibrium_gibbs_energy_minimization.resize(num_time_steps);
-        costs.smart_equilibrium_storage.resize(num_time_steps);
-
-        double t = 0.0;
+        info.transport.resize(num_time_steps);
+        info.equilibrium.resize(num_time_steps);
+        info.smart_equilibrium.resize(num_time_steps);
+        info.smart_equilibrium_with_ideal_search.resize(num_time_steps);
+        info.smart_equilibrium_estimate.resize(num_time_steps);
+        info.smart_equilibrium_nearest_neighbor_search.resize(num_time_steps);
+        info.smart_equilibrium_gibbs_energy_minimization.resize(num_time_steps);
+        info.smart_equilibrium_storage.resize(num_time_steps);
 
         for(Index i = 0; i < num_time_steps; ++i)
         {
-            costs.t[i] = t;
-            costs.transport[i] = timing_transport_at_step[i].step;
-            costs.equilibrium[i] = timing_equilibrium_at_step[i].solve;
-            costs.smart_equilibrium[i] = timing_smart_equilibrium_at_step[i].solve;
-            costs.smart_equilibrium_with_ideal_search[i] = costs.smart_equilibrium[i] - timing_smart_equilibrium_at_step[i].estimate_search;
-            costs.smart_equilibrium_estimate[i] = timing_smart_equilibrium_at_step[i].estimate;
-            costs.smart_equilibrium_nearest_neighbor_search[i] = timing_smart_equilibrium_at_step[i].estimate_search;
-            costs.smart_equilibrium_gibbs_energy_minimization[i] = timing_smart_equilibrium_at_step[i].learning_gibbs_energy_minimization;
-            costs.smart_equilibrium_storage[i] = timing_smart_equilibrium_at_step[i].learning_storage;
-            t += dt;
+            info.transport[i] = timing_transport_at_step[i].step;
+            info.equilibrium[i] = timing_equilibrium_at_step[i].solve;
+            info.smart_equilibrium[i] = timing_smart_equilibrium_at_step[i].solve;
+            info.smart_equilibrium_with_ideal_search[i] = info.smart_equilibrium[i] - timing_smart_equilibrium_at_step[i].estimate_search;
+            info.smart_equilibrium_estimate[i] = timing_smart_equilibrium_at_step[i].estimate;
+            info.smart_equilibrium_nearest_neighbor_search[i] = timing_smart_equilibrium_at_step[i].estimate_search;
+            info.smart_equilibrium_gibbs_energy_minimization[i] = timing_smart_equilibrium_at_step[i].learning_gibbs_energy_minimization;
+            info.smart_equilibrium_storage[i] = timing_smart_equilibrium_at_step[i].learning_storage;
         }
 
-        return costs;
+        return info;
     }
 
-    /// Return a summary of the performance analysis of the smart equilibrium operations in a reactive transport calculation.
-    auto smartEquilibriumProfiling() const -> SmartEquilibriumProfiling
+    /// Return a summary of the performance analysis of all transport calculations.
+    auto transportAnalysis() const -> ReactiveTransportAnalysis::TransportAnalysis
     {
-        SmartEquilibriumProfiling prof;
+        ReactiveTransportAnalysis::TransportAnalysis info;
+        info.timing = accumulated_timing_transport;
+        return info;
+    }
 
-        prof.timing = accumulated_timings.smart_equilibrium;
+    /// Return a summary of the performance analysis of all equilibrium calculations.
+    auto equilibriumAnalysis() const -> ReactiveTransportAnalysis::EquilibriumAnalysis
+    {
+        ReactiveTransportAnalysis::EquilibriumAnalysis info;
+        info.timing = accumulated_timing_equilibrium;
+        return info;
+    }
+
+    /// Return a summary of the performance analysis of all smart equilibrium calculations.
+    auto smartEquilibriumAnalysis() const -> ReactiveTransportAnalysis::SmartEquilibriumAnalysis
+    {
+        ReactiveTransportAnalysis::SmartEquilibriumAnalysis info;
+        info.timing = accumulated_timing_smart_equilibrium;
 
         // Count the accepted smart equilibrium estimates and required learning operations
         for(const auto& result : results)
             for(const auto& smart_equilibrium_result : result.smart_equilibrium_at_cell)
-                if(smart_equilibrium_result.estimate.accepted) ++prof.num_smart_equilibrium_accepted_estimates;
-                else ++prof.num_smart_equilibrium_required_learnings;
+                if(smart_equilibrium_result.estimate.accepted) ++info.num_smart_equilibrium_accepted_estimates;
+                else ++info.num_smart_equilibrium_required_learnings;
 
         // Set the total number of equilibrium calculations
-        prof.num_equilibrium_calculations =
-            prof.num_smart_equilibrium_accepted_estimates +
-                prof.num_smart_equilibrium_required_learnings;
+        info.num_equilibrium_calculations =
+            info.num_smart_equilibrium_accepted_estimates +
+                info.num_smart_equilibrium_required_learnings;
 
         // Set the success rate at which smart equilibrium estimates were accepted.
-        prof.smart_equilibrium_estimate_acceptance_rate =
-            static_cast<double>(prof.num_smart_equilibrium_accepted_estimates) / prof.num_equilibrium_calculations;
+        info.smart_equilibrium_estimate_acceptance_rate =
+            static_cast<double>(info.num_smart_equilibrium_accepted_estimates) / info.num_equilibrium_calculations;
 
         // The number of time steps (= the number of collected ReactiveTransportResult objects)
         const auto num_time_steps = results.size();
 
         // Set the table of indicators that show where smart equilibrium estimate was accepted at a cell in a time step.
-        prof.cells_where_learning_was_required_at_step.resize(num_time_steps);
+        info.cells_where_learning_was_required_at_step.resize(num_time_steps);
 
         // For each time step, identify the cells where learning was required
         for(Index i = 0; i < num_time_steps; ++i)
@@ -154,21 +163,26 @@ struct ReactiveTransportProfiler::Impl
             const auto num_cells = results[i].smart_equilibrium_at_cell.size();
             for(Index j = 0; j < num_cells; ++j)
                 if(results[i].smart_equilibrium_at_cell[j].estimate.accepted == false)
-                    prof.cells_where_learning_was_required_at_step[i].push_back(j);
+                    info.cells_where_learning_was_required_at_step[i].push_back(j);
         }
 
-        return prof;
+        return info;
     }
 
-    /// Output the complete analysis of the performance of reactive transport simulation.
-    auto output(std::string filename) -> void
+    /// Return the performance analysis of all operations in the reactive transport simulation.
+    auto analysis() const -> ReactiveTransportAnalysis
     {
-
+        ReactiveTransportAnalysis info;
+        info.computing_costs_per_time_step = computingCostsPerTimeStep();
+        info.transport = transportAnalysis();
+        info.equilibrium = equilibriumAnalysis();
+        info.smart_equilibrium = smartEquilibriumAnalysis();
+        return info;
     }
 };
 
-ReactiveTransportProfiler::ReactiveTransportProfiler(const ReactiveTransportSolver& solver)
-: pimpl(new Impl(solver))
+ReactiveTransportProfiler::ReactiveTransportProfiler()
+: pimpl(new Impl())
 {}
 
 ReactiveTransportProfiler::ReactiveTransportProfiler(const ReactiveTransportProfiler& other)
@@ -184,9 +198,14 @@ auto ReactiveTransportProfiler::operator=(ReactiveTransportProfiler other) -> Re
     return *this;
 }
 
-auto ReactiveTransportProfiler::update() -> void
+auto ReactiveTransportProfiler::update(const ReactiveTransportResult& result) -> void
 {
-    pimpl->update();
+    pimpl->update(result);
+}
+
+auto ReactiveTransportProfiler::analysis() const -> ReactiveTransportAnalysis
+{
+    return pimpl->analysis();
 }
 
 auto ReactiveTransportProfiler::results() const -> const std::deque<ReactiveTransportResult>&
@@ -194,97 +213,77 @@ auto ReactiveTransportProfiler::results() const -> const std::deque<ReactiveTran
     return pimpl->results;
 }
 
-auto ReactiveTransportProfiler::accumulatedTimings() const -> AccumulatedTimings
-{
-    return pimpl->accumulated_timings;
-}
+// auto operator<<(std::ostream& out, const ReactiveTransportProfiler::SmartEquilibriumProfiling& prof) -> std::ostream&
+// {
+//     const auto& timing = prof.timing;
 
-auto ReactiveTransportProfiler::computingCostsPerTimeStep() const -> ComputingCostsPerTimeStep
-{
-    return pimpl->computingCostsPerTimeStep();
-}
+//     auto seconds = [](double x) { return std::to_string(x) + "s"; };
+//     auto percent = [](double x, double y, std::string msg) { return std::to_string(x/y * 100) + "% " + msg; };
+//     auto status = [&](double x, double y, std::string msg) { return percent(x, y, msg) + " (" + seconds(x) + ")"; };
 
-auto ReactiveTransportProfiler::smartEquilibriumProfiling() const -> SmartEquilibriumProfiling
-{
-    return pimpl->smartEquilibriumProfiling();
-}
+//     out << "# -------------------------------------------------------------------------------------" << std::endl;
+//     out << "# Computing costs analysis of the operations in smart chemical equilibrium calculations" << std::endl;
+//     out << "# -------------------------------------------------------------------------------------" << std::endl;
+//     out << "# solve                         = " << seconds(timing.solve) << std::endl;
+//     out << "#   learning                      = " << status(timing.learning, timing.solve, "of total solve time") << std::endl;
+//     out << "#     gibbs_energy_minimization     = " << status(timing.learning_gibbs_energy_minimization, timing.learning, "of learning time") << std::endl;
+//     out << "#     chemical_properties           = " << status(timing.learning_chemical_properties, timing.learning, "of learning time") << std::endl;
+//     out << "#     sensitivity_matrix            = " << status(timing.learning_sensitivity_matrix, timing.learning, "of learning time") << std::endl;
+//     out << "#     storage                       = " << status(timing.learning_storage, timing.learning, "of learning time") << std::endl;
+//     out << "#   estimate                      = " << status(timing.estimate, timing.solve, "of total solve time") << std::endl;
+//     out << "#     search                        = " << status(timing.estimate_search, timing.estimate, "of estimate time") << std::endl;
+//     out << "#     mat_vec_mul                   = " << status(timing.estimate_mat_vec_mul, timing.estimate, "of estimate time") << std::endl;
+//     out << "#     acceptance                    = " << status(timing.estimate_acceptance, timing.estimate, "of estimate time") << std::endl;
+//     out << "# -------------------------------------------------------------------------------------" << std::endl;
+//     out << "#" << std::endl;
+//     out << "# ----------------------------------------------------------------------" << std::endl;
+//     out << "# Overall computing costs in all smart chemical equilibrium calculations" << std::endl;
+//     out << "# ----------------------------------------------------------------------" << std::endl;
+//     out << "# number of equilibrium calculations             = " << prof.num_equilibrium_calculations << std::endl;
+//     out << "# number of smart equilibrium accepted estimates = " << prof.num_smart_equilibrium_accepted_estimates << std::endl;
+//     out << "# number of smart equilibrium required learnings = " << prof.num_smart_equilibrium_required_learnings << std::endl;
+//     out << "# smart equilibrium estimate acceptance rate     = " << prof.smart_equilibrium_estimate_acceptance_rate * 100 << "%" << std::endl;
+//     out << "# ----------------------------------------------------------------------" << std::endl;
+//     out << "#" << std::endl;
+//     out << "# -------------------------------------------------------------------------" << std::endl;
+//     out << "# Each row below contains a time step number followed by cell indices where" << std::endl;
+//     out << "# learning was required because the smart estimation was not accepted      " << std::endl;
+//     out << "# -------------------------------------------------------------------------" << std::endl;
+//     const auto num_time_steps = prof.cells_where_learning_was_required_at_step.size();
+//     for(Index i = 0; i < num_time_steps; ++i)
+//         out << i << "," << prof.cells_where_learning_was_required_at_step[i] << std::endl;
+// }
 
-auto ReactiveTransportProfiler::output(std::string filename) -> void
-{
-    pimpl->output(filename);
-}
+// auto operator<<(std::ostream& out, const ReactiveTransportProfiler::ComputingCostsPerTimeStep& costs) -> std::ostream&
+// {
+//     // Print the names of the collected computing costs in the header
+//     out << "timestep" << ",";
+//     out << "transport" << ",";
+//     out << "equilibrium" << ",";
+//     out << "smart_equilibrium" << ",";
+//     out << "smart_equilibrium_with_ideal_search" << ",";
+//     out << "smart_equilibrium_estimate" << ",";
+//     out << "smart_equilibrium_nearest_neighbor_search" << ",";
+//     out << "smart_equilibrium_gibbs_energy_minimization" << ",";
+//     out << "smart_equilibrium_storage";
+//     out << std::endl;
 
-auto operator<<(std::ostream& out, const ReactiveTransportProfiler::SmartEquilibriumProfiling& prof) -> std::ostream&
-{
-    const auto& timing = prof.timing;
+//     // Print the values of the collected computing costs in each subsequent row
+//     for(std::size_t i = 0; i < costs.transport.size(); ++i)
+//     {
+//         out << i << ",";
+//         out << costs.transport[i] << ",";
+//         out << costs.equilibrium[i] << ",";
+//         out << costs.smart_equilibrium[i] << ",";
+//         out << costs.smart_equilibrium_with_ideal_search[i] << ",";
+//         out << costs.smart_equilibrium_estimate[i] << ",";
+//         out << costs.smart_equilibrium_nearest_neighbor_search[i] << ",";
+//         out << costs.smart_equilibrium_gibbs_energy_minimization[i] << ",";
+//         out << costs.smart_equilibrium_storage[i];
+//         out << std::endl;
+//     }
 
-    auto seconds = [](double x) { return std::to_string(x) + "s"; };
-    auto percent = [](double x, double y, std::string msg) { return std::to_string(x/y * 100) + "% " + msg; };
-    auto status = [&](double x, double y, std::string msg) { return percent(x, y, msg) + " (" + seconds(x) + ")"; };
-
-    out << "# -------------------------------------------------------------------------------------" << std::endl;
-    out << "# Computing costs analysis of the operations in smart chemical equilibrium calculations" << std::endl;
-    out << "# -------------------------------------------------------------------------------------" << std::endl;
-    out << "# solve                         = " << seconds(timing.solve) << std::endl;
-    out << "#   learning                      = " << status(timing.learning, timing.solve, "of total solve time") << std::endl;
-    out << "#     gibbs_energy_minimization     = " << status(timing.learning_gibbs_energy_minimization, timing.learning, "of learning time") << std::endl;
-    out << "#     chemical_properties           = " << status(timing.learning_chemical_properties, timing.learning, "of learning time") << std::endl;
-    out << "#     sensitivity_matrix            = " << status(timing.learning_sensitivity_matrix, timing.learning, "of learning time") << std::endl;
-    out << "#     storage                       = " << status(timing.learning_storage, timing.learning, "of learning time") << std::endl;
-    out << "#   estimate                      = " << status(timing.estimate, timing.solve, "of total solve time") << std::endl;
-    out << "#     search                        = " << status(timing.estimate_search, timing.estimate, "of estimate time") << std::endl;
-    out << "#     mat_vec_mul                   = " << status(timing.estimate_mat_vec_mul, timing.estimate, "of estimate time") << std::endl;
-    out << "#     acceptance                    = " << status(timing.estimate_acceptance, timing.estimate, "of estimate time") << std::endl;
-    out << "# -------------------------------------------------------------------------------------" << std::endl;
-    out << "#" << std::endl;
-    out << "# ----------------------------------------------------------------------" << std::endl;
-    out << "# Overall computing costs in all smart chemical equilibrium calculations" << std::endl;
-    out << "# ----------------------------------------------------------------------" << std::endl;
-    out << "# number of equilibrium calculations             = " << prof.num_equilibrium_calculations << std::endl;
-    out << "# number of smart equilibrium accepted estimates = " << prof.num_smart_equilibrium_accepted_estimates << std::endl;
-    out << "# number of smart equilibrium required learnings = " << prof.num_smart_equilibrium_required_learnings << std::endl;
-    out << "# smart equilibrium estimate acceptance rate     = " << prof.smart_equilibrium_estimate_acceptance_rate * 100 << "%" << std::endl;
-    out << "# ----------------------------------------------------------------------" << std::endl;
-    out << "#" << std::endl;
-    out << "# -------------------------------------------------------------------------" << std::endl;
-    out << "# Each row below contains a time step number followed by cell indices where" << std::endl;
-    out << "# learning was required because the smart estimation was not accepted      " << std::endl;
-    out << "# -------------------------------------------------------------------------" << std::endl;
-    const auto num_time_steps = prof.cells_where_learning_was_required_at_step.size();
-    for(Index i = 0; i < num_time_steps; ++i)
-        out << i << "," << prof.cells_where_learning_was_required_at_step[i] << std::endl;
-}
-
-auto operator<<(std::ostream& out, const ReactiveTransportProfiler::ComputingCostsPerTimeStep& costs) -> std::ostream&
-{
-    // Print the names of the collected computing costs in the header
-    out << "t" << ",";
-    out << "transport" << ",";
-    out << "equilibrium" << ",";
-    out << "smart_equilibrium" << ",";
-    out << "smart_equilibrium_with_ideal_search" << ",";
-    out << "smart_equilibrium_estimate" << ",";
-    out << "smart_equilibrium_nearest_neighbor_search" << ",";
-    out << "smart_equilibrium_gibbs_energy_minimization" << ",";
-    out << "smart_equilibrium_storage";
-    out << std::endl;
-
-    // Print the values of the collected computing costs in each subsequent row
-    for(std::size_t i = 0; i < costs.t.size(); ++i)
-    {
-        out << costs.t[i] << ",";
-        out << costs.transport[i] << ",";
-        out << costs.equilibrium[i] << ",";
-        out << costs.smart_equilibrium[i] << ",";
-        out << costs.smart_equilibrium_with_ideal_search[i] << ",";
-        out << costs.smart_equilibrium_estimate[i] << ",";
-        out << costs.smart_equilibrium_nearest_neighbor_search[i] << ",";
-        out << costs.smart_equilibrium_gibbs_energy_minimization[i] << ",";
-        out << costs.smart_equilibrium_storage[i];
-        out << std::endl;
-    }
-
-    return out;
-}
+//     return out;
+// }
 
 } // namespace Reaktoro

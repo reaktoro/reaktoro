@@ -1,7 +1,5 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2018 Allan Leal
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -18,17 +16,30 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/TimeUtils.hpp>
+#include <Reaktoro/Common/Json.hpp>
 
 namespace Reaktoro {
 
-/// Macro to start timing of a sequence of statements.
-#define tic(id) Time __start_time ## id = time();
+// Forward declarations (struct)
+struct EquilibriumResult;
+struct EquilibriumTiming;
+struct SmartEquilibriumResult;
+struct SmartEquilibriumTiming;
 
-/// Macro to get the execution time since last call to tic(expr) macro.
-#define toc(id, res) res=elapsed(__start_time ## id);
+// Json converters for EquilibriumResult
+void to_json(json& j, const EquilibriumResult& obj);
+void from_json(const json& j, EquilibriumResult& obj);
 
-/// Macro to measure the elapsed time of an expression execution.
-#define timeit(expr, res) { tic(__##__LINE__); expr; res elapsed(__start_time##__##__LINE__); }
+// Json converters for EquilibriumTiming
+void to_json(json& j, const EquilibriumTiming& obj);
+void from_json(const json& j, EquilibriumTiming& obj);
+
+// Json converters for SmartEquilibriumResult
+void to_json(json& j, const SmartEquilibriumResult& obj);
+void from_json(const json& j, SmartEquilibriumResult& obj);
+
+// Json converters for SmartEquilibriumTiming
+void to_json(json& j, const SmartEquilibriumTiming& obj);
+void from_json(const json& j, SmartEquilibriumTiming& obj);
 
 } // namespace Reaktoro

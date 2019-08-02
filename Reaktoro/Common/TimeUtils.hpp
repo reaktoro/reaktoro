@@ -41,4 +41,29 @@ auto elapsed(const Time& end, const Time& begin) -> double;
 /// @return The elapsed time between now and *begin* in seconds
 auto elapsed(const Time& begin) -> double;
 
+/// Used for measuring elapsed time since object creation.
+class Stopwatch
+{
+public:
+    /// Construct a Stopwatch object and start measuring time.
+    /// @param reading The variable to store the final measured elapsed time
+    Stopwatch(double& reading) : reading(reading), tstart(time()) {}
+
+    /// Destroy this Stopwatch object and stop measuring time.
+    ~Stopwatch() { stop(); }
+
+    /// Start measuring time.
+    auto start() -> void { tstart = time(); }
+
+    /// Stop measuring time.
+    auto stop() -> double { reading = elapsed(tstart); }
+
+private:
+    /// The auxiliary time variable marking the start of timing.
+    Time tstart;
+
+    /// The reference to the variable that will store the final measured elapsed time.
+    double& reading;
+};
+
 } // namespace Reaktoro

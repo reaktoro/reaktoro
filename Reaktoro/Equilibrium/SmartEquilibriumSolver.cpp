@@ -150,14 +150,14 @@ struct SmartEquilibriumSolver::Impl
     {
         // Calculate the equilibrium state using conventional Gibbs energy minimization approach
         timeit( solver.solve(state, T, P, be),
-            result.timing.learning_gibbs_energy_minimization);
+            result.timing.learning_gibbs_energy_minimization= );
 
         // Store the result of the Gibbs energy minimization calculation performed during learning
         result.learning.gibbs_energy_minimization = solver.result();
 
         // Store the computed solution into the knowledge tree
         timeit( tree.push_back({be, state, solver.properties(), solver.sensitivity()}),
-            result.timing.learning_storage);
+            result.timing.learning_storage= );
     }
 
     /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
@@ -187,7 +187,7 @@ struct SmartEquilibriumSolver::Impl
         //---------------------------------------------------------------------------------------
         // Step 1: Search for the reference element (closest to the new state input conditions)
         //---------------------------------------------------------------------------------------
-        tic();
+        tic(0);
 
         // Comparison function based on the Euclidean distance
         auto distancefn = [&](const TreeNode& a, const TreeNode& b)
@@ -200,12 +200,12 @@ struct SmartEquilibriumSolver::Impl
         // Find the entry with minimum "input" distance
         auto it = std::min_element(tree.begin(), tree.end(), distancefn);
 
-        toc(result.timing.estimate_search);
+        toc(0, result.timing.estimate_search);
 
         //----------------------------------------------------------------------------
         // Step 2: Calculate predicted state with a first-order Taylor approximation
         //----------------------------------------------------------------------------
-        tic();
+        tic(1);
 
         // Get all the data stored in the reference element
         const auto& be0 = it->be;
@@ -224,12 +224,12 @@ struct SmartEquilibriumSolver::Impl
         n.noalias() = n0 + dn;                         // n = n0 + delta(n)
         delta_lna.noalias() = dlnadn * dn;             // delta(ln(a)) = d(lna)/dn * delta(n)
 
-        toc(result.timing.estimate_mat_vec_mul);
+        toc(1, result.timing.estimate_mat_vec_mul);
 
         //----------------------------------------------
         // Step 3: Checking the acceptance criterion
         //----------------------------------------------
-        tic();
+        tic(2);
 
         const auto& x = properties0.moleFractions();
 
@@ -277,7 +277,7 @@ struct SmartEquilibriumSolver::Impl
             }
         }
 
-        toc(result.timing.estimate_acceptance);
+        toc(2, result.timing.estimate_acceptance);
 
 
         //*/
@@ -328,20 +328,20 @@ struct SmartEquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
     {
-        tic();
+        tic(0);
 
         // Reset the result of the last smart equilibrium calculation
         result = {};
 
         // Perform a smart estimate of the chemical state
         timeit( estimate(state, T, P, be),
-            result.timing.estimate);
+            result.timing.estimate= );
 
         // Perform a learning step if the smart prediction is not sactisfatory
         if(!result.estimate.accepted)
-            timeit( learn(state, T, P, be), result.timing.learning );
+            timeit( learn(state, T, P, be), result.timing.learning= );
 
-        toc(result.timing.solve);
+        toc(0, result.timing.solve);
 
         return result;
     }
