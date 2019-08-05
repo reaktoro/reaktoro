@@ -120,7 +120,7 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
             ),
             time_span(0, 24, "hours"),
             [
-                "time(units=hour)",
+                # "time(units=hour)",  # CVODE is generating slightly different time steps in different OSs.
                 "pH",
                 "elementMolality(Ca units=molal)",
                 "elementMolality(Mg units=molal)",
@@ -135,7 +135,7 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
             ),
             time_span(0, 48, "hours"),
             [
-                "time(units=hour)",
+                # "time(units=hour)",  # CVODE is generating slightly different time steps in different OSs.
                 "pH",
                 "elementMolality(Ca units=molal)",
                 "elementMolality(Mg units=molal)",
@@ -150,7 +150,7 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
             ),
             time_span(0, 72, "hours"),
             [
-                "time(units=hour)",
+                # "time(units=hour)",  # CVODE is generating slightly different time steps in different OSs.
                 "pH",
                 "elementMolality(Ca units=molal)",
                 "elementMolality(Mg units=molal)",
@@ -163,7 +163,7 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
             pytest.lazy_fixture("kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
             time_span(0, 5, "minute"),
             [
-                "time(units=minute)",
+                # "time(units=minute)",  # CVODE is generating slightly different time steps in different OSs.
                 "elementMolality(Ca units=mmolal)",
                 "phaseMass(Calcite units=g)",
             ],
@@ -173,7 +173,7 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
             pytest.lazy_fixture("kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
             time_span(0, 10, "minute"),
             [
-                "time(units=minute)",
+                # "time(units=minute)",  # CVODE is generating slightly different time steps in different OSs.
                 "elementMolality(Ca units=mmolal)",
                 "phaseMass(Calcite units=g)",
             ],
@@ -183,7 +183,7 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
             pytest.lazy_fixture("kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
             time_span(0, 20, "minute"),
             [
-                "time(units=minute)",
+                # "time(units=minute)",  # CVODE is generating slightly different time steps in different OSs.
                 "elementMolality(Ca units=mmolal)",
                 "phaseMass(Calcite units=g)",
             ],
@@ -244,7 +244,7 @@ def test_kinetic_path_solve_complete_path(
 
     path_kinetic_table.columns = checked_variables
 
-    table_regression.check(path_kinetic_table, default_tol=dict(atol=1e-5, rtol=1e-14))
+    table_regression.check(path_kinetic_table, default_tol=dict(atol=1e-3, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
