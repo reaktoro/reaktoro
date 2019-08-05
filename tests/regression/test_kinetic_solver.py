@@ -203,8 +203,8 @@ def test_kinetic_path_solve_complete_path(
     table_regression, tmpdir, setup, time_span, checked_variables, minerals_to_add
 ):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of a kinetic problem and check all the path 
+    An integration test that checks result's reproducibility of
+    the calculation of a kinetic problem and check all the path
     @param setup
         a tuple that has some objects from kineticProblemSetup.py
         (problem, reactions, partition)
@@ -213,7 +213,7 @@ def test_kinetic_path_solve_complete_path(
         time_span.ti = initial time
         time_span.tf = final time
         time_span.unit = ti and tf units
-    @param checked_variables 
+    @param checked_variables
         a list that has all the variables that will be tested
     """
     (problem, reactions, partition) = setup
@@ -299,9 +299,9 @@ def test_kinetic_path_solve_final_state(
     state_regression, setup, time_span, minerals_to_add
 ):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of a kinetic problem and only check the 
-    final state 
+    An integration test that checks result's reproducibility of
+    the calculation of a kinetic problem and only check the
+    final state
     @param setup
         a tuple that has some objects from kineticProblemSetup.py
         (problem, reactions, partition)
@@ -324,9 +324,4 @@ def test_kinetic_path_solve_final_state(
 
     path.solve(state, time_span.ti, time_span.tf, time_span.unit)
 
-    tolerances = {
-        "Potential [kJ/mol]": {"atol": 0.2, "rtol": 0.02},
-        "Element Dual Potential [kJ/mol]": {"atol": 0.2, "rtol": 0.02},
-    }
-
-    state_regression.check(state, tol=tolerances)
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
