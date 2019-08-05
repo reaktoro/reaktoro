@@ -243,7 +243,7 @@ def test_kinetic_path_solve_complete_path(
 
     path_kinetic_table.columns = checked_variables
 
-    table_regression.check(path_kinetic_table)
+    table_regression.check(path_kinetic_table, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
