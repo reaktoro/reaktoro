@@ -74,7 +74,7 @@ def test_equilibrate_overload_1(setup, state_regression):
 
     equilibriumState = equilibrate(problem)
 
-    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
@@ -147,7 +147,7 @@ def test_equilibrate_overload_2(setup, state_regression):
 
     equilibriumState = equilibrate(problem, options)
 
-    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
@@ -225,7 +225,7 @@ def test_equilibrate_overload_3(setup, state_regression):
     # compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(equilibriumState)
 
-    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
@@ -304,7 +304,7 @@ def test_equilibrate_overload_4(setup, state_regression):
     # compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(state, partition)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
@@ -383,7 +383,7 @@ def test_equilibrate_overload_5(setup, state_regression):
     # Compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(state, options)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
@@ -463,7 +463,7 @@ def test_equilibrate_overload_6(setup, state_regression):
     # compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(state, partition, options)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
@@ -536,7 +536,7 @@ def test_equilibrate_overload_7(setup, state_regression):
 
     equilibriumResult = equilibrate(state, problem)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
@@ -611,4 +611,4 @@ def test_equilibrate_overload_8(setup, state_regression):
 
     equilibriumResult = equilibrate(state, problem, options)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))

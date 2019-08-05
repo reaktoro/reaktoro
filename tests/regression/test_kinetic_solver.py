@@ -324,4 +324,4 @@ def test_kinetic_path_solve_final_state(
 
     path.solve(state, time_span.ti, time_span.tf, time_span.unit)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))

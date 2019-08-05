@@ -80,4 +80,4 @@ def test_different_results(state_regression):
 
     assert result.optimum.succeeded
 
-    state_regression.check(chemical_state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(chemical_state, default_tol=dict(atol=1e-5, rtol=1e-14))

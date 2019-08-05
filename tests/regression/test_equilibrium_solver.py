@@ -59,8 +59,8 @@ from reaktoro import ChemicalState, equilibrate, EquilibriumSolver, EquilibriumO
 )
 def test_equilibrium_solver_solve_overload_1(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of an equilibrium of a state using 
+    An integration test that checks result's reproducibility of
+    the calculation of an equilibrium of a state using
     EquilibriumSolver::solve(ChemicalState& state)
     @param setup
         a tuple that has some objects from problem setup
@@ -76,7 +76,7 @@ def test_equilibrium_solver_solve_overload_1(setup, state_regression):
 
     solver.solve(state)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
@@ -102,8 +102,8 @@ def test_equilibrium_solver_solve_overload_1(setup, state_regression):
 )
 def test_equilibrium_solver_solve_overload_2(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of an equilibrium of a state using 
+    An integration test that checks result's reproducibility of
+    the calculation of an equilibrium of a state using
     EquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem)
     @param setup
         a tuple that has some objects from problem setup
@@ -117,7 +117,7 @@ def test_equilibrium_solver_solve_overload_2(setup, state_regression):
 
     solver.solve(state, problem)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
@@ -143,8 +143,8 @@ def test_equilibrium_solver_solve_overload_2(setup, state_regression):
 )
 def test_equilibrium_solver_solve_overload_3(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of an equilibrium of a state using 
+    An integration test that checks result's reproducibility of
+    the calculation of an equilibrium of a state using
     EquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be)
     @param setup
         a tuple that has some objects from problem setup
@@ -160,7 +160,7 @@ def test_equilibrium_solver_solve_overload_3(setup, state_regression):
         state, problem.temperature(), problem.pressure(), problem.elementAmounts()
     )
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
@@ -218,8 +218,8 @@ def test_equilibrium_solver_solve_overload_3(setup, state_regression):
 )
 def test_equilibrium_solver_approx_overload_1(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of an equilibrium of a state using 
+    An integration test that checks result's reproducibility of
+    the calculation of an equilibrium of a state using
     EquilibriumSolver::approximate(ChemicalState& state)
     @param setup
         a tuple that has some objects from problem setup
@@ -235,7 +235,7 @@ def test_equilibrium_solver_approx_overload_1(setup, state_regression):
 
     solver.approximate(state)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 @pytest.mark.parametrize(
     "setup",
@@ -260,8 +260,8 @@ def test_equilibrium_solver_approx_overload_1(setup, state_regression):
 )
 def test_equilibrium_solver_approx_overload_2(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of an equilibrium of a state using 
+    An integration test that checks result's reproducibility of
+    the calculation of an equilibrium of a state using
     EquilibriumSolver::approximate(ChemicalState& state, const EquilibriumProblem& problem)
     @param setup
         a tuple that has some objects from problem setup
@@ -275,7 +275,7 @@ def test_equilibrium_solver_approx_overload_2(setup, state_regression):
 
     solver.approximate(state, problem)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
@@ -301,8 +301,8 @@ def test_equilibrium_solver_approx_overload_2(setup, state_regression):
 )
 def test_equilibrium_solver_approx_overload_3(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of an equilibrium of a state using 
+    An integration test that checks result's reproducibility of
+    the calculation of an equilibrium of a state using
     EquilibriumSolver::approximate(ChemicalState& state, double T, double P, VectorConstRef be)
     @param setup
         a tuple that has some objects from problem setup
@@ -318,4 +318,4 @@ def test_equilibrium_solver_approx_overload_3(setup, state_regression):
         state, problem.temperature(), problem.pressure(), problem.elementAmounts()
     )
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
