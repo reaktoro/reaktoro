@@ -45,7 +45,7 @@ def test_different_results(state_regression):
     mineral_species = ["Anhydrite", "Barite", "Calcite", "Celestite", "Siderite", "Pyrrhotite"]
     for mineral in mineral_species:
         editor.addMineralPhase(mineral)
-        
+
     gaseous_species = ["CO2(g)", "H2S(g)", "CH4(g)"]
     editor.addGaseousPhase(gaseous_species)
 
@@ -70,7 +70,7 @@ def test_different_results(state_regression):
     for name, index, molar_amount in reaktoro_case.species_amounts:
         assert index == species_index[name]
         chemical_state.setSpeciesAmount(index, molar_amount)
-        
+
     equilibrium_problem.addState(chemical_state)
 
     solver = EquilibriumSolver(chemical_system)
@@ -80,4 +80,4 @@ def test_different_results(state_regression):
 
     assert result.optimum.succeeded
 
-    state_regression.check(chemical_state, default_tol=dict(atol=1e-50, rtol=1e-16))
+    state_regression.check(chemical_state, default_tol=dict(atol=1e-5, rtol=1e-16))
