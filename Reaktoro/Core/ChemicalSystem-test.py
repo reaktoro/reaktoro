@@ -268,7 +268,7 @@ def test_chemical_system():
     # Check method ChemicalSystem::elementAmountInPhase
     # -------------------------------------------------------------------------
     for ielement, iphase in ((x, y) for x in range(Ne) for y in range(Np)):
-        assert system.elementAmountInPhase(ielement, iphase, n) == bp[iphase][ielement]
+        assert system.elementAmountInPhase(ielement, iphase, n) == approx(bp[iphase][ielement])
 
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::elementAmountInSpecies

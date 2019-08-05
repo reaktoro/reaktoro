@@ -29,20 +29,28 @@ ChemicalProperties::ChemicalProperties()
 
 ChemicalProperties::ChemicalProperties(const ChemicalSystem& system)
 : system(system), num_species(system.numSpecies()), num_phases(system.numPhases()),
-  T(298.15), P(1e-5), n(zeros(num_species)), x(num_species),
+  T(NAN), P(NAN), n(zeros(num_species)), x(num_species),
   tres(num_phases, num_species), cres(num_phases, num_species)
 {}
 
 auto ChemicalProperties::update(double T_, double P_) -> void
 {
     // Update both temperature and pressure
-    T = T_;
-    P = P_;
-    system.thermoModel()(tres, T, P);
+    if(T != T_ || P != P_)
+    {
+        T = T_;
+        P = P_;
+        system.thermoModel()(tres, T, P);
+    }
 }
 
 auto ChemicalProperties::update(VectorConstRef n_) -> void
 {
+    Assert(!std::isnan(T) && !std::isnan(P),
+           "Cannot proceed with method ChemicalProperties::update.",
+           "The temperature or pressure values are invalid (NAN). "
+           "Update these properties before calling this method!")
+
     n = n_;
     system.chemicalModel()(cres, T, P, n);
 

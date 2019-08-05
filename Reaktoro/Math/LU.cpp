@@ -137,7 +137,7 @@ auto LU::trsolve(MatrixConstRef B) -> Matrix
 {
     const Index m = L.rows();
     const Index k = B.cols();
-    Matrix X(m, k);
+    Matrix X = zeros(m, k);
 
     auto trsolve_column = [&](Index icol)
     {

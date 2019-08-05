@@ -10,6 +10,8 @@ def convert_reaktoro_state_to_dict(state):
     n = state.speciesAmounts()
     y = state.elementDualPotentials()
     z = state.speciesDualPotentials()
+    b = state.elementAmounts()
+    R = 8.314462618  # universal gas constant in J/(mol*K)
 
     properties = state.properties()
 
@@ -35,34 +37,34 @@ def convert_reaktoro_state_to_dict(state):
 
     phase_stability_indices = state.phaseStabilityIndices()
 
-    total_element_amounts = state.elementAmounts()
 
     pH = ChemicalProperty.pH(system)(properties).val
 
-    elementAmountInPhase = []
+    elementAmountsInPhase = []
     for i in range(0, system.numPhases()):
-        elementAmountInPhase.append(state.elementAmountsInPhase(i))
+        elementAmountsInPhase.append(state.elementAmountsInPhase(i))
 
     output = {}
     output["Temperature [K]"] = np.asarray([T])
     output["Pressure [Pa]"] = np.asarray([P])
-    output["Total element amount [mol]"] = np.asarray(total_element_amounts)
+    output["Element amounts [mol]"] = np.asarray(b)
+    output["Gibbs energy [-]"] = np.asarray([n.dot(chemical_potentials) / (R*T)])  # normalized by RT
+    output["Gibbs energy (dual) [-]"] = np.asarray([b.dot(y) / (R*T)])  # normalized by RT
     for i in range(0, system.numPhases()):
-        output["Elements amount in " + system.phase(i).name() + " [mol]"] = np.asarray(
-            elementAmountInPhase[i]
-        )
-    output["Element Dual Potential [kJ/mol]"] = y / 1000
-    output["Species amount [mol]"] = n
-    output["Mole Fraction [mol/mol]"] = molar_fractions
-    output["Activity coefficient [-]"] = np.exp(lnactivity_coeffs)
-    output["Activity [-]"] = np.exp(lnactivities)
-    output["Potential [kJ/mol]"] = chemical_potentials / 1000
-    output["Phase Amount [mol]"] = phase_moles
-    output["Stability Index [-]"] = phase_stability_indices
-    output["Phase Mass [kg]"] = phase_masses
-    output["Phase Volume [m³]"] = phase_volumes
-    output["Density [kg/m³]"] = phase_densities
-    output["Molar Volume [m³/mol]"] = phase_molar_volumes
+        output["Element amounts in " + system.phase(i).name() + " [mol]"] = \
+            np.asarray(elementAmountsInPhase[i])
+    # output["Element Dual Potential [kJ/mol]"] = y / 1000
+    output["Species amounts [mol]"] = n
+    output["Mole fractions [mol/mol]"] = molar_fractions
+    output["Activity coefficients [-]"] = np.exp(lnactivity_coeffs)
+    output["Activities [-]"] = np.exp(lnactivities)
+    # output["Chemical potentials [kJ/mol]"] = chemical_potentials / 1000
+    output["Phase amounts [mol]"] = phase_moles
+    output["Stability indices [-]"] = phase_stability_indices
+    output["Phase masses [kg]"] = phase_masses
+    output["Phase volumes [m³]"] = phase_volumes
+    output["Phase densities [kg/m³]"] = phase_densities
+    output["Phase molar volumes [m³/mol]"] = phase_molar_volumes
     output["pH [-]"] = np.asarray([pH])
 
     return output
