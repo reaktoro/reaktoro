@@ -228,6 +228,7 @@ def test_kinetic_path_solve_complete_path(
     path.setPartition(partition)
 
     output = path.output()
+    output.precision(16)
     output.filename(tmpdir.dirname + "/kinetictPathResult.txt")
     for checked_variable in checked_variables:
         output.add(checked_variable)
