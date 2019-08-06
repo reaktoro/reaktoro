@@ -25,8 +25,14 @@ namespace Reaktoro {
     // Forward declarations
     enum class PhaseType;
 
-namespace PhaseIdentification {
+namespace PhaseID {
     
+    /// Defines the enumeration of available phase identification methods.
+    enum class PhaseIdentificationMethods
+    {
+        VolumeMethod, IsothermalCompressibilityMethods, GibbsEnergyAndEquationOfStateMethod,
+    };
+
     /// Return a PhaseType that says if the phase is a Liquid or Gas based on Volume Method
     /// @param Temperature Phase temperature
     /// @param Pressure Phase pressure

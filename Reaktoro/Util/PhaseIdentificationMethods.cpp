@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PhaseIdentification.hpp"
+#include "PhaseIdentificationMethods.hpp"
 
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
@@ -23,7 +23,7 @@
 #include <Reaktoro/Math/Roots.hpp>
 
 namespace Reaktoro {
-namespace PhaseIdentification {
+namespace PhaseID {
 
 auto volumeMethod(const ThermoScalar& Temperature, const ThermoScalar& Pressure, const ChemicalScalar& Z, ChemicalScalar& b) -> PhaseType
 {
