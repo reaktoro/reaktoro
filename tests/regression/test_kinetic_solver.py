@@ -217,32 +217,32 @@ def test_kinetic_path_solve_complete_path(
         a list that has all the variables that will be tested
     """
     (problem, reactions, partition) = setup
-
+ 
     state = equilibrate(problem)
-
+ 
     for mineral in minerals_to_add:
         state.setSpeciesMass(mineral.mineral_name, mineral.amount, mineral.unit)
-
+ 
     path = KineticPath(reactions)
-
+ 
     path.setPartition(partition)
-
+ 
     output = path.output()
     output.filename(tmpdir.dirname + "/kinetictPathResult.txt")
     for checked_variable in checked_variables:
         output.add(checked_variable)
-
+ 
     path.solve(state, time_span.ti, time_span.tf, time_span.unit)
-
+ 
     path_kinetic_table = pd.read_csv(
         tmpdir.dirname + "/kinetictPathResult.txt",
         index_col=None,
         skiprows=1,
         delim_whitespace=True,
     )
-
+ 
     path_kinetic_table.columns = checked_variables
-
+ 
     table_regression.check(path_kinetic_table)
 
 

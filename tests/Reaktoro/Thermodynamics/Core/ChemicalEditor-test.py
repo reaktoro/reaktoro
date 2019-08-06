@@ -23,7 +23,6 @@ from reaktoro import (
     Database,
     AqueousPhase, 
     FluidPhase,
-    GaseousPhase,
     MineralPhase,
     PhaseType
 )

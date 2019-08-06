@@ -10,7 +10,6 @@ from reaktoro import (
     EquilibriumProblem,
     EquilibriumSolver,
     GibbsHessian,
-    phaseIdentificationMethod,
     StepMode,
 )
 
@@ -77,10 +76,7 @@ def test_equilibrium_CH4_H2S_CO2_H2O_liq_gas_aq(temperature, pressure, num_regre
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, 
-                             problem, 
-                             phaseIdentificationMethod.Gibbs_residual_based, 
-                             0)
+    res_final = solver.solve(state, problem)
     
 
     species_amount = {

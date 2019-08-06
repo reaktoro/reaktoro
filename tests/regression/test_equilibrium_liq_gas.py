@@ -10,7 +10,6 @@ from reaktoro import (
     EquilibriumProblem,
     EquilibriumSolver,
     GibbsHessian,
-    phaseIdentificationMethod,
     StepMode,
 )
 
@@ -73,10 +72,7 @@ def test_equilibrium_CH4_liq_gas(temperature, pressure, num_regression):
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, 
-                             problem, 
-                             phaseIdentificationMethod.Gibbs_residual_based, 
-                             0)
+    res_final = solver.solve(state, problem)
     
     species_amounts = {
         "CH4(g)": np.asarray([state.speciesAmount("CH4(g)")]),
@@ -139,10 +135,7 @@ def test_equilibrium_H2S_liq_gas(temperature, pressure, num_regression):
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, 
-                             problem, 
-                             phaseIdentificationMethod.Gibbs_residual_based, 
-                             0)
+    res_final = solver.solve(state, problem)
     
     species_amounts = {
         "H2S(g)": np.asarray([state.speciesAmount("H2S(g)")]),
@@ -205,10 +198,7 @@ def test_equilibrium_CO2_liq_gas(temperature, pressure, num_regression):
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, 
-                             problem, 
-                             phaseIdentificationMethod.Gibbs_residual_based, 
-                             0)
+    res_final = solver.solve(state, problem)
         
     species_amounts = {
         "CO2(g)": np.asarray([state.speciesAmount("CO2(g)")]),
@@ -268,10 +258,7 @@ def test_equilibrium_CH4_CO2_liq_gas(temperature, pressure, num_regression):
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, 
-                             problem, 
-                             phaseIdentificationMethod.Gibbs_residual_based, 
-                             0)
+    res_final = solver.solve(state, problem)
     
     species_amounts = {
         "CH4(g)": np.asarray([state.speciesAmount("CH4(g)")]),
@@ -332,10 +319,7 @@ def test_equilibrium_CH4_H2S_liq_gas(temperature, pressure, num_regression):
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, 
-                             problem, 
-                             phaseIdentificationMethod.Gibbs_residual_based, 
-                             0)
+    res_final = solver.solve(state, problem)
     
     species_amount = {
         "CH4(g)": np.asarray([state.speciesAmount("CH4(g)")]),
@@ -399,10 +383,7 @@ def test_equilibrium_CH4_CO2_H2S_liq_gas(temperature, pressure, num_regression):
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, 
-                             problem, 
-                             phaseIdentificationMethod.Gibbs_residual_based, 
-                             0)
+    res_final = solver.solve(state, problem)
     
     
     species_amount = {
