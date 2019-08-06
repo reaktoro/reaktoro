@@ -26,6 +26,9 @@ namespace Reaktoro {
 
     void exportFluidPhase(py::module& m)
     {
+        
+        //auto mixture2 = static_cast<FluidMixture(FluidPhase::*)(ChemicalState&, double, double, const double*)>(&FluidPhase::mixture);
+
         py::class_<FluidPhase, Phase>(m, "FluidPhase")
             .def(py::init<>())
             .def(py::init<const std::string&, PhaseType>())
@@ -37,7 +40,7 @@ namespace Reaktoro {
             .def("setChemicalModelPengRobinson", &FluidPhase::setChemicalModelPengRobinson, py::return_value_policy::reference_internal)
             .def("setChemicalModelSpycherPruessEnnis", &FluidPhase::setChemicalModelSpycherPruessEnnis, py::return_value_policy::reference_internal)
             .def("setChemicalModelSpycherReed", &FluidPhase::setChemicalModelSpycherReed, py::return_value_policy::reference_internal)
-            .def("mixture", &FluidPhase::mixture, py::return_value_policy::reference_internal)
+            .def("mixture", (FluidMixture& (FluidPhase::*)(void)) &FluidPhase::mixture, py::return_value_policy::reference_internal)
             ;
     }
 
