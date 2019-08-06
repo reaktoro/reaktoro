@@ -40,8 +40,6 @@
 #include <Reaktoro/Optimization/OptimumSolverRefiner.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 
-#include <Reaktoro/Thermodynamics/Core/Database.hpp>
-
 namespace Reaktoro {
 
 struct EquilibriumSolver::Impl
@@ -131,9 +129,9 @@ struct EquilibriumSolver::Impl
     Impl()
     {}
 
-    /// Construct a Impl instance
-    Impl(const ChemicalSystem& system)
-    : system(system), properties(system)
+    /// Construct a Impl instance with given Partition
+    Impl(const Partition& partition)
+    : system(partition.system()), properties(partition.system())
     {
         // Initialize the formula matrix
         A = system.formulaMatrix();
@@ -142,9 +140,9 @@ struct EquilibriumSolver::Impl
         N = system.numSpecies();
 		E = system.numElements();
 
-		// Set the default partition as all species are in equilibrium
-		setPartition(Partition(system));
-	}
+        // Set the default partition as all species are in equilibrium
+        setPartition(partition);
+    }
 
 	/// Set the partition of the chemical system
 	auto setPartition(const Partition& partition_) -> void
@@ -235,8 +233,8 @@ struct EquilibriumSolver::Impl
 			// Set the molar amounts of the species
 			n(ies) = ne;
 
-			// Update the chemical properties of the chemical system
-			properties.update(T, P, n);
+            // Update the chemical properties of the chemical system
+            properties.update(n);
 
             // Set the scaled chemical potentials of the species
             u = u0 + properties.lnActivities();
@@ -440,192 +438,7 @@ struct EquilibriumSolver::Impl
                 { zero = false; break; }
         return zero || !options.warmstart;
     }
-    /*
-	/// Return true if the system has the need to run the phase identification to remove an inaproriet phase
-	auto necessityofphaseidentification(const ChemicalState& state) -> bool
-	{
-		// Check the presence of Gas and Oil
-		const auto& phases = state.system().phases();
-		auto num_oil_and_gas = 0;
-		auto number_possible_phases = phases.size();
-		auto z = Vector(4);
-		for (const auto& phase : phases) {
-			if (phase.name() == "Oil" || phase.name() == "Gaseous"){
-				num_oil_and_gas++;
-			}
-		}
-		if (num_oil_and_gas > 1) {
-			z = speciesAmountsNotaqueous(state);
-			auto system = ChemicalSystem({ state.system().phase("Gaseous") });
-			number_possible_phases = stabitytest_TPD(system, z, state.temperature(), state.pressure());
-			if (number_possible_phases <= 1) {
-				return true;
-			}
-		}
-		return false;
-	}
-    */
-	
-	/// Return a vector with the total amount of species without count Aqueous phase
-	// the currently version only works when all species in oil phase are also in gas
-	auto speciesAmountsNotaqueous(const ChemicalState& state) -> Vector
-	{
-		const auto& system = state.system();
-		auto z = Vector(4);
-		const auto gas_phase_species = system.phase("Gaseous").species();
-		for (auto i = 0; i < gas_phase_species.size(); i++) {
-			if (gas_phase_species[i].name() == "H2O(g)") {
-				z[i] = state.speciesAmount(gas_phase_species[i].name());
-			}
-			else {
-				auto found = (gas_phase_species[i].name()).find("(g)");
-				auto gas_specie_name = gas_phase_species[i].name().substr(0, found) + "(g)";
-				auto oil_specie_name = gas_phase_species[i].name().substr(0, found) + "(oil)";
-				z[i] = state.speciesAmount(gas_specie_name) + state.speciesAmount(oil_specie_name);
-			}
-		}
-		return z;
-	}
 
-    /*
-	/// Return the number os possible stable phase of the system and the vector of element amounts
-	auto stabitytest_TPD(const ChemicalSystem& system, Vector Z, double temperature, double pressure) -> int {
-		auto numberofspecies = system.species().size();
-		auto K_liq = Vector(numberofspecies);
-		auto K_vap = Vector(numberofspecies);
-		auto Y_liq = Vector(numberofspecies);
-		auto y_liq = Vector(numberofspecies);
-		auto Y_vap = Vector(numberofspecies);
-		auto y_vap = Vector(numberofspecies);
-
-		auto R_liq = Vector(numberofspecies);
-		auto R_vap = Vector(numberofspecies);
-
-		auto db = Database("W:\\release\\Projects\\Reaktoro\\databases\\supcrt\\supcrt98.xml");
-
-		auto z_cres = ChemicalModelResult(numberofspecies, numberofspecies);
-		
-		for (auto i = 0; i < Z.size(); i++) {
-			z[i] = z[i] / Z.sum();
-		}
-		
-		system.chemicalModel()(z_cres, temperature, pressure, z);
-
-
-		for (auto i = 0; i < system.numSpecies(); i++) {							
-			double Pc = db.gaseousSpecies(system.species(i).name()).criticalPressure();
-			double Tc = db.gaseousSpecies(system.species(i).name()).criticalTemperature();
-			double w = db.gaseousSpecies(system.species(i).name()).acentricFactor();
-			auto Ki = (Pc / pressure)*std::exp(5.37 * (1.0 + w)*(1.0 - (Tc / temperature)));
-			K_liq(i) = Ki;
-			K_vap(i) = Ki;
-		}
-
-		bool converged = false;
-		bool TSliq = false;
-		bool TSvap = false;
-
-		double Sl = 0.0;
-		double Sv = 0.0;
-		for (auto i = 0; i < 10000; i++) {
-			for (auto j = 0; j < system.numSpecies(); j++) {
-				Y_liq(j) = z(j) / K_liq(j);
-				Y_vap(j) = z(j)*K_vap(j);
-			}
-
-			Sl = Y_liq.sum();
-			Sv = Y_vap.sum();
-
-			for (auto j = 0; j < system.numSpecies(); j++) {
-				y_liq(j) = Y_liq(j) / Sl;
-				y_vap(j) = Y_vap(j) / Sv;
-			}
-
-			auto y_liq_cres = ChemicalModelResult(numberofspecies, numberofspecies);
-			auto y_vap_cres = ChemicalModelResult(numberofspecies, numberofspecies);
-
-			system.chemicalModel()(y_liq_cres, temperature, pressure, y_vap);
-			system.chemicalModel()(y_vap_cres, temperature, pressure, y_liq);
-
-			for (auto j = 0; j < system.numSpecies(); j++) {
-				R_liq(j) = (Sl)*(std::exp(y_liq_cres.lnActivityCoefficients()[j].val) / std::exp(z_cres.lnActivityCoefficients()[j].val));
-				R_vap(j) = (1.0 / Sv)*(std::exp(z_cres.lnActivityCoefficients()[j].val) / std::exp(y_vap_cres.lnActivityCoefficients()[j].val));
-			}
-
-			auto trial_solution_liq = 0.0;
-			auto trial_solution_vap = 0.0;
-			for (auto j = 0; j < system.numSpecies(); j++) {
-				trial_solution_liq += std::log(K_liq(j))*std::log(K_liq(j));
-				trial_solution_vap += std::log(K_vap(j))*std::log(K_vap(j));
-			}
-			if (trial_solution_liq < 1.e-4) {
-				TSliq = true;
-			}
-			if (trial_solution_vap < 1.e-4) {
-				TSvap = true;
-			}
-
-			auto erro_liq = 0.0;
-			auto erro_vap = 0.0;
-			for (auto j = 0; j < system.numSpecies(); j++) {
-				erro_liq += (R_liq(j) - 1)*(R_liq(j) - 1);
-				erro_vap += (R_vap(j) - 1)*(R_vap(j) - 1);
-			}
-			if (erro_liq < 1e-12) {
-				//std::cout << "liq possivel to form" << std::endl;
-				converged = true;
-			}
-			if (erro_vap < 1e-12) {
-				//std::cout << "vap to form" << std::endl;
-				converged = true;
-			}
-			if (converged) {
-				break;
-			}
-
-			for (auto j = 0; j < system.numSpecies(); j++) {
-				K_liq(j) = K_liq(j) * R_liq(j);
-				K_vap(j) = K_vap(j) * R_liq(j);
-			}
-			if (i == 99999) {
-				return 4;
-			}
-		}
-
-		if (converged) {
-			if (TSliq && TSvap) {
-				return 1; //std::cout << "1 fase" << std::endl;
-			}
-			else if (Sl <= 1.0 && TSvap) {
-				return 2; // std::cout << "2 fases" << std::endl;
-			}
-			else if (TSliq && Sl <= 1.0) {
-				return 2;// std::cout << "2 fases" << std::endl;
-			}
-			else if (Sv <= 1.0 && Sl <= 1.0) {
-				return 3;// std::cout << "3 fases" << std::endl;
-			}
-		}
-		else {
-			if (Sv > 1 && TSliq) {
-				return 1;// std::cout << "2 fases" << std::endl;
-			}
-			else if (TSvap && Sl > 1) {
-				return 2;// std::cout << "2 fases" << std::endl;
-			}
-			else if (Sv > 1 && Sl > 1) {
-				return 2;// std::cout << "2 fases" << std::endl;
-			}
-			else if (Sv > 1 && Sl <= 1) {
-				return 3;// std::cout << "3 fases" << std::endl;
-			}
-			else if (Sv <= 1 && Sl > 1) {
-				return 3;// std::cout << "3 fases" << std::endl;
-			}
-		}
-		return 4;
-	}
-    */
     /// Solve the equilibrium problem
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
@@ -755,7 +568,11 @@ EquilibriumSolver::EquilibriumSolver()
 {}
 
 EquilibriumSolver::EquilibriumSolver(const ChemicalSystem& system)
-: pimpl(new Impl(system))
+: pimpl(new Impl(Partition(system)))
+{}
+
+EquilibriumSolver::EquilibriumSolver(const Partition& partition)
+: pimpl(new Impl(partition))
 {}
 
 EquilibriumSolver::EquilibriumSolver(const EquilibriumSolver& other)
