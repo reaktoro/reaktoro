@@ -191,7 +191,7 @@ public:
             addPhase(FluidPhase(FluidMixture(gaseous_species), "Gaseous", PhaseType::Gas));
         
         if (liquid_species.size())
-            addPhase(FluidPhase(FluidMixture(gaseous_species), "Liquid", PhaseType::Liquid));
+            addPhase(FluidPhase(FluidMixture(liquid_species), "Liquid", PhaseType::Liquid));
     
     	for(auto mineral : mineral_species)
     		addPhase(MineralPhase(MineralMixture(mineral)));
@@ -427,7 +427,7 @@ public:
     }
 
     template<typename PhaseType>
-    auto convertPhase(const PhaseType& phase) const -> PhaseType
+    auto convertPhase(const PhaseType& phase, bool remove_phases = false) const -> PhaseType
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
@@ -478,12 +478,79 @@ public:
         // Create the Phase instance
 		PhaseType converted = phase;
         converted.setThermoModel(thermo_model);
+        
+        return converted;
+    }
+
+    template<>
+    auto convertPhase(const FluidPhase& phase, bool remove_phases) const -> FluidPhase
+    {
+        // The number of species in the phase
+        const unsigned nspecies = phase.numSpecies();
+
+        // Define the lambda functions for the calculation of the essential thermodynamic properties
+        Thermo thermo(database);
+
+        std::vector<ThermoScalarFunction> standard_gibbs_energy_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_enthalpy_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_volume_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_heat_capacity_cp_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_heat_capacity_cv_fns(nspecies);
+
+        // Create the ThermoScalarFunction instances for each thermodynamic properties of each species
+        for (unsigned i = 0; i < nspecies; ++i)
+        {
+            const std::string name = phase.species(i).name();
+
+            standard_gibbs_energy_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarGibbsEnergy(T, P, name); };
+            standard_enthalpy_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarEnthalpy(T, P, name); };
+            standard_volume_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarVolume(T, P, name); };
+            standard_heat_capacity_cp_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstP(T, P, name); };
+            standard_heat_capacity_cv_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstV(T, P, name); };
+        }
+
+        // Create the interpolation functions for thermodynamic properties of the species
+        ThermoVectorFunction standard_gibbs_energies_interp = interpolate(temperatures, pressures, standard_gibbs_energy_fns);
+        ThermoVectorFunction standard_enthalpies_interp = interpolate(temperatures, pressures, standard_enthalpy_fns);
+        ThermoVectorFunction standard_volumes_interp = interpolate(temperatures, pressures, standard_volume_fns);
+        ThermoVectorFunction standard_heat_capacities_cp_interp = interpolate(temperatures, pressures, standard_heat_capacity_cp_fns);
+        ThermoVectorFunction standard_heat_capacities_cv_interp = interpolate(temperatures, pressures, standard_heat_capacity_cv_fns);
+        ThermoVectorFunction ln_activity_constants_func = lnActivityConstants(phase);
+
+        // Define the thermodynamic model function of the species
+        PhaseThermoModel thermo_model = [=](PhaseThermoModelResult& res, Temperature T, Pressure P)
+        {
+            // Calculate the standard thermodynamic properties of each species
+            res.standard_partial_molar_gibbs_energies = standard_gibbs_energies_interp(T, P);
+            res.standard_partial_molar_enthalpies = standard_enthalpies_interp(T, P);
+            res.standard_partial_molar_volumes = standard_volumes_interp(T, P);
+            res.standard_partial_molar_heat_capacities_cp = standard_heat_capacities_cp_interp(T, P);
+            res.standard_partial_molar_heat_capacities_cv = standard_heat_capacities_cv_interp(T, P);
+            res.ln_activity_constants = ln_activity_constants_func(T, P);
+
+            return res;
+        };
+
+        // Create the Phase instance
+        FluidPhase converted = phase;
+        if (remove_phases == true)
+        {
+            converted.mixture().setRemoveInapproprieatePhaseAsTrue();
+            converted.setChemicalModelPengRobinson(); //IT WILL ALL USE PengRobingson, think in a way to make this more generic
+        }
+        converted.setThermoModel(thermo_model);
 
         return converted;
     }
 
     auto createChemicalSystem() const -> ChemicalSystem
     {
+        auto remove_phases = false;
+        if (gaseous_phase.type() == PhaseType::Gas && liquid_phase.type() == PhaseType::Liquid)
+        {
+            remove_phases = true;
+        }
+        
         std::vector<Phase> phases;
         phases.reserve(2 + mineral_phases.size());
 
@@ -491,10 +558,10 @@ public:
             phases.push_back(convertPhase(aqueous_phase));
 
         if(gaseous_phase.numSpecies())
-            phases.push_back(convertPhase(gaseous_phase));
+            phases.push_back(convertPhase(gaseous_phase, remove_phases));
 
         if (liquid_phase.numSpecies())
-            phases.push_back(convertPhase(liquid_phase));
+            phases.push_back(convertPhase(liquid_phase, remove_phases));
 
         for(const MineralPhase& mineral_phase : mineral_phases)
             phases.push_back(convertPhase(mineral_phase));

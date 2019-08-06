@@ -36,7 +36,6 @@ class MineralReaction;
 class ReactionSystem;
 class StringList;
 
-enum class PhaseType;
 
 /// Provides convenient operations to initialize ChemicalSystem and ReactionSystem instances.
 /// The ChemicalEditor class is used to conveniently create instances of classes ChemicalSystem and ReactionSystem.
