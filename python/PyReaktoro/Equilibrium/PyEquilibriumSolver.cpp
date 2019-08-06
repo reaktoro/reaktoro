@@ -34,7 +34,7 @@ void exportEquilibriumSolver(py::module& m)
 {
     auto solve1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&EquilibriumSolver::solve);
     auto solve2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const double*)>(&EquilibriumSolver::solve);
-    auto solve3 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&, phaseIdentificationMethod, double)>(&EquilibriumSolver::solve);
+    auto solve3 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&EquilibriumSolver::solve);
     auto solve4 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&)>(&EquilibriumSolver::solve);
 
     auto approximate1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&EquilibriumSolver::approximate);

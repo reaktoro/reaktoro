@@ -108,7 +108,6 @@ void exportAqueousSpecies(py::module& m);
 void exportFluidSpecies(py::module& m);
 void exportMineralSpecies(py::module& m);
 void exportWater(py::module& m);
-void exportOil(py::module& m);
 
 // Transport module
 void exportChemicalField(py::module& m);
