@@ -34,6 +34,12 @@
 
 namespace Reaktoro {
 
+    // Forward declarations
+    namespace PhaseID 
+    {
+        enum class PhaseIdentificationMethods;
+    }
+    
 /// Defines a cubic equation of state and calculates thermodynamic properties of a fluid phase.
 class CubicEOS
 {
@@ -125,6 +131,16 @@ public:
     /// Set the type of the cubic equation of state (default: PengRobinson).
     /// @see Model
     auto setModel(Model model) -> void;
+
+    /// Set the phase identification method that is used (default: GibbsEnergyAndEquationOfStateMethod).
+    /// @see PhaseIdentification
+    auto setPhaseIdentificationMethod(PhaseID::PhaseIdentificationMethods PhaseIdentificationMethod) -> void;
+
+    /// Set the CubicEOS to remove inappropriate phase
+    auto setRemoveInappropriatePhaseAsTrue() -> void;
+
+    /// Set the CubicEOS to do not remove inappropriate phase
+    auto setRemoveInappropriatePhaseAsFalse() -> void;
 
     /// Set the equation of state to compute properties for a liquid phase.
     auto setPhaseAsLiquid() -> void;

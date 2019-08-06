@@ -16,6 +16,7 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include "FluidMixture.hpp"
+#include <Reaktoro/Util/PhaseIdentificationMethods.hpp>
 
 namespace Reaktoro {
 
@@ -27,8 +28,37 @@ namespace Reaktoro {
         : GeneralMixture<FluidSpecies>(species)
     {}
 
+    FluidMixture::FluidMixture(const std::vector<FluidSpecies>& species, PhaseID::PhaseIdentificationMethods fluidMixturePhaseIdentificationMethod)
+        : GeneralMixture<FluidSpecies>(species), _fluidMixturePhaseIdentificationMethod(fluidMixturePhaseIdentificationMethod)
+    {}
+
     FluidMixture::~FluidMixture()
     {}
+
+    auto FluidMixture::fluidMixturePhaseIdentificationMethod() const -> PhaseID::PhaseIdentificationMethods
+    {
+        return _fluidMixturePhaseIdentificationMethod;
+    }
+
+    auto FluidMixture::setFluidMixturePhaseIdentificationMethod(PhaseID::PhaseIdentificationMethods fluidMixturePhaseIdentificationMethod) -> void
+    {
+        _fluidMixturePhaseIdentificationMethod = fluidMixturePhaseIdentificationMethod;
+    }
+
+    auto FluidMixture::removeInapproprieatePhase() const -> bool
+    {
+        return _RemoveInapproprieatePhase;
+    }
+
+    auto FluidMixture::setRemoveInapproprieatePhaseAsTrue() -> void
+    {
+        _RemoveInapproprieatePhase = true;
+    }
+
+    auto FluidMixture::setRemoveInapproprieatePhaseAsFalse() -> void
+    {
+        _RemoveInapproprieatePhase = false;
+    }
 
     auto FluidMixture::state(Temperature T, Pressure P, VectorConstRef n) const -> FluidMixtureState
     {
