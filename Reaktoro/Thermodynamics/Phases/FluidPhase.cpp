@@ -119,4 +119,11 @@ namespace Reaktoro {
         return pimpl->mixture;
     }
 
+    auto FluidPhase::mixture() -> FluidMixture&
+    {
+        return pimpl->mixture;
+    }
+
+
+
 } // namespace Reaktoro
