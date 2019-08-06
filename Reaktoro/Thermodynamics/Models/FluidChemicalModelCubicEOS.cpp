@@ -52,6 +52,14 @@ namespace Reaktoro {
             eos.setCriticalPressures(Pc);
             eos.setAcentricFactors(omega);
             eos.setModel(modeltype);
+            eos.setPhaseIdentificationMethod(mixture.fluidMixturePhaseIdentificationMethod());
+            if (mixture.removeInapproprieatePhase())
+            {
+                eos.setRemoveInappropriatePhaseAsTrue();
+            }
+            else {
+                eos.setRemoveInappropriatePhaseAsFalse();
+            }
 
             // The state of the gaseous mixture
             FluidMixtureState state;
