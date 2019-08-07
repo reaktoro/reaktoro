@@ -17,6 +17,9 @@
 
 #include "ChemicalProperties.hpp"
 
+// C++ includes
+#include <cmath>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
