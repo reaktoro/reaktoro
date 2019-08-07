@@ -234,6 +234,6 @@ def test_equilibrium_solver_approx_overload_3(setup, state_regression):
 
     solver.approximate(state, T, P, b)
 
-    tol = { 'pH [-]': {'rtol': 1e-1} } # pH obtained via approximate is not accurate and can be slightly different across operating systems
+    tol = { 'pH [-]': dict(atol=0.1, rtol=0.1) } # pH obtained via approximate is not accurate and can be slightly different across operating systems
 
     state_regression.check(state, tol=tol, default_tol=dict(atol=1e-5, rtol=1e-14))
