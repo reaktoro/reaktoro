@@ -44,7 +44,7 @@ def test_equilibrium_CH4_liq_gas(temperature, pressure, num_regression):
         pressure in Pa which will be used to compute equilibrium
     """
     
-    db = Database("W:\\release\\Projects\\Reaktoro\\databases\\supcrt\\supcrt98.xml") 
+    db = Database("supcrt98.xml") 
      
     editor = ChemicalEditor(db)
     
@@ -107,7 +107,7 @@ def test_equilibrium_H2S_liq_gas(temperature, pressure, num_regression):
         pressure in Pa which will be used to compute equilibrium
     """
     
-    db = Database("W:\\release\\Projects\\Reaktoro\\databases\\supcrt\\supcrt98.xml") 
+    db = Database("supcrt98.xml") 
      
     editor = ChemicalEditor(db)
     
@@ -170,7 +170,7 @@ def test_equilibrium_CO2_liq_gas(temperature, pressure, num_regression):
         pressure in Pa which will be used to compute equilibrium
     """
     
-    db = Database("W:\\release\\Projects\\Reaktoro\\databases\\supcrt\\supcrt98.xml") 
+    db = Database("supcrt98.xml") 
      
     editor = ChemicalEditor(db)
     
@@ -229,7 +229,7 @@ def test_equilibrium_CH4_CO2_liq_gas(temperature, pressure, num_regression):
         pressure in bar which will be used to compute equilibrium
     """
     
-    db = Database("W:\\release\\Projects\\Reaktoro\\databases\\supcrt\\supcrt98.xml") 
+    db = Database("supcrt98.xml") 
      
     editor = ChemicalEditor(db)
     
@@ -290,7 +290,7 @@ def test_equilibrium_CH4_H2S_liq_gas(temperature, pressure, num_regression):
         pressure in bar which will be used to compute equilibrium
     """
     
-    db = Database("W:\\release\\Projects\\Reaktoro\\databases\\supcrt\\supcrt98.xml") 
+    db = Database("supcrt98.xml") 
      
     editor = ChemicalEditor(db)
     
@@ -353,7 +353,7 @@ def test_equilibrium_CH4_CO2_H2S_liq_gas(temperature, pressure, num_regression):
         pressure in bar which will be used to compute equilibrium
     """
     
-    db = Database("W:\\release\\Projects\\Reaktoro\\databases\\supcrt\\supcrt98.xml") 
+    db = Database("supcrt98.xml") 
      
     editor = ChemicalEditor(db)
     

@@ -44,11 +44,11 @@ def test_equilibrium_CH4_H2S_CO2_H2O_liq_gas_aq(temperature, pressure, num_regre
         pressure in bar which will be used to compute equilibrium
     """
     
-    db = Database("W:\\release\\Projects\\Reaktoro\\databases\\supcrt\\supcrt98.xml") 
+    db = Database("supcrt98.xml") 
      
     editor = ChemicalEditor(db)
     
-    editor.addAqueousPhase(["Methane(aq)", "CO2(aq)",  "H2S(aq)", "H2O(l)" ])
+    editor.addAqueousPhase(["CO2(aq)",  "H2S(aq)", "H2O(l)" ])
     editor.addGaseousPhase(["CH4(g)", "CO2(g)", "H2S(g)", "H2O(g)"])
     editor.addLiquidPhase(["CH4(liq)", "CO2(liq)", "H2S(liq)", "H2O(liq)"])
     
@@ -80,7 +80,6 @@ def test_equilibrium_CH4_H2S_CO2_H2O_liq_gas_aq(temperature, pressure, num_regre
     
 
     species_amount = {
-        "Methane(aq)": np.asarray([state.speciesAmount("Methane(aq)")]),
         "CO2(aq)": np.asarray([state.speciesAmount("CO2(g)")]),
         "H2S(aq)": np.asarray([state.speciesAmount("H2S(aq)")]),
         "H2O(l)": np.asarray([state.speciesAmount("H2O(l)")]),
