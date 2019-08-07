@@ -17,9 +17,6 @@
 
 #include "ChemicalProperties.hpp"
 
-// C++ includes
-#include <cmath>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
@@ -49,7 +46,7 @@ auto ChemicalProperties::update(double T_, double P_) -> void
 
 auto ChemicalProperties::update(VectorConstRef n_) -> void
 {
-    Assert(!std::isnan(T) && !std::isnan(P),
+    Assert(!std::isnan(T.val) && !std::isnan(P.val),
            "Cannot proceed with method ChemicalProperties::update.",
            "The temperature or pressure values are invalid (NAN). "
            "Update these properties before calling this method!")
