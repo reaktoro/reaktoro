@@ -186,24 +186,24 @@ struct EquilibriumSolver::Impl
         // Initialize the names of the primal and dual variables
         if (options.optimum.output.active)
         {
-	        // Use `n` instead of `x` to name the variables
-	        optimum_options.output.xprefix = "n";
+            // Use `n` instead of `x` to name the variables
+            optimum_options.output.xprefix = "n";
 
-	        // Define some auxiliary references to the variables names
-	        auto& xnames = optimum_options.output.xnames;
-	        auto& ynames = optimum_options.output.ynames;
-	        auto& znames = optimum_options.output.znames;
+            // Define some auxiliary references to the variables names
+            auto& xnames = optimum_options.output.xnames;
+            auto& ynames = optimum_options.output.ynames;
+            auto& znames = optimum_options.output.znames;
 
 	        // Initialize the names of the primal variables `n`
-	        for (Index i : ies)
-		        xnames.push_back(system.species(i).name());
+            for (Index i : ies)
+                xnames.push_back(system.species(i).name());
 
-	        // Initialize the names of the dual variables `y`
-	        for (Index i : iee)
-		        ynames.push_back(system.element(i).name());
+            // Initialize the names of the dual variables `y`
+            for (Index i : iee)
+                ynames.push_back(system.element(i).name());
 
-	        // Initialize the names of the dual variables `z`
-	        znames = xnames;
+            // Initialize the names of the dual variables `z`
+            znames = xnames;
         }
     }
 
@@ -230,8 +230,8 @@ struct EquilibriumSolver::Impl
         // The Gibbs energy function to be minimized
         optimum_problem.objective = [=](VectorConstRef ne) mutable
         {
-	        // Set the molar amounts of the species
-	        n(ies) = ne;
+            // Set the molar amounts of the species
+            n(ies) = ne;
 
             // Update the chemical properties of the chemical system
             properties.update(n);
