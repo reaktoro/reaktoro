@@ -138,100 +138,100 @@ struct EquilibriumSolver::Impl
 
         // Initialize the number of species and elements in the system
         N = system.numSpecies();
-		E = system.numElements();
+        E = system.numElements();
 
         // Set the default partition as all species are in equilibrium
         setPartition(partition);
     }
 
-	/// Set the partition of the chemical system
-	auto setPartition(const Partition& partition_) -> void
-	{
-		// Set the partition of the chemical system
-		partition = partition_;
+    /// Set the partition of the chemical system
+    auto setPartition(const Partition& partition_) -> void
+    {
+        // Set the partition of the chemical system
+        partition = partition_;
 
-		// Initialize the number of species and elements in the equilibrium partition
-		Ne = partition.numEquilibriumSpecies();
-		Ee = partition.numEquilibriumElements();
+        // Initialize the number of species and elements in the equilibrium partition
+        Ne = partition.numEquilibriumSpecies();
+        Ee = partition.numEquilibriumElements();
 
-		// Initialize the formula matrix of the equilibrium species
-		Ae = partition.formulaMatrixEquilibriumPartition();
+        // Initialize the formula matrix of the equilibrium species
+        Ae = partition.formulaMatrixEquilibriumPartition();
 
-		// Initialize the indices of the equilibrium species and elements
-		ies = partition.indicesEquilibriumSpecies();
-		iee = partition.indicesEquilibriumElements();
+        // Initialize the indices of the equilibrium species and elements
+        ies = partition.indicesEquilibriumSpecies();
+        iee = partition.indicesEquilibriumElements();
 
-		// Initialize the indices of the inert species
-		iis.clear();
-		iis.reserve(partition.numInertSpecies() + partition.numKineticSpecies());
-		iis.insert(iis.end(), partition.indicesInertSpecies().begin(), partition.indicesInertSpecies().end());
-		iis.insert(iis.end(), partition.indicesKineticSpecies().begin(), partition.indicesKineticSpecies().end());
+        // Initialize the indices of the inert species
+        iis.clear();
+        iis.reserve(partition.numInertSpecies() + partition.numKineticSpecies());
+        iis.insert(iis.end(), partition.indicesInertSpecies().begin(), partition.indicesInertSpecies().end());
+        iis.insert(iis.end(), partition.indicesKineticSpecies().begin(), partition.indicesKineticSpecies().end());
 
-		// Initialize the formula matrix of the inert species
-		Ai = cols(A, iis);
-	}
+        // Initialize the formula matrix of the inert species
+        Ai = cols(A, iis);
+    }
 
-	/// Update the OptimumOptions instance with given EquilibriumOptions instance
-	auto updateOptimumOptions() -> void
-	{
-		// Initialize the options for the optimisation calculation
-		optimum_options = options.optimum;
+        /// Update the OptimumOptions instance with given EquilibriumOptions instance
+    auto updateOptimumOptions() -> void
+    {
+        // Initialize the options for the optimisation calculation
+        optimum_options = options.optimum;
 
-		// Set the parameters of the optimisation algorithms that control how small can be the amount of a species
-		optimum_options.ipaction.mu = options.epsilon;
-		optimum_options.ipnewton.mu = options.epsilon;
-		optimum_options.ipopt.mu.push_back(options.epsilon);
-		optimum_options.ipactive.epsilon = options.epsilon;
+        // Set the parameters of the optimisation algorithms that control how small can be the amount of a species
+        optimum_options.ipaction.mu = options.epsilon;
+        optimum_options.ipnewton.mu = options.epsilon;
+        optimum_options.ipopt.mu.push_back(options.epsilon);
+        optimum_options.ipactive.epsilon = options.epsilon;
 
-		// Initialize the names of the primal and dual variables
-		if (options.optimum.output.active)
-		{
-			// Use `n` instead of `x` to name the variables
-			optimum_options.output.xprefix = "n";
+        // Initialize the names of the primal and dual variables
+        if (options.optimum.output.active)
+        {
+	        // Use `n` instead of `x` to name the variables
+	        optimum_options.output.xprefix = "n";
 
-			// Define some auxiliary references to the variables names
-			auto& xnames = optimum_options.output.xnames;
-			auto& ynames = optimum_options.output.ynames;
-			auto& znames = optimum_options.output.znames;
+	        // Define some auxiliary references to the variables names
+	        auto& xnames = optimum_options.output.xnames;
+	        auto& ynames = optimum_options.output.ynames;
+	        auto& znames = optimum_options.output.znames;
 
-			// Initialize the names of the primal variables `n`
-			for (Index i : ies)
-				xnames.push_back(system.species(i).name());
+	        // Initialize the names of the primal variables `n`
+	        for (Index i : ies)
+		        xnames.push_back(system.species(i).name());
 
-			// Initialize the names of the dual variables `y`
-			for (Index i : iee)
-				ynames.push_back(system.element(i).name());
+	        // Initialize the names of the dual variables `y`
+	        for (Index i : iee)
+		        ynames.push_back(system.element(i).name());
 
-			// Initialize the names of the dual variables `z`
-			znames = xnames;
-		}
-	}
+	        // Initialize the names of the dual variables `z`
+	        znames = xnames;
+        }
+    }
 
-	/// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
-	auto updateOptimumProblem(const ChemicalState& state) -> void
-	{
-		// The temperature and pressure of the equilibrium calculation
-		const auto T = state.temperature();
-		const auto P = state.pressure();
-		const auto RT = universalGasConstant * T;
+    /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
+    auto updateOptimumProblem(const ChemicalState& state) -> void
+    {
+        // The temperature and pressure of the equilibrium calculation
+        const auto T = state.temperature();
+        const auto P = state.pressure();
+        const auto RT = universalGasConstant * T;
 
-		// Set the molar amounts of the species
-		n = state.speciesAmounts();
+        // Set the molar amounts of the species
+        n = state.speciesAmounts();
 
-		// Update the standard thermodynamic properties of the chemical system
-		properties.update(T, P);
+        // Update the standard thermodynamic properties of the chemical system
+        properties.update(T, P);
 
-		// Update the normalized standard Gibbs energies of the species
-		u0 = properties.standardPartialMolarGibbsEnergies() / RT;
+        // Update the normalized standard Gibbs energies of the species
+        u0 = properties.standardPartialMolarGibbsEnergies() / RT;
 
-		// The result of the objective evaluation
-		ObjectiveResult res;
+        // The result of the objective evaluation
+        ObjectiveResult res;
 
-		// The Gibbs energy function to be minimized
-		optimum_problem.objective = [=](VectorConstRef ne) mutable
-		{
-			// Set the molar amounts of the species
-			n(ies) = ne;
+        // The Gibbs energy function to be minimized
+        optimum_problem.objective = [=](VectorConstRef ne) mutable
+        {
+	        // Set the molar amounts of the species
+	        n(ies) = ne;
 
             // Update the chemical properties of the chemical system
             properties.update(n);
