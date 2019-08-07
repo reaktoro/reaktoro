@@ -3,7 +3,7 @@ import numpy as np
 from reaktoro import ChemicalProperty
 
 
-def convert_reaktoro_state_to_dict(state):
+def convert_reaktoro_state_to_dict(state, exclude):
 
     T = state.temperature()
     P = state.pressure()
@@ -65,6 +65,9 @@ def convert_reaktoro_state_to_dict(state):
     output["Phase densities [kg/m³]"] = phase_densities
     output["Phase molar volumes [m³/mol]"] = phase_molar_volumes
     output["pH [-]"] = np.asarray([pH])
+
+    if exclude is not None:
+        output = { key: val for key, val in output.items() if key not in exclude }
 
     return output
 

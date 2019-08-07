@@ -15,8 +15,8 @@ from reaktoro import (
 @pytest.fixture(scope="function")
 def equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar():
     """
-    Build a problem with 1 kg of H2O, 100 g of CO2 and 0.1 mol of NaCl 
-    at 60 °C and 300 bar 
+    Build a problem with 1 kg of H2O, 100 g of CO2 and 0.1 mol of NaCl
+    at 60 °C and 300 bar
     """
     database = Database("supcrt98.xml")
 
@@ -40,8 +40,8 @@ def equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar():
 @pytest.fixture(scope="function")
 def equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar():
     """
-    Build a problem with H2O, H+, Na+, Cl-, HCO3-, CO2(aq), CO3-- and 
-    Halite at 60 °C and 300 bar 
+    Build a problem with H2O, H+, Na+, Cl-, HCO3-, CO2(aq), CO3-- and
+    Halite at 60 °C and 300 bar
     """
     database = Database("supcrt98.xml")
 
@@ -91,7 +91,7 @@ def equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite():
 def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity():
     """
     Build a problem with H, Na, Cl, Ca, Mg, C with fixed
-    species amount, activity and defined pH  
+    species amount, activity and defined pH
     """
 
     database = Database("supcrt98.xml")
@@ -117,7 +117,7 @@ def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity():
 @pytest.fixture(scope="function")
 def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph():
     """
-    Build a problem with H, Na, Cl, Ca, Mg, C with defined pH  
+    Build a problem with H, Na, Cl, Ca, Mg, C with defined pH
     """
     database = Database("supcrt98.xml")
 
@@ -140,8 +140,8 @@ def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph():
 @pytest.fixture(scope="function")
 def equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts():
     """
-    Build a problem with H, O, Na, Cl, Ca, C and Calcite with defined pH 
-    and fixed species amount  
+    Build a problem with H, O, Na, Cl, Ca, C and Calcite with defined pH
+    and fixed species amount
     """
     database = Database("supcrt98.xml")
 
@@ -164,7 +164,7 @@ def equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts():
 def equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass():
     """
     Build a problem with H2O, NaCL, CaCO3, CO2, Calcite with fixed
-    species mass and amount  
+    species mass and amount
     """
     database = Database("supcrt98.xml")
 
@@ -187,8 +187,8 @@ def equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass():
 @pytest.fixture(scope="function")
 def equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity():
     """
-    Build a problem with H2O, NaCl, CaCO3, CO2 and Calcite 
-    with fixed values of Species Mass, Amount and alkalinity 
+    Build a problem with H2O, NaCl, CaCO3, CO2 and Calcite
+    with fixed values of Species Mass, Amount and alkalinity
     """
     editor = ChemicalEditor()
     editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3")
@@ -210,8 +210,8 @@ def equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity
 @pytest.fixture(scope="function")
 def equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume():
     """
-    Build a problem with H2O, NaCl, CaCO3, CO2 and Calcite 
-    with fixed values of phase volume 
+    Build a problem with H2O, NaCl, CaCO3, CO2 and Calcite
+    with fixed values of phase volume
     """
     editor = ChemicalEditor()
     editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3")
@@ -233,9 +233,9 @@ def equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume():
 @pytest.fixture(scope="function")
 def state_regression(num_regression):
     class StateRegression:
-        def check(self, state, tol=None, default_tol=None):
+        def check(self, state, tol=None, default_tol=None, exclude=None):
             num_regression.check(
-                convert_reaktoro_state_to_dict(state),
+                convert_reaktoro_state_to_dict(state, exclude),
                 basename=None,
                 fullpath=None,
                 tolerances=tol,
@@ -252,7 +252,7 @@ def table_regression(num_regression):
     class TableRegression:
         def check(self, table, tol=None, default_tol=None):
             num_regression.check(
-                convert_table_to_dict(table),
+                convert_table_to_dict(table, exclude),
                 basename=None,
                 fullpath=None,
                 tolerances=tol,

@@ -165,7 +165,9 @@ def test_equilibrium_solver_approx_overload_1(setup, state_regression):
 
     solver.approximate(state)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
+    exclude = ['pH [-]']
+
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14), exclude=exclude)
 
 @pytest.mark.parametrize(
     "setup",
@@ -197,7 +199,9 @@ def test_equilibrium_solver_approx_overload_2(setup, state_regression):
 
     solver.approximate(state, problem)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
+    exclude = ['pH [-]']
+
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14), exclude=exclude)
 
 
 @pytest.mark.parametrize(
@@ -234,6 +238,6 @@ def test_equilibrium_solver_approx_overload_3(setup, state_regression):
 
     solver.approximate(state, T, P, b)
 
-    tol = { 'pH [-]': dict(atol=0.1, rtol=0.1) } # pH obtained via approximate is not accurate and can be slightly different across operating systems
+    exclude = ['pH [-]']
 
-    state_regression.check(state, tol=tol, default_tol=dict(atol=1e-5, rtol=1e-14))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14), exclude=exclude)
