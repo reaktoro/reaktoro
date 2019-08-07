@@ -115,9 +115,7 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
     "setup, time_span, checked_variables, minerals_to_add",
     [
         (
-            pytest.lazy_fixture(
-                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
-            ),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
             time_span(0, 24, "hours"),
             [
                 # "time(units=hour)",  # CVODE is generating slightly different time steps in different OSs.
@@ -130,9 +128,7 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
             [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
         ),
         (
-            pytest.lazy_fixture(
-                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
-            ),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
             time_span(0, 48, "hours"),
             [
                 # "time(units=hour)",  # CVODE is generating slightly different time steps in different OSs.
@@ -145,9 +141,7 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
             [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
         ),
         (
-            pytest.lazy_fixture(
-                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
-            ),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
             time_span(0, 72, "hours"),
             [
                 # "time(units=hour)",  # CVODE is generating slightly different time steps in different OSs.
@@ -251,23 +245,17 @@ def test_kinetic_path_solve_complete_path(
     "setup, time_span, minerals_to_add",
     [
         (
-            pytest.lazy_fixture(
-                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
-            ),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
             time_span(0, 24, "hours"),
             [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
         ),
         (
-            pytest.lazy_fixture(
-                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
-            ),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
             time_span(0, 48, "hours"),
             [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
         ),
         (
-            pytest.lazy_fixture(
-                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
-            ),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
             time_span(0, 72, "hours"),
             [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
         ),
