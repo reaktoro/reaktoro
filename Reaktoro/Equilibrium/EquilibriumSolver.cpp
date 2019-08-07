@@ -171,7 +171,7 @@ struct EquilibriumSolver::Impl
         Ai = cols(A, iis);
     }
 
-        /// Update the OptimumOptions instance with given EquilibriumOptions instance
+    /// Update the OptimumOptions instance with given EquilibriumOptions instance
     auto updateOptimumOptions() -> void
     {
         // Initialize the options for the optimisation calculation
@@ -184,7 +184,7 @@ struct EquilibriumSolver::Impl
         optimum_options.ipactive.epsilon = options.epsilon;
 
         // Initialize the names of the primal and dual variables
-        if (options.optimum.output.active)
+        if(options.optimum.output.active)
         {
             // Use `n` instead of `x` to name the variables
             optimum_options.output.xprefix = "n";
@@ -194,12 +194,12 @@ struct EquilibriumSolver::Impl
             auto& ynames = optimum_options.output.ynames;
             auto& znames = optimum_options.output.znames;
 
-	        // Initialize the names of the primal variables `n`
-            for (Index i : ies)
+            // Initialize the names of the primal variables `n`
+            for(Index i : ies)
                 xnames.push_back(system.species(i).name());
 
             // Initialize the names of the dual variables `y`
-            for (Index i : iee)
+            for(Index i : iee)
                 ynames.push_back(system.element(i).name());
 
             // Initialize the names of the dual variables `z`
@@ -211,9 +211,9 @@ struct EquilibriumSolver::Impl
     auto updateOptimumProblem(const ChemicalState& state) -> void
     {
         // The temperature and pressure of the equilibrium calculation
-        const auto T = state.temperature();
-        const auto P = state.pressure();
-        const auto RT = universalGasConstant * T;
+        const auto T  = state.temperature();
+        const auto P  = state.pressure();
+        const auto RT = universalGasConstant*T;
 
         // Set the molar amounts of the species
         n = state.speciesAmounts();
@@ -222,7 +222,7 @@ struct EquilibriumSolver::Impl
         properties.update(T, P);
 
         // Update the normalized standard Gibbs energies of the species
-        u0 = properties.standardPartialMolarGibbsEnergies() / RT;
+        u0 = properties.standardPartialMolarGibbsEnergies()/RT;
 
         // The result of the objective evaluation
         ObjectiveResult res;
