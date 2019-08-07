@@ -187,10 +187,10 @@ auto createAqueousSpecies(const PhreeqcSpecies* s) -> AqueousSpecies
 auto createGaseousSpecies(const PhreeqcPhase* p) -> FluidSpecies
 {
     FluidSpecies species;
-	species.setName(p->name);
-	species.setElements(elementsInPhase(p));
-	species.setThermoData(gaseousSpeciesThermoData(p));
-	return species;
+    species.setName(p->name);
+    species.setElements(elementsInPhase(p));
+    species.setThermoData(gaseousSpeciesThermoData(p));
+    return species;
 }
 
 auto createMineralSpecies(const PhreeqcPhase* p) -> MineralSpecies
