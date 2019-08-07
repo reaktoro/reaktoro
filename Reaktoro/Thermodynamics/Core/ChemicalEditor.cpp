@@ -427,7 +427,7 @@ public:
     }
 
     template<typename PhaseType>
-    auto convertPhase(const PhaseType& phase, bool remove_phases = false) const -> PhaseType
+    auto convertPhase(const PhaseType& phase) const -> PhaseType
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
@@ -482,8 +482,7 @@ public:
         return converted;
     }
 
-    template<>
-    auto convertPhase(const FluidPhase& phase, bool remove_phases) const -> FluidPhase
+    auto convertPhase(const FluidPhase& phase, bool remove_phases = false) const -> FluidPhase
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
