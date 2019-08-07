@@ -252,7 +252,7 @@ def table_regression(num_regression):
     class TableRegression:
         def check(self, table, tol=None, default_tol=None):
             num_regression.check(
-                convert_table_to_dict(table, exclude),
+                convert_table_to_dict(table),
                 basename=None,
                 fullpath=None,
                 tolerances=tol,
