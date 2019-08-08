@@ -59,22 +59,22 @@ auto collectElementsInCompounds(const std::vector<std::string>& compounds) -> st
 
 auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
 {
-	// The ln activity constants of the aqueous species
-	ThermoVector ln_c(phase.numSpecies());
+    // The ln activity constants of the aqueous species
+    ThermoVector ln_c(phase.numSpecies());
 
-	// The index of solvent water species
-	const Index iH2O = phase.indexSpeciesAnyWithError(alternativeWaterNames());
+    // The index of solvent water species
+    const Index iH2O = phase.indexSpeciesAnyWithError(alternativeWaterNames());
 
-	// Set the ln activity constants of aqueous species to ln(55.508472)
-	ln_c = std::log(1.0 / waterMolarMass);
+    // Set the ln activity constants of aqueous species to ln(55.508472)
+    ln_c = std::log(1.0 / waterMolarMass);
 
-	// Set the ln activity constant of water to zero
-	ln_c[iH2O] = 0.0;
+    // Set the ln activity constant of water to zero
+    ln_c[iH2O] = 0.0;
 
-	ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
-	{
-		return ln_c;
-	};
+    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
+    {
+        return ln_c;
+    };
 
 	return f;
 }
@@ -120,8 +120,8 @@ private:
     /// The definition of the gaseous phase
     FluidPhase gaseous_phase;
 
-	/// The definition of the liquid phase
-	FluidPhase liquid_phase;
+    /// The definition of the liquid phase
+    FluidPhase liquid_phase;
 
     /// The definition of the mineral phases
     std::vector<MineralPhase> mineral_phases;
