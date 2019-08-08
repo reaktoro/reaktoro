@@ -33,7 +33,9 @@ using QuarticRoots = std::tuple<std::complex<double>, std::complex<double>, std:
 /// Define a type that describes the roots of a cubic equation
 using CubicRoots = std::tuple<std::complex<double>, std::complex<double>, std::complex<double>>;
 
+/// Define a type that describes the roots of a square equation
 using SquareRoots = std::tuple<double, double>;
+
 /// Calculate the roots of a cubic equation using Cardano's method.
 /// The calculation uses the approach presented in:
 /// *Nickalls, R. W. D. (2012). A New Approach to Solving

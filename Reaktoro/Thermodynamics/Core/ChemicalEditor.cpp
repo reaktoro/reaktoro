@@ -57,22 +57,6 @@ auto collectElementsInCompounds(const std::vector<std::string>& compounds) -> st
     return {elemset.begin(), elemset.end()};
 }
 
-template<typename PhaseType>
-auto lnActivityConstants(const PhaseType& phase) -> ThermoVectorFunction
-{
-    // The ln activity constants of the generic species
-    ThermoVector ln_c(phase.numSpecies());
-
-    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
-    {
-        ln_c = log(P * 1e-5); // ln(Pbar)
-        return ln_c;
-    };
-
-    return f;
-}
-
-template<>
 auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
 {
 	// The ln activity constants of the aqueous species
@@ -95,7 +79,20 @@ auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
 	return f;
 }
 
-template<>
+auto lnActivityConstants(const FluidPhase& phase) -> ThermoVectorFunction
+{
+    // The ln activity constants of the generic species
+    ThermoVector ln_c(phase.numSpecies());
+
+    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
+    {
+        ln_c = log(P * 1e-5); // ln(Pbar)
+        return ln_c;
+    };
+
+    return f;
+}
+
 auto lnActivityConstants(const MineralPhase& phase) -> ThermoVectorFunction
 {
     // The ln activity constants of the mineral species
