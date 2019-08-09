@@ -5,7 +5,8 @@ using namespace Reaktoro;
 
 int main()
 {
-    ThermoFun::Database database("aq17.json");
+    ThermoFun::Database database("databases/thermofun/aq17.json");
+    Time start = time();
     ChemicalEditor editor(database);
     editor.setTemperatures({650}, "celsius");
     editor.setPressures({2000}, "bar");
@@ -25,6 +26,11 @@ int main()
     editor.addMineralPhase("Quartz");
 
     ChemicalSystem system(editor);
+
+    double time_initialization = elapsed(start);
+
+    start = time();
+
     EquilibriumProblem problem(system);
     problem.add("H2O", 1, "kg");
     problem.add("Al2O3", 183.9, "g");
@@ -46,8 +52,20 @@ int main()
 //    std::cout << properties.standardPartialMolarGibbsEnergies().val << std::endl;
     //stateaux.output("stateaux.txt");
     ChemicalState state = equilibrate(problem);
+
+    double time_solve = elapsed(start);
+
     state.output("result.txt");
 
+    start = time();
+
+    waterDensityWagnerPruss(Temperature(650+273), Pressure(2000e5), StateOfMatter::Liquid);
+
+    double time_watereos = elapsed(start);
+
+    std::cout << "time_initialization = " << time_initialization << std::endl;
+    std::cout << "time_solve = " << time_solve << std::endl;
+    std::cout << "time_watereos = " << time_watereos << std::endl;
 }
 
 
