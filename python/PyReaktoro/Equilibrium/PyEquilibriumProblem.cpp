@@ -44,6 +44,7 @@ void exportEquilibriumProblem(py::module& m)
 
     py::class_<EquilibriumProblem>(m, "EquilibriumProblem")
         .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const Partition&>())
         .def(py::init<const EquilibriumProblem&>())
         .def("setPartition", &EquilibriumProblem::setPartition, py::return_value_policy::reference_internal)
         .def("setTemperature", setTemperature1, py::return_value_policy::reference_internal)

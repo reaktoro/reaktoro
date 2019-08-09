@@ -46,7 +46,7 @@ inline auto uppercase(std::string str) -> std::string
 inline auto leftTrim(std::string& str) -> std::string&
 {
     str.erase(str.begin(),
-        std::find_if(str.begin(), str.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+        std::find_if(str.begin(), str.end(), [](int ch){ return !std::isspace(ch); }));
     return str;
 }
 
@@ -54,7 +54,7 @@ inline auto leftTrim(std::string& str) -> std::string&
 inline auto rightTrim(std::string& str) -> std::string&
 {
     str.erase(std::find_if(str.rbegin(), str.rend(),
-        std::not1(std::ptr_fun<int, int>(std::isspace))).base(), str.end());
+        [](int ch){ return !std::isspace(ch); }).base(), str.end());
     return str;
 }
 
