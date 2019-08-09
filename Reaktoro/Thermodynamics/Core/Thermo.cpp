@@ -174,7 +174,7 @@ struct Thermo::Impl
         ThermoScalar ts;
         ts.val = funscalar.val;
         ts.ddP = funscalar.ddp;
-        ts.ddT = funscalar.ddp;
+        ts.ddT = funscalar.ddt;
         return ts;
     }
 
