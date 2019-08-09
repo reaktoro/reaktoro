@@ -26,44 +26,44 @@
 
 namespace Reaktoro {
 
-    /// A type to describe the attributes of a fluids (gaseous or liquid) species
-    class FluidSpecies : public Species
-    {
-    public:
-        /// Construct a default FluidSpecies instance
-        FluidSpecies();
+/// A type to describe the attributes of a fluids (gaseous or liquid) species
+class FluidSpecies : public Species
+{
+public:
+    /// Construct a default FluidSpecies instance
+    FluidSpecies();
 
-        /// Construct an FluidSpecies instance from a Species instance
-        FluidSpecies(const Species& species);
+    /// Construct an FluidSpecies instance from a Species instance
+    FluidSpecies(const Species& species);
 
-        /// Set the critical temperature of the fluids (gaseous or liquid) species (in units of K)
-        auto setCriticalTemperature(double val) -> void;
+    /// Set the critical temperature of the fluids (gaseous or liquid) species (in units of K)
+    auto setCriticalTemperature(double val) -> void;
 
-        /// Set the critical pressure of the fluids (gaseous or liquid) species (in units of Pa)
-        auto setCriticalPressure(double val) -> void;
+    /// Set the critical pressure of the fluids (gaseous or liquid) species (in units of Pa)
+    auto setCriticalPressure(double val) -> void;
 
-        /// Set the acentric factor of the fluids (gaseous or liquid) species
-        auto setAcentricFactor(double val) -> void;
+    /// Set the acentric factor of the fluids (gaseous or liquid) species
+    auto setAcentricFactor(double val) -> void;
 
-        /// Set the thermodynamic data of the fluids (gaseous or liquid) species.
-        auto setThermoData(const FluidSpeciesThermoData& thermo) -> void;
+    /// Set the thermodynamic data of the fluids (gaseous or liquid) species.
+    auto setThermoData(const FluidSpeciesThermoData& thermo) -> void;
 
-        /// Return the critical temperature of the fluids (gaseous or liquid) species (in units of K)
-        auto criticalTemperature() const -> double;
+    /// Return the critical temperature of the fluids (gaseous or liquid) species (in units of K)
+    auto criticalTemperature() const -> double;
 
-        /// Return the critical pressure of the fluids (gaseous or liquid) species (in units of Pa)
-        auto criticalPressure() const -> double;
+    /// Return the critical pressure of the fluids (gaseous or liquid) species (in units of Pa)
+    auto criticalPressure() const -> double;
 
-        /// Return the acentric factor of the fluids (gaseous or liquid) species
-        auto acentricFactor() const -> double;
+    /// Return the acentric factor of the fluids (gaseous or liquid) species
+    auto acentricFactor() const -> double;
 
-        /// Return the thermodynamic data of the fluids (gaseous or liquid) species.
-        auto thermoData() const -> const FluidSpeciesThermoData&;
+    /// Return the thermodynamic data of the fluids (gaseous or liquid) species.
+    auto thermoData() const -> const FluidSpeciesThermoData&;
 
-    private:
-        struct Impl;
+private:
+    struct Impl;
 
-        std::shared_ptr<Impl> pimpl;
-    };
+    std::shared_ptr<Impl> pimpl;
+};
 
 } // namespace Reaktoro

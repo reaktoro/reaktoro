@@ -23,29 +23,29 @@
 
 namespace Reaktoro {
 
-    auto fluidChemicalModelIdeal(const FluidMixture& mixture) -> PhaseChemicalModel
+auto fluidChemicalModelIdeal(const FluidMixture& mixture) -> PhaseChemicalModel
+{
+    // The state of the gaseous mixture
+    FluidMixtureState state;
+
+    // Define the chemical model function of the gaseous phase
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
     {
-        // The state of the gaseous mixture
-        FluidMixtureState state;
+        // Evaluate the state of the gaseous mixture
+        state = mixture.state(T, P, n);
 
-        // Define the chemical model function of the gaseous phase
-        PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
-        {
-            // Evaluate the state of the gaseous mixture
-            state = mixture.state(T, P, n);
+        // Calculate pressure in bar
+        const ThermoScalar Pbar = 1e-5 * Pressure(P);
 
-            // Calculate pressure in bar
-            const ThermoScalar Pbar = 1e-5 * Pressure(P);
+        // The ln of pressure in units of bar
+        const ThermoScalar ln_Pbar = log(Pbar);
 
-            // The ln of pressure in units of bar
-            const ThermoScalar ln_Pbar = log(Pbar);
+        // The result of the ideal model
+        res.ln_activities = log(state.x) + ln_Pbar;
+    };
 
-            // The result of the ideal model
-            res.ln_activities = log(state.x) + ln_Pbar;
-        };
-
-        return model;
-    }
+    return model;
+}
 
 } // namespace Reaktoro
 

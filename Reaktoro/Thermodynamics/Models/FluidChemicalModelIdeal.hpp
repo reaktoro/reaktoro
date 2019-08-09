@@ -22,15 +22,15 @@
 
 namespace Reaktoro {
 
-    // Forward declarations
-    class FluidMixture;
+// Forward declarations
+class FluidMixture;
 
-    /// Return an equation of state for a gaseous phase based on the ideal model.
-    /// This model only supports a gaseous phase. Using it in a FluidPhase that it not
-    /// PhaseType::Gas will result in a runtime error.
-    /// @param mixture The fluid mixture
-    /// @return The equation of state function for the fluid phase
-    /// @see FluidMixture, FluidChemicalModel
-    auto fluidChemicalModelIdeal(const FluidMixture& mixture)->PhaseChemicalModel;
+/// Return an equation of state for a gaseous phase based on the ideal model.
+/// This model only supports a gaseous phase. Using it in a FluidPhase that it not
+/// PhaseType::Gas will result in a runtime error.
+/// @param mixture The fluid mixture
+/// @return The equation of state function for the fluid phase
+/// @see FluidMixture, FluidChemicalModel
+auto fluidChemicalModelIdeal(const FluidMixture& mixture)->PhaseChemicalModel;
 
 } // namespace Reaktoro

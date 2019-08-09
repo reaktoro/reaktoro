@@ -22,23 +22,23 @@
 
 namespace Reaktoro {
 
-    // Forward declarations
-    class FluidMixture;
+// Forward declarations
+class FluidMixture;
 
-    /// Set the chemical model of the phase with the van der Waals equation of state.
-    /// Reference: *van der Waals, J.D. (1910). Nobel Lectures in Physics. pp. 254-265*.
-    auto fluidChemicalModelVanDerWaals(const FluidMixture& mixture)->PhaseChemicalModel;
+/// Set the chemical model of the phase with the van der Waals equation of state.
+/// Reference: *van der Waals, J.D. (1910). Nobel Lectures in Physics. pp. 254-265*.
+auto fluidChemicalModelVanDerWaals(const FluidMixture& mixture)->PhaseChemicalModel;
 
-    /// Set the chemical model of the phase with the Redlich-Kwong equation of state.
-    /// Reference: *Redlich, O., Kwong, J.N.S. (1949). On The Thermodynamics of Solutions. Chem. Rev. 44(1) 233–244*.
-    auto fluidChemicalModelRedlichKwong(const FluidMixture& mixture)->PhaseChemicalModel;
+/// Set the chemical model of the phase with the Redlich-Kwong equation of state.
+/// Reference: *Redlich, O., Kwong, J.N.S. (1949). On The Thermodynamics of Solutions. Chem. Rev. 44(1) 233–244*.
+auto fluidChemicalModelRedlichKwong(const FluidMixture& mixture)->PhaseChemicalModel;
 
-    /// Set the chemical model of the phase with the Soave-Redlich-Kwong equation of state.
-    /// Reference: *Soave, G. (1972). Equilibrium constants from a modified Redlich-Kwong equation of state, Chem. Eng. Sci., 27, 1197-1203*.
-    auto fluidChemicalModelSoaveRedlichKwong(const FluidMixture& mixture)->PhaseChemicalModel;
+/// Set the chemical model of the phase with the Soave-Redlich-Kwong equation of state.
+/// Reference: *Soave, G. (1972). Equilibrium constants from a modified Redlich-Kwong equation of state, Chem. Eng. Sci., 27, 1197-1203*.
+auto fluidChemicalModelSoaveRedlichKwong(const FluidMixture& mixture)->PhaseChemicalModel;
 
-    /// Set the chemical model of the phase with the Peng-Robinson equation of state.
-    /// Reference: *Peng, D.Y., Robinson, D.B. (1976). A New Two-Constant Equation of State. Industrial and Engineering Chemistry: Fundamentals 15: 59–64*.
-    auto fluidChemicalModelPengRobinson(const FluidMixture& mixture)->PhaseChemicalModel;
+/// Set the chemical model of the phase with the Peng-Robinson equation of state.
+/// Reference: *Peng, D.Y., Robinson, D.B. (1976). A New Two-Constant Equation of State. Industrial and Engineering Chemistry: Fundamentals 15: 59–64*.
+auto fluidChemicalModelPengRobinson(const FluidMixture& mixture)->PhaseChemicalModel;
 
 } // namespace Reaktoro

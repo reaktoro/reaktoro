@@ -20,53 +20,53 @@
 
 namespace Reaktoro {
 
-    FluidMixture::FluidMixture()
-        : GeneralMixture<FluidSpecies>()
-    {}
+FluidMixture::FluidMixture()
+    : GeneralMixture<FluidSpecies>()
+{}
 
-    FluidMixture::FluidMixture(const std::vector<FluidSpecies>& species)
-        : GeneralMixture<FluidSpecies>(species)
-    {}
+FluidMixture::FluidMixture(const std::vector<FluidSpecies>& species)
+    : GeneralMixture<FluidSpecies>(species)
+{}
 
-    FluidMixture::FluidMixture(const std::vector<FluidSpecies>& species, PhaseID::PhaseIdentificationMethods fluidMixturePhaseIdentificationMethod)
-        : GeneralMixture<FluidSpecies>(species), _fluidMixturePhaseIdentificationMethod(fluidMixturePhaseIdentificationMethod)
-    {}
+FluidMixture::FluidMixture(const std::vector<FluidSpecies>& species, PhaseID::PhaseIdentificationMethods fluidMixturePhaseIdentificationMethod)
+    : GeneralMixture<FluidSpecies>(species), _fluidMixturePhaseIdentificationMethod(fluidMixturePhaseIdentificationMethod)
+{}
 
-    FluidMixture::~FluidMixture()
-    {}
+FluidMixture::~FluidMixture()
+{}
 
-    auto FluidMixture::fluidMixturePhaseIdentificationMethod() const -> PhaseID::PhaseIdentificationMethods
-    {
-        return _fluidMixturePhaseIdentificationMethod;
-    }
+auto FluidMixture::fluidMixturePhaseIdentificationMethod() const -> PhaseID::PhaseIdentificationMethods
+{
+    return _fluidMixturePhaseIdentificationMethod;
+}
 
-    auto FluidMixture::setFluidMixturePhaseIdentificationMethod(PhaseID::PhaseIdentificationMethods fluidMixturePhaseIdentificationMethod) -> void
-    {
-        _fluidMixturePhaseIdentificationMethod = fluidMixturePhaseIdentificationMethod;
-    }
+auto FluidMixture::setFluidMixturePhaseIdentificationMethod(PhaseID::PhaseIdentificationMethods fluidMixturePhaseIdentificationMethod) -> void
+{
+    _fluidMixturePhaseIdentificationMethod = fluidMixturePhaseIdentificationMethod;
+}
 
-    auto FluidMixture::removeInapproprieatePhase() const -> bool
-    {
-        return _RemoveInapproprieatePhase;
-    }
+auto FluidMixture::removeInapproprieatePhase() const -> bool
+{
+    return _RemoveInapproprieatePhase;
+}
 
-    auto FluidMixture::setRemoveInapproprieatePhaseAsTrue() -> void
-    {
-        _RemoveInapproprieatePhase = true;
-    }
+auto FluidMixture::setRemoveInapproprieatePhaseAsTrue() -> void
+{
+    _RemoveInapproprieatePhase = true;
+}
 
-    auto FluidMixture::setRemoveInapproprieatePhaseAsFalse() -> void
-    {
-        _RemoveInapproprieatePhase = false;
-    }
+auto FluidMixture::setRemoveInapproprieatePhaseAsFalse() -> void
+{
+    _RemoveInapproprieatePhase = false;
+}
 
-    auto FluidMixture::state(Temperature T, Pressure P, VectorConstRef n) const -> FluidMixtureState
-    {
-        FluidMixtureState res;
-        res.T = T;
-        res.P = P;
-        res.x = moleFractions(n);
-        return res;
-    }
+auto FluidMixture::state(Temperature T, Pressure P, VectorConstRef n) const -> FluidMixtureState
+{
+    FluidMixtureState res;
+    res.T = T;
+    res.P = P;
+    res.x = moleFractions(n);
+    return res;
+}
 
 } // namespace Reaktoro

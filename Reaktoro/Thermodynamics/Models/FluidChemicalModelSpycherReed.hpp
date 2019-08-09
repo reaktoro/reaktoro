@@ -22,18 +22,18 @@
 
 namespace Reaktoro {
 
-    // Forward declarations
-    class FluidMixture;
+// Forward declarations
+class FluidMixture;
 
-    /// Return a chemical model function for a gaseous phase based on the Spycher and Reed (1988) model.
-    /// This model only supports the gaseous species `H2O(g)`, `CO2(g)`, and `CH4(g)`.
-    ///
-    /// Reference: *Spycher, N., Reed, M. (1988). Fugacity coefficients of H2, CO2,
-    /// CH4, H2O and of H2O--CO2--CH4 mixtures: A virial equation treatment for
-    /// moderate pressures and temperatures applicable to calculations of
-    /// hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739–749*.
-    /// @param mixture The gaseous mixture instance
-    /// @see FluidMixture, (GaseousActivityFunction -- ???) -- DEVE FUNCIONAR COM LIQUID???
-    auto fluidChemicalModelSpycherReed(const FluidMixture& mixture)->PhaseChemicalModel;
+/// Return a chemical model function for a gaseous phase based on the Spycher and Reed (1988) model.
+/// This model only supports the gaseous species `H2O(g)`, `CO2(g)`, and `CH4(g)`.
+///
+/// Reference: *Spycher, N., Reed, M. (1988). Fugacity coefficients of H2, CO2,
+/// CH4, H2O and of H2O--CO2--CH4 mixtures: A virial equation treatment for
+/// moderate pressures and temperatures applicable to calculations of
+/// hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739–749*.
+/// @param mixture The gaseous mixture instance
+/// @see FluidMixture, (GaseousActivityFunction -- ???) -- DEVE FUNCIONAR COM LIQUID???
+auto fluidChemicalModelSpycherReed(const FluidMixture& mixture)->PhaseChemicalModel;
 
 } // namespace Reaktoro

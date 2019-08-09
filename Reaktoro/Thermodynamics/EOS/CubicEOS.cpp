@@ -19,13 +19,6 @@
 
 // C++ includes
 #include <algorithm>
-#include <iostream>  // TODO: REMOVE
-#include <limits>
-#include <Reaktoro/Math/Matrix.hpp> // TODO: REMOVE
-#include <fstream>
-#include <array>
-#include <cmath>
-#include <complex>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
@@ -351,13 +344,9 @@ struct CubicEOS::Impl
         // Selecting compressibility factor - Z_liq < Z_gas
         ChemicalScalar Z(nspecies);
         if (isvapor)
-        {
             Z.val = *std::max_element(cubicEOS_roots.begin(), cubicEOS_roots.end());
-        }
         else
-        {
             Z.val = *std::min_element(cubicEOS_roots.begin(), cubicEOS_roots.end());
-        }
 
         bool remove_phase = false;
 
@@ -401,15 +390,15 @@ struct CubicEOS::Impl
             }
         }
 
-		ChemicalScalar& V = result.molar_volume;
-		ChemicalScalar& G_res = result.residual_molar_gibbs_energy;
-		ChemicalScalar& H_res = result.residual_molar_enthalpy;
-		ChemicalScalar& Cp_res = result.residual_molar_heat_capacity_cp;
-		ChemicalScalar& Cv_res = result.residual_molar_heat_capacity_cv;
-		ChemicalVector& Vi = result.partial_molar_volumes;
-		ChemicalVector& Gi_res = result.residual_partial_molar_gibbs_energies;
-		ChemicalVector& Hi_res = result.residual_partial_molar_enthalpies;
-		ChemicalVector& ln_phi = result.ln_fugacity_coefficients;
+        ChemicalScalar& V = result.molar_volume;
+        ChemicalScalar& G_res = result.residual_molar_gibbs_energy;
+        ChemicalScalar& H_res = result.residual_molar_enthalpy;
+        ChemicalScalar& Cp_res = result.residual_molar_heat_capacity_cp;
+        ChemicalScalar& Cv_res = result.residual_molar_heat_capacity_cv;
+        ChemicalVector& Vi = result.partial_molar_volumes;
+        ChemicalVector& Gi_res = result.residual_partial_molar_gibbs_energies;
+        ChemicalVector& Hi_res = result.residual_partial_molar_enthalpies;
+        ChemicalVector& ln_phi = result.ln_fugacity_coefficients;
 
         // Calculate the partial derivatives of Z (dZdT, dZdP, dZdn)
         const double factor = -1.0/(3*Z.val*Z.val + 2*A.val*Z.val + B.val);
@@ -433,7 +422,7 @@ struct CubicEOS::Impl
 
 
         // Calculate the partial molar Zi for each species
-		V = Z * R*T / P;
+        V = Z*R*T/P;
         G_res = R*T*(Z - 1 - log(Z - beta) - q*I);
         H_res = R*T*(Z - 1 + T*qT*I);
         Cp_res = R*T*(ZT + qT*I + T*qTT + T*qT*IT) + H_res/T;
@@ -457,7 +446,7 @@ struct CubicEOS::Impl
             const ChemicalScalar Ci = -3*sigma*epsilon*beta*beta*betai + 2*epsilon*sigma*beta*beta*beta - (epsilon*sigma + qi)*beta*beta - 2*(epsilon*sigma + q)*(beta*betai - beta*beta);
             const ChemicalScalar Zi = -(Ai*Z*Z + (Bi + B)*Z + Ci + 2*C)/(3*Z*Z + 2*A*Z + B);
 
-			ChemicalScalar Ii;
+            ChemicalScalar Ii;
             if(epsilon != sigma) Ii = I + ((Zi + sigma*betai)/(Z + sigma*beta) - (Zi + epsilon*betai)/(Z + epsilon*beta))/(sigma - epsilon);
                             else Ii = I * (1 + betai/beta - (Zi + epsilon*betai)/(Z + epsilon*beta));
 
@@ -466,7 +455,6 @@ struct CubicEOS::Impl
             Hi_res[i] = R*T*(Zi - 1 + T*(qiT*I + qT*Ii - qT*I));
             ln_phi[i] = Gi_res[i]/(R*T);
         }
-
 
         return result;
     }

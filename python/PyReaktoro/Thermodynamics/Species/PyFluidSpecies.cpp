@@ -22,19 +22,19 @@
 
 namespace Reaktoro {
 
-    void exportFluidSpecies(py::module& m)
-    {
-        py::class_<FluidSpecies, Species>(m, "FluidSpecies")
-            .def(py::init<>())
-            .def("setCriticalTemperature", &FluidSpecies::setCriticalTemperature)
-            .def("setCriticalPressure", &FluidSpecies::setCriticalPressure)
-            .def("setAcentricFactor", &FluidSpecies::setAcentricFactor)
-            .def("setThermoData", &FluidSpecies::setThermoData)
-            .def("criticalTemperature", &FluidSpecies::criticalTemperature)
-            .def("criticalPressure", &FluidSpecies::criticalPressure)
-            .def("acentricFactor", &FluidSpecies::acentricFactor)
-            .def("thermoData", &FluidSpecies::thermoData, py::return_value_policy::reference_internal)
-            ;
-    }
+void exportFluidSpecies(py::module& m)
+{
+    py::class_<FluidSpecies, Species>(m, "FluidSpecies")
+        .def(py::init<>())
+        .def("setCriticalTemperature", &FluidSpecies::setCriticalTemperature)
+        .def("setCriticalPressure", &FluidSpecies::setCriticalPressure)
+        .def("setAcentricFactor", &FluidSpecies::setAcentricFactor)
+        .def("setThermoData", &FluidSpecies::setThermoData)
+        .def("criticalTemperature", &FluidSpecies::criticalTemperature)
+        .def("criticalPressure", &FluidSpecies::criticalPressure)
+        .def("acentricFactor", &FluidSpecies::acentricFactor)
+        .def("thermoData", &FluidSpecies::thermoData, py::return_value_policy::reference_internal)
+        ;
+}
 
 } // namespace Reaktoro

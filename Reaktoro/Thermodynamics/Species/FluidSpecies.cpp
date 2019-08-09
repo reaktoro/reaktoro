@@ -22,71 +22,71 @@
 
 namespace Reaktoro {
 
-    struct FluidSpecies::Impl
-    {
-        // The critical temperature of the fluids (gaseous or liquid) species (in units of K)
-        double critical_temperature = 0.0;
+struct FluidSpecies::Impl
+{
+    // The critical temperature of the fluids (gaseous or liquid) species (in units of K)
+    double critical_temperature = 0.0;
 
-        // The critical pressure of the fluids (gaseous or liquid) species (in units of Pa)
-        double critical_pressure = 0.0;
+    // The critical pressure of the fluids (gaseous or liquid) species (in units of Pa)
+    double critical_pressure = 0.0;
 
-        // The acentric factor of the fluids (gaseous or liquid) species
-        double acentric_factor = 0.0;
+    // The acentric factor of the fluids (gaseous or liquid) species
+    double acentric_factor = 0.0;
 
-        /// The thermodynamic data of the fluids (gaseous or liquid) species.
-        FluidSpeciesThermoData thermo;
-    };
+    /// The thermodynamic data of the fluids (gaseous or liquid) species.
+    FluidSpeciesThermoData thermo;
+};
 
-    FluidSpecies::FluidSpecies()
-        : pimpl(new Impl())
-    {}
+FluidSpecies::FluidSpecies()
+    : pimpl(new Impl())
+{}
 
-    FluidSpecies::FluidSpecies(const Species& species)
-        : Species(species), pimpl(new Impl())
-    {}
+FluidSpecies::FluidSpecies(const Species& species)
+    : Species(species), pimpl(new Impl())
+{}
 
-    auto FluidSpecies::setCriticalTemperature(double val) -> void
-    {
-        Assert(val > 0.0, "Cannot set the critical temperature of the fluid `" + name() + "`.",
-            "The given critical temperature `" + std::to_string(val) + "` is not positive.");
-        pimpl->critical_temperature = val;
-    }
+auto FluidSpecies::setCriticalTemperature(double val) -> void
+{
+    Assert(val > 0.0, "Cannot set the critical temperature of the fluid `" + name() + "`.",
+        "The given critical temperature `" + std::to_string(val) + "` is not positive.");
+    pimpl->critical_temperature = val;
+}
 
-    auto FluidSpecies::setCriticalPressure(double val) -> void
-    {
-        Assert(val > 0.0, "Cannot set the critical pressure of the fluid `" + name() + "`.",
-            "The given critical pressure `" + std::to_string(val) + "` is not positive.");
-        pimpl->critical_pressure = val;
-    }
+auto FluidSpecies::setCriticalPressure(double val) -> void
+{
+    Assert(val > 0.0, "Cannot set the critical pressure of the fluid `" + name() + "`.",
+        "The given critical pressure `" + std::to_string(val) + "` is not positive.");
+    pimpl->critical_pressure = val;
+}
 
-    auto FluidSpecies::setAcentricFactor(double val) -> void
-    {
-        pimpl->acentric_factor = val;
-    }
+auto FluidSpecies::setAcentricFactor(double val) -> void
+{
+    pimpl->acentric_factor = val;
+}
 
-    auto FluidSpecies::setThermoData(const FluidSpeciesThermoData& thermo) -> void
-    {
-        pimpl->thermo = thermo;
-    }
+auto FluidSpecies::setThermoData(const FluidSpeciesThermoData& thermo) -> void
+{
+    pimpl->thermo = thermo;
+}
 
-    auto FluidSpecies::criticalTemperature() const -> double
-    {
-        return pimpl->critical_temperature;
-    }
+auto FluidSpecies::criticalTemperature() const -> double
+{
+    return pimpl->critical_temperature;
+}
 
-    auto FluidSpecies::criticalPressure() const -> double
-    {
-        return pimpl->critical_pressure;
-    }
+auto FluidSpecies::criticalPressure() const -> double
+{
+    return pimpl->critical_pressure;
+}
 
-    auto FluidSpecies::acentricFactor() const -> double
-    {
-        return pimpl->acentric_factor;
-    }
+auto FluidSpecies::acentricFactor() const -> double
+{
+    return pimpl->acentric_factor;
+}
 
-    auto FluidSpecies::thermoData() const -> const FluidSpeciesThermoData&
-    {
-        return pimpl->thermo;
-    }
+auto FluidSpecies::thermoData() const -> const FluidSpeciesThermoData&
+{
+    return pimpl->thermo;
+}
 
 } // namespace Reaktoro
