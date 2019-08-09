@@ -1,6 +1,9 @@
 # Find Boost library
 find_package(Boost REQUIRED)
 
+# Find ThermoFun library
+find_package(ThermoFun REQUIRED)
+
 # Find pybind11 library (if needed)
 if(REAKTORO_BUILD_PYTHON)
     find_package(pybind11 REQUIRED)
