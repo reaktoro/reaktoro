@@ -52,7 +52,7 @@ namespace {
 /// Auxiliary types for a map of aqueous, fluid, and mineral species
 using ElementMap        = std::map<std::string, Element>;
 using AqueousSpeciesMap = std::map<std::string, AqueousSpecies>;
-using FluidSpeciesMap = std::map<std::string, FluidSpecies>;
+using FluidSpeciesMap   = std::map<std::string, FluidSpecies>;
 using MineralSpeciesMap = std::map<std::string, MineralSpecies>;
 
 auto errorNonExistentSpecies(std::string type, std::string name) -> void
@@ -542,7 +542,7 @@ struct Database::Impl
 
     auto gaseousSpecies(std::string name) const -> const FluidSpecies&
     {
-        if (gaseous_species_map.count(name) == 0)
+        if(gaseous_species_map.count(name) == 0)
             errorNonExistentSpecies("gaseous", name);
 
         return gaseous_species_map.find(name)->second;
@@ -555,7 +555,7 @@ struct Database::Impl
 
     auto liquidSpecies(std::string name) const -> const FluidSpecies&
     {
-        if (liquid_species_map.count(name) == 0)
+        if(liquid_species_map.count(name) == 0)
             errorNonExistentSpecies("liquid", name);
 
         return liquid_species_map.find(name)->second;
@@ -646,7 +646,7 @@ struct Database::Impl
             std::string type = node.child("Type").text().get();
             std::string name = node.child("Name").text().get();
             if (type == "Gaseous")
-			{
+            {
                 FluidSpecies fluid_species = parseFluidSpecies(node);
                 fluid_species.setName(name.substr(0, name.size() - 3));
                 FluidSpecies gaseous_species = parseFluidSpecies(node);
@@ -659,7 +659,7 @@ struct Database::Impl
                     gaseous_species_map[gaseous_species.name()] = gaseous_species;
                     liquid_species_map[liquid_species.name()] = liquid_species;
                 }
-			}
+            }
             else if (type == "Aqueous")
             {
                 AqueousSpecies species = parseAqueousSpecies(node);
@@ -743,7 +743,7 @@ struct Database::Impl
     auto parseFluidSpecies(const xml_node& node) -> FluidSpecies
     {
         // The gaseous species instance
-		FluidSpecies species = parseSpecies(node);
+        FluidSpecies species = parseSpecies(node);
 
         // Set the critical temperature of the fluid (gaseous or liquid) species (in units of K)
         if(!node.child("CriticalTemperature").empty())

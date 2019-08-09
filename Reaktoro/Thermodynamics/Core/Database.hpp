@@ -40,8 +40,8 @@ class MineralSpecies;
 //////*Usage**
 ///
 /// In the example below, a Database instance is initialized and
-/// two queries are made to retrieve information of an aqueous and 
-/// fluid. Fluid species can be used to emulete species that are
+/// four queries are made to retrieve information of an aqueous, gaseous,
+/// liquid and fluid. FluidSpecies can be used to emulete species that are
 /// in gaseous or liquid phase
 /// Note that if a species is not present in the
 /// database, then an exception is thrown.
@@ -53,11 +53,16 @@ class MineralSpecies;
 ///
 /// // Retrieve information of species H2O(l) -> Aqueous and CO2 -> fluid
 /// AqueousSpecies aqueousSpecies = database.aqueousSpecies("H2O(l)");
-/// FluidSpecies fluidSpecies = database.fluidSpecies("CO2(g)");
+/// FluidSpecies gaseousSpecies = database.gaseousSpecies("CO2(g)");
+/// FluidSpecies liquidSpecies = database.liquidSpecies("CO2(liq)");
+/// FluidSpecies fluidSpecies = database.fluidSpecies("CO2");
+
 ///
-/// // Output the data of the species H2O(l) and CO2(g)
+/// // Output the data of the species H2O(l), CO2(g), CO2(liq) and CO2
 /// std::cout << aqueousSpecies << std::endl;
-/// std::cout << fluidSpecies << std::endl;
+/// std::cout << gaseousSpecies << std::endl;
+/// std::cout << liquidSpecies << std::endl;
+/// std::cout << fluidSpecies << std::endl
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// @see AqueousSpecies, FluidSpecies, MineralSpecies

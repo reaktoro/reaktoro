@@ -66,7 +66,7 @@ auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
     const Index iH2O = phase.indexSpeciesAnyWithError(alternativeWaterNames());
 
     // Set the ln activity constants of aqueous species to ln(55.508472)
-    ln_c = std::log(1.0 / waterMolarMass);
+    ln_c = std::log(1.0/waterMolarMass);
 
     // Set the ln activity constant of water to zero
     ln_c[iH2O] = 0.0;
@@ -76,7 +76,7 @@ auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
         return ln_c;
     };
 
-	return f;
+    return f;
 }
 
 auto lnActivityConstants(const FluidPhase& phase) -> ThermoVectorFunction
@@ -171,18 +171,18 @@ public:
 
     auto initializePhasesWithElements(const std::vector<std::string>& elements) -> void
     {
-    	aqueous_phase = {};
-    	gaseous_phase = {};
-		liquid_phase = {};
+        aqueous_phase = {};
+        gaseous_phase = {};
+        liquid_phase = {};
     	mineral_phases.clear();
 
-    	auto aqueous_species = database.aqueousSpeciesWithElements(elements);
-    	auto gaseous_species = database.gaseousSpeciesWithElements(elements);
+        auto aqueous_species = database.aqueousSpeciesWithElements(elements);
+        auto gaseous_species = database.gaseousSpeciesWithElements(elements);
         auto liquid_species = database.liquidSpeciesWithElements(elements);
-    	auto mineral_species = database.mineralSpeciesWithElements(elements);
+        auto mineral_species = database.mineralSpeciesWithElements(elements);
 
     	if(aqueous_species.size())
-    		addPhase(AqueousPhase(AqueousMixture(aqueous_species)));
+            addPhase(AqueousPhase(AqueousMixture(aqueous_species)));
 
         if (gaseous_species.size())    
             addPhase(FluidPhase(FluidMixture(gaseous_species), "Gaseous", PhaseType::Gas));
@@ -190,8 +190,8 @@ public:
         if (liquid_species.size())
             addPhase(FluidPhase(FluidMixture(liquid_species), "Liquid", PhaseType::Liquid));
     
-    	for(auto mineral : mineral_species)
-    		addPhase(MineralPhase(MineralMixture(mineral)));
+        for(auto mineral : mineral_species)
+            addPhase(MineralPhase(MineralMixture(mineral)));
     }
 
     auto addPhase(const AqueousPhase& phase) -> AqueousPhase&
@@ -216,20 +216,6 @@ public:
 
         throw std::runtime_error("*** Error *** there is a FluidPhase with PhaseType not equal to Gas or Liquid");
     }
-
-    /*    
-    auto addPhase(const GaseousPhase& phase) -> GaseousPhase&
-    {
-        gaseous_phase = phase;
-        return gaseous_phase;
-    }
-
-    auto addPhase(const LiquidPhase& phase) -> LiquidPhase&
-    {
-        liquid_phase = phase;
-        return liquid_phase;
-    }
-    */
 
     auto addPhase(const MineralPhase& phase) -> MineralPhase&
     {
@@ -424,7 +410,7 @@ public:
     }
 
     template<typename PhaseType>
-    auto convertPhase(const PhaseType& phase) const -> PhaseType
+    auto convertPhase(const PhaseType& phase) const -> Phase
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
@@ -473,7 +459,7 @@ public:
         };
 
         // Create the Phase instance
-		PhaseType converted = phase;
+        Phase converted = phase;
         converted.setThermoModel(thermo_model);
         
         return converted;
@@ -624,18 +610,6 @@ auto ChemicalEditor::addPhase(const FluidPhase& phase) -> FluidPhase&
     return pimpl->addPhase(phase);
 }
 
-/*
-auto ChemicalEditor::addPhase(const GaseousPhase& phase) -> GaseousPhase&
-{
-    return pimpl->addPhase(phase);
-}
-
-auto ChemicalEditor::addPhase(const LiquidPhase& phase) -> LiquidPhase&
-{
-    return pimpl->addPhase(phase);
-}
-*/
-
 auto ChemicalEditor::addPhase(const MineralPhase& phase) -> MineralPhase&
 {
     return pimpl->addPhase(phase);
@@ -774,26 +748,6 @@ ChemicalEditor::operator ChemicalSystem() const
 ChemicalEditor::operator ReactionSystem() const
 {
     return createReactionSystem();
-}
-
-auto ChemicalEditor::convertAqueousPhase(const AqueousPhase& phase) const -> AqueousPhase
-{
-	return pimpl->convertPhase<AqueousPhase>(phase);
-}
-
-auto ChemicalEditor::convertLiquidPhase(const FluidPhase& phase) const -> FluidPhase
-{
-    return pimpl->convertPhase<FluidPhase>(phase);
-}
-
-auto ChemicalEditor::convertGaseousPhase(const FluidPhase& phase) const -> FluidPhase
-{
-	return pimpl->convertPhase<FluidPhase>(phase);
-}
-
-auto ChemicalEditor::convertFluidPhase(const FluidPhase& phase) const -> FluidPhase
-{
-    return pimpl->convertPhase<FluidPhase>(phase);
 }
 
 } // namespace Reaktoro

@@ -92,10 +92,6 @@ void exportChemicalEditor(py::module& m)
         .def("mineralPhases", mineralPhases2, py::return_value_policy::reference_internal)
         .def("createChemicalSystem", &ChemicalEditor::createChemicalSystem)
         .def("createReactionSystem", &ChemicalEditor::createReactionSystem)
-
-		.def("convertGaseousPhase", &ChemicalEditor::convertGaseousPhase)
-		.def("convertAqueousPhase", &ChemicalEditor::convertAqueousPhase)
-		.def("convertLiquidPhase", &ChemicalEditor::convertLiquidPhase)
         ;
 }
 

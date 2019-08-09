@@ -36,7 +36,6 @@ class MineralReaction;
 class ReactionSystem;
 class StringList;
 
-
 /// Provides convenient operations to initialize ChemicalSystem and ReactionSystem instances.
 /// The ChemicalEditor class is used to conveniently create instances of classes ChemicalSystem and ReactionSystem.
 ///
@@ -126,25 +125,6 @@ public:
     /// @param phase The FluidPhase instance
     /// @return A reference to the created FluidPhase object.
     auto addPhase(const FluidPhase& phase) -> FluidPhase&;
-    
-    /*
-    /// Add a gaseous phase in the chemical editor.
-    /// Note that only one gaseous phase can exist in the chemical editor.
-    /// So whenever this method is called, it has the effect of updating the
-    /// current state of the gaseous phase in the editor.
-    /// @param phase The GaseousPhase instance
-    /// @return A reference to the created GaseousPhase object.
-    auto addPhase(const GaseousPhase& phase) -> GaseousPhase&;
-
-    /// Add a liquid phase in the chemical editor.
-    /// Note that only one liquid phase can exist in the chemical editor.
-    /// So whenever this method is called, it has the effect of updating the
-    /// current state of the liquid phase in the editor.
-    /// @param phase The LiquidPhase instance
-    /// @return A reference to the created LiquidPhase object.
-    auto addPhase(const LiquidPhase& phase)->LiquidPhase&;
-
-    */
 
     /// Add a mineral phase in the chemical editor.
     /// If a mineral phase with the same name already exists, then
@@ -484,7 +464,7 @@ public:
     /// Return the liquid phase in the chemical editor.
     auto liquidPhase() const -> const FluidPhase&;
 
-    /// Return the gaseous phase in the chemical editor.
+    /// Return the liquid phase in the chemical editor.
     auto liquidPhase() ->FluidPhase&;
 
     /// Return the mineral phases in the chemical editor.
@@ -504,14 +484,6 @@ public:
 
     /// Convert this ChemicalEditor instance to a ReactionSystem instance
     operator ReactionSystem() const;
-
-	auto convertAqueousPhase(const AqueousPhase& phase) const ->AqueousPhase;
-
-	auto convertLiquidPhase(const FluidPhase& phase) const ->FluidPhase;
-
-	auto convertGaseousPhase(const FluidPhase& phase) const ->FluidPhase;
-
-    auto convertFluidPhase(const FluidPhase& phase) const->FluidPhase;
 
 private:
     struct Impl;
