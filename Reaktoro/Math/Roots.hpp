@@ -78,7 +78,7 @@ auto newton(const std::function<void(VectorConstRef, VectorRef, MatrixRef)>& f,
 /// @param d The coefficient @c d of the cubic equation
 /// @param e The coefficient @c e of the cubic equation
 /// @return The four roots \f$ (r_1, r_2, r_3, r_4) \f$ that
-auto ferrari(double a, double b, double c, double d, double e) -> QuarticRoots;
+auto ferrari(double a, double b, double c, double d, double e) -> QuarticRoots; //TODO: ADD TEST FOR FERRARI
 
 /// Return all real roots of a group of roots
 /// @param roots CubicRoots with of complex and real roots
