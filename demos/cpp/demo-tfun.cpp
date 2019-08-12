@@ -6,11 +6,11 @@ using namespace Reaktoro;
 int main()
 {
     Time start = time();
+    Time startT = time();
     ThermoFun::Database database("aq17.json");
     double time_parse_db = elapsed(start);
 
     start = time();
-    Time startT = time();
     ChemicalEditor editor(database);
     editor.setTemperatures({650}, "celsius");
     editor.setPressures({2000}, "bar");
@@ -38,8 +38,6 @@ int main()
     double time_initialization_system = elapsed(start);
 
     start = time();
-
-    std::cout << "solving " << std::endl;
 
     EquilibriumProblem problem(system);
     problem.add("H2O", 1, "kg");
@@ -98,10 +96,17 @@ int main()
  //   batch.thermoPropertiesSubstance(650+273, P, {"H2O@", "Al(OH)3@"},  {"gibbs_energy","entropy", "volume", "enthalpy"});
     start = time();
     P = 2000e5;
-    batch.thermoPropertiesSubstance(650+273, P, {"Al(OH)2+", "Al(OH)3@", "Al(OH)4-", "Al+3", "AlH3SiO4+2", "AlOH+2", "Cl-", "H+", "H2@", "H2O@", "HCl@", "HSiO3-", "K+", "KAlO2@", "KCl@", "KOH@", "Na+", "NaAl(OH)4@", "NaCl@", "NaHSiO3@", "NaOH@", "O2@", "OH-", "SiO2@"}, {"gibbs_energy"});
+    batch.thermoPropertiesSubstance(650+273, P, {"Albite", "Sanidine", "Andalusite", "Quartz", "Al(OH)2+", "Al(OH)3@", "Al(OH)4-", "Al+3", "AlH3SiO4+2", "AlOH+2", "Cl-", "H+", "H2@", "H2O@", "HCl@", "HSiO3-", "K+", "KAlO2@", "KCl@", "KOH@", "Na+", "NaAl(OH)4@", "NaCl@", "NaHSiO3@", "NaOH@", "O2@", "OH-", "SiO2@"}, {"gibbs_energy"});
 
     engine.propertiesSolvent(650+273, P, "H2O@");
     double time_species_fun = elapsed(start);
+
+    start = time();
+    P = 2000e5;
+    batch.thermoPropertiesSubstance(650+273, P, {"Albite", "Sanidine", "Andalusite", "Quartz", "Al(OH)2+", "Al(OH)3@", "Al(OH)4-", "Al+3", "AlH3SiO4+2", "AlOH+2", "Cl-", "H+", "H2@", "H2O@", "HCl@", "HSiO3-", "K+", "KAlO2@", "KCl@", "KOH@", "Na+", "NaAl(OH)4@", "NaCl@", "NaHSiO3@", "NaOH@", "O2@", "OH-", "SiO2@"}, {"gibbs_energy"});
+
+    engine.propertiesSolvent(650+273, P, "H2O@");
+    double time_species_fun2 = elapsed(start);
 
     start =time();
 
@@ -112,13 +117,14 @@ int main()
     std::cout << "time_initialization_editor = " << time_initialization_editor << std::endl;
     std::cout << "time_initialization_system = " << time_initialization_system << std::endl;
     std::cout << "time_solve = " << time_solve << std::endl;
-    std::cout << "time_watereos = " << time_watereos << std::endl;
+    std::cout << "time_total_parse_init_solve = " << time_total << std::endl;
+    std::cout << "time_watereos_reak = " << time_watereos << std::endl;
     std::cout << "time_watereos_fun = " << time_watereos_fun << std::endl;
-    std::cout << "time_waterelectro_fun = " << time_waterelectro_fun << std::endl;
+//    std::cout << "time_waterelectro_fun = " << time_waterelectro_fun << std::endl;
     std::cout << "time_watereos_fun called 2nd time = " << time_watereos_fun2 << std::endl;
-    std::cout << "time_aq_species_fun = " << time_species_fun << std::endl;
-    std::cout << "time_total = " << time_total << std::endl;
-    std::cout << "time_Alspecies_fun = " << time_Alspecies_fun << std::endl;
+    std::cout << "time_species_fun = " << time_species_fun << std::endl;
+    std::cout << "time_species_fun called 2nd time = " << time_species_fun2 << std::endl;
+//    std::cout << "time_Alspecies_fun = " << time_Alspecies_fun << std::endl;
 }
 
 
