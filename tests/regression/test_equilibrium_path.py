@@ -14,8 +14,8 @@ from reaktoro import (
 
 def test_equilibrium_path(table_regression, tmpdir):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of an equilibrium path between two states   
+    An integration test that checks result's reproducibility of
+    the calculation of an equilibrium path between two states
     """
 
     database = Database("supcrt98.xml")
@@ -41,6 +41,7 @@ def test_equilibrium_path(table_regression, tmpdir):
     path = EquilibriumPath(system)
 
     output = path.output()
+    output.precision(16)
     output.filename(tmpdir.dirname + "/equilibriumPathResult.txt")
 
     # Define which outputs will be written and checked
@@ -58,4 +59,4 @@ def test_equilibrium_path(table_regression, tmpdir):
         delim_whitespace=True,
     )
 
-    table_regression.check(pathTable)
+    table_regression.check(pathTable, default_tol=dict(atol=1e-5, rtol=1e-14))
