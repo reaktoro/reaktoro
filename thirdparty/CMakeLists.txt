@@ -10,9 +10,8 @@ else()
     set(CXXFLAGS "${CMAKE_CXX_FLAGS}")
 endif()
 
-separate_arguments(REAKTORO_THIRDPARTY_INSTALL_ARGS NATIVE_COMMAND "${REAKTORO_THIRDPARTY_INSTALL_ARGS}")
-if (NOT ${THIRDPARTY_EXTRA_BUILD_ARGS} STREQUAL "")
-    separate_arguments(THIRDPARTY_EXTRA_BUILD_ARGS NATIVE_COMMAND "${THIRDPARTY_EXTRA_BUILD_ARGS}")
+if (NOT ${REAKTORO_THIRDPARTY_EXTRA_BUILD_ARGS} STREQUAL "")
+    separate_arguments(REAKTORO_THIRDPARTY_EXTRA_BUILD_ARGS NATIVE_COMMAND "${REAKTORO_THIRDPARTY_EXTRA_BUILD_ARGS}")
 endif()
 
 # Set the common cmake arguments to all external projects
@@ -36,7 +35,7 @@ set(REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS
      # unused arguments above
     --no-warn-unused-cli
     # Allows the specification of extra args via command-line
-    ${REAKTORO_THIRDPARTY_EXTRA_INSTALL_ARGS}
+    ${REAKTORO_THIRDPARTY_EXTRA_BUILD_ARGS}
     )
 
 # Build and install the pugixml library
