@@ -47,6 +47,16 @@ install(TARGETS Reaktoro
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT libraries)
 
+# Install debug symbols
+if(MSVC)
+    install(
+        FILES $<TARGET_PDB_FILE:Reaktoro>
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT libraries
+        OPTIONAL
+    )
+endif()
+
 # Install Reaktoro header files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers

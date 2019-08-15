@@ -29,7 +29,7 @@ install:
   - clcache -s
   - clcache -z
 build_script:
-  - inv -e compile
+  - inv -e compile --config=%CONFIG% --verbose
   - clcache -s
   - python ci\check_compiled_files.py
 test_script:
