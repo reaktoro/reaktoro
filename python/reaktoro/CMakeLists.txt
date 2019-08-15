@@ -13,7 +13,7 @@ configure_file(${SETUP_PY_IN} ${SETUP_PY})
 
 # Create a custom target to build reaktoro python package during build stage
 add_custom_target(reaktoro ALL
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro> 
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
         ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:PyReaktoro>
     COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} --quiet install --prefix=${CMAKE_BINARY_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -32,8 +32,16 @@ file(TO_CMAKE_PATH "${REAKTORO_PYTHON_INSTALL_PREFIX}" REAKTORO_PYTHON_INSTALL_P
 # Install the reaktoro python package using setuptools
 install(CODE
 "
-	file(TO_NATIVE_PATH \"${REAKTORO_PYTHON_INSTALL_PREFIX}\" REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE)
-	   
+    file(TO_NATIVE_PATH \"${REAKTORO_PYTHON_INSTALL_PREFIX}\" REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE)
+
+    if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/../../lib/PyReaktoro.pdb)
+        string(REPLACE .pyd .pdb REAKTORO_PDB_FILENAME \"${REAKTORO_PYTHON_MODULE_FILENAME}\")
+
+        execute_process(
+            COMMAND \${CMAKE_COMMAND} -E copy ../../lib/PyReaktoro.pdb \${REAKTORO_PDB_FILENAME}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    endif()
+
     execute_process(
         COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

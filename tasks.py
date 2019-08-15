@@ -57,6 +57,7 @@ def _get_cmake_command(
     cmake_generator: str,
     cmake_arch: Optional[str]=None,
     config: str='Release',
+    verbose=False,
     ):
     '''
     :param build_dir: Directory from where cmake will be called.
@@ -84,7 +85,8 @@ def _get_cmake_command(
             -DCMAKE_BUILD_TYPE={config}
             -DCMAKE_INCLUDE_PATH="{cmake_include_path}"
             -DCMAKE_INSTALL_PREFIX="{relative_artifacts_dir.as_posix()}"
-            "-REAKTORO_THIRDPARTY_EXTRA_INSTALL_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
+            {f'-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON' if verbose else ''}
+            {f'"-DREAKTORO_THIRDPARTY_EXTRA_BUILD_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"' if verbose else ''}
             "{str(relative_root_dir)}"
     """)
 
@@ -116,7 +118,7 @@ if sys.platform.startswith('win'):
 
 
 @task
-def compile(c, clean=False, config='Release', number_of_jobs=-1):
+def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
     """
     Compiles Reaktoro by running CMake and building with `ninja`.
     Assumes that the environment is already configured using:
@@ -135,6 +137,7 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1):
         artifacts_dir=artifacts_dir,
         cmake_generator="Ninja",
         config=config,
+        verbose=verbose,
     )
     build_command = strip_and_join(f"""
         cmake
