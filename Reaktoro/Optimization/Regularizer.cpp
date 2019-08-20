@@ -109,9 +109,6 @@ struct Regularizer::Impl
     // The indices of basic/independent variables that compose the others.
     Indices ibasic_variables;
 
-    /// The indices of basic/independent variables that compose the others in the last call.
-    Indices ibasic_variables_last;
-
     /// The full-pivoting LU decomposition of the coefficient matrices `A*` and `A(echelon)`.
     LU lu_star, lu_echelon;
 
@@ -303,45 +300,38 @@ auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) ->
     // Initialize the indices of the basic variables
     ibasic_variables = Indices(Q.indices().data(), Q.indices().data() + rank);
 
-    // Check if the new set of basic variables is diffent than the previous
-    if(!equal(ibasic_variables, ibasic_variables_last))
+    // The rank of the original coefficient matrix
+    const auto r = lu_echelon.rank;
+
+    // The L factor of the original coefficient matrix
+    const auto L = lu_echelon.L.topLeftCorner(r, r).triangularView<Eigen::Lower>();
+
+    // The U1 part of U = [U1 U2]
+    const auto U1 = lu_echelon.U.topLeftCorner(r, r).triangularView<Eigen::Upper>();
+
+    // Compute the regularizer matrix R = inv(U1)*inv(L)
+    R = identity(r, r);
+    R = L.solve(R);
+    R = U1.solve(R);
+
+    // Compute the inverse of the regularizer matrix inv(R) = L*U1
+    invR = U1;
+    invR = L * invR;
+
+    // Update the permutation matrix in the echelonization
+    P_echelon = P;
+
+    // Compute the equality constraint regularization
+    A_echelon = P_echelon * A_star;
+    A_echelon = R * A_echelon;
+
+    // Check if the regularizer matrix is composed of rationals.
+    // If so, round-off errors can be eliminated
+    if(params.max_denominator)
     {
-        // Update the last set of basic variables
-        ibasic_variables_last = ibasic_variables;
-
-        // The rank of the original coefficient matrix
-        const auto r = lu_echelon.rank;
-
-        // The L factor of the original coefficient matrix
-        const auto L = lu_echelon.L.topLeftCorner(r, r).triangularView<Eigen::Lower>();
-
-        // The U1 part of U = [U1 U2]
-        const auto U1 = lu_echelon.U.topLeftCorner(r, r).triangularView<Eigen::Upper>();
-
-        // Compute the regularizer matrix R = inv(U1)*inv(L)
-        R = identity(r, r);
-        R = L.solve(R);
-        R = U1.solve(R);
-
-        // Compute the inverse of the regularizer matrix inv(R) = L*U1
-        invR = U1;
-        invR = L * invR;
-
-        // Update the permutation matrix in the echelonization
-        P_echelon = P;
-
-        // Compute the equality constraint regularization
-        A_echelon = P_echelon * A_star;
-        A_echelon = R * A_echelon;
-
-        // Check if the regularizer matrix is composed of rationals.
-        // If so, round-off errors can be eliminated
-        if(params.max_denominator)
-        {
-            cleanRationalNumbers(A_echelon, params.max_denominator);
-            cleanRationalNumbers(R, params.max_denominator);
-            cleanRationalNumbers(invR, params.max_denominator);
-        }
+        cleanRationalNumbers(A_echelon, params.max_denominator);
+        cleanRationalNumbers(R, params.max_denominator);
+        cleanRationalNumbers(invR, params.max_denominator);
     }
 }
 

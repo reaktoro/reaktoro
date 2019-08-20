@@ -9,6 +9,7 @@ cache: ccache
 
 os:
   - linux
+  - osx
 
 env:
   - PY_VER=3.6
