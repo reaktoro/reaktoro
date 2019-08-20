@@ -143,7 +143,7 @@ def test_database_instanciation_with_wrong_filename():
 def test_database_elements_Adding_and_getting():
     direatory_path = os.path.dirname(os.path.abspath(__file__))
 
-    database = Database(direatory_path+"//supcrt98_simplified.xml") 
+    database = Database(direatory_path+"\\..\\..\\..\\tests\\dataTest\\supcrt98_simplified.xml") 
 
     new_element = Element()
     new_element.setName("He")
@@ -172,7 +172,7 @@ def test_databae_parse():
     """
     direatory_path = os.path.dirname(os.path.abspath(__file__))
     
-    database = Database(direatory_path+"//supcrt98_simplified.xml")
+    database = Database(direatory_path+"\\..\\..\\..\\tests\\dataTest\\supcrt98_simplified.xml")
     
     gaseous_species = database.gaseousSpecies()
     liquid_species = database.liquidSpecies()
@@ -185,8 +185,8 @@ def test_databae_parse():
 def test_database_species_adding_and_getting():
     direatory_path = os.path.dirname(os.path.abspath(__file__))
     
-    database = Database(direatory_path+"//supcrt98_simplified.xml")
-    no_species_database = Database(direatory_path+"//supcrt98_no_species.xml")
+    database = Database(direatory_path+"\\..\\..\\..\\tests\\dataTest\\supcrt98_simplified.xml")
+    no_species_database = Database(direatory_path+"\\..\\..\\..\\tests\\dataTest\\supcrt98_no_species.xml")
     
     aqueous_species = database.aqueousSpecies()
     gaseous_species = database.gaseousSpecies()
@@ -216,7 +216,7 @@ def test_database_species_adding_and_getting():
 def test_database_contains():
     direatory_path = os.path.dirname(os.path.abspath(__file__))
     
-    database = Database(direatory_path+"//supcrt98_simplified.xml")
+    database = Database(direatory_path+"\\..\\..\\..\\tests\\dataTest\\supcrt98_simplified.xml")
     
     aqueous_species = database.aqueousSpecies()
     gaseous_species = database.gaseousSpecies()
@@ -232,7 +232,7 @@ def test_database_contains():
 def test_database_looking_for_species_with_element():
     direatory_path = os.path.dirname(os.path.abspath(__file__))
     
-    database = Database(direatory_path+"//supcrt98_simplified.xml")
+    database = Database(direatory_path+"\\..\\..\\..\\tests\\dataTest\\supcrt98_simplified.xml")
     
     aqueous_species_with_H_or_Fe = database.aqueousSpeciesWithElements(["H", "S"])
     gaseous_species_with_H_or_Fe = database.gaseousSpeciesWithElements(["H", "S"])
