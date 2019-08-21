@@ -55,8 +55,7 @@ def test_equilibrium_CH4_H2S_CO2_H2O_liq_gas_aq(temperature, pressure, num_regre
     system = ChemicalSystem(editor)
     
     problem = EquilibriumProblem(system)
-    
-    
+
     problem.setTemperature(temperature, "K")
     problem.setPressure(pressure, "bar")
     problem.add("H2O(g)", 0.50, "mol")
@@ -64,13 +63,17 @@ def test_equilibrium_CH4_H2S_CO2_H2O_liq_gas_aq(temperature, pressure, num_regre
     problem.add("H2S(g)", 0.40, "mol")
     problem.add("CH4(g)", 0.05, "mol")
     
+    # This is a workaround to avoid an Eigen assertion when in Debug:
+    # `DenseBase::resize() does not actually allow to resize.`, triggered by `y(iee) = optimum_state.y * RT;`
+    problem.add("Z", 1e-15, "mol")
+
     solver = EquilibriumSolver(problem.system())
     
-    options = EquilibriumOptions();
-    options.hessian = GibbsHessian.Exact;
-    options.nonlinear.max_iterations = 100;
-    options.optimum.max_iterations = 200;
-    options.optimum.ipnewton.step = StepMode.Conservative;
+    options = EquilibriumOptions()
+    options.hessian = GibbsHessian.Exact
+    options.nonlinear.max_iterations = 100
+    options.optimum.max_iterations = 200
+    options.optimum.ipnewton.step = StepMode.Conservative
     options.optimum.tolerance = 1e-17
     solver.setOptions(options)
             
@@ -91,6 +94,6 @@ def test_equilibrium_CH4_H2S_CO2_H2O_liq_gas_aq(temperature, pressure, num_regre
         "CO2(liq)": np.asarray([state.speciesAmount("CO2(liq)")]),
         "H2S(liq)": np.asarray([state.speciesAmount("H2S(liq)")]),
         "H2O(liq)": np.asarray([state.speciesAmount("H2O(liq)")]),
-        }
+    }
 
     num_regression.check(species_amount)
