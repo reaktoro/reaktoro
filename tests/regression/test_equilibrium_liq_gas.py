@@ -62,17 +62,19 @@ def test_equilibrium_CH4_liq_gas(temperature, pressure, num_regression):
     
     solver = EquilibriumSolver(problem.system())
     
-    options = EquilibriumOptions();
-    options.hessian = GibbsHessian.Exact;
-    options.nonlinear.max_iterations = 100;
-    options.optimum.max_iterations = 200;
-    options.optimum.ipnewton.step = StepMode.Conservative;
+    options = EquilibriumOptions()
+    options.hessian = GibbsHessian.Exact
+    options.nonlinear.max_iterations = 100
+    options.optimum.max_iterations = 200
+    options.optimum.ipnewton.step = StepMode.Conservative
     options.optimum.tolerance = 1e-17
     solver.setOptions(options)
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, problem)
+    result = solver.solve(state, problem)
+
+    assert result.optimum.succeeded
     
     species_amounts = {
         "CH4(g)": np.asarray([state.speciesAmount("CH4(g)")]),
@@ -125,17 +127,19 @@ def test_equilibrium_H2S_liq_gas(temperature, pressure, num_regression):
     
     solver = EquilibriumSolver(problem.system())
     
-    options = EquilibriumOptions();
-    options.hessian = GibbsHessian.Exact;
-    options.nonlinear.max_iterations = 100;
-    options.optimum.max_iterations = 200;
-    options.optimum.ipnewton.step = StepMode.Conservative;
+    options = EquilibriumOptions()
+    options.hessian = GibbsHessian.Exact
+    options.nonlinear.max_iterations = 100
+    options.optimum.max_iterations = 200
+    options.optimum.ipnewton.step = StepMode.Conservative
     options.optimum.tolerance = 1e-17
     solver.setOptions(options)
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, problem)
+    result = solver.solve(state, problem)
+
+    assert result.optimum.succeeded
     
     species_amounts = {
         "H2S(g)": np.asarray([state.speciesAmount("H2S(g)")]),
@@ -188,18 +192,20 @@ def test_equilibrium_CO2_liq_gas(temperature, pressure, num_regression):
     
     solver = EquilibriumSolver(problem.system())
     
-    options = EquilibriumOptions();
-    options.hessian = GibbsHessian.Exact;
-    options.nonlinear.max_iterations = 100;
-    options.optimum.max_iterations = 200;
-    options.optimum.ipnewton.step = StepMode.Conservative;
+    options = EquilibriumOptions()
+    options.hessian = GibbsHessian.Exact
+    options.nonlinear.max_iterations = 100
+    options.optimum.max_iterations = 200
+    options.optimum.ipnewton.step = StepMode.Conservative
     options.optimum.tolerance = 1e-17
     solver.setOptions(options)
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, problem)
-        
+    result = solver.solve(state, problem)
+
+    assert result.optimum.succeeded
+
     species_amounts = {
         "CO2(g)": np.asarray([state.speciesAmount("CO2(g)")]),
         "CO2(liq)": np.asarray([state.speciesAmount("CO2(liq)")]),
@@ -248,17 +254,19 @@ def test_equilibrium_CH4_CO2_liq_gas(temperature, pressure, num_regression):
     
     solver = EquilibriumSolver(problem.system())
     
-    options = EquilibriumOptions();
-    options.hessian = GibbsHessian.Exact;
-    options.nonlinear.max_iterations = 100;
-    options.optimum.max_iterations = 200;
-    options.optimum.ipnewton.step = StepMode.Conservative;
-    options.optimum.tolerance = 1e-17
+    options = EquilibriumOptions()
+    options.hessian = GibbsHessian.Exact
+    options.nonlinear.max_iterations = 100
+    options.optimum.max_iterations = 200
+    options.optimum.ipnewton.step = StepMode.Conservative
+    options.optimum.tolerance = 1e-14
     solver.setOptions(options)
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, problem)
+    result = solver.solve(state, problem)
+
+    assert result.optimum.succeeded
     
     species_amounts = {
         "CH4(g)": np.asarray([state.speciesAmount("CH4(g)")]),
@@ -309,17 +317,19 @@ def test_equilibrium_CH4_H2S_liq_gas(temperature, pressure, num_regression):
     
     solver = EquilibriumSolver(problem.system())
     
-    options = EquilibriumOptions();
-    options.hessian = GibbsHessian.Exact;
-    options.nonlinear.max_iterations = 100;
-    options.optimum.max_iterations = 200;
-    options.optimum.ipnewton.step = StepMode.Conservative;
+    options = EquilibriumOptions()
+    options.hessian = GibbsHessian.Exact
+    options.nonlinear.max_iterations = 100
+    options.optimum.max_iterations = 200
+    options.optimum.ipnewton.step = StepMode.Conservative
     options.optimum.tolerance = 1e-17
     solver.setOptions(options)
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, problem)
+    result = solver.solve(state, problem)
+
+    assert result.optimum.succeeded
     
     species_amount = {
         "CH4(g)": np.asarray([state.speciesAmount("CH4(g)")]),
@@ -383,8 +393,9 @@ def test_equilibrium_CH4_CO2_H2S_liq_gas(temperature, pressure, num_regression):
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, problem)
+    result = solver.solve(state, problem)
     
+    assert result.optimum.succeeded
     
     species_amount = {
         "CH4(g)": np.asarray([state.speciesAmount("CH4(g)")]),
@@ -396,5 +407,3 @@ def test_equilibrium_CH4_CO2_H2S_liq_gas(temperature, pressure, num_regression):
         }
     
     num_regression.check(species_amount)
-
-            

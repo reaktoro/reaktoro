@@ -74,13 +74,14 @@ def test_equilibrium_CH4_H2S_CO2_H2O_liq_gas_aq(temperature, pressure, num_regre
     options.nonlinear.max_iterations = 100
     options.optimum.max_iterations = 200
     options.optimum.ipnewton.step = StepMode.Conservative
-    options.optimum.tolerance = 1e-17
+    options.optimum.tolerance = 1e-14
     solver.setOptions(options)
             
     state = ChemicalState(system)
     
-    res_final = solver.solve(state, problem)
+    result = solver.solve(state, problem)
     
+    assert result.optimum.succeeded
 
     species_amount = {
         "CO2(aq)": np.asarray([state.speciesAmount("CO2(g)")]),
