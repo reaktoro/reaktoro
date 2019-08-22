@@ -66,20 +66,6 @@ auto newton(const std::function<std::tuple<double,double>(double)>& f,
 auto newton(const std::function<void(VectorConstRef, VectorRef, MatrixRef)>& f,
             VectorConstRef x0, double epsilon, unsigned maxiter) -> Vector;
 
-
-/// Calculate the roots of a quartic equation using Ferrari's method.
-/// The calculation uses the approach presented in:
-/// https://en.wikipedia.org/wiki/Quartic_function#Ferrari to solve
-/// the quartic equation:
-/// \f$ ax^{4}+bx^{3}+cx^{2}+dx+e=0 \f$.
-/// @param a The coefficient @c a of the cubic equation
-/// @param b The coefficient @c b of the cubic equation
-/// @param c The coefficient @c c of the cubic equation
-/// @param d The coefficient @c d of the cubic equation
-/// @param e The coefficient @c e of the cubic equation
-/// @return The four roots \f$ (r_1, r_2, r_3, r_4) \f$ that
-auto ferrari(double a, double b, double c, double d, double e) -> QuarticRoots; //TODO: ADD TEST FOR FERRARI
-
 /// Return all real roots of a group of roots
 /// @param roots CubicRoots with of complex and real roots
 /// @return A vector with all real roots

@@ -22,6 +22,10 @@
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Math/Roots.hpp>
 
+#include <Reaktoro/deps/eigen3/Eigen/Dense>
+#include <Reaktoro/deps/eigen3/unsupported/Eigen/Polynomials>
+
+
 namespace Reaktoro {
 namespace PhaseID {
 
@@ -58,28 +62,29 @@ auto pressureComparison(const ThermoScalar& Pressure, const ThermoScalar& Temper
     auto k1 = epsilon * bmix.val;
     auto k2 = sigma * bmix.val;
 
-    // Computing parameters AP, BP, CP, DP and EP of equation AP*P^4 + BP*P^3 + CP*P^2 + DP*P + EP = 0, which gives the values of P where the EoS changes slope (Local max and min)
-    const auto AP = universalGasConstant * Temperature.val;
-    const auto BP = 2.0 * universalGasConstant * Temperature.val*(k2 + k1) - 2.0 * amix.val;
-    const auto CP = universalGasConstant * Temperature.val * (std::pow(k2, 2.0) + 4.0 * k1 * k2 + std::pow(k1, 2.0)) - amix.val * (k1 + k2 - 4.0 * bmix.val);
-    const auto DP = 2 * universalGasConstant * Temperature.val*(k1*std::pow(k2, 2.0) + std::pow(k1, 2.0) * k2) - 2.0 * amix.val * (std::pow(bmix.val, 2.0) - k2 * bmix.val - k1 * bmix.val);
-    const auto EP = universalGasConstant * Temperature.val*std::pow(k1, 2.0) * std::pow(k2, 2.0) - amix.val * (k1 + k2)*std::pow(bmix.val, 2.0);
-    
-    // solving equation
-    auto roots = ferrari(AP, BP, CP, DP, EP);
+    // Computing parameters AP, BP, CP, DP and EP of equation AP*P^4 + BP*P^3 + CP*P^2 + DP*P + EP = 0,
+    // which gives the values of P where the EoS changes slope (Local max and min)
+    const auto R = universalGasConstant;
+    const auto T = Temperature.val;
+    const auto AP = R * T;
+    const auto BP = 2 * R * T * (k2 + k1) - 2 * amix.val;
+    const auto CP = R * T * (k2 * k2 + 4.0 * k1 * k2 + k1 * k1) - amix.val * (k1 + k2 - 4 * bmix.val);
+    const auto DP = 2 * R * T * (k1 * k2 * k2 + k1 * k1 * k2) - 2 * amix.val * (bmix.val * bmix.val - k2 * bmix.val - k1 * bmix.val);
+    const auto EP = R * T * k1 * k1 * k2 * k2 - amix.val * (k1 + k2) * bmix.val * bmix.val;
 
-    // getting real roots
-    auto real_roots = realRoots(roots);
+    auto polynomial_solver = Eigen::PolynomialSolver<double, 4>(
+        Eigen::Matrix<double, 5, 1>{EP, DP, CP, BP, AP});
 
-    // removing a root that is greater than bmix, no physical meaning
-    for (auto it = real_roots.begin(); it != real_roots.end(); it++)
-    {
-        if (*it < bmix.val)
-        {
-            real_roots.erase(it);
-            it--;
-        }
-    }
+    constexpr auto abs_imaginary_threshold = 1e-15;
+    auto real_roots = std::vector<double>();
+    real_roots.reserve(5);
+    polynomial_solver.realRoots(real_roots, abs_imaginary_threshold);
+
+    // removing roots lower than bmix, no physical meaning
+    auto new_end = std::remove_if(real_roots.begin(), real_roots.end(), [&](double r){
+        return r < bmix.val;
+    });
+    real_roots.resize(new_end - real_roots.begin());
     
     if (real_roots.size() == 0) 
     {
