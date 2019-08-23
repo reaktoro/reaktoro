@@ -16,7 +16,7 @@ from reaktoro import (
 
 """
 Those test tries to ensure the capability of Reaktoro on solving system that
-has liquidlike phases mixtures without water
+have liquid like phases without water
 """
 
 @pytest.mark.parametrize(
