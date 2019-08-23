@@ -255,7 +255,6 @@ struct CubicEOS::Impl
 
         if(calculate_interaction_params)
             kres = calculate_interaction_params(kargs);
-		
         // Calculate the parameter `amix` of the phase and the partial molar parameters `abar` of each species
         ChemicalScalar amix(nspecies);
         ChemicalScalar amixT(nspecies);
