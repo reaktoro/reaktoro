@@ -8,7 +8,11 @@ import shutil
 import sys
 
 
-VCVARS_PATH = Path(r"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat")
+def _get_vcvars_paths():
+    template = r"%PROGRAMFILES(X86)%\Microsoft Visual Studio\2017\{edition}\VC\Auxiliary\Build\vcvarsall.bat"
+    template = os.path.expandvars(template)
+    editions = ('BuildTools', 'Professional', 'WDExpress', 'Community')
+    return tuple(Path(template.format(edition=edition)) for edition in editions)
 
 
 def strip_and_join(s: str):
@@ -109,7 +113,7 @@ if sys.platform.startswith('win'):
             c,
             build_dir=build_dir,
             artifacts_dir=artifacts_dir,
-            cmake_generator="Visual Studio 14 2015",
+            cmake_generator="Visual Studio 15 2017",
             cmake_arch="x64",
             config=config,
         )
@@ -152,10 +156,16 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
     commands = [cmake_command, build_command]
 
     if sys.platform.startswith('win'):
-        vcvars_path = VCVARS_PATH
-        if not vcvars_path.is_file():
-            raise Exit(f'Error: Command to configure MSVC environment variables not found: "{vcvars_path}"', code=1)
-        commands.insert(0, f'"{vcvars_path}" amd64')
+        for vcvars_path in _get_vcvars_paths():
+            if not vcvars_path.is_file():
+                continue
+            commands.insert(0, f'"{vcvars_path}" amd64')
+            break
+        else:
+            raise Exit(
+                'Error: Commands to configure MSVC environment variables not found.',
+                code=1,
+            )
 
     os.chdir(build_dir)
     c.run("&&".join(commands))
