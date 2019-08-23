@@ -118,7 +118,7 @@ public:
     /// @return A reference to the created AqueousPhase object.
     auto addPhase(const AqueousPhase& phase) -> AqueousPhase&;
 
-    /// Add an fluid phase in the chemical editor.
+    /// Add a fluid phase in the chemical editor.
     /// Note that only one gaseous and one liquid phase can exist in the chemical editor.
     /// So whenever this method is called, it has the effect of updating the
     /// current state on gaseous phase or liquid phase in the editor.
