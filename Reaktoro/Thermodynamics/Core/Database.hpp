@@ -171,7 +171,7 @@ public:
     /// Return the liquid species that contains at least one of the specified elements.
     auto liquidSpeciesWithElements(const std::vector<std::string>& elements) const->std::vector<FluidSpecies>;
 
-    /// Return the liquid species that contains at least one of the specified elements.
+    /// Return the fluid species that contains at least one of the specified elements.
     auto fluidSpeciesWithElements(const std::vector<std::string>& elements) const->std::vector<FluidSpecies>;
 
     /// Return the mineral species that contains at least one of the specified elements.
