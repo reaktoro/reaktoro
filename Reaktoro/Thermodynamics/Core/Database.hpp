@@ -41,7 +41,7 @@ class MineralSpecies;
 ///
 /// In the example below, a Database instance is initialized and
 /// four queries are made to retrieve information of an aqueous, gaseous,
-/// liquid and fluid. FluidSpecies can be used to emulete species that are
+/// liquid and fluid. FluidSpecies can be used to emulate species that are
 /// in gaseous or liquid phase
 /// Note that if a species is not present in the
 /// database, then an exception is thrown.
