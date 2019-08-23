@@ -327,7 +327,7 @@ struct CubicEOS::Impl
         const ChemicalScalar CT = -3*epsilon*sigma*beta*beta*betaT - qT*beta*beta - 2*(epsilon*sigma + q)*beta*betaT;
 
         // Calculate cubicEOS roots using cardano's method
-		auto cubicEOS_roots = realRoots(cardano(1, A.val, B.val, C.val));
+        auto cubicEOS_roots = realRoots(cardano(1, A.val, B.val, C.val));
 
         // All possible Compressibility factor
         std::vector<ChemicalScalar> Zs;
