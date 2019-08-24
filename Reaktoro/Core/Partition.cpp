@@ -612,4 +612,14 @@ auto Partition::formulaMatrixInertSolidPartition() const -> MatrixConstRef
     return pimpl->formula_matrix_inert_solid;
 }
 
+bool Partition::operator==(const Partition& partition) const
+{
+    return partition.pimpl == pimpl;
+}
+
+bool Partition::operator!=(const Partition& partition) const
+{
+    return partition.pimpl != pimpl;
+}
+
 } // namespace Reaktoro

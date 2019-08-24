@@ -273,6 +273,10 @@ public:
     /// Return the formula matrix of the inert-solid partition.
     auto formulaMatrixInertSolidPartition() const -> MatrixConstRef;
 
+    /// Compare a Partition instance for equality
+    bool operator==(const Partition&) const;
+    bool operator!=(const Partition&) const;
+
 private:
     struct Impl;
 
