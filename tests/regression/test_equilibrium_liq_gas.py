@@ -158,10 +158,10 @@ def test_equilibrium_H2S_liq_gas(temperature, pressure, num_regression):
         (273.15, 5000000.0 ),                      
     ],
     ids=[
-        "temperature equal 153.15 K and 10132.5 Pa - all H2S should be gas",
-        "temperature equal 153.15 K and 101325 Pa - all H2S should be gas",
-        "temperature equal 153.15 K and 2026500 Pa - all H2S should be liquid",
-        "temperature equal 153.15 K and 3039750 Pa - all H2S should be liquid",
+        "temperature equal 153.15 K and 10132.5 Pa - all CO2 should be gas",
+        "temperature equal 153.15 K and 101325 Pa - all CO2 should be gas",
+        "temperature equal 153.15 K and 2026500 Pa - all CO2 should be liquid",
+        "temperature equal 153.15 K and 3039750 Pa - all CO2 should be liquid",
     ],
 )
 def test_equilibrium_CO2_liq_gas(temperature, pressure, num_regression):
