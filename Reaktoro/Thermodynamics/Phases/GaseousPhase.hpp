@@ -26,6 +26,14 @@
 namespace Reaktoro {
 
 using GaseousMixture = FluidMixture;
-using GaseousPhase = FluidPhase;
+
+class GaseousPhase
+    : public FluidPhase
+{
+public:
+    GaseousPhase()
+        : FluidPhase("Gaseous", PhaseType::Gas)
+    {}
+};
 
 } // namespace Reaktoro
