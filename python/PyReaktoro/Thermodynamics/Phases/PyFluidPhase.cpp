@@ -20,17 +20,17 @@
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Phases/FluidPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>
 #include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 
 namespace Reaktoro {
 
 void exportFluidPhase(py::module& m)
 {
-        
     //auto mixture2 = static_cast<FluidMixture(FluidPhase::*)(ChemicalState&, double, double, const double*)>(&FluidPhase::mixture);
 
-    py::class_<FluidPhase, Phase>(m, "FluidPhase")
-        .def(py::init<>())
+    py::class_<FluidPhase, Phase>(m, "_FluidPhase")
         .def(py::init<const std::string&, PhaseType>())
         .def(py::init<const FluidMixture&, const std::string&, PhaseType>())
         .def("setChemicalModelIdeal", &FluidPhase::setChemicalModelIdeal, py::return_value_policy::reference_internal)
@@ -41,6 +41,14 @@ void exportFluidPhase(py::module& m)
         .def("setChemicalModelSpycherPruessEnnis", &FluidPhase::setChemicalModelSpycherPruessEnnis, py::return_value_policy::reference_internal)
         .def("setChemicalModelSpycherReed", &FluidPhase::setChemicalModelSpycherReed, py::return_value_policy::reference_internal)
         .def("mixture", (FluidMixture& (FluidPhase::*)(void)) &FluidPhase::mixture, py::return_value_policy::reference_internal)
+        ;
+    
+    py::class_<GaseousPhase, FluidPhase>(m, "GaseousPhase")
+        .def(py::init<>())
+        ;
+
+    py::class_<LiquidPhase, FluidPhase>(m, "LiquidPhase")
+        .def(py::init<>())
         ;
 }
 

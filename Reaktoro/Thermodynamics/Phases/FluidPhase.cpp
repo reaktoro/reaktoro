@@ -43,8 +43,9 @@ struct FluidPhase::Impl
 
 };
 
+// TODO: Remove this constructor
 FluidPhase::FluidPhase()
-    : Phase("Fluid", PhaseType::Fluid), pimpl(new Impl())
+    : Phase("UNUSED", PhaseType::Gas), pimpl(new Impl())
 {}
 
 FluidPhase::FluidPhase(const std::string& name, PhaseType type)

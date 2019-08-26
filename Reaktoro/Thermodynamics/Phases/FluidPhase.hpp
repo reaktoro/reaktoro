@@ -32,6 +32,7 @@ class FluidMixture;
 class FluidPhase : public Phase
 {
 public:
+    // TODO: Remove this constructor
     /// Construct a default FluidPhase instance.
     FluidPhase();
 

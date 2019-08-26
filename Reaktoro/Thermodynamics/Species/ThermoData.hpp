@@ -254,6 +254,8 @@ struct FluidSpeciesThermoData : public SpeciesThermoData
 	Optional<FluidSpeciesThermoParamsHKF> hkf;
 };
 
+using GaseousSpeciesThermoData = FluidSpeciesThermoData;
+
 /// A type for storing the thermodynamic data of a mineral species
 struct MineralSpeciesThermoData : public SpeciesThermoData
 {
