@@ -332,6 +332,13 @@ struct EquilibriumSolver::Impl
         state.setSpeciesDualPotentials(z);
     }
 
+    /// Find a feasible approximation for an equilibrium problem with all elements present on chemical system.
+    auto approximate_with_all_element_amounts(ChemicalState& state, double T, double P, VectorConstRef b) -> EquilibriumResult
+    {
+        Vector be = b(iee); 
+        return approximate(state, T, P, be);
+    }
+
     /// Find a feasible approximation for an equilibrium problem.
     auto approximate(ChemicalState& state, double T, double P, Vector be) -> EquilibriumResult
     {
@@ -439,6 +446,13 @@ struct EquilibriumSolver::Impl
         return zero || !options.warmstart;
     }
 
+    /// Solve the equilibrium problem, passing all elements that has on chemical system
+    auto solve_with_all_element_amounts(ChemicalState& state, double T, double P, VectorConstRef b) -> EquilibriumResult
+    {
+        Vector be = b(iee);
+        return solve(state, T, P, be);
+    }
+
     /// Solve the equilibrium problem
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
@@ -452,10 +466,10 @@ struct EquilibriumSolver::Impl
     }
 
     /// Solve the equilibrium problem
-    auto solve(ChemicalState& state, double T, double P, const double* b) -> EquilibriumResult
+    auto solve(ChemicalState& state, double T, double P, const double* _be) -> EquilibriumResult
     {
         // Set the molar amounts of the elements
-        be = Vector::Map(b, Ee);
+        be = Vector::Map(_be, Ee);
 
         // Set temperature and pressure of the chemical state
         state.setTemperature(T);
@@ -605,12 +619,13 @@ auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, Ve
 
 auto EquilibriumSolver::approximate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
 {
-    return approximate(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
+    setPartition(problem.partition());
+    return pimpl->approximate_with_all_element_amounts(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 }
 
 auto EquilibriumSolver::approximate(ChemicalState& state) -> EquilibriumResult
 {
-    return approximate(state, state.temperature(), state.pressure(), state.elementAmounts());
+    return pimpl->approximate_with_all_element_amounts(state, state.temperature(), state.pressure(), state.elementAmounts());
 }
 
 auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
@@ -625,12 +640,13 @@ auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const do
 
 auto EquilibriumSolver::solve(ChemicalState& state) -> EquilibriumResult
 {
-    return solve(state, state.temperature(), state.pressure(), state.elementAmounts());
+    return pimpl->solve_with_all_element_amounts(state, state.temperature(), state.pressure(), state.elementAmounts());
 }
 
 auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
 {
-    return solve(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
+    setPartition(problem.partition());
+    return pimpl->solve_with_all_element_amounts(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 }
 
 auto EquilibriumSolver::properties() const -> const ChemicalProperties&
