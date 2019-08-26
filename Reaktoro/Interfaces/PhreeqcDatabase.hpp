@@ -32,6 +32,7 @@ class Database;
 class Element;
 class AqueousSpecies;
 class FluidSpecies;
+using GaseousSpecies = FluidSpecies;
 class MineralSpecies;
 
 class PhreeqcDatabase
@@ -70,11 +71,11 @@ public:
 
     auto aqueousSpecies() const -> const std::vector<AqueousSpecies>&;
 
-    auto gaseousSpecies(Index index) const -> FluidSpecies;
+    auto gaseousSpecies(Index index) const -> GaseousSpecies;
 
-    auto gaseousSpecies(std::string name) const -> FluidSpecies;
+    auto gaseousSpecies(std::string name) const -> GaseousSpecies;
 
-    auto gaseousSpecies() const -> const std::vector<FluidSpecies>&;
+    auto gaseousSpecies() const -> const std::vector<GaseousSpecies>&;
 
     auto mineralSpecies(Index index) const -> MineralSpecies;
 

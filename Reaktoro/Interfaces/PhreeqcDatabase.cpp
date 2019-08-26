@@ -25,7 +25,7 @@
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // Phreeqc includes
@@ -98,9 +98,9 @@ auto zeroAqueousSpeciesThermoData() -> AqueousSpeciesThermoData
     return data;
 }
 
-auto zeroGaseousSpeciesThermoData() -> FluidSpeciesThermoData
+auto zeroGaseousSpeciesThermoData() -> GaseousSpeciesThermoData
 {
-    FluidSpeciesThermoData data;
+    GaseousSpeciesThermoData data;
     data.phreeqc.set(SpeciesThermoParamsPhreeqc());
     data.properties.set(zeroThermoPropertiesInterpolated());
     return data;
@@ -131,7 +131,7 @@ auto aqueousSpeciesThermoData(const PhreeqcSpecies* species) -> AqueousSpeciesTh
     return zeroAqueousSpeciesThermoData();
 }
 
-auto gaseousSpeciesThermoData(const PhreeqcPhase* phase) -> FluidSpeciesThermoData
+auto gaseousSpeciesThermoData(const PhreeqcPhase* phase) -> GaseousSpeciesThermoData
 {
     // Get the PHREEQC thermodynamic params of the species
     SpeciesThermoParamsPhreeqc params = speciesThermoParamsPhreeqc(phase);
@@ -139,7 +139,7 @@ auto gaseousSpeciesThermoData(const PhreeqcPhase* phase) -> FluidSpeciesThermoDa
     // Check if the species has reaction info
     if(!params.reaction.equation.empty())
     {
-        FluidSpeciesThermoData data;
+        GaseousSpeciesThermoData data;
         data.phreeqc.set(params);
         return data;
     }
@@ -184,13 +184,13 @@ auto createAqueousSpecies(const PhreeqcSpecies* s) -> AqueousSpecies
 	return species;
 }
 
-auto createGaseousSpecies(const PhreeqcPhase* p) -> FluidSpecies
+auto createGaseousSpecies(const PhreeqcPhase* p) -> GaseousSpecies
 {
-    FluidSpecies species;
-    species.setName(p->name);
-    species.setElements(elementsInPhase(p));
-    species.setThermoData(gaseousSpeciesThermoData(p));
-    return species;
+	GaseousSpecies species;
+	species.setName(p->name);
+	species.setElements(elementsInPhase(p));
+	species.setThermoData(gaseousSpeciesThermoData(p));
+	return species;
 }
 
 auto createMineralSpecies(const PhreeqcPhase* p) -> MineralSpecies
@@ -215,8 +215,8 @@ struct PhreeqcDatabase::Impl
 	/// The list of aqueous species in the database
 	std::vector<AqueousSpecies> aqueous_species;
 
-	/// The list of fluid species in the database
-	std::vector<FluidSpecies> gaseous_species;
+	/// The list of gaseous species in the database
+	std::vector<GaseousSpecies> gaseous_species;
 
 	/// The list of mineral species in the database
 	std::vector<MineralSpecies> mineral_species;
@@ -375,12 +375,12 @@ auto PhreeqcDatabase::aqueousSpecies() const -> const std::vector<AqueousSpecies
 	return pimpl->aqueous_species;
 }
 
-auto PhreeqcDatabase::gaseousSpecies(Index index) const -> FluidSpecies
+auto PhreeqcDatabase::gaseousSpecies(Index index) const -> GaseousSpecies
 {
 	return pimpl->gaseous_species[index];
 }
 
-auto PhreeqcDatabase::gaseousSpecies(std::string name) const -> FluidSpecies
+auto PhreeqcDatabase::gaseousSpecies(std::string name) const -> GaseousSpecies
 {
     const Index i = index(name, pimpl->gaseous_species);
     Assert(i < numGaseousSpecies(),
@@ -389,7 +389,7 @@ auto PhreeqcDatabase::gaseousSpecies(std::string name) const -> FluidSpecies
 	return gaseousSpecies(i);
 }
 
-auto PhreeqcDatabase::gaseousSpecies() const -> const std::vector<FluidSpecies>&
+auto PhreeqcDatabase::gaseousSpecies() const -> const std::vector<GaseousSpecies>&
 {
 	return pimpl->gaseous_species;
 }
@@ -561,14 +561,14 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
         return species;
     };
 
-    // Return a FluidSpecies instance with appropriate thermodynamic data.
-    auto construct_gaseous_species = [&](const FluidSpecies& species)
+    // Return a GaseousSpecies instance with appropriate thermodynamic data.
+    auto construct_gaseous_species = [&](const GaseousSpecies& species)
     {
         // Check if the gaseous species is a product species that is being promoted as master species
         if(primary_species.count(species.name()))
         {
-            FluidSpecies refspecies = reference_database.gaseousSpecies(species.name());
-            FluidSpeciesThermoData data = refspecies.thermoData();
+            GaseousSpecies refspecies = reference_database.gaseousSpecies(species.name());
+            GaseousSpeciesThermoData data = refspecies.thermoData();
             data.phreeqc.set(species.thermoData().phreeqc.get());
             data.phreeqc.get().reaction = {};
             refspecies.setThermoData(data);
