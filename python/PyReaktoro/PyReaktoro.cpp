@@ -96,10 +96,10 @@ extern void exportDatabase(py::module& m);
 extern void exportThermo(py::module& m);
 extern void exportAqueousChemicalModelDebyeHuckel(py::module& m);
 extern void exportAqueousPhase(py::module& m);
-extern void exportGaseousPhase(py::module& m);
+extern void exportFluidPhase(py::module& m);
 extern void exportMineralPhase(py::module& m);
 extern void exportAqueousSpecies(py::module& m);
-extern void exportGaseousSpecies(py::module& m);
+extern void exportFluidSpecies(py::module& m);
 extern void exportMineralSpecies(py::module& m);
 extern void exportWater(py::module& m);
 
