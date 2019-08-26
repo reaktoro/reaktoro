@@ -31,8 +31,16 @@ class GaseousPhase
     : public FluidPhase
 {
 public:
+    /// Construct a default GaseousPhase instance.
     GaseousPhase()
         : FluidPhase("Gaseous", PhaseType::Gas)
+    {}
+
+    /// Construct a GaseousPhase instance with given gaseous mixture.
+    /// The Peng-Robinson equation of state is chosen by default to calculate the
+    /// thermodynamic and chemical properties of this GaseousPhase object.
+    explicit GaseousPhase(const GaseousMixture& mixture)
+        : FluidPhase(mixture, "Gaseous", PhaseType::Gas)
     {}
 };
 

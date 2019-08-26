@@ -30,7 +30,7 @@ void exportFluidPhase(py::module& m)
 {
     //auto mixture2 = static_cast<FluidMixture(FluidPhase::*)(ChemicalState&, double, double, const double*)>(&FluidPhase::mixture);
 
-    py::class_<FluidPhase, Phase>(m, "FluidPhase")
+    py::class_<FluidPhase, Phase>(m, "_FluidPhase")
         .def(py::init<const std::string&, PhaseType>())
         .def(py::init<const FluidMixture&, const std::string&, PhaseType>())
         .def("setChemicalModelIdeal", &FluidPhase::setChemicalModelIdeal, py::return_value_policy::reference_internal)

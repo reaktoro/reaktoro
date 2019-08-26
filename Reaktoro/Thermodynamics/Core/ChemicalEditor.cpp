@@ -37,11 +37,11 @@
 #include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
-#include <Reaktoro/Thermodynamics/Phases/FluidPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -118,7 +118,7 @@ private:
     AqueousPhase aqueous_phase;
 
     /// The definition of the gaseous phase
-    FluidPhase gaseous_phase;
+    GaseousPhase gaseous_phase;
 
     /// The definition of the liquid phase
     FluidPhase liquid_phase;
@@ -205,7 +205,9 @@ public:
     {
         if (phase.type() == PhaseType::Gas)
         {
-            gaseous_phase = phase;
+            // TODO: Remove this hack, probably remove this whole method and replace by specific
+            // addPhase(...)'s for Gaseous and Liquid
+            gaseous_phase = static_cast<GaseousPhase const&>(phase);
             return gaseous_phase;
         }
         else if (phase.type() == PhaseType::Liquid)
@@ -254,16 +256,16 @@ public:
         return addAqueousPhaseWithElements(collectElementsInCompounds(compounds));
     }
 
-    auto addGaseousPhaseHelper(const std::vector<FluidSpecies>& species) -> FluidPhase&
+    auto addGaseousPhaseHelper(const std::vector<FluidSpecies>& species) -> GaseousPhase&
     {
         FluidMixture mixture(species);
-        gaseous_phase = FluidPhase(mixture, "Gaseous", PhaseType::Gas);
+        gaseous_phase = GaseousPhase(mixture);
         return gaseous_phase;
     }
 
-    auto addGaseousPhaseWithSpecies(const std::vector<std::string>& species) -> FluidPhase&
+    auto addGaseousPhaseWithSpecies(const std::vector<std::string>& species) -> GaseousPhase&
     {
-        Assert(species.size(), "Could not create the FluidPhase object that represents a gas.",
+        Assert(species.size(), "Could not create the GaseousPhase object that represents a gas.",
             "Expecting at least one species name.");
         std::vector<FluidSpecies> gaseous_species(species.size());
         for(unsigned i = 0; i < species.size(); ++i)
@@ -271,14 +273,14 @@ public:
         return addGaseousPhaseHelper(gaseous_species);
     }
 
-    auto addGaseousPhaseWithElements(const std::vector<std::string>& elements) -> FluidPhase&
+    auto addGaseousPhaseWithElements(const std::vector<std::string>& elements) -> GaseousPhase&
     {
-        Assert(elements.size(), "Could not create the FluidPhase object that represents a gas.",
+        Assert(elements.size(), "Could not create the GaseousPhase object that represents a gas.",
             "Expecting at least one chemical element or compound name.");
         return addGaseousPhaseHelper(database.gaseousSpeciesWithElements(elements));
     }
 
-    auto addGaseousPhaseWithCompounds(const std::vector<std::string>& compounds) -> FluidPhase&
+    auto addGaseousPhaseWithCompounds(const std::vector<std::string>& compounds) -> GaseousPhase&
     {
         return addGaseousPhaseWithElements(collectElementsInCompounds(compounds));
     }
