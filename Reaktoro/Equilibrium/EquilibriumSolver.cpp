@@ -609,9 +609,7 @@ auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
 
 auto EquilibriumSolver::setPartition(const Partition& partition) -> void
 {
-    if(partition != pimpl->partition){
-        pimpl->setPartition(partition);
-    }
+    pimpl->setPartition(partition);
 }
 
 auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
