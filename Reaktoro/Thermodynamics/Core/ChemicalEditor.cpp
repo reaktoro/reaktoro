@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <set>
+#include <type_traits>
 
 // Reaktoro includes
 #include <Reaktoro/Common/ElementUtils.hpp>
@@ -107,6 +108,16 @@ auto lnActivityConstants(const MineralPhase& phase) -> ThermoVectorFunction
     };
 
     return f;
+}
+
+void configurePhaseForGaseousAndLiquidTogether(FluidPhase& phase)
+{
+    phase.mixture().setRemoveInapproprieatePhaseAsTrue();
+    phase.setChemicalModelPengRobinson(); //IT WILL ALL USE PengRobingson, think in a way to make this more generic
+}
+
+void configurePhaseForGaseousAndLiquidTogether(Phase& phase)
+{
 }
 
 } // namespace
@@ -409,7 +420,7 @@ public:
     }
 
     template<typename PhaseType>
-    auto convertPhase(const PhaseType& phase) const -> Phase
+    auto convertPhase(const PhaseType& phase, bool gaseous_and_liquid_together = false) const -> PhaseType
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
@@ -458,89 +469,22 @@ public:
         };
 
         // Create the Phase instance
-        Phase converted = phase;
+        PhaseType converted = phase;
+        if (gaseous_and_liquid_together)
+        {
+            configurePhaseForGaseousAndLiquidTogether(converted);
+        }
         converted.setThermoModel(thermo_model);
         
         return converted;
     }
 
-    template<typename FluidPhaseType>
-    auto convertFluidPhase(const FluidPhaseType& phase, bool remove_inappropriate_phases = false) const -> FluidPhaseType
-    {
-        // The number of species in the phase
-        const unsigned nspecies = phase.numSpecies();
-
-        // Define the lambda functions for the calculation of the essential thermodynamic properties
-        Thermo thermo(database);
-
-        std::vector<ThermoScalarFunction> standard_gibbs_energy_fns(nspecies);
-        std::vector<ThermoScalarFunction> standard_enthalpy_fns(nspecies);
-        std::vector<ThermoScalarFunction> standard_volume_fns(nspecies);
-        std::vector<ThermoScalarFunction> standard_heat_capacity_cp_fns(nspecies);
-        std::vector<ThermoScalarFunction> standard_heat_capacity_cv_fns(nspecies);
-
-        // Create the ThermoScalarFunction instances for each thermodynamic properties of each species
-        for (unsigned i = 0; i < nspecies; ++i)
-        {
-            const std::string name = phase.species(i).name();
-
-            standard_gibbs_energy_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarGibbsEnergy(T, P, name); };
-            standard_enthalpy_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarEnthalpy(T, P, name); };
-            standard_volume_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarVolume(T, P, name); };
-            standard_heat_capacity_cp_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstP(T, P, name); };
-            standard_heat_capacity_cv_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstV(T, P, name); };
-        }
-
-        // Create the interpolation functions for thermodynamic properties of the species
-        ThermoVectorFunction standard_gibbs_energies_interp = interpolate(temperatures, pressures, standard_gibbs_energy_fns);
-        ThermoVectorFunction standard_enthalpies_interp = interpolate(temperatures, pressures, standard_enthalpy_fns);
-        ThermoVectorFunction standard_volumes_interp = interpolate(temperatures, pressures, standard_volume_fns);
-        ThermoVectorFunction standard_heat_capacities_cp_interp = interpolate(temperatures, pressures, standard_heat_capacity_cp_fns);
-        ThermoVectorFunction standard_heat_capacities_cv_interp = interpolate(temperatures, pressures, standard_heat_capacity_cv_fns);
-        ThermoVectorFunction ln_activity_constants_func = lnActivityConstants(phase);
-
-        // Define the thermodynamic model function of the species
-        PhaseThermoModel thermo_model = [=](PhaseThermoModelResult& res, Temperature T, Pressure P)
-        {
-            // Calculate the standard thermodynamic properties of each species
-            res.standard_partial_molar_gibbs_energies = standard_gibbs_energies_interp(T, P);
-            res.standard_partial_molar_enthalpies = standard_enthalpies_interp(T, P);
-            res.standard_partial_molar_volumes = standard_volumes_interp(T, P);
-            res.standard_partial_molar_heat_capacities_cp = standard_heat_capacities_cp_interp(T, P);
-            res.standard_partial_molar_heat_capacities_cv = standard_heat_capacities_cv_interp(T, P);
-            res.ln_activity_constants = ln_activity_constants_func(T, P);
-
-            return res;
-        };
-
-        // Create the Phase instance
-        FluidPhaseType converted = phase;
-        if (remove_inappropriate_phases)
-        {
-            converted.mixture().setRemoveInapproprieatePhaseAsTrue();
-            converted.setChemicalModelPengRobinson(); //IT WILL ALL USE PengRobingson, think in a way to make this more generic
-        }
-        converted.setThermoModel(thermo_model);
-
-        return converted;
-    }
-
-    auto convertPhase(const LiquidPhase& phase, bool remove_inappropriate_phases = false) const -> LiquidPhase
-    {
-        return this->convertFluidPhase<LiquidPhase>(phase, remove_inappropriate_phases);
-    }
-
-    auto convertPhase(const GaseousPhase& phase, bool remove_inappropriate_phases = false) const -> GaseousPhase
-    {
-        return this->convertFluidPhase<GaseousPhase>(phase, remove_inappropriate_phases);
-    }
-
     auto createChemicalSystem() const -> ChemicalSystem
     {
-        auto remove_inappropriate_phases = false;
+        auto gaseous_and_liquid_together = false;
         if (!gaseous_phase.species().empty() != 0 && !liquid_phase.species().empty())
         {
-            remove_inappropriate_phases = true;
+            gaseous_and_liquid_together = true;
         }
         
         std::vector<Phase> phases;
@@ -550,10 +494,10 @@ public:
             phases.push_back(convertPhase(aqueous_phase));
 
         if(gaseous_phase.numSpecies())
-            phases.push_back(convertFluidPhase(gaseous_phase, remove_inappropriate_phases));
+            phases.push_back(convertPhase(gaseous_phase, gaseous_and_liquid_together));
 
         if(liquid_phase.numSpecies())
-            phases.push_back(convertFluidPhase(liquid_phase, remove_inappropriate_phases));
+            phases.push_back(convertPhase(liquid_phase, gaseous_and_liquid_together));
 
         for(const MineralPhase& mineral_phase : mineral_phases)
             phases.push_back(convertPhase(mineral_phase));

@@ -51,7 +51,8 @@
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
-#include <Reaktoro/Thermodynamics/Phases/FluidPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralCatalyst.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralMechanism.hpp>
