@@ -22,6 +22,6 @@
 
 namespace Reaktoro {
 
-using GaeousSpecies = FluidSpecies;
+using GaseousSpecies = FluidSpecies;
 
 } // namespace Reaktoro

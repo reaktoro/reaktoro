@@ -17,31 +17,12 @@
 
 #pragma once
 
-// C++ includes
-#include <memory>
-
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Phases/FluidPhase.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 
 namespace Reaktoro {
 
-using LiquidMixture = FluidMixture;
-
-class LiquidPhase
-    : public FluidPhase
-{
-public:
-    /// Construct a default LiquidPhase instance.
-    LiquidPhase()
-        : FluidPhase("Liquid", PhaseType::Liquid)
-    {}
-
-    /// Construct a GaseousPhase instance with given gaseous mixture.
-    /// The Peng-Robinson equation of state is chosen by default to calculate the
-    /// thermodynamic and chemical properties of this GaseousPhase object.
-    explicit LiquidPhase(const LiquidMixture& mixture)
-        : FluidPhase(mixture, "Liquid", PhaseType::Liquid)
-    {}
-};
+using GaseousMixtureState = FluidMixtureState;
+using GaseousMixture = FluidMixture;
 
 } // namespace Reaktoro
