@@ -464,7 +464,8 @@ public:
         return converted;
     }
 
-    auto convertPhase(const FluidPhase& phase, bool remove_phases = false) const -> FluidPhase
+    template<typename FluidPhaseType>
+    auto convertFluidPhase(const FluidPhaseType& phase, bool remove_phases = false) const -> FluidPhaseType
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
@@ -513,7 +514,7 @@ public:
         };
 
         // Create the Phase instance
-        FluidPhase converted = phase;
+        FluidPhaseType converted = phase;
         if (remove_phases == true)
         {
             converted.mixture().setRemoveInapproprieatePhaseAsTrue();
@@ -522,6 +523,16 @@ public:
         converted.setThermoModel(thermo_model);
 
         return converted;
+    }
+
+    auto convertPhase(const LiquidPhase& phase, bool remove_phases = false) const -> LiquidPhase
+    {
+        return this->convertFluidPhase<LiquidPhase>(phase, remove_phases);
+    }
+
+    auto convertPhase(const GaseousPhase& phase, bool remove_phases = false) const -> GaseousPhase
+    {
+        return this->convertFluidPhase<GaseousPhase>(phase, remove_phases);
     }
 
     auto createChemicalSystem() const -> ChemicalSystem
