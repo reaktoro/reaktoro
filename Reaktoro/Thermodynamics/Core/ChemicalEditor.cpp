@@ -465,7 +465,7 @@ public:
     }
 
     template<typename FluidPhaseType>
-    auto convertFluidPhase(const FluidPhaseType& phase, bool remove_phases = false) const -> FluidPhaseType
+    auto convertFluidPhase(const FluidPhaseType& phase, bool remove_inappropriate_phases = false) const -> FluidPhaseType
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
@@ -515,7 +515,7 @@ public:
 
         // Create the Phase instance
         FluidPhaseType converted = phase;
-        if (remove_phases == true)
+        if (remove_inappropriate_phases)
         {
             converted.mixture().setRemoveInapproprieatePhaseAsTrue();
             converted.setChemicalModelPengRobinson(); //IT WILL ALL USE PengRobingson, think in a way to make this more generic
@@ -525,22 +525,22 @@ public:
         return converted;
     }
 
-    auto convertPhase(const LiquidPhase& phase, bool remove_phases = false) const -> LiquidPhase
+    auto convertPhase(const LiquidPhase& phase, bool remove_inappropriate_phases = false) const -> LiquidPhase
     {
-        return this->convertFluidPhase<LiquidPhase>(phase, remove_phases);
+        return this->convertFluidPhase<LiquidPhase>(phase, remove_inappropriate_phases);
     }
 
-    auto convertPhase(const GaseousPhase& phase, bool remove_phases = false) const -> GaseousPhase
+    auto convertPhase(const GaseousPhase& phase, bool remove_inappropriate_phases = false) const -> GaseousPhase
     {
-        return this->convertFluidPhase<GaseousPhase>(phase, remove_phases);
+        return this->convertFluidPhase<GaseousPhase>(phase, remove_inappropriate_phases);
     }
 
     auto createChemicalSystem() const -> ChemicalSystem
     {
-        auto remove_phases = false;
-        if (gaseous_phase.type() == PhaseType::Gas && liquid_phase.type() == PhaseType::Liquid)
+        auto remove_inappropriate_phases = false;
+        if (!gaseous_phase.species().empty() != 0 && !liquid_phase.species().empty())
         {
-            remove_phases = true;
+            remove_inappropriate_phases = true;
         }
         
         std::vector<Phase> phases;
@@ -550,10 +550,10 @@ public:
             phases.push_back(convertPhase(aqueous_phase));
 
         if(gaseous_phase.numSpecies())
-            phases.push_back(convertPhase(gaseous_phase, remove_phases));
+            phases.push_back(convertFluidPhase(gaseous_phase, remove_inappropriate_phases));
 
-        if (liquid_phase.numSpecies())
-            phases.push_back(convertPhase(liquid_phase, remove_phases));
+        if(liquid_phase.numSpecies())
+            phases.push_back(convertFluidPhase(liquid_phase, remove_inappropriate_phases));
 
         for(const MineralPhase& mineral_phase : mineral_phases)
             phases.push_back(convertPhase(mineral_phase));
