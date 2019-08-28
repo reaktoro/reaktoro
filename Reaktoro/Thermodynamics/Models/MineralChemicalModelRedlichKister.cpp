@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 
 namespace Reaktoro {

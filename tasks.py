@@ -3,7 +3,6 @@ from invoke.exceptions import Exit
 from pathlib import Path
 from typing import Optional
 import os
-import os.path
 import shutil
 import sys
 
@@ -84,7 +83,8 @@ def _get_cmake_command(
         cmake
             -G "{cmake_generator}"
             {f'-A "{cmake_arch}"' if cmake_arch is not None else ""}
-            -DREAKTORO_BUILD_ALL=ON
+            -DPYBIND11_PYTHON_VERSION={os.environ.get("PY_VER", "3.7")}
+            -DREAKTORO_BUILD_ALL=ON            
             -DREAKTORO_PYTHON_INSTALL_PREFIX="{(artifacts_dir / 'python').as_posix()}"
             -DCMAKE_BUILD_TYPE={config}
             -DCMAKE_INCLUDE_PATH="{cmake_include_path}"

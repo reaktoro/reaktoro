@@ -30,7 +30,6 @@
 #include <Reaktoro/Common/Json.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/OptimizationUtils.hpp>
-#include <Reaktoro/Common/Optional.hpp>
 #include <Reaktoro/Common/Outputter.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
