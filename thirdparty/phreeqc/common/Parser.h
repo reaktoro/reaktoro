@@ -279,18 +279,22 @@ class CParser: public PHRQ_base
 
 // Global functions
 static inline std::string &trim_left(std::string &s)
-{ 
-	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace)))); 
-	return s; 
-} 
+{
+    //std::ptr_fun was removed from c++ 17. Replaced it by a lambda function.
+    auto is_not_space = [](char c) { return !std::isspace(c); };
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), is_not_space));
+    return s;
+}
 static inline std::string &trim_right(std::string &s)
-{ 
-	s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end()); 
-	return s; 
-} 
+{
+    //std::ptr_fun was removed from c++ 17. Replaced it by a lambda function.
+    auto is_not_space = [](char c) { return !std::isspace(c); };
+    s.erase(std::find_if(s.rbegin(), s.rend(), is_not_space).base(), s.end());
+    return s;
+}
 static inline std::string &trim(std::string &s)
-{ 
-	return trim_left(trim_right(s)); 
-} 
+{
+    return trim_left(trim_right(s));
+}
 
 #endif // PARSER_H_INCLUDED
