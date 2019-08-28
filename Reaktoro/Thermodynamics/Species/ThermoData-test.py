@@ -19,13 +19,13 @@ from reaktoro import *
 
 def test_ReactionParams():
     reaction = ReactionParams()
-    analytic = reaction.analytic
-    assert not analytic
-    analytic.append(1)
-    assert analytic
+    coefficients = reaction.analytic
+    assert not coefficients
+    coefficients.append(1)
+    assert coefficients
     assert reaction.analytic
     assert reaction.analytic[0] == 1
-    assert analytic is reaction.analytic
+    assert coefficients is reaction.analytic
 
 
 def test_SpeciesThermoData():
