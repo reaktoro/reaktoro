@@ -7,7 +7,7 @@ name: reaktoro
 
 dependencies:
   - boost=1.70
-  - cmake=3.14
+  - cmake=3.15
   - invoke
   - ninja>=1.9.0
   - numpy

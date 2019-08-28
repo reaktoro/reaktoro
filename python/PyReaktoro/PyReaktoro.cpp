@@ -17,6 +17,8 @@
 
 #include <PyReaktoro/PyReaktoro.hpp>
 
+#include <pybind11/stl_bind.h>
+
 namespace Reaktoro {
 
 // Common module
@@ -76,6 +78,7 @@ extern void exportKineticSolver(py::module& m);
 
 // Math module
 extern void exportODE(py::module& m);
+extern void exportBilinearInterpolator(py::module& m);
 
 // Optimization module
 extern void exportNonlinearOptions(py::module& m);
@@ -102,6 +105,8 @@ extern void exportAqueousSpecies(py::module& m);
 extern void exportGaseousSpecies(py::module& m);
 extern void exportMineralSpecies(py::module& m);
 extern void exportWater(py::module& m);
+extern void exportThermoData(py::module& m);
+extern void exportThermoDataProperties(py::module& m);
 
 // Transport module
 extern void exportChemicalField(py::module& m);
@@ -115,6 +120,8 @@ using namespace Reaktoro;
 
 PYBIND11_MODULE(PyReaktoro, m)
 {
+    py::bind_vector<std::vector<double>>(m, "VectorDouble", "VectorDouble Descriptor");
+
     // Common module
     exportAutoDiff(m);
     exportIndex(m);
@@ -170,6 +177,7 @@ PYBIND11_MODULE(PyReaktoro, m)
 
     // Math module
     exportODE(m);
+    exportBilinearInterpolator(m);
 
     // Optimization module
     exportNonlinearOptions(m);
@@ -196,6 +204,8 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportGaseousSpecies(m);
     exportMineralSpecies(m);
     exportWater(m);
+    exportThermoData(m);
+    exportThermoDataProperties(m);
 
     // Transport module
     exportChemicalField(m);

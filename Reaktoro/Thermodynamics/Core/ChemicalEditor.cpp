@@ -31,6 +31,7 @@
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Core/Thermo.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>

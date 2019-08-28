@@ -99,12 +99,12 @@ auto BilinearInterpolator::setData(const std::vector<double>& data) -> void
     m_data = data;
 }
 
-auto BilinearInterpolator::xCoodinates() const -> const std::vector<double>&
+auto BilinearInterpolator::xCoordinates() const -> const std::vector<double>&
 {
     return m_xcoordinates;
 }
 
-auto BilinearInterpolator::yCoodinates() const -> const std::vector<double>&
+auto BilinearInterpolator::yCoordinates() const -> const std::vector<double>&
 {
     return m_ycoordinates;
 }
@@ -128,20 +128,19 @@ auto BilinearInterpolator::operator()(double x, double y) const -> double
     const double xB = m_xcoordinates.back();
     const double yA = m_ycoordinates.front();
     const double yB = m_ycoordinates.back();
-
-    x = std::max(xA, std::min(x, xB));
-    y = std::max(yA, std::min(y, yB));
-
-    const unsigned sizex = m_xcoordinates.size();
-    const unsigned sizey = m_ycoordinates.size();
-
-    const double i = binarySearch(x, m_xcoordinates);
-    const double j = binarySearch(y, m_ycoordinates);
-
-    const auto k = [=](unsigned i, unsigned j) { return i + j*sizex; };
-
-    if(i == sizex || j == sizey)
+    if(x > xB || x < xA || y > yB || y < yA)
         interpolationOutOfBoundsError(x, xA, xB, y, yA, yB);
+
+    const auto size_x = m_xcoordinates.size();
+    const auto size_y = m_ycoordinates.size();
+
+    const auto index_x = binarySearch(x, m_xcoordinates);
+    const auto i = index_x == size_x - 1 ? index_x - 1 : index_x;
+
+    const auto index_y = binarySearch(y, m_ycoordinates);
+    const auto j = index_y == size_y - 1 ? index_y - 1 : index_y;
+
+    const auto k = [=](unsigned i, unsigned j) { return i + j*size_x; };
 
     const double x1 = m_xcoordinates[i];
     const double x2 = m_xcoordinates[i + 1];
@@ -164,8 +163,8 @@ auto BilinearInterpolator::operator()(double x, double y) const -> double
 
 auto operator<<(std::ostream& out, const BilinearInterpolator& interpolator) -> std::ostream&
 {
-    const auto& xcoordinates = interpolator.xCoodinates();
-    const auto& ycoordinates = interpolator.yCoodinates();
+    const auto& xcoordinates = interpolator.xCoordinates();
+    const auto& ycoordinates = interpolator.yCoordinates();
     const auto& data         = interpolator.data();
 
     const unsigned sizex = xcoordinates.size();
