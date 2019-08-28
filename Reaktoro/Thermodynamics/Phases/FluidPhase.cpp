@@ -18,6 +18,7 @@
 #include "FluidPhase.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/FluidChemicalModelCubicEOS.hpp>

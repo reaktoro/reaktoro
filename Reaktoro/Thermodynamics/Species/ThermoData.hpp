@@ -130,6 +130,9 @@ struct FluidSpeciesThermoParamsHKF
     double Tmax;
 };
 
+struct GaseousSpeciesThermoParamsHKF : FluidSpeciesThermoParamsHKF {};
+struct LiquidSpeciesThermoParamsHKF : FluidSpeciesThermoParamsHKF {};
+
 /// A type for storing the parameters of the HKF equation of state for a mineral species
 struct MineralSpeciesThermoParamsHKF
 {

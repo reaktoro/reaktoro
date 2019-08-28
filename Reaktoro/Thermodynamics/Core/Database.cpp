@@ -247,7 +247,7 @@ auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<A
     return hkf;
 }
 
-auto parseFluidSpeciesThermoParamsHKF(const xml_node& node)->Optional<FluidSpeciesThermoParamsHKF>
+auto parseFluidSpeciesThermoParamsHKF(const xml_node& node)->std::optional<FluidSpeciesThermoParamsHKF>
 {
     FluidSpeciesThermoParamsHKF hkf;
     hkf.Gf   = as_double(node, "Gf");
