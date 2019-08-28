@@ -59,10 +59,10 @@ public:
     auto setData(const std::vector<double>& data) -> void;
 
     /// Return the x-coordinates of the interpolation
-    auto xCoodinates() const -> const std::vector<double>&;
+    auto xCoordinates() const -> const std::vector<double>&;
 
     /// Return the y-coordinates of the interpolation
-    auto yCoodinates() const -> const std::vector<double>&;
+    auto yCoordinates() const -> const std::vector<double>&;
 
     /// Return the interpolation data
     auto data() const -> const std::vector<double>&;

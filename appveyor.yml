@@ -13,8 +13,11 @@ environment:
   # Testing only Debug + Python 3.6 and Release + Python 3.7 so that the number of jobs is still 2 instead of 4.
   - CONFIG: Debug
     PY_VER: 3.6
+    #Temporally disabling regression tests, which otherwise would cause timeout failure (> 1 hour build time)
+    TEST_DIR: Reaktoro
   - CONFIG: Release
     PY_VER: 3.7
+    TEST_DIR: .
 cache:
   - C:\Users\appveyor\clcache
 init:
@@ -33,4 +36,4 @@ build_script:
   - clcache -s
   - python ci\check_compiled_files.py
 test_script:
-  - pytest -n auto -ra -vv . --color=yes
+  - pytest -n auto -ra -vv %TEST_DIR% --color=yes

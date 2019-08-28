@@ -28,7 +28,6 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/GlobalOptions.hpp>
-#include <Reaktoro/Common/Optional.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
@@ -144,7 +143,7 @@ auto parseReactionInterpolatedThermoProperties(const xml_node& node) -> Reaction
     {
         const double R = universalGasConstant;
         auto f = [=](double T, double P) { return -R*T*lnk(T, P); };
-        return BilinearInterpolator(lnk.xCoodinates(), lnk.yCoodinates(), f);
+        return BilinearInterpolator(lnk.xCoordinates(), lnk.yCoordinates(), f);
     };
 
     // Initialize the properties thermodynamic properties of the reaction
@@ -232,7 +231,7 @@ auto as_double(const xml_node& node, const char* childname, double if_empty=std:
     return node.child(childname).text().as_double();
 }
 
-auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<AqueousSpeciesThermoParamsHKF>
+auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<AqueousSpeciesThermoParamsHKF>
 {
     AqueousSpeciesThermoParamsHKF hkf;
     hkf.Gf   = as_double(node, "Gf");
@@ -261,7 +260,7 @@ auto parseFluidSpeciesThermoParamsHKF(const xml_node& node)->Optional<FluidSpeci
     return hkf;
 }
 
-auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> Optional<MineralSpeciesThermoParamsHKF>
+auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<MineralSpeciesThermoParamsHKF>
 {
     MineralSpeciesThermoParamsHKF hkf;
     hkf.Gf      = as_double(node, "Gf");
@@ -794,9 +793,9 @@ struct Database::Impl
 
         // Check if HKF parameters exist, but they are incomplete
         const auto& hkf = species.thermoData().hkf;
-        if(!hkf.empty() && !std::isfinite(hkf.get().Gf))
+        if(hkf && !std::isfinite(hkf.value().Gf))
             return false;
-        if(!hkf.empty() && !std::isfinite(hkf.get().Hf))
+        if(hkf && !std::isfinite(hkf.value().Hf))
             return false;
 
         return true;
