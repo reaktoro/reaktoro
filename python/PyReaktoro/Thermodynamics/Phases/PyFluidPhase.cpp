@@ -28,7 +28,29 @@ namespace Reaktoro {
 
 void exportFluidPhase(py::module& m)
 {
-    //auto mixture2 = static_cast<FluidMixture(FluidPhase::*)(ChemicalState&, double, double, const double*)>(&FluidPhase::mixture);
+    py::enum_<CubicEOS::Model>(m, "CubicEOSModel")
+        .value("None", CubicEOS::VanDerWaals)
+        .value("RedlichKwong", CubicEOS::RedlichKwong)
+        .value("SoaveRedlichKwong", CubicEOS::SoaveRedlichKwong)
+        .value("PengRobinson", CubicEOS::PengRobinson)
+        ;
+
+    py::enum_<PhaseIdentificationMethod>(m, "PhaseIdentificationMethod")
+        .value("None", PhaseIdentificationMethod::None)
+        .value("VolumeMethod", PhaseIdentificationMethod::VolumeMethod)
+        .value("IsothermalCompressibilityMethods", PhaseIdentificationMethod::IsothermalCompressibilityMethods)
+        .value("GibbsEnergyAndEquationOfStateMethod", PhaseIdentificationMethod::GibbsEnergyAndEquationOfStateMethod)
+        ;
+
+    py::class_<CubicEOS::Params>(m, "CubicEOSParams")
+        .def(
+            py::init<CubicEOS::Model, PhaseIdentificationMethod>(),
+            py::arg("model") = CubicEOS::PengRobinson,
+            py::arg("phase_identification_method") = PhaseIdentificationMethod::None
+        )
+        .def_readwrite("model", &CubicEOS::Params::model)
+        .def_readwrite("phase_identification_method", &CubicEOS::Params::phase_identification_method)
+        ;
 
     py::class_<FluidPhase, Phase>(m, "_FluidPhase")
         .def(py::init<const std::string&, PhaseType>())
@@ -37,7 +59,18 @@ void exportFluidPhase(py::module& m)
         .def("setChemicalModelVanDerWaals", &FluidPhase::setChemicalModelVanDerWaals, py::return_value_policy::reference_internal)
         .def("setChemicalModelRedlichKwong", &FluidPhase::setChemicalModelRedlichKwong, py::return_value_policy::reference_internal)
         .def("setChemicalModelSoaveRedlichKwong", &FluidPhase::setChemicalModelSoaveRedlichKwong, py::return_value_policy::reference_internal)
-        .def("setChemicalModelPengRobinson", &FluidPhase::setChemicalModelPengRobinson, py::return_value_policy::reference_internal)
+        .def(
+            "setChemicalModelPengRobinson",
+            &FluidPhase::setChemicalModelPengRobinson,
+            py::arg("params") = CubicEOS::Params{},
+            py::return_value_policy::reference_internal
+        )
+        .def(
+            "setChemicalModelCubicEOS",
+            &FluidPhase::setChemicalModelCubicEOS,
+            py::arg("params") = CubicEOS::Params{},
+            py::return_value_policy::reference_internal
+        )
         .def("setChemicalModelSpycherPruessEnnis", &FluidPhase::setChemicalModelSpycherPruessEnnis, py::return_value_policy::reference_internal)
         .def("setChemicalModelSpycherReed", &FluidPhase::setChemicalModelSpycherReed, py::return_value_policy::reference_internal)
         .def("mixture", (FluidMixture& (FluidPhase::*)(void)) &FluidPhase::mixture, py::return_value_policy::reference_internal)

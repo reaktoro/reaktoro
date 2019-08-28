@@ -5,11 +5,13 @@ from reaktoro import (
     ChemicalEditor,
     ChemicalState,
     ChemicalSystem,
+    CubicEOSParams,
     Database,
     EquilibriumOptions,
     EquilibriumProblem,
     EquilibriumSolver,
     GibbsHessian,
+    PhaseIdentificationMethod,
     StepMode,
 )
 
@@ -48,9 +50,13 @@ def test_equilibrium_CH4_H2S_CO2_H2O_liq_gas_aq(temperature, pressure, num_regre
      
     editor = ChemicalEditor(db)
     
-    editor.addAqueousPhase(["CO2(aq)",  "H2S(aq)", "H2O(l)" ])
-    editor.addGaseousPhase(["CH4(g)", "CO2(g)", "H2S(g)", "H2O(g)"])
-    editor.addLiquidPhase(["CH4(liq)", "CO2(liq)", "H2S(liq)", "H2O(liq)"])
+    eos_params = CubicEOSParams(
+        phase_identification_method=PhaseIdentificationMethod.GibbsEnergyAndEquationOfStateMethod,
+    )
+
+    editor.addAqueousPhase(["CO2(aq)", "H2S(aq)", "H2O(l)" ])
+    editor.addGaseousPhase(["CH4(g)", "CO2(g)", "H2S(g)", "H2O(g)"]).setChemicalModelCubicEOS(eos_params)
+    editor.addLiquidPhase(["CH4(liq)", "CO2(liq)", "H2S(liq)", "H2O(liq)"]).setChemicalModelCubicEOS(eos_params)
     
     system = ChemicalSystem(editor)
     
