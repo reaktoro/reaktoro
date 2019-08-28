@@ -26,7 +26,7 @@
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Math/Roots.hpp>
-#include <Reaktoro/Util/PhaseIdentificationMethods.hpp>
+#include <Reaktoro/Util/PhaseIdentification.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 
 namespace Reaktoro {
@@ -164,14 +164,11 @@ struct CubicEOS::Impl
     /// The flag that indicates if the phase is vapor (false means liquid instead).
     bool isvapor = true;
 
-    /// The flag that indicates if the inappropriate phase should be removed - only use if work with gaseous and liquid
-    bool remove_inappropriate_phase = false;
-
-    /// The type of phase identification method that is going to be used
-    PhaseID::PhaseIdentificationMethods phaseIdentificationMethod = PhaseID::PhaseIdentificationMethods::GibbsEnergyAndEquationOfStateMethod;
-
     /// The type of the cubic equation of state.
     CubicEOS::Model model = CubicEOS::PengRobinson;
+
+    /// The type of phase identification method that is going to be used
+    PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
 
     /// The critical temperatures of the species (in units of K).
     std::vector<double> critical_temperatures;
@@ -336,8 +333,14 @@ struct CubicEOS::Impl
         }
         else
         {
-            Zs.push_back(ChemicalScalar(nspecies, cubicEOS_roots[0]));
-            Zs.push_back(ChemicalScalar(nspecies, cubicEOS_roots[2]));
+            if (cubicEOS_roots.size() != 3) {
+                Exception exception;
+                exception.error << "Could not calculate the Cubic Equation of State.";
+                exception.reason << "Logic error: it was expected Z roots of size 3, but got: " << Zs.size();
+                RaiseError(exception);
+            }
+            Zs.push_back(ChemicalScalar(nspecies, cubicEOS_roots[0]));  // Z_max
+            Zs.push_back(ChemicalScalar(nspecies, cubicEOS_roots[2]));  // Z_min
         }
 
         // Selecting compressibility factor - Z_liq < Z_gas
@@ -347,46 +350,47 @@ struct CubicEOS::Impl
         else
             Z.val = *std::min_element(cubicEOS_roots.begin(), cubicEOS_roots.end());
 
-        bool remove_phase = false;
+        auto input_phase_type = isvapor ? PhaseType::Gas : PhaseType::Liquid;
+        auto identified_phase_type = input_phase_type;
 
-        if (remove_inappropriate_phase)
+        switch (phase_identification_method)
         {
-            switch (phaseIdentificationMethod)
-            {
-            case PhaseID::PhaseIdentificationMethods::VolumeMethod:
-                if ((PhaseID::volumeMethod(T, P, Z, bmix) == PhaseType::Gas && !isvapor) || 
-                    (PhaseID::volumeMethod(T, P, Z, bmix) == PhaseType::Liquid && isvapor))
-                    remove_phase = true;
-                break;
-            case PhaseID::PhaseIdentificationMethods::IsothermalCompressibilityMethods:
-                if ((PhaseID::isothermalCompressibilityMethod(T, P, Z) == PhaseType::Gas && !isvapor) ||
-                    (PhaseID::isothermalCompressibilityMethod(T, P, Z) == PhaseType::Liquid && isvapor))
-                    remove_phase = true;
-                break;
-            case PhaseID::PhaseIdentificationMethods::GibbsEnergyAndEquationOfStateMethod:
-                if ((PhaseID::gibbsEnergyAndEquationOfStateMethod(P, T, amix, bmix, A, B, C, Zs, epsilon, sigma) == PhaseType::Gas && !isvapor) ||
-                    (PhaseID::gibbsEnergyAndEquationOfStateMethod(P, T, amix, bmix, A, B, C, Zs, epsilon, sigma) == PhaseType::Liquid && isvapor))
-                    remove_phase = true;
-                
-                break;
-            default:
-                remove_phase = false;
-                break;
-            }
+        case PhaseIdentificationMethod::None:
+            // `identified_phase_type` is already `input_phase_type`, keep it this way
+            break;
 
-            if (remove_phase)
-            {
-                result.molar_volume = 0.0;
-                result.residual_molar_gibbs_energy = 0.0;
-                result.residual_molar_enthalpy = 0.0;
-                result.residual_molar_heat_capacity_cp = 0.0;
-                result.residual_molar_heat_capacity_cv = 0.0;
-                result.partial_molar_volumes.fill(0.0);
-                result.residual_partial_molar_gibbs_energies.fill(0.0);
-                result.residual_partial_molar_enthalpies.fill(0.0);
-                result.ln_fugacity_coefficients.fill(100.0);
-                return result;
-            }
+        case PhaseIdentificationMethod::VolumeMethod:
+            identified_phase_type = identifyPhaseUsingVolume(T, P, Z, bmix);
+            break;
+
+        case PhaseIdentificationMethod::IsothermalCompressibilityMethods:
+            identified_phase_type = identifyPhaseUsingIsothermalCompressibility(T, P, Z);
+            break;
+
+        case PhaseIdentificationMethod::GibbsEnergyAndEquationOfStateMethod:
+            identified_phase_type = identifyPhaseUsingGibbsEnergyAndEos(
+                P, T, amix, bmix, A, B, C, Zs, epsilon, sigma);
+            break;
+
+        default:
+            throw std::logic_error("CubicEOS received an unexpected phaseIdentificationMethod");
+        }
+
+        if (identified_phase_type != input_phase_type)
+        {
+            // Since the phase is identified as different than the expect input phase type, it is
+            // deemed inappropriate. Artificially high values are configured for fugacities, so that
+            // this condition is "removed" by the optimizer.
+            result.molar_volume = 0.0;
+            result.residual_molar_gibbs_energy = 0.0;
+            result.residual_molar_enthalpy = 0.0;
+            result.residual_molar_heat_capacity_cp = 0.0;
+            result.residual_molar_heat_capacity_cv = 0.0;
+            result.partial_molar_volumes.fill(0.0);
+            result.residual_partial_molar_gibbs_energies.fill(0.0);
+            result.residual_partial_molar_enthalpies.fill(0.0);
+            result.ln_fugacity_coefficients.fill(100.0);
+            return result;
         }
 
         ChemicalScalar& V = result.molar_volume;
@@ -474,9 +478,12 @@ CubicEOS::Result::Result(unsigned nspecies)
   ln_fugacity_coefficients(nspecies)
 {}
 
-CubicEOS::CubicEOS(unsigned nspecies)
+CubicEOS::CubicEOS(unsigned nspecies, CubicEOS::Params params)
 : pimpl(new Impl(nspecies))
-{}
+{
+    pimpl->model = params.model;
+    pimpl->phase_identification_method = params.phase_identification_method;
+}
 
 CubicEOS::CubicEOS(const CubicEOS& other)
 : pimpl(new Impl(*other.pimpl))
@@ -501,19 +508,9 @@ auto CubicEOS::setModel(Model model) -> void
     pimpl->model = model;
 }
 
-auto CubicEOS::setPhaseIdentificationMethod(PhaseID::PhaseIdentificationMethods phaseIdentificationMethod) -> void
+auto CubicEOS::setPhaseIdentificationMethod(PhaseIdentificationMethod phase_identification_method) -> void
 {
-    pimpl->phaseIdentificationMethod = phaseIdentificationMethod;
-}
-
-auto CubicEOS::setRemoveInappropriatePhaseAsTrue() -> void
-{
-    pimpl->remove_inappropriate_phase = true;
-}
-
-auto CubicEOS::setRemoveInappropriatePhaseAsFalse() -> void
-{
-    pimpl->remove_inappropriate_phase = false;
+    pimpl->phase_identification_method = phase_identification_method;
 }
 
 auto CubicEOS::setPhaseAsLiquid() -> void

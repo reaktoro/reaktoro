@@ -26,9 +26,8 @@
 #include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 
 namespace Reaktoro {
-namespace {
 
-auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Model modeltype) -> PhaseChemicalModel
+auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Params params) -> PhaseChemicalModel
 {
     // The number of gases in the mixture
     const unsigned nspecies = mixture.numSpecies();
@@ -43,7 +42,7 @@ auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Model mod
     }
 
     // Initialize the CubicEOS instance
-    CubicEOS eos(nspecies);
+    CubicEOS eos(nspecies, params);
     if (mixture.species()[0].name().find("(liq)") != std::string::npos)
         eos.setPhaseAsLiquid();
     else
@@ -51,15 +50,6 @@ auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Model mod
     eos.setCriticalTemperatures(Tc);
     eos.setCriticalPressures(Pc);
     eos.setAcentricFactors(omega);
-    eos.setModel(modeltype);
-    eos.setPhaseIdentificationMethod(mixture.fluidMixturePhaseIdentificationMethod());
-    if (mixture.removeInapproprieatePhase())
-    {
-        eos.setRemoveInappropriatePhaseAsTrue();
-    }
-    else {
-        eos.setRemoveInappropriatePhaseAsFalse();
-    }
 
     // The state of the gaseous mixture
     FluidMixtureState state;
@@ -96,28 +86,6 @@ auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Model mod
     };
 
     return model;
-}
-
-} // namespace
-
-auto fluidChemicalModelVanDerWaals(const FluidMixture& mixture) -> PhaseChemicalModel
-{
-    return fluidChemicalModelCubicEOS(mixture, CubicEOS::VanDerWaals);
-}
-
-auto fluidChemicalModelRedlichKwong(const FluidMixture& mixture) -> PhaseChemicalModel
-{
-    return fluidChemicalModelCubicEOS(mixture, CubicEOS::RedlichKwong);
-}
-
-auto fluidChemicalModelSoaveRedlichKwong(const FluidMixture& mixture) -> PhaseChemicalModel
-{
-    return fluidChemicalModelCubicEOS(mixture, CubicEOS::SoaveRedlichKwong);
-}
-
-auto fluidChemicalModelPengRobinson(const FluidMixture& mixture) -> PhaseChemicalModel
-{
-    return fluidChemicalModelCubicEOS(mixture, CubicEOS::PengRobinson);
 }
 
 } // namespace Reaktoro

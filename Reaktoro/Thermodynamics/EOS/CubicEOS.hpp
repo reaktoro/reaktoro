@@ -31,15 +31,10 @@
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Util/PhaseIdentification.hpp>
 
 namespace Reaktoro {
 
-    // Forward declarations
-    namespace PhaseID 
-    {
-        enum class PhaseIdentificationMethods;
-    }
-    
 /// Defines a cubic equation of state and calculates thermodynamic properties of a fluid phase.
 class CubicEOS
 {
@@ -48,6 +43,17 @@ public:
     enum Model
     {
         VanDerWaals, RedlichKwong, SoaveRedlichKwong, PengRobinson,
+    };
+
+    /// Parameters to be passed to the Cubic Equation of State
+    struct Params
+    {
+        Model model = PengRobinson;
+
+        /// If both Gaseous and Liquid phases are in the system, it is recommended to configure a 
+        /// robust phase identification method such as GibbsEnergyAndEquationOfStateMethod for BOTH
+        /// phases.
+        PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
     };
 
     struct InteractionParamsResult
@@ -114,7 +120,7 @@ public:
 
     /// Construct a CubicEOS instance with given number of species.
     /// @param nspecies The number of species in the phase.
-    explicit CubicEOS(unsigned nspecies);
+    explicit CubicEOS(unsigned nspecies, Params params);
 
     /// Construct a copy of a CubicEOS instance
     CubicEOS(const CubicEOS& other);
@@ -132,15 +138,11 @@ public:
     /// @see Model
     auto setModel(Model model) -> void;
 
-    /// Set the phase identification method that is used (default: GibbsEnergyAndEquationOfStateMethod).
+    /// Set the phase identification method that is used (default: None).
+    /// It is recommended to use `GibbsEnergyAndEquationOfStateMethod` when using both Liquid and
+    /// Gaseous phase in the same system.
     /// @see PhaseIdentification
-    auto setPhaseIdentificationMethod(PhaseID::PhaseIdentificationMethods PhaseIdentificationMethod) -> void;
-
-    /// Set the CubicEOS to remove inappropriate phase
-    auto setRemoveInappropriatePhaseAsTrue() -> void;
-
-    /// Set the CubicEOS to do not remove inappropriate phase
-    auto setRemoveInappropriatePhaseAsFalse() -> void;
+    auto setPhaseIdentificationMethod(PhaseIdentificationMethod phase_identification_method) -> void;
 
     /// Set the equation of state to compute properties for a liquid phase.
     auto setPhaseAsLiquid() -> void;

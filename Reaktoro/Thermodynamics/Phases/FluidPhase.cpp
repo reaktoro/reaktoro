@@ -43,11 +43,6 @@ struct FluidPhase::Impl
 
 };
 
-// TODO: Remove this constructor
-FluidPhase::FluidPhase()
-    : Phase("UNUSED", PhaseType::Gas), pimpl(new Impl())
-{}
-
 FluidPhase::FluidPhase(const std::string& name, PhaseType type)
     : Phase(name, type), pimpl(new Impl())
 {}
@@ -75,28 +70,36 @@ auto FluidPhase::setChemicalModelIdeal() -> FluidPhase&
 
 auto FluidPhase::setChemicalModelVanDerWaals() -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelVanDerWaals(mixture());
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), {CubicEOS::VanDerWaals});
     setChemicalModel(model);
     return *this;
 }
 
 auto FluidPhase::setChemicalModelRedlichKwong() -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelRedlichKwong(mixture());
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), {CubicEOS::RedlichKwong});
     setChemicalModel(model);
     return *this;
 }
 
 auto FluidPhase::setChemicalModelSoaveRedlichKwong() -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelSoaveRedlichKwong(mixture());
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), {CubicEOS::SoaveRedlichKwong});
     setChemicalModel(model);
     return *this;
 }
 
-auto FluidPhase::setChemicalModelPengRobinson() -> FluidPhase&
+auto FluidPhase::setChemicalModelPengRobinson(CubicEOS::Params params) -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelPengRobinson(mixture());
+    params.model = CubicEOS::PengRobinson;
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), params);
+    setChemicalModel(model);
+    return *this;
+}
+
+auto FluidPhase::setChemicalModelCubicEOS(CubicEOS::Params params) -> FluidPhase&
+{
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), params);
     setChemicalModel(model);
     return *this;
 }

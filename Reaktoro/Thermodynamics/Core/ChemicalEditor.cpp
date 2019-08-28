@@ -110,16 +110,6 @@ auto lnActivityConstants(const MineralPhase& phase) -> ThermoVectorFunction
     return f;
 }
 
-void configurePhaseForGaseousAndLiquidTogether(FluidPhase& phase)
-{
-    phase.mixture().setRemoveInapproprieatePhaseAsTrue();
-    phase.setChemicalModelPengRobinson(); //IT WILL ALL USE PengRobingson, think in a way to make this more generic
-}
-
-void configurePhaseForGaseousAndLiquidTogether(Phase& phase)
-{
-}
-
 } // namespace
 
 struct ChemicalEditor::Impl
@@ -470,10 +460,6 @@ public:
 
         // Create the Phase instance
         PhaseType converted = phase;
-        if (gaseous_and_liquid_together)
-        {
-            configurePhaseForGaseousAndLiquidTogether(converted);
-        }
         converted.setThermoModel(thermo_model);
         
         return converted;
