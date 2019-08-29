@@ -234,6 +234,7 @@ struct FluidSpeciesThermoData : public SpeciesThermoData
 };
 
 using GaseousSpeciesThermoData = FluidSpeciesThermoData;
+using LiquidSpeciesThermoData = FluidSpeciesThermoData;
 
 /// A type for storing the thermodynamic data of a mineral species
 struct MineralSpeciesThermoData : public SpeciesThermoData

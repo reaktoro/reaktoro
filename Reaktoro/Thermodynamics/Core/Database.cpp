@@ -36,6 +36,8 @@
 #include <Reaktoro/Thermodynamics/Databases/DatabaseUtils.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // miniz includes
@@ -52,6 +54,8 @@ namespace {
 using ElementMap        = std::map<std::string, Element>;
 using AqueousSpeciesMap = std::map<std::string, AqueousSpecies>;
 using FluidSpeciesMap   = std::map<std::string, FluidSpecies>;
+using GaseousSpeciesMap = std::map<std::string, GaseousSpecies>;
+using LiquidSpeciesMap  = std::map<std::string, LiquidSpecies>;
 using MineralSpeciesMap = std::map<std::string, MineralSpecies>;
 
 auto errorNonExistentSpecies(std::string type, std::string name) -> void
@@ -407,12 +411,12 @@ struct Database::Impl
     AqueousSpeciesMap aqueous_species_map;
 
     /// The set of all gaseous species in the database
-    FluidSpeciesMap gaseous_species_map;
+    GaseousSpeciesMap gaseous_species_map;
 
     /// The set of all liquid species in the database
-    FluidSpeciesMap liquid_species_map;
+    LiquidSpeciesMap liquid_species_map;
 
-    /// The set of all fluid species in the database
+    /// The set of all fluid species in the database (those that can be both gaseous or liquid)
     FluidSpeciesMap fluid_species_map;
 
     /// The set of all mineral species in the database
@@ -479,12 +483,12 @@ struct Database::Impl
         fluid_species_map.insert({ species.name(), species });
     }
 
-    auto addGaseousSpecies(const FluidSpecies& species) -> void
+    auto addGaseousSpecies(const GaseousSpecies& species) -> void
     {
         gaseous_species_map.insert({ species.name(), species });
     }
 
-    auto addLiquidSpecies(const FluidSpecies& species) -> void
+    auto addLiquidSpecies(const LiquidSpecies& species) -> void
     {
         liquid_species_map.insert({ species.name(), species });
     }
@@ -534,12 +538,12 @@ struct Database::Impl
         return fluid_species_map.find(name)->second;
     }
 
-    auto gaseousSpecies() -> std::vector<FluidSpecies>
+    auto gaseousSpecies() -> std::vector<GaseousSpecies>
     {
         return collectValues(gaseous_species_map);
     }
 
-    auto gaseousSpecies(std::string name) const -> const FluidSpecies&
+    auto gaseousSpecies(std::string name) const -> const GaseousSpecies&
     {
         if(gaseous_species_map.count(name) == 0)
             errorNonExistentSpecies("gaseous", name);
@@ -547,12 +551,12 @@ struct Database::Impl
         return gaseous_species_map.find(name)->second;
     }
 
-    auto liquidSpecies() -> std::vector<FluidSpecies>
+    auto liquidSpecies() -> std::vector<LiquidSpecies>
     {
         return collectValues(liquid_species_map);
     }
 
-    auto liquidSpecies(std::string name) const -> const FluidSpecies&
+    auto liquidSpecies(std::string name) const -> const LiquidSpecies&
     {
         if(liquid_species_map.count(name) == 0)
             errorNonExistentSpecies("liquid", name);
@@ -820,12 +824,12 @@ auto Database::addAqueousSpecies(const AqueousSpecies& species) -> void
     pimpl->addAqueousSpecies(species);
 }
 
-auto Database::addGaseousSpecies(const FluidSpecies& species) -> void
+auto Database::addGaseousSpecies(const GaseousSpecies& species) -> void
 {
     pimpl->addGaseousSpecies(species);
 }
 
-auto Database::addLiquidSpecies(const FluidSpecies& species) -> void
+auto Database::addLiquidSpecies(const LiquidSpecies& species) -> void
 {
     pimpl->addLiquidSpecies(species);
 }

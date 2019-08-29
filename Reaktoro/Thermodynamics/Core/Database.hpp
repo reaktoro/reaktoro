@@ -28,6 +28,8 @@ namespace Reaktoro {
 class Element;
 class AqueousSpecies;
 class FluidSpecies;
+using GaseousSpecies = FluidSpecies;
+using LiquidSpecies = FluidSpecies;
 class MineralSpecies;
 
 /// Provides operations to retrieve physical and thermodynamic data of chemical species.
@@ -41,8 +43,8 @@ class MineralSpecies;
 ///
 /// In the example below, a Database instance is initialized and
 /// four queries are made to retrieve information of an aqueous, gaseous,
-/// liquid and fluid. FluidSpecies can be used to emulate species that are
-/// in gaseous or liquid phase
+/// liquid and fluid. FluidSpecies can be used for species that are
+/// in gaseous or liquid phase.
 /// Note that if a species is not present in the
 /// database, then an exception is thrown.
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,8 +55,8 @@ class MineralSpecies;
 ///
 /// // Retrieve information of species H2O(l) -> Aqueous and CO2 -> fluid
 /// AqueousSpecies aqueousSpecies = database.aqueousSpecies("H2O(l)");
-/// FluidSpecies gaseousSpecies = database.gaseousSpecies("CO2(g)");
-/// FluidSpecies liquidSpecies = database.liquidSpecies("CO2(liq)");
+/// GaseousSpecies gaseousSpecies = database.gaseousSpecies("CO2(g)");
+/// LiquidSpecies liquidSpecies = database.liquidSpecies("CO2(liq)");
 /// FluidSpecies fluidSpecies = database.fluidSpecies("CO2");
 
 ///
@@ -87,11 +89,11 @@ public:
     /// Add an AqueousSpecies instance in the database.
     auto addAqueousSpecies(const AqueousSpecies& species) -> void;
 
-    /// Add a FluidSpecies instance that can emulate gas in the database.
-    auto addGaseousSpecies(const FluidSpecies& species) -> void;
+    /// Add a GaseousSpecies instance in the database.
+    auto addGaseousSpecies(const GaseousSpecies& species) -> void;
 
-    /// Add a FluidSpecies instance that emulate liquid in the database
-    auto addLiquidSpecies(const FluidSpecies& species) -> void;
+    /// Add a LiquidSpecies instance in the database
+    auto addLiquidSpecies(const LiquidSpecies& species) -> void;
 
     /// Add a FluidSpecies instance in the database
     auto addFluidSpecies(const FluidSpecies& species) -> void;
@@ -110,7 +112,8 @@ public:
     /// @param name The name of the aqueous species
     auto aqueousSpecies(std::string name) const -> const AqueousSpecies&;
 
-    /// Return all fluid species in the database
+    /// Return all exclusively "fluid" species in the database (not considering exclusively liquid
+    /// and exclusively gas species).
     auto fluidSpecies()->std::vector<FluidSpecies>;
 
     /// Return a fluid species in the database.
@@ -119,20 +122,20 @@ public:
     auto fluidSpecies(std::string name) const -> const FluidSpecies&;
 
     /// Return all gaseous species in the database
-    auto gaseousSpecies() -> std::vector<FluidSpecies>;
+    auto gaseousSpecies() -> std::vector<GaseousSpecies>;
 
     /// Return a gaseous species in the database.
     /// **Note:** An exception is thrown if the database does not contain the species.
     /// @param name The name of the gaseous species
-    auto gaseousSpecies(std::string name) const -> const FluidSpecies&;
+    auto gaseousSpecies(std::string name) const -> const GaseousSpecies&;
 
     /// Return all liquid species in the database
-    auto liquidSpecies() -> std::vector<FluidSpecies>;
+    auto liquidSpecies() -> std::vector<LiquidSpecies>;
 	
     /// Return a liquid species in the database.
     /// **Note:** An exception is thrown if the database does not contain the species.
     /// @param name The name of the liquid species
-    auto liquidSpecies(std::string name) const -> const FluidSpecies&;
+    auto liquidSpecies(std::string name) const -> const LiquidSpecies&;
 
     /// Return all mineral species in the database
     auto mineralSpecies() -> std::vector<MineralSpecies>;
@@ -154,7 +157,7 @@ public:
     /// @param species The name of the liquid species
     auto containsLiquidSpecies(std::string species) const -> bool;
 
-    /// Check if the database contains a given fluid species
+    /// Check if the database contains a given exclusively "fluid" species
     /// @param species The name of the fluid species
     auto containsFluidSpecies(std::string species) const -> bool;
 
@@ -166,10 +169,10 @@ public:
     auto aqueousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<AqueousSpecies>;
 
     /// Return the gaseous species that contains at least one of the specified elements.
-    auto gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<FluidSpecies>;
+    auto gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<GaseousSpecies>;
 
     /// Return the liquid species that contains at least one of the specified elements.
-    auto liquidSpeciesWithElements(const std::vector<std::string>& elements) const->std::vector<FluidSpecies>;
+    auto liquidSpeciesWithElements(const std::vector<std::string>& elements) const->std::vector<LiquidSpecies>;
 
     /// Return the fluid species that contains at least one of the specified elements.
     auto fluidSpeciesWithElements(const std::vector<std::string>& elements) const->std::vector<FluidSpecies>;
