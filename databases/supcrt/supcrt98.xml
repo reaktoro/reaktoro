@@ -5693,54 +5693,6 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Methane(aq)</Name>
-    <Formula>CH4</Formula>
-    <Elements>C(1)H(4)</Elements>
-    <Type>Aqueous</Type>
-    <MolarMass units="g/mol">16.04246</MolarMass>
-    <Charge>0</Charge>
-    <Thermo>
-      <HKF>
-        <References>4</References>
-        <Date>31.Aug.87</Date>
-        <Gf units="cal/mol">-8234.0</Gf>
-        <Hf units="cal/mol">-21010.0</Hf>
-        <Sr units="cal/(mol*K)">20.99</Sr>
-        <a1 units="cal/(mol*bar)">0.67617</a1>
-        <a2 units="cal/mol">872.79</a2>
-        <a3 units="(cal*K)/(mol*bar)">2.3212</a3>
-        <a4 units="(cal*K)/mol">-31397.0</a4>
-        <c1 units="cal/(mol*K)">42.0941</c1>
-        <c2 units="(cal*K)/mol">104707.0</c2>
-        <wref units="cal/mol">-31790.0</wref>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>C2H6(g)</Name>
-    <Formula>C2H6</Formula>
-    <Elements>C(2)H(6)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">30.07</MolarMass>
-    <Gas>Ethane</Gas>
-    <CriticalTemperature units="K">305.322</CriticalTemperature>
-    <CriticalPressure units="bar">48.72200</CriticalPressure>
-    <AcentricFactor>0.099</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
     <Name>CO(g)</Name>
     <Formula>CO</Formula>
     <Elements>C(1)O(1)</Elements>
