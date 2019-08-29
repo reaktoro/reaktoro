@@ -123,46 +123,46 @@ namespace {
     const double d[][3][3] =
     {
         {{d111, d112, d113},
-            {d112, d122, d123},
-            {d113, d123, d133}},
+        {d112, d122, d123},
+        {d113, d123, d133}},
 
         {{d112, d122, d123},
-            {d122, d222, d223},
-            {d123, d223, d233}},
+        {d122, d222, d223},
+        {d123, d223, d233}},
 
         {{d113, d123, d133},
-            {d123, d223, d233},
-            {d133, d233, d333}},
+        {d123, d223, d233},
+        {d133, d233, d333}},
     };
 
     const double e[][3][3] =
     {
         {{e111, e112, e113},
-            {e112, e122, e123},
-            {e113, e123, e133}},
+        {e112, e122, e123},
+        {e113, e123, e133}},
 
         {{e112, e122, e123},
-            {e122, e222, e223},
-            {e123, e223, e233}},
+        {e122, e222, e223},
+        {e123, e223, e233}},
 
         {{e113, e123, e133},
-            {e123, e223, e233},
-            {e133, e233, e333}},
+        {e123, e223, e233},
+        {e133, e233, e333}},
     };
 
     const double f[][3][3] =
     {
         {{f111, f112, f113},
-            {f112, f122, f123},
-            {f113, f123, f133}},
+        {f112, f122, f123},
+        {f113, f123, f133}},
 
         {{f112, f122, f123},
-            {f122, f222, f223},
-            {f123, f223, f233}},
+        {f122, f222, f223},
+        {f123, f223, f233}},
 
         {{f113, f123, f133},
-            {f123, f223, f233},
-            {f133, f233, f333}},
+        {f123, f223, f233},
+        {f133, f233, f333}},
     };
 
     inline auto computeB(const ThermoScalar& T, int i, int j) -> ThermoScalar
@@ -217,16 +217,16 @@ auto fluidChemicalModelSpycherReed(const FluidMixture& mixture) -> PhaseChemical
     // Assert the gaseous species H2O(g), CO2(g) and CH4(g) exist.
     Assert(iH2O < mixture.numSpecies(),
         "Could not create the chemical model Spycher & Reed (1988) for the gaseous phase.",
-        "This model requires the species H2O(g) in the gaseous phase.")
-        Assert(iCO2 < mixture.numSpecies(),
-            "Could not create the chemical model Spycher & Reed (1988) for the gaseous phase.",
-            "This model requires the species CO2(g) in the gaseous phase.")
-        Assert(iCH4 < mixture.numSpecies(),
-            "Could not create the chemical model Spycher & Reed (1988) for the gaseous phase.",
-            "This model requires the species CH4(g) in the gaseous phase.")
+        "This model requires the species H2O(g) in the gaseous phase.");
+    Assert(iCO2 < mixture.numSpecies(),
+        "Could not create the chemical model Spycher & Reed (1988) for the gaseous phase.",
+        "This model requires the species CO2(g) in the gaseous phase.");
+    Assert(iCH4 < mixture.numSpecies(),
+        "Could not create the chemical model Spycher & Reed (1988) for the gaseous phase.",
+        "This model requires the species CH4(g) in the gaseous phase.");
 
-        // The number of species in the mixture
-        const unsigned nspecies = mixture.numSpecies();
+    // The number of species in the mixture
+    const unsigned nspecies = mixture.numSpecies();
 
     // An auxiliary zero ChemicalScalar instance
     const ChemicalScalar zero(nspecies);
