@@ -45,11 +45,6 @@ public:
     /// @param species The species that compose the fluid (gaseous or liquid) mixture
     explicit FluidMixture(const std::vector<FluidSpecies>& species);
 
-    /// Construct a FluidMixture instance with given species, phase type mixture and phase identification method
-    /// @param species The species that compose the fluid (gaseous or liquid) mixture
-    /// @param fluidMixturePhaseIdentificationMethod The phase identification method used by that composed mixture
-    explicit FluidMixture(const std::vector<FluidSpecies>& species, PhaseIdentificationMethod fluidMixturePhaseIdentificationMethod);
-
     /// Destroy the FluidMixture instance.
     virtual ~FluidMixture();
 

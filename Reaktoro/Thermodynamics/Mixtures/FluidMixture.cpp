@@ -28,10 +28,6 @@ FluidMixture::FluidMixture(const std::vector<FluidSpecies>& species)
     : GeneralMixture<FluidSpecies>(species)
 {}
 
-FluidMixture::FluidMixture(const std::vector<FluidSpecies>& species, PhaseIdentificationMethod fluidMixturePhaseIdentificationMethod)
-    : GeneralMixture<FluidSpecies>(species)
-{}
-
 FluidMixture::~FluidMixture()
 {}
 
