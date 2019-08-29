@@ -411,7 +411,7 @@ public:
     }
 
     template<typename PhaseType>
-    auto convertPhase(const PhaseType& phase, bool gaseous_and_liquid_together = false) const -> PhaseType
+    auto convertPhase(const PhaseType& phase) const -> PhaseType
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
@@ -468,23 +468,17 @@ public:
 
     auto createChemicalSystem() const -> ChemicalSystem
     {
-        auto gaseous_and_liquid_together = false;
-        if (!gaseous_phase.species().empty() != 0 && !liquid_phase.species().empty())
-        {
-            gaseous_and_liquid_together = true;
-        }
-        
         std::vector<Phase> phases;
-        phases.reserve(2 + mineral_phases.size());
+        phases.reserve(3 + mineral_phases.size());
 
         if(aqueous_phase.numSpecies())
             phases.push_back(convertPhase(aqueous_phase));
 
         if(gaseous_phase.numSpecies())
-            phases.push_back(convertPhase(gaseous_phase, gaseous_and_liquid_together));
+            phases.push_back(convertPhase(gaseous_phase));
 
         if(liquid_phase.numSpecies())
-            phases.push_back(convertPhase(liquid_phase, gaseous_and_liquid_together));
+            phases.push_back(convertPhase(liquid_phase));
 
         for(const MineralPhase& mineral_phase : mineral_phases)
             phases.push_back(convertPhase(mineral_phase));
