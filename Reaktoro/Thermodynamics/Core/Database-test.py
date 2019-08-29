@@ -165,7 +165,8 @@ def test_database_elements_Adding_and_getting():
     assert elements[3].name() == "S"
     assert elements[3].molarMass() == pytest.approx(32.065e-3) 
 
-def test_databae_parse():
+
+def test_database_parse():
     """
     Test the fact that species should be added as
     liquid species even if the Type is Gaseous 
