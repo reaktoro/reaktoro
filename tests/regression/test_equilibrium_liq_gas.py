@@ -18,7 +18,7 @@ from reaktoro import (
 
 
 """
-Those test tries to ensure the capability of Reaktoro on solving system that
+These tests try to ensure the capability of Reaktoro on solving systems that
 have liquid like phases without water
 """
 
