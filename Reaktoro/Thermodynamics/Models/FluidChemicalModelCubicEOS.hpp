@@ -28,6 +28,7 @@ class FluidMixture;
 
 /// Set the chemical model of the phase with a Cubic equation of state.
 /// @see FluidPhase::setChemicalModelCubicEOS
-auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Params params)->PhaseChemicalModel;
+auto fluidChemicalModelCubicEOS(
+    const FluidMixture& mixture, PhaseType phase_type, CubicEOS::Params params)->PhaseChemicalModel;
 
 } // namespace Reaktoro

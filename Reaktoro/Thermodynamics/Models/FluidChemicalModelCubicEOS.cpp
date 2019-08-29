@@ -22,12 +22,14 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/EOS/CubicEOS.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 
 namespace Reaktoro {
 
-auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Params params) -> PhaseChemicalModel
+auto fluidChemicalModelCubicEOS(
+    const FluidMixture& mixture, PhaseType phase_type, CubicEOS::Params params) -> PhaseChemicalModel
 {
     // The number of gases in the mixture
     const unsigned nspecies = mixture.numSpecies();
@@ -43,10 +45,16 @@ auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Params pa
 
     // Initialize the CubicEOS instance
     CubicEOS eos(nspecies, params);
-    if (mixture.species()[0].name().find("(liq)") != std::string::npos)
+    if (phase_type == PhaseType::Liquid) {
         eos.setPhaseAsLiquid();
-    else
+    } else {
+        Assert(
+            phase_type == PhaseType::Gas,
+            "Logic error in fluidChemicalModelCubicEOS",
+            "phase_type should be Liquid or Gaseous, but is: " << (int) phase_type
+        );
         eos.setPhaseAsVapor();
+    }
     eos.setCriticalTemperatures(Tc);
     eos.setCriticalPressures(Pc);
     eos.setAcentricFactors(omega);

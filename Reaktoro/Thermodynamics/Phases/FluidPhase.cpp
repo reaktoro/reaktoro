@@ -71,21 +71,21 @@ auto FluidPhase::setChemicalModelIdeal() -> FluidPhase&
 
 auto FluidPhase::setChemicalModelVanDerWaals() -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), {CubicEOS::VanDerWaals});
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::VanDerWaals});
     setChemicalModel(model);
     return *this;
 }
 
 auto FluidPhase::setChemicalModelRedlichKwong() -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), {CubicEOS::RedlichKwong});
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::RedlichKwong});
     setChemicalModel(model);
     return *this;
 }
 
 auto FluidPhase::setChemicalModelSoaveRedlichKwong() -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), {CubicEOS::SoaveRedlichKwong});
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::SoaveRedlichKwong});
     setChemicalModel(model);
     return *this;
 }
@@ -93,14 +93,14 @@ auto FluidPhase::setChemicalModelSoaveRedlichKwong() -> FluidPhase&
 auto FluidPhase::setChemicalModelPengRobinson(CubicEOS::Params params) -> FluidPhase&
 {
     params.model = CubicEOS::PengRobinson;
-    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), params);
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), type(), params);
     setChemicalModel(model);
     return *this;
 }
 
 auto FluidPhase::setChemicalModelCubicEOS(CubicEOS::Params params) -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), params);
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), type(), params);
     setChemicalModel(model);
     return *this;
 }
