@@ -652,9 +652,9 @@ struct Database::Impl
             {
                 FluidSpecies fluid_species = parseFluidSpecies(node);
                 fluid_species.setName(name.substr(0, name.size() - 3));
-                FluidSpecies gaseous_species = parseFluidSpecies(node);
+                GaseousSpecies gaseous_species = parseFluidSpecies(node);
                 gaseous_species.setName(name);
-                FluidSpecies liquid_species = parseFluidSpecies(node);
+                LiquidSpecies liquid_species = parseFluidSpecies(node);
                 liquid_species.setName(name.substr(0, name.size() - 3) + "(liq)");
                 if (valid(fluid_species))
                 {

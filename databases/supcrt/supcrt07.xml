@@ -1,38 +1,6 @@
 <?xml version="1.0" ?>
 <Database>
   <Element>
-    <Name>LampOil</Name>
-    <MolarMass units="g/mol">252.48</MolarMass>
-  </Element>
-  <Element>
-    <Name>C1</Name>
-    <MolarMass units="g/mol">252.48</MolarMass>
-  </Element>
-  <Element>
-    <Name>C2</Name>
-    <MolarMass units="g/mol">252.48</MolarMass>
-  </Element>
-  <Element>
-    <Name>C3</Name>
-    <MolarMass units="g/mol">252.48</MolarMass>
-  </Element>
-  <Element>
-    <Name>C4</Name>
-    <MolarMass units="g/mol">252.48</MolarMass>
-  </Element>
-  <Element>
-    <Name>C5</Name>
-    <MolarMass units="g/mol">252.48</MolarMass>
-  </Element>
-  <Element>
-    <Name>C6</Name>
-    <MolarMass units="g/mol">252.48</MolarMass>
-  </Element>
-  <Element>
-    <Name>C7</Name>
-    <MolarMass units="g/mol">252.48</MolarMass>
-  </Element>
-  <Element>
     <Name>H</Name>
     <MolarMass units="g/mol">1.00794</MolarMass>
   </Element>
@@ -25372,54 +25340,6 @@
         <c1 units="cal/(mol*K)">16.1839</c1>
         <c2 units="(cal*K)/mol">-19142.0</c2>
         <wref units="cal/mol">81270.0</wref>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>LampOil(g)</Name>
-    <Formula>LampOil</Formula>
-    <Elements>LampOil(1)</Elements>
-    <Type>Gaseous</Type>
-    <MolarMass units="g/mol">252.48</MolarMass>
-    <Gas>LampOil</Gas>
-    <CriticalTemperature units="K">746</CriticalTemperature>
-    <CriticalPressure units="bar">13</CriticalPressure>
-    <AcentricFactor>0.812</AcentricFactor>
-    <Thermo>
-      <HKF>
-        <References>6,8</References>
-        <Date>15.Dec.87</Date>
-        <Gf units="cal/mol">-12122.4</Gf>
-        <Hf units="cal/mol">-17880.0</Hf>
-        <Sr units="cal/(mol*K)">44.518</Sr>
-        <a units="cal/(mol*K)">5.65</a>
-        <b units="cal/(mol*K^2)">0.01144</b>
-        <c units="(cal*K)/mol">-46000.0</c>
-        <Tmax units="K">1500.0</Tmax>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>Methane(aq)</Name>
-    <Formula>CH4</Formula>
-    <Elements>C(1)H(4)</Elements>
-    <Type>Aqueous</Type>
-    <MolarMass units="g/mol">16.04246</MolarMass>
-    <Charge>0</Charge>
-    <Thermo>
-      <HKF>
-        <References>G18</References>
-        <Date>04.Oct.00</Date>
-        <Gf units="cal/mol">-8140.0</Gf>
-        <Hf units="cal/mol">-20930.0</Hf>
-        <Sr units="cal/(mol*K)">21.0</Sr>
-        <a1 units="cal/(mol*bar)">1.769</a1>
-        <a2 units="cal/mol">-1530.0</a2>
-        <a3 units="(cal*K)/(mol*bar)">-67.88</a3>
-        <a4 units="(cal*K)/mol">114700.0</a4>
-        <c1 units="cal/(mol*K)">40.87</c1>
-        <c2 units="(cal*K)/mol">64500.0</c2>
-        <wref units="cal/mol">-40000.0</wref>
       </HKF>
     </Thermo>
   </Species>
