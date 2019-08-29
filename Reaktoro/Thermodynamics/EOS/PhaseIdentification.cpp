@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Reaktoro/Util/PhaseIdentification.hpp>
+#include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>

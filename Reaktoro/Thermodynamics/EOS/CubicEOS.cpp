@@ -26,7 +26,7 @@
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Math/Roots.hpp>
-#include <Reaktoro/Util/PhaseIdentification.hpp>
+#include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 
 namespace Reaktoro {

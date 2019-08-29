@@ -16,7 +16,7 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include "FluidMixture.hpp"
-#include <Reaktoro/Util/PhaseIdentification.hpp>
+#include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 
 namespace Reaktoro {
 

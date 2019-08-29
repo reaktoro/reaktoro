@@ -31,7 +31,7 @@
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
-#include <Reaktoro/Util/PhaseIdentification.hpp>
+#include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 
 namespace Reaktoro {
 
