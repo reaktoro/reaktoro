@@ -141,11 +141,11 @@ def test_invariant_database():
     elements = {element.name(): element for element in database.elements()}
     assert pytest.approx(0.00100794) == elements['H'].molarMass()
 
-def test_database_instanciation_with_wrong_filename():
-    with pytest.raises(RuntimeError):    
+def test_database_instantiation_with_wrong_filename():
+    with pytest.raises(RuntimeError):
         database = Database("wrong_name.xml")
 
-def test_database_elements_Adding_and_getting():
+def test_adding_and_getting_database_elements():
     database = Database(str(get_test_data_dir() / "supcrt98_simplified.xml"))
 
     new_element = Element()

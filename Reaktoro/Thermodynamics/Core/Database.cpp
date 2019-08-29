@@ -818,22 +818,22 @@ auto Database::aqueousSpecies(std::string name) const -> const AqueousSpecies&
     return pimpl->aqueousSpecies(name);
 }
 
-auto Database::gaseousSpecies() -> std::vector<FluidSpecies>
+auto Database::gaseousSpecies() -> std::vector<GaseousSpecies>
 {
     return pimpl->gaseousSpecies();
 }
 
-auto Database::gaseousSpecies(std::string name) const -> const FluidSpecies&
+auto Database::gaseousSpecies(std::string name) const -> const GaseousSpecies&
 {
     return pimpl->gaseousSpecies(name);
 }
 
-auto Database::liquidSpecies() -> std::vector<FluidSpecies>
+auto Database::liquidSpecies() -> std::vector<LiquidSpecies>
 {
     return pimpl->liquidSpecies();
 }
 
-auto Database::liquidSpecies(std::string name) const -> const FluidSpecies&
+auto Database::liquidSpecies(std::string name) const -> const LiquidSpecies&
 {
     return pimpl->liquidSpecies(name);
 }
@@ -873,12 +873,12 @@ auto Database::aqueousSpeciesWithElements(const std::vector<std::string>& elemen
     return pimpl->aqueousSpeciesWithElements(elements);
 }
 
-auto Database::gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<FluidSpecies>
+auto Database::gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<GaseousSpecies>
 {
     return pimpl->gaseousSpeciesWithElements(elements);
 }
 
-auto Database::liquidSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<FluidSpecies>
+auto Database::liquidSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<LiquidSpecies>
 {
     return pimpl->liquidSpeciesWithElements(elements);
 }
