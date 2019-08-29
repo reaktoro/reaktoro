@@ -26,7 +26,7 @@ namespace Reaktoro {
 class FluidMixture;
 
 /// Return an equation of state for a gaseous phase based on the ideal model.
-/// This model only supports a gaseous phase. Using it in a FluidPhase that it not
+/// This model only supports a gaseous phase. Using it in a FluidPhase that is not a
 /// PhaseType::Gas will result in a runtime error.
 /// @param mixture The fluid mixture
 /// @return The equation of state function for the fluid phase

@@ -42,7 +42,7 @@ public:
     explicit FluidPhase(const FluidMixture& mixture, const std::string& name, PhaseType type);
 
     /// Set the chemical model of the phase with the ideal gas equation of state.
-    /// This model only supports a gaseous phase. Using it in a FluidPhase that it not
+    /// This model only supports a gaseous phase. Using it in a FluidPhase that is not a
     /// PhaseType::Gas will result in a runtime error.
     auto setChemicalModelIdeal()->FluidPhase&;
 

@@ -63,7 +63,7 @@ auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Params pa
         // The mole fractions of the species
         const auto& x = state.x;
 
-        // Evaluate the CubicEOS object function
+        // Evaluate the CubicEOS
         const CubicEOS::Result eosres = eos(T, P, x);
 
         // The ln of mole fractions
