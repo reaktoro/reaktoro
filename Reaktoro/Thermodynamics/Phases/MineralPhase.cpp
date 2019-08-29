@@ -58,7 +58,6 @@ struct MineralPhase::Impl
 MineralPhase::MineralPhase()
 : Phase(), pimpl(new Impl())
 {
-    setName("Mineral");
     setType(PhaseType::Solid);
 }
 
