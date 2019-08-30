@@ -20,32 +20,14 @@ using namespace Reaktoro;
 
 int main()
 {
-    
-    
-
     Database database("supcrt07.xml");
     
     DebyeHuckelParams dhModel{};
-    //dhModel.setPHREEQC();
     dhModel.setKielland1937();
 
     ChemicalEditor editor(database);
     
-    //editor.addAqueousPhase("H2O(l) FeS FeS2 H2S FeCO3").setChemicalModelDebyeHuckel(db);
-    //editor.addAqueousPhase({ "H2O(l)","H+","OH-", "H2(aq)", "O2(aq)", "HS-", "H2S(aq)", "SO4--", "HSO4-" });
-    //editor.addAqueousPhase("H2O H2S FeCO3");
-    //editor.addAqueousPhase("H2O(l)");
-    //editor.addMineralPhase("Pyrite");
-    //editor.addMineralPhase("Pyrrhotite");
-    //editor.addMineralPhase("Siderite");
-    
-    //editor.addAqueousPhase("H2O(l) FeS2 FeS H2S FeCO3 FeCO3(aq)").setChemicalModelDebyeHuckel(dhModel);
-    //editor.addAqueousPhase("H2O(l) FeS2 FeS H2S FeCO3 FeCO3(aq)").setChemicalModelDebyeHuckel(dhModel);
-    //editor.addAqueousPhase({ "H2O(l)", "OH-", "H+", "HCO3-", "CO3--", "Fe++", "FeOH+", "FeOH++", "Fe+++", "H2(aq)", "O2(aq)", "HS-", "S5--", "S4--", "H2S(aq)", "S3--", "S2--", "SO4--", "HSO4-" }).setChemicalModelDebyeHuckel(dhModel);
     editor.addAqueousPhase({ "H2O(l)", "OH-", "H+", "HCO3-", "CO3--", "Fe++", "FeOH+", "FeOH++", "Fe+++", "H2(aq)", "O2(aq)", "HS-", "S5--", "S4--", "H2S(aq)", "S3--", "S2--", "SO4--", "HSO4-" }).setChemicalModelPitzerHMW();
-    //editor.addAqueousPhase("H2O(l) FeS2 FeS H2S FeCO3 FeCO3(aq)").setChemicalModelHKF();
-    //editor.addAqueousPhase("H2O(l) FeS2 FeS H2S FeCO3").setChemicalModelPitzerHMW();
-    //editor.addMineralPhase("Pyrite");
     editor.addMineralPhase("Pyrrhotite");
     editor.addMineralPhase("Siderite");
 

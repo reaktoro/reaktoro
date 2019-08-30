@@ -20,7 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
-#include <Reaktoro/Util/PhaseIdentificationMethods.hpp>
 
 namespace Reaktoro {
 
@@ -45,44 +44,14 @@ public:
     /// @param species The species that compose the fluid (gaseous or liquid) mixture
     explicit FluidMixture(const std::vector<FluidSpecies>& species);
 
-    /// Construct a FluidMixture instance with given species, phase type mixture and phase identification method
-    /// @param species The species that compose the fluid (gaseous or liquid) mixture
-    /// @param fluidMixturePhaseIdentificationMethod The phase identification method used by that composed mixture
-    explicit FluidMixture(const std::vector<FluidSpecies>& species, PhaseID::PhaseIdentificationMethods fluidMixturePhaseIdentificationMethod);
-
     /// Destroy the FluidMixture instance.
     virtual ~FluidMixture();
-
-    /// Return phase identification method used by the mixture
-    auto fluidMixturePhaseIdentificationMethod() const->PhaseID::PhaseIdentificationMethods;
-
-    /// Return if the mixture should remove inappropriate phase
-    auto removeInapproprieatePhase() const -> bool;
-
-    /// Set the _RemoveInapproprieatePhase as true
-    auto setRemoveInapproprieatePhaseAsTrue() -> void;
-
-    /// Set the _RemoveInapproprieatePhase as false
-    auto setRemoveInapproprieatePhaseAsFalse() -> void;
-
-    /// Set the phase identification method used by the mixture
-    auto setFluidMixturePhaseIdentificationMethod(PhaseID::PhaseIdentificationMethods  fluidMixturePhaseIdentificationMethod) -> void;
-
 
     /// Calculate the state of the fluid (gaseous or liquid) mixture.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
     auto state(Temperature T, Pressure P, VectorConstRef n) const->FluidMixtureState;
-
-private:
-        
-    /// The phase identification method for the fluid mixture
-    PhaseID::PhaseIdentificationMethods _fluidMixturePhaseIdentificationMethod = PhaseID::PhaseIdentificationMethods::GibbsEnergyAndEquationOfStateMethod;
-
-    /// flag that indicate if the CubicEOS can remove any inappropriate phase
-    bool _RemoveInapproprieatePhase = false;
-
 };
 
 } // namespace Reaktoro

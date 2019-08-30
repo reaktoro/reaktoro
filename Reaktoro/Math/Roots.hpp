@@ -27,9 +27,6 @@
 
 namespace Reaktoro {
 
-/// Define a type that describes the roots of a quartic equation
-using QuarticRoots = std::tuple<std::complex<double>, std::complex<double>, std::complex<double>, std::complex<double>>;
-
 /// Define a type that describes the roots of a cubic equation
 using CubicRoots = std::tuple<std::complex<double>, std::complex<double>, std::complex<double>>;
 
@@ -48,6 +45,8 @@ using SquareRoots = std::tuple<double, double>;
 /// @param d The coefficient @c d of the cubic equation
 /// @return The three roots \f$ (r_1, r_2, r_3) \f$ that
 /// solve the cubic equation, where \f$ |r_1| \geq |r_2| \geq |r_3| \f$.
+/// If they are all real, they are returned in descending order (the
+/// first element is the highest).
 auto cardano(double a, double b, double c, double d) -> CubicRoots;
 
 /// Calculate the root of a non-linear function using Newton's method.
@@ -70,10 +69,5 @@ auto newton(const std::function<void(VectorConstRef, VectorRef, MatrixRef)>& f,
 /// @param roots CubicRoots with of complex and real roots
 /// @return A vector with all real roots
 auto realRoots(const CubicRoots& roots)->std::vector<double>;
-
-/// Return all real roots of a group of roots
-/// @param roots QuarticRoots with of complex and real roots
-/// @return A vector with all real roots
-auto realRoots(const QuarticRoots& roots)->std::vector<double>;
 
 } // namespace Reaktoro

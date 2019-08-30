@@ -25,17 +25,18 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 
 namespace Reaktoro {
 namespace {
 
-auto binarySearchHelper(double p, const std::vector<double>& coordinates, unsigned begin, unsigned end) -> unsigned
+auto binarySearchHelper(double p, const std::vector<double>& coordinates, Index begin, Index end) -> Index
 {
     if(end - begin == 1)
         return begin;
 
-    unsigned mid = (begin + end)/2;
+    auto mid = (begin + end)/2;
 
     if(p < coordinates[mid])
         return binarySearchHelper(p, coordinates, begin, mid);
@@ -43,17 +44,9 @@ auto binarySearchHelper(double p, const std::vector<double>& coordinates, unsign
         return binarySearchHelper(p, coordinates, mid, end);
 }
 
-auto binarySearch(double p, const std::vector<double>& coordinates) -> unsigned
+auto binarySearch(double p, const std::vector<double>& coordinates) -> Index
 {
     return binarySearchHelper(p, coordinates, 0, coordinates.size());
-}
-
-auto interpolationOutOfBoundsError(double x, double xA, double xB, double y, double yA, double yB) -> void
-{
-    Exception exception;
-    exception.error << "Unable to perform an interpolation at the coordinate pair (" << x << ", " << y << ").";
-    exception.reason << "Either the x- or y-coordinate is out of bound, where " << xA << " < x < " << xB << " and " << yA << " < y < " << yB << ".";
-    RaiseError(exception);
 }
 
 } // namespace
@@ -99,12 +92,12 @@ auto BilinearInterpolator::setData(const std::vector<double>& data) -> void
     m_data = data;
 }
 
-auto BilinearInterpolator::xCoodinates() const -> const std::vector<double>&
+auto BilinearInterpolator::xCoordinates() const -> const std::vector<double>&
 {
     return m_xcoordinates;
 }
 
-auto BilinearInterpolator::yCoodinates() const -> const std::vector<double>&
+auto BilinearInterpolator::yCoordinates() const -> const std::vector<double>&
 {
     return m_ycoordinates;
 }
@@ -132,16 +125,16 @@ auto BilinearInterpolator::operator()(double x, double y) const -> double
     x = std::max(xA, std::min(x, xB));
     y = std::max(yA, std::min(y, yB));
 
-    const unsigned sizex = m_xcoordinates.size();
-    const unsigned sizey = m_ycoordinates.size();
+    const auto size_x = m_xcoordinates.size();
+    const auto size_y = m_ycoordinates.size();
 
-    const double i = binarySearch(x, m_xcoordinates);
-    const double j = binarySearch(y, m_ycoordinates);
+    const auto index_x = binarySearch(x, m_xcoordinates);
+    const auto i = index_x == size_x - 1 ? index_x - 1 : index_x;
 
-    const auto k = [=](unsigned i, unsigned j) { return i + j*sizex; };
+    const auto index_y = binarySearch(y, m_ycoordinates);
+    const auto j = index_y == size_y - 1 ? index_y - 1 : index_y;
 
-    if(i == sizex || j == sizey)
-        interpolationOutOfBoundsError(x, xA, xB, y, yA, yB);
+    const auto k = [=](Index i, Index j) { return i + j*size_x; };
 
     const double x1 = m_xcoordinates[i];
     const double x2 = m_xcoordinates[i + 1];
@@ -164,12 +157,12 @@ auto BilinearInterpolator::operator()(double x, double y) const -> double
 
 auto operator<<(std::ostream& out, const BilinearInterpolator& interpolator) -> std::ostream&
 {
-    const auto& xcoordinates = interpolator.xCoodinates();
-    const auto& ycoordinates = interpolator.yCoodinates();
+    const auto& xcoordinates = interpolator.xCoordinates();
+    const auto& ycoordinates = interpolator.yCoordinates();
     const auto& data         = interpolator.data();
 
-    const unsigned sizex = xcoordinates.size();
-    const unsigned sizey = ycoordinates.size();
+    const auto sizex = xcoordinates.size();
+    const auto sizey = ycoordinates.size();
 
     out << std::setw(15) << std::right << "y/x";
     for(auto x : xcoordinates)

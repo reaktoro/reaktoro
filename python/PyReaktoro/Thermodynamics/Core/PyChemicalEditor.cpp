@@ -24,11 +24,13 @@
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
-#include <Reaktoro/Thermodynamics/Phases/FluidPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 namespace Reaktoro {
@@ -36,8 +38,9 @@ namespace Reaktoro {
 void exportChemicalEditor(py::module& m)
 {
     auto addPhase1 = static_cast<AqueousPhase&(ChemicalEditor::*)(const AqueousPhase&)>(&ChemicalEditor::addPhase);
-    auto addPhase2 = static_cast<FluidPhase&(ChemicalEditor::*)(const FluidPhase&)>(&ChemicalEditor::addPhase);
-    auto addPhase3 = static_cast<MineralPhase&(ChemicalEditor::*)(const MineralPhase&)>(&ChemicalEditor::addPhase);
+    auto addPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(const GaseousPhase&)>(&ChemicalEditor::addPhase);
+    auto addPhase3 = static_cast<LiquidPhase&(ChemicalEditor::*)(const LiquidPhase&)>(&ChemicalEditor::addPhase);
+    auto addPhase4 = static_cast<MineralPhase&(ChemicalEditor::*)(const MineralPhase&)>(&ChemicalEditor::addPhase);
 
     auto addMineralReaction1 = static_cast<MineralReaction&(ChemicalEditor::*)(const MineralReaction&)>(&ChemicalEditor::addMineralReaction);
     auto addMineralReaction2 = static_cast<MineralReaction&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addMineralReaction);
@@ -45,11 +48,11 @@ void exportChemicalEditor(py::module& m)
     auto aqueousPhase1 = static_cast<const AqueousPhase&(ChemicalEditor::*)() const>(&ChemicalEditor::aqueousPhase);
     auto aqueousPhase2 = static_cast<AqueousPhase&(ChemicalEditor::*)()>(&ChemicalEditor::aqueousPhase);
 
-    auto gaseousPhase1 = static_cast<const FluidPhase&(ChemicalEditor::*)() const>(&ChemicalEditor::gaseousPhase);
-    auto gaseousPhase2 = static_cast<FluidPhase&(ChemicalEditor::*)()>(&ChemicalEditor::gaseousPhase);
+    auto gaseousPhase1 = static_cast<const GaseousPhase&(ChemicalEditor::*)() const>(&ChemicalEditor::gaseousPhase);
+    auto gaseousPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)()>(&ChemicalEditor::gaseousPhase);
 
-    auto liquidPhase1 = static_cast<const FluidPhase&(ChemicalEditor::*)() const>(&ChemicalEditor::liquidPhase);
-    auto liquidPhase2 = static_cast<FluidPhase&(ChemicalEditor::*)()>(&ChemicalEditor::liquidPhase);
+    auto liquidPhase1 = static_cast<const LiquidPhase&(ChemicalEditor::*)() const>(&ChemicalEditor::liquidPhase);
+    auto liquidPhase2 = static_cast<LiquidPhase&(ChemicalEditor::*)()>(&ChemicalEditor::liquidPhase);
 
     auto mineralPhases1 = static_cast<const std::vector<MineralPhase>&(ChemicalEditor::*)() const>(&ChemicalEditor::mineralPhases);
     auto mineralPhases2 = static_cast<std::vector<MineralPhase>&(ChemicalEditor::*)()>(&ChemicalEditor::mineralPhases);
@@ -62,6 +65,7 @@ void exportChemicalEditor(py::module& m)
         .def("addPhase", addPhase1, py::return_value_policy::reference_internal)
         .def("addPhase", addPhase2, py::return_value_policy::reference_internal)
         .def("addPhase", addPhase3, py::return_value_policy::reference_internal)
+        .def("addPhase", addPhase4, py::return_value_policy::reference_internal)
         .def("addReaction", &ChemicalEditor::addReaction, py::return_value_policy::reference_internal)
         
         .def("addAqueousPhase", &ChemicalEditor::addAqueousPhase, py::return_value_policy::reference_internal)

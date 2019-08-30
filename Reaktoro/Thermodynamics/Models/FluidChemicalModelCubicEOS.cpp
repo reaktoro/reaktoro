@@ -22,13 +22,14 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/EOS/CubicEOS.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 
 namespace Reaktoro {
-namespace {
 
-auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Model modeltype) -> PhaseChemicalModel
+auto fluidChemicalModelCubicEOS(
+    const FluidMixture& mixture, PhaseType phase_type, CubicEOS::Params params) -> PhaseChemicalModel
 {
     // The number of gases in the mixture
     const unsigned nspecies = mixture.numSpecies();
@@ -43,23 +44,20 @@ auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Model mod
     }
 
     // Initialize the CubicEOS instance
-    CubicEOS eos(nspecies);
-    if (mixture.species()[0].name().find("(liq)") != std::string::npos)
+    CubicEOS eos(nspecies, params);
+    if (phase_type == PhaseType::Liquid) {
         eos.setPhaseAsLiquid();
-    else
+    } else {
+        Assert(
+            phase_type == PhaseType::Gas,
+            "Logic error in fluidChemicalModelCubicEOS",
+            "phase_type should be Liquid or Gaseous, but is: " << (int) phase_type
+        );
         eos.setPhaseAsVapor();
+    }
     eos.setCriticalTemperatures(Tc);
     eos.setCriticalPressures(Pc);
     eos.setAcentricFactors(omega);
-    eos.setModel(modeltype);
-    eos.setPhaseIdentificationMethod(mixture.fluidMixturePhaseIdentificationMethod());
-    if (mixture.removeInapproprieatePhase())
-    {
-        eos.setRemoveInappropriatePhaseAsTrue();
-    }
-    else {
-        eos.setRemoveInappropriatePhaseAsFalse();
-    }
 
     // The state of the gaseous mixture
     FluidMixtureState state;
@@ -73,7 +71,7 @@ auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Model mod
         // The mole fractions of the species
         const auto& x = state.x;
 
-        // Evaluate the CubicEOS object function
+        // Evaluate the CubicEOS
         const CubicEOS::Result eosres = eos(T, P, x);
 
         // The ln of mole fractions
@@ -96,28 +94,6 @@ auto fluidChemicalModelCubicEOS(const FluidMixture& mixture, CubicEOS::Model mod
     };
 
     return model;
-}
-
-} // namespace
-
-auto fluidChemicalModelVanDerWaals(const FluidMixture& mixture) -> PhaseChemicalModel
-{
-    return fluidChemicalModelCubicEOS(mixture, CubicEOS::VanDerWaals);
-}
-
-auto fluidChemicalModelRedlichKwong(const FluidMixture& mixture) -> PhaseChemicalModel
-{
-    return fluidChemicalModelCubicEOS(mixture, CubicEOS::RedlichKwong);
-}
-
-auto fluidChemicalModelSoaveRedlichKwong(const FluidMixture& mixture) -> PhaseChemicalModel
-{
-    return fluidChemicalModelCubicEOS(mixture, CubicEOS::SoaveRedlichKwong);
-}
-
-auto fluidChemicalModelPengRobinson(const FluidMixture& mixture) -> PhaseChemicalModel
-{
-    return fluidChemicalModelCubicEOS(mixture, CubicEOS::PengRobinson);
 }
 
 } // namespace Reaktoro

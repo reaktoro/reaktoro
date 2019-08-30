@@ -17,18 +17,31 @@
 
 #pragma once
 
+// C++ includes
+#include <memory>
+
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
-#include <Reaktoro/Thermodynamics/EOS/CubicEOS.hpp>
+#include <Reaktoro/Thermodynamics/Phases/FluidPhase.hpp>
 
 namespace Reaktoro {
 
-// Forward declarations
-class FluidMixture;
+using GaseousMixture = FluidMixture;
 
-/// Set the chemical model of the phase with a Cubic equation of state.
-/// @see FluidPhase::setChemicalModelCubicEOS
-auto fluidChemicalModelCubicEOS(
-    const FluidMixture& mixture, PhaseType phase_type, CubicEOS::Params params)->PhaseChemicalModel;
+class GaseousPhase
+    : public FluidPhase
+{
+public:
+    /// Construct a default GaseousPhase instance.
+    GaseousPhase()
+        : FluidPhase("Gaseous", PhaseType::Gas)
+    {}
+
+    /// Construct a GaseousPhase instance with given gaseous mixture.
+    /// The Peng-Robinson equation of state is chosen by default to calculate the
+    /// thermodynamic and chemical properties of this GaseousPhase object.
+    explicit GaseousPhase(const GaseousMixture& mixture)
+        : FluidPhase(mixture, "Gaseous", PhaseType::Gas)
+    {}
+};
 
 } // namespace Reaktoro

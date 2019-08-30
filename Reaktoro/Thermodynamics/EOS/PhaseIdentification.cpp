@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PhaseIdentificationMethods.hpp"
+#include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
@@ -27,26 +27,24 @@
 
 
 namespace Reaktoro {
-namespace PhaseID {
 
-auto volumeMethod(const ThermoScalar& Temperature, const ThermoScalar& Pressure, const ChemicalScalar& Z, ChemicalScalar& b) -> PhaseType
+auto identifyPhaseUsingVolume(
+    const ThermoScalar& temperature,
+    const ThermoScalar& pressure,
+    const ChemicalScalar& Z,
+    const ChemicalScalar& b) -> PhaseType
 {
-    auto Volume = Z * universalGasConstant * Temperature / Pressure;
-    if ((Volume.val / b.val) > 1.75)
-        return PhaseType::Gas;
-
-    return PhaseType::Liquid;
+    auto volume = Z * universalGasConstant * temperature / pressure;
+    return volume.val / b.val > 1.75 ? PhaseType::Gas : PhaseType::Liquid;
 }
 
-auto isothermalCompressibilityMethod(const ThermoScalar& Temperature, const ThermoScalar& Pressure, const ChemicalScalar& Z) -> PhaseType
+auto identifyPhaseUsingIsothermalCompressibility(
+    const ThermoScalar& temperature, const ThermoScalar& pressure, const ChemicalScalar& Z) -> PhaseType
 {
-    auto Volume = Z * universalGasConstant*Temperature / Pressure;
-    auto dkdt = (1.0 / (Volume.val*Volume.val))*Volume.ddP*Volume.ddT;
+    auto volume = Z * universalGasConstant * temperature / pressure;
+    auto dkdt = (1.0 / (volume.val * volume.val)) * volume.ddP * volume.ddT;
     
-    if (dkdt <= 0.0)
-        return PhaseType::Gas;
-
-    return PhaseType::Liquid;
+    return (dkdt <= 0.0) ? PhaseType::Gas : PhaseType::Liquid;
 }
 
 auto pressureComparison(const ThermoScalar& Pressure, const ThermoScalar& Temperature, const ChemicalScalar& amix,
@@ -110,17 +108,28 @@ auto pressureComparison(const ThermoScalar& Pressure, const ThermoScalar& Temper
 }
 
 
-auto gibbsResidualEnergyComparison(const ThermoScalar& Pressure, const ThermoScalar& Temperature, const ChemicalScalar& amix,
-                                   const ChemicalScalar& bmix, const ChemicalScalar& A, const ChemicalScalar& B,
-                                   std::vector<ChemicalScalar> Zs, const double epsilon, const double sigma) -> PhaseType
+auto gibbsResidualEnergyComparison(
+    const ThermoScalar& pressure,
+    const ThermoScalar& temperature,
+    const ChemicalScalar& amix,
+    const ChemicalScalar& bmix,
+    const ChemicalScalar& A,
+    const ChemicalScalar& B,
+    const ChemicalScalar& Z_min,
+    const ChemicalScalar& Z_max,
+    const double epsilon,
+    const double sigma) -> PhaseType
 {
+    auto constexpr R = universalGasConstant;
+    auto const& T = temperature;
+
     // Computing the values of residual Gibbs energy for all Zs
     std::vector<ChemicalScalar> Gs;
-    for (const auto Z : Zs)
+    for (const auto Z : {Z_max, Z_min})
     {
         const double factor = -1.0 / (3 * Z.val*Z.val + 2 * A.val*Z.val + B.val);
-        const ChemicalScalar beta = Pressure * bmix / (universalGasConstant * Temperature);
-        const ChemicalScalar q = amix / (bmix * universalGasConstant * Temperature);
+        const ChemicalScalar beta = pressure * bmix / (R * T);
+        const ChemicalScalar q = amix / (bmix * R * T);
         
         // Calculate the integration factor I and its temperature derivative IT
         ChemicalScalar I;
@@ -129,31 +138,42 @@ auto gibbsResidualEnergyComparison(const ThermoScalar& Pressure, const ThermoSca
         else 
             I = beta / (Z + epsilon * beta);        
 
-        Gs.push_back(universalGasConstant*Temperature*(Z - 1 - log(Z - beta) - q * I));
+        Gs.push_back(R * temperature*(Z - 1 - log(Z - beta) - q * I));
     }
     
-    if (Gs[0].val < Gs[1].val)
-        return PhaseType::Gas;
-    else
-       return PhaseType::Liquid;
-    
+    return (Gs[0].val < Gs[1].val) ? PhaseType::Gas : PhaseType::Liquid;
 }
 
 
-auto gibbsEnergyAndEquationOfStateMethod(const ThermoScalar& Pressure, const ThermoScalar& Temperature, const ChemicalScalar& amix,
-                                         const ChemicalScalar& bmix, const ChemicalScalar& A, const ChemicalScalar& B, const ChemicalScalar& C,
-                                         std::vector<ChemicalScalar> Zs, const double epsilon, const double sigma) -> PhaseType
+auto identifyPhaseUsingGibbsEnergyAndEos(
+    const ThermoScalar& pressure,
+    const ThermoScalar& temperature,
+    const ChemicalScalar& amix,
+    const ChemicalScalar& bmix,
+    const ChemicalScalar& A,
+    const ChemicalScalar& B,
+    const ChemicalScalar& C,
+    std::vector<ChemicalScalar> Zs,
+    const double epsilon,
+    const double sigma) -> PhaseType
 {
     if (Zs.size() == 1)
     {
-        return pressureComparison(Pressure, Temperature, amix, bmix, A, B, C, epsilon, sigma);
+        return pressureComparison(pressure, temperature, amix, bmix, A, B, C, epsilon, sigma);
     }
-    else
-    {
-        return gibbsResidualEnergyComparison(Pressure, Temperature, amix, bmix, A, B, Zs, epsilon, sigma);
-    }
-}
 
+    if (Zs.size() != 2) {
+        Exception exception;
+        exception.error << "identifyPhaseUsingGibbsEnergyAndEos received invalid input";
+        exception.reason << "Zs should have size 1 or 2 in identifyPhaseUsingGibbsEnergyAndEos, "
+            << "but has a size of " << Zs.size();
+        RaiseError(exception);
+    }
+
+    const ChemicalScalar& Z_min = Zs[0] < Zs[1] ? Zs[0] : Zs[1];
+    const ChemicalScalar& Z_max = Zs[0] < Zs[1] ? Zs[1] : Zs[0];
+
+    return gibbsResidualEnergyComparison(pressure, temperature, amix, bmix, A, B, Z_min, Z_max, epsilon, sigma);
 }
 
 }

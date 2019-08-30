@@ -33,7 +33,7 @@ class FluidMixture;
 /// moderate pressures and temperatures applicable to calculations of
 /// hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739–749*.
 /// @param mixture The gaseous mixture instance
-/// @see FluidMixture, (GaseousActivityFunction -- ???) -- DEVE FUNCIONAR COM LIQUID???
+/// @see GaseousMixture
 auto fluidChemicalModelSpycherReed(const FluidMixture& mixture)->PhaseChemicalModel;
 
 } // namespace Reaktoro

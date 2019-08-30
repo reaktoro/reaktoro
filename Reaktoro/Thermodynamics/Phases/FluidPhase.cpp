@@ -18,6 +18,7 @@
 #include "FluidPhase.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/FluidChemicalModelCubicEOS.hpp>
@@ -42,10 +43,6 @@ struct FluidPhase::Impl
     {}
 
 };
-
-FluidPhase::FluidPhase()
-    : Phase("Fluid", PhaseType::Fluid), pimpl(new Impl())
-{}
 
 FluidPhase::FluidPhase(const std::string& name, PhaseType type)
     : Phase(name, type), pimpl(new Impl())
@@ -74,28 +71,36 @@ auto FluidPhase::setChemicalModelIdeal() -> FluidPhase&
 
 auto FluidPhase::setChemicalModelVanDerWaals() -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelVanDerWaals(mixture());
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::VanDerWaals});
     setChemicalModel(model);
     return *this;
 }
 
 auto FluidPhase::setChemicalModelRedlichKwong() -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelRedlichKwong(mixture());
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::RedlichKwong});
     setChemicalModel(model);
     return *this;
 }
 
 auto FluidPhase::setChemicalModelSoaveRedlichKwong() -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelSoaveRedlichKwong(mixture());
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::SoaveRedlichKwong});
     setChemicalModel(model);
     return *this;
 }
 
-auto FluidPhase::setChemicalModelPengRobinson() -> FluidPhase&
+auto FluidPhase::setChemicalModelPengRobinson(CubicEOS::Params params) -> FluidPhase&
 {
-    PhaseChemicalModel model = fluidChemicalModelPengRobinson(mixture());
+    params.model = CubicEOS::PengRobinson;
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), type(), params);
+    setChemicalModel(model);
+    return *this;
+}
+
+auto FluidPhase::setChemicalModelCubicEOS(CubicEOS::Params params) -> FluidPhase&
+{
+    PhaseChemicalModel model = fluidChemicalModelCubicEOS(mixture(), type(), params);
     setChemicalModel(model);
     return *this;
 }

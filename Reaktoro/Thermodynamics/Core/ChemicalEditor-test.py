@@ -21,8 +21,9 @@ from reaktoro import (
     ChemicalEditor, 
     ChemicalSystem,
     Database,
-    AqueousPhase, 
-    FluidPhase,
+    AqueousPhase,
+    GaseousPhase,
+    LiquidPhase,
     MineralPhase,
     PhaseType
 )
@@ -96,14 +97,14 @@ def test_add_phases_wrong_use():
     with pytest.raises(RuntimeError):
         editor.addAqueousPhase("H2O(l) C Ca")
         
-    with pytest.raises(RuntimeError):        
+    with pytest.raises(RuntimeError):
         editor.addAqueousPhase(["H2O C Ca"])
         
     with pytest.raises(RuntimeError):
         editor.addGaseousPhase("CO2(g) H")
         
     with pytest.raises(RuntimeError):
-        editor.addMineralPhase("Siderita C")
+        editor.addMineralPhase("Siderite C")
         
     with pytest.raises(RuntimeError):
         editor.addMineralPhase(["CaCO3"])
@@ -163,8 +164,8 @@ def test_chemical_editor_adding_and_getting_phases():
     
     editor = ChemicalEditor(database)
     
-    gaseous_phase = FluidPhase("gaseous", PhaseType.Gas)
-    liquid_phase = FluidPhase("liquid", PhaseType.Liquid)
+    gaseous_phase = GaseousPhase()
+    liquid_phase = LiquidPhase()
     mineral_phase = MineralPhase()
     
     editor.addPhase(gaseous_phase)

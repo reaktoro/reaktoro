@@ -34,3 +34,21 @@ def test_dict_on_chemical_state(create_minimum_system):
 def test_dict_on_chemical_quantity(create_minimum_system):
     quantity = ChemicalQuantity(create_minimum_system)
     check_dict(quantity)
+
+
+def test_VectorDouble():
+    vector = VectorDouble()
+    assert not vector
+    vector.append(15)
+    vector.append(10)
+    assert vector[0] == 15
+    assert vector[1] == 10
+    vector.pop()
+    assert vector
+    vector.pop()
+    assert not vector
+    vector.extend(VectorDouble(range(10)))
+    assert len(vector) == 10
+    for i in range(10):
+        assert vector[i] == i
+

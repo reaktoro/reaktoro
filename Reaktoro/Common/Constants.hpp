@@ -20,24 +20,24 @@
 namespace Reaktoro {
 
 /// The universal gas constant (in units of J/(mol*K))
-const double universalGasConstant = 8.3144621;
+constexpr auto universalGasConstant = 8.3144621;
 
 /// The Faraday constant (in units of C/mol)
-const double faradayConstant = 96485.3329;
+constexpr auto faradayConstant = 96485.3329;
 
 /// The constant factor that converts joule to calorie
-const double jouleToCalorie = 0.239005736;
+constexpr auto jouleToCalorie = 0.239005736;
 
 /// The constant factor that converts calorie to joule
-const double calorieToJoule = 4.184;
+constexpr auto calorieToJoule = 4.184;
 
 /// The conversion factor from bar to pascal
-const double barToPascal = 1.0e+05;
+constexpr auto barToPascal = 1.0e+05;
 
 /// The conversion factor from cubic centimeters to cubic meters
-const double cubicCentimeterToCubicMeter = 1.0e-06;
+constexpr auto cubicCentimeterToCubicMeter = 1.0e-06;
 
 /// The conversion factor from cubic meters to cubic centimeters
-const double cubicMeterToCubicCentimeter = 1.0e+06;
+constexpr auto cubicMeterToCubicCentimeter = 1.0e+06;
 
 } // namespace Reaktoro
