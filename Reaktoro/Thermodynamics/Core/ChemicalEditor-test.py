@@ -46,6 +46,11 @@ def test_add_phases_right_use():
     database = Database("supcrt98.xml")
     
     # Check adding phase by giving an string with all species
+    list_of_aqueous_species_expected = r"H2O\(l\)\s*H\+\s*OH-\s*HCO3-\s*CO2\(aq\)\s*CO3--\s*"
+    list_of_gaseous_species_expected = r"H2O\(g\)\s*CO2\(g\)\s*"
+    list_of_liquid_species_expected = r"H2O\(liq\)\s*CO2\(liq\)\s*"
+    list_of_mineral_species_expected = r"Graphite\s*"
+    
     editor1 = ChemicalEditor(database)
     editor1.addAqueousPhase("H2O(l) H+ OH- HCO3- CO2(aq) CO3--")
     editor1.addGaseousPhase("H2O(g) CO2(g)")
@@ -62,10 +67,10 @@ def test_add_phases_right_use():
     liquid_species_added_1 = _getting_species_names(liquid_phase_1)
     mineral_species_added_1 = _getting_species_names(mineral_phases_1[0])
         
-    assert re.match(r"H2O\(l\)\s*H\+\s*OH-\s*HCO3-\s*CO2\(aq\)\s*CO3--\s*", aqueous_species_added_1)
-    assert re.match(r"H2O\(g\)\s*CO2\(g\)\s*", gaseous_species_added_1)
-    assert re.match(r"H2O\(liq\)\s*CO2\(liq\)\s*", liquid_species_added_1)
-    assert re.match(r"Graphite\s*", mineral_species_added_1)
+    assert re.match(list_of_aqueous_species_expected, aqueous_species_added_1)
+    assert re.match(list_of_gaseous_species_expected, gaseous_species_added_1)
+    assert re.match(list_of_liquid_species_expected, liquid_species_added_1)
+    assert re.match(list_of_mineral_species_expected, mineral_species_added_1)
     
     # Check adding phase by giving a list of string with all species
     editor2 = ChemicalEditor(database)
@@ -84,10 +89,10 @@ def test_add_phases_right_use():
     liquid_species_added_2 = _getting_species_names(liquid_phase_2)
     mineral_species_added_2 = _getting_species_names(mineral_phases_2[0])
     
-    assert re.match(r"H2O\(l\)\s*H\+\s*OH-\s*HCO3-\s*CO2\(aq\)\s*CO3--\s*", aqueous_species_added_2)
-    assert re.match(r"H2O\(g\)\s*CO2\(g\)\s*", gaseous_species_added_2)
-    assert re.match(r"H2O\(liq\)\s*CO2\(liq\)\s*", liquid_species_added_2)
-    assert re.match(r"Graphite\s*", mineral_species_added_2)
+    assert re.match(list_of_aqueous_species_expected, aqueous_species_added_2)
+    assert re.match(list_of_gaseous_species_expected, gaseous_species_added_2)
+    assert re.match(list_of_liquid_species_expected, liquid_species_added_2)
+    assert re.match(list_of_mineral_species_expected, mineral_species_added_2)
     
 def test_add_phases_wrong_use():
     """Test the wrong usage of addAqueousPhase, addGaseousPhase and addMineralPhase."""
