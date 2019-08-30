@@ -35,10 +35,13 @@ void exportThermoData(py::module& m)
         .def_readwrite("hkf", &AqueousSpeciesThermoData::hkf)
         ;
 
-    py::class_<GaseousSpeciesThermoData, SpeciesThermoData>(m, "GaseousSpeciesThermoData")
+    py::class_<FluidSpeciesThermoData, SpeciesThermoData>(m, "FluidSpeciesThermoData")
         .def(py::init<>())
-        .def_readwrite("hkf", &GaseousSpeciesThermoData::hkf)
+        .def_readwrite("hkf", &FluidSpeciesThermoData::hkf)
         ;
+
+    m.attr("LiquidSpeciesThermoData") = m.attr("FluidSpeciesThermoData");
+    m.attr("GaseousSpeciesThermoData") = m.attr("FluidSpeciesThermoData");
 
     py::class_<MineralSpeciesThermoData, SpeciesThermoData>(m, "MineralSpeciesThermoData")
         .def(py::init<>())
