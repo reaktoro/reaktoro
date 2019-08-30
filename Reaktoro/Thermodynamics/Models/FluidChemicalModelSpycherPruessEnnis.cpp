@@ -25,63 +25,63 @@
 namespace Reaktoro {
 namespace {
 
-    // The universal gas constant in units of (bar*cm3)/(mol*K)
-    const double R = 83.1447;
+// The universal gas constant in units of (bar*cm3)/(mol*K)
+const double R = 83.1447;
 
-    // Calculates the parameter aCO2 as a function of temperature
-    inline auto aCO2(Temperature T) -> ThermoScalar
+// Calculates the parameter aCO2 as a function of temperature
+inline auto aCO2(Temperature T) -> ThermoScalar
+{
+    return 7.54e+07 - 4.13e+04 * T;
+}
+
+// Parameters from the Table 1 of Spycher et al. (2003)
+const double bCO2 = 27.80; // in units of cm3/mol
+const double bH2O = 18.18; // in units of cm3/mol
+const double aH2OCO2 = 7.89e+07;
+
+/// Calculates the molar volume of the CO2-rich phase (in units of cm3/mol)
+auto volumeCO2(Temperature T, ThermoScalar Pb, ThermoScalar sqrtT) -> ThermoScalar
+{
+    // Auxiliary variables
+    const auto amix = aCO2(T);
+    const auto bmix = bCO2;
+
+    // The coefficients of the cubic equation
+    const ThermoScalar a(1.0);
+    const ThermoScalar b = -R * T / Pb;
+    const ThermoScalar c = -(R*T*bmix / Pb - amix / (Pb*sqrtT) + bmix * bmix);
+    const ThermoScalar d = -amix * bmix / (Pb*sqrtT);
+
+    std::complex<double> x1, x2, x3;
+    std::tie(x1, x2, x3) = cardano(a.val, b.val, c.val, d.val);
+
+    double vol = 0;
+
+    if (x2.imag() != 0.0) // there is only one real root
     {
-        return 7.54e+07 - 4.13e+04 * T;
+        vol = x1.real();
+    }
+    else // there are three real roots
+    {
+        const auto Vliq = std::min(x1.real(), std::min(x2.real(), x3.real()));
+        const auto Vgas = std::max(x1.real(), std::max(x2.real(), x3.real()));
+
+        const auto w1 = Pb * (Vgas - Vliq);
+        const auto w2 = R * T*std::log((Vgas - bmix) / (Vliq - bmix)) +
+            amix / (sqrtT*bmix)*std::log((Vgas + bmix) / (Vliq + bmix) * Vliq / Vgas);
+
+        vol = (w2 < w1) ? Vliq : Vgas;
     }
 
-    // Parameters from the Table 1 of Spycher et al. (2003)
-    const double bCO2 = 27.80; // in units of cm3/mol
-    const double bH2O = 18.18; // in units of cm3/mol
-    const double aH2OCO2 = 7.89e+07;
+    const double den = 3 * a.val*vol*vol + 2 * b.val*vol + c.val;
 
-    /// Calculates the molar volume of the CO2-rich phase (in units of cm3/mol)
-    auto volumeCO2(Temperature T, ThermoScalar Pb, ThermoScalar sqrtT) -> ThermoScalar
-    {
-        // Auxiliary variables
-        const auto amix = aCO2(T);
-        const auto bmix = bCO2;
+    ThermoScalar V;
+    V.val = vol;
+    V.ddT = -(a.ddT*vol*vol*vol + b.ddT*vol*vol + c.ddT*vol + d.ddT) / den;
+    V.ddP = -(a.ddP*vol*vol*vol + b.ddP*vol*vol + c.ddP*vol + d.ddP) / den;
 
-        // The coefficients of the cubic equation
-        const ThermoScalar a(1.0);
-        const ThermoScalar b = -R * T / Pb;
-        const ThermoScalar c = -(R*T*bmix / Pb - amix / (Pb*sqrtT) + bmix * bmix);
-        const ThermoScalar d = -amix * bmix / (Pb*sqrtT);
-
-        std::complex<double> x1, x2, x3;
-        std::tie(x1, x2, x3) = cardano(a.val, b.val, c.val, d.val);
-
-        double vol = 0;
-
-        if (x2.imag() != 0.0) // there is only one real root
-        {
-            vol = x1.real();
-        }
-        else // there are three real roots
-        {
-            const auto Vliq = std::min(x1.real(), std::min(x2.real(), x3.real()));
-            const auto Vgas = std::max(x1.real(), std::max(x2.real(), x3.real()));
-
-            const auto w1 = Pb * (Vgas - Vliq);
-            const auto w2 = R * T*std::log((Vgas - bmix) / (Vliq - bmix)) +
-                amix / (sqrtT*bmix)*std::log((Vgas + bmix) / (Vliq + bmix) * Vliq / Vgas);
-
-            vol = (w2 < w1) ? Vliq : Vgas;
-        }
-
-        const double den = 3 * a.val*vol*vol + 2 * b.val*vol + c.val;
-
-        ThermoScalar V;
-        V.val = vol;
-        V.ddT = -(a.ddT*vol*vol*vol + b.ddT*vol*vol + c.ddT*vol + d.ddT) / den;
-        V.ddP = -(a.ddP*vol*vol*vol + b.ddP*vol*vol + c.ddP*vol + d.ddP) / den;
-
-        return V;
-    }
+    return V;
+}
 
 } // namespace
 
