@@ -46,6 +46,9 @@
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
+// ThermoFun includes
+#include <ThermoFun/ThermoFun.h>
+
 namespace Reaktoro {
 namespace {
 
@@ -115,6 +118,9 @@ private:
     /// The database instance
     Database database;
 
+    /// The Thermo instance
+    Thermo thermo;
+
     /// The definition of the aqueous phase
     AqueousPhase aqueous_phase;
 
@@ -137,10 +143,17 @@ public:
     Impl()
     : Impl(Database("supcrt98"))
     {
+        thermo = Thermo(database);
     }
 
-    explicit Impl(const Database& database)
-    : database(database)
+    Impl(const ThermoFun::Database& fundatabase)
+    : Impl(Database(fundatabase))
+    {
+        thermo = Thermo(fundatabase);
+    }
+
+    explicit Impl(const Database& database_)
+    : database(database_), thermo(database)
     {
         // The default temperatures for the interpolation of the thermodynamic properties (in units of celsius)
         temperatures = { 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300 };
@@ -360,7 +373,6 @@ public:
         const unsigned nspecies = phase.numSpecies();
 
         // Define the lambda functions for the calculation of the essential thermodynamic properties
-        Thermo thermo(database);
 
         std::vector<ThermoScalarFunction> standard_gibbs_energy_fns(nspecies);
         std::vector<ThermoScalarFunction> standard_enthalpy_fns(nspecies);
@@ -440,6 +452,10 @@ public:
 
 ChemicalEditor::ChemicalEditor()
 : pimpl(new Impl())
+{}
+
+ChemicalEditor::ChemicalEditor(const ThermoFun::Database& fundatabase)
+: pimpl(new Impl(fundatabase))
 {}
 
 ChemicalEditor::ChemicalEditor(const Database& database)
@@ -600,3 +616,4 @@ ChemicalEditor::operator ReactionSystem() const
 }
 
 } // namespace Reaktoro
+
