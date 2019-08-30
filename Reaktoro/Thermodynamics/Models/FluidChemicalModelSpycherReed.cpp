@@ -30,170 +30,170 @@
 namespace Reaktoro {
 namespace {
 
-    // The numbers in the constants and functions below are: 1-H2O, 2-CO2, 3-CH4
+// The numbers in the constants and functions below are: 1-H2O, 2-CO2, 3-CH4
 
-    // The coefficients for pure gas H2O from Table 1 of Spycher and Reed (1988)
-    // on the temperature range 0--340 degC and maximum pressure Psat
-    const double a11 = -6191.41;
-    const double b11 = 14.8528;
-    const double c11 = -914.267e-05;
-    const double d111 = -6633.26e-02;
-    const double e111 = 18277.0e-05;
-    const double f111 = -13274.0e-08;
+// The coefficients for pure gas H2O from Table 1 of Spycher and Reed (1988)
+// on the temperature range 0--340 degC and maximum pressure Psat
+const double a11 = -6191.41;
+const double b11 = 14.8528;
+const double c11 = -914.267e-05;
+const double d111 = -6633.26e-02;
+const double e111 = 18277.0e-05;
+const double f111 = -13274.0e-08;
 
-    // The coefficients for pure gas CO2 from Table 1 of Spycher and Reed (1988)
-    // on the temperature range 50--350 C and maximum pressure 500 bar
-    const double a22 = -1430.87;
-    const double b22 = 3.598;
-    const double c22 = -227.376e-05;
-    const double d222 = 347.644e-02;
-    const double e222 = -1042.47e-05;
-    const double f222 = 846.271e-08;
+// The coefficients for pure gas CO2 from Table 1 of Spycher and Reed (1988)
+// on the temperature range 50--350 C and maximum pressure 500 bar
+const double a22 = -1430.87;
+const double b22 = 3.598;
+const double c22 = -227.376e-05;
+const double d222 = 347.644e-02;
+const double e222 = -1042.47e-05;
+const double f222 = 846.271e-08;
 
-    // The coefficients for pure gas CH4 from Table 1 of Spycher and Reed (1988)
-    // on the temperature range 16--350 C and maximum pressure 500 bar
-    const double a33 = -537.779;
-    const double b33 = 1.54946;
-    const double c33 = -92.7827e-05;
-    const double d333 = 120.861e-02;
-    const double e333 = -370.814e-05;
-    const double f333 = 333.804e-08;
+// The coefficients for pure gas CH4 from Table 1 of Spycher and Reed (1988)
+// on the temperature range 16--350 C and maximum pressure 500 bar
+const double a33 = -537.779;
+const double b33 = 1.54946;
+const double c33 = -92.7827e-05;
+const double d333 = 120.861e-02;
+const double e333 = -370.814e-05;
+const double f333 = 333.804e-08;
 
-    // The coefficients for the binary mixture H2O-CO2 from Table 2 of Spycher and
-    // Reed (1988) on the temperature range 50--350 C and maximum pressure 94 bar
-    const double a12 = -1954.70;
-    const double b12 = 7.74805;
-    const double c12 = -1.02901e-02;
-    const double d112 = 104.453;
-    const double e112 = -38.4283e-02;
-    const double f112 = 36.5858e-05;
-    const double d122 = -8.28426;
-    const double e122 = 1.19097e-02;
-    const double f122 = 0.808886e-05;
+// The coefficients for the binary mixture H2O-CO2 from Table 2 of Spycher and
+// Reed (1988) on the temperature range 50--350 C and maximum pressure 94 bar
+const double a12 = -1954.70;
+const double b12 = 7.74805;
+const double c12 = -1.02901e-02;
+const double d112 = 104.453;
+const double e112 = -38.4283e-02;
+const double f112 = 36.5858e-05;
+const double d122 = -8.28426;
+const double e122 = 1.19097e-02;
+const double f122 = 0.808886e-05;
 
-    // The coefficients for the binary mixture H2O-CH4 from Table 2 of Spycher and
-    // Reed (1988) on the temperature range 40--240 C and maximum pressure 500 bar
-    const double a13 = -1103.20;
-    const double b13 = 4.52871;
-    const double c13 = -0.507784e-02;
-    const double d113 = 0.0;
-    const double e113 = 0.0;
-    const double f113 = 0.0;
-    const double d133 = 0.0;
-    const double e133 = 0.0;
-    const double f133 = 0.0;
+// The coefficients for the binary mixture H2O-CH4 from Table 2 of Spycher and
+// Reed (1988) on the temperature range 40--240 C and maximum pressure 500 bar
+const double a13 = -1103.20;
+const double b13 = 4.52871;
+const double c13 = -0.507784e-02;
+const double d113 = 0.0;
+const double e113 = 0.0;
+const double f113 = 0.0;
+const double d133 = 0.0;
+const double e133 = 0.0;
+const double f133 = 0.0;
 
-    // The coefficients for the binary mixture CO2-CH4 from Table 2 of Spycher and
-    // Reed (1988) on the temperature range 25--100 C and maximum pressure 500 bar
-    const double a23 = -800.592;
-    const double b23 = 2.28990;
-    const double c23 = -0.153917e-02;
-    const double d223 = 2.99160;
-    const double e223 = -1.04893e-02;
-    const double f223 = 1.02627e-05;
-    const double d233 = 1.58384;
-    const double e233 = -0.492077e-02;
-    const double f233 = 0.430104e-05;
+// The coefficients for the binary mixture CO2-CH4 from Table 2 of Spycher and
+// Reed (1988) on the temperature range 25--100 C and maximum pressure 500 bar
+const double a23 = -800.592;
+const double b23 = 2.28990;
+const double c23 = -0.153917e-02;
+const double d223 = 2.99160;
+const double e223 = -1.04893e-02;
+const double f223 = 1.02627e-05;
+const double d233 = 1.58384;
+const double e233 = -0.492077e-02;
+const double f233 = 0.430104e-05;
 
-    const double d123 = 0.0;
-    const double e123 = 0.0;
-    const double f123 = 0.0;
+const double d123 = 0.0;
+const double e123 = 0.0;
+const double f123 = 0.0;
 
-    const double a[][3] =
-    {
-        {a11, a12, a13},
-        {a12, a22, a23},
-        {a13, a23, a33}
-    };
+const double a[][3] =
+{
+    {a11, a12, a13},
+    {a12, a22, a23},
+    {a13, a23, a33}
+};
 
-    const double b[][3] =
-    {
-        {b11, b12, b13},
-        {b12, b22, b23},
-        {b13, b23, b33}
-    };
+const double b[][3] =
+{
+    {b11, b12, b13},
+    {b12, b22, b23},
+    {b13, b23, b33}
+};
 
-    const double c[][3] =
-    {
-        {c11, c12, c13},
-        {c12, c22, c23},
-        {c13, c23, c33}
-    };
+const double c[][3] =
+{
+    {c11, c12, c13},
+    {c12, c22, c23},
+    {c13, c23, c33}
+};
 
-    const double d[][3][3] =
-    {
-        {{d111, d112, d113},
-        {d112, d122, d123},
-        {d113, d123, d133}},
+const double d[][3][3] =
+{
+    {{d111, d112, d113},
+    {d112, d122, d123},
+    {d113, d123, d133}},
 
-        {{d112, d122, d123},
-        {d122, d222, d223},
-        {d123, d223, d233}},
+    {{d112, d122, d123},
+    {d122, d222, d223},
+    {d123, d223, d233}},
 
-        {{d113, d123, d133},
-        {d123, d223, d233},
-        {d133, d233, d333}},
-    };
+    {{d113, d123, d133},
+    {d123, d223, d233},
+    {d133, d233, d333}},
+};
 
-    const double e[][3][3] =
-    {
-        {{e111, e112, e113},
-        {e112, e122, e123},
-        {e113, e123, e133}},
+const double e[][3][3] =
+{
+    {{e111, e112, e113},
+    {e112, e122, e123},
+    {e113, e123, e133}},
 
-        {{e112, e122, e123},
-        {e122, e222, e223},
-        {e123, e223, e233}},
+    {{e112, e122, e123},
+    {e122, e222, e223},
+    {e123, e223, e233}},
 
-        {{e113, e123, e133},
-        {e123, e223, e233},
-        {e133, e233, e333}},
-    };
+    {{e113, e123, e133},
+    {e123, e223, e233},
+    {e133, e233, e333}},
+};
 
-    const double f[][3][3] =
-    {
-        {{f111, f112, f113},
-        {f112, f122, f123},
-        {f113, f123, f133}},
+const double f[][3][3] =
+{
+    {{f111, f112, f113},
+    {f112, f122, f123},
+    {f113, f123, f133}},
 
-        {{f112, f122, f123},
-        {f122, f222, f223},
-        {f123, f223, f233}},
+    {{f112, f122, f123},
+    {f122, f222, f223},
+    {f123, f223, f233}},
 
-        {{f113, f123, f133},
-        {f123, f223, f233},
-        {f133, f233, f333}},
-    };
+    {{f113, f123, f133},
+    {f123, f223, f233},
+    {f133, f233, f333}},
+};
 
-    inline auto computeB(const ThermoScalar& T, int i, int j) -> ThermoScalar
-    {
-        return a[i][j] / (T*T) + b[i][j] / T + c[i][j];
-    }
+inline auto computeB(const ThermoScalar& T, int i, int j) -> ThermoScalar
+{
+    return a[i][j] / (T*T) + b[i][j] / T + c[i][j];
+}
 
-    inline auto computeBT(const ThermoScalar& T, int i, int j) -> ThermoScalar
-    {
-        return -(2 * a[i][j] / T + b[i][j]) / (T*T);
-    }
+inline auto computeBT(const ThermoScalar& T, int i, int j) -> ThermoScalar
+{
+    return -(2 * a[i][j] / T + b[i][j]) / (T*T);
+}
 
-    inline auto computeBTT(const ThermoScalar& T, int i, int j) -> ThermoScalar
-    {
-        return (6 * a[i][j] / T + 2 * b[i][j]) / (T*T*T);
-    }
+inline auto computeBTT(const ThermoScalar& T, int i, int j) -> ThermoScalar
+{
+    return (6 * a[i][j] / T + 2 * b[i][j]) / (T*T*T);
+}
 
-    inline auto computeC(const ThermoScalar& T, int i, int j, int k) -> ThermoScalar
-    {
-        return d[i][j][k] / (T*T) + e[i][j][k] / T + f[i][j][k];
-    }
+inline auto computeC(const ThermoScalar& T, int i, int j, int k) -> ThermoScalar
+{
+    return d[i][j][k] / (T*T) + e[i][j][k] / T + f[i][j][k];
+}
 
-    inline auto computeCT(const ThermoScalar& T, int i, int j, int k) -> ThermoScalar
-    {
-        return -(2 * d[i][j][k] / T + e[i][j][k]) / (T*T);
-    }
+inline auto computeCT(const ThermoScalar& T, int i, int j, int k) -> ThermoScalar
+{
+    return -(2 * d[i][j][k] / T + e[i][j][k]) / (T*T);
+}
 
-    inline auto computeCTT(const ThermoScalar& T, int i, int j, int k) -> ThermoScalar
-    {
-        return (6 * d[i][j][k] / T + 2 * e[i][j][k]) / (T*T*T);
-    }
+inline auto computeCTT(const ThermoScalar& T, int i, int j, int k) -> ThermoScalar
+{
+    return (6 * d[i][j][k] / T + 2 * e[i][j][k]) / (T*T*T);
+}
 
 } // namespace
 
