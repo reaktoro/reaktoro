@@ -22,40 +22,25 @@ int main()
 {
     Database database("supcrt07.xml");
     
-    DebyeHuckelParams dhModel{};
-    dhModel.setKielland1937();
-
     ChemicalEditor editor(database);
     
-    editor.addAqueousPhase({ "H2O(l)", "OH-", "H+", "HCO3-", "CO3--", "Fe++", "FeOH+", "FeOH++", "Fe+++", "H2(aq)", "O2(aq)", "HS-", "S5--", "S4--", "H2S(aq)", "S3--", "S2--", "SO4--", "HSO4-" }).setChemicalModelPitzerHMW();
+    editor.addAqueousPhase({ "H2O(l)", "OH-", "H+", "HCO3-", "CO3--", "Fe++",
+        "FeOH+", "FeOH++", "Fe+++", "H2(aq)", "O2(aq)", "HS-", "S5--", "S4--", 
+        "H2S(aq)", "S3--", "S2--", "SO4--", "HSO4-" }).setChemicalModelPitzerHMW();
     editor.addMineralPhase("Pyrrhotite");
     editor.addMineralPhase("Siderite");
-
 
     ChemicalSystem system(editor);
 
     EquilibriumProblem problem(system);
     problem.setTemperature(25, "celsius");
     problem.setPressure(1, "atm");
-    problem.add("H2O", 58.0, "kg");
-    problem.add("HS-", 0.05, "mol");
-    //problem.add("Pyrite", 0.0, "mol");
+    problem.add("H2O", 1.00, "mol");
+    problem.add("H2S", 0.05, "mol");
     problem.add("Pyrrhotite", 0.0, "mol");
     problem.add("Siderite", 0.5, "mol");
-    //problem.pH(5.728);
-    //problem.pE(-2.518);
     
-
     ChemicalState state = equilibrate(problem);
 
-    /*
-    problem.add("Siderite", 0.1, "mol");
-
-    equilibrate(state, problem);
-    */
-
-    state.output("siderite_out.txt");
-
     std::cout << state << std::endl;
-    std::cout << "RUN" << std::endl;
 }
