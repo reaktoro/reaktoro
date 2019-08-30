@@ -409,8 +409,8 @@ public:
         return converted;
     }
 
-    template<typename PhaseType>
-    auto convertPhase(const PhaseType& phase) const -> Phase
+    template<typename Phase_>
+    auto convertPhase(const Phase_& phase) const -> Phase
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
