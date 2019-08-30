@@ -468,7 +468,8 @@ public:
     auto createChemicalSystem() const -> ChemicalSystem
     {
         std::vector<Phase> phases;
-        phases.reserve(3 + mineral_phases.size());
+        const auto number_of_fluid_phases = 3;
+        phases.reserve(number_of_fluid_phases + mineral_phases.size());
 
         if(aqueous_phase.numSpecies())
             phases.push_back(convertPhase(aqueous_phase));

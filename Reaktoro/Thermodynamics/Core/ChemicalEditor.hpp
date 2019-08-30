@@ -290,7 +290,7 @@ public:
     /// ~~~
     /// @param compounds A StringList containing a list of compound names.
     /// @return A reference to the created GaseousPhase object.
-    /// @see addAqueousPhaseWithElements, addMineralPhaseWithElements
+    /// @see addAqueousPhaseWithElements, addLiquidPhaseWithElementsOf, addMineralPhaseWithElements
     auto addGaseousPhaseWithElementsOf(const StringList& compounds) -> GaseousPhase&;
 
     /// Add a liquid phase in the chemical editor.

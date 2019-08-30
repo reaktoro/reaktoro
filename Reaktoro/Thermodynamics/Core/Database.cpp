@@ -627,7 +627,8 @@ struct Database::Impl
                 GaseousSpecies gaseous_species = parseFluidSpecies(node);
                 gaseous_species.setName(name);
                 LiquidSpecies liquid_species = parseFluidSpecies(node);
-                liquid_species.setName(name.substr(0, name.size() - 3) + "(liq)");
+                const auto gas_species_suffix_size = 3;
+                liquid_species.setName(name.substr(0, name.size() - gas_species_suffix_size) + "(liq)");
                 if (valid(gaseous_species))
                 {
                     gaseous_species_map[gaseous_species.name()] = gaseous_species;

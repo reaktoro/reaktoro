@@ -51,13 +51,13 @@ class MineralSpecies;
 /// // Create a Database instance by parsing a local database file
 /// Database database("geodb.xml")
 ///
-/// // Retrieve information of species H2O(l) -> Aqueous and CO2 -> fluid
+/// // Retrieve information of species H2O(l), CO2(g) and CO2(liq)
 /// AqueousSpecies aqueousSpecies = database.aqueousSpecies("H2O(l)");
 /// GaseousSpecies gaseousSpecies = database.gaseousSpecies("CO2(g)");
 /// LiquidSpecies liquidSpecies = database.liquidSpecies("CO2(liq)");
 
 ///
-/// // Output the data of the species H2O(l), CO2(g), CO2(liq) and CO2
+/// // Output the data of the species H2O(l), CO2(g), CO2(liq)
 /// std::cout << aqueousSpecies << std::endl;
 /// std::cout << gaseousSpecies << std::endl;
 /// std::cout << liquidSpecies << std::endl;
