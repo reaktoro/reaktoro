@@ -50,7 +50,7 @@ public:
     {
         Model model = PengRobinson;
 
-        /// If both Gaseous and Liquid phases are in the system, it is recommended to configure a 
+        /// If both Gaseous and Liquid phases are in the system, it is recommended to configure a
         /// robust phase identification method such as GibbsEnergyAndEquationOfStateMethod for BOTH
         /// phases.
         PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
@@ -137,12 +137,6 @@ public:
     /// Set the type of the cubic equation of state (default: PengRobinson).
     /// @see Model
     auto setModel(Model model) -> void;
-
-    /// Set the phase identification method that is used (default: None).
-    /// It is recommended to use `GibbsEnergyAndEquationOfStateMethod` when using both Liquid and
-    /// Gaseous phase in the same system.
-    /// @see PhaseIdentification
-    auto setPhaseIdentificationMethod(PhaseIdentificationMethod phase_identification_method) -> void;
 
     /// Set the equation of state to compute properties for a liquid phase.
     auto setPhaseAsLiquid() -> void;

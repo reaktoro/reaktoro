@@ -25,12 +25,13 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 
 namespace Reaktoro {
 namespace {
 
-auto binarySearchHelper(double p, const std::vector<double>& coordinates, size_t begin, size_t end) -> size_t
+auto binarySearchHelper(double p, const std::vector<double>& coordinates, Index begin, Index end) -> Index
 {
     if(end - begin == 1)
         return begin;
@@ -43,7 +44,7 @@ auto binarySearchHelper(double p, const std::vector<double>& coordinates, size_t
         return binarySearchHelper(p, coordinates, mid, end);
 }
 
-auto binarySearch(double p, const std::vector<double>& coordinates) -> size_t
+auto binarySearch(double p, const std::vector<double>& coordinates) -> Index
 {
     return binarySearchHelper(p, coordinates, 0, coordinates.size());
 }
@@ -133,7 +134,7 @@ auto BilinearInterpolator::operator()(double x, double y) const -> double
     const auto index_y = binarySearch(y, m_ycoordinates);
     const auto j = index_y == size_y - 1 ? index_y - 1 : index_y;
 
-    const auto k = [=](size_t i, size_t j) { return i + j*size_x; };
+    const auto k = [=](Index i, Index j) { return i + j*size_x; };
 
     const double x1 = m_xcoordinates[i];
     const double x2 = m_xcoordinates[i + 1];

@@ -249,7 +249,7 @@ auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<A
     return hkf;
 }
 
-auto parseFluidSpeciesThermoParamsHKF(const xml_node& node)->std::optional<FluidSpeciesThermoParamsHKF>
+auto parseFluidSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<FluidSpeciesThermoParamsHKF>
 {
     FluidSpeciesThermoParamsHKF hkf;
     hkf.Gf   = as_double(node, "Gf");
@@ -615,7 +615,14 @@ struct Database::Impl
         {
             std::string type = node.child("Type").text().get();
             std::string name = node.child("Name").text().get();
-            if (type == "Gaseous")
+
+            if(type == "Aqueous")
+            {
+                AqueousSpecies species = parseAqueousSpecies(node);
+                if(valid(species))
+                    aqueous_species_map[species.name()] = species;
+            }
+            else if(type == "Gaseous")
             {
                 GaseousSpecies gaseous_species = parseFluidSpecies(node);
                 gaseous_species.setName(name);
@@ -626,12 +633,6 @@ struct Database::Impl
                     gaseous_species_map[gaseous_species.name()] = gaseous_species;
                     liquid_species_map[liquid_species.name()] = liquid_species;
                 }
-            }
-            else if (type == "Aqueous")
-            {
-                AqueousSpecies species = parseAqueousSpecies(node);
-                if(valid(species))
-                    aqueous_species_map[species.name()] = species;
             }
             else if(type == "Mineral")
             {
@@ -706,7 +707,7 @@ struct Database::Impl
 
         return species;
     }
-    
+
     auto parseFluidSpecies(const xml_node& node) -> FluidSpecies
     {
         // The gaseous species instance

@@ -20,7 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
-#include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 
 namespace Reaktoro {
 

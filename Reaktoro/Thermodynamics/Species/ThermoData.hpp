@@ -220,14 +220,14 @@ struct SpeciesThermoData
 
 
 /// A type for storing the thermodynamic data of an aqueous species
-struct AqueousSpeciesThermoData : public SpeciesThermoData
+struct AqueousSpeciesThermoData : SpeciesThermoData
 {
     /// The thermodynamic parameters of the HKF model for an aqueous species
     std::optional<AqueousSpeciesThermoParamsHKF> hkf;
 };
 
 /// A type for storing the thermodynamic data of fluid (gaseous or liquid) species
-struct FluidSpeciesThermoData : public SpeciesThermoData
+struct FluidSpeciesThermoData : SpeciesThermoData
 {
     /// The thermodynamic parameters of the HKF model for a fluid (gaseous or liquid) species
     std::optional<FluidSpeciesThermoParamsHKF> hkf;
@@ -237,7 +237,7 @@ using GaseousSpeciesThermoData = FluidSpeciesThermoData;
 using LiquidSpeciesThermoData = FluidSpeciesThermoData;
 
 /// A type for storing the thermodynamic data of a mineral species
-struct MineralSpeciesThermoData : public SpeciesThermoData
+struct MineralSpeciesThermoData : SpeciesThermoData
 {
     /// The thermodynamic parameters of the HKF model for a mineral species
     std::optional<MineralSpeciesThermoParamsHKF> hkf;

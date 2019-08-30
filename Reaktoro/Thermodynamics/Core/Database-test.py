@@ -19,7 +19,7 @@ from reaktoro import (
     Database,
     Element,
 )
-    
+
 from pathlib import Path
 import locale
 import os
@@ -141,9 +141,11 @@ def test_invariant_database():
     elements = {element.name(): element for element in database.elements()}
     assert pytest.approx(0.00100794) == elements['H'].molarMass()
 
+
 def test_database_instantiation_with_wrong_filename():
     with pytest.raises(RuntimeError):
         database = Database("wrong_name.xml")
+
 
 def test_adding_and_getting_database_elements():
     database = Database(str(get_test_data_dir() / "supcrt98_simplified.xml"))
@@ -153,90 +155,90 @@ def test_adding_and_getting_database_elements():
     new_element.setMolarMass(4.002602e-3)
 
     database.addElement(new_element)
-    
+
     elements = database.elements()
-    
+
     assert elements[0].name() == "Fe"
-    assert elements[0].molarMass() == pytest.approx(55.845e-3) 
+    assert elements[0].molarMass() == pytest.approx(55.845e-3)
     assert elements[1].name() == "H"
-    assert elements[1].molarMass() == pytest.approx(1.00794e-3) 
+    assert elements[1].molarMass() == pytest.approx(1.00794e-3)
     assert elements[2].name() == "He"
-    assert elements[2].molarMass() == pytest.approx(4.002602e-3) 
+    assert elements[2].molarMass() == pytest.approx(4.002602e-3)
     assert elements[3].name() == "S"
-    assert elements[3].molarMass() == pytest.approx(32.065e-3) 
+    assert elements[3].molarMass() == pytest.approx(32.065e-3)
 
 
 def test_database_parse():
     """
     Test the fact that species should be added as
-    liquid species even if the Type is Gaseous 
+    liquid species even if the Type is Gaseous
     expected result:
     - liquid_species[0] = "H2S(liq)" -- added as liquid
     - gaseous_species[1] = "H2S(g)" -- added as gas
     """
     database = Database(str(get_test_data_dir() / "supcrt98_simplified.xml"))
-    
+
     gaseous_species = database.gaseousSpecies()
     liquid_species = database.liquidSpecies()
-    
+
     assert gaseous_species[0].name() == "H2S(g)"
     assert liquid_species[0].name() == "H2S(liq)"
-    
-    
-    
+
+
+
 def test_database_species_adding_and_getting():
     database = Database(str(get_test_data_dir() / "supcrt98_simplified.xml"))
     no_species_database = Database(str(get_test_data_dir() / "supcrt98_no_species.xml"))
-    
+
     aqueous_species = database.aqueousSpecies()
     gaseous_species = database.gaseousSpecies()
     liquid_species = database.liquidSpecies()
     mineral_species = database.mineralSpecies()
-    
+
     for aqueous_specie, gaseous_specie, mineral_specie, liquid_specie in  zip(aqueous_species, gaseous_species, mineral_species, liquid_species):
         no_species_database.addAqueousSpecies(aqueous_specie)
         no_species_database.addGaseousSpecies(gaseous_specie)
         no_species_database.addLiquidSpecies(liquid_specie)
         no_species_database.addMineralSpecies(mineral_specie)
-        
-        
+
+
     for aqueous_specie in aqueous_species:
         assert no_species_database.aqueousSpecies(aqueous_specie.name()).name() == aqueous_specie.name()
-    
+
     for gaseous_specie in gaseous_species:
-        assert no_species_database.gaseousSpecies(gaseous_specie.name()).name() == gaseous_specie.name()    
+        assert no_species_database.gaseousSpecies(gaseous_specie.name()).name() == gaseous_specie.name()
 
     for liquid_specie in liquid_species:
         assert no_species_database.liquidSpecies(liquid_specie.name()).name() == liquid_specie.name()
-    
+
     for mineral_specie in mineral_species:
         assert no_species_database.mineralSpecies(mineral_specie.name()).name() == mineral_specie.name()
 
 
 def test_database_contains():
     database = Database(str(get_test_data_dir() / "supcrt98_simplified.xml"))
-    
+
     aqueous_species = database.aqueousSpecies()
     gaseous_species = database.gaseousSpecies()
     liquid_species = database.liquidSpecies()
     mineral_species = database.mineralSpecies()
-    
+
     assert database.containsAqueousSpecies(aqueous_species[0].name())
     assert database.containsGaseousSpecies(gaseous_species[0].name())
     assert database.containsLiquidSpecies(liquid_species[0].name())
     assert database.containsMineralSpecies(mineral_species[0].name())
-    
-        
+
+
 def test_database_looking_for_species_with_element():
     database = Database(str(get_test_data_dir() / "supcrt98_simplified.xml"))
-    
+
     aqueous_species_with_H_or_Fe = database.aqueousSpeciesWithElements(["H", "S"])
     gaseous_species_with_H_or_Fe = database.gaseousSpeciesWithElements(["H", "S"])
     liquid_species_with_H_or_Fe = database.liquidSpeciesWithElements(["H", "S"])
     mineral_species_with_H_or_Fe = database.mineralSpeciesWithElements(["Fe", "S"])
-    
+
     assert aqueous_species_with_H_or_Fe[0].name() == "H2S(aq)"
     assert gaseous_species_with_H_or_Fe[0].name() == "H2S(g)"
     assert liquid_species_with_H_or_Fe[0].name() == "H2S(liq)"
     assert mineral_species_with_H_or_Fe[0].name() == "Pyrrhotite"
-    
+

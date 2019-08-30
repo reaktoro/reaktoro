@@ -59,15 +59,10 @@ void exportFluidPhase(py::module& m)
         .def("setChemicalModelVanDerWaals", &FluidPhase::setChemicalModelVanDerWaals, py::return_value_policy::reference_internal)
         .def("setChemicalModelRedlichKwong", &FluidPhase::setChemicalModelRedlichKwong, py::return_value_policy::reference_internal)
         .def("setChemicalModelSoaveRedlichKwong", &FluidPhase::setChemicalModelSoaveRedlichKwong, py::return_value_policy::reference_internal)
-        .def(
-            "setChemicalModelPengRobinson",
-            &FluidPhase::setChemicalModelPengRobinson,
+        .def("setChemicalModelPengRobinson", &FluidPhase::setChemicalModelPengRobinson,
             py::arg("params") = CubicEOS::Params{},
-            py::return_value_policy::reference_internal
-        )
-        .def(
-            "setChemicalModelCubicEOS",
-            &FluidPhase::setChemicalModelCubicEOS,
+            py::return_value_policy::reference_internal)
+        .def("setChemicalModelCubicEOS", &FluidPhase::setChemicalModelCubicEOS,
             py::arg("params") = CubicEOS::Params{},
             py::return_value_policy::reference_internal
         )
@@ -75,7 +70,7 @@ void exportFluidPhase(py::module& m)
         .def("setChemicalModelSpycherReed", &FluidPhase::setChemicalModelSpycherReed, py::return_value_policy::reference_internal)
         .def("mixture", (FluidMixture& (FluidPhase::*)(void)) &FluidPhase::mixture, py::return_value_policy::reference_internal)
         ;
-    
+
     py::class_<GaseousPhase, FluidPhase>(m, "GaseousPhase")
         .def(py::init<>())
         ;

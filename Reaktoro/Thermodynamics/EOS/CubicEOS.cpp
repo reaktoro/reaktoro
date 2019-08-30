@@ -25,9 +25,9 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Math/Roots.hpp>
 #include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
-#include <Reaktoro/Core/Phase.hpp>
 
 namespace Reaktoro {
 namespace internal {
@@ -335,7 +335,7 @@ struct CubicEOS::Impl
         {
             if (cubicEOS_roots.size() != 3) {
                 Exception exception;
-                exception.error << "Could not calculate the Cubic Equation of State.";
+                exception.error << "Could not calculate the cubic equation of state.";
                 exception.reason << "Logic error: it was expected Z roots of size 3, but got: " << Zs.size();
                 RaiseError(exception);
             }
@@ -506,11 +506,6 @@ auto CubicEOS::numSpecies() const -> unsigned
 auto CubicEOS::setModel(Model model) -> void
 {
     pimpl->model = model;
-}
-
-auto CubicEOS::setPhaseIdentificationMethod(PhaseIdentificationMethod phase_identification_method) -> void
-{
-    pimpl->phase_identification_method = phase_identification_method;
 }
 
 auto CubicEOS::setPhaseAsLiquid() -> void

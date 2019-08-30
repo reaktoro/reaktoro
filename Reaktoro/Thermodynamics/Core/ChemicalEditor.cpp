@@ -19,7 +19,6 @@
 
 // C++ includes
 #include <set>
-#include <type_traits>
 
 // Reaktoro includes
 #include <Reaktoro/Common/ElementUtils.hpp>
@@ -189,12 +188,12 @@ public:
     	if(aqueous_species.size())
             addPhase(AqueousPhase(AqueousMixture(aqueous_species)));
 
-        if (gaseous_species.size())    
+        if (gaseous_species.size())
             addPhase(GaseousPhase(GaseousMixture(gaseous_species)));
-        
+
         if (liquid_species.size())
             addPhase(LiquidPhase(LiquidMixture(liquid_species)));
-    
+
         for(auto mineral : mineral_species)
             addPhase(MineralPhase(MineralMixture(mineral)));
     }
@@ -411,7 +410,7 @@ public:
     }
 
     template<typename PhaseType>
-    auto convertPhase(const PhaseType& phase) const -> PhaseType
+    auto convertPhase(const PhaseType& phase) const -> Phase
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
@@ -460,9 +459,9 @@ public:
         };
 
         // Create the Phase instance
-        PhaseType converted = phase;
+        Phase converted = phase;
         converted.setThermoModel(thermo_model);
-        
+
         return converted;
     }
 
