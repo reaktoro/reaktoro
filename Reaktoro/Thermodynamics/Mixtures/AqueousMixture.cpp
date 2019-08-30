@@ -24,6 +24,7 @@
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>

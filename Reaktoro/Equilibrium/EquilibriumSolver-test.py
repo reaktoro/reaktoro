@@ -38,7 +38,7 @@ def _create_chemical_state(chemical_system):
     return state
 
 
-def test_equilibrium_problem_with_equilibrate(partition_with_inert_gaseous_phase, chemical_system):
+def test_equilibrium_solver_with_equilibrate(partition_with_inert_gaseous_phase, chemical_system):
     problem = _create_equilibrium_problem(partition_with_inert_gaseous_phase)
     state = _create_chemical_state(chemical_system)
 
@@ -50,7 +50,7 @@ def test_equilibrium_problem_with_equilibrate(partition_with_inert_gaseous_phase
     assert state.speciesAmount('H2O(g)') == 0.001
 
 
-def test_equilibrium_problem_with_equilibrium_solver(partition_with_inert_gaseous_phase, chemical_system):
+def test_equilibrium_solver_with_equilibrium_problem(partition_with_inert_gaseous_phase, chemical_system):
     problem = _create_equilibrium_problem(partition_with_inert_gaseous_phase)
     state = _create_chemical_state(chemical_system)
 
@@ -62,3 +62,37 @@ def test_equilibrium_problem_with_equilibrium_solver(partition_with_inert_gaseou
     # Assert the amounts of CO2(g) and H2O(g) are the same as initially set
     assert state.speciesAmount('CO2(g)') == 1.0
     assert state.speciesAmount('H2O(g)') == 0.001
+
+
+def test_equilibrium_solver_with_equilibrium_problem_adding_argon(partition_with_inert_gaseous_phase_adding_argon, chemical_system_adding_argon):
+    problem = _create_equilibrium_problem(partition_with_inert_gaseous_phase_adding_argon)
+    state = _create_chemical_state(chemical_system_adding_argon)
+
+    # Compute equilibrium state; the amounts of CO2(g) and H2O(g) should remain the same
+    solver = EquilibriumSolver(chemical_system_adding_argon)
+    solver.setPartition(problem.partition())
+    solver.solve(state, problem)
+
+    # Assert the amounts of CO2(g) and H2O(g) are the same as initially set
+    assert state.speciesAmount('CO2(g)') == 1.0
+    assert state.speciesAmount('H2O(g)') == 0.001
+
+
+def test_equilibrium_solver_with_chemical_state(partition_with_inert_gaseous_phase, chemical_system):
+    state = _create_chemical_state(chemical_system)
+
+    # Compute equilibrium state; the amounts of CO2(g) and H2O(g) should remain the same
+    solver = EquilibriumSolver(chemical_system)
+    solver.setPartition(partition_with_inert_gaseous_phase)
+
+    # Set the amounts of H2O(l) and CO2(aq)
+    state.setSpeciesMass('H2O(l)', 55, 'kg')
+    state.setSpeciesAmount('CO2(aq)', 1, 'mol')
+
+    # Check inert elements are taken care of when solving with state input
+    solver.solve(state)
+
+    # Assert the amounts of CO2(g) and H2O(g) are the same as initially set
+    assert state.speciesAmount('CO2(g)') == 1.0
+    assert state.speciesAmount('H2O(g)') == 0.001
+

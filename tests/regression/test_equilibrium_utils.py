@@ -8,43 +8,15 @@ from reaktoro import ChemicalState, EquilibriumOptions, Partition, equilibrate
 @pytest.mark.parametrize(
     "setup",
     [
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar")),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar")),
         (pytest.lazy_fixture("equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity")),
         (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume")),
     ],
     ids=[
         "Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar",
@@ -74,49 +46,21 @@ def test_equilibrate_overload_1(setup, state_regression):
 
     equilibriumState = equilibrate(problem)
 
-    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
     "setup",
     [
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar")),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar")),
         (pytest.lazy_fixture("equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity")),
         (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume")),
     ],
     ids=[
         "Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar",
@@ -147,49 +91,21 @@ def test_equilibrate_overload_2(setup, state_regression):
 
     equilibriumState = equilibrate(problem, options)
 
-    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
     "setup",
     [
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar")),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar")),
         (pytest.lazy_fixture("equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity")),
         (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume")),
     ],
     ids=[
         "Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar",
@@ -225,49 +141,21 @@ def test_equilibrate_overload_3(setup, state_regression):
     # compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(equilibriumState)
 
-    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
     "setup",
     [
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar")),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar")),
         (pytest.lazy_fixture("equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity")),
         (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume")),
     ],
     ids=[
         "Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar",
@@ -304,49 +192,21 @@ def test_equilibrate_overload_4(setup, state_regression):
     # compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(state, partition)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
     "setup",
     [
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar")),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar")),
         (pytest.lazy_fixture("equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity")),
         (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume")),
     ],
     ids=[
         "Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar",
@@ -383,49 +243,21 @@ def test_equilibrate_overload_5(setup, state_regression):
     # Compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(state, options)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
     "setup",
     [
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar")),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar")),
         (pytest.lazy_fixture("equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity")),
         (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume")),
     ],
     ids=[
         "Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar",
@@ -463,49 +295,21 @@ def test_equilibrate_overload_6(setup, state_regression):
     # compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(state, partition, options)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
     "setup",
     [
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar")),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar")),
         (pytest.lazy_fixture("equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity")),
         (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume")),
     ],
     ids=[
         "Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar",
@@ -536,49 +340,21 @@ def test_equilibrate_overload_7(setup, state_regression):
 
     equilibriumResult = equilibrate(state, problem)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))
 
 
 @pytest.mark.parametrize(
     "setup",
     [
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar")),
+        (pytest.lazy_fixture("equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar")),
         (pytest.lazy_fixture("equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity")),
         (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph")),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity"
-            )
-        ),
-        (
-            pytest.lazy_fixture(
-                "equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume"
-            )
-        ),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity")),
+        (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume")),
     ],
     ids=[
         "Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar",
@@ -611,4 +387,4 @@ def test_equilibrate_overload_8(setup, state_regression):
 
     equilibriumResult = equilibrate(state, problem, options)
 
-    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-14))

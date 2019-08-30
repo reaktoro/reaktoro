@@ -4,15 +4,23 @@ language: cpp
 # compilation jobs in parallel.
 dist: trusty
 sudo: required
-
 cache: ccache
 
-os:
-  - linux
+matrix:
+  include:
+    - os: linux
+      env: PY_VER=3.6
 
-env:
-  - PY_VER=3.6
-  - PY_VER=3.7
+    - os: linux
+      env: PY_VER=3.7
+
+    - os: osx
+      osx_image: xcode11
+      env: PY_VER=3.6
+
+    - os: osx
+      osx_image: xcode11
+      env: PY_VER=3.7
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then OS=Linux-x86_64; else OS=MacOSX-x86_64; fi

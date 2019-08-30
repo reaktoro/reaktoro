@@ -9,5 +9,5 @@ setup(name='reaktoro',
       license='LGPLv2.1',
       package_dir={'reaktoro': ''},
       packages=['reaktoro'],
-      package_data={'reaktoro': ['@REAKTORO_PYTHON_MODULE_FILENAME@']}
+      package_data={'reaktoro': ['@REAKTORO_PYTHON_MODULE_FILENAME@', '*.pdb']}
       )
