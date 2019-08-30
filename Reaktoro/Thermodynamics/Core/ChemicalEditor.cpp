@@ -147,13 +147,18 @@ public:
     }
 
     Impl(const ThermoFun::Database& fundatabase)
-    : Impl(Database(fundatabase))
+    : thermo(fundatabase), database(fundatabase)
     {
-        thermo = Thermo(fundatabase);
+        setDefaultInterpolation();
     }
 
     explicit Impl(const Database& database_)
     : database(database_), thermo(database)
+    {
+        setDefaultInterpolation();
+    }
+
+    auto setDefaultInterpolation() -> void
     {
         // The default temperatures for the interpolation of the thermodynamic properties (in units of celsius)
         temperatures = { 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300 };
