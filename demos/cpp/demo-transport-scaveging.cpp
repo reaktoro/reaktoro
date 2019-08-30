@@ -16,23 +16,14 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include <Reaktoro/Reaktoro.hpp>
-using namespace Reaktoro;
+#include <filesystem>
 
-// This string defines a PHREEQC script problem.
-// This problem was taken from the official PHREEQC example named ex1.
-/*const std::string ex1 = R"(
-TITLE Equilibrium Problem with Calcite
-SOLUTION 1
-	S(-2) 	    0.1
-	H(1)		0.1
-EQUILIBRIUM_PHASES 1
-    Pyrite      0.0     0.0000000001
-    Siderite    0.0     0.0000000001
-END
-)";*/
+using namespace Reaktoro;
 
 int main()
 {
+    std::filesystem::create_directory("demo_transport_and_scaveging_results");
+
     auto second = 1;
     auto minute = 60 * second;
     auto hour = 60 * minute;
@@ -45,20 +36,19 @@ int main()
     auto ncells = 100;       // the number of cells in the discretization
     auto xl = 0.0;           // the x - coordinate of the left boundary
     auto xr = 100.0;         // the x - coordinate of the right boundary
-    auto D = 0.0;            // the diffusion coefficinet(in units of m2 / s)
-    auto v = 1.05e-5; //1.0 / day;      // the fluid pore velocity(in units of m / s)
-    auto dt = 0.0416*day;       // the time step(in units of s)
+    auto D = 0.0;            // the diffusion coefficient(in units of m2 / s)
+    auto v = 1.05e-5;        // the fluid pore velocity(in units of m / s)
+    auto dt = 0.0416*day;    // the time step(in units of s)
     auto T = 25.0;           // the temperature(in units of degC)
     auto P = 1.01325;        // the pressure(in units of bar)
 
      Database database("supcrt07.xml");
  
-    DebyeHuckelParams dhModel{};
-    dhModel.setPHREEQC();
- 
-     //Construct the chemical system with its phases and species
+     DebyeHuckelParams dhModel{};
+     dhModel.setPHREEQC();
+
      ChemicalEditor editor(database);
-     //editor.addAqueousPhase("H2O(l) FeS2 FeS H2S FeCO3 Na+ Cl- SO4-- Mg++ Ca++ K+ HCO3- SiO2(aq) O2(aq)").setChemicalModelDebyeHuckel(dhModel);
+     
      editor.addAqueousPhase({ "H2O(l)",  "H+", "OH-", 
                             "HCO3-", "Mg(HCO3)+", "Ca(HCO3)+", "MgCO3(aq)",  "CO3--", "CaCO3(aq)" ,
                             "Ca++", "CaSO4(aq)", "CaOH+", 
@@ -72,7 +62,6 @@ int main()
                             "H2S(aq)", "HS-", "S5--", "S4--", "S3--", "S2--",
                             "SO4--", "NaSO4-", "MgSO4(aq)", "CaSO4(aq)", "KSO4-", "HSO4-"}).setChemicalModelDebyeHuckel(dhModel);
 
-     //editor.addMineralPhase("Pyrite");
      editor.addMineralPhase("Pyrrhotite");
      editor.addMineralPhase("Siderite");
 
@@ -89,9 +78,7 @@ int main()
      problem_ic.add("Ca++", 23.838e-3, "kg");
      problem_ic.add("K+", 23.142e-3, "kg");
      problem_ic.add("HCO3-", 8.236e-3, "kg");
-     //problem_ic.add("SiO2(aq)", 29e-16, "kg");
      problem_ic.add("O2(aq)", 58e-12, "kg");
-     //problem_ic.add("Pyrite", 0.0, "mol");
      problem_ic.add("Pyrrhotite", 0.0, "mol");
      problem_ic.add("Siderite", 0.5, "mol");
      problem_ic.pH(8.951);
@@ -109,9 +96,7 @@ int main()
      problem_bc.add("Ca++", 23.838e-3, "kg");
      problem_bc.add("K+", 23.142e-3, "kg");
      problem_bc.add("HCO3-", 8.236e-3, "kg");
-     //problem_bc.add("SiO2(aq)", 29e-16, "kg");
      problem_bc.add("O2(aq)", 58e-12, "kg");
-     //problem_bc.add("Pyrite", 0.0, "mol");
      problem_bc.add("Pyrrhotite", 0.0, "mol");
      problem_bc.add("Siderite", 0.0, "mol");
      problem_bc.add("HS-", 0.0196504, "mol");
@@ -119,14 +104,8 @@ int main()
      problem_bc.pH(5.726);
      problem_bc.pE(8.220);
 
-
      ChemicalState state_ic = equilibrate(problem_ic);
      ChemicalState state_bc = equilibrate(problem_bc);
-
-     std::cout << state_bc << std::endl;
- 
-     state_ic.output("../../../../../reaktoronote/notebook/comparison_reaktoro_and_phreeqc/state_ic.txt");
-     state_bc.output("../../../../../reaktoronote/notebook/comparison_reaktoro_and_phreeqc/state_bc.txt");
 
      Mesh mesh(ncells, xl, xr);
  
@@ -141,7 +120,7 @@ int main()
  
  
      auto output = rt.output();
-     output.filename("../../../../../reaktoronote/notebook/comparison_reaktoro_and_phreeqc/with_siderite/reative_transport_siderite_pyrrhotite_pyrite.txt");
+     output.filename("demo_transport_and_scaveging_results\\reative_transport_siderite_pyrrhotite_pyrite.txt");
      output.add("pH");
      output.add("speciesMolality(H+)");
      output.add("speciesMolality(HS-)");
@@ -149,7 +128,6 @@ int main()
      output.add("speciesMolality(SO4--)");
      output.add("speciesMolality(HSO4-)");
      output.add("speciesMolality(H2S(aq))");
-     //output.add("phaseAmount(Pyrite)");
      output.add("phaseAmount(Pyrrhotite)");
      output.add("phaseAmount(Siderite)");
  
