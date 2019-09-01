@@ -75,7 +75,10 @@ struct Thermo::Impl
     /// The database instance
     Database database;
 
+    // The ThermoFun engine instance
     ThermoFun::ThermoEngine engine;
+
+    // The ThemroFun database instance
     ThermoFun::Database fundatabase;
 
     /// The Haar--Gallagher--Kell (1984) equation of state for water
@@ -97,30 +100,6 @@ struct Thermo::Impl
     Impl(const ThermoFun::Database& fundb)
     : engine(fundb), fundatabase(fundb), database(fundb)
     {
-//        // Initialize the Haar--Gallagher--Kell (1984) equation of state for water
-//        water_thermo_state_hgk_fn = [](Temperature T, Pressure P)
-//        {
-//            return Reaktoro::waterThermoStateHGK(T, P, StateOfMatter::Liquid);
-//        };
-
-//        water_thermo_state_hgk_fn = memoize(water_thermo_state_hgk_fn);
-
-//        // Initialize the Wagner and Pruss (1995) equation of state for water
-//        water_thermo_state_wagner_pruss_fn = [](Temperature T, Pressure P)
-//        {
-//            return Reaktoro::waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
-//        };
-
-//        water_thermo_state_wagner_pruss_fn = memoize(water_thermo_state_wagner_pruss_fn);
-
-//        // Initialize the Johnson and Norton equation of state for the electrostatic state of water
-//        water_eletro_state_fn = [=](double T, double P)
-//        {
-//            const WaterThermoState wts = water_thermo_state_wagner_pruss_fn(T, P);
-//            return waterElectroStateJohnsonNorton(T, P, wts);
-//        };
-
-//        water_eletro_state_fn = memoize(water_eletro_state_fn);
         // set solvent symbol, the HGK, JN water solvent model are defined in this record
         engine.setSolventSymbol("H2O@");
 
