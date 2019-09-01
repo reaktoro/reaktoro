@@ -23,7 +23,6 @@ int main()
 //    params.bion(0.064);
 //    editor.aqueousPhase().setChemicalModelDebyeHuckel(params);
 
-//    editor.addGaseousPhase("CO2");
     editor.addMineralPhase("Albite");
     editor.addMineralPhase("Sanidine");
     editor.addMineralPhase("Andalusite");
