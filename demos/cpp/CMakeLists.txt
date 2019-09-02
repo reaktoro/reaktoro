@@ -1,13 +1,12 @@
 file(GLOB_RECURSE CPPFILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+find_package(Boost COMPONENTS system filesystem REQUIRED)
 
 foreach(CPPFILE ${CPPFILES})
     get_filename_component(CPPNAME ${CPPFILE} NAME_WE)
     add_executable(${CPPNAME} ${CPPFILE})
-	if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-		target_link_libraries(${CPPNAME} Reaktoro::Reaktoro)
-	elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
-		target_link_libraries(${CPPNAME} Reaktoro::Reaktoro c++fs)
-	else()
-		target_link_libraries(${CPPNAME} Reaktoro::Reaktoro stdc++fs)
-	endif()
+	target_link_libraries(${CPPNAME} 
+						  Reaktoro::Reaktoro
+						  ${Boost_FILESYSTEM_LIBRARY}
+						  ${Boost_SYSTEM_LIBRARY}
+						  )
 endforeach()
