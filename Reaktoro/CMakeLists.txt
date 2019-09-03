@@ -43,6 +43,11 @@ target_link_libraries(Reaktoro
 # Set compilation features to be propagated to dependent codes.
 target_compile_features(Reaktoro PUBLIC cxx_std_17)
 
+# Set some target properties
+set_target_properties(Reaktoro PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+    CXX_EXTENSIONS OFF)
+
 # Install Reaktoro C++ library
 install(TARGETS Reaktoro
     EXPORT ReaktoroTargets
