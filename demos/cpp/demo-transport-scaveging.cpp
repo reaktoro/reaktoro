@@ -16,7 +16,6 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include <Reaktoro/Reaktoro.hpp>
-#include <sstream>
 #include <sys/stat.h>
 
 // for windows mkdir
@@ -28,11 +27,11 @@ using namespace Reaktoro;
 
 int main()
 {
-    auto path = "results_demo_transport_and_scaveging"; //folder 
+    std::string path = "results_demo_transport_and_scaveging"; //folder 
 #ifdef _WIN32
-    return ::_mkdir(path);
+    return ::_mkdir(path.c_str());
 #else
-    return ::mkdir(path, 0755);
+    return ::mkdir(path.c_str(), 0755);
 #endif
  
     auto second = 1;
