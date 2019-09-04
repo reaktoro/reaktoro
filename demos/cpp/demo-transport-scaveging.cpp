@@ -28,11 +28,11 @@ using namespace Reaktoro;
 
 int main()
 {
-#if defined(_WIN32)
-    _mkdir("results_demo_transport_and_scaveging");
-    //std::experimental::filesystem::create_directory("results_demo_transport_and_scaveging");
+    auto path = "results_demo_transport_and_scaveging"; //folder 
+#ifdef _WIN32
+    return ::_mkdir(path);
 #else
-    mkdir("results_demo_transport_and_scaveging");
+    return ::mkdir(path, 0755);
 #endif
  
     auto second = 1;
@@ -131,7 +131,7 @@ int main()
  
  
      auto output = rt.output();
-     output.filename("results_demo_transport_and_scaveging\\reative_transport_siderite_pyrrhotite_pyrite.txt");
+     output.filename(path+"\\reative_transport_siderite_pyrrhotite_pyrite.txt");
      output.add("pH");
      output.add("speciesMolality(H+)");
      output.add("speciesMolality(HS-)");
