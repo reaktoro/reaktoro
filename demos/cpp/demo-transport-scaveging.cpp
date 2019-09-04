@@ -16,14 +16,25 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include <Reaktoro/Reaktoro.hpp>
-#include <experimental/filesystem>
+#include <sstream>
+#include <sys/stat.h>
+
+// for windows mkdir
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 using namespace Reaktoro;
 
 int main()
 {
-    std::experimental::filesystem::create_directory("results_demo_transport_and_scaveging");
-
+#if defined(_WIN32)
+    _mkdir("results_demo_transport_and_scaveging");
+    //std::experimental::filesystem::create_directory("results_demo_transport_and_scaveging");
+#else
+    mkdir("results_demo_transport_and_scaveging");
+#endif
+ 
     auto second = 1;
     auto minute = 60 * second;
     auto hour = 60 * minute;
@@ -32,7 +43,7 @@ int main()
 
     
     //Parameters for the reactive transport simulation
-    auto nsteps = 9000;      // the number of steps in the reactive transport simulation
+    auto nsteps = 100;      // the number of steps in the reactive transport simulation
     auto ncells = 100;       // the number of cells in the discretization
     auto xl = 0.0;           // the x - coordinate of the left boundary
     auto xr = 100.0;         // the x - coordinate of the right boundary
@@ -120,7 +131,7 @@ int main()
  
  
      auto output = rt.output();
-     output.filename("demo_transport_and_scaveging_results\\reative_transport_siderite_pyrrhotite_pyrite.txt");
+     output.filename("results_demo_transport_and_scaveging\\reative_transport_siderite_pyrrhotite_pyrite.txt");
      output.add("pH");
      output.add("speciesMolality(H+)");
      output.add("speciesMolality(HS-)");
