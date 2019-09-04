@@ -16,13 +16,13 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include <Reaktoro/Reaktoro.hpp>
-#include "boost/filesystem.hpp"
+#include <filesystem>
 
 using namespace Reaktoro;
 
 int main()
 {
-    boost::filesystem::create_directory("results_demo_transport_and_scaveging");
+    std::filesystem::create_directory("results_demo_transport_and_scaveging");
 
     auto second = 1;
     auto minute = 60 * second;
