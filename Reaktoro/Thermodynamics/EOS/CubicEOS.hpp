@@ -31,6 +31,7 @@
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 
 namespace Reaktoro {
 
@@ -42,6 +43,17 @@ public:
     enum Model
     {
         VanDerWaals, RedlichKwong, SoaveRedlichKwong, PengRobinson,
+    };
+
+    /// Parameters to be passed to the Cubic Equation of State
+    struct Params
+    {
+        Model model = PengRobinson;
+
+        /// If both Gaseous and Liquid phases are in the system, it is recommended to configure a
+        /// robust phase identification method such as GibbsEnergyAndEquationOfStateMethod for BOTH
+        /// phases.
+        PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
     };
 
     struct InteractionParamsResult
@@ -108,7 +120,7 @@ public:
 
     /// Construct a CubicEOS instance with given number of species.
     /// @param nspecies The number of species in the phase.
-    explicit CubicEOS(unsigned nspecies);
+    explicit CubicEOS(unsigned nspecies, Params params);
 
     /// Construct a copy of a CubicEOS instance
     CubicEOS(const CubicEOS& other);

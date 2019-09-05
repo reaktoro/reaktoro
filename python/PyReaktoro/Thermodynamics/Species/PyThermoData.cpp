@@ -35,10 +35,13 @@ void exportThermoData(py::module& m)
         .def_readwrite("hkf", &AqueousSpeciesThermoData::hkf)
         ;
 
-    py::class_<GaseousSpeciesThermoData, SpeciesThermoData>(m, "GaseousSpeciesThermoData")
+    py::class_<FluidSpeciesThermoData, SpeciesThermoData>(m, "FluidSpeciesThermoData")
         .def(py::init<>())
-        .def_readwrite("hkf", &GaseousSpeciesThermoData::hkf)
+        .def_readwrite("hkf", &FluidSpeciesThermoData::hkf)
         ;
+
+    m.attr("LiquidSpeciesThermoData") = m.attr("FluidSpeciesThermoData");
+    m.attr("GaseousSpeciesThermoData") = m.attr("FluidSpeciesThermoData");
 
     py::class_<MineralSpeciesThermoData, SpeciesThermoData>(m, "MineralSpeciesThermoData")
         .def(py::init<>())
@@ -93,15 +96,25 @@ void exportThermoDataProperties(py::module& m)
         .def_readwrite("wref", &AqueousSpeciesThermoParamsHKF::wref)
         ;
 
-    py::class_<GaseousSpeciesThermoParamsHKF>(m, "GaseousSpeciesThermoParamsHKF")
+    py::class_<FluidSpeciesThermoParamsHKF>(m, "_FluidSpeciesThermoParamsHKF")
         .def(py::init<>())
-        .def_readwrite("Gf", &GaseousSpeciesThermoParamsHKF::Gf)
-        .def_readwrite("Hf", &GaseousSpeciesThermoParamsHKF::Hf)
-        .def_readwrite("Sr", &GaseousSpeciesThermoParamsHKF::Sr)
-        .def_readwrite("a", &GaseousSpeciesThermoParamsHKF::a)
-        .def_readwrite("b", &GaseousSpeciesThermoParamsHKF::b)
-        .def_readwrite("c", &GaseousSpeciesThermoParamsHKF::c)
-        .def_readwrite("Tmax", &GaseousSpeciesThermoParamsHKF::Tmax)
+        .def_readwrite("Gf", &FluidSpeciesThermoParamsHKF::Gf)
+        .def_readwrite("Hf", &FluidSpeciesThermoParamsHKF::Hf)
+        .def_readwrite("Sr", &FluidSpeciesThermoParamsHKF::Sr)
+        .def_readwrite("a", &FluidSpeciesThermoParamsHKF::a)
+        .def_readwrite("b", &FluidSpeciesThermoParamsHKF::b)
+        .def_readwrite("c", &FluidSpeciesThermoParamsHKF::c)
+        .def_readwrite("Tmax", &FluidSpeciesThermoParamsHKF::Tmax)
+        ;
+
+    py::class_<GaseousSpeciesThermoParamsHKF, FluidSpeciesThermoParamsHKF>(
+        m, "GaseousSpeciesThermoParamsHKF")
+        .def(py::init<>())
+        ;
+
+    py::class_<LiquidSpeciesThermoParamsHKF, FluidSpeciesThermoParamsHKF>(
+        m, "LiquidSpeciesThermoParamsHKF")
+        .def(py::init<>())
         ;
 
     py::class_<MineralSpeciesThermoParamsHKF>(m, "MineralSpeciesThermoParamsHKF")

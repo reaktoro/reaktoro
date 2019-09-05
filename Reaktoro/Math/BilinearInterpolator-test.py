@@ -58,11 +58,7 @@ def test_BilinearIntepolator():
     assert interpolator(3.0, 0.0) == interpolator(0.0, 3.0)
     assert interpolator.data()
 
-    with pytest.raises(RuntimeError):
-        interpolator(3.0001, 1.0)
-    with pytest.raises(RuntimeError):
-        interpolator(1.0, 3.0001)
-    with pytest.raises(RuntimeError):
-        interpolator(-0.0001, 1.0)
-    with pytest.raises(RuntimeError):
-        interpolator(1.0, -0.0001)
+    assert interpolator(3.0001, 1.0) == interpolator(3.0, 1.0)
+    assert interpolator(1.0, 3.0001) == interpolator(1.0, 3.0)
+    assert interpolator(-0.0001, 1.0) == interpolator(0.0, 1.0)
+    assert interpolator(1.0, -0.0001) == interpolator(1.0, 0.0)

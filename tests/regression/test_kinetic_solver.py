@@ -213,7 +213,7 @@ def test_kinetic_path_solve_complete_path(
     (problem, reactions, partition) = setup
 
     state = equilibrate(problem)
-
+ 
     for mineral in minerals_to_add:
         state.setSpeciesMass(mineral.mineral_name, mineral.amount, mineral.unit)
 

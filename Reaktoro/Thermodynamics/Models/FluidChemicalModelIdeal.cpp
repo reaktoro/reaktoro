@@ -15,18 +15,18 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "GaseousChemicalModelIdeal.hpp"
+#include "FluidChemicalModelIdeal.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 
 namespace Reaktoro {
 
-auto gaseousChemicalModelIdeal(const GaseousMixture& mixture) -> PhaseChemicalModel
+auto fluidChemicalModelIdeal(const FluidMixture& mixture) -> PhaseChemicalModel
 {
     // The state of the gaseous mixture
-    GaseousMixtureState state;
+    FluidMixtureState state;
 
     // Define the chemical model function of the gaseous phase
     PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable

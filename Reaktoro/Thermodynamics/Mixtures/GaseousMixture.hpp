@@ -18,40 +18,11 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 
 namespace Reaktoro {
 
-/// A type used to describe the state of a gaseous mixture
-struct GaseousMixtureState : public MixtureState
-{};
-
-/// Provides a computational representation of a gaseous mixture.
-/// The GaseousMixture class is defined as a collection of GaseousSpecies objects,
-/// representing, therefore, a mixture of gaseous species. Its main purpose is to
-/// provide the necessary operations in the calculation of activities of gaseous
-/// species.
-/// @see GaseousSpecies
-/// @ingroup Mixtures
-class GaseousMixture : public GeneralMixture<GaseousSpecies>
-{
-public:
-    /// Construct a default GaseousMixture instance.
-    GaseousMixture();
-
-    /// Construct a GaseousMixture instance with given species.
-    /// @param species The species that compose the gaseous mixture
-    explicit GaseousMixture(const std::vector<GaseousSpecies>& species);
-
-    /// Destroy the GaseousMixture instance.
-    virtual ~GaseousMixture();
-
-    /// Calculate the state of the gaseous mixture.
-    /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of Pa)
-    /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(Temperature T, Pressure P, VectorConstRef n) const -> GaseousMixtureState;
-};
+using GaseousMixtureState = FluidMixtureState;
+using GaseousMixture = FluidMixture;
 
 } // namespace Reaktoro

@@ -35,7 +35,7 @@ using namespace std::placeholders;
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
@@ -115,7 +115,7 @@ struct Thermo::Impl
 
         water_eletro_state_fn = memoize(water_eletro_state_fn);
 
-        // Initialize the HKF equation of state for the thermodynamic state of aqueous, gaseous and mineral species
+        // Initialize the HKF equation of state for the thermodynamic state of aqueous, gas, liquid, fluid and mineral species
         species_thermo_state_hkf_fn = [=](double T, double P, std::string species)
         {
             return speciesThermoStateHKF(T, P, species);
@@ -130,6 +130,8 @@ struct Thermo::Impl
             return aqueousSpeciesThermoStateHKF(T, P, database.aqueousSpecies(species));
         if(database.containsGaseousSpecies(species))
             return Reaktoro::speciesThermoStateHKF(T, P, database.gaseousSpecies(species));
+        if (database.containsLiquidSpecies(species))
+            return Reaktoro::speciesThermoStateHKF(T, P, database.liquidSpecies(species));
         if(database.containsMineralSpecies(species))
             return Reaktoro::speciesThermoStateHKF(T, P, database.mineralSpecies(species));
         errorNonExistentSpecies(species);
@@ -291,6 +293,8 @@ struct Thermo::Impl
             return database.aqueousSpecies(species).thermoData().properties;
         if(database.containsGaseousSpecies(species))
             return database.gaseousSpecies(species).thermoData().properties;
+        if (database.containsLiquidSpecies(species))
+            return database.liquidSpecies(species).thermoData().properties;
         if(database.containsMineralSpecies(species))
             return database.mineralSpecies(species).thermoData().properties;
         errorNonExistentSpecies(species);
@@ -303,6 +307,8 @@ struct Thermo::Impl
             return database.aqueousSpecies(species).thermoData().reaction;
         if(database.containsGaseousSpecies(species))
             return database.gaseousSpecies(species).thermoData().reaction;
+        if (database.containsLiquidSpecies(species))
+            return database.liquidSpecies(species).thermoData().reaction;
         if(database.containsMineralSpecies(species))
             return database.mineralSpecies(species).thermoData().reaction;
         errorNonExistentSpecies(species);
@@ -315,6 +321,8 @@ struct Thermo::Impl
             return database.aqueousSpecies(species).thermoData().phreeqc;
         if(database.containsGaseousSpecies(species))
             return database.gaseousSpecies(species).thermoData().phreeqc;
+        if (database.containsLiquidSpecies(species))
+            return database.liquidSpecies(species).thermoData().phreeqc;
         if(database.containsMineralSpecies(species))
             return database.mineralSpecies(species).thermoData().phreeqc;
         errorNonExistentSpecies(species);
@@ -328,6 +336,8 @@ struct Thermo::Impl
             return static_cast<bool>(database.aqueousSpecies(species).thermoData().hkf);
         if(database.containsGaseousSpecies(species))
             return static_cast<bool>(database.gaseousSpecies(species).thermoData().hkf);
+        if(database.containsLiquidSpecies(species))
+            return static_cast<bool>(database.liquidSpecies(species).thermoData().hkf);
         if(database.containsMineralSpecies(species))
             return static_cast<bool>(database.mineralSpecies(species).thermoData().hkf);
         errorNonExistentSpecies(species);

@@ -57,7 +57,9 @@ struct MineralPhase::Impl
 
 MineralPhase::MineralPhase()
 : Phase(), pimpl(new Impl())
-{}
+{
+    setType(PhaseType::Solid);
+}
 
 MineralPhase::MineralPhase(const MineralMixture& mixture)
 : pimpl(new Impl(mixture))

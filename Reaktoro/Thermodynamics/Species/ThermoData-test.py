@@ -64,3 +64,9 @@ def test_MineralSpeciesThermoData():
     mineral_species.hkf = MineralSpeciesThermoParamsHKF()
     assert mineral_species.hkf is not None
 
+def test_LiquidSpeciesThermoData():
+    liquid_species = LiquidSpeciesThermoData()
+    assert liquid_species.hkf is None
+    liquid_species.hkf = LiquidSpeciesThermoParamsHKF()
+    assert liquid_species.hkf is not None
+
