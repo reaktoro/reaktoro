@@ -29,11 +29,11 @@ struct SmartEquilibriumOptions
     /// The equilibrium options to be used during learning operations.
     EquilibriumOptions learning;
 
-    /// The relative tolerance for estimated species mole amounts.
-    double reltol = 1.0;
+    /// The relative tolerance used in the acceptance test.
+    double reltol = 0.1;
 
-    /// The absolute tolerance for estimated species mole amounts.
-    double abstol = 1e-14;
+    /// The absolute tolerance used in the acceptance test.
+    double abstol = 1e-8;
 };
 
 } // namespace Reaktoro
