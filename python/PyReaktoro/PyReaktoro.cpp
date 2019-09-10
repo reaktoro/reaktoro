@@ -17,6 +17,8 @@
 
 #include <PyReaktoro/PyReaktoro.hpp>
 
+#include <pybind11/stl_bind.h>
+
 namespace Reaktoro {
 
 // Common module
@@ -78,6 +80,7 @@ extern void exportKineticSolver(py::module& m);
 
 // Math module
 extern void exportODE(py::module& m);
+extern void exportBilinearInterpolator(py::module& m);
 
 // Optimization module
 extern void exportNonlinearOptions(py::module& m);
@@ -98,12 +101,14 @@ extern void exportDatabase(py::module& m);
 extern void exportThermo(py::module& m);
 extern void exportAqueousChemicalModelDebyeHuckel(py::module& m);
 extern void exportAqueousPhase(py::module& m);
-extern void exportGaseousPhase(py::module& m);
+extern void exportFluidPhase(py::module& m);
 extern void exportMineralPhase(py::module& m);
 extern void exportAqueousSpecies(py::module& m);
-extern void exportGaseousSpecies(py::module& m);
+extern void exportFluidSpecies(py::module& m);
 extern void exportMineralSpecies(py::module& m);
 extern void exportWater(py::module& m);
+extern void exportThermoData(py::module& m);
+extern void exportThermoDataProperties(py::module& m);
 
 // Transport module
 extern void exportChemicalField(py::module& m);
@@ -119,10 +124,12 @@ extern void exportReactiveTransportSolver(py::module& m);
 
 } // namespace Reaktoro
 
-
 PYBIND11_MODULE(PyReaktoro, m)
 {
     using namespace Reaktoro;
+
+    // STL bindings
+    py::bind_vector<std::vector<double>>(m, "VectorDouble", "VectorDouble Descriptor");
 
     // Common module
     exportAutoDiff(m);
@@ -181,6 +188,7 @@ PYBIND11_MODULE(PyReaktoro, m)
 
     // Math module
     exportODE(m);
+    exportBilinearInterpolator(m);
 
     // Optimization module
     exportNonlinearOptions(m);
@@ -201,12 +209,14 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportThermo(m);
     exportAqueousChemicalModelDebyeHuckel(m);
     exportAqueousPhase(m);
-    exportGaseousPhase(m);
+    exportFluidPhase(m);
     exportMineralPhase(m);
     exportAqueousSpecies(m);
-    exportGaseousSpecies(m);
+    exportFluidSpecies(m);
     exportMineralSpecies(m);
     exportWater(m);
+    exportThermoData(m);
+    exportThermoDataProperties(m);
 
     // Transport module
     exportChemicalField(m);

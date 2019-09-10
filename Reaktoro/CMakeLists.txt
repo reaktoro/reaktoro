@@ -46,6 +46,14 @@ target_link_libraries(Reaktoro
     PRIVATE nlohmann_json::nlohmann_json
     PUBLIC Boost::boost)
 
+# Set compilation features to be propagated to dependent codes.
+target_compile_features(Reaktoro PUBLIC cxx_std_17)
+
+# Set some target properties
+set_target_properties(Reaktoro PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+    CXX_EXTENSIONS OFF)
+
 # Install Reaktoro C++ library
 install(TARGETS Reaktoro
     EXPORT ReaktoroTargets
@@ -53,10 +61,20 @@ install(TARGETS Reaktoro
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT libraries)
 
+# Install debug symbols
+if(MSVC)
+    install(
+        FILES $<TARGET_PDB_FILE:Reaktoro>
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT libraries
+        OPTIONAL
+    )
+endif()
+
 # Install Reaktoro header files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers
-    FILES_MATCHING PATTERN "*.hpp")
+    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
 
 # Install deps header files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro/deps

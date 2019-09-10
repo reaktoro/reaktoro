@@ -31,17 +31,21 @@
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Core/Thermo.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/LiquidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -79,9 +83,9 @@ auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
     return f;
 }
 
-auto lnActivityConstants(const GaseousPhase& phase) -> ThermoVectorFunction
+auto lnActivityConstants(const FluidPhase& phase) -> ThermoVectorFunction
 {
-    // The ln activity constants of the gaseous species
+    // The ln activity constants of the generic species
     ThermoVector ln_c(phase.numSpecies());
 
     ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
@@ -119,6 +123,9 @@ private:
 
     /// The definition of the gaseous phase
     GaseousPhase gaseous_phase;
+
+    /// The definition of the liquid phase
+    LiquidPhase liquid_phase;
 
     /// The definition of the mineral phases
     std::vector<MineralPhase> mineral_phases;
@@ -168,22 +175,27 @@ public:
 
     auto initializePhasesWithElements(const std::vector<std::string>& elements) -> void
     {
-    	aqueous_phase = {};
-    	gaseous_phase = {};
+        aqueous_phase = {};
+        gaseous_phase = {};
+        liquid_phase = {};
     	mineral_phases.clear();
 
-    	auto aqueous_species = database.aqueousSpeciesWithElements(elements);
-    	auto gaseous_species = database.gaseousSpeciesWithElements(elements);
-    	auto mineral_species = database.mineralSpeciesWithElements(elements);
+        auto aqueous_species = database.aqueousSpeciesWithElements(elements);
+        auto gaseous_species = database.gaseousSpeciesWithElements(elements);
+        auto liquid_species = database.liquidSpeciesWithElements(elements);
+        auto mineral_species = database.mineralSpeciesWithElements(elements);
 
     	if(aqueous_species.size())
-    		addPhase(AqueousPhase(AqueousMixture(aqueous_species)));
+            addPhase(AqueousPhase(AqueousMixture(aqueous_species)));
 
-    	if(gaseous_species.size())
-    		addPhase(GaseousPhase(GaseousMixture(gaseous_species)));
+        if (gaseous_species.size())
+            addPhase(GaseousPhase(GaseousMixture(gaseous_species)));
 
-    	for(auto mineral : mineral_species)
-    		addPhase(MineralPhase(MineralMixture(mineral)));
+        if (liquid_species.size())
+            addPhase(LiquidPhase(LiquidMixture(liquid_species)));
+
+        for(auto mineral : mineral_species)
+            addPhase(MineralPhase(MineralMixture(mineral)));
     }
 
     auto addPhase(const AqueousPhase& phase) -> AqueousPhase&
@@ -197,6 +209,12 @@ public:
     {
         gaseous_phase = phase;
         return gaseous_phase;
+    }
+
+    auto addPhase(const LiquidPhase& phase) -> LiquidPhase&
+    {
+        liquid_phase = phase;
+        return liquid_phase;
     }
 
     auto addPhase(const MineralPhase& phase) -> MineralPhase&
@@ -245,7 +263,7 @@ public:
 
     auto addGaseousPhaseWithSpecies(const std::vector<std::string>& species) -> GaseousPhase&
     {
-        Assert(species.size(), "Could not create the GaseousPhase object.",
+        Assert(species.size(), "Could not create the GaseousPhase object that represents a gas.",
             "Expecting at least one species name.");
         std::vector<GaseousSpecies> gaseous_species(species.size());
         for(unsigned i = 0; i < species.size(); ++i)
@@ -255,7 +273,7 @@ public:
 
     auto addGaseousPhaseWithElements(const std::vector<std::string>& elements) -> GaseousPhase&
     {
-        Assert(elements.size(), "Could not create the GaseousPhase object.",
+        Assert(elements.size(), "Could not create the GaseousPhase object that represents a gas.",
             "Expecting at least one chemical element or compound name.");
         return addGaseousPhaseHelper(database.gaseousSpeciesWithElements(elements));
     }
@@ -263,6 +281,35 @@ public:
     auto addGaseousPhaseWithCompounds(const std::vector<std::string>& compounds) -> GaseousPhase&
     {
         return addGaseousPhaseWithElements(collectElementsInCompounds(compounds));
+    }
+
+    auto addLiquidPhaseHelper(const std::vector<LiquidSpecies>& species) -> LiquidPhase&
+    {
+        LiquidMixture mixture(species);
+        liquid_phase = LiquidPhase(mixture);
+        return liquid_phase;
+    }
+
+    auto addLiquidPhaseWithSpecies(const std::vector<std::string>& species) -> LiquidPhase&
+    {
+        Assert(species.size(), "Could not create the LiquidPhase object that represents a liquid.",
+            "Expecting at least one species name.");
+        std::vector<LiquidSpecies> liquid_species(species.size());
+        for (unsigned i = 0; i < species.size(); ++i)
+            liquid_species[i] = database.liquidSpecies(species[i]);
+        return addLiquidPhaseHelper(liquid_species);
+    }
+
+    auto addLiquidPhaseWithElements(const std::vector<std::string>& elements) -> LiquidPhase&
+    {
+        Assert(elements.size(), "Could not create the FluidPhase object that represents a liquid.",
+            "Expecting at least one chemical element or compound name.");
+        return addLiquidPhaseHelper(database.liquidSpeciesWithElements(elements));
+    }
+
+    auto addLiquidPhaseWithCompounds(const std::vector<std::string>& compounds) -> LiquidPhase&
+    {
+        return addLiquidPhaseWithElements(collectElementsInCompounds(compounds));
     }
 
     auto addMineralPhaseHelper(const std::vector<MineralSpecies>& species) -> MineralPhase&
@@ -330,6 +377,16 @@ public:
         return gaseous_phase;
     }
 
+    auto liquidPhase() const -> const LiquidPhase&
+    {
+        return liquid_phase;
+    }
+
+    auto liquidPhase() -> LiquidPhase&
+    {
+        return liquid_phase;
+    }
+
     auto mineralPhases() const -> const std::vector<MineralPhase>&
     {
         return mineral_phases;
@@ -352,8 +409,8 @@ public:
         return converted;
     }
 
-    template<typename PhaseType>
-    auto convertPhase(const PhaseType& phase) const -> Phase
+    template<typename Phase_>
+    auto convertPhase(const Phase_& phase) const -> Phase
     {
         // The number of species in the phase
         const unsigned nspecies = phase.numSpecies();
@@ -411,13 +468,17 @@ public:
     auto createChemicalSystem() const -> ChemicalSystem
     {
         std::vector<Phase> phases;
-        phases.reserve(2 + mineral_phases.size());
+        const auto number_of_fluid_phases = 3;
+        phases.reserve(number_of_fluid_phases + mineral_phases.size());
 
         if(aqueous_phase.numSpecies())
             phases.push_back(convertPhase(aqueous_phase));
 
         if(gaseous_phase.numSpecies())
             phases.push_back(convertPhase(gaseous_phase));
+
+        if(liquid_phase.numSpecies())
+            phases.push_back(convertPhase(liquid_phase));
 
         for(const MineralPhase& mineral_phase : mineral_phases)
             phases.push_back(convertPhase(mineral_phase));
@@ -483,6 +544,11 @@ auto ChemicalEditor::addPhase(const GaseousPhase& phase) -> GaseousPhase&
     return pimpl->addPhase(phase);
 }
 
+auto ChemicalEditor::addPhase(const LiquidPhase& phase) -> LiquidPhase&
+{
+    return pimpl->addPhase(phase);
+}
+
 auto ChemicalEditor::addPhase(const MineralPhase& phase) -> MineralPhase&
 {
     return pimpl->addPhase(phase);
@@ -521,6 +587,21 @@ auto ChemicalEditor::addGaseousPhaseWithElements(const StringList& elements) -> 
 auto ChemicalEditor::addGaseousPhaseWithElementsOf(const StringList& compounds) -> GaseousPhase&
 {
     return pimpl->addGaseousPhaseWithCompounds(compounds);
+}
+
+auto ChemicalEditor::addLiquidPhase(const StringList& species) -> LiquidPhase&
+{
+    return pimpl->addLiquidPhaseWithSpecies(species);
+}
+
+auto ChemicalEditor::addLiquidPhaseWithElements(const StringList& elements) -> LiquidPhase&
+{
+    return pimpl->addLiquidPhaseWithElements(elements);
+}
+
+auto ChemicalEditor::addLiquidPhaseWithElementsOf(const StringList& compounds) -> LiquidPhase&
+{
+    return pimpl->addLiquidPhaseWithCompounds(compounds);
 }
 
 auto ChemicalEditor::addMineralPhase(const StringList& species) -> MineralPhase&
@@ -566,6 +647,16 @@ auto ChemicalEditor::gaseousPhase() const -> const GaseousPhase&
 auto ChemicalEditor::gaseousPhase() -> GaseousPhase&
 {
     return pimpl->gaseousPhase();
+}
+
+auto ChemicalEditor::liquidPhase() const -> const LiquidPhase&
+{
+    return pimpl->liquidPhase();
+}
+
+auto ChemicalEditor::liquidPhase() -> LiquidPhase&
+{
+    return pimpl->liquidPhase();
 }
 
 auto ChemicalEditor::mineralPhases() const -> const std::vector<MineralPhase>&

@@ -3,12 +3,15 @@ from invoke.exceptions import Exit
 from pathlib import Path
 from typing import Optional
 import os
-import os.path
 import shutil
 import sys
 
 
-VCVARS_PATH = Path(r"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat")
+def _get_vcvars_paths():
+    template = r"%PROGRAMFILES(X86)%\Microsoft Visual Studio\2017\{edition}\VC\Auxiliary\Build\vcvarsall.bat"
+    template = os.path.expandvars(template)
+    editions = ('BuildTools', 'Professional', 'WDExpress', 'Community')
+    return tuple(Path(template.format(edition=edition)) for edition in editions)
 
 
 def strip_and_join(s: str):
@@ -57,6 +60,7 @@ def _get_cmake_command(
     cmake_generator: str,
     cmake_arch: Optional[str]=None,
     config: str='Release',
+    verbose=False,
     ):
     '''
     :param build_dir: Directory from where cmake will be called.
@@ -79,12 +83,14 @@ def _get_cmake_command(
         cmake
             -G "{cmake_generator}"
             {f'-A "{cmake_arch}"' if cmake_arch is not None else ""}
-            -DREAKTORO_BUILD_ALL=ON
+            -DPYBIND11_PYTHON_VERSION={os.environ.get("PY_VER", "3.7")}
+            -DREAKTORO_BUILD_ALL=ON            
             -DREAKTORO_PYTHON_INSTALL_PREFIX="{(artifacts_dir / 'python').as_posix()}"
             -DCMAKE_BUILD_TYPE={config}
             -DCMAKE_INCLUDE_PATH="{cmake_include_path}"
             -DCMAKE_INSTALL_PREFIX="{relative_artifacts_dir.as_posix()}"
-            "-REAKTORO_THIRDPARTY_EXTRA_INSTALL_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
+            {f'-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON' if verbose else ''}
+            {f'"-DREAKTORO_THIRDPARTY_EXTRA_BUILD_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"' if verbose else ''}
             "{str(relative_root_dir)}"
     """)
 
@@ -107,7 +113,7 @@ if sys.platform.startswith('win'):
             c,
             build_dir=build_dir,
             artifacts_dir=artifacts_dir,
-            cmake_generator="Visual Studio 14 2015",
+            cmake_generator="Visual Studio 15 2017",
             cmake_arch="x64",
             config=config,
         )
@@ -116,7 +122,7 @@ if sys.platform.startswith('win'):
 
 
 @task
-def compile(c, clean=False, config='Release', number_of_jobs=-1):
+def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
     """
     Compiles Reaktoro by running CMake and building with `ninja`.
     Assumes that the environment is already configured using:
@@ -135,6 +141,7 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1):
         artifacts_dir=artifacts_dir,
         cmake_generator="Ninja",
         config=config,
+        verbose=verbose,
     )
     build_command = strip_and_join(f"""
         cmake
@@ -149,10 +156,16 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1):
     commands = [cmake_command, build_command]
 
     if sys.platform.startswith('win'):
-        vcvars_path = VCVARS_PATH
-        if not vcvars_path.is_file():
-            raise Exit(f'Error: Command to configure MSVC environment variables not found: "{vcvars_path}"', code=1)
-        commands.insert(0, f'"{vcvars_path}" amd64')
+        for vcvars_path in _get_vcvars_paths():
+            if not vcvars_path.is_file():
+                continue
+            commands.insert(0, f'"{vcvars_path}" amd64')
+            break
+        else:
+            raise Exit(
+                'Error: Commands to configure MSVC environment variables not found.',
+                code=1,
+            )
 
     os.chdir(build_dir)
     c.run("&&".join(commands))

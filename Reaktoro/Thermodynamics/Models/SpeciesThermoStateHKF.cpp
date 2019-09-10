@@ -32,7 +32,7 @@
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
@@ -84,7 +84,7 @@ template<class SpeciesType>
 auto checkTemperatureValidityHKF(Temperature& T, const SpeciesType& species) -> void
 {
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermoData().hkf.get();
+    const auto& hkf = species.thermoData().hkf.value();
 
     // Check if temperature bounds should be enforced
     if(global::options.exception.enforce_temperature_bounds)
@@ -100,7 +100,7 @@ auto checkTemperatureValidityHKF(Temperature& T, const SpeciesType& species) -> 
 
 auto checkMineralDataHKF(const MineralSpecies& species) -> void
 {
-    const auto& hkf = species.thermoData().hkf.get();
+    const auto& hkf = species.thermoData().hkf.value();
 
     const std::string error = "Unable to calculate the thermodynamic properties of mineral species " +
         species.name() + " using the revised HKF equations of state.";
@@ -160,7 +160,7 @@ auto speciesThermoStateSolventHKF(Temperature T, Pressure P, const WaterThermoSt
 auto speciesThermoStateSoluteHKF(Temperature T, Pressure P, const AqueousSpecies& species, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState
 {
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermoData().hkf.get();
+    const auto& hkf = species.thermoData().hkf.value();
 
     // Auxiliary variables
     const auto Pbar = P * 1.0e-05;
@@ -254,13 +254,13 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const AqueousSpecies& spec
     return speciesThermoStateSoluteHKF(T, P, species, aes, wes);
 }
 
-auto speciesThermoStateHKF(Temperature T, Pressure P, const GaseousSpecies& species) -> SpeciesThermoState
+auto speciesThermoStateHKF(Temperature T, Pressure P, const FluidSpecies& species) -> SpeciesThermoState
 {
     // Check temperature range validity
     checkTemperatureValidityHKF(T, species);
 
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermoData().hkf.get();
+    const auto& hkf = species.thermoData().hkf.value();
 
     // Auxiliary variables
     const auto R    = universalGasConstant;
@@ -316,7 +316,7 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const MineralSpecies& spec
     checkMineralDataHKF(species);
 
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermoData().hkf.get();
+    const auto& hkf = species.thermoData().hkf.value();
 
     // Auxiliary variables
     const auto  Pb   = P * 1.0e-5;

@@ -19,10 +19,10 @@
 
 // C++ includes
 #include <vector>
+#include <optional>
 
 // Reaktoro includes
 #include <Reaktoro/Common/ReactionEquation.hpp>
-#include <Reaktoro/Common/Optional.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 
 namespace Reaktoro {
@@ -62,37 +62,13 @@ struct SpeciesThermoInterpolatedProperties
 /// The thermodynamic properties are represented by BilinearInterpolator instances, where
 /// the temperature points (in units of K) are along the x-coordinates, and the pressure points
 /// (in units of Pa) are along the y-coordinates.
-struct ReactionThermoInterpolatedProperties
+struct ReactionThermoInterpolatedProperties : SpeciesThermoInterpolatedProperties
 {
     /// The equation of the reaction as pairs `(reactant, stoichiometry)`
     ReactionEquation equation;
 
     /// The interpolator of the equilibrium constant @f$\ln k_{\mathrm{eq}}@f$ of the reaction
     BilinearInterpolator lnk;
-
-    /// The interpolator of the standard molar Gibbs free energy @f$\Delta G_{r}^{\circ}@f$ of the reaction (in units of J/mol)
-    BilinearInterpolator gibbs_energy;
-
-    /// The interpolator of the standard molar Helmholtz free energy @f$\Delta A_{r}^{\circ}@f$ of the reaction (in units of J/mol)
-    BilinearInterpolator helmholtz_energy;
-
-    /// The interpolator of the standard molar internal energy @f$\Delta U_{r}^{\circ}@f$ of the reaction (in units of J/mol)
-    BilinearInterpolator internal_energy;
-
-    /// The interpolator of the standard molar enthalpy @f$\Delta H_{r}^{\circ}@f$ of the reaction (in units of J/mol)
-    BilinearInterpolator enthalpy;
-
-    /// The interpolator of the standard molar entropy @f$\Delta S_{r}^{\circ}@f$ of the reaction (in units of J/K)
-    BilinearInterpolator entropy;
-
-    /// The interpolator of the standard molar volume @f$\Delta V_{r}^{\circ}@f$ of the reaction (in units of m3/mol)
-    BilinearInterpolator volume;
-
-    /// The interpolator of the standard molar isobaric heat capacity @f$ \Delta C_{P}^{\circ}@f$ of the reaction (in units of J/(mol*K))
-    BilinearInterpolator heat_capacity_cp;
-
-    /// The interpolator of the standard molar isochoric heat capacity @f$ \Delta C_{V}^{\circ}@f$ of the reaction (in units of J/(mol*K))
-    BilinearInterpolator heat_capacity_cv;
 };
 
 /// A type for storing the parameters of the HKF equation of state for a aqueous species
@@ -129,8 +105,8 @@ struct AqueousSpeciesThermoParamsHKF
     double wref;
 };
 
-/// A type for storing the parameters of the HKF equation of state for a gaseous species
-struct GaseousSpeciesThermoParamsHKF
+/// A type for storing the parameters of the HKF equation of state for a fluid (gaseous or liquid) species
+struct FluidSpeciesThermoParamsHKF
 {
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
     double Gf;
@@ -141,18 +117,21 @@ struct GaseousSpeciesThermoParamsHKF
     /// The standard molal entropy of the species at reference temperature and pressure (in units of cal/(mol�K))
     double Sr;
 
-    /// The coefficient a of the HKF equation of state of the gaseous species (in units of cal/(mol�K))
+    /// The coefficient a of the HKF equation of state of the fluid species (in units of cal/(mol�K))
     double a;
 
-    /// The coefficient b of the HKF equation of state of the gaseous species (in units of cal/(mol�K^2))
+    /// The coefficient b of the HKF equation of state of the fluid species (in units of cal/(mol�K^2))
     double b;
 
-    /// The coefficient c of the HKF equation of state of the gaseous species (in units of (cal�K)/mol)
+    /// The coefficient c of the HKF equation of state of the fluid species (in units of (cal�K)/mol)
     double c;
 
     /// The maximum temperature at which the HKF equation of state can be applied for the gaseous species (in units of K)
     double Tmax;
 };
+
+struct GaseousSpeciesThermoParamsHKF : FluidSpeciesThermoParamsHKF {};
+struct LiquidSpeciesThermoParamsHKF : FluidSpeciesThermoParamsHKF {};
 
 /// A type for storing the parameters of the HKF equation of state for a mineral species
 struct MineralSpeciesThermoParamsHKF
@@ -226,52 +205,42 @@ struct SpeciesThermoParamsPhreeqc
     ReactionParams reaction;
 };
 
+/// A type for storing the thermodynamic data of general species
+struct SpeciesThermoData
+{
+    /// The interpolated thermodynamic properties of general species
+    std::optional<SpeciesThermoInterpolatedProperties> properties;
+
+    /// The interpolated thermodynamic properties of general species given in terms of reaction
+    std::optional<ReactionThermoInterpolatedProperties> reaction;
+
+    /// The thermodynamic parameters of the species from a Phreeqc database
+    std::optional<SpeciesThermoParamsPhreeqc> phreeqc;
+};
+
+
 /// A type for storing the thermodynamic data of an aqueous species
-struct AqueousSpeciesThermoData
+struct AqueousSpeciesThermoData : SpeciesThermoData
 {
-    /// The interpolated thermodynamic properties of an aqueous species
-    Optional<SpeciesThermoInterpolatedProperties> properties;
-
-    /// The interpolated thermodynamic properties of an aqueous species given in terms of reaction
-    Optional<ReactionThermoInterpolatedProperties> reaction;
-
     /// The thermodynamic parameters of the HKF model for an aqueous species
-    Optional<AqueousSpeciesThermoParamsHKF> hkf;
-
-    /// The thermodynamic parameters of the species from a Phreeqc database
-    Optional<SpeciesThermoParamsPhreeqc> phreeqc;
+    std::optional<AqueousSpeciesThermoParamsHKF> hkf;
 };
 
-/// A type for storing the thermodynamic data of a gaseous species
-struct GaseousSpeciesThermoData
+/// A type for storing the thermodynamic data of fluid (gaseous or liquid) species
+struct FluidSpeciesThermoData : SpeciesThermoData
 {
-    /// The interpolated thermodynamic properties of a gaseous species
-    Optional<SpeciesThermoInterpolatedProperties> properties;
-
-    /// The interpolated thermodynamic properties of a gaseous species given in terms of reaction
-    Optional<ReactionThermoInterpolatedProperties> reaction;
-
-    /// The thermodynamic parameters of the HKF model for a gaseous species
-    Optional<GaseousSpeciesThermoParamsHKF> hkf;
-
-    /// The thermodynamic parameters of the species from a Phreeqc database
-    Optional<SpeciesThermoParamsPhreeqc> phreeqc;
+    /// The thermodynamic parameters of the HKF model for a fluid (gaseous or liquid) species
+    std::optional<FluidSpeciesThermoParamsHKF> hkf;
 };
+
+using GaseousSpeciesThermoData = FluidSpeciesThermoData;
+using LiquidSpeciesThermoData = FluidSpeciesThermoData;
 
 /// A type for storing the thermodynamic data of a mineral species
-struct MineralSpeciesThermoData
+struct MineralSpeciesThermoData : SpeciesThermoData
 {
-    /// The interpolated thermodynamic properties of a mineral species
-    Optional<SpeciesThermoInterpolatedProperties> properties;
-
-    /// The interpolated thermodynamic properties of a mineral species given in terms of reaction
-    Optional<ReactionThermoInterpolatedProperties> reaction;
-
     /// The thermodynamic parameters of the HKF model for a mineral species
-    Optional<MineralSpeciesThermoParamsHKF> hkf;
-
-    /// The thermodynamic parameters of the species from a Phreeqc database
-    Optional<SpeciesThermoParamsPhreeqc> phreeqc;
+    std::optional<MineralSpeciesThermoParamsHKF> hkf;
 };
 
 } // namespace Reaktoro

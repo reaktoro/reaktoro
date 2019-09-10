@@ -28,7 +28,6 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/GlobalOptions.hpp>
-#include <Reaktoro/Common/Optional.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
@@ -37,6 +36,7 @@
 #include <Reaktoro/Thermodynamics/Databases/DatabaseUtils.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // miniz includes
@@ -49,10 +49,11 @@ using namespace pugi;
 namespace Reaktoro {
 namespace {
 
-/// Auxiliary types for a map of aqueous, gaseous, and mineral species
+/// Auxiliary types for a map of aqueous, fluid, and mineral species
 using ElementMap        = std::map<std::string, Element>;
 using AqueousSpeciesMap = std::map<std::string, AqueousSpecies>;
 using GaseousSpeciesMap = std::map<std::string, GaseousSpecies>;
+using LiquidSpeciesMap  = std::map<std::string, LiquidSpecies>;
 using MineralSpeciesMap = std::map<std::string, MineralSpecies>;
 
 auto errorNonExistentSpecies(std::string type, std::string name) -> void
@@ -144,7 +145,7 @@ auto parseReactionInterpolatedThermoProperties(const xml_node& node) -> Reaction
     {
         const double R = universalGasConstant;
         auto f = [=](double T, double P) { return -R*T*lnk(T, P); };
-        return BilinearInterpolator(lnk.xCoodinates(), lnk.yCoodinates(), f);
+        return BilinearInterpolator(lnk.xCoordinates(), lnk.yCoordinates(), f);
     };
 
     // Initialize the properties thermodynamic properties of the reaction
@@ -232,7 +233,7 @@ auto as_double(const xml_node& node, const char* childname, double if_empty=std:
     return node.child(childname).text().as_double();
 }
 
-auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<AqueousSpeciesThermoParamsHKF>
+auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<AqueousSpeciesThermoParamsHKF>
 {
     AqueousSpeciesThermoParamsHKF hkf;
     hkf.Gf   = as_double(node, "Gf");
@@ -248,9 +249,9 @@ auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<Aqueou
     return hkf;
 }
 
-auto parseGaseousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<GaseousSpeciesThermoParamsHKF>
+auto parseFluidSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<FluidSpeciesThermoParamsHKF>
 {
-    GaseousSpeciesThermoParamsHKF hkf;
+    FluidSpeciesThermoParamsHKF hkf;
     hkf.Gf   = as_double(node, "Gf");
     hkf.Hf   = as_double(node, "Hf");
     hkf.Sr   = as_double(node, "Sr");
@@ -261,7 +262,7 @@ auto parseGaseousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<Gaseou
     return hkf;
 }
 
-auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> Optional<MineralSpeciesThermoParamsHKF>
+auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<MineralSpeciesThermoParamsHKF>
 {
     MineralSpeciesThermoParamsHKF hkf;
     hkf.Gf      = as_double(node, "Gf");
@@ -321,9 +322,9 @@ auto parseAqueousSpeciesThermoData(const xml_node& node) -> AqueousSpeciesThermo
     return thermo;
 }
 
-auto parseGaseousSpeciesThermoData(const xml_node& node) -> GaseousSpeciesThermoData
+auto parseFluidSpeciesThermoData(const xml_node& node) -> FluidSpeciesThermoData
 {
-    GaseousSpeciesThermoData thermo;
+    FluidSpeciesThermoData thermo;
 
     if(!node.child("Properties").empty())
         thermo.properties = parseSpeciesInterpolatedThermoProperties(node.child("Properties"));
@@ -332,7 +333,7 @@ auto parseGaseousSpeciesThermoData(const xml_node& node) -> GaseousSpeciesThermo
         thermo.reaction = parseReactionInterpolatedThermoProperties(node.child("Reaction"));
 
     if(!node.child("HKF").empty())
-        thermo.hkf = parseGaseousSpeciesThermoParamsHKF(node.child("HKF"));
+        thermo.hkf = parseFluidSpeciesThermoParamsHKF(node.child("HKF"));
 
     return thermo;
 }
@@ -410,6 +411,9 @@ struct Database::Impl
     /// The set of all gaseous species in the database
     GaseousSpeciesMap gaseous_species_map;
 
+    /// The set of all liquid species in the database
+    LiquidSpeciesMap liquid_species_map;
+
     /// The set of all mineral species in the database
     MineralSpeciesMap mineral_species_map;
 
@@ -471,7 +475,12 @@ struct Database::Impl
 
     auto addGaseousSpecies(const GaseousSpecies& species) -> void
     {
-        gaseous_species_map.insert({species.name(), species});
+        gaseous_species_map.insert({ species.name(), species });
+    }
+
+    auto addLiquidSpecies(const LiquidSpecies& species) -> void
+    {
+        liquid_species_map.insert({ species.name(), species });
     }
 
     auto addMineralSpecies(const MineralSpecies& species) -> void
@@ -519,6 +528,19 @@ struct Database::Impl
         return gaseous_species_map.find(name)->second;
     }
 
+    auto liquidSpecies() -> std::vector<LiquidSpecies>
+    {
+        return collectValues(liquid_species_map);
+    }
+
+    auto liquidSpecies(std::string name) const -> const LiquidSpecies&
+    {
+        if(liquid_species_map.count(name) == 0)
+            errorNonExistentSpecies("liquid", name);
+
+        return liquid_species_map.find(name)->second;
+    }
+
     auto mineralSpecies() -> std::vector<MineralSpecies>
     {
         return collectValues(mineral_species_map);
@@ -542,6 +564,11 @@ struct Database::Impl
         return gaseous_species_map.count(species) != 0;
     }
 
+    auto containsLiquidSpecies(std::string species) const -> bool
+    {
+        return liquid_species_map.count(species) != 0;
+    }
+
     auto containsMineralSpecies(std::string species) const -> bool
     {
         return mineral_species_map.count(species) != 0;
@@ -555,6 +582,11 @@ struct Database::Impl
     auto gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<GaseousSpecies>
     {
         return speciesWithElements(elements, gaseous_species_map);
+    }
+
+    auto liquidSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<LiquidSpecies>
+    {
+        return speciesWithElements(elements, liquid_species_map);
     }
 
     auto mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<MineralSpecies>
@@ -592,11 +624,17 @@ struct Database::Impl
             }
             else if(type == "Gaseous")
             {
-                GaseousSpecies species = parseGaseousSpecies(node);
-                if(valid(species))
-                    gaseous_species_map[species.name()] = species;
+                GaseousSpecies gaseous_species = parseFluidSpecies(node);
+                gaseous_species.setName(name);
+                LiquidSpecies liquid_species = parseFluidSpecies(node);
+                const auto gas_species_suffix_size = 3;
+                liquid_species.setName(name.substr(0, name.size() - gas_species_suffix_size) + "(liq)");
+                if (valid(gaseous_species))
+                {
+                    gaseous_species_map[gaseous_species.name()] = gaseous_species;
+                    liquid_species_map[liquid_species.name()] = liquid_species;
+                }
             }
-
             else if(type == "Mineral")
             {
                 MineralSpecies species = parseMineralSpecies(node);
@@ -671,25 +709,25 @@ struct Database::Impl
         return species;
     }
 
-    auto parseGaseousSpecies(const xml_node& node) -> GaseousSpecies
+    auto parseFluidSpecies(const xml_node& node) -> FluidSpecies
     {
         // The gaseous species instance
-        GaseousSpecies species = parseSpecies(node);
+        FluidSpecies species = parseSpecies(node);
 
-        // Set the critical temperature of the gaseous species (in units of K)
+        // Set the critical temperature of the fluid (gaseous or liquid) species (in units of K)
         if(!node.child("CriticalTemperature").empty())
             species.setCriticalTemperature(node.child("CriticalTemperature").text().as_double());
 
-        // Set the critical pressure of the gaseous species (in units of Pa)
+        // Set the critical pressure of the fluid (gaseous or liquid) species (in units of Pa)
         if(!node.child("CriticalPressure").empty())
             species.setCriticalPressure(node.child("CriticalPressure").text().as_double() * 1e5); // convert from bar to Pa
 
-        // Set the acentric factor of the gaseous species
+        // Set the acentric factor of the fluid (gaseous or liquid) species
         if(!node.child("AcentricFactor").empty())
             species.setAcentricFactor(node.child("AcentricFactor").text().as_double());
 
-        // Parse the thermodynamic data of the gaseous species
-        species.setThermoData(parseGaseousSpeciesThermoData(node.child("Thermo")));
+        // Parse the thermodynamic data of the fluid (gaseous or liquid) species
+        species.setThermoData(parseFluidSpeciesThermoData(node.child("Thermo")));
 
         return species;
     }
@@ -725,9 +763,9 @@ struct Database::Impl
 
         // Check if HKF parameters exist, but they are incomplete
         const auto& hkf = species.thermoData().hkf;
-        if(!hkf.empty() && !std::isfinite(hkf.get().Gf))
+        if(hkf && !std::isfinite(hkf.value().Gf))
             return false;
-        if(!hkf.empty() && !std::isfinite(hkf.get().Hf))
+        if(hkf && !std::isfinite(hkf.value().Hf))
             return false;
 
         return true;
@@ -755,6 +793,11 @@ auto Database::addAqueousSpecies(const AqueousSpecies& species) -> void
 auto Database::addGaseousSpecies(const GaseousSpecies& species) -> void
 {
     pimpl->addGaseousSpecies(species);
+}
+
+auto Database::addLiquidSpecies(const LiquidSpecies& species) -> void
+{
+    pimpl->addLiquidSpecies(species);
 }
 
 auto Database::addMineralSpecies(const MineralSpecies& species) -> void
@@ -787,6 +830,16 @@ auto Database::gaseousSpecies(std::string name) const -> const GaseousSpecies&
     return pimpl->gaseousSpecies(name);
 }
 
+auto Database::liquidSpecies() -> std::vector<LiquidSpecies>
+{
+    return pimpl->liquidSpecies();
+}
+
+auto Database::liquidSpecies(std::string name) const -> const LiquidSpecies&
+{
+    return pimpl->liquidSpecies(name);
+}
+
 auto Database::mineralSpecies() -> std::vector<MineralSpecies>
 {
     return pimpl->mineralSpecies();
@@ -807,6 +860,11 @@ auto Database::containsGaseousSpecies(std::string species) const -> bool
     return pimpl->containsGaseousSpecies(species);
 }
 
+auto Database::containsLiquidSpecies(std::string species) const -> bool
+{
+    return pimpl->containsLiquidSpecies(species);
+}
+
 auto Database::containsMineralSpecies(std::string species) const -> bool
 {
     return pimpl->containsMineralSpecies(species);
@@ -820,6 +878,11 @@ auto Database::aqueousSpeciesWithElements(const std::vector<std::string>& elemen
 auto Database::gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<GaseousSpecies>
 {
     return pimpl->gaseousSpeciesWithElements(elements);
+}
+
+auto Database::liquidSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<LiquidSpecies>
+{
+    return pimpl->liquidSpeciesWithElements(elements);
 }
 
 auto Database::mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<MineralSpecies>
