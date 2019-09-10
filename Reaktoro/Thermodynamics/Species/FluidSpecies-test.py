@@ -5,6 +5,18 @@ def test_GaseousSpecies_FluidSpecies_LiquidSpecies_import():
     from reaktoro import GaseousSpecies
     from reaktoro import LiquidSpecies
 
+def test_FluidSpecies_use():
+    Tc = 190.6
+    Pc = 45.99
+    wc = 0.012
+    fluidSpecies = FluidSpecies()
+    fluidSpecies.setCriticalTemperature(Tc)
+    fluidSpecies.setCriticalPressure(Pc)
+    fluidSpecies.setAcentricFactor(wc)
+    assert fluidSpecies.criticalTemperature() == Tc
+    assert fluidSpecies.criticalPressure() == Pc
+    assert fluidSpecies.acentricFactor() == wc
+
 def test_GaseousSpecies_use():
     Tc = 190.6
     Pc = 45.99
@@ -28,3 +40,4 @@ def test_LiquidSpecies_use():
     assert liquidSpecies.criticalTemperature() == Tc
     assert liquidSpecies.criticalPressure() == Pc
     assert liquidSpecies.acentricFactor() == wc
+    
