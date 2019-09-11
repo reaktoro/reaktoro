@@ -105,7 +105,7 @@ public:
         /// The residual molar heat capacity at constant volume of the phase (in units of J/(mol*K)).
         ChemicalScalar residual_molar_heat_capacity_cv;
 
-        /// The partial molar volumes of the speies in the phase (in units of m3/mol).
+        /// The partial molar volumes of the species in the phase (in units of m3/mol).
         ChemicalVector partial_molar_volumes;
 
         /// The residual partial molar Gibbs energies of the species in the phase (in units of J/mol).
