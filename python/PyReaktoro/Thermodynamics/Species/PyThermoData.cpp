@@ -62,7 +62,7 @@ void exportThermoData(py::module& m)
     {
         py::class_<MineralSpeciesThermoData, SpeciesThermoData> (m, "MineralSpeciesThermoData")
         .def(py::init<>())
-        .def_property("hkf", [&] (MineralSpeciesThermoData& self) { return get_optional(self.hkf);},
+        .def_property("hkf", [] (MineralSpeciesThermoData& self) { return get_optional(self.hkf);},
                              [] (MineralSpeciesThermoData& self, MineralSpeciesThermoParamsHKF& hkf) {self.hkf = hkf;})
         ;
     }
