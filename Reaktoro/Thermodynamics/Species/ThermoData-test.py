@@ -44,6 +44,13 @@ def test_SpeciesThermoData():
     assert species.phreeqc.reaction is not None
 
 
+def test_FluidSpeciesThermoData():
+    fluid_species = FluidSpeciesThermoData()
+    assert fluid_species.hkf is None
+    fluid_species.hkf = FluidSpeciesThermoParamsHKF()
+    assert fluid_species.hkf is not None
+
+
 def test_AqueousSpeciesThermoData():
     aqueous_species = AqueousSpeciesThermoData()
     assert aqueous_species.hkf is None
@@ -58,11 +65,53 @@ def test_GaseousSpeciesThermoData():
     assert gaseous_species.hkf is not None
 
 
+def test_MineralSpeciesThermoParamsHKF():
+    hkf = MineralSpeciesThermoParamsHKF()
+    assert len(hkf.a) == 0
+    hkf.a.append(1)
+    assert len(hkf.a) == 1
+
+    a = hkf.a
+    assert a[0] == 1
+
+    del a
+    assert hkf.a[0] == 1
+
+    a = hkf.a
+    a[0] = 2
+    assert hkf.a[0] == 2
+    hkf.a[0] = 3
+    del hkf
+    assert a[0] == 3
+
+
 def test_MineralSpeciesThermoData():
-    mineral_species = MineralSpeciesThermoData()
-    assert mineral_species.hkf is None
-    mineral_species.hkf = MineralSpeciesThermoParamsHKF()
-    assert mineral_species.hkf is not None
+    thermo_data = MineralSpeciesThermoData()
+
+    assert thermo_data.hkf is None
+    thermo_data.hkf = MineralSpeciesThermoParamsHKF()
+    assert thermo_data.hkf is not None
+
+    hkf = thermo_data.hkf
+    thermo_data.hkf.a.append(1)
+    assert hkf.a[0] == 1
+    del hkf
+    assert thermo_data.hkf.a[0] == 1
+
+    hkf = thermo_data.hkf
+    del thermo_data
+    assert hkf.a[0] == 1
+
+
+def test_MineralSpecies():
+    mineral_species = MineralSpecies()
+    thermo_data = mineral_species.thermoData()
+    thermo_data.hkf = MineralSpeciesThermoParamsHKF()
+
+    mineral_species.thermoData().hkf.a.append(1)
+    del mineral_species
+    assert thermo_data.hkf.a[0] == 1
+
 
 def test_LiquidSpeciesThermoData():
     liquid_species = LiquidSpeciesThermoData()

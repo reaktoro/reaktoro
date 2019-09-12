@@ -43,6 +43,8 @@ def test_VectorDouble():
     vector.append(10)
     assert vector[0] == 15
     assert vector[1] == 10
+    vector[0] = 1
+    assert vector[0] == 1
     vector.pop()
     assert vector
     vector.pop()
