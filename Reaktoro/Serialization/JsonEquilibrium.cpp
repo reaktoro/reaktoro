@@ -49,8 +49,8 @@ void to_json(json& j, const SmartEquilibriumResult& obj) {
     j["estimate"]["failed_with_species"] = obj.estimate.failed_with_species;
     j["estimate"]["failed_with_amount"] = obj.estimate.failed_with_amount;
     j["estimate"]["failed_with_chemical_potential"] = obj.estimate.failed_with_chemical_potential;
-    j["learning"] = json::object();
-    j["learning"]["gibbs_energy_minimization"] = obj.learning.gibbs_energy_minimization;
+    j["learn"] = json::object();
+    j["learn"]["gibbs_energy_minimization"] = obj.learning.gibbs_energy_minimization;
     j["timing"] = obj.timing;
 }
 
@@ -59,17 +59,17 @@ void from_json(const json& j, SmartEquilibriumResult& obj) {
     j.at("estimate").at("failed_with_species").get_to(obj.estimate.failed_with_species);
     j.at("estimate").at("failed_with_amount").get_to(obj.estimate.failed_with_amount);
     j.at("estimate").at("failed_with_chemical_potential").get_to(obj.estimate.failed_with_chemical_potential);
-    j.at("learning").at("gibbs_energy_minimization").get_to(obj.learning.gibbs_energy_minimization);
+    j.at("learn").at("gibbs_energy_minimization").get_to(obj.learning.gibbs_energy_minimization);
     j.at("timing").get_to(obj.timing);
 }
 
 void to_json(json& j, const SmartEquilibriumTiming& obj) {
     j["solve"] = obj.solve;
-    j["learning"] = obj.learning;
-    j["learning_gibbs_energy_minimization"] = obj.learning_gibbs_energy_minimization;
-    j["learning_chemical_properties"] = obj.learning_chemical_properties;
-    j["learning_sensitivity_matrix"] = obj.learning_sensitivity_matrix;
-    j["learning_storage"] = obj.learning_storage;
+    j["learn"] = obj.learn;
+    j["learn_gibbs_energy_minimization"] = obj.learn_gibbs_energy_minimization;
+    j["learn_chemical_properties"] = obj.learn_chemical_properties;
+    j["learn_sensitivity_matrix"] = obj.learn_sensitivity_matrix;
+    j["learn_storage"] = obj.learn_storage;
     j["estimate"] = obj.estimate;
     j["estimate_search"] = obj.estimate_search;
     j["estimate_mat_vec_mul"] = obj.estimate_mat_vec_mul;
@@ -78,11 +78,11 @@ void to_json(json& j, const SmartEquilibriumTiming& obj) {
 
 void from_json(const json& j, SmartEquilibriumTiming& obj) {
     j.at("solve").get_to(obj.solve);
-    j.at("learning").get_to(obj.learning);
-    j.at("learning_gibbs_energy_minimization").get_to(obj.learning_gibbs_energy_minimization);
-    j.at("learning_chemical_properties").get_to(obj.learning_chemical_properties);
-    j.at("learning_sensitivity_matrix").get_to(obj.learning_sensitivity_matrix);
-    j.at("learning_storage").get_to(obj.learning_storage);
+    j.at("learn").get_to(obj.learn);
+    j.at("learn_gibbs_energy_minimization").get_to(obj.learn_gibbs_energy_minimization);
+    j.at("learn_chemical_properties").get_to(obj.learn_chemical_properties);
+    j.at("learn_sensitivity_matrix").get_to(obj.learn_sensitivity_matrix);
+    j.at("learn_storage").get_to(obj.learn_storage);
     j.at("estimate").get_to(obj.estimate);
     j.at("estimate_search").get_to(obj.estimate_search);
     j.at("estimate_mat_vec_mul").get_to(obj.estimate_mat_vec_mul);

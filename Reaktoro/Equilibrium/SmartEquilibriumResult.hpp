@@ -32,19 +32,19 @@ struct SmartEquilibriumTiming
     double solve = 0.0;
 
     /// The time spent for learning a new chemical equilibrium calculation.
-    double learning = 0.0;
+    double learn = 0.0;
 
     /// The time spent for a conventional Gibbs energy minimization calculation during learning operation.
-    double learning_gibbs_energy_minimization = 0.0;
+    double learn_gibbs_energy_minimization = 0.0;
 
     /// The time spent for computing the chemical properties during learning operation.
-    double learning_chemical_properties = 0.0;
+    double learn_chemical_properties = 0.0;
 
     /// The time spent for computing the sensitivity matrix during learning operation.
-    double learning_sensitivity_matrix = 0.0;
+    double learn_sensitivity_matrix = 0.0;
 
     /// The time spent for storing the computed chemical state into the tree of knowledge.
-    double learning_storage = 0.0;
+    double learn_storage = 0.0;
 
     /// The time spent for the smart chemical equilibrium state estimation.
     double estimate = 0.0;

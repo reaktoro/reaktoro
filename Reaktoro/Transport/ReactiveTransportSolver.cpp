@@ -167,7 +167,6 @@ struct ReactiveTransportSolver::Impl
         //---------------------------------------------------------------------------
         tic(0);
 
-
         // Collect the amounts of elements in the solid and fluid species
         for(Index icell = 0; icell < num_cells; ++icell)
         {
