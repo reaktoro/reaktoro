@@ -18,10 +18,6 @@ dependencies:
     - sphinx-autobuild
     - sphinx_rtd_theme
     - sphinxcontrib-images
-  {% if not debug %}
-  # Cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
-  - pugixml
-  {% endif %}
   - nlohmann_json
   - pybind11=2.3.0
   - pytest
@@ -37,6 +33,10 @@ dependencies:
   - libstdcxx-ng                   # [linux]
   - ccache                         # [unix]
   - clcache                        # [win]
+  {% if not debug %}
+  # Cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
+  - pugixml
+  {% endif %}
 
 environment:
 
