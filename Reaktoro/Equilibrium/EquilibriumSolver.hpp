@@ -77,12 +77,12 @@ public:
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
     auto approximate(ChemicalState& state) -> EquilibriumResult;
 
-    /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
+    /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param be The molar amounts of the elements in the equilibrium partition
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
 
-    /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
+    /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
