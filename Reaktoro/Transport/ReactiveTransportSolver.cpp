@@ -34,7 +34,7 @@ namespace Reaktoro {
 struct ReactiveTransportSolver::Impl
 {
     /// The chemical system common to all degrees of freedom in the chemical field.
-    ChemicalSystem system_;
+    ChemicalSystem system;
 
     /// The solver for solving the transport equations
     TransportSolver transport_solver;
@@ -42,7 +42,7 @@ struct ReactiveTransportSolver::Impl
     /// The options for the reactive transport calculations.
     ReactiveTransportOptions options;
 
-    /// The resultrmation of the last reactive transport time step calculation.
+    /// The result information of the last reactive transport time step calculation.
     ReactiveTransportResult result;
 
     /// The equilibrium solver using conventional Gibbs energy minimization approach.
@@ -74,7 +74,7 @@ struct ReactiveTransportSolver::Impl
 
     /// Construct a ReactiveTransportSolver::Impl instance.
     Impl(const ChemicalSystem& system)
-    : system_(system), equilibrium_solver(system), smart_equilibrium_solver(system)
+    : system(system), equilibrium_solver(system), smart_equilibrium_solver(system)
     {
         setBoundaryState(ChemicalState(system));
     }
@@ -120,7 +120,7 @@ struct ReactiveTransportSolver::Impl
     /// Add the output to the reactive transport modelling.
     auto output() -> ChemicalOutput
     {
-        outputs.emplace_back(ChemicalOutput(system_));
+        outputs.emplace_back(ChemicalOutput(system));
         return outputs.back();
     }
 
@@ -129,7 +129,7 @@ struct ReactiveTransportSolver::Impl
     {
         // Initialize mesh and corresponding amount e
         const Mesh& mesh = transport_solver.mesh();
-        const Index num_elements = system_.numElements();
+        const Index num_elements = system.numElements();
         const Index num_cells = mesh.numCells();
 
         // Initialize amount of elements in fluid and solid phases
@@ -150,10 +150,10 @@ struct ReactiveTransportSolver::Impl
 
         // Auxiliary variables
         const auto& mesh = transport_solver.mesh();
-        const auto& num_elements = system_.numElements();
+        const auto& num_elements = system.numElements();
         const auto& num_cells = mesh.numCells();
-        const auto& ifs = system_.indicesFluidSpecies();
-        const auto& iss = system_.indicesSolidSpecies();
+        const auto& ifs = system.indicesFluidSpecies();
+        const auto& iss = system.indicesSolidSpecies();
 
         // Open the the file for outputting chemical states
         for(auto output : outputs)
@@ -327,7 +327,7 @@ auto ReactiveTransportSolver::result() const -> const ReactiveTransportResult&
 
 auto ReactiveTransportSolver::system() const -> const ChemicalSystem&
 {
-    return pimpl->system_;
+    return pimpl->system;
 }
 
 auto ReactiveTransportSolver::timeStep() const -> double
