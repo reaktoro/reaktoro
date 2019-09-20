@@ -56,7 +56,7 @@ public:
     auto start() -> void { tstart = time(); }
 
     /// Stop measuring time.
-    auto stop() -> double { reading = elapsed(tstart); }
+    auto stop() -> void { reading = elapsed(tstart); }
 
 private:
     /// The auxiliary time variable marking the start of timing.
