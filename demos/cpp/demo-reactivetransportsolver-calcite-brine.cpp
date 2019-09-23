@@ -260,7 +260,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     output.add("phaseVolume(Dolomite)");
     output.filename(folder + "/" + "test.txt");
 
-    // Step **: Create result
+    // Step **: Create RTProfiler to track the timing and results of reactive transport
     ReactiveTransportProfiler profiler;
 
     // Step **: Set initial time and counter of steps in time
