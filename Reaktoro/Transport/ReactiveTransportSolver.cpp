@@ -176,9 +176,10 @@ struct ReactiveTransportSolver::Impl
 
         // Left boundary condition cell
         Index icell_bc = 0;
-        const auto phi_bc = field[icell_bc].properties().fluidVolume().val;
+        // Get porosity of the left boundary cell
+        const auto phi_bc = field[icell_bc].properties().fluidVolume().val / field[icell_bc].properties().volume().val;
 
-        // Ensure the result of each fluid element transport calculation can be saved.
+        // Ensure the result of each fluid element transport calculation can be saved
         result.transport_of_element.resize(num_elements);
 
         // Transport the elements in the fluid species
@@ -198,13 +199,13 @@ struct ReactiveTransportSolver::Impl
         toc(0, result.timing.transport);
 
         //---------------------------------------------------------------------------
-        // Step 1: Perform a time step transport calculation for each fluid element
+        // Step 2: Perform a time step equilibrium calculation for each cell
         //---------------------------------------------------------------------------
         tic(1);
 
         if(options.use_smart_equilibrium_solver)
         {
-            // Ensure the result of each cell's smart equilibrium calculation can be saved.
+            // Ensure the result of each cell's smart equilibrium calculation can be saved
             result.smart_equilibrium_at_cell.resize(num_cells);
 
             for(Index icell = 0; icell < num_cells; ++icell)
@@ -215,7 +216,7 @@ struct ReactiveTransportSolver::Impl
                 // Solve with a smart equilibrium solver
                 smart_equilibrium_solver.solve(field[icell], T, P, b.row(icell));
 
-                // Save the result of this cell's smart equilibrium calculation.
+                // Save the result of this cell's smart equilibrium calculation
                 result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver.result();
             }
         }
