@@ -137,8 +137,8 @@ int main()
     Results results;
 
     // Execute reactive transport with different solvers
-    params.use_smart_eqilibirum_solver = 1; runReactiveTransport(params, results);
-    params.use_smart_eqilibirum_solver = 0; runReactiveTransport(params, results);
+    params.use_smart_eqilibirum_solver = true; runReactiveTransport(params, results);
+    params.use_smart_eqilibirum_solver = false; runReactiveTransport(params, results);
 
     results.conventional_total = results.equilibrium_timing.solve;
     results.smart_total = results.smart_equilibrium_timing.solve;
