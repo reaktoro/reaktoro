@@ -145,38 +145,36 @@ struct redux_novec_unroller<Func, Evaluator, Start, 0>
 template<typename Func, typename Evaluator, int Start, int Length>
 struct redux_vec_unroller
 {
-  enum {
-    PacketSize = redux_traits<Func, Evaluator>::PacketSize,
-    HalfLength = Length/2
-  };
-
-  typedef typename Evaluator::Scalar Scalar;
-  typedef typename redux_traits<Func, Evaluator>::PacketType PacketScalar;
-
-  static EIGEN_STRONG_INLINE PacketScalar run(const Evaluator &eval, const Func& func)
+  template<typename PacketType>
+  EIGEN_DEVICE_FUNC
+  static EIGEN_STRONG_INLINE PacketType run(const Evaluator &eval, const Func& func)
   {
+    enum {
+      PacketSize = unpacket_traits<PacketType>::size,
+      HalfLength = Length/2
+    };
+
     return func.packetOp(
-            redux_vec_unroller<Func, Evaluator, Start, HalfLength>::run(eval,func),
-            redux_vec_unroller<Func, Evaluator, Start+HalfLength, Length-HalfLength>::run(eval,func) );
+            redux_vec_unroller<Func, Evaluator, Start, HalfLength>::template run<PacketType>(eval,func),
+            redux_vec_unroller<Func, Evaluator, Start+HalfLength, Length-HalfLength>::template run<PacketType>(eval,func) );
   }
 };
 
 template<typename Func, typename Evaluator, int Start>
 struct redux_vec_unroller<Func, Evaluator, Start, 1>
 {
-  enum {
-    index = Start * redux_traits<Func, Evaluator>::PacketSize,
-    outer = index / int(Evaluator::InnerSizeAtCompileTime),
-    inner = index % int(Evaluator::InnerSizeAtCompileTime),
-    alignment = Evaluator::Alignment
-  };
-
-  typedef typename Evaluator::Scalar Scalar;
-  typedef typename redux_traits<Func, Evaluator>::PacketType PacketScalar;
-
-  static EIGEN_STRONG_INLINE PacketScalar run(const Evaluator &eval, const Func&)
+  template<typename PacketType>
+  EIGEN_DEVICE_FUNC
+  static EIGEN_STRONG_INLINE PacketType run(const Evaluator &eval, const Func&)
   {
-    return eval.template packetByOuterInner<alignment,PacketScalar>(outer, inner);
+    enum {
+      PacketSize = unpacket_traits<PacketType>::size,
+      index = Start * PacketSize,
+      outer = index / int(Evaluator::InnerSizeAtCompileTime),
+      inner = index % int(Evaluator::InnerSizeAtCompileTime),
+      alignment = Evaluator::Alignment
+    };
+    return eval.template packetByOuterInner<alignment,PacketType>(outer, inner);
   }
 };
 
@@ -329,7 +327,7 @@ struct redux_impl<Func, Evaluator, LinearVectorizedTraversal, CompleteUnrolling>
 {
   typedef typename Evaluator::Scalar Scalar;
 
-  typedef typename redux_traits<Func, Evaluator>::PacketType PacketScalar;
+  typedef typename redux_traits<Func, Evaluator>::PacketType PacketType;
   enum {
     PacketSize = redux_traits<Func, Evaluator>::PacketSize,
     Size = Evaluator::SizeAtCompileTime,
@@ -343,7 +341,7 @@ struct redux_impl<Func, Evaluator, LinearVectorizedTraversal, CompleteUnrolling>
     EIGEN_ONLY_USED_FOR_DEBUG(xpr)
     eigen_assert(xpr.rows()>0 && xpr.cols()>0 && "you are using an empty matrix");
     if (VectorizedSize > 0) {
-      Scalar res = func.predux(redux_vec_unroller<Func, Evaluator, 0, Size / PacketSize>::run(eval,func));
+      Scalar res = func.predux(redux_vec_unroller<Func, Evaluator, 0, Size / PacketSize>::template run<PacketType>(eval,func));
       if (VectorizedSize != Size)
         res = func(res,redux_novec_unroller<Func, Evaluator, VectorizedSize, Size-VectorizedSize>::run(eval,func));
       return res;
@@ -361,7 +359,8 @@ class redux_evaluator : public internal::evaluator<_XprType>
   typedef internal::evaluator<_XprType> Base;
 public:
   typedef _XprType XprType;
-  EIGEN_DEVICE_FUNC explicit redux_evaluator(const XprType &xpr) : Base(xpr) {}
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+  explicit redux_evaluator(const XprType &xpr) : Base(xpr) {}
   
   typedef typename XprType::Scalar Scalar;
   typedef typename XprType::CoeffReturnType CoeffReturnType;
@@ -377,11 +376,12 @@ public:
     InnerSizeAtCompileTime = XprType::InnerSizeAtCompileTime
   };
   
-  EIGEN_DEVICE_FUNC
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   CoeffReturnType coeffByOuterInner(Index outer, Index inner) const
   { return Base::coeff(IsRowMajor ? outer : inner, IsRowMajor ? inner : outer); }
   
   template<int LoadMode, typename PacketType>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   PacketType packetByOuterInner(Index outer, Index inner) const
   { return Base::template packet<LoadMode,PacketType>(IsRowMajor ? outer : inner, IsRowMajor ? inner : outer); }
   
@@ -398,6 +398,8 @@ public:
   *
   * The template parameter \a BinaryOp is the type of the functor \a func which must be
   * an associative operator. Both current C++98 and C++11 functor styles are handled.
+  *
+  * \warning the matrix must be not empty, otherwise an assertion is triggered.
   *
   * \sa DenseBase::sum(), DenseBase::minCoeff(), DenseBase::maxCoeff(), MatrixBase::colwise(), MatrixBase::rowwise()
   */
@@ -417,6 +419,7 @@ DenseBase<Derived>::redux(const Func& func) const
 }
 
 /** \returns the minimum of all coefficients of \c *this.
+  * \warning the matrix must be not empty, otherwise an assertion is triggered.
   * \warning the result is undefined if \c *this contains NaN.
   */
 template<typename Derived>
@@ -427,6 +430,7 @@ DenseBase<Derived>::minCoeff() const
 }
 
 /** \returns the maximum of all coefficients of \c *this.
+  * \warning the matrix must be not empty, otherwise an assertion is triggered.
   * \warning the result is undefined if \c *this contains NaN.
   */
 template<typename Derived>
