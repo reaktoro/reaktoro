@@ -27,8 +27,8 @@ template <typename _Property>
 _Property* get_optional(std::optional<_Property>& prop)
 {
     if (prop.has_value())
-        return &prop.value();
-        
+        return &(*prop);
+
     return nullptr;
 }
 
@@ -36,14 +36,14 @@ void exportThermoData(py::module& m)
 {
     py::class_<SpeciesThermoData>(m, "SpeciesThermoData")
         .def(py::init<>())
-        .def_property("properties", [] (SpeciesThermoData& self) { return get_optional(self.properties);}, 
+        .def_property("properties", [] (SpeciesThermoData& self) { return get_optional(self.properties);},
                                     [] (SpeciesThermoData& self, SpeciesThermoInterpolatedProperties& property) {self.properties = property;} )
         .def_property("reaction", [] (SpeciesThermoData& self) { return get_optional(self.reaction);},
                                   [] (SpeciesThermoData& self, ReactionThermoInterpolatedProperties& property) {self.reaction = property;})
         .def_property("phreeqc", [] (SpeciesThermoData& self) { return get_optional(self.phreeqc);},
                                  [] (SpeciesThermoData& self, SpeciesThermoParamsPhreeqc& property) {self.phreeqc = property;})
         ;
-    
+
     py::class_<AqueousSpeciesThermoData, SpeciesThermoData>(m, "AqueousSpeciesThermoData")
         .def(py::init<>())
         .def_property("hkf", [] (AqueousSpeciesThermoData& self) { return get_optional(self.hkf);},
@@ -58,7 +58,7 @@ void exportThermoData(py::module& m)
 
     m.attr("LiquidSpeciesThermoData") = m.attr("FluidSpeciesThermoData");
     m.attr("GaseousSpeciesThermoData") = m.attr("FluidSpeciesThermoData");
-    
+
     {
         py::class_<MineralSpeciesThermoData, SpeciesThermoData> (m, "MineralSpeciesThermoData")
         .def(py::init<>())
@@ -66,10 +66,10 @@ void exportThermoData(py::module& m)
                              [] (MineralSpeciesThermoData& self, MineralSpeciesThermoParamsHKF& hkf) {self.hkf = hkf;})
         ;
     }
-    
+
 }
 
-void exportThermoDataProperties(py::module& m) 
+void exportThermoDataProperties(py::module& m)
 {
     py::class_<SpeciesThermoInterpolatedProperties>(m, "SpeciesThermoInterpolatedProperties")
         .def(py::init<>())
