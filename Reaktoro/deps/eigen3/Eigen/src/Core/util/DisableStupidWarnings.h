@@ -44,10 +44,15 @@
   #if __clang_major__ >= 3 && __clang_minor__ >= 5
     #pragma clang diagnostic ignored "-Wabsolute-value"
   #endif
+  #if ( defined(__ALTIVEC__) || defined(__VSX__) ) && __cplusplus < 201103L
+    // warning: generic selections are a C11-specific feature
+    // ignoring warnings thrown at vec_ctf in Altivec/PacketMath.h
+    #pragma clang diagnostic ignored "-Wc11-extensions"
+  #endif
 
 #elif defined __GNUC__
 
-  #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+  #if (!defined(EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS)) &&  (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
     #pragma GCC diagnostic push
   #endif
   // g++ warns about local variables shadowing member functions, which is too strict
@@ -59,7 +64,10 @@
   #if __GNUC__>=6
     #pragma GCC diagnostic ignored "-Wignored-attributes"
   #endif
-
+  #if __GNUC__==7
+    // See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89325
+    #pragma GCC diagnostic ignored "-Wattributes"
+  #endif
 #endif
 
 #if defined __NVCC__

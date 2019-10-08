@@ -24,7 +24,7 @@ namespace internal {
 
 // copy_using_evaluator_traits is based on assign_traits
 
-template <typename DstEvaluator, typename SrcEvaluator, typename AssignFunc>
+template <typename DstEvaluator, typename SrcEvaluator, typename AssignFunc, int MaxPacketSize = -1>
 struct copy_using_evaluator_traits
 {
   typedef typename DstEvaluator::XprType Dst;
@@ -51,13 +51,15 @@ private:
     InnerMaxSize = int(Dst::IsVectorAtCompileTime) ? int(Dst::MaxSizeAtCompileTime)
               : int(DstFlags)&RowMajorBit ? int(Dst::MaxColsAtCompileTime)
               : int(Dst::MaxRowsAtCompileTime),
+    RestrictedInnerSize = EIGEN_SIZE_MIN_PREFER_FIXED(InnerSize,MaxPacketSize),
+    RestrictedLinearSize = EIGEN_SIZE_MIN_PREFER_FIXED(Dst::SizeAtCompileTime,MaxPacketSize),
     OuterStride = int(outer_stride_at_compile_time<Dst>::ret),
     MaxSizeAtCompileTime = Dst::SizeAtCompileTime
   };
 
   // TODO distinguish between linear traversal and inner-traversals
-  typedef typename find_best_packet<DstScalar,Dst::SizeAtCompileTime>::type LinearPacketType;
-  typedef typename find_best_packet<DstScalar,InnerSize>::type InnerPacketType;
+  typedef typename find_best_packet<DstScalar,RestrictedLinearSize>::type LinearPacketType;
+  typedef typename find_best_packet<DstScalar,RestrictedInnerSize>::type InnerPacketType;
 
   enum {
     LinearPacketSize = unpacket_traits<LinearPacketType>::size,
@@ -532,7 +534,7 @@ struct dense_assignment_loop<Kernel, SliceVectorizedTraversal, NoUnrolling>
     const Scalar *dst_ptr = kernel.dstDataPtr();
     if((!bool(dstIsAligned)) && (UIntPtr(dst_ptr) % sizeof(Scalar))>0)
     {
-      // the pointer is not aligend-on scalar, so alignment is not possible
+      // the pointer is not aligned-on scalar, so alignment is not possible
       return dense_assignment_loop<Kernel,DefaultTraversal,NoUnrolling>::run(kernel);
     }
     const Index packetAlignedMask = packetSize - 1;
@@ -609,7 +611,8 @@ public:
   typedef typename AssignmentTraits::PacketType PacketType;
   
   
-  EIGEN_DEVICE_FUNC generic_dense_assignment_kernel(DstEvaluatorType &dst, const SrcEvaluatorType &src, const Functor &func, DstXprType& dstExpr)
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+  generic_dense_assignment_kernel(DstEvaluatorType &dst, const SrcEvaluatorType &src, const Functor &func, DstXprType& dstExpr)
     : m_dst(dst), m_src(src), m_functor(func), m_dstExpr(dstExpr)
   {
     #ifdef EIGEN_DEBUG_ASSIGN
@@ -699,6 +702,27 @@ protected:
   DstXprType& m_dstExpr;
 };
 
+// Special kernel used when computing small products whose operands have dynamic dimensions.  It ensures that the
+// PacketSize used is no larger than 4, thereby increasing the chance that vectorized instructions will be used
+// when computing the product.
+
+template<typename DstEvaluatorTypeT, typename SrcEvaluatorTypeT, typename Functor>
+class restricted_packet_dense_assignment_kernel : public generic_dense_assignment_kernel<DstEvaluatorTypeT, SrcEvaluatorTypeT, Functor, BuiltIn>
+{
+protected:
+  typedef generic_dense_assignment_kernel<DstEvaluatorTypeT, SrcEvaluatorTypeT, Functor, BuiltIn> Base;
+ public:
+    typedef typename Base::Scalar Scalar;
+    typedef typename Base::DstXprType DstXprType;
+    typedef copy_using_evaluator_traits<DstEvaluatorTypeT, SrcEvaluatorTypeT, Functor, 4> AssignmentTraits;
+    typedef typename AssignmentTraits::PacketType PacketType;
+    
+    EIGEN_DEVICE_FUNC restricted_packet_dense_assignment_kernel(DstEvaluatorTypeT &dst, const SrcEvaluatorTypeT &src, const Functor &func, DstXprType& dstExpr)
+    : Base(dst, src, func, dstExpr)
+  {
+  }
+ };
+ 
 /***************************************************************************
 * Part 5 : Entry point for dense rectangular assignment
 ***************************************************************************/
@@ -837,6 +861,27 @@ void call_assignment_no_alias(Dst& dst, const Src& src, const Func& func)
   
   Assignment<ActualDstTypeCleaned,Src,Func>::run(actualDst, src, func);
 }
+
+template<typename Dst, typename Src, typename Func>
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+void call_restricted_packet_assignment_no_alias(Dst& dst, const Src& src, const Func& func)
+{
+    typedef evaluator<Dst> DstEvaluatorType;
+    typedef evaluator<Src> SrcEvaluatorType;
+    typedef restricted_packet_dense_assignment_kernel<DstEvaluatorType,SrcEvaluatorType,Func> Kernel;
+
+    EIGEN_STATIC_ASSERT_LVALUE(Dst)
+    EIGEN_CHECK_BINARY_COMPATIBILIY(Func,typename Dst::Scalar,typename Src::Scalar);
+
+    SrcEvaluatorType srcEvaluator(src);
+    resize_if_allowed(dst, src, func);
+    
+    DstEvaluatorType dstEvaluator(dst);
+    Kernel kernel(dstEvaluator, srcEvaluator, func, dst.const_cast_derived());
+
+    dense_assignment_loop<Kernel>::run(kernel);
+}
+
 template<typename Dst, typename Src>
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 void call_assignment_no_alias(Dst& dst, const Src& src)
