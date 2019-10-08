@@ -162,11 +162,11 @@ struct Thermo::Impl
 
         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(reaction_thermo_properties && !reaction_thermo_properties->gibbs_energy.empty())
-            return standardGibbsEnergyFromReaction(T, P, species, reaction_thermo_properties.value());
+            return standardGibbsEnergyFromReaction(T, P, species, *reaction_thermo_properties);
 
         const auto phreeqc_thermo_params = getSpeciesThermoParamsPhreeqc(species);
         if(phreeqc_thermo_params)
-			return standardGibbsEnergyFromPhreeqcReaction(T, P, species, phreeqc_thermo_params.value());
+			return standardGibbsEnergyFromPhreeqcReaction(T, P, species, *phreeqc_thermo_params);
 
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).gibbs_energy;
@@ -182,7 +182,7 @@ struct Thermo::Impl
 
         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(reaction_thermo_properties && !reaction_thermo_properties->helmholtz_energy.empty())
-            return standardHelmholtzEnergyFromReaction(T, P, species, reaction_thermo_properties.value());
+            return standardHelmholtzEnergyFromReaction(T, P, species, *reaction_thermo_properties);
 
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).helmholtz_energy;
@@ -198,7 +198,7 @@ struct Thermo::Impl
 
         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(reaction_thermo_properties && !reaction_thermo_properties->internal_energy.empty())
-            return standardInternalEnergyFromReaction(T, P, species, reaction_thermo_properties.value());
+            return standardInternalEnergyFromReaction(T, P, species, *reaction_thermo_properties);
 
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).internal_energy;
@@ -214,7 +214,7 @@ struct Thermo::Impl
 
         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(reaction_thermo_properties && !reaction_thermo_properties->enthalpy.empty())
-            return standardEnthalpyFromReaction(T, P, species, reaction_thermo_properties.value());
+            return standardEnthalpyFromReaction(T, P, species, *reaction_thermo_properties);
 
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).enthalpy;
@@ -230,7 +230,7 @@ struct Thermo::Impl
 
         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(reaction_thermo_properties && !reaction_thermo_properties->entropy.empty())
-            return standardEntropyFromReaction(T, P, species, reaction_thermo_properties.value());
+            return standardEntropyFromReaction(T, P, species, *reaction_thermo_properties);
 
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).entropy;
@@ -246,7 +246,7 @@ struct Thermo::Impl
 
         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(reaction_thermo_properties && !reaction_thermo_properties->volume.empty())
-            return standardVolumeFromReaction(T, P, species, reaction_thermo_properties.value());
+            return standardVolumeFromReaction(T, P, species, *reaction_thermo_properties);
 
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).volume;
@@ -262,7 +262,7 @@ struct Thermo::Impl
 
         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(reaction_thermo_properties && !reaction_thermo_properties->heat_capacity_cp.empty())
-            return standardHeatCapacityConstPFromReaction(T, P, species, reaction_thermo_properties.value());
+            return standardHeatCapacityConstPFromReaction(T, P, species, *reaction_thermo_properties);
 
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).heat_capacity_cp;
@@ -279,7 +279,7 @@ struct Thermo::Impl
 
         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(reaction_thermo_properties && !reaction_thermo_properties->heat_capacity_cv.empty())
-            return standardHeatCapacityConstVFromReaction(T, P, species, reaction_thermo_properties.value());
+            return standardHeatCapacityConstVFromReaction(T, P, species, *reaction_thermo_properties);
 
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).heat_capacity_cv;

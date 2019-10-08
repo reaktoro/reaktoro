@@ -410,7 +410,7 @@ auto PhreeqcDatabase::mineralSpecies(std::string name) const -> MineralSpecies
 
 auto PhreeqcDatabase::mineralSpecies() const -> const std::vector<MineralSpecies>&
 {
-	return pimpl->mineral_species;	
+	return pimpl->mineral_species;
 }
 
 auto PhreeqcDatabase::containsAqueousSpecies(std::string name) const -> bool
@@ -531,7 +531,7 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
             AqueousSpecies refspecies = reference_database.aqueousSpecies(reaktoro_name);
             AqueousSpeciesThermoData data = refspecies.thermoData();
             data.phreeqc = species.thermoData().phreeqc;
-            data.phreeqc.value().reaction = {};
+            data.phreeqc->reaction = {};
             refspecies.setThermoData(data);
             refspecies.setName(species.name());
             return refspecies;
@@ -547,11 +547,11 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
             AqueousSpeciesThermoData data = species.thermoData();
 
             if(containsAqueousSpecies(alternative))
-                data.phreeqc.value().reaction = aqueousSpecies(alternative).thermoData().phreeqc.value().reaction;
+                data.phreeqc->reaction = aqueousSpecies(alternative).thermoData().phreeqc->reaction;
             if(containsGaseousSpecies(alternative))
-                data.phreeqc.value().reaction = gaseousSpecies(alternative).thermoData().phreeqc.value().reaction;
+                data.phreeqc->reaction = gaseousSpecies(alternative).thermoData().phreeqc->reaction;
             if(containsMineralSpecies(alternative))
-                data.phreeqc.value().reaction = mineralSpecies(alternative).thermoData().phreeqc.value().reaction;
+                data.phreeqc->reaction = mineralSpecies(alternative).thermoData().phreeqc->reaction;
 
             copy.setThermoData(data);
 
@@ -570,7 +570,7 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
             GaseousSpecies refspecies = reference_database.gaseousSpecies(species.name());
             GaseousSpeciesThermoData data = refspecies.thermoData();
             data.phreeqc = species.thermoData().phreeqc;
-            data.phreeqc.value().reaction = {};
+            data.phreeqc->reaction = {};
             refspecies.setThermoData(data);
             return refspecies;
         }
@@ -586,7 +586,7 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
             MineralSpecies refspecies = reference_database.mineralSpecies(species.name());
             MineralSpeciesThermoData data = refspecies.thermoData();
             data.phreeqc = species.thermoData().phreeqc;
-            data.phreeqc.value().reaction = {};
+            data.phreeqc->reaction = {};
             refspecies.setThermoData(data);
             return refspecies;
         }

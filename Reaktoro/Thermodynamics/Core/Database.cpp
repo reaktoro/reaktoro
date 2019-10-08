@@ -763,9 +763,9 @@ struct Database::Impl
 
         // Check if HKF parameters exist, but they are incomplete
         const auto& hkf = species.thermoData().hkf;
-        if(hkf && !std::isfinite(hkf.value().Gf))
+        if(hkf && !std::isfinite(hkf->Gf))
             return false;
-        if(hkf && !std::isfinite(hkf.value().Hf))
+        if(hkf && !std::isfinite(hkf->Hf))
             return false;
 
         return true;
