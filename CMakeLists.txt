@@ -26,11 +26,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 
 # Define which components of Reaktoro to build
 option(REAKTORO_BUILD_ALL         "Build everything." OFF)
-option(REAKTORO_BUILD_DEMOS       "Build demos." OFF)
-option(REAKTORO_BUILD_DOCS        "Build documentation." OFF)
-option(REAKTORO_BUILD_INTERPRETER "Build the interpreter executable reaktoro." ON)
+option(REAKTORO_BUILD_TESTS       "Build tests." ON)
 option(REAKTORO_BUILD_PYTHON      "Build the python wrappers and python package reaktoro." ON)
-option(REAKTORO_BUILD_TESTS       "Build tests." OFF)
+option(REAKTORO_BUILD_INTERPRETER "Build the interpreter executable reaktoro." ON)
+option(REAKTORO_BUILD_DEMOS       "Build demos." ON)
+option(REAKTORO_BUILD_DOCS        "Build documentation." ON)
 
 # Modify the REAKTORO_BUILD_* variables accordingly to BUILD_ALL
 if(REAKTORO_BUILD_ALL MATCHES ON)
@@ -91,8 +91,6 @@ add_subdirectory(Reaktoro)
 # Build the Python extension module PyReaktoro and the Python packages reaktoro
 if(REAKTORO_BUILD_PYTHON)
     add_subdirectory(python)
-else()
-    add_subdirectory(python EXCLUDE_FROM_ALL)
 endif()
 
 # Build the Python package ireaktoro, the Reaktoro interpreter
@@ -102,37 +100,21 @@ endif()
 
 # Build the demonstration applications
 if(REAKTORO_BUILD_DEMOS)
-    add_subdirectory(demos)
-else()
     add_subdirectory(demos EXCLUDE_FROM_ALL)
 endif()
 
 # Build the project documentation
 if(REAKTORO_BUILD_DOCS)
-    add_subdirectory(docs)
-else()
     add_subdirectory(docs EXCLUDE_FROM_ALL)
 endif()
 
 # Build the tests
 if(REAKTORO_BUILD_TESTS)
-    add_subdirectory(tests)
-else()
     add_subdirectory(tests EXCLUDE_FROM_ALL)
 endif()
 
 # Build the utilities
 add_subdirectory(utilities EXCLUDE_FROM_ALL)
-
-# Add target "python" for manual building of python wrappers, as `make python`, if REAKTORO_BUILD_PYTHON is OFF
-add_custom_target(python
-    COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/python")
-
-# Add target "interpreter" for manual building of interpreter, as `make interpreter`, if REAKTORO_BUILD_INTERPRETER is OFF
-add_custom_target(interpreter
-    COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${CURRENT_BINARY_DIR}/interpreter")
 
 # Add target "demos" for manual building of demos, as `make demos`, if REAKTORO_BUILD_DEMOS is OFF
 add_custom_target(demos
