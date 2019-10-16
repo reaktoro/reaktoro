@@ -60,7 +60,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set the list of compiler flags for MSVC compiler
-if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC OR ${CMAKE_CXX_COMPILER_ID} STREQUAL Intel)
     add_compile_options(
         /D_SCL_SECURE_NO_WARNINGS
         /D_CRT_SECURE_NO_WARNINGS=1
