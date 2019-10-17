@@ -4,7 +4,7 @@ file(GLOB_RECURSE SOURCE_FILES *.cpp)
 
 # This is needed to avoid some compilation issues when using clang-9 and c++17
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 10.0.0)
-    add_compile_options(-fno-aligned-allocation)
+    add_compile_options(-fno-aligned-allocation -fno-sized-deallocation)
 endif()
 
 # Include the Reaktoro/python directory
