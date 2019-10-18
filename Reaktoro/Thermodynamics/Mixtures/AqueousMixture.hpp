@@ -44,6 +44,8 @@ struct AqueousMixtureState : public MixtureState
 
     /// The stoichiometric molalities of the ionic species and their partial derivatives (in units of mol/kg)
     ChemicalVector ms;
+
+    using MixtureState::operator=; // this is needed otherwise Intel compiler 2019 fails to build
 };
 
 /// A type used to describe an aqueous mixture.
