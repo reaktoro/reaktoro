@@ -29,7 +29,7 @@
 
 namespace Reaktoro {
 
-/// A type to define the possible state of matter of a phase.
+/// A type to define the possible state of matter of a phase. 
 enum class PhaseType
 {
     Solid, Liquid, Gas, Plasma
@@ -43,6 +43,9 @@ class Phase
 public:
     /// Construct a default Phase instance.
     Phase();
+
+    /// Construct a Phase instance with given fluid name and PhaseType.
+    Phase(std::string name, PhaseType type);
 
     /// Set the name of the phase.
     auto setName(std::string name) -> void;

@@ -54,6 +54,13 @@ Phase::Phase()
 : pimpl(new Impl())
 {}
 
+Phase::Phase(std::string name, PhaseType type)
+    : pimpl(new Impl())
+{
+    setName(name);
+    setType(type);
+}
+
 auto Phase::setName(std::string name) -> void
 {
     pimpl->name = name;

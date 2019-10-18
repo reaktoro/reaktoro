@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<Database>
+  <Element>
+    <Name>H</Name>
+    <MolarMass units="g/mol">1.00794</MolarMass>
+  </Element>
+  <Element>
+    <Name>Fe</Name>
+    <MolarMass units="g/mol">55.845</MolarMass>
+  </Element>
+  <Element>
+    <Name>S</Name>
+    <MolarMass units="g/mol">32.065</MolarMass>
+  </Element>  
+</Database>

@@ -15,7 +15,7 @@ namespace Eigen {
 namespace internal {
 
 // Disable the code for older versions of gcc that don't support many of the required avx512 instrinsics.
-#if EIGEN_GNUC_AT_LEAST(5, 3)
+#if EIGEN_GNUC_AT_LEAST(5, 3) || EIGEN_COMP_CLANG
 
 #define _EIGEN_DECLARE_CONST_Packet16f(NAME, X) \
   const Packet16f p16f_##NAME = pset1<Packet16f>(X)
@@ -47,6 +47,7 @@ plog<Packet16f>(const Packet16f& _x) {
   // The smallest non denormalized float number.
   _EIGEN_DECLARE_CONST_Packet16f_FROM_INT(min_norm_pos, 0x00800000);
   _EIGEN_DECLARE_CONST_Packet16f_FROM_INT(minus_inf, 0xff800000);
+  _EIGEN_DECLARE_CONST_Packet16f_FROM_INT(pos_inf, 0x7f800000);
   _EIGEN_DECLARE_CONST_Packet16f_FROM_INT(nan, 0x7fc00000);
 
   // Polynomial coefficients.
@@ -64,11 +65,9 @@ plog<Packet16f>(const Packet16f& _x) {
   _EIGEN_DECLARE_CONST_Packet16f(cephes_log_q2, 0.693359375f);
 
   // invalid_mask is set to true when x is NaN
-  __mmask16 invalid_mask =
-      _mm512_cmp_ps_mask(x, _mm512_setzero_ps(), _CMP_NGE_UQ);
-  __mmask16 iszero_mask =
-      _mm512_cmp_ps_mask(x, _mm512_setzero_ps(), _CMP_EQ_UQ);
-
+  __mmask16 invalid_mask =  _mm512_cmp_ps_mask(x, _mm512_setzero_ps(), _CMP_NGE_UQ);
+  __mmask16 iszero_mask  =  _mm512_cmp_ps_mask(x, _mm512_setzero_ps(), _CMP_EQ_OQ);
+      
   // Truncate input values to the minimum positive normal.
   x = pmax(x, p16f_min_norm_pos);
 
@@ -118,10 +117,16 @@ plog<Packet16f>(const Packet16f& _x) {
   x = padd(x, y);
   x = padd(x, y2);
 
-  // Filter out invalid inputs, i.e. negative arg will be NAN, 0 will be -INF.
+  __mmask16 pos_inf_mask = _mm512_cmp_ps_mask(_x,p16f_pos_inf,_CMP_EQ_OQ);
+  // Filter out invalid inputs, i.e.:
+  //  - negative arg will be NAN,
+  //  - 0 will be -INF.
+  //  - +INF will be +INF
   return _mm512_mask_blend_ps(iszero_mask,
-                              _mm512_mask_blend_ps(invalid_mask, x, p16f_nan),
-                              p16f_minus_inf);
+            _mm512_mask_blend_ps(invalid_mask,
+              _mm512_mask_blend_ps(pos_inf_mask,x,p16f_pos_inf),
+              p16f_nan),
+            p16f_minus_inf);
 }
 #endif
 
@@ -276,7 +281,7 @@ psqrt<Packet16f>(const Packet16f& _x) {
 template <>
 EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet8d
 psqrt<Packet8d>(const Packet8d& _x) {
-  Packet8d neg_half = pmul(_x, pset1<Packet8d>(-.5f));
+  Packet8d neg_half = pmul(_x, pset1<Packet8d>(-.5));
   __mmask16 denormal_mask = _mm512_kand(
       _mm512_cmp_pd_mask(_x, pset1<Packet8d>((std::numeric_limits<double>::min)()),
                         _CMP_LT_OQ),
@@ -285,10 +290,10 @@ psqrt<Packet8d>(const Packet8d& _x) {
   Packet8d x = _mm512_rsqrt14_pd(_x);
 
   // Do a single step of Newton's iteration.
-  x = pmul(x, pmadd(neg_half, pmul(x, x), pset1<Packet8d>(1.5f)));
+  x = pmul(x, pmadd(neg_half, pmul(x, x), pset1<Packet8d>(1.5)));
 
   // Do a second step of Newton's iteration.
-  x = pmul(x, pmadd(neg_half, pmul(x, x), pset1<Packet8d>(1.5f)));
+  x = pmul(x, pmadd(neg_half, pmul(x, x), pset1<Packet8d>(1.5)));
 
   return _mm512_mask_blend_pd(denormal_mask, pmul(_x,x), _mm512_setzero_pd());
 }
@@ -374,6 +379,37 @@ EIGEN_STRONG_INLINE Packet16f prsqrt<Packet16f>(const Packet16f& x) {
 }
 #endif
 #endif
+
+
+template <>
+EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f
+psin<Packet16f>(const Packet16f& _x) {
+  return psin_float(_x);
+}
+
+template <>
+EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f
+pcos<Packet16f>(const Packet16f& _x) {
+  return pcos_float(_x);
+}
+
+#if defined(EIGEN_VECTORIZE_AVX512DQ)
+template<> EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED
+Packet16f plog1p<Packet16f>(const Packet16f& _x) {
+  return generic_plog1p(_x);
+}
+
+template<> EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED
+Packet16f pexpm1<Packet16f>(const Packet16f& _x) {
+  return generic_expm1(_x);
+}
+#endif
+
+template <>
+EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f
+ptanh<Packet16f>(const Packet16f& _x) {
+  return internal::generic_fast_tanh_float(_x);
+}
 
 }  // end namespace internal
 

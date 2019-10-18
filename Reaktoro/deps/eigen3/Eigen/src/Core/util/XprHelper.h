@@ -44,7 +44,7 @@ template<typename T> struct is_valid_index_type
     internal::is_integral<T>::value || __is_enum(T)
 #else
     // without C++11, we use is_convertible to Index instead of is_integral in order to treat enums as Index.
-    internal::is_convertible<T,Index>::value
+    internal::is_convertible<T,Index>::value && !internal::is_same<T,float>::value && !is_same<T,double>::value
 #endif
   };
 };
@@ -184,7 +184,10 @@ template<typename T> struct unpacket_traits
   enum
   {
     size = 1,
-    alignment = 1
+    alignment = 1,
+    vectorizable = false,
+    masked_load_available=false,
+    masked_store_available=false
   };
 };
 

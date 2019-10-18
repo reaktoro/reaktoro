@@ -66,6 +66,12 @@ public:
     /// Return the natural log of the activities of the species.
     inline auto lnActivities() const -> ChemicalVectorConstRef { return ln_activities; }
 
+    /// Return the partial molar volume of species each phase (in units of m3/mol).
+    inline auto partialMolarVolumes() -> ChemicalVectorRef { return partial_molar_volumes; }
+
+    /// Return the partial molar volume of species each phase (in units of m3/mol).
+    inline auto partialMolarVolumes() const -> ChemicalVectorConstRef { return partial_molar_volumes; }
+
     /// Return the molar volumes of the phases (in units of m3/mol).
     inline auto phaseMolarVolumes() -> ChemicalVectorRef { return phase_molar_volumes; }
 
@@ -102,6 +108,9 @@ private:
 
     /// The natural log of the activities of the species.
     ChemicalVector ln_activities;
+
+    /// The partial molar volume of specie each phase (in units of m3/mol).
+    ChemicalVector partial_molar_volumes;
 
     /// The molar volumes of the phases (in units of m3/mol).
     ChemicalVector phase_molar_volumes;

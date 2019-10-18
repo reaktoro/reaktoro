@@ -25,6 +25,7 @@ ChemicalModelResult::ChemicalModelResult()
 ChemicalModelResult::ChemicalModelResult(Index nphases, Index nspecies)
 : ln_activity_coefficients(nspecies),
   ln_activities(nspecies),
+  partial_molar_volumes(nspecies),
   phase_molar_volumes(nphases, nspecies),
   phase_residual_molar_gibbs_energies(nphases, nspecies),
   phase_residual_molar_enthalpies(nphases, nspecies),
@@ -36,6 +37,7 @@ auto ChemicalModelResult::resize(Index nphases, Index nspecies) -> void
 {
     ln_activity_coefficients.resize(nspecies);
     ln_activities.resize(nspecies);
+    partial_molar_volumes.resize(nspecies);
     phase_molar_volumes.resize(nphases, nspecies);
     phase_residual_molar_gibbs_energies.resize(nphases, nspecies);
     phase_residual_molar_enthalpies.resize(nphases, nspecies);
@@ -48,6 +50,7 @@ auto ChemicalModelResult::phaseProperties(Index iphase, Index ispecies, Index ns
     return {
         rows(ln_activity_coefficients, ispecies, ispecies, nspecies, nspecies),
         rows(ln_activities, ispecies, ispecies, nspecies, nspecies),
+        rows(partial_molar_volumes, ispecies, ispecies, nspecies, nspecies),
         row(phase_molar_volumes, iphase, ispecies, nspecies),
         row(phase_residual_molar_gibbs_energies, iphase, ispecies, nspecies),
         row(phase_residual_molar_enthalpies, iphase, ispecies, nspecies),
@@ -61,6 +64,7 @@ auto ChemicalModelResult::phaseProperties(Index iphase, Index ispecies, Index ns
     return {
         rows(ln_activity_coefficients, ispecies, nspecies),
         rows(ln_activities, ispecies, nspecies),
+        rows(partial_molar_volumes, ispecies, nspecies),
         row(phase_molar_volumes, iphase, ispecies, nspecies),
         row(phase_residual_molar_gibbs_energies, iphase, ispecies, nspecies),
         row(phase_residual_molar_enthalpies, iphase, ispecies, nspecies),

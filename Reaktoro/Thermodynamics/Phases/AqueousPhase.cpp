@@ -95,7 +95,10 @@ struct AqueousPhase::Impl
 
 AqueousPhase::AqueousPhase()
 : Phase(), pimpl(new Impl())
-{}
+{
+    setName("Aqueous");
+    setType(PhaseType::Liquid);
+}
 
 AqueousPhase::AqueousPhase(const AqueousMixture& mixture)
 : pimpl(new Impl(mixture))

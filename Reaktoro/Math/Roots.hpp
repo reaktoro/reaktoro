@@ -30,6 +30,9 @@ namespace Reaktoro {
 /// Define a type that describes the roots of a cubic equation
 using CubicRoots = std::tuple<std::complex<double>, std::complex<double>, std::complex<double>>;
 
+/// Define a type that describes the roots of a square equation
+using SquareRoots = std::tuple<double, double>;
+
 /// Calculate the roots of a cubic equation using Cardano's method.
 /// The calculation uses the approach presented in:
 /// *Nickalls, R. W. D. (2012). A New Approach to Solving
@@ -42,6 +45,8 @@ using CubicRoots = std::tuple<std::complex<double>, std::complex<double>, std::c
 /// @param d The coefficient @c d of the cubic equation
 /// @return The three roots \f$ (r_1, r_2, r_3) \f$ that
 /// solve the cubic equation, where \f$ |r_1| \geq |r_2| \geq |r_3| \f$.
+/// If they are all real, they are returned in descending order (the
+/// first element is the highest).
 auto cardano(double a, double b, double c, double d) -> CubicRoots;
 
 /// Calculate the root of a non-linear function using Newton's method.
@@ -59,5 +64,10 @@ auto newton(const std::function<std::tuple<double,double>(double)>& f,
 /// @param maxiter The maximum number of iterations.
 auto newton(const std::function<void(VectorConstRef, VectorRef, MatrixRef)>& f,
             VectorConstRef x0, double epsilon, unsigned maxiter) -> Vector;
+
+/// Return all real roots of a group of roots
+/// @param roots CubicRoots with of complex and real roots
+/// @return A vector with all real roots
+auto realRoots(const CubicRoots& roots)->std::vector<double>;
 
 } // namespace Reaktoro

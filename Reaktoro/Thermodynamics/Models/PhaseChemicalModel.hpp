@@ -37,6 +37,9 @@ struct PhaseChemicalModelResultBase
     /// The natural log of the activities of the species in the phase.
     VectorType ln_activities;
 
+    /// The partial molar volumes of the species in the phase (in units of m3/mol).
+    VectorType partial_molar_volumes;
+
     /// The molar volume of the phase (in units of m3/mol).
     ScalarType molar_volume;
 

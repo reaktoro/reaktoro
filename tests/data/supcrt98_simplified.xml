@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<Database>
+  <Element>
+    <Name>H</Name>
+    <MolarMass units="g/mol">1.00794</MolarMass>
+  </Element>
+  <Element>
+    <Name>Fe</Name>
+    <MolarMass units="g/mol">55.845</MolarMass>
+  </Element>
+  <Element>
+    <Name>S</Name>
+    <MolarMass units="g/mol">32.065</MolarMass>
+  </Element>  
+  <Species>
+    <Name>Pyrrhotite</Name>
+    <Formula>FeS</Formula>
+    <Elements>Fe(1)S(1)</Elements>
+    <Type>Mineral</Type>
+    <MolarMass units="g/mol">87.91</MolarMass>
+    <MolarVolume units="m3/mol">18.2</MolarVolume>
+    <Thermo>
+      <HKF>
+        <References>1</References>
+        <Date>5.May.78</Date>
+        <Gf units="cal/mol">-24084.0</Gf>
+        <Hf units="cal/mol">-24000.0</Hf>
+        <Sr units="cal/(mol*K)">14.41</Sr>
+        <Vr units="cm3/mol">18.2</Vr>
+        <NumPhaseTrans>2</NumPhaseTrans>
+        <Tmax units="K">1468.0</Tmax>
+        <TemperatureRange0>
+          <a units="cal/(mol*K)">5.19</a>
+          <b units="cal/(mol*K^2)">0.0264</b>
+          <c units="(cal*K)/mol">0.0</c>
+          <Ttr>411.0</Ttr>
+          <Htr>570.0</Htr>
+          <Vtr></Vtr>
+          <dPdTtr></dPdTtr>
+        </TemperatureRange0>
+        <TemperatureRange1>
+          <a units="cal/(mol*K)">17.4</a>
+          <b units="cal/(mol*K^2)">0.0</b>
+          <c units="(cal*K)/mol">0.0</c>
+          <Ttr>598.0</Ttr>
+          <Htr>120.0</Htr>
+          <Vtr></Vtr>
+          <dPdTtr></dPdTtr>
+        </TemperatureRange1>
+        <TemperatureRange2>
+          <a units="cal/(mol*K)">12.2</a>
+          <b units="cal/(mol*K^2)">0.00238</b>
+          <c units="(cal*K)/mol">0.0</c>
+        </TemperatureRange2>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>H2S(g)</Name>
+    <Formula>H2S</Formula>
+    <Elements>H(2)S(1)</Elements>
+    <Type>Gaseous</Type>
+    <MolarMass units="g/mol">34.08088</MolarMass>
+    <Gas>Hydrogen-Sulfide</Gas>
+    <CriticalTemperature units="K">373.5</CriticalTemperature>
+    <CriticalPressure units="bar">89.63</CriticalPressure>
+    <AcentricFactor>0.094</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>6,8</References>
+        <Date>27.Dec.89</Date>
+        <Gf units="cal/mol">-8021.0</Gf>
+        <Hf units="cal/mol">-4931.0</Hf>
+        <Sr units="cal/(mol*K)">49.185</Sr>
+        <a units="cal/(mol*K)">7.81</a>
+        <b units="cal/(mol*K^2)">0.00296</b>
+        <c units="(cal*K)/mol">-46000.0</c>
+        <Tmax units="K">2300.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>H2S(aq)</Name>
+    <Formula>H2S</Formula>
+    <Elements>H(2)S(1)</Elements>
+    <Type>Aqueous</Type>
+    <MolarMass units="g/mol">34.08088</MolarMass>
+    <Charge>0</Charge>
+    <Dissociation>1:H+ 1:HS-</Dissociation>
+    <Thermo>
+      <HKF>
+        <References>3</References>
+        <Date>26.Jun.87</Date>
+        <Gf units="cal/mol">-6673.0</Gf>
+        <Hf units="cal/mol">-9001.0</Hf>
+        <Sr units="cal/(mol*K)">30.0</Sr>
+        <a1 units="cal/(mol*bar)">0.65097</a1>
+        <a2 units="cal/mol">677.24</a2>
+        <a3 units="(cal*K)/(mol*bar)">5.9646</a3>
+        <a4 units="(cal*K)/mol">-30590.0</a4>
+        <c1 units="cal/(mol*K)">32.3</c1>
+        <c2 units="(cal*K)/mol">47300.0</c2>
+        <wref units="cal/mol">-10000.0</wref>
+      </HKF>
+    </Thermo>
+  </Species>
+</Database>
