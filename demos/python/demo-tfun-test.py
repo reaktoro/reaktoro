@@ -1,7 +1,7 @@
 from reaktoro import *
 import thermofun.PyThermoFun as tfun
 
-database = tfun.Database("databases/thermofun/aq17.json")
+database = tfun.Database("databases/thermofun/aq17-fun.json")
 
 editor = ChemicalEditor(database)
 T = VectorDouble()

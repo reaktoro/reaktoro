@@ -5,7 +5,7 @@ using namespace Reaktoro;
 
 int main()
 {
-    ThermoFun::Database database("../databases/thermofun/aq17.json");
+    ThermoFun::Database database("../databases/thermofun/aq17-fun.json");
 
     ChemicalEditor editor(database);
     editor.setTemperatures({500}, "celsius");
@@ -55,7 +55,7 @@ int main()
 
     state.output("result.txt");
 
-/*
+
 // Output of standard state thermodynamic properties at T and P using ThermoFun
     ThermoFun::ThermoBatch batch(database);
     
@@ -71,5 +71,5 @@ int main()
     "Grossular", "Quartz", "Zoisite", "Andalusite", "Calcite", "Corundum", "Diopside", "Dolomite", 
     "Enstatite", "Margarite", "Microcline", "Muscovite", "Phlogopite", "Sanidine", 
     "Sillimanite", "Pargasite-Mg"}, {"gibbs_energy"}).toCSV("tp.csv");
-*/
+
 }
