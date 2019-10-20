@@ -5,7 +5,7 @@ using namespace Reaktoro;
 
 int main()
 {
-    ThermoFun::Database database("../databases/thermofun/aq17.json");
+    ThermoFun::Database database("../databases/thermofun/aq17-fun.json");
 
     ChemicalEditor editor(database);
     editor.setTemperatures({500}, "celsius");
