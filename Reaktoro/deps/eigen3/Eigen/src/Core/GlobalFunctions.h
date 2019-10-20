@@ -66,11 +66,17 @@ namespace Eigen
   EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(sinh,scalar_sinh_op,hyperbolic sine,\sa ArrayBase::sinh)
   EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(cosh,scalar_cosh_op,hyperbolic cosine,\sa ArrayBase::cosh)
   EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(tanh,scalar_tanh_op,hyperbolic tangent,\sa ArrayBase::tanh)
+#if EIGEN_HAS_CXX11_MATH
+  EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(asinh,scalar_asinh_op,inverse hyperbolic sine,\sa ArrayBase::asinh)
+  EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(acosh,scalar_acosh_op,inverse hyperbolic cosine,\sa ArrayBase::acosh)
+  EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(atanh,scalar_atanh_op,inverse hyperbolic tangent,\sa ArrayBase::atanh)
+#endif
   EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(logistic,scalar_logistic_op,logistic function,\sa ArrayBase::logistic)
   EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(lgamma,scalar_lgamma_op,natural logarithm of the gamma function,\sa ArrayBase::lgamma)
   EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(digamma,scalar_digamma_op,derivative of lgamma,\sa ArrayBase::digamma)
   EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(erf,scalar_erf_op,error function,\sa ArrayBase::erf)
   EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(erfc,scalar_erfc_op,complement error function,\sa ArrayBase::erfc)
+  EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(ndtri,scalar_ndtri_op,inverse normal distribution function,\sa ArrayBase::ndtri)
   EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(exp,scalar_exp_op,exponential,\sa ArrayBase::exp)
   EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(expm1,scalar_expm1_op,exponential of a value minus 1,\sa ArrayBase::expm1)
   EIGEN_ARRAY_DECLARE_GLOBAL_UNARY(log,scalar_log_op,natural logarithm,\sa Eigen::log10 DOXCOMMA ArrayBase::log)

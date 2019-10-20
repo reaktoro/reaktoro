@@ -17,8 +17,6 @@
 
 #pragma once
 
-#define EIGEN_MATRIX_PLUGIN "Reaktoro/Math/EigenMatrixPlugin.hpp"
-
 // Eigen includes
 #include <Reaktoro/deps/eigen3/Eigen/Core>
 

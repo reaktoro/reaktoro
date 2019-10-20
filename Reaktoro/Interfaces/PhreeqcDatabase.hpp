@@ -31,7 +31,8 @@ namespace Reaktoro {
 class Database;
 class Element;
 class AqueousSpecies;
-class GaseousSpecies;
+class FluidSpecies;
+using GaseousSpecies = FluidSpecies;
 class MineralSpecies;
 
 class PhreeqcDatabase

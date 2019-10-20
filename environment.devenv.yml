@@ -35,6 +35,7 @@ dependencies:
   - thermofun
   - gxx_linux-64=7.3.0             # [linux]
   - libstdcxx-ng                   # [linux]
+  - clangxx=9.0.0                  # [osx]
   - ccache                         # [unix]
   - clcache                        # [win]
 

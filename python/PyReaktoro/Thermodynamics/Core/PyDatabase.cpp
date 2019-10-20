@@ -22,6 +22,7 @@
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // ThermoFun includes
@@ -37,6 +38,9 @@ void exportDatabase(py::module& m)
     auto gaseousSpecies1 = static_cast<std::vector<GaseousSpecies>(Database::*)()>(&Database::gaseousSpecies);
     auto gaseousSpecies2 = static_cast<const GaseousSpecies&(Database::*)(std::string) const>(&Database::gaseousSpecies);
 
+    auto liquidSpecies1 = static_cast<std::vector<LiquidSpecies>(Database::*)()>(&Database::liquidSpecies);
+    auto liquidSpecies2 = static_cast<const LiquidSpecies&(Database::*)(std::string) const>(&Database::liquidSpecies);
+
     auto mineralSpecies1 = static_cast<std::vector<MineralSpecies>(Database::*)()>(&Database::mineralSpecies);
     auto mineralSpecies2 = static_cast<const MineralSpecies&(Database::*)(std::string) const>(&Database::mineralSpecies);
 
@@ -45,17 +49,26 @@ void exportDatabase(py::module& m)
         .def(py::init<std::string>())
         .def(py::init<const ThermoFun::Database&>())
         .def("elements", &Database::elements)
+		.def("addElement", &Database::addElement)
         .def("aqueousSpecies", aqueousSpecies1)
         .def("aqueousSpecies", aqueousSpecies2, py::return_value_policy::reference_internal)
+		.def("addAqueousSpecies", &Database::addAqueousSpecies)
         .def("gaseousSpecies", gaseousSpecies1)
         .def("gaseousSpecies", gaseousSpecies2, py::return_value_policy::reference_internal)
+		.def("addGaseousSpecies", &Database::addGaseousSpecies)
+        .def("liquidSpecies", liquidSpecies1)
+        .def("liquidSpecies", liquidSpecies2, py::return_value_policy::reference_internal)
+        .def("addLiquidSpecies", &Database::addLiquidSpecies)
         .def("mineralSpecies", mineralSpecies1)
         .def("mineralSpecies", mineralSpecies2, py::return_value_policy::reference_internal)
+		.def("addMineralSpecies", &Database::addMineralSpecies)
         .def("containsAqueousSpecies", &Database::containsAqueousSpecies)
         .def("containsGaseousSpecies", &Database::containsGaseousSpecies)
+        .def("containsLiquidSpecies", &Database::containsLiquidSpecies)
         .def("containsMineralSpecies", &Database::containsMineralSpecies)
         .def("aqueousSpeciesWithElements", &Database::aqueousSpeciesWithElements)
         .def("gaseousSpeciesWithElements", &Database::gaseousSpeciesWithElements)
+        .def("liquidSpeciesWithElements", &Database::liquidSpeciesWithElements)
         .def("mineralSpeciesWithElements", &Database::mineralSpeciesWithElements)
         ;
 }

@@ -25,7 +25,9 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Math/Roots.hpp>
+#include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 
 namespace Reaktoro {
 namespace internal {
@@ -165,6 +167,9 @@ struct CubicEOS::Impl
     /// The type of the cubic equation of state.
     CubicEOS::Model model = CubicEOS::PengRobinson;
 
+    /// The type of phase identification method that is going to be used
+    PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
+
     /// The critical temperatures of the species (in units of K).
     std::vector<double> critical_temperatures;
 
@@ -184,6 +189,14 @@ struct CubicEOS::Impl
     Impl(unsigned nspecies)
     : nspecies(nspecies)
     {
+        // Initialize the dimension of the chemical scalar quantities
+        ChemicalScalar sca(nspecies);
+        result.molar_volume = sca;
+        result.residual_molar_gibbs_energy = sca;
+        result.residual_molar_enthalpy = sca;
+        result.residual_molar_heat_capacity_cp = sca;
+        result.residual_molar_heat_capacity_cv = sca;
+
         // Initialize the dimension of the chemical vector quantities
         ChemicalVector vec(nspecies);
         result.partial_molar_volumes = vec;
@@ -239,7 +252,6 @@ struct CubicEOS::Impl
 
         if(calculate_interaction_params)
             kres = calculate_interaction_params(kargs);
-
         // Calculate the parameter `amix` of the phase and the partial molar parameters `abar` of each species
         ChemicalScalar amix(nspecies);
         ChemicalScalar amixT(nspecies);
@@ -310,24 +322,86 @@ struct CubicEOS::Impl
         const ChemicalScalar BT = 2*(epsilon*sigma - epsilon - sigma)*beta*betaT + qT*beta - (epsilon + sigma - q)*betaT;
         const ChemicalScalar CT = -3*epsilon*sigma*beta*beta*betaT - qT*beta*beta - 2*(epsilon*sigma + q)*beta*betaT;
 
-        // Define the non-linear function and its derivative for calculation of its root
-        const auto f = [&](double Z) -> std::tuple<double, double>
+        // Calculate cubicEOS roots using cardano's method
+        auto cubicEOS_roots = realRoots(cardano(1, A.val, B.val, C.val));
+
+        // All possible Compressibility factor
+        std::vector<ChemicalScalar> Zs;
+        if (cubicEOS_roots.size() == 1)
         {
-            const double val = Z*Z*Z + A.val*Z*Z + B.val*Z + C.val;
-            const double grad = 3*Z*Z + 2*A.val*Z + B.val;
-            return std::make_tuple(val, grad);
-        };
+            Zs.push_back(ChemicalScalar(nspecies, cubicEOS_roots[0]));
+        }
+        else
+        {
+            if (cubicEOS_roots.size() != 3) {
+                Exception exception;
+                exception.error << "Could not calculate the cubic equation of state.";
+                exception.reason << "Logic error: it was expected Z roots of size 3, but got: " << Zs.size();
+                RaiseError(exception);
+            }
+            Zs.push_back(ChemicalScalar(nspecies, cubicEOS_roots[0]));  // Z_max
+            Zs.push_back(ChemicalScalar(nspecies, cubicEOS_roots[2]));  // Z_min
+        }
 
-        // Define the parameters for Newton's method
-        const auto tolerance = 1e-6;
-        const auto maxiter = 100;
-
-        // Determine the appropriate initial guess for the cubic equation of state
-        const double Z0 = isvapor ? 1.0 : beta.val;
-
-        // Calculate the compressibility factor Z using Newton's method
+        // Selecting compressibility factor - Z_liq < Z_gas
         ChemicalScalar Z(nspecies);
-        Z.val = newton(f, Z0, tolerance, maxiter);
+        if (isvapor)
+            Z.val = *std::max_element(cubicEOS_roots.begin(), cubicEOS_roots.end());
+        else
+            Z.val = *std::min_element(cubicEOS_roots.begin(), cubicEOS_roots.end());
+
+        auto input_phase_type = isvapor ? PhaseType::Gas : PhaseType::Liquid;
+        auto identified_phase_type = input_phase_type;
+
+        switch (phase_identification_method)
+        {
+        case PhaseIdentificationMethod::None:
+            // `identified_phase_type` is already `input_phase_type`, keep it this way
+            break;
+
+        case PhaseIdentificationMethod::VolumeMethod:
+            identified_phase_type = identifyPhaseUsingVolume(T, P, Z, bmix);
+            break;
+
+        case PhaseIdentificationMethod::IsothermalCompressibilityMethods:
+            identified_phase_type = identifyPhaseUsingIsothermalCompressibility(T, P, Z);
+            break;
+
+        case PhaseIdentificationMethod::GibbsEnergyAndEquationOfStateMethod:
+            identified_phase_type = identifyPhaseUsingGibbsEnergyAndEos(
+                P, T, amix, bmix, A, B, C, Zs, epsilon, sigma);
+            break;
+
+        default:
+            throw std::logic_error("CubicEOS received an unexpected phaseIdentificationMethod");
+        }
+
+        if (identified_phase_type != input_phase_type)
+        {
+            // Since the phase is identified as different than the expect input phase type, it is
+            // deemed inappropriate. Artificially high values are configured for fugacities, so that
+            // this condition is "removed" by the optimizer.
+            result.molar_volume = 0.0;
+            result.residual_molar_gibbs_energy = 0.0;
+            result.residual_molar_enthalpy = 0.0;
+            result.residual_molar_heat_capacity_cp = 0.0;
+            result.residual_molar_heat_capacity_cv = 0.0;
+            result.partial_molar_volumes.fill(0.0);
+            result.residual_partial_molar_gibbs_energies.fill(0.0);
+            result.residual_partial_molar_enthalpies.fill(0.0);
+            result.ln_fugacity_coefficients.fill(100.0);
+            return result;
+        }
+
+        ChemicalScalar& V = result.molar_volume;
+        ChemicalScalar& G_res = result.residual_molar_gibbs_energy;
+        ChemicalScalar& H_res = result.residual_molar_enthalpy;
+        ChemicalScalar& Cp_res = result.residual_molar_heat_capacity_cp;
+        ChemicalScalar& Cv_res = result.residual_molar_heat_capacity_cv;
+        ChemicalVector& Vi = result.partial_molar_volumes;
+        ChemicalVector& Gi_res = result.residual_partial_molar_gibbs_energies;
+        ChemicalVector& Hi_res = result.residual_partial_molar_enthalpies;
+        ChemicalVector& ln_phi = result.ln_fugacity_coefficients;
 
         // Calculate the partial derivatives of Z (dZdT, dZdP, dZdn)
         const double factor = -1.0/(3*Z.val*Z.val + 2*A.val*Z.val + B.val);
@@ -349,15 +423,6 @@ struct CubicEOS::Impl
         if(epsilon != sigma) IT = ((ZT + sigma*betaT)/(Z + sigma*beta) - (ZT + epsilon*betaT)/(Z + epsilon*beta))/(sigma - epsilon);
                         else IT = I*(betaT/beta - (ZT + epsilon*betaT)/(Z + epsilon*beta));
 
-        ChemicalScalar& V = result.molar_volume;
-        ChemicalScalar& G_res = result.residual_molar_gibbs_energy;
-        ChemicalScalar& H_res = result.residual_molar_enthalpy;
-        ChemicalScalar& Cp_res = result.residual_molar_heat_capacity_cp;
-        ChemicalScalar& Cv_res = result.residual_molar_heat_capacity_cv;
-        ChemicalVector& Vi = result.partial_molar_volumes;
-        ChemicalVector& Gi_res = result.residual_partial_molar_gibbs_energies;
-        ChemicalVector& Hi_res = result.residual_partial_molar_enthalpies;
-        ChemicalVector& ln_phi = result.ln_fugacity_coefficients;
 
         // Calculate the partial molar Zi for each species
         V = Z*R*T/P;
@@ -368,7 +433,8 @@ struct CubicEOS::Impl
         const ChemicalScalar dPdT = P*(1.0/T + ZT/Z);
         const ChemicalScalar dVdT = V*(1.0/T + ZT/Z);
 
-        Cv_res = Cp_res - T*dPdT*dVdT + R;
+        Cv_res = Cp_res - T * dPdT*dVdT + R;
+
 
         for(unsigned i = 0; i < nspecies; ++i)
         {
@@ -382,6 +448,7 @@ struct CubicEOS::Impl
             const ChemicalScalar Bi = (epsilon*sigma - epsilon - sigma)*(2*beta*betai - beta*beta) - (epsilon + sigma - q)*(betai - beta) - (epsilon + sigma - qi)*beta;
             const ChemicalScalar Ci = -3*sigma*epsilon*beta*beta*betai + 2*epsilon*sigma*beta*beta*beta - (epsilon*sigma + qi)*beta*beta - 2*(epsilon*sigma + q)*(beta*betai - beta*beta);
             const ChemicalScalar Zi = -(Ai*Z*Z + (Bi + B)*Z + Ci + 2*C)/(3*Z*Z + 2*A*Z + B);
+
             ChemicalScalar Ii;
             if(epsilon != sigma) Ii = I + ((Zi + sigma*betai)/(Z + sigma*beta) - (Zi + epsilon*betai)/(Z + epsilon*beta))/(sigma - epsilon);
                             else Ii = I * (1 + betai/beta - (Zi + epsilon*betai)/(Z + epsilon*beta));
@@ -411,9 +478,12 @@ CubicEOS::Result::Result(unsigned nspecies)
   ln_fugacity_coefficients(nspecies)
 {}
 
-CubicEOS::CubicEOS(unsigned nspecies)
+CubicEOS::CubicEOS(unsigned nspecies, CubicEOS::Params params)
 : pimpl(new Impl(nspecies))
-{}
+{
+    pimpl->model = params.model;
+    pimpl->phase_identification_method = params.phase_identification_method;
+}
 
 CubicEOS::CubicEOS(const CubicEOS& other)
 : pimpl(new Impl(*other.pimpl))

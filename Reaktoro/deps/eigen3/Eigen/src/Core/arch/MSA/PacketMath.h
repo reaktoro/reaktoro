@@ -88,6 +88,7 @@ struct packet_traits<float> : default_packet_traits {
     HasSin = EIGEN_FAST_MATH,
     HasCos = EIGEN_FAST_MATH,
     HasTanh = EIGEN_FAST_MATH,
+    HasErf = EIGEN_FAST_MATH,
     HasLog = 1,
     HasExp = 1,
     HasSqrt = 1,
@@ -117,14 +118,14 @@ struct packet_traits<int32_t> : default_packet_traits {
 template <>
 struct unpacket_traits<Packet4f> {
   typedef float type;
-  enum { size = 4, alignment = Aligned16 };
+  enum { size = 4, alignment = Aligned16, vectorizable=true, masked_load_available=false, masked_store_available=false };
   typedef Packet4f half;
 };
 
 template <>
 struct unpacket_traits<Packet4i> {
   typedef int32_t type;
-  enum { size = 4, alignment = Aligned16 };
+  enum { size = 4, alignment = Aligned16, vectorizable=true, masked_load_available=false, masked_store_available=false };
   typedef Packet4i half;
 };
 
@@ -925,7 +926,7 @@ struct packet_traits<double> : default_packet_traits {
 template <>
 struct unpacket_traits<Packet2d> {
   typedef double type;
-  enum { size = 2, alignment = Aligned16 };
+  enum { size = 2, alignment = Aligned16, vectorizable=true, masked_load_available=false, masked_store_available=false };
   typedef Packet2d half;
 };
 

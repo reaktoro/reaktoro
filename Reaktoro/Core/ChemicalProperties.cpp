@@ -62,7 +62,16 @@ auto ChemicalProperties::update(VectorConstRef n_) -> void
         const auto np = rows(n, offset, size);
         const auto npc = Composition(np);
         auto xp = rows(x, offset, offset, size, size);
-        xp = npc/sum(npc);
+        if(size == 1) {
+            xp = 1.0;
+        }
+        else {
+            const auto snpc = sum(npc);
+            if(snpc != 0.0)
+                xp = npc/snpc;
+            else
+                xp = 0.0;
+        }
         offset += size;
     }
 }
@@ -125,6 +134,11 @@ auto ChemicalProperties::lnActivityConstants() const -> ThermoVectorConstRef
 auto ChemicalProperties::lnActivities() const -> ChemicalVectorConstRef
 {
     return cres.lnActivities();
+}
+
+auto ChemicalProperties::partialMolarVolumes() const -> ChemicalVectorConstRef
+{
+    return cres.partialMolarVolumes();
 }
 
 auto ChemicalProperties::chemicalPotentials() const -> ChemicalVector
