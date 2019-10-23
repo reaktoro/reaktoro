@@ -30,9 +30,12 @@ void exportChemicalProperties(py::module& m)
     auto update3 = static_cast<void (ChemicalProperties::*)(double, double, VectorConstRef)>(&ChemicalProperties::update);
     auto update4 = static_cast<void (ChemicalProperties::*)(double, double, VectorConstRef, const ThermoModelResult&, const ChemicalModelResult&)>(&ChemicalProperties::update);
 
+    auto assign = [](ChemicalProperties& self, const ChemicalProperties& other) { self = other; };
+
     py::class_<ChemicalProperties>(m, "ChemicalProperties")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
+        .def("assign", assign)
         .def("update", update1)
         .def("update", update2)
         .def("update", update3)

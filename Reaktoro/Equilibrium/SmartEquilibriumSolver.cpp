@@ -52,6 +52,9 @@ struct SmartEquilibriumSolver::Impl
     /// The solver for the equilibrium calculations
     EquilibriumSolver solver;
 
+    /// The chemical properties of the chemical system
+    ChemicalProperties properties;
+
     /// A class used to store the node of tree for smart equilibrium calculations.
     struct TreeNode
     {
@@ -155,8 +158,11 @@ struct SmartEquilibriumSolver::Impl
         // Store the result of the Gibbs energy minimization calculation performed during learning
         result.learning.gibbs_energy_minimization = solver.result();
 
+        // Update the chemical properties of the system
+        properties = solver.properties();
+
         // Store the computed solution into the knowledge tree
-        timeit( tree.push_back({be, state, solver.properties(), solver.sensitivity()}),
+        timeit( tree.push_back({be, state, properties, solver.sensitivity()}),
             result.timing.learning_storage= );
     }
 
@@ -324,6 +330,9 @@ struct SmartEquilibriumSolver::Impl
 
         // Set the estimate accepted status to true
         result.estimate.accepted = true;
+
+        // Update the chemical properties of the system
+        properties = properties0;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
     }
 
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
@@ -390,8 +399,7 @@ auto SmartEquilibriumSolver::solve(ChemicalState& state, const EquilibriumProble
 
 auto SmartEquilibriumSolver::properties() const -> const ChemicalProperties&
 {
-    RuntimeError("Could not calculate the chemical properties.",
-            "This method has not been implemented yet.");
+    return pimpl->properties;
 }
 
 auto SmartEquilibriumSolver::result() const -> const SmartEquilibriumResult&
