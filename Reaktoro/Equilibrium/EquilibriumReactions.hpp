@@ -38,6 +38,9 @@ class ReactionEquation;
 class EquilibriumReactions
 {
 public:
+    /// Construct a default EquilibriumReactions instance.
+    EquilibriumReactions();
+
     /// Construct an EquilibriumReactions instance.
     EquilibriumReactions(const ChemicalSystem& system);
 
@@ -52,6 +55,9 @@ public:
 
     /// Assign other EquilibriumReactions instance to this.
     auto operator=(EquilibriumReactions other) -> EquilibriumReactions&;
+
+    /// Update the stoichiometric matrix with given weights for all equilibrium species.
+    auto update(VectorConstRef weights) -> void;
 
     /// Return the chemical system for which the equilibrium reactions were defined.
     auto system() const -> const ChemicalSystem&;

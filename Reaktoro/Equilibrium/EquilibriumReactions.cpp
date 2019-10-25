@@ -141,6 +141,10 @@ struct EquilibriumReactions::Impl
     // The equations of the equilibrium reactions
     std::vector<ReactionEquation> equations;
 
+    // Construct a default Impl instance
+    Impl()
+    {}
+
     // Construct a Impl instance with given system
     Impl(const ChemicalSystem& system)
     : Impl(system, Partition(system))
@@ -251,6 +255,11 @@ struct EquilibriumReactions::Impl
     }
 };
 
+EquilibriumReactions::EquilibriumReactions()
+: pimpl(new Impl())
+{
+}
+
 EquilibriumReactions::EquilibriumReactions(const ChemicalSystem& system)
 : EquilibriumReactions(system, Partition(system))
 {
@@ -275,6 +284,11 @@ auto EquilibriumReactions::operator=(EquilibriumReactions other) -> EquilibriumR
 {
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto EquilibriumReactions::update(VectorConstRef weights) -> void
+{
+    pimpl->initialize(weights);
 }
 
 auto EquilibriumReactions::system() const -> const ChemicalSystem&
