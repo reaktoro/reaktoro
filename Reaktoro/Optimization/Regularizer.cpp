@@ -166,6 +166,9 @@ struct Regularizer::Impl
 
     /// Recover the sensitivity derivative `dxdp`.
     auto recover(Vector& dxdp) -> void;
+
+    /// Recover the sensitivity derivative `dxdp`, `dydp`, `dzdp`.
+    auto recover(const Vector& dgdp, const Vector& dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void;
 };
 
 auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& problem) -> void
@@ -561,6 +564,39 @@ auto Regularizer::Impl::recover(Vector& dxdp) -> void
     }
 }
 
+auto Regularizer::Impl::recover(const Vector& dgdp, const Vector& dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
+{
+    // Calculate dual variables y w.r.t. original equality constraints
+    dydp = lu_star.trsolve(dgdp - dzdp);
+
+    // Check if there was any trivial variables and update state accordingly
+    if(itrivial_variables.size())
+    {
+        // Define some auxiliary size variables
+        const Index nn = inontrivial_variables.size();
+        const Index nt = itrivial_variables.size();
+        const Index mn = inontrivial_constraints.size();
+        const Index mt = itrivial_constraints.size();
+        const Index n = nn + nt;
+        const Index m = mn + mt;
+
+        // Resize back the lengths of x, y, z
+        dxdp.conservativeResize(n);
+        dydp.conservativeResize(m);
+        dzdp.conservativeResize(n);
+
+        // Set the components corresponding to non-trivial variables and constraints
+        dxdp(inontrivial_variables)   = dxdp.segment(0, nn).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
+        dydp(inontrivial_constraints) = dydp.segment(0, mn).eval();
+        dzdp(inontrivial_variables)   = dzdp.segment(0, nn).eval();
+
+        // Set the components corresponding to trivial variables and constraints
+        dxdp(itrivial_variables).fill(0.0);
+        dydp(itrivial_constraints).fill(0.0);
+        dzdp(itrivial_variables).fill(0.0);
+    }
+}
+
 Regularizer::Regularizer()
 : pimpl(new Impl())
 {}
@@ -601,6 +637,11 @@ auto Regularizer::recover(OptimumState& state) -> void
 auto Regularizer::recover(Vector& dxdp) -> void
 {
     pimpl->recover(dxdp);
+}
+
+auto Regularizer::recover(const Vector& dgdp, const Vector& dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
+{
+    pimpl->recover(dgdp, dbdp, dxdp, dydp, dzdp);
 }
 
 } // namespace Reaktoro

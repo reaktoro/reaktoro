@@ -33,20 +33,20 @@ struct EquilibriumSensitivity
     /// These derivatives provide a measure of how much the equilibrium amounts of the species,
     /// @f$n@f$, change with an infinitesimal change in temperature, @f$T@f$. They are useful when solving
     /// non-linear problems that involve equilibrium calculations and derivatives with respect to temperature.
-    Vector dndT;
+    Vector dndT, dydT, dzdT;
 
     /// The partial derivatives @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$ (in units of mol/Pa).
     /// These derivatives provide a measure of how much the equilibrium amounts of the species,
     /// @f$n@f$, change with an infinitesimal change in pressure, @f$P@f$. They are useful when solving
     /// non-linear problems that involve equilibrium calculations and derivatives with respect to pressure.
-    Vector dndP;
+    Vector dndP, dydP, dzdP;
 
     /// The partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$ (in units of mol/mol).
     /// These derivatives provide a measure of how much the equilibrium amounts of the species,
     /// @f$n@f$, change with an infinitesimal change in the amounts of elements, @f$b@f$. They are
     /// useful when solving non-linear problems that involve equilibrium calculations and derivatives with respect
     /// to the amounts of elements.
-    Matrix dndb;
+    Matrix dndb, dydb, dzdb;
 };
 
 } // namespace Reaktoro

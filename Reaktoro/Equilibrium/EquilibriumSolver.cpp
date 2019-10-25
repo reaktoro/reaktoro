@@ -534,16 +534,38 @@ struct EquilibriumSolver::Impl
         zerosNe = zeros(Ne);
         unitjEe = zeros(Ee);
 
-        sensitivities.dndT = zeros(Ne);
-        sensitivities.dndP = zeros(Ne);
-        sensitivities.dndb = zeros(Ne, Ee);
+        auto& dndT = sensitivities.dndT;
+        auto& dydT = sensitivities.dydT;
+        auto& dzdT = sensitivities.dzdT;
+        auto& dndP = sensitivities.dndP;
+        auto& dydP = sensitivities.dydP;
+        auto& dzdP = sensitivities.dzdP;
+        auto& dndb = sensitivities.dndb;
+        auto& dydb = sensitivities.dydb;
+        auto& dzdb = sensitivities.dzdb;
 
-        sensitivities.dndT = solver.dxdp(ue.ddT, zerosEe);
-        sensitivities.dndP = solver.dxdp(ue.ddP, zerosEe);
+        dndT = zeros(Ne);
+        dndP = zeros(Ne);
+        dndb = zeros(Ne, Ee);
+
+        dydT = zeros(Ee);
+        dydP = zeros(Ee);
+        dydb = zeros(Ee, Ee);
+
+        dzdT = zeros(Ne);
+        dzdP = zeros(Ne);
+        dzdb = zeros(Ne, Ee);
+
+        solver.sensitivities(ue.ddT, zerosEe, dndT, dydT, dzdT);
+        solver.sensitivities(ue.ddP, zerosEe, dndP, dydP, dzdP);
+
         for(Index j = 0; j < Ee; ++j)
         {
+            auto dndbj = dndb.col(j);
+            auto dydbj = dydb.col(j);
+            auto dzdbj = dzdb.col(j);
             unitjEe = unit(Ee, j);
-            sensitivities.dndb.col(j) = solver.dxdp(zerosNe, unitjEe);
+            solver.sensitivities(zerosNe, unitjEe, dndbj, dydbj, dzdbj);
         }
 
         return sensitivities;

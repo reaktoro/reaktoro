@@ -433,6 +433,23 @@ struct OptimumSolverIpNewton::Impl
         // Return the calculated sensitivity vector
         return sol.dx;
     }
+
+    /// Calculate the sensitivity of the optimal solution with respect to parameters.
+    auto sensitivities(VectorConstRef dgdp, VectorConstRef dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
+    {
+        // Initialize the right-hand side of the KKT equations
+        rhs.rx.noalias() = -dgdp;
+        rhs.ry.noalias() =  dbdp;
+        rhs.rz.fill(0.0);
+
+        // Solve the KKT equations to get the derivatives
+        kkt.solve(rhs, sol);
+
+        // Return the calculated sensitivity vector
+        dxdp = sol.dx;
+        dydp = sol.dy;
+        dzdp = sol.dz;
+    }
 };
 
 OptimumSolverIpNewton::OptimumSolverIpNewton()
@@ -465,6 +482,11 @@ auto OptimumSolverIpNewton::solve(const OptimumProblem& problem, OptimumState& s
 auto OptimumSolverIpNewton::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     return pimpl->dxdp(dgdp, dbdp);
+}
+
+auto OptimumSolverIpNewton::sensitivities(VectorConstRef dgdp, VectorConstRef dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
+{
+    return pimpl->sensitivities(dgdp, dbdp, dxdp, dydp, dzdp);
 }
 
 auto OptimumSolverIpNewton::clone() const -> OptimumSolverBase*
