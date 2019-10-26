@@ -42,8 +42,11 @@ public:
     /// Construct a default SmartEquilibriumSolver instance.
     SmartEquilibriumSolver();
 
-    /// Construct an SmartEquilibriumSolver instance
+    /// Construct an SmartEquilibriumSolver instance with given chemical system
     explicit SmartEquilibriumSolver(const ChemicalSystem& system);
+
+    /// Construct an SmartEquilibriumSolver instance with given partition
+    explicit SmartEquilibriumSolver(const Partition& partition);
 
     /// Construct a copy of an SmartEquilibriumSolver instance.
     SmartEquilibriumSolver(const SmartEquilibriumSolver& other);
