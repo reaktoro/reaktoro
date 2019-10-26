@@ -107,15 +107,6 @@ public:
     /// and molar amounts of equilibrium elements `be`.
     auto sensitivity() -> const EquilibriumSensitivity&;
 
-    /// Compute the sensitivity of the species amounts with respect to temperature.
-    auto dndT() -> VectorConstRef;
-
-    /// Compute the sensitivity of the species amounts with respect to pressure.
-    auto dndP() -> VectorConstRef;
-
-    /// Compute the sensitivity of the species amounts with respect to element amounts.
-    auto dndb() -> VectorConstRef;
-
     /// Return the result of the last equilibrium calculation.
     auto result() const -> const EquilibriumResult&;
 
