@@ -77,10 +77,6 @@ public:
     /// @param b The vector of mole amounts of each element (in units of mol)
     auto setElementAmounts(VectorConstRef b) -> void;
 
-    /// Set the mole amounts of each element for the equilibrium calculation.
-    /// @param amount The mole amount for all elements (in units of mol)
-    auto setElementAmounts(double amount) -> void;
-
     /// Set the mole amount of an element for the equilibrium calculation (in units of mol)
     /// @param ielement The index of the element
     /// @param amount The same mole amount for all elements (in units of mol)

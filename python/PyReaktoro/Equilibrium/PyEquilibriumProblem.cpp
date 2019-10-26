@@ -27,9 +27,6 @@ namespace Reaktoro {
 
 void exportEquilibriumProblem(py::module& m)
 {
-    auto setElementAmounts1 = static_cast<void(EquilibriumProblem::*)(VectorConstRef)>(&EquilibriumProblem::setElementAmounts);
-    auto setElementAmounts2 = static_cast<void(EquilibriumProblem::*)(double)>(&EquilibriumProblem::setElementAmounts);
-
     auto setElementAmount1 = static_cast<void(EquilibriumProblem::*)(Index, double)>(&EquilibriumProblem::setElementAmount);
     auto setElementAmount2 = static_cast<void(EquilibriumProblem::*)(std::string, double)>(&EquilibriumProblem::setElementAmount);
 
@@ -51,8 +48,7 @@ void exportEquilibriumProblem(py::module& m)
         .def("setTemperature", setTemperature2)
         .def("setPressure", setPressure1)
         .def("setPressure", setPressure2)
-        .def("setElementAmounts", setElementAmounts1)
-        .def("setElementAmounts", setElementAmounts2)
+        .def("setElementAmounts", &EquilibriumProblem::setElementAmounts)
         .def("setElementAmount", setElementAmount1)
         .def("setElementAmount", setElementAmount2)
         .def("setElectricalCharge", &EquilibriumProblem::setElectricalCharge)
