@@ -158,30 +158,6 @@ struct OptimumSolver::Impl
         return result;
     }
 
-    /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(Vector dgdp, Vector dbdp) -> Vector
-    {
-        // Assert the size of the input matrices dgdp and dbdp
-        Assert(dgdp.rows() && dbdp.rows() && dgdp.cols() == dbdp.cols(),
-            "Could not calculate the sensitivity of the optimal solution with respect to parameters.",
-            "The given input matrices `dgdp` and `dbdp` are either empty or does not have the same number of columns.");
-
-        // Check if the last regularized problem had only trivial variables
-        if(rproblem.n == 0)
-            return zeros(dgdp.rows());
-
-        // Regularize dg/dp and db/dp by removing trivial components, linearly dependent components, etc.
-        regularizer.regularize(dgdp, dbdp);
-
-        // Compute the sensitivity dx/dp of x with respect to p
-        Vector dxdp = solver->dxdp(dgdp, dbdp);
-
-        // Recover `dx/dp` in case there are trivial variables
-        regularizer.recover(dxdp);
-
-        return dxdp;
-    }
-
     /// Return the sensitivities `dx/dp`, `dy/dp`, `dz/dp` of the solution `(x,y,z)` with respect to a vector of parameters `p`.
     auto sensitivities(Vector dgdp, Vector dbdp, VectorRef dxdp, VectorRef dydp, VectorRef dzdp) -> void
     {
@@ -258,11 +234,6 @@ auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state) ->
 auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
-}
-
-auto OptimumSolver::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
-{
-    return pimpl->dxdp(dgdp, dbdp);
 }
 
 auto OptimumSolver::sensitivities(const Vector& dgdp, const Vector& dbdp, VectorRef dxdp, VectorRef dydp, VectorRef dzdp) -> void

@@ -23,9 +23,10 @@
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
-#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
+#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
+#include <Reaktoro/Optimization/OptimumSensitivity.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
 
@@ -47,6 +48,9 @@ struct OptimumSolverIpNewton::Impl
 
     /// The outputter instance
     Outputter outputter;
+
+    /// The sensitivity derivatives of the computed optimum state
+    OptimumSensitivity sensitivity;
 
     /// Solve the optimization problem.
     auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
@@ -420,27 +424,22 @@ struct OptimumSolverIpNewton::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Matrix
+    auto sensitivities(MatrixConstRef dgdp, MatrixConstRef dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
     {
         // Initialize the right-hand side of the KKT equations
         rhs.rx.noalias() = -dgdp;
         rhs.ry.noalias() =  dbdp;
         rhs.rz.fill(0.0);
 
-        // Solve the KKT equations to get the derivatives
-        kkt.solve(rhs, sol);
+        // // The regularization parameters delta and gamma
+        // const auto gamma = 1.0e-20;
+        // const auto delta = 1.0e-20;
 
-        // Return the calculated sensitivity vector
-        return sol.dx;
-    }
+        // // The KKT matrix
+        // KktMatrix lhs(f.hessian, A, x, z, gamma, delta);
 
-    /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto sensitivities(VectorConstRef dgdp, VectorConstRef dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
-    {
-        // Initialize the right-hand side of the KKT equations
-        rhs.rx.noalias() = -dgdp;
-        rhs.ry.noalias() =  dbdp;
-        rhs.rz.fill(0.0);
+        // // Update the decomposition of the KKT matrix with update Hessian matrix
+        // kkt.decompose(lhs);
 
         // Solve the KKT equations to get the derivatives
         kkt.solve(rhs, sol);
@@ -479,12 +478,7 @@ auto OptimumSolverIpNewton::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverIpNewton::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
-{
-    return pimpl->dxdp(dgdp, dbdp);
-}
-
-auto OptimumSolverIpNewton::sensitivities(VectorConstRef dgdp, VectorConstRef dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
+auto OptimumSolverIpNewton::sensitivities(MatrixConstRef dgdp, MatrixConstRef dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
 {
     return pimpl->sensitivities(dgdp, dbdp, dxdp, dydp, dzdp);
 }

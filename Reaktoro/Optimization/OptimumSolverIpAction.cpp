@@ -526,24 +526,6 @@ struct OptimumSolverIpAction::Impl
 
         return result;
     }
-
-    /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Matrix
-    {
-        // Initialize the right-hand side of the KKT equations
-        r1.noalias() = -dgdp;
-        r2.noalias() =  dbdp;
-
-        // Solve the linear system equations to get the sensitivities
-        lssd.solve(r1, r2, dxS, dxP);
-
-        // Transfer primary and secondary dxP and dxS to dx
-        rows(dx, iP) = dxP;
-        rows(dx, iS) = dxS;
-
-        // Return the calculated sensitivity vector
-        return dx;
-    }
 };
 
 OptimumSolverIpAction::OptimumSolverIpAction()
@@ -571,11 +553,6 @@ auto OptimumSolverIpAction::solve(const OptimumProblem& problem, OptimumState& s
 auto OptimumSolverIpAction::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
-}
-
-auto OptimumSolverIpAction::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
-{
-    return pimpl->dxdp(dgdp, dbdp);
 }
 
 auto OptimumSolverIpAction::clone() const -> OptimumSolverBase*

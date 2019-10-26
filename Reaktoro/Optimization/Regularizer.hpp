@@ -78,9 +78,6 @@ public:
     /// @param state[in,out] The optimum state regularized in method `regularize`.
     auto recover(OptimumState& state) -> void;
 
-    /// Recover the sensitivity derivative `dxdp`.
-    auto recover(Vector& dxdp) -> void;
-
     /// Recover the sensitivity derivative `dxdp`, `dydp`, `dzdp`.
     auto recover(const Vector& dgdp, const Vector& dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void;
 

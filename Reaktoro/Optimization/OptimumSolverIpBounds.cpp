@@ -289,14 +289,6 @@ struct OptimumSolverIpBounds::Impl
 //
         return result;
     }
-
-    /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Matrix
-    {
-        RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
-            "The method OptimumSolverIpBounds::dxdp has not been implemented yet.");
-        return {};
-    }
 };
 
 OptimumSolverIpBounds::OptimumSolverIpBounds()
@@ -324,11 +316,6 @@ auto OptimumSolverIpBounds::solve(const OptimumProblem& problem, OptimumState& s
 auto OptimumSolverIpBounds::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
-}
-
-auto OptimumSolverIpBounds::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
-{
-    return pimpl->dxdp(dgdp, dbdp);
 }
 
 auto OptimumSolverIpBounds::clone() const -> OptimumSolverBase*

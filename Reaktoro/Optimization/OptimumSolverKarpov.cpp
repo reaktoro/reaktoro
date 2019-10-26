@@ -475,13 +475,6 @@ auto OptimumSolverKarpov::solve(const OptimumProblem& problem, OptimumState& sta
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverKarpov::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
-{
-    RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
-        "The method OptimumSolverKarpov::dxdp has not been implemented yet.");
-    return {};
-}
-
 auto OptimumSolverKarpov::clone() const -> OptimumSolverBase*
 {
     return new OptimumSolverKarpov(*this);

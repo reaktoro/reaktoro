@@ -324,13 +324,6 @@ auto OptimumSolverIpActive::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverIpActive::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
-{
-    RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
-        "The method OptimumSolverIpActive::dxdp has not been implemented yet.");
-    return {};
-}
-
 auto OptimumSolverIpActive::clone() const -> OptimumSolverBase*
 {
     return new OptimumSolverIpActive(*this);

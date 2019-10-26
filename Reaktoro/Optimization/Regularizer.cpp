@@ -550,20 +550,6 @@ auto Regularizer::Impl::recover(OptimumState& state) -> void
     }
 }
 
-auto Regularizer::Impl::recover(Vector& dxdp) -> void
-{
-    // Set the components corresponding to trivial and non-trivial variables
-    if(itrivial_constraints.size())
-    {
-        const Index nn = inontrivial_variables.size();
-        const Index nt = itrivial_variables.size();
-        const Index n = nn + nt;
-        dxdp.conservativeResize(n);
-        dxdp(inontrivial_variables) = dxdp.segment(0, nn).eval();
-        dxdp(itrivial_variables).fill(0.0);
-    }
-}
-
 auto Regularizer::Impl::recover(const Vector& dgdp, const Vector& dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
 {
     // Calculate dual variables y w.r.t. original equality constraints
@@ -632,11 +618,6 @@ auto Regularizer::regularize(Vector& dgdp, Vector& dbdp) -> void
 auto Regularizer::recover(OptimumState& state) -> void
 {
     pimpl->recover(state);
-}
-
-auto Regularizer::recover(Vector& dxdp) -> void
-{
-    pimpl->recover(dxdp);
 }
 
 auto Regularizer::recover(const Vector& dgdp, const Vector& dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
