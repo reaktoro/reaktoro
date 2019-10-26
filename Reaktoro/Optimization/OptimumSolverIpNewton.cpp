@@ -49,17 +49,34 @@ struct OptimumSolverIpNewton::Impl
     /// The outputter instance
     Outputter outputter;
 
+    /// The last optimization problem
+    OptimumProblem problem;
+
+    /// The last computed optimum state
+    OptimumState state;
+
+    /// The last optimization options
+    OptimumOptions options;
+
     /// The sensitivity derivatives of the computed optimum state
     OptimumSensitivity sensitivity;
 
+    // The last result of the calculation
+    OptimumResult result;
+
     /// Solve the optimization problem.
-    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+    auto solve(const OptimumProblem& problem_, OptimumState& state_, const OptimumOptions& options_) -> OptimumResult
     {
         // Start timing the calculation
         Time begin = time();
 
-        // The result of the calculation
-        OptimumResult result;
+        // Update internal copies of problem, state, and options
+        problem = problem_;
+        state = state_;
+        options = options_;
+
+        // The result of the calculation (start clean)
+        result = {};
 
         // Finish the calculation if the problem has no variable
         if(problem.n == 0)
@@ -417,6 +434,9 @@ struct OptimumSolverIpNewton::Impl
         // Output a final header
         outputter.outputHeader();
 
+        // Set input optimum state to the just computed optimum state
+        state_ = state;
+
         // Finish timing the calculation
         result.time = elapsed(begin);
 
@@ -426,14 +446,37 @@ struct OptimumSolverIpNewton::Impl
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
     auto sensitivities(MatrixConstRef dgdp, MatrixConstRef dbdp, Matrix& dxdp, Matrix& dydp, Matrix& dzdp) -> void
     {
-        const auto nx = dgdp.rows();
+        // The number of variables, equality constraints, and parameters
+        const auto nx = problem.A.cols();
+        const auto nb = problem.A.rows();
         const auto np = dgdp.cols();
-        const auto ny = dbdp.rows();
 
+        // Resize input/output matrices
         dxdp.resize(nx, np);
-        dydp.resize(ny, np);
+        dydp.resize(nb, np);
         dzdp.resize(nx, np);
 
+        // Auxiliary state references
+        auto& x = state.x;
+        auto& y = state.y;
+        auto& z = state.z;
+        auto& f = state.f;
+
+        // Auxiliary problem references
+        const auto& A = problem.A;
+
+        // The regularization parameters delta and gamma
+        auto gamma = options.regularization.gamma;
+        auto delta = options.regularization.delta;
+
+        // Set gamma and delta to mu in case they are zero
+        gamma = gamma ? gamma : options.ipnewton.mu;
+        delta = delta ? delta : options.ipnewton.mu;
+
+        // The KKT matrix
+        KktMatrix lhs(f.hessian, A, x, z, gamma, delta);
+
+        // Calculate sensitivity derivatives for each parameter
         for(auto i = 0; i < np; ++i)
         {
             // Initialize the right-hand side of the KKT equations
@@ -441,15 +484,8 @@ struct OptimumSolverIpNewton::Impl
             rhs.ry.noalias() =  dbdp.col(i);
             rhs.rz.fill(0.0);
 
-            // // The regularization parameters delta and gamma
-            // const auto gamma = 1.0e-20;
-            // const auto delta = 1.0e-20;
-
-            // // The KKT matrix
-            // KktMatrix lhs(f.hessian, A, x, z, gamma, delta);
-
-            // // Update the decomposition of the KKT matrix with update Hessian matrix
-            // kkt.decompose(lhs);
+            // Update the decomposition of the KKT matrix with update Hessian matrix
+            kkt.decompose(lhs);
 
             // Solve the KKT equations to get the derivatives
             kkt.solve(rhs, sol);
