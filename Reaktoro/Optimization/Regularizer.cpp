@@ -159,16 +159,13 @@ struct Regularizer::Impl
     auto regularize(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
 
     /// Regularize the vectors `dg/dp` and `db/dp`, where `g = grad(f)`.
-    auto regularize(Vector& dgdp, Vector& dbdp) -> void;
+    auto regularize(Matrix& dgdp, Matrix& dbdp) -> void;
 
     /// Recover an optimum state to an state that corresponds to the original optimum problem.
     auto recover(OptimumState& state) -> void;
 
-    /// Recover the sensitivity derivative `dxdp`.
-    auto recover(Vector& dxdp) -> void;
-
     /// Recover the sensitivity derivative `dxdp`, `dydp`, `dzdp`.
-    auto recover(const Vector& dgdp, const Vector& dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void;
+    auto recover(const Matrix& dgdp, const Matrix& dbdp, Matrix& dxdp, Matrix& dydp, Matrix& dzdp) -> void;
 };
 
 auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& problem) -> void
@@ -490,20 +487,20 @@ auto Regularizer::Impl::regularize(OptimumProblem& problem, OptimumState& state,
     fixInfeasibleConstraints(problem);
 }
 
-auto Regularizer::Impl::regularize(Vector& dgdp, Vector& dbdp) -> void
+auto Regularizer::Impl::regularize(Matrix& dgdp, Matrix& dbdp) -> void
 {
     // Remove derivative components corresponding to trivial constraints
     if(itrivial_constraints.size())
     {
-        dbdp = dbdp(inontrivial_constraints).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.;
-        dgdp = dgdp(inontrivial_variables).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
+        dbdp = rows(dbdp, inontrivial_constraints).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.;
+        dgdp = rows(dgdp, inontrivial_variables).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
     }
 
     // If there are linearly dependent constraints, remove corresponding components
     if(!all_li)
     {
         dbdp = P_li * dbdp;
-        dbdp.conservativeResize(m_li);
+        dbdp.conservativeResize(m_li, dbdp.cols());
     }
 
     // Perform echelonization of the right-hand side vector if needed
@@ -550,7 +547,7 @@ auto Regularizer::Impl::recover(OptimumState& state) -> void
     }
 }
 
-auto Regularizer::Impl::recover(const Vector& dgdp, const Vector& dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
+auto Regularizer::Impl::recover(const Matrix& dgdp, const Matrix& dbdp, Matrix& dxdp, Matrix& dydp, Matrix& dzdp) -> void
 {
     // Calculate dual variables y w.r.t. original equality constraints
     dydp = lu_star.trsolve(dgdp - dzdp);
@@ -566,20 +563,20 @@ auto Regularizer::Impl::recover(const Vector& dgdp, const Vector& dbdp, Vector& 
         const Index n = nn + nt;
         const Index m = mn + mt;
 
-        // Resize back the lengths of x, y, z
-        dxdp.conservativeResize(n);
-        dydp.conservativeResize(m);
-        dzdp.conservativeResize(n);
+        // Resize back the number of rows of dxdp, dydp, dzdp
+        dxdp.conservativeResize(n, dgdp.cols());
+        dydp.conservativeResize(m, dgdp.cols());
+        dzdp.conservativeResize(n, dgdp.cols());
 
         // Set the components corresponding to non-trivial variables and constraints
-        dxdp(inontrivial_variables)   = dxdp.segment(0, nn).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
-        dydp(inontrivial_constraints) = dydp.segment(0, mn).eval();
-        dzdp(inontrivial_variables)   = dzdp.segment(0, nn).eval();
+        rows(dxdp, inontrivial_variables)   = rows(dxdp, 0, nn).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
+        rows(dydp, inontrivial_constraints) = rows(dydp, 0, mn).eval();
+        rows(dzdp, inontrivial_variables)   = rows(dzdp, 0, nn).eval();
 
         // Set the components corresponding to trivial variables and constraints
-        dxdp(itrivial_variables).fill(0.0);
-        dydp(itrivial_constraints).fill(0.0);
-        dzdp(itrivial_variables).fill(0.0);
+        rows(dxdp, itrivial_variables).fill(0.0);
+        rows(dydp, itrivial_constraints).fill(0.0);
+        rows(dzdp, itrivial_variables).fill(0.0);
     }
 }
 
@@ -610,7 +607,7 @@ auto Regularizer::regularize(OptimumProblem& problem, OptimumState& state, Optim
     pimpl->regularize(problem, state, options);
 }
 
-auto Regularizer::regularize(Vector& dgdp, Vector& dbdp) -> void
+auto Regularizer::regularize(Matrix& dgdp, Matrix& dbdp) -> void
 {
     pimpl->regularize(dgdp, dbdp);
 }
@@ -620,7 +617,7 @@ auto Regularizer::recover(OptimumState& state) -> void
     pimpl->recover(state);
 }
 
-auto Regularizer::recover(const Vector& dgdp, const Vector& dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
+auto Regularizer::recover(const Matrix& dgdp, const Matrix& dbdp, Matrix& dxdp, Matrix& dydp, Matrix& dzdp) -> void
 {
     pimpl->recover(dgdp, dbdp, dxdp, dydp, dzdp);
 }

@@ -159,7 +159,7 @@ struct OptimumSolver::Impl
     }
 
     /// Return the sensitivities `dx/dp`, `dy/dp`, `dz/dp` of the solution `(x,y,z)` with respect to a vector of parameters `p`.
-    auto sensitivities(Vector dgdp, Vector dbdp, VectorRef dxdp, VectorRef dydp, VectorRef dzdp) -> void
+    auto sensitivities(Matrix dgdp, Matrix dbdp, MatrixRef dxdp, MatrixRef dydp, MatrixRef dzdp) -> void
     {
         // Assert the size of the input matrices dgdp and dbdp
         Assert(dgdp.rows() && dbdp.rows() && dgdp.cols() == dbdp.cols(),
@@ -174,7 +174,7 @@ struct OptimumSolver::Impl
         regularizer.regularize(dgdp, dbdp);
 
         // Compute the sensitivity dx/dp of x with respect to p
-        Vector dxdp_, dydp_, dzdp_;
+        Matrix dxdp_, dydp_, dzdp_;
         solver->sensitivities(dgdp, dbdp, dxdp_, dydp_, dzdp_);
 
         // Recover `dx/dp` in case there are trivial variables
@@ -236,7 +236,7 @@ auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, co
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolver::sensitivities(const Vector& dgdp, const Vector& dbdp, VectorRef dxdp, VectorRef dydp, VectorRef dzdp) -> void
+auto OptimumSolver::sensitivities(const Matrix& dgdp, const Matrix& dbdp, MatrixRef dxdp, MatrixRef dydp, MatrixRef dzdp) -> void
 {
     return pimpl->sensitivities(dgdp, dbdp, dxdp, dydp, dzdp);
 }

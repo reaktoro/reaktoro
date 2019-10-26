@@ -542,10 +542,6 @@ struct EquilibriumSolver::Impl
     /// Return the sensitivity of the equilibrium state.
     auto sensitivity() -> const EquilibriumSensitivity&
     {
-        zerosEe = zeros(Ee);
-        zerosNe = zeros(Ne);
-        unitjEe = zeros(Ee);
-
         auto& dndT = sensitivities.dndT;
         auto& dydT = sensitivities.dydT;
         auto& dzdT = sensitivities.dzdT;
@@ -571,17 +567,16 @@ struct EquilibriumSolver::Impl
         dzdP = zeros(Ne);
         dzdb = zeros(Ne, Ee);
 
-        solver.sensitivities(ue.ddT, zerosEe, dndT, dydT, dzdT);
-        solver.sensitivities(ue.ddP, zerosEe, dndP, dydP, dzdP);
+        const auto& dgdT = ue.ddT;
+        const auto& dgdP = ue.ddP;
+        const auto& dgdb = zeros(Ne, Ee);
+        const auto& dbdT = zeros(Ee);
+        const auto& dbdP = zeros(Ee);
+        const auto& dbdb = identity(Ee, Ee);
 
-        for(Index j = 0; j < Ee; ++j)
-        {
-            auto dndbj = dndb.col(j);
-            auto dydbj = dydb.col(j);
-            auto dzdbj = dzdb.col(j);
-            unitjEe = unit(Ee, j);
-            solver.sensitivities(zerosNe, unitjEe, dndbj, dydbj, dzdbj);
-        }
+        solver.sensitivities(dgdT, dbdT, dndT, dydT, dzdT);
+        solver.sensitivities(dgdP, dbdP, dndP, dydP, dzdP);
+        solver.sensitivities(dgdb, dbdb, dndb, dydb, dzdb);
 
         drdT = ue.ddT + ue.ddn * dndT - tr(Ae)*dydT - dzdT;
         drdP = ue.ddP + ue.ddn * dndP - tr(Ae)*dydP - dzdP;

@@ -83,7 +83,7 @@ public:
     /// @param[out] dxdp The derivatives `dx/dp`
     /// @param[out] dydp The derivatives `dy/dp`
     /// @param[out] dzdp The derivatives `dz/dp`
-    auto sensitivities(const Vector& dgdp, const Vector& dbdp, VectorRef dxdp, VectorRef dydp, VectorRef dzdp) -> void;
+    auto sensitivities(const Matrix& dgdp, const Matrix& dbdp, MatrixRef dxdp, MatrixRef dydp, MatrixRef dzdp) -> void;
 
 private:
     struct Impl;

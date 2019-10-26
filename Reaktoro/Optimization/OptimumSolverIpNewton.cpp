@@ -424,30 +424,41 @@ struct OptimumSolverIpNewton::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto sensitivities(MatrixConstRef dgdp, MatrixConstRef dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
+    auto sensitivities(MatrixConstRef dgdp, MatrixConstRef dbdp, Matrix& dxdp, Matrix& dydp, Matrix& dzdp) -> void
     {
-        // Initialize the right-hand side of the KKT equations
-        rhs.rx.noalias() = -dgdp;
-        rhs.ry.noalias() =  dbdp;
-        rhs.rz.fill(0.0);
+        const auto nx = dgdp.rows();
+        const auto np = dgdp.cols();
+        const auto ny = dbdp.rows();
 
-        // // The regularization parameters delta and gamma
-        // const auto gamma = 1.0e-20;
-        // const auto delta = 1.0e-20;
+        dxdp.resize(nx, np);
+        dydp.resize(ny, np);
+        dzdp.resize(nx, np);
 
-        // // The KKT matrix
-        // KktMatrix lhs(f.hessian, A, x, z, gamma, delta);
+        for(auto i = 0; i < np; ++i)
+        {
+            // Initialize the right-hand side of the KKT equations
+            rhs.rx.noalias() = -dgdp.col(i);
+            rhs.ry.noalias() =  dbdp.col(i);
+            rhs.rz.fill(0.0);
 
-        // // Update the decomposition of the KKT matrix with update Hessian matrix
-        // kkt.decompose(lhs);
+            // // The regularization parameters delta and gamma
+            // const auto gamma = 1.0e-20;
+            // const auto delta = 1.0e-20;
 
-        // Solve the KKT equations to get the derivatives
-        kkt.solve(rhs, sol);
+            // // The KKT matrix
+            // KktMatrix lhs(f.hessian, A, x, z, gamma, delta);
 
-        // Return the calculated sensitivity vector
-        dxdp = sol.dx;
-        dydp = sol.dy;
-        dzdp = sol.dz;
+            // // Update the decomposition of the KKT matrix with update Hessian matrix
+            // kkt.decompose(lhs);
+
+            // Solve the KKT equations to get the derivatives
+            kkt.solve(rhs, sol);
+
+            // Return the calculated sensitivity vector
+            dxdp.col(i) = sol.dx;
+            dydp.col(i) = sol.dy;
+            dzdp.col(i) = sol.dz;
+        }
     }
 };
 
@@ -478,7 +489,7 @@ auto OptimumSolverIpNewton::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverIpNewton::sensitivities(MatrixConstRef dgdp, MatrixConstRef dbdp, Vector& dxdp, Vector& dydp, Vector& dzdp) -> void
+auto OptimumSolverIpNewton::sensitivities(MatrixConstRef dgdp, MatrixConstRef dbdp, Matrix& dxdp, Matrix& dydp, Matrix& dzdp) -> void
 {
     return pimpl->sensitivities(dgdp, dbdp, dxdp, dydp, dzdp);
 }
