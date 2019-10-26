@@ -49,51 +49,51 @@ public:
 
     /// Set the partition of the chemical system.
     /// Use this method to specify the equilibrium, kinetic, and inert species.
-    auto setPartition(const Partition& partition) -> EquilibriumProblem&;
+    auto setPartition(const Partition& partition) -> void;
 
     /// Set the temperature for the equilibrium calculation.
     /// By default, the temperature is 25 &deg;C.
     /// @param val The temperature value (in units of K)
-    auto setTemperature(double val) -> EquilibriumProblem&;
+    auto setTemperature(double val) -> void;
 
     /// Set the temperature for the equilibrium calculation with given units.
     /// By default, the temperature is 25 &deg;C.
     /// @param val The temperature value
     /// @param units The units of the temperature (K, degC, degF, degR, kelvin, celsius, fahrenheit, rankine)
-    auto setTemperature(double val, std::string units) -> EquilibriumProblem&;
+    auto setTemperature(double val, std::string units) -> void;
 
     /// Set the pressure for the equilibrium calculation.
     /// By default, the pressure is 1 bar.
     /// @param val The pressure value (in units of Pa).
-    auto setPressure(double val) -> EquilibriumProblem&;
+    auto setPressure(double val) -> void;
 
     /// Set the pressure for the equilibrium calculation.
     /// By default, the pressure is 1 bar.
     /// @param val The pressure value
     /// @param units The units of the pressure (Pa, kPa, MPa, GPa, atm, mmHg, inHg, psi, kpsi, Mpsi, psf, bar, torr, inH2O, ftH2O, pascal)
-    auto setPressure(double val, std::string units) -> EquilibriumProblem&;
+    auto setPressure(double val, std::string units) -> void;
 
     /// Set the mole amounts of each element for the equilibrium calculation.
     /// @param b The vector of mole amounts of each element (in units of mol)
-    auto setElementAmounts(VectorConstRef b) -> EquilibriumProblem&;
+    auto setElementAmounts(VectorConstRef b) -> void;
 
     /// Set the mole amounts of each element for the equilibrium calculation.
     /// @param amount The mole amount for all elements (in units of mol)
-    auto setElementAmounts(double amount) -> EquilibriumProblem&;
+    auto setElementAmounts(double amount) -> void;
 
     /// Set the mole amount of an element for the equilibrium calculation (in units of mol)
     /// @param ielement The index of the element
     /// @param amount The same mole amount for all elements (in units of mol)
-    auto setElementAmount(Index ielement, double amount) -> EquilibriumProblem&;
+    auto setElementAmount(Index ielement, double amount) -> void;
 
     /// Set the mole amount of an element for the equilibrium calculation (in units of mol)
     /// @param element The name of the element
     /// @param amount The same mole amount for all elements (in units of mol)
-    auto setElementAmount(std::string element, double amount) -> EquilibriumProblem&;
+    auto setElementAmount(std::string element, double amount) -> void;
 
     /// Set the mole amount of electrical charge.
     /// @param amount The mole amount of electrical charge (in units of mol)
-    auto setElectricalCharge(double amount) -> EquilibriumProblem&;
+    auto setElectricalCharge(double amount) -> void;
 
     /// Add a given amount of a compound or species to the equilibrium recipe.
     /// This method will first check if the given compound is present in the chemical system.
@@ -101,7 +101,7 @@ public:
     /// @param name The name of the compound or species
     /// @param amount The amount of the compound or species
     /// @param units The units of the amount (must be convertible to either mol or kg)
-    auto add(std::string name, double amount, std::string units) -> EquilibriumProblem&;
+    auto add(std::string name, double amount, std::string units) -> void;
 
     /// Add the mole amounts of the equilibrium species in a ChemicalState instance to the equilibrium recipe.
     /// This method only extracts the mole amounts of equilibrium species in the given chemical state.
@@ -110,21 +110,21 @@ public:
     /// @note If a multiplication factor is needed, for example `2.0`, use `add(2.0*state)`.
     /// @param state The ChemicalState instance with the mole amounts of the species
     /// @see setPartition
-    auto add(const ChemicalState& state) -> EquilibriumProblem&;
+    auto add(const ChemicalState& state) -> void;
 
     /// Add a given amount of a compound to the equilibrium recipe.
     /// The compound must not have a chemical element that is not present in the chemical system.
     /// @param name The name of the compound (e.g., H2O, CaCO3)
     /// @param amount The amount of the compound
     /// @param units The units of the amount (must be convertible to either mol or kg)
-    auto addCompound(std::string name, double amount, std::string unit) -> EquilibriumProblem&;
+    auto addCompound(std::string name, double amount, std::string unit) -> void;
 
     /// Add a given amount of a species to the equilibrium recipe
     /// The species must be present in the chemical system.
     /// @param name The name of the species
     /// @param amount The amount of the species
     /// @param units The units of the amount (must be convertible to either mol or kg)
-    auto addSpecies(std::string name, double amount, std::string unit) -> EquilibriumProblem&;
+    auto addSpecies(std::string name, double amount, std::string unit) -> void;
 
     /// Add the mole amounts of the equilibrium species in a ChemicalState instance to the equilibrium recipe.
     /// This method only extracts the mole amounts of equilibrium species in the given chemical state.
@@ -133,7 +133,7 @@ public:
     /// @note If a multiplication factor is needed, for example `2.0`, use `addState(2.0*state)`.
     /// @param state The ChemicalState instance with the mole amounts of the species
     /// @see setPartition
-    auto addState(const ChemicalState& state) -> EquilibriumProblem&;
+    auto addState(const ChemicalState& state) -> void;
 
     /// Return a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
     auto system() const -> const ChemicalSystem&;
