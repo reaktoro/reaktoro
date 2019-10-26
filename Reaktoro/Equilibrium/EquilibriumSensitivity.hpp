@@ -30,23 +30,40 @@ namespace Reaktoro {
 struct EquilibriumSensitivity
 {
     /// The partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$ (in units of mol/K).
-    /// These derivatives provide a measure of how much the equilibrium amounts of the species,
-    /// @f$n@f$, change with an infinitesimal change in temperature, @f$T@f$. They are useful when solving
-    /// non-linear problems that involve equilibrium calculations and derivatives with respect to temperature.
-    Vector dndT, dydT, dzdT;
+    Vector dndT;
+
+    /// The partial derivatives @f$\left.\frac{\partial y/RT}{\partial T}\right|_{P,b}@f$ (in units of 1/K).
+    Vector dydT;
+
+    /// The partial derivatives @f$\left.\frac{\partial z/RT}{\partial T}\right|_{P,b}@f$ (in units of 1/K).
+    Vector dzdT;
+
+    /// The partial derivatives @f$\left.\frac{\partial r/RT}{\partial T}\right|_{P,b}@f$ (in units of 1/K).
+    Vector drdT;
 
     /// The partial derivatives @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$ (in units of mol/Pa).
-    /// These derivatives provide a measure of how much the equilibrium amounts of the species,
-    /// @f$n@f$, change with an infinitesimal change in pressure, @f$P@f$. They are useful when solving
-    /// non-linear problems that involve equilibrium calculations and derivatives with respect to pressure.
-    Vector dndP, dydP, dzdP;
+    Vector dndP;
 
-    /// The partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$ (in units of mol/mol).
-    /// These derivatives provide a measure of how much the equilibrium amounts of the species,
-    /// @f$n@f$, change with an infinitesimal change in the amounts of elements, @f$b@f$. They are
-    /// useful when solving non-linear problems that involve equilibrium calculations and derivatives with respect
-    /// to the amounts of elements.
-    Matrix dndb, dydb, dzdb;
+    /// The partial derivatives @f$\left.\frac{\partial y/RT}{\partial P}\right|_{T,b}@f$ (in units of 1/Pa).
+    Vector dydP;
+
+    /// The partial derivatives @f$\left.\frac{\partial z/RT}{\partial P}\right|_{T,b}@f$ (in units of 1/Pa).
+    Vector dzdP;
+
+    /// The partial derivatives @f$\left.\frac{\partial r/RT}{\partial P}\right|_{T,b}@f$ (in units of 1/Pa).
+    Vector drdP;
+
+    /// The partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T, P}@f$ (in units of mol/mol).
+    Matrix dndb;
+
+    /// The partial derivatives @f$\left.\frac{\partial y/RT}{\partial b}\right|_{T, P}@f$ (in units of 1/mol).
+    Matrix dydb;
+
+    /// The partial derivatives @f$\left.\frac{\partial z/RT}{\partial b}\right|_{T, P}@f$ (in units of 1/mol).
+    Matrix dzdb;
+
+    /// The partial derivatives @f$\left.\frac{\partial r/RT}{\partial b}\right|_{T, P}@f$ (in units of 1/mol).
+    Matrix drdb;
 };
 
 } // namespace Reaktoro
