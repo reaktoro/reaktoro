@@ -29,8 +29,11 @@ struct SmartEquilibriumOptions
     /// The equilibrium options to be used during learning operations.
     EquilibriumOptions learning;
 
+    /// The cutoff value for species mole fractions. Species with mole fractions below this value are ignored during the acceptance test.
+    double mole_fraction_cutoff = 1.0e-6;
+
     /// The weighted residual tolerance used in the acceptance test.
-    double tol = 1.0e-3;
+    double tol = 1.0e-1;
 
     /// The relative tolerance used in the acceptance test.
     double reltol = 0.1;
