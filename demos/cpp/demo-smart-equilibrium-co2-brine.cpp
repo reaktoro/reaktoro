@@ -23,10 +23,16 @@ int main()
     Database database("supcrt98.xml");
 
     ChemicalEditor editor(database);
-    editor.addAqueousPhaseWithElements("H O Na Cl C Ca Mg");
+    editor.addAqueousPhaseWithElements("H O Na Cl C Ca Mg Si")
+        // .setChemicalModelPitzerHMW()
+        // .setChemicalModelDebyeHuckel()
+        // .setActivityModelDrummondCO2()
+        ;
     editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
     editor.addMineralPhase("Halite");
     editor.addMineralPhase("Calcite");
+    editor.addMineralPhase("Magnesite");
+    editor.addMineralPhase("Aragonite");
     editor.addMineralPhase("Dolomite");
     editor.addMineralPhase("Quartz");
 
@@ -39,10 +45,11 @@ int main()
     problem.setTemperature(60, "celsius");
     problem.setPressure(300, "bar");
     problem.add("H2O", 1, "kg");
-    problem.add("CO2", 100, "g");
+    problem.add("CO2", 2, "mol");
     problem.add("NaCl", 0.1, "mol");
+    // problem.add("MgCl2", 0.1, "mol");
     problem.add("Calcite", 1, "mol");
-    problem.add("Dolomite", 1, "mol");
+    // problem.add("Dolomite", 1, "mol");
     problem.add("Quartz", 1, "mol");
 
     EquilibriumResult result;
@@ -58,7 +65,7 @@ int main()
     smartresult = smartsolver.solve(smartstate1, problem);
     std::cout << "Smart Prediction Succeess? " << (smartresult.estimate.accepted ? "yes" : "no") << std::endl;
 
-    problem.add("NaCl", 0.01, "mol");
+    problem.add("MgCl2", 0.01, "mol");
     std::cout << "Solving Problem 2...";
     ChemicalState state2(system);
     ChemicalState smartstate2(system);
@@ -66,7 +73,7 @@ int main()
     smartresult = smartsolver.solve(smartstate2, problem);
     std::cout << "Smart Prediction Succeess? " << (smartresult.estimate.accepted ? "yes" : "no") << std::endl;
 
-    problem.add("NaCl", 0.01, "mol");
+    problem.add("MgCl2", 0.01, "mol");
     std::cout << "Solving Problem 3...";
     ChemicalState state3(system);
     ChemicalState smartstate3(system);
@@ -74,7 +81,7 @@ int main()
     smartresult = smartsolver.solve(smartstate3, problem);
     std::cout << "Smart Prediction Succeess? " << (smartresult.estimate.accepted ? "yes" : "no") << std::endl;
 
-    problem.add("NaCl", 0.01, "mol");
+    problem.add("MgCl2", 0.01, "mol");
     std::cout << "Solving Problem 4...";
     ChemicalState state4(system);
     ChemicalState smartstate4(system);
@@ -97,20 +104,30 @@ int main()
     const Vector n3 = state3.speciesAmounts();
     const Vector n4 = state4.speciesAmounts();
 
-    const Vector smart_n1 = smartstate1.speciesAmounts();
-    const Vector smart_n2 = smartstate2.speciesAmounts();
-    const Vector smart_n3 = smartstate3.speciesAmounts();
-    const Vector smart_n4 = smartstate4.speciesAmounts();
-
     const Vector y1 = state1.elementDualPotentials();
     const Vector y2 = state2.elementDualPotentials();
     const Vector y3 = state3.elementDualPotentials();
     const Vector y4 = state4.elementDualPotentials();
 
+    const Vector z1 = state1.speciesDualPotentials();
+    const Vector z2 = state2.speciesDualPotentials();
+    const Vector z3 = state3.speciesDualPotentials();
+    const Vector z4 = state4.speciesDualPotentials();
+
+    const Vector smart_n1 = smartstate1.speciesAmounts();
+    const Vector smart_n2 = smartstate2.speciesAmounts();
+    const Vector smart_n3 = smartstate3.speciesAmounts();
+    const Vector smart_n4 = smartstate4.speciesAmounts();
+
     const Vector smart_y1 = smartstate1.elementDualPotentials();
     const Vector smart_y2 = smartstate2.elementDualPotentials();
     const Vector smart_y3 = smartstate3.elementDualPotentials();
     const Vector smart_y4 = smartstate4.elementDualPotentials();
+
+    const Vector smart_z1 = smartstate1.speciesDualPotentials();
+    const Vector smart_z2 = smartstate2.speciesDualPotentials();
+    const Vector smart_z3 = smartstate3.speciesDualPotentials();
+    const Vector smart_z4 = smartstate4.speciesDualPotentials();
 
     const Vector ndiff1 = abs(n1 - smart_n1);
     const Vector ndiff2 = abs(n2 - smart_n2);
@@ -122,6 +139,11 @@ int main()
     const Vector ydiff3 = abs(y3 - smart_y3);
     const Vector ydiff4 = abs(y4 - smart_y4);
 
+    const Vector zdiff1 = abs(z1 - smart_z1);
+    const Vector zdiff2 = abs(z2 - smart_z2);
+    const Vector zdiff3 = abs(z3 - smart_z3);
+    const Vector zdiff4 = abs(z4 - smart_z4);
+
     Index ispecies1;
     Index ispecies2;
     Index ispecies3;
@@ -132,26 +154,27 @@ int main()
     const double max_ndiff3 = ndiff3.maxCoeff(&ispecies3);
     const double max_ndiff4 = ndiff4.maxCoeff(&ispecies4);
 
-    Index ielement1;
-    Index ielement2;
-    Index ielement3;
-    Index ielement4;
+    const double max_ydiff1 = ydiff1.maxCoeff();
+    const double max_ydiff2 = ydiff2.maxCoeff();
+    const double max_ydiff3 = ydiff3.maxCoeff();
+    const double max_ydiff4 = ydiff4.maxCoeff();
 
-    const double max_ydiff1 = ydiff1.maxCoeff(&ielement1);
-    const double max_ydiff2 = ydiff2.maxCoeff(&ielement2);
-    const double max_ydiff3 = ydiff3.maxCoeff(&ielement3);
-    const double max_ydiff4 = ydiff4.maxCoeff(&ielement4);
+    const double max_zdiff1 = zdiff1.maxCoeff();
+    const double max_zdiff2 = zdiff2.maxCoeff();
+    const double max_zdiff3 = zdiff3.maxCoeff();
+    const double max_zdiff4 = zdiff4.maxCoeff();
 
     std::cout << std::scientific;
     std::cout << std::endl;
     std::cout << std::endl;
-    std::cout << "=== Results" << std::endl;
+    std::cout << "-------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
     std::cout << std::left << std::setw(25) << "Species";
     std::cout << std::left << std::setw(25) << "|smart(n1) - conv(n1)|";
     std::cout << std::left << std::setw(25) << "|smart(n2) - conv(n2)|";
     std::cout << std::left << std::setw(25) << "|smart(n3) - conv(n3)|";
     std::cout << std::left << std::setw(25) << "|smart(n4) - conv(n4)|";
     std::cout << std::endl;
+    std::cout << "-------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
     for(auto i = 0; i < system.numSpecies(); ++i)
     {
         std::cout << std::left << std::setw(25) << system.species(i).name();
@@ -161,23 +184,40 @@ int main()
         std::cout << std::left << std::setw(25) << ndiff4[i];
         std::cout << std::endl;
     }
+    std::cout << "-------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
     std::cout << std::left << std::setw(25) << "Element";
     std::cout << std::left << std::setw(25) << "|smart(y1) - conv(y1)|";
     std::cout << std::left << std::setw(25) << "|smart(y2) - conv(y2)|";
     std::cout << std::left << std::setw(25) << "|smart(y3) - conv(y3)|";
     std::cout << std::left << std::setw(25) << "|smart(y4) - conv(y4)|";
     std::cout << std::endl;
-    std::cout << "===" << std::endl;
+    std::cout << "-------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
     for(auto i = 0; i < system.numElements(); ++i)
     {
         std::cout << std::left << std::setw(25) << system.element(i).name();
-        std::cout << std::left << std::setw(25) << ydiff1[i];
-        std::cout << std::left << std::setw(25) << ydiff2[i];
-        std::cout << std::left << std::setw(25) << ydiff3[i];
-        std::cout << std::left << std::setw(25) << ydiff4[i];
+        std::cout << std::left << std::setw(25) << ydiff1[i] / (universalGasConstant * state1.temperature());
+        std::cout << std::left << std::setw(25) << ydiff2[i] / (universalGasConstant * state2.temperature());
+        std::cout << std::left << std::setw(25) << ydiff3[i] / (universalGasConstant * state3.temperature());
+        std::cout << std::left << std::setw(25) << ydiff4[i] / (universalGasConstant * state4.temperature());
         std::cout << std::endl;
     }
-    std::cout << "===" << std::endl;
+    std::cout << "-------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
+    std::cout << std::left << std::setw(25) << "Species";
+    std::cout << std::left << std::setw(25) << "|smart(z1) - conv(z1)|";
+    std::cout << std::left << std::setw(25) << "|smart(z2) - conv(z2)|";
+    std::cout << std::left << std::setw(25) << "|smart(z3) - conv(z3)|";
+    std::cout << std::left << std::setw(25) << "|smart(z4) - conv(z4)|";
+    std::cout << std::endl;
+    std::cout << "-------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
+    for(auto i = 0; i < system.numSpecies(); ++i)
+    {
+        std::cout << std::left << std::setw(25) << system.species(i).name();
+        std::cout << std::left << std::setw(25) << zdiff1[i] / (universalGasConstant * state1.temperature());
+        std::cout << std::left << std::setw(25) << zdiff2[i] / (universalGasConstant * state2.temperature());
+        std::cout << std::left << std::setw(25) << zdiff3[i] / (universalGasConstant * state3.temperature());
+        std::cout << std::left << std::setw(25) << zdiff4[i] / (universalGasConstant * state4.temperature());
+        std::cout << std::endl;
+    }
 
     std::cout << std::endl;
     std::cout << std::fixed << std::setprecision(2);
