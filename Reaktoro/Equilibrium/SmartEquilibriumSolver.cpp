@@ -58,10 +58,41 @@ struct SmartEquilibriumSolver::Impl
     Vector be;
 
     /// The solution of the equilibrium problem
-    Vector n, y, z, x, u;
+    Vector n, y, z, x, u, r;
 
     /// Auxiliary vectors
     Vector dn, dy, dz;
+
+
+
+
+
+
+
+    Vector a_dn;
+    Vector a_dy;
+    Vector a_dz;
+    Vector a_n0;
+    Vector a_y0;
+    Vector a_z0;
+    Vector a_n;
+    Vector a_y;
+    Vector a_z;
+    Vector b_dn;
+    Vector b_dy;
+    Vector b_dz;
+    Vector b_n0;
+    Vector b_y0;
+    Vector b_z0;
+    Vector b_n;
+    Vector b_y;
+    Vector b_z;
+    Vector a_u;
+    Vector b_u;
+    Vector a_x;
+    Vector b_x;
+    Vector a_r;
+    Vector b_r;
 
     /// A class used to store the node of tree for smart equilibrium calculations.
     struct TreeNode
@@ -90,7 +121,9 @@ struct SmartEquilibriumSolver::Impl
     {
         options = options_;
 
-        options.learning.hessian = GibbsHessian::Exact; // Ensure the use of an exact Hessian of the Gibbs energy function
+        // Tweak the options for the Gibbs energy minimization during learning operations.
+        options.learning.hessian = GibbsHessian::Exact; // ensure the use of an exact Hessian of the Gibbs energy function
+        options.learning.optimum.tolerance = 1e-10; // ensure the use of a stricter residual tolerance for the Gibbs energy minimization
 
         solver.setOptions(options.learning);
     }
@@ -133,6 +166,9 @@ struct SmartEquilibriumSolver::Impl
         const auto reltol = options.reltol;
         const auto abstol = options.abstol;
 
+
+        MatrixConstRef Ae = partition.formulaMatrixEquilibriumPartition();
+
         //---------------------------------------------------------------------------------------
         // Step 1: Search for the reference element (closest to the new state input conditions)
         //---------------------------------------------------------------------------------------
@@ -141,10 +177,97 @@ struct SmartEquilibriumSolver::Impl
         // Comparison function based on the Euclidean distance
         auto distancefn = [&](const TreeNode& a, const TreeNode& b)
         {
-            const auto& be_a = a.be;
-            const auto& be_b = b.be;
-            return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();  // TODO: We need to extend this later with T and P contributions too (Allan, 26.06.2019)
+            Vector be_a = a.be/sum(a.be);
+            Vector be_b = b.be/sum(b.be);
+            Vector be_x = be/sum(be);
+
+            return (be_a - be_x).squaredNorm() < (be_b - be_x).squaredNorm();  // TODO: We need to extend this later with T and P contributions too (Allan, 26.06.2019)
         };
+
+        // // Comparison function based on the Euclidean distance
+        // auto distancefn = [&](const TreeNode& a, const TreeNode& b)
+        // {
+        //     const auto& be_a = a.be;
+        //     const auto& be_b = b.be;
+        //     return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();  // TODO: We need to extend this later with T and P contributions too (Allan, 26.06.2019)
+        // };
+
+        // Comparison function based on the Euclidean distance
+        // auto distancefn = [&](const TreeNode& a, const TreeNode& b)
+        // {
+        //     const auto RT = universalGasConstant*a.state.temperature();
+
+        //     // Calculate perturbation of n
+        //     a_dn.noalias() = a.sensitivity.dndb * (be - a.be);
+        //     a_dy.noalias() = a.sensitivity.dydb * (be - a.be);
+        //     a_dz.noalias() = a.sensitivity.dzdb * (be - a.be);
+
+        //     a_n0.noalias() = a.state.speciesAmounts();
+        //     a_y0.noalias() = a.state.elementDualPotentials();
+        //     a_z0.noalias() = a.state.speciesDualPotentials();
+        //     const auto& a_u0 = a.properties.chemicalPotentials();
+        //     const auto& a_x0 = a.properties.moleFractions();
+
+        //     a_n.noalias() = a_n0 + a_dn;
+        //     a_y.noalias() = a_y0;
+        //     a_z.noalias() = a_z0;
+
+
+        //     b_dn.noalias() = b.sensitivity.dndb * (be - b.be);
+        //     b_dy.noalias() = b.sensitivity.dydb * (be - b.be);
+        //     b_dz.noalias() = b.sensitivity.dzdb * (be - b.be);
+
+        //     b_n0.noalias() = b.state.speciesAmounts();
+        //     b_y0.noalias() = b.state.elementDualPotentials();
+        //     b_z0.noalias() = b.state.speciesDualPotentials();
+        //     const auto& b_u0 = b.properties.chemicalPotentials();
+        //     const auto& b_x0 = b.properties.moleFractions();
+
+        //     b_n.noalias() = b_n0 + b_dn;
+        //     b_y.noalias() = b_y0;
+        //     b_z.noalias() = b_z0;
+
+
+        //     // Correct negative mole numbers
+        //     for(auto i = 0; i < n.size(); ++i)
+        //     {
+        //         // if(a_n[i] <= 0.0) a_n[i] = a_n0[i];
+        //         // if(b_n[i] <= 0.0) b_n[i] = b_n0[i];
+        //         if(a_n[i] <= 0.0) a_n[i] = 1e-12; // a_n0[i];
+        //         if(b_n[i] <= 0.0) b_n[i] = 1e-12; // b_n0[i];
+        //     }
+
+        //     // Recompute the change in n
+        //     a_dn = a_n - a_n0;
+        //     b_dn = b_n - b_n0;
+
+        //     // Calculate u(bar) = u(ref) + dudT(ref)*dT + dudP(ref)*dP + dudn(ref)*dn
+        //     a_u.noalias() = a_u0.val + a_u0.ddn * a_dn;
+        //     b_u.noalias() = b_u0.val + b_u0.ddn * b_dn;
+
+        //     // Calculate x(bar) = x(ref) + dxdn(ref)*dn
+        //     a_x.noalias() = a_x0.val + a_x0.ddn * a_dn;
+        //     b_x.noalias() = b_x0.val + b_x0.ddn * b_dn;
+
+        //     // Calculate the equilibrium residuals of the equilibrium species
+        //     a_r.noalias() = abs(a_u - tr(Ae)*a_y - a_z)/RT;  // TODO: We should actually collect the entries in u and z corresponding to equilibrium species
+        //     b_r.noalias() = abs(b_u - tr(Ae)*b_y - b_z)/RT;  // TODO: We should actually collect the entries in u and z corresponding to equilibrium species
+
+        //     // // Eliminate species with mole fractions below cutoff from the residual analysis
+        //     for(auto i = 0; i < n.size(); ++i)
+        //     {
+        //         if(a_x[i] < options.mole_fraction_cutoff) a_r[i] = 0.0; // set their residuals to zero
+        //         if(b_x[i] < options.mole_fraction_cutoff) b_r[i] = 0.0; // set their residuals to zero
+        //     }
+
+        //     const double a_error = a_r.maxCoeff();
+        //     const double b_error = b_r.maxCoeff();
+        //     return a_error < b_error;
+
+        //     // const auto& be_a = a.be;
+        //     // const auto& be_b = b.be;
+        //     // return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();  // TODO: We need to extend this later with T and P contributions too (Allan, 26.06.2019)
+        // };
 
         // Find the entry with minimum "input" distance
         auto it = std::min_element(tree.begin(), tree.end(), distancefn);
@@ -169,62 +292,127 @@ struct SmartEquilibriumSolver::Impl
         const auto u0 = properties0.chemicalPotentials();
         const auto x0 = properties0.moleFractions();
 
-
-
-        const double RT = universalGasConstant*T0;
-
+        const auto RT = universalGasConstant*T0;
 
         // Calculate perturbation of n
-        dn.noalias() = sensitivity0.dndb * (be - be0);
-        dy.noalias() = sensitivity0.dydb * (be - be0);
-        dz.noalias() = sensitivity0.dzdb * (be - be0);
+        dn.noalias() = sensitivity0.dndb * (be - be0); // TODO: set derivatives dndb{i} = 0 when b{i} = 0
+        dy.noalias() = sensitivity0.dydb * (be - be0); // TODO: set derivatives
+        dz.noalias() = sensitivity0.dzdb * (be - be0); // TODO: set derivatives
 
         n.noalias() = n0 + dn;
-        // y.noalias() = y0 + dy;
-        // z.noalias() = z0 + dz;
         y.noalias() = y0;
         z.noalias() = z0;
-        // y.noalias() = y0 + dy * RT;
-        // z.noalias() = z0 + dz * RT;
+        // y.noalias() = y0 + dy * RT; // TODO: Investigate further if derivatives of y and z wrt (T,P,b) can be made more accurately
+        // z.noalias() = z0 + dz * RT; // TODO: Investigate further if derivatives of y and z wrt (T,P,b) can be made more accurately
 
-        u = u0.val + u0.ddn * dn; // u = u_ref + dudn_ref * dn
-        x = x0.val + x0.ddn * dn; // x = x_ref + dxdn_ref * dn
+        // Correct negative mole numbers
+        for(auto i = 0; i < n.size(); ++i)
+            if(n[i] <= 0.0)
+                // n[i] = n0[i];
+                n[i] = 1e-12;
 
-        // MatrixConstRef Ae = partition.formulaMatrixEquilibriumPartition();
+        // Recompute the change in n
+        dn = n - n0;
 
-        Matrix A = system.formulaMatrix();
+        // Calculate u(bar) = u(ref) + dudT(ref)*dT + dudP(ref)*dP + dudn(ref)*dn
+        u = u0.val + u0.ddn * dn;
 
-        Vector r = abs(u - tr(A)*y - z);  // TODO: We should actually collect the entries in u and z corresponding to equilibrium species
-        r /= universalGasConstant*T0;
-        // Vector r = abs(sensitivity0.drdb * (be - be0));
+        // Calculate x(bar) = x(ref) + dxdn(ref)*dn
+        x = x0.val + x0.ddn * dn;
 
+        // Calculate the equilibrium residuals of the equilibrium species
+        r = abs(u - tr(Ae)*y - z)/RT;  // TODO: We should actually collect the entries in u and z corresponding to equilibrium species
+
+        // // Eliminate species with mole fractions below cutoff from the residual analysis
+        for(auto i = 0; i < n.size(); ++i)
+            if(x[i] < options.mole_fraction_cutoff)
+                r[i] = 0.0; // set their residuals to zero
+
+        // Eliminate species with amounts below their dual potentials (unstable species with n0[i] < z0[i])
+        // for(auto i = 0; i < n.size(); ++i)
+        //     if(n0[i] < z0[i])
+        //         r[i] = 0.0; // set their residuals to zero
+
+
+
+
+
+        // Should we add a test that prevent mole fractions from increasing by more than a certain tolerance?? My concern is that trace species could be left out.
+
+
+
+
+        // Vector v = dn;
+
+        // Eliminate species with mole fractions below cutoff from the residual analysis
+        // for(auto i = 0; i < n.size(); ++i)
+        //     if(x[i] < options.mole_fraction_cutoff)
+        //         v[i] = 0.0; // set their residuals to zero
+
+        // Eliminate species with amounts below their dual potentials (unstable species with n0[i] < z0[i])
+        // for(auto i = 0; i < n.size(); ++i)
+        //     if(n0[i] < z0[i])
+        //         v[i] = 0.0; // set their residuals to zero
+
+        // const double error = std::abs(v.dot(u0.ddn * v)/RT/sum(n0));
+        // const double error = r.dot(abs(v))/sum(n);
+
+        // Estimate the residual error of the trial Taylor approximation
         Index ispecies;
+        const double error = r.maxCoeff(&ispecies);
 
-        const double error = (x.cwiseProduct(r)).maxCoeff(&ispecies);
+        // const double error = abs(x.cwiseProduct(r)).maxCoeff(&ispecies);
+        // const double error = r.maxCoeff(&ispecies); // find the maximum residual among considered stable and relevant species
+        // abs(r.cwiseProduct(abs(v))/sum(n)).maxCoeff(&ispecies);
+        // double error = 0.0;
 
-        bool is_error_acceptable = error < 1e-1;
+        // Vector dx = abs(x - x0.val);
 
-        // if(is_error_acceptable == false)
+        // for(auto i = 0; i < n.size(); ++i)
+        // {
+        //     if(dx[i] > 1e-4) continue;
+        //     if(dx[i]/x0.val[i] > 0.02) // 2% difference
+        //     {
+        //         ispecies = i;
+        //         error = dx[i]/x0.val[i];
+        //     }
+        // }
+
+        bool is_error_acceptable = error <= options.tol;
+        // bool is_error_acceptable = true;
+
+        if(is_error_acceptable == false)
         {
-            std::cout << "*****************************" << std::endl;
-            std::cout << "*** Failed Smart Estimate ***" << std::endl;
-            std::cout << "*****************************" << std::endl;
+            std::cout << std::scientific;
+            // std::cout << "-----------------------------" << std::endl;
+            // std::cout << "*** Failed Smart Estimate ***" << std::endl;
+            std::cout << "-----------------------------" << std::endl;
             std::cout << "Error = " << error << std::endl;
             std::cout << "Triggered by species = " << system.species(ispecies).name() << std::endl;
             std::cout << "-----------------------------" << std::endl;
             std::cout << std::left << std::setw(25) << "Species";
             std::cout << std::left << std::setw(25) << "r[i]";
+            std::cout << std::left << std::setw(25) << "|r[i] * dn[i]/sum(n)|";
+            std::cout << std::left << std::setw(25) << "|dn[i]|";
+            std::cout << std::left << std::setw(25) << "n[i]";
             std::cout << std::left << std::setw(25) << "x[i]";
-            std::cout << std::left << std::setw(25) << "r[i] * x[i]";
+            std::cout << std::left << std::setw(25) << "z[i]";
+            // std::cout << std::left << std::setw(25) << "r[i] * x[i]";
+            // std::cout << std::left << std::setw(25) << "(r[i] * n[i])/nsum";
             std::cout << std::endl;
-            std::cout << std::scientific;
             for(auto i = 0; i < r.size(); ++i)
             {
+                if(r[i] == 0.0) continue;
                 if(i == ispecies) std::cout << "***************" << std::endl;
-                std::cout << std::left << std::setw(25) << system.species(i).name();
+                std::cout << std::left << std::setw(25) << ((i == ispecies) ? "==> " : "") + system.species(i).name();
                 std::cout << std::left << std::setw(25) << r[i];
+                std::cout << std::left << std::setw(25) << r[i] * std::abs(dn[i])/sum(n);
+                std::cout << std::left << std::setw(25) << std::abs(dn[i]);
+                std::cout << std::left << std::setw(25) << n[i];
                 std::cout << std::left << std::setw(25) << x[i];
-                std::cout << std::left << std::setw(25) << r[i] * x[i];
+                std::cout << std::left << std::setw(25) << z[i];
+                // std::cout << std::left << std::setw(25) << std::abs(r[i] * x[i]);
+                // std::cout << std::left << std::setw(25) << std::abs(r[i] * n[i])/nsum;
                 std::cout << std::endl;
                 if(i == ispecies) std::cout << "***************" << std::endl;
             }
@@ -238,18 +426,13 @@ struct SmartEquilibriumSolver::Impl
         //----------------------------------------------
         tic(2);
 
-        // Correct negative mole numbers
-        for(auto i = 0; i < n.size(); ++i)
-            if(n[i] < 0.0) n[i] = 1e-12;  // TODO: 1e-12 should be replaced by a value provided via options.
-
         state.setSpeciesAmounts(n);
-        state.setElementDualPotentials(y0 + dy * RT);
-        state.setSpeciesDualPotentials(z0 + dz * RT);
+        state.setElementDualPotentials(y);
+        state.setSpeciesDualPotentials(z);
 
         toc(2, result.timing.estimate_acceptance);
 
         // Check if smart estimation failed with respect to variation of chemical potentials or amounts
-        // if(!is_error_acceptable || !amount_check)
         if(is_error_acceptable == false)
             return;
 
