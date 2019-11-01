@@ -71,12 +71,15 @@ struct ReactiveTransportProfiler::Impl
     /// Update the profiler with the result of the last reactive transport time step.
     auto update(const ReactiveTransportResult& result) -> void
     {
+        // Add the result into the vector of results
         results.push_back(result);
 
+        // Calculate the total times (at one step) by summing the times in instances (elements or cells)
         timing_transport_at_step.push_back( internal::accumulateTimingsFromResults(result.transport_of_element) );
         timing_equilibrium_at_step.push_back( internal::accumulateTimingsFromResults(result.equilibrium_at_cell) );
         timing_smart_equilibrium_at_step.push_back( internal::accumulateTimingsFromResults(result.smart_equilibrium_at_cell) );
 
+        // Accumulate the total times (at steps) to track the time over all cells
         accumulated_timing_transport += timing_transport_at_step.back();
         accumulated_timing_equilibrium += timing_equilibrium_at_step.back();
         accumulated_timing_smart_equilibrium += timing_smart_equilibrium_at_step.back();
@@ -106,8 +109,8 @@ struct ReactiveTransportProfiler::Impl
             info.smart_equilibrium_with_ideal_search[i] = info.smart_equilibrium[i] - timing_smart_equilibrium_at_step[i].estimate_search;
             info.smart_equilibrium_estimate[i] = timing_smart_equilibrium_at_step[i].estimate;
             info.smart_equilibrium_nearest_neighbor_search[i] = timing_smart_equilibrium_at_step[i].estimate_search;
-            info.smart_equilibrium_gibbs_energy_minimization[i] = timing_smart_equilibrium_at_step[i].learning_gibbs_energy_minimization;
-            info.smart_equilibrium_storage[i] = timing_smart_equilibrium_at_step[i].learning_storage;
+            info.smart_equilibrium_gibbs_energy_minimization[i] = timing_smart_equilibrium_at_step[i].learn_gibbs_energy_minimization;
+            info.smart_equilibrium_storage[i] = timing_smart_equilibrium_at_step[i].learn_storage;
         }
 
         return info;
@@ -143,17 +146,16 @@ struct ReactiveTransportProfiler::Impl
 
         // Set the total number of equilibrium calculations
         info.num_equilibrium_calculations =
-            info.num_smart_equilibrium_accepted_estimates +
-                info.num_smart_equilibrium_required_learnings;
+            info.num_smart_equilibrium_accepted_estimates + info.num_smart_equilibrium_required_learnings;
 
-        // Set the success rate at which smart equilibrium estimates were accepted.
+        // Set the success rate at which smart equilibrium estimates were accepted
         info.smart_equilibrium_estimate_acceptance_rate =
             static_cast<double>(info.num_smart_equilibrium_accepted_estimates) / info.num_equilibrium_calculations;
 
         // The number of time steps (= the number of collected ReactiveTransportResult objects)
         const auto num_time_steps = results.size();
 
-        // Set the table of indicators that show where smart equilibrium estimate was accepted at a cell in a time step.
+        // Set the table of indicators that shows where the smart equilibrium estimate was accepted at a cell in a time step.
         info.cells_where_learning_was_required_at_step.resize(num_time_steps);
 
         // For each time step, identify the cells where learning was required

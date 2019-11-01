@@ -140,7 +140,7 @@ struct SmartEquilibriumSolver::Impl
     {
         // Calculate the equilibrium state using conventional Gibbs energy minimization approach
         timeit( solver.solve(state, T, P, be),
-            result.timing.learning_gibbs_energy_minimization= );
+            result.timing.learn_gibbs_energy_minimization= );
 
         // Store the result of the Gibbs energy minimization calculation performed during learning
         result.learning.gibbs_energy_minimization = solver.result();
@@ -481,7 +481,7 @@ struct SmartEquilibriumSolver::Impl
 
         // Perform a learning step if the smart prediction is not sactisfatory
         if(!result.estimate.accepted)
-            timeit( learn(state, T, P, be), result.timing.learning= );
+            timeit( learn(state, T, P, be), result.timing.learn= );
 
         toc(0, result.timing.solve);
 

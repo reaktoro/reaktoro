@@ -85,8 +85,8 @@ struct TransportSolver::Impl
     /// Set the value of the variable on the boundary.
     auto setBoundaryValue(double val) -> void
     {
-        ul = val; }
-    ;
+        ul = val;
+    }
 
     /// Set the time step for the numerical solution of the transport problem.
     auto setTimeStep(double val) -> void
@@ -94,7 +94,7 @@ struct TransportSolver::Impl
         dt = val;
     }
 
-    /// Set the time step for the numerical solution of the transport problem.
+    /// Set the options for the transport solver.
     auto setOptions(const TransportOptions& options) -> void
     {
         this->options = options;
@@ -110,6 +110,8 @@ struct TransportSolver::Impl
         const auto icell0 = 0;
         const auto icelln = num_cells - 1;
 
+        tic(0);
+
         // Initialize A vector
         A.resize(num_cells);
 
@@ -124,13 +126,13 @@ struct TransportSolver::Impl
             phi.resize(num_cells);
         }
 
-        // Coeffitiens of the system's matrix
+        // Initialize coefficients of the system's matrix
         double a(0.0), b(0.0), c(0.0);
 
         // Assemble the coefficient matrix A for the interior cells
         for(Index icell = 1; icell < icelln; ++icell)
         {
-            // Depending on the initialized FV scheme, initialize coeffitients
+            // Depending on the initialized FV scheme, initialize coefficients
             switch(options.finite_volume_method)
             {
                 case FiniteVolumeMethod::FullImplicit:
@@ -178,6 +180,9 @@ struct TransportSolver::Impl
 
         // Factorize A into LU factors for future uses in method step
         A.factorize();
+
+        toc(0, result.timing.matrix_equation_assembly);
+
     }
 
     /// Perform one transport time step calculation.

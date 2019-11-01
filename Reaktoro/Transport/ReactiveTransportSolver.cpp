@@ -34,7 +34,7 @@ namespace Reaktoro {
 struct ReactiveTransportSolver::Impl
 {
     /// The chemical system common to all degrees of freedom in the chemical field.
-    ChemicalSystem system_;
+    ChemicalSystem system;
 
     /// The solver for solving the transport equations
     TransportSolver transport_solver;
@@ -42,7 +42,7 @@ struct ReactiveTransportSolver::Impl
     /// The options for the reactive transport calculations.
     ReactiveTransportOptions options;
 
-    /// The resultrmation of the last reactive transport time step calculation.
+    /// The result information of the last reactive transport time step calculation.
     ReactiveTransportResult result;
 
     /// The equilibrium solver using conventional Gibbs energy minimization approach.
@@ -74,7 +74,7 @@ struct ReactiveTransportSolver::Impl
 
     /// Construct a ReactiveTransportSolver::Impl instance.
     Impl(const ChemicalSystem& system)
-    : system_(system), equilibrium_solver(system), smart_equilibrium_solver(system)
+    : system(system), equilibrium_solver(system), smart_equilibrium_solver(system)
     {
         setBoundaryState(ChemicalState(system));
     }
@@ -120,7 +120,7 @@ struct ReactiveTransportSolver::Impl
     /// Add the output to the reactive transport modelling.
     auto output() -> ChemicalOutput
     {
-        outputs.emplace_back(ChemicalOutput(system_));
+        outputs.emplace_back(ChemicalOutput(system));
         return outputs.back();
     }
 
@@ -129,7 +129,7 @@ struct ReactiveTransportSolver::Impl
     {
         // Initialize mesh and corresponding amount e
         const Mesh& mesh = transport_solver.mesh();
-        const Index num_elements = system_.numElements();
+        const Index num_elements = system.numElements();
         const Index num_cells = mesh.numCells();
 
         // Initialize amount of elements in fluid and solid phases
@@ -150,10 +150,10 @@ struct ReactiveTransportSolver::Impl
 
         // Auxiliary variables
         const auto& mesh = transport_solver.mesh();
-        const auto& num_elements = system_.numElements();
+        const auto& num_elements = system.numElements();
         const auto& num_cells = mesh.numCells();
-        const auto& ifs = system_.indicesFluidSpecies();
-        const auto& iss = system_.indicesSolidSpecies();
+        const auto& ifs = system.indicesFluidSpecies();
+        const auto& iss = system.indicesSolidSpecies();
 
         // Open the the file for outputting chemical states
         for(auto output : outputs)
@@ -167,7 +167,6 @@ struct ReactiveTransportSolver::Impl
         //---------------------------------------------------------------------------
         tic(0);
 
-
         // Collect the amounts of elements in the solid and fluid species
         for(Index icell = 0; icell < num_cells; ++icell)
         {
@@ -177,9 +176,10 @@ struct ReactiveTransportSolver::Impl
 
         // Left boundary condition cell
         Index icell_bc = 0;
-        const auto phi_bc = field[icell_bc].properties().fluidVolume().val;
+        // Get porosity of the left boundary cell
+        const auto phi_bc = field[icell_bc].properties().fluidVolume().val / field[icell_bc].properties().volume().val;
 
-        // Ensure the result of each fluid element transport calculation can be saved.
+        // Ensure the result of each fluid element transport calculation can be saved
         result.transport_of_element.resize(num_elements);
 
         // Transport the elements in the fluid species
@@ -199,13 +199,13 @@ struct ReactiveTransportSolver::Impl
         toc(0, result.timing.transport);
 
         //---------------------------------------------------------------------------
-        // Step 1: Perform a time step transport calculation for each fluid element
+        // Step 2: Perform a time step equilibrium calculation for each cell
         //---------------------------------------------------------------------------
         tic(1);
 
         if(options.use_smart_equilibrium_solver)
         {
-            // Ensure the result of each cell's smart equilibrium calculation can be saved.
+            // Ensure the result of each cell's smart equilibrium calculation can be saved
             result.smart_equilibrium_at_cell.resize(num_cells);
 
             for(Index icell = 0; icell < num_cells; ++icell)
@@ -216,7 +216,7 @@ struct ReactiveTransportSolver::Impl
                 // Solve with a smart equilibrium solver
                 smart_equilibrium_solver.solve(field[icell], T, P, b.row(icell));
 
-                // Save the result of this cell's smart equilibrium calculation.
+                // Save the result of this cell's smart equilibrium calculation
                 result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver.result();
             }
         }
@@ -328,7 +328,7 @@ auto ReactiveTransportSolver::result() const -> const ReactiveTransportResult&
 
 auto ReactiveTransportSolver::system() const -> const ChemicalSystem&
 {
-    return pimpl->system_;
+    return pimpl->system;
 }
 
 auto ReactiveTransportSolver::timeStep() const -> double

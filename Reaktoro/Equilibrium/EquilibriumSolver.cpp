@@ -224,7 +224,7 @@ struct EquilibriumSolver::Impl
 
         // Update the standard thermodynamic properties of the chemical system
         timeit( properties.update(T, P),
-            result.timing.standard_thermodynamic_properties= );
+            result.timing.standard_thermodynamic_properties+= );
 
         // Update the normalized standard Gibbs energies of the species
         u0 = properties.standardPartialMolarGibbsEnergies()/RT;
@@ -369,7 +369,8 @@ struct EquilibriumSolver::Impl
         z = state.speciesDualPotentials();
 
         // Update the standard thermodynamic properties of the system
-        properties.update(T, P);
+        timeit( properties.update(T, P),
+                result.timing.standard_thermodynamic_properties+= );
 
         // Get the standard Gibbs energies of the equilibrium species
         const Vector ge0 = properties.standardPartialMolarGibbsEnergies().val(ies);

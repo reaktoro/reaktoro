@@ -31,7 +31,7 @@ struct ReactiveTransportOptions
     /// The options for the equilibrium calculations.
     EquilibriumOptions equilibrium;
 
-    /// The options for the equilibrium calculations.
+    /// The options for the smart equilibrium calculations.
     SmartEquilibriumOptions smart_equilibrium;
 
     /// The boolean flag that indicates whether SmartEquilibriumSolver should be used.
