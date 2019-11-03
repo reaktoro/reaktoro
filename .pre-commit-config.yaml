@@ -1,0 +1,26 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+
+-   repo: https://github.com/psf/black
+    rev: stable
+    hooks:
+    -   id: black
+        args: [--fast, --quiet]
+        language_version: python3
+
+-   repo: https://github.com/asottile/blacken-docs
+    rev: v1.3.0
+    hooks:
+        -   id: blacken-docs
+
+-   repo: https://github.com/pocc/pre-commit-hooks
+    sha: master
+    hooks:
+    -   id: clang-format
+        args: [--style=Google]

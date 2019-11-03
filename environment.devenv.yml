@@ -6,6 +6,7 @@ name: reaktoro
 {% set debug = os.environ.get("CONFIG", "").lower() == "debug" %}
 
 dependencies:
+  - black
   - boost=1.70
   - cmake=3.15
   - invoke
@@ -22,6 +23,7 @@ dependencies:
   # Cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
   - pugixml
   {% endif %}
+  - pre-commit
   - pybind11=2.3.0
   - pytest
   - pytest-cpp
