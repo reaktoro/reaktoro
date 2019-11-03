@@ -23,7 +23,7 @@ cxxSS::cxxSS(PHRQ_io *io)
 :
 PHRQ_base(io)
 	//
-	// default constructor for cxxSS 
+	// default constructor for cxxSS
 	//
 {
 
@@ -99,10 +99,10 @@ cxxSS::dump_raw(std::ostream & s_oss, unsigned int indent) const
 	s_oss << indent0 << "# SOLID_SOLUTION_MODIFY candidate identifiers with new_def=true #\n";
 	s_oss << indent0 << "-tk                      " << this->tk << "\n";
 	s_oss << indent0 << "-input_case              " << this->input_case << "\n";
-	s_oss << indent0 << "-p			              " << 
-		p[0] << "\t"  << 
-		p[1] << "\t"  << 
-		p[2] << "\t"  << 
+	s_oss << indent0 << "-p			              " <<
+		p[0] << "\t"  <<
+		p[1] << "\t"  <<
+		p[2] << "\t"  <<
 		p[3] << "\n";
 
 	s_oss << indent0 << "# solid solution workspace variables #\n";
@@ -230,7 +230,7 @@ cxxSS::read_raw(CParser & parser, bool check)
 					cxxSScomp * comp_ptr = this->Find(str.c_str());
 					if (comp_ptr)
 					{
-						temp_comp = *comp_ptr;	
+						temp_comp = *comp_ptr;
 					}
 					temp_comp.read_raw(parser, false);
 					if (comp_ptr)
@@ -250,7 +250,7 @@ cxxSS::read_raw(CParser & parser, bool check)
 					useLastLine = true;
 				}
 			}
-			
+
 			opt_save = CParser::OPT_DEFAULT;
 			break;
 
@@ -475,23 +475,23 @@ cxxSS::add(const cxxSS & addee_in, LDBLE extensive)
 	cxxSS addee = addee_in;
 	for (size_t j = 0; j < addee.Get_ss_comps().size(); j++)
 	{
-		size_t i; 
+		size_t i;
 		for (i = 0; i < this->ss_comps.size(); i++)
 		{
 			//look for component in this
-			if (Utilities::strcmp_nocase(this->ss_comps[i].Get_name().c_str(), 
+			if (Utilities::strcmp_nocase(this->ss_comps[i].Get_name().c_str(),
 				addee.Get_ss_comps()[j].Get_name().c_str()) == 0)
 			{
-				LDBLE d = this->ss_comps[i].Get_initial_moles() + 
+				LDBLE d = this->ss_comps[i].Get_initial_moles() +
 					addee.Get_ss_comps()[j].Get_initial_moles() * extensive;
 				this->ss_comps[i].Set_initial_moles(d);
-				d = this->ss_comps[i].Get_moles() + 
+				d = this->ss_comps[i].Get_moles() +
 					addee.Get_ss_comps()[j].Get_moles() * extensive;
 				this->ss_comps[i].Set_moles(d);
-				d = this->ss_comps[i].Get_init_moles() + 
+				d = this->ss_comps[i].Get_init_moles() +
 					addee.Get_ss_comps()[j].Get_init_moles() * extensive;
 				this->ss_comps[i].Set_init_moles(d);
-				d = this->ss_comps[i].Get_delta() + 
+				d = this->ss_comps[i].Get_delta() +
 					addee.Get_ss_comps()[j].Get_delta() * extensive;
 				this->ss_comps[i].Set_delta(d);
 				break;
@@ -508,7 +508,7 @@ cxxSS::add(const cxxSS & addee_in, LDBLE extensive)
 void
 cxxSS::multiply(LDBLE extensive)
 {
-	size_t i; 
+	size_t i;
 	for (i = 0; i < this->ss_comps.size(); i++)
 	{
 		LDBLE d = this->ss_comps[i].Get_initial_moles() * extensive;
@@ -533,7 +533,7 @@ cxxSS::Find(const char * comp_name)
 	return NULL;
 }
 void
-cxxSS::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSS::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles)
 {
 	ints.push_back(dictionary.Find(this->name));
@@ -569,7 +569,7 @@ cxxSS::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 }
 
 void
-cxxSS::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSS::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 {
 	this->name = dictionary.GetWords()[ints[ii++]];
@@ -610,9 +610,9 @@ cxxSS::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 
 
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("ss_name"),	    // 0                                   
-	std::vector< std::string >::value_type("total_moles"),	// 1   
-	std::vector< std::string >::value_type("a0"),           // 2   
+	std::vector< std::string >::value_type("ss_name"),	    // 0
+	std::vector< std::string >::value_type("total_moles"),	// 1
+	std::vector< std::string >::value_type("a0"),           // 2
 	std::vector< std::string >::value_type("a1"),	        // 3
 	std::vector< std::string >::value_type("components"),	// 4
 	std::vector< std::string >::value_type("miscibility"),	// 5
@@ -628,5 +628,5 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("ss_in"),        //15
 	std::vector< std::string >::value_type("totals"),       //16
 	std::vector< std::string >::value_type("dn")            //17
-};									   
-const std::vector< std::string > cxxSS::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxSS::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

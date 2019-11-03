@@ -18,12 +18,12 @@ def create_minimum_system():
 
 
 def check_dict(chemical):
-    dict1 = {'test':chemical}
-    dict1[chemical] = 'test'
+    dict1 = {"test": chemical}
+    dict1[chemical] = "test"
 
-    dict2 = {chemical:'test'}
-    dict2['test'] = chemical
-    assert dict1['test'] == dict2['test'] and dict1[chemical] == dict2[chemical]
+    dict2 = {chemical: "test"}
+    dict2["test"] = chemical
+    assert dict1["test"] == dict2["test"] and dict1[chemical] == dict2[chemical]
 
 
 def test_dict_on_chemical_state(create_minimum_system):
@@ -53,4 +53,3 @@ def test_VectorDouble():
     assert len(vector) == 10
     for i in range(10):
         assert vector[i] == i
-

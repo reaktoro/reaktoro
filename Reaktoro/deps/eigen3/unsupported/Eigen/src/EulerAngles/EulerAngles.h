@@ -19,7 +19,7 @@ namespace Eigen
     * \brief Represents a rotation in a 3 dimensional space as three Euler angles.
     *
     * Euler rotation is a set of three rotation of three angles over three fixed axes, defined by the EulerSystem given as a template parameter.
-    * 
+    *
     * Here is how intrinsic Euler angles works:
     *  - first, rotate the axes system over the alpha axis in angle alpha
     *  - then, rotate the axes system over the beta axis(which was rotated in the first stage) in angle beta
@@ -101,31 +101,31 @@ namespace Eigen
   {
     public:
       typedef RotationBase<EulerAngles<_Scalar, _System>, 3> Base;
-      
+
       /** the scalar type of the angles */
       typedef _Scalar Scalar;
       typedef typename NumTraits<Scalar>::Real RealScalar;
-      
+
       /** the EulerSystem to use, which represents the axes of rotation. */
       typedef _System System;
-    
+
       typedef Matrix<Scalar,3,3> Matrix3; /*!< the equivalent rotation matrix type */
       typedef Matrix<Scalar,3,1> Vector3; /*!< the equivalent 3 dimension vector type */
       typedef Quaternion<Scalar> QuaternionType; /*!< the equivalent quaternion type */
       typedef AngleAxis<Scalar> AngleAxisType; /*!< the equivalent angle-axis type */
-      
+
       /** \returns the axis vector of the first (alpha) rotation */
       static Vector3 AlphaAxisVector() {
         const Vector3& u = Vector3::Unit(System::AlphaAxisAbs - 1);
         return System::IsAlphaOpposite ? -u : u;
       }
-      
+
       /** \returns the axis vector of the second (beta) rotation */
       static Vector3 BetaAxisVector() {
         const Vector3& u = Vector3::Unit(System::BetaAxisAbs - 1);
         return System::IsBetaOpposite ? -u : u;
       }
-      
+
       /** \returns the axis vector of the third (gamma) rotation */
       static Vector3 GammaAxisVector() {
         const Vector3& u = Vector3::Unit(System::GammaAxisAbs - 1);
@@ -141,11 +141,11 @@ namespace Eigen
       /** Constructs and initialize an EulerAngles (\p alpha, \p beta, \p gamma). */
       EulerAngles(const Scalar& alpha, const Scalar& beta, const Scalar& gamma) :
         m_angles(alpha, beta, gamma) {}
-      
+
       // TODO: Test this constructor
       /** Constructs and initialize an EulerAngles from the array data {alpha, beta, gamma} */
       explicit EulerAngles(const Scalar* data) : m_angles(data) {}
-      
+
       /** Constructs and initializes an EulerAngles from either:
         *  - a 3x3 rotation matrix expression(i.e. pure orthogonal matrix with determinant of +1),
         *  - a 3D vector expression representing Euler angles.
@@ -160,7 +160,7 @@ namespace Eigen
        */
       template<typename Derived>
       explicit EulerAngles(const MatrixBase<Derived>& other) { *this = other; }
-      
+
       /** Constructs and initialize Euler angles from a rotation \p rot.
         *
         * \note If \p rot is an EulerAngles (even when it represented as RotationBase explicitly),
@@ -174,7 +174,7 @@ namespace Eigen
       */
       template<typename Derived>
       EulerAngles(const RotationBase<Derived, 3>& rot) { System::CalcEulerAngles(*this, rot.toRotationMatrix()); }
-      
+
       /*EulerAngles(const QuaternionType& q)
       {
         // TODO: Implement it in a faster way for quaternions
@@ -226,7 +226,7 @@ namespace Eigen
       {
         return inverse();
       }
-      
+
       /** Set \c *this from either:
         *  - a 3x3 rotation matrix expression(i.e. pure orthogonal matrix with determinant of +1),
         *  - a 3D vector expression representing Euler angles.
@@ -239,13 +239,13 @@ namespace Eigen
       {
         EIGEN_STATIC_ASSERT((internal::is_same<Scalar, typename Derived::Scalar>::value),
          YOU_MIXED_DIFFERENT_NUMERIC_TYPES__YOU_NEED_TO_USE_THE_CAST_METHOD_OF_MATRIXBASE_TO_CAST_NUMERIC_TYPES_EXPLICITLY)
-        
+
         internal::eulerangles_assign_impl<System, Derived>::run(*this, other.derived());
         return *this;
       }
 
       // TODO: Assign and construct from another EulerAngles (with different system)
-      
+
       /** Set \c *this from a rotation.
         *
         * See EulerAngles(const RotationBase<Derived, 3>&) for more information about
@@ -256,7 +256,7 @@ namespace Eigen
         System::CalcEulerAngles(*this, rot.toRotationMatrix());
         return *this;
       }
-      
+
       /** \returns \c true if \c *this is approximately equal to \a other, within the precision
         * determined by \a prec.
         *
@@ -280,13 +280,13 @@ namespace Eigen
           AngleAxisType(beta(), BetaAxisVector())   *
           AngleAxisType(gamma(), GammaAxisVector());
       }
-      
+
       friend std::ostream& operator<<(std::ostream& s, const EulerAngles<Scalar, System>& eulerAngles)
       {
         s << eulerAngles.angles().transpose();
         return s;
       }
-      
+
       /** \returns \c *this with scalar type casted to \a NewScalarType */
       template <typename NewScalarType>
       EulerAngles<NewScalarType, System> cast() const
@@ -327,7 +327,7 @@ EIGEN_EULER_ANGLES_TYPEDEFS(double, d)
     {
       typedef _Scalar Scalar;
     };
-    
+
     // set from a rotation matrix
     template<class System, class Other>
     struct eulerangles_assign_impl<System,Other,3,3>
@@ -338,7 +338,7 @@ EIGEN_EULER_ANGLES_TYPEDEFS(double, d)
         System::CalcEulerAngles(e, m);
       }
     };
-    
+
     // set from a vector of Euler angles
     template<class System, class Other>
     struct eulerangles_assign_impl<System,Other,3,1>

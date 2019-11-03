@@ -21,7 +21,7 @@
 
 cxxExchComp::cxxExchComp(PHRQ_io *io)
 	//
-	// default constructor for cxxExchComp 
+	// default constructor for cxxExchComp
 	//
 	: PHRQ_base(io)
 {
@@ -35,7 +35,7 @@ cxxExchComp::cxxExchComp(PHRQ_io *io)
 cxxExchComp::cxxExchComp(std::vector < cxxExchComp > &ec_vector,
 						 std::vector < LDBLE >&f_vector)
 		//
-		// constructor for cxxExchComp from mixing 
+		// constructor for cxxExchComp from mixing
 		//
 {
 	if (ec_vector.size() <= 0)
@@ -401,9 +401,9 @@ cxxExchComp::add(const cxxExchComp & addee, LDBLE extensive)
 }
 void
 cxxExchComp::multiply(LDBLE extensive)
-{ 
+{
 	this->totals.multiply(extensive);
-	this->charge_balance *= extensive;  
+	this->charge_balance *= extensive;
 	this->phase_proportion *= extensive;
 }
 
@@ -421,7 +421,7 @@ cxxExchComp::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::v
 }
 
 void
-cxxExchComp::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxExchComp::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 {
 	this->formula = dictionary.GetWords()[ints[ii++]];
@@ -436,15 +436,15 @@ cxxExchComp::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 
 
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("formula"),	            // 0 
+	std::vector< std::string >::value_type("formula"),	            // 0
 	std::vector< std::string >::value_type("moles"),	            // 1
-	std::vector< std::string >::value_type("la"),	                // 2 
-	std::vector< std::string >::value_type("charge_balance"),	    // 3 
-	std::vector< std::string >::value_type("phase_name"),	        // 4 
-	std::vector< std::string >::value_type("rate_name"),	        // 5 
+	std::vector< std::string >::value_type("la"),	                // 2
+	std::vector< std::string >::value_type("charge_balance"),	    // 3
+	std::vector< std::string >::value_type("phase_name"),	        // 4
+	std::vector< std::string >::value_type("rate_name"),	        // 5
 	std::vector< std::string >::value_type("formula_z"),	        // 6
-	std::vector< std::string >::value_type("phase_proportion"),	    // 7 
+	std::vector< std::string >::value_type("phase_proportion"),	    // 7
 	std::vector< std::string >::value_type("totals"),	            // 8
-	std::vector< std::string >::value_type("formula_totals")	    // 9	
-};									   
+	std::vector< std::string >::value_type("formula_totals")	    // 9
+};
 const std::vector< std::string > cxxExchComp::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

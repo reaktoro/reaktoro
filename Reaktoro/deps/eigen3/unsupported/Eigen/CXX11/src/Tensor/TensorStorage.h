@@ -124,7 +124,7 @@ class TensorStorage<T, DSizes<IndexType, NumIndices_>, Options_>
         else if (NumIndices_ == 0) {
 	  m_data = internal::conditional_aligned_new_auto<T,(Options_&DontAlign)==0>(1);
 	}
-	else 
+	else
           m_data = 0;
         EIGEN_INTERNAL_DENSE_STORAGE_CTOR_PLUGIN({})
       }

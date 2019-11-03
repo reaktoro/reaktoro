@@ -12,7 +12,7 @@
 
 #include "../../../../Eigen/Dense"
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
   template<typename Scalar, typename RealScalar> struct arpack_wrapper;
@@ -158,7 +158,7 @@ public:
   ArpackGeneralizedSelfAdjointEigenSolver& compute(const MatrixType& A, const MatrixType& B,
                                                    Index nbrEigenvalues, std::string eigs_sigma="LM",
                                         int options=ComputeEigenvectors, RealScalar tol=0.0);
-  
+
   /** \brief Computes eigenvalues / eigenvectors of given matrix using the external ARPACK library.
    *
    * \param[in]  A  Selfadjoint matrix whose eigendecomposition is to be computed.
@@ -322,7 +322,7 @@ ArpackGeneralizedSelfAdjointEigenSolver<MatrixType, MatrixSolver, BisSPD>&
 {
     MatrixType B(0,0);
     compute(A, B, nbrEigenvalues, eigs_sigma, options, tol);
-    
+
     return *this;
 }
 
@@ -353,7 +353,7 @@ ArpackGeneralizedSelfAdjointEigenSolver<MatrixType, MatrixSolver, BisSPD>&
   // User options: "LA", "SA", "SM", "LM", "BE"
   //
   char whch[3] = "LM";
-    
+
   // Specifies the shift if iparam[6] = { 3, 4, 5 }, not used if iparam[6] = { 1, 2 }
   //
   RealScalar sigma = 0.0;
@@ -435,7 +435,7 @@ ArpackGeneralizedSelfAdjointEigenSolver<MatrixType, MatrixSolver, BisSPD>&
 
   // Used during reverse communicate to notify where arrays start
   //
-  int *ipntr = new int[11]; 
+  int *ipntr = new int[11];
 
   // Error codes are returned in here, initial value of 0 indicates a random initial
   // residual vector is used, any other values means resid contains the initial residual
@@ -475,7 +475,7 @@ ArpackGeneralizedSelfAdjointEigenSolver<MatrixType, MatrixSolver, BisSPD>&
             MatrixType AminusSigmaB(A);
             for (Index i=0; i<A.rows(); ++i)
                 AminusSigmaB.coeffRef(i,i) -= sigma;
-            
+
             OP.compute(AminusSigmaB);
           }
           else
@@ -485,13 +485,13 @@ ArpackGeneralizedSelfAdjointEigenSolver<MatrixType, MatrixSolver, BisSPD>&
           }
       }
   }
- 
+
   if (!(mode == 1 && isBempty) && !(mode == 2 && isBempty) && OP.info() != Success)
       std::cout << "Error factoring matrix" << std::endl;
 
   do
   {
-    internal::arpack_wrapper<Scalar, RealScalar>::saupd(&ido, bmat, &n, whch, &nev, &tol, resid, 
+    internal::arpack_wrapper<Scalar, RealScalar>::saupd(&ido, bmat, &n, whch, &nev, &tol, resid,
                                                         &ncv, v, &ldv, iparam, ipntr, workd, workl,
                                                         &lworkl, &info);
 
@@ -507,7 +507,7 @@ ArpackGeneralizedSelfAdjointEigenSolver<MatrixType, MatrixSolver, BisSPD>&
             Matrix<Scalar, Dynamic, 1>::Map(out2, n) = Matrix<Scalar, Dynamic, 1>::Map(in, n);
           else
             Matrix<Scalar, Dynamic, 1>::Map(out2, n) = B * Matrix<Scalar, Dynamic, 1>::Map(in, n);
-          
+
           in = workd + ipntr[2] - 1;
       }
 
@@ -530,7 +530,7 @@ ArpackGeneralizedSelfAdjointEigenSolver<MatrixType, MatrixSolver, BisSPD>&
       {
         if (ido == 1)
           Matrix<Scalar, Dynamic, 1>::Map(in, n)  = A * Matrix<Scalar, Dynamic, 1>::Map(in, n);
-        
+
         // OP = B^{-1} A
         //
         Matrix<Scalar, Dynamic, 1>::Map(out, n) = OP.solve(Matrix<Scalar, Dynamic, 1>::Map(in, n));
@@ -574,7 +574,7 @@ ArpackGeneralizedSelfAdjointEigenSolver<MatrixType, MatrixSolver, BisSPD>&
 
     // "A" means "All", use "S" to choose specific eigenvalues (not yet supported in ARPACK))
     //
-    char howmny[2] = "A"; 
+    char howmny[2] = "A";
 
     // if howmny == "S", specifies the eigenvalues to compute (not implemented in ARPACK)
     //
@@ -600,7 +600,7 @@ ArpackGeneralizedSelfAdjointEigenSolver<MatrixType, MatrixSolver, BisSPD>&
         for (int i=0; i<nev; i++)
           for (int j=0; j<n; j++)
             m_eivec(j,i) = v[i*n+j] / scale;
-      
+
         if (mode == 1 && !isBempty && BisSPD)
           internal::OP<MatrixSolver, MatrixType, Scalar, BisSPD>::project(OP, n, nev, m_eivec.data());
 
@@ -638,7 +638,7 @@ extern "C" void ssaupd_(int *ido, char *bmat, int *n, char *which,
     int *info);
 
 extern "C" void sseupd_(int *rvec, char *All, int *select, float *d,
-    float *z, int *ldz, float *sigma, 
+    float *z, int *ldz, float *sigma,
     char *bmat, int *n, char *which, int *nev,
     float *tol, float *resid, int *ncv, float *v,
     int *ldv, int *iparam, int *ipntr, float *workd,
@@ -653,7 +653,7 @@ extern "C" void dsaupd_(int *ido, char *bmat, int *n, char *which,
     int *info);
 
 extern "C" void dseupd_(int *rvec, char *All, int *select, double *d,
-    double *z, int *ldz, double *sigma, 
+    double *z, int *ldz, double *sigma,
     char *bmat, int *n, char *which, int *nev,
     double *tol, double *resid, int *ncv, double *v,
     int *ldv, int *iparam, int *ipntr, double *workd,
@@ -668,7 +668,7 @@ template<typename Scalar, typename RealScalar> struct arpack_wrapper
       int *nev, RealScalar *tol, Scalar *resid, int *ncv,
       Scalar *v, int *ldv, int *iparam, int *ipntr,
       Scalar *workd, Scalar *workl, int *lworkl, int *info)
-  { 
+  {
     EIGEN_STATIC_ASSERT(!NumTraits<Scalar>::IsComplex, NUMERIC_TYPE_MUST_BE_REAL)
   }
 
@@ -787,4 +787,3 @@ struct OP<MatrixSolver, MatrixType, Scalar, false>
 } // end namespace Eigen
 
 #endif // EIGEN_ARPACKSELFADJOINTEIGENSOLVER_H
-

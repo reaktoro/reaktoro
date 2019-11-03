@@ -24,7 +24,7 @@
 
 cxxNameDouble::cxxNameDouble()
 	//
-	// default constructor for cxxNameDouble 
+	// default constructor for cxxNameDouble
 	//
 {
 	this->type = ND_ELT_MOLES;
@@ -297,7 +297,7 @@ cxxNameDouble::add_log_activities(const cxxNameDouble & addee, LDBLE f1,
 		}
 	}
 }
-cxxNameDouble 
+cxxNameDouble
 cxxNameDouble::Simplify_redox(void) const
 {
 	cxxNameDouble const &nd = *this;
@@ -371,7 +371,7 @@ cxxNameDouble::Simplify_redox(void) const
 				new_it->second += old_it->second;
 				old_it++;
 			}
-			else 
+			else
 			{
 				old_it++;
 			}
@@ -380,7 +380,7 @@ cxxNameDouble::Simplify_redox(void) const
 	return new_totals;
 }
 #ifdef SKIP
-cxxNameDouble 
+cxxNameDouble
 cxxNameDouble::Simplify_redox(void)
 {
 	// remove individual redox states from totals
@@ -411,7 +411,7 @@ cxxNameDouble::Simplify_redox(void)
 	return new_totals;
 }
 #endif
-void 
+void
 cxxNameDouble::Multiply_activities_redox(std::string str, LDBLE f)
 {
 	// update original master_activities using just computed factors
@@ -428,7 +428,7 @@ cxxNameDouble::Multiply_activities_redox(std::string str, LDBLE f)
 			// Found exact match
 			it->second += lg_f;
 		}
-		else 
+		else
 		{
 			// no exact match, current is element name, need to find all valences
 			if (strstr(it->first.c_str(), redox_name.c_str()) == it->first.c_str())
@@ -440,7 +440,7 @@ cxxNameDouble::Multiply_activities_redox(std::string str, LDBLE f)
 	}
 }
 #ifdef SKIP
-void 
+void
 cxxNameDouble::Multiply_activities_redox(std::string str, LDBLE f)
 {
 	// update original master_activities using just computed factors
@@ -456,7 +456,7 @@ cxxNameDouble::Multiply_activities_redox(std::string str, LDBLE f)
 			// Found exact match
 			it->second += lg_f;
 		}
-		else 
+		else
 		{
 			// no exact match, current is element name, need to find all valences
 			if (strstr(it->first.c_str(), redox_name.c_str()) == it->first.c_str())
@@ -531,13 +531,13 @@ cxxNameDouble::merge_redox(const cxxNameDouble & source)
 {
 	for (cxxNameDouble::const_iterator sit = source.begin(); sit != source.end(); sit++)
 	{
-		
+
 		std::string redox_name = sit->first;
 		std::string elt_name;
 		size_t pos = redox_name.find("(");
 
 		bool redox;
-		if (pos != std::string::npos) 
+		if (pos != std::string::npos)
 		{
 			redox = true;
 			elt_name = redox_name.substr(0, pos - 1);
@@ -584,16 +584,16 @@ cxxNameDouble::merge_redox(const cxxNameDouble & source)
 		}
 	}
 }
-struct DblCmp {     
-	bool operator()(const std::pair<std::string, LDBLE> &lhs, const std::pair<std::string, LDBLE> &rhs) 
-	{         
-		return lhs.second > rhs.second;     
-	} 
-}; 
-std::vector< std::pair<std::string, LDBLE> > 
+struct DblCmp {
+	bool operator()(const std::pair<std::string, LDBLE> &lhs, const std::pair<std::string, LDBLE> &rhs)
+	{
+		return lhs.second > rhs.second;
+	}
+};
+std::vector< std::pair<std::string, LDBLE> >
 cxxNameDouble::sort_second(void)
 {
-	std::vector< std::pair<std::string, LDBLE> > myvec(this->begin(), this->end()); 
+	std::vector< std::pair<std::string, LDBLE> > myvec(this->begin(), this->end());
 	std::sort(myvec.begin(), myvec.end(), DblCmp());
 
 	return myvec;

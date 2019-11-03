@@ -65,7 +65,7 @@ pitz_param_read(char *string, int n)
 /*
  *   Read pitzer parameter info from string
  *   n is number of species (character values)
- *          
+ *
  */
 	int l, i, j, k;
 	char *ptr;
@@ -181,12 +181,12 @@ pitz_param_store(struct pitz_param *pzp_ptr, bool force_copy)
 	{
 		if (pzp_ptr->species[2] != NULL)
 		{
-			error_string = sformatf( "Redefinition of parameter, %s %s %s\n", 
+			error_string = sformatf( "Redefinition of parameter, %s %s %s\n",
 			pzp_ptr->species[0], pzp_ptr->species[1], pzp_ptr->species[2]);
 		}
 		else
 		{
-			error_string = sformatf( "Redefinition of parameter, %s %s\n", 
+			error_string = sformatf( "Redefinition of parameter, %s %s\n",
 			pzp_ptr->species[0], pzp_ptr->species[1]);
 		}
 	    warning_msg(error_string);
@@ -205,10 +205,10 @@ pitz_param_store(struct pitz_param *pzp_ptr, bool force_copy)
 		{
 			pitz_params[count_pitz_param] = pitz_param_duplicate(pzp_ptr);
 			// clean up pointers
-			// species 
+			// species
 			for (i = 0; i < 3; i++)
 			{
-				if (pzp_ptr->species[i] != NULL) 
+				if (pzp_ptr->species[i] != NULL)
 				{
 					pitz_params[count_pitz_param]->species[i] = string_hsave(pzp_ptr->species[i]);
 				}
@@ -260,12 +260,12 @@ sit_param_store(struct pitz_param *pzp_ptr, bool force_copy)
 	{
 		if (pzp_ptr->species[2] != NULL)
 		{
-			error_string = sformatf( "Redefinition of parameter, %s %s %s\n", 
+			error_string = sformatf( "Redefinition of parameter, %s %s %s\n",
 			pzp_ptr->species[0], pzp_ptr->species[1], pzp_ptr->species[2]);
 		}
 		else
 		{
-			error_string = sformatf( "Redefinition of parameter, %s %s\n", 
+			error_string = sformatf( "Redefinition of parameter, %s %s\n",
 			pzp_ptr->species[0], pzp_ptr->species[1]);
 		}
 	    warning_msg(error_string);
@@ -284,10 +284,10 @@ sit_param_store(struct pitz_param *pzp_ptr, bool force_copy)
 		{
 			sit_params[count_sit_param] = pitz_param_duplicate(pzp_ptr);
 			// clean up pointers
-			// species 
+			// species
 			for (i = 0; i < 3; i++)
 			{
-				if (pzp_ptr->species[i] != NULL) 
+				if (pzp_ptr->species[i] != NULL)
 				{
 					sit_params[count_sit_param]->species[i] = string_hsave(pzp_ptr->species[i]);
 				}

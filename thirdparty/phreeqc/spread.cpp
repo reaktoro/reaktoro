@@ -556,7 +556,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
  */
 	n_user = n_user_end = -1;
 	{
-		int i; 
+		int i;
 		for (i = 0; i < heading->count; i++)
 		{
 			if (strcmp_nocase(heading->char_vector[i], "number") == 0)
@@ -595,7 +595,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 /*
  *   set up solution
  */
-	
+
 	cxxSolution temp_solution;
 	temp_solution.Set_n_user(n_user);
 	temp_solution.Set_n_user_end(n_user_end);
@@ -652,7 +652,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 		 */
 		if (i >= data->count || data->type_vector[i] == EMPTY)
 			continue;
-		string.append(data->char_vector[i]); 
+		string.append(data->char_vector[i]);
 		string.append(" ");
 		/*
 		 *  Copy in concentration data
@@ -663,7 +663,7 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 			string.append(units->char_vector[i]);
 		}
 /*
- *   Parse string just like read_solution input 
+ *   Parse string just like read_solution input
  */
 		char * char_string = string_duplicate(string.c_str());
 		next_char = char_string;
@@ -733,12 +733,12 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 					input_error++;
 					break;
 				}
-				
+
 				temp_solution.Set_ph(temp_comp.Get_input_conc());
 				if (temp_comp.Get_equation_name().size() == 0)
 				{
 					break;
-					
+
 				}
 				temp_comp.Set_description("H(1)");
 				initial_data_ptr->Get_comps()[temp_comp.Get_description()] = temp_comp;

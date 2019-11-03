@@ -1115,7 +1115,7 @@ reactions(void)
 //	{
 //		cxxGasPhase *gas_phase_ptr = use.Get_gas_phase_ptr();
 //		for (size_t i = 0; i < gas_phase_ptr->Get_gas_comps().size(); i++)
-//		{	
+//		{
 //			cxxGasComp *gc_ptr = &(gas_phase_ptr->Get_gas_comps()[i]);
 //			int k;
 //			struct phase *phase_ptr = phase_bsearch(gc_ptr->Get_phase_name().c_str(), &k, FALSE);
@@ -1569,7 +1569,7 @@ xsolution_save(int n_user)
  * Bug-fix
  * Create and initialize intial data (this object should always be present even if it is left empty)
  */
- 
+
    temp_solution.Create_initial_data();
    cxxISolution* initialData = temp_solution.Get_initial_data();
 
@@ -1593,8 +1593,8 @@ xsolution_save(int n_user)
          tempComp.Set_input_conc( compConc / temp_solution.Get_mass_water());
          tempComp.Set_units( initialData->Get_units().c_str() );
       }
-   } 
-#endif 
+   }
+#endif
    if (this->save_species)
    {
 	   // saves mol/L
@@ -1605,7 +1605,7 @@ xsolution_save(int n_user)
 		   {
 			   temp_solution.Get_species_map()[s_x[i]->number] = s_x[i]->moles / temp_solution.Get_soln_vol();
 		   }
-	   }	 
+	   }
 	   // saves gamma
 	   temp_solution.Get_log_gamma_map().clear();
 	   for (int i = 0; i < this->count_s_x; i++)
@@ -1780,7 +1780,7 @@ xsurface_save(int n_user)
 			//charge_ref.Get_dl_species_map()[s_h2o->number] = 0.0;
 			charge_ref.Get_dl_species_map()[s_h2o->number] = 1.0/gfw_water;
 		}
-	} 
+	}
 
 /*
  *   Finish up

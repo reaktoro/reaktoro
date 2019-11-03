@@ -1,6 +1,6 @@
 # Thermodynamic Databases {#thermodynamic-databases}
 
-The currently supported thermodynamic databases in %Reaktoro are listed here. 
+The currently supported thermodynamic databases in %Reaktoro are listed here.
 
 ## SUPCRT92 Databases
 current

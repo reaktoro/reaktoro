@@ -86,7 +86,7 @@ public:
 	std::ostream *Get_punch_ostream(void)			{return this->punch_ostream;}
 	void Set_punch_on(bool tf)						{this->punch_on = tf;}
 	bool Get_punch_on(void)							{return this->punch_on;}
-	
+
 	// error_ostream
 #ifdef ERROR_OSTREAM
 	virtual bool error_open(const char *file_name, std::ios_base::openmode mode = std::ios_base::out);
@@ -141,17 +141,17 @@ public:
 	std::string & Get_m_line_save()  {return m_line_save;}
 	std::string & Get_accumulated()	 {return accumulated;}
 	LINE_TYPE Get_m_line_type()      {return m_line_type;};
-	void Set_accumulate(bool tf) 
-	{ 
+	void Set_accumulate(bool tf)
+	{
 		if (tf)
 		{
 			accumulated.clear();
 		}
-		this->accumulate = tf; 
+		this->accumulate = tf;
 	}
 	Keywords::KEYWORDS Get_m_next_keyword() const {return m_next_keyword;}
 
-	// echo 
+	// echo
 	enum ECHO_OPTION
 	{
 		ECHO_LOG,
@@ -165,9 +165,9 @@ public:
 
 	// data
 protected:
-	std::ostream *output_ostream;	
-	std::ostream *log_ostream;		
-	std::ostream *punch_ostream;	
+	std::ostream *output_ostream;
+	std::ostream *log_ostream;
+	std::ostream *punch_ostream;
 #ifdef ERROR_OSTREAM
 	std::ostream *error_ostream;
 #else

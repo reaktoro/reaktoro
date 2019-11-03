@@ -413,7 +413,7 @@ template<> EIGEN_STRONG_INLINE Packet4cd pcplxflip<Packet4cd>(const Packet4cd& x
 EIGEN_DEVICE_FUNC inline void
 ptranspose(PacketBlock<Packet8cf,4>& kernel) {
   PacketBlock<Packet8d,4> pb;
-  
+
   pb.packet[0] = _mm512_castps_pd(kernel.packet[0].v);
   pb.packet[1] = _mm512_castps_pd(kernel.packet[1].v);
   pb.packet[2] = _mm512_castps_pd(kernel.packet[2].v);
@@ -428,7 +428,7 @@ ptranspose(PacketBlock<Packet8cf,4>& kernel) {
 EIGEN_DEVICE_FUNC inline void
 ptranspose(PacketBlock<Packet8cf,8>& kernel) {
   PacketBlock<Packet8d,8> pb;
-  
+
   pb.packet[0] = _mm512_castps_pd(kernel.packet[0].v);
   pb.packet[1] = _mm512_castps_pd(kernel.packet[1].v);
   pb.packet[2] = _mm512_castps_pd(kernel.packet[2].v);

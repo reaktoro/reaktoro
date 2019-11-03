@@ -244,7 +244,7 @@ clean_up(void)
 	copier_free(&copy_temperature);
 	copier_free(&copy_pressure);
 
-#if defined PHREEQ98 
+#if defined PHREEQ98
 	rate_free(user_graph);
 	user_graph = (struct rate *) free_check_null(user_graph);
 	user_graph_headings = (char **) free_check_null(user_graph_headings);
@@ -1235,7 +1235,7 @@ master_bsearch_secondary(char *ptr)
 */
 	if (master_ptr_primary)
 	{
-		if ((master_ptr_primary->number >= count_master - 1) || 
+		if ((master_ptr_primary->number >= count_master - 1) ||
 			(master[master_ptr_primary->number + 1]->elt->primary != master_ptr_primary))
 		{
 			return(master_ptr_primary);
@@ -1260,7 +1260,7 @@ master_bsearch_secondary(char *ptr)
 		master_ptr_secondary = master_ptr;
 	}
 	else
-	{		
+	{
 		input_error++;
 		error_string = sformatf(
 				"Could not find secondary master species for %s.", ptr);
@@ -1655,7 +1655,7 @@ rate_free(struct rate *rate_ptr)
  *   Input: i, number of rate
  *   Return: OK
  */
-	
+
 
 	if (rate_ptr == NULL)
 		return (ERROR);
@@ -1834,7 +1834,7 @@ cxxChemRxn2rxn(cxxChemRxn &cr)
 /*
  *   mallocs space for a reaction and copies the cxxChemRxn to a struct reaction
  *
- *   Return: rxn_ptr_new,  pointer to new structure 
+ *   Return: rxn_ptr_new,  pointer to new structure
  */
 	for (int i = 0; i < (int) cr.Get_tokens().size(); i++)
 	{
@@ -1964,7 +1964,7 @@ rxn_print(struct reaction *rxn_ptr)
 	for (i = 0; i < 3; i++)
 	  {
 	    output_msg(sformatf( "\t%d %e\n", i, (double) rxn_ptr->dz[i]));
-	    
+
 	  }
 	return (OK);
 }
@@ -3814,7 +3814,7 @@ phreeqc2cxxStorageBin(cxxStorageBin & sb)
 		std::map<int, cxxSolution>::iterator it;
 		for (it = Rxn_solution_map.begin(); it != Rxn_solution_map.end(); it++)
 		{
-			sb.Set_Solution(it->second.Get_n_user(), &(it->second));	
+			sb.Set_Solution(it->second.Get_n_user(), &(it->second));
 		}
 	}
 	// Exchangers
@@ -3822,7 +3822,7 @@ phreeqc2cxxStorageBin(cxxStorageBin & sb)
 		std::map<int, cxxExchange>::iterator it;
 		for (it = Rxn_exchange_map.begin(); it != Rxn_exchange_map.end(); it++)
 		{
-			sb.Set_Exchange(it->second.Get_n_user(), &(it->second));	
+			sb.Set_Exchange(it->second.Get_n_user(), &(it->second));
 		}
 	}
 	// GasPhases
@@ -3830,7 +3830,7 @@ phreeqc2cxxStorageBin(cxxStorageBin & sb)
 		std::map<int, cxxGasPhase>::iterator it;
 		for (it = Rxn_gas_phase_map.begin(); it != Rxn_gas_phase_map.end(); it++)
 		{
-			sb.Set_GasPhase(it->second.Get_n_user(), &(it->second));	
+			sb.Set_GasPhase(it->second.Get_n_user(), &(it->second));
 		}
 	}
 
@@ -3839,7 +3839,7 @@ phreeqc2cxxStorageBin(cxxStorageBin & sb)
 		std::map<int, cxxKinetics>::iterator it;
 		for (it = Rxn_kinetics_map.begin(); it != Rxn_kinetics_map.end(); it++)
 		{
-			sb.Set_Kinetics(it->second.Get_n_user(), &(it->second));	
+			sb.Set_Kinetics(it->second.Get_n_user(), &(it->second));
 		}
 	}
 	// PPassemblages
@@ -3847,7 +3847,7 @@ phreeqc2cxxStorageBin(cxxStorageBin & sb)
 		std::map<int, cxxPPassemblage>::iterator it;
 		for (it = Rxn_pp_assemblage_map.begin(); it != Rxn_pp_assemblage_map.end(); it++)
 		{
-			sb.Set_PPassemblage(it->second.Get_n_user(), &(it->second));	
+			sb.Set_PPassemblage(it->second.Get_n_user(), &(it->second));
 		}
 	}
 	// SSassemblages
@@ -3855,7 +3855,7 @@ phreeqc2cxxStorageBin(cxxStorageBin & sb)
 		std::map<int, cxxSSassemblage>::iterator it;
 		for (it = Rxn_ss_assemblage_map.begin(); it != Rxn_ss_assemblage_map.end(); it++)
 		{
-			sb.Set_SSassemblage(it->second.Get_n_user(), &(it->second));	
+			sb.Set_SSassemblage(it->second.Get_n_user(), &(it->second));
 		}
 	}
 	// Surfaces
@@ -3863,7 +3863,7 @@ phreeqc2cxxStorageBin(cxxStorageBin & sb)
 		std::map<int, cxxSurface>::iterator it;
 		for (it = Rxn_surface_map.begin(); it != Rxn_surface_map.end(); it++)
 		{
-			sb.Set_Surface(it->second.Get_n_user(), &(it->second));	
+			sb.Set_Surface(it->second.Get_n_user(), &(it->second));
 		}
 	}
 	// Mixes
@@ -3871,7 +3871,7 @@ phreeqc2cxxStorageBin(cxxStorageBin & sb)
 		std::map<int, cxxMix>::iterator it;
 		for (it = Rxn_mix_map.begin(); it != Rxn_mix_map.end(); it++)
 		{
-			sb.Set_Mix(it->second.Get_n_user(), &(it->second));	
+			sb.Set_Mix(it->second.Get_n_user(), &(it->second));
 		}
 	}
 
@@ -3880,7 +3880,7 @@ phreeqc2cxxStorageBin(cxxStorageBin & sb)
 		std::map<int, cxxReaction>::iterator it;
 		for (it = Rxn_reaction_map.begin(); it != Rxn_reaction_map.end(); it++)
 		{
-			sb.Set_Reaction(it->second.Get_n_user(), &(it->second));	
+			sb.Set_Reaction(it->second.Get_n_user(), &(it->second));
 		}
 	}
 
@@ -3889,7 +3889,7 @@ phreeqc2cxxStorageBin(cxxStorageBin & sb)
 		std::map<int, cxxTemperature>::iterator it;
 		for (it = Rxn_temperature_map.begin(); it != Rxn_temperature_map.end(); it++)
 		{
-			sb.Set_Temperature(it->second.Get_n_user(), &(it->second));	
+			sb.Set_Temperature(it->second.Get_n_user(), &(it->second));
 		}
 	}
 
@@ -3898,7 +3898,7 @@ phreeqc2cxxStorageBin(cxxStorageBin & sb)
 		std::map<int, cxxPressure>::iterator it;
 		for (it = Rxn_pressure_map.begin(); it != Rxn_pressure_map.end(); it++)
 		{
-			sb.Set_Pressure(it->second.Get_n_user(), &(it->second));	
+			sb.Set_Pressure(it->second.Get_n_user(), &(it->second));
 		}
 	}
 }
@@ -4166,5 +4166,3 @@ cxxStorageBin2phreeqc(cxxStorageBin & sb)
 		}
 	}
 }
-
-

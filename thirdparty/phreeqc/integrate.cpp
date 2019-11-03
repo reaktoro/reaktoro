@@ -62,7 +62,7 @@ calc_all_g(void)
 			z_global = s_x[i]->z;
 			if (charge_ptr->Get_grams() > 0.0)
 			{
-				
+
 				if ((use.Get_surface_ptr()->Get_only_counter_ions() == false) ||
 					(((x[j]->master[0]->s->la > 0) && (z_global < 0))
 					 || ((x[j]->master[0]->s->la < 0) && (z_global > 0))))
@@ -245,7 +245,7 @@ g_function(LDBLE x_value)
 		return (0.0);
 	sum = 0.0;
 	ln_x_value = log(x_value);
-	
+
 	cxxSurfaceCharge *charge_ptr = &(use.Get_surface_ptr()->Get_surface_charges()[0]);
 	std::map<LDBLE, cxxSurfDL>::iterator it = charge_ptr->Get_g_map().begin();
 	for ( ; it != charge_ptr->Get_g_map().end(); it++)
@@ -731,7 +731,7 @@ int Phreeqc::
 calc_all_donnan(void)
 /* ---------------------------------------------------------------------- */
 {
-	bool converge; 
+	bool converge;
 	int cd_m;
 	LDBLE new_g, f_psi, surf_chrg_eq, psi_avg, f_sinh, A_surf, ratio_aq;
 	LDBLE new_g2, f_psi2, surf_chrg_eq2, psi_avg2, dif, var1;
@@ -952,7 +952,7 @@ calc_init_donnan(void)
 
 			if (charge_ptr->Get_g_map()[z].Get_g() != 0)
 			{
-				charge_ptr->Get_g_map()[z].Set_dg(-A_surf * f_sinh * cosh(f_psi) / 
+				charge_ptr->Get_g_map()[z].Set_dg(-A_surf * f_sinh * cosh(f_psi) /
 					(eq * F_C_MOL));
 			}
 			else

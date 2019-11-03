@@ -891,4 +891,3 @@ auto Database::mineralSpeciesWithElements(const std::vector<std::string>& elemen
 }
 
 } // namespace Reaktoro
-

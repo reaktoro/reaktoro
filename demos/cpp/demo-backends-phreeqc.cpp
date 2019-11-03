@@ -128,4 +128,3 @@ int main()
     // Print the new equilibrium state and check with pH is more acidic now.
     std::cout << state << std::endl;
 }
-

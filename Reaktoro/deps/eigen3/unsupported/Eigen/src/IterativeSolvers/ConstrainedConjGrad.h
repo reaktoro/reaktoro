@@ -33,7 +33,7 @@
 
 #include "../../../../Eigen/Core"
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 
@@ -60,7 +60,7 @@ void pseudo_inverse(const CMatrix &C, CINVMatrix &CINV)
 
   typedef Triplet<double> T;
   std::vector<T> tripletList;
-    
+
   for (Index i = 0; i < rows; ++i)
   {
     d[i] = 1.0;
@@ -88,7 +88,7 @@ void pseudo_inverse(const CMatrix &C, CINVMatrix &CINV)
       if (l[j]<1e-15)
 	tripletList.push_back(T(i,j,l(j)));
 
-	
+
     d[i] = 0.0;
   }
   CINV.setFromTriplets(tripletList.begin(), tripletList.end());

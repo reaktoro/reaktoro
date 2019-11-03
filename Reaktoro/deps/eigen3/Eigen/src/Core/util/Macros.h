@@ -156,8 +156,8 @@
 
 /// \internal EIGEN_COMP_IBM set to xlc version if the compiler is IBM XL C++
 // XLC   version
-// 3.1   0x0301	
-// 4.5   0x0405	
+// 3.1   0x0301
+// 4.5   0x0405
 // 5.0   0x0500
 // 12.1  0x0C01
 #if defined(__IBMCPP__) || defined(__xlc__) || defined(__ibmxl__)
@@ -727,7 +727,7 @@
   #endif
 #endif
 
-// NOTE: the required Apple's clang version is very conservative 
+// NOTE: the required Apple's clang version is very conservative
 //       and it could be that XCode 9 works just fine.
 // NOTE: the MSVC version is based on https://en.cppreference.com/w/cpp/compiler_support
 //       and not tested.
@@ -841,7 +841,7 @@
   #endif
   #define EIGEN_DEVICE_FUNC __attribute__((always_inline))
 // All functions callable from CUDA/HIP code must be qualified with __device__
-#elif defined(EIGEN_GPUCC) 
+#elif defined(EIGEN_GPUCC)
     #define EIGEN_DEVICE_FUNC __host__ __device__
 #else
   #define EIGEN_DEVICE_FUNC
@@ -868,7 +868,7 @@
   #else
     #define eigen_plain_assert(x)
   #endif
-#else 
+#else
   #if EIGEN_SAFE_TO_USE_STANDARD_ASSERT_MACRO
     namespace Eigen {
     namespace internal {

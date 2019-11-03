@@ -28,23 +28,23 @@ editor.addMineralPhase("Dolomite")
 editor.addMineralPhase("Halite")
 
 # Step 3: Define the kinetically-controlled reactions
-editor.addMineralReaction("Calcite") \
-    .setEquation("Calcite = Ca++ + CO3--") \
-    .addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol") \
-    .addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0") \
-    .setSpecificSurfaceArea(10, "cm2/g")
+editor.addMineralReaction("Calcite").setEquation("Calcite = Ca++ + CO3--").addMechanism(
+    "logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol"
+).addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0").setSpecificSurfaceArea(
+    10, "cm2/g"
+)
 
-editor.addMineralReaction("Magnesite") \
-    .setEquation("Magnesite = Mg++ + CO3--") \
-    .addMechanism("logk = -9.34 mol/(m2*s); Ea = 23.5 kJ/mol") \
-    .addMechanism("logk = -6.38 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0") \
-    .setSpecificSurfaceArea(10, "cm2/g")
+editor.addMineralReaction("Magnesite").setEquation("Magnesite = Mg++ + CO3--").addMechanism(
+    "logk = -9.34 mol/(m2*s); Ea = 23.5 kJ/mol"
+).addMechanism("logk = -6.38 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0").setSpecificSurfaceArea(
+    10, "cm2/g"
+)
 
-editor.addMineralReaction("Dolomite") \
-    .setEquation("Dolomite = Ca++ + Mg++ + 2*CO3--") \
-    .addMechanism("logk = -7.53 mol/(m2*s); Ea = 52.2 kJ/mol") \
-    .addMechanism("logk = -3.19 mol/(m2*s); Ea = 36.1 kJ/mol; a[H+] = 0.5") \
-    .setSpecificSurfaceArea(10, "cm2/g")
+editor.addMineralReaction("Dolomite").setEquation("Dolomite = Ca++ + Mg++ + 2*CO3--").addMechanism(
+    "logk = -7.53 mol/(m2*s); Ea = 52.2 kJ/mol"
+).addMechanism("logk = -3.19 mol/(m2*s); Ea = 36.1 kJ/mol; a[H+] = 0.5").setSpecificSurfaceArea(
+    10, "cm2/g"
+)
 
 # Step 4: Construct the chemical system
 system = ChemicalSystem(editor)
@@ -65,7 +65,7 @@ problem.add("CO2", 1, "mol")
 
 # Step 7: Calculate the initial chemical equilibrium state
 state0 = equilibrate(problem)
-state0.output('demo-kineticpath-carbonates-co2-before-kinetics')
+state0.output("demo-kineticpath-carbonates-co2-before-kinetics")
 
 # Step 8: Set the initial mass of the kinetic species
 state0.setSpeciesMass("Calcite", 100, "g")
@@ -108,4 +108,4 @@ t0, t1 = 0.0, 25.0
 path.solve(state0, t0, t1, "hours")
 
 # Step 12: Output the final chemical state of the system
-state0.output('demo-kineticpath-carbonates-co2-after-kinetics')
+state0.output("demo-kineticpath-carbonates-co2-after-kinetics")

@@ -70,7 +70,7 @@ struct tensor_static_symgroup_multiply
     typedef typename B::indices iib;
     constexpr static int ffa = A::flags;
     constexpr static int ffb = B::flags;
-  
+
   public:
     static_assert(iia::count == iib::count, "Cannot multiply symmetry elements with different number of indices.");
 
@@ -105,7 +105,7 @@ struct tensor_static_symgroup_equality
     constexpr static bool is_imag      = value && flags_cmp_ == (NegationFlag | ConjugationFlag);
 
   public:
-    constexpr static int global_flags = 
+    constexpr static int global_flags =
       (is_real ? GlobalRealFlag : 0) |
       (is_imag ? GlobalImagFlag : 0) |
       (is_zero ? GlobalZeroFlag : 0);

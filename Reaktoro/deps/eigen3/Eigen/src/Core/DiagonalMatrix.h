@@ -11,7 +11,7 @@
 #ifndef EIGEN_DIAGONALMATRIX_H
 #define EIGEN_DIAGONALMATRIX_H
 
-namespace Eigen { 
+namespace Eigen {
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
 template<typename Derived>
@@ -70,7 +70,7 @@ class DiagonalBase : public EigenBase<Derived>
     {
       return InverseReturnType(diagonal().cwiseInverse());
     }
-    
+
     EIGEN_DEVICE_FUNC
     inline const DiagonalWrapper<const EIGEN_EXPR_BINARYOP_SCALAR_RETURN_TYPE(DiagonalVectorType,Scalar,product) >
     operator*(const Scalar& scalar) const
@@ -180,12 +180,12 @@ class DiagonalMatrix
 
     #if EIGEN_HAS_CXX11
     /** \brief Construct a diagonal matrix with fixed size from an arbitrary number of coefficients. \cpp11
-      * 
+      *
       * There exists C++98 anologue constructors for fixed-size diagonal matrices having 2 or 3 coefficients.
-      * 
-      * \warning To construct a diagonal matrix of fixed size, the number of values passed to this 
+      *
+      * \warning To construct a diagonal matrix of fixed size, the number of values passed to this
       * constructor must match the fixed dimension of \c *this.
-      * 
+      *
       * \sa DiagonalMatrix(const Scalar&, const Scalar&)
       * \sa DiagonalMatrix(const Scalar&, const Scalar&, const Scalar&)
       */
@@ -372,14 +372,14 @@ struct Assignment<DstXprType, SrcXprType, Functor, Diagonal2Dense>
     Index dstCols = src.cols();
     if((dst.rows()!=dstRows) || (dst.cols()!=dstCols))
       dst.resize(dstRows, dstCols);
-    
+
     dst.setZero();
     dst.diagonal() = src.diagonal();
   }
-  
+
   static void run(DstXprType &dst, const SrcXprType &src, const internal::add_assign_op<typename DstXprType::Scalar,typename SrcXprType::Scalar> &/*func*/)
   { dst.diagonal() += src.diagonal(); }
-  
+
   static void run(DstXprType &dst, const SrcXprType &src, const internal::sub_assign_op<typename DstXprType::Scalar,typename SrcXprType::Scalar> &/*func*/)
   { dst.diagonal() -= src.diagonal(); }
 };

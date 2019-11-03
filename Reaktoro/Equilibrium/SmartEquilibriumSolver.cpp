@@ -274,4 +274,3 @@ auto SmartEquilibriumSolver::properties() const -> const ChemicalProperties&
 }
 
 } // namespace Reaktoro
-

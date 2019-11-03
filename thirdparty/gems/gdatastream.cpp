@@ -50,8 +50,8 @@ using namespace std;
 # error "Error: __BYTE_ORDER not defined\n";
 #endif
 
-inline short SWAP(short x) { 
-    return (((x>>8) & 0x00ff) | ((x<<8) & 0xff00)); 
+inline short SWAP(short x) {
+    return (((x>>8) & 0x00ff) | ((x<<8) & 0xff00));
 }
 
 inline int32_t SWAP(int32_t x) {
@@ -262,7 +262,7 @@ void GemDataStream::readArray( char* arr, int size )
 {
   if( !arr )
     return;
-    
+
   ff.read(arr, size);
 //  for(int ii=0; ii<size; ii++)
 //   *this >> arr[ii];
@@ -357,4 +357,3 @@ void GemDataStream::writeArray( double* arr, int size )
    *this << arr[ii];
 }
 // gdatastream.cpp
-

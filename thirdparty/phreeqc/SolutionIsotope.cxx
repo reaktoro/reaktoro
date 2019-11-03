@@ -114,7 +114,7 @@ void cxxSolutionIsotope::read_raw(CParser & parser, bool check )
 		{
 			opt = opt_save;
 		}
-		
+
 		opt_save = CParser::OPT_DEFAULT;
 		switch (opt)
 		{
@@ -130,7 +130,7 @@ void cxxSolutionIsotope::read_raw(CParser & parser, bool check )
 			parser.error_msg(parser.line().c_str(), PHRQ_io::OT_CONTINUE);
 			continue;
 
-		case 0:				// isotope_number                  
+		case 0:				// isotope_number
 			if (!(parser.get_iss() >> this->isotope_number))
 			{
 				this->isotope_number = 0;
@@ -141,7 +141,7 @@ void cxxSolutionIsotope::read_raw(CParser & parser, bool check )
 			isotope_number_defined = true;
 			break;
 
-		case 1:				// elt_name                
+		case 1:				// elt_name
 			if (!(parser.get_iss() >> this->elt_name))
 			{
 				this->elt_name.clear();
@@ -285,7 +285,7 @@ cxxSolutionIsotope::multiply(LDBLE extensive)
 {
 	this->total *= extensive;
 }
-void 
+void
 cxxSolutionIsotope::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles)
 {
 	doubles.push_back(this->isotope_number);
@@ -298,7 +298,7 @@ cxxSolutionIsotope::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	doubles.push_back(this->x_ratio_uncertainty);
 	doubles.push_back(this->coef);
 }
-void 
+void
 cxxSolutionIsotope::Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd)
 {
 	this->isotope_number = doubles[dd++];
@@ -313,13 +313,13 @@ cxxSolutionIsotope::Deserialize(Dictionary & dictionary, std::vector < int >&int
 }
 
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("isotope_number"),	            // 0 
-	std::vector< std::string >::value_type("elt_name"),	                    // 1 
-	std::vector< std::string >::value_type("total"),	                    // 2 
-	std::vector< std::string >::value_type("ratio"),	                    // 3 
-	std::vector< std::string >::value_type("ratio_uncertainty_defined"),	// 4 
-	std::vector< std::string >::value_type("ratio_uncertainty"),	        // 5 
-	std::vector< std::string >::value_type("x_ratio_uncertainty"),	        // 6 
-	std::vector< std::string >::value_type("coef") 	                        // 7 
-};									   
+	std::vector< std::string >::value_type("isotope_number"),	            // 0
+	std::vector< std::string >::value_type("elt_name"),	                    // 1
+	std::vector< std::string >::value_type("total"),	                    // 2
+	std::vector< std::string >::value_type("ratio"),	                    // 3
+	std::vector< std::string >::value_type("ratio_uncertainty_defined"),	// 4
+	std::vector< std::string >::value_type("ratio_uncertainty"),	        // 5
+	std::vector< std::string >::value_type("x_ratio_uncertainty"),	        // 6
+	std::vector< std::string >::value_type("coef") 	                        // 7
+};
 const std::vector< std::string > cxxSolutionIsotope::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

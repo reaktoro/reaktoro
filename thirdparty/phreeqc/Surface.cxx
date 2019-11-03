@@ -19,7 +19,7 @@
 
 cxxSurface::cxxSurface(PHRQ_io *io)
 	//
-	// default constructor for cxxSurface 
+	// default constructor for cxxSurface
 	//
 :	cxxNumKeyword(io)
 {
@@ -194,7 +194,7 @@ cxxSurface::dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out) cons
 	s_oss << "-DDL_viscosity             " << this->DDL_viscosity << "\n";
 	s_oss << indent1;
 	s_oss << "-DDL_limit                 " << this->DDL_limit << "\n";
-	// surfaceComps 
+	// surfaceComps
 	for (size_t i = 0; i != this->surface_comps.size(); i++)
 	{
 		const cxxSurfaceComp * comp_ptr = &(this->surface_comps[i]);
@@ -202,7 +202,7 @@ cxxSurface::dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out) cons
 		s_oss << "-component                 " << comp_ptr->Get_formula() << "\n";
 		comp_ptr->dump_raw(s_oss, indent + 2);
 	}
-	// surface charge 
+	// surface charge
 	for (size_t i = 0; i != this->surface_charges.size(); i++)
 	{
 		const cxxSurfaceCharge * charge_ptr = &(this->surface_charges[i]);
@@ -392,7 +392,7 @@ cxxSurface::read_raw(CParser & parser, bool check)
 					}
 					useLastLine = true;
 				}
-			}	
+			}
 			useLastLine = true;
 			break;
 		case 7:				// type
@@ -633,7 +633,7 @@ cxxSurface::add(const cxxSurface & addee_in, LDBLE extensive)
 		}
 		if (i_this == this->surface_comps.size())
 		{
-			
+
 			cxxSurfaceComp entity = comp_add_ptr;
 			entity.multiply(extensive);
 			this->surface_comps.push_back(entity);
@@ -655,7 +655,7 @@ cxxSurface::add(const cxxSurface & addee_in, LDBLE extensive)
 		}
 		if (i_this == this->surface_charges.size())
 		{
-			
+
 			cxxSurfaceCharge entity = charge_add_ptr;
 			entity.multiply(extensive);
 			this->surface_charges.push_back(entity);
@@ -747,7 +747,7 @@ Sort_comps(void)
 }
 /* ---------------------------------------------------------------------- */
 void
-cxxSurface::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSurface::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles)
 /* ---------------------------------------------------------------------- */
 {
@@ -758,7 +758,7 @@ cxxSurface::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 		for (size_t i = 0; i < this->surface_comps.size(); i++)
 		{
 			surface_comps[i].Serialize(dictionary, ints, doubles);
-		}	
+		}
 	}
 	ints.push_back((int) this->surface_charges.size());
 	{
@@ -785,7 +785,7 @@ cxxSurface::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 
 /* ---------------------------------------------------------------------- */
 void
-cxxSurface::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSurface::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 /* ---------------------------------------------------------------------- */
 {
@@ -830,16 +830,16 @@ cxxSurface::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 
 
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("diffuse_layer"),	    // 0 
-	std::vector< std::string >::value_type("edl"),	                // 1 
-	std::vector< std::string >::value_type("only_counter_ions"),	// 2 
-	std::vector< std::string >::value_type("donnan"),	            // 3 
-	std::vector< std::string >::value_type("thickness"),	        // 4 
+	std::vector< std::string >::value_type("diffuse_layer"),	    // 0
+	std::vector< std::string >::value_type("edl"),	                // 1
+	std::vector< std::string >::value_type("only_counter_ions"),	// 2
+	std::vector< std::string >::value_type("donnan"),	            // 3
+	std::vector< std::string >::value_type("thickness"),	        // 4
 	std::vector< std::string >::value_type("component"),	        // 5
-	std::vector< std::string >::value_type("charge_component"),	    // 6 
+	std::vector< std::string >::value_type("charge_component"),	    // 6
 	std::vector< std::string >::value_type("type "),	            // 7
-	std::vector< std::string >::value_type("dl_type"),	            // 8 
-	std::vector< std::string >::value_type("sites_units"),	        // 9 
+	std::vector< std::string >::value_type("dl_type"),	            // 8
+	std::vector< std::string >::value_type("sites_units"),	        // 9
 	std::vector< std::string >::value_type("debye_lengths"),	    // 10
 	std::vector< std::string >::value_type("ddl_viscosity"),	    // 11
 	std::vector< std::string >::value_type("ddl_limit"),	        // 12
@@ -848,5 +848,5 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("solution_equilibria"),	// 15
 	std::vector< std::string >::value_type("n_solution"),	        // 16
 	std::vector< std::string >::value_type("totals") 	            // 17
-};									   
-const std::vector< std::string > cxxSurface::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxSurface::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

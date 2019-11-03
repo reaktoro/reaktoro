@@ -20,7 +20,7 @@
 using namespace Reaktoro;
 
 
-int main() 
+int main()
 {
     Mesh mymesh{};
 

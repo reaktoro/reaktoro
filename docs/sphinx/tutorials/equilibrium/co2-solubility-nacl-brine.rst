@@ -155,23 +155,16 @@ phase is defined with only one gaseous species: |CO2g|.
 
     .. code-block:: python
 
-        editor.addAqueousPhaseWithElements([
-            'H2O(l)',
-            'H+',
-            'OH-',
-            'Na+',
-            'Cl-',
-            'HCO3-',
-            'CO3--',
-            'CO2(aq)'
-            ])
+        editor.addAqueousPhaseWithElements(
+            ["H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO3--", "CO2(aq)"]
+        )
 
     This is exactly what we did for the definition of the gaseous phase. If we
     had done instead:
 
     .. code-block:: python
 
-        editor.addGaseousPhase('C O')
+        editor.addGaseousPhase("C O")
 
     then other gases would be considered, such as CO(g) and O2(g), which are
     not of interest in our modeling problem.
@@ -248,11 +241,11 @@ solubility of |CO2| at 60 °C and 100 bar in a 1 molal NaCl brine.
 
     .. code-block:: python
 
-        problem.add('H' 111.0, 'mol')
-        problem.add('O' 75.5, 'mol')
-        problem.add('Na' 1.0, 'mol')
-        problem.add('Cl' 1.0, 'mol')
-        problem.add('C' 10.0, 'mol')
+        problem.add("H", 111.0, "mol")
+        problem.add("O", 75.5, "mol")
+        problem.add("Na", 1.0, "mol")
+        problem.add("Cl", 1.0, "mol")
+        problem.add("C", 10.0, "mol")
 
     assuming that 1 kg of |H2O| is roughly 55.5 mol, you might want to
     *adventure* in manually specifying different values for the amounts of
@@ -298,7 +291,7 @@ solubility of |CO2| at 60 °C and 100 bar in a 1 molal NaCl brine.
 
     .. code-block:: python
 
-        problem.add('H+' 0.1, 'mmol')
+        problem.add("H+", 0.1, "mmol")
 
     will increment not only the amount of element H by 0.1 mmol, but also the
     electric charge element Z. As a result, the composition of the aqueous
@@ -307,8 +300,8 @@ solubility of |CO2| at 60 °C and 100 bar in a 1 molal NaCl brine.
 
     .. code-block:: python
 
-        problem.add('H+' 0.1, 'mmol')
-        problem.add('Cl-' 0.1, 'mmol')
+        problem.add("H+", 0.1, "mmol")
+        problem.add("Cl-", 0.1, "mmol")
 
     would result in the amount of element Z equal to zero.
 
@@ -349,16 +342,16 @@ amounts. The result is stored in the object ``state``, of class
 
     .. code-block:: python
 
-        solver = EquilibriumSolver(system) # Our chemical equilibrium solver
+        solver = EquilibriumSolver(system)  # Our chemical equilibrium solver
         state = ChemicalState(system)  # Our chemical state
 
         solver.solve(state, problem)  # Initial equilibrium calculation
-        state.output('state-initial.txt')  # Output the initial equilibrium state
+        state.output("state-initial.txt")  # Output the initial equilibrium state
 
-        problem.add('NaCl', 0.1, 'mol')  # Increment the amount of NaCl
+        problem.add("NaCl", 0.1, "mol")  # Increment the amount of NaCl
 
         solver.solve(state, problem)  # Subsequent equilibrium calculation
-        state.output('state-modified.txt')  # Output the modified equilibrium state
+        state.output("state-modified.txt")  # Output the modified equilibrium state
 
 
 Outputting the calculated chemical state to a file

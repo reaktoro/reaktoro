@@ -17,7 +17,7 @@ make install
 Installing Python Packages
 --------------------------
 
-First, `pip` needs to be installed. 
+First, `pip` needs to be installed.
 
 ~~~
 cd ~/downloads
@@ -45,7 +45,7 @@ cd cmake-3.3.1
 cmake . -DCMAKE_USE_OPENSSL=ON
 make -j 32
 make install
-~~~ 
+~~~
 
 Installing Boost
 ----------------

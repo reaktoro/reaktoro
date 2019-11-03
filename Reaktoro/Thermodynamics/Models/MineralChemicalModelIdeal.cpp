@@ -41,6 +41,3 @@ auto mineralChemicalModelIdeal(const MineralMixture& mixture) -> PhaseChemicalMo
 }
 
 } // namespace Reaktoro
-
-
-

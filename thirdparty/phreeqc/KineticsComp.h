@@ -38,16 +38,16 @@ public:
 	cxxNameDouble &Get_namecoef(void) {return namecoef;}
 	const cxxNameDouble &Get_namecoef(void)const {return namecoef;}
 	void Set_namecoef(const cxxNameDouble nd) {namecoef = nd;}
-	LDBLE Get_tol(void) const {return tol;}	
-	void Set_tol(LDBLE t) {tol = t;}	
-	LDBLE Get_m(void) const {return m;}	
-	void Set_m(LDBLE t) {m = t;}	
+	LDBLE Get_tol(void) const {return tol;}
+	void Set_tol(LDBLE t) {tol = t;}
+	LDBLE Get_m(void) const {return m;}
+	void Set_m(LDBLE t) {m = t;}
 	LDBLE Get_m0(void) const {return m0;}
-	void Set_m0(LDBLE t) {m0 = t;}	
+	void Set_m0(LDBLE t) {m0 = t;}
 	LDBLE Get_moles(void) const {return moles;}
 	void Set_moles(LDBLE t) {moles = t;}
 	LDBLE Get_initial_moles(void) const {return initial_moles;}
-	void Set_initial_moles(LDBLE t) {initial_moles = t;}	
+	void Set_initial_moles(LDBLE t) {initial_moles = t;}
 	std::vector < LDBLE > &Get_d_params(void) {return d_params;};
 	const std::vector < LDBLE > &Get_d_params(void)const {return d_params;};
 	std::vector < std::string > &Get_c_params(void) {return c_params;};

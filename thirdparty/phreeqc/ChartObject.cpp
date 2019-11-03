@@ -31,7 +31,7 @@ cxxNumKeyword(io)
 {
 	new_ug = false;
 	FirstCallToUSER_GRAPH = true;
-	
+
 	update_time_chart = 150;
 	PanelHeight = 510;
 	PanelWidth = 640;
@@ -62,7 +62,7 @@ cxxNumKeyword(io)
 
 	chart_title.clear();
 	axis_titles.clear();
-	
+
 	int i;
 	for (i = 0; i < 5; i++)
 	{
@@ -132,7 +132,7 @@ ChartObject::~ChartObject()
 	}
 }
 
-bool 
+bool
 ChartObject::Set_axis_scale(CParser & parser)
 {
 	std::istream::pos_type ptr;
@@ -325,7 +325,7 @@ ChartObject::Read(CParser & parser)
 		case 5:	/* axis titles */
 			{
 				this->axis_titles.clear();
-				std::string l; 
+				std::string l;
 				parser.get_rest_of_line(l);
 				std::string tok;
 				std::string::iterator b = l.begin();
@@ -339,7 +339,7 @@ ChartObject::Read(CParser & parser)
 			while (this->axis_titles.size() < 3) this->axis_titles.push_back("");
 			break;
 		case 6:	/* axis scales */
-			{ 
+			{
 				this->Set_axis_scale(parser);
 			}
 			break;
@@ -357,7 +357,7 @@ ChartObject::Read(CParser & parser)
 			{
 				std::ostringstream estream;
 				estream << "Found " << token << ", but expect plot type: (\'x\' or \'dist\') for distance, (\'t\') for time.";
-				error_msg(estream.str().c_str(), CONTINUE);			
+				error_msg(estream.str().c_str(), CONTINUE);
 			}
 			break;
 		case 9:  /* shifts_as_points */
@@ -415,7 +415,7 @@ ChartObject::Read(CParser & parser)
 				parser.get_rest_of_line(rest_of_line);
 				lc_rest_of_line = rest_of_line;
 				Utilities::str_tolower(lc_rest_of_line);
-	
+
 				std::vector<std::string> file_types;
 				file_types.push_back(".emf");
 				file_types.push_back(".png");
@@ -439,7 +439,7 @@ ChartObject::Read(CParser & parser)
 				{
 					std::ostringstream estream;
 					estream << "Batch file name must have suffix emf, png, jpg, jpeg, gif, tiff, or bmp.";
-					error_msg(estream.str().c_str(), CONTINUE);	
+					error_msg(estream.str().c_str(), CONTINUE);
 					break;
 				}
 				switch (i)
@@ -487,7 +487,7 @@ ChartObject::Read(CParser & parser)
 					if (tf.size() > 0)
 					{
 						Utilities::str_tolower(tf);
-						if (tf[0] == 'f') 
+						if (tf[0] == 'f')
 						{
 							this->batch_background = false;
 						}
@@ -496,7 +496,7 @@ ChartObject::Read(CParser & parser)
 					if (tf.size() > 0)
 					{
 						Utilities::str_tolower(tf);
-						if (tf[0] == 'f') 
+						if (tf[0] == 'f')
 						{
 							this->batch_grid = false;
 						}
@@ -518,7 +518,7 @@ ChartObject::Read(CParser & parser)
 				this->rate_command_list_original.push_back(cmd);
 				std::string cmd_lower = cmd;
 				Utilities::str_tolower(cmd_lower);
-				if ((cmd_lower.find("graph_y") != std::string::npos) || 
+				if ((cmd_lower.find("graph_y") != std::string::npos) ||
 					(cmd_lower.find("graph_sy") != std::string::npos))
 				{
 					//Number of curves not known here
@@ -564,10 +564,10 @@ ChartObject::OpenCSVFile(std::string file_name)
 	}
 
 	CParser parser(f_csv, this->Get_io());
-	parser.set_echo_file(CParser::EO_NONE);	
+	parser.set_echo_file(CParser::EO_NONE);
 
 	/* Get lines */
-	int linenr = 0; 
+	int linenr = 0;
 
 	// temporary storage for new CSV curves
 	std::vector<std::string> headings;
@@ -588,7 +588,7 @@ ChartObject::OpenCSVFile(std::string file_name)
 				headings.push_back(token);
 			}
 			// add curves to temporary csv_curves
-			size_t i; 
+			size_t i;
 			for (i = 0; i < headings.size(); i++)
 			{
 				CurveObject *c = new CurveObject;
@@ -653,11 +653,11 @@ ChartObject::OpenCSVFile(std::string file_name)
 
 		// Curve data
 		if (linenr < 6)	linenr = 6;
-		if (tt != CParser::TT_DIGIT) 
+		if (tt != CParser::TT_DIGIT)
 		{
-			linenr++;	
+			linenr++;
 			continue;
-		} 
+		}
 
 		// x value for all curves
 		LDBLE x_value = atof(tok1.c_str());
@@ -701,7 +701,7 @@ ChartObject::OpenCSVFile(std::string file_name)
 	return true;
 }
 
-CurveObject 
+CurveObject
 ChartObject::ExtractCurveInfo(std::string & cmd_line)
 {
 	/* plot_xy x, tot("Cl"), color = Red, symbol = Circle, symbol_size = 0.0, line_w = 1.0, y_axis = 2 */
@@ -815,10 +815,10 @@ ChartObject::ExtractCurveInfo(std::string & cmd_line)
 
 			switch (sel)
 			{
-			case 0:	
+			case 0:
 				new_curve.Set_color(tok2);
 				break;
-			case 1:	
+			case 1:
 				new_curve.Set_symbol(tok2);
 				break;
 			case 2:
@@ -833,11 +833,11 @@ ChartObject::ExtractCurveInfo(std::string & cmd_line)
 			}
 		}
 	}
-	
+
 	cmd_line = revised_line;
 	return new_curve;
 }
-void 
+void
 ChartObject::Set_rate_struct(void)
 {
 
@@ -922,7 +922,7 @@ ChartObject::Get_color_string_csv(std::string &color)
 	}
 	return;
 }
-ZedGraph::SymbolType 
+ZedGraph::SymbolType
 ChartObject::Return_SymbolType(const std::string sym)
 {
 	int i;
@@ -977,7 +977,7 @@ ChartObject::Return_SymbolType(const std::string sym)
 			break;
 	}
 }
-void 
+void
 ChartObject::SaveCurvesToFile(std::string &file_name)
 {
 	// reimplemented in Form
@@ -993,7 +993,7 @@ ChartObject::SaveCurvesToFile(std::string &file_name)
 	}
 
 	// list of curves
-	std::vector<CurveObject *> all_curves; 
+	std::vector<CurveObject *> all_curves;
 	size_t i;
 	for (i = 0; i < this->CurvesCSV.size(); i++)
 	{
@@ -1004,7 +1004,7 @@ ChartObject::SaveCurvesToFile(std::string &file_name)
 		all_curves.push_back(Curves[i]);
 	}
 	// write headings
-	size_t max_points = 0; 
+	size_t max_points = 0;
 	std::vector<CurveObject *>::iterator it = all_curves.begin();
 	f_out.precision(4);
 	i = 0;
@@ -1013,7 +1013,7 @@ ChartObject::SaveCurvesToFile(std::string &file_name)
 		f_out.width(12);
 		f_out << "x" << "\t";
 		f_out.width(12);
-		if ((*it)->Get_id().size() > 0) 
+		if ((*it)->Get_id().size() > 0)
 		{
 			f_out << (*it)->Get_id() << "\t";
 		}
@@ -1060,7 +1060,7 @@ bool
 ChartObject::start_chart(void)
 {
 	Application::EnableVisualStyles();
-	Application::SetCompatibleTextRenderingDefault(true); 
+	Application::SetCompatibleTextRenderingDefault(true);
 
 	// needed to send ChartObject pointer to thread
 	Thread ^t = gcnew Thread(
@@ -1079,11 +1079,11 @@ ChartObject::start_chart(void)
 	return true;
 }
 
-void 
+void
 ChartObject::Rate_free(void)
 {
 
-	
+
 	if (this->phreeqc_ptr)
 	{
 		user_graph->commands = (char *) phreeqc_ptr-> free_check_null(user_graph->commands);
@@ -1107,7 +1107,7 @@ void ChartObject::Initialize_graph_pts(void)
 	secondary_y.clear();
 }
 
-void 
+void
 ChartObject::Finalize_graph_pts(void)
 {
 	if (graph_x != NA)
@@ -1131,7 +1131,7 @@ ChartObject::Finalize_graph_pts(void)
 		}
 	}
 }
-void 
+void
 ChartObject::Add_new_series(void)
 {
 	std::vector<CurveObject *> Curves;
@@ -1139,7 +1139,7 @@ ChartObject::Add_new_series(void)
 	size_t e = this->Curves.size();
 	for (i = this->ColumnOffset; i < e; i++)
 	{
-		this->Add_curve(false, 
+		this->Add_curve(false,
 			this->Curves[i]->Get_id(),
 			this->Curves[i]->Get_line_w(),
 			"",
@@ -1150,13 +1150,13 @@ ChartObject::Add_new_series(void)
 	this->ColumnOffset = (int) e;
 	this->curve_added = true;
 }
-void 
-ChartObject::Add_curve(bool plotxy, std::string id, 
-					   LDBLE line_width, 
+void
+ChartObject::Add_curve(bool plotxy, std::string id,
+					   LDBLE line_width,
 					   std::string symbol,
-					   LDBLE symbol_size, 
+					   LDBLE symbol_size,
 					   int y_axis,
-					   std::string color)				
+					   std::string color)
 {
 	CurveObject *c = new CurveObject;
 	c->Set_id(id);
@@ -1174,7 +1174,7 @@ ChartObject::Add_curve(bool plotxy, std::string id,
 
 	this->Curves.push_back(c);
 }
-void 
+void
 ChartObject::Set_rate_new_def(bool tf)
 {
 	this->rate_new_def = tf;
@@ -1188,9 +1188,9 @@ ChartObject::Set_rate_new_def(bool tf)
 		{
 			this->user_graph->new_def = 0;
 		}
-	}	
+	}
 }
-void 
+void
 ChartObject::dump(std::ostream & oss, unsigned int indent)
 {
 	size_t i;
@@ -1208,7 +1208,7 @@ ChartObject::dump(std::ostream & oss, unsigned int indent)
 	// axis titles
 	if (this->axis_titles.size() > 0)
 	{
-		oss << indent1 << "-axis_titles "; 
+		oss << indent1 << "-axis_titles ";
 
 		for (i = 0; i < this->axis_titles.size(); i++)
 		{
@@ -1316,7 +1316,7 @@ ChartObject::dump(std::ostream & oss, unsigned int indent)
 	// headings
 	if (this->headings_original.size() > 0)
 	{
-		oss << indent1 << "-headings "; 
+		oss << indent1 << "-headings ";
 		for (i = 0; i < this->headings_original.size(); i++)
 		{
 			oss << this->headings_original[i] << " ";
@@ -1365,19 +1365,19 @@ ChartObject::dump(std::ostream & oss, unsigned int indent)
 }
 
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("start"),                   // 0 
-	std::vector< std::string >::value_type("end"),	                   // 1 
-	std::vector< std::string >::value_type("heading"),	               // 2 
-	std::vector< std::string >::value_type("headings"),                // 3 
-	std::vector< std::string >::value_type("chart_title"),	           // 4 
-	std::vector< std::string >::value_type("axis_titles"),	           // 5 
-	std::vector< std::string >::value_type("axis_scale"),	           // 6 
-	std::vector< std::string >::value_type("initial_solutions"),       // 7 
-	std::vector< std::string >::value_type("plot_concentration_vs"),   // 8 
-	std::vector< std::string >::value_type("shifts_as_points"),        // 9 
+	std::vector< std::string >::value_type("start"),                   // 0
+	std::vector< std::string >::value_type("end"),	                   // 1
+	std::vector< std::string >::value_type("heading"),	               // 2
+	std::vector< std::string >::value_type("headings"),                // 3
+	std::vector< std::string >::value_type("chart_title"),	           // 4
+	std::vector< std::string >::value_type("axis_titles"),	           // 5
+	std::vector< std::string >::value_type("axis_scale"),	           // 6
+	std::vector< std::string >::value_type("initial_solutions"),       // 7
+	std::vector< std::string >::value_type("plot_concentration_vs"),   // 8
+	std::vector< std::string >::value_type("shifts_as_points"),        // 9
 	std::vector< std::string >::value_type("grid_offset"),	           // 10
 	std::vector< std::string >::value_type("connect_simulations"),	   // 11
-	std::vector< std::string >::value_type("plot_csv_file"),	       // 12	
+	std::vector< std::string >::value_type("plot_csv_file"),	       // 12
 	std::vector< std::string >::value_type("clear"),	               // 13
 	std::vector< std::string >::value_type("detach"),	               // 14
 	std::vector< std::string >::value_type("active"),	               // 15

@@ -109,7 +109,7 @@ pitzer_tidy(void)
 			continue;
 		if (s[i] == s_h2o)
 			continue;
-		if (s[i]->type == EX || s[i]->type == SURF) 
+		if (s[i]->type == EX || s[i]->type == SURF)
 			continue;
 		if (s[i]->z < -.001)
 		{
@@ -125,7 +125,7 @@ pitzer_tidy(void)
 		}
 	}
 	/*
-	 *  Add etheta to parameter list in case theta not defined for 
+	 *  Add etheta to parameter list in case theta not defined for
 	 *  cation-cation or anion-anion pair
 	 *  Remove old TYPE_ETHETA definitions
 	 */
@@ -544,7 +544,7 @@ pitzer_tidy(void)
 	{
 		pitz_param_map.clear();
 		for (int j = 0; j < count_pitz_param; j++)
-		{	
+		{
 			std::set< std::string > header;
 			for (int i = 0; i < 3; i++)
 			{
@@ -605,7 +605,7 @@ read_pitzer(void)
 	 *
 	 */
 	/*
-	 *   Read advection parameters: 
+	 *   Read advection parameters:
 	 *        number of cells;
 	 *        number of shifts;
 	 */
@@ -780,7 +780,7 @@ C
 		int i = param_list[j];
 		calc_pitz_param(pitz_params[i], TK, TR);
 	}
-	if (mcb0) 
+	if (mcb0)
 	{
 		calc_pitz_param(mcb0, TK, TR);
 	}
@@ -816,7 +816,7 @@ calc_pitz_param(struct pitz_param *pz_ptr, LDBLE TK, LDBLE TR)
 		param = (pz_ptr->a[0] +
 				 pz_ptr->a[1] * (1.e0 / TK - 1.e0 / TR) +
 				 pz_ptr->a[2] * log(TK / TR) +
-				 pz_ptr->a[3] * (TK - TR) + 
+				 pz_ptr->a[3] * (TK - TR) +
 				 pz_ptr->a[4] * (TK * TK - TR * TR)) +
 				 pz_ptr->a[5] * (1.e0 / (TK * TK) - 1.e0 / (TR * TR));
 	}
@@ -875,7 +875,7 @@ pitzer(void)
 	LDBLE param, l_alpha, z0, z1;
 	LDBLE etheta, ethetap;
 	/*
-	   LDBLE CONV, XI, XX, OSUM, BIGZ, DI, F, XXX, GAMCLM, 
+	   LDBLE CONV, XI, XX, OSUM, BIGZ, DI, F, XXX, GAMCLM,
 	   CSUM, PHIMAC, OSMOT, BMXP, ETHEAP, CMX, BMX, PHI,
 	   BMXPHI, PHIPHI, AW, A, B;
 	 */
@@ -1062,9 +1062,9 @@ pitzer(void)
 				OSMOT += M[i0] * M[i1] * (etheta + I * ethetap);
 				/*
 				   F += M[i0]*M[i1]*ETHETAP(z0, z1, I);
-				   LGAMMA[i0] += 2.0*M[i1]*(ETHETA(z0, z1, I) ); 
-				   LGAMMA[i1] += 2.0*M[i0]*(ETHETA(z0, z1, I) ); 
-				   OSMOT += M[i0]*M[i1]*(ETHETA(z0, z1, I) + I*ETHETAP(z0, z1, I) ); 
+				   LGAMMA[i0] += 2.0*M[i1]*(ETHETA(z0, z1, I) );
+				   LGAMMA[i1] += 2.0*M[i0]*(ETHETA(z0, z1, I) );
+				   OSMOT += M[i0]*M[i1]*(ETHETA(z0, z1, I) + I*ETHETAP(z0, z1, I) );
 				 */
 			}
 			break;
@@ -1210,7 +1210,7 @@ pitzer(void)
 	LDBLE param, l_alpha, z0, z1;
 	LDBLE etheta, ethetap;
 	/*
-	   LDBLE CONV, XI, XX, OSUM, BIGZ, DI, F, XXX, GAMCLM, 
+	   LDBLE CONV, XI, XX, OSUM, BIGZ, DI, F, XXX, GAMCLM,
 	   CSUM, PHIMAC, OSMOT, BMXP, ETHEAP, CMX, BMX, PHI,
 	   BMXPHI, PHIPHI, AW, A, B;
 	 */
@@ -1247,7 +1247,7 @@ pitzer(void)
 			if (M[i] > MIN_TOTAL)
 				IPRSNT[i] = TRUE;
 		}
-	}	
+	}
 	if (ICON == TRUE)
 	{
 		IPRSNT[IC] = TRUE;
@@ -2008,7 +2008,7 @@ Restart:
 			d2 = d1;
 			break;
 		case PITZER_GAMMA:
-			if (!full_pitzer) 
+			if (!full_pitzer)
 				continue;
 			x[i]->s->lg += d;
 			d2 = d;
@@ -2050,7 +2050,7 @@ Restart:
 			break;
 		}
 		molalities(TRUE);
-		if (max_unknowns > pz_max_unknowns) 
+		if (max_unknowns > pz_max_unknowns)
 		{
 			base = (LDBLE *) free_check_null(base);
 			gammas_pz();
@@ -2125,10 +2125,10 @@ model_pz(void)
 /*
  *   model is called after the equations have been set up by prep
  *   and initial guesses have been made in set.
- * 
+ *
  *   Here is the outline of the calculation sequence:
  *      residuals--residuals are calculated, if small we are done
- *      sum_jacobian--jacobian is calculated 
+ *      sum_jacobian--jacobian is calculated
  *      ineq--inequality solver is called
  *      reset--estimates of unknowns revised, if changes are small solution
  *         has been found, usually convergence is found in residuals.
@@ -2144,7 +2144,7 @@ model_pz(void)
  *         sum_species--calculate sums of elements from species concentrations
  *
  *      An additional pass through may be needed if unstable phases still exist
- *         in the phase assemblage. 
+ *         in the phase assemblage.
  */
 	int l_kode, return_kode;
 	int r;
@@ -2410,7 +2410,7 @@ gammas_pz()
 			break;
 		case 6:				/* Surface */
 /*
- *   Find moles of sites. 
+ *   Find moles of sites.
  *   s_x[i]->equiv is stoichiometric coefficient of sites in species
  */
 			for (j = 1; s_x[i]->rxn_x->token[j].s != NULL; j++)
@@ -2452,7 +2452,7 @@ gammas_pz()
  */
 	}
 	/*
-	 *  calculate exchange gammas 
+	 *  calculate exchange gammas
 	 */
 
 	if (use.Get_exchange_ptr() != NULL)
@@ -2565,9 +2565,9 @@ pitzer_make_lists(void)
 			{
 				if (spec[i]->type == EX ||
 					spec[i]->type == SURF || spec[i]->type == SURF_PSI)
-					continue;	
-				IPRSNT[i] = TRUE;	
-				s_list.push_back(i);	
+					continue;
+				IPRSNT[i] = TRUE;
+				s_list.push_back(i);
 				if (i < count_s)
 				{
 					cation_list.push_back(i);
@@ -2590,7 +2590,7 @@ pitzer_make_lists(void)
 				}
 			}
 		}
-	}	
+	}
 	if (ICON == TRUE)
 	{
 		IPRSNT[IC] = TRUE;

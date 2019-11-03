@@ -335,7 +335,7 @@ struct EquilibriumSolver::Impl
     /// Find a feasible approximation for an equilibrium problem with all elements present on chemical system.
     auto approximate_with_all_element_amounts(ChemicalState& state, double T, double P, VectorConstRef b) -> EquilibriumResult
     {
-        Vector be = b(iee); 
+        Vector be = b(iee);
         return approximate(state, T, P, be);
     }
 

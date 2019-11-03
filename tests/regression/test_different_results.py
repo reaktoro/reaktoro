@@ -1,7 +1,7 @@
 from collections import namedtuple
 
-SpeciesAmount = namedtuple('SpeciesAmount', ('name', 'index', 'molar_amount'))
-ReaktoroCase = namedtuple('ReaktoroCase', ('pressure_in_Pa', 'temperature_in_K', 'species_amounts'))
+SpeciesAmount = namedtuple("SpeciesAmount", ("name", "index", "molar_amount"))
+ReaktoroCase = namedtuple("ReaktoroCase", ("pressure_in_Pa", "temperature_in_K", "species_amounts"))
 
 
 def get_reaktoro_case():
@@ -33,14 +33,22 @@ def get_reaktoro_case():
 
 
 def test_different_results(state_regression):
-    from reaktoro import ChemicalEditor, ChemicalState, ChemicalSystem, Database, EquilibriumProblem, EquilibriumSolver, Partition
+    from reaktoro import (
+        ChemicalEditor,
+        ChemicalState,
+        ChemicalSystem,
+        Database,
+        EquilibriumProblem,
+        EquilibriumSolver,
+        Partition,
+    )
 
-    database = Database('supcrt07.xml')
+    database = Database("supcrt07.xml")
     editor = ChemicalEditor(database)
 
     aqueous_elements = ["C", "Ca", "Cl", "Fe", "H", "Na", "O", "S", "Ba", "Sr"]
     aqueous_phase = editor.addAqueousPhaseWithElements(aqueous_elements)
-    assert aqueous_phase.name() == 'Aqueous'
+    assert aqueous_phase.name() == "Aqueous"
 
     mineral_species = ["Anhydrite", "Barite", "Calcite", "Celestite", "Siderite", "Pyrrhotite"]
     for mineral in mineral_species:
@@ -62,7 +70,7 @@ def test_different_results(state_regression):
     equilibrium_problem.setPressure(reaktoro_case.pressure_in_Pa)
 
     partition = Partition(chemical_system)
-    partition.setInertPhases([phase_index['Gaseous']])
+    partition.setInertPhases([phase_index["Gaseous"]])
 
     equilibrium_problem.setPartition(partition)
 

@@ -47,11 +47,14 @@ def convert_reaktoro_state_to_dict(state, exclude):
     output["Temperature [K]"] = np.asarray([T])
     output["Pressure [Pa]"] = np.asarray([P])
     output["Element amounts [mol]"] = np.asarray(b)
-    output["Gibbs energy [-]"] = np.asarray([n.dot(chemical_potentials) / (R*T)])  # normalized by RT
+    output["Gibbs energy [-]"] = np.asarray(
+        [n.dot(chemical_potentials) / (R * T)]
+    )  # normalized by RT
     # output["Gibbs energy (dual) [-]"] = np.asarray([b.dot(y) / (R*T)])  # normalized by RT           # the current optimization algorithm produces slightly different y values across operating systems
     for i in range(0, system.numPhases()):
-        output["Element amounts in " + system.phase(i).name() + " [mol]"] = \
-            np.asarray(elementAmountsInPhase[i])
+        output["Element amounts in " + system.phase(i).name() + " [mol]"] = np.asarray(
+            elementAmountsInPhase[i]
+        )
     # output["Element Dual Potential [kJ/mol]"] = y / 1000
     output["Species amounts [mol]"] = n
     output["Mole fractions [mol/mol]"] = molar_fractions
@@ -67,7 +70,7 @@ def convert_reaktoro_state_to_dict(state, exclude):
     output["pH [-]"] = np.asarray([pH])
 
     if exclude is not None:
-        output = { key: val for key, val in output.items() if key not in exclude }
+        output = {key: val for key, val in output.items() if key not in exclude}
 
     return output
 

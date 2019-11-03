@@ -36,4 +36,3 @@
 
 /// @defgroup Core Core
 /// This is the main module in Reaktoro, in which the essential classes are defined.
-

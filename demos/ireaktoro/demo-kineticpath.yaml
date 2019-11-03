@@ -44,7 +44,7 @@ KineticPath:
     From: 0
     To: 1 day
     InitialCondition: StateIC
-    KineticSpecies: 
+    KineticSpecies:
     - Calcite
     - Dolomite
     Plot 1:
@@ -52,13 +52,13 @@ KineticPath:
       y: pH
       xlabel: Time [hour]
       showlegend: no
-    Plot 2: 
+    Plot 2:
       x: t(units=hour)
       y: speciesMass(Calcite units=g)
       legend: Calcite
       xlabel: Time [hour]
       ylabel: Mass [g]
-    Plot 3: 
+    Plot 3:
       x: t(units=hour)
       y: speciesMass(Dolomite units=g)
       legend: Dolomite

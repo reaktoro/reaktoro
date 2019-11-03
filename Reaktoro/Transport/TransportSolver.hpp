@@ -112,7 +112,7 @@ private:
 };
 
 /// A class that defines a Tridiagonal Matrix used on TransportSolver.
-/// it stores data in a Eigen::VectorXd like, M = {a[0][0], a[0][1], a[0][2], 
+/// it stores data in a Eigen::VectorXd like, M = {a[0][0], a[0][1], a[0][2],
 ///                                                a[1][0], a[1][1], a[1][2],
 ///                                                a[2][0], a[2][1], a[2][2]}
 class TridiagonalMatrix
@@ -241,7 +241,7 @@ public:
 
     /// Step the transport solver.
     /// This method solve one step of the transport solver equation, using an explicit approach for
-    /// advection and total implicit for diffusion. The amount resulted from the advection it is 
+    /// advection and total implicit for diffusion. The amount resulted from the advection it is
     /// passed to diffusion problem as a "source".
     /// @param[in,out] u The solution vector
     /// @param q The source rates vector ([same unit considered for u]/m)

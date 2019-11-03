@@ -13,7 +13,7 @@
 #include "StemFunction.h"
 
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 
@@ -27,7 +27,7 @@ static const float matrix_function_separation = 0.1f;
   * Here, an atomic matrix is a triangular matrix whose diagonal entries are close to each other.
   */
 template <typename MatrixType>
-class MatrixFunctionAtomic 
+class MatrixFunctionAtomic
 {
   public:
 
@@ -99,7 +99,7 @@ MatrixType MatrixFunctionAtomic<MatrixType>::compute(const MatrixType& A)
   return F;
 }
 
-/** \brief Find cluster in \p clusters containing some value 
+/** \brief Find cluster in \p clusters containing some value
   * \param[in] key Value to find
   * \returns Iterator to cluster containing \p key, or \c clusters.end() if no cluster in \p m_clusters
   * contains \p key.
@@ -117,14 +117,14 @@ typename ListOfClusters::iterator matrix_function_find_cluster(Index key, ListOf
 }
 
 /** \brief Partition eigenvalues in clusters of ei'vals close to each other
-  * 
+  *
   * \param[in]  eivals    Eigenvalues
   * \param[out] clusters  Resulting partition of eigenvalues
   *
   * The partition satisfies the following two properties:
   * # Any eigenvalue in a certain cluster is at most matrix_function_separation() away from another eigenvalue
   *   in the same cluster.
-  * # The distance between two eigenvalues in different clusters is more than matrix_function_separation().  
+  * # The distance between two eigenvalues in different clusters is more than matrix_function_separation().
   * The implementation follows Algorithm 4.1 in the paper of Davies and Higham.
   */
 template <typename EivalsType, typename Cluster>
@@ -209,7 +209,7 @@ void matrix_function_compute_permutation(const DynVectorType& blockStart, const 
     permutation[i] = indexNextEntry[cluster];
     ++indexNextEntry[cluster];
   }
-}  
+}
 
 /** \brief Permute Schur decomposition in U and T according to permutation */
 template <typename VectorType, typename MatrixType>
@@ -240,7 +240,7 @@ void matrix_function_permute_schur(VectorType& permutation, MatrixType& U, Matri
   */
 template <typename MatrixType, typename AtomicType, typename VectorType>
 void matrix_function_compute_block_atomic(const MatrixType& T, AtomicType& atomic, const VectorType& blockStart, const VectorType& clusterSize, MatrixType& fT)
-{ 
+{
   fT.setZero(T.rows(), T.cols());
   for (Index i = 0; i < clusterSize.rows(); ++i) {
     fT.block(blockStart(i), blockStart(i), clusterSize(i), clusterSize(i))
@@ -248,7 +248,7 @@ void matrix_function_compute_block_atomic(const MatrixType& T, AtomicType& atomi
   }
 }
 
-/** \brief Solve a triangular Sylvester equation AX + XB = C 
+/** \brief Solve a triangular Sylvester equation AX + XB = C
   *
   * \param[in]  A  the matrix A; should be square and upper triangular
   * \param[in]  B  the matrix B; should be square and upper triangular
@@ -258,16 +258,16 @@ void matrix_function_compute_block_atomic(const MatrixType& T, AtomicType& atomi
   *
   * If A is m-by-m and B is n-by-n, then both C and X are m-by-n.  The (i,j)-th component of the Sylvester
   * equation is
-  * \f[ 
-  *     \sum_{k=i}^m A_{ik} X_{kj} + \sum_{k=1}^j X_{ik} B_{kj} = C_{ij}. 
+  * \f[
+  *     \sum_{k=i}^m A_{ik} X_{kj} + \sum_{k=1}^j X_{ik} B_{kj} = C_{ij}.
   * \f]
   * This can be re-arranged to yield:
-  * \f[ 
+  * \f[
   *     X_{ij} = \frac{1}{A_{ii} + B_{jj}} \Bigl( C_{ij}
   *     - \sum_{k=i+1}^m A_{ik} X_{kj} - \sum_{k=1}^{j-1} X_{ik} B_{kj} \Bigr).
   * \f]
   * It is assumed that A and B are such that the numerator is never zero (otherwise the Sylvester equation
-  * does not have a unique solution). In that case, these equations can be evaluated in the order 
+  * does not have a unique solution). In that case, these equations can be evaluated in the order
   * \f$ i=m,\ldots,1 \f$ and \f$ j=1,\ldots,n \f$.
   */
 template <typename MatrixType>
@@ -292,7 +292,7 @@ MatrixType matrix_function_solve_triangular_sylvester(const MatrixType& A, const
       // Compute AX = \sum_{k=i+1}^m A_{ik} X_{kj}
       Scalar AX;
       if (i == m - 1) {
-	AX = 0; 
+	AX = 0;
       } else {
 	Matrix<Scalar,1,1> AXmatrix = A.row(i).tail(m-1-i) * X.col(j).tail(m-1-i);
 	AX = AXmatrix(0,0);
@@ -301,7 +301,7 @@ MatrixType matrix_function_solve_triangular_sylvester(const MatrixType& A, const
       // Compute XB = \sum_{k=1}^{j-1} X_{ik} B_{kj}
       Scalar XB;
       if (j == 0) {
-	XB = 0; 
+	XB = 0;
       } else {
 	Matrix<Scalar,1,1> XBmatrix = X.row(i).head(j) * B.col(j).head(j);
 	XB = XBmatrix(0,0);
@@ -321,7 +321,7 @@ MatrixType matrix_function_solve_triangular_sylvester(const MatrixType& A, const
   */
 template <typename MatrixType, typename VectorType>
 void matrix_function_compute_above_diagonal(const MatrixType& T, const VectorType& blockStart, const VectorType& clusterSize, MatrixType& fT)
-{ 
+{
   typedef internal::traits<MatrixType> Traits;
   typedef typename MatrixType::Scalar Scalar;
   static const int Options = MatrixType::Options;
@@ -365,7 +365,7 @@ void matrix_function_compute_above_diagonal(const MatrixType& T, const VectorTyp
   */
 template <typename MatrixType, int IsComplex = NumTraits<typename internal::traits<MatrixType>::Scalar>::IsComplex>
 struct matrix_function_compute
-{  
+{
     /** \brief Compute the matrix function.
       *
       * \param[in]  A       argument of matrix function, should be a square matrix.
@@ -376,11 +376,11 @@ struct matrix_function_compute
       * See MatrixBase::matrixFunction() for details on how this computation
       * is implemented.
       */
-    template <typename AtomicType, typename ResultType> 
-    static void run(const MatrixType& A, AtomicType& atomic, ResultType &result);    
+    template <typename AtomicType, typename ResultType>
+    static void run(const MatrixType& A, AtomicType& atomic, ResultType &result);
 };
 
-/** \internal \ingroup MatrixFunctions_Module 
+/** \internal \ingroup MatrixFunctions_Module
   * \brief Partial specialization of MatrixFunction for real matrices
   *
   * This converts the real matrix to a complex matrix, compute the matrix function of that matrix, and then
@@ -388,7 +388,7 @@ struct matrix_function_compute
   */
 template <typename MatrixType>
 struct matrix_function_compute<MatrixType, 0>
-{  
+{
   template <typename MatA, typename AtomicType, typename ResultType>
   static void run(const MatA& A, AtomicType& atomic, ResultType &result)
   {
@@ -407,7 +407,7 @@ struct matrix_function_compute<MatrixType, 0>
   }
 };
 
-/** \internal \ingroup MatrixFunctions_Module 
+/** \internal \ingroup MatrixFunctions_Module
   * \brief Partial specialization of MatrixFunction for complex matrices
   */
 template <typename MatrixType>
@@ -417,7 +417,7 @@ struct matrix_function_compute<MatrixType, 1>
   static void run(const MatA& A, AtomicType& atomic, ResultType &result)
   {
     typedef internal::traits<MatrixType> Traits;
-    
+
     // compute Schur decomposition of A
     const ComplexSchur<MatrixType> schurOfA(A);
     eigen_assert(schurOfA.info()==Success);
@@ -425,22 +425,22 @@ struct matrix_function_compute<MatrixType, 1>
     MatrixType U = schurOfA.matrixU();
 
     // partition eigenvalues into clusters of ei'vals "close" to each other
-    std::list<std::list<Index> > clusters; 
+    std::list<std::list<Index> > clusters;
     matrix_function_partition_eigenvalues(T.diagonal(), clusters);
 
     // compute size of each cluster
     Matrix<Index, Dynamic, 1> clusterSize;
     matrix_function_compute_cluster_size(clusters, clusterSize);
 
-    // blockStart[i] is row index at which block corresponding to i-th cluster starts 
-    Matrix<Index, Dynamic, 1> blockStart; 
+    // blockStart[i] is row index at which block corresponding to i-th cluster starts
+    Matrix<Index, Dynamic, 1> blockStart;
     matrix_function_compute_block_start(clusterSize, blockStart);
 
-    // compute map so that eivalToCluster[i] = j means that i-th ei'val is in j-th cluster 
+    // compute map so that eivalToCluster[i] = j means that i-th ei'val is in j-th cluster
     Matrix<Index, Dynamic, 1> eivalToCluster;
     matrix_function_compute_map(T.diagonal(), clusters, eivalToCluster);
 
-    // compute permutation which groups ei'vals in same cluster together 
+    // compute permutation which groups ei'vals in same cluster together
     Matrix<Index, Traits::RowsAtCompileTime, 1> permutation;
     matrix_function_compute_permutation(blockStart, eivalToCluster, permutation);
 

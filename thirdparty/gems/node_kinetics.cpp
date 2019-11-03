@@ -842,9 +842,9 @@ TKinetics::KM_CalcUptake( long int jb, long int k, const char *kMod )
 
 void
 TKinetics::KM_InitUptake( long int jb, long int k, const char *kMod )
-{   
+{
     switch( kMod[0] )
-    {      
+    {
         case KM_PRO_MWR_:
         {
             ErrorIf( !phKinMet[k], "KinMetCalcUptake: ","Invalid index of phase");
@@ -899,5 +899,3 @@ void TKinetics::Free_TKinMet()
 
 
 //--------------------- End of node_kinetics.cpp ---------------------------
-
-

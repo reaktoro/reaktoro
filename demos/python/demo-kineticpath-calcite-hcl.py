@@ -24,11 +24,11 @@ editor.addAqueousPhaseWithElementsOf("H2O HCl CaCO3")
 editor.addMineralPhase("Calcite")
 
 # Step 3: Define mineral reaction for Calcite
-editor.addMineralReaction("Calcite") \
-    .setEquation("Calcite = Ca++ + CO3--") \
-    .addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol") \
-    .addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0") \
-    .setSpecificSurfaceArea(10, "cm2/g")
+editor.addMineralReaction("Calcite").setEquation("Calcite = Ca++ + CO3--").addMechanism(
+    "logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol"
+).addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0").setSpecificSurfaceArea(
+    10, "cm2/g"
+)
 
 # Step 4: Create the ChemicalSystem and ReactionSystem instances
 system = ChemicalSystem(editor)
@@ -48,7 +48,7 @@ problem.add("HCl", 1, "mmol")
 
 # Step 7: Calculate the chemical equilibrium state in the equilibrium partition
 state0 = equilibrate(problem)
-state0.output('demo-kineticpath-calcite-hcl-before-kinetics')
+state0.output("demo-kineticpath-calcite-hcl-before-kinetics")
 
 # Step 8: Set the initial mass of the kinetic species
 state0.setSpeciesMass("Calcite", 100, "g")
@@ -91,4 +91,4 @@ t0, t1 = 0.0, 5.0
 path.solve(state0, t0, t1, "minute")
 
 # Step 12: Output the final state of the chemical system
-state0.output('demo-kineticpath-calcite-hcl-after-kinetics')
+state0.output("demo-kineticpath-calcite-hcl-after-kinetics")

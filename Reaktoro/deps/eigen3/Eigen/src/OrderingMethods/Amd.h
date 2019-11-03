@@ -21,10 +21,10 @@ the Mozilla Public License v. 2.0, as stated at the top of this file.
 #ifndef EIGEN_SPARSE_AMD_H
 #define EIGEN_SPARSE_AMD_H
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
-  
+
 template<typename T> inline T amd_flip(const T& i) { return -i-2; }
 template<typename T> inline T amd_unflip(const T& i) { return i<0 ? amd_flip(i) : i; }
 template<typename T0, typename T1> inline bool amd_marked(const T0* w, const T1& j) { return w[j]<0; }
@@ -72,7 +72,7 @@ StorageIndex cs_tdfs(StorageIndex j, StorageIndex k, StorageIndex *head, const S
 
 
 /** \internal
-  * \ingroup OrderingMethods_Module 
+  * \ingroup OrderingMethods_Module
   * Approximate minimum degree ordering algorithm.
   *
   * \param[in] C the input selfadjoint matrix stored in compressed column major format.
@@ -84,20 +84,20 @@ template<typename Scalar, typename StorageIndex>
 void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, PermutationMatrix<Dynamic,Dynamic,StorageIndex>& perm)
 {
   using std::sqrt;
-  
+
   StorageIndex d, dk, dext, lemax = 0, e, elenk, eln, i, j, k, k1,
                 k2, k3, jlast, ln, dense, nzmax, mindeg = 0, nvi, nvj, nvk, mark, wnvi,
                 ok, nel = 0, p, p1, p2, p3, p4, pj, pk, pk1, pk2, pn, q, t, h;
-  
+
   StorageIndex n = StorageIndex(C.cols());
   dense = std::max<StorageIndex> (16, StorageIndex(10 * sqrt(double(n))));   /* find dense threshold */
   dense = (std::min)(n-2, dense);
-  
+
   StorageIndex cnz = StorageIndex(C.nonZeros());
   perm.resize(n+1);
   t = cnz + cnz/5 + 2*n;                 /* add elbow room to C */
   C.resizeNonZeros(t);
-  
+
   // get workspace
   ei_declare_aligned_stack_constructed_variable(StorageIndex,W,8*(n+1),0);
   StorageIndex* len     = W;
@@ -109,7 +109,7 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
   StorageIndex* w       = W + 6*(n+1);
   StorageIndex* hhead   = W + 7*(n+1);
   StorageIndex* last    = perm.indices().data();                              /* use P as workspace for last */
-  
+
   /* --- Initialize quotient graph ---------------------------------------- */
   StorageIndex* Cp = C.outerIndexPtr();
   StorageIndex* Ci = C.innerIndexPtr();
@@ -117,20 +117,20 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
     len[k] = Cp[k+1] - Cp[k];
   len[n] = 0;
   nzmax = t;
-  
+
   for(i = 0; i <= n; i++)
   {
     head[i]   = -1;                     // degree list i is empty
     last[i]   = -1;
     next[i]   = -1;
-    hhead[i]  = -1;                     // hash list i is empty 
+    hhead[i]  = -1;                     // hash list i is empty
     nv[i]     = 1;                      // node i is just one node
     w[i]      = 1;                      // node i is alive
     elen[i]   = 0;                      // Ek of node i is empty
     degree[i] = len[i];                 // degree of node i
   }
   mark = internal::cs_wclear<StorageIndex>(0, 0, w, n);         /* clear w */
-  
+
   /* --- Initialize degree lists ------------------------------------------ */
   for(i = 0; i < n; i++)
   {
@@ -141,7 +141,7 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
         has_diag = true;
         break;
       }
-   
+
     d = degree[i];
     if(d == 1 && has_diag)           /* node i is empty */
     {
@@ -165,11 +165,11 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
       head[d] = i;
     }
   }
-  
+
   elen[n] = -2;                         /* n is a dead element */
   Cp[n] = -1;                           /* n is a root of assembly tree */
   w[n] = 0;                             /* n is a dead element */
-  
+
   while (nel < n)                         /* while (selecting pivots) do */
   {
     /* --- Select node of minimum approximate degree -------------------- */
@@ -179,7 +179,7 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
     elenk = elen[k];                  /* elenk = |Ek| */
     nvk = nv[k];                      /* # of nodes k represents */
     nel += nvk;                        /* nv[k] nodes of A eliminated */
-    
+
     /* --- Garbage collection ------------------------------------------- */
     if(elenk > 0 && cnz + mindeg >= nzmax)
     {
@@ -202,7 +202,7 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
       }
       cnz = q;                       /* Ci[cnz...nzmax-1] now free */
     }
-    
+
     /* --- Construct new element ---------------------------------------- */
     dk = 0;
     nv[k] = -nvk;                     /* flag k as in Lk */
@@ -251,7 +251,7 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
     Cp[k] = pk1;                      /* element k is in Ci[pk1..pk2-1] */
     len[k] = pk2 - pk1;
     elen[k] = -2;                     /* k is now an element */
-    
+
     /* --- Find set differences ----------------------------------------- */
     mark = internal::cs_wclear<StorageIndex>(mark, lemax, w, n);  /* clear w if necessary */
     for(pk = pk1; pk < pk2; pk++)    /* scan 1: find |Le\Lk| */
@@ -273,7 +273,7 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
         }
       }
     }
-    
+
     /* --- Degree update ------------------------------------------------ */
     for(pk = pk1; pk < pk2; pk++)    /* scan2: degree update */
     {
@@ -337,7 +337,7 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
     degree[k] = dk;                   /* finalize |Lk| */
     lemax = std::max<StorageIndex>(lemax, dk);
     mark = internal::cs_wclear<StorageIndex>(mark+lemax, lemax, w, n);    /* clear w */
-    
+
     /* --- Supernode detection ------------------------------------------ */
     for(pk = pk1; pk < pk2; pk++)
     {
@@ -376,7 +376,7 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
         }
       }
     }
-    
+
     /* --- Finalize new element------------------------------------------ */
     for(p = pk1, pk = pk1; pk < pk2; pk++)   /* finalize Lk */
     {
@@ -401,7 +401,7 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
     }
     if(elenk != 0) cnz = p;           /* free unused space in Lk */
   }
-  
+
   /* --- Postordering ----------------------------------------------------- */
   for(i = 0; i < n; i++) Cp[i] = amd_flip (Cp[i]);/* fix assembly tree */
   for(j = 0; j <= n; j++) head[j] = -1;
@@ -424,7 +424,7 @@ void minimum_degree_ordering(SparseMatrix<Scalar,ColMajor,StorageIndex>& C, Perm
   {
     if(Cp[i] == -1) k = internal::cs_tdfs<StorageIndex>(i, k, head, next, perm.indices().data(), w);
   }
-  
+
   perm.indices().conservativeResize(n);
 }
 

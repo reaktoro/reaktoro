@@ -32,12 +32,12 @@ Ca              Ca+2		0       40.08           40.08
 Cd              Cd+2		0       112.399         112.399
 Cl              Cl-		0       35.453          35.453
 Cr              CrO4-2		1       51.996          51.996
-Cr(2)           Cr+2		0       51.996  
-Cr(3)		Cr(OH)2+	1       51.996  
-Cr(6)           CrO4-2		1       51.996  
+Cr(2)           Cr+2		0       51.996
+Cr(3)		Cr(OH)2+	1       51.996
+Cr(6)           CrO4-2		1       51.996
 Cu              Cu+2		0       63.546          63.546
-Cu(1)           Cu+		0       63.546  
-Cu(2)           Cu+2		0       63.546  
+Cu(1)           Cu+		0       63.546
+Cu(2)           Cu+2		0       63.546
 F               F-		0       18.9984         18.9984
 Fe              Fe+3		0.0     55.847          55.847
 Fe(+2)          Fe+2		0.0     55.847
@@ -78,7 +78,7 @@ Se(6)           SeO4-2		0.0     78.96
 Si              H4SiO4		0       96.1155         28.0843
 Sr              Sr+2		0       87.62           87.62
 Tl              Tl(OH)3		0       204.37          204.37
-Tl(1)           Tl+		0       204.37  
+Tl(1)           Tl+		0       204.37
 Tl(3)           Tl(OH)3		0       204.37
 U               UO2+2		0.0     238.0290        238.0290
 U(3)            U+3		0.0     238.0290
@@ -86,8 +86,8 @@ U(4)            U+4		0.0     238.0290
 U(5)            UO2+		0.0     238.0290
 U(6)            UO2+2		0.0     238.0290
 V               VO2+		-2.0    50.94           50.94
-V(2)            V+2		0       50.94   
-V(3)            V+3		-3.0    50.94   
+V(2)            V+2		0       50.94
+V(3)            V+3		-3.0    50.94
 V(4)            VO+2		0       50.94
 V(5)            VO2+		-2.0    50.94
 Zn              Zn+2		0       65.37           65.37
@@ -136,7 +136,7 @@ H+ = H+
 H2O = H2O
         log_k   0
         delta_h 0       kcal
-2H2O = O2 + 4H+ + 4e- 
+2H2O = O2 + 4H+ + 4e-
         log_k           -86.08
         delta_h 134.79 kcal
 2 H+ + 2 e- = H2
@@ -513,7 +513,7 @@ Mg+2 + CO3-2 + H+ = MgHCO3+
         log_k   11.4
         delta_h -2.43   kcal
         -gamma  4       0
-# Minteq a_e has more constants than phreeqc, can not use     
+# Minteq a_e has more constants than phreeqc, can not use
 #       -analytical_expression -4.179     0.012734   2902.39    0.0        2.29812E-5
 Mg+2 + SO4-2 = MgSO4
         log_k   2.25
@@ -763,13 +763,13 @@ Cu+ + 3Cl- = CuCl3-2
         log_k   5.7
         delta_h 0.26    kcal
         -gamma  5       0
-Cu+ + 2HS- = Cu(S4)2-3 + 2H+ 
+Cu+ + 2HS- = Cu(S4)2-3 + 2H+
         log_k   3.39
         delta_h 0       kcal
         -gamma  23      0
         -no_check
         -mass_balance Cu(1)(S(-2)4)2
-Cu+ + 2HS- = CuS4S5-3 + 2H+ 
+Cu+ + 2HS- = CuS4S5-3 + 2H+
         log_k   2.66
         delta_h 0       kcal
         -gamma  25      0
@@ -1185,19 +1185,19 @@ Ag+ + 3I- = AgI3-2
 Ag+ + 4I- = AgI4-3
         log_k   14.08
         delta_h 0       kcal
-Ag+ + 2HS- = Ag(S4)2-3 + 2H+ 
+Ag+ + 2HS- = Ag(S4)2-3 + 2H+
         log_k   0.991
         delta_h 0       kcal
         -gamma  22      0
         -no_check
         -mass_balance Ag(S(-2)4)2
-Ag+ + 2HS- = AgS4S5-3 + 2H+ 
+Ag+ + 2HS- = AgS4S5-3 + 2H+
         log_k   0.68
         delta_h 0       kcal
         -gamma  24      0
         -no_check
         -mass_balance AgS(-2)4S(-2)5
-Ag+ + 2HS- = Ag(HS)S4-2 + H+ 
+Ag+ + 2HS- = Ag(HS)S4-2 + H+
         log_k   10.431
         delta_h 0       kcal
         -gamma  15      0
@@ -1392,12 +1392,12 @@ UO2+2 + Cl- = UO2Cl+
 UO2+2 + SO4-2 = UO2SO4
         log_k   2.709
         delta_h 5.1     kcal
-# Minteq a_e has more constants than phreeqc, can not use     
+# Minteq a_e has more constants than phreeqc, can not use
 #       -analytical 11.384     -0.07088   0.0        0.0        1.40277E-4
 UO2+2 + 2SO4-2 = UO2(SO4)2-2
         log_k   4.183
         delta_h 6.1     kcal
-# Minteq a_e has more constants than phreeqc, can not use     
+# Minteq a_e has more constants than phreeqc, can not use
 #       -analytical 12.130     -0.068297  0.0        0.0        1.3987E-04
 UO2+2 + PO4-3 + H+ = UO2HPO4
         log_k   20.814
@@ -1417,27 +1417,27 @@ UO2+2 + 3PO4-3 + 6H+ = UO2(H2PO4)3-
 UO2+2 + H4SiO4 = UO2H3SiO4+ + H+
         log_k   -2.4
         delta_h 0       kcal
-HS- = S2-2 + H+ 
+HS- = S2-2 + H+
         log_k   -14.528
         delta_h 11.4    kcal
         -no_check
         -mass_balance S(-2)2
-HS- = S3-2 + H+ 
+HS- = S3-2 + H+
         log_k   -13.282
         delta_h 10.4    kcal
         -no_check
         -mass_balance S(-2)3
-HS- = S4-2 + H+ 
+HS- = S4-2 + H+
         log_k   -9.829
         delta_h 9.7     kcal
         -no_check
         -mass_balance S(-2)4
-HS- = S5-2 + H+ 
+HS- = S5-2 + H+
         log_k   -9.595
         delta_h 9.3     kcal
         -no_check
         -mass_balance S(-2)5
-HS- = S6-2 + H+ 
+HS- = S6-2 + H+
         log_k   -9.881
         delta_h 0       kcal
         -no_check
@@ -3430,7 +3430,7 @@ UF4:2.5H2O
 U(HPO4)2
 # Minteq equation:
 #       U(HPO4)2 = U+4 + 2PO4-3 + 2H+ + 4H2O
-        U(HPO4)2 = U+4 + 2PO4-3 + 2H+ 
+        U(HPO4)2 = U+4 + 2PO4-3 + 2H+
         log_k   -51.584
         delta_h 3.84    kcal
 Ningyoite
@@ -3554,7 +3554,7 @@ Aragonite
         CaCO3 = Ca+2 + CO3-2
         log_k   -8.36
         delta_h -2.615  kcal
-# Minteq a_e has more constants than phreeqc, can not use     
+# Minteq a_e has more constants than phreeqc, can not use
 #       -analytical_expression 10.21      -0.0217    0.0        0.0        5.170E-005
 # This a_e is from wateq4f
         -analytical     -171.9773       -0.077993       2903.293        71.595  0.0
@@ -3582,7 +3582,7 @@ Calcite
         CaCO3 = Ca+2 + CO3-2
         log_k   -8.475
         delta_h -2.585  kcal
-        -analytical_expression 13.543    -0.0401     -3000.0    
+        -analytical_expression 13.543    -0.0401     -3000.0
 Celestite
         SrSO4 = Sr+2 + SO4-2
         log_k   -6.465
@@ -3656,7 +3656,7 @@ Fluorite
         CaF2 = Ca+2 + 2F-
         log_k   -10.96
         delta_h 4.71    kcal
-# Minteq a_e has more constants than phreeqc, can not use     
+# Minteq a_e has more constants than phreeqc, can not use
 #       -analytical_expression -109.25    -0.0024    3120.98    37.624     4.900E-007 2088.47    298.4
 # This a_e is from wateq4f
         -analytical     66.348  0.0     -4298.2         -25.271         0.0
@@ -3689,7 +3689,7 @@ Gypsum
         CaSO4:2H2O = Ca+2 + SO4-2 + 2H2O
 #	 	 	   # Log K gives too small a solubility < 10 mmol/L
 #			   # D. Parkhurst 7/13/09, Replacing log K with minteq version 4 log K
-#        log_k   -4.848    
+#        log_k   -4.848
 #        delta_h 0.261   kcal
 	log_k	-4.61
 	delta_h	1	kJ
@@ -3791,7 +3791,7 @@ SrF2
         log_k   -8.54
         delta_h 1.25    kcal
 Strengite
-        FePO4:2H2O = Fe+3 + PO4-3 + 2H2O 
+        FePO4:2H2O = Fe+3 + PO4-3 + 2H2O
         log_k   -26.4
         delta_h -2.03   kcal
 
@@ -5558,15 +5558,15 @@ SURFACE_MASTER_SPECIES
         Hfo_s  Hfo_sOH
         Hfo_w  Hfo_wOH
 SURFACE_SPECIES
-Hfo_wOH = Hfo_wOH 
+Hfo_wOH = Hfo_wOH
         log_k 0.0
-Hfo_sOH = Hfo_sOH 
+Hfo_sOH = Hfo_sOH
         log_k 0.0
-Hfo_wOH = Hfo_wO- + H+ 
+Hfo_wOH = Hfo_wO- + H+
         log_k   -8.93
 Hfo_wOH + H+  = Hfo_wOH2+
         log_k   7.29
-Hfo_sOH = Hfo_sO- + H+ 
+Hfo_sOH = Hfo_sO- + H+
         log_k   -8.93
 Hfo_sOH + H+  = Hfo_sOH2+
         log_k   7.29
@@ -5630,13 +5630,13 @@ Hfo_sOH + H3AsO4 = Hfo_sH2AsO4 + H2O
         log_k   8.67
 Hfo_wOH + H3AsO4 = Hfo_wH2AsO4 + H2O
         log_k   8.67
-Hfo_sOH + H3AsO4 = Hfo_sHAsO4- + H2O + H+ 
+Hfo_sOH + H3AsO4 = Hfo_sHAsO4- + H2O + H+
         log_k   2.99
-Hfo_wOH + H3AsO4 = Hfo_wHAsO4- + H2O + H+  
+Hfo_wOH + H3AsO4 = Hfo_wHAsO4- + H2O + H+
         log_k   2.99
-Hfo_sOH + H3AsO4 = Hfo_sAsO4-2 + H2O + 2H+ 
+Hfo_sOH + H3AsO4 = Hfo_sAsO4-2 + H2O + 2H+
         log_k   -4.7
-Hfo_wOH + H3AsO4 = Hfo_wAsO4-2 + H2O + 2H+ 
+Hfo_wOH + H3AsO4 = Hfo_wAsO4-2 + H2O + 2H+
         log_k   -4.7
 Hfo_sOH + H3AsO4 = Hfo_sOHAsO4-3 + 3H+
         log_k   -10.15
@@ -5647,4 +5647,3 @@ Hfo_sOH + H3BO3 = Hfo_sH2BO3 + H2O
 Hfo_wOH + H3BO3 = Hfo_wH2BO3 + H2O
         log_k   0.62
 END
-

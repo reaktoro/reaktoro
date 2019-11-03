@@ -54,7 +54,7 @@ public:
     {
         return Path;
     }
-    
+
 //    bool	 atEnd() const;
 //    bool	 eof() const;
 

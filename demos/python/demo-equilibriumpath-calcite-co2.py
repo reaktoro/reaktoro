@@ -19,8 +19,7 @@ from reaktoro import *
 
 editor = ChemicalEditor()
 editor.addAqueousPhaseWithElements("H O C Ca Mg Na Cl")
-editor.addGaseousPhase(["H2O(g)", "CO2(g)"]) \
-    .setChemicalModelSpycherPruessEnnis()
+editor.addGaseousPhase(["H2O(g)", "CO2(g)"]).setChemicalModelSpycherPruessEnnis()
 editor.addMineralPhase("Calcite")
 editor.addMineralPhase("Magnesite")
 editor.addMineralPhase("Dolomite")
@@ -71,4 +70,3 @@ output.add("elementMolality(Mg)", "Mg [molal]")
 output.add("pH")
 
 path.solve(state1, state2)
-

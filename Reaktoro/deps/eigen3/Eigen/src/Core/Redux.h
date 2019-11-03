@@ -11,7 +11,7 @@
 #ifndef EIGEN_REDUX_H
 #define EIGEN_REDUX_H
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 
@@ -66,7 +66,7 @@ public:
   enum {
     Unrolling = Cost <= UnrollingLimit ? CompleteUnrolling : NoUnrolling
   };
-  
+
 #ifdef EIGEN_DEBUG_ASSIGN
   static void debug()
   {
@@ -136,7 +136,7 @@ template<typename Func, typename Evaluator, int Start>
 struct redux_novec_unroller<Func, Evaluator, Start, 0>
 {
   typedef typename Evaluator::Scalar Scalar;
-  EIGEN_DEVICE_FUNC 
+  EIGEN_DEVICE_FUNC
   static EIGEN_STRONG_INLINE Scalar run(const Evaluator&, const Func&) { return Scalar(); }
 };
 
@@ -233,7 +233,7 @@ struct redux_impl<Func, Evaluator, LinearVectorizedTraversal, NoUnrolling>
   static Scalar run(const Evaluator &eval, const Func& func, const XprType& xpr)
   {
     const Index size = xpr.size();
-    
+
     const Index packetSize = redux_traits<Func, Evaluator>::PacketSize;
     const int packetAlignment = unpacket_traits<PacketScalar>::alignment;
     enum {
@@ -361,11 +361,11 @@ public:
   typedef _XprType XprType;
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   explicit redux_evaluator(const XprType &xpr) : Base(xpr) {}
-  
+
   typedef typename XprType::Scalar Scalar;
   typedef typename XprType::CoeffReturnType CoeffReturnType;
   typedef typename XprType::PacketScalar PacketScalar;
-  
+
   enum {
     MaxRowsAtCompileTime = XprType::MaxRowsAtCompileTime,
     MaxColsAtCompileTime = XprType::MaxColsAtCompileTime,
@@ -375,16 +375,16 @@ public:
     SizeAtCompileTime = XprType::SizeAtCompileTime,
     InnerSizeAtCompileTime = XprType::InnerSizeAtCompileTime
   };
-  
+
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   CoeffReturnType coeffByOuterInner(Index outer, Index inner) const
   { return Base::coeff(IsRowMajor ? outer : inner, IsRowMajor ? inner : outer); }
-  
+
   template<int LoadMode, typename PacketType>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   PacketType packetByOuterInner(Index outer, Index inner) const
   { return Base::template packet<LoadMode,PacketType>(IsRowMajor ? outer : inner, IsRowMajor ? inner : outer); }
-  
+
 };
 
 } // end namespace internal
@@ -414,7 +414,7 @@ DenseBase<Derived>::redux(const Func& func) const
   ThisEvaluator thisEval(derived());
 
   // The initial expression is passed to the reducer as an additional argument instead of
-  // passing it as a member of redux_evaluator to help  
+  // passing it as a member of redux_evaluator to help
   return internal::redux_impl<Func, ThisEvaluator>::run(thisEval, func, derived());
 }
 

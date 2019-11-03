@@ -166,11 +166,11 @@ am__v_P_1 = :
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN     " $@;
-am__v_GEN_1 = 
+am__v_GEN_1 =
 AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
-am__v_at_1 = 
+am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
@@ -180,26 +180,26 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 AM_V_CXX = $(am__v_CXX_@AM_V@)
 am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
 am__v_CXX_0 = @echo "  CXX     " $@;
-am__v_CXX_1 = 
+am__v_CXX_1 =
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
-am__v_CXXLD_1 = 
+am__v_CXXLD_1 =
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
 am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
 am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
+am__v_CC_1 =
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
+am__v_CCLD_1 =
 SOURCES = $(phreeqc_SOURCES)
 DIST_SOURCES = $(am__phreeqc_SOURCES_DIST)
 am__can_run_installinfo = \
@@ -325,7 +325,7 @@ EXTRA_DIST = \
 	CurveObject.h\
 	Form1.h\
 	Form1.resX\
-	ZedGraph.dll	
+	ZedGraph.dll
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/src/common -I$(top_srcdir)/src/PhreeqcKeywords
 
@@ -462,7 +462,7 @@ PhreeqcKeywords/$(DEPDIR)/$(am__dirstamp):
 PhreeqcKeywords/Keywords.$(OBJEXT): PhreeqcKeywords/$(am__dirstamp) \
 	PhreeqcKeywords/$(DEPDIR)/$(am__dirstamp)
 
-phreeqc$(EXEEXT): $(phreeqc_OBJECTS) $(phreeqc_DEPENDENCIES) $(EXTRA_phreeqc_DEPENDENCIES) 
+phreeqc$(EXEEXT): $(phreeqc_OBJECTS) $(phreeqc_DEPENDENCIES) $(EXTRA_phreeqc_DEPENDENCIES)
 	@rm -f phreeqc$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(phreeqc_OBJECTS) $(phreeqc_LDADD) $(LIBS)
 

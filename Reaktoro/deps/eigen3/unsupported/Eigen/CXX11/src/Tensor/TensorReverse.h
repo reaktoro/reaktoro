@@ -423,7 +423,7 @@ struct TensorEvaluator<TensorReverseOp<ReverseDimensions, ArgType>, Device>
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
   typedef internal::TensorBlockNotImplemented TensorBlockV2;
   //===--------------------------------------------------------------------===//
-  
+
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   const Dimensions& dimensions() const { return this->m_dimensions; }
 

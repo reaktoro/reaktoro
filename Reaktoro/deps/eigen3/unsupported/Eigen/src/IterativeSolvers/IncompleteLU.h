@@ -10,7 +10,7 @@
 #ifndef EIGEN_INCOMPLETE_LU_H
 #define EIGEN_INCOMPLETE_LU_H
 
-namespace Eigen { 
+namespace Eigen {
 
 template <typename _Scalar>
 class IncompleteLU : public SparseSolverBase<IncompleteLU<_Scalar> >
@@ -18,7 +18,7 @@ class IncompleteLU : public SparseSolverBase<IncompleteLU<_Scalar> >
   protected:
     typedef SparseSolverBase<IncompleteLU<_Scalar> > Base;
     using Base::m_isInitialized;
-    
+
     typedef _Scalar Scalar;
     typedef Matrix<Scalar,Dynamic,1> Vector;
     typedef typename Vector::Index Index;

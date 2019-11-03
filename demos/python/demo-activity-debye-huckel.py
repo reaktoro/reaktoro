@@ -21,8 +21,7 @@ db = DebyeHuckelParams()
 db.setPHREEQC()
 
 editor = ChemicalEditor()
-editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCl2 CO2") \
-    .setChemicalModelDebyeHuckel(db)
+editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCl2 CO2").setChemicalModelDebyeHuckel(db)
 
 system = ChemicalSystem(editor)
 

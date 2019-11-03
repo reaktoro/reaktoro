@@ -1,6 +1,6 @@
 # This cmake file defines several colors for use in message command.
 # Reference: https://stackoverflow.com/questions/18968979/how-to-get-colorized-output-with-cmake
-# 
+#
 # Examples:
 #     message("This is normal")
 #     message("${Red}This is Red${ColourReset}")
@@ -17,7 +17,7 @@
 #     message("${BoldMagenta}This is BoldMagenta${ColourReset}")
 #     message("${BoldCyan}This is BoldCyan${ColourReset}")
 #     message("${BoldWhite}This is BoldWhite\n\n${ColourReset}")
-# 
+#
 
 if(NOT WIN32)
   string(ASCII 27 Esc)
@@ -38,4 +38,3 @@ if(NOT WIN32)
   set(BoldCyan    "${Esc}[1;36m")
   set(BoldWhite   "${Esc}[1;37m")
 endif()
-

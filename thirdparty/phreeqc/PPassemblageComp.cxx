@@ -21,7 +21,7 @@ cxxPPassemblageComp::cxxPPassemblageComp(PHRQ_io *io)
 :
 PHRQ_base(io)
 	//
-	// default constructor for cxxPPassemblageComp 
+	// default constructor for cxxPPassemblageComp
 	//
 {
 	si = 0;
@@ -384,7 +384,7 @@ cxxPPassemblageComp::multiply(LDBLE extensive)
 	this->initial_moles *= extensive;
 }
 void
-cxxPPassemblageComp::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxPPassemblageComp::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles)
 {
 	ints.push_back(dictionary.Find(this->name));
@@ -418,16 +418,16 @@ cxxPPassemblageComp::Deserialize(Dictionary & dictionary, std::vector < int >&in
 
 
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("name"),	            // 0                 
+	std::vector< std::string >::value_type("name"),	            // 0
 	std::vector< std::string >::value_type("add_formula"),	    // 1
 	std::vector< std::string >::value_type("si"),	            // 2
 	std::vector< std::string >::value_type("moles"),	        // 3
 	std::vector< std::string >::value_type("delta"),	        // 4
-	std::vector< std::string >::value_type("initial_moles"),	// 5     
+	std::vector< std::string >::value_type("initial_moles"),	// 5
 	std::vector< std::string >::value_type("dissolve_only"),	// 6
 	std::vector< std::string >::value_type("force_equality"),	// 7
 	std::vector< std::string >::value_type("precipitate_only"),	// 8
 	std::vector< std::string >::value_type("si_org"),	        // 9
 	std::vector< std::string >::value_type("totals") 	        // 10
-};									   
-const std::vector< std::string > cxxPPassemblageComp::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxPPassemblageComp::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

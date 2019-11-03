@@ -30,13 +30,13 @@ namespace Eigen {
    * inverse is equal to its transpose, \f$ U^{-1} = U^T \f$. A quasi-triangular
    * matrix is a block-triangular matrix whose diagonal consists of 1-by-1
    * blocks and 2-by-2 blocks where further reduction is impossible due to
-   * complex eigenvalues. 
+   * complex eigenvalues.
    *
    * The eigenvalues of the pencil \f$ A - z B \f$ can be obtained from
    * 1x1 and 2x2 blocks on the diagonals of S and T.
    *
    * Call the function compute() to compute the real QZ decomposition of a
-   * given pair of matrices. Alternatively, you can use the 
+   * given pair of matrices. Alternatively, you can use the
    * RealQZ(const MatrixType& B, const MatrixType& B, bool computeQZ)
    * constructor which computes the real QZ decomposition at construction
    * time. Once the decomposition is computed, you can use the matrixS(),
@@ -95,7 +95,7 @@ namespace Eigen {
       {}
 
       /** \brief Constructor; computes real QZ decomposition of given matrices
-       * 
+       *
        * \param[in]  A          Matrix A.
        * \param[in]  B          Matrix B.
        * \param[in]  computeQZ  If false, A and Z are not computed.
@@ -115,7 +115,7 @@ namespace Eigen {
         compute(A, B, computeQZ);
       }
 
-      /** \brief Returns matrix Q in the QZ decomposition. 
+      /** \brief Returns matrix Q in the QZ decomposition.
        *
        * \returns A const reference to the matrix Q.
        */
@@ -125,7 +125,7 @@ namespace Eigen {
         return m_Q;
       }
 
-      /** \brief Returns matrix Z in the QZ decomposition. 
+      /** \brief Returns matrix Z in the QZ decomposition.
        *
        * \returns A const reference to the matrix Z.
        */
@@ -135,7 +135,7 @@ namespace Eigen {
         return m_Z;
       }
 
-      /** \brief Returns matrix S in the QZ decomposition. 
+      /** \brief Returns matrix S in the QZ decomposition.
        *
        * \returns A const reference to the matrix S.
        */
@@ -144,7 +144,7 @@ namespace Eigen {
         return m_S;
       }
 
-      /** \brief Returns matrix S in the QZ decomposition. 
+      /** \brief Returns matrix S in the QZ decomposition.
        *
        * \returns A const reference to the matrix S.
        */
@@ -153,8 +153,8 @@ namespace Eigen {
         return m_T;
       }
 
-      /** \brief Computes QZ decomposition of given matrix. 
-       * 
+      /** \brief Computes QZ decomposition of given matrix.
+       *
        * \param[in]  A          Matrix A.
        * \param[in]  B          Matrix B.
        * \param[in]  computeQZ  If false, A and Z are not computed.
@@ -425,7 +425,7 @@ namespace Eigen {
                ll = ss*ss;
         x = ll + a11*a11*b11i*b11i - lpl*a11*b11i + a12*a21*b11i*b22i
           - a11*a21*b12*b11i*b11i*b22i;
-        y = a11*a21*b11i*b11i - lpl*a21*b11i + a21*a22*b11i*b22i 
+        y = a11*a21*b11i*b11i - lpl*a21*b11i + a21*a22*b11i*b22i
           - a21*a21*b12*b11i*b11i*b22i;
         z = a21*a32*b11i*b22i;
       }
@@ -561,8 +561,8 @@ namespace Eigen {
 
       const Index dim = A_in.cols();
 
-      eigen_assert (A_in.rows()==dim && A_in.cols()==dim 
-          && B_in.rows()==dim && B_in.cols()==dim 
+      eigen_assert (A_in.rows()==dim && A_in.cols()==dim
+          && B_in.rows()==dim && B_in.cols()==dim
           && "Need square matrices of the same dimension");
 
       m_isInitialized = true;
@@ -576,8 +576,8 @@ namespace Eigen {
       // compute L1 vector norms of T, S into m_normOfS, m_normOfT
       computeNorms();
 
-      Index l = dim-1, 
-            f, 
+      Index l = dim-1,
+            f,
             local_iter = 0;
 
       while (l>0 && local_iter<m_maxIters)
@@ -607,7 +607,7 @@ namespace Eigen {
           }
           else
           {
-            // We are sure now that S.block(f,f, l-f+1,l-f+1) is underuced upper-Hessenberg 
+            // We are sure now that S.block(f,f, l-f+1,l-f+1) is underuced upper-Hessenberg
             // and T.block(f,f, l-f+1,l-f+1) is invertible uper-triangular, which allows to
             // apply a QR-like iteration to rows and columns f..l.
             step(f,l, local_iter);

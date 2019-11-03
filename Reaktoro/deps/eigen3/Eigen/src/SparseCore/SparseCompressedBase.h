@@ -10,10 +10,10 @@
 #ifndef EIGEN_SPARSE_COMPRESSED_BASE_H
 #define EIGEN_SPARSE_COMPRESSED_BASE_H
 
-namespace Eigen { 
+namespace Eigen {
 
 template<typename Derived> class SparseCompressedBase;
-  
+
 namespace internal {
 
 template<typename Derived>
@@ -41,17 +41,17 @@ class SparseCompressedBase
     EIGEN_SPARSE_PUBLIC_INTERFACE(SparseCompressedBase)
     using Base::operator=;
     using Base::IsRowMajor;
-    
+
     class InnerIterator;
     class ReverseInnerIterator;
-    
+
   protected:
     typedef typename Base::IndexVector IndexVector;
     Eigen::Map<IndexVector> innerNonZeros() { return Eigen::Map<IndexVector>(innerNonZeroPtr(), isCompressed()?0:derived().outerSize()); }
     const  Eigen::Map<const IndexVector> innerNonZeros() const { return Eigen::Map<const IndexVector>(innerNonZeroPtr(), isCompressed()?0:derived().outerSize()); }
-        
+
   public:
-    
+
     /** \returns the number of non zero coefficients */
     inline Index nonZeros() const
     {
@@ -64,7 +64,7 @@ class SparseCompressedBase
       else
         return innerNonZeros().sum();
     }
-    
+
     /** \returns a const pointer to the array of values.
       * This function is aimed at interoperability with other libraries.
       * \sa innerIndexPtr(), outerIndexPtr() */
@@ -102,7 +102,7 @@ class SparseCompressedBase
       * This function is aimed at interoperability with other libraries.
       * \warning it returns the null pointer 0 in compressed mode */
     inline StorageIndex* innerNonZeroPtr() { return derived().innerNonZeroPtr(); }
-    
+
     /** \returns whether \c *this is in compressed form. */
     inline bool isCompressed() const { return innerNonZeroPtr()==0; }
 
@@ -209,8 +209,8 @@ class SparseCompressedBase<Derived>::InnerIterator
     inline InnerIterator& operator++() { m_id++; return *this; }
     inline InnerIterator& operator+=(Index i) { m_id += i ; return *this; }
 
-    inline InnerIterator operator+(Index i) 
-    { 
+    inline InnerIterator operator+(Index i)
+    {
         InnerIterator result = *this;
         result += i;
         return result;
@@ -277,7 +277,7 @@ class SparseCompressedBase<Derived>::ReverseInnerIterator
     inline ReverseInnerIterator& operator--() { --m_id; return *this; }
     inline ReverseInnerIterator& operator-=(Index i) { m_id -= i; return *this; }
 
-    inline ReverseInnerIterator operator-(Index i) 
+    inline ReverseInnerIterator operator-(Index i)
     {
         ReverseInnerIterator result = *this;
         result -= i;
@@ -311,12 +311,12 @@ struct evaluator<SparseCompressedBase<Derived> >
 {
   typedef typename Derived::Scalar Scalar;
   typedef typename Derived::InnerIterator InnerIterator;
-  
+
   enum {
     CoeffReadCost = NumTraits<Scalar>::ReadCost,
     Flags = Derived::Flags
   };
-  
+
   evaluator() : m_matrix(0), m_zero(0)
   {
     EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
@@ -325,14 +325,14 @@ struct evaluator<SparseCompressedBase<Derived> >
   {
     EIGEN_INTERNAL_CHECK_COST_VALUE(CoeffReadCost);
   }
-  
+
   inline Index nonZerosEstimate() const {
     return m_matrix->nonZeros();
   }
-  
+
   operator Derived&() { return m_matrix->const_cast_derived(); }
   operator const Derived&() const { return *m_matrix; }
-  
+
   typedef typename DenseCoeffsBase<Derived,ReadOnlyAccessors>::CoeffReturnType CoeffReturnType;
   const Scalar& coeff(Index row, Index col) const
   {

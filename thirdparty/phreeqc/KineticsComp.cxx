@@ -22,7 +22,7 @@ cxxKineticsComp::cxxKineticsComp(PHRQ_io *io)
 :
 PHRQ_base(io)
 	//
-	// default constructor for cxxKineticsComp 
+	// default constructor for cxxKineticsComp
 	//
 {
 	tol = 1e-8;
@@ -351,5 +351,5 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("namecoef"),	            // 5
 	std::vector< std::string >::value_type("d_params"),	            // 6
 	std::vector< std::string >::value_type("initial_moles") 	    // 7
-};									   
+};
 const std::vector< std::string > cxxKineticsComp::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

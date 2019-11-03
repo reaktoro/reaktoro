@@ -70,9 +70,9 @@ struct SyclDeviceInfo {
 }  // end namespace TensorSycl
 
 typedef TensorSycl::internal::buffer_data_type_t buffer_scalar_t;
-// All devices (even AMD CPU with intel OpenCL runtime) that support OpenCL and 
-// can consume SPIR or SPIRV can use the Eigen SYCL backend and consequently 
-// TensorFlow via the Eigen SYCL Backend. 
+// All devices (even AMD CPU with intel OpenCL runtime) that support OpenCL and
+// can consume SPIR or SPIRV can use the Eigen SYCL backend and consequently
+// TensorFlow via the Eigen SYCL Backend.
 EIGEN_STRONG_INLINE auto get_sycl_supported_devices()
     -> decltype(cl::sycl::device::get_devices()) {
 #ifdef EIGEN_SYCL_USE_DEFAULT_SELECTOR

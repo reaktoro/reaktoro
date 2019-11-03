@@ -12,8 +12,8 @@
 *  8) In species block Ce+4, correct the elemental formula to Ce(1) and formula to Ce.
 *  9) In species block 2,4-DMP,AQ, change name to 2-4DMP,AQ to be consistent with others.
 * 10) In species block RuO4-2, change charge to -2 instead of -1 and in formula, change -(2) to (-2).
-* 11) In species TIN,NATIVE, SILVER,NATIVE, GOLD,NATIVE, COPPER,NATIVE, `,NATIVE` suffix was removed. 
-* 12) In species TIN,NATIVE, SILVER,NATIVE, GOLD,NATIVE, COPPER,NATIVE, `,NATIVE` suffix was removed. 
+* 11) In species TIN,NATIVE, SILVER,NATIVE, GOLD,NATIVE, COPPER,NATIVE, `,NATIVE` suffix was removed.
+* 12) In species TIN,NATIVE, SILVER,NATIVE, GOLD,NATIVE, COPPER,NATIVE, `,NATIVE` suffix was removed.
 * 13) Removed duplicate carbonate species 'Ba(CO3),aq', 'Ca(CO3),aq', 'Mg(CO3),aq', 'Sr(CO3),aq'.
 * 14) Removed duplicate species 'Al(OH)+2', duplicate of 'AlOH+2', which has more recent update.
 * 15) Removed duplicate species 'BaF+' with data from 2.Oct.97, and kept the one from 9.Oct.97.

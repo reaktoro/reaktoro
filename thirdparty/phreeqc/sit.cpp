@@ -73,7 +73,7 @@ sit_tidy(void)
 			continue;
 		if (s[i] == s_h2o)
 			continue;
-		if (s[i]->type == EX || s[i]->type == SURF) 
+		if (s[i]->type == EX || s[i]->type == SURF)
 			continue;
 		if (s[i]->z < -.001)
 		{
@@ -118,7 +118,7 @@ sit_tidy(void)
 	{
 		sit_param_map.clear();
 		for (int j = 0; j < count_sit_param; j++)
-		{	
+		{
 			std::set< std::string > header;
 			for (int i = 0; i < 3; i++)
 			{
@@ -180,7 +180,7 @@ read_sit(void)
    *
    */
   /*
-   *   Read advection parameters: 
+   *   Read advection parameters:
    *        number of cells;
    *        number of shifts;
    */
@@ -267,7 +267,7 @@ calc_sit_param(struct pitz_param *pz_ptr, LDBLE TK, LDBLE TR)
 		param = (pz_ptr->a[0] +
 			 pz_ptr->a[1] * (1.e0 / TK - 1.e0 / TR) +
 			 pz_ptr->a[2] * log(TK / TR) +
-			 pz_ptr->a[3] * (TK - TR) + 
+			 pz_ptr->a[3] * (TK - TR) +
 			 pz_ptr->a[4] * (TK * TK - TR * TR));
 	}
 	pz_ptr->p = param;
@@ -297,7 +297,7 @@ sit(void)
   LDBLE param, z0, z1;
   LDBLE A, AGAMMA, T;
 	/*
-	   LDBLE CONV, XI, XX, OSUM, BIGZ, DI, F, XXX, GAMCLM, 
+	   LDBLE CONV, XI, XX, OSUM, BIGZ, DI, F, XXX, GAMCLM,
 	   CSUM, PHIMAC, OSMOT, BMXP, ETHEAP, CMX, BMX, PHI,
 	   BMXPHI, PHIPHI, AW, A, B;
 	 */
@@ -475,7 +475,7 @@ sit(void)
   LDBLE param, z0, z1;
   LDBLE A, AGAMMA, T;
 	/*
-	   LDBLE CONV, XI, XX, OSUM, BIGZ, DI, F, XXX, GAMCLM, 
+	   LDBLE CONV, XI, XX, OSUM, BIGZ, DI, F, XXX, GAMCLM,
 	   CSUM, PHIMAC, OSMOT, BMXP, ETHEAP, CMX, BMX, PHI,
 	   BMXPHI, PHIPHI, AW, A, B;
 	 */
@@ -1034,7 +1034,7 @@ Restart:
 			d2 = d1;
 			break;
 		case PITZER_GAMMA:
-			if (!full_pitzer) 
+			if (!full_pitzer)
 				continue;
 			x[i]->s->lg += d;
 			d2 = d;
@@ -1081,7 +1081,7 @@ Restart:
 			break;
 		}
 		molalities(TRUE);
-		if (max_unknowns > pz_max_unknowns) 
+		if (max_unknowns > pz_max_unknowns)
 		{
 			base = (LDBLE *) free_check_null(base);
 			gammas_sit();
@@ -1155,10 +1155,10 @@ model_sit(void)
 /*
  *   model is called after the equations have been set up by prep
  *   and initial guesses have been made in set.
- * 
+ *
  *   Here is the outline of the calculation sequence:
  *      residuals--residuals are calculated, if small we are done
- *      sum_jacobian--jacobian is calculated 
+ *      sum_jacobian--jacobian is calculated
  *      ineq--inequality solver is called
  *      reset--estimates of unknowns revised, if changes are small solution
  *         has been found, usually convergence is found in residuals.
@@ -1174,7 +1174,7 @@ model_sit(void)
  *         sum_species--calculate sums of elements from species concentrations
  *
  *      An additional pass through may be needed if unstable phases still exist
- *         in the phase assemblage. 
+ *         in the phase assemblage.
  */
 	int l_kode, return_kode;
 	int r;
@@ -1309,7 +1309,7 @@ model_sit(void)
  */
 			if (switch_bases() == TRUE)
 			{
-				
+
 				count_basis_change++;
 				count_unknowns -= (int) s_list.size();
 				reprep();
@@ -1455,7 +1455,7 @@ gammas_sit()
 			break;
 		case 6:				/* Surface */
 /*
- *   Find moles of sites. 
+ *   Find moles of sites.
  *   s_x[i]->equiv is stoichiometric coefficient of sites in species
  */
 			for (j = 1; s_x[i]->rxn_x->token[j].s != NULL; j++)
@@ -1497,7 +1497,7 @@ gammas_sit()
  */
 	}
 	/*
-	 *  calculate exchange gammas 
+	 *  calculate exchange gammas
 	 */
 
 	if (use.Get_exchange_ptr() != NULL)
@@ -1584,7 +1584,7 @@ C
 	int i;
 	LDBLE TR = 298.15;
 
-	if (fabs(TK - OTEMP) < 0.001 && fabs(patm_x - OPRESS) < 0.1)	return OK; 
+	if (fabs(TK - OTEMP) < 0.001 && fabs(patm_x - OPRESS) < 0.1)	return OK;
 /*
 C     Set DW0
 */
@@ -1613,7 +1613,7 @@ C
 */
 	LDBLE TR = 298.15;
 
-	if (fabs(TK - OTEMP) < 0.001 && fabs(patm_x - OPRESS) < 0.1)	return OK; 
+	if (fabs(TK - OTEMP) < 0.001 && fabs(patm_x - OPRESS) < 0.1)	return OK;
 /*
 C     Set DW0
 */
@@ -1643,7 +1643,7 @@ sit_make_lists(void)
 	anion_list.clear();
 	ion_list.clear();
 	param_list.clear();
-	OTEMP = -100.0;	
+	OTEMP = -100.0;
 	for (int j = 0; j < 3; j++)
 	{
 		int min, max;
@@ -1670,9 +1670,9 @@ sit_make_lists(void)
 			{
 				if (spec[i]->type == EX ||
 					spec[i]->type == SURF || spec[i]->type == SURF_PSI)
-					continue;	
-				sit_IPRSNT[i] = TRUE;	
-				s_list.push_back(i);	
+					continue;
+				sit_IPRSNT[i] = TRUE;
+				s_list.push_back(i);
 				if (i < count_s)
 				{
 					cation_list.push_back(i);

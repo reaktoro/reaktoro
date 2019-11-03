@@ -21,7 +21,7 @@
 
 cxxGasPhase::cxxGasPhase(PHRQ_io * io)
 	//
-	// default constructor for cxxGasPhase 
+	// default constructor for cxxGasPhase
 	//
 :	cxxNumKeyword(io)
 {
@@ -336,7 +336,7 @@ cxxGasPhase::dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out) con
 	s_oss << "-total_p                   " << this->total_p << "\n";
 	s_oss << indent1;
 	s_oss << "-volume                    " << this->volume << "\n";
-	// gasPhaseComps 
+	// gasPhaseComps
 	for (size_t i = 0 ; i < this->gas_comps.size(); i++)
 	{
 		s_oss << indent1;
@@ -487,7 +487,7 @@ cxxGasPhase::read_raw(CParser & parser, bool check)
 					cxxGasComp * comp_ptr = this->Find_comp(str.c_str());
 					if (comp_ptr)
 					{
-						temp_comp = *comp_ptr;	
+						temp_comp = *comp_ptr;
 					}
 					temp_comp.read_raw(parser, false);
 					if (comp_ptr)
@@ -507,7 +507,7 @@ cxxGasPhase::read_raw(CParser & parser, bool check)
 					useLastLine = true;
 				}
 			}
-			
+
 			opt_save = CParser::OPT_DEFAULT;
 			break;
 		case 6:				// pr_in
@@ -681,7 +681,7 @@ cxxGasPhase::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::v
 }
 
 void
-cxxGasPhase::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxGasPhase::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 {
 	this->n_user = ints[ii++];
@@ -725,5 +725,5 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("total_moles"),			//10
 	std::vector< std::string >::value_type("temperature"),			//11
 	std::vector< std::string >::value_type("totals")                //12
-};									   
+};
 const std::vector< std::string > cxxGasPhase::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

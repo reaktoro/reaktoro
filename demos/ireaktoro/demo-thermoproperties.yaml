@@ -4,7 +4,7 @@ ThermoProperties:
     PressureUnits: bar
     Temperatures: [0, 25, 50, 75, 100, 200]
     Pressures: [50, 100, 500, 1000]
-    Species: 
+    Species:
     - H2O(l)
     - CO2(aq)
     - CO2(g)

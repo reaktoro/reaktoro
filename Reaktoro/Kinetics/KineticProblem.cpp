@@ -94,4 +94,3 @@ auto KineticProblem::pressure() const -> double
 }
 
 } // namespace Reaktoro
-

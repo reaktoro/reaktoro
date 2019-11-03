@@ -37,6 +37,3 @@ EquilibriumOptions::EquilibriumOptions(const char* str)
 }
 
 } // namespace Reaktoro
-
-
-

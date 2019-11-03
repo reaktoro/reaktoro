@@ -244,7 +244,7 @@ pm.pKMM = 0;
     pm.js = 0;     // js - index of DC for IPN equations ( CalculateActivityCoefficients() )
     pm.next = 0;
     pm.sitNcat = 0;    // SIT: number of cations
-    pm.sitNan = 0;     // SIT: number of anions    
+    pm.sitNan = 0;     // SIT: number of anions
 pm.ITau = -1;  // current time, s (kinetics)
 pm.kTau = 0.;  // current time, s (kinetics)
 pm.kdT = 0.;   // current time step, s (kinetics)
@@ -2309,5 +2309,3 @@ void TMulti::to_text_file( const char *path, bool append )
 }
 
 //--------------------- End of ms_multi_file.cpp ---------------------------
-
-

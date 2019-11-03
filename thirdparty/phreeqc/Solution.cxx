@@ -23,7 +23,7 @@
 
 cxxSolution::cxxSolution(PHRQ_io * io)
 	//
-	// default constructor for cxxSolution 
+	// default constructor for cxxSolution
 	//
 :	cxxNumKeyword(io)
 {
@@ -445,7 +445,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 
 		case 4:				// temp
 		case 5:				// tc_avoid_conflict_with_technetium
-		case 6:				// temperature                  
+		case 6:				// temperature
 			if (!(parser.get_iss() >> this->tc))
 			{
 				this->tc = 25.0;
@@ -654,7 +654,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 	}
 
 	// Update activities
-	
+
 	if (original_activities.size() > 0)
 	{
 		cxxNameDouble new_activities = this->master_activity;
@@ -787,7 +787,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 
 		case 4:				// temp
 		case 5:				// tc_avoid_conflict_with_technetium
-		case 6:				// temperature                  
+		case 6:				// temperature
 			if (!(parser.get_iss() >> this->tc))
 			{
 				this->tc = 25.0;
@@ -958,7 +958,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 					}
 					else
 					{
-						double d; 
+						double d;
 						if (!(parser.get_iss() >> d))
 						{
 							parser.incr_input_error();
@@ -984,7 +984,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 					}
 					else
 					{
-						double d; 
+						double d;
 						if (!(parser.get_iss() >> d))
 						{
 							parser.incr_input_error();
@@ -1071,7 +1071,7 @@ cxxSolution::read_raw(CParser & parser, bool check)
 	// Update activities
 	if (original_activities.size() > 0)
 	{
-		
+
 		cxxNameDouble simple_this_totals = this->totals.Simplify_redox();
 		cxxNameDouble::iterator it = simple_original_totals.begin();
 		for ( ; it != simple_original_totals.end(); it++)
@@ -1125,7 +1125,7 @@ cxxSolution::Update_activities(const cxxNameDouble &original_tot)
 	// totals after read
 	cxxNameDouble simple_new = this->totals.Simplify_redox();
 
-	// make factors 
+	// make factors
 	cxxNameDouble factors;
 	{
 		cxxNameDouble::iterator it = simple_new.begin();
@@ -1184,7 +1184,7 @@ cxxSolution::Update_activities(const cxxNameDouble &original_tot)
 					activity_it->second += factors_it->second;
 					activity_it++;
 				}
-				else 
+				else
 				{
 					activity_it++;
 				}
@@ -1203,7 +1203,7 @@ cxxSolution::Update(const cxxNameDouble &const_nd)
 
 	cxxNameDouble factors;
 	{
-		// make factors 
+		// make factors
 		cxxNameDouble::iterator it = simple_new.begin();
 		cxxNameDouble::iterator jit = simple_original.begin();
 		while (it != simple_new.end() && jit != simple_original.end())
@@ -1268,7 +1268,7 @@ cxxSolution::Update(const cxxNameDouble &const_nd)
 					activity_it->second += factors_it->second;
 					activity_it++;
 				}
-				else 
+				else
 				{
 					activity_it++;
 				}
@@ -1525,7 +1525,7 @@ cxxSolution::Multiply_isotopes(LDBLE extensive)
 
 /* ---------------------------------------------------------------------- */
 void
-cxxSolution::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSolution::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles)
 /* ---------------------------------------------------------------------- */
 {
@@ -1567,7 +1567,7 @@ cxxSolution::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	ints.push_back((int) isotopes.size());
 	{
 		std::map < std::string, cxxSolutionIsotope >::iterator it;
-		for (it = isotopes.begin(); it != isotopes.end(); it++) 
+		for (it = isotopes.begin(); it != isotopes.end(); it++)
 		{
 			ints.push_back(dictionary.Find(it->first));
 			it->second.Serialize(dictionary, ints, doubles);
@@ -1579,7 +1579,7 @@ cxxSolution::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	ints.push_back((int) species_map.size());
 	{
 		std::map < int, double >::iterator it;
-		for (it = species_map.begin(); it != species_map.end(); it++) 
+		for (it = species_map.begin(); it != species_map.end(); it++)
 		{
 			ints.push_back(it->first);
 			doubles.push_back(it->second);
@@ -1591,7 +1591,7 @@ cxxSolution::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	ints.push_back((int) log_gamma_map.size());
 	{
 		std::map < int, double >::iterator it;
-		for (it = log_gamma_map.begin(); it != log_gamma_map.end(); it++) 
+		for (it = log_gamma_map.begin(); it != log_gamma_map.end(); it++)
 		{
 			ints.push_back(it->first);
 			doubles.push_back(it->second);
@@ -1674,16 +1674,16 @@ cxxSolution::Deserialize(Dictionary & dictionary, std::vector < int >&ints, std:
 
 
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("totals"),	                            // 0 
-	std::vector< std::string >::value_type("activities"),	                        // 1 
-	std::vector< std::string >::value_type("gammas"),	                            // 2 
-	std::vector< std::string >::value_type("isotopes"),	                            // 3 
-	std::vector< std::string >::value_type("temp"),	                                // 4 
-	std::vector< std::string >::value_type("tc_avoid_conflict_with_technetium"),	// 5 
-	std::vector< std::string >::value_type("temperature"),	                        // 6 
-	std::vector< std::string >::value_type("ph"),	                                // 7 
-	std::vector< std::string >::value_type("pe"),	                                // 8 
-	std::vector< std::string >::value_type("mu"),	                                // 9 
+	std::vector< std::string >::value_type("totals"),	                            // 0
+	std::vector< std::string >::value_type("activities"),	                        // 1
+	std::vector< std::string >::value_type("gammas"),	                            // 2
+	std::vector< std::string >::value_type("isotopes"),	                            // 3
+	std::vector< std::string >::value_type("temp"),	                                // 4
+	std::vector< std::string >::value_type("tc_avoid_conflict_with_technetium"),	// 5
+	std::vector< std::string >::value_type("temperature"),	                        // 6
+	std::vector< std::string >::value_type("ph"),	                                // 7
+	std::vector< std::string >::value_type("pe"),	                                // 8
+	std::vector< std::string >::value_type("mu"),	                                // 9
 	std::vector< std::string >::value_type("ionic_strength"),	                    // 10
 	std::vector< std::string >::value_type("ah2o"),	                                // 11
 	std::vector< std::string >::value_type("activity_water"),	                    // 12
@@ -1700,5 +1700,5 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("soln_vol"),	                            // 23
 	std::vector< std::string >::value_type("species_map"), 	                        // 24
 	std::vector< std::string >::value_type("log_gamma_map") 	                    // 25
-};									   
-const std::vector< std::string > cxxSolution::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxSolution::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

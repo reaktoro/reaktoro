@@ -14,4 +14,3 @@ export PYTHONPATH = $PYTHONPATH:/opt/eclipse/plugins/org.python.pydev_X/pysrc/
 ~~~
 
 If executing from eclipse, just go to `Window → Preferences → PyDev → Interpreters → Python Interpreters`, go to the tab `Libraries` and click on `New Folder`. Go to that directory above and click `OK`.
-

@@ -627,9 +627,9 @@ atan2(const AutoDiffScalar<DerTypeA>& a, const AutoDiffScalar<DerTypeB>& b)
   typedef AutoDiffScalar<Matrix<Scalar,Dynamic,1> > PlainADS;
   PlainADS ret;
   ret.value() = atan2(a.value(), b.value());
-  
+
   Scalar squared_hypot = a.value() * a.value() + b.value() * b.value();
-  
+
   // if (squared_hypot==0) the derivation is undefined and the following results in a NaN:
   ret.derivatives() = (a.derivatives() * b.value() - a.value() * b.derivatives()) / squared_hypot;
 
@@ -645,7 +645,7 @@ EIGEN_AUTODIFF_DECLARE_GLOBAL_UNARY(asin,
   using std::sqrt;
   using std::asin;
   return Eigen::MakeAutoDiffScalar(asin(x.value()),x.derivatives() * (Scalar(1)/sqrt(1-numext::abs2(x.value()))));)
-  
+
 EIGEN_AUTODIFF_DECLARE_GLOBAL_UNARY(acos,
   using std::sqrt;
   using std::acos;

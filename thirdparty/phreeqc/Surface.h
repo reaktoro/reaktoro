@@ -75,7 +75,7 @@ public:
 	void Set_n_solution(int i) {n_solution = i;}
 	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
 	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
-	
+
 protected:
 	std::vector < cxxSurfaceComp > surface_comps;
 	std::vector < cxxSurfaceCharge > surface_charges;

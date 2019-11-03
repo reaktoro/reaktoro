@@ -40,7 +40,7 @@ struct DefaultDevice {
     ::memset(buffer, c, n);
   }
   template<typename Type>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Type get(Type data) const { 
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Type get(Type data) const {
     return data;
   }
 

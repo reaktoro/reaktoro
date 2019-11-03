@@ -105,7 +105,7 @@ void matrix_exp_pade7(const MatA& A, MatU& U, MatV& V)
   const MatrixType A2 = A * A;
   const MatrixType A4 = A2 * A2;
   const MatrixType A6 = A4 * A2;
-  const MatrixType tmp = b[7] * A6 + b[5] * A4 + b[3] * A2 
+  const MatrixType tmp = b[7] * A6 + b[5] * A4 + b[3] * A2
     + b[1] * MatrixType::Identity(A.rows(), A.cols());
   U.noalias() = A * tmp;
   V = b[6] * A6 + b[4] * A4 + b[2] * A2 + b[0] * MatrixType::Identity(A.rows(), A.cols());
@@ -128,7 +128,7 @@ void matrix_exp_pade9(const MatA& A, MatU& U, MatV& V)
   const MatrixType A4 = A2 * A2;
   const MatrixType A6 = A4 * A2;
   const MatrixType A8 = A6 * A2;
-  const MatrixType tmp = b[9] * A8 + b[7] * A6 + b[5] * A4 + b[3] * A2 
+  const MatrixType tmp = b[9] * A8 + b[7] * A6 + b[5] * A4 + b[3] * A2
     + b[1] * MatrixType::Identity(A.rows(), A.cols());
   U.noalias() = A * tmp;
   V = b[8] * A8 + b[6] * A6 + b[4] * A4 + b[2] * A2 + b[0] * MatrixType::Identity(A.rows(), A.cols());
@@ -184,12 +184,12 @@ void matrix_exp_pade17(const MatA& A, MatU& U, MatV& V)
   const MatrixType A8 = A4 * A4;
   V = b[17] * A8 + b[15] * A6 + b[13] * A4 + b[11] * A2; // used for temporary storage
   MatrixType tmp = A8 * V;
-  tmp += b[9] * A8 + b[7] * A6 + b[5] * A4 + b[3] * A2 
+  tmp += b[9] * A8 + b[7] * A6 + b[5] * A4 + b[3] * A2
     + b[1] * MatrixType::Identity(A.rows(), A.cols());
   U.noalias() = A * tmp;
   tmp = b[16] * A8 + b[14] * A6 + b[12] * A4 + b[10] * A2;
   V.noalias() = tmp * A8;
-  V += b[8] * A8 + b[6] * A6 + b[4] * A4 + b[2] * A2 
+  V += b[8] * A8 + b[6] * A6 + b[4] * A4 + b[2] * A2
     + b[0] * MatrixType::Identity(A.rows(), A.cols());
 }
 #endif
@@ -259,7 +259,7 @@ struct matrix_exp_computeUV<MatrixType, double>
     }
   }
 };
-  
+
 template <typename MatrixType>
 struct matrix_exp_computeUV<MatrixType, long double>
 {
@@ -268,16 +268,16 @@ struct matrix_exp_computeUV<MatrixType, long double>
   {
 #if   LDBL_MANT_DIG == 53   // double precision
     matrix_exp_computeUV<MatrixType, double>::run(arg, U, V, squarings);
-  
+
 #else
-  
+
     using std::frexp;
     using std::pow;
     const long double l1norm = arg.cwiseAbs().colwise().sum().maxCoeff();
     squarings = 0;
-  
+
 #if LDBL_MANT_DIG <= 64   // extended precision
-  
+
     if (l1norm < 4.1968497232266989671e-003L) {
       matrix_exp_pade3(arg, U, V);
     } else if (l1norm < 1.1848116734693823091e-001L) {
@@ -293,9 +293,9 @@ struct matrix_exp_computeUV<MatrixType, long double>
       MatrixType A = arg.unaryExpr(MatrixExponentialScalingOp<long double>(squarings));
       matrix_exp_pade13(A, U, V);
     }
-  
+
 #elif LDBL_MANT_DIG <= 106  // double-double
-  
+
     if (l1norm < 3.2787892205607026992947488108213e-005L) {
       matrix_exp_pade3(arg, U, V);
     } else if (l1norm < 6.4467025060072760084130906076332e-003L) {
@@ -313,9 +313,9 @@ struct matrix_exp_computeUV<MatrixType, long double>
       MatrixType A = arg.unaryExpr(MatrixExponentialScalingOp<long double>(squarings));
       matrix_exp_pade17(A, U, V);
     }
-  
+
 #elif LDBL_MANT_DIG <= 113  // quadruple precision
-  
+
     if (l1norm < 1.639394610288918690547467954466970e-005L) {
       matrix_exp_pade3(arg, U, V);
     } else if (l1norm < 4.253237712165275566025884344433009e-003L) {
@@ -333,12 +333,12 @@ struct matrix_exp_computeUV<MatrixType, long double>
       MatrixType A = arg.unaryExpr(MatrixExponentialScalingOp<long double>(squarings));
       matrix_exp_pade17(A, U, V);
     }
-  
+
 #else
-  
+
     // this case should be handled in compute()
-    eigen_assert(false && "Bug in MatrixExponential"); 
-  
+    eigen_assert(false && "Bug in MatrixExponential");
+
 #endif
 #endif  // LDBL_MANT_DIG
   }

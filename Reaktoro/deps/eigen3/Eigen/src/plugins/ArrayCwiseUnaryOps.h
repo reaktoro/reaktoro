@@ -612,7 +612,7 @@ erfc() const
   * function of *this.
   *
   * \specialfunctions_module
-  * 
+  *
   * In other words, considering `x = ndtri(y)`, it returns the argument, x, for which the area under the
   * Gaussian probability density function (integrated from minus infinity to x) is equal to y.
   *

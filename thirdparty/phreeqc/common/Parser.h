@@ -18,10 +18,10 @@
 #include "PHRQ_io.h"
 
 #ifdef _DEBUG
-#define isspace(a) isspace((a) < -1 ? (a) + 256 : (a)) 
+#define isspace(a) isspace((a) < -1 ? (a) + 256 : (a))
 #define isupper(a) isupper((a) < -1 ? (a) + 256 : (a))
-#define islower(a) islower((a) < -1 ? (a) + 256 : (a)) 
-#define isdigit(a) isdigit((a) < -1 ? (a) + 256 : (a)) 
+#define islower(a) islower((a) < -1 ? (a) + 256 : (a))
+#define isdigit(a) isdigit((a) < -1 ? (a) + 256 : (a))
 #define isalpha(a) isalpha((a) < -1 ? (a) + 256 : (a))
 #endif
 
@@ -146,13 +146,13 @@ class CParser: public PHRQ_base
 	{
 		return accumulated;
 	}
-	void set_accumulate(bool tf) 
-	{ 
+	void set_accumulate(bool tf)
+	{
 		if (tf)
 		{
 			accumulated.clear();
 		}
-		this->accumulate = tf; 
+		this->accumulate = tf;
 	}
 	std::istringstream & get_iss()
 	{

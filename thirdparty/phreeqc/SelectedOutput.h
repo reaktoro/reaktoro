@@ -128,7 +128,7 @@ public:
 	inline bool was_set_water()const                                  {return this->set_water;}
 	inline bool was_set_charge_balance()const                         {return this->set_charge_balance;}
 	inline bool was_set_percent_error()const                          {return this->set_percent_error;}
-	
+
 protected:
 
 	// vectors

@@ -69,7 +69,7 @@ public:
 protected:
 	std::vector<LDBLE> x, y;
 	std::string id, color, symbol;
-	int y_axis; 
+	int y_axis;
 	LDBLE line_w, symbol_size;
 
 public:

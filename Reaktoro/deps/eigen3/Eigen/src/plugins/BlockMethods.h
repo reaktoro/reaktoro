@@ -1440,4 +1440,3 @@ template<DirectionType Direction>
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 Index subVectors() const
 { return (Direction==Vertical)?cols():rows(); }
-

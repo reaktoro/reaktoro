@@ -205,7 +205,7 @@ void TMulti::CalculateConcentrationsInPhase( double X[], double XF[], double XFA
                     continue;
                   pm.IC_m[ii] += SPmol* a(j,ii);  // total aqueous molality
                   pm.IC_wm[ii] += X[j]* a(j,ii);  // total aqueous mass concentration
-               } 
+               }
             }
             break;
         case DC_AQ_SOLVENT: // mole fractions of solvent

@@ -102,7 +102,7 @@ EIGEN_DEVICE_FUNC inline void* handmade_aligned_malloc(std::size_t size, std::si
 
   EIGEN_USING_STD(malloc)
   void *original = malloc(size+alignment);
-  
+
   if (original == 0) return 0;
   void *aligned = reinterpret_cast<void*>((reinterpret_cast<std::size_t>(original) & ~(std::size_t(alignment-1))) + alignment);
   *(reinterpret_cast<void**>(aligned) - 1) = original;

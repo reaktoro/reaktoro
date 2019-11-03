@@ -4,7 +4,7 @@ In this tutorial, we'll cover the main classes and methods in %Reaktoro for perf
 
 ## Introduction
 
-Before you start reading the tutorials, it might be worth reading this introductory section containing essential information for the understanding of the underlying theory for modeling chemically reactive systems using either chemical equilibrium or chemical kinetics models. 
+Before you start reading the tutorials, it might be worth reading this introductory section containing essential information for the understanding of the underlying theory for modeling chemically reactive systems using either chemical equilibrium or chemical kinetics models.
 
 This introduction is not meant to be comprehensive. We recommend you to read the following article for a more in-depth discussion about key concepts in chemical equilibrium and chemical kinetics:
 
@@ -16,13 +16,13 @@ This introduction is not meant to be comprehensive. We recommend you to read the
 
 ### Chemical System, Phases, Species, and Elements
 
-When modeling chemically reactive processes, one has to define a *chemical system*. The chemical system definition comprehends all possible phases that could exist for the modeling problem of interest. Examples of phases include aqueous, gaseous, liquid, and solid solutions, pure minerals, plasma. 
+When modeling chemically reactive processes, one has to define a *chemical system*. The chemical system definition comprehends all possible phases that could exist for the modeling problem of interest. Examples of phases include aqueous, gaseous, liquid, and solid solutions, pure minerals, plasma.
 
 Which phases should one consider when defining the chemical system? Selecting an appropriate set of phases not always is a straightforward task. For example, when modeling the chemical reactions within an aqueous solution, either using chemical equilibrium or chemical kinetics models, it is clear that the chemical system should consider an *aqueous phase*. However, suppose this computational modeling is performed at various temperature conditions so that the following possible scenarios can exist:
 
-* What if a decrease in temperature causes the aqueous solution to precipitate one or more mineral phases? 
-* What if an increase in temperature causes gases to exsolve? 
-* What if the temperature increase is so high that the aqueous solution fully evaporates to become a gaseous solution and, as a result, precipitates several minerals that were previously dissolved? 
+* What if a decrease in temperature causes the aqueous solution to precipitate one or more mineral phases?
+* What if an increase in temperature causes gases to exsolve?
+* What if the temperature increase is so high that the aqueous solution fully evaporates to become a gaseous solution and, as a result, precipitates several minerals that were previously dissolved?
 
 The chemical calculations can only predict these phase appearance and disappearance behavior as long as all potentially existing phases are considered in the definition of your chemical system!
 
@@ -30,7 +30,7 @@ Each phase in a chemical system is composed by one or more *chemical species*. E
 
 * *ionic aqueous species*, e.g., Na@sup{+}(aq), Cl@sup{-}(aq), HCO@sub{3}@sup{-}(aq);
 * *neutral aqueous species*, e.g., CO@sub{2}(aq), H@sub{2}O(l);
-* *gases*, e.g., CO@sub{2}(g), H@sub{2}S(g), CH@sub{4}(g), N@sub{2}(g); 
+* *gases*, e.g., CO@sub{2}(g), H@sub{2}S(g), CH@sub{4}(g), N@sub{2}(g);
 * *minerals*, e.g., CaCO@sub{3}(s), SiO@sub{2}(s), Al@sub{2}Si@sub{2}O@sub{5}(OH)@sub{4}(s));
 * *complex organic molecules*, e.g., proteins, lipids, carbohydrates, vitamins.
 
@@ -62,9 +62,9 @@ One can define a chemical system with many phases, each phase containing one or 
 By selecting as many phases as possible, with the possibilities constrained by the *thermodynamic database* being used, one can increase the confidence level of the estimated chemical states. Note, however, that accurate and realistic estimates depend on many more factors than just the selection of potential phases, such as  the *choice of thermodynamic models for non-ideal phases*. Furthermore, note that adding too many phases and species to the definition of the chemical system can result in *more computationally expensive* chemical calculations. In critical performance applications, such as when combining chemical reactions and fluid flow and species transport modeling, restricting the number of phases and species might be necessary for achieving feasible simulation times. The modeler is responsible to decide to which extent the number of phases and species can be compromised for efficiency reasons at the expense of chemical realism!
 
 ### Thermodynamic Assumption for the Phases
-In the discussion above, the phases are modeled using *thermodynamics*. A thermodynamic model for a phase presumes that temperature, pressure, and species concentrations are *uniform* within its boundaries. As a result, all other physical and chemical phase properties, such as density, enthalpy, heat capacity, viscosity, which in turn depend on temperature, pressure, and species concentrations, are the same everywhere inside the phase. 
+In the discussion above, the phases are modeled using *thermodynamics*. A thermodynamic model for a phase presumes that temperature, pressure, and species concentrations are *uniform* within its boundaries. As a result, all other physical and chemical phase properties, such as density, enthalpy, heat capacity, viscosity, which in turn depend on temperature, pressure, and species concentrations, are the same everywhere inside the phase.
 
-If your modeling problem considers, for example, a fluid with concentration gradients within it, then your problem involves more than just chemical reactions: it also involves *diffusion*, and possibly other transport mechanisms! If these concentration gradients are insignificant for the given time and space scale of your problem, then these phases can be modeled thermodynamically. If not, it might still be possible to subdivide the time and/or space scales of your problem into smaller ones within which a thermodynamic model for the phases are plausible. 
+If your modeling problem considers, for example, a fluid with concentration gradients within it, then your problem involves more than just chemical reactions: it also involves *diffusion*, and possibly other transport mechanisms! If these concentration gradients are insignificant for the given time and space scale of your problem, then these phases can be modeled thermodynamically. If not, it might still be possible to subdivide the time and/or space scales of your problem into smaller ones within which a thermodynamic model for the phases are plausible.
 
 For example, a fluid flowing along a tube or within a porous medium can experience different temperatures, pressures, and possess different species concentrations at different points in space and time. This fluid, as a whole, certainly has no uniform properties within its boundaries. However, by discretizing the larger space in which the fluid flows into several sufficiently small control volumes, or using fine enough discrete grid points, the assumption that the fluid has uniform properties can be established inside those small control volumes or at those grid points.
 
@@ -91,7 +91,7 @@ In a chemical equilibrium calculation, the molar amounts of the *chemical specie
 ## Chemical Equilibrium Calculations
 
 
-In this section, we present tutorials for chemical equilibrium calculations. 
+In this section, we present tutorials for chemical equilibrium calculations.
 
 
 ### Calculating the equilibrium state of a H@sub{2}O–NaCl–CO@sub{2} system
@@ -113,7 +113,7 @@ In this tutorial, we show how to perform an equilibrium calculation in which 1 k
 
 @todo Provide more brief details below.
 
-In this tutorial, we show how to perform a sequence of equilibrium calculations that describes the reaction path of a H@sub{2}O--HCl--CaCO@sub{3} system in which HCl is gradually added to the system. 
+In this tutorial, we show how to perform a sequence of equilibrium calculations that describes the reaction path of a H@sub{2}O--HCl--CaCO@sub{3} system in which HCl is gradually added to the system.
 
 @htmlonly
 <a href="tutorial-equilibriumpath-calcite-hcl.html"
@@ -141,4 +141,3 @@ In this tutorial, we show how to perform a sequence of equilibrium calculations 
 <!-- - @subpage chemical-kinetics-calculations -->
 - @subpage defining-chemical-systems
 - @subpage thermodynamic-databases
-

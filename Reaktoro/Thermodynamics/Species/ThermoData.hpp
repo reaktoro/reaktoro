@@ -244,5 +244,3 @@ struct MineralSpeciesThermoData : SpeciesThermoData
 };
 
 } // namespace Reaktoro
-
-

@@ -126,4 +126,3 @@ StringList::operator const std::vector<std::string>&() const
 }
 
 } // namespace Reaktoro
-

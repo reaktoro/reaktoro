@@ -19,35 +19,35 @@
 from reaktoro import *
 
 # Step 2: Initialize a thermodynamic database
-db = Database('supcrt98.xml')
+db = Database("supcrt98.xml")
 
 # Step 3: Define the chemical system
 editor = ChemicalEditor(db)
-editor.addAqueousPhaseWithElements('H O Na Cl C')
-editor.addGaseousPhase(['CO2(g)'])
+editor.addAqueousPhaseWithElements("H O Na Cl C")
+editor.addGaseousPhase(["CO2(g)"])
 
 # Step 4: Construct the chemical system
 system = ChemicalSystem(editor)
 
 # Step 5: Define the chemical equilibrium problem
 problem = EquilibriumProblem(system)
-problem.setTemperature(60, 'celsius')
-problem.setPressure(100, 'bar')
-problem.add('H2O', 1.0, 'kg')
-problem.add('NaCl', 1.0, 'mol')
-problem.add('CO2', 10.0, 'mol')
+problem.setTemperature(60, "celsius")
+problem.setPressure(100, "bar")
+problem.add("H2O", 1.0, "kg")
+problem.add("NaCl", 1.0, "mol")
+problem.add("CO2", 10.0, "mol")
 
 # Step 6: Calculate the chemical equilibrium state
 state = equilibrate(problem)
 
 # Step 7: Output the calculated chemical state to a file
-state.output('result.txt')
+state.output("result.txt")
 
 # Step 8: Print the amounts of some aqueous species
-print('Amount of CO2(aq):', state.speciesAmount('CO2(aq)'))
-print('Amount of HCO3-:', state.speciesAmount('HCO3-'))
-print('Amount of CO3--:', state.speciesAmount('CO3--'))
+print("Amount of CO2(aq):", state.speciesAmount("CO2(aq)"))
+print("Amount of HCO3-:", state.speciesAmount("HCO3-"))
+print("Amount of CO3--:", state.speciesAmount("CO3--"))
 
 # Step 9: Print the amounts of element C in both aqueous and gaseous phases
-print('Amount of C in aqueous phase:', state.elementAmountInPhase('C', 'Aqueous'))
-print('Amount of C in gaseous phase:', state.elementAmountInPhase('C', 'Gaseous'))
+print("Amount of C in aqueous phase:", state.elementAmountInPhase("C", "Aqueous"))
+print("Amount of C in gaseous phase:", state.elementAmountInPhase("C", "Gaseous"))

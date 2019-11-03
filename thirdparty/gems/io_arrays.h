@@ -121,7 +121,7 @@ class TRWArrays  /// Basic class for red/write fields of structure
          if( ii >=0 )
            return getAlws(ii);
          else
-        return false;	 
+        return false;
     }
 
 };
@@ -267,7 +267,7 @@ public:
     bool  readFormat( gstring& format );
 
     inline void setCurrentArray( const char* name, long int size );
- 
+
 
  public:
 

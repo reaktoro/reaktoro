@@ -2,7 +2,7 @@ TITLE Example 2.--Temperature dependence of solubility
                   of gypsum and anhydrite
 SOLUTION 1 Pure water
         pH      7.0
-        temp    25.0                
+        temp    25.0
 EQUILIBRIUM_PHASES 1
         Gypsum          0.0     1.0
         Anhydrite       0.0     1.0

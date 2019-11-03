@@ -221,7 +221,7 @@ to_text_file( "MultiDumpD.txt" );   // Debugging
                 // no or only partial cleanup can be done
          pm.MK = 2;   // Set to check in ComputeEquilibriumState() later on
          if( pm.pNP )
-         {   // bad SIA mode - trying the AIA mode 
+         {   // bad SIA mode - trying the AIA mode
               goto FORCED_AIA;
          }
          goto FORCED_AIA; // even if in AIA, start over and go until r-1 then finish and do MBR
@@ -1896,7 +1896,7 @@ long int TMulti::Check_uDD( long int mode, double DivTol,  bool trace )
   //  Check here that pm.PCI is reasonable (i.e. C_D < 1)?
   //
     for( i=0; i<nNu; i++)
-    {    
+    {
       if( DivTol >= 1e6 )
           continue;     // Disabling divergence checks for complete tracing
       // Checking absolute ranges of u[i] - to be checked for 'exotic' systems!

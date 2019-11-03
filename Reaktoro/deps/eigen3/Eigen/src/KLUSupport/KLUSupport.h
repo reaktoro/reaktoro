@@ -253,7 +253,7 @@ class KLU : public SparseSolverBase<KLU<_MatrixType> >
 
       m_numeric = klu_factor(const_cast<StorageIndex*>(mp_matrix.outerIndexPtr()), const_cast<StorageIndex*>(mp_matrix.innerIndexPtr()), const_cast<Scalar*>(mp_matrix.valuePtr()),
                                     m_symbolic, &m_common, Scalar());
-                                         
+
 
       m_info = m_numeric ? Success : NumericalIssue;
       m_factorizationIsOk = m_numeric ? 1 : 0;

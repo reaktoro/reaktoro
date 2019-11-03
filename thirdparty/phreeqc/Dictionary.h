@@ -25,4 +25,3 @@ protected:
 };
 
 #endif // !defined(DICTIONARY_H_INCLUDED)
-

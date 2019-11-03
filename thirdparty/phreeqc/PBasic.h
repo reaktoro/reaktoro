@@ -495,7 +495,7 @@ public:
 	int P_subset(register long *s1, register long *s2);
 	long * P_setcpy(register long *d, register long *s);
 	long * P_expset(register long *d, register long s);
-	long P_packset(register long *s);	
+	long P_packset(register long *s);
 	int _OutMem(void);
 	int _CaseCheck(void);
 	int _NilCheck(void);

@@ -47,7 +47,30 @@ def equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar():
 
     editor = ChemicalEditor(database)
     editor.addAqueousPhase(
-        ["CO(aq)", "CO2(aq)", "CO3--", "Cl-", "ClO-", "ClO2-", "ClO3-", "ClO4-", "H+", "H2(aq)", "H2O(l)", "H2O2(aq)", "HCO3-", "HCl(aq)", "HClO(aq)", "HClO2(aq)", "HO2-", "Na+", "NaCl(aq)", "NaOH(aq)", "O2(aq)", "OH-"]
+        [
+            "CO(aq)",
+            "CO2(aq)",
+            "CO3--",
+            "Cl-",
+            "ClO-",
+            "ClO2-",
+            "ClO3-",
+            "ClO4-",
+            "H+",
+            "H2(aq)",
+            "H2O(l)",
+            "H2O2(aq)",
+            "HCO3-",
+            "HCl(aq)",
+            "HClO(aq)",
+            "HClO2(aq)",
+            "HO2-",
+            "Na+",
+            "NaCl(aq)",
+            "NaOH(aq)",
+            "O2(aq)",
+            "OH-",
+        ]
     ).setActivityModelDrummondCO2()
     editor.addGaseousPhase(["H2O(g)", "CO2(g)"]).setChemicalModelSpycherPruessEnnis()
     editor.addMineralPhase("Halite")

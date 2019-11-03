@@ -11,7 +11,7 @@
 #ifndef EIGEN_FULLPIVOTINGHOUSEHOLDERQR_H
 #define EIGEN_FULLPIVOTINGHOUSEHOLDERQR_H
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 
@@ -43,18 +43,18 @@ struct traits<FullPivHouseholderQRMatrixQReturnType<MatrixType> >
   * \tparam _MatrixType the type of the matrix of which we are computing the QR decomposition
   *
   * This class performs a rank-revealing QR decomposition of a matrix \b A into matrices \b P, \b P', \b Q and \b R
-  * such that 
+  * such that
   * \f[
   *  \mathbf{P} \, \mathbf{A} \, \mathbf{P}' = \mathbf{Q} \, \mathbf{R}
   * \f]
-  * by using Householder transformations. Here, \b P and \b P' are permutation matrices, \b Q a unitary matrix 
+  * by using Householder transformations. Here, \b P and \b P' are permutation matrices, \b Q a unitary matrix
   * and \b R an upper triangular matrix.
   *
   * This decomposition performs a very prudent full pivoting in order to be rank-revealing and achieve optimal
   * numerical stability. The trade-off is that it is slower than HouseholderQR and ColPivHouseholderQR.
   *
   * This class supports the \link InplaceDecomposition inplace decomposition \endlink mechanism.
-  * 
+  *
   * \sa MatrixBase::fullPivHouseholderQr()
   */
 template<typename _MatrixType> class FullPivHouseholderQR
@@ -116,12 +116,12 @@ template<typename _MatrixType> class FullPivHouseholderQR
       *
       * This constructor computes the QR factorization of the matrix \a matrix by calling
       * the method compute(). It is a short cut for:
-      * 
+      *
       * \code
       * FullPivHouseholderQR<MatrixType> qr(matrix.rows(), matrix.cols());
       * qr.compute(matrix);
       * \endcode
-      * 
+      *
       * \sa compute()
       */
     template<typename InputType>
@@ -317,9 +317,9 @@ template<typename _MatrixType> class FullPivHouseholderQR
 
     inline Index rows() const { return m_qr.rows(); }
     inline Index cols() const { return m_qr.cols(); }
-    
+
     /** \returns a const reference to the vector of Householder coefficients used to represent the factor \c Q.
-      * 
+      *
       * For advanced uses only.
       */
     const HCoeffsType& hCoeffs() const { return m_hCoeffs; }
@@ -465,7 +465,7 @@ void FullPivHouseholderQR<MatrixType>::computeInPlace()
   Index cols = m_qr.cols();
   Index size = (std::min)(rows,cols);
 
-  
+
   m_hCoeffs.resize(size);
 
   m_temp.resize(cols);
@@ -611,14 +611,14 @@ void FullPivHouseholderQR<_MatrixType>::_solve_impl_transposed(const RhsType &rh
 #endif
 
 namespace internal {
-  
+
 template<typename DstXprType, typename MatrixType>
 struct Assignment<DstXprType, Inverse<FullPivHouseholderQR<MatrixType> >, internal::assign_op<typename DstXprType::Scalar,typename FullPivHouseholderQR<MatrixType>::Scalar>, Dense2Dense>
 {
   typedef FullPivHouseholderQR<MatrixType> QrType;
   typedef Inverse<QrType> SrcXprType;
   static void run(DstXprType &dst, const SrcXprType &src, const internal::assign_op<typename DstXprType::Scalar,typename QrType::Scalar> &)
-  {    
+  {
     dst = src.nestedExpression().solve(MatrixType::Identity(src.rows(), src.cols()));
   }
 };

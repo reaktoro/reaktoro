@@ -45,7 +45,7 @@ public:
     /// ReactionEquation equation2("CO2(g) + H2O(l) = H+ + HCO3-");
     /// ReactionEquation equation3("Dolomite + 2*H+ = Ca++ + Mg++ + 2*HCO3-");
     /// ~~~
-    /// Note that unity stoichiometry coefficients can be ommited from the equation. 
+    /// Note that unity stoichiometry coefficients can be ommited from the equation.
     /// The operator `*` must be used when this is not the case.
     /// @param equation The string representing the rection equation
     ReactionEquation(std::string equation);
@@ -107,4 +107,3 @@ inline auto end(Reaktoro::ReactionEquation& equation) -> decltype(equation.equat
 }
 
 } // namespace Reaktoro
-

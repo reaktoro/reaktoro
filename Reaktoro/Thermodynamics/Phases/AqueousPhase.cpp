@@ -76,7 +76,7 @@ struct AqueousPhase::Impl
 
             // Evaluate the aqueous chemical model
 			base_model(res, T, P, n);
-            
+
             // Update the activity coefficients and activities of selected species
             for(auto pair : ln_activity_coeff_functions)
             {

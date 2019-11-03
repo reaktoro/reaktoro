@@ -411,7 +411,7 @@ public:
     /// editor.addMineralPhaseWithElements({"Ca", "C", "O"});
     ///
     /// // This will only recognize the element "O", and CaC will be ignored
-    /// editor.addMineralPhaseWithElements({"CaC", "O"}); 
+    /// editor.addMineralPhaseWithElements({"CaC", "O"});
     /// ~~~
     /// @note In most cases, the solid solutions of interest have predefined mineral composition, so that
     /// one might prefer instead to list the mineral end-members one by one, instead of letting

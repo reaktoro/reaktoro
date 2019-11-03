@@ -186,7 +186,7 @@ transport(void)
     	warning_msg(token);
    }
  */
-		
+
 		Rxn_mix_map.clear();
 
 /*
@@ -883,7 +883,7 @@ init_mix(void)
 /*
  * Fill mix structure
  */
-	
+
 		if (l_nmix != 0)
 		{
 			for (i = 1; i <= count_cells; i++)
@@ -988,7 +988,7 @@ init_mix(void)
 		/*
 		 * Fill mix structure
 		 */
-		
+
 		if (l_nmix != 0)
 		{
 			for (i = 1; i <= count_cells; i++)
@@ -1728,7 +1728,7 @@ multi_D(LDBLE DDt, int mobile_cell, int stagnant)
 					temp = 0.0;
 					length = (int) strlen(m_s[l].name);
 					cxxNameDouble::iterator it;
-					for (it = use.Get_solution_ptr()->Get_totals().begin(); 
+					for (it = use.Get_solution_ptr()->Get_totals().begin();
 						it != use.Get_solution_ptr()->Get_totals().end(); it++)
 					{
 						LDBLE moles = it->second;
@@ -1812,13 +1812,13 @@ multi_D(LDBLE DDt, int mobile_cell, int stagnant)
 					temp = 0.0;
 					length = (int) strlen(m_s[l].name);
 					cxxNameDouble::iterator it;
-					for (it = use.Get_solution_ptr()->Get_totals().begin(); 
+					for (it = use.Get_solution_ptr()->Get_totals().begin();
 						it != use.Get_solution_ptr()->Get_totals().end(); it++)
 					{
 						length2 = (int) (size_t) strcspn(
 							it->first.c_str(), "(");
 						if (strncmp(m_s[l].name,
-							it->first.c_str(), length) == 0 
+							it->first.c_str(), length) == 0
 							&& length == length2)
 						{
 							if (it->second < -m_s[l].tot2)
@@ -1962,7 +1962,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 	 *    A_icell = (L porewater in i_cell / length_icell) / tort_f_icell /
 	 *       (length_icell / 2)
 	 *    lav = A_icell + A_jcell
-	 *    grad(c) is concentration difference in icell and jcell, 
+	 *    grad(c) is concentration difference in icell and jcell,
 		   for activity corrections see Appelo & Wersin, 2007.
 	 *  stagnant TRUE:
 	 * J_ij = mixf_ij * (-D_i*grad(c) + D_i*z_i*c_i * SUM(D_i*z_i*grad(c)) / SUM(D_i*(z_i)^2*c_i))
@@ -1974,7 +1974,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 		stagnant: mixf_il is mixf * por_il / por.
 					por_il = interlayer porosity, from -interlayer_D true 'por_il'.
 		            por = total porosity, from -multi_D true 'multi_Dpor'.
-		            **nov. 12, 2011**: 
+		            **nov. 12, 2011**:
 							mixf is corrected, * (1 - por_il / por).
 							new_pf = (por - por_il)^(-multi_Dn).
 		in regular column, A is calc'd from (free + DL porewater) and cell-length.
@@ -2067,7 +2067,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 			/* find the one (and only one...) immobile surface comp with DL... */
 			for (i = 0; i < (int) s_ptr1->Get_surface_comps().size(); i++)
 			{
-				cxxSurfaceComp * comp_i_ptr = &(s_ptr1->Get_surface_comps()[i]); 
+				cxxSurfaceComp * comp_i_ptr = &(s_ptr1->Get_surface_comps()[i]);
 				if (comp_i_ptr->Get_Dw() == 0)
 				{
 					s_charge_ptr1 = s_ptr1->Find_charge(comp_i_ptr->Get_charge_name());
@@ -2078,7 +2078,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 					{
 						cxxSurfaceComp * comp_j_ptr = &(s_ptr1->Get_surface_comps()[j]);
 						if (comp_j_ptr->Get_Dw() == 0
-							&& (comp_j_ptr->Get_charge_name() != 
+							&& (comp_j_ptr->Get_charge_name() !=
 							comp_i_ptr->Get_charge_name()))
 						{
 							if (!warn_fixed_Surf)
@@ -2120,7 +2120,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 					{
 						cxxSurfaceComp * comp_j_ptr = &(s_ptr2->Get_surface_comps()[j]);
 						if (comp_j_ptr->Get_Dw() == 0
-							&& (comp_j_ptr->Get_charge_name() != 
+							&& (comp_j_ptr->Get_charge_name() !=
 							comp_i_ptr->Get_charge_name()))
 						{
 							if (!warn_fixed_Surf)
@@ -2169,7 +2169,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 	cec1 = cec2 = cec12 = rc1 = rc2 = 0.0;
 	if (il_calcs)
 	{
-		/* find interlayer porosity por_il, 
+		/* find interlayer porosity por_il,
 		   make it relative to exchange capacity (mol X/L), highest X in sol_D[1].x_max (mol X / L).
 		   Find amounts of IL water and cec.
 		   Must do this separately, since por and por_il are in cell_data structure. */
@@ -2221,18 +2221,18 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 				cell_data[icell - 1].por_il;
 			por_il2 = sol_D[jcell].exch_total / aq2 / sol_D[1].x_max *
 				cell_data[jcell - 1].por_il;
-		
+
 			if (sol_D[icell].exch_total > 3e-10 && sol_D[jcell].exch_total > 3e-10)
 				por_il12 = (por_il1 + por_il2) / 2;
 			else
 				por_il12 = (por_il1 >= por_il2 ? por_il1 : por_il2);
 			if (por_il12 > 0.999 * cell_data[icell - 1].por || por_il12 > 0.999 * cell_data[jcell - 1].por)
-				por_il12 = (cell_data[icell - 1].por >= cell_data[jcell - 1].por ? 
-					0.999 * cell_data[jcell - 1].por : 
+				por_il12 = (cell_data[icell - 1].por >= cell_data[jcell - 1].por ?
+					0.999 * cell_data[jcell - 1].por :
 					0.999 * cell_data[icell - 1].por);
 			aq_il1 = (aq1 + dl_aq1) * por_il1 /
                 (cell_data[icell - 1].por - por_il1);
-			aq_il2 = (aq2 + dl_aq2) * por_il2 / 
+			aq_il2 = (aq2 + dl_aq2) * por_il2 /
                 (cell_data[jcell - 1].por - por_il2);
 		}
 		if (por_il12 == 0)
@@ -2742,7 +2742,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 	 */
 	if (il_calcs && Dz2c_il != 0 && k_il > 0)
 	{
-		
+
 		cxxExchange *ex_ptr1 = Utilities::Rxn_find(Rxn_exchange_map, icell);
 		cxxExchange *ex_ptr2 = Utilities::Rxn_find(Rxn_exchange_map, jcell);
 		c = 0.0;
@@ -2787,7 +2787,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 				cxxNameDouble::iterator it = nd.begin();
 				i_max = 0;
 				for (; it != nd.end(); it++)
-				{ 
+				{
 					if (strcmp("X", it->first.c_str()) == 0)
 						i_max = 1;
 				}
@@ -2802,7 +2802,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 				cxxNameDouble::iterator it = nd.begin();
 				/* transfer O and H... */
 				for (; it != nd.end(); it++)
-				{				
+				{
 					struct element *elt_ptr = element_store(it->first.c_str());
 					LDBLE coef = it->second;
 					if (strcmp("H", elt_ptr->name) == 0)
@@ -2873,7 +2873,7 @@ find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant)
 				cxxNameDouble::iterator it = nd.begin();
 				i_max = 0;
 				for (; it != nd.end(); it++)
-				{ 
+				{
 					if (strcmp("X", it->first.c_str()) == 0)
 						i_max = 1;
 				}
@@ -2977,7 +2977,7 @@ disp_surf(LDBLE DDt)
  *		       but only mobile surface_comp's (Dw > 0) and their surface_charge's are transported.
  */
 {
-	int i, i1, i2, k, k1; 
+	int i, i1, i2, k, k1;
 	int charge_done, surf1, surf2;
 	LDBLE f1, f2, mixf, mixf_store, mcd_mixf;
 	LDBLE lav, A_ij, por, Dp1, Dp2;
@@ -3072,7 +3072,7 @@ disp_surf(LDBLE DDt)
 				if (surface_n1.Get_surface_charges().size() > 1)
 				{
 					std::string charge_name = surface_n1.Get_surface_charges()[0].Get_name();
-					surface_n1 = sum_surface_comp(&surface_n1, 0, 
+					surface_n1 = sum_surface_comp(&surface_n1, 0,
 						&surface_n1, charge_name, 1, surface_n1.Get_surface_comps()[0].Get_Dw());
 				}
 				f1 = 0;
@@ -3137,10 +3137,10 @@ disp_surf(LDBLE DDt)
 				lav =
 					(cell_data[i1 - 1].length + cell_data[i2 - 1].length) / 2;
 				A_ij =
-					Utilities::Rxn_find(Rxn_solution_map, i1)->Get_mass_water() / 
+					Utilities::Rxn_find(Rxn_solution_map, i1)->Get_mass_water() /
 					(cell_data[i1 - 1].length * cell_data[i1 - 1].por);
 				A_ij +=
-					Utilities::Rxn_find(Rxn_solution_map, i2)->Get_mass_water() / 
+					Utilities::Rxn_find(Rxn_solution_map, i2)->Get_mass_water() /
 					(cell_data[i2 - 1].length * cell_data[i2 - 1].por);
 				A_ij /= 2;
 				A_ij *=
@@ -3160,7 +3160,7 @@ disp_surf(LDBLE DDt)
 					std::string charge_name = comp_k_ptr->Get_charge_name();
 					if (comp_k_ptr->Get_Dw() == 0)
 						continue;
-					
+
 					charge_done = FALSE;
 					for (k1 = 0; k1 < k; k1++)
 					{
@@ -3585,7 +3585,7 @@ mobile_surface_copy(cxxSurface *surface_old_ptr,
 		// Return value is temp_surface
 		temp_surface.Set_n_user_both(n_user_new);
 	}
-	
+
 	/* delete moved parts from old surface */
 	if (move_old && i1 > 0)
 	{

@@ -10,7 +10,7 @@
 #ifndef EIGEN_PARTIALREDUX_H
 #define EIGEN_PARTIALREDUX_H
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 
@@ -110,7 +110,7 @@ struct packetwise_redux_impl<Func, Evaluator, NoUnrolling>
   {
     if(size==0)
       return packetwise_redux_empty_value<PacketType>(func);
-    
+
     const Index size4 = (size-1)&(~3);
     PacketType p = eval.template packetByOuterInner<Unaligned,PacketType>(0,0);
     Index i = 1;
@@ -146,19 +146,19 @@ struct evaluator<PartialReduxExpr<ArgType, MemberOp, Direction> >
     CoeffReadCost = TraversalSize==Dynamic ? HugeCost
                   : TraversalSize==0 ? 1
                   : TraversalSize * evaluator<ArgType>::CoeffReadCost + int(CostOpType::value),
-    
+
     _ArgFlags = evaluator<ArgType>::Flags,
 
     _Vectorizable =  bool(int(_ArgFlags)&PacketAccessBit)
                   && bool(MemberOp::Vectorizable)
                   && (Direction==int(Vertical) ? bool(_ArgFlags&RowMajorBit) : (_ArgFlags&RowMajorBit)==0)
                   && (TraversalSize!=0),
-                  
+
     Flags = (traits<XprType>::Flags&RowMajorBit)
           | (evaluator<ArgType>::Flags&(HereditaryBits&(~RowMajorBit)))
           | (_Vectorizable ? PacketAccessBit : 0)
           | LinearAccessBit,
-    
+
     Alignment = 0 // FIXME this will need to be improved once PartialReduxExpr is vectorized
   };
 
@@ -189,7 +189,7 @@ struct evaluator<PartialReduxExpr<ArgType, MemberOp, Direction> >
   {
     return packet<LoadMode,PacketType>(Direction==Vertical ? j : i);
   }
-  
+
   template<int LoadMode,typename PacketType>
   EIGEN_STRONG_INLINE EIGEN_DEVICE_FUNC
   PacketType packet(Index idx) const
@@ -199,7 +199,7 @@ struct evaluator<PartialReduxExpr<ArgType, MemberOp, Direction> >
                   Direction==Vertical ? int(ArgType::RowsAtCompileTime) : int(PacketSize),
                   Direction==Vertical ? int(PacketSize) : int(ArgType::ColsAtCompileTime),
                   true /* InnerPanel */> PanelType;
-    
+
     PanelType panel(m_arg,
                     Direction==Vertical ? 0 : idx,
                     Direction==Vertical ? idx : 0,
@@ -212,7 +212,7 @@ struct evaluator<PartialReduxExpr<ArgType, MemberOp, Direction> >
     // So let's just by pass "vectorization" in this case:
     if(PacketSize==1)
       return internal::pset1<PacketType>(coeff(idx));
-    
+
     typedef typename internal::redux_evaluator<PanelType> PanelEvaluator;
     PanelEvaluator panel_eval(panel);
     typedef typename MemberOp::BinaryOp BinaryOp;

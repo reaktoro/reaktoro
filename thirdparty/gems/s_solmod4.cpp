@@ -4888,5 +4888,3 @@ void TELVIS::TELVIS_test_out( const char *path, const double M ) const
 }
 
 //--------------------- End of s_solmod4.cpp ---------------------------
-
-

@@ -64,9 +64,9 @@ class cxxSolution:public cxxNumKeyword
 	cxxNameDouble & Get_species_gamma(void)             {return this->species_gamma;}
 	std::map<int, double> & Get_species_map(void)       {return this->species_map;}
 	std::map<int, double> & Get_log_gamma_map(void)     {return this->log_gamma_map;}
-	std::map < std::string, cxxSolutionIsotope > & Get_isotopes(void)             {return this->isotopes;}	
-	const std::map < std::string, cxxSolutionIsotope > & Get_isotopes(void)const  {return this->isotopes;}	
-	void Set_isotopes(const std::map < std::string, cxxSolutionIsotope > &iso ) {this->isotopes = iso;}	
+	std::map < std::string, cxxSolutionIsotope > & Get_isotopes(void)             {return this->isotopes;}
+	const std::map < std::string, cxxSolutionIsotope > & Get_isotopes(void)const  {return this->isotopes;}
+	void Set_isotopes(const std::map < std::string, cxxSolutionIsotope > &iso ) {this->isotopes = iso;}
 	cxxISolution *Get_initial_data()                    {return this->initial_data;}
 	const cxxISolution *Get_initial_data()const         {return this->initial_data;}
 	void Set_initial_data(const cxxISolution * id)
@@ -101,7 +101,7 @@ class cxxSolution:public cxxNumKeyword
 	void dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out=NULL) const;
 
 	LDBLE Get_master_activity(char *string) const;
-	void Set_master_activity(char *string, LDBLE value);	
+	void Set_master_activity(char *string, LDBLE value);
 	LDBLE Get_total(const char *string) const;
 	LDBLE Get_total_element(const char *string) const;
 	void Set_total(char *string, LDBLE value);

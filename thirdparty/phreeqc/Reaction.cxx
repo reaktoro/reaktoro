@@ -19,7 +19,7 @@
 
 cxxReaction::cxxReaction(PHRQ_io *io)
 	//
-	// default constructor for cxxReaction 
+	// default constructor for cxxReaction
 	//
 :	cxxNumKeyword(io)
 {
@@ -214,7 +214,7 @@ cxxReaction::read_raw(CParser & parser, const bool check)
 			break;
 
 		case 3:				// steps
-			if (!cleared_once) 
+			if (!cleared_once)
 			{
 				this->steps.clear();
 				cleared_once = true;
@@ -295,7 +295,7 @@ cxxReaction::read_raw(CParser & parser, const bool check)
 int cxxReaction::
 Get_reaction_steps(void) const
 {
-	if (equalIncrements) 
+	if (equalIncrements)
 	{
 		return this->countSteps;
 	}
@@ -308,5 +308,5 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("steps"),	        //3
 	std::vector< std::string >::value_type("equal_increments"),	//4
 	std::vector< std::string >::value_type("count_steps") 	    //5
-};									   
-const std::vector< std::string > cxxReaction::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxReaction::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

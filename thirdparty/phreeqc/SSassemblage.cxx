@@ -23,7 +23,7 @@
 
 cxxSSassemblage::cxxSSassemblage(PHRQ_io * io)
 	//
-	// default constructor for cxxSSassemblage 
+	// default constructor for cxxSSassemblage
 	//
 :	cxxNumKeyword(io)
 {
@@ -186,7 +186,7 @@ cxxSSassemblage::read_raw(CParser & parser, bool check)
 				temp_ss.Set_name(str);
 				ss_ptr = this->Find(str);
 				if (ss_ptr)
-				{ 
+				{
 					temp_ss = *ss_ptr;
 				}
 				temp_ss.read_raw(parser, false);
@@ -289,7 +289,7 @@ Find(const std::string &s)
 	return NULL;
 }
 void
-cxxSSassemblage::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSSassemblage::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles)
 {
 	/* int n_user; */
@@ -307,7 +307,7 @@ cxxSSassemblage::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 }
 
 void
-cxxSSassemblage::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSSassemblage::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 {
 
@@ -337,5 +337,5 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("solid_solution"),	    // 0
 	std::vector< std::string >::value_type("ssassemblage_totals"),	// 1
 	std::vector< std::string >::value_type("new_def") 	            // 2
-};									   
-const std::vector< std::string > cxxSSassemblage::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxSSassemblage::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

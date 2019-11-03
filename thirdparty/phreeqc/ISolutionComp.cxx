@@ -11,8 +11,8 @@
 
 cxxISolutionComp::cxxISolutionComp(PHRQ_io *io):
 PHRQ_base(io),
-moles(0.0), 
-input_conc(0.0), 
+moles(0.0),
+input_conc(0.0),
 phase_si(0.0),
 gfw(0.0)
 {
@@ -81,7 +81,7 @@ cxxISolutionComp::set_gfw(Phreeqc * phreeqc_ptr)
 			error_msg(oss.str().c_str(), CONTINUE);
 			return;
 		}
-		//if (this->description == "Alkalinity" && this->as == "CaCO3") 
+		//if (this->description == "Alkalinity" && this->as == "CaCO3")
 		if (strcmp(this->description.c_str(), "Alkalinity") == 0
 			&& strcmp(this->as.c_str(), "CaCO3"))
 		{
@@ -109,7 +109,7 @@ cxxISolutionComp::set_gfw(Phreeqc * phreeqc_ptr)
 cxxISolutionComp::STATUS_TYPE cxxISolutionComp::read(CParser & parser,
 													 cxxISolution & solution)
 {
-	// std::string& str = parser.line(); 
+	// std::string& str = parser.line();
 	std::string str = parser.line();
 
 	// defaults set in ctor
@@ -291,8 +291,8 @@ read(const char *line_in, cxxSolution *solution_ptr)
  */
 	std::string master_list;
 	std::string token;
-	std::string::iterator b = line.begin(); 
-	std::string::iterator e = line.end(); 
+	std::string::iterator b = line.begin();
+	std::string::iterator e = line.end();
 	{
 		int j;
 		while (((j = CParser::copy_token(token, b, e)) == CParser::TT_UPPER) ||

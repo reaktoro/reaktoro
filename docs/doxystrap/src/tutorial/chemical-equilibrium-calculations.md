@@ -50,7 +50,7 @@ The first line:
     #include <Reaktoro/Reaktoro.hpp>
 ~~~
 
-include the main %Reaktoro header file, `Reaktoro.hpp`. By doing this, the application has access to all %Reaktoro's classes and methods. 
+include the main %Reaktoro header file, `Reaktoro.hpp`. By doing this, the application has access to all %Reaktoro's classes and methods.
 
 The second line:
 
@@ -69,7 +69,7 @@ Database db;("supcrt98.xml");
 
 initializes a [Database](@ref Reaktoro::Database) object using the thermodynamic database file [supcrt98.xml]. This file was produced by converting the SUPCRT92@sup{@cite Johnson1992} database file [slop98.dat] into XML format. Read @ref thermodynamic-databases for more details about this and other databases supported by %Reaktoro.
 
-Once the [Database](@ref Reaktoro::Database) object has been initialized, one can use it to construct an object of class [ChemicalSystem](@ref Reaktoro::ChemicalSystem). This is one of the most important classes in %Reaktoro, and it is the class that represents a chemical system as a collection of phases, with each phase containing one or more chemical species. 
+Once the [Database](@ref Reaktoro::Database) object has been initialized, one can use it to construct an object of class [ChemicalSystem](@ref Reaktoro::ChemicalSystem). This is one of the most important classes in %Reaktoro, and it is the class that represents a chemical system as a collection of phases, with each phase containing one or more chemical species.
 
 The lines of code:
 
@@ -81,7 +81,7 @@ editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
 editor.addMineralPhase("Halite");
 ~~~
 
-use class [ChemicalEditor](@ref Reaktoro::ChemicalEditor) to define a chemical system with three phases: an *aqueous phase*, a *gaseous phase*, and a *mineral phase*. 
+use class [ChemicalEditor](@ref Reaktoro::ChemicalEditor) to define a chemical system with three phases: an *aqueous phase*, a *gaseous phase*, and a *mineral phase*.
 
 Defining a phase with more than one species requires either a *string containing multiple substance names*, such as in the call to [addAqueousPhase](@ref Reaktoro::ChemicalEditor::addAqueousPhase), or a *vector with species names*, such as in the call to [addGaseousPhase](@ref Reaktoro::ChemicalEditor::addGaseousPhase). When a string containing multiple substances are given, e.g., `"H2O NaCl CO2"`, the chemical species are selected automatically from the database based on the list of chemical elements that compose those substances. For example, the aqueous phase above will contain all aqueous species in the specified database that can be formed from elements H, O, Na, Cl, and C. Thus, one could alternatively have defined the previous aqueous phase using:
 
@@ -481,4 +481,3 @@ path.solve(state1, state2)
 [supcrt07.xml]: databases/supcrt/supcrt07.xml
 [slop98.dat]: databases/supcrt/slop98.dat
 [slop07.dat]: databases/supcrt/slop07.dat
-

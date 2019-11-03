@@ -53,13 +53,13 @@ template<typename _Scalar> class AlignedVector3
     CoeffType m_coeffs;
   public:
 
-    typedef MatrixBase<AlignedVector3<_Scalar> > Base;	
+    typedef MatrixBase<AlignedVector3<_Scalar> > Base;
     EIGEN_DENSE_PUBLIC_INTERFACE(AlignedVector3)
     using Base::operator*;
 
     inline Index rows() const { return 3; }
     inline Index cols() const { return 1; }
-    
+
     Scalar* data() { return m_coeffs.data(); }
     const Scalar* data() const { return m_coeffs.data(); }
     Index innerStride() const { return 1; }
@@ -194,7 +194,7 @@ template<typename _Scalar> class AlignedVector3
     {
       return m_coeffs.template head<3>().isApprox(other,eps);
     }
-    
+
     CoeffType& coeffs() { return m_coeffs; }
     const CoeffType& coeffs() const { return m_coeffs; }
 };
@@ -213,8 +213,8 @@ struct evaluator<AlignedVector3<Scalar> >
 {
   typedef AlignedVector3<Scalar> XprType;
   typedef evaluator<Matrix<Scalar,4,1> > Base;
-  
-  evaluator(const XprType &m) : Base(m.coeffs()) {}  
+
+  evaluator(const XprType &m) : Base(m.coeffs()) {}
 };
 
 }

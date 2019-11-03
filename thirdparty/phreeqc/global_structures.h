@@ -7,7 +7,7 @@
 #ifndef NAN
 #   define NAN -99999999
 #endif
-#define MISSING -9999.999            
+#define MISSING -9999.999
 #include "NA.h"   /* NA = not available */
 
 #define F_C_MOL 96493.5			/* C/mol or joule/volt-eq */
@@ -812,9 +812,9 @@ struct unknown
 	struct species *s;
 	const char * exch_comp;
 	const char *pp_assemblage_comp_name;
-	void *pp_assemblage_comp_ptr; 
+	void *pp_assemblage_comp_ptr;
 	const char * ss_name;
-	void *ss_ptr; 
+	void *ss_ptr;
 	const char * ss_comp_name;
 	void *ss_comp_ptr;
 	int ss_comp_number;
@@ -1097,4 +1097,3 @@ struct const_iso
 };
 
 #endif /* _INC_GLOBAL_STRUCTURES_H  */
-

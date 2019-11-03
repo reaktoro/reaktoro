@@ -27,7 +27,7 @@ S		SO4-2	 0	SO4		32.064
 S(6)		SO4-2	 0	SO4
 Si		H4SiO4	 0	SiO2		28.0843
 Sr		Sr+2	 0	Sr		87.62
-# redox-uncoupled gases	
+# redox-uncoupled gases
 Hdg		Hdg	 0	Hdg		2.016 # H2 gas
 Oxg		Oxg	 0	Oxg		32 # Oxygen gas
 Mtg		Mtg	 0.0	Mtg		16.032 # CH4 gas
@@ -235,7 +235,7 @@ Calcite
 	CaCO3 = CO3-2 + Ca+2
 	log_k	   -8.406
 	delta_h -2.297 kcal
-	-analytic   -237.04  -0.1077  0  102.25  6.79e5 # ref. 3 + data from Ellis, 1959, Plummer and Busenberg, 1982 
+	-analytic   -237.04  -0.1077  0  102.25  6.79e5 # ref. 3 + data from Ellis, 1959, Plummer and Busenberg, 1982
 	-Vm 36.9
 Carnallite
 	KMgCl3:6H2O  =  K+ + Mg+2 + 3Cl- + 6H2O
@@ -588,10 +588,10 @@ PITZER
   SO4-2     Sr+2      3.1973        0           0          27e-3
 -B2
   Ca+2      Cl-      -1.13          0           0        -0.0476                  # ref. 3
-  Ca+2      OH-      -5.72                                                        
+  Ca+2      OH-      -5.72
   Ca+2      SO4-2   -59.3           0           0        -0.443       -3.96e-6    # ref. 3
-  Fe+2      SO4-2   -42.0                                                         
-  HCO3-     Na+       8.22          0           0        -0.049                   # ref. 3 + new -analytic for calcite           
+  Fe+2      SO4-2   -42.0
+  HCO3-     Na+       8.22          0           0        -0.049                   # ref. 3 + new -analytic for calcite
   Mg+2      SO4-2   -32.45          0          -3.236e3  21.812       -1.8859e-2  # ref. 3
   Mn+2      SO4-2   -40.0
   SO4-2     Sr+2    -54.24          0           0          -0.42
@@ -607,9 +607,9 @@ PITZER
   Br-       Na+       0.00116       0           0        -9.30E-5
   Br-       Sr+2      0.00122506
   Ca+2      Cl-       1.4e-4      -57          -0.098    -7.83e-4      7.18e-7    # ref. 3
-  Ca+2      SO4-2     0.114  # ref. 3                                      
-  Cl-       Fe+2     -0.00860725                                                  
-  Cl-       H+        0.0008        0           0         6.213E-5                
+  Ca+2      SO4-2     0.114  # ref. 3
+  Cl-       Fe+2     -0.00860725
+  Cl-       H+        0.0008        0           0         6.213E-5
   Cl-       K+       -7.88e-4     91.27        0.58643  -1.298e-3     4.9567e-7  # ref. 3
   Cl-       Li+       0.00359       0           0        -4.520E-5
   Cl-       Mg+2      0.00651       0  0       -2.50e-4   2.418e-7                # ref. 3

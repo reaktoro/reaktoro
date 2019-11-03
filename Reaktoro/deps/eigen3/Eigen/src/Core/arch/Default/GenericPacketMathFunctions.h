@@ -322,7 +322,7 @@ inline float trig_reduce_huge (float xf, int *quadrant)
 
   // 192 bits of 2/pi for Payne-Hanek reduction
   // Bits are introduced by packet of 8 to enable aligned reads.
-  static const uint32_t two_over_pi [] = 
+  static const uint32_t two_over_pi [] =
   {
     0x00000028, 0x000028be, 0x0028be60, 0x28be60db,
     0xbe60db93, 0x60db9391, 0xdb939105, 0x9391054a,
@@ -332,7 +332,7 @@ inline float trig_reduce_huge (float xf, int *quadrant)
     0xd8a5664f, 0xa5664f10, 0x664f10e4, 0x4f10e410,
     0x10e41000, 0xe4100000
   };
-  
+
   uint32_t xi = numext::as_uint(xf);
   // Below, -118 = -126 + 8.
   //   -126 is to get the exponent,

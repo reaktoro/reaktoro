@@ -297,7 +297,7 @@ pcmp_eq(const Packet& a, const Packet& b) { return a==b ? ptrue(a) : pzero(a); }
 
 /** \internal \returns a < b or a==NaN or b==NaN as a bit mask */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-pcmp_lt_or_nan(const Packet& a, const Packet& b) { return pnot(pcmp_le(b,a)); } 
+pcmp_lt_or_nan(const Packet& a, const Packet& b) { return pnot(pcmp_le(b,a)); }
 
 /** \internal \returns a packet version of \a *from, from must be 16 bytes aligned */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
@@ -339,7 +339,7 @@ ploaddup(const typename unpacket_traits<Packet>::type* from) { return *from; }
   * For instance, for a packet of 8 elements, 2 scalars will be read from \a *from and
   * replicated to form: {from[0],from[0],from[0],from[0],from[1],from[1],from[1],from[1]}
   * Currently, this function is only used in matrix products.
-  * For packet-size smaller or equal to 4, this function is equivalent to pload1 
+  * For packet-size smaller or equal to 4, this function is equivalent to pload1
   */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
 ploadquad(const typename unpacket_traits<Packet>::type* from)
@@ -635,14 +635,14 @@ struct palign_impl
 
 /** \internal update \a first using the concatenation of the packet_size minus \a Offset last elements
   * of \a first and \a Offset first elements of \a second.
-  * 
+  *
   * This function is currently only used to optimize matrix-vector products on unligned matrices.
   * It takes 2 packets that represent a contiguous memory array, and returns a packet starting
   * at the position \a Offset. For instance, for packets of 4 elements, we have:
   *  Input:
   *  - first = {f0,f1,f2,f3}
   *  - second = {s0,s1,s2,s3}
-  * Output: 
+  * Output:
   *   - if Offset==0 then {f0,f1,f2,f3}
   *   - if Offset==1 then {f1,f2,f3,s0}
   *   - if Offset==2 then {f2,f3,s0,s1}

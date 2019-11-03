@@ -21,7 +21,7 @@ cxxSurfaceComp::cxxSurfaceComp(PHRQ_io *io)
 :
 PHRQ_base(io)
 //
-// default constructor for cxxSurfaceComp 
+// default constructor for cxxSurfaceComp
 //
 {
 	formula_z = 0.0;
@@ -481,19 +481,19 @@ cxxSurfaceComp::Deserialize(Dictionary & dictionary, std::vector < int >&ints, s
 }
 
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("formula"),	        // 0 
+	std::vector< std::string >::value_type("formula"),	        // 0
 	std::vector< std::string >::value_type("moles"),	        // 1
-	std::vector< std::string >::value_type("la"),	            // 2 
-	std::vector< std::string >::value_type("charge_number"),	// 3 
+	std::vector< std::string >::value_type("la"),	            // 2
+	std::vector< std::string >::value_type("charge_number"),	// 3
 	std::vector< std::string >::value_type("charge_balance"),	// 4
-	std::vector< std::string >::value_type("phase_name"),	    // 5 
-	std::vector< std::string >::value_type("rate_name"),	    // 6 
-	std::vector< std::string >::value_type("phase_proportion"),	// 7 
+	std::vector< std::string >::value_type("phase_name"),	    // 5
+	std::vector< std::string >::value_type("rate_name"),	    // 6
+	std::vector< std::string >::value_type("phase_proportion"),	// 7
 	std::vector< std::string >::value_type("totals"),	        // 8
 	std::vector< std::string >::value_type("formula_z"),	    // 9
 	std::vector< std::string >::value_type("formula_totals"),	// 10
 	std::vector< std::string >::value_type("dw"),	            // 11
 	std::vector< std::string >::value_type("charge_name"),	    // 12
 	std::vector< std::string >::value_type("master_element") 	// 13
-};									   
-const std::vector< std::string > cxxSurfaceComp::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxSurfaceComp::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

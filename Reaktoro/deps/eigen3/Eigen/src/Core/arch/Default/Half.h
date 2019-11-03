@@ -85,7 +85,7 @@ struct half_base : public __half_raw {
   #if (defined(EIGEN_CUDA_SDK_VER) && EIGEN_CUDA_SDK_VER >= 90000)
   EIGEN_DEVICE_FUNC half_base(const __half& h) : __half_raw(*(__half_raw*)&h) {}
   #endif
- #endif    
+ #endif
 #endif
 };
 

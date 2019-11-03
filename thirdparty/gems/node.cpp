@@ -2630,6 +2630,3 @@ void TNode::GEM_from_MT(long int  p_NodeHandle,   // Node identification handle
 
 #endif
 //-----------------------End of node.cpp--------------------------
-
-
-

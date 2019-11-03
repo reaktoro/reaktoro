@@ -172,4 +172,3 @@ public:
 #endif   // _num_methods_h_
 
 //-----------------------End of num_methods.h--------------------------
-

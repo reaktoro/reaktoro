@@ -15,7 +15,7 @@
 #ifndef EIGEN_LMQRSOLV_H
 #define EIGEN_LMQRSOLV_H
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 
@@ -43,8 +43,8 @@ void lmqrsolv(
     /*     in particular, save the diagonal elements of r in x. */
     x = s.diagonal();
     wa = qtb;
-    
-   
+
+
     s.topLeftCorner(n,n).template triangularView<StrictlyLower>() = s.topLeftCorner(n,n).transpose();
     /*     eliminate the diagonal matrix d using a givens rotation. */
     for (j = 0; j < n; ++j) {
@@ -81,7 +81,7 @@ void lmqrsolv(
             }
         }
     }
-  
+
     /*     solve the triangular system for z. if the system is */
     /*     singular, then obtain a least squares solution. */
     Index nsing;
@@ -89,13 +89,13 @@ void lmqrsolv(
 
     wa.tail(n-nsing).setZero();
     s.topLeftCorner(nsing, nsing).transpose().template triangularView<Upper>().solveInPlace(wa.head(nsing));
-  
+
     // restore
     sdiag = s.diagonal();
     s.diagonal() = x;
 
     /* permute the components of z back to components of x. */
-    x = iPerm * wa; 
+    x = iPerm * wa;
 }
 
 template <typename Scalar, int _Options, typename Index>
@@ -125,18 +125,18 @@ void lmqrsolv(
     // Eliminate the diagonal matrix d using a givens rotation
     for (j = 0; j < n; ++j)
     {
-      // Prepare the row of d to be eliminated, locating the 
+      // Prepare the row of d to be eliminated, locating the
       // diagonal element using p from the qr factorization
       l = iPerm.indices()(j);
-      if (diag(l) == Scalar(0)) 
-        break; 
+      if (diag(l) == Scalar(0))
+        break;
       sdiag.tail(n-j).setZero();
       sdiag[j] = diag[l];
       // the transformations to eliminate the row of d
       // modify only a single element of (q transpose)*b
-      // beyond the first n, which is initially zero. 
-      
-      Scalar qtbpj = 0; 
+      // beyond the first n, which is initially zero.
+
+      Scalar qtbpj = 0;
       // Browse the nonzero elements of row j of the upper triangular s
       for (k = j; k < n; ++k)
       {
@@ -146,17 +146,17 @@ void lmqrsolv(
           else break;
         }
         //At this point, we have the diagonal element R(k,k)
-        // Determine a givens rotation which eliminates 
+        // Determine a givens rotation which eliminates
         // the appropriate element in the current row of d
         givens.makeGivens(-itk.value(), sdiag(k));
-        
-        // Compute the modified diagonal element of r and 
+
+        // Compute the modified diagonal element of r and
         // the modified element of ((q transpose)*b,0).
         itk.valueRef() = givens.c() * itk.value() + givens.s() * sdiag(k);
-        temp = givens.c() * wa(k) + givens.s() * qtbpj; 
+        temp = givens.c() * wa(k) + givens.s() * qtbpj;
         qtbpj = -givens.s() * wa(k) + givens.c() * qtbpj;
         wa(k) = temp;
-        
+
         // Accumulate the transformation in the remaining k row/column of R
         for (++itk; itk; ++itk)
         {
@@ -167,19 +167,19 @@ void lmqrsolv(
         }
       }
     }
-    
-    // Solve the triangular system for z. If the system is 
+
+    // Solve the triangular system for z. If the system is
     // singular, then obtain a least squares solution
     Index nsing;
     for(nsing = 0; nsing<n && sdiag(nsing) !=0; nsing++) {}
-    
+
     wa.tail(n-nsing).setZero();
-//     x = wa; 
+//     x = wa;
     wa.head(nsing) = R.topLeftCorner(nsing,nsing).template triangularView<Upper>().solve/*InPlace*/(wa.head(nsing));
-    
+
     sdiag = R.diagonal();
     // Permute the components of z back to components of x
-    x = iPerm * wa; 
+    x = iPerm * wa;
 }
 } // end namespace internal
 

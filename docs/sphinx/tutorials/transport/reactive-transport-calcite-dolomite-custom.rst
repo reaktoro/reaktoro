@@ -417,4 +417,3 @@ one yet!
 .. _KineticSolver: https://reaktoro.org/cpp/classReaktoro_1_1KineticSolver.html
 .. _EquilibriumSolver: https://reaktoro.org/cpp/classReaktoro_1_1EquilibriumSolver.html
 .. _Reaktoro's GitHub Issues: https://github.com/reaktoro/reaktoro/issues/new
-

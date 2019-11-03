@@ -30,13 +30,13 @@ evalG0 = thermo.standardPartialMolarGibbsEnergy
 evalH0 = thermo.standardPartialMolarEnthalpy
 
 # Create a list of species names, as found in the database
-species = ['H2O(l)', 'HCO3-', 'CO2(aq)', 'CO2(g)', 'Calcite']
+species = ["H2O(l)", "HCO3-", "CO2(aq)", "CO2(g)", "Calcite"]
 
 # Create a numeric array of temperature values (in units of K)
 temperatures = array([25, 50, 75, 100, 200, 300]) + 273.15
 
 # Create pressure variable (in units of Pa)
-P = 100.e+5
+P = 100.0e5
 
 # Create Python dictionaries containing the standard partial
 # molar Gibbs energy and enthalpy for each species
@@ -54,7 +54,7 @@ for name in species:
 # 2nd column: standard partial molar gibbs energy (in units of J/mol)
 # 3rd column: standard partial molar enthalpy (in units of J/mol)
 for name in species:
-    f = open('calculated-standard-species-properties-' + name + '.txt', 'w')
-    print('T(K), G0(J/mol), H0(J/mol)', file=f)
+    f = open("calculated-standard-species-properties-" + name + ".txt", "w")
+    print("T(K), G0(J/mol), H0(J/mol)", file=f)
     for Tval, G0val, H0val in zip(temperatures, G0[name], H0[name]):
-        print('{0}, {1}, {2}'.format(Tval, G0val, H0val), file=f)
+        print("{0}, {1}, {2}".format(Tval, G0val, H0val), file=f)

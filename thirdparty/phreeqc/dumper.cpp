@@ -123,7 +123,7 @@ bool dumper::Read(CParser & parser)
 		if ((opt > 2))
 		{
 			for (;;)
-			{ 
+			{
 				CParser::TOKEN_TYPE j = parser.copy_token(token, next_char);
 				if (item && j == CParser::TT_DIGIT)
 				{
@@ -213,7 +213,7 @@ bool dumper::Read(CParser & parser)
 			return_value = false;
 			break;
 		}
-		
+
 		if (opt == CParser::OPT_EOF || opt == CParser::OPT_KEYWORD)
 			break;
 	}
@@ -237,16 +237,16 @@ bool dumper::Get_bool_any(void)
 		);
 }
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("file"),		                // 0 
-	std::vector< std::string >::value_type("append"),		            // 1 
-	std::vector< std::string >::value_type("all"),			            // 2 
-	std::vector< std::string >::value_type("cell"),			            // 3 
-	std::vector< std::string >::value_type("cells"),		            // 4 
-	std::vector< std::string >::value_type("solution"),		            // 5 
-	std::vector< std::string >::value_type("solutions"),		        // 6 
-	std::vector< std::string >::value_type("pp_assemblage"),	        // 7 
-	std::vector< std::string >::value_type("pp_assemblages"),	        // 8 
-	std::vector< std::string >::value_type("equilibrium_phase"),	    // 9 
+	std::vector< std::string >::value_type("file"),		                // 0
+	std::vector< std::string >::value_type("append"),		            // 1
+	std::vector< std::string >::value_type("all"),			            // 2
+	std::vector< std::string >::value_type("cell"),			            // 3
+	std::vector< std::string >::value_type("cells"),		            // 4
+	std::vector< std::string >::value_type("solution"),		            // 5
+	std::vector< std::string >::value_type("solutions"),		        // 6
+	std::vector< std::string >::value_type("pp_assemblage"),	        // 7
+	std::vector< std::string >::value_type("pp_assemblages"),	        // 8
+	std::vector< std::string >::value_type("equilibrium_phase"),	    // 9
 	std::vector< std::string >::value_type("equilibrium_phases"),	    // 10
 	std::vector< std::string >::value_type("exchange"),		            // 11
 	std::vector< std::string >::value_type("surface"),		            // 12

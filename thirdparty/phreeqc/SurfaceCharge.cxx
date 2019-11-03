@@ -22,7 +22,7 @@ cxxSurfaceCharge::cxxSurfaceCharge(PHRQ_io *io)
 :
 PHRQ_base(io)
 //
-// default constructor for cxxSurfaceCharge 
+// default constructor for cxxSurfaceCharge
 //
 {
 	specific_area = 0.0;
@@ -348,7 +348,7 @@ cxxSurfaceCharge::read_raw(CParser & parser, bool check)
 				}
 				else
 				{
-					double d; 
+					double d;
 					if (!(parser.get_iss() >> d))
 					{
 						parser.incr_input_error();
@@ -462,7 +462,7 @@ cxxSurfaceCharge::multiply(LDBLE extensive)
 	this->diffuse_layer_totals.multiply(extensive);
 }
 void
-cxxSurfaceCharge::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSurfaceCharge::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles)
 {
 
@@ -482,7 +482,7 @@ cxxSurfaceCharge::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	ints.push_back((int) this->g_map.size());
 	{
 		std::map<LDBLE, cxxSurfDL>::iterator it;
-		for (it = this->g_map.begin(); it != this->g_map.end(); it++) 
+		for (it = this->g_map.begin(); it != this->g_map.end(); it++)
 		{
 			doubles.push_back(it->first);
 			it->second.Serialize(dictionary, ints, doubles);
@@ -491,7 +491,7 @@ cxxSurfaceCharge::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	ints.push_back((int) this->dl_species_map.size());
 	{
 		std::map<int, double>::iterator it;
-		for (it = this->dl_species_map.begin(); it != this->dl_species_map.end(); it++) 
+		for (it = this->dl_species_map.begin(); it != this->dl_species_map.end(); it++)
 		{
 			ints.push_back(it->first);
 			doubles.push_back(it->second);
@@ -500,7 +500,7 @@ cxxSurfaceCharge::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 }
 
 void
-cxxSurfaceCharge::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSurfaceCharge::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 {
 	this->name = dictionary.GetWords()[ints[ii++]];
@@ -541,7 +541,7 @@ cxxSurfaceCharge::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 
 }
 void
-cxxSurfDL::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSurfDL::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles)
 {
 	doubles.push_back(this->g);
@@ -550,7 +550,7 @@ cxxSurfDL::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 }
 
 void
-cxxSurfDL::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSurfDL::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 {
 	this->g = doubles[dd++];
@@ -558,22 +558,22 @@ cxxSurfDL::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	this->psi_to_z = doubles[dd++];
 }
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("name"),	                // 0 
-	std::vector< std::string >::value_type("specific_area"),	    // 1 
-	std::vector< std::string >::value_type("grams"),	            // 2 
-	std::vector< std::string >::value_type("charge_balance"),	    // 3 
-	std::vector< std::string >::value_type("mass_water"),	        // 4 
-	std::vector< std::string >::value_type("la_psi"),	            // 5 
-	std::vector< std::string >::value_type("diffuse_layer_totals"),	// 6 
-	std::vector< std::string >::value_type("la_psi1"),	            // 7 
-	std::vector< std::string >::value_type("la_psi2"),	            // 8 
-	std::vector< std::string >::value_type("capacitance0"),	        // 9 
-	std::vector< std::string >::value_type("capacitance1"),	        // 10 
-	std::vector< std::string >::value_type("sigma0"),	            // 11 
-	std::vector< std::string >::value_type("sigma1"),	            // 12 
-	std::vector< std::string >::value_type("sigma2"),	            // 13 
+	std::vector< std::string >::value_type("name"),	                // 0
+	std::vector< std::string >::value_type("specific_area"),	    // 1
+	std::vector< std::string >::value_type("grams"),	            // 2
+	std::vector< std::string >::value_type("charge_balance"),	    // 3
+	std::vector< std::string >::value_type("mass_water"),	        // 4
+	std::vector< std::string >::value_type("la_psi"),	            // 5
+	std::vector< std::string >::value_type("diffuse_layer_totals"),	// 6
+	std::vector< std::string >::value_type("la_psi1"),	            // 7
+	std::vector< std::string >::value_type("la_psi2"),	            // 8
+	std::vector< std::string >::value_type("capacitance0"),	        // 9
+	std::vector< std::string >::value_type("capacitance1"),	        // 10
+	std::vector< std::string >::value_type("sigma0"),	            // 11
+	std::vector< std::string >::value_type("sigma1"),	            // 12
+	std::vector< std::string >::value_type("sigma2"),	            // 13
 	std::vector< std::string >::value_type("sigmaddl"),	            // 14
 	std::vector< std::string >::value_type("g_map"),	            // 15
 	std::vector< std::string >::value_type("diffuse_layer_species") // 16
-};									   
-const std::vector< std::string > cxxSurfaceCharge::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxSurfaceCharge::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

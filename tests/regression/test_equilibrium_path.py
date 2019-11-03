@@ -54,9 +54,7 @@ def test_equilibrium_path(table_regression, tmpdir):
     path.solve(state1, state2)
 
     pathTable = pd.read_csv(
-        tmpdir.dirname + "/equilibriumPathResult.txt",
-        index_col=None,
-        delim_whitespace=True,
+        tmpdir.dirname + "/equilibriumPathResult.txt", index_col=None, delim_whitespace=True,
     )
 
     table_regression.check(pathTable, default_tol=dict(atol=1e-5, rtol=1e-14))

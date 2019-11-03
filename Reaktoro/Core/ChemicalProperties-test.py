@@ -33,7 +33,9 @@ def test_chemical_properties_not_updated(chemical_system):
     assert np.isnan(chemical_properties.temperature().val)
     assert np.isnan(chemical_properties.pressure().val)
 
-    with pytest.raises(RuntimeError, match=r"Cannot proceed with method ChemicalProperties::update."):
+    with pytest.raises(
+        RuntimeError, match=r"Cannot proceed with method ChemicalProperties::update."
+    ):
         chemical_properties.update(np.array([55, 1e-7, 1e-7, 0.1, 0.5, 0.01, 1.0, 0.001, 1.0]))
 
 
@@ -41,14 +43,19 @@ def test_chemical_properties_standard_partial_volumes(chemical_system, chemical_
     standard_partial_volumes = chemical_properties.standardPartialMolarVolumes().val
     for i in range(0, len(standard_partial_volumes)):
         name = chemical_system.species(i).name()
-        if name == 'H+':
+        if name == "H+":
             assert standard_partial_volumes[i] == 0.0
         else:
             assert standard_partial_volumes[i] > 0.0
 
     only_updated_by_temperature_and_pressure = ChemicalProperties(chemical_system)
-    only_updated_by_temperature_and_pressure.update(chemical_properties.temperature().val, chemical_properties.pressure().val)
-    for pVol1, pVol2 in zip(only_updated_by_temperature_and_pressure.standardPartialMolarVolumes().val, standard_partial_volumes):
+    only_updated_by_temperature_and_pressure.update(
+        chemical_properties.temperature().val, chemical_properties.pressure().val
+    )
+    for pVol1, pVol2 in zip(
+        only_updated_by_temperature_and_pressure.standardPartialMolarVolumes().val,
+        standard_partial_volumes,
+    ):
         assert pVol1 == pVol2
 
 
@@ -64,6 +71,8 @@ def test_chemical_properties_partial_volumes(chemical_system, chemical_propertie
                 assert partial_volumes[index] > 0.0
 
     only_updated_by_temperature_and_pressure = ChemicalProperties(chemical_system)
-    only_updated_by_temperature_and_pressure.update(chemical_properties.temperature().val, chemical_properties.pressure().val)
+    only_updated_by_temperature_and_pressure.update(
+        chemical_properties.temperature().val, chemical_properties.pressure().val
+    )
     for pVol in only_updated_by_temperature_and_pressure.partialMolarVolumes().val:
         assert pVol == 0.0

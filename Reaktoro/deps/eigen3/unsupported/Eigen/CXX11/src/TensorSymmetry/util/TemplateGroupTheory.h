@@ -91,7 +91,7 @@ namespace group_theory {
  * Note that this flag mechanism is quite generic and may have other
  * uses beyond tensor properties.
  *
- * IMPORTANT: 
+ * IMPORTANT:
  *     This algorithm assumes the group to be finite. If you try to
  *     run it with a group that's infinite, the algorithm will only
  *     terminate once you hit a compiler limit (max template depth).
@@ -147,7 +147,7 @@ struct strip_identities<Equality, id, type_list<EIGEN_TPL_PP_SPEC_HACK_USE(ts)>>
 
 /** \internal
   *
-  * \class dimino_first_step_elements_helper 
+  * \class dimino_first_step_elements_helper
   * \ingroup CXX11_TensorSymmetry_Module
   *
   * \brief Recursive template that adds powers of the first generator to the list of group elements
@@ -401,7 +401,7 @@ struct dimino_add_all_coset_spaces
     sub_group_elements::count
   > _ac4r;
   typedef typename _ac4r::type new_elements;
-  
+
   constexpr static int new_rep_pos = rep_pos + sub_group_elements::count;
   constexpr static bool new_stop_condition = new_rep_pos >= new_elements::count;
 

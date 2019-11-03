@@ -23,7 +23,7 @@
 
 cxxGasComp::cxxGasComp(PHRQ_io *io)
 	//
-	// default constructor for cxxExchComp 
+	// default constructor for cxxExchComp
 	//
 	: PHRQ_base(io)
 {
@@ -189,7 +189,7 @@ cxxGasComp::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::ve
 }
 
 void
-cxxGasComp::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxGasComp::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 {
 	this->phase_name = dictionary.GetWords()[ints[ii++]];
@@ -199,10 +199,10 @@ cxxGasComp::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 }
 
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("phase_name"),	// 0 
+	std::vector< std::string >::value_type("phase_name"),	// 0
 	std::vector< std::string >::value_type("name"),	        // 1
-	std::vector< std::string >::value_type("p_read"),	    // 2 
-	std::vector< std::string >::value_type("moles"),	    // 3 
-	std::vector< std::string >::value_type("initial_moles")	// 4 
-};									   
-const std::vector< std::string > cxxGasComp::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+	std::vector< std::string >::value_type("p_read"),	    // 2
+	std::vector< std::string >::value_type("moles"),	    // 3
+	std::vector< std::string >::value_type("initial_moles")	// 4
+};
+const std::vector< std::string > cxxGasComp::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

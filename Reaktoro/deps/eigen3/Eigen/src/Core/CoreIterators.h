@@ -10,7 +10,7 @@
 #ifndef EIGEN_COREITERATORS_H
 #define EIGEN_COREITERATORS_H
 
-namespace Eigen { 
+namespace Eigen {
 
 /* This file contains the respective InnerIterator definition of the expressions defined in Eigen/Core
  */
@@ -24,9 +24,9 @@ class inner_iterator_selector;
 
 /** \class InnerIterator
   * \brief An InnerIterator allows to loop over the element of any matrix expression.
-  * 
+  *
   * \warning To be used with care because an evaluator is constructed every time an InnerIterator iterator is constructed.
-  * 
+  *
   * TODO: add a usage example
   */
 template<typename XprType>
@@ -41,7 +41,7 @@ public:
   InnerIterator(const XprType &xpr, const Index &outerId)
     : m_eval(xpr), m_iter(m_eval, outerId, xpr.innerSize())
   {}
-  
+
   /// \returns the value of the current coefficient.
   EIGEN_STRONG_INLINE Scalar value() const          { return m_iter.value(); }
   /** Increment the iterator \c *this to the next non-zero coefficient.
@@ -49,9 +49,9 @@ public:
     */
   EIGEN_STRONG_INLINE InnerIterator& operator++()   { m_iter.operator++(); return *this; }
   EIGEN_STRONG_INLINE InnerIterator& operator+=(Index i) { m_iter.operator+=(i); return *this; }
-  EIGEN_STRONG_INLINE InnerIterator operator+(Index i) 
+  EIGEN_STRONG_INLINE InnerIterator operator+(Index i)
   { InnerIterator result(*this); result+=i; return result; }
-    
+
 
   /// \returns the column or row index of the current coefficient.
   EIGEN_STRONG_INLINE Index index() const           { return m_iter.index(); }
@@ -61,7 +61,7 @@ public:
   EIGEN_STRONG_INLINE Index col() const             { return m_iter.col(); }
   /// \returns \c true if the iterator \c *this still references a valid coefficient.
   EIGEN_STRONG_INLINE operator bool() const         { return m_iter; }
-  
+
 protected:
   EvaluatorType m_eval;
   IteratorType m_iter;
@@ -82,7 +82,7 @@ protected:
   typedef evaluator<XprType> EvaluatorType;
   typedef typename traits<XprType>::Scalar Scalar;
   enum { IsRowMajor = (XprType::Flags&RowMajorBit)==RowMajorBit };
-  
+
 public:
   EIGEN_STRONG_INLINE inner_iterator_selector(const EvaluatorType &eval, const Index &outerId, const Index &innerSize)
     : m_eval(eval), m_inner(0), m_outer(outerId), m_end(innerSize)
@@ -118,11 +118,11 @@ class inner_iterator_selector<XprType, IteratorBased>
 protected:
   typedef typename evaluator<XprType>::InnerIterator Base;
   typedef evaluator<XprType> EvaluatorType;
-  
+
 public:
   EIGEN_STRONG_INLINE inner_iterator_selector(const EvaluatorType &eval, const Index &outerId, const Index &/*innerSize*/)
     : Base(eval, outerId)
-  {}  
+  {}
 };
 
 } // end namespace internal

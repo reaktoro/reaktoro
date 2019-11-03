@@ -15,11 +15,14 @@ import collections
 
 _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
 
+
 def dict_representer(dumper, data):
     return dumper.represent_dict(data.iteritems())
 
+
 def dict_constructor(loader, node):
     return collections.OrderedDict(loader.construct_pairs(node))
+
 
 yaml.add_representer(collections.OrderedDict, dict_representer)
 yaml.add_constructor(_mapping_tag, dict_constructor)
@@ -34,9 +37,9 @@ def xmlizer(key, value, root):
             xmlizer(key, entry, root)
     elif type(value) in [OrderedDict, dict]:
         child = xml.Element(key)
-        if value.has_key('value') and value.has_key('units'):
-            child.text = str(value['value'])
-            child.attrib['units'] = str(value['units'])
+        if value.has_key("value") and value.has_key("units"):
+            child.text = str(value["value"])
+            child.attrib["units"] = str(value["units"])
         else:
             for subkey, subvalue in value.iteritems():
                 xmlizer(subkey, subvalue, child)
@@ -49,28 +52,33 @@ def xmlizer(key, value, root):
 
 def main():
     # Create a command-line argument parser
-    parser = argparse.ArgumentParser(prog='ReaktoroConverter')
+    parser = argparse.ArgumentParser(prog="ReaktoroConverter")
 
     # Add the input argument
-    parser.add_argument('input', type=str, \
-        help='the relative path of the YAML database file, including its name')
+    parser.add_argument(
+        "input", type=str, help="the relative path of the YAML database file, including its name"
+    )
 
     # Add the output argument (optional)
-    parser.add_argument('output', type=str, nargs='?', \
-        help='the relative path of the XML output file, including its name')
+    parser.add_argument(
+        "output",
+        type=str,
+        nargs="?",
+        help="the relative path of the XML output file, including its name",
+    )
 
     # Parse the command-line arguments (remove the first argument, which is the name of this file
     args = parser.parse_args(sys.argv[1:])
 
     # Provide a default output file name if none was provided
     if args.output is None:
-        args.output = os.path.splitext(args.input)[0] + '.xml'
+        args.output = os.path.splitext(args.input)[0] + ".xml"
 
     yaml_database = file(args.input)
 
     dictionary = yaml.load(yaml_database)
 
-    doc = xml.Element('Database')
+    doc = xml.Element("Database")
 
     for key, value in dictionary.iteritems():
         xmlizer(key, value, doc)
@@ -79,5 +87,5 @@ def main():
     root.write(args.output, xml_declaration=True, pretty_print=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

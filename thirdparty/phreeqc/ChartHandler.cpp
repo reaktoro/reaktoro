@@ -138,7 +138,7 @@ ChartHandler::Read(Phreeqc * phreeqc_ptr, CParser &parser)
 	// if detached, wait for thread to acknowledge and then erase chart
 	if (it->second->Get_detach())
 	{
-		while (it->second->Get_form_started() && it->second->Get_done() != true) 
+		while (it->second->Get_form_started() && it->second->Get_done() != true)
 		{
 #if defined(__cplusplus_cli)
 			System::Threading::Thread::Sleep(5);
@@ -146,16 +146,16 @@ ChartHandler::Read(Phreeqc * phreeqc_ptr, CParser &parser)
 		}
 		delete it->second;
 		this->chart_map.erase(it);
-	}	
+	}
 	return true;
 }
 bool
 ChartHandler::End_timer()
 {
-	
+
 	size_t max_tries = 6000; // 1 h, but not used
 	std::map<int, ChartObject *>::iterator it = this->chart_map.begin();
-	if (chart_map.size() > 0) 
+	if (chart_map.size() > 0)
 	{
 		screen_msg("Detaching charts...");
 		if (io != NULL)
@@ -186,7 +186,7 @@ ChartHandler::End_timer()
 #endif
 
 			i2 = 0;
-			while (it->second->Get_done() != true) 
+			while (it->second->Get_done() != true)
 			{
 				//if (i2 > max_tries) break;
 				i2++;
@@ -224,4 +224,3 @@ ChartHandler::dump(std::ostream & oss, unsigned int indent)
 	return true;
 }
 #endif
-

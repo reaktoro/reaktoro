@@ -120,7 +120,7 @@ class MatrixPowerAtomic : internal::noncopyable
      * part of T is read.
      */
     MatrixPowerAtomic(const MatrixType& T, RealScalar p);
-    
+
     /**
      * \brief Compute the matrix power.
      *
@@ -230,7 +230,7 @@ void MatrixPowerAtomic<MatrixType>::computeBig(ResultType& res) const
   }
   compute2x2(res, m_p);
 }
-  
+
 template<typename MatrixType>
 inline int MatrixPowerAtomic<MatrixType>::getPadeDegree(float normIminusT)
 {
@@ -375,7 +375,7 @@ class MatrixPower : internal::noncopyable
      */
     template<typename ResultType>
     void compute(ResultType& res, RealScalar p);
-    
+
     Index rows() const { return m_A.rows(); }
     Index cols() const { return m_A.cols(); }
 
@@ -392,7 +392,7 @@ class MatrixPower : internal::noncopyable
 
     /** \brief Store the result of Schur decomposition. */
     ComplexMatrix m_T, m_U;
-    
+
     /** \brief Store fractional power of m_T. */
     ComplexMatrix m_fT;
 
@@ -406,7 +406,7 @@ class MatrixPower : internal::noncopyable
 
     /** \brief Rank of m_A. */
     Index m_rank;
-    
+
     /** \brief Rank deficiency of m_A. */
     Index m_nulls;
 
@@ -531,9 +531,9 @@ void MatrixPower<MatrixType>::computeIntPower(ResultType& res, RealScalar p)
   using std::fmod;
   RealScalar pp = abs(p);
 
-  if (p<0) 
+  if (p<0)
     m_tmp = m_A.inverse();
-  else     
+  else
     m_tmp = m_A;
 
   while (true) {

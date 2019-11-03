@@ -19,7 +19,7 @@
 
 cxxPressure::cxxPressure(PHRQ_io *io)
 	//
-	// default constructor for cxxPressure 
+	// default constructor for cxxPressure
 	//
 :	cxxNumKeyword(io)
 {
@@ -57,7 +57,7 @@ cxxPressure::read(CParser & parser)
 		std::string token, str;
 		lt = parser.check_line(str, false, true, true, true);
 
-		if (lt == PHRQ_io::LT_EMPTY || 
+		if (lt == PHRQ_io::LT_EMPTY ||
 			lt == PHRQ_io::LT_KEYWORD ||
 			lt == PHRQ_io::LT_EOF)
 		{
@@ -243,7 +243,7 @@ cxxPressure::read_raw(CParser & parser, bool check)
 			break;
 
 		case 0:				// pressures
-			if (!cleared_once) 
+			if (!cleared_once)
 			{
 				this->pressures.clear();
 				cleared_once = true;
@@ -299,7 +299,7 @@ cxxPressure::read_raw(CParser & parser, bool check)
 		if (equalIncrements_defined == false)
 		{
 			parser.incr_input_error();
-			parser.error_msg("Equal_increments not defined for REACTION_PRESSURE_RAW input.", 
+			parser.error_msg("Equal_increments not defined for REACTION_PRESSURE_RAW input.",
 				PHRQ_io::OT_CONTINUE);
 		}
 		if (count_defined == false)
@@ -353,7 +353,7 @@ Pressure_for_step(int step_number)
  *   Determine pressure of reaction step
  */
 	LDBLE p_temp;
-	if (this->pressures.size() == 0) 
+	if (this->pressures.size() == 0)
 	{
 		p_temp = 1;
 	}
@@ -375,7 +375,7 @@ Pressure_for_step(int step_number)
 				((LDBLE) (step_number - 1)) / (denom);
 		}
 	}
-	else 
+	else
 	{
 		if (step_number > (int) this->pressures.size())
 		{
@@ -393,7 +393,7 @@ Pressure_for_step(int step_number)
 int cxxPressure::
 Get_count(void) const
 {
-	if (equalIncrements) 
+	if (equalIncrements)
 	{
 		return this->count;
 	}
@@ -416,7 +416,7 @@ cxxPressure::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::v
 }
 
 void
-cxxPressure::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxPressure::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 {
 	this->n_user = ints[ii++];
@@ -439,5 +439,5 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("pressures"),	        //0
 	std::vector< std::string >::value_type("equal_increments"),	    //1
 	std::vector< std::string >::value_type("count") 	            //2
-};									   
-const std::vector< std::string > cxxPressure::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxPressure::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

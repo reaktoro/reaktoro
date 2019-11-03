@@ -27,7 +27,7 @@ def chemical_system(chemical_editor):
 @pytest.fixture
 def partition_with_inert_gaseous_phase(chemical_system):
     partition = Partition(chemical_system)
-    partition.setInertPhases(['Gaseous'])
+    partition.setInertPhases(["Gaseous"])
 
     return partition
 
@@ -35,7 +35,7 @@ def partition_with_inert_gaseous_phase(chemical_system):
 @pytest.fixture
 def partition_with_inert_gaseous_phase_adding_argon(chemical_system_adding_argon):
     partition = Partition(chemical_system_adding_argon)
-    partition.setInertPhases(['Gaseous'])
+    partition.setInertPhases(["Gaseous"])
 
     return partition
 
@@ -52,4 +52,3 @@ def chemical_properties(chemical_system):
     n = np.array([55, 1e-7, 1e-7, 0.1, 0.5, 0.01, 1.0, 0.001, 1.0])
 
     return chemical_system.properties(T, P, n)
-

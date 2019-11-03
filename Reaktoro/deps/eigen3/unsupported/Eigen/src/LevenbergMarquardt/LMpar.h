@@ -15,7 +15,7 @@
 namespace Eigen {
 
 namespace internal {
-  
+
   template <typename QRSolver, typename VectorType>
     void lmpar2(
     const QRSolver &qr,
@@ -40,8 +40,8 @@ namespace internal {
     Scalar temp, paru;
     Scalar gnorm;
     Scalar dxnorm;
-    
-    // Make a copy of the triangular factor. 
+
+    // Make a copy of the triangular factor.
     // This copy is modified during call the qrsolv
     MatrixType s;
     s = qr.matrixR();

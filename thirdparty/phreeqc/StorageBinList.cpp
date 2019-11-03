@@ -13,7 +13,7 @@ StorageBinListItem::~StorageBinListItem(void)
 StorageBinListItem::StorageBinListItem(CParser & parser)
 {
 	this->Clear();
-	// Read list of numbers or number ranges 
+	// Read list of numbers or number ranges
 	for (;;)
 	{
 		//read lines
@@ -21,7 +21,7 @@ StorageBinListItem::StorageBinListItem(CParser & parser)
 		std::istream::pos_type next_char = 0;
 		if (l == PHRQ_io::LT_EOF) break;
 		for (;;)
-		{ 
+		{
 			std::string token;
 			CParser::TOKEN_TYPE j = parser.copy_token(token, next_char);
 			if (j == CParser::TT_DIGIT)
@@ -55,7 +55,7 @@ void StorageBinListItem::Augment(std::string token)
 	int i;
 	if (iss >> i)
 	{
-		// add first 
+		// add first
 		temp_set.insert(i);
 		if (iss >> i)
 		{
@@ -216,7 +216,7 @@ bool StorageBinList::Read(CParser & parser)
 		if ((opt >= 0 && opt <= 12) || (opt >= 14))
 		{
 			for (;;)
-			{ 
+			{
 				CParser::TOKEN_TYPE j = parser.copy_token(token, next_char);
 				if (item)
 				{
@@ -298,7 +298,7 @@ bool StorageBinList::Read(CParser & parser)
 			break;
 	}
 
-	// Now check to see if cell_list defined 
+	// Now check to see if cell_list defined
 	if (this->Get_cell().Get_defined())
 	{
 		if (this->Get_cell().Get_numbers().empty())
@@ -327,16 +327,16 @@ void StorageBinList::TransferAll(StorageBinListItem &source)
 	}
 }
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("solution"),			       // 0 
-	std::vector< std::string >::value_type("pp_assemblage"),		   // 1 
-	std::vector< std::string >::value_type("equilibrium_phases"),	   // 2 
-	std::vector< std::string >::value_type("exchange"),			       // 3 
-	std::vector< std::string >::value_type("surface"),			       // 4 
-	std::vector< std::string >::value_type("ss_assemblage"),		   // 5 
-	std::vector< std::string >::value_type("solid_solution"),		   // 6 
-	std::vector< std::string >::value_type("solid_solutions"),		   // 7 
-	std::vector< std::string >::value_type("gas_phase"),			   // 8 
-	std::vector< std::string >::value_type("kinetics"),			       // 9 
+	std::vector< std::string >::value_type("solution"),			       // 0
+	std::vector< std::string >::value_type("pp_assemblage"),		   // 1
+	std::vector< std::string >::value_type("equilibrium_phases"),	   // 2
+	std::vector< std::string >::value_type("exchange"),			       // 3
+	std::vector< std::string >::value_type("surface"),			       // 4
+	std::vector< std::string >::value_type("ss_assemblage"),		   // 5
+	std::vector< std::string >::value_type("solid_solution"),		   // 6
+	std::vector< std::string >::value_type("solid_solutions"),		   // 7
+	std::vector< std::string >::value_type("gas_phase"),			   // 8
+	std::vector< std::string >::value_type("kinetics"),			       // 9
 	std::vector< std::string >::value_type("mix"),				       // 10
 	std::vector< std::string >::value_type("reaction"),			       // 11
 	std::vector< std::string >::value_type("temperature"),			   // 12
@@ -345,6 +345,6 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("cells"), 			       // 15
 	std::vector< std::string >::value_type("reaction_temperature"),	   // 16
 	std::vector< std::string >::value_type("pressure"),			       // 17
-	std::vector< std::string >::value_type("reaction_pressure") 	   // 18 
-};									   
-const std::vector< std::string > StorageBinList::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+	std::vector< std::string >::value_type("reaction_pressure") 	   // 18
+};
+const std::vector< std::string > StorageBinList::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

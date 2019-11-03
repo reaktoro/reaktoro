@@ -32,9 +32,7 @@ def kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite():
     calcite_reaction = editor.addMineralReaction("Calcite")
     calcite_reaction.setEquation("Calcite = Ca++ + CO3--")
     calcite_reaction.addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol")
-    calcite_reaction.addMechanism(
-        "logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0"
-    )
+    calcite_reaction.addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0")
     calcite_reaction.setSpecificSurfaceArea(10, "cm2/g")
 
     system = ChemicalSystem(editor)
@@ -71,25 +69,19 @@ def kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite
     calcite_reaction = editor.addMineralReaction("Calcite")
     calcite_reaction.setEquation("Calcite = Ca++ + CO3--")
     calcite_reaction.addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol")
-    calcite_reaction.addMechanism(
-        "logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0"
-    )
+    calcite_reaction.addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0")
     calcite_reaction.setSpecificSurfaceArea(10, "cm2/g")
 
     magnesite_reaction = editor.addMineralReaction("Magnesite")
     magnesite_reaction.setEquation("Magnesite = Mg++ + CO3--")
     magnesite_reaction.addMechanism("logk = -9.34 mol/(m2*s); Ea = 23.5 kJ/mol")
-    magnesite_reaction.addMechanism(
-        "logk = -6.38 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0"
-    )
+    magnesite_reaction.addMechanism("logk = -6.38 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0")
     magnesite_reaction.setSpecificSurfaceArea(10, "cm2/g")
 
     dolomite_reaction = editor.addMineralReaction("Dolomite")
     dolomite_reaction.setEquation("Dolomite = Ca++ + Mg++ + 2*CO3--")
     dolomite_reaction.addMechanism("logk = -7.53 mol/(m2*s); Ea = 52.2 kJ/mol")
-    dolomite_reaction.addMechanism(
-        "logk = -3.19 mol/(m2*s); Ea = 36.1 kJ/mol; a[H+] = 0.5"
-    )
+    dolomite_reaction.addMechanism("logk = -3.19 mol/(m2*s); Ea = 36.1 kJ/mol; a[H+] = 0.5")
     dolomite_reaction.setSpecificSurfaceArea(10, "cm2/g")
 
     system = ChemicalSystem(editor)
@@ -115,7 +107,9 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
     "setup, time_span, checked_variables, minerals_to_add",
     [
         (
-            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
+            pytest.lazy_fixture(
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+            ),
             time_span(0, 24, "hours"),
             [
                 # "time(units=hour)",  # CVODE is generating slightly different time steps in different OSs.
@@ -128,7 +122,9 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
             [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
         ),
         (
-            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
+            pytest.lazy_fixture(
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+            ),
             time_span(0, 48, "hours"),
             [
                 # "time(units=hour)",  # CVODE is generating slightly different time steps in different OSs.
@@ -141,7 +137,9 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
             [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
         ),
         (
-            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
+            pytest.lazy_fixture(
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+            ),
             time_span(0, 72, "hours"),
             [
                 # "time(units=hour)",  # CVODE is generating slightly different time steps in different OSs.
@@ -213,7 +211,7 @@ def test_kinetic_path_solve_complete_path(
     (problem, reactions, partition) = setup
 
     state = equilibrate(problem)
- 
+
     for mineral in minerals_to_add:
         state.setSpeciesMass(mineral.mineral_name, mineral.amount, mineral.unit)
 
@@ -245,17 +243,23 @@ def test_kinetic_path_solve_complete_path(
     "setup, time_span, minerals_to_add",
     [
         (
-            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
+            pytest.lazy_fixture(
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+            ),
             time_span(0, 24, "hours"),
             [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
         ),
         (
-            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
+            pytest.lazy_fixture(
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+            ),
             time_span(0, 48, "hours"),
             [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
         ),
         (
-            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
+            pytest.lazy_fixture(
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+            ),
             time_span(0, 72, "hours"),
             [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
         ),
@@ -284,9 +288,7 @@ def test_kinetic_path_solve_complete_path(
         "kinetic prob-h2o hcl caco3 mgco3 co2 calcite 0 to 20 min",
     ],
 )
-def test_kinetic_path_solve_final_state(
-    state_regression, setup, time_span, minerals_to_add
-):
+def test_kinetic_path_solve_final_state(state_regression, setup, time_span, minerals_to_add):
     """
     An integration test that checks result's reproducibility of
     the calculation of a kinetic problem and only check the

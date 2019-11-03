@@ -139,5 +139,3 @@ typedef enum {  /// Field index into outField structure
 #endif
 // -----------------------------------------------------------------------------
 // End of datach.h
-
-

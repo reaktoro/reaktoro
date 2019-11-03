@@ -28,7 +28,7 @@ warning_msg(const char *err_str)
 		phrq_io->warning_msg(msg.str().c_str());
 		status_on = false;
 	}
-	
+
 	return OK;
 }
 
@@ -108,7 +108,7 @@ void Phreeqc::
 fpunchf_user(int user_index, const char *format, double d)
 {
 	const char *name;
-	
+
 	if (current_user_punch == NULL)
 		return;
 	// check headings
@@ -146,7 +146,7 @@ void Phreeqc::
 fpunchf_user(int user_index, const char *format, char * d)
 {
 	const char *name;
-	
+
 	if (current_user_punch == NULL)
 		return;
 	int user_punch_count_headings = (int) current_user_punch->Get_headings().size();
@@ -182,7 +182,7 @@ fpunchf_user(int user_index, const char *format, char * d)
 int Phreeqc::
 fpunchf_end_row(const char *format)
 {
-	if (phrq_io) 
+	if (phrq_io)
 	{
 		phrq_io->fpunchf_end_row(format);
 	}
@@ -330,7 +330,7 @@ bool Phreeqc::
 output_open(const char *file_name)
 /* ---------------------------------------------------------------------- */
 {
-	if (phrq_io) 
+	if (phrq_io)
 		return this->phrq_io->output_open(file_name);
 	return false;
 }

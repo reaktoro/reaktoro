@@ -273,7 +273,7 @@ struct TensorEvaluator<const TensorPatchOp<PatchDim, ArgType>, Device>
 #ifdef EIGEN_USE_SYCL
   // binding placeholder accessors to a command group handler for SYCL
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void bind(cl::sycl::handler &cgh) const {
-    m_impl.bind(cgh); 
+    m_impl.bind(cgh);
   }
 #endif
 

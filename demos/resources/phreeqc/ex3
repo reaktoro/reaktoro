@@ -1,9 +1,9 @@
-TITLE Example 3, part A.--Calcite equilibrium at log Pco2 = -2.0 and 25C.        
+TITLE Example 3, part A.--Calcite equilibrium at log Pco2 = -2.0 and 25C.
 SOLUTION 1  Pure water
         pH      7.0
         temp    25.0
 EQUILIBRIUM_PHASES
-        CO2(g)          -2.0    
+        CO2(g)          -2.0
         Calcite         0.0
 SAVE solution 1
 END

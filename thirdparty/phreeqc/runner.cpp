@@ -63,7 +63,7 @@ bool runner::Read(CParser & parser)
 		case 0:
 		case 1:
 			for (;;)
-			{ 
+			{
 				CParser::TOKEN_TYPE j = parser.copy_token(token, next_char);
 				if (j == CParser::TT_DIGIT)
 				{
@@ -79,7 +79,7 @@ bool runner::Read(CParser & parser)
 					parser.error_msg("Expected single number or range of numbers.",
 						PHRQ_io::OT_CONTINUE);
 				}
-			}			
+			}
 			break;
 		case 2:				//start_time
 			if (!(parser.get_iss() >> this->start_time))
@@ -138,12 +138,12 @@ bool runner::Read(CParser & parser)
 	return(return_value);
 }
 const std::vector< std::string >::value_type temp_vopts[] = {
-		std::vector< std::string >::value_type("cell"),		 	 // 0 
-		std::vector< std::string >::value_type("cells"),		 // 1 
-		std::vector< std::string >::value_type("start_time"),	 // 2 
-		std::vector< std::string >::value_type("time_step"),	 // 3 
-		std::vector< std::string >::value_type("time_steps"),	 // 4 
-		std::vector< std::string >::value_type("step"),		 	 // 5 
-		std::vector< std::string >::value_type("steps")			 // 6 
-};									   
-const std::vector< std::string > runner::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+		std::vector< std::string >::value_type("cell"),		 	 // 0
+		std::vector< std::string >::value_type("cells"),		 // 1
+		std::vector< std::string >::value_type("start_time"),	 // 2
+		std::vector< std::string >::value_type("time_step"),	 // 3
+		std::vector< std::string >::value_type("time_steps"),	 // 4
+		std::vector< std::string >::value_type("step"),		 	 // 5
+		std::vector< std::string >::value_type("steps")			 // 6
+};
+const std::vector< std::string > runner::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

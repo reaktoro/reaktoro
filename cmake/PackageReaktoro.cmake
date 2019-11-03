@@ -16,7 +16,7 @@ endif()
 if(DEFINED CMAKE_SYSTEM_PROCESSOR AND (WIN32 OR APPLE))
     set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
 endif()
-      
+
 ###############################################################################
 # Package's generator configuration
 ###############################################################################
@@ -61,10 +61,10 @@ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/resources/packaging/license
 # Package's components and groups configuration
 ###############################################################################
 # Set all archive installers to be component aware (i.e., distinct between headers, binaries, libraries)
-# This affects the cpack generators STGZ, TBZ2, TGZ, TZ and ZIP 
+# This affects the cpack generators STGZ, TBZ2, TGZ, TZ and ZIP
 set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 
-# Generate a single package containing all components which can be optionally installed individually 
+# Generate a single package containing all components which can be optionally installed individually
 set(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)
 
 # Set the package components
@@ -77,13 +77,13 @@ set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "Headers")
 set(CPACK_COMPONENT_INTERFACES_DISPLAY_NAME "Interfaces")
 
 # Set descriptions to the package components
-set(CPACK_COMPONENT_APPLICATIONS_DESCRIPTION 
+set(CPACK_COMPONENT_APPLICATIONS_DESCRIPTION
     "The applications developed using Reaktoro.")
-set(CPACK_COMPONENT_LIBRARIES_DESCRIPTION 
+set(CPACK_COMPONENT_LIBRARIES_DESCRIPTION
     "The C++ static and shared libraries for runtime linking or application development.")
 set(CPACK_COMPONENT_HEADERS_DESCRIPTION
     "The C++ header files needed for application development.")
-set(CPACK_COMPONENT_INTERFACES_DESCRIPTION 
+set(CPACK_COMPONENT_INTERFACES_DESCRIPTION
     "The modules that enable the use of Reaktoro from other programming languages.")
 
 # Set the dependencies of some components on others
@@ -119,10 +119,10 @@ if(WIN32)
 
     # Allow Reaktoro to be uninstalled before installed
     set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
-    
+
     # Allow installation of Reaktoro to change the environment variable PATH
     set(CPACK_NSIS_MODIFY_PATH ON)
-    
+
     # Set the pre-selected installation types `Full` and `Developer`
     set(CPACK_ALL_INSTALL_TYPES Full Developer)
     set(CPACK_COMPONENT_LIBRARIES_INSTALL_TYPES Developer Full)

@@ -22,10 +22,10 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_PATH})
 
 # Configure the installation of the external dependencies
 execute_process(COMMAND ${CMAKE_COMMAND} -E chdir ${BUILD_PATH}
-    ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/thirdparty 
+    ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/thirdparty
         -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
         -DCMAKE_INSTALL_PREFIX=${BUILD_PATH})
 
-# Build and install the external dependencies 
+# Build and install the external dependencies
 # TODO: The following needs to be adapted for Visual Studio (/MP4 means 4 jobs)
 execute_process(COMMAND ${CMAKE_COMMAND} --build ${BUILD_PATH} -- -j${JOBS})

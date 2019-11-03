@@ -1121,10 +1121,10 @@ ineq(int in_kode)
 		{
 			//std::map<std::string, cxxPPassemblageComp>::iterator it;
 			//it =  pp_assemblage_ptr->Get_pp_assemblage_comps().find(x[i]->pp_assemblage_comp_name);
-			
+
 			/* not in model, ignore */
 			if (x[i]->phase->in == FALSE)
-				continue;		
+				continue;
 			// delay removing phase
 			if (x[i]->moles > 0.0 || x[i]->f <= 0.0 || iterations == 0 || equi_delay == 0)
 			{
@@ -1424,7 +1424,7 @@ ineq(int in_kode)
 		{
 			if (x[i]->type == PP)
 			{
-				//comp_ptr = pp_assemblage_ptr->Find(x[i]->pp_assemblage_comp_name);			
+				//comp_ptr = pp_assemblage_ptr->Find(x[i]->pp_assemblage_comp_name);
 				comp_ptr = (cxxPPassemblageComp *) x[i]->pp_assemblage_comp_ptr;
 				if ((x[i]->moles <= 0.0 && x[i]->f > 0e-8 &&
 					 comp_ptr->Get_add_formula().size() == 0)
@@ -1815,7 +1815,7 @@ ineq(int in_kode)
 	}
 #endif
 /*   Copy delta1 into delta and scale */
-#ifdef SHRINK_ARRAY	
+#ifdef SHRINK_ARRAY
 	memcpy((void *) &(delta[0]), (void *) &(zero[0]),
 		   (size_t) count_unknowns * sizeof(LDBLE));
 #endif
@@ -1988,7 +1988,7 @@ jacobian_sums(void)
 			if (mass_oxygen_unknown != NULL)
 			{
 				array[ah2o_unknown->number * (count_unknowns + 1) + mass_oxygen_unknown->number] -=
-					  a*y_sum*(x_h2o*(0.5*tanh(lim) + 0.5) + (47.5*x_h2o - 50.0*a*y_sum)/(cosh(lim)*cosh(lim))) / 
+					  a*y_sum*(x_h2o*(0.5*tanh(lim) + 0.5) + (47.5*x_h2o - 50.0*a*y_sum)/(cosh(lim)*cosh(lim))) /
 					  (x_h2o*x_h2o*x_h2o);
 			}
 		}
@@ -2376,7 +2376,7 @@ molalities(int allow_overflow)
 /*
  *   other terms for diffuse layer model
  */
-	if (use.Get_surface_ptr() != NULL 
+	if (use.Get_surface_ptr() != NULL
 		&& use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC
 		&& dl_type_x != cxxSurface::NO_DL)
 	{
@@ -3555,7 +3555,7 @@ reset(void)
 			cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[i]->surface_charge);
 			if (x[i]->phase_unknown != NULL)
 			{
-				charge_ptr->Set_grams(	
+				charge_ptr->Set_grams(
 					(x[i]->phase_unknown->moles -
 					 delta[x[i]->phase_unknown->number]));
 				if (charge_ptr->Get_grams() <= MIN_RELATED_SURFACE)
@@ -3599,7 +3599,7 @@ reset(void)
 					{
 						output_msg(sformatf(
 								   "\t%12.4e\t%12.4e\t%12.4e\t%12.4e\t%12.4e\n",
-								   
+
 								   (double) jit->second.Get_g(),
 								   (double) jit->second.Get_g() +
 								   (double) (jit->second.Get_dg() *
@@ -3815,9 +3815,9 @@ reset(void)
 			x[i]->moles += delta[i];
 			if (x[i]->moles < MIN_TOTAL)
 				x[i]->moles = MIN_TOTAL;
-			if (x[i] == gas_unknown && gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME && 
+			if (x[i] == gas_unknown && gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME &&
 				 !calculating_deriv)
-			{					
+			{
 				if (debug_model == TRUE)
 				{
 					output_msg(sformatf(
@@ -3940,10 +3940,10 @@ residuals(void)
 		if (x[i]->type == MB)
 		{
 			residual[i] = x[i]->moles - x[i]->f;
-			if ((fabs(residual[i]) > l_toler * x[i]->moles && 
-				fabs(residual[i]) > sqrt(fabs(x[i]->moles) * MIN_TOTAL) && 
-				x[i]->moles > MIN_TOTAL) 
-				|| 
+			if ((fabs(residual[i]) > l_toler * x[i]->moles &&
+				fabs(residual[i]) > sqrt(fabs(x[i]->moles) * MIN_TOTAL) &&
+				x[i]->moles > MIN_TOTAL)
+				||
 				x[i]->moles < 0)
 			{
 				if (print_fail)
@@ -4165,7 +4165,7 @@ residuals(void)
 		else if (x[i]->type == GAS_MOLES)
 		{
 			cxxGasPhase *gas_phase_ptr = use.Get_gas_phase_ptr();
-			if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME && 
+			if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME &&
 				(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) && numerical_fixed_volume)
 			{
 				residual[i] = x[i]->moles - x[i]->phase->moles_x;
@@ -4188,7 +4188,7 @@ residuals(void)
 				&& !calculating_deriv)
 			{
 				if (print_fail)
-					output_msg(sformatf("Failed pressure test %d: %e %e %e\n", iterations, last_patm_x, patm_x, 
+					output_msg(sformatf("Failed pressure test %d: %e %e %e\n", iterations, last_patm_x, patm_x,
 						gas_phase_ptr->Get_total_p()));
 				converge = FALSE;
 			}
@@ -4371,9 +4371,9 @@ residuals(void)
 				master_ptr2 =
 					surface_get_psi_master(charge_ptr->Get_name().c_str(),
 										   SURF_PSI2);
-				
+
 				cd_psi.clear();
-				
+
 				cd_psi.push_back(-(master_ptr->s->la * LOG_10) * R_KJ_DEG_MOL * tk_x /
 					F_KJ_V_EQ);
 				cd_psi.push_back(-(master_ptr1->s->la * LOG_10) * R_KJ_DEG_MOL * tk_x /
@@ -4407,7 +4407,7 @@ residuals(void)
 							   iterations, x[i]->description, i, residual[i]));
 				converge = FALSE;
 			}
-		}		
+		}
 		else if (x[i]->type == SURFACE_CB && use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
 		{
 			cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[i]->surface_charge);
@@ -4562,7 +4562,7 @@ residuals(void)
 
 				/* add fictitious monovalent ion that balances charge */
 				//sum += fabs(sum1) * (exp(-sum1 / fabs(sum1) * negfpsirt) - 1);
-				if (sum1 >= 0) 
+				if (sum1 >= 0)
 				{
 					sum += fabs(sum1) * (exp(-negfpsirt) - 1);
 				}
@@ -5465,10 +5465,10 @@ numerical_jacobian(void)
 	int i, j;
 	cxxGasPhase *gas_phase_ptr = use.Get_gas_phase_ptr();
 	if (!
-		(numerical_deriv || 
+		(numerical_deriv ||
 		(use.Get_surface_ptr() != NULL && use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC) ||
-		(gas_phase_ptr != NULL && gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME && 
-		(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) && numerical_fixed_volume) 
+		(gas_phase_ptr != NULL && gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME &&
+		(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) && numerical_fixed_volume)
 		))
 		return(OK);
 
@@ -5763,11 +5763,11 @@ set_inert_moles(void)
 {
 	int j;
 	if (use.Get_pp_assemblage_ptr() == NULL) return;
-	
+
 	for (j = 0; j < count_unknowns; j++)
 	{
 		if (x[j]->type != PP) continue;
-		//cxxPPassemblageComp * comp_ptr = pp_assemblage_ptr->Find(x[j]->pp_assemblage_comp_name); 
+		//cxxPPassemblageComp * comp_ptr = pp_assemblage_ptr->Find(x[j]->pp_assemblage_comp_name);
 		cxxPPassemblageComp * comp_ptr = (cxxPPassemblageComp *) x[j]->pp_assemblage_comp_ptr;
 		if (comp_ptr->Get_precipitate_only())
 		{
@@ -5786,7 +5786,7 @@ unset_inert_moles()
 	for (j = 0; j < count_unknowns; j++)
 	{
 		if (x[j]->type != PP) continue;
-		//cxxPPassemblageComp * comp_ptr = pp_assemblage_ptr->Find(x[j]->pp_assemblage_comp_name); 		
+		//cxxPPassemblageComp * comp_ptr = pp_assemblage_ptr->Find(x[j]->pp_assemblage_comp_name);
 		cxxPPassemblageComp * comp_ptr = (cxxPPassemblageComp *) x[j]->pp_assemblage_comp_ptr;
 		if (comp_ptr->Get_precipitate_only())
 		{

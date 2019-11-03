@@ -21,7 +21,7 @@
 
 cxxTemperature::cxxTemperature(PHRQ_io *io)
 	//
-	// default constructor for cxxTemperature 
+	// default constructor for cxxTemperature
 	//
 :	cxxNumKeyword(io)
 {
@@ -94,7 +94,7 @@ cxxTemperature::read(CParser & parser)
 		std::string token, str;
 		lt = parser.check_line(str, false, true, true, true);
 
-		if (lt == PHRQ_io::LT_EMPTY || 
+		if (lt == PHRQ_io::LT_EMPTY ||
 			lt == PHRQ_io::LT_KEYWORD ||
 			lt == PHRQ_io::LT_EOF)
 		{
@@ -280,7 +280,7 @@ cxxTemperature::read_raw(CParser & parser, bool check)
 			break;
 
 		case 0:				// temps
-			if (!cleared_once) 
+			if (!cleared_once)
 			{
 				this->temps.clear();
 				cleared_once = true;
@@ -364,7 +364,7 @@ Temperature_for_step(int step_number)
  *   Determine pressure of reaction step
  */
 	LDBLE t_temp;
-	if (this->temps.size() == 0) 
+	if (this->temps.size() == 0)
 	{
 		t_temp = 1;
 	}
@@ -386,7 +386,7 @@ Temperature_for_step(int step_number)
 				((LDBLE) (step_number - 1)) / (denom);
 		}
 	}
-	else 
+	else
 	{
 		if (step_number > (int) this->temps.size())
 		{
@@ -404,7 +404,7 @@ Temperature_for_step(int step_number)
 int cxxTemperature::
 Get_countTemps(void) const
 {
-	if (equalIncrements) 
+	if (equalIncrements)
 	{
 		return this->countTemps;
 	}
@@ -426,7 +426,7 @@ cxxTemperature::Serialize(Dictionary & dictionary, std::vector < int >&ints, std
 }
 
 void
-cxxTemperature::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxTemperature::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 {
 	this->n_user = ints[ii++];
@@ -448,5 +448,5 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("temps"),	        //0
 	std::vector< std::string >::value_type("equal_increments"),	//1
 	std::vector< std::string >::value_type("count_temps") 	    //2
-};									   
-const std::vector< std::string > cxxTemperature::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxTemperature::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

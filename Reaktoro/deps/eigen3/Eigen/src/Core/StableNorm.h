@@ -10,7 +10,7 @@
 #ifndef EIGEN_STABLENORM_H
 #define EIGEN_STABLENORM_H
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 
@@ -18,7 +18,7 @@ template<typename ExpressionType, typename Scalar>
 inline void stable_norm_kernel(const ExpressionType& bl, Scalar& ssq, Scalar& scale, Scalar& invScale)
 {
   Scalar maxCoeff = bl.cwiseAbs().maxCoeff();
-  
+
   if(maxCoeff>scale)
   {
     ssq = ssq * numext::abs2(scale/maxCoeff);
@@ -43,10 +43,10 @@ inline void stable_norm_kernel(const ExpressionType& bl, Scalar& ssq, Scalar& sc
   {
     scale = maxCoeff;
   }
-  
+
   // TODO if the maxCoeff is much much smaller than the current scale,
   // then we can neglect this sub vector
-  if(scale>Scalar(0)) // if scale==0, then bl is 0 
+  if(scale>Scalar(0)) // if scale==0, then bl is 0
     ssq += (bl*invScale).squaredNorm();
 }
 
@@ -55,11 +55,11 @@ void stable_norm_impl_inner_step(const VectorType &vec, RealScalar& ssq, RealSca
 {
   typedef typename VectorType::Scalar Scalar;
   const Index blockSize = 4096;
-  
+
   typedef typename internal::nested_eval<VectorType,2>::type VectorTypeCopy;
   typedef typename internal::remove_all<VectorTypeCopy>::type VectorTypeCopyClean;
   const VectorTypeCopy copy(vec);
-  
+
   enum {
     CanAlign = (   (int(VectorTypeCopyClean::Flags)&DirectAccessBit)
                 || (int(internal::evaluator<VectorTypeCopyClean>::Alignment)>0) // FIXME Alignment)>0 might not be enough
@@ -69,7 +69,7 @@ void stable_norm_impl_inner_step(const VectorType &vec, RealScalar& ssq, RealSca
   typedef typename internal::conditional<CanAlign, Ref<const Matrix<Scalar,Dynamic,1,0,blockSize,1>, internal::evaluator<VectorTypeCopyClean>::Alignment>,
                                                    typename VectorTypeCopyClean::ConstSegmentReturnType>::type SegmentWrapper;
   Index n = vec.size();
-  
+
   Index bi = internal::first_default_aligned(copy);
   if (bi>0)
     internal::stable_norm_kernel(copy.head(bi), ssq, scale, invScale);
@@ -95,7 +95,7 @@ stable_norm_impl(const VectorType &vec, typename enable_if<VectorType::IsVectorA
   RealScalar ssq(0); // sum of squares
 
   stable_norm_impl_inner_step(vec, ssq, scale, invScale);
-  
+
   return scale * sqrt(ssq);
 }
 
@@ -119,7 +119,7 @@ template<typename Derived>
 inline typename NumTraits<typename traits<Derived>::Scalar>::Real
 blueNorm_impl(const EigenBase<Derived>& _vec)
 {
-  typedef typename Derived::RealScalar RealScalar;  
+  typedef typename Derived::RealScalar RealScalar;
   using std::pow;
   using std::sqrt;
   using std::abs;

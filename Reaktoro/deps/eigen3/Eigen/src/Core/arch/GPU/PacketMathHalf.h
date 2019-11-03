@@ -49,7 +49,7 @@ template<> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE half2 pset1<half2>(const Eigen:
 
 #if defined(EIGEN_HAS_OLD_HIP_FP16)
   return half2half2(from);
-#else  
+#else
   return __half2half2(from);
 #endif
 
@@ -156,9 +156,9 @@ ptranspose(PacketBlock<half2,2>& kernel) {
 
 template<> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE half2 plset<half2>(const Eigen::half& a) {
 #if defined(EIGEN_HIP_DEVICE_COMPILE)
-  
+
   return __halves2half2(a, __hadd(a, __float2half(1.0f)));
-  
+
 #else  // EIGEN_CUDA_ARCH
 
 #if EIGEN_CUDA_ARCH >= 530
@@ -197,7 +197,7 @@ template<> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE half2 psub<half2>(const half2& 
 #if defined(EIGEN_HIP_DEVICE_COMPILE)
 
   return __hsub2(a, b);
-  
+
 #else  // EIGEN_CUDA_ARCH
 
 #if EIGEN_CUDA_ARCH >= 530
@@ -283,15 +283,15 @@ template<> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE half2 pmadd<half2>(const half2&
 
 template<> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE half2 pdiv<half2>(const half2& a, const half2& b) {
 #if defined(EIGEN_HIP_DEVICE_COMPILE)
-  
+
 #if defined(EIGEN_HAS_OLD_HIP_FP16)
   return h2div(a, b);
 #else
   return __h2div(a, b);
 #endif
-  
+
 #else // EIGEN_CUDA_ARCH
-  
+
   float a1 = __low2float(a);
   float a2 = __high2float(a);
   float b1 = __low2float(b);

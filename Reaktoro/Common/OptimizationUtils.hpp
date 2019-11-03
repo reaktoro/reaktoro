@@ -65,4 +65,3 @@ auto dereference(const std::shared_ptr<std::function<Ret(Args...)>>& f) -> std::
 }
 
 } // namespace Reaktoro
-

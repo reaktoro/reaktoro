@@ -67,7 +67,7 @@ struct __half_raw {
 // In the old HIP implementation,
 //   ++ __half is a typedef of __fp16
 //   ++ the "__h*" routines take "__half" arguments
-// so we need to implicitly convert "__half_raw" to "__half" to avoid having to explicitly make 
+// so we need to implicitly convert "__half_raw" to "__half" to avoid having to explicitly make
 // that conversiion in each call to a "__h*" routine...that is why we have "operator __half" routine
 struct __half_raw {
   EIGEN_DEVICE_FUNC __half_raw() : x(0) {}
@@ -110,7 +110,7 @@ struct half_base : public __half_raw {
   #if (defined(EIGEN_CUDACC_VER) && EIGEN_CUDACC_VER >= 90000)
   EIGEN_DEVICE_FUNC half_base(const __half& h) : __half_raw(*(__half_raw*)&h) {}
   #endif
- #endif    
+ #endif
 #endif
 };
 
@@ -130,7 +130,7 @@ struct half : public half_impl::half_base {
 #elif defined(EIGEN_HAS_CUDA_FP16)
   // Note that EIGEN_CUDACC_VER is set to 0 even when compiling with HIP, so (EIGEN_CUDACC_VER < 90000) is true even for HIP!
   // So keeping this within #if defined(EIGEN_HAS_CUDA_FP16) is needed
- #if defined(EIGEN_CUDACC_VER) && EIGEN_CUDACC_VER < 90000  
+ #if defined(EIGEN_CUDACC_VER) && EIGEN_CUDACC_VER < 90000
   typedef half_impl::__half_raw __half_raw;
  #endif
 #endif
@@ -139,7 +139,7 @@ struct half : public half_impl::half_base {
 
   EIGEN_DEVICE_FUNC half(const __half_raw& h) : half_impl::half_base(h) {}
   EIGEN_DEVICE_FUNC half(const half& h) : half_impl::half_base(h) {}
-  
+
 #if defined(EIGEN_HAS_GPU_FP16)
  #if defined(EIGEN_HAS_HIP_FP16)
   EIGEN_DEVICE_FUNC half(const __half& h) : half_impl::half_base(h) {}
@@ -149,7 +149,7 @@ struct half : public half_impl::half_base {
   #endif
  #endif
 #endif
-  
+
 
   explicit EIGEN_DEVICE_FUNC half(bool b)
       : half_impl::half_base(half_impl::raw_uint16_to_half(b ? 0x3c00 : 0)) {}

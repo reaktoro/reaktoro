@@ -66,7 +66,7 @@ bool gmres(const MatrixType & mat, const Rhs & rhs, Dest & x, const Precondition
 
   const RealScalar considerAsZero = (std::numeric_limits<RealScalar>::min)();
 
-  if(rhs.norm() <= considerAsZero) 
+  if(rhs.norm() <= considerAsZero)
   {
     x.setZero();
     tol_error = 0;
@@ -99,7 +99,7 @@ bool gmres(const MatrixType & mat, const Rhs & rhs, Dest & x, const Precondition
 
   // storage for Jacobi rotations
   std::vector < JacobiRotation < Scalar > > G(restart);
-  
+
   // storage for temporaries
   VectorType t(m), v(m), workspace(m), x_new(m);
 
@@ -108,7 +108,7 @@ bool gmres(const MatrixType & mat, const Rhs & rhs, Dest & x, const Precondition
   RealScalar beta;
   r0.makeHouseholder(H0_tail, tau.coeffRef(0), beta);
   w(0) = Scalar(beta);
-  
+
   for (Index k = 1; k <= restart; ++k)
   {
     ++iters;
@@ -260,7 +260,7 @@ struct traits<GMRES<_MatrixType,_Preconditioner> >
   *
   * By default the iterations start with x=0 as an initial guess of the solution.
   * One can control the start using the solveWithGuess() method.
-  * 
+  *
   * GMRES can also be used in a matrix-free context, see the following \link MatrixfreeSolverExample example \endlink.
   *
   * \sa class SimplicialCholesky, DiagonalPreconditioner, IdentityPreconditioner

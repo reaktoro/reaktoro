@@ -69,7 +69,7 @@ long int retCode;
 
   if( Mode < 0 || abs(Mode) == NEED_GEM_SIA )
 	  uPrimalSol = true;
-	  
+
 // Copy data from the iNode node from array NodT1 to the work DATABR structure
    CopyWorkNodeFromArray( iNode, anNodes, NodT1 );
 
@@ -444,17 +444,17 @@ TParticleArray::pa = 0;
     NodT1 = new  DATABRPTR[anNodes];
     for(  ii=0; ii<anNodes; ii++ )
         NodT1[ii] = 0;
-    
+
 // alloc memory for the work array of node types
     tcNode = new char[anNodes];
     for(  ii=0; ii<anNodes; ii++ )
-        tcNode[ii] = normal;    
-        
+        tcNode[ii] = normal;
+
 // alloc memory for the work array of IA indicators
     iaNode = new bool[anNodes];
     for(  ii=0; ii<anNodes; ii++ )
         iaNode[ii] = true;
-// grid ?    
+// grid ?
 }
 
 void TNodeArray::freeMemory()
@@ -481,7 +481,7 @@ void TNodeArray::freeMemory()
   if( tcNode)
      delete[] tcNode;
   if( iaNode )
-	 delete[] iaNode; 
+	 delete[] iaNode;
 }
 
 #ifndef IPMGEMPLUGIN
@@ -571,38 +571,38 @@ void TNodeArray::CopyWorkNodeFromArray( long int ii, long int nNodes, DATABRPTR*
   // mem_cpy( &pCNode()->TK, &arr_BR[ii]->TK, 32*sizeof(double));
 	pCNode()->TK = arr_BR[ii]->TK;
 	pCNode()->P = arr_BR[ii]->P;
-	pCNode()->Vs = arr_BR[ii]->Vs;  
-	pCNode()->Vi = arr_BR[ii]->Vi;   
-	pCNode()->Ms = arr_BR[ii]->Ms;   
-	pCNode()->Mi = arr_BR[ii]->Mi;    
-	pCNode()->Gs = arr_BR[ii]->Gs;    
-	pCNode()->Hs = arr_BR[ii]->Hs; 	
-	pCNode()->Hi = arr_BR[ii]->Hi;    
-	pCNode()->IC = arr_BR[ii]->IC;    
-	pCNode()->pH = arr_BR[ii]->pH;    
-	pCNode()->pe = arr_BR[ii]->pe;     
-	pCNode()->Eh = arr_BR[ii]->Eh; //13     
+	pCNode()->Vs = arr_BR[ii]->Vs;
+	pCNode()->Vi = arr_BR[ii]->Vi;
+	pCNode()->Ms = arr_BR[ii]->Ms;
+	pCNode()->Mi = arr_BR[ii]->Mi;
+	pCNode()->Gs = arr_BR[ii]->Gs;
+	pCNode()->Hs = arr_BR[ii]->Hs;
+	pCNode()->Hi = arr_BR[ii]->Hi;
+	pCNode()->IC = arr_BR[ii]->IC;
+	pCNode()->pH = arr_BR[ii]->pH;
+	pCNode()->pe = arr_BR[ii]->pe;
+	pCNode()->Eh = arr_BR[ii]->Eh; //13
 
-	pCNode()->Tm = arr_BR[ii]->Tm;    
+	pCNode()->Tm = arr_BR[ii]->Tm;
     pCNode()->dt = arr_BR[ii]->dt;
 #ifdef NODEARRAYLEVEL
-	pCNode()->Dif = arr_BR[ii]->Dif;    
-	pCNode()->Vt = arr_BR[ii]->Vt;		
-	pCNode()->vp = arr_BR[ii]->vp;		
-	pCNode()->eps = arr_BR[ii]->eps;	
-	pCNode()->Km = arr_BR[ii]->Km;		
-	pCNode()->Kf = arr_BR[ii]->Kf;		
-	pCNode()->S = arr_BR[ii]->S;	
-	pCNode()->Tr = arr_BR[ii]->Tr;     
-	pCNode()->h = arr_BR[ii]->h;		
-	pCNode()->rho = arr_BR[ii]->rho;	
-	pCNode()->al = arr_BR[ii]->al;		
-	pCNode()->at = arr_BR[ii]->at;		
-	pCNode()->av = arr_BR[ii]->av;		
-	pCNode()->hDl = arr_BR[ii]->hDl;	
-	pCNode()->hDt = arr_BR[ii]->hDt;	
-	pCNode()->hDv = arr_BR[ii]->hDv;	
-	pCNode()->nto = arr_BR[ii]->nto; //19	
+	pCNode()->Dif = arr_BR[ii]->Dif;
+	pCNode()->Vt = arr_BR[ii]->Vt;
+	pCNode()->vp = arr_BR[ii]->vp;
+	pCNode()->eps = arr_BR[ii]->eps;
+	pCNode()->Km = arr_BR[ii]->Km;
+	pCNode()->Kf = arr_BR[ii]->Kf;
+	pCNode()->S = arr_BR[ii]->S;
+	pCNode()->Tr = arr_BR[ii]->Tr;
+	pCNode()->h = arr_BR[ii]->h;
+	pCNode()->rho = arr_BR[ii]->rho;
+	pCNode()->al = arr_BR[ii]->al;
+	pCNode()->at = arr_BR[ii]->at;
+	pCNode()->av = arr_BR[ii]->av;
+	pCNode()->hDl = arr_BR[ii]->hDl;
+	pCNode()->hDt = arr_BR[ii]->hDt;
+	pCNode()->hDv = arr_BR[ii]->hDv;
+	pCNode()->nto = arr_BR[ii]->nto; //19
 #endif
 // Dynamic data - dimensions see in DATACH.H and DATAMT.H structures
 // exchange of values occurs through lists of indices, e.g. xDC, xPH
@@ -927,7 +927,7 @@ double TNodeArray::GetNodeMass( long int ndx,
 // ndx_from    -  (absolute) index of the old node
 // ndx_to     -  (absolute) index of the new  node
 // type  -  particle type index ( 1 to 255 )
-// COmpMode: true: transport of DCs; false - transport of ICs 
+// COmpMode: true: transport of DCs; false - transport of ICs
 // tcode  -  particle transport mechanism code (see enum PTCODE)
 // iips   - DataBr index of phase or species to which this particle is connected
 // m_v -  mass or volume of the particle (depending on ptype and mmode)
@@ -941,7 +941,7 @@ void TNodeArray::MoveParticleMass( long int ndx_from, long int ndx_to,
    if( tcode == DISSOLVED || tcode == ADVECTIVE || tcode == DIFFUSIVE )
    {
 	   xWatCH = CSD->nDCinPH[CSD->xph[0]]-1; // CH index of water
-//	   mWat = node1_xDC( ndx_from, xWatCH )* CSD->DCmm[xWatCH]; 
+//	   mWat = node1_xDC( ndx_from, xWatCH )* CSD->DCmm[xWatCH];
 	   mWat = node1_xPA(ndx_from, ips) * CSD->DCmm[xWatCH];  // Mass of water-solvent
 	   fmolal = 1.0; // 1000./mWat;              // molality conversion factor
    }
@@ -968,10 +968,10 @@ void TNodeArray::MoveParticleMass( long int ndx_from, long int ndx_to,
                    mass = DCmm( ips ) * node1_xDC( ndx_from, ips );
                    break;
     }
-   coeff = m_v/mass; // mass of particle/mass of phase (solvent). Is this reasonable? 
+   coeff = m_v/mass; // mass of particle/mass of phase (solvent). Is this reasonable?
 
   if( CompMode == true )
-  { // Moving dependent components 
+  { // Moving dependent components
 	for(long int jc=0; jc < CSD->nDC; jc++ )
 	{
 	  mol = 0.; // moles of DC transported in the particle
@@ -979,16 +979,16 @@ void TNodeArray::MoveParticleMass( long int ndx_from, long int ndx_to,
 	  {
         case DISSOLVED: // moving only dissolved DC (-H2O)
 //             if( jc == xWatCH )
-//            	 continue;  // H2O is ignored - not moved with the particle 
+//            	 continue;  // H2O is ignored - not moved with the particle
 	    case ADVECTIVE: // moving DC of the whole aq phase
              if( jc > xWatCH )
-            	 continue;     // ignoring non-aqueous species 
+            	 continue;     // ignoring non-aqueous species
 	    	 mol = node1_xDC( ndx_from, jc ) * coeff * fmolal;
-             break;                	 
+             break;
 //             ( node1_bPS( ndx_from, ips, ie )
 //                   - nodeCH_A( xWatCH, ie)
 //                   * node1_xPA(ndx_from,ips)) * coeff;
-	     case COLLOID:  // moving DC of solid particle - to be completed!     
+	     case COLLOID:  // moving DC of solid particle - to be completed!
 // 	    	 if( ips < dch->nPSb )
 //                  mol = node1_bPS( ndx_from, ips, ie ) * coeff;
 //             else
@@ -996,18 +996,18 @@ void TNodeArray::MoveParticleMass( long int ndx_from, long int ndx_to,
 	    	 break;
 	     case DIFFUSIVE: // moving DC - a diffusing species
              if( jc != ips )
-            	 continue;     // ignoring other diffusive species 
+            	 continue;     // ignoring other diffusive species
 	    	 mol = node1_xDC( ndx_from, jc ) * coeff * fmolal;
-             break;                	 
+             break;
 	  }
 	  if( tcode == DISSOLVED || tcode == ADVECTIVE || tcode == DIFFUSIVE )
 	      mol /= fmolal;       // back from molality to moles
-      
-      if( fabs(mol) > 1e-20 ) // mtp->cdv ) // Threshold for DC change carried over in the particle  
-      { 	   
+
+      if( fabs(mol) > 1e-20 ) // mtp->cdv ) // Threshold for DC change carried over in the particle
+      {
     	  if( NodT1[ndx_from]->NodeTypeHY != NBC3source )
     	  {
-    		  node1_xDC( ndx_from, jc ) -= mol;   // Correcting species amount in source node at T1 
+    		  node1_xDC( ndx_from, jc ) -= mol;   // Correcting species amount in source node at T1
     		  for( ic=0; ic<CSD->nICb; ic++)  // incrementing independent components
     		  {
     			  aji = DCaJI( jc, ic );
@@ -1025,19 +1025,19 @@ void TNodeArray::MoveParticleMass( long int ndx_from, long int ndx_to,
  	  				  aji = DCaJI( jc, ic );
  	  				  if( aji )
  	  					  node1_bIC(ndx_to, ic) += aji * mol;
- 	  			  }	
- 	  		  }	 
+ 	  			  }
+ 	  		  }
  	  	  }
  	  	  else
  	  		  if(dbr->NodeTypeHY != NBC3sink  && dbr->NodeTypeHY != NBC3source)
- 	  			cout << "W002MTRW " << "Warning: Particle jumped outside the domain" << endl; 
+ 	  			cout << "W002MTRW " << "Warning: Particle jumped outside the domain" << endl;
 // 	  			  Error( "W002MTRW", "Warning: Particle jumped outside the domain" );
-//	   } 
-     } 	  
-	} // loop jc  	  
+//	   }
+     }
+	} // loop jc
   }
-  else {  
-	      // Transport of independent components 
+  else {
+	      // Transport of independent components
    for(long int ie=0; ie < CSD->nICb; ie++ )
    {
      mol = 0.; // moles of IC in the particle
@@ -1065,7 +1065,7 @@ void TNodeArray::MoveParticleMass( long int ndx_from, long int ndx_to,
                         break;
      }
      if( tcode == DISSOLVED || tcode == ADVECTIVE || tcode == DIFFUSIVE )
-    	 mol /= fmolal; 
+    	 mol /= fmolal;
      if( dbr->NodeTypeHY != NBC3source )
        dbr->bIC[ie] -= mol;
      if( ndx_to >= 0 && ndx_to < anNodes )
@@ -1075,10 +1075,10 @@ void TNodeArray::MoveParticleMass( long int ndx_from, long int ndx_to,
      }
      else
          if(dbr->NodeTypeHY != NBC3sink  && dbr->NodeTypeHY != NBC3source)
-        	 cout << "W002MTRW " << "Warning: Particle jumped outside the domain" << endl;        	                     
+        	 cout << "W002MTRW " << "Warning: Particle jumped outside the domain" << endl;
 //        	 Error( "W002MTRW", "Warning: Particle jumped outside the domain" );
 
-   } // loop ie 
+   } // loop ie
   } // else
    // End of function
 }
@@ -1123,7 +1123,7 @@ void TNodeArray::logProfileAqDC( FILE* logfile, long int t, double at, long int 
 		return;
 	fprintf( logfile, "\nStep= %-8ld  Time= %-12.4g     Dissolved species concentrations, M\n",
 			t, at/(365*86400) );
-	fprintf(logfile, "%s","Node#   ");	
+	fprintf(logfile, "%s","Node#   ");
 	for( is=0; is < (pCSD()->nDCb); is++ )
 		fprintf( logfile, "%-12.4s ", pCSD()->DCNL[is] );
 	for (i=0; i<nx; i++)    // node iteration
@@ -1316,4 +1316,3 @@ void TNodeArray::databr_to_vtk( fstream& ff, const char*name, double time, long 
 }
 #endif
 //-----------------------End of nodearray.cpp--------------------------
-

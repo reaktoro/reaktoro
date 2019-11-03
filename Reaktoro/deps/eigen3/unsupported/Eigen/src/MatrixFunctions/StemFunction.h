@@ -10,7 +10,7 @@
 #ifndef EIGEN_STEM_FUNCTION
 #define EIGEN_STEM_FUNCTION
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 
@@ -31,7 +31,7 @@ Scalar stem_function_cos(Scalar x, int n)
   Scalar res;
 
   switch (n % 4) {
-  case 0: 
+  case 0:
     res = std::cos(x);
     break;
   case 1:
@@ -79,7 +79,7 @@ Scalar stem_function_cosh(Scalar x, int n)
   using std::cosh;
   using std::sinh;
   Scalar res;
-  
+
   switch (n % 2) {
   case 0:
     res = std::cosh(x);
@@ -90,7 +90,7 @@ Scalar stem_function_cosh(Scalar x, int n)
   }
   return res;
 }
-	
+
 /** \brief Hyperbolic sine (and its derivatives). */
 template <typename Scalar>
 Scalar stem_function_sinh(Scalar x, int n)
@@ -98,7 +98,7 @@ Scalar stem_function_sinh(Scalar x, int n)
   using std::cosh;
   using std::sinh;
   Scalar res;
-  
+
   switch (n % 2) {
   case 0:
     res = std::sinh(x);

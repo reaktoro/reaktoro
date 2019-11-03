@@ -1655,7 +1655,7 @@ print_surface(void)
 #endif
 			}
 			if (use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
-			{			
+			{
 				output_msg(sformatf("\t%11.3e  capacitance, F/m^2\n",
 					   (double) (charge_ptr->Get_capacitance0())));
 			}
@@ -2249,9 +2249,9 @@ print_totals(void)
 	{
 		output_msg(sformatf("%45s%9.5f", "Viscosity (mPa s)  = ",
 			   (double) viscos));
-		if (tc_x > 200 && !pure_water) 
+		if (tc_x > 200 && !pure_water)
 		{
-			output_msg(sformatf("%18s\n", 
+			output_msg(sformatf("%18s\n",
 #ifdef NO_UTF8_ENCODING
 				   " (solute contributions limited to 200 oC)"));
 #else
@@ -3637,4 +3637,3 @@ print_alkalinity(void)
 	alk_list = (struct species_list *) free_check_null(alk_list);
 	return (OK);
 }
-

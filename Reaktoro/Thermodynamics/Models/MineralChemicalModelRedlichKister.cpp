@@ -57,6 +57,3 @@ auto mineralChemicalModelRedlichKister(const MineralMixture& mixture, double a0,
 }
 
 } // namespace Reaktoro
-
-
-

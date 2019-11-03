@@ -13,7 +13,7 @@
 #ifndef EIGEN_LEVENBERGMARQUARDT__H
 #define EIGEN_LEVENBERGMARQUARDT__H
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace LevenbergMarquardtSpace {
     enum Status {
@@ -50,13 +50,13 @@ class LevenbergMarquardt
       using std::sqrt;
       return sqrt(NumTraits<Scalar>::epsilon());
     }
-    
+
 public:
     LevenbergMarquardt(FunctorType &_functor)
         : functor(_functor) { nfev = njev = iter = 0;  fnorm = gnorm = 0.; useExternalScaling=false; }
 
     typedef DenseIndex Index;
-    
+
     struct Parameters {
         Parameters()
             : factor(Scalar(100.))
@@ -111,11 +111,11 @@ public:
     Index njev;
     Index iter;
     Scalar fnorm, gnorm;
-    bool useExternalScaling; 
+    bool useExternalScaling;
 
     Scalar lm_param(void) { return par; }
 private:
-    
+
     FunctorType &functor;
     Index n;
     Index m;
@@ -435,7 +435,7 @@ LevenbergMarquardt<FunctorType,Scalar>::minimizeOptimumStorageOneStep(FVectorTyp
 {
     using std::abs;
     using std::sqrt;
-    
+
     eigen_assert(x.size()==n); // check the caller is not cheating us
 
     Index i, j;

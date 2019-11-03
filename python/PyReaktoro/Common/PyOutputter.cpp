@@ -35,4 +35,3 @@ void exportOutputter(py::module& m)
 }
 
 } // namespace Reaktoro
-

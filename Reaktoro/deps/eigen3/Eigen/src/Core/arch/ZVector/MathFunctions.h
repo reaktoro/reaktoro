@@ -32,7 +32,7 @@ static _EIGEN_DECLARE_CONST_Packet4f_FROM_INT(inv_mant_mask, ~0x7f800000);
 static _EIGEN_DECLARE_CONST_Packet4f_FROM_INT(min_norm_pos,  0x00800000);
 static _EIGEN_DECLARE_CONST_Packet4f_FROM_INT(minus_inf,     0xff800000); // -1.f/0.f
 static _EIGEN_DECLARE_CONST_Packet4f_FROM_INT(minus_nan,     0xffffffff);
-  
+
 /* natural logarithm computed for 4 simultaneous float
   return NaN for x <= 0
 */
@@ -129,7 +129,7 @@ Packet2d pexp<Packet2d>(const Packet2d& _x)
   emm0 = emm0 + p2l_1023;
   emm0 = emm0 << reinterpret_cast<Packet2l>(p2ul_52);
 
-  // Altivec's max & min operators just drop silent NaNs. Check NaNs in 
+  // Altivec's max & min operators just drop silent NaNs. Check NaNs in
   // inputs and return them unmodified.
   Packet2ul isnumber_mask = reinterpret_cast<Packet2ul>(vec_cmpeq(_x, _x));
   return vec_sel(_x, pmax(pmul(x, reinterpret_cast<Packet2d>(emm0)), _x),
@@ -175,7 +175,7 @@ Packet4f pexp<Packet4f>(const Packet4f& _x)
   emm0 = emm0 + p4i_0x7f;
   emm0 = emm0 << reinterpret_cast<Packet4i>(p4i_23);
 
-  // Altivec's max & min operators just drop silent NaNs. Check NaNs in 
+  // Altivec's max & min operators just drop silent NaNs. Check NaNs in
   // inputs and return them unmodified.
   Packet4ui isnumber_mask = reinterpret_cast<Packet4ui>(vec_cmpeq(_x, _x));
   return vec_sel(_x, pmax(pmul(y, reinterpret_cast<Packet4f>(emm0)), _x),

@@ -56,10 +56,10 @@ tidy_model(void)
 		keycount[Keywords::KEY_PITZER] > 0							||	/*"pitzer" */
 		keycount[Keywords::KEY_SIT] > 0								/*"sit" */
 		)
-	{							
+	{
 		new_model = TRUE;
 	}
-	if (keycount[Keywords::KEY_EQUILIBRIUM_PHASES] > 0		|| 
+	if (keycount[Keywords::KEY_EQUILIBRIUM_PHASES] > 0		||
 		keycount[Keywords::KEY_EQUILIBRIUM_PHASES_RAW] > 0	||
 		keycount[Keywords::KEY_EQUILIBRIUM_PHASES_MODIFY])
 	{
@@ -90,11 +90,11 @@ tidy_model(void)
 		new_temperature = TRUE;						/*"reacton_temperature" */
 	}
 	if (keycount[Keywords::KEY_MIX] > 0						||
-		keycount[Keywords::KEY_MIX_RAW] > 0)	
+		keycount[Keywords::KEY_MIX_RAW] > 0)
 	{
 		new_mix = TRUE;								/*"mix" */
 	}
-	if (keycount[Keywords::KEY_SOLUTION] > 0 ||			
+	if (keycount[Keywords::KEY_SOLUTION] > 0 ||
 		keycount[Keywords::KEY_SOLUTION_SPREAD] > 0			||
 		keycount[Keywords::KEY_SOLUTION_RAW] > 0			||
 		keycount[Keywords::KEY_SOLUTION_MODIFY])
@@ -1010,7 +1010,7 @@ tidy_gas_phase(void)
 					}
 				}
 			}
-			/* 
+			/*
 			*   Duplicate gas phase, only if not solution equilibria
 			*/
 			if (!gas_phase_ptr->Get_solution_equilibria())
@@ -1176,7 +1176,7 @@ tidy_gas_phase(void)
 					}
 					gas_phase_ptr->Set_gas_comps(gc);
 				}
-				/* 
+				/*
 				*   Duplicate gas phase, only if not solution equilibria
 				*/
 				if (!gas_phase_ptr->Get_solution_equilibria())
@@ -1440,7 +1440,7 @@ tidy_inverse(void)
 			count_in++;
 			if (j + 1 == count_master)
 				continue;
-			/*   if next master species is secondary, mark all 
+			/*   if next master species is secondary, mark all
 			   secondary master species until a primary is found */
 			if (master[j + 1]->primary == FALSE)
 			{
@@ -1505,7 +1505,7 @@ tidy_inverse(void)
 			inverse[i].carbon = FALSE;
 		}
 /*
- *   copy in input uncertainties 
+ *   copy in input uncertainties
  */
 		/* copy primary redox to all secondary redox */
 		for (j = 0; j < inverse[i].count_elts; j++)
@@ -1616,7 +1616,7 @@ tidy_phases(void)
 		count_trxn = 0;
 		trxn_add_phase(phases[i]->rxn, 1.0, FALSE);
 		trxn.token[0].name = phases[i]->name;
-		/* debug 
+		/* debug
 		   output_msg(sformatf( "%s PHASE.\n", phases[i]->name));
 		   trxn_print();
 		 */
@@ -1828,7 +1828,7 @@ tidy_ss_assemblage(void)
 				 *  Calculate a0 and a1 first
 				 */
 				ss_calc_a0_a1(ss_ptr);
-				
+
 				n_tot = 0;
 				for (size_t k = 0; k < ss_ptr->Get_ss_comps().size(); k++)
 				{
@@ -1951,7 +1951,7 @@ tidy_punch(void)
 /*
  *   tidy punch information
  */
-	std::map < int, SelectedOutput >::iterator so_it = SelectedOutput_map.begin(); 
+	std::map < int, SelectedOutput >::iterator so_it = SelectedOutput_map.begin();
 	for ( ; so_it != SelectedOutput_map.end(); so_it++)
 	{
 		current_selected_output = &(so_it->second);
@@ -2016,11 +2016,11 @@ tidy_punch(void)
 	/*
 	*  Always write new headings when SELECTED_OUTPUT is read
 	*/
-	so_it = SelectedOutput_map.begin(); 
+	so_it = SelectedOutput_map.begin();
 	for ( ; so_it != SelectedOutput_map.end(); so_it++)
 	{
 		current_selected_output = &(so_it->second);
-		if (current_selected_output == NULL || 
+		if (current_selected_output == NULL ||
 			!current_selected_output->Get_new_def())
 			continue;
 		phrq_io->Set_punch_ostream(current_selected_output->Get_punch_ostream());
@@ -3006,13 +3006,13 @@ tidy_species(void)
 			s[i]->equiv = surface_coef;
 		}
 	}
-	
+
 	for (i = 0; i < count_master; i++)
 	{
 		if (master[i]->gfw <= 0.0)
 		{
 			if (master[i]->type >= EMINUS) continue;
-			if ((strcmp(master[i]->elt->name, "E") != 0) && 
+			if ((strcmp(master[i]->elt->name, "E") != 0) &&
 			    (strcmp(master[i]->elt->name, "e") != 0) &&
 			    (strcmp(master[i]->elt->name, "H(1)") != 0) &&
 			    (strcmp(master[i]->elt->name, "O(-2)") != 0)
@@ -3196,7 +3196,7 @@ tidy_solutions(void)
 	 */
 	if (unnumbered_solutions.size() > 0)
 	{
-		int last = 0;			
+		int last = 0;
 		std::map<int, cxxSolution>::iterator jit;
 		for (jit = Rxn_solution_map.begin(); jit != Rxn_solution_map.end(); jit++)
 		{
@@ -3277,7 +3277,7 @@ tidy_solutions(void)
 			}
 		}
 	}
-	
+
 	return (OK);
 }
 /* ---------------------------------------------------------------------- */
@@ -3286,7 +3286,7 @@ species_rxn_to_trxn(struct species *s_ptr)
 /* ---------------------------------------------------------------------- */
 {
 /*
- *   Copy reaction from reaction structure to 
+ *   Copy reaction from reaction structure to
  *   temp reaction structure.
  */
 	int i;
@@ -3314,7 +3314,7 @@ phase_rxn_to_trxn(struct phase *phase_ptr, struct reaction *rxn_ptr)
 /* ---------------------------------------------------------------------- */
 {
 /*
- *   Copy reaction from reaction structure to 
+ *   Copy reaction from reaction structure to
  *   temp reaction structure.
  */
 	int i, l;
@@ -3372,7 +3372,7 @@ tidy_isotopes(void)
 			continue;
 		if (solution_ref.Get_isotopes().size() == 0)
 			continue;
-	
+
 		std::map<std::string, cxxSolutionIsotope> primary_isotopes;
 /*
  *   Make list of primary master species for isotopes
@@ -3525,7 +3525,7 @@ int Phreeqc::
 tidy_kin_exchange(void)
 /* ---------------------------------------------------------------------- */
 /*
- *  If exchanger is related to mineral, exchanger amount is 
+ *  If exchanger is related to mineral, exchanger amount is
  *  set in proportion
  */
 {
@@ -3632,7 +3632,7 @@ tidy_kin_exchange(void)
 			}
 			comp_ref.Set_totals(elt_list_NameDouble());
 /*
- *   No check on availability of exchange elements 
+ *   No check on availability of exchange elements
  */
 		}
 	}
@@ -3643,7 +3643,7 @@ int Phreeqc::
 tidy_min_exchange(void)
 /* ---------------------------------------------------------------------- */
 /*
- *  If exchanger is related to mineral, exchanger amount is 
+ *  If exchanger is related to mineral, exchanger amount is
  *  set in proportion
  */
 {
@@ -3796,7 +3796,7 @@ int Phreeqc::
 tidy_min_surface(void)
 /* ---------------------------------------------------------------------- */
 /*
- *  If surface is related to mineral, surface amount is 
+ *  If surface is related to mineral, surface amount is
  *  set in proportion
  */
 {
@@ -3964,7 +3964,7 @@ tidy_min_surface(void)
 						if (elt_ptr->master == NULL)
 						{
 							input_error++;
-							error_string = sformatf("Unknown element definition in SURFACE \n\t for surface related to equilibrium_phase: SURFACE %d.", 
+							error_string = sformatf("Unknown element definition in SURFACE \n\t for surface related to equilibrium_phase: SURFACE %d.",
 								surface_ptr->Get_n_user());
 							error_msg(error_string);
 							continue;
@@ -3972,14 +3972,14 @@ tidy_min_surface(void)
 						if (elt_ptr->master->s == NULL || elt_ptr->master->s->name == NULL)
 						{
 							input_error++;
-							error_string = sformatf("Unknown master species definition in SURFACE \n\t for surface related to equilibrium_phase: SURFACE %d.", 
+							error_string = sformatf("Unknown master species definition in SURFACE \n\t for surface related to equilibrium_phase: SURFACE %d.",
 								surface_ptr->Get_n_user());
 							error_msg(error_string);
 							continue;
 						}
 						if (strcmp(elt_ptr->master->s->name, temp_formula) != 0)
 						{
-							error_string = sformatf("Suggest using master species formula in SURFACE \n\t for surface related to equilibrium_phase: %s.", 
+							error_string = sformatf("Suggest using master species formula in SURFACE \n\t for surface related to equilibrium_phase: %s.",
 								elt_ptr->master->s->name);
 							warning_msg(error_string);
 						}
@@ -3989,7 +3989,7 @@ tidy_min_surface(void)
 								"Suggest master species of surface, %s, be uncharged for surface related to equilibrium_phase.",
 								elt_ptr->master->s->name);
 							warning_msg(error_string);
-						}	
+						}
 					}
 					free_check_null(temp_formula);
 				}
@@ -3999,8 +3999,8 @@ tidy_min_surface(void)
 			elt_list_combine();
 			/* Makes no sense: sorbed species need not be in mineral structure... */
 			/* But elements that can desorb into solution must be in mineral */
-			/* If you precipitate Ca-Mont, and make SurfMg (assuming this is the 
-			   formula in SURFACE), where does the Mg come from? 
+			/* If you precipitate Ca-Mont, and make SurfMg (assuming this is the
+			   formula in SURFACE), where does the Mg come from?
 			   Further, if you precipitate Ca-Mont, make SurfCa, desorb
 			   all the Ca, then dissolve the "Ca-Mont", you must remove SurfCa, or you
 			   will end up with Ca in solution. H and O are excluded */
@@ -4036,7 +4036,7 @@ int Phreeqc::
 tidy_kin_surface(void)
 /* ---------------------------------------------------------------------- */
 /*
- *  If surface is related to mineral, surface amount is 
+ *  If surface is related to mineral, surface amount is
  *  set in proportion
  */
 {
@@ -4678,7 +4678,7 @@ f_spinodal(LDBLE x, void * cookie)
 	LDBLE fx;
 	Phreeqc * pThis;
 	pThis = (Phreeqc *) cookie;
-	fx = -12 * pThis->a1 * x * x * x + (18 * pThis->a1 - 
+	fx = -12 * pThis->a1 * x * x * x + (18 * pThis->a1 -
 		2 * pThis->a0) * x * x + (2 * pThis->a0 -
 		6 * pThis->a1) * x - 1.0;
 	return (fx);
@@ -5457,7 +5457,7 @@ int Phreeqc::
 tidy_exchange(void)
 /* ---------------------------------------------------------------------- */
 /*
- *  If exchanger is related to mineral, exchanger amount is 
+ *  If exchanger is related to mineral, exchanger amount is
  *  set in proportion
  */
 {
@@ -5509,4 +5509,3 @@ tidy_exchange(void)
 	}
 	return (OK);
 }
-

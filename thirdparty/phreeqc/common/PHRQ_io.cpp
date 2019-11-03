@@ -38,7 +38,7 @@ PHRQ_io(void)
 
 	m_next_keyword = Keywords::KEY_NONE;
 	accumulate = false;
-	m_line_type = PHRQ_io::LT_EMPTY; 
+	m_line_type = PHRQ_io::LT_EMPTY;
 }
 
 PHRQ_io::
@@ -470,7 +470,7 @@ fpunchf_helper(std::ostream *os, const char *format, ...)
 		{
 			size_t alloc_buffer_size = STACK_MAX * 2;
 			char *alloc_buffer = new char[alloc_buffer_size];
-			do 
+			do
 			{
 				va_list args;
 				va_start(args, format);
@@ -515,7 +515,7 @@ fpunchf_helper(std::string *str, const char *format, ...)
 		{
 			size_t alloc_buffer_size = STACK_MAX * 2;
 			char *alloc_buffer = new char[alloc_buffer_size];
-			do 
+			do
 			{
 				va_list args;
 				va_start(args, format);
@@ -784,7 +784,7 @@ get_line(void)
 				if (!next_stream->is_open())
 				{
 					std::ostringstream errstr;
-					errstr << "\n***********  Could not open include file " << file_name 
+					errstr << "\n***********  Could not open include file " << file_name
 						   <<".\n             Please, write the full path to this file. ***********\n\n";
 					delete next_stream;
 #if defined(PHREEQCI_GUI)
@@ -898,4 +898,3 @@ check_key(std::string::iterator begin, std::string::iterator end)
 	}
 	return true;
 }
-

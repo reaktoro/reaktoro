@@ -162,7 +162,7 @@ class DynamicSGroupFromTemplateArgs : public DynamicSGroup
     inline DynamicSGroupFromTemplateArgs(DynamicSGroupFromTemplateArgs&& other) : DynamicSGroup(other) { }
     inline DynamicSGroupFromTemplateArgs<Gen...>& operator=(const DynamicSGroupFromTemplateArgs<Gen...>& o) { DynamicSGroup::operator=(o); return *this; }
     inline DynamicSGroupFromTemplateArgs<Gen...>& operator=(DynamicSGroupFromTemplateArgs<Gen...>&& o) { DynamicSGroup::operator=(o); return *this; }
-  
+
   private:
     template<typename Gen1, typename... GenNext>
     inline void add_all(internal::type_list<Gen1, GenNext...>)

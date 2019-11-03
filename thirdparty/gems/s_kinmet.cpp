@@ -817,7 +817,7 @@ TKinMet::CorrSpecSurfArea( const double sFratio, const bool toinit = false )
 
 bool
 TKinMet::RateInit( )
-{   
+{
     double RT = R_CONST*T_k, kPR, sSAcr;
     long int r;
 
@@ -1218,7 +1218,7 @@ TUptakeKin::UptakeMod()
                 {    // not a minor/trace element
                     xtHc = spcfu[j]*CF; //  xtHc = arWx[j]*CF;
                     spcfu[j] = xtHc;
-                    spcfl[j] = spcfu[j];   
+                    spcfl[j] = spcfu[j];
                 }
                 // Rd and Df calculation (on the bulk basis)
                 Rdj[j] = spcfu[j]/arElm[i];
@@ -1290,4 +1290,3 @@ bool SetMetCon()
 
 
 //--------------------- End of s_kinmet.cpp ---------------------------
-

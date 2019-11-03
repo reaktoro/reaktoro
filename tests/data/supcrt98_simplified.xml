@@ -11,7 +11,7 @@
   <Element>
     <Name>S</Name>
     <MolarMass units="g/mol">32.065</MolarMass>
-  </Element>  
+  </Element>
   <Species>
     <Name>Pyrrhotite</Name>
     <Formula>FeS</Formula>

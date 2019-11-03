@@ -89,9 +89,9 @@ struct traits<TensorCwiseUnaryOp<UnaryOp, XprType> >
   typedef typename remove_reference<XprTypeNested>::type _XprTypeNested;
   static const int NumDimensions = XprTraits::NumDimensions;
   static const int Layout = XprTraits::Layout;
-  typedef typename TypeConversion<Scalar, 
+  typedef typename TypeConversion<Scalar,
                                   typename XprTraits::PointerType
-                                  >::type 
+                                  >::type
                                   PointerType;
 };
 
@@ -169,7 +169,7 @@ struct traits<TensorCwiseBinaryOp<BinaryOp, LhsXprType, RhsXprType> >
                                   typename conditional<Pointer_type_promotion<typename LhsXprType::Scalar, Scalar>::val,
                                                       typename traits<LhsXprType>::PointerType,
                                                       typename traits<RhsXprType>::PointerType>::type
-                                  >::type 
+                                  >::type
                                   PointerType;
   enum {
     Flags = 0
@@ -251,7 +251,7 @@ struct traits<TensorCwiseTernaryOp<TernaryOp, Arg1XprType, Arg2XprType, Arg3XprT
                                   typename conditional<Pointer_type_promotion<typename Arg2XprType::Scalar, Scalar>::val,
                                                       typename traits<Arg2XprType>::PointerType,
                                                       typename traits<Arg3XprType>::PointerType>::type
-                                  >::type 
+                                  >::type
                                   PointerType;
   enum {
     Flags = 0

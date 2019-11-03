@@ -68,7 +68,7 @@ PBasic::PBasic(Phreeqc * ptr, PHRQ_io *phrq_io)
 }
 PBasic::~PBasic(void)
 {
-	
+
 }
 
 int PBasic::
@@ -501,8 +501,8 @@ numtostr(char * Result, LDBLE n)
 		//{
 		//	sprintf(l_s, "%20.0f", (double) n);
 		//}
-		bool temp_high_precision = (PhreeqcPtr->current_selected_output != NULL) ? 
-			PhreeqcPtr->current_selected_output->Get_high_precision() : 
+		bool temp_high_precision = (PhreeqcPtr->current_selected_output != NULL) ?
+			PhreeqcPtr->current_selected_output->Get_high_precision() :
 			PhreeqcPtr->high_precision;
 		if (!temp_high_precision)
 		{
@@ -515,8 +515,8 @@ numtostr(char * Result, LDBLE n)
 	}
 	else
 	{
-		bool temp_high_precision = (PhreeqcPtr->current_selected_output != NULL) ? 
-			PhreeqcPtr->current_selected_output->Get_high_precision() : 
+		bool temp_high_precision = (PhreeqcPtr->current_selected_output != NULL) ?
+			PhreeqcPtr->current_selected_output->Get_high_precision() :
 			PhreeqcPtr->high_precision;
 		if (!temp_high_precision)
 		{
@@ -1558,7 +1558,7 @@ listtokens(FILE * f, tokenrec * l_buf)
 		case tokspecies_formula:
 		case tokspecies_formula_:
 			output_msg("SPECIES_FORMULA$");
-			break;			
+			break;
 		case toklist_s_s:
 			output_msg("LIST_S_S");
 			break;
@@ -1603,7 +1603,7 @@ listtokens(FILE * f, tokenrec * l_buf)
  			break;
  		case toksoln_vol:
  			output_msg("SOLN_VOL"); // volume of solution
- 			break;		
+ 			break;
 		case tokstr_f_:
 			output_msg("STR_F$");
 			break;
@@ -2464,7 +2464,7 @@ factor(struct LOC_exec * LINK)
 			}
 			else
 			{
-				soln_ptr = Utilities::Rxn_find(PhreeqcPtr->Rxn_solution_map, 
+				soln_ptr = Utilities::Rxn_find(PhreeqcPtr->Rxn_solution_map,
 					PhreeqcPtr->use.Get_n_solution_user());
 				if (soln_ptr != NULL)
 				{
@@ -3136,7 +3136,7 @@ factor(struct LOC_exec * LINK)
 			break;
 		}
 	case tokrxn:
-		if (PhreeqcPtr->state == REACTION || 
+		if (PhreeqcPtr->state == REACTION ||
 			PhreeqcPtr->state == ADVECTION ||
 			PhreeqcPtr->state == TRANSPORT)
 		{
@@ -3587,13 +3587,13 @@ factor(struct LOC_exec * LINK)
 		break;
 
 	case tokstr_f_:
-		{		
+		{
 			// left parenthesis
 			require(toklp, LINK);
 
 			// set number
 			LDBLE nmbr;
-			nmbr = realexpr(LINK);	
+			nmbr = realexpr(LINK);
 
 			// set total length
 			require(tokcomma, LINK);
@@ -3622,7 +3622,7 @@ factor(struct LOC_exec * LINK)
 			if (n.UU.sval == NULL)
 				PhreeqcPtr->malloc_error();
 			strcpy(n.UU.sval, std_num.c_str());
-			n.stringval = true;	
+			n.stringval = true;
 
 			// free work space
 			PhreeqcPtr->free_check_null(token);
@@ -3630,13 +3630,13 @@ factor(struct LOC_exec * LINK)
 		break;
 
 	case tokstr_e_:
-		{		
+		{
 			// left parenthesis
 			require(toklp, LINK);
 
 			// set number
 			LDBLE nmbr;
-			nmbr = realexpr(LINK);	
+			nmbr = realexpr(LINK);
 
 			// set total length
 			require(tokcomma, LINK);
@@ -3665,14 +3665,14 @@ factor(struct LOC_exec * LINK)
 			if (n.UU.sval == NULL)
 				PhreeqcPtr->malloc_error();
 			strcpy(n.UU.sval, std_num.c_str());
-			n.stringval = true;	
+			n.stringval = true;
 
 			// free work space
 			PhreeqcPtr->free_check_null(token);
 		}
 		break;
 	case tokeq_frac:
-		{			
+		{
 			// left parenthesis
 			require(toklp, LINK);
 
@@ -3689,7 +3689,7 @@ factor(struct LOC_exec * LINK)
 			LINK->t = LINK->t->next;
 			require(tokcomma, LINK);
 
-			// exchange or surface element 
+			// exchange or surface element
 			varrec *elt_varrec = NULL;
 			elt_varrec = LINK->t->UU.vp;
 			if (LINK->t->kind != tokvar || elt_varrec->stringvar != 1)
@@ -3725,7 +3725,7 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 	case tokcallback:
-		{		
+		{
 			double x1, x2;
 			char * str;
 
@@ -3739,7 +3739,7 @@ factor(struct LOC_exec * LINK)
 			// second double arugument
 			x2 = realfactor(LINK);
 			require(tokcomma, LINK);
-			
+
 			// string arugument
 			str = strexpr(LINK);
 
@@ -3766,7 +3766,7 @@ factor(struct LOC_exec * LINK)
 			// second double arugument, Sa
 			sa = realfactor(LINK);
 			require(tokcomma, LINK);
-			
+
 			// third double arugument, Sa
 			d = realfactor(LINK);
 			require(tokcomma, LINK);
@@ -3793,7 +3793,7 @@ factor(struct LOC_exec * LINK)
  			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->diff_c(str);
 		}
 		break;
-			
+
 	case tokval:
 		l_s = strfactor(LINK);
 		tok1 = LINK->t;
@@ -3909,7 +3909,7 @@ upexpr(struct LOC_exec * LINK)
 		if (n2.UU.val != (long) n2.UU.val)
 		{
 			tmerr(": negative number cannot be raised to a fractional power.");
-		} 
+		}
 		else
 		{
 			n.UU.val = exp(n2.UU.val * log(-n.UU.val));
@@ -4196,7 +4196,7 @@ mustfindline(long n)
 	linerec *l;
 
 	l = findline(n);
-	if (l == NULL) 
+	if (l == NULL)
 	{
 		char * error_string = PhreeqcPtr->sformatf( "Undefined line %ld", n);
 		errormsg(error_string);
@@ -4214,7 +4214,7 @@ mustfindline(long n)
 	{
 		if (parse_whole_program)
 		{
-			if (l == NULL) 
+			if (l == NULL)
 			{
 				_ASSERTE(nIDErrPrompt == 0);
 				nIDErrPrompt = IDS_ERR_UNDEF_LINE;
@@ -4225,7 +4225,7 @@ mustfindline(long n)
 	}
 	else
 	{
-		if (l == NULL) 
+		if (l == NULL)
 		{
 			char * error_string = PhreeqcPtr->sformatf( "Undefined line %ld", n);
 			errormsg(error_string);
@@ -4755,8 +4755,8 @@ cmdpunch(struct LOC_exec *LINK)
 			continue;
 		}
 		n = expr(LINK);
-		bool temp_high_precision = (PhreeqcPtr->current_selected_output != NULL) ? 
-			PhreeqcPtr->current_selected_output->Get_high_precision() : 
+		bool temp_high_precision = (PhreeqcPtr->current_selected_output != NULL) ?
+			PhreeqcPtr->current_selected_output->Get_high_precision() :
 			PhreeqcPtr->high_precision;
 		if (n.stringval)
 		{
@@ -4798,7 +4798,7 @@ cmdpunch(struct LOC_exec *LINK)
 	}
 }
 
-#if defined PHREEQ98 
+#if defined PHREEQ98
 void PBasic::
 cmdgraph_x(struct LOC_exec *LINK)
 {
@@ -5331,7 +5331,7 @@ cmdread(struct LOC_exec *LINK)
 		v = findvar(LINK);
 		tok = LINK->t;
 		LINK->t = datatok;
-		if (phreeqci_gui) 
+		if (phreeqci_gui)
 		{
 			if (parse_whole_program)
 			{
@@ -6014,7 +6014,7 @@ cmdplot_xy(struct LOC_exec *LINK)
 					chart->Get_new_plotxy_curves()[0].Get_symbol(),
 					chart->Get_new_plotxy_curves()[0].Get_symbol_size(),
 					chart->Get_new_plotxy_curves()[0].Get_y_axis(),
-					chart->Get_new_plotxy_curves()[0].Get_color()					
+					chart->Get_new_plotxy_curves()[0].Get_color()
 					);
 				// pop plotxy curve definition
 				chart->Get_new_plotxy_curves().erase(chart->Get_new_plotxy_curves().begin());
@@ -6118,7 +6118,7 @@ cmdgraph_y(struct LOC_exec *LINK)
 			if (strlen(n.UU.sval) > 0)
 			{
 				chart->Get_graph_y()[chart->Get_colnr()] = atof(n.UU.sval);
-			}	
+			}
 			PhreeqcPtr->PHRQ_free(n.UU.sval);
 		}
 		else
@@ -7072,7 +7072,7 @@ const std::map<const std::string, PBasic::BASIC_TOKEN>::value_type temp_tokens[]
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sim_no",             PBasic::toksim_no),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("tot",                PBasic::toktot),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("log10",              PBasic::toklog10),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("charge_balance",     PBasic::tokcharge_balance),     
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("charge_balance",     PBasic::tokcharge_balance),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("percent_error",      PBasic::tokpercent_error),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("put",                PBasic::tokput),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("get",                PBasic::tokget),
@@ -7093,7 +7093,7 @@ const std::map<const std::string, PBasic::BASIC_TOKEN>::value_type temp_tokens[]
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmole",            PBasic::toktotmole),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmol",             PBasic::toktotmol),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmoles",           PBasic::toktotmoles),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("iso",                PBasic::tokiso),	     
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("iso",                PBasic::tokiso),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("iso_unit",           PBasic::tokiso_unit),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("phase_formula",      PBasic::tokphase_formula),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("phase_formula$",     PBasic::tokphase_formula_),
@@ -7130,4 +7130,3 @@ const std::map<const std::string, PBasic::BASIC_TOKEN>::value_type temp_tokens[]
 std::map<const std::string, PBasic::BASIC_TOKEN> PBasic::command_tokens(temp_tokens, temp_tokens + sizeof temp_tokens / sizeof temp_tokens[0]);
 
 /* End. */
-

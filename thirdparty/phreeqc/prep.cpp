@@ -222,12 +222,12 @@ quick_setup(void)
 	if (gas_unknown != NULL)
 	{
 		cxxGasPhase * gas_phase_ptr = use.Get_gas_phase_ptr();
-		if ((gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME) && 
-			numerical_fixed_volume && 
+		if ((gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME) &&
+			numerical_fixed_volume &&
 			(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume))
 		{
 			for (size_t i = 0; i < gas_phase_ptr->Get_gas_comps().size(); i++)
-			{	
+			{
 				cxxGasComp *gc_ptr = &(gas_phase_ptr->Get_gas_comps()[i]);
 				gas_unknowns[i]->moles = gc_ptr->Get_moles();
 				if (gas_unknowns[i]->moles <= 0)
@@ -241,7 +241,7 @@ quick_setup(void)
 		{
 			gas_unknown->moles = 0.0;
 			for (size_t i = 0; i < gas_phase_ptr->Get_gas_comps().size(); i++)
-			{	
+			{
 				cxxGasComp *gc_ptr = &(gas_phase_ptr->Get_gas_comps()[i]);
 				gas_unknown->moles += gc_ptr->Get_moles();
 			}
@@ -336,7 +336,7 @@ quick_setup(void)
 				/* moles picked up from master->total */
 			}
 			else if (x[i]->type == SURFACE_CB1 || x[i]->type == SURFACE_CB2)
-			{				
+			{
 				cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[i]->surface_charge);
 				x[i]->related_moles = charge_ptr->Get_grams();
 				x[i]->mass_water = charge_ptr->Get_mass_water();
@@ -379,7 +379,7 @@ build_gas_phase(void)
 {
 /*
  *   Put coefficients into lists to sum iaps to test for equilibrium
- *   Put coefficients into lists to build jacobian for 
+ *   Put coefficients into lists to build jacobian for
  *      sum of partial pressures equation and
  *      mass balance equations for elements contained in gases
  */
@@ -392,14 +392,14 @@ build_gas_phase(void)
 	if (gas_unknown == NULL)
 		return (OK);
 	cxxGasPhase * gas_phase_ptr = use.Get_gas_phase_ptr();
-	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME && 
-		(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) && 
+	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME &&
+		(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) &&
 		numerical_fixed_volume)
 	{
 		return build_fixed_volume_gas();
 	}
 	for (size_t i = 0; i < gas_phase_ptr->Get_gas_comps().size(); i++)
-	{	
+	{
 		cxxGasComp *gc_ptr = &(gas_phase_ptr->Get_gas_comps()[i]);
 		int k;
 		struct phase *phase_ptr = phase_bsearch(gc_ptr->Get_phase_name().c_str() , &k, FALSE);
@@ -654,7 +654,7 @@ build_ss_assemblage(void)
 {
 /*
  *   Put coefficients into lists to sum iaps to test for equilibrium
- *   Put coefficients into lists to build jacobian for 
+ *   Put coefficients into lists to build jacobian for
  *      mass action equation for component
  *      mass balance equations for elements contained in solid solutions
  */
@@ -1140,7 +1140,7 @@ build_model(void)
  */
 
 	max_s_x = MAX_S;
-	
+
 	// clear sum_species_map, which is built from s_x
 	sum_species_map_db.clear();
 	sum_species_map.clear();
@@ -1218,7 +1218,7 @@ build_model(void)
 			}
 			compute_gfw(s[i]->name, &s[i]->gfw);
 			s_x[count_s_x++] = s[i];
-			
+
 /*
  *   Write mass action equation for current model
  */
@@ -1547,7 +1547,7 @@ build_pure_phases(void)
 						error_string = sformatf(
 								"Element undefined, %s.",
 								elt_list[j].elt->name);
-						error_msg(error_string, STOP);					
+						error_msg(error_string, STOP);
 				}
 				if (master_ptr->in == FALSE)
 				{
@@ -1687,7 +1687,7 @@ build_species_list(int n)
 {
 /*
  *   Builds a list that includes an entry for each master species in each
- *   secondary reaction. Used for summing species of each element and 
+ *   secondary reaction. Used for summing species of each element and
  *   printing results.
  */
 	int j;
@@ -1871,7 +1871,7 @@ clear(void)
 	gas_unknown = NULL;
 	ss_unknown = NULL;
 /*
- *   Free arrays used in model   
+ *   Free arrays used in model
  */
 	free_model_allocs();
 #ifdef SKIP
@@ -1879,7 +1879,7 @@ clear(void)
    // The standard implementation of clear() sets the unknown pointer of some of the
    // masters to NULL. However, the function quick_setup presumes that a master pointer
    // is valid when the masters total is larger than zero. This results in a crash
-   // when the unknown pointer is dereferenced. The same goes for the secondary master 
+   // when the unknown pointer is dereferenced. The same goes for the secondary master
    // species.
    //
    // Perhaps this should be part of the 'Clear master species solution-dependent data'-loop above?!
@@ -1890,8 +1890,8 @@ clear(void)
 
       if ( master[i]->s == s_eminus ||
             master[i]->s == s_hplus ||
-            master[i]->s == s_h2o   || 
-            master[i]->s == s_h2    || 
+            master[i]->s == s_h2o   ||
+            master[i]->s == s_h2    ||
             master[i]->s == s_o2 )
                continue;
 
@@ -1904,7 +1904,7 @@ clear(void)
          }
       }
    }
-#endif   
+#endif
 	return (OK);
 }
 /* ---------------------------------------------------------------------- */
@@ -2274,7 +2274,7 @@ mb_for_species_aq(int n)
 {
 /*
  *   Make list of mass balance and charge balance equations in which
- *   to insert species n. 
+ *   to insert species n.
  *
  *        count_mb_unknowns - number of equations and summation relations
  *        mb_unknowns.unknown - pointer to unknown which contains row number
@@ -2292,7 +2292,7 @@ mb_for_species_aq(int n)
  */
 	if (s[n]->type == EMINUS)
 		return (OK);
-/* 
+/*
  *   Do not include diffuse layer in cb, alk, ah2o, mu
  */
 	if (charge_balance_unknown != NULL && s[n]->type < H2O)
@@ -2314,7 +2314,7 @@ mb_for_species_aq(int n)
 		store_mb_unknowns(mu_unknown, &s[n]->moles, s[n]->z * s[n]->z,
 						  &s[n]->dg);
 	}
-/* 
+/*
  *   Include diffuse layer in hydrogen and oxygen mass balance
  */
 	if (mass_hydrogen_unknown != NULL)
@@ -2353,7 +2353,7 @@ mb_for_species_aq(int n)
 							  &s[n]->dg);
 		}
 	}
-/* 
+/*
  *   Sum diffuse layer charge into (surface + DL) charge balance
  */
 	if (use.Get_surface_ptr() != NULL && s[n]->type < H2O && dl_type_x != cxxSurface::NO_DL)
@@ -2439,7 +2439,7 @@ mb_for_species_ex(int n)
 {
 /*
  *   Make list of mass balance and charge balance equations in which
- *   to insert exchange species n. 
+ *   to insert exchange species n.
  *
  *        count_mb_unknowns - number of equations and summation relations
  *        mb_unknowns.source - pointer to the LDBLE number to be multiplied
@@ -2455,7 +2455,7 @@ mb_for_species_ex(int n)
  */
 	if (s[n]->type == EX && s[n]->primary != NULL)
 		return (OK);
-/* 
+/*
  *   Include diffuse layer in hydrogen and oxygen mass balance
  */
 	if (charge_balance_unknown != NULL)
@@ -2528,7 +2528,7 @@ mb_for_species_surf(int n)
 {
 /*
  *   Make list of mass balance and charge balance equations in which
- *   to insert species n. 
+ *   to insert species n.
  *
  *        count_mb_unknowns - number of equations and summation relations
  *        mb_unknowns.source - pointer to the LDBLE number to be multiplied
@@ -2548,7 +2548,7 @@ mb_for_species_surf(int n)
 		store_mb_unknowns(charge_balance_unknown, &s[n]->moles, s[n]->z,
 						  &s[n]->dg);
 	}
-/* 
+/*
  *   Include diffuse layer in hydrogen and oxygen mass balance
  */
 	if (mass_hydrogen_unknown != NULL)
@@ -2615,9 +2615,9 @@ mb_for_species_surf(int n)
 							  &s[n]->dg);
 			/*
 			   if (diffuse_layer_x == TRUE) {
-			   store_mb_unknowns(master_ptr->unknown, &s[n]->moles, s[n]->z, &s[n]->dg ); 
+			   store_mb_unknowns(master_ptr->unknown, &s[n]->moles, s[n]->z, &s[n]->dg );
 			   } else {
-			   store_mb_unknowns(master_ptr->unknown, &s[n]->moles, s[n]->dz[2], &s[n]->dg ); 
+			   store_mb_unknowns(master_ptr->unknown, &s[n]->moles, s[n]->dz[2], &s[n]->dg );
 			   }
 			 */
 			continue;
@@ -2773,7 +2773,7 @@ write_mass_action_eqn_x(int stop)
 			{
 				name = trxn.token[0].s->name;
 			}
-			
+
 			input_error++;
 			error_string = sformatf( "Could not reduce equation "
 					"to primary and secondary species that are "
@@ -2937,7 +2937,7 @@ add_cd_music_factors(int n)
 /*
  *   Add the potential factors for cd_music to surface mass-action equations.
  *   Factors are essentially the activity coefficient, representing
- *   the work required to bring charged ions to the three charge layers 
+ *   the work required to bring charged ions to the three charge layers
  *   of the cd_music model
  */
 	int i;
@@ -3374,7 +3374,7 @@ setup_gas_phase(void)
 	x[count_unknowns]->description = string_hsave("gas moles");
 	x[count_unknowns]->moles = 0.0;
 	for (size_t i = 0; i < gas_phase_ptr->Get_gas_comps().size(); i++)
-	{	
+	{
 		cxxGasComp *gc_ptr = &(gas_phase_ptr->Get_gas_comps()[i]);
 		x[count_unknowns]->moles += gc_ptr->Get_moles();
 	}
@@ -3476,7 +3476,7 @@ setup_surface(void)
 				continue;
 			/*
 			 *   Check that data not already given
-			 */ 
+			 */
 			if (master_ptr->in != FALSE)
 			{
 				error_string = sformatf(
@@ -3668,8 +3668,8 @@ setup_surface(void)
 		{
 			if (use.Get_surface_ptr()->Get_surface_comps()[i].Get_phase_name().size() > 0)
 			{
-				if (pp_ptr == NULL || 
-					(pp_ptr->Get_pp_assemblage_comps().find(use.Get_surface_ptr()->Get_surface_comps()[i].Get_phase_name()) == 
+				if (pp_ptr == NULL ||
+					(pp_ptr->Get_pp_assemblage_comps().find(use.Get_surface_ptr()->Get_surface_comps()[i].Get_phase_name()) ==
 					pp_ptr->Get_pp_assemblage_comps().end()))
 				{
 					Rxn_new_surface.insert(use.Get_n_surface_user());
@@ -3727,13 +3727,13 @@ setup_surface(void)
 	 *   check related kinetics
 	 */
 	if (use.Get_surface_ptr()->Get_related_rate())
-	{		
+	{
 		cxxKinetics *kinetics_ptr = Utilities::Rxn_find(Rxn_kinetics_map, use.Get_n_surface_user());
 		for (size_t i = 0; i < use.Get_surface_ptr()->Get_surface_comps().size(); i++)
 		{
 			if (use.Get_surface_ptr()->Get_surface_comps()[i].Get_rate_name().size() > 0)
 			{
-				if (kinetics_ptr == NULL || 
+				if (kinetics_ptr == NULL ||
 					(kinetics_ptr->Find(use.Get_surface_ptr()->Get_surface_comps()[i].Get_rate_name()) == NULL))
 				{
 					Rxn_new_surface.insert(use.Get_n_surface_user());
@@ -3830,7 +3830,7 @@ setup_master_rxn(struct master **master_ptr_list, const std::string &pe_rxn)
 {
 /*
  *   Rewrites rxn_secondary for all redox states in list
- *   First, in = TRUE; others, in = REWRITE 
+ *   First, in = TRUE; others, in = REWRITE
  */
 	int j;
 	struct master *master_ptr, *master_ptr0;
@@ -3985,7 +3985,7 @@ calc_PR(std::vector<struct phase *> phase_ptrs, LDBLE P, LDBLE TK, LDBLE V_m)
 			return (OK);
 		phase_ptr->fraction_x = phase_ptr->moles_x / m_sum;
 	}
-	 
+
 	for (i = 0; i < n_g; i++)
 	{
 		a_aa_sum2 = 0.0;
@@ -4042,9 +4042,9 @@ calc_PR(std::vector<struct phase *> phase_ptrs, LDBLE P, LDBLE TK, LDBLE V_m)
 			r3[3] = b2 * b_sum + (R_TK * b2 - b_sum * a_aa_sum) / P;
 			// the discriminant of the cubic eqn...
 			disct = 18. * r3[1] * r3[2] * r3[3] -
-				4. * pow(r3[1], 3) * r3[3] + 
+				4. * pow(r3[1], 3) * r3[3] +
 				r3[1] * r3[1] * r3[2] * r3[2] -
-				4. * pow(r3[2], 3) - 
+				4. * pow(r3[2], 3) -
 				27. * r3[3] * r3[3];
 			//if (iterations > 50)
 			//	it = 0;	// debug
@@ -4104,7 +4104,7 @@ calc_PR(std::vector<struct phase *> phase_ptrs, LDBLE P, LDBLE TK, LDBLE V_m)
 		r3[2] = -3.0 * b2 + (a_aa_sum - R_TK * 2.0 * b_sum) / P;
 		r3[3] = b2 * b_sum + (R_TK * b2 - b_sum * a_aa_sum) / P;
 		// solve t^3 + rp*t + rq = 0.
-		// molar volume V_m = t - r3[1] / 3... 
+		// molar volume V_m = t - r3[1] / 3...
 		rp = r3[2] - r3_12 / 3;
 		rp3 = rp * rp * rp;
 		rq = (2.0 * r3_12 * r3[1] - 9.0 * r3[1] * r3[2]) / 27 + r3[3];
@@ -4231,7 +4231,7 @@ setup_pure_phases(void)
 		/* si_org is used for Peng-Robinson gas, with the fugacity
 		   coefficient added later in adjust_pure_phases,
 		   when rxn_x has been defined for each phase in the model */
-		x[count_unknowns]->delta = comp_ptr->Get_delta();	
+		x[count_unknowns]->delta = comp_ptr->Get_delta();
 		x[count_unknowns]->dissolve_only = comp_ptr->Get_dissolve_only();
 		if (pure_phase_unknown == NULL)
 			pure_phase_unknown = x[count_unknowns];
@@ -4382,7 +4382,7 @@ setup_solution(void)
 		{
 			setup_master_rxn(x[count_unknowns]->master, "pe");
 		}
-		
+
 /*
  *   Set default unknown data
  */
@@ -4788,7 +4788,7 @@ setup_unknowns(void)
 	{
 		if (use.Get_surface_ptr()->Get_type() != cxxSurface::CD_MUSIC)
 		{
-			max_unknowns +=	(int) use.Get_surface_ptr()->Get_surface_comps().size() + 
+			max_unknowns +=	(int) use.Get_surface_ptr()->Get_surface_comps().size() +
 				(int) use.Get_surface_ptr()->Get_surface_charges().size();
 		}
 		else
@@ -4803,7 +4803,7 @@ setup_unknowns(void)
 	if (use.Get_gas_phase_ptr() != NULL)
 	{
 		cxxGasPhase * gas_phase_ptr = use.Get_gas_phase_ptr();
-		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME && 
+		if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME &&
 			(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) && numerical_fixed_volume)
 		{
 			max_unknowns += (int) gas_phase_ptr->Get_gas_comps().size();
@@ -5036,7 +5036,7 @@ store_sum_deltas(LDBLE * source, LDBLE * target, LDBLE coef)
 /* ---------------------------------------------------------------------- */
 {
 /*
- *   List sum_delta is summed to determine the change in the mass of 
+ *   List sum_delta is summed to determine the change in the mass of
  *   each element due to mass transfers of minerals, changes show up
  *   in x[i]->delta. These may be multiplied by a factor under some
  *   situations where the entire calculated step is not taken
@@ -5119,7 +5119,7 @@ tidy_redox(void)
 /*
  *   Write pe redox reactions (rxn in struct pe_data) in terms of master species
  *   defined in analytical data
- *   
+ *
  */
 	std::string token, tok1, tok2;
 	struct master *master_ptr1, *master_ptr2;
@@ -5284,7 +5284,7 @@ write_mb_eqn_x(void)
 		trxn_combine();
 	}
 /*
- *  
+ *
  */
 	count_elts = 0;
 	paren_count = 0;
@@ -5491,7 +5491,7 @@ calc_delta_v(reaction *r_ptr, bool phase)
 		}
 	}
 	else
-	{	
+	{
 		for (size_t i = 0; r_ptr->token[i].name /*|| r_ptr->token[i].s*/ ; i++)
 		{
 			if (!r_ptr->token[i].s)
@@ -5511,7 +5511,7 @@ LDBLE Phreeqc::
 calc_lk_phase(phase *p_ptr, LDBLE TK, LDBLE pa)
 /* ---------------------------------------------------------------------- */
 {
-/* 
+/*
  * calculate log_k for a single phase, correct for pressure
  * see calc_vm (below) for details.
  */
@@ -5524,7 +5524,7 @@ calc_lk_phase(phase *p_ptr, LDBLE TK, LDBLE pa)
 		return k_calc(r_ptr->logk, TK, pa * PASCAL_PER_ATM);
 
 	LDBLE tc = TK - 273.15;
-	LDBLE pb_s = 2600. + pa * 1.01325, TK_s = tc + 45.15, sqrt_mu = sqrt(mu_x); 
+	LDBLE pb_s = 2600. + pa * 1.01325, TK_s = tc + 45.15, sqrt_mu = sqrt(mu_x);
 	LDBLE d_v = 0.0;
 	species * s_ptr;
 
@@ -5619,7 +5619,7 @@ calc_vm(LDBLE tc, LDBLE pa)
  *    b4 = logk[vmi4], or
  *	  coef(tc) = millero[3] + millero[4] * tc + millero[5] * tc^2
  */
-	LDBLE pb_s = 2600. + pa * 1.01325, TK_s = tc + 45.15, sqrt_mu = sqrt(mu_x); 
+	LDBLE pb_s = 2600. + pa * 1.01325, TK_s = tc + 45.15, sqrt_mu = sqrt(mu_x);
 	for (int i = 0; i < count_s_x; i++)
 	{
 		//if (!strcmp(s_x[i]->name, "H2O"))
@@ -5730,7 +5730,7 @@ k_temp(LDBLE tc, LDBLE pa) /* pa - pressure in atm */
  */
 	for (i = 0; i < count_phases; i++)
 	{
-		if (phases[i]->in == TRUE)  
+		if (phases[i]->in == TRUE)
 		{
 
 			phases[i]->rxn_x->logk[delta_v] = calc_delta_v(phases[i]->rxn_x, true) -
@@ -5782,7 +5782,7 @@ k_calc(LDBLE * l_logk, LDBLE tempk, LDBLE presPa)
 	LDBLE delta_p = presPa - REF_PRES_PASCAL;
 
 	/* Calculate new log k value for this temperature and pressure */
-	LDBLE lk = l_logk[logK_T0] 
+	LDBLE lk = l_logk[logK_T0]
 		- l_logk[delta_h] * (298.15 - tempk) / (LOG_10 * me * 298.15)
 		+ l_logk[T_A1]
 		+ l_logk[T_A2] * tempk
@@ -5812,7 +5812,7 @@ save_model(void)
  */
 	last_model.pressure = patm_x;
 /*
- *   mark master species 
+ *   mark master species
  */
 	for (i = 0; i < count_master; i++)
 	{
@@ -5845,7 +5845,7 @@ save_model(void)
 		if (last_model.gas_phase == NULL)
 			malloc_error();
 		for (size_t i = 0; i < gas_phase_ptr->Get_gas_comps().size(); i++)
-		{	
+		{
 			cxxGasComp *gc_ptr = &(gas_phase_ptr->Get_gas_comps()[i]);
 			int k;
 			struct phase *phase_ptr = phase_bsearch(gc_ptr->Get_phase_name().c_str() , &k, FALSE);
@@ -6092,7 +6092,7 @@ check_same_model(void)
 		{
 			int j;
 			struct phase * phase_ptr = phase_bsearch(it->first.c_str(), &j, FALSE);
-			assert(phase_ptr); 
+			assert(phase_ptr);
 			if (last_model.pp_assemblage[i] != phase_ptr)
 			{
 				return (FALSE);
@@ -6141,7 +6141,7 @@ check_same_model(void)
 			if (use.Get_surface_ptr()->Get_surface_comps()[i].Get_phase_name().size() > 0)
 			{
 				cxxPPassemblage *pp_ptr = Utilities::Rxn_find(Rxn_pp_assemblage_map, use.Get_n_surface_user());
-				if (pp_ptr == NULL || (pp_ptr->Get_pp_assemblage_comps().find(use.Get_surface_ptr()->Get_surface_comps()[i].Get_phase_name()) == 
+				if (pp_ptr == NULL || (pp_ptr->Get_pp_assemblage_comps().find(use.Get_surface_ptr()->Get_surface_comps()[i].Get_phase_name()) ==
 							pp_ptr->Get_pp_assemblage_comps().end()))
 				{
 					Rxn_new_surface.insert(use.Get_n_surface_user());
@@ -6154,7 +6154,7 @@ check_same_model(void)
 			if (use.Get_surface_ptr()->Get_surface_comps()[i].Get_rate_name().size() > 0)
 			{
 				cxxKinetics *kinetics_ptr = Utilities::Rxn_find(Rxn_kinetics_map, use.Get_n_surface_user());
-				if (kinetics_ptr == NULL || 
+				if (kinetics_ptr == NULL ||
 						(kinetics_ptr->Find(use.Get_surface_ptr()->Get_surface_comps()[i].Get_rate_name()) == NULL))
 				{
 					Rxn_new_surface.insert(use.Get_n_surface_user());

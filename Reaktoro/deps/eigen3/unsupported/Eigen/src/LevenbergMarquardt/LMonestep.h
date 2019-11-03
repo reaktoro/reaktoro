@@ -22,8 +22,8 @@ LevenbergMarquardt<FunctorType>::minimizeOneStep(FVectorType  &x)
 {
   using std::abs;
   using std::sqrt;
-  RealScalar temp, temp1,temp2; 
-  RealScalar ratio; 
+  RealScalar temp, temp1,temp2;
+  RealScalar ratio;
   RealScalar pnorm, xnorm, fnorm1, actred, dirder, prered;
   eigen_assert(x.size()==n); // check the caller is not cheating us
 
@@ -67,7 +67,7 @@ LevenbergMarquardt<FunctorType>::minimizeOneStep(FVectorType  &x)
   /* form (q transpose)*m_fvec and store the first n components in */
   /* m_qtf. */
   m_wa4 = m_fvec;
-  m_wa4 = qrfac.matrixQ().adjoint() * m_fvec; 
+  m_wa4 = qrfac.matrixQ().adjoint() * m_fvec;
   m_qtf = m_wa4.head(n);
 
   /* compute the norm of the scaled gradient. */
@@ -158,7 +158,7 @@ LevenbergMarquardt<FunctorType>::minimizeOneStep(FVectorType  &x)
        m_info = Success;
       return LevenbergMarquardtSpace::RelativeErrorAndReductionTooSmall;
     }
-    if (abs(actred) <= m_ftol && prered <= m_ftol && Scalar(.5) * ratio <= 1.) 
+    if (abs(actred) <= m_ftol && prered <= m_ftol && Scalar(.5) * ratio <= 1.)
     {
       m_info = Success;
       return LevenbergMarquardtSpace::RelativeReductionTooSmall;
@@ -170,7 +170,7 @@ LevenbergMarquardt<FunctorType>::minimizeOneStep(FVectorType  &x)
     }
 
     /* tests for termination and stringent tolerances. */
-    if (m_nfev >= m_maxfev) 
+    if (m_nfev >= m_maxfev)
     {
       m_info = NoConvergence;
       return LevenbergMarquardtSpace::TooManyFunctionEvaluation;
@@ -180,7 +180,7 @@ LevenbergMarquardt<FunctorType>::minimizeOneStep(FVectorType  &x)
       m_info = Success;
       return LevenbergMarquardtSpace::FtolTooSmall;
     }
-    if (m_delta <= NumTraits<Scalar>::epsilon() * xnorm) 
+    if (m_delta <= NumTraits<Scalar>::epsilon() * xnorm)
     {
       m_info = Success;
       return LevenbergMarquardtSpace::XtolTooSmall;
@@ -196,7 +196,7 @@ LevenbergMarquardt<FunctorType>::minimizeOneStep(FVectorType  &x)
   return LevenbergMarquardtSpace::Running;
 }
 
-  
+
 } // end namespace Eigen
 
 #endif // EIGEN_LMONESTEP_H

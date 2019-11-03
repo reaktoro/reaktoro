@@ -555,14 +555,14 @@ template<typename Scalar_, typename Index_, int side_,
          typename nocontract_t_, typename contract_t_,
          int packet_size_,
          bool inner_dim_contiguous_, bool inner_dim_reordered_, int Alignment_,  template <class> class MakePointer_>
-struct TensorContractionInputMapperTrait<TensorContractionInputMapper<Scalar_, Index_, side_, Tensor_, 
-                                                    nocontract_t_, contract_t_, packet_size_, inner_dim_contiguous_, 
+struct TensorContractionInputMapperTrait<TensorContractionInputMapper<Scalar_, Index_, side_, Tensor_,
+                                                    nocontract_t_, contract_t_, packet_size_, inner_dim_contiguous_,
                                                     inner_dim_reordered_, Alignment_, MakePointer_> > {
 
       typedef Tensor_ XprType;
       static const bool  inner_dim_contiguous = inner_dim_contiguous_;
       static const bool  inner_dim_reordered = inner_dim_reordered_;
-  };  
+  };
 
 
 }  // end namespace internal

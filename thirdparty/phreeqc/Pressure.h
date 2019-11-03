@@ -32,7 +32,7 @@ class cxxPressure:public cxxNumKeyword
 	void Set_equalIncrements(bool tf) {equalIncrements = tf;}
 	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
 	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
-	
+
 protected:
 	std::vector < LDBLE >pressures;
 	int count;

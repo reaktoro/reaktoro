@@ -18,7 +18,9 @@
 from reaktoro import ChemicalState, EquilibriumProblem
 
 
-def test_equilibrium_problem_add_by_chemical_state(partition_with_inert_gaseous_phase, chemical_system):
+def test_equilibrium_problem_add_by_chemical_state(
+    partition_with_inert_gaseous_phase, chemical_system
+):
     state = ChemicalState(chemical_system)
     state.setSpeciesAmount("CO2(g)", 10.0)
 
@@ -32,7 +34,7 @@ def test_equilibrium_problem_add_by_chemical_state(partition_with_inert_gaseous_
 
 def test_equilibrium_problem_add(partition_with_inert_gaseous_phase):
     problem = EquilibriumProblem(partition_with_inert_gaseous_phase)
-    problem.add("CO2", 10.0, 'mol')
+    problem.add("CO2", 10.0, "mol")
 
     assert sum(problem.elementAmounts()) == 30.0
     assert problem.partition().numInertSpecies() == 2

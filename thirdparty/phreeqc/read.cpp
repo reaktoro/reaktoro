@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <time.h>
 
-#include "Utils.h"	
+#include "Utils.h"
 #include "Phreeqc.h"
 #include "phqalloc.h"
 #include "Pressure.h"
@@ -221,7 +221,7 @@ read_input(void)
 			read_solid_solutions();
 			break;
 		case Keywords::KEY_USER_GRAPH:
-#if defined PHREEQ98 
+#if defined PHREEQ98
 			read_user_graph();
 #elif defined MULTICHART
 			read_user_graph_handler();
@@ -295,13 +295,13 @@ read_input(void)
 		case Keywords::KEY_SOLUTION_RAW:
 			Utilities::Rxn_read_raw(Rxn_solution_map, Rxn_new_solution, this);
 			break;
-		case Keywords::KEY_EXCHANGE_RAW:		
+		case Keywords::KEY_EXCHANGE_RAW:
 			Utilities::Rxn_read_raw(Rxn_exchange_map, Rxn_new_exchange, this);
 			break;
 		case Keywords::KEY_SURFACE_RAW:
 			Utilities::Rxn_read_raw(Rxn_surface_map, Rxn_new_surface, this);
 			break;
-		case Keywords::KEY_EQUILIBRIUM_PHASES_RAW:		
+		case Keywords::KEY_EQUILIBRIUM_PHASES_RAW:
 			Utilities::Rxn_read_raw(Rxn_pp_assemblage_map, Rxn_new_pp_assemblage, this);
 			break;
 		case Keywords::KEY_KINETICS_RAW:
@@ -310,19 +310,19 @@ read_input(void)
 		case Keywords::KEY_SOLID_SOLUTIONS_RAW:
 			Utilities::Rxn_read_raw(Rxn_ss_assemblage_map, Rxn_new_ss_assemblage, this);
 			break;
-		case Keywords::KEY_GAS_PHASE_RAW:		
+		case Keywords::KEY_GAS_PHASE_RAW:
 			Utilities::Rxn_read_raw(Rxn_gas_phase_map, Rxn_new_gas_phase, this);
 			break;
-		case Keywords::KEY_REACTION_RAW:		
+		case Keywords::KEY_REACTION_RAW:
 			Utilities::Rxn_read_raw(Rxn_reaction_map, Rxn_new_reaction, this);
 			break;
-		case Keywords::KEY_MIX_RAW:		
+		case Keywords::KEY_MIX_RAW:
 			Utilities::Rxn_read_raw(Rxn_mix_map, Rxn_new_mix, this);
 			break;
 		case Keywords::KEY_REACTION_TEMPERATURE_RAW:
 			Utilities::Rxn_read_raw(Rxn_temperature_map, Rxn_new_temperature, this);
 			break;
-		case Keywords::KEY_DUMP:		
+		case Keywords::KEY_DUMP:
 			read_dump();
 			break;
 		case Keywords::KEY_SOLUTION_MODIFY:
@@ -373,7 +373,7 @@ read_input(void)
 			break;
 		default:
 			error_msg("Error in keyword switch", STOP);
-			break;		  
+			break;
 		}
 	}
   END_OF_SIMULATION_INPUT:
@@ -1109,7 +1109,7 @@ read_exchange(void)
 				char * formula = string_duplicate(token.c_str());
 				ptr = formula;
 				get_elts_in_species(&ptr, conc);
-				
+
 				/*
 				*   save formula for adjusting number of exchange sites
 			    */
@@ -1389,7 +1389,7 @@ read_gas_phase(void)
 				*/
 
 				j = sscanf(token, SCANFORMAT, &dummy);
-				
+
 				if (j != 1)
 				{
 					error_msg("Expected partial pressure of gas in gas phase.",
@@ -1971,7 +1971,7 @@ read_inv_phases(struct inverse *inverse_ptr, char *ptr)
 	}
 	if (isotopes.size() > 0)
 	{
-		inverse_ptr->phases[inverse_ptr->count_phases].isotopes = 
+		inverse_ptr->phases[inverse_ptr->count_phases].isotopes =
 			(struct isotope *) PHRQ_malloc(isotopes.size() * sizeof(struct isotope));
 		for (size_t i = 0; i < isotopes.size(); i++)
 		{
@@ -2340,7 +2340,7 @@ read_kinetics(void)
 							}
 							while (copy_token(token, &next_char) != EMPTY);
 						}
-						else 
+						else
 						{
 							stdunits = token;
 						}
@@ -2461,7 +2461,7 @@ read_kinetics(void)
 		cxxKineticsComp *kinetics_comp_ptr = &(temp_kinetics.Get_kinetics_comps()[i]);
 		if (kinetics_comp_ptr->Get_namecoef().size() == 0)
 		{
-			kinetics_comp_ptr->Get_namecoef().add(kinetics_comp_ptr->Get_rate_name().c_str(), 1.0); 
+			kinetics_comp_ptr->Get_namecoef().add(kinetics_comp_ptr->Get_rate_name().c_str(), 1.0);
 		}
 	}
 /*
@@ -2878,7 +2878,7 @@ read_aq_species_vm_parms(char *ptr, LDBLE * delta_v)
 		&(delta_v[5]),
 		/* c1..c4 */
 		&(delta_v[6]), &(delta_v[7]), &(delta_v[8]), &(delta_v[9]));
-		/* vmax, dmax 
+		/* vmax, dmax
 		&(delta_v[10]), &(delta_v[11])); */
 	if (j < 1)
 	{
@@ -2929,7 +2929,7 @@ read_vm_only(char *ptr, LDBLE * delta_v, DELTA_V_UNIT * units)
 	do
 	{
 		j = copy_token(token, &ptr, &l);
-	} while (j == DIGIT); 
+	} while (j == DIGIT);
 
 	if (j == EMPTY)
 	{
@@ -2995,7 +2995,7 @@ read_phase_vm(char *ptr, LDBLE * delta_v, DELTA_V_UNIT * units)
 	do
 	{
 		j = copy_token(token, &ptr, &l);
-	} while (j == DIGIT); 
+	} while (j == DIGIT);
 
 	if (j == EMPTY)
 	{
@@ -3292,7 +3292,7 @@ read_master_species(void)
 			get_token(&ptr1, token1, &l_z, &l);
 			master[count_master-1]->s = s_store(token1, l_z, FALSE);
 		}
-		
+
 		std::string sname = token;
 		replace("("," ", ename);
 		std::istringstream iss(ename);
@@ -3482,7 +3482,7 @@ read_mix(void)
 			error_msg(line_save, CONTINUE);
 			continue;
 		}
-		
+
 /*
  *   Save data
  */
@@ -3662,7 +3662,7 @@ read_solution_mix(void)
 			error_msg(line_save, CONTINUE);
 			continue;
 		}
-		
+
 /*
  *   Save data
  */
@@ -4297,7 +4297,7 @@ read_reaction(void)
 	char token[MAX_LENGTH];
 	int return_value;
 	int n_user, n_user_end;
-	
+
 /*
  *   Read reaction number
  */
@@ -4769,7 +4769,7 @@ read_selected_output(void)
 		// n_user = 1, new definition, do nothing use; constructor default
 		temp_selected_output.Set_new_def(true);
 	}
-	else 
+	else
 	{
 		// n_user != 1 then reset false
 
@@ -5093,7 +5093,7 @@ read_selected_output(void)
 		if (return_value == EOF || return_value == KEYWORD)
 			break;
 	}
-	
+
 	if (temp_selected_output.Get_new_def() || so == SelectedOutput_map.end())
 	{
 		// delete if exists
@@ -5738,13 +5738,13 @@ read_solution(void)
 					input_error++;
 					break;
 				}
-				
+
 				temp_solution.Set_ph(temp_comp.Get_input_conc());
-				
+
 				if (temp_comp.Get_equation_name().size() == 0)
 				{
 					break;
-					
+
 				}
 				temp_comp.Set_description("H(1)");
 				isoln_ptr->Get_comps()[temp_comp.Get_description()] = temp_comp;
@@ -7402,7 +7402,7 @@ read_surface(void)
 			}
 			else
 			{
-				charge_ptr->Set_capacitance0(dummy); 
+				charge_ptr->Set_capacitance0(dummy);
 			}
 
 			/* constant capacitance model not implemented yet */
@@ -8273,8 +8273,8 @@ read_debug(void)
 		"numerical_fixed_volume",          /* 18 */
 		"force_numerical_fixed_volume",    /* 19 */
 		"equi_delay",                      /* 20 */
-		"minimum_total",                   /* 21 */  
-		"min_total"                        /* 22 */   
+		"minimum_total",                   /* 21 */
+		"min_total"                        /* 22 */
 	};
 	int count_opt_list = 23;
 /*
@@ -9286,7 +9286,7 @@ read_rates(void)
 			break;
 	}
 /*	output_msg(sformatf( "%s", rates[0].commands));
- */ 
+ */
 	rates_map.clear();
 	return (return_value);
 }
@@ -9436,7 +9436,7 @@ read_user_punch(void)
 	//{
 	//	UserPunch_map.erase(up);
 	//}
-	
+
 	// Malloc rate structure
 	struct rate *r = (struct rate *) PHRQ_malloc(sizeof(struct rate));
 	if (r == NULL) malloc_error();
@@ -9531,7 +9531,7 @@ read_user_punch(void)
 		if (return_value == EOF || return_value == KEYWORD)
 			break;
 	}
-	UserPunch_map.erase(n_user); 
+	UserPunch_map.erase(n_user);
 	UserPunch_map[n_user] = temp_user_punch;
 	UserPunch_map[n_user].Set_rate(r);
 
@@ -9650,7 +9650,7 @@ read_user_punch(void)
 	return (return_value);
 }
 #endif
-#if defined PHREEQ98 
+#if defined PHREEQ98
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
 read_user_graph(void)
@@ -10014,7 +10014,7 @@ read_solid_solutions(void)
 				/*
 				*   Read moles of component
 				*/
-				
+
 				if (copy_token(token, &ptr) == EMPTY)
 				{
 					comp.Set_moles(NAN);
@@ -10436,7 +10436,7 @@ read_solid_solutions(void)
 			break;
 	}
 
-	// add last ss and clean up 
+	// add last ss and clean up
 	if (comp1_ptr)
 		comps.insert(comps.begin(), *comp1_ptr);
 	if (comp0_ptr)
@@ -11339,7 +11339,7 @@ cleanup_after_parser(CParser &parser)
 		strcpy(line, "");
 		strcpy(line_save, "");
 		next_keyword = Keywords::KEY_END;
-		return(TRUE); 
+		return(TRUE);
 	}
 	int return_value = check_key(parser.line().c_str());
 

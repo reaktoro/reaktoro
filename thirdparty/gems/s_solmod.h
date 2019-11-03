@@ -110,7 +110,7 @@ struct SolutionData {
 
     double *arPparc;    ///< Partial pressures -> NSpecies
     double *arWx;       ///< Species (end member) mole fractions ->NSpecies
-    double *arlnGam;    ///< Output: activity coefficients of species (end members)   
+    double *arlnGam;    ///< Output: activity coefficients of species (end members)
 
     // Detailed output on terms of partial end-member properties, allocated in MULTI
     double *arlnDQFt; ///< new: DQF terms adding to overall activity coefficients [Ls_]
@@ -245,12 +245,12 @@ class TSolMod
         /// Getting phase name
 		void GetPhaseName( const char *PhName );
 
-		
+
         // copy activity coefficients into provided array lngamma
-		inline void Get_lnGamma( double* lngamma )		
-		{ 
+		inline void Get_lnGamma( double* lngamma )
+		{
 			for( int i=0; i<NComp; i++ )
-				lngamma[i] = lnGamma[i]; 
+				lngamma[i] = lnGamma[i];
 		}
 
 

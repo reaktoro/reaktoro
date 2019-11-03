@@ -9,8 +9,8 @@
 #include "SSassemblage.h"
 #include "cxxKinetics.h"
 #include "Solution.h"
-/*   
-     Calling sequence 
+/*
+     Calling sequence
 
 Initialization:
 ---------------
@@ -49,7 +49,7 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 				       index_conservative is solution number
 				           where conservative mixing is stored
                                        slot is 1 for final
-store_tally_table(LDBLE *array, int row_dim, int col_dim, LDBLE fill_factor) 
+store_tally_table(LDBLE *array, int row_dim, int col_dim, LDBLE fill_factor)
                                        row_dim is Fortran dimension
                                        col_dim is Fortran dimension
 				       array is space from Fortran
@@ -126,7 +126,7 @@ get_all_components(void)
 	t_buffer[j].name = string_hsave("Alkalinity");
 	t_buffer[j].master = master_bsearch("Alkalinity");
 	t_buffer[j].gfw = t_buffer[j].master->elt->gfw;
-	j++;		
+	j++;
 
 	// store total_h
 	t_buffer[j].name = string_hsave("Total_H");
@@ -469,7 +469,7 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 {
 /*
  *   Routine accumulates elements from all solutions, phases, gas phases,
- *   exchangers, and surfaces. 
+ *   exchangers, and surfaces.
  */
 	int found;
 	LDBLE moles;
@@ -523,7 +523,7 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 
 				// Fill table
 				master_to_tally_table(tally_table[i].total[n_buffer]);
-				
+
 				// Add alkalinity
 				tally_table[i].total[n_buffer][0].moles = solution_ptr->Get_total_alkalinity();
 
@@ -975,7 +975,7 @@ build_tally_table(void)
 	count_tt_pure_phase = 0;
 	if (Rxn_pp_assemblage_map.size() > 0)
 	{
-		/* 
+		/*
 		 * Go through all pure phases in pure phase assemblages
 		 */
 		std::map<int, cxxPPassemblage>::iterator it;
@@ -989,7 +989,7 @@ build_tally_table(void)
 				cxxPPassemblageComp * comp_ptr = &(jit->second);
 				int l;
 				struct phase * phase_ptr = phase_bsearch(jit->first.c_str(), &l, FALSE);
-				/* 
+				/*
 				 * check if already in tally_table
 				 */
 				for (k = 1; k < count_tally_table_columns; k++)
@@ -1037,7 +1037,7 @@ build_tally_table(void)
 	count_tt_ss_phase = 0;
 	if (Rxn_ss_assemblage_map.size() > 0)
 	{
-		/* 
+		/*
 		 * Go through all components of all solid solutions in solid-solution assemblages
 		 */
 		std::map<int, cxxSSassemblage>::iterator it;
@@ -1053,7 +1053,7 @@ build_tally_table(void)
 					cxxSScomp *comp_ptr = &(ss_ptr->Get_ss_comps()[k]);
 					int l;
 					struct phase *phase_ptr = phase_bsearch(comp_ptr->Get_name().c_str(), &l, FALSE);
-					/* 
+					/*
 					 * check if already in tally_table
 					 */
 					for (l = 1; l < count_tally_table_columns; l++)
@@ -1097,7 +1097,7 @@ build_tally_table(void)
 			for (j = 0; j < (int) kinetics_ptr->Get_kinetics_comps().size(); j++)
 			{
 				cxxKineticsComp *kinetics_comp_ptr = &(kinetics_ptr->Get_kinetics_comps()[j]);
-				/* 
+				/*
 				 * check if already in tally_table
 				 */
 				for (l = 1; l < count_tally_table_columns; l++)
@@ -1348,7 +1348,7 @@ extend_tally_table(void)
 /* ---------------------------------------------------------------------- */
 {
 	int i, j;
-	/* 
+	/*
 	 * adds another column to tally_table
 	 * increments number of columns
 	 */
@@ -1426,4 +1426,3 @@ set_kinetics_time(int n_user, LDBLE step)
 	kinetics_ptr->Set_equalIncrements(false);
 	return (OK);
 }
-

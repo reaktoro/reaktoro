@@ -1063,7 +1063,7 @@ template<> EIGEN_STRONG_INLINE Packet2d pabs(const Packet2d& a) { return vec_abs
 // VSX support varies between different compilers and even different
 // versions of the same compiler.  For gcc version >= 4.9.3, we can use
 // vec_cts to efficiently convert Packet2d to Packet2l.  Otherwise, use
-// a slow version that works with older compilers. 
+// a slow version that works with older compilers.
 // Update: apparently vec_cts/vec_ctf intrinsics for 64-bit doubles
 // are buggy, https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70963
 static inline Packet2l ConvertToPacket2l(const Packet2d& x) {
@@ -1080,11 +1080,11 @@ static inline Packet2l ConvertToPacket2l(const Packet2d& x) {
 }
 
 template<> EIGEN_STRONG_INLINE Packet2d pldexp<Packet2d>(const Packet2d& a, const Packet2d& exponent) {
-  
+
   // build 2^n
   Packet2l emm0 = ConvertToPacket2l(exponent);
 
-#ifdef __POWER8_VECTOR__ 
+#ifdef __POWER8_VECTOR__
   const Packet2l  p2l_1023 = { 1023, 1023 };
   const Packet2ul p2ul_52 = { 52, 52 };
   emm0 = vec_add(emm0, p2l_1023);
@@ -1100,7 +1100,7 @@ template<> EIGEN_STRONG_INLINE Packet2d pldexp<Packet2d>(const Packet2d& a, cons
   emm04i = vec_add(emm04i, p4i_1023);
   emm04i = vec_sl(emm04i, reinterpret_cast<Packet4ui>(p4i_20));
   static const Packet16uc perm = {
-    0x14, 0x15, 0x16, 0x17, 0x00, 0x01, 0x02, 0x03, 
+    0x14, 0x15, 0x16, 0x17, 0x00, 0x01, 0x02, 0x03,
     0x1c, 0x1d, 0x1e, 0x1f, 0x08, 0x09, 0x0a, 0x0b };
 #ifdef  _BIG_ENDIAN
   emm0 = reinterpret_cast<Packet2l>(vec_perm(p4i_ZERO, emm04i, perm));

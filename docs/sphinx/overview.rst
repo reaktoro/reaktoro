@@ -43,21 +43,21 @@ This calculation could also be performed using Reaktoro's Python interface:
     from reaktoro import *
 
     editor = ChemicalEditor()
-    editor.addAqueousPhase('H2O NaCl CaCO3 CO2')
-    editor.addGaseousPhase('CO2(g)')
-    editor.addMineralPhase('Calcite')
+    editor.addAqueousPhase("H2O NaCl CaCO3 CO2")
+    editor.addGaseousPhase("CO2(g)")
+    editor.addMineralPhase("Calcite")
 
     system = ChemicalSystem(editor)
 
     problem = EquilibriumProblem(system)
-    problem.add('H2O', 1, 'kg')
-    problem.add('CO2', 1, 'mol')
-    problem.add('NaCl', 0.7, 'mol')
-    problem.add('CaCO3', 1, 'g')
+    problem.add("H2O", 1, "kg")
+    problem.add("CO2", 1, "mol")
+    problem.add("NaCl", 0.7, "mol")
+    problem.add("CaCO3", 1, "g")
 
     state = equilibrate(problem)
 
-    state.output('result.txt')
+    state.output("result.txt")
 
 Chemical Kinetics
 -----------------

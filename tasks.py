@@ -10,16 +10,17 @@ import sys
 def _get_vcvars_paths():
     template = r"%PROGRAMFILES(X86)%\Microsoft Visual Studio\2017\{edition}\VC\Auxiliary\Build\vcvarsall.bat"
     template = os.path.expandvars(template)
-    editions = ('BuildTools', 'Professional', 'WDExpress', 'Community')
+    editions = ("BuildTools", "Professional", "WDExpress", "Community")
     return tuple(Path(template.format(edition=edition)) for edition in editions)
 
 
 def strip_and_join(s: str):
-    return ' '.join(line.strip() for line in s.splitlines() if line.strip() != '')
+    return " ".join(line.strip() for line in s.splitlines() if line.strip() != "")
 
 
 def echo(c, msg: str):
     from colorama.ansi import Fore, Style
+
     if c.config.run.echo:
         print(f"{Fore.WHITE}{Style.BRIGHT}{msg}{Style.RESET_ALL}")
 
@@ -33,15 +34,13 @@ def remove_directory(c, path: Path):
 
 
 def _get_and_prepare_build_and_artifacts_dir(
-    c,
-    clean: bool=False,
-    build_subdirectory: str="build",
-    ) -> Path:
-    '''
+    c, clean: bool = False, build_subdirectory: str = "build",
+) -> Path:
+    """
     Returns build directory where `cmake` shall be called from. Creates it and
     possibly removes its contents (and artifacts_dir contents) if `clean=True`
     is passed.
-    '''
+    """
     root_dir = Path(__file__).parent
     build_dir = root_dir / build_subdirectory
     artifacts_dir = root_dir / "artifacts"
@@ -58,19 +57,19 @@ def _get_cmake_command(
     build_dir: Path,
     artifacts_dir: Path,
     cmake_generator: str,
-    cmake_arch: Optional[str]=None,
-    config: str='Release',
+    cmake_arch: Optional[str] = None,
+    config: str = "Release",
     verbose=False,
-    ):
-    '''
+):
+    """
     :param build_dir: Directory from where cmake will be called.
     :param artifacts_dir: Directory where binaries and python modules will be installed.
-    '''
+    """
     root_dir = Path(__file__).parent
     relative_root_dir = Path(os.path.relpath(root_dir, build_dir))
     relative_artifacts_dir = Path(os.path.relpath(artifacts_dir, build_dir))
 
-    if sys.platform.startswith('win'):
+    if sys.platform.startswith("win"):
         cmake_include_path = f"{os.environ['CONDA_PREFIX']}\\Library\\include"
     else:
         cmake_include_path = f"{os.environ['CONDA_PREFIX']}\\include"
@@ -79,12 +78,13 @@ def _get_cmake_command(
     # so that it won't "pollute" the Python environment when in develop
     # mode.
 
-    return strip_and_join(f"""
+    return strip_and_join(
+        f"""
         cmake
             -G "{cmake_generator}"
             {f'-A "{cmake_arch}"' if cmake_arch is not None else ""}
             -DPYBIND11_PYTHON_VERSION={os.environ.get("PY_VER", "3.7")}
-            -DREAKTORO_BUILD_ALL=ON            
+            -DREAKTORO_BUILD_ALL=ON
             -DREAKTORO_PYTHON_INSTALL_PREFIX="{(artifacts_dir / 'python').as_posix()}"
             -DCMAKE_BUILD_TYPE={config}
             -DCMAKE_INCLUDE_PATH="{cmake_include_path}"
@@ -92,12 +92,14 @@ def _get_cmake_command(
             {f'-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON' if verbose else ''}
             {f'"-DREAKTORO_THIRDPARTY_EXTRA_BUILD_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"' if verbose else ''}
             "{str(relative_root_dir)}"
-    """)
+    """
+    )
 
 
-if sys.platform.startswith('win'):
+if sys.platform.startswith("win"):
+
     @task
-    def msvc(c, clean=False, config='Release'):
+    def msvc(c, clean=False, config="Release"):
         """
         Generates a Visual Studio project at the "build/msvc" directory.
         Assumes that the environment is already configured using:
@@ -105,9 +107,7 @@ if sys.platform.startswith('win'):
             activate reaktoro
         """
         build_dir, artifacts_dir = _get_and_prepare_build_and_artifacts_dir(
-            c,
-            clean=clean,
-            build_subdirectory="build/msvc",
+            c, clean=clean, build_subdirectory="build/msvc",
         )
         cmake_command = _get_cmake_command(
             c,
@@ -122,7 +122,7 @@ if sys.platform.startswith('win'):
 
 
 @task
-def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
+def compile(c, clean=False, config="Release", number_of_jobs=-1, verbose=False):
     """
     Compiles Reaktoro by running CMake and building with `ninja`.
     Assumes that the environment is already configured using:
@@ -130,9 +130,7 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
         [source] activate reaktoro
     """
     build_dir, artifacts_dir = _get_and_prepare_build_and_artifacts_dir(
-        c,
-        clean=clean,
-        build_subdirectory="build",
+        c, clean=clean, build_subdirectory="build",
     )
 
     cmake_command = _get_cmake_command(
@@ -143,7 +141,8 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
         config=config,
         verbose=verbose,
     )
-    build_command = strip_and_join(f"""
+    build_command = strip_and_join(
+        f"""
         cmake
             --build .
             --target install
@@ -151,11 +150,12 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
             --
                 {f"-j {number_of_jobs}" if number_of_jobs >= 0 else ""}
                 {"-d keeprsp" if sys.platform.startswith("win") else ""}
-    """)
+    """
+    )
 
     commands = [cmake_command, build_command]
 
-    if sys.platform.startswith('win'):
+    if sys.platform.startswith("win"):
         for vcvars_path in _get_vcvars_paths():
             if not vcvars_path.is_file():
                 continue
@@ -163,8 +163,7 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
             break
         else:
             raise Exit(
-                'Error: Commands to configure MSVC environment variables not found.',
-                code=1,
+                "Error: Commands to configure MSVC environment variables not found.", code=1,
             )
 
     os.chdir(build_dir)

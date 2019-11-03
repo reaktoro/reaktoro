@@ -52,7 +52,7 @@ add_elt_list_multi_surf(struct elt_list *elt_list_ptr, LDBLE coef, struct elemen
 			{
 				first_surface = true;
 				break;
-			} 
+			}
 			else
 			{
 				first_surface = false;
@@ -73,7 +73,7 @@ add_elt_list_multi_surf(struct elt_list *elt_list_ptr, LDBLE coef, struct elemen
 			if (elt_list_ptr1->elt == surf_elt_ptr)
 			{
 				elt_list[count_elts].elt = elt_list_ptr1->elt;
-				elt_list[count_elts].coef = elt_list_ptr1->coef * coef; 
+				elt_list[count_elts].coef = elt_list_ptr1->coef * coef;
 				count_elts++;
 			}
 			else if (elt_list_ptr1->elt->master->type == SURF)
@@ -84,7 +84,7 @@ add_elt_list_multi_surf(struct elt_list *elt_list_ptr, LDBLE coef, struct elemen
 			{
 				elt_list[count_elts].elt = elt_list_ptr1->elt;
 				elt_list[count_elts].coef = elt_list_ptr1->coef * coef;
-				count_elts++; 
+				count_elts++;
 			}
 		}
 	}
@@ -101,7 +101,7 @@ add_elt_list_multi_surf(struct elt_list *elt_list_ptr, LDBLE coef, struct elemen
 			if (elt_list_ptr1->elt == surf_elt_ptr)
 			{
 				elt_list[count_elts].elt = elt_list_ptr1->elt;
-				elt_list[count_elts].coef = elt_list_ptr1->coef * coef; 
+				elt_list[count_elts].coef = elt_list_ptr1->coef * coef;
 				count_elts++;
 			}
 		}
@@ -228,7 +228,7 @@ calc_dielectrics(LDBLE tc, LDBLE pa)
 	{
 		tc = 350.;
 	}
-	LDBLE T = tc + 273.15; 
+	LDBLE T = tc + 273.15;
     LDBLE u1 = 3.4279e2, u2 = -5.0866e-3, u3 = 9.469e-7, u4 = -2.0525,
 		u5 = 3.1159e3, u6 = -1.8289e2,  u7 = -8.0325e3, u8 = 4.2142e6,
 		u9 = 2.1417;
@@ -279,7 +279,7 @@ calc_dielectrics(LDBLE tc, LDBLE pa)
 	//	dgdP = - sa * sb * pow(1.0 - rho_0, sb - 1.0) * rho_0 * kappa_0 / 1.01325;
 
 	//	LDBLE ft = pow((tc - 155.0)/300.0, 4.8) + csc[1] * pow((tc - 155.0)/300.0, 16.0);
-	//	LDBLE dfdP   = ft * (-3.0 * csc[2] * pow(1000.0 - pb, 2) - 4.0 * csc[3] * pow(1000.0 - pb, 3)); 
+	//	LDBLE dfdP   = ft * (-3.0 * csc[2] * pow(1000.0 - pb, 2) - 4.0 * csc[3] * pow(1000.0 - pb, 3));
 	//	dgdP -= dfdP;
 	//}
 
@@ -486,7 +486,7 @@ copy_token(std::string &token, char **ptr)
 #endif
 	return (return_value);
 }
-#if defined PHREEQ98 
+#if defined PHREEQ98
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
 copy_title(char *token_ptr, char **ptr, int *length)
@@ -1371,7 +1371,7 @@ under(LDBLE xval)
 	{
 		return (0.0);
 	}
-	if (xval > MAX_LM)  
+	if (xval > MAX_LM)
 	{
 		return ( MAX_M );
 	}
@@ -1406,8 +1406,8 @@ status(int count, const char *str, bool rk_string)
 	}
 #ifdef NPP
 	t2 = clock();
-	if (((state < ADVECTION && reaction_step < count_total_steps) || 
-		(state == ADVECTION && (advection_step < count_ad_shifts || cell_no < count_cells)) || 
+	if (((state < ADVECTION && reaction_step < count_total_steps) ||
+		(state == ADVECTION && (advection_step < count_ad_shifts || cell_no < count_cells)) ||
 		(state == TRANSPORT && (transport_step < count_shifts || (mixrun < nmix /*&&
 		                        cell_no < count_cells*/))))
 		&& (int) (1e3 / CLOCKS_PER_SEC * (t2 - status_timer)) < status_interval)

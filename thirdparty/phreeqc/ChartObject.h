@@ -20,13 +20,13 @@ class ChartObject:public cxxNumKeyword
 	~ChartObject();
 
 	enum chart_batch_type
-	{ ChO_NO_BATCH   = -1, 
+	{ ChO_NO_BATCH   = -1,
 	  ChO_BATCH_ONLY = 0,
 	  ChO_EMF        = 1,
-	  ChO_PNG        = 2, 
+	  ChO_PNG        = 2,
 	  ChO_JPG        = 3,
 	  ChO_GIF        = 4,
-	  ChO_TIFF       = 5, 
+	  ChO_TIFF       = 5,
 	  ChO_BMP        = 6
 	};
 
@@ -141,7 +141,7 @@ class ChartObject:public cxxNumKeyword
 	int Get_ColumnOffset()const
 	{
 		return (this->ColumnOffset);
-	}	
+	}
 	void Set_AddSeries(bool b)
 	{
 		this->AddSeries = b;
@@ -346,10 +346,10 @@ class ChartObject:public cxxNumKeyword
 	void Get_color_string(std::string &color);
 	void Get_color_string_csv(std::string &color);
 	void Add_new_series(void);
-	void Add_curve(bool plotxy, std::string id = "", 
-					   LDBLE line_width = 1.0, 
+	void Add_curve(bool plotxy, std::string id = "",
+					   LDBLE line_width = 1.0,
 					   std::string symbol = "",
-					   LDBLE symbol_size = 6.0, 
+					   LDBLE symbol_size = 6.0,
 					   int y_axis = 1,
 					   std::string color = "");
 	void dump(std::ostream & s_oss, unsigned int indent);
@@ -370,7 +370,7 @@ class ChartObject:public cxxNumKeyword
 	int PanelHeight;
 	int PanelWidth;
 	std::map<std::string, int> Symbol_map;
-	std::vector<std::string> Color_vector; 
+	std::vector<std::string> Color_vector;
 	std::string chart_title;
 	std::vector<std::string> axis_titles;
 	LDBLE axis_scale_x[5];
@@ -384,7 +384,7 @@ class ChartObject:public cxxNumKeyword
 	int colnr;
 	int ColumnOffset;
 	bool AddSeries;
-	
+
 	int prev_advection_step;
 	int prev_transport_step;
 
@@ -398,7 +398,7 @@ class ChartObject:public cxxNumKeyword
 	std::vector<CurveObject *> Curves;
 	bool curve_added;
 	bool point_added;
-	
+
 	struct rate *user_graph;
 	// C++ for rate struct
 	std::string rate_name;

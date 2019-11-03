@@ -37,7 +37,7 @@ EquilibriumPath:
         showlegend: false
     Plot 2:
         x: pH
-        y: 
+        y:
         - speciesMass(Calcite units=g)
         - elementMassInPhase(Ca Aqueous units=g)
         legend:
@@ -45,4 +45,3 @@ EquilibriumPath:
         - Ca(Aqueous)
         xlabel: HCl [mol]
         ylabel: Mass [g]
-

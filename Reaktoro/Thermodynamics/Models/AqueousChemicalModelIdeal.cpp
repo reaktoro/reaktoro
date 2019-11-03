@@ -50,6 +50,3 @@ auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalMo
 }
 
 } // namespace Reaktoro
-
-
-

@@ -438,7 +438,7 @@ struct round_retval
       #if defined(EIGEN_HIP_DEVICE_COMPILE)
       // HIP does not seem to have a native device side implementation for the math routine "arg"
       using std::arg;
-      #else 		  
+      #else
       EIGEN_USING_STD_MATH(arg);
       #endif
       return arg(x);
@@ -899,7 +899,7 @@ template<typename T> T generic_fast_tanh_float(const T& a_x);
 
 namespace numext {
 
-#if (!defined(EIGEN_GPUCC) || defined(EIGEN_CONSTEXPR_ARE_DEVICE_FUNC)) 
+#if (!defined(EIGEN_GPUCC) || defined(EIGEN_CONSTEXPR_ARE_DEVICE_FUNC))
 template<typename T>
 EIGEN_DEVICE_FUNC
 EIGEN_ALWAYS_INLINE T mini(const T& x, const T& y)

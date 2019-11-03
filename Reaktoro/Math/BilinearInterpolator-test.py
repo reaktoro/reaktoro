@@ -29,12 +29,7 @@ def test_BilinearIntepolator():
     assert not empty_interpolator.yCoordinates()
 
     coordinates = VectorDouble([0, 1, 2, 3])
-    data = VectorDouble(
-                [4, 5, 6, 7,
-                 5, 5, 6, 7,
-                 6, 6, 6, 7,
-                 7, 7, 7, 7]
-            )
+    data = VectorDouble([4, 5, 6, 7, 5, 5, 6, 7, 6, 6, 6, 7, 7, 7, 7, 7])
     empty_interpolator.setCoordinatesX(coordinates)
     empty_interpolator.setCoordinatesY(coordinates)
     empty_interpolator.setData(data)
@@ -42,7 +37,7 @@ def test_BilinearIntepolator():
     interpolator = BilinearInterpolator(coordinates, coordinates, data)
     assert not interpolator.empty()
 
-    #it is needed to call data() twice to verify if the vector is not gonna be moved to interpolator_data and then destroyed
+    # it is needed to call data() twice to verify if the vector is not gonna be moved to interpolator_data and then destroyed
     interpolator_data = interpolator.data()
     assert all(i == j for i, j in zip(interpolator_data, data))
     assert all(i == j for i, j in zip(empty_interpolator.data(), data))

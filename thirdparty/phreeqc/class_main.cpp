@@ -331,7 +331,7 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
  *   Prepare error handling
  */
 	try {
-		if (phrq_io == NULL) 
+		if (phrq_io == NULL)
 		{
 			std::cerr << "No PHRQ_io output handler defined in process_file_names" << "\n";
 		}
@@ -440,7 +440,7 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
 			error_string = sformatf( "Error opening file, %s.", in_file);
 			error_msg(error_string, STOP);
 		}
-		
+
 /*
  *   Open data base
  */
@@ -528,7 +528,7 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
  *   Prepare error handling
  */
 	try {
-		if (phrq_io == NULL) 
+		if (phrq_io == NULL)
 		{
 			std::cerr << "No PHRQ_io output handler defined in process_file_names" << "\n";
 		}
@@ -636,7 +636,7 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
 			error_string = sformatf( "Error opening file, %s.", in_file);
 			error_msg(error_string, STOP);
 		}
-		
+
 /*
  *   Open data base
  */
@@ -766,7 +766,7 @@ open_input_stream(char *query, char *default_name, std::ios_base::openmode mode,
 #endif
 			error_flush();
 			batch = FALSE;
-			continue;		
+			continue;
 		}
 		break;
 	}
@@ -795,7 +795,7 @@ open_output_stream(char *query, char *default_name, std::ios_base::openmode mode
 #else
 	FILE * error_file_save = phrq_io->Get_error_file();
 #endif
-	
+
 	for (;;)
 	{
 /*
@@ -809,7 +809,7 @@ open_output_stream(char *query, char *default_name, std::ios_base::openmode mode
 #else
 			phrq_io->Set_error_file(stderr);
 #endif
-			
+
 			screen_msg(sformatf("%s\n", query));
 			if (default_name[0] != '\0')
 			{
@@ -842,7 +842,7 @@ open_output_stream(char *query, char *default_name, std::ios_base::openmode mode
 			screen_msg(error_string);
 			error_flush();
 			batch = FALSE;
-			continue;		
+			continue;
 		}
 		break;
 	}
@@ -871,7 +871,7 @@ open_output_file(char *query, char *default_name, std::ios_base::openmode mode, 
 #else
 		FILE * error_file_save = phrq_io->Get_error_file();
 #endif
-	
+
 
 	for (;;)
 	{
@@ -918,7 +918,7 @@ open_output_file(char *query, char *default_name, std::ios_base::openmode mode, 
 			screen_msg(error_string);
 			error_flush();
 			batch = FALSE;
-			continue;		
+			continue;
 		}
 		break;
 	}

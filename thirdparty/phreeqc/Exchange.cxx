@@ -172,7 +172,7 @@ cxxExchange::dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out) con
 	s_oss << indent1 << "# EXCHANGE_MODIFY candidate identifiers #\n";
 	s_oss << indent1;
 	s_oss << "-exchange_gammas           " << (this->pitzer_exchange_gammas ? 1 : 0) << "\n";
-	// exchComps 
+	// exchComps
 	for (size_t i = 0; i < this->exchange_comps.size(); i++)
 	{
 		s_oss << indent1;
@@ -206,7 +206,7 @@ cxxExchange::read_raw(CParser & parser, bool check)
 	// Read exchange number and description
 	this->read_number_description(parser);
 	this->Set_new_def(false);
-	
+
 	bool pitzer_exchange_gammas_defined(false);
 
 	for (;;)
@@ -386,17 +386,17 @@ cxxExchange::totalize()
 	}
 	return;
 }
-bool 
+bool
 cxxExchange::Get_pitzer_exchange_gammas() const
 {
 	return this->pitzer_exchange_gammas;
 }
-void 
+void
 cxxExchange::Set_pitzer_exchange_gammas(bool b)
 {
 	this->pitzer_exchange_gammas = b;
 }
-const cxxNameDouble & 
+const cxxNameDouble &
 cxxExchange::Get_totals() const
 {
 	return totals;
@@ -488,5 +488,5 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("solution_equilibria"),	    // 4
 	std::vector< std::string >::value_type("n_solution"),		        // 5
 	std::vector< std::string >::value_type("totals")		            // 6
-};									   
+};
 const std::vector< std::string > cxxExchange::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

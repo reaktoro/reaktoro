@@ -325,7 +325,7 @@ seq(const symbolic::BaseExpr<FirstTypeDerived> &f, const symbolic::BaseExpr<Last
   * \returns a symbolic ArithmeticSequence representing the last \a size elements with increment \a incr.
   *
   * It is a shortcut for: \code seqN(last-(size-fix<1>)*incr, size, incr) \endcode
-  * 
+  *
   * \sa lastN(SizeType), seqN(FirstType,SizeType), seq(FirstType,LastType,IncrType) */
 template<typename SizeType,typename IncrType>
 auto lastN(SizeType size, IncrType incr)
@@ -338,7 +338,7 @@ auto lastN(SizeType size, IncrType incr)
   * \returns a symbolic ArithmeticSequence representing the last \a size elements with a unit increment.
   *
   *  It is a shortcut for: \code seq(last+fix<1>-size, last) \endcode
-  * 
+  *
   * \sa lastN(SizeType,IncrType, seqN(FirstType,SizeType), seq(FirstType,LastType) */
 template<typename SizeType>
 auto lastN(SizeType size)
@@ -377,7 +377,7 @@ struct get_compile_time_incr<ArithmeticSequence<FirstType,SizeType,IncrType> > {
 
 /** \namespace Eigen::indexing
   * \ingroup Core_Module
-  * 
+  *
   * The sole purpose of this namespace is to be able to import all functions
   * and symbols that are expected to be used within operator() for indexing
   * and slicing. If you already imported the whole Eigen namespace:

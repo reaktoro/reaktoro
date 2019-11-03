@@ -195,7 +195,7 @@ struct InnerMostDimReducer<Self, Op, true, false> {
   }
 };
 
-#if !defined(EIGEN_HIPCC) 
+#if !defined(EIGEN_HIPCC)
 static const int kLeafSize = 1024;
 
 template <typename Self, typename Op>
@@ -259,7 +259,7 @@ struct InnerMostDimReducer<Self, Op, true, true> {
   }
 };
 #endif
- 
+
 template <int DimIndex, typename Self, typename Op, bool vectorizable = (Self::InputPacketAccess && Self::ReducerTraits::PacketAccess)>
 struct InnerMostDimPreserver {
   static EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void reduce(const Self&, typename Self::Index, Op&, typename Self::PacketReturnType*) {
@@ -784,7 +784,7 @@ struct TensorReductionEvaluatorBase<const TensorReductionOp<Op, Dims, ArgType, M
         }
       }
       #if defined(EIGEN_USE_SYCL)
-      // If there is no Optimised version for SYCL, the reduction expression 
+      // If there is no Optimised version for SYCL, the reduction expression
       // must break into two subexpression and use the SYCL generic Reducer on the device.
       if(RunningOnSycl) {
          const Index num_values_to_reduce = internal::array_prod(m_reducedDims);

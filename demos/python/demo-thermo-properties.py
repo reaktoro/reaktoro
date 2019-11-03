@@ -26,8 +26,8 @@ database = Database("supcrt98.xml")
 thermo = Thermo(database)
 
 # Define two reactions for which we'll calculate their log(K)
-reaction1 = 'CO2(g) + H2O(l) = HCO3- + H+'
-reaction2 = 'Calcite + H+ = Ca++ + HCO3-'
+reaction1 = "CO2(g) + H2O(l) = HCO3- + H+"
+reaction2 = "Calcite + H+ = Ca++ + HCO3-"
 
 # Define pressure as 100 bar for the calculations (converted to Pa)
 P = 100.0e5
@@ -43,8 +43,8 @@ x = x - 273.15
 
 # Plot the log(K) of the reactions
 plt.xlim(left=25, right=300)
-plt.xlabel('Temperature [C]')
-plt.ylabel('log(K)')
+plt.xlabel("Temperature [C]")
+plt.ylabel("log(K)")
 plt.plot(x, y1, label=reaction1)
 plt.plot(x, y2, label=reaction2)
 plt.show()

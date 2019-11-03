@@ -1322,5 +1322,3 @@ void TMulti::Free_TKinMet()
 */
 
 //--------------------- End of ipm_chemical3.cpp ---------------------------
-
-

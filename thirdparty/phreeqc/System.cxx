@@ -1,4 +1,4 @@
-#include <algorithm>			// std::replace 
+#include <algorithm>			// std::replace
 
 #include "Phreeqc.h"
 #include "System.h"
@@ -30,12 +30,12 @@ PHRQ_base(io)
 	this->reaction = NULL;
 	this->temperature = NULL;
 	this->pressure = NULL;
-} 
-cxxSystem::~cxxSystem(void) 
+}
+cxxSystem::~cxxSystem(void)
 {
-} 
+}
 void
-cxxSystem::Initialize(void) 
+cxxSystem::Initialize(void)
 {
 	this->solution = NULL;
 	this->exchange = NULL;
@@ -48,9 +48,9 @@ cxxSystem::Initialize(void)
 	this->reaction = NULL;
 	this->temperature = NULL;
 	this->pressure = NULL;
-} 
+}
 void
-cxxSystem::totalize(Phreeqc * phreeqc_ptr) 
+cxxSystem::totalize(Phreeqc * phreeqc_ptr)
 {
 	//initialize
 	this->totals.clear();

@@ -127,4 +127,3 @@ Packet pbessel_k1e(const Packet& x) {
 } // end namespace Eigen
 
 #endif // EIGEN_BESSELFUNCTIONS_PACKETMATH_H
-

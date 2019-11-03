@@ -149,7 +149,7 @@ TMulti::CalculateKinMet( long int LinkMode  )
    kae += pm.LsKin[k*6]*pm.LsKin[k*6+1]*pm.LsKin[k*6+3];
    kse += pm.LsKin[k*6+4];  // bugfix 14.12.13 was .LsMod
    kde += pm.LsKin[k*6+1];
-   if( k < pm.FIs)  
+   if( k < pm.FIs)
        kue += pm.LsUpt[k*2]*pmp->L1[k];  // bugfix 10.06.13
    if( kMod[0] == KM_PRO_UPT )
        kie += pm.N;
@@ -655,9 +655,9 @@ TMulti::KM_CalcUptake( long int jb, long int k, const char *kMod )
 
 void
 TMulti::KM_InitUptake( long int jb, long int k, const char *kMod )
-{   
+{
     switch( kMod[0] )
-    {      
+    {
         case KM_PRO_MWR_:
         {
             ErrorIf( !phKinMet[k], "KinMetCalcUptake: ","Invalid index of phase");
@@ -712,5 +712,3 @@ void TMulti::Free_TKinMet()
 
 
 //--------------------- End of ipm_chemical4.cpp ---------------------------
-
-

@@ -25,7 +25,7 @@ const std::string input = R"(
 		"database": "supcrt98.xml",
 		"elements": ["H", "O", "C", "Na", "Cl"]
 	  },
-	
+
 	  "calculations": [
 		{
 		  "equilibrium": {

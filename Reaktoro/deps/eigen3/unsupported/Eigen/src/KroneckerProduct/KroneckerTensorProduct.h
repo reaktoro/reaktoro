@@ -149,7 +149,7 @@ void KroneckerProductSparse<Lhs,Rhs>::evalTo(Dest& dst) const
   Index Br = m_B.rows(), Bc = m_B.cols();
   dst.resize(this->rows(), this->cols());
   dst.resizeNonZeros(0);
-  
+
   // 1 - evaluate the operands if needed:
   typedef typename internal::nested_eval<Lhs,Dynamic>::type Lhs1;
   typedef typename internal::remove_all<Lhs1>::type Lhs1Cleaned;
@@ -157,11 +157,11 @@ void KroneckerProductSparse<Lhs,Rhs>::evalTo(Dest& dst) const
   typedef typename internal::nested_eval<Rhs,Dynamic>::type Rhs1;
   typedef typename internal::remove_all<Rhs1>::type Rhs1Cleaned;
   const Rhs1 rhs1(m_B);
-    
+
   // 2 - construct respective iterators
   typedef Eigen::InnerIterator<Lhs1Cleaned> LhsInnerIterator;
   typedef Eigen::InnerIterator<Rhs1Cleaned> RhsInnerIterator;
-  
+
   // compute number of non-zeros per innervectors of dst
   {
     // TODO VectorXi is not necessarily big enough!
@@ -169,12 +169,12 @@ void KroneckerProductSparse<Lhs,Rhs>::evalTo(Dest& dst) const
     for (Index kA=0; kA < m_A.outerSize(); ++kA)
       for (LhsInnerIterator itA(lhs1,kA); itA; ++itA)
         nnzA(Dest::IsRowMajor ? itA.row() : itA.col())++;
-      
+
     VectorXi nnzB = VectorXi::Zero(Dest::IsRowMajor ? m_B.rows() : m_B.cols());
     for (Index kB=0; kB < m_B.outerSize(); ++kB)
       for (RhsInnerIterator itB(rhs1,kB); itB; ++itB)
         nnzB(Dest::IsRowMajor ? itB.row() : itB.col())++;
-    
+
     Matrix<int,Dynamic,Dynamic,ColMajor> nnzAB = nnzB * nnzA.transpose();
     dst.reserve(VectorXi::Map(nnzAB.data(), nnzAB.size()));
   }

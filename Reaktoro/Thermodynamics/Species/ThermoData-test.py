@@ -17,6 +17,7 @@
 
 from reaktoro import *
 
+
 def test_ReactionParams():
     reaction = ReactionParams()
     coefficients = reaction.analytic
@@ -118,4 +119,3 @@ def test_LiquidSpeciesThermoData():
     assert liquid_species.hkf is None
     liquid_species.hkf = LiquidSpeciesThermoParamsHKF()
     assert liquid_species.hkf is not None
-

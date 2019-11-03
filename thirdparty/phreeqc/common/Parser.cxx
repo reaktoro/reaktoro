@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////
 CParser::CParser(PHRQ_io *io):
 PHRQ_base(io),
-m_input_stream(std::cin), 
+m_input_stream(std::cin),
 m_input_error(0),
 m_next_keyword(Keywords::KEY_NONE)
 {
@@ -45,7 +45,7 @@ m_next_keyword(Keywords::KEY_NONE)
 
 CParser::CParser(std::istream & input, PHRQ_io *io):
 PHRQ_base(io),
-m_input_stream(input), 
+m_input_stream(input),
 m_input_error(0),
 m_next_keyword(Keywords::KEY_NONE)
 {
@@ -233,14 +233,14 @@ PHRQ_io::LINE_TYPE CParser::get_line()
 			this->accumulated.append("\n");
 		}
 		//
-		// New line character encountered 
+		// New line character encountered
 		//
 		return_value = (empty ? PHRQ_io::LT_EMPTY : PHRQ_io::LT_OK);
 	}
 
 	//
 	// Determine return_value
-	// 
+	//
 	if (return_value == PHRQ_io::LT_OK)
 	{
 		if (check_key(m_line.begin(), m_line.end()))

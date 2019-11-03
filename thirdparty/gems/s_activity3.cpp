@@ -1134,5 +1134,3 @@ void TActivity::SetSmoothingFactor( long int mode )
 
 
 //--------------------- End of s_activity3.cpp ---------------------------
-
-

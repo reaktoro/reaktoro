@@ -254,7 +254,7 @@ struct TensorEvaluator<const TensorTupleReducerOp<ReduceOp, Dims, ArgType>, Devi
     } else {
       const Index total_size = internal::array_prod(m_orig_impl.dimensions());
       m_stride_mod = (m_return_dim > 0) ? m_strides[m_return_dim - 1] : total_size;
-    }    
+    }
     // If m_return_dim is not a valid index, returns 1 or this can crash on Windows.
     m_stride_div = ((m_return_dim >= 0) &&
                     (m_return_dim < static_cast<Index>(m_strides.size())))

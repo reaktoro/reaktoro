@@ -27,8 +27,10 @@ def names(objects):
 
 def range_species_in_phase(system, iphase):
     """Return the range of species indices in a phase."""
-    return range(system.indexFirstSpeciesInPhase(iphase),
-        system.indexFirstSpeciesInPhase(iphase) + system.numSpeciesInPhase(iphase))
+    return range(
+        system.indexFirstSpeciesInPhase(iphase),
+        system.indexFirstSpeciesInPhase(iphase) + system.numSpeciesInPhase(iphase),
+    )
 
 
 def test_chemical_system():
@@ -61,13 +63,13 @@ def test_chemical_system():
     b = A @ n
 
     # The formula matrices of each phase in the system
-    Ap = [ A[:, range_species_in_phase(system, j)] for j in range(Np) ]
+    Ap = [A[:, range_species_in_phase(system, j)] for j in range(Np)]
 
     # The amounts of the species of each phase in the system
-    np = [ n[range_species_in_phase(system, j)] for j in range(Np) ]
+    np = [n[range_species_in_phase(system, j)] for j in range(Np)]
 
     # The amounts of the elements of each phase in the system
-    bp = [ Ap[j] @ np[j] for j in range(Np) ]
+    bp = [Ap[j] @ np[j] for j in range(Np)]
 
     # Calculate the chemical properties of the state
     properties = system.properties(T, P, n)
@@ -88,9 +90,11 @@ def test_chemical_system():
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::formulaMatrix
     # -------------------------------------------------------------------------
-    assert system.formulaMatrix() == approx(array([
-        [ s.elementCoefficient(e.name()) for s in system.species()]
-            for e in system.elements() ]))
+    assert system.formulaMatrix() == approx(
+        array(
+            [[s.elementCoefficient(e.name()) for s in system.species()] for e in system.elements()]
+        )
+    )
 
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::element
@@ -204,8 +208,9 @@ def test_chemical_system():
     assert system.indicesSpeciesInPhases(range(Np)) == approx(range(Ns))
 
     for iphase, phase in enumerate(system.phases()):
-        assert system.indicesSpeciesInPhases([iphase]) == \
-            system.indicesSpecies(names(phase.species()))
+        assert system.indicesSpeciesInPhases([iphase]) == system.indicesSpecies(
+            names(phase.species())
+        )
 
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::indicesPhases
@@ -220,26 +225,30 @@ def test_chemical_system():
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::indicesFluidPhases
     # -------------------------------------------------------------------------
-    assert system.indicesFluidPhases() == \
-        approx([i for i, phase in enumerate(system.phases()) if phase.isFluid()])
+    assert system.indicesFluidPhases() == approx(
+        [i for i, phase in enumerate(system.phases()) if phase.isFluid()]
+    )
 
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::indicesFluidSpecies
     # -------------------------------------------------------------------------
-    assert system.indicesFluidSpecies() == \
-        approx(system.indicesSpeciesInPhases(system.indicesFluidPhases()))
+    assert system.indicesFluidSpecies() == approx(
+        system.indicesSpeciesInPhases(system.indicesFluidPhases())
+    )
 
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::indicesSolidPhases
     # -------------------------------------------------------------------------
-    assert system.indicesSolidPhases() == \
-        approx([i for i, phase in enumerate(system.phases()) if phase.isSolid()])
+    assert system.indicesSolidPhases() == approx(
+        [i for i, phase in enumerate(system.phases()) if phase.isSolid()]
+    )
 
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::indicesSolidSpecies
     # -------------------------------------------------------------------------
-    assert system.indicesSolidSpecies() == \
-        approx(system.indicesSpeciesInPhases(system.indicesSolidPhases()))
+    assert system.indicesSolidSpecies() == approx(
+        system.indicesSpeciesInPhases(system.indicesSolidPhases())
+    )
 
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::elementAmounts
@@ -280,4 +289,6 @@ def test_chemical_system():
     # Check the usage system.properties(T, P, n).someProperty() works
     assert all(system.properties(T, P, n).phaseVolumes().val == properties.phaseVolumes().val)
     assert all(system.properties(T, P, n).lnActivities().val == properties.lnActivities().val)
-    assert all(system.properties(T, P, n).chemicalPotentials().val == properties.chemicalPotentials().val)
+    assert all(
+        system.properties(T, P, n).chemicalPotentials().val == properties.chemicalPotentials().val
+    )

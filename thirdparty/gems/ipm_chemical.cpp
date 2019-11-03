@@ -1088,7 +1088,7 @@ double TMulti::KarpovCriterionDC(
             break;
         case DC_ASYM_CARRIER:
             *dNuG += 1.0/(1.0 - asTail) - asTail - 1.0;
-        }    
+        }
     if( *dNuG < 13.8155 && *dNuG > -228. )
         Fj = exp( *dNuG );  // dual estimate of mole fraction
     if( *dNuG >= 13.8155 )

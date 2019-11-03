@@ -29,7 +29,7 @@
 
 namespace Reaktoro {
 
-/// A type to define the possible state of matter of a phase. 
+/// A type to define the possible state of matter of a phase.
 enum class PhaseType
 {
     Solid, Liquid, Gas, Plasma

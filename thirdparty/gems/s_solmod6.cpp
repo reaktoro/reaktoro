@@ -195,4 +195,3 @@ long int TModOther::IdealProp( double *Zid )
 
 
 //--------------------- End of s_solmod6.cpp ---------------------------
-

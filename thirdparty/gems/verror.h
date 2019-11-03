@@ -94,4 +94,3 @@ void ErrorIf(bool error, const gstring& title, const gstring& message)
 
 #endif
 // _verror_h
-

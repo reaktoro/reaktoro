@@ -1,9 +1,9 @@
-print('============================================================')
-print('Make sure you have the following Python packages installed: ')
-print('     numpy, matplotlib, joblib')
-print('These can be installed with pip:')
-print('     pip install numpy matplotlib joblib')
-print('============================================================')
+print("============================================================")
+print("Make sure you have the following Python packages installed: ")
+print("     numpy, matplotlib, joblib")
+print("These can be installed with pip:")
+print("     pip install numpy matplotlib joblib")
+print("============================================================")
 
 # Step 1: importing the required python packages
 from reaktoro import *
@@ -20,16 +20,16 @@ day = 24 * hour
 year = 365 * day
 
 # Step 3: Parameters for the reactive transport simulation
-xl = 0.0          # the x-coordinate of the left boundary
-xr = 1.0          # the x-coordinate of the right boundary
-nsteps = 100      # the number of steps in the reactive transport simulation
-ncells = 100      # the number of cells in the discretization
+xl = 0.0  # the x-coordinate of the left boundary
+xr = 1.0  # the x-coordinate of the right boundary
+nsteps = 100  # the number of steps in the reactive transport simulation
+ncells = 100  # the number of cells in the discretization
 
-D  = 1.0e-9       # the diffusion coefficient (in units of m2/s)
-v  = 1.0/day      # the fluid pore velocity (in units of m/s)
-dt = 10*minute    # the time step (in units of s)
-T = 60.0 + 273.15 # the temperature (in units of K)
-P = 100 * 1e5     # the pressure (in units of Pa)
+D = 1.0e-9  # the diffusion coefficient (in units of m2/s)
+v = 1.0 / day  # the fluid pore velocity (in units of m/s)
+dt = 10 * minute  # the time step (in units of s)
+T = 60.0 + 273.15  # the temperature (in units of K)
+P = 100 * 1e5  # the pressure (in units of Pa)
 
 dirichlet = False  # the parameter that determines whether Dirichlet BC must be used
 
@@ -49,24 +49,16 @@ output_quantities = """
 def simulate():
 
     # Step 7.1: Construct the chemical system with its phases and species
-    db = Database('supcrt98.xml')
+    db = Database("supcrt98.xml")
 
     editor = ChemicalEditor(db)
 
-    editor.addAqueousPhase([
-        'H2O(l)',
-        'H+',
-        'OH-',
-        'Na+',
-        'Cl-',
-        'Ca++',
-        'Mg++',
-        'HCO3-',
-        'CO2(aq)',
-        'CO3--'])  # aqueous species are individually selected for performance reasons
-    editor.addMineralPhase('Quartz')
-    editor.addMineralPhase('Calcite')
-    editor.addMineralPhase('Dolomite')
+    editor.addAqueousPhase(
+        ["H2O(l)", "H+", "OH-", "Na+", "Cl-", "Ca++", "Mg++", "HCO3-", "CO2(aq)", "CO3--"]
+    )  # aqueous species are individually selected for performance reasons
+    editor.addMineralPhase("Quartz")
+    editor.addMineralPhase("Calcite")
+    editor.addMineralPhase("Dolomite")
 
     # Step 7.2: Create the ChemicalSystem object using the configured editor
     system = ChemicalSystem(editor)
@@ -75,32 +67,32 @@ def simulate():
     problem_ic = EquilibriumProblem(system)
     problem_ic.setTemperature(T)
     problem_ic.setPressure(P)
-    problem_ic.add('H2O', 1.0, 'kg')
-    problem_ic.add('NaCl', 0.7, 'mol')
-    problem_ic.add('CaCO3', 10, 'mol')
-    problem_ic.add('SiO2', 10, 'mol')
+    problem_ic.add("H2O", 1.0, "kg")
+    problem_ic.add("NaCl", 0.7, "mol")
+    problem_ic.add("CaCO3", 10, "mol")
+    problem_ic.add("SiO2", 10, "mol")
 
     # Step 7.4: Define the boundary condition of the reactive transport modeling problem
     problem_bc = EquilibriumProblem(system)
     problem_bc.setTemperature(T)
     problem_bc.setPressure(P)
-    problem_bc.add('H2O', 1.0, 'kg')
-    problem_bc.add('NaCl', 0.90, 'mol')
-    problem_bc.add('MgCl2', 0.05, 'mol')
-    problem_bc.add('CaCl2', 0.01, 'mol')
-    problem_bc.add('CO2', 0.75, 'mol')
+    problem_bc.add("H2O", 1.0, "kg")
+    problem_bc.add("NaCl", 0.90, "mol")
+    problem_bc.add("MgCl2", 0.05, "mol")
+    problem_bc.add("CaCl2", 0.01, "mol")
+    problem_bc.add("CO2", 0.75, "mol")
 
     # Step 7.5: Calculate the equilibrium states for the initial and boundary conditions
     state_ic = equilibrate(problem_ic)
     state_bc = equilibrate(problem_bc)
 
     # Step 7.6: Scale the volumes of the phases in the initial condition
-    state_ic.scalePhaseVolume('Aqueous', 0.1, 'm3')
-    state_ic.scalePhaseVolume('Quartz', 0.882, 'm3')
-    state_ic.scalePhaseVolume('Calcite', 0.018, 'm3')
+    state_ic.scalePhaseVolume("Aqueous", 0.1, "m3")
+    state_ic.scalePhaseVolume("Quartz", 0.882, "m3")
+    state_ic.scalePhaseVolume("Calcite", 0.018, "m3")
 
     # Scale the boundary condition state to 1 m3
-    state_bc.scaleVolume(1.0, 'm3')
+    state_bc.scaleVolume(1.0, "m3")
 
     # Step 7.7: Partitioning fluid and solid species
 
@@ -137,7 +129,7 @@ def simulate():
     x = linspace(xl, xr, ncells + 1)
 
     # The length of each mesh cell (in units of m)
-    dx = (xr - xl)/ncells
+    dx = (xr - xl) / ncells
 
     # Step 7.10: Create the equilibrium solver object for the repeated equilibrium calculation
     solver = EquilibriumSolver(system)
@@ -151,11 +143,11 @@ def simulate():
         ndigits = len(str(nsteps))
 
         # Provide the output file name, which will correspond
-        output.filename('results/{}.txt'.format(str(step).zfill(ndigits)))
+        output.filename("results/{}.txt".format(str(step).zfill(ndigits)))
 
         # We define the columns' tags filled with the name of the quantities
         # The first column has a tag 'x' (which corresponds to the center coordinates of the cells )
-        output.add('tag', 'x') # The value of the center coordinates of the cells
+        output.add("tag", "x")  # The value of the center coordinates of the cells
 
         # The rest of the columns correspond to the requested properties
         for quantity in output_quantities:
@@ -173,7 +165,7 @@ def simulate():
 
     while step <= nsteps:
         # Print the progress of the simulation
-        print("Progress: {}/{} steps, {} min".format(step, nsteps, t/minute))
+        print("Progress: {}/{} steps, {} min".format(step, nsteps, t / minute))
 
         # Output the current state of the reactive transport calculation
         outputstate()
@@ -203,20 +195,20 @@ def simulate():
 
 # Step 10: Return a string for the title of a figure in the format Time: #h##m
 def titlestr(t):
-    t = t / minute   # Convert from seconds to minutes
+    t = t / minute  # Convert from seconds to minutes
     h = int(t) / 60  # The number of hours
     m = int(t) % 60  # The number of remaining minutes
-    return 'Time: {:>3}h{:>2}m'.format(h, str(m).zfill(2))
+    return "Time: {:>3}h{:>2}m".format(h, str(m).zfill(2))
 
 
 # Step 9: Generate figures for a result file
 def plotfile(file):
-    step = int(file.split('.')[0])
+    step = int(file.split(".")[0])
 
-    print('Plotting figure', step, '...')
+    print("Plotting figure", step, "...")
 
     t = step * dt
-    filearray = loadtxt('results/' + file, skiprows=1)
+    filearray = loadtxt("results/" + file, skiprows=1)
     data = filearray.T
 
     ndigits = len(str(nsteps))
@@ -225,77 +217,79 @@ def plotfile(file):
     plt.xlim(left=-0.02, right=0.52)
     plt.ylim(bottom=2.5, top=10.5)
     plt.title(titlestr(t))
-    plt.xlabel('Distance [m]')
-    plt.ylabel('pH')
+    plt.xlabel("Distance [m]")
+    plt.ylabel("pH")
     plt.plot(data[0], data[1])
     plt.tight_layout()
-    plt.savefig('figures/ph/{}.png'.format(str(step).zfill(ndigits)))
+    plt.savefig("figures/ph/{}.png".format(str(step).zfill(ndigits)))
 
     plt.figure()
     plt.xlim(left=-0.02, right=0.52)
     plt.ylim(bottom=-0.1, top=2.1)
-    plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    plt.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
     plt.title(titlestr(t))
-    plt.xlabel('Distance [m]')
-    plt.ylabel('Mineral Volume [%$_{\mathsf{vol}}$]')
-    plt.plot(data[0], data[7] * 100, label='Calcite')
-    plt.plot(data[0], data[8] * 100, label='Dolomite')
-    plt.legend(loc='center right')
+    plt.xlabel("Distance [m]")
+    plt.ylabel("Mineral Volume [%$_{\mathsf{vol}}$]")
+    plt.plot(data[0], data[7] * 100, label="Calcite")
+    plt.plot(data[0], data[8] * 100, label="Dolomite")
+    plt.legend(loc="center right")
     plt.tight_layout()
-    plt.savefig('figures/calcite-dolomite/{}.png'.format(str(step).zfill(ndigits)))
+    plt.savefig("figures/calcite-dolomite/{}.png".format(str(step).zfill(ndigits)))
 
     plt.figure()
-    plt.yscale('log')
+    plt.yscale("log")
     plt.xlim(left=-0.02, right=0.52)
     plt.ylim(bottom=0.5e-5, top=2)
     plt.title(titlestr(t))
-    plt.xlabel('Distance [m]')
-    plt.ylabel('Concentration [molal]')
-    plt.plot(data[0], data[3], label='Ca++')
-    plt.plot(data[0], data[4], label='Mg++')
-    plt.plot(data[0], data[5], label='HCO3-')
-    plt.plot(data[0], data[6], label='CO2(aq)')
-    plt.plot(data[0], data[2], label='H+')
-    plt.legend(loc='lower right')
+    plt.xlabel("Distance [m]")
+    plt.ylabel("Concentration [molal]")
+    plt.plot(data[0], data[3], label="Ca++")
+    plt.plot(data[0], data[4], label="Mg++")
+    plt.plot(data[0], data[5], label="HCO3-")
+    plt.plot(data[0], data[6], label="CO2(aq)")
+    plt.plot(data[0], data[2], label="H+")
+    plt.legend(loc="lower right")
     plt.tight_layout()
-    plt.savefig('figures/aqueous-species/{}.png'.format(str(step).zfill(ndigits)))
+    plt.savefig("figures/aqueous-species/{}.png".format(str(step).zfill(ndigits)))
 
-    plt.close('all')
+    plt.close("all")
 
 
 # Step 8: Plot all result files and generate a video
 def plot():
     # Plot all result files
-    files = sorted(os.listdir('results'))
+    files = sorted(os.listdir("results"))
     Parallel(n_jobs=16)(delayed(plotfile)(file) for file in files)
     # Create videos for the figures
-    ffmpegstr = 'ffmpeg -y -r 30 -i figures/{0}/%03d.png -codec:v mpeg4 -flags:v +qscale -global_quality:v 0 videos/{0}.mp4'
-    os.system(ffmpegstr.format('calcite-dolomite'))
-    os.system(ffmpegstr.format('aqueous-species'))
-    os.system(ffmpegstr.format('ph'))
+    ffmpegstr = "ffmpeg -y -r 30 -i figures/{0}/%03d.png -codec:v mpeg4 -flags:v +qscale -global_quality:v 0 videos/{0}.mp4"
+    os.system(ffmpegstr.format("calcite-dolomite"))
+    os.system(ffmpegstr.format("aqueous-species"))
+    os.system(ffmpegstr.format("ph"))
+
 
 # Step 7.10.2: Solve a tridiagonal matrix equation using Thomas algorithm (or TriDiagonal Matrix Algorithm (TDMA))
 def thomas(a, b, c, d):
     n = len(d)
     c[0] /= b[0]
     for i in range(1, n - 1):
-        c[i] /= b[i] - a[i]*c[i - 1]
+        c[i] /= b[i] - a[i] * c[i - 1]
     d[0] /= b[0]
     for i in range(1, n):
-        d[i] = (d[i] - a[i]*d[i - 1])/(b[i] - a[i]*c[i - 1])
+        d[i] = (d[i] - a[i] * d[i - 1]) / (b[i] - a[i] * c[i - 1])
     x = d
     for i in reversed(range(0, n - 1)):
-        x[i] -= c[i]*x[i + 1]
+        x[i] -= c[i] * x[i + 1]
     return x
+
 
 # Step 7.10.1: Perform a transport step
 def transport(u, dt, dx, v, D, g):
     # Number of DOFs
     n = len(u)
-    alpha = D*dt/dx**2
-    beta = v*dt/dx
+    alpha = D * dt / dx ** 2
+    beta = v * dt / dx
     a = full(n, -beta - alpha)
-    b = full(n, 1 + beta + 2*alpha)
+    b = full(n, 1 + beta + 2 * alpha)
     c = full(n, -alpha)
 
     # Set the boundary condition
@@ -306,23 +300,25 @@ def transport(u, dt, dx, v, D, g):
         u[0] = g
     else:
         # Use flux boundary conditions
-        u[0] += beta*g
+        u[0] += beta * g
         b[0] = 1 + beta + alpha
         b[-1] = 1 + beta + alpha
 
     # Solve a tridiagonal matrix equation
     thomas(a, b, c, u)
 
+
 # Step 6: Creating folders for the results' output
 def make_results_folders():
-    os.system('mkdir -p results')
-    os.system('mkdir -p figures/ph')
-    os.system('mkdir -p figures/aqueous-species')
-    os.system('mkdir -p figures/calcite-dolomite')
-    os.system('mkdir -p videos')
+    os.system("mkdir -p results")
+    os.system("mkdir -p figures/ph")
+    os.system("mkdir -p figures/aqueous-species")
+    os.system("mkdir -p figures/calcite-dolomite")
+    os.system("mkdir -p videos")
+
 
 # Step 5: Define the main function
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     # Create folders for the results
     make_results_folders()

@@ -54,7 +54,7 @@ public:
   friend Derived operator-(const indexed_based_stl_iterator_base& a, Index b) { Derived ret(a.derived()); ret -= b; return ret; }
   friend Derived operator+(Index a, const indexed_based_stl_iterator_base& b) { Derived ret(b.derived()); ret += a; return ret; }
   friend Derived operator-(Index a, const indexed_based_stl_iterator_base& b) { Derived ret(b.derived()); ret -= a; return ret; }
-  
+
   Derived& operator+=(Index b) { m_index += b; return derived(); }
   Derived& operator-=(Index b) { m_index -= b; return derived(); }
 
@@ -142,7 +142,7 @@ public:
   friend pointer_based_stl_iterator operator-(const pointer_based_stl_iterator& a, Index b) { pointer_based_stl_iterator ret(a); ret -= b; return ret; }
   friend pointer_based_stl_iterator operator+(Index a, const pointer_based_stl_iterator& b) { pointer_based_stl_iterator ret(b); ret += a; return ret; }
   friend pointer_based_stl_iterator operator-(Index a, const pointer_based_stl_iterator& b) { pointer_based_stl_iterator ret(b); ret -= a; return ret; }
-  
+
   pointer_based_stl_iterator& operator+=(Index b) { m_ptr += b*m_incr.value(); return *this; }
   pointer_based_stl_iterator& operator-=(Index b) { m_ptr -= b*m_incr.value(); return *this; }
 
@@ -205,10 +205,10 @@ protected:
   typedef const value_type read_only_ref_t;
 
 public:
-  
+
   typedef typename internal::conditional<bool(is_lvalue), value_type *, const value_type *>::type pointer;
   typedef typename internal::conditional<bool(is_lvalue), value_type&, read_only_ref_t>::type reference;
-  
+
   generic_randaccess_stl_iterator() : Base() {}
   generic_randaccess_stl_iterator(XprType& xpr, Index index) : Base(xpr,index) {}
   generic_randaccess_stl_iterator(const typename Base::non_const_iterator& other) : Base(other) {}
@@ -245,7 +245,7 @@ public:
   typedef typename internal::conditional<bool(is_lvalue), SubVectorType, ConstSubVectorType>::type value_type;
   typedef value_type* pointer;
   typedef value_type  reference;
-  
+
   subvector_stl_iterator() : Base() {}
   subvector_stl_iterator(XprType& xpr, Index index) : Base(xpr,index) {}
 

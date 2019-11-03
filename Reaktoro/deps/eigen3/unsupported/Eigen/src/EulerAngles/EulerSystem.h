@@ -15,7 +15,7 @@ namespace Eigen
   // Forward declarations
   template <typename _Scalar, class _System>
   class EulerAngles;
-  
+
   namespace internal
   {
     // TODO: Add this trait to the Eigen internal API?
@@ -24,7 +24,7 @@ namespace Eigen
     {
       enum { value = Num };
     };
-  
+
     template <int Num>
     struct Abs<Num, false>
     {
@@ -36,16 +36,16 @@ namespace Eigen
     {
       enum { value = Axis != 0 && Abs<Axis>::value <= 3 };
     };
-    
+
     template<typename System,
             typename Other,
             int OtherRows=Other::RowsAtCompileTime,
             int OtherCols=Other::ColsAtCompileTime>
     struct eulerangles_assign_impl;
   }
-  
+
   #define EIGEN_EULER_ANGLES_CLASS_STATIC_ASSERT(COND,MSG) typedef char static_assertion_##MSG[(COND)?1:-1]
-  
+
   /** \brief Representation of a fixed signed rotation axis for EulerSystem.
     *
     * \ingroup EulerAngles_Module
@@ -64,7 +64,7 @@ namespace Eigen
     EULER_Y = 2, /*!< the Y axis */
     EULER_Z = 3  /*!< the Z axis */
   };
-  
+
   /** \class EulerSystem
     *
     * \ingroup EulerAngles_Module
@@ -128,13 +128,13 @@ namespace Eigen
     public:
     // It's defined this way and not as enum, because I think
     //  that enum is not guerantee to support negative numbers
-    
+
     /** The first rotation axis */
     static const int AlphaAxis = _AlphaAxis;
-    
+
     /** The second rotation axis */
     static const int BetaAxis = _BetaAxis;
-    
+
     /** The third rotation axis */
     static const int GammaAxis = _GammaAxis;
 
@@ -143,7 +143,7 @@ namespace Eigen
       AlphaAxisAbs = internal::Abs<AlphaAxis>::value, /*!< the first rotation axis unsigned */
       BetaAxisAbs = internal::Abs<BetaAxis>::value, /*!< the second rotation axis unsigned */
       GammaAxisAbs = internal::Abs<GammaAxis>::value, /*!< the third rotation axis unsigned */
-      
+
       IsAlphaOpposite = (AlphaAxis < 0) ? 1 : 0, /*!< whether alpha axis is negative */
       IsBetaOpposite = (BetaAxis < 0) ? 1 : 0, /*!< whether beta axis is negative */
       IsGammaOpposite = (GammaAxis < 0) ? 1 : 0, /*!< whether gamma axis is negative */
@@ -155,40 +155,40 @@ namespace Eigen
 
       IsTaitBryan = ((unsigned)AlphaAxisAbs != (unsigned)GammaAxisAbs) ? 1 : 0 /*!< whether the Euler system is Tait-Bryan */
     };
-    
+
     private:
-    
+
     EIGEN_EULER_ANGLES_CLASS_STATIC_ASSERT(internal::IsValidAxis<AlphaAxis>::value,
       ALPHA_AXIS_IS_INVALID);
-      
+
     EIGEN_EULER_ANGLES_CLASS_STATIC_ASSERT(internal::IsValidAxis<BetaAxis>::value,
       BETA_AXIS_IS_INVALID);
-      
+
     EIGEN_EULER_ANGLES_CLASS_STATIC_ASSERT(internal::IsValidAxis<GammaAxis>::value,
       GAMMA_AXIS_IS_INVALID);
-      
+
     EIGEN_EULER_ANGLES_CLASS_STATIC_ASSERT((unsigned)AlphaAxisAbs != (unsigned)BetaAxisAbs,
       ALPHA_AXIS_CANT_BE_EQUAL_TO_BETA_AXIS);
-      
+
     EIGEN_EULER_ANGLES_CLASS_STATIC_ASSERT((unsigned)BetaAxisAbs != (unsigned)GammaAxisAbs,
       BETA_AXIS_CANT_BE_EQUAL_TO_GAMMA_AXIS);
 
     static const int
-      // I, J, K are the pivot indexes permutation for the rotation matrix, that match this Euler system. 
+      // I, J, K are the pivot indexes permutation for the rotation matrix, that match this Euler system.
       // They are used in this class converters.
       // They are always different from each other, and their possible values are: 0, 1, or 2.
       I_ = AlphaAxisAbs - 1,
       J_ = (AlphaAxisAbs - 1 + 1 + IsOdd)%3,
       K_ = (AlphaAxisAbs - 1 + 2 - IsOdd)%3
     ;
-    
+
     // TODO: Get @mat parameter in form that avoids double evaluation.
     template <typename Derived>
     static void CalcEulerAngles_imp(Matrix<typename MatrixBase<Derived>::Scalar, 3, 1>& res, const MatrixBase<Derived>& mat, internal::true_type /*isTaitBryan*/)
     {
       using std::atan2;
       using std::sqrt;
-      
+
       typedef typename Derived::Scalar Scalar;
 
       const Scalar plusMinus = IsEven? 1 : -1;
@@ -252,7 +252,7 @@ namespace Eigen
         res[2] = 0;
       }
     }
-    
+
     template<typename Scalar>
     static void CalcEulerAngles(
       EulerAngles<Scalar, EulerSystem>& res,
@@ -264,17 +264,17 @@ namespace Eigen
 
       if (IsAlphaOpposite)
         res.alpha() = -res.alpha();
-        
+
       if (IsBetaOpposite)
         res.beta() = -res.beta();
-        
+
       if (IsGammaOpposite)
         res.gamma() = -res.gamma();
     }
-    
+
     template <typename _Scalar, class _System>
     friend class Eigen::EulerAngles;
-    
+
     template<typename System,
             typename Other,
             int OtherRows,
@@ -285,17 +285,17 @@ namespace Eigen
 #define EIGEN_EULER_SYSTEM_TYPEDEF(A, B, C) \
   /** \ingroup EulerAngles_Module */ \
   typedef EulerSystem<EULER_##A, EULER_##B, EULER_##C> EulerSystem##A##B##C;
-  
+
   EIGEN_EULER_SYSTEM_TYPEDEF(X,Y,Z)
   EIGEN_EULER_SYSTEM_TYPEDEF(X,Y,X)
   EIGEN_EULER_SYSTEM_TYPEDEF(X,Z,Y)
   EIGEN_EULER_SYSTEM_TYPEDEF(X,Z,X)
-  
+
   EIGEN_EULER_SYSTEM_TYPEDEF(Y,Z,X)
   EIGEN_EULER_SYSTEM_TYPEDEF(Y,Z,Y)
   EIGEN_EULER_SYSTEM_TYPEDEF(Y,X,Z)
   EIGEN_EULER_SYSTEM_TYPEDEF(Y,X,Y)
-  
+
   EIGEN_EULER_SYSTEM_TYPEDEF(Z,X,Y)
   EIGEN_EULER_SYSTEM_TYPEDEF(Z,X,Z)
   EIGEN_EULER_SYSTEM_TYPEDEF(Z,Y,X)

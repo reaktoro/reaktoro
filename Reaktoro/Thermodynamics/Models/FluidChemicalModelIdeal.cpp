@@ -48,6 +48,3 @@ auto fluidChemicalModelIdeal(const FluidMixture& mixture) -> PhaseChemicalModel
 }
 
 } // namespace Reaktoro
-
-
-

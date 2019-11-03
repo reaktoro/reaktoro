@@ -263,11 +263,11 @@ NO3- + 2 H+ + 2 e- = NO2- + H2O
 	-Vm 7 # Pray et al., 1952, IEC 44. 1146
 NO3- + 10 H+ + 8 e- = NH4+ + 3 H2O
 	-log_k	119.077
-	-delta_h -187.055	kcal	
+	-delta_h -187.055	kcal
 	-gamma	2.5	0
 	-dw	 1.98e-9
-	-Vm  4.837  2.345  5.522  -2.88 1.096  3  -1.456  75.0  7.17e-3  1 # ref. 1	
-	
+	-Vm  4.837  2.345  5.522  -2.88 1.096  3  -1.456  75.0  7.17e-3  1 # ref. 1
+
 #AmmH+ = Amm + H+
 NH4+ = NH3 + H+
 	-log_k	-9.252
@@ -350,18 +350,18 @@ Ca+2 + HSO4- = CaHSO4+
 Ca+2 + PO4-3 = CaPO4-
 	-log_k	6.459
 	-delta_h 3.10	kcal
-	-gamma  5.4  0.0 
+	-gamma  5.4  0.0
 Ca+2 + HPO4-2 = CaHPO4
 	-log_k	2.739
 	-delta_h 3.3 kcal
 Ca+2 + H2PO4- = CaH2PO4+
 	-log_k	1.408
 	-delta_h 3.4 kcal
-	-gamma  5.4  0.0 
+	-gamma  5.4  0.0
 # Ca+2 + F- = CaF+
 	# -log_k	0.94
 	# -delta_h 4.120	kcal
-	# -gamma  5.5  0.0 
+	# -gamma  5.5  0.0
 	# -Vm  .9846  -5.3773  7.8635  -2.5567  .6911 5.5 # supcrt
 Mg+2 + H2O = MgOH+ + H+
 	-log_k	-11.44
@@ -441,7 +441,7 @@ Fe+2 + H2O = FeOH+ + H+
 	-log_k	-9.5
 	-delta_h 13.20	kcal
 	-gamma	5.0	0
-Fe+2 + 3H2O = Fe(OH)3- + 3H+ 
+Fe+2 + 3H2O = Fe(OH)3- + 3H+
 	-log_k -31.0
 	-delta_h 30.3 kcal
 	-gamma  5.0 0
@@ -487,9 +487,9 @@ Fe+3 + 4 H2O = Fe(OH)4- + 4 H+
 	-log_k	-21.6
 	-delta_h 31.9	kcal
 	-gamma	5.4	0
-Fe+2 + 2H2O = Fe(OH)2 + 2H+ 
+Fe+2 + 2H2O = Fe(OH)2 + 2H+
 	-log_k  -20.57
-	-delta_h 28.565 kcal  
+	-delta_h 28.565 kcal
 2 Fe+3 + 2 H2O = Fe2(OH)2+4 + 2 H+
 	-log_k	-2.95
 	-delta_h 13.5	kcal
@@ -536,7 +536,7 @@ Mn+2 + H2O = MnOH+ + H+
 	-log_k	-10.59
 	-delta_h 14.40	kcal
 	-gamma	5.0	0
-Mn+2 + 3H2O = Mn(OH)3- + 3H+ 
+Mn+2 + 3H2O = Mn(OH)3- + 3H+
 	-log_k  -34.8
 	-gamma	5.0	0
 Mn+2 + Cl- = MnCl+
@@ -682,19 +682,19 @@ Cu+ + 2Cl- = CuCl2-
 Cu+ + 3Cl- = CuCl3-2
 	-log_k	  5.70
 	-delta_h 0.26 kcal
-	-gamma  5.0  0.0  
-Cu+2 + CO3-2 = CuCO3 
+	-gamma  5.0  0.0
+Cu+2 + CO3-2 = CuCO3
 	-log_k	  6.73
-Cu+2 + 2CO3-2 = Cu(CO3)2-2 
+Cu+2 + 2CO3-2 = Cu(CO3)2-2
 	-log_k	  9.83
 Cu+2 + HCO3- = CuHCO3+
-	-log_k	  2.7	
-Cu+2 + Cl- = CuCl+ 
+	-log_k	  2.7
+Cu+2 + Cl- = CuCl+
 	-log_k	  0.43
 	-delta_h 8.65 kcal
 	-gamma  4.0  0
 	-Vm   -4.19  0  30.4  0  0  4  0  0  1.94e-2  1 # ref. 2
-Cu+2 + 2Cl- = CuCl2 
+Cu+2 + 2Cl- = CuCl2
 	-log_k	  0.16
 	-delta_h 10.56 kcal
 	-Vm   26.8  0  -136 # ref. 2
@@ -706,7 +706,7 @@ Cu+2 + 4Cl- = CuCl4-2
 	-log_k	  -4.59
 	-delta_h 17.78 kcal
 	-gamma  5.0  0
-Cu+2 + F- = CuF+ 
+Cu+2 + F- = CuF+
 	-log_k	  1.26
 	-delta_h 1.62 kcal
 Cu+2 + H2O = CuOH+ + H+
@@ -718,7 +718,7 @@ Cu+2 + 3 H2O = Cu(OH)3- + 3 H+
 	-log_k	-26.9
 Cu+2 + 4 H2O = Cu(OH)4-2 + 4 H+
 	-log_k	-39.6
-2Cu+2 + 2H2O = Cu2(OH)2+2 + 2H+ 
+2Cu+2 + 2H2O = Cu2(OH)2+2 + 2H+
 	-log_k  -10.359
 	-delta_h 17.539 kcal
 	-analytical  2.497  0.0  -3833.0
@@ -750,18 +750,18 @@ Zn+2 + 3Cl- = ZnCl3-
 	-log_k	0.5
 	-delta_h 9.56 kcal
 	-gamma  4.0  0
-	-Vm   0.772  15.5  -0.349  -3.42  1.25  0  -7.77  0  0  1 # ref. 2 
+	-Vm   0.772  15.5  -0.349  -3.42  1.25  0  -7.77  0  0  1 # ref. 2
 Zn+2 + 4Cl- = ZnCl4-2
 	-log_k	0.2
 	-delta_h 10.96 kcal
 	-gamma  5.0  0
 	-Vm   28.42  28  -5.26  -3.94  2.67  0  0  0  4.62e-2 1 # ref. 2
-Zn+2 + H2O + Cl- = ZnOHCl + H+ 
-	-log_k  -7.48  
+Zn+2 + H2O + Cl- = ZnOHCl + H+
+	-log_k  -7.48
 Zn+2 + 2HS- = Zn(HS)2
 	-log_k  14.94
 Zn+2 + 3HS- = Zn(HS)3-
-	-log_k  16.1  
+	-log_k  16.1
 Zn+2 + CO3-2 = ZnCO3
 	-log_k	5.3
 Zn+2 + 2CO3-2 = Zn(CO3)2-2
@@ -775,11 +775,11 @@ Zn+2 + SO4-2 = ZnSO4
 Zn+2 + 2SO4-2 = Zn(SO4)2-2
 	-log_k	3.28
 	-Vm    10.9  0  -98.7  0  0  0  24  0 -0.236  1 # ref. 2
-Zn+2 + Br- = ZnBr+ 
+Zn+2 + Br- = ZnBr+
 	-log_k  -0.58
 Zn+2 + 2Br- = ZnBr2
-	-log_k  -0.98	
-Zn+2 + F- = ZnF+ 
+	-log_k  -0.98
+Zn+2 + F- = ZnF+
 	-log_k  1.15
 	-delta_h 2.22 kcal
 Cd+2 + H2O = CdOH+ + H+
@@ -791,10 +791,10 @@ Cd+2 + 3 H2O = Cd(OH)3- + 3 H+
 	-log_k	-33.3
 Cd+2 + 4 H2O = Cd(OH)4-2 + 4 H+
 	-log_k	-47.35
-2Cd+2 + H2O = Cd2OH+3 + H+ 
+2Cd+2 + H2O = Cd2OH+3 + H+
 	-log_k  -9.39
 	-delta_h 10.9 kcal
-Cd+2 + H2O + Cl- = CdOHCl + H+ 
+Cd+2 + H2O + Cl- = CdOHCl + H+
 	-log_k  -7.404
 	-delta_h 4.355 kcal
 Cd+2 + NO3- = CdNO3+
@@ -826,23 +826,23 @@ Cd+2 + SO4-2 = CdSO4
 Cd+2 + 2SO4-2 = Cd(SO4)2-2
 	-log_k	3.5
 	-Vm   -6.29  0  -93  0  9.5  7  0  0  0  1 # ref. 2
-Cd+2 + Br- = CdBr+ 
+Cd+2 + Br- = CdBr+
 	-log_k  2.17
 	-delta_h -0.81 kcal
 Cd+2 + 2Br- = CdBr2
 	-log_k  2.9
-Cd+2 + F- = CdF+ 
+Cd+2 + F- = CdF+
 	-log_k  1.1
 Cd+2 + 2F- = CdF2
-	-log_k  1.5  
-Cd+2 + HS- = CdHS+ 
+	-log_k  1.5
+Cd+2 + HS- = CdHS+
 	-log_k  10.17
-Cd+2 + 2HS- = Cd(HS)2 
+Cd+2 + 2HS- = Cd(HS)2
 	-log_k  16.53
 Cd+2 + 3HS- = Cd(HS)3-
 	-log_k  18.71
 Cd+2 + 4HS- = Cd(HS)4-2
-	-log_k  20.9  
+	-log_k  20.9
 Pb+2 + H2O = PbOH+ + H+
 	-log_k	-7.71
 Pb+2 + 2 H2O = Pb(OH)2 + 2 H+
@@ -879,28 +879,28 @@ Pb+2 + SO4-2 = PbSO4
 	-log_k	2.75
 Pb+2 + 2 SO4-2 = Pb(SO4)2-2
 	-log_k	3.47
-Pb+2 + 2HS- = Pb(HS)2 
+Pb+2 + 2HS- = Pb(HS)2
 	-log_k  15.27
 Pb+2 + 3HS- = Pb(HS)3-
 	-log_k  16.57
-3Pb+2 + 4H2O = Pb3(OH)4+2 + 4H+ 
+3Pb+2 + 4H2O = Pb3(OH)4+2 + 4H+
 	-log_k  -23.88
-	-delta_h 26.5 kcal  
+	-delta_h 26.5 kcal
 Pb+2 + NO3- = PbNO3+
 	-log_k	1.17
-Pb+2 + Br- = PbBr+ 
+Pb+2 + Br- = PbBr+
 	-log_k  1.77
 	-delta_h 2.88 kcal
-Pb+2 + 2Br- = PbBr2 
-	-log_k  1.44	
-Pb+2 + F- = PbF+ 
+Pb+2 + 2Br- = PbBr2
+	-log_k  1.44
+Pb+2 + F- = PbF+
 	-log_k  1.25
 Pb+2 + 2F- = PbF2
 	-log_k  2.56
 Pb+2 + 3F- = PbF3-
 	-log_k  3.42
 Pb+2 + 4F- = PbF4-2
-	-log_k  3.1  
+	-log_k  3.1
 
 PHASES
 Calcite
@@ -1166,7 +1166,7 @@ CH4(g)
 #Amm(g)
 #	Amm = Amm
 NH3(g)
-	NH3 = NH3	
+	NH3 = NH3
 	-log_k	   1.7966
 	-analytic -18.758 3.3670e-4 2.5113e3 4.8619 39.192
 
@@ -1811,7 +1811,7 @@ END
 #   Deer, Howie and Zussman, The rock-forming minerals, Longman.
 #                           --------------------
 # Temperature- and pressure-dependent volumina of aqueous species are calculated with a Redlich-
-#   type equation (cf. Redlich and Meyer, Chem. Rev. 64, 221), from parameters entered with 
+#   type equation (cf. Redlich and Meyer, Chem. Rev. 64, 221), from parameters entered with
 #                        -Vm a1 a2 a3 a4 W a0 i1 i2 i3 i4
 # The volume (cm3/mol) is
 #    Vm(T, pb, I) = 41.84 * (a1 * 0.1 + a2 * 100 / (2600 + pb)  + a3 / (T - 228) +
@@ -1821,7 +1821,7 @@ END
 #   Volumina at I = 0 are obtained using supcrt92 formulas (Johnson et al., 1992, CG 18, 899).
 #   41.84 transforms cal/bar/mol into cm3/mol.
 #   pb is pressure in bar.
-#   W * QBrn is the energy of solvation, calculated from W and the pressure dependence of the 
+#   W * QBrn is the energy of solvation, calculated from W and the pressure dependence of the
 
 #     Born equation.
 #   z is charge of the solute species.
@@ -1831,7 +1831,7 @@ END
 #     a0 = -gamma x for cations, = 0 for anions.
 # For details, consult ref. 1.
 #
-# ref. 1: Appelo, Parkhurst and Post, 2014. Geochim. Cosmochim. Acta 125, 49–67. 
+# ref. 1: Appelo, Parkhurst and Post, 2014. Geochim. Cosmochim. Acta 125, 49–67.
 # ref. 2: Procedures from ref. 1 using data compiled by Laliberté, 2009, J. Chem. Eng. Data 54, 1725.
 #
 #

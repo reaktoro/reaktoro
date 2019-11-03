@@ -96,7 +96,7 @@ static _EIGEN_DECLARE_CONST_FAST_Packet2d(ZERO, 0);
 static _EIGEN_DECLARE_CONST_FAST_Packet2l(ZERO, 0);
 static _EIGEN_DECLARE_CONST_FAST_Packet2l(ONE, 1);
 
-static Packet2d p2d_ONE = { 1.0, 1.0 }; 
+static Packet2d p2d_ONE = { 1.0, 1.0 };
 static Packet2d p2d_ZERO_ = { -0.0, -0.0 };
 
 #if !defined(__ARCH__) || (defined(__ARCH__) && __ARCH__ >= 12)
@@ -247,7 +247,7 @@ template<> struct unpacket_traits<Packet2d> { typedef double type; enum {size=2,
 
 /* Forward declaration */
 EIGEN_DEVICE_FUNC inline void ptranspose(PacketBlock<Packet4f,4>& kernel);
- 
+
 inline std::ostream & operator <<(std::ostream & s, const Packet4i & v)
 {
   Packet vt;
@@ -563,7 +563,7 @@ template<> EIGEN_STRONG_INLINE Packet2d preduxp<Packet2d>(const Packet2d* vecs)
   Packet2d v[2], sum;
   v[0] = padd<Packet2d>(vecs[0], reinterpret_cast<Packet2d>(vec_sld(reinterpret_cast<Packet4ui>(vecs[0]), reinterpret_cast<Packet4ui>(vecs[0]), 8)));
   v[1] = padd<Packet2d>(vecs[1], reinterpret_cast<Packet2d>(vec_sld(reinterpret_cast<Packet4ui>(vecs[1]), reinterpret_cast<Packet4ui>(vecs[1]), 8)));
- 
+
   sum = reinterpret_cast<Packet2d>(vec_sld(reinterpret_cast<Packet4ui>(v[0]), reinterpret_cast<Packet4ui>(v[1]), 8));
 
   return sum;

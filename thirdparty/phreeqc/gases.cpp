@@ -52,7 +52,7 @@ build_fixed_volume_gas(void)
 {
 /*
  *   Put coefficients into lists to sum iaps to test for equilibrium
- *   Put coefficients into lists to build jacobian for 
+ *   Put coefficients into lists to build jacobian for
  *      sum of partial pressures equation and
  *      mass balance equations for elements contained in gases
  */
@@ -365,7 +365,7 @@ calc_PR(void)
 		error_msg("No gas unknowns.", STOP);
 	}
 	cxxGasPhase * gas_phase_ptr = use.Get_gas_phase_ptr();
-	
+
 	for (i = 0; i < gas_unknowns.size(); i++)
 	{
 		m_sum += gas_unknowns[i]->moles;
@@ -473,9 +473,9 @@ calc_PR(void)
 			r3[3] = b2 * b_sum + (R_TK * b2 - b_sum * a_aa_sum) / P;
 			// the discriminant of the cubic eqn...
 			disct = 18. * r3[1] * r3[2] * r3[3] -
-				4. * pow(r3[1], 3) * r3[3] + 
+				4. * pow(r3[1], 3) * r3[3] +
 				r3[1] * r3[1] * r3[2] * r3[2] -
-				4. * pow(r3[2], 3) - 
+				4. * pow(r3[2], 3) -
 				27. * r3[3] * r3[3];
 			if (disct > 0)
 			{
@@ -538,7 +538,7 @@ calc_PR(void)
 		r3[2] = -3.0 * b2 + (a_aa_sum - R_TK * 2.0 * b_sum) / P;
 		r3[3] = b2 * b_sum + (R_TK * b2 - b_sum * a_aa_sum) / P;
 		// solve t^3 + rp*t + rq = 0.
-		// molar volume V_m = t - r3[1] / 3... 
+		// molar volume V_m = t - r3[1] / 3...
 		rp = r3[2] - r3_12 / 3;
 		rp3 = rp * rp * rp;
 		rq = (2.0 * r3_12 * r3[1] - 9.0 * r3[1] * r3[2]) / 27 + r3[3];
@@ -573,7 +573,7 @@ calc_PR(void)
 			phase_ptr->pr_si_f = 0.0;
 			//phase_ptr->logk[vm0] = 0.0; // ***
 			continue;
-		}	
+		}
 		phase_ptr->pr_p = phase_ptr->fraction_x * P;
 
 		//if (phase_ptr->t_c == 0.0 || phase_ptr->p_c == 0.0)

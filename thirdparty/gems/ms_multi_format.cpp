@@ -1264,4 +1264,3 @@ if( fabs(dCH->DCmm[0]) < 1e-32 )  // Restore DCmm if skipped from the DCH file
 
 //=============================================================================
 // ms_multi_format.cpp
-

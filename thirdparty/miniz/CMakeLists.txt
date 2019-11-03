@@ -23,5 +23,5 @@ add_library(miniz STATIC ${HEADER_FILES} ${SOURCE_FILES})
 install(TARGETS miniz DESTINATION lib)
 
 # Install the header files preserving the directory hierarchy
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION include 
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION include
     FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")

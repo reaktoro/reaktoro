@@ -15,9 +15,9 @@
 
 
 namespace Eigen {
-    
+
     namespace internal {
-        
+
         /** \internal Low-level MINRES algorithm
          * \param mat The matrix A
          * \param rhs The right hand side vector b
@@ -47,12 +47,12 @@ namespace Eigen {
                 tol_error = 0;
                 return;
             }
-            
+
             // initialize
             const Index maxIters(iters);  // initialize maxIters to iters
             const Index N(mat.cols());    // the size of the matrix
             const RealScalar threshold2(tol_error*tol_error*rhsNorm2); // convergence threshold (compared to residualNorm2)
-            
+
             // Initialize preconditioned Lanczos
             VectorType v_old(N); // will be initialized inside loop
             VectorType v( VectorType::Zero(N) ); //initialize v
@@ -74,7 +74,7 @@ namespace Eigen {
             VectorType p_old(VectorType::Zero(N)); // initialize p_old=0
             VectorType p(p_old); // initialize p=0
             RealScalar eta(1.0);
-                        
+
             iters = 0; // reset iters
             while ( iters < maxIters )
             {
@@ -82,10 +82,10 @@ namespace Eigen {
                 /* Note that there are 4 variants on the Lanczos algorithm. These are
                  * described in Paige, C. C. (1972). Computational variants of
                  * the Lanczos method for the eigenproblem. IMA Journal of Applied
-                 * Mathematics, 10(3), 373-381. The current implementation corresponds 
-                 * to the case A(2,7) in the paper. It also corresponds to 
+                 * Mathematics, 10(3), 373-381. The current implementation corresponds
+                 * to the case A(2,7) in the paper. It also corresponds to
                  * algorithm 6.14 in Y. Saad, Iterative Methods for Sparse Linear
-                 * Systems, 2003 p.173. For the preconditioned version see 
+                 * Systems, 2003 p.173. For the preconditioned version see
                  * A. Greenbaum, Iterative Methods for Solving Linear Systems, SIAM (1987).
                  */
                 const RealScalar beta(beta_new);
@@ -101,7 +101,7 @@ namespace Eigen {
                 beta_new2 = v_new.dot(w_new); // compute beta_new
                 eigen_assert(beta_new2 >= 0.0 && "PRECONDITIONER IS NOT POSITIVE DEFINITE");
                 beta_new = sqrt(beta_new2); // compute beta_new
-                
+
                 // Givens rotation
                 const RealScalar r2 =s*alpha+c*c_old*beta; // s, s_old, c and c_old are still from previous iteration
                 const RealScalar r3 =s_old*beta; // s, s_old, c and c_old are still from previous iteration
@@ -111,48 +111,48 @@ namespace Eigen {
                 s_old = s; // store for next iteration
                 c=r1_hat/r1; // new cosine
                 s=beta_new/r1; // new sine
-                
+
                 // Update solution
                 p_oold = p_old;
                 p_old = p;
                 p.noalias()=(w-r2*p_old-r3*p_oold) /r1; // IS NOALIAS REQUIRED?
                 x += beta_one*c*eta*p;
-                
+
                 /* Update the squared residual. Note that this is the estimated residual.
                 The real residual |Ax-b|^2 may be slightly larger */
                 residualNorm2 *= s*s;
-                
+
                 if ( residualNorm2 < threshold2)
                 {
                     break;
                 }
-                
+
                 eta=-s*eta; // update eta
                 iters++; // increment iteration number (for output purposes)
             }
-            
-            /* Compute error. Note that this is the estimated error. The real 
+
+            /* Compute error. Note that this is the estimated error. The real
              error |Ax-b|/|b| may be slightly larger */
             tol_error = std::sqrt(residualNorm2 / rhsNorm2);
         }
-        
+
     }
-    
+
     template< typename _MatrixType, int _UpLo=Lower,
     typename _Preconditioner = IdentityPreconditioner>
     class MINRES;
-    
+
     namespace internal {
-        
+
         template< typename _MatrixType, int _UpLo, typename _Preconditioner>
         struct traits<MINRES<_MatrixType,_UpLo,_Preconditioner> >
         {
             typedef _MatrixType MatrixType;
             typedef _Preconditioner Preconditioner;
         };
-        
+
     }
-    
+
     /** \ingroup IterativeLinearSolvers_Module
      * \brief A minimal residual solver for sparse symmetric problems
      *
@@ -194,7 +194,7 @@ namespace Eigen {
     template< typename _MatrixType, int _UpLo, typename _Preconditioner>
     class MINRES : public IterativeSolverBase<MINRES<_MatrixType,_UpLo,_Preconditioner> >
     {
-        
+
         typedef IterativeSolverBase<MINRES> Base;
         using Base::matrix;
         using Base::m_error;
@@ -207,14 +207,14 @@ namespace Eigen {
         typedef typename MatrixType::Scalar Scalar;
         typedef typename MatrixType::RealScalar RealScalar;
         typedef _Preconditioner Preconditioner;
-        
+
         enum {UpLo = _UpLo};
-        
+
     public:
-        
+
         /** Default constructor. */
         MINRES() : Base() {}
-        
+
         /** Initialize the solver with matrix \a A for further \c Ax=b solving.
          *
          * This constructor is a shortcut for the default constructor followed
@@ -227,7 +227,7 @@ namespace Eigen {
          */
         template<typename MatrixDerived>
         explicit MINRES(const EigenBase<MatrixDerived>& A) : Base(A.derived()) {}
-        
+
         /** Destructor. */
         ~MINRES(){}
 
@@ -257,9 +257,9 @@ namespace Eigen {
                              Base::m_preconditioner, m_iterations, m_error);
             m_info = m_error <= Base::m_tolerance ? Success : NoConvergence;
         }
-        
+
     protected:
-        
+
     };
 
 } // end namespace Eigen

@@ -16,11 +16,11 @@ Dictionary::~Dictionary(void)
 {
 }
 
-int 
+int
 Dictionary::Find(std::string str)
 {
 	std::map<std::string, int>::iterator it = this->dictionary_map.find(str);
-	if (it != this->dictionary_map.end()) 
+	if (it != this->dictionary_map.end())
 	{
 		return it->second;
 	}

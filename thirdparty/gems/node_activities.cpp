@@ -439,5 +439,3 @@ TNode::InitCopyActivities( DATACH* csd, MULTI* mp, DATABR* cnd )
 
 
 //--------------------- End of node_activities.cpp ---------------------------
-
-

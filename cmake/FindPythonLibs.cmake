@@ -135,7 +135,7 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
     # This is where the static library is usually located
     PATH_SUFFIXES python${_CURRENT_VERSION}/config
   )
-  
+
   # Look for the shared library in the PATH (if static found before, PYTHON_LIBRARY is not changed)
   find_library(PYTHON_LIBRARY
     NAMES python${_CURRENT_VERSION_NO_DOTS} python${_CURRENT_VERSION}

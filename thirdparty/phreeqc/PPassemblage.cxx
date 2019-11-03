@@ -20,7 +20,7 @@
 
 cxxPPassemblage::cxxPPassemblage(PHRQ_io * io)
 	//
-	// default constructor for cxxPPassemblage 
+	// default constructor for cxxPPassemblage
 	//
 :	cxxNumKeyword(io)
 {
@@ -342,7 +342,7 @@ cxxPPassemblage::Serialize(Dictionary & dictionary, std::vector < int >&ints, st
 
 /* ---------------------------------------------------------------------- */
 void
-cxxPPassemblage::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxPPassemblage::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 /* ---------------------------------------------------------------------- */
 {
@@ -369,5 +369,5 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("component"),	    // 1
 	std::vector< std::string >::value_type("new_def"),          // 2
 	std::vector< std::string >::value_type("assemblage_totals") // 3
-};									   
-const std::vector< std::string > cxxPPassemblage::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxPPassemblage::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

@@ -11,18 +11,18 @@
 #ifndef EIGEN_MATRIX_LOGARITHM
 #define EIGEN_MATRIX_LOGARITHM
 
-namespace Eigen { 
+namespace Eigen {
 
-namespace internal { 
+namespace internal {
 
 template <typename Scalar>
-struct matrix_log_min_pade_degree 
+struct matrix_log_min_pade_degree
 {
   static const int value = 3;
 };
 
 template <typename Scalar>
-struct matrix_log_max_pade_degree 
+struct matrix_log_max_pade_degree
 {
   typedef typename NumTraits<Scalar>::Real RealScalar;
   static const int value = std::numeric_limits<RealScalar>::digits<= 24?  5:  // single precision
@@ -75,7 +75,7 @@ inline int matrix_log_get_pade_degree(float normTminusI)
   const int minPadeDegree = matrix_log_min_pade_degree<float>::value;
   const int maxPadeDegree = matrix_log_max_pade_degree<float>::value;
   int degree = minPadeDegree;
-  for (; degree <= maxPadeDegree; ++degree) 
+  for (; degree <= maxPadeDegree; ++degree)
     if (normTminusI <= maxNormForPade[degree - minPadeDegree])
       break;
   return degree;
@@ -137,9 +137,9 @@ void matrix_log_compute_pade(MatrixType& result, const MatrixType& T, int degree
   assert(degree >= minPadeDegree && degree <= maxPadeDegree);
   // FIXME this creates float-conversion-warnings if these are enabled.
   // Either manually convert each value, or disable the warning locally
-  const RealScalar nodes[][maxPadeDegree] = { 
+  const RealScalar nodes[][maxPadeDegree] = {
     { 0.1127016653792583114820734600217600L, 0.5000000000000000000000000000000000L,  // degree 3
-      0.8872983346207416885179265399782400L }, 
+      0.8872983346207416885179265399782400L },
     { 0.0694318442029737123880267555535953L, 0.3300094782075718675986671204483777L,  // degree 4
       0.6699905217924281324013328795516223L, 0.9305681557970262876119732444464048L },
     { 0.0469100770306680036011865608503035L, 0.2307653449471584544818427896498956L,  // degree 5
@@ -173,7 +173,7 @@ void matrix_log_compute_pade(MatrixType& result, const MatrixType& T, int degree
       0.8650760027870246620467081260155767L, 0.9435312998840476495375788846519636L,
       0.9891143290730284964019690005614287L } };
 
-  const RealScalar weights[][maxPadeDegree] = { 
+  const RealScalar weights[][maxPadeDegree] = {
     { 0.2777777777777777777777777777777778L, 0.4444444444444444444444444444444444L,  // degree 3
       0.2777777777777777777777777777777778L },
     { 0.1739274225687269286865319746109997L, 0.3260725774312730713134680253890003L,  // degree 4
@@ -217,9 +217,9 @@ void matrix_log_compute_pade(MatrixType& result, const MatrixType& T, int degree
     result += weight * (MatrixType::Identity(T.rows(), T.rows()) + node * TminusI)
                        .template triangularView<Upper>().solve(TminusI);
   }
-} 
+}
 
-/** \brief Compute logarithm of triangular matrices with size > 2. 
+/** \brief Compute logarithm of triangular matrices with size > 2.
   * \details This uses a inverse scale-and-square algorithm. */
 template <typename MatrixType>
 void matrix_log_compute_big(const MatrixType& A, MatrixType& result)
@@ -246,7 +246,7 @@ void matrix_log_compute_big(const MatrixType& A, MatrixType& result)
     if (normTminusI < maxNormForPade) {
       degree = matrix_log_get_pade_degree(normTminusI);
       int degree2 = matrix_log_get_pade_degree(normTminusI / RealScalar(2));
-      if ((degree - degree2 <= 1) || (numberOfExtraSquareRoots == 1)) 
+      if ((degree - degree2 <= 1) || (numberOfExtraSquareRoots == 1))
         break;
       ++numberOfExtraSquareRoots;
     }
@@ -323,7 +323,7 @@ public:
     * \param[in]  A  %Matrix (expression) forming the argument of the matrix logarithm.
     */
   explicit MatrixLogarithmReturnValue(const Derived& A) : m_A(A) { }
-  
+
   /** \brief Compute the matrix logarithm.
     *
     * \param[out]  result  Logarithm of \c A, where \c A is as specified in the constructor.
@@ -338,13 +338,13 @@ public:
     typedef Matrix<ComplexScalar, Dynamic, Dynamic, 0, Traits::RowsAtCompileTime, Traits::ColsAtCompileTime> DynMatrixType;
     typedef internal::MatrixLogarithmAtomic<DynMatrixType> AtomicType;
     AtomicType atomic;
-    
+
     internal::matrix_function_compute<typename DerivedEvalTypeClean::PlainObject>::run(m_A, atomic, result);
   }
 
   Index rows() const { return m_A.rows(); }
   Index cols() const { return m_A.cols(); }
-  
+
 private:
   const DerivedNested m_A;
 };

@@ -108,9 +108,9 @@ Br- = Br-
      delta_h         -1.759 kcal
 
 CO2 + 2H2O = HCO3- + H3O+
-     log_k           -6.352  
+     log_k           -6.352
      delta_h         2.177 kcal
-     -analytic       -356.3094       -0.06092        21834.37        126.8339        -1684915 
+     -analytic       -356.3094       -0.06092        21834.37        126.8339        -1684915
 
 CO2 + 3H2O = CO3-2 + 2H3O+
      log_k           -16.681
@@ -622,7 +622,7 @@ Vivianite
         log_k           -36.000
 
 Halite
-        NaCl = Na+ + Cl- 
+        NaCl = Na+ + Cl-
         log_k           1.582
         delta_h 0.918 kcal
 
@@ -638,7 +638,7 @@ O2(g)
 #	delta_h -1.844  kcal
 	 # log K from llnl.dat  Dec 8, 2010
 	log_k	   -2.8983
-	-analytic -7.5001e+000 7.8981e-003 0.0000e+000 0.0000e+000 2.0027e+005     
+	-analytic -7.5001e+000 7.8981e-003 0.0000e+000 0.0000e+000 2.0027e+005
 
 H2(g)
      H2 = H2
@@ -834,7 +834,7 @@ SURFACE_SPECIES
 #
 #        Hfo_wOH + CO3-2 + H3O+ = Hfo_wCO3- + 2H2O
 #        log_k   12.56
-# 
+#
 #        Hfo_wOH + CO3-2 + 2 H3O+= Hfo_wHCO3 + 3 H2O
 #        log_k   20.62
 
@@ -850,8 +850,8 @@ SURFACE_SPECIES
 SOLUTION_MASTER_SPECIES
 ###############################################################################################
 D            D2O            0       D               2
-D(1)         D2O            0       D  
-D(0)         HD             0       D  
+D(1)         D2O            0       D
+D(0)         HD             0       D
 T            HTO            0       T               3
 T(1)         HTO            0       T
 T(0)         HT             0       T
@@ -859,11 +859,11 @@ T(0)         HT             0       T
 [18O](-2)    H2[18O]        0       [18O]           18
 [18O](0)     O[18O]         0       [18O]           18
 [13C]        [13C]O2        0       [13C]           13
-[13C](4)     [13C]O2        0       [13C]      
+[13C](4)     [13C]O2        0       [13C]
 [13C](-4)    [13C]H4        0       [13C]
 [14C]        [14C]O2        0       [14C]           14
-[14C](4)     [14C]O2        0       [14C]     
-[14C](-4)    [14C]H4        0       [14C]     
+[14C](4)     [14C]O2        0       [14C]
+[14C](-4)    [14C]H4        0       [14C]
 [34S]        [34S]O4-2      0       [34S]           33.967
 [34S](6)     [34S]O4-2      0       [34S]
 [34S](-2)    H[34S]-        0       [34S]
@@ -884,7 +884,7 @@ H(0)
                                                              # 1 THO in 10^18 H2O
 #     -isotope        T       pCi/L   3.125e-18               #
 #1e-18/3.2 = T/mol H2O
-C       
+C
      -isotope        [13C]   permil  0.0111802               # VPDB, Vienna Pee Dee Belemnite
                                                              # Chang and Li, 1990, Chinese Science Bulletin
      -isotope        [13C](4)        permil  0.0111802       # VPDB, Vienna Pee Dee Belemnite
@@ -894,19 +894,19 @@ C
      -isotope        [14C](4)        pmc     1.175887709e-12 # Mole fraction of 14C in Modern Carbon
                                                              # 13.56 Modern Carbon dpm (Kalin, in eds, Cook and Herczeg, 2000)
      -isotope        [14C](-4)       pmc     1.175887709e-12 # Mole fraction of 14C in Modern Carbon
-C(4)    
+C(4)
      -isotope        [13C](4)        permil  0.0111802       # VPDB, Vienna Pee Dee Belemnite
                                                              # Chang and Li, 1990, Chinese Science Bulletin
      -isotope        [14C](4)        pmc     1.175887709e-12 # Mole fraction of 14C in Modern Carbon
                                                              # 13.56 Modern Carbon dpm (Kalin, in eds, Cook and Herczeg, 2000)
                                                              # 13.56 Modern Carbon dpm (Kalin, in eds, Cook and Herczeg, 2000)
-C(-4)    
+C(-4)
      -isotope        [13C](-4)       permil  0.0111802       # VPDB, Vienna Pee Dee Belemnite
      -isotope        [14C](-4)       pmc     1.175887709e-12 # Mole fraction of 14C in Modern Carbon
      # 14C calculation
      #
      # lambda = ln(2)/(5730 yrs * 3.15576e7 sec/yr)
-     # mole/g carbon = -(dn/dt)/lambda = 0.226 dps / 3.8332476e-12 / 6.022136736e23 
+     # mole/g carbon = -(dn/dt)/lambda = 0.226 dps / 3.8332476e-12 / 6.022136736e23
      # mole C/g C NBS Oxalic Acid with 13C = -19.3:  0.08325783313
      # mole 14C/mol Modern Carbon mol/g carbon/ (mole C/g C) = 1.175887709e-12
      #
@@ -1113,7 +1113,7 @@ ISOTOPE_ALPHAS
         Alpha_T_H2S(aq)/H2O(l)                  Log_alpha_T_H2S(aq)/H2O(l)
         Alpha_34S_H2S(aq)/HS-                   Log_alpha_34S_H2S(aq)/HS-
 # NO2-
-        Alpha_15N_NO2-/NO3-                     Log_alpha_15N_NO2-/NO3- 
+        Alpha_15N_NO2-/NO3-                     Log_alpha_15N_NO2-/NO3-
 # N2(aq)
         Alpha_15N_N2(aq)/NO3-                   Log_alpha_15N_N2(aq)/NO3-
 # NH3(aq)
@@ -1171,7 +1171,7 @@ NAMED_EXPRESSIONS
 #
 Log_alpha_D_OH-/H2O(l)                  # 1000ln(alpha(25C)) = -1435
      # 13.5 C
-     -ln_alpha1000   -1435.0     
+     -ln_alpha1000   -1435.0
 
 Log_alpha_T_OH-/H2O(l)                  # 1000ln(alpha(25C)) = -2870
      # 13.5 C
@@ -1186,14 +1186,14 @@ Log_alpha_18O_OH-/H2O(l)                # 1000ln(alpha(25C)) = -37.8
 Log_alpha_D_H3O+/H2O(l)                 # 1000ln(alpha(25C)) = 40.8
      # 13.5 C
      -ln_alpha1000   40.82
-     
+
 Log_alpha_T_H3O+/H2O(l)                 # 1000ln(alpha(25C)) = 81.6
      # 13.5 C
      -ln_alpha1000   81.64
-     
+
 Log_alpha_18O_H3O+/H2O(l)               # 1000ln(alpha(25C)) = 22.9
      # 25 C
-     -ln_alpha1000   22.86   
+     -ln_alpha1000   22.86
 #
 # O2(aq) fractionation factors
 #
@@ -1223,13 +1223,13 @@ Log_alpha_14C_CO2(aq)/CO2(g)             # 1000ln(alpha(25C))  -0.84
 #
 # HCO3- fractionation factors
 #
-Log_alpha_18O_HCO3-/H2O(l) 
+Log_alpha_18O_HCO3-/H2O(l)
      -ln_alpha1000   0.0 #?
 
 Log_alpha_D_HCO3-/H2O(l)
      -ln_alpha1000   0.0
 
-Log_alpha_T_HCO3-/H2O(l)                    
+Log_alpha_T_HCO3-/H2O(l)
      -ln_alpha1000   0.0
 
 Log_alpha_13C_HCO3-/CO2(g)              # 1000ln(alpha(25C)) = 7.82
@@ -1256,23 +1256,23 @@ Log_alpha_14C_HCO3-/CO2(aq)             # 1000ln(alpha(25C)) = 17.3
 #
 Log_alpha_18O_CO3-2/H2O(l)
      -ln_alpha1000   0.0
-     
-Log_alpha_13C_CO3-2/CO2(g)             # 1000ln(alpha(25C)) 
+
+Log_alpha_13C_CO3-2/CO2(g)             # 1000ln(alpha(25C))
      # Deines and others (1974)
      -ln_alpha1000   -3.4    0.0     0.0     0.0     0.870e6
 
-Log_alpha_13C_CO3-2/CO2(aq)             # 1000ln(alpha(25C)) 
+Log_alpha_13C_CO3-2/CO2(aq)             # 1000ln(alpha(25C))
      # 0-100 C
 #     -ln_alpha1000   -2.49   0.0     0.0     0.0     0.8637e6
       -add_logk       Log_alpha_13C_CO3-2/CO2(g)      1
       -add_logk       Log_alpha_13C_CO2(aq)/CO2(g)   -1
 
-Log_alpha_14C_CO3-2/CO2(g)             # 1000ln(alpha(25C)) 
+Log_alpha_14C_CO3-2/CO2(g)             # 1000ln(alpha(25C))
      # Deines and others (1974)
      -add_logk        Log_alpha_13C_CO3-2/CO2(g)      2
 
 Log_alpha_14C_CO3-2/CO2(aq)             # 1000ln(alpha(25C))
-     # 
+     #
 #     -ln_alpha1000   -2.49   0.0     0.0     0.0     0.8637e6
       -add_logk       Log_alpha_14C_CO3-2/CO2(g)      1
       -add_logk       Log_alpha_14C_CO2(aq)/CO2(g)   -1
@@ -1291,14 +1291,14 @@ Log_alpha_13C_CH4(aq)/CO2(aq)
 Log_alpha_14C_CH4(aq)/CO2(aq)
      -ln_alpha1000   0
 #
-# HSO4- fractionation factors     
+# HSO4- fractionation factors
 #
 Log_alpha_D_HSO4-/H2O(l)
      -ln_alpha1000   0
 
 Log_alpha_T_HSO4-/H2O(l)
      -ln_alpha1000   0
-     
+
 Log_alpha_34S_HSO4-/SO4-2
      -ln_alpha1000   0.0
 #
@@ -1314,7 +1314,7 @@ Log_alpha_D_HS-/H2O(l)
 
 Log_alpha_T_HS-/H2O(l)
      -ln_alpha1000   0
-     
+
 Log_alpha_34S_HS-/SO4-2
      -ln_alpha1000   0.0
 #
@@ -1325,22 +1325,22 @@ Log_alpha_D_H2S(aq)/H2O(l)
 
 Log_alpha_T_H2S(aq)/H2O(l)
      -ln_alpha1000   0
-     
+
 Log_alpha_34S_H2S(aq)/HS-
      -ln_alpha1000   0.0
 #
 # NO2- fractionation factors
 #
-Log_alpha_15N_NO2-/NO3- 
+Log_alpha_15N_NO2-/NO3-
      -ln_alpha1000   0.0
 #
 # N2(aq) fractionation factors
-#     
+#
 Log_alpha_15N_N2(aq)/NO3-
      -ln_alpha1000   0.0
 #
 # NH3(aq) fractionation factors
-#     
+#
 Log_alpha_D_NH3(aq)/H2O(l)
      -ln_alpha1000   0
 
@@ -1351,13 +1351,13 @@ Log_alpha_15N_NH3(aq)/NO3-
      -ln_alpha1000   0
 #
 # NH4+ fractionation factors
-#     
+#
 Log_alpha_D_NH4+/H2O(l)
      -ln_alpha1000   0
 
 Log_alpha_T_NH4+/H2O(l)
      -ln_alpha1000   0
-     
+
 Log_alpha_15N_NH4+/NH3(aq)
      -ln_alpha1000   0
 #
@@ -1377,7 +1377,7 @@ Log_alpha_18O_H2O(g)/H2O(l)             # 1000ln(alpha(25C)) = -9.3
 #
 # O2(g) fractionaton factors
 #
-Log_alpha_18O_O2(g)/H2O(l)      
+Log_alpha_18O_O2(g)/H2O(l)
      -ln_alpha1000   0.0
 #
 # H2(g) fractionaton factors
@@ -1389,7 +1389,7 @@ Log_alpha_T_H2(g)/H2O(l)
      -ln_alpha1000   0
 #
 # CO2(g) fractionaton factors
-#     
+#
 Log_alpha_18O_CO2(g)/H2O(l)             # 1000ln(alpha(25C)) = 40.151
      # 0-100 C
      -ln_alpha1000   -19.97  0.0     17.9942e3        0.0     -0.0206e6
@@ -1411,40 +1411,40 @@ Log_alpha_14C_CO2(g)/CO2(aq)            # 1000ln(alpha(25C)) = 1.7
 Log_alpha_18O_Calcite/H2O(l)           # 1000ln(alpha(25C)) = 28.38
      # O'Neil, Clayton and Mayeda (1969)
      -ln_alpha1000    -2.89   0       0               0       2.78e6
-     
-Log_alpha_13C_Calcite/CO2(g)           # 1000ln(alpha(25C)) 
+
+Log_alpha_13C_Calcite/CO2(g)           # 1000ln(alpha(25C))
      # Deines and others (1974)
      -ln_alpha1000   -3.63    0.0     0.0     0.0     1.194e6
 
-Log_alpha_13C_Calcite/CO2(aq)          # 1000ln(alpha(25C)) 
+Log_alpha_13C_Calcite/CO2(aq)          # 1000ln(alpha(25C))
      # Deines and others (1974)
      -add_logk       Log_alpha_13C_Calcite/CO2(g)     1
-     -add_logk       Log_alpha_13C_CO2(aq)/CO2(g)    -1     
+     -add_logk       Log_alpha_13C_CO2(aq)/CO2(g)    -1
 
-Log_alpha_14C_Calcite/CO2(g)           # 1000ln(alpha(25C)) 
+Log_alpha_14C_Calcite/CO2(g)           # 1000ln(alpha(25C))
      -add_logk       Log_alpha_13C_Calcite/CO2(g)     2
 
-Log_alpha_14C_Calcite/CO2(aq)          # 1000ln(alpha(25C)) 
+Log_alpha_14C_Calcite/CO2(aq)          # 1000ln(alpha(25C))
      # Deines and others (1974)
      -add_logk       Log_alpha_14C_Calcite/CO2(g)     1
-     -add_logk       Log_alpha_14C_CO2(aq)/CO2(g)    -1     
+     -add_logk       Log_alpha_14C_CO2(aq)/CO2(g)    -1
 #
 # Pyrite fractionation factors
-#     
+#
 Log_alpha_34S_Pyrite/HS-
-     -ln_alpha1000   0 
+     -ln_alpha1000   0
 #
 # CH4(g) fractionation factors
-#     
+#
 Log_alpha_D_CH4(g)/H2O(l) #?
      -ln_alpha1000   0.0
 
 Log_alpha_T_CH4(g)/H2O(l) #?
      -ln_alpha1000   0.0
-     
+
 Log_alpha_13C_CH4(g)/CO2(aq) #?
      -ln_alpha1000   0.0
-     
+
 Log_alpha_14C_CH4(g)/CO2(aq) #?
      -ln_alpha1000   0.0
 #
@@ -2055,7 +2055,7 @@ R(D)_NH3(aq)
      -start
 10 ratio = -9999.999
 20 if (TOT("D") <= 0) THEN GOTO 100
-30 total_D = sum_species("{[15N],N}{H,D,T}3","D") 
+30 total_D = sum_species("{[15N],N}{H,D,T}3","D")
 40 total_H = sum_species("{[15N],N}{H,D,T}3","H")
 50 if (total_H <= 0) THEN GOTO 100
 60 ratio = total_D/total_H
@@ -2066,7 +2066,7 @@ R(T)_NH3(aq)
      -start
 10 ratio = -9999.999
 20 if (TOT("T") <= 0) THEN GOTO 100
-30 total_T = sum_species("{[15N],N}{H,D,T}3","T") 
+30 total_T = sum_species("{[15N],N}{H,D,T}3","T")
 40 total_H = sum_species("{[15N],N}{H,D,T}3","H")
 50 if (total_H <= 0) THEN GOTO 100
 60 ratio = total_T/total_H
@@ -2077,7 +2077,7 @@ R(15N)_NH3(aq)
      -start
 10 ratio = -9999.999
 20 if (TOT("[15N]") <= 0) THEN GOTO 100
-30 total_15N = sum_species("[15N]{H,D,T}3","[15N]") 
+30 total_15N = sum_species("[15N]{H,D,T}3","[15N]")
 40 total_N = sum_species("N{H,D,T}3","N")
 50 if (total_N <= 0) THEN GOTO 100
 60 ratio = total_15N/total_N
@@ -2090,7 +2090,7 @@ R(D)_NH4+
      -start
 10 ratio = -9999.999
 20 if (TOT("D") <= 0) THEN GOTO 100
-30 total_D = sum_species("*{[15N],N}{H,D,T}4*","D") 
+30 total_D = sum_species("*{[15N],N}{H,D,T}4*","D")
 40 total_H = sum_species("*{[15N],N}{H,D,T}4*","H")
 50 if (total_H <= 0) THEN GOTO 100
 60 ratio = total_D/total_H
@@ -2101,7 +2101,7 @@ R(T)_NH4+
      -start
 10 ratio = -9999.999
 20 if (TOT("T") <= 0) THEN GOTO 100
-30 total_T = sum_species("*{[15N],N}{H,D,T}4*","T") 
+30 total_T = sum_species("*{[15N],N}{H,D,T}4*","T")
 40 total_H = sum_species("*{[15N],N}{H,D,T}4*","H")
 50 if (total_H <= 0) THEN GOTO 100
 60 ratio = total_T/total_H
@@ -2112,7 +2112,7 @@ R(15N)_NH4+
      -start
 10 ratio = -9999.999
 20 if (TOT("[15N]") <= 0) THEN GOTO 100
-30 total_15N = sum_species("*[15N]{H,D,T}4*","[15N]") 
+30 total_15N = sum_species("*[15N]{H,D,T}4*","[15N]")
 40 total_N = sum_species("*N{H,D,T}4*","N")
 50 if (total_N <= 0) THEN GOTO 100
 60 ratio = total_15N/total_N
@@ -3747,12 +3747,12 @@ CO2 = CO2
      log_k           0.0
      -gamma          5.0000   -0.0400
 
-[15N]O3- = [15N]O3- 
+[15N]O3- = [15N]O3-
      log_k           0.0
      -gamma          3.0000    0.0000
 
 #
-# H2O reactions 
+# H2O reactions
 # last update July 31, 2006
 # checked September 19, 2006
 #
@@ -3779,23 +3779,23 @@ H2[18O] + HTO = HT[18O] + H2O
      -mole_balance   HT[18O]
      log_k           0.0
      -activity_water
-     
+
 DTO  + H2[18O] = DT[18O] + H2O
      -mole_balance   DT[18O]
      log_k           0.0
      -activity_water
-     
+
 D2O + H2[18O] = D2[18O] + H2O
-     -mole_balance   D2[18O] 
+     -mole_balance   D2[18O]
      log_k           0.0
      -activity_water
-     
+
 H2[18O] + T2O = T2[18O] + H2O
      -mole_balance   T2[18O]
      log_k           0.0
      -activity_water
 #
-# OH- reactions 
+# OH- reactions
 # last update July 31, 2006
 # checked September 19, 2006
 #
@@ -3804,23 +3804,23 @@ OH- + HDO = OD- + H2O
      log_k           -0.301029995663                         # -log10(2)
      -add_logk       Log_alpha_D_OH-/H2O(l)                  1.0
      -gamma          3.5000    0.0000
-     
+
 OH- + HTO = OT- + H2O
      -mole_balance   OT
      log_k           -0.301029995663                         # -log10(2)
      -add_logk       Log_alpha_T_OH-/H2O(l)                  1.0
      -gamma          3.5000    0.0000
-     
+
 OH- + H2[18O] = [18O]H- + H2O
      -mole_balance   [18O]H
      -add_logk       Log_alpha_18O_OH-/H2O(l)                1.0
      -gamma          3.5000    0.0000
-     
+
 [18O]H- + OD- = [18O]D- + OH-
      -mole_balance   [18O]D
      log_k           0.0
      -gamma          3.5000    0.0000
-     
+
 [18O]H- + OT- = [18O]T- + OH-
      -mole_balance   [18O]T
      log_k           0.0
@@ -3835,48 +3835,48 @@ H3O+ + HDO = H2DO+ + H2O
      log_k           0.176091259055                          # log10(1.5)
      -add_logk       Log_alpha_D_H3O+/H2O(l)                 1.0
      -gamma          9.0000    0.0000
-     
+
 2H2DO+ = HD2O+ + H3O+
      -mole_balance   HD2O
      log_k           -0.477121254719662                      # log10(1/3)
      -gamma          9.0000    0.0000
-     
+
 H2DO+ + HD2O+ = D3O+ + H3O+
      -mole_balance   D3O
      log_k           -0.954242509439324                     # log10(1/9)
      -gamma          9.0000    0.0000
-     
+
 H3O+ + HTO = H2TO+ + H2O
      -mole_balance   H2TO
      log_k           0.176091259055                          # log10(1.5)
      -add_logk       Log_alpha_T_H3O+/H2O(l)                 1.0
      -gamma          9.0000    0.0000
-     
+
 2H2TO+ = HT2O+ + H3O+
      -mole_balance   HT2O
      log_k           -0.477121254719662                      # log10(1/3)
      -gamma          9.0000    0.0000
-     
+
 H2TO+ + HT2O+ = T3O+ + H3O+
      -mole_balance   T3O
      log_k           -0.954242509439324                     # log10(1/9)
      -gamma          9.0000    0.0000
-     
+
 H2TO+ + H2DO+ = HDTO+ + H3O+
      -mole_balance   HDTO
      log_k           -0.477121254719662                      # log10(1/3)
      -gamma          9.0000    0.0000
-     
+
 H2TO+ + HD2O+ = D2TO+ + H3O+
      -mole_balance   D2TO
      log_k           -0.477121254719662                      # log10(1/3)
      -gamma          9.0000    0.0000
-     
+
 H2DO+ + HT2O+ = DT2O+ + H3O+
      -mole_balance   DT2O
      log_k           -0.477121254719662                      # log10(1/3)
      -gamma          9.0000    0.0000
-     
+
 H3O+ + H2[18O] = H3[18O]+ + H2O
      -mole_balance   H3[18O]
      -add_logk       Log_alpha_18O_H3O+/H2O(l)               1.0
@@ -3886,47 +3886,47 @@ H3[18O]+ + H2DO+ = H2D[18O]+ + H3O+
      -mole_balance   H2D[18O]
      log_k           0.0
      -gamma          9.0000    0.0000
-     
+
 H3[18O]+ + HD2O+ = HD2[18O]+ + H3O+
      -mole_balance   HD2[18O]
      log_k           0.0
      -gamma          9.0000    0.0000
-     
+
 H3[18O]+ + D3O+ = D3[18O]+ + H3O+
      -mole_balance   D3[18O]
      log_k           0.0
      -gamma          9.0000    0.0000
-     
+
 H3[18O]+ + H2TO+ = H2T[18O]+ + H3O+
      -mole_balance   H2T[18O]
      log_k           0.0
      -gamma          9.0000    0.0000
-     
+
 H3[18O]+ + HT2O+ = HT2[18O]+ + H3O+
      -mole_balance   HT2[18O]
      log_k           0.0
      -gamma          9.0000    0.0000
-     
+
 H3[18O]+ + T3O+ = T3[18O]+ + H3O+
      -mole_balance   T3[18O]
      log_k           0.0
      -gamma          9.0000    0.0000
-     
+
 H3[18O]+ + HDTO+ = HDT[18O]+ + H3O+
      -mole_balance   HDT[18O]
      log_k           0.0
      -gamma          9.0000    0.0000
-     
+
 H3[18O]+ + D2TO+ = D2T[18O]+ + H3O+
      -mole_balance   D2T[18O]
      log_k           0.0
      -gamma          9.0000    0.0000
-     
+
 H3[18O]+ + DT2O+ = DT2[18O]+ + H3O+
      -mole_balance   DT2[18O]
      log_k           0.0
      -gamma          9.0000    0.0000
-     
+
 #
 # O2 reactions
 # last update July 31, 2006
@@ -3937,7 +3937,7 @@ O2 + H2[18O] = O[18O] + H2O
      log_k           0.301029995663                          # log10(2)
      -add_logk       Log_alpha_18O_O2(aq)/H2O(l)              1.0
      -mole_balance   O(0)[18O](0)
-     
+
 2O[18O] = [18O]2 + O2
      log_k           -0.602059991327962396                   # -log10(4)
      -mole_balance   [18O](0)2
@@ -3949,19 +3949,19 @@ O2 + H2[18O] = O[18O] + H2O
 H2 + HDO = HD + H2O
      -mole_balance   H(0)D(0)
      -add_logk       Log_alpha_D_H2(aq)/H2O(l)                 1.0
-     
+
 2HD = D2 + H2
      -mole_balance   D(0)2
      log_k           -0.602059991327962396                   # -log10(4)
-     
+
 H2 + HTO = HT + H2O
      -mole_balance   H(0)T(0)
      -add_logk       Log_alpha_T_H2(aq)/H2O(l)                 1.0
-     
+
 2HT = T2 + H2
      -mole_balance   T(0)2
      log_k           -0.602059991327962396                   # -log10(4)
-     
+
 HT + HD = DT + H2
      -mole_balance   D(0)T(0)
      log_k           -0.301029995663                         # -log10(2)
@@ -3973,13 +3973,13 @@ HT + HD = DT + H2
 CO2 + H2[18O] = CO[18O] + H2O
      log_k           0.301029995663                          # log10(2)
      -add_logk       Log_alpha_18O_CO2(aq)/H2O(l)            1.0
-     
+
 2CO[18O] = C[18O]2 + CO2
      log_k           -0.6020599913279623960                  # log10(1/4)
-     
+
 [13C]O2 + CO[18O] = [13C]O[18O] + CO2
      log_k           0
-     
+
 [13C]O2 + C[18O]2 = [13C][18O]2 + CO2
      log_k           0
 
@@ -3995,18 +3995,18 @@ CO2 + H2[18O] = CO[18O] + H2O
 #
 HCO3- + H2[18O] = HCO2[18O]- + H2O
      -add_logk       Log_alpha_18O_HCO3-/H2O(l)                   1.0
-     
+
 HCO2[18O]- = HCO[18O]O-
-HCO2[18O]- = HC[18O]O2- 
+HCO2[18O]- = HC[18O]O2-
 2HCO2[18O]- = HCO[18O]2- + HCO3-
-HCO[18O]2- = HC[18O]O[18O]- 
-HCO[18O]2- = HC[18O]2O- 
+HCO[18O]2- = HC[18O]O[18O]-
+HCO[18O]2- = HC[18O]2O-
 3HCO2[18O]- = HC[18O]3- + 2HCO3-
 
 HDO + HCO3- = DCO3- + H2O
      log_k           -0.301029995663                         # -log10(2)
      -add_logk       Log_alpha_D_HCO3-/H2O(l)                   1.0
-     
+
 DCO3- + HCO2[18O]- = DCO2[18O]- + HCO3-
 DCO3- + HCO[18O]O- = DCO[18O]O- + HCO3-
 DCO3- + HC[18O]O2- = DC[18O]O2- + HCO3-
@@ -4018,7 +4018,7 @@ DCO3- + HC[18O]3- = DC[18O]3- + HCO3-
 HTO + HCO3- = TCO3- + H2O
      log_k           -0.301029995663                         # -log10(2)
      -add_logk       Log_alpha_T_HCO3-/H2O(l)                1.0
-     
+
 TCO3- + HCO2[18O]- = TCO2[18O]- + HCO3-
 TCO3- + HCO[18O]O- = TCO[18O]O- + HCO3-
 TCO3- + HC[18O]O2- = TC[18O]O2- + HCO3-
@@ -4029,7 +4029,7 @@ TCO3- + HC[18O]3- = TC[18O]3- + HCO3-
 
 HCO3- + [13C]O2 = H[13C]O3- + CO2
      -add_logk       Log_alpha_13C_HCO3-/CO2(aq)             1.0
-     
+
 H[13C]O3- + HCO2[18O]- = H[13C]O2[18O]- + HCO3-
 H[13C]O3- + HCO[18O]O- = H[13C]O[18O]O- + HCO3-
 H[13C]O3- + HC[18O]O2- = H[13C][18O]O2- + HCO3-
@@ -4056,7 +4056,7 @@ H[13C]O3- + TC[18O]3- = T[13C][18O]3- + HCO3-
 
 HCO3- + [14C]O2 = H[14C]O3- + CO2
      -add_logk       Log_alpha_14C_HCO3-/CO2(aq)             1.0
-     
+
 H[14C]O3- + HCO2[18O]- = H[14C]O2[18O]- + HCO3-
 H[14C]O3- + HCO[18O]O- = H[14C]O[18O]O- + HCO3-
 H[14C]O3- + HC[18O]O2- = H[14C][18O]O2- + HCO3-
@@ -4088,34 +4088,34 @@ H[14C]O3- + TC[18O]3- = T[14C][18O]3- + HCO3-
 CO3-2 + H2[18O] = CO2[18O]-2 + H2O
      log_k           0.477121254719                          # log10(3)
      -add_logk       Log_alpha_18O_CO3-2/H2O(l)              1.0
-     
+
 2CO2[18O]-2 = CO[18O]2-2 + CO3-2
      log_k           -0.477121254719                         # -log10(3)
-     
+
 CO2[18O]-2 + CO[18O]2-2 = C[18O]3-2 + CO3-2
      log_k           -0.954242509439324                     # log10(1/9)
-     
+
 CO3-2 + [13C]O2 = [13C]O3-2 + CO2
      -add_logk       Log_alpha_13C_CO3-2/CO2(aq)             1.0
-     
+
 [13C]O3-2 + CO2[18O]-2 = [13C]O2[18O]-2 + CO3-2
      log_k           0.0
-     
+
 [13C]O3-2 + CO[18O]2-2 = [13C]O[18O]2-2 + CO3-2
      log_k           0.0
-     
+
 [13C]O3-2 + C[18O]3-2 = [13C][18O]3-2 + CO3-2
      log_k           0.0
-     
+
 CO3-2 + [14C]O2 = [14C]O3-2 + CO2
      -add_logk       Log_alpha_14C_CO3-2/CO2(aq)             1.0
-     
+
 [14C]O3-2 + CO2[18O]-2 = [14C]O2[18O]-2 + CO3-2
      log_k           0.0
-     
+
 [14C]O3-2 + CO[18O]2-2 = [14C]O[18O]2-2 + CO3-2
      log_k           0.0
-     
+
 [14C]O3-2 + C[18O]3-2 = [14C][18O]3-2 + CO3-2
      log_k           0.0
 #
@@ -4126,13 +4126,13 @@ CO3-2 + [14C]O2 = [14C]O3-2 + CO2
 CH4 + HDO = CH3D + H2O
      log_k           0.301029995663981198                    # log10(2)
      -add_logk       Log_alpha_D_CH4(aq)/H2O(l)                 1.0
-     
+
 2CH3D = CH2D2 + CH4
      log_k           -0.42596873227228                    # log10(3/8)
-     
+
 3CH3D = CHD3 + 2CH4
      log_k           -1.20411998265                          # log10(1/16)
-     
+
 4CH3D = CD4 + 3CH4
      log_k           -2.408239965311                        # log10(1/256)
 
@@ -4311,14 +4311,14 @@ N2 + [15N]O3- = N[15N] + NO3-
      -mole_balance   [15N](0)2
 #
 # NH3 reactions
-#     
+#
 HDO + NH3 = NH2D + H2O
      log_k           0.176091259055                        # log10(1.5)
      -add_logk       Log_alpha_D_NH3(aq)/H2O(l)                1.0
-     
+
 2NH2D = NHD2 + NH3
      log_k           -0.477121254719                         # -log10(3)
-     
+
 3NH2D = ND3 + 2NH3
      -logk           -1.431363764158                         # log10(1/27)
 
@@ -4331,19 +4331,19 @@ HTO + NH3 = NH2T + H2O
 
 3NH2T = NT3 + 2NH3
      -logk           -1.431363764158                         # log10(1/27)
-     
+
 NHD2 + NH2T = ND2T + NH3
      log_k           -0.477121254719                       # -log10(3)
-     
+
 NH2D + NHT2 = NDT2 + NH3
      log_k           -0.477121254719                       # -log10(3)
-     
+
 # Checked September 19, 2006
-     
+
 NH3 + [15N]O3- = [15N]H3 + NO3-
      -add_logk       Log_alpha_15N_NH3(aq)/NO3-                 1.0
      -mole_balance   [15N](-3)H3
-     
+
 [15N]H3 + NH2D = [15N]H2D + NH3
 [15N]H3 + NHD2 = [15N]HD2 + NH3
 [15N]H3 + ND3 = [15N]D3  + NH3
@@ -4352,122 +4352,122 @@ NH3 + [15N]O3- = [15N]H3 + NO3-
 [15N]H3 + NT3 = [15N]T3  + NH3
 [15N]H3 + ND2T = [15N]D2T + NH3
 [15N]H3 + NDT2 = [15N]DT2 + NH3
-#     
+#
 # NH4+ reactions
 # Updated September 19, 2006
 # Checked September 19, 2006
-#     
+#
 HDO + NH4+ = NH3D+ + H2O
      log_k           0.301029995663                         # log10(2)
      -add_logk       Log_alpha_D_NH4+/H2O(l)                   1.0
      -mole_balance   N(-3)H3D
      -gamma          2.5000    0.0000
-     
+
 2NH3D+ = NH2D2+ + NH4+
      log_k           -0.42596873227228                    # log10(3/8)
      -mole_balance   N(-3)H2D2
      -gamma          2.5000    0.0000
-     
+
 3NH3D+ = NHD3+ + 2NH4+
      log_k           -1.20411998265                          # log10(1/16)
      -mole_balance   N(-3)HD3
      -gamma          2.5000    0.0000
-     
+
 4NH3D+ = ND4+ + 3NH4+
      log_k           -2.408239965311                        # log10(1/256)
      -mole_balance   N(-3)D4
      -gamma          2.5000    0.0000
-     
+
 HTO + NH4+ = NH3T+ + H2O
      log_k           0.301029995663                         # log10(2)
      -add_logk       Log_alpha_T_NH4+/H2O(l)                   1.0
      -mole_balance   N(-3)H3T
      -gamma          2.5000    0.0000
-     
+
 2NH3T+ = NH2T2+ + NH4+
      log_k           -0.42596873227228                    # log10(3/8)
      -mole_balance   N(-3)H2T2
      -gamma          2.5000    0.0000
-     
+
 3NH3T+ = NHT3+ + 2NH4+
      log_k           -1.20411998265                          # log10(1/16)
      -mole_balance   N(-3)HT3
      -gamma          2.5000    0.0000
-     
+
 4NH3T+ = NT4+ + 3NH4+
      log_k           -2.408239965311                        # log10(1/256)
      -mole_balance   N(-3)T4
      -gamma          2.5000    0.0000
-#     
+#
 # Updated September 19, 2006
 # Checked September 19, 2006
-#     
+#
 NHD3+ + NH3T+ = ND3T+ + NH4+
      log_k           -0.602059991327962396                   # -log10(4)
      -mole_balance   N(-3)D3T
      -gamma          2.5000    0.0000
-     
+
 NH2D2+ + NH2T2+ = ND2T2+ + NH4+
      log_k           -0.7781512503836                      # -log10(6)
      -mole_balance   N(-3)D2T2
      -gamma          2.5000    0.0000
-     
+
 NH3D+ + NHT3+ = NDT3+ + NH4+
      log_k           -0.602059991327962396                   # -log10(4)
      -mole_balance   N(-3)DT3
      -gamma          2.5000    0.0000
-     
+
 [15N]H3 + NH4+ = [15N]H4+ + NH3
      -add_logk       Log_alpha_15N_NH4+/NH3(aq)              1.0
      -mole_balance   [15N](-3)H4
      -gamma          2.5000    0.0000
-     
+
 [15N]H4+ + NH3D+ = [15N]H3D+ + NH4+
      -mole_balance   [15N](-3)H3D
      -gamma          2.5000    0.0000
-     
+
 [15N]H4+ + NH2D2+ = [15N]H2D2+ + NH4+
      -mole_balance   [15N](-3)H2D2
      -gamma          2.5000    0.0000
-     
+
 [15N]H4+ + NHD3+ = [15N]HD3+ + NH4+
      -mole_balance   [15N](-3)HD3
      -gamma          2.5000    0.0000
-     
+
 [15N]H4+ + ND4+ = [15N]D4+ + NH4+
      -mole_balance   [15N](-3)D4+
      -gamma          2.5000    0.0000
-     
+
 [15N]H4+ + NH3T+ = [15N]H3T+ + NH4+
      -mole_balance   [15N](-3)H3T
      -gamma          2.5000    0.0000
-     
+
 [15N]H4+ + NH2T2+ = [15N]H2T2+ + NH4+
      -mole_balance   [15N](-3)H2T2
      -gamma          2.5000    0.0000
-     
+
 [15N]H4+ + NHT3+ = [15N]HT3+ + NH4+
      -mole_balance   [15N](-3)HT3
      -gamma          2.5000    0.0000
-     
+
 [15N]H4+ + NT4+ = [15N]T4+ + NH4+
      -mole_balance   [15N](-3)T4+
      -gamma          2.5000    0.0000
-     
+
 [15N]H4+ + ND3T+ = [15N]D3T+ + NH4+
      -mole_balance   [15N](-3)D3T
      -gamma          2.5000    0.0000
-     
+
 [15N]H4+ + ND2T2+ = [15N]D2T2+ + NH4+
      -mole_balance   [15N](-3)D2T2
      -gamma          2.5000    0.0000
-     
+
 [15N]H4+ + NDT3+ = [15N]DT3+ + NH4+
      -mole_balance   [15N](-3)DT3
      -gamma          2.5000    0.0000
-#     
+#
 # Missing NH4SO4- reactions
-#     
+#
 #
 # Missing PO4-2 reactions
 #
@@ -4488,7 +4488,7 @@ HF + HTO = TF + H2O
 HF2- + HDO = DF2- + H2O
 HF2- + HTO = TF2- + H2O
 #
-# CaOH reactions 
+# CaOH reactions
 #
 CaOH+ + [18O]H- = Ca[18O]H+ + OH-
      -mole_balance   Ca[18O]H
@@ -4857,13 +4857,13 @@ MgHCO3+ + T[14C][18O]3- = MgT[14C][18O]3+ + HCO3-
 MgSO4 + [34S]O4-2 = Mg[34S]O4 + SO4-2
 #
 # Missing MgPO4- reactions
-#     
+#
 #
 # Missing MgHPO4 reactions
-#     
+#
 #
 # Missing Mg2PO4+ reactions
-#     
+#
 #
 # NaOH reactions
 #
@@ -4981,7 +4981,7 @@ KOH + OT- = KOT + OH-
 KOH + [18O]T- = K[18O]T + OH-
 #
 # KSO4- reactions
-#     
+#
 KSO4- + [34S]O4-2 = K[34S]O4- + SO4-2
 #
 # Added FeOH+ reactions 16Dec09
@@ -6860,7 +6860,7 @@ HT(g)
 D2(g)
      D2(g) + H2(g) = 2HD(g)
      log_k           0.602059991327962396                   # log10(4)
-         
+
 T2(g)
      T2(g) + H2(g) = 2HT(g)
      log_k           0.602059991327962396                   # log10(4)
@@ -6904,7 +6904,7 @@ C[18O]2(g)
      log_k           0
 
 [14C][18O]2(g)
-     [14C][18O]2(g) + CO2(g) = [14C]O2(g) + C[18O]2(g) 
+     [14C][18O]2(g) + CO2(g) = [14C]O2(g) + C[18O]2(g)
      log_k           0
 #
 # Calcite
@@ -6913,7 +6913,7 @@ C[18O]2(g)
 # Checked September 19, 2006
 #
 CaCO2[18O](s)
-     CaCO2[18O](s) + H2O(l) = H2[18O](aq) + Calcite(s) 
+     CaCO2[18O](s) + H2O(l) = H2[18O](aq) + Calcite(s)
      log_k           -0.477121254719                          # -log10(3) ???
      -add_logk       Log_alpha_18O_Calcite/H2O(l)            -1.0
 
@@ -6960,7 +6960,7 @@ Ca[14C][18O]3(s)
 # Pyrite, March 20, 2006
 # Update September 28, 2006
 # Checked September 28, 2006
-# 
+#
 Pyrite_FeS[34S]
      FeS[34S](s) + HS- = Pyrite(s) + H[34S]-
      -add_logk       Log_alpha_34S_Pyrite/HS-               -1.0
@@ -7055,50 +7055,50 @@ CDT3(g)
 
 [13C]D2T2(g)
      [13C]D2T2(g) + CH4(g) = CD2T2(g) + [13C]H4(g)
-     
+
 [13C]DT3(g)
      [13C]DT3(g) + CH4(g) = CDT3(g) + [13C]H4(g)
-     
+
 [13C]T4(g)
      [13C]T4(g) + CH4(g) = CT4(g) + [13C]H4(g)
-     
+
 [14C]H4(g)
      [14C]H4(g) + CO2(aq) = [14C]O2(aq) + CH4(g)
      -add_logk       Log_alpha_14C_CH4(g)/CO2(aq)    -1.0
-     
+
 [14C]H3D(g)
      [14C]H3D(g) + CH4(g) = CH3D(g) + [14C]H4(g)
-     
+
 [14C]H2D2(g)
      [14C]H2D2(g) + CH4(g) = CH2D2(g) + [14C]H4(g)
-     
+
 [14C]HD3(g)
      [14C]HD3(g) + CH4(g) = CHD3(g) + [14C]H4(g)
 
 [14C]D4(g)
      [14C]D4(g) + CH4(g) = CD4(g) + [14C]H4(g)
-     
+
 [14C]H3T(g)
      [14C]H3T(g) + CH4(g) = CH3T(g) + [14C]H4(g)
-     
+
 [14C]H2T2(g)
      [14C]H2T2(g) + CH4(g) = CH2T2(g) + [14C]H4(g)
-     
+
 [14C]HT3(g)
      [14C]HT3(g) + CH4(g) = CHT3(g) + [14C]H4(g)
-     
+
 [14C]T4(g)
      [14C]T4(g) + CH4(g) = CT4(g) + [14C]H4(g)
-     
+
 [14C]D3T(g)
      [14C]D3T(g) + CH4(g) = CD3T(g) + [14C]H4(g)
-     
+
 [14C]D2T2(g)
      [14C]D2T2(g) + CH4(g) = CD2T2(g) + [14C]H4(g)
-     
+
 [14C]DT3(g)
      [14C]DT3(g) + CH4(g) = CDT3(g) + [14C]H4(g)
-     
+
 [14C]T4(g)
      [14C]T4(g) + CH4(g) = CT4(g) + [14C]H4(g)
 #
@@ -7161,7 +7161,7 @@ Ca[34S]O4
 #
 N[15N](g)
      N[15N](g) + N2(aq) = N[15N](aq) + N2(g)
-     -add_logk       Log_alpha_15N_N2(g)/N2(aq)              -1.0            
+     -add_logk       Log_alpha_15N_N2(g)/N2(aq)              -1.0
 
 [15N]2(g)
      [15N]2(g) + N2(g) = 2N[15N](g)
@@ -7203,7 +7203,7 @@ NDT2(g)
 
 [15N]H3(g)
      [15N]H3(g) + NH3(aq) = [15N]H3(aq) + NH3(g)
-     -add_logk       Log_alpha_15N_NH3(g)/NH3(aq)            -1.0            
+     -add_logk       Log_alpha_15N_NH3(g)/NH3(aq)            -1.0
 
 [15N]H2D(g)
      [15N]H2D(g) + NH3(g) = NH2D(g) + [15N]H3(g)

@@ -19,7 +19,7 @@ from reaktoro import *
 
 # This string defines a PHREEQC script problem.
 # This problem was taken from the official PHREEQC example named ex1.
-ex1 = r'''(
+ex1 = r"""(
 TITLE Example 1.--Add uranium and speciate seawater.
 SOLUTION 1  SEAWATER FROM NORDSTROM AND OTHERS (1979)
         units   ppm
@@ -90,10 +90,10 @@ PHASES
         log_k          -3.490
         delta_h        -18.630 kcal
 END
-)'''
+)"""
 
 # Initialize a Phreeqc instance with the official phreeqc.dat database file
-phreeqc = Phreeqc('../../databases/phreeqc/phreeqc.dat')
+phreeqc = Phreeqc("../../databases/phreeqc/phreeqc.dat")
 
 # Execute a PHREEQC script defining a geochemical problem.
 # Here this script is actually embedded into a string named `ex1`.
@@ -113,7 +113,7 @@ system = ChemicalSystem(phreeqc)
 state = phreeqc.state(system)
 
 # Output the equilibrium state calculated by PHREEQC to a file.
-state.output('state-phreeqc.txt')
+state.output("state-phreeqc.txt")
 
 # Define an equilibrium problem in which the current state is mixed with 1
 # mmol of HCl.
@@ -121,10 +121,10 @@ problem = EquilibriumProblem(system)
 problem.setTemperature(state.temperature())
 problem.setPressure(state.pressure())
 problem.add(state)
-problem.add('HCl', 1.0, 'mmol')
+problem.add("HCl", 1.0, "mmol")
 
-# Set Hessian of Gibbs energy to an approximation, since PHREEQC does not 
-# compute molar derivatives of activities 
+# Set Hessian of Gibbs energy to an approximation, since PHREEQC does not
+# compute molar derivatives of activities
 options = EquilibriumOptions()
 options.hessian = GibbsHessian.Approximation
 
@@ -134,6 +134,4 @@ state = ChemicalState(system)
 equilibrate(state, problem, options)
 
 # Print the new equilibrium state and check with pH is more acidic now.
-state.output('state-phreeqc-updated.txt')
-
-
+state.output("state-phreeqc-updated.txt")

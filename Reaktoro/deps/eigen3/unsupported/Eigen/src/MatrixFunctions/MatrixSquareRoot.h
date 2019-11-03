@@ -10,7 +10,7 @@
 #ifndef EIGEN_MATRIX_SQUARE_ROOT
 #define EIGEN_MATRIX_SQUARE_ROOT
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 
@@ -147,13 +147,13 @@ void matrix_sqrt_quasi_triangular_off_diagonal(const MatrixType& T, ResultType& 
 	continue;
       bool iBlockIs2x2 = (i < size - 1) && (T.coeff(i+1, i) != 0);
       bool jBlockIs2x2 = (j < size - 1) && (T.coeff(j+1, j) != 0);
-      if (iBlockIs2x2 && jBlockIs2x2) 
+      if (iBlockIs2x2 && jBlockIs2x2)
         matrix_sqrt_quasi_triangular_2x2_off_diagonal_block(T, i, j, sqrtT);
-      else if (iBlockIs2x2 && !jBlockIs2x2) 
+      else if (iBlockIs2x2 && !jBlockIs2x2)
         matrix_sqrt_quasi_triangular_2x1_off_diagonal_block(T, i, j, sqrtT);
-      else if (!iBlockIs2x2 && jBlockIs2x2) 
+      else if (!iBlockIs2x2 && jBlockIs2x2)
         matrix_sqrt_quasi_triangular_1x2_off_diagonal_block(T, i, j, sqrtT);
-      else if (!iBlockIs2x2 && !jBlockIs2x2) 
+      else if (!iBlockIs2x2 && !jBlockIs2x2)
         matrix_sqrt_quasi_triangular_1x1_off_diagonal_block(T, i, j, sqrtT);
     }
   }
@@ -176,7 +176,7 @@ void matrix_sqrt_quasi_triangular_off_diagonal(const MatrixType& T, ResultType& 
   *
   * \sa MatrixSquareRoot, MatrixSquareRootQuasiTriangular
   */
-template <typename MatrixType, typename ResultType> 
+template <typename MatrixType, typename ResultType>
 void matrix_sqrt_quasi_triangular(const MatrixType &arg, ResultType &result)
 {
   eigen_assert(arg.rows() == arg.cols());
@@ -200,7 +200,7 @@ void matrix_sqrt_quasi_triangular(const MatrixType &arg, ResultType &result)
   *
   * \sa MatrixSquareRoot, MatrixSquareRootQuasiTriangular
   */
-template <typename MatrixType, typename ResultType> 
+template <typename MatrixType, typename ResultType>
 void matrix_sqrt_triangular(const MatrixType &arg, ResultType &result)
 {
   using std::sqrt;
@@ -244,7 +244,7 @@ struct matrix_sqrt_compute
     *
     * See MatrixBase::sqrt() for details on how this computation is implemented.
     */
-  template <typename ResultType> static void run(const MatrixType &arg, ResultType &result);    
+  template <typename ResultType> static void run(const MatrixType &arg, ResultType &result);
 };
 
 
@@ -259,14 +259,14 @@ struct matrix_sqrt_compute<MatrixType, 0>
     eigen_assert(arg.rows() == arg.cols());
 
     // Compute Schur decomposition of arg
-    const RealSchur<MatrixType> schurOfA(arg);  
+    const RealSchur<MatrixType> schurOfA(arg);
     const MatrixType& T = schurOfA.matrixT();
     const MatrixType& U = schurOfA.matrixU();
-    
+
     // Compute square root of T
     MatrixType sqrtT = MatrixType::Zero(arg.rows(), arg.cols());
     matrix_sqrt_quasi_triangular(T, sqrtT);
-    
+
     // Compute square root of arg
     result = U * sqrtT * U.adjoint();
   }
@@ -284,14 +284,14 @@ struct matrix_sqrt_compute<MatrixType, 1>
     eigen_assert(arg.rows() == arg.cols());
 
     // Compute Schur decomposition of arg
-    const ComplexSchur<MatrixType> schurOfA(arg);  
+    const ComplexSchur<MatrixType> schurOfA(arg);
     const MatrixType& T = schurOfA.matrixT();
     const MatrixType& U = schurOfA.matrixU();
-    
+
     // Compute square root of T
     MatrixType sqrtT;
     matrix_sqrt_triangular(T, sqrtT);
-    
+
     // Compute square root of arg
     result = U * (sqrtT.template triangularView<Upper>() * U.adjoint());
   }

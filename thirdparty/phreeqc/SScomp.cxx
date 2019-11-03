@@ -21,7 +21,7 @@ cxxSScomp::cxxSScomp(PHRQ_io *io)
 :
 PHRQ_base(io)
 	//
-	// default constructor for cxxSScomp 
+	// default constructor for cxxSScomp
 	//
 {
 	name = "";
@@ -33,7 +33,7 @@ PHRQ_base(io)
 	log10_lambda = 0;
 	log10_fraction_x = 0;
 	dn = 0;
-	dnc = 0; 
+	dnc = 0;
 	dnb = 0;
 }
 #ifdef SKIP
@@ -279,7 +279,7 @@ cxxSScomp::multiply(LDBLE extensive)
 	this->initial_moles *= extensive;
 }
 void
-cxxSScomp::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSScomp::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles)
 {
 
@@ -298,7 +298,7 @@ cxxSScomp::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 }
 
 void
-cxxSScomp::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxSScomp::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 {
 
@@ -317,16 +317,16 @@ cxxSScomp::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 }
 
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("name"),	            // 0                 
+	std::vector< std::string >::value_type("name"),	            // 0
 	std::vector< std::string >::value_type("initial_moles"),	// 1
 	std::vector< std::string >::value_type("moles"),	        // 2
 	std::vector< std::string >::value_type("init_moles"),	    // 3
 	std::vector< std::string >::value_type("delta"),	        // 4
-	std::vector< std::string >::value_type("fraction_x"),	    // 5     
+	std::vector< std::string >::value_type("fraction_x"),	    // 5
 	std::vector< std::string >::value_type("log10_lambda"),	    // 6
 	std::vector< std::string >::value_type("log10_fraction_x"),	// 7
 	std::vector< std::string >::value_type("dn"),	            // 8
 	std::vector< std::string >::value_type("dnc"),	            // 9
 	std::vector< std::string >::value_type("dnb") 	            // 10
-};									   
-const std::vector< std::string > cxxSScomp::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	
+};
+const std::vector< std::string > cxxSScomp::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);

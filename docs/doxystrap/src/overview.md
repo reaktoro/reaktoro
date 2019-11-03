@@ -300,7 +300,7 @@ Similarly, the code below demonstrate the combined use of Reaktoro and [PHREEQC]
 ~~~
 
 --------------------------------
-<!-- 
+<!--
 Thermodynamic Property Calculations
 -----------------------------------
 

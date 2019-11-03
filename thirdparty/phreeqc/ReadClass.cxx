@@ -182,7 +182,7 @@ streamify_to_next_keyword(std::istringstream & lines)
  *   Returns:
  *       OPTION_KEYWORD
  *       OPTION_EOF
- *       
+ *
  */
 	// Handle echo
 	int save_echo_input = pr.echo_input;
@@ -535,7 +535,7 @@ run_as_cells(void)
 			*  save data for saving solutions
 			*/
 			memcpy(&save_data, &save, sizeof(struct save));
-			/* 
+			/*
 			*Copy everything to -2
 			*/
 			copy_use(-2);
@@ -746,7 +746,7 @@ run_as_cells(void)
 		*  save data for saving solutions
 		*/
 		memcpy(&save_data, &save, sizeof(struct save));
-		/* 
+		/*
 		*Copy everything to -2
 		*/
 		copy_use(-2);

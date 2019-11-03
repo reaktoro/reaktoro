@@ -19,7 +19,7 @@
 
 cxxMix::cxxMix(PHRQ_io *io)
 	//
-	// default constructor for cxxMix 
+	// default constructor for cxxMix
 	//
 :	cxxNumKeyword(io)
 {

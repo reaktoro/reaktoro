@@ -25,7 +25,7 @@ step(LDBLE step_fraction)
 /*
  *   zero global solution, add solution or mixture, add exchange,
  *   add surface, add gas phase, add solid solutions,
- *   set temperature, and add reaction. 
+ *   set temperature, and add reaction.
  *   Ensure all elements
  *   included in any of these are present in small amounts.
  *   Save result as n_user -1.
@@ -209,7 +209,7 @@ step(LDBLE step_fraction)
 	//
 	// Solution -1 has sum of solution/mix, exchange, surface, gas_phase
 	// reaction, kinetics
-	// 
+	//
 	// Determine system totals, calculate maximum mineral precipitation
 	if (use.Get_pp_assemblage_in() || use.Get_ss_assemblage_in())
 	{
@@ -274,7 +274,7 @@ step(LDBLE step_fraction)
 						if (st != sys_tots.end())
 						{
 							LDBLE m1 = st->second / e_ptr->coef;
-							if (m1 < min) 
+							if (m1 < min)
 							{
 								min = m1;
 							}
@@ -472,7 +472,7 @@ add_exchange(cxxExchange *exchange_ptr)
 			cxxNameDouble nd(comp_ref.Get_totals());
 			cxxNameDouble::iterator it = nd.begin();
 			for ( ; it != nd.end(); it++)
-			{	
+			{
 				struct element *elt_ptr = element_store(it->first.c_str());
 				assert(elt_ptr->master);
 				if (elt_ptr->master->type == EX)
@@ -531,7 +531,7 @@ add_surface(cxxSurface *surface_ptr)
 		{
 			LDBLE coef = jit->second;
 			struct element *elt_j_ptr = element_store(jit->first.c_str());
-			struct master *master_j_ptr = elt_j_ptr->primary; 
+			struct master *master_j_ptr = elt_j_ptr->primary;
 			if (master_j_ptr == NULL)
 			{
 				input_error++;
@@ -805,7 +805,7 @@ add_reaction(cxxReaction *reaction_ptr, int step_number, LDBLE step_fraction)
 /*
  *   Calculate and save reaction
  */
-/* !!!!! with kinetics reaction, coeff's may change 
+/* !!!!! with kinetics reaction, coeff's may change
  *       and reaction_calc must be called ....
  */
 	if (reaction_ptr == NULL)
@@ -936,7 +936,7 @@ reaction_calc(cxxReaction *reaction_ptr)
 {
 /*
  *    Go through irreversible reaction initially to
- *    determine a list of elements and amounts in 
+ *    determine a list of elements and amounts in
  *    the reaction.
  */
 	int return_value;
@@ -1410,7 +1410,7 @@ ss_assemblage_check(cxxSSassemblage *ss_assemblage_ptr)
 						}
 					}
 					/*
-					 *   Make la's of all master species for the element small, 
+					 *   Make la's of all master species for the element small,
 					 *   so SI will be small
 					 *   and no mass transfer will be calculated
 					 */

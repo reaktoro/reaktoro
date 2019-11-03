@@ -253,5 +253,3 @@ auto maxValue(const Container& values) -> typename Container::value_type
 }
 
 } // namespace Reaktoro
-
-

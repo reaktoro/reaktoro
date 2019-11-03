@@ -45,7 +45,6 @@ def test_chemical_state():
     state.setTemperature(330, "kelvin")
     assert state.temperature() == 330
 
-
     # Set pressure to 1e6 Pa
     state.setPressure(1e6)
     assert state.pressure() == 1e6
@@ -65,7 +64,6 @@ def test_chemical_state():
     # Set pressure to 100 bar (= 100e5 Pa)
     state.setPressure(100, "bar")
     assert state.pressure() == 100e5
-
 
     # Set all species amounts to 1 mol
     state.setSpeciesAmounts(1.0)
@@ -105,7 +103,6 @@ def test_chemical_state():
     with raises(RuntimeError):
         state.setSpeciesAmounts([])  # wrong dimension of array
 
-
     # Set the mass of species H2O(l) to 1 kg using its index
     state.setSpeciesMass(0, 1.0)
     assert state.speciesAmount(0) * system.species(0).molarMass() == approx(1.0)
@@ -122,13 +119,12 @@ def test_chemical_state():
     state.setSpeciesMass("H2O(l)", 2000, "g")
     assert state.speciesAmount(0) * system.species(0).molarMass() == approx(2.0)
 
-
     # Set the amounts of all species to 1 mol
     state.setSpeciesAmounts(1.0)
 
     # Check the amounts in mol of each element using their indices
-    assert state.elementAmount(0) == approx(5)   # C
-    assert state.elementAmount(1) == approx(7)   # H
+    assert state.elementAmount(0) == approx(5)  # C
+    assert state.elementAmount(1) == approx(7)  # H
     assert state.elementAmount(2) == approx(13)  # O
     assert state.elementAmount(3) == approx(-3)  # Z
 
@@ -139,8 +135,8 @@ def test_chemical_state():
     assert state.elementAmount("Z") == approx(-3)
 
     # Check the amounts in mmol of each element using their indices
-    assert state.elementAmount(0, "mmol") == approx(5e3)   # C
-    assert state.elementAmount(1, "mmol") == approx(7e3)   # H
+    assert state.elementAmount(0, "mmol") == approx(5e3)  # C
+    assert state.elementAmount(1, "mmol") == approx(7e3)  # H
     assert state.elementAmount(2, "mmol") == approx(13e3)  # O
     assert state.elementAmount(3, "mmol") == approx(-3e3)  # Z
 
@@ -150,10 +146,9 @@ def test_chemical_state():
     assert state.elementAmount("O", "umol") == approx(13e6)
     assert state.elementAmount("Z", "umol") == approx(-3e6)
 
-
     # Check the amounts in mol of each element in the aqueous phase using element indices
-    assert state.elementAmountInPhase(0, 0) == approx(3)   # C
-    assert state.elementAmountInPhase(1, 0) == approx(5)   # H
+    assert state.elementAmountInPhase(0, 0) == approx(3)  # C
+    assert state.elementAmountInPhase(1, 0) == approx(5)  # H
     assert state.elementAmountInPhase(2, 0) == approx(10)  # O
     assert state.elementAmountInPhase(3, 0) == approx(-3)  # Z
 
@@ -164,8 +159,8 @@ def test_chemical_state():
     assert state.elementAmountInPhase("Z", "Aqueous") == approx(-3)
 
     # Check the amounts in mmol of each element in the aqueous phase using element indices
-    assert state.elementAmountInPhase(0, 0, "mmol") == approx(3e3)   # C
-    assert state.elementAmountInPhase(1, 0, "mmol") == approx(5e3)   # H
+    assert state.elementAmountInPhase(0, 0, "mmol") == approx(3e3)  # C
+    assert state.elementAmountInPhase(1, 0, "mmol") == approx(5e3)  # H
     assert state.elementAmountInPhase(2, 0, "mmol") == approx(10e3)  # O
     assert state.elementAmountInPhase(3, 0, "mmol") == approx(-3e3)  # Z
 
@@ -176,10 +171,10 @@ def test_chemical_state():
     assert state.elementAmountInPhase("Z", "Aqueous", "umol") == approx(-3e6)
 
     # Check the amounts in mol of each element in the gaseous phase using element indices
-    assert state.elementAmountInPhase(0, 1) == approx(1)   # C
-    assert state.elementAmountInPhase(1, 1) == approx(2)   # H
-    assert state.elementAmountInPhase(2, 1) == approx(3)   # O
-    assert state.elementAmountInPhase(3, 1) == approx(0)   # Z
+    assert state.elementAmountInPhase(0, 1) == approx(1)  # C
+    assert state.elementAmountInPhase(1, 1) == approx(2)  # H
+    assert state.elementAmountInPhase(2, 1) == approx(3)  # O
+    assert state.elementAmountInPhase(3, 1) == approx(0)  # Z
 
     # Check the amounts in mol of each element in the gaseous phase using element symbols
     assert state.elementAmountInPhase("C", "Gaseous") == approx(1)
@@ -188,17 +183,16 @@ def test_chemical_state():
     assert state.elementAmountInPhase("Z", "Gaseous") == approx(0)
 
     # Check the amounts in mmol of each element in the gaseous phase using element indices
-    assert state.elementAmountInPhase(0, 1, "mmol") == approx(1e3)   # C
-    assert state.elementAmountInPhase(1, 1, "mmol") == approx(2e3)   # H
-    assert state.elementAmountInPhase(2, 1, "mmol") == approx(3e3)   # O
-    assert state.elementAmountInPhase(3, 1, "mmol") == approx(0)     # Z
+    assert state.elementAmountInPhase(0, 1, "mmol") == approx(1e3)  # C
+    assert state.elementAmountInPhase(1, 1, "mmol") == approx(2e3)  # H
+    assert state.elementAmountInPhase(2, 1, "mmol") == approx(3e3)  # O
+    assert state.elementAmountInPhase(3, 1, "mmol") == approx(0)  # Z
 
     # Check the amounts in umol of each element in the gaseous phase using element symbols
     assert state.elementAmountInPhase("C", "Gaseous", "umol") == approx(1e6)
     assert state.elementAmountInPhase("H", "Gaseous", "umol") == approx(2e6)
     assert state.elementAmountInPhase("O", "Gaseous", "umol") == approx(3e6)
     assert state.elementAmountInPhase("Z", "Gaseous", "umol") == approx(0)
-
 
     # Check the amount of each phase using their indices
     assert state.phaseAmount(0) == approx(6)

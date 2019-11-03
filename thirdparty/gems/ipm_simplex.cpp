@@ -60,7 +60,7 @@ void TMulti::AutoInitialApproximation( )
         for( i=0; i<pm.N; i++)
              DU[i+Q] = 0.;
         EPS = paTProfil->p.EPS; //  13.10.00  KC  DK
-        GZ = 1./EPS;    
+        GZ = 1./EPS;
 
         T=0; // Calcuation of all non-zero values in A and G arrays
         for(i=0;i<pm.L;i++)
@@ -553,7 +553,7 @@ try{
        switch( pm.tMin )
        {
        case  A_TV_:
-           {   
+           {
 	     // kg44 this is not yet properly implemented ....removed it
 	     /*
                GoldenSection gsData( pm.Pai[0], pm.Pai[1], pm.Pai[3], pm.Fdev1[1], A_P);
@@ -563,8 +563,8 @@ try{
            }
            break;
        case  U_SV_:
-           {      
-	     // kg44 this is not yet properly implemented...removed it 
+           {
+	     // kg44 this is not yet properly implemented...removed it
 	     /*
                   GoldenSectionTwo gsData( pm.Tai[0], pm.Tai[1], pm.Tai[3],
                                              pm.Pai[0], pm.Pai[1], pm.Pai[3],

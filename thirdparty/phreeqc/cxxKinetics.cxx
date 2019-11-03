@@ -7,7 +7,7 @@
 #include <cassert>				// assert
 #include <algorithm>			// std::sort
 
-#include "Utils.h"				
+#include "Utils.h"
 #include "Phreeqc.h"
 #include "cxxKinetics.h"
 #include "cxxMix.h"
@@ -21,7 +21,7 @@
 
 cxxKinetics::cxxKinetics(PHRQ_io *io)
 	//
-	// default constructor for cxxKinetics 
+	// default constructor for cxxKinetics
 	//
 :	cxxNumKeyword(io)
 {
@@ -527,7 +527,7 @@ Current_step(bool incremental_reactions, int reaction_step) const
 				kin_time = this->steps[reaction_step - 1];
 			}
 		}
-		else 
+		else
 		{
 			if (reaction_step > this->count)
 			{
@@ -553,7 +553,7 @@ Current_step(bool incremental_reactions, int reaction_step) const
 				kin_time = this->steps[reaction_step - 1];
 			}
 		}
-		else 
+		else
 		{
 			if (reaction_step > this->count)
 			{
@@ -568,7 +568,7 @@ Current_step(bool incremental_reactions, int reaction_step) const
 	return kin_time;
 }
 void
-cxxKinetics::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxKinetics::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles)
 {
 	ints.push_back(this->n_user);
@@ -594,7 +594,7 @@ cxxKinetics::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 }
 
 void
-cxxKinetics::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+cxxKinetics::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	std::vector < double >&doubles, int &ii, int &dd)
 {
 	this->n_user = ints[ii++];
@@ -628,16 +628,16 @@ cxxKinetics::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 
 
 const std::vector< std::string >::value_type temp_vopts[] = {
-	std::vector< std::string >::value_type("step_divide"),             // 0 
-	std::vector< std::string >::value_type("rk"),                      // 1 
-	std::vector< std::string >::value_type("bad_step_max"),            // 2 
-	std::vector< std::string >::value_type("use_cvode"),               // 3 
-	std::vector< std::string >::value_type("component"),               // 4 
-	std::vector< std::string >::value_type("totals"),                  // 5 
-	std::vector< std::string >::value_type("steps"),                   // 6 
-	std::vector< std::string >::value_type("cvode_steps"),             // 7 
-	std::vector< std::string >::value_type("cvode_order"),             // 8 
-	std::vector< std::string >::value_type("equalincrements"),         // 9 
+	std::vector< std::string >::value_type("step_divide"),             // 0
+	std::vector< std::string >::value_type("rk"),                      // 1
+	std::vector< std::string >::value_type("bad_step_max"),            // 2
+	std::vector< std::string >::value_type("use_cvode"),               // 3
+	std::vector< std::string >::value_type("component"),               // 4
+	std::vector< std::string >::value_type("totals"),                  // 5
+	std::vector< std::string >::value_type("steps"),                   // 6
+	std::vector< std::string >::value_type("cvode_steps"),             // 7
+	std::vector< std::string >::value_type("cvode_order"),             // 8
+	std::vector< std::string >::value_type("equalincrements"),         // 9
 	std::vector< std::string >::value_type("count"),                   // 10
 	std::vector< std::string >::value_type("equal_increments")         // 11
 };

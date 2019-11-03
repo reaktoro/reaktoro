@@ -18,7 +18,7 @@
 from reaktoro import *
 
 # The json input for the interpreter as a string
-input = r'''
+input = r"""
     {
       "system": {
         "database": "supcrt98.xml",
@@ -40,7 +40,7 @@ input = r'''
         }
       ]
     }
-'''
+"""
 
 # Create the interpreter to execute an input script in json format
 interpreter = Interpreter()
@@ -50,4 +50,3 @@ interpreter.executeJsonString(input)
 
 # Output to a file the saved chemical state computed during the execution
 interpreter.state("state-h2o-nacl-co2").output("demo-interpreter.txt")
-

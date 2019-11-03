@@ -18,18 +18,18 @@ source_parameters = namedtuple("source_parameters", ["a", "b"])
 )
 def test_transport_solver_diffusion(source_parameters, num_regression):
     """
-    A test to check the solution of a advection-diffusion equation with v = 0 
+    A test to check the solution of a advection-diffusion equation with v = 0
     and du/dt = 0
-    Eq: 
+    Eq:
         du/dt + v du/dx = D d²u/dx² + q
-    
+
     The result were compared with the following analytic solution and got
     near results when we increase the number of cells. We decided to compare with
     numerical solve to save some computational time and analytic result, but with
     relative error of 1e-1.
-    
+
     analytic_u = -((a*x**3)/(6*D)) - ((b*x**2)/(2*D)) + ((a*x*xr**2)/(2*D)) + ((b*x*xr)/(D)) + ul
-    
+
     @param source_parameters
         a tuple that has values of a and b coefficient of a source term
         that behaves as q a*x+b
@@ -67,10 +67,17 @@ def test_transport_solver_diffusion(source_parameters, num_regression):
         transp_solver.step(numerical_u, q)
 
     num_regression.check({"u": numerical_u})
-    
-    analytic_u = -(a*x**3)/(6*D) - (b*x**2)/(2*D) + (a*x*xr**2)/(2*D) + (b*x*xr)/D + ul
-    
-    assert numerical_u == pytest.approx(np.array(analytic_u), abs=8 ,rel=0.01)
+
+    analytic_u = (
+        -(a * x ** 3) / (6 * D)
+        - (b * x ** 2) / (2 * D)
+        + (a * x * xr ** 2) / (2 * D)
+        + (b * x * xr) / D
+        + ul
+    )
+
+    assert numerical_u == pytest.approx(np.array(analytic_u), abs=8, rel=0.01)
+
 
 @pytest.mark.parametrize(
     "source_parameters",
@@ -82,18 +89,18 @@ def test_transport_solver_diffusion(source_parameters, num_regression):
 )
 def test_transport_solver_advection(source_parameters, num_regression):
     """
-    A test to check the solution of a advection-diffusion equation with D = 0 
+    A test to check the solution of a advection-diffusion equation with D = 0
     and du/dt = 0
-    Eq: 
+    Eq:
         du/dt + v du/dx = D d²u/dx² + q
-    
+
     The result was compared with the following analytic solution and got
     near results when we increase the number of cells. We decided to compare with
     numerical solve to save some computational time and analytic result, but with
     relative error of 1e-1
-    
+
     analytic_u = (a*x**2)/(2*v) + (b*x)/(v) + ul
-    
+
     @param source_parameters
         a tuple that has values of "a" and "b" coefficients of a source term
         that behaves as q=a*x+b
@@ -131,7 +138,7 @@ def test_transport_solver_advection(source_parameters, num_regression):
         transp_solver.step(numerical_u, q)
 
     num_regression.check({"u": numerical_u})
-    
-    analytic_u = (a*x**2)/(2*v) + (b*x)/v + ul
-    
-    assert numerical_u == pytest.approx(np.array(analytic_u), abs=8 ,rel=0.01)
+
+    analytic_u = (a * x ** 2) / (2 * v) + (b * x) / v + ul
+
+    assert numerical_u == pytest.approx(np.array(analytic_u), abs=8, rel=0.01)

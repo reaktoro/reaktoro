@@ -703,7 +703,7 @@ read_transport(void)
 			cell_data[i].mid_cell_x = 1.0;
 			cell_data[i].disp = 1.0;
 			cell_data[i].temp = 25.0;
-			cell_data[i].por = 0.3;   
+			cell_data[i].por = 0.3;
 			cell_data[i].por_il = 0.01;
 			cell_data[i].punch = FALSE;
 			cell_data[i].print = FALSE;
@@ -927,7 +927,7 @@ read_transport(void)
 	//		std::cerr << i << "  " << cell_data[i].por << std::endl;
 	//	}
 	//}
-	
+
 /*
  *   Calculate dump_modulus
  */
@@ -1101,18 +1101,18 @@ dump_cpp(void)
 		error_msg(error_string, CONTINUE);
 		return (OK);
 	}
-	
+
 	fs << "# Dumpfile" << "\n" << "# Transport simulation " << simul_tr << "  Shift " << transport_step << "\n" << "#" << "\n";
 	phreeqcBin.dump_raw(fs, 0);
 	fs << "END" << "\n";
 
 	char token[MAX_LENGTH];
 	sprintf(token, "KNOBS\n");
-	fs << token; 
+	fs << token;
 	sprintf(token, "\t-iter%15d\n", itmax);
-	fs << token; 
+	fs << token;
 	sprintf(token, "\t-tol %15.3e\n", (double) ineq_tol);
-	fs << token; 
+	fs << token;
 	sprintf(token, "\t-step%15.3e\n", (double) step_size);
 	fs << token;
 	sprintf(token, "\t-pe_s%15.3e\n", (double) pe_step_size);

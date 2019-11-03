@@ -44,7 +44,7 @@ struct traits<CompleteOrthogonalDecomposition<_MatrixType> >
   * size rank-by-rank. \b A may be rank deficient.
   *
   * This class supports the \link InplaceDecomposition inplace decomposition \endlink mechanism.
-  * 
+  *
   * \sa MatrixBase::completeOrthogonalDecomposition()
   */
 template <typename _MatrixType> class CompleteOrthogonalDecomposition
@@ -136,7 +136,7 @@ template <typename _MatrixType> class CompleteOrthogonalDecomposition
       m_temp(matrix.cols())
   {
     computeInPlace();
-  } 
+  }
 
   #ifdef EIGEN_PARSED_BY_DOXYGEN
   /** This method computes the minimum-norm solution X to a least squares
@@ -391,7 +391,7 @@ template <typename _MatrixType> class CompleteOrthogonalDecomposition
   void computeInPlace();
 
   /** Overwrites \b rhs with \f$ \mathbf{Z} * \mathbf{rhs} \f$ or
-   *  \f$ \mathbf{\overline Z} * \mathbf{rhs} \f$ if \c Conjugate 
+   *  \f$ \mathbf{\overline Z} * \mathbf{rhs} \f$ if \c Conjugate
    *  is set to \c true.
    */
   template <bool Conjugate, typename Rhs>

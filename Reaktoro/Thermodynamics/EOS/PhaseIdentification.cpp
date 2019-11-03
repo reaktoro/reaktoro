@@ -43,7 +43,7 @@ auto identifyPhaseUsingIsothermalCompressibility(
 {
     auto volume = Z * universalGasConstant * temperature / pressure;
     auto dkdt = (1.0 / (volume.val * volume.val)) * volume.ddP * volume.ddT;
-    
+
     return (dkdt <= 0.0) ? PhaseType::Gas : PhaseType::Liquid;
 }
 
@@ -51,12 +51,12 @@ auto pressureComparison(const ThermoScalar& Pressure, const ThermoScalar& Temper
                         const ChemicalScalar& bmix, const ChemicalScalar& A, const ChemicalScalar& B, const ChemicalScalar& C,
                         const double epsilon, const double sigma) -> PhaseType
 {
-    
+
     auto p = [&](double V) -> double
     {
         return ((universalGasConstant*Temperature.val) / (V - bmix.val)) - (amix.val / ((V + epsilon * bmix.val) * (V + sigma * bmix.val)));
     };
-    
+
     auto k1 = epsilon * bmix.val;
     auto k2 = sigma * bmix.val;
 
@@ -83,8 +83,8 @@ auto pressureComparison(const ThermoScalar& Pressure, const ThermoScalar& Temper
         return r < bmix.val;
     });
     real_roots.resize(new_end - real_roots.begin());
-    
-    if (real_roots.size() == 0) 
+
+    if (real_roots.size() == 0)
     {
         return PhaseType::Gas;
     }
@@ -95,7 +95,7 @@ auto pressureComparison(const ThermoScalar& Pressure, const ThermoScalar& Temper
 
     auto Pmin = std::min_element(pressures.begin(), pressures.end());
     auto Pmax = std::max_element(pressures.begin(), pressures.end());
-    
+
     if (Pressure.val < *Pmin)
         return PhaseType::Gas;
     if (Pressure.val > *Pmax)
@@ -130,17 +130,17 @@ auto gibbsResidualEnergyComparison(
         const double factor = -1.0 / (3 * Z.val*Z.val + 2 * A.val*Z.val + B.val);
         const ChemicalScalar beta = pressure * bmix / (R * T);
         const ChemicalScalar q = amix / (bmix * R * T);
-        
+
         // Calculate the integration factor I and its temperature derivative IT
         ChemicalScalar I;
-        if (epsilon != sigma) 
+        if (epsilon != sigma)
             I = log((Z + sigma * beta) / (Z + epsilon * beta)) / (sigma - epsilon);
-        else 
-            I = beta / (Z + epsilon * beta);        
+        else
+            I = beta / (Z + epsilon * beta);
 
         Gs.push_back(R * temperature*(Z - 1 - log(Z - beta) - q * I));
     }
-    
+
     return (Gs[0].val < Gs[1].val) ? PhaseType::Gas : PhaseType::Liquid;
 }
 

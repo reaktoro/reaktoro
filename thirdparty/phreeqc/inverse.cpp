@@ -89,7 +89,7 @@ inverse_models(void)
 				fprintf(netpath_file, "2.14               # File format\n");
 			}
 /*
- *  Fill in stucture "use".  
+ *  Fill in stucture "use".
  */
 			use.Set_inverse_in(true);
 			use.Set_inverse_ptr(&inverse[n]);
@@ -190,7 +190,7 @@ setup_inverse(struct inverse *inv_ptr)
 
 	//current_selected_output->Set_inverse(temp_inv);
 	state = INVERSE;
-/* 
+/*
  *   tidy isotopes if necessary
  */
 	inv_ptr->count_isotope_unknowns = 0;
@@ -258,7 +258,7 @@ setup_inverse(struct inverse *inv_ptr)
 	row_epsilon = row_isotopes + inv_ptr->count_isotopes;
 /*   The next three are not right, some rows of epsilon are deleted */
 /*
-	row_ph_epsilon = row_epsilon + 2 * inv_ptr->count_solns * inv_ptr->count_elts; 
+	row_ph_epsilon = row_epsilon + 2 * inv_ptr->count_solns * inv_ptr->count_elts;
 	row_water_epsilon = row_ph + 2 * carbon * inv_ptr->count_solns;
 	row_isotope_epsilon
 	row_isotope_phase_epsilon
@@ -656,7 +656,7 @@ setup_inverse(struct inverse *inv_ptr)
 			}
 		}
 	}
-/*   
+/*
  *   Initial solution mixing fractions or water mass balance
  */
 	for (i = 0; i < inv_ptr->count_solns; i++)
@@ -1072,7 +1072,7 @@ solve_inverse(struct inverse *inv_ptr)
  *   Exhaustively search for mass-balance models with two options
  *      -minimal on or off
  *      -range   on or off
- *      
+ *
  */
 	int i, j, n;
 	int quit, print, first;
@@ -1136,7 +1136,7 @@ solve_inverse(struct inverse *inv_ptr)
 		token[i] = '=';
 	token[79] = '\0';
 /*
- *   Set solutions, largest bit is final solution, smallest bit is initial solution 1 
+ *   Set solutions, largest bit is final solution, smallest bit is initial solution 1
  *   Set phases, largest bit is last phase, smallest bit is first phase
  *   Set current bits to complete list.
  */
@@ -1160,7 +1160,7 @@ solve_inverse(struct inverse *inv_ptr)
  *   solutions are in highest bits, phases are in lower bits;
  */
 /*
- *   All combinations of solutions 
+ *   All combinations of solutions
  */
 	first = TRUE;
 	for (;
@@ -1186,14 +1186,14 @@ solve_inverse(struct inverse *inv_ptr)
 					|| subset_minimal(current_bits) == TRUE)
 					continue;
 				quit = FALSE;
-/*  
+/*
  *   Switch for finding minimal models only
  */
 				if (inv_ptr->minimal == TRUE
 					&& superset_minimal(current_bits) == TRUE)
 					continue;
 /*
- *   Solve for minimum epsilons, continue if no solution found.  
+ *   Solve for minimum epsilons, continue if no solution found.
  */
 				if (solve_with_mask(inv_ptr, current_bits) == ERROR)
 				{
@@ -1211,7 +1211,7 @@ solve_inverse(struct inverse *inv_ptr)
 				}
 				first = FALSE;
 /*
- *   Model has been found, set bits 
+ *   Model has been found, set bits
  */
 				good_bits = current_bits;
 				for (i = 0; i < inv_ptr->count_phases; i++)
@@ -1390,7 +1390,7 @@ minimal_solve(struct inverse *inv_ptr, unsigned long minimal_bits)
 /*
  *   minimal_bits cannot be superset of a minimal model, but
  *   could be subset of one of the sets of minerals with no feasible solution
- *   If it is a subset, then replace mineral and go on to next 
+ *   If it is a subset, then replace mineral and go on to next
  */
 		if (subset_bad(minimal_bits) == TRUE)
 		{
@@ -1559,7 +1559,7 @@ solve_with_mask(struct inverse *inv_ptr, unsigned long cur_bits)
 	}
 
 /*
- *   Debug, write results 
+ *   Debug, write results
  */
 
 	if (debug_inverse == TRUE)
@@ -1813,7 +1813,7 @@ print_model(struct inverse *inv_ptr)
 			if (inv_ptr->ph_uncertainties[i] > 0)
 			{
 				scaled_error += fabs(d2) / inv_ptr->ph_uncertainties[i];
-/* debug 
+/* debug
 				output_msg(sformatf( "%e\t%e\t%e\n", fabs(d2) / inv_ptr->ph_uncertainties[i], fabs(d2), inv_ptr->ph_uncertainties[i]));
  */
 			}
@@ -1860,7 +1860,7 @@ print_model(struct inverse *inv_ptr)
 			if (d4 > 0)
 			{
 				scaled_error += fabs(d2) / d4;
-/* debug 
+/* debug
 				output_msg(sformatf( "%e\t%e\t%e\n", fabs(d2) / d4, fabs(d2), d4));
  */
 			}
@@ -2087,13 +2087,13 @@ punch_model_heading(struct inverse *inv_ptr)
 	int i;
 	char token[MAX_LENGTH];
 
-	std::map < int, SelectedOutput >::iterator so_it = SelectedOutput_map.begin(); 
+	std::map < int, SelectedOutput >::iterator so_it = SelectedOutput_map.begin();
 	for ( ; so_it != SelectedOutput_map.end(); so_it++)
 	{
 		// set punch file
 		current_selected_output = &(so_it->second);
 		if (pr.punch == FALSE ||
-			current_selected_output == NULL || 
+			current_selected_output == NULL ||
 			!current_selected_output->Get_inverse() ||
 			!current_selected_output->Get_active())
 			continue;
@@ -2169,13 +2169,13 @@ punch_model_heading(struct inverse *inv_ptr)
 	//if (/*punch.in == FALSE ||*/ pr.punch == FALSE || punch.inverse == FALSE)
 	//	return (OK);
 	std::vector<std::string> heading_names;
-	std::map < int, SelectedOutput >::iterator so_it = SelectedOutput_map.begin(); 
+	std::map < int, SelectedOutput >::iterator so_it = SelectedOutput_map.begin();
 	for ( ; so_it != SelectedOutput_map.end(); so_it++)
 	{
 		// set punch file
 		current_selected_output = &(so_it->second);
 		if (pr.punch == FALSE ||
-			current_selected_output == NULL || 
+			current_selected_output == NULL ||
 			current_selected_output->punch_ostream == NULL ||
 			!current_selected_output->Get_inverse() ||
 			!current_selected_output->Get_active())
@@ -2266,17 +2266,17 @@ punch_model(struct inverse *inv_ptr)
 	current_user_punch = & temp_user_punch;
 	temp_user_punch.Set_headings(inverse_heading_names);
 
-	std::map < int, SelectedOutput >::iterator so_it = SelectedOutput_map.begin(); 
+	std::map < int, SelectedOutput >::iterator so_it = SelectedOutput_map.begin();
 	for ( ; so_it != SelectedOutput_map.end(); so_it++)
 	{
 		current_selected_output = &(so_it->second);
 		if (pr.punch == FALSE ||
-			current_selected_output == NULL || 
+			current_selected_output == NULL ||
 			!current_selected_output->Get_inverse() ||
 			!current_selected_output->Get_active())
 			continue;
 		phrq_io->Set_punch_ostream(current_selected_output->Get_punch_ostream());
-		
+
 		n_user_punch_index = 0;
 		/*
 		*   write residual info
@@ -2455,7 +2455,7 @@ range(struct inverse *inv_ptr, unsigned long cur_bits)
 /* ---------------------------------------------------------------------- */
 {
 /*
- *   Takes the model from cur_bits and sequentially determines the 
+ *   Takes the model from cur_bits and sequentially determines the
  *   minimum and maximum values for each solution fraction and
  *   each phase mass transfer.
  */
@@ -2685,7 +2685,7 @@ shrink(struct inverse *inv_ptr, LDBLE * array_in, LDBLE * array_out,
 	for (i = 0; i < (*n + 1); i++)
 		col_back_l[i] = i;
 
-/*   
+/*
  *   Drop phases not in model
  */
 	for (i = 0; i < inv_ptr->count_phases; i++)
@@ -2705,7 +2705,7 @@ shrink(struct inverse *inv_ptr, LDBLE * array_in, LDBLE * array_out,
 			}
 		}
 	}
-/*   
+/*
  *   Drop solutions not in model
  */
 	for (i = 0; i < (inv_ptr->count_solns - 1); i++)
@@ -2739,7 +2739,7 @@ shrink(struct inverse *inv_ptr, LDBLE * array_in, LDBLE * array_out,
 		}
 	}
 
-/*   
+/*
  *   Drop epsilons not used
  */
 	for (i = col_epsilon; i < *n; i++)
@@ -2779,7 +2779,7 @@ shrink(struct inverse *inv_ptr, LDBLE * array_in, LDBLE * array_out,
 		cur_col++;
 	}
 	*n = cur_col - 1;
-/* 
+/*
  *   Eliminate unnecessary optimization eqns
  */
 	row = 0;
@@ -2812,7 +2812,7 @@ shrink(struct inverse *inv_ptr, LDBLE * array_in, LDBLE * array_out,
 		k1++;
 	}
 
-/* 
+/*
  *   Eliminate unnecessary equality eqns
  */
 	l1 = 0;
@@ -2831,7 +2831,7 @@ shrink(struct inverse *inv_ptr, LDBLE * array_in, LDBLE * array_out,
 		if (nonzero == FALSE)
 			continue;
 /*
-		if (memcmp(&(array_out[i * max_column_count]), &(zero[0]), 
+		if (memcmp(&(array_out[i * max_column_count]), &(zero[0]),
 			   (size_t) (*n) * sizeof(LDBLE)) == 0) {
 			continue;
 		}
@@ -2855,7 +2855,7 @@ shrink(struct inverse *inv_ptr, LDBLE * array_in, LDBLE * array_out,
 		row++;
 		l1++;
 	}
-/* 
+/*
  *   Eliminate unnecessary inequality eqns
  */
 	m1 = 0;
@@ -2874,7 +2874,7 @@ shrink(struct inverse *inv_ptr, LDBLE * array_in, LDBLE * array_out,
 		if (nonzero == FALSE)
 			continue;
 /*
-		if (memcmp(&(array_out[i * max_column_count]), &(zero[0]), 
+		if (memcmp(&(array_out[i * max_column_count]), &(zero[0]),
 			   (size_t) (*n) * sizeof(LDBLE)) == 0) {
 			continue;
 		}
@@ -3040,12 +3040,12 @@ check_solns(struct inverse *inv_ptr)
 		for (j = 0; j < n; j++) {
 			output_msg(sformatf( "\t%d\t%s\n", j, col_name[col_back[j]]));
 		}
-		
+
 		output_msg(sformatf( "\nRows\n"));
 		for (j = 0; j < k + l + m; j++) {
 			output_msg(sformatf( "\t%d\t%s\n", j, row_name[row_back[j]]));
 		}
-		
+
 		output_msg(sformatf( "\nA and B arrays:\n\n"));
 		array_print(array1, k + l + m,
 			    n + 1, max_column_count);
@@ -3099,7 +3099,7 @@ post_mortem(void)
 {
 /*
  *   Post_mortem simply identifies which equality and inequality of the
- *   array have not been satisfied. 
+ *   array have not been satisfied.
  *
  */
 	int i, j;
@@ -3287,7 +3287,7 @@ carbon_derivs(struct inverse *inv_ptr)
 					"modeling not found.", inv_ptr->solns[i]);
 			error_msg(error_string, STOP);
 		}
-/* 
+/*
  *   Find carbon uncertainty
  */
 		c_uncertainty = 0;
@@ -3338,7 +3338,7 @@ carbon_derivs(struct inverse *inv_ptr)
 /*
  *   dAlk/dpH
  */
-		solution_ptr = Utilities::Rxn_find(Rxn_solution_map, -5); 
+		solution_ptr = Utilities::Rxn_find(Rxn_solution_map, -5);
 		alk_plus = solution_ptr->Get_total_alkalinity();
 		solution_ptr = Utilities::Rxn_find(Rxn_solution_map, -4);
 		alk_minus = solution_ptr->Get_total_alkalinity();
@@ -3927,7 +3927,7 @@ phase_isotope_inequalities(struct inverse *inv_ptr)
 				continue;
 			}
 
-/* 
+/*
  *   optimization
  */
 			array[(column - col_epsilon) * max_column_count + column] =
@@ -5181,10 +5181,10 @@ dump_netpath_pat(struct inverse *inv_ptr)
 /*
  * Write extra stuff at bottom
  */
-	/* 
-	   (Iflag(i),i=2,6), (P(i),i=1,2), (Isdocrs(i),i=0,5), Disalong, 
-	   (C14dat(i),i=1,5), (Usera(i),i=1,2), 
-	   (C14dat(i),i=8,9), i10, i11, (C14dat(i),i=12,13), 
+	/*
+	   (Iflag(i),i=2,6), (P(i),i=1,2), (Isdocrs(i),i=0,5), Disalong,
+	   (C14dat(i),i=1,5), (Usera(i),i=1,2),
+	   (C14dat(i),i=8,9), i10, i11, (C14dat(i),i=12,13),
 	   (Dbdata(Well(0),i),i=44,47), Dbdata(Well(0),49),
 	   ((Dbdata(Well(iwell),i),i=44,47),Dbdata(Well(iwell),49),Usera(iwell),iwell=1,Iflag(1)+1)
 	   9030 FORMAT (5(I2),2(F8.4),6(I1),F6.3,/,
@@ -5326,7 +5326,7 @@ add_to_file(const char *filename, const char *string)
 		{
 			fclose(model_file);
 			model_file = fopen(filename, "a");
-			if (model_file) 
+			if (model_file)
 			{
 				fprintf(model_file, "%s\n", string);
 				fclose(model_file);
@@ -5342,4 +5342,3 @@ add_to_file(const char *filename, const char *string)
 		i = 0;
 	}
 }
-

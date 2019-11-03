@@ -141,7 +141,7 @@ cxxNumKeyword::read_number_description(const std::string & line_in)
 	// read number
 	if (CParser::copy_token(token, b, e) == CParser::TT_DIGIT)
 	{
-		if (token[0] == '-') 
+		if (token[0] == '-')
 		{
 			token = token.substr(1);
 			Utilities::replace("-", " ", token);

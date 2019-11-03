@@ -19,7 +19,7 @@ from reaktoro import *
 
 # This string defines a PHREEQC input file. The contents of the input string
 # below was taken from the official PHREEQC example named ex1.
-ex1 = r'''(
+ex1 = r"""(
 TITLE Example 1.--Add uranium and speciate seawater.
 SOLUTION 1  SEAWATER FROM NORDSTROM AND OTHERS (1979)
         units   ppm
@@ -90,12 +90,12 @@ PHASES
         log_k          -3.490
         delta_h        -18.630 kcal
 END
-)'''
+)"""
 
 # Initialize a Phreeqc instance with the official phreeqc.dat database file
 # Make sure the file phreeqc.dat is located in the given path below relative to
 # the path where you execute this script!
-phreeqc = Phreeqc('databases/phreeqc/phreeqc.dat')
+phreeqc = Phreeqc("databases/phreeqc/phreeqc.dat")
 
 # Execute a PHREEQC script defining a geochemical problem. Here this script is
 # actually embedded into a string named `ex1`. However, `ex1` could also be a
@@ -115,13 +115,13 @@ system = ChemicalSystem(phreeqc)
 state = phreeqc.state(system)
 
 # Output this chemical state to a file.
-state.output('phreeqc-ex1-result.txt')
+state.output("phreeqc-ex1-result.txt")
 
 # Define an equilibrium problem in which the current state
 # is mixed with 1 mmol of HCl.
 problem = EquilibriumProblem(system)
 problem.add(state)
-problem.add('HCl', 1.0, 'mmol')
+problem.add("HCl", 1.0, "mmol")
 
 # Calculate the new equilibrium state using Reaktoro's Gibbs energy
 # minimization algorithm together with thermodynamic data and activity models
@@ -129,4 +129,4 @@ problem.add('HCl', 1.0, 'mmol')
 equilibrate(state, problem)
 
 # Output the new equilibrium state and check if pH is now more acidic.
-state.output('phreeqc-ex1-result-new.txt')
+state.output("phreeqc-ex1-result-new.txt")

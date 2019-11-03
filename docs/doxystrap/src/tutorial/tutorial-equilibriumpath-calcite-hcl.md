@@ -340,4 +340,3 @@ path.solve(state1, state2)
 [supcrt07.xml]: databases/supcrt/supcrt07.xml
 [slop98.dat]: databases/supcrt/slop98.dat
 [slop07.dat]: databases/supcrt/slop07.dat
-

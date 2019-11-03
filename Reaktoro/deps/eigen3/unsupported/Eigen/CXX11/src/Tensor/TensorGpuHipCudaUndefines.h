@@ -11,7 +11,7 @@
 #if defined(EIGEN_CXX11_TENSOR_GPU_HIP_CUDA_DEFINES_H)
 
 #undef gpuStream_t
-#undef gpuDeviceProp_t 
+#undef gpuDeviceProp_t
 #undef gpuError_t
 #undef gpuSuccess
 #undef gpuErrorNotReady

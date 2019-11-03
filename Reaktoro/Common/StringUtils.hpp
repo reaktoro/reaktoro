@@ -117,5 +117,3 @@ inline auto tofloats(const std::string& str, const std::string& delims = " ") ->
 }
 
 } // namespace Reaktoro
-
-

@@ -70,5 +70,3 @@ auto AqueousSpecies::thermoData() const -> const AqueousSpeciesThermoData&
 }
 
 } // namespace Reaktoro
-
-

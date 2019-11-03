@@ -16,7 +16,7 @@
 #include <mpreal.h>
 
 namespace Eigen {
-  
+
 /**
   * \defgroup MPRealSupport_Module MPFRC++ Support module
   * \code
@@ -58,7 +58,7 @@ int main()
 \endcode
   *
   */
-	
+
   template<> struct NumTraits<mpfr::mpreal>
     : GenericNumTraits<mpfr::mpreal>
   {
@@ -74,7 +74,7 @@ int main()
 
     typedef mpfr::mpreal Real;
     typedef mpfr::mpreal NonInteger;
-    
+
     static inline Real highest  (long Precision = mpfr::mpreal::get_default_prec()) { return  mpfr::maxval(Precision); }
     static inline Real lowest   (long Precision = mpfr::mpreal::get_default_prec()) { return -mpfr::maxval(Precision); }
 
@@ -90,7 +90,7 @@ int main()
 #ifdef MPREAL_HAVE_DYNAMIC_STD_NUMERIC_LIMITS
     static inline int digits10 (long Precision = mpfr::mpreal::get_default_prec())  { return std::numeric_limits<Real>::digits10(Precision); }
     static inline int digits10 (const Real& x)                                      { return std::numeric_limits<Real>::digits10(x); }
-    
+
     static inline int digits ()               { return std::numeric_limits<Real>::digits(); }
     static inline int digits (const Real& x)  { return std::numeric_limits<Real>::digits(x); }
 #endif
@@ -163,7 +163,7 @@ int main()
       typedef ResScalar RhsPacket;
       typedef ResScalar ResPacket;
       typedef LhsPacket LhsPacket4Packing;
-      
+
     };
 
 
@@ -174,7 +174,7 @@ int main()
       typedef mpfr::mpreal mpreal;
 
       EIGEN_DONT_INLINE
-      void operator()(const DataMapper& res, const mpreal* blockA, const mpreal* blockB, 
+      void operator()(const DataMapper& res, const mpreal* blockA, const mpreal* blockB,
                       Index rows, Index depth, Index cols, const mpreal& alpha,
                       Index strideA=-1, Index strideB=-1, Index offsetA=0, Index offsetB=0)
       {
@@ -193,14 +193,14 @@ int main()
           {
             const mpreal *A = blockA + i*strideA + offsetA;
             const mpreal *B = blockB + j*strideB + offsetB;
-            
+
             acc1 = 0;
             for(Index k=0; k<depth; k++)
             {
               mpfr_mul(tmp.mpfr_ptr(), A[k].mpfr_srcptr(), B[k].mpfr_srcptr(), mpreal::get_default_rnd());
               mpfr_add(acc1.mpfr_ptr(), acc1.mpfr_ptr(), tmp.mpfr_ptr(),  mpreal::get_default_rnd());
             }
-            
+
             mpfr_mul(acc1.mpfr_ptr(), acc1.mpfr_srcptr(), alpha.mpfr_srcptr(), mpreal::get_default_rnd());
             mpfr_add(res(i,j).mpfr_ptr(), res(i,j).mpfr_srcptr(), acc1.mpfr_srcptr(),  mpreal::get_default_rnd());
           }

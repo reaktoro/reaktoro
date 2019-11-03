@@ -104,7 +104,7 @@ LDBLE Phreeqc::
 sa_declercq(double sa_type, double Sa, double d, double m, double m0, double gfw)
 /* ---------------------------------------------------------------------- */
 {
-	if (sa_type == 0) 
+	if (sa_type == 0)
 	{
 		// surface-area-calculation-Fixed_Surface
 		return Sa;
@@ -121,7 +121,7 @@ sa_declercq(double sa_type, double Sa, double d, double m, double m0, double gfw
 	    double RATS = Sa / St0;
 		double mass = m * gfw;
 		double V = mass / d;
-		double a = pow(V, 1.0/3.0); 
+		double a = pow(V, 1.0/3.0);
 		double St = 6.0 * a*a*np;
 		return St * RATS;               // total current surface
 	}
@@ -131,11 +131,11 @@ sa_declercq(double sa_type, double Sa, double d, double m, double m0, double gfw
 		double mass0 = m0 * gfw;
 		double V0 = mass0 / d;                         // volume
 		double St0 = mass0 * Sa;                       // total surface
-		double a0 = pow(3.0 * V0/(4.0 * pi), 1.0/3.0); // ((3*V0)/(4 * 3.14159265359))^(1/3)  
+		double a0 = pow(3.0 * V0/(4.0 * pi), 1.0/3.0); // ((3*V0)/(4 * 3.14159265359))^(1/3)
 		double Sp0 = (4.0 * pi) * a0 * a0;             // surface particle
 		double np = St0 / Sp0;                         // number of particles
 		double RATS = Sa / St0;
- 
+
 		double mass = m * gfw;
 		double V = mass / d;
 		double a = pow(3.0 * V/(4.0 * pi), 1.0/3.0);  //((3*V)/(4 * 3.14159265359))^(1/3)
@@ -146,7 +146,7 @@ sa_declercq(double sa_type, double Sa, double d, double m, double m0, double gfw
 	error_msg(error_string, CONTINUE);
 	input_error++;
 	return (MISSING);
- 
+
 }
 
 /* ---------------------------------------------------------------------- */
@@ -363,7 +363,7 @@ calc_solution_volume(void)
 		struct master *master_ptr = master[i];
 		if (master_ptr->primary == TRUE && strcmp(master_ptr->elt->name, "Alkalinity"))
 		{
-			total_mass += master_ptr->total_primary * master_ptr->elt->gfw; 
+			total_mass += master_ptr->total_primary * master_ptr->elt->gfw;
 		}
 	}
 	LDBLE rho = calc_dens();
@@ -415,7 +415,7 @@ calc_logk_p(const char *name)
 	phase_ptr = phase_bsearch(token, &j, FALSE);
 
 	if (phase_ptr != NULL)
-	{		
+	{
 		struct reaction *reaction_ptr;
 		if (phase_ptr->replaced)
 			reaction_ptr = phase_ptr->rxn_s;
@@ -434,7 +434,7 @@ calc_logk_p(const char *name)
 		}
 		//lk = k_calc(reaction_ptr->logk, tk_x, patm_x * PASCAL_PER_ATM);
 		select_log_k_expression(reaction_ptr->logk, l_logk);
-		add_other_logk(l_logk, phase_ptr->count_add_logk, phase_ptr->add_logk); 
+		add_other_logk(l_logk, phase_ptr->count_add_logk, phase_ptr->add_logk);
 		lk = k_calc(l_logk, tk_x, patm_x * PASCAL_PER_ATM);
 	}
 	return (lk);
@@ -978,7 +978,7 @@ equivalent_fraction(const char *name, LDBLE *eq, std::string &elt_name)
 		}
 		if (s_ptr->in == TRUE && tot > 0.0)
 		{
-			f = s_ptr->moles * s_ptr->equiv / tot; 
+			f = s_ptr->moles * s_ptr->equiv / tot;
 		}
 	}
 	return f;
@@ -1162,7 +1162,7 @@ get_calculate_value(const char *name)
 	if (calculate_value_ptr->new_def == TRUE)
 	{
 		if (interp.basic_compile
-			(calculate_value_ptr->commands, 
+			(calculate_value_ptr->commands,
 			&calculate_value_ptr->linebase,
 			&calculate_value_ptr->varbase,
 			&calculate_value_ptr->loopbase) != 0)
@@ -1175,9 +1175,9 @@ get_calculate_value(const char *name)
 		calculate_value_ptr->new_def = FALSE;
 	}
 
-	if (interp.basic_run(l_command, 
+	if (interp.basic_run(l_command,
 		calculate_value_ptr->linebase,
-		calculate_value_ptr->varbase, 
+		calculate_value_ptr->varbase,
 		calculate_value_ptr->loopbase) != 0)
 	{
 		error_string = sformatf( "Fatal Basic error in calculate_value %s.",
@@ -1640,7 +1640,7 @@ match_elts_in_species(const char *name, const char *mytemplate)
 	char *ptr, *ptr1;
 	LDBLE d;
 	char element[MAX_LENGTH];
-	char token[MAX_LENGTH], equal_list[MAX_LENGTH]; 
+	char token[MAX_LENGTH], equal_list[MAX_LENGTH];
 	char token1[MAX_LENGTH], template1[MAX_LENGTH], equal_list1[MAX_LENGTH];
 	char str[2];
 
@@ -1688,12 +1688,12 @@ match_elts_in_species(const char *name, const char *mytemplate)
 				return (ERROR);
 			}
 			std::pair<std::string, LDBLE> pr(element, d);
-			match_vector.push_back(pr);			
+			match_vector.push_back(pr);
 		}
 		else
 		{
 			std::pair<std::string, LDBLE> pr(str, 1.0);
-			match_vector.push_back(pr);		
+			match_vector.push_back(pr);
 			ptr += 1;
 		}
 	}
@@ -1739,7 +1739,7 @@ match_elts_in_species(const char *name, const char *mytemplate)
 	/*
 	 *  Combine contiguous elements
 	 */
-	i1 = 0;		
+	i1 = 0;
 	for (i = 1; i < (int) match_vector.size(); i++)
 	{
 		if ((isupper((int) (match_vector[i].first[0])) != FALSE)
@@ -2134,7 +2134,7 @@ surf_total(const char *total_name, const char *surface_name)
 		{
 			return surf_total_no_redox(total_name, surface_name);
 		}
-	}	
+	}
 /*
  *   Find surface...
  */
@@ -2142,7 +2142,7 @@ surf_total(const char *total_name, const char *surface_name)
 	{
 		if (x[j]->type != SURFACE)
 			continue;
-		
+
 		std::string token;
 		token = x[j]->master[0]->elt->name;
 		replace("_", " ", token);
@@ -2165,9 +2165,9 @@ surf_total(const char *total_name, const char *surface_name)
 			continue;
 
 		std::string token;
-		bool match = false; 
+		bool match = false;
 
-		// find if surface matches 
+		// find if surface matches
 		for (int i = 0; s_x[j]->next_elt[i].elt != NULL; i++)
 		{
 			if (s_x[j]->next_elt[i].elt->master->type != SURF) continue;
@@ -2256,7 +2256,7 @@ surf_total(const char *total_name, const char *surface_name)
 	{
 		if (x[j]->type != SURFACE)
 			continue;
-		
+
 		std::string token;
 		token = x[j]->master[0]->elt->name;
 		replace("_", " ", token);
@@ -2284,9 +2284,9 @@ surf_total(const char *total_name, const char *surface_name)
 			continue;
 
 		std::string token;
-		bool match = false; 
+		bool match = false;
 
-		// find if surface matches 
+		// find if surface matches
 		for (int i = 0; s_x[j]->next_elt[i].elt != NULL; i++)
 		{
 			if (s_x[j]->next_elt[i].elt->master->type != SURF) continue;
@@ -2645,7 +2645,7 @@ get_edl_species(cxxSurfaceCharge & charge_ref)
 		space((void **) ((void *) &sys), count_sys, &max_sys,
 			  sizeof(struct system_species));
 	}
-	
+
 #endif
 	return (OK);
 }
@@ -2670,7 +2670,7 @@ edl_species(const char *surf_name, LDBLE * count, char ***names, LDBLE ** moles,
 		{
 			cxxSurfaceCharge & charge_ref = surface_ptr->Get_surface_charges()[i];
 			if (strcmp(charge_ref.Get_name().c_str(), surf_name) == 0)
-			{	
+			{
 				get_edl_species(charge_ref);
 				*area = charge_ref.Get_specific_area() * charge_ref.Get_grams();
 				*thickness = surface_ptr->Get_thickness();
@@ -2707,7 +2707,7 @@ edl_species(const char *surf_name, LDBLE * count, char ***names, LDBLE ** moles,
 
 	PHRQ_free(sys);
 	return (sys_tot);
-}				
+}
 				/* ---------------------------------------------------------------------- */
 LDBLE Phreeqc::
 system_total(const char *total_name, LDBLE * count, char ***names,
@@ -3134,7 +3134,7 @@ system_total_gas(void)
 	cxxGasPhase *gas_phase_ptr = use.Get_gas_phase_ptr();
 	for (size_t j = 0; j < gas_phase_ptr->Get_gas_comps().size(); j++)
 	{
-		struct phase *phase_ptr = phase_bsearch(gas_phase_ptr->Get_gas_comps()[j].Get_phase_name().c_str(), 
+		struct phase *phase_ptr = phase_bsearch(gas_phase_ptr->Get_gas_comps()[j].Get_phase_name().c_str(),
 			&i, FALSE);
 		assert(phase_ptr);
 		sys[count_sys].name = string_duplicate(phase_ptr->name);
@@ -3443,7 +3443,7 @@ system_total_elt(const char *total_name)
 		cxxGasPhase *gas_phase_ptr = use.Get_gas_phase_ptr();
 		for (size_t i = 0; i < gas_phase_ptr->Get_gas_comps().size(); i++)
 		{
-			struct phase *phase_ptr = 
+			struct phase *phase_ptr =
 				phase_bsearch(gas_phase_ptr->Get_gas_comps()[i].Get_phase_name().c_str(), &k, FALSE);
 			assert(phase_ptr);
 			if (phase_ptr->in == TRUE)
@@ -3714,9 +3714,9 @@ system_total_elt_secondary(const char *total_name)
 	if (use.Get_gas_phase_ptr() != NULL)
 	{
 		cxxGasPhase *gas_phase_ptr = use.Get_gas_phase_ptr();
-		for (size_t j = 0; j < gas_phase_ptr->Get_gas_comps().size(); j++)	
+		for (size_t j = 0; j < gas_phase_ptr->Get_gas_comps().size(); j++)
 		{
-			struct phase *phase_ptr = 
+			struct phase *phase_ptr =
 				phase_bsearch(gas_phase_ptr->Get_gas_comps()[j].Get_phase_name().c_str(), &i, FALSE);
 			assert(phase_ptr);
 			if (phase_ptr->in == TRUE)
@@ -3908,7 +3908,7 @@ system_total_solids(cxxExchange *exchange_ptr,
 		for (size_t j = 0; j < gas_phase_ptr->Get_gas_comps().size(); j++)
 		{
 			int i;
-			struct phase *phase_ptr = 
+			struct phase *phase_ptr =
 				phase_bsearch(gas_phase_ptr->Get_gas_comps()[j].Get_phase_name().c_str(), &i, FALSE);
 			add_elt_list(phase_ptr->next_elt, gas_phase_ptr->Get_gas_comps()[j].Get_moles());
 		}
@@ -4075,21 +4075,21 @@ basic_callback(double x1, double x2, const char * str)
 	return 0;
 }
 
-void 
+void
 Phreeqc::register_basic_callback(double (*fcn)(double x1, double x2, const char *str, void *cookie), void *cookie1)
 {
 	this->basic_callback_ptr = fcn;
 	this->basic_callback_cookie = cookie1;
 }
 #ifdef IPHREEQC_NO_FORTRAN_MODULE
-void 
+void
 Phreeqc::register_fortran_basic_callback(double ( *fcn)(double *x1, double *x2, char *str, size_t l))
 {
 	this->basic_fortran_callback_ptr = fcn;
 }
 #else
 
-void 
+void
 Phreeqc::register_fortran_basic_callback(double ( *fcn)(double *x1, double *x2, const char *str, int l))
 {
 	this->basic_fortran_callback_ptr = fcn;

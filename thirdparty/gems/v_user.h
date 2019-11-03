@@ -237,11 +237,10 @@ u_splitpath(const gstring& Path, gstring& dir,
 
 #define fileNameLength 64
 /// Get Path of file and Reading list of file names from it, return number of files
-char  (* f_getfiles(const char *f_name, char *Path, 
+char  (* f_getfiles(const char *f_name, char *Path,
 		long int& nElem, char delim ))[fileNameLength];
 
 
 
 #endif
 // _v_user_h_
-

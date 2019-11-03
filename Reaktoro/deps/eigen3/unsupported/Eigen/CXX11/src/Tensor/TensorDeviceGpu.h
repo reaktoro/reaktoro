@@ -12,7 +12,7 @@
 
 // This header file container defines fo gpu* macros which will resolve to
 // their equivalent hip* or cuda* versions depending on the compiler in use
-// A separate header (included at the end of this file) will undefine all 
+// A separate header (included at the end of this file) will undefine all
 #include "TensorGpuHipCudaDefines.h"
 
 namespace Eigen {
@@ -216,7 +216,7 @@ struct GpuDevice {
   }
 
   template<typename Type>
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Type get(Type data) const { 
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Type get(Type data) const {
     return data;
   }
 
@@ -342,13 +342,13 @@ struct GpuDevice {
   gpu_assert(hipGetLastError() == hipSuccess);
 
 #else
- 
+
 #define LAUNCH_GPU_KERNEL(kernel, gridsize, blocksize, sharedmem, device, ...)             \
   (kernel) <<< (gridsize), (blocksize), (sharedmem), (device).stream() >>> (__VA_ARGS__);   \
   gpu_assert(cudaGetLastError() == cudaSuccess);
 
 #endif
- 
+
 // FIXME: Should be device and kernel specific.
 #ifdef EIGEN_GPUCC
 static EIGEN_DEVICE_FUNC inline void setGpuSharedMemConfig(gpuSharedMemConfig config) {

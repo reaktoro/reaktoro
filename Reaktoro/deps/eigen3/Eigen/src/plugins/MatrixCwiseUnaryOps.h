@@ -81,5 +81,3 @@ EIGEN_DOC_UNARY_ADDONS(cwiseInverse,inverse)
 EIGEN_DEVICE_FUNC
 inline const CwiseInverseReturnType
 cwiseInverse() const { return CwiseInverseReturnType(derived()); }
-
-

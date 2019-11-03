@@ -95,7 +95,7 @@ read_isotopes(void)
 			}
 			master_isotope_ptr->units = string_hsave(token);
 			/*
-			 *  Read standard 
+			 *  Read standard
 			 */
 			if (copy_token(token, &next_char, &l) == EMPTY)
 			{
@@ -259,7 +259,7 @@ read_calculate_values(void)
 			opt_save = OPT_1;
 			}
 			else
-			{				
+			{
 				error_string = sformatf(
 						"Expecting a calculate_value definition, %s. CALCULATE_VALUES data block.",
 						line);
@@ -902,7 +902,7 @@ punch_calculate_values(void)
 		result = MISSING;
 		calculate_value_ptr =
 			calculate_value_search(current_selected_output->Get_calculate_values()[i].first.c_str());
-		if (!calculate_value_ptr) 
+		if (!calculate_value_ptr)
 		{
 			error_string = sformatf(
 				"Definition not found for CALCULATE_VALUES %s.",
@@ -1443,7 +1443,7 @@ master_isotope_store(const char *name, int replace_if_found)
  *
  *   Pointer to a master_isotope structure is always returned.
  *
- *   If the string is not found, a new entry is made in the hash table. Pointer to 
+ *   If the string is not found, a new entry is made in the hash table. Pointer to
  *      the new structure is returned.
  *   If "name" is found and replace is true, pointers in old master_isotope structure
  *      are freed and replaced with additional input.
@@ -1610,7 +1610,7 @@ calculate_value_store(const char *name, int replace_if_found)
  *
  *   Pointer to a calculate_value structure is always returned.
  *
- *   If the string is not found, a new entry is made in the hash table. Pointer to 
+ *   If the string is not found, a new entry is made in the hash table. Pointer to
  *      the new structure is returned.
  *   If "name" is found and replace is true, pointers in old calculate_value structure
  *      are freed and replaced with additional input.
@@ -1800,7 +1800,7 @@ isotope_ratio_store(const char *name, int replace_if_found)
  *
  *   Pointer to a isotope_ratio structure is always returned.
  *
- *   If the string is not found, a new entry is made in the hash table. Pointer to 
+ *   If the string is not found, a new entry is made in the hash table. Pointer to
  *      the new structure is returned.
  *   If "name" is found and replace is true, pointers in old isotope_ratio structure
  *      are freed and replaced with additional input.
@@ -1962,7 +1962,7 @@ isotope_alpha_store(const char *name, int replace_if_found)
  *
  *   Pointer to a isotope_alpha structure is always returned.
  *
- *   If the string is not found, a new entry is made in the hash table. Pointer to 
+ *   If the string is not found, a new entry is made in the hash table. Pointer to
  *      the new structure is returned.
  *   If "name" is found and replace is true, pointers in old isotope_alpha structure
  *      are freed and replaced with additional input.

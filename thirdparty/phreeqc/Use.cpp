@@ -66,5 +66,3 @@ init(void)
 	trans_in = false;
 	advect_in = false;
 }
-
-

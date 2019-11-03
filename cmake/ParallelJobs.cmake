@@ -1,5 +1,5 @@
 #-------------------------------------------------------------
-# This script defines a variable JOBS to be used for parallel 
+# This script defines a variable JOBS to be used for parallel
 # compilation in install and build cmake scripts.
 #-------------------------------------------------------------
 

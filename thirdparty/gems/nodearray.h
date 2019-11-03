@@ -88,7 +88,7 @@ protected:
 
     char* tcNode;      ///< Node type codes (see databr.h), size anNodes
     bool* iaNode;      ///< GEM IA status for all nodes (true: NEED_GEM_AIA, false: NEED_GEM_SIA)
-    
+
     void allocMemory();
     void freeMemory();
 
@@ -185,10 +185,10 @@ public:
 
     bool* piaNode() const /// Get pointer to IA switches for nodes
     { return iaNode; }
-    
+
     char* ptcNode() const /// Get pointer to boundary condition codes for nodes
     { return tcNode; }
-    
+
     /// Calls GEM IPM calculation for a node with absolute index ndx
     long int RunGEM( long int ndx, long int Mode );
 
@@ -246,7 +246,7 @@ public:
 
     //---------------------------------------------------------
     // Data collection for monitoring differences
-    // formatted writing into text file that must be already open 
+    // formatted writing into text file that must be already open
     //
     /// Prints difference increments in all nodes (cells) for step t (time point at)
     void logDiffsIC( FILE* diffile, long int t, double at, long int nx, long int every_t );
@@ -259,10 +259,10 @@ public:
 
     /// Prints amounts of phases in all cells for time point t / at
     void logProfilePhMol( FILE* logfile, long int t, double at, long int nx, long int every_t );
-    
+
     /// Prints volumes of phases in all cells for time point t / at
     void logProfilePhVol( FILE* logfile, long int t, double at, long int nx, long int every_t );
-    
+
     /// Prints dissolved species molarities in all cells for time point t / at
     void logProfileAqDC( FILE* logfile, long int t, double at, long int nx, long int every_t );
 
@@ -293,7 +293,7 @@ public:
      double GetNodeMass( long int ndx, char type, char tcode, unsigned char ips );
 
      /// Move a mass m_v from node ndx_from to node ind_to, for particle type
-     void MoveParticleMass( long int ndx_from, long int ind_to, char type, char ComponentMode, 
+     void MoveParticleMass( long int ndx_from, long int ind_to, char type, char ComponentMode,
     		 char tcode, unsigned char ips, double m_v );
 
      /// Writes work node (DATABR structure) to a text VTK file
@@ -535,7 +535,7 @@ Hi,     ///< Total enthalpy of inert subsystem (J) (reserved)            +      
   // amount of solvent/sorbent in phase with index PHx from T0 node with index nodex
 #define node0_xPA( nodex, PHx ) (TNodeArray::na->pNodT0()[(nodex)]->xPA[(PHx)])
   // amount of solvent/sorbent in phase with index PHx from T1 node with index nodex
-#define node1_xPA( nodex, PHx ) (TNodeArray::na->pNodT1()[(nodex)]->xPA[(PHx)])   
+#define node1_xPA( nodex, PHx ) (TNodeArray::na->pNodT1()[(nodex)]->xPA[(PHx)])
 
 // Phase compositions node data access macros
 // amount of independent component ICx in multi-component phase PHx in T0 node nodex

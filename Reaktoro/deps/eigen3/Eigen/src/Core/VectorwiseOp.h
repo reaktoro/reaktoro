@@ -134,7 +134,7 @@ struct member_redux {
   typedef typename result_of<
                      BinaryOp(const Scalar&,const Scalar&)
                    >::type  result_type;
-  
+
   enum { Vectorizable = functor_traits<BinaryOp>::PacketAccess };
   template<int Size> struct Cost { enum { value = (Size-1) * functor_traits<BinaryOp>::Cost }; };
   EIGEN_DEVICE_FUNC explicit member_redux(const BinaryOp func) : m_functor(func) {}
@@ -162,17 +162,17 @@ struct member_redux {
   * where `foo` is any method of `VectorwiseOp`. This expression is equivalent to applying `foo()` to each
   * column of `A` and then re-assemble the outputs in a matrix expression:
   * \code [A.col(0).foo(), A.col(1).foo(), ..., A.col(A.cols()-1).foo()] \endcode
-  * 
+  *
   * Example: \include MatrixBase_colwise.cpp
   * Output: \verbinclude MatrixBase_colwise.out
   *
   * The begin() and end() methods are obviously exceptions to the previous rule as they
   * return STL-compatible begin/end iterators to the rows or columns of the nested expression.
   * Typical use cases include for-range-loop and calls to STL algorithms:
-  * 
+  *
   * Example: \include MatrixBase_colwise_iterator_cxx11.cpp
   * Output: \verbinclude MatrixBase_colwise_iterator_cxx11.out
-  * 
+  *
   * For a partial reduction on an empty input, some rules apply.
   * For the sake of clarity, let's consider a vertical reduction:
   *   - If the number of columns is zero, then a 1x0 row-major vector expression is returned.
@@ -180,7 +180,7 @@ struct member_redux {
   *       - a row vector of zeros is returned for sum-like reductions (sum, squaredNorm, norm, etc.)
   *       - a row vector of ones is returned for a product reduction (e.g., <code>MatrixXd(n,0).colwise().prod()</code>)
   *       - an assert is triggered for all other reductions (minCoeff,maxCoeff,redux(bin_op))
-  * 
+  *
   * \sa DenseBase::colwise(), DenseBase::rowwise(), class PartialReduxExpr
   */
 template<typename ExpressionType, int Direction> class VectorwiseOp
@@ -216,7 +216,7 @@ template<typename ExpressionType, int Direction> class VectorwiseOp
     };
 
   protected:
-  
+
     template<typename OtherDerived> struct ExtendedType {
       typedef Replicate<OtherDerived,
                         isVertical   ? 1 : ExpressionType::RowsAtCompileTime,
@@ -304,7 +304,7 @@ template<typename ExpressionType, int Direction> class VectorwiseOp
       *
       * \warning the size along the reduction direction must be strictly positive,
       *          otherwise an assertion is triggered.
-      * 
+      *
       * \sa class VectorwiseOp, DenseBase::colwise(), DenseBase::rowwise()
       */
     template<typename BinaryOp>
@@ -341,7 +341,7 @@ template<typename ExpressionType, int Direction> class VectorwiseOp
       *
       * \warning the size along the reduction direction must be strictly positive,
       *          otherwise an assertion is triggered.
-      * 
+      *
       * \warning the result is undefined if \c *this contains NaN.
       *
       * Example: \include PartialRedux_minCoeff.cpp
@@ -360,7 +360,7 @@ template<typename ExpressionType, int Direction> class VectorwiseOp
       *
       * \warning the size along the reduction direction must be strictly positive,
       *          otherwise an assertion is triggered.
-      * 
+      *
       * \warning the result is undefined if \c *this contains NaN.
       *
       * Example: \include PartialRedux_maxCoeff.cpp

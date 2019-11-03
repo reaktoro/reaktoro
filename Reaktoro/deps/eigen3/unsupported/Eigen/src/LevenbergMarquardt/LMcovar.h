@@ -12,7 +12,7 @@
 #ifndef EIGEN_LMCOVAR_H
 #define EIGEN_LMCOVAR_H
 
-namespace Eigen { 
+namespace Eigen {
 
 namespace internal {
 

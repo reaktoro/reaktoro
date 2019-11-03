@@ -67,7 +67,7 @@ void exportChemicalEditor(py::module& m)
         .def("addPhase", addPhase3, py::return_value_policy::reference_internal)
         .def("addPhase", addPhase4, py::return_value_policy::reference_internal)
         .def("addReaction", &ChemicalEditor::addReaction, py::return_value_policy::reference_internal)
-        
+
         .def("addAqueousPhase", &ChemicalEditor::addAqueousPhase, py::return_value_policy::reference_internal)
         .def("addAqueousPhaseWithElements", &ChemicalEditor::addAqueousPhaseWithElements, py::return_value_policy::reference_internal)
         .def("addAqueousPhaseWithElementsOf", &ChemicalEditor::addAqueousPhaseWithElementsOf, py::return_value_policy::reference_internal)

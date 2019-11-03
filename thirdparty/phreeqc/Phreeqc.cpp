@@ -38,7 +38,7 @@ Phreeqc::~Phreeqc(void)
 {
 
 	clean_up();
-	
+
 	PHRQ_free_all();
 	if (phrq_io == &ioInstance)
 	{
@@ -381,10 +381,10 @@ void Phreeqc::init(void)
 	*---------------------------------------------------------------------- */
 	count_sum_jacob0        = 0;
 	max_sum_jacob0          = 0;
-	sum_jacob0              = NULL;	
+	sum_jacob0              = NULL;
 	count_sum_mb1           = 0;
 	max_sum_mb1             = 0;
-	sum_mb1                 = NULL;	
+	sum_mb1                 = NULL;
 	count_sum_jacob1        = 0;
 	max_sum_jacob1          = 0;
 	sum_jacob1              = NULL;
@@ -578,7 +578,7 @@ void Phreeqc::init(void)
 	/*----------------------------------------------------------------------
 	*   Reaction work space
 	*---------------------------------------------------------------------- */
-	// struct trxn;	
+	// struct trxn;
 	trxn.token				= 0;
 	for (int i = 0; i < MAX_LOG_K_INDICES; i++)
 	{
@@ -667,7 +667,7 @@ void Phreeqc::init(void)
 	fpunchf_user_s_warning  = 0;
 	fpunchf_user_buffer[0]  = 0;
 
-#if defined PHREEQ98 
+#if defined PHREEQ98
 	struct rate *user_graph;
 	char **user_graph_headings;
 	int user_graph_count_headings;
@@ -722,7 +722,7 @@ void Phreeqc::init(void)
 #else
 	ineq_tol                = pow((double) 10, (double) -DBL_DIG);
 #endif
-	convergence_tolerance   = 1e-8;	
+	convergence_tolerance   = 1e-8;
 	step_size				= 100.;
 	pe_step_size			= 10.;
 	step_size_now           = step_size;
@@ -779,11 +779,11 @@ void Phreeqc::init(void)
 	count_calculate_value	= 0;
 	calculate_value			= NULL;
 	max_calculate_value		= MAX_ELTS;
-	calculate_value_hash_table = NULL;	
+	calculate_value_hash_table = NULL;
 	count_isotope_ratio		= 0;
 	isotope_ratio			= 0;
 	max_isotope_ratio		= MAX_ELTS;
-	isotope_ratio_hash_table = 0;	
+	isotope_ratio_hash_table = 0;
 	count_isotope_alpha		= 0;
 	isotope_alpha			= 0;
 	max_isotope_alpha		= MAX_ELTS;
@@ -795,7 +795,7 @@ void Phreeqc::init(void)
 	user_database			= NULL;
 	//have_punch_name			= FALSE;
 	print_density		    = 0;
-	zeros                   = NULL;	
+	zeros                   = NULL;
 	zeros_max			    = 1;
 	cell_pore_volume	    = 0;
 	cell_volume			    = 0;
@@ -830,15 +830,15 @@ void Phreeqc::init(void)
 	basic_fortran_callback_ptr  = NULL;
 
 	/* cl1.cpp ------------------------------- */
-	x_arg                   = NULL; 
-	res_arg                 = NULL; 
+	x_arg                   = NULL;
+	res_arg                 = NULL;
 	scratch                 = NULL;
-	x_arg_max               = 0; 
-	res_arg_max             = 0; 
+	x_arg_max               = 0;
+	res_arg_max             = 0;
 	scratch_max             = 0;
 #ifdef SKIP
 	/* dw.cpp ------------------------------- */
-	/* COMMON /QQQQ/ */	
+	/* COMMON /QQQQ/ */
 	Q0                      = 0;
 	Q5                      = 0;
 	GASCON                  = 0.461522e0;
@@ -863,7 +863,7 @@ void Phreeqc::init(void)
 	b_sum                   = 0;
 	R_TK                    = 0;
 	/* input.cpp ------------------------------- */
-	check_line_return       = 0;  
+	check_line_return       = 0;
 	reading_db              = FALSE;
 	/* integrate.cpp ------------------------------- */
 	midpoint_sv             = 0;
@@ -941,7 +941,7 @@ void Phreeqc::init(void)
 		now[i]              = 0;
 	}
 	/* kinetics.cpp ------------------------------- */
-	count_pp = count_pg = count_ss = 0; 
+	count_pp = count_pg = count_ss = 0;
 	cvode_kinetics_ptr      = NULL;
 	cvode_test              = FALSE;
 	cvode_error             = FALSE;
@@ -995,7 +995,7 @@ void Phreeqc::init(void)
 	char *LogFileNameC;
 	char progress_str[512];
 #endif
-	/* Pitzer  */	
+	/* Pitzer  */
 	pitzer_model			= FALSE;
 	sit_model				= FALSE;
 	pitzer_pe				= FALSE;
@@ -1017,7 +1017,7 @@ void Phreeqc::init(void)
 	use_etheta				= TRUE;
 	OTEMP					= -100.;
 	OPRESS					= -100.;
-	A0                      = 0;	
+	A0                      = 0;
 	spec                    = NULL;
 	cations                 = NULL;
 	anions                  = NULL;
@@ -1049,7 +1049,7 @@ void Phreeqc::init(void)
 	dummy                   = 0;
 	/* print.cpp ------------------------------- */
 	sformatf_buffer = (char *) PHRQ_malloc(256 * sizeof(char));
-	if (sformatf_buffer == NULL) 
+	if (sformatf_buffer == NULL)
 			malloc_error();
 		sformatf_buffer_size = 256;
 #ifdef PHREEQ98
@@ -1063,7 +1063,7 @@ void Phreeqc::init(void)
 #endif
 	/* read.cpp */
 	prev_next_char          = NULL;
-#if defined PHREEQ98 
+#if defined PHREEQ98
 	int shifts_as_points;
 #endif
 	/* read_class.cxx */
@@ -1077,7 +1077,7 @@ void Phreeqc::init(void)
 	sit_params              = NULL;
 	count_sit_param			= 0;
 	max_sit_param			= 100;
-	// auto sit_param_map	
+	// auto sit_param_map
 	sit_A0                  = 0;
 	sit_count_cations       = 0;
 	sit_count_anions        = 0;
@@ -1219,7 +1219,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	*---------------------------------------------------------------------- */
 	count_save_values          = 0;
 	/*
-	save_values                = NULL;	
+	save_values                = NULL;
 	save_init(-1);             // set initial save values
 	*/
 
@@ -1231,7 +1231,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	/*----------------------------------------------------------------------
 	*   Inverse
 	*---------------------------------------------------------------------- */
-	
+
 	/*
 	inverse					= NULL;
 	*/
@@ -1280,10 +1280,10 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	/*
 	count_sum_jacob0        = 0;
 	max_sum_jacob0          = 0;
-	sum_jacob0              = NULL;	
+	sum_jacob0              = NULL;
 	count_sum_mb1           = 0;
 	max_sum_mb1             = 0;
-	sum_mb1                 = NULL;	
+	sum_mb1                 = NULL;
 	count_sum_jacob1        = 0;
 	max_sum_jacob1          = 0;
 	sum_jacob1              = NULL;
@@ -1481,7 +1481,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	s_co3					= NULL;
 	s_h2					= NULL;
 	s_o2					= NULL;
-	*/	
+	*/
 	// logk
 	for (int i = 0; i < pSrc->count_logk; i++)
 	{
@@ -1500,7 +1500,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 				logk_ptr->add_logk[j].coef = pSrc->logk[i]->add_logk[j].coef;
 				logk_ptr->add_logk[j].name = string_hsave( pSrc->logk[i]->add_logk[j].name);
 			}
-		}	
+		}
 	}
 	// s, species
 	for (int i = 0; i < pSrc->count_s; i++)
@@ -1557,7 +1557,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 			s_ptr->rxn = cxxChemRxn2rxn(rxn);
 			//s_ptr->rxn = rxn_copy_operator(pSrc->s[i]->rxn);
 		}
-		//rxn_s	
+		//rxn_s
 		s_ptr->rxn_s = NULL;
 		if (pSrc->s[i]->rxn_s != NULL)
 		{
@@ -1639,7 +1639,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 		if (pSrc->phases[i]->rxn_x != NULL)
 		{
 			cxxChemRxn rxn_x(pSrc->phases[i]->rxn_x);
-			phase_ptr->rxn_x = cxxChemRxn2rxn(rxn_x);	
+			phase_ptr->rxn_x = cxxChemRxn2rxn(rxn_x);
 		}
 	}
 	/*----------------------------------------------------------------------
@@ -1683,7 +1683,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 		if (pSrc->master[i]->rxn_secondary != NULL)
 		{
 			cxxChemRxn rxn_secondary(pSrc->master[i]->rxn_secondary);
-			master[i]->rxn_secondary = cxxChemRxn2rxn(rxn_secondary);	
+			master[i]->rxn_secondary = cxxChemRxn2rxn(rxn_secondary);
 		}
 	}
 	/*----------------------------------------------------------------------
@@ -1714,7 +1714,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	/*----------------------------------------------------------------------
 	*   Reaction work space
 	*---------------------------------------------------------------------- */
-	// struct trxn;	
+	// struct trxn;
 	/*
 	trxn.token				= 0;
 	for (int i = 0; i < MAX_LOG_K_INDICES; i++)
@@ -1803,7 +1803,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 		for (int i = 0; i < count_rates; i++)
 		{
 			rates[i].name = string_hsave(pSrc->rates[i].name);
-			rates[i].commands = string_duplicate(pSrc->rates[i].commands); 
+			rates[i].commands = string_duplicate(pSrc->rates[i].commands);
 			rates[i].new_def = TRUE;
 			rates[i].linebase = NULL;
 			rates[i].varbase = NULL;
@@ -1821,7 +1821,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 		user_print->commands = NULL;
 		if (pSrc->user_print->commands != NULL)
 		{
-			user_print->commands = string_duplicate(pSrc->user_print->commands); 
+			user_print->commands = string_duplicate(pSrc->user_print->commands);
 		}
 		user_print->new_def = TRUE;
 		user_print->linebase = NULL;
@@ -1839,13 +1839,13 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 		user_punch->commands = NULL;
 		if (pSrc->user_punch->commands != NULL)
 		{
-			user_punch->commands = string_duplicate(pSrc->user_punch->commands); 
+			user_punch->commands = string_duplicate(pSrc->user_punch->commands);
 		}
 		user_punch->new_def = TRUE;
 		user_punch->linebase = NULL;
 		user_punch->varbase = NULL;
 		user_punch->loopbase = NULL;
-	}	
+	}
 	/*
 	user_punch_headings		= NULL;
 	user_punch_count_headings = 0;
@@ -1866,7 +1866,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	fpunchf_user_s_warning  = pSrc->fpunchf_user_s_warning;
 	//fpunchf_user_buffer[0]  = 0;
 
-#if defined PHREEQ98 
+#if defined PHREEQ98
 	struct rate *user_graph;
 	char **user_graph_headings;
 	int user_graph_count_headings;
@@ -2050,7 +2050,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	count_calculate_value	= 0;
 	calculate_value			= NULL;
 	max_calculate_value		= MAX_ELTS;
-	calculate_value_hash_table = NULL;	
+	calculate_value_hash_table = NULL;
 	*/
 	for (int i = 0; i < pSrc->count_calculate_value; i++)
 	{
@@ -2072,7 +2072,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	count_isotope_ratio		= 0;
 	isotope_ratio			= 0;
 	max_isotope_ratio		= MAX_ELTS;
-	isotope_ratio_hash_table = 0;	
+	isotope_ratio_hash_table = 0;
 	*/
 	for (int i = 0; i < pSrc->count_isotope_ratio; i++)
 	{
@@ -2101,7 +2101,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	//have_punch_name			= pSrc->have_punch_name;
 	print_density		    = pSrc->print_density;
 #ifdef SKIP
-	zeros                   = NULL;	
+	zeros                   = NULL;
 	zeros_max			    = 1;
 	cell_pore_volume	    = 0;
 	cell_volume			    = 0;
@@ -2132,14 +2132,14 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	/* Basic */
 	basic_interpreter       = NULL;
 	/* cl1.cpp ------------------------------- */
-	x_arg                   = NULL; 
-	res_arg                 = NULL; 
+	x_arg                   = NULL;
+	res_arg                 = NULL;
 	scratch                 = NULL;
-	x_arg_max               = 0; 
-	res_arg_max             = 0; 
+	x_arg_max               = 0;
+	res_arg_max             = 0;
 	scratch_max             = 0;
 	/* dw.cpp ------------------------------- */
-	/* COMMON /QQQQ/ */	
+	/* COMMON /QQQQ/ */
 	Q0                      = 0;
 	Q5                      = 0;
 	GASCON                  = 0.461522e0;
@@ -2163,7 +2163,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	b_sum                   = 0;
 	R_TK                    = 0;
 	/* input.cpp ------------------------------- */
-	check_line_return       = 0;  
+	check_line_return       = 0;
 	reading_db              = FALSE;
 	/* integrate.cpp ------------------------------- */
 	midpoint_sv             = 0;
@@ -2241,7 +2241,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 		now[i]              = 0;
 	}
 	/* kinetics.cpp ------------------------------- */
-	count_pp = count_pg = count_ss = 0; 
+	count_pp = count_pg = count_ss = 0;
 	cvode_kinetics_ptr      = NULL;
 	cvode_test              = FALSE;
 	cvode_error             = FALSE;
@@ -2296,7 +2296,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	char progress_str[512];
 #endif
 #endif
-	/* Pitzer  */	
+	/* Pitzer  */
 	pitzer_model			= pSrc->pitzer_model;
 	sit_model				= pSrc->sit_model;
 	pitzer_pe				= pSrc->pitzer_pe;
@@ -2329,7 +2329,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	use_etheta				= TRUE;
 	OTEMP					= -100.0;
 	OPRESS					= -100.0;
-	A0                      = 0;	
+	A0                      = 0;
 	spec                    = NULL;
 	cations                 = NULL;
 	anions                  = NULL;
@@ -2364,7 +2364,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	/* print.cpp ------------------------------- */
 	/*
 	sformatf_buffer = (char *) PHRQ_malloc(256 * sizeof(char));
-	if (sformatf_buffer == NULL) 
+	if (sformatf_buffer == NULL)
 		malloc_error();
 	sformatf_buffer_size = 256;
 	*/
@@ -2379,7 +2379,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 #endif
 	/* read.cpp */
 	prev_next_char          = NULL;
-#if defined PHREEQ98 
+#if defined PHREEQ98
 	int shifts_as_points;
 #endif
 	/* read_class.cxx */
@@ -2396,7 +2396,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	sit_params              = NULL;
 	count_sit_param			= 0;
 	max_sit_param			= 100;
-	// auto sit_param_map	
+	// auto sit_param_map
 	sit_A0                  = 0;
 	sit_count_cations       = 0;
 	sit_count_anions        = 0;
@@ -2408,7 +2408,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	sit_M                   = NULL;
 	sit_LGAMMA              = NULL;
 */
-	
+
 	for (int i = 0; i < pSrc->count_sit_param; i++)
 	{
 		sit_param_store(pSrc->sit_params[i], true);
@@ -2427,7 +2427,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 
 	/* transport.cpp ------------------------------- */
 	/* storage is created and freed in tranport.cpp */
-	sol_D                   = NULL;   
+	sol_D                   = NULL;
 	sol_D_dbg               = NULL;
 	J_ij                    = NULL;
 	J_ij_il                 = NULL;
@@ -2473,10 +2473,10 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	return;
 }
 // Operator overloaded using a member function
-Phreeqc &Phreeqc::operator=(const Phreeqc &rhs) 
+Phreeqc &Phreeqc::operator=(const Phreeqc &rhs)
 {
 	if (this == &rhs)      // Same object?
-		return *this; 
+		return *this;
 
 	// clean up this here
 	this->clean_up();

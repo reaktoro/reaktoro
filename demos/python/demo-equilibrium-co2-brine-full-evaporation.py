@@ -22,13 +22,12 @@
 from reaktoro import *
 
 editor = ChemicalEditor()
-    editor.addAqueousPhase(["H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--", "Ca++"]) \
-        .setChemicalModelDebyeHuckel() \
-        .setActivityModelDrummondCO2()
-    editor.addGaseousPhase(["CO2(g)", "H2O(g)"]) \
-        .setChemicalModelSpycherPruessEnnis()
-    editor.addMineralPhase("Calcite");
-    editor.addMineralPhase("Halite");
+editor.addAqueousPhase(
+    ["H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--", "Ca++"]
+).setChemicalModelDebyeHuckel().setActivityModelDrummondCO2()
+editor.addGaseousPhase(["CO2(g)", "H2O(g)"]).setChemicalModelSpycherPruessEnnis()
+editor.addMineralPhase("Calcite")
+editor.addMineralPhase("Halite")
 
 system = ChemicalSystem(editor)
 reactions = ReactionSystem(editor)
@@ -44,4 +43,3 @@ options.optimum.output.active = True
 options.epsilon = 1e-50
 
 state = equilibrate(problem, options)
-

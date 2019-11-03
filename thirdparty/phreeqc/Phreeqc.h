@@ -24,7 +24,7 @@
 #include <errno.h>
 #include <float.h>
 #include "phrqtype.h"
-#include "cvdense.h"	
+#include "cvdense.h"
 #include "runner.h"
 #include "dumper.h"
 #include "PHRQ_io.h"
@@ -69,7 +69,7 @@ public:
 	Phreeqc(PHRQ_io *io = NULL);
 	Phreeqc(const Phreeqc &src);
 	void InternalCopy(const Phreeqc *pSrc);
-	Phreeqc &operator=(const Phreeqc &rhs); 
+	Phreeqc &operator=(const Phreeqc &rhs);
 	~Phreeqc(void);
 
 public:
@@ -173,7 +173,7 @@ public:
 	LDBLE calc_solution_volume(void);
 
 	// chart.cpp
-#if defined PHREEQ98 
+#if defined PHREEQ98
 	void DeleteCurves(void);
 	void ExtractCurveInfo(char *line, int curvenr);
 	void  GridChar(char *s, char *a);
@@ -536,7 +536,7 @@ public:
 	int read_pitzer(void);
 	int set_pz(int initial);
 	int calc_pitz_param(struct pitz_param *pz_ptr, LDBLE TK, LDBLE TR);
-	int check_gammas_pz(void);	
+	int check_gammas_pz(void);
 #ifdef SKIP
 	LDBLE DC(LDBLE T);
 	int DW(LDBLE T);
@@ -758,7 +758,7 @@ public:
 	int read_title(void);
 	int read_user_print(void);
 	int read_user_punch(void);
-#if defined PHREEQ98 
+#if defined PHREEQ98
 	int read_user_graph(void);
 #endif
 #if defined MULTICHART
@@ -1079,7 +1079,7 @@ public:
 	LDBLE calc_rho_0(LDBLE tc, LDBLE pa);
 	LDBLE calc_dielectrics(LDBLE tc, LDBLE pa);
 	int compute_gfw(const char *string, LDBLE * gfw);
-#if defined PHREEQ98 
+#if defined PHREEQ98
 	int copy_title(char *token_ptr, char **ptr, int *length);
 #endif
 	int copy_token(char *token_ptr, char **ptr, int *length);
@@ -1566,7 +1566,7 @@ protected:
 	int fpunchf_user_s_warning;
 	char fpunchf_user_buffer[80];
 
-#if defined PHREEQ98 
+#if defined PHREEQ98
 	struct rate *user_graph;
 	char **user_graph_headings;
 	int user_graph_count_headings;
@@ -1664,7 +1664,7 @@ protected:
 	//char *selected_output_file_name;
 	std::map<int, SelectedOutput> SelectedOutput_map;
 	SelectedOutput * current_selected_output;
-	
+
 	std::map <int, UserPunch> UserPunch_map;
 	UserPunch * current_user_punch;
 
@@ -1778,7 +1778,7 @@ protected:
 	LDBLE a_aa_sum, b2, b_sum, R_TK;
 
 	/* input.cpp ------------------------------- */
-	int check_line_return;  
+	int check_line_return;
 	int reading_db;
 
 	/* integrate.cpp ------------------------------- */
@@ -1901,7 +1901,7 @@ protected:
 
 	/* read.cpp */
 	char *prev_next_char;
-#if defined PHREEQ98 
+#if defined PHREEQ98
 	int shifts_as_points;
 #endif
 
@@ -1966,7 +1966,7 @@ protected:
 	std::map<const char *, int> rates_map;
 
 	/* new after release of Version 3 */
-	std::map<std::string, std::vector < std::string> > sum_species_map; 
+	std::map<std::string, std::vector < std::string> > sum_species_map;
 	std::map<std::string, std::vector < std::string> > sum_species_map_db;
 
 	friend class PBasic;
@@ -1978,7 +1978,7 @@ protected:
 	friend class IPhreeqcPhast;
 	friend class PhreeqcRM;
 
-	std::vector<int> keycount;  // used to mark keywords that have been read 
+	std::vector<int> keycount;  // used to mark keywords that have been read
 
 public:
 	static const struct const_iso iso_defaults[];
@@ -2126,7 +2126,7 @@ namespace Utilities
 	int Rxn_read_modify(std::map < int, T > &m, std::set < int > &s, Phreeqc * phreeqc_cookie)
 	{
 		typename std::map < int, T >::iterator it;
-		
+
 		CParser parser(phreeqc_cookie->Get_phrq_io());
 
 		std::string key_name;
@@ -2158,7 +2158,7 @@ namespace Utilities
 	int Rxn_read_modify(std::map < int, T > &m, std::set < int > &s, Phreeqc * phreeqc_cookie)
 	{
 		typename std::map < int, T >::iterator it;
-		
+
 		CParser parser(phreeqc_cookie->Get_phrq_io());
 
 		std::string key_name;

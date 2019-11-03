@@ -2447,7 +2447,7 @@ long int EOSPARAM::ParamMix( double *Xin )
 
 //=======================================================================================================
 // Soave-Redlich-Kwong (SRK) model for fluid mixtures
-// References: Soave (1972), Soave (1993) 
+// References: Soave (1972), Soave (1993)
 // (c) TW December 2008
 //=======================================================================================================
 
@@ -6284,5 +6284,3 @@ long int TSTPcalc::STPCalcFugPure( double Tmin, float *Cpg, double *FugProps )
 
 
 //--------------------- End of s_solmod2.cpp ---------------------------
-
-

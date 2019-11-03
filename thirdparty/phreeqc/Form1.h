@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-#include <cassert>	
+#include <cassert>
 
 namespace zdg_ui2 {
 	using namespace System;
@@ -40,7 +40,7 @@ namespace zdg_ui2 {
 				symbol_use = 0;
 				Y2 = false;
 				phreeqc_done = false;
-				Y2show = false;	
+				Y2show = false;
 				background = true;
 				hints = true;
 				grid = true;
@@ -53,7 +53,7 @@ namespace zdg_ui2 {
 				myForm->~Form1();
 			}
 	private: bool phreeqc_done;
-			 
+
 	private: void SetSize()
 			 {
 				 zg1->Location = Point( 0, 0 );
@@ -63,11 +63,11 @@ namespace zdg_ui2 {
 			 }
 
 			System::Void MyFormClosingEventHandler(
-					System::Object^ sender, 
+					System::Object^ sender,
 				System::Windows::Forms::FormClosingEventArgs ^e)
 			{
 				ChartObject *chart = this->chartobject_ptr;
-				if (chart != NULL) 
+				if (chart != NULL)
 				{
 					chart->Set_done(true);
 					System::Threading::Interlocked::Exchange(this->chartobject_ptr->usingResource, 0);
@@ -98,7 +98,7 @@ namespace zdg_ui2 {
 				 ChartObject *chart = this->chartobject_ptr;
 				 if (chart == NULL) return false;
 				 std::vector<CurveObject *> &Curves = chart->Get_Curves();
-				 if (LogX && chart->Get_axis_scale_x()[4] == 10.0 && 
+				 if (LogX && chart->Get_axis_scale_x()[4] == 10.0 &&
 					 Curves[i]->Get_x()[i2] <= 0)
 				 {
 					 if (Phreeqc* ptr = chart->Get_phreeqc())
@@ -109,8 +109,8 @@ namespace zdg_ui2 {
 					 //LogX = false;
 					 return true;
 				 }
-				 if (Curves[i]->Get_y()[i2] <= 0 && 
-					 (chart->Get_axis_scale_y()[4] == 10.0 || 
+				 if (Curves[i]->Get_y()[i2] <= 0 &&
+					 (chart->Get_axis_scale_y()[4] == 10.0 ||
 					 chart->Get_axis_scale_y2()[4] == 10.0))
 				 {
 					 if (Curves[i]->Get_y_axis() == 2 && LogY2)
@@ -150,11 +150,11 @@ namespace zdg_ui2 {
 			 void DefineCurves(GraphPane ^myPane, int init)
 			 {
 				 ChartObject *chart = this->chartobject_ptr;
-				 if (chart == NULL) 
+				 if (chart == NULL)
 				 {
 					 return;
 				 }
- 				 std::vector<CurveObject *> Curves; 
+ 				 std::vector<CurveObject *> Curves;
 				 size_t i;
 				 for (i = 0; i < chart->Get_CurvesCSV().size(); i++)
 				 {
@@ -237,7 +237,7 @@ namespace zdg_ui2 {
 
 
 					 // Curve with no points is invisible
-					 if (Curves[i]->Get_x().size() == 0) 
+					 if (Curves[i]->Get_x().size() == 0)
 					 {
 						 myCurve->IsVisible = false;
 						 myCurve->Label->IsVisible = false;
@@ -576,7 +576,7 @@ namespace zdg_ui2 {
 				saveFileDialog1->Filter = "User graph files (*.u_g)|*.u_g|txt files (*.txt)|*.txt|All files (*.*)|*.*";
 				saveFileDialog1->FilterIndex = 1;
 				saveFileDialog1->RestoreDirectory = true;
-#undef OK 
+#undef OK
 				if ( saveFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK )
 				{
 					std::string file_name;
@@ -592,9 +592,9 @@ namespace zdg_ui2 {
 					}
 
 					// write headings
-					size_t max_points = 0; 
+					size_t max_points = 0;
 					f_out.precision(4);
-					for (int i = 0; i < zg1->GraphPane->CurveList->Count; i++) 
+					for (int i = 0; i < zg1->GraphPane->CurveList->Count; i++)
 					{
 						LineItem  ^curve;
 						curve =  (LineItem ^) zg1->GraphPane->CurveList[i];
@@ -611,7 +611,7 @@ namespace zdg_ui2 {
 						f_out.width(12);
 						f_out << "x" << "\t";
 						f_out.width(12);
-						if (s_std.size() > 0) 
+						if (s_std.size() > 0)
 						{
 							f_out << s_std << "\t";
 						}
@@ -635,7 +635,7 @@ namespace zdg_ui2 {
 							LineItem  ^curve;
 							curve =  (LineItem ^) zg1->GraphPane->CurveList[i];
 							// Get the PointPairList
-							IPointListEdit  ^ip = (IPointListEdit^) curve->Points;					
+							IPointListEdit  ^ip = (IPointListEdit^) curve->Points;
 							if (i2 < (size_t) ip->Count)
 							{
 								//double x = ip[i]->X;
@@ -905,7 +905,7 @@ namespace zdg_ui2 {
 					{
 
 						// Make list of curves
-						std::vector<CurveObject *> Curves; 
+						std::vector<CurveObject *> Curves;
 						size_t j;
 						for (j = 0; j < chart->Get_CurvesCSV().size(); j++)
 						{
@@ -916,7 +916,7 @@ namespace zdg_ui2 {
 							Curves.push_back(chart->Get_Curves()[j]);
 						}
 						// Add points to curves ...
-						for (int i = 0; i < zg1->GraphPane->CurveList->Count; i++) 
+						for (int i = 0; i < zg1->GraphPane->CurveList->Count; i++)
 						{
 							curve =  (LineItem ^) zg1->GraphPane->CurveList[i];
 							// Get the PointPairList
@@ -942,7 +942,7 @@ namespace zdg_ui2 {
 
 						//size_t i, k;
 						//k = 0;
-						//for (i = 0; i < Curves.size(); i++) 
+						//for (i = 0; i < Curves.size(); i++)
 						//{
 						//	if (Curves[i]->Get_x().size() == 0) continue;
 						//	curve =  (LineItem ^) zg1->GraphPane->CurveList[k++];
@@ -1007,7 +1007,7 @@ namespace zdg_ui2 {
 						zg1->Refresh();
 					}
 					//
-					// Following asserts may not be true for Log scales 
+					// Following asserts may not be true for Log scales
 					// negative values are rejected, so chart may have fewer points than phreeqc
 					//
 					//for (size_t j = 0; j < chart->Get_CurvesCSV().size(); j++)
@@ -1019,7 +1019,7 @@ namespace zdg_ui2 {
 					//	}
 					//	assert(zg1->GraphPane->CurveList[j]->Points->Count == chart->Get_CurvesCSV()[j]->Get_x().size());
 					//}
-					//for (int j = chart->Get_CurvesCSV().size(); j < zg1->GraphPane->CurveList->Count; j++) 
+					//for (int j = chart->Get_CurvesCSV().size(); j < zg1->GraphPane->CurveList->Count; j++)
 					//{
 					//	int k = j - chart->Get_CurvesCSV().size();
 					//	if (zg1->GraphPane->CurveList[j]->Points->Count != chart->Get_Curves()[k]->Get_x().size())
@@ -1102,9 +1102,9 @@ namespace zdg_ui2 {
 			this->zg1 = (gcnew ZedGraph::ZedGraphControl());
 			this->timer1 = (gcnew System::Windows::Forms::Timer( this->components ));
 			this->SuspendLayout();
-			// 
+			//
 			// zg1
-			// 
+			//
 			this->zg1->Location = System::Drawing::Point(12, 12);
 			this->zg1->Name = L"zg1";
 			this->zg1->ScrollGrace = 0;
@@ -1117,9 +1117,9 @@ namespace zdg_ui2 {
 			this->zg1->Size = System::Drawing::Size(this->chartobject_ptr->Get_PanelWidth() - 2 * 12, chartobject_ptr->Get_PanelHeight() - 2 * 12);
 			this->zg1->TabIndex = 0;
 			this->timer1->Tick += gcnew System::EventHandler( this, &Form1::timer1_Tick );
-			// 
+			//
 			// Form1
-			// 
+			//
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->AutoValidate = System::Windows::Forms::AutoValidate::EnablePreventFocusChange;
