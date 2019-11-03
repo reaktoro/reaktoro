@@ -38,6 +38,7 @@ before_install:
 install:
   - $CONDA devenv
   - source $CONDA_BIN/activate reaktoro
+  - pre-commit install
 
 script:
   - export "CFLAGS=-I$CONDA_PREFIX/include $CFLAGS"
@@ -45,6 +46,7 @@ script:
   - echo -e "\n\nCurrent compiler configuration:\nCXX=$CXX\nCC=$CC\nCFLAGS=$CFLAGS\nCXXFLAGS=$CXXFLAGS"
   - echo -e "\nCurrent packages:"
   - $CONDA list
+  - pre-commit run --all-files
   - inv -e compile -n $NUMBER_OF_COMPILATION_JOBS
   - python ci/check_compiled_files.py
   - pytest -n auto -ra -vv .

@@ -31,7 +31,9 @@ install:
   - conda list
   - clcache -s
   - clcache -z
+  - pre-commit install
 build_script:
+  - pre-commit run --all-files
   - inv -e compile --config=%CONFIG% --verbose
   - clcache -s
   - python ci\check_compiled_files.py
