@@ -68,6 +68,30 @@ We use the `Fork & Pull Request workflow`_ to ensure everything works smoothly. 
 3. Add your changes in a branch named after what's being done (``lower-case-with-hyphens``)
 4. Make a pull request to ``reaktoro/Reaktoro``, targeting the ``master`` branch
 
+But what about how you can do your changes? In order to start developing, you'll need to build Reaktoro from sources. There
+are two ways: install the dependencies manually, as described `here
+<http://www.reaktoro.org/installation.html>`_, or using Conda. `Conda
+<https://conda.io/docs/>`_ is a tool for managing packages, dependencies and
+environments for multiple languages, including Python and C++, and supporting
+multiple platforms: Windows, Linux and macOS. In order to start developing
+Reaktoro using Conda, these are the steps:
+
+#. Install Miniconda, pick the 64-bit installer that uses the latest Python version from: `conda.io/miniconda.html <https://conda.io/miniconda.html>`_.
+#. Add ``conda-forge`` as a channel: ``conda config --append channels conda-forge``
+#. Install ``conda-devenv``: ``conda install -n base conda-devenv``
+#. Create an environment for Reaktoro, from the repository root directory: ``conda devenv``
+#. Activate the environment: ``source activate reaktoro`` from Linux/macOS or ``activate reaktoro`` from Windows
+#. Install pre-commit in order to activate git hooks, checkers and formatters: ``pre-commit install``
+#. Create a ``build`` directory and call ``cmake`` from it (for now check the `.travis.yml` file for an example on CMake parameters), OR, on Windows, call the ``inv msvc`` task to generate a project under ``build\msvc`` directory, open it in the IDE and build the ``INSTALL`` project. (``inv`` is short for ``invoke``, from the `Invoke <https://www.pyinvoke.org/>`_ tool.)
+
+We follow some standards for the sake of code style, uniformity and quality. Don't worry, everything is provided through
+``pre-commit``. If you choose to develop Reaktoro using Conda, then the steps depicted above include ``pre-commit``.
+If you installed the dependecies manually, you have to install ``pre-commit`` just after you cloned Reaktoro's
+repository. Just do in your console: ``pre-commit install``, then checkers and formatters are enable to verify every
+modification you introduced in a commit automatically. If something is not according to the standards, then the commit
+will fail, but ``pre-commit`` will modify the necessary part in order to fit it in our standards, then just commit
+again and everything will be fine.
+
 That's all for now. Is there any thing missing here? If so, please `let us know`__.
 
 .. _Reaktoro's GitHub Issues: https://github.com/reaktoro/Reaktoro/issues/new
