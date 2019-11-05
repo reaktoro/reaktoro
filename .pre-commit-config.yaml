@@ -19,8 +19,8 @@ repos:
     hooks:
     -   id: blacken-docs
 
-#-   repo: https://github.com/pocc/pre-commit-hooks
-#    rev: v0.2.0
-#    hooks:
-#    -   id: clang-format
-#        args: [-i -style=file]
+-   repo: https://github.com/pocc/pre-commit-hooks
+    rev: v0.2.0
+    hooks:
+    -   id: clang-format
+        args: [-i -style=file]
