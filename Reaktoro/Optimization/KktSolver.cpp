@@ -18,8 +18,8 @@
 #include "KktSolver.hpp"
 
 // Eigen includes
-#include <Reaktoro/deps/eigen3/Eigen/LU>
 #include <Reaktoro/deps/eigen3/Eigen/Cholesky>
+#include <Reaktoro/deps/eigen3/Eigen/LU>
 using namespace Eigen;
 
 // Reaktoro includes
@@ -161,8 +161,8 @@ auto KktSolverDense<LUSolver>::decompose(const KktMatrix& lhs) -> void
 
     // Check if the Hessian matrix is in the dense mode
     Assert(lhs.H.mode == Hessian::Dense || lhs.H.mode == Hessian::Diagonal,
-        "Cannot solve the KKT equation using PartialPivLU or FullPivLU algorithms.",
-        "The Hessian matrix must be in Dense or Diagonal mode.");
+           "Cannot solve the KKT equation using PartialPivLU or FullPivLU algorithms.",
+           "The Hessian matrix must be in Dense or Diagonal mode.");
 
     // Auxiliary references to the KKT matrix components
     const auto& H = lhs.H;
@@ -180,13 +180,15 @@ auto KktSolverDense<LUSolver>::decompose(const KktMatrix& lhs) -> void
     kkt_sol.resize(n + m);
 
     // Assemble the left-hand side of the KKT equation
-    if(H.mode == Hessian::Dense) kkt_lhs.block(0, 0, n, n).noalias() = H.dense;
-    else kkt_lhs.block(0, 0, n, n) = diag(H.diagonal);
-    kkt_lhs.block(0, 0, n, n).diagonal() +=  z/x;
-    kkt_lhs.block(0, 0, n, n).diagonal() +=  gamma*gamma*ones(n);
+    if(H.mode == Hessian::Dense)
+        kkt_lhs.block(0, 0, n, n).noalias() = H.dense;
+    else
+        kkt_lhs.block(0, 0, n, n) = diag(H.diagonal);
+    kkt_lhs.block(0, 0, n, n).diagonal() += z / x;
+    kkt_lhs.block(0, 0, n, n).diagonal() += gamma * gamma * ones(n);
     kkt_lhs.block(0, n, n, m).noalias() = -tr(A);
-    kkt_lhs.block(n, 0, m, n).noalias() =  A;
-    kkt_lhs.block(n, n, m, m).noalias() = delta*delta*identity(m, m);
+    kkt_lhs.block(n, 0, m, n).noalias() = A;
+    kkt_lhs.block(n, n, m, m).noalias() = delta * delta * identity(m, m);
 
     // Perform the LU decomposition
     kkt_lu.compute(kkt_lhs);
@@ -208,14 +210,14 @@ auto KktSolverDense<LUSolver>::solve(const KktVector& rhs, KktSolution& sol) -> 
     const unsigned m = ry.rows();
 
     // Assemble the right-hand side of the KKT equation
-    kkt_rhs.segment(0, n) = rx + rz/x;
+    kkt_rhs.segment(0, n) = rx + rz / x;
     kkt_rhs.segment(n, m) = ry;
 
     // Check if the LU decomposition has already been performed
     Assert(kkt_lu.rows() == n + m && kkt_lu.cols() == n + m,
-        "Cannot solve the KKT equation using a LU algorithm.",
-        "The LU decomposition of the KKT matrix was not performed a priori"
-        "or not updated for a new problem with different dimension.");
+           "Cannot solve the KKT equation using a LU algorithm.",
+           "The LU decomposition of the KKT matrix was not performed a priori"
+           "or not updated for a new problem with different dimension.");
 
     // Solve the linear system with the LU decomposition already calculated
     kkt_sol = kkt_lu.solve(kkt_rhs);
@@ -227,7 +229,7 @@ auto KktSolverDense<LUSolver>::solve(const KktVector& rhs, KktSolution& sol) -> 
     // Extract the solution `x` and `y` from the linear system solution `sol`
     dx = rows(kkt_sol, 0, n);
     dy = rows(kkt_sol, n, m);
-    dz = (rz - z % dx)/x;
+    dz = (rz - z % dx) / x;
 }
 
 auto KktSolverRangespaceInverse::decompose(const KktMatrix& lhs) -> void
@@ -237,25 +239,25 @@ auto KktSolverRangespaceInverse::decompose(const KktMatrix& lhs) -> void
 
     // Check if the Hessian matrix is in inverse more
     Assert(lhs.H.mode == Hessian::Inverse,
-        "Cannot solve the KKT equation using the rangespace algorithm.",
-        "The Hessian matrix must be in Inverse mode.");
+           "Cannot solve the KKT equation using the rangespace algorithm.",
+           "The Hessian matrix must be in Inverse mode.");
 
     // Auxiliary references to the KKT matrix components
-    const auto& x    = lhs.x;
-    const auto& z    = lhs.z;
+    const auto& x = lhs.x;
+    const auto& z = lhs.z;
     const auto& invH = lhs.H.inverse;
-    const auto& A    = lhs.A;
+    const auto& A = lhs.A;
 
-    invG = inverseShermanMorrison(invH, z/x);
+    invG = inverseShermanMorrison(invH, z / x);
     AinvG = A * invG;
     AinvGAt = AinvG * tr(A);
 
     llt_AinvGAt.compute(AinvGAt);
 
     Assert(llt_AinvGAt.info() == Eigen::Success,
-        "Cannot solve the KKT problem with the rangespace algorithm.",
-        "The provided Hessian matrix of the KKT equation might not be "
-        "symmetric positive-definite.");
+           "Cannot solve the KKT problem with the rangespace algorithm.",
+           "The provided Hessian matrix of the KKT equation might not be "
+           "symmetric positive-definite.");
 }
 
 auto KktSolverRangespaceInverse::solve(const KktVector& rhs, KktSolution& sol) -> void
@@ -264,23 +266,23 @@ auto KktSolverRangespaceInverse::solve(const KktVector& rhs, KktSolution& sol) -
     const auto& rx = rhs.rx;
     const auto& ry = rhs.ry;
     const auto& rz = rhs.rz;
-    const auto& x  = lhs->x;
-    const auto& z  = lhs->z;
+    const auto& x = lhs->x;
+    const auto& z = lhs->z;
     auto& dx = sol.dx;
     auto& dy = sol.dy;
     auto& dz = sol.dz;
 
-    dy = llt_AinvGAt.solve(ry - AinvG*(rx + rz/x));
-    dx = invG * (rx + rz/x) + tr(AinvG)*dy;
-    dz = (rz - z % dx)/x;
+    dy = llt_AinvGAt.solve(ry - AinvG * (rx + rz / x));
+    dx = invG * (rx + rz / x) + tr(AinvG) * dy;
+    dz = (rz - z % dx) / x;
 }
 
 auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
 {
     // Check if the Hessian matrix is diagonal
     Assert(lhs.H.mode == Hessian::Diagonal,
-        "Cannot solve the KKT equation using the rangespace algorithm.",
-        "The Hessian matrix must be in Diagonal mode.");
+           "Cannot solve the KKT equation using the rangespace algorithm.",
+           "The Hessian matrix must be in Diagonal mode.");
 
     // Initialize diagonal matrices X and Z
     X = lhs.x;
@@ -295,15 +297,17 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     const unsigned n = A.cols();
     const unsigned m = A.rows();
 
-    D.noalias() = H + Z/X + gamma*gamma*ones(n);
+    D.noalias() = H + Z / X + gamma * gamma * ones(n);
 
     ipivot.clear();
     inonpivot.clear();
     ipivot.reserve(n);
     inonpivot.reserve(n);
     for(unsigned i = 0; i < n; ++i)
-        if(D[i] > norminf(A.col(i))) ipivot.push_back(i);
-        else inonpivot.push_back(i);
+        if(D[i] > norminf(A.col(i)))
+            ipivot.push_back(i);
+        else
+            inonpivot.push_back(i);
 
     D1 = rows(D, ipivot);
     D2 = rows(D, inonpivot);
@@ -311,18 +315,18 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     A2 = cols(A, inonpivot);
 
     invD1.noalias() = inv(D1);
-    A1invD1.noalias() = A1*diag(invD1);
-    A1invD1A1t.noalias() = A1invD1*tr(A1);
+    A1invD1.noalias() = A1 * diag(invD1);
+    A1invD1A1t.noalias() = A1invD1 * tr(A1);
 
     const unsigned n2 = inonpivot.size();
-    const unsigned t  = m + n2;
+    const unsigned t = m + n2;
 
     kkt_lhs = zeros(t, t);
     kkt_lhs.topLeftCorner(n2, n2).diagonal() = D2;
     kkt_lhs.topRightCorner(n2, m).noalias() = -tr(A2);
     kkt_lhs.bottomLeftCorner(m, n2).noalias() = A2;
     kkt_lhs.bottomRightCorner(m, m).noalias() = A1invD1A1t;
-    kkt_lhs.bottomRightCorner(m, m).diagonal() += delta*delta*ones(m);
+    kkt_lhs.bottomRightCorner(m, m).diagonal() += delta * delta * ones(m);
 
     lu.compute(kkt_lhs);
 }
@@ -337,19 +341,19 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     auto& dy = sol.dy;
     auto& dz = sol.dz;
 
-    r.noalias() = a + c/X;
+    r.noalias() = a + c / X;
     a1 = rows(r, ipivot);
     a2 = rows(r, inonpivot);
 
     const unsigned n1 = A1.cols();
     const unsigned n2 = A2.cols();
-    const unsigned n  = n1 + n2;
-    const unsigned m  = A1.rows();
-    const unsigned t  = n2 + m;
+    const unsigned n = n1 + n2;
+    const unsigned m = A1.rows();
+    const unsigned t = n2 + m;
 
     kkt_rhs.resize(t);
-    kkt_rhs.segment( 0, n2).noalias() = a2;
-    kkt_rhs.segment(n2,  m).noalias() = b - A1invD1*a1;
+    kkt_rhs.segment(0, n2).noalias() = a2;
+    kkt_rhs.segment(n2, m).noalias() = b - A1invD1 * a1;
 
     kkt_sol.noalias() = lu.solve(kkt_rhs);
 
@@ -358,14 +362,14 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
 
     dy.noalias() = kkt_sol.segment(n2, m);
 
-    dx1.noalias() = a1 % invD1 + tr(A1invD1)*dy;
+    dx1.noalias() = a1 % invD1 + tr(A1invD1) * dy;
     dx2.noalias() = kkt_sol.segment(0, n2);
 
     dx.resize(n);
-    rows(dx, ipivot)    = dx1;
+    rows(dx, ipivot) = dx1;
     rows(dx, inonpivot) = dx2;
 
-    dz.noalias() = (c - Z % dx)/X;
+    dz.noalias() = (c - Z % dx) / X;
 }
 
 auto KktSolverNullspace::initialize(MatrixConstRef newA) -> void
@@ -373,7 +377,8 @@ auto KktSolverNullspace::initialize(MatrixConstRef newA) -> void
     // Check if `newA` was used last time to avoid repeated operations
     if(A.rows() == newA.rows() &&
        A.cols() == newA.cols() &&
-       A == newA) return;
+       A == newA)
+        return;
 
     // Update the matrix `A` of the KKT equation
     A.noalias() = newA;
@@ -401,13 +406,13 @@ auto KktSolverNullspace::initialize(MatrixConstRef newA) -> void
     Z = zeros(n, n - m);
     Z.topRows(m) = -U1.triangularView<Upper>().solve(U2);
     Z.bottomRows(n - m) = identity(n - m, n - m);
-    Z = P2*Z;
+    Z = P2 * Z;
 
     // Update the rangespace matrix `Y` of `A`
     Y = zeros(n, m);
     Y.topRows(m) = L.triangularView<Lower>().solve(identity(m, m));
     Y.topRows(m) = U1.triangularView<Upper>().solve(Y.topRows(m));
-    Y = P2*Y*P1;
+    Y = P2 * Y * P1;
 }
 
 auto KktSolverNullspace::decompose(const KktMatrix& lhs) -> void
@@ -417,8 +422,8 @@ auto KktSolverNullspace::decompose(const KktMatrix& lhs) -> void
 
     // Check if the Hessian matrix is dense
     Assert(lhs.H.mode == Hessian::Dense || lhs.H.mode == Hessian::Diagonal,
-        "Cannot solve the KKT equation using the nullspace algorithm.",
-        "The Hessian matrix must be either in the Dense or Diagonal mode.");
+           "Cannot solve the KKT equation using the nullspace algorithm.",
+           "The Hessian matrix must be either in the Dense or Diagonal mode.");
 
     // Auxiliary references to the KKT matrix components
     const auto& x = lhs.x;
@@ -431,7 +436,7 @@ auto KktSolverNullspace::decompose(const KktMatrix& lhs) -> void
 
     // Set matrix `G = H + inv(X)*Z`
     G.noalias() = (H.mode == Hessian::Dense) ? H.dense : diag(H.diagonal);
-    G.diagonal() += z/x;
+    G.diagonal() += z / x;
 
     // Compute the reduced Hessian matrix
     ZtGZ = tr(Z) * G * Z;
@@ -441,9 +446,9 @@ auto KktSolverNullspace::decompose(const KktMatrix& lhs) -> void
 
     // Check if the Cholesky decomposition was successful
     Assert(llt_ZtGZ.info() == Eigen::Success,
-        "Cannot solve the KKT equation using the nullspace algorithm.",
-        "The provided H matrix might not be symmetric positive-definite or "
-        "is ill-conditioned.");
+           "Cannot solve the KKT equation using the nullspace algorithm.",
+           "The provided H matrix might not be symmetric positive-definite or "
+           "is ill-conditioned.");
 }
 
 auto KktSolverNullspace::solve(const KktVector& rhs, KktSolution& sol) -> void
@@ -452,8 +457,8 @@ auto KktSolverNullspace::solve(const KktVector& rhs, KktSolution& sol) -> void
     const auto& rx = rhs.rx;
     const auto& ry = rhs.ry;
     const auto& rz = rhs.rz;
-    const auto& x  = lhs->x;
-    const auto& z  = lhs->z;
+    const auto& x = lhs->x;
+    const auto& z = lhs->z;
     auto& dx = sol.dx;
     auto& dy = sol.dy;
     auto& dz = sol.dz;
@@ -464,19 +469,19 @@ auto KktSolverNullspace::solve(const KktVector& rhs, KktSolution& sol) -> void
 
     // Check if the Cholesky decomposition has already been performed
     Assert(llt_ZtGZ.rows() == n - m || llt_ZtGZ.cols() == n - m,
-        "Cannot solve the KKT equation using the nullspace algorithm.",
-        "The Cholesky decomposition of the reduced Hessian matrix has not "
-        "been performed a priori or not updated for a new problem with "
-        "different dimension.");
+           "Cannot solve the KKT equation using the nullspace algorithm.",
+           "The Cholesky decomposition of the reduced Hessian matrix has not "
+           "been performed a priori or not updated for a new problem with "
+           "different dimension.");
 
     // Compute the `xZ` component of `x`
-    xZ = Z.transpose() * ((rx + rz/x) - G*Y*ry);
+    xZ = Z.transpose() * ((rx + rz / x) - G * Y * ry);
     xZ = llt_ZtGZ.solve(xZ);
 
     // Compute both `x` and `y` variables
-    dx = Z*xZ + Y*ry;
-    dy = Y.transpose() * (G*x - (rx + rz/x));
-    dz = (rz - z % dx)/x;
+    dx = Z * xZ + Y * ry;
+    dy = Y.transpose() * (G * x - (rx + rz / x));
+    dz = (rz - z % dx) / x;
 }
 
 struct KktSolver::Impl
@@ -497,8 +502,7 @@ struct KktSolver::Impl
 
 auto KktSolver::Impl::decompose(const KktMatrix& lhs) -> void
 {
-    if(options.method == KktMethod::Automatic)
-    {
+    if(options.method == KktMethod::Automatic) {
         if(lhs.H.mode == Hessian::Dense)
             base = &kkt_partial_lu;
 
@@ -518,8 +522,7 @@ auto KktSolver::Impl::decompose(const KktMatrix& lhs) -> void
     if(options.method == KktMethod::Nullspace)
         base = &kkt_nullspace;
 
-    if(options.method == KktMethod::Rangespace)
-    {
+    if(options.method == KktMethod::Rangespace) {
         if(lhs.H.mode == Hessian::Diagonal)
             base = &kkt_rangespace_diagonal;
 
@@ -546,11 +549,11 @@ auto KktSolver::Impl::solve(const KktVector& rhs, KktSolution& sol) -> void
 }
 
 KktSolver::KktSolver()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 KktSolver::KktSolver(const KktSolver& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 KktSolver::~KktSolver()

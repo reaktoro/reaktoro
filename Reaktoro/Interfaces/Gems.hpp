@@ -35,7 +35,7 @@ struct GemsOptions
 /// A wrapper class for Gems code
 class Gems : public Interface
 {
-public:
+  public:
     /// Construct a default Gems instance
     Gems();
 
@@ -129,7 +129,7 @@ public:
     /// Return a shared pointer to the TNode instance of Gems
     auto node() const -> std::shared_ptr<TNode>;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

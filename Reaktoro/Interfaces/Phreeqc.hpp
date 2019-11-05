@@ -30,7 +30,7 @@ class ReactionEquation;
 
 class Phreeqc : public Interface
 {
-public:
+  public:
     /// Construct a default Phreeqc instance
     Phreeqc();
 
@@ -179,7 +179,7 @@ public:
     /// Return a const reference to the low-level Phreeqc instance
     auto phreeqc() const -> const PHREEQC&;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

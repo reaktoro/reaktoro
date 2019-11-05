@@ -29,8 +29,7 @@ void exportElement(py::module& m)
         .def("setName", &Element::setName, "Set the name of the element.")
         .def("setMolarMass", &Element::setMolarMass, "Set the molar mass of the element (in units of kg/mol).")
         .def("name", &Element::name, "Return the name of the element.")
-        .def("molarMass", &Element::molarMass, "Return the molar mass of the element (in units of kg/mol).")
-        ;
+        .def("molarMass", &Element::molarMass, "Return the molar mass of the element (in units of kg/mol).");
 }
 
 } // namespace Reaktoro

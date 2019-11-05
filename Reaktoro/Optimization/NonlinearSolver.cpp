@@ -86,12 +86,13 @@ struct NonlinearSolver::Impl
         auto& succeeded = result.succeeded = false;
 
         // Ensure the initial guess for `x` has adequate dimension
-        if(Index(x.size()) != n) x = zeros(n);
+        if(Index(x.size()) != n)
+            x = zeros(n);
 
         // The function that outputs the header and initial state of the solution
-        auto output_initial_state = [&]()
-        {
-            if(!options.output.active) return;
+        auto output_initial_state = [&]() {
+            if(!options.output.active)
+                return;
 
             outputter.addEntry("Iteration");
             outputter.addEntries(options.output.xprefix, n, options.output.xnames);
@@ -107,9 +108,9 @@ struct NonlinearSolver::Impl
         };
 
         // The function that outputs the current state of the solution
-        auto output_state = [&]()
-        {
-            if(!options.output.active) return;
+        auto output_state = [&]() {
+            if(!options.output.active)
+                return;
 
             outputter.addValue(iterations);
             outputter.addValues(x);
@@ -119,14 +120,12 @@ struct NonlinearSolver::Impl
         };
 
         // Return true if the result of a calculation failed
-        auto failed = [&](bool succeeded)
-        {
+        auto failed = [&](bool succeeded) {
             return !succeeded;
         };
 
         // The function that initialize the state of some variables
-        auto initialize = [&]()
-        {
+        auto initialize = [&]() {
             // Initialize xtrial
             xtrial.resize(n);
 
@@ -138,8 +137,7 @@ struct NonlinearSolver::Impl
         };
 
         // The function that computes the Newton step
-        auto compute_newton_step = [&]()
-        {
+        auto compute_newton_step = [&]() {
             // Check if the last residual calculation succeeded
             if(!residual.succeeded)
                 return false;
@@ -155,8 +153,7 @@ struct NonlinearSolver::Impl
         };
 
         // The function that performs an update in the iterates
-        auto update_iterates = [&]()
-        {
+        auto update_iterates = [&]() {
             // Initialize the step length factor for Newton step dx with the largest possible value
             double alphax = fractionToTheBoundary(x, dx, A, b, tau);
 
@@ -173,18 +170,17 @@ struct NonlinearSolver::Impl
             const double slope = tr(F) * dx;
 
             // Repeat until a suitable xtrial iterate if found such that f(xtrial) is finite
-            for(; tentatives < 4; ++tentatives)
-            {
+            for(; tentatives < 4; ++tentatives) {
                 // Calculate the current trial iterate for x
-                xtrial = x + alpha*alphax*dx;
+                xtrial = x + alpha * alphax * dx;
 
                 // Evaluate the objective function at the trial iterate
                 residual = problem.f(xtrial);
 
                 // Decrease step length if evaluation of f(xtrial) failed
-                if(!residual.succeeded)
-                {
-                    alpha *= 0.1; continue;
+                if(!residual.succeeded) {
+                    alpha *= 0.1;
+                    continue;
                 }
 
                 // Skip Armijo condition checking if we are in the 1st iteration
@@ -195,7 +191,7 @@ struct NonlinearSolver::Impl
                 const double f_new = 0.5 * tr(F) * F;
 
                 // Check if the trial iterate pass the Armijo condition
-                if(f_new <= 0.1*f || f_new <= f + armijo*alpha*alphax*slope + 1e-14*f)
+                if(f_new <= 0.1 * f || f_new <= f + armijo * alpha * alphax * slope + 1e-14 * f)
                     break;
 
                 // Decrease alpha in a hope that a shorter step results in f(xtrial) succeeded
@@ -212,8 +208,7 @@ struct NonlinearSolver::Impl
             return true;
         };
 
-        auto converged = [&]()
-        {
+        auto converged = [&]() {
             // Check if the calculation should stop based on max variation of x
             if(tolx && max(abs(dx)) < tolx)
                 return true;
@@ -225,8 +220,7 @@ struct NonlinearSolver::Impl
         initialize();
         output_initial_state();
 
-        for(iterations = 1; iterations <= maxiters && !succeeded; ++iterations)
-        {
+        for(iterations = 1; iterations <= maxiters && !succeeded; ++iterations) {
             if(failed(compute_newton_step()))
                 break;
             if(failed(update_iterates()))
@@ -246,11 +240,11 @@ struct NonlinearSolver::Impl
 };
 
 NonlinearSolver::NonlinearSolver()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 NonlinearSolver::NonlinearSolver(const NonlinearSolver& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 NonlinearSolver::~NonlinearSolver()

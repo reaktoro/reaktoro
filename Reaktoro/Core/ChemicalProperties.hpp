@@ -31,7 +31,7 @@ namespace Reaktoro {
 /// A class for querying thermodynamic and chemical properties of a chemical system.
 class ChemicalProperties
 {
-public:
+  public:
     /// Construct a default ChemicalProperties instance.
     ChemicalProperties();
 
@@ -193,7 +193,7 @@ public:
     /// The solid volume is defined as the sum of volumes of all solid phases.
     auto solidVolume() const -> ChemicalScalar;
 
-private:
+  private:
     /// The chemical system
     ChemicalSystem system;
 

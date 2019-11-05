@@ -31,7 +31,7 @@ struct OptimumState;
 /// The class that implements the IpBounds algorithm using an interior-point method.
 class OptimumSolverIpBounds : public OptimumSolverBase
 {
-public:
+  public:
     /// Construct a default OptimumSolverIpBounds instance.
     OptimumSolverIpBounds();
 
@@ -63,7 +63,7 @@ public:
     /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase*;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

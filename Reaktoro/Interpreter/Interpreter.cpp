@@ -25,7 +25,6 @@
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
-
 #include <fstream>
 
 namespace Reaktoro {
@@ -56,8 +55,7 @@ struct Interpreter::Impl
 
     auto executeCalculations(json node) -> void
     {
-        for(auto item : node)
-        {
+        for(auto item : node) {
             if(item.count("equilibrium"))
                 calculateEquilibrium(item["equilibrium"]);
         }
@@ -82,11 +80,11 @@ struct Interpreter::Impl
 };
 
 Interpreter::Interpreter()
-: pimpl(new Interpreter::Impl())
+    : pimpl(new Interpreter::Impl())
 {}
 
 Interpreter::Interpreter(const Interpreter& other)
-: pimpl(new Interpreter::Impl(*other.pimpl))
+    : pimpl(new Interpreter::Impl(*other.pimpl))
 {}
 
 Interpreter::~Interpreter()

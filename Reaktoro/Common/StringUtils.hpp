@@ -46,7 +46,7 @@ inline auto uppercase(std::string str) -> std::string
 inline auto leftTrim(std::string& str) -> std::string&
 {
     str.erase(str.begin(),
-        std::find_if(str.begin(), str.end(), [](int ch){ return !std::isspace(ch); }));
+              std::find_if(str.begin(), str.end(), [](int ch) { return !std::isspace(ch); }));
     return str;
 }
 
@@ -54,7 +54,9 @@ inline auto leftTrim(std::string& str) -> std::string&
 inline auto rightTrim(std::string& str) -> std::string&
 {
     str.erase(std::find_if(str.rbegin(), str.rend(),
-        [](int ch){ return !std::isspace(ch); }).base(), str.end());
+                           [](int ch) { return !std::isspace(ch); })
+                  .base(),
+              str.end());
     return str;
 }
 
@@ -66,18 +68,18 @@ inline auto trim(std::string& str) -> std::string&
 
 /// Split the string on every occurrence of the specified delimiters
 inline auto split(const std::string& str, const std::string& delims,
-	std::function<std::string&(std::string&)> transform) -> std::vector<std::string>
+                  std::function<std::string&(std::string&)> transform) -> std::vector<std::string>
 {
-	std::vector<std::string> words;
-	std::size_t start = 0, end = 0;
-	while(end != std::string::npos)
-	{
-		end = str.find_first_of(delims, start);
-		std::string word = str.substr(start, end - start);
-		if(word != "") words.push_back(transform ? transform(word) : word);
-		start = end + 1;
-	}
-	return words;
+    std::vector<std::string> words;
+    std::size_t start = 0, end = 0;
+    while(end != std::string::npos) {
+        end = str.find_first_of(delims, start);
+        std::string word = str.substr(start, end - start);
+        if(word != "")
+            words.push_back(transform ? transform(word) : word);
+        start = end + 1;
+    }
+    return words;
 }
 
 /// Split the string on every occurrence of the specified delimiters

@@ -50,7 +50,7 @@ struct AqueousPhase::Impl
 
     /// Construct a custom Impl instance
     Impl(const AqueousMixture& mixture)
-    : mixture(mixture)
+        : mixture(mixture)
     {}
 
     /// Return the combined chemical model function of the phase
@@ -69,23 +69,21 @@ struct AqueousPhase::Impl
         AqueousMixtureState state;
 
         // Define the function that calculates the chemical properties of the phase
-        PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
-        {
+        PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable {
             // Evaluate the state of the aqueous mixture
             state = mixture.state(T, P, n);
 
             // Evaluate the aqueous chemical model
-			base_model(res, T, P, n);
+            base_model(res, T, P, n);
 
             // Update the activity coefficients and activities of selected species
-            for(auto pair : ln_activity_coeff_functions)
-            {
-                const Index& i = pair.first; // the index of the selected species
+            for(auto pair : ln_activity_coeff_functions) {
+                const Index& i = pair.first;                    // the index of the selected species
                 const AqueousActivityModel& func = pair.second; // the ln activity coefficient function of the selected species
-                const ChemicalScalar ln_gi = func(state); // evaluate the ln activity coefficient function
-                const ChemicalScalar ln_mi = log(state.m[i]); // get the molality of the selected species
-                res.ln_activity_coefficients[i] = ln_gi; // update the ln activity coefficient selected species
-                res.ln_activities[i] = ln_gi + ln_mi; // update the ln activity of the selected species
+                const ChemicalScalar ln_gi = func(state);       // evaluate the ln activity coefficient function
+                const ChemicalScalar ln_mi = log(state.m[i]);   // get the molality of the selected species
+                res.ln_activity_coefficients[i] = ln_gi;        // update the ln activity coefficient selected species
+                res.ln_activities[i] = ln_gi + ln_mi;           // update the ln activity of the selected species
             }
         };
 
@@ -94,14 +92,14 @@ struct AqueousPhase::Impl
 };
 
 AqueousPhase::AqueousPhase()
-: Phase(), pimpl(new Impl())
+    : Phase(), pimpl(new Impl())
 {
     setName("Aqueous");
     setType(PhaseType::Liquid);
 }
 
 AqueousPhase::AqueousPhase(const AqueousMixture& mixture)
-: pimpl(new Impl(mixture))
+    : pimpl(new Impl(mixture))
 {
     // Convert the AqueousSpecies instances to Species instances
     std::vector<Species> species;
@@ -132,7 +130,7 @@ auto AqueousPhase::setChemicalModelIdeal() -> AqueousPhase&
 
 auto AqueousPhase::setChemicalModelDebyeHuckel() -> AqueousPhase&
 {
-	return setChemicalModelDebyeHuckel({});
+    return setChemicalModelDebyeHuckel({});
 }
 
 auto AqueousPhase::setChemicalModelDebyeHuckel(const DebyeHuckelParams& params) -> AqueousPhase&

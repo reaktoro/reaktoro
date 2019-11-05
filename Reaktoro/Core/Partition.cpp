@@ -30,8 +30,7 @@ auto indicesSpeciesInPhases(const ChemicalSystem& system, const Indices& iphases
 {
     Indices indices;
     indices.reserve(system.numSpecies());
-    for(Index iphase : iphases)
-    {
+    for(Index iphase : iphases) {
         const Index ifirst = system.indexFirstSpeciesInPhase(iphase);
         const Index nspecies = system.numSpeciesInPhase(iphase);
         for(unsigned i = 0; i < nspecies; ++i)
@@ -59,7 +58,6 @@ struct Partition::Impl
     /// The universe for the indices of all phases
     Indices universe_phases;
 
-
     /// The indices of the phases in the fluid partition
     Indices indices_fluid_phases;
 
@@ -71,7 +69,6 @@ struct Partition::Impl
 
     /// The indices of the species in the solid partition
     Indices indices_solid_species;
-
 
     /// The indices of the species in the equilibrium partition
     Indices indices_equilibrium_species;
@@ -91,7 +88,6 @@ struct Partition::Impl
     /// The indices of the elements in the equilibrium-solid partition
     Indices indices_equilibrium_solid_elements;
 
-
     /// The indices of the species in the kinetic partition
     Indices indices_kinetic_species;
 
@@ -109,7 +105,6 @@ struct Partition::Impl
 
     /// The indices of the elements in the kinetic-solid partition
     Indices indices_kinetic_solid_elements;
-
 
     /// The indices of the species in the inert partition
     Indices indices_inert_species;
@@ -129,7 +124,6 @@ struct Partition::Impl
     /// The indices of the elements in the inert-solid partition
     Indices indices_inert_solid_elements;
 
-
     /// The formula matrix of the equilibrium partition
     Matrix formula_matrix_equilibrium;
 
@@ -138,7 +132,6 @@ struct Partition::Impl
 
     /// The formula matrix of the equilibrium-solid partition
     Matrix formula_matrix_equilibrium_solid;
-
 
     /// The formula matrix of the kinetic partition
     Matrix formula_matrix_kinetic;
@@ -149,7 +142,6 @@ struct Partition::Impl
     /// The formula matrix of the kinetic-solid partition
     Matrix formula_matrix_kinetic_solid;
 
-
     /// The formula matrix of the inert partition
     Matrix formula_matrix_inert;
 
@@ -159,12 +151,11 @@ struct Partition::Impl
     /// The formula matrix of the inert-solid partition
     Matrix formula_matrix_inert_solid;
 
-
     Impl()
     {}
 
     Impl(const ChemicalSystem& system)
-    : system(system)
+        : system(system)
     {
         universe_species = range(system.species().size());
         universe_phases = range(system.phases().size());
@@ -179,24 +170,24 @@ struct Partition::Impl
     auto setEquilibriumSpecies(const Indices& ispecies) -> void
     {
         indices_equilibrium_species = ispecies;
-        indices_inert_species       = difference(indices_inert_species, ispecies);
-        indices_kinetic_species     = difference(universe_species, unify(ispecies, indices_inert_species));
+        indices_inert_species = difference(indices_inert_species, ispecies);
+        indices_kinetic_species = difference(universe_species, unify(ispecies, indices_inert_species));
         finalise();
     }
 
     auto setKineticSpecies(const Indices& ispecies) -> void
     {
-        indices_kinetic_species     = ispecies;
-        indices_inert_species       = difference(indices_inert_species, ispecies);
+        indices_kinetic_species = ispecies;
+        indices_inert_species = difference(indices_inert_species, ispecies);
         indices_equilibrium_species = difference(universe_species, unify(ispecies, indices_inert_species));
         finalise();
     }
 
     auto setInertSpecies(const Indices& ispecies) -> void
     {
-        indices_inert_species       = ispecies;
+        indices_inert_species = ispecies;
         indices_equilibrium_species = difference(indices_equilibrium_species, ispecies);
-        indices_kinetic_species     = difference(indices_kinetic_species, ispecies);
+        indices_kinetic_species = difference(indices_kinetic_species, ispecies);
         finalise();
     }
 
@@ -228,38 +219,38 @@ struct Partition::Impl
         indices_inert_fluid_species = intersect(indices_inert_species, indices_fluid_species);
         indices_inert_solid_species = intersect(indices_inert_species, indices_solid_species);
 
-        indices_equilibrium_elements       = system.indicesElementsInSpecies(indices_equilibrium_species);
+        indices_equilibrium_elements = system.indicesElementsInSpecies(indices_equilibrium_species);
         indices_equilibrium_fluid_elements = system.indicesElementsInSpecies(indices_equilibrium_fluid_species);
         indices_equilibrium_solid_elements = system.indicesElementsInSpecies(indices_equilibrium_solid_species);
 
-        indices_kinetic_elements       = system.indicesElementsInSpecies(indices_kinetic_species);
+        indices_kinetic_elements = system.indicesElementsInSpecies(indices_kinetic_species);
         indices_kinetic_fluid_elements = system.indicesElementsInSpecies(indices_kinetic_fluid_species);
         indices_kinetic_solid_elements = system.indicesElementsInSpecies(indices_kinetic_solid_species);
 
-        indices_inert_elements       = system.indicesElementsInSpecies(indices_inert_species);
+        indices_inert_elements = system.indicesElementsInSpecies(indices_inert_species);
         indices_inert_fluid_elements = system.indicesElementsInSpecies(indices_inert_fluid_species);
         indices_inert_solid_elements = system.indicesElementsInSpecies(indices_inert_solid_species);
 
-        formula_matrix_equilibrium       = submatrix(system.formulaMatrix(), indices_equilibrium_elements, indices_equilibrium_species);
+        formula_matrix_equilibrium = submatrix(system.formulaMatrix(), indices_equilibrium_elements, indices_equilibrium_species);
         formula_matrix_equilibrium_fluid = submatrix(system.formulaMatrix(), indices_equilibrium_fluid_elements, indices_equilibrium_fluid_species);
         formula_matrix_equilibrium_solid = submatrix(system.formulaMatrix(), indices_equilibrium_solid_elements, indices_equilibrium_solid_species);
 
-        formula_matrix_kinetic       = submatrix(system.formulaMatrix(), indices_kinetic_elements, indices_kinetic_species);
+        formula_matrix_kinetic = submatrix(system.formulaMatrix(), indices_kinetic_elements, indices_kinetic_species);
         formula_matrix_kinetic_fluid = submatrix(system.formulaMatrix(), indices_kinetic_fluid_elements, indices_kinetic_fluid_species);
         formula_matrix_kinetic_solid = submatrix(system.formulaMatrix(), indices_kinetic_solid_elements, indices_kinetic_solid_species);
 
-        formula_matrix_inert       = submatrix(system.formulaMatrix(), indices_inert_elements, indices_inert_species);
+        formula_matrix_inert = submatrix(system.formulaMatrix(), indices_inert_elements, indices_inert_species);
         formula_matrix_inert_fluid = submatrix(system.formulaMatrix(), indices_inert_fluid_elements, indices_inert_fluid_species);
         formula_matrix_inert_solid = submatrix(system.formulaMatrix(), indices_inert_solid_elements, indices_inert_solid_species);
     }
 };
 
 Partition::Partition()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 Partition::Partition(const ChemicalSystem& system)
-: pimpl(new Impl(system))
+    : pimpl(new Impl(system))
 {}
 
 auto Partition::setEquilibriumSpecies(const Indices& ispecies) -> void

@@ -48,14 +48,14 @@ FluidSpecies::FluidSpecies(const Species& species)
 auto FluidSpecies::setCriticalTemperature(double val) -> void
 {
     Assert(val > 0.0, "Cannot set the critical temperature of the fluid `" + name() + "`.",
-        "The given critical temperature `" + std::to_string(val) + "` is not positive.");
+           "The given critical temperature `" + std::to_string(val) + "` is not positive.");
     pimpl->critical_temperature = val;
 }
 
 auto FluidSpecies::setCriticalPressure(double val) -> void
 {
     Assert(val > 0.0, "Cannot set the critical pressure of the fluid `" + name() + "`.",
-        "The given critical pressure `" + std::to_string(val) + "` is not positive.");
+           "The given critical pressure `" + std::to_string(val) + "` is not positive.");
     pimpl->critical_pressure = val;
 }
 

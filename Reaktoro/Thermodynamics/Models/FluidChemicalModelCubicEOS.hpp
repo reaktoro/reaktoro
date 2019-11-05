@@ -18,8 +18,8 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 #include <Reaktoro/Thermodynamics/EOS/CubicEOS.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 
 namespace Reaktoro {
 
@@ -29,6 +29,6 @@ class FluidMixture;
 /// Set the chemical model of the phase with a Cubic equation of state.
 /// @see FluidPhase::setChemicalModelCubicEOS
 auto fluidChemicalModelCubicEOS(
-    const FluidMixture& mixture, PhaseType phase_type, CubicEOS::Params params)->PhaseChemicalModel;
+    const FluidMixture& mixture, PhaseType phase_type, CubicEOS::Params params) -> PhaseChemicalModel;
 
 } // namespace Reaktoro

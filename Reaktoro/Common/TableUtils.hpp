@@ -22,9 +22,12 @@
 
 namespace Reaktoro {
 
-template<typename T> using Table1D = std::vector<T>;
-template<typename T> using Table2D = std::vector<std::vector<T>>;
-template<typename T> using Table3D = std::vector<std::vector<std::vector<T>>>;
+template<typename T>
+using Table1D = std::vector<T>;
+template<typename T>
+using Table2D = std::vector<std::vector<T>>;
+template<typename T>
+using Table3D = std::vector<std::vector<std::vector<T>>>;
 
 template<typename T>
 auto table1D(unsigned dim1) -> Table1D<T>

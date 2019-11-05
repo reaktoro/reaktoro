@@ -22,8 +22,8 @@
 #include <string>
 
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/ScalarTypes.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -59,7 +59,7 @@ class ChemicalSystem;
 /// @ingroup Core
 class ChemicalState
 {
-public:
+  public:
     /// Disable the default ChemicalState constructor.
     /// This is to enforce the initialization of a ChemicalState
     /// instance with a ChemicalSystem instance.
@@ -371,7 +371,7 @@ public:
     /// Output the ChemicalState instance to a file.
     auto output(std::string filename) const -> void;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

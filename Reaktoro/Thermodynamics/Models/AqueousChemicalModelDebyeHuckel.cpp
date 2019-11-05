@@ -42,7 +42,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     const double Mw = waterMolarMass;
 
     // The number of moles of water per kg
-    const double nwo = 1/Mw;
+    const double nwo = 1 / Mw;
 
     // The number of species in the mixture
     const Index num_species = mixture.numSpecies();
@@ -68,16 +68,14 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     std::vector<double> bneutral;
 
     // Collect the Debye-Huckel parameters a and b of the charged species
-    for(Index i : icharged_species)
-    {
+    for(Index i : icharged_species) {
         const AqueousSpecies& species = mixture.species(i);
         aions.push_back(params.aion(species.name()));
         bions.push_back(params.bion(species.name()));
     }
 
     // Collect the Debye-Huckel parameter b of the neutral species
-    for(Index i : ineutral_species)
-    {
+    for(Index i : ineutral_species) {
         const AqueousSpecies& species = mixture.species(i);
         bneutral.push_back(params.bneutral(species.name()));
     }
@@ -91,8 +89,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     ThermoScalar A, B, sqrt_rho, T_epsilon, sqrt_T_epsilon;
 
     // Define the intermediate chemical model function of the aqueous mixture
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
-    {
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable {
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, n);
 
@@ -100,7 +97,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
         const auto& I = state.Ie;            // ionic strength
         const auto& x = state.x;             // mole fractions of the species
         const auto& m = state.m;             // molalities of the species
-        const auto& rho = state.rho/1000;    // density in units of g/cm3
+        const auto& rho = state.rho / 1000;  // density in units of g/cm3
         const auto& epsilon = state.epsilon; // dielectric constant
 
         // Auxiliary references
@@ -108,25 +105,24 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
         auto& ln_a = res.ln_activities;
 
         // Update auxiliary variables
-		ln_m = log(m);
-		xw = x[iwater];
-		ln_xw = log(xw);
-		mSigma = nwo * (1 - xw)/xw;
-		I2 = I*I;
-		sqrtI = sqrt(I);
-		sqrt_rho = sqrt(rho);
-		T_epsilon = T * epsilon;
-		sqrt_T_epsilon = sqrt(T_epsilon);
-		A = 1.824829238e+6 * sqrt_rho/(T_epsilon*sqrt_T_epsilon);
-		B = 50.29158649 * sqrt_rho/sqrt_T_epsilon;
-		sigmacoeff = (2.0/3.0)*A*I*sqrtI;
+        ln_m = log(m);
+        xw = x[iwater];
+        ln_xw = log(xw);
+        mSigma = nwo * (1 - xw) / xw;
+        I2 = I * I;
+        sqrtI = sqrt(I);
+        sqrt_rho = sqrt(rho);
+        T_epsilon = T * epsilon;
+        sqrt_T_epsilon = sqrt(T_epsilon);
+        A = 1.824829238e+6 * sqrt_rho / (T_epsilon * sqrt_T_epsilon);
+        B = 50.29158649 * sqrt_rho / sqrt_T_epsilon;
+        sigmacoeff = (2.0 / 3.0) * A * I * sqrtI;
 
         // Set the first contribution to the activity of water
         ln_a[iwater] = mSigma;
 
         // Loop over all charged species in the mixture
-        for(Index i = 0; i < num_charged_species; ++i)
-        {
+        for(Index i = 0; i < num_charged_species; ++i) {
             // The index of the current charged species
             const Index ispecies = icharged_species[i];
 
@@ -137,31 +133,32 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
             const auto z = charges[i];
 
             // Update the Lambda parameter of the Debye-Huckel activity coefficient model
-            Lambda = 1.0 + aions[i]*B*sqrtI;
+            Lambda = 1.0 + aions[i] * B * sqrtI;
 
-			// Update the sigma parameter of the current ion
-            if(aions[i] != 0.0) sigma = 3.0*pow(Lambda - 1, -3) * ((Lambda - 1)*(Lambda - 3) + 2*log(Lambda));
-            else                sigma = 2.0;
+            // Update the sigma parameter of the current ion
+            if(aions[i] != 0.0)
+                sigma = 3.0 * pow(Lambda - 1, -3) * ((Lambda - 1) * (Lambda - 3) + 2 * log(Lambda));
+            else
+                sigma = 2.0;
 
             // Calculate the ln activity coefficient of the current charged species
-            ln_g[ispecies] = ln10 * (-A*z*z*sqrtI/Lambda + bions[i]*I);
+            ln_g[ispecies] = ln10 * (-A * z * z * sqrtI / Lambda + bions[i] * I);
 
             // Calculate the ln activity of the current charged species
             ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
 
             // Calculate the contribution of current ion to the ln activity of water
-			ln_a[iwater] += mi*ln_g[ispecies] + sigmacoeff*sigma*ln10 - I2*bions[i]/(z*z)*ln10;
+            ln_a[iwater] += mi * ln_g[ispecies] + sigmacoeff * sigma * ln10 - I2 * bions[i] / (z * z) * ln10;
         }
 
         // Finalize the computation of the activity of water (in mole fraction scale)
-        ln_a[iwater] *= -1.0/nwo;
+        ln_a[iwater] *= -1.0 / nwo;
 
         // Set the activity coefficient of water (mole fraction scale)
         ln_g[iwater] = ln_a[iwater] - ln_xw;
 
         // Loop over all neutral species in the mixture
-        for(Index i = 0; i < num_neutral_species; ++i)
-        {
+        for(Index i = 0; i < num_neutral_species; ++i) {
             // The index of the current neutral species
             const Index ispecies = ineutral_species[i];
 
@@ -209,7 +206,7 @@ struct DebyeHuckelParams::Impl
     const std::map<std::string, double> bion_wateq4f = {{"Ca++", 0.165}, {"Mg++", 0.20}, {"Na+", 0.075}, {"K+", 0.015}, {"Cl-", 0.015}, {"SO4--", -0.04}, {"HCO3-", 0.0}, {"CO3--", 0.0}, {"H2CO3(aq)", 0.0}, {"Sr++", 0.121}};
 
     /// The Debye--Hückel parameter `å` from Kielland (1937).
-    const std::map<std::string, double> aion_kielland = {{"H+" , 9.0}, {"Li+" , 6.0}, {"Rb+" , 2.5}, {"Cs+" , 2.5}, {"NH4+" , 2.5}, {"Tl+" , 2.5}, {"Ag+" , 2.5}, {"K+" , 3.0}, {"Cl-" , 3.0}, {"Br-" , 3.0}, {"I-" , 3.0}, {"CN-" , 3.0}, {"NO2-" , 3.0}, {"NO3-" , 3.0}, {"OH-" , 3.5}, {"F-" , 3.5}, {"NCS-" , 3.5}, {"NCO-" , 3.5}, {"HS-" , 3.5}, {"ClO3-" , 3.5}, {"ClO4-" , 3.5}, {"BrO3-" , 3.5}, {"IO4-" , 3.5}, {"MnO4-" , 3.5}, {"Na+" , 4.0}, {"CdCl+" , 4.0}, {"ClO2-" , 4.0}, {"IO3-" , 4.0}, {"HCO3-" , 4.0}, {"H2PO4-" , 4.0}, {"HSO3-" , 4.0}, {"H2AsO4-" , 4.0}, {"Co(NH3)4(NO2)2+" , 4.0}, {"Hg2++" , 4.0}, {"SO4--" , 4.0}, {"S2O3--" , 4.0}, {"S2O6--" , 4.0}, {"S2O8--" , 4.0}, {"SeO4--" , 4.0}, {"CrO4--" , 4.0}, {"HPO4--" , 4.0}, {"Pb++" , 4.5}, {"CO3--" , 4.5}, {"SO3--" , 4.5}, {"MoO4--" , 4.5}, {"Co(NH3)5Cl++" , 4.5}, {"Fe(CN)5NO--" , 4.5}, {"Sr++" , 5.0}, {"Ba++" , 5.0}, {"Ra++" , 5.0}, {"Cd++" , 5.0}, {"Hg++" , 5.0}, {"S--" , 5.0}, {"S2O4--" , 5.0}, {"WO4--" , 5.0}, {"Ca++" , 6.0}, {"Cu++" , 6.0}, {"Zn++" , 6.0}, {"Sn++" , 6.0}, {"Mn++" , 6.0}, {"Fe++" , 6.0}, {"Ni++" , 6.0}, {"Co++" , 6.0}, {"Mg++" , 8.0}, {"Be++" , 8.0}, {"PO4---" , 4.0}, {"Fe(CN)6---" , 4.0}, {"Cr(NH3)6+++" , 4.0}, {"Co(NH3)6+++" , 4.0}, {"Co(NH3)5H2O+++" , 4.0}, {"Al+++" , 9.0}, {"Fe+++" , 9.0}, {"Cr+++" , 9.0}, {"Sc+++" , 9.0}, {"Y+++" , 9.0}, {"La+++" , 9.0}, {"In+++" , 9.0}, {"Ce+++" , 9.0}, {"Pr+++" , 9.0}, {"Nd+++" , 9.0}, {"Sm+++" , 9.0}, {"Fe(CN)6----" , 5.0}, {"Co(S2O3)(CN)5----" , 6.0}, {"Th++++" , 11.0}, {"Zn++++" , 11.0}, {"Ce++++" , 11.0}, {"Sn++++" , 11.0}, {"Co(SO3)2(CN)4-----" , 9.0}};
+    const std::map<std::string, double> aion_kielland = {{"H+", 9.0}, {"Li+", 6.0}, {"Rb+", 2.5}, {"Cs+", 2.5}, {"NH4+", 2.5}, {"Tl+", 2.5}, {"Ag+", 2.5}, {"K+", 3.0}, {"Cl-", 3.0}, {"Br-", 3.0}, {"I-", 3.0}, {"CN-", 3.0}, {"NO2-", 3.0}, {"NO3-", 3.0}, {"OH-", 3.5}, {"F-", 3.5}, {"NCS-", 3.5}, {"NCO-", 3.5}, {"HS-", 3.5}, {"ClO3-", 3.5}, {"ClO4-", 3.5}, {"BrO3-", 3.5}, {"IO4-", 3.5}, {"MnO4-", 3.5}, {"Na+", 4.0}, {"CdCl+", 4.0}, {"ClO2-", 4.0}, {"IO3-", 4.0}, {"HCO3-", 4.0}, {"H2PO4-", 4.0}, {"HSO3-", 4.0}, {"H2AsO4-", 4.0}, {"Co(NH3)4(NO2)2+", 4.0}, {"Hg2++", 4.0}, {"SO4--", 4.0}, {"S2O3--", 4.0}, {"S2O6--", 4.0}, {"S2O8--", 4.0}, {"SeO4--", 4.0}, {"CrO4--", 4.0}, {"HPO4--", 4.0}, {"Pb++", 4.5}, {"CO3--", 4.5}, {"SO3--", 4.5}, {"MoO4--", 4.5}, {"Co(NH3)5Cl++", 4.5}, {"Fe(CN)5NO--", 4.5}, {"Sr++", 5.0}, {"Ba++", 5.0}, {"Ra++", 5.0}, {"Cd++", 5.0}, {"Hg++", 5.0}, {"S--", 5.0}, {"S2O4--", 5.0}, {"WO4--", 5.0}, {"Ca++", 6.0}, {"Cu++", 6.0}, {"Zn++", 6.0}, {"Sn++", 6.0}, {"Mn++", 6.0}, {"Fe++", 6.0}, {"Ni++", 6.0}, {"Co++", 6.0}, {"Mg++", 8.0}, {"Be++", 8.0}, {"PO4---", 4.0}, {"Fe(CN)6---", 4.0}, {"Cr(NH3)6+++", 4.0}, {"Co(NH3)6+++", 4.0}, {"Co(NH3)5H2O+++", 4.0}, {"Al+++", 9.0}, {"Fe+++", 9.0}, {"Cr+++", 9.0}, {"Sc+++", 9.0}, {"Y+++", 9.0}, {"La+++", 9.0}, {"In+++", 9.0}, {"Ce+++", 9.0}, {"Pr+++", 9.0}, {"Nd+++", 9.0}, {"Sm+++", 9.0}, {"Fe(CN)6----", 5.0}, {"Co(S2O3)(CN)5----", 6.0}, {"Th++++", 11.0}, {"Zn++++", 11.0}, {"Ce++++", 11.0}, {"Sn++++", 11.0}, {"Co(SO3)2(CN)4-----", 9.0}};
 
     Impl()
     {
@@ -217,9 +214,9 @@ struct DebyeHuckelParams::Impl
 };
 
 DebyeHuckelParams::DebyeHuckelParams()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {
-	setPHREEQC();
+    setPHREEQC();
 }
 
 auto DebyeHuckelParams::aiondefault(double value) -> void

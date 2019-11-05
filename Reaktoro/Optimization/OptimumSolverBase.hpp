@@ -34,7 +34,7 @@ struct OptimumState;
 /// The base class for all optimization algorithms.
 class OptimumSolverBase
 {
-public:
+  public:
     /// Pure virtual destructor
     virtual ~OptimumSolverBase() = 0;
 

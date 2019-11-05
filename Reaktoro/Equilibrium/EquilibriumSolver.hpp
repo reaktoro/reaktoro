@@ -36,7 +36,7 @@ struct EquilibriumSensitivity;
 /// A solver class for solving chemical equilibrium calculations.
 class EquilibriumSolver
 {
-public:
+  public:
     /// Construct a default EquilibriumSolver instance
     EquilibriumSolver();
 
@@ -114,7 +114,7 @@ public:
     /// Compute the sensitivity of the species amounts with respect to element amounts.
     auto dndb() -> VectorConstRef;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

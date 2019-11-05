@@ -32,6 +32,6 @@ class FluidMixture;
 /// and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031*.
 /// @param mixture The gaseous mixture instance
 /// @see FluidMixture, PhaseChemicalModel
-auto fluidChemicalModelSpycherPruessEnnis(const FluidMixture& mixture)->PhaseChemicalModel;
+auto fluidChemicalModelSpycherPruessEnnis(const FluidMixture& mixture) -> PhaseChemicalModel;
 
 } // namespace Reaktoro

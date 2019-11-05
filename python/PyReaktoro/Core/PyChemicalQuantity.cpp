@@ -29,8 +29,8 @@ namespace Reaktoro {
 
 void exportChemicalQuantity(py::module& m)
 {
-    auto update1 = static_cast<ChemicalQuantity&(ChemicalQuantity::*)(const ChemicalState&)>(&ChemicalQuantity::update);
-    auto update2 = static_cast<ChemicalQuantity&(ChemicalQuantity::*)(const ChemicalState&,double)>(&ChemicalQuantity::update);
+    auto update1 = static_cast<ChemicalQuantity& (ChemicalQuantity::*)(const ChemicalState&)>(&ChemicalQuantity::update);
+    auto update2 = static_cast<ChemicalQuantity& (ChemicalQuantity::*)(const ChemicalState&, double)>(&ChemicalQuantity::update);
 
     py::class_<ChemicalQuantity>(m, "ChemicalQuantity")
         .def(py::init<const ChemicalSystem&>())
@@ -45,8 +45,7 @@ void exportChemicalQuantity(py::module& m)
         .def("update", update1, py::return_value_policy::reference_internal)
         .def("update", update2, py::return_value_policy::reference_internal)
         .def("value", &ChemicalQuantity::value)
-        .def("__call__", &ChemicalQuantity::value)
-        ;
+        .def("__call__", &ChemicalQuantity::value);
 }
 
 } // namespace Reaktoro

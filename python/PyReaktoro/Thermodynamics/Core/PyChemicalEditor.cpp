@@ -37,25 +37,25 @@ namespace Reaktoro {
 
 void exportChemicalEditor(py::module& m)
 {
-    auto addPhase1 = static_cast<AqueousPhase&(ChemicalEditor::*)(const AqueousPhase&)>(&ChemicalEditor::addPhase);
-    auto addPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(const GaseousPhase&)>(&ChemicalEditor::addPhase);
-    auto addPhase3 = static_cast<LiquidPhase&(ChemicalEditor::*)(const LiquidPhase&)>(&ChemicalEditor::addPhase);
-    auto addPhase4 = static_cast<MineralPhase&(ChemicalEditor::*)(const MineralPhase&)>(&ChemicalEditor::addPhase);
+    auto addPhase1 = static_cast<AqueousPhase& (ChemicalEditor::*)(const AqueousPhase&)>(&ChemicalEditor::addPhase);
+    auto addPhase2 = static_cast<GaseousPhase& (ChemicalEditor::*)(const GaseousPhase&)>(&ChemicalEditor::addPhase);
+    auto addPhase3 = static_cast<LiquidPhase& (ChemicalEditor::*)(const LiquidPhase&)>(&ChemicalEditor::addPhase);
+    auto addPhase4 = static_cast<MineralPhase& (ChemicalEditor::*)(const MineralPhase&)>(&ChemicalEditor::addPhase);
 
-    auto addMineralReaction1 = static_cast<MineralReaction&(ChemicalEditor::*)(const MineralReaction&)>(&ChemicalEditor::addMineralReaction);
-    auto addMineralReaction2 = static_cast<MineralReaction&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addMineralReaction);
+    auto addMineralReaction1 = static_cast<MineralReaction& (ChemicalEditor::*)(const MineralReaction&)>(&ChemicalEditor::addMineralReaction);
+    auto addMineralReaction2 = static_cast<MineralReaction& (ChemicalEditor::*)(std::string)>(&ChemicalEditor::addMineralReaction);
 
-    auto aqueousPhase1 = static_cast<const AqueousPhase&(ChemicalEditor::*)() const>(&ChemicalEditor::aqueousPhase);
-    auto aqueousPhase2 = static_cast<AqueousPhase&(ChemicalEditor::*)()>(&ChemicalEditor::aqueousPhase);
+    auto aqueousPhase1 = static_cast<const AqueousPhase& (ChemicalEditor::*)() const>(&ChemicalEditor::aqueousPhase);
+    auto aqueousPhase2 = static_cast<AqueousPhase& (ChemicalEditor::*)()>(&ChemicalEditor::aqueousPhase);
 
-    auto gaseousPhase1 = static_cast<const GaseousPhase&(ChemicalEditor::*)() const>(&ChemicalEditor::gaseousPhase);
-    auto gaseousPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)()>(&ChemicalEditor::gaseousPhase);
+    auto gaseousPhase1 = static_cast<const GaseousPhase& (ChemicalEditor::*)() const>(&ChemicalEditor::gaseousPhase);
+    auto gaseousPhase2 = static_cast<GaseousPhase& (ChemicalEditor::*)()>(&ChemicalEditor::gaseousPhase);
 
-    auto liquidPhase1 = static_cast<const LiquidPhase&(ChemicalEditor::*)() const>(&ChemicalEditor::liquidPhase);
-    auto liquidPhase2 = static_cast<LiquidPhase&(ChemicalEditor::*)()>(&ChemicalEditor::liquidPhase);
+    auto liquidPhase1 = static_cast<const LiquidPhase& (ChemicalEditor::*)() const>(&ChemicalEditor::liquidPhase);
+    auto liquidPhase2 = static_cast<LiquidPhase& (ChemicalEditor::*)()>(&ChemicalEditor::liquidPhase);
 
-    auto mineralPhases1 = static_cast<const std::vector<MineralPhase>&(ChemicalEditor::*)() const>(&ChemicalEditor::mineralPhases);
-    auto mineralPhases2 = static_cast<std::vector<MineralPhase>&(ChemicalEditor::*)()>(&ChemicalEditor::mineralPhases);
+    auto mineralPhases1 = static_cast<const std::vector<MineralPhase>& (ChemicalEditor::*)() const>(&ChemicalEditor::mineralPhases);
+    auto mineralPhases2 = static_cast<std::vector<MineralPhase>& (ChemicalEditor::*)()>(&ChemicalEditor::mineralPhases);
 
     py::class_<ChemicalEditor>(m, "ChemicalEditor")
         .def(py::init<>())
@@ -95,8 +95,7 @@ void exportChemicalEditor(py::module& m)
         .def("mineralPhases", mineralPhases1, py::return_value_policy::reference_internal)
         .def("mineralPhases", mineralPhases2, py::return_value_policy::reference_internal)
         .def("createChemicalSystem", &ChemicalEditor::createChemicalSystem)
-        .def("createReactionSystem", &ChemicalEditor::createReactionSystem)
-        ;
+        .def("createReactionSystem", &ChemicalEditor::createReactionSystem);
 }
 
 } // namespace Reaktoro

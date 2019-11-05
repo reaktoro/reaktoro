@@ -162,19 +162,19 @@ struct ChemicalPlot::Impl
     unsigned id;
 
     Impl()
-    : quantity(system)
+        : quantity(system)
     {
         id = counter++;
     }
 
     Impl(const ChemicalSystem& system)
-    : system(system), quantity(system)
+        : system(system), quantity(system)
     {
         id = counter++;
     }
 
     Impl(const ReactionSystem& reactions)
-    : system(reactions.system()), reactions(reactions), quantity(reactions)
+        : system(reactions.system()), reactions(reactions), quantity(reactions)
     {
         id = counter++;
     }
@@ -196,7 +196,7 @@ struct ChemicalPlot::Impl
         // Initialize the names of the data and gnuplot script files
         dataname = name + ".dat";
         plotname = name + ".plt";
-        endname  = name + ".end";
+        endname = name + ".end";
 
         // Open the data and gnuplot script files
         datafile.open(dataname);
@@ -212,10 +212,9 @@ struct ChemicalPlot::Impl
         datafile << std::endl;
 
         // For each discrete point data, output a file with given data
-        for(auto item : points)
-        {
+        for(auto item : points) {
             // Auxiliary variables
-            const auto& legend  = std::get<0>(item);
+            const auto& legend = std::get<0>(item);
             const auto& xpoints = std::get<1>(item);
             const auto& ypoints = std::get<2>(item);
 
@@ -228,8 +227,7 @@ struct ChemicalPlot::Impl
             file << std::endl;
 
             // Output each line of data (x, y)
-            for(Index i = 0; i < xpoints.size(); ++i)
-            {
+            for(Index i = 0; i < xpoints.size(); ++i) {
                 file << std::left << std::setw(20) << xpoints[i];
                 file << std::left << std::setw(20) << ypoints[i];
                 file << std::endl;
@@ -247,21 +245,24 @@ struct ChemicalPlot::Impl
         plotfile << "ytitles = \""; // e.g., ytitles = "legend1 legend2 legend3"
         for(unsigned i = 0; i < y.size(); ++i)
             plotfile << (i == 0 ? "" : " ") << "'" << std::get<0>(y[i]) << "'";
-        plotfile << "\"\n" << std::endl;
+        plotfile << "\"\n"
+                 << std::endl;
 
         // Define Gnuplot a variable containing a list of titles for the discrete data points plotted along the y-axis.
         plotfile << "# The titles of each discrete point data" << std::endl;
         plotfile << "ptitles = \""; // e.g., ptitles = "legend1 legend2 legend3"
         for(unsigned i = 0; i < points.size(); ++i)
             plotfile << (i == 0 ? "" : " ") << "'" << std::get<0>(points[i]) << "'";
-        plotfile << "\"\n" << std::endl;
+        plotfile << "\"\n"
+                 << std::endl;
 
         // Define Gnuplot a variable containing a list of file names containing the discrete data points.
         plotfile << "# The names of the files containing discrete point data" << std::endl;
         plotfile << "pfiles = \""; // e.g., pfiles = "plot-legend1.dat plot-legend2.dat plot-legend3.dat"
         for(unsigned i = 0; i < points.size(); ++i)
             plotfile << (i == 0 ? "" : " ") << name + "-" + std::get<0>(points[i]) + ".dat";
-        plotfile << "\"\n" << std::endl;
+        plotfile << "\"\n"
+                 << std::endl;
 
         // On Windows, use the `dir` command on the data file to check its state.
         // On any other OS, use the `ls -l` command instead.
@@ -273,7 +274,7 @@ struct ChemicalPlot::Impl
         std::string file_exists_cmd = "[ ! -e " + endname + " ]; echo $?";
 #endif
         // Define auxiliary variables for the plot
-        auto wait = 1.0/frequency;
+        auto wait = 1.0 / frequency;
 
         // Finalize the Gnuplot script
         plotfile << boost::format(gnuplot_plot) % file_status_cmd % dataname % file_exists_cmd % wait;
@@ -284,8 +285,7 @@ struct ChemicalPlot::Impl
 
     auto close() -> void
     {
-        if(pipe != nullptr)
-        {
+        if(pipe != nullptr) {
             // Create the file that signals Gnuplot to stop rereading the input script
             endfile.open(endname);
 
@@ -308,8 +308,7 @@ struct ChemicalPlot::Impl
         // Output the current chemical state to the data file.
         quantity.update(state, t);
         datafile << std::left << std::setw(20) << quantity.value(x);
-        for(auto item : y)
-        {
+        for(auto item : y) {
             std::string qstr = std::get<1>(item);
             auto val = (qstr == "i") ? iteration : quantity.value(qstr);
             datafile << std::left << std::setw(20) << val;
@@ -318,8 +317,7 @@ struct ChemicalPlot::Impl
 
         // Open the Gnuplot plot after the first data has been output to the data file.
         // This ensures that Gnuplot opens the plot without errors/warnings.
-        if(pipe == nullptr)
-        {
+        if(pipe == nullptr) {
             std::string command = ("gnuplot -persist -e \"current=''\" " + plotname + " >> gnuplot.log 2>&1");
             pipe = popen(command.c_str(), "w");
         }
@@ -333,15 +331,15 @@ struct ChemicalPlot::Impl
 unsigned ChemicalPlot::Impl::counter = 0;
 
 ChemicalPlot::ChemicalPlot()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 ChemicalPlot::ChemicalPlot(const ChemicalSystem& system)
-: pimpl(new Impl(system))
+    : pimpl(new Impl(system))
 {}
 
 ChemicalPlot::ChemicalPlot(const ReactionSystem& reactions)
-: pimpl(new Impl(reactions))
+    : pimpl(new Impl(reactions))
 {}
 
 ChemicalPlot::~ChemicalPlot()
@@ -370,7 +368,7 @@ auto ChemicalPlot::y(std::string quantity, std::string label) -> void
 auto ChemicalPlot::points(std::string label, std::vector<double> xpoints, std::vector<double> ypoints) -> void
 {
     Assert(xpoints.size() == ypoints.size(), "Could not set the given points in the plot.",
-        "The number of x and y points do not match.");
+           "The number of x and y points do not match.");
     pimpl->points.emplace_back(label, xpoints, ypoints);
 }
 

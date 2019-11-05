@@ -54,8 +54,8 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
 
     // Assert the calculation succeeded
     Assert(res.optimum.succeeded, "Could not calculate the equilibrium state of the system.",
-        "Convergence could not be established with given equilibrium conditions, "
-        "initial guess, and/or numerical parameters.");
+           "Convergence could not be established with given equilibrium conditions, "
+           "initial guess, and/or numerical parameters.");
 
     return res;
 }
@@ -77,8 +77,8 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumInverseProblem& probl
 
     // Assert the calculation succeeded
     Assert(res.optimum.succeeded, "Could not calculate the equilibrium state of the system.",
-        "Convergence could not be established with given equilibrium conditions, "
-        "initial guess, and/or numerical parameters.");
+           "Convergence could not be established with given equilibrium conditions, "
+           "initial guess, and/or numerical parameters.");
 
     return res;
 }

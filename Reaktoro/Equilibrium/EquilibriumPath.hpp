@@ -59,7 +59,7 @@ struct EquilibriumPathResult
 /// A class that describes a path of equilibrium states.
 class EquilibriumPath
 {
-public:
+  public:
     /// Construct an EquilibriumPath instance
     explicit EquilibriumPath(const ChemicalSystem& system);
 
@@ -108,7 +108,7 @@ public:
     /// Return the partition of the chemical system in the equilibrium path definition.
     auto partition() const -> const Partition&;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

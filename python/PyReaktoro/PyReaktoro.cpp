@@ -16,7 +16,6 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include <PyReaktoro/PyReaktoro.hpp>
-
 #include <pybind11/stl_bind.h>
 
 namespace Reaktoro {

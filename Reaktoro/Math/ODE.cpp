@@ -27,18 +27,18 @@
 
 namespace Reaktoro {
 
-#define VecEntry(v, i)    NV_Ith_S(v, i)
+#define VecEntry(v, i) NV_Ith_S(v, i)
 #define MatEntry(A, i, j) DENSE_ELEM(A, i, j)
 
-#define CheckInitialize(r) \
-    Assert(r == CV_SUCCESS, \
-        "Cannot proceed with ODESolver::initialize to initialize the solver.", \
-        "There was a failure in the CVODE call `" + std::string(#r) + "`."); \
+#define CheckInitialize(r)                                                        \
+    Assert(r == CV_SUCCESS,                                                       \
+           "Cannot proceed with ODESolver::initialize to initialize the solver.", \
+           "There was a failure in the CVODE call `" + std::string(#r) + "`.");
 
-#define CheckIntegration(r) \
-    Assert(r == CV_SUCCESS, \
-        "Cannot proceed with ODESolver::integrate to integrate the differential equations.", \
-        "There was a failure in the CVODE call `" + std::string(#r) + "`."); \
+#define CheckIntegration(r)                                                                     \
+    Assert(r == CV_SUCCESS,                                                                     \
+           "Cannot proceed with ODESolver::integrate to integrate the differential equations.", \
+           "There was a failure in the CVODE call `" + std::string(#r) + "`.");
 
 using N_Vector = struct _generic_N_Vector*;
 
@@ -52,7 +52,7 @@ int CVODEJacobian(long int N, realtype t, N_Vector y, N_Vector fy, DlsMat J, voi
 struct ODEData
 {
     ODEData(const ODEProblem& problem, VectorRef y, VectorRef f, MatrixRef J)
-    : problem(problem), y(y), f(f), J(J), num_equations(problem.numEquations())
+        : problem(problem), y(y), f(f), J(J), num_equations(problem.numEquations())
     {}
 
     const ODEProblem& problem;
@@ -99,16 +99,18 @@ struct ODESolver::Impl
 
     /// Construct a default ODESolver::Impl instance
     Impl()
-    : cvode_mem(0), cvode_y(0)
+        : cvode_mem(0), cvode_y(0)
     {}
 
     ~Impl()
     {
         // Free the dynamic memory allocated for cvode context
-        if(cvode_mem) CVodeFree(&cvode_mem);
+        if(cvode_mem)
+            CVodeFree(&cvode_mem);
 
         // Free dynamic memory allocated for y
-        if(cvode_y) N_VDestroy_Serial(cvode_y);
+        if(cvode_y)
+            N_VDestroy_Serial(cvode_y);
     }
 
     /// Initializes the ODE solver
@@ -116,13 +118,13 @@ struct ODESolver::Impl
     {
         // Check if the ordinary differential problem has been initialized
         Assert(problem.initialized(),
-            "Cannot proceed with ODESolver::initialize to initialize the solver.",
-            "The provided ODEProblem instance was not properly initialized.");
+               "Cannot proceed with ODESolver::initialize to initialize the solver.",
+               "The provided ODEProblem instance was not properly initialized.");
 
         // Check if the dimension of 'y' matches the number of equations
         Assert(y.size() == problem.numEquations(),
-            "Cannot proceed with ODESolver::initialize to initialize the solver.",
-            "The dimension of the vector parameter `y` does not match the number of equations.");
+               "Cannot proceed with ODESolver::initialize to initialize the solver.",
+               "The dimension of the vector parameter `y` does not match the number of equations.");
 
         // The number of differential equations
         const int num_equations = problem.numEquations();
@@ -132,10 +134,12 @@ struct ODESolver::Impl
         J.resize(num_equations, num_equations);
 
         // Free any dynamic memory allocated for cvode_mem context
-        if(cvode_mem) CVodeFree(&cvode_mem);
+        if(cvode_mem)
+            CVodeFree(&cvode_mem);
 
         // Free dynamic memory allocated for y
-        if(cvode_y) N_VDestroy_Serial(cvode_y);
+        if(cvode_y)
+            N_VDestroy_Serial(cvode_y);
 
         // Initialize a new vector y
         cvode_y = N_VNew_Serial(num_equations);
@@ -150,8 +154,8 @@ struct ODESolver::Impl
 
         // Check if the cvode creation succeeded
         Assert(cvode_mem != NULL,
-            "Cannot proceed with ODESolver::initialize to initialize the solver.",
-            "There was an error creating the CVODE context.");
+               "Cannot proceed with ODESolver::initialize to initialize the solver.",
+               "There was an error creating the CVODE context.");
 
         // Initialize the cvode context
         CheckInitialize(CVodeInit(cvode_mem, CVODEFunction, tstart, cvode_y));
@@ -169,7 +173,8 @@ struct ODESolver::Impl
         // Set the parameters for the calculation
         CheckInitialize(CVodeSetStabLimDet(cvode_mem, options.stability_limit_detection));
         CheckInitialize(CVodeSetInitStep(cvode_mem, options.initial_step));
-        if(options.stop_time) CheckInitialize(CVodeSetStopTime(cvode_mem, options.stop_time));
+        if(options.stop_time)
+            CheckInitialize(CVodeSetStopTime(cvode_mem, options.stop_time));
         CheckInitialize(CVodeSetMinStep(cvode_mem, options.min_step));
         CheckInitialize(CVodeSetMaxStep(cvode_mem, options.max_step));
         CheckInitialize(CVodeSetMaxNumSteps(cvode_mem, int(options.max_num_steps)));
@@ -197,7 +202,7 @@ struct ODESolver::Impl
         ODEData data(problem, y, f, J);
 
         // Define an infinite time.
-        double tfinal = 10*(t + 1);
+        double tfinal = 10 * (t + 1);
 
         // Set the user-defined data to cvode_mem
         CheckIntegration(CVodeSetUserData(cvode_mem, &data));
@@ -223,8 +228,7 @@ struct ODESolver::Impl
         CheckIntegration(CVode(cvode_mem, tfinal, cvode_y, &t, CV_ONE_STEP));
 
         // Check if the current time is now greater than the final time
-        if(t > tfinal)
-        {
+        if(t > tfinal) {
             // Interpolate y at t using its old state and the new one
             CheckIntegration(CVodeGetDky(cvode_mem, tfinal, 0, cvode_y));
 
@@ -260,28 +264,31 @@ struct ODESolver::Impl
 
 inline int CVODEStep(const ODEStepMode& step)
 {
-    switch(step)
-    {
-        case ODEStepMode::Adams: return CV_ADAMS;
-        default: return CV_BDF;
+    switch(step) {
+    case ODEStepMode::Adams:
+        return CV_ADAMS;
+    default:
+        return CV_BDF;
     }
 }
 
 inline int CVODEIteration(const ODEIterationMode& iteration)
 {
-    switch(iteration)
-    {
-        case ODEIterationMode::Functional: return CV_FUNCTIONAL;
-        default: return CV_NEWTON;
+    switch(iteration) {
+    case ODEIterationMode::Functional:
+        return CV_FUNCTIONAL;
+    default:
+        return CV_NEWTON;
     }
 }
 
 inline int CVODEMaxStepOrder(const ODEOptions& options)
 {
-    switch(options.step)
-    {
-        case ODEStepMode::Adams: return options.max_order_adams;
-        default: return options.max_order_bdf;
+    switch(options.step) {
+    case ODEStepMode::Adams:
+        return options.max_order_adams;
+    default:
+        return options.max_order_bdf;
     }
 }
 
@@ -317,11 +324,11 @@ int CVODEJacobian(long int N, realtype t, N_Vector y, N_Vector fy, DlsMat J, voi
 }
 
 ODEProblem::ODEProblem()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 ODEProblem::ODEProblem(const ODEProblem& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 ODEProblem::~ODEProblem()
@@ -379,7 +386,7 @@ auto ODEProblem::jacobian(double t, VectorConstRef y, MatrixRef J) const -> int
 }
 
 ODESolver::ODESolver()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 ODESolver::~ODESolver()

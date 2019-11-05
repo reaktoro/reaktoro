@@ -18,7 +18,7 @@
 #include "Gnuplot.hpp"
 
 // C++ includes
-#include<stdio.h>
+#include <stdio.h>
 
 // Ensure appropriate popen or pclose calls when compiling with MSVC
 #ifdef _MSC_VER
@@ -82,7 +82,7 @@ set format '%g'
 } // namespace
 
 Gnuplot::Gnuplot()
-: pipe(popen("gnuplot -persist", "w"))
+    : pipe(popen("gnuplot -persist", "w"))
 {
     *this << style;
 }

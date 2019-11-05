@@ -26,13 +26,11 @@ void exportODE(py::module& m)
 {
     py::enum_<ODEStepMode>(m, "ODEStepMode")
         .value("Adams", ODEStepMode::Adams)
-        .value("BDF", ODEStepMode::BDF)
-        ;
+        .value("BDF", ODEStepMode::BDF);
 
     py::enum_<ODEIterationMode>(m, "ODEIterationMode")
         .value("Functional", ODEIterationMode::Functional)
-        .value("Newton", ODEIterationMode::Newton)
-        ;
+        .value("Newton", ODEIterationMode::Newton);
 
     py::class_<ODEOptions>(m, "ODEOptions")
         .def(py::init<>())
@@ -52,41 +50,40 @@ void exportODE(py::module& m)
         .def_readwrite("max_num_nonlinear_iterations", &ODEOptions::max_num_nonlinear_iterations)
         .def_readwrite("max_num_convergence_failures", &ODEOptions::max_num_convergence_failures)
         .def_readwrite("nonlinear_convergence_coefficient", &ODEOptions::nonlinear_convergence_coefficient)
-        .def_readwrite("abstols", &ODEOptions::abstols)
-        ;
+        .def_readwrite("abstols", &ODEOptions::abstols);
 
-//
-//    auto function1 = static_cast<const ODEFunction&(ODEProblem::*)() const>(&ODEProblem::function);
-//    auto function2 = static_cast<int(ODEProblem::*)(double, VectorConstRef, VectorReff) const>(&ODEProblem::function);
-//
-//    auto jacobian1 = static_cast<const ODEJacobian&(ODEProblem::*)() const>(&ODEProblem::jacobian);
-//    auto jacobian2 = static_cast<int(ODEProblem::*)(double, VectorConstRef, MatrixReff) const>(&ODEProblem::jacobian);
-//
-//    py::class_<ODEProblem>(m, "ODEProblem")
-//        .def(py::init<>())
-//        .def("setNumEquations", &ODEProblem::setNumEquations)
-//        .def("setFunction", &ODEProblem::setFunction)
-//        .def("setJacobian", &ODEProblem::setJacobian)
-//        .def("initialized", &ODEProblem::initialized)
-//        .def("numEquations", &ODEProblem::numEquations)
-//        .def("function", function1, py::return_value_policy::reference_internal)
-//        .def("jacobian", jacobian1, py::return_value_policy::reference_internal)
-//        .def("function", function2)
-//        .def("jacobian", jacobian2)
-//        ;
-//
-//    auto integrate1 = static_cast<void(ODESolver::*)(double&, VectorRef)>(&ODESolver::integrate);
-//    auto integrate2 = static_cast<void(ODESolver::*)(double&, VectorRef, double)>(&ODESolver::integrate);
-//
-//    py::class_<ODESolver>(m, "ODESolver")
-//        .def(py::init<>())
-//        .def("setOptions", &ODESolver::setOptions)
-//        .def("setProblem", &ODESolver::setProblem)
-//        .def("initialize", &ODESolver::initialize)
-//        .def("integrate", integrate1)
-//        .def("integrate", integrate2)
-//        .def("solve", &ODESolver::solve)
-//        ;
+    //
+    //    auto function1 = static_cast<const ODEFunction&(ODEProblem::*)() const>(&ODEProblem::function);
+    //    auto function2 = static_cast<int(ODEProblem::*)(double, VectorConstRef, VectorReff) const>(&ODEProblem::function);
+    //
+    //    auto jacobian1 = static_cast<const ODEJacobian&(ODEProblem::*)() const>(&ODEProblem::jacobian);
+    //    auto jacobian2 = static_cast<int(ODEProblem::*)(double, VectorConstRef, MatrixReff) const>(&ODEProblem::jacobian);
+    //
+    //    py::class_<ODEProblem>(m, "ODEProblem")
+    //        .def(py::init<>())
+    //        .def("setNumEquations", &ODEProblem::setNumEquations)
+    //        .def("setFunction", &ODEProblem::setFunction)
+    //        .def("setJacobian", &ODEProblem::setJacobian)
+    //        .def("initialized", &ODEProblem::initialized)
+    //        .def("numEquations", &ODEProblem::numEquations)
+    //        .def("function", function1, py::return_value_policy::reference_internal)
+    //        .def("jacobian", jacobian1, py::return_value_policy::reference_internal)
+    //        .def("function", function2)
+    //        .def("jacobian", jacobian2)
+    //        ;
+    //
+    //    auto integrate1 = static_cast<void(ODESolver::*)(double&, VectorRef)>(&ODESolver::integrate);
+    //    auto integrate2 = static_cast<void(ODESolver::*)(double&, VectorRef, double)>(&ODESolver::integrate);
+    //
+    //    py::class_<ODESolver>(m, "ODESolver")
+    //        .def(py::init<>())
+    //        .def("setOptions", &ODESolver::setOptions)
+    //        .def("setProblem", &ODESolver::setProblem)
+    //        .def("initialize", &ODESolver::initialize)
+    //        .def("integrate", integrate1)
+    //        .def("integrate", integrate2)
+    //        .def("solve", &ODESolver::solve)
+    //        ;
 }
 
 } // namespace Reaktoro

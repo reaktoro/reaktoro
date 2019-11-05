@@ -28,7 +28,7 @@ namespace Reaktoro {
 /// A class used for calculating standard thermodynamic properties of species in a chemical system.
 class ThermoProperties
 {
-public:
+  public:
     /// Construct a default ThermoProperties instance.
     ThermoProperties();
 
@@ -70,7 +70,7 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
     auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector;
 
-private:
+  private:
     /// The chemical system
     ChemicalSystem system;
 

@@ -66,8 +66,7 @@ void exportWaterThermoState(py::module& m)
         .def_readwrite("pressureD", &WaterThermoState::pressureD)
         .def_readwrite("pressureTT", &WaterThermoState::pressureTT)
         .def_readwrite("pressureTD", &WaterThermoState::pressureTD)
-        .def_readwrite("pressureDD", &WaterThermoState::pressureDD)
-        ;
+        .def_readwrite("pressureDD", &WaterThermoState::pressureDD);
 
     m.def("waterThermoStateHGK", waterThermoStateHGK);
     m.def("waterThermoStateWagnerPruss", waterThermoStateWagnerPruss);
@@ -86,8 +85,7 @@ void exportWaterHelmholtzState(py::module& m)
         .def_readwrite("helmholtzTTT", &WaterHelmholtzState::helmholtzTTT)
         .def_readwrite("helmholtzTTD", &WaterHelmholtzState::helmholtzTTD)
         .def_readwrite("helmholtzTDD", &WaterHelmholtzState::helmholtzTDD)
-        .def_readwrite("helmholtzDDD", &WaterHelmholtzState::helmholtzDDD)
-        ;
+        .def_readwrite("helmholtzDDD", &WaterHelmholtzState::helmholtzDDD);
 
     m.def("waterHelmholtzStateHGK", waterHelmholtzStateHGK);
     m.def("waterHelmholtzStateWagnerPruss", waterHelmholtzStateWagnerPruss);
@@ -107,8 +105,7 @@ void exportWaterElectroState(py::module& m)
         .def_readwrite("bornQ", &WaterElectroState::bornQ)
         .def_readwrite("bornN", &WaterElectroState::bornN)
         .def_readwrite("bornU", &WaterElectroState::bornU)
-        .def_readwrite("bornX", &WaterElectroState::bornX)
-        ;
+        .def_readwrite("bornX", &WaterElectroState::bornX);
 
     m.def("waterElectroStateJohnsonNorton", waterElectroStateJohnsonNorton);
 }

@@ -27,8 +27,8 @@
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
-#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
+#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
@@ -41,7 +41,7 @@ auto largestStepSize(VectorConstRef x, VectorConstRef dx, VectorConstRef l) -> d
     double alpha = infinity();
     for(unsigned i = 0; i < x.size(); ++i)
         if(dx[i] < 0.0)
-            alpha = std::min(alpha, std::abs(-(x[i] - l[i])/dx[i]));
+            alpha = std::min(alpha, std::abs(-(x[i] - l[i]) / dx[i]));
     return alpha;
 }
 
@@ -111,8 +111,10 @@ struct OptimumSolverKarpov::Impl
         x = max(x, l);
 
         // Ensure the dual variables `y` and `z` are initialized
-        if(y.rows() == 0) y = zeros(m);
-        if(z.rows() == 0) z = zeros(n);
+        if(y.rows() == 0)
+            y = zeros(m);
+        if(z.rows() == 0)
+            z = zeros(n);
 
         // Auxiliary references to algorithm parameters
         const auto& tolerance = options.tolerance;
@@ -138,9 +140,9 @@ struct OptimumSolverKarpov::Impl
         unsigned iter = 1;
 
         // The function that outputs the header and initial state of the solution
-        auto output_header = [&]()
-        {
-            if(!options.output.active) return;
+        auto output_header = [&]() {
+            if(!options.output.active)
+                return;
 
             outputter.addEntry("iter");
             outputter.addEntries(options.output.xprefix, n, options.output.xnames);
@@ -168,9 +170,9 @@ struct OptimumSolverKarpov::Impl
         };
 
         // The function that outputs the current state of the solution
-        auto output_state = [&]()
-        {
-            if(!options.output.active) return;
+        auto output_state = [&]() {
+            if(!options.output.active)
+                return;
 
             outputter.addValue(iter);
             outputter.addValues(x);
@@ -186,22 +188,19 @@ struct OptimumSolverKarpov::Impl
         };
 
         // Initialize the variables before the calculation begins
-        auto initialize = [&]()
-        {
+        auto initialize = [&]() {
             // Evaluate the objective function at the initial guess `x`
             f = problem.objective(x);
 
             // Calculate the initial infeasibility
-            infeasibility = norm(A*x - b);
+            infeasibility = norm(A * x - b);
         };
 
         // Calculate a feasible point for the minimization calculation
-        auto calculate_feasible_point = [&]()
-        {
+        auto calculate_feasible_point = [&]() {
             outputter.outputMessage("...solving the feasible problem", '\n');
 
-            for(; iter < max_iterations; ++iter)
-            {
+            for(; iter < max_iterations; ++iter) {
                 // Check if the current iterate is sufficiently feasible
                 if(infeasibility < feasibility_tolerance)
                     break;
@@ -210,14 +209,14 @@ struct OptimumSolverKarpov::Impl
                 w.noalias() = x - l;
 
                 // Assemble the linear system whose rhs is the feasibility residual
-                lhs = A*diag(w)*tr(A);
-                rhs = b - A*x;
+                lhs = A * diag(w) * tr(A);
+                rhs = b - A * x;
 
                 // Calculate the dual variables `y`
                 y = lhs.llt().solve(rhs);
 
                 // Calculate the correction step towards a feasible point
-                dx = diag(w)*tr(A)*y;
+                dx = diag(w) * tr(A) * y;
 
                 // Calculate the largest step size
                 alpha_max = tau_feasible * largestStepSize(x, dx, l);
@@ -229,7 +228,7 @@ struct OptimumSolverKarpov::Impl
                 x += alpha * dx;
 
                 // Calculate the feasibility residual
-                infeasibility = norm(A*x - b);
+                infeasibility = norm(A * x - b);
 
                 output_state();
             }
@@ -241,8 +240,7 @@ struct OptimumSolverKarpov::Impl
         };
 
         // Calculate the descent direction using KktSolver
-        auto calculate_descent_direction_using_kkt = [&]()
-        {
+        auto calculate_descent_direction_using_kkt = [&]() {
             // Calculate the weights for the primal variables in the ellipsoid condition
             w.noalias() = x - l;
 
@@ -274,34 +272,32 @@ struct OptimumSolverKarpov::Impl
             z = sol.dz;
 
             // Calculate the auxiliary vector `t = tr(A)*y - grad(f)`
-            t = tr(A)*y - f.grad;
+            t = tr(A) * y - f.grad;
         };
 
-        auto calculate_descent_direction_using_llt = [&]()
-        {
+        auto calculate_descent_direction_using_llt = [&]() {
             // Calculate the weights for the primal variables in the ellipsoid condition
             w.noalias() = x - l;
 
             // Assemble the linear system
-            lhs = A*diag(w)*tr(A);
-            rhs = A*diag(w)*f.grad;
+            lhs = A * diag(w) * tr(A);
+            rhs = A * diag(w) * f.grad;
 
             // Solve for the dual variables `y`
             y = lhs.llt().solve(rhs);
 
             // Calculate the auxiliary vector `t = tr(A)*y - grad(f)`
-            t = tr(A)*y - f.grad;
+            t = tr(A) * y - f.grad;
 
             // Calculate the dual variable `p`
-            p = tr(t)*diag(w)*t;
+            p = tr(t) * diag(w) * t;
             p = std::sqrt(p);
 
             // Calculate the descent step for the primal variables `x`
-            dx = diag(w)*t;
+            dx = diag(w) * t;
         };
 
-        auto calculate_descent_direction = [&]()
-        {
+        auto calculate_descent_direction = [&]() {
             if(options.karpov.use_kkt_solver)
                 calculate_descent_direction_using_kkt();
             else
@@ -309,8 +305,7 @@ struct OptimumSolverKarpov::Impl
         };
 
         // Solve the line search minimization problem
-        auto solve_line_search_minimization_problem = [&]()
-        {
+        auto solve_line_search_minimization_problem = [&]() {
             // Calculate the largest step size that will not leave the feasible domain
             alpha_max = largestStepSize(x, dx, l);
 
@@ -320,41 +315,37 @@ struct OptimumSolverKarpov::Impl
             // Start the backtracking line search algorithm
             unsigned i = 0;
             alpha = std::min(alpha_max, 1.0);
-            x_alpha = x + alpha*dx;
+            x_alpha = x + alpha * dx;
             f_alpha = f_alpha_max = problem.objective(x_alpha);
-            for(; i < line_search_max_iterations; ++i)
-            {
-                if(!std::isfinite(f_alpha.val) || min(x_alpha - l) < 0.0)
-                {
+            for(; i < line_search_max_iterations; ++i) {
+                if(!std::isfinite(f_alpha.val) || min(x_alpha - l) < 0.0) {
                     alpha_max = alpha = 0.999 * alpha;
 
                     // Update the objective value at the new trial step
-                    x_alpha = x + alpha*dx;
+                    x_alpha = x + alpha * dx;
                     f_alpha_max = f_alpha = problem.objective(x_alpha);
 
                     continue;
                 }
 
                 // Check for the Wolfe condition for sufficient decrease in the objective function
-                if(f_alpha.val >= f.val + line_search_wolfe*alpha*dot(f.grad, dx))
-                {
+                if(f_alpha.val >= f.val + line_search_wolfe * alpha * dot(f.grad, dx)) {
                     // Decrease the step length
                     alpha *= 0.5;
 
                     // Update the objective value at the new trial step
-                    x_alpha = x + alpha*dx;
+                    x_alpha = x + alpha * dx;
                     f_alpha = problem.objective(x_alpha);
                 }
             }
 
             // Check if an adequate step has been found, otherwise use the maximum allowed step length
-            if(i >= line_search_max_iterations)
-            {
+            if(i >= line_search_max_iterations) {
                 // Set the step length to its maximum allowed value without causing primal infeasibility
                 alpha = std::min(alpha_max, 1.0);
 
                 // Set f(x + alpha*dx) at the maximum allowed step step length
-                x_alpha = x + alpha*dx;
+                x_alpha = x + alpha * dx;
                 f_alpha = f_alpha_max;
             }
 
@@ -367,22 +358,19 @@ struct OptimumSolverKarpov::Impl
         };
 
         // Update the error norms
-        auto update_errors = [&]()
-        {
+        auto update_errors = [&]() {
             // Calculate the current error of the minimization calculation
-            error = norm<1>(diag(w)*t);
+            error = norm<1>(diag(w) * t);
 
             // Calculate the feasibility residual
-            infeasibility = norminf(A*x - b);
+            infeasibility = norminf(A * x - b);
         };
 
         // Return true if the calculation has converged
-        auto converged = [&]()
-        {
+        auto converged = [&]() {
             Vector tmp = (w.array() > 0).select(z, 0.0);
 
-            if(error < tolerance && min(tmp) > negative_dual_tolerance)
-            {
+            if(error < tolerance && min(tmp) > negative_dual_tolerance) {
                 result.iterations = iter;
                 result.succeeded = true;
                 return true;
@@ -391,12 +379,10 @@ struct OptimumSolverKarpov::Impl
         };
 
         // Perform the minimization of the objective function under linear and bound constraints
-        auto minimize = [&]()
-        {
+        auto minimize = [&]() {
             calculate_feasible_point();
 
-            for(; iter < max_iterations; ++iter)
-            {
+            for(; iter < max_iterations; ++iter) {
                 calculate_descent_direction();
 
                 solve_line_search_minimization_problem();
@@ -411,15 +397,12 @@ struct OptimumSolverKarpov::Impl
         };
 
         // Return true if there are active primal variables that need to be removed from the boundary
-        auto some_active_variables_should_become_inactive = [&]()
-        {
+        auto some_active_variables_should_become_inactive = [&]() {
             // Check all components in `z` for sufficient negative values
             // and set the corresponding primal variable to an interior value
             bool any_variable_to_become_inactive = false;
-            for(unsigned i = 0; i < n; ++i)
-            {
-                if(z[i] < negative_dual_tolerance)
-                {
+            for(unsigned i = 0; i < n; ++i) {
+                if(z[i] < negative_dual_tolerance) {
                     x[i] = l[i] + active_to_inactive;
                     any_variable_to_become_inactive = true;
                 }
@@ -431,8 +414,7 @@ struct OptimumSolverKarpov::Impl
 
         output_header();
 
-        do
-        {
+        do {
             minimize();
 
         } while(some_active_variables_should_become_inactive());
@@ -448,11 +430,11 @@ struct OptimumSolverKarpov::Impl
 };
 
 OptimumSolverKarpov::OptimumSolverKarpov()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 OptimumSolverKarpov::OptimumSolverKarpov(const OptimumSolverKarpov& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 OptimumSolverKarpov::~OptimumSolverKarpov()
@@ -478,7 +460,7 @@ auto OptimumSolverKarpov::solve(const OptimumProblem& problem, OptimumState& sta
 auto OptimumSolverKarpov::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
-        "The method OptimumSolverKarpov::dxdp has not been implemented yet.");
+                 "The method OptimumSolverKarpov::dxdp has not been implemented yet.");
     return {};
 }
 

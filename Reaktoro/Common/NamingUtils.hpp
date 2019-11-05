@@ -18,9 +18,9 @@
 #pragma once
 
 // C++ includes
+#include <cctype>
 #include <string>
 #include <vector>
-#include <cctype>
 
 namespace Reaktoro {
 

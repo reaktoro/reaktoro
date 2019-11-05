@@ -25,29 +25,29 @@ namespace Reaktoro {
 
 void exportPartition(py::module& m)
 {
-    auto setEquilibriumSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setEquilibriumSpecies);
-    auto setEquilibriumSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setEquilibriumSpecies);
+    auto setEquilibriumSpecies1 = static_cast<void (Partition::*)(const Indices&)>(&Partition::setEquilibriumSpecies);
+    auto setEquilibriumSpecies2 = static_cast<void (Partition::*)(const std::vector<std::string>&)>(&Partition::setEquilibriumSpecies);
 
-    auto setEquilibriumPhases1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setEquilibriumPhases);
-    auto setEquilibriumPhases2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setEquilibriumPhases);
+    auto setEquilibriumPhases1 = static_cast<void (Partition::*)(const Indices&)>(&Partition::setEquilibriumPhases);
+    auto setEquilibriumPhases2 = static_cast<void (Partition::*)(const std::vector<std::string>&)>(&Partition::setEquilibriumPhases);
 
-    auto setKineticSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setKineticSpecies);
-    auto setKineticSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setKineticSpecies);
+    auto setKineticSpecies1 = static_cast<void (Partition::*)(const Indices&)>(&Partition::setKineticSpecies);
+    auto setKineticSpecies2 = static_cast<void (Partition::*)(const std::vector<std::string>&)>(&Partition::setKineticSpecies);
 
-    auto setKineticPhases1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setKineticPhases);
-    auto setKineticPhases2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setKineticPhases);
+    auto setKineticPhases1 = static_cast<void (Partition::*)(const Indices&)>(&Partition::setKineticPhases);
+    auto setKineticPhases2 = static_cast<void (Partition::*)(const std::vector<std::string>&)>(&Partition::setKineticPhases);
 
-    auto setInertSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setInertSpecies);
-    auto setInertSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setInertSpecies);
+    auto setInertSpecies1 = static_cast<void (Partition::*)(const Indices&)>(&Partition::setInertSpecies);
+    auto setInertSpecies2 = static_cast<void (Partition::*)(const std::vector<std::string>&)>(&Partition::setInertSpecies);
 
-    auto setInertPhases1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setInertPhases);
-    auto setInertPhases2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setInertPhases);
+    auto setInertPhases1 = static_cast<void (Partition::*)(const Indices&)>(&Partition::setInertPhases);
+    auto setInertPhases2 = static_cast<void (Partition::*)(const std::vector<std::string>&)>(&Partition::setInertPhases);
 
-    auto setFluidPhases1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setFluidPhases);
-    auto setFluidPhases2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setFluidPhases);
+    auto setFluidPhases1 = static_cast<void (Partition::*)(const Indices&)>(&Partition::setFluidPhases);
+    auto setFluidPhases2 = static_cast<void (Partition::*)(const std::vector<std::string>&)>(&Partition::setFluidPhases);
 
-    auto setSolidPhases1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setSolidPhases);
-    auto setSolidPhases2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setSolidPhases);
+    auto setSolidPhases1 = static_cast<void (Partition::*)(const Indices&)>(&Partition::setSolidPhases);
+    auto setSolidPhases2 = static_cast<void (Partition::*)(const std::vector<std::string>&)>(&Partition::setSolidPhases);
 
     py::class_<Partition>(m, "Partition")
         .def(py::init<>())
@@ -121,8 +121,7 @@ void exportPartition(py::module& m)
         .def("formulaMatrixKineticSolidPartition", &Partition::formulaMatrixKineticSolidPartition, py::return_value_policy::reference_internal)
         .def("formulaMatrixInertPartition", &Partition::formulaMatrixInertPartition, py::return_value_policy::reference_internal)
         .def("formulaMatrixInertFluidPartition", &Partition::formulaMatrixInertFluidPartition, py::return_value_policy::reference_internal)
-        .def("formulaMatrixInertSolidPartition", &Partition::formulaMatrixInertSolidPartition, py::return_value_policy::reference_internal)
-        ;
+        .def("formulaMatrixInertSolidPartition", &Partition::formulaMatrixInertSolidPartition, py::return_value_policy::reference_internal);
 }
 
 } // namespace Reaktoro

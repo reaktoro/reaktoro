@@ -32,7 +32,10 @@ namespace Reaktoro {
 /// A type to define the possible state of matter of a phase.
 enum class PhaseType
 {
-    Solid, Liquid, Gas, Plasma
+    Solid,
+    Liquid,
+    Gas,
+    Plasma
 };
 
 /// A type used to define a phase and its attributes.
@@ -40,7 +43,7 @@ enum class PhaseType
 /// @ingroup Core
 class Phase
 {
-public:
+  public:
     /// Construct a default Phase instance.
     Phase();
 
@@ -136,7 +139,7 @@ public:
     /// @param n The molar amounts of the species (in units of mol)
     auto properties(PhaseChemicalModelResult& res, double T, double P, VectorConstRef n) const -> void;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

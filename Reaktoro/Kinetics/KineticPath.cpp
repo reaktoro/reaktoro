@@ -55,7 +55,7 @@ struct KineticPath::Impl
     std::vector<ChemicalPlot> plots;
 
     Impl(const ReactionSystem& reactions)
-    : reactions(reactions), system(reactions.system()), solver(reactions)
+        : reactions(reactions), system(reactions.system()), solver(reactions)
     {
         solver.setPartition(Partition(system));
     }
@@ -83,33 +83,38 @@ struct KineticPath::Impl
         double t = t0;
 
         // Initialize the output of the equilibrium path calculation
-        if(output) output.open();
+        if(output)
+            output.open();
 
         // Initialize the plots of the equilibrium path calculation
-        for(auto& plot : plots) plot.open();
+        for(auto& plot : plots)
+            plot.open();
 
-        while(t < t1)
-        {
+        while(t < t1) {
             // Update the output with current state
-            if(output) output.update(state, t);
+            if(output)
+                output.update(state, t);
 
             // Update the plots with current state
-            for(auto& plot : plots) plot.update(state, t);
+            for(auto& plot : plots)
+                plot.update(state, t);
 
             // Integrate one time step only
             t = solver.step(state, t, t1);
         }
 
         // Update the output with the final state
-        if(output) output.update(state, t1);
+        if(output)
+            output.update(state, t1);
 
         // Update the plots with the final state
-        for(auto& plot : plots) plot.update(state, t1);
+        for(auto& plot : plots)
+            plot.update(state, t1);
     }
 };
 
 KineticPath::KineticPath(const ReactionSystem& reactions)
-: pimpl(new Impl(reactions))
+    : pimpl(new Impl(reactions))
 {}
 
 KineticPath::~KineticPath()
@@ -170,7 +175,8 @@ auto KineticPath::plot() -> ChemicalPlot
 
 auto KineticPath::plots(unsigned num) -> std::vector<ChemicalPlot>
 {
-    for(unsigned i = 0; i < num; ++i) plot();
+    for(unsigned i = 0; i < num; ++i)
+        plot();
     return pimpl->plots;
 }
 

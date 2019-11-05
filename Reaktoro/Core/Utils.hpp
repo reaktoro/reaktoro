@@ -48,8 +48,10 @@ inline auto moleFractions(Composition n) -> ChemicalVector
     if(nspecies == 1)
         return ones(n);
     const ChemicalScalar nt = sum(n);
-    if(nt != 0.0) return n/nt;
-    else return zeros(n);
+    if(nt != 0.0)
+        return n / nt;
+    else
+        return zeros(n);
 }
 
 } // namespace Reaktoro

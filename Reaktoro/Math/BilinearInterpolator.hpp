@@ -27,7 +27,7 @@ namespace Reaktoro {
 /// A class used to calculate bilinear interpolation of data in two dimensions.
 class BilinearInterpolator
 {
-public:
+  public:
     /// Construct a default BilinearInterpolator instance
     BilinearInterpolator();
 
@@ -76,7 +76,7 @@ public:
     /// @return The interpolation of the data at (x, y) point
     auto operator()(double x, double y) const -> double;
 
-private:
+  private:
     /// The coordinates of the x and y points
     std::vector<double> m_xcoordinates, m_ycoordinates;
 

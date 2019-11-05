@@ -24,9 +24,10 @@ int main()
 
     ChemicalEditor editor(database);
 
-    editor.addAqueousPhase({ "H2O(l)", "OH-", "H+", "HCO3-", "CO3--", "Fe++",
-        "FeOH+", "FeOH++", "Fe+++", "H2(aq)", "O2(aq)", "HS-", "S5--", "S4--",
-        "H2S(aq)", "S3--", "S2--", "SO4--", "HSO4-" }).setChemicalModelPitzerHMW();
+    editor.addAqueousPhase({"H2O(l)", "OH-", "H+", "HCO3-", "CO3--", "Fe++",
+                            "FeOH+", "FeOH++", "Fe+++", "H2(aq)", "O2(aq)", "HS-", "S5--", "S4--",
+                            "H2S(aq)", "S3--", "S2--", "SO4--", "HSO4-"})
+        .setChemicalModelPitzerHMW();
     editor.addMineralPhase("Pyrrhotite");
     editor.addMineralPhase("Siderite");
 

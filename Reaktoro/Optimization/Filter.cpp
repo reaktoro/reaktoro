@@ -36,18 +36,17 @@ auto Filter::clear() -> void
 auto Filter::acceptable(const Point& point) const -> bool
 {
     for(const Point& x : filter)
-        if(dominated(point, x)) return false;
+        if(dominated(point, x))
+            return false;
     return true;
 }
 
 auto Filter::extend(const Point& point) -> void
 {
     // Check if the entry trying to be added to the filter is accepted to it
-    if(acceptable(point))
-    {
+    if(acceptable(point)) {
         // Define the domination function to remove dominated points from the filter
-        auto is_dominated = [=](const Point& x)
-        {
+        auto is_dominated = [=](const Point& x) {
             return dominated(x, point);
         };
 
@@ -62,7 +61,8 @@ auto Filter::extend(const Point& point) -> void
 auto Filter::dominated(const Point& a, const Point& b) -> bool
 {
     for(unsigned i = 0; i < a.size(); ++i)
-        if(lessThan(a[i], b[i], a[i])) return false;
+        if(lessThan(a[i], b[i], a[i]))
+            return false;
     return true;
 }
 

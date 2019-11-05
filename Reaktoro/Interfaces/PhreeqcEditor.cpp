@@ -45,18 +45,18 @@ struct PhreeqcEditor::Impl
 };
 
 PhreeqcEditor::PhreeqcEditor()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {
 }
 
 PhreeqcEditor::PhreeqcEditor(std::string database)
-: PhreeqcEditor()
+    : PhreeqcEditor()
 {
     pimpl->database = database;
 }
 
 PhreeqcEditor::PhreeqcEditor(const PhreeqcEditor& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 PhreeqcEditor::~PhreeqcEditor()
@@ -97,9 +97,9 @@ PhreeqcEditor::operator ChemicalSystem() const
 {
     // Assert the database has been given
     Assert(!pimpl->database.empty(),
-        "Could not convert the PhreeqcEditor instance to a ChemicalSystem instance.",
-        "No database was provided to PhreeqcEditor via its constructor or its "
-        "method PhreeqcEditor::setDatabase.");
+           "Could not convert the PhreeqcEditor instance to a ChemicalSystem instance.",
+           "No database was provided to PhreeqcEditor via its constructor or its "
+           "method PhreeqcEditor::setDatabase.");
 
     Phreeqc phreeqc = *this;
     return phreeqc.system();
@@ -109,9 +109,9 @@ PhreeqcEditor::operator Phreeqc() const
 {
     // Assert the database has been given
     Assert(!pimpl->database.empty(),
-        "Could not convert the PhreeqcEditor instance to a Phreeqc instance.",
-        "No database was provided to PhreeqcEditor via its constructor or its "
-        "method PhreeqcEditor::setDatabase.");
+           "Could not convert the PhreeqcEditor instance to a Phreeqc instance.",
+           "No database was provided to PhreeqcEditor via its constructor or its "
+           "method PhreeqcEditor::setDatabase.");
 
     // The indentation string
     const std::string indent = "    ";
@@ -123,23 +123,22 @@ PhreeqcEditor::operator Phreeqc() const
     std::string input;
 
     // Define the SOLUTION block
-    input = "SOLUTION\n"
-            "    units   ppm\n";
+    input =
+        "SOLUTION\n"
+        "    units   ppm\n";
     for(auto element : pimpl->elements)
         if(!ignored_elements.count(element))
             input += indent + element + " 1.0\n";
 
     // Define the EQUILIBRIUM_PHASES block containing the minerals
-    if(pimpl->minerals.size())
-    {
+    if(pimpl->minerals.size()) {
         input += "EQUILIBRIUM_PHASES\n";
         for(auto mineral : pimpl->minerals)
             input += indent + mineral + " 0.0\n";
     }
 
     // Define the GAS_PHASE block containing the gases
-    if(pimpl->gases.size())
-    {
+    if(pimpl->gases.size()) {
         input += "GAS_PHASE\n";
         for(auto gas : pimpl->gases)
             input += indent + gas + " 0.0\n";

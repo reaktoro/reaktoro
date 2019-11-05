@@ -23,14 +23,14 @@ ChemicalModelResult::ChemicalModelResult()
 {}
 
 ChemicalModelResult::ChemicalModelResult(Index nphases, Index nspecies)
-: ln_activity_coefficients(nspecies),
-  ln_activities(nspecies),
-  partial_molar_volumes(nspecies),
-  phase_molar_volumes(nphases, nspecies),
-  phase_residual_molar_gibbs_energies(nphases, nspecies),
-  phase_residual_molar_enthalpies(nphases, nspecies),
-  phase_residual_molar_heat_capacities_cp(nphases, nspecies),
-  phase_residual_molar_heat_capacities_cv(nphases, nspecies)
+    : ln_activity_coefficients(nspecies),
+      ln_activities(nspecies),
+      partial_molar_volumes(nspecies),
+      phase_molar_volumes(nphases, nspecies),
+      phase_residual_molar_gibbs_energies(nphases, nspecies),
+      phase_residual_molar_enthalpies(nphases, nspecies),
+      phase_residual_molar_heat_capacities_cp(nphases, nspecies),
+      phase_residual_molar_heat_capacities_cv(nphases, nspecies)
 {}
 
 auto ChemicalModelResult::resize(Index nphases, Index nspecies) -> void
@@ -55,8 +55,7 @@ auto ChemicalModelResult::phaseProperties(Index iphase, Index ispecies, Index ns
         row(phase_residual_molar_gibbs_energies, iphase, ispecies, nspecies),
         row(phase_residual_molar_enthalpies, iphase, ispecies, nspecies),
         row(phase_residual_molar_heat_capacities_cp, iphase, ispecies, nspecies),
-        row(phase_residual_molar_heat_capacities_cv, iphase, ispecies, nspecies)
-    };
+        row(phase_residual_molar_heat_capacities_cv, iphase, ispecies, nspecies)};
 }
 
 auto ChemicalModelResult::phaseProperties(Index iphase, Index ispecies, Index nspecies) const -> PhaseChemicalModelResultConst
@@ -69,8 +68,7 @@ auto ChemicalModelResult::phaseProperties(Index iphase, Index ispecies, Index ns
         row(phase_residual_molar_gibbs_energies, iphase, ispecies, nspecies),
         row(phase_residual_molar_enthalpies, iphase, ispecies, nspecies),
         row(phase_residual_molar_heat_capacities_cp, iphase, ispecies, nspecies),
-        row(phase_residual_molar_heat_capacities_cv, iphase, ispecies, nspecies)
-    };
+        row(phase_residual_molar_heat_capacities_cv, iphase, ispecies, nspecies)};
 }
 
 } // namespace Reaktoro

@@ -38,8 +38,7 @@ void exportThermoProperties(py::module& m)
         .def("standardPartialMolarInternalEnergies", &ThermoProperties::standardPartialMolarInternalEnergies)
         .def("standardPartialMolarHelmholtzEnergies", &ThermoProperties::standardPartialMolarHelmholtzEnergies)
         .def("standardPartialMolarHeatCapacitiesConstP", &ThermoProperties::standardPartialMolarHeatCapacitiesConstP)
-        .def("standardPartialMolarHeatCapacitiesConstV", &ThermoProperties::standardPartialMolarHeatCapacitiesConstV)
-        ;
+        .def("standardPartialMolarHeatCapacitiesConstV", &ThermoProperties::standardPartialMolarHeatCapacitiesConstV);
 }
 
 } // namespace Reaktoro

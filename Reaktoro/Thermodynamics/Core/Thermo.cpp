@@ -23,12 +23,12 @@ using namespace std::placeholders;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/Units.hpp>
-#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
@@ -88,27 +88,24 @@ struct Thermo::Impl
     {}
 
     Impl(const Database& database)
-    : database(database)
+        : database(database)
     {
         // Initialize the Haar--Gallagher--Kell (1984) equation of state for water
-        water_thermo_state_hgk_fn = [](Temperature T, Pressure P)
-        {
+        water_thermo_state_hgk_fn = [](Temperature T, Pressure P) {
             return Reaktoro::waterThermoStateHGK(T, P, StateOfMatter::Liquid);
         };
 
         water_thermo_state_hgk_fn = memoize(water_thermo_state_hgk_fn);
 
         // Initialize the Wagner and Pruss (1995) equation of state for water
-        water_thermo_state_wagner_pruss_fn = [](Temperature T, Pressure P)
-        {
+        water_thermo_state_wagner_pruss_fn = [](Temperature T, Pressure P) {
             return Reaktoro::waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
         };
 
         water_thermo_state_wagner_pruss_fn = memoize(water_thermo_state_wagner_pruss_fn);
 
         // Initialize the Johnson and Norton equation of state for the electrostatic state of water
-        water_eletro_state_fn = [=](double T, double P)
-        {
+        water_eletro_state_fn = [=](double T, double P) {
             const WaterThermoState wts = water_thermo_state_wagner_pruss_fn(T, P);
             return waterElectroStateJohnsonNorton(T, P, wts);
         };
@@ -116,8 +113,7 @@ struct Thermo::Impl
         water_eletro_state_fn = memoize(water_eletro_state_fn);
 
         // Initialize the HKF equation of state for the thermodynamic state of aqueous, gas, liquid, fluid and mineral species
-        species_thermo_state_hkf_fn = [=](double T, double P, std::string species)
-        {
+        species_thermo_state_hkf_fn = [=](double T, double P, std::string species) {
             return speciesThermoStateHKF(T, P, species);
         };
 
@@ -130,7 +126,7 @@ struct Thermo::Impl
             return aqueousSpeciesThermoStateHKF(T, P, database.aqueousSpecies(species));
         if(database.containsGaseousSpecies(species))
             return Reaktoro::speciesThermoStateHKF(T, P, database.gaseousSpecies(species));
-        if (database.containsLiquidSpecies(species))
+        if(database.containsLiquidSpecies(species))
             return Reaktoro::speciesThermoStateHKF(T, P, database.liquidSpecies(species));
         if(database.containsMineralSpecies(species))
             return Reaktoro::speciesThermoStateHKF(T, P, database.mineralSpecies(species));
@@ -166,7 +162,7 @@ struct Thermo::Impl
 
         const auto phreeqc_thermo_params = getSpeciesThermoParamsPhreeqc(species);
         if(phreeqc_thermo_params)
-			return standardGibbsEnergyFromPhreeqcReaction(T, P, species, *phreeqc_thermo_params);
+            return standardGibbsEnergyFromPhreeqcReaction(T, P, species, *phreeqc_thermo_params);
 
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).gibbs_energy;
@@ -293,7 +289,7 @@ struct Thermo::Impl
             return database.aqueousSpecies(species).thermoData().properties;
         if(database.containsGaseousSpecies(species))
             return database.gaseousSpecies(species).thermoData().properties;
-        if (database.containsLiquidSpecies(species))
+        if(database.containsLiquidSpecies(species))
             return database.liquidSpecies(species).thermoData().properties;
         if(database.containsMineralSpecies(species))
             return database.mineralSpecies(species).thermoData().properties;
@@ -307,7 +303,7 @@ struct Thermo::Impl
             return database.aqueousSpecies(species).thermoData().reaction;
         if(database.containsGaseousSpecies(species))
             return database.gaseousSpecies(species).thermoData().reaction;
-        if (database.containsLiquidSpecies(species))
+        if(database.containsLiquidSpecies(species))
             return database.liquidSpecies(species).thermoData().reaction;
         if(database.containsMineralSpecies(species))
             return database.mineralSpecies(species).thermoData().reaction;
@@ -321,7 +317,7 @@ struct Thermo::Impl
             return database.aqueousSpecies(species).thermoData().phreeqc;
         if(database.containsGaseousSpecies(species))
             return database.gaseousSpecies(species).thermoData().phreeqc;
-        if (database.containsLiquidSpecies(species))
+        if(database.containsLiquidSpecies(species))
             return database.liquidSpecies(species).thermoData().phreeqc;
         if(database.containsMineralSpecies(species))
             return database.mineralSpecies(species).thermoData().phreeqc;
@@ -331,7 +327,8 @@ struct Thermo::Impl
 
     auto hasThermoParamsHKF(std::string species) -> bool
     {
-        if(isAlternativeWaterName(species)) return true;
+        if(isAlternativeWaterName(species))
+            return true;
         if(database.containsAqueousSpecies(species))
             return static_cast<bool>(database.aqueousSpecies(species).thermoData().hkf);
         if(database.containsGaseousSpecies(species))
@@ -346,19 +343,21 @@ struct Thermo::Impl
 
     template<typename PropertyFunction, typename EvalFunction>
     auto standardPropertyFromReaction(double T, double P, std::string species,
-        const ReactionThermoInterpolatedProperties& reaction, PropertyFunction property,
-        EvalFunction eval) -> ThermoScalar
+                                      const ReactionThermoInterpolatedProperties& reaction, PropertyFunction property,
+                                      EvalFunction eval) -> ThermoScalar
     {
         const double stoichiometry = reaction.equation.stoichiometry(species);
 
-        Assert(stoichiometry, "Cannot calculate the thermodynamic property of "
-            "species `" + species + "` using its reaction data.", "This species "
-            "is not present in the reaction equation `" +
-            std::string(reaction.equation) + "` or has zero stoichiometry.");
+        Assert(stoichiometry,
+               "Cannot calculate the thermodynamic property of "
+               "species `" +
+                   species + "` using its reaction data.",
+               "This species "
+               "is not present in the reaction equation `" +
+                   std::string(reaction.equation) + "` or has zero stoichiometry.");
 
         double sum = 0.0;
-        for(auto pair : reaction.equation.equation())
-        {
+        for(auto pair : reaction.equation.equation()) {
             const auto reactant = pair.first;
             const auto stoichiometry = pair.second;
             if(reactant != species)
@@ -426,34 +425,34 @@ struct Thermo::Impl
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-	auto lnEquilibriumConstantFromPhreeqcParams(Temperature T, Pressure P, const SpeciesThermoParamsPhreeqc& params) -> ThermoScalar
-	{
-		const double ln10 = 2.302585092994046;
-		const double lnk298 = params.reaction.log_k * ln10;
+    auto lnEquilibriumConstantFromPhreeqcParams(Temperature T, Pressure P, const SpeciesThermoParamsPhreeqc& params) -> ThermoScalar
+    {
+        const double ln10 = 2.302585092994046;
+        const double lnk298 = params.reaction.log_k * ln10;
 
-        if(params.reaction.analytic.size())
-        {
-        	const auto& A = params.reaction.analytic;
-        	const auto logk = A[0] + A[1]*T + A[2]/T + A[3]*log10(T) + A[4]/(T*T) + A[5]*T*T;
-        	return logk * ln10;
-        }
-        else if(params.reaction.delta_h)
-        {
-        	// The universal gas constant (in units of kJ/(K*mol))
-        	const double R = 8.31470e-3;
-        	return lnk298 - params.reaction.delta_h/R*(1.0/T - 1.0/298.15);
-        }
-        else return ThermoScalar(lnk298);
-	}
+        if(params.reaction.analytic.size()) {
+            const auto& A = params.reaction.analytic;
+            const auto logk = A[0] + A[1] * T + A[2] / T + A[3] * log10(T) + A[4] / (T * T) + A[5] * T * T;
+            return logk * ln10;
+        } else if(params.reaction.delta_h) {
+            // The universal gas constant (in units of kJ/(K*mol))
+            const double R = 8.31470e-3;
+            return lnk298 - params.reaction.delta_h / R * (1.0 / T - 1.0 / 298.15);
+        } else
+            return ThermoScalar(lnk298);
+    }
 
-	auto standardGibbsEnergyFromPhreeqcReaction(Temperature T, Pressure P, std::string species, const SpeciesThermoParamsPhreeqc& params) -> ThermoScalar
+    auto standardGibbsEnergyFromPhreeqcReaction(Temperature T, Pressure P, std::string species, const SpeciesThermoParamsPhreeqc& params) -> ThermoScalar
     {
         const double stoichiometry = params.reaction.equation.stoichiometry(species);
 
-        Assert(stoichiometry, "Cannot calculate the thermodynamic property of "
-            "species `" + species + "` using its reaction data.", "This species "
-            "is not present in the reaction equation `" +
-            std::string(params.reaction.equation) + "` or has zero stoichiometry.");
+        Assert(stoichiometry,
+               "Cannot calculate the thermodynamic property of "
+               "species `" +
+                   species + "` using its reaction data.",
+               "This species "
+               "is not present in the reaction equation `" +
+                   std::string(params.reaction.equation) + "` or has zero stoichiometry.");
 
         // The universal gas constant (in units of kJ/(K*mol))
         const double R = 8.31470e-3;
@@ -463,14 +462,13 @@ struct Thermo::Impl
         // G_{j}^{\circ}=-\frac{1}{\nu_{j}}\left[\sum_{i\neq j}\nu_{i}G_{i}^{\circ}+RT\ln K\right]
 
         ThermoScalar sum;
-        for(auto pair : params.reaction.equation)
-        {
+        for(auto pair : params.reaction.equation) {
             const auto reactant = pair.first;
             const auto stoichiometry = pair.second;
             if(reactant != species)
                 sum += stoichiometry * standardPartialMolarGibbsEnergy(T.val, P.val, reactant);
         }
-        sum += R*T*lnk;
+        sum += R * T * lnk;
         sum /= -stoichiometry;
 
         return sum;
@@ -491,12 +489,12 @@ struct Thermo::Impl
     {
         const double ln10 = 2.302585092994046;
         const ThermoScalar lnK = lnEquilibriumConstant(T, P, reaction);
-        return lnK/ln10;
+        return lnK / ln10;
     }
 };
 
 Thermo::Thermo(const Database& database)
-: pimpl(new Impl(database))
+    : pimpl(new Impl(database))
 {}
 
 auto Thermo::standardPartialMolarGibbsEnergy(double T, double P, std::string species) const -> ThermoScalar

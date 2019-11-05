@@ -21,8 +21,8 @@
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
-#include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpNewton.hpp>
+#include <Reaktoro/Optimization/OptimumState.hpp>
 
 namespace Reaktoro {
 
@@ -38,11 +38,11 @@ auto OptimumSolverIpFeasible::Impl::approximate(OptimumProblem problem, OptimumS
     // Auxiliary variables
     const unsigned n = problem.A.cols();
     const unsigned m = problem.A.rows();
-    const double  mu = options.ipnewton.mu;
+    const double mu = options.ipnewton.mu;
     const double rho = std::sqrt(mu);
 
     // The total number of primal variables for the feasibility problem
-    const unsigned t = n + 2*m;
+    const unsigned t = n + 2 * m;
 
     // Initialize the solution variables if it has not been done before
     if(state.x.size() != n)
@@ -59,7 +59,7 @@ auto OptimumSolverIpFeasible::Impl::approximate(OptimumProblem problem, OptimumS
 
     // Initialize the gradient member
     res.grad.resize(t);
-    res.grad << zeros(n), ones(2*m);
+    res.grad << zeros(n), ones(2 * m);
 
     // Initialize the hessian member
     res.hessian.mode = Hessian::Diagonal;
@@ -67,13 +67,12 @@ auto OptimumSolverIpFeasible::Impl::approximate(OptimumProblem problem, OptimumS
     rows(res.hessian.diagonal, 0, n) = rho * ones(n);
 
     // Define the objective function of the feasibility problem
-    fproblem.objective = [=](VectorConstRef x) mutable
-    {
+    fproblem.objective = [=](VectorConstRef x) mutable {
         const auto xx = rows(x, 0, n);
         const auto xp = rows(x, n, m);
         const auto xn = rows(x, n + m, m);
         res.val = (xp + xn).sum() + 0.5 * rho * (xx - xr).dot(xx - xr);
-        rows(res.grad, 0, n) = rho*(xx - xr);
+        rows(res.grad, 0, n) = rho * (xx - xr);
         return res;
     };
 
@@ -81,9 +80,9 @@ auto OptimumSolverIpFeasible::Impl::approximate(OptimumProblem problem, OptimumS
     fproblem.l = zeros(t);
     fproblem.b = problem.b;
     fproblem.A.resize(m, t);
-    cols(fproblem.A, 0, n)     =  problem.A;
-    cols(fproblem.A, n, m)     = -identity(m, m);
-    cols(fproblem.A, n + m, m) =  identity(m, m);
+    cols(fproblem.A, 0, n) = problem.A;
+    cols(fproblem.A, n, m) = -identity(m, m);
+    cols(fproblem.A, n + m, m) = identity(m, m);
 
     // Set the initial guess
     const Vector xx = state.x;
@@ -92,8 +91,8 @@ auto OptimumSolverIpFeasible::Impl::approximate(OptimumProblem problem, OptimumS
 
     state.x.resize(t);
     state.x << xx, xp, xn;
-    state.y  = zeros(m);
-    state.z = mu/state.x.array();
+    state.y = zeros(m);
+    state.z = mu / state.x.array();
 
     // Solve the feasibility problem
     auto result = ipnewton.solve(fproblem, state, options);
@@ -101,17 +100,17 @@ auto OptimumSolverIpFeasible::Impl::approximate(OptimumProblem problem, OptimumS
     // Convert the result of the artificial feasibility problem
     state.x = rows(state.x, 0, n);
     state.y = zeros(m);
-    state.z = mu/state.x.array();
+    state.z = mu / state.x.array();
 
     return result;
 }
 
 OptimumSolverIpFeasible::OptimumSolverIpFeasible()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 OptimumSolverIpFeasible::OptimumSolverIpFeasible(const OptimumSolverIpFeasible& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 OptimumSolverIpFeasible::~OptimumSolverIpFeasible()

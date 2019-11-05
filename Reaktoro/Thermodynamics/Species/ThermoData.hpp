@@ -18,8 +18,8 @@
 #pragma once
 
 // C++ includes
-#include <vector>
 #include <optional>
+#include <vector>
 
 // Reaktoro includes
 #include <Reaktoro/Common/ReactionEquation.hpp>
@@ -217,7 +217,6 @@ struct SpeciesThermoData
     /// The thermodynamic parameters of the species from a Phreeqc database
     std::optional<SpeciesThermoParamsPhreeqc> phreeqc;
 };
-
 
 /// A type for storing the thermodynamic data of an aqueous species
 struct AqueousSpeciesThermoData : SpeciesThermoData

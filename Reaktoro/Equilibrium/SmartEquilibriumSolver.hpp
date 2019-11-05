@@ -37,7 +37,7 @@ struct EquilibriumResult;
 /// A class used to perform equilibrium calculations using machine learning scheme.
 class SmartEquilibriumSolver
 {
-public:
+  public:
     /// Construct a default SmartEquilibriumSolver instance.
     SmartEquilibriumSolver();
 
@@ -82,7 +82,7 @@ public:
     /// Return the chemical properties of the calculated equilibrium state.
     auto properties() const -> const ChemicalProperties&;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

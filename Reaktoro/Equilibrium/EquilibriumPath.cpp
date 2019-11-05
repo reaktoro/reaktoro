@@ -52,7 +52,7 @@ struct EquilibriumPath::Impl
 
     /// Construct a EquilibriumPath::Impl instance
     explicit Impl(const ChemicalSystem& system)
-    : system(system), partition(system)
+        : system(system), partition(system)
     {}
 
     /// Set the options for the equilibrium path calculation and visualization
@@ -103,22 +103,23 @@ struct EquilibriumPath::Impl
         ChemicalState state = state_i;
 
         // The ODE function describing the equilibrium path
-        ODEFunction f = [&](double t, VectorConstRef ne, VectorRef res) -> int
-        {
+        ODEFunction f = [&](double t, VectorConstRef ne, VectorRef res) -> int {
             static double tprev = t;
 
             // Skip if t is greater or equal than 1
-            if(t > 0.0 && std::abs(t - tprev) >= options.maxstep) return 1;
+            if(t > 0.0 && std::abs(t - tprev) >= options.maxstep)
+                return 1;
 
             // Update tprev
             tprev = t;
 
             // Skip if t is greater or equal than 1
-            if(t >= 1) return 0;
+            if(t >= 1)
+                return 0;
 
             // Calculate T, P, be at current t
-            const double T  = T_i + t * (T_f - T_i);
-            const double P  = P_i + t * (P_f - P_i);
+            const double T = T_i + t * (T_f - T_i);
+            const double P = P_i + t * (P_f - P_i);
             const Vector be = be_i + t * (be_f - be_i);
 
             // Perform the equilibrium calculation at T, P, be
@@ -128,7 +129,8 @@ struct EquilibriumPath::Impl
             sensitivity = equilibrium.sensitivity();
 
             // Check if the calculation succeeded
-            if(!result.equilibrium.optimum.succeeded) return 1;
+            if(!result.equilibrium.optimum.succeeded)
+                return 1;
 
             // Calculate the right-hand side vector of the ODE
             res = sensitivity.dndT * (T_f - T_i) +
@@ -148,7 +150,7 @@ struct EquilibriumPath::Impl
         Vector ne_f = rows(state_i.speciesAmounts(), ies);
 
         // Adjust the absolute tolerance parameters for each component
-        options.ode.abstols = options.ode.abstol * ((ne_i + ne_f)/2.0 + 1.0);
+        options.ode.abstols = options.ode.abstol * ((ne_i + ne_f) / 2.0 + 1.0);
 
         // Ensure the iteration algorithm is not Newton
         options.ode.iteration = ODEIterationMode::Functional;
@@ -165,40 +167,45 @@ struct EquilibriumPath::Impl
         ode.initialize(t, ne);
 
         // Initialize the output of the equilibrium path calculation
-        if(output) output.open();
+        if(output)
+            output.open();
 
         // Initialize the plots of the equilibrium path calculation
-        for(auto& plot : plots) plot.open();
+        for(auto& plot : plots)
+            plot.open();
 
         // Perform the integration from t = 0 to t = 1
-        while(t < 1.0)
-        {
+        while(t < 1.0) {
             // Update the output with current state
-            if(output) output.update(state, t);
+            if(output)
+                output.update(state, t);
 
             // Update the plots with current state
-            for(auto& plot : plots) plot.update(state, t);
+            for(auto& plot : plots)
+                plot.update(state, t);
 
             // Integrate one time step only
             ode.integrate(t, ne);
         }
 
         // Update the output with the final state
-        if(output) output.update(state_f, 1.0);
+        if(output)
+            output.update(state_f, 1.0);
 
         // Update the plots with the final state
-        for(auto& plot : plots) plot.update(state_f, 1.0);
+        for(auto& plot : plots)
+            plot.update(state_f, 1.0);
 
         return result;
     }
 };
 
 EquilibriumPath::EquilibriumPath(const ChemicalSystem& system)
-: pimpl(new Impl(system))
+    : pimpl(new Impl(system))
 {}
 
 EquilibriumPath::EquilibriumPath(const EquilibriumPath& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 EquilibriumPath::~EquilibriumPath()
@@ -239,7 +246,8 @@ auto EquilibriumPath::plot() -> ChemicalPlot
 
 auto EquilibriumPath::plots(unsigned num) -> std::vector<ChemicalPlot>
 {
-    for(unsigned i = 0; i < num; ++i) plot();
+    for(unsigned i = 0; i < num; ++i)
+        plot();
     return pimpl->plots;
 }
 

@@ -24,40 +24,41 @@
 #include <miniz/zip_file.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Common/SetUtils.hpp>
-#include "supcrt98.hpp"
+#include "supcrt07-organics.hpp"
 #include "supcrt07.hpp"
 #include "supcrt98-organics.hpp"
-#include "supcrt07-organics.hpp"
+#include "supcrt98.hpp"
+
+#include <Reaktoro/Common/SetUtils.hpp>
 
 namespace Reaktoro {
 namespace internal {
 
 /// The names of the built-in databases
 const std::vector<std::string> databases =
-{
-    "supcrt98.xml",
-    "supcrt07.xml",
-    "supcrt98-organics.xml",
-    "supcrt07-organics.xml",
+    {
+        "supcrt98.xml",
+        "supcrt07.xml",
+        "supcrt98-organics.xml",
+        "supcrt07-organics.xml",
 };
 
 /// The arrays containing the zipped data of the built-in databases
 const std::vector<unsigned char*> databases_data =
-{
-    supcrt98_zip,
-    supcrt07_zip,
-    supcrt98_organics_zip,
-    supcrt07_organics_zip,
+    {
+        supcrt98_zip,
+        supcrt07_zip,
+        supcrt98_organics_zip,
+        supcrt07_organics_zip,
 };
 
 /// The lengths of the arrays containing the zipped data of the built-in databases
 const std::vector<unsigned int> databases_len =
-{
-    supcrt98_zip_len,
-    supcrt07_zip_len,
-    supcrt98_organics_zip_len,
-    supcrt07_organics_zip_len,
+    {
+        supcrt98_zip_len,
+        supcrt07_zip_len,
+        supcrt98_organics_zip_len,
+        supcrt07_organics_zip_len,
 };
 
 } // namespace internal

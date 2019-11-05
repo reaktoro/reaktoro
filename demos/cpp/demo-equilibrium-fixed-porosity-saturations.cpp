@@ -48,6 +48,7 @@
 //    std::cout << state << std::endl;
 //}
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
     // TODO implement the above demo using the new design of Reaktoro
 }

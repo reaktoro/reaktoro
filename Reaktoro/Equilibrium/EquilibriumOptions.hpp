@@ -18,9 +18,9 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Optimization/NonlinearSolver.hpp>
 #include <Reaktoro/Optimization/OptimumMethod.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
-#include <Reaktoro/Optimization/NonlinearSolver.hpp>
 
 namespace Reaktoro {
 

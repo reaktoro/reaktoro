@@ -26,7 +26,7 @@ namespace Reaktoro {
 /// A type to describe the attributes of a mineral species
 class MineralSpecies : public Species
 {
-public:
+  public:
     /// Construct a default MineralSpecies instance
     MineralSpecies();
 
@@ -39,7 +39,7 @@ public:
     /// Return the thermodynamic data of the mineral species.
     auto thermoData() const -> const MineralSpeciesThermoData&;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

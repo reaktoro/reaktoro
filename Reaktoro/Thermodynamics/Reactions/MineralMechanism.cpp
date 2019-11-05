@@ -48,14 +48,14 @@ inline auto checkRateConstantUnit(std::string unit) -> void
 {
     if(!units::convertible(unit, "mol/(m2*s)"))
         RuntimeError("Cannot set the kinetic rate constant of the mineral reaction",
-            "The provided unit cannot be converted to mol/(m2*s)");
+                     "The provided unit cannot be converted to mol/(m2*s)");
 }
 
 inline auto checkActivationEnergyUnit(std::string unit) -> void
 {
     if(!units::convertible(unit, "kJ/mol"))
         RuntimeError("Cannot set the Arrhenius activation energy of the mineral reaction",
-            "The provided unit cannot be converted to kJ/mol");
+                     "The provided unit cannot be converted to kJ/mol");
 }
 
 } /* namespace internal */
@@ -69,14 +69,16 @@ MineralMechanism::MineralMechanism(std::string mechanism)
 {
     const auto options = split(mechanism, ";");
 
-    for(const auto& option : options)
-    {
+    for(const auto& option : options) {
         if(option.find("a[") != std::string::npos || option.find("activity[") != std::string::npos ||
-            option.find("p[") != std::string::npos || option.find("pressure[") != std::string::npos)
-                { catalysts.push_back(MineralCatalyst(option)); continue; }
+           option.find("p[") != std::string::npos || option.find("pressure[") != std::string::npos) {
+            catalysts.push_back(MineralCatalyst(option));
+            continue;
+        }
 
         const auto words = split(option, "= ");
-        if(words.empty() || words.size() > 3) unknownOptionError(option);
+        if(words.empty() || words.size() > 3)
+            unknownOptionError(option);
 
         const auto& quantity = words[0];
         const auto& value = tofloat(words[1]);
@@ -95,7 +97,8 @@ MineralMechanism::MineralMechanism(std::string mechanism)
             p = value;
         else if(quantity == "q")
             q = value;
-        else unknownOptionError(option);
+        else
+            unknownOptionError(option);
     }
 }
 

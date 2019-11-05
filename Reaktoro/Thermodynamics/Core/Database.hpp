@@ -67,7 +67,7 @@ class MineralSpecies;
 /// @ingroup Core
 class Database
 {
-public:
+  public:
     /// Construct a default Database instance
     Database();
 
@@ -152,12 +152,12 @@ public:
     auto gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<GaseousSpecies>;
 
     /// Return the liquid species that contains at least one of the specified elements.
-    auto liquidSpeciesWithElements(const std::vector<std::string>& elements) const->std::vector<LiquidSpecies>;
+    auto liquidSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<LiquidSpecies>;
 
     /// Return the mineral species that contains at least one of the specified elements.
     auto mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<MineralSpecies>;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

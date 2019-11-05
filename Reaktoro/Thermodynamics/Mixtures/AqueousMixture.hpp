@@ -18,8 +18,8 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
+#include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 
 namespace Reaktoro {
 
@@ -58,7 +58,7 @@ struct AqueousMixtureState : public MixtureState
 /// @ingroup Mixtures
 class AqueousMixture : public GeneralMixture<AqueousSpecies>
 {
-public:
+  public:
     /// Construct a default AqueousMixture instance.
     AqueousMixture();
 
@@ -188,7 +188,7 @@ public:
     /// @param n The molar amounts of the species in the mixture (in units of mol)
     auto state(Temperature T, Pressure P, VectorConstRef n) const -> AqueousMixtureState;
 
-private:
+  private:
     /// The index of the water species
     Index idx_water;
 

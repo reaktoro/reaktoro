@@ -26,7 +26,12 @@ namespace Reaktoro {
 struct Hessian
 {
     /// An enumeration of possible modes for an Hessian representation
-    enum Mode { Dense, Diagonal, Inverse };
+    enum Mode
+    {
+        Dense,
+        Diagonal,
+        Inverse
+    };
 
     /// The mode of the Hessian.
     /// It is the responsibility of the user to set the appropriate `mode`

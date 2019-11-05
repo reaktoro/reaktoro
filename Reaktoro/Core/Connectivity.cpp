@@ -62,7 +62,8 @@ struct Connectivity::Impl
             for(unsigned i = 0; i < num_species; ++i)
                 if(species[i].elements().count(elements[j])) {
                     element_to_species[j].push_back(i);
-                    species_to_elements[i].push_back(j); }
+                    species_to_elements[i].push_back(j);
+                }
 
         species_to_phase.resize(num_species);
         phase_to_species.resize(num_phases);
@@ -85,15 +86,15 @@ struct Connectivity::Impl
 };
 
 Connectivity::Connectivity()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 Connectivity::Connectivity(const ChemicalSystem& system)
-: pimpl(new Impl(system))
+    : pimpl(new Impl(system))
 {}
 
 Connectivity::Connectivity(const Connectivity& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 Connectivity::~Connectivity()

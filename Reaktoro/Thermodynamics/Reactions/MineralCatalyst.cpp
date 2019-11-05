@@ -34,8 +34,7 @@ inline auto invalidCatalystError(std::string catalyst) -> void
 
 inline auto checkCatalystQuantity(std::string quantity) -> void
 {
-    if(quantity != "a" && quantity != "activity" && quantity != "p" && quantity != "pressure")
-    {
+    if(quantity != "a" && quantity != "activity" && quantity != "p" && quantity != "pressure") {
         Exception exception;
         exception.error << "Cannot set the mineral catalyst with given catalyst quantity: " << quantity << ".";
         exception.reason << "The provided catalyst quantity is not supported.";
@@ -49,7 +48,7 @@ MineralCatalyst::MineralCatalyst()
 {}
 
 MineralCatalyst::MineralCatalyst(std::string species, std::string quantity, double power)
-: species(species), quantity(quantity), power(power)
+    : species(species), quantity(quantity), power(power)
 {
     internal::checkCatalystQuantity(quantity);
 }
@@ -60,7 +59,8 @@ MineralCatalyst::MineralCatalyst(std::string catalyst)
     std::vector<std::string> words = split(catalyst, "= ");
 
     // Check if the split of the string result in only two new strings
-    if(words.size() != 2) internal::invalidCatalystError(catalyst);
+    if(words.size() != 2)
+        internal::invalidCatalystError(catalyst);
 
     // Set the power of the catalyst with the second word
     power = tofloat(words[1]);

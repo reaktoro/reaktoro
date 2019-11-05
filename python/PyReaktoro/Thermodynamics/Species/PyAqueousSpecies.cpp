@@ -31,8 +31,7 @@ void exportAqueousSpecies(py::module& m)
         .def("setThermoData", &AqueousSpecies::setThermoData)
         .def("charge", &AqueousSpecies::charge)
         .def("dissociation", &AqueousSpecies::dissociation, py::return_value_policy::reference_internal)
-        .def("thermoData", &AqueousSpecies::thermoData, py::return_value_policy::reference_internal)
-        ;
+        .def("thermoData", &AqueousSpecies::thermoData, py::return_value_policy::reference_internal);
 }
 
 } // namespace Reaktoro

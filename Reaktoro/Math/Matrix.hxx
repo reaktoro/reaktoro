@@ -266,9 +266,9 @@ auto operator/(const Eigen::MatrixBase<DerivedLHS>& lhs, const Eigen::MatrixBase
 }
 
 template<typename Derived>
-auto operator/(const typename Derived::Scalar& scalar, const Eigen::MatrixBase<Derived>& mat) -> decltype(scalar*mat.cwiseInverse())
+auto operator/(const typename Derived::Scalar& scalar, const Eigen::MatrixBase<Derived>& mat) -> decltype(scalar * mat.cwiseInverse())
 {
-    return scalar*mat.cwiseInverse();
+    return scalar * mat.cwiseInverse();
 }
 
 template<typename Derived>

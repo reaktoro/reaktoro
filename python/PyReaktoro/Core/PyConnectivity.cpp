@@ -33,8 +33,7 @@ void exportConnectivity(py::module& m)
         .def("indicesSpeciesInPhase", &Connectivity::indicesSpeciesInPhase, py::return_value_policy::reference_internal)
         .def("indicesSpeciesWithElement", &Connectivity::indicesSpeciesWithElement, py::return_value_policy::reference_internal)
         .def("indicesPhasesWithElement", &Connectivity::indicesPhasesWithElement, py::return_value_policy::reference_internal)
-        .def("indexPhaseWithSpecies", &Connectivity::indexPhaseWithSpecies)
-        ;
+        .def("indexPhaseWithSpecies", &Connectivity::indexPhaseWithSpecies);
 }
 
 } // namespace Reaktoro

@@ -31,23 +31,23 @@ namespace Reaktoro {
 void exportEquilibriumCompositionProblem(py::module& m)
 {
     // TODO remove this
-//    py::class_<EquilibriumCompositionProblem>(m, "EquilibriumCompositionProblem")
-//        .def(py::init<>())
-//        .def(py::init<const ChemicalSystem&>())
-//        .def("system", &EquilibriumCompositionProblem::system, py::return_value_policy::reference_internal)
-//        .def("partition", &EquilibriumCompositionProblem::partition, py::return_value_policy::reference_internal)
-//        .def("setPartition", &EquilibriumCompositionProblem::setPartition)
-//        .def("setTemperature", &EquilibriumCompositionProblem::setTemperature)
-//        .def("setPressure", &EquilibriumCompositionProblem::setPressure)
-//        .def("setAqueousComposition", &EquilibriumCompositionProblem::setAqueousComposition)
-//        .def("setGaseousComposition", &EquilibriumCompositionProblem::setGaseousComposition)
-//        .def("setSolidComposition", &EquilibriumCompositionProblem::setSolidComposition)
-//        .def("setAqueousSaturation", &EquilibriumCompositionProblem::setAqueousSaturation)
-//        .def("setGaseousSaturation", &EquilibriumCompositionProblem::setGaseousSaturation)
-//        .def("setPorosity", &EquilibriumCompositionProblem::setPorosity)
-//        ;
-//
-//    py::implicitly_convertible<EquilibriumCompositionProblem, EquilibriumInverseProblem>();
+    //    py::class_<EquilibriumCompositionProblem>(m, "EquilibriumCompositionProblem")
+    //        .def(py::init<>())
+    //        .def(py::init<const ChemicalSystem&>())
+    //        .def("system", &EquilibriumCompositionProblem::system, py::return_value_policy::reference_internal)
+    //        .def("partition", &EquilibriumCompositionProblem::partition, py::return_value_policy::reference_internal)
+    //        .def("setPartition", &EquilibriumCompositionProblem::setPartition)
+    //        .def("setTemperature", &EquilibriumCompositionProblem::setTemperature)
+    //        .def("setPressure", &EquilibriumCompositionProblem::setPressure)
+    //        .def("setAqueousComposition", &EquilibriumCompositionProblem::setAqueousComposition)
+    //        .def("setGaseousComposition", &EquilibriumCompositionProblem::setGaseousComposition)
+    //        .def("setSolidComposition", &EquilibriumCompositionProblem::setSolidComposition)
+    //        .def("setAqueousSaturation", &EquilibriumCompositionProblem::setAqueousSaturation)
+    //        .def("setGaseousSaturation", &EquilibriumCompositionProblem::setGaseousSaturation)
+    //        .def("setPorosity", &EquilibriumCompositionProblem::setPorosity)
+    //        ;
+    //
+    //    py::implicitly_convertible<EquilibriumCompositionProblem, EquilibriumInverseProblem>();
 }
 
 } // namespace Reaktoro

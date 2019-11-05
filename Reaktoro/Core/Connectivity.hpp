@@ -34,7 +34,7 @@ class ChemicalSystem;
 /// @ingroup Core
 class Connectivity
 {
-public:
+  public:
     /// Construct a default Connectivity instance
     Connectivity();
 
@@ -74,7 +74,7 @@ public:
     /// @param ispecies The index of the species.
     auto indexPhaseWithSpecies(Index ispecies) const -> Index;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

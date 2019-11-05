@@ -37,7 +37,7 @@ struct KineticOptions;
 /// A class that conveniently solves kinetic path calculations.
 class KineticPath
 {
-public:
+  public:
     /// Construct a KineticPath instance.
     explicit KineticPath(const ReactionSystem& reactions);
 
@@ -122,7 +122,7 @@ public:
     /// Return the partition of the chemical system in the kinetic path definition.
     auto partition() const -> const Partition&;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

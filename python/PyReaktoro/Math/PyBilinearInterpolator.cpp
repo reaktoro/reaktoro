@@ -16,7 +16,6 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include <PyReaktoro/PyReaktoro.hpp>
-
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 
 namespace Reaktoro {
@@ -34,8 +33,7 @@ void exportBilinearInterpolator(py::module& m)
         .def("yCoordinates", &BilinearInterpolator::yCoordinates, py::return_value_policy::reference_internal)
         .def("data", &BilinearInterpolator::data, py::return_value_policy::reference_internal)
         .def("empty", &BilinearInterpolator::empty)
-        .def("__call__", &BilinearInterpolator::operator())
-        ;
+        .def("__call__", &BilinearInterpolator::operator());
 }
 
 } // namespace Reaktoro

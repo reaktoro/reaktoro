@@ -48,18 +48,16 @@ struct KineticProblem::Impl
     {}
 
     Impl(const ReactionSystem& reactions)
-    : reactions(reactions), system(reactions.system()),
-      temperature(INFINITY), pressure(INFINITY),
-      initial_time(0), final_time(INFINITY)
+        : reactions(reactions), system(reactions.system()), temperature(INFINITY), pressure(INFINITY), initial_time(0), final_time(INFINITY)
     {}
 };
 
 KineticProblem::KineticProblem(const ReactionSystem& reactions)
-: pimpl(new Impl(reactions))
+    : pimpl(new Impl(reactions))
 {}
 
 KineticProblem::KineticProblem(const KineticProblem& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 KineticProblem::~KineticProblem()

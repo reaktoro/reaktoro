@@ -36,20 +36,20 @@ class ChemicalVectorBase;
 /// and species amounts. A ChemicalVector is a vector representation of
 /// a collection of ChemicalScalar instances.
 /// @see ThermoVector, ThermoScalar, ChemicalScalar
-using ChemicalVector = ChemicalVectorBase<Vector,Vector,Vector,Matrix>;
+using ChemicalVector = ChemicalVectorBase<Vector, Vector, Vector, Matrix>;
 
 /// A type that represents a vector of chemical properties and their derivatives.
-using ChemicalVectorRef = ChemicalVectorBase<VectorRef,VectorRef,VectorRef,MatrixRef>;
+using ChemicalVectorRef = ChemicalVectorBase<VectorRef, VectorRef, VectorRef, MatrixRef>;
 
 /// A type that represents a vector of chemical properties and their derivatives.
-using ChemicalVectorConstRef = ChemicalVectorBase<VectorConstRef,VectorConstRef,VectorConstRef,MatrixConstRef>;
+using ChemicalVectorConstRef = ChemicalVectorBase<VectorConstRef, VectorConstRef, VectorConstRef, MatrixConstRef>;
 
 /// A template base class to represent a vector of chemical properties and their partial derivatives.
 /// @see ThermoScalar, ThermoVector, ChemicalScalar, ChemicalVector
 template<typename V, typename T, typename P, typename N>
 class ChemicalVectorBase
 {
-public:
+  public:
     /// The vector of chemical scalars
     V val;
 
@@ -68,20 +68,20 @@ public:
     /// Construct a ChemicalVectorBase instance with number of rows equal to given number of species.
     /// @param nspecies The number of nspecies in the chemical vector.
     explicit ChemicalVectorBase(Index nspecies)
-    : ChemicalVectorBase(nspecies, nspecies) {}
+        : ChemicalVectorBase(nspecies, nspecies) {}
 
     /// Construct a ChemicalVectorBase instance with given number of rows and species.
     /// @param nrows The number of rows in the chemical vector
     /// @param nspecies The number of species for the molar derivatives
     ChemicalVectorBase(Index nrows, Index nspecies)
-    : ChemicalVectorBase(zeros(nrows), zeros(nrows), zeros(nrows), zeros(nrows, nspecies)) {}
+        : ChemicalVectorBase(zeros(nrows), zeros(nrows), zeros(nrows), zeros(nrows, nspecies)) {}
 
     /// Construct a ChemicalVectorBase instance with given number of rows and species, and a constant value.
     /// @param nrows The number of rows in the chemical vector
     /// @param nspecies The number of species for the molar derivatives
     /// @param val The constant value
     ChemicalVectorBase(Index nrows, Index nspecies, double val)
-    : ChemicalVectorBase(constants(nrows, val), zeros(nrows), zeros(nrows), zeros(nrows, nspecies)) {}
+        : ChemicalVectorBase(constants(nrows, val), zeros(nrows), zeros(nrows), zeros(nrows, nspecies)) {}
 
     /// Construct a ChemicalVectorBase instance with given values and derivatives.
     /// @param val The vector of values of the chemical scalars
@@ -89,17 +89,19 @@ public:
     /// @param ddP The vector of partial pressure derivatives of the chemical scalars
     /// @param ddn The matrix of partial mole derivatives of the chemical scalars
     ChemicalVectorBase(const V& val, const T& ddT, const P& ddP, const N& ddn)
-    : val(val), ddT(ddT), ddP(ddP), ddn(ddn) {}
+        : val(val), ddT(ddT), ddP(ddP), ddn(ddn) {}
 
     /// Construct a ChemicalVectorBase instance from another.
     template<typename VR, typename TR, typename PR, typename NR>
-    ChemicalVectorBase(ChemicalVectorBase<VR,TR,PR,NR>& other)
-    : val(other.val), ddT(other.ddT), ddP(other.ddP), ddn(other.ddn) {}
+    ChemicalVectorBase(ChemicalVectorBase<VR, TR, PR, NR>& other)
+        : val(other.val), ddT(other.ddT), ddP(other.ddP), ddn(other.ddn)
+    {}
 
     /// Construct a ChemicalVectorBase instance from another.
     template<typename VR, typename TR, typename PR, typename NR>
-    ChemicalVectorBase(const ChemicalVectorBase<VR,TR,PR,NR>& other)
-    : val(other.val), ddT(other.ddT), ddP(other.ddP), ddn(other.ddn) {}
+    ChemicalVectorBase(const ChemicalVectorBase<VR, TR, PR, NR>& other)
+        : val(other.val), ddT(other.ddT), ddP(other.ddP), ddn(other.ddn)
+    {}
 
     /// Return the number of rows in this ChemicalVectorBase instance.
     auto size() const -> Index
@@ -132,7 +134,8 @@ public:
         val.fill(other.val);
         ddT.fill(other.ddT);
         ddP.fill(other.ddP);
-        for(auto i = 0; i < ddn.rows(); ++i) ddn.row(i) = other.ddn;
+        for(auto i = 0; i < ddn.rows(); ++i)
+            ddn.row(i) = other.ddn;
     }
 
     /// Assign a ThermoScalarBase instance to this.
@@ -147,16 +150,16 @@ public:
 
     /// Assign a scalarsto this.
     auto fill(double value) -> void
-	{
-    	val.fill(value);
-    	ddT.fill(0.0);
-    	ddP.fill(0.0);
-    	ddn.fill(0.0);
-	}
+    {
+        val.fill(value);
+        ddT.fill(0.0);
+        ddP.fill(0.0);
+        ddn.fill(0.0);
+    }
 
     /// Assign another ChemicalVectorBase instance to this.
     template<typename VR, typename TR, typename PR, typename NR>
-    auto operator=(const ChemicalVectorBase<VR,TR,PR,NR>& other) -> ChemicalVectorBase&
+    auto operator=(const ChemicalVectorBase<VR, TR, PR, NR>& other) -> ChemicalVectorBase&
     {
         val = other.val;
         ddT = other.ddT;
@@ -167,12 +170,13 @@ public:
 
     /// Assign a ChemicalScalarBase instance to this.
     template<typename VR, typename NR>
-    auto operator=(const ChemicalScalarBase<VR,NR>& other) -> ChemicalVectorBase&
+    auto operator=(const ChemicalScalarBase<VR, NR>& other) -> ChemicalVectorBase&
     {
         val.fill(other.val);
         ddT.fill(other.ddT);
         ddP.fill(other.ddP);
-        for(auto i = 0; i < ddn.rows(); ++i) ddn.row(i) = other.ddn;
+        for(auto i = 0; i < ddn.rows(); ++i)
+            ddn.row(i) = other.ddn;
         return *this;
     }
 
@@ -199,7 +203,7 @@ public:
 
     /// Assign-addition of a ChemicalVectorBase instance to this.
     template<typename VR, typename TR, typename PR, typename NR>
-    auto operator+=(const ChemicalVectorBase<VR,TR,PR,NR>& other) -> ChemicalVectorBase&
+    auto operator+=(const ChemicalVectorBase<VR, TR, PR, NR>& other) -> ChemicalVectorBase&
     {
         val += other.val;
         ddT += other.ddT;
@@ -210,7 +214,7 @@ public:
 
     /// Assign-addition of a ThermoVectorBase instance to this.
     template<typename VR, typename TR, typename PR>
-    auto operator+=(const ThermoVectorBase<VR,TR,PR>& other) -> ChemicalVectorBase&
+    auto operator+=(const ThermoVectorBase<VR, TR, PR>& other) -> ChemicalVectorBase&
     {
         val += other.val;
         ddT += other.ddT;
@@ -237,7 +241,7 @@ public:
 
     /// Assign-subtraction of a ChemicalVectorBase instance to this.
     template<typename VR, typename TR, typename PR, typename NR>
-    auto operator-=(const ChemicalVectorBase<VR,TR,PR,NR>& other) -> ChemicalVectorBase&
+    auto operator-=(const ChemicalVectorBase<VR, TR, PR, NR>& other) -> ChemicalVectorBase&
     {
         val -= other.val;
         ddT -= other.ddT;
@@ -248,7 +252,7 @@ public:
 
     /// Assign-subtraction of a ThermoVectorBase instance to this.
     template<typename VR, typename TR, typename PR>
-    auto operator-=(const ThermoVectorBase<VR,TR,PR>& other) -> ChemicalVectorBase&
+    auto operator-=(const ThermoVectorBase<VR, TR, PR>& other) -> ChemicalVectorBase&
     {
         val -= other.val;
         ddT -= other.ddT;
@@ -275,7 +279,7 @@ public:
 
     /// Assign-multiplication of a ChemicalVectorBase instance to this.
     template<typename VR, typename TR, typename PR, typename NR>
-    auto operator*=(const ChemicalVectorBase<VR,TR,PR,NR>& other) -> ChemicalVectorBase&
+    auto operator*=(const ChemicalVectorBase<VR, TR, PR, NR>& other) -> ChemicalVectorBase&
     {
         ddT = diag(val) * other.ddT + diag(other.val) * ddT;
         ddP = diag(val) * other.ddP + diag(other.val) * ddP;
@@ -297,7 +301,7 @@ public:
     /// Assign-division of a scalar to this.
     auto operator/=(double other) -> ChemicalVectorBase&
     {
-        *this *= 1.0/other;
+        *this *= 1.0 / other;
         return *this;
     }
 
@@ -358,7 +362,7 @@ public:
 
 /// Return a ChemicalVectorBase expression representing zeros with same dimension of given vector.
 template<typename V, typename T, typename P, typename N>
-auto zeros(const ChemicalVectorBase<V,T,P,N>& v) -> ChemicalVectorBase<decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0,0))>
+auto zeros(const ChemicalVectorBase<V, T, P, N>& v) -> ChemicalVectorBase<decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0, 0))>
 {
     const Index n = v.size();
     return {zeros(n), zeros(n), zeros(n), zeros(n, n)};
@@ -366,164 +370,165 @@ auto zeros(const ChemicalVectorBase<V,T,P,N>& v) -> ChemicalVectorBase<decltype(
 
 /// Return a ChemicalVectorBase expression representing ones with same dimension of given vector.
 template<typename V, typename T, typename P, typename N>
-auto ones(const ChemicalVectorBase<V,T,P,N>& v) -> ChemicalVectorBase<decltype(ones(0)), decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0,0))>
+auto ones(const ChemicalVectorBase<V, T, P, N>& v) -> ChemicalVectorBase<decltype(ones(0)), decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0, 0))>
 {
     const Index n = v.size();
-    return { ones(n), zeros(n), zeros(n), zeros(n, n) };
+    return {ones(n), zeros(n), zeros(n), zeros(n, n)};
 }
 
 /// A type that describes temperature in units of K
-class Composition : public ChemicalVectorBase<VectorConstRef, decltype(zeros(0)), decltype(zeros(0)), decltype(identity(0,0))>
+class Composition : public ChemicalVectorBase<VectorConstRef, decltype(zeros(0)), decltype(zeros(0)), decltype(identity(0, 0))>
 {
-public:
-	/// Auxiliary base type
-	using Base = ChemicalVectorBase<VectorConstRef, decltype(zeros(0)), decltype(zeros(0)), decltype(identity(0,0))>;
+  public:
+    /// Auxiliary base type
+    using Base = ChemicalVectorBase<VectorConstRef, decltype(zeros(0)), decltype(zeros(0)), decltype(identity(0, 0))>;
 
     /// Construct a Composition instance with given composition vector.
-    Composition(VectorConstRef n) : Base(n, zeros(n.rows()), zeros(n.rows()), identity(n.rows(), n.rows())) {}
+    Composition(VectorConstRef n)
+        : Base(n, zeros(n.rows()), zeros(n.rows()), identity(n.rows(), n.rows())) {}
 
     /// Return a ChemicalScalarBase with const reference to the chemical scalar in a given row.
     auto operator[](Index irow) const -> ChemicalScalarBase<double, decltype(unitrow(val.size(), irow))>
     {
-        return { val[irow], 0.0, 0.0, unitrow(val.size(), irow) };
+        return {val[irow], 0.0, 0.0, unitrow(val.size(), irow)};
     }
 };
 
 template<typename V, typename T, typename P, typename N>
-auto operator<<(std::ostream& out, const ChemicalVectorBase<V,T,P,N>& r) -> std::ostream&
+auto operator<<(std::ostream& out, const ChemicalVectorBase<V, T, P, N>& r) -> std::ostream&
 {
     out << r.val;
     return out;
 }
 
 template<typename V, typename T, typename P, typename N>
-auto operator+(const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalVectorBase<V,T,P,N>
+auto operator+(const ChemicalVectorBase<V, T, P, N>& r) -> ChemicalVectorBase<V, T, P, N>
 {
     return r;
 }
 
 template<typename V, typename T, typename P, typename N>
-auto operator-(const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalVectorBase<decltype(-r.val), decltype(-r.ddT), decltype(-r.ddP), decltype(-r.ddn)>
+auto operator-(const ChemicalVectorBase<V, T, P, N>& r) -> ChemicalVectorBase<decltype(-r.val), decltype(-r.ddT), decltype(-r.ddP), decltype(-r.ddn)>
 {
     return {-r.val, -r.ddT, -r.ddP, -r.ddn};
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator+(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> ChemicalVectorBase<decltype(l.val + r.val), decltype(l.ddT + r.ddT), decltype(l.ddP + r.ddP), decltype(l.ddn + r.ddn)>
+auto operator+(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> ChemicalVectorBase<decltype(l.val + r.val), decltype(l.ddT + r.ddT), decltype(l.ddP + r.ddP), decltype(l.ddn + r.ddn)>
 {
     return {l.val + r.val, l.ddT + r.ddT, l.ddP + r.ddP, l.ddn + r.ddn};
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR>
-auto operator+(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> ChemicalVectorBase<decltype(l.val + r.val), decltype(l.ddT + r.ddT), decltype(l.ddP + r.ddP), decltype(l.ddn)>
+auto operator+(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> ChemicalVectorBase<decltype(l.val + r.val), decltype(l.ddT + r.ddT), decltype(l.ddP + r.ddP), decltype(l.ddn)>
 {
     return {l.val + r.val, l.ddT + r.ddT, l.ddP + r.ddP, l.ddn};
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR, typename NR>
-auto operator+(const ThermoVectorBase<VL,TL,PL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> decltype(r + l)
+auto operator+(const ThermoVectorBase<VL, TL, PL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> decltype(r + l)
 {
     return r + l;
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR>
-auto operator+(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ThermoScalarBase<VR>& r) -> ChemicalVectorBase<decltype(l.val + r.val*ones(l.size())), decltype(l.ddT + r.ddT*ones(l.size())), decltype(l.ddP + r.ddP*ones(l.size())), decltype(l.ddn)>
+auto operator+(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ThermoScalarBase<VR>& r) -> ChemicalVectorBase<decltype(l.val + r.val * ones(l.size())), decltype(l.ddT + r.ddT * ones(l.size())), decltype(l.ddP + r.ddP * ones(l.size())), decltype(l.ddn)>
 {
-    return {l.val + r.val*ones(l.size()), l.ddT + r.ddT*ones(l.size()), l.ddP + r.ddP*ones(l.size()), l.ddn};
+    return {l.val + r.val * ones(l.size()), l.ddT + r.ddT * ones(l.size()), l.ddP + r.ddP * ones(l.size()), l.ddn};
 }
 
 template<typename VL, typename VR, typename TR, typename PR, typename NR>
-auto operator+(const ThermoScalarBase<VL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> decltype(r + l)
+auto operator+(const ThermoScalarBase<VL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> decltype(r + l)
 {
     return r + l;
 }
 
 template<typename V, typename T, typename P, typename N, typename Derived>
-auto operator+(const ChemicalVectorBase<V,T,P,N>& l, const Eigen::MatrixBase<Derived>& r) -> ChemicalVectorBase<decltype(l.val + r),T,P,N>
+auto operator+(const ChemicalVectorBase<V, T, P, N>& l, const Eigen::MatrixBase<Derived>& r) -> ChemicalVectorBase<decltype(l.val + r), T, P, N>
 {
     return {l.val + r, l.ddT, l.ddP, l.ddn};
 }
 
 template<typename V, typename T, typename P, typename N, typename Derived>
-auto operator+(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V,T,P,N>& r) -> decltype(r + l)
+auto operator+(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V, T, P, N>& r) -> decltype(r + l)
 {
     return r + l;
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator-(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> ChemicalVectorBase<decltype(l.val - r.val), decltype(l.ddT - r.ddT), decltype(l.ddP - r.ddP), decltype(l.ddn - r.ddn)>
+auto operator-(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> ChemicalVectorBase<decltype(l.val - r.val), decltype(l.ddT - r.ddT), decltype(l.ddP - r.ddP), decltype(l.ddn - r.ddn)>
 {
     return {l.val - r.val, l.ddT - r.ddT, l.ddP - r.ddP, l.ddn - r.ddn};
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR>
-auto operator-(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> ChemicalVectorBase<decltype(l.val - r.val), decltype(l.ddT - r.ddT), decltype(l.ddP - r.ddP), decltype(l.ddn)>
+auto operator-(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> ChemicalVectorBase<decltype(l.val - r.val), decltype(l.ddT - r.ddT), decltype(l.ddP - r.ddP), decltype(l.ddn)>
 {
     return {l.val - r.val, l.ddT - r.ddT, l.ddP - r.ddP, l.ddn};
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR, typename NR>
-auto operator-(const ThermoVectorBase<VL,TL,PL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> decltype(-(r - l))
+auto operator-(const ThermoVectorBase<VL, TL, PL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> decltype(-(r - l))
 {
     return -(r - l);
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR>
-auto operator-(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ThermoScalarBase<VR>& r) -> ChemicalVectorBase<decltype(l.val - r.val*ones(l.size())), decltype(l.ddT - r.ddT*ones(l.size())), decltype(l.ddP - r.ddP*ones(l.size())), decltype(l.ddn)>
+auto operator-(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ThermoScalarBase<VR>& r) -> ChemicalVectorBase<decltype(l.val - r.val * ones(l.size())), decltype(l.ddT - r.ddT * ones(l.size())), decltype(l.ddP - r.ddP * ones(l.size())), decltype(l.ddn)>
 {
-    return {l.val - r.val*ones(l.size()), l.ddT - r.ddT*ones(l.size()), l.ddP - r.ddP*ones(l.size()), l.ddn};
+    return {l.val - r.val * ones(l.size()), l.ddT - r.ddT * ones(l.size()), l.ddP - r.ddP * ones(l.size()), l.ddn};
 }
 
 template<typename VL, typename VR, typename TR, typename PR, typename NR>
-auto operator-(const ThermoScalarBase<VL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> decltype(r + l)
+auto operator-(const ThermoScalarBase<VL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> decltype(r + l)
 {
     return -(r - l);
 }
 
 template<typename V, typename T, typename P, typename N, typename Derived>
-auto operator-(const ChemicalVectorBase<V,T,P,N>& l, const Eigen::MatrixBase<Derived>& r) -> ChemicalVectorBase<decltype(l.val - r),T,P,N>
+auto operator-(const ChemicalVectorBase<V, T, P, N>& l, const Eigen::MatrixBase<Derived>& r) -> ChemicalVectorBase<decltype(l.val - r), T, P, N>
 {
     return {l.val - r, l.ddT, l.ddP, l.ddn};
 }
 
 template<typename V, typename T, typename P, typename N, typename Derived>
-auto operator-(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V,T,P,N>& r) -> decltype(-(r - l))
+auto operator-(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V, T, P, N>& r) -> decltype(-(r - l))
 {
     return -(r - l);
 }
 
 template<typename V, typename T, typename P, typename N>
-auto operator*(double l, const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalVectorBase<decltype(l * r.val), decltype(l * r.ddT), decltype(l * r.ddP), decltype(l * r.ddn)>
+auto operator*(double l, const ChemicalVectorBase<V, T, P, N>& r) -> ChemicalVectorBase<decltype(l * r.val), decltype(l * r.ddT), decltype(l * r.ddP), decltype(l * r.ddn)>
 {
     return {l * r.val, l * r.ddT, l * r.ddP, l * r.ddn};
 }
 
 template<typename V, typename T, typename P, typename N>
-auto operator*(const ChemicalVectorBase<V,T,P,N>& l, double r) -> decltype(r * l)
+auto operator*(const ChemicalVectorBase<V, T, P, N>& l, double r) -> decltype(r * l)
 {
     return r * l;
 }
 
 template<typename VL, typename VR, typename T, typename P, typename N>
-auto operator*(const ThermoScalarBase<VL>& l, const ChemicalVectorBase<VR,T,P,N>& r) -> ChemicalVectorBase<decltype(l.val * r.val), decltype(l.val * r.ddT + l.ddT * r.val), decltype(l.val * r.ddP + l.ddP * r.val), decltype(l.val * r.ddn)>
+auto operator*(const ThermoScalarBase<VL>& l, const ChemicalVectorBase<VR, T, P, N>& r) -> ChemicalVectorBase<decltype(l.val * r.val), decltype(l.val * r.ddT + l.ddT * r.val), decltype(l.val * r.ddP + l.ddP * r.val), decltype(l.val * r.ddn)>
 {
     return {l.val * r.val, l.val * r.ddT + l.ddT * r.val, l.val * r.ddP + l.ddP * r.val, l.val * r.ddn};
 }
 
 template<typename VL, typename VR, typename T, typename P, typename N>
-auto operator*(const ChemicalVectorBase<VL,T,P,N>& l, const ThermoScalarBase<VR>& r) -> decltype(r * l)
+auto operator*(const ChemicalVectorBase<VL, T, P, N>& l, const ThermoScalarBase<VR>& r) -> decltype(r * l)
 {
     return r * l;
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename NR>
-auto operator*(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalVectorBase<decltype(l.val * r.val), decltype(l.val * r.ddT + l.ddT * r.val), decltype(l.val * r.ddP + l.ddP * r.val), decltype(l.val * r.ddn + l.ddn * r.val)>
+auto operator*(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalScalarBase<VR, NR>& r) -> ChemicalVectorBase<decltype(l.val * r.val), decltype(l.val * r.ddT + l.ddT * r.val), decltype(l.val * r.ddP + l.ddP * r.val), decltype(l.val * r.ddn + l.ddn * r.val)>
 {
     return {l.val * r.val, l.val * r.ddT + l.ddT * r.val, l.val * r.ddP + l.ddP * r.val, l.val * r.ddn + l.ddn * r.val};
 }
 
 template<typename VL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator*(const ChemicalScalarBase<VL,NL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> decltype(r * l)
+auto operator*(const ChemicalScalarBase<VL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> decltype(r * l)
 {
     return r * l;
 }
@@ -531,260 +536,259 @@ auto operator*(const ChemicalScalarBase<VL,NL>& l, const ChemicalVectorBase<VR,T
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
 auto operator%(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> ChemicalVectorBase<decltype(diag(l.val) * r.val), decltype(diag(l.val) * r.ddT + diag(r.val) * l.ddT), decltype(diag(l.val) * r.ddP + diag(r.val) * l.ddP), decltype(diag(l.val) * r.ddn + diag(r.val) * l.ddn)>
 {
-	return { diag(l.val) * r.val,
-		diag(l.val) * r.ddT + diag(r.val) * l.ddT,
-		diag(l.val) * r.ddP + diag(r.val) * l.ddP,
-		diag(l.val) * r.ddn + diag(r.val) * l.ddn };
+    return {diag(l.val) * r.val,
+            diag(l.val) * r.ddT + diag(r.val) * l.ddT,
+            diag(l.val) * r.ddP + diag(r.val) * l.ddP,
+            diag(l.val) * r.ddn + diag(r.val) * l.ddn};
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR, typename NR>
 auto operator%(const ThermoVectorBase<VL, TL, PL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> ChemicalVectorBase<decltype(diag(l.val) * r.val), decltype(diag(l.val) * r.ddT + diag(r.val) * l.ddT), decltype(diag(l.val) * r.ddP + diag(r.val) * l.ddP), decltype(diag(l.val) * r.ddn)>
 {
-	return { diag(l.val) * r.val,
-		diag(l.val) * r.ddT + diag(r.val) * l.ddT,
-		diag(l.val) * r.ddP + diag(r.val) * l.ddP,
-		diag(l.val) * r.ddn };
+    return {diag(l.val) * r.val,
+            diag(l.val) * r.ddT + diag(r.val) * l.ddT,
+            diag(l.val) * r.ddP + diag(r.val) * l.ddP,
+            diag(l.val) * r.ddn};
 }
 
-
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR>
-auto operator%(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> decltype(r % l)
+auto operator%(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> decltype(r % l)
 {
     return r % l;
 }
 
 template<typename V, typename T, typename P, typename N, typename Derived>
-auto operator%(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalVectorBase<decltype(diag(l) * r.val), decltype(diag(l) * r.ddT), decltype(diag(l) * r.ddP), decltype(diag(l) * r.ddn)>
+auto operator%(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V, T, P, N>& r) -> ChemicalVectorBase<decltype(diag(l) * r.val), decltype(diag(l) * r.ddT), decltype(diag(l) * r.ddP), decltype(diag(l) * r.ddn)>
 {
     return {diag(l) * r.val, diag(l) * r.ddT, diag(l) * r.ddP, diag(l) * r.ddn};
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename Derived>
-auto operator%(const ChemicalVectorBase<VL,TL,PL,NL>& l, const Eigen::MatrixBase<Derived>& r) -> decltype(r % l)
+auto operator%(const ChemicalVectorBase<VL, TL, PL, NL>& l, const Eigen::MatrixBase<Derived>& r) -> decltype(r % l)
 {
     return r % l;
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator/(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> ChemicalVector
+auto operator/(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> ChemicalVector
 {
-    const Vector tmp = 1.0/(r.val % r.val);
-    return {l.val/r.val,
+    const Vector tmp = 1.0 / (r.val % r.val);
+    return {l.val / r.val,
             diag(tmp) * (diag(r.val) * l.ddT - diag(l.val) * r.ddT),
             diag(tmp) * (diag(r.val) * l.ddP - diag(l.val) * r.ddP),
             diag(tmp) * (diag(r.val) * l.ddn - diag(l.val) * r.ddn)};
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator/(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> ChemicalVector
+auto operator/(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> ChemicalVector
 {
-    const Vector tmp = 1.0/(r.val % r.val);
-    return {l.val/r.val,
+    const Vector tmp = 1.0 / (r.val % r.val);
+    return {l.val / r.val,
             diag(tmp) * (diag(r.val) * l.ddT - diag(l.val) * r.ddT),
             diag(tmp) * (diag(r.val) * l.ddP - diag(l.val) * r.ddP),
             diag(tmp) * (diag(r.val) * l.ddn)};
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename NR>
-auto operator/(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalVector
+auto operator/(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalScalarBase<VR, NR>& r) -> ChemicalVector
 {
-    const double tmp = 1.0/(r.val * r.val);
-    return {l.val/r.val,
+    const double tmp = 1.0 / (r.val * r.val);
+    return {l.val / r.val,
             tmp * (r.val * l.ddT - l.val * r.ddT),
             tmp * (r.val * l.ddP - l.val * r.ddP),
             tmp * (r.val * l.ddn - l.val * r.ddn)};
 }
 
 template<typename VL, typename VR, typename T, typename P, typename N>
-auto operator/(const ChemicalVectorBase<VL,T,P,N>& l, const ThermoScalarBase<VR>& r) -> ChemicalVectorBase<decltype(l.val/r.val), decltype(double() * (l.ddT * r.val - l.val * r.ddT)), decltype(double() * (l.ddP * r.val - l.val * r.ddP)), decltype(double() * (l.ddn * r.val))>
+auto operator/(const ChemicalVectorBase<VL, T, P, N>& l, const ThermoScalarBase<VR>& r) -> ChemicalVectorBase<decltype(l.val / r.val), decltype(double() * (l.ddT * r.val - l.val * r.ddT)), decltype(double() * (l.ddP * r.val - l.val * r.ddP)), decltype(double() * (l.ddn * r.val))>
 {
-    const double tmp = 1.0/(r.val * r.val);
-    return {l.val/r.val,
+    const double tmp = 1.0 / (r.val * r.val);
+    return {l.val / r.val,
             tmp * (l.ddT * r.val - l.val * r.ddT),
             tmp * (l.ddP * r.val - l.val * r.ddP),
             tmp * (l.ddn * r.val)};
 }
 
 template<typename V, typename T, typename P, typename N>
-auto operator/(const ChemicalVectorBase<V,T,P,N>& l, double r) -> decltype((1.0/r) * l)
+auto operator/(const ChemicalVectorBase<V, T, P, N>& l, double r) -> decltype((1.0 / r) * l)
 {
-    return (1.0/r) * l;
+    return (1.0 / r) * l;
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator<(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> bool
+auto operator<(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> bool
 {
     return l.val < r.val;
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator<=(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> bool
+auto operator<=(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> bool
 {
     return l.val <= r.val;
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator>(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> bool
+auto operator>(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> bool
 {
     return l.val > r.val;
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator>=(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> bool
+auto operator>=(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> bool
 {
     return l.val >= r.val;
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator==(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> bool
+auto operator==(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> bool
 {
     return l.val == r.val;
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator!=(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> bool
+auto operator!=(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> bool
 {
     return l.val == r.val;
 }
 
 /// Return a ChemicalScalarBase with reference to the chemical scalar in a given row.
 template<typename V, typename T, typename P, typename N>
-auto row(ChemicalVectorBase<V,T,P,N>& vec, Index irow) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow))>
+auto row(ChemicalVectorBase<V, T, P, N>& vec, Index irow) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow))>
 {
-	return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow)};
+    return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow)};
 }
 
 /// Return a ChemicalScalarBase with const reference to the chemical scalar in a given row.
 template<typename V, typename T, typename P, typename N>
-auto row(const ChemicalVectorBase<V,T,P,N>& vec, Index irow) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow))>
+auto row(const ChemicalVectorBase<V, T, P, N>& vec, Index irow) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow))>
 {
-	return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow)};
+    return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow)};
 }
 
 /// Return a reference of a row of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto row(ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index ncols) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow).segment(icol, ncols))>
+auto row(ChemicalVectorBase<V, T, P, N>& vec, Index irow, Index icol, Index ncols) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow).segment(icol, ncols))>
 {
-	return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow).segment(icol, ncols)};
+    return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow).segment(icol, ncols)};
 }
 
 /// Return a const reference of a row of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto row(const ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index ncols) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow).segment(icol, ncols))>
+auto row(const ChemicalVectorBase<V, T, P, N>& vec, Index irow, Index icol, Index ncols) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow).segment(icol, ncols))>
 {
-	return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow).segment(icol, ncols)};
+    return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow).segment(icol, ncols)};
 }
 
 /// Return a reference of a sequence of rows of this ChemicalVectorBase instance
 template<typename V, typename T, typename P, typename N>
-auto rows(ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index nrows) -> ChemicalVectorBase<decltype(rows(vec.val, irow, nrows)), decltype(rows(vec.ddT, irow, nrows)), decltype(rows(vec.ddP, irow, nrows)), decltype(rows(vec.ddn, irow, nrows))>
+auto rows(ChemicalVectorBase<V, T, P, N>& vec, Index irow, Index nrows) -> ChemicalVectorBase<decltype(rows(vec.val, irow, nrows)), decltype(rows(vec.ddT, irow, nrows)), decltype(rows(vec.ddP, irow, nrows)), decltype(rows(vec.ddn, irow, nrows))>
 {
-	return {rows(vec.val, irow, nrows), rows(vec.ddT, irow, nrows), rows(vec.ddP, irow, nrows), rows(vec.ddn, irow, nrows)};
+    return {rows(vec.val, irow, nrows), rows(vec.ddT, irow, nrows), rows(vec.ddP, irow, nrows), rows(vec.ddn, irow, nrows)};
 }
 
 /// Return a const reference of a sequence of rows of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto rows(const ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index nrows) -> ChemicalVectorBase<decltype(rows(vec.val, irow, nrows)), decltype(rows(vec.ddT, irow, nrows)), decltype(rows(vec.ddP, irow, nrows)), decltype(rows(vec.ddn, irow, nrows))>
+auto rows(const ChemicalVectorBase<V, T, P, N>& vec, Index irow, Index nrows) -> ChemicalVectorBase<decltype(rows(vec.val, irow, nrows)), decltype(rows(vec.ddT, irow, nrows)), decltype(rows(vec.ddP, irow, nrows)), decltype(rows(vec.ddn, irow, nrows))>
 {
-	return {rows(vec.val, irow, nrows), rows(vec.ddT, irow, nrows), rows(vec.ddP, irow, nrows), rows(vec.ddn, irow, nrows)};
+    return {rows(vec.val, irow, nrows), rows(vec.ddT, irow, nrows), rows(vec.ddP, irow, nrows), rows(vec.ddn, irow, nrows)};
 }
 
 /// Return a reference of a sequence of rows of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto rows(ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index nrows, Index ncols) -> ChemicalVectorBase<decltype(rows(vec.val, irow, nrows)), decltype(rows(vec.ddT, irow, nrows)), decltype(rows(vec.ddP, irow, nrows)), decltype(block(vec.ddn, irow, icol, nrows, ncols))>
+auto rows(ChemicalVectorBase<V, T, P, N>& vec, Index irow, Index icol, Index nrows, Index ncols) -> ChemicalVectorBase<decltype(rows(vec.val, irow, nrows)), decltype(rows(vec.ddT, irow, nrows)), decltype(rows(vec.ddP, irow, nrows)), decltype(block(vec.ddn, irow, icol, nrows, ncols))>
 {
-	return {rows(vec.val, irow, nrows), rows(vec.ddT, irow, nrows), rows(vec.ddP, irow, nrows), block(vec.ddn, irow, icol, nrows, ncols)};
+    return {rows(vec.val, irow, nrows), rows(vec.ddT, irow, nrows), rows(vec.ddP, irow, nrows), block(vec.ddn, irow, icol, nrows, ncols)};
 }
 
 /// Return a const reference of a sequence of rows of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto rows(const ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index nrows, Index ncols) -> ChemicalVectorBase<decltype(rows(vec.val, irow, nrows)), decltype(rows(vec.ddT, irow, nrows)), decltype(rows(vec.ddP, irow, nrows)), decltype(block(vec.ddn, irow, icol, nrows, ncols))>
+auto rows(const ChemicalVectorBase<V, T, P, N>& vec, Index irow, Index icol, Index nrows, Index ncols) -> ChemicalVectorBase<decltype(rows(vec.val, irow, nrows)), decltype(rows(vec.ddT, irow, nrows)), decltype(rows(vec.ddP, irow, nrows)), decltype(block(vec.ddn, irow, icol, nrows, ncols))>
 {
-	return {rows(vec.val, irow, nrows), rows(vec.ddT, irow, nrows), rows(vec.ddP, irow, nrows), block(vec.ddn, irow, icol, nrows, ncols)};
+    return {rows(vec.val, irow, nrows), rows(vec.ddT, irow, nrows), rows(vec.ddP, irow, nrows), block(vec.ddn, irow, icol, nrows, ncols)};
 }
 
 /// Return a reference of some rows of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto rows(ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(rows(vec.ddn, irows))>
+auto rows(ChemicalVectorBase<V, T, P, N>& vec, const Indices& irows) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(rows(vec.ddn, irows))>
 {
-	return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), rows(vec.ddn, irows)};
+    return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), rows(vec.ddn, irows)};
 }
 
 /// Return a const reference of some rows of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto rows(const ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(rows(vec.ddn, irows))>
+auto rows(const ChemicalVectorBase<V, T, P, N>& vec, const Indices& irows) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(rows(vec.ddn, irows))>
 {
-	return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), rows(vec.ddn, irows)};
+    return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), rows(vec.ddn, irows)};
 }
 
 /// Return a reference of some rows and cols of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto rows(ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows, const Indices& icols) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(submatrix(vec.ddn, irows, icols))>
+auto rows(ChemicalVectorBase<V, T, P, N>& vec, const Indices& irows, const Indices& icols) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(submatrix(vec.ddn, irows, icols))>
 {
-	return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), submatrix(vec.ddn, irows, icols)};
+    return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), submatrix(vec.ddn, irows, icols)};
 }
 
 /// Return a const reference of some rows and cols of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto rows(const ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows, const Indices& icols) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(submatrix(vec.ddn, irows, icols))>
+auto rows(const ChemicalVectorBase<V, T, P, N>& vec, const Indices& irows, const Indices& icols) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(submatrix(vec.ddn, irows, icols))>
 {
-	return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), submatrix(vec.ddn, irows, icols)};
+    return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), submatrix(vec.ddn, irows, icols)};
 }
 
 template<typename V, typename T, typename P, typename N>
-auto abs(const ChemicalVectorBase<V,T,P,N>& l) -> ChemicalVector
+auto abs(const ChemicalVectorBase<V, T, P, N>& l) -> ChemicalVector
 {
     const Vector tmp1 = abs(l.val);
-    const Vector tmp2 = l.val/tmp1;
+    const Vector tmp2 = l.val / tmp1;
     return {tmp1, diag(tmp2) * l.ddT, diag(tmp2) * l.ddP, diag(tmp2) * l.ddn};
 }
 
 template<typename V, typename T, typename P, typename N>
-auto sqrt(const ChemicalVectorBase<V,T,P,N>& l) -> ChemicalVector
+auto sqrt(const ChemicalVectorBase<V, T, P, N>& l) -> ChemicalVector
 {
     const Vector tmp1 = sqrt(l.val);
-    const Vector tmp2 = 0.5 * tmp1/l.val;
+    const Vector tmp2 = 0.5 * tmp1 / l.val;
     return {tmp1, diag(tmp2) * l.ddT, diag(tmp2) * l.ddP, diag(tmp2) * l.ddn};
 }
 
 template<typename V, typename T, typename P, typename N>
-auto pow(const ChemicalVectorBase<V,T,P,N>& l, double power) -> ChemicalVector
+auto pow(const ChemicalVectorBase<V, T, P, N>& l, double power) -> ChemicalVector
 {
     const Vector tmp1 = pow(l.val, power);
-    const Vector tmp2 = power * tmp1/l.val;
+    const Vector tmp2 = power * tmp1 / l.val;
     return {tmp1, diag(tmp2) * l.ddT, diag(tmp2) * l.ddP, diag(tmp2) * l.ddn};
 }
 
 template<typename V, typename T, typename P, typename N>
-auto exp(const ChemicalVectorBase<V,T,P,N>& l) -> ChemicalVector
+auto exp(const ChemicalVectorBase<V, T, P, N>& l) -> ChemicalVector
 {
     const Vector tmp = exp(l.val);
     return {tmp, diag(tmp) * l.ddT, diag(tmp) * l.ddP, diag(tmp) * l.ddn};
 }
 
 template<typename V, typename T, typename P, typename N>
-auto log(const ChemicalVectorBase<V,T,P,N>& l) -> ChemicalVector
+auto log(const ChemicalVectorBase<V, T, P, N>& l) -> ChemicalVector
 {
     const Vector tmp1 = log(l.val);
-    const Vector tmp2 = 1.0/l.val;
+    const Vector tmp2 = 1.0 / l.val;
     return {tmp1, diag(tmp2) * l.ddT, diag(tmp2) * l.ddP, diag(tmp2) * l.ddn};
 }
 
 template<typename V, typename T, typename P, typename N>
-auto log10(const ChemicalVectorBase<V,T,P,N>& l) -> decltype(log(l)/double())
+auto log10(const ChemicalVectorBase<V, T, P, N>& l) -> decltype(log(l) / double())
 {
     const double ln10 = 2.302585092994046;
-    return log(l)/ln10;
+    return log(l) / ln10;
 }
 
 template<typename V, typename T, typename P, typename N>
-auto min(const ChemicalVectorBase<V,T,P,N>& r) -> double
+auto min(const ChemicalVectorBase<V, T, P, N>& r) -> double
 {
     return min(r.val);
 }
 
 template<typename V, typename T, typename P, typename N>
-auto max(const ChemicalVectorBase<V,T,P,N>& r) -> double
+auto max(const ChemicalVectorBase<V, T, P, N>& r) -> double
 {
     return max(r.val);
 }
@@ -792,35 +796,35 @@ auto max(const ChemicalVectorBase<V,T,P,N>& r) -> double
 template<typename V, typename T, typename P, typename N>
 auto sum(const ChemicalVectorBase<V, T, P, N>& r) -> ChemicalScalarBase<double, decltype(r.ddn.colwise().sum())>
 {
-	return { r.val.sum(), r.ddT.sum(), r.ddP.sum(), r.ddn.colwise().sum() };
+    return {r.val.sum(), r.ddT.sum(), r.ddP.sum(), r.ddn.colwise().sum()};
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto dot(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> ChemicalScalarBase<double, decltype(tr(l.val) * r.ddn + tr(r.val) * l.ddn)>
+auto dot(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> ChemicalScalarBase<double, decltype(tr(l.val) * r.ddn + tr(r.val) * l.ddn)>
 {
     return {tr(l.val) * r.val, tr(l.val) * r.ddT + tr(r.val) * l.ddT, tr(l.val) * r.ddP + tr(r.val) * l.ddP, tr(l.val) * r.ddn + tr(r.val) * l.ddn};
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto dot(const ThermoVectorBase<VL,TL,PL>& l, const ChemicalVectorBase<VR,TR,PR,NR>& r) -> ChemicalScalarBase<double, decltype(tr(l.val) * r.ddn)>
+auto dot(const ThermoVectorBase<VL, TL, PL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> ChemicalScalarBase<double, decltype(tr(l.val) * r.ddn)>
 {
     return {tr(l.val) * r.val, tr(l.val) * r.ddT + tr(r.val) * l.ddT, tr(l.val) * r.ddP + tr(r.val) * l.ddP, tr(l.val) * r.ddn};
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto dot(const ChemicalVectorBase<VR,TR,PR,NR>& l, const ThermoVectorBase<VL,TL,PL>& r) -> decltype(dot(r, l))
+auto dot(const ChemicalVectorBase<VR, TR, PR, NR>& l, const ThermoVectorBase<VL, TL, PL>& r) -> decltype(dot(r, l))
 {
     return dot(r, l);
 }
 
 template<typename V, typename T, typename P, typename N, typename Derived>
-auto dot(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalScalarBase<double, decltype(tr(l) * r.ddn)>
+auto dot(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V, T, P, N>& r) -> ChemicalScalarBase<double, decltype(tr(l) * r.ddn)>
 {
     return {tr(l) * r.val, tr(l) * r.ddT, tr(l) * r.ddP, tr(l) * r.ddn};
 }
 
 template<typename V, typename T, typename P, typename N, typename Derived>
-auto dot(const ChemicalVectorBase<V,T,P,N>& l, const Eigen::MatrixBase<Derived>& r) -> decltype(dot(r, l))
+auto dot(const ChemicalVectorBase<V, T, P, N>& l, const Eigen::MatrixBase<Derived>& r) -> decltype(dot(r, l))
 {
     return dot(r, l);
 }

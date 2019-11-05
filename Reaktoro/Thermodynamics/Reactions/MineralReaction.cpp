@@ -24,15 +24,15 @@
 #include <Reaktoro/deps/eigen3/Eigen/LU>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/ChemicalScalar.hpp>
+#include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/Species.hpp>
@@ -52,8 +52,7 @@ auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const Chem
     const std::string species = catalyst.species;
     const Index ispecies = system.indexSpeciesWithError(species);
 
-    MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable
-    {
+    MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable {
         const ChemicalVector& ln_a = properties.lnActivities();
         ChemicalScalar ai = exp(ln_a[ispecies]);
         ChemicalScalar res = pow(ai, power);
@@ -65,19 +64,18 @@ auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const Chem
 
 auto mineralCatalystFunctionPartialPressure(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction
 {
-    const auto gas         = catalyst.species;                           // the species of the catalyst
-    const auto power       = catalyst.power;                             // the power of the catalyst
-    const auto idx_phase   = system.indexPhase("Gaseous");               // the index of the gaseous phase
-    const auto gases       = names(system.phase(idx_phase).species());   // the names of the gaseous species
-    const auto igases      = system.indicesSpecies(gases);               // the indices of the gaseous species
-    const auto ifirst      = system.indexFirstSpeciesInPhase(idx_phase); // the index of the first gaseous species
-    const auto igas        = index(gas, gases);                          // the index of the gaseous species
-    const auto num_gases   = gases.size();                               // the number of gases
+    const auto gas = catalyst.species;                              // the species of the catalyst
+    const auto power = catalyst.power;                              // the power of the catalyst
+    const auto idx_phase = system.indexPhase("Gaseous");            // the index of the gaseous phase
+    const auto gases = names(system.phase(idx_phase).species());    // the names of the gaseous species
+    const auto igases = system.indicesSpecies(gases);               // the indices of the gaseous species
+    const auto ifirst = system.indexFirstSpeciesInPhase(idx_phase); // the index of the first gaseous species
+    const auto igas = index(gas, gases);                            // the index of the gaseous species
+    const auto num_gases = gases.size();                            // the number of gases
 
     ChemicalScalar res;
 
-    MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable
-    {
+    MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable {
         // The pressure and composition of the system
         const auto P = properties.pressure();
         const auto n = properties.composition();
@@ -89,7 +87,7 @@ auto mineralCatalystFunctionPartialPressure(const MineralCatalyst& catalyst, con
         const auto ngsum = sum(ng);
 
         // The mole fraction of the gas
-        const auto xi = ng[igas]/ngsum;
+        const auto xi = ng[igas] / ngsum;
 
         // The pressure in units of bar
         const auto Pbar = convertPascalToBar(P);
@@ -105,7 +103,7 @@ auto mineralCatalystFunctionPartialPressure(const MineralCatalyst& catalyst, con
 
 auto mineralCatalystFunction(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction
 {
-    if (catalyst.quantity == "a" || catalyst.quantity == "activity")
+    if(catalyst.quantity == "a" || catalyst.quantity == "activity")
         return mineralCatalystFunctionActivity(catalyst, system);
     else
         return mineralCatalystFunctionPartialPressure(catalyst, system);
@@ -128,8 +126,7 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
     ChemicalScalar aux, f, g;
 
     // Define the mineral mechanism function
-    ReactionRateFunction fn = [=](const ChemicalProperties& properties) mutable
-    {
+    ReactionRateFunction fn = [=](const ChemicalProperties& properties) mutable {
         // The temperature and pressure of the system
         const Temperature T = properties.temperature();
 
@@ -142,7 +139,7 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
         const auto lnOmega = lnQ - lnK;
 
         // Calculate the rate constant for the current mechanism
-        const auto kappa = mechanism.kappa * exp(-mechanism.Ea/R * (1.0/T - 1.0/298.15));
+        const auto kappa = mechanism.kappa * exp(-mechanism.Ea / R * (1.0 / T - 1.0 / 298.15));
 
         // Calculate the saturation index
         const auto Omega = exp(lnOmega);
@@ -188,8 +185,8 @@ inline auto errroZeroSurfaceArea(const MineralReaction& reaction) -> void
 auto defaultMineralReactionEquation(Index imineral, const ChemicalSystem& system) -> ReactionEquation
 {
     RuntimeError("Could not create a default mineral reaction.",
-        "This functionaly has not been developed yet. Please specify the "
-        "reaction equation manually.");
+                 "This functionaly has not been developed yet. Please specify the "
+                 "reaction equation manually.");
 
     Index E = system.numElements();
     Index N = system.numSpecies();
@@ -201,7 +198,8 @@ auto defaultMineralReactionEquation(Index imineral, const ChemicalSystem& system
     cleanRationalNumbers(c);
     std::map<std::string, double> equation;
     for(Index i = 0; i < N; ++i)
-        if(c[i] != 0.0) equation[system.species(i).name()] = c[i];
+        if(c[i] != 0.0)
+            equation[system.species(i).name()] = c[i];
     return {equation};
 }
 
@@ -236,7 +234,7 @@ struct MineralReaction::Impl
     {}
 
     Impl(std::string mineral)
-    : mineral(mineral)
+        : mineral(mineral)
     {}
 
     auto setMineral(std::string mineral) -> void
@@ -270,7 +268,8 @@ struct MineralReaction::Impl
             specific_surface_area = units::convert(value, unit, "m2/kg");
         else if(units::convertible(unit, "m2/m3"))
             volumetric_surface_area = units::convert(value, unit, "m2/m3");
-        else surfaceAreaUnitError(unit);
+        else
+            surfaceAreaUnitError(unit);
     }
 
     auto setSurfaceArea(double value, std::string unit) -> void
@@ -298,11 +297,11 @@ struct MineralReaction::Impl
 };
 
 MineralReaction::MineralReaction()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 MineralReaction::MineralReaction(std::string mineral)
-: pimpl(new Impl(mineral))
+    : pimpl(new Impl(mineral))
 {}
 
 auto MineralReaction::setMineral(std::string mineral) -> MineralReaction&
@@ -415,7 +414,8 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
     const double molar_mass = system.species(ispecies).molarMass();
 
     // Check if the specific surface area of the mineral was set
-    if(specific_surface_area) return specific_surface_area * molar_mass;
+    if(specific_surface_area)
+        return specific_surface_area * molar_mass;
 
     // The standard partial molar volumes at 25 C and 1 bar of all species
     const ThermoVector V = system.properties(T, P).standardPartialMolarVolumes();
@@ -427,7 +427,8 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
     const double volumetric_surface_area = reaction.volumetricSurfaceArea();
 
     // Check if the volumetric surface area of the mineral was set
-    if(volumetric_surface_area) return volumetric_surface_area * molar_volume;
+    if(volumetric_surface_area)
+        return volumetric_surface_area * molar_volume;
 
     errroZeroSurfaceArea(reaction);
 
@@ -443,8 +444,7 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
     const Index imineral = system.indexSpeciesWithError(mineralrxn.mineral());
 
     // Check if a default mineral reaction is needed
-    ReactionEquation equation = mineralrxn.equation().empty() ?
-        defaultMineralReactionEquation(imineral, system) : mineralrxn.equation();
+    ReactionEquation equation = mineralrxn.equation().empty() ? defaultMineralReactionEquation(imineral, system) : mineralrxn.equation();
 
     // Create a Reaction instance
     Reaction reaction(equation, system);
@@ -470,10 +470,8 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
     // Create the mineral rate function
     ReactionRateFunction rate;
 
-    if(mineralrxn.surfaceArea())
-    {
-        rate = [=](const ChemicalProperties& properties)
-        {
+    if(mineralrxn.surfaceArea()) {
+        rate = [=](const ChemicalProperties& properties) {
             // The mineral reaction rate using specified surface area
             ChemicalScalar r(num_species);
 
@@ -486,17 +484,14 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
 
             return r;
         };
-    }
-    else
-    {
+    } else {
         // The molar surface area of the mineral
         const double molar_surface_area = molarSurfaceArea(mineralrxn, system);
 
         // The surface area of the mineral
         const double surface_area = mineralrxn.surfaceArea();
 
-        rate = [=](const ChemicalProperties& properties) mutable
-        {
+        rate = [=](const ChemicalProperties& properties) mutable {
             // The composition of the chemical system
             const auto n = properties.composition();
 

@@ -33,8 +33,7 @@ auto exportPhreeqcEditor(py::module& m) -> void
         .def("setDatabase", &PhreeqcEditor::setDatabase)
         .def("setAqueousPhase", &PhreeqcEditor::setAqueousPhase)
         .def("setGaseousPhase", &PhreeqcEditor::setGaseousPhase)
-        .def("setMineralPhases", &PhreeqcEditor::setMineralPhases)
-        ;
+        .def("setMineralPhases", &PhreeqcEditor::setMineralPhases);
 }
 
 } // namespace Reaktoro

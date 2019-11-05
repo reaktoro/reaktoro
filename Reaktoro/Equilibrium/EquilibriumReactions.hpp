@@ -24,8 +24,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Math/LU.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -37,7 +37,7 @@ class ReactionEquation;
 /// A class that generates a system of equilibrium reactions written in terms of master and secondary species.
 class EquilibriumReactions
 {
-public:
+  public:
     /// Construct an EquilibriumReactions instance.
     EquilibriumReactions(const ChemicalSystem& system);
 
@@ -84,7 +84,7 @@ public:
     /// Return the LU decomposition of the formula matrix `A`.
     auto lu() const -> const LU&;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

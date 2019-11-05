@@ -32,7 +32,7 @@ struct OptimumState;
 /// This method is implemented based on some strategies of the optimization code IPOPT.
 class OptimumSolverIpOpt : public OptimumSolverBase
 {
-public:
+  public:
     /// Construct a default OptimumSolverIpOpt instance.
     OptimumSolverIpOpt();
 
@@ -64,7 +64,7 @@ public:
     /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase*;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

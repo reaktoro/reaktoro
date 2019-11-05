@@ -32,7 +32,7 @@ void exportReactionEquation(py::module& m)
         .def("stoichiometry", &ReactionEquation::stoichiometry)
         .def("equation", &ReactionEquation::equation, py::return_value_policy::reference_internal)
         .def("__str__", [](const ReactionEquation& x) -> std::string { return x; });
-        ;
+    ;
 }
 
 } // namespace Reaktoro

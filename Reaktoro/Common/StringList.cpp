@@ -25,7 +25,8 @@ namespace {
 /// Return a string iterator to the position with a given token.
 auto findNextToken(std::string::iterator begin, std::string::iterator end, char token) -> std::string::iterator
 {
-    if(*begin == token || begin == end) return begin;
+    if(*begin == token || begin == end)
+        return begin;
     return findNextToken(begin + 1, end, token);
 }
 
@@ -33,10 +34,10 @@ auto findNextToken(std::string::iterator begin, std::string::iterator end, char 
 /// This function assumes that `begin` points to an opening bracket `(`.
 auto findMatchingBracket(std::string::iterator begin, std::string::iterator end) -> std::string::iterator
 {
-    if(begin == end) return end;
+    if(begin == end)
+        return end;
     int level = 0;
-    for(auto iter = begin+1; iter < end; ++iter)
-    {
+    for(auto iter = begin + 1; iter < end; ++iter) {
         level = (*iter == '(') ? level + 1 : level;
         level = (*iter == ')') ? level - 1 : level;
         if(*iter == ')' && level == -1)
@@ -56,21 +57,14 @@ auto convertStringToStringsHelper(
     char token,
     std::vector<std::string>& res) -> void
 {
-    if(current == end)
-    {
+    if(current == end) {
         res.push_back(std::string(begin, end));
-    }
-    else if(*current == token)
-    {
+    } else if(*current == token) {
         res.push_back(std::string(begin, current));
         convertStringToStringsHelper(current + 1, end, current + 1, token, res);
-    }
-    else if(*current != '(')
-    {
+    } else if(*current != '(') {
         convertStringToStringsHelper(begin, end, current + 1, token, res);
-    }
-    else if(*current == '(')
-    {
+    } else if(*current == '(') {
         convertStringToStringsHelper(begin, end, findMatchingBracket(current, end), token, res);
     }
 }
@@ -89,27 +83,27 @@ StringList::StringList()
 {}
 
 StringList::StringList(const char* strings)
-: _strings(convertStringToStrings(strings, ' '))
+    : _strings(convertStringToStrings(strings, ' '))
 {}
 
 StringList::StringList(const char* strings, char token)
-: _strings(convertStringToStrings(strings, token))
+    : _strings(convertStringToStrings(strings, token))
 {}
 
 StringList::StringList(std::string strings)
-: _strings(convertStringToStrings(strings, ' '))
+    : _strings(convertStringToStrings(strings, ' '))
 {}
 
 StringList::StringList(std::string strings, char token)
-: _strings(convertStringToStrings(strings, token))
+    : _strings(convertStringToStrings(strings, token))
 {}
 
 StringList::StringList(const std::vector<std::string>& strings)
-: _strings(strings.begin(), strings.end())
+    : _strings(strings.begin(), strings.end())
 {}
 
 StringList::StringList(std::initializer_list<std::string> strings)
-: _strings(strings.begin(), strings.end())
+    : _strings(strings.begin(), strings.end())
 {}
 
 StringList::~StringList()

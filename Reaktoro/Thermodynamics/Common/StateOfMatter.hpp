@@ -22,7 +22,10 @@ namespace Reaktoro {
 /// A type to define the possible states of matter of a phase or substance.
 enum class StateOfMatter
 {
-    Solid, Liquid, Gas, Plasma
+    Solid,
+    Liquid,
+    Gas,
+    Plasma
 };
 
 } // namespace Reaktoro

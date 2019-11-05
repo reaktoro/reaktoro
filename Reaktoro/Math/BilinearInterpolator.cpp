@@ -36,7 +36,7 @@ auto binarySearchHelper(double p, const std::vector<double>& coordinates, Index 
     if(end - begin == 1)
         return begin;
 
-    auto mid = (begin + end)/2;
+    auto mid = (begin + end) / 2;
 
     if(p < coordinates[mid])
         return binarySearchHelper(p, coordinates, begin, mid);
@@ -58,18 +58,18 @@ BilinearInterpolator::BilinearInterpolator(
     const std::vector<double>& xcoordinates,
     const std::vector<double>& ycoordinates,
     const std::vector<double>& data)
-: m_xcoordinates(xcoordinates),
-  m_ycoordinates(ycoordinates),
-  m_data(data)
+    : m_xcoordinates(xcoordinates),
+      m_ycoordinates(ycoordinates),
+      m_data(data)
 {}
 
 BilinearInterpolator::BilinearInterpolator(
     const std::vector<double>& xcoordinates,
     const std::vector<double>& ycoordinates,
     const std::function<double(double, double)>& function)
-: m_xcoordinates(xcoordinates),
-  m_ycoordinates(ycoordinates),
-  m_data(xcoordinates.size() * ycoordinates.size())
+    : m_xcoordinates(xcoordinates),
+      m_ycoordinates(ycoordinates),
+      m_data(xcoordinates.size() * ycoordinates.size())
 {
     unsigned k = 0;
     for(unsigned j = 0; j < ycoordinates.size(); ++j)
@@ -115,7 +115,8 @@ auto BilinearInterpolator::empty() const -> bool
 auto BilinearInterpolator::operator()(double x, double y) const -> double
 {
     // Check if the interpolation data contains only one point
-    if(m_data.size() == 1) return m_data[0];
+    if(m_data.size() == 1)
+        return m_data[0];
 
     const double xA = m_xcoordinates.front();
     const double xB = m_xcoordinates.back();
@@ -134,7 +135,7 @@ auto BilinearInterpolator::operator()(double x, double y) const -> double
     const auto index_y = binarySearch(y, m_ycoordinates);
     const auto j = index_y == size_y - 1 ? index_y - 1 : index_y;
 
-    const auto k = [=](Index i, Index j) { return i + j*size_x; };
+    const auto k = [=](Index i, Index j) { return i + j * size_x; };
 
     const double x1 = m_xcoordinates[i];
     const double x2 = m_xcoordinates[i + 1];
@@ -142,24 +143,24 @@ auto BilinearInterpolator::operator()(double x, double y) const -> double
     const double y1 = m_ycoordinates[j];
     const double y2 = m_ycoordinates[j + 1];
 
-    const double z11 = m_data[k(i  , j  )]; // z at (x1, y1)
-    const double z21 = m_data[k(i+1, j  )]; // z at (x2, y1)
-    const double z12 = m_data[k(i  , j+1)]; // z at (x1, y2)
-    const double z22 = m_data[k(i+1, j+1)]; // z at (x2, y2)
+    const double z11 = m_data[k(i, j)];         // z at (x1, y1)
+    const double z21 = m_data[k(i + 1, j)];     // z at (x2, y1)
+    const double z12 = m_data[k(i, j + 1)];     // z at (x1, y2)
+    const double z22 = m_data[k(i + 1, j + 1)]; // z at (x2, y2)
 
-    const double f11 =  z11*(x2 - x)*(y2 - y);
-    const double f12 = -z12*(x2 - x)*(y1 - y);
-    const double f21 = -z21*(x1 - x)*(y2 - y);
-    const double f22 =  z22*(x1 - x)*(y1 - y);
+    const double f11 = z11 * (x2 - x) * (y2 - y);
+    const double f12 = -z12 * (x2 - x) * (y1 - y);
+    const double f21 = -z21 * (x1 - x) * (y2 - y);
+    const double f22 = z22 * (x1 - x) * (y1 - y);
 
-    return (f11 + f12 + f21 + f22)/((x2 - x1)*(y2 - y1));
+    return (f11 + f12 + f21 + f22) / ((x2 - x1) * (y2 - y1));
 }
 
 auto operator<<(std::ostream& out, const BilinearInterpolator& interpolator) -> std::ostream&
 {
     const auto& xcoordinates = interpolator.xCoordinates();
     const auto& ycoordinates = interpolator.yCoordinates();
-    const auto& data         = interpolator.data();
+    const auto& data = interpolator.data();
 
     const auto sizex = xcoordinates.size();
     const auto sizey = ycoordinates.size();
@@ -169,11 +170,10 @@ auto operator<<(std::ostream& out, const BilinearInterpolator& interpolator) -> 
         out << std::setw(15) << std::right << x;
     out << std::endl;
 
-    for(unsigned j = 0; j < sizey; ++j)
-    {
+    for(unsigned j = 0; j < sizey; ++j) {
         out << std::setw(15) << std::right << ycoordinates[j];
         for(unsigned i = 0; i < sizex; ++i)
-            out << std::setw(15) << std::right << data[i + j*sizex];
+            out << std::setw(15) << std::right << data[i + j * sizex];
         out << std::endl;
     }
 

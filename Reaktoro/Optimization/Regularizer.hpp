@@ -49,7 +49,7 @@ struct RegularizerOptions
 /// A type that represents a regularized optimization problem.
 class Regularizer
 {
-public:
+  public:
     /// Construct a default Regularizer instance.
     Regularizer();
 
@@ -81,7 +81,7 @@ public:
     /// Recover the sensitivity derivative `dxdp`.
     auto recover(Vector& dxdp) -> void;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

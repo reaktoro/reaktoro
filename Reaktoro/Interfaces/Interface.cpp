@@ -98,13 +98,13 @@ auto Interface::indexPhase(std::string phase) const -> Index
 auto Interface::indexPhaseWithSpecies(Index ispecies) const -> Index
 {
     Assert(ispecies < numSpecies(), "Cannot get the index of the phase with a given species.",
-        "The given species index `" + std::to_string(ispecies) + "` is out of range.");
+           "The given species index `" + std::to_string(ispecies) + "` is out of range.");
     const Index size = numPhases();
     unsigned counter = 0;
-    for(unsigned i = 0; i < size; ++i)
-    {
+    for(unsigned i = 0; i < size; ++i) {
         counter += numSpeciesInPhase(i);
-        if(counter > ispecies) return i;
+        if(counter > ispecies)
+            return i;
     }
     return size;
 }
@@ -112,7 +112,7 @@ auto Interface::indexPhaseWithSpecies(Index ispecies) const -> Index
 auto Interface::indexFirstSpeciesInPhase(Index iphase) const -> Index
 {
     Assert(iphase < numPhases(), "Cannot get the index of first species in a given phase.",
-        "The given phase index `" + std::to_string(iphase) + "` is out of range.");
+           "The given phase index `" + std::to_string(iphase) + "` is out of range.");
     Index counter = 0;
     for(unsigned i = 0; i < iphase; ++i)
         counter += numSpeciesInPhase(i);
@@ -131,16 +131,14 @@ auto Interface::system() const -> ChemicalSystem
 
     // Create the Element instances
     std::vector<Element> elements(nelements);
-    for(unsigned i = 0; i < nelements; ++i)
-    {
+    for(unsigned i = 0; i < nelements; ++i) {
         elements[i].setName(elementName(i));
         elements[i].setMolarMass(elementMolarMass(i));
     }
 
     // Create the Species instances
     std::vector<Species> species(nspecies);
-    for(unsigned i = 0; i < nspecies; ++i)
-    {
+    for(unsigned i = 0; i < nspecies; ++i) {
         species[i].setName(speciesName(i));
         species[i].setFormula(speciesName(i));
         species[i].setElements(elementsInSpecies(*interface, elements, i));
@@ -148,20 +146,17 @@ auto Interface::system() const -> ChemicalSystem
 
     // Create the Phase instances
     std::vector<Phase> phases(nphases);
-    for(unsigned i = 0; i < nphases; ++i)
-    {
+    for(unsigned i = 0; i < nphases; ++i) {
         // Create the PhaseThermoModel function for the phase
-        PhaseThermoModel phase_thermo_model = [](PhaseThermoModelResult& res, Temperature T, Pressure P) -> void
-        {
+        PhaseThermoModel phase_thermo_model = [](PhaseThermoModelResult& res, Temperature T, Pressure P) -> void {
             RuntimeError("Could not evaluate the thermodynamic model of the phase.",
-                "This phase was construted without a thermodynamic model.");
+                         "This phase was construted without a thermodynamic model.");
         };
 
         // Create the PhaseChemicalModel function for the phase
-        PhaseChemicalModel phase_chemical_model = [](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) -> void
-        {
+        PhaseChemicalModel phase_chemical_model = [](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) -> void {
             RuntimeError("Could not evaluate the chemical model of phase.",
-                "This phase was construted without a thermodynamic model.");
+                         "This phase was construted without a thermodynamic model.");
         };
 
         phases[i].setName(phaseName(i));
@@ -171,14 +166,12 @@ auto Interface::system() const -> ChemicalSystem
     }
 
     // Create the ThermoModel function for the chemical system
-    ThermoModel thermo_model = [=](ThermoModelResult& res, Temperature T, Pressure P) -> void
-    {
+    ThermoModel thermo_model = [=](ThermoModelResult& res, Temperature T, Pressure P) -> void {
         interface->properties(res, T, P);
     };
 
     // Create the ChemicalModel function for the chemical system
-    ChemicalModel chemical_model = [=](ChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) -> void
-    {
+    ChemicalModel chemical_model = [=](ChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) -> void {
         interface->properties(res, T, P, n);
     };
 

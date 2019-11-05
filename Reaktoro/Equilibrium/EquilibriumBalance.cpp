@@ -38,7 +38,7 @@ struct EquilibriumBalance::Impl
 
     /// Construct an Impl instance with given reactions
     Impl(const EquilibriumReactions& reactions)
-    : reactions(reactions)
+        : reactions(reactions)
     {
         // Auxiliary references to LU factors of formula matrix of equilibrium partition
         const auto& P = reactions.lu().P;
@@ -91,22 +91,22 @@ struct EquilibriumBalance::Impl
 };
 
 EquilibriumBalance::EquilibriumBalance(const ChemicalSystem& system)
-: EquilibriumBalance(system, Partition(system))
+    : EquilibriumBalance(system, Partition(system))
 {
 }
 
 EquilibriumBalance::EquilibriumBalance(const ChemicalSystem& system, const Partition& partition)
-: EquilibriumBalance(EquilibriumReactions(system, partition))
+    : EquilibriumBalance(EquilibriumReactions(system, partition))
 {
 }
 
 EquilibriumBalance::EquilibriumBalance(const EquilibriumReactions& reactions)
-: pimpl(new Impl(reactions))
+    : pimpl(new Impl(reactions))
 {
 }
 
 EquilibriumBalance::EquilibriumBalance(const EquilibriumBalance& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {
 }
 

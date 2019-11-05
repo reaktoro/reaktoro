@@ -50,7 +50,7 @@ struct EquilibriumInverseSolver::Impl
 
     /// Construct a Impl instance
     Impl(const ChemicalSystem& system)
-    : system(system), solver(system)
+        : system(system), solver(system)
     {
         // Set the default partition as all species are in equilibrium
         setPartition(Partition(system));
@@ -115,17 +115,15 @@ struct EquilibriumInverseSolver::Impl
         nonlinear_problem.b = -be0;
 
         // Set the non-linear function of the non-linear problem
-        nonlinear_problem.f = [&](VectorConstRef x) mutable
-        {
+        nonlinear_problem.f = [&](VectorConstRef x) mutable {
             // The amounts of elements in the equilibrium partition
-            const Vector be = be0 + Ce*x;
+            const Vector be = be0 + Ce * x;
 
             // Solve the equilibrium problem with update `be`
             result += solver.solve(state, T, P, be);
 
             // Check if the equilibrium calculation converged
-            if(!result.optimum.succeeded)
-            {
+            if(!result.optimum.succeeded) {
                 // If not, solve using cold start
                 state.setSpeciesAmounts(0.0);
                 result += solver.solve(state, T, P, be);
@@ -162,11 +160,11 @@ struct EquilibriumInverseSolver::Impl
 };
 
 EquilibriumInverseSolver::EquilibriumInverseSolver(const ChemicalSystem& system)
-: pimpl(new Impl(system))
+    : pimpl(new Impl(system))
 {}
 
 EquilibriumInverseSolver::EquilibriumInverseSolver(const EquilibriumInverseSolver& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 EquilibriumInverseSolver::~EquilibriumInverseSolver()

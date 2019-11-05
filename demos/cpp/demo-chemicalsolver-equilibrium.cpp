@@ -61,6 +61,7 @@
 //    std::cout << "saturations[1] = \n" << solver.fluidSaturations()[1] << std::endl;
 //}
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
     // TODO implement the above demo using the new design of Reaktoro
 }

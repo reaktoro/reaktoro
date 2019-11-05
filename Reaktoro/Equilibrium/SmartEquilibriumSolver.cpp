@@ -25,8 +25,8 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
@@ -64,7 +64,7 @@ struct SmartEquilibriumSolver::Impl
 
     /// Construct an SmartEquilibriumSolver::Impl instance.
     Impl(const ChemicalSystem& system)
-    : system(system), solver(system)
+        : system(system), solver(system)
     {}
 
     /// Set the options for the equilibrium calculation.
@@ -97,8 +97,7 @@ struct SmartEquilibriumSolver::Impl
 
         EquilibriumResult res;
 
-        auto comp = [&](const TreeNodeType& a, const TreeNodeType& b)
-        {
+        auto comp = [&](const TreeNodeType& a, const TreeNodeType& b) {
             const auto& be_a = std::get<0>(a);
             const auto& be_b = std::get<0>(b);
             return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();
@@ -123,14 +122,14 @@ struct SmartEquilibriumSolver::Impl
         //    below abstol!).
         // 2)
 
-//        const double ln10 = 2.302585;
+        //        const double ln10 = 2.302585;
 
-//        const auto reltol = ln10 * options.smart.reltol;
-//        const auto abstol = ln10 * options.smart.abstol;
+        //        const auto reltol = ln10 * options.smart.reltol;
+        //        const auto abstol = ln10 * options.smart.abstol;
         const auto reltol = options.smart.reltol;
         const auto abstol = options.smart.abstol;
 
-//        n = n0 + sensitivity0.dnedbe * (be - be0);
+        //        n = n0 + sensitivity0.dnedbe * (be - be0);
         dn.noalias() = sensitivity0.dndb * (be - be0); // n is actually delta(n)
 
         n.noalias() = n0 + dn;
@@ -140,23 +139,24 @@ struct SmartEquilibriumSolver::Impl
         // The estimated ln(a[i]) of each species must not be
         // too far away from the reference value ln(aref[i])
         const bool variation_check = (delta_lna.array().abs() <=
-                abstol + reltol * lna0.array().abs()).all();
+                                      abstol + reltol * lna0.array().abs())
+                                         .all();
 
         // The estimated activity of all species must be positive.
         // This results in the need to check delta(ln(a[i])) > -1 for all species.
-//        const bool activity_check = delta_lna.minCoeff() > -1.0;
+        //        const bool activity_check = delta_lna.minCoeff() > -1.0;
         const bool amount_check = n.minCoeff() > -1e-5;
-//
-//        for(int i = 0; i < n.size(); ++i)
-//        {
-//            if(n[i] > 0.0) continue;
-//            if(n[i] > -1e-5) n[i] = abstol;
-//        }
+        //
+        //        for(int i = 0; i < n.size(); ++i)
+        //        {
+        //            if(n[i] > 0.0) continue;
+        //            if(n[i] > -1e-5) n[i] = abstol;
+        //        }
 
-//        if(variation_check && activity_check && amount_check)
+        //        if(variation_check && activity_check && amount_check)
         if(variation_check && amount_check)
-//        if(variation_check)
-//        if(((n - n0).array().abs() <= abstol + reltol*n0.array().abs()).all())
+        //        if(variation_check)
+        //        if(((n - n0).array().abs() <= abstol + reltol*n0.array().abs()).all())
         {
             n.noalias() = abs(n); // TODO abs needs only to be applied to negative values
             state.setSpeciesAmounts(n);
@@ -198,7 +198,8 @@ struct SmartEquilibriumSolver::Impl
     {
         EquilibriumResult res = estimate(state, T, P, be);
 
-        if(res.optimum.succeeded) return res;
+        if(res.optimum.succeeded)
+            return res;
 
         res += learn(state, T, P, be);
 
@@ -207,15 +208,15 @@ struct SmartEquilibriumSolver::Impl
 };
 
 SmartEquilibriumSolver::SmartEquilibriumSolver()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 SmartEquilibriumSolver::SmartEquilibriumSolver(const ChemicalSystem& system)
-: pimpl(new Impl(system))
+    : pimpl(new Impl(system))
 {}
 
 SmartEquilibriumSolver::SmartEquilibriumSolver(const SmartEquilibriumSolver& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 auto SmartEquilibriumSolver::operator=(SmartEquilibriumSolver other) -> SmartEquilibriumSolver&
@@ -270,7 +271,7 @@ auto SmartEquilibriumSolver::solve(ChemicalState& state, const EquilibriumProble
 auto SmartEquilibriumSolver::properties() const -> const ChemicalProperties&
 {
     RuntimeError("Could not calculate the chemical properties.",
-            "This method has not been implemented yet.");
+                 "This method has not been implemented yet.");
 }
 
 } // namespace Reaktoro

@@ -25,8 +25,8 @@ namespace Reaktoro {
 
 void exportPhreeqc(py::module& m)
 {
-	auto execute1 = static_cast<void(Phreeqc::*)(std::string,std::string)>(&Phreeqc::execute);
-	auto execute2 = static_cast<void(Phreeqc::*)(std::string)>(&Phreeqc::execute);
+    auto execute1 = static_cast<void (Phreeqc::*)(std::string, std::string)>(&Phreeqc::execute);
+    auto execute2 = static_cast<void (Phreeqc::*)(std::string)>(&Phreeqc::execute);
 
     py::class_<Phreeqc, Interface>(m, "Phreeqc")
         .def(py::init<>())
@@ -46,8 +46,7 @@ void exportPhreeqc(py::module& m)
         .def("lnActivityConstants", &Phreeqc::lnActivityConstants)
         .def("lnActivities", &Phreeqc::lnActivities)
         .def("lnEquilibriumConstants", &Phreeqc::lnEquilibriumConstants)
-        .def("phaseMolarVolumes", &Phreeqc::phaseMolarVolumes)
-        ;
+        .def("phaseMolarVolumes", &Phreeqc::phaseMolarVolumes);
 }
 
 } // namespace Reaktoro

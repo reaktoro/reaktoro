@@ -27,8 +27,7 @@ void exportMineralSpecies(py::module& m)
     py::class_<MineralSpecies, Species>(m, "MineralSpecies")
         .def(py::init<>())
         .def("setThermoData", &MineralSpecies::setThermoData)
-        .def("thermoData", &MineralSpecies::thermoData, py::return_value_policy::reference_internal)
-        ;
+        .def("thermoData", &MineralSpecies::thermoData, py::return_value_policy::reference_internal);
 }
 
 } // namespace Reaktoro

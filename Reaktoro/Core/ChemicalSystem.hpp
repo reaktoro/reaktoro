@@ -18,12 +18,12 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
+#include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Thermodynamics/Models/ChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
 
 namespace Reaktoro {
 
@@ -36,7 +36,7 @@ class ThermoProperties;
 /// @ingroup Core
 class ChemicalSystem
 {
-public:
+  public:
     /// Construct a default ChemicalSystem instance
     ChemicalSystem();
 
@@ -233,7 +233,7 @@ public:
     /// @param n The molar amounts of the species (in units of mol)
     auto properties(double T, double P, VectorConstRef n) const -> ChemicalProperties;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

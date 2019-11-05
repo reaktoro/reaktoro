@@ -32,11 +32,11 @@ struct AqueousSpecies::Impl
 };
 
 AqueousSpecies::AqueousSpecies()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 AqueousSpecies::AqueousSpecies(const Species& species)
-: Species(species), pimpl(new Impl())
+    : Species(species), pimpl(new Impl())
 {}
 
 auto AqueousSpecies::setCharge(double value) -> void

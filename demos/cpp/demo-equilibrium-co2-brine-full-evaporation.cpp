@@ -22,20 +22,20 @@ using namespace Reaktoro;
 
 int main()
 {
-//    ChemicalEditor editor;
-//    editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--", "Ca++"});
-//    editor.addGaseousPhase({"CO2(g)", "H2O(g)"});
-//    editor.addMineralPhase("Calcite");
-//    editor.addMineralPhase("Halite");
-//
-//    ChemicalSystem system(editor);
-//    ReactionSystem reactions(editor);
-//
-//    EquilibriumProblem problem(system);
-//    problem.add("H2O", 1, "kg");
-//    problem.add("NaCl", 1, "mol");
-//    problem.add("CaCO3", 10, "mol");
-//    problem.add("CO2", 200, "kg");
-//
-//    ChemicalState state = equilibrate(problem);
+    //    ChemicalEditor editor;
+    //    editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--", "Ca++"});
+    //    editor.addGaseousPhase({"CO2(g)", "H2O(g)"});
+    //    editor.addMineralPhase("Calcite");
+    //    editor.addMineralPhase("Halite");
+    //
+    //    ChemicalSystem system(editor);
+    //    ReactionSystem reactions(editor);
+    //
+    //    EquilibriumProblem problem(system);
+    //    problem.add("H2O", 1, "kg");
+    //    problem.add("NaCl", 1, "mol");
+    //    problem.add("CaCO3", 10, "mol");
+    //    problem.add("CO2", 200, "kg");
+    //
+    //    ChemicalState state = equilibrate(problem);
 }

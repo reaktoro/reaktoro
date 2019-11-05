@@ -69,7 +69,7 @@ struct Species::Impl
 };
 
 Species::Species()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 auto Species::setName(std::string name) -> void

@@ -27,34 +27,34 @@ namespace Reaktoro {
 
 void exportEquilibriumInverseProblem(py::module& m)
 {
-    auto setTemperature1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::setTemperature);
-    auto setTemperature2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::setTemperature);
+    auto setTemperature1 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::setTemperature);
+    auto setTemperature2 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::setTemperature);
 
-    auto setPressure1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::setPressure);
-    auto setPressure2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::setPressure);
+    auto setPressure1 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::setPressure);
+    auto setPressure2 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::setPressure);
 
-    auto fixSpeciesAmount1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string)>(&EquilibriumInverseProblem::fixSpeciesAmount);
-    auto fixSpeciesAmount2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumInverseProblem::fixSpeciesAmount);
+    auto fixSpeciesAmount1 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(std::string, double, std::string)>(&EquilibriumInverseProblem::fixSpeciesAmount);
+    auto fixSpeciesAmount2 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumInverseProblem::fixSpeciesAmount);
 
-    auto fixSpeciesMass1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string)>(&EquilibriumInverseProblem::fixSpeciesMass);
-    auto fixSpeciesMass2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumInverseProblem::fixSpeciesMass);
+    auto fixSpeciesMass1 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(std::string, double, std::string)>(&EquilibriumInverseProblem::fixSpeciesMass);
+    auto fixSpeciesMass2 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumInverseProblem::fixSpeciesMass);
 
-    auto fixSpeciesActivity1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double)>(&EquilibriumInverseProblem::fixSpeciesActivity);
-    auto fixSpeciesActivity2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string)>(&EquilibriumInverseProblem::fixSpeciesActivity);
-    auto fixSpeciesActivity3 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumInverseProblem::fixSpeciesActivity);
+    auto fixSpeciesActivity1 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(std::string, double)>(&EquilibriumInverseProblem::fixSpeciesActivity);
+    auto fixSpeciesActivity2 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(std::string, double, std::string)>(&EquilibriumInverseProblem::fixSpeciesActivity);
+    auto fixSpeciesActivity3 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumInverseProblem::fixSpeciesActivity);
 
-    auto fixSpeciesFugacity1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string)>(&EquilibriumInverseProblem::fixSpeciesFugacity);
-    auto fixSpeciesFugacity2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumInverseProblem::fixSpeciesFugacity);
+    auto fixSpeciesFugacity1 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(std::string, double, std::string)>(&EquilibriumInverseProblem::fixSpeciesFugacity);
+    auto fixSpeciesFugacity2 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumInverseProblem::fixSpeciesFugacity);
 
-    auto pH1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::pH);
-    auto pH2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::pH);
-    auto pH3 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string, std::string)>(&EquilibriumInverseProblem::pH);
+    auto pH1 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::pH);
+    auto pH2 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::pH);
+    auto pH3 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(double, std::string, std::string)>(&EquilibriumInverseProblem::pH);
 
-    auto pE1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::pE);
-    auto pE2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::pE);
+    auto pE1 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::pE);
+    auto pE2 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::pE);
 
-    auto Eh1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::Eh);
-    auto Eh2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string, std::string)>(&EquilibriumInverseProblem::Eh);
+    auto Eh1 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::Eh);
+    auto Eh2 = static_cast<EquilibriumInverseProblem& (EquilibriumInverseProblem::*)(double, std::string, std::string)>(&EquilibriumInverseProblem::Eh);
 
     py::class_<EquilibriumInverseProblem>(m, "EquilibriumInverseProblem")
         .def(py::init<const ChemicalSystem&>())
@@ -78,7 +78,7 @@ void exportEquilibriumInverseProblem(py::module& m)
         .def("fixPhaseAmount", &EquilibriumInverseProblem::fixPhaseAmount, py::return_value_policy::reference_internal)
         .def("fixPhaseMass", &EquilibriumInverseProblem::fixPhaseMass, py::return_value_policy::reference_internal)
         .def("fixPhaseVolume", &EquilibriumInverseProblem::fixPhaseVolume, py::return_value_policy::reference_internal)
-		.def("fixPhaseSetVolume", &EquilibriumInverseProblem::fixPhaseSetVolume, py::return_value_policy::reference_internal)
+        .def("fixPhaseSetVolume", &EquilibriumInverseProblem::fixPhaseSetVolume, py::return_value_policy::reference_internal)
         .def("pH", pH1, py::return_value_policy::reference_internal)
         .def("pH", pH2, py::return_value_policy::reference_internal)
         .def("pH", pH3, py::return_value_policy::reference_internal)
@@ -86,7 +86,7 @@ void exportEquilibriumInverseProblem(py::module& m)
         .def("pE", pE2, py::return_value_policy::reference_internal)
         .def("Eh", Eh1, py::return_value_policy::reference_internal)
         .def("Eh", Eh2, py::return_value_policy::reference_internal)
-		.def("alkalinity", &EquilibriumInverseProblem::alkalinity, py::return_value_policy::reference_internal)
+        .def("alkalinity", &EquilibriumInverseProblem::alkalinity, py::return_value_policy::reference_internal)
         .def("system", &EquilibriumInverseProblem::system, py::return_value_policy::reference_internal)
         .def("partition", &EquilibriumInverseProblem::partition, py::return_value_policy::reference_internal)
         .def("temperature", &EquilibriumInverseProblem::temperature)
@@ -95,8 +95,7 @@ void exportEquilibriumInverseProblem(py::module& m)
         .def("numTitrants", &EquilibriumInverseProblem::numTitrants)
         .def("formulaMatrixTitrants", &EquilibriumInverseProblem::formulaMatrixTitrants)
         .def("elementInitialAmounts", &EquilibriumInverseProblem::elementInitialAmounts)
-        .def("titrantInitialAmounts", &EquilibriumInverseProblem::titrantInitialAmounts)
-        ;
+        .def("titrantInitialAmounts", &EquilibriumInverseProblem::titrantInitialAmounts);
 }
 
 } // namespace Reaktoro

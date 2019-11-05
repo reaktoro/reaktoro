@@ -68,24 +68,24 @@ std::string message(const Exception& exception, const std::string& file, int lin
 /// @see Exception
 /// @ingroup Common
 #define RuntimeError(errorstr, reasonstr) \
-    { \
-        Reaktoro::Exception exception; \
-        exception.error << errorstr; \
-        exception.reason << reasonstr; \
-        RaiseError(exception); \
+    {                                     \
+        Reaktoro::Exception exception;    \
+        exception.error << errorstr;      \
+        exception.reason << reasonstr;    \
+        RaiseError(exception);            \
     }
 
 /// Define a macro to raise a runtime exception from a error string and a reason string.
 /// @see Exception
 /// @ingroup Common
 #define Assert(condition, errorstr, reasonstr) \
-    { \
-        if(!(condition)) { \
-            Reaktoro::Exception exception; \
-            exception.error << errorstr; \
-            exception.reason << reasonstr; \
-            RaiseError(exception); \
-        } \
+    {                                          \
+        if(!(condition)) {                     \
+            Reaktoro::Exception exception;     \
+            exception.error << errorstr;       \
+            exception.reason << reasonstr;     \
+            RaiseError(exception);             \
+        }                                      \
     }
 
 } // namespace Reaktoro

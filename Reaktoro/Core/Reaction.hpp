@@ -25,10 +25,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/ScalarTypes.hpp>
 #include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -58,7 +58,7 @@ using ReactionRateVectorFunction = std::function<ChemicalVector(const ChemicalPr
 /// @ingroup Core
 class Reaction
 {
-public:
+  public:
     /// Construct a default Reaction instance
     Reaction();
 
@@ -135,7 +135,7 @@ public:
     /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
     auto rate(const ChemicalProperties& properties) const -> ChemicalScalar;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

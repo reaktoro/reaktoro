@@ -32,7 +32,7 @@ struct OptimumState;
 /// with a null-space KKT formulation.
 class OptimumSolverIpAction : public OptimumSolverBase
 {
-public:
+  public:
     /// Construct a default OptimumSolverIpAction instance.
     OptimumSolverIpAction();
 
@@ -64,7 +64,7 @@ public:
     /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase*;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

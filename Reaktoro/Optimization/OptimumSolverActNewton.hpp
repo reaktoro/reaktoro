@@ -32,7 +32,7 @@ struct OptimumState;
 /// The class that implements the ActNewton algorithm using an active-set strategy.
 class OptimumSolverActNewton : public OptimumSolverBase
 {
-public:
+  public:
     /// Construct a default OptimumSolverActNewton instance.
     OptimumSolverActNewton();
 
@@ -64,7 +64,7 @@ public:
     /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase*;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

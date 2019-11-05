@@ -18,8 +18,8 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
+#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 namespace Reaktoro {
 
@@ -36,7 +36,7 @@ struct MineralMixtureState : public MixtureState
 /// @ingroup Mixtures
 class MineralMixture : public GeneralMixture<MineralSpecies>
 {
-public:
+  public:
     /// Construct a default MineralMixture instance.
     MineralMixture();
 

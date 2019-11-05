@@ -28,11 +28,11 @@ namespace Reaktoro {
 
 void exportMineralReaction(py::module& m)
 {
-    auto setEquation1 = static_cast<MineralReaction&(MineralReaction::*)(const ReactionEquation&)>(&MineralReaction::setEquation);
-    auto setEquation2 = static_cast<MineralReaction&(MineralReaction::*)(std::string)>(&MineralReaction::setEquation);
+    auto setEquation1 = static_cast<MineralReaction& (MineralReaction::*)(const ReactionEquation&)>(&MineralReaction::setEquation);
+    auto setEquation2 = static_cast<MineralReaction& (MineralReaction::*)(std::string)>(&MineralReaction::setEquation);
 
-    auto addMechanism1 = static_cast<MineralReaction&(MineralReaction::*)(const MineralMechanism&)>(&MineralReaction::addMechanism);
-    auto addMechanism2 = static_cast<MineralReaction&(MineralReaction::*)(std::string)>(&MineralReaction::addMechanism);
+    auto addMechanism1 = static_cast<MineralReaction& (MineralReaction::*)(const MineralMechanism&)>(&MineralReaction::addMechanism);
+    auto addMechanism2 = static_cast<MineralReaction& (MineralReaction::*)(std::string)>(&MineralReaction::addMechanism);
 
     py::class_<MineralReaction>(m, "MineralReaction")
         .def(py::init<>())
@@ -51,8 +51,7 @@ void exportMineralReaction(py::module& m)
         .def("equilibriumConstant", &MineralReaction::equilibriumConstant, py::return_value_policy::reference_internal)
         .def("specificSurfaceArea", &MineralReaction::specificSurfaceArea)
         .def("volumetricSurfaceArea", &MineralReaction::volumetricSurfaceArea)
-        .def("mechanisms", &MineralReaction::mechanisms, py::return_value_policy::reference_internal)
-        ;
+        .def("mechanisms", &MineralReaction::mechanisms, py::return_value_policy::reference_internal);
 }
 
 } // namespace Reaktoro

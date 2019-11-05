@@ -23,12 +23,12 @@ ThermoModelResult::ThermoModelResult()
 {}
 
 ThermoModelResult::ThermoModelResult(Index nphases, Index nspecies)
-: standard_partial_molar_gibbs_energies(nspecies),
-  standard_partial_molar_enthalpies(nspecies),
-  standard_partial_molar_volumes(nspecies),
-  standard_partial_molar_heat_capacities_cp(nspecies),
-  standard_partial_molar_heat_capacities_cv(nspecies),
-  ln_activity_constants(nspecies)
+    : standard_partial_molar_gibbs_energies(nspecies),
+      standard_partial_molar_enthalpies(nspecies),
+      standard_partial_molar_volumes(nspecies),
+      standard_partial_molar_heat_capacities_cp(nspecies),
+      standard_partial_molar_heat_capacities_cv(nspecies),
+      ln_activity_constants(nspecies)
 {}
 
 auto ThermoModelResult::resize(Index nphases, Index nspecies) -> void

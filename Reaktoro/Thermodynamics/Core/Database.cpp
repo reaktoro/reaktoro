@@ -50,10 +50,10 @@ namespace Reaktoro {
 namespace {
 
 /// Auxiliary types for a map of aqueous, fluid, and mineral species
-using ElementMap        = std::map<std::string, Element>;
+using ElementMap = std::map<std::string, Element>;
 using AqueousSpeciesMap = std::map<std::string, AqueousSpecies>;
 using GaseousSpeciesMap = std::map<std::string, GaseousSpecies>;
-using LiquidSpeciesMap  = std::map<std::string, LiquidSpecies>;
+using LiquidSpeciesMap = std::map<std::string, LiquidSpecies>;
 using MineralSpeciesMap = std::map<std::string, MineralSpecies>;
 
 auto errorNonExistentSpecies(std::string type, std::string name) -> void
@@ -68,8 +68,7 @@ auto parseDissociation(std::string dissociation) -> std::map<std::string, double
 {
     std::map<std::string, double> equation;
     auto words = split(dissociation, " ");
-    for(const auto& word : words)
-    {
+    for(const auto& word : words) {
         auto pair = split(word, ":");
         equation.emplace(pair[1], tofloat(pair[0]));
     }
@@ -79,32 +78,30 @@ auto parseDissociation(std::string dissociation) -> std::map<std::string, double
 auto parseReactionInterpolatedThermoProperties(const xml_node& node) -> ReactionThermoInterpolatedProperties
 {
     // Get the data values of the children nodes
-    std::vector<double> temperatures     = tofloats(node.child("Temperatures").text().get());
-    std::vector<double> pressures        = tofloats(node.child("Pressures").text().get());
-    std::vector<double> pk               = tofloats(node.child("pk").text().get());
-    std::vector<double> lnk              = tofloats(node.child("lnk").text().get());
-    std::vector<double> logk             = tofloats(node.child("logk").text().get());
-    std::vector<double> gibbs_energy     = tofloats(node.child("G").text().get());
+    std::vector<double> temperatures = tofloats(node.child("Temperatures").text().get());
+    std::vector<double> pressures = tofloats(node.child("Pressures").text().get());
+    std::vector<double> pk = tofloats(node.child("pk").text().get());
+    std::vector<double> lnk = tofloats(node.child("lnk").text().get());
+    std::vector<double> logk = tofloats(node.child("logk").text().get());
+    std::vector<double> gibbs_energy = tofloats(node.child("G").text().get());
     std::vector<double> helmholtz_energy = tofloats(node.child("A").text().get());
-    std::vector<double> internal_energy  = tofloats(node.child("U").text().get());
-    std::vector<double> enthalpy         = tofloats(node.child("H").text().get());
-    std::vector<double> entropy          = tofloats(node.child("S").text().get());
-    std::vector<double> volume           = tofloats(node.child("V").text().get());
+    std::vector<double> internal_energy = tofloats(node.child("U").text().get());
+    std::vector<double> enthalpy = tofloats(node.child("H").text().get());
+    std::vector<double> entropy = tofloats(node.child("S").text().get());
+    std::vector<double> volume = tofloats(node.child("V").text().get());
     std::vector<double> heat_capacity_cp = tofloats(node.child("Cp").text().get());
     std::vector<double> heat_capacity_cv = tofloats(node.child("Cv").text().get());
 
     // Convert `pk` to `lnk`, where `pk = -log(k) = -ln(k)/ln(10)`
     const double ln_10 = std::log(10.0);
-    if(!pk.empty() && lnk.empty())
-    {
+    if(!pk.empty() && lnk.empty()) {
         lnk.resize(pk.size());
         for(unsigned i = 0; i < pk.size(); ++i)
             lnk[i] = -pk[i] * ln_10;
     }
 
     // Convert `logk` to `lnk`, where `log(k) = ln(k)/ln(10)`
-    if(!logk.empty() && lnk.empty())
-    {
+    if(!logk.empty() && lnk.empty()) {
         lnk.resize(logk.size());
         for(unsigned i = 0; i < logk.size(); ++i)
             lnk[i] = logk[i] * ln_10;
@@ -118,46 +115,51 @@ auto parseReactionInterpolatedThermoProperties(const xml_node& node) -> Reaction
     std::string equation = node.child("Equation").text().get();
 
     // Check if element `temperatures` was provided, if not set default to 25 celsius
-    if(temperatures.empty()) temperatures.push_back(25.0);
+    if(temperatures.empty())
+        temperatures.push_back(25.0);
 
     // Check if element `pressures` was provided, if not set default to 1 bar
-    if(pressures.empty()) pressures.push_back(1.0);
+    if(pressures.empty())
+        pressures.push_back(1.0);
 
     // Check if temperature units was provided, if not set default to celsius
-    if(tunits.empty()) tunits = "celsius";
+    if(tunits.empty())
+        tunits = "celsius";
 
     // Check if pressure units was provided, if not set default to bar
-    if(punits.empty()) punits = "bar";
+    if(punits.empty())
+        punits = "bar";
 
     // Convert temperatures and pressures to standard units (kelvin and pascal respectively)
-    for(auto& x : temperatures) x = units::convert(x, tunits, "kelvin");
-    for(auto& x : pressures)    x = units::convert(x, punits, "pascal");
+    for(auto& x : temperatures)
+        x = units::convert(x, tunits, "kelvin");
+    for(auto& x : pressures)
+        x = units::convert(x, punits, "pascal");
 
     // Define a lambda function to generate a bilinear interpolator from a vector
-    auto bilinear_interpolator = [&](const std::vector<double>& data) -> BilinearInterpolator
-    {
-        if(data.empty())  return BilinearInterpolator();
+    auto bilinear_interpolator = [&](const std::vector<double>& data) -> BilinearInterpolator {
+        if(data.empty())
+            return BilinearInterpolator();
         return BilinearInterpolator(temperatures, pressures, data);
     };
 
     // Define a lambda function to generate a bilinear interpolator of the Gibbs energy of a reaction from its lnk
-    auto gibbs_energy_from_lnk = [](const BilinearInterpolator& lnk)
-    {
+    auto gibbs_energy_from_lnk = [](const BilinearInterpolator& lnk) {
         const double R = universalGasConstant;
-        auto f = [=](double T, double P) { return -R*T*lnk(T, P); };
+        auto f = [=](double T, double P) { return -R * T * lnk(T, P); };
         return BilinearInterpolator(lnk.xCoordinates(), lnk.yCoordinates(), f);
     };
 
     // Initialize the properties thermodynamic properties of the reaction
     ReactionThermoInterpolatedProperties data;
-    data.equation         = equation;
-    data.lnk              = bilinear_interpolator(lnk);
-    data.gibbs_energy     = gibbs_energy.empty() ? gibbs_energy_from_lnk(data.lnk) : bilinear_interpolator(gibbs_energy);
+    data.equation = equation;
+    data.lnk = bilinear_interpolator(lnk);
+    data.gibbs_energy = gibbs_energy.empty() ? gibbs_energy_from_lnk(data.lnk) : bilinear_interpolator(gibbs_energy);
     data.helmholtz_energy = bilinear_interpolator(helmholtz_energy);
-    data.internal_energy  = bilinear_interpolator(internal_energy);
-    data.enthalpy         = bilinear_interpolator(enthalpy);
-    data.entropy          = bilinear_interpolator(entropy);
-    data.volume           = bilinear_interpolator(volume);
+    data.internal_energy = bilinear_interpolator(internal_energy);
+    data.enthalpy = bilinear_interpolator(enthalpy);
+    data.entropy = bilinear_interpolator(entropy);
+    data.volume = bilinear_interpolator(volume);
     data.heat_capacity_cp = bilinear_interpolator(heat_capacity_cp);
     data.heat_capacity_cv = bilinear_interpolator(heat_capacity_cv);
 
@@ -167,14 +169,14 @@ auto parseReactionInterpolatedThermoProperties(const xml_node& node) -> Reaction
 auto parseSpeciesInterpolatedThermoProperties(const xml_node& node) -> SpeciesThermoInterpolatedProperties
 {
     // Get the data values of the children nodes
-    std::vector<double> temperatures     = tofloats(node.child("Temperatures").text().get());
-    std::vector<double> pressures        = tofloats(node.child("Pressures").text().get());
-    std::vector<double> gibbs_energy     = tofloats(node.child("G").text().get());
+    std::vector<double> temperatures = tofloats(node.child("Temperatures").text().get());
+    std::vector<double> pressures = tofloats(node.child("Pressures").text().get());
+    std::vector<double> gibbs_energy = tofloats(node.child("G").text().get());
     std::vector<double> helmholtz_energy = tofloats(node.child("A").text().get());
-    std::vector<double> internal_energy  = tofloats(node.child("U").text().get());
-    std::vector<double> enthalpy         = tofloats(node.child("H").text().get());
-    std::vector<double> entropy          = tofloats(node.child("S").text().get());
-    std::vector<double> volume           = tofloats(node.child("V").text().get());
+    std::vector<double> internal_energy = tofloats(node.child("U").text().get());
+    std::vector<double> enthalpy = tofloats(node.child("H").text().get());
+    std::vector<double> entropy = tofloats(node.child("S").text().get());
+    std::vector<double> volume = tofloats(node.child("V").text().get());
     std::vector<double> heat_capacity_cp = tofloats(node.child("Cp").text().get());
     std::vector<double> heat_capacity_cv = tofloats(node.child("Cv").text().get());
 
@@ -183,50 +185,56 @@ auto parseSpeciesInterpolatedThermoProperties(const xml_node& node) -> SpeciesTh
     std::string punits = node.child("Pressures").attribute("units").as_string();
 
     // Check if element `temperatures` was provided, if not set default to 25 celsius
-    if(temperatures.empty()) temperatures.push_back(25.0);
+    if(temperatures.empty())
+        temperatures.push_back(25.0);
 
     // Check if element `pressures` was provided, if not set default to 1 bar
-    if(pressures.empty()) pressures.push_back(1.0);
+    if(pressures.empty())
+        pressures.push_back(1.0);
 
     // Check if temperature units was provided, if not set default to celsius
-    if(tunits.empty()) tunits = "celsius";
+    if(tunits.empty())
+        tunits = "celsius";
 
     // Check if pressure units was provided, if not set default to bar
-    if(punits.empty()) punits = "bar";
+    if(punits.empty())
+        punits = "bar";
 
     // Convert temperatures and pressures to standard units
-    for(auto& x : temperatures) x = units::convert(x, tunits, "kelvin");
-    for(auto& x : pressures)    x = units::convert(x, punits, "pascal");
+    for(auto& x : temperatures)
+        x = units::convert(x, tunits, "kelvin");
+    for(auto& x : pressures)
+        x = units::convert(x, punits, "pascal");
 
     // Define a lambda function to generate a bilinear interpolator from a vector
-    auto bilinear_interpolator = [&](const std::vector<double>& data) -> BilinearInterpolator
-    {
-        if(data.empty())  return BilinearInterpolator();
+    auto bilinear_interpolator = [&](const std::vector<double>& data) -> BilinearInterpolator {
+        if(data.empty())
+            return BilinearInterpolator();
         return BilinearInterpolator(temperatures, pressures, data);
     };
 
     // Initialize the properties thermodynamic properties of the species
     SpeciesThermoInterpolatedProperties data;
-    data.gibbs_energy     = bilinear_interpolator(gibbs_energy);
+    data.gibbs_energy = bilinear_interpolator(gibbs_energy);
     data.helmholtz_energy = bilinear_interpolator(helmholtz_energy);
-    data.internal_energy  = bilinear_interpolator(internal_energy);
-    data.enthalpy         = bilinear_interpolator(enthalpy);
-    data.entropy          = bilinear_interpolator(entropy);
-    data.volume           = bilinear_interpolator(volume);
+    data.internal_energy = bilinear_interpolator(internal_energy);
+    data.enthalpy = bilinear_interpolator(enthalpy);
+    data.entropy = bilinear_interpolator(entropy);
+    data.volume = bilinear_interpolator(volume);
     data.heat_capacity_cp = bilinear_interpolator(heat_capacity_cp);
     data.heat_capacity_cv = bilinear_interpolator(heat_capacity_cv);
 
     return data;
 }
 
-auto as_int(const xml_node& node, const char* childname, int if_empty=std::numeric_limits<int>::infinity()) -> int
+auto as_int(const xml_node& node, const char* childname, int if_empty = std::numeric_limits<int>::infinity()) -> int
 {
     if(node.child(childname).text().empty())
         return if_empty;
     return node.child(childname).text().as_int();
 }
 
-auto as_double(const xml_node& node, const char* childname, double if_empty=std::numeric_limits<double>::infinity()) -> double
+auto as_double(const xml_node& node, const char* childname, double if_empty = std::numeric_limits<double>::infinity()) -> double
 {
     if(node.child(childname).text().empty())
         return if_empty;
@@ -236,15 +244,15 @@ auto as_double(const xml_node& node, const char* childname, double if_empty=std:
 auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<AqueousSpeciesThermoParamsHKF>
 {
     AqueousSpeciesThermoParamsHKF hkf;
-    hkf.Gf   = as_double(node, "Gf");
-    hkf.Hf   = as_double(node, "Hf");
-    hkf.Sr   = as_double(node, "Sr");
-    hkf.a1   = as_double(node, "a1");
-    hkf.a2   = as_double(node, "a2");
-    hkf.a3   = as_double(node, "a3");
-    hkf.a4   = as_double(node, "a4");
-    hkf.c1   = as_double(node, "c1");
-    hkf.c2   = as_double(node, "c2");
+    hkf.Gf = as_double(node, "Gf");
+    hkf.Hf = as_double(node, "Hf");
+    hkf.Sr = as_double(node, "Sr");
+    hkf.a1 = as_double(node, "a1");
+    hkf.a2 = as_double(node, "a2");
+    hkf.a3 = as_double(node, "a3");
+    hkf.a4 = as_double(node, "a4");
+    hkf.c1 = as_double(node, "c1");
+    hkf.c2 = as_double(node, "c2");
     hkf.wref = as_double(node, "wref");
     return hkf;
 }
@@ -252,12 +260,12 @@ auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<A
 auto parseFluidSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<FluidSpeciesThermoParamsHKF>
 {
     FluidSpeciesThermoParamsHKF hkf;
-    hkf.Gf   = as_double(node, "Gf");
-    hkf.Hf   = as_double(node, "Hf");
-    hkf.Sr   = as_double(node, "Sr");
-    hkf.a    = as_double(node, "a");
-    hkf.b    = as_double(node, "b");
-    hkf.c    = as_double(node, "c");
+    hkf.Gf = as_double(node, "Gf");
+    hkf.Hf = as_double(node, "Hf");
+    hkf.Sr = as_double(node, "Sr");
+    hkf.a = as_double(node, "a");
+    hkf.b = as_double(node, "b");
+    hkf.c = as_double(node, "c");
     hkf.Tmax = as_double(node, "Tmax");
     return hkf;
 }
@@ -265,23 +273,19 @@ auto parseFluidSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<Flu
 auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<MineralSpeciesThermoParamsHKF>
 {
     MineralSpeciesThermoParamsHKF hkf;
-    hkf.Gf      = as_double(node, "Gf");
-    hkf.Hf      = as_double(node, "Hf");
-    hkf.Sr      = as_double(node, "Sr");
-    hkf.Vr      = as_double(node, "Vr");
+    hkf.Gf = as_double(node, "Gf");
+    hkf.Hf = as_double(node, "Hf");
+    hkf.Sr = as_double(node, "Sr");
+    hkf.Vr = as_double(node, "Vr");
     hkf.nptrans = as_int(node, "NumPhaseTrans");
-    hkf.Tmax    = as_double(node, "Tmax");
+    hkf.Tmax = as_double(node, "Tmax");
 
-    if(hkf.nptrans == 0)
-    {
+    if(hkf.nptrans == 0) {
         hkf.a.push_back(as_double(node, "a"));
         hkf.b.push_back(as_double(node, "b"));
         hkf.c.push_back(as_double(node, "c"));
-    }
-    else
-    {
-        for(int i = 0; i <= hkf.nptrans; ++i)
-        {
+    } else {
+        for(int i = 0; i <= hkf.nptrans; ++i) {
             std::stringstream str;
             str << "TemperatureRange" << i;
 
@@ -291,8 +295,7 @@ auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> std::optional<M
             hkf.b.push_back(as_double(temperature_range, "b"));
             hkf.c.push_back(as_double(temperature_range, "c"));
 
-            if(i < hkf.nptrans)
-            {
+            if(i < hkf.nptrans) {
                 hkf.Ttr.push_back(as_double(temperature_range, "Ttr"));
 
                 // Set zero the non-available transition values
@@ -367,8 +370,7 @@ auto collectSpecies(const std::map<std::string, SpeciesType>& map, const Species
 template<typename SpeciesType>
 auto speciesWithElements(const std::vector<std::string>& elements, const std::map<std::string, SpeciesType>& map) -> std::vector<SpeciesType>
 {
-    auto f = [&](const SpeciesType& species)
-    {
+    auto f = [&](const SpeciesType& species) {
         // Check if the given species has all chemical elements in the list of elements (ignore charge Z)
         for(auto pair : species.elements())
             if(pair.first.name() != "Z" && !contained(pair.first.name(), elements))
@@ -384,9 +386,10 @@ auto speciesWithElements(const std::vector<std::string>& elements, const std::ma
 //A guard object to guarantee the return of original locale
 class ChangeLocale
 {
-public:
+  public:
     ChangeLocale() = delete;
-    explicit ChangeLocale(const char* new_locale) : old_locale(std::setlocale(LC_NUMERIC, nullptr))
+    explicit ChangeLocale(const char* new_locale)
+        : old_locale(std::setlocale(LC_NUMERIC, nullptr))
     {
         std::setlocale(LC_NUMERIC, new_locale);
     }
@@ -395,9 +398,8 @@ public:
         std::setlocale(LC_NUMERIC, old_locale.c_str());
     }
 
-private:
+  private:
     const std::string old_locale;
-
 };
 
 struct Database::Impl
@@ -430,23 +432,24 @@ struct Database::Impl
         auto result = doc.load_file(filename.c_str());
 
         // Check if result is not ok, and then try a built-in database with same name
-        if(!result)
-        {
+        if(!result) {
             // Search for a built-in database
             std::string builtin = database(filename);
 
             // If not empty, use the built-in database to create the xml doc
-            if(!builtin.empty()) result = doc.load_string(builtin.c_str());
+            if(!builtin.empty())
+                result = doc.load_string(builtin.c_str());
         }
 
         // Ensure either a database file path was correctly given, or a built-in database
-        if(!result)
-        {
+        if(!result) {
             std::string names;
-            for(auto const& s : databases()) names += s + " ";
+            for(auto const& s : databases())
+                names += s + " ";
             RuntimeError("Could not initialize the Database instance with given database name `" + filename + "`.",
-                "This name either points to a non-existent database file, or it is not one of the "
-                "built-in database files in Reaktoro. The built-in databases are: " + names + ".");
+                         "This name either points to a non-existent database file, or it is not one of the "
+                         "built-in database files in Reaktoro. The built-in databases are: " +
+                             names + ".");
         }
 
         // Parse the xml document
@@ -475,12 +478,12 @@ struct Database::Impl
 
     auto addGaseousSpecies(const GaseousSpecies& species) -> void
     {
-        gaseous_species_map.insert({ species.name(), species });
+        gaseous_species_map.insert({species.name(), species});
     }
 
     auto addLiquidSpecies(const LiquidSpecies& species) -> void
     {
-        liquid_species_map.insert({ species.name(), species });
+        liquid_species_map.insert({species.name(), species});
     }
 
     auto addMineralSpecies(const MineralSpecies& species) -> void
@@ -488,7 +491,7 @@ struct Database::Impl
         mineral_species_map.insert({species.name(), species});
     }
 
-    auto elements() const-> std::vector<Element>
+    auto elements() const -> std::vector<Element>
     {
         std::vector<Element> elements{};
         elements.reserve(element_map.size());
@@ -600,8 +603,7 @@ struct Database::Impl
         xml_node database = doc.child("Database");
 
         // Read all elements in the database
-        for(xml_node node : database.children("Element"))
-        {
+        for(xml_node node : database.children("Element")) {
             Element element = parseElement(node);
             element_map[element.name()] = element;
         }
@@ -611,39 +613,33 @@ struct Database::Impl
         element_map["Z"].setName("Z");
 
         // Read all species in the database
-        for(xml_node node : database.children("Species"))
-        {
+        for(xml_node node : database.children("Species")) {
             std::string type = node.child("Type").text().get();
             std::string name = node.child("Name").text().get();
 
-            if(type == "Aqueous")
-            {
+            if(type == "Aqueous") {
                 AqueousSpecies species = parseAqueousSpecies(node);
                 if(valid(species))
                     aqueous_species_map[species.name()] = species;
-            }
-            else if(type == "Gaseous")
-            {
+            } else if(type == "Gaseous") {
                 GaseousSpecies gaseous_species = parseFluidSpecies(node);
                 gaseous_species.setName(name);
                 LiquidSpecies liquid_species = parseFluidSpecies(node);
                 const auto gas_species_suffix_size = 3;
                 liquid_species.setName(name.substr(0, name.size() - gas_species_suffix_size) + "(liq)");
-                if (valid(gaseous_species))
-                {
+                if(valid(gaseous_species)) {
                     gaseous_species_map[gaseous_species.name()] = gaseous_species;
                     liquid_species_map[liquid_species.name()] = liquid_species;
                 }
-            }
-            else if(type == "Mineral")
-            {
+            } else if(type == "Mineral") {
                 MineralSpecies species = parseMineralSpecies(node);
                 if(valid(species))
                     mineral_species_map[species.name()] = species;
-            }
-            else RuntimeError("Could not parse the species `" +
-                name + "` with type `" + type + "` in the database `" +
-                databasename + "`.", "The type of the species is unknown.");
+            } else
+                RuntimeError("Could not parse the species `" +
+                                 name + "` with type `" + type + "` in the database `" +
+                                 databasename + "`.",
+                             "The type of the species is unknown.");
         }
     }
 
@@ -660,15 +656,13 @@ struct Database::Impl
         std::string formula = node.child("Elements").text().get();
         std::map<Element, double> elements;
         auto words = split(formula, "()");
-        for(unsigned i = 0; i < words.size(); i += 2)
-        {
+        for(unsigned i = 0; i < words.size(); i += 2) {
             Assert(element_map.count(words[i]),
-                "Cannot parse the elemental formula `" + formula + "`.",
-                "The element `" + words[i] + "` is not in the database.");
+                   "Cannot parse the elemental formula `" + formula + "`.",
+                   "The element `" + words[i] + "` is not in the database.");
             elements.emplace(element_map.at(words[i]), tofloat(words[i + 1]));
         }
-        if(!node.child("Charge").empty())
-        {
+        if(!node.child("Charge").empty()) {
             double charge = node.child("Charge").text().as_double();
             elements.emplace(element_map.at("Z"), charge);
         }
@@ -773,11 +767,11 @@ struct Database::Impl
 };
 
 Database::Database()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 Database::Database(std::string filename)
-: pimpl(new Impl(filename))
+    : pimpl(new Impl(filename))
 {}
 
 auto Database::addElement(const Element& element) -> void

@@ -24,68 +24,68 @@ namespace Reaktoro {
 
 struct WaterThermoState
 {
-	/// The temperature of water (in units of K)
-	ThermoScalar temperature;
+    /// The temperature of water (in units of K)
+    ThermoScalar temperature;
 
-	/// The specific volume of water (in units of m3/kg)
-	ThermoScalar volume;
+    /// The specific volume of water (in units of m3/kg)
+    ThermoScalar volume;
 
-	/// The specific entropy of water (in units of J/(kg*K))
-	ThermoScalar entropy;
+    /// The specific entropy of water (in units of J/(kg*K))
+    ThermoScalar entropy;
 
-	/// The specific Helmholtz free energy of water (in units of J/kg)
-	ThermoScalar helmholtz;
+    /// The specific Helmholtz free energy of water (in units of J/kg)
+    ThermoScalar helmholtz;
 
-	/// The specific internal energy of water (in units of J/kg)
-	ThermoScalar internal_energy;
+    /// The specific internal energy of water (in units of J/kg)
+    ThermoScalar internal_energy;
 
-	/// The specific enthalpy of water (in units of J/kg)
-	ThermoScalar enthalpy;
+    /// The specific enthalpy of water (in units of J/kg)
+    ThermoScalar enthalpy;
 
-	/// The specific Gibbs free energy of water (in units of J/kg)
-	ThermoScalar gibbs;
+    /// The specific Gibbs free energy of water (in units of J/kg)
+    ThermoScalar gibbs;
 
-	/// The specific isochoric heat capacity of water (in units of J/(kg*K))
-	ThermoScalar cv;
+    /// The specific isochoric heat capacity of water (in units of J/(kg*K))
+    ThermoScalar cv;
 
-	/// The specific isobaric heat capacity of water (in units of J/(kg*K))
-	ThermoScalar cp;
+    /// The specific isobaric heat capacity of water (in units of J/(kg*K))
+    ThermoScalar cp;
 
-	/// The specific density of water (in units of kg/m3)
-	ThermoScalar density;
+    /// The specific density of water (in units of kg/m3)
+    ThermoScalar density;
 
-	/// The first-order partial derivative of density with respect to temperature (in units of (kg/m3)/K)
-	ThermoScalar densityT;
+    /// The first-order partial derivative of density with respect to temperature (in units of (kg/m3)/K)
+    ThermoScalar densityT;
 
-	/// The first-order partial derivative of density with respect to pressure (in units of (kg/m3)/Pa)
-	ThermoScalar densityP;
+    /// The first-order partial derivative of density with respect to pressure (in units of (kg/m3)/Pa)
+    ThermoScalar densityP;
 
-	/// The second-order partial derivative of density with respect to temperature (in units of (kg/m3)/(K*K))
-	ThermoScalar densityTT;
+    /// The second-order partial derivative of density with respect to temperature (in units of (kg/m3)/(K*K))
+    ThermoScalar densityTT;
 
-	/// The second-order partial derivative of density with respect to temperature and pressure (in units of (kg/m3)/(K*Pa))
-	ThermoScalar densityTP;
+    /// The second-order partial derivative of density with respect to temperature and pressure (in units of (kg/m3)/(K*Pa))
+    ThermoScalar densityTP;
 
-	/// The second-order partial derivative of density with respect to pressure (in units of (kg/m3)/(Pa*Pa))
-	ThermoScalar densityPP;
+    /// The second-order partial derivative of density with respect to pressure (in units of (kg/m3)/(Pa*Pa))
+    ThermoScalar densityPP;
 
-	/// The pressure of water (in units of Pa)
-	ThermoScalar pressure;
+    /// The pressure of water (in units of Pa)
+    ThermoScalar pressure;
 
-	/// The first-order partial derivative of pressure with respect to temperature (in units of Pa/K)
-	ThermoScalar pressureT;
+    /// The first-order partial derivative of pressure with respect to temperature (in units of Pa/K)
+    ThermoScalar pressureT;
 
-	/// The first-order partial derivative of pressure with respect to density (in units of Pa/(kg/m3))
-	ThermoScalar pressureD;
+    /// The first-order partial derivative of pressure with respect to density (in units of Pa/(kg/m3))
+    ThermoScalar pressureD;
 
-	/// The second-order partial derivative of pressure with respect to temperature (in units of Pa/(K*K))
-	ThermoScalar pressureTT;
+    /// The second-order partial derivative of pressure with respect to temperature (in units of Pa/(K*K))
+    ThermoScalar pressureTT;
 
-	/// The second-order partial derivative of pressure with respect to temperature and density (in units of Pa/(K*kg/m3))
-	ThermoScalar pressureTD;
+    /// The second-order partial derivative of pressure with respect to temperature and density (in units of Pa/(K*kg/m3))
+    ThermoScalar pressureTD;
 
-	/// The second-order partial derivative of pressure with respect to density (in units of Pa/((kg/m3)*(kg/m3)))
-	ThermoScalar pressureDD;
+    /// The second-order partial derivative of pressure with respect to density (in units of Pa/((kg/m3)*(kg/m3)))
+    ThermoScalar pressureDD;
 };
 
 } // namespace Reaktoro

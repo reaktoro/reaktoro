@@ -54,7 +54,7 @@ class ChemicalSystem;
 /// @ingroup Core
 class Partition
 {
-public:
+  public:
     /// Construct a default Partition instance
     Partition();
 
@@ -273,7 +273,7 @@ public:
     /// Return the formula matrix of the inert-solid partition.
     auto formulaMatrixInertSolidPartition() const -> MatrixConstRef;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

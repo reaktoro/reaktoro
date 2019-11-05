@@ -18,10 +18,10 @@
 #include "ChemicalOutput.hpp"
 
 // C++ includes
+#include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <cmath>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -89,15 +89,15 @@ struct ChemicalOutput::Impl
     std::vector<int> spacings;
 
     Impl()
-    : quantity(system)
+        : quantity(system)
     {}
 
     Impl(const ChemicalSystem& system)
-    : system(system), quantity(system)
+        : system(system), quantity(system)
     {}
 
     Impl(const ReactionSystem& reactions)
-    : system(reactions.system()), reactions(reactions), quantity(reactions)
+        : system(reactions.system()), reactions(reactions), quantity(reactions)
     {}
 
     ~Impl()
@@ -117,8 +117,8 @@ struct ChemicalOutput::Impl
 
         // Ensure output is done either to a file and/or terminal
         Assert(!filename.empty() || terminal,
-            "Cannot open the ChemicalOutput instance for output.",
-            "The instance has not been configured to output to the terminal or file.");
+               "Cannot open the ChemicalOutput instance for output.",
+               "The instance has not been configured to output to the terminal or file.");
 
         // Make sure header is not empty
         if(headings.empty())
@@ -142,14 +142,14 @@ struct ChemicalOutput::Impl
 
         // Output the header of the data file
         icolumn = 0;
-        for(auto word : headings)
-        {
+        for(auto word : headings) {
             auto space = spacings[icolumn];
-            if(datafile.is_open()) datafile << std::left << std::setw(space) << word;
-            if(terminal)
-            {
+            if(datafile.is_open())
+                datafile << std::left << std::setw(space) << word;
+            if(terminal) {
                 std::ios::fmtflags flags(std::cout.flags());
-                if(scientific) std::cout << std::scientific;
+                if(scientific)
+                    std::cout << std::scientific;
                 std::cout << std::setprecision(precision);
                 std::cout << std::left << std::setw(space) << word;
                 std::cout.flags(flags);
@@ -166,20 +166,23 @@ struct ChemicalOutput::Impl
     auto update(const ChemicalState& state, double t) -> void
     {
         // Output values on a new line
-        if(datafile.is_open()) datafile << std::endl;
-        if(terminal) std::cout << std::endl;
+        if(datafile.is_open())
+            datafile << std::endl;
+        if(terminal)
+            std::cout << std::endl;
 
         // Output the current chemical state to the data file.
         quantity.update(state, t);
 
         // For each quantity, ouput its value on each column
         icolumn = 0;
-        for(auto word : data)
-        {
+        for(auto word : data) {
             auto space = spacings[icolumn];
             auto val = (word == "i") ? iteration : quantity.value(word);
-            if(datafile.is_open()) datafile << std::left << std::setw(space) << val;
-            if(terminal) std::cout << std::left << std::setw(space) << val;
+            if(datafile.is_open())
+                datafile << std::left << std::setw(space) << val;
+            if(terminal)
+                std::cout << std::left << std::setw(space) << val;
             ++icolumn;
         }
 
@@ -191,22 +194,24 @@ struct ChemicalOutput::Impl
     auto attach(ValueType value) -> void
     {
         auto space = spacings[icolumn];
-        if(datafile.is_open()) datafile << std::left << std::setw(space) << value;
-        if(terminal) std::cout << std::left << std::setw(space) << value;
+        if(datafile.is_open())
+            datafile << std::left << std::setw(space) << value;
+        if(terminal)
+            std::cout << std::left << std::setw(space) << value;
         ++icolumn;
     }
 };
 
 ChemicalOutput::ChemicalOutput()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 ChemicalOutput::ChemicalOutput(const ChemicalSystem& system)
-: pimpl(new Impl(system))
+    : pimpl(new Impl(system))
 {}
 
 ChemicalOutput::ChemicalOutput(const ReactionSystem& reactions)
-: pimpl(new Impl(reactions))
+    : pimpl(new Impl(reactions))
 {}
 
 ChemicalOutput::~ChemicalOutput()

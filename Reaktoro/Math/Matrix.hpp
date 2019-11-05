@@ -25,63 +25,63 @@
 
 namespace Reaktoro {
 
-using Vector           = Eigen::VectorXd;                             /// < Alias to Eigen type VectorXd.
-using VectorRef        = Eigen::Ref<Eigen::VectorXd>;                 /// < Alias to Eigen type Ref<VectorXd>.
+using Vector = Eigen::VectorXd;                                       /// < Alias to Eigen type VectorXd.
+using VectorRef = Eigen::Ref<Eigen::VectorXd>;                        /// < Alias to Eigen type Ref<VectorXd>.
 using VectorStridedRef = Eigen::Ref<Vector, 0, Eigen::InnerStride<>>; /// < Alias to Eigen type Ref<VectorXd>.
-using VectorConstRef   = Eigen::Ref<const Eigen::VectorXd>;           /// < Alias to Eigen type Ref<const VectorXd>.
-using VectorMap        = Eigen::Map<Eigen::VectorXd>;                 /// < Alias to Eigen type Map<VectorXd>.
-using VectorConstMap   = Eigen::Map<const Eigen::VectorXd>;           /// < Alias to Eigen type Map<const VectorXd>.
+using VectorConstRef = Eigen::Ref<const Eigen::VectorXd>;             /// < Alias to Eigen type Ref<const VectorXd>.
+using VectorMap = Eigen::Map<Eigen::VectorXd>;                        /// < Alias to Eigen type Map<VectorXd>.
+using VectorConstMap = Eigen::Map<const Eigen::VectorXd>;             /// < Alias to Eigen type Map<const VectorXd>.
 
-using RowVector           = Eigen::RowVectorXd;                                      /// < Alias to Eigen type RowVectorXd.
-using RowVectorRef        = Eigen::Ref<Eigen::RowVectorXd>;                          /// < Alias to Eigen type Ref<RowVectorXd>.
+using RowVector = Eigen::RowVectorXd;                                                /// < Alias to Eigen type RowVectorXd.
+using RowVectorRef = Eigen::Ref<Eigen::RowVectorXd>;                                 /// < Alias to Eigen type Ref<RowVectorXd>.
 using RowVectorStridedRef = Eigen::Ref<Eigen::RowVectorXd, 0, Eigen::InnerStride<>>; /// < Alias to Eigen type Ref<RowVectorXd>.
-using RowVectorConstRef   = Eigen::Ref<const Eigen::RowVectorXd>;                    /// < Alias to Eigen type Ref<const RowVectorXd>.
-using RowVectorMap        = Eigen::Map<Eigen::RowVectorXd>;                          /// < Alias to Eigen type Map<VectorXd>.
-using RowVectorConstMap   = Eigen::Map<const Eigen::RowVectorXd>;                    /// < Alias to Eigen type Map<const VectorXd>.
+using RowVectorConstRef = Eigen::Ref<const Eigen::RowVectorXd>;                      /// < Alias to Eigen type Ref<const RowVectorXd>.
+using RowVectorMap = Eigen::Map<Eigen::RowVectorXd>;                                 /// < Alias to Eigen type Map<VectorXd>.
+using RowVectorConstMap = Eigen::Map<const Eigen::RowVectorXd>;                      /// < Alias to Eigen type Map<const VectorXd>.
 
-using Matrix         = Eigen::MatrixXd;                   ///< Alias to Eigen type MatrixXd.
-using MatrixRef      = Eigen::Ref<Eigen::MatrixXd>;       ///< Alias to Eigen type Ref<MatrixXd>.
+using Matrix = Eigen::MatrixXd;                           ///< Alias to Eigen type MatrixXd.
+using MatrixRef = Eigen::Ref<Eigen::MatrixXd>;            ///< Alias to Eigen type Ref<MatrixXd>.
 using MatrixConstRef = Eigen::Ref<const Eigen::MatrixXd>; ///< Alias to Eigen type Ref<const MatrixXd>.
-using MatrixMap      = Eigen::Map<Eigen::MatrixXd>;       ///< Alias to Eigen type Map<MatrixXd>.
+using MatrixMap = Eigen::Map<Eigen::MatrixXd>;            ///< Alias to Eigen type Map<MatrixXd>.
 using MatrixConstMap = Eigen::Map<const Eigen::MatrixXd>; ///< Alias to Eigen type Map<const MatrixXd>.
 
-using Vector = Eigen::VectorXd; /// Alias to Eigen type Eigen::VectorXd.
+using Vector = Eigen::VectorXd;   /// Alias to Eigen type Eigen::VectorXd.
 using VectorXd = Eigen::VectorXd; /// Alias to Eigen type Eigen::VectorXd.
 using VectorXi = Eigen::VectorXi; /// Alias to Eigen type Eigen::VectorXi.
 
-using VectorRef = Eigen::Ref<VectorXd>; ///< Alias to Eigen type Eigen::Ref<VectorXd>.
+using VectorRef = Eigen::Ref<VectorXd>;   ///< Alias to Eigen type Eigen::Ref<VectorXd>.
 using VectorXdRef = Eigen::Ref<VectorXd>; ///< Alias to Eigen type Eigen::Ref<VectorXd>.
 using VectorXiRef = Eigen::Ref<VectorXi>; ///< Alias to Eigen type Eigen::Ref<VectorXi>.
 
-using VectorConstRef = Eigen::Ref<const VectorXd>; ///< Alias to Eigen type Eigen::Ref<const VectorXd>.
+using VectorConstRef = Eigen::Ref<const VectorXd>;   ///< Alias to Eigen type Eigen::Ref<const VectorXd>.
 using VectorXdConstRef = Eigen::Ref<const VectorXd>; ///< Alias to Eigen type Eigen::Ref<const VectorXd>.
 using VectorXiConstRef = Eigen::Ref<const VectorXi>; ///< Alias to Eigen type Eigen::Ref<const VectorXi>.
 
-using VectorMap = Eigen::Map<VectorXd>; ///< Alias to Eigen type Eigen::Map<VectorXd>.
+using VectorMap = Eigen::Map<VectorXd>;   ///< Alias to Eigen type Eigen::Map<VectorXd>.
 using VectorXdMap = Eigen::Map<VectorXd>; ///< Alias to Eigen type Eigen::Map<VectorXd>.
 using VectorXiMap = Eigen::Map<VectorXi>; ///< Alias to Eigen type Eigen::Map<VectorXi>.
 
-using VectorConstMap = Eigen::Map<const VectorXd>; ///< Alias to Eigen type Eigen::Map<const VectorXd>.
+using VectorConstMap = Eigen::Map<const VectorXd>;   ///< Alias to Eigen type Eigen::Map<const VectorXd>.
 using VectorXdConstMap = Eigen::Map<const VectorXd>; ///< Alias to Eigen type Eigen::Map<const VectorXd>.
 using VectorXiConstMap = Eigen::Map<const VectorXi>; ///< Alias to Eigen type Eigen::Map<const VectorXi>.
 
-using Matrix = Eigen::MatrixXd; /// Alias to Eigen type Eigen::MatrixXd.
+using Matrix = Eigen::MatrixXd;   /// Alias to Eigen type Eigen::MatrixXd.
 using MatrixXd = Eigen::MatrixXd; /// Alias to Eigen type Eigen::MatrixXd.
 using MatrixXi = Eigen::MatrixXi; /// Alias to Eigen type Eigen::MatrixXi.
 
-using MatrixRef = Eigen::Ref<MatrixXd>; ///< Alias to Eigen type Eigen::Ref<MatrixXd>.
+using MatrixRef = Eigen::Ref<MatrixXd>;   ///< Alias to Eigen type Eigen::Ref<MatrixXd>.
 using MatrixXdRef = Eigen::Ref<MatrixXd>; ///< Alias to Eigen type Eigen::Ref<MatrixXd>.
 using MatrixXiRef = Eigen::Ref<MatrixXi>; ///< Alias to Eigen type Eigen::Ref<MatrixXi>.
 
-using MatrixConstRef = Eigen::Ref<const MatrixXd>; ///< Alias to Eigen type Eigen::Ref<const MatrixXd>.
+using MatrixConstRef = Eigen::Ref<const MatrixXd>;   ///< Alias to Eigen type Eigen::Ref<const MatrixXd>.
 using MatrixXdConstRef = Eigen::Ref<const MatrixXd>; ///< Alias to Eigen type Eigen::Ref<const MatrixXd>.
 using MatrixXiConstRef = Eigen::Ref<const MatrixXi>; ///< Alias to Eigen type Eigen::Ref<const MatrixXi>.
 
-using MatrixMap = Eigen::Map<MatrixXd>; ///< Alias to Eigen type Eigen::Map<MatrixXd>.
+using MatrixMap = Eigen::Map<MatrixXd>;   ///< Alias to Eigen type Eigen::Map<MatrixXd>.
 using MatrixXdMap = Eigen::Map<MatrixXd>; ///< Alias to Eigen type Eigen::Map<MatrixXd>.
 using MatrixXiMap = Eigen::Map<MatrixXi>; ///< Alias to Eigen type Eigen::Map<MatrixXi>.
 
-using MatrixConstMap = Eigen::Map<const MatrixXd>; ///< Alias to Eigen type Eigen::Map<const MatrixXd>.
+using MatrixConstMap = Eigen::Map<const MatrixXd>;   ///< Alias to Eigen type Eigen::Map<const MatrixXd>.
 using MatrixXdConstMap = Eigen::Map<const MatrixXd>; ///< Alias to Eigen type Eigen::Map<const MatrixXd>.
 using MatrixXiConstMap = Eigen::Map<const MatrixXi>; ///< Alias to Eigen type Eigen::Map<const MatrixXi>.
 
@@ -237,10 +237,10 @@ auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, cons
 /// @param nrows The number of rows of the mapped view.
 /// @param ncols The number of columns of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto blockmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto blockmap(Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows, Cols>>
 {
-    Eigen::Stride<Rows,Cols> stride(mat.outerStride(), mat.innerStride());
-    return Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows,MaxCols>>(
+    Eigen::Stride<Rows, Cols> stride(mat.outerStride(), mat.innerStride());
+    return Eigen::Map<Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows, MaxCols>>(
         mat.block(row, col, nrows, ncols).data(), nrows, ncols, stride);
 }
 
@@ -251,10 +251,10 @@ auto blockmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Inde
 /// @param nrows The number of rows of the mapped view.
 /// @param ncols The number of columns of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto blockmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto blockmap(const Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<const Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows, Cols>>
 {
-    Eigen::Stride<Rows,Cols> stride(mat.outerStride(), mat.innerStride());
-    return Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows,MaxCols>>(
+    Eigen::Stride<Rows, Cols> stride(mat.outerStride(), mat.innerStride());
+    return Eigen::Map<const Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows, MaxCols>>(
         mat.block(row, col, nrows, ncols).data(), nrows, ncols, stride);
 }
 
@@ -263,7 +263,7 @@ auto blockmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat
 /// @param row The index of the row at which the view starts.
 /// @param nrows The number of rows of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto rowsmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto rowsmap(Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows, Cols>>
 {
     return blockmap(mat, row, 0, nrows, mat.cols());
 }
@@ -273,7 +273,7 @@ auto rowsmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index
 /// @param row The index of the row at which the view starts.
 /// @param nrows The number of rows of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto rowsmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto rowsmap(const Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<const Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows, Cols>>
 {
     return blockmap(mat, row, 0, nrows, mat.cols());
 }
@@ -285,7 +285,7 @@ auto rowsmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat,
 /// @param nrows The number of rows of the mapped view.
 /// @param ncols The number of columns of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto colsmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto colsmap(Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows, Cols>>
 {
     return blockmap(mat, 0, col, mat.rows(), ncols);
 }
@@ -297,7 +297,7 @@ auto colsmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index
 /// @param nrows The number of rows of the mapped view.
 /// @param ncols The number of columns of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto colsmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto colsmap(const Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<const Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows, Cols>>
 {
     return blockmap(mat, 0, col, mat.rows(), ncols);
 }
@@ -372,7 +372,7 @@ auto operator/(const Eigen::MatrixBase<DerivedLHS>& lhs, const Eigen::MatrixBase
 
 /// Return the component-wise division of two matrices
 template<typename Derived>
-auto operator/(const typename Derived::Scalar& scalar, const Eigen::MatrixBase<Derived>& mat) -> decltype(scalar*mat.cwiseInverse());
+auto operator/(const typename Derived::Scalar& scalar, const Eigen::MatrixBase<Derived>& mat) -> decltype(scalar * mat.cwiseInverse());
 
 /// Return the component-wise division of two matrices
 template<typename Derived>

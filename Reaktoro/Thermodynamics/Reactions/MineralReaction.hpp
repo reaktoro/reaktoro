@@ -18,9 +18,9 @@
 #pragma once
 
 // C++ includes
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 // Reaktoro includes
 #include <Reaktoro/Common/ScalarTypes.hpp>
@@ -36,7 +36,7 @@ class ReactionEquation;
 
 class MineralReaction
 {
-public:
+  public:
     /// Construct a default MineralReaction instance.
     MineralReaction();
 
@@ -113,7 +113,7 @@ public:
     /// @see MineralMechanism
     auto mechanisms() const -> const std::vector<MineralMechanism>&;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

@@ -22,9 +22,9 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
@@ -54,15 +54,19 @@ auto solveTranspose(const Decomposition& lu, VectorConstRef b) -> Vector
 inline auto findFirstNegative(VectorConstRef vec) -> Index
 {
     const Index size = vec.rows();
-    Index i = 0; while(i < size && vec[i] >= 0.0) ++i;
+    Index i = 0;
+    while(i < size && vec[i] >= 0.0)
+        ++i;
     return i;
 }
 
 inline auto findMostNegative(VectorConstRef vec) -> Index
 {
     Index i = 0;
-    if(vec.rows() == 0) return i;
-    else return vec.minCoeff(&i) < 0 ? i : vec.rows();
+    if(vec.rows() == 0)
+        return i;
+    else
+        return vec.minCoeff(&i) < 0 ? i : vec.rows();
 }
 
 template<typename T>
@@ -114,15 +118,11 @@ auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, Optimum
     ibasic.clear();
     ilower.clear();
     iupper.clear();
-    for(unsigned i = 0; i < n; ++i)
-    {
-        if(std::isfinite(lower[i]))
-        {
+    for(unsigned i = 0; i < n; ++i) {
+        if(std::isfinite(lower[i])) {
             x1[i] = lower[i];
             ilower.push_back(i);
-        }
-        else
-        {
+        } else {
             x1[i] = upper[i];
             iupper.push_back(i);
         }
@@ -168,14 +168,14 @@ auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, Optimum
 
     // Check if a basic feasible solution exists by checking the sum of artificial variables
     Assert(x2.sum() <= 1e-16 * x1.sum() && result.succeeded,
-        "Failed to calculate a basic feasible solution.",
-        "The provided constraints result in an infeasible problem.");
+           "Failed to calculate a basic feasible solution.",
+           "The provided constraints result in an infeasible problem.");
 
     // Check if the basic feasible solution has an artificial variable
     for(unsigned k = n; k < n + m; ++k)
         if(contained(k, ibasic))
             RuntimeError("A basic feasible solution was calculated, but it contains artificial variables.",
-                "The provided constraints might be linearly dependent.");
+                         "The provided constraints might be linearly dependent.");
 
     // Remove the artificial variables
     state.x.conservativeResize(n);
@@ -224,8 +224,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
 
     Vector xb = rows(state.x, ibasic);
 
-    for(iterations = 1; iterations <= maxiters; ++iterations)
-    {
+    for(iterations = 1; iterations <= maxiters; ++iterations) {
         const unsigned nL = ilower.size();
         const unsigned nU = iupper.size();
 
@@ -241,15 +240,14 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
 
         y = solveTranspose(lu, cB);
 
-        Vector zL =  cL - AL.transpose() * y;
+        Vector zL = cL - AL.transpose() * y;
         Vector zU = -cU + AU.transpose() * y;
 
         const Index qLower = findMostNegative(zL); // the index of the first negative entry in zL
         const Index qUpper = findMostNegative(zU); // the index of the first negative entry in zU
 
         // Check if all dual variables zL and zU are positive
-        if(qLower == nL && qUpper == nU)
-        {
+        if(qLower == nL && qUpper == nU) {
             rows(x, ibasic) = xb;
             z.setZero(n);
             w.setZero(n);
@@ -259,8 +257,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
         }
 
         // There is a lower bound component with negative dual variable - moving it to the basic set
-        if(qLower < nL)
-        {
+        if(qLower < nL) {
             // The index q of the variable on the lower bound that will be moved to the basic set
             const Index q = ilower[qLower];
 
@@ -282,50 +279,47 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
             // The local index p to exit the basic set
             int plocal = -1;
 
-            for(unsigned i = 0; i < m; ++i)
-            {
-                if(t[i] <= 0.0) continue; // skip for negative components of `t`
+            for(unsigned i = 0; i < m; ++i) {
+                if(t[i] <= 0.0)
+                    continue; // skip for negative components of `t`
 
                 // Compute the step to bind the i-th basic variable to its lower bound
-                const double trial = (xb[i] - lower[ibasic[i]])/t[i];
+                const double trial = (xb[i] - lower[ibasic[i]]) / t[i];
 
-                if(trial < lambda)
-                {
+                if(trial < lambda) {
                     lambda = trial;
                     plocal = i;
-                    code   = 1;
+                    code = 1;
                 }
             }
 
-            for(unsigned i = 0; i < m; ++i)
-            {
-                if(t[i] >= 0.0) continue; // skip for positive components of `t`
+            for(unsigned i = 0; i < m; ++i) {
+                if(t[i] >= 0.0)
+                    continue; // skip for positive components of `t`
 
                 // Compute the step to bind the i-th basic variable to its upper bound
-                const double trial = (xb[i] - upper[ibasic[i]])/t[i];
+                const double trial = (xb[i] - upper[ibasic[i]]) / t[i];
 
-                if(trial < lambda)
-                {
+                if(trial < lambda) {
                     lambda = trial;
                     plocal = i;
-                    code   = 2;
+                    code = 2;
                 }
             }
 
             // Check if the linear programming programming is bounded
             Assert(std::isfinite(lambda),
-                "Cannot proceed with the simplex minimization.",
-                "The linear programming problem is unbounded.");
+                   "Cannot proceed with the simplex minimization.",
+                   "The linear programming problem is unbounded.");
 
             // The index of the basic variable exiting the basic set
             const Index p = ibasic[plocal];
 
-            switch(code)
-            {
+            switch(code) {
             case 0:
-                erase(qlocal, ilower);      // L' = L - {q}
-                iupper.push_back(q);        // U' = U + {q}
-                x[q] = upper[q];            // set the q-th variable to its upper bound
+                erase(qlocal, ilower); // L' = L - {q}
+                iupper.push_back(q);   // U' = U + {q}
+                x[q] = upper[q];       // set the q-th variable to its upper bound
                 break;
 
             case 1:
@@ -348,8 +342,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
         }
 
         // There is an upper bound component with negative dual variable - moving it to the basic set
-        else
-        {
+        else {
             // The index q of the variable on the upper bound that will be moved to the basic set
             const Index q = iupper[qUpper];
 
@@ -371,46 +364,43 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
             // The local index p to exit the basic set
             int plocal = -1;
 
-            for(unsigned i = 0; i < m; ++i)
-            {
-                if(t[i] <= 0.0) continue; // skip for negative components of `t`
+            for(unsigned i = 0; i < m; ++i) {
+                if(t[i] <= 0.0)
+                    continue; // skip for negative components of `t`
 
                 // Compute the step to bind the i-th basic variable to its upper bound
-                const double trial = (upper[ibasic[i]] - xb[i])/t[i];
+                const double trial = (upper[ibasic[i]] - xb[i]) / t[i];
 
-                if(trial < lambda)
-                {
+                if(trial < lambda) {
                     lambda = trial;
                     plocal = i;
-                    code   = 1;
+                    code = 1;
                 }
             }
 
-            for(unsigned i = 0; i < m; ++i)
-            {
-                if(t[i] >= 0.0) continue; // skip for positive components of `t`
+            for(unsigned i = 0; i < m; ++i) {
+                if(t[i] >= 0.0)
+                    continue; // skip for positive components of `t`
 
                 // Compute the step to bind the i-th basic variable to its lower bound
-                const double trial = (lower[ibasic[i]] - xb[i])/t[i];
+                const double trial = (lower[ibasic[i]] - xb[i]) / t[i];
 
-                if(trial < lambda)
-                {
+                if(trial < lambda) {
                     lambda = trial;
                     plocal = i;
-                    code   = 2;
+                    code = 2;
                 }
             }
 
             // Check if the linear programming programming is bounded
             Assert(std::isfinite(lambda),
-                "Cannot proceed with the simplex minimization.",
-                "The linear programming problem is unbounded.");
+                   "Cannot proceed with the simplex minimization.",
+                   "The linear programming problem is unbounded.");
 
             // The index of the basic variable exiting the basic set
             const Index p = ibasic[plocal];
 
-            switch(code)
-            {
+            switch(code) {
             case 0:
                 erase(qlocal, iupper); // U' = U - {q}
                 ilower.push_back(q);   // L' = L + {q}
@@ -459,11 +449,11 @@ auto OptimumSolverSimplex::Impl::solve(const OptimumProblem& problem, OptimumSta
 }
 
 OptimumSolverSimplex::OptimumSolverSimplex()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 OptimumSolverSimplex::OptimumSolverSimplex(const OptimumSolverSimplex& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 OptimumSolverSimplex::~OptimumSolverSimplex()
@@ -499,7 +489,7 @@ auto OptimumSolverSimplex::solve(const OptimumProblem& problem, OptimumState& st
 auto OptimumSolverSimplex::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
-        "The method OptimumSolverSimplex::dxdp has not been implemented yet.");
+                 "The method OptimumSolverSimplex::dxdp has not been implemented yet.");
     return {};
 }
 

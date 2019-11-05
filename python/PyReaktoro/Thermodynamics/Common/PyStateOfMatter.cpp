@@ -28,8 +28,7 @@ auto exportStateOfMatter(py::module& m) -> void
         .value("Solid", StateOfMatter::Solid)
         .value("Liquid", StateOfMatter::Liquid)
         .value("Gas", StateOfMatter::Gas)
-        .value("Plasma", StateOfMatter::Plasma)
-        ;
+        .value("Plasma", StateOfMatter::Plasma);
 }
 
 } // namespace Reaktoro

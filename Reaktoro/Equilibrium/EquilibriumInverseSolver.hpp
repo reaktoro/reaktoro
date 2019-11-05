@@ -37,7 +37,7 @@ struct EquilibriumSensitivity;
 /// A class used for solving inverse equilibrium problems.
 class EquilibriumInverseSolver
 {
-public:
+  public:
     /// Construct an EquilibriumInverseSolver instance
     explicit EquilibriumInverseSolver(const ChemicalSystem& system);
 
@@ -67,7 +67,7 @@ public:
     /// and molar amounts of equilibrium elements `be`.
     auto sensitivity() -> EquilibriumSensitivity;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

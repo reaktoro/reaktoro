@@ -21,8 +21,7 @@ namespace Reaktoro {
 
 KineticResult::KineticResult()
 {
-	// TODO Auto-generated constructor stub
-
+    // TODO Auto-generated constructor stub
 }
 
 } // namespace Reaktoro

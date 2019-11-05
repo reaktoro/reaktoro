@@ -18,8 +18,8 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
+#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 
 namespace Reaktoro {
 
@@ -36,7 +36,7 @@ struct FluidMixtureState : public MixtureState
 /// @ingroup Mixtures
 class FluidMixture : public GeneralMixture<FluidSpecies>
 {
-public:
+  public:
     /// Construct a default FluidMixture instance.
     FluidMixture();
 
@@ -51,7 +51,7 @@ public:
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(Temperature T, Pressure P, VectorConstRef n) const->FluidMixtureState;
+    auto state(Temperature T, Pressure P, VectorConstRef n) const -> FluidMixtureState;
 };
 
 } // namespace Reaktoro

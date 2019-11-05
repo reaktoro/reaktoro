@@ -30,7 +30,7 @@ namespace Reaktoro {
 /// A type to represent an aqueous species
 class AqueousSpecies : public Species
 {
-public:
+  public:
     /// Construct a default AqueousSpecies instance
     AqueousSpecies();
 
@@ -57,7 +57,7 @@ public:
     /// Return the thermodynamic data of the aqueous species.
     auto thermoData() const -> const AqueousSpeciesThermoData&;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

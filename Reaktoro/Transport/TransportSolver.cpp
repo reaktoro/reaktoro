@@ -33,24 +33,23 @@ auto row(TridiagonalMatrixType&& mat, Index index) -> ReturnType
     auto n = mat.size();
     auto data = mat.data();
     auto length = data.size();
-    return (index == 0) ? data.segment(1, 2) : (index == n - 1) ?
-        data.segment(length - 4, 2) : data.segment(3 * index, 3);
+    return (index == 0) ? data.segment(1, 2) : (index == n - 1) ? data.segment(length - 4, 2) : data.segment(3 * index, 3);
 }
 
 } // namespace internal
 
 ChemicalField::ChemicalField(Index size, const ChemicalSystem& system)
-: m_size(size),
-  m_system(system),
-  m_states(size, ChemicalState(system)),
-  m_properties(size, ChemicalProperties(system))
+    : m_size(size),
+      m_system(system),
+      m_states(size, ChemicalState(system)),
+      m_properties(size, ChemicalProperties(system))
 {}
 
 ChemicalField::ChemicalField(Index size, const ChemicalState& state)
-: m_size(size),
-  m_system(state.system()),
-  m_states(size, state),
-  m_properties(size, state.properties())
+    : m_size(size),
+      m_system(state.system()),
+      m_states(size, state),
+      m_properties(size, state.properties())
 {}
 
 auto ChemicalField::set(const ChemicalState& state) -> void
@@ -88,7 +87,6 @@ auto ChemicalField::output(std::string filename, StringList quantities) -> void
     out.filename(filename);
     for(auto quantity : quantities)
         out.add(quantity);
-
 }
 
 auto TridiagonalMatrix::resize(Index size) -> void
@@ -104,15 +102,14 @@ auto TridiagonalMatrix::factorize() -> void
     auto prev = row(0).data(); // iterator to previous row
     auto curr = row(1).data(); // iterator to current row
 
-    for(Index i = 1; i < n; ++i, prev = curr, curr += 3)
-    {
+    for(Index i = 1; i < n; ++i, prev = curr, curr += 3) {
         const auto& b_prev = prev[1]; // `b` value on the previous row
         const auto& c_prev = prev[2]; // `c` value on the previous row
 
         auto& a_curr = curr[0]; // `a` value on the current row
         auto& b_curr = curr[1]; // `b` value on the current row
 
-        a_curr /= b_prev; // update the a-diagonal in the tridiagonal matrix
+        a_curr /= b_prev;          // update the a-diagonal in the tridiagonal matrix
         b_curr -= a_curr * c_prev; // update the b-diagonal in the tridiagonal matrix
     }
 }
@@ -128,29 +125,27 @@ auto TridiagonalMatrix::solve(VectorRef x, VectorConstRef d) const -> void
     //-------------------------------------------------------------------------
     x[0] = d[0];
 
-    for(Index i = 1; i < n; ++i, curr += 3)
-    {
+    for(Index i = 1; i < n; ++i, curr += 3) {
         const auto& a = curr[0]; // `a` value on the current row
 
         x[i] = d[i] - a * x[i - 1];
     }
 
-    curr -= 3; // step back so that curr points to the last row
+    curr -= 3;                // step back so that curr points to the last row
     const auto& bn = curr[1]; // `b` value on the last row
-    curr -= 3; // step back so that curr points to the second to last row
+    curr -= 3;                // step back so that curr points to the second to last row
 
     //-------------------------------------------------------------------------
     // Perform the backward solve with the U factor of the LU factorization
     //-------------------------------------------------------------------------
     x[n - 1] /= bn;
 
-    for(Index i = 2; i <= n; ++i, curr -= 3)
-    {
-        const auto& k = n - i; // the index of the current row
+    for(Index i = 2; i <= n; ++i, curr -= 3) {
+        const auto& k = n - i;   // the index of the current row
         const auto& b = curr[1]; // `b` value on the current row
         const auto& c = curr[2]; // `c` value on the current row
 
-        x[k] = (x[k] - c * x[k + 1])/b;
+        x[k] = (x[k] - c * x[k + 1]) / b;
     }
 }
 
@@ -181,14 +176,14 @@ Mesh::Mesh(Index num_cells, double xl, double xr)
 auto Mesh::setDiscretization(Index num_cells, double xl, double xr) -> void
 {
     Assert(xr > xl, "Could not set the discretization.",
-        "The x-coordinate of the right boundary needs to be "
-        "larger than that of the left boundary.");
+           "The x-coordinate of the right boundary needs to be "
+           "larger than that of the left boundary.");
 
     m_num_cells = num_cells;
     m_xl = xl;
     m_xr = xr;
     m_dx = (xr - xl) / num_cells;
-    m_xcells = linspace(num_cells, xl + 0.5*m_dx, xr - 0.5*m_dx);
+    m_xcells = linspace(num_cells, xl + 0.5 * m_dx, xr - 0.5 * m_dx);
 }
 
 TransportSolver::TransportSolver()
@@ -249,7 +244,7 @@ TransportSolver::TransportSolver()
 auto TransportSolver::initialize() -> void
 {
     const auto dx = mesh_.dx();
-    const auto beta = diffusion*dt/(dx * dx);
+    const auto beta = diffusion * dt / (dx * dx);
     const auto num_cells = mesh_.numCells();
     const auto icell0 = 0;
     const auto icelln = num_cells - 1;
@@ -258,17 +253,16 @@ auto TransportSolver::initialize() -> void
     phi.resize(num_cells);
 
     // Assemble the coefficient matrix A for the interior cells
-    for(Index icell = 1; icell < icelln; ++icell)
-    {
+    for(Index icell = 1; icell < icelln; ++icell) {
         const double a = -beta;
-        const double b = 1 + 2*beta;
+        const double b = 1 + 2 * beta;
         const double c = -beta;
         A.row(icell) << a, b, c;
     }
 
     // Assemble the coefficient matrix A for the boundary cells
-    A.row(icell0) << 0.0, 1.0 + 4.5*beta, -1.5*beta; // prescribed amount on the wall and approximatin deriveted by forward diference approximation with second order error
-    A.row(icelln) << -beta, 1.0 + beta, 0.0;   // du/dx = 0 at the right boundary
+    A.row(icell0) << 0.0, 1.0 + 4.5 * beta, -1.5 * beta; // prescribed amount on the wall and approximatin deriveted by forward diference approximation with second order error
+    A.row(icelln) << -beta, 1.0 + beta, 0.0;             // du/dx = 0 at the right boundary
 
     // Factorize A into LU factors for future uses in method step
     A.factorize();
@@ -280,42 +274,40 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
     // Solving advection problem with time explicit approach
     const auto dx = mesh_.dx();
     const auto num_cells = mesh_.numCells();
-    const auto alpha = velocity*dt/dx;
+    const auto alpha = velocity * dt / dx;
     const auto icell0 = 0;
     const auto icelln = num_cells - 1;
 
     Assert(alpha <= 1, "Could not solve the advection problem explicitly.",
-        "alpha > 1, try to decrease time step ");
+           "alpha > 1, try to decrease time step ");
 
     u0 = u;
 
     phi[0] = 2.0; //  this is very important to ensure correct flux limiting behavior for boundary cell.
 
     // Calculate the flux limiters in the interior cells
-    for(Index icell = 1; icell < icelln; ++icell)
-    {
+    for(Index icell = 1; icell < icelln; ++icell) {
         // Calculate the variation index `r = (uP - uW)/(uE - uP)` on current cell
-        const double r = (u[icell] - u[icell - 1])/(u[icell + 1] - u[icell]);
+        const double r = (u[icell] - u[icell - 1]) / (u[icell + 1] - u[icell]);
 
         // Calculate the flux limiter phi based on the superbee limiter (https://en.wikipedia.org/wiki/Flux_limiter)
         phi[icell] = std::max(0.0, std::max(std::min(2 * r, 1.0), std::min(r, 2.0)));
     }
 
     // Compute advection contributions to u for the interior cells
-    for(Index icell = 1; icell < icelln; ++icell)
-    {
+    for(Index icell = 1; icell < icelln; ++icell) {
         const double phiW = phi[icell - 1];
         const double phiP = phi[icell];
         const double aux = 1.0 + 0.5 * (phiP - phiW);
 
         const double uW = u0[icell - 1];
         const double uP = u0[icell];
-        u[icell] += aux*alpha * (uW - uP);
+        u[icell] += aux * alpha * (uW - uP);
     }
 
     // Handle the left boundary cell
     const double aux = 1 + 0.5 * phi[0];
-    u[icell0] += aux * alpha * (ul - u0[0]) + (3.0*diffusion*ul*dt/(dx*dx)); // prescribed amount on the wall and approximatin deriveted by forward diference approximation with second order error
+    u[icell0] += aux * alpha * (ul - u0[0]) + (3.0 * diffusion * ul * dt / (dx * dx)); // prescribed amount on the wall and approximatin deriveted by forward diference approximation with second order error
 
     // Handle the right boundary cell
     u[icelln] += alpha * (u0[icelln - 1] - u0[icelln]); // du/dx = 0 at the right boundary
@@ -333,7 +325,7 @@ auto TransportSolver::step(VectorRef u) -> void
 }
 
 ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem& system)
-: system_(system), equilibriumsolver(system)
+    : system_(system), equilibriumsolver(system)
 {
     setBoundaryState(ChemicalState(system));
 }
@@ -391,15 +383,13 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> void
     const auto& iss = system_.indicesSolidSpecies();
 
     // Collect the amounts of elements in the solid and fluid species
-    for(Index icell = 0; icell < num_cells; ++icell)
-    {
+    for(Index icell = 0; icell < num_cells; ++icell) {
         bf.row(icell) = field[icell].elementAmountsInSpecies(ifs);
         bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
     }
 
     // Transport the elements in the fluid species
-    for(Index ielement = 0; ielement < num_elements; ++ielement)
-    {
+    for(Index ielement = 0; ielement < num_elements; ++ielement) {
         transportsolver.setBoundaryValue(bbc[ielement]);
         transportsolver.step(bf.col(ielement));
     }
@@ -407,14 +397,12 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> void
     // Sum the amounts of elements distributed among fluid and solid species
     b.noalias() = bf + bs;
 
-    for(auto output : outputs)
-    {
+    for(auto output : outputs) {
         output.suffix("-" + std::to_string(steps));
         output.open();
     }
 
-    for(Index icell = 0; icell < num_cells; ++icell)
-    {
+    for(Index icell = 0; icell < num_cells; ++icell) {
         const double T = field[icell].temperature();
         const double P = field[icell].pressure();
         equilibriumsolver.solve(field[icell], T, P, b.row(icell));

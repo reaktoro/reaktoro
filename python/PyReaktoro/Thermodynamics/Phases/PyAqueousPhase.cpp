@@ -27,8 +27,8 @@ namespace Reaktoro {
 
 void exportAqueousPhase(py::module& m)
 {
-	auto setChemicalModelDebyeHuckel1 = static_cast<AqueousPhase&(AqueousPhase::*)()>(&AqueousPhase::setChemicalModelDebyeHuckel);
-	auto setChemicalModelDebyeHuckel2 = static_cast<AqueousPhase&(AqueousPhase::*)(const DebyeHuckelParams&)>(&AqueousPhase::setChemicalModelDebyeHuckel);
+    auto setChemicalModelDebyeHuckel1 = static_cast<AqueousPhase& (AqueousPhase::*)()>(&AqueousPhase::setChemicalModelDebyeHuckel);
+    auto setChemicalModelDebyeHuckel2 = static_cast<AqueousPhase& (AqueousPhase::*)(const DebyeHuckelParams&)>(&AqueousPhase::setChemicalModelDebyeHuckel);
 
     py::class_<AqueousPhase, Phase>(m, "AqueousPhase")
         .def(py::init<>())
@@ -45,8 +45,7 @@ void exportAqueousPhase(py::module& m)
         .def("setActivityModelDuanSunCO2", &AqueousPhase::setActivityModelDuanSunCO2, py::return_value_policy::reference_internal)
         .def("setActivityModelDrummondCO2", &AqueousPhase::setActivityModelDrummondCO2, py::return_value_policy::reference_internal)
         .def("setActivityModelRumpfCO2", &AqueousPhase::setActivityModelRumpfCO2, py::return_value_policy::reference_internal)
-        .def("mixture", &AqueousPhase::mixture, py::return_value_policy::reference_internal)
-        ;
+        .def("mixture", &AqueousPhase::mixture, py::return_value_policy::reference_internal);
 }
 
 } // namespace Reaktoro

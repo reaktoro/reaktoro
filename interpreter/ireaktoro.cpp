@@ -19,18 +19,18 @@
 using namespace Reaktoro;
 
 /// Prints a message detailing how to use the interpreter executable.
-void printUsage(int argc, char **argv);
+void printUsage(int argc, char** argv);
 
 /// The entry point of the Reaktoro interpreter
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-	// Check the command-line arguments were used correctly
-	if(argc != 2) {
-		printUsage(argc, argv);
-		return 0;
-	}
+    // Check the command-line arguments were used correctly
+    if(argc != 2) {
+        printUsage(argc, argv);
+        return 0;
+    }
 
-	// Create the interpreter to execute the input file
+    // Create the interpreter to execute the input file
     Interpreter interpreter;
 
     // Execute the input file provided via command-line
@@ -38,10 +38,10 @@ int main(int argc, char **argv)
 
     // Output all calculated states
     for(const auto& pair : interpreter.states())
-    	pair.second.output(pair.first + ".txt");
+        pair.second.output(pair.first + ".txt");
 }
 
-void printUsage(int argc, char **argv)
+void printUsage(int argc, char** argv)
 {
-	std::cout << "Usage: " << argv[0] << " `your-input-file.json`" << std::endl;
+    std::cout << "Usage: " << argv[0] << " `your-input-file.json`" << std::endl;
 }

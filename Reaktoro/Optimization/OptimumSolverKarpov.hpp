@@ -31,7 +31,7 @@ struct OptimumState;
 /// The class that implements an optimization algorithm based on Karpov's method.
 class OptimumSolverKarpov : public OptimumSolverBase
 {
-public:
+  public:
     /// Construct a default OptimumSolverKarpov instance
     OptimumSolverKarpov();
 
@@ -63,7 +63,7 @@ public:
     /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase*;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

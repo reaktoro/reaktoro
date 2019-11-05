@@ -19,8 +19,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
+#include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
 
@@ -28,8 +28,8 @@ namespace Reaktoro {
 
 void exportKineticSolver(py::module& m)
 {
-    auto step1 = static_cast<double(KineticSolver::*)(ChemicalState&, double)>(&KineticSolver::step);
-    auto step2 = static_cast<double(KineticSolver::*)(ChemicalState&, double, double)>(&KineticSolver::step);
+    auto step1 = static_cast<double (KineticSolver::*)(ChemicalState&, double)>(&KineticSolver::step);
+    auto step2 = static_cast<double (KineticSolver::*)(ChemicalState&, double, double)>(&KineticSolver::step);
 
     py::class_<KineticSolver>(m, "KineticSolver")
         .def(py::init<const ReactionSystem&>())
@@ -42,8 +42,7 @@ void exportKineticSolver(py::module& m)
         .def("initialize", &KineticSolver::initialize)
         .def("step", step1)
         .def("step", step2)
-        .def("solve", &KineticSolver::solve)
-        ;
+        .def("solve", &KineticSolver::solve);
 }
 
 } // namespace Reaktoro

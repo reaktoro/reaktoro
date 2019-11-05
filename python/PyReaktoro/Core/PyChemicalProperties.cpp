@@ -79,8 +79,7 @@ void exportChemicalProperties(py::module& m)
         .def("volume", &ChemicalProperties::volume)
         .def("subvolume", &ChemicalProperties::subvolume)
         .def("fluidVolume", &ChemicalProperties::fluidVolume)
-        .def("solidVolume", &ChemicalProperties::solidVolume)
-        ;
+        .def("solidVolume", &ChemicalProperties::solidVolume);
 }
 
 } // namespace Reaktoro

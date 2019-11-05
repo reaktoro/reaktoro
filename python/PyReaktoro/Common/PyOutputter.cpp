@@ -30,8 +30,7 @@ void exportOutputter(py::module& m)
         .def_readwrite("scientific", &OutputterOptions::scientific)
         .def_readwrite("precision", &OutputterOptions::precision)
         .def_readwrite("width", &OutputterOptions::width)
-        .def_readwrite("separator", &OutputterOptions::separator)
-        ;
+        .def_readwrite("separator", &OutputterOptions::separator);
 }
 
 } // namespace Reaktoro

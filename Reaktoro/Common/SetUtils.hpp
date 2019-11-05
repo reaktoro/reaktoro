@@ -20,8 +20,8 @@
 // C++ includes
 #include <algorithm>
 #include <set>
-#include <vector>
 #include <string>
+#include <vector>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>

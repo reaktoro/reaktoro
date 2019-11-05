@@ -58,8 +58,7 @@ void Outputter::addEntry(const std::string& name)
 
 void Outputter::addEntries(const std::string& prefix, unsigned size)
 {
-    for(unsigned i = 0; i < size; ++i)
-    {
+    for(unsigned i = 0; i < size; ++i) {
         std::stringstream ss;
         ss << prefix << "[" << i << "]";
         addEntry(ss.str());
@@ -70,10 +69,8 @@ void Outputter::addEntries(const std::string& prefix, unsigned size, const std::
 {
     if(names.size() != size)
         addEntries(prefix, size);
-    else
-    {
-        for(std::string name : names)
-        {
+    else {
+        for(std::string name : names) {
             std::stringstream ss;
             ss << prefix << "[" << name << "]";
             addEntry(ss.str());
@@ -93,15 +90,16 @@ void Outputter::addValueSeparator()
 
 void Outputter::outputHeader()
 {
-    if(options.active)
-    {
+    if(options.active) {
         for(const std::string& entry : entries)
             std::cout << (entry == options.separator ? options.separator : barstr(options.width, entry));
         std::cout << std::endl;
 
         for(const std::string& entry : entries)
-            if(entry == options.separator) std::cout << options.separator;
-            else std::cout << std::setw(colwidth(options.width, entry)) << std::left << entry;
+            if(entry == options.separator)
+                std::cout << options.separator;
+            else
+                std::cout << std::setw(colwidth(options.width, entry)) << std::left << entry;
         std::cout << std::endl;
 
         for(const std::string& entry : entries)
@@ -112,14 +110,15 @@ void Outputter::outputHeader()
 
 void Outputter::outputState()
 {
-    if(options.active)
-    {
+    if(options.active) {
         Assert(entries.size() == values.size(), "Could not output the state of the calculation.",
-            "There are more entry names than values.");
+               "There are more entry names than values.");
         auto entry = entries.begin();
         for(const std::string& val : values)
-            if(val == options.separator) std::cout << options.separator;
-            else std::cout << std::setw(colwidth(options.width, *entry++)) << std::left << val;
+            if(val == options.separator)
+                std::cout << options.separator;
+            else
+                std::cout << std::setw(colwidth(options.width, *entry++)) << std::left << val;
         std::cout << std::endl;
 
         values.clear();
@@ -128,7 +127,8 @@ void Outputter::outputState()
 
 void Outputter::outputMessage(const std::string& message)
 {
-    if(options.active) std::cout << message << std::endl;
+    if(options.active)
+        std::cout << message << std::endl;
 }
 
-} // namespace
+} // namespace Reaktoro

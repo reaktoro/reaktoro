@@ -26,7 +26,7 @@ namespace Reaktoro {
 /// A type used to define a chemical element and its attributes
 class Element
 {
-public:
+  public:
     /// Construct a default Element instance
     Element();
 
@@ -42,7 +42,7 @@ public:
     /// Return the molar mass of the element (in units of kg/mol)
     auto molarMass() const -> double;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

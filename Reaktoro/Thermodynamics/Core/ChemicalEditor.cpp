@@ -22,6 +22,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ElementUtils.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/StringList.hpp>
@@ -31,7 +32,6 @@
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Core/Thermo.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
@@ -70,13 +70,12 @@ auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
     const Index iH2O = phase.indexSpeciesAnyWithError(alternativeWaterNames());
 
     // Set the ln activity constants of aqueous species to ln(55.508472)
-    ln_c = std::log(1.0/waterMolarMass);
+    ln_c = std::log(1.0 / waterMolarMass);
 
     // Set the ln activity constant of water to zero
     ln_c[iH2O] = 0.0;
 
-    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
-    {
+    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable {
         return ln_c;
     };
 
@@ -88,8 +87,7 @@ auto lnActivityConstants(const FluidPhase& phase) -> ThermoVectorFunction
     // The ln activity constants of the generic species
     ThermoVector ln_c(phase.numSpecies());
 
-    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
-    {
+    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable {
         ln_c = log(P * 1e-5); // ln(Pbar)
         return ln_c;
     };
@@ -102,8 +100,7 @@ auto lnActivityConstants(const MineralPhase& phase) -> ThermoVectorFunction
     // The ln activity constants of the mineral species
     ThermoVector ln_c(phase.numSpecies());
 
-    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
-    {
+    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable {
         return ln_c;
     };
 
@@ -114,7 +111,7 @@ auto lnActivityConstants(const MineralPhase& phase) -> ThermoVectorFunction
 
 struct ChemicalEditor::Impl
 {
-private:
+  private:
     /// The database instance
     Database database;
 
@@ -139,24 +136,26 @@ private:
     /// The pressures for constructing interpolation tables of thermodynamic properties (in units of Pa).
     std::vector<double> pressures;
 
-public:
+  public:
     Impl()
-    : Impl(Database("supcrt98"))
+        : Impl(Database("supcrt98"))
     {
     }
 
     explicit Impl(const Database& database)
-    : database(database)
+        : database(database)
     {
         // The default temperatures for the interpolation of the thermodynamic properties (in units of celsius)
-        temperatures = { 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300 };
+        temperatures = {0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300};
 
         // The default pressures for the interpolation of the thermodynamic properties (in units of bar)
-        pressures = { 1, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000 };
+        pressures = {1, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};
 
         // Convert the temperatures and pressures to units of kelvin and pascal respectively
-        for(auto& x : temperatures) x = x + 273.15;
-        for(auto& x : pressures)    x = x * 1.0e+5;
+        for(auto& x : temperatures)
+            x = x + 273.15;
+        for(auto& x : pressures)
+            x = x * 1.0e+5;
     }
 
     auto setTemperatures(std::vector<double> values, std::string units) -> void
@@ -178,20 +177,20 @@ public:
         aqueous_phase = {};
         gaseous_phase = {};
         liquid_phase = {};
-    	mineral_phases.clear();
+        mineral_phases.clear();
 
         auto aqueous_species = database.aqueousSpeciesWithElements(elements);
         auto gaseous_species = database.gaseousSpeciesWithElements(elements);
         auto liquid_species = database.liquidSpeciesWithElements(elements);
         auto mineral_species = database.mineralSpeciesWithElements(elements);
 
-    	if(aqueous_species.size())
+        if(aqueous_species.size())
             addPhase(AqueousPhase(AqueousMixture(aqueous_species)));
 
-        if (gaseous_species.size())
+        if(gaseous_species.size())
             addPhase(GaseousPhase(GaseousMixture(gaseous_species)));
 
-        if (liquid_species.size())
+        if(liquid_species.size())
             addPhase(LiquidPhase(LiquidMixture(liquid_species)));
 
         for(auto mineral : mineral_species)
@@ -235,7 +234,7 @@ public:
     auto addAqueousPhaseWithSpecies(const std::vector<std::string>& species) -> AqueousPhase&
     {
         Assert(species.size(), "Could not create the AqueousPhase object.",
-            "Expecting at least one species name.");
+               "Expecting at least one species name.");
         std::vector<AqueousSpecies> aqueous_species(species.size());
         for(unsigned i = 0; i < species.size(); ++i)
             aqueous_species[i] = database.aqueousSpecies(species[i]);
@@ -245,7 +244,7 @@ public:
     auto addAqueousPhaseWithElements(const std::vector<std::string>& elements) -> AqueousPhase&
     {
         Assert(elements.size(), "Could not create the AqueousPhase object.",
-            "Expecting at least one chemical element or compound name.");
+               "Expecting at least one chemical element or compound name.");
         return addAqueousPhaseHelper(database.aqueousSpeciesWithElements(elements));
     }
 
@@ -264,7 +263,7 @@ public:
     auto addGaseousPhaseWithSpecies(const std::vector<std::string>& species) -> GaseousPhase&
     {
         Assert(species.size(), "Could not create the GaseousPhase object that represents a gas.",
-            "Expecting at least one species name.");
+               "Expecting at least one species name.");
         std::vector<GaseousSpecies> gaseous_species(species.size());
         for(unsigned i = 0; i < species.size(); ++i)
             gaseous_species[i] = database.gaseousSpecies(species[i]);
@@ -274,7 +273,7 @@ public:
     auto addGaseousPhaseWithElements(const std::vector<std::string>& elements) -> GaseousPhase&
     {
         Assert(elements.size(), "Could not create the GaseousPhase object that represents a gas.",
-            "Expecting at least one chemical element or compound name.");
+               "Expecting at least one chemical element or compound name.");
         return addGaseousPhaseHelper(database.gaseousSpeciesWithElements(elements));
     }
 
@@ -293,9 +292,9 @@ public:
     auto addLiquidPhaseWithSpecies(const std::vector<std::string>& species) -> LiquidPhase&
     {
         Assert(species.size(), "Could not create the LiquidPhase object that represents a liquid.",
-            "Expecting at least one species name.");
+               "Expecting at least one species name.");
         std::vector<LiquidSpecies> liquid_species(species.size());
-        for (unsigned i = 0; i < species.size(); ++i)
+        for(unsigned i = 0; i < species.size(); ++i)
             liquid_species[i] = database.liquidSpecies(species[i]);
         return addLiquidPhaseHelper(liquid_species);
     }
@@ -303,7 +302,7 @@ public:
     auto addLiquidPhaseWithElements(const std::vector<std::string>& elements) -> LiquidPhase&
     {
         Assert(elements.size(), "Could not create the FluidPhase object that represents a liquid.",
-            "Expecting at least one chemical element or compound name.");
+               "Expecting at least one chemical element or compound name.");
         return addLiquidPhaseHelper(database.liquidSpeciesWithElements(elements));
     }
 
@@ -321,7 +320,7 @@ public:
     auto addMineralPhaseWithSpecies(const std::vector<std::string>& species) -> MineralPhase&
     {
         Assert(species.size(), "Could not create the MineralPhase object.",
-            "Expecting at least one species name.");
+               "Expecting at least one species name.");
         std::vector<MineralSpecies> mineral_species(species.size());
         for(unsigned i = 0; i < species.size(); ++i)
             mineral_species[i] = database.mineralSpecies(species[i]);
@@ -331,7 +330,7 @@ public:
     auto addMineralPhaseWithElements(const std::vector<std::string>& elements) -> MineralPhase&
     {
         Assert(elements.size(), "Could not create the MineralPhase object.",
-            "Expecting at least one chemical element or compound name.");
+               "Expecting at least one chemical element or compound name.");
         return addMineralPhaseHelper(database.mineralSpeciesWithElements(elements));
     }
 
@@ -425,35 +424,33 @@ public:
         std::vector<ThermoScalarFunction> standard_heat_capacity_cv_fns(nspecies);
 
         // Create the ThermoScalarFunction instances for each thermodynamic properties of each species
-        for(unsigned i = 0; i < nspecies; ++i)
-        {
+        for(unsigned i = 0; i < nspecies; ++i) {
             const std::string name = phase.species(i).name();
 
-            standard_gibbs_energy_fns[i]     = [=](double T, double P) { return thermo.standardPartialMolarGibbsEnergy(T, P, name); };
-            standard_enthalpy_fns[i]         = [=](double T, double P) { return thermo.standardPartialMolarEnthalpy(T, P, name); };
-            standard_volume_fns[i]           = [=](double T, double P) { return thermo.standardPartialMolarVolume(T, P, name); };
+            standard_gibbs_energy_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarGibbsEnergy(T, P, name); };
+            standard_enthalpy_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarEnthalpy(T, P, name); };
+            standard_volume_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarVolume(T, P, name); };
             standard_heat_capacity_cp_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstP(T, P, name); };
             standard_heat_capacity_cv_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstV(T, P, name); };
         }
 
         // Create the interpolation functions for thermodynamic properties of the species
-        ThermoVectorFunction standard_gibbs_energies_interp     = interpolate(temperatures, pressures, standard_gibbs_energy_fns);
-        ThermoVectorFunction standard_enthalpies_interp         = interpolate(temperatures, pressures, standard_enthalpy_fns);
-        ThermoVectorFunction standard_volumes_interp            = interpolate(temperatures, pressures, standard_volume_fns);
+        ThermoVectorFunction standard_gibbs_energies_interp = interpolate(temperatures, pressures, standard_gibbs_energy_fns);
+        ThermoVectorFunction standard_enthalpies_interp = interpolate(temperatures, pressures, standard_enthalpy_fns);
+        ThermoVectorFunction standard_volumes_interp = interpolate(temperatures, pressures, standard_volume_fns);
         ThermoVectorFunction standard_heat_capacities_cp_interp = interpolate(temperatures, pressures, standard_heat_capacity_cp_fns);
         ThermoVectorFunction standard_heat_capacities_cv_interp = interpolate(temperatures, pressures, standard_heat_capacity_cv_fns);
-        ThermoVectorFunction ln_activity_constants_func         = lnActivityConstants(phase);
+        ThermoVectorFunction ln_activity_constants_func = lnActivityConstants(phase);
 
         // Define the thermodynamic model function of the species
-        PhaseThermoModel thermo_model = [=](PhaseThermoModelResult& res, Temperature T, Pressure P)
-        {
+        PhaseThermoModel thermo_model = [=](PhaseThermoModelResult& res, Temperature T, Pressure P) {
             // Calculate the standard thermodynamic properties of each species
-            res.standard_partial_molar_gibbs_energies     = standard_gibbs_energies_interp(T, P);
-            res.standard_partial_molar_enthalpies         = standard_enthalpies_interp(T, P);
-            res.standard_partial_molar_volumes            = standard_volumes_interp(T, P);
+            res.standard_partial_molar_gibbs_energies = standard_gibbs_energies_interp(T, P);
+            res.standard_partial_molar_enthalpies = standard_enthalpies_interp(T, P);
+            res.standard_partial_molar_volumes = standard_volumes_interp(T, P);
             res.standard_partial_molar_heat_capacities_cp = standard_heat_capacities_cp_interp(T, P);
             res.standard_partial_molar_heat_capacities_cv = standard_heat_capacities_cv_interp(T, P);
-            res.ln_activity_constants                     = ln_activity_constants_func(T, P);
+            res.ln_activity_constants = ln_activity_constants_func(T, P);
 
             return res;
         };
@@ -499,15 +496,15 @@ public:
 };
 
 ChemicalEditor::ChemicalEditor()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 ChemicalEditor::ChemicalEditor(const Database& database)
-: pimpl(new Impl(database))
+    : pimpl(new Impl(database))
 {}
 
 ChemicalEditor::ChemicalEditor(const ChemicalEditor& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 ChemicalEditor::~ChemicalEditor()
@@ -531,7 +528,7 @@ auto ChemicalEditor::setPressures(std::vector<double> values, std::string units)
 
 auto ChemicalEditor::initializePhasesWithElements(const StringList& elements) -> void
 {
-	pimpl->initializePhasesWithElements(elements);
+    pimpl->initializePhasesWithElements(elements);
 }
 
 auto ChemicalEditor::addPhase(const AqueousPhase& phase) -> AqueousPhase&

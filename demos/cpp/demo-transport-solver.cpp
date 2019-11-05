@@ -15,10 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
-
 
 int main()
 {
@@ -44,7 +42,7 @@ int main()
 
     std::cout << u << std::endl;
 
-    for (int i = 0; i < 10000; i++) {
+    for(int i = 0; i < 10000; i++) {
         transpsolver.step(u);
     }
 

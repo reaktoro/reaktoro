@@ -32,7 +32,7 @@ struct OptimumResult;
 /// This method can be used to find an initial feasible solution.
 class OptimumSolverIpFeasible
 {
-public:
+  public:
     /// Construct a default OptimumSolverIpFeasible instance
     OptimumSolverIpFeasible();
 
@@ -57,7 +57,7 @@ public:
     /// @param options The options for the optimisation calculation
     auto approximate(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

@@ -33,7 +33,10 @@ auto index(const std::string& name, const NamedValues& values) -> Index
 {
     Index idx = 0;
     for(const auto& value : values)
-        if(value.name() == name) return idx; else ++idx;
+        if(value.name() == name)
+            return idx;
+        else
+            ++idx;
     return idx;
 }
 
@@ -46,8 +49,7 @@ auto index(const NamedValue& value, const NamedValues& values) -> Index
 template<typename Names, typename NamedValues>
 auto indexAny(const Names& names, const NamedValues& values) -> Index
 {
-    for(auto& name : names)
-    {
+    for(auto& name : names) {
         const Index i = index(name, values);
         if(i < values.size())
             return i;
@@ -190,10 +192,10 @@ auto unique(std::vector<T> values) -> std::vector<T>
 template<typename T>
 auto range(T first, T last, T step) -> std::vector<T>
 {
-    unsigned size = unsigned((last - first)/step);
+    unsigned size = unsigned((last - first) / step);
     std::vector<T> range(size);
     for(unsigned i = 0; i < size; ++i)
-        range[i] = first + i*step;
+        range[i] = first + i * step;
     return range;
 }
 

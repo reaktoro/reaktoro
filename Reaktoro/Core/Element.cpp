@@ -29,7 +29,7 @@ struct Element::Impl
 };
 
 Element::Element()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 auto Element::setName(std::string name) -> void

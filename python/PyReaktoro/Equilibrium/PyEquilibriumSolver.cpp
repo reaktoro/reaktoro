@@ -32,14 +32,14 @@ namespace Reaktoro {
 
 void exportEquilibriumSolver(py::module& m)
 {
-    auto solve1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&EquilibriumSolver::solve);
-    auto solve2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const double*)>(&EquilibriumSolver::solve);
-    auto solve3 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&EquilibriumSolver::solve);
-    auto solve4 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&)>(&EquilibriumSolver::solve);
+    auto solve1 = static_cast<EquilibriumResult (EquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&EquilibriumSolver::solve);
+    auto solve2 = static_cast<EquilibriumResult (EquilibriumSolver::*)(ChemicalState&, double, double, const double*)>(&EquilibriumSolver::solve);
+    auto solve3 = static_cast<EquilibriumResult (EquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&EquilibriumSolver::solve);
+    auto solve4 = static_cast<EquilibriumResult (EquilibriumSolver::*)(ChemicalState&)>(&EquilibriumSolver::solve);
 
-    auto approximate1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&EquilibriumSolver::approximate);
-    auto approximate2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&EquilibriumSolver::approximate);
-    auto approximate3 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&)>(&EquilibriumSolver::approximate);
+    auto approximate1 = static_cast<EquilibriumResult (EquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&EquilibriumSolver::approximate);
+    auto approximate2 = static_cast<EquilibriumResult (EquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&EquilibriumSolver::approximate);
+    auto approximate3 = static_cast<EquilibriumResult (EquilibriumSolver::*)(ChemicalState&)>(&EquilibriumSolver::approximate);
 
     py::class_<EquilibriumSolver>(m, "EquilibriumSolver")
         .def(py::init<const ChemicalSystem&>())
@@ -55,9 +55,9 @@ void exportEquilibriumSolver(py::module& m)
         .def("solve", solve4)
         .def("properties", &EquilibriumSolver::properties, py::return_value_policy::reference_internal)
         .def("sensitivity", &EquilibriumSolver::sensitivity, py::return_value_policy::reference_internal)
-//        .def("dndT", &EquilibriumSolver::dndT, py::return_value_policy::reference_internal)
-//        .def("dndP", &EquilibriumSolver::dndP, py::return_value_policy::reference_internal)
-//        .def("dndb", &EquilibriumSolver::dndb, py::return_value_policy::reference_internal)
+        //        .def("dndT", &EquilibriumSolver::dndT, py::return_value_policy::reference_internal)
+        //        .def("dndP", &EquilibriumSolver::dndP, py::return_value_policy::reference_internal)
+        //        .def("dndb", &EquilibriumSolver::dndb, py::return_value_policy::reference_internal)
         ;
 }
 

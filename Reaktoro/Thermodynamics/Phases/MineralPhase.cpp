@@ -51,18 +51,18 @@ struct MineralPhase::Impl
 
     /// Construct a custom Impl instance
     Impl(const MineralMixture& mixture)
-    : mixture(mixture)
+        : mixture(mixture)
     {}
 };
 
 MineralPhase::MineralPhase()
-: Phase(), pimpl(new Impl())
+    : Phase(), pimpl(new Impl())
 {
     setType(PhaseType::Solid);
 }
 
 MineralPhase::MineralPhase(const MineralMixture& mixture)
-: pimpl(new Impl(mixture))
+    : pimpl(new Impl(mixture))
 {
     // Convert the MineralSpecies instances to Species instances
     std::vector<Species> species;
@@ -77,7 +77,7 @@ MineralPhase::MineralPhase(const MineralMixture& mixture)
 }
 
 MineralPhase::MineralPhase(const MineralSpecies& species)
-: MineralPhase(MineralMixture(std::vector<MineralSpecies>{species}))
+    : MineralPhase(MineralMixture(std::vector<MineralSpecies>{species}))
 {}
 
 auto MineralPhase::setChemicalModelIdeal() -> MineralPhase&

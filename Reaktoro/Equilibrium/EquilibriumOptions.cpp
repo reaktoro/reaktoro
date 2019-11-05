@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/StringUtils.hpp>
 
-namespace Reaktoro{
+namespace Reaktoro {
 
 EquilibriumOptions::EquilibriumOptions()
 {}
@@ -28,8 +28,7 @@ EquilibriumOptions::EquilibriumOptions()
 EquilibriumOptions::EquilibriumOptions(const char* str)
 {
     auto words = split(str);
-    for(auto word : words)
-    {
+    for(auto word : words) {
         auto pair = split(word, "=");
         if(pair.front() == "output")
             optimum.output.active = pair.back() == "true" ? true : false;

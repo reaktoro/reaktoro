@@ -32,7 +32,7 @@ class MineralSpecies;
 /// Class that defines a mineral phase
 class MineralPhase : public Phase
 {
-public:
+  public:
     /// Construct a default MineralPhase instance.
     MineralPhase();
 
@@ -61,7 +61,7 @@ public:
     /// Return the MineralMixture instance
     auto mixture() const -> const MineralMixture&;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

@@ -18,8 +18,8 @@
 #pragma once
 
 // C++ includes
-#include <string>
 #include <map>
+#include <string>
 
 namespace Reaktoro {
 
@@ -34,7 +34,7 @@ namespace Reaktoro {
 /// ~~~~~~~~~~~~~~
 class ReactionEquation
 {
-public:
+  public:
     /// Construct a default ReactionEquation instance
     ReactionEquation();
 
@@ -71,7 +71,7 @@ public:
     /// Convert the ReactionEquation instance into a string
     operator std::string() const;
 
-private:
+  private:
     /// The string representation of the reaction equation
     std::string equation_str;
 

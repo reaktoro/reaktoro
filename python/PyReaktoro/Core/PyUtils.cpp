@@ -21,7 +21,6 @@ namespace Reaktoro {
 
 void exportUtils(py::module& m)
 {
-
 }
 
 } // namespace Reaktoro

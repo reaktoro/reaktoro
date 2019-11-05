@@ -22,9 +22,9 @@
 #include <vector>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/ScalarTypes.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
@@ -56,7 +56,7 @@ inline auto operator==(const MixtureState& l, const MixtureState& r) -> bool
 template<class SpeciesType>
 class GeneralMixture
 {
-public:
+  public:
     /// Construct a default GeneralMixture instance
     GeneralMixture();
 
@@ -112,7 +112,7 @@ public:
     /// @param n The molar amounts of the species in the mixture (in units of mol)
     auto state(Temperature T, Pressure P, VectorConstRef n) const -> MixtureState;
 
-private:
+  private:
     /// The name of mixture
     std::string _name;
 
@@ -126,7 +126,7 @@ GeneralMixture<SpeciesType>::GeneralMixture()
 
 template<class SpeciesType>
 GeneralMixture<SpeciesType>::GeneralMixture(const std::vector<SpeciesType>& species)
-: _species(species)
+    : _species(species)
 {}
 
 template<class SpeciesType>
@@ -198,20 +198,19 @@ template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::moleFractions(VectorConstRef n) const -> ChemicalVector
 {
     const unsigned nspecies = numSpecies();
-    if(nspecies == 1)
-    {
+    if(nspecies == 1) {
         ChemicalVector x(1);
         x.val[0] = 1.0;
         return x;
     }
     ChemicalVector x(nspecies);
     const double nt = n.sum();
-    if(nt == 0.0) return x;
-    x.val = n/nt;
-    for(unsigned i = 0; i < nspecies; ++i)
-    {
-        x.ddn.row(i).fill(-x.val[i]/nt);
-        x.ddn(i, i) += 1.0/nt;
+    if(nt == 0.0)
+        return x;
+    x.val = n / nt;
+    for(unsigned i = 0; i < nspecies; ++i) {
+        x.ddn.row(i).fill(-x.val[i] / nt);
+        x.ddn(i, i) += 1.0 / nt;
     }
     return x;
 }

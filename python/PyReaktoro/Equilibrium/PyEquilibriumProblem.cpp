@@ -27,20 +27,20 @@ namespace Reaktoro {
 
 void exportEquilibriumProblem(py::module& m)
 {
-    auto setElementAmounts1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(VectorConstRef)>(&EquilibriumProblem::setElementAmounts);
-    auto setElementAmounts2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::setElementAmounts);
+    auto setElementAmounts1 = static_cast<EquilibriumProblem& (EquilibriumProblem::*)(VectorConstRef)>(&EquilibriumProblem::setElementAmounts);
+    auto setElementAmounts2 = static_cast<EquilibriumProblem& (EquilibriumProblem::*)(double)>(&EquilibriumProblem::setElementAmounts);
 
-    auto setElementAmount1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(Index, double)>(&EquilibriumProblem::setElementAmount);
-    auto setElementAmount2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double)>(&EquilibriumProblem::setElementAmount);
+    auto setElementAmount1 = static_cast<EquilibriumProblem& (EquilibriumProblem::*)(Index, double)>(&EquilibriumProblem::setElementAmount);
+    auto setElementAmount2 = static_cast<EquilibriumProblem& (EquilibriumProblem::*)(std::string, double)>(&EquilibriumProblem::setElementAmount);
 
-    auto setTemperature1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::setTemperature);
-    auto setTemperature2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::setTemperature);
+    auto setTemperature1 = static_cast<EquilibriumProblem& (EquilibriumProblem::*)(double)>(&EquilibriumProblem::setTemperature);
+    auto setTemperature2 = static_cast<EquilibriumProblem& (EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::setTemperature);
 
-    auto setPressure1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::setPressure);
-    auto setPressure2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::setPressure);
+    auto setPressure1 = static_cast<EquilibriumProblem& (EquilibriumProblem::*)(double)>(&EquilibriumProblem::setPressure);
+    auto setPressure2 = static_cast<EquilibriumProblem& (EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::setPressure);
 
-    auto add1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string)>(&EquilibriumProblem::add);
-    auto add2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(const ChemicalState&)>(&EquilibriumProblem::add);
+    auto add1 = static_cast<EquilibriumProblem& (EquilibriumProblem::*)(std::string, double, std::string)>(&EquilibriumProblem::add);
+    auto add2 = static_cast<EquilibriumProblem& (EquilibriumProblem::*)(const ChemicalState&)>(&EquilibriumProblem::add);
 
     py::class_<EquilibriumProblem>(m, "EquilibriumProblem")
         .def(py::init<const ChemicalSystem&>())
@@ -65,8 +65,7 @@ void exportEquilibriumProblem(py::module& m)
         .def("partition", &EquilibriumProblem::partition, py::return_value_policy::reference_internal)
         .def("temperature", &EquilibriumProblem::temperature)
         .def("pressure", &EquilibriumProblem::pressure)
-        .def("elementAmounts", &EquilibriumProblem::elementAmounts, py::return_value_policy::reference_internal)
-        ;
+        .def("elementAmounts", &EquilibriumProblem::elementAmounts, py::return_value_policy::reference_internal);
 }
 
 } // namespace Reaktoro

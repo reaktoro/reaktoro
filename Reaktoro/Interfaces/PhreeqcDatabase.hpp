@@ -37,7 +37,7 @@ class MineralSpecies;
 
 class PhreeqcDatabase
 {
-public:
+  public:
     /// Construct a default PhreeqcDatabase instance
     PhreeqcDatabase();
 
@@ -94,7 +94,7 @@ public:
     /// Cross this PhreeqcDatabase instance with master thermodynamic data in another Database instance
     auto cross(const Database& master) -> Database;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

@@ -23,8 +23,7 @@ ThermoProperties::ThermoProperties()
 {}
 
 ThermoProperties::ThermoProperties(const ChemicalSystem& system)
-: system(system), num_species(system.numSpecies()), num_phases(system.numPhases()),
-  tres(num_phases, num_species), T(298.15), P(1e-5)
+    : system(system), num_species(system.numSpecies()), num_phases(system.numPhases()), tres(num_phases, num_species), T(298.15), P(1e-5)
 {}
 
 auto ThermoProperties::update(double T_, double P_) -> void
@@ -35,8 +34,7 @@ auto ThermoProperties::update(double T_, double P_) -> void
 
     // Update the thermodynamic properties of each phase
     Index ispecies = 0;
-    for(Index iphase = 0; iphase < num_phases; ++iphase)
-    {
+    for(Index iphase = 0; iphase < num_phases; ++iphase) {
         const auto nspecies = system.numSpeciesInPhase(iphase);
         auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
         system.phase(iphase).thermoModel()(tp, T, P);
@@ -73,21 +71,21 @@ auto ThermoProperties::standardPartialMolarEntropies() const -> ThermoVector
 {
     const auto& G = standardPartialMolarGibbsEnergies();
     const auto& H = standardPartialMolarEnthalpies();
-    return (H - G)/T;
+    return (H - G) / T;
 }
 
 auto ThermoProperties::standardPartialMolarInternalEnergies() const -> ThermoVector
 {
     const auto& H = standardPartialMolarEnthalpies();
     const auto& V = standardPartialMolarVolumes();
-    return H - P*V;
+    return H - P * V;
 }
 
 auto ThermoProperties::standardPartialMolarHelmholtzEnergies() const -> ThermoVector
 {
     const auto& G = standardPartialMolarGibbsEnergies();
     const auto& V = standardPartialMolarVolumes();
-    return G - P*V;
+    return G - P * V;
 }
 
 auto ThermoProperties::standardPartialMolarHeatCapacitiesConstP() const -> ThermoVector

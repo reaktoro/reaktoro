@@ -47,8 +47,7 @@ void exportThermo(py::module& m)
         .def("standardPartialMolarHeatCapacityConstP", &Thermo::standardPartialMolarHeatCapacityConstP)
         .def("standardPartialMolarHeatCapacityConstV", &Thermo::standardPartialMolarHeatCapacityConstV)
         .def("lnEquilibriumConstant", &Thermo::lnEquilibriumConstant)
-        .def("logEquilibriumConstant", &Thermo::logEquilibriumConstant)
-        ;
+        .def("logEquilibriumConstant", &Thermo::logEquilibriumConstant);
 }
 
 } // namespace Reaktoro

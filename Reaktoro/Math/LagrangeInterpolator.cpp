@@ -24,12 +24,11 @@ auto interpolate(double x, const double* xi, const double* yi, unsigned npoints)
 {
     double y = 0.0;
 
-    for(unsigned i = 0; i < npoints; ++i)
-    {
+    for(unsigned i = 0; i < npoints; ++i) {
         double li = 1.0;
 
         for(unsigned j = 0; j < npoints; ++j)
-            li *= (i == j) ? 1.0 : (x - xi[j])/(xi[i] - xi[j]);
+            li *= (i == j) ? 1.0 : (x - xi[j]) / (xi[i] - xi[j]);
 
         y += yi[i] * li;
     }
@@ -43,27 +42,31 @@ LagrangeInterpolator::LagrangeInterpolator()
 {}
 
 LagrangeInterpolator::LagrangeInterpolator(const std::vector<double>& xi, const std::vector<double>& yi, unsigned order)
-: xi(xi), yi(yi), order(order)
+    : xi(xi), yi(yi), order(order)
 {}
 
 auto LagrangeInterpolator::operator()(double x) const -> double
 {
-	// The number of interpolation points
-	const unsigned size = xi.size();
+    // The number of interpolation points
+    const unsigned size = xi.size();
 
-	// Check if x is less than the smallest interpolation x-point
-	if(x <= xi.front()) return yi.front();
+    // Check if x is less than the smallest interpolation x-point
+    if(x <= xi.front())
+        return yi.front();
 
-	// Check if x is larger than the largest interpolation x-point
-	if(x >= xi.back()) return yi.back();
+    // Check if x is larger than the largest interpolation x-point
+    if(x >= xi.back())
+        return yi.back();
 
-	// Otherwise, find the interval where x lives
-	unsigned i = 0; while(xi[i] < x) ++i;
+    // Otherwise, find the interval where x lives
+    unsigned i = 0;
+    while(xi[i] < x)
+        ++i;
 
-	// The number of points to be used in the interpolation
-	unsigned npoints = (i + order + 1 > size) ? size - i : order + 1;
+    // The number of points to be used in the interpolation
+    unsigned npoints = (i + order + 1 > size) ? size - i : order + 1;
 
-	return interpolate(x, &xi[i], &yi[i], npoints);
+    return interpolate(x, &xi[i], &yi[i], npoints);
 }
 
 } // namespace Reaktoro

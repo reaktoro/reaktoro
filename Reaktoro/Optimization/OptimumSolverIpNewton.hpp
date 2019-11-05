@@ -31,7 +31,7 @@ struct OptimumState;
 /// The class that implements the IpNewton algorithm using an interior-point method.
 class OptimumSolverIpNewton : public OptimumSolverBase
 {
-public:
+  public:
     /// Construct a default OptimumSolverIpNewton instance.
     OptimumSolverIpNewton();
 
@@ -63,7 +63,7 @@ public:
     /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase*;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

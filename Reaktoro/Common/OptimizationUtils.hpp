@@ -25,12 +25,11 @@
 
 namespace Reaktoro {
 
-template <typename Ret, typename... Args>
+template<typename Ret, typename... Args>
 auto memoize(std::function<Ret(Args...)> f) -> std::function<Ret(Args...)>
 {
     auto cache = std::make_shared<std::map<std::tuple<Args...>, Ret>>();
-    return [=](Args... args) mutable -> Ret
-    {
+    return [=](Args... args) mutable -> Ret {
         std::tuple<Args...> t(args...);
         if(cache->find(t) == cache->end())
             (*cache)[t] = f(args...);
@@ -43,8 +42,7 @@ auto memoizeLast(std::function<Ret(Args...)> f) -> std::function<Ret(Args...)>
 {
     std::tuple<typename std::decay<Args>::type...> cache;
     Ret result = Ret();
-    return [=](Args... args) mutable -> Ret
-    {
+    return [=](Args... args) mutable -> Ret {
         if(std::tie(args...) == cache)
             return Ret(result);
         cache = std::make_tuple(args...);

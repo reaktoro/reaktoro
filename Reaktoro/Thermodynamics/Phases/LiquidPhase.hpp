@@ -30,7 +30,7 @@ using LiquidMixture = FluidMixture;
 class LiquidPhase
     : public FluidPhase
 {
-public:
+  public:
     /// Construct a default LiquidPhase instance.
     LiquidPhase()
         : FluidPhase("Liquid", PhaseType::Liquid)

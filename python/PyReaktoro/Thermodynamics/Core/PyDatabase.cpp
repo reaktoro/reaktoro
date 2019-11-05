@@ -29,35 +29,35 @@ namespace Reaktoro {
 
 void exportDatabase(py::module& m)
 {
-    auto aqueousSpecies1 = static_cast<std::vector<AqueousSpecies>(Database::*)()>(&Database::aqueousSpecies);
-    auto aqueousSpecies2 = static_cast<const AqueousSpecies&(Database::*)(std::string) const>(&Database::aqueousSpecies);
+    auto aqueousSpecies1 = static_cast<std::vector<AqueousSpecies> (Database::*)()>(&Database::aqueousSpecies);
+    auto aqueousSpecies2 = static_cast<const AqueousSpecies& (Database::*)(std::string) const>(&Database::aqueousSpecies);
 
-    auto gaseousSpecies1 = static_cast<std::vector<GaseousSpecies>(Database::*)()>(&Database::gaseousSpecies);
-    auto gaseousSpecies2 = static_cast<const GaseousSpecies&(Database::*)(std::string) const>(&Database::gaseousSpecies);
+    auto gaseousSpecies1 = static_cast<std::vector<GaseousSpecies> (Database::*)()>(&Database::gaseousSpecies);
+    auto gaseousSpecies2 = static_cast<const GaseousSpecies& (Database::*)(std::string) const>(&Database::gaseousSpecies);
 
-    auto liquidSpecies1 = static_cast<std::vector<LiquidSpecies>(Database::*)()>(&Database::liquidSpecies);
-    auto liquidSpecies2 = static_cast<const LiquidSpecies&(Database::*)(std::string) const>(&Database::liquidSpecies);
+    auto liquidSpecies1 = static_cast<std::vector<LiquidSpecies> (Database::*)()>(&Database::liquidSpecies);
+    auto liquidSpecies2 = static_cast<const LiquidSpecies& (Database::*)(std::string) const>(&Database::liquidSpecies);
 
-    auto mineralSpecies1 = static_cast<std::vector<MineralSpecies>(Database::*)()>(&Database::mineralSpecies);
-    auto mineralSpecies2 = static_cast<const MineralSpecies&(Database::*)(std::string) const>(&Database::mineralSpecies);
+    auto mineralSpecies1 = static_cast<std::vector<MineralSpecies> (Database::*)()>(&Database::mineralSpecies);
+    auto mineralSpecies2 = static_cast<const MineralSpecies& (Database::*)(std::string) const>(&Database::mineralSpecies);
 
     py::class_<Database>(m, "Database")
         .def(py::init<>())
         .def(py::init<std::string>())
         .def("elements", &Database::elements)
-		.def("addElement", &Database::addElement)
+        .def("addElement", &Database::addElement)
         .def("aqueousSpecies", aqueousSpecies1)
         .def("aqueousSpecies", aqueousSpecies2, py::return_value_policy::reference_internal)
-		.def("addAqueousSpecies", &Database::addAqueousSpecies)
+        .def("addAqueousSpecies", &Database::addAqueousSpecies)
         .def("gaseousSpecies", gaseousSpecies1)
         .def("gaseousSpecies", gaseousSpecies2, py::return_value_policy::reference_internal)
-		.def("addGaseousSpecies", &Database::addGaseousSpecies)
+        .def("addGaseousSpecies", &Database::addGaseousSpecies)
         .def("liquidSpecies", liquidSpecies1)
         .def("liquidSpecies", liquidSpecies2, py::return_value_policy::reference_internal)
         .def("addLiquidSpecies", &Database::addLiquidSpecies)
         .def("mineralSpecies", mineralSpecies1)
         .def("mineralSpecies", mineralSpecies2, py::return_value_policy::reference_internal)
-		.def("addMineralSpecies", &Database::addMineralSpecies)
+        .def("addMineralSpecies", &Database::addMineralSpecies)
         .def("containsAqueousSpecies", &Database::containsAqueousSpecies)
         .def("containsGaseousSpecies", &Database::containsGaseousSpecies)
         .def("containsLiquidSpecies", &Database::containsLiquidSpecies)
@@ -65,8 +65,7 @@ void exportDatabase(py::module& m)
         .def("aqueousSpeciesWithElements", &Database::aqueousSpeciesWithElements)
         .def("gaseousSpeciesWithElements", &Database::gaseousSpeciesWithElements)
         .def("liquidSpeciesWithElements", &Database::liquidSpeciesWithElements)
-        .def("mineralSpeciesWithElements", &Database::mineralSpeciesWithElements)
-        ;
+        .def("mineralSpeciesWithElements", &Database::mineralSpeciesWithElements);
 }
 
 } // namespace Reaktoro

@@ -28,13 +28,11 @@ void exportEquilibriumOptions(py::module& m)
         .value("Exact", GibbsHessian::Exact)
         .value("ExactDiagonal", GibbsHessian::ExactDiagonal)
         .value("Approximation", GibbsHessian::Approximation)
-        .value("ApproximationDiagonal", GibbsHessian::ApproximationDiagonal)
-        ;
+        .value("ApproximationDiagonal", GibbsHessian::ApproximationDiagonal);
 
     py::class_<SmartEquilibriumOptions>(m, "SmartEquilibriumOptions")
         .def_readwrite("reltol", &SmartEquilibriumOptions::reltol)
-        .def_readwrite("abstol", &SmartEquilibriumOptions::abstol)
-        ;
+        .def_readwrite("abstol", &SmartEquilibriumOptions::abstol);
 
     py::class_<EquilibriumOptions>(m, "EquilibriumOptions")
         .def(py::init<>())
@@ -44,8 +42,7 @@ void exportEquilibriumOptions(py::module& m)
         .def_readwrite("method", &EquilibriumOptions::method)
         .def_readwrite("optimum", &EquilibriumOptions::optimum)
         .def_readwrite("nonlinear", &EquilibriumOptions::nonlinear)
-        .def_readwrite("smart", &EquilibriumOptions::smart)
-        ;
+        .def_readwrite("smart", &EquilibriumOptions::smart);
 }
 
 } // namespace Reaktoro

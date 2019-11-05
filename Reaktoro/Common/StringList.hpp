@@ -26,7 +26,7 @@ namespace Reaktoro {
 /// A class for representing a list of strings with special constructors.
 class StringList
 {
-public:
+  public:
     /// Construct a default StringList instance.
     StringList();
 
@@ -74,7 +74,7 @@ public:
 
     operator const std::vector<std::string>&() const;
 
-private:
+  private:
     std::vector<std::string> _strings;
 };
 

@@ -29,8 +29,7 @@ void exportNonlinearOptions(py::module& m)
         .def_readwrite("xprefix", &NonlinearOutput::xprefix)
         .def_readwrite("fprefix", &NonlinearOutput::fprefix)
         .def_readwrite("xnames", &NonlinearOutput::xnames)
-        .def_readwrite("fnames", &NonlinearOutput::fnames)
-        ;
+        .def_readwrite("fnames", &NonlinearOutput::fnames);
 
     py::class_<NonlinearOptions>(m, "NonlinearOptions")
         .def(py::init<>())
@@ -39,8 +38,7 @@ void exportNonlinearOptions(py::module& m)
         .def_readwrite("max_iterations", &NonlinearOptions::max_iterations)
         .def_readwrite("tau", &NonlinearOptions::tau)
         .def_readwrite("armijo", &NonlinearOptions::armijo)
-        .def_readwrite("output", &NonlinearOptions::output)
-        ;
+        .def_readwrite("output", &NonlinearOptions::output);
 }
 
 } // namespace Reaktoro

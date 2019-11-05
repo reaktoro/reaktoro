@@ -36,8 +36,7 @@ void exportSpecies(py::module& m)
         .def("elements", &Species::elements, py::return_value_policy::reference_internal)
         .def("molarMass", &Species::molarMass)
         .def("charge", &Species::charge)
-        .def("elementCoefficient", &Species::elementCoefficient)
-        ;
+        .def("elementCoefficient", &Species::elementCoefficient);
 }
 
 } // namespace Reaktoro

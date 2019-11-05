@@ -21,10 +21,10 @@
 #include <algorithm>
 
 // Reaktoro includes
-#include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Common/InterpolationUtils.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/InterpolationUtils.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
+#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
@@ -59,7 +59,7 @@ AqueousMixture::AqueousMixture()
 {}
 
 AqueousMixture::AqueousMixture(const std::vector<AqueousSpecies>& species)
-: GeneralMixture<AqueousSpecies>(species)
+    : GeneralMixture<AqueousSpecies>(species)
 {
     // Initialize the index related data
     initializeIndices(species);
@@ -220,11 +220,10 @@ auto AqueousMixture::molalities(VectorConstRef n) const -> ChemicalVector
 
     const double kgH2O = nw * waterMolarMass;
 
-    m.val = n/kgH2O;
-    for(unsigned i = 0; i < num_species; ++i)
-    {
-        m.ddn(i, i) = 1.0/kgH2O;
-        m.ddn(i, idx_water) -= m.val[i]/nw;
+    m.val = n / kgH2O;
+    for(unsigned i = 0; i < num_species; ++i) {
+        m.ddn(i, i) = 1.0 / kgH2O;
+        m.ddn(i, idx_water) -= m.val[i] / nw;
     }
 
     return m;
@@ -289,7 +288,7 @@ auto AqueousMixture::state(Temperature T, Pressure P, VectorConstRef n) const ->
     res.x = moleFractions(n);
     res.rho = rho(T, P);
     res.epsilon = epsilon(T, P);
-    res.m  = molalities(n);
+    res.m = molalities(n);
     res.ms = stoichiometricMolalities(res.m);
     res.Ie = effectiveIonicStrength(res.m);
     res.Is = stoichiometricIonicStrength(res.ms);
@@ -303,20 +302,21 @@ auto AqueousMixture::initializeIndices(const std::vector<AqueousSpecies>& specie
 
     // Ensure water species is present
     Assert(idx_water < numSpecies(),
-        "Could not initialize the aqueous mixture.",
-        "You probably forgot to add water species in the definition of the aqueous phase (e.g., H2O(l)).");
+           "Could not initialize the aqueous mixture.",
+           "You probably forgot to add water species in the definition of the aqueous phase (e.g., H2O(l)).");
 
     // Initialize the indices of the charged and neutral species
-    for(unsigned i = 0; i < species.size(); ++i)
-    {
-        if(i == idx_water) continue; // Skip if water species
+    for(unsigned i = 0; i < species.size(); ++i) {
+        if(i == idx_water)
+            continue; // Skip if water species
         if(species[i].charge() == 0)
             idx_neutral_species.push_back(i); // Current species is neutral
-        else
-        {
+        else {
             idx_charged_species.push_back(i); // Current species is charged
-            if(species[i].charge() > 0) idx_cations.push_back(i); // Current species is a cation
-            else idx_anions.push_back(i); // Current species is an anion
+            if(species[i].charge() > 0)
+                idx_cations.push_back(i); // Current species is a cation
+            else
+                idx_anions.push_back(i); // Current species is an anion
         }
     }
 }
@@ -324,8 +324,7 @@ auto AqueousMixture::initializeIndices(const std::vector<AqueousSpecies>& specie
 auto AqueousMixture::initializeDissociationMatrix(const std::vector<AqueousSpecies>& species) -> void
 {
     // Return the stoichiometry of the i-th charged species in the j-th neutral species
-    auto stoichiometry = [&](Index i, Index j) -> double
-    {
+    auto stoichiometry = [&](Index i, Index j) -> double {
         const Index ineutral = idx_neutral_species[i];
         const Index icharged = idx_charged_species[j];
         const AqueousSpecies& neutral = species[ineutral];

@@ -31,12 +31,10 @@ void exportEquilibriumPath(py::module& m)
 {
     py::class_<EquilibriumPathOptions>(m, "EquilibriumPathOptions")
         .def_readwrite("equilibrium", &EquilibriumPathOptions::equilibrium)
-        .def_readwrite("ode", &EquilibriumPathOptions::ode)
-        ;
+        .def_readwrite("ode", &EquilibriumPathOptions::ode);
 
     py::class_<EquilibriumPathResult>(m, "EquilibriumPathResult")
-        .def_readwrite("equilibrium", &EquilibriumPathResult::equilibrium)
-        ;
+        .def_readwrite("equilibrium", &EquilibriumPathResult::equilibrium);
 
     py::class_<EquilibriumPath>(m, "EquilibriumPath")
         .def(py::init<const ChemicalSystem&>())
@@ -47,8 +45,7 @@ void exportEquilibriumPath(py::module& m)
         .def("plot", &EquilibriumPath::plot)
         .def("plots", &EquilibriumPath::plots)
         .def("system", &EquilibriumPath::system, py::return_value_policy::reference_internal)
-        .def("partition", &EquilibriumPath::partition, py::return_value_policy::reference_internal)
-        ;
+        .def("partition", &EquilibriumPath::partition, py::return_value_policy::reference_internal);
 }
 
 } // namespace Reaktoro

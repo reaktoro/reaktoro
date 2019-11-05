@@ -25,7 +25,7 @@ namespace Reaktoro {
 /// A class used to calculate interpolation of data in one dimension in any order.
 class LagrangeInterpolator
 {
-public:
+  public:
     /// Construct a default LagrangeInterpolator instance.
     LagrangeInterpolator();
 
@@ -38,15 +38,15 @@ public:
     /// Return the interpolation of \eq{y} at a given coordinate \eq{x}.
     auto operator()(double x) const -> double;
 
-private:
-	/// The interpolation points on the x-axis
-	std::vector<double> xi;
+  private:
+    /// The interpolation points on the x-axis
+    std::vector<double> xi;
 
-	/// The interpolation points on the y-axis
-	std::vector<double> yi;
+    /// The interpolation points on the y-axis
+    std::vector<double> yi;
 
-	/// The order of the interpolation
-	unsigned order;
+    /// The order of the interpolation
+    unsigned order;
 };
 
 } // namespace Reaktoro

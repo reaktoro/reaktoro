@@ -33,8 +33,7 @@ auto interpolate(
     vals.reserve(scalars.size());
     ddTs.reserve(scalars.size());
     ddPs.reserve(scalars.size());
-    for(const ThermoScalar& scalar : scalars)
-    {
+    for(const ThermoScalar& scalar : scalars) {
         vals.push_back(scalar.val);
         ddTs.push_back(scalar.ddT);
         ddPs.push_back(scalar.ddP);
@@ -43,8 +42,7 @@ auto interpolate(
     BilinearInterpolator ddT(temperatures, pressures, ddTs);
     BilinearInterpolator ddP(temperatures, pressures, ddPs);
 
-    auto func = [=](Temperature T, Pressure P)
-    {
+    auto func = [=](Temperature T, Pressure P) {
         return ThermoScalar(val(T, P), ddT(T, P), ddP(T, P));
     };
 
@@ -64,8 +62,7 @@ auto interpolate(
     BilinearInterpolator ddT(temperatures, pressures, ddT_func);
     BilinearInterpolator ddP(temperatures, pressures, ddP_func);
 
-    auto func = [=](Temperature T, Pressure P)
-    {
+    auto func = [=](Temperature T, Pressure P) {
         return ThermoScalar(val(T, P), ddT(T, P), ddP(T, P));
     };
 
@@ -81,8 +78,7 @@ auto interpolate(
 
     std::vector<BilinearInterpolator> val(size), ddT(size), ddP(size);
 
-    for(unsigned i = 0; i < size; ++i)
-    {
+    for(unsigned i = 0; i < size; ++i) {
         auto val_func = [=](double T, double P) { return fs[i](T, P).val; };
         auto ddT_func = [=](double T, double P) { return fs[i](T, P).ddT; };
         auto ddP_func = [=](double T, double P) { return fs[i](T, P).ddP; };
@@ -94,10 +90,8 @@ auto interpolate(
 
     ThermoVector res(size);
 
-    auto func = [=](double T, double P) mutable
-    {
-        for(unsigned i = 0; i < size; ++i)
-        {
+    auto func = [=](double T, double P) mutable {
+        for(unsigned i = 0; i < size; ++i) {
             res.val[i] = val[i](T, P);
             res.ddT[i] = ddT[i](T, P);
             res.ddP[i] = ddP[i](T, P);

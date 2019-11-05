@@ -46,10 +46,6 @@
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
-#include <Reaktoro/Thermodynamics/Models/SpeciesElectroState.hpp>
-#include <Reaktoro/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
-#include <Reaktoro/Thermodynamics/Models/SpeciesThermoState.hpp>
-#include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>

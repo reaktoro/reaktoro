@@ -38,10 +38,10 @@ template<typename V, typename T, typename P, typename N>
 class ChemicalVectorBase;
 
 using ThermoScalar = ThermoScalarBase<double>;
-using ThermoVector = ThermoVectorBase<Vector,Vector,Vector>;
+using ThermoVector = ThermoVectorBase<Vector, Vector, Vector>;
 
-using ChemicalScalar = ChemicalScalarBase<double,RowVector>;
-using ChemicalVector = ChemicalVectorBase<Vector,Vector,Vector,Matrix>;
+using ChemicalScalar = ChemicalScalarBase<double, RowVector>;
+using ChemicalVector = ChemicalVectorBase<Vector, Vector, Vector, Matrix>;
 
 using ThermoScalarFunction = std::function<ThermoScalar(Temperature, Pressure)>;
 using ThermoVectorFunction = std::function<ThermoVector(Temperature, Pressure)>;

@@ -29,8 +29,7 @@ void exportOptimumMethod(py::module& m)
         .value("IpNewton", OptimumMethod::IpNewton)
         .value("IpOpt", OptimumMethod::IpOpt)
         .value("Karpov", OptimumMethod::Karpov)
-        .value("Simplex", OptimumMethod::Simplex)
-        ;
+        .value("Simplex", OptimumMethod::Simplex);
 }
 
 } // namespace Reaktoro

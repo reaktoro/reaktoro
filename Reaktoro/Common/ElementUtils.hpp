@@ -18,9 +18,9 @@
 #pragma once
 
 // C++ includes
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 namespace Reaktoro {
 

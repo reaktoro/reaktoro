@@ -27,8 +27,7 @@ void exportEquilibriumSensitivity(py::module& m)
     py::class_<EquilibriumSensitivity>(m, "EquilibriumSensitivity")
         .def_readwrite("dndT", &EquilibriumSensitivity::dndT)
         .def_readwrite("dndP", &EquilibriumSensitivity::dndP)
-        .def_readwrite("dndb", &EquilibriumSensitivity::dndb)
-        ;
+        .def_readwrite("dndb", &EquilibriumSensitivity::dndb);
 }
 
 } // namespace Reaktoro

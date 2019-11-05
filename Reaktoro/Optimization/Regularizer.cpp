@@ -20,10 +20,10 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
@@ -190,10 +190,9 @@ auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& proble
     const double epsilon = std::numeric_limits<double>::epsilon();
 
     // Return true if the i-th constraint forces the variables to be fixed on the lower bounds
-    auto istrivial = [&](Index irow)
-    {
-        return ( min(A.row(irow)) >= 0 &&  A.row(irow).dot(l) + epsilon*bmax >= b[irow] ) ||
-               ( max(A.row(irow)) <= 0 && -A.row(irow).dot(l) + epsilon*bmax >= b[irow] );
+    auto istrivial = [&](Index irow) {
+        return (min(A.row(irow)) >= 0 && A.row(irow).dot(l) + epsilon * bmax >= b[irow]) ||
+               (max(A.row(irow)) <= 0 && -A.row(irow).dot(l) + epsilon * bmax >= b[irow]);
     };
 
     // Determine the original equality constraints that fix variables on the lower bound
@@ -202,13 +201,14 @@ auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& proble
             itrivial_constraints.push_back(i);
 
     // Skip the rest if there are no trivial constraints
-    if(itrivial_constraints.size())
-    {
+    if(itrivial_constraints.size()) {
         // Determine the original trivial variables that are fixed at their lower bounds
         for(Index i = 0; i < n; ++i)
             for(Index j = 0; j < m; ++j)
-                if(A(j, i) != 0.0 && contained(j, itrivial_constraints))
-                    { itrivial_variables.push_back(i); break; }
+                if(A(j, i) != 0.0 && contained(j, itrivial_constraints)) {
+                    itrivial_variables.push_back(i);
+                    break;
+                }
 
         // Update  the indices of the non-trivial original constraints
         inontrivial_constraints = difference(range(m), itrivial_constraints);
@@ -218,9 +218,7 @@ auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& proble
 
         // Initialize the matrix `A_star` by removing trivial constraints and variables
         A_star = A(inontrivial_constraints, inontrivial_variables);
-    }
-    else
-    {
+    } else {
         // Initialize the matrix `A_star` as the original matrix A
         A_star = A;
     }
@@ -275,13 +273,14 @@ auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) ->
     z.noalias() = (state.z.array() > 0.0).select(state.z, 1.0);
 
     // Calculate the priority weights for the canonicalization
-    W.noalias() = log(abs(x/z));
+    W.noalias() = log(abs(x / z));
     const auto Wmin = min(W);
     const auto Wmax = max(W);
-    W.noalias() = (Wmax - W)/(W - Wmin);
-    W.noalias() = (W + 100.0)/(W + 1.0);
+    W.noalias() = (Wmax - W) / (W - Wmin);
+    W.noalias() = (W + 100.0) / (W + 1.0);
     for(unsigned i = 0; i < W.size(); ++i)
-        if(!std::isfinite(W[i])) W[i] = 1.0;
+        if(!std::isfinite(W[i]))
+            W[i] = 1.0;
 
     // Remove all components in W corresponding to trivial variables
     if(itrivial_constraints.size())
@@ -327,8 +326,7 @@ auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) ->
 
     // Check if the regularizer matrix is composed of rationals.
     // If so, round-off errors can be eliminated
-    if(params.max_denominator)
-    {
+    if(params.max_denominator) {
         cleanRationalNumbers(A_echelon, params.max_denominator);
         cleanRationalNumbers(R, params.max_denominator);
         cleanRationalNumbers(invR, params.max_denominator);
@@ -366,8 +364,7 @@ auto Regularizer::Impl::removeTrivialConstraints(
         problem.u = problem.u(inontrivial_variables).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
 
     // Remove trivial components from problem.objective
-    if(problem.objective)
-    {
+    if(problem.objective) {
         // The objective function before it is regularized.
         ObjectiveFunction original_objective = problem.objective;
 
@@ -375,8 +372,7 @@ auto Regularizer::Impl::removeTrivialConstraints(
         ObjectiveResult res;
 
         // Update the objective function
-        problem.objective = [=](VectorConstRef X) mutable
-        {
+        problem.objective = [=](VectorConstRef X) mutable {
             x(inontrivial_variables) = X;
 
             f = original_objective(x);
@@ -402,8 +398,7 @@ auto Regularizer::Impl::removeTrivialConstraints(
     state.z = state.z(inontrivial_variables).eval();
 
     // Update the names of the constraints and variables accordingly
-    if(options.output.active)
-    {
+    if(options.output.active) {
         options.output.xnames = extract(options.output.xnames, inontrivial_variables);
         options.output.ynames = extract(options.output.ynames, inontrivial_constraints);
         options.output.znames = extract(options.output.znames, inontrivial_variables);
@@ -490,22 +485,19 @@ auto Regularizer::Impl::regularize(OptimumProblem& problem, OptimumState& state,
 auto Regularizer::Impl::regularize(Vector& dgdp, Vector& dbdp) -> void
 {
     // Remove derivative components corresponding to trivial constraints
-    if(itrivial_constraints.size())
-    {
+    if(itrivial_constraints.size()) {
         dbdp = dbdp(inontrivial_constraints).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.;
-        dgdp = dgdp(inontrivial_variables).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
+        dgdp = dgdp(inontrivial_variables).eval();   // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
     }
 
     // If there are linearly dependent constraints, remove corresponding components
-    if(!all_li)
-    {
+    if(!all_li) {
         dbdp = P_li * dbdp;
         dbdp.conservativeResize(m_li);
     }
 
     // Perform echelonization of the right-hand side vector if needed
-    if(params.echelonize && A_echelon.size())
-    {
+    if(params.echelonize && A_echelon.size()) {
         dbdp = P_echelon * dbdp;
         dbdp = R * dbdp;
     }
@@ -517,8 +509,7 @@ auto Regularizer::Impl::recover(OptimumState& state) -> void
     state.y = lu_star.trsolve(state.f.grad - state.z);
 
     // Check if there was any trivial variables and update state accordingly
-    if(itrivial_variables.size())
-    {
+    if(itrivial_variables.size()) {
         // Define some auxiliary size variables
         const Index nn = inontrivial_variables.size();
         const Index nt = itrivial_variables.size();
@@ -536,12 +527,12 @@ auto Regularizer::Impl::recover(OptimumState& state) -> void
         state.z.conservativeResize(n);
 
         // Set the components corresponding to non-trivial variables and constraints
-        state.x(inontrivial_variables)   = state.x.segment(0, nn).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
+        state.x(inontrivial_variables) = state.x.segment(0, nn).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
         state.y(inontrivial_constraints) = state.y.segment(0, mn).eval();
-        state.z(inontrivial_variables)   = state.z.segment(0, nn).eval();
+        state.z(inontrivial_variables) = state.z.segment(0, nn).eval();
 
         // Set the components corresponding to trivial variables and constraints
-        state.x(itrivial_variables)   = xtrivial;
+        state.x(itrivial_variables) = xtrivial;
         state.y(itrivial_constraints).fill(0.0);
         state.z(itrivial_variables).fill(0.0);
     }
@@ -550,8 +541,7 @@ auto Regularizer::Impl::recover(OptimumState& state) -> void
 auto Regularizer::Impl::recover(Vector& dxdp) -> void
 {
     // Set the components corresponding to trivial and non-trivial variables
-    if(itrivial_constraints.size())
-    {
+    if(itrivial_constraints.size()) {
         const Index nn = inontrivial_variables.size();
         const Index nt = itrivial_variables.size();
         const Index n = nn + nt;
@@ -562,11 +552,11 @@ auto Regularizer::Impl::recover(Vector& dxdp) -> void
 }
 
 Regularizer::Regularizer()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 Regularizer::Regularizer(const Regularizer& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 Regularizer::~Regularizer()

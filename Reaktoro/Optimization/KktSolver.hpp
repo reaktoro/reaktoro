@@ -80,12 +80,12 @@ struct KktMatrix
 {
     /// Construct a custom KktMatrix instance
     KktMatrix(const Hessian& H, MatrixConstRef A, VectorConstRef x, VectorConstRef z)
-    : H(H), A(A), x(x), z(z)
+        : H(H), A(A), x(x), z(z)
     {}
 
     /// Construct a custom KktMatrix instance
     KktMatrix(const Hessian& H, MatrixConstRef A, VectorConstRef x, VectorConstRef z, double gamma, double delta)
-    : H(H), A(A), x(x), z(z), gamma(gamma), delta(delta)
+        : H(H), A(A), x(x), z(z), gamma(gamma), delta(delta)
     {}
 
     /// The Hessian matrix `H` of the KKT matrix equation
@@ -138,7 +138,7 @@ struct KktVector
 /// A type to describe a solver for a KKT equation
 class KktSolver
 {
-public:
+  public:
     /// Construct a default KktSolver instance
     KktSolver();
 
@@ -172,7 +172,7 @@ public:
     /// @param sol The solution vector of the KKT equation
     auto solve(const KktVector& rhs, KktSolution& sol) -> void;
 
-private:
+  private:
     /// Implementation details
     struct Impl;
 

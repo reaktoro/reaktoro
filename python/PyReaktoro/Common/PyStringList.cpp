@@ -31,8 +31,7 @@ void exportStringList(py::module& m)
         .def(py::init<std::string>())
         .def(py::init<std::string, char>())
         .def(py::init<const std::vector<std::string>&>())
-        .def("strings", &StringList::strings, py::return_value_policy::reference_internal)
-        ;
+        .def("strings", &StringList::strings, py::return_value_policy::reference_internal);
 
     py::implicitly_convertible<std::string, StringList>();
     py::implicitly_convertible<const std::vector<std::string>&, StringList>();

@@ -75,16 +75,17 @@ struct OptimumSolver::Impl
 
     ~Impl()
     {
-        if(solver != nullptr) delete solver;
+        if(solver != nullptr)
+            delete solver;
     }
 
     // Set the optimization method for the solver
     auto setMethod(OptimumMethod method) -> void
     {
-        if(solver != nullptr) delete solver;
+        if(solver != nullptr)
+            delete solver;
 
-        switch(method)
-        {
+        switch(method) {
         case OptimumMethod::ActNewton:
             solver = new OptimumSolverActNewton();
             break;
@@ -121,8 +122,8 @@ struct OptimumSolver::Impl
         // Assert either objective function or c vector have been initialized
         if(problem.objective && problem.c.size())
             RuntimeError("Could not solve the optimization problem.",
-                "The given OptimumProblem instance is ambiguous: "
-                    "both members `c` and `objective` have been initialized.");
+                         "The given OptimumProblem instance is ambiguous: "
+                         "both members `c` and `objective` have been initialized.");
 
         // The number of variables, constraints, and sensitivity parameters
         const auto m = problem.A.rows();
@@ -130,14 +131,19 @@ struct OptimumSolver::Impl
 
         // Assert the number of columns in A is compatible with number of variables
         Assert(static_cast<Index>(n) == problem.n,
-            "Could not solve the optimization problem.",
-            "The constraint matrix A has " + std::to_string(n) + " columns, but the "
-            "optimization problem has " + std::to_string(problem.n) + " variables.");
+               "Could not solve the optimization problem.",
+               "The constraint matrix A has " + std::to_string(n) +
+                   " columns, but the "
+                   "optimization problem has " +
+                   std::to_string(problem.n) + " variables.");
 
         // Ensure x, y, z have correct dimensions
-        if(state.x.size() != n) state.x = zeros(n);
-        if(state.y.size() != m) state.y = zeros(m);
-        if(state.z.size() != n) state.z = zeros(n);
+        if(state.x.size() != n)
+            state.x = zeros(n);
+        if(state.y.size() != m)
+            state.y = zeros(m);
+        if(state.z.size() != n)
+            state.z = zeros(n);
 
         // Initialize the regularized problem, state, and options instances
         rproblem = problem;
@@ -163,8 +169,8 @@ struct OptimumSolver::Impl
     {
         // Assert the size of the input matrices dgdp and dbdp
         Assert(dgdp.rows() && dbdp.rows() && dgdp.cols() == dbdp.cols(),
-            "Could not calculate the sensitivity of the optimal solution with respect to parameters.",
-            "The given input matrices `dgdp` and `dbdp` are either empty or does not have the same number of columns.");
+               "Could not calculate the sensitivity of the optimal solution with respect to parameters.",
+               "The given input matrices `dgdp` and `dbdp` are either empty or does not have the same number of columns.");
 
         // Check if the last regularized problem had only trivial variables
         if(rproblem.n == 0)
@@ -184,15 +190,15 @@ struct OptimumSolver::Impl
 };
 
 OptimumSolver::OptimumSolver()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 OptimumSolver::OptimumSolver(OptimumMethod method)
-: pimpl(new Impl(method))
+    : pimpl(new Impl(method))
 {}
 
 OptimumSolver::OptimumSolver(const OptimumSolver& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {
     // Clone the optimization solver from the copying object
     pimpl->solver = other.pimpl->solver->clone();

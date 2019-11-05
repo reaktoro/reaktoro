@@ -28,8 +28,8 @@
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
-#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
+#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
@@ -55,14 +55,16 @@ struct LinearSystemSolverDiagonal
         ipivot.reserve(n);
         inonpivot.reserve(n);
         for(unsigned i = 0; i < n; ++i)
-            if(A[i] > norminf(C.col(i))) ipivot.push_back(i);
-            else inonpivot.push_back(i);
+            if(A[i] > norminf(C.col(i)))
+                ipivot.push_back(i);
+            else
+                inonpivot.push_back(i);
 
         const unsigned n2 = inonpivot.size();
 
         A1 = rows(A, ipivot);
         A2 = rows(A, inonpivot);
-        invA1 = 1/A1;
+        invA1 = 1 / A1;
         B1 = rows(B, ipivot);
         B2 = rows(B, inonpivot);
         C1 = cols(C, ipivot);
@@ -73,7 +75,7 @@ struct LinearSystemSolverDiagonal
         Q.topRightCorner(n2, m) = B2;
         Q.bottomLeftCorner(m, n2) = C2;
         Q.bottomRightCorner(m, m) = identity(m, m);
-        Q.bottomRightCorner(m, m) -= C1*diag(invA1)*B1;
+        Q.bottomRightCorner(m, m) -= C1 * diag(invA1) * B1;
 
         lu.compute(Q);
     }
@@ -88,7 +90,7 @@ struct LinearSystemSolverDiagonal
 
         q.resize(n2 + m);
         rows(q, 0, n2) = a2;
-        rows(q, n2, m) = b - C1*diag(invA1)*a1;
+        rows(q, n2, m) = b - C1 * diag(invA1) * a1;
 
         u = lu.solve(q);
 
@@ -98,7 +100,7 @@ struct LinearSystemSolverDiagonal
         y = rows(u, n2, m);
 
         x.resize(n);
-        rows(x, ipivot) = invA1 % (a1 - B1*y);
+        rows(x, ipivot) = invA1 % (a1 - B1 * y);
         rows(x, inonpivot) = rows(u, 0, n2);
 
         return x.allFinite() && y.allFinite();
@@ -161,8 +163,7 @@ struct OptimumSolverIpAction::Impl
         OptimumResult result;
 
         // Finish the calculation if the problem has no variable
-        if(problem.n == 0)
-        {
+        if(problem.n == 0) {
             state = OptimumState();
             result.succeeded = true;
             result.time = elapsed(begin);
@@ -205,9 +206,12 @@ struct OptimumSolverIpAction::Impl
         auto delta = options.regularization.delta;
 
         // Ensure the initial guesses for `x` and `y` have adequate dimensions
-        if(x.size() != n) x = zeros(n);
-        if(y.size() != m) y = zeros(m);
-        if(z.size() != n) z = zeros(n);
+        if(x.size() != n)
+            x = zeros(n);
+        if(y.size() != m)
+            y = zeros(m);
+        if(z.size() != n)
+            z = zeros(n);
 
         // Ensure the initial guesses for `x` and `z` are inside the feasible domain
         x = (x.array() > 0.0).select(x, mu);
@@ -217,9 +221,9 @@ struct OptimumSolverIpAction::Impl
         double errorf, errorh, errorc;
 
         // The function that outputs the header and initial state of the solution
-        auto output_initial_state = [&]()
-        {
-            if(!options.output.active) return;
+        auto output_initial_state = [&]() {
+            if(!options.output.active)
+                return;
 
             // Initialize the names of the secondary variables
             snames = extract(options.output.xnames, iS);
@@ -250,9 +254,9 @@ struct OptimumSolverIpAction::Impl
         };
 
         // The function that outputs the current state of the solution
-        auto output_state = [&]()
-        {
-            if(!options.output.active) return;
+        auto output_state = [&]() {
+            if(!options.output.active)
+                return;
 
             outputter.addValue(iterations);
             outputter.addValues(x);
@@ -267,8 +271,7 @@ struct OptimumSolverIpAction::Impl
             outputter.outputState();
         };
 
-        auto initialize_decomposition = [&]()
-        {
+        auto initialize_decomposition = [&]() {
             // Initialize the weighted scaling vector `W`
             Vector W = abs(x);
             const double threshold = 1e-10 * (max(W) + 1);
@@ -330,17 +333,15 @@ struct OptimumSolverIpAction::Impl
         };
 
         // Return true if the result of a calculation failed
-        auto failed = [&](bool succeeded)
-        {
+        auto failed = [&](bool succeeded) {
             return !succeeded;
         };
 
         // The function that computes the current error norms
-        auto update_residuals = [&]()
-        {
+        auto update_residuals = [&]() {
             // Compute the right-hand side vectors of the KKT equation
-            r1 = -K*(f.grad - mu/x);
-            r2 = -(A*x + delta*delta*y - b);
+            r1 = -K * (f.grad - mu / x);
+            r2 = -(A * x + delta * delta * y - b);
 
             // Calculate the optimality, feasibility and centrality errors
             errorf = norminf(r1);
@@ -350,8 +351,7 @@ struct OptimumSolverIpAction::Impl
         };
 
         // The function that initialize the state of some variables
-        auto initialize = [&]()
-        {
+        auto initialize = [&]() {
             // Initialize xtrial
             xtrial.resize(n);
 
@@ -363,17 +363,17 @@ struct OptimumSolverIpAction::Impl
         };
 
         // The function that computes the Action step
-        auto compute_newton_step_diagonal = [&]()
-        {
+        auto compute_newton_step_diagonal = [&]() {
             // Calculate the diagonal Hessian of the Lagrange function
-            H = f.hessian.diagonal + z/x + gamma*gamma*ones(n);
+            H = f.hessian.diagonal + z / x + gamma * gamma * ones(n);
 
             // Extract the primary and secondary components
             HP = rows(H, iP);
-            HS = rows(H, iS); HS *= -1;
+            HS = rows(H, iS);
+            HS *= -1;
 
             // Compute the auxiliary matrix StHP = tr(S)*HP
-            StHP = tr(S)*diag(HP);
+            StHP = tr(S) * diag(HP);
 
             // Update the decomposition of the linear system
             lssd.decompose(HS, StHP, S);
@@ -387,19 +387,17 @@ struct OptimumSolverIpAction::Impl
             rows(dx, iS) = dxS;
 
             // Compute the dz step using dx
-            dz = (mu - z % x - z % dx)/x;
+            dz = (mu - z % x - z % dx) / x;
 
             // Return true if he calculation succeeded
             return successful;
         };
 
         // The aggressive mode for updating the iterates
-        auto update_iterates_aggressive = [&]()
-        {
+        auto update_iterates_aggressive = [&]() {
             // Calculate the current trial iterate for x
             for(int i = 0; i < n; ++i)
-                xtrial[i] = (x[i] + dx[i] > 0.0) ?
-                    x[i] + dx[i] : x[i]*(1.0 - tau);
+                xtrial[i] = (x[i] + dx[i] > 0.0) ? x[i] + dx[i] : x[i] * (1.0 - tau);
 
             // Evaluate the objective function at the trial iterate
             f = problem.objective(xtrial);
@@ -411,8 +409,7 @@ struct OptimumSolverIpAction::Impl
             unsigned tentatives = 0;
 
             // Repeat until f(xtrial) is finite
-            while(!isfinite(f) && ++tentatives < 10)
-            {
+            while(!isfinite(f) && ++tentatives < 10) {
                 // Calculate a new trial iterate using a smaller step length
                 xtrial = x + alpha * dx;
 
@@ -432,19 +429,18 @@ struct OptimumSolverIpAction::Impl
 
             // Update the z-Lagrange multipliers
             for(int i = 0; i < n; ++i)
-                z[i] += (z[i] + dz[i] > 0.0) ?
-                    dz[i] : -tau * z[i];
+                z[i] += (z[i] + dz[i] > 0.0) ? dz[i] : -tau * z[i];
 
             // Compute the Lagrange multipliers y only if regularization param delta is non-zero
-            if(delta) y = lu.trsolve(f.grad - z + gamma*gamma*x);
+            if(delta)
+                y = lu.trsolve(f.grad - z + gamma * gamma * x);
 
             // Return true as found xtrial results in finite f(xtrial)
             return true;
         };
 
         // The conservative mode for updating the iterates
-        auto update_iterates_convervative = [&]()
-        {
+        auto update_iterates_convervative = [&]() {
             // Initialize the step length factor
             double alphax = fractionToTheBoundary(x, dx, tau);
             double alphaz = fractionToTheBoundary(z, dz, tau);
@@ -454,8 +450,7 @@ struct OptimumSolverIpAction::Impl
             unsigned tentatives = 0;
 
             // Repeat until a suitable xtrial iterate if found such that f(xtrial) is finite
-            for(; tentatives < 10; ++tentatives)
-            {
+            for(; tentatives < 10; ++tentatives) {
                 // Calculate the current trial iterate for x
                 xtrial = x + alpha * dx;
 
@@ -481,24 +476,24 @@ struct OptimumSolverIpAction::Impl
             z += alphaz * dz;
 
             // Compute the Lagrange multipliers y only if regularization param delta is non-zero
-            if(delta) y = lu.trsolve(f.grad - z + gamma*gamma*x);
+            if(delta)
+                y = lu.trsolve(f.grad - z + gamma * gamma * x);
 
             // Return true as found xtrial results in finite f(xtrial)
             return true;
         };
 
         // The function that performs an update in the iterates
-        auto update_iterates = [&]()
-        {
-            switch(options.ipnewton.step)
-            {
-            case Aggressive: return update_iterates_aggressive();
-            default: return update_iterates_convervative();
+        auto update_iterates = [&]() {
+            switch(options.ipnewton.step) {
+            case Aggressive:
+                return update_iterates_aggressive();
+            default:
+                return update_iterates_convervative();
             }
         };
 
-        auto converged = [&]()
-        {
+        auto converged = [&]() {
             return error < tol;
         };
 
@@ -506,8 +501,7 @@ struct OptimumSolverIpAction::Impl
         initialize();
         output_initial_state();
 
-        for(iterations = 1; iterations <= maxiters && !succeeded; ++iterations)
-        {
+        for(iterations = 1; iterations <= maxiters && !succeeded; ++iterations) {
             if(failed(compute_newton_step_diagonal()))
                 break;
             if(failed(update_iterates()))
@@ -532,7 +526,7 @@ struct OptimumSolverIpAction::Impl
     {
         // Initialize the right-hand side of the KKT equations
         r1.noalias() = -dgdp;
-        r2.noalias() =  dbdp;
+        r2.noalias() = dbdp;
 
         // Solve the linear system equations to get the sensitivities
         lssd.solve(r1, r2, dxS, dxP);
@@ -547,11 +541,11 @@ struct OptimumSolverIpAction::Impl
 };
 
 OptimumSolverIpAction::OptimumSolverIpAction()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 OptimumSolverIpAction::OptimumSolverIpAction(const OptimumSolverIpAction& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 OptimumSolverIpAction::~OptimumSolverIpAction()

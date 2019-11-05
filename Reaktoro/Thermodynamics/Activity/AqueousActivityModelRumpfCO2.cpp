@@ -19,8 +19,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktoro {
@@ -32,11 +32,11 @@ auto aqueousActivityModelRumpfCO2(const AqueousMixture& mixture) -> AqueousActiv
     const unsigned nions = mixture.numChargedSpecies();
 
     // The local indices of some charged species among all charged species
-    const Index iNa  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Na+"));  // Na+, Na[+]
-    const Index iK   = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("K+"));   // K+, K[+]
-    const Index iCa  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Ca++")); // Ca++, Ca+2, Ca[+2]
-    const Index iMg  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Mg++")); // Mg++, Mg+2, Mg[+2]
-    const Index iCl  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Cl-"));  // Cl-, Cl[-]
+    const Index iNa = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Na+"));  // Na+, Na[+]
+    const Index iK = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("K+"));    // K+, K[+]
+    const Index iCa = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Ca++")); // Ca++, Ca+2, Ca[+2]
+    const Index iMg = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Mg++")); // Mg++, Mg+2, Mg[+2]
+    const Index iCl = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Cl-"));  // Cl-, Cl[-]
 
     // The molalities of some ionic species covered by the model
     ChemicalScalar mNa(nspecies);
@@ -49,8 +49,7 @@ auto aqueousActivityModelRumpfCO2(const AqueousMixture& mixture) -> AqueousActiv
     // The ln activity coefficient of CO2(aq)
     ChemicalScalar ln_gCO2(nspecies);
 
-    AqueousActivityModel f = [=](const AqueousMixtureState& state) mutable
-    {
+    AqueousActivityModel f = [=](const AqueousMixtureState& state) mutable {
         // Extract temperature from the parameters
         const ThermoScalar& T = state.T;
 
@@ -58,18 +57,23 @@ auto aqueousActivityModelRumpfCO2(const AqueousMixture& mixture) -> AqueousActiv
         const ChemicalVector& ms = state.ms;
 
         // Extract the stoichiometric molalities of the specific ions and their molar derivatives
-        if(iNa < nions) mNa = ms[iNa];
-        if(iK  < nions) mK  = ms[iK];
-        if(iCa < nions) mCa = ms[iCa];
-        if(iMg < nions) mMg = ms[iMg];
-        if(iCl < nions) mCl = ms[iCl];
+        if(iNa < nions)
+            mNa = ms[iNa];
+        if(iK < nions)
+            mK = ms[iK];
+        if(iCa < nions)
+            mCa = ms[iCa];
+        if(iMg < nions)
+            mMg = ms[iMg];
+        if(iCl < nions)
+            mCl = ms[iCl];
 
         // The Pitzer's parameters of the Rumpf et al. (1994) model
-        const ThermoScalar B = 0.254 - 76.82/T - 10656.0/(T*T) + 6312.0e+3/(T*T*T);
+        const ThermoScalar B = 0.254 - 76.82 / T - 10656.0 / (T * T) + 6312.0e+3 / (T * T * T);
         const double Gamma = -0.0028;
 
         // The ln activity coefficient of CO2(aq)
-        ChemicalScalar ln_gCO2 = 2*B*(mNa + mK + 2*mCa + 2*mMg) + 3*Gamma*(mNa + mK + mCa + mMg)*mCl;
+        ChemicalScalar ln_gCO2 = 2 * B * (mNa + mK + 2 * mCa + 2 * mMg) + 3 * Gamma * (mNa + mK + mCa + mMg) * mCl;
 
         return ln_gCO2;
     };

@@ -26,7 +26,7 @@ namespace Reaktoro {
 /// A type that describes an optimisation filter
 class Filter
 {
-public:
+  public:
     /// A type that describes an entry point of an optimisation filter
     using Point = std::vector<double>;
 
@@ -51,7 +51,7 @@ public:
     /// Check if point `a` is dominated by `b`, that is, if `a` > `b` componentwise.
     static auto dominated(const Point& a, const Point& b) -> bool;
 
-private:
+  private:
     /// The list of points in the filter
     std::list<Point> filter;
 };

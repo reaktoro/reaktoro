@@ -32,7 +32,7 @@ struct OptimumState;
 /// combined with an active-set strategy.
 class OptimumSolverIpActive : public OptimumSolverBase
 {
-public:
+  public:
     /// Construct a default OptimumSolverIpActive instance.
     OptimumSolverIpActive();
 
@@ -64,7 +64,7 @@ public:
     /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase*;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

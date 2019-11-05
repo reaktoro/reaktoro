@@ -33,8 +33,7 @@ auto parseReaction(std::string reaction) -> std::map<std::string, double>
     std::vector<std::string> words = split(reaction, " ");
 
     // Create the pair entries
-    for(const std::string& word : words)
-    {
+    for(const std::string& word : words) {
         std::vector<std::string> pair = split(word, ":");
         equation.emplace(pair[1], tofloat(pair[0]));
     }

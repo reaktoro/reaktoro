@@ -28,7 +28,7 @@ namespace Reaktoro {
 /// The result of a thermodynamic model function that calculates standard thermodynamic properties of species.
 class ThermoModelResult
 {
-public:
+  public:
     /// Construct a default ThermoModelResult instance.
     ThermoModelResult();
 
@@ -90,7 +90,7 @@ public:
     /// The natural log of the activity constants of the species.
     inline auto lnActivityConstants() const -> ThermoVectorConstRef { return ln_activity_constants; };
 
-private:
+  private:
     /// The standard partial molar Gibbs energies of the species (in units of J/mol).
     ThermoVector standard_partial_molar_gibbs_energies;
 

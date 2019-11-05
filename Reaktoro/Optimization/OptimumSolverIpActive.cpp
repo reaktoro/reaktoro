@@ -124,24 +124,28 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
     const auto& zero = options.ipactive.epsilon;
 
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
-    if(x.size() != n) x = zeros(n);
-    if(y.size() != m) y = zeros(m);
-    if(z.size() != n) z = zeros(n);
-//
-//    // Ensure the initial guesses for `x` and `z` are inside the feasible domain
-//    x = (x.array() > 0.0).select(x, 1.0);
-//    z = (z.array() > 0.0).select(z, 1.0);
+    if(x.size() != n)
+        x = zeros(n);
+    if(y.size() != m)
+        y = zeros(m);
+    if(z.size() != n)
+        z = zeros(n);
+    //
+    //    // Ensure the initial guesses for `x` and `z` are inside the feasible domain
+    //    x = (x.array() > 0.0).select(x, 1.0);
+    //    z = (z.array() > 0.0).select(z, 1.0);
 
     // Update the sets of stable and unstable variables
     // by checking which variables have zero molar amounts
-    auto update_stability_sets = [&]()
-    {
+    auto update_stability_sets = [&]() {
         // Update the indices of the stable and unstable variables
         istable_variables.clear();
         iunstable_variables.clear();
         for(unsigned i = 0; i < n; ++i)
-            if(x[i] > 0.0) istable_variables.push_back(i);
-            else iunstable_variables.push_back(i);
+            if(x[i] > 0.0)
+                istable_variables.push_back(i);
+            else
+                iunstable_variables.push_back(i);
 
         // Check if the set of stable variables is empty
         if(istable_variables.empty())
@@ -153,30 +157,26 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
     };
 
     /// Update the stable primal variables by setting them to zero
-    auto update_unstable_variables = [&]()
-    {
+    auto update_unstable_variables = [&]() {
         for(auto i : istable_variables)
             if(x[i] < zero)
                 x[i] = 0.0;
     };
 
     /// Update the OptimumOptions instance `optimum_options`
-    auto update_optimum_options = [&]()
-    {
+    auto update_optimum_options = [&]() {
         // Initialize the options for the optimisation calculation
         stable_options = options;
         stable_options.ipnewton.mu = zero * 1e-5;
 
         // Initialize the names of the primal and dual variables
-        if(options.output.active)
-        {
+        if(options.output.active) {
             // Create references to the primal and dual variables `x` and `z`
             auto& xnames = stable_options.output.xnames;
             auto& znames = stable_options.output.znames;
 
             // Ensure only the names of stable primal variables are output
-            if(xnames.size())
-            {
+            if(xnames.size()) {
                 xnames = extract(xnames, istable_variables);
                 znames = xnames;
             }
@@ -184,16 +184,14 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
     };
 
     /// Update the OptimumProblem instance `optimum_problem`
-    auto update_optimum_problem = [&]()
-    {
+    auto update_optimum_problem = [&]() {
         // The number of stable variables and elements in the equilibrium partition
         const unsigned num_stable_variables = istable_variables.size();
 
         // The result of the objective evaluation
         ObjectiveResult f_stable;
 
-        stable_problem.objective = [=,&f](VectorConstRef xs) mutable
-        {
+        stable_problem.objective = [=, &f](VectorConstRef xs) mutable {
             // Update the stable components in `x`
             rows(x, istable_variables) = xs;
 
@@ -219,8 +217,7 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
     };
 
     /// Update the OptimumState instance `stable_state` using `state`
-    auto update_stable_state = [&]()
-    {
+    auto update_stable_state = [&]() {
         // Update the optimum state of the stable components
         stable_state.x = rows(x, istable_variables);
         stable_state.z = rows(z, istable_variables);
@@ -228,8 +225,7 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
     };
 
     /// Update the OptimumState instance `state` using `stable_state`
-    auto update_state = [&]()
-    {
+    auto update_state = [&]() {
         // Set all dual variables `z` to zero, but correct the stable components below
         z.fill(0.0);
 
@@ -242,8 +238,7 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
     };
 
     /// Return true if not all variables are still stable
-    auto not_all_stable_yet = [&]()
-    {
+    auto not_all_stable_yet = [&]() {
         if(iunstable_variables.empty())
             return false;
 
@@ -282,7 +277,8 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
         result += solver.solve(stable_problem, stable_state, stable_options);
 
         // Exit if the the optimisation calculation did not succeed
-        if(!result.succeeded) break;
+        if(!result.succeeded)
+            break;
 
         // Update the full state from the stable state
         update_state();
@@ -298,11 +294,11 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
 }
 
 OptimumSolverIpActive::OptimumSolverIpActive()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 OptimumSolverIpActive::OptimumSolverIpActive(const OptimumSolverIpActive& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 OptimumSolverIpActive::~OptimumSolverIpActive()
@@ -327,7 +323,7 @@ auto OptimumSolverIpActive::solve(const OptimumProblem& problem, OptimumState& s
 auto OptimumSolverIpActive::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
-        "The method OptimumSolverIpActive::dxdp has not been implemented yet.");
+                 "The method OptimumSolverIpActive::dxdp has not been implemented yet.");
     return {};
 }
 
@@ -335,6 +331,5 @@ auto OptimumSolverIpActive::clone() const -> OptimumSolverBase*
 {
     return new OptimumSolverIpActive(*this);
 }
-
 
 } // namespace Reaktoro

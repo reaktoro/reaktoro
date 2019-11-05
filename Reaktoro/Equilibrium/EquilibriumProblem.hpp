@@ -31,7 +31,7 @@ class Partition;
 /// A type that defines an equilibrium problem
 class EquilibriumProblem
 {
-public:
+  public:
     /// Construct an EquilibriumProblem instance
     explicit EquilibriumProblem(const ChemicalSystem& system);
 
@@ -150,7 +150,7 @@ public:
     /// Return the amounts of the elements for the equilibrium calculation (in units of mol)
     auto elementAmounts() const -> VectorConstRef;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

@@ -30,16 +30,16 @@ ReactionEquation::ReactionEquation()
 {}
 
 ReactionEquation::ReactionEquation(std::string equation)
-: equation_str(equation)
+    : equation_str(equation)
 {
     // Split the reaction equation into two words: reactants and products
     auto two_words = split(equation_str, "=");
 
     // Assert the equation has a single equal sign `=`
     Assert(two_words.size() == 2,
-        "Cannot parse the reaction equation `" +  equation + "`.",
-        "Expecting an equation with a single equal sign `=` separating "
-        "reactants from products");
+           "Cannot parse the reaction equation `" + equation + "`.",
+           "Expecting an equation with a single equal sign `=` separating "
+           "reactants from products");
 
     // The reactants and products as string
     const auto& reactants_str = two_words[0];
@@ -50,9 +50,9 @@ ReactionEquation::ReactionEquation(std::string equation)
     auto products = split(products_str, " ");
 
     // Iterave over all strings representing pair number and species name in the reactants
-    for(auto word : reactants)
-    {
-        if(word == "+") continue;
+    for(auto word : reactants) {
+        if(word == "+")
+            continue;
         auto pair = split(word, "*");
         auto number = pair.size() == 2 ? tofloat(pair[0]) : 1.0;
         auto species = pair.size() == 2 ? pair[1] : pair[0];
@@ -60,9 +60,9 @@ ReactionEquation::ReactionEquation(std::string equation)
     }
 
     // Iterave over all strings representing pair number and species name in the products
-    for(auto word : products)
-    {
-        if(word == "+") continue;
+    for(auto word : products) {
+        if(word == "+")
+            continue;
         auto pair = split(word, "*");
         auto number = pair.size() == 2 ? tofloat(pair[0]) : 1.0;
         auto species = pair.size() == 2 ? pair[1] : pair[0];
@@ -71,14 +71,12 @@ ReactionEquation::ReactionEquation(std::string equation)
 }
 
 ReactionEquation::ReactionEquation(const std::map<std::string, double>& equation)
-: equation_map(equation)
+    : equation_map(equation)
 {
-    if(!equation.empty())
-    {
+    if(!equation.empty()) {
         std::stringstream reactants;
         std::stringstream products;
-        for(auto pair : equation)
-        {
+        for(auto pair : equation) {
             auto species = pair.first;
             auto stoichiometry = pair.second;
             if(stoichiometry == -1)
@@ -94,7 +92,7 @@ ReactionEquation::ReactionEquation(const std::map<std::string, double>& equation
         std::string reactants_str = reactants.str();
         std::string products_str = products.str();
         reactants_str = reactants_str.substr(0, reactants_str.size() - 3); // remove the leading string " + "
-        products_str = products_str.substr(0, products_str.size() - 3); // remove the leading string " + "
+        products_str = products_str.substr(0, products_str.size() - 3);    // remove the leading string " + "
 
         equation_str = reactants_str + " = " + products_str;
     }

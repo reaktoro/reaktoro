@@ -34,7 +34,7 @@ struct OptimumState;
 /// The class that implements the simplex algorithm for linear programming problems.
 class OptimumSolverSimplex : public OptimumSolverBase
 {
-public:
+  public:
     /// Construct a default OptimumSolverSimplex instance
     OptimumSolverSimplex();
 
@@ -78,7 +78,7 @@ public:
     /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase*;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

@@ -38,11 +38,14 @@ namespace Reaktoro {
 /// Defines a cubic equation of state and calculates thermodynamic properties of a fluid phase.
 class CubicEOS
 {
-public:
+  public:
     /// Defines the enumeration of available cubic EOS models.
     enum Model
     {
-        VanDerWaals, RedlichKwong, SoaveRedlichKwong, PengRobinson,
+        VanDerWaals,
+        RedlichKwong,
+        SoaveRedlichKwong,
+        PengRobinson,
     };
 
     /// Parameters to be passed to the Cubic Equation of State
@@ -163,7 +166,7 @@ public:
     /// @param x The mole fractions of the species in the phase (in units of mol/mol)
     auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

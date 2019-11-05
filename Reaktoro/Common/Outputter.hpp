@@ -49,7 +49,7 @@ struct OutputterOptions
 /// A utility class for printing the progress of iterative calculations
 class Outputter
 {
-public:
+  public:
     struct Options;
 
     Outputter();
@@ -87,20 +87,20 @@ public:
     template<typename T>
     void outputMessage(const T& arg)
     {
-        if(options.active) std::cout << arg;
+        if(options.active)
+            std::cout << arg;
     }
 
     template<typename T, typename... Args>
     void outputMessage(const T& arg, const Args&... args)
     {
-        if(options.active)
-        {
+        if(options.active) {
             std::cout << arg;
             outputMessage(args...);
         }
     }
 
-private:
+  private:
     std::list<std::string> entries;
 
     std::list<std::string> values;
@@ -119,8 +119,10 @@ void Outputter::addValue(const T& val)
 {
     std::stringstream ss;
     ss << std::setprecision(options.precision);
-    if(options.fixed) ss << std::fixed;
-    if(options.scientific) ss << std::scientific;
+    if(options.fixed)
+        ss << std::fixed;
+    if(options.scientific)
+        ss << std::scientific;
     ss << val;
     values.push_back(ss.str());
 }
@@ -139,4 +141,4 @@ void Outputter::addValues(const Vec& vec)
         addValue(vec[i]);
 }
 
-} // namespace
+} // namespace Reaktoro

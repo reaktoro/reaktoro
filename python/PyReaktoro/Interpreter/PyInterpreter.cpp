@@ -18,9 +18,9 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Interpreter/Interpreter.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Interpreter/Interpreter.hpp>
 
 namespace Reaktoro {
 
@@ -32,8 +32,7 @@ void exportInterpreter(py::module& m)
         .def("executeJsonFile", &Interpreter::executeJsonFile)
         .def("system", &Interpreter::system, py::return_value_policy::reference_internal)
         .def("states", &Interpreter::states, py::return_value_policy::reference_internal)
-        .def("state", &Interpreter::state, py::return_value_policy::reference_internal)
-        ;
+        .def("state", &Interpreter::state, py::return_value_policy::reference_internal);
 }
 
 } // namespace Reaktoro

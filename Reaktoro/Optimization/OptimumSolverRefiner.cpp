@@ -30,8 +30,8 @@
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
-#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
+#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
@@ -71,10 +71,10 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     auto& z = state.z;
 
     // Define some auxiliary references to parameters
-    const auto& n         = problem.A.cols();
-    const auto& m         = problem.A.rows();
+    const auto& n = problem.A.cols();
+    const auto& m = problem.A.rows();
     const auto& tolerance = options.tolerance;
-    const auto& tau       = options.ipnewton.tau;
+    const auto& tau = options.ipnewton.tau;
 
     auto A = problem.A;
     auto b = problem.b;
@@ -103,8 +103,10 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     Vector h;
 
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
-    if(x.size() != n) x = zeros(n);
-    if(y.size() != m) y = zeros(m);
+    if(x.size() != n)
+        x = zeros(n);
+    if(y.size() != m)
+        y = zeros(m);
 
     // Ensure the dual potentials `z` are zero
     z = zeros(n);
@@ -122,9 +124,9 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     double errorf, errorh, error;
 
     // The function that outputs the header and initial state of the solution
-    auto output_header = [&]()
-    {
-        if(!options.output.active) return;
+    auto output_header = [&]() {
+        if(!options.output.active)
+            return;
 
         outputter.addEntry("iter");
         outputter.addEntries(options.output.xprefix, n, options.output.xnames);
@@ -152,9 +154,9 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     };
 
     // The function that outputs the current state of the solution
-    auto output_state = [&]()
-    {
-        if(!options.output.active) return;
+    auto output_state = [&]() {
+        if(!options.output.active)
+            return;
 
         outputter.addValue(result.iterations);
         outputter.addValues(x);
@@ -169,15 +171,13 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     };
 
     // The function that updates the objective and constraint state
-    auto update_state = [&]()
-    {
+    auto update_state = [&]() {
         f = problem.objective(x);
-        h = A*x - b;
+        h = A * x - b;
     };
 
     // Return true if function `update_state` failed
-    auto update_state_failed = [&]()
-    {
+    auto update_state_failed = [&]() {
         const bool f_finite = std::isfinite(f.val);
         const bool g_finite = f.grad.allFinite();
         const bool all_finite = f_finite && g_finite;
@@ -185,43 +185,39 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     };
 
     // The function that computes the Newton step
-    auto compute_newton_step_gem = [&]()
-    {
+    auto compute_newton_step_gem = [&]() {
         Matrix J = zeros(n, n);
         block(J, 0, 0, n - m, n) = tr(K) * diag(f.hessian.diagonal);
         block(J, n - m, 0, m, n) = A;
 
         Matrix r = zeros(n);
         rows(r, 0, n - m) = -tr(K) * f.grad;
-        rows(r, n - m, m) = -(A*x - b);
+        rows(r, n - m, m) = -(A * x - b);
 
         sol.dx = J.lu().solve(r);
-        sol.dy = tr(A).fullPivLu().solve(f.hessian.diagonal % sol.dx + f.grad - At*y);
+        sol.dy = tr(A).fullPivLu().solve(f.hessian.diagonal % sol.dx + f.grad - At * y);
     };
 
     // The function that computes the Newton step
-    auto compute_newton_step_lma = [&]()
-    {
+    auto compute_newton_step_lma = [&]() {
         Matrix J = zeros(n, n);
         block(J, 0, 0, n - m, n) = tr(K) * diag(f.hessian.diagonal);
         block(J, n - m, 0, m, n) = A;
 
         Matrix r = zeros(n);
         rows(r, 0, n - m) = -tr(K) * f.grad;
-        rows(r, n - m, m) = -(A*x - b);
+        rows(r, n - m, m) = -(A * x - b);
 
         sol.dx = J.lu().solve(r);
     };
 
     // Return true if the function `compute_newton_step` failed
-    auto compute_newton_step_failed_lma = [&]()
-    {
+    auto compute_newton_step_failed_lma = [&]() {
         return !sol.dx.allFinite();
     };
 
     // Return true if the function `compute_newton_step` failed
-    auto compute_newton_step_failed_gem = [&]()
-    {
+    auto compute_newton_step_failed_gem = [&]() {
         const bool dx_finite = sol.dx.allFinite();
         const bool dy_finite = sol.dy.allFinite();
         const bool all_finite = dx_finite && dy_finite;
@@ -229,15 +225,13 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     };
 
     // The function that performs an update in the iterates
-    auto update_iterates_lma = [&]()
-    {
+    auto update_iterates_lma = [&]() {
         alpha = fractionToTheBoundary(x, sol.dx, tau);
         x += alpha * sol.dx;
     };
 
     // The function that performs an update in the iterates
-    auto update_iterates_gem = [&]()
-    {
+    auto update_iterates_gem = [&]() {
         alpha = fractionToTheBoundary(x, sol.dx, tau);
 
         x += alpha * sol.dx;
@@ -245,10 +239,9 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     };
 
     // The function that computes the current error norms
-    auto update_errors_gem = [&]()
-    {
+    auto update_errors_gem = [&]() {
         // Calculate the optimality, feasibility and centrality errors
-        errorf = norminf(f.grad - At*y);
+        errorf = norminf(f.grad - At * y);
         errorh = norminf(h);
 
         // Calculate the maximum error
@@ -257,8 +250,7 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     };
 
     // The function that computes the current error norms
-    auto update_errors_lma = [&]()
-    {
+    auto update_errors_lma = [&]() {
         // Calculate the optimality and feasibility errors
         errorf = norminf(tr(K) * f.grad);
         errorh = norminf(h);
@@ -268,10 +260,8 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
         result.error = error;
     };
 
-    auto converged = [&]()
-    {
-        if(error < tolerance)
-        {
+    auto converged = [&]() {
+        if(error < tolerance) {
             result.succeeded = true;
             return true;
         }
@@ -281,12 +271,12 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     update_state();
     output_header();
 
-    do
-    {
-        ++result.iterations; if(result.iterations > options.max_iterations) break;
+    do {
+        ++result.iterations;
+        if(result.iterations > options.max_iterations)
+            break;
 
-        if(options.refiner.use_lma_setup)
-        {
+        if(options.refiner.use_lma_setup) {
             compute_newton_step_lma();
             if(compute_newton_step_failed_lma())
                 break;
@@ -295,9 +285,7 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
             if(update_state_failed())
                 break;
             update_errors_lma();
-        }
-        else
-        {
+        } else {
             compute_newton_step_gem();
             if(compute_newton_step_failed_gem())
                 break;
@@ -319,11 +307,11 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
 }
 
 OptimumSolverRefiner::OptimumSolverRefiner()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 OptimumSolverRefiner::OptimumSolverRefiner(const OptimumSolverRefiner& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 OptimumSolverRefiner::~OptimumSolverRefiner()
@@ -348,7 +336,7 @@ auto OptimumSolverRefiner::solve(const OptimumProblem& problem, OptimumState& st
 auto OptimumSolverRefiner::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
-        "The method OptimumSolverRefiner::dxdp has not been implemented yet.");
+                 "The method OptimumSolverRefiner::dxdp has not been implemented yet.");
     return {};
 }
 

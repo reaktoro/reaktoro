@@ -24,29 +24,29 @@ namespace Reaktoro {
 
 void exportAqueousChemicalModelDebyeHuckel(py::module& m)
 {
-    auto aiondefault1 = static_cast<void(DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::aiondefault);
-    auto aiondefault2 = static_cast<double(DebyeHuckelParams::*)() const>(&DebyeHuckelParams::aiondefault);
+    auto aiondefault1 = static_cast<void (DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::aiondefault);
+    auto aiondefault2 = static_cast<double (DebyeHuckelParams::*)() const>(&DebyeHuckelParams::aiondefault);
 
-    auto aion1 = static_cast<void(DebyeHuckelParams::*)(std::string,double)>(&DebyeHuckelParams::aion);
-    auto aion2 = static_cast<void(DebyeHuckelParams::*)(const std::map<std::string, double>&)>(&DebyeHuckelParams::aion);
-    auto aion3 = static_cast<void(DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::aion);
-    auto aion4 = static_cast<double(DebyeHuckelParams::*)(std::string) const>(&DebyeHuckelParams::aion);
+    auto aion1 = static_cast<void (DebyeHuckelParams::*)(std::string, double)>(&DebyeHuckelParams::aion);
+    auto aion2 = static_cast<void (DebyeHuckelParams::*)(const std::map<std::string, double>&)>(&DebyeHuckelParams::aion);
+    auto aion3 = static_cast<void (DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::aion);
+    auto aion4 = static_cast<double (DebyeHuckelParams::*)(std::string) const>(&DebyeHuckelParams::aion);
 
-    auto biondefault1 = static_cast<void(DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::biondefault);
-    auto biondefault2 = static_cast<double(DebyeHuckelParams::*)() const>(&DebyeHuckelParams::biondefault);
+    auto biondefault1 = static_cast<void (DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::biondefault);
+    auto biondefault2 = static_cast<double (DebyeHuckelParams::*)() const>(&DebyeHuckelParams::biondefault);
 
-    auto bion1 = static_cast<void(DebyeHuckelParams::*)(std::string,double)>(&DebyeHuckelParams::bion);
-    auto bion2 = static_cast<void(DebyeHuckelParams::*)(const std::map<std::string, double>&)>(&DebyeHuckelParams::bion);
-    auto bion3 = static_cast<void(DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::bion);
-    auto bion4 = static_cast<double(DebyeHuckelParams::*)(std::string) const>(&DebyeHuckelParams::bion);
+    auto bion1 = static_cast<void (DebyeHuckelParams::*)(std::string, double)>(&DebyeHuckelParams::bion);
+    auto bion2 = static_cast<void (DebyeHuckelParams::*)(const std::map<std::string, double>&)>(&DebyeHuckelParams::bion);
+    auto bion3 = static_cast<void (DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::bion);
+    auto bion4 = static_cast<double (DebyeHuckelParams::*)(std::string) const>(&DebyeHuckelParams::bion);
 
-    auto bneutraldefault1 = static_cast<void(DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::bneutraldefault);
-    auto bneutraldefault2 = static_cast<double(DebyeHuckelParams::*)() const>(&DebyeHuckelParams::bneutraldefault);
+    auto bneutraldefault1 = static_cast<void (DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::bneutraldefault);
+    auto bneutraldefault2 = static_cast<double (DebyeHuckelParams::*)() const>(&DebyeHuckelParams::bneutraldefault);
 
-    auto bneutral1 = static_cast<void(DebyeHuckelParams::*)(std::string,double)>(&DebyeHuckelParams::bneutral);
-    auto bneutral2 = static_cast<void(DebyeHuckelParams::*)(const std::map<std::string, double>&)>(&DebyeHuckelParams::bneutral);
-    auto bneutral3 = static_cast<void(DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::bneutral);
-    auto bneutral4 = static_cast<double(DebyeHuckelParams::*)(std::string) const>(&DebyeHuckelParams::bneutral);
+    auto bneutral1 = static_cast<void (DebyeHuckelParams::*)(std::string, double)>(&DebyeHuckelParams::bneutral);
+    auto bneutral2 = static_cast<void (DebyeHuckelParams::*)(const std::map<std::string, double>&)>(&DebyeHuckelParams::bneutral);
+    auto bneutral3 = static_cast<void (DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::bneutral);
+    auto bneutral4 = static_cast<double (DebyeHuckelParams::*)(std::string) const>(&DebyeHuckelParams::bneutral);
 
     py::class_<DebyeHuckelParams>(m, "DebyeHuckelParams")
         .def(py::init<>())
@@ -71,8 +71,7 @@ void exportAqueousChemicalModelDebyeHuckel(py::module& m)
         .def("setLimitingLaw", &DebyeHuckelParams::setLimitingLaw)
         .def("setKielland1937", &DebyeHuckelParams::setKielland1937)
         .def("setWATEQ4F", &DebyeHuckelParams::setWATEQ4F)
-        .def("setPHREEQC", &DebyeHuckelParams::setPHREEQC)
-        ;
+        .def("setPHREEQC", &DebyeHuckelParams::setPHREEQC);
 }
 
 } // namespace Reaktoro

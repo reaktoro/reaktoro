@@ -28,8 +28,8 @@
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
-#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
+#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
@@ -57,13 +57,10 @@ auto stepLengthToBound(VectorConstRef p, VectorConstRef dp, Index& ilimiting) ->
 {
     ilimiting = p.size();
     double alpha_max = 1.0;
-    for(int i = 0; i < p.size(); ++i)
-    {
-        if(dp[i] < 0.0 && p[i] != 0.0)
-        {
-            const double alpha_trial = -p[i]/dp[i];
-            if(alpha_trial < alpha_max)
-            {
+    for(int i = 0; i < p.size(); ++i) {
+        if(dp[i] < 0.0 && p[i] != 0.0) {
+            const double alpha_trial = -p[i] / dp[i];
+            if(alpha_trial < alpha_max) {
                 alpha_max = alpha_trial;
                 ilimiting = i;
             }
@@ -146,7 +143,8 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     x.noalias() = (x.array() > l.array()).select(x, l);
 
     // Ensure `y` has dimension `m` and proper initial values
-    if(y.size() != m) y = zeros(m);
+    if(y.size() != m)
+        y = zeros(m);
 
     // Initialize the set of free variables
     for(int i = 0; i < n; ++i)
@@ -173,9 +171,9 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     Index iglimiting;
 
     // The function that outputs the header and initial state of the solution
-    auto output_header = [&]()
-    {
-        if(!options.output.active) return;
+    auto output_header = [&]() {
+        if(!options.output.active)
+            return;
 
         outputter.addEntry("iter");
         outputter.addEntries(options.output.xprefix, n, options.output.xnames);
@@ -191,7 +189,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         outputter.addEntry("alphax");
         outputter.addEntry("alphaz");
 
-        Vector r = abs(f.grad - tr(A)*y);
+        Vector r = abs(f.grad - tr(A) * y);
 
         outputter.outputHeader();
         outputter.addValue(result.iterations);
@@ -211,11 +209,11 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     };
 
     // The function that outputs the current state of the solution
-    auto output_state = [&]()
-    {
-        if(!options.output.active) return;
+    auto output_state = [&]() {
+        if(!options.output.active)
+            return;
 
-        Vector r = abs(f.grad - tr(A)*y);
+        Vector r = abs(f.grad - tr(A) * y);
 
         outputter.addValue(result.iterations);
         outputter.addValues(x);
@@ -234,52 +232,46 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     };
 
     // The function that updates the objective and constraint state
-    auto update_state = [&]()
-    {
+    auto update_state = [&]() {
         rows(x, E) = xE;
         rows(x, F) = xF;
         rows(x, L) = rows(l, L);
 
         f = problem.objective(x);
-        h = A*x - b;
+        h = A * x - b;
 
-        if(y.norm() == 0.0)
-        {
+        if(y.norm() == 0.0) {
             gF = rows(f.grad, F);
             y = tr(AF).fullPivLu().solve(gF);
         }
 
         // Update the gradient subvector corresponding to the interior variables
         gL = rows(f.grad, L);
-        zL = gL - tr(AL)*y;
+        zL = gL - tr(AL) * y;
 
         rows(z, L) = zL;
 
-        if(L.size())
-        {
+        if(L.size()) {
             Index iminz;
             const double minz = zL.minCoeff(&iminz);
 
-            if(minz < 0)
-            {
+            if(minz < 0) {
                 outputter.outputMessage("Adding ", options.output.xnames[L[iminz]], " to the set of free variables...\n");
                 F.push_back(L[iminz]);
                 erase(L, iminz);
                 xF.conservativeResize(F.size());
-                xF[F.size()-1] = l[F.back()];
+                xF[F.size() - 1] = l[F.back()];
                 AF = cols(A, F);
                 AL = cols(A, L);
             }
         }
 
-        for(Index i = 0; i < E.size(); ++i)
-        {
-            if(xE[i] > threshold)
-            {
+        for(Index i = 0; i < E.size(); ++i) {
+            if(xE[i] > threshold) {
                 outputter.outputMessage("Adding ", options.output.xnames[E[i]], " to the set of free variables...\n");
                 F.push_back(E[i]);
                 xF.conservativeResize(F.size());
-                xF[F.size()-1] = xE[i];
+                xF[F.size() - 1] = xE[i];
                 erase(E, i);
                 erase(xE, i);
             }
@@ -293,22 +285,21 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
 
         // Update the Hessian submatrix corresponding to the interior variables
         HF.mode = f.hessian.mode;
-        switch(f.hessian.mode)
-        {
+        switch(f.hessian.mode) {
         case Hessian::Dense:
             HF.dense = submatrix(f.hessian.dense, F, F);
             break;
         case Hessian::Diagonal:
-            HF.diagonal = rows(f.hessian.diagonal, F); break;
+            HF.diagonal = rows(f.hessian.diagonal, F);
+            break;
         default:
             RuntimeError("Could not solve the optimization problem with given Hessian.",
-                "OptimumSolverActNewton only accepts `Dense` or `Diagonal` Hessian matrices.");
+                         "OptimumSolverActNewton only accepts `Dense` or `Diagonal` Hessian matrices.");
         }
     };
 
     // Return true if function `update_state` failed
-    auto update_state_failed = [&]()
-    {
+    auto update_state_failed = [&]() {
         const bool f_finite = std::isfinite(f.val);
         const bool g_finite = f.grad.allFinite();
         const bool all_finite = f_finite && g_finite;
@@ -316,17 +307,16 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     };
 
     // The function that computes the Newton step
-    auto compute_newton_step = [&]()
-    {
+    auto compute_newton_step = [&]() {
         zF = zeros(F.size());
         KktMatrix lhs(HF, AF, xF, zF);
 
-        Vector CF = delta*delta*ones(F.size());
+        Vector CF = delta * delta * ones(F.size());
         kkt.decompose(lhs);
 
         // Compute the right-hand side vectors of the KKT equation
-        rhs.rx.noalias() = -(gF - tr(AF)*y + gamma*gamma*xF);
-        rhs.ry.noalias() = -(h + delta*delta*y);
+        rhs.rx.noalias() = -(gF - tr(AF) * y + gamma * gamma * xF);
+        rhs.ry.noalias() = -(h + delta * delta * y);
         rhs.rz.noalias() = zeros(F.size());
 
         // Compute `dx` and `dy` by solving the KKT equation
@@ -338,8 +328,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     };
 
     // Return true if the function `compute_newton_step` failed
-    auto compute_newton_step_failed = [&]()
-    {
+    auto compute_newton_step_failed = [&]() {
         const bool dx_finite = sol.dx.allFinite();
         const bool dy_finite = sol.dy.allFinite();
         const bool dz_finite = sol.dz.allFinite();
@@ -348,12 +337,11 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     };
 
     // The function that performs an update in the iterates
-    auto update_iterates = [&]()
-    {
+    auto update_iterates = [&]() {
         Index ilimiting;
         Vector lE = rows(l, E);
         Vector lF = rows(l, F);
-        alpha = stepLengthToBound(xF-lF, sol.dx, ilimiting);
+        alpha = stepLengthToBound(xF - lF, sol.dx, ilimiting);
 
         iglimiting = F[ilimiting];
 
@@ -370,14 +358,12 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         double zlimiting;
         std::string name;
 
-        if(ilimiting < F.size())
-        {
+        if(ilimiting < F.size()) {
             zlimiting = gF[ilimiting] - dot(AF.col(ilimiting), y);
             name = options.output.xnames[F[ilimiting]];
         }
 
-        if(ilimiting < F.size() && zlimiting > 0.0)
-        {
+        if(ilimiting < F.size() && zlimiting > 0.0) {
             outputter.outputMessage("Adding ", name, " to the set of blocked variables...\n");
             Index iF = F[ilimiting];
             L.push_back(iF);
@@ -389,11 +375,10 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     };
 
     // The function that computes the current error norms
-    auto update_errors = [&]()
-    {
+    auto update_errors = [&]() {
         // Calculate the optimality, feasibility and centrality errors
-//        errorf = norminf(gF - tr(AF)*y);
-//        errorf = norminf(gF/(tr(AF)*y) - ones(gF.size()));
+        //        errorf = norminf(gF - tr(AF)*y);
+        //        errorf = norminf(gF/(tr(AF)*y) - ones(gF.size()));
         errorf = 0.0;
         for(unsigned i = 0; i < F.size(); ++i)
             if(xF[i] > l[F[i]] && errorf < std::abs(gF[i] - dot(AF.col(i), y)))
@@ -405,10 +390,8 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         result.error = error;
     };
 
-    auto converged = [&]()
-    {
-        if(error < options.tolerance)
-        {
+    auto converged = [&]() {
+        if(error < options.tolerance) {
             result.succeeded = true;
             return true;
         }
@@ -418,9 +401,10 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     update_state();
     output_header();
 
-    do
-    {
-        ++result.iterations; if(result.iterations > options.max_iterations) break;
+    do {
+        ++result.iterations;
+        if(result.iterations > options.max_iterations)
+            break;
         compute_newton_step();
         if(compute_newton_step_failed())
             break;
@@ -441,11 +425,11 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
 }
 
 OptimumSolverActNewton::OptimumSolverActNewton()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 OptimumSolverActNewton::OptimumSolverActNewton(const OptimumSolverActNewton& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 OptimumSolverActNewton::~OptimumSolverActNewton()
@@ -470,7 +454,7 @@ auto OptimumSolverActNewton::solve(const OptimumProblem& problem, OptimumState& 
 auto OptimumSolverActNewton::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
-        "The method OptimumSolverActNewton::dxdp has not been implemented yet.");
+                 "The method OptimumSolverActNewton::dxdp has not been implemented yet.");
     return {};
 }
 

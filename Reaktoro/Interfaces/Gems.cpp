@@ -47,8 +47,7 @@ auto uniqueSpeciesNames(const Gems& gems) -> std::vector<std::string>
     std::map<std::string, std::set<std::string>> species_names_in_phase;
 
     unsigned offset = 0;
-    for(unsigned iphase = 0; iphase < gems.numPhases(); ++iphase)
-    {
+    for(unsigned iphase = 0; iphase < gems.numPhases(); ++iphase) {
         const std::string phase_name = gems.phaseName(iphase);
         for(unsigned i = 0; i < gems.numSpeciesInPhase(iphase); ++i)
             species_names_in_phase[phase_name].insert(originalSpeciesName(gems, offset + i));
@@ -56,11 +55,9 @@ auto uniqueSpeciesNames(const Gems& gems) -> std::vector<std::string>
     }
 
     std::map<std::string, std::set<std::string>> species_found_in_phases;
-    for(unsigned i = 0; i < gems.numSpecies(); ++i)
-    {
+    for(unsigned i = 0; i < gems.numSpecies(); ++i) {
         std::string species_name = originalSpeciesName(gems, i);
-        for(const auto& pair : species_names_in_phase)
-        {
+        for(const auto& pair : species_names_in_phase) {
             const auto& phase_name = pair.first;
             const auto& species_names_in_this_phase = pair.second;
             if(species_names_in_this_phase.count(species_name))
@@ -71,14 +68,12 @@ auto uniqueSpeciesNames(const Gems& gems) -> std::vector<std::string>
     std::vector<std::string> species_names;
     species_names.reserve(gems.numSpecies());
 
-    for(unsigned i = 0; i < gems.numSpecies(); ++i)
-    {
+    for(unsigned i = 0; i < gems.numSpecies(); ++i) {
         std::string species_name = originalSpeciesName(gems, i);
 
         if(species_found_in_phases[species_name].size() == 1)
             species_names.push_back(species_name);
-        else
-        {
+        else {
             const Index iphase = gems.indexPhaseWithSpecies(i);
             const std::string phase_name = gems.phaseName(iphase);
             if(gems.numSpeciesInPhase(iphase) == 1)
@@ -127,7 +122,7 @@ struct Gems::Impl
         node = std::make_shared<TNode>();
         if(node->GEM_init(filename.c_str()))
             RuntimeError("Could not initialize the Gems object.",
-                "Make sure the provided file exists relative to the working directory.");
+                         "Make sure the provided file exists relative to the working directory.");
 
         //------------------------------------------------------------------------------------------------------
         // The following parameters in GEMS have to be set to extremely small values to ensure that
@@ -154,11 +149,11 @@ struct Gems::Impl
 };
 
 Gems::Gems()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 Gems::Gems(std::string filename)
-: pimpl(new Impl(filename))
+    : pimpl(new Impl(filename))
 {
     // Initialize the unique names of the species
     pimpl->species_names = uniqueSpeciesNames(*this);
@@ -211,7 +206,8 @@ auto Gems::numSpeciesInPhase(Index iphase) const -> unsigned
 auto Gems::elementName(Index ielement) const -> std::string
 {
     std::string name = node()->pCSD()->ICNL[ielement];
-    if(name == "Zz") name = "Z";
+    if(name == "Zz")
+        name = "Z";
     return name;
 }
 
@@ -248,8 +244,7 @@ auto Gems::properties(ThermoModelResult& res, double T, double P) -> void
     const Index num_phases = numPhases();
 
     // Set the thermodynamic properties of the species
-    for(Index i = 0; i < num_species; ++i)
-    {
+    for(Index i = 0; i < num_species; ++i) {
         res.standardPartialMolarGibbsEnergies().val[i] = node()->DC_G0(i, P, T, false);
         res.standardPartialMolarEnthalpies().val[i] = node()->DC_H0(i, P, T);
         res.standardPartialMolarVolumes().val[i] = node()->DC_V0(i, P, T);
@@ -258,8 +253,7 @@ auto Gems::properties(ThermoModelResult& res, double T, double P) -> void
     }
 
     Index offset = 0;
-    for(Index iphase = 0; iphase < num_phases; ++iphase)
-    {
+    for(Index iphase = 0; iphase < num_phases; ++iphase) {
         // The number of species in the current phase
         const Index size = numSpeciesInPhase(iphase);
 
@@ -267,9 +261,8 @@ auto Gems::properties(ThermoModelResult& res, double T, double P) -> void
         if(ap->PHC[iphase] == PH_AQUEL) // check if aqueous species
         {
             res.lnActivityConstants().val.segment(offset, size).fill(std::log(55.508472));
-            res.lnActivityConstants().val[ap->LO] = 0.0; // zero for water species
-        }
-        else if(ap->PHC[iphase] == PH_GASMIX) // check if gaseous species
+            res.lnActivityConstants().val[ap->LO] = 0.0;                                  // zero for water species
+        } else if(ap->PHC[iphase] == PH_GASMIX)                                           // check if gaseous species
             res.lnActivityConstants().val.segment(offset, size).fill(std::log(1e-5 * P)); // ln(Pbar) for gases
 
         offset += size;
@@ -294,8 +287,7 @@ auto Gems::properties(ChemicalModelResult& res, double T, double P, VectorConstR
 
     // Set the molar derivatives of the activities
     Index offset = 0;
-    for(Index iphase = 0; iphase < num_phases; ++iphase)
-    {
+    for(Index iphase = 0; iphase < num_phases; ++iphase) {
         // The number of species in the current phase
         const Index size = numSpeciesInPhase(iphase);
 
@@ -303,13 +295,11 @@ auto Gems::properties(ChemicalModelResult& res, double T, double P, VectorConstR
         const auto np = n.segment(offset, size);
 
         // Set the molar volume of current phase
-        res.phaseMolarVolumes().val[iphase] = (num_species == 1) ?
-            node()->DC_V0(offset, P, T) :
-            node()->Ph_Volume(iphase)/node()->Ph_Mole(iphase);
+        res.phaseMolarVolumes().val[iphase] = (num_species == 1) ? node()->DC_V0(offset, P, T) : node()->Ph_Volume(iphase) / node()->Ph_Mole(iphase);
 
         // Set d(ln(a))/dn to d(ln(x))/dn, where x is mole fractions
-        res.lnActivities().ddn.block(offset, offset, size, size) = -1.0/sum(np) * ones(size, size);
-        res.lnActivities().ddn.block(offset, offset, size, size).diagonal() += 1.0/np;
+        res.lnActivities().ddn.block(offset, offset, size, size) = -1.0 / sum(np) * ones(size, size);
+        res.lnActivities().ddn.block(offset, offset, size, size).diagonal() += 1.0 / np;
 
         offset += size;
     }

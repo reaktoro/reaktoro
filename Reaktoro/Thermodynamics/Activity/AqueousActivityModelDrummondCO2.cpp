@@ -26,18 +26,17 @@ namespace Reaktoro {
 
 auto aqueousActivityModelDrummondCO2(const AqueousMixture& mixture) -> AqueousActivityModel
 {
-    AqueousActivityModel f = [=](const AqueousMixtureState& state)
-    {
+    AqueousActivityModel f = [=](const AqueousMixtureState& state) {
         // Calculate the activity coefficient of CO2(aq)
         const ThermoScalar& T = state.T;
-        const ThermoScalar c1 = -1.0312 + 1.2806e-3*T + 255.9/T;
-        const ThermoScalar c2 =  0.4445 - 1.6060e-3*T;
+        const ThermoScalar c1 = -1.0312 + 1.2806e-3 * T + 255.9 / T;
+        const ThermoScalar c2 = 0.4445 - 1.6060e-3 * T;
 
         // The stoichiometric ionic strength of the aqueous mixture
         const auto& I = state.Is;
 
         // The ln activity coefficient of CO2(aq)
-        ChemicalScalar ln_gCO2 = c1 * I - c2 * I/(I + 1);
+        ChemicalScalar ln_gCO2 = c1 * I - c2 * I / (I + 1);
 
         return ln_gCO2;
     };

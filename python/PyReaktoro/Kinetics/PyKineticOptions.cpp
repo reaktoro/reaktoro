@@ -26,15 +26,13 @@ void exportKineticOptions(py::module& m)
 {
     py::class_<KineticOutputOptions>(m, "KineticOutputOptions")
         .def_readwrite("active", &KineticOutputOptions::active)
-        .def_readwrite("format", &KineticOutputOptions::format)
-        ;
+        .def_readwrite("format", &KineticOutputOptions::format);
 
     py::class_<KineticOptions>(m, "KineticOptions")
         .def(py::init<>())
         .def_readwrite("equilibrium", &KineticOptions::equilibrium)
         .def_readwrite("ode", &KineticOptions::ode)
-        .def_readwrite("output", &KineticOptions::output)
-        ;
+        .def_readwrite("output", &KineticOptions::output);
 }
 
 } // namespace Reaktoro

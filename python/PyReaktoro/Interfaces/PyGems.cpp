@@ -25,8 +25,7 @@ namespace Reaktoro {
 void exportGems(py::module& m)
 {
     py::class_<GemsOptions>(m, "GemsOptions")
-        .def_readwrite("warmstart", &GemsOptions::warmstart)
-        ;
+        .def_readwrite("warmstart", &GemsOptions::warmstart);
 
     py::class_<Gems, Interface>(m, "Gems")
         .def(py::init<>())
@@ -35,8 +34,7 @@ void exportGems(py::module& m)
         .def("equilibrate", &Gems::equilibrate)
         .def("converged", &Gems::converged)
         .def("numIterations", &Gems::numIterations)
-        .def("elapsedTime", &Gems::elapsedTime)
-        ;
+        .def("elapsedTime", &Gems::elapsedTime);
 }
 
 } // namespace Reaktoro

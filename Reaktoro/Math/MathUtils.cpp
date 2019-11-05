@@ -65,7 +65,7 @@ auto inverseShermanMorrison(MatrixConstRef invA, VectorConstRef D) -> Matrix
 {
     Matrix invM = invA;
     for(unsigned i = 0; i < D.rows(); ++i)
-        invM = invM - (D[i]/(1 + D[i]*invM(i, i)))*invM.col(i)*invM.row(i);
+        invM = invM - (D[i] / (1 + D[i] * invM(i, i))) * invM.col(i) * invM.row(i);
     return invM;
 }
 
@@ -77,21 +77,21 @@ auto farey(double x, unsigned maxden) -> std::tuple<long, long>
 {
     long a = 0, b = 1;
     long c = 1, d = 1;
-    while(b <= maxden && d <= maxden)
-    {
-        double mediant = double(a+c)/(b+d);
+    while(b <= maxden && d <= maxden) {
+        double mediant = double(a + c) / (b + d);
         if(x == mediant) {
-            if(b + d <= maxden) return std::make_tuple(a+c, b+d);
-            if(d > b) return std::make_tuple(c, d);
+            if(b + d <= maxden)
+                return std::make_tuple(a + c, b + d);
+            if(d > b)
+                return std::make_tuple(c, d);
             return std::make_tuple(a, b);
         }
         if(x > mediant) {
-            a = a+c;
-            b = b+d;
-        }
-        else {
-            c = a+c;
-            d = b+d;
+            a = a + c;
+            b = b + d;
+        } else {
+            c = a + c;
+            d = b + d;
         }
     }
 
@@ -102,22 +102,20 @@ auto rationalize(double x, unsigned maxden) -> std::tuple<long, long>
 {
     long a, b, sign = (x >= 0) ? +1 : -1;
     if(std::abs(x) > 1.0) {
-        std::tie(a, b) = farey(1.0/std::abs(x), maxden);
-        return std::make_tuple(sign*b, a);
-    }
-    else {
+        std::tie(a, b) = farey(1.0 / std::abs(x), maxden);
+        return std::make_tuple(sign * b, a);
+    } else {
         std::tie(a, b) = farey(std::abs(x), maxden);
-        return std::make_tuple(sign*a, b);
+        return std::make_tuple(sign * a, b);
     }
 }
 
 auto cleanRationalNumbers(double* vals, long size, long maxden) -> void
 {
     long num, den;
-    for(long i = 0; i < size; ++i)
-    {
+    for(long i = 0; i < size; ++i) {
         std::tie(num, den) = rationalize(vals[i], maxden);
-        vals[i] = static_cast<double>(num)/den;
+        vals[i] = static_cast<double>(num) / den;
     }
 }
 
@@ -129,26 +127,25 @@ auto cleanRationalNumbers(MatrixRef A, long maxden) -> void
 template<typename VectorTypeX, typename VectorTypeY>
 auto dot3p_(const VectorTypeX& x, const VectorTypeY& y, double s) -> double
 {
-   double shi = double(float(s));
-   double slo = s - shi;
-   for(int k = 0; k < x.size(); ++k)
-   {
-      double xhi = double(float(x[k]));
-      double xlo = x[k] - xhi;
-      double yhi = double(float(y[k]));
-      double ylo = y[k] - yhi;
-      double tmp = xhi*yhi;
-      double zhi = double(float(tmp));
-      double zlo = tmp - zhi + xhi*ylo + xlo*yhi + xlo*ylo;
+    double shi = double(float(s));
+    double slo = s - shi;
+    for(int k = 0; k < x.size(); ++k) {
+        double xhi = double(float(x[k]));
+        double xlo = x[k] - xhi;
+        double yhi = double(float(y[k]));
+        double ylo = y[k] - yhi;
+        double tmp = xhi * yhi;
+        double zhi = double(float(tmp));
+        double zlo = tmp - zhi + xhi * ylo + xlo * yhi + xlo * ylo;
 
-      tmp = shi + zhi;
-      double del = tmp - shi - zhi;
-      shi = double(float(tmp));
-      slo = tmp - shi + slo + zlo - del;
-   }
+        tmp = shi + zhi;
+        double del = tmp - shi - zhi;
+        shi = double(float(tmp));
+        slo = tmp - shi + slo + zlo - del;
+    }
 
-   s = shi + slo;
-   return s;
+    s = shi + slo;
+    return s;
 }
 
 auto dot3p(VectorConstRef x, VectorConstRef y, double s) -> double

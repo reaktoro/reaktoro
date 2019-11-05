@@ -33,7 +33,7 @@ class EquilibriumReactions;
 /// A class that defines the mass balance conditions for equilibrium calculations.
 class EquilibriumBalance
 {
-public:
+  public:
     /// Construct an EquilibriumBalance instance with given chemical system.
     EquilibriumBalance(const ChemicalSystem& system);
 
@@ -65,11 +65,10 @@ public:
     /// @param b The vector of molar amounts of the elements.
     auto regularizedVector(Vector b) const -> Vector;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;
 };
-
 
 } // namespace Reaktoro

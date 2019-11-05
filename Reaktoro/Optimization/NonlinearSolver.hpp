@@ -22,8 +22,8 @@
 #include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/Outputter.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -143,7 +143,7 @@ struct NonlinearResult
 /// A type that implements the Newton algorithm for solving non-linear problems.
 class NonlinearSolver
 {
-public:
+  public:
     /// Construct a default NonlinearSolver instance.
     NonlinearSolver();
 
@@ -167,7 +167,7 @@ public:
     /// @param options The options for the calculation.
     auto solve(const NonlinearProblem& problem, VectorRef x, const NonlinearOptions& options) -> NonlinearResult;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

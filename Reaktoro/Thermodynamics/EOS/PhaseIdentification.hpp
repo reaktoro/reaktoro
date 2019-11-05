@@ -17,8 +17,8 @@
 
 #pragma once
 
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ChemicalScalar.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 
 namespace Reaktoro {
 
@@ -85,4 +85,4 @@ auto identifyPhaseUsingGibbsEnergyAndEos(
     const double epsilon,
     const double sigma) -> PhaseType;
 
-}
+} // namespace Reaktoro

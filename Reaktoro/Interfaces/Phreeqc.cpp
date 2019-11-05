@@ -29,16 +29,16 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Interfaces/PhreeqcUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 // Phreeqc includes
 #define Phreeqc PHREEQC
 #define protected public
-#include <phreeqc/Phreeqc.h>
 #include <phreeqc/GasPhase.h>
+#include <phreeqc/Phreeqc.h>
 #undef Phreeqc
 
 namespace Reaktoro {
@@ -47,32 +47,31 @@ namespace {
 const double gram_to_kilogram = 1e-3;
 const double pascal_to_bar = 1e-5;
 const double pascal_to_atm = 9.86923267e-6;
-const double atm_to_pascal = 1/pascal_to_atm;
+const double atm_to_pascal = 1 / pascal_to_atm;
 const double cm3_to_m3 = 1e-6;
 
 // The critical properties of some gases
 // The data are: {temperature [C], pressure [bar], acentric factor}
 std::map<std::string, std::vector<double>> critical_properties =
-{
-    {"Ar(g)"    , {150.9 , 48.98  , 0.0}},
-    {"CH4(g)"   , {190.6 , 45.99  , 0.012}},
-    {"C6H6O(g)" , {694.3 , 61.3   , 0.444}},
-    {"CO(g)"    , {132.9 , 34.99  , 0.048}},
-    {"CO2(g)"   , {304.2 , 73.83  , 0.224}},
-    {"C2H4(g)"  , {282.3 , 50.4   , 0.087}},
-    {"H2(g)"    , {33.19 , 13.13  , -0.216}},
-    {"H2O(g)"   , {647.1 , 220.55 , 0.345}},
-    {"H2S(g)"   , {373.5 , 89.63  , 0.094}},
-    {"He(g)"    , {5.2   , 2.28   , -0.39}},
-    {"Kr(g)"    , {209.4 , 55.02  , 0.0}},
-    {"N2(g)"    , {126.2 , 34.0   , 0.038}},
-    {"Ne(g)"    , {44.0  , 27.0   , 0.0}},
-    {"NH3(g)"   , {405.7 , 112.8  , 0.253}},
-    {"O2(g)"    , {154.6 , 50.43  , 0.022}},
-    {"Rn(g)"    , {377.0 , 62.8   , 0.0}},
-    {"SO2(g)"   , {430.8 , 78.84  , 0.245}},
-    {"Xe(g)"    , {289.7 , 58.4   , 0.0}}
-};
+    {
+        {"Ar(g)", {150.9, 48.98, 0.0}},
+        {"CH4(g)", {190.6, 45.99, 0.012}},
+        {"C6H6O(g)", {694.3, 61.3, 0.444}},
+        {"CO(g)", {132.9, 34.99, 0.048}},
+        {"CO2(g)", {304.2, 73.83, 0.224}},
+        {"C2H4(g)", {282.3, 50.4, 0.087}},
+        {"H2(g)", {33.19, 13.13, -0.216}},
+        {"H2O(g)", {647.1, 220.55, 0.345}},
+        {"H2S(g)", {373.5, 89.63, 0.094}},
+        {"He(g)", {5.2, 2.28, -0.39}},
+        {"Kr(g)", {209.4, 55.02, 0.0}},
+        {"N2(g)", {126.2, 34.0, 0.038}},
+        {"Ne(g)", {44.0, 27.0, 0.0}},
+        {"NH3(g)", {405.7, 112.8, 0.253}},
+        {"O2(g)", {154.6, 50.43, 0.022}},
+        {"Rn(g)", {377.0, 62.8, 0.0}},
+        {"SO2(g)", {430.8, 78.84, 0.245}},
+        {"Xe(g)", {289.7, 58.4, 0.0}}};
 
 } // namespace
 
@@ -316,7 +315,7 @@ Phreeqc::Impl::Impl()
 {}
 
 Phreeqc::Impl::Impl(std::string database)
-: Impl()
+    : Impl()
 {
     load(database);
 }
@@ -410,8 +409,7 @@ auto Phreeqc::Impl::initializeSpecies() -> void
 
 auto Phreeqc::Impl::initializeMasterSpecies() -> void
 {
-    auto get_corresponding_master_species = [&](species* s) -> species*
-    {
+    auto get_corresponding_master_species = [&](species* s) -> species* {
         // Check if the species in e-
         if(s == phreeqc.s_eminus)
             return s;
@@ -421,7 +419,7 @@ auto Phreeqc::Impl::initializeMasterSpecies() -> void
                 return phreeqc.species_list[i].master_s;
 
         RuntimeError("Could not initialize the list of master species.",
-            "Could not find the master species of species `" + std::string(s->name) + "`.");
+                     "Could not find the master species of species `" + std::string(s->name) + "`.");
 
         return nullptr;
     };
@@ -435,14 +433,13 @@ auto Phreeqc::Impl::initializeMasterSpecies() -> void
 auto Phreeqc::Impl::initializeRedoxElements() -> void
 {
     redox_elements.clear();
-    for(int i = 0; i < phreeqc.count_unknowns; ++i)
-    {
-        if(phreeqc.x[i]->master == nullptr) continue;
-        for(int j = i + 1; j < phreeqc.count_unknowns; ++j)
-        {
-            if(phreeqc.x[j]->master == nullptr) continue;
-            if(phreeqc.x[i]->master[0]->elt->primary == phreeqc.x[j]->master[0]->elt->primary)
-            {
+    for(int i = 0; i < phreeqc.count_unknowns; ++i) {
+        if(phreeqc.x[i]->master == nullptr)
+            continue;
+        for(int j = i + 1; j < phreeqc.count_unknowns; ++j) {
+            if(phreeqc.x[j]->master == nullptr)
+                continue;
+            if(phreeqc.x[i]->master[0]->elt->primary == phreeqc.x[j]->master[0]->elt->primary) {
                 const auto primary_element = phreeqc.x[i]->master[0]->elt->primary->elt->name;
                 const auto secondary_element1 = phreeqc.x[i]->master[0]->elt->name;
                 const auto secondary_element2 = phreeqc.x[j]->master[0]->elt->name;
@@ -459,33 +456,31 @@ auto Phreeqc::Impl::initializeRedoxElements() -> void
 
 auto Phreeqc::Impl::initializeElements() -> void
 {
-    auto choose_element_is_species = [&](element* e, species* master)
-    {
-        if(master == phreeqc.s_eminus) return e;
+    auto choose_element_is_species = [&](element* e, species* master) {
+        if(master == phreeqc.s_eminus)
+            return e;
         if(redox_elements.count(e->name))
             if(master->secondary != nullptr &&
-                master->secondary->elt->primary->elt->name == std::string(e->name))
-                    return master->secondary->elt;
-            else return e->master->s->secondary->elt;
+               master->secondary->elt->primary->elt->name == std::string(e->name))
+                return master->secondary->elt;
+            else
+                return e->master->s->secondary->elt;
         else
             return e;
     };
 
-    auto choose_element_in_phase = [&](element* e)
-    {
+    auto choose_element_in_phase = [&](element* e) {
         return redox_elements.count(e->name) ? e->master->s->secondary->elt : e;
     };
 
-    auto get_elements_in_species = [&](species* s, species* master)
-    {
+    auto get_elements_in_species = [&](species* s, species* master) {
         std::map<element*, double> elements;
         for(auto iter = s->next_elt; iter->elt != nullptr; ++iter)
             elements.insert({choose_element_is_species(iter->elt, master), iter->coef});
         return elements;
     };
 
-    auto get_elements_in_phase = [&](phase* s)
-    {
+    auto get_elements_in_phase = [&](phase* s) {
         std::map<element*, double> elements;
         for(auto iter = s->next_elt; iter->elt != nullptr; ++iter)
             elements.insert({choose_element_in_phase(iter->elt), iter->coef});
@@ -511,17 +506,16 @@ auto Phreeqc::Impl::initializeElements() -> void
     std::set<element*> element_set;
     for(auto map : elements_in_species)
         for(auto pair : map)
-//            if(pair.first->name != std::string("E") &&
-//                pair.first->name != std::string("e")) // do not add e- as an element
-                    element_set.insert(pair.first);
+            //            if(pair.first->name != std::string("E") &&
+            //                pair.first->name != std::string("e")) // do not add e- as an element
+            element_set.insert(pair.first);
 
     // Transform a std::set to a std::vector of elements
     elements.resize(element_set.size());
     elements.assign(element_set.begin(), element_set.end());
 
     // Sort the elements in alphabetical order
-    std::sort(elements.begin(), elements.end(), [](element* l, element* r)
-        { return std::string(l->name) < std::string(r->name); });
+    std::sort(elements.begin(), elements.end(), [](element* l, element* r) { return std::string(l->name) < std::string(r->name); });
 }
 
 auto Phreeqc::Impl::initializeNames() -> void
@@ -568,8 +562,7 @@ auto Phreeqc::Impl::initializeSpeciesCharges() -> void
 
 auto Phreeqc::Impl::initializeElementMolarMasses() -> void
 {
-    auto get_element_molar_mass = [](element* e)
-    {
+    auto get_element_molar_mass = [](element* e) {
         if(e->name == std::string("E") || e->name == std::string("e"))
             return 0.0; // electron e- element
         return e->primary->elt->gfw;
@@ -605,8 +598,7 @@ auto Phreeqc::Impl::initializeFormulaMatrix() -> void
     const unsigned num_elements = element_names.size();
     const unsigned num_species = species_names.size();
 
-    auto get_element_stoichiometry = [&](unsigned ielement, unsigned ispecies)
-    {
+    auto get_element_stoichiometry = [&](unsigned ielement, unsigned ispecies) {
         // Check if the element index corresponds to the charge index (last index)
         if(ielement == element_names.size() - 1)
             return species_charges[ispecies];
@@ -631,10 +623,8 @@ auto Phreeqc::Impl::initializeStoichiometricMatrix() -> void
 
     // Initialize the stoichiometric matrix of the equilibrium reactions
     stoichiometric_matrix = zeros(num_reactions, num_species);
-    for(unsigned j = 0; j < num_reactions; ++j)
-    {
-        for(auto pair : reactions[j])
-        {
+    for(unsigned j = 0; j < num_reactions; ++j) {
+        for(auto pair : reactions[j]) {
             const std::string species_name = pair.first;
             const double species_coef = pair.second;
             const unsigned i = index(species_name, species_names);
@@ -651,12 +641,10 @@ auto Phreeqc::Impl::initializeCriticalPropertiesGaseousSpecies() -> void
     // Iterate over the gaseous species and set their critical properties.
     // However, only do this for those gases whose critical properties were
     // not specified in the PHASES block in the PHREEQC script file.
-    for(auto species : gaseous_species)
-    {
+    for(auto species : gaseous_species) {
         auto iter = critical_properties.find(species->name);
 
-        if(iter != critical_properties.end())
-        {
+        if(iter != critical_properties.end()) {
             if(species->t_c == 0)
                 species->t_c = iter->second[0];
             if(species->p_c == 0)
@@ -677,8 +665,8 @@ void Phreeqc::Impl::initializeChemicalState()
     n.resize(numSpecies());
 
     n << PhreeqcUtils::speciesAmounts(phreeqc, aqueous_species),
-         PhreeqcUtils::speciesAmounts(phreeqc, gaseous_species),
-         PhreeqcUtils::speciesAmounts(phreeqc, mineral_species);
+        PhreeqcUtils::speciesAmounts(phreeqc, gaseous_species),
+        PhreeqcUtils::speciesAmounts(phreeqc, mineral_species);
 
     // Initialize thermodynamic and chemical properties
     set(T, P, n);
@@ -793,20 +781,18 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
     ln_a.resize(num_aqueous_species);
 
     // Calculate the activity coefficients of the aqueous species
-    if(phreeqc.pitzer_model || phreeqc.sit_model)
-    {
+    if(phreeqc.pitzer_model || phreeqc.sit_model) {
         // Calculate the activity coefficients using either Pitzer or SIT models
         if(phreeqc.pitzer_model)
             phreeqc.pitzer();
-        else phreeqc.sit();
+        else
+            phreeqc.sit();
 
         // Collect the updated activity coefficients
         unsigned ispecies = 0;
         for(auto species : aqueous_species)
             ln_g[ispecies++] = species->lg_pitzer * ln_10;
-    }
-    else
-    {
+    } else {
         // Calculate the activity coefficients using conventional Phreeqc models
         phreeqc.gammas(phreeqc.mu_x);
 
@@ -818,8 +804,7 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
 
     // Calculate the natural log of the activities of the aqueous species
     for(unsigned i = 0; i < num_aqueous_species; ++i)
-        ln_a[i] = std::isfinite(aqueous_species[i]->lm) ?
-            ln_g[i] + aqueous_species[i]->lm*ln_10 : 0.0;
+        ln_a[i] = std::isfinite(aqueous_species[i]->lm) ? ln_g[i] + aqueous_species[i]->lm * ln_10 : 0.0;
 
     // Get the molar amounts of the aqueous species
     const auto n_aqueous = n.head(num_aqueous_species);
@@ -829,7 +814,7 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
 
     // Calculate the mole fraction of H2O
     const double nH2O = aqueous_species[iH2O]->moles;
-    const double xH2O = nH2O/n_total;
+    const double xH2O = nH2O / n_total;
 
     // Calculate the activity of water
     if(phreeqc.pitzer_model || phreeqc.sit_model)
@@ -841,7 +826,7 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
     const auto v_aqueous = standard_molar_volumes_TPI.head(num_aqueous_species);
 
     // Calculate the molar volume of the aqueous phase with T, P, I corrections
-    molar_volume_aqueous_phase = (n_total > 0) ? dot(v_aqueous, n_aqueous)/n_total : 0.0;
+    molar_volume_aqueous_phase = (n_total > 0) ? dot(v_aqueous, n_aqueous) / n_total : 0.0;
 }
 
 auto Phreeqc::Impl::updateGaseousProperties() -> void
@@ -872,8 +857,7 @@ auto Phreeqc::Impl::updateGaseousProperties() -> void
     const double v = phreeqc.calc_PR(gaseous_species, Patm, T, 0.0);
 
     // Calculate the ln activity coefficients and ln activities of the gaseous species
-    for(unsigned i = 0; i < num_gaseous_species; ++i)
-    {
+    for(unsigned i = 0; i < num_gaseous_species; ++i) {
         const double x = gaseous_species[i]->fraction_x; // the molar fraction of the gas
         const double phi = gaseous_species[i]->pr_phi;   // the fugacity coefficient of the gas
         ln_g[i] = std::log(phi);
@@ -946,22 +930,20 @@ auto Phreeqc::Impl::setSpeciesAmounts(VectorConstRef n) -> void
         mineral_species[i]->moles_x = n_mineral[i];
 
     // Check if mass of water is positive before updating aqueous properties
-    if(massH2O > 0.0)
-    {
+    if(massH2O > 0.0) {
         // Set the molalities of the aqueous species
         for(unsigned i = 0; i < num_aqueous; ++i)
-            aqueous_species[i]->lm = std::log10(n_aqueous[i]/massH2O);
+            aqueous_species[i]->lm = std::log10(n_aqueous[i] / massH2O);
 
         // Update the ionic strength of the aqueous phase
         I = 0.0;
         for(auto species : aqueous_species)
             I += species->moles * species->z * species->z;
-        I *= 0.5/massH2O;
+        I *= 0.5 / massH2O;
 
         // Set the ionic strength of the aqueous solution
         phreeqc.mu_x = I;
-    }
-    else {
+    } else {
         // Ionic strength is zero as a result of zero amounts of water
         I = phreeqc.mu_x = 0.0;
     }
@@ -1016,7 +998,7 @@ auto Phreeqc::Impl::speciesMolarVolumes() -> Vector
         v[ispecies++] = species->logk[vm_tc] * cm3_to_m3;
 
     for(auto species : gaseous_species)
-        v[ispecies++] = R*T/P;
+        v[ispecies++] = R * T / P;
 
     for(auto species : mineral_species)
         v[ispecies++] = species->logk[vm0] * cm3_to_m3;
@@ -1034,7 +1016,7 @@ auto Phreeqc::Impl::speciesMolarGibbsEnergies() -> Vector
 
     // Use the LU decomposition of the stoichiometric matrix to calculate `u0`
     Vector G = lu.solve(ln_k);
-    G *= -R*T;
+    G *= -R * T;
 
     return G;
 }
@@ -1045,8 +1027,7 @@ auto Phreeqc::Impl::phaseMolarVolumes() -> Vector
 
     Vector vphases(num_phases);
 
-    if(num_phases > 0)
-    {
+    if(num_phases > 0) {
         unsigned offset = 0;
 
         if(aqueous_species.size())
@@ -1067,8 +1048,8 @@ auto Phreeqc::Impl::lnActivityCoefficients() -> Vector
 
     Vector ln_g(numSpecies());
     ln_g << ln_activity_coefficients_aqueous_species,
-            ln_activity_coefficients_gaseous_species,
-            zeros(num_minerals);
+        ln_activity_coefficients_gaseous_species,
+        zeros(num_minerals);
 
     return ln_g;
 }
@@ -1085,8 +1066,8 @@ auto Phreeqc::Impl::lnActivityConstants() -> Vector
 
     Vector res(numSpecies());
     res << constants(num_aqueous_species, std::log(55.508472)),
-           constants(num_gaseous_species, std::log(Pbar)),
-           zeros(num_mineral_species);
+        constants(num_gaseous_species, std::log(Pbar)),
+        zeros(num_mineral_species);
 
     // The ln activity constant for water is zero
     res[iH2O] = 0.0;
@@ -1103,8 +1084,8 @@ auto Phreeqc::Impl::lnActivities() -> Vector
     // Collect the activities of the species
     Vector ln_a(numSpecies());
     ln_a << ln_activities_aqueous_species,
-            ln_activities_gaseous_species,
-            zeros(num_minerals);
+        ln_activities_gaseous_species,
+        zeros(num_minerals);
 
     // The standard molar Gibbs energies with T and P corrections
     const auto& G0 = standard_molar_gibbs_energies;
@@ -1116,17 +1097,17 @@ auto Phreeqc::Impl::lnActivities() -> Vector
     // of reactions are transferred to the activities of the species.
     // This is needed because standard properties should not depend on composition,
     // but only on T and P.
-    ln_a += (G0TPI - G0) * 1.0/(R*T);
+    ln_a += (G0TPI - G0) * 1.0 / (R * T);
 
     return ln_a;
 }
 
 Phreeqc::Phreeqc()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 Phreeqc::Phreeqc(std::string database)
-: pimpl(new Impl(database))
+    : pimpl(new Impl(database))
 {}
 
 Phreeqc::~Phreeqc()
@@ -1169,14 +1150,17 @@ auto Phreeqc::numSpeciesInPhase(Index iphase) const -> unsigned
 
     // Ensure `index` is not out-of-bound
     Assert(iphase < numPhases(),
-        "Cannot get the number of species in phase with index "
-        "`" + std::to_string(iphase) + "`.", "The given index is out of range.")
+           "Cannot get the number of species in phase with index "
+           "`" +
+               std::to_string(iphase) + "`.",
+           "The given index is out of range.")
 
-    // Return the number of aqueous species
-    if(iphase == 0) return num_aqueous;
+        // Return the number of aqueous species
+        if(iphase == 0) return num_aqueous;
 
     // Return the number of gaseous species if they exist
-    if(iphase == 1 && num_gaseous) return num_gaseous;
+    if(iphase == 1 && num_gaseous)
+        return num_gaseous;
 
     // Return 1 as all mineral phases only have one species
     return 1;
@@ -1220,7 +1204,8 @@ auto Phreeqc::set(double T, double P, VectorConstRef n) -> void
 auto Phreeqc::load(std::string database) -> void
 {
     // Resets this instance before loading a new database file
-    reset(); pimpl->load(database);
+    reset();
+    pimpl->load(database);
 }
 
 auto Phreeqc::execute(std::string input, std::string output) -> void
@@ -1324,8 +1309,7 @@ auto Phreeqc::properties(ChemicalModelResult& res, double T, double P, VectorCon
 
     // Set the molar derivatives of the activities
     Index offset = 0;
-    for(Index iphase = 0; iphase < num_phases; ++iphase)
-    {
+    for(Index iphase = 0; iphase < num_phases; ++iphase) {
         // The number of species in the current phase
         const Index size = numSpeciesInPhase(iphase);
 
@@ -1333,8 +1317,8 @@ auto Phreeqc::properties(ChemicalModelResult& res, double T, double P, VectorCon
         const auto np = n.segment(offset, size);
 
         // Set d(ln(a))/dn to d(ln(x))/dn, where x is mole fractions
-        res.lnActivities().ddn.block(offset, offset, size, size) = -1.0/sum(np) * ones(size, size);
-        res.lnActivities().ddn.block(offset, offset, size, size).diagonal() += 1.0/np;
+        res.lnActivities().ddn.block(offset, offset, size, size) = -1.0 / sum(np) * ones(size, size);
+        res.lnActivities().ddn.block(offset, offset, size, size).diagonal() += 1.0 / np;
 
         offset += size;
     }

@@ -55,7 +55,7 @@ struct ResidualEquilibriumConstraints
 /// towards a state where all given equilibrium constraints are satisfied.
 class EquilibriumInverseProblem
 {
-public:
+  public:
     /// Construct an EquilibriumInverseProblem instance.
     explicit EquilibriumInverseProblem(const ChemicalSystem& system);
 
@@ -270,7 +270,7 @@ public:
     /// @param state The initial guess for the final chemical state solution.
     auto solve(ChemicalState& state) -> EquilibriumResult;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

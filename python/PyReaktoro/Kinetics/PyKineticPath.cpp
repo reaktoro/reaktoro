@@ -45,8 +45,7 @@ void exportKineticPath(py::module& m)
         .def("plots", &KineticPath::plots)
         .def("system", &KineticPath::system, py::return_value_policy::reference_internal)
         .def("reactions", &KineticPath::reactions, py::return_value_policy::reference_internal)
-        .def("partition", &KineticPath::partition, py::return_value_policy::reference_internal)
-        ;
+        .def("partition", &KineticPath::partition, py::return_value_policy::reference_internal);
 }
 
 } // namespace Reaktoro

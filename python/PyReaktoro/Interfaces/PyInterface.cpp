@@ -26,7 +26,7 @@ namespace Reaktoro {
 
 class PyInterface : public Interface
 {
-public:
+  public:
     auto temperature() const -> double
     {
         PYBIND11_OVERLOAD_PURE(double, Interface, temperature);
@@ -131,8 +131,7 @@ void exportInterface(py::module& m)
         .def("indexPhaseWithSpecies", &Interface::indexPhaseWithSpecies)
         .def("indexFirstSpeciesInPhase", &Interface::indexFirstSpeciesInPhase)
         .def("system", &Interface::system)
-        .def("state", &Interface::state)
-        ;
+        .def("state", &Interface::state);
 }
 
 } // namespace Reaktoro

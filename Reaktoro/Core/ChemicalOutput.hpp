@@ -19,9 +19,9 @@
 
 // C++ includes
 #include <memory>
-#include <vector>
 #include <sstream>
 #include <string>
+#include <vector>
 
 namespace Reaktoro {
 
@@ -34,7 +34,7 @@ class StringList;
 /// A type used to output sequence of chemical states to a file or terminal.
 class ChemicalOutput
 {
-public:
+  public:
     /// Construct a default ChemicalOutput instance.
     ChemicalOutput();
 
@@ -113,7 +113,7 @@ public:
     /// Convert this ChemicalOutput instance to bool.
     operator bool() const;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

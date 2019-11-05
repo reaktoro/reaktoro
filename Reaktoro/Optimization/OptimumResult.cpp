@@ -21,15 +21,15 @@ namespace Reaktoro {
 
 auto OptimumResult::operator+=(const OptimumResult& other) -> OptimumResult&
 {
-    succeeded              = other.succeeded;
-    iterations            += other.iterations;
-    num_objective_evals   += other.num_objective_evals;
-    convergence_rate       = other.convergence_rate;
-    error                  = other.error;
-    time                  += other.time;
-    time_objective_evals  += other.time_objective_evals;
+    succeeded = other.succeeded;
+    iterations += other.iterations;
+    num_objective_evals += other.num_objective_evals;
+    convergence_rate = other.convergence_rate;
+    error = other.error;
+    time += other.time;
+    time_objective_evals += other.time_objective_evals;
     time_constraint_evals += other.time_constraint_evals;
-    time_linear_systems   += other.time_linear_systems;
+    time_linear_systems += other.time_linear_systems;
 
     return *this;
 }

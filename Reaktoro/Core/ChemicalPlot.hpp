@@ -19,9 +19,9 @@
 
 // C++ includes
 #include <memory>
-#include <vector>
 #include <sstream>
 #include <string>
+#include <vector>
 
 namespace Reaktoro {
 
@@ -34,7 +34,7 @@ class StringList;
 /// A class used to create plots from sequence of chemical states.
 class ChemicalPlot
 {
-public:
+  public:
     /// Construct a default ChemicalPlot instance.
     ChemicalPlot();
 
@@ -159,10 +159,10 @@ public:
     auto yformat(std::string) -> void;
 
     /// Set the x-axis to log-scale.
-    auto xlogscale(int base=10) -> void;
+    auto xlogscale(int base = 10) -> void;
 
     /// Set the y-axis to log-scale.
-    auto ylogscale(int base=10) -> void;
+    auto ylogscale(int base = 10) -> void;
 
     /// Set the refresh rate of the real-time plot.
     auto frequency(unsigned frequency) -> void;
@@ -182,7 +182,7 @@ public:
     /// Compare a ChemicalPlot instance for equality
     auto operator==(const ChemicalPlot& other) -> bool;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

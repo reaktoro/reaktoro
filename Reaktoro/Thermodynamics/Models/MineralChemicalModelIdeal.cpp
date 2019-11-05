@@ -28,8 +28,7 @@ auto mineralChemicalModelIdeal(const MineralMixture& mixture) -> PhaseChemicalMo
     MineralMixtureState state;
 
     // Define the chemical model function of the mineral phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
-    {
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable {
         // Evaluate the state of the mineral mixture
         state = mixture.state(T, P, n);
 

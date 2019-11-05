@@ -20,21 +20,21 @@
 // Reaktoro includes
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 
 namespace Reaktoro {
 
 void exportChemicalPlot(py::module& m)
 {
-    auto y1 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::y);
-    auto y2 = static_cast<void(ChemicalPlot::*)(std::string,std::string)>(&ChemicalPlot::y);
-    auto points1 = static_cast<void(ChemicalPlot::*)(std::string, std::vector<double>, std::vector<double>)>(&ChemicalPlot::points);
-    auto points2 = static_cast<void(ChemicalPlot::*)(std::string, std::string, std::string)>(&ChemicalPlot::points);
-    auto showlegend1 = static_cast<void(ChemicalPlot::*)(bool)>(&ChemicalPlot::showlegend);
-    auto showlegend2 = static_cast<bool(ChemicalPlot::*)() const>(&ChemicalPlot::showlegend);
-    auto lshift = static_cast<ChemicalPlot&(ChemicalPlot::*)(std::string)>(&ChemicalPlot::operator<<);
+    auto y1 = static_cast<void (ChemicalPlot::*)(std::string)>(&ChemicalPlot::y);
+    auto y2 = static_cast<void (ChemicalPlot::*)(std::string, std::string)>(&ChemicalPlot::y);
+    auto points1 = static_cast<void (ChemicalPlot::*)(std::string, std::vector<double>, std::vector<double>)>(&ChemicalPlot::points);
+    auto points2 = static_cast<void (ChemicalPlot::*)(std::string, std::string, std::string)>(&ChemicalPlot::points);
+    auto showlegend1 = static_cast<void (ChemicalPlot::*)(bool)>(&ChemicalPlot::showlegend);
+    auto showlegend2 = static_cast<bool (ChemicalPlot::*)() const>(&ChemicalPlot::showlegend);
+    auto lshift = static_cast<ChemicalPlot& (ChemicalPlot::*)(std::string)>(&ChemicalPlot::operator<<);
 
     py::class_<ChemicalPlot>(m, "ChemicalPlot")
         .def(py::init<>())
@@ -56,15 +56,14 @@ void exportChemicalPlot(py::module& m)
         .def("ytics", &ChemicalPlot::ytics)
         .def("xformat", &ChemicalPlot::xformat)
         .def("yformat", &ChemicalPlot::yformat)
-        .def("xlogscale", &ChemicalPlot::xlogscale, py::arg("base")=10)
-        .def("ylogscale", &ChemicalPlot::ylogscale, py::arg("base")=10)
+        .def("xlogscale", &ChemicalPlot::xlogscale, py::arg("base") = 10)
+        .def("ylogscale", &ChemicalPlot::ylogscale, py::arg("base") = 10)
         .def("frequency", &ChemicalPlot::frequency)
         .def("__lshift__", lshift, py::return_value_policy::reference_internal)
         .def("open", &ChemicalPlot::open)
-        .def("update", &ChemicalPlot::update)
-        ;
+        .def("update", &ChemicalPlot::update);
 
-//    exportstd_vector<ChemicalPlot>("ChemicalPlotVector");
+    //    exportstd_vector<ChemicalPlot>("ChemicalPlotVector");
 }
 
 } // namespace Reaktoro

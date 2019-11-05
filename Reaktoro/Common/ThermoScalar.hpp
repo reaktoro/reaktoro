@@ -43,7 +43,7 @@ using ThermoScalar = ThermoScalarBase<double>;
 template<typename V>
 class ThermoScalarBase
 {
-public:
+  public:
     /// The value of the thermodynamic property.
     V val;
 
@@ -55,24 +55,25 @@ public:
 
     /// Construct a default ThermoScalar instance
     ThermoScalarBase()
-    : ThermoScalarBase(0.0) {}
+        : ThermoScalarBase(0.0) {}
 
     /// Construct a custom ThermoScalarBase instance with given value only.
     /// @param val The value of the thermodynamic property
     explicit ThermoScalarBase(double val)
-    : ThermoScalarBase(val, 0.0, 0.0) {}
+        : ThermoScalarBase(val, 0.0, 0.0) {}
 
     /// Construct a custom ThermoScalarBase instance with given value and derivatives.
     /// @param val The value of the thermodynamic property
     /// @param ddT The partial temperature derivative of the thermodynamic property
     /// @param ddP The partial pressure derivative of the thermodynamic property
     ThermoScalarBase(const V& val, const V& ddT, const V& ddP)
-    : val(val), ddT(ddT), ddP(ddP) {}
+        : val(val), ddT(ddT), ddP(ddP) {}
 
     /// Construct a copy of a ThermoScalar instance.
     template<typename VR>
     ThermoScalarBase(const ThermoScalarBase<VR>& other)
-    : val(other.val), ddT(other.ddT), ddP(other.ddP) {}
+        : val(other.val), ddT(other.ddT), ddP(other.ddP)
+    {}
 
     /// Assign another ThermoScalarBase instance to this ThermoScalarBase instance.
     template<typename VR>
@@ -117,8 +118,8 @@ public:
     template<typename VR>
     auto operator*=(const ThermoScalarBase<VR>& other) -> ThermoScalarBase&
     {
-        ddT  = ddT * other.val + val * other.ddT;
-        ddP  = ddP * other.val + val * other.ddP;
+        ddT = ddT * other.val + val * other.ddT;
+        ddP = ddP * other.val + val * other.ddP;
         val *= other.val;
         return *this;
     }
@@ -127,10 +128,10 @@ public:
     template<typename VR>
     auto operator/=(const ThermoScalarBase<VR>& other) -> ThermoScalarBase&
     {
-        const double tmp1 = 1.0/other.val;
+        const double tmp1 = 1.0 / other.val;
         const double tmp2 = tmp1 * tmp1;
-        ddT  = (ddT * other.val - val * other.ddT) * tmp2;
-        ddP  = (ddP * other.val - val * other.ddP) * tmp2;
+        ddT = (ddT * other.val - val * other.ddT) * tmp2;
+        ddP = (ddP * other.val - val * other.ddP) * tmp2;
         val *= tmp1;
         return *this;
     }
@@ -161,7 +162,7 @@ public:
     /// Assign-division of a ThermoScalar instance
     auto operator/=(double other) -> ThermoScalarBase&
     {
-        *this *= 1.0/other;
+        *this *= 1.0 / other;
         return *this;
     }
 
@@ -175,12 +176,14 @@ public:
 /// A type that describes temperature in units of K
 class Temperature : public ThermoScalar
 {
-public:
+  public:
     /// Construct a default Temperature instance
-    Temperature() : Temperature(0.0) {}
+    Temperature()
+        : Temperature(0.0) {}
 
     /// Construct a Temperature instance with given value
-    Temperature(double val) : ThermoScalarBase(val, 1.0, 0.0) {}
+    Temperature(double val)
+        : ThermoScalarBase(val, 1.0, 0.0) {}
 
     /// Converts this Temperature instance into a double.
     operator double() const
@@ -192,12 +195,14 @@ public:
 /// A type that describes pressure in units of Pa
 class Pressure : public ThermoScalar
 {
-public:
+  public:
     /// Construct a default Pressure instance
-    Pressure() : Pressure(0.0) {}
+    Pressure()
+        : Pressure(0.0) {}
 
     /// Construct a Pressure instance with given value
-    Pressure(double val) : ThermoScalarBase(val, 0.0, 1.0) {}
+    Pressure(double val)
+        : ThermoScalarBase(val, 0.0, 1.0) {}
 
     /// Converts this Pressure instance into a double.
     operator double() const
@@ -275,7 +280,7 @@ auto operator*(const ThermoScalarBase<V>& l, double r) -> ThermoScalarBase<doubl
 template<typename VL, typename VR>
 auto operator/(const ThermoScalarBase<VL>& l, const ThermoScalarBase<VR>& r) -> ThermoScalarBase<double>
 {
-    const double tmp1 = 1.0/r.val;
+    const double tmp1 = 1.0 / r.val;
     const double tmp2 = tmp1 * tmp1;
     return {tmp1 * l.val, tmp2 * (l.ddT * r.val - l.val * r.ddT), tmp2 * (l.ddP * r.val - l.val * r.ddP)};
 }
@@ -283,15 +288,15 @@ auto operator/(const ThermoScalarBase<VL>& l, const ThermoScalarBase<VR>& r) -> 
 template<typename V>
 auto operator/(double l, const ThermoScalarBase<V>& r) -> ThermoScalarBase<double>
 {
-    const double tmp1 = 1.0/r.val;
-    const double tmp2 = -l*tmp1*tmp1;
+    const double tmp1 = 1.0 / r.val;
+    const double tmp2 = -l * tmp1 * tmp1;
     return {tmp1 * l, tmp2 * r.ddT, tmp2 * r.ddP};
 }
 
 template<typename V>
 auto operator/(const ThermoScalarBase<V>& l, double r) -> ThermoScalarBase<double>
 {
-    return (1.0/r) * l;
+    return (1.0 / r) * l;
 }
 
 template<typename VL, typename VR>
@@ -412,25 +417,28 @@ auto operator<<(std::ostream& out, const ThermoScalarBase<V>& scalar) -> std::os
 template<typename V>
 auto abs(const ThermoScalarBase<V>& l) -> ThermoScalarBase<double>
 {
-    if(l.val == 0.0) return {};
+    if(l.val == 0.0)
+        return {};
     const double tmp1 = std::abs(l.val);
-    const double tmp2 = l.val/tmp1;
+    const double tmp2 = l.val / tmp1;
     return {tmp1, tmp2 * l.ddT, tmp2 * l.ddP};
 }
 
 template<typename V>
 auto sqrt(const ThermoScalarBase<V>& l) -> ThermoScalarBase<double>
 {
-    if(l.val == 0.0) return {};
+    if(l.val == 0.0)
+        return {};
     const double tmp1 = std::sqrt(l.val);
-    const double tmp2 = 0.5 * tmp1/l.val;
+    const double tmp2 = 0.5 * tmp1 / l.val;
     return {tmp1, tmp2 * l.ddT, tmp2 * l.ddP};
 }
 
 template<typename V>
 auto pow(const ThermoScalarBase<V>& l, double power) -> ThermoScalarBase<double>
 {
-    if(l.val == 0.0) return {};
+    if(l.val == 0.0)
+        return {};
     const double tmp1 = std::pow(l.val, power - 1);
     const double tmp2 = power * tmp1;
     return {tmp1 * l.val, tmp2 * l.ddT, tmp2 * l.ddP};
@@ -439,10 +447,11 @@ auto pow(const ThermoScalarBase<V>& l, double power) -> ThermoScalarBase<double>
 template<typename VL, typename VR>
 auto pow(const ThermoScalarBase<VL>& l, const ThermoScalarBase<VR>& power) -> ThermoScalarBase<double>
 {
-    if(l.val == 0.0) return {};
+    if(l.val == 0.0)
+        return {};
     const double logl = std::log(l.val);
     const double powl = std::pow(l.val, power.val);
-    const double tmp = power.val/l.val;
+    const double tmp = power.val / l.val;
     return {powl, powl * (logl * power.ddT + tmp * l.ddT), powl * (logl * power.ddP + tmp * l.ddP)};
 }
 
@@ -457,7 +466,7 @@ template<typename V>
 auto log(const ThermoScalarBase<V>& l) -> ThermoScalarBase<double>
 {
     const double tmp1 = std::log(l.val);
-    const double tmp2 = 1.0/l.val;
+    const double tmp2 = 1.0 / l.val;
     return {tmp1, tmp2 * l.ddT, tmp2 * l.ddP};
 }
 
@@ -465,7 +474,7 @@ template<typename V>
 auto log10(const ThermoScalarBase<V>& l) -> ThermoScalarBase<double>
 {
     const double ln10 = 2.302585092994046;
-    return log(l)/ln10;
+    return log(l) / ln10;
 }
 
 } // namespace Reaktoro

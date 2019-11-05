@@ -18,10 +18,10 @@
 #pragma once
 
 // C++ includes
+#include <fstream>
 #include <map>
 #include <memory>
 #include <string>
-#include <fstream>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Json.hpp>
@@ -35,7 +35,7 @@ class ChemicalSystem;
 /// Used to interpret json files containing defined calculations.
 class Interpreter
 {
-public:
+  public:
     /// Construct a default Interpreter instance.
     Interpreter();
 
@@ -69,7 +69,7 @@ public:
     /// Return the saved chemical state with given reference name.
     auto state(std::string reference) -> const ChemicalState&;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

@@ -54,10 +54,9 @@ namespace Reaktoro {
 //private:
 //};
 
-
 class ChemicalField
 {
-public:
+  public:
     using Iterator = std::vector<ChemicalState>::iterator;
 
     using ConstIterator = std::vector<ChemicalState>::const_iterator;
@@ -90,16 +89,16 @@ public:
 
     auto output(std::string filename, StringList quantities) -> void;
 
-private:
+  private:
     /// The number of degrees of freedom in the chemical field.
     Index m_size;
 
-//    Vector temperatures;
-//
-//    Vector pressures;
-//
-//    /// The matrix of amounts for every element (
-//    Matrix element_amounts;
+    //    Vector temperatures;
+    //
+    //    Vector pressures;
+    //
+    //    /// The matrix of amounts for every element (
+    //    Matrix element_amounts;
 
     /// The chemical system common to all degrees of freedom in the chemical field.
     ChemicalSystem m_system;
@@ -117,10 +116,12 @@ private:
 ///                                                a[2][0], a[2][1], a[2][2]}
 class TridiagonalMatrix
 {
-public:
-    TridiagonalMatrix() : TridiagonalMatrix(0) {}
+  public:
+    TridiagonalMatrix()
+        : TridiagonalMatrix(0) {}
 
-    TridiagonalMatrix(Index size) : m_size(size), m_data(size * 3) {}
+    TridiagonalMatrix(Index size)
+        : m_size(size), m_data(size * 3) {}
 
     auto size() const -> Index { return m_size; }
 
@@ -158,7 +159,7 @@ public:
 
     operator Matrix() const;
 
-private:
+  private:
     /// The size of the tridiagonal matrix
     Index m_size;
 
@@ -169,7 +170,7 @@ private:
 /// A class that defines the mesh for TransportSolver.
 class Mesh
 {
-public:
+  public:
     Mesh();
 
     Mesh(Index num_cells, double xl = 0.0, double xr = 1.0);
@@ -186,7 +187,7 @@ public:
 
     auto xcells() const -> VectorConstRef { return m_xcells; }
 
-private:
+  private:
     /// The number of cells in the discretization.
     Index m_num_cells = 10;
 
@@ -210,7 +211,7 @@ private:
 ///     D - diffusion coefficient
 class TransportSolver
 {
-public:
+  public:
     /// Construct a default TransportSolver instance.
     TransportSolver();
 
@@ -251,7 +252,7 @@ public:
     /// @param[in,out] u The solution vector
     auto step(VectorRef u) -> void;
 
-private:
+  private:
     /// The mesh describing the discretization of the domain.
     Mesh mesh_;
 
@@ -280,7 +281,7 @@ private:
 /// Use this class for solving reactive transport problems.
 class ReactiveTransportSolver
 {
-public:
+  public:
     /// Construct a default ReactiveTransportSolver instance.
     ReactiveTransportSolver(const ChemicalSystem& system);
 
@@ -302,7 +303,7 @@ public:
 
     auto step(ChemicalField& field) -> void;
 
-private:
+  private:
     /// The chemical system common to all degrees of freedom in the chemical field.
     ChemicalSystem system_;
 

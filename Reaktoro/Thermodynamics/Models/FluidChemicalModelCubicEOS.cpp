@@ -36,8 +36,7 @@ auto fluidChemicalModelCubicEOS(
 
     // Get the the critical temperatures, pressures and acentric factors of the gases
     std::vector<double> Tc, Pc, omega;
-    for (FluidSpecies species : mixture.species())
-    {
+    for(FluidSpecies species : mixture.species()) {
         Tc.push_back(species.criticalTemperature());
         Pc.push_back(species.criticalPressure());
         omega.push_back(species.acentricFactor());
@@ -45,14 +44,13 @@ auto fluidChemicalModelCubicEOS(
 
     // Initialize the CubicEOS instance
     CubicEOS eos(nspecies, params);
-    if (phase_type == PhaseType::Liquid) {
+    if(phase_type == PhaseType::Liquid) {
         eos.setPhaseAsLiquid();
     } else {
         Assert(
             phase_type == PhaseType::Gas,
             "Logic error in fluidChemicalModelCubicEOS",
-            "phase_type should be Liquid or Gaseous, but is: " << (int) phase_type
-        );
+            "phase_type should be Liquid or Gaseous, but is: " << (int)phase_type);
         eos.setPhaseAsVapor();
     }
     eos.setCriticalTemperatures(Tc);
@@ -63,8 +61,7 @@ auto fluidChemicalModelCubicEOS(
     FluidMixtureState state;
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
-    {
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable {
         // Evaluate the state of the gaseous mixture
         state = mixture.state(T, P, n);
 

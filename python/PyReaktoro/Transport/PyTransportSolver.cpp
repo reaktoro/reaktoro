@@ -34,8 +34,7 @@ void exportMesh(py::module& m)
         .def("xl", &Mesh::xl)
         .def("xr", &Mesh::xr)
         .def("dx", &Mesh::dx)
-        .def("xcells", &Mesh::xcells, py::return_value_policy::reference_internal)
-        ;
+        .def("xcells", &Mesh::xcells, py::return_value_policy::reference_internal);
 }
 
 auto ChemicalField_setitem(ChemicalField& self, Index i, const ChemicalState& state) -> void
@@ -60,14 +59,13 @@ void exportChemicalField(py::module& m)
         .def("elementAmounts", &ChemicalField::elementAmounts)
         .def("output", &ChemicalField::output)
         .def("__setitem__", ChemicalField_setitem)
-        .def("__getitem__", ChemicalField_getitem, py::return_value_policy::reference_internal)
-        ;
+        .def("__getitem__", ChemicalField_getitem, py::return_value_policy::reference_internal);
 }
 
 void exportTransportSolver(py::module& m)
 {
-    auto step1 = static_cast<void(TransportSolver::*)(VectorRef, VectorConstRef)>(&TransportSolver::step);
-    auto step2 = static_cast<void(TransportSolver::*)(VectorRef)>(&TransportSolver::step);
+    auto step1 = static_cast<void (TransportSolver::*)(VectorRef, VectorConstRef)>(&TransportSolver::step);
+    auto step2 = static_cast<void (TransportSolver::*)(VectorRef)>(&TransportSolver::step);
 
     py::class_<TransportSolver>(m, "TransportSolver")
         .def(py::init<>())
@@ -79,8 +77,7 @@ void exportTransportSolver(py::module& m)
         .def("mesh", &TransportSolver::mesh, py::return_value_policy::reference_internal)
         .def("initialize", &TransportSolver::initialize)
         .def("step", step1)
-        .def("step", step2)
-        ;
+        .def("step", step2);
 }
 
 void exportReactiveTransportSolver(py::module& m)
@@ -95,8 +92,7 @@ void exportReactiveTransportSolver(py::module& m)
         .def("system", &ReactiveTransportSolver::system, py::return_value_policy::reference_internal)
         .def("output", &ReactiveTransportSolver::output)
         .def("initialize", &ReactiveTransportSolver::initialize)
-        .def("step", &ReactiveTransportSolver::step)
-        ;
+        .def("step", &ReactiveTransportSolver::step);
 }
 
 } // namespace Reaktoro

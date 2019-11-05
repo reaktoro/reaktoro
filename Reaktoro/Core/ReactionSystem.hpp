@@ -40,7 +40,7 @@ class Reaction;
 /// @ingroup Core
 class ReactionSystem
 {
-public:
+  public:
     /// Construct a default ReactionSystem instances
     ReactionSystem();
 
@@ -89,13 +89,12 @@ public:
     /// @param properties The thermodynamic properties of the system
     auto rates(const ChemicalProperties& properties) const -> ChemicalVector;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;
 };
 
 auto operator<<(std::ostream& out, const ReactionSystem& reactions) -> std::ostream&;
-
 
 } // namespace Reaktoro

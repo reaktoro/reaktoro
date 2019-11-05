@@ -18,8 +18,8 @@
 #pragma once
 
 // C++ includes
-#include <string>
 #include <memory>
+#include <string>
 
 // Reaktoro includes
 #include <Reaktoro/Common/ScalarTypes.hpp>
@@ -34,7 +34,7 @@ struct WaterThermoState;
 /// A type to calculate thermodynamic properties of chemical species
 class Thermo
 {
-public:
+  public:
     /// Construct a Thermo instance with given Database instance
     explicit Thermo(const Database& database);
 
@@ -149,7 +149,7 @@ public:
     /// @see WaterThermoState
     auto waterThermoStateWagnerPruss(double T, double P) -> WaterThermoState;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

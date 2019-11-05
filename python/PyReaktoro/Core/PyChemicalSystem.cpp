@@ -30,21 +30,21 @@ namespace Reaktoro {
 
 void exportChemicalSystem(py::module& m)
 {
-    auto element1 = static_cast<const Element&(ChemicalSystem::*)(Index) const>(&ChemicalSystem::element);
-    auto element2 = static_cast<const Element&(ChemicalSystem::*)(std::string) const>(&ChemicalSystem::element);
+    auto element1 = static_cast<const Element& (ChemicalSystem::*)(Index) const>(&ChemicalSystem::element);
+    auto element2 = static_cast<const Element& (ChemicalSystem::*)(std::string) const>(&ChemicalSystem::element);
 
-    auto species1 = static_cast<const std::vector<Species>&(ChemicalSystem::*)() const>(&ChemicalSystem::species);
-    auto species2 = static_cast<const Species&(ChemicalSystem::*)(Index) const>(&ChemicalSystem::species);
-    auto species3 = static_cast<const Species&(ChemicalSystem::*)(std::string) const>(&ChemicalSystem::species);
+    auto species1 = static_cast<const std::vector<Species>& (ChemicalSystem::*)() const>(&ChemicalSystem::species);
+    auto species2 = static_cast<const Species& (ChemicalSystem::*)(Index) const>(&ChemicalSystem::species);
+    auto species3 = static_cast<const Species& (ChemicalSystem::*)(std::string) const>(&ChemicalSystem::species);
 
-    auto phase1 = static_cast<const Phase&(ChemicalSystem::*)(Index) const>(&ChemicalSystem::phase);
-    auto phase2 = static_cast<const Phase&(ChemicalSystem::*)(std::string) const>(&ChemicalSystem::phase);
+    auto phase1 = static_cast<const Phase& (ChemicalSystem::*)(Index) const>(&ChemicalSystem::phase);
+    auto phase2 = static_cast<const Phase& (ChemicalSystem::*)(std::string) const>(&ChemicalSystem::phase);
 
-    auto indicesElementsInSpecies1 = static_cast<Indices(ChemicalSystem::*)(Index) const>(&ChemicalSystem::indicesElementsInSpecies);
-    auto indicesElementsInSpecies2 = static_cast<Indices(ChemicalSystem::*)(const Indices&) const>(&ChemicalSystem::indicesElementsInSpecies);
+    auto indicesElementsInSpecies1 = static_cast<Indices (ChemicalSystem::*)(Index) const>(&ChemicalSystem::indicesElementsInSpecies);
+    auto indicesElementsInSpecies2 = static_cast<Indices (ChemicalSystem::*)(const Indices&) const>(&ChemicalSystem::indicesElementsInSpecies);
 
-    auto properties1 = static_cast<ThermoProperties(ChemicalSystem::*)(double,double) const>(&ChemicalSystem::properties);
-    auto properties2 = static_cast<ChemicalProperties(ChemicalSystem::*)(double,double,VectorConstRef) const>(&ChemicalSystem::properties);
+    auto properties1 = static_cast<ThermoProperties (ChemicalSystem::*)(double, double) const>(&ChemicalSystem::properties);
+    auto properties2 = static_cast<ChemicalProperties (ChemicalSystem::*)(double, double, VectorConstRef) const>(&ChemicalSystem::properties);
 
     py::class_<ChemicalSystem>(m, "ChemicalSystem")
         .def(py::init<>())
@@ -98,8 +98,7 @@ void exportChemicalSystem(py::module& m)
         .def("elementAmountInSpecies", &ChemicalSystem::elementAmountInSpecies)
         .def("properties", properties1, py::keep_alive<1, 0>()) // keep returned ChemicalProperties object alive until ChemicalSystem object is garbage collected!
         .def("properties", properties2, py::keep_alive<1, 0>()) // keep returned ChemicalProperties object alive until ChemicalSystem object is garbage collected!
-        .def("__repr__", [](const ChemicalSystem& self) { std::stringstream ss; ss << self; return ss.str(); })
-        ;
+        .def("__repr__", [](const ChemicalSystem& self) { std::stringstream ss; ss << self; return ss.str(); });
 }
 
 } // namespace Reaktoro

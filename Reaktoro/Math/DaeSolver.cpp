@@ -64,13 +64,13 @@ struct DaeSolver::Impl
     {
         // Check if the ordinary differential problem has been initialized
         Assert(problem.initialized(),
-            "Cannot proceed with DaeSolver::initialize to initialize the solver.",
-            "The provided DaeProblem instance was not properly initialized.");
+               "Cannot proceed with DaeSolver::initialize to initialize the solver.",
+               "The provided DaeProblem instance was not properly initialized.");
 
         // Check if the dimension of 'y' matches the number of equations
         Assert(y.size() == problem.numEquations(),
-            "Cannot proceed with DaeSolver::initialize to initialize the solver.",
-            "The dimension of the vector parameter `y` does not match the number of equations.");
+               "Cannot proceed with DaeSolver::initialize to initialize the solver.",
+               "The dimension of the vector parameter `y` does not match the number of equations.");
     }
 
     /// Integrate the DAE performing a single step.
@@ -90,11 +90,11 @@ struct DaeSolver::Impl
 };
 
 DaeProblem::DaeProblem()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 DaeProblem::DaeProblem(const DaeProblem& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 DaeProblem::~DaeProblem()
@@ -152,11 +152,11 @@ auto DaeProblem::jacobian(double t, VectorConstRef y, VectorConstRef ydot, Matri
 }
 
 DaeSolver::DaeSolver()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 DaeSolver::DaeSolver(const DaeSolver& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 DaeSolver::~DaeSolver()

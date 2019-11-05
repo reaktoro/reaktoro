@@ -30,8 +30,8 @@ namespace Reaktoro {
 
 void exportReactionSystem(py::module& m)
 {
-    auto reaction1 = static_cast<const Reaction&(ReactionSystem::*)(Index) const>(&ReactionSystem::reaction);
-    auto reaction2 = static_cast<const Reaction&(ReactionSystem::*)(std::string) const>(&ReactionSystem::reaction);
+    auto reaction1 = static_cast<const Reaction& (ReactionSystem::*)(Index) const>(&ReactionSystem::reaction);
+    auto reaction2 = static_cast<const Reaction& (ReactionSystem::*)(std::string) const>(&ReactionSystem::reaction);
 
     py::class_<ReactionSystem>(m, "ReactionSystem")
         .def(py::init<>())
@@ -46,8 +46,7 @@ void exportReactionSystem(py::module& m)
         .def("system", &ReactionSystem::system, py::return_value_policy::reference_internal)
         .def("lnEquilibriumConstants", &ReactionSystem::lnEquilibriumConstants)
         .def("lnReactionQuotients", &ReactionSystem::lnReactionQuotients)
-        .def("rates", &ReactionSystem::rates)
-        ;
+        .def("rates", &ReactionSystem::rates);
 }
 
 } // namespace Reaktoro

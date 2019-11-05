@@ -24,9 +24,9 @@ namespace Reaktoro {
 
 void exportMineralMechanism(py::module& m)
 {
-    auto setCatalysts1 = static_cast<MineralMechanism&(MineralMechanism::*)(std::string)>(&MineralMechanism::setCatalysts);
-    auto setCatalysts2 = static_cast<MineralMechanism&(MineralMechanism::*)(const MineralCatalyst&)>(&MineralMechanism::setCatalysts);
-    auto setCatalysts3 = static_cast<MineralMechanism&(MineralMechanism::*)(const std::vector<MineralCatalyst>&)>(&MineralMechanism::setCatalysts);
+    auto setCatalysts1 = static_cast<MineralMechanism& (MineralMechanism::*)(std::string)>(&MineralMechanism::setCatalysts);
+    auto setCatalysts2 = static_cast<MineralMechanism& (MineralMechanism::*)(const MineralCatalyst&)>(&MineralMechanism::setCatalysts);
+    auto setCatalysts3 = static_cast<MineralMechanism& (MineralMechanism::*)(const std::vector<MineralCatalyst>&)>(&MineralMechanism::setCatalysts);
 
     py::class_<MineralMechanism>(m, "MineralMechanism")
         .def(py::init<>())
@@ -42,8 +42,7 @@ void exportMineralMechanism(py::module& m)
         .def_readwrite("Ea", &MineralMechanism::Ea)
         .def_readwrite("p", &MineralMechanism::p)
         .def_readwrite("q", &MineralMechanism::q)
-        .def_readwrite("catalysts", &MineralMechanism::catalysts)
-        ;
+        .def_readwrite("catalysts", &MineralMechanism::catalysts);
 }
 
 } // namespace Reaktoro

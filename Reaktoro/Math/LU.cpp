@@ -118,8 +118,7 @@ auto LU::solve(MatrixConstRef B) -> Matrix
     const Index k = B.cols();
     Matrix X = zeros(n, k);
 
-    auto solve_column = [&](Index icol)
-    {
+    auto solve_column = [&](Index icol) {
         auto xx = X.col(icol).segment(0, rank);
         xx = (P * B.col(icol)).segment(0, rank);
         xx = L.topLeftCorner(rank, rank).triangularView<Eigen::Lower>().solve(xx);
@@ -139,8 +138,7 @@ auto LU::trsolve(MatrixConstRef B) -> Matrix
     const Index k = B.cols();
     Matrix X = zeros(m, k);
 
-    auto trsolve_column = [&](Index icol)
-    {
+    auto trsolve_column = [&](Index icol) {
         const auto& indices = Q.indices();
         for(Index i = 0; i < rank; ++i)
             X.col(icol)[i] = B.col(icol)[indices[i]];

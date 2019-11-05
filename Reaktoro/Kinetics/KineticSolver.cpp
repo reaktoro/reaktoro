@@ -24,7 +24,6 @@ using namespace std::placeholders;
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -38,6 +37,7 @@ using namespace std::placeholders;
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticProblem.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
@@ -132,7 +132,7 @@ struct KineticSolver::Impl
     {}
 
     Impl(const ReactionSystem& reactions)
-    : reactions(reactions), system(reactions.system()), equilibrium(system)
+        : reactions(reactions), system(reactions.system()), equilibrium(system)
     {
         setPartition(Partition(system));
     }
@@ -206,8 +206,7 @@ struct KineticSolver::Impl
         const Vector n = state.speciesAmounts();
         auto old_source_fn = source_fn;
 
-        source_fn = [=](const ChemicalProperties& properties)
-        {
+        source_fn = [=](const ChemicalProperties& properties) {
             ChemicalVector q(num_species);
             q.val = n;
             if(old_source_fn)
@@ -226,13 +225,12 @@ struct KineticSolver::Impl
         ChemicalScalar phasevolume;
         ChemicalVector q(size);
 
-        source_fn = [=](const ChemicalProperties& properties) mutable
-        {
+        source_fn = [=](const ChemicalProperties& properties) mutable {
             const auto n = properties.composition();
             const auto np = rows(n, ifirst, size);
             auto qp = rows(q, ifirst, size);
             phasevolume = properties.phaseVolumes()[iphase];
-            qp = -volume*np/phasevolume;
+            qp = -volume * np / phasevolume;
             if(old_source_fn)
                 q += old_source_fn(properties);
             return q;
@@ -247,11 +245,10 @@ struct KineticSolver::Impl
         ChemicalScalar fluidvolume;
         ChemicalVector q;
 
-        source_fn = [=](const ChemicalProperties& properties) mutable
-        {
+        source_fn = [=](const ChemicalProperties& properties) mutable {
             const auto n = properties.composition();
             fluidvolume = properties.fluidVolume();
-            q = -volume*n/fluidvolume;
+            q = -volume * n / fluidvolume;
             rows(q, isolid_species).fill(0.0);
             if(old_source_fn)
                 q += old_source_fn(properties);
@@ -267,11 +264,10 @@ struct KineticSolver::Impl
         ChemicalScalar solidvolume;
         ChemicalVector q;
 
-        source_fn = [=](const ChemicalProperties& properties) mutable
-        {
+        source_fn = [=](const ChemicalProperties& properties) mutable {
             const auto n = properties.composition();
             solidvolume = properties.solidVolume();
-            q = -volume*n/solidvolume;
+            q = -volume * n / solidvolume;
             rows(q, ifluid_species).fill(0.0);
             if(old_source_fn)
                 q += old_source_fn(properties);
@@ -296,14 +292,12 @@ struct KineticSolver::Impl
         benk.tail(Nk) = nk;
 
         // Define the ODE function
-        ODEFunction ode_function = [&](double t, VectorConstRef u, VectorRef res)
-        {
+        ODEFunction ode_function = [&](double t, VectorConstRef u, VectorRef res) {
             return function(state, t, u, res);
         };
 
         // Define the jacobian of the ODE function
-        ODEJacobian ode_jacobian = [&](double t, VectorConstRef u, MatrixRef res)
-        {
+        ODEJacobian ode_jacobian = [&](double t, VectorConstRef u, MatrixRef res) {
             return jacobian(state, t, u, res);
         };
 
@@ -396,16 +390,15 @@ struct KineticSolver::Impl
         auto result = equilibrium.solve(state, T, P, be);
 
         // Check if the calculation failed, if so, use cold-start
-        if(!result.optimum.succeeded)
-        {
+        if(!result.optimum.succeeded) {
             state.setSpeciesAmounts(0.0);
             result = equilibrium.solve(state, T, P, be);
         }
 
         // Assert the equilibrium calculation did not fail
         Assert(result.optimum.succeeded,
-            "Could not calculate the rates of the species.",
-            "The equilibrium calculation failed.");
+               "Could not calculate the rates of the species.",
+               "The equilibrium calculation failed.");
 
         // Update the chemical properties of the system
         properties = state.properties();
@@ -417,8 +410,7 @@ struct KineticSolver::Impl
         res = A * r.val;
 
         // Add the function contribution from the source rates
-        if(source_fn)
-        {
+        if(source_fn) {
             // Evaluate the source function
             q = source_fn(properties);
 
@@ -448,8 +440,7 @@ struct KineticSolver::Impl
         res = A * drdu;
 
         // Add the Jacobian contribution from the source rates
-        if(source_fn)
-        {
+        if(source_fn) {
             // Extract the columns of the source rates derivatives w.r.t. the equilibrium and kinetic species
             dqdne = cols(q.ddn, ies);
             dqdnk = cols(q.ddn, iks);
@@ -469,11 +460,11 @@ struct KineticSolver::Impl
 };
 
 KineticSolver::KineticSolver()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 KineticSolver::KineticSolver(const ReactionSystem& reactions)
-: pimpl(new Impl(reactions))
+    : pimpl(new Impl(reactions))
 {}
 
 KineticSolver::~KineticSolver()

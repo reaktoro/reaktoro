@@ -40,59 +40,58 @@ auto defaultMasterSpecies(const Partition& partition) -> Indices
     const Index N = A.cols();
 
     // Return the number of species with a given element
-    auto num_species_with_element = [&](Index ielement)
-    {
+    auto num_species_with_element = [&](Index ielement) {
         Index count = 0;
         for(Index j = 0; j < N; ++j)
-            if(A(ielement, j) != 0) ++count;
+            if(A(ielement, j) != 0)
+                ++count;
         return count;
     };
 
     // Return the number of elements in a given species
-    auto num_elements_in_species = [&](Index ispecies)
-    {
+    auto num_elements_in_species = [&](Index ispecies) {
         Index count = 0;
         for(Index i = 0; i < E; ++i)
-            if(A(i, ispecies) != 0) ++count;
+            if(A(i, ispecies) != 0)
+                ++count;
         return count;
     };
 
     // Return the number of species that have at least one of the elements in a given species
-    auto species_elemental_weight = [&](Index ispecies)
-    {
+    auto species_elemental_weight = [&](Index ispecies) {
         Index weight = 0;
         for(Index i = 0; i < E; ++i)
-            if(A(i, ispecies) != 0) weight += num_species_with_element(i);
+            if(A(i, ispecies) != 0)
+                weight += num_species_with_element(i);
         return weight;
     };
 
     // Return the indices of the species with a given element
-    auto indices_species_with_element = [&](Index ielement)
-    {
+    auto indices_species_with_element = [&](Index ielement) {
         Indices indices;
         for(Index j = 0; j < N; ++j)
-            if(A(ielement, j) != 0) indices.push_back(j);
+            if(A(ielement, j) != 0)
+                indices.push_back(j);
         return indices;
     };
 
     // Return for each element a potential master species
-    auto master_species_for_element = [&](Index ielement)
-    {
+    auto master_species_for_element = [&](Index ielement) {
         Indices ispecies = indices_species_with_element(ielement);
         std::sort(ispecies.begin(), ispecies.end(),
-            [&](Index l, Index r) {
-                if(num_elements_in_species(l) > num_elements_in_species(r))
-                    return false;
-                if(num_elements_in_species(l) < num_elements_in_species(r))
-                    return true;
-                if(species_elemental_weight(l) < species_elemental_weight(r))
-                    return false;
-                if(species_elemental_weight(l) > species_elemental_weight(r))
-                    return true;
-                if(sum(abs(A.col(l))) < sum(abs(A.col(r))))
-                    return true;
-                return false;
-        });
+                  [&](Index l, Index r) {
+                      if(num_elements_in_species(l) > num_elements_in_species(r))
+                          return false;
+                      if(num_elements_in_species(l) < num_elements_in_species(r))
+                          return true;
+                      if(species_elemental_weight(l) < species_elemental_weight(r))
+                          return false;
+                      if(species_elemental_weight(l) > species_elemental_weight(r))
+                          return true;
+                      if(sum(abs(A.col(l))) < sum(abs(A.col(r))))
+                          return true;
+                      return false;
+                  });
 
         return ispecies.front();
     };
@@ -143,12 +142,12 @@ struct EquilibriumReactions::Impl
 
     // Construct a Impl instance with given system
     Impl(const ChemicalSystem& system)
-    : Impl(system, Partition(system))
+        : Impl(system, Partition(system))
     {}
 
     // Construct a Impl instance with given system and its partition
     Impl(const ChemicalSystem& system, const Partition& partition)
-    : system(system), partition(partition)
+        : system(system), partition(partition)
     {
         // Initialize the formula matrix of the equilibrium species
         Ae = partition.formulaMatrixEquilibriumPartition();
@@ -188,13 +187,14 @@ struct EquilibriumReactions::Impl
         Indices ispecies = system.indicesSpecies(species);
 
         // Convert the global indices to local indices (within the equilibrium partition)
-        for(Index& i : ispecies) i = index(i, iequilibrium);
+        for(Index& i : ispecies)
+            i = index(i, iequilibrium);
 
         // Assert all local indices are within bounds
         for(Index i = 0; i < ispecies.size(); ++i)
             Assert(ispecies[i] < iequilibrium.size(),
-                "Could not initialize the equilibrium reactions with given master species.",
-                "The master species `" + species[i] + "` is not present in the chemical system.");
+                   "Could not initialize the equilibrium reactions with given master species.",
+                   "The master species `" + species[i] + "` is not present in the chemical system.");
 
         // Finally set the master species
         setMasterSpecies(ispecies);
@@ -221,8 +221,10 @@ struct EquilibriumReactions::Impl
         isecondary = Indices(Q.indices().data() + r, Q.indices().data() + Q.size());
 
         // Convert local indices to global indices
-        for(Index& index : imaster) index = iequilibrium[index];
-        for(Index& index : isecondary) index = iequilibrium[index];
+        for(Index& index : imaster)
+            index = iequilibrium[index];
+        for(Index& index : isecondary)
+            index = iequilibrium[index];
 
         // Initialize the stoichiometric matrix
         const Index num_primary = imaster.size();
@@ -239,9 +241,9 @@ struct EquilibriumReactions::Impl
         cleanRationalNumbers(stoichiometric_matrix);
 
         // Initialize the system of cannonical equilibrium reactions
-        equations.clear(); equations.reserve(num_secondary);
-        for(Index i = 0; i < num_secondary; ++i)
-        {
+        equations.clear();
+        equations.reserve(num_secondary);
+        for(Index i = 0; i < num_secondary; ++i) {
             std::map<std::string, double> equation;
             for(Index j = 0; j < num_species; ++j)
                 if(stoichiometric_matrix(i, j) != 0)
@@ -252,18 +254,17 @@ struct EquilibriumReactions::Impl
 };
 
 EquilibriumReactions::EquilibriumReactions(const ChemicalSystem& system)
-: EquilibriumReactions(system, Partition(system))
+    : EquilibriumReactions(system, Partition(system))
 {
 }
 
 EquilibriumReactions::EquilibriumReactions(const ChemicalSystem& system, const Partition& partition)
-: pimpl(new Impl(system, partition))
+    : pimpl(new Impl(system, partition))
 {
-
 }
 
 EquilibriumReactions::EquilibriumReactions(const EquilibriumReactions& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {
 }
 
@@ -286,7 +287,6 @@ auto EquilibriumReactions::partition() const -> const Partition&
 {
     return pimpl->partition;
 }
-
 
 auto EquilibriumReactions::setMasterSpecies(Indices ispecies) -> void
 {

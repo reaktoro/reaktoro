@@ -23,7 +23,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
-
 #include <cctype>
 
 namespace Reaktoro {
@@ -58,8 +57,9 @@ auto alternativeChargedSpeciesNames(std::string name) -> std::vector<std::string
 
     // Check if the species has charge
     Assert(charge != 0, "Could not get an alternative charged species name.",
-        "The given species `" + name + "` is not charged or its name does not "
-        "follow the convention `H+`, `Ca++`, `HCO3-`, `SO4--`, and so forth.");
+           "The given species `" + name +
+               "` is not charged or its name does not "
+               "follow the convention `H+`, `Ca++`, `HCO3-`, `SO4--`, and so forth.");
 
     // Create alternative names for the given charged species
     std::vector<std::string> alternatives;
@@ -130,12 +130,11 @@ auto splitChargedSpeciesName(std::string name) -> std::pair<std::string, double>
     const std::string base = name.substr(0, mid);
 
     // Check if the charged species name is of the form Ca[2+], H[+], Cl[-]
-    if(name[mid] == '[')
-    {
+    if(name[mid] == '[') {
         const auto pos1 = mid;
         const auto pos2 = name.find(']', pos1);
         Assert(pos2 != std::string::npos, "Could not parse the species name `" + name + "`.",
-            "The species name is missing the closing bracket `]`");
+               "The species name is missing the closing bracket `]`");
         const std::string inside = name.substr(pos1 + 1, pos2 - pos1 - 1);
         const char sign = name[pos2 - 1];
         const std::string numb = inside.size() > 1 ? inside.substr(0, inside.size() - 1) : "1";
@@ -143,21 +142,19 @@ auto splitChargedSpeciesName(std::string name) -> std::pair<std::string, double>
         return {base, charge};
     }
     // Check if the charged species name is of the form Cl-, CO3--, SO4--, Ca++, Na+, H+
-    if((name[mid] == '-' || name[mid] == '+') && name.back() == name[mid])
-    {
+    if((name[mid] == '-' || name[mid] == '+') && name.back() == name[mid]) {
         const int abscharge = name.size() - mid;
         const int charge = name[mid] == '-' ? -abscharge : +abscharge;
         return {base, charge};
     }
     // Check if the charged species name is of the form Cl-, CO3--, SO4--
-    if((name[mid] == '-' || name[mid] == '+') && std::isdigit(name.back()))
-    {
+    if((name[mid] == '-' || name[mid] == '+') && std::isdigit(name.back())) {
         const int charge = std::stoi(name.substr(mid));
         return {base, charge};
     }
 
     RuntimeError("Could not parse the species name `" + name + "`.",
-        "The species name has no recognized format such as Ca++, Ca+2, or Ca[2+].");
+                 "The species name has no recognized format such as Ca++, Ca+2, or Ca[2+].");
 }
 
 auto baseNameChargedSpecies(std::string name) -> std::string
@@ -169,15 +166,18 @@ auto baseNameNeutralSpecies(std::string name) -> std::string
 {
     // Check the convention CO2(aq), CaCO3(aq)
     auto pos = name.find("(aq)");
-    if(pos < name.size()) return name.substr(0, pos);
+    if(pos < name.size())
+        return name.substr(0, pos);
 
     // Check the convention CO2@, CaCO3@
     pos = name.find("@");
-    if(pos < name.size()) return name.substr(0, pos);
+    if(pos < name.size())
+        return name.substr(0, pos);
 
     // Check the convention CO2,aq, CaCO3,aq
     pos = name.find(",aq");
-    if(pos < name.size()) return name.substr(0, pos);
+    if(pos < name.size())
+        return name.substr(0, pos);
 
     // Cover the case where no suffix is used or the used suffix is unrecognized
     return name;

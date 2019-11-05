@@ -131,7 +131,7 @@ struct EquilibriumSolver::Impl
 
     /// Construct a Impl instance with given Partition
     Impl(const Partition& partition)
-    : system(partition.system()), properties(partition.system())
+        : system(partition.system()), properties(partition.system())
     {
         // Initialize the formula matrix
         A = system.formulaMatrix();
@@ -184,8 +184,7 @@ struct EquilibriumSolver::Impl
         optimum_options.ipactive.epsilon = options.epsilon;
 
         // Initialize the names of the primal and dual variables
-        if(options.optimum.output.active)
-        {
+        if(options.optimum.output.active) {
             // Use `n` instead of `x` to name the variables
             optimum_options.output.xprefix = "n";
 
@@ -211,9 +210,9 @@ struct EquilibriumSolver::Impl
     auto updateOptimumProblem(const ChemicalState& state) -> void
     {
         // The temperature and pressure of the equilibrium calculation
-        const auto T  = state.temperature();
-        const auto P  = state.pressure();
-        const auto RT = universalGasConstant*T;
+        const auto T = state.temperature();
+        const auto P = state.pressure();
+        const auto RT = universalGasConstant * T;
 
         // Set the molar amounts of the species
         n = state.speciesAmounts();
@@ -222,14 +221,13 @@ struct EquilibriumSolver::Impl
         properties.update(T, P);
 
         // Update the normalized standard Gibbs energies of the species
-        u0 = properties.standardPartialMolarGibbsEnergies()/RT;
+        u0 = properties.standardPartialMolarGibbsEnergies() / RT;
 
         // The result of the objective evaluation
         ObjectiveResult res;
 
         // The Gibbs energy function to be minimized
-        optimum_problem.objective = [=](VectorConstRef ne) mutable
-        {
+        optimum_problem.objective = [=](VectorConstRef ne) mutable {
             // Set the molar amounts of the species
             n(ies) = ne;
 
@@ -250,8 +248,7 @@ struct EquilibriumSolver::Impl
             res.grad = ue.val;
 
             // Set the Hessian of the objective function
-            switch(options.hessian)
-            {
+            switch(options.hessian) {
             case GibbsHessian::Exact:
                 res.hessian.mode = Hessian::Dense;
                 res.hessian.dense = ue.ddn;
@@ -266,7 +263,7 @@ struct EquilibriumSolver::Impl
                 break;
             case GibbsHessian::ApproximationDiagonal:
                 res.hessian.mode = Hessian::Diagonal;
-                res.hessian.diagonal = diagonal(xe.ddn)/xe.val;
+                res.hessian.diagonal = diagonal(xe.ddn) / xe.val;
                 break;
             }
 
@@ -284,17 +281,17 @@ struct EquilibriumSolver::Impl
     auto updateOptimumState(const ChemicalState& state) -> void
     {
         // The temperature and the RT factor
-        const double T  = state.temperature();
-        const double RT = universalGasConstant*T;
+        const double T = state.temperature();
+        const double RT = universalGasConstant * T;
 
         // Set the molar amounts of the species
         n = state.speciesAmounts();
 
         // Set the normalized dual potentials of the elements
-        y = state.elementDualPotentials()/RT;
+        y = state.elementDualPotentials() / RT;
 
         // Set the normalized dual potentials of the species
-        z = state.speciesDualPotentials()/RT;
+        z = state.speciesDualPotentials() / RT;
 
         // Initialize the optimum state
         optimum_state.x = n(ies);
@@ -306,8 +303,8 @@ struct EquilibriumSolver::Impl
     auto updateChemicalState(ChemicalState& state) -> void
     {
         // The temperature and the RT factor
-        const double T  = state.temperature();
-        const double RT = universalGasConstant*T;
+        const double T = state.temperature();
+        const double RT = universalGasConstant * T;
 
         // Update the molar amounts of the equilibrium species
         n(ies) = optimum_state.x;
@@ -316,7 +313,8 @@ struct EquilibriumSolver::Impl
         ui = u.val(iis);
 
         // Update the normalized dual potentials of the elements
-        y = zeros(E); y(iee) = optimum_state.y;
+        y = zeros(E);
+        y(iee) = optimum_state.y;
 
         // Update the normalized dual potentials of the equilibrium and inert species
         z(ies) = optimum_state.z;
@@ -344,17 +342,17 @@ struct EquilibriumSolver::Impl
     {
         // Check the dimension of the vector `be`
         Assert(unsigned(be.rows()) == Ee,
-            "Cannot proceed with method EquilibriumSolver::approximate.",
-            "The dimension of the given vector of molar amounts of the "
-            "elements does not match the number of elements in the "
-            "equilibrium partition.");
+               "Cannot proceed with method EquilibriumSolver::approximate.",
+               "The dimension of the given vector of molar amounts of the "
+               "elements does not match the number of elements in the "
+               "equilibrium partition.");
 
         // Set temperature and pressure of the chemical state
         state.setTemperature(T);
         state.setPressure(P);
 
         // Auxiliary variables
-        const double RT = universalGasConstant*T;
+        const double RT = universalGasConstant * T;
         const double inf = std::numeric_limits<double>::infinity();
 
         // Update the internal state of n, y, z
@@ -374,7 +372,7 @@ struct EquilibriumSolver::Impl
         // Define the optimisation problem
         OptimumProblem optimum_problem;
         optimum_problem.n = Ne;
-        optimum_problem.c = ge0/RT + ln_ce;
+        optimum_problem.c = ge0 / RT + ln_ce;
         optimum_problem.A = Ae;
         optimum_problem.b = be;
         optimum_problem.l = zeros(Ne);
@@ -399,8 +397,10 @@ struct EquilibriumSolver::Impl
         n(ies) = optimum_state.x;
 
         // Update the dual potentials of the species and elements (in units of J/mol)
-        z = zeros(N); z(ies) = optimum_state.z * RT;
-        y = zeros(E); y(iee) = optimum_state.y * RT;
+        z = zeros(N);
+        z(ies) = optimum_state.z * RT;
+        y = zeros(E);
+        y(iee) = optimum_state.y * RT;
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
@@ -418,9 +418,9 @@ struct EquilibriumSolver::Impl
 
         // Check the approximate calculation was successful
         Assert(result.optimum.succeeded,
-            "Cannot proceed with the equilibrium calculation.",
-            "The calculation of initial guess failed, most "
-            "probably because no feasible solution exists.");
+               "Cannot proceed with the equilibrium calculation.",
+               "The calculation of initial guess failed, most "
+               "probably because no feasible solution exists.");
 
         // Preserve the values of n that are greater than z. For all others, set n to sqrt(epsilon)
         n = (n.array() > z.array()).select(n, std::sqrt(options.epsilon));
@@ -441,8 +441,10 @@ struct EquilibriumSolver::Impl
         // Check if all equilibrium species have zero amounts
         bool zero = true;
         for(Index i : ies)
-            if(state.speciesAmount(i) > 0)
-                { zero = false; break; }
+            if(state.speciesAmount(i) > 0) {
+                zero = false;
+                break;
+            }
         return zero || !options.warmstart;
     }
 
@@ -458,10 +460,10 @@ struct EquilibriumSolver::Impl
     {
         // Check the dimension of the vector `be`
         Assert(be.size() == static_cast<int>(Ee),
-            "Cannot proceed with method EquilibriumSolver::solve.",
-            "The dimension of the given vector of molar amounts of the "
-            "elements does not match the number of elements in the "
-            "equilibrium partition.");
+               "Cannot proceed with method EquilibriumSolver::solve.",
+               "The dimension of the given vector of molar amounts of the "
+               "elements does not match the number of elements in the "
+               "equilibrium partition.");
         return solve(state, T, P, be.data());
     }
 
@@ -499,8 +501,7 @@ struct EquilibriumSolver::Impl
 
         // Start the several opmization passes (stop if convergence attained)
         auto counter = 0;
-        while(counter < options.optimum.max_iterations)
-        {
+        while(counter < options.optimum.max_iterations) {
             // Solve the optimisation problem
             result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
 
@@ -530,8 +531,7 @@ struct EquilibriumSolver::Impl
 
         sensitivities.dndT = solver.dxdp(ue.ddT, zerosEe);
         sensitivities.dndP = solver.dxdp(ue.ddP, zerosEe);
-        for(Index j = 0; j < Ee; ++j)
-        {
+        for(Index j = 0; j < Ee; ++j) {
             unitjEe = unit(Ee, j);
             sensitivities.dndb.col(j) = solver.dxdp(zerosNe, unitjEe);
         }
@@ -568,8 +568,7 @@ struct EquilibriumSolver::Impl
         zerosNe = zeros(Ne);
         unitjEe = zeros(Ee);
         sensitivities.dndb = zeros(Ne, Ee);
-        for(Index j : ieq_elements)
-        {
+        for(Index j : ieq_elements) {
             unitjEe = unit(Ee, j);
             sensitivities.dndb.col(j)(ieq_species) = solver.dxdp(zerosNe, unitjEe);
         }
@@ -578,19 +577,19 @@ struct EquilibriumSolver::Impl
 };
 
 EquilibriumSolver::EquilibriumSolver()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 EquilibriumSolver::EquilibriumSolver(const ChemicalSystem& system)
-: pimpl(new Impl(Partition(system)))
+    : pimpl(new Impl(Partition(system)))
 {}
 
 EquilibriumSolver::EquilibriumSolver(const Partition& partition)
-: pimpl(new Impl(partition))
+    : pimpl(new Impl(partition))
 {}
 
 EquilibriumSolver::EquilibriumSolver(const EquilibriumSolver& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 EquilibriumSolver::~EquilibriumSolver()

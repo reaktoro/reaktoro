@@ -18,8 +18,8 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -33,20 +33,20 @@ class ThermoVectorBase;
 /// not only holds the values of the thermo properties, but also their
 /// partial temperature and pressure derivatives.
 /// @see ThermoScalar, ChemicalScalar, ChemicalVector
-using ThermoVector = ThermoVectorBase<Vector,Vector,Vector>;
+using ThermoVector = ThermoVectorBase<Vector, Vector, Vector>;
 
 /// A type that defines a vector of thermodynamic properties.
-using ThermoVectorRef = ThermoVectorBase<VectorRef,VectorRef,VectorRef>;
+using ThermoVectorRef = ThermoVectorBase<VectorRef, VectorRef, VectorRef>;
 
 /// A type that defines a vector of thermodynamic properties.
-using ThermoVectorConstRef = ThermoVectorBase<VectorConstRef,VectorConstRef,VectorConstRef>;
+using ThermoVectorConstRef = ThermoVectorBase<VectorConstRef, VectorConstRef, VectorConstRef>;
 
 /// A template base class to represent a vector of thermodynamic scalars and their partial derivatives.
 /// @see ThermoScalar, ThermoVector, ChemicalScalar, ChemicalVector
 template<typename V, typename T, typename P>
 class ThermoVectorBase
 {
-public:
+  public:
     /// The vector of values of the thermodynamic properties.
     V val;
 
@@ -63,31 +63,31 @@ public:
     /// Construct a ThermoVectorBase instance with given number of rows.
     /// @param nrows The number of rows in the thermo vector
     explicit ThermoVectorBase(Index nrows)
-    : ThermoVectorBase(zeros(nrows), zeros(nrows), zeros(nrows)) {}
+        : ThermoVectorBase(zeros(nrows), zeros(nrows), zeros(nrows)) {}
 
     /// Construct a ThermoVectorBase instance with given number of rows and value.
     /// @param nrows The number of rows in the thermo vector
     /// @param val The constant value
     ThermoVectorBase(Index nrows, double val)
-    : ThermoVectorBase(constants(nrows, val), zeros(nrows), zeros(nrows)) {}
+        : ThermoVectorBase(constants(nrows, val), zeros(nrows), zeros(nrows)) {}
 
     /// Construct a ChemicalVectorBase instance with given values and derivatives.
     /// @param val The vector of values of the thermo scalars
     /// @param ddT The vector of partial temperature derivatives of the thermo scalars
     /// @param ddP The vector of partial pressure derivatives of the thermo scalars
     ThermoVectorBase(const V& val, const T& ddT, const P& ddP)
-    : val(val), ddT(ddT), ddP(ddP) {}
+        : val(val), ddT(ddT), ddP(ddP) {}
 
     /// Construct a ChemicalVectorBase instance from another.
     template<typename VR, typename TR, typename PR>
-    ThermoVectorBase(ThermoVectorBase<VR,TR,PR>& other)
-    : val(other.val), ddT(other.ddT), ddP(other.ddP)
+    ThermoVectorBase(ThermoVectorBase<VR, TR, PR>& other)
+        : val(other.val), ddT(other.ddT), ddP(other.ddP)
     {}
 
     /// Construct a ChemicalVectorBase instance from another.
     template<typename VR, typename TR, typename PR>
-    ThermoVectorBase(const ThermoVectorBase<VR,TR,PR>& other)
-    : val(other.val), ddT(other.ddT), ddP(other.ddP)
+    ThermoVectorBase(const ThermoVectorBase<VR, TR, PR>& other)
+        : val(other.val), ddT(other.ddT), ddP(other.ddP)
     {}
 
     /// Return the number of rows in this ChemicalVectorBase instance.
@@ -116,15 +116,15 @@ public:
 
     /// Assign a scalarsto this.
     auto fill(double value) -> void
-	{
-    	val.fill(value);
-    	ddT.fill(0.0);
-    	ddP.fill(0.0);
-	}
+    {
+        val.fill(value);
+        ddT.fill(0.0);
+        ddP.fill(0.0);
+    }
 
     /// Assign a ThermoVectorBase instance to this ThermoVectorBase instance.
     template<typename VR, typename TR, typename PR>
-    auto operator=(const ThermoVectorBase<VR,TR,PR>& other) -> ThermoVectorBase&
+    auto operator=(const ThermoVectorBase<VR, TR, PR>& other) -> ThermoVectorBase&
     {
         val = other.val;
         ddT = other.ddT;
@@ -153,7 +153,7 @@ public:
 
     /// Assign-addition of a ThermoVectorBase instance.
     template<typename VR, typename TR, typename PR>
-    auto operator+=(const ThermoVectorBase<VR,TR,PR>& other) -> ThermoVectorBase&
+    auto operator+=(const ThermoVectorBase<VR, TR, PR>& other) -> ThermoVectorBase&
     {
         val += other.val;
         ddT += other.ddT;
@@ -180,7 +180,7 @@ public:
 
     /// Assign-subtraction of a ThermoVectorBase instance.
     template<typename VR, typename TR, typename PR>
-    auto operator-=(const ThermoVectorBase<VR,TR,PR>& other) -> ThermoVectorBase&
+    auto operator-=(const ThermoVectorBase<VR, TR, PR>& other) -> ThermoVectorBase&
     {
         val -= other.val;
         ddT -= other.ddT;
@@ -207,7 +207,7 @@ public:
 
     /// Assign-multiplication of a ThermoVectorBase instance.
     template<typename VR, typename TR, typename PR>
-    auto operator*=(const ThermoVectorBase<VR,TR,PR>& other) -> ThermoVectorBase&
+    auto operator*=(const ThermoVectorBase<VR, TR, PR>& other) -> ThermoVectorBase&
     {
         ddT = diag(ddT) * other.val + diag(val) * other.ddT;
         ddP = diag(ddP) * other.val + diag(val) * other.ddP;
@@ -227,7 +227,7 @@ public:
     /// Assign-division of a ThermoVectorBase instance.
     auto operator/=(double scalar) -> ThermoVectorBase&
     {
-        *this *= 1.0/scalar;
+        *this *= 1.0 / scalar;
         return *this;
     }
 
@@ -268,7 +268,7 @@ public:
 
 /// Return a ThermoVectorBase expression representing zeros with same dimension of given vector.
 template<typename V, typename T, typename P>
-auto zeros(const ThermoVectorBase<V,T,P>& v) -> ThermoVectorBase<decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0))>
+auto zeros(const ThermoVectorBase<V, T, P>& v) -> ThermoVectorBase<decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0))>
 {
     const Index n = v.size();
     return {zeros(n), zeros(n), zeros(n)};
@@ -276,93 +276,93 @@ auto zeros(const ThermoVectorBase<V,T,P>& v) -> ThermoVectorBase<decltype(zeros(
 
 /// Return a ThermoVectorBase expression representing ones with same dimension of given vector.
 template<typename V, typename T, typename P>
-auto ones(const ThermoVectorBase<V,T,P>& v) -> ThermoVectorBase<decltype(ones(0)), decltype(zeros(0)), decltype(zeros(0))>
+auto ones(const ThermoVectorBase<V, T, P>& v) -> ThermoVectorBase<decltype(ones(0)), decltype(zeros(0)), decltype(zeros(0))>
 {
     const Index n = v.size();
     return {ones(n), zeros(n), zeros(n)};
 }
 
 template<typename V, typename T, typename P>
-auto operator<<(std::ostream& out, const ThermoVectorBase<V,T,P>& a) -> std::ostream&
+auto operator<<(std::ostream& out, const ThermoVectorBase<V, T, P>& a) -> std::ostream&
 {
     out << a.val;
     return out;
 }
 
 template<typename V, typename T, typename P>
-auto operator+(const ThermoVectorBase<V,T,P>& l) -> ThermoVectorBase<V,T,P>
+auto operator+(const ThermoVectorBase<V, T, P>& l) -> ThermoVectorBase<V, T, P>
 {
     return l;
 }
 
 template<typename V, typename T, typename P>
-auto operator-(const ThermoVectorBase<V,T,P>& l) -> ThermoVectorBase<decltype(-l.val), decltype(-l.ddT), decltype(-l.ddP)>
+auto operator-(const ThermoVectorBase<V, T, P>& l) -> ThermoVectorBase<decltype(-l.val), decltype(-l.ddT), decltype(-l.ddP)>
 {
     return {-l.val, -l.ddT, -l.ddP};
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator+(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> ThermoVectorBase<decltype(l.val + r.val), decltype(l.ddT + r.ddT), decltype(l.ddP + r.ddP)>
+auto operator+(const ThermoVectorBase<VL, TL, PL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> ThermoVectorBase<decltype(l.val + r.val), decltype(l.ddT + r.ddT), decltype(l.ddP + r.ddP)>
 {
     return {l.val + r.val, l.ddT + r.ddT, l.ddP + r.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto operator+(const ThermoVectorBase<V,T,P>& l, VectorConstRef r) -> ThermoVectorBase<decltype(l.val + r),T,P>
+auto operator+(const ThermoVectorBase<V, T, P>& l, VectorConstRef r) -> ThermoVectorBase<decltype(l.val + r), T, P>
 {
     return {l.val + r, l.ddT, l.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto operator+(VectorConstRef l, const ThermoVectorBase<V,T,P>& r) -> decltype(r + l)
+auto operator+(VectorConstRef l, const ThermoVectorBase<V, T, P>& r) -> decltype(r + l)
 {
     return r + l;
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator-(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> ThermoVectorBase<decltype(l.val - r.val), decltype(l.ddT - r.ddT), decltype(l.ddP - r.ddP)>
+auto operator-(const ThermoVectorBase<VL, TL, PL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> ThermoVectorBase<decltype(l.val - r.val), decltype(l.ddT - r.ddT), decltype(l.ddP - r.ddP)>
 {
     return {l.val - r.val, l.ddT - r.ddT, l.ddP - r.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto operator-(const ThermoVectorBase<V,T,P>& l, VectorConstRef r) -> ThermoVectorBase<decltype(l.val - r),T,P>
+auto operator-(const ThermoVectorBase<V, T, P>& l, VectorConstRef r) -> ThermoVectorBase<decltype(l.val - r), T, P>
 {
     return {l.val - r, l.ddT, l.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto operator-(VectorConstRef l, const ThermoVectorBase<V,T,P>& r) -> decltype(-(r - l))
+auto operator-(VectorConstRef l, const ThermoVectorBase<V, T, P>& r) -> decltype(-(r - l))
 {
     return -(r - l);
 }
 
 template<typename V, typename T, typename P>
-auto operator*(double l, const ThermoVectorBase<V,T,P>& r) -> ThermoVectorBase<decltype(l * r.val), decltype(l * r.ddT), decltype(l * r.ddP)>
+auto operator*(double l, const ThermoVectorBase<V, T, P>& r) -> ThermoVectorBase<decltype(l * r.val), decltype(l * r.ddT), decltype(l * r.ddP)>
 {
     return {l * r.val, l * r.ddT, l * r.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto operator*(const ThermoVectorBase<V,T,P>& l, double r) -> decltype(r * l)
+auto operator*(const ThermoVectorBase<V, T, P>& l, double r) -> decltype(r * l)
 {
     return r * l;
 }
 
 template<typename VL, typename V, typename T, typename P>
-auto operator*(const ThermoScalarBase<VL>& l, const ThermoVectorBase<V,T,P>& r) -> ThermoVectorBase<decltype(l.val * r.val), decltype(l.val * r.ddT + l.ddT * r.val), decltype(l.val * r.ddP + l.ddP * r.val)>
+auto operator*(const ThermoScalarBase<VL>& l, const ThermoVectorBase<V, T, P>& r) -> ThermoVectorBase<decltype(l.val * r.val), decltype(l.val * r.ddT + l.ddT * r.val), decltype(l.val * r.ddP + l.ddP * r.val)>
 {
     return {l.val * r.val, l.val * r.ddT + l.ddT * r.val, l.val * r.ddP + l.ddP * r.val};
 }
 
 template<typename V, typename T, typename P, typename VR>
-auto operator*(const ThermoVectorBase<V,T,P>& l, const ThermoScalarBase<VR>& r) -> decltype(r * l)
+auto operator*(const ThermoVectorBase<V, T, P>& l, const ThermoScalarBase<VR>& r) -> decltype(r * l)
 {
     return r * l;
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator%(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> ThermoVectorBase<decltype(diag(l.val) * r.val), decltype(diag(l.val) * r.ddT + diag(r.val) * l.ddT), decltype(diag(l.val) * r.ddP + diag(r.val) * l.ddP)>
+auto operator%(const ThermoVectorBase<VL, TL, PL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> ThermoVectorBase<decltype(diag(l.val) * r.val), decltype(diag(l.val) * r.ddT + diag(r.val) * l.ddT), decltype(diag(l.val) * r.ddP + diag(r.val) * l.ddP)>
 {
     return {diag(l.val) * r.val,
             diag(l.val) * r.ddT + diag(r.val) * l.ddT,
@@ -370,7 +370,7 @@ auto operator%(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR
 }
 
 template<typename V, typename T, typename P>
-auto operator%(VectorConstRef l, const ThermoVectorBase<V,T,P>& r) -> ThermoVectorBase<decltype(diag(l) * r.val), decltype(diag(l) * r.ddT), decltype(diag(l) * r.ddP)>
+auto operator%(VectorConstRef l, const ThermoVectorBase<V, T, P>& r) -> ThermoVectorBase<decltype(diag(l) * r.val), decltype(diag(l) * r.ddT), decltype(diag(l) * r.ddP)>
 {
     return {diag(l) * r.val,
             diag(l) * r.ddT,
@@ -378,156 +378,156 @@ auto operator%(VectorConstRef l, const ThermoVectorBase<V,T,P>& r) -> ThermoVect
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator%(const ThermoVectorBase<VL,TL,PL>& l, VectorConstRef r) -> decltype(r % l)
+auto operator%(const ThermoVectorBase<VL, TL, PL>& l, VectorConstRef r) -> decltype(r % l)
 {
     return r % l;
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator/(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> ThermoVector
+auto operator/(const ThermoVectorBase<VL, TL, PL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> ThermoVector
 {
-    const Vector tmp = 1.0/(r.val % r.val);
-    return {l.val/r.val,
+    const Vector tmp = 1.0 / (r.val % r.val);
+    return {l.val / r.val,
             diag(tmp) * (diag(r.val) * l.ddT - diag(l.val) * r.ddT),
             diag(tmp) * (diag(r.val) * l.ddP - diag(l.val) * r.ddP)};
 }
 
 template<typename V, typename T, typename P, typename VR>
-auto operator/(const ThermoVectorBase<V,T,P>& l, const ThermoScalarBase<VR>& r) -> ThermoVectorBase<decltype(l.val/r.val), decltype(double() * (l.ddT * r.val - l.val * r.ddT)), decltype(double() * (l.ddP * r.val - l.val * r.ddP))>
+auto operator/(const ThermoVectorBase<V, T, P>& l, const ThermoScalarBase<VR>& r) -> ThermoVectorBase<decltype(l.val / r.val), decltype(double() * (l.ddT * r.val - l.val * r.ddT)), decltype(double() * (l.ddP * r.val - l.val * r.ddP))>
 {
-    const double tmp = 1.0/(r.val * r.val);
-    return {l.val/r.val, tmp * (l.ddT * r.val - l.val * r.ddT), tmp * (l.ddP * r.val - l.val * r.ddP)};
+    const double tmp = 1.0 / (r.val * r.val);
+    return {l.val / r.val, tmp * (l.ddT * r.val - l.val * r.ddT), tmp * (l.ddP * r.val - l.val * r.ddP)};
 }
 
 template<typename V, typename T, typename P>
-auto operator/(const ThermoVectorBase<V,T,P>& l, double r) -> decltype((1.0/r) * l)
+auto operator/(const ThermoVectorBase<V, T, P>& l, double r) -> decltype((1.0 / r) * l)
 {
-    return (1.0/r) * l;
+    return (1.0 / r) * l;
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator<(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> bool
+auto operator<(const ThermoVectorBase<VL, TL, PL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> bool
 {
     return l.val < r.val;
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator<=(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> bool
+auto operator<=(const ThermoVectorBase<VL, TL, PL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> bool
 {
     return l.val <= r.val;
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator>(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> bool
+auto operator>(const ThermoVectorBase<VL, TL, PL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> bool
 {
     return l.val > r.val;
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator>=(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> bool
+auto operator>=(const ThermoVectorBase<VL, TL, PL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> bool
 {
     return l.val >= r.val;
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator==(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> bool
+auto operator==(const ThermoVectorBase<VL, TL, PL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> bool
 {
     return l.val == r.val;
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator!=(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> bool
+auto operator!=(const ThermoVectorBase<VL, TL, PL>& l, const ThermoVectorBase<VR, TR, PR>& r) -> bool
 {
     return l.val == r.val;
 }
 
 /// Return a reference of a row of this ThermoVectorBase instance.
 template<typename V, typename T, typename P>
-auto row(ThermoVectorBase<V,T,P>& vec, Index irow) -> ThermoScalarBase<decltype(vec.val[irow])>
+auto row(ThermoVectorBase<V, T, P>& vec, Index irow) -> ThermoScalarBase<decltype(vec.val[irow])>
 {
     return {vec.val[irow], vec.ddT[irow], vec.ddP[irow]};
 }
 
 /// Return a const reference of a row of this ThermoVectorBase instance.
 template<typename V, typename T, typename P>
-auto row(const ThermoVectorBase<V,T,P>& vec, Index irow) -> ThermoScalarBase<decltype(vec.val[irow])>
+auto row(const ThermoVectorBase<V, T, P>& vec, Index irow) -> ThermoScalarBase<decltype(vec.val[irow])>
 {
     return {vec.val[irow], vec.ddT[irow], vec.ddP[irow]};
 }
 
 /// Return a reference of a sequence of rows of this ThermoVectorBase instance.
 template<typename V, typename T, typename P>
-auto rows(ThermoVectorBase<V,T,P>& vec, Index irow, Index nrows) -> ThermoVectorBase<decltype(vec.val.segment(irow, nrows)), decltype(vec.ddT.segment(irow, nrows)), decltype(vec.ddP.segment(irow, nrows))>
+auto rows(ThermoVectorBase<V, T, P>& vec, Index irow, Index nrows) -> ThermoVectorBase<decltype(vec.val.segment(irow, nrows)), decltype(vec.ddT.segment(irow, nrows)), decltype(vec.ddP.segment(irow, nrows))>
 {
     return {vec.val.segment(irow, nrows), vec.ddT.segment(irow, nrows), vec.ddP.segment(irow, nrows)};
 }
 
 /// Return a const reference of a sequence of rows of this ThermoVectorBase instance.
 template<typename V, typename T, typename P>
-auto rows(const ThermoVectorBase<V,T,P>& vec, Index irow, Index nrows) -> ThermoVectorBase<decltype(vec.val.segment(irow, nrows)), decltype(vec.ddT.segment(irow, nrows)), decltype(vec.ddP.segment(irow, nrows))>
+auto rows(const ThermoVectorBase<V, T, P>& vec, Index irow, Index nrows) -> ThermoVectorBase<decltype(vec.val.segment(irow, nrows)), decltype(vec.ddT.segment(irow, nrows)), decltype(vec.ddP.segment(irow, nrows))>
 {
     return {vec.val.segment(irow, nrows), vec.ddT.segment(irow, nrows), vec.ddP.segment(irow, nrows)};
 }
 
 /// Return a reference of some rows of this ThermoVectorBase instance.
 template<typename V, typename T, typename P>
-auto rows(ThermoVectorBase<V,T,P>& vec, const Indices& irows) -> ThermoVectorBase<decltype(Reaktoro::rows(vec.val, irows)), decltype(Reaktoro::rows(vec.ddT, irows)), decltype(Reaktoro::rows(vec.ddP, irows))>
+auto rows(ThermoVectorBase<V, T, P>& vec, const Indices& irows) -> ThermoVectorBase<decltype(Reaktoro::rows(vec.val, irows)), decltype(Reaktoro::rows(vec.ddT, irows)), decltype(Reaktoro::rows(vec.ddP, irows))>
 {
     return {Reaktoro::rows(vec.val, irows), Reaktoro::rows(vec.ddT, irows), Reaktoro::rows(vec.ddP, irows)};
 }
 
 /// Return a const reference of some rows of this ThermoVectorBase instance.
 template<typename V, typename T, typename P>
-auto rows(const ThermoVectorBase<V,T,P>& vec, const Indices& irows) -> ThermoVectorBase<decltype(Reaktoro::rows(vec.val, irows)), decltype(Reaktoro::rows(vec.ddT, irows)), decltype(Reaktoro::rows(vec.ddP, irows))>
+auto rows(const ThermoVectorBase<V, T, P>& vec, const Indices& irows) -> ThermoVectorBase<decltype(Reaktoro::rows(vec.val, irows)), decltype(Reaktoro::rows(vec.ddT, irows)), decltype(Reaktoro::rows(vec.ddP, irows))>
 {
     return {Reaktoro::rows(vec.val, irows), Reaktoro::rows(vec.ddT, irows), Reaktoro::rows(vec.ddP, irows)};
 }
 
 template<typename V, typename T, typename P>
-auto abs(const ThermoVectorBase<V,T,P>& l) -> ThermoVector
+auto abs(const ThermoVectorBase<V, T, P>& l) -> ThermoVector
 {
     const Vector tmp1 = abs(l.val);
-    const Vector tmp2 = l.val/tmp1;
+    const Vector tmp2 = l.val / tmp1;
     return {tmp1, diag(tmp2) * l.ddT, diag(tmp2) * l.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto sqrt(const ThermoVectorBase<V,T,P>& l) -> ThermoVector
+auto sqrt(const ThermoVectorBase<V, T, P>& l) -> ThermoVector
 {
     const Vector tmp1 = sqrt(l.val);
-    const Vector tmp2 = 0.5 * tmp1/l.val;
+    const Vector tmp2 = 0.5 * tmp1 / l.val;
     return {tmp1, diag(tmp2) * l.ddT, diag(tmp2) * l.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto pow(const ThermoVectorBase<V,T,P>& l, double power) -> ThermoVector
+auto pow(const ThermoVectorBase<V, T, P>& l, double power) -> ThermoVector
 {
     const Vector tmp1 = pow(l.val, power);
-    const Vector tmp2 = power * tmp1/l.val;
+    const Vector tmp2 = power * tmp1 / l.val;
     return {tmp1, diag(tmp2) * l.ddT, diag(tmp2) * l.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto exp(const ThermoVectorBase<V,T,P>& l) -> ThermoVector
+auto exp(const ThermoVectorBase<V, T, P>& l) -> ThermoVector
 {
     const Vector tmp = exp(l.val);
     return {tmp, diag(tmp) * l.ddT, diag(tmp) * l.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto log(const ThermoVectorBase<V,T,P>& l) -> ThermoVector
+auto log(const ThermoVectorBase<V, T, P>& l) -> ThermoVector
 {
     const Vector tmp1 = log(l.val);
-    const Vector tmp2 = 1.0/l.val;
+    const Vector tmp2 = 1.0 / l.val;
     return {tmp1, diag(tmp2) * l.ddT, diag(tmp2) * l.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto log10(const ThermoVectorBase<V,T,P>& l) -> ThermoVector
+auto log10(const ThermoVectorBase<V, T, P>& l) -> ThermoVector
 {
     const double log10e = 0.4342944819032518166679324;
-    const Vector tmp1 = log10e*log(l.val);
-    const Vector tmp2 = log10e/l.val;
+    const Vector tmp1 = log10e * log(l.val);
+    const Vector tmp2 = log10e / l.val;
     return {tmp1, diag(tmp2) * l.ddT, diag(tmp2) * l.ddP, diag(tmp2) * l.ddn};
 }
 

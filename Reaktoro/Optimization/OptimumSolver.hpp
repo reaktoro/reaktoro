@@ -36,7 +36,7 @@ enum class OptimumMethod;
 /// The friendly interface to all optimisation algorithms.
 class OptimumSolver
 {
-public:
+  public:
     /// Construct a default OptimumSolver instance.
     OptimumSolver();
 
@@ -82,7 +82,7 @@ public:
     /// @param dbdp The derivatives `db/dp` of the vector `b` with respect to the parameters `p`
     auto dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

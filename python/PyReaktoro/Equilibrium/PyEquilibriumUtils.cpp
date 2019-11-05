@@ -20,8 +20,8 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Partition.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
@@ -31,15 +31,15 @@ namespace Reaktoro {
 
 void exportEquilibriumUtils(py::module& m)
 {
-    auto equilibrate1  = static_cast<EquilibriumResult (*)(ChemicalState&)>(equilibrate);
-    auto equilibrate2  = static_cast<EquilibriumResult (*)(ChemicalState&, const Partition&)>(equilibrate);
-    auto equilibrate3  = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumOptions&)>(equilibrate);
-    auto equilibrate4  = static_cast<EquilibriumResult (*)(ChemicalState&, const Partition&, const EquilibriumOptions&)>(equilibrate);
-    auto equilibrate5  = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumProblem&)>(equilibrate);
-    auto equilibrate6  = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumProblem&, const EquilibriumOptions&)>(equilibrate);
-    auto equilibrate7  = static_cast<ChemicalState (*)(const EquilibriumProblem&)>(equilibrate);
-    auto equilibrate8  = static_cast<ChemicalState (*)(const EquilibriumProblem&, const EquilibriumOptions&)>(equilibrate);
-    auto equilibrate9  = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumInverseProblem&)>(equilibrate);
+    auto equilibrate1 = static_cast<EquilibriumResult (*)(ChemicalState&)>(equilibrate);
+    auto equilibrate2 = static_cast<EquilibriumResult (*)(ChemicalState&, const Partition&)>(equilibrate);
+    auto equilibrate3 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumOptions&)>(equilibrate);
+    auto equilibrate4 = static_cast<EquilibriumResult (*)(ChemicalState&, const Partition&, const EquilibriumOptions&)>(equilibrate);
+    auto equilibrate5 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumProblem&)>(equilibrate);
+    auto equilibrate6 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumProblem&, const EquilibriumOptions&)>(equilibrate);
+    auto equilibrate7 = static_cast<ChemicalState (*)(const EquilibriumProblem&)>(equilibrate);
+    auto equilibrate8 = static_cast<ChemicalState (*)(const EquilibriumProblem&, const EquilibriumOptions&)>(equilibrate);
+    auto equilibrate9 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumInverseProblem&)>(equilibrate);
     auto equilibrate10 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumInverseProblem&, const EquilibriumOptions&)>(equilibrate);
     auto equilibrate11 = static_cast<ChemicalState (*)(const EquilibriumInverseProblem&)>(equilibrate);
     auto equilibrate12 = static_cast<ChemicalState (*)(const EquilibriumInverseProblem&, const EquilibriumOptions&)>(equilibrate);

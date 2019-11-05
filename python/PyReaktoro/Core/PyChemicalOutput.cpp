@@ -20,26 +20,26 @@
 // Reaktoro includes
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Core/ChemicalOutput.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 
 namespace Reaktoro {
 
 void exportChemicalOutput(py::module& m)
 {
-    auto filename1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::filename);
+    auto filename1 = static_cast<void (ChemicalOutput::*)(std::string)>(&ChemicalOutput::filename);
     auto filename2 = static_cast<std::string (ChemicalOutput::*)() const>(&ChemicalOutput::filename);
 
-    auto suffix1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::suffix);
+    auto suffix1 = static_cast<void (ChemicalOutput::*)(std::string)>(&ChemicalOutput::suffix);
     auto suffix2 = static_cast<std::string (ChemicalOutput::*)() const>(&ChemicalOutput::suffix);
 
-    auto add1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::add);
-    auto add2 = static_cast<void(ChemicalOutput::*)(std::string,std::string)>(&ChemicalOutput::add);
+    auto add1 = static_cast<void (ChemicalOutput::*)(std::string)>(&ChemicalOutput::add);
+    auto add2 = static_cast<void (ChemicalOutput::*)(std::string, std::string)>(&ChemicalOutput::add);
 
-    auto attach1 = static_cast<void(ChemicalOutput::*)(int)>(&ChemicalOutput::attach);
-    auto attach2 = static_cast<void(ChemicalOutput::*)(double)>(&ChemicalOutput::attach);
-    auto attach3 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::attach);
+    auto attach1 = static_cast<void (ChemicalOutput::*)(int)>(&ChemicalOutput::attach);
+    auto attach2 = static_cast<void (ChemicalOutput::*)(double)>(&ChemicalOutput::attach);
+    auto attach3 = static_cast<void (ChemicalOutput::*)(std::string)>(&ChemicalOutput::attach);
 
     py::class_<ChemicalOutput>(m, "ChemicalOutput")
         .def(py::init<>())
@@ -64,8 +64,7 @@ void exportChemicalOutput(py::module& m)
         .def("headings", &ChemicalOutput::headings)
         .def("open", &ChemicalOutput::open)
         .def("update", &ChemicalOutput::update)
-        .def("close", &ChemicalOutput::close)
-        ;
+        .def("close", &ChemicalOutput::close);
 }
 
 } // namespace Reaktoro

@@ -30,7 +30,7 @@ using GaseousMixture = FluidMixture;
 class GaseousPhase
     : public FluidPhase
 {
-public:
+  public:
     /// Construct a default GaseousPhase instance.
     GaseousPhase()
         : FluidPhase("Gaseous", PhaseType::Gas)

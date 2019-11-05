@@ -28,7 +28,7 @@ namespace Reaktoro {
 /// The result of a chemical model function that calculates the chemical properties of species.
 class ChemicalModelResult
 {
-public:
+  public:
     /// Construct a default ChemicalModelResultBase instance.
     ChemicalModelResult();
 
@@ -102,7 +102,7 @@ public:
     /// Return the residual molar isochoric heat capacities of the phases w.r.t. to its ideal state (in units of J/(mol*K)).
     inline auto phaseResidualMolarHeatCapacitiesCv() const -> ChemicalVectorConstRef { return phase_residual_molar_heat_capacities_cv; }
 
-private:
+  private:
     /// The natural log of the activity coefficients of the species.
     ChemicalVector ln_activity_coefficients;
 

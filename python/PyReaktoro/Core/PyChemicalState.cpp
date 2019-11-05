@@ -38,69 +38,69 @@ auto cloneChemicalState(ChemicalState& state) -> ChemicalState
     return state;
 }
 
-}  // namespace
+} // namespace
 
 void exportChemicalState(py::module& m)
 {
-    auto setTemperature1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::setTemperature);
-    auto setTemperature2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::setTemperature);
+    auto setTemperature1 = static_cast<void (ChemicalState::*)(double)>(&ChemicalState::setTemperature);
+    auto setTemperature2 = static_cast<void (ChemicalState::*)(double, std::string)>(&ChemicalState::setTemperature);
 
-    auto setPressure1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::setPressure);
-    auto setPressure2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::setPressure);
+    auto setPressure1 = static_cast<void (ChemicalState::*)(double)>(&ChemicalState::setPressure);
+    auto setPressure2 = static_cast<void (ChemicalState::*)(double, std::string)>(&ChemicalState::setPressure);
 
-    auto setSpeciesAmounts1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::setSpeciesAmounts);
-    auto setSpeciesAmounts2 = static_cast<void(ChemicalState::*)(VectorConstRef)>(&ChemicalState::setSpeciesAmounts);
-    auto setSpeciesAmounts3 = static_cast<void(ChemicalState::*)(VectorConstRef, const Indices&)>(&ChemicalState::setSpeciesAmounts);
+    auto setSpeciesAmounts1 = static_cast<void (ChemicalState::*)(double)>(&ChemicalState::setSpeciesAmounts);
+    auto setSpeciesAmounts2 = static_cast<void (ChemicalState::*)(VectorConstRef)>(&ChemicalState::setSpeciesAmounts);
+    auto setSpeciesAmounts3 = static_cast<void (ChemicalState::*)(VectorConstRef, const Indices&)>(&ChemicalState::setSpeciesAmounts);
 
-    auto setSpeciesAmount1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::setSpeciesAmount);
-    auto setSpeciesAmount2 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setSpeciesAmount);
-    auto setSpeciesAmount3 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setSpeciesAmount);
-    auto setSpeciesAmount4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setSpeciesAmount);
+    auto setSpeciesAmount1 = static_cast<void (ChemicalState::*)(Index, double)>(&ChemicalState::setSpeciesAmount);
+    auto setSpeciesAmount2 = static_cast<void (ChemicalState::*)(std::string, double)>(&ChemicalState::setSpeciesAmount);
+    auto setSpeciesAmount3 = static_cast<void (ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setSpeciesAmount);
+    auto setSpeciesAmount4 = static_cast<void (ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setSpeciesAmount);
 
-    auto setSpeciesMass1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::setSpeciesMass);
-    auto setSpeciesMass2 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setSpeciesMass);
-    auto setSpeciesMass3 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setSpeciesMass);
-    auto setSpeciesMass4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setSpeciesMass);
+    auto setSpeciesMass1 = static_cast<void (ChemicalState::*)(Index, double)>(&ChemicalState::setSpeciesMass);
+    auto setSpeciesMass2 = static_cast<void (ChemicalState::*)(std::string, double)>(&ChemicalState::setSpeciesMass);
+    auto setSpeciesMass3 = static_cast<void (ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setSpeciesMass);
+    auto setSpeciesMass4 = static_cast<void (ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setSpeciesMass);
 
-    auto scalePhaseVolume1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::scalePhaseVolume);
-    auto scalePhaseVolume2 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::scalePhaseVolume);
-    auto scalePhaseVolume3 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::scalePhaseVolume);
-    auto scalePhaseVolume4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::scalePhaseVolume);
+    auto scalePhaseVolume1 = static_cast<void (ChemicalState::*)(Index, double)>(&ChemicalState::scalePhaseVolume);
+    auto scalePhaseVolume2 = static_cast<void (ChemicalState::*)(Index, double, std::string)>(&ChemicalState::scalePhaseVolume);
+    auto scalePhaseVolume3 = static_cast<void (ChemicalState::*)(std::string, double)>(&ChemicalState::scalePhaseVolume);
+    auto scalePhaseVolume4 = static_cast<void (ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::scalePhaseVolume);
 
-    auto scaleFluidVolume1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::scaleFluidVolume);
-    auto scaleFluidVolume2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::scaleFluidVolume);
+    auto scaleFluidVolume1 = static_cast<void (ChemicalState::*)(double)>(&ChemicalState::scaleFluidVolume);
+    auto scaleFluidVolume2 = static_cast<void (ChemicalState::*)(double, std::string)>(&ChemicalState::scaleFluidVolume);
 
-    auto scaleSolidVolume1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::scaleSolidVolume);
-    auto scaleSolidVolume2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::scaleSolidVolume);
+    auto scaleSolidVolume1 = static_cast<void (ChemicalState::*)(double)>(&ChemicalState::scaleSolidVolume);
+    auto scaleSolidVolume2 = static_cast<void (ChemicalState::*)(double, std::string)>(&ChemicalState::scaleSolidVolume);
 
-    auto scaleVolume1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::scaleVolume);
-    auto scaleVolume2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::scaleVolume);
+    auto scaleVolume1 = static_cast<void (ChemicalState::*)(double)>(&ChemicalState::scaleVolume);
+    auto scaleVolume2 = static_cast<void (ChemicalState::*)(double, std::string)>(&ChemicalState::scaleVolume);
 
-    auto speciesAmounts1 = static_cast<VectorConstRef(ChemicalState::*)() const>(&ChemicalState::speciesAmounts);
-    auto speciesAmounts2 = static_cast<Vector(ChemicalState::*)(const Indices&) const>(&ChemicalState::speciesAmounts);
+    auto speciesAmounts1 = static_cast<VectorConstRef (ChemicalState::*)() const>(&ChemicalState::speciesAmounts);
+    auto speciesAmounts2 = static_cast<Vector (ChemicalState::*)(const Indices&) const>(&ChemicalState::speciesAmounts);
 
-    auto speciesAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesAmount);
-    auto speciesAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesAmount);
-    auto speciesAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::speciesAmount);
-    auto speciesAmount4 = static_cast<double(ChemicalState::*)(std::string, std::string) const>(&ChemicalState::speciesAmount);
+    auto speciesAmount1 = static_cast<double (ChemicalState::*)(Index) const>(&ChemicalState::speciesAmount);
+    auto speciesAmount2 = static_cast<double (ChemicalState::*)(std::string) const>(&ChemicalState::speciesAmount);
+    auto speciesAmount3 = static_cast<double (ChemicalState::*)(Index, std::string) const>(&ChemicalState::speciesAmount);
+    auto speciesAmount4 = static_cast<double (ChemicalState::*)(std::string, std::string) const>(&ChemicalState::speciesAmount);
 
-    auto elementAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::elementAmount);
-    auto elementAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::elementAmount);
-    auto elementAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::elementAmount);
-    auto elementAmount4 = static_cast<double(ChemicalState::*)(std::string, std::string) const>(&ChemicalState::elementAmount);
+    auto elementAmount1 = static_cast<double (ChemicalState::*)(Index) const>(&ChemicalState::elementAmount);
+    auto elementAmount2 = static_cast<double (ChemicalState::*)(std::string) const>(&ChemicalState::elementAmount);
+    auto elementAmount3 = static_cast<double (ChemicalState::*)(Index, std::string) const>(&ChemicalState::elementAmount);
+    auto elementAmount4 = static_cast<double (ChemicalState::*)(std::string, std::string) const>(&ChemicalState::elementAmount);
 
-    auto elementAmountInPhase1 = static_cast<double(ChemicalState::*)(Index, Index) const>(&ChemicalState::elementAmountInPhase);
-    auto elementAmountInPhase2 = static_cast<double(ChemicalState::*)(std::string, std::string) const>(&ChemicalState::elementAmountInPhase);
-    auto elementAmountInPhase3 = static_cast<double(ChemicalState::*)(Index, Index, std::string) const>(&ChemicalState::elementAmountInPhase);
-    auto elementAmountInPhase4 = static_cast<double(ChemicalState::*)(std::string, std::string, std::string) const>(&ChemicalState::elementAmountInPhase);
+    auto elementAmountInPhase1 = static_cast<double (ChemicalState::*)(Index, Index) const>(&ChemicalState::elementAmountInPhase);
+    auto elementAmountInPhase2 = static_cast<double (ChemicalState::*)(std::string, std::string) const>(&ChemicalState::elementAmountInPhase);
+    auto elementAmountInPhase3 = static_cast<double (ChemicalState::*)(Index, Index, std::string) const>(&ChemicalState::elementAmountInPhase);
+    auto elementAmountInPhase4 = static_cast<double (ChemicalState::*)(std::string, std::string, std::string) const>(&ChemicalState::elementAmountInPhase);
 
-    auto elementAmountInSpecies1 = static_cast<double(ChemicalState::*)(Index, const Indices&) const>(&ChemicalState::elementAmountInSpecies);
-    auto elementAmountInSpecies2 = static_cast<double(ChemicalState::*)(Index, const Indices&, std::string) const>(&ChemicalState::elementAmountInSpecies);
+    auto elementAmountInSpecies1 = static_cast<double (ChemicalState::*)(Index, const Indices&) const>(&ChemicalState::elementAmountInSpecies);
+    auto elementAmountInSpecies2 = static_cast<double (ChemicalState::*)(Index, const Indices&, std::string) const>(&ChemicalState::elementAmountInSpecies);
 
-    auto phaseAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::phaseAmount);
-    auto phaseAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::phaseAmount);
-    auto phaseAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::phaseAmount);
-    auto phaseAmount4 = static_cast<double(ChemicalState::*)(std::string, std::string) const>(&ChemicalState::phaseAmount);
+    auto phaseAmount1 = static_cast<double (ChemicalState::*)(Index) const>(&ChemicalState::phaseAmount);
+    auto phaseAmount2 = static_cast<double (ChemicalState::*)(std::string) const>(&ChemicalState::phaseAmount);
+    auto phaseAmount3 = static_cast<double (ChemicalState::*)(Index, std::string) const>(&ChemicalState::phaseAmount);
+    auto phaseAmount4 = static_cast<double (ChemicalState::*)(std::string, std::string) const>(&ChemicalState::phaseAmount);
 
     py::class_<ChemicalState>(m, "ChemicalState")
         .def(py::init<const ChemicalSystem&>())
@@ -169,8 +169,7 @@ void exportChemicalState(py::module& m)
         .def("__repr__", [](const ChemicalState& self) { std::stringstream ss; ss << self; return ss.str(); })
         .def(py::self + py::self)
         .def(double() * py::self)
-        .def(py::self * double())
-        ;
+        .def(py::self * double());
 }
 
 } // namespace Reaktoro

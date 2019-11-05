@@ -48,11 +48,11 @@ struct ResidualEquilibriumConstraint
 {
     /// Construct a default EquilibriumConstraintResult instance
     ResidualEquilibriumConstraint()
-    : val(0.0) {};
+        : val(0.0){};
 
     /// Construct an EquilibriumConstraintResult instance from a ChemicalScalar instance
     ResidualEquilibriumConstraint(const ChemicalScalar& scalar)
-    : val(scalar.val), ddn(scalar.ddn) {}
+        : val(scalar.val), ddn(scalar.ddn) {}
 
     /// The residual value of the equilibrium constraint.
     double val = 0.0;
@@ -91,8 +91,7 @@ auto titrantElementalFormula(std::string titrant) -> std::map<std::string, doubl
     std::map<std::string, double> formula;
 
     // Otherwise, process each word
-    for(auto word : words)
-    {
+    for(auto word : words) {
         // Split on space ` ` to get three words, like `1 kg H2O` results in ("1", "kg", "H2O")
         const auto triplet = split(word);
 
@@ -112,11 +111,12 @@ auto titrantElementalFormula(std::string titrant) -> std::map<std::string, doubl
 
         // Check if the type of units, either mass or mol
         if(units::convertible(units, "kg"))
-            factor = units::convert(1.0, units, "kg")/molar_mass; // convert from mass units to kg, then from kg to mol
+            factor = units::convert(1.0, units, "kg") / molar_mass; // convert from mass units to kg, then from kg to mol
         else if(units::convertible(units, "mol"))
             factor = units::convert(1.0, units, "mol"); // convert from molar units to mol
-        else RuntimeError("Could not create the titrant with name `" + titrant + "`.",
-            "The units of each component in a multi-component titrant must be convertible to mol or kg.");
+        else
+            RuntimeError("Could not create the titrant with name `" + titrant + "`.",
+                         "The units of each component in a multi-component titrant must be convertible to mol or kg.");
 
         // Determine the molar coefficient of the titrant (e.g., 1 kg H2O ~ 55.508 mol H2O)
         const auto coeff = factor * number;
@@ -141,15 +141,12 @@ auto createTitrant(std::string titrant, const ChemicalSystem& system) -> Titrant
 
     Index idx = system.indexSpecies(titrant);
 
-    if(idx < system.numSpecies())
-    {
+    if(idx < system.numSpecies()) {
         Species species = system.species(idx);
         res.molar_mass = species.molarMass();
         for(auto pair : species.elements())
             res.formula[system.indexElement(pair.first.name())] = pair.second;
-    }
-    else
-    {
+    } else {
         auto elemental_formula = titrantElementalFormula(titrant);
         for(auto pair : elemental_formula)
             res.formula[system.indexElement(pair.first)] = pair.second;
@@ -161,8 +158,7 @@ auto createTitrant(std::string titrant, const ChemicalSystem& system) -> Titrant
 
 /// A type used to define the functional signature of an equilibrium constraint.
 using EquilibriumConstraint =
-    std::function<ResidualEquilibriumConstraint
-        (VectorConstRef, const ChemicalState&)>;
+    std::function<ResidualEquilibriumConstraint(VectorConstRef, const ChemicalState&)>;
 
 } // namespace
 
@@ -194,7 +190,7 @@ struct EquilibriumInverseProblem::Impl
 
     /// Construct an Impl instance
     Impl(const ChemicalSystem& system)
-    : system(system), problem(system)
+        : system(system), problem(system)
     {
         // Initialize a default partition for the chemical system
         setPartition(Partition(system));
@@ -223,8 +219,7 @@ struct EquilibriumInverseProblem::Impl
         ni.ddn[ispecies] = 1.0;
 
         // Define the amount constraint function
-        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable
-        {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable {
             ni.val = state.speciesAmount(ispecies);
             return ni - value;
         };
@@ -246,8 +241,7 @@ struct EquilibriumInverseProblem::Impl
         ChemicalScalar ln_ai;
 
         // Define the activity constraint function
-        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable
-        {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable {
             ln_ai = state.properties().lnActivities()[ispecies];
             return ln_ai - ln_val;
         };
@@ -263,8 +257,7 @@ struct EquilibriumInverseProblem::Impl
         const auto pE = ChemicalProperty::pE(system);
 
         // Define the activity constraint function
-        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable
-        {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable {
             return pE(state.properties()) - value;
         };
 
@@ -279,8 +272,7 @@ struct EquilibriumInverseProblem::Impl
         const auto Eh = ChemicalProperty::Eh(system);
 
         // Define the activity constraint function
-        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable
-        {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable {
             return Eh(state.properties()) - value;
         };
 
@@ -295,8 +287,7 @@ struct EquilibriumInverseProblem::Impl
         const auto alk = ChemicalProperty::alkalinity(system);
 
         // Define the activity constraint function
-        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable
-        {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable {
             return alk(state.properties()) - value;
         };
 
@@ -314,8 +305,7 @@ struct EquilibriumInverseProblem::Impl
         ChemicalScalar np;
 
         // Define the phase volume constraint function
-        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable
-        {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable {
             np = state.properties().phaseAmounts()[iphase];
             return np - value;
         };
@@ -334,8 +324,7 @@ struct EquilibriumInverseProblem::Impl
         ChemicalScalar mass;
 
         // Define the phase volume constraint function
-        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable
-        {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable {
             mass = state.properties().phaseMasses()[iphase];
             return mass - value;
         };
@@ -354,8 +343,7 @@ struct EquilibriumInverseProblem::Impl
         ChemicalScalar Vp;
 
         // Define the phase volume constraint function
-        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable
-        {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable {
             Vp = state.properties().phaseVolumes()[iphase];
             return Vp - value;
         };
@@ -374,8 +362,7 @@ struct EquilibriumInverseProblem::Impl
         ChemicalScalar Vp;
 
         // Define the phase volume constraint function
-        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable
-        {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable {
             Vp = sum(rows(state.properties().phaseVolumes(), iphases));
             return Vp - value;
         };
@@ -389,7 +376,10 @@ struct EquilibriumInverseProblem::Impl
     {
         Index idx = 0;
         for(const auto& t : titrants)
-            if(t.name == titrant) return idx; else ++idx;
+            if(t.name == titrant)
+                return idx;
+            else
+                ++idx;
         return idx;
     }
 
@@ -400,8 +390,11 @@ struct EquilibriumInverseProblem::Impl
         const Index ititrant = indexTitrant(titrant);
 
         // Assert this titrant has been added already
-        Assert(ititrant < titrants.size(), "Could not set the initial guess "
-            "of titrant `" + titrant + "`.", "This titrant has not been added yet.");
+        Assert(ititrant < titrants.size(),
+               "Could not set the initial guess "
+               "of titrant `" +
+                   titrant + "`.",
+               "This titrant has not been added yet.");
 
         // Set the initial guess of the titrant
         titrant_initial_amounts[ititrant] = amount;
@@ -412,8 +405,8 @@ struct EquilibriumInverseProblem::Impl
     {
         // Assert that the new titrant has not been added before
         Assert(indexTitrant(titrant) >= titrants.size(),
-            "Could not add the titrant " + titrant + " to the inverse problem.",
-            "This titrant has been added before.");
+               "Could not add the titrant " + titrant + " to the inverse problem.",
+               "This titrant has been added before.");
 
         // Update the list of titrants
         titrants.push_back(createTitrant(titrant, system));
@@ -441,8 +434,9 @@ struct EquilibriumInverseProblem::Impl
     auto setAsMutuallyExclusive(std::string titrant1, std::string titrant2) -> void
     {
         // Common error message
-        auto errormsg = "Could not set `" + titrant1 + "` and " + titrant2 + "` "
-            "as mutually exclusive titrants.";
+        auto errormsg = "Could not set `" + titrant1 + "` and " + titrant2 +
+                        "` "
+                        "as mutually exclusive titrants.";
 
         // Get the indices of the titrants
         const Index i1 = indexTitrant(titrant1);
@@ -450,23 +444,22 @@ struct EquilibriumInverseProblem::Impl
 
         // Check if the two titrants are different
         Assert(titrant1 != titrant2, errormsg,
-            "They must have different identifiers.");
+               "They must have different identifiers.");
 
         // Check if the first titrant has been added before
         Assert(i1 < titrants.size(), errormsg,
-            "The titrant `" + titrant1 + "` has not been added before.");
+               "The titrant `" + titrant1 + "` has not been added before.");
 
         // Check if the second titrant has been added before
         Assert(i2 < titrants.size(), errormsg,
-            "The titrant `" + titrant2 + "` has not been added before.");
+               "The titrant `" + titrant2 + "` has not been added before.");
 
         // The smoothing parameter for the mutually exclusive constraint function
         const double tau = 1e-20;
 
         // Define the mutually exclusive constraint function
         ResidualEquilibriumConstraint res;
-        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable
-        {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state) mutable {
             const Index Nt = x.rows();
 
             res.ddx.resize(Nt);
@@ -474,7 +467,7 @@ struct EquilibriumInverseProblem::Impl
             const double x1 = x[i1];
             const double x2 = x[i2];
 
-            res.val = x1*x2 - tau;
+            res.val = x1 * x2 - tau;
             res.ddx = x1 * unit(Nt, i2) + x2 * unit(Nt, i1);
 
             return res;
@@ -495,10 +488,9 @@ struct EquilibriumInverseProblem::Impl
         res.ddx.resize(num_constraints, num_titrants);
         res.ddn.resize(num_constraints, num_species);
         ResidualEquilibriumConstraint aux;
-        for(Index i = 0; i < num_constraints; ++i)
-        {
+        for(Index i = 0; i < num_constraints; ++i) {
             aux = constraints[i](x, state);
-            res.val[i]     = aux.val;
+            res.val[i] = aux.val;
             res.ddx.row(i) = aux.ddx.size() ? aux.ddx : zeros(num_titrants);
             res.ddn.row(i) = aux.ddn.size() ? aux.ddn : zeros(num_species);
         }
@@ -562,10 +554,9 @@ struct EquilibriumInverseProblem::Impl
         nonlinear_problem.b = -be0;
 
         // Set the non-linear function of the non-linear problem
-        nonlinear_problem.f = [&](VectorConstRef x) mutable
-        {
+        nonlinear_problem.f = [&](VectorConstRef x) mutable {
             // The amounts of elements in the equilibrium partition
-            const Vector be = be0 + Ce*x;
+            const Vector be = be0 + Ce * x;
 
             // Solve the equilibrium problem with update `be`
             result += solver.solve(state, T, P, be);
@@ -601,11 +592,11 @@ struct EquilibriumInverseProblem::Impl
 };
 
 EquilibriumInverseProblem::EquilibriumInverseProblem(const ChemicalSystem& system)
-: pimpl(new Impl(system))
+    : pimpl(new Impl(system))
 {}
 
 EquilibriumInverseProblem::EquilibriumInverseProblem(const EquilibriumInverseProblem& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 EquilibriumInverseProblem::~EquilibriumInverseProblem()
@@ -682,7 +673,7 @@ auto EquilibriumInverseProblem::fixSpeciesMass(std::string species, double value
 {
     const Index ispecies = pimpl->system.indexSpeciesWithError(species);
     const double molar_mass = pimpl->system.species(ispecies).molarMass();
-    value = units::convert(value, units, "kg")/molar_mass;
+    value = units::convert(value, units, "kg") / molar_mass;
     return fixSpeciesAmount(species, value, "mol", titrant);
 }
 
@@ -737,7 +728,7 @@ auto EquilibriumInverseProblem::fixPhaseMass(std::string phase, double value, st
     value = units::convert(value, units, "kg");
     pimpl->addPhaseMassConstraint(phase, value);
     pimpl->addTitrant(titrant);
-//    pimpl->setTitrantInitialAmount(titrant, value); // access to molar mass of titrant is needed here for setting adequate initial guess
+    //    pimpl->setTitrantInitialAmount(titrant, value); // access to molar mass of titrant is needed here for setting adequate initial guess
     return *this;
 }
 

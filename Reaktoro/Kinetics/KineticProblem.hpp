@@ -21,8 +21,8 @@
 #include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/ScalarTypes.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -34,7 +34,7 @@ class ReactionSystem;
 /// A type that defines a kinetic problem
 class KineticProblem
 {
-public:
+  public:
     /// Construct a default KineticProblem instance
     KineticProblem();
 
@@ -96,7 +96,7 @@ public:
     /// Return a reference to the Partition instance used to create this KineticProblem instance
     auto partition() const -> const Partition&;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

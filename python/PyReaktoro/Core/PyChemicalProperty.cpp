@@ -25,15 +25,16 @@
 
 namespace Reaktoro {
 
-class ChemicalPropertyDummy {};
+class ChemicalPropertyDummy
+{};
 
 void exportChemicalProperty(py::module& m)
 {
-    auto pE1 = static_cast<ChemicalPropertyFunction(*)(const ChemicalSystem&)>(ChemicalProperty::pE);
-    auto pE2 = static_cast<ChemicalPropertyFunction(*)(const ChemicalSystem&, const ReactionEquation&)>(ChemicalProperty::pE);
+    auto pE1 = static_cast<ChemicalPropertyFunction (*)(const ChemicalSystem&)>(ChemicalProperty::pE);
+    auto pE2 = static_cast<ChemicalPropertyFunction (*)(const ChemicalSystem&, const ReactionEquation&)>(ChemicalProperty::pE);
 
-    auto Eh1 = static_cast<ChemicalPropertyFunction(*)(const ChemicalSystem&)>(ChemicalProperty::Eh);
-    auto Eh2 = static_cast<ChemicalPropertyFunction(*)(const ChemicalSystem&, const ReactionEquation&)>(ChemicalProperty::Eh);
+    auto Eh1 = static_cast<ChemicalPropertyFunction (*)(const ChemicalSystem&)>(ChemicalProperty::Eh);
+    auto Eh2 = static_cast<ChemicalPropertyFunction (*)(const ChemicalSystem&, const ReactionEquation&)>(ChemicalProperty::Eh);
 
     py::class_<ChemicalPropertyDummy>(m, "ChemicalProperty")
         .def_static("ionicStrength", &ChemicalProperty::ionicStrength)
@@ -42,8 +43,7 @@ void exportChemicalProperty(py::module& m)
         .def_static("pE", pE2)
         .def_static("Eh", Eh1)
         .def_static("Eh", Eh2)
-        .def_static("alkalinity", &ChemicalProperty::alkalinity)
-        ;
+        .def_static("alkalinity", &ChemicalProperty::alkalinity);
 }
 
 } // namespace Reaktoro

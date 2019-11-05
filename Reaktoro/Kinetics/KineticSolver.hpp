@@ -34,7 +34,7 @@ struct KineticOptions;
 /// @see KineticProblem
 class KineticSolver
 {
-public:
+  public:
     /// Construct a default KineticSolver instance.
     KineticSolver();
 
@@ -110,7 +110,7 @@ public:
     /// @param dt The step to be used for the integration from `t` to `t + dt` (in units of seconds)
     auto solve(ChemicalState& state, double t, double dt) -> void;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

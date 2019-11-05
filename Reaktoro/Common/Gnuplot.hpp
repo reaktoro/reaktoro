@@ -25,7 +25,7 @@ namespace Reaktoro {
 
 class Gnuplot
 {
-public:
+  public:
     Gnuplot();
 
     virtual ~Gnuplot();
@@ -34,7 +34,7 @@ public:
 
     auto operator<<(const std::stringstream& str) -> Gnuplot&;
 
-private:
+  private:
     FILE* pipe;
 };
 

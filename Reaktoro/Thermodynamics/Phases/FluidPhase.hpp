@@ -32,7 +32,7 @@ class FluidMixture;
 /// Class that defines a fluid (gaseous or liquid) phase
 class FluidPhase : public Phase
 {
-public:
+  public:
     ///Construct an FluidPhase instance with given name and PhaseType
     FluidPhase(const std::string& name, PhaseType type);
 
@@ -99,9 +99,9 @@ public:
     auto mixture() const -> const FluidMixture&;
 
     /// Return the FluidMixture instance
-    auto mixture()->FluidMixture&;
+    auto mixture() -> FluidMixture&;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

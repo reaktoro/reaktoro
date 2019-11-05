@@ -30,8 +30,7 @@ void exportMineralCatalyst(py::module& m)
         .def(py::init<std::string>())
         .def_readwrite("species", &MineralCatalyst::species)
         .def_readwrite("quantity", &MineralCatalyst::quantity)
-        .def_readwrite("power", &MineralCatalyst::power)
-        ;
+        .def_readwrite("power", &MineralCatalyst::power);
 }
 
 } // namespace Reaktoro

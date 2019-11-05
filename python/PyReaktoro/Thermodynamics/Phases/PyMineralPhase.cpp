@@ -32,8 +32,7 @@ void exportMineralPhase(py::module& m)
         .def(py::init<const MineralSpecies&>())
         .def("setChemicalModelIdeal", &MineralPhase::setChemicalModelIdeal, py::return_value_policy::reference_internal)
         .def("setChemicalModelRedlichKister", &MineralPhase::setChemicalModelRedlichKister, py::return_value_policy::reference_internal)
-        .def("mixture", &MineralPhase::mixture, py::return_value_policy::reference_internal)
-        ;
+        .def("mixture", &MineralPhase::mixture, py::return_value_policy::reference_internal);
 }
 
 } // namespace Reaktoro

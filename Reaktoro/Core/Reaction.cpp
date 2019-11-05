@@ -71,15 +71,14 @@ struct Reaction::Impl
     {}
 
     Impl(const ReactionEquation& equation, const ChemicalSystem& system)
-    : equation(equation), system(system)
+        : equation(equation), system(system)
     {
         // Initialize the species, their indices, and their stoichiometries in the reaction
         species.reserve(equation.numSpecies());
         indices.reserve(equation.numSpecies());
         stoichiometries.resize(equation.numSpecies());
         unsigned i = 0;
-        for(const auto& pair : equation.equation())
-        {
+        for(const auto& pair : equation.equation()) {
             species.push_back(system.species(pair.first));
             indices.push_back(system.indexSpecies(pair.first));
             stoichiometries[i] = pair.second;
@@ -89,15 +88,15 @@ struct Reaction::Impl
 };
 
 Reaction::Reaction()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 Reaction::Reaction(const ReactionEquation& equation, const ChemicalSystem& system)
-: pimpl(new Impl(equation, system))
+    : pimpl(new Impl(equation, system))
 {}
 
 Reaction::Reaction(const Reaction& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 Reaction::~Reaction()
@@ -176,22 +175,22 @@ auto Reaction::lnEquilibriumConstant(const ChemicalProperties& properties) const
     const double P = properties.pressure();
 
     // Check if a equilibrium constant function was provided
-    if(pimpl->lnk) return pimpl->lnk(T, P);
+    if(pimpl->lnk)
+        return pimpl->lnk(T, P);
 
     // Calculate the equilibrium constant using the standard Gibbs energies of the species
     const ThermoVector G0 = properties.standardPartialMolarGibbsEnergies();
     const ThermoScalar RT = universalGasConstant * Temperature(T);
 
     ThermoScalar res;
-    for(unsigned i = 0; i < indices().size(); ++i)
-    {
+    for(unsigned i = 0; i < indices().size(); ++i) {
         const Index ispecies = indices()[i];
         const double vi = stoichiometries()[i];
         const ThermoScalar G0i = G0[ispecies];
         res += vi * G0i;
     }
 
-    return -res/RT;
+    return -res / RT;
 }
 
 auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const -> ChemicalScalar
@@ -200,8 +199,7 @@ auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const ->
     const ChemicalVector& ln_a = properties.lnActivities();
     ChemicalScalar ln_Q(num_species);
     unsigned counter = 0;
-    for(Index i : indices())
-    {
+    for(Index i : indices()) {
         const double vi = stoichiometries()[counter];
         ln_Q += vi * ln_a[i];
         ++counter;
@@ -212,7 +210,7 @@ auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const ->
 
 auto Reaction::lnEquilibriumIndex(const ChemicalProperties& properties) const -> ChemicalScalar
 {
-	return lnReactionQuotient(properties) - lnEquilibriumConstant(properties);
+    return lnReactionQuotient(properties) - lnEquilibriumConstant(properties);
 }
 
 auto Reaction::rate(const ChemicalProperties& properties) const -> ChemicalScalar

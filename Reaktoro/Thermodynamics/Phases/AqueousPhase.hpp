@@ -35,7 +35,7 @@ class DebyeHuckelParams;
 /// A type used to describe an aqueous phase.
 class AqueousPhase : public Phase
 {
-public:
+  public:
     /// Construct a default AqueousPhase instance.
     AqueousPhase();
 
@@ -96,7 +96,7 @@ public:
     /// Return the AqueousMixture instance
     auto mixture() const -> const AqueousMixture&;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

@@ -80,7 +80,7 @@ class StringList;
 /// @ingroup Core
 class ChemicalEditor
 {
-public:
+  public:
     /// Construct a default ChemicalEditor instance.
     /// The built-in database `supcrt98.xml` is used for the initialization
     /// of a ChemicalEditor instance using the default constructor.
@@ -224,7 +224,7 @@ public:
     /// @param compounds A StringList containing a list of compound names.
     /// @return A reference to the created AqueousPhase object.
     /// @see addGaseousPhaseWithElementsOf, addMineralPhaseWithElementsOf
-    auto addAqueousPhaseWithElementsOf(const StringList& compounds)->AqueousPhase&;
+    auto addAqueousPhaseWithElementsOf(const StringList& compounds) -> AqueousPhase&;
 
     /// Add a gaseous phase in the chemical editor.
     /// This method constructs a GaseousPhase object that represents a gaseous phase in the system.
@@ -384,7 +384,7 @@ public:
     /// and let the ChemicalEditor to figure out automatically which species from the loaded database
     /// should be added in the phase. This functionality is supported by methods
     /// @ref addMineralPhaseWithElements(std::string elements) and
-	/// @ref addMineralPhaseWithElementsOf(std::string compounds).
+    /// @ref addMineralPhaseWithElementsOf(std::string compounds).
     /// @param species A StringList containing the names of the species.
     /// @return A reference to the created MineralPhase object.
     /// @see addAqueousPhase, addLiquidPhase, addGaseousPhase
@@ -469,13 +469,13 @@ public:
     auto gaseousPhase() const -> const GaseousPhase&;
 
     /// Return the gaseous phase in the chemical editor.
-    auto gaseousPhase() ->GaseousPhase&;
+    auto gaseousPhase() -> GaseousPhase&;
 
     /// Return the liquid phase in the chemical editor.
     auto liquidPhase() const -> const LiquidPhase&;
 
     /// Return the liquid phase in the chemical editor.
-    auto liquidPhase() ->LiquidPhase&;
+    auto liquidPhase() -> LiquidPhase&;
 
     /// Return the mineral phases in the chemical editor.
     auto mineralPhases() const -> const std::vector<MineralPhase>&;
@@ -495,7 +495,7 @@ public:
     /// Convert this ChemicalEditor instance to a ReactionSystem instance
     operator ReactionSystem() const;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

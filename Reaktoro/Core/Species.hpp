@@ -24,8 +24,8 @@
 #include <vector>
 
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -40,7 +40,7 @@ class Element;
 /// @ingroup Core
 class Species
 {
-public:
+  public:
     /// Construct a default Species instance.
     Species();
 
@@ -74,7 +74,7 @@ public:
     /// Return the stoichiometry of an element in the species.
     auto elementCoefficient(std::string element) const -> double;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

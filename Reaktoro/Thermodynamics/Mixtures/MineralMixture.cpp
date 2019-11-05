@@ -20,15 +20,15 @@
 namespace Reaktoro {
 
 MineralMixture::MineralMixture()
-: GeneralMixture<MineralSpecies>()
+    : GeneralMixture<MineralSpecies>()
 {}
 
 MineralMixture::MineralMixture(const std::vector<MineralSpecies>& species)
-: GeneralMixture<MineralSpecies>(species)
+    : GeneralMixture<MineralSpecies>(species)
 {}
 
 MineralMixture::MineralMixture(const MineralSpecies& species)
-: GeneralMixture<MineralSpecies>({species})
+    : GeneralMixture<MineralSpecies>({species})
 {}
 
 MineralMixture::~MineralMixture()

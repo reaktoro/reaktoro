@@ -20,8 +20,8 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -51,7 +51,7 @@ struct Phase::Impl
 };
 
 Phase::Phase()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 Phase::Phase(std::string name, PhaseType type)
@@ -161,8 +161,8 @@ auto Phase::indexSpeciesWithError(std::string name) const -> Index
 {
     const Index index = indexSpecies(name);
     Assert(index < numSpecies(),
-        "Could not get the index of species `" + name + "`.",
-        "There is no species called `" + name + "` in the phase.");
+           "Could not get the index of species `" + name + "`.",
+           "There is no species called `" + name + "` in the phase.");
     return index;
 }
 
@@ -175,9 +175,10 @@ auto Phase::indexSpeciesAnyWithError(const std::vector<std::string>& names) cons
 {
     const Index index = indexSpeciesAny(names);
     Assert(index < numSpecies(),
-        "Could not get the index of the species with "
-        "any of the following names `" + join(names, ", ") + "`.",
-        "There is no species in phase `" + name() + "` with any of these names.");
+           "Could not get the index of the species with "
+           "any of the following names `" +
+               join(names, ", ") + "`.",
+           "There is no species in phase `" + name() + "` with any of these names.");
     return index;
 }
 

@@ -42,7 +42,7 @@ struct DaeOptions
 /// @see DaeSolver, DaeOptions
 class DaeProblem
 {
-public:
+  public:
     /// Construct a default DaeProblem instance
     DaeProblem();
 
@@ -92,7 +92,7 @@ public:
     /// @return Return 0 if successful, any other number otherwise.
     auto jacobian(double t, VectorConstRef y, VectorConstRef ydot, MatrixRef J) const -> int;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;
@@ -102,7 +102,7 @@ private:
 /// @see DaeProblem, DaeOptions
 class DaeSolver
 {
-public:
+  public:
     /// Construct a default DaeSolver instance.
     DaeSolver();
 
@@ -146,7 +146,7 @@ public:
     /// @param[in,out] y The current variables as input, the new current variables as output
     auto solve(double& t, double dt, VectorRef y) -> void;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

@@ -20,8 +20,8 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 
 namespace Reaktoro {
@@ -58,7 +58,7 @@ struct ReactionSystem::Impl
 
     /// Construct a ReactionSystem::Impl instance with given reactions
     Impl(const ChemicalSystem& system, const std::vector<Reaction>& reactions)
-    : system(system), reactions(reactions)
+        : system(system), reactions(reactions)
     {
         // Initialize the stoichiometric matrix of the reactions
         stoichiometric_matrix = Reaktoro::stoichiometricMatrix(system, reactions);
@@ -66,11 +66,11 @@ struct ReactionSystem::Impl
 };
 
 ReactionSystem::ReactionSystem()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 ReactionSystem::ReactionSystem(const ChemicalSystem& system, const std::vector<Reaction>& reactions)
-: pimpl(new Impl(system, reactions))
+    : pimpl(new Impl(system, reactions))
 {}
 
 ReactionSystem::~ReactionSystem()
@@ -90,8 +90,8 @@ auto ReactionSystem::indexReactionWithError(std::string name) const -> Index
 {
     const Index index = indexReaction(name);
     Assert(index < numReactions(),
-        "Cannot get the index of the reaction `" + name + "`.",
-        "There is no reaction called `" + name + "` in the reaction system.");
+           "Cannot get the index of the reaction `" + name + "`.",
+           "There is no reaction called `" + name + "` in the reaction system.");
     return index;
 }
 
@@ -103,10 +103,12 @@ auto ReactionSystem::reactions() const -> const std::vector<Reaction>&
 auto ReactionSystem::reaction(Index index) const -> const Reaction&
 {
     Assert(index < numReactions(),
-        "Cannot return a Reaction instance with given "
-        "index `" + std::to_string(index) + "`.",
-        "The reaction index must be less than the "
-        "number of reactions `" + std::to_string(numReactions()) + "`.");
+           "Cannot return a Reaction instance with given "
+           "index `" +
+               std::to_string(index) + "`.",
+           "The reaction index must be less than the "
+           "number of reactions `" +
+               std::to_string(numReactions()) + "`.");
 
     return pimpl->reactions[index];
 }
@@ -116,8 +118,8 @@ auto ReactionSystem::reaction(std::string name) const -> const Reaction&
     const Index index = indexReaction(name);
 
     Assert(index < numReactions(),
-        "Cannot return a Reaction instance with given name `" + name + "`.",
-        "There is no reaction with such name in this ReactionSystem instance.");
+           "Cannot return a Reaction instance with given name `" + name + "`.",
+           "There is no reaction with such name in this ReactionSystem instance.");
 
     return pimpl->reactions[index];
 }

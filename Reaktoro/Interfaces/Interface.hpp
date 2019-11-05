@@ -18,8 +18,8 @@
 #pragma once
 
 // C++ includes
-#include <string>
 #include <memory>
+#include <string>
 
 // Reaktoro includes
 #include <Reaktoro/Math/Matrix.hpp>
@@ -35,7 +35,7 @@ class ChemicalSystem;
 /// A class used to interface other codes with Reaktoro.
 class Interface
 {
-public:
+  public:
     /// Virtual destructor
     virtual ~Interface() = 0;
 

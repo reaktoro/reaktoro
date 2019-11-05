@@ -29,7 +29,7 @@ namespace Reaktoro {
 /// A type to describe the attributes of a fluids (gaseous or liquid) species
 class FluidSpecies : public Species
 {
-public:
+  public:
     /// Construct a default FluidSpecies instance
     FluidSpecies();
 
@@ -60,7 +60,7 @@ public:
     /// Return the thermodynamic data of the fluids (gaseous or liquid) species.
     auto thermoData() const -> const FluidSpeciesThermoData&;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

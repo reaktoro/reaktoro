@@ -22,8 +22,8 @@
 #include <string>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Common/Index.hpp>
 
 namespace Reaktoro {
 
@@ -96,7 +96,7 @@ class ReactionSystem;
 ///
 class ChemicalQuantity
 {
-public:
+  public:
     /// A type to describe a chemical quantity function.
     using Function = std::function<double()>;
 
@@ -150,7 +150,7 @@ public:
     /// Return the value of the quantity given as a formatted string.
     auto operator()(std::string str) const -> double;
 
-private:
+  private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;

@@ -18,8 +18,8 @@
 #include "ChemicalSystem.hpp"
 
 // C++ includes
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <set>
 
 // Reaktoro includes
@@ -35,17 +35,18 @@ namespace {
 
 auto fixDuplicatedSpeciesNames(std::vector<Phase> phases) -> std::vector<Phase>
 {
-    for(Phase& p1 : phases) for(Species& s1 : p1.species())
-    {
-        int suffix = 1;
+    for(Phase& p1 : phases)
+        for(Species& s1 : p1.species()) {
+            int suffix = 1;
 
-        for(Phase& p2 : phases) for(Species& s2 : p2.species())
-            if(&s1 != &s2 && s1.name() == s2.name())
-                s2.setName(s2.name() + "(" + std::to_string(++suffix) + ")");
+            for(Phase& p2 : phases)
+                for(Species& s2 : p2.species())
+                    if(&s1 != &s2 && s1.name() == s2.name())
+                        s2.setName(s2.name() + "(" + std::to_string(++suffix) + ")");
 
-        if(suffix > 1)
-            s1.setName(s1.name() + "(" + std::to_string(1) + ")");
-    }
+            if(suffix > 1)
+                s1.setName(s1.name() + "(" + std::to_string(1) + ")");
+        }
     return phases;
 }
 
@@ -132,12 +133,10 @@ struct ChemicalSystem::Impl
 
     auto initializeThermoModel() -> void
     {
-        thermo_model = [&](ThermoModelResult& res, double T, double P)
-        {
+        thermo_model = [&](ThermoModelResult& res, double T, double P) {
             const Index num_phases = phases.size();
             Index offset = 0;
-            for(Index iphase = 0; iphase < num_phases; ++iphase)
-            {
+            for(Index iphase = 0; iphase < num_phases; ++iphase) {
                 const Index size = phases[iphase].numSpecies();
                 auto tp = res.phaseProperties(iphase, offset, size);
                 phases[iphase].properties(tp, T, P);
@@ -148,12 +147,10 @@ struct ChemicalSystem::Impl
 
     auto initializeChemicalModel() -> void
     {
-        chemical_model = [&](ChemicalModelResult& res, double T, double P, VectorConstRef n)
-        {
+        chemical_model = [&](ChemicalModelResult& res, double T, double P, VectorConstRef n) {
             const Index num_phases = phases.size();
             Index offset = 0;
-            for(Index iphase = 0; iphase < num_phases; ++iphase)
-            {
+            for(Index iphase = 0; iphase < num_phases; ++iphase) {
                 const Index size = phases[iphase].numSpecies();
                 const auto np = n.segment(offset, size);
                 auto cp = res.phaseProperties(iphase, offset, size);
@@ -165,15 +162,15 @@ struct ChemicalSystem::Impl
 };
 
 ChemicalSystem::ChemicalSystem()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases)
-: pimpl(new Impl(phases))
+    : pimpl(new Impl(phases))
 {}
 
 ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases, const ThermoModel& thermo_model, const ChemicalModel& chemical_model)
-: pimpl(new Impl(phases, thermo_model, chemical_model))
+    : pimpl(new Impl(phases, thermo_model, chemical_model))
 {}
 
 ChemicalSystem::~ChemicalSystem()
@@ -232,9 +229,8 @@ auto ChemicalSystem::species() const -> const std::vector<Species>&
 auto ChemicalSystem::phase(Index index) const -> const Phase&
 {
     Assert(index < numPhases(),
-        "Could not get a reference to a Phase instance with given index.",
-        "The given index " + std::to_string(index) + " is out of bounds.")
-    return phases()[index];
+           "Could not get a reference to a Phase instance with given index.",
+           "The given index " + std::to_string(index) + " is out of bounds.") return phases()[index];
 }
 
 auto ChemicalSystem::phase(std::string name) const -> const Phase&
@@ -272,8 +268,8 @@ auto ChemicalSystem::indexElementWithError(std::string name) const -> Index
     const Index index = indexElement(name);
 
     Assert(index < numElements(),
-        "Could not get the index of element `" + name + "`.",
-        "There is no element called `" + name + "` in the system.");
+           "Could not get the index of element `" + name + "`.",
+           "There is no element called `" + name + "` in the system.");
 
     return index;
 }
@@ -287,8 +283,8 @@ auto ChemicalSystem::indexSpeciesWithError(std::string name) const -> Index
 {
     const Index index = indexSpecies(name);
     Assert(index < numSpecies(),
-        "Could not get the index of species `" + name + "`.",
-        "There is no species called `" + name + "` in the system.");
+           "Could not get the index of species `" + name + "`.",
+           "There is no species called `" + name + "` in the system.");
     return index;
 }
 
@@ -301,9 +297,10 @@ auto ChemicalSystem::indexSpeciesAnyWithError(const std::vector<std::string>& na
 {
     const Index index = indexSpeciesAny(names);
     Assert(index < numSpecies(),
-        "Could not get the index of the species with "
-        "any of the following names `" + join(names, ", ") + "`.",
-        "There is no species in the system with any of these names.");
+           "Could not get the index of the species with "
+           "any of the following names `" +
+               join(names, ", ") + "`.",
+           "There is no species in the system with any of these names.");
     return index;
 }
 
@@ -317,8 +314,8 @@ auto ChemicalSystem::indexPhaseWithError(std::string name) const -> Index
     const Index index = indexPhase(name);
 
     Assert(index < numPhases(),
-        "Could not get the index of phase `" + name + "`.",
-        "There is no phase called `" + name + "` in the system.");
+           "Could not get the index of phase `" + name + "`.",
+           "There is no phase called `" + name + "` in the system.");
 
     return index;
 }
@@ -326,10 +323,10 @@ auto ChemicalSystem::indexPhaseWithError(std::string name) const -> Index
 auto ChemicalSystem::indexPhaseWithSpecies(Index index) const -> Index
 {
     unsigned counter = 0;
-    for(unsigned i = 0; i < numPhases(); ++i)
-    {
+    for(unsigned i = 0; i < numPhases(); ++i) {
         counter += numSpeciesInPhase(i);
-        if(counter > index) return i;
+        if(counter > index)
+            return i;
     }
     return numPhases();
 }
@@ -362,8 +359,7 @@ auto ChemicalSystem::indicesElementsInSpecies(Index index) const -> Indices
 auto ChemicalSystem::indicesElementsInSpecies(const Indices& ispecies) const -> Indices
 {
     std::set<Index> ielements;
-    for(const Index& i : ispecies)
-    {
+    for(const Index& i : ispecies) {
         const Indices& indices = indicesElementsInSpecies(i);
         ielements.insert(indices.begin(), indices.end());
     }
@@ -383,8 +379,7 @@ auto ChemicalSystem::indicesSpeciesInPhases(const Indices& indices) const -> Ind
 {
     Indices res;
     res.reserve(numSpecies());
-    for(Index iphase : indices)
-    {
+    for(Index iphase : indices) {
         const Index ifirst = indexFirstSpeciesInPhase(iphase);
         const Index nspecies = numSpeciesInPhase(iphase);
         for(unsigned i = 0; i < nspecies; ++i)
@@ -524,13 +519,11 @@ auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream
         out << std::setw(25) << std::left << phase.name();
     out << std::endl;
     out << bar2 << std::endl;
-    for(unsigned i = 0; ; ++i)
-    {
+    for(unsigned i = 0;; ++i) {
         if(max_size <= i)
             break;
 
-        for(const auto& phase : phases)
-        {
+        for(const auto& phase : phases) {
             if(i < phase.numSpecies())
                 out << std::setw(25) << std::left << phase.species(i).name();
             else
@@ -548,8 +541,7 @@ auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream
     out << std::endl;
     out << bar2 << std::endl;
 
-    for(unsigned i = 0; ; ++i)
-    {
+    for(unsigned i = 0;; ++i) {
         if(elements.size() <= i && species.size() <= i && phases.size() <= i)
             break;
 

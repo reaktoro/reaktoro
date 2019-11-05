@@ -26,11 +26,11 @@ struct MineralSpecies::Impl
 };
 
 MineralSpecies::MineralSpecies()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 MineralSpecies::MineralSpecies(const Species& species)
-: Species(species), pimpl(new Impl())
+    : Species(species), pimpl(new Impl())
 {}
 
 auto MineralSpecies::setThermoData(const MineralSpeciesThermoData& thermo) -> void

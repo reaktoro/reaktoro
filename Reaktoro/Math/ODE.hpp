@@ -33,10 +33,18 @@ using ODEFunction = std::function<int(double, VectorConstRef, VectorRef)>;
 using ODEJacobian = std::function<int(double, VectorConstRef, MatrixRef)>;
 
 /// The linear multistep method to be used in ODESolver.
-enum class ODEStepMode { Adams, BDF };
+enum class ODEStepMode
+{
+    Adams,
+    BDF
+};
 
 /// The type of nonlinear solver iteration to be used in ODESolver.
-enum class ODEIterationMode { Functional, Newton };
+enum class ODEIterationMode
+{
+    Functional,
+    Newton
+};
 
 /// A struct that defines the options for the ODESolver.
 /// @see ODESolver, ODEProblem
@@ -109,7 +117,7 @@ struct ODEOptions
 /// @see ODESolver, ODEOptions
 class ODEProblem
 {
-public:
+  public:
     /// Construct a default ODEProblem instance
     ODEProblem();
 
@@ -157,7 +165,7 @@ public:
     /// @return Return 0 if successful, any other number otherwise.
     auto jacobian(double t, VectorConstRef y, MatrixRef J) const -> int;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;
@@ -167,7 +175,7 @@ private:
 /// @see ODEProblem, ODEOptions
 class ODESolver
 {
-public:
+  public:
     /// Construct a default ODESolver instance.
     ODESolver();
 
@@ -211,7 +219,7 @@ public:
     /// @param[in,out] y The current variables as input, the new current variables as output
     auto solve(double& t, double dt, VectorRef y) -> void;
 
-private:
+  private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;

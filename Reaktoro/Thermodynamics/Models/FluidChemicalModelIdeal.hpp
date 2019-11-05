@@ -31,6 +31,6 @@ class FluidMixture;
 /// @param mixture The fluid mixture
 /// @return The equation of state function for the fluid phase
 /// @see FluidMixture, FluidChemicalModel
-auto fluidChemicalModelIdeal(const FluidMixture& mixture)->PhaseChemicalModel;
+auto fluidChemicalModelIdeal(const FluidMixture& mixture) -> PhaseChemicalModel;
 
 } // namespace Reaktoro

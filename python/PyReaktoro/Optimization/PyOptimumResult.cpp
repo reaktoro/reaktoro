@@ -34,8 +34,7 @@ void exportOptimumResult(py::module& m)
         .def_readwrite("time", &OptimumResult::time)
         .def_readwrite("time_objective_evals", &OptimumResult::time_objective_evals)
         .def_readwrite("time_constraint_evals", &OptimumResult::time_constraint_evals)
-        .def_readwrite("time_linear_systems", &OptimumResult::time_linear_systems)
-        ;
+        .def_readwrite("time_linear_systems", &OptimumResult::time_linear_systems);
 }
 
 } // namespace Reaktoro

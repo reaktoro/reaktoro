@@ -23,8 +23,8 @@
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
-#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
+#include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
@@ -58,8 +58,7 @@ struct OptimumSolverIpNewton::Impl
         OptimumResult result;
 
         // Finish the calculation if the problem has no variable
-        if(problem.n == 0)
-        {
+        if(problem.n == 0) {
             state = OptimumState();
             result.succeeded = true;
             result.time = elapsed(begin);
@@ -119,9 +118,12 @@ struct OptimumSolverIpNewton::Impl
         delta = delta ? delta : mu;
 
         // Ensure the initial guesses for `x` and `y` have adequate dimensions
-        if(x.rows() != n) x = zeros(n);
-        if(y.rows() != m) y = zeros(m);
-        if(z.rows() != n) z = zeros(n);
+        if(x.rows() != n)
+            x = zeros(n);
+        if(y.rows() != m)
+            y = zeros(m);
+        if(z.rows() != n)
+            z = zeros(n);
 
         // Ensure the initial guesses for `x` and `z` are inside their feasible domain
         x = (x.array() > 0.0).select(x, mu);
@@ -137,9 +139,9 @@ struct OptimumSolverIpNewton::Impl
         double errorf, errorh, errorc;
 
         // The function that outputs the header and initial state of the solution
-        auto output_initial_state = [&]()
-        {
-            if(!options.output.active) return;
+        auto output_initial_state = [&]() {
+            if(!options.output.active)
+                return;
 
             outputter.addEntry("Iteration");
             outputter.addEntries(options.output.xprefix, n, options.output.xnames);
@@ -167,9 +169,9 @@ struct OptimumSolverIpNewton::Impl
         };
 
         // The function that outputs the current state of the solution
-        auto output_state = [&]()
-        {
-            if(!options.output.active) return;
+        auto output_state = [&]() {
+            if(!options.output.active)
+                return;
 
             outputter.addValue(iterations);
             outputter.addValues(x);
@@ -185,17 +187,15 @@ struct OptimumSolverIpNewton::Impl
         };
 
         // Return true if the result of a calculation failed
-        auto failed = [&](bool succeeded)
-        {
+        auto failed = [&](bool succeeded) {
             return !succeeded;
         };
 
         // The function that computes the current error norms
-        auto update_residuals = [&]()
-        {
+        auto update_residuals = [&]() {
             // Compute the right-hand side vectors of the KKT equation
-            rhs.rx.noalias() = -(f.grad - At*y - z + gamma*gamma*ones(n));
-            rhs.ry.noalias() = -(A*x + delta*delta*y - b);
+            rhs.rx.noalias() = -(f.grad - At * y - z + gamma * gamma * ones(n));
+            rhs.ry.noalias() = -(A * x + delta * delta * y - b);
             rhs.rz.noalias() = -(x % z - mu);
 
             // Calculate the optimality, feasibility and centrality errors
@@ -205,30 +205,26 @@ struct OptimumSolverIpNewton::Impl
             error = std::max({errorf, errorh, errorc});
         };
 
-        auto update_objective = [&](VectorConstRef x)
-        {
-            if(problem.c.rows())
-            {
+        auto update_objective = [&](VectorConstRef x) {
+            if(problem.c.rows()) {
                 f.val = dot(problem.c, x);
-                if(iterations == 0)
-                {
+                if(iterations == 0) {
                     f.grad = problem.c;
                     f.hessian.mode = Hessian::Diagonal;
                     f.hessian.diagonal = zeros(n);
                 }
-            }
-            else f = problem.objective(x);
+            } else
+                f = problem.objective(x);
         };
 
         // The function that initialize the state of some variables
-        auto initialize = [&]()
-        {
+        auto initialize = [&]() {
             // Initialize xtrial
             xtrial.resize(n);
 
             // TODO organize this better - this prevents zero initial guess for the feasible problem
             if(problem.c.rows())
-            	state.x.fill(1.0);
+                state.x.fill(1.0);
 
             // Update the objective function state
             update_objective(x);
@@ -238,8 +234,7 @@ struct OptimumSolverIpNewton::Impl
         };
 
         // The function that computes the Newton step
-        auto compute_newton_step = [&]()
-        {
+        auto compute_newton_step = [&]() {
             // Update the decomposition of the KKT matrix with update Hessian matrix
             kkt.decompose(lhs);
 
@@ -251,16 +246,16 @@ struct OptimumSolverIpNewton::Impl
             result.time_linear_systems += kkt.result().time_decompose;
 
             // Perform emergency Newton step calculation as long as steps contains NaN or INF values
-            while(!kkt.result().succeeded)
-            {
+            while(!kkt.result().succeeded) {
                 // Increase the value of the regularization parameter delta
                 delta = std::max(delta * 100, 1e-8);
 
                 // Return false if the calculation did not succeeded
-                if(delta > 1e-2) return false;
+                if(delta > 1e-2)
+                    return false;
 
                 // Update the residual of the feasibility conditition
-                rhs.ry -= -delta*delta*y;
+                rhs.ry -= -delta * delta * y;
 
                 // Update the decomposition of the KKT matrix with update Hessian matrix
                 kkt.decompose(lhs);
@@ -278,12 +273,10 @@ struct OptimumSolverIpNewton::Impl
         };
 
         // The aggressive mode for updating the iterates
-        auto update_iterates_aggressive = [&]()
-        {
+        auto update_iterates_aggressive = [&]() {
             // Calculate the current trial iterate for x
             for(int i = 0; i < n; ++i)
-                xtrial[i] = (x[i] + sol.dx[i] > 0.0) ?
-                    x[i] + sol.dx[i] : x[i]*(1.0 - tau);
+                xtrial[i] = (x[i] + sol.dx[i] > 0.0) ? x[i] + sol.dx[i] : x[i] * (1.0 - tau);
 
             // Update the objective function state at the trial iterate
             update_objective(xtrial);
@@ -295,8 +288,7 @@ struct OptimumSolverIpNewton::Impl
             unsigned tentatives = 0;
 
             // Repeat until f(xtrial) is finite
-            while(!isfinite(f) && ++tentatives < 10)
-            {
+            while(!isfinite(f) && ++tentatives < 10) {
                 // Calculate a new trial iterate using a smaller step length
                 xtrial = x + alpha * sol.dx;
 
@@ -316,8 +308,7 @@ struct OptimumSolverIpNewton::Impl
 
             // Update the z-Lagrange multipliers
             for(int i = 0; i < n; ++i)
-                z[i] += (z[i] + sol.dz[i] > 0.0) ?
-                    sol.dz[i] : -tau * z[i];
+                z[i] += (z[i] + sol.dz[i] > 0.0) ? sol.dz[i] : -tau * z[i];
 
             // Update the y-Lagrange multipliers
             y += sol.dy;
@@ -327,8 +318,7 @@ struct OptimumSolverIpNewton::Impl
         };
 
         // The conservative mode for updating the iterates
-        auto update_iterates_convervative = [&]()
-        {
+        auto update_iterates_convervative = [&]() {
             // Initialize the step length factor
             double alphax = fractionToTheBoundary(x, sol.dx, tau);
             double alphaz = fractionToTheBoundary(z, sol.dz, tau);
@@ -338,8 +328,7 @@ struct OptimumSolverIpNewton::Impl
             unsigned tentatives = 0;
 
             // Repeat until a suitable xtrial iterate if found such that f(xtrial) is finite
-            for(; tentatives < 10; ++tentatives)
-            {
+            for(; tentatives < 10; ++tentatives) {
                 // Calculate the current trial iterate for x
                 xtrial = x + alpha * sol.dx;
 
@@ -372,17 +361,16 @@ struct OptimumSolverIpNewton::Impl
         };
 
         // The function that performs an update in the iterates
-        auto update_iterates = [&]()
-        {
-            switch(options.ipnewton.step)
-            {
-            case Aggressive: return update_iterates_aggressive();
-            default: return update_iterates_convervative();
+        auto update_iterates = [&]() {
+            switch(options.ipnewton.step) {
+            case Aggressive:
+                return update_iterates_aggressive();
+            default:
+                return update_iterates_convervative();
             }
         };
 
-        auto converged = [&]()
-        {
+        auto converged = [&]() {
             // Prevent successfull convergence if linear constraints have not converged yet
             if(errorh > tolh)
                 return false;
@@ -398,8 +386,7 @@ struct OptimumSolverIpNewton::Impl
         initialize();
         output_initial_state();
 
-        for(iterations = 1; iterations <= maxiters && !succeeded; ++iterations)
-        {
+        for(iterations = 1; iterations <= maxiters && !succeeded; ++iterations) {
             if(failed(compute_newton_step()))
                 break;
             if(failed(update_iterates()))
@@ -424,7 +411,7 @@ struct OptimumSolverIpNewton::Impl
     {
         // Initialize the right-hand side of the KKT equations
         rhs.rx.noalias() = -dgdp;
-        rhs.ry.noalias() =  dbdp;
+        rhs.ry.noalias() = dbdp;
         rhs.rz.fill(0.0);
 
         // Solve the KKT equations to get the derivatives
@@ -436,11 +423,11 @@ struct OptimumSolverIpNewton::Impl
 };
 
 OptimumSolverIpNewton::OptimumSolverIpNewton()
-: pimpl(new Impl())
+    : pimpl(new Impl())
 {}
 
 OptimumSolverIpNewton::OptimumSolverIpNewton(const OptimumSolverIpNewton& other)
-: pimpl(new Impl(*other.pimpl))
+    : pimpl(new Impl(*other.pimpl))
 {}
 
 OptimumSolverIpNewton::~OptimumSolverIpNewton()

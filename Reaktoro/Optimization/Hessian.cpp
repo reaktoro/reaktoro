@@ -29,7 +29,7 @@ auto operator*(const Hessian& H, VectorConstRef x) -> Vector
     if(H.mode == Hessian::Diagonal)
         return H.diagonal % x;
     RuntimeError("Could not multiply a Hessian matrix with a vector.",
-        "The Hessian matrix must be in either Dense or Diagonal mode.");
+                 "The Hessian matrix must be in either Dense or Diagonal mode.");
 }
 
 } // namespace Reaktoro

@@ -23,8 +23,8 @@
 #include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/FluidChemicalModelCubicEOS.hpp>
 #include <Reaktoro/Thermodynamics/Models/FluidChemicalModelIdeal.hpp>
-#include <Reaktoro/Thermodynamics/Models/FluidChemicalModelSpycherReed.hpp>
 #include <Reaktoro/Thermodynamics/Models/FluidChemicalModelSpycherPruessEnnis.hpp>
+#include <Reaktoro/Thermodynamics/Models/FluidChemicalModelSpycherReed.hpp>
 
 namespace Reaktoro {
 
@@ -41,7 +41,6 @@ struct FluidPhase::Impl
     Impl(const FluidMixture& mixture)
         : mixture(mixture)
     {}
-
 };
 
 FluidPhase::FluidPhase(const std::string& name, PhaseType type)
@@ -53,7 +52,7 @@ FluidPhase::FluidPhase(const FluidMixture& mixture, const std::string& name, Pha
 {
     // Convert the FluidSpecies instances to Species instances
     std::vector<Species> species;
-    for (const FluidSpecies& x : mixture.species())
+    for(const FluidSpecies& x : mixture.species())
         species.push_back(x);
 
     // Set the Phase attributes
@@ -128,7 +127,5 @@ auto FluidPhase::mixture() -> FluidMixture&
 {
     return pimpl->mixture;
 }
-
-
 
 } // namespace Reaktoro

@@ -45,10 +45,10 @@ const std::string input = R"(
 
 int main()
 {
-	// Create the interpreter to execute an input script in json format
+    // Create the interpreter to execute an input script in json format
     Interpreter interpreter;
 
-	// Execute the json input script (as a string)
+    // Execute the json input script (as a string)
     interpreter.executeJsonString(input);
 
     // Output to a file the saved chemical state computed during the execution

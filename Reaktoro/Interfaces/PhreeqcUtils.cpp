@@ -30,7 +30,7 @@ auto load(PHREEQC& phreeqc, std::string database) -> void
     // Initialize the phreeqc instance
     int errors = phreeqc.do_initialize();
     Assert(errors == 0, "Could not initialize PHREEQC.",
-        "Call to method `Phreeqc::do_initialize` failed.");
+           "Call to method `Phreeqc::do_initialize` failed.");
 
     // Initialize the phreeqc database
     std::istream* db_cookie = new std::ifstream(database, std::ios_base::in);
@@ -38,7 +38,7 @@ auto load(PHREEQC& phreeqc, std::string database) -> void
     errors = phreeqc.read_database();
     phreeqc.Get_phrq_io()->clear_istream();
     Assert(errors == 0, "Could not load the PHREEQC database file `" + database + "`.",
-        "Ensure `" + database + "` points to the right path to the database file.");
+           "Ensure `" + database + "` points to the right path to the database file.");
 }
 
 auto execute(PHREEQC& phreeqc, std::string input, std::string output) -> void
@@ -48,14 +48,15 @@ auto execute(PHREEQC& phreeqc, std::string input, std::string output) -> void
     std::istream* in_cookie;
     if(input.find('\n') == std::string::npos)
         in_cookie = new std::ifstream(input, std::ios_base::in);
-    else in_cookie = new std::istringstream(input);
+    else
+        in_cookie = new std::istringstream(input);
 
     // Check if output to a file should be performed
     std::ofstream* out = output.empty() ? nullptr : new std::ofstream(output);
 
     // Set the output and error streams
-	phreeqc.Get_phrq_io()->Set_output_ostream(out);
-	phreeqc.Get_phrq_io()->Set_error_ostream(out);
+    phreeqc.Get_phrq_io()->Set_output_ostream(out);
+    phreeqc.Get_phrq_io()->Set_error_ostream(out);
 
     // Set the input stream and execute the simulation
     phreeqc.Get_phrq_io()->push_istream(in_cookie);
@@ -63,11 +64,12 @@ auto execute(PHREEQC& phreeqc, std::string input, std::string output) -> void
     phreeqc.Get_phrq_io()->clear_istream();
 
     // Delete the dynamically allocated stream objects
-    if(out != nullptr) delete out;
+    if(out != nullptr)
+        delete out;
 
     // Check if there was any error
     Assert(errors == 0, "Failed to execute the PHREEQC input script `" + input + "`.",
-        "There was a Phreeqc error when executing this input script file.");
+           "There was a Phreeqc error when executing this input script file.");
 }
 
 auto findElement(const PHREEQC& phreeqc, std::string name) -> PhreeqcElement*
@@ -113,7 +115,8 @@ auto elements(const PhreeqcPhase* phase) -> std::map<PhreeqcElement*, double>
 auto stoichiometry(std::string element, const PhreeqcSpecies* species) -> double
 {
     // Return species charge if element is electrical charge Z
-    if(element == "Z") return species->z;
+    if(element == "Z")
+        return species->z;
 
     // Iterate over all elements in the species
     for(auto iter = species->next_elt; iter->elt != nullptr; iter++)
@@ -140,10 +143,14 @@ auto name(const PhreeqcSpecies* species) -> std::string
 {
     const double charge = species->z;
     const std::string phreeqc_name = species->name;
-    if(phreeqc_name == "H2O") return "H2O(l)";
-    if(charge == 0) return phreeqc_name + "(aq)";
-    if(charge < 0) return phreeqc_name.substr(0, phreeqc_name.rfind('-')) + std::string(std::abs(charge), '-');
-    else return phreeqc_name.substr(0, phreeqc_name.rfind('+')) + std::string(std::abs(charge), '+');
+    if(phreeqc_name == "H2O")
+        return "H2O(l)";
+    if(charge == 0)
+        return phreeqc_name + "(aq)";
+    if(charge < 0)
+        return phreeqc_name.substr(0, phreeqc_name.rfind('-')) + std::string(std::abs(charge), '-');
+    else
+        return phreeqc_name.substr(0, phreeqc_name.rfind('+')) + std::string(std::abs(charge), '+');
 }
 
 auto name(const PhreeqcPhase* phase) -> std::string
@@ -153,19 +160,20 @@ auto name(const PhreeqcPhase* phase) -> std::string
 
 auto isGaseousSpecies(const PhreeqcPhase* phase) -> bool
 {
-	std::string name(phase->name);
-	return name.find("(g)") < name.size();
+    std::string name(phase->name);
+    return name.find("(g)") < name.size();
 }
 
 auto isMineralSpecies(const PhreeqcPhase* phase) -> bool
 {
-	return !isGaseousSpecies(phase);
+    return !isGaseousSpecies(phase);
 }
 
 auto reactionEquation(const PhreeqcSpecies* species) -> std::map<std::string, double>
 {
     // Check if there is any reaction defined by this species.
-    if(species->rxn_x == nullptr) return {};
+    if(species->rxn_x == nullptr)
+        return {};
 
     // The reaction equation as pairs of names and stoichiometries
     std::map<std::string, double> pairs;
@@ -177,7 +185,8 @@ auto reactionEquation(const PhreeqcSpecies* species) -> std::map<std::string, do
     // Check if the reaction is a trivial reaction (e.g., H+ = H+)
     // Phreeqc generates this reactions for master species. Here, we
     // return a empty reaction equation in this case.
-    if(pairs.size() <= 1) return {};
+    if(pairs.size() <= 1)
+        return {};
 
     return pairs;
 }
@@ -185,7 +194,8 @@ auto reactionEquation(const PhreeqcSpecies* species) -> std::map<std::string, do
 auto reactionEquation(const PhreeqcPhase* phase) -> std::map<std::string, double>
 {
     // Check if there is any reaction defined by this species.
-    if(phase->rxn_x == nullptr) return {};
+    if(phase->rxn_x == nullptr)
+        return {};
 
     // The reaction equation as pairs of names and stoichiometries
     std::map<std::string, double> pairs;
@@ -200,7 +210,8 @@ auto reactionEquation(const PhreeqcPhase* phase) -> std::map<std::string, double
     // Check if the reaction is a trivial reaction (e.g., X- = X-)
     // Phreeqc generates this reactions for master species. Here, we
     // return a empty reaction equation in this case.
-    if(pairs.size() <= 1) return {};
+    if(pairs.size() <= 1)
+        return {};
 
     return pairs;
 }
@@ -263,7 +274,7 @@ auto activeProductSpecies(const PHREEQC& phreeqc) -> std::vector<PhreeqcSpecies*
     // Loop over all species in `s_x` data-member of PHREEQC
     for(int i = 0; i < phreeqc.count_s_x; ++i)
         if(phreeqc.s_x[i]->type != EX && phreeqc.s_x[i]->type != SURF) // exchange and surface species are currently not supported
-            if(!reactionEquation(phreeqc.s_x[i]).empty()) //  a product species has a non-empty reaction equation
+            if(!reactionEquation(phreeqc.s_x[i]).empty())              //  a product species has a non-empty reaction equation
                 species.push_back(phreeqc.s_x[i]);
 
     return species;
@@ -273,8 +284,7 @@ auto activeGaseousSpecies(const PHREEQC& phreeqc) -> std::vector<PhreeqcPhase*>
 {
     // Collect the gaseous species of the cxxGasPhase instances
     std::set<PhreeqcPhase*> gases;
-    for(const auto& pair : phreeqc.Rxn_gas_phase_map)
-    {
+    for(const auto& pair : phreeqc.Rxn_gas_phase_map) {
         const cxxGasPhase& gas_phase = pair.second;
         for(const cxxGasComp& component : gas_phase.Get_gas_comps())
             gases.insert(findPhase(phreeqc, component.Get_phase_name()));
@@ -316,18 +326,14 @@ auto speciesAmounts(const PHREEQC& phreeqc, const std::vector<PhreeqcPhase*>& ph
     const unsigned num_phases = phases.size();
     const unsigned num_unknowns = phreeqc.count_unknowns;
     Vector n(num_phases);
-    for(unsigned i = 0; i < num_phases; ++i)
-    {
+    for(unsigned i = 0; i < num_phases; ++i) {
         n[i] = phases[i]->moles_x;
 
         // Check if the phase has zero molar amount
-        if(n[i] <= 0.0)
-        {
+        if(n[i] <= 0.0) {
             // Check if there is any unknown for current phase and get its moles from there
-            for(unsigned j = 0; j < num_unknowns; ++j)
-            {
-                if(phases[i] == phreeqc.x[j]->phase)
-                {
+            for(unsigned j = 0; j < num_unknowns; ++j) {
+                if(phases[i] == phreeqc.x[j]->phase) {
                     n[i] = phreeqc.x[j]->moles;
                     break;
                 }
@@ -345,16 +351,20 @@ auto delta_h_in_original_units(const SpeciesType* species) -> double
     const double kjoule_per_cal = 4.184e-3;
     const double kjoule_per_kcal = kjoule_per_cal * 1e+3;
     const double kjoule_per_joule = 1e-3;
-    switch(species->original_units)
-    {
-        case kcal: return delta_h_in_kjoule/kjoule_per_kcal;
-        case cal: return delta_h_in_kjoule/kjoule_per_cal;
-        case kjoules: return delta_h_in_kjoule;
-        case joules: return delta_h_in_kjoule/kjoule_per_joule;
+    switch(species->original_units) {
+    case kcal:
+        return delta_h_in_kjoule / kjoule_per_kcal;
+    case cal:
+        return delta_h_in_kjoule / kjoule_per_cal;
+    case kjoules:
+        return delta_h_in_kjoule;
+    case joules:
+        return delta_h_in_kjoule / kjoule_per_joule;
     }
     RuntimeError("Could not convert PHREEQC reaction data `delta_h` to kilo joule.",
-        "The species or phase `" + std::string(species->name) + "` does not have a valid"
-            "`original_units` data-member value.");
+                 "The species or phase `" + std::string(species->name) +
+                     "` does not have a valid"
+                     "`original_units` data-member value.");
 }
 
 // Returns true if the PHREEQC analytical logk expression can be used, false otherwise.
@@ -381,11 +391,12 @@ auto lnEquilibriumConstantHelper(const SpeciesType* species, Temperature T, Pres
 
     // Check if the PHREEQC analytical expression for logk should be used
     if(useAnalytic(logk))
-        return (logk[T_A1] + logk[T_A2]*T + logk[T_A3]/T +
-            logk[T_A4]*log10(T) + logk[T_A5]/(T*T) + logk[T_A6]*(T*T)) * ln10;
+        return (logk[T_A1] + logk[T_A2] * T + logk[T_A3] / T +
+                logk[T_A4] * log10(T) + logk[T_A5] / (T * T) + logk[T_A6] * (T * T)) *
+               ln10;
 
     // Use the Van't Hoff equation instead
-    return logk[logK_T0]*ln10 - logk[delta_h] * (298.15 - T)/(R*T*298.15);
+    return logk[logK_T0] * ln10 - logk[delta_h] * (298.15 - T) / (R * T * 298.15);
 }
 
 auto lnEquilibriumConstant(const PhreeqcSpecies* species, double T, double P) -> ThermoScalar

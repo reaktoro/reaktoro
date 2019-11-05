@@ -15,16 +15,13 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
-
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Math/Roots.hpp>
-
+#include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 #include <Reaktoro/deps/eigen3/Eigen/Dense>
 #include <Reaktoro/deps/eigen3/unsupported/Eigen/Polynomials>
-
 
 namespace Reaktoro {
 
@@ -52,9 +49,8 @@ auto pressureComparison(const ThermoScalar& Pressure, const ThermoScalar& Temper
                         const double epsilon, const double sigma) -> PhaseType
 {
 
-    auto p = [&](double V) -> double
-    {
-        return ((universalGasConstant*Temperature.val) / (V - bmix.val)) - (amix.val / ((V + epsilon * bmix.val) * (V + sigma * bmix.val)));
+    auto p = [&](double V) -> double {
+        return ((universalGasConstant * Temperature.val) / (V - bmix.val)) - (amix.val / ((V + epsilon * bmix.val) * (V + sigma * bmix.val)));
     };
 
     auto k1 = epsilon * bmix.val;
@@ -79,26 +75,25 @@ auto pressureComparison(const ThermoScalar& Pressure, const ThermoScalar& Temper
     polynomial_solver.realRoots(real_roots, abs_imaginary_threshold);
 
     // removing roots lower than bmix, no physical meaning
-    auto new_end = std::remove_if(real_roots.begin(), real_roots.end(), [&](double r){
+    auto new_end = std::remove_if(real_roots.begin(), real_roots.end(), [&](double r) {
         return r < bmix.val;
     });
     real_roots.resize(new_end - real_roots.begin());
 
-    if (real_roots.size() == 0)
-    {
+    if(real_roots.size() == 0) {
         return PhaseType::Gas;
     }
 
     std::vector<double> pressures;
-    for (const auto& volume : real_roots)
+    for(const auto& volume : real_roots)
         pressures.push_back(p(volume));
 
     auto Pmin = std::min_element(pressures.begin(), pressures.end());
     auto Pmax = std::max_element(pressures.begin(), pressures.end());
 
-    if (Pressure.val < *Pmin)
+    if(Pressure.val < *Pmin)
         return PhaseType::Gas;
-    if (Pressure.val > *Pmax)
+    if(Pressure.val > *Pmax)
         return PhaseType::Liquid;
 
     Exception exception;
@@ -106,7 +101,6 @@ auto pressureComparison(const ThermoScalar& Pressure, const ThermoScalar& Temper
     exception.reason << "gibbsEnergyAndEquationOfStateMethod has received one Z but the pressure is between Pmin and Pmax.";
     RaiseError(exception);
 }
-
 
 auto gibbsResidualEnergyComparison(
     const ThermoScalar& pressure,
@@ -125,25 +119,23 @@ auto gibbsResidualEnergyComparison(
 
     // Computing the values of residual Gibbs energy for all Zs
     std::vector<ChemicalScalar> Gs;
-    for (const auto Z : {Z_max, Z_min})
-    {
-        const double factor = -1.0 / (3 * Z.val*Z.val + 2 * A.val*Z.val + B.val);
+    for(const auto Z : {Z_max, Z_min}) {
+        const double factor = -1.0 / (3 * Z.val * Z.val + 2 * A.val * Z.val + B.val);
         const ChemicalScalar beta = pressure * bmix / (R * T);
         const ChemicalScalar q = amix / (bmix * R * T);
 
         // Calculate the integration factor I and its temperature derivative IT
         ChemicalScalar I;
-        if (epsilon != sigma)
+        if(epsilon != sigma)
             I = log((Z + sigma * beta) / (Z + epsilon * beta)) / (sigma - epsilon);
         else
             I = beta / (Z + epsilon * beta);
 
-        Gs.push_back(R * temperature*(Z - 1 - log(Z - beta) - q * I));
+        Gs.push_back(R * temperature * (Z - 1 - log(Z - beta) - q * I));
     }
 
     return (Gs[0].val < Gs[1].val) ? PhaseType::Gas : PhaseType::Liquid;
 }
-
 
 auto identifyPhaseUsingGibbsEnergyAndEos(
     const ThermoScalar& pressure,
@@ -157,16 +149,15 @@ auto identifyPhaseUsingGibbsEnergyAndEos(
     const double epsilon,
     const double sigma) -> PhaseType
 {
-    if (Zs.size() == 1)
-    {
+    if(Zs.size() == 1) {
         return pressureComparison(pressure, temperature, amix, bmix, A, B, C, epsilon, sigma);
     }
 
-    if (Zs.size() != 2) {
+    if(Zs.size() != 2) {
         Exception exception;
         exception.error << "identifyPhaseUsingGibbsEnergyAndEos received invalid input";
         exception.reason << "Zs should have size 1 or 2 in identifyPhaseUsingGibbsEnergyAndEos, "
-            << "but has a size of " << Zs.size();
+                         << "but has a size of " << Zs.size();
         RaiseError(exception);
     }
 
@@ -176,4 +167,4 @@ auto identifyPhaseUsingGibbsEnergyAndEos(
     return gibbsResidualEnergyComparison(pressure, temperature, amix, bmix, A, B, Z_min, Z_max, epsilon, sigma);
 }
 
-}
+} // namespace Reaktoro
