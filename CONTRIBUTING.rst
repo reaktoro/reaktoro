@@ -86,7 +86,7 @@ Reaktoro using Conda, these are the steps:
 
 We follow some standards for the sake of code style, uniformity and quality. Don't worry, everything is provided through
 ``pre-commit``. If you choose to develop Reaktoro using Conda, then the steps depicted above include ``pre-commit``.
-If you installed the dependencies manually, you have to install ``pre-commit`` just after cloning Reaktoro's
+If you want to install the dependencies manually, you have to install ``pre-commit`` just after cloning Reaktoro's
 repository. Check `here <https://pre-commit.com/#install>`_ for installation instructions. With ``pre-commit`` properly
 installed, just do the following in your console: ``pre-commit install``. After that, checkers and formatters are
 enable to verify every modification you introduced in a commit automatically. If something is not according to the
