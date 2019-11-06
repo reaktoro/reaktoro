@@ -8,6 +8,7 @@ name: reaktoro
 dependencies:
   - black
   - boost=1.70
+  - clang-tools>=9.0.0
   - cmake=3.15
   - invoke
   - ninja>=1.9.0
