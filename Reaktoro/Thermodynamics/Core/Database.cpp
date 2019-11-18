@@ -459,7 +459,6 @@ struct Database::Impl
         parse(doc, filename);
     }
 
-// ThermoFun intergation BEGIN
     Impl(const ThermoFun::Database& fundatabase)
     {
         fundb = fundatabase;
@@ -469,17 +468,17 @@ struct Database::Impl
             auto substance = pair.second;
             auto type = substance.aggregateState();
 
-            if (type == ThermoFun::AggregateState::type::AQUEOUS)
+            if(type == ThermoFun::AggregateState::type::AQUEOUS)
             {
                 AqueousSpecies species = getAqueousSpecies(substance);
                 if(valid(species))
                     aqueous_species_map[species.name()] = species;
-            } else if (type == ThermoFun::AggregateState::type::GAS)
+            } else if(type == ThermoFun::AggregateState::type::GAS)
             {
                 GaseousSpecies species = getGaseousSpecies(substance);
                 if(valid(species))
                     gaseous_species_map[species.name()] = species;
-            } else if (type == ThermoFun::AggregateState::type::CRYSTAL)
+            } else if(type == ThermoFun::AggregateState::type::CRYSTAL)
             {
                 MineralSpecies species = getMineralSpecies(substance);
                 if(valid(species))
@@ -500,7 +499,7 @@ struct Database::Impl
         for (auto &e : mapElements)
         {
             Element element;
-            if (e.first.symbol() == "Zz")
+            if(e.first.symbol() == "Zz")
                 element.setName("Z");
             else
                 element.setName(e.first.symbol());
@@ -553,15 +552,15 @@ struct Database::Impl
 
         ThermoFun::ThermoParametersSubstance param = substance.thermoParameters();
 
-        if (param.critical_parameters.size() >= 3)
+        if(param.critical_parameters.size() >= 3)
         {
-            if (param.critical_parameters[0]>0.0)
+            if(param.critical_parameters[0] > 0.0)
                 species.setCriticalTemperature(param.critical_parameters[0]);
 
-            if (param.critical_parameters[1]>0.0)
+            if(param.critical_parameters[1] > 0.0)
                 species.setCriticalPressure(param.critical_parameters[1]*1e05); // from bar to Pa
 
-            if (param.critical_parameters[2]>0.0)
+            if(param.critical_parameters[2] > 0.0)
                 species.setAcentricFactor(param.critical_parameters[2]);
         }
 
@@ -771,7 +770,7 @@ struct Database::Impl
                 LiquidSpecies liquid_species = parseFluidSpecies(node);
                 const auto gas_species_suffix_size = 3;
                 liquid_species.setName(name.substr(0, name.size() - gas_species_suffix_size) + "(liq)");
-                if (valid(gaseous_species))
+                if(valid(gaseous_species))
                 {
                     gaseous_species_map[gaseous_species.name()] = gaseous_species;
                     liquid_species_map[liquid_species.name()] = liquid_species;

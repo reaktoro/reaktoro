@@ -22,9 +22,13 @@
 #include <string>
 #include <vector>
 
+
+// Forward declarations for ThermoFun
 namespace ThermoFun {
-    class Database;
-}
+
+class Database;
+
+} // namespace ThermoFun
 
 namespace Reaktoro {
 
@@ -121,7 +125,7 @@ public:
 
     /// Return all liquid species in the database
     auto liquidSpecies() -> std::vector<LiquidSpecies>;
-	
+
     /// Return a liquid species in the database.
     /// **Note:** An exception is thrown if the database does not contain the species.
     /// @param name The name of the liquid species

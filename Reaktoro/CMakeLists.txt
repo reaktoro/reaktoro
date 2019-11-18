@@ -38,9 +38,12 @@ target_include_directories(Reaktoro
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro
     PRIVATE ${THIRDPARTY_LIBS}
-    PUBLIC Boost::boost
-    PUBLIC ThermoFun::ThermoFun
-    )
+    PUBLIC Boost::boost)
+
+# Link Reaktoro library against ThermoFun if found
+if(ThermoFun_FOUND)
+    target_link_libraries(Reaktoro PUBLIC ThermoFun::ThermoFun)
+endif()
 
 # Set compilation features to be propagated to dependent codes.
 target_compile_features(Reaktoro PUBLIC cxx_std_17)

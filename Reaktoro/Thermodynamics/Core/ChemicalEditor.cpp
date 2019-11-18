@@ -152,14 +152,14 @@ public:
         thermo = Thermo(database);
     }
 
-    Impl(const ThermoFun::Database& fundatabase)
-    : thermo(fundatabase), database(fundatabase)
+    Impl(const ThermoFun::Database& db)
+    : thermo(db), database(db)
     {
         setDefaultInterpolation();
     }
 
-    explicit Impl(const Database& database_)
-    : database(database_), thermo(database)
+    explicit Impl(const Database& db)
+    : database(db), thermo(database)
     {
         setDefaultInterpolation();
     }
@@ -519,12 +519,12 @@ ChemicalEditor::ChemicalEditor()
 : pimpl(new Impl())
 {}
 
-ChemicalEditor::ChemicalEditor(const ThermoFun::Database& fundatabase)
-: pimpl(new Impl(fundatabase))
+ChemicalEditor::ChemicalEditor(const ThermoFun::Database& db)
+: pimpl(new Impl(db))
 {}
 
-ChemicalEditor::ChemicalEditor(const Database& database)
-: pimpl(new Impl(database))
+ChemicalEditor::ChemicalEditor(const Database& db)
+: pimpl(new Impl(db))
 {}
 
 ChemicalEditor::ChemicalEditor(const ChemicalEditor& other)
@@ -711,4 +711,3 @@ ChemicalEditor::operator ReactionSystem() const
 }
 
 } // namespace Reaktoro
-
