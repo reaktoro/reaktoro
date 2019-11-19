@@ -466,6 +466,7 @@ struct Database::Impl
         for (auto pair : fundb.mapSubstances())
         {
             auto substance = pair.second;
+            auto name = pair.first;
             auto type = substance.aggregateState();
 
             if(type == ThermoFun::AggregateState::type::AQUEOUS)
@@ -484,9 +485,8 @@ struct Database::Impl
                 if(valid(species))
                     mineral_species_map[species.name()] = species;
 
-            } /*else RuntimeError("Could not parse the species `" +
-                              name + "` with type `" + type + "` in the database `" +
-                              databasename + "`.", "The type of the species is unknown.");*/
+            } else RuntimeError("Could not parse the species `" + name + " in the database.", 
+                "The type of the species is unknown.");
         }
     }
 
@@ -536,12 +536,6 @@ struct Database::Impl
         // Set the elemental charge of the species
         species.setCharge(substance.charge());
 
-        // Parse the complex formula of the aqueous species (if any)
-//        species.setDissociation(parseDissociation(node.child("Dissociation").text().get()));
-
-        // Parse the thermodynamic data of the aqueous species
-//        species.setThermoData(parseAqueousSpeciesThermoData(node.child("Thermo")));
-
         return species;
     }
 
@@ -564,21 +558,6 @@ struct Database::Impl
                 species.setAcentricFactor(param.critical_parameters[2]);
         }
 
-        // Set the critical temperature of the gaseous species (in units of K)
-//        if(!node.child("CriticalTemperature").empty())
-//            species.setCriticalTemperature(node.child("CriticalTemperature").text().as_double());
-
-        // Set the critical pressure of the gaseous species (in units of Pa)
-//        if(!node.child("CriticalPressure").empty())
-//            species.setCriticalPressure(node.child("CriticalPressure").text().as_double() * 1e5); // convert from bar to Pa
-
-        // Set the acentric factor of the gaseous species
-//        if(!node.child("AcentricFactor").empty())
-//            species.setAcentricFactor(node.child("AcentricFactor").text().as_double());
-
-        // Parse the thermodynamic data of the gaseous species
-//        species.setThermoData(parseGaseousSpeciesThermoData(node.child("Thermo")));
-
         return species;
     }
 
@@ -586,9 +565,6 @@ struct Database::Impl
     {
         // The mineral species instance
         MineralSpecies species = getSpecies(substance);
-
-        // Parse the thermodynamic data of the mineral species
-//        species.setThermoData(parseMineralSpeciesThermoData(node.child("Thermo")));
 
         return species;
     }

@@ -95,7 +95,7 @@ public:
     explicit ChemicalEditor(const Database& database);
 
     /// Construct a ChemicalEditor instance with a provided ThermoFun database.
-    ChemicalEditor(const ThermoFun::Database& database);
+    explicit ChemicalEditor(const ThermoFun::Database& database);
 
     /// Construct a copy of the provided ChemicalEditor instance.
     ChemicalEditor(const ChemicalEditor& other);
