@@ -87,6 +87,7 @@ public:
     /// @param filename The name of the database file
     explicit Database(std::string filename);
 
+    /// Construct a Database instance with a given ThermoFun database.
     Database(const ThermoFun::Database& fundatabase);
 
     /// Add an Element instance in the database.
