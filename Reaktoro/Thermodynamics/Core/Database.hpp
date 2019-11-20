@@ -88,7 +88,7 @@ public:
     explicit Database(std::string filename);
 
     /// Construct a Database instance with a given ThermoFun database.
-    Database(const ThermoFun::Database& fundatabase);
+    explicit Database(const ThermoFun::Database& fundatabase);
 
     /// Add an Element instance in the database.
     auto addElement(const Element& element) -> void;
