@@ -22,6 +22,14 @@
 #include <string>
 #include <vector>
 
+
+// Forward declarations for ThermoFun
+namespace ThermoFun {
+
+class Database;
+
+} // namespace ThermoFun
+
 namespace Reaktoro {
 
 // Forward declarations
@@ -79,6 +87,9 @@ public:
     /// @param filename The name of the database file
     explicit Database(std::string filename);
 
+    /// Construct a Database instance with a given ThermoFun database.
+    explicit Database(const ThermoFun::Database& fundatabase);
+
     /// Add an Element instance in the database.
     auto addElement(const Element& element) -> void;
 
@@ -115,7 +126,7 @@ public:
 
     /// Return all liquid species in the database
     auto liquidSpecies() -> std::vector<LiquidSpecies>;
-	
+
     /// Return a liquid species in the database.
     /// **Note:** An exception is thrown if the database does not contain the species.
     /// @param name The name of the liquid species

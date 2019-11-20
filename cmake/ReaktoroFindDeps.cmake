@@ -1,6 +1,13 @@
 # Find Boost library
 find_package(Boost REQUIRED)
 
+# Find ThermoFun library and define a pre-processor macro REAKTORO_USING_THERMOFUN if so
+find_package(ThermoFun REQUIRED)
+
+if(ThermoFun_FOUND)
+    add_compile_definitions(REAKTORO_USING_THERMOFUN)
+endif()
+
 # Find pybind11 library (if needed)
 if(REAKTORO_BUILD_PYTHON)
     set(PYBIND11_CPP_STANDARD -std=c++17)  # Ensure pybind11 really uses c++17

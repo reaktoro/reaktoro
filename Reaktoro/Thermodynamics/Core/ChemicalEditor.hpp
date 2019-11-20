@@ -22,7 +22,12 @@
 #include <string>
 #include <vector>
 
-// Reaktoro includes
+// Forward declarations for ThermoFun
+namespace ThermoFun {
+
+class Database;
+
+} // namespace ThermoFun
 
 namespace Reaktoro {
 
@@ -86,8 +91,11 @@ public:
     /// of a ChemicalEditor instance using the default constructor.
     ChemicalEditor();
 
-    /// Construct a ChemicalEditor instance with the provided database.
+    /// Construct a ChemicalEditor instance with a provided database.
     explicit ChemicalEditor(const Database& database);
+
+    /// Construct a ChemicalEditor instance with a provided ThermoFun database.
+    explicit ChemicalEditor(const ThermoFun::Database& database);
 
     /// Construct a copy of the provided ChemicalEditor instance.
     ChemicalEditor(const ChemicalEditor& other);
@@ -411,7 +419,7 @@ public:
     /// editor.addMineralPhaseWithElements({"Ca", "C", "O"});
     ///
     /// // This will only recognize the element "O", and CaC will be ignored
-    /// editor.addMineralPhaseWithElements({"CaC", "O"}); 
+    /// editor.addMineralPhaseWithElements({"CaC", "O"});
     /// ~~~
     /// @note In most cases, the solid solutions of interest have predefined mineral composition, so that
     /// one might prefer instead to list the mineral end-members one by one, instead of letting
