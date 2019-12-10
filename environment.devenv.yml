@@ -6,23 +6,26 @@ name: reaktoro
 {% set debug = os.environ.get("CONFIG", "").lower() == "debug" %}
 
 dependencies:
+  # Compilers
+  - gxx_linux-64=7.3.0             # [linux]
+  - libstdcxx-ng                   # [linux]
+  - clangxx=9.0.0                  # [osx]
+  # C++ dependendies
   - boost=1.70
-  - cmake=3.15
-  - invoke
-  - ninja>=1.9.0
+  - pybind11
+  - thermofun
+  {% if not debug %}
+  - pugixml                        # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
+  {% endif %}
+  # Python dependendies
   - numpy
   - pandas
   - pip
   - pip:
-    - sphinx
+    - sphinx==1.8.5
     - sphinx-autobuild
     - sphinx_rtd_theme
     - sphinxcontrib-images
-  {% if not debug %}
-  # Cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
-  - pugixml
-  {% endif %}
-  - pybind11=2.3.0
   - pytest
   - pytest-cpp
   - pytest-datadir
@@ -32,12 +35,15 @@ dependencies:
   - pytest-xdist
   - python={{ python_version }}
   - tabulate
-  - thermofun
-  - gxx_linux-64=7.3.0             # [linux]
-  - libstdcxx-ng                   # [linux]
-  - clangxx=9.0.0                  # [osx]
+  # Doxygen documentation
+  # - doxygen=1.8.9                 # [linux]
+  - graphviz                       # [linux]
+  # Utilities
+  - cmake=3.15
+  - ninja>=1.9.0
   - ccache                         # [unix]
   - clcache                        # [win]
+  - invoke
 
 environment:
 
