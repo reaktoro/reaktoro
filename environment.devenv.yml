@@ -36,7 +36,7 @@ dependencies:
   - python={{ python_version }}
   - tabulate
   # Doxygen documentation
-  - doxygen                        # [linux]
+  # - doxygen=1.8.9                 # [linux]
   - graphviz                       # [linux]
   # Utilities
   - cmake=3.15
