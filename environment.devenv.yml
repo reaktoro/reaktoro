@@ -12,7 +12,7 @@ dependencies:
   - clangxx=9.0.0                  # [osx]
   # C++ dependendies
   - boost=1.70
-  - pybind11=2.3.0
+  - pybind11
   - thermofun
   {% if not debug %}
   - pugixml                        # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
