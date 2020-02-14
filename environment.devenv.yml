@@ -4,6 +4,7 @@ name: reaktoro
 
 {% set python_version = os.environ.get("PY_VER", "3.7") %}
 {% set debug = os.environ.get("CONFIG", "").lower() == "debug" %}
+{% set use_openlibm = os.environ.get("REAKTORO_USE_OPENLIBM", "0").strip() != "0" %}
 
 dependencies:
   # Compilers
@@ -16,6 +17,9 @@ dependencies:
   - thermofun
   {% if not debug %}
   - pugixml                        # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
+  {% endif %}
+  {% if use_openlibm %}
+  - openlibm
   {% endif %}
   # Python dependendies
   - numpy
