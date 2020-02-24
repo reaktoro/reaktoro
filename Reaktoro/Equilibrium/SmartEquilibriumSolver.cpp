@@ -140,7 +140,7 @@ struct SmartEquilibriumSolver::Impl
     {
         // Calculate the equilibrium state using conventional Gibbs energy minimization approach
         timeit( solver.solve(state, T, P, be),
-            result.timing.learn_gibbs_energy_minimization= );
+            result.timing.learning_gibbs_energy_minimization= );
 
         // Store the result of the Gibbs energy minimization calculation performed during learning
         result.learning.gibbs_energy_minimization = solver.result();
