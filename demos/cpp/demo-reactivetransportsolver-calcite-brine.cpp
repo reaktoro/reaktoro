@@ -118,6 +118,7 @@ int main()
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
     //*/
+    // params.nsteps = 10000; // the number of steps in the reactive transport simulation
     params.nsteps = 10000; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 30 * minute; // the time step (in units of s)
@@ -129,7 +130,7 @@ int main()
     params.P = 100;                      // the pressure (in units of bar)
 
     // Define parameters of the equilibrium solvers
-    params.smart_equlibrium_reltol = 1e-1;
+    params.smart_equlibrium_reltol = 0.02;
     params.smart_equlibrium_abstol = 1e-8;
     params.track_statistics = true;
 
@@ -315,7 +316,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     while (step < params.nsteps)
     {
         // Print some progress
-        //std::cout << "Step " << step << " of " << params.nsteps << std::endl;
+        std::cout << "Step " << step << " of " << params.nsteps << std::endl;
 
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
         rtsolver.step(field);
