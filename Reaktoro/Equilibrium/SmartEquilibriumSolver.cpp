@@ -16,6 +16,7 @@
 #include "SmartEquilibriumSolver.hpp"
 
 // C++ includes
+#include <algorithm>
 #include <deque>
 
 // Reaktoro includes
@@ -63,7 +64,9 @@ struct SmartEquilibriumSolver::Impl
     /// Auxiliary vectors
     Vector dn, dy, dz;
 
+    std::deque<Index> priority;
 
+    std::deque<Index> ranking;
 
 
 
@@ -149,8 +152,181 @@ struct SmartEquilibriumSolver::Impl
         properties = solver.properties();
 
         // Store the computed solution into the knowledge tree
+        // timeit( tree.push_back({be, state, properties, solver.sensitivity()}),
+        //     result.timing.learning_storage= );
+
         timeit( tree.push_back({be, state, properties, solver.sensitivity()}),
             result.timing.learning_storage= );
+
+        priority.push_back(priority.size());
+
+        ranking.push_back(0);
+    }
+
+    /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
+    auto estimate_old(ChemicalState& state, double T, double P, VectorConstRef be) -> void
+    {
+        // Skip estimation if no previous full computation has been done
+        if(tree.empty())
+            return;
+
+        // TODO Fixing negative amounts
+        // Once some species are found to have negative values, first check
+        // After the projection, assume species i has negative amounts.
+        // 1) Check if n(i,new) is greater than, say, -1.0e-4.
+        //    If so, just approximate n(i,new) to, say, 1e-25 (some small number
+        //    below abstol!).
+        // 2)
+
+        //        const double ln10 = 2.302585;
+
+        //        const auto reltol = ln10 * options.smart.reltol;
+        //        const auto abstol = ln10 * options.smart.abstol;
+
+        // Relative and absolute tolerance parameters
+        const auto reltol = options.reltol;
+        const auto abstol = options.abstol;
+
+        //---------------------------------------------------------------------------------------
+        // Step 1: Search for the reference element (closest to the new state input conditions)
+        //---------------------------------------------------------------------------------------
+        tic(0);
+
+        // Comparison function based on the Euclidean distance
+        auto distancefn = [&](const TreeNode& a, const TreeNode& b)
+        {
+            const auto& be_a = a.be;
+            const auto& be_b = b.be;
+            return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();  // TODO: We need to extend this later with T and P contributions too (Allan, 26.06.2019)
+        };
+
+        // Find the entry with minimum "input" distance
+        auto it = std::min_element(tree.begin(), tree.end(), distancefn);
+
+        toc(0, result.timing.estimate_search);
+
+        //----------------------------------------------------------------------------
+        // Step 2: Calculate predicted state with a first-order Taylor approximation
+        //----------------------------------------------------------------------------
+        tic(1);
+
+        // Get all the data stored in the reference element
+        const auto& be0 = it->be;
+        const auto& state0 = it->state;
+        const auto& properties0 = it->properties;
+        const auto& sensitivity0 = it->sensitivity;
+        const auto& n0 = state0.speciesAmounts();
+
+        // Get the sensitivity derivatives dln(a) / dn
+        const auto lna_vec = properties0.lnActivities();
+        const auto& dlnadn = lna_vec.ddn; // TODO: this line is assuming all species are equilibrium specie! get the rows and columns corresponding to equilibrium species
+        const auto& lna0 = lna_vec.val;
+
+        // Calculate perturbation of n
+        dn.noalias() = sensitivity0.dndb * (be - be0); // delta(n) = dn/db * (b - b0)
+        n.noalias() = n0 + dn;                         // n = n0 + delta(n)
+        Vector delta_lna = dlnadn * dn;             // delta(ln(a)) = d(lna)/dn * delta(n)
+
+        toc(1, result.timing.estimate_mat_vec_mul);
+
+        //----------------------------------------------
+        // Step 3: Checking the acceptance criterion
+        //----------------------------------------------
+        tic(2);
+
+        const auto& x = properties0.moleFractions();
+
+        // The estimated activity of all species must be positive.
+        // This results in the need to check delta(ln(a[i])) > -1 for all species.
+
+        // Perform the check for the negative amounts
+        const double cutoff = -1e-5;    // relaxation parameter
+        const bool amount_check = n.minCoeff() > cutoff;
+
+        // Assign small values to all the amount in the interval [cutoff, 0]
+        // (instead of mirroring bellow)
+        // for(int i = 0; i < n.size(); ++i) if(n[i] > cutoff && n[i] < 0) n[i] = options.epsilon;
+
+        // The estimated ln(a[i]) of each species must not be
+        // too far away from the reference value ln(aref[i])
+        // const bool variation_check = (delta_lna.array().abs() <= abstol + reltol * lna0.array().abs()).all();
+        ///*
+        // Check in the loop mole fractions and variations of the ln(a)
+        ///*
+        bool variation_check = true;
+        const double fraction_tol = abstol * 1e-2;
+        for(Index i = 0; i < n.size(); ++i)
+        {
+            // If the fraction is too small, skip the variational check
+            if(x[i] < fraction_tol)
+                continue;
+
+            // Perform the variational check
+            if(std::abs(delta_lna[i]) > abstol + reltol * std::abs(lna0[i])) {
+                variation_check = false;    // variation test failed
+                /*
+                // Info about the failed species
+                std::cout << "i: " << i << std::endl;
+                std::cout << "Species: " << system.species(i).name() << std::endl;
+                std::cout << "Amount(new): " << n[i] << std::endl;
+                std::cout << "Amount(old): " << n0[i] << std::endl;
+                std::cout << "logActivity(new): " << lna0[i] + delta_lna[i] << std::endl;
+                std::cout << "logActivity(old): " << lna0[i] << std::endl;
+                std::cout << "RelativeDifference(Amount): " << std::abs((n[i] - n0[i])/n0[i]) << std::endl;
+                std::cout << "RelativeDifference(lnActivity): " << std::abs(delta_lna[i])/(std::abs(lna0[i]) + 1.0) << std::endl;
+                std::cout << "VariationCheck: " << variation_check << std::endl;
+                std::cout << "AmountCheck: " << amount_check << std::endl;
+                */
+            }
+        }
+
+        toc(2, result.timing.estimate_acceptance);
+
+
+        //*/
+        //*/
+        /*
+        std::cout << "=======================" << std::endl;
+        std::cout << "Smart Estimation Failed" << std::endl;
+        std::cout << "=======================" << std::endl;
+        for(int i = 0; i < n.size(); ++i)
+        {
+            const bool variation_check = (std::abs(delta_lna[i]) <= abstol + reltol * std::abs(lna0[i]));
+            const bool activity_check = delta_lna[i] > -1.0;
+            const bool amount_check = n[i] > -1e-5;
+            const bool moll_fraction_check = n[i] / total_amount > -1e-5;
+
+            if(variation_check && activity_check && amount_check)
+                continue;
+
+            std::cout << "i: " << i << std::endl;
+            std::cout << "Species: " << system.species(i).name() << std::endl;
+            std::cout << "Amount(new): " << n[i] << std::endl;
+            std::cout << "Amount(old): " << n0[i] << std::endl;
+            std::cout << "logActivity(new): " << lna0[i] + delta_lna[i] << std::endl;
+            std::cout << "logActivity(old): " << lna0[i] << std::endl;
+            std::cout << "RelativeDifference(Amount): " << std::abs((n[i] - n0[i])/n0[i]) << std::endl;
+            std::cout << "RelativeDifference(lnActivity): " << std::abs(delta_lna[i])/(std::abs(lna0[i]) + 1.0) << std::endl;
+            std::cout << "VariationCheck: " << variation_check << std::endl;
+            std::cout << "ActivityCheck: " << activity_check << std::endl;
+            std::cout << "AmountCheck: " << amount_check << std::endl;
+            std::cout << "Mole fraction: " << moll_fraction_check << std::endl;
+
+            std::cout << std::endl;
+        }
+
+        */
+
+        // Check if smart estimation failed with respect to variation of chemical potentials or amounts
+        if(!variation_check || !amount_check)
+            return;
+
+        // Set the output chemical state to the approximate amounts of species
+        n.noalias() = abs(n); // TODO: this mirroring should be replaced by setting a very small mole amount for negative small amounts
+        state.setSpeciesAmounts(n);
+
+        // Set the estimate accepted status to true
+        result.estimate.accepted = true;
     }
 
     /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
@@ -166,13 +342,107 @@ struct SmartEquilibriumSolver::Impl
         const auto reltol = options.reltol;
         const auto abstol = options.abstol;
 
-
-        MatrixConstRef Ae = partition.formulaMatrixEquilibriumPartition();
-
         //---------------------------------------------------------------------------------------
         // Step 1: Search for the reference element (closest to the new state input conditions)
         //---------------------------------------------------------------------------------------
         tic(0);
+
+        Vector n;
+        Vector du, dn;
+        Vector x;
+
+        double nmin, ntot, uerror;
+        Index inmin, iuerror;
+
+        double nerror;
+        Index inerror;
+
+        for(auto inode : priority)
+        {
+            const auto& node = tree[inode];
+            const auto& n0 = node.state.speciesAmounts();
+            const auto& be0 = node.be;
+            auto u0 = node.properties.chemicalPotentials();
+            auto x0 = node.properties.moleFractions();
+            const auto& dndb = node.sensitivity.dndb;
+            n = n0 + dndb * (be - be0);
+            du = u0.ddn * (n - n0);
+
+            nmin = n.minCoeff(&inmin);
+            ntot = sum(n);
+
+            if(nmin/ntot < -1e-5)
+                continue;
+
+            du.noalias() = abs(du / u0.val);
+
+            // error = max(abs(du)/abs(u0.val));
+            uerror = du.maxCoeff(&iuerror);
+
+            if(uerror < reltol)
+            {
+                ranking[inode] += 1;
+
+                auto comp = [&](Index l, Index r) { return ranking[l] > ranking[r]; };
+                std::sort(priority.begin(), priority.end(), comp);
+
+                // ChemicalState statetmp(state);
+                // solver.solve(statetmp, T, P, be);
+
+                // const auto utmp = solver.properties().chemicalPotentials().val;
+                // const auto ntmp = statetmp.speciesAmounts();
+
+                // du = abs((utmp - u0.val)/u0.val);
+                // dn = abs((ntmp - n0)/n0);
+                // uerror = du.maxCoeff(&iuerror);
+                // nerror = dn.maxCoeff(&inerror);
+
+                // if(uerror > reltol && ntmp[iuerror] > 1e-10 && nerror > reltol)
+                // {
+                //     std::cout << "==========================================================" << std::endl;
+                //     std::cout << "species = " << system.species()[iuerror].name() << std::endl;
+                //     std::cout << "uerror = " << uerror << std::endl;
+                //     std::cout << "nerror = " << nerror << std::endl;
+                //     std::cout << "n(exact) = " << ntmp[iuerror] << std::endl;
+                //     std::cout << "n(trial) = " << n[iuerror] << std::endl;
+                //     std::cout << "|n(exact) - n(trial)|/n(exact) = " << std::abs(n[iuerror] - ntmp[iuerror])/std::abs(ntmp[iuerror]) << std::endl;
+                // }
+
+                // if(std::abs((n[n.size() - 1] - ntmp[n.size() - 1])/ntmp[n.size() - 1]) > 0.1 && ntmp[n.size() - 1] > 1e-10)
+                // {
+                //     std::cout << "--------------------------------------------------" << std::endl;
+                //     std::cout << "Dolomite" << std::endl;
+                //     std::cout << "n(exact) = " << ntmp[n.size() - 1] << std::endl;
+                //     std::cout << "n(trial) = " << n[n.size() - 1] << std::endl;
+                //     std::cout << "|n(exact) - n(trial)|/n(exact) = " << std::abs((n[n.size() - 1] - ntmp[n.size() - 1])/ntmp[n.size() - 1]) << std::endl;
+                // }
+
+                state.setSpeciesAmounts(n);
+                // state.setElementDualPotentials(y);
+                // state.setSpeciesDualPotentials(z);
+
+                // Update the chemical properties of the system
+                properties = node.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+                result.estimate.accepted = true;
+                return;
+            }
+        }
+
+        // std::cout << "ranking = " << std::endl;
+        // for(auto i : priority)
+        //     std::cout << ranking[i] << ", ";
+        // std::cout << std::endl;
+
+        if(result.estimate.accepted == false)
+            return;
+
+
+
+
+
+
+
+        MatrixConstRef Ae = partition.formulaMatrixEquilibriumPartition();
 
         // Comparison function based on the Euclidean distance
         auto distancefn = [&](const TreeNode& a, const TreeNode& b)
