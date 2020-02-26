@@ -14,27 +14,3 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
-
-Matrix(const std::initializer_list<Scalar>& list)
-: Matrix(list.size(), 1)
-{
-    Index i = 0;
-    for(const auto& entry : list)
-    {
-        (*this).data()[i] = entry; ++i;
-    }
-}
-
-Matrix(const std::initializer_list<std::initializer_list<Scalar>>& list)
-: Matrix(list.size(), list.size() ? list.begin()->size() : 0)
-{
-    Index i = 0, j = 0;
-    for(const auto& row : list)
-    {
-        for(const auto& entry : row)
-        {
-            (*this)(i, j) = entry; ++j;
-        }
-        j = 0; ++i;
-    }
-}
