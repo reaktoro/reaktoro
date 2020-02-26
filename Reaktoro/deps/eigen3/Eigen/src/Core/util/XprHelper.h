@@ -44,7 +44,7 @@ template<typename T> struct is_valid_index_type
     internal::is_integral<T>::value || __is_enum(T)
 #else
     // without C++11, we use is_convertible to Index instead of is_integral in order to treat enums as Index.
-    internal::is_convertible<T,Index>::value
+    internal::is_convertible<T,Index>::value && !internal::is_same<T,float>::value && !is_same<T,double>::value
 #endif
   };
 };
@@ -110,6 +110,9 @@ class no_assignment_operator
 {
   private:
     no_assignment_operator& operator=(const no_assignment_operator&);
+  protected:
+    EIGEN_DEFAULT_COPY_CONSTRUCTOR(no_assignment_operator)
+    EIGEN_DEFAULT_EMPTY_CONSTRUCTOR_AND_DESTRUCTOR(no_assignment_operator)
 };
 
 /** \internal return the index type with the largest number of bits */
@@ -184,7 +187,10 @@ template<typename T> struct unpacket_traits
   enum
   {
     size = 1,
-    alignment = 1
+    alignment = 1,
+    vectorizable = false,
+    masked_load_available=false,
+    masked_store_available=false
   };
 };
 

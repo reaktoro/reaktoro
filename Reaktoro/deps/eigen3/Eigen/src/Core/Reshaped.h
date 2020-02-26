@@ -12,6 +12,7 @@
 #define EIGEN_RESHAPED_H
 
 namespace Eigen {
+namespace internal {
 
 /** \class Reshaped
   * \ingroup Core_Module
@@ -43,7 +44,6 @@ namespace Eigen {
   * \sa DenseBase::reshaped(NRowsType,NColsType)
   */
 
-namespace internal {
 template<typename XprType, int Rows, int Cols, int Order>
 struct traits<Reshaped<XprType, Rows, Cols, Order> > : traits<XprType>
 {
@@ -125,7 +125,7 @@ template<typename XprType, int Rows, int Cols, int Order> class Reshaped
     }
 };
 
-// The generic default implementation for dense reshape simplu forward to the internal::ReshapedImpl_dense
+// The generic default implementation for dense reshape simply forward to the internal::ReshapedImpl_dense
 // that must be specialized for direct and non-direct access...
 template<typename XprType, int Rows, int Cols, int Order>
 class ReshapedImpl<XprType, Rows, Cols, Order, Dense>
@@ -191,7 +191,7 @@ class ReshapedImpl_dense<XprType,Rows,Cols,Order,false>
     /** \returns the nested expression */
     EIGEN_DEVICE_FUNC
     typename internal::remove_reference<XprType>::type&
-    nestedExpression() { return m_xpr.const_cast_derived(); }
+    nestedExpression() { return m_xpr; }
 
   protected:
 
