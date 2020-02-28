@@ -286,7 +286,7 @@ struct SmartEquilibriumSolver::Impl
                 const auto& z0 = node.state.speciesDualPotentials();
                 const auto& dndb0 = node.sensitivity.dndb;
 
-                n = n0 + dndb0 * (be - be0);
+                n.noalias() = n0 + dndb0 * (be - be0);
 
                 nmin = min(n(imajor));
                 nsum = sum(n);
