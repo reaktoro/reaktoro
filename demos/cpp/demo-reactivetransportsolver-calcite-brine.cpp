@@ -121,7 +121,7 @@ int main()
     params.ncells = 100; // the number of cells in the spacial discretization
     //*/
     // params.nsteps = 10000; // the number of steps in the reactive transport simulation
-    params.nsteps = 10000; // the number of steps in the reactive transport simulation
+    params.nsteps = 1000; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 30 * minute; // the time step (in units of s)
 
@@ -132,9 +132,9 @@ int main()
     params.P = 100;                      // the pressure (in units of bar)
 
     // Define parameters of the equilibrium solvers
-    params.smart_equlibrium_reltol = 0.003;
+    params.smart_equlibrium_reltol = 0.005;
     params.smart_equlibrium_abstol = 1e-8;
-    params.activity_model = "pitzer ";
+    params.activity_model = "hkf";
     //params.activity_model = "pitzer";
     params.track_statistics = true;
 
@@ -433,6 +433,6 @@ auto outputConsole(const Params& params) -> void {
     std::cout << "P       : " << params.P << std::endl;
     std::cout << "eqabstol  : " << params.smart_equlibrium_abstol << std::endl;
     std::cout << "eqreltol  : " << params.smart_equlibrium_reltol << std::endl;
-
+    std::cout << "activity model : " << params.activity_model << std::endl;
 }
 
