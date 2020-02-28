@@ -308,18 +308,15 @@ struct SmartEquilibriumSolver::Impl
             {
                 const auto& be0 = node.be;
                 const auto& n0 = node.state.speciesAmounts();
-                const auto& y0 = node.state.elementDualPotentials();
-                const auto& z0 = node.state.speciesDualPotentials();
                 const auto& dndb0 = node.sensitivity.dndb;
 
                 n = n0 + dndb0 * (be - be0);
 
-                nmin = min(n(imajor));
-                nsum = sum(n);
+                nmin = n.minCoeff(&inmin);
+                ntot = sum(n);
 
-                const auto eps_n = options.amount_fraction_cutoff * nsum;
-
-                if(nmin < -eps_n)
+                // if(nmin/ntot < -options.amount_fraction_cutoff)
+                if(nmin < -1.0e-5)
                     continue;
 
                 toc(0, result.timing.estimate_search);
@@ -334,8 +331,8 @@ struct SmartEquilibriumSolver::Impl
                 }
 
                 state.setSpeciesAmounts(n);
-                state.setElementDualPotentials(y0);
-                state.setSpeciesDualPotentials(z0);
+                // state.setElementDualPotentials(y);
+                // state.setSpeciesDualPotentials(z);
 
                 // Update the chemical properties of the system
                 properties = node.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
