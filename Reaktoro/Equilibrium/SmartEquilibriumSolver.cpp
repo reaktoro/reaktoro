@@ -310,7 +310,7 @@ struct SmartEquilibriumSolver::Impl
                 const auto& n0 = node.state.speciesAmounts();
                 const auto& dndb0 = node.sensitivity.dndb;
 
-                n = n0 + dndb0 * (be - be0);
+                n.noalias() = n0 + dndb0 * (be - be0);
 
                 nmin = n.minCoeff(&inmin);
                 ntot = sum(n);
