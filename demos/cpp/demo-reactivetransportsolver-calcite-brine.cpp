@@ -53,6 +53,8 @@ struct Params
     double smart_equlibrium_reltol;
     double smart_equlibrium_abstol;
 
+    std::string activity_model;
+
 };
 
 struct Results
@@ -119,7 +121,7 @@ int main()
     params.ncells = 100; // the number of cells in the spacial discretization
     //*/
     // params.nsteps = 10000; // the number of steps in the reactive transport simulation
-    params.nsteps = 1000; // the number of steps in the reactive transport simulation
+    params.nsteps = 10000; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 30 * minute; // the time step (in units of s)
 
@@ -130,8 +132,10 @@ int main()
     params.P = 100;                      // the pressure (in units of bar)
 
     // Define parameters of the equilibrium solvers
-    params.smart_equlibrium_reltol = 0.01;
+    params.smart_equlibrium_reltol = 0.003;
     params.smart_equlibrium_abstol = 1e-8;
+    params.activity_model = "pitzer ";
+    //params.activity_model = "pitzer";
     params.track_statistics = true;
 
     // Output
@@ -159,9 +163,6 @@ int main()
               << results.conventional_total / results.smart_total_ideal_search << std::endl;
     std::cout << "speed up (with ideal search & store): "
               << results.conventional_total / results.smart_total_ideal_search_store << std::endl << std::endl;
-    std::cout << " smart equilibrium acceptance rate   : " << results.smart_equilibrium_acceptance_rate << " / "
-              << (1 - results.smart_equilibrium_acceptance_rate) * params.ncells *params.nsteps
-              << " fully evaluated GEMS out of " << params.ncells * params.nsteps  << std::endl;
 
     std::cout << "time_reactive_transport_conventional: " << results.time_reactive_transport_conventional << std::endl;
     std::cout << "time_reactive_transport_smart       : " << results.time_reactive_transport_smart << std::endl;
@@ -196,22 +197,25 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     // HKF selected species
     editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
     */
-    ///*
-    // HKF full system
-    editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C");
-    editor.addMineralPhase("Quartz");
-    editor.addMineralPhase("Calcite");
-    editor.addMineralPhase("Dolomite");
-    //*/
+    if(params.activity_model == "hkf"){
+        // HKF full system
+        editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C");
+        editor.addMineralPhase("Quartz");
+        editor.addMineralPhase("Calcite");
+        editor.addMineralPhase("Dolomite");
+    }
+    else if(params.activity_model == "pitzer"){
+        // Pitzer full system
+        editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
+                .setChemicalModelPitzerHMW()
+                .setActivityModelDrummondCO2();
+        editor.addMineralPhase("Quartz");
+        editor.addMineralPhase("Calcite");
+        editor.addMineralPhase("Dolomite");
+    }
     /*
     // Pitzer selected species
     editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--")
-            .setChemicalModelPitzerHMW()
-            .setActivityModelDrummondCO2();
-    */
-    /*
-    // Pitzer full system
-    editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
             .setChemicalModelPitzerHMW()
             .setActivityModelDrummondCO2();
     */
@@ -236,7 +240,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
-    if (params.use_smart_eqilibirum_solver) std::cout << "system = \n" << system << std:: endl;
+    //if (params.use_smart_eqilibirum_solver) std::cout << "system = \n" << system << std:: endl;
 
     // Step **: Define the initial condition (IC) of the reactive transport modeling problem
     EquilibriumProblem problem_ic(system);
@@ -301,6 +305,12 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     output.add("speciesMolality(CO2(aq))");
     output.add("phaseVolume(Calcite)");
     output.add("phaseVolume(Dolomite)");
+    output.add("speciesMolality(H+)");
+    output.add("speciesMolality(Ca++)");
+    output.add("speciesMolality(Mg++)");
+    output.add("speciesMolality(HCO3-)");
+    output.add("speciesMolality(CO2(aq))");
+
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create RTProfiler to track the timing and results of reactive transport
@@ -316,7 +326,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     while (step < params.nsteps)
     {
         // Print some progress
-        std::cout << "Step " << step << " of " << params.nsteps << std::endl;
+        //std::cout << "Step " << step << " of " << params.nsteps << std::endl;
 
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
         rtsolver.step(field);
@@ -344,6 +354,9 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     if(params.use_smart_eqilibirum_solver) {
         results.smart_equilibrium_timing = analysis.smart_equilibrium.timing;
         results.smart_equilibrium_acceptance_rate = analysis.smart_equilibrium.smart_equilibrium_estimate_acceptance_rate;
+        std::cout << "smart equilibrium acceptance rate   : " << results.smart_equilibrium_acceptance_rate << " / "
+                  << (1 - results.smart_equilibrium_acceptance_rate) * params.ncells *params.nsteps
+                  << " fully evaluated GEMS out of " << params.ncells * params.nsteps  << std::endl;
     }
     else results.equilibrium_timing = analysis.equilibrium.timing;
 }
@@ -377,7 +390,8 @@ auto makeResultsFolder(const Params& params) -> std::string
                            "-nsteps-" + std::to_string(params.nsteps) +
                            "-eqreltol-" + reltol_stream.str() +
                            "-eqabstol-" + abstol_stream.str() +
-                           (params.use_smart_eqilibirum_solver == true ? "-smart" : "-reference");      // name of the folder with results
+                            "-" + params.activity_model +
+                            (params.use_smart_eqilibirum_solver == true ? "-smart" : "-reference");      // name of the folder with results
     //std::string folder = "results-pitzer-full" + test_tag;
     //std::string folder = "results-pitzer-selected-species" + test_tag; // Local(2)
     //std::string folder = "results-hkf-full" + test_tag; // Local(3)
@@ -394,7 +408,10 @@ auto makeResultsFolder(const Params& params) -> std::string
     //std::string folder = "results-hkf-full-no-skipping" + test_tag;
     //std::string folder = "results-hkf-full-with-skipping-1e-14" + test_tag;
     //std::string folder = "results-hkf-full-with-skipping-1e-13" + test_tag;
-    std::string folder = "results-hkf-full-with-skipping-1e-12" + test_tag;
+    //std::string folder = "results-hkf-full-with-skipping-1e-12" + test_tag;
+
+    //std::string folder = "results-pitzer-full-new-algorithm" + test_tag;
+    std::string folder = "results-new-algorithm" + test_tag;
 
     if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str());
 

@@ -156,13 +156,14 @@ struct SmartEquilibriumSolver::Impl
         // Store the result of the Gibbs energy minimization calculation performed during learning
         result.learning.gibbs_energy_minimization = solver.result();
 
+        tic(0);
+
+        // Adding into prioroity from the back ()
+        priority.push_back(priority.size()); // adding to the priority deque according to the order of training in ODML algorithm
+        ranking.push_back(0); // adding zero-rank of just added reference point
+
         // Update the chemical properties of the system
         properties = solver.properties();
-
-        // Store the computed solution into the knowledge tree
-        priority.push_back(priority.size());
-
-        ranking.push_back(0);
 
         const auto RT = universalGasConstant * T;
 
@@ -210,8 +211,10 @@ struct SmartEquilibriumSolver::Impl
 
         const Matrix Mb = diag(inv(um)) * dumdb;
 
-        timeit( tree.push_back({be, be/sum(be), state, properties, solver.sensitivity(), Mb, imajor}),
-            result.timing.learning_storage= );
+        // Store the computed solution into the knowledge tree
+        tree.push_back({be, be/sum(be), state, properties, solver.sensitivity(), Mb, imajor});
+
+        toc(0, result.timing.learning_storage);
     }
 
     /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
@@ -233,13 +236,16 @@ struct SmartEquilibriumSolver::Impl
         tic(0);
 
         Vector rs;
+        // Amounts of speceis
         Vector n, ns;
+        // Variations of the potentials and species
         Vector du, dus, dns;
         Vector x;
-        Vector bebar = be/sum(be);
+        //Vector bebar = be/sum(be);
         Vector dbe;
 
         double nmin, ntot, uerror;
+        // Why do we need these indices?
         Index inmin, iuerror;
 
         double nerror;
@@ -271,9 +277,10 @@ struct SmartEquilibriumSolver::Impl
             return { true, error, n.size() };
         };
 
-        for(auto inode : priority)
+        auto inode_prev = priority.begin();
+        for(auto inode=priority.begin(); inode!=priority.end(); ++inode)
         {
-            const auto& node = tree[inode];
+            const auto& node = tree[*inode];
 
             const auto [success, error, ispecies] = pass_error_test(node);
 
@@ -292,11 +299,16 @@ struct SmartEquilibriumSolver::Impl
                 if(nmin < -1.0e-5)
                     continue;
 
-                ranking[inode] += 1;
+                toc(0, result.timing.estimate_search);
+
+                ranking[*inode] += 1;
 
                 auto comp = [&](Index l, Index r) { return ranking[l] > ranking[r]; };
-                std::sort(priority.begin(), priority.end(), comp);
-
+                //std::sort(priority.begin(), priority.end(), comp);
+                //std::stable_sort(priority.begin(), inode + 1, comp);
+                if ( !((inode == priority.begin()) || (ranking[*inode_prev] >= ranking[*inode])) ) {
+                    std::stable_sort(priority.begin(), inode + 1, comp);
+                }
 
                 state.setSpeciesAmounts(n);
                 // state.setElementDualPotentials(y);
@@ -307,7 +319,10 @@ struct SmartEquilibriumSolver::Impl
                 result.estimate.accepted = true;
                 return;
             }
-            else continue;
+            else {
+                inode_prev = inode;
+                continue;
+            }
         }
 
         result.estimate.accepted = false;
