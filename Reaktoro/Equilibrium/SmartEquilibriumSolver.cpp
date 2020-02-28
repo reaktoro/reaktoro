@@ -244,8 +244,7 @@ struct SmartEquilibriumSolver::Impl
         //Vector bebar = be/sum(be);
         Vector dbe;
 
-        double nmin, ntot, uerror;
-        // Why do we need these indices?
+        double nmin, nsum, uerror;
         Index inmin, iuerror;
 
         double nerror;
@@ -281,6 +280,7 @@ struct SmartEquilibriumSolver::Impl
         for(auto inode=priority.begin(); inode!=priority.end(); ++inode)
         {
             const auto& node = tree[*inode];
+            const auto& imajor = node.imajor;
 
             const auto [success, error, ispecies] = pass_error_test(node);
 
@@ -288,15 +288,18 @@ struct SmartEquilibriumSolver::Impl
             {
                 const auto& be0 = node.be;
                 const auto& n0 = node.state.speciesAmounts();
+                const auto& y0 = node.state.elementDualPotentials();
+                const auto& z0 = node.state.speciesDualPotentials();
                 const auto& dndb0 = node.sensitivity.dndb;
 
                 n = n0 + dndb0 * (be - be0);
 
-                nmin = n.minCoeff(&inmin);
-                ntot = sum(n);
+                nmin = min(n(imajor));
+                nsum = sum(n);
 
-                // if(nmin/ntot < -options.amount_fraction_cutoff)
-                if(nmin < -1.0e-5)
+                const auto eps_n = options.amount_fraction_cutoff * nsum;
+
+                if(nmin < -eps_n)
                     continue;
 
                 toc(0, result.timing.estimate_search);
@@ -311,8 +314,8 @@ struct SmartEquilibriumSolver::Impl
                 }
 
                 state.setSpeciesAmounts(n);
-                // state.setElementDualPotentials(y);
-                // state.setSpeciesDualPotentials(z);
+                state.setElementDualPotentials(y0);
+                state.setSpeciesDualPotentials(z0);
 
                 // Update the chemical properties of the system
                 properties = node.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
