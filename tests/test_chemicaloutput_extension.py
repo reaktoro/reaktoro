@@ -9,7 +9,7 @@ from reaktoro import EquilibriumProblem, equilibrate, KineticPath, ChemicalOutpu
 @pytest.fixture()
 def output_file_name():
     path = os.path.dirname(__file__)
-    filename = f"{path}/data/results.txt"
+    filename = f"{path}/data/results_chemicaloutput.txt"
     return filename
 
 
