@@ -120,8 +120,8 @@ int main()
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
     //*/
-    // params.nsteps = 10000; // the number of steps in the reactive transport simulation
     params.nsteps = 1000; // the number of steps in the reactive transport simulation
+    //params.nsteps = 1000; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 30 * minute; // the time step (in units of s)
 
@@ -132,7 +132,7 @@ int main()
     params.P = 100;                      // the pressure (in units of bar)
 
     // Define parameters of the equilibrium solvers
-    params.smart_equlibrium_reltol = 0.005;
+    params.smart_equlibrium_reltol = 0.004;
     params.smart_equlibrium_abstol = 1e-8;
     params.activity_model = "hkf";
     //params.activity_model = "pitzer";
@@ -305,11 +305,12 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     output.add("speciesMolality(CO2(aq))");
     output.add("phaseVolume(Calcite)");
     output.add("phaseVolume(Dolomite)");
-    output.add("speciesMolality(H+)");
-    output.add("speciesMolality(Ca++)");
-    output.add("speciesMolality(Mg++)");
-    output.add("speciesMolality(HCO3-)");
-    output.add("speciesMolality(CO2(aq))");
+    output.add("speciesMolality(CO3--)");
+    output.add("speciesMolality(CaCl+)");
+    output.add("speciesMolality(Ca(HCO3)+)");
+    output.add("speciesMolality(MgCl+)");
+    output.add("speciesMolality(Mg(HCO3)+)");
+    output.add("speciesMolality(OH-)");
 
     output.filename(folder + "/" + "test.txt");
 
