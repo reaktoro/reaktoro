@@ -104,30 +104,30 @@ int main()
     const Vector n3 = state3.speciesAmounts();
     const Vector n4 = state4.speciesAmounts();
 
-    const Vector y1 = state1.elementDualPotentials();
-    const Vector y2 = state2.elementDualPotentials();
-    const Vector y3 = state3.elementDualPotentials();
-    const Vector y4 = state4.elementDualPotentials();
+    const Vector y1 = state1.equilibrium().elementChemicalPotentials();
+    const Vector y2 = state2.equilibrium().elementChemicalPotentials();
+    const Vector y3 = state3.equilibrium().elementChemicalPotentials();
+    const Vector y4 = state4.equilibrium().elementChemicalPotentials();
 
-    const Vector z1 = state1.speciesDualPotentials();
-    const Vector z2 = state2.speciesDualPotentials();
-    const Vector z3 = state3.speciesDualPotentials();
-    const Vector z4 = state4.speciesDualPotentials();
+    const Vector z1 = state1.equilibrium().speciesStabilities();
+    const Vector z2 = state2.equilibrium().speciesStabilities();
+    const Vector z3 = state3.equilibrium().speciesStabilities();
+    const Vector z4 = state4.equilibrium().speciesStabilities();
 
     const Vector smart_n1 = smartstate1.speciesAmounts();
     const Vector smart_n2 = smartstate2.speciesAmounts();
     const Vector smart_n3 = smartstate3.speciesAmounts();
     const Vector smart_n4 = smartstate4.speciesAmounts();
 
-    const Vector smart_y1 = smartstate1.elementDualPotentials();
-    const Vector smart_y2 = smartstate2.elementDualPotentials();
-    const Vector smart_y3 = smartstate3.elementDualPotentials();
-    const Vector smart_y4 = smartstate4.elementDualPotentials();
+    const Vector smart_y1 = smartstate1.equilibrium().elementChemicalPotentials();
+    const Vector smart_y2 = smartstate2.equilibrium().elementChemicalPotentials();
+    const Vector smart_y3 = smartstate3.equilibrium().elementChemicalPotentials();
+    const Vector smart_y4 = smartstate4.equilibrium().elementChemicalPotentials();
 
-    const Vector smart_z1 = smartstate1.speciesDualPotentials();
-    const Vector smart_z2 = smartstate2.speciesDualPotentials();
-    const Vector smart_z3 = smartstate3.speciesDualPotentials();
-    const Vector smart_z4 = smartstate4.speciesDualPotentials();
+    const Vector smart_z1 = smartstate1.equilibrium().speciesStabilities();
+    const Vector smart_z2 = smartstate2.equilibrium().speciesStabilities();
+    const Vector smart_z3 = smartstate3.equilibrium().speciesStabilities();
+    const Vector smart_z4 = smartstate4.equilibrium().speciesStabilities();
 
     const Vector ndiff1 = abs(n1 - smart_n1);
     const Vector ndiff2 = abs(n2 - smart_n2);

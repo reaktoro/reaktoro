@@ -30,6 +30,7 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalProperties;
 class ChemicalSystem;
+class EquilibriumProperties;
 
 /// Provides a computational representation of the state of a multiphase chemical system.
 /// The chemical state of a multiphase system is defined by its temperature @f$(T)@f$,
@@ -60,21 +61,17 @@ class ChemicalSystem;
 class ChemicalState
 {
 public:
-    /// Disable the default ChemicalState constructor.
-    /// This is to enforce the initialization of a ChemicalState
-    /// instance with a ChemicalSystem instance.
-    ChemicalState() = delete;
 
     /// Construct a ChemicalState instance with standard conditions
-    /// This constructor creates an instance of ChemicalState with temperature 25 °C,
-    /// pressure 1 bar, and zero mole amounts for the species.
+    /// This constructor creates an instance of ChemicalState with
+    /// temperature 25 °C, pressure 1 bar, and zero species amounts.
     /// @param system The chemical system instance
     explicit ChemicalState(const ChemicalSystem& system);
 
     /// Construct a copy of a ChemicalState instance
     ChemicalState(const ChemicalState& other);
 
-    /// Destroy the instance
+    /// Destroy this ChemicalState instance
     virtual ~ChemicalState();
 
     /// Assign a ChemicalState instance to this instance
@@ -157,6 +154,7 @@ public:
     /// measures of stability of a species at equilibrium, with values closer
     /// to zero meaning more stability.
     /// @param z The Lagrange multipliers with respect to the positive constraints.
+    [[deprecated("Use state.equilibrium().setSpeciesStabilities() instead, where state is a ChemicalState object.")]]
     auto setSpeciesDualPotentials(VectorConstRef z) -> void;
 
     /// Set the dual potentials of the elements (in units of J/mol).
@@ -165,6 +163,7 @@ public:
     /// respect to the balance constraints on the molar amounts of the elements.
     /// They can be seen as a dual chemical potential of elements.
     /// @param values The Lagrange multipliers with respect to the balance constraints.
+    [[deprecated("Use state.equilibrium().setElementChemicalPotentials() instead, where state is a ChemicalState object.")]]
     auto setElementDualPotentials(VectorConstRef y) -> void;
 
     /// Scale the molar amounts of the species by a given scalar.
@@ -272,6 +271,7 @@ public:
     auto speciesAmount(std::string name, std::string units) const -> double;
 
     /// Return the dual potentials of the species (in units of J/mol)
+    [[deprecated("Use state.equilibrium().speciesStabilities() instead, where state is a ChemicalState object.")]]
     auto speciesDualPotentials() const -> VectorConstRef;
 
     /// Return the molar amounts of the elements (in units of mol)
@@ -337,6 +337,7 @@ public:
     auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double;
 
     /// Return the dual potentials of the elements (in units of J/mol).
+    [[deprecated("Use state.equilibrium().elementChemicalPotentials() instead, where state is a ChemicalState object.")]]
     auto elementDualPotentials() const -> VectorConstRef;
 
     /// Return the molar amount of a phase (in units of mol).
@@ -358,18 +359,92 @@ public:
     auto phaseAmount(std::string name, std::string units) const -> double;
 
     /// Return the stability indices of the phases with respect to chemical equilibrium.
-    ///
-    /// The stability index of a stable phase at chemical equilibrium should
-    /// be zero or very close to zero. A negative stability index indicates
-    /// that the corresponding phase is under-saturated, while a positive index
-    /// indicates the phase is over-saturated.
+    [[deprecated("Use phaseStabilityIndices(state) instead, where state is a ChemicalState object.")]]
     auto phaseStabilityIndices() const -> Vector;
 
     /// Return the chemical properties of the system.
     auto properties() const -> ChemicalProperties;
 
+    /// Return the equilibrium properties of a calculated chemical equilibrium state.
+    auto equilibrium() const -> const EquilibriumProperties&;
+
+    /// Return the equilibrium properties of a calculated chemical equilibrium state.
+    auto equilibrium() -> EquilibriumProperties&;
+
     /// Output the ChemicalState instance to a file.
     auto output(std::string filename) const -> void;
+
+private:
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
+};
+
+/// Provide access to specific properties of a chemical equilibrium state.
+class EquilibriumProperties
+{
+public:
+    /// Construct a EquilibriumProperties instance.
+    EquilibriumProperties(const ChemicalSystem& system);
+
+    /// Construct a copy of a EquilibriumProperties instance
+    EquilibriumProperties(const EquilibriumProperties& other);
+
+    /// Destroy this EquilibriumProperties instance
+    virtual ~EquilibriumProperties();
+
+    /// Assign a EquilibriumProperties instance to this instance
+    auto operator=(EquilibriumProperties other) -> EquilibriumProperties&;
+
+    /// Set the indices of the equilibrium species partitioned as (primary, secondary).
+    /// @param ips The indices of the equilibrium species ordered (primary, secondary)
+    /// @param kp The number of primary species
+    auto setIndicesEquilibriumSpecies(VectorXiConstRef ips, Index kp) -> void;
+
+    /// Set the chemical potentials of the species in the equilibrium state (in units of J/mol)
+    auto setSpeciesChemicalPotentials(VectorConstRef u) -> void;
+
+    /// Set the chemical potentials of the elements in the equilibrium state (in units of J/mol)
+    auto setElementChemicalPotentials(VectorConstRef y) -> void;
+
+    /// Set the stabilities of the species in the equilibrium state (in units of J/mol)
+    auto setSpeciesStabilities(VectorConstRef z) -> void;
+
+    /// Return the number of equilibrium species.
+    auto numEquilibriumSpecies() const -> Index;
+
+    /// Return the number of primary equilibrium species.
+    auto numPrimarySpecies() const -> Index;
+
+    /// Return the number of secondary equilibrium species.
+    auto numSecondarySpecies() const -> Index;
+
+    /// Return the indices of the equilibrium species.
+    auto indicesEquilibriumSpecies() const -> VectorXiConstRef;
+
+    /// Return the indices of the primary equilibrium species.
+    auto indicesPrimarySpecies() const -> VectorXiConstRef;
+
+    /// Return the indices of the secondary equilibrium species.
+    auto indicesSecondarySpecies() const -> VectorXiConstRef;
+
+    /// Return the chemical potentials of the species (in units of J/mol).
+    /// The chemical potentials of the species are the gradient of the Gibbs energy
+    /// function with respect to species amounts.
+    auto speciesChemicalPotentials() const -> VectorConstRef;
+
+    /// Return the chemical potentials of the elements (in units of J/mol).
+    /// The chemical potentials of the elements are the Lagrange multipliers with
+    /// respect to the mass conservation constraints on the amounts of the elements.
+    auto elementChemicalPotentials() const -> VectorConstRef;
+
+    /// Return the stabilities of the species (in units of J/mol)
+    /// The stabilities of the species are the slack variables with
+    /// respect to the non-negative bound constraints on the amounts of the
+    /// species in a chemical equilibrium calculation. They can be seen as
+    /// measures of stability of a species at equilibrium, with values closer
+    /// to zero meaning more stable.
+    auto speciesStabilities() const -> VectorConstRef;
 
 private:
     struct Impl;
@@ -388,5 +463,12 @@ auto operator*(double scalar, const ChemicalState& state) -> ChemicalState;
 
 /// Multiply a ChemicalState instance by a scalar (from the right).
 auto operator*(const ChemicalState& state, double scalar) -> ChemicalState;
+
+/// Return the stability indices of the phases with respect to a chemical equilibrium state.
+/// The stability index of a stable phase at chemical equilibrium should be, or
+/// very close to, zero. A negative stability index indicates that the
+/// corresponding phase is under-stable, while a positive index indicates the
+/// phase is over-stable.
+auto phaseStabilityIndices(const ChemicalState& state) -> Vector;
 
 } // namespace Reaktoro

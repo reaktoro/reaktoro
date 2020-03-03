@@ -8,8 +8,8 @@ def convert_reaktoro_state_to_dict(state, exclude):
     T = state.temperature()
     P = state.pressure()
     n = state.speciesAmounts()
-    y = state.elementDualPotentials()
-    z = state.speciesDualPotentials()
+    y = state.equilibrium().elementChemicalPotentials()
+    z = state.equilibrium().speciesStabilities()
     b = state.elementAmounts()
     R = 8.314462618  # universal gas constant in J/(mol*K)
 

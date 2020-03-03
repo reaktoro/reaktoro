@@ -48,22 +48,17 @@ struct ChemicalState::Impl
     /// The molar amounts of the chemical species
     Vector n;
 
-    /// The dual chemical potentials of the elements (in units of J/mol)
-    Vector y;
-
-    /// The dual chemical potentials of the species (in units of J/mol)
-    Vector z;
+    /// The specific properties of a calculated chemical equilibrium state
+    EquilibriumProperties eprops;
 
     Impl() = delete;
 
     /// Construct a custom ChemicalState::Impl instance
     explicit Impl(const ChemicalSystem& system)
-    : system(system)
+    : system(system), eprops(system)
     {
         // Initialise the molar amounts of the species and dual potentials
         n = zeros(system.numSpecies());
-        y = zeros(system.numElements());
-        z = zeros(system.numSpecies());
     }
 
     auto setTemperature(double val) -> void
@@ -173,24 +168,6 @@ struct ChemicalState::Impl
     {
         const Index index = system.indexSpeciesWithError(species);
         setSpeciesMass(index, mass, units);
-    }
-
-    /// Set the dual chemical potentials of the species
-    auto setSpeciesDualPotentials(VectorConstRef values) -> void
-    {
-        Assert(values.size() == z.size(),
-            "Could not set the dual chemical potentials of the species.",
-            "The dimension of given vector is different from the number of species.");
-        z = values;
-    }
-
-    /// Set the dual chemical potentials of the elements
-    auto setElementDualPotentials(VectorConstRef values) -> void
-    {
-        Assert(values.size() == y.size(),
-            "Could not set the dual chemical potentials of the elements.",
-            "The dimension of given vector is different from the number of elements.");
-        y = values;
     }
 
     auto scaleSpeciesAmounts(double scalar) -> void
@@ -417,48 +394,6 @@ struct ChemicalState::Impl
         res.update(T, P, n);
         return res;
     }
-
-    // Return the stability indices of the phases
-    auto phaseStabilityIndices() const -> Vector
-    {
-        // Auxiliary variables
-        const double ln10 = 2.302585092994046;
-        const unsigned num_phases = system.numPhases();
-        const double RT = universalGasConstant * T;
-
-        // Calculate the normalized z-Lagrange multipliers for all species
-        const Vector zRT = z/RT;
-
-        // Initialise the stability indices of the phases
-        Vector stability_indices = zeros(num_phases);
-
-        // The index of the first species in each phase iterated below
-        unsigned offset = 0;
-
-        // Iterate over all phases
-        for(unsigned i = 0 ; i < num_phases; ++i)
-        {
-            // The number of species in the current phase
-            const unsigned num_species = system.numSpeciesInPhase(i);
-
-            if(num_species == 1)
-            {
-                stability_indices[i] = -zRT[offset]/ln10;
-            }
-            else
-            {
-                const Vector zp = rows(zRT, offset, num_species);
-                Vector xp = rows(n, offset, num_species);
-                const double nsum = sum(xp);
-                if(nsum) xp /= nsum; else xp.fill(1.0/num_species);
-                stability_indices[i] = std::log10(sum(xp % exp(-zp)));
-            }
-
-            offset += num_species;
-        }
-
-        return stability_indices;
-    }
 };
 
 ChemicalState::ChemicalState(const ChemicalSystem& system)
@@ -469,8 +404,8 @@ ChemicalState::ChemicalState(const ChemicalState& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-//It needs Imp implementation because of its std::unique_ptr.
-ChemicalState::~ChemicalState() = default;
+ChemicalState::~ChemicalState()
+{}
 
 auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
 {
@@ -551,16 +486,6 @@ auto ChemicalState::setSpeciesMass(Index index, double mass, std::string units) 
 auto ChemicalState::setSpeciesMass(std::string name, double mass, std::string units) -> void
 {
     pimpl->setSpeciesMass(name, mass, units);
-}
-
-auto ChemicalState::setSpeciesDualPotentials(VectorConstRef z) -> void
-{
-    pimpl->setSpeciesDualPotentials(z);
-}
-
-auto ChemicalState::setElementDualPotentials(VectorConstRef y) -> void
-{
-    pimpl->setElementDualPotentials(y);
 }
 
 auto ChemicalState::scaleSpeciesAmounts(double scalar) -> void
@@ -668,11 +593,6 @@ auto ChemicalState::speciesAmount(std::string species, std::string units) const 
     return pimpl->speciesAmount(species, units);
 }
 
-auto ChemicalState::speciesDualPotentials() const -> VectorConstRef
-{
-    return pimpl->z;
-}
-
 auto ChemicalState::elementAmounts() const -> Vector
 {
     return pimpl->elementAmounts();
@@ -738,11 +658,6 @@ auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispeci
     return pimpl->elementAmountInSpecies(ielement, ispecies, units);
 }
 
-auto ChemicalState::elementDualPotentials() const -> VectorConstRef
-{
-    return pimpl->y;
-}
-
 auto ChemicalState::phaseAmount(Index index) const -> double
 {
     return pimpl->phaseAmount(index);
@@ -763,20 +678,136 @@ auto ChemicalState::phaseAmount(std::string name, std::string units) const -> do
     return pimpl->phaseAmount(name, units);
 }
 
-auto ChemicalState::phaseStabilityIndices() const -> Vector
-{
-    return pimpl->phaseStabilityIndices();
-}
-
 auto ChemicalState::properties() const -> ChemicalProperties
 {
     return pimpl->properties();
+}
+
+auto ChemicalState::equilibrium() const -> const EquilibriumProperties&
+{
+    return pimpl->eprops;
+}
+
+auto ChemicalState::equilibrium() -> EquilibriumProperties&
+{
+    return pimpl->eprops;
 }
 
 auto ChemicalState::output(std::string filename) const -> void
 {
     std::ofstream out(filename);
     out << *this;
+}
+
+struct EquilibriumProperties::Impl
+{
+    /// The indices of the equilibrium species partitioned as (primary, secondary).
+    VectorXi ips;
+
+    /// The number of primary species among the equilibrium species.
+    Index kp;
+
+    /// The chemical potentials of the species in the equilibrium state (in units of J/mol)
+    Vector u;
+
+    /// The chemical potentials of the elements in the equilibrium state (in units of J/mol)
+    Vector y;
+
+    /// The stabilities of the species in the equilibrium state (in units of J/mol)
+    Vector z;
+
+    /// Construct a default EquilibriumProperties::Impl instance
+    Impl(const ChemicalSystem& system)
+    : u(system.numSpecies()),
+      y(system.numElements()),
+      z(system.numSpecies())
+    {}
+};
+
+EquilibriumProperties::EquilibriumProperties(const ChemicalSystem& system)
+: pimpl(new Impl(system))
+{}
+
+EquilibriumProperties::EquilibriumProperties(const EquilibriumProperties& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+EquilibriumProperties::~EquilibriumProperties()
+{}
+
+auto EquilibriumProperties::operator=(EquilibriumProperties other) -> EquilibriumProperties&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
+
+auto EquilibriumProperties::setIndicesEquilibriumSpecies(VectorXiConstRef ips, Index kp) -> void
+{
+    pimpl->ips = ips;
+    pimpl->kp = kp;
+}
+
+auto EquilibriumProperties::setSpeciesChemicalPotentials(VectorConstRef u) -> void
+{
+    assert(u.size() == pimpl->u.size());
+    pimpl->u = u;
+}
+
+auto EquilibriumProperties::setElementChemicalPotentials(VectorConstRef y) -> void
+{
+    assert(y.size() == pimpl->y.size());
+    pimpl->y = y;
+}
+
+auto EquilibriumProperties::setSpeciesStabilities(VectorConstRef z) -> void
+{
+    assert(z.size() == pimpl->z.size());
+    pimpl->z = z;
+}
+
+auto EquilibriumProperties::numEquilibriumSpecies() const -> Index
+{
+    return pimpl->ips.size();
+}
+
+auto EquilibriumProperties::numPrimarySpecies() const -> Index
+{
+    return pimpl->kp;
+}
+
+auto EquilibriumProperties::numSecondarySpecies() const -> Index
+{
+    return numEquilibriumSpecies() - numPrimarySpecies();
+}
+
+auto EquilibriumProperties::indicesEquilibriumSpecies() const -> VectorXiConstRef
+{
+    return pimpl->ips;
+}
+
+auto EquilibriumProperties::indicesPrimarySpecies() const -> VectorXiConstRef
+{
+    return indicesEquilibriumSpecies().head(numPrimarySpecies());
+}
+
+auto EquilibriumProperties::indicesSecondarySpecies() const -> VectorXiConstRef
+{
+    return indicesEquilibriumSpecies().tail(numSecondarySpecies());
+}
+
+auto EquilibriumProperties::speciesChemicalPotentials() const -> VectorConstRef
+{
+    return pimpl->u;
+}
+
+auto EquilibriumProperties::elementChemicalPotentials() const -> VectorConstRef
+{
+    return pimpl->y;
+}
+
+auto EquilibriumProperties::speciesStabilities() const -> VectorConstRef
+{
+    return pimpl->z;
 }
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
@@ -787,8 +818,8 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const double& R = universalGasConstant;
     const double& F = faradayConstant;
     const auto& n = state.speciesAmounts();
-    const auto& y = state.elementDualPotentials();
-    const auto& z = state.speciesDualPotentials();
+    const auto& y = state.equilibrium().elementChemicalPotentials();
+    const auto& z = state.equilibrium().speciesStabilities();
     const ChemicalProperties properties = state.properties();
     const Vector molar_fractions = properties.moleFractions().val;
     const Vector activity_coeffs = exp(properties.lnActivityCoefficients().val);
@@ -800,7 +831,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector phase_volumes = properties.phaseVolumes().val;
     const Vector phase_volume_fractions = phase_volumes/sum(phase_volumes);
     const Vector phase_densities = phase_masses/phase_volumes;
-    const Vector phase_stability_indices = state.phaseStabilityIndices();
+    const Vector phase_stability_indices = phaseStabilityIndices(state);
 
     const unsigned num_phases = system.numPhases();
     const unsigned bar_size = std::max(unsigned(9), num_phases + 2) * 25;
@@ -947,6 +978,51 @@ auto operator*(double scalar, const ChemicalState& state) -> ChemicalState
 auto operator*(const ChemicalState& state, double scalar) -> ChemicalState
 {
     return scalar*state;
+}
+
+auto phaseStabilityIndices(const ChemicalState& state) -> Vector
+{
+    // Auxiliary variables
+    const auto& system = state.system();
+    const auto& n = state.speciesAmounts();
+    const auto& z = state.equilibrium().speciesStabilities();
+    const auto ln10 = 2.302585092994046;
+    const auto num_phases = system.numPhases();
+    const auto T = state.temperature();
+    const auto RT = universalGasConstant * T;
+
+    // Calculate the normalized z-Lagrange multipliers for all species
+    const Vector zRT = z/RT;
+
+    // Initialise the stability indices of the phases
+    Vector stability_indices = zeros(num_phases);
+
+    // The index of the first species in each phase iterated below
+    unsigned offset = 0;
+
+    // Iterate over all phases
+    for(unsigned i = 0 ; i < num_phases; ++i)
+    {
+        // The number of species in the current phase
+        const unsigned num_species = system.numSpeciesInPhase(i);
+
+        if(num_species == 1)
+        {
+            stability_indices[i] = -zRT[offset]/ln10;
+        }
+        else
+        {
+            const Vector zp = rows(zRT, offset, num_species);
+            Vector xp = rows(n, offset, num_species);
+            const double nsum = sum(xp);
+            if(nsum) xp /= nsum; else xp.fill(1.0/num_species);
+            stability_indices[i] = std::log10(sum(xp % exp(-zp)));
+        }
+
+        offset += num_species;
+    }
+
+    return stability_indices;
 }
 
 } // namespace Reaktoro
