@@ -130,7 +130,7 @@ int main()
     params.P = 100;                      // the pressure (in units of bar)
 
     // Define parameters of the equilibrium solvers
-    params.smart_equlibrium_reltol = 0.01;
+    params.smart_equlibrium_reltol = 0.001;
     params.smart_equlibrium_abstol = 1e-8;
     params.track_statistics = true;
 
@@ -243,6 +243,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     problem_ic.setTemperature(params.T, "celsius");
     problem_ic.setPressure(params.P, "bar");
     problem_ic.add("H2O",   1.0, "kg");
+    problem_ic.add("O2",    1.0, "umol");
     problem_ic.add("NaCl",  0.7, "mol");
     problem_ic.add("CaCO3", 10,  "mol");
     problem_ic.add("SiO2",  10,  "mol");
@@ -252,6 +253,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     problem_bc.setTemperature(params.T, "celsius");
     problem_bc.setPressure(params.P, "bar");
     problem_bc.add("H2O",   1.00, "kg");
+    problem_bc.add("O2",    1.0, "umol");
     problem_bc.add("NaCl",  0.90, "mol");
     problem_bc.add("MgCl2", 0.05, "mol");
     problem_bc.add("CaCl2", 0.01, "mol");
