@@ -297,10 +297,10 @@ struct EquilibriumSolver::Impl
         n = state.speciesAmounts();
 
         // Set the normalized dual potentials of the elements
-        y = state.elementDualPotentials()/RT;
+        y = state.equilibrium().elementChemicalPotentials()/RT;
 
         // Set the normalized dual potentials of the species
-        z = state.speciesDualPotentials()/RT;
+        z = state.equilibrium().speciesStabilities()/RT;
 
         // Initialize the optimum state
         optimum_state.x = n(ies);
@@ -334,8 +334,8 @@ struct EquilibriumSolver::Impl
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
-        state.setElementDualPotentials(y);
-        state.setSpeciesDualPotentials(z);
+        state.equilibrium().setElementChemicalPotentials(y);
+        state.equilibrium().setSpeciesStabilities(z);
     }
 
     /// Find a feasible approximation for an equilibrium problem with all elements present on chemical system.
@@ -365,8 +365,8 @@ struct EquilibriumSolver::Impl
 
         // Update the internal state of n, y, z
         n = state.speciesAmounts();
-        y = state.elementDualPotentials();
-        z = state.speciesDualPotentials();
+        y = state.equilibrium().elementChemicalPotentials();
+        z = state.equilibrium().speciesStabilities();
 
         // Update the standard thermodynamic properties of the system
         timeit( properties.update(T, P),
@@ -411,8 +411,8 @@ struct EquilibriumSolver::Impl
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
-        state.setElementDualPotentials(y);
-        state.setSpeciesDualPotentials(z);
+        state.equilibrium().setElementChemicalPotentials(y);
+        state.equilibrium().setSpeciesStabilities(z);
 
         return result;
     }
@@ -437,7 +437,7 @@ struct EquilibriumSolver::Impl
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
-        state.setSpeciesDualPotentials(z);
+        state.equilibrium().setSpeciesStabilities(z);
 
         return result;
     }

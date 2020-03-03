@@ -102,6 +102,25 @@ void exportChemicalState(py::module& m)
     auto phaseAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::phaseAmount);
     auto phaseAmount4 = static_cast<double(ChemicalState::*)(std::string, std::string) const>(&ChemicalState::phaseAmount);
 
+    auto equilibrium1 = [](const ChemicalState& self) { return self.equilibrium(); };
+    auto equilibrium2 = [](ChemicalState& self) { return self.equilibrium(); };
+
+    py::class_<EquilibriumProperties>(m, "EquilibriumProperties")
+        .def("setIndicesEquilibriumSpecies", &EquilibriumProperties::setIndicesEquilibriumSpecies)
+        .def("setSpeciesChemicalPotentials", &EquilibriumProperties::setSpeciesChemicalPotentials)
+        .def("setElementChemicalPotentials", &EquilibriumProperties::setElementChemicalPotentials)
+        .def("setSpeciesStabilities", &EquilibriumProperties::setSpeciesStabilities)
+        .def("numEquilibriumSpecies", &EquilibriumProperties::numEquilibriumSpecies)
+        .def("numPrimarySpecies", &EquilibriumProperties::numPrimarySpecies)
+        .def("numSecondarySpecies", &EquilibriumProperties::numSecondarySpecies)
+        .def("indicesEquilibriumSpecies", &EquilibriumProperties::indicesEquilibriumSpecies, py::return_value_policy::reference_internal)
+        .def("indicesPrimarySpecies", &EquilibriumProperties::indicesPrimarySpecies, py::return_value_policy::reference_internal)
+        .def("indicesSecondarySpecies", &EquilibriumProperties::indicesSecondarySpecies, py::return_value_policy::reference_internal)
+        .def("speciesChemicalPotentials", &EquilibriumProperties::speciesChemicalPotentials, py::return_value_policy::reference_internal)
+        .def("elementChemicalPotentials", &EquilibriumProperties::elementChemicalPotentials, py::return_value_policy::reference_internal)
+        .def("speciesStabilities", &EquilibriumProperties::speciesStabilities, py::return_value_policy::reference_internal)
+        ;
+
     py::class_<ChemicalState>(m, "ChemicalState")
         .def(py::init<const ChemicalSystem&>())
         .def("assign", assignChemicalState)
@@ -121,8 +140,6 @@ void exportChemicalState(py::module& m)
         .def("setSpeciesMass", setSpeciesMass2)
         .def("setSpeciesMass", setSpeciesMass3)
         .def("setSpeciesMass", setSpeciesMass4)
-        .def("setSpeciesDualPotentials", &ChemicalState::setSpeciesDualPotentials)
-        .def("setElementDualPotentials", &ChemicalState::setElementDualPotentials)
         .def("scaleSpeciesAmounts", &ChemicalState::scaleSpeciesAmounts)
         .def("scaleSpeciesAmountsInPhase", &ChemicalState::scaleSpeciesAmountsInPhase)
         .def("scalePhaseVolume", scalePhaseVolume1)
@@ -144,7 +161,6 @@ void exportChemicalState(py::module& m)
         .def("speciesAmount", speciesAmount2)
         .def("speciesAmount", speciesAmount3)
         .def("speciesAmount", speciesAmount4)
-        .def("speciesDualPotentials", &ChemicalState::speciesDualPotentials, py::return_value_policy::reference_internal)
         .def("elementAmounts", &ChemicalState::elementAmounts)
         .def("elementAmountsInPhase", &ChemicalState::elementAmountsInPhase)
         .def("elementAmountsInSpecies", &ChemicalState::elementAmountsInSpecies)
@@ -158,19 +174,21 @@ void exportChemicalState(py::module& m)
         .def("elementAmountInPhase", elementAmountInPhase4)
         .def("elementAmountInSpecies", elementAmountInSpecies1)
         .def("elementAmountInSpecies", elementAmountInSpecies2)
-        .def("elementDualPotentials", &ChemicalState::elementDualPotentials, py::return_value_policy::reference_internal)
         .def("phaseAmount", phaseAmount1)
         .def("phaseAmount", phaseAmount2)
         .def("phaseAmount", phaseAmount3)
         .def("phaseAmount", phaseAmount4)
-        .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
         .def("properties", &ChemicalState::properties, py::keep_alive<1, 0>()) // keep returned ChemicalProperties object alive until ChemicalState object is garbage collected!
+        .def("equilibrium", equilibrium1, py::return_value_policy::reference_internal)
+        .def("equilibrium", equilibrium2, py::return_value_policy::reference_internal)
         .def("output", &ChemicalState::output)
         .def("__repr__", [](const ChemicalState& self) { std::stringstream ss; ss << self; return ss.str(); })
         .def(py::self + py::self)
         .def(double() * py::self)
         .def(py::self * double())
         ;
+
+    m.def("phaseStabilityIndices", phaseStabilityIndices);
 }
 
 } // namespace Reaktoro
