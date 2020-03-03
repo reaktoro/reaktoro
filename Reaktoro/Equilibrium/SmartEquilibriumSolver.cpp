@@ -18,10 +18,9 @@
 // C++ includes
 #include <algorithm>
 #include <deque>
+#include <numeric>
+#include <set>
 #include <tuple>
-
-// Eigen includes
-#include <Reaktoro/deps/eigen3/Eigen/LU>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
@@ -36,6 +35,8 @@
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
+#include <Reaktoro/ODML/ClusterConnectivity.hpp>
+#include <Reaktoro/ODML/PriorityQueue.hpp>
 #include <Reaktoro/Optimization/Canonicalizer.hpp>
 
 namespace Reaktoro {
@@ -47,6 +48,9 @@ struct SmartEquilibriumSolver::Impl
 
     /// The partition of the chemical system
     Partition partition;
+
+    /// The canonicalizer used to determine primary and secondary species
+    Canonicalizer canonicalizer;
 
     /// The options for the smart equilibrium calculation
     SmartEquilibriumOptions options;
@@ -60,63 +64,83 @@ struct SmartEquilibriumSolver::Impl
     /// The chemical properties of the chemical system
     ChemicalProperties properties;
 
+    /// The amounts of the species in the chemical system
+    Vector n;
+
     /// The amounts of the elements in the equilibrium partition
     Vector be;
 
-    /// The solution of the equilibrium problem
-    Vector n, y, z, x, u, r;
+    /// The indices of the major and minor species
+    VectorXi imajorminor;
 
-    /// Auxiliary vectors
-    Vector dn, dy, dz;
+    /// The number of major species
+    Index nummajor;
 
-    std::deque<Index> priority;
+    /// The storage for matrix du/db = du/dn * dn/db
+    Matrix dudb;
 
-    std::deque<Index> ranking;
+    /// The storage for vector u(imajor)
+    Vector um;
 
-    int prev_learning_rate = 0;
-    int cur_learning_rate = 0;
+    /// The storage for matrix Mb = inv(u(imajor)) * du(imajor)/db.
+    Matrix Mb;
 
-
-
-    Vector a_dn;
-    Vector a_dy;
-    Vector a_dz;
-    Vector a_n0;
-    Vector a_y0;
-    Vector a_z0;
-    Vector a_n;
-    Vector a_y;
-    Vector a_z;
-    Vector b_dn;
-    Vector b_dy;
-    Vector b_dz;
-    Vector b_n0;
-    Vector b_y0;
-    Vector b_z0;
-    Vector b_n;
-    Vector b_y;
-    Vector b_z;
-    Vector a_u;
-    Vector b_u;
-    Vector a_x;
-    Vector b_x;
-    Vector a_r;
-    Vector b_r;
-
-    /// A class used to store the node of tree for smart equilibrium calculations.
-    struct TreeNode
+    /// The record of the knowledge database containing input, output and derivatives data.
+    struct Record
     {
+        /// The temperature of the equilibrium state (in units of K).
+        double T;
+
+        /// The pressure of the equilibrium state (in units of Pa).
+        double P;
+
+        /// The amounts of elements in the equilibrium state (in units of mol).
         Vector be;
-        Vector bebar;
+
+        /// The calculated equilibrium state at `T`, `P`, `be`.
         ChemicalState state;
+
+        /// The chemical properties at the calculated equilibrium state.
         ChemicalProperties properties;
+
+        /// The sensitivity derivatives at the calculated equilibrium state.
         EquilibriumSensitivity sensitivity;
+
+        /// The matrix used to compute relative change of chemical potentials due to change in `be`.
         Matrix Mb;
+
+        /// The indices of the species with significant amounts and mole fractions.
         VectorXi imajor;
     };
 
-    /// The tree used to save the calculated equilibrium states and respective sensitivities
-    std::deque<TreeNode> tree;
+    /// The cluster storing learned input-output data with same classification.
+    struct Cluster
+    {
+        /// The indices of the primary species for this cluster.
+        VectorXi iprimary;
+
+        /// The records stored in this cluster with learning data.
+        std::deque<Record> records;
+
+        /// The priority queue for the records based on their usage count.
+        PriorityQueue priority;
+    };
+
+    /// The database containing the learned input-output data.
+    struct Database
+    {
+        /// The clusters containing the learned input-output data points.
+        std::deque<Cluster> clusters;
+
+        /// The connectivity matrix of the clusters to determine how we move from one to another when searching.
+        ClusterConnectivity connectivity;
+
+        /// The priority queue for the clusters based on their usage counts.
+        PriorityQueue priority;
+    };
+
+    /// The database with learned input-output data points.
+    Database database;
 
     /// Construct a default SmartEquilibriumSolver::Impl instance.
     Impl()
@@ -126,6 +150,14 @@ struct SmartEquilibriumSolver::Impl
     Impl(const Partition& partition_)
     : partition(partition_), system(partition_.system()), solver(partition_)
     {
+        // Auxiliary variables
+        const auto Ne = partition.numEquilibriumSpecies();
+
+        // Initialize the canonicalizer with the formula matrix A
+        canonicalizer.compute(system.formulaMatrix());
+
+        // Initialize the indices of major/minor species with default order
+        imajorminor.setLinSpaced(Ne, 0, Ne);
     }
 
     /// Set the options for the equilibrium calculation.
@@ -145,6 +177,12 @@ struct SmartEquilibriumSolver::Impl
     {
         partition = partition_;
         solver.setPartition(partition_);
+
+        // Auxiliary variables
+        const auto Ne = partition.numEquilibriumSpecies();
+
+        // Initialize the indices of major/minor species with default order
+        imajorminor.setLinSpaced(Ne, 0, Ne);
     }
 
     /// Learn how to perform a full equilibrium calculation (with tracking)
@@ -157,65 +195,91 @@ struct SmartEquilibriumSolver::Impl
         // Store the result of the Gibbs energy minimization calculation performed during learning
         result.learning.gibbs_energy_minimization = solver.result();
 
-        tic(0);
-
-        // Adding into prioroity from the back ()
-        priority.push_back(priority.size()); // adding to the priority deque according to the order of training in ODML algorithm
-        ranking.push_back(0); // adding zero-rank of just added reference point
-
-        // Update the chemical properties of the system
+        // Update `properties` with the chemical properties of the calculated equilibrum state
         properties = solver.properties();
 
-        const auto RT = universalGasConstant * T;
+        // Get a reference to the sensitivity derivatives of the calculated equilibrium state
+        const auto& sensitivity = solver.sensitivity();
 
+        // The species amounts at the calculated equilibrium state
         const auto& n = state.speciesAmounts();
 
-        const auto u = properties.chemicalPotentials();
-        const auto x = properties.moleFractions();
-
-        const auto& dndb = solver.sensitivity().dndb;
-        const auto& dudn = u.ddn;
-
-        const Matrix dudb = dudn * dndb;
-
-        const double nsum = sum(n);
-
-        const auto& A = system.formulaMatrix();
-
-        Canonicalizer canonicalizer(A);
+        // Update the canonical form of formula matrix A so that we can identify primary species
         canonicalizer.updateWithPriorityWeights(n);
 
+        // Store the indices of primary and secondary species in state
+        state.equilibrium().setIndicesEquilibriumSpecies(canonicalizer.Q(), canonicalizer.numBasicVariables());
+
+        // Get the indices of the primary and secondary species at the calculated equilibrium state
+        const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
+
+
+        std::cout << "PRIMARY SPECIES = ";
+        for(auto i : iprimary)
+            std::cout << system.species(i).name() << " ";
+        std::cout << std::endl;
+
+
+        // Compute the mole fractions of the species in the calculated equilibrium state
+        const auto x = properties.moleFractions().val;
+
+        // Compute the sum of species amounts in the calculated equilibrium state
+        const auto nsum = sum(n);
+
+        // Auxiliary tolerance values for species amounts and species mole fractions
         const auto eps_n = options.amount_fraction_cutoff * nsum;
         const auto eps_x = options.mole_fraction_cutoff;
 
-        const auto S = canonicalizer.S();
+        // Identify the species with significant amounts -- the major species
+        nummajor = std::partition(imajorminor.begin(), imajorminor.end(),
+            [&](Index i) { return n[i] >= eps_n && x[i] >= eps_x; }) - imajorminor.begin();
 
-        auto imajorminor = canonicalizer.Q();
-        const auto nummajor = std::partition(imajorminor.begin(), imajorminor.end(),
-            [&](Index i) { return n[i] >= eps_n && x.val[i] >= eps_x; }) - imajorminor.begin();
-
+        // The indices of the major species
         const auto imajor = imajorminor.head(nummajor);
 
-        // const auto iprimary = canonicalizer.indicesBasicVariables();
-        // const auto isecondary = canonicalizer.indicesNonBasicVariables();
+        // The chemical potentials at the calculated equilibrium state
+        const auto u = properties.chemicalPotentials();
 
-        // Indices imajor;
-        // imajor.reserve(isecondary.size());
-        // for(auto i = 0; i < isecondary.size(); ++i)
-        //     if(n[isecondary[i]] >= eps_n && x.val[isecondary[i]] >= eps_x)
-        //         imajor.push_back(i);
+        // Auxiliary references to the derivatives dn/db and du/dn
+        const auto& dndb = solver.sensitivity().dndb;
+        const auto& dudn = u.ddn;
 
-        // VectorXi isecondary_major = isecondary(imajor);
+        // Compute the matrix du/db = du/dn * dn/db
+        dudb = dudn * dndb;
 
-        const Vector um = u.val(imajor);
+        // Assemble the vector with chemical potentials of major species
+        um = u.val(imajor);
+
+        // The rows in du/db corresponding to major species
         const auto dumdb = rows(dudb, imajor);
 
-        const Matrix Mb = diag(inv(um)) * dumdb;
+        // Compute matrix Mb that is used to compute delta(u)/u due to changes in b
+        Mb = diag(inv(um)) * dumdb;
 
-        // Store the computed solution into the knowledge tree
-        tree.push_back({be, be/sum(be), state, properties, solver.sensitivity(), Mb, imajor});
+        // Find the cluster
+        auto iter = std::find_if(database.clusters.begin(), database.clusters.end(),
+            [&](const Cluster& cluster) { return cluster.iprimary == iprimary; });
 
-        toc(0, result.timing.learning_storage);
+        if(iter < database.clusters.end())
+        {
+            auto& cluster = *iter;
+            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mb, imajor});
+            cluster.priority.extend();
+        }
+        else
+        {
+            Cluster cluster;
+            cluster.iprimary = iprimary;
+            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mb, imajor});
+            cluster.priority.extend();
+
+            database.clusters.push_back(cluster);
+            database.connectivity.extend();
+            database.priority.extend();
+        }
+
+        // timeit( tree.push_back({be, be/sum(be), state, properties, solver.sensitivity(), Mb, imajor}),
+        //     result.timing.learning_storage= );
     }
 
     /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
@@ -223,60 +287,29 @@ struct SmartEquilibriumSolver::Impl
     {
         result.estimate.accepted = false;
 
-        // Skip estimation if no previous full computation has been done
-        if(tree.empty())
+        // Skip estimation if no cluster exists yet
+        if(database.clusters.empty())
             return;
 
-        // Relative and absolute tolerance parameters
+        // Auxiliary relative and absolute tolerance parameters
         const auto reltol = options.reltol;
         const auto abstol = options.abstol;
 
-        //---------------------------------------------------------------------------------------
-        // Step 1: Search for the reference element (closest to the new state input conditions)
-        //---------------------------------------------------------------------------------------
-        tic(0);
-
-        Vector rs;
-        // Amounts of speceis
-        Vector n, ns;
-        // Variations of the potentials and species
-        Vector du, dus, dns;
-        Vector x;
-        //Vector bebar = be/sum(be);
         Vector dbe;
-
-        double nmin, nsum, uerror;
-        Index inmin, iuerror;
-
-        double nerror;
-        Index inerror;
-
-        /*if(tree.size() == 33) {
-            int count = 0;
-            for (auto it = tree.begin(); it != tree.end(); it++) {
-                std::cout << "count = " << count << ", be = " << tr(it->be) << std::endl;
-                count++;
-            }
-            getchar();
-        }*/
 
         // Check if an entry in the database pass the error test.
         // It returns (`success`, `error`, `ispecies`), where
         //   - `success` is true if error test succeeds, false otherwise.
         //   - `error` is the first error violating the tolerance
         //   - `ispecies` is the index of the species that fails the error test
-        auto pass_error_test = [&](const auto& node) -> std::tuple<bool, double, Index>
+        auto pass_error_test = [&](const Record& record) -> std::tuple<bool, double, Index>
         {
             using std::abs;
             using std::max;
-            const auto& be0 = node.be;
-            const auto& Mb0 = node.Mb;
-            const auto& imajor = node.imajor;
+            const auto& be0 = record.be;
+            const auto& Mb0 = record.Mb;
+            const auto& imajor = record.imajor;
 
-            /*if(tree.size() == 33) {
-                std::cout << "be0 = " << tr(be0) << "\nbe = " << tr(be) << std::endl;
-                getchar();
-            }*/
             dbe.noalias() = be - be0;
 
             double error = 0.0;
@@ -289,59 +322,87 @@ struct SmartEquilibriumSolver::Impl
             return { true, error, n.size() };
         };
 
-        auto inode_prev = priority.begin();
-        for(auto inode=priority.begin(); inode!=priority.end(); ++inode)
+        // The current set of primary species in the chemical state
+        const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
+
+        // The function that identifies the index of starting cluster
+        auto index_starting_cluster = [&]() -> Index
         {
-            const auto& node = tree[*inode];
-            const auto& imajor = node.imajor;
+            // If no primary species, then return number of clusters to trigger use of total usage counts of clusters
+            if(iprimary.size() == 0)
+                return database.clusters.size();
 
-            /*if(tree.size() == 33) {
-                std::cout << "index of priority node = " << *inode << std::endl;
-                std::cout << "be = " << tr(node.be) << std::endl;
-                getchar();
-            }
+            // Find the index of the cluster with same set of primary species (search those with highest count first)
+            for(auto icluster : database.priority.ordering())
+                if(database.clusters[icluster].iprimary == iprimary)
+                    return icluster;
 
-*/
-            const auto [success, error, ispecies] = pass_error_test(node);
+            return database.clusters.size();
+        };
 
-            if(success)
+        // The index of the starting cluster
+        const auto icluster = index_starting_cluster();
+
+        // The ordering of the clusters to look for (starting with icluster)
+        const auto& clusters_ordering = database.connectivity.ordering(icluster);
+
+        // Iterate over all clusters starting with icluster
+        for(auto jcluster : clusters_ordering)
+        {
+            const auto& records = database.clusters[jcluster].records;
+            const auto& records_ordering = database.clusters[jcluster].priority.ordering();
+
+            // Iterate over all records in current cluster
+            for(auto irecord : records_ordering)
             {
-                const auto& be0 = node.be;
-                const auto& n0 = node.state.speciesAmounts();
-                const auto& dndb0 = node.sensitivity.dndb;
+                const auto& record = records[irecord];
+                const auto& imajor = record.imajor;
 
-                n.noalias() = n0 + dndb0 * (be - be0);
+                const auto [success, error, ispecies] = pass_error_test(record);
 
-                nmin = n.minCoeff(&inmin);
-                ntot = sum(n);
 
-                // if(nmin/ntot < -options.amount_fraction_cutoff)
-                if(nmin < -1.0e-5)
-                    continue;
-
-                toc(0, result.timing.estimate_search);
-
-                ranking[*inode] += 1;
-
-                auto comp = [&](Index l, Index r) { return ranking[l] > ranking[r]; };
-                //std::sort(priority.begin(), priority.end(), comp);
-                //std::stable_sort(priority.begin(), inode + 1, comp);
-                if ( !((inode == priority.begin()) || (ranking[*inode_prev] >= ranking[*inode])) ) {
-                    std::stable_sort(priority.begin(), inode + 1, comp);
+                if(success == false)
+                {
+                    std::cout << "FAILED ERROR TEST" << std::endl;
+                    std::cout << "  SPECIES = " << system.species(ispecies).name() << std::endl;
+                    std::cout << "  ERROR = " << error << std::endl;
+                    std::cout << "  PRIMARY SPECIES = "; for(auto i : iprimary) std::cout << system.species(i).name() << " "; std::cout << std::endl;
                 }
 
-                state.setSpeciesAmounts(n);
-                // state.setElementDualPotentials(y);
-                // state.setSpeciesDualPotentials(z);
 
-                // Update the chemical properties of the system
-                properties = node.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
-                result.estimate.accepted = true;
-                return;
-            }
-            else {
-                inode_prev = inode;
-                continue;
+                if(success)
+                {
+                    const auto& be0 = record.be;
+                    const auto& n0 = record.state.speciesAmounts();
+                    const auto& y0 = record.state.equilibrium().elementChemicalPotentials();
+                    const auto& z0 = record.state.equilibrium().speciesStabilities();
+                    const auto& ies0 = record.state.equilibrium().indicesEquilibriumSpecies();
+                    const auto& kp0 = record.state.equilibrium().numPrimarySpecies();
+                    const auto& dndb0 = record.sensitivity.dndb;
+
+                    n.noalias() = n0 + dndb0 * (be - be0);
+
+                    const double nmin = min(n(imajor));
+                    const double nsum = sum(n);
+
+                    const auto eps_n = options.amount_fraction_cutoff * nsum;
+
+                    if(nmin < -eps_n)
+                        continue;
+
+                    database.clusters[jcluster].priority.increment(irecord);
+                    database.connectivity.increment(icluster, jcluster);
+
+                    state.setSpeciesAmounts(n);
+                    state.equilibrium().setElementChemicalPotentials(y0);
+                    state.equilibrium().setSpeciesStabilities(z0);
+                    state.equilibrium().setIndicesEquilibriumSpecies(ies0, kp0);
+
+                    // Update the chemical properties of the system
+                    properties = record.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+                    result.estimate.accepted = true;
+                    return;
+                }
             }
         }
 
@@ -371,7 +432,8 @@ struct SmartEquilibriumSolver::Impl
         return solve(state, T, P, be);
     }
 
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult {
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
+    {
         tic(0);
 
         // Absolutely ensure an exact Hessian of the Gibbs energy function is used in the calculations
@@ -381,97 +443,18 @@ struct SmartEquilibriumSolver::Impl
         result = {};
 
         // Perform a smart estimate of the chemical state
-        timeit(estimate(state, T, P, be),
-               result.timing.estimate =);
+        timeit( estimate(state, T, P, be),
+            result.timing.estimate= );
 
         // Perform a learning step if the smart prediction is not sactisfatory
-        if (!result.estimate.accepted) {
-            timeit(learn(state, T, P, be), result.timing.learn =);
-        }
+        if(!result.estimate.accepted)
+            timeit( learn(state, T, P, be), result.timing.learn= );
 
         toc(0, result.timing.solve);
-
-        return result;
-    }
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be, Index istep, Index icell) -> SmartEquilibriumResult {
-
-        tic(0);
-
-        // Null learning rate at the beginning of each step
-        if(icell == 0)
-            cur_learning_rate = 0;
-
-        // Absolutely ensure an exact Hessian of the Gibbs energy function is used in the calculations
-        setOptions(options);
-
-        // Reset the result of the last smart equilibrium calculation
-        result = {};
-
-        // Perform a smart estimate of the chemical state
-        timeit(estimate(state, T, P, be),
-               result.timing.estimate =);
-
-        // Perform a learning step if the smart prediction is not sactisfatory
-        if (!result.estimate.accepted) {
-            timeit(learn(state, T, P, be), result.timing.learn =);
-            cur_learning_rate++;
-        }
-
-        toc(0, result.timing.solve);
-
-        ///*
-        // If tree is of a certain size, do the cleanup
-        //if (0) {
-        // prev_learning_rate == 0 &&
-        //
-        if (istep >= 2000 && icell == 0 && !(istep % 100) && std::count(ranking.begin(), ranking.end(), 0) > 10) {
-        //if (istep > 300 && icell == 0 && !(istep % 100)) {
-
-//            std::cout << "ranking          = ";
-//            for(auto i : ranking)  std::cout << i << ", ";
-//            std::cout << std::endl;
-
-//            std::cout << "ranking (sorted) = ";
-//            for(auto i : priority) std::cout << ranking[i] << ", ";
-//            std::cout << std::endl;
-
-//            std::cout << "priority         = ";
-//            for(auto i : priority) std::cout << i << ", ";
-//            std::cout << std::endl;
-
-            Index counter = 0;
-            Index counter_removed = 0;
-            auto it_rank = ranking.begin();
-            auto it_priority = priority.begin();
-            for (auto it = tree.begin(); it != tree.end(); ) {
-                //std::cout << "priority = " << *it_priority << ", rank = " << *it_rank << std::endl;
-                if (!*it_rank) {
-                    //std::cout << "removing it ..." << std::endl;
-                    it = tree.erase(it); // return the iterator pointing on the elemnt after the removed one
-                    it_rank = ranking.erase(it_rank);
-                    for (auto it_decrease = priority.begin(); it_decrease != priority.end(); it_decrease++){
-                        if(*it_decrease > counter)
-                            *it_decrease = *it_decrease - 1;
-                    }
-                    priority.pop_back();
-                    counter_removed++;
-                } else {
-                    it++; // increase the iterator	                    it++; // increase the iterator
-                    it_rank++;
-                    //it_priority++;
-                    counter ++;
-                }
-            }
-            std::cout << "removed number of elements = " << counter_removed << std::endl;
-        }
-
-        if(icell==99)
-            prev_learning_rate = cur_learning_rate;
 
         return result;
     }
 };
-
 
 SmartEquilibriumSolver::SmartEquilibriumSolver()
 : pimpl(new Impl())
@@ -513,10 +496,6 @@ auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, Vec
     return pimpl->solve(state, T, P, be);
 }
 
-auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be, Index istep, Index icell) -> SmartEquilibriumResult
-{
-    return pimpl->solve(state, T, P, be, istep, icell);
-}
 auto SmartEquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResult
 {
     return pimpl->solve(state, problem);
