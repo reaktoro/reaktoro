@@ -83,14 +83,16 @@ auto ClusterConnectivity::increment(Index icluster, Index jcluster) -> void
         _rank[icluster][jcluster] += 1;
 
         // Update ordering of clusters for the i-th cluster to reflect change in rank of j-th cluster
-        std::sort(_ordering[icluster].begin(), _ordering[icluster].begin() + jcluster + 1); // TODO This sort operation can be made faster, since the deque was already sorted
+        std::sort(_ordering[icluster].begin(), _ordering[icluster].begin() + jcluster + 1,
+            [&](Index l, Index r) { return _rank[icluster][l] > _rank[icluster][r]; }); // TODO This sort operation can be made faster, since the deque was already sorted
     }
 
     // Increment total rank/usage count of cluster jcluster
     _rank_total[jcluster] += 1;
 
     // Update ordering of clusters based on their total usage counts
-    std::sort(_ordering_total.begin(), _ordering_total.begin() + jcluster + 1); // TODO This sort operation can be made faster, since the deque was already sorted
+    std::sort(_ordering_total.begin(), _ordering_total.begin() + jcluster + 1,
+        [&](Index l, Index r) { return _rank_total[l] > _rank_total[r]; }); // TODO This sort operation can be made faster, since the deque was already sorted
 }
 
 auto ClusterConnectivity::ordering(Index icluster) const -> const std::deque<Index>&
