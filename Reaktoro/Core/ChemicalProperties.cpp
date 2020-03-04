@@ -116,7 +116,7 @@ auto ChemicalProperties::chemicalModelResult() const -> const ChemicalModelResul
     return cres;
 }
 
-auto ChemicalProperties::moleFractions() const -> ChemicalVector
+auto ChemicalProperties::moleFractions() const -> ChemicalVectorConstRef
 {
     return x;
 }
