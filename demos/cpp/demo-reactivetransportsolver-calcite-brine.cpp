@@ -130,7 +130,7 @@ int main()
     params.P = 100;                      // the pressure (in units of bar)
 
     // Define parameters of the equilibrium solvers
-    params.smart_equlibrium_reltol = 0.1;
+    params.smart_equlibrium_reltol = 0.005;
     params.smart_equlibrium_abstol = 1e-8;
     params.track_statistics = true;
 

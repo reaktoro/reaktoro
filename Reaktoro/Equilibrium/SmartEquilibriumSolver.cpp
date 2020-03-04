@@ -70,19 +70,13 @@ struct SmartEquilibriumSolver::Impl
     /// The amounts of the elements in the equilibrium partition
     Vector be;
 
-    /// The indices of the major and minor species
-    VectorXi imajorminor;
-
-    /// The number of major species
-    Index nummajor;
-
     /// The storage for matrix du/db = du/dn * dn/db
     Matrix dudb;
 
-    /// The storage for vector u(imajor)
-    Vector um;
+    /// The storage for vector u(iprimary)
+    Vector up;
 
-    /// The storage for matrix Mb = inv(u(imajor)) * du(imajor)/db.
+    /// The storage for matrix Mb = inv(u(iprimary)) * du(iprimary)/db.
     Matrix Mb;
 
     /// The record of the knowledge database containing input, output and derivatives data.
@@ -108,9 +102,6 @@ struct SmartEquilibriumSolver::Impl
 
         /// The matrix used to compute relative change of chemical potentials due to change in `be`.
         Matrix Mb;
-
-        /// The indices of the species with significant amounts and mole fractions.
-        VectorXi imajor;
     };
 
     /// The cluster storing learned input-output data with same classification.
@@ -150,14 +141,8 @@ struct SmartEquilibriumSolver::Impl
     Impl(const Partition& partition_)
     : partition(partition_), system(partition_.system()), solver(partition_)
     {
-        // Auxiliary variables
-        const auto Ne = partition.numEquilibriumSpecies();
-
         // Initialize the canonicalizer with the formula matrix A
         canonicalizer.compute(system.formulaMatrix());
-
-        // Initialize the indices of major/minor species with default order
-        imajorminor.setLinSpaced(Ne, 0, Ne);
     }
 
     /// Set the options for the equilibrium calculation.
@@ -176,13 +161,8 @@ struct SmartEquilibriumSolver::Impl
     auto setPartition(const Partition& partition_) -> void
     {
         partition = partition_;
+
         solver.setPartition(partition_);
-
-        // Auxiliary variables
-        const auto Ne = partition.numEquilibriumSpecies();
-
-        // Initialize the indices of major/minor species with default order
-        imajorminor.setLinSpaced(Ne, 0, Ne);
     }
 
     /// Learn how to perform a full equilibrium calculation (with tracking)
@@ -210,27 +190,8 @@ struct SmartEquilibriumSolver::Impl
         // Store the indices of primary and secondary species in state
         state.equilibrium().setIndicesEquilibriumSpecies(canonicalizer.Q(), canonicalizer.numBasicVariables());
 
-        // Get the indices of the primary and secondary species at the calculated equilibrium state
+        // The indices of the primary species at the calculated equilibrium state
         const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
-        const auto& isecondary = state.equilibrium().indicesSecondarySpecies();
-
-
-
-
-        // std::cout << "PRIMARY SPECIES = ";
-        // for(auto i : iprimary)
-        //     std::cout << system.species(i).name() << " ";
-        // std::cout << std::endl;
-
-
-
-
-        // Compute the sum of species amounts in the calculated equilibrium state
-        const auto nsum = sum(n);
-
-        // Auxiliary tolerance values for species amounts and species mole fractions
-        const auto eps_n = options.amount_fraction_cutoff * nsum;
-        const auto eps_x = options.mole_fraction_cutoff;
 
         // The chemical potentials at the calculated equilibrium state
         const auto u = properties.chemicalPotentials();
@@ -242,43 +203,41 @@ struct SmartEquilibriumSolver::Impl
         // Compute the matrix du/db = du/dn * dn/db
         dudb = dudn * dndb;
 
-        // The indices of the major secondary species
-        // const auto imajor = isecondary.head(std::min(iprimary.size(), isecondary.size()));
-        const auto imajor = isecondary;
+        // The vector u(iprimary) with chemical potentials of primary species
+        up.noalias() = rows(u.val, iprimary);
 
-        // The rows in dn/db corresponding to major secondary species
-        const auto ns = rows(n, imajor);
-        const auto dnsdb = rows(dndb, imajor);
-        const auto max_ns = max(ns);
+        // The matrix du(iprimary)/db with derivatives of chemical potentials of primary species
+        const auto dupdb = rows(dudb, iprimary);
 
-        assert(max_ns != 0.0);
-
-        // Compute matrix Mb that is used to compute delta(ns)/max(ns) due to changes in b
-        Mb.noalias() = dnsdb * (1.0 / max_ns);
+        // Compute matrix Mb = 1/up * dup/db
+        Mb.noalias() = diag(inv(up)) * dupdb;
 
         // Find the cluster
         auto iter = std::find_if(database.clusters.begin(), database.clusters.end(),
             [&](const Cluster& cluster) { return cluster.iprimary == iprimary; });
 
+        // If cluster found, store the new record in it, otherwise, create a new cluster
         if(iter < database.clusters.end())
         {
             auto& cluster = *iter;
-            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mb, imajor});
+            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mb});
             cluster.priority.extend();
         }
         else
         {
+            // Create a new cluster
             Cluster cluster;
             cluster.iprimary = iprimary;
-            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mb, imajor});
+            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mb});
             cluster.priority.extend();
 
+            // Append the new cluster in the database
             database.clusters.push_back(cluster);
             database.connectivity.extend();
             database.priority.extend();
         }
 
-        // timeit( tree.push_back({be, be/sum(be), state, properties, solver.sensitivity(), Mb, imajor}),
+        // timeit( tree.push_back({be, be/sum(be), state, properties, solver.sensitivity(), Mb, iprimary}),
         //     result.timing.learning_storage= );
     }
 
@@ -308,18 +267,17 @@ struct SmartEquilibriumSolver::Impl
             using std::max;
             const auto& be0 = record.be;
             const auto& Mb0 = record.Mb;
-            const auto& imajor = record.imajor;
 
             dbe.noalias() = be - be0;
 
             double error = 0.0;
-            for(auto i = 0; i < imajor.size(); ++i) {
+            for(auto i = 0; i < Mb.rows(); ++i) {
                 error = max(error, abs(Mb0.row(i) * dbe));
                 if(error >= reltol)
-                    return { false, error, imajor[i] };
+                    return { false, error, i };
             }
 
-            return { true, error, n.size() };
+            return { true, error, -1 };
         };
 
         // The current set of primary species in the chemical state
@@ -333,7 +291,7 @@ struct SmartEquilibriumSolver::Impl
                 return database.clusters.size();
 
             // Find the index of the cluster with same set of primary species (search those with highest count first)
-            for(auto icluster : database.priority.ordering())
+            for(auto icluster : database.priority.order())
                 if(database.clusters[icluster].iprimary == iprimary)
                     return icluster;
 
@@ -344,21 +302,20 @@ struct SmartEquilibriumSolver::Impl
         const auto icluster = index_starting_cluster();
 
         // The ordering of the clusters to look for (starting with icluster)
-        const auto& clusters_ordering = database.connectivity.ordering(icluster);
+        const auto& clusters_ordering = database.connectivity.order(icluster);
 
         // Iterate over all clusters starting with icluster
         for(auto jcluster : clusters_ordering)
         {
             const auto& records = database.clusters[jcluster].records;
-            const auto& records_ordering = database.clusters[jcluster].priority.ordering();
+            const auto& records_ordering = database.clusters[jcluster].priority.order();
 
             // Iterate over all records in current cluster
             for(auto irecord : records_ordering)
             {
                 const auto& record = records[irecord];
-                const auto& imajor = record.imajor;
 
-                const auto [success, error, ispecies] = pass_error_test(record);
+                const auto [success, error, iprimaryspecies] = pass_error_test(record);
 
                 if(success)
                 {
@@ -372,26 +329,32 @@ struct SmartEquilibriumSolver::Impl
 
                     n.noalias() = n0 + dndb0 * (be - be0);
 
-                    // const double nmin = min(n(imajor));
-                    const double nmin = min(n);
-                    const double nsum = sum(n);
+                    const double nmin = min(n);  // TODO: this should be amounts of equilibrium species only!
+                    const double nsum = sum(n);  // TODO: this should be amounts of equilibrium species only!
 
                     const auto eps_n = options.amount_fraction_cutoff * nsum;
 
+                    // Check if all projected species amounts are not negative beyond tolerance
                     if(nmin < -eps_n)
                         continue;
 
+                    // Increment priority of the current record (irecord) in the current cluster (jcluster)
                     database.clusters[jcluster].priority.increment(irecord);
+
+                    // Increment priority of the current cluster (jcluster) with respect to starting cluster (icluster)
                     database.connectivity.increment(icluster, jcluster);
+
+                    // Increment priority of the current cluster (jcluster)
                     database.priority.increment(jcluster);
 
+                    // Set the chemical state result with estimated amounts
                     state.setSpeciesAmounts(n);
                     state.equilibrium().setElementChemicalPotentials(y0);
                     state.equilibrium().setSpeciesStabilities(z0);
                     state.equilibrium().setIndicesEquilibriumSpecies(ies0, kp0);
 
                     // Update the chemical properties of the system
-                    properties = record.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+                    properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
                     result.estimate.accepted = true;
                     return;
                 }
@@ -449,22 +412,22 @@ struct SmartEquilibriumSolver::Impl
 
     auto outputClusterInfo() const -> void
     {
-        for(auto i : database.priority.ordering())
+        for(auto i : database.priority.order())
         {
             std::cout << "CLUSTER #" << i << std::endl;
-            std::cout << "  RANK OF CLUSTER: " << database.priority.rank()[i] << std::endl;
+            std::cout << "  RANK OF CLUSTER: " << database.priority.priorities()[i] << std::endl;
             std::cout << "  PRIMARY SPECIES: ";
             for(auto j : database.clusters[i].iprimary)
                 std::cout << system.species(j).name() << " ";
             std::cout << std::endl;
             std::cout << "  NUMBER OF RECORDS: " << database.clusters[i].records.size() << std::endl;
             std::cout << "  RANK OF RECORDS: ";
-            for(auto j : database.clusters[i].priority.ordering())
-                std::cout << database.clusters[i].priority.rank()[j] << " ";
+            for(auto j : database.clusters[i].priority.order())
+                std::cout << database.clusters[i].priority.priorities()[j] << " ";
             std::cout << std::endl;
-            std::cout << "  NEXT CLUSTER: " << database.connectivity.ordering(i)[1] << std::endl;
+            std::cout << "  NEXT CLUSTER: " << database.connectivity.order(i)[1] << std::endl;
             std::cout << "  NEXT CLUSTER PRIMARY SPECIES: ";
-            for(auto j : database.clusters[database.connectivity.ordering(i)[1]].iprimary)
+            for(auto j : database.clusters[database.connectivity.order(i)[1]].iprimary)
                 std::cout << system.species(j).name() << " ";
             std::cout << std::endl;
             std::cout << std::endl;
