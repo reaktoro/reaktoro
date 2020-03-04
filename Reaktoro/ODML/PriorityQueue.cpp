@@ -17,6 +17,7 @@
 
 // C++ includes
 #include <algorithm>
+#include <cassert>
 #include <numeric>
 
 namespace Reaktoro {
@@ -24,27 +25,82 @@ namespace Reaktoro {
 PriorityQueue::PriorityQueue()
 {}
 
+auto PriorityQueue::withInitialSize(Index size) -> PriorityQueue
+{
+    PriorityQueue queue;
+    queue._priorities.resize(size, 0);
+    queue._order.resize(size);
+    std::iota(queue._order.begin(), queue._order.end(), 0);
+    return queue;
+}
+
+auto PriorityQueue::withInitialPriorities(const std::deque<Index>& priorities) -> PriorityQueue
+{
+    const auto size = priorities.size();
+    PriorityQueue queue = PriorityQueue::withInitialSize(size);
+    queue._priorities = priorities;
+    std::sort(queue._order.begin(), queue._order.end(),
+        [&](Index l, Index r) { return priorities[l] > priorities[r]; });
+    return queue;
+}
+
+auto PriorityQueue::withInitialOrder(const std::deque<Index>& order) -> PriorityQueue
+{
+    const auto size = order.size();
+    PriorityQueue queue;
+    queue._priorities.resize(size, 0);
+    queue._order = order;
+    return queue;
+}
+
+auto PriorityQueue::withInitialPrioritiesAndOrder(const std::deque<Index>& priorities, const std::deque<Index>& order) -> PriorityQueue
+{
+    assert(priorities.size() == order.size());
+    const auto size = priorities.size();
+    PriorityQueue queue;
+    queue._priorities = priorities;
+    queue._order = order;
+    std::stable_sort(queue._order.begin(), queue._order.end(),
+        [&](Index l, Index r) { return priorities[l] > priorities[r]; });
+    return queue;
+}
+
+auto PriorityQueue::size() const -> Index
+{
+    return _priorities.size();
+}
+
+auto PriorityQueue::reset() -> void
+{
+    std::fill(_priorities.begin(), _priorities.end(), 0);
+    std::iota(_order.begin(), _order.end(), 0);
+}
+
 auto PriorityQueue::increment(Index ientity) -> void
 {
-    _rank[ientity] += 1;
-    std::sort(_ordering.begin(), _ordering.begin() + ientity + 1,
-        [&](Index l, Index r) { return _rank[l] > _rank[r]; });
+    // == EXAMPLE OF WHAT HAPPENS IN THIS METHOD ==
+    // PRIORITIES BEFORE INCREMENTING: 13  5  3  2  2 (2) 1  --- incrementing from 2 to 3
+    //  PRIORITIES AFTER INCREMENTING: 13  5  3 [2] 2 (3) 1  --- (3) needs to be swaped with [2]
+    //       PRIORITIES AFTER SORTING: 13  5  3 (3) 2 [2] 1
+    _priorities[ientity] += 1;
+    std::sort(_order.begin(), _order.begin() + ientity + 1,
+        [&](Index l, Index r) { return _priorities[l] > _priorities[r]; });
 }
 
 auto PriorityQueue::extend() -> void
 {
-    _rank.push_back(0);
-    _ordering.push_back(_ordering.size());
+    _priorities.push_back(0);
+    _order.push_back(_order.size());
 }
 
-auto PriorityQueue::rank() const -> const std::deque<Index>&
+auto PriorityQueue::priorities() const -> const std::deque<Index>&
 {
-    return _rank;
+    return _priorities;
 }
 
-auto PriorityQueue::ordering() const -> const std::deque<Index>&
+auto PriorityQueue::order() const -> const std::deque<Index>&
 {
-    return _ordering;
+    return _order;
 }
 
 } // namespace Reaktoro

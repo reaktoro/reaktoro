@@ -23,32 +23,52 @@
 
 namespace Reaktoro {
 
-// A priority queue data structure based on usage count.
+// A queue organized based on priorities that can change dynamically.
 class PriorityQueue
 {
 public:
     /// Construct a default instance of PriorityQueue.
     PriorityQueue();
 
-    /// Increment the rank of a tracked entity to increase its priority.
+    /// Return a PriorityQueue instance with given initial size.
+    static auto withInitialSize(Index size) -> PriorityQueue;
+
+    /// Return a PriorityQueue instance with given initial priorities.
+    static auto withInitialPriorities(const std::deque<Index>& priorities) -> PriorityQueue;
+
+    /// Return a PriorityQueue instance with an initial order and zero priorities.
+    static auto withInitialOrder(const std::deque<Index>& order) -> PriorityQueue;
+
+    /// Return a PriorityQueue instance with given initial priorities and order.
+    /// @note A stable sort algorithm is applied to ensure consistency between
+    /// given order and priorities.
+    static auto withInitialPrioritiesAndOrder(const std::deque<Index>& priorities, const std::deque<Index>& order) -> PriorityQueue;
+
+    /// Return the size of the priority queue.
+    auto size() const -> Index;
+
+    /// Reset the priorities of the tracked entities.
+    auto reset() -> void;
+
+    /// Increment the priority of a tracked entity.
     /// @param ientity The index of the tracked entity.
     auto increment(Index ientity) -> void;
 
-    /// Extend the priority queue with the introduction of a new tracked entity.
+    /// Extend the queue with the introduction of a new tracked entity.
     auto extend() -> void;
 
-    /// Return the current rank of each tracked entity in the priority queue.
-    auto rank() const -> const std::deque<Index>&;
+    /// Return the current priorities of each tracked entity in the queue.
+    auto priorities() const -> const std::deque<Index>&;
 
-    /// Return the current ordering of the tracked entities in the priority queue based on their rank.
-    auto ordering() const -> const std::deque<Index>&;
+    /// Return the current order of the tracked entities in the queue.
+    auto order() const -> const std::deque<Index>&;
 
 private:
-    /// The rank/usage count of each tracked entity in the priority queue.
-    std::deque<Index> _rank;
+    /// The priorities/usage count of each tracked entity in the priority queue.
+    std::deque<Index> _priorities;
 
-    /// The ordering of the tracked entities based on their current rank.
-    std::deque<Index> _ordering;
+    /// The order of the tracked entities based on their current priorities.
+    std::deque<Index> _order;
 };
 
 } // namespace Reaktoro
