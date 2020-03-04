@@ -3,7 +3,7 @@ import pandas as pd
 from reaktoro.PyReaktoro import ChemicalOutput
 
 
-def _to_array(self):
+def _ChemicalOutput_to_array(self):
     """
     Define a method to convert the file data into an array.
 
@@ -15,7 +15,7 @@ def _to_array(self):
     return output_array
 
 
-def _to_dict(self):
+def _ChemicalOutput_to_dict(self):
     """
     Define a method to convert the ChemicalOutput data in the file into a dictionary,
     with the headings being the keys, and the column data as the values.
@@ -29,7 +29,7 @@ def _to_dict(self):
     return {heading: column for heading, column in zip(self.headings(), columns)}
 
 
-def _to_dataframe(self):
+def _ChemicalOutput_to_dataframe(self):
     """
     Convert ChemicalOutput data into a pandas DataFrame.
 
@@ -41,6 +41,6 @@ def _to_dataframe(self):
     return output_dataframe
 
 
-ChemicalOutput.array = _to_array
-ChemicalOutput.dict = _to_dict
-ChemicalOutput.DataFrame = _to_dataframe
+ChemicalOutput.array = _ChemicalOutput_to_array
+ChemicalOutput.dict = _ChemicalOutput_to_dict
+ChemicalOutput.DataFrame = _ChemicalOutput_to_dataframe
