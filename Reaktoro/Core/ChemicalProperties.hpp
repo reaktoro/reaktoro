@@ -77,7 +77,7 @@ public:
     auto chemicalModelResult() const -> const ChemicalModelResult&;
 
     /// Return the mole fractions of the species.
-    auto moleFractions() const -> ChemicalVector;
+    auto moleFractions() const -> ChemicalVectorConstRef;
 
     /// Return the ln activity coefficients of the species.
     auto lnActivityCoefficients() const -> ChemicalVectorConstRef;
