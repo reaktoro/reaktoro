@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/ODML/PriorityQueue.hpp>
 
 namespace Reaktoro {
 
@@ -47,26 +48,20 @@ public:
     /// ordering of clusters solely based on their usage counts is used instead.
     auto increment(Index icluster, Index jcluster) -> void;
 
-    /// Return the ordering of clusters for a given starting cluster.
+    /// Return the order of clusters for a given starting cluster.
     /// -----------------------------------------------------------------------
     /// @param icluster The index of the starting cluster.
     /// -----------------------------------------------------------------------
     /// @note If index `icluster` is equal or greater than number of clusters,
     /// then an ordering based on usage count of clusters is returned.
-    auto ordering(Index icluster) const -> const std::deque<Index>&;
+    auto order(Index icluster) const -> const std::deque<Index>&;
 
 private:
-    /// The rank/usage count of each connectivity pair of clusters.
-    std::deque<std::deque<Index>> _rank;
+    /// The connectivity of each cluster with others in terms of priority queue for visitation.
+    std::deque<PriorityQueue> matrix;
 
-    /// The ordering of clusters for each cluster based on their connectivity usage counts.
-    std::deque<std::deque<Index>> _ordering;
-
-    /// The total rank/usage count of each cluster.
-    std::deque<Index> _rank_total;
-
-    /// The ordering of clusters for each cluster based on their total usage counts.
-    std::deque<Index> _ordering_total;
+    /// The ordering of clusters based on their usage count.
+    PriorityQueue queue;
 };
 
 } // namespace Reaktoro

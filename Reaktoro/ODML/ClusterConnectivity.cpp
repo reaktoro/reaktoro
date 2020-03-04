@@ -16,9 +16,8 @@
 #include "ClusterConnectivity.hpp"
 
 // C++ includes
-#include <algorithm>
 #include <cassert>
-#include <numeric>
+#include <limits>
 
 namespace Reaktoro {
 
@@ -27,48 +26,31 @@ ClusterConnectivity::ClusterConnectivity()
 
 auto ClusterConnectivity::size() const -> Index
 {
-    return _rank.size();
+    return queue.size();
 }
 
 auto ClusterConnectivity::extend() -> void
 {
-    // The current number of rows and columns in the matrix
-    const auto size = _rank.size();
+    // Extend the priority queue in each row of the connectivity matrix of the clusters
+    for(auto& row : matrix)
+        row.extend();
 
-    // Append a zero count at the end of each rank row for the new cluster (not yet used)
-    for(auto& row : _rank)
-        row.push_back(0);
+    // Extend the priority queue that keeps track the most used clusters
+    queue.extend();
 
-    // Append the index of new cluster to the end of each ordering row (it should be the last one tried, as it is new)
-    for(auto& row : _ordering)
-        row.push_back(size);
+    // The ordering of the most used clusters that will be used for the new cluster
+    const auto& order = queue.order();
 
-    // Create a new rank row (with zeros)
-    std::deque<Index> new_rank_row(size + 1, 0);
+    // Create priorities for the priority queue of the new cluster
+    std::deque<Index> priorities(order.size(), 0);
 
-    // Set the last entry in the last counting row to infinity, to give it first priority always
-    new_rank_row.back() = std::numeric_limits<Index>::infinity();
+    // Set the priority of the new cluster (the last one) to infinity,
+    // to ensure it is always the first one to be visited as we
+    // go from cluster to cluster
+    priorities.back() = std::numeric_limits<Index>::infinity();
 
-    // Create a new ordering row
-    std::deque<Index> new_ordering_row(size + 1);
-
-    // Set first index to the index of current cluster created
-    new_ordering_row[0] = size;
-
-    // Set the indices of the other clusters in ascending order, starting from 0
-    std::iota(new_ordering_row.begin() + 1, new_ordering_row.end(), 0);
-
-    // As initial ordering, consider the total usage count of clusters beyond the first
-    std::sort(new_ordering_row.begin() + 1, new_ordering_row.end(),
-        [&](Index l, Index r) { return _rank_total[l] > _rank_total[r]; });
-
-    // Push back the new row of rank and ordering
-    _rank.push_back(new_rank_row);
-    _ordering.push_back(new_ordering_row);
-
-    // Update the total rank/usage count list and the ordering based on total usage counts
-    _rank_total.push_back(0);
-    _ordering_total.push_back(size);
+    // Append the new priority queue for the new cluster
+    matrix.push_back(PriorityQueue::withInitialPrioritiesAndOrder(priorities, order));
 }
 
 auto ClusterConnectivity::increment(Index icluster, Index jcluster) -> void
@@ -76,28 +58,17 @@ auto ClusterConnectivity::increment(Index icluster, Index jcluster) -> void
     // Only jcluster needs to be bounded, because icluster >= size() has a specific logic
     assert(jcluster < size());
 
-    // Check if index of starting cluster is below number of clusters
+    // Increment jcluster when starting from icluster (if icluster is below number of clusters!)
     if(icluster < size())
-    {
-        // Increment rank/usage count of connectivity from icluster to jcluster
-        _rank[icluster][jcluster] += 1;
+        matrix[icluster].increment(jcluster);
 
-        // Update ordering of clusters for the i-th cluster to reflect change in rank of j-th cluster
-        std::sort(_ordering[icluster].begin(), _ordering[icluster].begin() + jcluster + 1,
-            [&](Index l, Index r) { return _rank[icluster][l] > _rank[icluster][r]; }); // TODO This sort operation can be made faster, since the deque was already sorted
-    }
-
-    // Increment total rank/usage count of cluster jcluster
-    _rank_total[jcluster] += 1;
-
-    // Update ordering of clusters based on their total usage counts
-    std::sort(_ordering_total.begin(), _ordering_total.begin() + jcluster + 1,
-        [&](Index l, Index r) { return _rank_total[l] > _rank_total[r]; }); // TODO This sort operation can be made faster, since the deque was already sorted
+    // Increment usage count of jcluster
+    queue.increment(jcluster);
 }
 
-auto ClusterConnectivity::ordering(Index icluster) const -> const std::deque<Index>&
+auto ClusterConnectivity::order(Index icluster) const -> const std::deque<Index>&
 {
-    return icluster < size() ? _ordering[icluster] : _ordering_total;
+    return icluster < size() ? matrix[icluster].order() : queue.order();
 }
 
 } // namespace Reaktoro
