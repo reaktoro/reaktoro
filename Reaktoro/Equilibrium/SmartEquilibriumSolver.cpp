@@ -73,7 +73,8 @@ struct SmartEquilibriumSolver::Impl
 
     std::deque<Index> ranking;
 
-
+    int prev_learning_rate = 0;
+    int cur_learning_rate = 0;
 
 
 
@@ -250,6 +251,14 @@ struct SmartEquilibriumSolver::Impl
         double nerror;
         Index inerror;
 
+        /*if(tree.size() == 33) {
+            int count = 0;
+            for (auto it = tree.begin(); it != tree.end(); it++) {
+                std::cout << "count = " << count << ", be = " << tr(it->be) << std::endl;
+                count++;
+            }
+            getchar();
+        }*/
 
         // Check if an entry in the database pass the error test.
         // It returns (`success`, `error`, `ispecies`), where
@@ -264,6 +273,10 @@ struct SmartEquilibriumSolver::Impl
             const auto& Mb0 = node.Mb;
             const auto& imajor = node.imajor;
 
+            /*if(tree.size() == 33) {
+                std::cout << "be0 = " << tr(be0) << "\nbe = " << tr(be) << std::endl;
+                getchar();
+            }*/
             dbe.noalias() = be - be0;
 
             double error = 0.0;
@@ -282,6 +295,13 @@ struct SmartEquilibriumSolver::Impl
             const auto& node = tree[*inode];
             const auto& imajor = node.imajor;
 
+            /*if(tree.size() == 33) {
+                std::cout << "index of priority node = " << *inode << std::endl;
+                std::cout << "be = " << tr(node.be) << std::endl;
+                getchar();
+            }
+
+*/
             const auto [success, error, ispecies] = pass_error_test(node);
 
             if(success)
@@ -354,8 +374,7 @@ struct SmartEquilibriumSolver::Impl
         return solve(state, T, P, be);
     }
 
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
-    {
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult {
         tic(0);
 
         // Absolutely ensure an exact Hessian of the Gibbs energy function is used in the calculations
@@ -365,18 +384,97 @@ struct SmartEquilibriumSolver::Impl
         result = {};
 
         // Perform a smart estimate of the chemical state
-        timeit( estimate(state, T, P, be),
-            result.timing.estimate= );
+        timeit(estimate(state, T, P, be),
+               result.timing.estimate =);
 
         // Perform a learning step if the smart prediction is not sactisfatory
-        if(!result.estimate.accepted)
-            timeit( learn(state, T, P, be), result.timing.learn= );
+        if (!result.estimate.accepted) {
+            timeit(learn(state, T, P, be), result.timing.learn =);
+        }
 
         toc(0, result.timing.solve);
 
         return result;
     }
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef be, Index istep, Index icell) -> SmartEquilibriumResult {
+
+        tic(0);
+
+        // Null learning rate at the beginning of each step
+        if(icell == 0)
+            cur_learning_rate = 0;
+
+        // Absolutely ensure an exact Hessian of the Gibbs energy function is used in the calculations
+        setOptions(options);
+
+        // Reset the result of the last smart equilibrium calculation
+        result = {};
+
+        // Perform a smart estimate of the chemical state
+        timeit(estimate(state, T, P, be),
+               result.timing.estimate =);
+
+        // Perform a learning step if the smart prediction is not sactisfatory
+        if (!result.estimate.accepted) {
+            timeit(learn(state, T, P, be), result.timing.learn =);
+            cur_learning_rate++;
+        }
+
+        toc(0, result.timing.solve);
+
+        ///*
+        // If tree is of a certain size, do the cleanup
+        //if (0) {
+        // prev_learning_rate == 0 &&
+        //
+        if (istep >= 2000 && icell == 0 && !(istep % 100) && std::count(ranking.begin(), ranking.end(), 0) > 10) {
+        //if (istep > 300 && icell == 0 && !(istep % 100)) {
+
+//            std::cout << "ranking          = ";
+//            for(auto i : ranking)  std::cout << i << ", ";
+//            std::cout << std::endl;
+
+//            std::cout << "ranking (sorted) = ";
+//            for(auto i : priority) std::cout << ranking[i] << ", ";
+//            std::cout << std::endl;
+
+//            std::cout << "priority         = ";
+//            for(auto i : priority) std::cout << i << ", ";
+//            std::cout << std::endl;
+
+            Index counter = 0;
+            Index counter_removed = 0;
+            auto it_rank = ranking.begin();
+            auto it_priority = priority.begin();
+            for (auto it = tree.begin(); it != tree.end(); ) {
+                //std::cout << "priority = " << *it_priority << ", rank = " << *it_rank << std::endl;
+                if (!*it_rank) {
+                    //std::cout << "removing it ..." << std::endl;
+                    it = tree.erase(it); // return the iterator pointing on the elemnt after the removed one
+                    it_rank = ranking.erase(it_rank);
+                    for (auto it_decrease = priority.begin(); it_decrease != priority.end(); it_decrease++){
+                        if(*it_decrease > counter)
+                            *it_decrease = *it_decrease - 1;
+                    }
+                    priority.pop_back();
+                    counter_removed++;
+                } else {
+                    it++; // increase the iterator	                    it++; // increase the iterator
+                    it_rank++;
+                    //it_priority++;
+                    counter ++;
+                }
+            }
+            std::cout << "removed number of elements = " << counter_removed << std::endl;
+        }
+
+        if(icell==99)
+            prev_learning_rate = cur_learning_rate;
+
+        return result;
+    }
 };
+
 
 SmartEquilibriumSolver::SmartEquilibriumSolver()
 : pimpl(new Impl())
@@ -418,6 +516,10 @@ auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, Vec
     return pimpl->solve(state, T, P, be);
 }
 
+auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be, Index istep, Index icell) -> SmartEquilibriumResult
+{
+    return pimpl->solve(state, T, P, be, istep, icell);
+}
 auto SmartEquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResult
 {
     return pimpl->solve(state, problem);
