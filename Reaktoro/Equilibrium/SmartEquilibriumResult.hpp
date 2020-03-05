@@ -28,35 +28,41 @@ namespace Reaktoro {
 /// Provide timing information of the operations during a smart equilibrium calculation.
 struct SmartEquilibriumTiming
 {
-    /// The time spent for solving the chemical equilibrium problem.
+    /// The time spent in seconds for solving the chemical equilibrium problem.
     double solve = 0.0;
 
-    /// The time spent for learning a new chemical equilibrium calculation.
+    /// The time spent in seconds for learning a new chemical equilibrium calculation.
     double learn = 0.0;
 
-    /// The time spent for a conventional Gibbs energy minimization calculation during learning operation.
+    /// The time spent in seconds for a conventional Gibbs energy minimization calculation during learning operation.
     double learning_gibbs_energy_minimization = 0.0;
 
-    /// The time spent for computing the chemical properties during learning operation.
+    /// The time spent in seconds for computing the chemical properties during learning operation.
     double learning_chemical_properties = 0.0;
 
-    /// The time spent for computing the sensitivity matrix during learning operation.
+    /// The time spent in seconds for computing the sensitivity matrix during learning operation.
     double learning_sensitivity_matrix = 0.0;
 
-    /// The time spent for storing the computed chemical state into the tree of knowledge.
+    /// The time spent in seconds for computing the error control matrices during learning operation.
+    double learning_error_control_matrices = 0.0;
+
+    /// The time spent in seconds for storing the computed chemical state into the tree of knowledge.
     double learning_storage = 0.0;
 
-    /// The time spent for the smart chemical equilibrium state estimation.
+    /// The time spent in seconds for the smart chemical equilibrium state estimation.
     double estimate = 0.0;
 
-    /// The time spent for the search operation during a smart estimation.
+    /// The time spent in seconds for the search operation during a smart estimation.
     double estimate_search = 0.0;
 
-    /// The time spent for the matrix-vector multiplication during a smart estimation.
-    double estimate_mat_vec_mul = 0.0;
+    /// The time spent in seconds during on error control while searching during a smart estimation.
+    double estimate_error_control = 0.0;
 
-    /// The time spent for the acceptance test during a smart estimation.
-    double estimate_acceptance = 0.0;
+    /// The time spent in seconds for the matrix-vector multiplication during a smart estimation.
+    double estimate_taylor = 0.0;
+
+    /// The time spent in seconds for updating the priority related info of the clusters in the database.
+    double estimate_database_priority_update = 0.0;
 
     /// Self addition of another SmartEquilibriumTiming instance to this one.
     auto operator+=(const SmartEquilibriumTiming& other) -> SmartEquilibriumTiming&;

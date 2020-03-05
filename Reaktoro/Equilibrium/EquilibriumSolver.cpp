@@ -487,7 +487,7 @@ struct EquilibriumSolver::Impl
     /// Solve the equilibrium problem
     auto solve(ChemicalState& state, double T, double P, const double* _be) -> EquilibriumResult
     {
-        tic(0);
+        tic(SOLVE);
 
         // Reset the result of last equilibrium calculation
         result = {};
@@ -535,7 +535,7 @@ struct EquilibriumSolver::Impl
         // Update the chemical state from the optimum state
         updateChemicalState(state);
 
-        toc(0, result.timing.solve)
+        result.timing.solve = toc(SOLVE);
 
         return result;
     }

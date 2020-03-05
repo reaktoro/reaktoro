@@ -234,8 +234,8 @@ auto ReactiveTransportProfiler::results() const -> const std::deque<ReactiveTran
 //     out << "#     storage                       = " << status(timing.learning_storage, timing.learning, "of learning time") << std::endl;
 //     out << "#   estimate                      = " << status(timing.estimate, timing.solve, "of total solve time") << std::endl;
 //     out << "#     search                        = " << status(timing.estimate_search, timing.estimate, "of estimate time") << std::endl;
-//     out << "#     mat_vec_mul                   = " << status(timing.estimate_mat_vec_mul, timing.estimate, "of estimate time") << std::endl;
-//     out << "#     acceptance                    = " << status(timing.estimate_acceptance, timing.estimate, "of estimate time") << std::endl;
+//     out << "#     mat_vec_mul                   = " << status(timing.estimate_taylor, timing.estimate, "of estimate time") << std::endl;
+//     out << "#     acceptance                    = " << status(timing.estimate_error_control, timing.estimate, "of estimate time") << std::endl;
 //     out << "# -------------------------------------------------------------------------------------" << std::endl;
 //     out << "#" << std::endl;
 //     out << "# ----------------------------------------------------------------------" << std::endl;

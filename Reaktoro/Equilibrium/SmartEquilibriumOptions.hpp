@@ -41,9 +41,6 @@ struct SmartEquilibriumOptions
     /// below this threshold will be discarded from the error control.
     double amount_fraction_cutoff = 1.0e-14;
 
-    /// The weighted residual tolerance used in the acceptance test.
-    double tol = 1.0e-1;
-
     /// The relative tolerance used in the acceptance test.
     double reltol = 0.1;
 
