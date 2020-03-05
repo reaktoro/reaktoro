@@ -546,15 +546,12 @@ struct EquilibriumSolver::Impl
         auto& dndT = sensitivities.dndT;
         auto& dydT = sensitivities.dydT;
         auto& dzdT = sensitivities.dzdT;
-        auto& drdT = sensitivities.drdT;
         auto& dndP = sensitivities.dndP;
         auto& dydP = sensitivities.dydP;
         auto& dzdP = sensitivities.dzdP;
-        auto& drdP = sensitivities.drdP;
         auto& dndb = sensitivities.dndb;
         auto& dydb = sensitivities.dydb;
         auto& dzdb = sensitivities.dzdb;
-        auto& drdb = sensitivities.drdb;
 
         dndT = zeros(Ne);
         dndP = zeros(Ne);
@@ -578,10 +575,6 @@ struct EquilibriumSolver::Impl
         solver.sensitivities(dgdT, dbdT, dndT, dydT, dzdT);
         solver.sensitivities(dgdP, dbdP, dndP, dydP, dzdP);
         solver.sensitivities(dgdb, dbdb, dndb, dydb, dzdb);
-
-        drdT = ue.ddT + ue.ddn * dndT - tr(Ae)*dydT - dzdT;
-        drdP = ue.ddP + ue.ddn * dndP - tr(Ae)*dydP - dzdP;
-        drdb = ue.ddn * dndb - tr(Ae)*dydb - dzdb;
 
         return sensitivities;
     }

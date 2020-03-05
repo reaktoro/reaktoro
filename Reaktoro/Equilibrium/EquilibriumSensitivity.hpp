@@ -38,9 +38,6 @@ struct EquilibriumSensitivity
     /// The partial derivatives @f$\left.\frac{\partial z/RT}{\partial T}\right|_{P,b}@f$ (in units of 1/K).
     Vector dzdT;
 
-    /// The partial derivatives @f$\left.\frac{\partial r/RT}{\partial T}\right|_{P,b}@f$ (in units of 1/K).
-    Vector drdT;
-
     /// The partial derivatives @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$ (in units of mol/Pa).
     Vector dndP;
 
@@ -50,9 +47,6 @@ struct EquilibriumSensitivity
     /// The partial derivatives @f$\left.\frac{\partial z/RT}{\partial P}\right|_{T,b}@f$ (in units of 1/Pa).
     Vector dzdP;
 
-    /// The partial derivatives @f$\left.\frac{\partial r/RT}{\partial P}\right|_{T,b}@f$ (in units of 1/Pa).
-    Vector drdP;
-
     /// The partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T, P}@f$ (in units of mol/mol).
     Matrix dndb;
 
@@ -61,9 +55,6 @@ struct EquilibriumSensitivity
 
     /// The partial derivatives @f$\left.\frac{\partial z/RT}{\partial b}\right|_{T, P}@f$ (in units of 1/mol).
     Matrix dzdb;
-
-    /// The partial derivatives @f$\left.\frac{\partial r/RT}{\partial b}\right|_{T, P}@f$ (in units of 1/mol).
-    Matrix drdb;
 };
 
 } // namespace Reaktoro
