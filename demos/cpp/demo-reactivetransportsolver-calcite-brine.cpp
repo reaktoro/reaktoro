@@ -263,6 +263,9 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     problem_bc.add("CaCl2", 0.01, "mol");
     problem_bc.add("CO2",   0.75, "mol");
 
+    Partition partition(system);
+    partition.setInertSpecies({"Quartz"});
+
     // Step **: Calculate the equilibrium states for the IC and BC
     ChemicalState state_ic = equilibrate(problem_ic);
     ChemicalState state_bc = equilibrate(problem_bc);
@@ -288,7 +291,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     reactive_transport_options.smart_equilibrium = smart_equilibrium_options;
 
     // Step **: Define the reactive transport modeling
-    ReactiveTransportSolver rtsolver(system);
+    ReactiveTransportSolver rtsolver(partition);
     rtsolver.setOptions(reactive_transport_options);
     rtsolver.setMesh(mesh);
     rtsolver.setVelocity(params.v);

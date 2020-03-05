@@ -26,8 +26,18 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Profiling.hpp>
+#include <Reaktoro/Core/ChemicalOutput.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Partition.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Transport/ChemicalField.hpp>
 #include <Reaktoro/Transport/Mesh.hpp>
+#include <Reaktoro/Transport/TransportSolver.hpp>
 
 namespace Reaktoro {
 
@@ -35,6 +45,9 @@ struct ReactiveTransportSolver::Impl
 {
     /// The chemical system common to all degrees of freedom in the chemical field.
     ChemicalSystem system;
+
+    /// The partition of the chemical system
+    Partition partition;
 
     /// The solver for solving the transport equations
     TransportSolver transport_solver;
@@ -54,17 +67,17 @@ struct ReactiveTransportSolver::Impl
     /// The list of chemical output objects
     std::vector<ChemicalOutput> outputs;
 
-    /// The amounts of fluid elements on the boundary.
-    Vector bbc;
+    /// The amounts of elements between fluid-equilibrium species on the boundary.
+    Vector be_bc;
 
-    /// The amounts of a fluid element on each cell of the mesh.
-    Matrix bf;
+    /// The amounts of a fluid-equilibrium elements on each cell of the mesh.
+    Matrix bef;
 
-    /// The amounts of a solid element on each cell of the mesh.
-    Matrix bs;
+    /// The amounts of a solid-equilibrium elements on each cell of the mesh.
+    Matrix bes;
 
-    /// The amounts of an element on each cell of the mesh.
-    Matrix b;
+    /// The amounts of equilibrium elements on each cell of the mesh.
+    Matrix be;
 
     /// The current number of steps in the solution of the reactive transport equations.
     Index steps = 0;
@@ -72,9 +85,16 @@ struct ReactiveTransportSolver::Impl
     /// Name of the file and folder with a status output
     std::string folder;
 
-    /// Construct a ReactiveTransportSolver::Impl instance.
+    /// Construct a ReactiveTransportSolver::Impl instance with given chemical system.
     Impl(const ChemicalSystem& system)
-    : system(system), equilibrium_solver(system), smart_equilibrium_solver(system)
+    : Impl(Partition(system))
+    {
+    }
+
+    /// Construct a ReactiveTransportSolver::Impl instance with given partition of the chemical system.
+    Impl(const Partition& partition)
+    : system(partition.system()), partition(partition),
+      equilibrium_solver(partition), smart_equilibrium_solver(partition)
     {
         setBoundaryState(ChemicalState(system));
     }
@@ -108,7 +128,14 @@ struct ReactiveTransportSolver::Impl
     /// Initialize boundary conditions of the reactive transport model.
     auto setBoundaryState(const ChemicalState& state) -> void
     {
-        bbc = state.elementAmounts();
+        // The indices of the fluid species in equilibrium
+        const auto& ifs = partition.indicesEquilibriumFluidSpecies();
+
+        // The indices of the equilibrium elements
+        const auto& iee = partition.indicesEquilibriumElements();
+
+        // Get the amounts of equilibrium elements considering only fluid-equilibrium species
+        be_bc = state.elementAmountsInSpecies(ifs)(iee);
     }
 
     /// Initialize time step of the reactive transport sequential algorithm.
@@ -127,15 +154,15 @@ struct ReactiveTransportSolver::Impl
     /// Initialize the reactive transport solver.
     auto initialize() -> void
     {
-        // Initialize mesh and corresponding amount e
+        // Auxiliary variables
         const Mesh& mesh = transport_solver.mesh();
-        const Index num_elements = system.numElements();
         const Index num_cells = mesh.numCells();
+        const Index Ee = partition.numEquilibriumElements();
 
         // Initialize amount of elements in fluid and solid phases
-        bf.resize(num_cells, num_elements);
-        bs.resize(num_cells, num_elements);
-        b.resize(num_cells, num_elements);
+        bef.resize(num_cells, Ee);
+        bes.resize(num_cells, Ee);
+        be.resize(num_cells, Ee);
 
         // Initialize equilibrium solver based on the parameter
         transport_solver.setOptions(options.transport);
@@ -150,10 +177,11 @@ struct ReactiveTransportSolver::Impl
 
         // Auxiliary variables
         const auto& mesh = transport_solver.mesh();
-        const auto& num_elements = system.numElements();
         const auto& num_cells = mesh.numCells();
-        const auto& ifs = system.indicesFluidSpecies();
-        const auto& iss = system.indicesSolidSpecies();
+        const auto& Ee = partition.numEquilibriumElements();
+        const auto& iee = partition.indicesEquilibriumElements();
+        const auto& ifs = partition.indicesEquilibriumFluidSpecies();
+        const auto& iss = partition.indicesEquilibriumSolidSpecies();
 
         // Open the the file for outputting chemical states
         for(auto output : outputs)
@@ -170,31 +198,32 @@ struct ReactiveTransportSolver::Impl
         // Collect the amounts of elements in the solid and fluid species
         for(Index icell = 0; icell < num_cells; ++icell)
         {
-            bf.row(icell) = field[icell].elementAmountsInSpecies(ifs);
-            bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
+            bef.row(icell) = field[icell].elementAmountsInSpecies(ifs)(iee);
+            bes.row(icell) = field[icell].elementAmountsInSpecies(iss)(iee);
         }
 
         // Left boundary condition cell
         Index icell_bc = 0;
+
         // Get porosity of the left boundary cell
         const auto phi_bc = field[icell_bc].properties().fluidVolume().val / field[icell_bc].properties().volume().val;
 
         // Ensure the result of each fluid element transport calculation can be saved
-        result.transport_of_element.resize(num_elements);
+        result.transport_of_element.resize(Ee);
 
-        // Transport the elements in the fluid species
-        for(Index ielement = 0; ielement < num_elements; ++ielement)
+        // Transport the elements in the fluid species in equilibrium
+        for(Index ielement = 0; ielement < Ee; ++ielement)
         {
             // Scale BC with a porosity of the boundary cell
-            transport_solver.setBoundaryValue(phi_bc * bbc[ielement]);
-            transport_solver.step(bf.col(ielement));
+            transport_solver.setBoundaryValue(phi_bc * be_bc[ielement]);
+            transport_solver.step(bef.col(ielement));
 
             // Save the result of this element transport calculation.
             result.transport_of_element[ielement] = transport_solver.result();
         }
 
         // Sum the amounts of elements distributed among fluid and solid species
-        b.noalias() = bf + bs;
+        be.noalias() = bef + bes;
 
         result.timing.transport = toc(TRANSPORT_STEP);
 
@@ -214,6 +243,7 @@ struct ReactiveTransportSolver::Impl
                 const auto P = field[icell].pressure();
 
                 // Solve with a smart equilibrium solver
+                smart_equilibrium_solver.solve(field[icell], T, P, be.row(icell));
                 //smart_equilibrium_solver.solve(field[icell], T, P, b.row(icell));
                 smart_equilibrium_solver.solve(field[icell], T, P, b.row(icell), steps, icell);
 
@@ -232,7 +262,7 @@ struct ReactiveTransportSolver::Impl
                 const auto P = field[icell].pressure();
 
                 // Solve with a conventional equilibrium solver
-                equilibrium_solver.solve(field[icell], T, P, b.row(icell));
+                equilibrium_solver.solve(field[icell], T, P, be.row(icell));
 
                 // Save the result of this cell's smart equilibrium calculation.
                 result.equilibrium_at_cell[icell] = equilibrium_solver.result();
@@ -259,6 +289,11 @@ struct ReactiveTransportSolver::Impl
 
 ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem& system)
 : pimpl(new Impl(system))
+{
+}
+
+ReactiveTransportSolver::ReactiveTransportSolver(const Partition& partition)
+: pimpl(new Impl(partition))
 {
 }
 

@@ -16,30 +16,32 @@
 #pragma once
 
 // C++ includes
-#include <iostream>
 #include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalOutput.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Transport/ChemicalField.hpp>
 #include <Reaktoro/Transport/ReactiveTransportOptions.hpp>
 #include <Reaktoro/Transport/ReactiveTransportResult.hpp>
-#include <Reaktoro/Transport/TransportSolver.hpp>
 
 namespace Reaktoro {
+
+// Forward declarations
+class ChemicalField;
+class ChemicalOutput;
+class ChemicalSystem;
+class ChemicalState;
+class Mesh;
+class Partition;
 
 /// Use this class for solving reactive transport problems.
 class ReactiveTransportSolver
 {
 public:
-    /// Construct a ReactiveTransportSolver instance.
-    ReactiveTransportSolver(const ChemicalSystem& system);
+    /// Construct a ReactiveTransportSolver instance with given chemical system.
+    explicit ReactiveTransportSolver(const ChemicalSystem& system);
+
+    /// Construct a ReactiveTransportSolver instance with given chemical system.
+    explicit ReactiveTransportSolver(const Partition& partition);
 
     /// Construct a copy of a ReactiveTransportSolver instance.
     ReactiveTransportSolver(const ReactiveTransportSolver& other);

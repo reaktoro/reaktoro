@@ -705,7 +705,7 @@ struct EquilibriumProperties::Impl
     VectorXi ips;
 
     /// The number of primary species among the equilibrium species.
-    Index kp;
+    Index kp = 0;
 
     /// The chemical potentials of the species in the equilibrium state (in units of J/mol)
     Vector u;
