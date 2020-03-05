@@ -22,13 +22,28 @@
 
 namespace Reaktoro {
 
+#ifdef REAKTORO_DISABLE_PROFILING
+
+/// Macro to start timing of a sequence of statements.
+#define tic(id)
+
+/// Macro to get the execution time since last call to tic(expr) macro.
+#define toc(id) 0.0
+
+/// Macro to measure the elapsed time of an expression execution.
+#define timeit(expr, res) { expr; res 0.0; }
+
+#else
+
 /// Macro to start timing of a sequence of statements.
 #define tic(id) Time __start_time ## id = time();
 
 /// Macro to get the execution time since last call to tic(expr) macro.
-#define toc(id, res) res=elapsed(__start_time ## id);
+#define toc(id) elapsed(__start_time ## id)
 
 /// Macro to measure the elapsed time of an expression execution.
 #define timeit(expr, res) { tic(__##__LINE__); expr; res elapsed(__start_time##__##__LINE__); }
+
+#endif // REAKTORO_DISABLE_PROFILING
 
 } // namespace Reaktoro

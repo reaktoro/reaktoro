@@ -139,7 +139,10 @@ struct SmartEquilibriumSolver::Impl
 
     /// Construct an SmartEquilibriumSolver::Impl instance with given partition.
     Impl(const Partition& partition_)
-    : partition(partition_), system(partition_.system()), solver(partition_)
+    : partition(partition_),
+      system(partition_.system()),
+      properties(partition_.system()),
+      solver(partition_)
     {
         // Initialize the canonicalizer with the formula matrix A
         canonicalizer.compute(system.formulaMatrix());
@@ -168,18 +171,38 @@ struct SmartEquilibriumSolver::Impl
     /// Learn how to perform a full equilibrium calculation (with tracking)
     auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> void
     {
-        // Calculate the equilibrium state using conventional Gibbs energy minimization approach
-        timeit( solver.solve(state, T, P, be),
-            result.timing.learning_gibbs_energy_minimization= );
+        //---------------------------------------------------------------------
+        // GIBBS ENERGY MINIMIZATION CALCULATION DURING THE LEARNING PROCESS
+        //---------------------------------------------------------------------
+        tic(EQUILIBRIUM_STEP);
 
-        // Store the result of the Gibbs energy minimization calculation performed during learning
-        result.learning.gibbs_energy_minimization = solver.result();
+        // Perform a full chemical equilibrium calculation
+        result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
 
-        // Update `properties` with the chemical properties of the calculated equilibrum state
+        result.timing.learning_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
+
+        //---------------------------------------------------------------------
+        // CHEMICAL PROPERTIES UPDATE STEP DURING THE LEARNING PROCESS
+        //---------------------------------------------------------------------
+        tic(CHEMICAL_PROPERTIES_STEP);
+
         properties = solver.properties();
 
-        // Get a reference to the sensitivity derivatives of the calculated equilibrium state
+        result.timing.learning_chemical_properties = toc(CHEMICAL_PROPERTIES_STEP);
+
+        //---------------------------------------------------------------------
+        // SENSITIVITY MATRIX COMPUTATION STEP DURING THE LEARNING PROCESS
+        //---------------------------------------------------------------------
+        tic(SENSITIVITY_STEP);
+
         const auto& sensitivity = solver.sensitivity();
+
+        result.timing.learning_sensitivity_matrix = toc(SENSITIVITY_STEP);
+
+        //---------------------------------------------------------------------
+        // ERROR CONTROL MATRICES ASSEMBLING STEP DURING THE LEARNING PROCESS
+        //---------------------------------------------------------------------
+        tic(ERROR_CONTROL_MATRICES);
 
         // The species amounts at the calculated equilibrium state
         const auto& n = state.speciesAmounts();
@@ -212,7 +235,14 @@ struct SmartEquilibriumSolver::Impl
         // Compute matrix Mb = 1/up * dup/db
         Mb.noalias() = diag(inv(up)) * dupdb;
 
-        // Find the cluster
+        result.timing.learning_error_control_matrices = toc(ERROR_CONTROL_MATRICES);
+
+        //---------------------------------------------------------------------
+        // STORAGE STEP DURING THE LEARNING PROCESS
+        //---------------------------------------------------------------------
+        tic(STORAGE_STEP);
+
+        // Find the index of the cluster that has same primary species
         auto iter = std::find_if(database.clusters.begin(), database.clusters.end(),
             [&](const Cluster& cluster) { return cluster.iprimary == iprimary; });
 
@@ -237,13 +267,13 @@ struct SmartEquilibriumSolver::Impl
             database.priority.extend();
         }
 
-        // timeit( tree.push_back({be, be/sum(be), state, properties, solver.sensitivity(), Mb, iprimary}),
-        //     result.timing.learning_storage= );
+        result.timing.learning_storage = toc(STORAGE_STEP);
     }
 
     /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
     auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> void
     {
+        // Set the estimate status to false at the beginning
         result.estimate.accepted = false;
 
         // Skip estimation if no cluster exists yet
@@ -254,13 +284,16 @@ struct SmartEquilibriumSolver::Impl
         const auto reltol = options.reltol;
         const auto abstol = options.abstol;
 
+        // The current set of primary species in the chemical state
+        const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
+
         Vector dbe;
 
-        // Check if an entry in the database pass the error test.
-        // It returns (`success`, `error`, `ispecies`), where
-        //   - `success` is true if error test succeeds, false otherwise.
-        //   - `error` is the first error violating the tolerance
-        //   - `ispecies` is the index of the species that fails the error test
+        // The function that checks if a record in the database pass the error test.
+        // It returns (`success`, `error`, `iprimaryspecies`), where
+        // * `success` is true if error test succeeds, false otherwise.
+        // * `error` is the first error value violating the tolerance
+        // * `iprimaryspecies` is the index of the primary species that fails the error test
         auto pass_error_test = [&](const Record& record) -> std::tuple<bool, double, Index>
         {
             using std::abs;
@@ -280,10 +313,7 @@ struct SmartEquilibriumSolver::Impl
             return { true, error, -1 };
         };
 
-        // The current set of primary species in the chemical state
-        const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
-
-        // The function that identifies the index of starting cluster
+        // The function that identifies the starting cluster index
         auto index_starting_cluster = [&]() -> Index
         {
             // If no primary species, then return number of clusters to trigger use of total usage counts of clusters
@@ -298,11 +328,17 @@ struct SmartEquilibriumSolver::Impl
             return database.clusters.size();
         };
 
+
         // The index of the starting cluster
         const auto icluster = index_starting_cluster();
 
         // The ordering of the clusters to look for (starting with icluster)
         const auto& clusters_ordering = database.connectivity.order(icluster);
+
+        //---------------------------------------------------------------------
+        // SEARCH STEP DURING THE ESTIMATE PROCESS
+        //---------------------------------------------------------------------
+        tic(SEARCH_STEP);
 
         // Iterate over all clusters starting with icluster
         for(auto jcluster : clusters_ordering)
@@ -315,10 +351,24 @@ struct SmartEquilibriumSolver::Impl
             {
                 const auto& record = records[irecord];
 
+                //---------------------------------------------------------------------
+                // ERROR CONTROL STEP DURING THE ESTIMATE PROCESS
+                //---------------------------------------------------------------------
+                tic(ERROR_CONTROL_STEP);
+
                 const auto [success, error, iprimaryspecies] = pass_error_test(record);
+
+                result.timing.estimate_error_control += toc(ERROR_CONTROL_STEP);
 
                 if(success)
                 {
+                    result.timing.estimate_search = toc(SEARCH_STEP);
+
+                    //---------------------------------------------------------------------
+                    // TAYLOR PREDICTION STEP DURING THE ESTIMATE PROCESS
+                    //---------------------------------------------------------------------
+                    tic(TAYLOR_STEP);
+
                     const auto& be0 = record.be;
                     const auto& n0 = record.state.speciesAmounts();
                     const auto& y0 = record.state.equilibrium().elementChemicalPotentials();
@@ -338,6 +388,22 @@ struct SmartEquilibriumSolver::Impl
                     if(nmin < -eps_n)
                         continue;
 
+                    // Set the chemical state result with estimated amounts
+                    state.setSpeciesAmounts(n);
+                    state.equilibrium().setElementChemicalPotentials(y0);
+                    state.equilibrium().setSpeciesStabilities(z0);
+                    state.equilibrium().setIndicesEquilibriumSpecies(ies0, kp0);
+
+                    // Update the chemical properties of the system
+                    properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+
+                    result.timing.estimate_taylor = toc(TAYLOR_STEP);
+
+                    //---------------------------------------------------------------------
+                    // DATABASE PRIORITY UPDATE STEP DURING THE ESTIMATE PROCESS
+                    //---------------------------------------------------------------------
+                    tic(PRIORITY_UPDATE_STEP);
+
                     // Increment priority of the current record (irecord) in the current cluster (jcluster)
                     database.clusters[jcluster].priority.increment(irecord);
 
@@ -347,14 +413,8 @@ struct SmartEquilibriumSolver::Impl
                     // Increment priority of the current cluster (jcluster)
                     database.priority.increment(jcluster);
 
-                    // Set the chemical state result with estimated amounts
-                    state.setSpeciesAmounts(n);
-                    state.equilibrium().setElementChemicalPotentials(y0);
-                    state.equilibrium().setSpeciesStabilities(z0);
-                    state.equilibrium().setIndicesEquilibriumSpecies(ies0, kp0);
+                    result.timing.estimate_database_priority_update = toc(PRIORITY_UPDATE_STEP);
 
-                    // Update the chemical properties of the system
-                    properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
                     result.estimate.accepted = true;
                     return;
                 }
@@ -389,7 +449,7 @@ struct SmartEquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
     {
-        tic(0);
+        tic(SOLVE_STEP);
 
         // Absolutely ensure an exact Hessian of the Gibbs energy function is used in the calculations
         setOptions(options);
@@ -405,7 +465,7 @@ struct SmartEquilibriumSolver::Impl
         if(!result.estimate.accepted)
             timeit( learn(state, T, P, be), result.timing.learn= );
 
-        toc(0, result.timing.solve);
+        result.timing.solve = toc(SOLVE_STEP);
 
         return result;
     }

@@ -110,7 +110,7 @@ struct TransportSolver::Impl
         const auto icell0 = 0;
         const auto icelln = num_cells - 1;
 
-        tic(0);
+        tic(ASSEMBLY_STEP);
 
         // Initialize A vector
         A.resize(num_cells);
@@ -181,14 +181,13 @@ struct TransportSolver::Impl
         // Factorize A into LU factors for future uses in method step
         A.factorize();
 
-        toc(0, result.timing.matrix_equation_assembly);
-
+        result.timing.matrix_equation_assembly = toc(ASSEMBLY_STEP);
     }
 
     /// Perform one transport time step calculation.
     auto step(VectorRef u, VectorConstRef q) -> TransportResult
     {
-        tic(0);
+        tic(TRANSPORT_STEP);
 
         // Reset the result of the last transport calculation
         result = {};
@@ -250,7 +249,7 @@ struct TransportSolver::Impl
         // Solving the diffusion problem with time implicit approach
         timeit( A.solve(u), result.timing.matrix_equation_solve= );
 
-        toc(0, result.timing.step);
+        result.timing.step = toc(TRANSPORT_STEP);
 
         return result;
     }

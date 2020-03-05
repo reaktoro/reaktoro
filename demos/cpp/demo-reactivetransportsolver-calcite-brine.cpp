@@ -312,7 +312,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     double t = 0.0;
     int step = 0;
 
-    tic(0);
+    tic(REACTIVE_TRANSPORT_STEPS);
 
     // Reactive transport simulations in the cycle
     while (step < params.nsteps)
@@ -332,7 +332,9 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
         step += 1;
     }
 
-    toc(0, (params.use_smart_eqilibirum_solver ? results.time_reactive_transport_smart : results.time_reactive_transport_conventional) );
+    if(params.use_smart_eqilibirum_solver)
+        results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
+    else results.time_reactive_transport_conventional = toc(REACTIVE_TRANSPORT_STEPS);
 
     // Step **: Collect the analytics related to reactive transport performance
     auto analysis = profiler.analysis();

@@ -26,11 +26,13 @@ auto SmartEquilibriumTiming::operator+=(const SmartEquilibriumTiming& other) -> 
     learning_gibbs_energy_minimization += other.learning_gibbs_energy_minimization;
     learning_chemical_properties += other.learning_chemical_properties;
     learning_sensitivity_matrix += other.learning_sensitivity_matrix;
+    learning_error_control_matrices += other.learning_error_control_matrices;
     learning_storage += other.learning_storage;
     estimate += other.estimate;
     estimate_search += other.estimate_search;
-    estimate_mat_vec_mul += other.estimate_mat_vec_mul;
-    estimate_acceptance += other.estimate_acceptance;
+    estimate_error_control += other.estimate_error_control;
+    estimate_taylor += other.estimate_taylor;
+    estimate_database_priority_update += other.estimate_database_priority_update;
     return *this;
 }
 

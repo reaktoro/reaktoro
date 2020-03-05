@@ -165,7 +165,7 @@ struct ReactiveTransportSolver::Impl
         //---------------------------------------------------------------------------
         // Step 1: Perform a time step transport calculation for each fluid element
         //---------------------------------------------------------------------------
-        tic(0);
+        tic(TRANSPORT_STEP);
 
         // Collect the amounts of elements in the solid and fluid species
         for(Index icell = 0; icell < num_cells; ++icell)
@@ -196,12 +196,12 @@ struct ReactiveTransportSolver::Impl
         // Sum the amounts of elements distributed among fluid and solid species
         b.noalias() = bf + bs;
 
-        toc(0, result.timing.transport);
+        result.timing.transport = toc(TRANSPORT_STEP);
 
         //---------------------------------------------------------------------------
         // Step 2: Perform a time step equilibrium calculation for each cell
         //---------------------------------------------------------------------------
-        tic(1);
+        tic(EQUILIBRIUM_STEP);
 
         if(options.use_smart_equilibrium_solver)
         {
@@ -238,7 +238,7 @@ struct ReactiveTransportSolver::Impl
             }
         }
 
-        toc(1, result.timing.equilibrium);
+        result.timing.equilibrium = toc(EQUILIBRIUM_STEP);
 
         // Update the output files with the chemical state of every cell
         for(Index icell = 0; icell < num_cells; ++icell)
