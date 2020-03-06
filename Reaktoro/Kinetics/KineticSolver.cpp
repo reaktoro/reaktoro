@@ -128,29 +128,13 @@ struct KineticSolver::Impl
     /// The function that calculates the source term in the problem
     std::function<ChemicalVector(const ChemicalProperties&)> source_fn;
 
-    Impl()
-    {}
-
-    Impl(const ReactionSystem& reactions)
-    : reactions(reactions), system(reactions.system()), equilibrium(system)
+    /// Construct an instance of KineticSolver::Impl
+    Impl(const ReactionSystem& reactions, const Partition& partition)
+    : reactions(reactions),
+      system(partition.system()),
+      partition(partition),
+      equilibrium(partition)
     {
-        setPartition(Partition(system));
-    }
-
-    auto setOptions(const KineticOptions& options_) -> void
-    {
-        // Initialise the options of the kinetic solver
-        options = options_;
-    }
-
-    auto setPartition(const Partition& partition_) -> void
-    {
-        // Initialise the partition member
-        partition = partition_;
-
-        // Set the partition of the equilibrium solver
-        equilibrium.setPartition(partition);
-
         // Set the indices of the equilibrium and kinetic species
         ies = partition.indicesEquilibriumSpecies();
         iks = partition.indicesKineticSpecies();
@@ -196,6 +180,12 @@ struct KineticSolver::Impl
 
         // Allocate memory for the partial derivatives of the source rates `q` w.r.t. to `u = [be nk]`
         dqdu.resize(system.numSpecies(), Ee + Nk);
+    }
+
+    auto setOptions(const KineticOptions& options_) -> void
+    {
+        // Initialise the options of the kinetic solver
+        options = options_;
     }
 
     auto addSource(ChemicalState state, double volumerate, std::string units) -> void
@@ -438,8 +428,11 @@ struct KineticSolver::Impl
         drdne = cols(r.ddn, ies);
         drdnk = cols(r.ddn, iks);
 
+        // The sensitivity derivatives with respect to equilibrium species
+        const auto dnedbe = sensitivity.dndb(ies, iee);
+
         // Calculate the derivatives of `r` w.r.t. `be` using the equilibrium sensitivity
-        drdbe = drdne * sensitivity.dndb;
+        drdbe = drdne * dnedbe;
 
         // Assemble the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
         drdu << drdbe, drdnk;
@@ -455,7 +448,7 @@ struct KineticSolver::Impl
             dqdnk = cols(q.ddn, iks);
 
             // Calculate the derivatives of `q` w.r.t. `be` using the equilibrium sensitivity
-            dqdbe = dqdne * sensitivity.dndb;
+            dqdbe = dqdne * dnedbe;
 
             // Assemble the partial derivatives of the source rates `q` w.r.t. to `u = [be nk]`
             dqdu << dqdbe, dqdnk;
@@ -469,11 +462,21 @@ struct KineticSolver::Impl
 };
 
 KineticSolver::KineticSolver()
-: pimpl(new Impl())
-{}
+{
+    RuntimeError("Cannot proceed with KineticSolver().",
+        "KineticSolver() constructor is deprecated. "
+        "Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.");
+}
 
 KineticSolver::KineticSolver(const ReactionSystem& reactions)
-: pimpl(new Impl(reactions))
+{
+    RuntimeError("Cannot proceed with KineticSolver(const ReactionSystem&).",
+        "KineticSolver(const ReactionSystem&) constructor is deprecated. "
+        "Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.");
+}
+
+KineticSolver::KineticSolver(const ReactionSystem& reactions, const Partition& partition)
+: pimpl(new Impl(reactions, partition))
 {}
 
 KineticSolver::~KineticSolver()
@@ -492,7 +495,9 @@ auto KineticSolver::setOptions(const KineticOptions& options) -> void
 
 auto KineticSolver::setPartition(const Partition& partition) -> void
 {
-    pimpl->setPartition(partition);
+    RuntimeError("Cannot proceed with KineticSolver::setPartition.",
+        "KineticSolver::setPartition is deprecated. "
+        "Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.");
 }
 
 auto KineticSolver::addSource(const ChemicalState& state, double volumerate, std::string units) -> void

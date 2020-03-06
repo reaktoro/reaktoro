@@ -39,7 +39,11 @@ class KineticPath
 {
 public:
     /// Construct a KineticPath instance.
+    [[deprecated("KineticPath(const ReactionSystem&) is deprecated. Use constructor KineticPath(const ReactionSystem&, const Partition&) instead.")]]
     explicit KineticPath(const ReactionSystem& reactions);
+
+    /// Construct a KineticPath instance.
+    KineticPath(const ReactionSystem& reactions, const Partition& partition);
 
     /// Construct a copy of a KineticPath instance.
     KineticPath(const KineticPath& other) = delete;
@@ -55,6 +59,7 @@ public:
 
     /// Set the partition of the chemical system.
     /// Use this method to specify the equilibrium, kinetic, and inert species.
+    [[deprecated("KineticPath::setPartition is deprecated. Use constructor KineticPath(const ReactionSystem&, const Partition&) instead.")]]
     auto setPartition(const Partition& partition) -> void;
 
     /// Add a source to the chemical kinetics problem.

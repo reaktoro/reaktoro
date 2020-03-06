@@ -63,17 +63,11 @@ struct EquilibriumProblem::Impl
     Vector b;
 
     /// Construct a EquilibriumProblem::Impl instance
-    Impl(const Partition& partition_)
-    : partition(partition_), system(partition_.system())
+    Impl(const Partition& partition)
+    : system(partition.system()), partition(partition)
     {
         // Initialize the amounts of the elements
         b = zeros(system.numElements());
-    }
-
-    /// Set the partition of the chemical system
-    auto setPartition(const Partition& partition_) -> void
-    {
-        partition = partition_;
     }
 
     auto setTemperature(double val) -> void
@@ -231,7 +225,9 @@ auto EquilibriumProblem::operator=(EquilibriumProblem other) -> EquilibriumProbl
 
 auto EquilibriumProblem::setPartition(const Partition& partition) -> void
 {
-    pimpl->setPartition(partition);
+    RuntimeError("Cannot proceed with EquilibriumProblem::setPartition.",
+        "EquilibriumProblem::setPartition is deprecated. "
+        "Use constructor EquilibriumProblem(const Partition&) instead.");
 }
 
 auto EquilibriumProblem::setTemperature(double val) -> void

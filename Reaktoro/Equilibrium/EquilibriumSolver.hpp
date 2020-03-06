@@ -40,6 +40,7 @@ class EquilibriumSolver
 {
 public:
     /// Construct a default EquilibriumSolver instance
+    [[deprecated("EquilibriumSolver() is deprecated. Use constructor EquilibriumSolver(const ChemicalSystem&) or EquilibriumSolver(const Partition&) instead.")]]
     EquilibriumSolver();
 
     /// Construct an EquilibriumSolver instance
@@ -61,6 +62,7 @@ public:
     auto setOptions(const EquilibriumOptions& options) -> void;
 
     /// Set the partition of the chemical system
+    [[deprecated("EquilibriumSolver::setPartition is deprecated. Use constructor EquilibriumSolver(const Partition&) instead.")]]
     auto setPartition(const Partition& partition) -> void;
 
     /// Find an initial feasible guess for an equilibrium problem.

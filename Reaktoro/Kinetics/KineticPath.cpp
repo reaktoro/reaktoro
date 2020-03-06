@@ -43,7 +43,7 @@ struct KineticPath::Impl
     Partition partition;
 
     /// The kinetic solver instance
-    KineticSolver solver;
+    KineticSolver kineticsolver;
 
     /// The options of the kinetic path
     KineticOptions options;
@@ -54,10 +54,13 @@ struct KineticPath::Impl
     /// The plots of the kinetic path calculation
     std::vector<ChemicalPlot> plots;
 
-    Impl(const ReactionSystem& reactions)
-    : reactions(reactions), system(reactions.system()), solver(reactions)
+    /// Construct an instance of KineticPath::Impl
+    Impl(const ReactionSystem& reactions, const Partition& partition)
+    : reactions(reactions),
+      system(partition.system()),
+      partition(partition),
+      kineticsolver(reactions, partition)
     {
-        solver.setPartition(Partition(system));
     }
 
     auto setOptions(const KineticOptions& options_) -> void
@@ -66,19 +69,14 @@ struct KineticPath::Impl
         options = options_;
 
         // Set the options of the kinetic solver
-        solver.setOptions(options);
-    }
-
-    auto setPartition(const Partition& partition) -> void
-    {
-        solver.setPartition(partition);
+        kineticsolver.setOptions(options);
     }
 
     auto solve(ChemicalState& state, double t0, double t1, std::string units) -> void
     {
         t0 = units::convert(t0, units, "s");
         t1 = units::convert(t1, units, "s");
-        solver.initialize(state, t0);
+        kineticsolver.initialize(state, t0);
 
         double t = t0;
 
@@ -97,7 +95,7 @@ struct KineticPath::Impl
             for(auto& plot : plots) plot.update(state, t);
 
             // Integrate one time step only
-            t = solver.step(state, t, t1);
+            t = kineticsolver.step(state, t, t1);
         }
 
         // Update the output with the final state
@@ -109,7 +107,14 @@ struct KineticPath::Impl
 };
 
 KineticPath::KineticPath(const ReactionSystem& reactions)
-: pimpl(new Impl(reactions))
+{
+    RuntimeError("Cannot proceed with KineticPath().",
+        "KineticPath() constructor is deprecated. "
+        "Use constructor KineticPath(const ReactionSystem&, const Partition&) instead.");
+}
+
+KineticPath::KineticPath(const ReactionSystem& reactions, const Partition& partition)
+: pimpl(new Impl(reactions, partition))
 {}
 
 KineticPath::~KineticPath()
@@ -128,27 +133,29 @@ auto KineticPath::setOptions(const KineticOptions& options) -> void
 
 auto KineticPath::setPartition(const Partition& partition) -> void
 {
-    pimpl->setPartition(partition);
+    RuntimeError("Cannot proceed with KineticPath::setPartition.",
+        "KineticPath::setPartition is deprecated. "
+        "Use constructor KineticPath(const ReactionSystem&, const Partition&) instead.");
 }
 
 auto KineticPath::addSource(const ChemicalState& state, double volumerate, std::string units) -> void
 {
-    pimpl->solver.addSource(state, volumerate, units);
+    pimpl->kineticsolver.addSource(state, volumerate, units);
 }
 
 auto KineticPath::addPhaseSink(std::string phase, double volumerate, std::string units) -> void
 {
-    pimpl->solver.addPhaseSink(phase, volumerate, units);
+    pimpl->kineticsolver.addPhaseSink(phase, volumerate, units);
 }
 
 auto KineticPath::addFluidSink(double volumerate, std::string units) -> void
 {
-    pimpl->solver.addFluidSink(volumerate, units);
+    pimpl->kineticsolver.addFluidSink(volumerate, units);
 }
 
 auto KineticPath::addSolidSink(double volumerate, std::string units) -> void
 {
-    pimpl->solver.addSolidSink(volumerate, units);
+    pimpl->kineticsolver.addSolidSink(volumerate, units);
 }
 
 auto KineticPath::solve(ChemicalState& state, double t0, double t1, std::string units) -> void

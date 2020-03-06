@@ -194,17 +194,16 @@ struct EquilibriumInverseProblem::Impl
 
     /// Construct an Impl instance
     Impl(const ChemicalSystem& system)
-    : system(system), problem(system)
+    : Impl(Partition(system))
     {
-        // Initialize a default partition for the chemical system
-        setPartition(Partition(system));
     }
 
-    /// Set the partition of the chemical system
-    auto setPartition(const Partition& partition_) -> void
+    /// Construct an Impl instance
+    Impl(const Partition& partition)
+    : system(partition.system()),
+      partition(partition),
+      problem(partition)
     {
-        partition = partition_;
-        problem.setPartition(partition);
     }
 
     /// Add a species amount constraint to the inverse equilibrium problem.
@@ -512,9 +511,8 @@ struct EquilibriumInverseProblem::Impl
         EquilibriumResult result;
 
         // The equilibrium solver used in the calculation of equilibrium
-        EquilibriumSolver solver(system);
+        EquilibriumSolver solver(partition);
         solver.setOptions(options);
-        solver.setPartition(system);
 
         // The sensitivity of the calculation equilibrium states
         EquilibriumSensitivity sensitivity;
@@ -550,7 +548,6 @@ struct EquilibriumInverseProblem::Impl
 
         // Set the options and partition in the equilibrium solver
         solver.setOptions(options);
-        solver.setPartition(partition);
 
         // Define the non-linear problem with inequality constraints
         NonlinearProblem nonlinear_problem;
@@ -576,12 +573,18 @@ struct EquilibriumInverseProblem::Impl
             // Update the sensitivity of the equilibrium state
             sensitivity = solver.sensitivity();
 
+            // The sensitivity derivatives with respect to all species in the chemical system
+            const auto dndb = sensitivity.dndb;
+
+            // The sensitivity derivatives with respect to equilibrium species
+            const auto dnedbe = dndb(ies, iee);
+
             // Calculate the residuals of the equilibrium constraints
             res = residualEquilibriumConstraints(x, state);
 
             // Calculate the residual vector `F` and its Jacobian `J`
             F = res.val;
-            J = res.ddx + res.ddn * sensitivity.dndb * C;
+            J = res.ddx + res.ddn * dndb * C;
 
             return nonlinear_residual;
         };
@@ -604,6 +607,10 @@ EquilibriumInverseProblem::EquilibriumInverseProblem(const ChemicalSystem& syste
 : pimpl(new Impl(system))
 {}
 
+EquilibriumInverseProblem::EquilibriumInverseProblem(const Partition& partition)
+: pimpl(new Impl(partition))
+{}
+
 EquilibriumInverseProblem::EquilibriumInverseProblem(const EquilibriumInverseProblem& other)
 : pimpl(new Impl(*other.pimpl))
 {}
@@ -619,7 +626,9 @@ auto EquilibriumInverseProblem::operator=(EquilibriumInverseProblem other) -> Eq
 
 auto EquilibriumInverseProblem::setPartition(const Partition& partition) -> EquilibriumInverseProblem&
 {
-    pimpl->setPartition(partition);
+    RuntimeError("Cannot proceed with EquilibriumInverseProblem::setPartition.",
+        "EquilibriumInverseProblem::setPartition is deprecated. "
+        "Use constructor EquilibriumInverseProblem(const Partition&) instead.");
     return *this;
 }
 

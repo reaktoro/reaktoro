@@ -36,10 +36,15 @@ class KineticSolver
 {
 public:
     /// Construct a default KineticSolver instance.
+    [[deprecated("KineticSolver() is deprecated. Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.")]]
     KineticSolver();
 
-    /// Construct a KineticSolver instance.
+    /// Construct a KineticSolver instance
+    [[deprecated("KineticSolver(const ReactionSystem&) is deprecated. Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.")]]
     explicit KineticSolver(const ReactionSystem& reactions);
+
+    /// Construct a KineticSolver instance.
+    KineticSolver(const ReactionSystem& reactions, const Partition& partition);
 
     /// Construct a copy of a KineticSolver instance.
     KineticSolver(const KineticSolver& other) = delete;
@@ -55,6 +60,7 @@ public:
 
     /// Set the partition of the chemical system.
     /// Use this method to specify the equilibrium, kinetic, and inert species.
+    [[deprecated("KineticSolver::setPartition is deprecated. Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.")]]
     auto setPartition(const Partition& partition) -> void;
 
     /// Add a source to the chemical kinetics problem.

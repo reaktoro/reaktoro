@@ -49,6 +49,7 @@ public:
 
     /// Set the partition of the chemical system.
     /// Use this method to specify the equilibrium, kinetic, and inert species.
+    [[deprecated("EquilibriumProblem::setPartition is deprecated. Use constructor EquilibriumProblem(const Partition&) instead.")]]
     auto setPartition(const Partition& partition) -> void;
 
     /// Set the temperature for the equilibrium calculation.

@@ -47,8 +47,7 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
     EquilibriumResult res;
 
     // Perform a direct equilibrium calculation
-    EquilibriumSolver solver(system);
-    solver.setPartition(partition);
+    EquilibriumSolver solver(partition);
     solver.setOptions(options);
     res = solver.solve(state, T, P, be);
 
@@ -70,8 +69,7 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumInverseProblem& probl
     EquilibriumResult res;
 
     // Perform an inverse equilibrium calculation
-    EquilibriumInverseSolver solver(system);
-    solver.setPartition(partition);
+    EquilibriumInverseSolver solver(partition);
     solver.setOptions(options);
     res = solver.solve(state, problem);
 
@@ -107,8 +105,7 @@ auto equilibrate(ChemicalState& state, const Partition& partition, const Equilib
 {
     ChemicalSystem system = state.system();
 
-    EquilibriumProblem problem(system);
-    problem.setPartition(partition);
+    EquilibriumProblem problem(partition);
     problem.setTemperature(state.temperature());
     problem.setPressure(state.pressure());
     problem.setElementAmounts(state.elementAmounts());

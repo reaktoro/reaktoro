@@ -64,10 +64,7 @@ struct EquilibriumSolver::Impl
     ChemicalProperties properties;
 
     /// The sensitivity derivatives of the equilibrium state
-    EquilibriumSensitivity sensitivities;
-    Vector zerosEe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
-    Vector zerosNe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
-    Vector unitjEe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
+    EquilibriumSensitivity sensitivities, sensitivities_e;
 
     /// The molar amounts of the species
     Vector n;
@@ -144,16 +141,6 @@ struct EquilibriumSolver::Impl
         N = system.numSpecies();
         E = system.numElements();
 
-        // Set the default partition as all species are in equilibrium
-        setPartition(partition);
-    }
-
-    /// Set the partition of the chemical system
-    auto setPartition(const Partition& partition_) -> void
-    {
-        // Set the partition of the chemical system
-        partition = partition_;
-
         // Initialize the number of species and elements in the equilibrium partition
         Ne = partition.numEquilibriumSpecies();
         Ee = partition.numEquilibriumElements();
@@ -173,6 +160,28 @@ struct EquilibriumSolver::Impl
 
         // Initialize the formula matrix of the inert species
         Ai = cols(A, iis);
+
+        // Initialize the sensitivity matrices with respect to all species in the system
+        sensitivities.dndT = zeros(N);
+        sensitivities.dndP = zeros(N);
+        sensitivities.dndb = zeros(N, E);
+        sensitivities.dydT = zeros(E);
+        sensitivities.dydP = zeros(E);
+        sensitivities.dydb = zeros(E, E);
+        sensitivities.dzdT = zeros(N);
+        sensitivities.dzdP = zeros(N);
+        sensitivities.dzdb = zeros(N, E);
+
+        // Initialize the sensitivity matrices with respect to equilibrium species only
+        sensitivities_e.dndT = zeros(Ne);
+        sensitivities_e.dndP = zeros(Ne);
+        sensitivities_e.dndb = zeros(Ne, Ee);
+        sensitivities_e.dydT = zeros(Ee);
+        sensitivities_e.dydP = zeros(Ee);
+        sensitivities_e.dydb = zeros(Ee, Ee);
+        sensitivities_e.dzdT = zeros(Ne);
+        sensitivities_e.dzdP = zeros(Ne);
+        sensitivities_e.dzdb = zeros(Ne, Ee);
     }
 
     /// Update the OptimumOptions instance with given EquilibriumOptions instance
@@ -465,7 +474,9 @@ struct EquilibriumSolver::Impl
     /// Solve the equilibrium problem with given problem definition
     auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
     {
-        setPartition(problem.partition());
+        Assert(problem.partition() == partition,
+            "Cannot proceed with method EquilibriumSolver::solve(ChemicalState&, const EquilibriumProblem&).",
+            "This EquilibriumSolver and the given EquilibriumProblem objects were not initialized with the same Partition object.");
         const auto T = problem.temperature();
         const auto P = problem.pressure();
         be = problem.elementAmounts()(iee);
@@ -553,36 +564,49 @@ struct EquilibriumSolver::Impl
         auto& dydb = sensitivities.dydb;
         auto& dzdb = sensitivities.dzdb;
 
-        dndT = zeros(Ne);
-        dndP = zeros(Ne);
-        dndb = zeros(Ne, Ee);
+        auto& dnedT  = sensitivities_e.dndT;
+        auto& dyedT  = sensitivities_e.dydT;
+        auto& dzedT  = sensitivities_e.dzdT;
+        auto& dnedP  = sensitivities_e.dndP;
+        auto& dyedP  = sensitivities_e.dydP;
+        auto& dzedP  = sensitivities_e.dzdP;
+        auto& dnedbe = sensitivities_e.dndb;
+        auto& dyedbe = sensitivities_e.dydb;
+        auto& dzedbe = sensitivities_e.dzdb;
 
-        dydT = zeros(Ee);
-        dydP = zeros(Ee);
-        dydb = zeros(Ee, Ee);
+        const auto& dgedT  = ue.ddT;
+        const auto& dgedP  = ue.ddP;
+        const auto& dgedbe = zeros(Ne, Ee);
+        const auto& dbedT  = zeros(Ee);
+        const auto& dbedP  = zeros(Ee);
+        const auto& dbedbe = identity(Ee, Ee);
 
-        dzdT = zeros(Ne);
-        dzdP = zeros(Ne);
-        dzdb = zeros(Ne, Ee);
+        solver.sensitivities(dgedT,  dbedT,  dnedT,  dyedT,  dzedT);
+        solver.sensitivities(dgedP,  dbedP,  dnedP,  dyedP,  dzedP);
+        solver.sensitivities(dgedbe, dbedbe, dnedbe, dyedbe, dzedbe);
 
-        const auto& dgdT = ue.ddT;
-        const auto& dgdP = ue.ddP;
-        const auto& dgdb = zeros(Ne, Ee);
-        const auto& dbdT = zeros(Ee);
-        const auto& dbdP = zeros(Ee);
-        const auto& dbdb = identity(Ee, Ee);
+        dndT(ies)      = dnedT;
+        dndP(ies)      = dnedP;
+        dndb(ies, iee) = dnedbe;
 
-        solver.sensitivities(dgdT, dbdT, dndT, dydT, dzdT);
-        solver.sensitivities(dgdP, dbdP, dndP, dydP, dzdP);
-        solver.sensitivities(dgdb, dbdb, dndb, dydb, dzdb);
+        dydT(iee)      = dyedT;
+        dydP(iee)      = dyedP;
+        dydb(iee, iee) = dyedbe;
+
+        dzdT(ies)      = dzedT;
+        dzdP(ies)      = dzedP;
+        dzdb(ies, iee) = dzedbe;
 
         return sensitivities;
     }
 };
 
 EquilibriumSolver::EquilibriumSolver()
-: pimpl(new Impl())
-{}
+{
+    RuntimeError("Cannot proceed with EquilibriumSolver().",
+        "EquilibriumSolver() constructor is deprecated. "
+        "Use constructors EquilibriumSolver(const ChemicalSystem&) or EquilibriumSolver(const Partition&) instead.");
+}
 
 EquilibriumSolver::EquilibriumSolver(const ChemicalSystem& system)
 : pimpl(new Impl(Partition(system)))
@@ -612,7 +636,9 @@ auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
 
 auto EquilibriumSolver::setPartition(const Partition& partition) -> void
 {
-    pimpl->setPartition(partition);
+    RuntimeError("Cannot proceed with EquilibriumSolver::setPartition.",
+        "EquilibriumSolver::setPartition is deprecated. "
+        "Use constructor EquilibriumSolver(const Partition&) instead.");
 }
 
 auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
@@ -622,7 +648,6 @@ auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, Ve
 
 auto EquilibriumSolver::approximate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
 {
-    setPartition(problem.partition());
     return pimpl->approximate_with_all_element_amounts(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 }
 

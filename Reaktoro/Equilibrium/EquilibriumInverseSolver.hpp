@@ -38,8 +38,11 @@ struct EquilibriumSensitivity;
 class EquilibriumInverseSolver
 {
 public:
-    /// Construct an EquilibriumInverseSolver instance
+    /// Construct an EquilibriumInverseSolver instance with given chemical system.
     explicit EquilibriumInverseSolver(const ChemicalSystem& system);
+
+    /// Construct an EquilibriumInverseSolver instance with given partition of the chemical system.
+    explicit EquilibriumInverseSolver(const Partition& partition);
 
     /// Construct a copy of an EquilibriumInverseSolver instance
     EquilibriumInverseSolver(const EquilibriumInverseSolver& other);
@@ -54,6 +57,7 @@ public:
     auto setOptions(const EquilibriumOptions& options) -> void;
 
     /// Set the partition of the chemical system
+    [[deprecated("EquilibriumInverseSolver::setPartition is deprecated. Use constructor EquilibriumInverseSolver(const Partition&) instead.")]]
     auto setPartition(const Partition& partition) -> void;
 
     /// Solve an inverse equilibrium problem.
