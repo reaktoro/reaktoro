@@ -279,4 +279,7 @@ private:
     std::shared_ptr<Impl> pimpl;
 };
 
+/// Return true if two Partition objects are equal.
+auto operator==(const Partition& l, const Partition& r) -> bool;
+
 } // namespace Reaktoro
