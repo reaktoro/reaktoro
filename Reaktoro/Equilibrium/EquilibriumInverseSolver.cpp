@@ -18,6 +18,7 @@
 #include "EquilibriumInverseSolver.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -43,27 +44,23 @@ struct EquilibriumInverseSolver::Impl
     EquilibriumOptions options;
 
     /// The solver for the equilibrium calculations
-    EquilibriumSolver solver;
+    EquilibriumSolver equilibriumsolver;
 
     /// The sensitivity of the equilibrium state
     EquilibriumSensitivity sensitivity;
 
-    /// Construct a Impl instance
+    /// Construct a Impl instance with given chemical system
     Impl(const ChemicalSystem& system)
-    : system(system), solver(system)
+    : Impl(Partition(system))
     {
-        // Set the default partition as all species are in equilibrium
-        setPartition(Partition(system));
     }
 
-    /// Set the partition of the chemical system
-    auto setPartition(const Partition& partition_) -> void
+    /// Construct a Impl instance with given partition of chemical system
+    Impl(const Partition& partition)
+    : system(partition.system()),
+      partition(partition),
+      equilibriumsolver(partition)
     {
-        // Set the partition of the chemical system
-        partition = partition_;
-
-        // Set the partition of the equilibrium solver
-        solver.setPartition(partition);
     }
 
     /// Solve an inverse equilibrium problem
@@ -102,8 +99,7 @@ struct EquilibriumInverseSolver::Impl
         auto& J = nonlinear_residual.jacobian;
 
         // Set the options and partition in the equilibrium solver
-        solver.setOptions(options);
-        solver.setPartition(partition);
+        equilibriumsolver.setOptions(options);
 
         // Define the non-linear problem with inequality constraints
         NonlinearProblem nonlinear_problem;
@@ -121,21 +117,21 @@ struct EquilibriumInverseSolver::Impl
             const Vector be = be0 + Ce*x;
 
             // Solve the equilibrium problem with update `be`
-            result += solver.solve(state, T, P, be);
+            result += equilibriumsolver.solve(state, T, P, be);
 
             // Check if the equilibrium calculation converged
             if(!result.optimum.succeeded)
             {
                 // If not, solve using cold start
                 state.setSpeciesAmounts(0.0);
-                result += solver.solve(state, T, P, be);
+                result += equilibriumsolver.solve(state, T, P, be);
             }
 
             // Check if the function evaluation was successful
             nonlinear_residual.succeeded = result.optimum.succeeded;
 
             // Update the sensitivity of the equilibrium state
-            sensitivity = solver.sensitivity();
+            sensitivity = equilibriumsolver.sensitivity();
 
             // Calculate the residuals of the equilibrium constraints
             res = problem.residualEquilibriumConstraints(x, state);
@@ -165,6 +161,10 @@ EquilibriumInverseSolver::EquilibriumInverseSolver(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
 
+EquilibriumInverseSolver::EquilibriumInverseSolver(const Partition& partition)
+: pimpl(new Impl(partition))
+{}
+
 EquilibriumInverseSolver::EquilibriumInverseSolver(const EquilibriumInverseSolver& other)
 : pimpl(new Impl(*other.pimpl))
 {}
@@ -185,7 +185,9 @@ auto EquilibriumInverseSolver::setOptions(const EquilibriumOptions& options) -> 
 
 auto EquilibriumInverseSolver::setPartition(const Partition& partition) -> void
 {
-    pimpl->setPartition(partition);
+    RuntimeError("Cannot proceed with EquilibriumInverseSolver::setPartition.",
+        "EquilibriumInverseSolver::setPartition is deprecated. "
+        "Use constructor EquilibriumInverseSolver(const Partition&) instead.");
 }
 
 auto EquilibriumInverseSolver::solve(ChemicalState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult
@@ -195,7 +197,7 @@ auto EquilibriumInverseSolver::solve(ChemicalState& state, const EquilibriumInve
 
 auto EquilibriumInverseSolver::sensitivity() -> EquilibriumSensitivity
 {
-    return pimpl->solver.sensitivity();
+    return pimpl->equilibriumsolver.sensitivity();
 }
 
 } // namespace Reaktoro

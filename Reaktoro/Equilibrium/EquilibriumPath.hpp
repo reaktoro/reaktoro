@@ -60,8 +60,11 @@ struct EquilibriumPathResult
 class EquilibriumPath
 {
 public:
-    /// Construct an EquilibriumPath instance
+    /// Construct an EquilibriumPath instance with given chemical system
     explicit EquilibriumPath(const ChemicalSystem& system);
+
+    /// Construct an EquilibriumPath instance with given partition of the chemical system
+    explicit EquilibriumPath(const Partition& partition);
 
     /// Construct a copy of an EquilibriumPath instance
     EquilibriumPath(const EquilibriumPath& other);
@@ -76,6 +79,7 @@ public:
     auto setOptions(const EquilibriumPathOptions& options) -> void;
 
     /// Set the partition of the chemical system
+    [[deprecated("EquilibriumPath::setPartition is deprecated. Use constructor EquilibriumPath(const Partition&) instead.")]]
     auto setPartition(const Partition& partition) -> void;
 
     /// Solve the path of equilibrium states between two chemical states

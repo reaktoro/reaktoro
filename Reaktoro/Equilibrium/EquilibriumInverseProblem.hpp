@@ -56,8 +56,11 @@ struct ResidualEquilibriumConstraints
 class EquilibriumInverseProblem
 {
 public:
-    /// Construct an EquilibriumInverseProblem instance.
+    /// Construct an EquilibriumInverseProblem instance with given chemical system.
     explicit EquilibriumInverseProblem(const ChemicalSystem& system);
+
+    /// Construct an EquilibriumInverseProblem instance with given partition of the chemical system.
+    explicit EquilibriumInverseProblem(const Partition& partition);
 
     /// Construct a copy of an EquilibriumInverseProblem instance.
     EquilibriumInverseProblem(const EquilibriumInverseProblem& other);
@@ -70,6 +73,7 @@ public:
 
     /// Set the partition of the chemical system.
     /// Use this method to specify the equilibrium, kinetic, and inert species.
+    [[deprecated("EquilibriumInverseProblem::setPartition is deprecated. Use constructor EquilibriumInverseProblem(const Partition&) instead.")]]
     auto setPartition(const Partition& partition) -> EquilibriumInverseProblem&;
 
     /// Set the temperature for the equilibrium calculation (in units of K).

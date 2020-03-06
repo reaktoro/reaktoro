@@ -21,6 +21,7 @@
 #include <list>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -52,19 +53,18 @@ struct EquilibriumPath::Impl
 
     /// Construct a EquilibriumPath::Impl instance
     explicit Impl(const ChemicalSystem& system)
-    : system(system), partition(system)
+    : Impl(Partition(system))
+    {}
+
+    /// Construct a EquilibriumPath::Impl instance
+    explicit Impl(const Partition& partition)
+    : system(partition.system()), partition(partition)
     {}
 
     /// Set the options for the equilibrium path calculation and visualization
     auto setOptions(const EquilibriumPathOptions& options_) -> void
     {
         options = options_;
-    }
-
-    /// Set the partition of the chemical system
-    auto setPartition(const Partition& partition_) -> void
-    {
-        partition = partition_;
     }
 
     /// Solve the path of equilibrium states between two chemical states
@@ -77,7 +77,8 @@ struct EquilibriumPath::Impl
         const unsigned Ne = partition.numEquilibriumSpecies();
 
         // The indices of species and elements in the equilibrium partition
-        const Indices& ies = partition.indicesEquilibriumSpecies();
+        const auto& ies = partition.indicesEquilibriumSpecies();
+        const auto& iee = partition.indicesEquilibriumElements();
 
         /// The temperatures at the initial and final chemical states
         const double T_i = state_i.temperature();
@@ -88,13 +89,12 @@ struct EquilibriumPath::Impl
         const double P_f = state_f.pressure();
 
         /// The molar amounts of the elements in the equilibrium partition at the initial and final chemical states
-        const Vector be_i = state_i.elementAmountsInSpecies(ies);
-        const Vector be_f = state_f.elementAmountsInSpecies(ies);
+        const Vector be_i = state_i.elementAmountsInSpecies(ies)(iee);
+        const Vector be_f = state_f.elementAmountsInSpecies(ies)(iee);
 
         // The equilibrium solver
-        EquilibriumSolver equilibrium(system);
+        EquilibriumSolver equilibrium(partition);
         equilibrium.setOptions(options.equilibrium);
-        equilibrium.setPartition(partition);
 
         /// The sensitivity of the equilibrium state
         EquilibriumSensitivity sensitivity;
@@ -127,13 +127,16 @@ struct EquilibriumPath::Impl
             // Calculate the sensitivity of the equilibrium state
             sensitivity = equilibrium.sensitivity();
 
+            // The sensitivity derivatives with respect to equilibrium species
+            const auto dnedT  = sensitivity.dndT(ies);
+            const auto dnedP  = sensitivity.dndP(ies);
+            const auto dnedbe = sensitivity.dndb(ies, iee);
+
             // Check if the calculation succeeded
             if(!result.equilibrium.optimum.succeeded) return 1;
 
             // Calculate the right-hand side vector of the ODE
-            res = sensitivity.dndT * (T_f - T_i) +
-                  sensitivity.dndP * (P_f - P_i) +
-                  sensitivity.dndb * (be_f - be_i);
+            res = dnedT*(T_f - T_i) + dnedP*(P_f - P_i) + dnedbe*(be_f - be_i);
 
             return 0;
         };
@@ -144,8 +147,8 @@ struct EquilibriumPath::Impl
         problem.setFunction(f);
 
         // The initial and final molar amounts of equilibrium species
-        Vector ne_i = rows(state_i.speciesAmounts(), ies);
-        Vector ne_f = rows(state_i.speciesAmounts(), ies);
+        Vector ne_i = state_i.speciesAmounts()(ies);
+        Vector ne_f = state_i.speciesAmounts()(ies);
 
         // Adjust the absolute tolerance parameters for each component
         options.ode.abstols = options.ode.abstol * ((ne_i + ne_f)/2.0 + 1.0);
@@ -217,7 +220,9 @@ auto EquilibriumPath::setOptions(const EquilibriumPathOptions& options) -> void
 
 auto EquilibriumPath::setPartition(const Partition& partition) -> void
 {
-    pimpl->setPartition(partition);
+    RuntimeError("Cannot proceed with EquilibriumPath::setPartition.",
+        "EquilibriumPath::setPartition is deprecated. "
+        "Use constructor EquilibriumPath(const Partition&) instead.");
 }
 
 auto EquilibriumPath::solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult
