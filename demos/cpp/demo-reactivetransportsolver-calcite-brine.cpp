@@ -52,7 +52,8 @@ struct Params
     bool track_statistics;
     double smart_equlibrium_reltol;
     double smart_equlibrium_abstol;
-
+    double amount_fraction_cutoff;
+    double mole_fraction_cutoff;
 };
 
 struct Results
@@ -132,7 +133,8 @@ int main()
     // Define parameters of the equilibrium solvers
     params.smart_equlibrium_reltol = 0.005;
     params.smart_equlibrium_abstol = 1e-8;
-    params.track_statistics = true;
+    params.amount_fraction_cutoff = 1e-14;
+    params.mole_fraction_cutoff = 1e-14;
 
     // Output
     outputConsole(params);
@@ -183,6 +185,9 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     SmartEquilibriumOptions smart_equilibrium_options;
     smart_equilibrium_options.reltol = params.smart_equlibrium_reltol;
     smart_equilibrium_options.abstol = params.smart_equlibrium_abstol;
+
+    smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
+    smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
 
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;

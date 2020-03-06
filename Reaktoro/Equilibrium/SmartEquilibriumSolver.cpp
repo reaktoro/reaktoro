@@ -64,6 +64,9 @@ struct SmartEquilibriumSolver::Impl
     /// The chemical properties of the chemical system
     ChemicalProperties properties;
 
+    /// The chemical potentials at the calculated equilibrium state
+    ChemicalVector u;
+
     /// The amounts of the species in the chemical system
     Vector n;
 
@@ -79,8 +82,8 @@ struct SmartEquilibriumSolver::Impl
     /// The storage for vector u(iprimary)
     Vector up;
 
-    /// The storage for matrix Mb = inv(u(iprimary)) * du(iprimary)/db.
-    Matrix Mb;
+    /// The storage for matrix Mbe = inv(u(iprimary)) * du(iprimary)/db.
+    Matrix Mbe;
 
     /// The record of the knowledge database containing input, output and derivatives data.
     struct Record
@@ -104,7 +107,7 @@ struct SmartEquilibriumSolver::Impl
         EquilibriumSensitivity sensitivity;
 
         /// The matrix used to compute relative change of chemical potentials due to change in `be`.
-        Matrix Mb;
+        Matrix Mbe;
     };
 
     /// The cluster storing learned input-output data with same classification.
@@ -199,11 +202,13 @@ struct SmartEquilibriumSolver::Impl
         //---------------------------------------------------------------------
         tic(ERROR_CONTROL_MATRICES);
 
-        // The indices of the equilibrium species
+        // The indices of the equilibrium species and elements
         const auto& ies = partition.indicesEquilibriumSpecies();
+        const auto& iee = partition.indicesEquilibriumElements();
 
-        // The number of equilibrium species
+        // The number of equilibrium species and elements
         const auto& Ne = partition.numEquilibriumSpecies();
+        const auto& Ee = partition.numEquilibriumElements();
 
         // The amounts of the species at the calculated equilibrium state
         n = state.speciesAmounts();
@@ -214,36 +219,72 @@ struct SmartEquilibriumSolver::Impl
         // Update the canonical form of formula matrix Ae so that we can identify primary species
         canonicalizer.updateWithPriorityWeights(ne);
 
-        // The indices of the equilibrium species ordered as (primary, secondary)
-        const auto& iequilibrium = canonicalizer.Q();
+        // The order of the equilibrium species as (primary, secondary)
+        const auto& iorder = canonicalizer.Q();
+
+        // Assemble the vector of indices of equilibrium species as (primary, secondary)
+        VectorXi ips(ies.size());
+        for(auto i = 0; i < ips.size(); ++i)  // TODO: type Indices should be alias to VectorXi, to avoid such kind of codes
+            ips[i] = ies[iorder[i]];
 
         // The number of primary species among the equilibrium species
         const auto& Np = canonicalizer.numBasicVariables();
 
         // Store the indices of primary and secondary species in state
-        state.equilibrium().setIndicesEquilibriumSpecies(iequilibrium, Np);
+        state.equilibrium().setIndicesEquilibriumSpecies(ips, Np);
 
         // The indices of the primary species at the calculated equilibrium state
         const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
 
+
+        // std::cout << "PRIMARY SPECIES = ";
+        // for(auto i : state.equilibrium().indicesPrimarySpecies())
+        //     std::cout << system.species(i).name() << " ";
+        // std::cout << std::endl;
+
+
+        // std::cout << "SECONDARY SPECIES = ";
+        // for(auto i : state.equilibrium().indicesSecondarySpecies())
+        //     std::cout << system.species(i).name() << " ";
+        // std::cout << std::endl;
+
+        // The mole fractions of the species at the calculated equilibrium state
+        const auto& x = properties.moleFractions().val;
+
+        // The maximum species amount among equilibrium species only!
+        const double ne_sum = sum(ne);
+
+        // The tolerance values for tiny species amounts/mole fractions
+        const auto eps_n = options.amount_fraction_cutoff * ne_sum;
+        const auto eps_x = options.mole_fraction_cutoff;
+
+        // Partition the indices of equilibrium species as (major, minor)
+        VectorXi imajorminor(ies.size());
+        std::copy(ies.begin(), ies.end(), imajorminor.begin());
+        const auto nummajor = std::partition(imajorminor.begin(), imajorminor.end(),
+            [&](Index i) { return n[i] >= eps_n && x[i] >= eps_x; }) - imajorminor.begin();
+
+        // The indices of major equilibrium species
+        const auto imajor = imajorminor.head(nummajor);
+
         // The chemical potentials at the calculated equilibrium state
-        const auto u = properties.chemicalPotentials();
+        u = properties.chemicalPotentials();
 
         // Auxiliary references to the derivatives dn/db and du/dn
         const auto& dndb = solver.sensitivity().dndb;
-        const auto& dudn = u.ddn(ies, ies);
+        const auto& dudn = u.ddn;
 
         // Compute the matrix du/db = du/dn * dn/db
         dudb = dudn * dndb;
 
-        // The vector u(iprimary) with chemical potentials of primary species
-        up.noalias() = rows(u.val, iprimary);
+        // The vector u(imajor) with chemical potentials of major species
+        up.noalias() = u.val(imajor);
 
-        // The matrix du(iprimary)/db with derivatives of chemical potentials of primary species
-        const auto dupdb = rows(dudb, iprimary);
+        // The matrix du(imajor)/dbe with derivatives of chemical potentials (major species only)
+        const auto dupdbe = dudb(imajor, iee);
 
-        // Compute matrix Mb = 1/up * dup/db
-        Mb.noalias() = diag(inv(up)) * dupdb;
+        // Compute matrix Mbe = 1/up * dup/db
+        Mbe.noalias() = diag(inv(up)) * dupdbe;
 
         result.timing.learning_error_control_matrices = toc(ERROR_CONTROL_MATRICES);
 
@@ -260,7 +301,7 @@ struct SmartEquilibriumSolver::Impl
         if(iter < database.clusters.end())
         {
             auto& cluster = *iter;
-            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mb});
+            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mbe});
             cluster.priority.extend();
         }
         else
@@ -268,7 +309,7 @@ struct SmartEquilibriumSolver::Impl
             // Create a new cluster
             Cluster cluster;
             cluster.iprimary = iprimary;
-            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mb});
+            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mbe});
             cluster.priority.extend();
 
             // Append the new cluster in the database
@@ -309,13 +350,13 @@ struct SmartEquilibriumSolver::Impl
             using std::abs;
             using std::max;
             const auto& be0 = record.be;
-            const auto& Mb0 = record.Mb;
+            const auto& Mbe0 = record.Mbe;
 
             dbe.noalias() = be - be0;
 
             double error = 0.0;
-            for(auto i = 0; i < Mb.rows(); ++i) {
-                error = max(error, abs(Mb0.row(i) * dbe));
+            for(auto i = 0; i < Mbe.rows(); ++i) {
+                error = max(error, abs(Mbe0.row(i) * dbe));
                 if(error >= reltol)
                     return { false, error, i };
             }
@@ -380,6 +421,7 @@ struct SmartEquilibriumSolver::Impl
                     tic(TAYLOR_STEP);
 
                     const auto& ies = partition.indicesEquilibriumSpecies();
+                    const auto& iee = partition.indicesEquilibriumElements();
                     const auto& be0 = record.be;
                     const auto& n0 = record.state.speciesAmounts();
                     const auto& y0 = record.state.equilibrium().elementChemicalPotentials();
@@ -387,9 +429,10 @@ struct SmartEquilibriumSolver::Impl
                     const auto& ips0 = record.state.equilibrium().indicesEquilibriumSpecies();
                     const auto& Np0 = record.state.equilibrium().numPrimarySpecies();
                     const auto& dndb0 = record.sensitivity.dndb;
-                    const auto& ne0 = n(ies);
+                    const auto& dnedbe0 = dndb0(ies, iee);
+                    const auto& ne0 = n0(ies);
 
-                    ne.noalias() = ne0 + dndb0 * (be - be0);
+                    ne.noalias() = ne0 + dnedbe0 * (be - be0);
 
                     n(ies) = ne;
 

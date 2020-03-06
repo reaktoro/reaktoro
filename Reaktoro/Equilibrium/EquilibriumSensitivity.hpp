@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-/// A type that contains the sensitivity data of the equilibrium state.
+/// A type that contains the sensitivity derivatives of the equilibrium state.
 /// The sensitivity of the equilibrium state contains derivatives of the species
 /// amounts with respect to temperature, pressure, and amounts of the elements.
 /// It is an important information for implicit numerical methods, since these
