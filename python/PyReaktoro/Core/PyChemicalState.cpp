@@ -102,6 +102,9 @@ void exportChemicalState(py::module& m)
     auto phaseAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::phaseAmount);
     auto phaseAmount4 = static_cast<double(ChemicalState::*)(std::string, std::string) const>(&ChemicalState::phaseAmount);
 
+    auto output1 = static_cast<void(ChemicalState::*)(std::ostream&, int) const>(&ChemicalState::output);
+    auto output2 = static_cast<void(ChemicalState::*)(std::string const&, int) const>(&ChemicalState::output);
+
     py::class_<ChemicalState>(m, "ChemicalState")
         .def(py::init<const ChemicalSystem&>())
         .def("assign", assignChemicalState)
@@ -165,7 +168,8 @@ void exportChemicalState(py::module& m)
         .def("phaseAmount", phaseAmount4)
         .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
         .def("properties", &ChemicalState::properties, py::keep_alive<1, 0>()) // keep returned ChemicalProperties object alive until ChemicalState object is garbage collected!
-        .def("output", &ChemicalState::output)
+        .def("output", output1, py::arg("out"), py::arg("precision"))
+        .def("output", output2, py::arg("out"), py::arg("precision"))
         .def("__repr__", [](const ChemicalState& self) { std::stringstream ss; ss << self; return ss.str(); })
         .def(py::self + py::self)
         .def(double() * py::self)
