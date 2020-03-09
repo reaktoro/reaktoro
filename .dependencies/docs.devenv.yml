@@ -1,0 +1,7 @@
+dependencies:
+  - graphviz                       # [linux]
+  - sphinx==1.8.5
+  - sphinx-autobuild
+  - sphinx_rtd_theme
+  - pip:
+    - sphinxcontrib-images

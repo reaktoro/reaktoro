@@ -6,48 +6,13 @@ name: reaktoro
 {% set debug = os.environ.get("CONFIG", "").lower() == "debug" %}
 {% set use_openlibm = os.environ.get("REAKTORO_USE_OPENLIBM", "0").strip() != "0" %}
 
-dependencies:
-  # Compilers
-  - gxx_linux-64=7.3.0             # [linux]
-  - libstdcxx-ng                   # [linux]
-  - clangxx=9.0.0                  # [osx]
-  # C++ dependendies
-  - boost=1.70
-  - pybind11
-  - thermofun
-  {% if not debug %}
-  - pugixml                        # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
-  {% endif %}
-  {% if use_openlibm %}
-  - openlibm
-  {% endif %}
-  # Python dependendies
-  - numpy
-  - pandas
-  - pip
-  - pip:
-    - sphinx==1.8.5
-    - sphinx-autobuild
-    - sphinx_rtd_theme
-    - sphinxcontrib-images
-  - pytest
-  - pytest-cpp
-  - pytest-datadir
-  - pytest-lazy-fixture
-  - pytest-regressions
-  - pytest-timeout
-  - pytest-xdist
-  - python={{ python_version }}
-  - tabulate
-  # Doxygen documentation
-  # - doxygen=1.8.9                 # [linux]
-  - graphviz                       # [linux]
-  # Utilities
-  - cmake=3.15
-  - ninja>=1.9.0
-  - ccache                         # [unix]
-  - clcache                        # [win]
-  - invoke
+includes:
+  - {{ root }}/.dependencies/compilers.devenv.yml
+  - {{ root }}/.dependencies/cpp.devenv.yml
+  - {{ root }}/.dependencies/python.devenv.yml
+  - {{ root }}/.dependencies/docs.devenv.yml
+  - {{ root }}/.dependencies/tests.devenv.yml
+  - {{ root }}/.dependencies/utilities.devenv.yml
 
 environment:
 
