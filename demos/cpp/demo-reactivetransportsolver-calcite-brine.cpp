@@ -172,6 +172,9 @@ int main()
               << results.conventional_total / results.smart_total_ideal_search << std::endl;
     std::cout << "speed up (with ideal search & store): "
               << results.conventional_total / results.smart_total_ideal_search_store << std::endl << std::endl;
+    std::cout << " smart equilibrium acceptance rate   : " << results.smart_equilibrium_acceptance_rate << " / "
+              << (1 - results.smart_equilibrium_acceptance_rate) * params.ncells *params.nsteps
+              << " fully evaluated GEMS out of " << params.ncells * params.nsteps  << std::endl;
 
     std::cout << "time_reactive_transport_conventional: " << results.time_reactive_transport_conventional << std::endl;
     std::cout << "time_reactive_transport_smart       : " << results.time_reactive_transport_smart << std::endl;
@@ -272,14 +275,6 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     // Step **: Calculate the equilibrium states for the IC and BC
     ChemicalState state_ic = equilibrate(problem_ic);
     ChemicalState state_bc = equilibrate(problem_bc);
-
-    Vector b_ic = state_ic.elementAmounts();
-    Vector b_bc = state_bc.elementAmounts();
-    //std::cout << "be_bc      = " << tr(b_bc) << std::endl;
-    //std::cout << "be_ic      = " << tr(b_ic) << std::endl;
-    //std::cout << "n_ic_system      = " << tr(state_ic.speciesAmounts()) << std::endl;
-    //std::cout << "state_ic_system = " << state_ic << std::endl;
-    //getchar();
 
     // Step **: Scale the boundary condition state
     state_bc.scaleVolume(1.0, "m3");
