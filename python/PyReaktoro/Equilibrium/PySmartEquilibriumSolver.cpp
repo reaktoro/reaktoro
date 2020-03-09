@@ -38,12 +38,15 @@ void exportSmartEquilibriumSolver(py::module& m)
 
     py::class_<SmartEquilibriumSolver>(m, "SmartEquilibriumSolver")
         .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const Partition&>())
         .def("setOptions", &SmartEquilibriumSolver::setOptions)
-        .def("setPartition", &SmartEquilibriumSolver::setPartition)
         .def("solve", solve1)
         .def("solve", solve2)
         .def("properties", &SmartEquilibriumSolver::properties, py::return_value_policy::reference_internal)
         .def("result", &SmartEquilibriumSolver::result, py::return_value_policy::reference_internal)
+
+        // DEPRECATED METHODS: TO BE REMOVED
+        .def("setPartition", &SmartEquilibriumSolver::setPartition)
         ;
 }
 

@@ -43,7 +43,6 @@ void exportEquilibriumProblem(py::module& m)
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const Partition&>())
         .def(py::init<const EquilibriumProblem&>())
-        .def("setPartition", &EquilibriumProblem::setPartition)
         .def("setTemperature", setTemperature1)
         .def("setTemperature", setTemperature2)
         .def("setPressure", setPressure1)
@@ -62,6 +61,9 @@ void exportEquilibriumProblem(py::module& m)
         .def("temperature", &EquilibriumProblem::temperature)
         .def("pressure", &EquilibriumProblem::pressure)
         .def("elementAmounts", &EquilibriumProblem::elementAmounts, py::return_value_policy::reference_internal)
+
+        // DEPRECATED METHODS: TO BE REMOVED
+        .def("setPartition", &EquilibriumProblem::setPartition)
         ;
 }
 

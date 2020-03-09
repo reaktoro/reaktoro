@@ -32,9 +32,8 @@ namespace Reaktoro {
 void exportKineticPath(py::module& m)
 {
     py::class_<KineticPath>(m, "KineticPath")
-        .def(py::init<const ReactionSystem&>())
+        .def(py::init<const ReactionSystem&, const Partition&>())
         .def("setOptions", &KineticPath::setOptions)
-        .def("setPartition", &KineticPath::setPartition)
         .def("addSource", &KineticPath::addSource)
         .def("addPhaseSink", &KineticPath::addPhaseSink)
         .def("addFluidSink", &KineticPath::addFluidSink)
@@ -46,6 +45,9 @@ void exportKineticPath(py::module& m)
         .def("system", &KineticPath::system, py::return_value_policy::reference_internal)
         .def("reactions", &KineticPath::reactions, py::return_value_policy::reference_internal)
         .def("partition", &KineticPath::partition, py::return_value_policy::reference_internal)
+
+        // DEPRECATED METHODS: TO BE REMOVED
+        .def("setPartition", &KineticPath::setPartition)
         ;
 }
 

@@ -18,9 +18,13 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Partition.hpp>
+#include <Reaktoro/Transport/ChemicalField.hpp>
 #include <Reaktoro/Transport/Mesh.hpp>
+#include <Reaktoro/Transport/ReactiveTransportSolver.hpp>
 
 namespace Reaktoro {
 
@@ -28,6 +32,7 @@ void exportReactiveTransportSolver(py::module& m)
 {
     py::class_<ReactiveTransportSolver>(m, "ReactiveTransportSolver")
         .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const Partition&>())
         .def("setMesh", &ReactiveTransportSolver::setMesh)
         .def("setVelocity", &ReactiveTransportSolver::setVelocity)
         .def("setDiffusionCoeff", &ReactiveTransportSolver::setDiffusionCoeff)
