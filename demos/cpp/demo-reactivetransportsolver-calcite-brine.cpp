@@ -311,6 +311,15 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     output.add("speciesMolality(CO2(aq))");
     output.add("phaseVolume(Calcite)");
     output.add("phaseVolume(Dolomite)");
+    output.add("speciesMolality(CO3--)");
+    output.add("speciesMolality(CaCl+)");
+    output.add("speciesMolality(Ca(HCO3)+)");
+    output.add("speciesMolality(MgCl+)");
+    output.add("speciesMolality(Mg(HCO3)+)");
+    output.add("speciesMolality(OH-)");
+    output.add("speciesMolality(MgCO3(aq))");
+    output.add("speciesMolality(MgOH+)");
+    output.add("speciesAmount(Dolomite)");
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create RTProfiler to track the timing and results of reactive transport
