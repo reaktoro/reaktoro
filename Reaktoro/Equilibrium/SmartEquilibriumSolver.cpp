@@ -43,6 +43,7 @@ namespace Reaktoro {
 namespace detail {
 
 /// Return the hash number of a vector.
+/// https://stackoverflow.com/questions/20511347/a-good-hash-function-for-a-vector
 template<typename Vec>
 auto hash(Vec& vec) -> std::size_t
 {
@@ -90,7 +91,7 @@ struct SmartEquilibriumSolver::Impl
     Vector ne;
 
     /// The amounts of the elements in the equilibrium partition
-    Vector be;
+    Vector be_aux;
 
     /// The storage for matrix du/db = du/dn * dn/db
     Matrix dudb;
@@ -254,25 +255,6 @@ struct SmartEquilibriumSolver::Impl
 
         // The indices of the primary species at the calculated equilibrium state
         const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
-
-        // The mole fractions of the species at the calculated equilibrium state
-        const auto& x = properties.moleFractions().val;
-
-        // The maximum species amount among equilibrium species only!
-        const double ne_sum = sum(ne);
-
-        // The tolerance values for tiny species amounts/mole fractions
-        const auto eps_n = options.amount_fraction_cutoff * ne_sum;
-        const auto eps_x = options.mole_fraction_cutoff;
-
-        // Partition the indices of equilibrium species as (major, minor)
-        VectorXi imajorminor(ies.size());
-        std::copy(ies.begin(), ies.end(), imajorminor.begin());
-        const auto nummajor = std::partition(imajorminor.begin(), imajorminor.end(),
-            [&](Index i) { return n[i] >= eps_n && x[i] >= eps_x; }) - imajorminor.begin();
-
-        // The indices of major equilibrium species
-        const auto imajor = imajorminor.head(nummajor);
 
         // The chemical potentials at the calculated equilibrium state
         u = properties.chemicalPotentials();
@@ -444,7 +426,60 @@ struct SmartEquilibriumSolver::Impl
                     const auto& dnedbe0 = dndb0(ies, iee);
                     const auto& ne0 = n0(ies);
 
+                    const auto Ae = partition.formulaMatrixEquilibriumPartition();
+
                     ne.noalias() = ne0 + dnedbe0 * (be - be0);
+
+                    Vector res = abs(Ae*ne - be);
+
+                    if(max(abs(res)) > 1e-8)
+                    {
+                        Matrix AeSe = Ae*dnedbe0;
+                        Vector res0 = abs(Ae*ne0 - be0);
+                        Vector deltabe = abs(be - be0);
+
+                        std::cout << std::left << std::setw(15) << "ELEMENT";
+                        std::cout << std::left << std::setw(15) << "BALANCE";
+                        std::cout << std::left << std::setw(15) << "BALANCE0";
+                        std::cout << std::left << std::setw(15) << "DELTA";
+                        std::cout << std::endl;
+                        for(auto i = 0; i < iee.size(); ++i)
+                        {
+                            std::cout << std::left << std::setw(15) << system.element(iee[i]).name();
+                            std::cout << std::left << std::setw(15) << res[i];
+                            std::cout << std::left << std::setw(15) << res0[i];
+                            std::cout << std::left << std::setw(15) << deltabe[i];
+                            std::cout << std::endl;
+                        }
+
+                        std::cout << std::endl;
+
+                        std::cout << std::left << std::setw(15) << "ELEMENT";
+                        for(auto i = 0; i < iee.size(); ++i)
+                            std::cout << std::left << std::setw(15) << system.element(iee[i]).name();
+                        std::cout << std::endl;
+                        for(auto i = 0; i < iee.size(); ++i)
+                        {
+                            std::cout << std::left << std::setw(15) << system.element(iee[i]).name();
+                            for(auto j = 0; j < iee.size(); ++j)
+                                std::cout << std::left << std::setw(15) << AeSe(i, j);
+                            std::cout << std::endl;
+                        }
+
+                        std::cout << std::left << std::setw(15) << "SPECIES";
+                        std::cout << std::left << std::setw(15) << "Ae[Mg]";
+                        std::cout << std::left << std::setw(15) << "dnebe[Mg]";
+                        std::cout << std::endl;
+                        for(auto i = 0; i < ies.size(); ++i)
+                        {
+                            std::cout << std::left << std::setw(15) << system.species(ies[i]).name();
+                            std::cout << std::left << std::setw(15) << Ae(4, i);
+                            std::cout << std::left << std::setw(15) << dnedbe0(i, 4);
+                            std::cout << std::endl;
+                        }
+
+                        std::cout << std::endl;
+                    }
 
                     n(ies) = ne;
 
@@ -503,8 +538,8 @@ struct SmartEquilibriumSolver::Impl
         const auto& ies = partition.indicesEquilibriumSpecies();
         const auto T = state.temperature();
         const auto P = state.pressure();
-        be = state.elementAmountsInSpecies(ies)(iee);
-        return solve(state, T, P, be);
+        be_aux = state.elementAmountsInSpecies(ies)(iee);
+        return solve(state, T, P, be_aux);
     }
 
     /// Solve the equilibrium problem with given problem definition
@@ -513,8 +548,8 @@ struct SmartEquilibriumSolver::Impl
         const auto T = problem.temperature();
         const auto P = problem.pressure();
         const auto& iee = partition.indicesEquilibriumElements();
-        be = problem.elementAmounts()(iee);
-        return solve(state, T, P, be);
+        be_aux = problem.elementAmounts()(iee);
+        return solve(state, T, P, be_aux);
     }
 
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
