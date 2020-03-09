@@ -18,8 +18,8 @@
 // C++ includes
 #include <algorithm>
 #include <deque>
+#include <functional>
 #include <numeric>
-#include <set>
 #include <tuple>
 
 // Reaktoro includes
@@ -40,6 +40,22 @@
 #include <Reaktoro/Optimization/Canonicalizer.hpp>
 
 namespace Reaktoro {
+namespace detail {
+
+/// Return the hash number of a vector.
+template<typename Vec>
+auto hash(Vec& vec) -> std::size_t
+{
+    using T = decltype(vec[0]);
+    const std::hash<T> hasher;
+    std::size_t seed = vec.size();
+    for(const auto& i : vec)
+        seed ^= hasher(i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    return seed;
+}
+
+} // namespace detail
+
 
 struct SmartEquilibriumSolver::Impl
 {
@@ -115,6 +131,9 @@ struct SmartEquilibriumSolver::Impl
     {
         /// The indices of the primary species for this cluster.
         VectorXi iprimary;
+
+        /// The hash of the indices of the primary species for this cluster.
+        std::size_t label;
 
         /// The records stored in this cluster with learning data.
         std::deque<Record> records;
@@ -281,9 +300,12 @@ struct SmartEquilibriumSolver::Impl
         //---------------------------------------------------------------------
         tic(STORAGE_STEP);
 
+        // Generate the hash number for the indices of primary species in the state
+        const auto label = detail::hash(iprimary);
+
         // Find the index of the cluster that has same primary species
         auto iter = std::find_if(database.clusters.begin(), database.clusters.end(),
-            [&](const Cluster& cluster) { return cluster.iprimary == iprimary; });
+            [&](const Cluster& cluster) { return cluster.label == label; });
 
         // If cluster found, store the new record in it, otherwise, create a new cluster
         if(iter < database.clusters.end())
@@ -297,6 +319,7 @@ struct SmartEquilibriumSolver::Impl
             // Create a new cluster
             Cluster cluster;
             cluster.iprimary = iprimary;
+            cluster.label = label;
             cluster.records.push_back({T, P, be, state, properties, sensitivity, Mbe});
             cluster.priority.extend();
 
@@ -353,6 +376,9 @@ struct SmartEquilibriumSolver::Impl
             return { true, error, -1 };
         };
 
+        // Generate the hash number for the indices of primary species in the state
+        const auto label = detail::hash(iprimary);
+
         // The function that identifies the starting cluster index
         auto index_starting_cluster = [&]() -> Index
         {
@@ -362,7 +388,7 @@ struct SmartEquilibriumSolver::Impl
 
             // Find the index of the cluster with same set of primary species (search those with highest count first)
             for(auto icluster : database.priority.order())
-                if(database.clusters[icluster].iprimary == iprimary)
+                if(database.clusters[icluster].label == label)
                     return icluster;
 
             return database.clusters.size();
