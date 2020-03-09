@@ -3,8 +3,6 @@
 name: reaktoro
 
 {% set python_version = os.environ.get("PY_VER", "3.7") %}
-{% set debug = os.environ.get("CONFIG", "").lower() == "debug" %}
-{% set use_openlibm = os.environ.get("REAKTORO_USE_OPENLIBM", "0").strip() != "0" %}
 
 includes:
   - {{ root }}/.dependencies/compilers.devenv.yml
