@@ -328,6 +328,9 @@ struct SmartEquilibriumSolver::Impl
         const auto reltol = options.reltol;
         const auto abstol = options.abstol;
 
+        // The threshold used to determine elements with insignificant amounts
+        const auto eps_b = options.amount_fraction_cutoff * sum(be);
+
         // The current set of primary species in the chemical state
         const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
 
@@ -338,14 +341,24 @@ struct SmartEquilibriumSolver::Impl
         // * `success` is true if error test succeeds, false otherwise.
         // * `error` is the first error value violating the tolerance
         // * `iprimaryspecies` is the index of the primary species that fails the error test
-        auto pass_error_test = [&be, &dbe, &reltol](const Record& record) -> std::tuple<bool, double, Index>
+        auto pass_error_test = [&be, &dbe, &reltol, &eps_b](const Record& record) -> std::tuple<bool, double, Index>
         {
             using std::abs;
             using std::max;
+            const auto& state0 = record.state;
             const auto& be0 = record.be;
             const auto& Mbe0 = record.Mbe;
+            const auto& isue0 = state0.equilibrium().indicesStrictlyUnstableElements();
 
             dbe.noalias() = be - be0;
+
+            // Check if state0 has strictly unstable elements (i.e. elements with zero amounts)
+            // which cannot be used for Taylor estimation if positive amounts for those elements are given.
+            if((dbe(isue0).array() > eps_b).any())
+            {
+                assert((be0(isue0).array() < eps_b).any()); // ensure this condition is never broken (effective during debug only)
+                return { false, 9999, -1 };
+            }
 
             double error = 0.0;
             const auto size = Mbe0.rows();
@@ -428,60 +441,6 @@ struct SmartEquilibriumSolver::Impl
 
                     ne.noalias() = ne0 + dnedbe0 * (be - be0);
 
-                    /*
-                    const auto Ae = partition.formulaMatrixEquilibriumPartition();
-
-                    Vector res = abs(Ae*ne - be);
-
-                    if(max(abs(res)) > 1e-8)
-                    {
-                        Matrix AeSe = Ae*dnedbe0;
-                        Vector res0 = abs(Ae*ne0 - be0);
-                        Vector deltabe = abs(be - be0);
-
-                        std::cout << std::left << std::setw(15) << "ELEMENT";
-                        std::cout << std::left << std::setw(15) << "BALANCE";
-                        std::cout << std::left << std::setw(15) << "BALANCE0";
-                        std::cout << std::left << std::setw(15) << "DELTA";
-                        std::cout << std::endl;
-                        for(auto i = 0; i < iee.size(); ++i)
-                        {
-                            std::cout << std::left << std::setw(15) << system.element(iee[i]).name();
-                            std::cout << std::left << std::setw(15) << res[i];
-                            std::cout << std::left << std::setw(15) << res0[i];
-                            std::cout << std::left << std::setw(15) << deltabe[i];
-                            std::cout << std::endl;
-                        }
-
-                        std::cout << std::endl;
-
-                        std::cout << std::left << std::setw(15) << "ELEMENT";
-                        for(auto i = 0; i < iee.size(); ++i)
-                            std::cout << std::left << std::setw(15) << system.element(iee[i]).name();
-                        std::cout << std::endl;
-                        for(auto i = 0; i < iee.size(); ++i)
-                        {
-                            std::cout << std::left << std::setw(15) << system.element(iee[i]).name();
-                            for(auto j = 0; j < iee.size(); ++j)
-                                std::cout << std::left << std::setw(15) << AeSe(i, j);
-                            std::cout << std::endl;
-                        }
-
-                        std::cout << std::left << std::setw(15) << "SPECIES";
-                        std::cout << std::left << std::setw(15) << "Ae[Mg]";
-                        std::cout << std::left << std::setw(15) << "dnebe[Mg]";
-                        std::cout << std::endl;
-                        for(auto i = 0; i < ies.size(); ++i)
-                        {
-                            std::cout << std::left << std::setw(15) << system.species(ies[i]).name();
-                            std::cout << std::left << std::setw(15) << Ae(4, i);
-                            std::cout << std::left << std::setw(15) << dnedbe0(i, 4);
-                            std::cout << std::endl;
-                        }
-
-                        std::cout << std::endl;
-                    }
-                    */
                     n(ies) = ne;
 
                     const double ne_min = min(ne);
@@ -496,10 +455,8 @@ struct SmartEquilibriumSolver::Impl
                     result.timing.estimate_search = toc(SEARCH_STEP);
 
                     // Set the chemical state result with estimated amounts
+                    state = record.state; // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transfered from reference state to new state
                     state.setSpeciesAmounts(n);
-                    state.equilibrium().setElementChemicalPotentials(y0);
-                    state.equilibrium().setSpeciesStabilities(z0);
-                    state.equilibrium().setIndicesEquilibriumSpecies(ips0, Np0);
 
                     // Update the chemical properties of the system
                     properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
