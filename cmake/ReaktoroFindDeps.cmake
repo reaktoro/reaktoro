@@ -1,6 +1,10 @@
 # Find Boost library
 find_package(Boost REQUIRED)
 
+if(REAKTORO_USE_OPENLIBM)
+    find_package(openlibm REQUIRED)
+endif()
+
 # Find ThermoFun library and define a pre-processor macro REAKTORO_USING_THERMOFUN if so
 find_package(ThermoFun REQUIRED)
 

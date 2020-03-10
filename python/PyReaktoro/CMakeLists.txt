@@ -18,3 +18,8 @@ pybind11_add_module(PyReaktoro ${SOURCE_FILES} NO_EXTRAS) # NO_EXTRAS used to de
 
 # Link PyReaktoro against Reaktoro library
 target_link_libraries(PyReaktoro LINK_PRIVATE Reaktoro::Reaktoro)
+
+if(REAKTORO_USE_OPENLIBM)
+    configure_target_to_use_openlibm(PyReaktoro)
+    target_compile_definitions(PyReaktoro PRIVATE REAKTORO_USE_OPENLIBM=1)
+endif()

@@ -9,6 +9,7 @@ from reaktoro import (
     ChemicalSystem,
     EquilibriumProblem,
     EquilibriumInverseProblem,
+    isUsingOpenlibm,
 )
 
 import thermofun.PyThermoFun as thermofun
@@ -287,14 +288,21 @@ def equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume():
     return (system, problem)
 
 
+def _get_basename(request):
+    if isUsingOpenlibm():
+        import re
+        return re.sub(r"[\W]", "_", request.node.name) + ".openlibm"
+    return None  # use default
+
+
 @pytest.fixture(scope="function")
-def state_regression(num_regression):
+def state_regression(num_regression, request):
+
     class StateRegression:
         def check(self, state, tol=None, default_tol=None, exclude=None):
             num_regression.check(
                 convert_reaktoro_state_to_dict(state, exclude),
-                basename=None,
-                fullpath=None,
+                basename=_get_basename(request),
                 tolerances=tol,
                 default_tolerance=default_tol,
                 data_index=None,
@@ -305,13 +313,12 @@ def state_regression(num_regression):
 
 
 @pytest.fixture(scope="function")
-def table_regression(num_regression):
+def table_regression(num_regression, request):
     class TableRegression:
         def check(self, table, tol=None, default_tol=None):
             num_regression.check(
                 convert_table_to_dict(table),
-                basename=None,
-                fullpath=None,
+                basename=_get_basename(request),
                 tolerances=tol,
                 default_tolerance=default_tol,
                 data_index=None,

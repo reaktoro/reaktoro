@@ -44,6 +44,9 @@ endif()
 # Set the CTest option BUILD_TESTING to the value of BUILD_TESTS
 set(BUILD_TESTING BUILD_TEST)
 
+# Define is Reaktoro should be built linking against openlibm instead of system's default libm
+option(REAKTORO_USE_OPENLIBM      "Build linking with openlibm." OFF)
+
 # Define if shared library should be build instead of static.
 option(BUILD_SHARED_LIBS "Build shared libraries." ON)
 

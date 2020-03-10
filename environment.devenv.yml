@@ -3,7 +3,6 @@
 name: reaktoro
 
 {% set python_version = os.environ.get("PY_VER", "3.7") %}
-{% set debug = os.environ.get("CONFIG", "").lower() == "debug" %}
 
 includes:
   - {{ root }}/.dependencies/compilers.devenv.yml
