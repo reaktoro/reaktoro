@@ -773,14 +773,9 @@ auto ChemicalState::properties() const -> ChemicalProperties
     return pimpl->properties();
 }
 
-auto ChemicalState::output(std::string filename) const -> void
+auto ChemicalState::output(std::ostream& out, int precision) const -> void
 {
-    std::ofstream out(filename);
-    out << *this;
-}
-
-auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
-{
+    auto const& state = *this;
     const ChemicalSystem& system = state.system();
     const double& T = state.temperature();
     const double& P = state.pressure();
@@ -822,7 +817,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 
     // Set output in scientific notation
     auto flags = out.flags();
-    out << std::setprecision(6);
+    out << std::setprecision(precision);
 
     // Output the table of the element-related state
     out << bar1 << std::endl;
@@ -924,7 +919,17 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 
     // Recover the previous state of `out`
     out.flags(flags);
+}
 
+auto ChemicalState::output(std::string const& filename, int precision) const -> void
+{
+    auto out = std::ofstream(filename);
+    this->output(out, precision);
+}
+
+auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
+{
+    state.output(out);
     return out;
 }
 

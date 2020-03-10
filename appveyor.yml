@@ -9,6 +9,9 @@ environment:
   CONDA_DIR: C:\Miniconda36-x64
   CC: clcache
   CXX: clcache
+  # Use shorter temporary dirs because of long path name problems
+  TMP: C:\temp
+  TEMP: C:\temp
   matrix:
   # Testing only Debug + Python 3.6 and Release + Python 3.7 so that the number of jobs is still 2 instead of 4.
   - CONFIG: Debug
@@ -16,11 +19,16 @@ environment:
     #Temporally disabling regression tests, which otherwise would cause timeout failure (> 1 hour build time)
     TEST_DIR: Reaktoro
   - CONFIG: Release
+    PY_VER: 3.6
+    REAKTORO_USE_OPENLIBM: 1
+    TEST_DIR: .
+  - CONFIG: Release
     PY_VER: 3.7
     TEST_DIR: .
 cache:
   - C:\Users\appveyor\clcache
 init:
+  - ps: mkdir C:\temp
   - set PATH=%CONDA_DIR%;%CONDA_DIR%\Scripts;%CONDA_DIR%\Library\bin;%PATH%
 install:
   - conda config --system --set always_yes yes --set changeps1 no

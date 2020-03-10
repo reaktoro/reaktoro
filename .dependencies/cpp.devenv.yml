@@ -1,4 +1,5 @@
 {% set debug = os.environ.get("CONFIG", "").lower() == "debug" %}
+{% set use_openlibm = os.environ.get("REAKTORO_USE_OPENLIBM", "0").strip() != "0" %}
 
 dependencies:
   - boost=1.70
@@ -6,4 +7,7 @@ dependencies:
   - thermofun
   {% if not debug %}
   - pugixml                        # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
+  {% endif %}
+  {% if use_openlibm %}
+  - openlibm
   {% endif %}
