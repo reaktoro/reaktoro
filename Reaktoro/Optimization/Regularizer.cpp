@@ -54,6 +54,18 @@ struct Regularizer::Impl
     /// The indices of the non-trivial constraints
     Indices inontrivial_constraints;
 
+    /// The auxiliary indices of trivial variables (a temporary solution until Indices become VectorXi)
+    VectorXi itv;
+
+    /// The auxiliary indices of trivial constraints (a temporary solution until Indices become VectorXi)
+    VectorXi itc;
+
+    /// The auxiliary indices of non-trivial variables (a temporary solution until Indices become VectorXi)
+    VectorXi intv;
+
+    /// The auxiliary indices of non-trivial constraints (a temporary solution until Indices become VectorXi)
+    VectorXi intc;
+
     /// The values of the trivial variables
     Vector xtrivial;
 
@@ -166,6 +178,18 @@ struct Regularizer::Impl
 
     /// Recover the sensitivity derivative `dxdp`, `dydp`, `dzdp`.
     auto recover(const Matrix& dgdp, const Matrix& dbdp, Matrix& dxdp, Matrix& dydp, Matrix& dzdp) -> void;
+
+    /// Return the indices of the variables fixed at the lower bound.
+    auto indicesTrivialVariables() -> VectorXiConstRef;
+
+    /// Return the indices of the equality constraints whose participating variables are fixed at the lower bound.
+    auto indicesTrivialConstraints() -> VectorXiConstRef;
+
+    /// Return the indices of the non-trivial variables.
+    auto indicesNonTrivialVariables() -> VectorXiConstRef;
+
+    /// Return the indices of the non-trivial constraints.
+    auto indicesNonTrivialConstraints() -> VectorXiConstRef;
 };
 
 auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& problem) -> void
@@ -545,6 +569,10 @@ auto Regularizer::Impl::recover(OptimumState& state) -> void
         state.y(itrivial_constraints).fill(0.0);
         state.z(itrivial_variables).fill(0.0);
     }
+
+    // Set the indices of trivial variables and constraints in state
+    state.itrivial_variables = indicesTrivialVariables();
+    state.itrivial_constraints = indicesTrivialConstraints();
 }
 
 auto Regularizer::Impl::recover(const Matrix& dgdp, const Matrix& dbdp, Matrix& dxdp, Matrix& dydp, Matrix& dzdp) -> void
@@ -578,6 +606,34 @@ auto Regularizer::Impl::recover(const Matrix& dgdp, const Matrix& dbdp, Matrix& 
         rows(dydp, itrivial_constraints).fill(0.0);
         rows(dzdp, itrivial_variables).fill(0.0);
     }
+}
+
+auto Regularizer::Impl::indicesTrivialVariables() -> VectorXiConstRef
+{
+    itv.resize(itrivial_variables.size());
+    std::copy(itrivial_variables.begin(), itrivial_variables.end(), itv.begin());
+    return itv;
+}
+
+auto Regularizer::Impl::indicesTrivialConstraints() -> VectorXiConstRef
+{
+    itc.resize(itrivial_constraints.size());
+    std::copy(itrivial_constraints.begin(), itrivial_constraints.end(), itc.begin());
+    return itc;
+}
+
+auto Regularizer::Impl::indicesNonTrivialVariables() -> VectorXiConstRef
+{
+    intv.resize(inontrivial_variables.size());
+    std::copy(inontrivial_variables.begin(), inontrivial_variables.end(), intv.begin());
+    return intv;
+}
+
+auto Regularizer::Impl::indicesNonTrivialConstraints() -> VectorXiConstRef
+{
+    intc.resize(inontrivial_constraints.size());
+    std::copy(inontrivial_constraints.begin(), inontrivial_constraints.end(), intc.begin());
+    return intc;
 }
 
 Regularizer::Regularizer()
@@ -620,6 +676,26 @@ auto Regularizer::recover(OptimumState& state) -> void
 auto Regularizer::recover(const Matrix& dgdp, const Matrix& dbdp, Matrix& dxdp, Matrix& dydp, Matrix& dzdp) -> void
 {
     pimpl->recover(dgdp, dbdp, dxdp, dydp, dzdp);
+}
+
+auto Regularizer::indicesTrivialVariables() const -> VectorXiConstRef
+{
+    return pimpl->indicesTrivialVariables();
+}
+
+auto Regularizer::indicesTrivialConstraints() const -> VectorXiConstRef
+{
+    return pimpl->indicesTrivialConstraints();
+}
+
+auto Regularizer::indicesNonTrivialVariables() const -> VectorXiConstRef
+{
+    return pimpl->indicesNonTrivialVariables();
+}
+
+auto Regularizer::indicesNonTrivialConstraints() const -> VectorXiConstRef
+{
+    return pimpl->indicesNonTrivialConstraints();
 }
 
 } // namespace Reaktoro

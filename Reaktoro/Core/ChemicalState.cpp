@@ -716,6 +716,12 @@ struct EquilibriumProperties::Impl
     /// The stabilities of the species in the equilibrium state (in units of J/mol)
     Vector z;
 
+    /// The indices of equilibrium elements whose amounts should be positive, but given amount was less or equal to zero.
+    VectorXi isue;
+
+    /// The indices of equilibrium species that contain one or more strictly unstable elements.
+    VectorXi isus;
+
     /// Construct a default EquilibriumProperties::Impl instance
     Impl(const ChemicalSystem& system)
     : u(system.numSpecies()),
@@ -745,6 +751,16 @@ auto EquilibriumProperties::setIndicesEquilibriumSpecies(VectorXiConstRef ips, I
 {
     pimpl->ips = ips;
     pimpl->kp = kp;
+}
+
+auto EquilibriumProperties::setIndicesStrictlyUnstableElements(VectorXiConstRef isue) -> void
+{
+    pimpl->isue = isue;
+}
+
+auto EquilibriumProperties::setIndicesStrictlyUnstableSpecies(VectorXiConstRef isus) -> void
+{
+    pimpl->isus = isus;
 }
 
 auto EquilibriumProperties::setSpeciesChemicalPotentials(VectorConstRef u) -> void
@@ -793,6 +809,16 @@ auto EquilibriumProperties::indicesPrimarySpecies() const -> VectorXiConstRef
 auto EquilibriumProperties::indicesSecondarySpecies() const -> VectorXiConstRef
 {
     return indicesEquilibriumSpecies().tail(numSecondarySpecies());
+}
+
+auto EquilibriumProperties::indicesStrictlyUnstableElements() const -> VectorXiConstRef
+{
+    return pimpl->isue;
+}
+
+auto EquilibriumProperties::indicesStrictlyUnstableSpecies() const -> VectorXiConstRef
+{
+    return pimpl->isus;
 }
 
 auto EquilibriumProperties::speciesChemicalPotentials() const -> VectorConstRef

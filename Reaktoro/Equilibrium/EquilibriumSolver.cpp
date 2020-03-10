@@ -355,6 +355,8 @@ struct EquilibriumSolver::Impl
         state.setSpeciesAmounts(n);
         state.equilibrium().setElementChemicalPotentials(y);
         state.equilibrium().setSpeciesStabilities(z);
+        state.equilibrium().setIndicesStrictlyUnstableElements(optimum_state.itrivial_constraints);
+        state.equilibrium().setIndicesStrictlyUnstableSpecies(optimum_state.itrivial_variables);
     }
 
     /// Find a feasible approximation for an equilibrium problem with all elements present on chemical system.

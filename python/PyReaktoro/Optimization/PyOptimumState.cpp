@@ -29,6 +29,8 @@ void exportOptimumState(py::module& m)
         .def_readwrite("x", &OptimumState::x)
         .def_readwrite("y", &OptimumState::y)
         .def_readwrite("z", &OptimumState::z)
+        .def_readwrite("itrivial_variables", &OptimumState::itrivial_variables)
+        .def_readwrite("itrivial_constraints", &OptimumState::itrivial_constraints)
         ;
 }
 
