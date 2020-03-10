@@ -35,17 +35,18 @@ struct SmartEquilibriumOptions
     /// will be discarded from the error control.
     double mole_fraction_cutoff = 1.0e-14;
 
-    /// The cutoff value for normalized species amounts.
-    /// This parameter is used to ignore certain species with tiny amounts
-    /// during the error test. Those with normalized amounts, \eq{n_{i}/\text{sum}(n)},
+    /// The cutoff value for normalized species and element amounts.
+    /// This parameter is used to ignore certain species/elements with tiny amounts
+    /// during the error test. The species and elements with normalized amounts,
+    /// \eq{n_{i}/\text{sum}(n)} and \eq{b_{j}/\text{sum}(b)} respectively,
     /// below this threshold will be discarded from the error control.
     double amount_fraction_cutoff = 1.0e-14;
 
     /// The relative tolerance used in the acceptance test.
-    double reltol = 0.1;
+    double reltol = 1.0e-3;
 
     /// The absolute tolerance used in the acceptance test.
-    double abstol = 1e-8;
+    double abstol = 1.0e-8;
 };
 
 } // namespace Reaktoro
