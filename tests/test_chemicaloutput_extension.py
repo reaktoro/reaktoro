@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 import pandas as pd
 import pytest
 from reaktoro import ChemicalEditor, ChemicalSystem, ReactionSystem, Partition
@@ -95,11 +96,21 @@ def output_from_path(
     return output
 
 
+def test_chemicaloutput_to_array(
+        dict_with_properties_to_output, output_from_path
+):
+    output = output_from_path
+    output_array = output.to_array()
+
+    assert type(output_array) is np.ndarray
+    assert output_array.shape[1] == len(dict_with_properties_to_output.keys())
+
+
 def test_chemicaloutput_to_dict(
         dict_with_properties_to_output, output_from_path
 ):
     output = output_from_path
-    output_dict = output.dict()
+    output_dict = output.to_dict()
 
     assert type(output_dict) is dict
     assert output_dict.keys() == dict_with_properties_to_output.keys()
@@ -109,7 +120,7 @@ def test_chemicaloutput_to_dataframe(
         dict_with_properties_to_output, output_from_path
 ):
     output = output_from_path
-    output_df = output.DataFrame()
+    output_df = output.to_data_frame()
 
     assert type(output_df) is pd.DataFrame
     assert list(output_df.columns) == list(dict_with_properties_to_output.keys())

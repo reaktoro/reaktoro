@@ -24,7 +24,7 @@ def _ChemicalOutput_to_dict(self):
         A dict with ChemicalOutput properties from result file.
     :rtype dict:
     """
-    data = np.loadtxt(self.filename(), skiprows=1)
+    data = self.to_array()
     columns = [data[:, i] for i in range(data.shape[1])]
     return {heading: column for heading, column in zip(self.headings(), columns)}
 
@@ -37,10 +37,10 @@ def _ChemicalOutput_to_dataframe(self):
         A pandas DataFrame with ChemicalOutput data.
     :rtype pd.DataFrame:
     """
-    output_dataframe = pd.DataFrame(self.dict())
+    output_dataframe = pd.DataFrame(self.to_dict())
     return output_dataframe
 
 
-ChemicalOutput.array = _ChemicalOutput_to_array
-ChemicalOutput.dict = _ChemicalOutput_to_dict
-ChemicalOutput.DataFrame = _ChemicalOutput_to_dataframe
+ChemicalOutput.to_array = _ChemicalOutput_to_array
+ChemicalOutput.to_dict = _ChemicalOutput_to_dict
+ChemicalOutput.to_data_frame = _ChemicalOutput_to_dataframe
