@@ -11,7 +11,7 @@ def _ChemicalOutput_to_array(self):
         An numpy array with data from ChemicalOutput.
     :rtype numpy.ndarray:
     """
-    output_array = lambda self: np.loadtxt(self.filename(), skiprows=1)
+    output_array = np.loadtxt(self.filename(), skiprows=1)
     return output_array
 
 
