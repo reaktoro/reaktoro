@@ -81,6 +81,18 @@ public:
     /// Recover the sensitivity derivative `dxdp`, `dydp`, `dzdp`.
     auto recover(const Matrix& dgdp, const Matrix& dbdp, Matrix& dxdp, Matrix& dydp, Matrix& dzdp) -> void;
 
+    /// Return the indices of the variables fixed at the lower bound.
+    auto indicesTrivialVariables() const -> VectorXiConstRef;
+
+    /// Return the indices of the equality constraints whose participating variables are fixed at the lower bound.
+    auto indicesTrivialConstraints() const -> VectorXiConstRef;
+
+    /// Return the indices of the non-trivial variables.
+    auto indicesNonTrivialVariables() const -> VectorXiConstRef;
+
+    /// Return the indices of the non-trivial constraints.
+    auto indicesNonTrivialConstraints() const -> VectorXiConstRef;
+
 private:
     struct Impl;
 

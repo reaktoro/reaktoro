@@ -401,6 +401,13 @@ public:
     /// @param kp The number of primary species
     auto setIndicesEquilibriumSpecies(VectorXiConstRef ips, Index kp) -> void;
 
+    /// Set the indices of equilibrium elements whose amounts should be positive, but given amount was less or equal to zero.
+    auto setIndicesStrictlyUnstableElements(VectorXiConstRef isue) -> void;
+
+    /// Set the indices of equilibrium species that contain one or more strictly unstable elements.
+    /// @see setIndicesElementsStrictlyUnstable
+    auto setIndicesStrictlyUnstableSpecies(VectorXiConstRef isus) -> void;
+
     /// Set the chemical potentials of the species in the equilibrium state (in units of J/mol)
     auto setSpeciesChemicalPotentials(VectorConstRef u) -> void;
 
@@ -427,6 +434,12 @@ public:
 
     /// Return the indices of the secondary equilibrium species.
     auto indicesSecondarySpecies() const -> VectorXiConstRef;
+
+    /// Return the indices of equilibrium elements whose amounts should be positive, but given amount was less or equal to zero.
+    auto indicesStrictlyUnstableElements() const -> VectorXiConstRef;
+
+    /// Return the indices of equilibrium species that contain one or more strictly unstable elements.
+    auto indicesStrictlyUnstableSpecies() const -> VectorXiConstRef;
 
     /// Return the chemical potentials of the species (in units of J/mol).
     /// The chemical potentials of the species are the gradient of the Gibbs energy

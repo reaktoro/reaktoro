@@ -41,6 +41,12 @@ struct OptimumState
 
     /// The evaluation of the objective function at `x`
     ObjectiveResult f;
+
+    /// The indices of the variables fixed at the lower bound
+    VectorXi itrivial_variables;
+
+    /// The indices of the equality constraints whose all participating variables are fixed at the lower bound
+    VectorXi itrivial_constraints;
 };
 
 } // namespace Reaktoro
