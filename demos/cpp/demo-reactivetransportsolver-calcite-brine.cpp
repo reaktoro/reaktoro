@@ -51,7 +51,7 @@ struct Params
     bool use_smart_eqilibirum_solver;
     bool track_statistics;
     double smart_equlibrium_reltol;
-    double smart_equlibrium_abstol;
+
     double amount_fraction_cutoff;
     double mole_fraction_cutoff;
 
@@ -122,8 +122,8 @@ int main()
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
     //*/
+    // params.nsteps = 10000; // the number of steps in the reactive transport simulation
     params.nsteps = 10000; // the number of steps in the reactive transport simulation
-    //params.nsteps = 1000; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 30 * minute; // the time step (in units of s)
 
@@ -134,13 +134,16 @@ int main()
     params.P = 100;                      // the pressure (in units of bar)
 
     // Define parameters of the equilibrium solvers
-    params.smart_equlibrium_reltol = 0.005;
-    params.smart_equlibrium_abstol = 1e-8;
+    params.smart_equlibrium_reltol = 0.001;
+    //params.activity_model = "hkf-full";
+    //params.activity_model = "hkf-selected-species";
+    params.activity_model = "pitzer-full";
+    //params.activity_model = "pitzer-selected-species";
+    //params.activity_model = "dk-full";
+    //params.activity_model = "dk-selected-species";
+
     params.amount_fraction_cutoff = 1e-14;
     params.mole_fraction_cutoff = 1e-14;
-    params.activity_model = "hkf";
-    //params.activity_model = "pitzer";
-    params.track_statistics = true;
 
     // Output
     outputConsole(params);
@@ -155,9 +158,11 @@ int main()
     results.conventional_total = results.equilibrium_timing.solve;
     results.smart_total = results.smart_equilibrium_timing.solve;
     results.smart_total_ideal_search = results.smart_equilibrium_timing.solve
-                                        - results.smart_equilibrium_timing.estimate_search;
+                                        - results.smart_equilibrium_timing.estimate_search
+                                        - results.smart_equilibrium_timing.estimate_database_priority_update;
     results.smart_total_ideal_search_store = results.smart_equilibrium_timing.solve
                                                 - results.smart_equilibrium_timing.estimate_search
+                                                - results.smart_equilibrium_timing.estimate_database_priority_update
                                                 - results.smart_equilibrium_timing.learning_storage;
 
     // Output speed-us
@@ -187,7 +192,6 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     // Step **: Define smart chemical equilibrium solver options
     SmartEquilibriumOptions smart_equilibrium_options;
     smart_equilibrium_options.reltol = params.smart_equlibrium_reltol;
-    smart_equilibrium_options.abstol = params.smart_equlibrium_abstol;
 
     smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
     smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
@@ -200,50 +204,41 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     // Set a chemical model of the phase with the Pitzer equation of state
     // With an exception for the CO2, for which Drummond model is set
 
-    /*
-    // HKF selected species
-    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
-    */
-    if(params.activity_model == "hkf"){
+    if(params.activity_model == "hkf-full"){
         // HKF full system
         editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C");
-        editor.addMineralPhase("Quartz");
-        editor.addMineralPhase("Calcite");
-        editor.addMineralPhase("Dolomite");
     }
-    else if(params.activity_model == "pitzer"){
+    else if(params.activity_model == "hkf-selected-species"){
+        // HKF selected species
+        editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3-- CaCl+ Ca(HCO3)+ MgCl+ Mg(HCO3)+");
+    }
+    else if(params.activity_model == "pitzer-full"){
         // Pitzer full system
         editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
-        editor.addMineralPhase("Quartz");
-        editor.addMineralPhase("Calcite");
-        editor.addMineralPhase("Dolomite");
     }
-    /*
-    // Pitzer selected species
-    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--")
-            .setChemicalModelPitzerHMW()
-            .setActivityModelDrummondCO2();
-    */
-    /*
-    // Debey-Huckel full system
-    editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
-           .setChemicalModelDebyeHuckel()
-           .setActivityModelDrummondCO2();
+    else if(params.activity_model == "pitzer-selected-species"){
+        // Pitzer selected species
+        editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3-- CaCl+ Ca(HCO3)+ MgCl+ Mg(HCO3)+")
+                .setChemicalModelPitzerHMW()
+                .setActivityModelDrummondCO2();
+    }
+    else if(params.activity_model == "dk-full"){
+        // Debye-Huckel full system
+        editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
+                .setChemicalModelDebyeHuckel()
+                .setActivityModelDrummondCO2();
+    }
+    else if(params.activity_model == "dk-selected-species"){
+        // Debye-Huckel selected species
+        editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3-- CaCl+ Ca(HCO3)+ MgCl+ Mg(HCO3)+")
+                .setChemicalModelDebyeHuckel()
+                .setActivityModelDrummondCO2();
+    }
     editor.addMineralPhase("Quartz");
     editor.addMineralPhase("Calcite");
     editor.addMineralPhase("Dolomite");
-    */
-    /*
-    // Debey-Huckel selected species
-    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--")
-            .setChemicalModelDebyeHuckel()
-            .setActivityModelDrummondCO2();
-    editor.addMineralPhase("Quartz");
-    editor.addMineralPhase("Calcite");
-    editor.addMineralPhase("Dolomite");
-    */
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
@@ -258,6 +253,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     problem_ic.add("NaCl",  0.7, "mol");
     problem_ic.add("CaCO3", 10,  "mol");
     problem_ic.add("SiO2",  10,  "mol");
+    problem_ic.add("MgCl2", 1e-10, "mol");
 
     // Step **: Define the boundary condition (BC)  of the reactive transport modeling problem
     EquilibriumProblem problem_bc(system);
@@ -369,9 +365,11 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     if(params.use_smart_eqilibirum_solver) {
         results.smart_equilibrium_timing = analysis.smart_equilibrium.timing;
         results.smart_equilibrium_acceptance_rate = analysis.smart_equilibrium.smart_equilibrium_estimate_acceptance_rate;
+
         std::cout << "smart equilibrium acceptance rate   : " << results.smart_equilibrium_acceptance_rate << " / "
                   << (1 - results.smart_equilibrium_acceptance_rate) * params.ncells *params.nsteps
                   << " fully evaluated GEMS out of " << params.ncells * params.nsteps  << std::endl;
+
     }
     else results.equilibrium_timing = analysis.equilibrium.timing;
 }
@@ -395,38 +393,26 @@ auto makeResultsFolder(const Params& params) -> std::string
 {
     struct stat status = {0};               // structure to get the file status
 
-    std::ostringstream reltol_stream, abstol_stream, dt_stream;
+    std::ostringstream reltol_stream, dt_stream;
     dt_stream << params.dt;
     reltol_stream << std::scientific << std::setprecision(1) << params.smart_equlibrium_reltol;
-    abstol_stream << std::scientific << std::setprecision(1) <<  params.smart_equlibrium_abstol;
 
     std::string test_tag = "-dt-" + dt_stream.str() +
                            "-ncells-" + std::to_string(params.ncells) +
                            "-nsteps-" + std::to_string(params.nsteps) +
-                           "-eqreltol-" + reltol_stream.str() +
-                           "-eqabstol-" + abstol_stream.str() +
-                            "-" + params.activity_model +
-                            (params.use_smart_eqilibirum_solver == true ? "-smart" : "-reference");      // name of the folder with results
-    //std::string folder = "results-pitzer-full" + test_tag;
-    //std::string folder = "results-pitzer-selected-species" + test_tag; // Local(2)
-    //std::string folder = "results-hkf-full" + test_tag; // Local(3)
-    //std::string folder = "results-hkf-secelted-species" + test_tag; // Local(4)
-    //std::string folder = "../results-pitzer-full-with-skipping-1e-14" + test_tag; // Local(5)
-    //std::string folder = "../results-pitzer-full-with-skipping-1e-14-both-solvers" + test_tag; // Local(6)
-    //std::string folder = "../results-pitzer-full-with-skipping-1e-13" + test_tag; // Local(5)
-    //std::string folder = "../results-pitzer-full-with-skipping-1e-13-both-solvers" + test_tag; // Local(8)
+                           "-" + params.activity_model + "-reference";
 
+    std::string smart_test_tag = "-dt-" + dt_stream.str() +
+                                 "-ncells-" + std::to_string(params.ncells) +
+                                 "-nsteps-" + std::to_string(params.nsteps) +
+                                 "-reltol-" + reltol_stream.str() +
+                                 "-" + params.activity_model +
+                                 "-smart";
 
-    //std::string folder = "results-debey-huckel-full" + test_tag; // Local(1)
-    //std::string folder = "results-debey-huckel-selected-species" + test_tag; // Local(2)
-
-    //std::string folder = "results-hkf-full-no-skipping" + test_tag;
-    //std::string folder = "results-hkf-full-with-skipping-1e-14" + test_tag;
-    //std::string folder = "results-hkf-full-with-skipping-1e-13" + test_tag;
-    //std::string folder = "results-hkf-full-with-skipping-1e-12" + test_tag;
-
-    //std::string folder = "results-pitzer-full-new-algorithm" + test_tag;
-    std::string folder = "results-new-algorithm" + test_tag;
+    std::string folder = "results-custering-primary-species-morning-version";
+    folder = (params.use_smart_eqilibirum_solver) ?
+             folder + smart_test_tag :
+             folder + test_tag;
 
     if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str());
 
@@ -446,8 +432,8 @@ auto outputConsole(const Params& params) -> void {
     std::cout << "CFD     : " << params.v * params.dt / params.dx << std::endl;
     std::cout << "T       : " << params.T << std::endl;
     std::cout << "P       : " << params.P << std::endl;
-    std::cout << "eqabstol  : " << params.smart_equlibrium_abstol << std::endl;
-    std::cout << "eqreltol  : " << params.smart_equlibrium_reltol << std::endl;
+    std::cout << "eqreltol       : " << params.smart_equlibrium_reltol << std::endl;
     std::cout << "activity model : " << params.activity_model << std::endl;
+
 }
 

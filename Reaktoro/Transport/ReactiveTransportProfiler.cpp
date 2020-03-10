@@ -106,7 +106,7 @@ struct ReactiveTransportProfiler::Impl
             info.transport[i] = timing_transport_at_step[i].step;
             info.equilibrium[i] = timing_equilibrium_at_step[i].solve;
             info.smart_equilibrium[i] = timing_smart_equilibrium_at_step[i].solve;
-            info.smart_equilibrium_with_ideal_search[i] = info.smart_equilibrium[i] - timing_smart_equilibrium_at_step[i].estimate_search;
+            info.smart_equilibrium_with_ideal_search[i] = info.smart_equilibrium[i] - timing_smart_equilibrium_at_step[i].estimate_search - timing_smart_equilibrium_at_step[i].estimate_database_priority_update;
             info.smart_equilibrium_estimate[i] = timing_smart_equilibrium_at_step[i].estimate;
             info.smart_equilibrium_nearest_neighbor_search[i] = timing_smart_equilibrium_at_step[i].estimate_search;
             info.smart_equilibrium_gibbs_energy_minimization[i] = timing_smart_equilibrium_at_step[i].learning_gibbs_energy_minimization;

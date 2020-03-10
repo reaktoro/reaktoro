@@ -45,7 +45,6 @@ void exportEquilibriumSolver(py::module& m)
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const Partition&>())
         .def("setOptions", &EquilibriumSolver::setOptions)
-        .def("setPartition", &EquilibriumSolver::setPartition)
         .def("approximate", approximate1)
         .def("approximate", approximate2)
         .def("approximate", approximate3)
@@ -56,6 +55,9 @@ void exportEquilibriumSolver(py::module& m)
         .def("properties", &EquilibriumSolver::properties, py::return_value_policy::reference_internal)
         .def("sensitivity", &EquilibriumSolver::sensitivity, py::return_value_policy::reference_internal)
         .def("result", &EquilibriumSolver::result, py::return_value_policy::reference_internal)
+
+        // DEPRECATED METHODS: TO BE REMOVED
+        .def("setPartition", &EquilibriumSolver::setPartition)
         ;
 }
 

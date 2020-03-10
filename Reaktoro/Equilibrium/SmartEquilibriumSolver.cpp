@@ -236,18 +236,6 @@ struct SmartEquilibriumSolver::Impl
         // The indices of the primary species at the calculated equilibrium state
         const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
 
-
-        // std::cout << "PRIMARY SPECIES = ";
-        // for(auto i : state.equilibrium().indicesPrimarySpecies())
-        //     std::cout << system.species(i).name() << " ";
-        // std::cout << std::endl;
-
-
-        // std::cout << "SECONDARY SPECIES = ";
-        // for(auto i : state.equilibrium().indicesSecondarySpecies())
-        //     std::cout << system.species(i).name() << " ";
-        // std::cout << std::endl;
-
         // The mole fractions of the species at the calculated equilibrium state
         const auto& x = properties.moleFractions().val;
 
@@ -277,11 +265,11 @@ struct SmartEquilibriumSolver::Impl
         // Compute the matrix du/db = du/dn * dn/db
         dudb = dudn * dndb;
 
-        // The vector u(imajor) with chemical potentials of major species
-        up.noalias() = u.val(imajor);
+        // The vector u(iprimary) with chemical potentials of primary species
+        up.noalias() = u.val(iprimary);
 
-        // The matrix du(imajor)/dbe with derivatives of chemical potentials (major species only)
-        const auto dupdbe = dudb(imajor, iee);
+        // The matrix du(iprimary)/dbe with derivatives of chemical potentials (primary species only)
+        const auto dupdbe = dudb(iprimary, iee);
 
         // Compute matrix Mbe = 1/up * dup/db
         Mbe.noalias() = diag(inv(up)) * dupdbe;
@@ -345,7 +333,7 @@ struct SmartEquilibriumSolver::Impl
         // * `success` is true if error test succeeds, false otherwise.
         // * `error` is the first error value violating the tolerance
         // * `iprimaryspecies` is the index of the primary species that fails the error test
-        auto pass_error_test = [&](const Record& record) -> std::tuple<bool, double, Index>
+        auto pass_error_test = [&be, &dbe, &reltol](const Record& record) -> std::tuple<bool, double, Index>
         {
             using std::abs;
             using std::max;
@@ -355,10 +343,11 @@ struct SmartEquilibriumSolver::Impl
             dbe.noalias() = be - be0;
 
             double error = 0.0;
-            for(auto i = 0; i < Mbe.rows(); ++i) {
-                error = max(error, abs(Mbe0.row(i) * dbe));
+            const auto size = Mbe0.rows();
+            for(auto i = 1; i <= size; ++i) {
+                error = max(error, abs(Mbe0.row(size - i) * dbe)); // start checking primary species with least amount first
                 if(error >= reltol)
-                    return { false, error, i };
+                    return { false, error, size - i };
             }
 
             return { true, error, -1 };
@@ -378,7 +367,6 @@ struct SmartEquilibriumSolver::Impl
 
             return database.clusters.size();
         };
-
 
         // The index of the starting cluster
         const auto icluster = index_starting_cluster();
@@ -413,8 +401,6 @@ struct SmartEquilibriumSolver::Impl
 
                 if(success)
                 {
-                    result.timing.estimate_search = toc(SEARCH_STEP);
-
                     //---------------------------------------------------------------------
                     // TAYLOR PREDICTION STEP DURING THE ESTIMATE PROCESS
                     //---------------------------------------------------------------------
@@ -441,9 +427,11 @@ struct SmartEquilibriumSolver::Impl
 
                     const auto eps_n = options.amount_fraction_cutoff * ne_sum;
 
-                    // Check if all projected species amounts are not negative beyond tolerance
-                    if(ne_min < -eps_n)
+                    // Check if all projected species amounts are positive
+                    if(ne_min <= -eps_n)
                         continue;
+
+                    result.timing.estimate_search = toc(SEARCH_STEP);
 
                     // Set the chemical state result with estimated amounts
                     state.setSpeciesAmounts(n);
@@ -526,6 +514,42 @@ struct SmartEquilibriumSolver::Impl
         return result;
     }
 
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef be, Index istep, Index icell) -> SmartEquilibriumResult
+    {
+        tic(SOLVE_STEP);
+
+        // Absolutely ensure an exact Hessian of the Gibbs energy function is used in the calculations
+        setOptions(options);
+
+        // Reset the result of the last smart equilibrium calculation
+        result = {};
+
+        // Perform a smart estimate of the chemical state
+        timeit( estimate(state, T, P, be),
+                result.timing.estimate= );
+
+        // Perform a learning step if the smart prediction is not sactisfatory
+        if(!result.estimate.accepted)
+        timeit( learn(state, T, P, be), result.timing.learn= );
+
+        result.timing.solve = toc(SOLVE_STEP);
+
+        // Print
+        if(istep == 0 || istep == 9 || istep == 1199)
+        {
+            const auto Ae = partition.formulaMatrixEquilibriumPartition();
+            const auto& ies = partition.indicesEquilibriumSpecies();
+            const auto& n = state.speciesAmounts();
+            const auto& ne = n(ies);
+
+            Vector res = abs(Ae*ne - be);
+            if(icell == 0) std::cout << "res = abs(Ae*ne - be) = [ " << res.squaredNorm();
+            else if (icell == 99) std::cout << " ]" << std::endl;
+            else std::cout << ", " << res.squaredNorm();
+        }
+        return result;
+    }
+
     auto outputClusterInfo() const -> void
     {
         for(auto i : database.priority.order())
@@ -587,6 +611,11 @@ auto SmartEquilibriumSolver::setOptions(const SmartEquilibriumOptions& options) 
 auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
+}
+
+auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be, Index istep, Index icell) -> SmartEquilibriumResult
+{
+    return pimpl->solve(state, T, P, be, istep, icell);
 }
 
 auto SmartEquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResult

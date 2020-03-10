@@ -40,14 +40,17 @@ void exportEquilibriumPath(py::module& m)
 
     py::class_<EquilibriumPath>(m, "EquilibriumPath")
         .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const Partition&>())
         .def("setOptions", &EquilibriumPath::setOptions)
-        .def("setPartition", &EquilibriumPath::setPartition)
         .def("solve", &EquilibriumPath::solve)
         .def("output", &EquilibriumPath::output)
         .def("plot", &EquilibriumPath::plot)
         .def("plots", &EquilibriumPath::plots)
         .def("system", &EquilibriumPath::system, py::return_value_policy::reference_internal)
         .def("partition", &EquilibriumPath::partition, py::return_value_policy::reference_internal)
+
+        // DEPRECATED METHODS: TO BE REMOVED
+        .def("setPartition", &EquilibriumPath::setPartition)
         ;
 }
 
