@@ -9,7 +9,7 @@ from reaktoro import (
     ChemicalSystem,
     EquilibriumProblem,
     EquilibriumInverseProblem,
-    is_using_openlibm,
+    isUsingOpenlibm,
 )
 
 import thermofun.PyThermoFun as thermofun
@@ -289,7 +289,7 @@ def equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume():
 
 
 def _get_basename(request):
-    if is_using_openlibm():
+    if isUsingOpenlibm():
         import re
         return re.sub(r"[\W]", "_", request.node.name) + ".openlibm"
     return None  # use default

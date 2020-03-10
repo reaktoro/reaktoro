@@ -19,7 +19,7 @@
 
 namespace Reaktoro {
 
-bool is_using_openlibm() {
+bool isUsingOpenlibm() {
 #if defined(REAKTORO_USE_OPENLIBM) && REAKTORO_USE_OPENLIBM
     return true;
 #else    
@@ -27,9 +27,9 @@ bool is_using_openlibm() {
 #endif
 }
 
-void exportIsUsingOpenlibm(py::module& m)
+void exportOpenlibm(py::module& m)
 {
-    m.def("is_using_openlibm", &is_using_openlibm);
+    m.def("isUsingOpenlibm", &isUsingOpenlibm);
 }
 
 } // namespace Reaktoro
