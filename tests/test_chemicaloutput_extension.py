@@ -1,5 +1,3 @@
-import os
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -8,9 +6,8 @@ from reaktoro import EquilibriumProblem, equilibrate, KineticPath, ChemicalOutpu
 
 
 @pytest.fixture()
-def output_file_name():
-    path = os.path.dirname(__file__)
-    filename = f"{path}/data/results_chemicaloutput.txt"
+def output_file_name(tmp_path):
+    filename = f"{tmp_path}/data/results_chemicaloutput.txt"
     return filename
 
 
