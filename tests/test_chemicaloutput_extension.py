@@ -5,13 +5,13 @@ from reaktoro import ChemicalEditor, ChemicalSystem, ReactionSystem, Partition
 from reaktoro import EquilibriumProblem, equilibrate, KineticPath, ChemicalOutput
 
 
-@pytest.fixture()
+@pytest.fixture
 def output_file_name(tmp_path):
     filename = f"{tmp_path}/data/results_chemicaloutput.txt"
     return filename
 
 
-@pytest.fixture()
+@pytest.fixture
 def dict_with_properties_to_output():
     properties_and_components = {
         "time(units=minute)": "time(units=minute)",
@@ -24,7 +24,7 @@ def dict_with_properties_to_output():
     return properties_and_components
 
 
-@pytest.fixture()
+@pytest.fixture
 def brine_co2_path(output_file_name):
     editor = ChemicalEditor()
     editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3 MgCO3")
@@ -77,7 +77,7 @@ def brine_co2_path(output_file_name):
     return path
 
 
-@pytest.fixture()
+@pytest.fixture
 def output_from_path(
     brine_co2_path, output_file_name, dict_with_properties_to_output
 ):
