@@ -244,8 +244,7 @@ struct ReactiveTransportSolver::Impl
 
                 // Solve with a smart equilibrium solver
                 smart_equilibrium_solver.solve(field[icell], T, P, be.row(icell));
-                //smart_equilibrium_solver.solve(field[icell], T, P, b.row(icell));
-                smart_equilibrium_solver.solve(field[icell], T, P, b.row(icell), steps, icell);
+                //smart_equilibrium_solver.solve(field[icell], T, P, be.row(icell), steps, icell);
 
                 // Save the result of this cell's smart equilibrium calculation
                 result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver.result();

@@ -319,7 +319,15 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     output.add("speciesMolality(MgCl+)");
     output.add("speciesMolality(Mg(HCO3)+)");
     output.add("speciesMolality(OH-)");
-
+    output.add("elementmolality(C)");
+    output.add("elementmolality(Ca)");
+    output.add("elementmolality(Cl)");
+    output.add("elementmolality(H)");
+    output.add("elementmolality(Mg)");
+    output.add("elementmolality(Na)");
+    output.add("elementmolality(O)");
+    output.add("elementmolality(Si)");
+    output.add("elementmolality(Z)");
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create RTProfiler to track the timing and results of reactive transport
@@ -409,7 +417,7 @@ auto makeResultsFolder(const Params& params) -> std::string
                                  "-" + params.activity_model +
                                  "-smart";
 
-    std::string folder = "results-custering-primary-species-morning-version";
+    std::string folder = "results-custering-primary-species-paper";
     folder = (params.use_smart_eqilibirum_solver) ?
              folder + smart_test_tag :
              folder + test_tag;

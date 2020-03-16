@@ -535,7 +535,7 @@ struct SmartEquilibriumSolver::Impl
         result.timing.solve = toc(SOLVE_STEP);
 
         // Print
-        if(istep == 0 || istep == 9 || istep == 1199)
+        if(istep == 0 || istep == 19 || istep == 2399)
         {
             const auto Ae = partition.formulaMatrixEquilibriumPartition();
             const auto& ies = partition.indicesEquilibriumSpecies();
@@ -543,15 +543,36 @@ struct SmartEquilibriumSolver::Impl
             const auto& ne = n(ies);
 
             Vector res = abs(Ae*ne - be);
-            if(icell == 0) std::cout << "res = abs(Ae*ne - be) = [ " << res.squaredNorm();
-            else if (icell == 99) std::cout << " ]" << std::endl;
-            else std::cout << ", " << res.squaredNorm();
+            if(icell == 0) std::cout << "res on istep " << istep << "\n" << tr(res) << std::endl;
+            else std::cout << tr(res)  << std::endl;
         }
         return result;
     }
 
     auto outputClusterInfo() const -> void
     {
+        std::cout << "***********************************************************************************" << std::endl;
+        std::cout << "Clusters ordered by order of their creation" << std::endl;
+        std::cout << "***********************************************************************************" << std::endl;
+
+        Index i = 0;
+        for(auto cluster : database.clusters)
+        {
+            std::cout << "CLUSTER #" << i << std::endl;
+            std::cout << "  RANK OF CLUSTER: " << database.priority.priorities()[i] << std::endl;
+            std::cout << "  PRIMARY SPECIES: ";
+            for(auto j : database.clusters[i].iprimary)
+                std::cout << system.species(j).name() << " ";
+            std::cout << std::endl;
+            std::cout << "  NUMBER OF RECORDS: " << database.clusters[i].records.size() << std::endl;
+            std::cout << "  RANK OF RECORDS: ";
+            for(auto j : database.clusters[i].priority.order())
+                std::cout << database.clusters[i].priority.priorities()[j] << " ";
+            std::cout << std::endl;
+            std::cout << std::endl;
+            i++;
+        }
+        /*
         for(auto i : database.priority.order())
         {
             std::cout << "CLUSTER #" << i << std::endl;
@@ -572,6 +593,7 @@ struct SmartEquilibriumSolver::Impl
             std::cout << std::endl;
             std::cout << std::endl;
         }
+        */
     }
 };
 
