@@ -6,12 +6,6 @@ from reaktoro import EquilibriumProblem, equilibrate, KineticPath, ChemicalOutpu
 
 
 @pytest.fixture
-def output_file_name(tmp_path):
-    filename = f"{tmp_path}/data/results_chemicaloutput.txt"
-    return filename
-
-
-@pytest.fixture
 def dict_with_properties_to_output():
     properties_and_components = {
         "time(units=minute)": "time(units=minute)",
@@ -66,29 +60,32 @@ def brine_co2_path():
     problem.add("NaCl", 0.5, "mol")
     problem.add("CO2", 1, "mol")
 
-    state0 = equilibrate(problem)
+    state = equilibrate(problem)
 
-    state0.setSpeciesMass("Calcite", 100, "g")
-    state0.setSpeciesMass("Dolomite", 50, "g")
+    state.setSpeciesMass("Calcite", 100, "g")
+    state.setSpeciesMass("Dolomite", 50, "g")
 
     path = KineticPath(reactions)
     path.setPartition(partition)
 
-    return path
+    return path, state
 
 
 @pytest.fixture
 def output_from_path(
-    brine_co2_path, output_file_name, dict_with_properties_to_output
+    brine_co2_path, tmp_path, dict_with_properties_to_output
 ):
-    path = brine_co2_path
+    path, state = brine_co2_path
     output = path.output()
-    output.filename(output_file_name)
+    output.filename(str(tmp_path / "test_output_path.txt"))
     for property_name, unit in dict_with_properties_to_output.items():
         if property_name == "time(units=minute)" or property_name == "pH":
             output.add(property_name)
         else:
             output.add(unit, property_name)
+
+    t0, t1 = 0.0, 25.0
+    path.solve(state, t0, t1, "hours")
 
     return output
 
