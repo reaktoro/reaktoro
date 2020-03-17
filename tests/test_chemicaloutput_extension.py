@@ -25,7 +25,7 @@ def dict_with_properties_to_output():
 
 
 @pytest.fixture
-def brine_co2_path(output_file_name):
+def brine_co2_path():
     editor = ChemicalEditor()
     editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3 MgCO3")
     editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
