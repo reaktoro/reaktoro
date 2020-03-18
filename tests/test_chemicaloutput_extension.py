@@ -1,5 +1,5 @@
 import pathlib
-from typing import Tuple
+from typing import Tuple, Dict
 
 import numpy as np
 import pandas as pd
@@ -78,7 +78,7 @@ def brine_co2_path():
 def output_from_path(
     brine_co2_path: Tuple[KineticPath, ChemicalState],
     tmp_path: pathlib.Path,
-    dict_with_properties_to_output,
+    dict_with_properties_to_output: Dict,
 ):
     path, state = brine_co2_path
     output = path.output()
