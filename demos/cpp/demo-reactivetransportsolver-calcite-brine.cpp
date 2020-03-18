@@ -122,8 +122,8 @@ int main()
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
     //*/
-    // params.nsteps = 10000; // the number of steps in the reactive transport simulation
     params.nsteps = 10000; // the number of steps in the reactive transport simulation
+    //params.nsteps = 1000; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 30 * minute; // the time step (in units of s)
 
@@ -135,9 +135,9 @@ int main()
 
     // Define parameters of the equilibrium solvers
     params.smart_equlibrium_reltol = 0.001;
-    //params.activity_model = "hkf-full";
+    params.activity_model = "hkf-full";
     //params.activity_model = "hkf-selected-species";
-    params.activity_model = "pitzer-full";
+    //params.activity_model = "pitzer-full";
     //params.activity_model = "pitzer-selected-species";
     //params.activity_model = "dk-full";
     //params.activity_model = "dk-selected-species";
@@ -244,6 +244,9 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     ChemicalSystem system(editor);
     //if (params.use_smart_eqilibirum_solver) std::cout << "system = \n" << system << std:: endl;
 
+    Partition partition(system);
+    partition.setInertSpecies({"Quartz"});
+
     // Step **: Define the initial condition (IC) of the reactive transport modeling problem
     EquilibriumProblem problem_ic(system);
     problem_ic.setTemperature(params.T, "celsius");
@@ -266,12 +269,17 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     problem_bc.add("CaCl2", 0.01, "mol");
     problem_bc.add("CO2",   0.75, "mol");
 
-    Partition partition(system);
-    partition.setInertSpecies({"Quartz"});
-
     // Step **: Calculate the equilibrium states for the IC and BC
     ChemicalState state_ic = equilibrate(problem_ic);
     ChemicalState state_bc = equilibrate(problem_bc);
+
+    Vector b_ic = state_ic.elementAmounts();
+    Vector b_bc = state_bc.elementAmounts();
+    //std::cout << "be_bc      = " << tr(b_bc) << std::endl;
+    //std::cout << "be_ic      = " << tr(b_ic) << std::endl;
+    //std::cout << "n_ic_system      = " << tr(state_ic.speciesAmounts()) << std::endl;
+    //std::cout << "state_ic_system = " << state_ic << std::endl;
+    //getchar();
 
     // Step **: Scale the boundary condition state
     state_bc.scaleVolume(1.0, "m3");

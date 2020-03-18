@@ -551,9 +551,9 @@ struct SmartEquilibriumSolver::Impl
 
     auto outputClusterInfo() const -> void
     {
-        std::cout << "***********************************************************************************" << std::endl;
-        std::cout << "Clusters ordered by order of their creation" << std::endl;
-        std::cout << "***********************************************************************************" << std::endl;
+        //std::cout << "***********************************************************************************" << std::endl;
+        //std::cout << "Clusters ordered by order of their creation" << std::endl;
+        //std::cout << "***********************************************************************************" << std::endl;
 
         Index i = 0;
         for(auto cluster : database.clusters)
