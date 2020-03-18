@@ -1,8 +1,11 @@
+import pathlib
+from typing import Tuple
+
 import numpy as np
 import pandas as pd
 import pytest
-from reaktoro import ChemicalEditor, ChemicalSystem, ReactionSystem, Partition
-from reaktoro import EquilibriumProblem, equilibrate, KineticPath, ChemicalOutput
+from reaktoro import ChemicalEditor, ChemicalSystem, ReactionSystem, Partition, ChemicalState
+from reaktoro import EquilibriumProblem, equilibrate, KineticPath
 
 
 @pytest.fixture
@@ -73,7 +76,9 @@ def brine_co2_path():
 
 @pytest.fixture
 def output_from_path(
-    brine_co2_path, tmp_path, dict_with_properties_to_output
+    brine_co2_path: Tuple[KineticPath, ChemicalState],
+    tmp_path: pathlib.Path,
+    dict_with_properties_to_output,
 ):
     path, state = brine_co2_path
     output = path.output()
