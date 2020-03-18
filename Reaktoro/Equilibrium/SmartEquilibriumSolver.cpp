@@ -91,7 +91,7 @@ struct SmartEquilibriumSolver::Impl
     Vector ne;
 
     /// The amounts of the elements in the equilibrium partition
-    Vector be_aux;
+    Vector be;
 
     /// The storage for matrix du/db = du/dn * dn/db
     Matrix dudb;
@@ -426,9 +426,10 @@ struct SmartEquilibriumSolver::Impl
                     const auto& dnedbe0 = dndb0(ies, iee);
                     const auto& ne0 = n0(ies);
 
-                    const auto Ae = partition.formulaMatrixEquilibriumPartition();
-
                     ne.noalias() = ne0 + dnedbe0 * (be - be0);
+
+                    /*
+                    const auto Ae = partition.formulaMatrixEquilibriumPartition();
 
                     Vector res = abs(Ae*ne - be);
 
@@ -480,7 +481,7 @@ struct SmartEquilibriumSolver::Impl
 
                         std::cout << std::endl;
                     }
-
+                    */
                     n(ies) = ne;
 
                     const double ne_min = min(ne);
@@ -538,8 +539,8 @@ struct SmartEquilibriumSolver::Impl
         const auto& ies = partition.indicesEquilibriumSpecies();
         const auto T = state.temperature();
         const auto P = state.pressure();
-        be_aux = state.elementAmountsInSpecies(ies)(iee);
-        return solve(state, T, P, be_aux);
+        be = state.elementAmountsInSpecies(ies)(iee);
+        return solve(state, T, P, be);
     }
 
     /// Solve the equilibrium problem with given problem definition
@@ -548,8 +549,8 @@ struct SmartEquilibriumSolver::Impl
         const auto T = problem.temperature();
         const auto P = problem.pressure();
         const auto& iee = partition.indicesEquilibriumElements();
-        be_aux = problem.elementAmounts()(iee);
-        return solve(state, T, P, be_aux);
+        be = problem.elementAmounts()(iee);
+        return solve(state, T, P, be);
     }
 
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
