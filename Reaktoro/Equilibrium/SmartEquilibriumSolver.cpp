@@ -326,7 +326,6 @@ struct SmartEquilibriumSolver::Impl
 
         // Auxiliary relative and absolute tolerance parameters
         const auto reltol = options.reltol;
-        const auto abstol = options.abstol;
 
         // The threshold used to determine elements with insignificant amounts
         const auto eps_b = options.amount_fraction_cutoff * sum(be);
