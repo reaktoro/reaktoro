@@ -62,10 +62,20 @@ void to_json(json& j, const ReactiveTransportAnalysis& obj) {
     j["computing_costs_per_time_step"]["equilibrium"] = obj.computing_costs_per_time_step.equilibrium;
     j["computing_costs_per_time_step"]["smart_equilibrium"] = obj.computing_costs_per_time_step.smart_equilibrium;
     j["computing_costs_per_time_step"]["smart_equilibrium_with_ideal_search"] = obj.computing_costs_per_time_step.smart_equilibrium_with_ideal_search;
+
     j["computing_costs_per_time_step"]["smart_equilibrium_estimate"] = obj.computing_costs_per_time_step.smart_equilibrium_estimate;
-    j["computing_costs_per_time_step"]["smart_equilibrium_nearest_neighbor_search"] = obj.computing_costs_per_time_step.smart_equilibrium_nearest_neighbor_search;
+    j["computing_costs_per_time_step"]["smart_equilibrium_search"] = obj.computing_costs_per_time_step.smart_equilibrium_search;
+    j["computing_costs_per_time_step"]["smart_equilibrium_error_control"] = obj.computing_costs_per_time_step.smart_equilibrium_error_control;
+    j["computing_costs_per_time_step"]["smart_equilibrium_taylor"] = obj.computing_costs_per_time_step.smart_equilibrium_taylor;
+    j["computing_costs_per_time_step"]["smart_equilibrium_database_priority_update"] = obj.computing_costs_per_time_step.smart_equilibrium_database_priority_update;
+
+    j["computing_costs_per_time_step"]["smart_equilibrium_learn"] = obj.computing_costs_per_time_step.smart_equilibrium_learn;
     j["computing_costs_per_time_step"]["smart_equilibrium_gibbs_energy_minimization"] = obj.computing_costs_per_time_step.smart_equilibrium_gibbs_energy_minimization;
+    j["computing_costs_per_time_step"]["smart_equilibrium_chemical_properties"] = obj.computing_costs_per_time_step.smart_equilibrium_chemical_properties;
+    j["computing_costs_per_time_step"]["smart_equilibrium_sensitivity_matrix"] = obj.computing_costs_per_time_step.smart_equilibrium_sensitivity_matrix;
+    j["computing_costs_per_time_step"]["smart_equilibrium_error_control_matrices"] = obj.computing_costs_per_time_step.smart_equilibrium_error_control_matrices;
     j["computing_costs_per_time_step"]["smart_equilibrium_storage"] = obj.computing_costs_per_time_step.smart_equilibrium_storage;
+
 }
 
 void from_json(const json& j, ReactiveTransportAnalysis& obj) {
@@ -84,9 +94,18 @@ void from_json(const json& j, ReactiveTransportAnalysis& obj) {
     j.at("computing_costs_per_time_step").at("equilibrium").get_to(obj.computing_costs_per_time_step.equilibrium);
     j.at("computing_costs_per_time_step").at("smart_equilibrium").get_to(obj.computing_costs_per_time_step.smart_equilibrium);
     j.at("computing_costs_per_time_step").at("smart_equilibrium_with_ideal_search").get_to(obj.computing_costs_per_time_step.smart_equilibrium_with_ideal_search);
+
     j.at("computing_costs_per_time_step").at("smart_equilibrium_estimate").get_to(obj.computing_costs_per_time_step.smart_equilibrium_estimate);
-    j.at("computing_costs_per_time_step").at("smart_equilibrium_nearest_neighbor_search").get_to(obj.computing_costs_per_time_step.smart_equilibrium_nearest_neighbor_search);
+    j.at("computing_costs_per_time_step").at("smart_equilibrium_search").get_to(obj.computing_costs_per_time_step.smart_equilibrium_search);
+    j.at("computing_costs_per_time_step").at("smart_equilibrium_error_control").get_to(obj.computing_costs_per_time_step.smart_equilibrium_error_control);
+    j.at("computing_costs_per_time_step").at("smart_equilibrium_error_taylor").get_to(obj.computing_costs_per_time_step.smart_equilibrium_taylor);
+    j.at("computing_costs_per_time_step").at("smart_equilibrium_error_database_priority_update").get_to(obj.computing_costs_per_time_step.smart_equilibrium_database_priority_update);
+
+    j.at("computing_costs_per_time_step").at("smart_equilibrium_learn").get_to(obj.computing_costs_per_time_step.smart_equilibrium_learn);
     j.at("computing_costs_per_time_step").at("smart_equilibrium_gibbs_energy_minimization").get_to(obj.computing_costs_per_time_step.smart_equilibrium_gibbs_energy_minimization);
+    j.at("computing_costs_per_time_step").at("smart_equilibrium_chemical_properties").get_to(obj.computing_costs_per_time_step.smart_equilibrium_chemical_properties);
+    j.at("computing_costs_per_time_step").at("smart_equilibrium_sensitivity_matrix").get_to(obj.computing_costs_per_time_step.smart_equilibrium_sensitivity_matrix);
+    j.at("computing_costs_per_time_step").at("smart_equilibrium_error_control_matrices").get_to(obj.computing_costs_per_time_step.smart_equilibrium_error_control_matrices);
     j.at("computing_costs_per_time_step").at("smart_equilibrium_storage").get_to(obj.computing_costs_per_time_step.smart_equilibrium_storage);
 }
 

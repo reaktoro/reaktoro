@@ -43,7 +43,7 @@ void exportReactiveTransportAnalysis(py::module& m)
         .def_readwrite("smart_equilibrium", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium)
         .def_readwrite("smart_equilibrium_with_ideal_search", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_with_ideal_search)
         .def_readwrite("smart_equilibrium_estimate", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_estimate)
-        .def_readwrite("smart_equilibrium_nearest_neighbor_search", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_nearest_neighbor_search)
+        .def_readwrite("smart_equilibrium_search", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_search)
         .def_readwrite("smart_equilibrium_gibbs_energy_minimization", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_gibbs_energy_minimization)
         .def_readwrite("smart_equilibrium_storage", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_storage)
         ;

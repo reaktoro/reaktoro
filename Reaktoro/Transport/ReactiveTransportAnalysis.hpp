@@ -77,22 +77,40 @@ struct ReactiveTransportAnalysis
         /// The time spent (in s) in each time step for smart chemical equilibrium calculations.
         std::vector<double> smart_equilibrium;
 
-        /// The time spent (in s) in each time step for smart chemical equilibrium calculations without the computing costs of nearest neighbor search operations.
+        /// The time spent (in s) in each time step for smart chemical equilibrium calculations without the computing costs of search operations.
         std::vector<double> smart_equilibrium_with_ideal_search;
 
         /// The time spent (in s) in each time step for smart chemical equilibrium estimation calculations.
         std::vector<double> smart_equilibrium_estimate;
 
-        /// The time spent (in s) in each time step for nearest neighbor search operations during smart chemical equilibrium calculations.
-        std::vector<double> smart_equilibrium_nearest_neighbor_search;
+        /// The time spent (in s) in each time step for search operations during smart equilibrium estimation operations.
+        std::vector<double> smart_equilibrium_search;
 
-        /// The time spent (in s) in each time step for smart chemical equilibrium estimation calculations.
+        /// The time spent (in s) in each time step for error control operations during smart equilibrium estimation operations.
+        std::vector<double> smart_equilibrium_error_control;
+
+        // The time spent (in s) in each time step for Taylor extrapolation during smart equilibrium estimation operations.
+        std::vector<double> smart_equilibrium_taylor;
+
+        /// The time spent (in s) in each time step for updating the priority related info during smart equilibrium estimation operations.
         std::vector<double> smart_equilibrium_database_priority_update;
+
+        /// The time spent (in s) in each time step for smart equilibrium learning calculations.
+        std::vector<double> smart_equilibrium_learn;
 
         /// The time spent (in s) in each time step for Gibbs energy minimization calculations during smart equilibrium learning operations.
         std::vector<double> smart_equilibrium_gibbs_energy_minimization;
 
-        /// The time spent (in s) in each time step for storing a new learned chemical state in smart chemical equilibrium calculations.
+        /// The time spent (in s) in each time step for computing the chemical properties during smart equilibrium learning operation.
+        std::vector<double> smart_equilibrium_chemical_properties;
+
+        /// The time spent (in s) in each time step  for computing the sensitivity matrix during smart equilibrium learning operation.
+        std::vector<double> smart_equilibrium_sensitivity_matrix;
+
+        /// The time spent (in s) in each time step for computing the error control matrices during smart equilibrium learning operation.
+        std::vector<double> smart_equilibrium_error_control_matrices;
+
+        /// The time spent (in s) in each time step for storing a new learned chemical state during smart equilibrium learning operation.
         std::vector<double> smart_equilibrium_storage;
     };
 
