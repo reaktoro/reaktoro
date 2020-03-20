@@ -18,12 +18,10 @@
 // C++ includes
 #include <algorithm>
 #include <deque>
-#include <functional>
 #include <numeric>
 #include <tuple>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -102,7 +100,7 @@ struct SmartEquilibriumSolver::Impl
     /// The storage for matrix Mbe = inv(u(iprimary)) * du(iprimary)/db.
     Matrix Mbe;
 
-    /// The record of the knowledge database containing input, output and derivatives data.
+    /// The record of the knowledge database containing input, output, and derivatives data.
     struct Record
     {
         /// The temperature of the equilibrium state (in units of K).
@@ -247,13 +245,14 @@ struct SmartEquilibriumSolver::Impl
         for(auto i = 0; i < ips.size(); ++i)  // TODO: type Indices should be alias to VectorXi, to avoid such kind of codes
             ips[i] = ies[iorder[i]];
 
-        // The number of primary species among the equilibrium species
+        // The number of primary species among the equilibrium species (Np <= Ne)
         const auto& Np = canonicalizer.numBasicVariables();
 
         // Store the indices of primary and secondary species in state
         state.equilibrium().setIndicesEquilibriumSpecies(ips, Np);
 
         // The indices of the primary species at the calculated equilibrium state
+        // TODO: is this operation needed? Can't we access primary indices as const auto& iprimary = ips.head(Np);
         const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
 
         // The chemical potentials at the calculated equilibrium state
@@ -289,7 +288,7 @@ struct SmartEquilibriumSolver::Impl
         auto iter = std::find_if(database.clusters.begin(), database.clusters.end(),
             [&](const Cluster& cluster) { return cluster.label == label; });
 
-        // If cluster found, store the new record in it, otherwise, create a new cluster
+        // If cluster is found, store the new record in it, otherwise, create a new cluster
         if(iter < database.clusters.end())
         {
             auto& cluster = *iter;
@@ -380,11 +379,12 @@ struct SmartEquilibriumSolver::Impl
             if(iprimary.size() == 0)
                 return database.clusters.size();
 
-            // Find the index of the cluster with same set of primary species (search those with highest count first)
+            // Find the index of the cluster with the same set of primary species (search those with highest count first)
             for(auto icluster : database.priority.order())
                 if(database.clusters[icluster].label == label)
                     return icluster;
 
+            // In no cluster with the same set of primary species if found, then return number of clusters
             return database.clusters.size();
         };
 
@@ -399,13 +399,14 @@ struct SmartEquilibriumSolver::Impl
         //---------------------------------------------------------------------
         tic(SEARCH_STEP);
 
-        // Iterate over all clusters starting with icluster
+        // Iterate over all clusters (starting with icluster)
         for(auto jcluster : clusters_ordering)
         {
+            // Fetch records from the cluster and the order they have to be processed in
             const auto& records = database.clusters[jcluster].records;
             const auto& records_ordering = database.clusters[jcluster].priority.order();
 
-            // Iterate over all records in current cluster
+            // Iterate over all records in current cluster (using the  order based on the priorities)
             for(auto irecord : records_ordering)
             {
                 const auto& record = records[irecord];
@@ -415,6 +416,7 @@ struct SmartEquilibriumSolver::Impl
                 //---------------------------------------------------------------------
                 tic(ERROR_CONTROL_STEP);
 
+                // Check if the current record passes the error test
                 const auto [success, error, iprimaryspecies] = pass_error_test(record);
 
                 result.timing.estimate_error_control += toc(ERROR_CONTROL_STEP);
@@ -438,22 +440,25 @@ struct SmartEquilibriumSolver::Impl
                     const auto& dnedbe0 = dndb0(ies, iee);
                     const auto& ne0 = n0(ies);
 
+                    // Perform Taylor extrapolation
                     ne.noalias() = ne0 + dnedbe0 * (be - be0);
 
-                    n(ies) = ne;
-
+                    // Check if all projected species amounts are positive
                     const double ne_min = min(ne);
                     const double ne_sum = sum(ne);
-
                     const auto eps_n = options.amount_fraction_cutoff * ne_sum;
-
-                    // Check if all projected species amounts are positive
                     if(ne_min <= -eps_n)
                         continue;
 
                     result.timing.estimate_search = toc(SEARCH_STEP);
 
-                    // Set the chemical state result with estimated amounts
+                    // After the search is finished successfully
+                    //---------------------------------------------------------------------
+
+                    // Update the amounts of elements for the equilibrium species
+                    n(ies) = ne;
+
+                    // Update the chemical state result with estimated amounts
                     state = record.state; // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transfered from reference state to new state
                     state.setSpeciesAmounts(n);
 
@@ -479,6 +484,7 @@ struct SmartEquilibriumSolver::Impl
                     result.timing.estimate_database_priority_update = toc(PRIORITY_UPDATE_STEP);
 
                     result.estimate.accepted = true;
+
                     return;
                 }
             }
@@ -520,8 +526,7 @@ struct SmartEquilibriumSolver::Impl
         result = {};
 
         // Perform a smart estimate of the chemical state
-        timeit( estimate(state, T, P, be),
-            result.timing.estimate= );
+        timeit( estimate(state, T, P, be), result.timing.estimate= );
 
         // Perform a learning step if the smart prediction is not sactisfatory
         if(!result.estimate.accepted)
