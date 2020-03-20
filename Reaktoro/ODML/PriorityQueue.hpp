@@ -51,8 +51,8 @@ public:
     auto reset() -> void;
 
     /// Increment the priority of a tracked entity.
-    /// @param ientity The index of the tracked entity.
-    auto increment(Index ientity) -> void;
+    /// @param identity The index of the tracked entity.
+    auto increment(Index identity) -> void;
 
     /// Extend the queue with the introduction of a new tracked entity.
     auto extend() -> void;

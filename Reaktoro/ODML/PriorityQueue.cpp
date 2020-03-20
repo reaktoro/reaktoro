@@ -56,7 +56,6 @@ auto PriorityQueue::withInitialOrder(const std::deque<Index>& order) -> Priority
 auto PriorityQueue::withInitialPrioritiesAndOrder(const std::deque<Index>& priorities, const std::deque<Index>& order) -> PriorityQueue
 {
     assert(priorities.size() == order.size());
-    const auto size = priorities.size();
     PriorityQueue queue;
     queue._priorities = priorities;
     queue._order = order;
@@ -76,15 +75,22 @@ auto PriorityQueue::reset() -> void
     std::iota(_order.begin(), _order.end(), 0);
 }
 
-auto PriorityQueue::increment(Index ientity) -> void
+auto PriorityQueue::increment(Index identity) -> void
 {
     // == EXAMPLE OF WHAT HAPPENS IN THIS METHOD ==
     // PRIORITIES BEFORE INCREMENTING: 13  5  3  2  2 (2) 1  --- incrementing from 2 to 3
-    //  PRIORITIES AFTER INCREMENTING: 13  5  3 [2] 2 (3) 1  --- (3) needs to be swaped with [2]
+    //  PRIORITIES AFTER INCREMENTING: 13  5  3 [2] 2 (3) 1  --- (3) needs to be swapped with [2]
     //       PRIORITIES AFTER SORTING: 13  5  3 (3) 2 [2] 1
-    _priorities[ientity] += 1;
-    std::sort(_order.begin(), _order.begin() + ientity + 1,
-        [&](Index l, Index r) { return _priorities[l] > _priorities[r]; });
+    _priorities[identity] += 1;
+
+    // Avoid sorting if the identity == 0 (the priority of the very first element is increased)
+    // or if the increase of priority does not ruin the order in _priorities
+    if(!((identity == 0) || (_priorities[identity - 1] >= _priorities[identity]))){
+        std::sort(_order.begin(), _order.begin() + identity + 1,
+                  [&](Index l, Index r) { return _priorities[l] > _priorities[r]; });
+    }
+    //std::sort(_order.begin(), _order.begin() + identity + 1,
+    //    [&](Index l, Index r) { return _priorities[l] > _priorities[r]; });
 }
 
 auto PriorityQueue::extend() -> void
