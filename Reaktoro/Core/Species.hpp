@@ -18,14 +18,10 @@
 #pragma once
 
 // C++ includes
+#include <any>
 #include <map>
 #include <memory>
 #include <string>
-#include <vector>
-
-// Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
 
 namespace Reaktoro {
 
@@ -53,6 +49,12 @@ public:
     /// Set the elements of the species.
     auto setElements(const std::map<Element, double>& elements) -> void;
 
+    /// Set the tag of the species such as aqueous, gaseous, solid, etc..
+    auto setTag(std::string tag) -> void;
+
+    /// Set the specific data the species may have such as thermodynamic data.
+    auto setData(const std::any& data) -> void;
+
     /// Return the number of elements of the species.
     auto numElements() const -> unsigned;
 
@@ -65,6 +67,9 @@ public:
     /// Return the elements that compose the species and their coefficients.
     auto elements() const -> const std::map<Element, double>&;
 
+    /// Return the tag of the species.
+    auto tag() const -> std::string;
+
     /// Return the molar mass of the species (in units of kg/mol).
     auto molarMass() const -> double;
 
@@ -73,6 +78,9 @@ public:
 
     /// Return the stoichiometry of an element in the species.
     auto elementCoefficient(std::string element) const -> double;
+
+    /// Return the specific data the species may have such as thermodynamic data.
+    auto data() const -> const std::any&;
 
 private:
     struct Impl;
