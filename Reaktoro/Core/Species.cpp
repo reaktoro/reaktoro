@@ -61,6 +61,12 @@ struct Species::Impl
     /// The elements that compose the chemical species and their coefficients
     std::map<Element, double> elements;
 
+    /// The tag of the chemical species
+    std::string tag;
+
+    /// The specific data the chemical species may have such as thermodynamic data.
+    std::any data;
+
     /// The molar mass of the chemical species (in units of kg/mol)
     double molar_mass;
 
@@ -89,6 +95,16 @@ auto Species::setElements(const std::map<Element, double>& elements) -> void
     pimpl->charge = chargeFromElements(elements);
 }
 
+auto Species::setTag(std::string tag) -> void
+{
+    pimpl->tag = tag;
+}
+
+auto Species::setData(const std::any& data) -> void
+{
+    pimpl->data = data;
+}
+
 auto Species::numElements() const -> unsigned
 {
     return elements().size();
@@ -109,6 +125,11 @@ auto Species::elements() const -> const std::map<Element, double>&
     return pimpl->elements;
 }
 
+auto Species::tag() const -> std::string
+{
+    return pimpl->tag;
+}
+
 auto Species::molarMass() const -> double
 {
     return pimpl->molar_mass;
@@ -125,6 +146,11 @@ auto Species::elementCoefficient(std::string element) const -> double
         if(element == pair.first.name())
             return pair.second;
     return 0.0;
+}
+
+auto Species::data() const -> const std::any&
+{
+    return pimpl->data;
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool
