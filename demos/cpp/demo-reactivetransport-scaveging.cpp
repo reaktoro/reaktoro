@@ -127,7 +127,7 @@ int main()
     params.P = 1.01325;                      // the pressure (in units of bar)
 
     // Define parameters of the equilibrium solvers
-    params.smart_equlibrium_reltol = 0.01;
+    params.smart_equlibrium_reltol = 0.001;
     //params.activity_model = "hkf";
     params.activity_model = "pitzer";
     //params.activity_model = "dk";
@@ -143,7 +143,7 @@ int main()
 
     // Execute reactive transport with different solvers
     params.use_smart_eqilibirum_solver = true; runReactiveTransport(params, results);
-    params.use_smart_eqilibirum_solver = false; runReactiveTransport(params, results);
+    //params.use_smart_eqilibirum_solver = false; runReactiveTransport(params, results);
 
     results.conventional_total = results.equilibrium_timing.solve;
     results.smart_total = results.smart_equilibrium_timing.solve;
@@ -202,18 +202,12 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     if(params.activity_model == "hkf"){
         // HKF full system
-        editor.addAqueousPhase({"H2O(l)",  "H+", "OH-",
-                                "HCO3-", "Mg(HCO3)+", "Ca(HCO3)+", "MgCO3(aq)",  "CO3--", "CaCO3(aq)" ,
-                                "Ca++", "CaSO4(aq)", "CaOH+",
-                                "Cl-", "FeCl++", "FeCl2(aq)", "FeCl+",
-                                "Fe++", "FeOH+",  "FeOH++", "Fe+++",
-                                "H2(aq)",
-                                "K+", "KSO4-",
-                                "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+",
-                                "Na+", "NaSO4-",
-                                "O2(aq)",
-                                "H2S(aq)", "HS-", "S5--", "S4--", "S3--", "S2--",
-                                "SO4--", "NaSO4-", "MgSO4(aq)", "CaSO4(aq)", "KSO4-", "HSO4-"});
+        editor.addAqueousPhase({"H2O(l)",  "H+", "OH-", "HCO3-", "Mg(HCO3)+", "Ca(HCO3)+", "MgCO3(aq)",
+                                "CO3--", "CaCO3(aq)", "Ca++", "CaSO4(aq)", "CaOH+", "Cl-", "FeCl++",
+                                "FeCl2(aq)", "FeCl+", "Fe++", "FeOH+",  "FeOH++", "Fe+++", "H2(aq)", "K+",
+                                "KSO4-", "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+", "Na+", "NaSO4-",
+                                "O2(aq)", "H2S(aq)", "HS-", "S5--", "S4--", "S3--", "S2--", "SO4--",
+                                "NaSO4-", "MgSO4(aq)", "CaSO4(aq)", "KSO4-", "HSO4-"});
     }
     else if(params.activity_model == "pitzer"){
         // Pitzer full system
@@ -339,6 +333,8 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     output.add("speciesMolality(H2S(aq))");
     output.add("phaseAmount(Pyrrhotite)");
     output.add("phaseAmount(Siderite)");
+    output.add("phaseVolume(Pyrrhotite)");
+    output.add("phaseVolume(Siderite)");
     output.add("elementmolality(C)");
     output.add("elementmolality(Ca)");
     output.add("elementmolality(Cl)");
