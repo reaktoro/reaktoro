@@ -45,8 +45,6 @@ void exportSmartEquilibriumSolver(py::module& m)
         .def("properties", &SmartEquilibriumSolver::properties, py::return_value_policy::reference_internal)
         .def("result", &SmartEquilibriumSolver::result, py::return_value_policy::reference_internal)
 
-        // DEPRECATED METHODS: TO BE REMOVED
-        .def("setPartition", &SmartEquilibriumSolver::setPartition)
         ;
 }
 
