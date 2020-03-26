@@ -44,6 +44,7 @@ void exportSmartEquilibriumSolver(py::module& m)
         .def("solve", solve2)
         .def("properties", &SmartEquilibriumSolver::properties, py::return_value_policy::reference_internal)
         .def("result", &SmartEquilibriumSolver::result, py::return_value_policy::reference_internal)
+        .def("outputClusterInfo", &SmartEquilibriumSolver::outputClusterInfo)
 
         ;
 }
