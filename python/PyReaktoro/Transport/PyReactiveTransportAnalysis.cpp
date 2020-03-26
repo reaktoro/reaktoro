@@ -24,6 +24,14 @@ namespace Reaktoro {
 
 void exportReactiveTransportAnalysis(py::module& m)
 {
+    py::class_<ReactiveTransportAnalysis>(m, "ReactiveTransportAnalysis")
+            .def(py::init<>())
+            .def_readwrite("transport", &ReactiveTransportAnalysis::transport)
+            .def_readwrite("equilibrium", &ReactiveTransportAnalysis::equilibrium)
+            .def_readwrite("smart_equilibrium", &ReactiveTransportAnalysis::smart_equilibrium)
+            .def_readwrite("computing_costs_per_time_step", &ReactiveTransportAnalysis::computing_costs_per_time_step)
+            ;
+
     py::class_<ReactiveTransportAnalysis::TransportAnalysis>(m, "ReactiveTransportAnalysis_TransportAnalysis")
         .def_readwrite("timing", &ReactiveTransportAnalysis::TransportAnalysis::timing)
         ;
