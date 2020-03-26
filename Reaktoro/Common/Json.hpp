@@ -42,6 +42,7 @@ public:
     auto operator<<(const T& val) -> JsonOutput&
     {
         file << json(val);
+        file.close();
     }
 
 private:
