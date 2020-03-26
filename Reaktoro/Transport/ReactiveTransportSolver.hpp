@@ -95,6 +95,9 @@ public:
     /// Return the last time step length used.
     auto timeStep() const -> double;
 
+    /// Output clusters created by the ODML method
+    auto outputClusterInfo() const -> void;
+
 private:
     struct Impl;
 

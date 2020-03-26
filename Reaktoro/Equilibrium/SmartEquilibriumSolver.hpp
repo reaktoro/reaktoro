@@ -77,6 +77,9 @@ public:
     /// Return the result of the last smart equilibrium calculation.
     auto result() const -> const SmartEquilibriumResult&;
 
+    /// Output clusters created during the ODML algorithm
+    auto outputClusterInfo() const -> void;
+
 private:
     struct Impl;
 
