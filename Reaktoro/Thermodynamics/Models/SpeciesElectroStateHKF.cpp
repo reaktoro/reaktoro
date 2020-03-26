@@ -21,7 +21,7 @@
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroState.hpp>
-#include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 
@@ -123,18 +123,15 @@ auto functionG(Temperature T, Pressure P, const WaterThermoState& wts) -> Functi
     return funcG;
 }
 
-auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectroState
+auto speciesElectroStateHKF(const FunctionG& g, const ParamsAqueousSoluteHKF& params) -> SpeciesElectroState
 {
-    // Get the HKF thermodynamic parameters of the aqueous species
-    const auto& hkf = *species.thermoData().hkf;
-
     // The species electro instance to be calculated
     SpeciesElectroState se;
 
     // Check if the aqueous species is neutral or H+, and set its electrostatic data accordingly
-    if(species.charge() == 0.0 || isAlternativeChargedSpeciesName(species.name(), "H+"))
+    if(params.charge == 0.0 || isAlternativeChargedSpeciesName(params.name, "H+"))
     {
-        se.w   = hkf.wref;
+        se.w   = params.wref;
         se.wT  = 0.0;
         se.wP  = 0.0;
         se.wTT = 0.0;
@@ -143,8 +140,8 @@ auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -
     }
     else
     {
-        const auto z = species.charge();
-        const auto wref = hkf.wref;
+        const auto z = params.charge;
+        const auto wref = params.wref;
 
         const auto reref = z*z/(wref/eta + z/3.082);
         const auto re    = reref + std::abs(z) * g.g;
@@ -165,13 +162,13 @@ auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -
     return se;
 }
 
-auto speciesElectroStateHKF(Temperature T, Pressure P, const AqueousSpecies& species) -> SpeciesElectroState
+auto speciesElectroStateHKF(Temperature T, Pressure P, const ParamsAqueousSoluteHKF& params) -> SpeciesElectroState
 {
     WaterThermoState wt = waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
 
     FunctionG g = functionG(T, P, wt);
 
-    return speciesElectroStateHKF(g, species);
+    return speciesElectroStateHKF(g, params);
 }
 
 } // namespace Reaktoro

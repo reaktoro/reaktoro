@@ -23,7 +23,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class AqueousSpecies;
+struct ParamsAqueousSoluteHKF;
 struct SpeciesElectroState;
 struct WaterThermoState;
 
@@ -53,9 +53,9 @@ struct FunctionG
 auto functionG(Temperature T, Pressure P, const WaterThermoState& wts) -> FunctionG;
 
 /// Calculate the electrostatic state of the aqueous species using the g-function state.
-auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectroState;
+auto speciesElectroStateHKF(const FunctionG& g, const ParamsAqueousSoluteHKF& params) -> SpeciesElectroState;
 
 /// Calculate the electrostatic state of the aqueous species using the HKF model.
-auto speciesElectroStateHKF(Temperature T, Pressure P, const AqueousSpecies& species) -> SpeciesElectroState;
+auto speciesElectroStateHKF(Temperature T, Pressure P, const ParamsAqueousSoluteHKF& params) -> SpeciesElectroState;
 
 } // namespace Reaktoro

@@ -50,12 +50,6 @@ public:
     /// @param species The species object.
     auto standardThermoProps(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps;
 
-    /// Return the standard thermodynamic properties of multiple species at given temperature and pressure.
-    /// @param T The temperature for the calculation (in unit of K)
-    /// @param P The pressure for the calculation (in unit of Pa)
-    /// @param species The species object.
-    auto standardThermoProps(Temperature T, Pressure P, const std::vector<Species>& species) const -> std::vector<StandardThermoProps>;
-
 private:
     struct Impl;
 

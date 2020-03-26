@@ -29,6 +29,7 @@
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Databases/EmbeddedDatabases.hpp>
+#include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
 
 // miniz includes
 #include <miniz/zip_file.hpp>
@@ -94,9 +95,11 @@ auto parseElement(const xml_node& node) -> Element
     return element;
 }
 
-auto parseParamsAqueousSoluteHKF(const xml_node& node) -> SupcrtParamsAqueousSoluteHKF
+auto parseParamsAqueousSoluteHKF(const xml_node& node) -> ParamsAqueousSoluteHKF
 {
-    SupcrtParamsAqueousSoluteHKF data;
+    ParamsAqueousSoluteHKF data;
+
+    data.name = as_text(node, "Name");
 
     data.charge = as_double(node, "Charge");
     data.dissociation = parseDissociation(as_text(node, "Dissociation"));
@@ -117,9 +120,11 @@ auto parseParamsAqueousSoluteHKF(const xml_node& node) -> SupcrtParamsAqueousSol
     return data;
 }
 
-auto parseParamsMaierKelly(const xml_node& node) -> SupcrtParamsMaierKelly
+auto parseParamsMaierKelly(const xml_node& node) -> ParamsMaierKelly
 {
-    SupcrtParamsMaierKelly data;
+    ParamsMaierKelly data;
+
+    data.name = as_text(node, "Name");
 
     data.Tcr = as_double(node, "CriticalTemperature");
     data.Pcr = as_double(node, "CriticalPressure") * barToPascal; // convert from bar to Pa
@@ -138,9 +143,11 @@ auto parseParamsMaierKelly(const xml_node& node) -> SupcrtParamsMaierKelly
     return data;
 }
 
-auto parseParamsMaierKellyHKF(const xml_node& node) -> SupcrtParamsMaierKellyHKF
+auto parseParamsMaierKellyHKF(const xml_node& node) -> ParamsMaierKellyHKF
 {
-    SupcrtParamsMaierKellyHKF data;
+    ParamsMaierKellyHKF data;
+
+    data.name = as_text(node, "Name");
 
     const auto hkf = node.child("Thermo").child("HKF");
 
