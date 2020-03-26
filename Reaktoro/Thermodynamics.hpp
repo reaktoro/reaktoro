@@ -23,7 +23,6 @@
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelRumpfCO2.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelSetschenow.hpp>
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
-#include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Core/Thermo.hpp>
 #include <Reaktoro/Thermodynamics/EOS/CubicEOS.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>

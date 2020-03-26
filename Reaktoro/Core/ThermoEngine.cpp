@@ -15,26 +15,30 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "ThermoEngine.hpp"
 
-#include <Reaktoro/Core/ChemicalOutput.hpp>
-#include <Reaktoro/Core/ChemicalPlot.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalProperty.hpp>
-#include <Reaktoro/Core/ChemicalQuantity.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Connectivity.hpp>
-#include <Reaktoro/Core/Database.hpp>
-#include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Core/Partition.hpp>
-#include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/Reaction.hpp>
-#include <Reaktoro/Core/ReactionSystem.hpp>
+// Reaktoro includes
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/ThermoProperties.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
-/// @defgroup Core Core
-/// This is the main module in Reaktoro, in which the essential classes are defined.
+namespace Reaktoro {
 
+ThermoEngine::ThermoEngine(const Database& database)
+: db(database)
+{
+}
+
+auto ThermoEngine::database() const -> const Database&
+{
+    return db;
+}
+
+auto ThermoEngine::standardThermoProps(Temperature T, Pressure P, const std::vector<Species>& species) const -> std::vector<StandardThermoProps>
+{
+    std::vector<StandardThermoProps> res;
+    res.reserve(species.size());
+    for(const auto& s : species)
+        res.push_back(standardThermoProps(T, P, s));
+    return res;
+}
+
+} // namespace Reaktoro

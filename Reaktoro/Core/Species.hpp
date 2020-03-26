@@ -40,20 +40,22 @@ public:
     /// Construct a default Species instance.
     Species();
 
-    /// Set the name of the species.
-    auto setName(std::string name) -> void;
+    /// Return a copy of this Species object with given name.
+    auto withName(std::string name) -> Species;
 
-    /// Set the formula of the species.
-    auto setFormula(std::string formula) -> void;
+    /// Return a copy of this Species object with given formula.
+    auto withFormula(std::string formula) -> Species;
 
-    /// Set the elements of the species.
-    auto setElements(const std::map<Element, double>& elements) -> void;
+    /// Return a copy of this Species object with given elements.
+    auto withElements(const std::map<Element, double>& elements) -> Species;
 
-    /// Set the tag of the species such as aqueous, gaseous, solid, etc..
-    auto setTag(std::string tag) -> void;
+    /// Return a copy of this Species object with given type.
+    /// The following are examples of species types:
+    /// `Aqueous`, `Gaseous`, `Liquid`, `Mineral`.
+    auto withType(std::string type) -> Species;
 
-    /// Set the specific data the species may have such as thermodynamic data.
-    auto setData(const std::any& data) -> void;
+    /// Return a copy of this Species object with given data.
+    auto withData(const std::any& data) -> Species;
 
     /// Return the number of elements of the species.
     auto numElements() const -> unsigned;
@@ -67,8 +69,8 @@ public:
     /// Return the elements that compose the species and their coefficients.
     auto elements() const -> const std::map<Element, double>&;
 
-    /// Return the tag of the species.
-    auto tag() const -> std::string;
+    /// Return the type of the species.
+    auto type() const -> std::string;
 
     /// Return the molar mass of the species (in units of kg/mol).
     auto molarMass() const -> double;
@@ -81,6 +83,9 @@ public:
 
     /// Return the specific data the species may have such as thermodynamic data.
     auto data() const -> const std::any&;
+
+    /// Return a cloned copy of this Species object.
+    auto clone() const -> Species;
 
 private:
     struct Impl;

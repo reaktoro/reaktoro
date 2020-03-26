@@ -23,24 +23,27 @@
 
 namespace Reaktoro {
 
-/// A type used to define a chemical element and its attributes
+/// A type used to define an elementary unit of chemical species and its attributes.
 class Element
 {
 public:
-    /// Construct a default Element instance
+    /// Construct a default Element instance.
     Element();
 
-    /// Set the name of the element
-    auto setName(std::string name) -> void;
+    /// Return a copy of this Element object with given name.
+    auto withName(std::string name) -> Element;
 
-    /// Set the molar mass of the element (in units of kg/mol)
-    auto setMolarMass(double value) -> void;
+    /// Return a copy of this Element object with given molar mass (in units of kg/mol).
+    auto withMolarMass(double value) -> Element;
 
-    /// Return the name of the element
+    /// Return the name of the element.
     auto name() const -> std::string;
 
-    /// Return the molar mass of the element (in units of kg/mol)
+    /// Return the molar mass of the element (in units of kg/mol).
     auto molarMass() const -> double;
+
+    /// Return a cloned copy of this Element object.
+    auto clone() const -> Element;
 
 private:
     struct Impl;

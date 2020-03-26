@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "DatabaseUtils.hpp"
+#include "EmbeddedDatabases.hpp"
 
 // C++ includes
 #include <map>
@@ -25,16 +25,16 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/SetUtils.hpp>
-#include "supcrt98.hpp"
-#include "supcrt07.hpp"
-#include "supcrt98-organics.hpp"
-#include "supcrt07-organics.hpp"
+#include "embedded/supcrt98.hpp"
+#include "embedded/supcrt07.hpp"
+#include "embedded/supcrt98-organics.hpp"
+#include "embedded/supcrt07-organics.hpp"
 
 namespace Reaktoro {
-namespace internal {
+namespace {
 
-/// The names of the built-in databases
-const std::vector<std::string> databases =
+/// The names of the built-in SUPCRT databases
+const std::vector<std::string> supcrt_databases =
 {
     "supcrt98.xml",
     "supcrt07.xml",
@@ -42,8 +42,8 @@ const std::vector<std::string> databases =
     "supcrt07-organics.xml",
 };
 
-/// The arrays containing the zipped data of the built-in databases
-const std::vector<unsigned char*> databases_data =
+/// The arrays containing the zipped data of the built-in SUPCRT databases
+const std::vector<unsigned char*> supcrt_databases_data =
 {
     supcrt98_zip,
     supcrt07_zip,
@@ -51,8 +51,8 @@ const std::vector<unsigned char*> databases_data =
     supcrt07_organics_zip,
 };
 
-/// The lengths of the arrays containing the zipped data of the built-in databases
-const std::vector<unsigned int> databases_len =
+/// The lengths of the arrays containing the zipped data of the built-in SUPCRT databases
+const std::vector<unsigned int> supcrt_databases_len =
 {
     supcrt98_zip_len,
     supcrt07_zip_len,
@@ -60,26 +60,26 @@ const std::vector<unsigned int> databases_len =
     supcrt07_organics_zip_len,
 };
 
-} // namespace internal
+} // namespace
 
-auto database(std::string name) -> std::string
+auto supcrtEmbeddedDatabaseTextContent(std::string name) -> std::string
 {
     // Get the index of the database, either named, e.g., supcrt98.xml or supcrt98
-    const Index i = index(name, internal::databases);
-    const Index j = index(name + ".xml", internal::databases);
+    const Index i = index(name, supcrt_databases);
+    const Index j = index(name + ".xml", supcrt_databases);
     const Index idx = std::min(i, j);
 
     // Return empty string if there is no built-in database if such name
-    if(idx >= internal::databases.size())
+    if(idx >= supcrt_databases.size())
         return "";
 
     // If the database name was provided without extension, then add it
-    if(j < internal::databases.size())
+    if(j < supcrt_databases.size())
         name += ".xml";
 
     // The begin and end pointers to the array containing the database data
-    const auto& begin = internal::databases_data[idx];
-    const auto& end = begin + internal::databases_len[idx];
+    const auto& begin = supcrt_databases_data[idx];
+    const auto& end = begin + supcrt_databases_len[idx];
 
     // Create the vector of unsigned char
     std::vector<unsigned char> data(begin, end);
@@ -91,9 +91,9 @@ auto database(std::string name) -> std::string
     return file.read(name);
 }
 
-auto databases() -> std::vector<std::string>
+auto supcrtEmbeddedDatabaseNames() -> std::vector<std::string>
 {
-    return internal::databases;
+    return supcrt_databases;
 }
 
 } // namespace Reaktoro

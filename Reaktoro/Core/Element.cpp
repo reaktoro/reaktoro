@@ -32,14 +32,18 @@ Element::Element()
 : pimpl(new Impl())
 {}
 
-auto Element::setName(std::string name) -> void
+auto Element::withName(std::string name) -> Element
 {
-    pimpl->name = name;
+    Element element = clone();
+    element.pimpl->name = name;
+    return element;
 }
 
-auto Element::setMolarMass(double value) -> void
+auto Element::withMolarMass(double value) -> Element
 {
-    pimpl->molar_mass = value;
+    Element element = clone();
+    element.pimpl->molar_mass = value;
+    return element;
 }
 
 auto Element::name() const -> std::string
@@ -50,6 +54,13 @@ auto Element::name() const -> std::string
 auto Element::molarMass() const -> double
 {
     return pimpl->molar_mass;
+}
+
+auto Element::clone() const -> Element
+{
+    Element element;
+    *element.pimpl = *pimpl;
+    return element;
 }
 
 auto operator<(const Element& lhs, const Element& rhs) -> bool

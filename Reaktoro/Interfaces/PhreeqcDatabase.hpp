@@ -24,16 +24,14 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Common/ReactionEquation.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class Database;
 class Element;
-class AqueousSpecies;
-class FluidSpecies;
-using GaseousSpecies = FluidSpecies;
-class MineralSpecies;
+class Species;
 
 class PhreeqcDatabase
 {
@@ -65,21 +63,21 @@ public:
 
     auto elements() const -> const std::vector<Element>&;
 
-    auto aqueousSpecies(Index index) const -> AqueousSpecies;
+    auto aqueousSpecies(Index index) const -> Species;
 
-    auto aqueousSpecies(std::string name) const -> AqueousSpecies;
+    auto aqueousSpecies(std::string name) const -> Species;
 
-    auto aqueousSpecies() const -> const std::vector<AqueousSpecies>&;
+    auto aqueousSpecies() const -> const std::vector<Species>&;
 
-    auto gaseousSpecies(Index index) const -> GaseousSpecies;
+    auto gaseousSpecies(Index index) const -> Species;
 
-    auto gaseousSpecies(std::string name) const -> GaseousSpecies;
+    auto gaseousSpecies(std::string name) const -> Species;
 
-    auto gaseousSpecies() const -> const std::vector<GaseousSpecies>&;
+    auto gaseousSpecies() const -> const std::vector<Species>&;
 
-    auto mineralSpecies(Index index) const -> MineralSpecies;
+    auto mineralSpecies(Index index) const -> Species;
 
-    auto mineralSpecies(std::string name) const -> MineralSpecies;
+    auto mineralSpecies(std::string name) const -> Species;
 
     auto containsAqueousSpecies(std::string name) const -> bool;
 
@@ -87,17 +85,43 @@ public:
 
     auto containsMineralSpecies(std::string name) const -> bool;
 
-    auto mineralSpecies() const -> const std::vector<MineralSpecies>&;
+    auto mineralSpecies() const -> const std::vector<Species>&;
 
     auto masterSpecies() const -> std::set<std::string>;
-
-    /// Cross this PhreeqcDatabase instance with master thermodynamic data in another Database instance
-    auto cross(const Database& master) -> Database;
 
 private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;
+};
+
+/// A type for storing Phreeqc parameters of a species.
+struct SpeciesThermoParamsPhreeqc
+{
+    struct ReactionParams
+    {
+        /// The reaction equation defining the Phreeqc species in terms of master species.
+        ReactionEquation equation;
+
+        /// The equilibrium constant of the product species at 25 °C.
+        double log_k;
+
+        /// The standard enthalpy of the reaction at 25 °C (in units of kJ/mol).
+        /// This parameter is used in the Van't Hoff equation to calculate the equilibrium constant
+        /// of the reaction at temperature @f$T@f$:
+        /// @f[\ln K=\ln K^{298.15\mathrm{K}}-\frac{\Delta H^{\circ}}{R}\left(\frac{1}{T}-\frac{1}{298.15}\right)@f],
+        /// where @f$R@f$ is the universal gas constant. This equation requires the standard enthalpy of reaction
+        /// and its equilibrium constant at 25 °C.
+        double delta_h;
+
+        /// The coefficients of the analytical expression of the equilibrium constant of the reaction.
+        /// The analytical expression is:
+        /// @f[\log_{10}K=A_{1}+A_{2}T+\frac{A_{3}}{T}+A_{4}\log_{10}T+\frac{A_{5}}{T^{2}}+A_{6}T^{2}@f],
+        /// where @f$T@f$ is temperature in Kelvin, and @f$A_i@f$ are the coefficients.
+        std::vector<double> analytic;
+    };
+
+    ReactionParams reaction;
 };
 
 } // namespace Reaktoro

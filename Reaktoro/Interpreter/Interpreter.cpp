@@ -21,10 +21,10 @@
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
-#include <Reaktoro/Thermodynamics/Core/Database.hpp>
 
 #include <fstream>
 

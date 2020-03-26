@@ -26,20 +26,18 @@ using namespace std::placeholders;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Thermodynamics/Core/Database.hpp>
+#include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
-#include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
@@ -75,11 +73,11 @@ struct Thermo::Impl
     /// The database instance
     Database database;
 
-    // The ThermoFun engine instance
-    ThermoFun::ThermoEngine engine;
+    // // The ThermoFun engine instance
+    // ThermoFun::ThermoEngine engine;
 
-    // The ThemroFun database instance
-    ThermoFun::Database fundatabase;
+    // // The ThemroFun database instance
+    // ThermoFun::Database fundatabase;
 
     /// The Haar--Gallagher--Kell (1984) equation of state for water
     WaterThermoStateFunction water_thermo_state_hgk_fn;
@@ -94,23 +92,23 @@ struct Thermo::Impl
     SpeciesThermoStateFunction species_thermo_state_hkf_fn;
 
     Impl()
-    : engine(ThermoFun::Database())
+    // : engine(ThermoFun::Database())
     {}
 
-    Impl(const ThermoFun::Database& fundb)
-    : engine(fundb), fundatabase(fundb), database(fundb)
-    {
-        // set solvent symbol, the HGK, JN water solvent model are defined in this record
-        engine.setSolventSymbol("H2O@");
+    // Impl(const ThermoFun::Database& fundb)
+    // : engine(fundb), fundatabase(fundb), database(fundb)
+    // {
+    //     // set solvent symbol, the HGK, JN water solvent model are defined in this record
+    //     engine.setSolventSymbol("H2O@");
 
-        // Initialize the HKF equation of state for the thermodynamic state of aqueous, gaseous and mineral species
-        species_thermo_state_hkf_fn = [=](double T, double P, std::string species)
-        {
-            return speciesThermoStateUsingThermoFun(T, P, species);
-        };
+    //     // Initialize the HKF equation of state for the thermodynamic state of aqueous, gaseous and mineral species
+    //     species_thermo_state_hkf_fn = [=](double T, double P, std::string species)
+    //     {
+    //         return speciesThermoStateUsingThermoFun(T, P, species);
+    //     };
 
-        species_thermo_state_hkf_fn = memoize(species_thermo_state_hkf_fn);
-    }
+    //     species_thermo_state_hkf_fn = memoize(species_thermo_state_hkf_fn);
+    // }
 
     Impl(const Database& database)
     : database(database), engine(ThermoFun::Database())
