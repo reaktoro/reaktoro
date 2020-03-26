@@ -40,17 +40,15 @@
 # First, we import the **reaktoro** Python package so that we can use its classes
 # and methods for performing the chemical reaction calculations.
 
-print('============================================================')
-print('Make sure you have the following Python packages installed: ')
-print('     numpy, matplotlib, natsort')
-print('These can be installed with pip:')
-print('     pip install numpy matplotlib natsort')
-print('============================================================')
 from reaktoro import *
 import numpy as np
 import os
 import matplotlib.pyplot as plt
 from natsort import natsorted
+import time
+import json
+from progress.bar import IncrementalBar
+
 
 # We import the **reaktoro** Python package so that we can use its classes and methods for performing chemical
 # reaction calculations, **numpy** for working with arrays, **os** to provide a portable way of using operating system
@@ -85,8 +83,8 @@ year = 365 * day
 xl = 0.0                # the x-coordinate of the left boundary
 xr = 1.0                # the x-coordinate of the right boundary
 ncells = 100            # the number of cells in the discretization
-nsteps = 500            # the number of steps in the reactive transport simulation
-dt = 10*minute          # the time step (30 minutes in units of s)
+nsteps = 50            # the number of steps in the reactive transport simulation
+dt = 30*minute          # the time step (30 minutes in units of s)
 dx = (xr - xl)/ncells   # length of the mesh cells (in units of m)
 
 # Physical and chemical parameters
@@ -126,17 +124,17 @@ tag = "-dt-" + "{:d}".format(dt) + \
 folder_results = 'results-odml' + tag
 
 # The seconds spent on equilibrium and transport calculations per time step
-smart_equlibrium_times = np.zeros(nsteps)  # using conventional equilibrium solver
-conv_equlibrium_times = np.zeros(nsteps)  # using smart equilibrium solver
-transport_times = np.zeros(nsteps + 1)
+time_steps = np.linspace(0, nsteps, nsteps)
+
+timings_equilibrium_smart = np.zeros(nsteps)  # using conventional equilibrium solver
+timings_equilibrium_conv = np.zeros(nsteps)  # using smart equilibrium solver
+timings_transport = np.zeros(nsteps)
+
 smart_cells_per_step = np.zeros(ncells)
 smart_cells = np.zeros((nsteps, ncells))
 
-smart_cells_list_per_step = []
-smart_cells_list = []
-
 # The counter of full chemical equilibrium training calculations each time step
-smart_training_counter = np.zeros(nsteps)
+learnings = np.zeros(nsteps)
 
 # Next, we generate the coordinates of the mesh nodes (array `x`) by equally dividing the interval *[xr, xl]* with
 # the number of cells `ncells`. The length between each consecutive mesh nodes is computed and stored in `dx` (the
@@ -154,210 +152,354 @@ assert CFL <= 1.0, f"Make sure that CFL = {CFL} is less that 1.0"
 
 folder_results = 'results-rt-calcite-brine'
 folder_videos  = 'videos-rt-calcite-brine'
-def make_results_folders():
+def make_results_folders(use_smart_equilibrium_solver):
+    if use_smart_equilibrium_solver: os.system('mkdir -p ' + folder_results + "-smart")
+    else: os.system('mkdir -p ' + folder_results + "-reference")
     os.system('mkdir -p ' + folder_results)
     os.system('mkdir -p ' + folder_videos)
 
-# ## Reactive transport simulations
-#
-# ### Defining the chemical system
-#
-# We need to define a chemical system that can represent both our fluid and rock. We use class
-# [ChemicalEditor](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalEditor.html) below to define a system with an
-# aqueous phase and three mineral phases: quartz, calcite, and dolomite. Initially, our rock has no dolomite
-# (CaMg(CO<sub>3</sub>)<sub>2</sub>), but since this is a mineral that could potentially precipitate given the fluid
-# composition injected ( containing CaCl<sub>2</sub> and MgCl<sub>2</sub> dissolved), we add it here in the
-# chemical system to ensure that the calculations are able to model dolomite precipitation.
+def reactive_transport(use_smart_equilibrium_solver):
 
-db = Database('supcrt98.xml')
-editor = ChemicalEditor(db)
-#editor.addAqueousPhase('H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--')
-editor.addAqueousPhaseWithElements('H O Na Cl Ca Mg C') \
-    .setChemicalModelPitzerHMW() \
-    .setActivityModelDrummondCO2()
-editor.addMineralPhase('Quartz')
-editor.addMineralPhase('Calcite')
-editor.addMineralPhase('Dolomite')
+    # ## Reactive transport simulations
+    #
+    # ### Defining the chemical system
+    #
+    # We need to define a chemical system that can represent both our fluid and rock. We use class
+    # [ChemicalEditor](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalEditor.html) below to define a system with an
+    # aqueous phase and three mineral phases: quartz, calcite, and dolomite. Initially, our rock has no dolomite
+    # (CaMg(CO<sub>3</sub>)<sub>2</sub>), but since this is a mineral that could potentially precipitate given the fluid
+    # composition injected ( containing CaCl<sub>2</sub> and MgCl<sub>2</sub> dissolved), we add it here in the
+    # chemical system to ensure that the calculations are able to model dolomite precipitation.
 
-# > **Note**: The aqueous phase is defined above by using a list of compounds, which is then broken automatically by
-# > Reaktoro into a list of element names. These element names are then used to find in the database all the aqueous
-# > species that could be formed out of them.
-#
-# ### Constructing the chemical system
-#
-# This step is where we create an object of class
-# [ChemicalSystem](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalSystem.html) using the
-# chemical system definition details stored in the object ``editor``.
+    editor = ChemicalEditor()
 
-system = ChemicalSystem(editor)
+    if activity_model == "pitzer-full":
+        editor.addAqueousPhaseWithElements('H O Na Cl Ca Mg C') \
+            .setChemicalModelPitzerHMW() \
+            .setActivityModelDrummondCO2()
+    elif activity_model == "hkf-full":
+        editor.addAqueousPhaseWithElements('H O Na Cl Ca Mg C')
 
-# ### Initial condition for the fluid composition
-#
-# Below, we define the **initial condition** for the fluid composition in the rock. We want an aqueous fluid that is
-# 0.7 molal of NaCl and in equilibrium with calcite and quartz. To achieve this, we mix 1 kg of water, 0.7 mol of
-# NaCl, and plenty of calcite and quartz (10 mol each) to ensure that the aqueous solution is saturated with respect
-# to these minerals.
+    elif activity_model == "dk-full":
+        editor.addAqueousPhaseWithElements('H O Na Cl Ca Mg C') \
+            .setChemicalModelDebyeHuckel()
 
-problem_ic = EquilibriumProblem(system)
-problem_ic.setTemperature(T, 'celsius')
-problem_ic.setPressure(P, 'bar')
-problem_ic.add('H2O', 1.0, 'kg')
-problem_ic.add("O2",  1.0, "umol")
-problem_ic.add('NaCl', 0.7, 'mol')
-problem_ic.add('CaCO3', 10, 'mol')
-problem_ic.add('SiO2', 10, 'mol')
-problem_ic.add("MgCl2", 1e-10, "mol")
+    editor.addMineralPhase('Quartz')
+    editor.addMineralPhase('Calcite')
+    editor.addMineralPhase('Dolomite')
 
-# ### Boundary condition for the fluid composition
-#
-# Next, we define the **boundary condition** for the fluid composition on the left side of the rock, which should be
-# the one that represents the fluid being continuously injected: 0.9 molal NaCl, 0.05 molal MgCl<sub>2</sub>,
-# 0.01 molal CaCl<sub>2</sub> and almost CO<sub>2</sub>-saturated, with 0.75 molal of CO<sub>2</sub> dissolved. To
-# provide that, we mix 1 kg of HO<sub>2</sub> with 0.9 mol of NaCl, 0.05 mol of MgCl<sub>2</sub>, 0.01 mol
-# of CaCl<sub>2</sub>, and 0.75 mol of CO<sub>2</sub>.
+    # > **Note**: The aqueous phase is defined above by using a list of compounds, which is then broken automatically by
+    # > Reaktoro into a list of element names. These element names are then used to find in the database all the aqueous
+    # > species that could be formed out of them.
+    #
+    # ### Constructing the chemical system
+    #
+    # This step is where we create an object of class
+    # [ChemicalSystem](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalSystem.html) using the
+    # chemical system definition details stored in the object ``editor``.
 
-problem_bc = EquilibriumProblem(system)
-problem_bc.setTemperature(T, 'celsius')
-problem_bc.setPressure(P, 'bar')
-problem_bc.add('H2O', 1.0, 'kg')
-problem_ic.add("O2",  1.0, "umol")
-problem_bc.add('NaCl', 0.90, 'mol')
-problem_bc.add('MgCl2', 0.05, 'mol')
-problem_bc.add('CaCl2', 0.01, 'mol')
-problem_bc.add('CO2', 0.75, 'mol')
+    system = ChemicalSystem(editor)
 
-# ### Calculating the IC and BC fluid compositions
-# In this step, we use the [equilibrate](https://reaktoro.org/cpp/namespaceReaktoro.html#af2d3b39d3e0b8f9cb5a4d9bbb06b697e)
-# function to calculate the chemical equilibrium state of the system with the given initial and boundary equilibrium
-# conditions stored in the object `problem_ic` and `problem_bc`, respectively. The result is stored in the
-# corresponding instances of the class [ChemicalState](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html),
-# i.e., `state_ic` and `state_bc`.
+    # ### Initial condition for the fluid composition
+    #
+    # Below, we define the **initial condition** for the fluid composition in the rock. We want an aqueous fluid that is
+    # 0.7 molal of NaCl and in equilibrium with calcite and quartz. To achieve this, we mix 1 kg of water, 0.7 mol of
+    # NaCl, and plenty of calcite and quartz (10 mol each) to ensure that the aqueous solution is saturated with respect
+    # to these minerals.
 
-state_ic = equilibrate(problem_ic)
-state_bc = equilibrate(problem_bc)
+    problem_ic = EquilibriumProblem(system)
+    problem_ic.setTemperature(T, 'celsius')
+    problem_ic.setPressure(P, 'bar')
+    problem_ic.add('H2O', 1.0, 'kg')
+    problem_ic.add("O2",  1.0, "umol")
+    problem_ic.add('NaCl', 0.7, 'mol')
+    problem_ic.add('CaCO3', 10, 'mol')
+    problem_ic.add('SiO2', 10, 'mol')
+    problem_ic.add("MgCl2", 1e-10, "mol")
 
-# ### Scaling the phases in the initial condition
-#
-# The initial chemical state `state_ic` computed before has, at this point, phases with volumes that do not
-# correspond to our desired porosity of 10 % and rock mineral composition of 98 %<sub>vol</sub> of quartz and
-# 2 %<sub>vol</sub> of calcite.
-#
-# To obtain this, we scale the volumes of the aqueous and mineral phases as shown
-# below:
+    # ### Boundary condition for the fluid composition
+    #
+    # Next, we define the **boundary condition** for the fluid composition on the left side of the rock, which should be
+    # the one that represents the fluid being continuously injected: 0.9 molal NaCl, 0.05 molal MgCl<sub>2</sub>,
+    # 0.01 molal CaCl<sub>2</sub> and almost CO<sub>2</sub>-saturated, with 0.75 molal of CO<sub>2</sub> dissolved. To
+    # provide that, we mix 1 kg of HO<sub>2</sub> with 0.9 mol of NaCl, 0.05 mol of MgCl<sub>2</sub>, 0.01 mol
+    # of CaCl<sub>2</sub>, and 0.75 mol of CO<sub>2</sub>.
 
-# Scale the volumes of the phases in the initial condition
-state_ic.scalePhaseVolume('Aqueous', 0.1, 'm3') # corresponds to the initial porosity of 10%.
-state_ic.scalePhaseVolume('Quartz', 0.882, 'm3') # 0.882 = 0.9 * 0.98
-state_ic.scalePhaseVolume('Calcite', 0.018, 'm3') # 0.018 = 0.9 * 0.02
+    problem_bc = EquilibriumProblem(system)
+    problem_bc.setTemperature(T, 'celsius')
+    problem_bc.setPressure(P, 'bar')
+    problem_bc.add('H2O', 1.0, 'kg')
+    problem_ic.add("O2",  1.0, "umol")
+    problem_bc.add('NaCl', 0.90, 'mol')
+    problem_bc.add('MgCl2', 0.05, 'mol')
+    problem_bc.add('CaCl2', 0.01, 'mol')
+    problem_bc.add('CO2', 0.75, 'mol')
 
-# > **Note**: After this scaling step, the sum of the phase volumes in ``state_ic`` is 1 m<sup>3</sup>. This also
-# > ensures that the amounts of the species in the chemical system are normalized by m<sup>3</sup>, and thus they can
-# > be regarded as concentrations in a unit of mol/m<sup>3</sup> (*bulk volume, not fluid volume!*).
-#
-# ### Scaling the boundary condition state
-#
-# Next, we scale the boundary condition state to 1 m<sup>3</sup>, so that we have the amounts of fluid species in
-# `state_bc` also normalized by m<sup>3</sup>.
-#
-# > **Note**: The chemical state represented by `state_bc` has no other stable phase than the aqueous phase (i.e.,
-# > all mineral phases have zero or negligible amounts such as 10<sup>-21</sup> mol).
+    # ### Calculating the IC and BC fluid compositions
+    # In this step, we use the [equilibrate](https://reaktoro.org/cpp/namespaceReaktoro.html#af2d3b39d3e0b8f9cb5a4d9bbb06b697e)
+    # function to calculate the chemical equilibrium state of the system with the given initial and boundary equilibrium
+    # conditions stored in the object `problem_ic` and `problem_bc`, respectively. The result is stored in the
+    # corresponding instances of the class [ChemicalState](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html),
+    # i.e., `state_ic` and `state_bc`.
 
-state_bc.scaleVolume(1.0, 'm3')
+    state_ic = equilibrate(problem_ic)
+    state_bc = equilibrate(problem_bc)
 
-# ### Creating the mesh
-#
-# We define the mesh with the class [Mesh](https://reaktoro.org/cpp/classReaktoro_1_1Mesh.html) to use in
-# the initialization of class [ReactiveTransportSolver](
-# https://reaktoro.org/cpp/classReaktoro_1_1ReactiveTransportSolver.html) later. Here, we specify the number of cells
-# in the mesh and the x-coordinates of the left and right boundaries (in m).
+    # ### Scaling the phases in the initial condition
+    #
+    # The initial chemical state `state_ic` computed before has, at this point, phases with volumes that do not
+    # correspond to our desired porosity of 10 % and rock mineral composition of 98 %<sub>vol</sub> of quartz and
+    # 2 %<sub>vol</sub> of calcite.
+    #
+    # To obtain this, we scale the volumes of the aqueous and mineral phases as shown
+    # below:
 
-mesh = Mesh(ncells, xl, xr)
+    # Scale the volumes of the phases in the initial condition
+    state_ic.scalePhaseVolume('Aqueous', 0.1, 'm3') # corresponds to the initial porosity of 10%.
+    state_ic.scalePhaseVolume('Quartz', 0.882, 'm3') # 0.882 = 0.9 * 0.98
+    state_ic.scalePhaseVolume('Calcite', 0.018, 'm3') # 0.018 = 0.9 * 0.02
 
-# ### Creating a chemical field object
-#
-# We have been using class [ChemicalState](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html) to represent
-# an individual chemical state. We will now use class [ChemicalField](
-# https://reaktoro.org/cpp/classReaktoro_1_1ChemicalField.html) to represent a collection of chemical states: one for
-# each mesh cell.
-#
-# > **Note**: Different initial conditions across the mesh cells are possible by assigning different chemical states to
-# > each mesh cell. Here, the same chemical state in `state_ic` is used for all cells.
+    # > **Note**: After this scaling step, the sum of the phase volumes in ``state_ic`` is 1 m<sup>3</sup>. This also
+    # > ensures that the amounts of the species in the chemical system are normalized by m<sup>3</sup>, and thus they can
+    # > be regarded as concentrations in a unit of mol/m<sup>3</sup> (*bulk volume, not fluid volume!*).
+    #
+    # ### Scaling the boundary condition state
+    #
+    # Next, we scale the boundary condition state to 1 m<sup>3</sup>, so that we have the amounts of fluid species in
+    # `state_bc` also normalized by m<sup>3</sup>.
+    #
+    # > **Note**: The chemical state represented by `state_bc` has no other stable phase than the aqueous phase (i.e.,
+    # > all mineral phases have zero or negligible amounts such as 10<sup>-21</sup> mol).
 
-field = ChemicalField(mesh.numCells(), state_ic)
+    state_bc.scaleVolume(1.0, 'm3')
 
-# ### Initializing the reactive transport solver
-#
-# At last, we define the object responsible for solving the reactive transport problem, which is handled by the
-# class [ReactiveTransportSolver](https://reaktoro.org/cpp/classReaktoro_1_1ReactiveTransportSolver.html).
-# Here, we set the mesh and problem parameters such as velocity, diffusion coefficient, the chemical state
-# representing the boundary condition, and the time step. We also initialize the reactive solver object with the
-# chemical field object specified on the previous step, at this point containing the initial condition for the
-# chemical state of each mesh cell.
 
-rt = ReactiveTransportSolver(system)
-rt.setMesh(mesh)
-rt.setVelocity(v)
-rt.setDiffusionCoeff(D)
-rt.setBoundaryState(state_bc)
-rt.setTimeStep(dt)
-rt.initialize(field)
+    #partition = Partition(system)
+    #partition.setInertSpecies(["Quartz"])
 
-# ### Defining the output quantities
-#
-# Before starting the reactive transport calculations, we define the quantities that will be output for every mesh
-# cell, at every time step. For this, we use an object of the class
-# [ChemicalOutput](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalOutput.html).
-# The name of the output file is to `reactive-transport.txt`. We specify the parameters that we are interested in
-# outputting. In this case, it is pH, molality of `H+`, `Ca++`, `Mg++`, `HCO3-`, `CO2(aq)`, as well as a phase volume
-# of calcite and dolomite.
+    #print("state_ic = ", state_ic)
+    #print("state_bc = ", state_bc)
+    #input()
 
-output = rt.output()
-output.add("pH")
-output.add("speciesMolality(H+)")
-output.add("speciesMolality(Ca++)")
-output.add("speciesMolality(Mg++)")
-output.add("speciesMolality(HCO3-)")
-output.add("speciesMolality(CO2(aq))")
-output.add("phaseVolume(Calcite)")
-output.add("phaseVolume(Dolomite)")
-output.filename(folder_results + '/state.txt')  # Set the name of the output files
+    # ### Creating the mesh
+    #
+    # We define the mesh with the class [Mesh](https://reaktoro.org/cpp/classReaktoro_1_1Mesh.html) to use in
+    # the initialization of class [ReactiveTransportSolver](
+    # https://reaktoro.org/cpp/classReaktoro_1_1ReactiveTransportSolver.html) later. Here, we specify the number of cells
+    # in the mesh and the x-coordinates of the left and right boundaries (in m).
 
-# Make auxiliary folders to save generated results, their plots, or videos
-make_results_folders()
+    mesh = Mesh(ncells, xl, xr)
 
-# ### Running the reactive transport simulation
-#
-# As shown below, we perform a sequence of reactive transport calculations, one for each time step, during which the
-# chemical state of each mesh cell is updated. The iterations continue until the maximum number of steps is
-# achieved.
-#
-# Using **tqdm** we track the progress of simulations using the progress bar. For that, we wrap the while-loop with
-# the function 'tqdm()'. We then use the method `step` of class
-# [ReactiveTransportSolver](https://reaktoro.org/cpp/classReaktoro_1_1ReactiveTransportSolver.html) to perform a
-# single  reactive transport time-stepping. This method also produces a new output file containing the requested
-# output properties for every mesh cell. In each such file, rows correspond to cells, whereas the columns correspond
-# to the requested output properties, i.e., pH, molality of `H+`, `Ca++`, `Mg++`, `HCO3-`, `CO2(aq)`, as
-# well as the phase volume of calcite and dolomite.
+    # ### Creating a chemical field object
+    #
+    # We have been using class [ChemicalState](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html) to represent
+    # an individual chemical state. We will now use class [ChemicalField](
+    # https://reaktoro.org/cpp/classReaktoro_1_1ChemicalField.html) to represent a collection of chemical states: one for
+    # each mesh cell.
+    #
+    # > **Note**: Different initial conditions across the mesh cells are possible by assigning different chemical states to
+    # > each mesh cell. Here, the same chemical state in `state_ic` is used for all cells.
 
-# +
-# Step 15: Perform given number of reactive tranport steps
-t = 0.0  # current time variable
-step = 0  # current number of steps
+    field = ChemicalField(mesh.numCells(), state_ic)
 
-from tqdm.notebook import tqdm
-with tqdm(total=nsteps, desc="Reactive transport simulations") as pbar:
-    while step <= nsteps:  # step until the number of steps are achieved
+    # ### Initializing the reactive transport solver
+    #
+    # At last, we define the object responsible for solving the reactive transport problem, which is handled by the
+    # class [ReactiveTransportSolver](https://reaktoro.org/cpp/classReaktoro_1_1ReactiveTransportSolver.html).
+    # Here, we set the mesh and problem parameters such as velocity, diffusion coefficient, the chemical state
+    # representing the boundary condition, and the time step. We also initialize the reactive solver object with the
+    # chemical field object specified on the previous step, at this point containing the initial condition for theuse_smart_eqilibirum_solver
+    # chemical state of each mesh cell.
+
+    smart_equilibrium_options = SmartEquilibriumOptions()
+    smart_equilibrium_options.reltol = smart_equlibrium_reltol
+    smart_equilibrium_options.amount_fraction_cutoff = amount_fraction_cutoff
+    smart_equilibrium_options.mole_fraction_cutoff = mole_fraction_cutoff
+
+    reactive_transport_options = ReactiveTransportOptions()
+    reactive_transport_options.use_smart_equilibrium_solver = use_smart_equilibrium_solver
+    reactive_transport_options.smart_equilibrium = smart_equilibrium_options
+
+    rtsolver = ReactiveTransportSolver(system)
+    rtsolver.setOptions(reactive_transport_options)
+    rtsolver.setMesh(mesh)
+    rtsolver.setVelocity(v)
+    rtsolver.setDiffusionCoeff(D)
+    rtsolver.setBoundaryState(state_bc)
+    rtsolver.setTimeStep(dt)
+    rtsolver.initialize()
+
+    profiler = ReactiveTransportProfiler()
+
+    # ### Defining the output quantities
+    #
+    # Before starting the reactive transport calculations, we define the quantities that will be output for every mesh
+    # cell, at every time step. For this, we use an object of the class
+    # [ChemicalOutput](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalOutput.html).
+    # The name of the output file is to `reactive-transport.txt`. We specify the parameters that we are interested in
+    # outputting. In this case, it is pH, molality of `H+`, `Ca++`, `Mg++`, `HCO3-`, `CO2(aq)`, as well as a phase volume
+    # of calcite and dolomite.
+
+    output = rtsolver.output()
+    output.add("pH")
+    output.add("speciesMolality(H+)")
+    output.add("speciesMolality(Ca++)")
+    output.add("speciesMolality(Mg++)")
+    output.add("speciesMolality(HCO3-)")
+    output.add("speciesMolality(CO2(aq))")
+    output.add("phaseVolume(Calcite)")
+    output.add("phaseVolume(Dolomite)")
+    output.add("speciesMolality(CO3--)");
+    output.add("speciesMolality(CaCl+)");
+    output.add("speciesMolality(Ca(HCO3)+)");
+    output.add("speciesMolality(MgCl+)");
+    output.add("speciesMolality(Mg(HCO3)+)");
+    output.filename(folder_results + '/state.txt')  # Set the name of the output files
+
+    # Make auxiliary folders to save generated results, their plots, or videos
+    make_results_folders(use_smart_equilibrium_solver)
+
+    # ### Running the reactive transport simulation
+    #
+    # As shown below, we perform a sequence of reactive transport calculations, one for each time step, during which the
+    # chemical state of each mesh cell is updated. The iterations continue until the maximum number of steps is
+    # achieved.
+    #
+    # Using **tqdm** we track the progress of simulations using the progress bar. For that, we wrap the while-loop with
+    # the function 'tqdm()'. We then use the method `step` of class
+    # [ReactiveTransportSolver](https://reaktoro.org/cpp/classReaktoro_1_1ReactiveTransportSolver.html) to perform a
+    # single  reactive transport time-stepping. This method also produces a new output file containing the requested
+    # output properties for every mesh cell. In each such file, rows correspond to cells, whereas the columns correspond
+    # to the requested output properties, i.e., pH, molality of `H+`, `Ca++`, `Mg++`, `HCO3-`, `CO2(aq)`, as
+    # well as the phase volume of calcite and dolomite.
+
+    # Step 15: Perform given number of reactive tranport steps
+    t = 0.0  # current time variable
+    step = 0  # current number of steps
+
+    #from tqdm.notebook import tqdm
+    #with tqdm(total=nsteps, desc="Reactive transport simulations") as pbar:
+    bar = IncrementalBar('Run reactive transport:', max = nsteps)
+    while step < nsteps:  # step until the number of steps are achieved
+
+        print(f"Step {step}")
 
         # Perform one reactive transport time step
-        rt.step(field)
+        rtsolver.step(field)
+
+        # Update the profiler after every call to step method
+        profiler.update(rtsolver.result())
 
         # Increment time step and number of time steps
         t += dt
         step += 1
 
         # Update a progress bar
-        pbar.update(1)
-# -
+        #pbar.update(1)
+        bar.next()
+
+    bar.finish()
+
+    rtsolver.outputClusterInfo()
+
+    # Collect the analytics related to reactive transport performance
+    analysis = ReactiveTransportAnalysis()
+    analysis = profiler.analysis()
+    if use_smart_equilibrium_solver:
+        timings_equilibrium_smart = np.array(analysis.computing_costs_per_time_step.smart_equilibrium)
+        indices = analysis.smart_equilibrium.cells_where_learning_was_required_at_step
+        size = len(indices)
+        for i in range(size):
+            learnings[i] = len(indices[i])
+        #print("smart_equlibrium_times : ", timings_equilibrium_smart)
+        print("learnings : ", learnings)
+    else:
+        timings_equilibrium_conv = np.array(analysis.computing_costs_per_time_step.equilibrium)
+        #print("conv_equlibrium_times : ", timings_equilibrium_conv)
+
+    #timings_transport = np.array(analysis.computing_costs_per_time_step.transport)
+    #print("transport_times : ", timings_transport)
+
+    #if use_smart_eqilibirum_solver:  json_output = JsonOutput(folder + "/" + "analysis-smart.json");
+    #else: json_output = JsonOutput(folder + "/" + "analysis-conventional.json");
+    #print(json_output)
+
+    # if use_smart_equilibrium_solver:  filename = 'analysis-smart-json.json'
+    # else: filename = 'analysis-conventional-json.json'
+    # with open(filename, 'w') as outfile:
+    #     json.dump(analysis, outfile)
+    # #print(json_output);
+    #json_output << analysis;
+
+
+print("Smart algorithm: ")
+use_smart_equilibrium_solver = True
+start_rt = time.time()
+reactive_transport(use_smart_equilibrium_solver)
+timing_rt_smart = time.time() - start_rt
+
+
+print("Conventional algorithm: ")
+use_smart_equilibrium_solver = False
+start_rt = time.time()
+reactive_transport(use_smart_equilibrium_solver)
+timing_rt_conv = time.time() - start_rt
+
+print(f"Total learnings: {np.sum(learnings)} out of {ncells * nsteps}")
+#print("Speed up = ", np.sum(timings_equilibrium_conv) / np.sum(timings_equilibrium_smart))
+
+
+def plot_on_demand_learning_countings_mpl():
+
+    plt.xlabel('Time Step')
+    plt.ylabel('On-demand learnings (at each step)')
+    plt.xlim(left=0, right=nsteps)
+    plt.ylim(bottom=0, top=np.max(learnings)+1)
+    plt.ticklabel_format(style='plain', axis='x')
+    plt.plot(learnings, color='C0', linewidth=1.5)
+    plt.tight_layout()
+    plt.savefig(folder_results + '/on-demand-learning-countings.png')
+    plt.close()
+
+def plot_computing_costs_mpl(step):
+
+    print("speed up = ", np.sum(timings_equilibrium_conv) / np.sum(timings_equilibrium_smart))
+    plt.xlabel('Time Step')
+    plt.ylabel('Computing Cost [μs]')
+    plt.xlim(left=0, right=nsteps)
+    plt.yscale('log')
+    plt.ticklabel_format(style='plain', axis='x')
+    plt.plot(time_steps[0:nsteps:step], timings_equilibrium_conv[0:nsteps:step] * 1e6, label="Chemical Equilibrium (Conventional)", color='C0', linewidth=1.5)
+    plt.plot(time_steps[0:nsteps:step], timings_equilibrium_smart[0:nsteps:step] * 1e6, label="Chemical Equilibrium (Smart)", color='C1', linewidth=1.5, alpha=1.0)
+    plt.plot(time_steps[0:nsteps:step], timings_transport[0:nsteps:step] * 1e6, label="Transport", color='C2', linewidth=1.5, alpha=1.0)
+    leg = plt.legend(loc='right', bbox_to_anchor=(0.5, 0.0, 0.5, 0.5))
+    for line in leg.get_lines(): line.set_linewidth(2.0)
+    plt.tight_layout()
+    plt.savefig(folder_results + '/computing-costs-nolegend-with-smart-ideal.png')
+    plt.close()
+
+def plot_speedups_mpl(step):
+
+    speedup = timings_equilibrium_conv / timings_equilibrium_smart
+
+    plt.xlim(left=0, right=nsteps)
+    plt.xlabel('Time Step')
+    plt.ylabel('Speedup [-]')
+    plt.ticklabel_format(style='plain', axis='x')
+    plt.plot(time_steps[0:nsteps:step], speedup[0:nsteps:step], label="Conventional vs. Smart ", color='C0', linewidth=1.5)
+    leg = plt.legend(loc='upper right')
+    for line in leg.get_lines(): line.set_linewidth(2.0)
+    plt.tight_layout()
+    plt.savefig(folder_results + '/speedups.png')
+    plt.close()
+
+# Plotting of the number of the learning:
+#plot_on_demand_learning_countings_mpl()
+
+# Plot with the CPU time comparison and speedup:
+step = 1
+#plot_computing_costs_mpl(1)
+#plot_speedups_mpl(1)
 
 # ## Plotting of the obtained results
 # The last block of the main routine is dedicated to plotting of the results and generating a video from the plots to
@@ -377,7 +519,7 @@ from matplotlib import animation
 from IPython.display import Video
 
 animation_starts_at_frame = 0      # the first frame index to be considered
-animation_ends_at_frame = 10 * 30  # the last frame index to be considered
+animation_ends_at_frame = nsteps  # the last frame index to be considered
 animation_num_frames_to_jump = 1     # the number of frames to jump between current and next
 # Check for the correct end frame number
 assert animation_ends_at_frame <= nsteps, "WARNING: The number of the end frame must be smaller then number of steps! "
@@ -524,6 +666,8 @@ def plot_animation_aqueous_species():
     anim = animation.FuncAnimation(fig, animate, init_func=init, frames=animation_frame_range, interval=animation_interval_wait, blit=True)
     anim.save(folder_videos + '/aqueous-species.mp4', fps=animation_fps, extra_args=['-vcodec', 'libx264'])
     print("Finished!")
+
+"""
 # -
 
 # Generate animation with the ph behaviour:
@@ -549,3 +693,4 @@ plot_animation_aqueous_species()
 # Show corresponding video:
 
 Video(folder_videos + '/aqueous-species.mp4')
+"""
