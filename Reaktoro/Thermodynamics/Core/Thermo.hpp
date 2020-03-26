@@ -33,8 +33,10 @@ class Database;
 
 namespace Reaktoro {
 
-// Forward declarations
+// Forward declarations (class)
 class Database;
+
+// Forward declarations (struct)
 struct SpeciesThermoState;
 struct WaterThermoState;
 

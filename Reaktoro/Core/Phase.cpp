@@ -32,7 +32,10 @@ struct Phase::Impl
     std::string name;
 
     /// The type of the phase.
-    PhaseType type = PhaseType::Solid;
+    std::string type;
+
+    /// The physical state of the phase.
+    PhasePhysicalState state = PhasePhysicalState::Solid;
 
     /// The list of Species instances defining the phase
     std::vector<Species> species;
@@ -40,25 +43,28 @@ struct Phase::Impl
     /// The list of Element instances in the phase
     std::vector<Element> elements;
 
-    /// The function that calculates the standard thermodynamic properties of the phase and its species
-    PhaseThermoModel thermo_model;
+    /// The standard thermodynamic model of the phase.
+    PhaseStandardThermoModelFn standard_thermo_model_fn;
 
-    /// The function that calculates the chemical properties of the phase and its species
-    PhaseChemicalModel chemical_model;
-
-    // The molar masses of the species
-    Vector molar_masses;
+    /// The activity model of the phase.
+    PhaseActivityModelFn activity_model_fn;
 };
 
 Phase::Phase()
 : pimpl(new Impl())
 {}
 
-Phase::Phase(std::string name, PhaseType type)
-    : pimpl(new Impl())
+Phase::Phase(const Phase& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+Phase::~Phase()
+{}
+
+auto Phase::operator=(Phase other) -> Phase&
 {
-    setName(name);
-    setType(type);
+    pimpl = std::move(other.pimpl);
+    return *this;
 }
 
 auto Phase::setName(std::string name) -> void
@@ -66,25 +72,29 @@ auto Phase::setName(std::string name) -> void
     pimpl->name = name;
 }
 
-auto Phase::setType(PhaseType type) -> void
+auto Phase::setType(std::string type) -> void
 {
     pimpl->type = type;
+}
+
+auto Phase::setPhysicalState(PhasePhysicalState state) -> void
+{
+    pimpl->state = state;
 }
 
 auto Phase::setSpecies(const std::vector<Species>& species) -> void
 {
     pimpl->species = species;
-    pimpl->molar_masses = molarMasses(species);
 }
 
-auto Phase::setThermoModel(const PhaseThermoModel& model) -> void
+auto Phase::setStandardThermoModel(const PhaseStandardThermoModelFn& model) -> void
 {
-    pimpl->thermo_model = model;
+    pimpl->standard_thermo_model_fn = model;
 }
 
-auto Phase::setChemicalModel(const PhaseChemicalModel& model) -> void
+auto Phase::setActivityModel(const PhaseActivityModelFn& model) -> void
 {
-    pimpl->chemical_model = model;
+    pimpl->activity_model_fn = model;
 }
 
 auto Phase::numElements() const -> unsigned
@@ -102,9 +112,14 @@ auto Phase::name() const -> std::string
     return pimpl->name;
 }
 
-auto Phase::type() const -> PhaseType
+auto Phase::type() const -> std::string
 {
     return pimpl->type;
+}
+
+auto Phase::physicalState() const -> PhasePhysicalState
+{
+    return pimpl->state;
 }
 
 auto Phase::elements() const -> const std::vector<Element>&
@@ -112,17 +127,7 @@ auto Phase::elements() const -> const std::vector<Element>&
     return pimpl->elements;
 }
 
-auto Phase::elements() -> std::vector<Element>&
-{
-    return pimpl->elements;
-}
-
 auto Phase::species() const -> const std::vector<Species>&
-{
-    return pimpl->species;
-}
-
-auto Phase::species() -> std::vector<Species>&
 {
     return pimpl->species;
 }
@@ -139,17 +144,17 @@ auto Phase::isFluid() const -> bool
 
 auto Phase::isSolid() const -> bool
 {
-    return type() == PhaseType::Solid;
+    return physicalState() == PhasePhysicalState::Solid;
 }
 
-auto Phase::thermoModel() const -> const PhaseThermoModel&
+auto Phase::standardThermoModel() const -> const PhaseStandardThermoModelFn&
 {
-    return pimpl->thermo_model;
+    return pimpl->standard_thermo_model_fn;
 }
 
-auto Phase::chemicalModel() const -> const PhaseChemicalModel&
+auto Phase::activityModel() const -> const PhaseActivityModelFn&
 {
-    return pimpl->chemical_model;
+    return pimpl->activity_model_fn;
 }
 
 auto Phase::indexSpecies(std::string name) const -> Index
@@ -181,14 +186,14 @@ auto Phase::indexSpeciesAnyWithError(const std::vector<std::string>& names) cons
     return index;
 }
 
-auto Phase::properties(PhaseThermoModelResult& res, double T, double P) const -> void
+auto Phase::standardThermoProps(double T, double P) const -> PhaseStandardThermoProps
 {
-    pimpl->thermo_model(res, T, P);
+    return pimpl->standard_thermo_model_fn(T, P);
 }
 
-auto Phase::properties(PhaseChemicalModelResult& res, double T, double P, VectorConstRef n) const -> void
+auto Phase::activityProps(double T, double P, VectorConstRef n) const -> PhaseActivityProps
 {
-    pimpl->chemical_model(res, T, P, n);
+    return pimpl->activity_model_fn(T, P, n);
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool

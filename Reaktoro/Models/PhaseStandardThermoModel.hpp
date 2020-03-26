@@ -17,21 +17,25 @@
 
 #pragma once
 
-// C++ includes
-#include <string>
-#include <vector>
+// Reaktoro includes
+#include <Reaktoro/Core/Phase.hpp>
 
 namespace Reaktoro {
 
-/// Return the contents of a built-in database as a string.
-/// This method searches among all built-in databases and
-/// return the database file as a string. If the given
-/// database `name` is not found, an empty string is returned.
-/// @param name The name of the database.
-/// @see databases
-auto database(std::string name) -> std::string;
+// Forward declarations
+class Species;
+class ThermoEngine;
 
-/// Return the list of names of all built-in databases.
-auto databases() -> std::vector<std::string>;
+/// The base type for all standard thermodynamic models for phases.
+/// @see PhaseActivityModel
+class PhaseStandardThermoModel
+{
+public:
+    /// Create the standard thermodynamic model function of the phase.
+    /// @param engine The thermodynamic engine from which additional data can be fetched.
+    /// @param species The species that compose the phase.
+    virtual auto create(const ThermoEngine& engine, const std::vector<Species>& species) -> PhaseStandardThermoModelFn = 0;
+};
 
 } // namespace Reaktoro
+

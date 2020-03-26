@@ -17,24 +17,24 @@
 
 #pragma once
 
-#include <Reaktoro/Core/ChemicalOutput.hpp>
-#include <Reaktoro/Core/ChemicalPlot.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalProperty.hpp>
-#include <Reaktoro/Core/ChemicalQuantity.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Connectivity.hpp>
-#include <Reaktoro/Core/Database.hpp>
-#include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Core/Partition.hpp>
+// Reaktoro includes
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/Reaction.hpp>
-#include <Reaktoro/Core/ReactionSystem.hpp>
-#include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/ThermoProperties.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
-/// @defgroup Core Core
-/// This is the main module in Reaktoro, in which the essential classes are defined.
+namespace Reaktoro {
 
+// Forward declarations
+class Species;
+class ThermoEngine;
+
+/// The base type for all thermodynamic activity models for phases.
+/// @see PhaseStandardThermoModel
+class PhaseActivityModel
+{
+public:
+    /// Create the activity model of the phase.
+    /// @param engine The thermodynamic engine from which additional data can be fetched.
+    /// @param species The species that compose the phase.
+    virtual auto create(const ThermoEngine& engine, const std::vector<Species>& species) -> PhaseActivityModelFn = 0;
+};
+
+} // namespace Reaktoro

@@ -41,10 +41,10 @@ auto fixDuplicatedSpeciesNames(std::vector<Phase> phases) -> std::vector<Phase>
 
         for(Phase& p2 : phases) for(Species& s2 : p2.species())
             if(&s1 != &s2 && s1.name() == s2.name())
-                s2.setName(s2.name() + "(" + std::to_string(++suffix) + ")");
+                s2 = s2.withName(s2.name() + "(" + std::to_string(++suffix) + ")");
 
         if(suffix > 1)
-            s1.setName(s1.name() + "(" + std::to_string(1) + ")");
+            s1 = s1.withName(s1.name() + "(" + std::to_string(1) + ")");
     }
     return phases;
 }

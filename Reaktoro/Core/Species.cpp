@@ -61,8 +61,8 @@ struct Species::Impl
     /// The elements that compose the chemical species and their coefficients
     std::map<Element, double> elements;
 
-    /// The tag of the chemical species
-    std::string tag;
+    /// The type of the chemical species
+    std::string type;
 
     /// The specific data the chemical species may have such as thermodynamic data.
     std::any data;
@@ -78,31 +78,41 @@ Species::Species()
 : pimpl(new Impl())
 {}
 
-auto Species::setName(std::string name) -> void
+auto Species::withName(std::string name) -> Species
 {
-    pimpl->name = name;
+    Species species = clone();
+    species.pimpl->name = name;
+    return species;
 }
 
-auto Species::setFormula(std::string formula) -> void
+auto Species::withFormula(std::string formula) -> Species
 {
-    pimpl->formula = formula;
+    Species species = clone();
+    species.pimpl->formula = formula;
+    return species;
 }
 
-auto Species::setElements(const std::map<Element, double>& elements) -> void
+auto Species::withElements(const std::map<Element, double>& elements) -> Species
 {
-    pimpl->elements = elements;
-    pimpl->molar_mass = molarMassFromElements(elements);
-    pimpl->charge = chargeFromElements(elements);
+    Species species = clone();
+    species.pimpl->elements = elements;
+    species.pimpl->molar_mass = molarMassFromElements(elements);
+    species.pimpl->charge = chargeFromElements(elements);
+    return species;
 }
 
-auto Species::setTag(std::string tag) -> void
+auto Species::withType(std::string type) -> Species
 {
-    pimpl->tag = tag;
+    Species species = clone();
+    species.pimpl->type = type;
+    return species;
 }
 
-auto Species::setData(const std::any& data) -> void
+auto Species::withData(const std::any& data) -> Species
 {
-    pimpl->data = data;
+    Species species = clone();
+    species.pimpl->data = data;
+    return species;
 }
 
 auto Species::numElements() const -> unsigned
@@ -125,9 +135,9 @@ auto Species::elements() const -> const std::map<Element, double>&
     return pimpl->elements;
 }
 
-auto Species::tag() const -> std::string
+auto Species::type() const -> std::string
 {
-    return pimpl->tag;
+    return pimpl->type;
 }
 
 auto Species::molarMass() const -> double
@@ -151,6 +161,13 @@ auto Species::elementCoefficient(std::string element) const -> double
 auto Species::data() const -> const std::any&
 {
     return pimpl->data;
+}
+
+auto Species::clone() const -> Species
+{
+    Species species;
+    *species.pimpl = *pimpl;
+    return species;
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool
