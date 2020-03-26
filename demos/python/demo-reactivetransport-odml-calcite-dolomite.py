@@ -78,7 +78,7 @@ year = 365 * day
 xl = 0.0                # x-coordinate of the left boundary
 xr = 1.0                # x-coordinate of the right boundary
 ncells = 100            # number of cells in the discretization
-nsteps = 10            # number of steps in the reactive transport simulation
+nsteps = 50          # number of steps in the reactive transport simulation
 dx = (xr - xl) / ncells # length of the mesh cells (in units of m)
 dt = 30 * minute        # time step
 
@@ -118,17 +118,17 @@ tag = "-dt-" + "{:d}".format(dt) + \
 folder_results = 'results-odml' + tag
 
 # The seconds spent on equilibrium and transport calculations per time step
-smart_equlibrium_times = np.zeros(nsteps)  # using conventional equilibrium solver
-conv_equlibrium_times = np.zeros(nsteps)  # using smart equilibrium solver
-transport_times = np.zeros(nsteps + 1)
+time_steps = np.linspace(0, nsteps, nsteps)
+
+timings_equilibrium_smart = np.zeros(nsteps)  # using conventional equilibrium solver
+timings_equilibrium_conv = np.zeros(nsteps)  # using smart equilibrium solver
+timings_transport = np.zeros(nsteps)
+
 smart_cells_per_step = np.zeros(ncells)
 smart_cells = np.zeros((nsteps, ncells))
 
-smart_cells_list_per_step = []
-smart_cells_list = []
-
 # The counter of full chemical equilibrium training calculations each time step
-smart_training_counter = np.zeros(nsteps)
+learnings = np.zeros(nsteps)
 
 # Next, we generate the coordinates of the mesh nodes (array `xcells`) by equally dividing the interval *[xr, xl]* with
 # the number of cells `ncells`. The length between each consecutive mesh node is computed and stored in `dx` (the
@@ -229,8 +229,8 @@ df_conv = pd.DataFrame(columns=columns)
 def make_results_folders(use_smart_equilibrium_solver):
 
     os.system('mkdir -p ' + folder_results)
-    if use_smart_equilibrium_solver: os.system('mkdir -p ' + folder_results + "-smart")
-    else: os.system('mkdir -p ' + folder_results + "-reference")
+    #if use_smart_equilibrium_solver: os.system('mkdir -p ' + folder_results + "-smart")
+    #else: os.system('mkdir -p ' + folder_results + "-reference")
 
 # ## Performing the reactive transport simulation
 #
@@ -282,8 +282,20 @@ def simulate(use_smart_equilibrium_solver):
     # Create a list of chemical states for the mesh cells (one for each cell, initialized to state_ic)
     states = [state_ic.clone() for _ in range(ncells + 1)]
 
+    #partition = Partition(system)
+    #partition.setInertSpecies(["Quartz"])
+
     # Create the equilibrium solver object for the repeated equilibrium calculation
-    if use_smart_equilibrium_solver: solver =  SmartEquilibriumSolver(system)
+    if use_smart_equilibrium_solver:
+        #from reaktoro import SmartEquilibriumOptions as smart_equilibrium_options
+        smart_equilibrium_options = SmartEquilibriumOptions()
+        smart_equilibrium_options.reltol = smart_equlibrium_reltol
+        smart_equilibrium_options.amount_fraction_cutoff = amount_fraction_cutoff
+        smart_equilibrium_options.mole_fraction_cutoff = mole_fraction_cutoff
+
+        solver = SmartEquilibriumSolver(system)
+        solver.setOptions(smart_equilibrium_options)
+
     else: solver = EquilibriumSolver(system)
 
     # Running the reactive transport simulation loop
@@ -301,17 +313,17 @@ def simulate(use_smart_equilibrium_solver):
         start_transport = time.time()
         # Perform transport calculations
         bfluid, bsolid, b = transport(states, bfluid, bsolid, b, b_bc, nelems, ifluid_species, isolid_species)
-        transport_times[step] = time.time() - start_transport
+        timings_transport[step] = time.time() - start_transport
 
         start_equilibrium = time.time()
         # Perform reactive chemical calculations
         states = reactive_chemistry(solver, states, b, use_smart_equilibrium_solver)
         if use_smart_equilibrium_solver:
-            smart_equlibrium_times[step] = time.time() - start_equilibrium
+            timings_equilibrium_smart[step] = time.time() - start_equilibrium
             smart_cells[step, :] = smart_cells_per_step
-            smart_training_counter[step] = ncells - np.count_nonzero(smart_cells_per_step)
+            learnings[step] = ncells - np.count_nonzero(smart_cells_per_step)
         else:
-            conv_equlibrium_times[step] = time.time() - start_equilibrium
+            timings_equilibrium_conv[step] = time.time() - start_equilibrium
 
         # Increment time step and number of time steps
         t += dt
@@ -323,7 +335,10 @@ def simulate(use_smart_equilibrium_solver):
         # Update a progress bar
         # pbar.update(1)
         bar.next()
+
     bar.finish()
+    if use_smart_equilibrium_solver:
+        solver.outputClusterInfo();
 
 # Subsections below correspond to the methods responsible for each of the functional parts of `simulate()` method.
 #
@@ -376,10 +391,17 @@ def define_chemical_system():
     # Construct the chemical system with its phases and species
     editor = ChemicalEditor()
 
-    # H O Na Cl Ca Mg C Si Ca
-    editor.addAqueousPhaseWithElements('H O Na Cl Ca Mg C') \
-        .setChemicalModelPitzerHMW() \
-        .setActivityModelDrummondCO2()
+    # H O Na Cl Ca Mg C
+    if activity_model == "pitzer-full":
+        editor.addAqueousPhaseWithElements('H O Na Cl Ca Mg C') \
+            .setChemicalModelPitzerHMW() \
+            .setActivityModelDrummondCO2()
+    elif activity_model == "hkf-full":
+        editor.addAqueousPhaseWithElements('H O Na Cl Ca Mg C')
+    elif activity_model == "dk-full":
+        editor.addAqueousPhaseWithElements('H O Na Cl Ca Mg C') \
+            .setChemicalModelDebyeHuckel()
+
     editor.addMineralPhase('Quartz')
     editor.addMineralPhase('Calcite')
     editor.addMineralPhase('Dolomite')
@@ -469,7 +491,7 @@ def define_boundary_condition(system):
     problem_bc.setTemperature(T)
     problem_bc.setPressure(P)
     problem_bc.add('H2O', 1.0, 'kg')
-    problem_bc.add("O2",    1.0, "umol");
+    problem_bc.add("O2", 1.0, "umol");
     problem_bc.add('NaCl', 0.90, 'mol')
     problem_bc.add('MgCl2', 0.05, 'mol')
     problem_bc.add('CaCl2', 0.01, 'mol')
@@ -818,7 +840,6 @@ def plot_figures_ph_mpl(steps):
         plt.tight_layout()
         plt.close()
 
-
 def plot_figures_calcite_dolomite_mpl(steps):
 
     for i in steps:
@@ -843,9 +864,7 @@ def plot_figures_calcite_dolomite_mpl(steps):
         plt.tight_layout()
         plt.close()
 
-
 def plot_figures_aqueous_species_mpl(steps):
-    plots = []
     for i in steps:
         t = i * dt
         source_conv = ColumnDataSource(df_conv[df_conv['step'] == i])
@@ -897,6 +916,49 @@ def plot_figures_aqueous_species_mpl(steps):
         plt.tight_layout()
         plt.close()
 
+def plot_on_demand_learning_countings_mpl():
+
+    plt.xlabel('Time Step')
+    plt.ylabel('On-demand learnings (at each step)')
+    plt.xlim(left=0, right=nsteps)
+    plt.ylim(bottom=0, top=np.max(learnings)+1)
+    plt.ticklabel_format(style='plain', axis='x')
+    plt.plot(learnings, color='C0', linewidth=1.5)
+    plt.tight_layout()
+    plt.savefig(folder_results + '/on-demand-learning-countings.png')
+    plt.close()
+
+def plot_computing_costs_mpl(step):
+
+    print("speed up = ", np.sum(timings_equilibrium_conv) / np.sum(timings_equilibrium_smart))
+    plt.xlabel('Time Step')
+    plt.ylabel('Computing Cost [μs]')
+    plt.xlim(left=0, right=nsteps)
+    plt.yscale('log')
+    plt.ticklabel_format(style='plain', axis='x')
+    plt.plot(time_steps[0:nsteps:step], timings_equilibrium_conv[0:nsteps:step] * 1e6, label="Chemical Equilibrium (Conventional)", color='C0', linewidth=1.5)
+    plt.plot(time_steps[0:nsteps:step], timings_equilibrium_smart[0:nsteps:step] * 1e6, label="Chemical Equilibrium (Smart)", color='C1', linewidth=1.5, alpha=1.0)
+    plt.plot(time_steps[0:nsteps:step], timings_transport[0:nsteps:step] * 1e6, label="Transport", color='C2', linewidth=1.5, alpha=1.0)
+    leg = plt.legend(loc='right', bbox_to_anchor=(0.5, 0.0, 0.5, 0.5))
+    for line in leg.get_lines(): line.set_linewidth(2.0)
+    plt.tight_layout()
+    plt.savefig(folder_results + '/computing-costs-nolegend-with-smart-ideal.png')
+    plt.close()
+
+def plot_speedups_mpl(step):
+
+    speedup = timings_equilibrium_conv / timings_equilibrium_smart
+
+    plt.xlim(left=0, right=nsteps)
+    plt.xlabel('Time Step')
+    plt.ylabel('Speedup [-]')
+    plt.ticklabel_format(style='plain', axis='x')
+    plt.plot(time_steps[0:nsteps:step], speedup[0:nsteps:step], label="Conventional vs. Smart ", color='C0', linewidth=1.5)
+    leg = plt.legend(loc='upper right')
+    for line in leg.get_lines(): line.set_linewidth(2.0)
+    plt.tight_layout()
+    plt.savefig(folder_results + '/speedups.png')
+    plt.close()
 
 # # Main parts of the tutorial
 #
@@ -907,8 +969,10 @@ def plot_figures_aqueous_species_mpl(steps):
 print("ODML algorithm: ")
 use_smart_equilibrium_solver = True
 make_results_folders(use_smart_equilibrium_solver)
+start_rt = time.time()
 simulate(use_smart_equilibrium_solver)
-print(smart_training_counter)
+timing_rt_smart = time.time() - start_rt
+print("Learnings: ", learnings)
 df_smart.to_csv(folder_results + '/smart.csv', index=False)
 
 # -
@@ -917,9 +981,9 @@ df_smart.to_csv(folder_results + '/smart.csv', index=False)
 # the number of the step and then select the columns of DataFrame we are interested in (cells indices together with the
 # chemical properties):
 
-step = 0
-df_step = df_smart[df_smart['step'] == step].loc[:, ['x'] + column_quantities]
-df_step
+#step = 0
+#df_step = df_smart[df_smart['step'] == step].loc[:, ['x'] + column_quantities]
+#df_step
 
 # Run the reactive transport simulations with the conventional approach:
 
@@ -927,9 +991,15 @@ df_step
 print("Conventional algorithm: ")
 use_smart_equilibrium_solver = False
 make_results_folders(use_smart_equilibrium_solver)
+start_rt = time.time()
 simulate(use_smart_equilibrium_solver)
 df_smart.to_csv(folder_results + '/conv.csv', index=False)
+timing_rt_conv = time.time() - start_rt
 # -
+
+
+print("Total speedup: ", timing_rt_conv/timing_rt_smart)
+print(f"Total learnings: {int(np.sum(learnings))} out of {ncells * nsteps}")
 
 # Select the steps, on which results must plotted:
 
@@ -944,7 +1014,32 @@ assert all(step <= nsteps for step in selected_steps_to_plot), f"Make sure that 
 
 # Outputting the plots to the notebook requires the call of `output_notebook()` that specifies outputting the plot
 # inline in the Jupyter notebook:
+from bokeh.models import Range1d, ColumnDataSource
 
+# Plot ph on the selected steps:
+plot_figures_ph_mpl(selected_steps_to_plot)
+
+# Plot calcite and dolomite on the selected steps:
+plot_figures_calcite_dolomite_mpl(selected_steps_to_plot)
+
+# Plot aqueous species on the selected steps:
+plot_figures_aqueous_species_mpl(selected_steps_to_plot)
+
+# Plotting of the number of the learning:
+plot_on_demand_learning_countings_mpl()
+
+# Plot with the CPU time comparison and speedup:
+step = 1
+plot_computing_costs_mpl(1)
+plot_speedups_mpl(1)
+
+#print("conv_equlibrium_times : ", conv_equlibrium_times)
+#print("smart_equlibrium_times : ", smart_equlibrium_times)
+#print("transport_times : ", transport_times)
+
+# To study the time-dependent behavior of the chemical properties, we create a Bokeh application using function
+# `modify_doc(doc)`. It creates Bokeh content and adds it to the app. Streaming of the reactive transport data:
+'''
 # Import components of bokeh library
 from bokeh.io import show, output_notebook
 from bokeh.layouts import column
@@ -954,23 +1049,8 @@ from bokeh.layouts import gridplot
 from bokeh.io import export_png
 from bokeh.io import export_svgs, save
 
-
 output_notebook()
 
-# Plot ph on the selected steps:
-plot_figures_ph_mpl(selected_steps_to_plot)
-
-# Plot calcite and dolomite on the selected steps:
-
-plot_figures_calcite_dolomite_mpl(selected_steps_to_plot)
-
-# Plot aqueous species on the selected steps:
-
-plot_figures_aqueous_species_mpl(selected_steps_to_plot)
-
-# To study the time-dependent behavior of the chemical properties, we create a Bokeh application using function
-# `modify_doc(doc)`. It creates Bokeh content and adds it to the app. Streaming of the reactive transport data:
-'''
 def modify_doc(doc):
     # Initialize the data by the initial chemical state
     # source = ColumnDataSource(df[df['step'] == 0].loc[:, column_quantities])
