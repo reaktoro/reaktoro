@@ -121,9 +121,7 @@ int main()
     ///*
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
-    //*/
-    params.nsteps = 10000; // the number of steps in the reactive transport simulation
-    //params.nsteps = 1000; // the number of steps in the reactive transport simulation
+    params.nsteps = 50; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 30 * minute; // the time step (in units of s)
 
@@ -195,7 +193,6 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     // Step **: Define smart chemical equilibrium solver options
     SmartEquilibriumOptions smart_equilibrium_options;
     smart_equilibrium_options.reltol = params.smart_equlibrium_reltol;
-
     smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
     smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
 
@@ -362,6 +359,9 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
         step += 1;
     }
+
+    if(params.use_smart_eqilibirum_solver)
+        rtsolver.outputClusterInfo();
 
     if(params.use_smart_eqilibirum_solver)
         results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
