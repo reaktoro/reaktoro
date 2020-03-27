@@ -54,7 +54,7 @@ public:
     /// `Aqueous`, `Gaseous`, `Liquid`, `Mineral`.
     auto withType(std::string type) -> Species;
 
-    /// Return a copy of this Species object with given data.
+    /// Return a copy of this Species object with additional data whose type is known at runtime only.
     auto withData(const std::any& data) -> Species;
 
     /// Return the number of elements of the species.
@@ -81,7 +81,7 @@ public:
     /// Return the stoichiometry of an element in the species.
     auto elementCoefficient(std::string element) const -> double;
 
-    /// Return the specific data the species may have such as thermodynamic data.
+    /// Return the additional data of the species whose type is known at runtime only.
     auto data() const -> const std::any&;
 
     /// Return a cloned copy of this Species object.
