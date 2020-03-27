@@ -18,13 +18,17 @@
 #include "ThermoEngine.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
 
-ThermoEngine::ThermoEngine(const Database& database)
-: db(database)
+ThermoEngine::ThermoEngine(const Database& db, const StandardThermoModelFn& model)
+: db(db), model(model)
 {
+    // Assert given standard thermodynamic model function is not empty
+    Assert(model, "Failure at ThermoEngine::ThermoEngine(const Database&, const StandardThermoModelFn&).",
+        "Given StandardThermoModelFn object is empty.");
 }
 
 auto ThermoEngine::database() const -> const Database&
@@ -32,13 +36,14 @@ auto ThermoEngine::database() const -> const Database&
     return db;
 }
 
-auto ThermoEngine::standardThermoProps(Temperature T, Pressure P, const std::vector<Species>& species) const -> std::vector<StandardThermoProps>
+auto ThermoEngine::standardThermoModelFn() const -> const StandardThermoModelFn&
 {
-    std::vector<StandardThermoProps> res;
-    res.reserve(species.size());
-    for(const auto& s : species)
-        res.push_back(standardThermoProps(T, P, s));
-    return res;
+    return model;
+}
+
+auto ThermoEngine::standardThermoProps(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps
+{
+    return model(T, P, species);
 }
 
 } // namespace Reaktoro
