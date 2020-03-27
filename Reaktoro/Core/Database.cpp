@@ -54,6 +54,9 @@ struct Database::Impl
     /// The map of species type to a a SpeciesMap object containing species with that type.
     SpeciesGroupMap species_group_with_type;
 
+    /// The additional data in the database whose type is known at runtime only.
+    std::any anydata;
+
     /// Set all element in the database.
     auto setElements(const ElementMap& map) -> void
     {
@@ -67,6 +70,12 @@ struct Database::Impl
         species_group_with_type.clear();
         for(const auto& [_, species] : species_map)
             species_group_with_type[species.type()][species.name()] = species;
+    }
+
+    /// Set additional data for the database whose type is known at runtime only.
+    auto setData(const std::any& data) -> void
+    {
+        anydata = data;
     }
 
     /// Add an element in the database.
@@ -92,6 +101,12 @@ struct Database::Impl
     auto species() const -> std::vector<Species>
     {
         return vectorize(species_map);
+    }
+
+    /// Return the additional data in the database whose type is known at runtime only.
+    auto data() const -> const std::any&
+    {
+        return anydata;
     }
 
     /// Return an element with given name if it exists in the database.
@@ -166,6 +181,11 @@ auto Database::setSpecies(const SpeciesMap& species_map) -> void
     pimpl->setSpecies(species_map);
 }
 
+auto Database::setData(const std::any& data) -> void
+{
+    pimpl->setData(data);
+}
+
 auto Database::addElement(const Element& element) -> void
 {
     pimpl->addElement(element);
@@ -184,6 +204,11 @@ auto Database::elements() const -> std::vector<Element>
 auto Database::species() const -> std::vector<Species>
 {
     return pimpl->species();
+}
+
+auto Database::data() const -> const std::any&
+{
+    return pimpl->data();
 }
 
 auto Database::elementWithName(std::string name) const -> std::optional<Element>

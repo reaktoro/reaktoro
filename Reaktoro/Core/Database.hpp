@@ -18,6 +18,7 @@
 #pragma once
 
 // C++ includes
+#include <any>
 #include <memory>
 #include <optional>
 #include <string>
@@ -51,6 +52,9 @@ public:
     /// Set all species in the database.
     auto setSpecies(const SpeciesMap& species_map) -> void;
 
+    /// Set additional data for the database whose type is known at runtime only.
+    auto setData(const std::any& data) -> void;
+
     /// Add an element in the database.
     auto addElement(const Element& element) -> void;
 
@@ -62,6 +66,9 @@ public:
 
     /// Return all species in the database.
     auto species() const -> std::vector<Species>;
+
+    /// Return the additional data in the database whose type is known at runtime only.
+    auto data() const -> const std::any&;
 
     /// Return an element with given name if it exists in the database.
     auto elementWithName(std::string name) const -> std::optional<Element>;
