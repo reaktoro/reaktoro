@@ -17,9 +17,6 @@
 
 #pragma once
 
-// C++ includes
-#include <memory>
-
 // Reaktoro includes
 #include <Reaktoro/Core/ThermoEngine.hpp>
 
@@ -28,32 +25,12 @@ namespace Reaktoro {
 // Forward declarations
 class DatabaseSupcrt;
 
-/// A type defining the calculation of standard thermodynamic properties based on SUPCRT.
+/// The thermodynamic engine for standard thermodynamic properties calculation based on SUPCRT.
 class ThermoEngineSupcrt : public ThermoEngine
 {
 public:
     /// Construct a ThermoEngineSupcrt object.
     explicit ThermoEngineSupcrt(const DatabaseSupcrt& database);
-
-    /// Construct a copy of a ThermoEngineSupcrt object.
-    ThermoEngineSupcrt(const ThermoEngineSupcrt& other);
-
-    /// Destroy this ThermoEngineSupcrt object.
-    ~ThermoEngineSupcrt();
-
-    /// Assign a ThermoEngineSupcrt object to this.
-    auto operator=(ThermoEngineSupcrt other) -> ThermoEngineSupcrt&;
-
-    /// Return the standard thermodynamic properties of a species at given temperature and pressure.
-    /// @param T The temperature for the calculation (in unit of K)
-    /// @param P The pressure for the calculation (in unit of Pa)
-    /// @param species The species object.
-    auto standardThermoProps(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps;
-
-private:
-    struct Impl;
-
-    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro

@@ -62,13 +62,9 @@ auto convert(const SpeciesThermoState& state) -> StandardThermoProps
     return props;
 }
 
-} // namespace
-
-struct ThermoEngineSupcrt::Impl
+/// The standard thermodynamic model function object based on SUPCRT
+struct SupcrtStandardThermoModelFn
 {
-    /// The thermodynamic database based on SUPCRT
-    DatabaseSupcrt supcrtdb;
-
     /// The Haar--Gallagher--Kell (1984) equation of state for water
     WaterThermoPropsFn water_thermo_props_hgk_fn;
 
@@ -81,9 +77,8 @@ struct ThermoEngineSupcrt::Impl
     /// The HKF equation of state for the thermodynamic state of aqueous, gaseous and mineral species
     SpeciesThermoPropsFn species_thermo_props_hkf_fn;
 
-    /// Construct a ThermoEngineSupcrt::Impl object
-    Impl(const DatabaseSupcrt& database)
-    : supcrtdb(database)
+    /// Construct a SupcrtStandardThermoModelFn object
+    SupcrtStandardThermoModelFn()
     {
         // Initialize the Haar--Gallagher--Kell (1984) equation of state for water
         water_thermo_props_hgk_fn = [](Temperature T, Pressure P)
@@ -109,6 +104,23 @@ struct ThermoEngineSupcrt::Impl
         };
 
         water_eletro_props_fn = memoize(water_eletro_props_fn);
+    }
+
+    /// Return the standard thermodynamic properties of a species at given temperature and pressure.
+    auto operator()(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps
+    {
+        const auto data = species.data();
+        if(data.type() == typeid(ParamsMaierKelly))
+            return standardThermoPropsMaierKelly(T, P, species);
+        if(data.type() == typeid(ParamsMaierKellyHKF))
+            return standardThermoPropsMaierKellyHKF(T, P, species);
+        if(isAlternativeWaterName(species.name()))
+            return standardThermoPropsAqueousSolventHKF(T, P, species);
+        if(data.type() == typeid(ParamsAqueousSoluteHKF))
+            return standardThermoPropsAqueousSoluteHKF(T, P, species);
+        RuntimeError("Failure at SupcrtStandardThermoModelFn::operator().",
+            "There is no SUPCRT parameters for species named " + species.name()) + ".";
+        return {};
     }
 
     /// Return the standard thermodynamic properties of the aqueous solvent water using HKF model.
@@ -146,48 +158,13 @@ struct ThermoEngineSupcrt::Impl
         const auto res = speciesThermoStateHKF(T, P, params);
         return convert(res);
     }
-
-    /// Return the standard thermodynamic properties of a species at given temperature and pressure.
-    auto standardThermoProps(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps
-    {
-        const auto data = species.data();
-        if(data.type() == typeid(ParamsMaierKelly))
-            return standardThermoPropsMaierKelly(T, P, species);
-        if(data.type() == typeid(ParamsMaierKellyHKF))
-            return standardThermoPropsMaierKellyHKF(T, P, species);
-        if(isAlternativeWaterName(species.name()))
-            return standardThermoPropsAqueousSolventHKF(T, P, species);
-        if(data.type() == typeid(ParamsAqueousSoluteHKF))
-            return standardThermoPropsAqueousSoluteHKF(T, P, species);
-        RuntimeError("Could not evaluate ThermoEngineSupcrt::standardThermoProps.", "There is no SUPCRT parameters for species named " + species.name()) + ".";
-        return {};
-    }
 };
 
+} // namespace
+
 ThermoEngineSupcrt::ThermoEngineSupcrt(const DatabaseSupcrt& database)
-: ThermoEngine(database), pimpl(new Impl(database))
+: ThermoEngine(database, SupcrtStandardThermoModelFn())
 {
-}
-
-ThermoEngineSupcrt::ThermoEngineSupcrt(const ThermoEngineSupcrt& other)
-: ThermoEngine(other), pimpl(new Impl(*other.pimpl))
-{
-}
-
-ThermoEngineSupcrt::~ThermoEngineSupcrt()
-{
-}
-
-auto ThermoEngineSupcrt::operator=(ThermoEngineSupcrt other) -> ThermoEngineSupcrt&
-{
-    ThermoEngine::operator=(other);
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
-auto ThermoEngineSupcrt::standardThermoProps(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps
-{
-    return pimpl->standardThermoProps(T, P, species);
 }
 
 } // namespace Reaktoro
