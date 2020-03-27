@@ -18,10 +18,7 @@
 #pragma once
 
 // C++ includes
-#include <map>
-#include <memory>
 #include <string>
-#include <vector>
 
 // Reaktoro includes
 #include <Reaktoro/Core/Database.hpp>
@@ -29,7 +26,6 @@
 namespace Reaktoro {
 
 /// The class used to store and retrieve data of chemical species from SUPCRT databases.
-/// @see Element, Species
 /// @ingroup Databases
 class DatabaseSupcrt : public Database
 {

@@ -232,7 +232,7 @@ auto parseSpecies(const xml_node& node, const ElementMap& element_map) -> Specie
     return species;
 }
 
-auto parseElementList(const xml_document& doc) -> ElementMap
+auto parseElementMap(const xml_document& doc) -> ElementMap
 {
     ElementMap element_map;
     for(xml_node node : doc.child("Database").children("Element"))
@@ -244,7 +244,7 @@ auto parseElementList(const xml_document& doc) -> ElementMap
     return element_map;
 }
 
-auto parseSpeciesList(const xml_document& doc, const ElementMap& element_map) -> SpeciesMap
+auto parseSpeciesMap(const xml_document& doc, const ElementMap& element_map) -> SpeciesMap
 {
     SpeciesMap species_map;
     for(xml_node node : doc.child("Database").children("Species"))
@@ -259,8 +259,8 @@ auto parseDatabase(const xml_document& doc) -> DatabaseSupcrt
 {
     xml_node database = doc.child("Database");
 
-    ElementMap element_map = parseElementList(doc);
-    SpeciesMap species_map = parseSpeciesList(doc, element_map);
+    ElementMap element_map = parseElementMap(doc);
+    SpeciesMap species_map = parseSpeciesMap(doc, element_map);
 
     DatabaseSupcrt db;
     db.setElements(element_map);
