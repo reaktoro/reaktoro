@@ -26,15 +26,16 @@ namespace Reaktoro {
 class Species;
 class ThermoEngine;
 
-/// The base type for all thermodynamic activity models for phases.
-/// @see PhaseStandardThermoModel
-class PhaseActivityModel
+/// The base type for all standard thermodynamic models for phases.
+/// @see ActivityModel
+class StandardThermoModelBase
 {
 public:
-    /// Create the activity model of the phase.
+    /// Create the standard thermodynamic model function of the phase.
     /// @param engine The thermodynamic engine from which additional data can be fetched.
     /// @param species The species that compose the phase.
-    virtual auto create(const ThermoEngine& engine, const std::vector<Species>& species) -> PhaseActivityModelFn = 0;
+    virtual auto create(const ThermoEngine& engine, const std::vector<Species>& species) -> StandardThermoModelFn = 0;
 };
 
 } // namespace Reaktoro
+
