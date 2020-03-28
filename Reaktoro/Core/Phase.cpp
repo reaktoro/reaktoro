@@ -191,7 +191,7 @@ auto Phase::standardThermoProps(double T, double P) const -> StandardThermoProps
     return pimpl->standard_thermo_model_fn(T, P);
 }
 
-auto Phase::activityProps(double T, double P, VectorConstRef n) const -> ActivityProps
+auto Phase::activityProps(double T, double P, VectorXrConstRef n) const -> ActivityProps
 {
     return pimpl->activity_model_fn(T, P, n);
 }

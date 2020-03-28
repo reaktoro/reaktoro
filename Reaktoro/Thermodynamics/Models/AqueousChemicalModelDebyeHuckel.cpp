@@ -59,7 +59,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     const Index iwater = mixture.indexWater();
 
     // The electrical charges of the charged species only
-    const Vector charges = mixture.chargesChargedSpecies();
+    const VectorXr charges = mixture.chargesChargedSpecies();
 
     // The Debye-Huckel parameters a and b of the charged species
     std::vector<double> aions, bions;
@@ -86,12 +86,12 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     AqueousMixtureState state;
 
     // Auxiliary variables
-    ChemicalScalar xw, ln_xw, I2, sqrtI, mSigma, sigma(num_species), sigmacoeff, Lambda;
+    real xw, ln_xw, I2, sqrtI, mSigma, sigma(num_species), sigmacoeff, Lambda;
     VectorXd ln_m;
-    ThermoScalar A, B, sqrt_rho, T_epsilon, sqrt_T_epsilon;
+    real A, B, sqrt_rho, T_epsilon, sqrt_T_epsilon;
 
     // Define the intermediate chemical model function of the aqueous mixture
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) mutable
     {
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, n);

@@ -301,20 +301,20 @@ auto activePhasesInSaturationList(const PHREEQC& phreeqc) -> std::vector<Phreeqc
     return phases;
 }
 
-auto speciesAmounts(const PHREEQC& phreeqc, const std::vector<PhreeqcSpecies*>& species) -> Vector
+auto speciesAmounts(const PHREEQC& phreeqc, const std::vector<PhreeqcSpecies*>& species) -> VectorXr
 {
     const unsigned num_species = species.size();
-    Vector n(num_species);
+    VectorXr n(num_species);
     for(unsigned i = 0; i < num_species; ++i)
         n[i] = species[i]->moles;
     return n;
 }
 
-auto speciesAmounts(const PHREEQC& phreeqc, const std::vector<PhreeqcPhase*>& phases) -> Vector
+auto speciesAmounts(const PHREEQC& phreeqc, const std::vector<PhreeqcPhase*>& phases) -> VectorXr
 {
     const unsigned num_phases = phases.size();
     const unsigned num_unknowns = phreeqc.count_unknowns;
-    Vector n(num_phases);
+    VectorXr n(num_phases);
     for(unsigned i = 0; i < num_phases; ++i)
     {
         n[i] = phases[i]->moles_x;
@@ -366,7 +366,7 @@ auto useAnalytic(const double* logk) -> bool
 }
 
 template<typename SpeciesType>
-auto lnEquilibriumConstantHelper(const SpeciesType* species, Temperature T, Pressure P) -> ThermoScalar
+auto lnEquilibriumConstantHelper(const SpeciesType* species, Temperature T, Pressure P) -> real
 {
     //--------------------------------------------------------------------------------
     // The implementation of this method was inspired by the PHREEQC
@@ -387,12 +387,12 @@ auto lnEquilibriumConstantHelper(const SpeciesType* species, Temperature T, Pres
     return logk[logK_T0]*ln10 - logk[delta_h] * (298.15 - T)/(R*T*298.15);
 }
 
-auto lnEquilibriumConstant(const PhreeqcSpecies* species, double T, double P) -> ThermoScalar
+auto lnEquilibriumConstant(const PhreeqcSpecies* species, double T, double P) -> real
 {
     return lnEquilibriumConstantHelper(species, T, P);
 }
 
-auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> ThermoScalar
+auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> real
 {
     return lnEquilibriumConstantHelper(phase, T, P);
 }

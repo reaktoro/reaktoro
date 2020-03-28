@@ -94,16 +94,16 @@ auto newton(const std::function<std::tuple<double,double>(double)>& f,
     return x;
 }
 
-auto newton(const std::function<void(VectorConstRef, VectorRef, MatrixRef)>& f,
-    VectorConstRef x0, double epsilon, unsigned maxiter) -> Vector
+auto newton(const std::function<void(VectorXdConstRef, VectorXdRef, MatrixXdRef)>& f,
+    VectorXdConstRef x0, double epsilon, unsigned maxiter) -> VectorXd
 {
     Assert(epsilon > 0.0, "Could not start Newton's method with given parameter.",
         "Expecting a positive tolerance parameter.");
     Assert(maxiter > 0, "Could not start Newton's method with given parameter.",
         "Expecting a positive maximum number of iterations.");
     Index n = x0.rows();
-    Vector x = x0;
-    Vector fx(n);
+    VectorXd x = x0;
+    VectorXd fx(n);
     Matrix Jx(n, n);
     for(unsigned i = 0; i < maxiter; ++i)
     {

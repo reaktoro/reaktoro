@@ -36,22 +36,22 @@ struct ActivityProps
     VectorXd partial_molar_volumes;
 
     /// The molar volume of the phase (in units of m3/mol).
-    ChemicalScalar molar_volume;
+    real molar_volume;
 
     /// The excess molar Gibbs energy of the phase (in units of J/mol).
-    ChemicalScalar excess_molar_gibbs_energy;
+    real excess_molar_gibbs_energy;
 
     /// The excess molar enthalpy of the phase (in units of J/mol).
-    ChemicalScalar excess_molar_enthalpy;
+    real excess_molar_enthalpy;
 
     /// The excess molar isobaric heat capacity of the phase (in units of J/(mol*K)).
-    ChemicalScalar excess_molar_heat_capacity_cp;
+    real excess_molar_heat_capacity_cp;
 
     /// The excess molar isochoric heat capacity of the phase (in units of J/(mol*K)).
-    ChemicalScalar excess_molar_heat_capacity_cv;
+    real excess_molar_heat_capacity_cv;
 };
 
 /// The function type for the activity model of a phase.
-using ActivityModelFn = std::function<ActivityProps(Temperature, Pressure, VectorConstRef)>;
+using ActivityModelFn = std::function<ActivityProps(Temperature, Pressure, VectorXrConstRef)>;
 
 } // namespace Reaktoro

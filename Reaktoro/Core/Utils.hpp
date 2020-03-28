@@ -33,11 +33,11 @@ auto names(const NamedValues& values) -> std::vector<std::string>;
 
 /// Return the electrical charges of all species in a list of species
 template<typename ChargedValues>
-auto charges(const ChargedValues& values) -> Vector;
+auto charges(const ChargedValues& values) -> VectorXr;
 
 /// Return the molar masses of all species in a list of species (in units of kg/mol)
 template<typename SpeciesValues>
-auto molarMasses(const SpeciesValues& species) -> Vector;
+auto molarMasses(const SpeciesValues& species) -> VectorXr;
 
 /// Return the mole fractions of the species.
 inline auto moleFractions(Composition n) -> VectorXd
@@ -45,7 +45,7 @@ inline auto moleFractions(Composition n) -> VectorXd
     const auto nspecies = n.size();
     if(nspecies == 1)
         return ones(n);
-    const ChemicalScalar nt = sum(n);
+    const real nt = sum(n);
     if(nt != 0.0) return n/nt;
     else return zeros(n);
 }

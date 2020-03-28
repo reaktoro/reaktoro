@@ -33,7 +33,7 @@ namespace {
 auto defaultMasterSpecies(const Partition& partition) -> Indices
 {
     // The formula matrix of the equilibrium species
-    MatrixConstRef A = partition.formulaMatrixEquilibriumPartition();
+    MatrixXdConstRef A = partition.formulaMatrixEquilibriumPartition();
 
     // The number of elements and species in the equilibrium partition
     const Index E = A.rows();
@@ -171,7 +171,7 @@ struct EquilibriumReactions::Impl
         const Index num_species = iequilibrium.size();
 
         // Initialize the weights of priority of the equilibrium species
-        Vector weights = ones(num_species);
+        VectorXr weights = ones(num_species);
 
         // Give higher priority to the first indices in imaster
         for(Index i = imaster.size(); i > 0; --i)
@@ -201,7 +201,7 @@ struct EquilibriumReactions::Impl
     }
 
     // Initialize the equilibrium reactions based on weights of priority for master species
-    auto initialize(Vector weights) -> void
+    auto initialize(VectorXr weights) -> void
     {
         // Auxiliary references to the LU factors
         const auto& U = lu.U;

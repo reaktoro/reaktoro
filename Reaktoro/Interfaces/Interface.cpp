@@ -158,7 +158,7 @@ auto Interface::system() const -> ChemicalSystem
         };
 
         // Create the PhaseChemicalModel function for the phase
-        PhaseChemicalModel phase_chemical_model = [](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) -> void
+        PhaseChemicalModel phase_chemical_model = [](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) -> void
         {
             RuntimeError("Could not evaluate the chemical model of phase.",
                 "This phase was construted without a thermodynamic model.");
@@ -177,7 +177,7 @@ auto Interface::system() const -> ChemicalSystem
     };
 
     // Create the ChemicalModel function for the chemical system
-    ChemicalModel chemical_model = [=](ChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) -> void
+    ChemicalModel chemical_model = [=](ChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) -> void
     {
         interface->properties(res, T, P, n);
     };
@@ -193,7 +193,7 @@ auto Interface::state(const ChemicalSystem& system) const -> ChemicalState
     ChemicalState state(system);
     state.setTemperature(temperature());
     state.setPressure(pressure());
-    Vector n = speciesAmounts();
+    VectorXr n = speciesAmounts();
     n = (n.array() > 0.0).select(n, 1e-20);
     state.setSpeciesAmounts(n);
     return state;

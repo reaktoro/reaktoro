@@ -30,7 +30,7 @@ class ChemicalSystem;
 class ReactionEquation;
 
 /// The signature of a function that calculates a single chemical property.
-using ChemicalPropertyFunction = std::function<ChemicalScalar(const ChemicalProperties&)>;
+using ChemicalPropertyFunction = std::function<real(const ChemicalProperties&)>;
 
 /// The namespace of all chemical property functions.
 /// @see ChemicalPropertyFunction

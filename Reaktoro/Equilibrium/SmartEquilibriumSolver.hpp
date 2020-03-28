@@ -60,19 +60,19 @@ public:
     auto setPartition(const Partition& partition) -> void;
 
     /// Learn how to perform a full equilibrium calculation.
-    auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
+    auto learn(ChemicalState& state, double T, double P, VectorXrConstRef be) -> EquilibriumResult;
 
     /// Learn how to perform a full equilibrium calculation.
     auto learn(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
 
     /// Estimate the equilibrium state using sensitivity derivatives.
-    auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
+    auto estimate(ChemicalState& state, double T, double P, VectorXrConstRef be) -> EquilibriumResult;
 
     /// Estimate the equilibrium state using sensitivity derivatives.
     auto estimate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
 
     /// Solve an equilibrium calculation either by
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
+    auto solve(ChemicalState& state, double T, double P, VectorXrConstRef be) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation

@@ -36,7 +36,7 @@
 namespace Reaktoro {
 namespace {
 
-auto largestStepSize(VectorConstRef x, VectorConstRef dx, VectorConstRef l) -> double
+auto largestStepSize(VectorXdConstRef x, VectorXdConstRef dx, VectorXdConstRef l) -> double
 {
     double alpha = infinity();
     for(unsigned i = 0; i < x.size(); ++i)
@@ -59,20 +59,20 @@ struct OptimumSolverKarpov::Impl
     ObjectiveResult f_alpha_max;
 
     // The iterate at the trial step length
-    Vector x_alpha;
+    VectorXd x_alpha;
 
     // The vector of weights for the primal variables in the ellipsoid condition
-    Vector w;
+    VectorXd w;
 
     // The vector defined as `t = tr(A)*y - grad(f)`
-    Vector t;
+    VectorXd t;
 
     // The descent direction vector
-    Vector dx;
+    VectorXd dx;
 
     // The left-hand and right-hand side matrix and vector of the linear system
     Matrix lhs;
-    Vector rhs;
+    VectorXd rhs;
 
     // The outputter instance
     Outputter outputter;
@@ -379,7 +379,7 @@ struct OptimumSolverKarpov::Impl
         // Return true if the calculation has converged
         auto converged = [&]()
         {
-            Vector tmp = (w.array() > 0).select(z, 0.0);
+            VectorXd tmp = (w.array() > 0).select(z, 0.0);
 
             if(error < tolerance && min(tmp) > negative_dual_tolerance)
             {
@@ -475,7 +475,7 @@ auto OptimumSolverKarpov::solve(const OptimumProblem& problem, OptimumState& sta
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverKarpov::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
+auto OptimumSolverKarpov::dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> VectorXd
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
         "The method OptimumSolverKarpov::dxdp has not been implemented yet.");

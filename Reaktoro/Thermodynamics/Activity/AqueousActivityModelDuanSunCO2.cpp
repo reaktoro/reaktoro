@@ -56,10 +56,10 @@ const double zeta_coeffs[] =
      0.0
 };
 
-auto paramDuanSun(const ThermoScalar& T, const ThermoScalar& P, const double coeffs[]) -> ThermoScalar
+auto paramDuanSun(const real& T, const real& P, const double coeffs[]) -> real
 {
     // Convert pressure from pascal to bar
-    const ThermoScalar Pbar = 1e-5 * P;
+    const real Pbar = 1e-5 * P;
 
     const double c1  = coeffs[0];
     const double c2  = coeffs[1];
@@ -95,28 +95,28 @@ auto aqueousActivityModelDuanSunCO2(const AqueousMixture& mixture) -> AqueousAct
     const Index iSO4 = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("SO4--")); // SO4--, SO4-2, SO4[-2]
 
     // The molalities of some ionic species covered by the model
-    ChemicalScalar mNa(nspecies);
-    ChemicalScalar mK(nspecies);
-    ChemicalScalar mCa(nspecies);
-    ChemicalScalar mMg(nspecies);
-    ChemicalScalar mCl(nspecies);
-    ChemicalScalar mSO4(nspecies);
+    real mNa(nspecies);
+    real mK(nspecies);
+    real mCa(nspecies);
+    real mMg(nspecies);
+    real mCl(nspecies);
+    real mSO4(nspecies);
 
     // The ln activity coefficient of CO2(aq)
-    ChemicalScalar ln_gCO2(nspecies);
+    real ln_gCO2(nspecies);
 
     AqueousActivityModel f = [=](const AqueousMixtureState& state) mutable
     {
         // Extract temperature and pressure values
-        const ThermoScalar& T = state.T;
-        const ThermoScalar& P = state.P;
+        const real& T = state.T;
+        const real& P = state.P;
 
         // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
         const auto& ms = state.ms;
 
         // The parameters lambda and zeta of activity coefficient model
-        const ThermoScalar lambda = paramDuanSun(T, P, lambda_coeffs);
-        const ThermoScalar zeta   = paramDuanSun(T, P, zeta_coeffs);
+        const real lambda = paramDuanSun(T, P, lambda_coeffs);
+        const real zeta   = paramDuanSun(T, P, zeta_coeffs);
 
         // The stoichiometric molalities of the specific ions and their molar derivatives
         if(iNa  < nions) mNa  = ms[iNa];

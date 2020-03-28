@@ -34,6 +34,6 @@
 ///// @param W The binary interaction parameters for the solid solution end-members
 ///// @return The equation of state function for the mineral phase
 ///// @see MineralMixture, MineralChemicalModel
-//auto mineralChemicalModelVanLaar(const MineralMixture& mixture, VectorConstRef a, MatrixConstRef W) -> PhaseChemicalModel;
+//auto mineralChemicalModelVanLaar(const MineralMixture& mixture, VectorXrConstRef a, MatrixXdConstRef W) -> PhaseChemicalModel;
 //
 //} // namespace Reaktoro

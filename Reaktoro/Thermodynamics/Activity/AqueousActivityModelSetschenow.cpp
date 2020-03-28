@@ -33,7 +33,7 @@ auto aqueousActivityModelSetschenow(const AqueousMixture& mixture, double b) -> 
         const auto& I = state.Ie;
 
         // The activity coefficient of the given species (in molality scale)
-        ChemicalScalar ln_gi = ln10 * b * I;
+        real ln_gi = ln10 * b * I;
 
         return ln_gi;
     };

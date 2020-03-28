@@ -109,7 +109,7 @@
 //    auto states() const -> const std::vector<ChemicalState>&;
 //
 //    /// Return the molar amounts of the chemical components at every field point (in units of mol).
-//    auto componentAmounts() -> const std::vector<Vector>&;
+//    auto componentAmounts() -> const std::vector<VectorXr>&;
 //
 //    /// Return the molar amounts of each equilibrium species and their derivatives at every field point.
 //    auto equilibriumSpeciesAmounts() -> const std::vector<ChemicalField>&;

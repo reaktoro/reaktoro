@@ -22,9 +22,9 @@
 
 namespace Reaktoro {
 
-auto largestStep(VectorConstRef p, VectorConstRef dp) -> double
+auto largestStep(VectorXdConstRef p, VectorXdConstRef dp) -> double
 {
-    Vector res = -p.array() / dp.array();
+    VectorXd res = -p.array() / dp.array();
     double alpha = infinity();
     for(unsigned i = 0; i < res.size(); ++i)
         if(res[i] > 0.0 && res[i] < alpha)
@@ -32,13 +32,13 @@ auto largestStep(VectorConstRef p, VectorConstRef dp) -> double
     return alpha;
 }
 
-auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, double tau) -> double
+auto fractionToTheBoundary(VectorXdConstRef p, VectorXdConstRef dp, double tau) -> double
 {
     Index i;
     return fractionToTheBoundary(p, dp, tau, i);
 }
 
-auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, double tau, Index& ilimiting) -> double
+auto fractionToTheBoundary(VectorXdConstRef p, VectorXdConstRef dp, double tau, Index& ilimiting) -> double
 {
     ilimiting = p.size();
     double alpha_max = 1.0;
@@ -58,7 +58,7 @@ auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, double tau, Inde
     return alpha_max;
 }
 
-auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, MatrixConstRef C, VectorConstRef r, double tau) -> double
+auto fractionToTheBoundary(VectorXdConstRef p, VectorXdConstRef dp, MatrixXdConstRef C, VectorXdConstRef r, double tau) -> double
 {
     // The number of linear inequality constraints
     const Index m = C.rows();
@@ -82,7 +82,7 @@ auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, MatrixConstRef C
     return alpha_max;
 }
 
-auto fractionToTheLowerBoundary(VectorConstRef p, VectorConstRef dp, VectorConstRef lower, double tau) -> double
+auto fractionToTheLowerBoundary(VectorXdConstRef p, VectorXdConstRef dp, VectorXdConstRef lower, double tau) -> double
 {
     double alpha_max = 1.0;
     for(unsigned i = 0; i < p.size(); ++i)
@@ -107,15 +107,15 @@ auto infinity() -> double
     return std::numeric_limits<double>::infinity();
 }
 
-auto bfgs() -> std::function<Matrix(VectorConstRef, VectorConstRef)>
+auto bfgs() -> std::function<Matrix(VectorXdConstRef, VectorXdConstRef)>
 {
-    Vector x0;
-    Vector g0;
-    Vector dx;
-    Vector dg;
+    VectorXd x0;
+    VectorXd g0;
+    VectorXd dx;
+    VectorXd dg;
     Matrix H;
 
-    std::function<Matrix(VectorConstRef, VectorConstRef)> f = [=](VectorConstRef x, VectorConstRef g) mutable
+    std::function<Matrix(VectorXdConstRef, VectorXdConstRef)> f = [=](VectorXdConstRef x, VectorXdConstRef g) mutable
     {
         if(x0.size() == 0)
         {

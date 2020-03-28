@@ -28,12 +28,12 @@ const double eps2ndorder = 1.0e-6;
 
 } // namespace
 
-auto derivativeForward(const ScalarFunction& f, VectorConstRef x) -> Vector
+auto derivativeForward(const ScalarFunction& f, VectorXdConstRef x) -> VectorXd
 {
     const double fx = f(x);
     const unsigned nrows = x.rows();
-    Vector dfdx = zeros(nrows);
-    Vector xh(nrows);
+    VectorXd dfdx = zeros(nrows);
+    VectorXd xh(nrows);
     for(unsigned i = 0; i < nrows; ++i)
     {
         const double h = eps1storder * (x[i] ? std::abs(x[i]) : 1.0);
@@ -44,12 +44,12 @@ auto derivativeForward(const ScalarFunction& f, VectorConstRef x) -> Vector
     return dfdx;
 }
 
-auto derivativeBackward(const ScalarFunction& f, VectorConstRef x) -> Vector
+auto derivativeBackward(const ScalarFunction& f, VectorXdConstRef x) -> VectorXd
 {
     const double fx = f(x);
     const unsigned nrows = x.rows();
-    Vector dfdx = zeros(nrows);
-    Vector xh(nrows);
+    VectorXd dfdx = zeros(nrows);
+    VectorXd xh(nrows);
     for(unsigned i = 0; i < nrows; ++i)
     {
         const double h = eps1storder * (x[i] ? std::abs(x[i]) : 1.0);
@@ -60,11 +60,11 @@ auto derivativeBackward(const ScalarFunction& f, VectorConstRef x) -> Vector
     return dfdx;
 }
 
-auto derivativeCentral(const ScalarFunction& f, VectorConstRef x) -> Vector
+auto derivativeCentral(const ScalarFunction& f, VectorXdConstRef x) -> VectorXd
 {
     const unsigned nrows = x.rows();
-    Vector dfdx = zeros(nrows);
-    Vector xh1(nrows), xh2(nrows);
+    VectorXd dfdx = zeros(nrows);
+    VectorXd xh1(nrows), xh2(nrows);
     for(unsigned i = 0; i < nrows; ++i)
     {
         const double h = eps2ndorder * (x[i] ? std::abs(x[i]) : 1.0);
@@ -77,13 +77,13 @@ auto derivativeCentral(const ScalarFunction& f, VectorConstRef x) -> Vector
     return dfdx;
 }
 
-auto derivativeForward(const VectorFunction& f, VectorConstRef x) -> Matrix
+auto derivativeForward(const VectorFunction& f, VectorXdConstRef x) -> Matrix
 {
-    const Vector fx = f(x);
+    const VectorXd fx = f(x);
     const unsigned nrows = fx.rows();
     const unsigned ncols = x.rows();
     Matrix dfdx = zeros(nrows, ncols);
-    Vector xh(ncols);
+    VectorXd xh(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {
         const double h = eps1storder * (x[i] ? std::abs(x[i]) : 1.0);
@@ -94,13 +94,13 @@ auto derivativeForward(const VectorFunction& f, VectorConstRef x) -> Matrix
     return dfdx;
 }
 
-auto derivativeBackward(const VectorFunction& f, VectorConstRef x) -> Matrix
+auto derivativeBackward(const VectorFunction& f, VectorXdConstRef x) -> Matrix
 {
-    const Vector fx = f(x);
+    const VectorXd fx = f(x);
     const unsigned nrows = fx.rows();
     const unsigned ncols = x.rows();
     Matrix dfdx = zeros(nrows, ncols);
-    Vector xh(ncols);
+    VectorXd xh(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {
         const double h = eps1storder * (x[i] ? std::abs(x[i]) : 1.0);
@@ -111,13 +111,13 @@ auto derivativeBackward(const VectorFunction& f, VectorConstRef x) -> Matrix
     return dfdx;
 }
 
-auto derivativeCentral(const VectorFunction& f, VectorConstRef x) -> Matrix
+auto derivativeCentral(const VectorFunction& f, VectorXdConstRef x) -> Matrix
 {
-    const Vector fx = f(x);
+    const VectorXd fx = f(x);
     const unsigned nrows = fx.rows();
     const unsigned ncols = x.rows();
     Matrix dfdx = zeros(nrows, ncols);
-    Vector xh1(ncols), xh2(ncols);
+    VectorXd xh1(ncols), xh2(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {
         const double h = eps2ndorder * (x[i] ? std::abs(x[i]) : 1.0);

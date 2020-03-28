@@ -41,12 +41,12 @@ template<typename LUSolver>
 struct KktSolverDense : KktSolverBase
 {
     /// The vectors x and z
-    Vector x, z;
+    VectorXd x, z;
 
     /// The internal data for the KKT problem
     Matrix kkt_lhs;
-    Vector kkt_rhs;
-    Vector kkt_sol;
+    VectorXd kkt_rhs;
+    VectorXd kkt_sol;
     LUSolver kkt_lu;
 
     /// Decompose any necessary matrix before the KKT calculation.
@@ -84,18 +84,18 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
 {
     Indices ipivot, inonpivot;
 
-    Vector X, Z;
-    Vector D, D1, D2;
+    VectorXd X, Z;
+    VectorXd D, D1, D2;
     Matrix A1, A2;
-    Vector a1, a2;
-    Vector dx1, dx2;
-    Vector r;
+    VectorXd a1, a2;
+    VectorXd dx1, dx2;
+    VectorXd r;
 
-    Vector invD1;
+    VectorXd invD1;
     Matrix A1invD1;
     Matrix A1invD1A1t;
 
-    Vector kkt_rhs, kkt_sol;
+    VectorXd kkt_rhs, kkt_sol;
     Matrix kkt_lhs;
 
     PartialPivLU<Matrix> lu;
@@ -130,7 +130,7 @@ struct KktSolverNullspace : KktSolverBase
     /// Auxiliary data for the nullspace algorithm
     Matrix ZtGZ;
     LLT<Matrix> llt_ZtGZ;
-    Vector xZ;
+    VectorXd xZ;
 
     /// Auxiliary data for finding the nullspace and rangespace matrices `Z` and `Y`
     FullPivLU<Matrix> lu_A;
@@ -140,7 +140,7 @@ struct KktSolverNullspace : KktSolverBase
     /// Initialize the constant bottom-left matrix `A` of the KKT equation.
     /// This method should be called once to initialize the `A` matrix
     /// of the KKT equation and whenever it is changed subsequently.
-    auto initialize(MatrixConstRef A) -> void;
+    auto initialize(MatrixXdConstRef A) -> void;
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
@@ -368,7 +368,7 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     dz.noalias() = (c - Z % dx)/X;
 }
 
-auto KktSolverNullspace::initialize(MatrixConstRef newA) -> void
+auto KktSolverNullspace::initialize(MatrixXdConstRef newA) -> void
 {
     // Check if `newA` was used last time to avoid repeated operations
     if(A.rows() == newA.rows() &&

@@ -28,16 +28,16 @@ namespace Reaktoro {
 struct AqueousMixtureState : public MixtureState
 {
     /// The density of water (in units of kg/m3)
-    ThermoScalar rho;
+    real rho;
 
     /// The relative dielectric constant of water (no units)
-    ThermoScalar epsilon;
+    real epsilon;
 
     /// The effective ionic strength of the aqueous mixture and their partial derivatives (in units of mol/kg)
-    ChemicalScalar Ie;
+    real Ie;
 
     /// The stoichiometric ionic strength of the aqueous mixture and their partial derivatives (in units of mol/kg)
-    ChemicalScalar Is;
+    real Is;
 
     /// The molalities of the aqueous species and their partial derivatives (in units of mol/kg)
     VectorXd m;
@@ -147,25 +147,25 @@ public:
     auto namesAnions() const -> std::vector<std::string>;
 
     /// Return the charges of the charged species in the aqueous mixture.
-    auto chargesChargedSpecies() const -> Vector;
+    auto chargesChargedSpecies() const -> VectorXr;
 
     /// Return the charges of the cations in the aqueous mixture.
-    auto chargesCations() const -> Vector;
+    auto chargesCations() const -> VectorXr;
 
     /// Return the charges of the anions in the aqueous mixture.
-    auto chargesAnions() const -> Vector;
+    auto chargesAnions() const -> VectorXr;
 
     /// Return the dissociation matrix of the aqueous complexes into ions.
     /// This the matrix defines the stoichiometric relationship between the aqueous complexes and the
     /// ions produced from their dissociation. For example, the stoichiometry of the *j*-th ion in
     /// the dissociation reaction of the i*-th aqueous complex is given by the (*i*, *j*)-th entry in
     /// the matrix.
-    auto dissociationMatrix() const -> MatrixConstRef;
+    auto dissociationMatrix() const -> MatrixXdConstRef;
 
     /// Calculate the molalities of the aqueous species and its molar derivatives.
     /// @param n The molar abundance of species (in units of mol)
     /// @return The molalities and their partial derivatives
-    auto molalities(VectorConstRef n) const -> VectorXd;
+    auto molalities(VectorXrConstRef n) const -> VectorXd;
 
     /// Calculate the stoichiometric molalities of the ions and its molar derivatives.
     /// @param m The molalities of the aqueous species and their partial derivatives
@@ -175,18 +175,18 @@ public:
     /// Calculate the effective ionic strength of the aqueous mixture and its molar derivatives.
     /// @param m The molalities of the aqueous species and their partial derivatives
     /// @return The effective ionic strength of the aqueous mixture and its molar derivatives
-    auto effectiveIonicStrength(const VectorXd& m) const -> ChemicalScalar;
+    auto effectiveIonicStrength(const VectorXd& m) const -> real;
 
     /// Calculate the stoichiometric ionic strength of the aqueous mixture and its molar derivatives.
     /// @param ms The stoichiometric molalities of the ions and their partial derivatives
     /// @return The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
-    auto stoichiometricIonicStrength(const VectorXd& ms) const -> ChemicalScalar;
+    auto stoichiometricIonicStrength(const VectorXd& ms) const -> real;
 
     /// Calculate the state of the aqueous mixture.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(Temperature T, Pressure P, VectorConstRef n) const -> AqueousMixtureState;
+    auto state(Temperature T, Pressure P, VectorXrConstRef n) const -> AqueousMixtureState;
 
 private:
     /// The index of the water species

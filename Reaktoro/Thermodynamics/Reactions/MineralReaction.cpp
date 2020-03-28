@@ -42,8 +42,8 @@
 namespace Reaktoro {
 namespace internal {
 
-using MineralCatalystFunction = std::function<ChemicalScalar(const ChemicalProperties&)>;
-using MineralMechanismFunction = std::function<ChemicalScalar(const ChemicalProperties&)>;
+using MineralCatalystFunction = std::function<real(const ChemicalProperties&)>;
+using MineralMechanismFunction = std::function<real(const ChemicalProperties&)>;
 
 auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction
 {
@@ -54,8 +54,8 @@ auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const Chem
     MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable
     {
         const VectorXd& ln_a = properties.lnActivities();
-        ChemicalScalar ai = exp(ln_a[ispecies]);
-        ChemicalScalar res = pow(ai, power);
+        real ai = exp(ln_a[ispecies]);
+        real res = pow(ai, power);
         return res;
     };
 
@@ -73,7 +73,7 @@ auto mineralCatalystFunctionPartialPressure(const MineralCatalyst& catalyst, con
     const auto igas        = index(gas, gases);                          // the index of the gaseous species
     const auto num_gases   = gases.size();                               // the number of gases
 
-    ChemicalScalar res;
+    real res;
 
     MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable
     {
@@ -124,7 +124,7 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
         catalysts.push_back(mineralCatalystFunction(catalyst, system));
 
     // Auxiliary variables
-    ChemicalScalar aux, f, g;
+    real aux, f, g;
 
     // Define the mineral mechanism function
     ReactionRateFunction fn = [=](const ChemicalProperties& properties) mutable
@@ -133,7 +133,7 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
         const Temperature T = properties.temperature();
 
         // The result of this function evaluation
-        ChemicalScalar res(num_species);
+        real res(num_species);
 
         // Calculate the saturation index of the mineral
         const auto lnK = reaction.lnEquilibriumConstant(properties);
@@ -154,7 +154,7 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
         f = kappa * qOmega;
 
         // Calculate the function g
-        g = ChemicalScalar(num_species, 1.0);
+        g = real(num_species, 1.0);
 
         for(const MineralCatalystFunction& catalyst : catalysts)
             g *= catalyst(properties);
@@ -196,7 +196,7 @@ auto defaultMineralReactionEquation(Index imineral, const ChemicalSystem& system
     W.conservativeResize(E + 1, N);
     W.row(E).fill(0.0);
     W(E, imineral) = -1;
-    Vector c = W.fullPivLu().solve(unit(E + 1, E));
+    VectorXr c = W.fullPivLu().solve(unit(E + 1, E));
     cleanRationalNumbers(c);
     std::map<std::string, double> equation;
     for(Index i = 0; i < N; ++i)
@@ -417,7 +417,7 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
     if(specific_surface_area) return specific_surface_area * molar_mass;
 
     // The standard partial molar volumes at 25 C and 1 bar of all species
-    const ThermoVector V = system.properties(T, P).standardPartialMolarVolumes();
+    const VectorXr V = system.properties(T, P).standardPartialMolarVolumes();
 
     // The molar volume of the mineral species (in units of m3/mol)
     const double molar_volume = V.val[ispecies];
@@ -461,10 +461,10 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
         mechanisms.push_back(mineralMechanismFunction(mechanism, reaction, system));
 
     // The sum function of the mechanism contributions
-    ChemicalScalar f(num_species);
+    real f(num_species);
 
     // The rate of the reaction
-    ChemicalScalar res;
+    real res;
 
     // Create the mineral rate function
     ReactionRateFunction rate;
@@ -474,7 +474,7 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
         rate = [=](const ChemicalProperties& properties)
         {
             // The mineral reaction rate using specified surface area
-            ChemicalScalar r(num_species);
+            real r(num_species);
 
             // Iterate over all mechanism functions
             for(const ReactionRateFunction& mechanism : mechanisms)

@@ -35,7 +35,7 @@ struct EquilibriumResult;
 struct ResidualEquilibriumConstraints
 {
     /// The residual values of the equilibrium constraints.
-    Vector val;
+    VectorXr val;
 
     /// The partial derivatives of the residuals w.r.t. titrant amounts x.
     Matrix ddx;
@@ -96,7 +96,7 @@ public:
 
     /// Set the initial known molar amounts of the elements in the equilibrium partition.
     /// These are the amounts of the equilibrium elements before unknown amounts of titrants are added.
-    auto setElementInitialAmounts(VectorConstRef values) -> EquilibriumInverseProblem&;
+    auto setElementInitialAmounts(VectorXrConstRef values) -> EquilibriumInverseProblem&;
 
     /// Add a given amount of a compound or species to the initial equilibrium recipe.
     /// @param name The name of the compound or species
@@ -256,15 +256,15 @@ public:
     /// Return the initial amounts of elements in the equilibrium partition.
     /// These are the values of element amounts in the equilibrium partition
     /// before unknown amounts of titrants are added.
-    auto elementInitialAmounts() const -> Vector;
+    auto elementInitialAmounts() const -> VectorXr;
 
     /// Return the initial amounts of titrants as initial guess for the inverse equilibrium calculation.
-    auto titrantInitialAmounts() const -> Vector;
+    auto titrantInitialAmounts() const -> VectorXr;
 
     /// Return the residuals of the equilibrium constraints and their partial derivatives.
     /// @param x The amounts of the titrants (in units of mol)
     /// @param state The chemical state of the system
-    auto residualEquilibriumConstraints(VectorConstRef x, const ChemicalState& state) const -> ResidualEquilibriumConstraints;
+    auto residualEquilibriumConstraints(VectorXrConstRef x, const ChemicalState& state) const -> ResidualEquilibriumConstraints;
 
     /// Solve the inverse equilibrium problem.
     /// @param state The initial guess for the final chemical state solution.

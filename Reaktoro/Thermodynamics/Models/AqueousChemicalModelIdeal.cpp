@@ -29,13 +29,13 @@ auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalMo
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    PhaseChemicalModel f = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
+    PhaseChemicalModel f = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) mutable
     {
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, n);
 
         // The ln of water mole fraction
-        ChemicalScalar ln_xw = log(state.x[iH2O]);
+        real ln_xw = log(state.x[iH2O]);
 
         // Set the activity coefficients of the aqueous species
         res.ln_activity_coefficients = ln_xw;

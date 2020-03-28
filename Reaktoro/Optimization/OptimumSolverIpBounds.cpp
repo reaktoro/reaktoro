@@ -37,22 +37,22 @@ namespace Reaktoro {
 struct OptimumSolverIpBounds::Impl
 {
     /// The right-hand side vector of the KKT equations
-    Vector rhs;
+    VectorXd rhs;
 
     /// The left-hand side matrix of the KKT equations
     Matrix lhs;
 
     /// The slack variables `s` and its inverse
-    Vector s, inv_s;
+    VectorXd s, inv_s;
 
     /// The Newton steps `dx`, `dz`, and `ds`
-    Vector dx, dz, ds;
+    VectorXd dx, dz, ds;
 
     /// The vectors containing the residual of the optimality and feasibility equations
-    Vector res_o, res_f;
+    VectorXd res_o, res_f;
 
     /// The trial iterate x
-    Vector xtrial;
+    VectorXd xtrial;
 
     /// The outputter instance
     Outputter outputter;
@@ -291,7 +291,7 @@ struct OptimumSolverIpBounds::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Matrix
+    auto dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> Matrix
     {
         RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
             "The method OptimumSolverIpBounds::dxdp has not been implemented yet.");
@@ -326,7 +326,7 @@ auto OptimumSolverIpBounds::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverIpBounds::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
+auto OptimumSolverIpBounds::dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> VectorXd
 {
     return pimpl->dxdp(dgdp, dbdp);
 }

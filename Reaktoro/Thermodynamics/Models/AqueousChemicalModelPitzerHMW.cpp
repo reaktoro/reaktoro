@@ -710,11 +710,11 @@ struct PitzerParams
 
     Indices idx_anions;
 
-    Vector z_charged;
+    VectorXr z_charged;
 
-    Vector z_cations;
+    VectorXr z_cations;
 
-    Vector z_anions;
+    VectorXr z_anions;
 
     Table2D<std::function<double(double)>> beta0;
 
@@ -990,7 +990,7 @@ auto computeF(const AqueousMixtureState& state, const PitzerParams& pitzer) -> d
     const auto& P = state.P;
 
     // The molalities of all aqueous species
-    VectorConstRef m = state.m.val;
+    VectorXrConstRef m = state.m.val;
 
     // The ionic strength of the aqueous mixture and its square root
     const double I = state.Ie.val;
@@ -1022,8 +1022,8 @@ auto computeF(const AqueousMixtureState& state, const PitzerParams& pitzer) -> d
 
 auto computeZ(const AqueousMixtureState& state, const PitzerParams& pitzer) -> double
 {
-    const Vector mi = rows(state.m.val, pitzer.idx_charged);
-    const Vector zi = pitzer.z_charged.array().abs();
+    const VectorXr mi = rows(state.m.val, pitzer.idx_charged);
+    const VectorXr zi = pitzer.z_charged.array().abs();
     return mi.dot(zi);
 }
 
@@ -1031,7 +1031,7 @@ auto computeZ(const AqueousMixtureState& state, const PitzerParams& pitzer) -> d
 /// @param state The state of the aqueous mixture
 /// @param pitzer The Pitzer parameters
 /// @param M The local index of the cation among all cations in the mixture
-auto lnActivityCoefficientCation(const AqueousMixtureState& state, const PitzerParams& pitzer, Index M) -> ChemicalScalar
+auto lnActivityCoefficientCation(const AqueousMixtureState& state, const PitzerParams& pitzer, Index M) -> real
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1057,12 +1057,12 @@ auto lnActivityCoefficientCation(const AqueousMixtureState& state, const PitzerP
     const double Z = computeZ(state, pitzer);
 
     // The log of the activity coefficient of the M-th cation
-    ChemicalScalar ln_gammaM(nspecies);
+    real ln_gammaM(nspecies);
 
     // Iterate over all anions
     for(unsigned a = 0; a < num_anions; ++a)
     {
-        const ChemicalScalar ma = m[idx_anions[a]];
+        const real ma = m[idx_anions[a]];
         const double BMa = B(state, pitzer, M, a);
         const double CMa = C(state, pitzer, M, a);
 
@@ -1072,16 +1072,16 @@ auto lnActivityCoefficientCation(const AqueousMixtureState& state, const PitzerP
     // Iterate over all cations
     for(unsigned c = 0; c < num_cations; ++c)
     {
-        const ChemicalScalar mc = m[idx_cations[c]];
+        const real mc = m[idx_cations[c]];
         const double PhiMc = Phi_cc(state, pitzer, M, c);
 
-        ChemicalScalar aux(nspecies);
+        real aux(nspecies);
         aux.val = 2*PhiMc;
 
         // Iterate over all anions
         for(unsigned a = 0; a < num_anions; ++a)
         {
-            const ChemicalScalar ma = m[idx_anions[a]];
+            const real ma = m[idx_anions[a]];
             const double psiMca = pitzer.psi_cca[M][c][a];
 
             aux += ma * psiMca;
@@ -1093,8 +1093,8 @@ auto lnActivityCoefficientCation(const AqueousMixtureState& state, const PitzerP
     // Iterate over all pairs of distinct anions
     for(unsigned i = 0; i < num_anions - 1; ++i) for(unsigned j = i + 1; j < num_anions; ++j)
     {
-        const ChemicalScalar mi = m[idx_anions[i]];
-        const ChemicalScalar mj = m[idx_anions[j]];
+        const real mi = m[idx_anions[i]];
+        const real mj = m[idx_anions[j]];
         const double psi_ijM = pitzer.psi_aac[i][j][M];
 
         ln_gammaM += mi * mj * psi_ijM;
@@ -1103,8 +1103,8 @@ auto lnActivityCoefficientCation(const AqueousMixtureState& state, const PitzerP
     // Iterate over all pairs of cations and anions
     for(unsigned c = 0; c < num_cations; ++c) for(unsigned a = 0; a < num_anions; ++a)
     {
-        const ChemicalScalar mc = m[idx_cations[c]];
-        const ChemicalScalar ma = m[idx_anions[a]];
+        const real mc = m[idx_cations[c]];
+        const real ma = m[idx_anions[a]];
         const double Cca = C(state, pitzer, c, a);
 
         ln_gammaM += std::abs(zM) * mc * ma * Cca;
@@ -1124,7 +1124,7 @@ auto lnActivityCoefficientCation(const AqueousMixtureState& state, const PitzerP
 /// @param state The state of the aqueous mixture
 /// @param pitzer The Pitzer parameters
 /// @param X The local index of the anion among all anions in the mixture
-auto lnActivityCoefficientAnion(const AqueousMixtureState& state, const PitzerParams& pitzer, Index X) -> ChemicalScalar
+auto lnActivityCoefficientAnion(const AqueousMixtureState& state, const PitzerParams& pitzer, Index X) -> real
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1150,12 +1150,12 @@ auto lnActivityCoefficientAnion(const AqueousMixtureState& state, const PitzerPa
     const double Z = computeZ(state, pitzer);
 
     // The log of the activity coefficient of the X-th anion
-    ChemicalScalar ln_gammaX(nspecies);
+    real ln_gammaX(nspecies);
 
     // Iterate over all cations
     for(unsigned c = 0; c < num_cations; ++c)
     {
-        const ChemicalScalar mc = m[idx_cations[c]];
+        const real mc = m[idx_cations[c]];
         const double BcX = B(state, pitzer, c, X);
         const double CcX = C(state, pitzer, c, X);
 
@@ -1165,16 +1165,16 @@ auto lnActivityCoefficientAnion(const AqueousMixtureState& state, const PitzerPa
     // Iterate over all anions
     for(unsigned a = 0; a < num_anions; ++a)
     {
-        const ChemicalScalar ma = m[idx_anions[a]];
+        const real ma = m[idx_anions[a]];
         const double PhiXa = Phi_aa(state, pitzer, X, a);
 
-        ChemicalScalar aux(nspecies);
+        real aux(nspecies);
         aux.val = 2*PhiXa;
 
         // Iterate over all cations
         for(unsigned c = 0; c < num_cations; ++c)
         {
-            const ChemicalScalar mc = m[idx_cations[c]];
+            const real mc = m[idx_cations[c]];
             const double psiXac = pitzer.psi_aac[X][a][c];
 
             aux += mc * psiXac;
@@ -1186,8 +1186,8 @@ auto lnActivityCoefficientAnion(const AqueousMixtureState& state, const PitzerPa
     // Iterate over all pairs of distinct cations
     for(unsigned i = 0; i < num_cations - 1; ++i) for(unsigned j = i + 1; j < num_cations; ++j)
     {
-        const ChemicalScalar mi = m[idx_cations[i]];
-        const ChemicalScalar mj = m[idx_cations[j]];
+        const real mi = m[idx_cations[i]];
+        const real mj = m[idx_cations[j]];
         const double psi_ijX = pitzer.psi_cca[i][j][X];
 
         ln_gammaX += mi * mj * psi_ijX;
@@ -1196,8 +1196,8 @@ auto lnActivityCoefficientAnion(const AqueousMixtureState& state, const PitzerPa
     // Iterate over all pairs of cations and anions
     for(unsigned c = 0; c < num_cations; ++c) for(unsigned a = 0; a < num_anions; ++a)
     {
-        const ChemicalScalar mc = m[idx_cations[c]];
-        const ChemicalScalar ma = m[idx_anions[a]];
+        const real mc = m[idx_cations[c]];
+        const real ma = m[idx_anions[a]];
         const double Cca = C(state, pitzer, c, a);
 
         ln_gammaX += std::abs(zX) * mc * ma * Cca;
@@ -1217,7 +1217,7 @@ auto lnActivityCoefficientAnion(const AqueousMixtureState& state, const PitzerPa
 /// @param state The state of the aqueous mixture
 /// @param pitzer The Pitzer parameters
 /// @param iH2O The index of the water species
-auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitzer, Index iH2O) -> ChemicalScalar
+auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitzer, Index iH2O) -> real
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1236,10 +1236,10 @@ auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitze
     const unsigned nspecies = m.val.size();
 
     // The ionic strength of the aqueous mixture
-    const ChemicalScalar& I = state.Ie;
+    const real& I = state.Ie;
 
     // The square root of the ionic strength of the aqueous mixture
-    const ChemicalScalar sqrtI = sqrt(I);
+    const real sqrtI = sqrt(I);
 
     // The molar mass of water
     const double Mw = waterMolarMass;
@@ -1254,13 +1254,13 @@ auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitze
     const double Z = computeZ(state, pitzer);
 
     // The osmotic coefficient of the aqueous mixture
-    ChemicalScalar phi = -Aphi*I*sqrtI/(1 + b*sqrtI);
+    real phi = -Aphi*I*sqrtI/(1 + b*sqrtI);
 
     // Iterate over all pairs of cations and anions
     for(unsigned c = 0; c < num_cations; ++c) for(unsigned a = 0; a < num_anions; ++a)
     {
-        const ChemicalScalar mc = m[idx_cations[c]];
-        const ChemicalScalar ma = m[idx_anions[a]];
+        const real mc = m[idx_cations[c]];
+        const real ma = m[idx_anions[a]];
         const double Bca = B_phi(state, pitzer, c, a);
         const double Cca = C(state, pitzer, c, a);
 
@@ -1270,17 +1270,17 @@ auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitze
     // Iterate over all pairs of distinct cations
     for(unsigned i = 0; i < num_cations - 1; ++i) for(unsigned j = i + 1; j < num_cations; ++j)
     {
-        const ChemicalScalar mi = m[idx_cations[i]];
-        const ChemicalScalar mj = m[idx_cations[j]];
+        const real mi = m[idx_cations[i]];
+        const real mj = m[idx_cations[j]];
         const double Phi_ij = Phi_phi_cc(state, pitzer, i, j);
 
-        ChemicalScalar aux(nspecies);
+        real aux(nspecies);
         aux.val = Phi_ij;
 
         // Iterate over all anions
         for(unsigned a = 0; a < num_anions; ++a)
         {
-            const ChemicalScalar ma = m[idx_anions[a]];
+            const real ma = m[idx_anions[a]];
             const double psi_ija = pitzer.psi_cca[i][j][a];
 
             aux += ma * psi_ija;
@@ -1292,17 +1292,17 @@ auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitze
     // Iterate over all pairs of distinct anions
     for(unsigned i = 0; i < num_anions - 1; ++i) for(unsigned j = i + 1; j < num_anions; ++j)
     {
-        const ChemicalScalar mi = m[idx_anions[i]];
-        const ChemicalScalar mj = m[idx_anions[j]];
+        const real mi = m[idx_anions[i]];
+        const real mj = m[idx_anions[j]];
         const double Phi_ij = Phi_phi_aa(state, pitzer, i, j);
 
-        ChemicalScalar aux(nspecies);
+        real aux(nspecies);
         aux.val = Phi_ij;
 
         // Iterate over all cations
         for(unsigned c = 0; c < num_cations; ++c)
         {
-            const ChemicalScalar mc = m[idx_cations[c]];
+            const real mc = m[idx_cations[c]];
             const double psi_ija = pitzer.psi_aac[i][j][c];
 
             aux += mc * psi_ija;
@@ -1328,13 +1328,13 @@ auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitze
                 phi += m[idx_neutrals[n]] * m[idx_cations[c]] * m[idx_anions[a]] * pitzer.zeta[n][c][a];
 
     // Calculate the sum of molalities of the solutes
-    const ChemicalScalar sum_mi = sum(m) - m[iH2O];
+    const real sum_mi = sum(m) - m[iH2O];
 
     // Finalise the calculation of the osmotic coefficient
     phi = 1 + 2.0/sum_mi * phi;
 
     // Compute the activity of the water species
-    ChemicalScalar ln_aw = -phi * sum_mi * Mw;
+    real ln_aw = -phi * sum_mi * Mw;
 
     return ln_aw;
 }
@@ -1343,7 +1343,7 @@ auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitze
 /// @param state The state of the aqueous mixture
 /// @param pitzer The Pitzer parameters
 /// @param N The local index of the neutral species among all neutral species in the mixture
-auto lnActivityCoefficientNeutral(const AqueousMixtureState& state, const PitzerParams& pitzer, Index N) -> ChemicalScalar
+auto lnActivityCoefficientNeutral(const AqueousMixtureState& state, const PitzerParams& pitzer, Index N) -> real
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_cations  = pitzer.idx_cations;
@@ -1360,7 +1360,7 @@ auto lnActivityCoefficientNeutral(const AqueousMixtureState& state, const Pitzer
     const unsigned nspecies = m.val.size();
 
     // The log of the activity coefficient of the N-th neutral species
-    ChemicalScalar ln_gammaN(nspecies);
+    real ln_gammaN(nspecies);
 
     // Iterate over all cations
     for(unsigned c = 0; c < num_cations; ++c)
@@ -1394,7 +1394,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemic
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) mutable
     {
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, n);
@@ -1430,7 +1430,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemic
         }
 
         // Calculate the activity of water
-        const ChemicalScalar ln_aw = lnActivityWater(state, pitzer, iwater);
+        const real ln_aw = lnActivityWater(state, pitzer, iwater);
 
         // The mole fraction of water
         const auto xw = state.x[iwater];

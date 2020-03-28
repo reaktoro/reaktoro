@@ -45,10 +45,10 @@ struct Hessian
     Matrix dense;
 
     /// The Hessian matrix represented as a diagonal matrix
-    Vector diagonal;
+    VectorXd diagonal;
 };
 
 /// Return the multiplication of a Hessian matrix and a vector.
-auto operator*(const Hessian& H, VectorConstRef x) -> Vector;
+auto operator*(const Hessian& H, VectorXdConstRef x) -> VectorXd;
 
 } // namespace Reaktoro

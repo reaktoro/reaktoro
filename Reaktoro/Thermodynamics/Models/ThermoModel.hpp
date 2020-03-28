@@ -55,59 +55,59 @@ public:
     auto phaseProperties(Index iphase, Index ispecies, Index nspecies) const -> PhaseThermoModelResultConst;
 
     /// The standard partial molar Gibbs energies of the species (in units of J/mol).
-    inline auto standardPartialMolarGibbsEnergies() -> ThermoVectorRef { return standard_partial_molar_gibbs_energies; };
+    inline auto standardPartialMolarGibbsEnergies() -> VectorXrRef { return standard_partial_molar_gibbs_energies; };
 
     /// The standard partial molar Gibbs energies of the species (in units of J/mol).
-    inline auto standardPartialMolarGibbsEnergies() const -> ThermoVectorConstRef { return standard_partial_molar_gibbs_energies; };
+    inline auto standardPartialMolarGibbsEnergies() const -> VectorXrConstRef { return standard_partial_molar_gibbs_energies; };
 
     /// The standard partial molar enthalpies of the species (in units of J/mol).
-    inline auto standardPartialMolarEnthalpies() -> ThermoVectorRef { return standard_partial_molar_enthalpies; };
+    inline auto standardPartialMolarEnthalpies() -> VectorXrRef { return standard_partial_molar_enthalpies; };
 
     /// The standard partial molar enthalpies of the species (in units of J/mol).
-    inline auto standardPartialMolarEnthalpies() const -> ThermoVectorConstRef { return standard_partial_molar_enthalpies; };
+    inline auto standardPartialMolarEnthalpies() const -> VectorXrConstRef { return standard_partial_molar_enthalpies; };
 
     /// The standard partial molar volumes of the species (in units of m3/mol).
-    inline auto standardPartialMolarVolumes() -> ThermoVectorRef { return standard_partial_molar_volumes; };
+    inline auto standardPartialMolarVolumes() -> VectorXrRef { return standard_partial_molar_volumes; };
 
     /// The standard partial molar volumes of the species (in units of m3/mol).
-    inline auto standardPartialMolarVolumes() const -> ThermoVectorConstRef { return standard_partial_molar_volumes; };
+    inline auto standardPartialMolarVolumes() const -> VectorXrConstRef { return standard_partial_molar_volumes; };
 
     /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    inline auto standardPartialMolarHeatCapacitiesConstP() -> ThermoVectorRef { return standard_partial_molar_heat_capacities_cp; };
+    inline auto standardPartialMolarHeatCapacitiesConstP() -> VectorXrRef { return standard_partial_molar_heat_capacities_cp; };
 
     /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    inline auto standardPartialMolarHeatCapacitiesConstP() const -> ThermoVectorConstRef { return standard_partial_molar_heat_capacities_cp; };
+    inline auto standardPartialMolarHeatCapacitiesConstP() const -> VectorXrConstRef { return standard_partial_molar_heat_capacities_cp; };
 
     /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    inline auto standardPartialMolarHeatCapacitiesConstV() -> ThermoVectorRef { return standard_partial_molar_heat_capacities_cv; };
+    inline auto standardPartialMolarHeatCapacitiesConstV() -> VectorXrRef { return standard_partial_molar_heat_capacities_cv; };
 
     /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    inline auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVectorConstRef { return standard_partial_molar_heat_capacities_cv; };
+    inline auto standardPartialMolarHeatCapacitiesConstV() const -> VectorXrConstRef { return standard_partial_molar_heat_capacities_cv; };
 
     /// The natural log of the activity constants of the species.
-    inline auto lnActivityConstants() -> ThermoVectorRef { return ln_activity_constants; };
+    inline auto lnActivityConstants() -> VectorXrRef { return ln_activity_constants; };
 
     /// The natural log of the activity constants of the species.
-    inline auto lnActivityConstants() const -> ThermoVectorConstRef { return ln_activity_constants; };
+    inline auto lnActivityConstants() const -> VectorXrConstRef { return ln_activity_constants; };
 
 private:
     /// The standard partial molar Gibbs energies of the species (in units of J/mol).
-    ThermoVector standard_partial_molar_gibbs_energies;
+    VectorXr standard_partial_molar_gibbs_energies;
 
     /// The standard partial molar enthalpies of the species (in units of J/mol).
-    ThermoVector standard_partial_molar_enthalpies;
+    VectorXr standard_partial_molar_enthalpies;
 
     /// The standard partial molar volumes of the species (in units of m3/mol).
-    ThermoVector standard_partial_molar_volumes;
+    VectorXr standard_partial_molar_volumes;
 
     /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVector standard_partial_molar_heat_capacities_cp;
+    VectorXr standard_partial_molar_heat_capacities_cp;
 
     /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVector standard_partial_molar_heat_capacities_cv;
+    VectorXr standard_partial_molar_heat_capacities_cv;
 
     /// The natural log of the activity constants of the species.
-    ThermoVector ln_activity_constants;
+    VectorXr ln_activity_constants;
 };
 
 /// The signature of the thermodynamic model function that calculates the standard thermodynamic properties of the species in a chemical system.

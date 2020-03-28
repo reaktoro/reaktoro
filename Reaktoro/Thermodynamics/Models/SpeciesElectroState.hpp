@@ -24,28 +24,28 @@ namespace Reaktoro {
 struct SpeciesElectroState
 {
     /// The effective electrostatic radius of the solute species at referente temperature 298.15 K and pressure 1 bar
-    ThermoScalar reref;
+    real reref;
 
     /// The effective electrostatic radius of the solute species
-    ThermoScalar re;
+    real re;
 
     /// The Born coefficient of the solute species
-    ThermoScalar w;
+    real w;
 
     /// The first-order partial derivative of the Born coefficient of the solute species with respect to temperature
-    ThermoScalar wT;
+    real wT;
 
     /// The first-order partial derivative of the Born coefficient of the solute species with respect to pressure
-    ThermoScalar wP;
+    real wP;
 
     /// The second-order partial derivative of the Born coefficient of the solute species with respect to temperature
-    ThermoScalar wTT;
+    real wTT;
 
     /// The second-order partial derivative of the Born coefficient of the solute species with respect to temperature and pressure
-    ThermoScalar wTP;
+    real wTP;
 
     /// The second-order partial derivative of the Born coefficient of the solute species with respect to pressure
-    ThermoScalar wPP;
+    real wPP;
 };
 
 } // namespace Reaktoro

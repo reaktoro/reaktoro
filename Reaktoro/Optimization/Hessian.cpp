@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-auto operator*(const Hessian& H, VectorConstRef x) -> Vector
+auto operator*(const Hessian& H, VectorXdConstRef x) -> VectorXd
 {
     if(H.mode == Hessian::Dense)
         return H.dense * x;

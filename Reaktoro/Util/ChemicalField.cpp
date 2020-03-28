@@ -36,22 +36,22 @@
 //    Index npoints = 0;
 //
 //    /// The values of the scalar chemical field.
-//    Vector val;
+//    VectorXr val;
 //
 //    /// The derivatives of the scalar chemical field with respect to temperature.
-//    Vector ddT;
+//    VectorXr ddT;
 //
 //    /// The derivatives of the scalar chemical field with respect to pressure.
-//    Vector ddP;
+//    VectorXr ddP;
 //
 //    /// The derivatives of the scalar chemical field with respect to the amounts of each equilibrium element.
-//    std::vector<Vector> ddbe;
+//    std::vector<VectorXr> ddbe;
 //
 //    /// The derivatives of the scalar chemical field with respect to the amounts of each kinetic species.
-//    std::vector<Vector> ddnk;
+//    std::vector<VectorXr> ddnk;
 //
 //    /// Auxiliary vectors to avoid recurrent memory allocation.
-//    Vector scalar_ne, scalar_nk, scalar_be;
+//    VectorXr scalar_ne, scalar_nk, scalar_be;
 //
 //    /// Construct a default ChemicalField instance.
 //    Impl()
@@ -65,17 +65,17 @@
 //      ddnk(partition.numKineticSpecies(), zeros(npoints))
 //    {}
 //
-//    /// Set the field at the i-th point with a ChemicalScalar instance.
-//    auto set(Index i, const ChemicalScalar& scalar, const EquilibriumSensitivity& sensitivity) -> void
+//    /// Set the field at the i-th point with a real instance.
+//    auto set(Index i, const real& scalar, const EquilibriumSensitivity& sensitivity) -> void
 //    {
 //        // The indices of the equilibrium and kinetic species
 //        const Indices& ispecies_e = partition.indicesEquilibriumSpecies();
 //        const Indices& ispecies_k = partition.indicesKineticSpecies();
 //
 //        // Auxiliary references to sensitivity values
-//        VectorConstRef ne_T  = sensitivity.dnedT;
-//        VectorConstRef ne_P  = sensitivity.dnedP;
-//        MatrixConstRef ne_be = sensitivity.dnedbe;
+//        VectorXrConstRef ne_T  = sensitivity.dnedT;
+//        VectorXrConstRef ne_P  = sensitivity.dnedP;
+//        MatrixXdConstRef ne_be = sensitivity.dnedbe;
 //
 //        // Extract the derivatives of scalar w.r.t. amounts of equilibrium species
 //        scalar_ne = rows(scalar.ddn, ispecies_e);
@@ -126,7 +126,7 @@
 //    return *this;
 //}
 //
-//auto ChemicalField::set(Index i, const ChemicalScalar& scalar, const EquilibriumSensitivity& sensitivity) -> void
+//auto ChemicalField::set(Index i, const real& scalar, const EquilibriumSensitivity& sensitivity) -> void
 //{
 //    pimpl->set(i, scalar, sensitivity);
 //}
@@ -141,52 +141,52 @@
 //    return pimpl->npoints;
 //}
 //
-//auto ChemicalField::val() -> VectorRef
+//auto ChemicalField::val() -> VectorXrRef
 //{
 //    return pimpl->val;
 //}
 //
-//auto ChemicalField::val() const -> VectorConstRef
+//auto ChemicalField::val() const -> VectorXrConstRef
 //{
 //    return pimpl->val;
 //}
 //
-//auto ChemicalField::ddT() -> VectorRef
+//auto ChemicalField::ddT() -> VectorXrRef
 //{
 //    return pimpl->ddT;
 //}
 //
-//auto ChemicalField::ddT() const -> VectorConstRef
+//auto ChemicalField::ddT() const -> VectorXrConstRef
 //{
 //    return pimpl->ddT;
 //}
 //
-//auto ChemicalField::ddP() -> VectorRef
+//auto ChemicalField::ddP() -> VectorXrRef
 //{
 //    return pimpl->ddP;
 //}
 //
-//auto ChemicalField::ddP() const -> VectorConstRef
+//auto ChemicalField::ddP() const -> VectorXrConstRef
 //{
 //    return pimpl->ddP;
 //}
 //
-//auto ChemicalField::ddbe() -> std::vector<Vector>&
+//auto ChemicalField::ddbe() -> std::vector<VectorXr>&
 //{
 //    return pimpl->ddbe;
 //}
 //
-//auto ChemicalField::ddbe() const -> const std::vector<Vector>&
+//auto ChemicalField::ddbe() const -> const std::vector<VectorXr>&
 //{
 //    return pimpl->ddbe;
 //}
 //
-//auto ChemicalField::ddnk() -> std::vector<Vector>&
+//auto ChemicalField::ddnk() -> std::vector<VectorXr>&
 //{
 //    return pimpl->ddnk;
 //}
 //
-//auto ChemicalField::ddnk() const -> const std::vector<Vector>&
+//auto ChemicalField::ddnk() const -> const std::vector<VectorXr>&
 //{
 //    return pimpl->ddnk;
 //}

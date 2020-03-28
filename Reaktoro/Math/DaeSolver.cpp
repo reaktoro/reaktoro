@@ -43,10 +43,10 @@ struct DaeSolver::Impl
     DaeOptions options;
 
     /// The auxiliary vector y
-    Vector y;
+    VectorXd y;
 
     /// The auxiliary vector f for the function evaluation
-    Vector f;
+    VectorXd f;
 
     /// The auxiliary matrix J for the Jacobian evaluation
     Matrix J;
@@ -60,7 +60,7 @@ struct DaeSolver::Impl
     }
 
     /// Initializes the DAE solver
-    auto initialize(double tstart, VectorConstRef y) -> void
+    auto initialize(double tstart, VectorXdConstRef y) -> void
     {
         // Check if the ordinary differential problem has been initialized
         Assert(problem.initialized(),
@@ -74,17 +74,17 @@ struct DaeSolver::Impl
     }
 
     /// Integrate the DAE performing a single step.
-    auto integrate(double& t, VectorRef y) -> void
+    auto integrate(double& t, VectorXdRef y) -> void
     {
     }
 
     /// Integrate the DAE performing a single step not going over a given time.
-    auto integrate(double& t, VectorRef y, double tfinal) -> void
+    auto integrate(double& t, VectorXdRef y, double tfinal) -> void
     {
     }
 
     /// Solve the DAE equations from a given start time to a final one.
-    auto solve(double& t, double dt, VectorRef y) -> void
+    auto solve(double& t, double dt, VectorXdRef y) -> void
     {
     }
 };
@@ -141,12 +141,12 @@ auto DaeProblem::jacobian() const -> const DaeJacobian&
     return pimpl->ode_jacobian;
 }
 
-auto DaeProblem::function(double t, VectorConstRef y, VectorConstRef ydot, VectorRef f) const -> int
+auto DaeProblem::function(double t, VectorXdConstRef y, VectorXdConstRef ydot, VectorXdRef f) const -> int
 {
     return function()(t, y, ydot, f);
 }
 
-auto DaeProblem::jacobian(double t, VectorConstRef y, VectorConstRef ydot, MatrixRef J) const -> int
+auto DaeProblem::jacobian(double t, VectorXdConstRef y, VectorXdConstRef ydot, MatrixXdRef J) const -> int
 {
     return jacobian()(t, y, ydot, J);
 }
@@ -178,22 +178,22 @@ auto DaeSolver::setProblem(const DaeProblem& problem) -> void
     pimpl->problem = problem;
 }
 
-auto DaeSolver::initialize(double tstart, VectorConstRef y) -> void
+auto DaeSolver::initialize(double tstart, VectorXdConstRef y) -> void
 {
     pimpl->initialize(tstart, y);
 }
 
-auto DaeSolver::integrate(double& t, VectorRef y) -> void
+auto DaeSolver::integrate(double& t, VectorXdRef y) -> void
 {
     pimpl->integrate(t, y);
 }
 
-auto DaeSolver::integrate(double& t, VectorRef y, double tfinal) -> void
+auto DaeSolver::integrate(double& t, VectorXdRef y, double tfinal) -> void
 {
     pimpl->integrate(t, y, tfinal);
 }
 
-auto DaeSolver::solve(double& t, double dt, VectorRef y) -> void
+auto DaeSolver::solve(double& t, double dt, VectorXdRef y) -> void
 {
     pimpl->solve(t, dt, y);
 }

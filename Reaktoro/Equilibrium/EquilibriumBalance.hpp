@@ -56,14 +56,14 @@ public:
     /// The regularized mass balance matrix is an alternative
     /// to the elemental balance matrix that reduces round-off error
     /// issues when some species have very low amounts.
-    auto regularizedMatrix() const -> MatrixConstRef;
+    auto regularizedMatrix() const -> MatrixXdConstRef;
 
     /// Return the regularized mass balance vector.
     /// The regularized mass balance matrix is an alternative
     /// to the elemental balance matrix that reduces round-off error
     /// issues when some species have very low amounts.
     /// @param b The vector of molar amounts of the elements.
-    auto regularizedVector(Vector b) const -> Vector;
+    auto regularizedVector(VectorXr b) const -> VectorXr;
 
 private:
     struct Impl;

@@ -35,12 +35,12 @@ auto equal(const Eigen::MatrixBase<DerivedL>& l, const Eigen::MatrixBase<Derived
 LU::LU()
 {}
 
-LU::LU(MatrixConstRef A)
+LU::LU(MatrixXdConstRef A)
 {
     compute(A);
 }
 
-LU::LU(MatrixConstRef A, VectorConstRef W)
+LU::LU(MatrixXdConstRef A, VectorXdConstRef W)
 {
     compute(A, W);
 }
@@ -50,7 +50,7 @@ auto LU::empty() const -> bool
     return L.size();
 }
 
-auto LU::compute(MatrixConstRef A) -> void
+auto LU::compute(MatrixXdConstRef A) -> void
 {
     // Check if matrix A is equal to the last one used
     if(equal(A, A_last) && !W_last.size())
@@ -78,7 +78,7 @@ auto LU::compute(MatrixConstRef A) -> void
     Q = lu.permutationQ();
 }
 
-auto LU::compute(MatrixConstRef A, VectorConstRef W) -> void
+auto LU::compute(MatrixXdConstRef A, VectorXdConstRef W) -> void
 {
     // Check if matrix A is equal to the last one used
     if(equal(A, A_last) && equal(W, W_last))
@@ -112,7 +112,7 @@ auto LU::compute(MatrixConstRef A, VectorConstRef W) -> void
     U = U * Q.inverse() * diag(inv(W)) * Q;
 }
 
-auto LU::solve(MatrixConstRef B) -> Matrix
+auto LU::solve(MatrixXdConstRef B) -> Matrix
 {
     const Index n = U.cols();
     const Index k = B.cols();
@@ -133,7 +133,7 @@ auto LU::solve(MatrixConstRef B) -> Matrix
     return X;
 }
 
-auto LU::trsolve(MatrixConstRef B) -> Matrix
+auto LU::trsolve(MatrixXdConstRef B) -> Matrix
 {
     const Index m = L.rows();
     const Index k = B.cols();

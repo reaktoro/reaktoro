@@ -49,7 +49,7 @@ auto OptimumSolverIpFeasible::Impl::approximate(OptimumProblem problem, OptimumS
         state.x = mu * ones(n);
 
     // The reference point from which the solution cannot differ much
-    const Vector xr = state.x;
+    const VectorXd xr = state.x;
 
     // The definition of the feasibility problem
     OptimumProblem fproblem;
@@ -67,7 +67,7 @@ auto OptimumSolverIpFeasible::Impl::approximate(OptimumProblem problem, OptimumS
     rows(res.hessian.diagonal, 0, n) = rho * ones(n);
 
     // Define the objective function of the feasibility problem
-    fproblem.objective = [=](VectorConstRef x) mutable
+    fproblem.objective = [=](VectorXdConstRef x) mutable
     {
         const auto xx = rows(x, 0, n);
         const auto xp = rows(x, n, m);
@@ -86,9 +86,9 @@ auto OptimumSolverIpFeasible::Impl::approximate(OptimumProblem problem, OptimumS
     cols(fproblem.A, n + m, m) =  identity(m, m);
 
     // Set the initial guess
-    const Vector xx = state.x;
-    const Vector xp = mu * ones(m);
-    const Vector xn = mu * ones(m);
+    const VectorXd xx = state.x;
+    const VectorXd xp = mu * ones(m);
+    const VectorXd xn = mu * ones(m);
 
     state.x.resize(t);
     state.x << xx, xp, xn;

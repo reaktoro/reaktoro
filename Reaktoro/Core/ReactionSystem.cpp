@@ -122,7 +122,7 @@ auto ReactionSystem::reaction(std::string name) const -> const Reaction&
     return pimpl->reactions[index];
 }
 
-auto ReactionSystem::stoichiometricMatrix() const -> MatrixConstRef
+auto ReactionSystem::stoichiometricMatrix() const -> MatrixXdConstRef
 {
     return pimpl->stoichiometric_matrix;
 }
@@ -132,10 +132,10 @@ auto ReactionSystem::system() const -> const ChemicalSystem&
     return pimpl->system;
 }
 
-auto ReactionSystem::lnEquilibriumConstants(const ChemicalProperties& properties) const -> ThermoVector
+auto ReactionSystem::lnEquilibriumConstants(const ChemicalProperties& properties) const -> VectorXr
 {
     const unsigned num_reactions = numReactions();
-    ThermoVector res(num_reactions);
+    VectorXr res(num_reactions);
     for(unsigned i = 0; i < num_reactions; ++i)
         res[i] = reaction(i).lnEquilibriumConstant(properties);
     return res;

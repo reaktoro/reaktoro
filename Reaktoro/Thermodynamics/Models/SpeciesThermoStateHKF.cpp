@@ -304,7 +304,7 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const ParamsMaierKellyHKF&
     Ti.push_back(T);
 
     // Collect the pressure intercepts along the temperature line T for every phase transition boundary (see
-    std::vector<ThermoScalar> Pt;
+    std::vector<real> Pt;
     for(int i = 0; i < nt; ++i)
     {
         if(dPdT[i] != 0.0)
@@ -312,14 +312,14 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const ParamsMaierKellyHKF&
     }
 
     // Calculate the heat capacity of the mineral at T
-    ThermoScalar Cp;
+    real Cp;
     for(unsigned i = 0; i+1 < Ti.size(); ++i)
         if(Ti[i] <= T && T <= Ti[i+1])
             Cp = a[i] + b[i]*T + c[i]/(T*T);
 
     // Calculate the integrals of the heat capacity function of the mineral from Tr to T at constant pressure Pr
-    ThermoScalar CpdT;
-    ThermoScalar CpdlnT;
+    real CpdT;
+    real CpdlnT;
     for(unsigned i = 0; i+1 < Ti.size(); ++i)
     {
         const auto T0 = Ti[i];
@@ -330,10 +330,10 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const ParamsMaierKellyHKF&
     }
 
     // Calculate the volume and other auxiliary quantities for the thermodynamic properties of the mineral
-    ThermoScalar V(Vr);
-    ThermoScalar GdH;
-    ThermoScalar HdH;
-    ThermoScalar SdH;
+    real V(Vr);
+    real GdH;
+    real HdH;
+    real SdH;
     for(unsigned i = 1; i+1 < Ti.size(); ++i)
     {
         GdH += dHt[i-1]*(T - Ti[i])/Ti[i];
@@ -344,7 +344,7 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const ParamsMaierKellyHKF&
     }
 
     // Calculate the volume integral from Pr to P at constant temperature T
-    ThermoScalar VdP = 0.023901488*V*(Pb - Pr);
+    real VdP = 0.023901488*V*(Pb - Pr);
     for(unsigned i = 0; i < Pt.size(); ++i)
     {
         if(0.0 < Pt[i] && Pt[i] < Pb)

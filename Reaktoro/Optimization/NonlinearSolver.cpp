@@ -42,16 +42,16 @@ struct NonlinearSolver::Impl
     NonlinearResidual residual;
 
     /// The Newton step for the unknowns `x`
-    Vector dx;
+    VectorXd dx;
 
     /// The trial iterate `x`
-    Vector xtrial;
+    VectorXd xtrial;
 
     /// The outputter instance
     Outputter outputter;
 
     /// Solve the optimization problem.
-    auto solve(const NonlinearProblem& problem, VectorRef x, const NonlinearOptions& options) -> NonlinearResult
+    auto solve(const NonlinearProblem& problem, VectorXdRef x, const NonlinearOptions& options) -> NonlinearResult
     {
         // Start timing the calculation
         Time begin = time();
@@ -262,12 +262,12 @@ auto NonlinearSolver::operator=(NonlinearSolver other) -> NonlinearSolver&
     return *this;
 }
 
-auto NonlinearSolver::solve(const NonlinearProblem& problem, VectorRef x) -> NonlinearResult
+auto NonlinearSolver::solve(const NonlinearProblem& problem, VectorXdRef x) -> NonlinearResult
 {
     return pimpl->solve(problem, x, {});
 }
 
-auto NonlinearSolver::solve(const NonlinearProblem& problem, VectorRef x, const NonlinearOptions& options) -> NonlinearResult
+auto NonlinearSolver::solve(const NonlinearProblem& problem, VectorXdRef x, const NonlinearOptions& options) -> NonlinearResult
 {
     return pimpl->solve(problem, x, options);
 }

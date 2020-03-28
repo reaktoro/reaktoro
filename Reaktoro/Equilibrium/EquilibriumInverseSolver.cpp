@@ -76,13 +76,13 @@ struct EquilibriumInverseSolver::Impl
         const Index Nt = problem.numTitrants();
         const Index Nc = problem.numConstraints();
         const Matrix C = problem.formulaMatrixTitrants();
-        const Vector b0 = problem.elementInitialAmounts();
+        const VectorXr b0 = problem.elementInitialAmounts();
         const Indices ies = partition.indicesEquilibriumSpecies();
         const Indices iee = partition.indicesEquilibriumElements();
 
         // Get the rows corresponding to equilibrium elements only
         const Matrix Ce = rows(C, iee);
-        const Vector be0 = rows(b0, iee);
+        const VectorXr be0 = rows(b0, iee);
 
         // The temperature and pressure for the calculation
         const double T = problem.temperature();
@@ -115,10 +115,10 @@ struct EquilibriumInverseSolver::Impl
         nonlinear_problem.b = -be0;
 
         // Set the non-linear function of the non-linear problem
-        nonlinear_problem.f = [&](VectorConstRef x) mutable
+        nonlinear_problem.f = [&](VectorXrConstRef x) mutable
         {
             // The amounts of elements in the equilibrium partition
-            const Vector be = be0 + Ce*x;
+            const VectorXr be = be0 + Ce*x;
 
             // Solve the equilibrium problem with update `be`
             result += solver.solve(state, T, P, be);
@@ -148,7 +148,7 @@ struct EquilibriumInverseSolver::Impl
         };
 
         // Initialize the initial guess of the titrant amounts
-        Vector x = problem.titrantInitialAmounts();
+        VectorXr x = problem.titrantInitialAmounts();
 
         // Replace zeros in x by small molar amounts
         x = (x.array() > 0.0).select(x, 1e-6);

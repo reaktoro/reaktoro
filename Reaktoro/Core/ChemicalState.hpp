@@ -97,12 +97,12 @@ public:
 
     /// Set the molar amounts of the species (in units of mol)
     /// @param n The vector of molar amounts of the species
-    auto setSpeciesAmounts(VectorConstRef n) -> void;
+    auto setSpeciesAmounts(VectorXrConstRef n) -> void;
 
     /// Set the molar amounts of species given by their indices (in units of mol)
     /// @param n The vector of molar amounts of the species
     /// @param indices The indices of the species to be set
-    auto setSpeciesAmounts(VectorConstRef n, const Indices& indices) -> void;
+    auto setSpeciesAmounts(VectorXrConstRef n, const Indices& indices) -> void;
 
     /// Set the molar amount of a species (in units of mol)
     /// @param index The index of the species
@@ -156,7 +156,7 @@ public:
     /// measures of stability of a species at equilibrium, with values closer
     /// to zero meaning more stability.
     /// @param z The Lagrange multipliers with respect to the positive constraints.
-    auto setSpeciesDualPotentials(VectorConstRef z) -> void;
+    auto setSpeciesDualPotentials(VectorXrConstRef z) -> void;
 
     /// Set the dual potentials of the elements (in units of J/mol).
     ///
@@ -164,7 +164,7 @@ public:
     /// respect to the balance constraints on the molar amounts of the elements.
     /// They can be seen as a dual chemical potential of elements.
     /// @param values The Lagrange multipliers with respect to the balance constraints.
-    auto setElementDualPotentials(VectorConstRef y) -> void;
+    auto setElementDualPotentials(VectorXrConstRef y) -> void;
 
     /// Scale the molar amounts of the species by a given scalar.
     /// @param scalar The scale factor of the molar amounts
@@ -246,11 +246,11 @@ public:
     auto pressure() const -> double;
 
     /// Return the molar amounts of the species (in units of mol)
-    auto speciesAmounts() const -> VectorConstRef;
+    auto speciesAmounts() const -> VectorXrConstRef;
 
     /// Return the molar amounts of given species (in units of mol)
     /// @param indices The indices of the species
-    auto speciesAmounts(const Indices& indices) const -> Vector;
+    auto speciesAmounts(const Indices& indices) const -> VectorXr;
 
     /// Return the molar mass of a chemical species (in units of mol)
     /// @param index The index of the species
@@ -271,18 +271,18 @@ public:
     auto speciesAmount(std::string name, std::string units) const -> double;
 
     /// Return the dual potentials of the species (in units of J/mol)
-    auto speciesDualPotentials() const -> VectorConstRef;
+    auto speciesDualPotentials() const -> VectorXrConstRef;
 
     /// Return the molar amounts of the elements (in units of mol)
-    auto elementAmounts() const -> Vector;
+    auto elementAmounts() const -> VectorXr;
 
     /// Return the molar amounts of the elements in a phase (in units of mol)
     /// @param index The index of the phase
-    auto elementAmountsInPhase(Index index) const -> Vector;
+    auto elementAmountsInPhase(Index index) const -> VectorXr;
 
     /// Return the molar amounts of the elements in a set of species (in units of mol)
     /// @param indices The indices of the species
-    auto elementAmountsInSpecies(const Indices& indices) const -> Vector;
+    auto elementAmountsInSpecies(const Indices& indices) const -> VectorXr;
 
     /// Return the molar amount of an element (in units of mol)
     /// @param index The index of the element
@@ -336,7 +336,7 @@ public:
     auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double;
 
     /// Return the dual potentials of the elements (in units of J/mol).
-    auto elementDualPotentials() const -> VectorConstRef;
+    auto elementDualPotentials() const -> VectorXrConstRef;
 
     /// Return the molar amount of a phase (in units of mol).
     /// @param index The index of the phase
@@ -362,7 +362,7 @@ public:
     /// be zero or very close to zero. A negative stability index indicates
     /// that the corresponding phase is under-saturated, while a positive index
     /// indicates the phase is over-saturated.
-    auto phaseStabilityIndices() const -> Vector;
+    auto phaseStabilityIndices() const -> VectorXr;
 
     /// Return the chemical properties of the system.
     auto properties() const -> ChemicalProperties;

@@ -29,6 +29,6 @@ struct WaterHelmholtzState;
 /// @param D The density of water (in units of kg/m3)
 /// @return The Helmholtz free energy state of water
 /// @see WaterHelmholtzState
-auto waterHelmholtzStateHGK(Temperature T, ThermoScalar D) -> WaterHelmholtzState;
+auto waterHelmholtzStateHGK(Temperature T, real D) -> WaterHelmholtzState;
 
 } // namespace Reaktoro

@@ -46,7 +46,7 @@ public:
     virtual auto pressure() const -> double = 0;
 
     /// Return the amounts of the species (in units of mol)
-    virtual auto speciesAmounts() const -> Vector = 0;
+    virtual auto speciesAmounts() const -> VectorXr = 0;
 
     /// Return the number of elements
     virtual auto numElements() const -> unsigned = 0;
@@ -85,7 +85,7 @@ public:
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The amounts of the species (in units of mol)
-    virtual auto properties(ChemicalModelResult& res, double T, double P, VectorConstRef n) -> void = 0;
+    virtual auto properties(ChemicalModelResult& res, double T, double P, VectorXrConstRef n) -> void = 0;
 
     /// Return a clone of this Interface instance.
     virtual auto clone() const -> std::shared_ptr<Interface> = 0;

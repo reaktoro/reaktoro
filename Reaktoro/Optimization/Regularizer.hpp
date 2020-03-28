@@ -72,14 +72,14 @@ public:
     auto regularize(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
 
     /// Regularize the vectors `dg/dp` and `db/dp`, where `g = grad(f)`.
-    auto regularize(Vector& dgdp, Vector& dbdp) -> void;
+    auto regularize(VectorXd& dgdp, VectorXd& dbdp) -> void;
 
     /// Recover an optimum state to an state that corresponds to the original optimum problem.
     /// @param state[in,out] The optimum state regularized in method `regularize`.
     auto recover(OptimumState& state) -> void;
 
     /// Recover the sensitivity derivative `dxdp`.
-    auto recover(Vector& dxdp) -> void;
+    auto recover(VectorXd& dxdp) -> void;
 
 private:
     struct Impl;

@@ -141,7 +141,7 @@ const double E[] = { 0.3, 0.3 };
 
 } // namespace
 
-auto waterHelmholtzStateWagnerPruss(Temperature T, ThermoScalar D) -> WaterHelmholtzState
+auto waterHelmholtzStateWagnerPruss(Temperature T, real D) -> WaterHelmholtzState
 {
 	const auto tau   = waterCriticalTemperature/T;
 	const auto delta = D/waterCriticalDensity;
@@ -169,16 +169,16 @@ auto waterHelmholtzStateWagnerPruss(Temperature T, ThermoScalar D) -> WaterHelmh
 		phio_ttt += no[i] * ee * (1 + ee) * pow((gammao[j]/(ee - 1)), 3);
 	}
 
-	ThermoScalar phir;
-	ThermoScalar phir_d;
-	ThermoScalar phir_t;
-	ThermoScalar phir_dd;
-	ThermoScalar phir_tt;
-	ThermoScalar phir_dt;
-	ThermoScalar phir_ddd;
-	ThermoScalar phir_ttt;
-	ThermoScalar phir_dtt;
-	ThermoScalar phir_ddt;
+	real phir;
+	real phir_d;
+	real phir_t;
+	real phir_dd;
+	real phir_tt;
+	real phir_dt;
+	real phir_ddd;
+	real phir_ttt;
+	real phir_dtt;
+	real phir_ddt;
 
 	for(int i = 1; i <= 7; ++i)
 	{

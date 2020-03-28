@@ -30,14 +30,14 @@ namespace Reaktoro {
 /// lower bound @f$\mathbf{x}_l=\mathbf{0}@f$.
 /// @param p The point @f$\mathbf{p}@f$
 /// @param dp The step @f$\Delta\mathbf{p}@f$
-auto largestStep(VectorConstRef p, VectorConstRef dp) -> double;
+auto largestStep(VectorXdConstRef p, VectorXdConstRef dp) -> double;
 
 /// Compute the fraction-to-the-boundary step length given by:
 /// @f[\alpha_{\mathrm{max}}=\max\{\alpha\in(0,1]:\mathbf{p}+\alpha\Delta\mathbf{p}\geq(1-\tau)\mathbf{p}\}@f.]
 /// @param p The point @f$\mathbf{p}@f$
 /// @param dp The step @f$\Delta\mathbf{p}@f$
 /// @param tau The fraction-to-the-boundary parameter @f$\tau@f$
-auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, double tau) -> double;
+auto fractionToTheBoundary(VectorXdConstRef p, VectorXdConstRef dp, double tau) -> double;
 
 /// Compute the fraction-to-the-boundary step length given by:
 /// @f[\alpha_{\mathrm{max}}=\max\{\alpha\in(0,1]:\mathbf{p}+\alpha\Delta\mathbf{p}\geq(1-\tau)\mathbf{p}\}@f.]
@@ -45,7 +45,7 @@ auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, double tau) -> d
 /// @param dp The step @f$\Delta\mathbf{p}@f$
 /// @param tau The fraction-to-the-boundary parameter @f$\tau@f$
 /// @param ilimiting The index of the limiting variable
-auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, double tau, Index& ilimiting) -> double;
+auto fractionToTheBoundary(VectorXdConstRef p, VectorXdConstRef dp, double tau, Index& ilimiting) -> double;
 
 /// Compute the fraction-to-the-boundary step length given by:
 /// @f[\alpha_{\mathrm{max}}=\max\{\alpha\in(0,1]:\alpha C\Delta\mathbf{p}\geq-\tau C\mathbf{p}+\mathbf{r}\}@f.]
@@ -54,7 +54,7 @@ auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, double tau, Inde
 /// @param C The left-hand side matrix that defines the inequality constraint @f$C\mathbf{p}\geq\mathbf{r}@f$
 /// @param r The right-hand side vector that defines the inequality constraint @f$C\mathbf{p}\geq\mathbf{r}@f$
 /// @param tau The fraction-to-the-boundary parameter @f$\tau@f$
-auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, MatrixConstRef C, VectorConstRef r, double tau) -> double;
+auto fractionToTheBoundary(VectorXdConstRef p, VectorXdConstRef dp, MatrixXdConstRef C, VectorXdConstRef r, double tau) -> double;
 
 /// Compute the fraction-to-the-boundary step length given by:
 /// @f[\alpha_{\mathrm{max}}=\max\{\alpha\in(0,1]:\mathbf{p}+\alpha\Delta\mathbf{p}\geq(1-\tau)\mathbf{p}\}@f.]
@@ -62,7 +62,7 @@ auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, MatrixConstRef C
 /// @param dp The step @f$\Delta\mathbf{p}@f$
 /// @param lower The lower bound for the step @f$\Delta\mathbf{p}@f$
 /// @param tau The fraction-to-the-boundary parameter @f$\tau@f$
-auto fractionToTheLowerBoundary(VectorConstRef p, VectorConstRef dp, VectorConstRef lower, double tau) -> double;
+auto fractionToTheLowerBoundary(VectorXdConstRef p, VectorXdConstRef dp, VectorXdConstRef lower, double tau) -> double;
 
 /// Check if a float number is less than another by a base value.
 /// This method is particularly useful when comparing two float numbers
@@ -90,7 +90,7 @@ auto greaterThan(double a, double b, double baseval) -> bool;
 auto infinity() -> double;
 
 /// Return an inverse Hessian function based on the BFGS Hessian approximation
-auto bfgs() -> std::function<Matrix(VectorConstRef, VectorConstRef)>;
+auto bfgs() -> std::function<Matrix(VectorXdConstRef, VectorXdConstRef)>;
 
 /// Calculate the minimum of a single variable function using the Golden Section Search algorithm.
 auto minimizeGoldenSectionSearch(const std::function<double(double)>& f, double a, double b, double tol = 1e-5) -> double;

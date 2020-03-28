@@ -19,34 +19,34 @@
 
 namespace Reaktoro {
 
-inline auto zeros(Index rows) -> decltype(Vector::Zero(rows))
+inline auto zeros(Index rows) -> decltype(VectorXd::Zero(rows))
 {
-    return Vector::Zero(rows);
+    return VectorXd::Zero(rows);
 }
 
-inline auto ones(Index rows) -> decltype(Vector::Ones(rows))
+inline auto ones(Index rows) -> decltype(VectorXd::Ones(rows))
 {
-    return Vector::Ones(rows);
+    return VectorXd::Ones(rows);
 }
 
-inline auto constants(Index rows, double val) -> decltype(Vector::Constant(rows, val))
+inline auto constants(Index rows, double val) -> decltype(VectorXd::Constant(rows, val))
 {
-    return Vector::Constant(rows, val);
+    return VectorXd::Constant(rows, val);
 }
 
-inline auto random(Index rows) -> decltype(Vector::Random(rows))
+inline auto random(Index rows) -> decltype(VectorXd::Random(rows))
 {
-    return Vector::Random(rows);
+    return VectorXd::Random(rows);
 }
 
-inline auto linspace(Index rows, double start, double stop) -> decltype(Vector::LinSpaced(rows, start, stop))
+inline auto linspace(Index rows, double start, double stop) -> decltype(VectorXd::LinSpaced(rows, start, stop))
 {
-    return Vector::LinSpaced(rows, start, stop);
+    return VectorXd::LinSpaced(rows, start, stop);
 }
 
-inline auto unit(Index rows, Index i) -> decltype(Vector::Unit(rows, i))
+inline auto unit(Index rows, Index i) -> decltype(VectorXd::Unit(rows, i))
 {
-    return Vector::Unit(rows, i);
+    return VectorXd::Unit(rows, i);
 }
 
 inline auto unitcol(Index rows, Index i) -> decltype(unit(rows, i))

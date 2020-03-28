@@ -33,7 +33,7 @@ struct ObjectiveResult
     double val = 0.0;
 
     /// The gradient of the objective function evaluated at `x`.
-    Vector grad;
+    VectorXd grad;
 
     /// The Hessian of the objective function evaluated at `x`.
     Hessian hessian;
@@ -42,7 +42,7 @@ struct ObjectiveResult
 /// A type that describes the functional signature of an objective function.
 /// @param x The vector of primal variables
 /// @return The objective function evaluated at `x`
-using ObjectiveFunction = std::function<ObjectiveResult(VectorConstRef x)>;
+using ObjectiveFunction = std::function<ObjectiveResult(VectorXdConstRef x)>;
 
 /// A type that describes the non-linear constrained optimisation problem
 struct OptimumProblem
@@ -54,25 +54,25 @@ struct OptimumProblem
     Index n;
 
     /// The coefficient vector of a linear programming problem `min tr(c)*x subject to A*x = b`.
-    Vector c;
+    VectorXd c;
 
     /// The coefficient matrix of the linear equality constraint `A*x = b`.
     Matrix A;
 
     /// The right-hand side vector of the linear equality constraint `A*x = b`.
-    Vector b;
+    VectorXd b;
 
     /// The coefficient matrix of the linear inequality constraint `Ai*x = bi`.
     Matrix Ai;
 
     /// The right-hand side vector of the linear equality constraint `Ai*x = bi`.
-    Vector bi;
+    VectorXd bi;
 
     /// The lower bound of the primal variables `x`.
-    Vector l;
+    VectorXd l;
 
     /// The upper bound of the primal variables `x`.
-    Vector u;
+    VectorXd u;
 };
 
 /// Returns true if the evaluation of a objective function has finite value and gradient.

@@ -169,7 +169,7 @@ struct ChemicalQuantity::Impl
     double P;
 
     /// The molar amounts of the species in the chemical system (in units of mol).
-    Vector n;
+    VectorXr n;
 
     /// The rates of the reactions in the chemical system (in units of mol/s).
     VectorXd rates;

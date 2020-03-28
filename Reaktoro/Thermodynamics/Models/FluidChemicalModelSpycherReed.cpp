@@ -164,32 +164,32 @@ const double f[][3][3] =
     {f133, f233, f333}},
 };
 
-inline auto computeB(const ThermoScalar& T, int i, int j) -> ThermoScalar
+inline auto computeB(const real& T, int i, int j) -> real
 {
     return a[i][j] / (T*T) + b[i][j] / T + c[i][j];
 }
 
-inline auto computeBT(const ThermoScalar& T, int i, int j) -> ThermoScalar
+inline auto computeBT(const real& T, int i, int j) -> real
 {
     return -(2 * a[i][j] / T + b[i][j]) / (T*T);
 }
 
-inline auto computeBTT(const ThermoScalar& T, int i, int j) -> ThermoScalar
+inline auto computeBTT(const real& T, int i, int j) -> real
 {
     return (6 * a[i][j] / T + 2 * b[i][j]) / (T*T*T);
 }
 
-inline auto computeC(const ThermoScalar& T, int i, int j, int k) -> ThermoScalar
+inline auto computeC(const real& T, int i, int j, int k) -> real
 {
     return d[i][j][k] / (T*T) + e[i][j][k] / T + f[i][j][k];
 }
 
-inline auto computeCT(const ThermoScalar& T, int i, int j, int k) -> ThermoScalar
+inline auto computeCT(const real& T, int i, int j, int k) -> real
 {
     return -(2 * d[i][j][k] / T + e[i][j][k]) / (T*T);
 }
 
-inline auto computeCTT(const ThermoScalar& T, int i, int j, int k) -> ThermoScalar
+inline auto computeCTT(const real& T, int i, int j, int k) -> real
 {
     return (6 * d[i][j][k] / T + 2 * e[i][j][k]) / (T*T*T);
 }
@@ -227,8 +227,8 @@ auto fluidChemicalModelSpycherReed(const FluidMixture& mixture) -> PhaseChemical
     // The number of species in the mixture
     const unsigned nspecies = mixture.numSpecies();
 
-    // An auxiliary zero ChemicalScalar instance
-    const ChemicalScalar zero(nspecies);
+    // An auxiliary zero real instance
+    const real zero(nspecies);
 
     // The universal gas constant of the phase (in units of J/(mol*K))
     const double R = universalGasConstant;
@@ -237,7 +237,7 @@ auto fluidChemicalModelSpycherReed(const FluidMixture& mixture) -> PhaseChemical
     FluidMixtureState state;
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) mutable
     {
         // Evaluate the state of the gaseous mixture
         state = mixture.state(T, P, n);
@@ -255,13 +255,13 @@ auto fluidChemicalModelSpycherReed(const FluidMixture& mixture) -> PhaseChemical
         const auto ln_x = log(x);
 
         // The mole fractions of the gaseous species H2O(g), CO2(g) and CH4(g)
-        ChemicalScalar y[3];
+        real y[3];
         if (iH2O < nspecies) y[0] = x[iH2O]; else y[0] = zero;
         if (iCO2 < nspecies) y[1] = x[iCO2]; else y[1] = zero;
         if (iCH4 < nspecies) y[2] = x[iCH4]; else y[2] = zero;
 
         // Calculate the Bij, BijT, BijTT coefficients
-        ThermoScalar B[3][3], BT[3][3], BTT[3][3];
+        real B[3][3], BT[3][3], BTT[3][3];
         for (int i = 0; i < 3; ++i) for (int k = 0; k < 3; ++k)
         {
             B[i][k] = computeB(T, i, k);
@@ -270,7 +270,7 @@ auto fluidChemicalModelSpycherReed(const FluidMixture& mixture) -> PhaseChemical
         }
 
         // Calculate the Cijk, CijkT, CijkTT coefficients
-        ThermoScalar C[3][3][3], CT[3][3][3], CTT[3][3][3];
+        real C[3][3][3], CT[3][3][3], CTT[3][3][3];
         for (int i = 0; i < 3; ++i) for (int k = 0; k < 3; ++k) for (int l = 0; l < 3; ++l)
         {
             C[i][k][l] = computeC(T, i, k, l);
@@ -279,7 +279,7 @@ auto fluidChemicalModelSpycherReed(const FluidMixture& mixture) -> PhaseChemical
         }
 
         // Calculate the coefficient Bmix, BmixT, and BmixTT
-        ChemicalScalar Bmix(nspecies), BmixT(nspecies), BmixTT(nspecies);
+        real Bmix(nspecies), BmixT(nspecies), BmixTT(nspecies);
         for (int i = 0; i < 3; ++i) for (int k = 0; k < 3; ++k)
         {
             Bmix += y[i] * y[k] * B[i][k];
@@ -288,7 +288,7 @@ auto fluidChemicalModelSpycherReed(const FluidMixture& mixture) -> PhaseChemical
         }
 
         // Calculate the coefficient Cmix, CmixT, and CmixTT
-        ChemicalScalar Cmix(nspecies), CmixT(nspecies), CmixTT(nspecies);
+        real Cmix(nspecies), CmixT(nspecies), CmixTT(nspecies);
         for (int i = 0; i < 3; ++i) for (int k = 0; k < 3; ++k) for (int l = 0; l < 3; ++l)
         {
             Cmix += y[i] * y[k] * y[l] * C[i][k][l];
@@ -297,11 +297,11 @@ auto fluidChemicalModelSpycherReed(const FluidMixture& mixture) -> PhaseChemical
         }
 
         // Calculate the compressibility factor Zmix and its temperature derivative ZmixT
-        const ChemicalScalar Zmix = 1.0 + Bmix * Pbar + Cmix * Pbar*Pbar;
-        const ChemicalScalar ZmixT = BmixT * Pbar + CmixT * Pbar*Pbar;
+        const real Zmix = 1.0 + Bmix * Pbar + Cmix * Pbar*Pbar;
+        const real ZmixT = BmixT * Pbar + CmixT * Pbar*Pbar;
 
         // Calculate the ln fugacity coefficients of the gaseous species
-        ChemicalScalar ln_phi[3];
+        real ln_phi[3];
         for (int i = 0; i < 3; ++i)
         {
             ln_phi[i] = 1 - Zmix;
@@ -326,8 +326,8 @@ auto fluidChemicalModelSpycherReed(const FluidMixture& mixture) -> PhaseChemical
         V = R * T*Zmix / P;
 
         // Calculate the derivatives dP/dT and dV/dT
-        const ChemicalScalar dPdT = P * (1.0 / T + ZmixT / Zmix);
-        const ChemicalScalar dVdT = V * (1.0 / T + ZmixT / Zmix);
+        const real dPdT = P * (1.0 / T + ZmixT / Zmix);
+        const real dVdT = V * (1.0 / T + ZmixT / Zmix);
 
         // Calculate the residual molar Gibbs energy of the phase
         GR = R * T*(Bmix + 0.5*Cmix*Pbar)*Pbar;

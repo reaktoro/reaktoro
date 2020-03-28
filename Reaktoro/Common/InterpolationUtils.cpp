@@ -26,13 +26,13 @@ namespace Reaktoro {
 auto interpolate(
     const std::vector<double>& temperatures,
     const std::vector<double>& pressures,
-    const std::vector<ThermoScalar>& scalars) -> ThermoScalarFunction
+    const std::vector<real>& scalars) -> ThermoScalarFunction
 {
     std::vector<double> vals, ddTs, ddPs;
     vals.reserve(scalars.size());
     ddTs.reserve(scalars.size());
     ddPs.reserve(scalars.size());
-    for(const ThermoScalar& scalar : scalars)
+    for(const real& scalar : scalars)
     {
         vals.push_back(scalar.val);
         ddTs.push_back(scalar.ddT);
@@ -44,7 +44,7 @@ auto interpolate(
 
     auto func = [=](Temperature T, Pressure P)
     {
-        return ThermoScalar(val(T, P), ddT(T, P), ddP(T, P));
+        return real(val(T, P), ddT(T, P), ddP(T, P));
     };
 
     return func;
@@ -65,7 +65,7 @@ auto interpolate(
 
     auto func = [=](Temperature T, Pressure P)
     {
-        return ThermoScalar(val(T, P), ddT(T, P), ddP(T, P));
+        return real(val(T, P), ddT(T, P), ddP(T, P));
     };
 
     return func;
@@ -91,7 +91,7 @@ auto interpolate(
         ddP[i] = BilinearInterpolator(temperatures, pressures, ddP_func);
     }
 
-    ThermoVector res(size);
+    VectorXr res(size);
 
     auto func = [=](double T, double P) mutable
     {

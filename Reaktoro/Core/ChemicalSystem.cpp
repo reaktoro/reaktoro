@@ -148,7 +148,7 @@ struct ChemicalSystem::Impl
 
     auto initializeChemicalModel() -> void
     {
-        chemical_model = [&](ChemicalModelResult& res, double T, double P, VectorConstRef n)
+        chemical_model = [&](ChemicalModelResult& res, double T, double P, VectorXrConstRef n)
         {
             const Index num_phases = phases.size();
             Index offset = 0;
@@ -257,7 +257,7 @@ auto ChemicalSystem::chemicalModel() const -> const ChemicalModel&
     return pimpl->chemical_model;
 }
 
-auto ChemicalSystem::formulaMatrix() const -> MatrixConstRef
+auto ChemicalSystem::formulaMatrix() const -> MatrixXdConstRef
 {
     return pimpl->formula_matrix;
 }
@@ -440,15 +440,15 @@ auto ChemicalSystem::indicesSolidSpecies() const -> Indices
     return indicesSpeciesInPhases(indicesSolidPhases());
 }
 
-auto ChemicalSystem::elementAmounts(VectorConstRef n) const -> Vector
+auto ChemicalSystem::elementAmounts(VectorXrConstRef n) const -> VectorXr
 {
-    MatrixConstRef W = formulaMatrix();
+    MatrixXdConstRef W = formulaMatrix();
     return W * n;
 }
 
-auto ChemicalSystem::elementAmountsInPhase(Index iphase, VectorConstRef n) const -> Vector
+auto ChemicalSystem::elementAmountsInPhase(Index iphase, VectorXrConstRef n) const -> VectorXr
 {
-    MatrixConstRef W = formulaMatrix();
+    MatrixXdConstRef W = formulaMatrix();
     const unsigned first = indexFirstSpeciesInPhase(iphase);
     const unsigned size = numSpeciesInPhase(iphase);
     const auto Wp = cols(W, first, size);
@@ -456,24 +456,24 @@ auto ChemicalSystem::elementAmountsInPhase(Index iphase, VectorConstRef n) const
     return Wp * np;
 }
 
-auto ChemicalSystem::elementAmountsInSpecies(const Indices& ispecies, VectorConstRef n) const -> Vector
+auto ChemicalSystem::elementAmountsInSpecies(const Indices& ispecies, VectorXrConstRef n) const -> VectorXr
 {
-    MatrixConstRef W = formulaMatrix();
-    Vector b = zeros(W.rows());
+    MatrixXdConstRef W = formulaMatrix();
+    VectorXr b = zeros(W.rows());
     for(Index i : ispecies)
         b += W.col(i) * n[i];
     return b;
 }
 
-auto ChemicalSystem::elementAmount(Index ielement, VectorConstRef n) const -> double
+auto ChemicalSystem::elementAmount(Index ielement, VectorXrConstRef n) const -> double
 {
-    MatrixConstRef W = formulaMatrix();
+    MatrixXdConstRef W = formulaMatrix();
     return W.row(ielement) * n;
 }
 
-auto ChemicalSystem::elementAmountInPhase(Index ielement, Index iphase, VectorConstRef n) const -> double
+auto ChemicalSystem::elementAmountInPhase(Index ielement, Index iphase, VectorXrConstRef n) const -> double
 {
-    MatrixConstRef W = formulaMatrix();
+    MatrixXdConstRef W = formulaMatrix();
     const unsigned first = indexFirstSpeciesInPhase(iphase);
     const unsigned size = numSpeciesInPhase(iphase);
     const auto Wp = cols(W, first, size);
@@ -481,9 +481,9 @@ auto ChemicalSystem::elementAmountInPhase(Index ielement, Index iphase, VectorCo
     return dot(Wp.row(ielement), np);
 }
 
-auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispecies, VectorConstRef n) const -> double
+auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispecies, VectorXrConstRef n) const -> double
 {
-    MatrixConstRef W = formulaMatrix();
+    MatrixXdConstRef W = formulaMatrix();
     double bval = 0.0;
     for(Index i : ispecies)
         bval += W(ielement, i) * n[i];
@@ -497,7 +497,7 @@ auto ChemicalSystem::properties(double T, double P) const -> ThermoProperties
     return prop;
 }
 
-auto ChemicalSystem::properties(double T, double P, VectorConstRef n) const -> ChemicalProperties
+auto ChemicalSystem::properties(double T, double P, VectorXrConstRef n) const -> ChemicalProperties
 {
     ChemicalProperties prop(*this);
     prop.update(T, P, n);

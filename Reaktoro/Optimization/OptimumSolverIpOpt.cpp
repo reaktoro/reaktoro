@@ -53,19 +53,19 @@ struct OptimumSolverIpOpt::Impl
     ObjectiveResult f_trial, phi;
 
     /// The auxiliary constraint function results
-    Vector h_trial;
+    VectorXd h_trial;
 
     /// The trial primal iterate
-    Vector x_trial;
+    VectorXd x_trial;
 
     /// The trial second-order iterate
-    Vector x_soc;
+    VectorXd x_soc;
 
     /// The Newton steps for the trial second-order iterates x and y
     KktSolution sol_cor;
 
     /// The equality constraint function evaluated at x_soc
-    Vector h_soc;
+    VectorXd h_soc;
 
     /// Several other auxiliary algorithmic variables computed along the way
     double theta0;
@@ -130,7 +130,7 @@ struct OptimumSolverIpOpt::Impl
 
         ObjectiveResult f;
 
-        Vector h;
+        VectorXd h;
 
         // The alpha step sizes used to restric the steps inside the feasible domain
         double alphax, alphaz, alpha;
@@ -518,7 +518,7 @@ auto OptimumSolverIpOpt::solve(const OptimumProblem& problem, OptimumState& stat
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverIpOpt::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
+auto OptimumSolverIpOpt::dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> VectorXd
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
         "The method OptimumSolverIpOpt::dxdp has not been implemented yet.");

@@ -30,22 +30,22 @@ struct WaterThermoState;
 struct FunctionG
 {
     /// The function g at temperature T and pressure P
-    ThermoScalar g;
+    real g;
 
     /// The first-order partial derivative of function g with respect to temperature
-    ThermoScalar gT;
+    real gT;
 
     /// The first-order partial derivative of function g with respect to pressure
-    ThermoScalar gP;
+    real gP;
 
     /// The second-order partial derivative of function g with respect to temperature
-    ThermoScalar gTT;
+    real gTT;
 
     /// The second-order partial derivative of function g with respect to temperature and pressure
-    ThermoScalar gTP;
+    real gTP;
 
     /// The second-order partial derivative of function g with respect to pressure
-    ThermoScalar gPP;
+    real gPP;
 };
 
 /// Calculate the function g of the HKF model.

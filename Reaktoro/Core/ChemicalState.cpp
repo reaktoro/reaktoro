@@ -45,13 +45,13 @@ struct ChemicalState::Impl
     double P = 1.0e+05;
 
     /// The molar amounts of the chemical species
-    Vector n;
+    VectorXr n;
 
     /// The dual chemical potentials of the elements (in units of J/mol)
-    Vector y;
+    VectorXr y;
 
     /// The dual chemical potentials of the species (in units of J/mol)
-    Vector z;
+    VectorXr z;
 
     Impl() = delete;
 
@@ -97,7 +97,7 @@ struct ChemicalState::Impl
         n.fill(val);
     }
 
-    auto setSpeciesAmounts(VectorConstRef values) -> void
+    auto setSpeciesAmounts(VectorXrConstRef values) -> void
     {
         Assert(static_cast<unsigned>(values.rows()) == system.numSpecies(),
             "Cannot set the molar amounts of the species.",
@@ -106,7 +106,7 @@ struct ChemicalState::Impl
         n = values;
     }
 
-    auto setSpeciesAmounts(VectorConstRef values, const Indices& indices) -> void
+    auto setSpeciesAmounts(VectorXrConstRef values, const Indices& indices) -> void
     {
         Assert(static_cast<unsigned>(values.rows()) == indices.size(),
             "Cannot set the molar amounts of the species with given indices.",
@@ -175,7 +175,7 @@ struct ChemicalState::Impl
     }
 
     /// Set the dual chemical potentials of the species
-    auto setSpeciesDualPotentials(VectorConstRef values) -> void
+    auto setSpeciesDualPotentials(VectorXrConstRef values) -> void
     {
         Assert(values.size() == z.size(),
             "Could not set the dual chemical potentials of the species.",
@@ -184,7 +184,7 @@ struct ChemicalState::Impl
     }
 
     /// Set the dual chemical potentials of the elements
-    auto setElementDualPotentials(VectorConstRef values) -> void
+    auto setElementDualPotentials(VectorXrConstRef values) -> void
     {
         Assert(values.size() == y.size(),
             "Could not set the dual chemical potentials of the elements.",
@@ -227,7 +227,7 @@ struct ChemicalState::Impl
         Assert(index < system.numPhases(), "Cannot set the volume of the phase.",
             "The given phase index is out of range.");
         ChemicalProperties properties = system.properties(T, P, n);
-        const Vector v = properties.phaseVolumes().val;
+        const VectorXr v = properties.phaseVolumes().val;
         const double scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
         scaleSpeciesAmountsInPhase(index, scalar);
     }
@@ -283,7 +283,7 @@ struct ChemicalState::Impl
         Assert(volume >= 0.0, "Cannot set the volume of the chemical state.",
             "The given volume is negative.");
         ChemicalProperties properties = system.properties(T, P, n);
-        const Vector v = properties.phaseVolumes().val;
+        const VectorXr v = properties.phaseVolumes().val;
         const double vtotal = sum(v);
         const double scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
         scaleSpeciesAmounts(scalar);
@@ -320,17 +320,17 @@ struct ChemicalState::Impl
         return speciesAmount(index, units);
     }
 
-    auto elementAmounts() const -> Vector
+    auto elementAmounts() const -> VectorXr
     {
         return system.elementAmounts(n);
     }
 
-    auto elementAmountsInPhase(Index index) const -> Vector
+    auto elementAmountsInPhase(Index index) const -> VectorXr
     {
         return system.elementAmountsInPhase(index, n);
     }
 
-    auto elementAmountsInSpecies(const Indices& indices) const -> Vector
+    auto elementAmountsInSpecies(const Indices& indices) const -> VectorXr
     {
         return system.elementAmountsInSpecies(indices, n);
     }
@@ -418,7 +418,7 @@ struct ChemicalState::Impl
     }
 
     // Return the stability indices of the phases
-    auto phaseStabilityIndices() const -> Vector
+    auto phaseStabilityIndices() const -> VectorXr
     {
         // Auxiliary variables
         const double ln10 = 2.302585092994046;
@@ -426,10 +426,10 @@ struct ChemicalState::Impl
         const double RT = universalGasConstant * T;
 
         // Calculate the normalized z-Lagrange multipliers for all species
-        const Vector zRT = z/RT;
+        const VectorXr zRT = z/RT;
 
         // Initialise the stability indices of the phases
-        Vector stability_indices = zeros(num_phases);
+        VectorXr stability_indices = zeros(num_phases);
 
         // The index of the first species in each phase iterated below
         unsigned offset = 0;
@@ -446,8 +446,8 @@ struct ChemicalState::Impl
             }
             else
             {
-                const Vector zp = rows(zRT, offset, num_species);
-                Vector xp = rows(n, offset, num_species);
+                const VectorXr zp = rows(zRT, offset, num_species);
+                VectorXr xp = rows(n, offset, num_species);
                 const double nsum = sum(xp);
                 if(nsum) xp /= nsum; else xp.fill(1.0/num_species);
                 stability_indices[i] = std::log10(sum(xp % exp(-zp)));
@@ -502,12 +502,12 @@ auto ChemicalState::setSpeciesAmounts(double val) -> void
     pimpl->setSpeciesAmounts(val);
 }
 
-auto ChemicalState::setSpeciesAmounts(VectorConstRef n) -> void
+auto ChemicalState::setSpeciesAmounts(VectorXrConstRef n) -> void
 {
     pimpl->setSpeciesAmounts(n);
 }
 
-auto ChemicalState::setSpeciesAmounts(VectorConstRef n, const Indices& indices) -> void
+auto ChemicalState::setSpeciesAmounts(VectorXrConstRef n, const Indices& indices) -> void
 {
     pimpl->setSpeciesAmounts(n, indices);
 }
@@ -552,12 +552,12 @@ auto ChemicalState::setSpeciesMass(std::string name, double mass, std::string un
     pimpl->setSpeciesMass(name, mass, units);
 }
 
-auto ChemicalState::setSpeciesDualPotentials(VectorConstRef z) -> void
+auto ChemicalState::setSpeciesDualPotentials(VectorXrConstRef z) -> void
 {
     pimpl->setSpeciesDualPotentials(z);
 }
 
-auto ChemicalState::setElementDualPotentials(VectorConstRef y) -> void
+auto ChemicalState::setElementDualPotentials(VectorXrConstRef y) -> void
 {
     pimpl->setElementDualPotentials(y);
 }
@@ -637,12 +637,12 @@ auto ChemicalState::pressure() const -> double
     return pimpl->P;
 }
 
-auto ChemicalState::speciesAmounts() const -> VectorConstRef
+auto ChemicalState::speciesAmounts() const -> VectorXrConstRef
 {
     return pimpl->n;
 }
 
-auto ChemicalState::speciesAmounts(const Indices& indices) const -> Vector
+auto ChemicalState::speciesAmounts(const Indices& indices) const -> VectorXr
 {
     return rows(pimpl->n, indices);
 }
@@ -667,22 +667,22 @@ auto ChemicalState::speciesAmount(std::string species, std::string units) const 
     return pimpl->speciesAmount(species, units);
 }
 
-auto ChemicalState::speciesDualPotentials() const -> VectorConstRef
+auto ChemicalState::speciesDualPotentials() const -> VectorXrConstRef
 {
     return pimpl->z;
 }
 
-auto ChemicalState::elementAmounts() const -> Vector
+auto ChemicalState::elementAmounts() const -> VectorXr
 {
     return pimpl->elementAmounts();
 }
 
-auto ChemicalState::elementAmountsInPhase(Index iphase) const -> Vector
+auto ChemicalState::elementAmountsInPhase(Index iphase) const -> VectorXr
 {
     return pimpl->elementAmountsInPhase(iphase);
 }
 
-auto ChemicalState::elementAmountsInSpecies(const Indices& ispecies) const -> Vector
+auto ChemicalState::elementAmountsInSpecies(const Indices& ispecies) const -> VectorXr
 {
     return pimpl->elementAmountsInSpecies(ispecies);
 }
@@ -737,7 +737,7 @@ auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispeci
     return pimpl->elementAmountInSpecies(ielement, ispecies, units);
 }
 
-auto ChemicalState::elementDualPotentials() const -> VectorConstRef
+auto ChemicalState::elementDualPotentials() const -> VectorXrConstRef
 {
     return pimpl->y;
 }
@@ -762,7 +762,7 @@ auto ChemicalState::phaseAmount(std::string name, std::string units) const -> do
     return pimpl->phaseAmount(name, units);
 }
 
-auto ChemicalState::phaseStabilityIndices() const -> Vector
+auto ChemicalState::phaseStabilityIndices() const -> VectorXr
 {
     return pimpl->phaseStabilityIndices();
 }
@@ -784,17 +784,17 @@ auto ChemicalState::output(std::ostream& out, int precision) const -> void
     const auto& y = state.elementDualPotentials();
     const auto& z = state.speciesDualPotentials();
     const ChemicalProperties properties = state.properties();
-    const Vector molar_fractions = properties.moleFractions().val;
-    const Vector activity_coeffs = exp(properties.lnActivityCoefficients().val);
-    const Vector activities = exp(properties.lnActivities().val);
-    const Vector chemical_potentials = properties.chemicalPotentials().val;
-    const Vector phase_moles = properties.phaseAmounts().val;
-    const Vector phase_masses = properties.phaseMasses().val;
-    const Vector phase_molar_volumes = properties.phaseMolarVolumes().val;
-    const Vector phase_volumes = properties.phaseVolumes().val;
-    const Vector phase_volume_fractions = phase_volumes/sum(phase_volumes);
-    const Vector phase_densities = phase_masses/phase_volumes;
-    const Vector phase_stability_indices = state.phaseStabilityIndices();
+    const VectorXr molar_fractions = properties.moleFractions().val;
+    const VectorXr activity_coeffs = exp(properties.lnActivityCoefficients().val);
+    const VectorXr activities = exp(properties.lnActivities().val);
+    const VectorXr chemical_potentials = properties.chemicalPotentials().val;
+    const VectorXr phase_moles = properties.phaseAmounts().val;
+    const VectorXr phase_masses = properties.phaseMasses().val;
+    const VectorXr phase_molar_volumes = properties.phaseMolarVolumes().val;
+    const VectorXr phase_volumes = properties.phaseVolumes().val;
+    const VectorXr phase_volume_fractions = phase_volumes/sum(phase_volumes);
+    const VectorXr phase_densities = phase_masses/phase_volumes;
+    const VectorXr phase_stability_indices = state.phaseStabilityIndices();
 
     const unsigned num_phases = system.numPhases();
     const unsigned bar_size = std::max(unsigned(9), num_phases + 2) * 25;

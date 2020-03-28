@@ -37,7 +37,7 @@
 namespace Reaktoro {
 namespace {
 
-//auto multiKahanSum(MatrixConstRef A, VectorConstRef x, VectorRef res) -> void
+//auto multiKahanSum(MatrixXdConstRef A, VectorXdConstRef x, VectorXdRef res) -> void
 //{
 //    res = zeros(A.rows());
 //    for(int i = 0; i < A.rows(); ++i)
@@ -53,7 +53,7 @@ namespace {
 //    }
 //}
 
-auto stepLengthToBound(VectorConstRef p, VectorConstRef dp, Index& ilimiting) -> double
+auto stepLengthToBound(VectorXdConstRef p, VectorXdConstRef dp, Index& ilimiting) -> double
 {
     ilimiting = p.size();
     double alpha_max = 1.0;
@@ -73,7 +73,7 @@ auto stepLengthToBound(VectorConstRef p, VectorConstRef dp, Index& ilimiting) ->
     return alpha_max;
 }
 
-auto erase(Vector& x, Index i) -> void
+auto erase(VectorXd& x, Index i) -> void
 {
     std::copy(x.data() + i + 1, x.data() + x.size(), x.data() + i);
     x.conservativeResize(x.size() - 1);
@@ -93,8 +93,8 @@ struct OptimumSolverActNewton::Impl
     KktSolver kkt;
 
     Indices L, F, E;
-    Vector gF, gL, gE;
-    Vector xF, zF, xE, zL;
+    VectorXd gF, gL, gE;
+    VectorXd xF, zF, xE, zL;
     Matrix AF, AL, AE;
     Hessian HF;
 
@@ -137,7 +137,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     const auto& b = problem.b;
     const auto& l = problem.l;
 
-    Vector h;
+    VectorXd h;
 
     const double threshold = options.actnewton.threshold;
 
@@ -191,7 +191,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         outputter.addEntry("alphax");
         outputter.addEntry("alphaz");
 
-        Vector r = abs(f.grad - tr(A)*y);
+        VectorXd r = abs(f.grad - tr(A)*y);
 
         outputter.outputHeader();
         outputter.addValue(result.iterations);
@@ -215,7 +215,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     {
         if(!options.output.active) return;
 
-        Vector r = abs(f.grad - tr(A)*y);
+        VectorXd r = abs(f.grad - tr(A)*y);
 
         outputter.addValue(result.iterations);
         outputter.addValues(x);
@@ -321,7 +321,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         zF = zeros(F.size());
         KktMatrix lhs(HF, AF, xF, zF);
 
-        Vector CF = delta*delta*ones(F.size());
+        VectorXd CF = delta*delta*ones(F.size());
         kkt.decompose(lhs);
 
         // Compute the right-hand side vectors of the KKT equation
@@ -351,8 +351,8 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     auto update_iterates = [&]()
     {
         Index ilimiting;
-        Vector lE = rows(l, E);
-        Vector lF = rows(l, F);
+        VectorXd lE = rows(l, E);
+        VectorXd lF = rows(l, F);
         alpha = stepLengthToBound(xF-lF, sol.dx, ilimiting);
 
         iglimiting = F[ilimiting];
@@ -467,7 +467,7 @@ auto OptimumSolverActNewton::solve(const OptimumProblem& problem, OptimumState& 
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverActNewton::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
+auto OptimumSolverActNewton::dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> VectorXd
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
         "The method OptimumSolverActNewton::dxdp has not been implemented yet.");
