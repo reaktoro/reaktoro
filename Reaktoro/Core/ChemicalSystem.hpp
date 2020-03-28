@@ -18,10 +18,11 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
 #include <Reaktoro/Thermodynamics/Models/ChemicalModel.hpp>
 

@@ -21,6 +21,8 @@
 #include <functional>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 
 namespace Reaktoro {

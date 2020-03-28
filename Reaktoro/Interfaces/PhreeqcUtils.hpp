@@ -23,6 +23,7 @@
 #include <vector>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
 // Phreeqc includes

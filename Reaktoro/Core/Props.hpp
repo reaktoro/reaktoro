@@ -18,9 +18,11 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/ActivityModel.hpp>
 #include <Reaktoro/Core/StandardThermoModel.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 

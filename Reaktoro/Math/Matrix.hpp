@@ -22,6 +22,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Common/Real.hpp>
 
 namespace Reaktoro {
 
@@ -45,43 +46,43 @@ using MatrixXdConstRef = Eigen::Ref<const Eigen::MatrixXd>; ///< Alias to Eigen 
 using MatrixXdMap      = Eigen::Map<Eigen::MatrixXd>;       ///< Alias to Eigen type Map<MatrixXd>.
 using MatrixXdConstMap = Eigen::Map<const Eigen::MatrixXd>; ///< Alias to Eigen type Map<const MatrixXd>.
 
-using VectorXr = Eigen::VectorXd; /// Alias to Eigen type Eigen::VectorXd.
+using VectorXr = Eigen::Matrix<real, Eigen::Dynamic, 1, 0, Eigen::Dynamic, 1>; /// Alias to Eigen type Eigen::VectorXr.
 using VectorXd = Eigen::VectorXd; /// Alias to Eigen type Eigen::VectorXd.
 using VectorXi = Eigen::VectorXi; /// Alias to Eigen type Eigen::VectorXi.
 
-using VectorXrRef = Eigen::Ref<VectorXr>; ///< Alias to Eigen type Eigen::Ref<VectorXd>.
+using VectorXrRef = Eigen::Ref<VectorXr>; ///< Alias to Eigen type Eigen::Ref<VectorXr>.
 using VectorXdRef = Eigen::Ref<VectorXd>; ///< Alias to Eigen type Eigen::Ref<VectorXd>.
 using VectorXiRef = Eigen::Ref<VectorXi>; ///< Alias to Eigen type Eigen::Ref<VectorXi>.
 
-using VectorXrConstRef = Eigen::Ref<const VectorXr>; ///< Alias to Eigen type Eigen::Ref<const VectorXd>.
+using VectorXrConstRef = Eigen::Ref<const VectorXr>; ///< Alias to Eigen type Eigen::Ref<const VectorXr>.
 using VectorXdConstRef = Eigen::Ref<const VectorXd>; ///< Alias to Eigen type Eigen::Ref<const VectorXd>.
 using VectorXiConstRef = Eigen::Ref<const VectorXi>; ///< Alias to Eigen type Eigen::Ref<const VectorXi>.
 
-using VectorXrMap = Eigen::Map<VectorXr>; ///< Alias to Eigen type Eigen::Map<VectorXd>.
+using VectorXrMap = Eigen::Map<VectorXr>; ///< Alias to Eigen type Eigen::Map<VectorXr>.
 using VectorXdMap = Eigen::Map<VectorXd>; ///< Alias to Eigen type Eigen::Map<VectorXd>.
 using VectorXiMap = Eigen::Map<VectorXi>; ///< Alias to Eigen type Eigen::Map<VectorXi>.
 
-using VectorXrConstMap = Eigen::Map<const VectorXr>; ///< Alias to Eigen type Eigen::Map<const VectorXd>.
+using VectorXrConstMap = Eigen::Map<const VectorXr>; ///< Alias to Eigen type Eigen::Map<const VectorXr>.
 using VectorXdConstMap = Eigen::Map<const VectorXd>; ///< Alias to Eigen type Eigen::Map<const VectorXd>.
 using VectorXiConstMap = Eigen::Map<const VectorXi>; ///< Alias to Eigen type Eigen::Map<const VectorXi>.
 
-using MatrixXr = Eigen::MatrixXr; /// Alias to Eigen type Eigen::MatrixXd.
+using MatrixXr = Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic, 0, Eigen::Dynamic, Eigen::Dynamic>; /// Alias to Eigen type Eigen::MatrixXr.
 using MatrixXd = Eigen::MatrixXd; /// Alias to Eigen type Eigen::MatrixXd.
 using MatrixXi = Eigen::MatrixXi; /// Alias to Eigen type Eigen::MatrixXi.
 
-using MatrixXrRef = Eigen::Ref<MatrixXr>; ///< Alias to Eigen type Eigen::Ref<MatrixXd>.
+using MatrixXrRef = Eigen::Ref<MatrixXr>; ///< Alias to Eigen type Eigen::Ref<MatrixXr>.
 using MatrixXdRef = Eigen::Ref<MatrixXd>; ///< Alias to Eigen type Eigen::Ref<MatrixXd>.
 using MatrixXiRef = Eigen::Ref<MatrixXi>; ///< Alias to Eigen type Eigen::Ref<MatrixXi>.
 
-using MatrixXrConstRef = Eigen::Ref<const MatrixXr>; ///< Alias to Eigen type Eigen::Ref<const MatrixXd>.
+using MatrixXrConstRef = Eigen::Ref<const MatrixXr>; ///< Alias to Eigen type Eigen::Ref<const MatrixXr>.
 using MatrixXdConstRef = Eigen::Ref<const MatrixXd>; ///< Alias to Eigen type Eigen::Ref<const MatrixXd>.
 using MatrixXiConstRef = Eigen::Ref<const MatrixXi>; ///< Alias to Eigen type Eigen::Ref<const MatrixXi>.
 
-using MatrixXrMap = Eigen::Map<MatrixXr>; ///< Alias to Eigen type Eigen::Map<MatrixXd>.
+using MatrixXrMap = Eigen::Map<MatrixXr>; ///< Alias to Eigen type Eigen::Map<MatrixXr>.
 using MatrixXdMap = Eigen::Map<MatrixXd>; ///< Alias to Eigen type Eigen::Map<MatrixXd>.
 using MatrixXiMap = Eigen::Map<MatrixXi>; ///< Alias to Eigen type Eigen::Map<MatrixXi>.
 
-using MatrixXrConstMap = Eigen::Map<const MatrixXr>; ///< Alias to Eigen type Eigen::Map<const MatrixXd>.
+using MatrixXrConstMap = Eigen::Map<const MatrixXr>; ///< Alias to Eigen type Eigen::Map<const MatrixXr>.
 using MatrixXdConstMap = Eigen::Map<const MatrixXd>; ///< Alias to Eigen type Eigen::Map<const MatrixXd>.
 using MatrixXiConstMap = Eigen::Map<const MatrixXi>; ///< Alias to Eigen type Eigen::Map<const MatrixXi>.
 

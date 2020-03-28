@@ -26,6 +26,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 

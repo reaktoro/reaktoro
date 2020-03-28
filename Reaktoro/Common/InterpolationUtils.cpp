@@ -24,11 +24,11 @@
 namespace Reaktoro {
 
 auto interpolate(
-    const std::vector<double>& temperatures,
-    const std::vector<double>& pressures,
+    const std::vector<real>& temperatures,
+    const std::vector<real>& pressures,
     const std::vector<real>& scalars) -> ThermoScalarFunction
 {
-    std::vector<double> vals, ddTs, ddPs;
+    std::vector<real> vals, ddTs, ddPs;
     vals.reserve(scalars.size());
     ddTs.reserve(scalars.size());
     ddPs.reserve(scalars.size());
@@ -51,8 +51,8 @@ auto interpolate(
 }
 
 auto interpolate(
-    const std::vector<double>& temperatures,
-    const std::vector<double>& pressures,
+    const std::vector<real>& temperatures,
+    const std::vector<real>& pressures,
     const ThermoScalarFunction& f) -> ThermoScalarFunction
 {
     auto val_func = [=](real T, real P) { return f(T, P).val; };
@@ -72,8 +72,8 @@ auto interpolate(
 }
 
 auto interpolate(
-    const std::vector<double>& temperatures,
-    const std::vector<double>& pressures,
+    const std::vector<real>& temperatures,
+    const std::vector<real>& pressures,
     const std::vector<ThermoScalarFunction>& fs) -> ThermoVectorFunction
 {
     const unsigned size = fs.size();
@@ -82,9 +82,9 @@ auto interpolate(
 
     for(unsigned i = 0; i < size; ++i)
     {
-        auto val_func = [=](double T, double P) { return fs[i](T, P).val; };
-        auto ddT_func = [=](double T, double P) { return fs[i](T, P).ddT; };
-        auto ddP_func = [=](double T, double P) { return fs[i](T, P).ddP; };
+        auto val_func = [=](real T, real P) { return fs[i](T, P).val; };
+        auto ddT_func = [=](real T, real P) { return fs[i](T, P).ddT; };
+        auto ddP_func = [=](real T, real P) { return fs[i](T, P).ddP; };
 
         val[i] = BilinearInterpolator(temperatures, pressures, val_func);
         ddT[i] = BilinearInterpolator(temperatures, pressures, ddT_func);
@@ -93,7 +93,7 @@ auto interpolate(
 
     VectorXr res(size);
 
-    auto func = [=](double T, double P) mutable
+    auto func = [=](real T, real P) mutable
     {
         for(unsigned i = 0; i < size; ++i)
         {

@@ -18,7 +18,9 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Thermodynamics/Models/ChemicalModel.hpp>
 #include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
 
