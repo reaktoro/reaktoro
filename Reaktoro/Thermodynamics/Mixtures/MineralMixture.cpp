@@ -34,7 +34,7 @@ MineralMixture::MineralMixture(const MineralSpecies& species)
 MineralMixture::~MineralMixture()
 {}
 
-auto MineralMixture::state(Temperature T, Pressure P, VectorXrConstRef n) const -> MineralMixtureState
+auto MineralMixture::state(real T, real P, VectorXrConstRef n) const -> MineralMixtureState
 {
     MineralMixtureState res;
     res.T = T;

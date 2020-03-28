@@ -52,6 +52,6 @@ struct ActivityProps
 };
 
 /// The function type for the activity model of a phase.
-using ActivityModelFn = std::function<ActivityProps(Temperature, Pressure, VectorXrConstRef)>;
+using ActivityModelFn = std::function<ActivityProps(real, real, VectorXrConstRef)>;
 
 } // namespace Reaktoro

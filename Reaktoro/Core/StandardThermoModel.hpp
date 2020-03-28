@@ -56,6 +56,6 @@ struct StandardThermoProps
 };
 
 /// The function type for the standard thermodynamic model of a chemical species.
-using StandardThermoModelFn = std::function<StandardThermoProps(Temperature, Pressure, const Species&)>;
+using StandardThermoModelFn = std::function<StandardThermoProps(real, real, const Species&)>;
 
 } // namespace Reaktoro

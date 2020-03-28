@@ -375,7 +375,7 @@ auto calculateWaterHelmholtzStateHGK4(real t, real d) -> WaterHelmholtzState
 
 } // namespace
 
-auto waterHelmholtzStateHGK(Temperature T, real D) -> WaterHelmholtzState
+auto waterHelmholtzStateHGK(real T, real D) -> WaterHelmholtzState
 {
 	// The dimensionless temperature and density
 	const auto t = T/referenceTemperature;

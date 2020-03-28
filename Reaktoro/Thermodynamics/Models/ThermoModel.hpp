@@ -111,6 +111,6 @@ private:
 };
 
 /// The signature of the thermodynamic model function that calculates the standard thermodynamic properties of the species in a chemical system.
-using ThermoModel = std::function<void(ThermoModelResult&, Temperature, Pressure)>;
+using ThermoModel = std::function<void(ThermoModelResult&, real, real)>;
 
 } // namespace Reaktoro

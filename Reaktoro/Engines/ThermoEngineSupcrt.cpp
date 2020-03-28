@@ -81,7 +81,7 @@ struct SupcrtStandardThermoModelFn
     SupcrtStandardThermoModelFn()
     {
         // Initialize the Haar--Gallagher--Kell (1984) equation of state for water
-        water_thermo_props_hgk_fn = [](Temperature T, Pressure P)
+        water_thermo_props_hgk_fn = [](real T, real P)
         {
             return Reaktoro::waterThermoStateHGK(T, P, StateOfMatter::Liquid);
         };
@@ -89,7 +89,7 @@ struct SupcrtStandardThermoModelFn
         water_thermo_props_hgk_fn = memoize(water_thermo_props_hgk_fn);
 
         // Initialize the Wagner and Pruss (1995) equation of state for water
-        water_thermo_props_wagner_pruss_fn = [](Temperature T, Pressure P)
+        water_thermo_props_wagner_pruss_fn = [](real T, real P)
         {
             return Reaktoro::waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
         };
@@ -107,7 +107,7 @@ struct SupcrtStandardThermoModelFn
     }
 
     /// Return the standard thermodynamic properties of a species at given temperature and pressure.
-    auto operator()(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps
+    auto operator()(real T, real P, const Species& species) const -> StandardThermoProps
     {
         const auto data = species.data();
         if(data.type() == typeid(ParamsMaierKelly))
@@ -124,7 +124,7 @@ struct SupcrtStandardThermoModelFn
     }
 
     /// Return the standard thermodynamic properties of the aqueous solvent water using HKF model.
-    auto standardThermoPropsAqueousSolventHKF(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps
+    auto standardThermoPropsAqueousSolventHKF(real T, real P, const Species& species) const -> StandardThermoProps
     {
         const auto wts = water_thermo_props_wagner_pruss_fn(T, P);
         const auto res = speciesThermoStateSolventHKF(T, P, wts);
@@ -132,7 +132,7 @@ struct SupcrtStandardThermoModelFn
     }
 
     /// Return the standard thermodynamic properties of an aqueous solute using HKF model.
-    auto standardThermoPropsAqueousSoluteHKF(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps
+    auto standardThermoPropsAqueousSoluteHKF(real T, real P, const Species& species) const -> StandardThermoProps
     {
         const auto params = std::any_cast<ParamsAqueousSoluteHKF>(species.data());
         const auto wts = water_thermo_props_wagner_pruss_fn(T, P);
@@ -144,7 +144,7 @@ struct SupcrtStandardThermoModelFn
     }
 
     /// Return the standard thermodynamic properties of a species using Maier-Kelly model.
-    auto standardThermoPropsMaierKelly(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps
+    auto standardThermoPropsMaierKelly(real T, real P, const Species& species) const -> StandardThermoProps
     {
         const auto params = std::any_cast<ParamsMaierKelly>(species.data());
         const auto res = speciesThermoStateHKF(T, P, params);
@@ -152,7 +152,7 @@ struct SupcrtStandardThermoModelFn
     }
 
     /// Return the standard thermodynamic properties of a mineral species using Maier-Kelly-HKF model.
-    auto standardThermoPropsMaierKellyHKF(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps
+    auto standardThermoPropsMaierKellyHKF(real T, real P, const Species& species) const -> StandardThermoProps
     {
         const auto params = std::any_cast<ParamsMaierKellyHKF>(species.data());
         const auto res = speciesThermoStateHKF(T, P, params);

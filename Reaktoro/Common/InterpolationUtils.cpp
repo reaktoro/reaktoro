@@ -42,7 +42,7 @@ auto interpolate(
     BilinearInterpolator ddT(temperatures, pressures, ddTs);
     BilinearInterpolator ddP(temperatures, pressures, ddPs);
 
-    auto func = [=](Temperature T, Pressure P)
+    auto func = [=](real T, real P)
     {
         return real(val(T, P), ddT(T, P), ddP(T, P));
     };
@@ -55,15 +55,15 @@ auto interpolate(
     const std::vector<double>& pressures,
     const ThermoScalarFunction& f) -> ThermoScalarFunction
 {
-    auto val_func = [=](Temperature T, Pressure P) { return f(T, P).val; };
-    auto ddT_func = [=](Temperature T, Pressure P) { return f(T, P).ddT; };
-    auto ddP_func = [=](Temperature T, Pressure P) { return f(T, P).ddP; };
+    auto val_func = [=](real T, real P) { return f(T, P).val; };
+    auto ddT_func = [=](real T, real P) { return f(T, P).ddT; };
+    auto ddP_func = [=](real T, real P) { return f(T, P).ddP; };
 
     BilinearInterpolator val(temperatures, pressures, val_func);
     BilinearInterpolator ddT(temperatures, pressures, ddT_func);
     BilinearInterpolator ddP(temperatures, pressures, ddP_func);
 
-    auto func = [=](Temperature T, Pressure P)
+    auto func = [=](real T, real P)
     {
         return real(val(T, P), ddT(T, P), ddP(T, P));
     };

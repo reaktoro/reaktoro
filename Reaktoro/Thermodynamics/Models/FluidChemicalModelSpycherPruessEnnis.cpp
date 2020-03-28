@@ -29,7 +29,7 @@ namespace {
 const double R = 83.1447;
 
 // Calculates the parameter aCO2 as a function of temperature
-inline auto aCO2(Temperature T) -> real
+inline auto aCO2(real T) -> real
 {
     return 7.54e+07 - 4.13e+04 * T;
 }
@@ -40,7 +40,7 @@ const double bH2O = 18.18; // in units of cm3/mol
 const double aH2OCO2 = 7.89e+07;
 
 /// Calculates the molar volume of the CO2-rich phase (in units of cm3/mol)
-auto volumeCO2(Temperature T, real Pb, real sqrtT) -> real
+auto volumeCO2(real T, real Pb, real sqrtT) -> real
 {
     // Auxiliary variables
     const auto amix = aCO2(T);
@@ -104,7 +104,7 @@ auto fluidChemicalModelSpycherPruessEnnis(const FluidMixture& mixture) -> PhaseC
     FluidMixtureState state;
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) mutable
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, real T, real P, VectorXrConstRef n) mutable
     {
         // Evaluate the state of the gaseous mixture
         state = mixture.state(T, P, n);

@@ -39,10 +39,10 @@ public:
     auto update(double T, double P) -> void;
 
     /// Return the temperature of the phase (in units of K).
-    auto temperature() const -> Temperature;
+    auto temperature() const -> real;
 
     /// Return the pressure of the phase (in units of Pa).
-    auto pressure() const -> Pressure;
+    auto pressure() const -> real;
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
     auto standardPartialMolarGibbsEnergies() const -> VectorXr;
@@ -82,10 +82,10 @@ private:
     ThermoModelResult tres;
 
     /// The temperature of the system (in units of K)
-    Temperature T;
+    real T;
 
     /// The pressure of the system (in units of Pa)
-    Pressure P;
+    real P;
 };
 
 } // namespace Reaktoro

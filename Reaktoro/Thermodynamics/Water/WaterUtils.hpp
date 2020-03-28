@@ -26,63 +26,63 @@ namespace Reaktoro {
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The density of liquid water (in units of kg/m3)
-auto waterDensityHGK(Temperature T, Pressure P, StateOfMatter stateofmatter) -> real;
+auto waterDensityHGK(real T, real P, StateOfMatter stateofmatter) -> real;
 
 /// Calculate the density of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The density of liquid water (in units of kg/m3)
-auto waterDensityWagnerPruss(Temperature T, Pressure P, StateOfMatter stateofmatter) -> real;
+auto waterDensityWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> real;
 
 /// Calculate the density of liquid water using the Haar--Gallagher--Kell (1984) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The density of liquid water (in units of kg/m3)
-auto waterLiquidDensityHGK(Temperature T, Pressure P) -> real;
+auto waterLiquidDensityHGK(real T, real P) -> real;
 
 /// Calculate the density of liquid water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The density of liquid water (in units of kg/m3)
-auto waterLiquidDensityWagnerPruss(Temperature T, Pressure P) -> real;
+auto waterLiquidDensityWagnerPruss(real T, real P) -> real;
 
 /// Calculate the density of vapor water using the Haar--Gallagher--Kell (1984) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The density of water (in units of kg/m3)
-auto waterVaporDensityHGK(Temperature T, Pressure P) -> real;
+auto waterVaporDensityHGK(real T, real P) -> real;
 
 /// Calculate the density of vapor water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The density of water (in units of kg/m3)
-auto waterVaporDensityWagnerPruss(Temperature T, Pressure P) -> real;
+auto waterVaporDensityWagnerPruss(real T, real P) -> real;
 
 /// Calculate the pressure of water using the Haar--Gallagher--Kell (1984) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param D The density of water (in units of kg/m3)
 /// @return The pressure of water (in units of Pa)
-auto waterPressureHGK(Temperature T, real D) -> real;
+auto waterPressureHGK(real T, real D) -> real;
 
 /// Calculate the pressure of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param D The density of water (in units of kg/m3)
 /// @return The pressure of water (in units of Pa)
-auto waterPressureWagnerPruss(Temperature T, real D) -> real;
+auto waterPressureWagnerPruss(real T, real D) -> real;
 
 /// Calculate the saturated pressure of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @return The saturated pressure of water (in units of Pa)
-auto waterSaturatedPressureWagnerPruss(Temperature T) -> real;
+auto waterSaturatedPressureWagnerPruss(real T) -> real;
 
 /// Calculate the saturated liquid-density of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @return The saturated liquid-density of water (in units of kg/m3)
-auto waterSaturatedLiquidDensityWagnerPruss(Temperature T) -> real;
+auto waterSaturatedLiquidDensityWagnerPruss(real T) -> real;
 
 /// Calculate the saturated vapour-density of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @return The saturated vapour-density of water (in units of kg/m3)
-auto waterSaturatedVapourDensityWagnerPruss(Temperature T) -> real;
+auto waterSaturatedVapourDensityWagnerPruss(real T) -> real;
 
 } // namespace Reaktoro

@@ -58,13 +58,13 @@ public:
     auto update(double T, double P, VectorXrConstRef n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void;
 
     /// Return the temperature of the system (in units of K).
-    auto temperature() const -> Temperature;
+    auto temperature() const -> real;
 
     /// Return the pressure of the system (in units of Pa).
-    auto pressure() const -> Pressure;
+    auto pressure() const -> real;
 
     /// Return the molar amounts of the species (in units of mol).
-    auto composition() const -> Composition;
+    auto composition() const -> VectorXrConstRef;
 
     /// Return the result of the PhaseThermoModel function of each phase.
     auto thermoModelResult() const -> const ThermoModelResult&;
@@ -200,10 +200,10 @@ private:
     Index num_phases;
 
     /// The temperature of the system (in units of K)
-    Temperature T;
+    real T;
 
     /// The pressure of the system (in units of Pa)
-    Pressure P;
+    real P;
 
     /// The amounts of the species in the system (in units of mol).
     VectorXr n;

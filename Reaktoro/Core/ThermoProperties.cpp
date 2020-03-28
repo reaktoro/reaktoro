@@ -44,12 +44,12 @@ auto ThermoProperties::update(double T_, double P_) -> void
     }
 }
 
-auto ThermoProperties::temperature() const -> Temperature
+auto ThermoProperties::temperature() const -> real
 {
     return T;
 }
 
-auto ThermoProperties::pressure() const -> Pressure
+auto ThermoProperties::pressure() const -> real
 {
     return P;
 }

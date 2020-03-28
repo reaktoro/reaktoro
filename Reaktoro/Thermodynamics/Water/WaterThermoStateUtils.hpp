@@ -35,7 +35,7 @@ struct WaterHelmholtzState;
 /// @param P The pressure of water (in units of Pa)
 /// @return The thermodynamic state of water
 /// @see WaterThermoState
-auto waterThermoStateHGK(Temperature T, Pressure P, StateOfMatter stateofmatter) -> WaterThermoState;
+auto waterThermoStateHGK(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState;
 
 /// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state.
 /// **References:**
@@ -46,7 +46,7 @@ auto waterThermoStateHGK(Temperature T, Pressure P, StateOfMatter stateofmatter)
 /// @param P The pressure of water (in units of Pa)
 /// @return The thermodynamic state of water
 /// @see WaterThermoState
-auto waterThermoStateWagnerPruss(Temperature T, Pressure P, StateOfMatter stateofmatter) -> WaterThermoState;
+auto waterThermoStateWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState;
 
 /// Calculate the thermodynamic state of water.
 /// This is a general method that uses the Helmholtz free energy state
@@ -57,6 +57,6 @@ auto waterThermoStateWagnerPruss(Temperature T, Pressure P, StateOfMatter stateo
 /// @param whs The Helmholtz free energy state of water
 /// @return The thermodynamic state of water
 /// @see WaterHelmholtzState, WaterThermoState
-auto waterThermoState(Temperature T, Pressure P, const WaterHelmholtzState& whs) -> WaterThermoState;
+auto waterThermoState(real T, real P, const WaterHelmholtzState& whs) -> WaterThermoState;
 
 } // namespace Reaktoro

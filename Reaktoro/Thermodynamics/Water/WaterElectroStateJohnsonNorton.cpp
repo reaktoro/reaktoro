@@ -76,7 +76,7 @@ real (*k_tt[5])(real) = {k0_tt, k1_tt, k2_tt, k3_tt, k4_tt};
 
 } // namespace
 
-auto waterElectroStateJohnsonNorton(Temperature T, Pressure P, const WaterThermoState& wt) -> WaterElectroState
+auto waterElectroStateJohnsonNorton(real T, real P, const WaterThermoState& wt) -> WaterElectroState
 {
 	WaterElectroState we;
 

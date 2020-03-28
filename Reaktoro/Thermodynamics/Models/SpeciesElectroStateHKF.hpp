@@ -49,12 +49,12 @@ struct FunctionG
 };
 
 /// Calculate the function g of the HKF model.
-auto functionG(Temperature T, Pressure P, const WaterThermoState& wts) -> FunctionG;
+auto functionG(real T, real P, const WaterThermoState& wts) -> FunctionG;
 
 /// Calculate the electrostatic state of the aqueous species using the g-function state.
 auto speciesElectroStateHKF(const FunctionG& g, const ParamsAqueousSoluteHKF& params) -> SpeciesElectroState;
 
 /// Calculate the electrostatic state of the aqueous species using the HKF model.
-auto speciesElectroStateHKF(Temperature T, Pressure P, const ParamsAqueousSoluteHKF& params) -> SpeciesElectroState;
+auto speciesElectroStateHKF(real T, real P, const ParamsAqueousSoluteHKF& params) -> SpeciesElectroState;
 
 } // namespace Reaktoro

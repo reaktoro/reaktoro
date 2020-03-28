@@ -42,7 +42,7 @@ public:
     /// @param T The temperature for the calculation (in unit of K)
     /// @param P The pressure for the calculation (in unit of Pa)
     /// @param species The species object.
-    auto standardThermoProps(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps;
+    auto standardThermoProps(real T, real P, const Species& species) const -> StandardThermoProps;
 
 private:
     /// The thermodynamic database of this thermodynamic engine

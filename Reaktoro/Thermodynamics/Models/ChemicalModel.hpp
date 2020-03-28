@@ -129,6 +129,6 @@ private:
 };
 
 /// The signature of the chemical model function that calculates the chemical properties of the species in a chemical system.
-using ChemicalModel = std::function<void(ChemicalModelResult&, Temperature, Pressure, VectorXrConstRef)>;
+using ChemicalModel = std::function<void(ChemicalModelResult&, real, real, VectorXrConstRef)>;
 
 } // namespace Reaktoro

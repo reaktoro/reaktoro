@@ -61,6 +61,6 @@ using PhaseChemicalModelResult = PhaseChemicalModelResultBase<ChemicalScalarRef,
 using PhaseChemicalModelResultConst = PhaseChemicalModelResultBase<ChemicalScalarConstRef, VectorXdConstRef>;
 
 /// The signature of the chemical model function that calculates the chemical properties of the species in a phase.
-using PhaseChemicalModel = std::function<void(PhaseChemicalModelResult&, Temperature, Pressure, VectorXrConstRef)>;
+using PhaseChemicalModel = std::function<void(PhaseChemicalModelResult&, real, real, VectorXrConstRef)>;
 
 } // namespace Reaktoro

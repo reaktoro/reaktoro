@@ -29,19 +29,19 @@ struct WaterElectroState;
 struct WaterThermoState;
 
 /// Calculate the thermodynamic state of solvent water using the HKF model.
-auto speciesThermoStateSolventHKF(Temperature T, Pressure P, const WaterThermoState& wts) -> SpeciesThermoState;
+auto speciesThermoStateSolventHKF(real T, real P, const WaterThermoState& wts) -> SpeciesThermoState;
 
 /// Calculate the thermodynamic state of an aqueous solute using the HKF model.
-auto speciesThermoStateSoluteHKF(Temperature T, Pressure P, const ParamsAqueousSoluteHKF& params, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState;
+auto speciesThermoStateSoluteHKF(real T, real P, const ParamsAqueousSoluteHKF& params, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState;
 
 /// Calculate the thermodynamic state of an aqueous solute using the HKF model.
-auto speciesThermoStateSoluteHKF(Temperature T, Pressure P, const ParamsAqueousSoluteHKF& params) -> SpeciesThermoState;
+auto speciesThermoStateSoluteHKF(real T, real P, const ParamsAqueousSoluteHKF& params) -> SpeciesThermoState;
 
 /// Calculate the thermodynamic state of a fluid species using the Maier-Kelly model.
-auto speciesThermoStateHKF(Temperature T, Pressure P, const ParamsMaierKelly& params) -> SpeciesThermoState;
+auto speciesThermoStateHKF(real T, real P, const ParamsMaierKelly& params) -> SpeciesThermoState;
 
 /// Calculate the thermodynamic state of a mineral species using the Maier-Kelly-HKF model.
-auto speciesThermoStateHKF(Temperature T, Pressure P, const ParamsMaierKellyHKF& params) -> SpeciesThermoState;
+auto speciesThermoStateHKF(real T, real P, const ParamsMaierKellyHKF& params) -> SpeciesThermoState;
 
 /// The type used to store HKF parameters based on SUPCRT databases for an aqueous solute.
 struct ParamsAqueousSoluteHKF
