@@ -21,7 +21,6 @@
 #include <map>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/ElementUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>

@@ -20,7 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
 
 namespace Reaktoro {
 namespace PhreeqcUtils {

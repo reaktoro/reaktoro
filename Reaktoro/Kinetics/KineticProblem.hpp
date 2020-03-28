@@ -22,7 +22,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Common/ScalarTypes.hpp>
 
 namespace Reaktoro {
 

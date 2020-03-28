@@ -198,14 +198,14 @@ struct CubicEOS::Impl
         result.residual_molar_heat_capacity_cv = sca;
 
         // Initialize the dimension of the chemical vector quantities
-        ChemicalVector vec(nspecies);
+        VectorXd vec(nspecies);
         result.partial_molar_volumes = vec;
         result.residual_partial_molar_enthalpies = vec;
         result.residual_partial_molar_gibbs_energies = vec;
         result.ln_fugacity_coefficients = vec;
     }
 
-    auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result
+    auto operator()(const ThermoScalar& T, const ThermoScalar& P, const VectorXd& x) -> Result
     {
         // Check if the mole fractions are zero or non-initialized
         if(x.val.size() == 0 || min(x.val) <= 0.0)
@@ -256,8 +256,8 @@ struct CubicEOS::Impl
         ChemicalScalar amix(nspecies);
         ChemicalScalar amixT(nspecies);
         ChemicalScalar amixTT(nspecies);
-        ChemicalVector abar(nspecies);
-        ChemicalVector abarT(nspecies);
+        VectorXd abar(nspecies);
+        VectorXd abarT(nspecies);
         for(unsigned i = 0; i < nspecies; ++i)
         {
             for(unsigned j = 0; j < nspecies; ++j)
@@ -398,10 +398,10 @@ struct CubicEOS::Impl
         ChemicalScalar& H_res = result.residual_molar_enthalpy;
         ChemicalScalar& Cp_res = result.residual_molar_heat_capacity_cp;
         ChemicalScalar& Cv_res = result.residual_molar_heat_capacity_cv;
-        ChemicalVector& Vi = result.partial_molar_volumes;
-        ChemicalVector& Gi_res = result.residual_partial_molar_gibbs_energies;
-        ChemicalVector& Hi_res = result.residual_partial_molar_enthalpies;
-        ChemicalVector& ln_phi = result.ln_fugacity_coefficients;
+        VectorXd& Vi = result.partial_molar_volumes;
+        VectorXd& Gi_res = result.residual_partial_molar_gibbs_energies;
+        VectorXd& Hi_res = result.residual_partial_molar_enthalpies;
+        VectorXd& ln_phi = result.ln_fugacity_coefficients;
 
         // Calculate the partial derivatives of Z (dZdT, dZdP, dZdn)
         const double factor = -1.0/(3*Z.val*Z.val + 2*A.val*Z.val + B.val);
@@ -561,7 +561,7 @@ auto CubicEOS::setInteractionParamsFunction(const InteractionParamsFunction& fun
     pimpl->calculate_interaction_params = func;
 }
 
-auto CubicEOS::operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result
+auto CubicEOS::operator()(const ThermoScalar& T, const ThermoScalar& P, const VectorXd& x) -> Result
 {
     return pimpl->operator()(T, P, x);
 }

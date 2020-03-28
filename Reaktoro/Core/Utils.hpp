@@ -22,8 +22,6 @@
 #include <vector>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
@@ -42,7 +40,7 @@ template<typename SpeciesValues>
 auto molarMasses(const SpeciesValues& species) -> Vector;
 
 /// Return the mole fractions of the species.
-inline auto moleFractions(Composition n) -> ChemicalVector
+inline auto moleFractions(Composition n) -> VectorXd
 {
     const auto nspecies = n.size();
     if(nspecies == 1)

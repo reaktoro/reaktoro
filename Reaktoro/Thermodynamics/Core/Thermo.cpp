@@ -30,7 +30,6 @@ using namespace std::placeholders;
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Database.hpp>

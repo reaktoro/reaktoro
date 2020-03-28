@@ -19,7 +19,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateHGK.hpp>

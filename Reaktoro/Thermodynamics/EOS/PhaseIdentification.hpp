@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include <Reaktoro/Common/ThermoScalar.hpp>
-#include <Reaktoro/Common/ChemicalScalar.hpp>
 
 namespace Reaktoro {
 
@@ -37,9 +35,9 @@ enum class PhaseIdentificationMethod
 /// Return a PhaseType that says if the phase is a Liquid or Gas based on Volume Method
 /// @param Temperature Phase temperature
 /// @param Pressure Phase pressure
-/// @param Z Phase compressibility factor 
+/// @param Z Phase compressibility factor
 /// @return The type of the phase
-/// 
+///
 /// Reference: Bennett, J. and Schmidt, K.A., 2016. Comparison of Phase Identification Methods Used in Oil Industry Flow Simulations. Energy & Fuels, 31(4), pp.3370-3379.
 auto identifyPhaseUsingVolume(
     const ThermoScalar& temperature,
@@ -52,13 +50,13 @@ auto identifyPhaseUsingVolume(
 /// @param Pressure Phase pressure
 /// @param Z Phase compressibility factor
 /// @return The type of the phase
-/// 
+///
 /// Reference: Bennett, J. and Schmidt, K.A., 2016. Comparison of Phase Identification Methods Used in Oil Industry Flow Simulations. Energy & Fuels, 31(4), pp.3370-3379.
 auto identifyPhaseUsingIsothermalCompressibility(
     const ThermoScalar& temperature,
     const ThermoScalar& pressure,
     const ChemicalScalar& Z) -> PhaseType;
-    
+
 /// Return a PhaseType that says if the phase is a Liquid or Gas based on gibbs residual energy and
 /// equation of state
 /// @param pressure Phase pressure
@@ -71,7 +69,7 @@ auto identifyPhaseUsingIsothermalCompressibility(
 ///     If size(Z) == 1, the pressue is compared with the local P_min and local P_max of the EoS.
 ///     It is a liquid phase if P \textgreater P_min and gaseous if P \textless Pmax.
 /// @return The type of the phase
-/// 
+///
 /// Reference: Bennett, J. and Schmidt, K.A., 2016. Comparison of Phase Identification Methods Used in Oil Industry Flow Simulations. Energy & Fuels, 31(4), pp.3370-3379.
 auto identifyPhaseUsingGibbsEnergyAndEos(
     const ThermoScalar& pressure,

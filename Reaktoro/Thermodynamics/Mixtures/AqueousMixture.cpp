@@ -204,12 +204,12 @@ auto AqueousMixture::chargesAnions() const -> Vector
     return rows(chargesSpecies(), indicesAnions());
 }
 
-auto AqueousMixture::molalities(VectorConstRef n) const -> ChemicalVector
+auto AqueousMixture::molalities(VectorConstRef n) const -> VectorXd
 {
     const unsigned num_species = numSpecies();
 
     // The molalities of the species and their partial derivatives
-    ChemicalVector m(num_species);
+    VectorXd m(num_species);
 
     // The molar amount of water
     const double nw = n[idx_water];
@@ -230,7 +230,7 @@ auto AqueousMixture::molalities(VectorConstRef n) const -> ChemicalVector
     return m;
 }
 
-auto AqueousMixture::stoichiometricMolalities(const ChemicalVector& m) const -> ChemicalVector
+auto AqueousMixture::stoichiometricMolalities(const VectorXd& m) const -> VectorXd
 {
     // Auxiliary variables
     const unsigned num_species = numSpecies();
@@ -238,24 +238,24 @@ auto AqueousMixture::stoichiometricMolalities(const ChemicalVector& m) const -> 
     const unsigned num_neutral = numNeutralSpecies();
 
     // The molalities of the charged species
-    ChemicalVector mc(num_charged, num_species);
+    VectorXd mc(num_charged, num_species);
     mc.val = rows(m.val, idx_charged_species);
     mc.ddn = rows(m.ddn, idx_charged_species);
 
     // The molalities of the neutral species
-    ChemicalVector mn(num_neutral, num_species);
+    VectorXd mn(num_neutral, num_species);
     mn.val = rows(m.val, idx_neutral_species);
     mn.ddn = rows(m.ddn, idx_neutral_species);
 
     // The stoichiometric molalities of the charged species
-    ChemicalVector ms(num_charged, num_species);
+    VectorXd ms(num_charged, num_species);
     ms.val = mc.val + tr(dissociation_matrix) * mn.val;
     ms.ddn = mc.ddn + tr(dissociation_matrix) * mn.ddn;
 
     return ms;
 }
 
-auto AqueousMixture::effectiveIonicStrength(const ChemicalVector& m) const -> ChemicalScalar
+auto AqueousMixture::effectiveIonicStrength(const VectorXd& m) const -> ChemicalScalar
 {
     const unsigned num_species = numSpecies();
     const Vector z = chargesSpecies();
@@ -268,7 +268,7 @@ auto AqueousMixture::effectiveIonicStrength(const ChemicalVector& m) const -> Ch
     return Ie;
 }
 
-auto AqueousMixture::stoichiometricIonicStrength(const ChemicalVector& ms) const -> ChemicalScalar
+auto AqueousMixture::stoichiometricIonicStrength(const VectorXd& ms) const -> ChemicalScalar
 {
     const unsigned num_species = numSpecies();
     const Vector zc = chargesChargedSpecies();

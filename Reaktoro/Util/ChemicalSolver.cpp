@@ -316,7 +316,7 @@
 //        const Indices& ifp = partition.indicesFluidPhases();
 //
 //        // The volumes of the fluid phases and their saturations
-//        ChemicalVector fluid_volumes, fluid_saturation;
+//        VectorXd fluid_volumes, fluid_saturation;
 //
 //        // Loop over all field points
 //        for(Index k = 0; k < npoints; ++k)
@@ -344,7 +344,7 @@
 //        const Indices& ifp = partition.indicesFluidPhases();
 //
 //        // The densities of all phases at a field point
-//        ChemicalVector rho;
+//        VectorXd rho;
 //
 //        // Loop over all field points
 //        for(Index k = 0; k < npoints; ++k)
@@ -369,7 +369,7 @@
 //        const Indices& ifp = partition.indicesFluidPhases();
 //
 //        // The volumes of all fluid phases
-//        ChemicalVector volumes;
+//        VectorXd volumes;
 //
 //        // Loop over all field points
 //        for(Index k = 0; k < npoints; ++k)
@@ -457,7 +457,7 @@
 //        A.topRows(Ee) = We * tr(Se);
 //        A.bottomRows(Nk) = tr(Sk);
 //
-//        ChemicalVector rates, r;
+//        VectorXd rates, r;
 //
 //        // Loop over all field points
 //        for(Index k = 0; k < npoints; ++k)

@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/ElementUtils.hpp>
@@ -33,13 +31,10 @@
 #include <Reaktoro/Common/Outputter.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
-#include <Reaktoro/Common/ScalarTypes.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
-#include <Reaktoro/Common/ThermoVector.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>

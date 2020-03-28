@@ -116,12 +116,12 @@ auto ChemicalProperties::chemicalModelResult() const -> const ChemicalModelResul
     return cres;
 }
 
-auto ChemicalProperties::moleFractions() const -> ChemicalVector
+auto ChemicalProperties::moleFractions() const -> VectorXd
 {
     return x;
 }
 
-auto ChemicalProperties::lnActivityCoefficients() const -> ChemicalVectorConstRef
+auto ChemicalProperties::lnActivityCoefficients() const -> VectorXdConstRef
 {
     return cres.lnActivityCoefficients();
 }
@@ -131,17 +131,17 @@ auto ChemicalProperties::lnActivityConstants() const -> ThermoVectorConstRef
     return tres.lnActivityConstants();
 }
 
-auto ChemicalProperties::lnActivities() const -> ChemicalVectorConstRef
+auto ChemicalProperties::lnActivities() const -> VectorXdConstRef
 {
     return cres.lnActivities();
 }
 
-auto ChemicalProperties::partialMolarVolumes() const -> ChemicalVectorConstRef
+auto ChemicalProperties::partialMolarVolumes() const -> VectorXdConstRef
 {
     return cres.partialMolarVolumes();
 }
 
-auto ChemicalProperties::chemicalPotentials() const -> ChemicalVector
+auto ChemicalProperties::chemicalPotentials() const -> VectorXd
 {
     const auto& R = universalGasConstant;
     const auto& G = standardPartialMolarGibbsEnergies();
@@ -195,9 +195,9 @@ auto ChemicalProperties::standardPartialMolarHeatCapacitiesConstV() const -> The
     return tres.standardPartialMolarHeatCapacitiesConstV();
 }
 
-auto ChemicalProperties::phaseMolarGibbsEnergies() const -> ChemicalVector
+auto ChemicalProperties::phaseMolarGibbsEnergies() const -> VectorXd
 {
-    ChemicalVector res(num_phases, num_species);
+    VectorXd res(num_phases, num_species);
     Index ispecies = 0;
     for(Index iphase = 0; iphase < num_phases; ++iphase)
     {
@@ -212,9 +212,9 @@ auto ChemicalProperties::phaseMolarGibbsEnergies() const -> ChemicalVector
     return res;
 }
 
-auto ChemicalProperties::phaseMolarEnthalpies() const -> ChemicalVector
+auto ChemicalProperties::phaseMolarEnthalpies() const -> VectorXd
 {
-    ChemicalVector res(num_phases, num_species);
+    VectorXd res(num_phases, num_species);
     Index ispecies = 0;
     for(Index iphase = 0; iphase < num_phases; ++iphase)
     {
@@ -229,9 +229,9 @@ auto ChemicalProperties::phaseMolarEnthalpies() const -> ChemicalVector
     return res;
 }
 
-auto ChemicalProperties::phaseMolarVolumes() const -> ChemicalVector
+auto ChemicalProperties::phaseMolarVolumes() const -> VectorXd
 {
-    ChemicalVector res(num_phases, num_species);
+    VectorXd res(num_phases, num_species);
     Index ispecies = 0;
     for(Index iphase = 0; iphase < num_phases; ++iphase)
     {
@@ -251,30 +251,30 @@ auto ChemicalProperties::phaseMolarVolumes() const -> ChemicalVector
     return res;
 }
 
-auto ChemicalProperties::phaseMolarEntropies() const -> ChemicalVector
+auto ChemicalProperties::phaseMolarEntropies() const -> VectorXd
 {
     const auto& G = phaseMolarGibbsEnergies();
     const auto& H = phaseMolarEnthalpies();
     return (H - G)/T;
 }
 
-auto ChemicalProperties::phaseMolarInternalEnergies() const -> ChemicalVector
+auto ChemicalProperties::phaseMolarInternalEnergies() const -> VectorXd
 {
     const auto& H = phaseMolarEnthalpies();
     const auto& V = phaseMolarVolumes();
     return H - P*V;
 }
 
-auto ChemicalProperties::phaseMolarHelmholtzEnergies() const -> ChemicalVector
+auto ChemicalProperties::phaseMolarHelmholtzEnergies() const -> VectorXd
 {
     const auto& G = phaseMolarGibbsEnergies();
     const auto& V = phaseMolarVolumes();
     return G - P*V;
 }
 
-auto ChemicalProperties::phaseMolarHeatCapacitiesConstP() const -> ChemicalVector
+auto ChemicalProperties::phaseMolarHeatCapacitiesConstP() const -> VectorXd
 {
-    ChemicalVector res(num_phases, num_species);
+    VectorXd res(num_phases, num_species);
     Index ispecies = 0;
     for(Index iphase = 0; iphase < num_phases; ++iphase)
     {
@@ -289,9 +289,9 @@ auto ChemicalProperties::phaseMolarHeatCapacitiesConstP() const -> ChemicalVecto
     return res;
 }
 
-auto ChemicalProperties::phaseMolarHeatCapacitiesConstV() const -> ChemicalVector
+auto ChemicalProperties::phaseMolarHeatCapacitiesConstV() const -> VectorXd
 {
-    ChemicalVector res(num_phases, num_species);
+    VectorXd res(num_phases, num_species);
     Index ispecies = 0;
     for(Index iphase = 0; iphase < num_phases; ++iphase)
     {
@@ -306,56 +306,56 @@ auto ChemicalProperties::phaseMolarHeatCapacitiesConstV() const -> ChemicalVecto
     return res;
 }
 
-auto ChemicalProperties::phaseSpecificGibbsEnergies() const -> ChemicalVector
+auto ChemicalProperties::phaseSpecificGibbsEnergies() const -> VectorXd
 {
     return phaseAmounts()/phaseMasses() % phaseMolarGibbsEnergies();
 }
 
-auto ChemicalProperties::phaseSpecificEnthalpies() const -> ChemicalVector
+auto ChemicalProperties::phaseSpecificEnthalpies() const -> VectorXd
 {
     return phaseAmounts()/phaseMasses() % phaseMolarEnthalpies();
 }
 
-auto ChemicalProperties::phaseSpecificVolumes() const -> ChemicalVector
+auto ChemicalProperties::phaseSpecificVolumes() const -> VectorXd
 {
     return phaseAmounts()/phaseMasses() % phaseMolarVolumes();
 }
 
-auto ChemicalProperties::phaseSpecificEntropies() const -> ChemicalVector
+auto ChemicalProperties::phaseSpecificEntropies() const -> VectorXd
 {
     return phaseAmounts()/phaseMasses() % phaseMolarEntropies();
 }
 
-auto ChemicalProperties::phaseSpecificInternalEnergies() const -> ChemicalVector
+auto ChemicalProperties::phaseSpecificInternalEnergies() const -> VectorXd
 {
     return phaseAmounts()/phaseMasses() % phaseMolarInternalEnergies();
 }
 
-auto ChemicalProperties::phaseSpecificHelmholtzEnergies() const -> ChemicalVector
+auto ChemicalProperties::phaseSpecificHelmholtzEnergies() const -> VectorXd
 {
     return phaseAmounts()/phaseMasses() % phaseMolarHelmholtzEnergies();
 }
 
-auto ChemicalProperties::phaseSpecificHeatCapacitiesConstP() const -> ChemicalVector
+auto ChemicalProperties::phaseSpecificHeatCapacitiesConstP() const -> VectorXd
 {
     return phaseAmounts()/phaseMasses() % phaseMolarHeatCapacitiesConstP();
 }
 
-auto ChemicalProperties::phaseSpecificHeatCapacitiesConstV() const -> ChemicalVector
+auto ChemicalProperties::phaseSpecificHeatCapacitiesConstV() const -> VectorXd
 {
     return phaseAmounts()/phaseMasses() % phaseMolarHeatCapacitiesConstV();
 }
 
-auto ChemicalProperties::phaseDensities() const -> ChemicalVector
+auto ChemicalProperties::phaseDensities() const -> VectorXd
 {
     return phaseMasses()/(phaseAmounts() % phaseMolarVolumes());
 }
 
-auto ChemicalProperties::phaseMasses() const -> ChemicalVector
+auto ChemicalProperties::phaseMasses() const -> VectorXd
 {
     const auto nc = Composition(n);
     const auto mm = Reaktoro::molarMasses(system.species());
-    ChemicalVector res(num_phases, num_species);
+    VectorXd res(num_phases, num_species);
     Index ispecies = 0;
     for(Index iphase = 0; iphase < num_phases; ++iphase)
     {
@@ -368,10 +368,10 @@ auto ChemicalProperties::phaseMasses() const -> ChemicalVector
     return res;
 }
 
-auto ChemicalProperties::phaseAmounts() const -> ChemicalVector
+auto ChemicalProperties::phaseAmounts() const -> VectorXd
 {
     const auto nc = Composition(n);
-    ChemicalVector res(num_phases, num_species);
+    VectorXd res(num_phases, num_species);
     Index ispecies = 0;
     for(Index iphase = 0; iphase < num_phases; ++iphase)
     {
@@ -383,7 +383,7 @@ auto ChemicalProperties::phaseAmounts() const -> ChemicalVector
     return res;
 }
 
-auto ChemicalProperties::phaseVolumes() const -> ChemicalVector
+auto ChemicalProperties::phaseVolumes() const -> VectorXd
 {
     return phaseAmounts() % phaseMolarVolumes();
 }

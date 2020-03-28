@@ -18,8 +18,6 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/ThermoScalar.hpp>
-#include <Reaktoro/Common/ThermoVector.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
 

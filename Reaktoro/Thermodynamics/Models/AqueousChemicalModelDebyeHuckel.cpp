@@ -87,7 +87,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
 
     // Auxiliary variables
     ChemicalScalar xw, ln_xw, I2, sqrtI, mSigma, sigma(num_species), sigmacoeff, Lambda;
-    ChemicalVector ln_m;
+    VectorXd ln_m;
     ThermoScalar A, B, sqrt_rho, T_epsilon, sqrt_T_epsilon;
 
     // Define the intermediate chemical model function of the aqueous mixture

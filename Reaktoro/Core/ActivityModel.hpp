@@ -20,10 +20,6 @@
 // C++ includes
 #include <functional>
 
-// Reaktoro includes
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
-
 namespace Reaktoro {
 
 /// The activity and excess thermodynamic properties of a phase.
@@ -31,13 +27,13 @@ namespace Reaktoro {
 struct ActivityProps
 {
     /// The activity coefficients (natural log) of the species in the phase.
-    ChemicalVector ln_activity_coefficients;
+    VectorXd ln_activity_coefficients;
 
     /// The activities (natural log) of the species in the phase.
-    ChemicalVector ln_activities;
+    VectorXd ln_activities;
 
     /// The partial molar volumes of the species in the phase (in units of m3/mol).
-    ChemicalVector partial_molar_volumes;
+    VectorXd partial_molar_volumes;
 
     /// The molar volume of the phase (in units of m3/mol).
     ChemicalScalar molar_volume;

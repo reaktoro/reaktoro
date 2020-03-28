@@ -23,7 +23,6 @@
 #include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ScalarTypes.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralCatalyst.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralMechanism.hpp>
 

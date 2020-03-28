@@ -29,7 +29,7 @@
 //    MineralMixtureState state;
 //    PhaseChemicalModelResult res(2);
 //
-//    ChemicalVector phi;
+//    VectorXd phi;
 //
 //    ChemicalScalar avg;
 //

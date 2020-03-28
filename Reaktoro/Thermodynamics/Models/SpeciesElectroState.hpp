@@ -18,7 +18,6 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/ThermoScalar.hpp>
 
 namespace Reaktoro {
 

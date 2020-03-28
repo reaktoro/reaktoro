@@ -18,7 +18,6 @@
 #include "KineticProblem.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Reaction.hpp>

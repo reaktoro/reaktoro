@@ -23,7 +23,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
 
 namespace Reaktoro {
 
@@ -130,7 +129,7 @@ public:
     auto properties() const -> const ChemicalProperties&;
 
     /// Return the reaction rates of the ChemicalQuantity instance.
-    auto rates() const -> const ChemicalVector&;
+    auto rates() const -> const VectorXd&;
 
     /// Return the tag variable of the ChemicalQuantity instance.
     auto tag() const -> double;

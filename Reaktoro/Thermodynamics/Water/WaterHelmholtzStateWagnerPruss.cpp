@@ -18,7 +18,6 @@
 #include "WaterHelmholtzStateWagnerPruss.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 

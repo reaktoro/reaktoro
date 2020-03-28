@@ -141,21 +141,21 @@ auto ReactionSystem::lnEquilibriumConstants(const ChemicalProperties& properties
     return res;
 }
 
-auto ReactionSystem::lnReactionQuotients(const ChemicalProperties& properties) const -> ChemicalVector
+auto ReactionSystem::lnReactionQuotients(const ChemicalProperties& properties) const -> VectorXd
 {
     const unsigned num_reactions = numReactions();
     const unsigned num_species = system().numSpecies();
-    ChemicalVector res(num_reactions, num_species);
+    VectorXd res(num_reactions, num_species);
     for(unsigned i = 0; i < num_reactions; ++i)
         res[i] = reaction(i).lnReactionQuotient(properties);
     return res;
 }
 
-auto ReactionSystem::rates(const ChemicalProperties& properties) const -> ChemicalVector
+auto ReactionSystem::rates(const ChemicalProperties& properties) const -> VectorXd
 {
     const unsigned num_reactions = numReactions();
     const unsigned num_species = system().numSpecies();
-    ChemicalVector res(num_reactions, num_species);
+    VectorXd res(num_reactions, num_species);
     for(unsigned i = 0; i < num_reactions; ++i)
         res[i] = reaction(i).rate(properties);
     return res;
