@@ -32,13 +32,13 @@ public:
     PhaseChemicalProps();
 
     /// Return the temperature of the phase (in units of K).
-    auto temperature() const -> Temperature;
+    auto temperature() const -> real;
 
     /// Return the pressure of the phase (in units of Pa).
-    auto pressure() const -> Pressure;
+    auto pressure() const -> real;
 
     /// Return the amounts of the species in the phase (in units of mol).
-    auto speciesAmounts() const -> Composition;
+    auto speciesAmounts() const -> VectorXrConstRef;
 
     /// Return the mole fractions of the species in the phase.
     auto moleFractions() const -> VectorXd;
@@ -144,10 +144,10 @@ private:
     Index num_species;
 
     /// The temperature of the phase (in units of K)
-    Temperature T;
+    real T;
 
     /// The pressure of the phase (in units of Pa)
-    Pressure P;
+    real P;
 
     /// The amounts of the species in the phase (in units of mol).
     VectorXr n;

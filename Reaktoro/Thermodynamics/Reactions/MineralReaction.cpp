@@ -130,7 +130,7 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
     ReactionRateFunction fn = [=](const ChemicalProperties& properties) mutable
     {
         // The temperature and pressure of the system
-        const Temperature T = properties.temperature();
+        const real T = properties.temperature();
 
         // The result of this function evaluation
         real res(num_species);

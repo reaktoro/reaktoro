@@ -151,14 +151,14 @@ auto Interface::system() const -> ChemicalSystem
     for(unsigned i = 0; i < nphases; ++i)
     {
         // Create the PhaseThermoModel function for the phase
-        PhaseThermoModel phase_thermo_model = [](PhaseThermoModelResult& res, Temperature T, Pressure P) -> void
+        PhaseThermoModel phase_thermo_model = [](PhaseThermoModelResult& res, real T, real P) -> void
         {
             RuntimeError("Could not evaluate the thermodynamic model of the phase.",
                 "This phase was construted without a thermodynamic model.");
         };
 
         // Create the PhaseChemicalModel function for the phase
-        PhaseChemicalModel phase_chemical_model = [](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) -> void
+        PhaseChemicalModel phase_chemical_model = [](PhaseChemicalModelResult& res, real T, real P, VectorXrConstRef n) -> void
         {
             RuntimeError("Could not evaluate the chemical model of phase.",
                 "This phase was construted without a thermodynamic model.");
@@ -171,13 +171,13 @@ auto Interface::system() const -> ChemicalSystem
     }
 
     // Create the ThermoModel function for the chemical system
-    ThermoModel thermo_model = [=](ThermoModelResult& res, Temperature T, Pressure P) -> void
+    ThermoModel thermo_model = [=](ThermoModelResult& res, real T, real P) -> void
     {
         interface->properties(res, T, P);
     };
 
     // Create the ChemicalModel function for the chemical system
-    ChemicalModel chemical_model = [=](ChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) -> void
+    ChemicalModel chemical_model = [=](ChemicalModelResult& res, real T, real P, VectorXrConstRef n) -> void
     {
         interface->properties(res, T, P, n);
     };

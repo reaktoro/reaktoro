@@ -113,7 +113,7 @@ struct Thermo::Impl
     : database(database), engine(ThermoFun::Database())
     {
         // Initialize the Haar--Gallagher--Kell (1984) equation of state for water
-        water_thermo_state_hgk_fn = [](Temperature T, Pressure P)
+        water_thermo_state_hgk_fn = [](real T, real P)
         {
             return Reaktoro::waterThermoStateHGK(T, P, StateOfMatter::Liquid);
         };
@@ -121,7 +121,7 @@ struct Thermo::Impl
         water_thermo_state_hgk_fn = memoize(water_thermo_state_hgk_fn);
 
         // Initialize the Wagner and Pruss (1995) equation of state for water
-        water_thermo_state_wagner_pruss_fn = [](Temperature T, Pressure P)
+        water_thermo_state_wagner_pruss_fn = [](real T, real P)
         {
             return Reaktoro::waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
         };
@@ -477,7 +477,7 @@ struct Thermo::Impl
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-	auto lnEquilibriumConstantFromPhreeqcParams(Temperature T, Pressure P, const SpeciesThermoParamsPhreeqc& params) -> real
+	auto lnEquilibriumConstantFromPhreeqcParams(real T, real P, const SpeciesThermoParamsPhreeqc& params) -> real
 	{
 		const double ln10 = 2.302585092994046;
 		const double lnk298 = params.reaction.log_k * ln10;
@@ -497,7 +497,7 @@ struct Thermo::Impl
         else return real(lnk298);
 	}
 
-	auto standardGibbsEnergyFromPhreeqcReaction(Temperature T, Pressure P, std::string species, const SpeciesThermoParamsPhreeqc& params) -> real
+	auto standardGibbsEnergyFromPhreeqcReaction(real T, real P, std::string species, const SpeciesThermoParamsPhreeqc& params) -> real
     {
         const double stoichiometry = params.reaction.equation.stoichiometry(species);
 
@@ -530,7 +530,7 @@ struct Thermo::Impl
     auto lnEquilibriumConstant(double T, double P, std::string reaction) -> real
     {
         ReactionEquation equation(reaction);
-        const real RT = universalGasConstant * Temperature(T);
+        const real RT = universalGasConstant * real(T);
         real lnK;
         for(auto pair : equation.equation())
             lnK += pair.second * standardPartialMolarGibbsEnergy(T, P, pair.first);

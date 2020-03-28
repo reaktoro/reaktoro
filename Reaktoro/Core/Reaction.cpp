@@ -177,7 +177,7 @@ auto Reaction::lnEquilibriumConstant(const ChemicalProperties& properties) const
 
     // Calculate the equilibrium constant using the standard Gibbs energies of the species
     const VectorXr G0 = properties.standardPartialMolarGibbsEnergies();
-    const real RT = universalGasConstant * Temperature(T);
+    const real RT = universalGasConstant * real(T);
 
     real res;
     for(unsigned i = 0; i < indices().size(); ++i)

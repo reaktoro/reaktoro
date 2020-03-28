@@ -68,7 +68,7 @@ struct ThermoFunStandardThermoModelFn
     }
 
     /// Return the standard thermodynamic properties of a species at given temperature and pressure.
-    auto operator()(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps
+    auto operator()(real T, real P, const Species& species) const -> StandardThermoProps
     {
         double Tval = T;
         double Pval = P;

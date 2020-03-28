@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
@@ -41,7 +42,7 @@ auto ThermoEngine::standardThermoModelFn() const -> const StandardThermoModelFn&
     return model;
 }
 
-auto ThermoEngine::standardThermoProps(Temperature T, Pressure P, const Species& species) const -> StandardThermoProps
+auto ThermoEngine::standardThermoProps(real T, real P, const Species& species) const -> StandardThermoProps
 {
     return model(T, P, species);
 }

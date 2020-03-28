@@ -366,7 +366,7 @@ auto useAnalytic(const double* logk) -> bool
 }
 
 template<typename SpeciesType>
-auto lnEquilibriumConstantHelper(const SpeciesType* species, Temperature T, Pressure P) -> real
+auto lnEquilibriumConstantHelper(const SpeciesType* species, real T, real P) -> real
 {
     //--------------------------------------------------------------------------------
     // The implementation of this method was inspired by the PHREEQC

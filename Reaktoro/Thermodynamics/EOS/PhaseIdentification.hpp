@@ -34,7 +34,7 @@ enum class PhaseIdentificationMethod
 
 /// Return a PhaseType that says if the phase is a Liquid or Gas based on Volume Method
 /// @param Temperature Phase temperature
-/// @param Pressure Phase pressure
+/// @param real Phase pressure
 /// @param Z Phase compressibility factor
 /// @return The type of the phase
 ///
@@ -47,7 +47,7 @@ auto identifyPhaseUsingVolume(
 
 /// Return a PhaseType that says if the phase is a Liquid or Gas based on Isothermal Compressibility
 /// @param Temperature Phase temperature
-/// @param Pressure Phase pressure
+/// @param real Phase pressure
 /// @param Z Phase compressibility factor
 /// @return The type of the phase
 ///

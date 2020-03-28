@@ -141,7 +141,7 @@ const double E[] = { 0.3, 0.3 };
 
 } // namespace
 
-auto waterHelmholtzStateWagnerPruss(Temperature T, real D) -> WaterHelmholtzState
+auto waterHelmholtzStateWagnerPruss(real T, real D) -> WaterHelmholtzState
 {
 	const auto tau   = waterCriticalTemperature/T;
 	const auto delta = D/waterCriticalDensity;

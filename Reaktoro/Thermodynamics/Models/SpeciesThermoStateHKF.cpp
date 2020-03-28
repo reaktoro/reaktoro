@@ -77,7 +77,7 @@ const double theta = 228;
 const double psi = 2600;
 
 template<class ParamsType>
-auto checkTemperatureValidityHKF(Temperature& T, const ParamsType& params) -> void
+auto checkTemperatureValidityHKF(real& T, const ParamsType& params) -> void
 {
     // Check if temperature bounds should be enforced
     if(global::options.exception.enforce_temperature_bounds)
@@ -93,7 +93,7 @@ auto checkTemperatureValidityHKF(Temperature& T, const ParamsType& params) -> vo
 
 } // namespace
 
-auto speciesThermoStateSolventHKF(Temperature T, Pressure P, const WaterThermoState& wt) -> SpeciesThermoState
+auto speciesThermoStateSolventHKF(real T, real P, const WaterThermoState& wt) -> SpeciesThermoState
 {
     // Auxiliary data from Helgeson and Kirkham (1974), on page 1098
     const auto Ttr =  273.16;                   // unit: K
@@ -130,7 +130,7 @@ auto speciesThermoStateSolventHKF(Temperature T, Pressure P, const WaterThermoSt
     return state;
 }
 
-auto speciesThermoStateSoluteHKF(Temperature T, Pressure P, const ParamsAqueousSoluteHKF& params, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState
+auto speciesThermoStateSoluteHKF(real T, real P, const ParamsAqueousSoluteHKF& params, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState
 {
     // Auxiliary variables
     const auto Pbar = P * 1.0e-05;
@@ -208,7 +208,7 @@ auto speciesThermoStateSoluteHKF(Temperature T, Pressure P, const ParamsAqueousS
     return state;
 }
 
-auto speciesThermoStateSoluteHKF(Temperature T, Pressure P, const ParamsAqueousSoluteHKF& params) -> SpeciesThermoState
+auto speciesThermoStateSoluteHKF(real T, real P, const ParamsAqueousSoluteHKF& params) -> SpeciesThermoState
 {
     WaterThermoState wt = waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
 
@@ -221,7 +221,7 @@ auto speciesThermoStateSoluteHKF(Temperature T, Pressure P, const ParamsAqueousS
     return speciesThermoStateSoluteHKF(T, P, species, aes, wes);
 }
 
-auto speciesThermoStateHKF(Temperature T, Pressure P, const ParamsMaierKelly& params) -> SpeciesThermoState
+auto speciesThermoStateHKF(real T, real P, const ParamsMaierKelly& params) -> SpeciesThermoState
 {
     // Check temperature range validity
     checkTemperatureValidityHKF(T, params);
@@ -271,7 +271,7 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const ParamsMaierKelly& pa
     return state;
 }
 
-auto speciesThermoStateHKF(Temperature T, Pressure P, const ParamsMaierKellyHKF& params) -> SpeciesThermoState
+auto speciesThermoStateHKF(real T, real P, const ParamsMaierKellyHKF& params) -> SpeciesThermoState
 {
     // Check temperature range validity
     checkTemperatureValidityHKF(T, params);
@@ -294,7 +294,7 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const ParamsMaierKellyHKF&
     const auto& dPdT = params.dPdTtr;
 
     // Collect the temperature points used for the integrals along the pressure line P = Pr
-    std::vector<Temperature> Ti;
+    std::vector<real> Ti;
 
     Ti.push_back(Tr);
 

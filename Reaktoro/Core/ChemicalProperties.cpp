@@ -60,15 +60,14 @@ auto ChemicalProperties::update(VectorXrConstRef n_) -> void
     {
         const auto size = system.numSpeciesInPhase(iphase);
         const auto np = rows(n, offset, size);
-        const auto npc = Composition(np);
         auto xp = rows(x, offset, offset, size, size);
         if(size == 1) {
             xp = 1.0;
         }
         else {
-            const auto snpc = sum(npc);
-            if(snpc != 0.0)
-                xp = npc/snpc;
+            const auto snp = sum(np);
+            if(snp != 0.0)
+                xp = np/snp;
             else
                 xp = 0.0;
         }
@@ -91,19 +90,19 @@ auto ChemicalProperties::update(double T_, double P_, VectorXrConstRef n_, const
     cres = cres_;
 }
 
-auto ChemicalProperties::temperature() const -> Temperature
+auto ChemicalProperties::temperature() const -> real
 {
     return T;
 }
 
-auto ChemicalProperties::pressure() const -> Pressure
+auto ChemicalProperties::pressure() const -> real
 {
     return P;
 }
 
-auto ChemicalProperties::composition() const -> Composition
+auto ChemicalProperties::composition() const -> VectorXrConstRef
 {
-    return Composition(n);
+    return n;
 }
 
 auto ChemicalProperties::thermoModelResult() const -> const ThermoModelResult&
@@ -353,14 +352,13 @@ auto ChemicalProperties::phaseDensities() const -> VectorXd
 
 auto ChemicalProperties::phaseMasses() const -> VectorXd
 {
-    const auto nc = Composition(n);
     const auto mm = Reaktoro::molarMasses(system.species());
     VectorXd res(num_phases, num_species);
     Index ispecies = 0;
     for(Index iphase = 0; iphase < num_phases; ++iphase)
     {
         const auto nspecies = system.numSpeciesInPhase(iphase);
-        const auto np = rows(nc, ispecies, ispecies, nspecies, nspecies);
+        const auto np = rows(n, ispecies, ispecies, nspecies, nspecies);
         auto mmp = rows(mm, ispecies, nspecies);
         row(res, iphase, ispecies, nspecies) = sum(mmp % np);
         ispecies += nspecies;
@@ -370,13 +368,12 @@ auto ChemicalProperties::phaseMasses() const -> VectorXd
 
 auto ChemicalProperties::phaseAmounts() const -> VectorXd
 {
-    const auto nc = Composition(n);
     VectorXd res(num_phases, num_species);
     Index ispecies = 0;
     for(Index iphase = 0; iphase < num_phases; ++iphase)
     {
         const auto nspecies = system.numSpeciesInPhase(iphase);
-        const auto np = rows(nc, ispecies, ispecies, nspecies, nspecies);
+        const auto np = rows(n, ispecies, ispecies, nspecies, nspecies);
         row(res, iphase, ispecies, nspecies) = sum(np);
         ispecies += nspecies;
     }

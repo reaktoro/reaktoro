@@ -30,7 +30,7 @@ FluidMixture::FluidMixture(const std::vector<FluidSpecies>& species)
 FluidMixture::~FluidMixture()
 {}
 
-auto FluidMixture::state(Temperature T, Pressure P, VectorXrConstRef n) const -> FluidMixtureState
+auto FluidMixture::state(real T, real P, VectorXrConstRef n) const -> FluidMixtureState
 {
     FluidMixtureState res;
     res.T = T;
