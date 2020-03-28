@@ -44,10 +44,10 @@ struct Phase::Impl
     std::vector<Element> elements;
 
     /// The standard thermodynamic model of the phase.
-    PhaseStandardThermoModelFn standard_thermo_model_fn;
+    StandardThermoModelFn standard_thermo_model_fn;
 
     /// The activity model of the phase.
-    PhaseActivityModelFn activity_model_fn;
+    ActivityModelFn activity_model_fn;
 };
 
 Phase::Phase()
@@ -87,12 +87,12 @@ auto Phase::setSpecies(const std::vector<Species>& species) -> void
     pimpl->species = species;
 }
 
-auto Phase::setStandardThermoModel(const PhaseStandardThermoModelFn& model) -> void
+auto Phase::setStandardThermoModel(const StandardThermoModelFn& model) -> void
 {
     pimpl->standard_thermo_model_fn = model;
 }
 
-auto Phase::setActivityModel(const PhaseActivityModelFn& model) -> void
+auto Phase::setActivityModel(const ActivityModelFn& model) -> void
 {
     pimpl->activity_model_fn = model;
 }
@@ -147,12 +147,12 @@ auto Phase::isSolid() const -> bool
     return physicalState() == PhasePhysicalState::Solid;
 }
 
-auto Phase::standardThermoModel() const -> const PhaseStandardThermoModelFn&
+auto Phase::standardThermoModel() const -> const StandardThermoModelFn&
 {
     return pimpl->standard_thermo_model_fn;
 }
 
-auto Phase::activityModel() const -> const PhaseActivityModelFn&
+auto Phase::activityModel() const -> const ActivityModelFn&
 {
     return pimpl->activity_model_fn;
 }
@@ -186,12 +186,12 @@ auto Phase::indexSpeciesAnyWithError(const std::vector<std::string>& names) cons
     return index;
 }
 
-auto Phase::standardThermoProps(double T, double P) const -> PhaseStandardThermoProps
+auto Phase::standardThermoProps(double T, double P) const -> StandardThermoProps
 {
     return pimpl->standard_thermo_model_fn(T, P);
 }
 
-auto Phase::activityProps(double T, double P, VectorConstRef n) const -> PhaseActivityProps
+auto Phase::activityProps(double T, double P, VectorConstRef n) const -> ActivityProps
 {
     return pimpl->activity_model_fn(T, P, n);
 }
