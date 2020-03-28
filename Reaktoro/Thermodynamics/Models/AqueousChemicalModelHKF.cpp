@@ -329,7 +329,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
     }
 
     // Define the chemical model function of the aqueous phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) mutable
     {
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, n);
@@ -355,7 +355,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         const auto ln_m = log(m);
 
         // The alpha parameter
-        const ChemicalScalar alpha = xw/(1.0 - xw) * log10_xw;
+        const real alpha = xw/(1.0 - xw) * log10_xw;
 
         // The parameters for the HKF model
         const double A = debyeHuckelParamA(T.val, P.val);
@@ -364,7 +364,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         const double bNapClm = shortRangeInteractionParamNaCl(T.val, P.val);
 
         // The osmotic coefficient of the aqueous phase
-        ChemicalScalar phi(num_species);
+        real phi(num_species);
 
         // Loop over all neutral species in the mixture
         for(auto i = 0; i < num_neutral_species; ++i)
@@ -411,11 +411,11 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
                 2.0*(eff_radius + 1.81*std::abs(z))/(std::abs(z) + 1.0);
 
             // The \Lamba parameter of the HKF activity coefficient model and its molar derivatives
-            const ChemicalScalar lambda = 1.0 + a*B*sqrtI;
+            const real lambda = 1.0 + a*B*sqrtI;
 
             // The log10 of the activity coefficient of the charged species (in mole fraction scale) and its molar derivatives
             // This is the equation (298) in Helgeson et a. (1981) paper, page 230.
-            const ChemicalScalar log10_gi = -(A*z2*sqrtI)/lambda + log10_xw + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
+            const real log10_gi = -(A*z2*sqrtI)/lambda + log10_xw + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
 
             // Set the activity coefficient of the current charged species
             ln_g[ispecies] = log10_gi * ln10;

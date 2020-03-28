@@ -64,7 +64,7 @@ public:
     /// Find an initial feasible guess for an equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
     /// @param be The molar amounts of the elements in the equilibrium partition
-    auto approximate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
+    auto approximate(ChemicalState& state, double T, double P, VectorXrConstRef be) -> EquilibriumResult;
 
     /// Find an initial feasible guess for an equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
@@ -78,7 +78,7 @@ public:
     /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param be The molar amounts of the elements in the equilibrium partition
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult;
+    auto solve(ChemicalState& state, double T, double P, VectorXrConstRef be) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
@@ -106,13 +106,13 @@ public:
     auto sensitivity() -> const EquilibriumSensitivity&;
 
     /// Compute the sensitivity of the species amounts with respect to temperature.
-    auto dndT() -> VectorConstRef;
+    auto dndT() -> VectorXrConstRef;
 
     /// Compute the sensitivity of the species amounts with respect to pressure.
-    auto dndP() -> VectorConstRef;
+    auto dndP() -> VectorXrConstRef;
 
     /// Compute the sensitivity of the species amounts with respect to element amounts.
-    auto dndb() -> VectorConstRef;
+    auto dndb() -> VectorXrConstRef;
 
 private:
     struct Impl;

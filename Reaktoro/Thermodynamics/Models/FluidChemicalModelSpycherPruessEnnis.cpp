@@ -29,7 +29,7 @@ namespace {
 const double R = 83.1447;
 
 // Calculates the parameter aCO2 as a function of temperature
-inline auto aCO2(Temperature T) -> ThermoScalar
+inline auto aCO2(Temperature T) -> real
 {
     return 7.54e+07 - 4.13e+04 * T;
 }
@@ -40,17 +40,17 @@ const double bH2O = 18.18; // in units of cm3/mol
 const double aH2OCO2 = 7.89e+07;
 
 /// Calculates the molar volume of the CO2-rich phase (in units of cm3/mol)
-auto volumeCO2(Temperature T, ThermoScalar Pb, ThermoScalar sqrtT) -> ThermoScalar
+auto volumeCO2(Temperature T, real Pb, real sqrtT) -> real
 {
     // Auxiliary variables
     const auto amix = aCO2(T);
     const auto bmix = bCO2;
 
     // The coefficients of the cubic equation
-    const ThermoScalar a(1.0);
-    const ThermoScalar b = -R * T / Pb;
-    const ThermoScalar c = -(R*T*bmix / Pb - amix / (Pb*sqrtT) + bmix * bmix);
-    const ThermoScalar d = -amix * bmix / (Pb*sqrtT);
+    const real a(1.0);
+    const real b = -R * T / Pb;
+    const real c = -(R*T*bmix / Pb - amix / (Pb*sqrtT) + bmix * bmix);
+    const real d = -amix * bmix / (Pb*sqrtT);
 
     std::complex<double> x1, x2, x3;
     std::tie(x1, x2, x3) = cardano(a.val, b.val, c.val, d.val);
@@ -75,7 +75,7 @@ auto volumeCO2(Temperature T, ThermoScalar Pb, ThermoScalar sqrtT) -> ThermoScal
 
     const double den = 3 * a.val*vol*vol + 2 * b.val*vol + c.val;
 
-    ThermoScalar V;
+    real V;
     V.val = vol;
     V.ddT = -(a.ddT*vol*vol*vol + b.ddT*vol*vol + c.ddT*vol + d.ddT) / den;
     V.ddP = -(a.ddP*vol*vol*vol + b.ddP*vol*vol + c.ddP*vol + d.ddP) / den;
@@ -97,14 +97,14 @@ auto fluidChemicalModelSpycherPruessEnnis(const FluidMixture& mixture) -> PhaseC
     const unsigned nspecies = mixture.numSpecies();
 
     // The ln of H2O(g) and CO2(g) mole fractions
-    ChemicalScalar ln_xH2O(nspecies);
-    ChemicalScalar ln_xCO2(nspecies);
+    real ln_xH2O(nspecies);
+    real ln_xCO2(nspecies);
 
     // The state of the gaseous mixture
     FluidMixtureState state;
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) mutable
     {
         // Evaluate the state of the gaseous mixture
         state = mixture.state(T, P, n);
@@ -122,7 +122,7 @@ auto fluidChemicalModelSpycherPruessEnnis(const FluidMixture& mixture) -> PhaseC
         const auto bmix = bCO2;
 
         // Calculate the molar volume of the CO2-rich phase (in units of cm3/mol)
-        const ThermoScalar v = volumeCO2(T, Pb, T05);
+        const real v = volumeCO2(T, Pb, T05);
 
         // Auxiliary values for the fugacity coefficients
         const auto aux1 = log(v / (v - bmix));

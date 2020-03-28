@@ -39,14 +39,14 @@ namespace {
 
 struct LinearSystemSolverDiagonal
 {
-    Vector A1, A2, invA1, a1, a2, q, u;
+    VectorXd A1, A2, invA1, a1, a2, q, u;
     Matrix B1, B2, C1, C2, Q;
     Indices ipivot, inonpivot;
     Index n, m;
     Eigen::PartialPivLU<Matrix> lu;
 
     /// Decompose the matrix [A B ; C I]
-    auto decompose(VectorConstRef A, MatrixConstRef B, MatrixConstRef C) -> void
+    auto decompose(VectorXdConstRef A, MatrixXdConstRef B, MatrixXdConstRef C) -> void
     {
         n = A.rows();
         m = B.cols();
@@ -79,7 +79,7 @@ struct LinearSystemSolverDiagonal
     }
 
     /// Solve the linear system
-    auto solve(VectorConstRef a, VectorConstRef b, VectorRef x, VectorRef y) -> bool
+    auto solve(VectorXdConstRef a, VectorXdConstRef b, VectorXdRef x, VectorXdRef y) -> bool
     {
         const unsigned n2 = inonpivot.size();
 
@@ -131,19 +131,19 @@ struct OptimumSolverIpAction::Impl
     Indices iS;
 
     /// The trial iterate x
-    Vector xtrial;
+    VectorXd xtrial;
 
     /// The Newton steps for variables x and z
-    Vector dx, dz;
+    VectorXd dx, dz;
 
     /// The Newton steps for primary and secondary variables
-    Vector dxP, dxS;
+    VectorXd dxP, dxS;
 
     /// The residual vectors in the Newton step equation
-    Vector r1, r2;
+    VectorXd r1, r2;
 
     /// The diagonal Hessian of the Lagrange function and its primary and secondary components
-    Vector H, HP, HS;
+    VectorXd H, HP, HS;
 
     /// The auxiliary matrix StHP = tr(S)*HP
     Matrix StHP;
@@ -185,7 +185,7 @@ struct OptimumSolverIpAction::Impl
 
         // The components of the equality constraints
         Matrix A = problem.A;
-        Vector b = problem.b;
+        VectorXd b = problem.b;
 
         // Define auxiliary references to general options
         const auto tol = options.tolerance;
@@ -270,7 +270,7 @@ struct OptimumSolverIpAction::Impl
         auto initialize_decomposition = [&]()
         {
             // Initialize the weighted scaling vector `W`
-            Vector W = abs(x);
+            VectorXd W = abs(x);
             const double threshold = 1e-10 * (max(W) + 1);
             W = (W.array() > threshold).select(W, threshold);
 
@@ -528,7 +528,7 @@ struct OptimumSolverIpAction::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Matrix
+    auto dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> Matrix
     {
         // Initialize the right-hand side of the KKT equations
         r1.noalias() = -dgdp;
@@ -573,7 +573,7 @@ auto OptimumSolverIpAction::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverIpAction::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
+auto OptimumSolverIpAction::dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> VectorXd
 {
     return pimpl->dxdp(dgdp, dbdp);
 }

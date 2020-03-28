@@ -100,7 +100,7 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     b = P * b;
     b = L.triangularView<Eigen::UnitLower>().solve(b);
 
-    Vector h;
+    VectorXd h;
 
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
     if(x.size() != n) x = zeros(n);
@@ -345,7 +345,7 @@ auto OptimumSolverRefiner::solve(const OptimumProblem& problem, OptimumState& st
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverRefiner::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
+auto OptimumSolverRefiner::dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> VectorXd
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
         "The method OptimumSolverRefiner::dxdp has not been implemented yet.");

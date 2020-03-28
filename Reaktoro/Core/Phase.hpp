@@ -139,7 +139,7 @@ public:
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
     /// @param n The amounts of the species in the phase (in units of mol)
-    auto activityProps(double T, double P, VectorConstRef n) const -> ActivityProps;
+    auto activityProps(double T, double P, VectorXrConstRef n) const -> ActivityProps;
 
 private:
     struct Impl;

@@ -80,7 +80,7 @@ public:
     /// Return the formula matrix of the system
     /// The formula matrix is defined as the matrix whose entry `(j, i)`
     /// is given by the number of atoms of its `j`-th element in its `i`-th species.
-    auto formulaMatrix() const -> MatrixConstRef;
+    auto formulaMatrix() const -> MatrixXdConstRef;
 
     /// Return an element of the system
     /// @param index The index of the element
@@ -193,34 +193,34 @@ public:
 
     /// Calculate the molar amounts of the elements (in units of mol)
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmounts(VectorConstRef n) const -> Vector;
+    auto elementAmounts(VectorXrConstRef n) const -> VectorXr;
 
     /// Calculate the molar amounts of the elements in a given phase (in units of mol)
     /// @param iphase The index of the phase
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountsInPhase(Index iphase, VectorConstRef n) const -> Vector;
+    auto elementAmountsInPhase(Index iphase, VectorXrConstRef n) const -> VectorXr;
 
     /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
     /// @param ispecies The indices of the species
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountsInSpecies(const Indices& ispecies, VectorConstRef n) const -> Vector;
+    auto elementAmountsInSpecies(const Indices& ispecies, VectorXrConstRef n) const -> VectorXr;
 
     /// Calculate the molar amount of elements (in units of mol)
     /// @param ielement The index of the element
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmount(Index ielement, VectorConstRef n) const -> double;
+    auto elementAmount(Index ielement, VectorXrConstRef n) const -> double;
 
     /// Calculate the molar amounts of elements in a given phase (in units of mol)
     /// @param ielement The index of the element
     /// @param iphase The index of the phase
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountInPhase(Index ielement, Index iphase, VectorConstRef n) const -> double;
+    auto elementAmountInPhase(Index ielement, Index iphase, VectorXrConstRef n) const -> double;
 
     /// Calculate the molar amounts of elements in a given set of species (in units of mol)
     /// @param ielement The index of the element
     /// @param ispecies The indices of the species in the set
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, VectorConstRef n) const -> double;
+    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, VectorXrConstRef n) const -> double;
 
     /// Calculate the standard thermodynamic properties of the species.
     /// @param T The temperature of the system (in units of K)
@@ -231,7 +231,7 @@ public:
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
     /// @param n The molar amounts of the species (in units of mol)
-    auto properties(double T, double P, VectorConstRef n) const -> ChemicalProperties;
+    auto properties(double T, double P, VectorXrConstRef n) const -> ChemicalProperties;
 
 private:
     struct Impl;

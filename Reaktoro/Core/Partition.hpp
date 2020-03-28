@@ -247,31 +247,31 @@ public:
     auto indicesInertSolidElements() const -> const Indices&;
 
     /// Return the formula matrix of the equilibrium partition.
-    auto formulaMatrixEquilibriumPartition() const -> MatrixConstRef;
+    auto formulaMatrixEquilibriumPartition() const -> MatrixXdConstRef;
 
     /// Return the formula matrix of the equilibrium-fluid partition.
-    auto formulaMatrixEquilibriumFluidPartition() const -> MatrixConstRef;
+    auto formulaMatrixEquilibriumFluidPartition() const -> MatrixXdConstRef;
 
     /// Return the formula matrix of the equilibrium-solid partition.
-    auto formulaMatrixEquilibriumSolidPartition() const -> MatrixConstRef;
+    auto formulaMatrixEquilibriumSolidPartition() const -> MatrixXdConstRef;
 
     /// Return the formula matrix of the kinetic partition.
-    auto formulaMatrixKineticPartition() const -> MatrixConstRef;
+    auto formulaMatrixKineticPartition() const -> MatrixXdConstRef;
 
     /// Return the formula matrix of the kinetic-fluid partition.
-    auto formulaMatrixKineticFluidPartition() const -> MatrixConstRef;
+    auto formulaMatrixKineticFluidPartition() const -> MatrixXdConstRef;
 
     /// Return the formula matrix of the kinetic-solid partition.
-    auto formulaMatrixKineticSolidPartition() const -> MatrixConstRef;
+    auto formulaMatrixKineticSolidPartition() const -> MatrixXdConstRef;
 
     /// Return the formula matrix of the inert partition.
-    auto formulaMatrixInertPartition() const -> MatrixConstRef;
+    auto formulaMatrixInertPartition() const -> MatrixXdConstRef;
 
     /// Return the formula matrix of the inert-fluid partition.
-    auto formulaMatrixInertFluidPartition() const -> MatrixConstRef;
+    auto formulaMatrixInertFluidPartition() const -> MatrixXdConstRef;
 
     /// Return the formula matrix of the inert-solid partition.
-    auto formulaMatrixInertSolidPartition() const -> MatrixConstRef;
+    auto formulaMatrixInertSolidPartition() const -> MatrixXdConstRef;
 
 private:
     struct Impl;

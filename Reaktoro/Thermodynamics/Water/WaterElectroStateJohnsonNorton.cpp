@@ -52,27 +52,27 @@ const double a[] =
 	-0.2729401652e+02
 };
 
-inline auto k0(ThermoScalar t)    -> ThermoScalar { return {1.0, 0.0, 0.0}; }
-inline auto k1(ThermoScalar t)    -> ThermoScalar { return a[1]/t; }
-inline auto k2(ThermoScalar t)    -> ThermoScalar { return a[2]/t + a[3] + a[4]*t; }
-inline auto k3(ThermoScalar t)    -> ThermoScalar { return a[5]/t + a[6]*t + a[7]*t*t; }
-inline auto k4(ThermoScalar t)    -> ThermoScalar { return a[8]/t/t + a[9]/t + a[10]; }
+inline auto k0(real t)    -> real { return {1.0, 0.0, 0.0}; }
+inline auto k1(real t)    -> real { return a[1]/t; }
+inline auto k2(real t)    -> real { return a[2]/t + a[3] + a[4]*t; }
+inline auto k3(real t)    -> real { return a[5]/t + a[6]*t + a[7]*t*t; }
+inline auto k4(real t)    -> real { return a[8]/t/t + a[9]/t + a[10]; }
 
-inline auto k0_t(ThermoScalar t)  -> ThermoScalar { return {0.0, 0.0, 0.0}; }
-inline auto k1_t(ThermoScalar t)  -> ThermoScalar { return -a[1]/(t*t); }
-inline auto k2_t(ThermoScalar t)  -> ThermoScalar { return -a[2]/(t*t) + a[4]; }
-inline auto k3_t(ThermoScalar t)  -> ThermoScalar { return -a[5]/(t*t) + a[6] + 2*a[7]*t; }
-inline auto k4_t(ThermoScalar t)  -> ThermoScalar { return -2*a[8]/(t*t*t) - a[9]/(t*t); }
+inline auto k0_t(real t)  -> real { return {0.0, 0.0, 0.0}; }
+inline auto k1_t(real t)  -> real { return -a[1]/(t*t); }
+inline auto k2_t(real t)  -> real { return -a[2]/(t*t) + a[4]; }
+inline auto k3_t(real t)  -> real { return -a[5]/(t*t) + a[6] + 2*a[7]*t; }
+inline auto k4_t(real t)  -> real { return -2*a[8]/(t*t*t) - a[9]/(t*t); }
 
-inline auto k0_tt(ThermoScalar t) -> ThermoScalar { return {0.0, 0.0, 0.0}; }
-inline auto k1_tt(ThermoScalar t) -> ThermoScalar { return 2*a[1]/(t*t*t); }
-inline auto k2_tt(ThermoScalar t) -> ThermoScalar { return 2*a[2]/(t*t*t); }
-inline auto k3_tt(ThermoScalar t) -> ThermoScalar { return 2*a[5]/(t*t*t) + 2*a[7]; }
-inline auto k4_tt(ThermoScalar t) -> ThermoScalar { return 6*a[8]/(t*t*t*t) + 2*a[9]/(t*t*t); }
+inline auto k0_tt(real t) -> real { return {0.0, 0.0, 0.0}; }
+inline auto k1_tt(real t) -> real { return 2*a[1]/(t*t*t); }
+inline auto k2_tt(real t) -> real { return 2*a[2]/(t*t*t); }
+inline auto k3_tt(real t) -> real { return 2*a[5]/(t*t*t) + 2*a[7]; }
+inline auto k4_tt(real t) -> real { return 6*a[8]/(t*t*t*t) + 2*a[9]/(t*t*t); }
 
-ThermoScalar (*k[5])(ThermoScalar)    = {k0, k1, k2, k3, k4};
-ThermoScalar (*k_t[5])(ThermoScalar)  = {k0_t, k1_t, k2_t, k3_t, k4_t};
-ThermoScalar (*k_tt[5])(ThermoScalar) = {k0_tt, k1_tt, k2_tt, k3_tt, k4_tt};
+real (*k[5])(real)    = {k0, k1, k2, k3, k4};
+real (*k_t[5])(real)  = {k0_t, k1_t, k2_t, k3_t, k4_t};
+real (*k_tt[5])(real) = {k0_tt, k1_tt, k2_tt, k3_tt, k4_tt};
 
 } // namespace
 

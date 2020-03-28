@@ -45,28 +45,28 @@ public:
     auto pressure() const -> Pressure;
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
-    auto standardPartialMolarGibbsEnergies() const -> ThermoVector;
+    auto standardPartialMolarGibbsEnergies() const -> VectorXr;
 
     /// Return the standard partial molar enthalpies of the species (in units of J/mol).
-    auto standardPartialMolarEnthalpies() const -> ThermoVector;
+    auto standardPartialMolarEnthalpies() const -> VectorXr;
 
     /// Return the standard partial molar volumes of the species (in units of m3/mol).
-    auto standardPartialMolarVolumes() const -> ThermoVector;
+    auto standardPartialMolarVolumes() const -> VectorXr;
 
     /// Return the standard partial molar entropies of the species (in units of J/(mol*K)).
-    auto standardPartialMolarEntropies() const -> ThermoVector;
+    auto standardPartialMolarEntropies() const -> VectorXr;
 
     /// Return the standard partial molar internal energies of the species (in units of J/mol).
-    auto standardPartialMolarInternalEnergies() const -> ThermoVector;
+    auto standardPartialMolarInternalEnergies() const -> VectorXr;
 
     /// Return the standard partial molar Helmholtz energies of the species (in units of J/mol).
-    auto standardPartialMolarHelmholtzEnergies() const -> ThermoVector;
+    auto standardPartialMolarHelmholtzEnergies() const -> VectorXr;
 
     /// Return the standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    auto standardPartialMolarHeatCapacitiesConstP() const -> ThermoVector;
+    auto standardPartialMolarHeatCapacitiesConstP() const -> VectorXr;
 
     /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector;
+    auto standardPartialMolarHeatCapacitiesConstV() const -> VectorXr;
 
 private:
     /// The chemical system

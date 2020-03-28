@@ -24,20 +24,20 @@
 //
 //namespace Reaktoro {
 //
-//auto mineralChemicalModelVanLaar(const MineralMixture& mixture, VectorConstRef a, MatrixConstRef W) -> PhaseChemicalModel
+//auto mineralChemicalModelVanLaar(const MineralMixture& mixture, VectorXrConstRef a, MatrixXdConstRef W) -> PhaseChemicalModel
 //{
 //    MineralMixtureState state;
 //    PhaseChemicalModelResult res(2);
 //
 //    VectorXd phi;
 //
-//    ChemicalScalar avg;
+//    real avg;
 //
 //    const Index nspecies = mixture.numSpecies();
 //
-//    Table2D<ChemicalScalar> B = table2D<ChemicalScalar>(nspecies, nspecies);
+//    Table2D<real> B = table2D<real>(nspecies, nspecies);
 //
-//    PhaseChemicalModel f = [=](double T, double P, VectorConstRef n) mutable
+//    PhaseChemicalModel f = [=](double T, double P, VectorXrConstRef n) mutable
 //    {
 //        state = mixture.state(T, P, n);
 //

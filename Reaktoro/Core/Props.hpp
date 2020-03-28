@@ -56,88 +56,88 @@ public:
     auto chemicalPotentials() const -> VectorXd;
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
-    auto standardPartialMolarGibbsEnergies() const -> ThermoVectorConstRef;
+    auto standardPartialMolarGibbsEnergies() const -> VectorXrConstRef;
 
     /// Return the standard partial molar enthalpies of the species (in units of J/mol).
-    auto standardPartialMolarEnthalpies() const -> ThermoVectorConstRef;
+    auto standardPartialMolarEnthalpies() const -> VectorXrConstRef;
 
     /// Return the standard partial molar volumes of the species (in units of m3/mol).
-    auto standardPartialMolarVolumes() const -> ThermoVectorConstRef;
+    auto standardPartialMolarVolumes() const -> VectorXrConstRef;
 
     /// Return the standard partial molar entropies of the species (in units of J/(mol*K)).
-    auto standardPartialMolarEntropies() const -> ThermoVector;
+    auto standardPartialMolarEntropies() const -> VectorXr;
 
     /// Return the standard partial molar internal energies of the species (in units of J/mol).
-    auto standardPartialMolarInternalEnergies() const -> ThermoVector;
+    auto standardPartialMolarInternalEnergies() const -> VectorXr;
 
     /// Return the standard partial molar Helmholtz energies of the species (in units of J/mol).
-    auto standardPartialMolarHelmholtzEnergies() const -> ThermoVector;
+    auto standardPartialMolarHelmholtzEnergies() const -> VectorXr;
 
     /// Return the standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    auto standardPartialMolarHeatCapacitiesConstP() const -> ThermoVectorConstRef;
+    auto standardPartialMolarHeatCapacitiesConstP() const -> VectorXrConstRef;
 
     /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVectorConstRef;
+    auto standardPartialMolarHeatCapacitiesConstV() const -> VectorXrConstRef;
 
     /// Return the molar Gibbs energy of the phase (in units of J/mol).
-    auto molarGibbsEnergy() const -> ChemicalScalar;
+    auto molarGibbsEnergy() const -> real;
 
     /// Return the molar enthalpy of the phase (in units of J/mol).
-    auto molarEnthalpy() const -> ChemicalScalar;
+    auto molarEnthalpy() const -> real;
 
     /// Return the molar volume of the phase (in units of m3/mol).
-    auto molarVolume() const -> ChemicalScalar;
+    auto molarVolume() const -> real;
 
     /// Return the molar entropy of the phase (in units of J/(mol*K)).
-    auto molarEntropy() const -> ChemicalScalar;
+    auto molarEntropy() const -> real;
 
     /// Return the molar internal energy of the phase (in units of J/mol).
-    auto molarInternalEnergy() const -> ChemicalScalar;
+    auto molarInternalEnergy() const -> real;
 
     /// Return the molar Helmholtz energy of the phase (in units of J/mol).
-    auto molarHelmholtzEnergy() const -> ChemicalScalar;
+    auto molarHelmholtzEnergy() const -> real;
 
     /// Return the molar isobaric heat capacity of the phase (in units of J/(mol*K)).
-    auto molarHeatCapacityConstP() const -> ChemicalScalar;
+    auto molarHeatCapacityConstP() const -> real;
 
     /// Return the molar isochoric heat capacity of the phase (in units of J/(mol*K)).
-    auto molarHeatCapacityConstV() const -> ChemicalScalar;
+    auto molarHeatCapacityConstV() const -> real;
 
     /// Return the specific Gibbs energy of the phase (in units of J/kg).
-    auto specificGibbsEnergy() const -> ChemicalScalar;
+    auto specificGibbsEnergy() const -> real;
 
     /// Return the specific enthalpy of the phase (in units of J/kg).
-    auto specificEnthalpy() const -> ChemicalScalar;
+    auto specificEnthalpy() const -> real;
 
     /// Return the specific volume of the phase (in units of m3/kg).
-    auto specificVolumes() const -> ChemicalScalar;
+    auto specificVolumes() const -> real;
 
     /// Return the specific entropy of the phase (in units of J/(kg*K)).
-    auto specificEntropy() const -> ChemicalScalar;
+    auto specificEntropy() const -> real;
 
     /// Return the specific internal energy of the phase (in units of J/kg).
-    auto specificInternalEnergy() const -> ChemicalScalar;
+    auto specificInternalEnergy() const -> real;
 
     /// Return the specific Helmholtz energy of the phase (in units of J/kg).
-    auto specificHelmholtzEnergy() const -> ChemicalScalar;
+    auto specificHelmholtzEnergy() const -> real;
 
     /// Return the specific isobaric heat capacity of the phase (in units of J/(kg*K)).
-    auto specificHeatCapacityConstP() const -> ChemicalScalar;
+    auto specificHeatCapacityConstP() const -> real;
 
     /// Return the specific isochoric heat capacity of the phase (in units of J/(kg*K)).
-    auto specificHeatCapacityConstV() const -> ChemicalScalar;
+    auto specificHeatCapacityConstV() const -> real;
 
     /// Return the density of the phase (in units of kg/m3).
-    auto density() const -> ChemicalScalar;
+    auto density() const -> real;
 
     /// Return the mass of the phase (in units of kg).
-    auto mass() const -> ChemicalScalar;
+    auto mass() const -> real;
 
     /// Return the total amount of species in the phase (in units of mol).
-    auto amount() const -> ChemicalScalar;
+    auto amount() const -> real;
 
     /// Return the volume of the phase (in units of m3).
-    auto volume() const -> ChemicalScalar;
+    auto volume() const -> real;
 
 private:
     /// The number of species in the phase
@@ -150,7 +150,7 @@ private:
     Pressure P;
 
     /// The amounts of the species in the phase (in units of mol).
-    Vector n;
+    VectorXr n;
 
     /// The mole fractions of the species in the phase (in units of mol/mol).
     VectorXd x;

@@ -71,14 +71,14 @@ public:
     auto reaction(std::string name) const -> const Reaction&;
 
     /// Return the stoichiometric matrix of the reaction system.
-    auto stoichiometricMatrix() const -> MatrixConstRef;
+    auto stoichiometricMatrix() const -> MatrixXdConstRef;
 
     /// Return the chemical system instance
     auto system() const -> const ChemicalSystem&;
 
     /// Calculate the equilibrium constants of the reactions.
     /// @param properties The chemical properties of the system
-    auto lnEquilibriumConstants(const ChemicalProperties& properties) const -> ThermoVector;
+    auto lnEquilibriumConstants(const ChemicalProperties& properties) const -> VectorXr;
 
     /// Calculate the reaction quotients of the reactions.
     /// @param properties The chemical properties of the system

@@ -28,10 +28,10 @@
 namespace Reaktoro {
 namespace {
 
-/// Convert ThermoFun::ThermoScalar to Reaktoro::ThermoScalar
-auto convertScalar(Reaktoro_::ThermoScalar other) -> ThermoScalar
+/// Convert ThermoFun::real to Reaktoro::real
+auto convertScalar(Reaktoro_::real other) -> real
 {
-    ThermoScalar converted;
+    real converted;
     converted.val = other.val;
     converted.ddP = other.ddp;
     converted.ddT = other.ddt;

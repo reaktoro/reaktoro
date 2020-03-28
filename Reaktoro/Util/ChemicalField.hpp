@@ -47,11 +47,11 @@
 //    /// Construct a copy of a ChemicalField instance.
 //    auto operator=(ChemicalField other) -> ChemicalField&;
 //
-//    /// Set the field at the i-th point with a ChemicalScalar instance.
+//    /// Set the field at the i-th point with a real instance.
 //    /// @param i The index of the field point.
 //    /// @param scalar The chemical scalar to be set at the i-th point.
 //    /// @param sensitivity The equilibrium sensitivity at the i-th point.
-//    auto set(Index i, const ChemicalScalar& scalar, const EquilibriumSensitivity& sensitivity) -> void;
+//    auto set(Index i, const real& scalar, const EquilibriumSensitivity& sensitivity) -> void;
 //
 //    /// Return the partition of the chemical system.
 //    auto partition() const -> const Partition&;
@@ -60,34 +60,34 @@
 //    auto size() const -> Index;
 //
 //    /// Return a reference to the values of the chemical field.
-//    auto val() -> VectorRef;
+//    auto val() -> VectorXrRef;
 //
 //    /// Return a const reference to the values of the chemical field.
-//    auto val() const -> VectorConstRef;
+//    auto val() const -> VectorXrConstRef;
 //
 //    /// Return a reference to the derivatives w.r.t. temperature of the chemical field.
-//    auto ddT() -> VectorRef;
+//    auto ddT() -> VectorXrRef;
 //
 //    /// Return a const-reference to the derivatives w.r.t. temperature of the chemical field.
-//    auto ddT() const -> VectorConstRef;
+//    auto ddT() const -> VectorXrConstRef;
 //
 //    /// Return a reference to the derivatives w.r.t. pressure of the chemical field.
-//    auto ddP() -> VectorRef;
+//    auto ddP() -> VectorXrRef;
 //
 //    /// Return a const-reference to the derivatives w.r.t. pressure of the chemical field.
-//    auto ddP() const -> VectorConstRef;
+//    auto ddP() const -> VectorXrConstRef;
 //
 //    /// Return a reference to the derivatives w.r.t. molar amounts of equilibrium elements of the chemical field.
-//    auto ddbe() -> std::vector<Vector>&;
+//    auto ddbe() -> std::vector<VectorXr>&;
 //
 //    /// Return a const-reference to the derivatives w.r.t. molar amounts of equilibrium elements of the chemical field.
-//    auto ddbe() const -> const std::vector<Vector>&;
+//    auto ddbe() const -> const std::vector<VectorXr>&;
 //
 //    /// Return a reference to the derivatives w.r.t. molar amounts of kinetic species of the chemical field.
-//    auto ddnk() -> std::vector<Vector>&;
+//    auto ddnk() -> std::vector<VectorXr>&;
 //
 //    /// Return a const-reference to the derivatives w.r.t. molar amounts of kinetic species of the chemical field.
-//    auto ddnk() const -> const std::vector<Vector>&;
+//    auto ddnk() const -> const std::vector<VectorXr>&;
 //
 //private:
 //    struct Impl;

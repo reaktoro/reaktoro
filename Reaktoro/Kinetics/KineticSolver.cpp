@@ -98,16 +98,16 @@ struct KineticSolver::Impl
     double P;
 
     /// The molar composition of the equilibrium species
-    Vector ne;
+    VectorXr ne;
 
     /// The molar composition of the kinetic species
-    Vector nk;
+    VectorXr nk;
 
     /// The molar abundance of the elements in the equilibrium species
-    Vector be;
+    VectorXr be;
 
     /// The combined vector of elemental molar abundance and composition of kinetic species [be nk]
-    Vector benk;
+    VectorXr benk;
 
     /// The chemical properties of the system
     ChemicalProperties properties;
@@ -202,7 +202,7 @@ struct KineticSolver::Impl
         const Index num_species = system.numSpecies();
         const double volume = units::convert(volumerate, units, "m3/s");
         state.scaleVolume(volume);
-        const Vector n = state.speciesAmounts();
+        const VectorXr n = state.speciesAmounts();
         auto old_source_fn = source_fn;
 
         source_fn = [=](const ChemicalProperties& properties)
@@ -222,7 +222,7 @@ struct KineticSolver::Impl
         const Index ifirst = system.indexFirstSpeciesInPhase(iphase);
         const Index size = system.numSpeciesInPhase(iphase);
         auto old_source_fn = source_fn;
-        ChemicalScalar phasevolume;
+        real phasevolume;
         VectorXd q(size);
 
         source_fn = [=](const ChemicalProperties& properties) mutable
@@ -243,7 +243,7 @@ struct KineticSolver::Impl
         const double volume = units::convert(volumerate, units, "m3/s");
         const Indices& isolid_species = partition.indicesSolidSpecies();
         auto old_source_fn = source_fn;
-        ChemicalScalar fluidvolume;
+        real fluidvolume;
         VectorXd q;
 
         source_fn = [=](const ChemicalProperties& properties) mutable
@@ -263,7 +263,7 @@ struct KineticSolver::Impl
         const double volume = units::convert(volumerate, units, "m3/s");
         const Indices& ifluid_species = partition.indicesFluidSpecies();
         auto old_source_fn = source_fn;
-        ChemicalScalar solidvolume;
+        real solidvolume;
         VectorXd q;
 
         source_fn = [=](const ChemicalProperties& properties) mutable
@@ -295,13 +295,13 @@ struct KineticSolver::Impl
         benk.tail(Nk) = nk;
 
         // Define the ODE function
-        ODEFunction ode_function = [&](double t, VectorConstRef u, VectorRef res)
+        ODEFunction ode_function = [&](double t, VectorXrConstRef u, VectorXrRef res)
         {
             return function(state, t, u, res);
         };
 
         // Define the jacobian of the ODE function
-        ODEJacobian ode_jacobian = [&](double t, VectorConstRef u, MatrixRef res)
+        ODEJacobian ode_jacobian = [&](double t, VectorXrConstRef u, MatrixXdRef res)
         {
             return jacobian(state, t, u, res);
         };
@@ -377,7 +377,7 @@ struct KineticSolver::Impl
         equilibrium.solve(state, T, P, be);
     }
 
-    auto function(ChemicalState& state, double t, VectorConstRef u, VectorRef res) -> int
+    auto function(ChemicalState& state, double t, VectorXrConstRef u, VectorXrRef res) -> int
     {
         // Extract the `be` and `nk` entries of the vector [be, nk]
         be = u.head(Ee);
@@ -428,7 +428,7 @@ struct KineticSolver::Impl
         return 0;
     }
 
-    auto jacobian(ChemicalState& state, double t, VectorConstRef u, MatrixRef res) -> int
+    auto jacobian(ChemicalState& state, double t, VectorXrConstRef u, MatrixXdRef res) -> int
     {
         // Calculate the sensitivity of the equilibrium state
         sensitivity = equilibrium.sensitivity();

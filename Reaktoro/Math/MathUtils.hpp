@@ -26,29 +26,29 @@ namespace Reaktoro {
 /// Determine the set of linearly independent columns in a matrix using a column pivoting QR algorithm.
 /// @param A The matrix whose linearly independent columns must be found
 /// @return The indices of the linearly independent columns
-auto linearlyIndependentCols(MatrixConstRef A) -> Indices;
+auto linearlyIndependentCols(MatrixXdConstRef A) -> Indices;
 
 /// Determine the set of linearly independent rows in a matrix.
 /// @param A The matrix whose linearly independent rows must be found
 /// @return The indices of the linearly independent rows
-auto linearlyIndependentRows(MatrixConstRef A) -> Indices;
+auto linearlyIndependentRows(MatrixXdConstRef A) -> Indices;
 
 /// Determine the set of linearly independent columns in a matrix.
 /// @param[in] A The matrix whose linearly independent columns must be found
 /// @param[out] B The matrix composed by linearly independent columns only
 /// @return The indices of the linearly independent columns
-auto linearlyIndependentCols(MatrixConstRef A, MatrixRef B) -> Indices;
+auto linearlyIndependentCols(MatrixXdConstRef A, MatrixXdRef B) -> Indices;
 
 /// Determine the set of linearly independent rows in a matrix.
 /// @param[in] A The matrix whose linearly independent rows must be found
 /// @param[out] B The matrix composed by linearly independent rows only
 /// @return The indices of the linearly independent rows
-auto linearlyIndependentRows(MatrixConstRef A, MatrixRef B) -> Indices;
+auto linearlyIndependentRows(MatrixXdConstRef A, MatrixXdRef B) -> Indices;
 
 /// Calculate the inverse of `A + D` where `inv(A)` is already known and `D` is a diagonal matrix.
 /// @param invA[in,out] The inverse of the matrix `A` and the final inverse of `A + D`
 /// @param D The diagonal matrix `D`
-auto inverseShermanMorrison(MatrixConstRef invA, VectorConstRef D) -> Matrix;
+auto inverseShermanMorrison(MatrixXdConstRef invA, VectorXdConstRef D) -> Matrix;
 
 /// Calculates the rational number that approximates a given real number.
 /// The algorithm is based on Farey sequence as shown
@@ -66,12 +66,12 @@ auto cleanRationalNumbers(double* vals, long size, long maxden = 6) -> void;
 /// Clean a matrix that is known to have rational numbers from round-off errors.
 /// @param A[in,out] The matrix to be cleaned
 /// @param maxden The maximum known denominator in the matrix with rational numbers
-auto cleanRationalNumbers(MatrixRef A, long maxden = 6) -> void;
+auto cleanRationalNumbers(MatrixXdRef A, long maxden = 6) -> void;
 
 /// Return the dot product `s + dot(x, y)` of two vectors with triple-precision.
-auto dot3p(VectorConstRef x, VectorConstRef y, double s) -> double;
+auto dot3p(VectorXdConstRef x, VectorXdConstRef y, double s) -> double;
 
 /// Return the residual of the equation `A*x - b` with triple-precision.
-auto residual3p(MatrixConstRef A, VectorConstRef x, VectorConstRef b) -> Vector;
+auto residual3p(MatrixXdConstRef A, VectorXdConstRef x, VectorXdConstRef b) -> VectorXd;
 
 } // namespace Reaktoro

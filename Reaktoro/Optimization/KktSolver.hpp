@@ -79,12 +79,12 @@ struct KktOptions
 struct KktMatrix
 {
     /// Construct a custom KktMatrix instance
-    KktMatrix(const Hessian& H, MatrixConstRef A, VectorConstRef x, VectorConstRef z)
+    KktMatrix(const Hessian& H, MatrixXdConstRef A, VectorXdConstRef x, VectorXdConstRef z)
     : H(H), A(A), x(x), z(z)
     {}
 
     /// Construct a custom KktMatrix instance
-    KktMatrix(const Hessian& H, MatrixConstRef A, VectorConstRef x, VectorConstRef z, double gamma, double delta)
+    KktMatrix(const Hessian& H, MatrixXdConstRef A, VectorXdConstRef x, VectorXdConstRef z, double gamma, double delta)
     : H(H), A(A), x(x), z(z), gamma(gamma), delta(delta)
     {}
 
@@ -92,13 +92,13 @@ struct KktMatrix
     const Hessian& H;
 
     /// The coefficient matrix `A` of the KKT matrix equation
-    MatrixConstRef A;
+    MatrixXdConstRef A;
 
     /// The vector of primal variables `x`
-    VectorConstRef x;
+    VectorXdConstRef x;
 
     /// The vector of dual variables `z`
-    VectorConstRef z;
+    VectorXdConstRef z;
 
     /// The regularization parameter @f$\gamma@f$
     const double gamma = 0.0;
@@ -112,13 +112,13 @@ struct KktMatrix
 struct KktSolution
 {
     /// The step vector of the primal variables `x`
-    Vector dx;
+    VectorXd dx;
 
     /// The step vector of the dual variables `y`
-    Vector dy;
+    VectorXd dy;
 
     /// The step vector of the dual variables `z`
-    Vector dz;
+    VectorXd dz;
 };
 
 /// A type to represent the right-hand side vector of a KKT equation
@@ -126,13 +126,13 @@ struct KktSolution
 struct KktVector
 {
     /// The top vector of the right-hand side KKT vector
-    Vector rx;
+    VectorXd rx;
 
     /// The middle vector of the right-hand side KKT vector
-    Vector ry;
+    VectorXd ry;
 
     /// The bottom vector of the right-hand side KKT vector
-    Vector rz;
+    VectorXd rz;
 };
 
 /// A type to describe a solver for a KKT equation

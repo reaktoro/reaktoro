@@ -65,13 +65,32 @@ public:
         /// robust phase identification method such as GibbsEnergyAndEquationOfStateMethod for BOTH
         /// phases.
         PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
-
-        /// Wrapper function to calculate binary interaction parameters for mixture rules using a 
-        /// Cubic EOS. This function should have the temperature T as input 
-        /// and should return a InteractionParamsResult.
-        /// @see InteractionParamsResult
-        InteractionParamsFunction binary_interaction_values;
     };
+
+    struct InteractionParamsResult
+    {
+        Table2D<real> k;
+
+        Table2D<real> kT;
+
+        Table2D<real> kTT;
+    };
+
+    struct InteractionParamsArgs
+    {
+        const real& T;
+
+        const VectorXr& a;
+
+        const VectorXr& aT;
+
+        const VectorXr& aTT;
+
+        VectorXrConstRef b;
+    };
+
+    using InteractionParamsFunction =
+        std::function<InteractionParamsResult(const InteractionParamsArgs&)>;
 
     struct Result
     {
@@ -83,19 +102,19 @@ public:
         explicit Result(unsigned nspecies);
 
         /// The molar volume of the phase (in units of m3/mol).
-        ChemicalScalar molar_volume;
+        real molar_volume;
 
         /// The residual molar Gibbs energy of the phase (in units of J/mol).
-        ChemicalScalar residual_molar_gibbs_energy;
+        real residual_molar_gibbs_energy;
 
         /// The residual molar enthalpy of the phase (in units of J/mol).
-        ChemicalScalar residual_molar_enthalpy;
+        real residual_molar_enthalpy;
 
         /// The residual molar heat capacity at constant pressure of the phase (in units of J/(mol*K)).
-        ChemicalScalar residual_molar_heat_capacity_cp;
+        real residual_molar_heat_capacity_cp;
 
         /// The residual molar heat capacity at constant volume of the phase (in units of J/(mol*K)).
-        ChemicalScalar residual_molar_heat_capacity_cv;
+        real residual_molar_heat_capacity_cv;
 
         /// The partial molar volumes of the species in the phase (in units of m3/mol).
         VectorXd partial_molar_volumes;
@@ -155,7 +174,7 @@ public:
     /// @param T The temperature of the phase (in units of K)
     /// @param P The pressure of the phase (in units of Pa)
     /// @param x The mole fractions of the species in the phase (in units of mol/mol)
-    auto operator()(const ThermoScalar& T, const ThermoScalar& P, const VectorXd& x) -> Result;
+    auto operator()(const real& T, const real& P, const VectorXd& x) -> Result;
 
 private:
     struct Impl;

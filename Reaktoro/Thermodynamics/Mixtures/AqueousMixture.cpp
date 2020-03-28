@@ -128,7 +128,7 @@ auto AqueousMixture::indexWater() const -> Index
     return idx_water;
 }
 
-auto AqueousMixture::dissociationMatrix() const -> MatrixConstRef
+auto AqueousMixture::dissociationMatrix() const -> MatrixXdConstRef
 {
     return dissociation_matrix;
 }
@@ -189,22 +189,22 @@ auto AqueousMixture::namesAnions() const -> std::vector<std::string>
     return extract(namesSpecies(), indicesAnions());
 }
 
-auto AqueousMixture::chargesChargedSpecies() const -> Vector
+auto AqueousMixture::chargesChargedSpecies() const -> VectorXr
 {
     return rows(chargesSpecies(), indicesChargedSpecies());
 }
 
-auto AqueousMixture::chargesCations() const -> Vector
+auto AqueousMixture::chargesCations() const -> VectorXr
 {
     return rows(chargesSpecies(), indicesCations());
 }
 
-auto AqueousMixture::chargesAnions() const -> Vector
+auto AqueousMixture::chargesAnions() const -> VectorXr
 {
     return rows(chargesSpecies(), indicesAnions());
 }
 
-auto AqueousMixture::molalities(VectorConstRef n) const -> VectorXd
+auto AqueousMixture::molalities(VectorXrConstRef n) const -> VectorXd
 {
     const unsigned num_species = numSpecies();
 
@@ -255,12 +255,12 @@ auto AqueousMixture::stoichiometricMolalities(const VectorXd& m) const -> Vector
     return ms;
 }
 
-auto AqueousMixture::effectiveIonicStrength(const VectorXd& m) const -> ChemicalScalar
+auto AqueousMixture::effectiveIonicStrength(const VectorXd& m) const -> real
 {
     const unsigned num_species = numSpecies();
-    const Vector z = chargesSpecies();
+    const VectorXr z = chargesSpecies();
 
-    ChemicalScalar Ie(num_species);
+    real Ie(num_species);
     Ie.val = 0.5 * sum(z % z % m.val);
     for(unsigned i = 0; i < num_species; ++i)
         Ie.ddn[i] = 0.5 * sum(z % z % m.ddn.col(i));
@@ -268,12 +268,12 @@ auto AqueousMixture::effectiveIonicStrength(const VectorXd& m) const -> Chemical
     return Ie;
 }
 
-auto AqueousMixture::stoichiometricIonicStrength(const VectorXd& ms) const -> ChemicalScalar
+auto AqueousMixture::stoichiometricIonicStrength(const VectorXd& ms) const -> real
 {
     const unsigned num_species = numSpecies();
-    const Vector zc = chargesChargedSpecies();
+    const VectorXr zc = chargesChargedSpecies();
 
-    ChemicalScalar Is(num_species);
+    real Is(num_species);
     Is.val = 0.5 * sum(zc % zc % ms.val);
     for(unsigned i = 0; i < num_species; ++i)
         Is.ddn[i] = 0.5 * sum(zc % zc % ms.ddn.col(i));
@@ -281,7 +281,7 @@ auto AqueousMixture::stoichiometricIonicStrength(const VectorXd& ms) const -> Ch
     return Is;
 }
 
-auto AqueousMixture::state(Temperature T, Pressure P, VectorConstRef n) const -> AqueousMixtureState
+auto AqueousMixture::state(Temperature T, Pressure P, VectorXrConstRef n) const -> AqueousMixtureState
 {
     AqueousMixtureState res;
     res.T = T;

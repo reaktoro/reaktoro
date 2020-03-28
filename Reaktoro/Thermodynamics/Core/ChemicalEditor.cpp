@@ -67,7 +67,7 @@ auto collectElementsInCompounds(const std::vector<std::string>& compounds) -> st
 auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
 {
     // The ln activity constants of the aqueous species
-    ThermoVector ln_c(phase.numSpecies());
+    VectorXr ln_c(phase.numSpecies());
 
     // The index of solvent water species
     const Index iH2O = phase.indexSpeciesAnyWithError(alternativeWaterNames());
@@ -89,7 +89,7 @@ auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
 auto lnActivityConstants(const FluidPhase& phase) -> ThermoVectorFunction
 {
     // The ln activity constants of the generic species
-    ThermoVector ln_c(phase.numSpecies());
+    VectorXr ln_c(phase.numSpecies());
 
     ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
     {
@@ -103,7 +103,7 @@ auto lnActivityConstants(const FluidPhase& phase) -> ThermoVectorFunction
 auto lnActivityConstants(const MineralPhase& phase) -> ThermoVectorFunction
 {
     // The ln activity constants of the mineral species
-    ThermoVector ln_c(phase.numSpecies());
+    VectorXr ln_c(phase.numSpecies());
 
     ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
     {

@@ -74,7 +74,7 @@
 //    std::vector<EquilibriumSensitivity> sensitivities;
 //
 //    /// The molar amounts of the chemical components at every field point
-//    std::vector<Vector> c;
+//    std::vector<VectorXr> c;
 //
 //    /// The kinetic rates of the chemical components and their derivatives at every field point (in units of mol/s)
 //    std::vector<ChemicalField> rc;
@@ -197,7 +197,7 @@
 //            "Expecting, for each equilibrium element, the same number of amount "
 //            "values as there are field points.");
 //
-//        Vector bk(Ee);
+//        VectorXr bk(Ee);
 //        for(Index k = 0; k < npoints; ++k)
 //        {
 //            const auto Tk  = T.data[k];
@@ -225,7 +225,7 @@
 //    {
 //        // Check if member `c` is initialized
 //        if(c.size() != Nc)
-//            c.resize(Nc, Vector(npoints));
+//            c.resize(Nc, VectorXr(npoints));
 //
 //        // The indices of the equilibrium elements and kinetic species
 //        const Indices& ies = partition.indicesEquilibriumSpecies();
@@ -233,13 +233,13 @@
 //        const Indices& iks = partition.indicesKineticSpecies();
 //
 //        // The molar amounts of elements in the equilibrium species
-//        Vector bes(E);
+//        VectorXr bes(E);
 //
 //        // Loop over all field points
 //        for(Index k = 0; k < npoints; ++k)
 //        {
 //            // Get the molar amounts of all species
-//            VectorConstRef n = states[k].speciesAmounts();
+//            VectorXrConstRef n = states[k].speciesAmounts();
 //
 //            // Calculate the molar amounts of the elements in the equilibrium species
 //            bes = states[k].elementAmountsInSpecies(ies);
@@ -294,7 +294,7 @@
 //            porosity = ChemicalField(partition, npoints);
 //
 //        // The porosity
-//        ChemicalScalar phi;
+//        real phi;
 //
 //        // Loop over all field points
 //        for(Index k = 0; k < npoints; ++k)
@@ -394,7 +394,7 @@
 //        const Indices& ifp = partition.indicesFluidPhases();
 //
 //        // The total fluid volume at a field point
-//        ChemicalScalar total_volume;
+//        real total_volume;
 //
 //        // Loop over all field points
 //        for(Index k = 0; k < npoints; ++k)
@@ -416,7 +416,7 @@
 //        const Indices& isp = partition.indicesSolidPhases();
 //
 //        // The total solid volume at a field point
-//        ChemicalScalar total_volume;
+//        real total_volume;
 //
 //        // Loop over all field points
 //        for(Index k = 0; k < npoints; ++k)
@@ -586,7 +586,7 @@
 //    return pimpl->states;
 //}
 //
-//auto ChemicalSolver::componentAmounts() -> const std::vector<Vector>&
+//auto ChemicalSolver::componentAmounts() -> const std::vector<VectorXr>&
 //{
 //    pimpl->updateComponentAmounts();
 //    return pimpl->c;

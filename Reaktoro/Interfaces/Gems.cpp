@@ -105,7 +105,7 @@ struct Gems::Impl
     double P;
 
     // The current molar amounts of all species in GEMS TNode instance (in units of mol)
-    Vector n;
+    VectorXr n;
 
     /// The elapsed time of the equilibrate method (in units of s)
     double elapsed_time = 0;
@@ -180,9 +180,9 @@ auto Gems::pressure() const -> double
     return node()->Get_P();
 }
 
-auto Gems::speciesAmounts() const -> Vector
+auto Gems::speciesAmounts() const -> VectorXr
 {
-    Vector n(numSpecies());
+    VectorXr n(numSpecies());
     for(unsigned i = 0; i < n.size(); ++i)
         n[i] = node()->Get_nDC(i);
     return n;
@@ -276,7 +276,7 @@ auto Gems::properties(ThermoModelResult& res, double T, double P) -> void
     }
 }
 
-auto Gems::properties(ChemicalModelResult& res, double T, double P, VectorConstRef n) -> void
+auto Gems::properties(ChemicalModelResult& res, double T, double P, VectorXrConstRef n) -> void
 {
     // Update the temperature, pressure, and species amounts of the Gems instance
     set(T, P, n);
@@ -289,8 +289,8 @@ auto Gems::properties(ChemicalModelResult& res, double T, double P, VectorConstR
     const Index num_phases = numPhases();
 
     // Set the ln activity coefficients and ln activities of the species in current phase
-    res.lnActivityCoefficients().val = Vector::Map(ap->lnGam, num_species);
-    res.lnActivities().val = Vector::Map(ap->lnAct, num_species);
+    res.lnActivityCoefficients().val = VectorXr::Map(ap->lnGam, num_species);
+    res.lnActivities().val = VectorXr::Map(ap->lnAct, num_species);
 
     // Set the molar derivatives of the activities
     Index offset = 0;
@@ -329,7 +329,7 @@ auto Gems::set(double T, double P) -> void
     node()->setPressure(P);
 }
 
-auto Gems::set(double T, double P, VectorConstRef n) -> void
+auto Gems::set(double T, double P, VectorXrConstRef n) -> void
 {
     pimpl->T = T;
     pimpl->P = P;
@@ -352,7 +352,7 @@ auto Gems::setOptions(const GemsOptions& options) -> void
     pimpl->options = options;
 }
 
-auto Gems::equilibrate(double T, double P, VectorConstRef b) -> void
+auto Gems::equilibrate(double T, double P, VectorXrConstRef b) -> void
 {
     // Start timing
     Time start = time();

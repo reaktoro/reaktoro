@@ -25,7 +25,7 @@ namespace Reaktoro {
 auto interpolate(
     const std::vector<double>& temperatures,
     const std::vector<double>& pressures,
-    const std::vector<ThermoScalar>& scalars) -> ThermoScalarFunction;
+    const std::vector<real>& scalars) -> ThermoScalarFunction;
 
 auto interpolate(
     const std::vector<double>& temperatures,

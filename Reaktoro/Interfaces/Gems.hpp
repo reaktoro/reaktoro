@@ -53,7 +53,7 @@ public:
     virtual auto pressure() const -> double;
 
     /// Return the amounts of the species (in units of mol)
-    virtual auto speciesAmounts() const -> Vector;
+    virtual auto speciesAmounts() const -> VectorXr;
 
     /// Return the number of elements
     virtual auto numElements() const -> unsigned;
@@ -92,7 +92,7 @@ public:
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The amounts of the species (in units of mol)
-    virtual auto properties(ChemicalModelResult& res, double T, double P, VectorConstRef n) -> void;
+    virtual auto properties(ChemicalModelResult& res, double T, double P, VectorXrConstRef n) -> void;
 
     /// Return a clone of this Gems instance
     virtual auto clone() const -> std::shared_ptr<Interface>;
@@ -106,7 +106,7 @@ public:
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The composition of the species (in units of mol)
-    auto set(double T, double P, VectorConstRef n) -> void;
+    auto set(double T, double P, VectorXrConstRef n) -> void;
 
     /// Set the options of the Gems instance
     auto setOptions(const GemsOptions& options) -> void;
@@ -115,7 +115,7 @@ public:
     /// @param T The temperature for the equilibrium calculation (in units of K)
     /// @param P The pressure for the equilibrium calculation (in units of Pa)
     /// @param n The amounts of the elements (in units of mol)
-    auto equilibrate(double T, double P, VectorConstRef b) -> void;
+    auto equilibrate(double T, double P, VectorXrConstRef b) -> void;
 
     /// Return the convergence result of the equilibrium calculation
     auto converged() const -> bool;

@@ -37,7 +37,7 @@ struct KineticProblem::Impl
 
     double pressure;
 
-    Vector n;
+    VectorXr n;
 
     double initial_time;
 

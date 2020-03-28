@@ -40,10 +40,10 @@ enum class PhaseIdentificationMethod
 ///
 /// Reference: Bennett, J. and Schmidt, K.A., 2016. Comparison of Phase Identification Methods Used in Oil Industry Flow Simulations. Energy & Fuels, 31(4), pp.3370-3379.
 auto identifyPhaseUsingVolume(
-    const ThermoScalar& temperature,
-    const ThermoScalar& pressure,
-    const ChemicalScalar& Z,
-    const ChemicalScalar& b) -> PhaseType;
+    const real& temperature,
+    const real& pressure,
+    const real& Z,
+    const real& b) -> PhaseType;
 
 /// Return a PhaseType that says if the phase is a Liquid or Gas based on Isothermal Compressibility
 /// @param Temperature Phase temperature
@@ -53,9 +53,9 @@ auto identifyPhaseUsingVolume(
 ///
 /// Reference: Bennett, J. and Schmidt, K.A., 2016. Comparison of Phase Identification Methods Used in Oil Industry Flow Simulations. Energy & Fuels, 31(4), pp.3370-3379.
 auto identifyPhaseUsingIsothermalCompressibility(
-    const ThermoScalar& temperature,
-    const ThermoScalar& pressure,
-    const ChemicalScalar& Z) -> PhaseType;
+    const real& temperature,
+    const real& pressure,
+    const real& Z) -> PhaseType;
 
 /// Return a PhaseType that says if the phase is a Liquid or Gas based on gibbs residual energy and
 /// equation of state
@@ -72,14 +72,14 @@ auto identifyPhaseUsingIsothermalCompressibility(
 ///
 /// Reference: Bennett, J. and Schmidt, K.A., 2016. Comparison of Phase Identification Methods Used in Oil Industry Flow Simulations. Energy & Fuels, 31(4), pp.3370-3379.
 auto identifyPhaseUsingGibbsEnergyAndEos(
-    const ThermoScalar& pressure,
-    const ThermoScalar& temperature,
-    const ChemicalScalar& amix,
-    const ChemicalScalar& bmix,
-    const ChemicalScalar& A,
-    const ChemicalScalar& B,
-    const ChemicalScalar& C,
-    std::vector<ChemicalScalar> Zs,
+    const real& pressure,
+    const real& temperature,
+    const real& amix,
+    const real& bmix,
+    const real& A,
+    const real& B,
+    const real& C,
+    std::vector<real> Zs,
     const double epsilon,
     const double sigma) -> PhaseType;
 

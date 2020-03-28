@@ -31,7 +31,7 @@ namespace Reaktoro {
 struct NonlinearResidual
 {
     /// The residual vector of the non-linear residual function evaluated at `x`.
-    Vector val;
+    VectorXd val;
 
     /// The Jacobian matrix of the non-linear residual function evaluated at `x`.
     Matrix jacobian;
@@ -46,7 +46,7 @@ struct NonlinearResidual
 /// A type that describes the functional signature of a non-linear residual function.
 /// @param x The vector of variables
 /// @return The residual of the non-linear function evaluated at `x`
-using NonlinearFunction = std::function<NonlinearResidual(VectorConstRef x)>;
+using NonlinearFunction = std::function<NonlinearResidual(VectorXdConstRef x)>;
 
 /// A type that describes the non-linear problem.
 struct NonlinearProblem
@@ -66,7 +66,7 @@ struct NonlinearProblem
 
     /// The right-hand side vector of the linear equality constraint `A*x = b`.
     /// This can be left empty if no linear inequality constraints exist.
-    Vector b;
+    VectorXd b;
 };
 
 /// A type that describes the options for the output of a non-linear problem calculation.
@@ -159,13 +159,13 @@ public:
     /// Solve a non-linear problem.
     /// @param problem The definition of the non-linear problem.
     /// @param x[in,out] The initial guess and the final solution of the calculation.
-    auto solve(const NonlinearProblem& problem, VectorRef x) -> NonlinearResult;
+    auto solve(const NonlinearProblem& problem, VectorXdRef x) -> NonlinearResult;
 
     /// Solve a non-linear problem with given options.
     /// @param problem The definition of the non-linear problem.
     /// @param x[in,out] The initial guess and the final solution of the calculation.
     /// @param options The options for the calculation.
-    auto solve(const NonlinearProblem& problem, VectorRef x, const NonlinearOptions& options) -> NonlinearResult;
+    auto solve(const NonlinearProblem& problem, VectorXdRef x, const NonlinearOptions& options) -> NonlinearResult;
 
 private:
     struct Impl;

@@ -187,7 +187,7 @@ const double A4[] =
 	-0.13362857E+1
 };
 
-auto calculateWaterHelmholtzStateHGK0(ThermoScalar t, ThermoScalar d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzStateHGK0(real t, real d) -> WaterHelmholtzState
 {
 	WaterHelmholtzState s;
 
@@ -211,7 +211,7 @@ auto calculateWaterHelmholtzStateHGK0(ThermoScalar t, ThermoScalar d) -> WaterHe
 	return s;
 }
 
-auto calculateWaterHelmholtzStateHGK1(ThermoScalar t, ThermoScalar d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzStateHGK1(real t, real d) -> WaterHelmholtzState
 {
 	WaterHelmholtzState s;
 
@@ -232,7 +232,7 @@ auto calculateWaterHelmholtzStateHGK1(ThermoScalar t, ThermoScalar d) -> WaterHe
 	return s;
 }
 
-auto calculateWaterHelmholtzStateHGK2(ThermoScalar t, ThermoScalar d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzStateHGK2(real t, real d) -> WaterHelmholtzState
 {
 	WaterHelmholtzState s;
 
@@ -292,7 +292,7 @@ auto calculateWaterHelmholtzStateHGK2(ThermoScalar t, ThermoScalar d) -> WaterHe
 	return s;
 }
 
-auto calculateWaterHelmholtzStateHGK3(ThermoScalar t, ThermoScalar d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzStateHGK3(real t, real d) -> WaterHelmholtzState
 {
 	WaterHelmholtzState s;
 
@@ -329,7 +329,7 @@ auto calculateWaterHelmholtzStateHGK3(ThermoScalar t, ThermoScalar d) -> WaterHe
 	return s;
 }
 
-auto calculateWaterHelmholtzStateHGK4(ThermoScalar t, ThermoScalar d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzStateHGK4(real t, real d) -> WaterHelmholtzState
 {
 	WaterHelmholtzState s;
 
@@ -375,7 +375,7 @@ auto calculateWaterHelmholtzStateHGK4(ThermoScalar t, ThermoScalar d) -> WaterHe
 
 } // namespace
 
-auto waterHelmholtzStateHGK(Temperature T, ThermoScalar D) -> WaterHelmholtzState
+auto waterHelmholtzStateHGK(Temperature T, real D) -> WaterHelmholtzState
 {
 	// The dimensionless temperature and density
 	const auto t = T/referenceTemperature;

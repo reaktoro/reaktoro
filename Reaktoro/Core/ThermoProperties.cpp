@@ -54,48 +54,48 @@ auto ThermoProperties::pressure() const -> Pressure
     return P;
 }
 
-auto ThermoProperties::standardPartialMolarGibbsEnergies() const -> ThermoVector
+auto ThermoProperties::standardPartialMolarGibbsEnergies() const -> VectorXr
 {
     return tres.standardPartialMolarGibbsEnergies();
 }
 
-auto ThermoProperties::standardPartialMolarEnthalpies() const -> ThermoVector
+auto ThermoProperties::standardPartialMolarEnthalpies() const -> VectorXr
 {
     return tres.standardPartialMolarEnthalpies();
 }
 
-auto ThermoProperties::standardPartialMolarVolumes() const -> ThermoVector
+auto ThermoProperties::standardPartialMolarVolumes() const -> VectorXr
 {
     return tres.standardPartialMolarVolumes();
 }
 
-auto ThermoProperties::standardPartialMolarEntropies() const -> ThermoVector
+auto ThermoProperties::standardPartialMolarEntropies() const -> VectorXr
 {
     const auto& G = standardPartialMolarGibbsEnergies();
     const auto& H = standardPartialMolarEnthalpies();
     return (H - G)/T;
 }
 
-auto ThermoProperties::standardPartialMolarInternalEnergies() const -> ThermoVector
+auto ThermoProperties::standardPartialMolarInternalEnergies() const -> VectorXr
 {
     const auto& H = standardPartialMolarEnthalpies();
     const auto& V = standardPartialMolarVolumes();
     return H - P*V;
 }
 
-auto ThermoProperties::standardPartialMolarHelmholtzEnergies() const -> ThermoVector
+auto ThermoProperties::standardPartialMolarHelmholtzEnergies() const -> VectorXr
 {
     const auto& G = standardPartialMolarGibbsEnergies();
     const auto& V = standardPartialMolarVolumes();
     return G - P*V;
 }
 
-auto ThermoProperties::standardPartialMolarHeatCapacitiesConstP() const -> ThermoVector
+auto ThermoProperties::standardPartialMolarHeatCapacitiesConstP() const -> VectorXr
 {
     return tres.standardPartialMolarHeatCapacitiesConstP();
 }
 
-auto ThermoProperties::standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector
+auto ThermoProperties::standardPartialMolarHeatCapacitiesConstV() const -> VectorXr
 {
     return tres.standardPartialMolarHeatCapacitiesConstV();
 }

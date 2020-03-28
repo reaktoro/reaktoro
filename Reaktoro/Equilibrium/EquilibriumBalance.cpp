@@ -71,7 +71,7 @@ struct EquilibriumBalance::Impl
     }
 
     /// Return the regularized right hand side vector b
-    auto regularizedVector(Vector b) const -> Vector
+    auto regularizedVector(VectorXr b) const -> VectorXr
     {
         // Auxiliary references to LU factors of formula matrix of equilibrium partition
         const auto& P = reactions.lu().P;
@@ -120,12 +120,12 @@ auto EquilibriumBalance::operator=(EquilibriumBalance other) -> EquilibriumBalan
     return *this;
 }
 
-auto EquilibriumBalance::regularizedMatrix() const -> MatrixConstRef
+auto EquilibriumBalance::regularizedMatrix() const -> MatrixXdConstRef
 {
     return pimpl->A;
 }
 
-auto EquilibriumBalance::regularizedVector(Vector b) const -> Vector
+auto EquilibriumBalance::regularizedVector(VectorXr b) const -> VectorXr
 {
     return pimpl->regularizedVector(b);
 }

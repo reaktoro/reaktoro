@@ -41,13 +41,13 @@ public:
 
     /// Update the chemical properties of the chemical system.
     /// @param n The amounts of the species in the system (in units of mol)
-    auto update(VectorConstRef n) -> void;
+    auto update(VectorXrConstRef n) -> void;
 
     /// Update the thermodynamic and chemical properties of the chemical system.
     /// @param T The temperature in the system (in units of K)
     /// @param P The pressure in the system (in units of Pa)
     /// @param n The amounts of the species in the system (in units of mol)
-    auto update(double T, double P, VectorConstRef n) -> void;
+    auto update(double T, double P, VectorXrConstRef n) -> void;
 
     /// Update the thermodynamic and chemical properties of the chemical system.
     /// @param T The temperature in the system (in units of K)
@@ -55,7 +55,7 @@ public:
     /// @param n The amounts of the species in the system (in units of mol)
     /// @param tres The result of the ThermoModel function of the chemical system.
     /// @param cres The result of the ChemicalModel function of the chemical system.
-    auto update(double T, double P, VectorConstRef n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void;
+    auto update(double T, double P, VectorXrConstRef n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void;
 
     /// Return the temperature of the system (in units of K).
     auto temperature() const -> Temperature;
@@ -79,7 +79,7 @@ public:
     auto lnActivityCoefficients() const -> VectorXdConstRef;
 
     /// Return the ln activity constants of the species.
-    auto lnActivityConstants() const -> ThermoVectorConstRef;
+    auto lnActivityConstants() const -> VectorXrConstRef;
 
     /// Return the ln activities of the species.
     auto lnActivities() const -> VectorXdConstRef;
@@ -91,28 +91,28 @@ public:
     auto chemicalPotentials() const -> VectorXd;
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
-    auto standardPartialMolarGibbsEnergies() const -> ThermoVectorConstRef;
+    auto standardPartialMolarGibbsEnergies() const -> VectorXrConstRef;
 
     /// Return the standard partial molar enthalpies of the species (in units of J/mol).
-    auto standardPartialMolarEnthalpies() const -> ThermoVectorConstRef;
+    auto standardPartialMolarEnthalpies() const -> VectorXrConstRef;
 
     /// Return the standard partial molar volumes of the species (in units of m3/mol).
-    auto standardPartialMolarVolumes() const -> ThermoVectorConstRef;
+    auto standardPartialMolarVolumes() const -> VectorXrConstRef;
 
     /// Return the standard partial molar entropies of the species (in units of J/(mol*K)).
-    auto standardPartialMolarEntropies() const -> ThermoVector;
+    auto standardPartialMolarEntropies() const -> VectorXr;
 
     /// Return the standard partial molar internal energies of the species (in units of J/mol).
-    auto standardPartialMolarInternalEnergies() const -> ThermoVector;
+    auto standardPartialMolarInternalEnergies() const -> VectorXr;
 
     /// Return the standard partial molar Helmholtz energies of the species (in units of J/mol).
-    auto standardPartialMolarHelmholtzEnergies() const -> ThermoVector;
+    auto standardPartialMolarHelmholtzEnergies() const -> VectorXr;
 
     /// Return the standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    auto standardPartialMolarHeatCapacitiesConstP() const -> ThermoVectorConstRef;
+    auto standardPartialMolarHeatCapacitiesConstP() const -> VectorXrConstRef;
 
     /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVectorConstRef;
+    auto standardPartialMolarHeatCapacitiesConstV() const -> VectorXrConstRef;
 
     /// Return the molar Gibbs energies of the phases (in units of J/mol).
     auto phaseMolarGibbsEnergies() const -> VectorXd;
@@ -175,19 +175,19 @@ public:
     auto phaseVolumes() const -> VectorXd;
 
     /// Return the volume of the system (in units of m3).
-    auto volume() const -> ChemicalScalar;
+    auto volume() const -> real;
 
     /// Return the total volume occupied by given phases (in units of m3).
     /// @param iphases The indices of the phases.
-    auto subvolume(const Indices& iphases) const -> ChemicalScalar;
+    auto subvolume(const Indices& iphases) const -> real;
 
     /// Return the total fluid volume of the system (in units of m3).
     /// The fluid volume is defined as the sum of volumes of all fluid phases.
-    auto fluidVolume() const -> ChemicalScalar;
+    auto fluidVolume() const -> real;
 
     /// Return the total solid volume of the system (in units of m3).
     /// The solid volume is defined as the sum of volumes of all solid phases.
-    auto solidVolume() const -> ChemicalScalar;
+    auto solidVolume() const -> real;
 
 private:
     /// The chemical system
@@ -206,7 +206,7 @@ private:
     Pressure P;
 
     /// The amounts of the species in the system (in units of mol).
-    Vector n;
+    VectorXr n;
 
     /// The mole fractions of the species in the system (in units of mol/mol).
     VectorXd x;

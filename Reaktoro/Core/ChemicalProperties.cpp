@@ -44,7 +44,7 @@ auto ChemicalProperties::update(double T_, double P_) -> void
     }
 }
 
-auto ChemicalProperties::update(VectorConstRef n_) -> void
+auto ChemicalProperties::update(VectorXrConstRef n_) -> void
 {
     Assert(!std::isnan(T.val) && !std::isnan(P.val),
            "Cannot proceed with method ChemicalProperties::update.",
@@ -76,13 +76,13 @@ auto ChemicalProperties::update(VectorConstRef n_) -> void
     }
 }
 
-auto ChemicalProperties::update(double T, double P, VectorConstRef n) -> void
+auto ChemicalProperties::update(double T, double P, VectorXrConstRef n) -> void
 {
     update(T, P);
     update(n);
 }
 
-auto ChemicalProperties::update(double T_, double P_, VectorConstRef n_, const ThermoModelResult& tres_, const ChemicalModelResult& cres_) -> void
+auto ChemicalProperties::update(double T_, double P_, VectorXrConstRef n_, const ThermoModelResult& tres_, const ChemicalModelResult& cres_) -> void
 {
     T = T_;
     P = P_;
@@ -126,7 +126,7 @@ auto ChemicalProperties::lnActivityCoefficients() const -> VectorXdConstRef
     return cres.lnActivityCoefficients();
 }
 
-auto ChemicalProperties::lnActivityConstants() const -> ThermoVectorConstRef
+auto ChemicalProperties::lnActivityConstants() const -> VectorXrConstRef
 {
     return tres.lnActivityConstants();
 }
@@ -149,48 +149,48 @@ auto ChemicalProperties::chemicalPotentials() const -> VectorXd
     return G + R*T*lna;
 }
 
-auto ChemicalProperties::standardPartialMolarGibbsEnergies() const -> ThermoVectorConstRef
+auto ChemicalProperties::standardPartialMolarGibbsEnergies() const -> VectorXrConstRef
 {
     return tres.standardPartialMolarGibbsEnergies();
 }
 
-auto ChemicalProperties::standardPartialMolarEnthalpies() const -> ThermoVectorConstRef
+auto ChemicalProperties::standardPartialMolarEnthalpies() const -> VectorXrConstRef
 {
     return tres.standardPartialMolarEnthalpies();
 }
 
-auto ChemicalProperties::standardPartialMolarVolumes() const -> ThermoVectorConstRef
+auto ChemicalProperties::standardPartialMolarVolumes() const -> VectorXrConstRef
 {
     return tres.standardPartialMolarVolumes();
 }
 
-auto ChemicalProperties::standardPartialMolarEntropies() const -> ThermoVector
+auto ChemicalProperties::standardPartialMolarEntropies() const -> VectorXr
 {
     const auto& G = standardPartialMolarGibbsEnergies();
     const auto& H = standardPartialMolarEnthalpies();
     return (H - G)/T;
 }
 
-auto ChemicalProperties::standardPartialMolarInternalEnergies() const -> ThermoVector
+auto ChemicalProperties::standardPartialMolarInternalEnergies() const -> VectorXr
 {
     const auto& H = standardPartialMolarEnthalpies();
     const auto& V = standardPartialMolarVolumes();
     return H - P*V;
 }
 
-auto ChemicalProperties::standardPartialMolarHelmholtzEnergies() const -> ThermoVector
+auto ChemicalProperties::standardPartialMolarHelmholtzEnergies() const -> VectorXr
 {
     const auto& G = standardPartialMolarGibbsEnergies();
     const auto& V = standardPartialMolarVolumes();
     return G - P*V;
 }
 
-auto ChemicalProperties::standardPartialMolarHeatCapacitiesConstP() const -> ThermoVectorConstRef
+auto ChemicalProperties::standardPartialMolarHeatCapacitiesConstP() const -> VectorXrConstRef
 {
     return tres.standardPartialMolarHeatCapacitiesConstP();
 }
 
-auto ChemicalProperties::standardPartialMolarHeatCapacitiesConstV() const -> ThermoVectorConstRef
+auto ChemicalProperties::standardPartialMolarHeatCapacitiesConstV() const -> VectorXrConstRef
 {
     return tres.standardPartialMolarHeatCapacitiesConstV();
 }
@@ -388,23 +388,23 @@ auto ChemicalProperties::phaseVolumes() const -> VectorXd
     return phaseAmounts() % phaseMolarVolumes();
 }
 
-auto ChemicalProperties::volume() const -> ChemicalScalar
+auto ChemicalProperties::volume() const -> real
 {
     return sum(phaseVolumes());
 }
 
-auto ChemicalProperties::subvolume(const Indices& iphases) const -> ChemicalScalar
+auto ChemicalProperties::subvolume(const Indices& iphases) const -> real
 {
     return sum(rows(phaseVolumes(), iphases));
 }
 
-auto ChemicalProperties::fluidVolume() const -> ChemicalScalar
+auto ChemicalProperties::fluidVolume() const -> real
 {
     const Indices iphases = system.indicesFluidPhases();
     return sum(rows(phaseVolumes(), iphases));
 }
 
-auto ChemicalProperties::solidVolume() const -> ChemicalScalar
+auto ChemicalProperties::solidVolume() const -> real
 {
     const Indices iphases = system.indicesSolidPhases();
     return sum(rows(phaseVolumes(), iphases));

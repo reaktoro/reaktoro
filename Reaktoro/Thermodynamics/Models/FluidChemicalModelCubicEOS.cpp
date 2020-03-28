@@ -63,7 +63,7 @@ auto fluidChemicalModelCubicEOS(
     FluidMixtureState state;
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorXrConstRef n) mutable
     {
         // Evaluate the state of the gaseous mixture
         state = mixture.state(T, P, n);
@@ -78,7 +78,7 @@ auto fluidChemicalModelCubicEOS(
         const VectorXd ln_x = log(x);
 
         // The ln of pressure in bar units
-        const ThermoScalar ln_Pbar = log(1e-5 * P);
+        const real ln_Pbar = log(1e-5 * P);
 
         // Create an alias to the ln fugacity coefficients
         const auto& ln_phi = eosres.ln_fugacity_coefficients;

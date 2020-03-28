@@ -35,7 +35,7 @@ namespace Reaktoro {
 namespace {
 
 template<typename Decomposition>
-auto solveTranspose(const Decomposition& lu, VectorConstRef b) -> Vector
+auto solveTranspose(const Decomposition& lu, VectorXdConstRef b) -> VectorXd
 {
     const Matrix& LU = lu.matrixLU();
 
@@ -43,7 +43,7 @@ auto solveTranspose(const Decomposition& lu, VectorConstRef b) -> Vector
     const auto& U = LU.triangularView<Eigen::Upper>();
     const auto& P = lu.permutationP();
 
-    Vector x(b.rows());
+    VectorXd x(b.rows());
     x = U.transpose().solve(b);
     x = L.transpose().solve(x);
     x = P.transpose() * x;
@@ -51,14 +51,14 @@ auto solveTranspose(const Decomposition& lu, VectorConstRef b) -> Vector
     return x;
 }
 
-inline auto findFirstNegative(VectorConstRef vec) -> Index
+inline auto findFirstNegative(VectorXdConstRef vec) -> Index
 {
     const Index size = vec.rows();
     Index i = 0; while(i < size && vec[i] >= 0.0) ++i;
     return i;
 }
 
-inline auto findMostNegative(VectorConstRef vec) -> Index
+inline auto findMostNegative(VectorXdConstRef vec) -> Index
 {
     Index i = 0;
     if(vec.rows() == 0) return i;
@@ -222,7 +222,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
 
     std::sort(ibasic.begin(), ibasic.end());
 
-    Vector xb = rows(state.x, ibasic);
+    VectorXd xb = rows(state.x, ibasic);
 
     for(iterations = 1; iterations <= maxiters; ++iterations)
     {
@@ -233,16 +233,16 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
         Matrix AL = cols(A, ilower);
         Matrix AU = cols(A, iupper);
 
-        Vector cB = rows(c, ibasic);
-        Vector cL = rows(c, ilower);
-        Vector cU = rows(c, iupper);
+        VectorXd cB = rows(c, ibasic);
+        VectorXd cL = rows(c, ilower);
+        VectorXd cU = rows(c, iupper);
 
         Eigen::PartialPivLU<Matrix> lu(AB);
 
         y = solveTranspose(lu, cB);
 
-        Vector zL =  cL - AL.transpose() * y;
-        Vector zU = -cU + AU.transpose() * y;
+        VectorXd zL =  cL - AL.transpose() * y;
+        VectorXd zU = -cU + AU.transpose() * y;
 
         const Index qLower = findMostNegative(zL); // the index of the first negative entry in zL
         const Index qUpper = findMostNegative(zU); // the index of the first negative entry in zU
@@ -268,7 +268,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
             const Index qlocal = qLower;
 
             // Compute the step vector `t`
-            Vector t = lu.solve(A.col(q));
+            VectorXd t = lu.solve(A.col(q));
 
             // Compute the step length `lambda`
             double lambda = upper[q] - lower[q];
@@ -357,7 +357,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
             const Index qlocal = qUpper;
 
             // Compute the step vector `t`
-            Vector t = lu.solve(A.col(q));
+            VectorXd t = lu.solve(A.col(q));
 
             // Compute the step length `lambda`
             double lambda = upper[q] - lower[q];
@@ -496,7 +496,7 @@ auto OptimumSolverSimplex::solve(const OptimumProblem& problem, OptimumState& st
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverSimplex::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
+auto OptimumSolverSimplex::dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> VectorXd
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
         "The method OptimumSolverSimplex::dxdp has not been implemented yet.");

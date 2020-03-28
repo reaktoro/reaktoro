@@ -54,16 +54,16 @@ struct OptimumSolverIpActive::Impl
     OptimumSolver solver;
 
     /// The stable primal variables
-    Vector xs;
+    VectorXd xs;
 
     /// The dual potentials of the unstable primal variables
-    Vector zu;
+    VectorXd zu;
 
     /// The gradient of the objective function w.r.t. stable primal variables
-    Vector gs;
+    VectorXd gs;
 
     /// The gradient of the objective function w.r.t. stable primal variables
-    Vector gu;
+    VectorXd gu;
 
     /// The indices of the stable primal variables
     Indices istable_variables;
@@ -116,7 +116,7 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
     const auto& A = problem.A;
     const auto& b = problem.b;
 
-    Vector h;
+    VectorXd h;
 
     // Define some auxiliary references to parameters
     const auto& n = problem.A.cols();
@@ -192,7 +192,7 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
         // The result of the objective evaluation
         ObjectiveResult f_stable;
 
-        stable_problem.objective = [=,&f](VectorConstRef xs) mutable
+        stable_problem.objective = [=,&f](VectorXdConstRef xs) mutable
         {
             // Update the stable components in `x`
             rows(x, istable_variables) = xs;
@@ -324,7 +324,7 @@ auto OptimumSolverIpActive::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverIpActive::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
+auto OptimumSolverIpActive::dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> VectorXd
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
         "The method OptimumSolverIpActive::dxdp has not been implemented yet.");

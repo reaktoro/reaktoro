@@ -29,7 +29,7 @@ class AqueousMixture;
 struct AqueousMixtureState;
 
 /// The signature of a function that calculates the ln activity coefficient of a neutral aqueous species.
-/// @see AqueousMixtureState, ChemicalScalar
-using AqueousActivityModel = std::function<ChemicalScalar(const AqueousMixtureState&)>;
+/// @see AqueousMixtureState, real
+using AqueousActivityModel = std::function<real(const AqueousMixtureState&)>;
 
 } // namespace Reaktoro

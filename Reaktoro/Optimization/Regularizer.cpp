@@ -55,7 +55,7 @@ struct Regularizer::Impl
     Indices inontrivial_constraints;
 
     /// The values of the trivial variables
-    Vector xtrivial;
+    VectorXd xtrivial;
 
     /// The indices of the linearly independent constraints
     Indices ili_constraints;
@@ -82,10 +82,10 @@ struct Regularizer::Impl
     // These members are calculated from `A_star` and `b_star`.
     //=============================================================================================
     /// The weights computed for the regularization.
-    Vector W;
+    VectorXd W;
 
     /// Auxiliary variables for calculation of the weights computed for the regularization.
-    Vector x, z;
+    VectorXd x, z;
 
     /// The regularizer matrix that is applied to the coefficient matrix `A_star` as `reg(A) = R*A_star`.
     /// If the new set of basic variables are the same as last, then there is no need to update `R`.
@@ -159,13 +159,13 @@ struct Regularizer::Impl
     auto regularize(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
 
     /// Regularize the vectors `dg/dp` and `db/dp`, where `g = grad(f)`.
-    auto regularize(Vector& dgdp, Vector& dbdp) -> void;
+    auto regularize(VectorXd& dgdp, VectorXd& dbdp) -> void;
 
     /// Recover an optimum state to an state that corresponds to the original optimum problem.
     auto recover(OptimumState& state) -> void;
 
     /// Recover the sensitivity derivative `dxdp`.
-    auto recover(Vector& dxdp) -> void;
+    auto recover(VectorXd& dxdp) -> void;
 };
 
 auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& problem) -> void
@@ -345,7 +345,7 @@ auto Regularizer::Impl::removeTrivialConstraints(
     // The auxiliary vector used in the lambda functions below.
     // The use of this vector `x` ensures that trivial components
     // remain unchanged on the lower bounds.
-    Vector x = problem.l;
+    VectorXd x = problem.l;
 
     // Set the number of primal variables as the number of non-trivial variables
     problem.n = inontrivial_variables.size();
@@ -375,7 +375,7 @@ auto Regularizer::Impl::removeTrivialConstraints(
         ObjectiveResult res;
 
         // Update the objective function
-        problem.objective = [=](VectorConstRef X) mutable
+        problem.objective = [=](VectorXdConstRef X) mutable
         {
             x(inontrivial_variables) = X;
 
@@ -487,7 +487,7 @@ auto Regularizer::Impl::regularize(OptimumProblem& problem, OptimumState& state,
     fixInfeasibleConstraints(problem);
 }
 
-auto Regularizer::Impl::regularize(Vector& dgdp, Vector& dbdp) -> void
+auto Regularizer::Impl::regularize(VectorXd& dgdp, VectorXd& dbdp) -> void
 {
     // Remove derivative components corresponding to trivial constraints
     if(itrivial_constraints.size())
@@ -547,7 +547,7 @@ auto Regularizer::Impl::recover(OptimumState& state) -> void
     }
 }
 
-auto Regularizer::Impl::recover(Vector& dxdp) -> void
+auto Regularizer::Impl::recover(VectorXd& dxdp) -> void
 {
     // Set the components corresponding to trivial and non-trivial variables
     if(itrivial_constraints.size())
@@ -588,7 +588,7 @@ auto Regularizer::regularize(OptimumProblem& problem, OptimumState& state, Optim
     pimpl->regularize(problem, state, options);
 }
 
-auto Regularizer::regularize(Vector& dgdp, Vector& dbdp) -> void
+auto Regularizer::regularize(VectorXd& dgdp, VectorXd& dbdp) -> void
 {
     pimpl->regularize(dgdp, dbdp);
 }
@@ -598,7 +598,7 @@ auto Regularizer::recover(OptimumState& state) -> void
     pimpl->recover(state);
 }
 
-auto Regularizer::recover(Vector& dxdp) -> void
+auto Regularizer::recover(VectorXd& dxdp) -> void
 {
     pimpl->recover(dxdp);
 }

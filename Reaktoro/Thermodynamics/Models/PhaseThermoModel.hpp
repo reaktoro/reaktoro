@@ -48,10 +48,10 @@
 // };
 
 // /// The thermodynamic properties of the species in a phase.
-// using PhaseThermoModelResult = PhaseThermoModelResultBase<ThermoVectorRef>;
+// using PhaseThermoModelResult = PhaseThermoModelResultBase<VectorXrRef>;
 
 // /// The thermodynamic properties of the species in a phase (constant).
-// using PhaseThermoModelResultConst = PhaseThermoModelResultBase<ThermoVectorConstRef>;
+// using PhaseThermoModelResultConst = PhaseThermoModelResultBase<VectorXrConstRef>;
 
 // /// The signature of the chemical model function that calculates the thermodynamic properties of the species in a phase.
 // using PhaseThermoModel = std::function<void(PhaseThermoModelResult&, Temperature, Pressure)>;

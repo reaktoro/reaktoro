@@ -43,7 +43,7 @@ struct OptimumSolverIpNewton::Impl
     KktSolver kkt;
 
     /// The trial iterate x
-    Vector xtrial;
+    VectorXd xtrial;
 
     /// The outputter instance
     Outputter outputter;
@@ -205,7 +205,7 @@ struct OptimumSolverIpNewton::Impl
             error = std::max({errorf, errorh, errorc});
         };
 
-        auto update_objective = [&](VectorConstRef x)
+        auto update_objective = [&](VectorXdConstRef x)
         {
             if(problem.c.rows())
             {
@@ -420,7 +420,7 @@ struct OptimumSolverIpNewton::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Matrix
+    auto dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> Matrix
     {
         // Initialize the right-hand side of the KKT equations
         rhs.rx.noalias() = -dgdp;
@@ -462,7 +462,7 @@ auto OptimumSolverIpNewton::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverIpNewton::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
+auto OptimumSolverIpNewton::dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> VectorXd
 {
     return pimpl->dxdp(dgdp, dbdp);
 }

@@ -29,18 +29,18 @@ auto names(const NamedValues& values) -> std::vector<std::string>
 }
 
 template<typename SpeciesValues>
-auto charges(const SpeciesValues& species) -> Vector
+auto charges(const SpeciesValues& species) -> VectorXr
 {
-    Vector charges(species.size());
+    VectorXr charges(species.size());
     for(unsigned i = 0; i < species.size(); ++i)
         charges[i] = species[i].charge();
     return charges;
 }
 
 template<typename SpeciesValues>
-auto molarMasses(const SpeciesValues& species) -> Vector
+auto molarMasses(const SpeciesValues& species) -> VectorXr
 {
-    Vector molar_masses(species.size());
+    VectorXr molar_masses(species.size());
     for(unsigned i = 0; i < species.size(); ++i)
         molar_masses[i] = species[i].molarMass();
     return molar_masses;

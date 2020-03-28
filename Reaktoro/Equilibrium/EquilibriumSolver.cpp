@@ -60,24 +60,24 @@ struct EquilibriumSolver::Impl
 
     /// The sensitivity derivatives of the equilibrium state
     EquilibriumSensitivity sensitivities;
-    Vector zerosEe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
-    Vector zerosNe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
-    Vector unitjEe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
+    VectorXr zerosEe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
+    VectorXr zerosNe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
+    VectorXr unitjEe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
 
     /// The molar amounts of the species
-    Vector n;
+    VectorXr n;
 
     /// The dual potentials of the elements
-    Vector y;
+    VectorXr y;
 
     /// The dual potentials of the species
-    Vector z;
+    VectorXr z;
 
     /// The molar amounts of the elements in the equilibrium partition
-    Vector be;
+    VectorXr be;
 
     /// The standard chemical potentials of the species
-    ThermoVector u0;
+    VectorXr u0;
 
     /// The chemical potentials of the species
     VectorXd u;
@@ -86,7 +86,7 @@ struct EquilibriumSolver::Impl
     VectorXd ue;
 
     /// The chemical potentials of the inert species
-    Vector ui;
+    VectorXr ui;
 
     /// The mole fractions of the equilibrium species
     VectorXd xe;
@@ -227,7 +227,7 @@ struct EquilibriumSolver::Impl
         ObjectiveResult res;
 
         // The Gibbs energy function to be minimized
-        optimum_problem.objective = [=](VectorConstRef ne) mutable
+        optimum_problem.objective = [=](VectorXrConstRef ne) mutable
         {
             // Set the molar amounts of the species
             n(ies) = ne;
@@ -332,14 +332,14 @@ struct EquilibriumSolver::Impl
     }
 
     /// Find a feasible approximation for an equilibrium problem with all elements present on chemical system.
-    auto approximate_with_all_element_amounts(ChemicalState& state, double T, double P, VectorConstRef b) -> EquilibriumResult
+    auto approximate_with_all_element_amounts(ChemicalState& state, double T, double P, VectorXrConstRef b) -> EquilibriumResult
     {
-        Vector be = b(iee);
+        VectorXr be = b(iee);
         return approximate(state, T, P, be);
     }
 
     /// Find a feasible approximation for an equilibrium problem.
-    auto approximate(ChemicalState& state, double T, double P, Vector be) -> EquilibriumResult
+    auto approximate(ChemicalState& state, double T, double P, VectorXr be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
         Assert(unsigned(be.rows()) == Ee,
@@ -365,10 +365,10 @@ struct EquilibriumSolver::Impl
         properties.update(T, P);
 
         // Get the standard Gibbs energies of the equilibrium species
-        const Vector ge0 = properties.standardPartialMolarGibbsEnergies().val(ies);
+        const VectorXr ge0 = properties.standardPartialMolarGibbsEnergies().val(ies);
 
         // Get the ln activity constants of the equilibrium species
-        const Vector ln_ce = properties.lnActivityConstants().val(ies);
+        const VectorXr ln_ce = properties.lnActivityConstants().val(ies);
 
         // Define the optimisation problem
         OptimumProblem optimum_problem;
@@ -410,7 +410,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Find an initial guess for an equilibrium problem.
-    auto initialguess(ChemicalState& state, double T, double P, Vector be) -> EquilibriumResult
+    auto initialguess(ChemicalState& state, double T, double P, VectorXr be) -> EquilibriumResult
     {
         // Solve the linear programming problem to obtain an approximation
         auto result = approximate(state, T, P, be);
@@ -446,14 +446,14 @@ struct EquilibriumSolver::Impl
     }
 
     /// Solve the equilibrium problem, passing all elements that has on chemical system
-    auto solve_with_all_element_amounts(ChemicalState& state, double T, double P, VectorConstRef b) -> EquilibriumResult
+    auto solve_with_all_element_amounts(ChemicalState& state, double T, double P, VectorXrConstRef b) -> EquilibriumResult
     {
-        Vector be = b(iee);
+        VectorXr be = b(iee);
         return solve(state, T, P, be);
     }
 
     /// Solve the equilibrium problem
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
+    auto solve(ChemicalState& state, double T, double P, VectorXrConstRef be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
         Assert(be.size() == static_cast<int>(Ee),
@@ -468,7 +468,7 @@ struct EquilibriumSolver::Impl
     auto solve(ChemicalState& state, double T, double P, const double* _be) -> EquilibriumResult
     {
         // Set the molar amounts of the elements
-        be = Vector::Map(_be, Ee);
+        be = VectorXr::Map(_be, Ee);
 
         // Set temperature and pressure of the chemical state
         state.setTemperature(T);
@@ -539,7 +539,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Compute the sensitivity of the species amounts with respect to temperature.
-    auto dndT() -> VectorConstRef
+    auto dndT() -> VectorXrConstRef
     {
         const auto& ieq_species = partition.indicesEquilibriumSpecies();
         zerosEe = zeros(Ee);
@@ -549,7 +549,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Compute the sensitivity of the species amounts with respect to pressure.
-    auto dndP() -> VectorConstRef
+    auto dndP() -> VectorXrConstRef
     {
         const auto& ieq_species = partition.indicesEquilibriumSpecies();
         zerosEe = zeros(Ee);
@@ -559,7 +559,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Compute the sensitivity of the species amounts with respect to element amounts.
-    auto dndb() -> VectorConstRef
+    auto dndb() -> VectorXrConstRef
     {
         const auto& ieq_species = partition.indicesEquilibriumSpecies();
         const auto& ieq_elements = partition.indicesEquilibriumElements();
@@ -611,7 +611,7 @@ auto EquilibriumSolver::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
+auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, VectorXrConstRef be) -> EquilibriumResult
 {
     return pimpl->approximate(state, T, P, be);
 }
@@ -627,7 +627,7 @@ auto EquilibriumSolver::approximate(ChemicalState& state) -> EquilibriumResult
     return pimpl->approximate_with_all_element_amounts(state, state.temperature(), state.pressure(), state.elementAmounts());
 }
 
-auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
+auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorXrConstRef be) -> EquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
 }
@@ -658,17 +658,17 @@ auto EquilibriumSolver::sensitivity() -> const EquilibriumSensitivity&
     return pimpl->sensitivity();
 }
 
-auto EquilibriumSolver::dndT() -> VectorConstRef
+auto EquilibriumSolver::dndT() -> VectorXrConstRef
 {
     return pimpl->dndT();
 }
 
-auto EquilibriumSolver::dndP() -> VectorConstRef
+auto EquilibriumSolver::dndP() -> VectorXrConstRef
 {
     return pimpl->dndP();
 }
 
-auto EquilibriumSolver::dndb() -> VectorConstRef
+auto EquilibriumSolver::dndb() -> VectorXrConstRef
 {
     return pimpl->dndb();
 }

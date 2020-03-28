@@ -151,7 +151,7 @@
 //
 //        // The molar volumes of the solid phases at (T, P), defined as
 //        // the average of the standard molar volumes of their end-members.
-//        Vector molar_volumes_solid_phases(isp.size());
+//        VectorXr molar_volumes_solid_phases(isp.size());
 //        for(Index i = 0; i < isp.size(); ++i)
 //            molar_volumes_solid_phases[i] = sum(system.phase(isp[i]).properties(T, P). // TODO not sure yet how to fix this for the new desing
 //                standardPartialMolarVolumes().val)/isp.size();

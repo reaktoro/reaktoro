@@ -62,8 +62,8 @@ auto newton(const std::function<std::tuple<double,double>(double)>& f,
 /// @param x0 The initial guess for the iterative root calculation.
 /// @param epsilon The tolerance used in \f$ |f(x)| < \epsilon \f$ to check convergence.
 /// @param maxiter The maximum number of iterations.
-auto newton(const std::function<void(VectorConstRef, VectorRef, MatrixRef)>& f,
-            VectorConstRef x0, double epsilon, unsigned maxiter) -> Vector;
+auto newton(const std::function<void(VectorXdConstRef, VectorXdRef, MatrixXdRef)>& f,
+            VectorXdConstRef x0, double epsilon, unsigned maxiter) -> VectorXd;
 
 /// Return all real roots of a group of roots
 /// @param roots CubicRoots with of complex and real roots

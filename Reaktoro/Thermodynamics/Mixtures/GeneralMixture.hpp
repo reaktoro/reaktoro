@@ -95,18 +95,18 @@ public:
     auto namesSpecies() const -> std::vector<std::string>;
 
     /// Return the charges of the species in the mixture
-    auto chargesSpecies() const -> Vector;
+    auto chargesSpecies() const -> VectorXr;
 
     /// Calculates the mole fractions of the species and their partial derivatives
     /// @param n The molar abundance of the species (in units of mol)
     /// @return The mole fractions and their partial derivatives
-    auto moleFractions(VectorConstRef n) const -> VectorXd;
+    auto moleFractions(VectorXrConstRef n) const -> VectorXd;
 
     /// Calculate the state of the mixture.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(Temperature T, Pressure P, VectorConstRef n) const -> MixtureState;
+    auto state(Temperature T, Pressure P, VectorXrConstRef n) const -> MixtureState;
 
 private:
     /// The name of mixture
@@ -181,17 +181,17 @@ auto GeneralMixture<SpeciesType>::namesSpecies() const -> std::vector<std::strin
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::chargesSpecies() const -> Vector
+auto GeneralMixture<SpeciesType>::chargesSpecies() const -> VectorXr
 {
     const unsigned nspecies = numSpecies();
-    Vector charges(nspecies);
+    VectorXr charges(nspecies);
     for(unsigned i = 0; i < nspecies; ++i)
         charges[i] = _species[i].charge();
     return charges;
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::moleFractions(VectorConstRef n) const -> VectorXd
+auto GeneralMixture<SpeciesType>::moleFractions(VectorXrConstRef n) const -> VectorXd
 {
     const unsigned nspecies = numSpecies();
     if(nspecies == 1)
@@ -213,7 +213,7 @@ auto GeneralMixture<SpeciesType>::moleFractions(VectorConstRef n) const -> Vecto
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::state(Temperature T, Pressure P, VectorConstRef n) const -> MixtureState
+auto GeneralMixture<SpeciesType>::state(Temperature T, Pressure P, VectorXrConstRef n) const -> MixtureState
 {
     MixtureState res;
     res.T = T;
