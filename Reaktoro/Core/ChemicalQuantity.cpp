@@ -172,7 +172,7 @@ struct ChemicalQuantity::Impl
     Vector n;
 
     /// The rates of the reactions in the chemical system (in units of mol/s).
-    ChemicalVector rates;
+    VectorXd rates;
 
     /// All created chemical quantity functions from formatted strings
     std::map<std::string, Function> function_map;
@@ -280,7 +280,7 @@ auto ChemicalQuantity::properties() const -> const ChemicalProperties&
     return pimpl->properties;
 }
 
-auto ChemicalQuantity::rates() const -> const ChemicalVector&
+auto ChemicalQuantity::rates() const -> const VectorXd&
 {
     return pimpl->rates;
 }
@@ -841,7 +841,7 @@ auto reactionRate(const ChemicalQuantity& quantity, std::string arguments) -> st
     const double factor = units::convert(1.0, "mol/s", units);
     auto func = [=]() -> double
     {
-        const ChemicalVector& rates = quantity.rates();
+        const VectorXd& rates = quantity.rates();
         const double val = rates.val[ireaction];
         return factor * val;
     };

@@ -18,8 +18,7 @@
 //#pragma once
 //
 //// Reaktoro includes
-//#include <Reaktoro/Common/ChemicalScalar.hpp>
-//#include <Reaktoro/Math/Matrix.hpp>
+////#include <Reaktoro/Math/Matrix.hpp>
 //#include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
 //
 //namespace Reaktoro {

@@ -27,7 +27,6 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/GlobalOptions.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoState.hpp>

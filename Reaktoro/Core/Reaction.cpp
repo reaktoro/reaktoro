@@ -18,11 +18,8 @@
 #include "Reaction.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Species.hpp>
@@ -197,7 +194,7 @@ auto Reaction::lnEquilibriumConstant(const ChemicalProperties& properties) const
 auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const -> ChemicalScalar
 {
     const unsigned num_species = system().numSpecies();
-    const ChemicalVector& ln_a = properties.lnActivities();
+    const VectorXd& ln_a = properties.lnActivities();
     ChemicalScalar ln_Q(num_species);
     unsigned counter = 0;
     for(Index i : indices())

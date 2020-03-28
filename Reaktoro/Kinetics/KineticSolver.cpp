@@ -22,9 +22,7 @@
 using namespace std::placeholders;
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -38,6 +36,7 @@ using namespace std::placeholders;
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticProblem.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
@@ -114,19 +113,19 @@ struct KineticSolver::Impl
     ChemicalProperties properties;
 
     /// The vector with the values of the reaction rates
-    ChemicalVector r;
+    VectorXd r;
 
     /// The partial derivatives of the reaction rates `r` w.r.t. to `be`, `ne`, `nk`, `and `u = [be nk]`
     Matrix drdbe, drdne, drdnk, drdu;
 
     /// The source term
-    ChemicalVector q;
+    VectorXd q;
 
     /// The partial derivatives of the source rates `q` w.r.t. to `be`, `ne`, `nk`, `and `u = [be nk]`
     Matrix dqdbe, dqdne, dqdnk, dqdu;
 
     /// The function that calculates the source term in the problem
-    std::function<ChemicalVector(const ChemicalProperties&)> source_fn;
+    std::function<VectorXd(const ChemicalProperties&)> source_fn;
 
     Impl()
     {}
@@ -208,7 +207,7 @@ struct KineticSolver::Impl
 
         source_fn = [=](const ChemicalProperties& properties)
         {
-            ChemicalVector q(num_species);
+            VectorXd q(num_species);
             q.val = n;
             if(old_source_fn)
                 q += old_source_fn(properties);
@@ -224,7 +223,7 @@ struct KineticSolver::Impl
         const Index size = system.numSpeciesInPhase(iphase);
         auto old_source_fn = source_fn;
         ChemicalScalar phasevolume;
-        ChemicalVector q(size);
+        VectorXd q(size);
 
         source_fn = [=](const ChemicalProperties& properties) mutable
         {
@@ -245,7 +244,7 @@ struct KineticSolver::Impl
         const Indices& isolid_species = partition.indicesSolidSpecies();
         auto old_source_fn = source_fn;
         ChemicalScalar fluidvolume;
-        ChemicalVector q;
+        VectorXd q;
 
         source_fn = [=](const ChemicalProperties& properties) mutable
         {
@@ -265,7 +264,7 @@ struct KineticSolver::Impl
         const Indices& ifluid_species = partition.indicesFluidSpecies();
         auto old_source_fn = source_fn;
         ChemicalScalar solidvolume;
-        ChemicalVector q;
+        VectorXd q;
 
         source_fn = [=](const ChemicalProperties& properties) mutable
         {

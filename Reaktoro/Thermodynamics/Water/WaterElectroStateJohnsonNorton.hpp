@@ -18,7 +18,6 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/ScalarTypes.hpp>
 
 namespace Reaktoro {
 

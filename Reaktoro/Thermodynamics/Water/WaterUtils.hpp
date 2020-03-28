@@ -18,7 +18,6 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/ScalarTypes.hpp>
 #include <Reaktoro/Thermodynamics/Common/StateOfMatter.hpp>
 
 namespace Reaktoro {

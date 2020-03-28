@@ -25,7 +25,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
-#include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
@@ -54,7 +53,7 @@ auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const Chem
 
     MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable
     {
-        const ChemicalVector& ln_a = properties.lnActivities();
+        const VectorXd& ln_a = properties.lnActivities();
         ChemicalScalar ai = exp(ln_a[ispecies]);
         ChemicalScalar res = pow(ai, power);
         return res;

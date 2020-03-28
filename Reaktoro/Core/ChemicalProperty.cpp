@@ -22,7 +22,6 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
@@ -139,10 +138,10 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
         const ThermoVector u0a = rows(properties.standardPartialMolarGibbsEnergies(), ifirst, num_aqueous)/RT;
 
         // The ln activities of the aqueous species
-        const ChemicalVector ln_aa = rows(properties.lnActivities(), ifirst, num_aqueous);
+        const VectorXd ln_aa = rows(properties.lnActivities(), ifirst, num_aqueous);
 
         // The normalized chemical potentials of the aqueous species
-        const ChemicalVector ua = u0a + ln_aa;
+        const VectorXd ua = u0a + ln_aa;
 
         // The standard chemical potential of electron species (zero if not existent in the system)
         ThermoScalar u0a_electron;
@@ -150,7 +149,7 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
             u0a_electron = u0a[ielectron];
 
         // The dual potentials of the elements and its derivatives
-        ChemicalVector y;
+        VectorXd y;
         y.val = lu.trsolve(ua.val);
         y.ddT = lu.trsolve(ua.ddT);
         y.ddP = lu.trsolve(ua.ddP);
@@ -302,7 +301,7 @@ auto ChemicalProperty::alkalinity(const ChemicalSystem& system) -> ChemicalPrope
         alkalinity_factors[j++] = system.species(i).charge();
 
     ChemicalScalar volume(num_species);
-    ChemicalVector n;
+    VectorXd n;
 
     ChemicalPropertyFunction f = [=](const ChemicalProperties& properties) mutable
     {

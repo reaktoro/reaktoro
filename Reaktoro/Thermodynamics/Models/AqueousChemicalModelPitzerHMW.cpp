@@ -1044,7 +1044,7 @@ auto lnActivityCoefficientCation(const AqueousMixtureState& state, const PitzerP
     const auto num_anions   = idx_anions.size();
 
     // The vector of molalities of all aqueous species
-    const ChemicalVector& m = state.m;
+    const VectorXd& m = state.m;
 
     // The number of species in the mixture
     const unsigned nspecies = m.val.size();
@@ -1137,7 +1137,7 @@ auto lnActivityCoefficientAnion(const AqueousMixtureState& state, const PitzerPa
     const auto num_anions   = idx_anions.size();
 
     // The molalities of all aqueous species
-    const ChemicalVector& m = state.m;
+    const VectorXd& m = state.m;
 
     // The number of species in the mixture
     const unsigned nspecies = m.val.size();
@@ -1230,7 +1230,7 @@ auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitze
     const auto num_anions   = idx_anions.size();
 
     // The vector of molalities of all aqueous species
-    const ChemicalVector& m = state.m;
+    const VectorXd& m = state.m;
 
     // The number of species in the mixture
     const unsigned nspecies = m.val.size();
@@ -1354,7 +1354,7 @@ auto lnActivityCoefficientNeutral(const AqueousMixtureState& state, const Pitzer
     const auto num_anions   = idx_anions.size();
 
     // The vector of molalities of all aqueous species
-    const ChemicalVector& m = state.m;
+    const VectorXd& m = state.m;
 
     // The number of species in the mixture
     const unsigned nspecies = m.val.size();

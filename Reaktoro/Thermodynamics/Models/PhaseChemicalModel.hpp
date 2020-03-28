@@ -21,9 +21,7 @@
 #include <functional>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ThermoScalar.hpp>
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -57,10 +55,10 @@ struct PhaseChemicalModelResultBase
 };
 
 /// The chemical properties of the species in a phase.
-using PhaseChemicalModelResult = PhaseChemicalModelResultBase<ChemicalScalarRef, ChemicalVectorRef>;
+using PhaseChemicalModelResult = PhaseChemicalModelResultBase<ChemicalScalarRef, VectorXdRef>;
 
 /// The chemical properties of the species in a phase (constant).
-using PhaseChemicalModelResultConst = PhaseChemicalModelResultBase<ChemicalScalarConstRef, ChemicalVectorConstRef>;
+using PhaseChemicalModelResultConst = PhaseChemicalModelResultBase<ChemicalScalarConstRef, VectorXdConstRef>;
 
 /// The signature of the chemical model function that calculates the chemical properties of the species in a phase.
 using PhaseChemicalModel = std::function<void(PhaseChemicalModelResult&, Temperature, Pressure, VectorConstRef)>;

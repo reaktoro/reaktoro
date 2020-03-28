@@ -22,7 +22,6 @@
 #include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ScalarTypes.hpp>
 
 // Forwardt declarations for ThermoFun
 namespace ThermoFun {

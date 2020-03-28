@@ -21,9 +21,7 @@
 // #include <functional>
 
 // // Reaktoro includes
-// #include <Reaktoro/Common/ThermoScalar.hpp>
-// #include <Reaktoro/Common/ThermoVector.hpp>
-
+// //
 // namespace Reaktoro {
 
 // /// The result of a thermodynamic model function that calculates the thermodynamic properties of species.

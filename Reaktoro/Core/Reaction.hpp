@@ -27,7 +27,6 @@
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
-#include <Reaktoro/Common/ScalarTypes.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
@@ -47,7 +46,7 @@ using ReactionRateFunction = std::function<ChemicalScalar(const ChemicalProperti
 /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
 /// @see Reaction
 /// @ingroup Core
-using ReactionRateVectorFunction = std::function<ChemicalVector(const ChemicalProperties&)>;
+using ReactionRateVectorFunction = std::function<VectorXd(const ChemicalProperties&)>;
 
 /// Provide a computational representation of a chemical reaction.
 /// The Reaction class provides a representation of a chemical reaction

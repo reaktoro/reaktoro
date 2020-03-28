@@ -18,8 +18,6 @@
 #include "AqueousActivityModelRumpfCO2.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 
@@ -55,7 +53,7 @@ auto aqueousActivityModelRumpfCO2(const AqueousMixture& mixture) -> AqueousActiv
         const ThermoScalar& T = state.T;
 
         // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
-        const ChemicalVector& ms = state.ms;
+        const VectorXd& ms = state.ms;
 
         // Extract the stoichiometric molalities of the specific ions and their molar derivatives
         if(iNa < nions) mNa = ms[iNa];

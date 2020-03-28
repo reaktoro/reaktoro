@@ -23,11 +23,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
-#include <Reaktoro/Common/ScalarTypes.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -42,7 +38,7 @@ struct MixtureState
     Pressure P;
 
     /// The mole fractions of the species in the mixture and their partial derivatives
-    ChemicalVector x;
+    VectorXd x;
 };
 
 /// Compare two MixtureState instances for equality
@@ -104,7 +100,7 @@ public:
     /// Calculates the mole fractions of the species and their partial derivatives
     /// @param n The molar abundance of the species (in units of mol)
     /// @return The mole fractions and their partial derivatives
-    auto moleFractions(VectorConstRef n) const -> ChemicalVector;
+    auto moleFractions(VectorConstRef n) const -> VectorXd;
 
     /// Calculate the state of the mixture.
     /// @param T The temperature (in units of K)
@@ -195,16 +191,16 @@ auto GeneralMixture<SpeciesType>::chargesSpecies() const -> Vector
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::moleFractions(VectorConstRef n) const -> ChemicalVector
+auto GeneralMixture<SpeciesType>::moleFractions(VectorConstRef n) const -> VectorXd
 {
     const unsigned nspecies = numSpecies();
     if(nspecies == 1)
     {
-        ChemicalVector x(1);
+        VectorXd x(1);
         x.val[0] = 1.0;
         return x;
     }
-    ChemicalVector x(nspecies);
+    VectorXd x(nspecies);
     const double nt = n.sum();
     if(nt == 0.0) return x;
     x.val = n/nt;

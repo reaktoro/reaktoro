@@ -24,7 +24,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Common/ScalarTypes.hpp>
 
 // Phreeqc includes
 #include <Reaktoro/Interfaces/PhreeqcLegacy.hpp>

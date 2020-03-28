@@ -40,10 +40,10 @@ struct AqueousMixtureState : public MixtureState
     ChemicalScalar Is;
 
     /// The molalities of the aqueous species and their partial derivatives (in units of mol/kg)
-    ChemicalVector m;
+    VectorXd m;
 
     /// The stoichiometric molalities of the ionic species and their partial derivatives (in units of mol/kg)
-    ChemicalVector ms;
+    VectorXd ms;
 };
 
 /// A type used to describe an aqueous mixture.
@@ -165,22 +165,22 @@ public:
     /// Calculate the molalities of the aqueous species and its molar derivatives.
     /// @param n The molar abundance of species (in units of mol)
     /// @return The molalities and their partial derivatives
-    auto molalities(VectorConstRef n) const -> ChemicalVector;
+    auto molalities(VectorConstRef n) const -> VectorXd;
 
     /// Calculate the stoichiometric molalities of the ions and its molar derivatives.
     /// @param m The molalities of the aqueous species and their partial derivatives
     /// @return The stoichiometric molalities and their partial derivatives
-    auto stoichiometricMolalities(const ChemicalVector& m) const -> ChemicalVector;
+    auto stoichiometricMolalities(const VectorXd& m) const -> VectorXd;
 
     /// Calculate the effective ionic strength of the aqueous mixture and its molar derivatives.
     /// @param m The molalities of the aqueous species and their partial derivatives
     /// @return The effective ionic strength of the aqueous mixture and its molar derivatives
-    auto effectiveIonicStrength(const ChemicalVector& m) const -> ChemicalScalar;
+    auto effectiveIonicStrength(const VectorXd& m) const -> ChemicalScalar;
 
     /// Calculate the stoichiometric ionic strength of the aqueous mixture and its molar derivatives.
     /// @param ms The stoichiometric molalities of the ions and their partial derivatives
     /// @return The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
-    auto stoichiometricIonicStrength(const ChemicalVector& ms) const -> ChemicalScalar;
+    auto stoichiometricIonicStrength(const VectorXd& ms) const -> ChemicalScalar;
 
     /// Calculate the state of the aqueous mixture.
     /// @param T The temperature (in units of K)

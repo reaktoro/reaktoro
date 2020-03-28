@@ -18,11 +18,8 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
-#include <Reaktoro/Common/ThermoVector.hpp>
-#include <Reaktoro/Core/ActivityModel.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 #include <Reaktoro/Core/StandardThermoModel.hpp>
 
 namespace Reaktoro {
@@ -44,19 +41,19 @@ public:
     auto speciesAmounts() const -> Composition;
 
     /// Return the mole fractions of the species in the phase.
-    auto moleFractions() const -> ChemicalVector;
+    auto moleFractions() const -> VectorXd;
 
     /// Return the ln activity coefficients of the species in the phase.
-    auto lnActivityCoefficients() const -> ChemicalVectorConstRef;
+    auto lnActivityCoefficients() const -> VectorXdConstRef;
 
     /// Return the ln activities of the species in the phase.
-    auto lnActivities() const -> ChemicalVectorConstRef;
+    auto lnActivities() const -> VectorXdConstRef;
 
     /// Return the partial molar volume of the species in the phase (in units of m3/mol).
-    auto partialMolarVolumes() const -> ChemicalVectorConstRef;
+    auto partialMolarVolumes() const -> VectorXdConstRef;
 
     /// Return the chemical potentials of the species (in units of J/mol).
-    auto chemicalPotentials() const -> ChemicalVector;
+    auto chemicalPotentials() const -> VectorXd;
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
     auto standardPartialMolarGibbsEnergies() const -> ThermoVectorConstRef;
@@ -156,7 +153,7 @@ private:
     Vector n;
 
     /// The mole fractions of the species in the phase (in units of mol/mol).
-    ChemicalVector x;
+    VectorXd x;
 
     /// The standard thermodynamic properties of each species in the phase.
     std::vector<StandardThermoProps> species_standard_thermo_props;
