@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
 #include "AggregateState.hpp"
 
 namespace Reaktoro {
@@ -36,6 +34,7 @@ auto parseAggregateState(const std::string& symbol) -> AggregateState
     if(symbol == "mon") return AggregateState::Monomeric;
     if(symbol == "pol") return AggregateState::Polymeric;
     if(symbol == "ss")  return AggregateState::SolidSolution;
+    if(symbol == "ex")  return AggregateState::IonExchange;
     if(symbol == "aq")  return AggregateState::Aqueous;
     return AggregateState::Undefined;
 }
