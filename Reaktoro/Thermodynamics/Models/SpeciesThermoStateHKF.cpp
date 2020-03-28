@@ -41,40 +41,40 @@ namespace Reaktoro {
 namespace {
 
 /// The reference temperature assumed in the HKF equations of state (in units of K)
-const double referenceTemperature = 298.15;
+const auto referenceTemperature = 298.15;
 
 /// The reference temperature assumed in the HKF equations of state (in units of bar)
-const double referencePressure = 1.0;
+const auto referencePressure = 1.0;
 
 /// The reference dielectric constant of water \epsilon
-const double referenceDielectricConstant = 78.24385513;
+const auto referenceDielectricConstant = 78.24385513;
 
 /// The reference Born function Z (dimensionless)
-const double referenceBornZ = -1.278055636e-02;
+const auto referenceBornZ = -1.278055636e-02;
 
 /// The reference Born function Y (dimensionless)
-const double referenceBornY = -5.795424563e-05;
+const auto referenceBornY = -5.795424563e-05;
 
 /// The reference Born function Q (dimensionless)
-const double referenceBornQ =  6.638388994e-12;
+const auto referenceBornQ =  6.638388994e-12;
 
 /// The reference Born function N (dimensionless)
-const double referenceBornN = -2.321814455e-20;
+const auto referenceBornN = -2.321814455e-20;
 
 /// The reference Born function U (dimensionless)
-const double referenceBornU = 4.872982291e-14;
+const auto referenceBornU = 4.872982291e-14;
 
 /// The reference Born function X (dimensionless)
-const double referenceBornX = -3.060388224e-07;
+const auto referenceBornX = -3.060388224e-07;
 
 /// The \eta constant in the HKF model (in units of (A*cal)/mol)
-const double eta = 1.66027e+05;
+const auto eta = 1.66027e+05;
 
 /// The constant characteristics \Theta of the solvent (in units of K)
-const double theta = 228;
+const auto theta = 228.0;
 
 /// The constant characteristics \Psi of the solvent (in units of bar)
-const double psi = 2600;
+const auto psi = 2600.0;
 
 template<class ParamsType>
 auto checkTemperatureValidityHKF(real& T, const ParamsType& params) -> void

@@ -18,6 +18,7 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Core/StandardThermoModel.hpp>
 

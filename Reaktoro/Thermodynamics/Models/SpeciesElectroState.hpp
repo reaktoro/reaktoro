@@ -18,34 +18,35 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
 
 namespace Reaktoro {
 
 struct SpeciesElectroState
 {
     /// The effective electrostatic radius of the solute species at referente temperature 298.15 K and pressure 1 bar
-    real reref;
+    real reref = {};
 
     /// The effective electrostatic radius of the solute species
-    real re;
+    real re = {};
 
     /// The Born coefficient of the solute species
-    real w;
+    real w = {};
 
     /// The first-order partial derivative of the Born coefficient of the solute species with respect to temperature
-    real wT;
+    real wT = {};
 
     /// The first-order partial derivative of the Born coefficient of the solute species with respect to pressure
-    real wP;
+    real wP = {};
 
     /// The second-order partial derivative of the Born coefficient of the solute species with respect to temperature
-    real wTT;
+    real wTT = {};
 
     /// The second-order partial derivative of the Born coefficient of the solute species with respect to temperature and pressure
-    real wTP;
+    real wTP = {};
 
     /// The second-order partial derivative of the Born coefficient of the solute species with respect to pressure
-    real wPP;
+    real wPP = {};
 };
 
 } // namespace Reaktoro

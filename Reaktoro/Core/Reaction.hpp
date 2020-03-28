@@ -25,9 +25,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 

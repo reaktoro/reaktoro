@@ -22,6 +22,7 @@
 #include <memory>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
 
 // Forwardt declarations for ThermoFun
 namespace ThermoFun {

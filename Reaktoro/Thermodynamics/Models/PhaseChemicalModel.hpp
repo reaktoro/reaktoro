@@ -21,6 +21,7 @@
 #include <functional>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {

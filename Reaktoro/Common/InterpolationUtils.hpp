@@ -20,21 +20,24 @@
 // C++ includes
 #include <vector>
 
+// Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
+
 namespace Reaktoro {
 
 auto interpolate(
-    const std::vector<double>& temperatures,
-    const std::vector<double>& pressures,
+    const std::vector<real>& temperatures,
+    const std::vector<real>& pressures,
     const std::vector<real>& scalars) -> ThermoScalarFunction;
 
 auto interpolate(
-    const std::vector<double>& temperatures,
-    const std::vector<double>& pressures,
+    const std::vector<real>& temperatures,
+    const std::vector<real>& pressures,
     const ThermoScalarFunction& func) -> ThermoScalarFunction;
 
 auto interpolate(
-    const std::vector<double>& temperatures,
-    const std::vector<double>& pressures,
+    const std::vector<real>& temperatures,
+    const std::vector<real>& pressures,
     const std::vector<ThermoScalarFunction>& fs) -> ThermoVectorFunction;
 
 } // namespace Reaktoro

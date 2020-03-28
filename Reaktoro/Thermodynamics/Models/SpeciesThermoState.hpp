@@ -18,6 +18,7 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
 
 namespace Reaktoro {
 
@@ -25,28 +26,28 @@ namespace Reaktoro {
 struct SpeciesThermoState
 {
     /// The apparent standard molar Gibbs free energy @f$\Delta G_{f}^{\circ}@f$ of the species (in units of J/mol)
-    real gibbs_energy;
+    real gibbs_energy = {};
 
     /// The apparent standard molar Helmholtz free energy @f$\Delta A_{f}^{\circ}@f$ of the species (in units of J/mol)
-    real helmholtz_energy;
+    real helmholtz_energy = {};
 
     /// The apparent standard molar internal energy @f$\Delta U_{f}^{\circ}@f$ of the species (in units of J/mol)
-    real internal_energy;
+    real internal_energy = {};
 
     /// The apparent standard molar enthalpy @f$\Delta H_{f}^{\circ}@f$ of the species (in units of J/mol)
-    real enthalpy;
+    real enthalpy = {};
 
     /// The standard molar entropy @f$ S^{\circ}@f$ of the species (in units of J/K)
-    real entropy;
+    real entropy = {};
 
     /// The standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
-    real volume;
+    real volume = {};
 
     /// The standard molar isobaric heat capacity @f$ C_{P}^{\circ}@f$ of the species (in units of J/(mol K))
-    real heat_capacity_cp;
+    real heat_capacity_cp = {};
 
     /// The standard molar isochoric heat capacity @f$ C_{V}^{\circ}@f$ of the species (in units of J/(mol K))
-    real heat_capacity_cv;
+    real heat_capacity_cv = {};
 };
 
 } // namespace Reaktoro

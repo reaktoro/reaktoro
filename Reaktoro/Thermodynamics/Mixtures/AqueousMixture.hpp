@@ -18,6 +18,7 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 

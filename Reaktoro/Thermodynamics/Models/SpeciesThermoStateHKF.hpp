@@ -19,6 +19,9 @@
 
 namespace Reaktoro {
 
+// Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
+
 // Forward declarations
 struct ParamsAqueousSoluteHKF;
 struct ParamsMaierKelly;
@@ -50,40 +53,40 @@ struct ParamsAqueousSoluteHKF
     std::string name;
 
     /// The electrical charge of the aqueous solute
-    double charge = 0.0;
+    real charge = {};
 
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
-    double Gf = 0.0;
+    real Gf = {};
 
     /// The apparent standard molal enthalpy of formation of the species from its elements (in units of cal/mol)
-    double Hf = 0.0;
+    real Hf = {};
 
     /// The standard molal entropy of the species at reference temperature and pressure (in units of cal/(mol*K))
-    double Sr = 0.0;
+    real Sr = {};
 
     /// The coefficient a1 of the HKF equation of state of the aqueous solute (in units of cal/(mol*bar))
-    double a1 = 0.0;
+    real a1 = {};
 
     /// The coefficient a2 of the HKF equation of state of the aqueous solute (in units of cal/mol)
-    double a2 = 0.0;
+    real a2 = {};
 
     /// The coefficient a3 of the HKF equation of state of the aqueous solute (in units of (cal*K)/(mol*bar))
-    double a3 = 0.0;
+    real a3 = {};
 
     /// The coefficient a4 of the HKF equation of state of the aqueous solute (in units of (cal*K)/mol)
-    double a4 = 0.0;
+    real a4 = {};
 
     /// The coefficient c1 of the HKF equation of state of the aqueous solute (in units of cal/(mol*K))
-    double c1 = 0.0;
+    real c1 = {};
 
     /// The coefficient c2 of the HKF equation of state of the aqueous solute (in units of (cal*K)/mol)
-    double c2 = 0.0;
+    real c2 = {};
 
     /// The conventional Born coefficient of the aqueous solute at reference temperature 298.15 K and pressure 1 bar (in units of cal/mol)
-    double wref = 0.0;
+    real wref = {};
 
     /// The dissociation of a neutral aqueous solute into charged species.
-    std::map<std::string, double> dissociation; // TODO: This dissociation data should not exist here, but in a more central location that will work for other databases as well.
+    std::map<std::string, real> dissociation; // TODO: This dissociation data should not exist here, but in a more central location that will work for other databases as well.
 };
 
 /// The type used to store Maier-Kelly parameters based on SUPCRT databases for gaseous/liquid species.
@@ -93,34 +96,34 @@ struct ParamsMaierKelly
     std::string name;
 
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
-    double Gf = 0.0;
+    real Gf = {};
 
     /// The apparent standard molal enthalpy of formation of the species from its elements (in units of cal/mol)
-    double Hf = 0.0;
+    real Hf = {};
 
     /// The standard molal entropy of the species at reference temperature and pressure (in units of cal/(mol*K))
-    double Sr = 0.0;
+    real Sr = {};
 
     /// The coefficient a of the Maier-Kelly equation of state of the gaseous/liquid species (in units of cal/(mol*K))
-    double a = 0.0;
+    real a = {};
 
     /// The coefficient b of the Maier-Kelly equation of state of the gaseous/liquid species (in units of cal/(mol*K^2))
-    double b = 0.0;
+    real b = {};
 
     /// The coefficient c of the Maier-Kelly equation of state of the gaseous/liquid species (in units of (cal*K)/mol)
-    double c = 0.0;
+    real c = {};
 
     /// The maximum temperature at which the Maier-Kelly equation of state can be applied for the gaseous species (in units of K)
-    double Tmax = 0.0;
+    real Tmax = {};
 
     // The critical temperature of the species (in units of K)
-    double Tcr = 0.0; // TODO: All these critical properties should not exist here, but in a more central location that will work for other databases as well.
+    real Tcr = {}; // TODO: All these critical properties should not exist here, but in a more central location that will work for other databases as well.
 
     // The critical pressure of the species (in units of Pa)
-    double Pcr = 0.0;
+    real Pcr = {};
 
     // The acentric factor of the species
-    double acentric_factor = 0.0;
+    real acentric_factor = {};
 };
 
 /// The type used to store Maier-Kelly-HKF parameters based on SUPCRT databases for mineral species.
@@ -130,43 +133,43 @@ struct ParamsMaierKellyHKF
     std::string name;
 
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
-    double Gf = 0.0;
+    real Gf = {};
 
     /// The apparent standard molal enthalpy of formation of the species from its elements (in units of cal/mol)
-    double Hf = 0.0;
+    real Hf = {};
 
     /// The standard molal entropy of the species at reference temperature and pressure (in units of cal/(mol*K))
-    double Sr = 0.0;
+    real Sr = {};
 
     /// The standard molal volume of the mineral species at reference temperature and pressure (in units of cm^3/mol)
-    double Vr = 0.0;
+    real Vr = {};
 
     /// The number of phase transitions that the mineral may undergo
     int nptrans = 0;
 
     /// The coefficients ai of the Maier-Kelly-HKF equation of state of the mineral species for each phase region (in units of cal/(mol*K))
-    std::vector<double> a;
+    std::vector<real> a;
 
     /// The coefficients bi of the Maier-Kelly-HKF equation of state of the mineral species for each phase region (in units of cal/(mol*K^2))
-    std::vector<double> b;
+    std::vector<real> b;
 
     /// The coefficients ci of the Maier-Kelly-HKF equation of state of the mineral species for each phase region (in units of (cal*K)/mol)
-    std::vector<double> c;
+    std::vector<real> c;
 
     /// The temperatures at which the mineral experiences phase transition along the line of reference pressure (in units of K)
-    std::vector<double> Ttr;
+    std::vector<real> Ttr;
 
     /// The change in the standard molal enthalpy of each mineral phase transition (in units of cal/mol)
-    std::vector<double> Htr;
+    std::vector<real> Htr;
 
     /// The change in the standard molal volume of each mineral phase transition (in units of cm^3/mol)
-    std::vector<double> Vtr;
+    std::vector<real> Vtr;
 
     /// The Clapeyron slote at each mineral phase transition (in units of bar/K)
-    std::vector<double> dPdTtr;
+    std::vector<real> dPdTtr;
 
     /// The maximum temperature at which the Maier-Kelly-HKF equation of state can be applied for the mineral (in units of K)
-    double Tmax = 0.0;
+    real Tmax = {};
 };
 
 } // namespace Reaktoro

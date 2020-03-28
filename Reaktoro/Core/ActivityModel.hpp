@@ -20,6 +20,10 @@
 // C++ includes
 #include <functional>
 
+// Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
+
 namespace Reaktoro {
 
 /// The activity and excess thermodynamic properties of a phase.
@@ -27,13 +31,13 @@ namespace Reaktoro {
 struct ActivityProps
 {
     /// The activity coefficients (natural log) of the species in the phase.
-    VectorXd ln_activity_coefficients;
+    VectorXr ln_activity_coefficients;
 
     /// The activities (natural log) of the species in the phase.
-    VectorXd ln_activities;
+    VectorXr ln_activities;
 
     /// The partial molar volumes of the species in the phase (in units of m3/mol).
-    VectorXd partial_molar_volumes;
+    VectorXr partial_molar_volumes;
 
     /// The molar volume of the phase (in units of m3/mol).
     real molar_volume;
