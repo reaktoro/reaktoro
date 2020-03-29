@@ -25,6 +25,7 @@
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
@@ -44,14 +45,10 @@ struct MixtureState
 };
 
 /// Compare two MixtureState instances for equality
-inline auto operator==(const MixtureState& l, const MixtureState& r) -> bool
-{
-    return l.T == r.T && r.P == r.P && l.x == r.x;
-}
+auto operator==(const MixtureState& l, const MixtureState& r) -> bool;
 
 /// Provide a base of implementation for the mixture classes.
 /// @ingroup Mixtures
-template<class SpeciesType>
 class GeneralMixture
 {
 public:
@@ -60,7 +57,7 @@ public:
 
     /// Construct a GeneralMixture instance with given species
     /// @param species The names of the species in the mixture
-    explicit GeneralMixture(const std::vector<SpeciesType>& species);
+    explicit GeneralMixture(const std::vector<Species>& species);
 
     /// Destroy the instance
     virtual ~GeneralMixture();
@@ -76,12 +73,12 @@ public:
 
     /// Return the species that compose the mixture
     /// @return The species that compose the mixture
-    auto species() const -> const std::vector<SpeciesType>&;
+    auto species() const -> const std::vector<Species>&;
 
     /// Return a species in the mixture
     /// @param index The index of the species
     /// @return The species with given index
-    auto species(const Index& index) const -> const SpeciesType&;
+    auto species(const Index& index) const -> const Species&;
 
     /// Return the index of a species in the mixture
     /// @param name The name of the species in the mixture
@@ -115,113 +112,7 @@ private:
     std::string _name;
 
     /// The species in the mixture
-    std::vector<SpeciesType> _species;
+    std::vector<Species> _species;
 };
-
-template<class SpeciesType>
-GeneralMixture<SpeciesType>::GeneralMixture()
-{}
-
-template<class SpeciesType>
-GeneralMixture<SpeciesType>::GeneralMixture(const std::vector<SpeciesType>& species)
-: _species(species)
-{}
-
-template<class SpeciesType>
-GeneralMixture<SpeciesType>::~GeneralMixture()
-{}
-
-template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::setName(std::string name) -> void
-{
-    _name = name;
-}
-
-template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::numSpecies() const -> unsigned
-{
-    return _species.size();
-}
-
-template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::name() const -> std::string
-{
-    return _name;
-}
-
-template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::species() const -> const std::vector<SpeciesType>&
-{
-    return _species;
-}
-
-template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::species(const Index& index) const -> const SpeciesType&
-{
-    return _species[index];
-}
-
-template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::indexSpecies(const std::string& name) const -> Index
-{
-    return index(name, _species);
-}
-
-template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::indexSpeciesAny(const std::vector<std::string>& names) const -> Index
-{
-    return indexAny(names, _species);
-}
-
-template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::namesSpecies() const -> std::vector<std::string>
-{
-    std::vector<std::string> names(_species.size());
-    for(unsigned i = 0; i < names.size(); ++i)
-        names[i] = _species[i].name();
-    return names;
-}
-
-template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::chargesSpecies() const -> VectorXr
-{
-    const unsigned nspecies = numSpecies();
-    VectorXr charges(nspecies);
-    for(unsigned i = 0; i < nspecies; ++i)
-        charges[i] = _species[i].charge();
-    return charges;
-}
-
-template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::moleFractions(VectorXrConstRef n) const -> VectorXr
-{
-    const unsigned nspecies = numSpecies();
-    if(nspecies == 1)
-    {
-        VectorXr x(1);
-        x.val[0] = 1.0;
-        return x;
-    }
-    VectorXr x(nspecies);
-    const double nt = n.sum();
-    if(nt == 0.0) return x;
-    x.val = n/nt;
-    for(unsigned i = 0; i < nspecies; ++i)
-    {
-        x.ddn.row(i).fill(-x.val[i]/nt);
-        x.ddn(i, i) += 1.0/nt;
-    }
-    return x;
-}
-
-template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::state(real T, real P, VectorXrConstRef n) const -> MixtureState
-{
-    MixtureState res;
-    res.T = T;
-    res.P = P;
-    res.x = moleFractions(n);
-    return res;
-}
 
 } // namespace Reaktoro

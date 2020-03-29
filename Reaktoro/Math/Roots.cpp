@@ -104,7 +104,7 @@ auto newton(const std::function<void(VectorXdConstRef, VectorXdRef, MatrixXdRef)
     Index n = x0.rows();
     VectorXd x = x0;
     VectorXd fx(n);
-    Matrix Jx(n, n);
+    MatrixXd Jx(n, n);
     for(unsigned i = 0; i < maxiter; ++i)
     {
         f(x, fx, Jx);

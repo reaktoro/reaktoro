@@ -1,6 +1,6 @@
-// Reaktoro is a unified framework for modeling chemically reactive systems.
+// Atomik is a library that implements basic chemical concepts such as elements, substances, and reactions.
 //
-// Copyright (C) 2014-2018 Allan Leal
+// Copyright (C) 2018-2019 Allan Leal and Reaktoro Contributors
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -15,13 +15,5 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-// Reaktoro includes
-#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
-
-namespace Reaktoro {
-
-using LiquidSpecies = FluidSpecies;
-
-} // namespace Reaktoro
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>

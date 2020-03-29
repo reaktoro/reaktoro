@@ -39,10 +39,10 @@ struct Hessian
     Mode mode = Dense;
 
     /// The Hessian matrix represented through its inverse
-    Matrix inverse;
+    MatrixXd inverse;
 
     /// The Hessian matrix represented as a dense matrix
-    Matrix dense;
+    MatrixXd dense;
 
     /// The Hessian matrix represented as a diagonal matrix
     VectorXd diagonal;

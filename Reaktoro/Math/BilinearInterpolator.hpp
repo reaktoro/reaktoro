@@ -22,6 +22,9 @@
 #include <iostream>
 #include <vector>
 
+// Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
+
 namespace Reaktoro {
 
 /// A class used to calculate bilinear interpolation of data in two dimensions.
@@ -36,36 +39,36 @@ public:
     /// @param ycoordinates The y-coordinates for the interpolation
     /// @param data The data to be interpolated over the (x, y) coordinates
     BilinearInterpolator(
-        const std::vector<double>& xcoordinates,
-        const std::vector<double>& ycoordinates,
-        const std::vector<double>& data);
+        const std::vector<real>& xcoordinates,
+        const std::vector<real>& ycoordinates,
+        const std::vector<real>& data);
 
     /// Construct a BilinearInterpolator instance with given function
     /// @param xcoordinates The x-coordinates for the interpolation
     /// @param ycoordinates The y-coordinates for the interpolation
     /// @param function The function to be interpolated over the (x, y) coordinates
     BilinearInterpolator(
-        const std::vector<double>& xcoordinates,
-        const std::vector<double>& ycoordinates,
-        const std::function<double(double, double)>& function);
+        const std::vector<real>& xcoordinates,
+        const std::vector<real>& ycoordinates,
+        const std::function<real(real, real)>& function);
 
     /// setCoordinatesY the x-coordinates of the interpolation
-    auto setCoordinatesX(const std::vector<double>& xcoordinates) -> void;
+    auto setCoordinatesX(const std::vector<real>& xcoordinates) -> void;
 
     /// Set the y-coordinates of the interpolation
-    auto setCoordinatesY(const std::vector<double>& ycoordinates) -> void;
+    auto setCoordinatesY(const std::vector<real>& ycoordinates) -> void;
 
     /// Set the x-coordinates of the interpolation
-    auto setData(const std::vector<double>& data) -> void;
+    auto setData(const std::vector<real>& data) -> void;
 
     /// Return the x-coordinates of the interpolation
-    auto xCoordinates() const -> const std::vector<double>&;
+    auto xCoordinates() const -> const std::vector<real>&;
 
     /// Return the y-coordinates of the interpolation
-    auto yCoordinates() const -> const std::vector<double>&;
+    auto yCoordinates() const -> const std::vector<real>&;
 
     /// Return the interpolation data
-    auto data() const -> const std::vector<double>&;
+    auto data() const -> const std::vector<real>&;
 
     /// Check if the BilinearInterpolator instance is empty
     auto empty() const -> bool;
@@ -74,14 +77,14 @@ public:
     /// @param x The x-coordinate of the point
     /// @param y The y-coordinate of the point
     /// @return The interpolation of the data at (x, y) point
-    auto operator()(double x, double y) const -> double;
+    auto operator()(real x, real y) const -> real;
 
 private:
     /// The coordinates of the x and y points
-    std::vector<double> m_xcoordinates, m_ycoordinates;
+    std::vector<real> m_xcoordinates, m_ycoordinates;
 
     /// The interpolated data on every (x, y) point
-    std::vector<double> m_data;
+    std::vector<real> m_data;
 };
 
 /// Output a BilinearInterpolator instance

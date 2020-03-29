@@ -26,7 +26,7 @@ namespace Reaktoro {
 struct Jacobian
 {
     /// The constant equality Jacobian matrix
-    Matrix Ae;
+    MatrixXd Ae;
 };
 
 } // namespace Reaktoro

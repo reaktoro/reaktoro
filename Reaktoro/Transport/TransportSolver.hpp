@@ -156,7 +156,7 @@ public:
     /// old values as the vector b.
     auto solve(VectorXrRef x) const -> void;
 
-    operator Matrix() const;
+    operator MatrixXd() const;
 
 private:
     /// The size of the tridiagonal matrix
@@ -319,13 +319,13 @@ private:
     VectorXr bbc;
 
     /// The amounts of a fluid element on each cell of the mesh.
-    Matrix bf;
+    MatrixXd bf;
 
     /// The amounts of a solid element on each cell of the mesh.
-    Matrix bs;
+    MatrixXd bs;
 
     /// The amounts of an element on each cell of the mesh.
-    Matrix b;
+    MatrixXd b;
 
     /// The current number of steps in the solution of the reactive transport equations.
     Index steps = 0;

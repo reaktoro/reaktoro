@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/ReactionEquation.hpp>
+#include <Reaktoro/Core/ReactionEquation.hpp>
 
 namespace Reaktoro {
 namespace PhreeqcUtils {
@@ -368,6 +368,7 @@ auto useAnalytic(const double* logk) -> bool
 template<typename SpeciesType>
 auto lnEquilibriumConstantHelper(const SpeciesType* species, real T, real P) -> real
 {
+    using std::log10;
     //--------------------------------------------------------------------------------
     // The implementation of this method was inspired by the PHREEQC
     // method `Phreeqc::select_log_k_expression`

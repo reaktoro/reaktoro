@@ -71,7 +71,7 @@ struct OptimumSolverKarpov::Impl
     VectorXd dx;
 
     // The left-hand and right-hand side matrix and vector of the linear system
-    Matrix lhs;
+    MatrixXd lhs;
     VectorXd rhs;
 
     // The outputter instance

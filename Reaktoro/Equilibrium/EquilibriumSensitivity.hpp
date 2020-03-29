@@ -46,7 +46,7 @@ struct EquilibriumSensitivity
     /// @f$n@f$, change with an infinitesimal change in the amounts of elements, @f$b@f$. They are
     /// useful when solving non-linear problems that involve equilibrium calculations and derivatives with respect
     /// to the amounts of elements.
-    Matrix dndb;
+    MatrixXd dndb;
 };
 
 } // namespace Reaktoro

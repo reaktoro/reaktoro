@@ -57,13 +57,13 @@ struct OptimumProblem
     VectorXd c;
 
     /// The coefficient matrix of the linear equality constraint `A*x = b`.
-    Matrix A;
+    MatrixXd A;
 
     /// The right-hand side vector of the linear equality constraint `A*x = b`.
     VectorXd b;
 
     /// The coefficient matrix of the linear inequality constraint `Ai*x = bi`.
-    Matrix Ai;
+    MatrixXd Ai;
 
     /// The right-hand side vector of the linear equality constraint `Ai*x = bi`.
     VectorXd bi;

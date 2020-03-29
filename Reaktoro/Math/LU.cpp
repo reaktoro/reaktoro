@@ -66,7 +66,7 @@ auto LU::compute(MatrixXdConstRef A) -> void
     const Index r = std::min(m, n);
 
     // Compute the full-pivoting LU of A
-    Eigen::FullPivLU<Matrix> lu(A);
+    Eigen::FullPivLU<MatrixXd> lu(A);
 
     // Set the rank of the formula matrix Ae
     rank = lu.rank();
@@ -94,10 +94,10 @@ auto LU::compute(MatrixXdConstRef A, VectorXdConstRef W) -> void
     const Index r = std::min(m, n);
 
     // Initialize the weighted formula matrix
-    const Matrix AW = A * diag(W);
+    const MatrixXd AW = A * diag(W);
 
     // Compute the full-pivoting LU of A
-    Eigen::FullPivLU<Matrix> lu(tr(AW));
+    Eigen::FullPivLU<MatrixXd> lu(tr(AW));
 
     // Set the rank of the matrix A
     rank = lu.rank();
@@ -112,11 +112,11 @@ auto LU::compute(MatrixXdConstRef A, VectorXdConstRef W) -> void
     U = U * Q.inverse() * diag(inv(W)) * Q;
 }
 
-auto LU::solve(MatrixXdConstRef B) -> Matrix
+auto LU::solve(MatrixXdConstRef B) -> MatrixXd
 {
     const Index n = U.cols();
     const Index k = B.cols();
-    Matrix X = zeros(n, k);
+    MatrixXd X = zeros(n, k);
 
     auto solve_column = [&](Index icol)
     {
@@ -133,11 +133,11 @@ auto LU::solve(MatrixXdConstRef B) -> Matrix
     return X;
 }
 
-auto LU::trsolve(MatrixXdConstRef B) -> Matrix
+auto LU::trsolve(MatrixXdConstRef B) -> MatrixXd
 {
     const Index m = L.rows();
     const Index k = B.cols();
-    Matrix X = zeros(m, k);
+    MatrixXd X = zeros(m, k);
 
     auto trsolve_column = [&](Index icol)
     {

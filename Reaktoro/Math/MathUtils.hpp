@@ -49,7 +49,7 @@ auto linearlyIndependentRows(MatrixXdConstRef A, MatrixXdRef B) -> Indices;
 /// Calculate the inverse of `A + D` where `inv(A)` is already known and `D` is a diagonal matrix.
 /// @param invA[in,out] The inverse of the matrix `A` and the final inverse of `A + D`
 /// @param D The diagonal matrix `D`
-auto inverseShermanMorrison(MatrixXdConstRef invA, VectorXdConstRef D) -> Matrix;
+auto inverseShermanMorrison(MatrixXdConstRef invA, VectorXdConstRef D) -> MatrixXd;
 
 /// Calculates the rational number that approximates a given real number.
 /// The algorithm is based on Farey sequence as shown

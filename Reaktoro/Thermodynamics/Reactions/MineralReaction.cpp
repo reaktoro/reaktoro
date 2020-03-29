@@ -26,13 +26,13 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
@@ -192,7 +192,7 @@ auto defaultMineralReactionEquation(Index imineral, const ChemicalSystem& system
 
     Index E = system.numElements();
     Index N = system.numSpecies();
-    Matrix W = system.formulaMatrix();
+    MatrixXd W = system.formulaMatrix();
     W.conservativeResize(E + 1, N);
     W.row(E).fill(0.0);
     W(E, imineral) = -1;

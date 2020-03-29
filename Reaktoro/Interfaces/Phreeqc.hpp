@@ -81,13 +81,13 @@ public:
     /// @param iphase The index of the phase
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
-    virtual auto properties(ThermoModelResult& res, double T, double P) -> void;
+    // virtual auto properties(ThermoModelResult& res, double T, double P) -> void;
 
     /// Return the chemical properties of the phases and its species.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The amounts of the species (in units of mol)
-    virtual auto properties(ChemicalModelResult& res, double T, double P, VectorXrConstRef n) -> void;
+    // virtual auto properties(ChemicalModelResult& res, double T, double P, VectorXrConstRef n) -> void;
 
     /// Return a clone of this Phreeqc instance
     virtual auto clone() const -> std::shared_ptr<Interface>;
@@ -141,7 +141,7 @@ public:
     auto reactions() const -> const std::vector<ReactionEquation>&;
 
     /// Return the stoichiometric matrix of the system of reactions.
-    auto stoichiometricMatrix() const -> Matrix;
+    auto stoichiometricMatrix() const -> MatrixXd;
 
     /// Return the standard molar Gibbs free energies of the species (in units of J/mol)
     auto standardMolarGibbsEnergies() const -> VectorXr;

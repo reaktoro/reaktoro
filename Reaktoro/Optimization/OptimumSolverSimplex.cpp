@@ -37,7 +37,7 @@ namespace {
 template<typename Decomposition>
 auto solveTranspose(const Decomposition& lu, VectorXdConstRef b) -> VectorXd
 {
-    const Matrix& LU = lu.matrixLU();
+    const MatrixXd& LU = lu.matrixLU();
 
     const auto& L = LU.triangularView<Eigen::UnitLower>();
     const auto& U = LU.triangularView<Eigen::Upper>();
@@ -229,15 +229,15 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
         const unsigned nL = ilower.size();
         const unsigned nU = iupper.size();
 
-        Matrix AB = cols(A, ibasic);
-        Matrix AL = cols(A, ilower);
-        Matrix AU = cols(A, iupper);
+        MatrixXd AB = cols(A, ibasic);
+        MatrixXd AL = cols(A, ilower);
+        MatrixXd AU = cols(A, iupper);
 
         VectorXd cB = rows(c, ibasic);
         VectorXd cL = rows(c, ilower);
         VectorXd cU = rows(c, iupper);
 
-        Eigen::PartialPivLU<Matrix> lu(AB);
+        Eigen::PartialPivLU<MatrixXd> lu(AB);
 
         y = solveTranspose(lu, cB);
 

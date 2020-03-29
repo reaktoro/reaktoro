@@ -186,12 +186,12 @@ auto Phase::indexSpeciesAnyWithError(const std::vector<std::string>& names) cons
     return index;
 }
 
-auto Phase::standardThermoProps(double T, double P) const -> StandardThermoProps
+auto Phase::standardThermoProps(Index ispecies, real T, real P) const -> StandardThermoProps
 {
-    return pimpl->standard_thermo_model_fn(T, P);
+    return pimpl->standard_thermo_model_fn(T, P, pimpl->species[ispecies]);
 }
 
-auto Phase::activityProps(double T, double P, VectorXrConstRef n) const -> ActivityProps
+auto Phase::activityProps(real T, real P, VectorXrConstRef n) const -> ActivityProps
 {
     return pimpl->activity_model_fn(T, P, n);
 }

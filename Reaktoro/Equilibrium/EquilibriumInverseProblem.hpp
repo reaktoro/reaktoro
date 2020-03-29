@@ -38,10 +38,10 @@ struct ResidualEquilibriumConstraints
     VectorXr val;
 
     /// The partial derivatives of the residuals w.r.t. titrant amounts x.
-    Matrix ddx;
+    MatrixXd ddx;
 
     /// The partial derivatives of the residuals w.r.t. species amounts n.
-    Matrix ddn;
+    MatrixXd ddn;
 };
 
 /// A class used for defining an inverse equilibrium problem.
@@ -251,7 +251,7 @@ public:
     /// The formula matrix of the titrants is defined as the matrix whose (j,i)th entry
     /// contains the stoichiometric coefficient of jth element in the ith titrant.
     /// Its dimension is `E x T`, where `T` is the number of titrants.
-    auto formulaMatrixTitrants() const -> Matrix;
+    auto formulaMatrixTitrants() const -> MatrixXd;
 
     /// Return the initial amounts of elements in the equilibrium partition.
     /// These are the values of element amounts in the equilibrium partition

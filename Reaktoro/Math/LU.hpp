@@ -45,22 +45,22 @@ struct LU
     auto compute(MatrixXdConstRef A, VectorXdConstRef W) -> void;
 
     /// Solve the linear system `AX = B` using the calculated LU decomposition.
-    auto solve(MatrixXdConstRef b) -> Matrix;
+    auto solve(MatrixXdConstRef b) -> MatrixXd;
 
     /// Solve the linear system `tr(A)X = B` using the calculated LU decomposition.
-    auto trsolve(MatrixXdConstRef B) -> Matrix;
+    auto trsolve(MatrixXdConstRef B) -> MatrixXd;
 
     /// The last decomposed matrix A
-    Matrix A_last;
+    MatrixXd A_last;
 
     /// The last weights used for column scaling
     VectorXd W_last;
 
     /// The lower triangular matrix `L` in the LU decomposition of the matrix `PAQ = LU`.
-    Matrix L;
+    MatrixXd L;
 
     /// The upper triangular matrix `U` in the LU decomposition of the matrix `PAQ = LU`.
-    Matrix U;
+    MatrixXd U;
 
     /// The permutation matrix `P` in the LU decomposition of the matrix `PAQ = LU`.
     PermutationMatrix P;

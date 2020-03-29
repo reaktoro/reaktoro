@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
-#include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
+#include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 
 namespace Reaktoro {
@@ -41,23 +41,23 @@ struct AqueousMixtureState : public MixtureState
     real Is;
 
     /// The molalities of the aqueous species and their partial derivatives (in units of mol/kg)
-    VectorXd m;
+    VectorXr m;
 
     /// The stoichiometric molalities of the ionic species and their partial derivatives (in units of mol/kg)
-    VectorXd ms;
+    VectorXr ms;
 };
 
 /// A type used to describe an aqueous mixture.
-/// The AqueousMixture class is defined as a collection of AqueousSpecies objects,
+/// The AqueousMixture class is defined as a collection of Species objects,
 /// representing, therefore, a mixture of aqueous species. Its main purpose is to
 /// provide the necessary operations in the calculation of activities of aqueous
 /// species. It implements methods for the calculation of mole fractions, molalities,
 /// stoichiometric molalities, and effective and stoichiometric ionic strengths.
 /// In addition, it provides methods that retrives information about the ionic, neutral
 /// and complex species.
-/// @see AqueousSpecies
+/// @see Species
 /// @ingroup Mixtures
-class AqueousMixture : public GeneralMixture<AqueousSpecies>
+class AqueousMixture : public GeneralMixture
 {
 public:
     /// Construct a default AqueousMixture instance.
@@ -65,7 +65,7 @@ public:
 
     /// Construct an AqueousMixture instance with given species.
     /// @param species The species that compose the aqueous mixture
-    explicit AqueousMixture(const std::vector<AqueousSpecies>& species);
+    explicit AqueousMixture(const std::vector<Species>& species);
 
     /// Destroy the AqueousMixture instance.
     virtual ~AqueousMixture();
@@ -166,22 +166,22 @@ public:
     /// Calculate the molalities of the aqueous species and its molar derivatives.
     /// @param n The molar abundance of species (in units of mol)
     /// @return The molalities and their partial derivatives
-    auto molalities(VectorXrConstRef n) const -> VectorXd;
+    auto molalities(VectorXrConstRef n) const -> VectorXr;
 
     /// Calculate the stoichiometric molalities of the ions and its molar derivatives.
     /// @param m The molalities of the aqueous species and their partial derivatives
     /// @return The stoichiometric molalities and their partial derivatives
-    auto stoichiometricMolalities(const VectorXd& m) const -> VectorXd;
+    auto stoichiometricMolalities(const VectorXr& m) const -> VectorXr;
 
     /// Calculate the effective ionic strength of the aqueous mixture and its molar derivatives.
     /// @param m The molalities of the aqueous species and their partial derivatives
     /// @return The effective ionic strength of the aqueous mixture and its molar derivatives
-    auto effectiveIonicStrength(const VectorXd& m) const -> real;
+    auto effectiveIonicStrength(const VectorXr& m) const -> real;
 
     /// Calculate the stoichiometric ionic strength of the aqueous mixture and its molar derivatives.
     /// @param ms The stoichiometric molalities of the ions and their partial derivatives
     /// @return The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
-    auto stoichiometricIonicStrength(const VectorXd& ms) const -> real;
+    auto stoichiometricIonicStrength(const VectorXr& ms) const -> real;
 
     /// Calculate the state of the aqueous mixture.
     /// @param T The temperature (in units of K)
@@ -206,7 +206,7 @@ private:
     Indices idx_anions;
 
     /// The matrix that represents the dissociation of the aqueous complexes into ions
-    Matrix dissociation_matrix;
+    MatrixXd dissociation_matrix;
 
     /// The density function for water
     ThermoScalarFunction rho, rho_default;
@@ -215,10 +215,10 @@ private:
     ThermoScalarFunction epsilon, epsilon_default;
 
     /// Initialize the index related data of the species.
-    void initializeIndices(const std::vector<AqueousSpecies>& species);
+    void initializeIndices(const std::vector<Species>& species);
 
     /// Initialize the dissociation matrix of the neutral species w.r.t. the charged species.
-    void initializeDissociationMatrix(const std::vector<AqueousSpecies>& species);
+    void initializeDissociationMatrix(const std::vector<Species>& species);
 };
 
 } // namespace Reaktoro

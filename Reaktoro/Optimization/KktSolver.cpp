@@ -44,7 +44,7 @@ struct KktSolverDense : KktSolverBase
     VectorXd x, z;
 
     /// The internal data for the KKT problem
-    Matrix kkt_lhs;
+    MatrixXd kkt_lhs;
     VectorXd kkt_rhs;
     VectorXd kkt_sol;
     LUSolver kkt_lu;
@@ -65,10 +65,10 @@ struct KktSolverRangespaceInverse : KktSolverBase
     const KktMatrix* lhs;
 
     /// The matrix `inv(G)` where `G = H + inv(X)*Z`
-    Matrix invG;
-    Matrix AinvG;
-    Matrix AinvGAt;
-    LLT<Matrix> llt_AinvGAt;
+    MatrixXd invG;
+    MatrixXd AinvG;
+    MatrixXd AinvGAt;
+    LLT<MatrixXd> llt_AinvGAt;
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
@@ -86,19 +86,19 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
 
     VectorXd X, Z;
     VectorXd D, D1, D2;
-    Matrix A1, A2;
+    MatrixXd A1, A2;
     VectorXd a1, a2;
     VectorXd dx1, dx2;
     VectorXd r;
 
     VectorXd invD1;
-    Matrix A1invD1;
-    Matrix A1invD1A1t;
+    MatrixXd A1invD1;
+    MatrixXd A1invD1A1t;
 
     VectorXd kkt_rhs, kkt_sol;
-    Matrix kkt_lhs;
+    MatrixXd kkt_lhs;
 
-    PartialPivLU<Matrix> lu;
+    PartialPivLU<MatrixXd> lu;
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
@@ -116,26 +116,26 @@ struct KktSolverNullspace : KktSolverBase
     const KktMatrix* lhs;
 
     /// The matrix `A` of the KKT problem
-    Matrix A;
+    MatrixXd A;
 
     /// The matrix `G = H + inv(X)*Z` of the KKT equation
-    Matrix G;
+    MatrixXd G;
 
     /// The nullspace matrix of `A` with the property `AZ = 0`
-    Matrix Z;
+    MatrixXd Z;
 
     /// The rangespace matrix of `A` with the property `AY = I`
-    Matrix Y;
+    MatrixXd Y;
 
     /// Auxiliary data for the nullspace algorithm
-    Matrix ZtGZ;
-    LLT<Matrix> llt_ZtGZ;
+    MatrixXd ZtGZ;
+    LLT<MatrixXd> llt_ZtGZ;
     VectorXd xZ;
 
     /// Auxiliary data for finding the nullspace and rangespace matrices `Z` and `Y`
-    FullPivLU<Matrix> lu_A;
-    Matrix L;
-    Matrix U;
+    FullPivLU<MatrixXd> lu_A;
+    MatrixXd L;
+    MatrixXd U;
 
     /// Initialize the constant bottom-left matrix `A` of the KKT equation.
     /// This method should be called once to initialize the `A` matrix
@@ -483,8 +483,8 @@ struct KktSolver::Impl
 {
     KktResult result;
     KktOptions options;
-    KktSolverDense<PartialPivLU<Matrix>> kkt_partial_lu;
-    KktSolverDense<FullPivLU<Matrix>> kkt_full_lu;
+    KktSolverDense<PartialPivLU<MatrixXd>> kkt_partial_lu;
+    KktSolverDense<FullPivLU<MatrixXd>> kkt_full_lu;
     KktSolverNullspace kkt_nullspace;
     KktSolverRangespaceDiagonal kkt_rangespace_diagonal;
     KktSolverRangespaceInverse kkt_rangespace_inverse;

@@ -159,10 +159,10 @@ auto TridiagonalMatrix::solve(VectorXrRef x) const -> void
     solve(x, x);
 }
 
-TridiagonalMatrix::operator Matrix() const
+TridiagonalMatrix::operator MatrixXd() const
 {
     const Index n = size();
-    Matrix res = zeros(n, n);
+    MatrixXd res = zeros(n, n);
     res.row(0).head(2) = row(0).tail(2);
     for(Index i = 1; i < n - 1; ++i)
         res.row(i).segment(i - 1, 3) = row(i);

@@ -28,14 +28,10 @@
 namespace Reaktoro {
 namespace {
 
-/// Convert ThermoFun::real to Reaktoro::real
-auto convertScalar(Reaktoro_::real other) -> real
+/// Convert ThermoFun::ThermoScalar to Reaktoro::real
+auto convertScalar(Reaktoro_::ThermoScalar other) -> real
 {
-    real converted;
-    converted.val = other.val;
-    converted.ddP = other.ddp;
-    converted.ddT = other.ddt;
-    return converted;
+    return other.val;
 }
 
 /// Convert a SpeciesThermoState object into a StandardThermoProps one

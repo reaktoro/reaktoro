@@ -56,10 +56,6 @@
 #include <Reaktoro/Thermodynamics/Reactions/MineralCatalyst.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralMechanism.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
-#include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
-#include <Reaktoro/Thermodynamics/Species/ThermoData.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>

@@ -95,10 +95,10 @@ struct OptimumSolverActNewton::Impl
     Indices L, F, E;
     VectorXd gF, gL, gE;
     VectorXd xF, zF, xE, zL;
-    Matrix AF, AL, AE;
+    MatrixXd AF, AL, AE;
     Hessian HF;
 
-    Eigen::LLT<Matrix> llt;
+    Eigen::LLT<MatrixXd> llt;
 
     Outputter outputter;
 

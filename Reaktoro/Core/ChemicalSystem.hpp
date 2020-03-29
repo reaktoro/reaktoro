@@ -45,7 +45,7 @@ public:
     explicit ChemicalSystem(const std::vector<Phase>& phases);
 
     /// Construct a ChemicalSystem instance with given phases and thermodynamic and chemical models.
-    ChemicalSystem(const std::vector<Phase>& phases, const ThermoModel& thermo_model, const ChemicalModel& chemical_model);
+    // ChemicalSystem(const std::vector<Phase>& phases, const ThermoModel& thermo_model, const ChemicalModel& chemical_model);
 
     /// Destroy this ChemicalSystem instance
     virtual ~ChemicalSystem();
@@ -72,11 +72,11 @@ public:
     /// Return the list of phases in the system
     auto phases() const -> const std::vector<Phase>&;
 
-    /// Return the thermodynamic model of the system.
-    auto thermoModel() const -> const ThermoModel&;
+    // /// Return the thermodynamic model of the system.
+    // auto thermoModel() const -> const ThermoModel&;
 
-    /// Return the chemical model of the system.
-    auto chemicalModel() const -> const ChemicalModel&;
+    // /// Return the chemical model of the system.
+    // auto chemicalModel() const -> const ChemicalModel&;
 
     /// Return the formula matrix of the system
     /// The formula matrix is defined as the matrix whose entry `(j, i)`

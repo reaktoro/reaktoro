@@ -31,10 +31,10 @@ struct EquilibriumBalance::Impl
     EquilibriumReactions reactions;
 
     /// The regularizer matrix
-    Matrix R;
+    MatrixXd R;
 
     /// The regularized balance matrix
-    Matrix A;
+    MatrixXd A;
 
     /// Construct an Impl instance with given reactions
     Impl(const EquilibriumReactions& reactions)

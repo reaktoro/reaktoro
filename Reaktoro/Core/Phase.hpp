@@ -130,16 +130,17 @@ public:
     /// @return The index of the species if found, or a runtime exception otherwise.
     auto indexSpeciesAnyWithError(const std::vector<std::string>& names) const -> Index;
 
-    /// Calculate the standard thermodynamic properties of the phase.
+    /// Calculate the standard thermodynamic properties of a species in the phase.
+    /// @param ispecies The local index of the species in the phase.
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
-    auto standardThermoProps(double T, double P) const -> StandardThermoProps;
+    auto standardThermoProps(Index ispecies, real T, real P) const -> StandardThermoProps;
 
     /// Calculate the activity and excess thermodynamic properties of the phase.
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
     /// @param n The amounts of the species in the phase (in units of mol)
-    auto activityProps(double T, double P, VectorXrConstRef n) const -> ActivityProps;
+    auto activityProps(real T, real P, VectorXrConstRef n) const -> ActivityProps;
 
 private:
     struct Impl;
