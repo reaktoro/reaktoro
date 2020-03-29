@@ -95,7 +95,7 @@ struct ODESolver::Impl
     VectorXd f;
 
     /// The auxiliary matrix J for the Jacobian evaluation
-    Matrix J;
+    MatrixXd J;
 
     /// Construct a default ODESolver::Impl instance
     Impl()

@@ -45,10 +45,10 @@ inline auto moleFractions(VectorXrConstRef n) -> VectorXr
 {
     const auto nspecies = n.size();
     if(nspecies == 1)
-        return ones(n);
+        return ones(nspecies);
     const real nt = sum(n);
     if(nt != 0.0) return n/nt;
-    else return zeros(n);
+    else return zeros(nspecies);
 }
 
 } // namespace Reaktoro

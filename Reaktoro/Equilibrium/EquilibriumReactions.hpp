@@ -79,7 +79,7 @@ public:
     auto equations() const -> std::vector<ReactionEquation>;
 
     /// Return the stoichiometric matrix of the reactions.
-    auto stoichiometricMatrix() const -> Matrix;
+    auto stoichiometricMatrix() const -> MatrixXd;
 
     /// Return the LU decomposition of the formula matrix `A`.
     auto lu() const -> const LU&;

@@ -35,22 +35,22 @@
 namespace Reaktoro {
 namespace internal {
 
-auto defaultWaterDensityFunction() -> ThermoScalarFunction
+auto defaultWaterDensityFunction() -> std::function<real(real, real)>
 {
     const auto T = 298.15;
     const auto P = 1.0e5;
     const auto rho = waterLiquidDensityWagnerPruss(T, P);
-    return [=](double T, double P) { return rho; };
+    return [=](real T, real P) { return rho; };
 }
 
-auto defaultWaterDielectricConstantFunction() -> ThermoScalarFunction
+auto defaultWaterDielectricConstantFunction() -> std::function<real(real, real)>
 {
     const auto T = 298.15;
     const auto P = 1.0e5;
     const auto wts = waterThermoStateHGK(T, P, StateOfMatter::Liquid);
     const auto wes = waterElectroStateJohnsonNorton(T, P, wts);
     const auto epsilon = wes.epsilon;
-    return [=](double T, double P) { return epsilon; };
+    return [=](real T, real P) { return epsilon; };
 }
 
 } // namespace internal
@@ -58,8 +58,8 @@ auto defaultWaterDielectricConstantFunction() -> ThermoScalarFunction
 AqueousMixture::AqueousMixture()
 {}
 
-AqueousMixture::AqueousMixture(const std::vector<AqueousSpecies>& species)
-: GeneralMixture<AqueousSpecies>(species)
+AqueousMixture::AqueousMixture(const std::vector<Species>& species)
+: GeneralMixture(species)
 {
     // Initialize the index related data
     initializeIndices(species);
@@ -77,17 +77,17 @@ AqueousMixture::AqueousMixture(const std::vector<AqueousSpecies>& species)
 AqueousMixture::~AqueousMixture()
 {}
 
-auto AqueousMixture::setWaterDensity(const ThermoScalarFunction& rho) -> void
+auto AqueousMixture::setWaterDensity(const std::function<real(real, real)>& rho) -> void
 {
     this->rho = rho;
 }
 
-auto AqueousMixture::setWaterDielectricConstant(const ThermoScalarFunction& epsilon) -> void
+auto AqueousMixture::setWaterDielectricConstant(const std::function<real(real, real)>& epsilon) -> void
 {
     this->epsilon = epsilon;
 }
 
-auto AqueousMixture::setInterpolationPoints(const std::vector<double>& temperatures, const std::vector<double>& pressures) -> void
+auto AqueousMixture::setInterpolationPoints(const std::vector<real>& temperatures, const std::vector<real>& pressures) -> void
 {
     rho = interpolate(temperatures, pressures, rho_default);
     epsilon = interpolate(temperatures, pressures, epsilon_default);
@@ -204,81 +204,46 @@ auto AqueousMixture::chargesAnions() const -> VectorXr
     return rows(chargesSpecies(), indicesAnions());
 }
 
-auto AqueousMixture::molalities(VectorXrConstRef n) const -> VectorXd
+auto AqueousMixture::molalities(VectorXrConstRef n) const -> VectorXr
 {
-    const unsigned num_species = numSpecies();
+    // The amount of solvent water
+    const auto nw = n[idx_water];
 
-    // The molalities of the species and their partial derivatives
-    VectorXd m(num_species);
-
-    // The molar amount of water
-    const double nw = n[idx_water];
-
-    // Check if the molar amount of water is zero
+    // Check if amount of water is zero
     if(nw == 0.0)
-        return m;
+        return VectorXr::Zero(n.size());
 
-    const double kgH2O = nw * waterMolarMass;
+    const auto kgH2O = nw * waterMolarMass;
 
-    m.val = n/kgH2O;
-    for(unsigned i = 0; i < num_species; ++i)
-    {
-        m.ddn(i, i) = 1.0/kgH2O;
-        m.ddn(i, idx_water) -= m.val[i]/nw;
-    }
-
-    return m;
+    return n/kgH2O;
 }
 
-auto AqueousMixture::stoichiometricMolalities(const VectorXd& m) const -> VectorXd
+auto AqueousMixture::stoichiometricMolalities(const VectorXr& m) const -> VectorXr
 {
-    // Auxiliary variables
-    const unsigned num_species = numSpecies();
-    const unsigned num_charged = numChargedSpecies();
-    const unsigned num_neutral = numNeutralSpecies();
-
     // The molalities of the charged species
-    VectorXd mc(num_charged, num_species);
-    mc.val = rows(m.val, idx_charged_species);
-    mc.ddn = rows(m.ddn, idx_charged_species);
+    const auto mc = m(idx_charged_species);
 
     // The molalities of the neutral species
-    VectorXd mn(num_neutral, num_species);
-    mn.val = rows(m.val, idx_neutral_species);
-    mn.ddn = rows(m.ddn, idx_neutral_species);
+    const auto mn = m(idx_neutral_species);
 
     // The stoichiometric molalities of the charged species
-    VectorXd ms(num_charged, num_species);
-    ms.val = mc.val + tr(dissociation_matrix) * mn.val;
-    ms.ddn = mc.ddn + tr(dissociation_matrix) * mn.ddn;
+    const auto ms = mc + tr(dissociation_matrix) * mn;
 
     return ms;
 }
 
-auto AqueousMixture::effectiveIonicStrength(const VectorXd& m) const -> real
+auto AqueousMixture::effectiveIonicStrength(const VectorXr& m) const -> real
 {
-    const unsigned num_species = numSpecies();
-    const VectorXr z = chargesSpecies();
-
-    real Ie(num_species);
-    Ie.val = 0.5 * sum(z % z % m.val);
-    for(unsigned i = 0; i < num_species; ++i)
-        Ie.ddn[i] = 0.5 * sum(z % z % m.ddn.col(i));
-
-    return Ie;
+    const auto num_species = numSpecies();
+    const auto z = chargesSpecies();
+    return 0.5 * sum(z % z % m);
 }
 
-auto AqueousMixture::stoichiometricIonicStrength(const VectorXd& ms) const -> real
+auto AqueousMixture::stoichiometricIonicStrength(const VectorXr& ms) const -> real
 {
-    const unsigned num_species = numSpecies();
-    const VectorXr zc = chargesChargedSpecies();
-
-    real Is(num_species);
-    Is.val = 0.5 * sum(zc % zc % ms.val);
-    for(unsigned i = 0; i < num_species; ++i)
-        Is.ddn[i] = 0.5 * sum(zc % zc % ms.ddn.col(i));
-
-    return Is;
+    const auto num_species = numSpecies();
+    const auto zc = chargesChargedSpecies();
+    return 0.5 * sum(zc % zc % ms);
 }
 
 auto AqueousMixture::state(real T, real P, VectorXrConstRef n) const -> AqueousMixtureState
@@ -296,7 +261,7 @@ auto AqueousMixture::state(real T, real P, VectorXrConstRef n) const -> AqueousM
     return res;
 }
 
-auto AqueousMixture::initializeIndices(const std::vector<AqueousSpecies>& species) -> void
+auto AqueousMixture::initializeIndices(const std::vector<Species>& species) -> void
 {
     // Initialize the index of the water species
     idx_water = indexSpeciesAny(alternativeWaterNames());
@@ -321,15 +286,15 @@ auto AqueousMixture::initializeIndices(const std::vector<AqueousSpecies>& specie
     }
 }
 
-auto AqueousMixture::initializeDissociationMatrix(const std::vector<AqueousSpecies>& species) -> void
+auto AqueousMixture::initializeDissociationMatrix(const std::vector<Species>& species) -> void
 {
     // Return the stoichiometry of the i-th charged species in the j-th neutral species
-    auto stoichiometry = [&](Index i, Index j) -> double
+    auto stoichiometry = [&](Index i, Index j) -> real
     {
         const Index ineutral = idx_neutral_species[i];
         const Index icharged = idx_charged_species[j];
-        const AqueousSpecies& neutral = species[ineutral];
-        const AqueousSpecies& charged = species[icharged];
+        const Species& neutral = species[ineutral];
+        const Species& charged = species[icharged];
         const auto iter = neutral.dissociation().find(charged.name());
         return iter != neutral.dissociation().end() ? iter->second : 0.0;
     };

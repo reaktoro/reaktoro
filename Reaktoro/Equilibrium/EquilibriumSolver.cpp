@@ -116,13 +116,13 @@ struct EquilibriumSolver::Impl
     unsigned Ne, Ee;
 
     /// The formula matrix of the species in the system
-    Matrix A;
+    MatrixXd A;
 
     /// The formula matrix of the species in the equilibrium partition
-    Matrix Ae;
+    MatrixXd Ae;
 
     /// The formula matrix of the inert species
-    Matrix Ai;
+    MatrixXd Ai;
 
     /// Construct a default Impl instance
     Impl()
@@ -239,33 +239,33 @@ struct EquilibriumSolver::Impl
             u = u0 + properties.lnActivities();
 
             // Set the scaled chemical potentials of the equilibrium species
-            ue = rows(u, ies, ies);
+            ue = u(ies);
 
             // Set the mole fractions of the equilibrium species
-            xe = rows(properties.moleFractions(), ies, ies);
+            xe = properties.moleFractions()(ies);
 
             // Set the objective result
-            res.val = dot(ne, ue.val);
-            res.grad = ue.val;
+            res.val = ne.dot(ue);
+            res.grad = ue;
 
             // Set the Hessian of the objective function
             switch(options.hessian)
             {
             case GibbsHessian::Exact:
-                res.hessian.mode = Hessian::Dense;
-                res.hessian.dense = ue.ddn;
-                break;
+                // res.hessian.mode = Hessian::Dense;
+                // res.hessian.dense = ue.ddn;
+                // break;
             case GibbsHessian::ExactDiagonal:
-                res.hessian.mode = Hessian::Diagonal;
-                res.hessian.diagonal = diagonal(ue.ddn);
-                break;
+                // res.hessian.mode = Hessian::Diagonal;
+                // res.hessian.diagonal = diagonal(ue.ddn);
+                // break;
             case GibbsHessian::Approximation:
-                res.hessian.mode = Hessian::Dense;
-                res.hessian.dense = diag(inv(xe.val)) * xe.ddn;
-                break;
+                // res.hessian.mode = Hessian::Dense;
+                // res.hessian.dense = diag(inv(xe.val)) * xe.ddn;
+                // break;
             case GibbsHessian::ApproximationDiagonal:
                 res.hessian.mode = Hessian::Diagonal;
-                res.hessian.diagonal = diagonal(xe.ddn)/xe.val;
+                res.hessian.diagonal = 1.0 / ne.array();
                 break;
             }
 
@@ -312,7 +312,7 @@ struct EquilibriumSolver::Impl
         n(ies) = optimum_state.x;
 
         // Update the normalized chemical potentials of the inert species
-        ui = u.val(iis);
+        ui = u(iis);
 
         // Update the normalized dual potentials of the elements
         y = zeros(E); y(iee) = optimum_state.y;
@@ -365,10 +365,10 @@ struct EquilibriumSolver::Impl
         properties.update(T, P);
 
         // Get the standard Gibbs energies of the equilibrium species
-        const VectorXr ge0 = properties.standardPartialMolarGibbsEnergies().val(ies);
+        const VectorXr ge0 = properties.standardPartialMolarGibbsEnergies()(ies);
 
         // Get the ln activity constants of the equilibrium species
-        const VectorXr ln_ce = properties.lnActivityConstants().val(ies);
+        const VectorXr ln_ce = properties.lnActivityConstants()(ies);
 
         // Define the optimisation problem
         OptimumProblem optimum_problem;
@@ -527,8 +527,8 @@ struct EquilibriumSolver::Impl
         sensitivities.dndP = zeros(Ne);
         sensitivities.dndb = zeros(Ne, Ee);
 
-        sensitivities.dndT = solver.dxdp(ue.ddT, zerosEe);
-        sensitivities.dndP = solver.dxdp(ue.ddP, zerosEe);
+        // sensitivities.dndT = solver.dxdp(ue.ddT, zerosEe);
+        // sensitivities.dndP = solver.dxdp(ue.ddP, zerosEe);
         for(Index j = 0; j < Ee; ++j)
         {
             unitjEe = unit(Ee, j);
@@ -544,7 +544,7 @@ struct EquilibriumSolver::Impl
         const auto& ieq_species = partition.indicesEquilibriumSpecies();
         zerosEe = zeros(Ee);
         sensitivities.dndT = zeros(N);
-        sensitivities.dndT(ieq_species) = solver.dxdp(ue.ddT, zerosEe);
+        // sensitivities.dndT(ieq_species) = solver.dxdp(ue.ddT, zerosEe);
         return sensitivities.dndT;
     }
 
@@ -554,7 +554,7 @@ struct EquilibriumSolver::Impl
         const auto& ieq_species = partition.indicesEquilibriumSpecies();
         zerosEe = zeros(Ee);
         sensitivities.dndP = zeros(N);
-        sensitivities.dndP(ieq_species) = solver.dxdp(ue.ddP, zerosEe);
+        // sensitivities.dndP(ieq_species) = solver.dxdp(ue.ddP, zerosEe);
         return sensitivities.dndP;
     }
 

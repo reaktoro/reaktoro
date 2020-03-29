@@ -27,12 +27,12 @@
 namespace Reaktoro {
 namespace {
 
-auto stoichiometricMatrix(const ChemicalSystem& system, const std::vector<Reaction>& reactions) -> Matrix
+auto stoichiometricMatrix(const ChemicalSystem& system, const std::vector<Reaction>& reactions) -> MatrixXd
 {
     const auto& species = system.species();
     const auto num_reactions = reactions.size();
     const auto num_species = species.size();
-    Matrix S = zeros(num_reactions, num_species);
+    MatrixXd S = zeros(num_reactions, num_species);
     for(unsigned i = 0; i < num_reactions; ++i)
         for(unsigned j = 0; j < num_species; ++j)
             S(i, j) = reactions[i].stoichiometry(species[j].name());
@@ -50,7 +50,7 @@ struct ReactionSystem::Impl
     std::vector<Reaction> reactions;
 
     /// The stoichiometric matrix of the reactions w.r.t. to all species in the system
-    Matrix stoichiometric_matrix;
+    MatrixXd stoichiometric_matrix;
 
     /// Construct a defaut ReactionSystem::Impl instance
     Impl()

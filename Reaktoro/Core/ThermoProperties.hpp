@@ -80,8 +80,8 @@ private:
     /// The number of phases in the system
     Index num_phases = 0;
 
-    /// The results of the evaluation of the PhaseThermoModel functions of each phase.
-    ThermoModelResult tres;
+    // /// The results of the evaluation of the PhaseThermoModel functions of each phase.
+    // ThermoModelResult tres;
 
     /// The temperature of the system (in units of K)
     real T;

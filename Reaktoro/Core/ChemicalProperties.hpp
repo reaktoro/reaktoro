@@ -57,7 +57,7 @@ public:
     /// @param n The amounts of the species in the system (in units of mol)
     /// @param tres The result of the ThermoModel function of the chemical system.
     /// @param cres The result of the ChemicalModel function of the chemical system.
-    auto update(double T, double P, VectorXrConstRef n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void;
+    // auto update(double T, double P, VectorXrConstRef n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void;
 
     /// Return the temperature of the system (in units of K).
     auto temperature() const -> real;
@@ -68,14 +68,14 @@ public:
     /// Return the molar amounts of the species (in units of mol).
     auto composition() const -> VectorXrConstRef;
 
-    /// Return the result of the PhaseThermoModel function of each phase.
-    auto thermoModelResult() const -> const ThermoModelResult&;
+    // /// Return the result of the PhaseThermoModel function of each phase.
+    // auto thermoModelResult() const -> const ThermoModelResult&;
 
-    /// Return the result of the PhaseChemicalModel function of each phase.
-    auto chemicalModelResult() const -> const ChemicalModelResult&;
+    // /// Return the result of the PhaseChemicalModel function of each phase.
+    // auto chemicalModelResult() const -> const ChemicalModelResult&;
 
     /// Return the mole fractions of the species.
-    auto moleFractions() const -> VectorXd;
+    auto moleFractions() const -> VectorXdConstRef;
 
     /// Return the ln activity coefficients of the species.
     auto lnActivityCoefficients() const -> VectorXdConstRef;
@@ -213,11 +213,11 @@ private:
     /// The mole fractions of the species in the system (in units of mol/mol).
     VectorXd x;
 
-    /// The results of the evaluation of the PhaseThermoModel functions of each phase.
-    ThermoModelResult tres;
+    // /// The results of the evaluation of the PhaseThermoModel functions of each phase.
+    // ThermoModelResult tres;
 
-    /// The results of the evaluation of the PhaseChemicalModel functions of each phase.
-    ChemicalModelResult cres;
+    // /// The results of the evaluation of the PhaseChemicalModel functions of each phase.
+    // ChemicalModelResult cres;
 };
 
 } // namespace Reaktoro

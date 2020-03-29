@@ -72,10 +72,10 @@ struct OptimumSolverIpActive::Impl
     Indices iunstable_variables;
 
     /// The coefficient matrix of the stable variables
-    Matrix As;
+    MatrixXd As;
 
     /// The coefficient matrix of the unstable variables
-    Matrix Au;
+    MatrixXd Au;
 
     /// The optimisation problem based on stable variables only
     OptimumProblem stable_problem;

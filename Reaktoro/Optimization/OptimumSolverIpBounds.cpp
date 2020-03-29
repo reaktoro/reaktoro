@@ -40,7 +40,7 @@ struct OptimumSolverIpBounds::Impl
     VectorXd rhs;
 
     /// The left-hand side matrix of the KKT equations
-    Matrix lhs;
+    MatrixXd lhs;
 
     /// The slack variables `s` and its inverse
     VectorXd s, inv_s;
@@ -291,7 +291,7 @@ struct OptimumSolverIpBounds::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> Matrix
+    auto dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> MatrixXd
     {
         RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
             "The method OptimumSolverIpBounds::dxdp has not been implemented yet.");

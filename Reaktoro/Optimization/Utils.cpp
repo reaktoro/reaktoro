@@ -107,15 +107,15 @@ auto infinity() -> double
     return std::numeric_limits<double>::infinity();
 }
 
-auto bfgs() -> std::function<Matrix(VectorXdConstRef, VectorXdConstRef)>
+auto bfgs() -> std::function<MatrixXd(VectorXdConstRef, VectorXdConstRef)>
 {
     VectorXd x0;
     VectorXd g0;
     VectorXd dx;
     VectorXd dg;
-    Matrix H;
+    MatrixXd H;
 
-    std::function<Matrix(VectorXdConstRef, VectorXdConstRef)> f = [=](VectorXdConstRef x, VectorXdConstRef g) mutable
+    std::function<MatrixXd(VectorXdConstRef, VectorXdConstRef)> f = [=](VectorXdConstRef x, VectorXdConstRef g) mutable
     {
         if(x0.size() == 0)
         {

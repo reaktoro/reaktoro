@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <clocale>
+#include <sstream>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
@@ -31,8 +32,8 @@
 #include <Reaktoro/Databases/EmbeddedDatabases.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
 
-// miniz includes
-#include <miniz/zip_file.hpp>
+// // miniz includes
+// #include <miniz/zip_file.hpp>
 
 // pugixml includes
 #include <pugixml.hpp>

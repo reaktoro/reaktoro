@@ -238,10 +238,10 @@ auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, cons
 /// @param nrows The number of rows of the mapped view.
 /// @param ncols The number of columns of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto blockmap(Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto blockmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
 {
     Eigen::Stride<Rows,Cols> stride(mat.outerStride(), mat.innerStride());
-    return Eigen::Map<Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows,MaxCols>>(
+    return Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows,MaxCols>>(
         mat.block(row, col, nrows, ncols).data(), nrows, ncols, stride);
 }
 
@@ -252,10 +252,10 @@ auto blockmap(Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, In
 /// @param nrows The number of rows of the mapped view.
 /// @param ncols The number of columns of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto blockmap(const Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<const Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto blockmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
 {
     Eigen::Stride<Rows,Cols> stride(mat.outerStride(), mat.innerStride());
-    return Eigen::Map<const Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows,MaxCols>>(
+    return Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows,MaxCols>>(
         mat.block(row, col, nrows, ncols).data(), nrows, ncols, stride);
 }
 
@@ -264,7 +264,7 @@ auto blockmap(const Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& m
 /// @param row The index of the row at which the view starts.
 /// @param nrows The number of rows of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto rowsmap(Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto rowsmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
 {
     return blockmap(mat, row, 0, nrows, mat.cols());
 }
@@ -274,7 +274,7 @@ auto rowsmap(Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Ind
 /// @param row The index of the row at which the view starts.
 /// @param nrows The number of rows of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto rowsmap(const Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<const Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto rowsmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
 {
     return blockmap(mat, row, 0, nrows, mat.cols());
 }
@@ -286,7 +286,7 @@ auto rowsmap(const Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& ma
 /// @param nrows The number of rows of the mapped view.
 /// @param ncols The number of columns of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto colsmap(Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto colsmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
 {
     return blockmap(mat, 0, col, mat.rows(), ncols);
 }
@@ -298,7 +298,7 @@ auto colsmap(Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Ind
 /// @param nrows The number of rows of the mapped view.
 /// @param ncols The number of columns of the mapped view.
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto colsmap(const Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<const Eigen::MatrixXd<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+auto colsmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
 {
     return blockmap(mat, 0, col, mat.rows(), ncols);
 }
@@ -417,4 +417,4 @@ auto log10(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().log10(
 
 } // namespace Reaktoro
 
-#include "MatrixXd.hxx"
+#include "Matrix.hxx"

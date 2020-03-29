@@ -71,11 +71,11 @@ struct Regularizer::Impl
 
     /// The coefficient matrix `A` without trivial constraints and linearly dependent rows.
     /// If new `A` in `update` equals `A_last`, then there is no need to update `A_star`.
-    Matrix A_star;
+    MatrixXd A_star;
 
     /// The right-hand side vector `b` without trivial constraints and linearly dependent rows.
     /// If new `A` in `update` equals `A_last`, then there is no need to update `b_star`.
-    Matrix b_star;
+    MatrixXd b_star;
 
     //=============================================================================================
     // Data related to echelonization of the constraints (helps with round-off errors).
@@ -89,22 +89,22 @@ struct Regularizer::Impl
 
     /// The regularizer matrix that is applied to the coefficient matrix `A_star` as `reg(A) = R*A_star`.
     /// If the new set of basic variables are the same as last, then there is no need to update `R`.
-    Matrix R;
+    MatrixXd R;
 
     /// The inverse of the regularizer matrix R.
     /// If the new set of basic variables are the same as last, then there is no need to update `invR`.
-    Matrix invR;
+    MatrixXd invR;
 
     /// The permutation matrix from the echelonization.
     PermutationMatrix P_echelon;
 
     /// The coefficient matrix computed as `A_echelon = R * A_star`.
     /// If the new set of basic variables are the same as last, then there is no need to update `A_echelon`.
-    Matrix A_echelon;
+    MatrixXd A_echelon;
 
     /// The right-hand side vector `b_echelon` computed as `b_echelon = R * b_star`.
     /// This member must always be updated because `b` changes frequently.
-    Matrix b_echelon;
+    MatrixXd b_echelon;
 
     // The indices of basic/independent variables that compose the others.
     Indices ibasic_variables;

@@ -21,9 +21,9 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
@@ -119,7 +119,7 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
         const auto na = rows(properties.composition(), ifirst, num_aqueous);
 
         // The ln amounts of aqueous species
-        const VectorXr ln_na = log(na.val);
+        const VectorXr ln_na = log(na);
 
         // The columns of the formula matrix corresponding to aqueous species
         const auto Aa = cols(system.formulaMatrix(), ifirst, num_aqueous);
@@ -138,10 +138,10 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
         const VectorXr u0a = rows(properties.standardPartialMolarGibbsEnergies(), ifirst, num_aqueous)/RT;
 
         // The ln activities of the aqueous species
-        const VectorXd ln_aa = rows(properties.lnActivities(), ifirst, num_aqueous);
+        const VectorXr ln_aa = rows(properties.lnActivities(), ifirst, num_aqueous);
 
         // The normalized chemical potentials of the aqueous species
-        const VectorXd ua = u0a + ln_aa;
+        const VectorXr ua = u0a + ln_aa;
 
         // The standard chemical potential of electron species (zero if not existent in the system)
         real u0a_electron;
@@ -149,11 +149,8 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
             u0a_electron = u0a[ielectron];
 
         // The dual potentials of the elements and its derivatives
-        VectorXd y;
-        y.val = lu.trsolve(ua.val);
-        y.ddT = lu.trsolve(ua.ddT);
-        y.ddP = lu.trsolve(ua.ddP);
-        y.ddn = lu.trsolve(ua.ddn);
+        VectorXr y;
+        y = lu.trsolve(ua);
 
         // The pe of the aqueous phase
         real pe(num_species);
@@ -301,7 +298,7 @@ auto ChemicalProperty::alkalinity(const ChemicalSystem& system) -> ChemicalPrope
         alkalinity_factors[j++] = system.species(i).charge();
 
     real volume(num_species);
-    VectorXd n;
+    VectorXr n;
 
     ChemicalPropertyFunction f = [=](const ChemicalProperties& properties) mutable
     {

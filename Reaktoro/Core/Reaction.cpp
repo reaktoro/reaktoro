@@ -59,7 +59,7 @@ struct Reaction::Impl
     VectorXr stoichiometries;
 
     /// The function for the equilibrium constant of the reaction (in terms of natural log)
-    ThermoScalarFunction lnk;
+    std::function<real(real, real)> lnk;
 
     /// The function for the kinetic rate of the reaction (in units of mol/s)
     ReactionRateFunction rate;
@@ -111,7 +111,7 @@ auto Reaction::setName(std::string name) -> void
     pimpl->name = name;
 }
 
-auto Reaction::setEquilibriumConstant(const ThermoScalarFunction& lnk) -> void
+auto Reaction::setEquilibriumConstant(const std::function<real(real, real)>& lnk) -> void
 {
     pimpl->lnk = lnk;
 }
@@ -126,7 +126,7 @@ auto Reaction::name() const -> std::string
     return pimpl->name;
 }
 
-auto Reaction::equilibriumConstant() const -> const ThermoScalarFunction&
+auto Reaction::equilibriumConstant() const -> const std::function<real(real, real)>&
 {
     return pimpl->lnk;
 }

@@ -18,26 +18,28 @@
 #pragma once
 
 // C++ includes
+#include <functional>
 #include <vector>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
 auto interpolate(
     const std::vector<real>& temperatures,
     const std::vector<real>& pressures,
-    const std::vector<real>& scalars) -> ThermoScalarFunction;
+    const std::vector<real>& scalars) -> std::function<real(real, real)>;
 
 auto interpolate(
     const std::vector<real>& temperatures,
     const std::vector<real>& pressures,
-    const ThermoScalarFunction& func) -> ThermoScalarFunction;
+    const std::function<real(real, real)>& func) -> std::function<real(real, real)>;
 
 auto interpolate(
     const std::vector<real>& temperatures,
     const std::vector<real>& pressures,
-    const std::vector<ThermoScalarFunction>& fs) -> ThermoVectorFunction;
+    const std::vector<std::function<real(real, real)>>& fs) -> std::function<VectorXr(real, real)>;
 
 } // namespace Reaktoro

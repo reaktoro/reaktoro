@@ -420,7 +420,7 @@ struct OptimumSolverIpNewton::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> Matrix
+    auto dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> MatrixXd
     {
         // Initialize the right-hand side of the KKT equations
         rhs.rx.noalias() = -dgdp;

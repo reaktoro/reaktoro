@@ -19,10 +19,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
+#include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
@@ -115,7 +115,7 @@ struct EquilibriumReactions::Impl
     Partition partition;
 
     // The formula matrix of the equilibrium species
-    Matrix Ae;
+    MatrixXd Ae;
 
     // The indices of the equilibrium species
     Indices iequilibrium;
@@ -124,7 +124,7 @@ struct EquilibriumReactions::Impl
     Index Ne, Ee;
 
     // The weighted formula matrix of the equilibrium species
-    Matrix We;
+    MatrixXd We;
 
     // The LU decomposition of the coefficient matrix `Abar`, where `P*Abar*Q = LU` and `Abar` is `Ae` without linearly dependent rows
     LU lu;
@@ -136,7 +136,7 @@ struct EquilibriumReactions::Impl
     Indices isecondary;
 
     // The stoichiometric matrix of the equilibrium reactions
-    Matrix stoichiometric_matrix;
+    MatrixXd stoichiometric_matrix;
 
     // The equations of the equilibrium reactions
     std::vector<ReactionEquation> equations;
@@ -313,7 +313,7 @@ auto EquilibriumReactions::equations() const -> std::vector<ReactionEquation>
     return pimpl->equations;
 }
 
-auto EquilibriumReactions::stoichiometricMatrix() const -> Matrix
+auto EquilibriumReactions::stoichiometricMatrix() const -> MatrixXd
 {
     return pimpl->stoichiometric_matrix;
 }

@@ -142,11 +142,6 @@ add_custom_target(demos
     COMMAND ${CMAKE_MAKE_PROGRAM}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/demos")
 
-# Add target "tests" for manual building of tests, as `make tests`, if REAKTORO_BUILD_TESTS is OFF
-add_custom_target(tests
-    COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests")
-
 # Add target "utilities" for manual building of utilities, as `make utilities`, if REAKTORO_BUILD_UTILITIES is OFF
 add_custom_target(utilities
     COMMAND ${CMAKE_MAKE_PROGRAM}

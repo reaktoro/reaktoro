@@ -75,13 +75,13 @@ struct EquilibriumInverseSolver::Impl
         // Define auxiliary variables from the inverse problem definition
         const Index Nt = problem.numTitrants();
         const Index Nc = problem.numConstraints();
-        const Matrix C = problem.formulaMatrixTitrants();
+        const MatrixXd C = problem.formulaMatrixTitrants();
         const VectorXr b0 = problem.elementInitialAmounts();
         const Indices ies = partition.indicesEquilibriumSpecies();
         const Indices iee = partition.indicesEquilibriumElements();
 
         // Get the rows corresponding to equilibrium elements only
-        const Matrix Ce = rows(C, iee);
+        const MatrixXd Ce = rows(C, iee);
         const VectorXr be0 = rows(b0, iee);
 
         // The temperature and pressure for the calculation

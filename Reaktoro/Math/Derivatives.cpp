@@ -77,12 +77,12 @@ auto derivativeCentral(const ScalarFunction& f, VectorXdConstRef x) -> VectorXd
     return dfdx;
 }
 
-auto derivativeForward(const VectorFunction& f, VectorXdConstRef x) -> Matrix
+auto derivativeForward(const VectorFunction& f, VectorXdConstRef x) -> MatrixXd
 {
     const VectorXd fx = f(x);
     const unsigned nrows = fx.rows();
     const unsigned ncols = x.rows();
-    Matrix dfdx = zeros(nrows, ncols);
+    MatrixXd dfdx = zeros(nrows, ncols);
     VectorXd xh(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {
@@ -94,12 +94,12 @@ auto derivativeForward(const VectorFunction& f, VectorXdConstRef x) -> Matrix
     return dfdx;
 }
 
-auto derivativeBackward(const VectorFunction& f, VectorXdConstRef x) -> Matrix
+auto derivativeBackward(const VectorFunction& f, VectorXdConstRef x) -> MatrixXd
 {
     const VectorXd fx = f(x);
     const unsigned nrows = fx.rows();
     const unsigned ncols = x.rows();
-    Matrix dfdx = zeros(nrows, ncols);
+    MatrixXd dfdx = zeros(nrows, ncols);
     VectorXd xh(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {
@@ -111,12 +111,12 @@ auto derivativeBackward(const VectorFunction& f, VectorXdConstRef x) -> Matrix
     return dfdx;
 }
 
-auto derivativeCentral(const VectorFunction& f, VectorXdConstRef x) -> Matrix
+auto derivativeCentral(const VectorFunction& f, VectorXdConstRef x) -> MatrixXd
 {
     const VectorXd fx = f(x);
     const unsigned nrows = fx.rows();
     const unsigned ncols = x.rows();
-    Matrix dfdx = zeros(nrows, ncols);
+    MatrixXd dfdx = zeros(nrows, ncols);
     VectorXd xh1(ncols), xh2(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {

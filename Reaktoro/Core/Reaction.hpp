@@ -26,7 +26,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Real.hpp>
-#include <Reaktoro/Common/ReactionEquation.hpp>
+#include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
@@ -78,7 +78,7 @@ public:
     auto setName(std::string name) -> void;
 
     /// Set the equilibrium constant function of the reaction (in natural log scale).
-    auto setEquilibriumConstant(const ThermoScalarFunction& lnk) -> void;
+    auto setEquilibriumConstant(const std::function<real(real, real)>& lnk) -> void;
 
     /// Set the rate function of the reaction (in units of mol/s).
     auto setRate(const ReactionRateFunction& function) -> void;
@@ -87,7 +87,7 @@ public:
     auto name() const -> std::string;
 
     /// Return the equilibrium constant function of the reaction.
-    auto equilibriumConstant() const -> const ThermoScalarFunction&;
+    auto equilibriumConstant() const -> const std::function<real(real, real)>&;
 
     /// Return the rate function of the reaction.
     auto rate() const -> const ReactionRateFunction&;

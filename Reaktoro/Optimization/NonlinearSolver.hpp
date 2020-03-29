@@ -34,7 +34,7 @@ struct NonlinearResidual
     VectorXd val;
 
     /// The Jacobian matrix of the non-linear residual function evaluated at `x`.
-    Matrix jacobian;
+    MatrixXd jacobian;
 
     /// The boolean flag that indicates if the non-linear function evaluation succeeded.
     /// This should be set to false whenever the evaluation of the non-linear function
@@ -62,7 +62,7 @@ struct NonlinearProblem
 
     /// The left-hand side matrix of the linear inequality constraint `A*x = b`.
     /// This can be left empty if no linear inequality constraints exist.
-    Matrix A;
+    MatrixXd A;
 
     /// The right-hand side vector of the linear equality constraint `A*x = b`.
     /// This can be left empty if no linear inequality constraints exist.

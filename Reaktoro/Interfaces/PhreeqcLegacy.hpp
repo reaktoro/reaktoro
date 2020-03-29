@@ -30,3 +30,4 @@ using PhreeqcPhase = phase;
 
 #undef Phreeqc
 #undef protected
+#undef pi

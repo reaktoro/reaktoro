@@ -39,10 +39,10 @@ struct ChemicalState::Impl
     const ChemicalSystem system;
 
     /// The temperature state of the chemical system (in units of K)
-    double T = 298.15;
+    real T = 298.15;
 
     /// The pressure state of the chemical system (in units of Pa)
-    double P = 1.0e+05;
+    real P = 1.0e+05;
 
     /// The molar amounts of the chemical species
     VectorXr n;
@@ -65,31 +65,31 @@ struct ChemicalState::Impl
         z = zeros(system.numSpecies());
     }
 
-    auto setTemperature(double val) -> void
+    auto setTemperature(real val) -> void
     {
         Assert(val > 0.0, "Cannot set temperature of the chemical "
             "state with a non-positive value.", "");
         T = val;
     }
 
-    auto setTemperature(double val, std::string units) -> void
+    auto setTemperature(real val, std::string units) -> void
     {
         setTemperature(units::convert(val, units, "kelvin"));
     }
 
-    auto setPressure(double val) -> void
+    auto setPressure(real val) -> void
     {
         Assert(val > 0.0, "Cannot set pressure of the chemical "
             "state with a non-positive value.", "");
         P = val;
     }
 
-    auto setPressure(double val, std::string units) -> void
+    auto setPressure(real val, std::string units) -> void
     {
         setPressure(units::convert(val, units, "pascal"));
     }
 
-    auto setSpeciesAmounts(double val) -> void
+    auto setSpeciesAmounts(real val) -> void
     {
         Assert(val >= 0.0,
             "Cannot set the molar amounts of the species.",
@@ -115,7 +115,7 @@ struct ChemicalState::Impl
         n(indices) = values;
     }
 
-    auto setSpeciesAmount(Index index, double amount) -> void
+    auto setSpeciesAmount(Index index, real amount) -> void
     {
         Assert(amount >= 0.0,
             "Cannot set the molar amount of the species.",
@@ -126,25 +126,25 @@ struct ChemicalState::Impl
         n[index] = amount;
     }
 
-    auto setSpeciesAmount(std::string species, double amount) -> void
+    auto setSpeciesAmount(std::string species, real amount) -> void
     {
         const Index index = system.indexSpeciesWithError(species);
         setSpeciesAmount(index, amount);
     }
 
-    auto setSpeciesAmount(Index index, double amount, std::string units) -> void
+    auto setSpeciesAmount(Index index, real amount, std::string units) -> void
     {
         amount = units::convert(amount, units, "mol");
         setSpeciesAmount(index, amount);
     }
 
-    auto setSpeciesAmount(std::string species, double amount, std::string units) -> void
+    auto setSpeciesAmount(std::string species, real amount, std::string units) -> void
     {
         const Index index = system.indexSpeciesWithError(species);
         setSpeciesAmount(index, amount, units);
     }
 
-    auto setSpeciesMass(Index index, double mass) -> void
+    auto setSpeciesMass(Index index, real mass) -> void
     {
         Assert(mass >= 0.0,
             "Cannot set the mass of the species.",
@@ -152,23 +152,23 @@ struct ChemicalState::Impl
         Assert(index < system.numSpecies(),
             "Cannot set the mass of the species.",
             "The given species index is out-of-range.");
-        const double ni = mass/system.species(index).molarMass();
+        const auto ni = mass/system.species(index).molarMass();
         setSpeciesAmount(index, ni);
     }
 
-    auto setSpeciesMass(std::string species, double mass) -> void
+    auto setSpeciesMass(std::string species, real mass) -> void
     {
         const Index index = system.indexSpeciesWithError(species);
         setSpeciesMass(index, mass);
     }
 
-    auto setSpeciesMass(Index index, double mass, std::string units) -> void
+    auto setSpeciesMass(Index index, real mass, std::string units) -> void
     {
         mass = units::convert(mass, units, "kg");
         setSpeciesMass(index, mass);
     }
 
-    auto setSpeciesMass(std::string species, double mass, std::string units) -> void
+    auto setSpeciesMass(std::string species, real mass, std::string units) -> void
     {
         const Index index = system.indexSpeciesWithError(species);
         setSpeciesMass(index, mass, units);
@@ -192,7 +192,7 @@ struct ChemicalState::Impl
         y = values;
     }
 
-    auto scaleSpeciesAmounts(double scalar) -> void
+    auto scaleSpeciesAmounts(real scalar) -> void
     {
         Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.",
             "The given scalar is negative.");
@@ -200,7 +200,7 @@ struct ChemicalState::Impl
             setSpeciesAmount(i, speciesAmount(i) * scalar);
     }
 
-    auto scaleSpeciesAmounts(double scalar, const Indices& indices) -> void
+    auto scaleSpeciesAmounts(real scalar, const Indices& indices) -> void
     {
         Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.",
             "The given scalar is negative.");
@@ -208,7 +208,7 @@ struct ChemicalState::Impl
             setSpeciesAmount(i, speciesAmount(i) * scalar);
     }
 
-    auto scaleSpeciesAmountsInPhase(Index index, double scalar) -> void
+    auto scaleSpeciesAmountsInPhase(Index index, real scalar) -> void
     {
         Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.",
             "The given scalar `" + std::to_string(scalar) << "` is negative.");
@@ -220,82 +220,82 @@ struct ChemicalState::Impl
             setSpeciesAmount(start + i, speciesAmount(start + i) * scalar);
     }
 
-    auto scalePhaseVolume(Index index, double volume) -> void
+    auto scalePhaseVolume(Index index, real volume) -> void
     {
         Assert(volume >= 0.0, "Cannot set the volume of the phase.",
             "The given volume is negative.");
         Assert(index < system.numPhases(), "Cannot set the volume of the phase.",
             "The given phase index is out of range.");
         ChemicalProperties properties = system.properties(T, P, n);
-        const VectorXr v = properties.phaseVolumes().val;
-        const double scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
+        const VectorXr v = properties.phaseVolumes();
+        const auto scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
         scaleSpeciesAmountsInPhase(index, scalar);
     }
 
-    auto scalePhaseVolume(Index index, double volume, std::string units) -> void
+    auto scalePhaseVolume(Index index, real volume, std::string units) -> void
     {
         volume = units::convert(volume, units, "m3");
         scalePhaseVolume(index, volume);
     }
 
-    auto scalePhaseVolume(std::string name, double volume) -> void
+    auto scalePhaseVolume(std::string name, real volume) -> void
     {
         const Index index = system.indexPhase(name);
         scalePhaseVolume(index, volume);
     }
 
-    auto scalePhaseVolume(std::string name, double volume, std::string units) -> void
+    auto scalePhaseVolume(std::string name, real volume, std::string units) -> void
     {
         volume = units::convert(volume, units, "m3");
         scalePhaseVolume(name, volume);
     }
 
-    auto scaleFluidVolume(double volume) -> void
+    auto scaleFluidVolume(real volume) -> void
     {
         const auto& fluid_volume = properties().fluidVolume();
-        const auto& factor = fluid_volume.val ? volume/fluid_volume.val : 0.0;
+        const auto& factor = fluid_volume ? volume/fluid_volume : 0.0;
         const auto& ifluidspecies = system.indicesFluidSpecies();
         scaleSpeciesAmounts(factor, ifluidspecies);
     }
 
-    auto scaleFluidVolume(double volume, std::string units) -> void
+    auto scaleFluidVolume(real volume, std::string units) -> void
     {
         volume = units::convert(volume, units, "m3");
         scaleFluidVolume(volume);
     }
 
-    auto scaleSolidVolume(double volume) -> void
+    auto scaleSolidVolume(real volume) -> void
     {
         const auto& solid_volume = properties().solidVolume();
-        const auto& factor = solid_volume.val ? volume/solid_volume.val : 0.0;
+        const auto& factor = solid_volume ? volume/solid_volume : 0.0;
         const auto& isolidspecies = system.indicesSolidSpecies();
         scaleSpeciesAmounts(factor, isolidspecies);
     }
 
-    auto scaleSolidVolume(double volume, std::string units) -> void
+    auto scaleSolidVolume(real volume, std::string units) -> void
     {
         volume = units::convert(volume, units, "m3");
         scaleSolidVolume(volume);
     }
 
-    auto scaleVolume(double volume) -> void
+    auto scaleVolume(real volume) -> void
     {
         Assert(volume >= 0.0, "Cannot set the volume of the chemical state.",
             "The given volume is negative.");
         ChemicalProperties properties = system.properties(T, P, n);
-        const VectorXr v = properties.phaseVolumes().val;
-        const double vtotal = sum(v);
-        const double scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
+        const VectorXr v = properties.phaseVolumes();
+        const auto vtotal = sum(v);
+        const auto scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
         scaleSpeciesAmounts(scalar);
     }
 
-    auto scaleVolume(double volume, std::string units) -> void
+    auto scaleVolume(real volume, std::string units) -> void
     {
         volume = units::convert(volume, units, "m3");
         return scaleVolume(volume);
     }
 
-    auto speciesAmount(Index index) const -> double
+    auto speciesAmount(Index index) const -> real
     {
         Assert(index < system.numSpecies(),
             "Cannot get the molar amount of the species.",
@@ -303,18 +303,18 @@ struct ChemicalState::Impl
         return n[index];
     }
 
-    auto speciesAmount(std::string name) const -> double
+    auto speciesAmount(std::string name) const -> real
     {
         const Index index = system.indexSpeciesWithError(name);
         return speciesAmount(index);
     }
 
-    auto speciesAmount(Index index, std::string units) const -> double
+    auto speciesAmount(Index index, std::string units) const -> real
     {
         return units::convert(speciesAmount(index), "mol", units);
     }
 
-    auto speciesAmount(std::string name, std::string units) const -> double
+    auto speciesAmount(std::string name, std::string units) const -> real
     {
         const Index index = system.indexSpeciesWithError(name);
         return speciesAmount(index, units);
@@ -335,77 +335,77 @@ struct ChemicalState::Impl
         return system.elementAmountsInSpecies(indices, n);
     }
 
-    auto elementAmount(Index ielement) const -> double
+    auto elementAmount(Index ielement) const -> real
     {
         return system.elementAmount(ielement, n);
     }
 
-    auto elementAmount(std::string element) const -> double
+    auto elementAmount(std::string element) const -> real
     {
         return elementAmount(system.indexElementWithError(element));
     }
 
-    auto elementAmount(Index index, std::string units) const -> double
+    auto elementAmount(Index index, std::string units) const -> real
     {
         return units::convert(elementAmount(index), "mol", units);
     }
 
-    auto elementAmount(std::string name, std::string units) const -> double
+    auto elementAmount(std::string name, std::string units) const -> real
     {
         return units::convert(elementAmount(name), "mol", units);
     }
 
-    auto elementAmountInPhase(Index ielement, Index iphase) const -> double
+    auto elementAmountInPhase(Index ielement, Index iphase) const -> real
     {
         return system.elementAmountInPhase(ielement, iphase, n);
     }
 
-    auto elementAmountInPhase(std::string element, std::string phase) const -> double
+    auto elementAmountInPhase(std::string element, std::string phase) const -> real
     {
         const unsigned ielement = system.indexElementWithError(element);
         const unsigned iphase = system.indexPhaseWithError(phase);
         return elementAmountInPhase(ielement, iphase);
     }
 
-    auto elementAmountInPhase(Index ielement, Index iphase, std::string units) const -> double
+    auto elementAmountInPhase(Index ielement, Index iphase, std::string units) const -> real
     {
         return units::convert(elementAmountInPhase(ielement, iphase), "mol", units);
     }
 
-    auto elementAmountInPhase(std::string element, std::string phase, std::string units) const -> double
+    auto elementAmountInPhase(std::string element, std::string phase, std::string units) const -> real
     {
         return units::convert(elementAmountInPhase(element, phase), "mol", units);
     }
 
-    auto elementAmountInSpecies(Index ielement, const Indices& ispecies) const -> double
+    auto elementAmountInSpecies(Index ielement, const Indices& ispecies) const -> real
     {
         return system.elementAmountInSpecies(ielement, ispecies, n);
     }
 
-    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double
+    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> real
     {
         return units::convert(elementAmountInSpecies(ielement, ispecies), "mol", units);
     }
 
-    auto phaseAmount(Index index) const -> double
+    auto phaseAmount(Index index) const -> real
     {
         const Index first = system.indexFirstSpeciesInPhase(index);
         const Index size = system.numSpeciesInPhase(index);
         return rows(n, first, size).sum();
     }
 
-    auto phaseAmount(std::string name) const -> double
+    auto phaseAmount(std::string name) const -> real
     {
         const Index index = system.indexPhaseWithError(name);
         return phaseAmount(index);
     }
 
-    auto phaseAmount(Index index, std::string units) const -> double
+    auto phaseAmount(Index index, std::string units) const -> real
     {
         return units::convert(phaseAmount(index), "mol", units);
     }
 
-    auto phaseAmount(std::string name, std::string units) const -> double
+    auto phaseAmount(std::string name, std::string units) const -> real
     {
         return units::convert(phaseAmount(name), "mol", units);
     }
@@ -421,9 +421,9 @@ struct ChemicalState::Impl
     auto phaseStabilityIndices() const -> VectorXr
     {
         // Auxiliary variables
-        const double ln10 = 2.302585092994046;
+        const auto ln10 = 2.302585092994046;
         const unsigned num_phases = system.numPhases();
-        const double RT = universalGasConstant * T;
+        const auto RT = universalGasConstant * T;
 
         // Calculate the normalized z-Lagrange multipliers for all species
         const VectorXr zRT = z/RT;
@@ -448,7 +448,7 @@ struct ChemicalState::Impl
             {
                 const VectorXr zp = rows(zRT, offset, num_species);
                 VectorXr xp = rows(n, offset, num_species);
-                const double nsum = sum(xp);
+                const auto nsum = sum(xp);
                 if(nsum) xp /= nsum; else xp.fill(1.0/num_species);
                 stability_indices[i] = std::log10(sum(xp % exp(-zp)));
             }
@@ -477,27 +477,27 @@ auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
     return *this;
 }
 
-auto ChemicalState::setTemperature(double val) -> void
+auto ChemicalState::setTemperature(real val) -> void
 {
     pimpl->setTemperature(val);
 }
 
-auto ChemicalState::setTemperature(double val, std::string units) -> void
+auto ChemicalState::setTemperature(real val, std::string units) -> void
 {
     pimpl->setTemperature(val, units);
 }
 
-auto ChemicalState::setPressure(double val) -> void
+auto ChemicalState::setPressure(real val) -> void
 {
     pimpl->setPressure(val);
 }
 
-auto ChemicalState::setPressure(double val, std::string units) -> void
+auto ChemicalState::setPressure(real val, std::string units) -> void
 {
     pimpl->setPressure(val, units);
 }
 
-auto ChemicalState::setSpeciesAmounts(double val) -> void
+auto ChemicalState::setSpeciesAmounts(real val) -> void
 {
     pimpl->setSpeciesAmounts(val);
 }
@@ -512,42 +512,42 @@ auto ChemicalState::setSpeciesAmounts(VectorXrConstRef n, const Indices& indices
     pimpl->setSpeciesAmounts(n, indices);
 }
 
-auto ChemicalState::setSpeciesAmount(Index index, double amount) -> void
+auto ChemicalState::setSpeciesAmount(Index index, real amount) -> void
 {
     pimpl->setSpeciesAmount(index, amount);
 }
 
-auto ChemicalState::setSpeciesAmount(std::string species, double amount) -> void
+auto ChemicalState::setSpeciesAmount(std::string species, real amount) -> void
 {
     pimpl->setSpeciesAmount(species, amount);
 }
 
-auto ChemicalState::setSpeciesAmount(Index index, double amount, std::string units) -> void
+auto ChemicalState::setSpeciesAmount(Index index, real amount, std::string units) -> void
 {
     pimpl->setSpeciesAmount(index, amount, units);
 }
 
-auto ChemicalState::setSpeciesAmount(std::string species, double amount, std::string units) -> void
+auto ChemicalState::setSpeciesAmount(std::string species, real amount, std::string units) -> void
 {
     pimpl->setSpeciesAmount(species, amount, units);
 }
 
-auto ChemicalState::setSpeciesMass(Index index, double mass) -> void
+auto ChemicalState::setSpeciesMass(Index index, real mass) -> void
 {
     pimpl->setSpeciesMass(index, mass);
 }
 
-auto ChemicalState::setSpeciesMass(std::string name, double mass) -> void
+auto ChemicalState::setSpeciesMass(std::string name, real mass) -> void
 {
     pimpl->setSpeciesMass(name, mass);
 }
 
-auto ChemicalState::setSpeciesMass(Index index, double mass, std::string units) -> void
+auto ChemicalState::setSpeciesMass(Index index, real mass, std::string units) -> void
 {
     pimpl->setSpeciesMass(index, mass, units);
 }
 
-auto ChemicalState::setSpeciesMass(std::string name, double mass, std::string units) -> void
+auto ChemicalState::setSpeciesMass(std::string name, real mass, std::string units) -> void
 {
     pimpl->setSpeciesMass(name, mass, units);
 }
@@ -562,62 +562,62 @@ auto ChemicalState::setElementDualPotentials(VectorXrConstRef y) -> void
     pimpl->setElementDualPotentials(y);
 }
 
-auto ChemicalState::scaleSpeciesAmounts(double scalar) -> void
+auto ChemicalState::scaleSpeciesAmounts(real scalar) -> void
 {
     pimpl->scaleSpeciesAmounts(scalar);
 }
 
-auto ChemicalState::scaleSpeciesAmountsInPhase(Index index, double scalar) -> void
+auto ChemicalState::scaleSpeciesAmountsInPhase(Index index, real scalar) -> void
 {
     pimpl->scaleSpeciesAmountsInPhase(index, scalar);
 }
 
-auto ChemicalState::scalePhaseVolume(Index index, double volume) -> void
+auto ChemicalState::scalePhaseVolume(Index index, real volume) -> void
 {
     pimpl->scalePhaseVolume(index, volume);
 }
 
-auto ChemicalState::scalePhaseVolume(Index index, double volume, std::string units) -> void
+auto ChemicalState::scalePhaseVolume(Index index, real volume, std::string units) -> void
 {
     pimpl->scalePhaseVolume(index, volume, units);
 }
 
-auto ChemicalState::scalePhaseVolume(std::string name, double volume) -> void
+auto ChemicalState::scalePhaseVolume(std::string name, real volume) -> void
 {
     pimpl->scalePhaseVolume(name, volume);
 }
 
-auto ChemicalState::scalePhaseVolume(std::string name, double volume, std::string units) -> void
+auto ChemicalState::scalePhaseVolume(std::string name, real volume, std::string units) -> void
 {
     pimpl->scalePhaseVolume(name, volume, units);
 }
 
-auto ChemicalState::scaleFluidVolume(double volume) -> void
+auto ChemicalState::scaleFluidVolume(real volume) -> void
 {
     pimpl->scaleFluidVolume(volume);
 }
 
-auto ChemicalState::scaleFluidVolume(double volume, std::string units) -> void
+auto ChemicalState::scaleFluidVolume(real volume, std::string units) -> void
 {
     pimpl->scaleFluidVolume(volume, units);
 }
 
-auto ChemicalState::scaleSolidVolume(double volume) -> void
+auto ChemicalState::scaleSolidVolume(real volume) -> void
 {
     pimpl->scaleSolidVolume(volume);
 }
 
-auto ChemicalState::scaleSolidVolume(double volume, std::string units) -> void
+auto ChemicalState::scaleSolidVolume(real volume, std::string units) -> void
 {
     pimpl->scaleSolidVolume(volume, units);
 }
 
-auto ChemicalState::scaleVolume(double volume) -> void
+auto ChemicalState::scaleVolume(real volume) -> void
 {
     pimpl->scaleVolume(volume);
 }
 
-auto ChemicalState::scaleVolume(double volume, std::string units) -> void
+auto ChemicalState::scaleVolume(real volume, std::string units) -> void
 {
     pimpl->scaleVolume(volume, units);
 }
@@ -627,12 +627,12 @@ auto ChemicalState::system() const -> const ChemicalSystem&
     return pimpl->system;
 }
 
-auto ChemicalState::temperature() const -> double
+auto ChemicalState::temperature() const -> real
 {
     return pimpl->T;
 }
 
-auto ChemicalState::pressure() const -> double
+auto ChemicalState::pressure() const -> real
 {
     return pimpl->P;
 }
@@ -647,22 +647,22 @@ auto ChemicalState::speciesAmounts(const Indices& indices) const -> VectorXr
     return rows(pimpl->n, indices);
 }
 
-auto ChemicalState::speciesAmount(Index index) const -> double
+auto ChemicalState::speciesAmount(Index index) const -> real
 {
     return pimpl->speciesAmount(index);
 }
 
-auto ChemicalState::speciesAmount(std::string name) const -> double
+auto ChemicalState::speciesAmount(std::string name) const -> real
 {
     return pimpl->speciesAmount(name);
 }
 
-auto ChemicalState::speciesAmount(Index index, std::string units) const -> double
+auto ChemicalState::speciesAmount(Index index, std::string units) const -> real
 {
     return pimpl->speciesAmount(index, units);
 }
 
-auto ChemicalState::speciesAmount(std::string species, std::string units) const -> double
+auto ChemicalState::speciesAmount(std::string species, std::string units) const -> real
 {
     return pimpl->speciesAmount(species, units);
 }
@@ -687,52 +687,52 @@ auto ChemicalState::elementAmountsInSpecies(const Indices& ispecies) const -> Ve
     return pimpl->elementAmountsInSpecies(ispecies);
 }
 
-auto ChemicalState::elementAmount(Index ielement) const -> double
+auto ChemicalState::elementAmount(Index ielement) const -> real
 {
     return pimpl->elementAmount(ielement);
 }
 
-auto ChemicalState::elementAmount(std::string element) const -> double
+auto ChemicalState::elementAmount(std::string element) const -> real
 {
     return pimpl->elementAmount(element);
 }
 
-auto ChemicalState::elementAmount(Index index, std::string units) const -> double
+auto ChemicalState::elementAmount(Index index, std::string units) const -> real
 {
     return pimpl->elementAmount(index, units);
 }
 
-auto ChemicalState::elementAmount(std::string name, std::string units) const -> double
+auto ChemicalState::elementAmount(std::string name, std::string units) const -> real
 {
     return pimpl->elementAmount(name, units);
 }
 
-auto ChemicalState::elementAmountInPhase(Index ielement, Index iphase) const -> double
+auto ChemicalState::elementAmountInPhase(Index ielement, Index iphase) const -> real
 {
     return pimpl->elementAmountInPhase(ielement, iphase);
 }
 
-auto ChemicalState::elementAmountInPhase(std::string element, std::string phase) const -> double
+auto ChemicalState::elementAmountInPhase(std::string element, std::string phase) const -> real
 {
     return pimpl->elementAmountInPhase(element, phase);
 }
 
-auto ChemicalState::elementAmountInPhase(Index ielement, Index iphase, std::string units) const -> double
+auto ChemicalState::elementAmountInPhase(Index ielement, Index iphase, std::string units) const -> real
 {
     return pimpl->elementAmountInPhase(ielement, iphase, units);
 }
 
-auto ChemicalState::elementAmountInPhase(std::string element, std::string phase, std::string units) const -> double
+auto ChemicalState::elementAmountInPhase(std::string element, std::string phase, std::string units) const -> real
 {
     return pimpl->elementAmountInPhase(element, phase, units);
 }
 
-auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispecies) const -> double
+auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispecies) const -> real
 {
     return pimpl->elementAmountInSpecies(ielement, ispecies);
 }
 
-auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double
+auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> real
 {
     return pimpl->elementAmountInSpecies(ielement, ispecies, units);
 }
@@ -742,22 +742,22 @@ auto ChemicalState::elementDualPotentials() const -> VectorXrConstRef
     return pimpl->y;
 }
 
-auto ChemicalState::phaseAmount(Index index) const -> double
+auto ChemicalState::phaseAmount(Index index) const -> real
 {
     return pimpl->phaseAmount(index);
 }
 
-auto ChemicalState::phaseAmount(std::string name) const -> double
+auto ChemicalState::phaseAmount(std::string name) const -> real
 {
     return pimpl->phaseAmount(name);
 }
 
-auto ChemicalState::phaseAmount(Index index, std::string units) const -> double
+auto ChemicalState::phaseAmount(Index index, std::string units) const -> real
 {
     return pimpl->phaseAmount(index, units);
 }
 
-auto ChemicalState::phaseAmount(std::string name, std::string units) const -> double
+auto ChemicalState::phaseAmount(std::string name, std::string units) const -> real
 {
     return pimpl->phaseAmount(name, units);
 }
@@ -776,22 +776,22 @@ auto ChemicalState::output(std::ostream& out, int precision) const -> void
 {
     auto const& state = *this;
     const ChemicalSystem& system = state.system();
-    const double& T = state.temperature();
-    const double& P = state.pressure();
-    const double& R = universalGasConstant;
-    const double& F = faradayConstant;
+    const auto& T = state.temperature();
+    const auto& P = state.pressure();
+    const auto& R = universalGasConstant;
+    const auto& F = faradayConstant;
     const auto& n = state.speciesAmounts();
     const auto& y = state.elementDualPotentials();
     const auto& z = state.speciesDualPotentials();
     const ChemicalProperties properties = state.properties();
-    const VectorXr molar_fractions = properties.moleFractions().val;
-    const VectorXr activity_coeffs = exp(properties.lnActivityCoefficients().val);
-    const VectorXr activities = exp(properties.lnActivities().val);
-    const VectorXr chemical_potentials = properties.chemicalPotentials().val;
-    const VectorXr phase_moles = properties.phaseAmounts().val;
-    const VectorXr phase_masses = properties.phaseMasses().val;
-    const VectorXr phase_molar_volumes = properties.phaseMolarVolumes().val;
-    const VectorXr phase_volumes = properties.phaseVolumes().val;
+    const VectorXr molar_fractions = properties.moleFractions();
+    const VectorXr activity_coeffs = exp(properties.lnActivityCoefficients());
+    const VectorXr activities = exp(properties.lnActivities());
+    const VectorXr chemical_potentials = properties.chemicalPotentials();
+    const VectorXr phase_moles = properties.phaseAmounts();
+    const VectorXr phase_masses = properties.phaseMasses();
+    const VectorXr phase_molar_volumes = properties.phaseMolarVolumes();
+    const VectorXr phase_volumes = properties.phaseVolumes();
     const VectorXr phase_volume_fractions = phase_volumes/sum(phase_volumes);
     const VectorXr phase_densities = phase_masses/phase_volumes;
     const VectorXr phase_stability_indices = state.phaseStabilityIndices();
@@ -894,11 +894,11 @@ auto ChemicalState::output(std::ostream& out, int precision) const -> void
     {
         // Calculate pH, pE, and Eh
         const auto Ifn  = ChemicalProperty::ionicStrength(system);
-        const double I  = Ifn(properties).val;
-        const double pH = ChemicalProperty::pH(system)(properties).val;
-        const double pE = ChemicalProperty::pE(system)(properties).val;
-        const double Eh = std::log(10)*R*T/F*pE;
-        const double alk = ChemicalProperty::alkalinity(system)(properties).val;
+        const auto I  = Ifn(properties);
+        const auto pH = ChemicalProperty::pH(system)(properties);
+        const auto pE = ChemicalProperty::pE(system)(properties);
+        const auto Eh = std::log(10)*R*T/F*pE;
+        const auto alk = ChemicalProperty::alkalinity(system)(properties);
 
         // Output the table of the aqueous phase related state
         out << bar1 << std::endl;
@@ -941,14 +941,14 @@ auto operator+(const ChemicalState& l, const ChemicalState& r) -> ChemicalState
     return res;
 }
 
-auto operator*(double scalar, const ChemicalState& state) -> ChemicalState
+auto operator*(real scalar, const ChemicalState& state) -> ChemicalState
 {
     ChemicalState res = state;
     res.scaleSpeciesAmounts(scalar);
     return res;
 }
 
-auto operator*(const ChemicalState& state, double scalar) -> ChemicalState
+auto operator*(const ChemicalState& state, real scalar) -> ChemicalState
 {
     return scalar*state;
 }

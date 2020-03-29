@@ -31,7 +31,7 @@
 namespace Reaktoro {
 namespace {
 
-auto binarySearchHelper(double p, const std::vector<double>& coordinates, Index begin, Index end) -> Index
+auto binarySearchHelper(real p, const std::vector<real>& coordinates, Index begin, Index end) -> Index
 {
     if(end - begin == 1)
         return begin;
@@ -44,7 +44,7 @@ auto binarySearchHelper(double p, const std::vector<double>& coordinates, Index 
         return binarySearchHelper(p, coordinates, mid, end);
 }
 
-auto binarySearch(double p, const std::vector<double>& coordinates) -> Index
+auto binarySearch(real p, const std::vector<real>& coordinates) -> Index
 {
     return binarySearchHelper(p, coordinates, 0, coordinates.size());
 }
@@ -55,18 +55,18 @@ BilinearInterpolator::BilinearInterpolator()
 {}
 
 BilinearInterpolator::BilinearInterpolator(
-    const std::vector<double>& xcoordinates,
-    const std::vector<double>& ycoordinates,
-    const std::vector<double>& data)
+    const std::vector<real>& xcoordinates,
+    const std::vector<real>& ycoordinates,
+    const std::vector<real>& data)
 : m_xcoordinates(xcoordinates),
   m_ycoordinates(ycoordinates),
   m_data(data)
 {}
 
 BilinearInterpolator::BilinearInterpolator(
-    const std::vector<double>& xcoordinates,
-    const std::vector<double>& ycoordinates,
-    const std::function<double(double, double)>& function)
+    const std::vector<real>& xcoordinates,
+    const std::vector<real>& ycoordinates,
+    const std::function<real(real, real)>& function)
 : m_xcoordinates(xcoordinates),
   m_ycoordinates(ycoordinates),
   m_data(xcoordinates.size() * ycoordinates.size())
@@ -77,32 +77,32 @@ BilinearInterpolator::BilinearInterpolator(
             m_data[k] = function(xcoordinates[i], ycoordinates[j]);
 }
 
-auto BilinearInterpolator::setCoordinatesX(const std::vector<double>& xcoordinates) -> void
+auto BilinearInterpolator::setCoordinatesX(const std::vector<real>& xcoordinates) -> void
 {
     m_xcoordinates = xcoordinates;
 }
 
-auto BilinearInterpolator::setCoordinatesY(const std::vector<double>& ycoordinates) -> void
+auto BilinearInterpolator::setCoordinatesY(const std::vector<real>& ycoordinates) -> void
 {
     m_ycoordinates = ycoordinates;
 }
 
-auto BilinearInterpolator::setData(const std::vector<double>& data) -> void
+auto BilinearInterpolator::setData(const std::vector<real>& data) -> void
 {
     m_data = data;
 }
 
-auto BilinearInterpolator::xCoordinates() const -> const std::vector<double>&
+auto BilinearInterpolator::xCoordinates() const -> const std::vector<real>&
 {
     return m_xcoordinates;
 }
 
-auto BilinearInterpolator::yCoordinates() const -> const std::vector<double>&
+auto BilinearInterpolator::yCoordinates() const -> const std::vector<real>&
 {
     return m_ycoordinates;
 }
 
-auto BilinearInterpolator::data() const -> const std::vector<double>&
+auto BilinearInterpolator::data() const -> const std::vector<real>&
 {
     return m_data;
 }
@@ -112,15 +112,15 @@ auto BilinearInterpolator::empty() const -> bool
     return m_data.empty();
 }
 
-auto BilinearInterpolator::operator()(double x, double y) const -> double
+auto BilinearInterpolator::operator()(real x, real y) const -> real
 {
     // Check if the interpolation data contains only one point
     if(m_data.size() == 1) return m_data[0];
 
-    const double xA = m_xcoordinates.front();
-    const double xB = m_xcoordinates.back();
-    const double yA = m_ycoordinates.front();
-    const double yB = m_ycoordinates.back();
+    const auto xA = m_xcoordinates.front();
+    const auto xB = m_xcoordinates.back();
+    const auto yA = m_ycoordinates.front();
+    const auto yB = m_ycoordinates.back();
 
     x = std::max(xA, std::min(x, xB));
     y = std::max(yA, std::min(y, yB));
@@ -136,21 +136,21 @@ auto BilinearInterpolator::operator()(double x, double y) const -> double
 
     const auto k = [=](Index i, Index j) { return i + j*size_x; };
 
-    const double x1 = m_xcoordinates[i];
-    const double x2 = m_xcoordinates[i + 1];
+    const auto x1 = m_xcoordinates[i];
+    const auto x2 = m_xcoordinates[i + 1];
 
-    const double y1 = m_ycoordinates[j];
-    const double y2 = m_ycoordinates[j + 1];
+    const auto y1 = m_ycoordinates[j];
+    const auto y2 = m_ycoordinates[j + 1];
 
-    const double z11 = m_data[k(i  , j  )]; // z at (x1, y1)
-    const double z21 = m_data[k(i+1, j  )]; // z at (x2, y1)
-    const double z12 = m_data[k(i  , j+1)]; // z at (x1, y2)
-    const double z22 = m_data[k(i+1, j+1)]; // z at (x2, y2)
+    const auto z11 = m_data[k(i  , j  )]; // z at (x1, y1)
+    const auto z21 = m_data[k(i+1, j  )]; // z at (x2, y1)
+    const auto z12 = m_data[k(i  , j+1)]; // z at (x1, y2)
+    const auto z22 = m_data[k(i+1, j+1)]; // z at (x2, y2)
 
-    const double f11 =  z11*(x2 - x)*(y2 - y);
-    const double f12 = -z12*(x2 - x)*(y1 - y);
-    const double f21 = -z21*(x1 - x)*(y2 - y);
-    const double f22 =  z22*(x1 - x)*(y1 - y);
+    const auto f11 =  z11*(x2 - x)*(y2 - y);
+    const auto f12 = -z12*(x2 - x)*(y1 - y);
+    const auto f21 = -z21*(x1 - x)*(y2 - y);
+    const auto f22 =  z22*(x1 - x)*(y1 - y);
 
     return (f11 + f12 + f21 + f22)/((x2 - x1)*(y2 - y1));
 }

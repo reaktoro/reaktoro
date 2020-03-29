@@ -30,6 +30,7 @@
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
+#include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>

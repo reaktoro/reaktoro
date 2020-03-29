@@ -18,7 +18,6 @@
 #include "InterpolationUtils.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 
 namespace Reaktoro {
@@ -26,81 +25,36 @@ namespace Reaktoro {
 auto interpolate(
     const std::vector<real>& temperatures,
     const std::vector<real>& pressures,
-    const std::vector<real>& scalars) -> ThermoScalarFunction
+    const std::vector<real>& scalars) -> std::function<real(real, real)>
 {
-    std::vector<real> vals, ddTs, ddPs;
-    vals.reserve(scalars.size());
-    ddTs.reserve(scalars.size());
-    ddPs.reserve(scalars.size());
-    for(const real& scalar : scalars)
-    {
-        vals.push_back(scalar.val);
-        ddTs.push_back(scalar.ddT);
-        ddPs.push_back(scalar.ddP);
-    }
-    BilinearInterpolator val(temperatures, pressures, vals);
-    BilinearInterpolator ddT(temperatures, pressures, ddTs);
-    BilinearInterpolator ddP(temperatures, pressures, ddPs);
-
-    auto func = [=](real T, real P)
-    {
-        return real(val(T, P), ddT(T, P), ddP(T, P));
-    };
-
-    return func;
+    return BilinearInterpolator(temperatures, pressures, scalars);
 }
 
 auto interpolate(
     const std::vector<real>& temperatures,
     const std::vector<real>& pressures,
-    const ThermoScalarFunction& f) -> ThermoScalarFunction
+    const std::function<real(real, real)>& func) -> std::function<real(real, real)>
 {
-    auto val_func = [=](real T, real P) { return f(T, P).val; };
-    auto ddT_func = [=](real T, real P) { return f(T, P).ddT; };
-    auto ddP_func = [=](real T, real P) { return f(T, P).ddP; };
-
-    BilinearInterpolator val(temperatures, pressures, val_func);
-    BilinearInterpolator ddT(temperatures, pressures, ddT_func);
-    BilinearInterpolator ddP(temperatures, pressures, ddP_func);
-
-    auto func = [=](real T, real P)
-    {
-        return real(val(T, P), ddT(T, P), ddP(T, P));
-    };
-
-    return func;
+    return BilinearInterpolator(temperatures, pressures, func);
 }
 
 auto interpolate(
     const std::vector<real>& temperatures,
     const std::vector<real>& pressures,
-    const std::vector<ThermoScalarFunction>& fs) -> ThermoVectorFunction
+    const std::vector<std::function<real(real, real)>>& fs) -> std::function<VectorXr(real, real)>
 {
-    const unsigned size = fs.size();
+    const auto size = fs.size();
 
-    std::vector<BilinearInterpolator> val(size), ddT(size), ddP(size);
-
+    std::vector<BilinearInterpolator> interps(size);
     for(unsigned i = 0; i < size; ++i)
-    {
-        auto val_func = [=](real T, real P) { return fs[i](T, P).val; };
-        auto ddT_func = [=](real T, real P) { return fs[i](T, P).ddT; };
-        auto ddP_func = [=](real T, real P) { return fs[i](T, P).ddP; };
-
-        val[i] = BilinearInterpolator(temperatures, pressures, val_func);
-        ddT[i] = BilinearInterpolator(temperatures, pressures, ddT_func);
-        ddP[i] = BilinearInterpolator(temperatures, pressures, ddP_func);
-    }
+        interps[i] = BilinearInterpolator(temperatures, pressures, fs[i]);
 
     VectorXr res(size);
 
     auto func = [=](real T, real P) mutable
     {
         for(unsigned i = 0; i < size; ++i)
-        {
-            res.val[i] = val[i](T, P);
-            res.ddT[i] = ddT[i](T, P);
-            res.ddP[i] = ddP[i](T, P);
-        }
+            res[i] = interps[i](T, P);
         return res;
     };
 

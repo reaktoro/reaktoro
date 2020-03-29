@@ -40,10 +40,10 @@ namespace {
 struct LinearSystemSolverDiagonal
 {
     VectorXd A1, A2, invA1, a1, a2, q, u;
-    Matrix B1, B2, C1, C2, Q;
+    MatrixXd B1, B2, C1, C2, Q;
     Indices ipivot, inonpivot;
     Index n, m;
-    Eigen::PartialPivLU<Matrix> lu;
+    Eigen::PartialPivLU<MatrixXd> lu;
 
     /// Decompose the matrix [A B ; C I]
     auto decompose(VectorXdConstRef A, MatrixXdConstRef B, MatrixXdConstRef C) -> void
@@ -119,10 +119,10 @@ struct OptimumSolverIpAction::Impl
     LU lu;
 
     /// The coefficient matrix of the secondary variables
-    Matrix S;
+    MatrixXd S;
 
     /// The kernel matrix
-    Matrix K;
+    MatrixXd K;
 
     /// The indices of the primary variables
     Indices iP;
@@ -146,7 +146,7 @@ struct OptimumSolverIpAction::Impl
     VectorXd H, HP, HS;
 
     /// The auxiliary matrix StHP = tr(S)*HP
-    Matrix StHP;
+    MatrixXd StHP;
 
     /// The names of the secondary variables
     std::vector<std::string> snames;
@@ -184,7 +184,7 @@ struct OptimumSolverIpAction::Impl
         const auto& m = problem.A.rows();
 
         // The components of the equality constraints
-        Matrix A = problem.A;
+        MatrixXd A = problem.A;
         VectorXd b = problem.b;
 
         // Define auxiliary references to general options
@@ -528,7 +528,7 @@ struct OptimumSolverIpAction::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> Matrix
+    auto dxdp(VectorXdConstRef dgdp, VectorXdConstRef dbdp) -> MatrixXd
     {
         // Initialize the right-hand side of the KKT equations
         r1.noalias() = -dgdp;

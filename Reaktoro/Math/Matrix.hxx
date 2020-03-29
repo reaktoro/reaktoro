@@ -54,29 +54,29 @@ inline auto unitcol(Index rows, Index i) -> decltype(unit(rows, i))
     return unit(rows, i);
 }
 
-inline auto unitrow(Index cols, Index i) -> decltype(RowVector::Unit(cols, i))
+inline auto unitrow(Index cols, Index i) -> decltype(RowVectorXd::Unit(cols, i))
 {
-    return RowVector::Unit(cols, i);
+    return RowVectorXd::Unit(cols, i);
 }
 
-inline auto zeros(Index rows, Index cols) -> decltype(Matrix::Zero(rows, cols))
+inline auto zeros(Index rows, Index cols) -> decltype(MatrixXd::Zero(rows, cols))
 {
-    return Matrix::Zero(rows, cols);
+    return MatrixXd::Zero(rows, cols);
 }
 
-inline auto ones(Index rows, Index cols) -> decltype(Matrix::Ones(rows, cols))
+inline auto ones(Index rows, Index cols) -> decltype(MatrixXd::Ones(rows, cols))
 {
-    return Matrix::Ones(rows, cols);
+    return MatrixXd::Ones(rows, cols);
 }
 
-inline auto random(Index rows, Index cols) -> decltype(Matrix::Random(rows, cols))
+inline auto random(Index rows, Index cols) -> decltype(MatrixXd::Random(rows, cols))
 {
-    return Matrix::Random(rows, cols);
+    return MatrixXd::Random(rows, cols);
 }
 
-inline auto identity(Index rows, Index cols) -> decltype(Matrix::Identity(rows, cols))
+inline auto identity(Index rows, Index cols) -> decltype(MatrixXd::Identity(rows, cols))
 {
-    return Matrix::Identity(rows, cols);
+    return MatrixXd::Identity(rows, cols);
 }
 
 template<typename Derived>

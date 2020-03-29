@@ -90,7 +90,7 @@ auto greaterThan(double a, double b, double baseval) -> bool;
 auto infinity() -> double;
 
 /// Return an inverse Hessian function based on the BFGS Hessian approximation
-auto bfgs() -> std::function<Matrix(VectorXdConstRef, VectorXdConstRef)>;
+auto bfgs() -> std::function<MatrixXd(VectorXdConstRef, VectorXdConstRef)>;
 
 /// Calculate the minimum of a single variable function using the Golden Section Search algorithm.
 auto minimizeGoldenSectionSearch(const std::function<double(double)>& f, double a, double b, double tol = 1e-5) -> double;

@@ -1,8 +1,11 @@
 # Recursively collect all header files from the current directory
-file(GLOB_RECURSE HEADER_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp *.hxx)
+file(GLOB_RECURSE HPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp *.hxx)
 
 # Recursively collect all source files from the current directory
-file(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+file(GLOB_RECURSE CPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+
+# Recursively collect all test files from the current directory
+file(GLOB_RECURSE CXX_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.test.cxx)
 
 # The name of the shared and static libraries
 set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
@@ -19,8 +22,8 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 # Note: cmake v3.13 is needed to use target_link_directories command!
 link_directories(${REAKTORO_THIRDPARTY_LIBRARY_PATH})
 
-# Build a Reaktoro C++ library
-add_library(Reaktoro ${HEADER_FILES} ${SOURCE_FILES})
+# Create a library target for Reaktoro
+add_library(Reaktoro ${HPP_FILES} ${CPP_FILES})
 
 # Add an alias Reaktoro::Reaktoro to the target library Reaktoro
 add_library(Reaktoro::Reaktoro ALIAS Reaktoro)
@@ -28,7 +31,7 @@ add_library(Reaktoro::Reaktoro ALIAS Reaktoro)
 # Specify the external dependencies of Reaktoro to ensure proper build sequence
 add_dependencies(Reaktoro ${THIRDPARTY_TARGETS})
 
-# Add the include paths to the Reaktoro target
+# Add the include paths to Reaktoro library target
 target_include_directories(Reaktoro
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
@@ -57,6 +60,11 @@ target_compile_features(Reaktoro PUBLIC cxx_std_17)
 set_target_properties(Reaktoro PROPERTIES
     POSITION_INDEPENDENT_CODE ON
     CXX_EXTENSIONS OFF)
+
+# Create a test executable target for Reaktoro
+add_executable(tests ${CXX_FILES})
+target_link_libraries(tests Reaktoro)
+target_include_directories(tests PUBLIC ${PROJECT_SOURCE_DIR})
 
 # Install Reaktoro C++ library
 install(TARGETS Reaktoro

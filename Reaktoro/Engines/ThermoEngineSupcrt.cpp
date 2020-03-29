@@ -119,7 +119,7 @@ struct SupcrtStandardThermoModelFn
         if(data.type() == typeid(ParamsAqueousSoluteHKF))
             return standardThermoPropsAqueousSoluteHKF(T, P, species);
         RuntimeError("Failure at SupcrtStandardThermoModelFn::operator().",
-            "There is no SUPCRT parameters for species named " + species.name()) + ".";
+            "There is no SUPCRT parameters for species named " + species.name() + ".");
         return {};
     }
 

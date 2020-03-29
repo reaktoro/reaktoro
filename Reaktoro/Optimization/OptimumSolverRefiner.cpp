@@ -85,16 +85,16 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     auto lu = A.fullPivLu();
 
     // Get the lower and upper matrices
-    Matrix L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
-    Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
+    MatrixXd L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
+    MatrixXd U = lu.matrixLU().triangularView<Eigen::Upper>();
 
     // Get the permutation matrices
     const auto P = lu.permutationP();
     const auto Q = lu.permutationQ();
 
     // Set the U1 and U2 submatrices of U = [U1 U2]
-    const Matrix U1 = U.leftCols(m);
-    const Matrix U2 = U.rightCols(n - m);
+    const MatrixXd U1 = U.leftCols(m);
+    const MatrixXd U2 = U.rightCols(n - m);
 
     A = U * Q.inverse();
     b = P * b;
@@ -113,7 +113,7 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     x = (x.array() > 0.0).select(x, 1.0);
 
     // Calculate the kernel (nullspace) matrix K
-    const Matrix K = A.fullPivLu().kernel();
+    const MatrixXd K = A.fullPivLu().kernel();
 
     // The alpha step size used to restric the steps inside the feasible domain
     double alpha;
@@ -187,11 +187,11 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     // The function that computes the Newton step
     auto compute_newton_step_gem = [&]()
     {
-        Matrix J = zeros(n, n);
+        MatrixXd J = zeros(n, n);
         block(J, 0, 0, n - m, n) = tr(K) * diag(f.hessian.diagonal);
         block(J, n - m, 0, m, n) = A;
 
-        Matrix r = zeros(n);
+        MatrixXd r = zeros(n);
         rows(r, 0, n - m) = -tr(K) * f.grad;
         rows(r, n - m, m) = -(A*x - b);
 
@@ -202,11 +202,11 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     // The function that computes the Newton step
     auto compute_newton_step_lma = [&]()
     {
-        Matrix J = zeros(n, n);
+        MatrixXd J = zeros(n, n);
         block(J, 0, 0, n - m, n) = tr(K) * diag(f.hessian.diagonal);
         block(J, n - m, 0, m, n) = A;
 
-        Matrix r = zeros(n);
+        MatrixXd r = zeros(n);
         rows(r, 0, n - m) = -tr(K) * f.grad;
         rows(r, n - m, m) = -(A*x - b);
 

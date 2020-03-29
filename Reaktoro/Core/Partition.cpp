@@ -131,33 +131,33 @@ struct Partition::Impl
 
 
     /// The formula matrix of the equilibrium partition
-    Matrix formula_matrix_equilibrium;
+    MatrixXd formula_matrix_equilibrium;
 
     /// The formula matrix of the equilibrium-fluid partition
-    Matrix formula_matrix_equilibrium_fluid;
+    MatrixXd formula_matrix_equilibrium_fluid;
 
     /// The formula matrix of the equilibrium-solid partition
-    Matrix formula_matrix_equilibrium_solid;
+    MatrixXd formula_matrix_equilibrium_solid;
 
 
     /// The formula matrix of the kinetic partition
-    Matrix formula_matrix_kinetic;
+    MatrixXd formula_matrix_kinetic;
 
     /// The formula matrix of the kinetic-fluid partition
-    Matrix formula_matrix_kinetic_fluid;
+    MatrixXd formula_matrix_kinetic_fluid;
 
     /// The formula matrix of the kinetic-solid partition
-    Matrix formula_matrix_kinetic_solid;
+    MatrixXd formula_matrix_kinetic_solid;
 
 
     /// The formula matrix of the inert partition
-    Matrix formula_matrix_inert;
+    MatrixXd formula_matrix_inert;
 
     /// The formula matrix of the inert-fluid partition
-    Matrix formula_matrix_inert_fluid;
+    MatrixXd formula_matrix_inert_fluid;
 
     /// The formula matrix of the inert-solid partition
-    Matrix formula_matrix_inert_solid;
+    MatrixXd formula_matrix_inert_solid;
 
 
     Impl()

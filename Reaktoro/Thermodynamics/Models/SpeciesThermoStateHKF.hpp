@@ -17,10 +17,10 @@
 
 #pragma once
 
-namespace Reaktoro {
-
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
+
+namespace Reaktoro {
 
 // Forward declarations
 struct ParamsAqueousSoluteHKF;

@@ -37,14 +37,14 @@ auto linearlyIndependentCols(MatrixXdConstRef A) -> Indices
 
 auto linearlyIndependentRows(MatrixXdConstRef A) -> Indices
 {
-    const Matrix At = A.transpose();
+    const MatrixXd At = A.transpose();
     return linearlyIndependentCols(At);
 }
 
 auto linearlyIndependentCols(MatrixXdConstRef A, MatrixXdRef B) -> Indices
 {
     Indices indices = linearlyIndependentCols(A);
-    Matrix C(A.rows(), indices.size());
+    MatrixXd C(A.rows(), indices.size());
     for(unsigned i = 0; i < indices.size(); ++i)
         C.col(i) = A.col(indices[i]);
     B.noalias() = C;
@@ -54,16 +54,16 @@ auto linearlyIndependentCols(MatrixXdConstRef A, MatrixXdRef B) -> Indices
 auto linearlyIndependentRows(MatrixXdConstRef A, MatrixXdRef B) -> Indices
 {
     Indices indices = linearlyIndependentRows(A);
-    Matrix C(indices.size(), A.cols());
+    MatrixXd C(indices.size(), A.cols());
     for(unsigned i = 0; i < indices.size(); ++i)
         C.row(i) = A.row(indices[i]);
     B.noalias() = C;
     return indices;
 }
 
-auto inverseShermanMorrison(MatrixXdConstRef invA, VectorXdConstRef D) -> Matrix
+auto inverseShermanMorrison(MatrixXdConstRef invA, VectorXdConstRef D) -> MatrixXd
 {
-    Matrix invM = invA;
+    MatrixXd invM = invA;
     for(unsigned i = 0; i < D.rows(); ++i)
         invM = invM - (D[i]/(1 + D[i]*invM(i, i)))*invM.col(i)*invM.row(i);
     return invM;
