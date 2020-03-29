@@ -3,4 +3,5 @@ dependencies:
   - ninja>=1.9.0
   - ccache                         # [unix]
   - clcache                        # [win]
+  - catch2
   - invoke
