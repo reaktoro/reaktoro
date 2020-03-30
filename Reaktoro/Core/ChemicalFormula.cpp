@@ -62,6 +62,20 @@ auto findMatchedParenthesis(string::iterator begin, string::iterator end) -> str
     return end;
 }
 
+auto findMatchedParenthesisReverse(string::iterator begin, string::iterator end) -> string::iterator
+{
+    if(begin == end) return begin;
+    int level = 0;
+    for(auto iter = end-2; iter != begin; --iter)
+    {
+        level = (*iter == ')') ? level + 1 : level;
+        level = (*iter == '(') ? level - 1 : level;
+        if(*iter == '(' && level == -1)
+            return iter;
+    }
+    return begin;
+}
+
 auto parseChemicalFormulaAux(string::iterator begin, string::iterator end, unordered_map<string, double>& result, double scalar) -> void
 {
     if(begin == end) return;
@@ -114,19 +128,29 @@ auto parseChemicalFormulaAux(string::iterator begin, string::iterator end, unord
     }
 }
 
-auto parseChemicalFormula(string formula) -> vector<pair<string, double>>
+auto parseChemicalFormula(string formula) -> std::unordered_map<std::string, double>
 {
     // Parse the formula for elements and their coefficients (without charge)
     unordered_map<string, double> result;
     parseChemicalFormulaAux(formula.begin(), formula.end(), result, 1.0);
+    return result;
+}
 
-    // Convert the map into vector of pairs
-    vector<pair<string, double>> symbols;
-    symbols.reserve(result.size());
-    for(auto&& [symbol, coeff] : result)
-        symbols.emplace_back(symbol, coeff);
+auto removeAggregateStateSuffix(string formula) -> string
+{
+    if(formula.back() != ')') return formula;
 
-    return symbols;
+    string::iterator begin = formula.begin();
+    string::iterator end = formula.end();
+    begin = findMatchedParenthesisReverse(begin, end);
+
+    for(auto iter = begin; iter < end; ++iter)
+        if(isupper(*begin)) // no upper case char - otherwise, there are element symbols and thus not aggregate state
+            return formula;
+
+    const auto n = begin - formula.begin();  // H+(aq) => n = 2
+
+    return formula.substr(0, n);
 }
 
 auto parseElectricChargeModeSignNumber(string formula) -> double
@@ -188,6 +212,8 @@ auto parseElectricCharge(string formula) -> double
 {
     double charge;
 
+    formula = removeAggregateStateSuffix(formula);
+
     charge = parseElectricChargeModeMultipleSigns(formula); if(charge != 0.0) return charge;
     charge = parseElectricChargeModeNumberSign(formula); if(charge != 0.0) return charge;
     charge = parseElectricChargeModeSignNumber(formula); if(charge != 0.0) return charge;
@@ -197,7 +223,7 @@ auto parseElectricCharge(string formula) -> double
 
 } // namespace detail
 
-auto parseChemicalFormula(const std::string& formula) -> std::vector<std::pair<std::string, double>>
+auto parseChemicalFormula(const std::string& formula) -> std::unordered_map<std::string, double>
 {
     return detail::parseChemicalFormula(formula);
 }
@@ -259,8 +285,8 @@ struct ChemicalFormula::Impl
     /// Return the coefficient of an element symbol in the chemical formula.
     auto coefficient(const std::string& symbol) const -> double
     {
-        const auto idx = indexfn(symbols, [&](auto&& pair) { return pair.first == symbol; });
-        if(idx < symbols.size()) return symbols[idx].second;
+        const auto iter = symbols.find(symbol);
+        if(iter != symbols.end()) return iter->second;
         return 0.0;
     }
 };
@@ -314,9 +340,14 @@ auto ChemicalFormula::coefficient(const std::string& symbol) const -> double
     return pimpl->coefficient(symbol);
 }
 
+auto ChemicalFormula::equivalent(const ChemicalFormula& other) const -> bool
+{
+    return symbols() == other.symbols() && charge() == other.charge();
+}
+
 auto ChemicalFormula::equivalent(const ChemicalFormula& f1, const ChemicalFormula& f2) -> bool
 {
-    return f1.symbols() == f2.symbols() && f1.charge() == f2.charge();
+    return f1.equivalent(f2);
 }
 
 ChemicalFormula::operator std::string() const

@@ -33,7 +33,7 @@ class ChemicalFormula
 {
 public:
     /// Alias type for a vector of element symbols and their coefficients in a chemical formula.
-    using ElementSymbols = std::vector<std::pair<std::string, double>>;
+    using ElementSymbols = std::unordered_map<std::string, double>;
 
     /// Alias type for a vector of elements and their coefficients in a chemical formula.
     using Elements = std::vector<std::pair<Element, double>>;
@@ -72,13 +72,16 @@ public:
     /// Return the coefficient of an element symbol in the chemical formula.
     auto coefficient(const std::string& symbol) const -> double;
 
-    /// Return true if two chemical formulas are equivalent.
+    /// Return true if another chemical formula is equivalent to this one.
     /// Two chemical formulas are equivalent if they have the same elemental
     /// composition. Consider `Ca++` and `Ca+2` for example. These two formulas
     /// are equivalent, despite the different convention for indicating charge.
     /// Another example is `CaCO3` and `Ca(CO3)`. All these formulas have
     /// identical symbols and coefficients, and are thus equivalent.
-    static auto equivalent(const ChemicalFormula& formula1, const ChemicalFormula& formula2) -> bool;
+    auto equivalent(const ChemicalFormula& other) const -> bool;
+
+    /// Return true if two chemical formulas are equivalent.
+    static auto equivalent(const ChemicalFormula& f1, const ChemicalFormula& f2) -> bool;
 
     /// Convert this ChemicalFormula object into a string.
     operator std::string() const;
@@ -119,7 +122,7 @@ auto operator==(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool;
 /// auto formula10 = parseChemicalFormula("CO3--");
 /// auto formula11 = parseChemicalFormula("CO3-2");
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-auto parseChemicalFormula(const std::string& formula) -> std::vector<std::pair<std::string, double>>;
+auto parseChemicalFormula(const std::string& formula) -> std::unordered_map<std::string, double>;
 
 /// Return the electric charge in a chemical formula.
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
