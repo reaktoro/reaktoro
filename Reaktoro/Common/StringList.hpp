@@ -30,6 +30,12 @@ public:
     /// Construct a default StringList instance.
     StringList();
 
+    /// Construct a StringList instance with a initializer list of strings.
+    StringList(std::initializer_list<std::string> strings);
+
+    /// Construct a StringList instance with a vector of strings.
+    StringList(std::vector<std::string> strings);
+
     /// Construct a StringList instance by breaking the words within separated by space.
     /// This method converts a given string into a list of strings separated by a token.
     /// However, it ignores the token inside brackets. If the token is space, then the
@@ -60,46 +66,33 @@ public:
     /// @param token The token used to separate the words in `str`.
     StringList(std::string str, char token);
 
-    /// Construct a StringList instance with a vector of strings.
-    StringList(const std::vector<std::string>& strings);
+    /// Return the number of strings.
+    auto size() const -> std::size_t;
 
-    /// Construct a StringList with a initializer list
-    StringList(std::initializer_list<std::string> strings);
+    /// Return the vector of strings.
+    auto data() const -> const std::vector<std::string>&;
 
-    /// Destroy this StringList instance.
-    virtual ~StringList();
+    /// Return the string at the given index position.
+    auto operator[](std::size_t index) -> std::string&;
 
-    /// Return a vector of strings.
-    auto strings() const -> const std::vector<std::string>&;
+    /// Return the string at the given index position.
+    auto operator[](std::size_t index) const -> const std::string&;
 
-    operator const std::vector<std::string>&() const;
+    /// Return begin const iterator of this StringList instance
+    inline auto begin() const { return data().begin(); }
+
+    /// Return begin iterator of this StringList instance
+    inline auto begin() { return data().begin(); }
+
+    /// Return end const iterator of this StringList instance
+    inline auto end() const { return data().end(); }
+
+    /// Return end iterator of this StringList instance
+    inline auto end() { return data().end(); }
 
 private:
-    std::vector<std::string> _strings;
+    /// The list of strings separated by given token
+    std::vector<std::string> m_strings;
 };
-
-/// Return begin const iterator of a StringList instance
-inline auto begin(const StringList& strings) -> decltype(strings.strings().begin())
-{
-    return strings.strings().begin();
-}
-
-/// Return begin iterator of a StringList instance
-inline auto begin(StringList& strings) -> decltype(strings.strings().begin())
-{
-    return strings.strings().begin();
-}
-
-/// Return end const iterator of a StringList instance
-inline auto end(const StringList& strings) -> decltype(strings.strings().end())
-{
-    return strings.strings().end();
-}
-
-/// Return end iterator of a StringList instance
-inline auto end(StringList& strings) -> decltype(strings.strings().end())
-{
-    return strings.strings().end();
-}
 
 } // namespace Reaktoro
