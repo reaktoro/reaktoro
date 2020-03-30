@@ -18,9 +18,14 @@
 #pragma once
 
 // C++ includes
+#include <exception>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+
+// Reaktoro includes
+#include <Reaktoro/Common/StringUtils.hpp>
 
 namespace Reaktoro {
 
@@ -87,5 +92,21 @@ std::string message(const Exception& exception, const std::string& file, int lin
             RaiseError(exception); \
         } \
     }
+
+/// Issue a warning message if condition is true.
+template<typename... Args>
+auto warning(bool condition, Args... items) -> void
+{
+    if(condition)
+        std::cerr << "\033[1;33m***WARNING***\033[0m" << " " << str(items...) << std::endl;
+}
+
+/// Raise a runtime error if condition is true.
+template<typename... Args>
+auto error(bool condition, Args... items) -> void
+{
+    if(condition)
+        throw std::runtime_error(str("\033[1;31m***ERROR***\033[0m", " ", str(items...), '\n'));
+}
 
 } // namespace Reaktoro
