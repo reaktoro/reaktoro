@@ -23,10 +23,43 @@
 #include <cstdlib>
 #include <functional>
 #include <locale>
+#include <sstream>
 #include <string>
 #include <vector>
 
 namespace Reaktoro {
+namespace internal {
+
+template <typename Arg>
+auto stringfy(std::stringstream& ss, const std::string& sep, const Arg& item)
+{
+    ss << item;
+}
+
+template <typename Arg, typename... Args>
+auto stringfy(std::stringstream& ss, const std::string& sep, const Arg& item, Args... items) -> void
+{
+    ss << item << sep;
+    stringfy(ss, sep, items...);
+}
+
+} // namespace internal
+
+/// Concatenate the arguments into a string using a given separator string.
+template <typename... Args>
+auto stringfy(const std::string& sep, Args... items) -> std::string
+{
+    std::stringstream ss;
+    internal::stringfy(ss, sep, items...);
+    return ss.str();
+}
+
+/// Concatenate the arguments into a string without any separator string.
+template <typename... Args>
+auto str(Args... items) -> std::string
+{
+    return stringfy("", items...);
+}
 
 /// Return a string with lower case characters.
 inline auto lowercase(std::string str) -> std::string
@@ -46,7 +79,7 @@ inline auto uppercase(std::string str) -> std::string
 inline auto leftTrim(std::string& str) -> std::string&
 {
     str.erase(str.begin(),
-        std::find_if(str.begin(), str.end(), [](int ch){ return !std::isspace(ch); }));
+        std::find_if(str.begin(), str.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
     return str;
 }
 
@@ -54,7 +87,7 @@ inline auto leftTrim(std::string& str) -> std::string&
 inline auto rightTrim(std::string& str) -> std::string&
 {
     str.erase(std::find_if(str.rbegin(), str.rend(),
-        [](int ch){ return !std::isspace(ch); }).base(), str.end());
+        std::not1(std::ptr_fun<int, int>(std::isspace))).base(), str.end());
     return str;
 }
 
