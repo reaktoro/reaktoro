@@ -17,33 +17,99 @@
 
 #include "Element.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
+
 namespace Reaktoro {
 
 struct Element::Impl
 {
-    /// The name of the chemical element
+    /// The symbol of the element (e.g., "H", "O", "C", "Na").
+    std::string symbol;
+
+    /// The name of the element (e.g., "Hydrogen", "Oxygen").
     std::string name;
 
-    /// The molar mass of the chemical element (in units of kg/mol)
-    double molar_mass;
+    /// The atomic number of the element.
+    std::size_t atomic_number = {};
+
+    /// The atomic weight (or molar mass) of the element (in unit of kg/mol).
+    double atomic_weight = {};
+
+    /// The electronegativity of the element.
+    double electronegativity = {};
+
+    /// The tags of the element.
+    std::vector<std::string> tags;
+
+    /// Construct a default Element::Impl object.
+    Impl()
+    {}
+
+    /// Construct an Element::Impl object with given attributes.
+    Impl(const Args& args)
+    : symbol(args.symbol),
+      name(args.name),
+      atomic_number(args.atomic_number),
+      atomic_weight(args.atomic_weight),
+      electronegativity(args.electronegativity),
+      tags(args.tags)
+    {}
 };
 
 Element::Element()
 : pimpl(new Impl())
 {}
 
-auto Element::withName(std::string name) -> Element
+Element::Element(const Args& attributes)
+ : pimpl(new Impl(attributes))
+{}
+
+auto Element::withSymbol(std::string symbol) const -> Element
 {
-    Element element = clone();
-    element.pimpl->name = name;
-    return element;
+    Element copy = clone();
+    copy.pimpl->symbol = symbol;
+    return copy;
 }
 
-auto Element::withMolarMass(double value) -> Element
+auto Element::withName(std::string name) const -> Element
 {
-    Element element = clone();
-    element.pimpl->molar_mass = value;
-    return element;
+    Element copy = clone();
+    copy.pimpl->name = name;
+    return copy;
+}
+
+auto Element::withAtomicNumber(std::size_t atomic_number) const -> Element
+{
+    Element copy = clone();
+    copy.pimpl->atomic_number = atomic_number;
+    return copy;
+}
+
+auto Element::withAtomicWeight(double atomic_weight) const -> Element
+{
+    Element copy = clone();
+    copy.pimpl->atomic_weight = atomic_weight;
+    return copy;
+}
+
+auto Element::withElectronegativity(double electronegativity) const -> Element
+{
+    Element copy = clone();
+    copy.pimpl->electronegativity = electronegativity;
+    return copy;
+}
+
+auto Element::withTags(std::vector<std::string> tags) const -> Element
+{
+    Element copy = clone();
+    copy.pimpl->tags = tags;
+    return copy;
+}
+
+auto Element::symbol() const -> std::string
+{
+    return pimpl->symbol;
 }
 
 auto Element::name() const -> std::string
@@ -51,9 +117,29 @@ auto Element::name() const -> std::string
     return pimpl->name;
 }
 
+auto Element::atomicNumber() const -> std::size_t
+{
+    return pimpl->atomic_number;
+}
+
+auto Element::atomicWeight() const -> double
+{
+    return pimpl->atomic_weight;
+}
+
+auto Element::electronegativity() const -> double
+{
+    return pimpl->electronegativity;
+}
+
+auto Element::tags() const -> const std::vector<std::string>&
+{
+    return pimpl->tags;
+}
+
 auto Element::molarMass() const -> double
 {
-    return pimpl->molar_mass;
+    return atomicWeight();
 }
 
 auto Element::clone() const -> Element
@@ -65,12 +151,18 @@ auto Element::clone() const -> Element
 
 auto operator<(const Element& lhs, const Element& rhs) -> bool
 {
-    return lhs.name() < rhs.name();
+    return lhs.atomicNumber() < rhs.atomicNumber();
 }
 
 auto operator==(const Element& lhs, const Element& rhs) -> bool
 {
-    return lhs.name() == rhs.name();
+    return lhs.symbol()            == rhs.symbol()            &&
+           lhs.name()              == rhs.name()              &&
+           lhs.atomicNumber()      == rhs.atomicNumber()      &&
+           lhs.atomicWeight()      == rhs.atomicWeight()      &&
+           lhs.electronegativity() == rhs.electronegativity() &&
+           lhs.tags()              == rhs.tags()
+           ;
 }
 
 } // namespace Reaktoro

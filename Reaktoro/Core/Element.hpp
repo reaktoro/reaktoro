@@ -20,26 +20,80 @@
 // C++ includes
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace Reaktoro {
 
-/// A type used to define an elementary unit of chemical species and its attributes.
+/// A type used to define a element and its attributes.
 class Element
 {
 public:
-    /// Construct a default Element instance.
+    /// A type used to represent the arguments to construct an Element object.
+    struct Args
+    {
+        /// The symbol of the element (e.g., "H", "O", "C", "Na").
+        std::string symbol;
+
+        /// The name of the element (e.g., "Hydrogen", "Oxygen").
+        std::string name;
+
+        /// The atomic number of the element.
+        std::size_t atomic_number = {};
+
+        /// The atomic weight (or molar mass) of the element (in unit of kg/mol).
+        double atomic_weight = {};
+
+        /// The electronegativity of the element.
+        double electronegativity = {};
+
+        /// The tags of the element.
+        std::vector<std::string> tags;
+    };
+
+    /// Construct a default Element object.
     Element();
 
-    /// Return a copy of this Element object with given name.
-    auto withName(std::string name) -> Element;
+    /// Construct an Element object with given data.
+    /// @param args The arguments to construct the element.
+    explicit Element(const Args& args);
 
-    /// Return a copy of this Element object with given molar mass (in units of kg/mol).
-    auto withMolarMass(double value) -> Element;
+    /// Return a duplicate of this Element object with replaced symbol attribute.
+    auto withSymbol(std::string symbol) const -> Element;
 
-    /// Return the name of the element.
+    /// Return a duplicate of this Element object with replaced name attribute.
+    auto withName(std::string name) const -> Element;
+
+    /// Return a duplicate of this Element object with replaced atomic number attribute.
+    auto withAtomicNumber(std::size_t atomic_number) const -> Element;
+
+    /// Return a duplicate of this Element object with replaced atomic weight attribute.
+    auto withAtomicWeight(double atomic_weight) const -> Element;
+
+    /// Return a duplicate of this Element object with replaced electronegativity attribute.
+    auto withElectronegativity(double electronegativity) const -> Element;
+
+    /// Return a duplicate of this Element object with replaced tags attribute.
+    auto withTags(std::vector<std::string> tags) const -> Element;
+
+    /// Return the symbol of the element (e.g., "H", "O", "C", "Na").
+    auto symbol() const -> std::string;
+
+    /// Return the name of the element (e.g., "Hydrogen", "Oxygen").
     auto name() const -> std::string;
 
-    /// Return the molar mass of the element (in units of kg/mol).
+    /// Return the atomic number of the element.
+    auto atomicNumber() const -> std::size_t;
+
+    /// Return the atomic weight of the element (in unit of kg/mol).
+    auto atomicWeight() const -> double;
+
+    /// Return the electronegativity of the element.
+    auto electronegativity() const -> double;
+
+    /// Return the tags of the element.
+    auto tags() const -> const std::vector<std::string>&;
+
+    /// Return the molar mass of the element (in unit of kg/mol).
     auto molarMass() const -> double;
 
     /// Return a cloned copy of this Element object.
@@ -51,10 +105,10 @@ private:
     std::shared_ptr<Impl> pimpl;
 };
 
-/// Compare two Element instances for less than
+/// Compare two Element objects for less than.
 auto operator<(const Element& lhs, const Element& rhs) -> bool;
 
-/// Compare two Element instances for equality
+/// Compare two Element objects for equality.
 auto operator==(const Element& lhs, const Element& rhs) -> bool;
 
 } // namespace Reaktoro
