@@ -53,6 +53,9 @@ public:
     /// Construct a default Element object.
     Element();
 
+    /// Construct an Element object with given symbol.
+    explicit Element(std::string symbol);
+
     /// Construct an Element object with given data.
     /// @param args The arguments to construct the element.
     explicit Element(const Args& args);
@@ -96,7 +99,7 @@ public:
     /// Return the molar mass of the element (in unit of kg/mol).
     auto molarMass() const -> double;
 
-    /// Return a cloned copy of this Element object.
+    /// Return a deep copy of this Element object.
     auto clone() const -> Element;
 
 private:

@@ -61,6 +61,10 @@ Element::Element()
 : pimpl(new Impl())
 {}
 
+Element::Element(std::string symbol)
+ : pimpl(new Impl({symbol}))
+{}
+
 Element::Element(const Args& attributes)
  : pimpl(new Impl(attributes))
 {}
