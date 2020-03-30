@@ -17,8 +17,6 @@
 
 #include "StringList.hpp"
 
-// C++ includes
-
 namespace Reaktoro {
 namespace {
 
@@ -79,7 +77,8 @@ auto convertStringToStringsHelper(
 auto convertStringToStrings(std::string str, char token) -> std::vector<std::string>
 {
     std::vector<std::string> strings;
-    convertStringToStringsHelper(str.begin(), str.end(), str.begin(), token, strings);
+    if(str.size())
+        convertStringToStringsHelper(str.begin(), str.end(), str.begin(), token, strings);
     return strings;
 }
 
@@ -88,41 +87,48 @@ auto convertStringToStrings(std::string str, char token) -> std::vector<std::str
 StringList::StringList()
 {}
 
+StringList::StringList(std::initializer_list<std::string> strings)
+: m_strings(strings.begin(), strings.end())
+{}
+
+StringList::StringList(std::vector<std::string> strings)
+: m_strings(std::move(strings))
+{}
+
 StringList::StringList(const char* strings)
-: _strings(convertStringToStrings(strings, ' '))
+: m_strings(convertStringToStrings(strings, ' '))
 {}
 
 StringList::StringList(const char* strings, char token)
-: _strings(convertStringToStrings(strings, token))
+: m_strings(convertStringToStrings(strings, token))
 {}
 
 StringList::StringList(std::string strings)
-: _strings(convertStringToStrings(strings, ' '))
+: m_strings(convertStringToStrings(strings, ' '))
 {}
 
 StringList::StringList(std::string strings, char token)
-: _strings(convertStringToStrings(strings, token))
+: m_strings(convertStringToStrings(strings, token))
 {}
 
-StringList::StringList(const std::vector<std::string>& strings)
-: _strings(strings.begin(), strings.end())
-{}
-
-StringList::StringList(std::initializer_list<std::string> strings)
-: _strings(strings.begin(), strings.end())
-{}
-
-StringList::~StringList()
-{}
-
-auto StringList::strings() const -> const std::vector<std::string>&
+auto StringList::size() const -> std::size_t
 {
-    return _strings;
+    return m_strings.size();
 }
 
-StringList::operator const std::vector<std::string>&() const
+auto StringList::data() const -> const std::vector<std::string>&
 {
-    return _strings;
+    return m_strings;
+}
+
+auto StringList::operator[](std::size_t index) -> std::string&
+{
+    return m_strings[index];
+}
+
+auto StringList::operator[](std::size_t index) const -> const std::string&
+{
+    return m_strings[index];
 }
 
 } // namespace Reaktoro
