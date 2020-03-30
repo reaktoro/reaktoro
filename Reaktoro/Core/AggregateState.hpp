@@ -32,6 +32,7 @@ enum class AggregateState
     Gas,              ///< for a gas or a vapour (symbol *g*)
     Liquid,           ///< for a liquid (symbol *l*)
     Solid,            ///< for a solid (symbol *s*)
+    Plasma,           ///< for a plasma (symbol *pl*)
     CondensedPhase,   ///< for either the solid or the liquid state (symbol *cd*)
     Fluid,            ///< for either the gaseous or the liquid state) (symbol *fl*)
     LiquidCrystal,    ///< for a liquid crystal (crystalline liquid) (symbol *lc*)
@@ -55,6 +56,7 @@ enum class AggregateState
 /// | `g`    | AggregateState::Gas              |
 /// | `l`    | AggregateState::Liquid           |
 /// | `s`    | AggregateState::Solid            |
+/// | `pl`   | AggregateState::Plasma           |
 /// | `cd`   | AggregateState::CondensedPhase   |
 /// | `fl`   | AggregateState::Fluid            |
 /// | `lc`   | AggregateState::LiquidCrystal    |
@@ -70,5 +72,35 @@ enum class AggregateState
 ///
 /// AggregateState::Undefined is returned if symbol is none of above.
 auto parseAggregateState(const std::string& symbol) -> AggregateState;
+
+/// Identify the aggregate state in the name of a chemical species.
+
+/// This methods searches for aggregate state symbols in the name of a chemical
+/// species. The following table shows how the symbols should be found in the
+/// species name and its corresponding AggregateState value.
+///
+/// | Symbol   | AggregateState                   |
+/// |:-------- |:-------------------------------- |
+/// | `(g)`    | AggregateState::Gas              |
+/// | `(l)`    | AggregateState::Liquid           |
+/// | `(s)`    | AggregateState::Solid            |
+/// | `(pl)`   | AggregateState::Plasma           |
+/// | `(cd)`   | AggregateState::CondensedPhase   |
+/// | `(fl)`   | AggregateState::Fluid            |
+/// | `(lc)`   | AggregateState::LiquidCrystal    |
+/// | `(cr)`   | AggregateState::CrystallineSolid |
+/// | `(am)`   | AggregateState::AmorphousSolid   |
+/// | `(vit)`  | AggregateState::Vitreous         |
+/// | `(ads)`  | AggregateState::Adsorbed         |
+/// | `(mon)`  | AggregateState::Monomeric        |
+/// | `(pol)`  | AggregateState::Polymeric        |
+/// | `(ss)`   | AggregateState::SolidSolution    |
+/// | `(ex)`   | AggregateState::IonExchange      |
+/// | `(aq)`   | AggregateState::Aqueous          |
+///
+/// By default, charged species without explicit aggregate state identification
+/// is considered aqueous. Thus species names such as HCO3-, Ca++, H+ will
+/// produce AggregateState::Aqueous.
+auto identifyAggregateState(const std::string& species_name) -> AggregateState;
 
 } // namespace Reaktoro
