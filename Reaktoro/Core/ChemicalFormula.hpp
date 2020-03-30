@@ -43,22 +43,25 @@ public:
 
     /// Construct a ChemicalFormula object with given formula.
     /// @param formula The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    explicit ChemicalFormula(const char* formula);
+    ChemicalFormula(const char* formula);
 
     /// Construct a ChemicalFormula object with given formula.
     /// @param formula The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    explicit ChemicalFormula(std::string formula);
+    ChemicalFormula(std::string formula);
 
     /// Construct a ChemicalFormula object with given formula and parsed formula.
     /// @param formula The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
     /// @param elements The element symbols and their coefficients in the formula, e.g., {{"H", 2}, {"O", 1}} for `H2O`.
-    explicit ChemicalFormula(std::string formula, ElementSymbols symbols);
+    ChemicalFormula(std::string formula, ElementSymbols symbols);
 
     /// Return the chemical formula of the substance as a string.
     auto str() const -> const std::string&;
 
     /// Return the elements in the chemical formula and their coefficients.
     auto elements() const -> const Elements&;
+
+    /// Return the element symbols in the chemical formula and their coefficients.
+    auto symbols() const -> const ElementSymbols&;
 
     /// Return the electric charge of the chemical formula.
     auto charge() const -> double;
@@ -69,10 +72,13 @@ public:
     /// Return the coefficient of an element symbol in the chemical formula.
     auto coefficient(const std::string& symbol) const -> double;
 
-    /// Return true if another chemical formula is equivalent to this one.
-    /// Equivalency is defined as two formulas with the same elemental composition.
-    /// For example, `Ca++` and `Ca+2`; and `CaCO3` and `Ca(CO3)`.
-    auto equivalent(const ChemicalFormula& other) const -> bool;
+    /// Return true if two chemical formulas are equivalent.
+    /// Two chemical formulas are equivalent if they have the same elemental
+    /// composition. Consider `Ca++` and `Ca+2` for example. These two formulas
+    /// are equivalent, despite the different convention for indicating charge.
+    /// Another example is `CaCO3` and `Ca(CO3)`. All these formulas have
+    /// identical symbols and coefficients, and are thus equivalent.
+    static auto equivalent(const ChemicalFormula& formula1, const ChemicalFormula& formula2) -> bool;
 
     /// Convert this ChemicalFormula object into a string.
     operator std::string() const;
@@ -132,8 +138,5 @@ auto parseChemicalFormula(const std::string& formula) -> std::vector<std::pair<s
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// @see parseChemicalFormula
 auto parseElectricCharge(const std::string& formula) -> double;
-
-/// Return true if the two given chemical formulas are equivalent.
-auto equivalentChemicalFormulas(const std::string& formula1, const std::string& formula2) -> bool;
 
 } // namespace Reaktoro
