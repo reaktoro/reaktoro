@@ -39,7 +39,6 @@ struct DissociationReaction
 };
 
 /// A type used store a collection of dissociation reactions.
-/// @see Element
 class DissociationReactions
 {
 public:
