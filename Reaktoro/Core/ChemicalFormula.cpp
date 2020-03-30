@@ -263,14 +263,6 @@ struct ChemicalFormula::Impl
         if(idx < symbols.size()) return symbols[idx].second;
         return 0.0;
     }
-
-    /// Return true if another chemical formula is equivalent to this one.
-    auto equivalent(const ChemicalFormula& other) const -> bool
-    {
-        const auto same_charge = charge == other.pimpl->charge;
-        const auto same_symbols = symbols == other.pimpl->symbols;
-        return same_symbols && same_charge;
-    }
 };
 
 ChemicalFormula::ChemicalFormula()
@@ -302,6 +294,11 @@ auto ChemicalFormula::elements() const -> const Elements&
     return pimpl->elements;
 }
 
+auto ChemicalFormula::symbols() const -> const ElementSymbols&
+{
+    return pimpl->symbols;
+}
+
 auto ChemicalFormula::charge() const -> double
 {
     return pimpl->charge;
@@ -317,9 +314,9 @@ auto ChemicalFormula::coefficient(const std::string& symbol) const -> double
     return pimpl->coefficient(symbol);
 }
 
-auto ChemicalFormula::equivalent(const ChemicalFormula& other) const -> bool
+auto ChemicalFormula::equivalent(const ChemicalFormula& f1, const ChemicalFormula& f2) -> bool
 {
-    return pimpl->equivalent(other);
+    return f1.symbols() == f2.symbols() && f1.charge() == f2.charge();
 }
 
 ChemicalFormula::operator std::string() const
@@ -335,11 +332,6 @@ auto operator<(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool
 auto operator==(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool
 {
     return lhs.str() == rhs.str();
-}
-
-auto equivalentChemicalFormulas(const std::string& formula1, const std::string& formula2) -> bool
-{
-    return ChemicalFormula(formula1).equivalent(ChemicalFormula(formula2));
 }
 
 } // namespace Reaktoro
