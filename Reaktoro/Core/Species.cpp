@@ -17,150 +17,137 @@
 
 #include "Species.hpp"
 
-// C++ includes
-#include <cctype>
-#include <set>
-
 // Reaktoro includes
-#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/AggregateState.hpp>
+#include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Core/ThermoProperties.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
-namespace {
-
-/// Return the molar mass a species given its elemental composition.
-auto molarMassFromElements(const std::map<Element, double>& elements) -> double
-{
-    double res = 0.0;
-    for(auto pair : elements)
-        res += pair.first.molarMass() * pair.second;
-    return res;
-}
-
-/// Return the electrical charge of a species given its elemental composition.
-auto chargeFromElements(const std::map<Element, double>& elements) -> double
-{
-    for(auto pair : elements)
-        if(pair.first.name() == "Z")
-            return pair.second;
-    return 0.0;
-}
-
-} // namespace
 
 struct Species::Impl
 {
-    /// The name of the chemical species
+    /// The name of the species such as `H2O(aq)`, `O2(g)`, `H+(aq)`.
     std::string name;
 
-    /// The chemical formula of the chemical species
-    std::string formula;
+    /// The chemical formula of the species such as `H2O`, `O2`, `H+`.
+    ChemicalFormula formula;
 
-    /// The elements that compose the chemical species and their coefficients
-    std::map<Element, double> elements;
+    /// The aggregate state of the species such as `aqueous`, `gaseous`, `liquid`, `solid`, etc..
+    AggregateState aggregate_state;
 
-    /// The type of the chemical species
-    std::string type;
+    /// The tags of the species such as `organic`, `mineral`.
+    std::vector<std::string> tags;
 
-    /// The specific data the chemical species may have such as thermodynamic data.
-    std::any data;
+    /// The attached data whose type is known at runtime only and their ids.
+    std::unordered_map<std::string, std::any> attached_data;
 
-    /// The molar mass of the chemical species (in units of kg/mol)
-    double molar_mass;
+    /// Construct a default Species::Impl instance
+    Impl()
+    {}
 
-    /// The electrical charge of the chemical species
-    double charge = 0.0;
+    /// Construct a Species::Impl instance
+    Impl(const ChemicalFormula& formula)
+    : name(formula.str()), formula(formula)
+    {}
 };
 
 Species::Species()
 : pimpl(new Impl())
 {}
 
+Species::Species(const ChemicalFormula& formula)
+: pimpl(new Impl(formula))
+{}
+
 auto Species::withName(std::string name) -> Species
 {
-    Species species = clone();
-    species.pimpl->name = name;
-    return species;
+    Species copy = clone();
+    copy.pimpl->name = std::move(name);
+    return copy;
 }
 
-auto Species::withFormula(std::string formula) -> Species
+auto Species::withFormula(const ChemicalFormula& formula) -> Species
 {
-    Species species = clone();
-    species.pimpl->formula = formula;
-    return species;
+    Species copy = clone();
+    copy.pimpl->formula = formula;
+    return copy;
 }
 
-auto Species::withElements(const std::map<Element, double>& elements) -> Species
+auto Species::withAggregateState(AggregateState option) -> Species
 {
-    Species species = clone();
-    species.pimpl->elements = elements;
-    species.pimpl->molar_mass = molarMassFromElements(elements);
-    species.pimpl->charge = chargeFromElements(elements);
-    return species;
+    Species copy = clone();
+    copy.pimpl->aggregate_state = option;
+    return copy;
 }
 
-auto Species::withType(std::string type) -> Species
+auto Species::withTags(std::vector<std::string> tags) -> Species
 {
-    Species species = clone();
-    species.pimpl->type = type;
-    return species;
+    Species copy = clone();
+    copy.pimpl->tags = std::move(tags);
+    return copy;
 }
 
-auto Species::withData(const std::any& data) -> Species
+auto Species::withAttachedData(std::string id, std::any data) -> Species
 {
-    Species species = clone();
-    species.pimpl->data = data;
-    return species;
-}
-
-auto Species::numElements() const -> unsigned
-{
-    return elements().size();
+    Species copy = clone();
+    copy.pimpl->attached_data[id] = std::move(data);
+    return copy;
 }
 
 auto Species::name() const -> std::string
 {
+    if(pimpl->name.empty())
+        return formula().str();
     return pimpl->name;
 }
 
-auto Species::formula() const -> std::string
+auto Species::formula() const -> const ChemicalFormula&
 {
     return pimpl->formula;
 }
 
-auto Species::elements() const -> const std::map<Element, double>&
+auto Species::charge() const -> double
 {
-    return pimpl->elements;
-}
-
-auto Species::type() const -> std::string
-{
-    return pimpl->type;
+    return formula().charge();
 }
 
 auto Species::molarMass() const -> double
 {
-    return pimpl->molar_mass;
+    return formula().molarMass();
 }
 
-auto Species::charge() const -> double
+auto Species::aggregateState() const -> AggregateState
 {
-    return pimpl->charge;
+    if(pimpl->aggregate_state == AggregateState::Undefined)
+        return identifyAggregateState(name());
+    return pimpl->aggregate_state;
 }
 
-auto Species::elementCoefficient(std::string element) const -> double
+auto Species::elements() const -> const std::vector<std::pair<Element, double>>&
 {
-    for(const auto& pair : elements())
-        if(element == pair.first.name())
-            return pair.second;
-    return 0.0;
+    return formula().elements();
 }
 
-auto Species::data() const -> const std::any&
+auto Species::elementCoefficient(const std::string& symbol) const -> double
 {
-    return pimpl->data;
+    return formula().coefficient(symbol);
+}
+
+auto Species::tags() const -> const std::vector<std::string>&
+{
+    return pimpl->tags;
+}
+
+auto Species::attachedData(std::string id) const -> std::optional<std::any>
+{
+    const auto iter = pimpl->attached_data.find(id);
+    if(iter != pimpl->attached_data.end()) return iter->second;
+    return {};
+}
+
+auto Species::attachedData() const -> const std::unordered_map<std::string, std::any>&
+{
+    return pimpl->attached_data;
 }
 
 auto Species::clone() const -> Species
