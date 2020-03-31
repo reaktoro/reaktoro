@@ -18,11 +18,12 @@
 #include "PhreeqcDatabase.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/ConvertUtils.hpp>
+// #include <Reaktoro/Common/ConvertUtils.hpp>
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
-#include <Reaktoro/Common/StringUtils.hpp>
-#include <Reaktoro/Core/Database.hpp>
+// #include <Reaktoro/Common/SetUtils.hpp>
+// #include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
@@ -33,28 +34,32 @@
 namespace Reaktoro {
 namespace {
 
-auto createElement(const PhreeqcElement* e) -> Element
+/// Convert a PhreeqcElement pointer into a Reaktoro::Element object.
+auto convert(const PhreeqcElement* e) -> Element
 {
 	Element element;
 	element = element.withName(e->name);
+	element = element.withSymbol(e->name);
 	element = element.withMolarMass(e->gfw);
 	return element;
 }
 
-auto elementsInSpecies(const PhreeqcSpecies* s) -> std::map<Element, double>
+/// Create the Element objects and their coefficients with given PhreeqcSpecies pointer.
+auto createElements(const PhreeqcSpecies* s) -> Species::Elements
 {
-	std::map<Element, double> res;
-	for(auto pair : PhreeqcUtils::elements(s))
-		res.insert({createElement(pair.first), pair.second});
-	return res;
+	Species::Elements elements;
+	for(auto&& [element, coeff] : PhreeqcUtils::elements(s))
+		elements.emplace(convert(element), coeff);
+	return elements;
 }
 
-auto elementsInPhase(const PhreeqcPhase* p) -> std::map<Element, double>
+/// Create the Element objects and their coefficients with given PhreeqcPhase pointer.
+auto createElements(const PhreeqcPhase* p) -> Species::Elements
 {
-	std::map<Element, double> res;
-	for(auto pair : PhreeqcUtils::elements(p))
-		res.insert({createElement(pair.first), pair.second});
-	return res;
+	Species::Elements elements;
+	for(auto&& [element, coeff] : PhreeqcUtils::elements(p))
+		elements.emplace(convert(element), coeff);
+	return elements;
 }
 
 template<typename SpeciesType>
@@ -78,10 +83,11 @@ auto createAqueousSpecies(const PhreeqcSpecies* s) -> Species
 {
 	Species species;
 	species = species.withName(s->name);
-	species = species.withType("aqueous");
-	// species = species.withCharge(s->z);
-	species = species.withElements(elementsInSpecies(s));
-	species = species.withData(speciesThermoParamsPhreeqc(s));
+	species = species.withFormula(s->name);
+	species = species.withElements(createElements(s));
+	species = species.withCharge(s->z);
+	species = species.withAggregateState(AggregateState::Aqueous);
+	species = species.withAttachedData(speciesThermoParamsPhreeqc(s));
 	return species;
 }
 
@@ -89,9 +95,11 @@ auto createGaseousSpecies(const PhreeqcPhase* p) -> Species
 {
 	Species species;
 	species = species.withName(p->name);
-	species = species.withType("gaseous");
-	species = species.withElements(elementsInPhase(p));
-	species = species.withData(speciesThermoParamsPhreeqc(p));
+	species = species.withFormula(p->formula);
+	species = species.withElements(createElements(p));
+	species = species.withCharge(0.0);
+	species = species.withAggregateState(AggregateState::Gas);
+	species = species.withAttachedData(speciesThermoParamsPhreeqc(p));
 	return species;
 }
 
@@ -99,9 +107,11 @@ auto createMineralSpecies(const PhreeqcPhase* p) -> Species
 {
 	Species species;
 	species = species.withName(p->name);
-	species = species.withType("mineral");
-	species = species.withElements(elementsInPhase(p));
-	species = species.withData(speciesThermoParamsPhreeqc(p));
+	species = species.withFormula(p->formula);
+	species = species.withElements(createElements(p));
+	species = species.withCharge(0.0);
+	species = species.withAggregateState(AggregateState::Solid);
+	species = species.withAttachedData(speciesThermoParamsPhreeqc(p));
 	return species;
 }
 
@@ -199,7 +209,7 @@ struct PhreeqcDatabase::Impl
 
 		// Initialize the elements
 		for(int i = 0; i < phreeqc.count_elements; ++i)
-			elements.push_back(createElement(phreeqc.elements[i]));
+			elements.push_back(convert(phreeqc.elements[i]));
 
 		// Initialize the aqueous species
 		for(int i = 0; i < phreeqc.count_s; ++i)

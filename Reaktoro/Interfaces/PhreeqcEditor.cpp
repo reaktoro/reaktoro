@@ -85,12 +85,12 @@ auto PhreeqcEditor::setAqueousPhase(StringList elements) -> void
 
 auto PhreeqcEditor::setGaseousPhase(StringList gases) -> void
 {
-    pimpl->gases = gases.strings();
+    pimpl->gases = gases;
 }
 
 auto PhreeqcEditor::setMineralPhases(StringList minerals) -> void
 {
-    pimpl->minerals = minerals.strings();
+    pimpl->minerals = minerals;
 }
 
 PhreeqcEditor::operator ChemicalSystem() const
