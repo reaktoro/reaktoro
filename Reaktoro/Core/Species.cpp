@@ -18,11 +18,57 @@
 #include "Species.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Singletons/PeriodicTable.hpp>
 
 namespace Reaktoro {
+namespace detail {
+
+/// Create the Element objects in a Species object using PeriodicTable.
+auto createElements(const ChemicalFormula& formula) -> Species::Elements
+{
+    Species::Elements elements;
+    for(auto&& [symbol, coeff] : formula.symbols())
+    {
+        const auto element = PeriodicTable::elementWithSymbol(symbol);
+        error(!element.has_value(), "Cannot construct Species object with formula",
+            formula.str(), ". PeriodicTable contains no element with symbol ", symbol, ". "
+            "Use method PeriodicTable::append (in C++) or PeriodicTable.append (in Python) "
+            "to add a new Element with this symbol.");
+        elements.emplace(element.value(), coeff);
+    }
+    return elements;
+}
+
+/// Create the Element objects in a Species object using PeriodicTable.
+auto createElements(const Species::ElementSymbols& symbols) -> Species::Elements
+{
+    Species::Elements elements;
+    for(auto&& [symbol, coeff] : symbols)
+    {
+        const auto element = PeriodicTable::elementWithSymbol(symbol);
+        error(!element.has_value(), "Cannot proceed with Species::withElementSymbols. "
+            "PeriodicTable contains no element with symbol ", symbol, ". "
+            "Use method PeriodicTable::append (in C++) or PeriodicTable.append (in Python) "
+            "to add a new Element with this symbol.");
+        elements.emplace(element.value(), coeff);
+    }
+    return elements;
+}
+
+/// Return the molar mass of a species.
+auto molarMass(const Species::Elements& elements)
+{
+    double molar_mass = {};
+    for(auto&& [element, coeff] : elements)
+        molar_mass += element.molarMass() * coeff;
+    return molar_mass;
+}
+
+} // namespace detail
 
 struct Species::Impl
 {
@@ -30,7 +76,13 @@ struct Species::Impl
     std::string name;
 
     /// The chemical formula of the species such as `H2O`, `O2`, `H+`.
-    ChemicalFormula formula;
+    std::string formula;
+
+    /// The elements in the species and their coefficients.
+    Elements elements;
+
+    /// The electric charge of the species.
+    double charge = {};
 
     /// The aggregate state of the species such as `aqueous`, `gaseous`, `liquid`, `solid`, etc..
     AggregateState aggregate_state;
@@ -38,24 +90,27 @@ struct Species::Impl
     /// The tags of the species such as `organic`, `mineral`.
     std::vector<std::string> tags;
 
-    /// The attached data whose type is known at runtime only and their ids.
-    std::unordered_map<std::string, std::any> attached_data;
+    /// The attached data whose type is known at runtime only.
+    std::any attached_data;
 
     /// Construct a default Species::Impl instance
     Impl()
     {}
 
     /// Construct a Species::Impl instance
-    Impl(const ChemicalFormula& formula)
-    : name(formula.str()), formula(formula)
-    {}
+    Impl(ChemicalFormula formula)
+    : name(formula), formula(formula),
+      elements(detail::createElements(formula)),
+      charge(formula.charge())
+    {
+    }
 };
 
 Species::Species()
 : pimpl(new Impl())
 {}
 
-Species::Species(const ChemicalFormula& formula)
+Species::Species(std::string formula)
 : pimpl(new Impl(formula))
 {}
 
@@ -66,10 +121,29 @@ auto Species::withName(std::string name) -> Species
     return copy;
 }
 
-auto Species::withFormula(const ChemicalFormula& formula) -> Species
+auto Species::withFormula(std::string formula) -> Species
 {
     Species copy = clone();
-    copy.pimpl->formula = formula;
+    copy.pimpl->formula = std::move(formula);
+    return copy;
+}
+
+auto Species::withElements(Elements elements) -> Species
+{
+    Species copy = clone();
+    copy.pimpl->elements = std::move(elements);
+    return copy;
+}
+
+auto Species::withElementSymbols(ElementSymbols symbols) -> Species
+{
+    return withElements(detail::createElements(symbols));
+}
+
+auto Species::withCharge(double charge) -> Species
+{
+    Species copy = clone();
+    copy.pimpl->charge = charge;
     return copy;
 }
 
@@ -87,33 +161,33 @@ auto Species::withTags(std::vector<std::string> tags) -> Species
     return copy;
 }
 
-auto Species::withAttachedData(std::string id, std::any data) -> Species
+auto Species::withAttachedData(std::any data) -> Species
 {
     Species copy = clone();
-    copy.pimpl->attached_data[id] = std::move(data);
+    copy.pimpl->attached_data = std::move(data);
     return copy;
 }
 
 auto Species::name() const -> std::string
 {
     if(pimpl->name.empty())
-        return formula().str();
+        return formula();
     return pimpl->name;
 }
 
-auto Species::formula() const -> const ChemicalFormula&
+auto Species::formula() const -> std::string
 {
     return pimpl->formula;
 }
 
 auto Species::charge() const -> double
 {
-    return formula().charge();
+    return pimpl->charge;
 }
 
 auto Species::molarMass() const -> double
 {
-    return formula().molarMass();
+    return detail::molarMass(elements());
 }
 
 auto Species::aggregateState() const -> AggregateState
@@ -123,14 +197,17 @@ auto Species::aggregateState() const -> AggregateState
     return pimpl->aggregate_state;
 }
 
-auto Species::elements() const -> const std::vector<std::pair<Element, double>>&
+auto Species::elements() const -> const Elements&
 {
-    return formula().elements();
+    return pimpl->elements;
 }
 
 auto Species::elementCoefficient(const std::string& symbol) const -> double
 {
-    return formula().coefficient(symbol);
+    for(auto&& [element, coeff] : elements())
+        if(element.symbol() == symbol)
+            return coeff;
+    return 0.0;
 }
 
 auto Species::tags() const -> const std::vector<std::string>&
@@ -138,14 +215,7 @@ auto Species::tags() const -> const std::vector<std::string>&
     return pimpl->tags;
 }
 
-auto Species::attachedData(std::string id) const -> std::optional<std::any>
-{
-    const auto iter = pimpl->attached_data.find(id);
-    if(iter != pimpl->attached_data.end()) return iter->second;
-    return {};
-}
-
-auto Species::attachedData() const -> const std::unordered_map<std::string, std::any>&
+auto Species::attachedData() const -> const std::any&
 {
     return pimpl->attached_data;
 }
