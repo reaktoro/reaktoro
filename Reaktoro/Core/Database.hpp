@@ -27,9 +27,13 @@
 
 namespace Reaktoro {
 
-// Forward declarations
+// Forward declarations (class)
 class Element;
 class Species;
+class StringList;
+
+// Forward declarations (enum class)
+enum class AggregateState;
 
 /// Auxiliary type alias for an unordered map of element name to Element object.
 using ElementMap = std::unordered_map<std::string, Element>;
@@ -46,20 +50,11 @@ public:
     /// Construct a default Database instance.
     Database();
 
-    /// Set all element in the database.
-    auto setElements(const ElementMap& element_map) -> void;
-
-    /// Set all species in the database.
-    auto setSpecies(const SpeciesMap& species_map) -> void;
-
-    /// Set additional data for the database whose type is known at runtime only.
-    auto setData(const std::any& data) -> void;
-
-    /// Add an element in the database.
-    auto addElement(const Element& element) -> void;
-
     /// Add a species in the database.
     auto addSpecies(const Species& species) -> void;
+
+    /// Attach data to this database whose type is known at runtime only.
+    auto attachData(const std::any& data) -> void;
 
     /// Return all elements in the database.
     auto elements() const -> std::vector<Element>;
@@ -67,29 +62,21 @@ public:
     /// Return all species in the database.
     auto species() const -> std::vector<Species>;
 
-    /// Return the additional data in the database whose type is known at runtime only.
-    auto data() const -> const std::any&;
+    /// Return the attached data to this database whose type is known at runtime only.
+    auto attachedData() const -> const std::any&;
 
     /// Return an element with given name if it exists in the database.
     auto elementWithName(std::string name) const -> std::optional<Element>;
 
-    /// Return an element with given name if it exists in the database.
+    /// Return a species with given name if it exists in the database.
     auto speciesWithName(std::string name) const -> std::optional<Species>;
 
-    /// Return all species in the database with given type.
-    auto speciesWithType(std::string type) const -> std::vector<Species>;
+    /// Return all species in the database with given aggregate state.
+    auto allSpeciesWithAggregateState(AggregateState state) const -> std::vector<Species>;
 
     /// Return all species in the database with given elements.
-    /// @param elements The names of the elements.
-    auto speciesWithElements(std::vector<std::string> elements) const -> std::vector<Species>;
-
-    /// Return true if the database contains an element with given name.
-    /// @param name The name of the element.
-    auto containsElement(std::string name) const -> bool;
-
-    /// Return true if the database contains a species with given name.
-    /// @param name The name of the species.
-    auto containsSpecies(std::string name) const -> bool;
+    /// @param symbols The symbols of the elements.
+    auto allSpeciesWithElements(const StringList& symbols) const -> std::vector<Species>;
 
 private:
     struct Impl;
