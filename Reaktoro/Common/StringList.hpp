@@ -78,6 +78,9 @@ public:
     /// Return the string at the given index position.
     auto operator[](std::size_t index) const -> const std::string&;
 
+    /// Convert this StringList instance into a std::vector<std::string>.
+    operator std::vector<std::string>() const;
+
     /// Return begin const iterator of this StringList instance
     inline auto begin() const { return data().begin(); }
 

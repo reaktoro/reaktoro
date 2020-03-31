@@ -131,5 +131,10 @@ auto StringList::operator[](std::size_t index) const -> const std::string&
     return m_strings[index];
 }
 
+StringList::operator std::vector<std::string>() const
+{
+    return data();
+}
+
 } // namespace Reaktoro
 
