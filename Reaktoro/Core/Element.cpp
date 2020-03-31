@@ -97,6 +97,11 @@ auto Element::withAtomicWeight(double atomic_weight) const -> Element
     return copy;
 }
 
+auto Element::withMolarMass(double molar_mass) const -> Element
+{
+    return withAtomicWeight(molar_mass);
+}
+
 auto Element::withElectronegativity(double electronegativity) const -> Element
 {
     Element copy = clone();
@@ -131,6 +136,11 @@ auto Element::atomicWeight() const -> double
     return pimpl->atomic_weight;
 }
 
+auto Element::molarMass() const -> double
+{
+    return atomicWeight();
+}
+
 auto Element::electronegativity() const -> double
 {
     return pimpl->electronegativity;
@@ -139,11 +149,6 @@ auto Element::electronegativity() const -> double
 auto Element::tags() const -> const std::vector<std::string>&
 {
     return pimpl->tags;
-}
-
-auto Element::molarMass() const -> double
-{
-    return atomicWeight();
 }
 
 auto Element::clone() const -> Element
