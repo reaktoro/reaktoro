@@ -70,7 +70,12 @@ public:
     auto withAtomicNumber(std::size_t atomic_number) const -> Element;
 
     /// Return a duplicate of this Element object with replaced atomic weight attribute.
+    /// @note This method is equivalent to withMolarMass
     auto withAtomicWeight(double atomic_weight) const -> Element;
+
+    /// Return a duplicate of this Element object with replaced molar mass attribute.
+    /// @note This method is equivalent to withAtomicWeight
+    auto withMolarMass(double molar_mass) const -> Element;
 
     /// Return a duplicate of this Element object with replaced electronegativity attribute.
     auto withElectronegativity(double electronegativity) const -> Element;
@@ -88,16 +93,18 @@ public:
     auto atomicNumber() const -> std::size_t;
 
     /// Return the atomic weight of the element (in unit of kg/mol).
+    /// @note This method is equivalent to molarMass
     auto atomicWeight() const -> double;
+
+    /// Return the molar mass of the element (in unit of kg/mol).
+    /// @note This method is equivalent to atomicWeight
+    auto molarMass() const -> double;
 
     /// Return the electronegativity of the element.
     auto electronegativity() const -> double;
 
     /// Return the tags of the element.
     auto tags() const -> const std::vector<std::string>&;
-
-    /// Return the molar mass of the element (in unit of kg/mol).
-    auto molarMass() const -> double;
 
     /// Return a deep copy of this Element object.
     auto clone() const -> Element;
@@ -115,3 +122,17 @@ auto operator<(const Element& lhs, const Element& rhs) -> bool;
 auto operator==(const Element& lhs, const Element& rhs) -> bool;
 
 } // namespace Reaktoro
+
+// Custom specialization of std::hash for Reaktoro::Element
+namespace std {
+
+template<>
+struct hash<Reaktoro::Element>
+{
+    std::size_t operator()(const Reaktoro::Element& e) const noexcept
+    {
+        return std::hash<std::string>{}(e.symbol());
+    }
+};
+
+} // namespace std
