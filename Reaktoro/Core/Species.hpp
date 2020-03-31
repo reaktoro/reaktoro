@@ -20,7 +20,6 @@
 // C++ includes
 #include <any>
 #include <memory>
-#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -28,7 +27,6 @@
 namespace Reaktoro {
 
 // Forward declarations (class)
-class ChemicalFormula;
 class Element;
 
 // Forward declarations (enum)
@@ -38,18 +36,34 @@ enum class AggregateState;
 class Species
 {
 public:
+    /// The type for the container of Element objects composing the species and their corresponding coefficients.
+    using Elements = std::unordered_map<Element, double>;
+
+    /// The type for the container of chemical element symbols composing the species and their corresponding coefficients.
+    using ElementSymbols = std::unordered_map<std::string, double>;
+
     /// Construct a default Species object.
     Species();
 
     /// Construct a Species object with given chemical formula.
     /// @param formula The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    Species(const ChemicalFormula& formula);
+    Species(std::string formula);
 
     /// Return a duplicate of this Species object with replaced name attribute.
     auto withName(std::string name) -> Species;
 
     /// Return a duplicate of this Species object with replaced formula attribute.
-    auto withFormula(const ChemicalFormula& formula) -> Species;
+    auto withFormula(std::string formula) -> Species;
+
+    /// Return a duplicate of this Species object with replaced Element objects and respective coefficients.
+    auto withElements(Elements elements) -> Species;
+
+    /// Return a duplicate of this Species object with replaced Element objects and respective coefficients.
+    /// @note The Element objects in the Species instance will be collected from PeriodicTable.
+    auto withElementSymbols(ElementSymbols symbols) -> Species;
+
+    /// Return a duplicate of this Species object with replaced electric charge attribute.
+    auto withCharge(double charge) -> Species;
 
     /// Return a duplicate of this Species object with replaced aggregate state.
     auto withAggregateState(AggregateState option) -> Species;
@@ -57,14 +71,14 @@ public:
     /// Return a duplicate of this Species object with replaced tags attribute.
     auto withTags(std::vector<std::string> tags) -> Species;
 
-    /// Return a duplicate of this Species object with attached data.
-    auto withAttachedData(std::string id, std::any data) -> Species;
+    /// Return a duplicate of this Species object with attached data whose type is known at runtime only.
+    auto withAttachedData(std::any data) -> Species;
 
     /// Return the name of the species if provided, otherwise, its formula.
     auto name() const -> std::string;
 
     /// Return the chemical formula of the species.
-    auto formula() const -> const ChemicalFormula&;
+    auto formula() const -> std::string;
 
     /// Return the electric charge of the species.
     auto charge() const -> double;
@@ -76,7 +90,7 @@ public:
     auto aggregateState() const -> AggregateState;
 
     /// Return the elements that compose the species and their coefficients.
-    auto elements() const -> const std::vector<std::pair<Element, double>>&;
+    auto elements() const -> const Elements&;
 
     /// Return the coefficient of an element in the species.
     auto elementCoefficient(const std::string& symbol) const -> double;
@@ -84,11 +98,8 @@ public:
     /// Return the tags of the species (e.g., `organic`, `mineral`).
     auto tags() const -> const std::vector<std::string>&;
 
-    /// Return the attached data with given id.
-    auto attachedData(std::string id) const -> std::optional<std::any>;
-
-    /// Return all attached data and their corresponding id's.
-    auto attachedData() const -> const std::unordered_map<std::string, std::any>&;
+    /// Return the attached data of the species whose type is known at runtime only.
+    auto attachedData() const -> const std::any&;
 
     /// Return a deep copy of this Species object.
     auto clone() const -> Species;
@@ -106,3 +117,17 @@ auto operator<(const Species& lhs, const Species& rhs) -> bool;
 auto operator==(const Species& lhs, const Species& rhs) -> bool;
 
 } // namespace Reaktoro
+
+// Custom specialization of std::hash for Reaktoro::Species
+namespace std {
+
+template<>
+struct hash<Reaktoro::Species>
+{
+    std::size_t operator()(const Reaktoro::Species& s) const noexcept
+    {
+        return std::hash<std::string>{}(s.name());
+    }
+};
+
+} // namespace std
