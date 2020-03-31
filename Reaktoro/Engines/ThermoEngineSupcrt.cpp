@@ -109,7 +109,7 @@ struct SupcrtStandardThermoModelFn
     /// Return the standard thermodynamic properties of a species at given temperature and pressure.
     auto operator()(real T, real P, const Species& species) const -> StandardThermoProps
     {
-        const auto data = species.data();
+        const auto& data = species.attachedData();
         if(data.type() == typeid(ParamsMaierKelly))
             return standardThermoPropsMaierKelly(T, P, species);
         if(data.type() == typeid(ParamsMaierKellyHKF))
@@ -134,7 +134,7 @@ struct SupcrtStandardThermoModelFn
     /// Return the standard thermodynamic properties of an aqueous solute using HKF model.
     auto standardThermoPropsAqueousSoluteHKF(real T, real P, const Species& species) const -> StandardThermoProps
     {
-        const auto params = std::any_cast<ParamsAqueousSoluteHKF>(species.data());
+        const auto params = std::any_cast<ParamsAqueousSoluteHKF>(species.attachedData());
         const auto wts = water_thermo_props_wagner_pruss_fn(T, P);
         const auto wes = water_eletro_props_fn(T, P);
         const auto g = functionG(T, P, wts);
@@ -146,7 +146,7 @@ struct SupcrtStandardThermoModelFn
     /// Return the standard thermodynamic properties of a species using Maier-Kelly model.
     auto standardThermoPropsMaierKelly(real T, real P, const Species& species) const -> StandardThermoProps
     {
-        const auto params = std::any_cast<ParamsMaierKelly>(species.data());
+        const auto params = std::any_cast<ParamsMaierKelly>(species.attachedData());
         const auto res = speciesThermoStateHKF(T, P, params);
         return convert(res);
     }
@@ -154,7 +154,7 @@ struct SupcrtStandardThermoModelFn
     /// Return the standard thermodynamic properties of a mineral species using Maier-Kelly-HKF model.
     auto standardThermoPropsMaierKellyHKF(real T, real P, const Species& species) const -> StandardThermoProps
     {
-        const auto params = std::any_cast<ParamsMaierKellyHKF>(species.data());
+        const auto params = std::any_cast<ParamsMaierKellyHKF>(species.attachedData());
         const auto res = speciesThermoStateHKF(T, P, params);
         return convert(res);
     }
