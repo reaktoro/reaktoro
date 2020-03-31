@@ -17,6 +17,10 @@
 
 #pragma once
 
+// C++ includes
+#include <unordered_map>
+#include <vector>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
 
@@ -86,7 +90,7 @@ struct ParamsAqueousSoluteHKF
     real wref = {};
 
     /// The dissociation of a neutral aqueous solute into charged species.
-    std::map<std::string, real> dissociation; // TODO: This dissociation data should not exist here, but in a more central location that will work for other databases as well.
+    std::unordered_map<std::string, real> dissociation; // TODO: This dissociation data should not exist here, but in a more central location that will work for other databases as well.
 };
 
 /// The type used to store Maier-Kelly parameters based on SUPCRT databases for gaseous/liquid species.
