@@ -18,18 +18,20 @@
 #include "Database.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/StringUtils.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/StringList.hpp>
+#include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
 namespace {
 
-/// Auxiliary type alias for an unordered map of species category to SpeciesMap object.
-using SpeciesGroupMap = std::unordered_map<std::string, SpeciesMap>;
+/// Auxiliary type to store species with same aggregate state.
+using SpeciesSameAggregateStateMap = std::unordered_map<AggregateState, std::vector<Species>>;
 
-/// Return values in a map in a vector.
+/// Return the values in a map in a vector container.
 template<typename Map>
 auto vectorize(const Map& map)
 {
@@ -45,50 +47,48 @@ auto vectorize(const Map& map)
 
 struct Database::Impl
 {
-    /// The map of element name to Element objects in the database.
-    ElementMap element_map;
-
     /// The map of species name to Species objects in the database.
     SpeciesMap species_map;
 
-    /// The map of species type to a a SpeciesMap object containing species with that type.
-    SpeciesGroupMap species_group_with_type;
+    /// The map of element name to Element objects in the database collected from the species.
+    ElementMap element_map;
+
+    /// The map from aggregate state to species with that aggregate state.
+    SpeciesSameAggregateStateMap species_with_same_aggregate_state;
 
     /// The additional data in the database whose type is known at runtime only.
-    std::any anydata;
+    std::any attached_data;
 
-    /// Set all element in the database.
-    auto setElements(const ElementMap& map) -> void
+    /// Add a species in the database.
+    auto addSpecies(Species species) -> void
     {
-        element_map = map;
-    }
+        // Ensure a unique name is used when storing this species
+        auto name = species.name();
+        auto unique_name = name;
+        auto already_exists = true;
+        while(already_exists) {
+            already_exists = species_map.find(unique_name) != species_map.end();
+            if(already_exists)
+                unique_name = unique_name + "!"; // keep adding symbol ! to the name such as H2O, H2O!, H2O!!, H2O!!! if many H2O are given
+        }
 
-    /// Set all species in the database.
-    auto setSpecies(const SpeciesMap& map) -> void
-    {
-        species_map = map;
-        species_group_with_type.clear();
-        for(const auto& [_, species] : species_map)
-            species_group_with_type[species.type()][species.name()] = species;
+        // Replace name if not unique
+        if(name != unique_name) {
+            species = species.withName(unique_name);
+            warning(true, "Species in a Database object should have unique names, but species ", name, " violates this rule. "
+                "I'm changing its name to ", unique_name, " to fix this issue for you.");
+        }
+
+        species_map[species.name()] = std::move(species);
+        for(auto&& [element, coeff] : species.elements())
+            element_map[element.symbol()] = element;
+        species_with_same_aggregate_state[species.aggregateState()].push_back(species);
     }
 
     /// Set additional data for the database whose type is known at runtime only.
-    auto setData(const std::any& data) -> void
+    auto attachData(const std::any& data) -> void
     {
-        anydata = data;
-    }
-
-    /// Add an element in the database.
-    auto addElement(const Element& element) -> void
-    {
-        element_map[element.name()] = element;
-    }
-
-    /// Add a species in the database.
-    auto addSpecies(const Species& species) -> void
-    {
-        species_map[species.name()] = species;
-        species_group_with_type[species.type()][species.name()] = species;
+        attached_data = data;
     }
 
     /// Return all elements in the database.
@@ -104,9 +104,9 @@ struct Database::Impl
     }
 
     /// Return the additional data in the database whose type is known at runtime only.
-    auto data() const -> const std::any&
+    auto attachedData() const -> const std::any&
     {
-        return anydata;
+        return attached_data;
     }
 
     /// Return an element with given name if it exists in the database.
@@ -125,22 +125,22 @@ struct Database::Impl
         return found ? iter->second : std::optional<Species>{};
     }
 
-    /// Return all species in the database with given type.
-    auto speciesWithType(std::string type) const -> std::vector<Species>
+    /// Return all species in the database with given aggregate state.
+    auto allSpeciesWithAggregateState(AggregateState state) const -> std::vector<Species>
     {
-        const auto iter = species_group_with_type.find(type);
-        const auto found = iter != species_group_with_type.end();
-        return found ? vectorize(iter->second) : std::vector<Species>{};
+        const auto iter = species_with_same_aggregate_state.find(state);
+        const auto found = iter != species_with_same_aggregate_state.end();
+        return found ? iter->second : std::vector<Species>{};
     }
 
     /// Return all species in the database with given elements.
-    /// @param elements The names of the elements.
-    auto speciesWithElements(std::vector<std::string> elements) const -> std::vector<Species>
+    /// @param symbols The symbols of the elements.
+    auto allSpeciesWithElements(const StringList& symbols) const -> std::vector<Species>
     {
         auto with_elements = [&](const Species& species)
         {
             for(auto [element, _] : species.elements())
-                if(!contained(element.name(), elements))
+                if(!contains(symbols, element.name()))
                     return false;
             return true;
         };
@@ -171,29 +171,14 @@ Database::Database()
 : pimpl(new Impl())
 {}
 
-auto Database::setElements(const ElementMap& element_map) -> void
-{
-    pimpl->setElements(element_map);
-}
-
-auto Database::setSpecies(const SpeciesMap& species_map) -> void
-{
-    pimpl->setSpecies(species_map);
-}
-
-auto Database::setData(const std::any& data) -> void
-{
-    pimpl->setData(data);
-}
-
-auto Database::addElement(const Element& element) -> void
-{
-    pimpl->addElement(element);
-}
-
 auto Database::addSpecies(const Species& species) -> void
 {
     pimpl->addSpecies(species);
+}
+
+auto Database::attachData(const std::any& data) -> void
+{
+    pimpl->attachData(data);
 }
 
 auto Database::elements() const -> std::vector<Element>
@@ -206,9 +191,9 @@ auto Database::species() const -> std::vector<Species>
     return pimpl->species();
 }
 
-auto Database::data() const -> const std::any&
+auto Database::attachedData() const -> const std::any&
 {
-    return pimpl->data();
+    return pimpl->attachedData();
 }
 
 auto Database::elementWithName(std::string name) const -> std::optional<Element>
@@ -221,24 +206,14 @@ auto Database::speciesWithName(std::string name) const -> std::optional<Species>
     return pimpl->speciesWithName(name);
 }
 
-auto Database::speciesWithType(std::string type) const -> std::vector<Species>
+auto Database::allSpeciesWithAggregateState(AggregateState state) const -> std::vector<Species>
 {
-    return pimpl->speciesWithType(type);
+    return pimpl->allSpeciesWithAggregateState(state);
 }
 
-auto Database::speciesWithElements(std::vector<std::string> elements) const -> std::vector<Species>
+auto Database::allSpeciesWithElements(const StringList& symbols) const -> std::vector<Species>
 {
-    return pimpl->speciesWithElements(elements);
-}
-
-auto Database::containsElement(std::string name) const -> bool
-{
-    return pimpl->containsElement(name);
-}
-
-auto Database::containsSpecies(std::string name) const -> bool
-{
-    return pimpl->containsSpecies(name);
+    return pimpl->allSpeciesWithElements(symbols);
 }
 
 } // namespace Reaktoro
