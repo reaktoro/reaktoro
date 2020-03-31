@@ -29,6 +29,9 @@
 
 namespace Reaktoro {
 
+// Forward declarations
+class StringList;
+
 /// A type used store a collection of elements.
 /// @see Element
 class PeriodicTable
