@@ -25,18 +25,12 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class Element;
-
 /// A type used to represent the chemical formula of a chemical species.
 class ChemicalFormula
 {
 public:
-    /// Alias type for a vector of element symbols and their coefficients in a chemical formula.
+    /// The type for the container of chemical element symbols in the formula and their corresponding coefficients.
     using ElementSymbols = std::unordered_map<std::string, double>;
-
-    /// Alias type for a vector of elements and their coefficients in a chemical formula.
-    using Elements = std::vector<std::pair<Element, double>>;
 
     /// Construct a default ChemicalFormula object.
     ChemicalFormula();
@@ -49,25 +43,20 @@ public:
     /// @param formula The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
     ChemicalFormula(std::string formula);
 
-    /// Construct a ChemicalFormula object with given formula and parsed formula.
-    /// @param formula The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    /// @param elements The element symbols and their coefficients in the formula, e.g., {{"H", 2}, {"O", 1}} for `H2O`.
-    ChemicalFormula(std::string formula, ElementSymbols symbols);
+    /// Construct a ChemicalFormula object with given formula, element symbols, and charge.
+    /// @param formula The chemical formula of the species (e.g., `HCO3-`).
+    /// @param symbols The element symbols and their coefficients (e.g., `{{"H", 1}, {"C", 1}, {"O", 3}}` for `HCO3-`).
+    /// @param charge The electric charge in the chemical formula (e.g., `-1` for `HCO3-`).
+    ChemicalFormula(std::string formula, ElementSymbols symbols, double charge);
 
     /// Return the chemical formula of the substance as a string.
     auto str() const -> const std::string&;
 
-    /// Return the elements in the chemical formula and their coefficients.
-    auto elements() const -> const Elements&;
-
-    /// Return the element symbols in the chemical formula and their coefficients.
+    /// Return the element symbols and their coefficients in the chemical formula.
     auto symbols() const -> const ElementSymbols&;
 
     /// Return the electric charge of the chemical formula.
     auto charge() const -> double;
-
-    /// Return the molar mass of the chemical formula (in kg/mol).
-    auto molarMass() const -> double;
 
     /// Return the coefficient of an element symbol in the chemical formula.
     auto coefficient(const std::string& symbol) const -> double;
