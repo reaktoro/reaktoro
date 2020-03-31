@@ -17,17 +17,9 @@
 
 #include "DatabaseThermoFun.hpp"
 
-// C++ includes
-
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
-#include <Reaktoro/Common/StringUtils.hpp>
-#include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Databases/EmbeddedDatabases.hpp>
 
 // ThermoFun includes
 #include <ThermoFun/ThermoFun.h>
@@ -35,80 +27,43 @@
 namespace Reaktoro {
 namespace {
 
-/// Convert a ThermoFun::Element symbol in a Reaktoro::Element name.
-auto convertThermoFunElementSymbol(const ThermoFun::Element& element) -> std::string
+/// Convert a ThermoFun::Element object into a Reaktoro::Element object
+auto convert(const ThermoFun::Element& element) -> Element
 {
-    /// ThermoFun::Element::symbol is equivalent to Reaktoro::Element::name except for electric charge, which is Z instead of Zz
-    return element.symbol() == "Zz" ? "Z" : element.symbol();
+    Element converted;
+    converted = converted.withName(element.name());
+    converted = converted.withSymbol(element.symbol());
+    converted = converted.withMolarMass(element.molarMass());
+    return converted;
 }
 
 /// Return the elements and their coefficients in a species a ThermoFun::Substance object
 /// @param db The ThermoFun::Database object
 /// @param subtance The ThermoFun::Substance object
-/// @param element_map The unique and immutable Reaktoro::Element objects previously created
-auto speciesElements(ThermoFun::Database& db, const ThermoFun::Substance& substance, const ElementMap& element_map) -> std::map<Element, double>
+auto createElements(ThermoFun::Database& db, const ThermoFun::Substance& substance) -> Species::Elements
 {
-    std::map<Element, double> elements;
-
-    for(auto [symbol, coeff] : db.parseSubstanceFormula(substance.formula()))
+    Species::Elements elements;
+    for(auto&& [element, coeff] : db.parseSubstanceFormula(substance.formula()))
     {
-        const auto name = convertThermoFunElementSymbol(symbol);
-        const auto element = element_map.at(name);
-        elements[element] = coeff;
+        if(element.symbol() == "Zz")
+            continue;
+        elements[convert(element)] = coeff;
     }
-
     return elements;
-}
-
-/// Convert a ThermoFun::Element object into a Reaktoro::Element object
-auto convertThermoFunElement(const ThermoFun::Element& element) -> Element
-{
-    Element converted;
-    converted = converted.withName(convertThermoFunElementSymbol(element));
-    converted = converted.withMolarMass(element.molarMass());
-    return converted;
 }
 
 /// Convert a ThermoFun::Substance object into a Reaktoro::Species object
 /// @param subtance The ThermoFun::Substance object
 /// @param db The ThermoFun::Database object
-/// @param element_map The unique and immutable Reaktoro::Element objects previously created
-auto convertThermoFunSubstance(const ThermoFun::Substance& substance, ThermoFun::Database& db, const ElementMap& element_map) -> Species
+auto convert(const ThermoFun::Substance& substance, ThermoFun::Database& db) -> Species
 {
     Species species;
     species = species.withName(substance.symbol());
     species = species.withFormula(substance.formula());
-    species = species.withElements(speciesElements(db, substance, element_map));
-    species = species.withData(substance);
+    species = species.withElements(createElements(db, substance));
+    species = species.withCharge(substance.charge());
+    species = species.withAttachedData(substance);
     return species;
-}
-
-/// Create the Reaktoro::Element objects for the Reaktoro::Database object
-auto createElementMap(ThermoFun::Database& db) -> ElementMap
-{
-    ElementMap element_map;
-
-    for(auto [_, elem] : db.mapElements())
-    {
-        Element element = convertThermoFunElement(elem);
-        element_map[element.name()] = element;
-    }
-
-    return element_map;
-}
-
-/// Create the Reaktoro::Species objects for the Reaktoro::Database object
-auto createSpeciesMap(ThermoFun::Database& db, const ElementMap& element_map) -> SpeciesMap
-{
-    SpeciesMap species_map;
-
-    for(auto [_, subs] : db.mapSubstances())
-    {
-        Species species = convertThermoFunSubstance(subs, db, element_map);
-        species_map[species.name()] = species;
-    }
-
-    return species_map;
 }
 
 } // namespace
@@ -120,13 +75,12 @@ auto DatabaseThermoFun::fromFile(std::string path) ->  DatabaseThermoFun
 {
     ThermoFun::Database thermofun_db(path);
 
-    ElementMap element_map = createElementMap(thermofun_db);
-    SpeciesMap species_map = createSpeciesMap(thermofun_db, element_map);
-
     DatabaseThermoFun db;
-    db.setElements(element_map);
-    db.setSpecies(species_map);
-    db.setData(thermofun_db);
+    db.attachData(thermofun_db);
+
+    for(auto [_, subs] : thermofun_db.mapSubstances())
+        db.addSpecies(convert(subs, thermofun_db));
+
     return db;
 }
 

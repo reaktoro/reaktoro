@@ -57,7 +57,7 @@ struct ThermoFunStandardThermoModelFn
 
     /// Construct a ThermoFunStandardThermoModelFn object
     ThermoFunStandardThermoModelFn(const DatabaseThermoFun& database)
-    : thermofun_engine(std::any_cast<ThermoFun::Database>(database.data()))
+    : thermofun_engine(std::any_cast<ThermoFun::Database>(database.attachedData()))
     {
         // Set solvent symbol, the HGK, JN water solvent model are defined in this record
         thermofun_engine.setSolventSymbol("H2O@");

@@ -22,18 +22,12 @@
 #include <sstream>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
-#include <Reaktoro/Common/StringUtils.hpp>
-#include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Databases/EmbeddedDatabases.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
-
-// // miniz includes
-// #include <miniz/zip_file.hpp>
 
 // pugixml includes
 #include <pugixml.hpp>
@@ -50,9 +44,9 @@ auto errorNonExistentSpecies(std::string type, std::string name) -> void
     RaiseError(exception);
 }
 
-auto parseDissociation(std::string dissociation) -> std::map<std::string, double>
+auto parseDissociation(std::string dissociation) -> std::unordered_map<std::string, double>
 {
-    std::map<std::string, double> equation;
+    std::unordered_map<std::string, double> equation;
     auto words = split(dissociation, " ");
     for(const auto& word : words)
     {
@@ -88,14 +82,6 @@ auto as_lowercase_text(const xml_node& node, const char* childname, std::string 
     return lowercase(as_text(node, childname, if_empty));
 }
 
-auto parseElement(const xml_node& node) -> Element
-{
-    Element element;
-    element = element.withName(as_text(node, "Name"));
-    element = element.withMolarMass(as_double(node, "MolarMass") * 1.0e-3); // convert from g/mol to kg/mol
-    return element;
-}
-
 auto parseParamsAqueousSoluteHKF(const xml_node& node) -> ParamsAqueousSoluteHKF
 {
     ParamsAqueousSoluteHKF data;
@@ -128,7 +114,7 @@ auto parseParamsMaierKelly(const xml_node& node) -> ParamsMaierKelly
     data.name = as_text(node, "Name");
 
     data.Tcr = as_double(node, "CriticalTemperature");
-    data.Pcr = as_double(node, "CriticalPressure") * barToPascal; // convert from bar to Pa
+    data.Pcr = as_double(node, "CriticalPressure") * 1.0e+5; // convert from bar to Pa
     data.acentric_factor = as_double(node, "AcentricFactor");
 
     const auto hkf = node.child("Thermo").child("HKF");
@@ -193,24 +179,24 @@ auto parseParamsMaierKellyHKF(const xml_node& node) -> ParamsMaierKellyHKF
     return data;
 }
 
-auto parseElementalFormula(const xml_node& node, const ElementMap& element_map) -> std::map<Element, double>
+auto parseElementSymbols(const xml_node& node) -> Species::ElementSymbols
 {
-    std::string formula = as_text(node, "Elements");
-    std::map<Element, double> elements;
-    auto words = split(formula, "()");
+    const auto nodetext = as_text(node, "Elements");
+    auto words = split(nodetext, "()");
+    Species::ElementSymbols symbols;
     for(unsigned i = 0; i < words.size(); i += 2)
-    {
-        Assert(element_map.count(words[i]),
-            "Cannot parse the elemental formula `" + formula + "`.",
-            "The element `" + words[i] + "` is not in the database.");
-        elements.emplace(element_map.at(words[i]), tofloat(words[i + 1]));
-    }
-    if(!node.child("Charge").empty())
-    {
-        double charge = node.child("Charge").text().as_double();
-        elements.emplace(element_map.at("Z"), charge);
-    }
-    return elements;
+        symbols.emplace(words[i], tofloat(words[i + 1]));
+    return symbols;
+}
+
+auto parseAggregateState(const xml_node& node)
+{
+    const auto type = as_lowercase_text(node, "Type");
+    if(type == "aqueous") return AggregateState::Aqueous;
+    if(type == "gaseous") return AggregateState::Gas;
+    if(type == "liquid") return AggregateState::Liquid;
+    if(type == "mineral") return AggregateState::Solid;
+    return AggregateState::Undefined;
 }
 
 auto parseSpeciesData(const xml_node& node) -> std::any
@@ -222,50 +208,26 @@ auto parseSpeciesData(const xml_node& node) -> std::any
     return parseParamsMaierKelly(node); // assume Maier-Kelly data by default
 }
 
-auto parseSpecies(const xml_node& node, const ElementMap& element_map) -> Species
+auto parseSpecies(const xml_node& node) -> Species
 {
     Species species;
     species = species.withName(as_text(node, "Name"));
     species = species.withFormula(as_text(node, "Formula"));
-    species = species.withElements(parseElementalFormula(node, element_map));
-    species = species.withType(as_lowercase_text(node, "Type"));
-    species = species.withData(parseSpeciesData(node));
+    species = species.withElementSymbols(parseElementSymbols(node));
+    species = species.withCharge(as_double(node, "Charge", 0.0));
+    species = species.withAggregateState(parseAggregateState(node));
+    species = species.withAttachedData(parseSpeciesData(node));
     return species;
-}
-
-auto parseElementMap(const xml_document& doc) -> ElementMap
-{
-    ElementMap element_map;
-    for(xml_node node : doc.child("Database").children("Element"))
-    {
-        Element element = parseElement(node);
-        element_map[element.name()] = element;
-    }
-    element_map["Z"] = Element().withName("Z");
-    return element_map;
-}
-
-auto parseSpeciesMap(const xml_document& doc, const ElementMap& element_map) -> SpeciesMap
-{
-    SpeciesMap species_map;
-    for(xml_node node : doc.child("Database").children("Species"))
-    {
-        Species species = parseSpecies(node, element_map);
-        species_map[species.name()] = species;
-    }
-    return species_map;
 }
 
 auto parseDatabase(const xml_document& doc) -> DatabaseSupcrt
 {
     xml_node database = doc.child("Database");
 
-    ElementMap element_map = parseElementMap(doc);
-    SpeciesMap species_map = parseSpeciesMap(doc, element_map);
-
     DatabaseSupcrt db;
-    db.setElements(element_map);
-    db.setSpecies(species_map);
+    for(xml_node node : doc.child("Database").children("Species"))
+        db.addSpecies(parseSpecies(node));
+
     return db;
 }
 
