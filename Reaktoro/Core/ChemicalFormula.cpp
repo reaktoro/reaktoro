@@ -20,7 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Singletons/PeriodicTable.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -235,20 +234,14 @@ auto parseElectricCharge(const std::string& formula) -> double
 
 struct ChemicalFormula::Impl
 {
-    /// The chemical formula of the substance.
+    /// The chemical formula of the substance (e.g., `HCO3-`).
     std::string formula;
 
-    /// The element symbols and their coefficients in the chemical formula, e.g., {{"H", 2}, {"O", 1}} for `H2O`.
+    /// The element symbols and their coefficients (e.g., `{{"H", 1}, {"C", 1}, {"O", 3}}` for `HCO3-`).
     ElementSymbols symbols;
 
-    /// The elements and their coefficients in the chemical formula.
-    Elements elements;
-
-    /// The electric charge in the chemical formula.
+    /// The electric charge in the chemical formula (e.g., `-1` for `HCO3-`).
     double charge = {};
-
-    /// The molar mass of the chemical formula.
-    double molar_mass = {};
 
     /// Construct an object of type Impl.
     Impl()
@@ -257,29 +250,14 @@ struct ChemicalFormula::Impl
 
     /// Construct an object of type Impl with given formula.
     Impl(std::string formula)
-    : Impl(formula, parseChemicalFormula(formula))
+    : formula(formula), symbols(parseChemicalFormula(formula)), charge(parseElectricCharge(formula))
     {
     }
 
     /// Construct an object of type Impl with given data.
-    Impl(std::string formula, ElementSymbols symbols)
-    : formula(formula), symbols(symbols)
+    Impl(std::string formula, ElementSymbols symbols, double charge)
+    : formula(formula), symbols(symbols), charge(charge)
     {
-        elements.reserve(symbols.size());
-        for(auto&& [symbol, coeff] : symbols)
-        {
-            const auto element = PeriodicTable::elementWithSymbol(symbol);
-            error(!element.has_value(), "Cannot construct ChemicalFormula object with formula ",
-                formula, ". PeriodicTable contains no element with symbol ", symbol, ". "
-                "Use method PeriodicTable::append (in C++) or PeriodicTable.append (in Python) "
-                "to add a new Element with this symbol.");
-            elements.emplace_back(element.value(), coeff);
-        }
-
-        charge = parseElectricCharge(formula);
-        molar_mass = 0.0;
-        for(auto&& [element, coeff] : elements)
-            molar_mass += element.molarMass() * coeff;
     }
 
     /// Return the coefficient of an element symbol in the chemical formula.
@@ -305,19 +283,13 @@ ChemicalFormula::ChemicalFormula(std::string formula)
 {
 }
 
-ChemicalFormula::ChemicalFormula(std::string formula, ElementSymbols symbols)
-: pimpl(new Impl(formula, symbols))
-{
-}
+ChemicalFormula::ChemicalFormula(std::string formula, ElementSymbols symbols, double charge)
+: pimpl(new Impl(formula, symbols, charge))
+{}
 
 auto ChemicalFormula::str() const -> const std::string&
 {
     return pimpl->formula;
-}
-
-auto ChemicalFormula::elements() const -> const Elements&
-{
-    return pimpl->elements;
 }
 
 auto ChemicalFormula::symbols() const -> const ElementSymbols&
@@ -330,10 +302,6 @@ auto ChemicalFormula::charge() const -> double
     return pimpl->charge;
 }
 
-auto ChemicalFormula::molarMass() const -> double
-{
-    return pimpl->molar_mass;
-}
 
 auto ChemicalFormula::coefficient(const std::string& symbol) const -> double
 {
