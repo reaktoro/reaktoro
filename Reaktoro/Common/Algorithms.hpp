@@ -78,13 +78,13 @@ auto merge(const Container& a, const Container& b)
 template <typename Container, typename T>
 auto contains(const Container& c, const T& value)
 {
-    return std::find(std::begin(c), std::end(c), value) != std::end(c);
+    return std::find(c.begin(), c.end(), value) != c.end();
 }
 
 template <typename Container, typename Predicate>
 auto containsfn(const Container& c, const Predicate& pred)
 {
-    return std::find_if(std::begin(c), std::end(c), pred) != std::end(c);
+    return std::find_if(c.begin(), c.end(), pred) != c.end();
 }
 
 template <typename ContainerA, typename ContainerB>
