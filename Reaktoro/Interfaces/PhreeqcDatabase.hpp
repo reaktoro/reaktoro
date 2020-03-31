@@ -24,6 +24,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
 
 namespace Reaktoro {
