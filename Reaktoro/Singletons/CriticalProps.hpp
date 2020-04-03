@@ -49,11 +49,13 @@ public:
     /// Construct a default SubstanceCriticalProps instance.
     SubstanceCriticalProps();
 
-    /// Construct a SubstanceCriticalProps instance with given name and chemical formula.
-    SubstanceCriticalProps(std::string name, const ChemicalFormula& formula);
-
-    /// Construct a SubstanceCriticalProps instance with given name and chemical formula.
-    SubstanceCriticalProps(std::string name, const ChemicalFormula& formula, const SubstanceCriticalPropsData& data);
+    /// Construct a SubstanceCriticalProps instance with given data.
+    /// The given names will be converted to uppercase, suffix will be removed,
+    /// and spaces will be replaced by dashes. So, for example, the substance name
+    /// `carbon dioxide` is replaced by `CARBON-DIOXIDE` and `HCl(g)` by `HCL`.
+    /// @param data The critical property data of the substance
+    /// @param names The names that can uniquely identify the substance *(case-insensitive)*
+    SubstanceCriticalProps(SubstanceCriticalPropsData data, std::vector<std::string> names);
 
     /// Set the critical temperature of the substance (in K)
     auto setTemperature(real value) -> void;
@@ -70,11 +72,8 @@ public:
     /// Set the acentric factor of the substance.
     auto setAcentricFactor(real value) -> void;
 
-    /// Return the name of the substance.
-    auto name() const -> const std::string&;
-
-    /// Return the chemical formula of the substance.
-    auto formula() const -> const ChemicalFormula&;
+    /// Return the names that uniquely identify the substance.
+    auto names() const -> const std::vector<std::string>&;
 
     /// Return the critical temperature of the substance (in K)
     auto temperature() const -> real;
@@ -92,14 +91,11 @@ public:
     operator SubstanceCriticalPropsData() const;
 
 private:
-    /// The name of the substance.
-    std::string m_name;
-
-    /// The chemical formula of the substance.
-    ChemicalFormula m_formula;
-
     /// The critical properties data of the substance.
     SubstanceCriticalPropsData m_data;
+
+    /// The names that uniquely identify the substance.
+    std::vector<std::string> m_names;
 };
 
 /// A type used store a collection of substances and their critical properties.
@@ -124,14 +120,11 @@ public:
     /// Return the number of substances in the database.
     static auto size() -> std::size_t;
 
-    /// Return the substance and its critical properties with given name.
-    static auto getWithName(const std::string& name) -> std::optional<SubstanceCriticalProps>;
+    /// Return the substance and its critical properties with given name (e.g. "WATER", "CARBON-DIOXIDE", "HYDROGEN-SULFIDE", etc.).
+    static auto get(std::string name) -> std::optional<SubstanceCriticalProps>;
 
-    /// Return the substance and its critical properties with given chemical formula.
-    static auto getWithFormula(const ChemicalFormula& formula) -> std::optional<SubstanceCriticalProps>;
-
-    /// Return the substance and its critical properties with given name or chemical formula.
-    static auto get(const std::string& name_or_formula) -> std::optional<SubstanceCriticalProps>;
+    /// Return the substance and its critical properties with given alternative names.
+    static auto get(std::vector<std::string> names) -> std::optional<SubstanceCriticalProps>;
 
     /// Return begin const iterator of this CriticalProps instance
     auto begin() const;

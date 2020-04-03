@@ -22,93 +22,183 @@
 #include <Reaktoro/Singletons/CriticalProps.hpp>
 using namespace Reaktoro;
 
-namespace withFormula {
-
-auto get(std::string formula) { return CriticalProps::getWithFormula(formula).value(); }
-auto temperature(std::string formula) { return get(formula).temperature(); }
-auto pressure(std::string formula) { return get(formula).pressure(); }
-auto acentricFactor(std::string formula) { return get(formula).acentricFactor(); }
-
-} // withFormula
-
 namespace withName {
 
-auto get(std::string name) { return CriticalProps::getWithName(name).value(); }
+auto get(std::string name) { return CriticalProps::get(name).value(); }
 auto temperature(std::string name) { return get(name).temperature(); }
 auto pressure(std::string name) { return get(name).pressure(); }
 auto acentricFactor(std::string name) { return get(name).acentricFactor(); }
 
-} // withFormula
+} // namespace withName
+
+namespace withNames {
+
+auto get(std::vector<std::string> names) { return CriticalProps::get(names).value(); }
+auto temperature(std::vector<std::string> names) { return get(names).temperature(); }
+auto pressure(std::vector<std::string> names) { return get(names).pressure(); }
+auto acentricFactor(std::vector<std::string> names) { return get(names).acentricFactor(); }
+
+} // namespace withNames
 
 TEST_CASE("Testing CriticalProps", "[CriticalProps]")
 {
     REQUIRE(CriticalProps::size() == CriticalProps::substances().size());
+    REQUIRE_NOTHROW( withName::get("methane")              );
+    REQUIRE_NOTHROW( withName::get("ethane")               );
+    REQUIRE_NOTHROW( withName::get("propane")              );
+    REQUIRE_NOTHROW( withName::get("N-BUTANE")             );
+    REQUIRE_NOTHROW( withName::get("N-PENTANE")            );
+    REQUIRE_NOTHROW( withName::get("N-HEXANE")             );
+    REQUIRE_NOTHROW( withName::get("N-HEPTANE")            );
+    REQUIRE_NOTHROW( withName::get("N-OCTANE")             );
+    REQUIRE_NOTHROW( withName::get("N-NONANE")             );
+    REQUIRE_NOTHROW( withName::get("N-DECANE")             );
+    REQUIRE_NOTHROW( withName::get("ISOBUTANE")            );
+    REQUIRE_NOTHROW( withName::get("ISOOCTANE")            );
+    REQUIRE_NOTHROW( withName::get("CYCLOPENTANE")         );
+    REQUIRE_NOTHROW( withName::get("CYCLOHEXANE")          );
+    REQUIRE_NOTHROW( withName::get("METHYLCYCLOPENTANE")   );
+    REQUIRE_NOTHROW( withName::get("METHYLCYCLOHEXANE")    );
+    REQUIRE_NOTHROW( withName::get("ETHYLENE")             );
+    REQUIRE_NOTHROW( withName::get("PROPYLENE")            );
+    REQUIRE_NOTHROW( withName::get("1-BUTENE")             );
+    REQUIRE_NOTHROW( withName::get("CIS-2-BUTENE")         );
+    REQUIRE_NOTHROW( withName::get("TRANS-2-BUTENE")       );
+    REQUIRE_NOTHROW( withName::get("1-HEXENE")             );
+    REQUIRE_NOTHROW( withName::get("ISOBUTYLENE")          );
+    REQUIRE_NOTHROW( withName::get("1,3-BUTADIENE")        );
+    REQUIRE_NOTHROW( withName::get("CYCLOHEXENE")          );
+    REQUIRE_NOTHROW( withName::get("ACETYLENE")            );
+    REQUIRE_NOTHROW( withName::get("BENZENE")              );
+    REQUIRE_NOTHROW( withName::get("TOLUENE")              );
+    REQUIRE_NOTHROW( withName::get("ETHYLBENZENE")         );
+    REQUIRE_NOTHROW( withName::get("CUMENE")               );
+    REQUIRE_NOTHROW( withName::get("O-XYLENE")             );
+    REQUIRE_NOTHROW( withName::get("M-XYLENE")             );
+    REQUIRE_NOTHROW( withName::get("P-XYLENE")             );
+    REQUIRE_NOTHROW( withName::get("STYRENE")              );
+    REQUIRE_NOTHROW( withName::get("NAPHTHALENE")          );
+    REQUIRE_NOTHROW( withName::get("BIPHENYL")             );
+    REQUIRE_NOTHROW( withName::get("FORMALDEHYDE")         );
+    REQUIRE_NOTHROW( withName::get("ACETALDEHYDE")         );
+    REQUIRE_NOTHROW( withName::get("METHYL-ACETATE")       );
+    REQUIRE_NOTHROW( withName::get("ETHYL-ACETATE")        );
+    REQUIRE_NOTHROW( withName::get("ACETONE")              );
+    REQUIRE_NOTHROW( withName::get("METHYL-ETHYL-KETONE")  );
+    REQUIRE_NOTHROW( withName::get("DIETHYL-ETHER")        );
+    REQUIRE_NOTHROW( withName::get("METHYL-T-BUTYL-ETHER") );
+    REQUIRE_NOTHROW( withName::get("METHANOL")             );
+    REQUIRE_NOTHROW( withName::get("ETHANOL")              );
+    REQUIRE_NOTHROW( withName::get("1-PROPANOL")           );
+    REQUIRE_NOTHROW( withName::get("1-BUTANOL")            );
+    REQUIRE_NOTHROW( withName::get("1-HEXANOL")            );
+    REQUIRE_NOTHROW( withName::get("2-PROPANOL")           );
+    REQUIRE_NOTHROW( withName::get("PHENOL")               );
+    REQUIRE_NOTHROW( withName::get("ETHYLENE-GLYCOL")      );
+    REQUIRE_NOTHROW( withName::get("ACETIC-ACID")          );
+    REQUIRE_NOTHROW( withName::get("N-BUTYRIC-ACID")       );
+    REQUIRE_NOTHROW( withName::get("BENZOIC-ACID")         );
+    REQUIRE_NOTHROW( withName::get("ACETONITRILE")         );
+    REQUIRE_NOTHROW( withName::get("METHYLAMINE")          );
+    REQUIRE_NOTHROW( withName::get("ETHYLAMINE")           );
+    REQUIRE_NOTHROW( withName::get("NITROmethane")         );
+    REQUIRE_NOTHROW( withName::get("CARBOn-TETRACHLORIDE") );
+    REQUIRE_NOTHROW( withName::get("CHLORoform")           );
+    REQUIRE_NOTHROW( withName::get("DICHLOROmethane")      );
+    REQUIRE_NOTHROW( withName::get("METHYL-Chloride")      );
+    REQUIRE_NOTHROW( withName::get("ETHYL-CHloride")       );
+    REQUIRE_NOTHROW( withName::get("CHLOROBENZENE")        );
+    REQUIRE_NOTHROW( withName::get("TETRAFLUOROETHANE")    );
+    REQUIRE_NOTHROW( withName::get("ARGON")                );
+    REQUIRE_NOTHROW( withName::get("KRYPTON")              );
+    REQUIRE_NOTHROW( withName::get("XENON")                );
+    REQUIRE_NOTHROW( withName::get("HELIUM")               );
+    REQUIRE_NOTHROW( withName::get("HYDROGEN")             );
+    REQUIRE_NOTHROW( withName::get("OXYGEN")               );
+    REQUIRE_NOTHROW( withName::get("NITROGEN")             );
+    REQUIRE_NOTHROW( withName::get("AIR")                  );
+    REQUIRE_NOTHROW( withName::get("CHLORINE")             );
+    REQUIRE_NOTHROW( withName::get("CARBON-MONOXIDE")      );
+    REQUIRE_NOTHROW( withName::get("CARBON-DIOXIDE")       );
+    REQUIRE_NOTHROW( withName::get("CARBON-DISULFIDE")     );
+    REQUIRE_NOTHROW( withName::get("HYDROGEN-SULFIDE")     );
+    REQUIRE_NOTHROW( withName::get("SULFUR-DIOXIDE")       );
+    REQUIRE_NOTHROW( withName::get("SULFUR-TRIOXIDE")      );
+    REQUIRE_NOTHROW( withName::get("NITRIC-OXIDE")         );
+    REQUIRE_NOTHROW( withName::get("NITROUS-OXIDE")        );
+    REQUIRE_NOTHROW( withName::get("HYDROGEN-CHLORIDE")    );
+    REQUIRE_NOTHROW( withName::get("HYDROGEN-CYANIDE")     );
+    REQUIRE_NOTHROW( withName::get("WATER")                );
+    REQUIRE_NOTHROW( withName::get("AMMONIA")              );
+    REQUIRE_NOTHROW( withName::get("NITRIC-ACID")          );
+    REQUIRE_NOTHROW( withName::get("SULFURIC-ACID")        );
+    REQUIRE_NOTHROW( withName::get("RADON")                );
+    REQUIRE_NOTHROW( withName::get("NEON")                 );
 
-    REQUIRE_NOTHROW( withName::get("Argon")            );
-    REQUIRE_NOTHROW( withName::get("Ethylene")         );
-    REQUIRE_NOTHROW( withName::get("Phenol")           );
-    REQUIRE_NOTHROW( withName::get("Meta-Cresol")      );
-    REQUIRE_NOTHROW( withName::get("Ortho-Cresol")     );
-    REQUIRE_NOTHROW( withName::get("Para-Cresol")      );
-    REQUIRE_NOTHROW( withName::get("Methane")          );
-    REQUIRE_NOTHROW( withName::get("Carbon-Monoxide")  );
-    REQUIRE_NOTHROW( withName::get("Carbon-Dioxide")   );
-    REQUIRE_NOTHROW( withName::get("Hydrogen")         );
-    REQUIRE_NOTHROW( withName::get("Steam")            );
-    REQUIRE_NOTHROW( withName::get("Hydrogen-Sulfide") );
-    REQUIRE_NOTHROW( withName::get("Helium")           );
-    REQUIRE_NOTHROW( withName::get("Krypton")          );
-    REQUIRE_NOTHROW( withName::get("Nitrogen")         );
-    REQUIRE_NOTHROW( withName::get("Nitrous-Oxide")    );
-    REQUIRE_NOTHROW( withName::get("Neon")             );
-    REQUIRE_NOTHROW( withName::get("Ammonia")          );
-    REQUIRE_NOTHROW( withName::get("Nitric-Oxide")     );
-    REQUIRE_NOTHROW( withName::get("Oxygen")           );
-    REQUIRE_NOTHROW( withName::get("Radon")            );
-    REQUIRE_NOTHROW( withName::get("Sulfur")           );
-    REQUIRE_NOTHROW( withName::get("Sulfur-Dioxide")   );
-    REQUIRE_NOTHROW( withName::get("Xenon")            );
+    // Checking if get is indeed case insensitive
+    REQUIRE_NOTHROW( withName::get("methane") );
+    REQUIRE_NOTHROW( withName::get("ethane")  );
+    REQUIRE_NOTHROW( withName::get("propane") );
 
-    REQUIRE_NOTHROW( withFormula::get("Ar")    );
-    REQUIRE_NOTHROW( withFormula::get("C2H4")  );
-    REQUIRE_NOTHROW( withFormula::get("C6H6O") );
-    REQUIRE_NOTHROW( withFormula::get("C7H8O") );
-    REQUIRE_NOTHROW( withFormula::get("C7H8O") );
-    REQUIRE_NOTHROW( withFormula::get("C7H8O") );
-    REQUIRE_NOTHROW( withFormula::get("CH4")   );
-    REQUIRE_NOTHROW( withFormula::get("CO")    );
-    REQUIRE_NOTHROW( withFormula::get("CO2")   );
-    REQUIRE_NOTHROW( withFormula::get("H2")    );
-    REQUIRE_NOTHROW( withFormula::get("H2O")   );
-    REQUIRE_NOTHROW( withFormula::get("H2S")   );
-    REQUIRE_NOTHROW( withFormula::get("He")    );
-    REQUIRE_NOTHROW( withFormula::get("Kr")    );
-    REQUIRE_NOTHROW( withFormula::get("N2")    );
-    REQUIRE_NOTHROW( withFormula::get("N2O")   );
-    REQUIRE_NOTHROW( withFormula::get("Ne")    );
-    REQUIRE_NOTHROW( withFormula::get("NH3")   );
-    REQUIRE_NOTHROW( withFormula::get("NO")    );
-    REQUIRE_NOTHROW( withFormula::get("O2")    );
-    REQUIRE_NOTHROW( withFormula::get("Rn")    );
-    REQUIRE_NOTHROW( withFormula::get("S2")    );
-    REQUIRE_NOTHROW( withFormula::get("SO2")   );
-    REQUIRE_NOTHROW( withFormula::get("Xe")    );
+    // Checking if get finds species with other names
+    REQUIRE_NOTHROW( withName::get("CH4")   );
+    REQUIRE_NOTHROW( withName::get("C2H6")  );
+    REQUIRE_NOTHROW( withName::get("C3H8")  );
+    REQUIRE_NOTHROW( withName::get("C5H12") );
+    REQUIRE_NOTHROW( withName::get("C6H14") );
+    REQUIRE_NOTHROW( withName::get("C6H12") );
+    REQUIRE_NOTHROW( withName::get("C2H4")  );
+    REQUIRE_NOTHROW( withName::get("C3H6")  );
+    REQUIRE_NOTHROW( withName::get("C4H8")  );
+    REQUIRE_NOTHROW( withName::get("C2H2")  );
+    REQUIRE_NOTHROW( withName::get("C6H6")  );
+    REQUIRE_NOTHROW( withName::get("C7H8")  );
+    REQUIRE_NOTHROW( withName::get("CH4O")  );
+    REQUIRE_NOTHROW( withName::get("C2H6O") );
+    REQUIRE_NOTHROW( withName::get("Ar")    );
+    REQUIRE_NOTHROW( withName::get("Kr")    );
+    REQUIRE_NOTHROW( withName::get("Xe")    );
+    REQUIRE_NOTHROW( withName::get("He")    );
+    REQUIRE_NOTHROW( withName::get("H2")    );
+    REQUIRE_NOTHROW( withName::get("O2")    );
+    REQUIRE_NOTHROW( withName::get("N2")    );
+    REQUIRE_NOTHROW( withName::get("Cl2")   );
+    REQUIRE_NOTHROW( withName::get("CO")    );
+    REQUIRE_NOTHROW( withName::get("CO2")   );
+    REQUIRE_NOTHROW( withName::get("CS2")   );
+    REQUIRE_NOTHROW( withName::get("H2S")   );
+    REQUIRE_NOTHROW( withName::get("SO2")   );
+    REQUIRE_NOTHROW( withName::get("SO3")   );
+    REQUIRE_NOTHROW( withName::get("NO")    );
+    REQUIRE_NOTHROW( withName::get("N2O")   );
+    REQUIRE_NOTHROW( withName::get("HCl")   );
+    REQUIRE_NOTHROW( withName::get("HCN")   );
+    REQUIRE_NOTHROW( withName::get("H2O")   );
+    REQUIRE_NOTHROW( withName::get("NH3")   );
+    REQUIRE_NOTHROW( withName::get("HNO3")  );
+    REQUIRE_NOTHROW( withName::get("H2SO4") );
+    REQUIRE_NOTHROW( withName::get("Ra")    );
+    REQUIRE_NOTHROW( withName::get("Ne")    );
 
-    REQUIRE( withFormula::temperature("CO2")    == Approx(304.20)   );
-    REQUIRE( withFormula::pressure("CO2")       == Approx(73.83e+5) );
-    REQUIRE( withFormula::acentricFactor("CO2") == Approx(0.2240)   );
+    REQUIRE_NOTHROW( withNames::get({ "methane", "CH4" }) );
+    REQUIRE_NOTHROW( withNames::get({ "argon", "Ar" }) );
+    REQUIRE_THROWS( withNames::get({ "Ab", "Cd" }) );
 
-    CriticalProps::append({ "HCl", "HCl", { 400.0, 100.0e+5, 0.1234 } });
+    REQUIRE( withName::temperature("CO2")    == Approx(304.20)   );
+    REQUIRE( withName::pressure("CO2")       == Approx(73.83e+5) );
+    REQUIRE( withName::acentricFactor("CO2") == Approx(0.2240)   );
 
-    REQUIRE( withFormula::temperature("HCl")    == Approx(400.0)    );
-    REQUIRE( withFormula::pressure("HCl")       == Approx(100.0e+5) );
-    REQUIRE( withFormula::acentricFactor("HCl") == Approx(0.1234)   );
+    CriticalProps::append({ { 400.0, 100.0e+5, 0.1234 }, {"HCl"} });
 
-    withFormula::get("HCl").setTemperature(200, "celsius");
-    withFormula::get("HCl").setPressure(150, "bar");
-    withFormula::get("HCl").setAcentricFactor(0.9999);
+    REQUIRE( withName::temperature("HCl")    == Approx(400.0)    );
+    REQUIRE( withName::pressure("HCl")       == Approx(100.0e+5) );
+    REQUIRE( withName::acentricFactor("HCl") == Approx(0.1234)   );
 
-    REQUIRE( withFormula::temperature("HCl")    == Approx(473.15)    );
-    REQUIRE( withFormula::pressure("HCl")       == Approx(150.0e+5) );
-    REQUIRE( withFormula::acentricFactor("HCl") == Approx(0.9999)   );
+    withName::get("HCl").setTemperature(200, "celsius");
+    withName::get("HCl").setPressure(150, "bar");
+    withName::get("HCl").setAcentricFactor(0.9999);
+
+    REQUIRE( withName::temperature("HCl")    == Approx(473.15)    );
+    REQUIRE( withName::pressure("HCl")       == Approx(150.0e+5) );
+    REQUIRE( withName::acentricFactor("HCl") == Approx(0.9999)   );
 }
