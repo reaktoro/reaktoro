@@ -18,6 +18,9 @@
 #include "AggregateState.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 
 namespace Reaktoro {
@@ -43,26 +46,27 @@ auto parseAggregateState(const std::string& symbol) -> AggregateState
     return AggregateState::Undefined;
 }
 
-auto identifyAggregateState(const std::string& name) -> AggregateState
+auto identifyAggregateState(const std::string& substance) -> AggregateState
 {
-    auto contains = [&](auto str) { return name.rfind(str) != std::string::npos; };
-    auto charged = [&](auto str) { return parseElectricCharge(name) != 0; };
-    if(contains("(g)"))   return AggregateState::Gas;
-    if(contains("(l)"))   return AggregateState::Liquid;
-    if(contains("(s)"))   return AggregateState::Solid;
-    if(contains("(pl)"))  return AggregateState::Plasma;
-    if(contains("(cd)"))  return AggregateState::CondensedPhase;
-    if(contains("(fl)"))  return AggregateState::Fluid;
-    if(contains("(lc)"))  return AggregateState::LiquidCrystal;
-    if(contains("(cr)"))  return AggregateState::CrystallineSolid;
-    if(contains("(am)"))  return AggregateState::AmorphousSolid;
-    if(contains("(vit)")) return AggregateState::Vitreous;
-    if(contains("(ads)")) return AggregateState::Adsorbed;
-    if(contains("(mon)")) return AggregateState::Monomeric;
-    if(contains("(pol)")) return AggregateState::Polymeric;
-    if(contains("(ss)"))  return AggregateState::SolidSolution;
-    if(contains("(ex)"))  return AggregateState::IonExchange;
-    if(contains("(aq)"))  return AggregateState::Aqueous;
+    const auto [name, suffix] = splitSpeciesNameSuffix(substance);
+    const auto words = split(suffix, " ,"); // suffix = "s, calcite" => words = {"s", "calcite"}
+    auto charged = [&](auto str) { return parseElectricCharge(str) != 0; };
+    if(contains(words, "g"))   return AggregateState::Gas;
+    if(contains(words, "l"))   return AggregateState::Liquid;
+    if(contains(words, "s"))   return AggregateState::Solid;
+    if(contains(words, "pl"))  return AggregateState::Plasma;
+    if(contains(words, "cd"))  return AggregateState::CondensedPhase;
+    if(contains(words, "fl"))  return AggregateState::Fluid;
+    if(contains(words, "lc"))  return AggregateState::LiquidCrystal;
+    if(contains(words, "cr"))  return AggregateState::CrystallineSolid;
+    if(contains(words, "am"))  return AggregateState::AmorphousSolid;
+    if(contains(words, "vit")) return AggregateState::Vitreous;
+    if(contains(words, "ads")) return AggregateState::Adsorbed;
+    if(contains(words, "mon")) return AggregateState::Monomeric;
+    if(contains(words, "pol")) return AggregateState::Polymeric;
+    if(contains(words, "ss"))  return AggregateState::SolidSolution;
+    if(contains(words, "ex"))  return AggregateState::IonExchange;
+    if(contains(words, "aq"))  return AggregateState::Aqueous;
     if(charged(name)) return AggregateState::Aqueous;
     return AggregateState::Undefined;
 }
