@@ -26,6 +26,11 @@ TEST_CASE("Testing StringUtils", "[StringUtils]")
 {
     REQUIRE( stringfy(".", "a", "b") == "a.b");
     REQUIRE( stringfy(".", 1, 2, "abc") == "1.2.abc");
+
+    std::vector<std::string> words = {"alpha", "beta", "gamma"};
+
+    REQUIRE( str(words) == "alpha, beta, gamma");
+
     REQUIRE( str(1, 2, " abc") == "12 abc");
 
     REQUIRE( replace("CARBON DIOXIDE", " ", "-")   == "CARBON-DIOXIDE" );

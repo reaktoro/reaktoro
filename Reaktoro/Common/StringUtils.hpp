@@ -30,6 +30,14 @@
 namespace Reaktoro {
 namespace internal {
 
+template<typename T>
+auto operator<<(std::ostream& out, const std::vector<T>& values) -> std::ostream&
+{
+    for(auto i = 0; i < values.size(); ++i)
+        out << (i == 0) ? "" : ", " << values[i];
+    return out;
+}
+
 template <typename Arg>
 auto stringfy(std::stringstream& ss, const std::string& sep, const Arg& item)
 {
