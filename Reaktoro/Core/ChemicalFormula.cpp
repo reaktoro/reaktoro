@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -135,23 +136,6 @@ auto parseChemicalFormula(string formula) -> std::unordered_map<std::string, dou
     return result;
 }
 
-auto removeAggregateStateSuffix(string formula) -> string
-{
-    if(formula.back() != ')') return formula;
-
-    string::iterator begin = formula.begin();
-    string::iterator end = formula.end();
-    begin = findMatchedParenthesisReverse(begin, end);
-
-    for(auto iter = begin; iter < end; ++iter)
-        if(isupper(*begin)) // no upper case char - otherwise, there are element symbols and thus not aggregate state
-            return formula;
-
-    const auto n = begin - formula.begin();  // H+(aq) => n = 2
-
-    return formula.substr(0, n);
-}
-
 auto parseElectricChargeModeSignNumber(string formula) -> double
 {
     size_t ipos = formula.find_last_of('+');
@@ -187,11 +171,11 @@ auto parseElectricChargeModeMultipleSigns(string formula) -> double
     else return 0;
 }
 
-auto parseElectricChargeModeNumberSign(string formula) -> double
+auto parseElectricChargeModeNumberSignBetweenBrackets(string formula) -> double
 {
-    if(formula.back() != ')') return 0.0;
+    if(formula.back() != ']') return 0.0;
 
-    size_t iparbegin = formula.rfind('(');
+    size_t iparbegin = formula.rfind('[');
 
     if(iparbegin == string::npos) return 0.0;
 
@@ -209,13 +193,12 @@ auto parseElectricChargeModeNumberSign(string formula) -> double
 
 auto parseElectricCharge(string formula) -> double
 {
-    double charge;
+    const auto [formula0, suffix] = splitSpeciesNameSuffix(formula);
 
-    formula = removeAggregateStateSuffix(formula);
-
-    charge = parseElectricChargeModeMultipleSigns(formula); if(charge != 0.0) return charge;
-    charge = parseElectricChargeModeNumberSign(formula); if(charge != 0.0) return charge;
-    charge = parseElectricChargeModeSignNumber(formula); if(charge != 0.0) return charge;
+    double charge = {};
+    charge = parseElectricChargeModeMultipleSigns(formula0); if(charge != 0.0) return charge;
+    charge = parseElectricChargeModeNumberSignBetweenBrackets(formula0); if(charge != 0.0) return charge;
+    charge = parseElectricChargeModeSignNumber(formula0); if(charge != 0.0) return charge;
 
     return 0.0;
 }

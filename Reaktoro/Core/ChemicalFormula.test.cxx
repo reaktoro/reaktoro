@@ -29,7 +29,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("H2O");
     REQUIRE(formula.str() == "H2O");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 2);
     REQUIRE(formula.coefficient("H") == 2);
     REQUIRE(formula.coefficient("O") == 1);
@@ -42,7 +41,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("CaCO3");
     REQUIRE(formula.str() == "CaCO3");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 3);
     REQUIRE(formula.coefficient("C") == 1);
     REQUIRE(formula.coefficient("Ca") == 1);
@@ -56,73 +54,66 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("HCO3-");
     REQUIRE(formula.str() == "HCO3-");
     REQUIRE(formula.charge() == -1);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 4);
     REQUIRE(formula.coefficient("C") == 1);
     REQUIRE(formula.coefficient("H") == 1);
     REQUIRE(formula.coefficient("O") == 3);
     REQUIRE(formula.equivalent("HCO3-(aq)"));
-    REQUIRE(formula.equivalent("HCO3(-)(aq)"));
-    REQUIRE(formula.equivalent("HCO3(-)"));
+    REQUIRE(formula.equivalent("HCO3[-](aq)"));
+    REQUIRE(formula.equivalent("HCO3[-]"));
     REQUIRE(formula.equivalent("HCOOO-"));
 
     formula = ChemicalFormula("H+");
     REQUIRE(formula.str() == "H+");
     REQUIRE(formula.charge() == 1);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 2);
     REQUIRE(formula.coefficient("H") == 1);
     REQUIRE(formula.equivalent("H+(aq)"));
-    REQUIRE(formula.equivalent("H(+)"));
+    REQUIRE(formula.equivalent("H[+]"));
 
     formula = ChemicalFormula("Na+");
     REQUIRE(formula.str() == "Na+");
     REQUIRE(formula.charge() == 1);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 2);
     REQUIRE(formula.coefficient("Na") == 1);
     REQUIRE(formula.equivalent("Na+(aq)"));
     REQUIRE(formula.equivalent("Na+(pl)"));
-    REQUIRE(formula.equivalent("Na(+)(aq)"));
-    REQUIRE(formula.equivalent("Na(+)"));
+    REQUIRE(formula.equivalent("Na[+](aq)"));
+    REQUIRE(formula.equivalent("Na[+]"));
 
     formula = ChemicalFormula("Cl-");
     REQUIRE(formula.str() == "Cl-");
     REQUIRE(formula.charge() == -1);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 2);
     REQUIRE(formula.coefficient("Cl") == 1);
-    REQUIRE(formula.equivalent("Cl(-)(aq)"));
+    REQUIRE(formula.equivalent("Cl[-](aq)"));
     REQUIRE(formula.equivalent("Cl-(aq)"));
     REQUIRE(formula.equivalent("Cl-(pl)"));
 
     formula = ChemicalFormula("CO3--");
     REQUIRE(formula.str() == "CO3--");
     REQUIRE(formula.charge() == -2);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 3);
     REQUIRE(formula.coefficient("C") == 1);
     REQUIRE(formula.coefficient("O") == 3);
     REQUIRE(formula.equivalent("CO3-2(aq)"));
     REQUIRE(formula.equivalent("CO3-2"));
-    REQUIRE(formula.equivalent("CO3(2-)(aq)"));
+    REQUIRE(formula.equivalent("CO3[2-](aq)"));
 
     formula = ChemicalFormula("Fe+++");
     REQUIRE(formula.str() == "Fe+++");
     REQUIRE(formula.charge() == 3);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 2);
     REQUIRE(formula.coefficient("Fe") == 1);
     REQUIRE(formula.equivalent("Fe+++(aq)"));
     REQUIRE(formula.equivalent("Fe+3(aq)"));
-    REQUIRE(formula.equivalent("Fe(3+)(aq)"));
+    REQUIRE(formula.equivalent("Fe[3+](aq)"));
     REQUIRE(formula.equivalent("Fe+3"));
-    REQUIRE(formula.equivalent("Fe(3+)"));
+    REQUIRE(formula.equivalent("Fe[3+]"));
 
     formula = ChemicalFormula("(CaMg)(CO3)2");
     REQUIRE(formula.str() == "(CaMg)(CO3)2");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 4);
     REQUIRE(formula.coefficient("C") == 2);
     REQUIRE(formula.coefficient("Ca") == 1);
@@ -136,7 +127,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("CH3COOH");
     REQUIRE(formula.str() == "CH3COOH");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 3);
     REQUIRE(formula.coefficient("C") == 2);
     REQUIRE(formula.coefficient("H") == 4);
@@ -148,7 +138,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Al2.5Si0.5O4.75");
     REQUIRE(formula.str() == "Al2.5Si0.5O4.75");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 3);
     REQUIRE(formula.coefficient("Al") == 2.5);
     REQUIRE(formula.coefficient("Si") == 0.5);
@@ -159,7 +148,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Fe4Al18Si7.5O48H4");
     REQUIRE(formula.str() == "Fe4Al18Si7.5O48H4");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 5);
     REQUIRE(formula.coefficient("Fe") == 4);
     REQUIRE(formula.coefficient("Al") == 18);
@@ -172,7 +160,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Mg4Al18Si7.5O48H4");
     REQUIRE(formula.str() == "Mg4Al18Si7.5O48H4");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 5);
     REQUIRE(formula.coefficient("Mg") == 4);
     REQUIRE(formula.coefficient("Al") == 18);
@@ -184,7 +171,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Mn4Al18Si7.5O48H4");
     REQUIRE(formula.str() == "Mn4Al18Si7.5O48H4");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 5);
     REQUIRE(formula.coefficient("Mn") == 4);
     REQUIRE(formula.coefficient("Al") == 18);
@@ -195,7 +181,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Ca0.5Al1Si2O6");
     REQUIRE(formula.str() == "Ca0.5Al1Si2O6");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 4);
     REQUIRE(formula.coefficient("Ca") == 0.5);
     REQUIRE(formula.coefficient("Al") == 1);
@@ -205,7 +190,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("K0.5Fe5Al2Si8O30.5H12.5");
     REQUIRE(formula.str() == "K0.5Fe5Al2Si8O30.5H12.5");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 6);
     REQUIRE(formula.coefficient("K") == 0.5);
     REQUIRE(formula.coefficient("Fe") == 5);
@@ -217,7 +201,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("K0.5Mg5Al2Si8O30.5H12.5");
     REQUIRE(formula.str() == "K0.5Mg5Al2Si8O30.5H12.5");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 6);
     REQUIRE(formula.coefficient("K") == 0.5);
     REQUIRE(formula.coefficient("Mg") == 5);
@@ -229,7 +212,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Mg3.5Al9Si1.5O20");
     REQUIRE(formula.str() == "Mg3.5Al9Si1.5O20");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 4);
     REQUIRE(formula.coefficient("Mg") == 3.5);
     REQUIRE(formula.coefficient("Al") == 9);
@@ -239,7 +221,6 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Fe3.5Al9Si1.5O20");
     REQUIRE(formula.str() == "Fe3.5Al9Si1.5O20");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 4);
     REQUIRE(formula.coefficient("Fe") == 3.5);
     REQUIRE(formula.coefficient("Al") == 9);
@@ -249,30 +230,29 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Fe0.875S1");
     REQUIRE(formula.str() == "Fe0.875S1");
     REQUIRE(formula.charge() == 0);
-    REQUIRE(formula.molarMass() == Approx(0.0));
     REQUIRE(formula.symbols().size() == 2);
     REQUIRE(formula.coefficient("Fe") == 0.875);
     REQUIRE(formula.coefficient("S") == 1);
 
     REQUIRE(ChemicalFormula::equivalent("Ca++", "Ca+2"));
-    REQUIRE(ChemicalFormula::equivalent("Ca++", "Ca(2+)"));
-    REQUIRE(ChemicalFormula::equivalent("Ca++", "Ca(2+)(aq)"));
+    REQUIRE(ChemicalFormula::equivalent("Ca++", "Ca[2+]"));
+    REQUIRE(ChemicalFormula::equivalent("Ca++", "Ca[2+](aq)"));
 
     REQUIRE(ChemicalFormula::equivalent("CO3--", "CO3-2"));
-    REQUIRE(ChemicalFormula::equivalent("CO3--", "CO3(2-)"));
-    REQUIRE(ChemicalFormula::equivalent("CO3--", "CO3(2-)(aq)"));
+    REQUIRE(ChemicalFormula::equivalent("CO3--", "CO3[2-]"));
+    REQUIRE(ChemicalFormula::equivalent("CO3--", "CO3[2-](aq)"));
 
     REQUIRE(ChemicalFormula::equivalent("Fe+++", "Fe+3"));
-    REQUIRE(ChemicalFormula::equivalent("Fe+++", "Fe(3+)"));
-    REQUIRE(ChemicalFormula::equivalent("Fe+++", "Fe(3+)(aq)"));
+    REQUIRE(ChemicalFormula::equivalent("Fe+++", "Fe[3+]"));
+    REQUIRE(ChemicalFormula::equivalent("Fe+++", "Fe[3+](aq)"));
 
     REQUIRE(ChemicalFormula::equivalent("H+", "H+1"));
-    REQUIRE(ChemicalFormula::equivalent("H+", "H(+)"));
-    REQUIRE(ChemicalFormula::equivalent("H+", "H(+)(aq)"));
+    REQUIRE(ChemicalFormula::equivalent("H+", "H[+]"));
+    REQUIRE(ChemicalFormula::equivalent("H+", "H[+](aq)"));
 
     REQUIRE(ChemicalFormula::equivalent("OH-", "OH-1"));
-    REQUIRE(ChemicalFormula::equivalent("OH-", "OH(-)"));
-    REQUIRE(ChemicalFormula::equivalent("OH-", "OH(-)(aq)"));
+    REQUIRE(ChemicalFormula::equivalent("OH-", "OH[-]"));
+    REQUIRE(ChemicalFormula::equivalent("OH-", "OH[-](aq)"));
 
     REQUIRE(ChemicalFormula::equivalent("CO2", "CO2(g)"));
     REQUIRE(ChemicalFormula::equivalent("CO2", "COO"));
@@ -429,22 +409,22 @@ TEST_CASE("Testing parseElectricCharge method", "[ChemicalFormula]")
 {
     REQUIRE(parseElectricCharge("H+") == +1);
     REQUIRE(parseElectricCharge("H+1") == +1);
-    REQUIRE(parseElectricCharge("H(+)") == +1);
+    REQUIRE(parseElectricCharge("H[+]") == +1);
     REQUIRE(parseElectricCharge("H+1(aq)") == +1);
     REQUIRE(parseElectricCharge("H+(aq)") == +1);
-    REQUIRE(parseElectricCharge("H(+)(aq)") == +1);
+    REQUIRE(parseElectricCharge("H[+](aq)") == +1);
 
     REQUIRE(parseElectricCharge("Ca++") == +2);
     REQUIRE(parseElectricCharge("Ca+2") == +2);
-    REQUIRE(parseElectricCharge("Ca(2+)") == +2);
+    REQUIRE(parseElectricCharge("Ca[2+]") == +2);
     REQUIRE(parseElectricCharge("Ca++(aq)") == +2);
     REQUIRE(parseElectricCharge("Ca+2(aq)") == +2);
-    REQUIRE(parseElectricCharge("Ca(2+)(aq)") == +2);
+    REQUIRE(parseElectricCharge("Ca[2+](aq)") == +2);
 
     REQUIRE(parseElectricCharge("CO3--") == -2);
     REQUIRE(parseElectricCharge("CO3-2") == -2);
-    REQUIRE(parseElectricCharge("CO3(2-)") == -2);
+    REQUIRE(parseElectricCharge("CO3[2-]") == -2);
     REQUIRE(parseElectricCharge("CO3--(aq)") == -2);
     REQUIRE(parseElectricCharge("CO3-2(aq)") == -2);
-    REQUIRE(parseElectricCharge("CO3(2-)(aq)") == -2);
+    REQUIRE(parseElectricCharge("CO3[2-](aq)") == -2);
 }
