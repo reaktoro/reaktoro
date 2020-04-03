@@ -91,7 +91,16 @@ template <typename ContainerA, typename ContainerB>
 auto contained(const ContainerA& a, const ContainerB& b)
 {
     for(auto const& x : a)
-        if (!contains(b, x))
+        if(!contains(b, x))
+            return false;
+    return true;
+}
+
+template <typename ContainerA, typename ContainerB>
+auto disjoint(const ContainerA& a, const ContainerB& b)
+{
+    for(auto&& x : a)
+        if(contains(b, x))
             return false;
     return true;
 }
