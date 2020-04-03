@@ -94,8 +94,16 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     std::vector<int> a = {1, 2, 3, 4, 5};
     std::vector<int> b = {2, 4};
     std::vector<int> c = {4, 6};
+    std::vector<int> d = {5, 7};
+    std::vector<int> e = {};
 
     REQUIRE( contained(a, a) );
     REQUIRE( contained(b, a) );
     REQUIRE_FALSE( contained(c, a) );
+
+    REQUIRE( disjoint(b, d) );
+    REQUIRE( disjoint(b, e) );
+    REQUIRE( disjoint(e, e) );
+    REQUIRE_FALSE( disjoint(b, b) );
+    REQUIRE_FALSE( disjoint(b, c) );
 }
