@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-/// The states of aggregation of chemical species according to IUPAC.
+/// The aggregate states of substances according to IUPAC.
 /// Cox, J. D. (1982). Notation for states and processes, significance of the
 /// word standard in chemical thermodynamics, and remarks on commonly tabulated
 /// forms of thermodynamic functions, Pure and Applied Chemistry, 54(6),
@@ -73,34 +73,25 @@ enum class AggregateState
 /// AggregateState::Undefined is returned if symbol is none of above.
 auto parseAggregateState(const std::string& symbol) -> AggregateState;
 
-/// Identify the aggregate state in the name of a chemical species.
-
-/// This methods searches for aggregate state symbols in the name of a chemical
-/// species. The following table shows how the symbols should be found in the
-/// species name and its corresponding AggregateState value.
-///
-/// | Symbol   | AggregateState                   |
-/// |:-------- |:-------------------------------- |
-/// | `(g)`    | AggregateState::Gas              |
-/// | `(l)`    | AggregateState::Liquid           |
-/// | `(s)`    | AggregateState::Solid            |
-/// | `(pl)`   | AggregateState::Plasma           |
-/// | `(cd)`   | AggregateState::CondensedPhase   |
-/// | `(fl)`   | AggregateState::Fluid            |
-/// | `(lc)`   | AggregateState::LiquidCrystal    |
-/// | `(cr)`   | AggregateState::CrystallineSolid |
-/// | `(am)`   | AggregateState::AmorphousSolid   |
-/// | `(vit)`  | AggregateState::Vitreous         |
-/// | `(ads)`  | AggregateState::Adsorbed         |
-/// | `(mon)`  | AggregateState::Monomeric        |
-/// | `(pol)`  | AggregateState::Polymeric        |
-/// | `(ss)`   | AggregateState::SolidSolution    |
-/// | `(ex)`   | AggregateState::IonExchange      |
-/// | `(aq)`   | AggregateState::Aqueous          |
-///
-/// By default, charged species without explicit aggregate state identification
-/// is considered aqueous. Thus species names such as HCO3-, Ca++, H+ will
-/// produce AggregateState::Aqueous.
-auto identifyAggregateState(const std::string& species_name) -> AggregateState;
+/// Identify the aggregate state in the name of a substance or chemical species.
+/// This methods searches for aggregate state symbols in the suffix of a
+/// substance or chemical species name. The suffix must start with `(`, end
+/// with `)` and cannot contain upper case characters. The words within the
+/// suffix must be separated by comma and/or space.
+/// Example:
+/// ~~~
+/// using namespace Reaktoro;
+/// const auto res = identifyAggregateState("H2O(aq)");             // res is AggregateState::Aqueous
+/// const auto res = identifyAggregateState("CO2(g)");              // res is AggregateState::Gas
+/// const auto res = identifyAggregateState("CaCO3(s, calcite)");   // res is AggregateState::Solid
+/// const auto res = identifyAggregateState("MgCO3(magnesite, s)"); // res is AggregateState::Solid
+/// const auto res = identifyAggregateState("Fe+++");               // res is AggregateState::Aqueous
+/// const auto res = identifyAggregateState("Na+(pl)");             // res is AggregateState::Plasma
+/// ~~~
+/// @note By default, charged species without explicit aggregate state
+/// identification is considered aqueous. Thus species names such as HCO3-,
+/// Ca++, H+ will produce AggregateState::Aqueous.
+/// @see AggregateState, parseAggregateState
+auto identifyAggregateState(const std::string& name) -> AggregateState;
 
 } // namespace Reaktoro
