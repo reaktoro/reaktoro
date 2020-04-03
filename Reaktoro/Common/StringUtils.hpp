@@ -61,6 +61,18 @@ auto str(Args... items) -> std::string
     return stringfy("", items...);
 }
 
+/// Return a new string where `substr` occurrences are replaced by `newsubstr`.
+inline auto replace(std::string original, std::string substr, std::string newsubstr) -> std::string
+{
+	auto pos = original.find(substr);
+	while(pos != std::string::npos)
+	{
+		original.replace(pos, substr.size(), newsubstr);
+		pos = original.find(substr, pos + newsubstr.size());
+	}
+    return original;
+}
+
 /// Return a string with lower case characters.
 inline auto lowercase(std::string str) -> std::string
 {

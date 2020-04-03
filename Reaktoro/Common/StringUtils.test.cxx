@@ -27,4 +27,8 @@ TEST_CASE("Testing StringUtils", "[StringUtils]")
     REQUIRE( stringfy(".", "a", "b") == "a.b");
     REQUIRE( stringfy(".", 1, 2, "abc") == "1.2.abc");
     REQUIRE( str(1, 2, " abc") == "12 abc");
+
+    REQUIRE( replace("CARBON DIOXIDE", " ", "-")   == "CARBON-DIOXIDE" );
+    REQUIRE( replace("CARBON DIOXIDE", "O", "x")   == "CARBXN DIXXIDE" );
+    REQUIRE( replace("CARBON DIOXIDE", "", "XYZ")  == "CARBON DIOXIDE" );
 }
