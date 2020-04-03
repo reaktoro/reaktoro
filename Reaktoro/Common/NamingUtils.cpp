@@ -40,7 +40,7 @@ std::map<std::string, std::vector<std::string>> alternative_neutral_names;
 
 } // namespace
 
-auto alternativeWaterNames() -> std::vector<std::string>&
+auto alternativeWaterNames() -> std::vector<std::string>
 {
     return alternative_water_names;
 }
@@ -186,6 +186,21 @@ auto baseNameNeutralSpecies(std::string name) -> std::string
 auto chargeInSpeciesName(std::string name) -> double
 {
     return splitChargedSpeciesName(name).second;
+}
+
+auto splitSpeciesNameSuffix(std::string name) -> std::pair<std::string, std::string>
+{
+    if(name.back() != ')')
+        return { name, "" };
+
+    const auto pos = name.rfind('(');
+    const auto suffix = name.substr(pos);
+
+    for(auto i = 1; i < suffix.size() - 1; ++i) // skip first and last char, ( and ) respectively
+        if(!islower(suffix[i])) // if not lower case char only, then it is not an aggregate state suffix
+            return { name, "" };
+
+    return { name.substr(0, pos), suffix };
 }
 
 } // namespace Reaktoro

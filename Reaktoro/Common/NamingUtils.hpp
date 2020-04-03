@@ -26,7 +26,7 @@ namespace Reaktoro {
 
 /// Return a collection of alternative names to the given species name.
 /// @param name The name of the species.
-auto alternativeWaterNames() -> std::vector<std::string>&;
+auto alternativeWaterNames() -> std::vector<std::string>;
 
 /// Return a collection of alternative names to the given charged species name.
 /// The argument `name` must follow the naming convention `H+`, `Ca++`, `Cl-`,
@@ -93,5 +93,21 @@ auto baseNameNeutralSpecies(std::string name) -> std::string;
 /// `H+`, `Ca++`, `HCO3-`, `CO3--`, `SO4--`, and so forth.
 /// @param name The name of the species
 auto chargeInSpeciesName(std::string name) -> double;
+
+/// Split name and suffix from a substance name or chemical formula.
+/// The suffix must start with `(`, end with `)` and cannot contain upper case
+/// characters.
+///
+/// Example:
+/// ~~~
+/// using namespace Reaktoro;
+/// const auto [name, suffix] = splitSpeciesNameSuffix("H2O(aq)");           // name: "H2O",     suffix: "aq"
+/// const auto [name, suffix] = splitSpeciesNameSuffix("CaCO3(s, calcite)"); // name: "CaCO3",   suffix: "s, calcite"
+/// const auto [name, suffix] = splitSpeciesNameSuffix("MgCO3");             // name: "MgCO3",   suffix: ""
+/// const auto [name, suffix] = splitSpeciesNameSuffix("Methane(aq)");       // name: "Methane", suffix: "aq"
+/// const auto [name, suffix] = splitSpeciesNameSuffix("Ca++");              // name: "Ca++",    suffix: ""
+/// const auto [name, suffix] = splitSpeciesNameSuffix("Fe[3+](aq)");        // name: "Fe[3+]",  suffix: "aq"
+/// ~~~
+auto splitSpeciesNameSuffix(std::string name) -> std::pair<std::string, std::string>;
 
 } // namespace Reaktoro
