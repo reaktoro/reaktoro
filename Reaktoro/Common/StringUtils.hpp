@@ -34,7 +34,7 @@ template<typename T>
 auto operator<<(std::ostream& out, const std::vector<T>& values) -> std::ostream&
 {
     for(auto i = 0; i < values.size(); ++i)
-        out << (i == 0) ? "" : ", " << values[i];
+        out << ((i == 0) ? "" : ", ") << values[i];
     return out;
 }
 
