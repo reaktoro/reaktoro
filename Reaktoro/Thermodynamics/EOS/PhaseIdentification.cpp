@@ -15,91 +15,95 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
+#include "PhaseIdentification.hpp"
 
+// Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Math/Roots.hpp>
 
+// Eigen includes
 #include <Reaktoro/deps/eigen3/Eigen/Dense>
 #include <Reaktoro/deps/eigen3/unsupported/Eigen/Polynomials>
 
-
 namespace Reaktoro {
+
+using std::log;
 
 auto identifyPhaseUsingVolume(
     const real& temperature,
     const real& pressure,
     const real& Z,
-    const real& b) -> PhaseType
+    const real& b) -> CubicEOSFluidType
 {
     auto volume = Z * universalGasConstant * temperature / pressure;
-    return volume.val / b.val > 1.75 ? PhaseType::Gas : PhaseType::Liquid;
+    return volume / b > 1.75 ? CubicEOSFluidType::Vapor : CubicEOSFluidType::Liquid;
 }
 
 auto identifyPhaseUsingIsothermalCompressibility(
-    const real& temperature, const real& pressure, const real& Z) -> PhaseType
+    const real& temperature, const real& pressure, const real& Z) -> CubicEOSFluidType
 {
-    auto volume = Z * universalGasConstant * temperature / pressure;
-    auto dkdt = (1.0 / (volume.val * volume.val)) * volume.ddP * volume.ddT;
+    error(true, "identifyPhaseUsingIsothermalCompressibility is currently not accessible.");
+    // auto volume = Z * universalGasConstant * temperature / pressure;
+    // auto dkdt = (1.0 / (volume * volume)) * volume.ddP * volume.ddT;
 
-    return (dkdt <= 0.0) ? PhaseType::Gas : PhaseType::Liquid;
+    // return (dkdt <= 0.0) ? CubicEOSFluidType::Vapor : CubicEOSFluidType::Liquid;
 }
 
 auto pressureComparison(const real& Pressure, const real& Temperature, const real& amix,
                         const real& bmix, const real& A, const real& B, const real& C,
-                        const double epsilon, const double sigma) -> PhaseType
+                        const real epsilon, const real sigma) -> CubicEOSFluidType
 {
 
-    auto p = [&](double V) -> double
+    auto p = [&](real V) -> real
     {
-        return ((universalGasConstant*Temperature.val) / (V - bmix.val)) - (amix.val / ((V + epsilon * bmix.val) * (V + sigma * bmix.val)));
+        return ((universalGasConstant*Temperature) / (V - bmix)) - (amix / ((V + epsilon * bmix) * (V + sigma * bmix)));
     };
 
-    auto k1 = epsilon * bmix.val;
-    auto k2 = sigma * bmix.val;
+    auto k1 = epsilon * bmix;
+    auto k2 = sigma * bmix;
 
     // Computing parameters AP, BP, CP, DP and EP of equation AP*P^4 + BP*P^3 + CP*P^2 + DP*P + EP = 0,
     // which gives the values of P where the EoS changes slope (Local max and min)
     const auto R = universalGasConstant;
-    const auto T = Temperature.val;
+    const auto T = Temperature;
     const auto AP = R * T;
-    const auto BP = 2 * R * T * (k2 + k1) - 2 * amix.val;
-    const auto CP = R * T * (k2 * k2 + 4.0 * k1 * k2 + k1 * k1) - amix.val * (k1 + k2 - 4 * bmix.val);
-    const auto DP = 2 * R * T * (k1 * k2 * k2 + k1 * k1 * k2) - 2 * amix.val * (bmix.val * bmix.val - k2 * bmix.val - k1 * bmix.val);
-    const auto EP = R * T * k1 * k1 * k2 * k2 - amix.val * (k1 + k2) * bmix.val * bmix.val;
+    const auto BP = 2 * R * T * (k2 + k1) - 2 * amix;
+    const auto CP = R * T * (k2 * k2 + 4.0 * k1 * k2 + k1 * k1) - amix * (k1 + k2 - 4 * bmix);
+    const auto DP = 2 * R * T * (k1 * k2 * k2 + k1 * k1 * k2) - 2 * amix * (bmix * bmix - k2 * bmix - k1 * bmix);
+    const auto EP = R * T * k1 * k1 * k2 * k2 - amix * (k1 + k2) * bmix * bmix;
 
-    auto polynomial_solver = Eigen::PolynomialSolver<double, 4>(
-        Eigen::Matrix<double, 5, 1>{EP, DP, CP, BP, AP});
+    auto polynomial_solver = Eigen::PolynomialSolver<real, 4>(
+        Eigen::Matrix<real, 5, 1>{EP, DP, CP, BP, AP});
 
     constexpr auto abs_imaginary_threshold = 1e-15;
-    auto real_roots = std::vector<double>();
+    auto real_roots = std::vector<real>();
     real_roots.reserve(5);
     polynomial_solver.realRoots(real_roots, abs_imaginary_threshold);
 
     // removing roots lower than bmix, no physical meaning
-    auto new_end = std::remove_if(real_roots.begin(), real_roots.end(), [&](double r){
-        return r < bmix.val;
+    auto new_end = std::remove_if(real_roots.begin(), real_roots.end(), [&](real r){
+        return r < bmix;
     });
     real_roots.resize(new_end - real_roots.begin());
 
     if (real_roots.size() == 0)
     {
-        return PhaseType::Gas;
+        return CubicEOSFluidType::Vapor;
     }
 
-    std::vector<double> pressures;
+    std::vector<real> pressures;
     for (const auto& volume : real_roots)
         pressures.push_back(p(volume));
 
     auto Pmin = std::min_element(pressures.begin(), pressures.end());
     auto Pmax = std::max_element(pressures.begin(), pressures.end());
 
-    if (Pressure.val < *Pmin)
-        return PhaseType::Gas;
-    if (Pressure.val > *Pmax)
-        return PhaseType::Liquid;
+    if (Pressure < *Pmin)
+        return CubicEOSFluidType::Vapor;
+    if (Pressure > *Pmax)
+        return CubicEOSFluidType::Liquid;
 
     Exception exception;
     exception.error << "Could not define phase type.";
@@ -117,8 +121,8 @@ auto gibbsResidualEnergyComparison(
     const real& B,
     const real& Z_min,
     const real& Z_max,
-    const double epsilon,
-    const double sigma) -> PhaseType
+    const real epsilon,
+    const real sigma) -> CubicEOSFluidType
 {
     auto constexpr R = universalGasConstant;
     auto const& T = temperature;
@@ -127,12 +131,12 @@ auto gibbsResidualEnergyComparison(
     std::vector<real> Gs;
     for (const auto Z : {Z_max, Z_min})
     {
-        const double factor = -1.0 / (3 * Z.val*Z.val + 2 * A.val*Z.val + B.val);
+        const real factor = -1.0 / (3 * Z*Z + 2 * A*Z + B);
         const real beta = pressure * bmix / (R * T);
         const real q = amix / (bmix * R * T);
 
         // Calculate the integration factor I and its temperature derivative IT
-        real I;
+        real I = {};
         if (epsilon != sigma)
             I = log((Z + sigma * beta) / (Z + epsilon * beta)) / (sigma - epsilon);
         else
@@ -141,7 +145,7 @@ auto gibbsResidualEnergyComparison(
         Gs.push_back(R * temperature*(Z - 1 - log(Z - beta) - q * I));
     }
 
-    return (Gs[0].val < Gs[1].val) ? PhaseType::Gas : PhaseType::Liquid;
+    return (Gs[0] < Gs[1]) ? CubicEOSFluidType::Vapor : CubicEOSFluidType::Liquid;
 }
 
 
@@ -154,8 +158,8 @@ auto identifyPhaseUsingGibbsEnergyAndEos(
     const real& B,
     const real& C,
     std::vector<real> Zs,
-    const double epsilon,
-    const double sigma) -> PhaseType
+    const real epsilon,
+    const real sigma) -> CubicEOSFluidType
 {
     if (Zs.size() == 1)
     {

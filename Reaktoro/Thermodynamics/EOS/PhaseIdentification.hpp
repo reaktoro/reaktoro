@@ -17,13 +17,20 @@
 
 #pragma once
 
+// C++ includes
+#include <vector>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
 
 namespace Reaktoro {
 
-// Forward declarations
-enum class PhaseType;
+/// The options for the fluid types supported by the cubic equation of state.
+enum class CubicEOSFluidType
+{
+    Liquid,
+    Vapor
+};
 
 /// Defines the enumeration of available phase identification methods.
 enum class PhaseIdentificationMethod
@@ -34,7 +41,7 @@ enum class PhaseIdentificationMethod
     GibbsEnergyAndEquationOfStateMethod,
 };
 
-/// Return a PhaseType that says if the phase is a Liquid or Gas based on Volume Method
+/// Return a CubicEOSFluidType that says if the phase is a Liquid or Gas based on Volume Method
 /// @param Temperature Phase temperature
 /// @param real Phase pressure
 /// @param Z Phase compressibility factor
@@ -45,9 +52,9 @@ auto identifyPhaseUsingVolume(
     const real& temperature,
     const real& pressure,
     const real& Z,
-    const real& b) -> PhaseType;
+    const real& b) -> CubicEOSFluidType;
 
-/// Return a PhaseType that says if the phase is a Liquid or Gas based on Isothermal Compressibility
+/// Return a CubicEOSFluidType that says if the phase is a Liquid or Gas based on Isothermal Compressibility
 /// @param Temperature Phase temperature
 /// @param real Phase pressure
 /// @param Z Phase compressibility factor
@@ -57,9 +64,9 @@ auto identifyPhaseUsingVolume(
 auto identifyPhaseUsingIsothermalCompressibility(
     const real& temperature,
     const real& pressure,
-    const real& Z) -> PhaseType;
+    const real& Z) -> CubicEOSFluidType;
 
-/// Return a PhaseType that says if the phase is a Liquid or Gas based on gibbs residual energy and
+/// Return a CubicEOSFluidType that says if the phase is a Liquid or Gas based on gibbs residual energy and
 /// equation of state
 /// @param pressure Phase pressure
 /// @param temperature Phase temperature
@@ -83,6 +90,6 @@ auto identifyPhaseUsingGibbsEnergyAndEos(
     const real& C,
     std::vector<real> Zs,
     const double epsilon,
-    const double sigma) -> PhaseType;
+    const double sigma) -> CubicEOSFluidType;
 
 }

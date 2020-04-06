@@ -1,0 +1,2483 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\begin_modules
+tcolorbox
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "garamondx" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "garamondx-ntxm" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\rightmargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip smallskip
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CubicEOS Extension
+\end_layout
+
+\begin_layout Author
+Allan Leal
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Generic cubic equation of state:
+\series default
+
+\begin_inset Formula 
+\[
+P=\frac{RT}{V-b}-\frac{a(T)}{(V+\epsilon b)(V+\sigma b)}\tag{3.41}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+b=\sum_{i}x_{i}b_{i}\tag{13.91}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+a=\sum_{i}\sum_{j}x_{i}x_{j}a_{ij}\tag{13.92}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+a_{ij}=(1-k_{ij})(a_{i}a_{j})^{1/2}\tag{13.93}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+b_{k}=\Omega\frac{RT_{c,k}}{P_{c,k}}\tag{3.44}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+a_{k}(T)=\Psi\frac{\alpha(T_{r,k};\omega_{k})R^{2}T_{c,k}^{2}}{P_{c,k}}\tag{3.45}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Parameters of the cubic equations of state collected from Table 3.1
+ in Smith et al.
+ (2017).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="7">
+<features booktabs="true" tabularvalignment="middle" tabularwidth="100text%">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+EOS
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\alpha(T_{r})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\sigma$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\epsilon$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\Omega$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\Psi$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $Z_{c}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+vdW (1873)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1/8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+27/64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3/8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RK (1949)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $T_{r}^{-1/2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.08664
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.42748
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1/3
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SRK (1972)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\alpha_{\mathrm{SRK}}(T_{r};\omega)^{(a)}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.08664
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.42748
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1/3
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PR (1976)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\alpha_{\mathrm{SRK}}(T_{r};\omega)^{(b)}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1+\sqrt{\ensuremath{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-\sqrt{\ensuremath{2}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.07780
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.45724
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.30740
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multicolumn="1" alignment="left" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $^{(a)}$
+\end_inset
+
+ 
+\begin_inset Formula $\alpha_{\mathrm{SRK}}(T_{r};\omega)=[1+(0.480+1.574\omega-0.176\omega^{2})(1-T_{r})^{1/2}]^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multicolumn="1" alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $^{(b)}$
+\end_inset
+
+ 
+\begin_inset Formula $\alpha_{\mathrm{PR}}(T_{r};\omega)=[1+(0.37464+1.54226\omega-0.26992\omega^{2})(1-T_{r})^{1/2}]^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Compressibility factor:
+\series default
+
+\begin_inset Formula 
+\[
+Z=\frac{PV}{RT}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Equation of state in terms of compressibility factor:
+\series default
+
+\begin_inset Formula 
+\[
+Z=1+\beta-q\beta\frac{Z-\beta}{(Z+\epsilon\beta)(Z+\sigma\beta)}\tag{3.48}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\beta=\frac{bP}{RT}\tag{3.46}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+q=\frac{a(T)}{bRT}\tag{3.47}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Cubic polynomial:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Z^{3}+AZ^{2}+BZ+C=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+A & \equiv(\epsilon+\sigma-1)\beta-1\\
+B & \equiv(\epsilon\sigma-\epsilon-\sigma)\beta^{2}-(\epsilon+\sigma-q)\beta\\
+C & \equiv-\epsilon\sigma\beta^{3}-(\epsilon\sigma+q)\beta^{2}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Identifying the coefficients of the cubic polynomial.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+Z=1+\beta-q\beta\frac{Z-\beta}{(Z+\epsilon\beta)(Z+\sigma\beta)}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Z=1+\beta-q\beta\frac{Z-\beta}{(Z^{2}+(\epsilon+\sigma)\beta Z+\epsilon\sigma\beta^{2})}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Z(Z^{2}+(\epsilon+\sigma)\beta Z+\epsilon\sigma\beta^{2})=(Z^{2}+(\epsilon+\sigma)\beta Z+\epsilon\sigma\beta^{2})+\beta(Z^{2}+(\epsilon+\sigma)\beta Z+\epsilon\sigma\beta^{2})-q\beta(Z-\beta)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Z^{3}+(\epsilon+\sigma)\beta Z^{2}+\epsilon\sigma\beta^{2}Z=Z^{2}+(\epsilon+\sigma)\beta Z+\epsilon\sigma\beta^{2}+\beta Z^{2}+(\epsilon+\sigma)\beta^{2}Z+\epsilon\sigma\beta^{3}-q\beta(Z-\beta)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Z^{3}+[(\epsilon+\sigma)\beta-1-\beta]Z^{2}+[\epsilon\sigma\beta^{2}-(\epsilon+\sigma)\beta-(\epsilon+\sigma)\beta^{2}+q\beta]Z-(\epsilon\sigma\beta^{2}+\epsilon\sigma\beta^{3}+q\beta^{2})=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Derivatives 
+\begin_inset Formula $Z_{T}\equiv(\partial Z/\partial T)_{P}$
+\end_inset
+
+ and 
+\begin_inset Formula $Z_{P}\equiv(\partial Z/\partial P)_{T}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Z_{T}=-\frac{A_{T}Z^{2}+B_{T}Z+C_{T}}{3Z^{2}+2AZ+B}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Z_{P}=-\frac{A_{P}Z^{2}+B_{P}Z+C_{P}}{3Z^{2}+2AZ+B}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\beta_{T} & =-\frac{\beta}{T}\\
+\beta_{P} & =\frac{\beta}{P}\\
+q_{T} & =q\left(\frac{a_{T}}{a}-\frac{1}{T}\right)\\
+q_{P} & =0\vphantom{\frac{1}{1}}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+A_{T} & \equiv(\epsilon+\sigma-1)\beta_{T}\\
+A_{P} & \equiv(\epsilon+\sigma-1)\beta_{P}\\
+B_{T} & \equiv(\epsilon\sigma-\epsilon-\sigma)(2\beta\beta_{T})+q_{T}\beta-(\epsilon+\sigma-q)\beta_{T}\\
+B_{P} & \equiv(\epsilon\sigma-\epsilon-\sigma)(2\beta\beta_{P})+q_{P}\beta-(\epsilon+\sigma-q)\beta_{P}\\
+C_{T} & \equiv-\epsilon\sigma(3\beta^{2}\beta_{T})-q_{T}\beta^{2}-(\epsilon\sigma+q)(2\beta\beta_{T})\\
+C_{P} & \equiv-\epsilon\sigma(3\beta^{2}\beta_{P})-q_{P}\beta^{2}-(\epsilon\sigma+q)(2\beta\beta_{P})
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Derivation of the previous derivatives.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+Z^{3}+AZ^{2}+BZ+C=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+3Z^{2}Z_{T}+A_{T}Z^{2}+2AZZ_{T}+B_{T}Z+BZ_{T}+C_{T}=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Z_{T}=-\frac{A_{T}Z^{2}+B_{T}Z+C_{T}}{3Z^{2}+2AZ+B}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\beta=\frac{bP}{RT}\implies\beta_{T}=-\frac{\beta}{T},\qquad\beta_{P}=\frac{\beta}{P}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+q=\frac{a(T)}{bRT}\implies q_{T}=\frac{a_{T}}{bRT}-\frac{a}{bRT}\frac{1}{T}=q\left(\frac{a_{T}}{a}-\frac{1}{T}\right),\qquad q_{P}=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Calculate the integration factor 
+\begin_inset Formula $I$
+\end_inset
+
+ and its derivatives 
+\begin_inset Formula $I_{T}=(\partial I/\partial T)_{P}$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{P}=(\partial I/\partial P)_{T}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+Case I: 
+\begin_inset Formula $\epsilon\neq\sigma$
+\end_inset
+
+
+\emph default
+
+\begin_inset Formula 
+\begin{align*}
+I & =\frac{1}{\sigma-\epsilon}\ln\left(\frac{Z+\sigma\beta}{Z+\epsilon\beta}\right)\tag{13.72}\\
+I_{T} & =\frac{1}{\sigma-\epsilon}\left(\frac{Z_{T}+\sigma\beta_{T}}{Z+\sigma\beta}-\frac{Z_{T}+\epsilon\beta_{T}}{Z+\epsilon\beta}\right)\\
+I_{P} & =\frac{1}{\sigma-\epsilon}\left(\frac{Z_{P}+\sigma\beta_{P}}{Z+\sigma\beta}-\frac{Z_{P}+\epsilon\beta_{P}}{Z+\epsilon\beta}\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Derivation of the previous derivatives.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+I=\frac{1}{\sigma-\epsilon}\ln\left(\frac{Z+\sigma\beta}{Z+\epsilon\beta}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+I_{T} & =\frac{1}{\sigma-\epsilon}\left(\frac{Z+\epsilon\beta}{Z+\sigma\beta}\right)\frac{(Z_{T}+\sigma\beta_{T})(Z+\epsilon\beta)-(Z+\sigma\beta)(Z_{T}+\epsilon\beta_{T})}{(Z+\epsilon\beta)^{2}}\\
+ & =\frac{1}{\sigma-\epsilon}\frac{(Z_{T}+\sigma\beta_{T})(Z+\epsilon\beta)-(Z+\sigma\beta)(Z_{T}+\epsilon\beta_{T})}{(Z+\sigma\beta)(Z+\epsilon\beta)}\\
+ & =\frac{1}{\sigma-\epsilon}\left(\frac{Z_{T}+\sigma\beta_{T}}{Z+\sigma\beta}-\frac{Z_{T}+\epsilon\beta_{T}}{Z+\epsilon\beta}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+Case II: 
+\begin_inset Formula $\epsilon=\sigma$
+\end_inset
+
+
+\emph default
+
+\begin_inset Formula 
+\begin{align*}
+I & =\frac{\beta}{Z+\epsilon\beta}\tag{after 13.72}\\
+I_{T} & =I\left(\frac{\beta_{T}}{\beta}-\frac{Z_{T}+\epsilon\beta_{T}}{Z+\epsilon\beta}\right)\\
+I_{P} & =I\left(\frac{\beta_{P}}{\beta}-\frac{Z_{P}+\epsilon\beta_{P}}{Z+\epsilon\beta}\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Derivation of the previous derivatives.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+I=\frac{\beta}{Z+\epsilon\beta}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+I_{T} & =\frac{\beta_{T}(Z+\epsilon\beta)-\beta(Z_{T}+\epsilon\beta_{T})}{(Z+\epsilon\beta)^{2}}\\
+ & =\frac{\beta_{T}}{Z+\epsilon\beta}-\frac{\beta}{Z+\epsilon\beta}\frac{Z_{T}+\epsilon\beta_{T}}{Z+\epsilon\beta}\\
+ & =I\left(\frac{\beta_{T}}{\beta}-\frac{Z_{T}+\epsilon\beta_{T}}{Z+\epsilon\beta}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Calculate the phase molar volume 
+\begin_inset Formula $V$
+\end_inset
+
+ and its derivatives 
+\begin_inset Formula $V_{T}=(\partial V/\partial T)_{P}$
+\end_inset
+
+ and 
+\begin_inset Formula $V_{P}=(\partial V/\partial P)_{T}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+V & =\frac{ZRT}{P}\\
+V_{T} & =V\left(\frac{Z_{T}}{Z}+\frac{1}{T}\right)\\
+V_{P} & =V\left(\frac{Z_{P}}{Z}-\frac{1}{P}\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Derivation of the previous derivatives.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+V=\frac{ZRT}{P}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+V_{T} & =\frac{Z_{T}RT}{P}+\frac{ZR}{P}\\
+ & =\frac{ZRT}{P}\frac{Z_{T}}{Z}+\frac{ZRT}{P}\frac{1}{T}\\
+ & =V\left(\frac{Z_{T}}{Z}+\frac{1}{T}\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+V_{P} & =\frac{Z_{P}RT}{P}-\frac{ZRT}{P^{2}}\\
+ & =\frac{ZRT}{P}\frac{Z_{P}}{Z}-\frac{ZRT}{P}\frac{1}{P}\\
+ & =V\left(\frac{Z_{P}}{Z}-\frac{1}{P}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Calculate 
+\begin_inset Formula $G^{R}$
+\end_inset
+
+, 
+\begin_inset Formula $H^{R}$
+\end_inset
+
+, 
+\begin_inset Formula $S^{R}$
+\end_inset
+
+ and 
+\begin_inset Formula $C_{P}^{R}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{G^{R}}{RT} & =Z-1-\ln(Z-\beta)-qI\tag{13.74}\\
+\frac{H^{R}}{RT} & =Z-1+Tq_{T}I\tag{after 13.74}\\
+\frac{S^{R}}{RT} & =\ln(Z-\beta)+(q+Tq_{T})I\\
+\frac{C_{P}^{R}}{RT} & =\frac{1}{T}\frac{H^{R}}{RT}+Z_{T}+q_{T}I+Tq_{TT}I+Tq_{T}I_{T}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Derivation of the previous derivatives.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+T=T_{r}T_{c}\implies\frac{dT}{dT_{r}}=T_{c}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+T_{r}\frac{dq}{dT_{r}}=T_{r}\frac{dq}{dT}\frac{dT}{dT_{r}}=T_{r}\frac{dq}{dT}T_{c}=T\frac{dq}{dT}=Tq_{T}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+C_{P}=\left(\frac{\partial H}{\partial T}\right)_{P}\implies C_{P}^{R}=\left(\frac{\partial H^{R}}{\partial T}\right)_{P}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+H^{R}=RT(Z-1+Tq_{T}I)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+H_{T}^{R} & =R(Z-1+Tq_{T}I)+RT(Z_{T}+q_{T}I+Tq_{TT}I+Tq_{T}I_{T})\\
+ & =\frac{H^{R}}{T}+RT(Z_{T}+q_{T}I+Tq_{TT}I+Tq_{T}I_{T})
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Calculate fugacity coefficients 
+\begin_inset Formula $\ln\phi_{k}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\ln\phi_{k}=\bar{Z}_{k}-\frac{\bar{Z}_{k}-\bar{\beta}_{k}}{Z-\beta}-\ln(Z-\beta)+qI-\bar{q}_{k}I-q\bar{I}_{k}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\bar{b}_{k} & \equiv\left[\frac{\partial(nb)}{\partial n_{k}}\right]_{T,P,n_{i}}=b_{k}\\
+\bar{a}_{k} & \equiv\left[\frac{\partial(na)}{\partial n_{k}}\right]_{T,P,n_{i}}=2\sum_{i}x_{i}a_{ik}-a\\
+\bar{\beta}_{k} & \equiv\left[\frac{\partial(n\beta)}{\partial n_{k}}\right]_{T,P,n_{i}}=\frac{\bar{b}_{k}}{b}\beta\\
+\bar{q}_{k} & \equiv\left[\frac{\partial(nq)}{\partial n_{k}}\right]_{T,P,n_{i}}=\left(1+\frac{\bar{a}_{k}}{a}-\frac{\bar{b}_{k}}{b}\right)q\\
+\bar{A}_{k} & \equiv\left[\frac{\partial(nA)}{\partial n_{k}}\right]_{T,P,n_{i}}=(\epsilon+\sigma-1)\bar{\beta}_{k}-1\\
+\bar{B}_{k} & \equiv\left[\frac{\partial(nB)}{\partial n_{k}}\right]_{T,P,n_{i}}=\left[(\epsilon\sigma-\epsilon-\sigma)(2\bar{\beta}_{k}-\beta)+\bar{q}_{k}-q\right]\beta-(\epsilon+\sigma-q)\bar{\beta}_{k}\\
+\bar{C}_{k} & \equiv\left[\frac{\partial(nC)}{\partial n_{k}}\right]_{T,P,n_{i}}=[\epsilon\sigma(2\beta+1)+2q-\bar{q}_{k}]\beta^{2}-[2(\epsilon\sigma+q)+3\epsilon\sigma\beta]\beta\beta_{k}\\
+\bar{Z}_{k} & \equiv\left[\frac{\partial(nZ)}{\partial n_{k}}\right]_{T,P,n_{i}}=-\frac{\bar{A}_{k}Z^{2}+(B+\bar{B}_{k})Z+2C+\bar{C}_{k}}{3Z^{2}+2AZ+B}\\
+\bar{I}_{k} & \equiv\left[\frac{\partial(nI)}{\partial n_{k}}\right]_{T,P,n_{i}}={\displaystyle I+\frac{1}{\sigma-\epsilon}\left[\frac{\bar{Z}_{k}+\sigma\bar{\beta}_{k}}{Z+\sigma\beta}-\frac{\bar{Z}_{k}+\epsilon\bar{\beta}_{k}}{Z+\epsilon\beta}\right]}\qquad(\epsilon\neq\sigma)\\
+\bar{I}_{k} & \equiv\left[\frac{\partial(nI)}{\partial n_{k}}\right]_{T,P,n_{i}}={\displaystyle \left(1+\frac{\bar{\beta}_{k}}{\beta}-\frac{\bar{Z}_{k}+\epsilon\bar{\beta}_{k}}{Z+\epsilon\beta}\right)}I\qquad(\epsilon=\sigma)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title={Derivation of the formula for the fugacity coefficients 
+\begin_inset Formula $\ln\phi_{k}$
+\end_inset
+
+.}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\mathrm{d}\left(\frac{nG^{R}}{RT}\right)=\frac{nV^{R}}{RT}\mathrm{d}P-\frac{nH^{R}}{RT^{2}}\mathrm{d}T+\sum_{i}\ln\phi_{i}\mathrm{d}n_{i}\tag{10.56}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\ln\phi_{k}\equiv\left[\frac{\partial}{\partial n_{k}}\left(\frac{nG^{R}}{RT}\right)\right]_{T,P,n_{i}}=\frac{\bar{G}_{k}^{R}}{RT}\tag{10.59}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\frac{G^{R}}{RT}=Z-1-\ln(Z-\beta)-qI
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{nG^{R}}{RT}=nZ-n-n\ln\left(\frac{nZ-n\beta}{n}\right)-\frac{1}{n}(nq)(nI)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\ln\phi_{k} & \equiv\left[\frac{\partial}{\partial n_{k}}\left(\frac{nG^{R}}{RT}\right)\right]_{T,P,n_{i}}\\
+ & =\left[\frac{\partial}{\partial n_{k}}\left(nZ-n-n\ln\left(\frac{nZ-n\beta}{n}\right)-\frac{1}{n}(nq)(nI)\right)\right]_{T,P,n_{i}}\\
+ & =\bar{Z}_{k}-1-\ln\left(\frac{nZ-n\beta}{n}\right)-n\frac{n}{nZ-n\beta}\left[\frac{\partial}{\partial n_{k}}\left(\frac{nZ-n\beta}{n}\right)\right]_{T,P,n_{i}}+\frac{1}{n^{2}}(nq)(nI)-\frac{1}{n}\bar{q}_{k}(nI)-\frac{1}{n}(nq)\bar{I}_{k}\\
+ & =\bar{Z}_{k}-1-\ln(Z-\beta)-\frac{n}{Z-\beta}\left(\frac{\bar{Z}_{k}-\bar{\beta}_{k}}{n}-\frac{nZ-n\beta}{n^{2}}\right)+qI-\bar{q}_{k}I-q\bar{I}_{k}\\
+ & =\bar{Z}_{k}-1-\ln(Z-\beta)-\left(\frac{\bar{Z}_{k}-\bar{\beta}_{k}}{Z-\beta}-1\right)+qI-\bar{q}_{k}I-q\bar{I}_{k}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\ln\phi_{k}\equiv\left[\frac{\partial}{\partial n_{k}}\left(\frac{nG^{R}}{RT}\right)\right]_{T,nV,n_{i}}-\frac{n(Z-1)}{P}\left[\frac{\partial P}{\partial n_{k}}\right]_{T,nV,n_{i}}\tag{13.97}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+P=\frac{ZRT}{V}=\frac{nZRT}{nV}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\left[\frac{\partial P}{\partial n_{k}}\right]_{T,nV,n_{i}}=\frac{\bar{Z}_{k}RT}{nV}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{n(Z-1)}{P}\left[\frac{\partial P}{\partial n_{k}}\right]_{T,nV,n_{i}} & =\frac{n(Z-1)}{P}\frac{\bar{Z}_{k}RT}{nV}\\
+ & =(Z-1)\bar{Z}_{k}\frac{RT}{PV}\\
+ & =\left(\frac{Z-1}{Z}\right)\bar{Z}_{k}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[\frac{\partial}{\partial n_{k}}\ln(Z-\beta)\right]_{T,nV,n_{i}} & =\frac{1}{Z-\beta}\left[\frac{\partial}{\partial n_{k}}\left(Z-\beta\right)\right]_{T,nV,n_{i}}\\
+ & =\frac{1}{Z-\beta}\left[\frac{\partial}{\partial n_{k}}\left(\frac{nZ-n\beta}{n}\right)\right]_{T,nV,n_{i}}\\
+ & =\frac{1}{Z-\beta}\left[\frac{\bar{Z}_{k}-\bar{\beta}_{k}}{n}-\frac{nZ-n\beta}{n^{2}}\frac{\partial n}{\partial n_{k}}\right]\\
+ & =\frac{1}{Z-\beta}\left[\frac{\bar{Z}_{k}-\bar{\beta}_{k}}{n}-\frac{Z-\beta}{n}\right]\\
+ & =\frac{1}{n}\left(\frac{\bar{Z}_{k}-\bar{\beta}_{k}}{Z-\beta}-1\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{nG^{R}}{RT}=nZ-n-n\ln(Z-\beta)-\frac{1}{n}(nq)(nI)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left[\frac{\partial}{\partial n_{k}}\left(\frac{nG^{R}}{RT}\right)\right]_{T,nV,n_{i}} & =\bar{Z}_{k}-1-\ln(Z-\beta)-n\left[\frac{\partial}{\partial n_{k}}\ln(Z-\beta)\right]_{T,nV,n_{i}}+\frac{1}{n^{2}}(nq)(nI)-\frac{1}{n}(\bar{q}_{k})(nI)-\frac{1}{n}(nq)(\bar{I}_{k})\\
+ & =\bar{Z}_{k}-1-\ln(Z-\beta)-\left(\frac{\bar{Z}_{k}-\bar{\beta}_{k}}{Z-\beta}-1\right)+qI-\bar{q}_{k}I-q\bar{I}_{k}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\ln\phi_{k} & \equiv\left[\frac{\partial}{\partial n_{k}}\left(\frac{nG^{R}}{RT}\right)\right]_{T,nV,n_{i}}-\frac{n(Z-1)}{P}\left[\frac{\partial P}{\partial n_{k}}\right]_{T,nV,n_{i}}\\
+ & =\bar{Z}_{k}-1-\ln(Z-\beta)-\left(\frac{\bar{Z}_{k}-\bar{\beta}_{k}}{Z-\beta}-1\right)+qI-\bar{q}_{k}I-q\bar{I}_{k}-\left(\frac{Z-1}{Z}\right)\bar{Z}_{k}\\
+ & =\left(1-\frac{Z-1}{Z}\right)\bar{Z}_{k}-1-\ln(Z-\beta)-\left(\frac{\bar{Z}_{k}-\bar{\beta}_{k}}{Z-\beta}-1\right)+qI-\bar{q}_{k}I-q\bar{I}_{k}\\
+ & =\frac{\bar{Z}_{k}}{Z}-1-\ln(Z-\beta)-\left(\frac{\bar{Z}_{k}-\bar{\beta}_{k}}{Z-\beta}-1\right)+qI-\bar{q}_{k}I-q\bar{I}_{k}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Derivation of the partial molar derivatives 
+\begin_inset Formula $\bar{a}_{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $\bar{b}_{k}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+b & =\sum_{i}x_{i}b_{i}\\
+a & =\sum_{i}\sum_{j}x_{i}x_{j}a_{ij}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\bar{b}_{k} & \equiv\frac{\partial(nb)}{\partial n_{k}} & \bar{a}_{k} & \equiv\frac{\partial(na)}{\partial n_{k}}\\
+ & =\frac{\partial}{\partial n_{k}}\left(n\sum_{i}x_{i}b_{i}\right) &  & =\frac{\partial}{\partial n_{k}}\left(n\sum_{i}\sum_{j}x_{i}x_{j}a_{ij}\right)\\
+ & =\frac{\partial}{\partial n_{k}}\left(\sum_{i}n_{i}b_{i}\right) &  & =\frac{\partial}{\partial n_{k}}\left(\frac{1}{n}\sum_{i}\sum_{j}n_{i}n_{j}a_{ij}\right)\\
+ & =b_{k} &  & =\frac{1}{n}\sum_{i}\sum_{j}\delta_{ik}n_{j}a_{ij}+\frac{1}{n}\sum_{i}\sum_{j}n_{i}\delta_{jk}a_{ij}-\frac{1}{n^{2}}\sum_{i}\sum_{j}n_{i}n_{j}a_{ij}\\
+ &  &  & =\sum_{j}x_{j}a_{kj}+\sum_{i}x_{i}a_{ik}-\sum_{i}\sum_{j}x_{i}x_{j}a_{ij}\\
+ &  &  & =\sum_{i}x_{i}(a_{ik}+a_{ki})-a\qquad(a_{ik}=a_{ki})\\
+ &  &  & =2\sum_{i}x_{i}a_{ik}-a
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Derivation of the partial molar derivatives 
+\begin_inset Formula $\bar{P}_{k}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+P=\frac{ZRT}{V}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\bar{P}_{k} & \equiv\left[\frac{\partial(nP)}{\partial n_{k}}\right]_{T,nV,n_{i}}\\
+ & =\left[\frac{\partial}{\partial n_{k}}\left(n\frac{nZRT}{nV}\right)\right]_{T,nV,n_{i}}\\
+ & =\frac{nZRT}{nV}+n\frac{\bar{Z}_{k}RT}{nV}\\
+ & =\frac{ZRT}{V}+\frac{ZRT}{V}\frac{\bar{Z}_{k}}{Z}\\
+ & =P\left(1+\frac{\bar{Z}_{k}}{Z}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Derivation of the partial molar derivatives 
+\begin_inset Formula $\bar{\beta}_{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $\bar{q}_{k}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\beta & =\frac{bP}{RT}\\
+q & =\frac{a}{bRT}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\bar{\beta}_{k} & \equiv\left[\frac{\partial(n\beta)}{\partial n_{k}}\right]_{T,P,n_{i}} & \bar{q}_{k} & \equiv\left[\frac{\partial(nq)}{\partial n_{k}}\right]_{T,P,n_{i}}\\
+ & =\left[\frac{\partial}{\partial n_{k}}\left(\frac{nbP}{RT}\right)\right]_{T,P,n_{i}} &  & =\left[\frac{\partial}{\partial n_{k}}\left(\frac{na}{bRT}\right)\right]_{T,P,n_{i}}\\
+ & =\frac{\bar{b}_{k}P}{RT} &  & =\left[\frac{\partial}{\partial n_{k}}\left(n\frac{na}{nbRT}\right)\right]_{T,P,n_{i}}\\
+ & =\frac{bP}{RT}\frac{\bar{b}_{k}}{b} &  & =\frac{na}{nbRT}+n\frac{\bar{a}_{k}}{nbRT}-n\frac{na}{(nb)^{2}RT}\bar{b}_{k}\\
+ & =\frac{\bar{b}_{k}}{b}\beta &  & =\frac{a}{bRT}+\frac{\bar{a}_{k}}{bRT}-\frac{a}{bRT}\frac{\bar{b}_{k}}{b}\\
+ &  &  & =\left(1+\frac{\bar{a}_{k}}{a}-\frac{\bar{b}_{k}}{b}\right)q
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Derivation of the partial molar derivatives 
+\begin_inset Formula $\bar{Z}_{k}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Z^{3}+AZ^{2}+BZ+C=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{1}{n^{3}}(nZ)^{3}+\frac{1}{n^{3}}(nA)(nZ)^{2}+\frac{1}{n^{2}}(nB)(nZ)+\frac{1}{n}(nC)=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+(nZ)^{3}+(nA)(nZ)^{2}+n(nB)(nZ)+n^{2}(nC)=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+3(nZ)^{2}\bar{Z}_{k}+\bar{A}_{k}(nZ)^{2}+2(nA)(nZ)\bar{Z}_{k}+(nB)(nZ)+n\bar{B}_{k}(nZ)+n(nB)\bar{Z}_{k}+2n(nC)+n^{2}\bar{C}_{k}=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+3Z^{2}\bar{Z}_{k}+\bar{A}_{k}Z^{2}+2AZ\bar{Z}_{k}+BZ+\bar{B}_{k}Z+B\bar{Z}_{k}+2C+\bar{C}_{k}=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\left(3Z^{2}+2AZ+B\right)\bar{Z}_{k}+\bar{A}_{k}Z^{2}+BZ+\bar{B}_{k}Z+2C+\bar{C}_{k}=0
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\boxed{\bar{Z}_{k}=-\frac{\bar{A}_{k}Z^{2}+BZ+\bar{B}_{k}Z+2C+\bar{C}_{k}}{3Z^{2}+2AZ+B}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+When there is only one substance, if follows that 
+\begin_inset Formula $\bar{Z}_{k}\equiv Z$
+\end_inset
+
+, as shown below:
+\begin_inset Formula 
+\begin{align*}
+\bar{Z}_{k} & =-\frac{AZ^{2}+2BZ+3C}{3Z^{2}+2AZ+B}\qquad(3C=-3Z^{3}-3AZ^{2}-3BZ)\\
+ & =-\frac{AZ^{2}+2BZ-3Z^{3}-3AZ^{2}-3BZ}{3Z^{2}+2AZ+B}\\
+ & =\frac{3Z^{3}+2AZ^{2}+BZ}{3Z^{2}+2AZ+B}\\
+ & =Z\vphantom{\frac{1}{1}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title={Derivation of the partial molar derivatives 
+\begin_inset Formula $\bar{A}_{k}$
+\end_inset
+
+, 
+\begin_inset Formula $\bar{B}_{k}$
+\end_inset
+
+, and 
+\begin_inset Formula $\bar{C}_{k}$
+\end_inset
+
+}.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+A & \equiv(\epsilon+\sigma-1)\beta-1\\
+B & \equiv(\epsilon\sigma-\epsilon-\sigma)\beta^{2}-(\epsilon+\sigma-q)\beta\\
+C & \equiv-\epsilon\sigma\beta^{3}-(\epsilon\sigma+q)\beta^{2}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\bar{A}_{k} & \equiv\frac{\partial(nA)}{\partial n_{k}}\\
+ & =\frac{\partial}{\partial n_{k}}\left[(\epsilon+\sigma-1)n\beta-n\right]\\
+ & =(\epsilon+\sigma-1)\bar{\beta}_{k}-1\vphantom{\frac{1}{1}}\\
+\\
+\bar{B}_{k} & \equiv\frac{\partial(nB)}{\partial n_{k}}\\
+ & =\frac{\partial}{\partial n_{k}}\left[\frac{1}{n}(\epsilon\sigma-\epsilon-\sigma)(n\beta)^{2}-\left(\epsilon+\sigma-\frac{nq}{n}\right)(n\beta)\right]\\
+ & =-\frac{1}{n^{2}}(\epsilon\sigma-\epsilon-\sigma)(n\beta)^{2}+\frac{2}{n}(\epsilon\sigma-\epsilon-\sigma)(n\beta)\bar{\beta}_{k}-\left(-\frac{\bar{q}_{k}}{n}+\frac{nq}{n^{2}}\right)(n\beta)-\left(\epsilon+\sigma-\frac{nq}{n}\right)\bar{\beta}_{k}\\
+ & =-(\epsilon\sigma-\epsilon-\sigma)\beta^{2}+2(\epsilon\sigma-\epsilon-\sigma)\beta\bar{\beta}_{k}-(q-\bar{q}_{k})\beta-(\epsilon+\sigma-q)\bar{\beta}_{k}\\
+ & =(\epsilon\sigma-\epsilon-\sigma)(2\bar{\beta}_{k}-\beta)\beta-(q-\bar{q}_{k})\beta-(\epsilon+\sigma-q)\bar{\beta}_{k}\\
+ & =\left[(\epsilon\sigma-\epsilon-\sigma)(2\bar{\beta}_{k}-\beta)+\bar{q}_{k}-q\right]\beta-(\epsilon+\sigma-q)\bar{\beta}_{k}\\
+\\
+\bar{C}_{k} & \equiv\frac{\partial(nC)}{\partial n_{k}}\\
+ & =\frac{\partial}{\partial n_{k}}\left[-\frac{1}{n^{2}}\epsilon\sigma(n\beta)^{3}-\frac{1}{n}\left(\epsilon\sigma+\frac{nq}{n}\right)(n\beta)^{2}\right]\\
+ & =\frac{2}{n^{3}}\epsilon\sigma(n\beta)^{3}-\frac{3}{n^{2}}\epsilon\sigma(n\beta)^{2}\bar{\beta}_{k}+\frac{1}{n^{2}}\left(\epsilon\sigma+\frac{nq}{n}\right)(n\beta)^{2}-\frac{1}{n}\left(\frac{\bar{q}_{k}}{n}-\frac{nq}{n^{2}}\right)(n\beta)^{2}-\frac{2}{n}\left(\epsilon\sigma+\frac{nq}{n}\right)(n\beta)\beta_{k}\\
+ & =2\epsilon\sigma\beta^{3}-3\epsilon\sigma\beta^{2}\bar{\beta}_{k}+(\epsilon\sigma+q)\beta^{2}-(\bar{q}_{k}-q)\beta^{2}-2(\epsilon\sigma+q)\beta\beta_{k}\\
+ & =(2\epsilon\sigma\beta+\epsilon\sigma+2q-\bar{q}_{k})\beta^{2}-[2(\epsilon\sigma+q)+3\epsilon\sigma\beta]\beta\beta_{k}\\
+ & =[\epsilon\sigma(2\beta+1)+2q-\bar{q}_{k}]\beta^{2}-[2(\epsilon\sigma+q)+3\epsilon\sigma\beta]\beta\beta_{k}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Color Box
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+title=Derivation of the partial molar derivatives 
+\begin_inset Formula $\bar{I}_{k}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+Case I: 
+\begin_inset Formula $\epsilon\neq\sigma$
+\end_inset
+
+
+\emph default
+
+\begin_inset Formula 
+\[
+I=\frac{1}{\sigma-\epsilon}\ln\left(\frac{Z+\sigma\beta}{Z+\epsilon\beta}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+nI=\frac{n}{\sigma-\epsilon}\ln\left(\frac{nZ+\sigma n\beta}{nZ+\epsilon n\beta}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\bar{I}_{k}\equiv\frac{\partial(nI)}{\partial n_{k}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\bar{I}_{k} & \equiv\left[\frac{\partial(nI)}{\partial n_{k}}\right]_{T,P,n_{i}}\\
+ & =\frac{1}{\sigma-\epsilon}\ln\left(\frac{Z+\sigma\beta}{Z+\epsilon\beta}\right)+\frac{n}{\sigma-\epsilon}\frac{Z+\epsilon\beta}{Z+\sigma\beta}\left[\frac{(\bar{Z}_{k}+\sigma\bar{\beta}_{k})(nZ+\epsilon n\beta)-(nZ+\sigma n\beta)(\bar{Z}_{k}+\epsilon\bar{\beta}_{k})}{(nZ+\epsilon n\beta)^{2}}\right]\\
+ & =I+\frac{n}{\sigma-\epsilon}\frac{1}{Z+\sigma\beta}\left[\frac{(\bar{Z}_{k}+\sigma\bar{\beta}_{k})(Z+\epsilon\beta)}{n(Z+\epsilon\beta)}-\frac{(Z+\sigma\beta)(\bar{Z}_{k}+\epsilon\bar{\beta}_{k})}{n(Z+\epsilon\beta)}\right]\\
+ & =I+\frac{1}{\sigma-\epsilon}\left[\frac{\bar{Z}_{k}+\sigma\bar{\beta}_{k}}{Z+\sigma\beta}-\frac{\bar{Z}_{k}+\epsilon\bar{\beta}_{k}}{Z+\epsilon\beta}\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+Case II: 
+\begin_inset Formula $\epsilon=\sigma$
+\end_inset
+
+
+\emph default
+
+\begin_inset Formula 
+\[
+I=\frac{\beta}{Z+\epsilon\beta}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+nI=n\frac{n\beta}{nZ+\epsilon n\beta}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\bar{I}_{k}\equiv\frac{\partial(nI)}{\partial n_{k}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\bar{I}_{k} & =\frac{n\beta}{nZ+\epsilon n\beta}+n\frac{\bar{\beta}_{k}}{nZ+\epsilon n\beta}-n\frac{n\beta}{(nZ+\epsilon n\beta)^{2}}(\bar{Z}_{k}+\epsilon\bar{\beta}_{k})\\
+ & =\frac{\beta}{Z+\epsilon\beta}+\frac{\bar{\beta}_{k}}{Z+\epsilon\beta}-\frac{\beta}{Z+\epsilon\beta}\frac{\bar{Z}_{k}+\epsilon\bar{\beta}_{k}}{Z+\epsilon\beta}\\
+ & =\left(1+\frac{\bar{\beta}_{k}}{\beta}-\frac{\bar{Z}_{k}+\epsilon\bar{\beta}_{k}}{Z+\epsilon\beta}\right)I
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset line
+LatexCommand rule
+offset "0.5ex"
+width "100col%"
+height "1pt"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+P=\frac{ZRT}{V}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\left(\frac{\partial P}{\partial T}\right)_{V}=\left(\frac{\partial Z}{\partial T}\right)_{V}\frac{RT}{V}+\frac{ZR}{V}=\left(\frac{\partial Z}{\partial T}\right)_{V}\frac{P}{Z}+\frac{P}{T}=P\left[\frac{1}{Z}\left(\frac{\partial Z}{\partial T}\right)_{V}+\frac{1}{T}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+V=\frac{ZRT}{P}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\left(\frac{\partial V}{\partial T}\right)_{P}=\left(\frac{\partial Z}{\partial T}\right)_{P}\frac{RT}{P}+\frac{ZR}{P}=\left(\frac{\partial Z}{\partial T}\right)_{P}\frac{V}{Z}+\frac{V}{T}=V\left[\frac{1}{Z}\left(\frac{\partial Z}{\partial T}\right)_{P}+\frac{1}{T}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+C_{V}=\left(\frac{\partial U}{\partial T}\right)_{V}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+U=H-PV
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+C_{V}=\left(\frac{\partial H}{\partial T}\right)_{V}-V\left(\frac{\partial P}{\partial T}\right)_{V}
+\]
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+dH=\left(\frac{\partial H}{\partial T}\right)_{V}dT+\left(\frac{\partial H}{\partial V}\right)_{T}dV
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+dV=\left(\frac{\partial V}{\partial T}\right)_{P}dT+\left(\frac{\partial V}{\partial P}\right)_{T}dP
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+dH=\left(\frac{\partial H}{\partial T}\right)_{V}dT+\left(\frac{\partial H}{\partial V}\right)_{T}\left[\left(\frac{\partial V}{\partial T}\right)_{P}dT+\left(\frac{\partial V}{\partial P}\right)_{T}dP\right]
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+dH=\left[\left(\frac{\partial H}{\partial T}\right)_{V}+\left(\frac{\partial H}{\partial V}\right)_{T}\left(\frac{\partial V}{\partial T}\right)_{P}\right]dT+\left(\frac{\partial H}{\partial V}\right)_{T}\left(\frac{\partial V}{\partial P}\right)_{T}dP
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\left(\frac{\partial H}{\partial T}\right)_{P} & \equiv\left(\frac{\partial H}{\partial T}\right)_{V}+\left(\frac{\partial H}{\partial V}\right)_{T}\left(\frac{\partial V}{\partial T}\right)_{P}\\
+\left(\frac{\partial H}{\partial P}\right)_{T} & \equiv\left(\frac{\partial H}{\partial V}\right)_{T}\left(\frac{\partial V}{\partial P}\right)_{T}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+C_{V}=\left(\frac{\partial H}{\partial T}\right)_{P}-\left(\frac{\partial H}{\partial V}\right)_{T}\left(\frac{\partial V}{\partial T}\right)_{P}-V\left(\frac{\partial P}{\partial T}\right)_{V}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+C_{V}=C_{P}-\left(\frac{\partial H}{\partial V}\right)_{T}\left(\frac{\partial V}{\partial T}\right)_{P}-V\left(\frac{\partial P}{\partial T}\right)_{V}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+C_{V}=C_{P}-V\left(\frac{\partial P}{\partial T}\right)_{V}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+dU=\left(\frac{\partial U}{\partial T}\right)_{V}dT+\left(\frac{\partial U}{\partial V}\right)_{T}dV
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+dV=\left(\frac{\partial V}{\partial T}\right)_{P}dT+\left(\frac{\partial V}{\partial P}\right)_{T}dP
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+dU=\left[\left(\frac{\partial U}{\partial T}\right)_{V}+\left(\frac{\partial U}{\partial V}\right)_{T}\left(\frac{\partial V}{\partial T}\right)_{P}\right]dT+\left(\frac{\partial U}{\partial V}\right)_{T}\left(\frac{\partial V}{\partial P}\right)_{T}dP
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\left(\frac{\partial U}{\partial T}\right)_{P}=\left(\frac{\partial U}{\partial T}\right)_{V}+\left(\frac{\partial U}{\partial V}\right)_{T}\left(\frac{\partial V}{\partial T}\right)_{P}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\left(\frac{\partial U}{\partial V}\right)_{T}=\left(\frac{\partial U}{\partial P}\right)_{T}\left(\frac{\partial P}{\partial V}\right)_{T}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\left(\frac{\partial U}{\partial T}\right)_{P}=\left(\frac{\partial U}{\partial T}\right)_{V}+\left(\frac{\partial U}{\partial P}\right)_{T}\left(\frac{\partial P}{\partial V}\right)_{T}\left(\frac{\partial V}{\partial T}\right)_{P}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\boxed{C_{V}=\left(\frac{\partial U}{\partial T}\right)_{P}-\left(\frac{\partial U}{\partial P}\right)_{T}\left(\frac{\partial P}{\partial V}\right)_{T}\left(\frac{\partial V}{\partial T}\right)_{P}}
+\]
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+V=\frac{ZRT}{P}\implies\left(\frac{\partial V}{\partial T}\right)_{P}=\left(\frac{\partial Z}{\partial T}\right)_{P}\frac{RT}{P}+\frac{ZR}{P}=\left(\frac{\partial Z}{\partial T}\right)_{P}\frac{V}{Z}+\frac{V}{T}=V\left[\left(\frac{\partial Z}{\partial T}\right)_{P}\frac{1}{Z}+\frac{1}{T}\right]
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+P=\frac{ZRT}{V}\implies\left(\frac{\partial P}{\partial V}\right)_{T}=\left(\frac{\partial Z}{\partial V}\right)_{T}\frac{RT}{P}-\frac{ZRT}{V^{2}}=\left(\frac{\partial Z}{\partial V}\right)_{T}\frac{V}{Z}-\frac{P}{V}
+\]
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathrm{d}V=\left(\frac{\partial V}{\partial T}\right)_{P}\mathrm{d}T+\left(\frac{\partial V}{\partial P}\right)_{T}\mathrm{d}P
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+V=\frac{ZRT}{P}\implies\left(\frac{\partial V}{\partial T}\right)_{P}=\left(\frac{\partial Z}{\partial T}\right)_{P}\frac{RT}{P}+\frac{ZR}{P}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\boxed{\frac{1}{V}\left(\frac{\partial V}{\partial T}\right)_{P}=\left(\frac{\partial Z}{\partial T}\right)_{P}\frac{RT}{PV}+\frac{ZR}{PV}=\frac{1}{Z}\left(\frac{\partial Z}{\partial T}\right)_{P}+\frac{1}{T}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+V=\frac{ZRT}{P}\implies\left(\frac{\partial V}{\partial P}\right)_{T}=\left(\frac{\partial Z}{\partial P}\right)_{T}\frac{RT}{P}-\frac{ZRT}{P^{2}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\boxed{\frac{1}{V}\left(\frac{\partial V}{\partial P}\right)_{T}=\left(\frac{\partial Z}{\partial P}\right)_{T}\frac{RT}{PV}-\frac{ZRT}{PV}\frac{1}{P}=\frac{1}{Z}\left(\frac{\partial Z}{\partial P}\right)_{T}-\frac{1}{P}}
+\]
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\boxed{\frac{1}{V}\left(\frac{\partial V}{\partial T}\right)_{P}=\frac{1}{Z}\left(\frac{\partial Z}{\partial T}\right)_{P}+\frac{1}{T}}
+\]
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\mathrm{d}V=\left(\frac{\partial V}{\partial T}\right)_{P}\mathrm{d}T+\left(\frac{\partial V}{\partial P}\right)_{T}\mathrm{d}P
+\]
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+I=\frac{1}{\sigma-\epsilon}\ln\left(\frac{Z+\sigma\beta}{Z+\epsilon\beta}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+I_{T}\equiv\left(\frac{\partial I}{\partial T}\right)_{P}=\left(\frac{Z+\sigma\beta}{Z+\epsilon\beta}\right)^{-1}\frac{1}{\sigma-\epsilon}\left(\frac{(Z_{T}+\sigma\beta_{T})(Z+\epsilon\beta)-(Z+\sigma\beta)(Z_{T}+\epsilon\beta_{T})}{(Z+\epsilon\beta)^{2}}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+I_{T}\equiv\left(\frac{\partial I}{\partial T}\right)_{P}=\frac{1}{\sigma-\epsilon}\left(\frac{Z_{T}+\sigma\beta_{T}}{Z+\sigma\beta}-\frac{Z_{T}+\epsilon\beta_{T}}{Z+\epsilon\beta}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+I_{P}\equiv\left(\frac{\partial I}{\partial P}\right)_{T}=\frac{1}{\sigma-\epsilon}\left(\frac{Z_{P}+\sigma\beta_{P}}{Z+\sigma\beta}-\frac{Z_{P}+\epsilon\beta_{P}}{Z+\epsilon\beta}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+I=\frac{\beta}{Z+\epsilon\beta}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+I_{T}\equiv\left(\frac{\partial I}{\partial T}\right)_{P}=\frac{\beta_{T}}{Z+\epsilon\beta}-\beta\frac{Z_{T}+\epsilon\beta_{T}}{(Z+\epsilon\beta)^{2}}=I\frac{\beta_{T}}{\beta}-I\frac{Z_{T}+\epsilon\beta_{T}}{Z+\epsilon\beta}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+I_{T}\equiv\left(\frac{\partial I}{\partial T}\right)_{P}=I\left(\frac{\beta_{T}}{\beta}-\frac{Z_{T}+\epsilon\beta_{T}}{Z+\epsilon\beta}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+I_{P}\equiv\left(\frac{\partial I}{\partial P}\right)_{T}=I\left(\frac{\beta_{P}}{\beta}-\frac{Z_{P}+\epsilon\beta_{P}}{Z+\epsilon\beta}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+na=n\sum_{i}\sum_{j}x_{i}x_{j}a_{ij}
+\]
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\bar{a}_{k}=\left[\frac{\partial(na)}{\partial n_{k}}\right]_{T.n_{\neq k}}=\sum_{i}\sum_{j}x_{i}x_{j}a_{ij}+n\sum_{i}\sum_{j}\frac{\partial x_{i}}{\partial n_{k}}x_{j}a_{ij}+n\sum_{i}\sum_{j}x_{i}\frac{\partial x_{j}}{\partial n_{k}}a_{ij}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\bar{a}_{k}=a+n\sum_{i}\sum_{j}\frac{\partial x_{i}}{\partial n_{k}}x_{j}a_{ij}+n\sum_{i}\sum_{j}x_{i}\frac{\partial x_{j}}{\partial n_{k}}a_{ij}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial x_{i}}{\partial n_{k}}=\frac{\partial(n_{i}/n)}{\partial n_{k}}=\frac{\delta_{ik}n-n_{i}}{n^{2}}=\frac{\delta_{ik}-x_{i}}{n}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\bar{a}_{k}=a+n\sum_{i}\sum_{j}\frac{\delta_{ik}-x_{i}}{n}x_{j}a_{ij}+n\sum_{i}\sum_{j}x_{i}\frac{\delta_{jk}-x_{j}}{n}a_{ij}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\bar{a}_{k}=a+\sum_{i}\sum_{j}(\delta_{ik}-x_{i})x_{j}a_{ij}+\sum_{i}\sum_{j}x_{i}(\delta_{jk}-x_{j})a_{ij}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\bar{a}_{k}=a+\sum_{i}\sum_{j}\delta_{ik}x_{j}a_{ij}-\sum_{i}\sum_{j}x_{i}x_{j}a_{ij}+\sum_{i}\sum_{j}\delta_{jk}x_{i}a_{ij}-\sum_{i}\sum_{j}x_{i}x_{j}a_{ij}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\bar{a}_{k}=\sum_{j}x_{j}a_{kj}+\sum_{i}x_{i}a_{ik}-a
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\bar{a}_{k}=\sum_{i}x_{i}a_{ki}+\sum_{i}x_{i}a_{ik}-a
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\bar{a}_{k}=\sum_{i}x_{i}(a_{ki}+a_{ik})-a
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\boxed{\bar{a}_{i}=\sum_{j}2x_{j}a_{ij}-a}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

@@ -27,97 +27,110 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Real.hpp>
-#include <Reaktoro/Common/TableUtils.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 
 namespace Reaktoro {
 
-/// Defines a cubic equation of state and calculates thermodynamic properties of a fluid phase.
+/// The properties calculated by evaluating a cubic equation of state.
+struct CubicEOSProps
+{
+    /// The molar volume *V* of the phase (in m3/mol).
+    real V = {};
+
+    /// The temperature derivative of *V* at constant pressure (in m3/(mol*K)).
+    real VT = {};
+
+    /// The pressure derivative of *V* at constant temperature (in m3/(mol*Pa)).
+    real VP = {};
+
+    /// The residual molar Gibbs energy of the phase (in J/mol).
+    real Gres = {};
+
+    /// The residual molar enthalpy of the phase (in J/mol).
+    real Hres = {};
+
+    /// The residual molar heat capacity at constant pressure of the phase (in J/(mol*K)).
+    real Cpres = {};
+
+    /// The ln fugacity coefficients of the species in the phase.
+    ArrayXr ln_phi;
+};
+
+/// The options for the cubic equation of state models.
+enum class CubicEOSModel
+{
+    VanDerWaals,
+    RedlichKwong,
+    SoaveRedlichKwong,
+    PengRobinson
+};
+
+/// The interaction parameters for the cubic equation of state.
+struct CubicEOSInteractionParams
+{
+    MatrixXr k;
+
+    MatrixXr kT;
+
+    MatrixXr kTT;
+};
+
+/// The arguments needed in the function that evaluates interaction parameters for the cubic equation of state.
+struct CubicEOSInteractionParamsArgs
+{
+    const real& T;
+
+    ArrayXrConstRef a;
+
+    ArrayXrConstRef aT;
+
+    ArrayXrConstRef aTT;
+
+    ArrayXrConstRef b;
+};
+
+/// The function that evaluates interaction parameters for the cubic equation of state model.
+using CubicEOSInteractionParamsFn = std::function<CubicEOSInteractionParams(const CubicEOSInteractionParamsArgs&)>;
+
+/// Calculates thermodynamic properties of fluid phases based on a cubic equation of state model.
 class CubicEOS
 {
 public:
-    /// Defines the enumeration of available cubic EOS models.
-    enum Model
+    /// The arguments needed to construct a CubicEOS object.
+    struct Args
     {
-        VanDerWaals, RedlichKwong, SoaveRedlichKwong, PengRobinson,
-    };
+        /// The number of species in the fluid phase.
+        const unsigned nspecies = {};
 
-    /// Parameters to be passed to the Cubic Equation of State
-    struct Params
-    {
-        Model model = PengRobinson;
+        /// The critical temperatures of the substances (in K).
+        ArrayXrConstRef Tcr;
 
-        /// If both Gaseous and Liquid phases are in the system, it is recommended to configure a
-        /// robust phase identification method such as GibbsEnergyAndEquationOfStateMethod for BOTH
-        /// phases.
+        /// The critical pressures of the substances (in Pa).
+        ArrayXrConstRef Pcr;
+
+        /// The acentric factor of the substances.
+        ArrayXrConstRef omega;
+
+        /// The fluid type for which the equation of state should be confifured.
+        CubicEOSFluidType fluidtype = CubicEOSFluidType::Vapor;
+
+        /// The cubic equation of state model to be used.
+        CubicEOSModel model = CubicEOSModel::PengRobinson;
+
+        /// The function that calculates interaction parameters @eq{k_{ij}} in @eq{a_{ij}=(1-k_{ij})(a_{i}a_{j})^{1/2}}.
+        CubicEOSInteractionParamsFn interaction_params_fn;
+
+        /// The method to identify whether liquid or vapor phases is stable.
+        /// If both vapor and liquid phases are considered in the system, it is
+        /// recommended to configure a robust phase identification method such as
+        /// GibbsEnergyAndEquationOfStateMethod for BOTH phases.
         PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
-    };
-
-    struct InteractionParamsResult
-    {
-        Table2D<real> k;
-
-        Table2D<real> kT;
-
-        Table2D<real> kTT;
-    };
-
-    struct InteractionParamsArgs
-    {
-        const real& T;
-
-        const VectorXr& a;
-
-        const VectorXr& aT;
-
-        const VectorXr& aTT;
-
-        VectorXrConstRef b;
-    };
-
-    using InteractionParamsFunction =
-        std::function<InteractionParamsResult(const InteractionParamsArgs&)>;
-
-    struct Result
-    {
-        /// Construct a default Result instance
-        Result();
-
-        /// Construct a Result instance with zero entries
-        /// @param nspecies The number of species
-        explicit Result(unsigned nspecies);
-
-        /// The molar volume of the phase (in units of m3/mol).
-        real molar_volume;
-
-        /// The residual molar Gibbs energy of the phase (in units of J/mol).
-        real residual_molar_gibbs_energy;
-
-        /// The residual molar enthalpy of the phase (in units of J/mol).
-        real residual_molar_enthalpy;
-
-        /// The residual molar heat capacity at constant pressure of the phase (in units of J/(mol*K)).
-        real residual_molar_heat_capacity_cp;
-
-        /// The residual molar heat capacity at constant volume of the phase (in units of J/(mol*K)).
-        real residual_molar_heat_capacity_cv;
-
-        /// The partial molar volumes of the species in the phase (in units of m3/mol).
-        VectorXd partial_molar_volumes;
-
-        /// The residual partial molar Gibbs energies of the species in the phase (in units of J/mol).
-        VectorXd residual_partial_molar_gibbs_energies;
-
-        /// The residual partial molar enthalpies of the species in the phase (in units of J/mol).
-        VectorXd residual_partial_molar_enthalpies;
-
-        /// The fugacity coefficients of the species in the phase.
-        VectorXd ln_fugacity_coefficients;
     };
 
     /// Construct a CubicEOS instance with given number of species.
     /// @param nspecies The number of species in the phase.
-    explicit CubicEOS(unsigned nspecies, Params params);
+    explicit CubicEOS(const Args& args);
 
     /// Construct a copy of a CubicEOS instance
     CubicEOS(const CubicEOS& other);
@@ -131,34 +144,25 @@ public:
     /// Return the number of species in the phase.
     auto numSpecies() const -> unsigned;
 
-    /// Set the type of the cubic equation of state (default: PengRobinson).
-    /// @see Model
-    auto setModel(Model model) -> void;
+    /// Set the cubic equation of state model.
+    auto setModel(CubicEOSModel model) -> void;
 
-    /// Set the equation of state to compute properties for a liquid phase.
-    auto setPhaseAsLiquid() -> void;
+    /// Set the fluid type, liquid or vapor, for which the equation of state should be confifured.
+    auto setFluidType(CubicEOSFluidType fluidtype) -> void;
 
-    /// Set the equation of state to compute properties for a vapor phase.
-    auto setPhaseAsVapor() -> void;
+    /// Set the function that calculates interaction parameters @eq{k_{ij}} in @eq{a_{ij}=(1-k_{ij})(a_{i}a_{j})^{1/2}}.
+    /// @see CubicEOSInteractionParamsFn, CubicEOSInteractionParams
+    auto setInteractionParamsFunction(const CubicEOSInteractionParamsFn& func) -> void;
 
-    /// Set the critical temperatures of the species (in units of K).
-    auto setCriticalTemperatures(const std::vector<double>& values) -> void;
+    /// Set the method to identify whether liquid or vapor phases is stable.
+    auto setStablePhaseIdentificationMethod(const PhaseIdentificationMethod& method) -> void;
 
-    /// Set the critical pressures of the species (in units of Pa).
-    auto setCriticalPressures(const std::vector<double>& values) -> void;
-
-    /// Set the acentric factors of the species.
-    auto setAcentricFactors(const std::vector<double>& values) -> void;
-
-    /// Set the function that calculates the interaction parameters kij and its temperature derivatives.
-    /// @see InteractionParamFunction, InteractionParamArgs, InteractionParamResult
-    auto setInteractionParamsFunction(const InteractionParamsFunction& func) -> void;
-
-    /// Calculate the thermodynamic properties of the phase.
-    /// @param T The temperature of the phase (in units of K)
-    /// @param P The pressure of the phase (in units of Pa)
-    /// @param x The mole fractions of the species in the phase (in units of mol/mol)
-    auto operator()(const real& T, const real& P, const VectorXd& x) -> Result;
+    /// Compute the thermodynamic properties of the phase.
+    /// @param[in] props The evaluated thermodynamic properties of the phase.
+    /// @param T The temperature of the phase (in K)
+    /// @param P The pressure of the phase (in Pa)
+    /// @param x The mole fractions of the species in the phase (in mol/mol)
+    auto compute(CubicEOSProps& props, real T, real P, ArrayXrConstRef x) -> void;
 
 private:
     struct Impl;
