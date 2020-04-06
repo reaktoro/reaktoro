@@ -28,6 +28,7 @@ namespace Reaktoro {
 
 // Forward declarations (class)
 class Element;
+class SubstanceCriticalProps;
 
 // Forward declarations (enum)
 enum class AggregateState;
@@ -49,32 +50,41 @@ public:
     /// @param formula The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
     Species(std::string formula);
 
-    /// Return a duplicate of this Species object with replaced name attribute.
+    /// Return a duplicate of this Species object with new symbol that uniquely identifies this species.
+    auto withSymbol(std::string symbol) -> Species;
+
+    /// Return a duplicate of this Species object with new substance name attribute (case insensitive).
     auto withName(std::string name) -> Species;
 
-    /// Return a duplicate of this Species object with replaced formula attribute.
+    /// Return a duplicate of this Species object with new formula attribute.
     auto withFormula(std::string formula) -> Species;
 
-    /// Return a duplicate of this Species object with replaced Element objects and respective coefficients.
+    /// Return a duplicate of this Species object with new Element objects and respective coefficients.
     auto withElements(Elements elements) -> Species;
 
-    /// Return a duplicate of this Species object with replaced Element objects and respective coefficients.
+    /// Return a duplicate of this Species object with new Element objects and respective coefficients.
     /// @note The Element objects in the Species instance will be collected from PeriodicTable.
     auto withElementSymbols(ElementSymbols symbols) -> Species;
 
-    /// Return a duplicate of this Species object with replaced electric charge attribute.
+    /// Return a duplicate of this Species object with new electric charge attribute.
     auto withCharge(double charge) -> Species;
 
-    /// Return a duplicate of this Species object with replaced aggregate state.
+    /// Return a duplicate of this Species object with new aggregate state.
     auto withAggregateState(AggregateState option) -> Species;
 
-    /// Return a duplicate of this Species object with replaced tags attribute.
+    /// Return a duplicate of this Species object with new tags attribute.
     auto withTags(std::vector<std::string> tags) -> Species;
 
-    /// Return a duplicate of this Species object with attached data whose type is known at runtime only.
+    /// Return a duplicate of this Species object with new critical properties.
+    auto withCriticalProps(const SubstanceCriticalProps& props) -> Species;
+
+    /// Return a duplicate of this Species object with new attached data whose type is known at runtime only.
     auto withAttachedData(std::any data) -> Species;
 
-    /// Return the name of the species if provided, otherwise, its formula.
+    /// Return the symbol that uniquely identifies this species if provided, otherwise, its formula.
+    auto symbol() const -> std::string;
+
+    /// Return the name of the underlying substance of the species if provided, otherwise, its formula.
     auto name() const -> std::string;
 
     /// Return the chemical formula of the species.
@@ -97,6 +107,9 @@ public:
 
     /// Return the tags of the species (e.g., `organic`, `mineral`).
     auto tags() const -> const std::vector<std::string>&;
+
+    /// Return the critical properties of the underlying substance of the species if available.
+    auto criticalProps() const -> std::optional<SubstanceCriticalProps>;
 
     /// Return the attached data of the species whose type is known at runtime only.
     auto attachedData() const -> const std::any&;
