@@ -82,11 +82,11 @@ public:
 
     auto set(const ChemicalState& state) -> void;
 
-    auto temperature(VectorXrRef values) -> void;
+    auto temperature(VectorXdRef values) -> void;
 
-    auto pressure(VectorXrRef values) -> void;
+    auto pressure(VectorXdRef values) -> void;
 
-    auto elementAmounts(VectorXrRef values) -> void;
+    auto elementAmounts(VectorXdRef values) -> void;
 
     auto output(std::string filename, StringList quantities) -> void;
 
@@ -94,9 +94,9 @@ private:
     /// The number of degrees of freedom in the chemical field.
     Index m_size;
 
-//    VectorXr temperatures;
+//    VectorXd temperatures;
 //
-//    VectorXr pressures;
+//    VectorXd pressures;
 //
 //    /// The matrix of amounts for every element (
 //    Matrix element_amounts;
@@ -124,25 +124,25 @@ public:
 
     auto size() const -> Index { return m_size; }
 
-    auto data() -> VectorXrRef { return m_data; }
+    auto data() -> VectorXdRef { return m_data; }
 
-    auto data() const -> VectorXrConstRef { return m_data; }
+    auto data() const -> VectorXdConstRef { return m_data; }
 
-    auto row(Index index) -> VectorXrRef { return m_data.segment(3 * index, 3); }
+    auto row(Index index) -> VectorXdRef { return m_data.segment(3 * index, 3); }
 
-    auto row(Index index) const -> VectorXrConstRef { return m_data.segment(3 * index, 3); }
+    auto row(Index index) const -> VectorXdConstRef { return m_data.segment(3 * index, 3); }
 
-    auto a() -> VectorStridedRef { return VectorXr::Map(m_data.data() + 3, size() - 1, Eigen::InnerStride<3>()); }
+    auto a() -> VectorXdStridedRef { return VectorXd::Map(m_data.data() + 3, size() - 1, Eigen::InnerStride<3>()); }
 
-    auto a() const -> VectorXrConstRef { return VectorXr::Map(m_data.data() + 3, size() - 1, Eigen::InnerStride<3>()); }
+    auto a() const -> VectorXdConstRef { return VectorXd::Map(m_data.data() + 3, size() - 1, Eigen::InnerStride<3>()); }
 
-    auto b() -> VectorStridedRef { return VectorXr::Map(m_data.data() + 1, size(), Eigen::InnerStride<3>()); }
+    auto b() -> VectorXdStridedRef { return VectorXd::Map(m_data.data() + 1, size(), Eigen::InnerStride<3>()); }
 
-    auto b() const -> VectorXrConstRef { return VectorXr::Map(m_data.data() + 1, size(), Eigen::InnerStride<3>()); }
+    auto b() const -> VectorXdConstRef { return VectorXd::Map(m_data.data() + 1, size(), Eigen::InnerStride<3>()); }
 
-    auto c() -> VectorStridedRef { return VectorXr::Map(m_data.data() + 2, size() - 1, Eigen::InnerStride<3>()); }
+    auto c() -> VectorXdStridedRef { return VectorXd::Map(m_data.data() + 2, size() - 1, Eigen::InnerStride<3>()); }
 
-    auto c() const -> VectorXrConstRef { return VectorXr::Map(m_data.data() + 2, size() - 1, Eigen::InnerStride<3>()); }
+    auto c() const -> VectorXdConstRef { return VectorXd::Map(m_data.data() + 2, size() - 1, Eigen::InnerStride<3>()); }
 
     auto resize(Index size) -> void;
 
@@ -150,11 +150,11 @@ public:
     auto factorize() -> void;
 
     /// Solve a linear system Ax = b with LU decomposition.
-    auto solve(VectorXrRef x, VectorXrConstRef b) const -> void;
+    auto solve(VectorXdRef x, VectorXdConstRef b) const -> void;
 
     /// Solve a linear system Ax = b with LU decomposition, using x as the unknown and it's.
     /// old values as the vector b.
-    auto solve(VectorXrRef x) const -> void;
+    auto solve(VectorXdRef x) const -> void;
 
     operator MatrixXd() const;
 
@@ -163,7 +163,7 @@ private:
     Index m_size;
 
     /// The coefficients
-    VectorXr m_data;
+    VectorXd m_data;
 };
 
 /// A class that defines the mesh for TransportSolver.
@@ -184,7 +184,7 @@ public:
 
     auto dx() const -> double { return m_dx; }
 
-    auto xcells() const -> VectorXrConstRef { return m_xcells; }
+    auto xcells() const -> VectorXdConstRef { return m_xcells; }
 
 private:
     /// The number of cells in the discretization.
@@ -200,7 +200,7 @@ private:
     double m_dx = 0.1;
 
     /// The x-coordinate of the center of the cells.
-    VectorXr m_xcells;
+    VectorXd m_xcells;
 };
 
 /// A class for solving advection-diffusion problem.
@@ -245,11 +245,11 @@ public:
     /// passed to diffusion problem as a "source".
     /// @param[in,out] u The solution vector
     /// @param q The source rates vector ([same unit considered for u]/m)
-    auto step(VectorXrRef u, VectorXrConstRef q) -> void;
+    auto step(VectorXdRef u, VectorXdConstRef q) -> void;
 
     /// Step the transport solver.
     /// @param[in,out] u The solution vector
-    auto step(VectorXrRef u) -> void;
+    auto step(VectorXdRef u) -> void;
 
 private:
     /// The mesh describing the discretization of the domain.
@@ -271,10 +271,10 @@ private:
     TridiagonalMatrix A;
 
     /// The flux limiters at each cell.
-    VectorXr phi;
+    VectorXd phi;
 
     /// The previous state of the variables.
-    VectorXr u0;
+    VectorXd u0;
 };
 
 /// Use this class for solving reactive transport problems.
@@ -316,7 +316,7 @@ private:
     std::vector<ChemicalOutput> outputs;
 
     /// The amounts of fluid elements on the boundary.
-    VectorXr bbc;
+    VectorXd bbc;
 
     /// The amounts of a fluid element on each cell of the mesh.
     MatrixXd bf;
