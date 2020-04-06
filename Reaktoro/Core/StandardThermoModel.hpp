@@ -32,28 +32,28 @@ class Species;
 struct StandardThermoProps
 {
     /// The standard molar Gibbs energy @f$G^{\circ}@f$ of the species (in unit of J/mol)
-    real G0;
+    real G0 = {};
 
     /// The standard molar Helmholtz energy @f$A^{\circ}@f$ of the species (in unit of J/mol)
-    real A0;
+    real A0 = {};
 
     /// The standard molar internal energy @f$U^{\circ}@f$ of the species (in unit of J/mol)
-    real U0;
+    real U0 = {};
 
     /// The standard molar enthalpy @f$H^{\circ}@f$ of the species (in unit of J/mol)
-    real H0;
+    real H0 = {};
 
     /// The standard molar entropy @f$S^{\circ}@f$ of the species (in unit of J/K)
-    real S0;
+    real S0 = {};
 
     /// The standard molar volume @f$V^{\circ}@f$ of the species (in unit of m3/mol)
-    real V0;
+    real V0 = {};
 
     /// The standard molar isobaric heat capacity @f$C_{P}^{\circ}@f$ of the species (in unit of J/(mol·K))
-    real Cp0;
+    real Cp0 = {};
 
     /// The standard molar isochoric heat capacity @f$C_{V}^{\circ}@f$ of the species (in unit of J/(mol·K))
-    real Cv0;
+    real Cv0 = {};
 };
 
 /// The function type for the standard thermodynamic model of a chemical species.
