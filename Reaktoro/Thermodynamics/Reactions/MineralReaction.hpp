@@ -18,11 +18,13 @@
 #pragma once
 
 // C++ includes
+#include <functional>
 #include <string>
 #include <vector>
 #include <memory>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralCatalyst.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralMechanism.hpp>
 
@@ -58,7 +60,7 @@ public:
     /// Set the equilibrium constant of the mineral reaction (in natural log scale).
     /// If no equilibrium contant is provided, it will be calculated from the
     /// standard Gibbs energies of the species in the reaction.
-    auto setEquilibriumConstant(const ThermoScalarFunction& lnk) -> MineralReaction&;
+    auto setEquilibriumConstant(const std::function<real(real, real)>& lnk) -> MineralReaction&;
 
     /// Set the specific surface area of the mineral.
     /// The specific surface area of the mineral can be set using units
@@ -97,7 +99,7 @@ public:
     auto equation() const -> const ReactionEquation&;
 
     /// Return the equilibrium constant of the mineral reaction.
-    auto equilibriumConstant() const -> const ThermoScalarFunction&;
+    auto equilibriumConstant() const -> const std::function<real(real, real)>&;
 
     /// Return the specific surface area of the mineral (in units of m2/kg).
     auto specificSurfaceArea() const -> double;
