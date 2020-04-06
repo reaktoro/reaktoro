@@ -38,6 +38,11 @@
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
 
 namespace Reaktoro {
+
+using std::log;
+using std::min;
+using std::pow;
+
 namespace {
 
 /// The reference temperature assumed in the HKF equations of state (in units of K)
@@ -84,11 +89,11 @@ auto checkTemperatureValidityHKF(real& T, const ParamsType& params) -> void
         Assert(T >= 0.0 && T <= params.Tmax, "Unable to calculate the "
             "thermodynamic properties of species" + params.name + "using the "
                 "revised HKF equations of state.", "The provided temperature `" +
-                    std::to_string(T.val) + " K` is either negative or greater than the "
+                    std::to_string(T) + " K` is either negative or greater than the "
                         "maximum allowed `" + std::to_string(params.Tmax) + " K`.");
 
     // Ensure temperature is not above the maximum allowed
-    T = std::min(T.val, params.Tmax);
+    T = min(T, params.Tmax);
 }
 
 } // namespace
@@ -216,9 +221,9 @@ auto speciesThermoStateSoluteHKF(real T, real P, const ParamsAqueousSoluteHKF& p
 
     FunctionG g = functionG(T, P, wt);
 
-    SpeciesElectroState aes = speciesElectroStateHKF(g, species);
+    SpeciesElectroState aes = speciesElectroStateHKF(g, params);
 
-    return speciesThermoStateSoluteHKF(T, P, species, aes, wes);
+    return speciesThermoStateSoluteHKF(T, P, params, aes, wes);
 }
 
 auto speciesThermoStateHKF(real T, real P, const ParamsMaierKelly& params) -> SpeciesThermoState
@@ -312,14 +317,14 @@ auto speciesThermoStateHKF(real T, real P, const ParamsMaierKellyHKF& params) ->
     }
 
     // Calculate the heat capacity of the mineral at T
-    real Cp;
+    real Cp = {};
     for(unsigned i = 0; i+1 < Ti.size(); ++i)
         if(Ti[i] <= T && T <= Ti[i+1])
             Cp = a[i] + b[i]*T + c[i]/(T*T);
 
     // Calculate the integrals of the heat capacity function of the mineral from Tr to T at constant pressure Pr
-    real CpdT;
-    real CpdlnT;
+    real CpdT = {};
+    real CpdlnT = {};
     for(unsigned i = 0; i+1 < Ti.size(); ++i)
     {
         const auto T0 = Ti[i];
@@ -330,10 +335,10 @@ auto speciesThermoStateHKF(real T, real P, const ParamsMaierKellyHKF& params) ->
     }
 
     // Calculate the volume and other auxiliary quantities for the thermodynamic properties of the mineral
-    real V(Vr);
-    real GdH;
-    real HdH;
-    real SdH;
+    real V = Vr;
+    real GdH = {};
+    real HdH = {};
+    real SdH = {};
     for(unsigned i = 1; i+1 < Ti.size(); ++i)
     {
         GdH += dHt[i-1]*(T - Ti[i])/Ti[i];
