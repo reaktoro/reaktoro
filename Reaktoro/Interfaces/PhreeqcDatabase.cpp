@@ -18,11 +18,8 @@
 #include "PhreeqcDatabase.hpp"
 
 // Reaktoro includes
-// #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-// #include <Reaktoro/Common/SetUtils.hpp>
-// #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
@@ -111,6 +108,7 @@ auto createMineralSpecies(const PhreeqcPhase* p) -> Species
 	species = species.withElements(createElements(p));
 	species = species.withCharge(0.0);
 	species = species.withAggregateState(AggregateState::Solid);
+	species = species.withTags({"mineral"});
 	species = species.withAttachedData(speciesThermoParamsPhreeqc(p));
 	return species;
 }
@@ -239,48 +237,9 @@ auto PhreeqcDatabase::load(std::string filename) -> void
 	pimpl->load(filename);
 }
 
-auto PhreeqcDatabase::numElements() const -> unsigned
+auto PhreeqcDatabase::masterSpecies() const -> std::set<std::string>
 {
-	return pimpl->elements.size();
-}
-
-auto PhreeqcDatabase::numAqueousSpecies() const -> unsigned
-{
-	return pimpl->aqueous_species.size();
-}
-
-auto PhreeqcDatabase::numGaseousSpecies() const -> unsigned
-{
-	return pimpl->gaseous_species.size();
-}
-
-auto PhreeqcDatabase::numMineralSpecies() const -> unsigned
-{
-	return pimpl->mineral_species.size();
-}
-
-auto PhreeqcDatabase::element(Index index) const -> Element
-{
-	return pimpl->elements[index];
-}
-
-auto PhreeqcDatabase::elements() const -> const std::vector<Element>&
-{
-	return pimpl->elements;
-}
-
-auto PhreeqcDatabase::aqueousSpecies(Index index) const -> Species
-{
-	return pimpl->aqueous_species[index];
-}
-
-auto PhreeqcDatabase::aqueousSpecies(std::string name) const -> Species
-{
-    const Index i = index(name, pimpl->aqueous_species);
-    Assert(i < numAqueousSpecies(),
-        "Could not get the aqueous species `" + name + "` in PhreeqcDatabase.",
-        "There is no such aqueous species in the database.");
-	return aqueousSpecies(i);
+	return pimpl->master_species;
 }
 
 auto PhreeqcDatabase::aqueousSpecies() const -> const std::vector<Species>&
@@ -288,62 +247,14 @@ auto PhreeqcDatabase::aqueousSpecies() const -> const std::vector<Species>&
 	return pimpl->aqueous_species;
 }
 
-auto PhreeqcDatabase::gaseousSpecies(Index index) const -> Species
-{
-	return pimpl->gaseous_species[index];
-}
-
-auto PhreeqcDatabase::gaseousSpecies(std::string name) const -> Species
-{
-    const Index i = index(name, pimpl->gaseous_species);
-    Assert(i < numGaseousSpecies(),
-        "Could not get the gaseous species `" + name + "` in PhreeqcDatabase.",
-        "There is no such gaseous species in the database.");
-	return gaseousSpecies(i);
-}
-
 auto PhreeqcDatabase::gaseousSpecies() const -> const std::vector<Species>&
 {
 	return pimpl->gaseous_species;
 }
 
-auto PhreeqcDatabase::mineralSpecies(Index index) const -> Species
-{
-	return pimpl->mineral_species[index];
-}
-
-auto PhreeqcDatabase::mineralSpecies(std::string name) const -> Species
-{
-    const Index i = index(name, pimpl->mineral_species);
-    Assert(i < numMineralSpecies(),
-        "Could not get the mineral species `" + name + "` in PhreeqcDatabase.",
-        "There is no such mineral species in the database.");
-	return mineralSpecies(i);
-}
-
 auto PhreeqcDatabase::mineralSpecies() const -> const std::vector<Species>&
 {
 	return pimpl->mineral_species;
-}
-
-auto PhreeqcDatabase::containsAqueousSpecies(std::string name) const -> bool
-{
-    return index(name, pimpl->aqueous_species) < numAqueousSpecies();
-}
-
-auto PhreeqcDatabase::containsGaseousSpecies(std::string name) const -> bool
-{
-    return index(name, pimpl->gaseous_species) < numGaseousSpecies();
-}
-
-auto PhreeqcDatabase::containsMineralSpecies(std::string name) const -> bool
-{
-    return index(name, pimpl->mineral_species) < numMineralSpecies();
-}
-
-auto PhreeqcDatabase::masterSpecies() const -> std::set<std::string>
-{
-	return pimpl->master_species;
 }
 
 } // namespace Reaktoro
