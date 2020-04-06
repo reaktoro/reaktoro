@@ -216,7 +216,7 @@
 //         const Index num_species = system.numSpecies();
 
 //         // Auxiliary chemical scalar to avoid memory reallocation
-//         real ni(num_species);
+//         real ni = {};
 
 //         // Set the parial molar derivative of `ni`
 //         ni.ddn[ispecies] = 1.0;
@@ -242,7 +242,7 @@
 //         const double ln_val = std::log(value);
 
 //         // Auxiliary chemical scalar to avoid memory reallocation
-//         real ln_ai;
+//         real ln_ai = {};
 
 //         // Define the activity constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
@@ -310,7 +310,7 @@
 //         const Index iphase = system.indexPhaseWithError(phase);
 
 //         // Auxiliary chemical scalar to avoid memory reallocation
-//         real np;
+//         real np = {};
 
 //         // Define the phase volume constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
@@ -330,7 +330,7 @@
 //         const Index iphase = system.indexPhaseWithError(phase);
 
 //         // Auxiliary chemical scalar to avoid memory reallocation
-//         real mass;
+//         real mass = {};
 
 //         // Define the phase volume constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
@@ -350,7 +350,7 @@
 //         const Index iphase = system.indexPhaseWithError(phase);
 
 //         // Auxiliary chemical scalar to avoid memory reallocation
-//         real Vp;
+//         real Vp = {};
 
 //         // Define the phase volume constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
@@ -370,7 +370,7 @@
 //         const Indices iphases = system.indicesPhases(phases);
 
 //         // Auxiliary chemical scalar to avoid memory reallocation
-//         real Vp;
+//         real Vp = {};
 
 //         // Define the phase volume constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable

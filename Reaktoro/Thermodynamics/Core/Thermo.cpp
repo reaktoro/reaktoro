@@ -148,7 +148,7 @@
 
 //     auto convertScalar(Reaktoro_::real funscalar) -> real
 //     {
-//         real ts;
+//         real ts = {};
 //         ts.val = funscalar.val;
 //         ts.ddP = funscalar.ddp;
 //         ts.ddT = funscalar.ddt;
@@ -189,7 +189,7 @@
 //         return {};
 //     }
 
-//     auto aqueousSpeciesThermoStateHKF(double T, double P, const AqueousSpecies& species) -> SpeciesThermoState
+//     auto aqueousSpeciesThermoStateHKF(double T, double P, const Species& species) -> SpeciesThermoState
 //     {
 //         const WaterThermoState wts = water_thermo_state_wagner_pruss_fn(T, P);
 
@@ -209,7 +209,7 @@
 //     {
 //         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
 //         if(species_thermo_properties && !species_thermo_properties->gibbs_energy.empty())
-//             return real(species_thermo_properties->gibbs_energy(T, P), 0.0, 0.0);
+//             return species_thermo_properties->gibbs_energy(T, P);
 
 //         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
 //         if(reaction_thermo_properties && !reaction_thermo_properties->gibbs_energy.empty())
@@ -229,7 +229,7 @@
 //     {
 //         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
 //         if(species_thermo_properties && !species_thermo_properties->helmholtz_energy.empty())
-//             return real(species_thermo_properties->helmholtz_energy(T, P), 0.0, 0.0);
+//             return species_thermo_properties->helmholtz_energy(T, P);
 
 //         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
 //         if(reaction_thermo_properties && !reaction_thermo_properties->helmholtz_energy.empty())
@@ -245,7 +245,7 @@
 //     {
 //         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
 //         if(species_thermo_properties && !species_thermo_properties->internal_energy.empty())
-//             return real(species_thermo_properties->internal_energy(T, P), 0.0, 0.0);
+//             return species_thermo_properties->internal_energy(T, P);
 
 //         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
 //         if(reaction_thermo_properties && !reaction_thermo_properties->internal_energy.empty())
@@ -261,7 +261,7 @@
 //     {
 //         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
 //         if(species_thermo_properties && !species_thermo_properties->enthalpy.empty())
-//             return real(species_thermo_properties->enthalpy(T, P), 0.0, 0.0);
+//             return species_thermo_properties->enthalpy(T, P);
 
 //         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
 //         if(reaction_thermo_properties && !reaction_thermo_properties->enthalpy.empty())
@@ -277,7 +277,7 @@
 //     {
 //         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
 //         if(species_thermo_properties && !species_thermo_properties->entropy.empty())
-//             return real(species_thermo_properties->entropy(T, P), 0.0, 0.0);
+//             return species_thermo_properties->entropy(T, P);
 
 //         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
 //         if(reaction_thermo_properties && !reaction_thermo_properties->entropy.empty())
@@ -293,7 +293,7 @@
 //     {
 //         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
 //         if(species_thermo_properties && !species_thermo_properties->volume.empty())
-//             return real(species_thermo_properties->volume(T, P), 0.0, 0.0);
+//             return species_thermo_properties->volume(T, P);
 
 //         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
 //         if(reaction_thermo_properties && !reaction_thermo_properties->volume.empty())
@@ -309,7 +309,7 @@
 //     {
 //         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
 //         if(species_thermo_properties && !species_thermo_properties->heat_capacity_cp.empty())
-//             return real(species_thermo_properties->heat_capacity_cp(T, P), 0.0, 0.0);
+//             return species_thermo_properties->heat_capacity_cp(T, P);
 
 //         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
 //         if(reaction_thermo_properties && !reaction_thermo_properties->heat_capacity_cp.empty())
@@ -326,7 +326,7 @@
 //         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
 //         if(species_thermo_properties)
 //             if(!species_thermo_properties->heat_capacity_cv.empty())
-//                 return real(species_thermo_properties->heat_capacity_cv(T, P), 0.0, 0.0);
+//                 return species_thermo_properties->heat_capacity_cv(T, P);
 
 //         const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
 //         if(reaction_thermo_properties && !reaction_thermo_properties->heat_capacity_cv.empty())
@@ -494,7 +494,7 @@
 //         	const double R = 8.31470e-3;
 //         	return lnk298 - params.reaction.delta_h/R*(1.0/T - 1.0/298.15);
 //         }
-//         else return real(lnk298);
+//         else return lnk298;
 // 	}
 
 // 	auto standardGibbsEnergyFromPhreeqcReaction(real T, real P, std::string species, const SpeciesThermoParamsPhreeqc& params) -> real
@@ -513,7 +513,7 @@
 //         // Using formula:
 //         // G_{j}^{\circ}=-\frac{1}{\nu_{j}}\left[\sum_{i\neq j}\nu_{i}G_{i}^{\circ}+RT\ln K\right]
 
-//         real sum;
+//         real sum = {};
 //         for(auto pair : params.reaction.equation)
 //         {
 //             const auto reactant = pair.first;
@@ -531,7 +531,7 @@
 //     {
 //         ReactionEquation equation(reaction);
 //         const real RT = universalGasConstant * real(T);
-//         real lnK;
+//         real lnK = {};
 //         for(auto pair : equation.equation())
 //             lnK += pair.second * standardPartialMolarGibbsEnergy(T, P, pair.first);
 //         lnK /= -RT;

@@ -294,7 +294,7 @@
 //            porosity = ChemicalField(partition, npoints);
 //
 //        // The porosity
-//        real phi;
+//        real phi = {};
 //
 //        // Loop over all field points
 //        for(Index k = 0; k < npoints; ++k)
@@ -394,7 +394,7 @@
 //        const Indices& ifp = partition.indicesFluidPhases();
 //
 //        // The total fluid volume at a field point
-//        real total_volume;
+//        real total_volume = {};
 //
 //        // Loop over all field points
 //        for(Index k = 0; k < npoints; ++k)
@@ -416,7 +416,7 @@
 //        const Indices& isp = partition.indicesSolidPhases();
 //
 //        // The total solid volume at a field point
-//        real total_volume;
+//        real total_volume = {};
 //
 //        // Loop over all field points
 //        for(Index k = 0; k < npoints; ++k)

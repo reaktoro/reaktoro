@@ -79,8 +79,8 @@ class StringList;
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ///
 /// @see Database, ChemicalSystem, ReactionSystem, AqueousPhase, GaseousPhase,
-/// LiquidPhase, MineralPhase, AqueousSpecies, GaseousSpecies, LiquidSpecies,
-/// MineralSpecies, MineralReaction
+/// LiquidPhase, MineralPhase, Species, Species, LiquidSpecies,
+/// Species, MineralReaction
 ///
 /// @ingroup Core
 class ChemicalEditor

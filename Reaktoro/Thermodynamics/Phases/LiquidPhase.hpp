@@ -25,7 +25,7 @@
 
 namespace Reaktoro {
 
-using LiquidMixture = FluidMixture;
+using LiquidMixture = GeneralMixture;
 
 class LiquidPhase
     : public FluidPhase
@@ -33,14 +33,14 @@ class LiquidPhase
 public:
     /// Construct a default LiquidPhase instance.
     LiquidPhase()
-        : FluidPhase("Liquid", PhaseType::Liquid)
+        : FluidPhase("Liquid", StateOfMatter::Liquid)
     {}
 
     /// Construct a GaseousPhase instance with given gaseous mixture.
     /// The Peng-Robinson equation of state is chosen by default to calculate the
     /// thermodynamic and chemical properties of this GaseousPhase object.
     explicit LiquidPhase(const LiquidMixture& mixture)
-        : FluidPhase(mixture, "Liquid", PhaseType::Liquid)
+        : FluidPhase(mixture, "Liquid", StateOfMatter::Liquid)
     {}
 };
 

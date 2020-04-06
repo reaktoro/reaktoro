@@ -26,8 +26,8 @@
 namespace Reaktoro {
 
 // Forward declarations
-class MineralMixture;
-class MineralSpecies;
+class GeneralMixture;
+class Species;
 
 /// Class that defines a mineral phase
 class MineralPhase : public Phase
@@ -37,10 +37,10 @@ public:
     MineralPhase();
 
     /// Construct a MineralPhase instance with a given mineral mixture.
-    explicit MineralPhase(const MineralMixture& mixture);
+    explicit MineralPhase(const GeneralMixture& mixture);
 
     /// Construct a MineralPhase instance with given species.
-    explicit MineralPhase(const MineralSpecies& species);
+    explicit MineralPhase(const Species& species);
 
     /// Set the chemical model of the phase with the ideal solution model.
     auto setChemicalModelIdeal() -> MineralPhase&;
@@ -56,10 +56,10 @@ public:
     /// @param a0 The Redlich-Kister parameter a0
     /// @param a1 The Redlich-Kister parameter a1
     /// @param a2 The Redlich-Kister parameter a2
-    auto setChemicalModelRedlichKister(double a0, double a1, double a2) -> MineralPhase&;
+    auto setChemicalModelRedlichKister(real a0, real a1, real a2) -> MineralPhase&;
 
-    /// Return the MineralMixture instance
-    auto mixture() const -> const MineralMixture&;
+    /// Return the GeneralMixture instance
+    auto mixture() const -> const GeneralMixture&;
 
 private:
     struct Impl;

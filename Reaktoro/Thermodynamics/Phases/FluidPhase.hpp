@@ -27,23 +27,23 @@
 namespace Reaktoro {
 
 // Forward declarations
-class FluidMixture;
+class GeneralMixture;
 
 /// Class that defines a fluid (gaseous or liquid) phase
 class FluidPhase : public Phase
 {
 public:
-    ///Construct an FluidPhase instance with given name and PhaseType
-    FluidPhase(const std::string& name, PhaseType type);
+    ///Construct an FluidPhase instance with given name and StateOfMatter
+    FluidPhase(const std::string& name, StateOfMatter type);
 
     /// Construct an FluidPhase instance with given fluid (gaseous or liquid) mixture, name and type.
     /// The Peng-Robinson equation of state is chosen by default to calculate the
     /// thermodynamic and chemical properties of this FluidPhase object.
-    explicit FluidPhase(const FluidMixture& mixture, const std::string& name, PhaseType type);
+    explicit FluidPhase(const GeneralMixture& mixture, const std::string& name, StateOfMatter type);
 
     /// Set the chemical model of the phase with the ideal gas equation of state.
     /// This model only supports a gaseous phase. Using it in a FluidPhase that is not a
-    /// PhaseType::Gas will result in a runtime error.
+    /// StateOfMatter::Gas will result in a runtime error.
     auto setChemicalModelIdeal() -> FluidPhase&;
 
     /// Set the chemical model of the phase with the van der Waals equation of state.
@@ -95,11 +95,11 @@ public:
     /// hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739–749*.
     auto setChemicalModelSpycherReed() -> FluidPhase&;
 
-    /// Return a const reference of the FluidMixture instance
-    auto mixture() const -> const FluidMixture&;
+    /// Return a const reference of the GeneralMixture instance
+    auto mixture() const -> const GeneralMixture&;
 
-    /// Return the FluidMixture instance
-    auto mixture()->FluidMixture&;
+    /// Return the GeneralMixture instance
+    auto mixture() -> GeneralMixture&;
 
 private:
     struct Impl;

@@ -237,8 +237,8 @@
 //         const auto nspecies = system.numSpeciesInPhase(iphase);
 //         const auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
 //         const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
-//         if(cp.molar_volume > 0.0)
-//             row(res, iphase, ispecies, nspecies) = cp.molar_volume;
+//         if(cp.V > 0.0)
+//             row(res, iphase, ispecies, nspecies) = cp.V;
 //         else
 //         {
 //             const auto xp = rows(x, ispecies, nspecies);
