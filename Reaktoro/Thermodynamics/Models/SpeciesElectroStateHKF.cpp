@@ -17,6 +17,11 @@
 
 #include "SpeciesElectroStateHKF.hpp"
 
+// C++ includes
+#include <cmath>
+using std::log;
+using std::pow;
+
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
