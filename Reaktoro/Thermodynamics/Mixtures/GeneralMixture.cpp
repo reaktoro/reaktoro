@@ -22,15 +22,19 @@ namespace Reaktoro {
 /// Compare two MixtureState instances for equality
 auto operator==(const MixtureState& l, const MixtureState& r) -> bool
 {
-    return l.T == r.T && r.P == r.P && l.x == r.x;
+    return l.T == r.T && r.P == r.P && (l.x == r.x).all();
 }
 
 GeneralMixture::GeneralMixture()
 {}
 
 GeneralMixture::GeneralMixture(const std::vector<Species>& species)
-: _species(species)
-{}
+: _species(species), _charges(species.size())
+{
+    // Initialize the electric charges of the species
+    for(auto i = 0; i < species.size(); ++i)
+        _charges[i] = _species[i].charge();
+}
 
 GeneralMixture::~GeneralMixture()
 {}
@@ -73,31 +77,27 @@ auto GeneralMixture::indexSpeciesAny(const std::vector<std::string>& names) cons
 auto GeneralMixture::namesSpecies() const -> std::vector<std::string>
 {
     std::vector<std::string> names(_species.size());
-    for(unsigned i = 0; i < names.size(); ++i)
+    for(auto i = 0; i < names.size(); ++i)
         names[i] = _species[i].name();
     return names;
 }
 
-auto GeneralMixture::chargesSpecies() const -> VectorXr
+auto GeneralMixture::charges() const -> ArrayXrConstRef
 {
-    const unsigned nspecies = numSpecies();
-    VectorXr charges(nspecies);
-    for(unsigned i = 0; i < nspecies; ++i)
-        charges[i] = _species[i].charge();
-    return charges;
+    return _charges;
 }
 
-auto GeneralMixture::moleFractions(VectorXrConstRef n) const -> VectorXr
+auto GeneralMixture::moleFractions(ArrayXrConstRef n) const -> ArrayXr
 {
-    const unsigned nspecies = numSpecies();
+    const auto nspecies = numSpecies();
     if(nspecies == 1)
-        return VectorXr::Ones(1);
+        return ArrayXr::Ones(1);
     const real nsum = n.sum();
-    if(nsum == 0.0) return VectorXr::Zero(nspecies);
+    if(nsum == 0.0) return ArrayXr::Zero(nspecies);
     return n/nsum;
 }
 
-auto GeneralMixture::state(real T, real P, VectorXrConstRef n) const -> MixtureState
+auto GeneralMixture::state(real T, real P, ArrayXrConstRef n) const -> MixtureState
 {
     MixtureState res;
     res.T = T;
