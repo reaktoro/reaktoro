@@ -23,47 +23,50 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/StateOfMatter.hpp>
+#include <Reaktoro/Singletons/CriticalProps.hpp>
 #include <Reaktoro/Thermodynamics/EOS/CubicEOS.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 
 namespace Reaktoro {
 
-auto fluidChemicalModelCubicEOS(
-    const FluidMixture& mixture, PhaseType phase_type, CubicEOS::Params params) -> PhaseChemicalModel
+using std::log;
+
+auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCubicEOS options) -> ActivityModelFn
 {
     // The number of gases in the mixture
-    const unsigned nspecies = mixture.numSpecies();
+    const auto nspecies = mixture.numSpecies();
 
     // Get the the critical temperatures, pressures and acentric factors of the gases
-    std::vector<double> Tc, Pc, omega;
-    for (FluidSpecies species : mixture.species())
+    ArrayXr Tcr(nspecies), Pcr(nspecies), omega(nspecies);
+    for(auto i = 0; i < nspecies; ++i)
     {
-        Tc.push_back(species.criticalTemperature());
-        Pc.push_back(species.criticalPressure());
-        omega.push_back(species.acentricFactor());
+        const auto& species = mixture.species()[i];
+        const auto crprops = species.criticalProps();
+        error(!crprops.has_value(), "Cannot create any cubic equation of state model (e.g. Peng-Robinson, Soave-Redlich-Kwong, etc.) without "
+            "critical properties for the species with symbol ", species.symbol(), "and with substance name", species.name(), ". "
+            "In order to fix this error, use CriticalProps::append to register the critical properties of this substance.");
+        Tcr[i] = crprops->temperature();
+        Pcr[i] = crprops->pressure();
+        omega[i] = crprops->acentricFactor();
     }
 
     // Initialize the CubicEOS instance
-    CubicEOS eos(nspecies, params);
-    if (phase_type == PhaseType::Liquid) {
-        eos.setPhaseAsLiquid();
-    } else {
-        Assert(
-            phase_type == PhaseType::Gas,
-            "Logic error in fluidChemicalModelCubicEOS",
-            "phase_type should be Liquid or Gaseous, but is: " << (int) phase_type
-        );
-        eos.setPhaseAsVapor();
-    }
-    eos.setCriticalTemperatures(Tc);
-    eos.setCriticalPressures(Pc);
-    eos.setAcentricFactors(omega);
+    CubicEOS eos({nspecies, Tcr, Pcr, omega});
+    eos.setFluidType(options.fluidtype);
+    eos.setModel(options.model);
+    eos.setInteractionParamsFunction(options.interaction_params_fn);
+    eos.setStablePhaseIdentificationMethod(options.phase_identification_method);
 
     // The state of the gaseous mixture
-    FluidMixtureState state;
+    MixtureState state;
+
+    /// The thermodynamic properties calculated with CubicEOS
+    CubicEOSProps props;
+    props.ln_phi.resize(nspecies);
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, real T, real P, VectorXrConstRef n) mutable
+    ActivityModelFn model = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
     {
         // Evaluate the state of the gaseous mixture
         state = mixture.state(T, P, n);
@@ -72,26 +75,21 @@ auto fluidChemicalModelCubicEOS(
         const auto& x = state.x;
 
         // Evaluate the CubicEOS
-        const CubicEOS::Result eosres = eos(T, P, x);
+        eos.compute(props, T, P, x);
 
         // The ln of mole fractions
-        const VectorXd ln_x = log(x);
+        const auto ln_x = log(x);
 
         // The ln of pressure in bar units
-        const real ln_Pbar = log(1e-5 * P);
-
-        // Create an alias to the ln fugacity coefficients
-        const auto& ln_phi = eosres.ln_fugacity_coefficients;
+        const auto ln_Pbar = log(1e-5 * P);
 
         // Fill the chemical properties of the fluid phase
-        res.ln_activity_coefficients = ln_phi;
-        res.ln_activities = ln_phi + ln_x + ln_Pbar;
-        res.molar_volume = eosres.molar_volume;
-        res.partial_molar_volumes = eosres.partial_molar_volumes;
-        res.residual_molar_gibbs_energy = eosres.residual_molar_gibbs_energy;
-        res.residual_molar_enthalpy = eosres.residual_molar_enthalpy;
-        res.residual_molar_heat_capacity_cp = eosres.residual_molar_heat_capacity_cp;
-        res.residual_molar_heat_capacity_cv = eosres.residual_molar_heat_capacity_cv;
+        res.ln_activity_coefficients = props.ln_phi;
+        res.ln_activities = props.ln_phi + ln_x + ln_Pbar;
+        res.V = props.V;
+        res.Gex = props.Gres;
+        res.Hex = props.Hres;
+        res.Cpex = props.Cpres;
     };
 
     return model;

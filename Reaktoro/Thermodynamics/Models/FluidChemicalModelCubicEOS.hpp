@@ -18,17 +18,31 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 #include <Reaktoro/Thermodynamics/EOS/CubicEOS.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-class FluidMixture;
+class GeneralMixture;
 
-/// Set the chemical model of the phase with a Cubic equation of state.
-/// @see FluidPhase::setChemicalModelCubicEOS
-auto fluidChemicalModelCubicEOS(
-    const FluidMixture& mixture, PhaseType phase_type, CubicEOS::Params params)->PhaseChemicalModel;
+/// The options for the activity model based on cubic equation of state.
+struct ActivityModelOptionsCubicEOS
+{
+    /// The fluid type for which the equation of state should be confifured.
+    CubicEOSFluidType fluidtype = CubicEOSFluidType::Vapor;
+
+    /// The cubic equation of state model to be used.
+    CubicEOSModel model = CubicEOSModel::PengRobinson;
+
+    /// The function that calculates interaction parameters @eq{k_{ij}} in @eq{a_{ij}=(1-k_{ij})(a_{i}a_{j})^{1/2}}.
+    CubicEOSInteractionParamsFn interaction_params_fn;
+
+    /// The method to identify whether liquid or vapor phases is stable.
+    PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
+};
+
+/// Return an activity model for a fluid, liquid or gaseous, based on a cubic equation of state.
+auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCubicEOS options) -> ActivityModelFn;
 
 } // namespace Reaktoro

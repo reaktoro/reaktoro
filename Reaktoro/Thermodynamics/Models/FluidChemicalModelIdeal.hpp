@@ -18,19 +18,19 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-class FluidMixture;
+class GeneralMixture;
 
 /// Return an equation of state for a gaseous phase based on the ideal model.
 /// This model only supports a gaseous phase. Using it in a FluidPhase that is not a
-/// PhaseType::Gas will result in a runtime error.
+/// StateOfMatter::Gas will result in a runtime error.
 /// @param mixture The fluid mixture
 /// @return The equation of state function for the fluid phase
-/// @see FluidMixture, FluidChemicalModel
-auto fluidChemicalModelIdeal(const FluidMixture& mixture)->PhaseChemicalModel;
+/// @see GeneralMixture, FluidChemicalModel
+auto fluidChemicalModelIdeal(const GeneralMixture& mixture) -> ActivityModelFn;
 
 } // namespace Reaktoro
