@@ -160,13 +160,13 @@ struct ChemicalQuantity::Impl
     ChemicalProperties properties;
 
     /// The progress variable at which the chemical state is referred (if time, in units of s)
-    real tag;
+    real tag = {};
 
     /// The temperature of the chemical system (in units of K).
-    real T;
+    real T = {};
 
     /// The pressure of the chemical system (in units of Pa).
-    real P;
+    real P = {};
 
     /// The molar amounts of the species in the chemical system (in units of mol).
     VectorXr n;
