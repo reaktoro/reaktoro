@@ -26,18 +26,11 @@ auto aqueousActivityModelDrummondCO2(const AqueousMixture& mixture) -> AqueousAc
 {
     AqueousActivityModel f = [=](const AqueousMixtureState& state)
     {
-        // Calculate the activity coefficient of CO2(aq)
-        const real& T = state.T;
-        const real c1 = -1.0312 + 1.2806e-3*T + 255.9/T;
-        const real c2 =  0.4445 - 1.6060e-3*T;
-
-        // The stoichiometric ionic strength of the aqueous mixture
-        const auto& I = state.Is;
-
-        // The ln activity coefficient of CO2(aq)
-        real ln_gCO2 = c1 * I - c2 * I/(I + 1);
-
-        return ln_gCO2;
+        const auto T = state.T;
+        const auto c1 = -1.0312 + 1.2806e-3*T + 255.9/T;
+        const auto c2 =  0.4445 - 1.6060e-3*T;
+        const auto I = state.Is;
+        return c1 * I - c2 * I/(I + 1);
     };
 
     return f;
