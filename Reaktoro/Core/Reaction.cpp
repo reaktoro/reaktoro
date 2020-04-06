@@ -74,7 +74,7 @@ struct Reaction::Impl
         species.reserve(equation.numSpecies());
         indices.reserve(equation.numSpecies());
         stoichiometries.resize(equation.numSpecies());
-        unsigned i = 0;
+        auto i = 0;
         for(const auto& pair : equation.equation())
         {
             species.push_back(system.species(pair.first));
@@ -169,22 +169,22 @@ auto Reaction::stoichiometry(std::string species) const -> double
 auto Reaction::lnEquilibriumConstant(const ChemicalProperties& properties) const -> real
 {
     // Get the temperature and pressure of the system
-    const double T = properties.temperature();
-    const double P = properties.pressure();
+    const auto T = properties.temperature();
+    const auto P = properties.pressure();
 
     // Check if a equilibrium constant function was provided
     if(pimpl->lnk) return pimpl->lnk(T, P);
 
     // Calculate the equilibrium constant using the standard Gibbs energies of the species
-    const VectorXr G0 = properties.standardPartialMolarGibbsEnergies();
-    const real RT = universalGasConstant * real(T);
+    const auto G0 = properties.standardPartialMolarGibbsEnergies();
+    const auto RT = universalGasConstant * T;
 
-    real res;
-    for(unsigned i = 0; i < indices().size(); ++i)
+    real res = {};
+    for(auto i = 0; i < indices().size(); ++i)
     {
-        const Index ispecies = indices()[i];
-        const double vi = stoichiometries()[i];
-        const real G0i = G0[ispecies];
+        const auto ispecies = indices()[i];
+        const auto vi = stoichiometries()[i];
+        const auto G0i = G0[ispecies];
         res += vi * G0i;
     }
 
@@ -193,17 +193,16 @@ auto Reaction::lnEquilibriumConstant(const ChemicalProperties& properties) const
 
 auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const -> real
 {
-    const unsigned num_species = system().numSpecies();
-    const VectorXd& ln_a = properties.lnActivities();
-    real ln_Q(num_species);
-    unsigned counter = 0;
-    for(Index i : indices())
+    const auto num_species = system().numSpecies();
+    const auto ln_a = properties.lnActivities();
+    real ln_Q = {};
+    auto counter = 0;
+    for(auto i : indices())
     {
-        const double vi = stoichiometries()[counter];
+        const auto vi = stoichiometries()[counter];
         ln_Q += vi * ln_a[i];
         ++counter;
     }
-
     return ln_Q;
 }
 
