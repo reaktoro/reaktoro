@@ -17,6 +17,9 @@
 
 #pragma once
 
+// C++ includes
+#include <functional>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Core/Species.hpp>
@@ -29,22 +32,22 @@ namespace Reaktoro {
 struct AqueousMixtureState : public MixtureState
 {
     /// The density of water (in units of kg/m3)
-    real rho;
+    real rho = {};
 
     /// The relative dielectric constant of water (no units)
-    real epsilon;
+    real epsilon = {};
 
     /// The effective ionic strength of the aqueous mixture and their partial derivatives (in units of mol/kg)
-    real Ie;
+    real Ie = {};
 
     /// The stoichiometric ionic strength of the aqueous mixture and their partial derivatives (in units of mol/kg)
-    real Is;
+    real Is = {};
 
     /// The molalities of the aqueous species and their partial derivatives (in units of mol/kg)
-    VectorXr m;
+    ArrayXr m;
 
     /// The stoichiometric molalities of the ionic species and their partial derivatives (in units of mol/kg)
-    VectorXr ms;
+    ArrayXr ms;
 };
 
 /// A type used to describe an aqueous mixture.
@@ -71,10 +74,10 @@ public:
     virtual ~AqueousMixture();
 
     /// Set a customized density function for water.
-    auto setWaterDensity(const ThermoScalarFunction& rho) -> void;
+    auto setWaterDensity(std::function<real(real, real)> rho) -> void;
 
     /// Set a customized dielectric constant function for water.
-    auto setWaterDielectricConstant(const ThermoScalarFunction& epsilon) -> void;
+    auto setWaterDielectricConstant(std::function<real(real, real)> epsilon) -> void;
 
     /// Set the temperature and pressure interpolation points for calculation of water density and water dielectric constant.
     /// Use this method if temperature-pressure interpolation should be used for the calculation of water density and
@@ -148,13 +151,13 @@ public:
     auto namesAnions() const -> std::vector<std::string>;
 
     /// Return the charges of the charged species in the aqueous mixture.
-    auto chargesChargedSpecies() const -> VectorXr;
+    auto chargesChargedSpecies() const -> ArrayXr;
 
     /// Return the charges of the cations in the aqueous mixture.
-    auto chargesCations() const -> VectorXr;
+    auto chargesCations() const -> ArrayXr;
 
     /// Return the charges of the anions in the aqueous mixture.
-    auto chargesAnions() const -> VectorXr;
+    auto chargesAnions() const -> ArrayXr;
 
     /// Return the dissociation matrix of the aqueous complexes into ions.
     /// This the matrix defines the stoichiometric relationship between the aqueous complexes and the
@@ -166,28 +169,28 @@ public:
     /// Calculate the molalities of the aqueous species and its molar derivatives.
     /// @param n The molar abundance of species (in units of mol)
     /// @return The molalities and their partial derivatives
-    auto molalities(VectorXrConstRef n) const -> VectorXr;
+    auto molalities(ArrayXrConstRef n) const -> ArrayXr;
 
     /// Calculate the stoichiometric molalities of the ions and its molar derivatives.
     /// @param m The molalities of the aqueous species and their partial derivatives
     /// @return The stoichiometric molalities and their partial derivatives
-    auto stoichiometricMolalities(const VectorXr& m) const -> VectorXr;
+    auto stoichiometricMolalities(ArrayXrConstRef m) const -> ArrayXr;
 
     /// Calculate the effective ionic strength of the aqueous mixture and its molar derivatives.
     /// @param m The molalities of the aqueous species and their partial derivatives
     /// @return The effective ionic strength of the aqueous mixture and its molar derivatives
-    auto effectiveIonicStrength(const VectorXr& m) const -> real;
+    auto effectiveIonicStrength(ArrayXrConstRef m) const -> real;
 
     /// Calculate the stoichiometric ionic strength of the aqueous mixture and its molar derivatives.
     /// @param ms The stoichiometric molalities of the ions and their partial derivatives
     /// @return The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
-    auto stoichiometricIonicStrength(const VectorXr& ms) const -> real;
+    auto stoichiometricIonicStrength(ArrayXrConstRef ms) const -> real;
 
     /// Calculate the state of the aqueous mixture.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(real T, real P, VectorXrConstRef n) const -> AqueousMixtureState;
+    auto state(real T, real P, ArrayXrConstRef n) const -> AqueousMixtureState;
 
 private:
     /// The index of the water species
@@ -209,10 +212,10 @@ private:
     MatrixXd dissociation_matrix;
 
     /// The density function for water
-    ThermoScalarFunction rho, rho_default;
+    std::function<real(real, real)> rho, rho_default;
 
     /// The dielectric constant function for water
-    ThermoScalarFunction epsilon, epsilon_default;
+    std::function<real(real, real)> epsilon, epsilon_default;
 
     /// Initialize the index related data of the species.
     void initializeIndices(const std::vector<Species>& species);

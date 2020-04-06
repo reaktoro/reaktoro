@@ -25,6 +25,7 @@
 #include <Reaktoro/Common/InterpolationUtils.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Singletons/DissociationReactions.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
@@ -77,12 +78,12 @@ AqueousMixture::AqueousMixture(const std::vector<Species>& species)
 AqueousMixture::~AqueousMixture()
 {}
 
-auto AqueousMixture::setWaterDensity(const std::function<real(real, real)>& rho) -> void
+auto AqueousMixture::setWaterDensity(std::function<real(real, real)> rho) -> void
 {
     this->rho = rho;
 }
 
-auto AqueousMixture::setWaterDielectricConstant(const std::function<real(real, real)>& epsilon) -> void
+auto AqueousMixture::setWaterDielectricConstant(std::function<real(real, real)> epsilon) -> void
 {
     this->epsilon = epsilon;
 }
@@ -189,64 +190,64 @@ auto AqueousMixture::namesAnions() const -> std::vector<std::string>
     return extract(namesSpecies(), indicesAnions());
 }
 
-auto AqueousMixture::chargesChargedSpecies() const -> VectorXr
+auto AqueousMixture::chargesChargedSpecies() const -> ArrayXr
 {
-    return rows(chargesSpecies(), indicesChargedSpecies());
+    return charges()(indicesChargedSpecies());
 }
 
-auto AqueousMixture::chargesCations() const -> VectorXr
+auto AqueousMixture::chargesCations() const -> ArrayXr
 {
-    return rows(chargesSpecies(), indicesCations());
+    return charges()(indicesCations());
 }
 
-auto AqueousMixture::chargesAnions() const -> VectorXr
+auto AqueousMixture::chargesAnions() const -> ArrayXr
 {
-    return rows(chargesSpecies(), indicesAnions());
+    return charges()(indicesAnions());
 }
 
-auto AqueousMixture::molalities(VectorXrConstRef n) const -> VectorXr
+auto AqueousMixture::molalities(ArrayXrConstRef n) const -> ArrayXr
 {
     // The amount of solvent water
     const auto nw = n[idx_water];
 
     // Check if amount of water is zero
     if(nw == 0.0)
-        return VectorXr::Zero(n.size());
+        return ArrayXr::Zero(n.size());
 
     const auto kgH2O = nw * waterMolarMass;
 
     return n/kgH2O;
 }
 
-auto AqueousMixture::stoichiometricMolalities(const VectorXr& m) const -> VectorXr
+auto AqueousMixture::stoichiometricMolalities(ArrayXrConstRef m) const -> ArrayXr
 {
     // The molalities of the charged species
-    const auto mc = m(idx_charged_species);
+    const auto mc = m(idx_charged_species).matrix(); // convert from array to matrix expression
 
     // The molalities of the neutral species
-    const auto mn = m(idx_neutral_species);
+    const auto mn = m(idx_neutral_species).matrix(); // convert from array to matrix expression
 
     // The stoichiometric molalities of the charged species
-    const auto ms = mc + tr(dissociation_matrix) * mn;
+    const auto ms = mc + dissociation_matrix.transpose() * mn;
 
     return ms;
 }
 
-auto AqueousMixture::effectiveIonicStrength(const VectorXr& m) const -> real
+auto AqueousMixture::effectiveIonicStrength(ArrayXrConstRef m) const -> real
 {
     const auto num_species = numSpecies();
-    const auto z = chargesSpecies();
-    return 0.5 * sum(z % z % m);
+    const auto z = charges();
+    return 0.5 * (z * z * m).sum();
 }
 
-auto AqueousMixture::stoichiometricIonicStrength(const VectorXr& ms) const -> real
+auto AqueousMixture::stoichiometricIonicStrength(ArrayXrConstRef ms) const -> real
 {
     const auto num_species = numSpecies();
     const auto zc = chargesChargedSpecies();
-    return 0.5 * sum(zc % zc % ms);
+    return 0.5 * (zc * zc * ms).sum();
 }
 
-auto AqueousMixture::state(real T, real P, VectorXrConstRef n) const -> AqueousMixtureState
+auto AqueousMixture::state(real T, real P, ArrayXrConstRef n) const -> AqueousMixtureState
 {
     AqueousMixtureState res;
     res.T = T;
@@ -291,12 +292,11 @@ auto AqueousMixture::initializeDissociationMatrix(const std::vector<Species>& sp
     // Return the stoichiometry of the i-th charged species in the j-th neutral species
     auto stoichiometry = [&](Index i, Index j) -> real
     {
-        const Index ineutral = idx_neutral_species[i];
-        const Index icharged = idx_charged_species[j];
-        const Species& neutral = species[ineutral];
-        const Species& charged = species[icharged];
-        const auto iter = neutral.dissociation().find(charged.name());
-        return iter != neutral.dissociation().end() ? iter->second : 0.0;
+        const auto ineutral = idx_neutral_species[i];
+        const auto icharged = idx_charged_species[j];
+        const auto neutral = species[ineutral].formula();
+        const auto charged = species[icharged].formula();
+        return DissociationReactions::coefficient(neutral, charged); // TODO: Performance can be improved here by avoiding recreation of ChemicalFormula objects.
     };
 
     // Assemble the dissociation matrix of the neutral species with respect to the charged species
