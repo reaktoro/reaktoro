@@ -19,6 +19,8 @@
 
 // C++ includes
 #include <cmath>
+using std::exp;
+using std::pow;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
@@ -52,7 +54,7 @@ auto waterDensity(real T, real P, const HelmholtsModel& model, StateOfMatter sta
     const auto Dwc_vapor = waterMolarMass / Vwc_vapor;
 
     // Determine an adequate initial guess for (dimensionless) density based on the physical state of water
-    real D;
+    real D = {};
 
     switch(stateofmatter)
     {
@@ -77,7 +79,7 @@ auto waterDensity(real T, real P, const HelmholtsModel& model, StateOfMatter sta
     Exception exception;
     exception.error << "Unable to calculate the density of water.";
     exception.reason << "The calculations did not converge at temperature "
-        << T.val << " K and pressure " << P.val << "Pa.";
+        << T << " K and pressure " << P << "Pa.";
     RaiseError(exception);
 
     return {};
@@ -117,7 +119,7 @@ template<typename HelmholtzModel>
 auto waterPressure(real T, real D, const HelmholtzModel& model) -> real
 {
     WaterHelmholtzState h = model(T, D);
-    return D*D*h.helmholtzD.val;
+    return D*D*h.helmholtzD;
 }
 
 auto waterPressureHGK(real T, real D) -> real

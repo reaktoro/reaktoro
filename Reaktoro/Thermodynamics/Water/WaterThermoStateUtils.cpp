@@ -17,6 +17,10 @@
 
 #include "WaterThermoStateUtils.hpp"
 
+// C++ includes
+#include <cmath>
+using std::sqrt;
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
