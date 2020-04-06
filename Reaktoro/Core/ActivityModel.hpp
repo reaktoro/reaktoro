@@ -21,7 +21,6 @@
 #include <functional>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
@@ -31,31 +30,31 @@ namespace Reaktoro {
 struct ActivityProps
 {
     /// The activity coefficients (natural log) of the species in the phase.
-    VectorXr ln_activity_coefficients;
+    ArrayXr ln_activity_coefficients;
 
     /// The activities (natural log) of the species in the phase.
-    VectorXr ln_activities;
+    ArrayXr ln_activities;
 
-    /// The partial molar volumes of the species in the phase (in units of m3/mol).
-    VectorXr partial_molar_volumes;
+    /// The molar volume *V* of the phase (in m3/mol).
+    real V = {};
 
-    /// The molar volume of the phase (in units of m3/mol).
-    real molar_volume;
+    /// The temperature derivative of *V* at constant pressure (in m3/(mol*K)).
+    real VT = {};
+
+    /// The pressure derivative of *V* at constant temperature (in m3/(mol*Pa)).
+    real VP = {};
 
     /// The excess molar Gibbs energy of the phase (in units of J/mol).
-    real excess_molar_gibbs_energy;
+    real Gex = {};
 
     /// The excess molar enthalpy of the phase (in units of J/mol).
-    real excess_molar_enthalpy;
+    real Hex = {};
 
     /// The excess molar isobaric heat capacity of the phase (in units of J/(mol*K)).
-    real excess_molar_heat_capacity_cp;
-
-    /// The excess molar isochoric heat capacity of the phase (in units of J/(mol*K)).
-    real excess_molar_heat_capacity_cv;
+    real Cpex = {};
 };
 
 /// The function type for the activity model of a phase.
-using ActivityModelFn = std::function<ActivityProps(real, real, VectorXrConstRef)>;
+using ActivityModelFn = std::function<void(ActivityProps&, real, real, VectorXrConstRef)>;
 
 } // namespace Reaktoro
