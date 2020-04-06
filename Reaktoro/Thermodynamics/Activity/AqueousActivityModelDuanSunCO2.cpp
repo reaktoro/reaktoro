@@ -19,7 +19,6 @@
 
 // C++ includes
 #include <cmath>
-using std::log;
 
 // Reaktoro includes
 #include <Reaktoro/Common/NamingUtils.hpp>
@@ -27,6 +26,8 @@ using std::log;
 
 namespace Reaktoro {
 namespace {
+
+using std::log;
 
 /// The lambda coefficients for the activity coefficient of CO2(aq)
 const double lambda_coeffs[] =
