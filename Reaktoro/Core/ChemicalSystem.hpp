@@ -17,18 +17,20 @@
 
 #pragma once
 
+// C++ includes
+#include <memory>
+#include <vector>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
-#include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
-#include <Reaktoro/Thermodynamics/Models/ChemicalModel.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
+class Element;
+class Species;
+class Phase;
 class ChemicalProperties;
 class ThermoProperties;
 
@@ -46,9 +48,6 @@ public:
 
     /// Construct a ChemicalSystem instance with given phases and thermodynamic and chemical models.
     // ChemicalSystem(const std::vector<Phase>& phases, const ThermoModel& thermo_model, const ChemicalModel& chemical_model);
-
-    /// Destroy this ChemicalSystem instance
-    virtual ~ChemicalSystem();
 
     /// Return the number of elements in the system
     auto numElements() const -> unsigned;
@@ -79,8 +78,8 @@ public:
     // auto chemicalModel() const -> const ChemicalModel&;
 
     /// Return the formula matrix of the system
-    /// The formula matrix is defined as the matrix whose entry `(j, i)`
-    /// is given by the number of atoms of its `j`-th element in its `i`-th species.
+    /// The formula matrix is defined as the matrix whose entry *(j, i)* is
+    /// given by the coefficient of the *j*th element in the *i*th species.
     auto formulaMatrix() const -> MatrixXdConstRef;
 
     /// Return an element of the system
@@ -191,37 +190,6 @@ public:
 
     /// Return the indices of the species in the solid phases.
     auto indicesSolidSpecies() const -> Indices;
-
-    /// Calculate the molar amounts of the elements (in units of mol)
-    /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmounts(VectorXrConstRef n) const -> VectorXr;
-
-    /// Calculate the molar amounts of the elements in a given phase (in units of mol)
-    /// @param iphase The index of the phase
-    /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountsInPhase(Index iphase, VectorXrConstRef n) const -> VectorXr;
-
-    /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
-    /// @param ispecies The indices of the species
-    /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountsInSpecies(const Indices& ispecies, VectorXrConstRef n) const -> VectorXr;
-
-    /// Calculate the molar amount of elements (in units of mol)
-    /// @param ielement The index of the element
-    /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmount(Index ielement, VectorXrConstRef n) const -> double;
-
-    /// Calculate the molar amounts of elements in a given phase (in units of mol)
-    /// @param ielement The index of the element
-    /// @param iphase The index of the phase
-    /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountInPhase(Index ielement, Index iphase, VectorXrConstRef n) const -> double;
-
-    /// Calculate the molar amounts of elements in a given set of species (in units of mol)
-    /// @param ielement The index of the element
-    /// @param ispecies The indices of the species in the set
-    /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, VectorXrConstRef n) const -> double;
 
     /// Calculate the standard thermodynamic properties of the species.
     /// @param T The temperature of the system (in units of K)

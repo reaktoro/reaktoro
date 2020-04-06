@@ -27,6 +27,9 @@
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
@@ -175,9 +178,6 @@ ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases)
 // ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases, const ThermoModel& thermo_model, const ChemicalModel& chemical_model)
 // : pimpl(new Impl(phases, thermo_model, chemical_model))
 // {}
-
-ChemicalSystem::~ChemicalSystem()
-{}
 
 auto ChemicalSystem::numElements() const -> unsigned
 {
@@ -438,56 +438,6 @@ auto ChemicalSystem::indicesSolidPhases() const -> Indices
 auto ChemicalSystem::indicesSolidSpecies() const -> Indices
 {
     return indicesSpeciesInPhases(indicesSolidPhases());
-}
-
-auto ChemicalSystem::elementAmounts(VectorXrConstRef n) const -> VectorXr
-{
-    MatrixXdConstRef W = formulaMatrix();
-    return W * n;
-}
-
-auto ChemicalSystem::elementAmountsInPhase(Index iphase, VectorXrConstRef n) const -> VectorXr
-{
-    MatrixXdConstRef W = formulaMatrix();
-    const unsigned first = indexFirstSpeciesInPhase(iphase);
-    const unsigned size = numSpeciesInPhase(iphase);
-    const auto Wp = cols(W, first, size);
-    const auto np = rows(n, first, size);
-    return Wp * np;
-}
-
-auto ChemicalSystem::elementAmountsInSpecies(const Indices& ispecies, VectorXrConstRef n) const -> VectorXr
-{
-    MatrixXdConstRef W = formulaMatrix();
-    VectorXr b = zeros(W.rows());
-    for(Index i : ispecies)
-        b += W.col(i) * n[i];
-    return b;
-}
-
-auto ChemicalSystem::elementAmount(Index ielement, VectorXrConstRef n) const -> double
-{
-    MatrixXdConstRef W = formulaMatrix();
-    return W.row(ielement) * n;
-}
-
-auto ChemicalSystem::elementAmountInPhase(Index ielement, Index iphase, VectorXrConstRef n) const -> double
-{
-    MatrixXdConstRef W = formulaMatrix();
-    const unsigned first = indexFirstSpeciesInPhase(iphase);
-    const unsigned size = numSpeciesInPhase(iphase);
-    const auto Wp = cols(W, first, size);
-    const auto np = rows(n, first, size);
-    return dot(Wp.row(ielement), np);
-}
-
-auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispecies, VectorXrConstRef n) const -> double
-{
-    MatrixXdConstRef W = formulaMatrix();
-    double bval = 0.0;
-    for(Index i : ispecies)
-        bval += W(ielement, i) * n[i];
-    return bval;
 }
 
 auto ChemicalSystem::properties(double T, double P) const -> ThermoProperties
