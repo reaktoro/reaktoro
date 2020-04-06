@@ -18,12 +18,12 @@
 //#pragma once
 //
 //// Reaktoro includes
-//#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+//#include <Reaktoro/Core/ActivityModel.hpp>
 //
 //namespace Reaktoro {
 //
 //// Forward declarations
-//class MineralMixture;
+//class GeneralMixture;
 //
 ///// Return an equation of state for a binary mineral solid solution based on Van Laar model.
 ///// The Van Laar model calculates the activity coefficient of the end-members in a
@@ -33,7 +33,7 @@
 ///// @param a The size parameters for the solid solution end-members
 ///// @param W The binary interaction parameters for the solid solution end-members
 ///// @return The equation of state function for the mineral phase
-///// @see MineralMixture, MineralChemicalModel
-//auto mineralChemicalModelVanLaar(const MineralMixture& mixture, VectorXrConstRef a, MatrixXdConstRef W) -> PhaseChemicalModel;
+///// @see GeneralMixture, MineralChemicalModel
+//auto mineralChemicalModelVanLaar(const GeneralMixture& mixture, VectorXrConstRef a, MatrixXdConstRef W)-> ActivityModelFn;
 //
 //} // namespace Reaktoro

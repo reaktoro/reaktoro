@@ -18,12 +18,12 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-class MineralMixture;
+class GeneralMixture;
 
 /// Return an equation of state for a binary mineral solid solution based on Redlich-Kister model.
 /// The Redlich-Kister model calculates the activity coefficient of the end-members in a
@@ -38,7 +38,7 @@ class MineralMixture;
 /// @param a1 The Redlich-Kister parameter a1
 /// @param a2 The Redlich-Kister parameter a2
 /// @return The equation of state function for the mineral phase
-/// @see MineralMixture, MineralChemicalModel
-auto mineralChemicalModelRedlichKister(const MineralMixture& mixture, double a0, double a1, double a2) -> PhaseChemicalModel;
+/// @see GeneralMixture, MineralChemicalModel
+auto mineralChemicalModelRedlichKister(const GeneralMixture& mixture, double a0, double a1, double a2)-> ActivityModelFn;
 
 } // namespace Reaktoro

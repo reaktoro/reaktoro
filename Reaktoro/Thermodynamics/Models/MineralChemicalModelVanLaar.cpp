@@ -20,24 +20,24 @@
 //// Reaktoro includes
 //#include <Reaktoro/Common/Constants.hpp>
 //#include <Reaktoro/Common/TableUtils.hpp>
-//#include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
+//#include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 //
 //namespace Reaktoro {
 //
-//auto mineralChemicalModelVanLaar(const MineralMixture& mixture, VectorXrConstRef a, MatrixXdConstRef W) -> PhaseChemicalModel
+//auto mineralChemicalModelVanLaar(const GeneralMixture& mixture, VectorXrConstRef a, MatrixXdConstRef W)-> ActivityModelFn
 //{
-//    MineralMixtureState state;
+//    MixtureState state;
 //    PhaseChemicalModelResult res(2);
 //
 //    VectorXd phi;
 //
-//    real avg;
+//    real avg = {};
 //
 //    const Index nspecies = mixture.numSpecies();
 //
 //    Table2D<real> B = table2D<real>(nspecies, nspecies);
 //
-//    PhaseChemicalModel f = [=](double T, double P, VectorXrConstRef n) mutable
+//    ActivityModelFn f = [=](double T, double P, VectorXrConstRef n) mutable
 //    {
 //        state = mixture.state(T, P, n);
 //
@@ -65,8 +65,8 @@
 ////
 ////        res.ln_activities = res.ln_activity_coefficients + log(state.x);
 ////
-////        res.residual_molar_gibbs_energy = (x1*x2*(a0 + a1*(x1 - x2) + a2*pow((x1 - x2), 2))) * RT;
-////        res.residual_molar_enthalpy = res.residual_molar_gibbs_energy;
+////        res.Gex = (x1*x2*(a0 + a1*(x1 - x2) + a2*pow((x1 - x2), 2))) * RT;
+////        res.Hex = res.Gex;
 //
 //        return res;
 //    };
