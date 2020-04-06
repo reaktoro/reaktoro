@@ -26,15 +26,9 @@
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/StandardThermoModel.hpp>
+#include <Reaktoro/Core/StateOfMatter.hpp>
 
 namespace Reaktoro {
-
-/// The possible physical states of a phase.
-/// @see Phase
-enum class PhasePhysicalState
-{
-    Solid, Liquid, Gas, Plasma
-};
 
 /// A type used to define a phase and its attributes.
 /// @see ChemicalSystem, Element, Species
@@ -61,7 +55,7 @@ public:
     auto setType(std::string type) -> void;
 
     /// Set the physical state of the phase.
-    auto setPhysicalState(PhasePhysicalState state) -> void;
+    auto setPhysicalState(StateOfMatter state) -> void;
 
     /// Set the species of the phase.
     auto setSpecies(const std::vector<Species>& species) -> void;
@@ -85,7 +79,7 @@ public:
     auto type() const -> std::string;
 
     /// Return the physical state of the phase.
-    auto physicalState() const -> PhasePhysicalState;
+    auto physicalState() const -> StateOfMatter;
 
     /// Return the elements of the phase.
     auto elements() const -> const std::vector<Element>&;

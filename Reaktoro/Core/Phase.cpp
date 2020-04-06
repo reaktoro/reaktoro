@@ -35,7 +35,7 @@ struct Phase::Impl
     std::string type;
 
     /// The physical state of the phase.
-    PhasePhysicalState state = PhasePhysicalState::Solid;
+    StateOfMatter state = StateOfMatter::Solid;
 
     /// The list of Species instances defining the phase
     std::vector<Species> species;
@@ -77,7 +77,7 @@ auto Phase::setType(std::string type) -> void
     pimpl->type = type;
 }
 
-auto Phase::setPhysicalState(PhasePhysicalState state) -> void
+auto Phase::setPhysicalState(StateOfMatter state) -> void
 {
     pimpl->state = state;
 }
@@ -117,7 +117,7 @@ auto Phase::type() const -> std::string
     return pimpl->type;
 }
 
-auto Phase::physicalState() const -> PhasePhysicalState
+auto Phase::physicalState() const -> StateOfMatter
 {
     return pimpl->state;
 }
@@ -144,7 +144,7 @@ auto Phase::isFluid() const -> bool
 
 auto Phase::isSolid() const -> bool
 {
-    return physicalState() == PhasePhysicalState::Solid;
+    return physicalState() == StateOfMatter::Solid;
 }
 
 auto Phase::standardThermoModel() const -> const StandardThermoModelFn&
@@ -193,7 +193,11 @@ auto Phase::standardThermoProps(Index ispecies, real T, real P) const -> Standar
 
 auto Phase::activityProps(real T, real P, VectorXrConstRef n) const -> ActivityProps
 {
-    return pimpl->activity_model_fn(T, P, n);
+    ActivityProps props;
+    props.ln_activity_coefficients.resize(numSpecies());
+    props.ln_activities.resize(numSpecies());
+    pimpl->activity_model_fn(props, T, P, n);
+    return props;
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool
