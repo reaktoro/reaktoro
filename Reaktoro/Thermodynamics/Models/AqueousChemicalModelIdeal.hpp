@@ -18,7 +18,7 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 
 namespace Reaktoro {
 
@@ -28,7 +28,7 @@ class AqueousMixture;
 /// Return an equation of state for an aqueous phase based on the ideal model.
 /// @param mixture The aqueous mixture
 /// @return The equation of state function for the aqueous phase
-/// @see AqueousMixture, PhaseChemicalModel
-auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalModel;
+/// @see AqueousMixture, ActivityModelFn
+auto aqueousChemicalModelIdeal(const AqueousMixture& mixture)-> ActivityModelFn;
 
 } // namespace Reaktoro

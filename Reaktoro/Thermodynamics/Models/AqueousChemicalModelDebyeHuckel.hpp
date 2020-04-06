@@ -22,7 +22,7 @@
 #include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 
 namespace Reaktoro {
 
@@ -34,8 +34,8 @@ class DebyeHuckelParams;
 /// @param mixture The aqueous mixture instance
 /// @param params The parameters for the Debye--Hückel activity model.
 /// @return The activity model function for the aqueous phase
-/// @see AqueousMixture, DebyeHuckelParams, PhaseChemicalModel
-auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeHuckelParams& params) -> PhaseChemicalModel;
+/// @see AqueousMixture, DebyeHuckelParams, ActivityModelFn
+auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeHuckelParams& params)-> ActivityModelFn;
 
 /**
 A class used to define the parameters in the Debye--Hückel activity model for aqueous mixtures.
