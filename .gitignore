@@ -26,6 +26,10 @@ _build/
 /environment.yml
 /compile_environment*.yml
 
+# LyX backup and temporary files
+*.lyx#
+*.lyx~
+
 # Other files/directories
 .DS_Store
 .directory
