@@ -76,7 +76,8 @@ struct packet_traits<half> : default_packet_traits {
     HasRsqrt = 0,
     HasExp = 0,
     HasLog = 0,
-    HasBlend = 0
+    HasBlend = 0,
+    HasInsert = 1
   };
 };
 
@@ -90,6 +91,7 @@ template<> struct packet_traits<float>  : default_packet_traits
     size = 16,
     HasHalfPacket = 1,
     HasBlend = 0,
+    HasInsert = 1,
     HasSin = EIGEN_FAST_MATH,
     HasCos = EIGEN_FAST_MATH,
 #if EIGEN_GNUC_AT_LEAST(5, 3) || (!EIGEN_COMP_GNUC_STRICT)
@@ -118,6 +120,7 @@ template<> struct packet_traits<double> : default_packet_traits
     AlignedOnScalar = 1,
     size = 8,
     HasHalfPacket = 1,
+    HasInsert = 1,
 #if EIGEN_GNUC_AT_LEAST(5, 3) || (!EIGEN_COMP_GNUC_STRICT)
     HasSqrt = EIGEN_FAST_MATH,
     HasRsqrt = EIGEN_FAST_MATH,
@@ -365,6 +368,12 @@ EIGEN_STRONG_INLINE Packet16f cat256(Packet8f a, Packet8f b) {
 }
 #endif
 
+template <>
+EIGEN_STRONG_INLINE Packet16f pcmp_eq(const Packet16f& a, const Packet16f& b) {
+  __mmask16 mask = _mm512_cmp_ps_mask(a, b, _CMP_EQ_OQ);
+  return _mm512_castsi512_ps(
+      _mm512_mask_set1_epi32(_mm512_set1_epi32(0), mask, 0xffffffffu));
+}
 template<> EIGEN_STRONG_INLINE Packet16f pcmp_le(const Packet16f& a, const Packet16f& b) {
   __mmask16 mask = _mm512_cmp_ps_mask(a, b, _CMP_LE_OQ);
   return _mm512_castsi512_ps(
@@ -388,16 +397,28 @@ template<> EIGEN_STRONG_INLINE Packet16i pcmp_eq(const Packet16i& a, const Packe
   return _mm512_mask_set1_epi32(_mm512_set1_epi32(0), mask, 0xffffffffu);
 }
 
-template <>
-EIGEN_STRONG_INLINE Packet16f pcmp_eq(const Packet16f& a, const Packet16f& b) {
-  __mmask16 mask = _mm512_cmp_ps_mask(a, b, _CMP_EQ_OQ);
-  return _mm512_castsi512_ps(
-      _mm512_mask_set1_epi32(_mm512_set1_epi32(0), mask, 0xffffffffu));
-}
 
 template <>
 EIGEN_STRONG_INLINE Packet8d pcmp_eq(const Packet8d& a, const Packet8d& b) {
   __mmask8 mask = _mm512_cmp_pd_mask(a, b, _CMP_EQ_OQ);
+  return _mm512_castsi512_pd(
+      _mm512_mask_set1_epi64(_mm512_set1_epi64(0), mask, 0xffffffffffffffffu));
+}
+template <>
+EIGEN_STRONG_INLINE Packet8d pcmp_le(const Packet8d& a, const Packet8d& b) {
+  __mmask8 mask = _mm512_cmp_pd_mask(a, b, _CMP_LE_OQ);
+  return _mm512_castsi512_pd(
+      _mm512_mask_set1_epi64(_mm512_set1_epi64(0), mask, 0xffffffffffffffffu));
+}
+template <>
+EIGEN_STRONG_INLINE Packet8d pcmp_lt(const Packet8d& a, const Packet8d& b) {
+  __mmask8 mask = _mm512_cmp_pd_mask(a, b, _CMP_LT_OQ);
+  return _mm512_castsi512_pd(
+      _mm512_mask_set1_epi64(_mm512_set1_epi64(0), mask, 0xffffffffffffffffu));
+}
+template <>
+EIGEN_STRONG_INLINE Packet8d pcmp_lt_or_nan(const Packet8d& a, const Packet8d& b) {
+  __mmask8 mask = _mm512_cmp_pd_mask(a, b, _CMP_NGT_UQ);
   return _mm512_castsi512_pd(
       _mm512_mask_set1_epi64(_mm512_set1_epi64(0), mask, 0xffffffffffffffffu));
 }
@@ -520,7 +541,15 @@ EIGEN_STRONG_INLINE Packet8d pandnot<Packet8d>(const Packet8d& a,const Packet8d&
 #endif
 }
 
-template<int N> EIGEN_STRONG_INLINE Packet16i pshiftleft(Packet16i a) {
+template<int N> EIGEN_STRONG_INLINE Packet16i parithmetic_shift_right(Packet16i a) {
+  return _mm512_srai_epi32(a, N);
+}
+
+template<int N> EIGEN_STRONG_INLINE Packet16i plogical_shift_right(Packet16i a) {
+  return _mm512_srli_epi32(a, N);
+}
+
+template<int N> EIGEN_STRONG_INLINE Packet16i plogical_shift_left(Packet16i a) {
   return _mm512_slli_epi32(a, N);
 }
 

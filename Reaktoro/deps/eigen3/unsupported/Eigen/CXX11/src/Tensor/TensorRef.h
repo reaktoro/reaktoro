@@ -142,7 +142,6 @@ template<typename PlainObjectType> class TensorRef : public TensorBase<TensorRef
       IsAligned = false,
       PacketAccess = false,
       BlockAccess = false,
-      BlockAccessV2 = false,
       PreferBlockAccess = false,
       Layout = PlainObjectType::Layout,
       CoordAccess = false,  // to be implemented
@@ -150,7 +149,7 @@ template<typename PlainObjectType> class TensorRef : public TensorBase<TensorRef
     };
 
     //===- Tensor block evaluation strategy (see TensorBlock.h) -----------===//
-    typedef internal::TensorBlockNotImplemented TensorBlockV2;
+    typedef internal::TensorBlockNotImplemented TensorBlock;
     //===------------------------------------------------------------------===//
 
     EIGEN_STRONG_INLINE TensorRef() : m_evaluator(NULL) {
@@ -379,7 +378,6 @@ struct TensorEvaluator<const TensorRef<Derived>, Device>
     IsAligned = false,
     PacketAccess = false,
     BlockAccess = false,
-    BlockAccessV2 = false,
     PreferBlockAccess = false,
     Layout = TensorRef<Derived>::Layout,
     CoordAccess = false,  // to be implemented
@@ -387,7 +385,7 @@ struct TensorEvaluator<const TensorRef<Derived>, Device>
   };
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
-  typedef internal::TensorBlockNotImplemented TensorBlockV2;
+  typedef internal::TensorBlockNotImplemented TensorBlock;
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const TensorRef<Derived>& m, const Device&)
@@ -410,7 +408,7 @@ struct TensorEvaluator<const TensorRef<Derived>, Device>
     return m_ref.coeffRef(index);
   }
 
-  EIGEN_DEVICE_FUNC Scalar* data() const { return m_ref.data(); }
+  EIGEN_DEVICE_FUNC const Scalar* data() const { return m_ref.data(); }
 
  protected:
   TensorRef<Derived> m_ref;
@@ -433,13 +431,12 @@ struct TensorEvaluator<TensorRef<Derived>, Device> : public TensorEvaluator<cons
     IsAligned = false,
     PacketAccess = false,
     BlockAccess = false,
-    BlockAccessV2 = false,
     PreferBlockAccess = false,
     RawAccess = false
   };
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
-  typedef internal::TensorBlockNotImplemented TensorBlockV2;
+  typedef internal::TensorBlockNotImplemented TensorBlock;
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(TensorRef<Derived>& m, const Device& d) : Base(m, d)

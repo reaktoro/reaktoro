@@ -111,7 +111,6 @@ struct TensorEvaluator<const TensorEvalToOp<ArgType, MakePointer_>, Device>
     IsAligned         = TensorEvaluator<ArgType, Device>::IsAligned,
     PacketAccess      = TensorEvaluator<ArgType, Device>::PacketAccess,
     BlockAccess       = true,
-    BlockAccessV2     = true,
     PreferBlockAccess = false,
     Layout            = TensorEvaluator<ArgType, Device>::Layout,
     CoordAccess       = false,  // to be implemented
@@ -120,18 +119,15 @@ struct TensorEvaluator<const TensorEvalToOp<ArgType, MakePointer_>, Device>
 
   static const int NumDims = internal::traits<ArgType>::NumDimensions;
 
-  typedef typename internal::TensorBlock<CoeffReturnType, Index, NumDims, Layout> TensorBlock;
-  typedef typename internal::TensorBlockReader<CoeffReturnType, Index, NumDims, Layout> TensorBlockReader;
-
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
   typedef internal::TensorBlockDescriptor<NumDims, Index> TensorBlockDesc;
   typedef internal::TensorBlockScratchAllocator<Device> TensorBlockScratch;
 
-  typedef typename TensorEvaluator<const ArgType, Device>::TensorBlockV2
+  typedef typename TensorEvaluator<const ArgType, Device>::TensorBlock
       ArgTensorBlock;
 
   typedef internal::TensorBlockAssignment<
-      Scalar, NumDims, typename ArgTensorBlock::XprType, Index>
+      CoeffReturnType, NumDims, typename ArgTensorBlock::XprType, Index>
       TensorBlockAssignment;
   //===--------------------------------------------------------------------===//
 
@@ -151,6 +147,16 @@ struct TensorEvaluator<const TensorEvalToOp<ArgType, MakePointer_>, Device>
     return m_impl.evalSubExprsIfNeeded(m_buffer);
   }
 
+#ifdef EIGEN_USE_THREADS
+  template <typename EvalSubExprsCallback>
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void evalSubExprsIfNeededAsync(
+      EvaluatorPointerType scalar, EvalSubExprsCallback done) {
+    EIGEN_UNUSED_VARIABLE(scalar);
+    eigen_assert(scalar == NULL);
+    m_impl.evalSubExprsIfNeededAsync(m_buffer, std::move(done));
+  }
+#endif
+
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void evalScalar(Index i) {
     m_buffer[i] = m_impl.coeff(i);
   }
@@ -158,29 +164,20 @@ struct TensorEvaluator<const TensorEvalToOp<ArgType, MakePointer_>, Device>
     internal::pstoret<CoeffReturnType, PacketReturnType, Aligned>(m_buffer + i, m_impl.template packet<TensorEvaluator<ArgType, Device>::IsAligned ? Aligned : Unaligned>(i));
   }
 
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void getResourceRequirements(
-      std::vector<internal::TensorOpResourceRequirements>* resources) const {
-    m_impl.getResourceRequirements(resources);
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+  internal::TensorBlockResourceRequirements getResourceRequirements() const {
+    return m_impl.getResourceRequirements();
   }
 
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void evalBlock(TensorBlock* block) {
-    TensorBlock eval_to_block(block->first_coeff_index(), block->block_sizes(),
-                              block->tensor_strides(), block->tensor_strides(),
-                              m_buffer + block->first_coeff_index());
-    m_impl.block(&eval_to_block);
-  }
-
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void evalBlockV2(
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void evalBlock(
       TensorBlockDesc& desc, TensorBlockScratch& scratch) {
     // Add `m_buffer` as destination buffer to the block descriptor.
-    desc.AddDestinationBuffer(
+    desc.template AddDestinationBuffer<Layout>(
         /*dst_base=*/m_buffer + desc.offset(),
-        /*dst_strides=*/internal::strides<Layout>(m_impl.dimensions()),
-        /*total_dst_bytes=*/
-                     (internal::array_prod(m_impl.dimensions())
-                         * sizeof(Scalar)));
+        /*dst_strides=*/internal::strides<Layout>(m_impl.dimensions()));
 
-    ArgTensorBlock block = m_impl.blockV2(desc, scratch);
+    ArgTensorBlock block =
+        m_impl.block(desc, scratch, /*root_of_expr_ast=*/true);
 
     // If block was evaluated into a destination buffer, there is no need to do
     // an assignment.
@@ -207,11 +204,6 @@ struct TensorEvaluator<const TensorEvalToOp<ArgType, MakePointer_>, Device>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE PacketReturnType packet(Index index) const
   {
     return internal::ploadt<PacketReturnType, LoadMode>(m_buffer + index);
-  }
-
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void block(TensorBlock* block) const {
-    assert(m_buffer != NULL);
-    TensorBlockReader::Run(block, m_buffer);
   }
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorOpCost costPerCoeff(bool vectorized) const {

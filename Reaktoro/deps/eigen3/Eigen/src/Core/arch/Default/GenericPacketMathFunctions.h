@@ -25,7 +25,7 @@ pfrexp_float(const Packet& a, Packet& exponent) {
   const Packet cst_126f = pset1<Packet>(126.0f);
   const Packet cst_half = pset1<Packet>(0.5f);
   const Packet cst_inv_mant_mask  = pset1frombits<Packet>(~0x7f800000u);
-  exponent = psub(pcast<PacketI,Packet>(pshiftright<23>(preinterpret<PacketI>(a))), cst_126f);
+  exponent = psub(pcast<PacketI,Packet>(plogical_shift_right<23>(preinterpret<PacketI>(a))), cst_126f);
   return por(pand(a, cst_inv_mant_mask), cst_half);
 }
 
@@ -36,7 +36,7 @@ pldexp_float(Packet a, Packet exponent)
   const Packet cst_127 = pset1<Packet>(127.f);
   // return a * 2^exponent
   PacketI ei = pcast<Packet,PacketI>(padd(exponent, cst_127));
-  return pmul(a, preinterpret<Packet>(pshiftleft<23>(ei)));
+  return pmul(a, preinterpret<Packet>(plogical_shift_left<23>(ei)));
 }
 
 // Natural logarithm
@@ -233,6 +233,10 @@ Packet pexp_float(const Packet _x)
   return pmax(pldexp(y,m), _x);
 }
 
+// make it the default path for scalar float
+template<>
+EIGEN_DEVICE_FUNC inline float pexp(const float& a) { return pexp_float(a); }
+
 template <typename Packet>
 EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS
 EIGEN_UNUSED
@@ -300,6 +304,10 @@ Packet pexp_double(const Packet _x)
   // non-finite values in the input.
   return pmax(pldexp(x,fx), _x);
 }
+
+// make it the default path for scalar double
+template<>
+EIGEN_DEVICE_FUNC inline double pexp(const double& a) { return pexp_double(a); }
 
 // The following code is inspired by the following stack-overflow answer:
 //   https://stackoverflow.com/questions/30463616/payne-hanek-algorithm-implementation-in-c/30465751#30465751
@@ -458,8 +466,8 @@ Packet psincos_float(const Packet& _x)
   // Compute the sign to apply to the polynomial.
   // sin: sign = second_bit(y_int) xor signbit(_x)
   // cos: sign = second_bit(y_int+1)
-  Packet sign_bit = ComputeSine ? pxor(_x, preinterpret<Packet>(pshiftleft<30>(y_int)))
-                                : preinterpret<Packet>(pshiftleft<30>(padd(y_int,csti_1)));
+  Packet sign_bit = ComputeSine ? pxor(_x, preinterpret<Packet>(plogical_shift_left<30>(y_int)))
+                                : preinterpret<Packet>(plogical_shift_left<30>(padd(y_int,csti_1)));
   sign_bit = pand(sign_bit, cst_sign_mask); // clear all but left most bit
 
   // Get the polynomial selection mask from the second bit of y_int

@@ -42,10 +42,13 @@ typedef __vector unsigned char  Packet16uc;
 // and it doesn't really work to declare them global, so we define macros instead
 
 #define _EIGEN_DECLARE_CONST_FAST_Packet4f(NAME,X) \
-  Packet4f p4f_##NAME = reinterpret_cast<Packet4f>(vec_splat_s32(X))
+  Packet4f p4f_##NAME = {X, X, X, X}
 
 #define _EIGEN_DECLARE_CONST_FAST_Packet4i(NAME,X) \
   Packet4i p4i_##NAME = vec_splat_s32(X)
+
+#define _EIGEN_DECLARE_CONST_FAST_Packet4ui(NAME,X) \
+  Packet4ui p4ui_##NAME = {X, X, X, X}
 
 #define _EIGEN_DECLARE_CONST_Packet4f(NAME,X) \
   Packet4f p4f_##NAME = pset1<Packet4f>(X)
@@ -65,13 +68,14 @@ typedef __vector unsigned char  Packet16uc;
 #define DST_CHAN 1
 #define DST_CTRL(size, count, stride) (((size) << 24) | ((count) << 16) | (stride))
 
-
 // These constants are endian-agnostic
 static _EIGEN_DECLARE_CONST_FAST_Packet4f(ZERO, 0); //{ 0.0, 0.0, 0.0, 0.0}
 static _EIGEN_DECLARE_CONST_FAST_Packet4i(ZERO, 0); //{ 0, 0, 0, 0,}
 static _EIGEN_DECLARE_CONST_FAST_Packet4i(ONE,1); //{ 1, 1, 1, 1}
 static _EIGEN_DECLARE_CONST_FAST_Packet4i(MINUS16,-16); //{ -16, -16, -16, -16}
 static _EIGEN_DECLARE_CONST_FAST_Packet4i(MINUS1,-1); //{ -1, -1, -1, -1}
+static _EIGEN_DECLARE_CONST_FAST_Packet4ui(SIGN, 0x80000000u);
+static _EIGEN_DECLARE_CONST_FAST_Packet4ui(PREV0DOT5, 0x3EFFFFFFu);
 static Packet4f p4f_MZERO = (Packet4f) vec_sl((Packet4ui)p4i_MINUS1, (Packet4ui)p4i_MINUS1); //{ 0x80000000, 0x80000000, 0x80000000, 0x80000000}
 #ifndef __VSX__
 static Packet4f p4f_ONE = vec_ctf(p4i_ONE, 0); //{ 1.0, 1.0, 1.0, 1.0}
@@ -171,10 +175,11 @@ struct packet_traits<int> : default_packet_traits {
     size = 4,
     HasHalfPacket = 0,
 
-    HasAdd  = 1,
-    HasSub  = 1,
-    HasMul  = 1,
-    HasDiv  = 0,
+    HasAdd   = 1,
+    HasSub   = 1,
+    HasShift = 1,
+    HasMul   = 1,
+    HasDiv   = 0,
     HasBlend = 1
   };
 };
@@ -190,7 +195,7 @@ template<> struct unpacket_traits<Packet4i>
 {
   typedef int       type;
   typedef Packet4i  half;
-  enum {size=4, alignment=Aligned16, vectorizable=false, masked_load_available=false, masked_store_available=false};
+  enum {size=4, alignment=Aligned16, vectorizable=true, masked_load_available=false, masked_store_available=false};
 };
 
 inline std::ostream & operator <<(std::ostream & s, const Packet16uc & v)
@@ -245,7 +250,11 @@ template<> EIGEN_STRONG_INLINE Packet4f pload<Packet4f>(const float* from)
   // ignoring these warnings for now.
   EIGEN_UNUSED_VARIABLE(from);
   EIGEN_DEBUG_ALIGNED_LOAD
+#ifdef __VSX__
+  return vec_xl(0, from);
+#else
   return vec_ld(0, from);
+#endif
 }
 
 template<> EIGEN_STRONG_INLINE Packet4i pload<Packet4i>(const int*     from)
@@ -254,7 +263,11 @@ template<> EIGEN_STRONG_INLINE Packet4i pload<Packet4i>(const int*     from)
   // ignoring these warnings for now.
   EIGEN_UNUSED_VARIABLE(from);
   EIGEN_DEBUG_ALIGNED_LOAD
+#ifdef __VSX__
+  return vec_xl(0, from);
+#else
   return vec_ld(0, from);
+#endif
 }
 
 template<> EIGEN_STRONG_INLINE void pstore<float>(float*   to, const Packet4f& from)
@@ -263,7 +276,11 @@ template<> EIGEN_STRONG_INLINE void pstore<float>(float*   to, const Packet4f& f
   // ignoring these warnings for now.
   EIGEN_UNUSED_VARIABLE(to);
   EIGEN_DEBUG_ALIGNED_STORE
+#ifdef __VSX__
+  vec_xst(from, 0, to);
+#else
   vec_st(from, 0, to);
+#endif
 }
 
 template<> EIGEN_STRONG_INLINE void pstore<int>(int*       to, const Packet4i& from)
@@ -272,7 +289,11 @@ template<> EIGEN_STRONG_INLINE void pstore<int>(int*       to, const Packet4i& f
   // ignoring these warnings for now.
   EIGEN_UNUSED_VARIABLE(to);
   EIGEN_DEBUG_ALIGNED_STORE
+#ifdef __VSX__
+  vec_xst(from, 0, to);
+#else
   vec_st(from, 0, to);
+#endif
 }
 
 template<> EIGEN_STRONG_INLINE Packet4f pset1<Packet4f>(const float&  from) {
@@ -442,8 +463,16 @@ template<> EIGEN_STRONG_INLINE Packet4i pandnot<Packet4i>(const Packet4i& a, con
 template<> EIGEN_STRONG_INLINE Packet4f pselect(const Packet4f& mask, const Packet4f& a, const Packet4f& b) {
   return vec_sel(b, a, reinterpret_cast<Packet4ui>(mask));
 }
+template<> EIGEN_STRONG_INLINE Packet4f pround<Packet4f>(const Packet4f& a) {
+    Packet4f t = vec_add(reinterpret_cast<Packet4f>(vec_or(vec_and(reinterpret_cast<Packet4ui>(a), p4ui_SIGN), p4ui_PREV0DOT5)), a);
+    Packet4f res;
 
-template<> EIGEN_STRONG_INLINE Packet4f pround<Packet4f>(const Packet4f& a) { return vec_round(a); }
+    __asm__("vrfiz %0, %1\n\t"
+        : "=v" (res)
+        : "v" (t));
+
+    return res;
+}
 template<> EIGEN_STRONG_INLINE Packet4f pceil<Packet4f>(const  Packet4f& a) { return vec_ceil(a); }
 template<> EIGEN_STRONG_INLINE Packet4f pfloor<Packet4f>(const Packet4f& a) { return vec_floor(a); }
 
@@ -475,12 +504,12 @@ template<> EIGEN_STRONG_INLINE Packet4i ploadu<Packet4i>(const int* from)
 template<> EIGEN_STRONG_INLINE Packet4i ploadu<Packet4i>(const int* from)
 {
   EIGEN_DEBUG_UNALIGNED_LOAD
-  return vec_vsx_ld(0, from);
+  return vec_xl(0, from);
 }
 template<> EIGEN_STRONG_INLINE Packet4f ploadu<Packet4f>(const float* from)
 {
   EIGEN_DEBUG_UNALIGNED_LOAD
-  return vec_vsx_ld(0, from);
+  return vec_xl(0, from);
 }
 #endif
 
@@ -541,12 +570,12 @@ template<> EIGEN_STRONG_INLINE void pstoreu<int>(int*      to, const Packet4i& f
 template<> EIGEN_STRONG_INLINE void pstoreu<int>(int*       to, const Packet4i& from)
 {
   EIGEN_DEBUG_UNALIGNED_STORE
-  vec_vsx_st(from, 0, to);
+  vec_xst(from, 0, to);
 }
 template<> EIGEN_STRONG_INLINE void pstoreu<float>(float*   to, const Packet4f& from)
 {
   EIGEN_DEBUG_UNALIGNED_STORE
-  vec_vsx_st(from, 0, to);
+  vec_xst(from, 0, to);
 }
 #endif
 
@@ -567,9 +596,11 @@ template<> EIGEN_STRONG_INLINE Packet4i preverse(const Packet4i& a)
 template<> EIGEN_STRONG_INLINE Packet4f pabs(const Packet4f& a) { return vec_abs(a); }
 template<> EIGEN_STRONG_INLINE Packet4i pabs(const Packet4i& a) { return vec_abs(a); }
 
-template<int N> EIGEN_STRONG_INLINE Packet4i pshiftright(Packet4i a)
+template<int N> EIGEN_STRONG_INLINE Packet4i parithmetic_shift_right(Packet4i a)
+{ return vec_sra(a,reinterpret_cast<Packet4ui>(pset1<Packet4i>(N))); }
+template<int N> EIGEN_STRONG_INLINE Packet4i plogical_shift_right(Packet4i a)
 { return vec_sr(a,reinterpret_cast<Packet4ui>(pset1<Packet4i>(N))); }
-template<int N> EIGEN_STRONG_INLINE Packet4i pshiftleft(Packet4i a)
+template<int N> EIGEN_STRONG_INLINE Packet4i plogical_shift_left(Packet4i a)
 { return vec_sl(a,reinterpret_cast<Packet4ui>(pset1<Packet4i>(N))); }
 
 template<> EIGEN_STRONG_INLINE Packet4f pfrexp<Packet4f>(const Packet4f& a, Packet4f& exponent) {
@@ -1033,7 +1064,7 @@ template<> EIGEN_STRONG_INLINE Packet2d pfloor<Packet2d>(const Packet2d& a) { re
 template<> EIGEN_STRONG_INLINE Packet2d ploadu<Packet2d>(const double* from)
 {
   EIGEN_DEBUG_UNALIGNED_LOAD
-  return vec_vsx_ld(0, from);
+  return vec_xl(0, from);
 }
 
 template<> EIGEN_STRONG_INLINE Packet2d ploaddup<Packet2d>(const double*   from)
@@ -1047,7 +1078,7 @@ template<> EIGEN_STRONG_INLINE Packet2d ploaddup<Packet2d>(const double*   from)
 template<> EIGEN_STRONG_INLINE void pstoreu<double>(double*  to, const Packet2d& from)
 {
   EIGEN_DEBUG_UNALIGNED_STORE
-  vec_vsx_st(from, 0, to);
+  vec_xst(from, 0, to);
 }
 
 template<> EIGEN_STRONG_INLINE void prefetch<double>(const double* addr) { EIGEN_PPC_PREFETCH(addr); }

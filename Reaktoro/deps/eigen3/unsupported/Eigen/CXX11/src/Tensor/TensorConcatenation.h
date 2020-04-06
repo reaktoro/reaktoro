@@ -122,17 +122,18 @@ struct TensorEvaluator<const TensorConcatenationOp<Axis, LeftArgType, RightArgTy
   typedef StorageMemory<CoeffReturnType, Device> Storage;
   typedef typename Storage::Type EvaluatorPointerType;
   enum {
-    IsAligned = false,
-    PacketAccess = TensorEvaluator<LeftArgType, Device>::PacketAccess & TensorEvaluator<RightArgType, Device>::PacketAccess,
-    BlockAccess = false,
-    BlockAccessV2 = false,
-    PreferBlockAccess = false,
-    Layout = TensorEvaluator<LeftArgType, Device>::Layout,
-    RawAccess = false
+    IsAligned         = false,
+    PacketAccess      = TensorEvaluator<LeftArgType, Device>::PacketAccess &&
+                        TensorEvaluator<RightArgType, Device>::PacketAccess,
+    BlockAccess       = false,
+    PreferBlockAccess = TensorEvaluator<LeftArgType, Device>::PreferBlockAccess ||
+                        TensorEvaluator<RightArgType, Device>::PreferBlockAccess,
+    Layout            = TensorEvaluator<LeftArgType, Device>::Layout,
+    RawAccess         = false
   };
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
-  typedef internal::TensorBlockNotImplemented TensorBlockV2;
+  typedef internal::TensorBlockNotImplemented TensorBlock;
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device)
@@ -320,17 +321,18 @@ template<typename Axis, typename LeftArgType, typename RightArgType, typename De
   typedef TensorConcatenationOp<Axis, LeftArgType, RightArgType> XprType;
   typedef typename Base::Dimensions Dimensions;
   enum {
-    IsAligned = false,
-    PacketAccess = TensorEvaluator<LeftArgType, Device>::PacketAccess & TensorEvaluator<RightArgType, Device>::PacketAccess,
-    BlockAccess = false,
-    BlockAccessV2 = false,
-    PreferBlockAccess = false,
-    Layout = TensorEvaluator<LeftArgType, Device>::Layout,
-    RawAccess = false
+    IsAligned         = false,
+    PacketAccess      = TensorEvaluator<LeftArgType, Device>::PacketAccess &&
+                        TensorEvaluator<RightArgType, Device>::PacketAccess,
+    BlockAccess       = false,
+    PreferBlockAccess = TensorEvaluator<LeftArgType, Device>::PreferBlockAccess ||
+                        TensorEvaluator<RightArgType, Device>::PreferBlockAccess,
+    Layout            = TensorEvaluator<LeftArgType, Device>::Layout,
+    RawAccess         = false
   };
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
-  typedef internal::TensorBlockNotImplemented TensorBlockV2;
+  typedef internal::TensorBlockNotImplemented TensorBlock;
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(XprType& op, const Device& device)

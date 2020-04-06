@@ -212,7 +212,6 @@
   #endif
 #endif
 
-
 #if !(defined(EIGEN_DONT_VECTORIZE) || defined(EIGEN_GPUCC))
 
   #if defined (EIGEN_SSE2_ON_NON_MSVC_BUT_NOT_OLD_GCC) || defined(EIGEN_SSE2_ON_MSVC_2008_OR_LATER)
@@ -241,15 +240,19 @@
       #define EIGEN_VECTORIZE_SSE4_2
     #endif
     #ifdef __AVX__
-      #define EIGEN_VECTORIZE_AVX
+      #ifndef EIGEN_USE_SYCL 
+        #define EIGEN_VECTORIZE_AVX
+      #endif
       #define EIGEN_VECTORIZE_SSE3
       #define EIGEN_VECTORIZE_SSSE3
       #define EIGEN_VECTORIZE_SSE4_1
       #define EIGEN_VECTORIZE_SSE4_2
     #endif
     #ifdef __AVX2__
-      #define EIGEN_VECTORIZE_AVX2
-      #define EIGEN_VECTORIZE_AVX
+      #ifndef EIGEN_USE_SYCL 
+        #define EIGEN_VECTORIZE_AVX2
+        #define EIGEN_VECTORIZE_AVX
+      #endif
       #define EIGEN_VECTORIZE_SSE3
       #define EIGEN_VECTORIZE_SSSE3
       #define EIGEN_VECTORIZE_SSE4_1
@@ -268,20 +271,56 @@
       #error Please enable FMA in your compiler flags (e.g. -mfma): compiling with AVX512 alone without SSE/AVX FMA is not supported (bug 1638).
       #endif
       #endif
-      #define EIGEN_VECTORIZE_AVX512
-      #define EIGEN_VECTORIZE_AVX2
-      #define EIGEN_VECTORIZE_AVX
+      #ifndef EIGEN_USE_SYCL
+        #define EIGEN_VECTORIZE_AVX512
+        #define EIGEN_VECTORIZE_AVX2
+        #define EIGEN_VECTORIZE_AVX
+      #endif
       #define EIGEN_VECTORIZE_FMA
       #define EIGEN_VECTORIZE_SSE3
       #define EIGEN_VECTORIZE_SSSE3
       #define EIGEN_VECTORIZE_SSE4_1
       #define EIGEN_VECTORIZE_SSE4_2
-      #ifdef __AVX512DQ__
-        #define EIGEN_VECTORIZE_AVX512DQ
+      #ifndef EIGEN_USE_SYCL
+        #ifdef __AVX512DQ__
+          #define EIGEN_VECTORIZE_AVX512DQ
+        #endif
+        #ifdef __AVX512ER__
+          #define EIGEN_VECTORIZE_AVX512ER
+        #endif
       #endif
-      #ifdef __AVX512ER__
-        #define EIGEN_VECTORIZE_AVX512ER
+    #endif
+
+    // Disable AVX support on broken xcode versions
+    #if defined(__apple_build_version__) && (__apple_build_version__ == 11000033 ) && ( __MAC_OS_X_VERSION_MIN_REQUIRED == 101500 )
+      // A nasty bug in the clang compiler shipped with xcode in a common compilation situation
+      // when XCode 11.0 and Mac deployment target macOS 10.15 is https://trac.macports.org/ticket/58776#no1
+      #ifdef EIGEN_VECTORIZE_AVX
+        #undef EIGEN_VECTORIZE_AVX
+        #warning "Disabling AVX support: clang compiler shipped with XCode 11.[012] generates broken assembly with -macosx-version-min=10.15 and AVX enabled. "
+        #ifdef EIGEN_VECTORIZE_AVX2
+          #undef EIGEN_VECTORIZE_AVX2
+        #endif
+        #ifdef EIGEN_VECTORIZE_FMA
+          #undef EIGEN_VECTORIZE_FMA
+        #endif
+        #ifdef EIGEN_VECTORIZE_AVX512
+          #undef EIGEN_VECTORIZE_AVX512
+        #endif
+        #ifdef EIGEN_VECTORIZE_AVX512DQ
+          #undef EIGEN_VECTORIZE_AVX512DQ
+        #endif
+        #ifdef EIGEN_VECTORIZE_AVX512ER
+          #undef EIGEN_VECTORIZE_AVX512ER
+        #endif
       #endif
+      // NOTE: Confirmed test failures in XCode 11.0, and XCode 11.2 with  -macosx-version-min=10.15 and AVX
+      // NOTE using -macosx-version-min=10.15 with Xcode 11.0 results in runtime segmentation faults in many tests, 11.2 produce core dumps in 3 tests
+      // NOTE using -macosx-version-min=10.14 produces functioning and passing tests in all cases
+      // NOTE __clang_version__ "11.0.0 (clang-1100.0.33.8)"  XCode 11.0 <- Produces many segfault and core dumping tests
+      //                                                                    with  -macosx-version-min=10.15 and AVX
+      // NOTE __clang_version__ "11.0.0 (clang-1100.0.33.12)" XCode 11.2 <- Produces 3 core dumping tests with  
+      //                                                                    -macosx-version-min=10.15 and AVX
     #endif
 
     // include files
@@ -372,7 +411,7 @@
   #endif
 #endif
 
-#if defined(__F16C__) && (!defined(EIGEN_COMP_CLANG) || EIGEN_COMP_CLANG>=380)
+#if defined(__F16C__) && (!defined(EIGEN_GPUCC) && (!defined(EIGEN_COMP_CLANG) || EIGEN_COMP_CLANG>=380))
   // We can use the optimized fp16 to float and float to fp16 conversion routines
   #define EIGEN_HAS_FP16_C
 
@@ -400,9 +439,6 @@
 #if defined(EIGEN_HIPCC)
   #define EIGEN_VECTORIZE_GPU
   #include <hip/hip_vector_types.h>
-#endif
-
-#if defined(EIGEN_HIP_DEVICE_COMPILE)
   #define EIGEN_HAS_HIP_FP16
   #include <hip/hip_fp16.h>
 #endif
