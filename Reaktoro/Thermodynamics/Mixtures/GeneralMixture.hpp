@@ -35,13 +35,13 @@ namespace Reaktoro {
 struct MixtureState
 {
     /// The temperature of the mixture (in units of K)
-    real T;
+    real T = {};
 
     /// The pressure of the mixture (in units of Pa)
-    real P;
+    real P = {};
 
     /// The mole fractions of the species in the mixture and their partial derivatives
-    VectorXr x;
+    ArrayXr x;
 };
 
 /// Compare two MixtureState instances for equality
@@ -94,22 +94,25 @@ public:
     auto namesSpecies() const -> std::vector<std::string>;
 
     /// Return the charges of the species in the mixture
-    auto chargesSpecies() const -> VectorXr;
+    auto charges() const -> ArrayXrConstRef;
 
     /// Calculates the mole fractions of the species and their partial derivatives
     /// @param n The molar abundance of the species (in units of mol)
     /// @return The mole fractions and their partial derivatives
-    auto moleFractions(VectorXrConstRef n) const -> VectorXr;
+    auto moleFractions(ArrayXrConstRef n) const -> ArrayXr;
 
     /// Calculate the state of the mixture.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(real T, real P, VectorXrConstRef n) const -> MixtureState;
+    auto state(real T, real P, ArrayXrConstRef n) const -> MixtureState;
 
 private:
     /// The name of mixture
     std::string _name;
+
+    /// The electric charges of the species
+    ArrayXd _charges;
 
     /// The species in the mixture
     std::vector<Species> _species;
