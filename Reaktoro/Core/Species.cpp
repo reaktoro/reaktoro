@@ -19,9 +19,11 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Singletons/CriticalProps.hpp>
 #include <Reaktoro/Singletons/PeriodicTable.hpp>
 
 namespace Reaktoro {
@@ -68,11 +70,20 @@ auto molarMass(const Species::Elements& elements)
     return molar_mass;
 }
 
+/// Return the name of the species from its formula by removing suffix such as (aq), (s, calcite), etc..
+auto removeSuffix(std::string formula) -> std::string
+{
+    return splitSpeciesNameSuffix(formula).first; // remove suffix
+}
+
 } // namespace detail
 
 struct Species::Impl
 {
-    /// The name of the species such as `H2O(aq)`, `O2(g)`, `H+(aq)`.
+    /// The symbol that uniquely identifies this species such as `H2O(aq)`, `O2(g)`, `H+(aq)`.
+    std::string symbol;
+
+    /// The name of the underlying substance `H2O`, `WATER`, `CARBON-MONOXIDE`, `CO2`.
     std::string name;
 
     /// The chemical formula of the species such as `H2O`, `O2`, `H+`.
@@ -90,6 +101,9 @@ struct Species::Impl
     /// The tags of the species such as `organic`, `mineral`.
     std::vector<std::string> tags;
 
+    /// The critical properties of the underlying substance of the species if available.
+    std::optional<SubstanceCriticalProps> crprops;
+
     /// The attached data whose type is known at runtime only.
     std::any attached_data;
 
@@ -99,9 +113,8 @@ struct Species::Impl
 
     /// Construct a Species::Impl instance
     Impl(ChemicalFormula formula)
-    : name(formula), formula(formula),
-      elements(detail::createElements(formula)),
-      charge(formula.charge())
+    : symbol(formula), name(detail::removeSuffix(formula)), formula(detail::removeSuffix(formula)),
+      elements(detail::createElements(formula)), charge(formula.charge())
     {
     }
 };
@@ -113,6 +126,13 @@ Species::Species()
 Species::Species(std::string formula)
 : pimpl(new Impl(formula))
 {}
+
+auto Species::withSymbol(std::string symbol) -> Species
+{
+    Species copy = clone();
+    copy.pimpl->symbol = std::move(symbol);
+    return copy;
+}
 
 auto Species::withName(std::string name) -> Species
 {
@@ -161,11 +181,25 @@ auto Species::withTags(std::vector<std::string> tags) -> Species
     return copy;
 }
 
+auto Species::withCriticalProps(const SubstanceCriticalProps& props) -> Species
+{
+    Species copy = clone();
+    copy.pimpl->crprops = std::move(props);
+    return copy;
+}
+
 auto Species::withAttachedData(std::any data) -> Species
 {
     Species copy = clone();
     copy.pimpl->attached_data = std::move(data);
     return copy;
+}
+
+auto Species::symbol() const -> std::string
+{
+    if(pimpl->symbol.empty())
+        return formula();
+    return pimpl->symbol;
 }
 
 auto Species::name() const -> std::string
@@ -213,6 +247,13 @@ auto Species::elementCoefficient(const std::string& symbol) const -> double
 auto Species::tags() const -> const std::vector<std::string>&
 {
     return pimpl->tags;
+}
+
+auto Species::criticalProps() const -> std::optional<SubstanceCriticalProps>
+{
+    if(pimpl->crprops)
+        return pimpl->crprops;
+    return CriticalProps::get({ name(), formula(), symbol() });
 }
 
 auto Species::attachedData() const -> const std::any&

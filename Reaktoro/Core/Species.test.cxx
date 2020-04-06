@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
@@ -31,8 +32,9 @@ TEST_CASE("Testing Species class", "[Species]")
     Species species;
 
     species = Species("H2O");
-    REQUIRE(species.formula().equivalent("H2O"));
+    REQUIRE(species.symbol() == "H2O");
     REQUIRE(species.name() == "H2O");
+    REQUIRE(species.formula() == "H2O");
     REQUIRE(species.tags().empty());
     REQUIRE(species.molarMass() == Approx(0.01801528));
     REQUIRE(species.charge() == 0);
@@ -40,9 +42,10 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(species.elementCoefficient("H") == 2);
     REQUIRE(species.elementCoefficient("O") == 1);
 
-    species = Species("Na+").withName("Na+(aq)").withTags({"aqueous", "cation", "charged"});
-    REQUIRE(species.formula().equivalent("Na+"));
-    REQUIRE(species.name() == "Na+(aq)");
+    species = Species("Na+").withSymbol("Na+(aq)").withTags({"aqueous", "cation", "charged"});
+    REQUIRE(species.symbol() == "Na+(aq)");
+    REQUIRE(species.name() == "Na+");
+    REQUIRE(species.formula() == "Na+");
     REQUIRE(species.molarMass() == Approx(0.022989769));
     REQUIRE(species.charge() == 1);
     REQUIRE(species.elements().size() == 1);
@@ -52,9 +55,10 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(contains(species.tags(), "cation"));
     REQUIRE(contains(species.tags(), "charged"));
 
-    species = Species("Cl-").withName("Cl-(aq)").withTags({"aqueous", "anion", "charged"});
-    REQUIRE(species.formula().equivalent("Cl-"));
-    REQUIRE(species.name() == "Cl-(aq)");
+    species = Species("Cl-").withSymbol("Cl-(aq)").withTags({"aqueous", "anion", "charged"});
+    REQUIRE(species.symbol() == "Cl-(aq)");
+    REQUIRE(species.name() == "Cl-");
+    REQUIRE(species.formula() == "Cl-");
     REQUIRE(species.molarMass() == Approx(0.035453));
     REQUIRE(species.charge() == -1);
     REQUIRE(species.elements().size() == 1);
@@ -64,9 +68,10 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(contains(species.tags(), "anion"));
     REQUIRE(contains(species.tags(), "charged"));
 
-    species = Species("CO3--").withName("CO3--(aq)").withTags({"aqueous", "anion", "charged"});
-    REQUIRE(species.formula().equivalent("CO3-2"));
-    REQUIRE(species.name() == "CO3--(aq)");
+    species = Species("CO3--").withSymbol("CO3--(aq)").withTags({"aqueous", "anion", "charged"});
+    REQUIRE(species.symbol() == "CO3--(aq)");
+    REQUIRE(species.name() == "CO3--");
+    REQUIRE(species.formula() == "CO3--");
     REQUIRE(species.molarMass() == Approx(0.0600092));
     REQUIRE(species.charge() == -2);
     REQUIRE(species.elements().size() == 2);
@@ -77,9 +82,10 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(contains(species.tags(), "anion"));
     REQUIRE(contains(species.tags(), "charged"));
 
-    species = Species("CaCO3").withFormula("Ca(CO3)");
-    REQUIRE(species.formula().equivalent("Ca(CO3)"));
+    species = Species("CaCO3(aq)");
+    REQUIRE(species.symbol() == "CaCO3(aq)");
     REQUIRE(species.name() == "CaCO3");
+    REQUIRE(species.formula() == "CaCO3");
     REQUIRE(species.molarMass() == Approx(0.1000869));
     REQUIRE(species.charge() == 0);
     REQUIRE(species.elements().size() == 3);
@@ -88,9 +94,10 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(species.elementCoefficient("O") == 3);
     REQUIRE(species.tags().empty());
 
-    species = Species("H+").withName("H+(aq)");
-    REQUIRE(species.formula().equivalent("H+"));
-    REQUIRE(species.name() == "H+(aq)");
+    species = Species("H+").withSymbol("H+(aq)");
+    REQUIRE(species.symbol() == "H+(aq)");
+    REQUIRE(species.name() == "H+");
+    REQUIRE(species.formula() == "H+");
     REQUIRE(species.molarMass() == Approx(0.00100794));
     REQUIRE(species.charge() == 1);
     REQUIRE(species.elements().size() == 1);
@@ -98,8 +105,9 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(species.tags().empty());
 
     species = Species("HCO3-").withTags({"aqueous"});
-    REQUIRE(species.formula().equivalent("HCO3-"));
+    REQUIRE(species.symbol() == "HCO3-");
     REQUIRE(species.name() == "HCO3-");
+    REQUIRE(species.formula() == "HCO3-");
     REQUIRE(species.molarMass() == Approx(0.0610168));
     REQUIRE(species.charge() == -1);
     REQUIRE(species.elements().size() == 3);
@@ -110,8 +118,9 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(contains(species.tags(), "aqueous"));
 
     species = Species("Fe+++").withTags({"aqueous", "cation", "charged", "iron"});
-    REQUIRE(species.formula().equivalent("Fe+3"));
+    REQUIRE(species.symbol() == "Fe+++");
     REQUIRE(species.name() == "Fe+++");
+    REQUIRE(species.formula() == "Fe+++");
     REQUIRE(species.molarMass() == Approx(0.055847));
     REQUIRE(species.charge() == 3);
     REQUIRE(species.elements().size() == 1);
@@ -122,12 +131,32 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(contains(species.tags(), "charged"));
     REQUIRE(contains(species.tags(), "iron"));
 
+    species = Species()
+        .withSymbol("H2S(g)")
+        .withName("HYDROGEN-SULFIDE")
+        .withFormula("H2S")
+        .withElementSymbols({{"H", 2}, {"S", 1}})
+        .withAggregateState(AggregateState::Gas)
+        .withCharge(0.0)
+        .withTags({"gaseous"});
+    REQUIRE(species.symbol() == "H2S(g)");
+    REQUIRE(species.name() == "HYDROGEN-SULFIDE");
+    REQUIRE(species.formula() == "H2S");
+    REQUIRE(species.molarMass() == Approx(0.0341));
+    REQUIRE(species.charge() == 0.0);
+    REQUIRE(species.elements().size() == 2);
+    REQUIRE(species.elementCoefficient("H") == 2);
+    REQUIRE(species.elementCoefficient("S") == 1);
+    REQUIRE(species.tags().size() == 1);
+    REQUIRE(contains(species.tags(), "gaseous"));
+
     PeriodicTable::append(Element("Aa"));
     PeriodicTable::append(Element("Bb"));
 
     species = Species("AaBb2+");
-    REQUIRE(species.formula().equivalent("AaBb2+"));
+    REQUIRE(species.symbol() == "AaBb2+");
     REQUIRE(species.name() == "AaBb2+");
+    REQUIRE(species.formula() == "AaBb2+");
     REQUIRE(species.molarMass() == Approx(0.0));
     REQUIRE(species.charge() == 1);
     REQUIRE(species.elements().size() == 2);
