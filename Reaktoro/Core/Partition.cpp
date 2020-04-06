@@ -21,6 +21,9 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
 namespace {

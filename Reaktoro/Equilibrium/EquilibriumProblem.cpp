@@ -26,7 +26,9 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Partition.hpp>
+#include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 
