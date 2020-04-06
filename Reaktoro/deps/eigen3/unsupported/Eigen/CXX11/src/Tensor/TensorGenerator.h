@@ -94,7 +94,6 @@ struct TensorEvaluator<const TensorGeneratorOp<Generator, ArgType>, Device>
     IsAligned         = false,
     PacketAccess      = (PacketType<CoeffReturnType, Device>::size > 1),
     BlockAccess       = true,
-    BlockAccessV2     = false,
     PreferBlockAccess = true,
     Layout            = TensorEvaluator<ArgType, Device>::Layout,
     CoordAccess       = false,  // to be implemented
@@ -103,11 +102,13 @@ struct TensorEvaluator<const TensorGeneratorOp<Generator, ArgType>, Device>
 
   typedef internal::TensorIntDivisor<Index> IndexDivisor;
 
-  typedef internal::TensorBlock<CoeffReturnType, Index, NumDims, Layout>
-      TensorBlock;
-
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
-  typedef internal::TensorBlockNotImplemented TensorBlockV2;
+  typedef internal::TensorBlockDescriptor<NumDims, Index> TensorBlockDesc;
+  typedef internal::TensorBlockScratchAllocator<Device> TensorBlockScratch;
+
+  typedef typename internal::TensorMaterializedBlock<CoeffReturnType, NumDims,
+                                                     Layout, Index>
+      TensorBlock;
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device)
@@ -163,12 +164,12 @@ struct TensorEvaluator<const TensorGeneratorOp<Generator, ArgType>, Device>
     return rslt;
   }
 
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void getResourceRequirements(
-      std::vector<internal::TensorOpResourceRequirements>* resources) const {
-    Eigen::Index block_total_size_max = numext::maxi<Eigen::Index>(
-        1, m_device.firstLevelCacheSize() / sizeof(Scalar));
-    resources->push_back(internal::TensorOpResourceRequirements(
-        internal::kSkewedInnerDims, block_total_size_max));
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+  internal::TensorBlockResourceRequirements getResourceRequirements() const {
+    const size_t target_size = m_device.firstLevelCacheSize();
+    // TODO(ezhulenev): Generator should have a cost.
+    return internal::TensorBlockResourceRequirements::skewed<Scalar>(
+        target_size);
   }
 
   struct BlockIteratorState {
@@ -178,47 +179,67 @@ struct TensorEvaluator<const TensorGeneratorOp<Generator, ArgType>, Device>
     Index count;
   };
 
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void block(
-      TensorBlock* output_block) const {
-    if (NumDims <= 0) return;
-
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorBlock
+  block(TensorBlockDesc& desc, TensorBlockScratch& scratch,
+          bool /*root_of_expr_ast*/ = false) const {
     static const bool is_col_major =
         static_cast<int>(Layout) == static_cast<int>(ColMajor);
 
     // Compute spatial coordinates for the first block element.
     array<Index, NumDims> coords;
-    extract_coordinates(output_block->first_coeff_index(), coords);
+    extract_coordinates(desc.offset(), coords);
     array<Index, NumDims> initial_coords = coords;
 
-    CoeffReturnType* data = output_block->data();
+    // Offset in the output block buffer.
     Index offset = 0;
 
     // Initialize output block iterator state. Dimension in this array are
     // always in inner_most -> outer_most order (col major layout).
     array<BlockIteratorState, NumDims> it;
-    for (Index i = 0; i < NumDims; ++i) {
-      const Index dim = is_col_major ? i : NumDims - 1 - i;
-      it[i].size = output_block->block_sizes()[dim];
-      it[i].stride = output_block->block_strides()[dim];
+    for (int i = 0; i < NumDims; ++i) {
+      const int dim = is_col_major ? i : NumDims - 1 - i;
+      it[i].size = desc.dimension(dim);
+      it[i].stride = i == 0 ? 1 : (it[i - 1].size * it[i - 1].stride);
       it[i].span = it[i].stride * (it[i].size - 1);
       it[i].count = 0;
     }
     eigen_assert(it[0].stride == 1);
 
+    // Prepare storage for the materialized generator result.
+    const typename TensorBlock::Storage block_storage =
+        TensorBlock::prepareStorage(desc, scratch);
+
+    CoeffReturnType* block_buffer = block_storage.data();
+
+    static const int packet_size = PacketType<CoeffReturnType, Device>::size;
+
+    static const int inner_dim = is_col_major ? 0 : NumDims - 1;
+    const Index inner_dim_size = it[0].size;
+    const Index inner_dim_vectorized = inner_dim_size - packet_size;
+
     while (it[NumDims - 1].count < it[NumDims - 1].size) {
-      // Generate data for the inner-most dimension.
-      for (Index i = 0; i < it[0].size; ++i) {
-        *(data + offset + i) = m_generator(coords);
-        coords[is_col_major ? 0 : NumDims - 1]++;
+      Index i = 0;
+      // Generate data for the vectorized part of the inner-most dimension.
+      for (; i <= inner_dim_vectorized; i += packet_size) {
+        for (Index j = 0; j < packet_size; ++j) {
+          array<Index, NumDims> j_coords = coords;  // Break loop dependence.
+          j_coords[inner_dim] += j;
+          *(block_buffer + offset + i + j) = m_generator(j_coords);
+        }
+        coords[inner_dim] += packet_size;
       }
-      coords[is_col_major ? 0 : NumDims - 1] =
-          initial_coords[is_col_major ? 0 : NumDims - 1];
+      // Finalize non-vectorized part of the inner-most dimension.
+      for (; i < inner_dim_size; ++i) {
+        *(block_buffer + offset + i) = m_generator(coords);
+        coords[inner_dim]++;
+      }
+      coords[inner_dim] = initial_coords[inner_dim];
 
       // For the 1d tensor we need to generate only one inner-most dimension.
       if (NumDims == 1) break;
 
       // Update offset.
-      for (Index i = 1; i < NumDims; ++i) {
+      for (i = 1; i < NumDims; ++i) {
         if (++it[i].count < it[i].size) {
           offset += it[i].stride;
           coords[is_col_major ? i : NumDims - 1 - i]++;
@@ -230,6 +251,8 @@ struct TensorEvaluator<const TensorGeneratorOp<Generator, ArgType>, Device>
         offset -= it[i].span;
       }
     }
+
+    return block_storage.AsTensorMaterializedBlock();
   }
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorOpCost

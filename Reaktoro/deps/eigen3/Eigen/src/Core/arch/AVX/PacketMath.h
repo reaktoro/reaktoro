@@ -64,6 +64,7 @@ template<> struct packet_traits<float>  : default_packet_traits
     AlignedOnScalar = 1,
     size = 8,
     HasHalfPacket = 1,
+    HasInsert = 1,
 
     HasDiv = 1,
     HasSin = EIGEN_FAST_MATH,
@@ -81,7 +82,8 @@ template<> struct packet_traits<float>  : default_packet_traits
     HasBlend = 1,
     HasRound = 1,
     HasFloor = 1,
-    HasCeil = 1
+    HasCeil = 1,
+    HasRint = 1
   };
 };
 template<> struct packet_traits<double> : default_packet_traits
@@ -93,6 +95,7 @@ template<> struct packet_traits<double> : default_packet_traits
     AlignedOnScalar = 1,
     size=4,
     HasHalfPacket = 1,
+    HasInsert = 1,
 
     HasDiv  = 1,
     HasExp  = 1,
@@ -130,7 +133,8 @@ struct packet_traits<Eigen::half> : default_packet_traits {
     HasRsqrt = 0,
     HasExp = 0,
     HasLog = 0,
-    HasBlend = 0
+    HasBlend = 0,
+    HasInsert = 1
   };
 };
 #endif
@@ -297,9 +301,14 @@ template<> EIGEN_STRONG_INLINE Packet4d pmax<Packet4d>(const Packet4d& a, const 
 
 template<> EIGEN_STRONG_INLINE Packet8f pcmp_le(const Packet8f& a, const Packet8f& b) { return _mm256_cmp_ps(a,b,_CMP_LE_OQ); }
 template<> EIGEN_STRONG_INLINE Packet8f pcmp_lt(const Packet8f& a, const Packet8f& b) { return _mm256_cmp_ps(a,b,_CMP_LT_OQ); }
-template<> EIGEN_STRONG_INLINE Packet8f pcmp_eq(const Packet8f& a, const Packet8f& b) { return _mm256_cmp_ps(a,b,_CMP_EQ_OQ); }
-template<> EIGEN_STRONG_INLINE Packet4d pcmp_eq(const Packet4d& a, const Packet4d& b) { return _mm256_cmp_pd(a,b,_CMP_EQ_OQ); }
 template<> EIGEN_STRONG_INLINE Packet8f pcmp_lt_or_nan(const Packet8f& a, const Packet8f& b) { return _mm256_cmp_ps(a, b, _CMP_NGE_UQ); }
+template<> EIGEN_STRONG_INLINE Packet8f pcmp_eq(const Packet8f& a, const Packet8f& b) { return _mm256_cmp_ps(a,b,_CMP_EQ_OQ); }
+
+template<> EIGEN_STRONG_INLINE Packet4d pcmp_le(const Packet4d& a, const Packet4d& b) { return _mm256_cmp_pd(a,b,_CMP_LE_OQ); }
+template<> EIGEN_STRONG_INLINE Packet4d pcmp_lt(const Packet4d& a, const Packet4d& b) { return _mm256_cmp_pd(a,b,_CMP_LT_OQ); }
+template<> EIGEN_STRONG_INLINE Packet4d pcmp_lt_or_nan(const Packet4d& a, const Packet4d& b) { return _mm256_cmp_pd(a, b, _CMP_NGE_UQ); }
+template<> EIGEN_STRONG_INLINE Packet4d pcmp_eq(const Packet4d& a, const Packet4d& b) { return _mm256_cmp_pd(a,b,_CMP_EQ_OQ); }
+
 
 template<> EIGEN_STRONG_INLINE Packet8i pcmp_eq(const Packet8i& a, const Packet8i& b) {
 #ifdef EIGEN_VECTORIZE_AVX2
@@ -311,8 +320,8 @@ template<> EIGEN_STRONG_INLINE Packet8i pcmp_eq(const Packet8i& a, const Packet8
 #endif
 }
 
-template<> EIGEN_STRONG_INLINE Packet8f pround<Packet8f>(const Packet8f& a) { return _mm256_round_ps(a, _MM_FROUND_CUR_DIRECTION); }
-template<> EIGEN_STRONG_INLINE Packet4d pround<Packet4d>(const Packet4d& a) { return _mm256_round_pd(a, _MM_FROUND_CUR_DIRECTION); }
+template<> EIGEN_STRONG_INLINE Packet8f print<Packet8f>(const Packet8f& a) { return _mm256_round_ps(a, _MM_FROUND_CUR_DIRECTION); }
+template<> EIGEN_STRONG_INLINE Packet4d print<Packet4d>(const Packet4d& a) { return _mm256_round_pd(a, _MM_FROUND_CUR_DIRECTION); }
 
 template<> EIGEN_STRONG_INLINE Packet8f pceil<Packet8f>(const Packet8f& a) { return _mm256_ceil_ps(a); }
 template<> EIGEN_STRONG_INLINE Packet4d pceil<Packet4d>(const Packet4d& a) { return _mm256_ceil_pd(a); }
@@ -391,12 +400,35 @@ template<> EIGEN_STRONG_INLINE Packet8i pandnot<Packet8i>(const Packet8i& a, con
 #endif
 }
 
+template<> EIGEN_STRONG_INLINE Packet8f pround<Packet8f>(const Packet8f& a)
+{
+  const Packet8f mask = pset1frombits<Packet8f>(0x80000000u);
+  const Packet8f prev0dot5 = pset1frombits<Packet8f>(0x3EFFFFFFu);
+  return _mm256_round_ps(padd(por(pand(a, mask), prev0dot5), a), _MM_FROUND_TO_ZERO);
+}
+template<> EIGEN_STRONG_INLINE Packet4d pround<Packet4d>(const Packet4d& a)
+{
+  const Packet4d mask = _mm256_castsi256_pd(_mm256_set_epi64x(0x8000000000000000ull, 0x8000000000000000ull, 0x8000000000000000ull, 0x8000000000000000ull));
+  const Packet4d prev0dot5 = _mm256_castsi256_pd(_mm256_set_epi64x(0x3FDFFFFFFFFFFFFFull, 0x3FDFFFFFFFFFFFFFull, 0x3FDFFFFFFFFFFFFFull, 0x3FDFFFFFFFFFFFFFull));
+  return _mm256_round_pd(padd(por(pand(a, mask), prev0dot5), a), _MM_FROUND_TO_ZERO);
+}
+
 template<> EIGEN_STRONG_INLINE Packet8f pselect<Packet8f>(const Packet8f& mask, const Packet8f& a, const Packet8f& b)
 { return _mm256_blendv_ps(b,a,mask); }
 template<> EIGEN_STRONG_INLINE Packet4d pselect<Packet4d>(const Packet4d& mask, const Packet4d& a, const Packet4d& b)
 { return _mm256_blendv_pd(b,a,mask); }
 
-template<int N> EIGEN_STRONG_INLINE Packet8i pshiftright(Packet8i a) {
+template<int N> EIGEN_STRONG_INLINE Packet8i parithmetic_shift_right(Packet8i a) {
+#ifdef EIGEN_VECTORIZE_AVX2
+  return _mm256_srai_epi32(a, N);
+#else
+  __m128i lo = _mm_srai_epi32(_mm256_extractf128_si256(a, 0), N);
+  __m128i hi = _mm_srai_epi32(_mm256_extractf128_si256(a, 1), N);
+  return _mm256_insertf128_si256(_mm256_castsi128_si256(lo), (hi), 1);
+#endif
+}
+
+template<int N> EIGEN_STRONG_INLINE Packet8i plogical_shift_right(Packet8i a) {
 #ifdef EIGEN_VECTORIZE_AVX2
   return _mm256_srli_epi32(a, N);
 #else
@@ -406,7 +438,7 @@ template<int N> EIGEN_STRONG_INLINE Packet8i pshiftright(Packet8i a) {
 #endif
 }
 
-template<int N> EIGEN_STRONG_INLINE Packet8i pshiftleft(Packet8i a) {
+template<int N> EIGEN_STRONG_INLINE Packet8i plogical_shift_left(Packet8i a) {
 #ifdef EIGEN_VECTORIZE_AVX2
   return _mm256_slli_epi32(a, N);
 #else

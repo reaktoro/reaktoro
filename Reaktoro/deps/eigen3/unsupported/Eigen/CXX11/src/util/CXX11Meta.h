@@ -13,11 +13,6 @@
 #include <vector>
 #include "EmulateArray.h"
 
-// Emulate the cxx11 functionality that we need if the compiler doesn't support it.
-// Visual studio 2015 doesn't advertise itself as cxx11 compliant, although it
-// supports enough of the standard for our needs
-#if __cplusplus > 199711L || EIGEN_COMP_MSVC >= 1900
-
 #include "CXX11Workarounds.h"
 
 namespace Eigen {
@@ -42,6 +37,7 @@ struct numeric_list { constexpr static std::size_t count = sizeof...(nn); };
 template<typename T, T n, T... nn>
 struct numeric_list<T, n, nn...> { static const std::size_t count = sizeof...(nn) + 1; const static T first_value = n; };
 
+#ifndef EIGEN_PARSED_BY_DOXYGEN
 /* numeric list constructors
  *
  * equivalencies:
@@ -100,6 +96,7 @@ template<int n, typename t, typename... tt> struct h_skip_helper_type<n, t, tt..
 template<typename t, typename... tt>        struct h_skip_helper_type<0, t, tt...> { typedef type_list<t, tt...> type; };
 template<int n>                             struct h_skip_helper_type<n>           { typedef type_list<> type; };
 template<>                                  struct h_skip_helper_type<0>           { typedef type_list<> type; };
+#endif //not EIGEN_PARSED_BY_DOXYGEN
 
 template<int n>
 struct h_skip {
@@ -536,11 +533,5 @@ InstType instantiate_by_c_array(ArrType* arr)
 } // end namespace internal
 
 } // end namespace Eigen
-
-#else // Non C++11, fallback to emulation mode
-
-#include "EmulateCXX11Meta.h"
-
-#endif
 
 #endif // EIGEN_CXX11META_H

@@ -757,6 +757,21 @@
   #endif
 #endif
 
+// Does the compiler support the __int128 and __uint128_t extensions for 128-bit
+// integer arithmetic?
+//
+// Clang and GCC define __SIZEOF_INT128__ when these extensions are supported,
+// but we avoid using them in certain cases:
+//
+// * Building using Clang for Windows, where the Clang runtime library has
+//   128-bit support only on LP64 architectures, but Windows is LLP64.
+#ifndef EIGEN_HAS_BUILTIN_INT128
+#if defined(__SIZEOF_INT128__) && !(EIGEN_OS_WIN && EIGEN_COMP_CLANG)
+#define EIGEN_HAS_BUILTIN_INT128 1
+#else
+#define EIGEN_HAS_BUILTIN_INT128 0
+#endif
+#endif
 
 //------------------------------------------------------------------------------------------
 // Preprocessor programming helpers
@@ -839,7 +854,7 @@
   #ifndef EIGEN_DONT_VECTORIZE
     #define EIGEN_DONT_VECTORIZE
   #endif
-  #define EIGEN_DEVICE_FUNC __attribute__((always_inline))
+  #define EIGEN_DEVICE_FUNC __attribute__((flatten)) __attribute__((always_inline))
 // All functions callable from CUDA/HIP code must be qualified with __device__
 #elif defined(EIGEN_GPUCC) 
     #define EIGEN_DEVICE_FUNC __host__ __device__
@@ -1030,11 +1045,48 @@ namespace Eigen {
 #endif
 
 
+/**
+ * \internal
+ * \brief Macro to explicitly define the default copy constructor.
+ * This is necessary, because the implicit definition is deprecated if the copy-assignment is overridden.
+ */
+#if EIGEN_HAS_CXX11
+#define EIGEN_DEFAULT_COPY_CONSTRUCTOR(CLASS) EIGEN_DEVICE_FUNC CLASS(const CLASS&) = default;
+#else
+#define EIGEN_DEFAULT_COPY_CONSTRUCTOR(CLASS)
+#endif
+
+
+
 /** \internal
  * \brief Macro to manually inherit assignment operators.
  * This is necessary, because the implicitly defined assignment operator gets deleted when a custom operator= is defined.
+ * With C++11 or later this also default-implements the copy-constructor
  */
-#define EIGEN_INHERIT_ASSIGNMENT_OPERATORS(Derived) EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Derived)
+#define EIGEN_INHERIT_ASSIGNMENT_OPERATORS(Derived)  \
+    EIGEN_INHERIT_ASSIGNMENT_EQUAL_OPERATOR(Derived) \
+    EIGEN_DEFAULT_COPY_CONSTRUCTOR(Derived)
+
+/** \internal
+ * \brief Macro to manually define default constructors and destructors.
+ * This is necessary when the copy constructor is re-defined.
+ * For empty helper classes this should usually be protected, to avoid accidentally creating empty objects.
+ *
+ * Hiding the default destructor lead to problems in C++03 mode together with boost::multiprecision
+ */
+#if EIGEN_HAS_CXX11
+#define EIGEN_DEFAULT_EMPTY_CONSTRUCTOR_AND_DESTRUCTOR(Derived)  \
+    EIGEN_DEVICE_FUNC Derived() = default; \
+    EIGEN_DEVICE_FUNC ~Derived() = default;
+#else
+#define EIGEN_DEFAULT_EMPTY_CONSTRUCTOR_AND_DESTRUCTOR(Derived)  \
+    EIGEN_DEVICE_FUNC Derived() {}; \
+    /* EIGEN_DEVICE_FUNC ~Derived() {}; */
+#endif
+
+
+
+
 
 /**
 * Just a side note. Commenting within defines works only by documenting
@@ -1096,6 +1148,14 @@ namespace Eigen {
 #define EIGEN_LOGICAL_XOR(a,b) (((a) || (b)) && !((a) && (b)))
 
 #define EIGEN_IMPLIES(a,b) (!(a) || (b))
+
+#if EIGEN_HAS_BUILTIN(__builtin_expect) || EIGEN_COMP_GNUC
+#define EIGEN_PREDICT_FALSE(x) (__builtin_expect(x, false))
+#define EIGEN_PREDICT_TRUE(x) (__builtin_expect(false || (x), true))
+#else
+#define EIGEN_PREDICT_FALSE(x) (x)
+#define EIGEN_PREDICT_TRUE(x) (x)
+#endif
 
 // the expression type of a standard coefficient wise binary operation
 #define EIGEN_CWISE_BINARY_RETURN_TYPE(LHS,RHS,OPNAME) \
