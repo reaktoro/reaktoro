@@ -63,6 +63,9 @@ public:
     /// Return the dissociation reaction of the substance with given chemical formula.
     static auto get(const ChemicalFormula& complex) -> std::optional<DissociationReaction>;
 
+    /// Return the stoichiometric coefficient of an ion in a complex substance.
+    static auto coefficient(const ChemicalFormula& complex, const ChemicalFormula& ion) -> double;
+
     /// Return begin const iterator of this DissociationReactions instance
     auto begin() const;
 

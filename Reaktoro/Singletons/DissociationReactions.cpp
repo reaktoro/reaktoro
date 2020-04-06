@@ -242,6 +242,16 @@ auto DissociationReactions::get(const ChemicalFormula& complex) -> std::optional
     return {};
 }
 
+auto DissociationReactions::coefficient(const ChemicalFormula& complex, const ChemicalFormula& ion) -> double
+{
+    const auto reaction = get(complex);
+    if(reaction.has_value())
+        for(auto&& [coeff, product] : reaction.value().ions)
+            if(product.equivalent(ion))
+                return coeff;
+    return 0.0;
+}
+
 auto DissociationReactions::begin() const
 {
     return m_reactions.begin();
