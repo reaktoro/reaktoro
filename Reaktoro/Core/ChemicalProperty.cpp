@@ -55,7 +55,7 @@ auto ChemicalProperty::ionicStrength(const ChemicalSystem& system) -> ChemicalPr
 
     // Check if there is an aqueous phase in the system
     if(iaqueousphase >= system.numPhases())
-        return [=](const ChemicalProperties&) { return real(num_species); };
+        return [=](const ChemicalProperties&) { return 0.0; };
 
     // The index of the first aqueous species
     const Index ifirst = system.indexFirstSpeciesInPhase(iaqueousphase);
@@ -89,7 +89,7 @@ auto ChemicalProperty::pH(const ChemicalSystem& system) -> ChemicalPropertyFunct
 
     // Check if there is an aqueous phase in the system
     if(iaqueousphase >= system.numPhases())
-        return [=](const ChemicalProperties&) { return real(num_species); };
+        return [=](const ChemicalProperties&) { return 0.0; };
 
     ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
     {
@@ -111,7 +111,7 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
 
     // Check if there is an aqueous phase in the system
     if(iaqueousphase >= system.numPhases())
-        return [=](const ChemicalProperties&) { return real(num_species); };
+        return [=](const ChemicalProperties&) { return 0.0; };
 
     ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
     {
@@ -144,7 +144,7 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
         const VectorXr ua = u0a + ln_aa;
 
         // The standard chemical potential of electron species (zero if not existent in the system)
-        real u0a_electron;
+        real u0a_electron = {};
         if(ielectron < num_aqueous)
             u0a_electron = u0a[ielectron];
 
@@ -153,10 +153,7 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
         y = lu.trsolve(ua);
 
         // The pe of the aqueous phase
-        real pe(num_species);
-
-        // The pe of the aqueous phase
-        pe = (y[icharge] - u0a_electron)/ln_10;
+        const auto pe = (y[icharge] - u0a_electron)/ln_10;
 
         return pe;
     };
@@ -172,7 +169,7 @@ auto ChemicalProperty::pE(const ChemicalSystem& system, const ReactionEquation& 
 
     // Check if there is an aqueous phase in the system
     if(iaqueousphase >= system.numPhases())
-        return [=](const ChemicalProperties&) { return real(num_species); };
+        return [=](const ChemicalProperties&) { return 0.0; };
 
     // Find the stoichiometry of e-
     double stoichiometry_eminus = 0.0;
@@ -186,14 +183,14 @@ auto ChemicalProperty::pE(const ChemicalSystem& system, const ReactionEquation& 
     ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
     {
         // The pE of the aqueous phase
-        real pe(num_species);
+        real pe = {};
 
         const auto T = properties.temperature();
         const auto RT = universalGasConstant * T;
 
         // Find the standard chemical potential of e- (it is not zero if the
         // standard chemical potentials were obtained from log(k)'s of reactions.
-        real G0_eminus;
+        real G0_eminus = {};
         if(ielectron < num_species)
             G0_eminus = properties.standardPartialMolarGibbsEnergies()[ielectron];
 
@@ -272,7 +269,7 @@ auto ChemicalProperty::alkalinity(const ChemicalSystem& system) -> ChemicalPrope
 
     // Check if there is an aqueous phase in the system
     if(iaqueousphase >= system.numPhases())
-        return [=](const ChemicalProperties&) { return real(num_species); };
+        return [=](const ChemicalProperties&) { return 0.0; };
 
     // The ions that contribute to alkalinity
     const std::map<double, std::string> ions = { {1, "Na+"}, {1, "K+"}, {2, "Ca++"}, {2, "Mg++"}, {-1, "Cl-"}, {-2, "SO4--"} };
@@ -297,7 +294,6 @@ auto ChemicalProperty::alkalinity(const ChemicalSystem& system) -> ChemicalPrope
     auto j = 0; for(auto i : alkalinity_indices)
         alkalinity_factors[j++] = system.species(i).charge();
 
-    real volume(num_species);
     VectorXr n;
 
     ChemicalPropertyFunction f = [=](const ChemicalProperties& properties) mutable
@@ -305,8 +301,8 @@ auto ChemicalProperty::alkalinity(const ChemicalSystem& system) -> ChemicalPrope
         n = properties.composition();
         const auto n_ions = rows(n, alkalinity_indices);
         const auto m3_to_liter = 1000.0;
-        volume = properties.phaseVolumes()[iaqueousphase];
-        real res = sum(alkalinity_factors % n_ions)/(volume * m3_to_liter);
+        const auto volume = properties.phaseVolumes()[iaqueousphase];
+        const auto res = sum(alkalinity_factors % n_ions)/(volume * m3_to_liter);
         return res;
     };
 
