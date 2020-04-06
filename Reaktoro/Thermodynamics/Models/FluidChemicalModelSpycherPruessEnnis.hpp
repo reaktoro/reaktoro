@@ -18,20 +18,20 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-class FluidMixture;
+class GeneralMixture;
 
 /// Return a chemical model function for a gaseous phase based on the Spycher et al. (2003) model.
 /// This model only supports a gaseous phase with species `CO2(g)` and `H2O(g)`.
 /// The model is documented in: *Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2-H2O mixtures in the
-/// geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100°C
-/// and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031*.
+/// geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100ï¿½C
+/// and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015ï¿½3031*.
 /// @param mixture The gaseous mixture instance
-/// @see FluidMixture, PhaseChemicalModel
-auto fluidChemicalModelSpycherPruessEnnis(const FluidMixture& mixture)->PhaseChemicalModel;
+/// @see GeneralMixture, ActivityModelFn
+auto fluidChemicalModelSpycherPruessEnnis(const GeneralMixture& mixture) -> ActivityModelFn;
 
 } // namespace Reaktoro

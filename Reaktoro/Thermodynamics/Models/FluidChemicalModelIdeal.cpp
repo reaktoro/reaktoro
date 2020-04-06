@@ -18,36 +18,24 @@
 #include "FluidChemicalModelIdeal.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 
 namespace Reaktoro {
 
-auto fluidChemicalModelIdeal(const FluidMixture& mixture) -> PhaseChemicalModel
+using std::log;
+
+auto fluidChemicalModelIdeal(const GeneralMixture& mixture)-> ActivityModelFn
 {
-    // The state of the gaseous mixture
-    FluidMixtureState state;
+    MixtureState state;
 
-    // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, real T, real P, VectorXrConstRef n) mutable
+    ActivityModelFn model = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
     {
-        // Evaluate the state of the gaseous mixture
         state = mixture.state(T, P, n);
-
-        // Calculate pressure in bar
-        const real Pbar = 1e-5 * P;
-
-        // The ln of pressure in units of bar
-        const real ln_Pbar = log(Pbar);
-
-        // The result of the ideal model
-        res.ln_activities = log(state.x) + ln_Pbar;
+        const auto Pbar = 1e-5 * P;
+        res.ln_activities = state.x.log() + log(Pbar);
     };
 
     return model;
 }
 
 } // namespace Reaktoro
-
-
-
