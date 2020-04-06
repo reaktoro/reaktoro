@@ -59,21 +59,21 @@ auto ChemicalField::set(const ChemicalState& state) -> void
         item = state;
 }
 
-auto ChemicalField::temperature(VectorXrRef values) -> void
+auto ChemicalField::temperature(VectorXdRef values) -> void
 {
     const Index len = size();
     for(Index i = 0; i < len; ++i)
         values[i] = m_states[i].temperature();
 }
 
-auto ChemicalField::pressure(VectorXrRef values) -> void
+auto ChemicalField::pressure(VectorXdRef values) -> void
 {
     const Index len = size();
     for(Index i = 0; i < len; ++i)
         values[i] = m_states[i].pressure();
 }
 
-auto ChemicalField::elementAmounts(VectorXrRef values) -> void
+auto ChemicalField::elementAmounts(VectorXdRef values) -> void
 {
     const Index len = size();
     const Index num_elements = m_system.numElements();
@@ -117,7 +117,7 @@ auto TridiagonalMatrix::factorize() -> void
     }
 }
 
-auto TridiagonalMatrix::solve(VectorXrRef x, VectorXrConstRef d) const -> void
+auto TridiagonalMatrix::solve(VectorXdRef x, VectorXdConstRef d) const -> void
 {
     const Index n = size();
 
@@ -154,7 +154,7 @@ auto TridiagonalMatrix::solve(VectorXrRef x, VectorXrConstRef d) const -> void
     }
 }
 
-auto TridiagonalMatrix::solve(VectorXrRef x) const -> void
+auto TridiagonalMatrix::solve(VectorXdRef x) const -> void
 {
     solve(x, x);
 }
@@ -195,7 +195,7 @@ TransportSolver::TransportSolver()
 {
 }
 
-//auto TransportSolver::step(VectorXrRef u, VectorXrConstRef q) -> void
+//auto TransportSolver::step(VectorXdRef u, VectorXdConstRef q) -> void
 //{
 //    // TODO: Implement Kurganov-Tadmor method as detailed in their 2000 paper (not as in Wikipedia)
 //    const double dx = mmesh.dx();
@@ -274,7 +274,7 @@ auto TransportSolver::initialize() -> void
     A.factorize();
 }
 
-auto TransportSolver::step(VectorXrRef u, VectorXrConstRef q) -> void
+auto TransportSolver::step(VectorXdRef u, VectorXdConstRef q) -> void
 {
     // TODO: Implement Kurganov-Tadmor method as detailed in their 2000 paper (not as in Wikipedia)
     // Solving advection problem with time explicit approach
@@ -327,7 +327,7 @@ auto TransportSolver::step(VectorXrRef u, VectorXrConstRef q) -> void
     A.solve(u);
 }
 
-auto TransportSolver::step(VectorXrRef u) -> void
+auto TransportSolver::step(VectorXdRef u) -> void
 {
     step(u, zeros(u.size()));
 }
