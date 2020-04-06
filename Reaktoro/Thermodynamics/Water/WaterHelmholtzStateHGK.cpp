@@ -17,6 +17,11 @@
 
 #include "WaterHelmholtzStateHGK.hpp"
 
+// C++ includes
+#include <cmath>
+using std::log;
+using std::pow;
+
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
@@ -25,34 +30,34 @@ namespace Reaktoro {
 namespace {
 
 // Reference temperature of water in units of K
-const double referenceTemperature = 647.27;
+const auto referenceTemperature = 647.27;
 
 // Reference density of water in units of kg/m3
-const double referenceDensity = 317.763;
+const auto referenceDensity = 317.763;
 
 // Reference volume of water in units of m3/kg
-const double referenceVolume = 1.0/referenceDensity;
+const auto referenceVolume = 1.0/referenceDensity;
 
 // Reference pressure of water in units of Pa
-const double referencePressure = 22.115e+06;
+const auto referencePressure = 22.115e+06;
 
 // Reference viscosity of water in units of Pa*s
-const double referenceViscosity = 55.071e-06;
+const auto referenceViscosity = 55.071e-06;
 
 // Reference thermal conductivity of water in units of W/(K*m)
-const double referenceConductivity = 0.49450;
+const auto referenceConductivity = 0.49450;
 
 // Reference surface tension of water in units of N/m
-const double referenceSurfTension = 235.8e-03;
+const auto referenceSurfTension = 235.8e-03;
 
 // Reference constant for Helmholtz function in units of J/kg
-const double referenceHelmholtz = 69595.89;
+const auto referenceHelmholtz = 69595.89;
 
 // Reference constant for entropy specific heat in units of J/(kg*K)
-const double referenceEntropy = 107.5222;
+const auto referenceEntropy = 107.5222;
 
 // Reference constant for sound speed in units of m/s
-const double referenceSoundSpeed = 263.810;
+const auto referenceSoundSpeed = 263.810;
 
 const double A0[] =
 {
