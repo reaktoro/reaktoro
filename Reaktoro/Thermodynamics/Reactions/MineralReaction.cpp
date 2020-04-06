@@ -19,8 +19,6 @@
 
 // C++ includes
 #include <cmath>
-using std::exp;
-using std::pow;
 
 // Eigen includes
 #include <Reaktoro/deps/eigen3/Eigen/LU>
@@ -42,6 +40,10 @@ using std::pow;
 #include <Reaktoro/Math/MathUtils.hpp>
 
 namespace Reaktoro {
+
+using std::exp;
+using std::pow;
+
 namespace internal {
 
 using MineralCatalystFunction = std::function<real(const ChemicalProperties&)>;
