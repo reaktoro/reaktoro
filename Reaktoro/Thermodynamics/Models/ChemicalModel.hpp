@@ -23,7 +23,7 @@
 // // Reaktoro includes
 // #include <Reaktoro/Common/Real.hpp>
 // #include <Reaktoro/Math/Matrix.hpp>
-// #include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+// #include <Reaktoro/Core/ActivityModel.hpp>
 
 // namespace Reaktoro {
 
@@ -48,13 +48,13 @@
 //     /// @param iphase The index of the phase.
 //     /// @param ispecies The index of the first species in the phase.
 //     /// @param nspecies The number of species in the phase.
-//     auto phaseProperties(Index iphase, Index ispecies, Index nspecies) -> PhaseChemicalModelResult;
+//     auto phaseProperties(Index iphase, Index ispecies, Index nspecies)-> ActivityModelFnResult;
 
 //     /// Return a view of the chemical properties of a phase.
 //     /// @param iphase The index of the phase.
 //     /// @param ispecies The index of the first species in the phase.
 //     /// @param nspecies The number of species in the phase.
-//     auto phaseProperties(Index iphase, Index ispecies, Index nspecies) const -> PhaseChemicalModelResultConst;
+//     auto phaseProperties(Index iphase, Index ispecies, Index nspecies) const-> ActivityModelFnResultConst;
 
 //     /// Return the natural log of the activity coefficients of the species.
 //     inline auto lnActivityCoefficients() -> VectorXdRef { return ln_activity_coefficients; }

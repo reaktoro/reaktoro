@@ -202,10 +202,10 @@ private:
     Index num_phases;
 
     /// The temperature of the system (in units of K)
-    real T;
+    real T = {};
 
     /// The pressure of the system (in units of Pa)
-    real P;
+    real P = {};
 
     /// The amounts of the species in the system (in units of mol).
     VectorXr n;

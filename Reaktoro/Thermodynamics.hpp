@@ -26,9 +26,7 @@
 #include <Reaktoro/Thermodynamics/Core/Thermo.hpp>
 #include <Reaktoro/Thermodynamics/EOS/CubicEOS.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/FluidMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelDebyeHuckel.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelIdeal.hpp>

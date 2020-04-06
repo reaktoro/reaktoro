@@ -24,7 +24,6 @@
 #include <Reaktoro/Core/ChemicalQuantity.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Connectivity.hpp>
 #include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Partition.hpp>

@@ -19,7 +19,7 @@
 import pytest
 
 import numpy as np
-from reaktoro import ChemicalProperties, PhaseType
+from reaktoro import ChemicalProperties, StateOfMatter
 
 
 def test_chemical_properties_subvolume(chemical_properties):
@@ -58,7 +58,7 @@ def test_chemical_properties_partial_volumes(chemical_system, chemical_propertie
         phase_type = phase.type()
         for species in phase.species():
             index = chemical_system.indexSpecies(species.name())
-            if phase_type != PhaseType.Gas:
+            if phase_type != StateOfMatter.Gas:
                 assert partial_volumes[index] == 0.0
             else:
                 assert partial_volumes[index] > 0.0

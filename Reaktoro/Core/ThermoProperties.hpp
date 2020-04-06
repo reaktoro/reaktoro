@@ -84,10 +84,10 @@ private:
     // ThermoModelResult tres;
 
     /// The temperature of the system (in units of K)
-    real T;
+    real T = {};
 
     /// The pressure of the system (in units of Pa)
-    real P;
+    real P = {};
 };
 
 } // namespace Reaktoro

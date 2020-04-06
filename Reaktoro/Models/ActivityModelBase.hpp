@@ -34,7 +34,7 @@ public:
     /// Create the activity model of the phase.
     /// @param engine The thermodynamic engine from which additional data can be fetched.
     /// @param species The species that compose the phase.
-    virtual auto create(const ThermoEngine& engine, const std::vector<Species>& species) -> ActivityModelFn = 0;
+    virtual auto create(const ThermoEngine& engine, const std::vector<Species>& species)-> ActivityModelFn = 0;
 };
 
 } // namespace Reaktoro
