@@ -26,68 +26,131 @@
 
 namespace Reaktoro {
 
-using VectorXd           = Eigen::VectorXd;                               ///< Alias to Eigen type VectorXd.
-using VectorXdRef        = Eigen::Ref<Eigen::VectorXd>;                   ///< Alias to Eigen type Ref<VectorXd>.
-using VectorXdStridedRef = Eigen::Ref<VectorXd, 0, Eigen::InnerStride<>>; ///< Alias to Eigen type Ref<VectorXd>.
-using VectorXdConstRef   = Eigen::Ref<const Eigen::VectorXd>;             ///< Alias to Eigen type Ref<const VectorXd>.
-using VectorXdMap        = Eigen::Map<Eigen::VectorXd>;                   ///< Alias to Eigen type Map<VectorXd>.
-using VectorXdConstMap   = Eigen::Map<const Eigen::VectorXd>;             ///< Alias to Eigen type Map<const VectorXd>.
+///< Convenient alias to Eigen type.
+template<typename T>
+using VectorX = Eigen::Matrix<T, -1, 1, 0, -1, 1>;
 
-using RowVectorXd           = Eigen::RowVectorXd;                                      ///< Alias to Eigen type RowVectorXd.
-using RowVectorXdRef        = Eigen::Ref<Eigen::RowVectorXd>;                          ///< Alias to Eigen type Ref<RowVectorXd>.
-using RowVectorXdStridedRef = Eigen::Ref<Eigen::RowVectorXd, 0, Eigen::InnerStride<>>; ///< Alias to Eigen type Ref<RowVectorXd>.
-using RowVectorXdConstRef   = Eigen::Ref<const Eigen::RowVectorXd>;                    ///< Alias to Eigen type Ref<const RowVectorXd>.
-using RowVectorXdMap        = Eigen::Map<Eigen::RowVectorXd>;                          ///< Alias to Eigen type Map<VectorXd>.
-using RowVectorXdConstMap   = Eigen::Map<const Eigen::RowVectorXd>;                    ///< Alias to Eigen type Map<const VectorXd>.
+///< Convenient alias to Eigen type.
+template<typename T>
+using MatrixX = Eigen::Matrix<T, -1, -1, 0, -1, -1>;
 
-using MatrixXd         = Eigen::MatrixXd;                   ///< Alias to Eigen type MatrixXd.
-using MatrixXdRef      = Eigen::Ref<Eigen::MatrixXd>;       ///< Alias to Eigen type Ref<MatrixXd>.
-using MatrixXdConstRef = Eigen::Ref<const Eigen::MatrixXd>; ///< Alias to Eigen type Ref<const MatrixXd>.
-using MatrixXdMap      = Eigen::Map<Eigen::MatrixXd>;       ///< Alias to Eigen type Map<MatrixXd>.
-using MatrixXdConstMap = Eigen::Map<const Eigen::MatrixXd>; ///< Alias to Eigen type Map<const MatrixXd>.
+///< Convenient alias to Eigen type.
+template<typename T>
+using ArrayX = Eigen::Array<T, -1, 1,  0,  -1, 1>;
 
-using VectorXr = Eigen::Matrix<real, Eigen::Dynamic, 1, 0, Eigen::Dynamic, 1>; /// Alias to Eigen type Eigen::VectorXr.
-using VectorXd = Eigen::VectorXd; /// Alias to Eigen type Eigen::VectorXd.
-using VectorXi = Eigen::VectorXi; /// Alias to Eigen type Eigen::VectorXi.
+///< Convenient alias to Eigen type.
+template<typename T>
+using ArrayXX = Eigen::Array<T, -1, -1,  0,  -1, -1>;
 
-using VectorXrRef = Eigen::Ref<VectorXr>; ///< Alias to Eigen type Eigen::Ref<VectorXr>.
-using VectorXdRef = Eigen::Ref<VectorXd>; ///< Alias to Eigen type Eigen::Ref<VectorXd>.
-using VectorXiRef = Eigen::Ref<VectorXi>; ///< Alias to Eigen type Eigen::Ref<VectorXi>.
+///< Convenient alias to Eigen type.
+template<typename T>
+using RowVectorX = Eigen::Matrix<T, 1, -1, 0, 1, -1>;
 
-using VectorXrConstRef = Eigen::Ref<const VectorXr>; ///< Alias to Eigen type Eigen::Ref<const VectorXr>.
-using VectorXdConstRef = Eigen::Ref<const VectorXd>; ///< Alias to Eigen type Eigen::Ref<const VectorXd>.
-using VectorXiConstRef = Eigen::Ref<const VectorXi>; ///< Alias to Eigen type Eigen::Ref<const VectorXi>.
+//---------------------------------------------------------------------------------------------------------------------
+// == VECTOR TYPE ALIASES ==
+//---------------------------------------------------------------------------------------------------------------------
 
-using VectorXrMap = Eigen::Map<VectorXr>; ///< Alias to Eigen type Eigen::Map<VectorXr>.
-using VectorXdMap = Eigen::Map<VectorXd>; ///< Alias to Eigen type Eigen::Map<VectorXd>.
-using VectorXiMap = Eigen::Map<VectorXi>; ///< Alias to Eigen type Eigen::Map<VectorXi>.
+using VectorXr                = VectorX<real>;                                       ///< Convenient alias to Eigen type.
+using VectorXrRef             = Eigen::Ref<VectorXr>;                                ///< Convenient alias to Eigen type.
+using VectorXrConstRef        = Eigen::Ref<const VectorXr>;                          ///< Convenient alias to Eigen type.
+using VectorXrMap             = Eigen::Map<VectorXr>;                                ///< Convenient alias to Eigen type.
+using VectorXrConstMap        = Eigen::Map<const VectorXr>;                          ///< Convenient alias to Eigen type.
+using VectorXrStridedRef      = Eigen::Ref<VectorXr, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
+using VectorXrStridedConstRef = Eigen::Ref<const VectorXr, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
 
-using VectorXrConstMap = Eigen::Map<const VectorXr>; ///< Alias to Eigen type Eigen::Map<const VectorXr>.
-using VectorXdConstMap = Eigen::Map<const VectorXd>; ///< Alias to Eigen type Eigen::Map<const VectorXd>.
-using VectorXiConstMap = Eigen::Map<const VectorXi>; ///< Alias to Eigen type Eigen::Map<const VectorXi>.
+using VectorXl                = VectorX<long>;                                       ///< Convenient alias to Eigen type.
+using VectorXlRef             = Eigen::Ref<VectorXl>;                                ///< Convenient alias to Eigen type.
+using VectorXlConstRef        = Eigen::Ref<const VectorXl>;                          ///< Convenient alias to Eigen type.
+using VectorXlMap             = Eigen::Map<VectorXl>;                                ///< Convenient alias to Eigen type.
+using VectorXlConstMap        = Eigen::Map<const VectorXl>;                          ///< Convenient alias to Eigen type.
+using VectorXlStridedRef      = Eigen::Ref<VectorXl, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
+using VectorXlStridedConstRef = Eigen::Ref<const VectorXl, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
 
-using MatrixXr = Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic, 0, Eigen::Dynamic, Eigen::Dynamic>; /// Alias to Eigen type Eigen::MatrixXr.
-using MatrixXd = Eigen::MatrixXd; /// Alias to Eigen type Eigen::MatrixXd.
-using MatrixXi = Eigen::MatrixXi; /// Alias to Eigen type Eigen::MatrixXi.
+using VectorXd                = Eigen::VectorXd;                                     ///< Convenient alias to Eigen type.
+using VectorXdRef             = Eigen::Ref<VectorXd>;                                ///< Convenient alias to Eigen type.
+using VectorXdConstRef        = Eigen::Ref<const VectorXd>;                          ///< Convenient alias to Eigen type.
+using VectorXdMap             = Eigen::Map<VectorXd>;                                ///< Convenient alias to Eigen type.
+using VectorXdConstMap        = Eigen::Map<const VectorXd>;                          ///< Convenient alias to Eigen type.
+using VectorXdStridedRef      = Eigen::Ref<VectorXd, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
+using VectorXdStridedConstRef = Eigen::Ref<const VectorXd, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
 
-using MatrixXrRef = Eigen::Ref<MatrixXr>; ///< Alias to Eigen type Eigen::Ref<MatrixXr>.
-using MatrixXdRef = Eigen::Ref<MatrixXd>; ///< Alias to Eigen type Eigen::Ref<MatrixXd>.
-using MatrixXiRef = Eigen::Ref<MatrixXi>; ///< Alias to Eigen type Eigen::Ref<MatrixXi>.
 
-using MatrixXrConstRef = Eigen::Ref<const MatrixXr>; ///< Alias to Eigen type Eigen::Ref<const MatrixXr>.
-using MatrixXdConstRef = Eigen::Ref<const MatrixXd>; ///< Alias to Eigen type Eigen::Ref<const MatrixXd>.
-using MatrixXiConstRef = Eigen::Ref<const MatrixXi>; ///< Alias to Eigen type Eigen::Ref<const MatrixXi>.
+//---------------------------------------------------------------------------------------------------------------------
+// == ARRAY TYPE ALIASES ==
+//---------------------------------------------------------------------------------------------------------------------
 
-using MatrixXrMap = Eigen::Map<MatrixXr>; ///< Alias to Eigen type Eigen::Map<MatrixXr>.
-using MatrixXdMap = Eigen::Map<MatrixXd>; ///< Alias to Eigen type Eigen::Map<MatrixXd>.
-using MatrixXiMap = Eigen::Map<MatrixXi>; ///< Alias to Eigen type Eigen::Map<MatrixXi>.
+using ArrayXr                = ArrayX<real>;                                       ///< Convenient alias to Eigen type.
+using ArrayXrRef             = Eigen::Ref<ArrayXr>;                                ///< Convenient alias to Eigen type.
+using ArrayXrConstRef        = Eigen::Ref<const ArrayXr>;                          ///< Convenient alias to Eigen type.
+using ArrayXrMap             = Eigen::Map<ArrayXr>;                                ///< Convenient alias to Eigen type.
+using ArrayXrConstMap        = Eigen::Map<const ArrayXr>;                          ///< Convenient alias to Eigen type.
+using ArrayXrStridedRef      = Eigen::Ref<ArrayXr, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
+using ArrayXrStridedConstRef = Eigen::Ref<const ArrayXr, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
 
-using MatrixXrConstMap = Eigen::Map<const MatrixXr>; ///< Alias to Eigen type Eigen::Map<const MatrixXr>.
-using MatrixXdConstMap = Eigen::Map<const MatrixXd>; ///< Alias to Eigen type Eigen::Map<const MatrixXd>.
-using MatrixXiConstMap = Eigen::Map<const MatrixXi>; ///< Alias to Eigen type Eigen::Map<const MatrixXi>.
+using ArrayXl                = ArrayX<long>;                                       ///< Convenient alias to Eigen type.
+using ArrayXlRef             = Eigen::Ref<ArrayXl>;                                ///< Convenient alias to Eigen type.
+using ArrayXlConstRef        = Eigen::Ref<const ArrayXl>;                          ///< Convenient alias to Eigen type.
+using ArrayXlMap             = Eigen::Map<ArrayXl>;                                ///< Convenient alias to Eigen type.
+using ArrayXlConstMap        = Eigen::Map<const ArrayXl>;                          ///< Convenient alias to Eigen type.
+using ArrayXlStridedRef      = Eigen::Ref<ArrayXl, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
+using ArrayXlStridedConstRef = Eigen::Ref<const ArrayXl, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
+
+using ArrayXd                = Eigen::ArrayXd;                                     ///< Convenient alias to Eigen type.
+using ArrayXdRef             = Eigen::Ref<ArrayXd>;                                ///< Convenient alias to Eigen type.
+using ArrayXdConstRef        = Eigen::Ref<const ArrayXd>;                          ///< Convenient alias to Eigen type.
+using ArrayXdMap             = Eigen::Map<ArrayXd>;                                ///< Convenient alias to Eigen type.
+using ArrayXdConstMap        = Eigen::Map<const ArrayXd>;                          ///< Convenient alias to Eigen type.
+using ArrayXdStridedRef      = Eigen::Ref<ArrayXd, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
+using ArrayXdStridedConstRef = Eigen::Ref<const ArrayXd, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
+
+//---------------------------------------------------------------------------------------------------------------------
+// == MATRIX TYPE ALIASES ==
+//---------------------------------------------------------------------------------------------------------------------
+
+using MatrixXr                = MatrixX<real>;              ///< Convenient alias to Eigen type.
+using MatrixXrRef             = Eigen::Ref<MatrixXr>;       ///< Convenient alias to Eigen type.
+using MatrixXrConstRef        = Eigen::Ref<const MatrixXr>; ///< Convenient alias to Eigen type.
+using MatrixXrMap             = Eigen::Map<MatrixXr>;       ///< Convenient alias to Eigen type.
+using MatrixXrConstMap        = Eigen::Map<const MatrixXr>; ///< Convenient alias to Eigen type.
+
+using MatrixXd                = Eigen::MatrixXd;            ///< Convenient alias to Eigen type.
+using MatrixXdRef             = Eigen::Ref<MatrixXd>;       ///< Convenient alias to Eigen type.
+using MatrixXdConstRef        = Eigen::Ref<const MatrixXd>; ///< Convenient alias to Eigen type.
+using MatrixXdMap             = Eigen::Map<MatrixXd>;       ///< Convenient alias to Eigen type.
+using MatrixXdConstMap        = Eigen::Map<const MatrixXd>; ///< Convenient alias to Eigen type.
+
+//---------------------------------------------------------------------------------------------------------------------
+// == ROW VECTOR TYPE ALIASES ==
+//---------------------------------------------------------------------------------------------------------------------
+
+using RowVectorXr                = RowVectorX<real>;              ///< Convenient alias to Eigen type.
+using RowVectorXrRef             = Eigen::Ref<RowVectorXr>;       ///< Convenient alias to Eigen type.
+using RowVectorXrConstRef        = Eigen::Ref<const RowVectorXr>; ///< Convenient alias to Eigen type.
+using RowVectorXrMap             = Eigen::Map<RowVectorXr>;       ///< Convenient alias to Eigen type.
+using RowVectorXrConstMap        = Eigen::Map<const RowVectorXr>; ///< Convenient alias to Eigen type.
+
+using RowVectorXl                = RowVectorX<long>;              ///< Convenient alias to Eigen type.
+using RowVectorXlRef             = Eigen::Ref<RowVectorXl>;       ///< Convenient alias to Eigen type.
+using RowVectorXlConstRef        = Eigen::Ref<const RowVectorXl>; ///< Convenient alias to Eigen type.
+using RowVectorXlMap             = Eigen::Map<RowVectorXl>;       ///< Convenient alias to Eigen type.
+using RowVectorXlConstMap        = Eigen::Map<const RowVectorXl>; ///< Convenient alias to Eigen type.
+
+using RowVectorXd                = Eigen::RowVectorXd;            ///< Convenient alias to Eigen type.
+using RowVectorXdRef             = Eigen::Ref<RowVectorXd>;       ///< Convenient alias to Eigen type.
+using RowVectorXdConstRef        = Eigen::Ref<const RowVectorXd>; ///< Convenient alias to Eigen type.
+using RowVectorXdMap             = Eigen::Map<RowVectorXd>;       ///< Convenient alias to Eigen type.
+using RowVectorXdConstMap        = Eigen::Map<const RowVectorXd>; ///< Convenient alias to Eigen type.
+
+//---------------------------------------------------------------------------------------------------------------------
+// == OTHER TYPE ALIASES ==
+//---------------------------------------------------------------------------------------------------------------------
 
 /// Define an alias to a permutation matrix type of the Eigen library
 using PermutationMatrix = Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic>;
+
+//---------------------------------------------------------------------------------------------------------------------
+// == FUNCTION ALIASES ==
+//---------------------------------------------------------------------------------------------------------------------
 
 /// Return an expression of a zero vector
 /// @param rows The number of rows
