@@ -17,6 +17,10 @@
 
 #include "AqueousActivityModelDuanSunCO2.hpp"
 
+// C++ includes
+#include <cmath>
+using std::log;
+
 // Reaktoro includes
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
@@ -56,22 +60,22 @@ const double zeta_coeffs[] =
      0.0
 };
 
-auto paramDuanSun(const real& T, const real& P, const double coeffs[]) -> real
+auto paramDuanSun(const real& T, const real& P, const real coeffs[]) -> real
 {
     // Convert pressure from pascal to bar
-    const real Pbar = 1e-5 * P;
+    const auto Pbar = 1e-5 * P;
 
-    const double c1  = coeffs[0];
-    const double c2  = coeffs[1];
-    const double c3  = coeffs[2];
-    const double c4  = coeffs[3];
-    const double c5  = coeffs[4];
-    const double c6  = coeffs[5];
-    const double c7  = coeffs[6];
-    const double c8  = coeffs[7];
-    const double c9  = coeffs[8];
-    const double c10 = coeffs[9];
-    const double c11 = coeffs[10];
+    const auto c1  = coeffs[0];
+    const auto c2  = coeffs[1];
+    const auto c3  = coeffs[2];
+    const auto c4  = coeffs[3];
+    const auto c5  = coeffs[4];
+    const auto c6  = coeffs[5];
+    const auto c7  = coeffs[6];
+    const auto c8  = coeffs[7];
+    const auto c9  = coeffs[8];
+    const auto c10 = coeffs[9];
+    const auto c11 = coeffs[10];
 
     return c1 + c2*T + c3/T + c4*T*T + c5/(630 - T) +
         c6*Pbar + c7*Pbar*log(T) + c8*Pbar/T + c9*Pbar/(630 - T) +
@@ -83,54 +87,34 @@ auto paramDuanSun(const real& T, const real& P, const double coeffs[]) -> real
 auto aqueousActivityModelDuanSunCO2(const AqueousMixture& mixture) -> AqueousActivityModel
 {
     // The number of speciesn and charged species
-    const unsigned nspecies = mixture.numSpecies();
-    const unsigned nions = mixture.numChargedSpecies();
+    const auto nspecies = mixture.numSpecies();
+    const auto nions = mixture.numChargedSpecies();
 
     // The local indices of some charged species among all charged species
-    const Index iNa  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Na+"));   // Na+, Na[+]
-    const Index iK   = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("K+"));    // K+, K[+]
-    const Index iCa  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Ca++"));  // Ca++, Ca+2, Ca[+2]
-    const Index iMg  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Mg++"));  // Mg++, Mg+2, Mg[+2]
-    const Index iCl  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Cl-"));   // Cl-, Cl[-]
-    const Index iSO4 = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("SO4--")); // SO4--, SO4-2, SO4[-2]
-
-    // The molalities of some ionic species covered by the model
-    real mNa(nspecies);
-    real mK(nspecies);
-    real mCa(nspecies);
-    real mMg(nspecies);
-    real mCl(nspecies);
-    real mSO4(nspecies);
-
-    // The ln activity coefficient of CO2(aq)
-    real ln_gCO2(nspecies);
+    const auto iNa  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Na+"));   // Na+, Na[+]
+    const auto iK   = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("K+"));    // K+, K[+]
+    const auto iCa  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Ca++"));  // Ca++, Ca+2, Ca[+2]
+    const auto iMg  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Mg++"));  // Mg++, Mg+2, Mg[+2]
+    const auto iCl  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Cl-"));   // Cl-, Cl[-]
+    const auto iSO4 = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("SO4--")); // SO4--, SO4-2, SO4[-2]
 
     AqueousActivityModel f = [=](const AqueousMixtureState& state) mutable
     {
-        // Extract temperature and pressure values
-        const real& T = state.T;
-        const real& P = state.P;
-
-        // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
+        const auto T = state.T;
+        const auto P = state.P;
         const auto& ms = state.ms;
+        const auto lambda = paramDuanSun(T, P, lambda_coeffs);
+        const auto zeta   = paramDuanSun(T, P, zeta_coeffs);
 
-        // The parameters lambda and zeta of activity coefficient model
-        const real lambda = paramDuanSun(T, P, lambda_coeffs);
-        const real zeta   = paramDuanSun(T, P, zeta_coeffs);
+        const real mNa  = (iNa  < nions) ? ms[iNa]  : 0.0;
+        const real mK   = (iK   < nions) ? ms[iK]   : 0.0;
+        const real mCa  = (iCa  < nions) ? ms[iCa]  : 0.0;
+        const real mMg  = (iMg  < nions) ? ms[iMg]  : 0.0;
+        const real mCl  = (iCl  < nions) ? ms[iCl]  : 0.0;
+        const real mSO4 = (iSO4 < nions) ? ms[iSO4] : 0.0;
 
-        // The stoichiometric molalities of the specific ions and their molar derivatives
-        if(iNa  < nions) mNa  = ms[iNa];
-        if(iK   < nions) mK   = ms[iK];
-        if(iCa  < nions) mCa  = ms[iCa];
-        if(iMg  < nions) mMg  = ms[iMg];
-        if(iCl  < nions) mCl  = ms[iCl];
-        if(iSO4 < nions) mSO4 = ms[iSO4];
-
-        // The ln activity coefficient of CO2(aq)
-        ln_gCO2 = 2*lambda*(mNa + mK + 2*mCa + 2*mMg) +
-            zeta*(mNa + mK + mCa + mMg)*mCl - 0.07*mSO4;
-
-        return ln_gCO2;
+        // Return the ln activity coefficient of CO2(aq)
+        return 2*lambda*(mNa + mK + 2*mCa + 2*mMg) + zeta*(mNa + mK + mCa + mMg)*mCl - 0.07*mSO4;
     };
 
     return f;
