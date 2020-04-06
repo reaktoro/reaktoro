@@ -18,22 +18,18 @@
 #include "MineralChemicalModelIdeal.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 
 namespace Reaktoro {
 
-auto mineralChemicalModelIdeal(const MineralMixture& mixture) -> PhaseChemicalModel
+auto mineralChemicalModelIdeal(const GeneralMixture& mixture)-> ActivityModelFn
 {
-    // The state of the mineral mixture
-    MineralMixtureState state;
+    MixtureState state;
 
-    // Define the chemical model function of the mineral phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, real T, real P, VectorXrConstRef n) mutable
+    ActivityModelFn model = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
     {
-        // Evaluate the state of the mineral mixture
         state = mixture.state(T, P, n);
 
-        // Fill the chemical properties of the mineral phase
         res.ln_activities = log(state.x);
     };
 

@@ -18,17 +18,17 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-class MineralMixture;
+class GeneralMixture;
 
 /// Return an equation of state for a mineral phase based on the ideal model.
 /// @param mixture The mineral mixture
 /// @return The equation of state function for the mineral phase
-/// @see MineralMixture, MineralChemicalModel
-auto mineralChemicalModelIdeal(const MineralMixture& mixture) -> PhaseChemicalModel;
+/// @see GeneralMixture, MineralChemicalModel
+auto mineralChemicalModelIdeal(const GeneralMixture& mixture)-> ActivityModelFn;
 
 } // namespace Reaktoro

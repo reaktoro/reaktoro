@@ -20,22 +20,24 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 
 namespace Reaktoro {
 
-auto mineralChemicalModelRedlichKister(const MineralMixture& mixture, double a0, double a1, double a2) -> PhaseChemicalModel
+auto mineralChemicalModelRedlichKister(const GeneralMixture& mixture, double a0, double a1, double a2)-> ActivityModelFn
 {
-    Assert(mixture.numSpecies() == 2,
-        "Cannot create the chemical model Redlich-Kister for the mineral phase.",
-        "The Redlich-Kister model requires a solid solution phase with two species.");
+    error(mixture.numSpecies() != 2, "Cannot create the chemical model Redlich-Kister for the mineral phase. "
+        "The Redlich-Kister model requires a solid solution phase with exactly two species.");
 
     // The state of the mineral mixture
-    MineralMixtureState state;
+    MixtureState state;
 
     // Define the chemical model function of the mineral phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, real T, real P, VectorXrConstRef n) mutable
+    ActivityModelFn model = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
     {
+        using std::log;
+        using std::pow;
+
         // Evaluate the state of the mineral mixture
         state = mixture.state(T, P, n);
 
@@ -49,8 +51,8 @@ auto mineralChemicalModelRedlichKister(const MineralMixture& mixture, double a0,
 
         res.ln_activities = res.ln_activity_coefficients + log(state.x);
 
-        res.residual_molar_gibbs_energy = (x1*x2*(a0 + a1*(x1 - x2) + a2*pow((x1 - x2), 2))) * RT;
-        res.residual_molar_enthalpy = res.residual_molar_gibbs_energy;
+        res.Gex = (x1*x2*(a0 + a1*(x1 - x2) + a2*pow((x1 - x2), 2))) * RT;
+        res.Hex = res.Gex;
     };
 
     return model;
