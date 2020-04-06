@@ -23,6 +23,7 @@
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Math/LU.hpp>
