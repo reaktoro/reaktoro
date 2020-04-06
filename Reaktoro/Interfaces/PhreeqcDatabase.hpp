@@ -48,47 +48,17 @@ public:
     /// @param filename The path to the Phreeqc database file
     auto load(std::string filename) -> void;
 
-    auto numElements() const -> unsigned;
+    /// Return the names of the master species in the database.
+    auto masterSpecies() const -> std::set<std::string>;
 
-    auto numAqueousSpecies() const -> unsigned;
-
-    auto numGaseousSpecies() const -> unsigned;
-
-    auto numMineralSpecies() const -> unsigned;
-
-    auto numMasterSpecies() const -> unsigned;
-
-    auto numProductSpecies() const -> unsigned;
-
-    auto element(Index index) const -> Element;
-
-    auto elements() const -> const std::vector<Element>&;
-
-    auto aqueousSpecies(Index index) const -> Species;
-
-    auto aqueousSpecies(std::string name) const -> Species;
-
+    /// Return the aqueous species in the database.
     auto aqueousSpecies() const -> const std::vector<Species>&;
 
-    auto gaseousSpecies(Index index) const -> Species;
-
-    auto gaseousSpecies(std::string name) const -> Species;
-
+    /// Return the gaseous species in the database.
     auto gaseousSpecies() const -> const std::vector<Species>&;
 
-    auto mineralSpecies(Index index) const -> Species;
-
-    auto mineralSpecies(std::string name) const -> Species;
-
-    auto containsAqueousSpecies(std::string name) const -> bool;
-
-    auto containsGaseousSpecies(std::string name) const -> bool;
-
-    auto containsMineralSpecies(std::string name) const -> bool;
-
+    /// Return the mineral species in the database.
     auto mineralSpecies() const -> const std::vector<Species>&;
-
-    auto masterSpecies() const -> std::set<std::string>;
 
 private:
     struct Impl;
