@@ -18,9 +18,11 @@
 #pragma once
 
 // C++ includes
+#include <cmath>
 #include <functional>
 
 // Reaktoro includes
+#include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
@@ -35,14 +37,14 @@ struct ActivityProps
     /// The activities (natural log) of the species in the phase.
     ArrayXr ln_a;
 
-    /// The molar volume *V* of the phase (in m3/mol).
-    real V = {};
+    /// The excess molar volume of the phase (in m3/mol).
+    real Vex = {};
 
-    /// The temperature derivative of *V* at constant pressure (in m3/(mol*K)).
-    real VT = {};
+    /// The temperature derivative of the excess molar volume at constant pressure (in m3/(mol*K)).
+    real VexT = {};
 
-    /// The pressure derivative of *V* at constant temperature (in m3/(mol*Pa)).
-    real VP = {};
+    /// The pressure derivative of the excess molar volume at constant temperature (in m3/(mol*Pa)).
+    real VexP = {};
 
     /// The excess molar Gibbs energy of the phase (in units of J/mol).
     real Gex = {};
@@ -56,5 +58,14 @@ struct ActivityProps
 
 /// The function type for the activity model of a phase.
 using ActivityModelFn = std::function<void(ActivityProps&, real, real, ArrayXrConstRef)>;
+
+/// The base type for all thermodynamic activity models for phases.
+class ActivityModel
+{
+public:
+    /// Create the activity model function of the phase.
+    /// @param species The species that compose the phase.
+    virtual auto create(const SpeciesList& species) -> ActivityModelFn = 0;
+};
 
 } // namespace Reaktoro

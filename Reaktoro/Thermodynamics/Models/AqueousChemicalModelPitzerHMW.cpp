@@ -1435,7 +1435,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityMode
         const real ln_aw = lnActivityWater(state, pitzer, iwater);
 
         // The mole fraction of water
-        const auto xw = state.x[iwater];
+        const auto xw = x[iwater];
 
         // Set the activities of the solutes
         res.ln_a = res.ln_g + log(state.m);
@@ -1451,4 +1451,3 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityMode
 }
 
 } // namespace Reaktoro
-

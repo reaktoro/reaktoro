@@ -431,11 +431,18 @@ struct CubicEOS::Impl
         }
 
         //=========================================================================================
-        // Calculate the volume and residual properties of the phase
+        // Calculate the ideal volumetric properties of the phase
         //=========================================================================================
-        props.V     = Z*R*T/P;          // from Z := PV/RT, V := ZRT/P
-        props.VT    = props.V*(ZT/Z + 1.0/T); // from V := ZRT/P, (dV/dT)_P = (dZ/dT)_P * R*T/P + Z*R/P = V*[1/Z*(dZ/dT)_P + 1/T]
-        props.VP    = props.V*(ZP/Z - 1.0/P); // from V := ZRT/P, (dV/dP)_T = (dZ/dP)_T * R*T/P - Z*R*T/P^2 = V*[1/Z*(dZ/dP)_T - 1/P]
+        const real V0  =  R*T/P;
+        const real V0T =  V0/T;
+        const real V0P = -V0/P;
+
+        //=========================================================================================
+        // Calculate the residual properties of the phase
+        //=========================================================================================
+        props.Vres  = (Z - 1)*V0;          // Vres = V - V0, where V := ZRT/P and V0 := RT/P
+        props.VresT = ZT*V0 + (Z - 1)*V0T;
+        props.VresP = ZP*V0 + (Z - 1)*V0P;
         props.Gres  = R*T*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
         props.Hres  = R*T*(Z - 1 + T*qT*I); // equation after Eq. (13.74), but using T*qT instead of Tr*qTr, which is equivalent
         props.Cpres = props.Hres/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT); // from Eq. (2.19), Cp(res) := (dH(res)/dT)P === R*(Z - 1 + T*qT*I) + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT) = H_res/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT)

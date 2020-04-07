@@ -314,19 +314,24 @@ auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture)-> ActivityMode
         }
 
         // The result of the chemical model (equation of state) of the phase
-        auto V     = res.V;
-        auto VT    = res.VT;
-        auto VP    = res.VP;
+        auto Vex   = res.Vex;
+        auto VexT  = res.VexT;
+        auto VexP  = res.VexP;
         auto Gres  = res.Gex;
         auto Hres  = res.Hex;
         auto Cpres = res.Cpex;
         auto ln_g  = res.ln_g;
         auto ln_a  = res.ln_a;
 
-        // Calculate the molar volume of the phase (in units of m3/mol)
-        V = Z*R*T/P;           // from Z := PV/RT, V := ZRT/P
-        VT = V*(ZT/Z + 1.0/T); // from V := ZRT/P, (dV/dT)_P = (dZ/dT)_P * R*T/P + Z*R/P = V*[1/Z*(dZ/dT)_P + 1/T]
-        VP = V*(ZP/Z - 1.0/P); // from V := ZRT/P, (dV/dP)_T = (dZ/dP)_T * R*T/P - Z*R*T/P^2 = V*[1/Z*(dZ/dP)_T - 1/P]
+        // Calculate the ideal molar volume of the phase (in m3/mol) and its derivatives
+        const real V0  =  R*T/P;
+        const real V0T =  V0/T;
+        const real V0P = -V0/P;
+
+        // Calculate the excess molar volume of the phase (in m3/mol) and its derivatives
+        Vex  = (Z - 1)*V0;          // Vres = V - V0, where V := ZRT/P and V0 := RT/P
+        VexT = ZT*V0 + (Z - 1)*V0T;
+        VexP = ZP*V0 + (Z - 1)*V0P;
 
         // Calculate the residual molar Gibbs energy of the phase
         Gres = R * T*(Bmix + 0.5*Cmix*Pbar)*Pbar;
