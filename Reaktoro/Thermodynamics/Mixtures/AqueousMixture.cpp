@@ -210,7 +210,7 @@ auto AqueousMixture::molalities(ArrayXrConstRef x) const -> ArrayXr
     const auto xw = x[idx_water];
     if(xw == 0.0)
         return ArrayXr::Zero(x.size());
-    return waterMolarMass * x/xw;
+    return x/(waterMolarMass * xw);
 }
 
 auto AqueousMixture::stoichiometricMolalities(ArrayXrConstRef m) const -> ArrayXr
@@ -244,6 +244,8 @@ auto AqueousMixture::stoichiometricIonicStrength(ArrayXrConstRef ms) const -> re
 auto AqueousMixture::state(real T, real P, ArrayXrConstRef x) const -> AqueousMixtureState
 {
     AqueousMixtureState res;
+    res.T = T;
+    res.P = P;
     res.rho = rho(T, P);
     res.epsilon = epsilon(T, P);
     res.m  = molalities(x);
