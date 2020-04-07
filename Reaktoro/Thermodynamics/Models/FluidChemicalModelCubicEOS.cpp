@@ -58,9 +58,6 @@ auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCu
     eos.setInteractionParamsFunction(options.interaction_params_fn);
     eos.setStablePhaseIdentificationMethod(options.phase_identification_method);
 
-    // The state of the gaseous mixture
-    MixtureState state;
-
     /// The thermodynamic properties calculated with CubicEOS
     CubicEOSProps props;
     props.ln_phi.resize(nspecies);
@@ -78,12 +75,14 @@ auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCu
         const auto ln_Pbar = log(1e-5 * P);
 
         // Fill the chemical properties of the fluid phase
+        res.Vex  = props.Vres;
+        res.VexT = props.VresT;
+        res.VexP = props.VresP;
+        res.Gex  = props.Gres;
+        res.Hex  = props.Hres;
+        res.Cpex = props.Cpres;
         res.ln_g = props.ln_phi;
         res.ln_a = props.ln_phi + ln_x + ln_Pbar;
-        res.V = props.V;
-        res.Gex = props.Gres;
-        res.Hex = props.Hres;
-        res.Cpex = props.Cpres;
     };
 
     return model;

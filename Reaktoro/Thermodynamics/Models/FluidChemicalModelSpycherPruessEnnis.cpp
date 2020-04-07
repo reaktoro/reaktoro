@@ -127,8 +127,11 @@ auto fluidChemicalModelSpycherPruessEnnis(const GeneralMixture& mixture)-> Activ
         // The ln mole fractions of all gaseous species
         const auto ln_x = x.log();
 
-        // Set the molar volume of the phase (in units of m3/mol)
-        res.V = convertCubicCentimeterToCubicMeter(v);
+        // The molar volume of the phase (in m3/mol)
+        const auto V = convertCubicCentimeterToCubicMeter(v);
+
+        // Set the excess molar volume of the phase (in m3/mol)
+        res.Vex = V - R*T/P;
 
         // Set the ln activities of the gaseous species to ideal values
         res.ln_a = ln_x + ln_Pb;
