@@ -20,31 +20,34 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
+namespace detail {
+
+// struct ActivityModelIdeal
+// {
+//     auto operator()(ActivityProps& props, real T, real P, ArrayXrConstRef x)
+//     {
+//         props.ln_g.fill(0.0);
+//         props.ln_a = x.log();
+//     }
+// }
+
+} // namespace detail
 
 struct Phase::Impl
 {
     /// The name of the phase
     std::string name;
 
-    /// The type of the phase.
-    std::string type;
-
     /// The physical state of the phase.
     StateOfMatter state = StateOfMatter::Solid;
 
     /// The list of Species instances defining the phase
-    std::vector<Species> species;
-
-    /// The list of Element instances in the phase
-    std::vector<Element> elements;
-
-    /// The standard thermodynamic model of the phase.
-    StandardThermoModelFn standard_thermo_model_fn;
+    SpeciesList species;
 
     /// The activity model of the phase.
     ActivityModelFn activity_model_fn;
@@ -58,53 +61,32 @@ Phase::Phase(const Phase& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-Phase::~Phase()
-{}
-
-auto Phase::operator=(Phase other) -> Phase&
+auto Phase::withName(std::string name) -> Phase
 {
-    pimpl = std::move(other.pimpl);
-    return *this;
+    Phase copy = clone();
+    copy.pimpl->name = std::move(name);
+    return copy;
 }
 
-auto Phase::setName(std::string name) -> void
+auto Phase::withPhysicalState(StateOfMatter state) -> Phase
 {
-    pimpl->name = name;
+    Phase copy = clone();
+    copy.pimpl->state = std::move(state);
+    return copy;
 }
 
-auto Phase::setType(std::string type) -> void
+auto Phase::withSpecies(SpeciesList species) -> Phase
 {
-    pimpl->type = type;
+    Phase copy = clone();
+    copy.pimpl->species = std::move(species);
+    return copy;
 }
 
-auto Phase::setPhysicalState(StateOfMatter state) -> void
+auto Phase::withActivityModel(ActivityModelFn model) -> Phase
 {
-    pimpl->state = state;
-}
-
-auto Phase::setSpecies(const std::vector<Species>& species) -> void
-{
-    pimpl->species = species;
-}
-
-auto Phase::setStandardThermoModel(const StandardThermoModelFn& model) -> void
-{
-    pimpl->standard_thermo_model_fn = model;
-}
-
-auto Phase::setActivityModel(const ActivityModelFn& model) -> void
-{
-    pimpl->activity_model_fn = model;
-}
-
-auto Phase::numElements() const -> unsigned
-{
-    return elements().size();
-}
-
-auto Phase::numSpecies() const -> unsigned
-{
-    return species().size();
+    Phase copy = clone();
+    copy.pimpl->activity_model_fn = std::move(model);
+    return copy;
 }
 
 auto Phase::name() const -> std::string
@@ -112,44 +94,19 @@ auto Phase::name() const -> std::string
     return pimpl->name;
 }
 
-auto Phase::type() const -> std::string
-{
-    return pimpl->type;
-}
-
 auto Phase::physicalState() const -> StateOfMatter
 {
     return pimpl->state;
 }
 
-auto Phase::elements() const -> const std::vector<Element>&
-{
-    return pimpl->elements;
-}
-
-auto Phase::species() const -> const std::vector<Species>&
+auto Phase::species() const -> const SpeciesList&
 {
     return pimpl->species;
 }
 
-auto Phase::species(Index index) const -> const Species&
+auto Phase::species(Index idx) const -> const Species&
 {
-    return pimpl->species[index];
-}
-
-auto Phase::isFluid() const -> bool
-{
-    return !isSolid();
-}
-
-auto Phase::isSolid() const -> bool
-{
-    return physicalState() == StateOfMatter::Solid;
-}
-
-auto Phase::standardThermoModel() const -> const StandardThermoModelFn&
-{
-    return pimpl->standard_thermo_model_fn;
+    return pimpl->species[idx];
 }
 
 auto Phase::activityModel() const -> const ActivityModelFn&
@@ -157,47 +114,20 @@ auto Phase::activityModel() const -> const ActivityModelFn&
     return pimpl->activity_model_fn;
 }
 
-auto Phase::indexSpecies(std::string name) const -> Index
-{
-    return index(name, species());
-}
-
-auto Phase::indexSpeciesWithError(std::string name) const -> Index
-{
-    const Index index = indexSpecies(name);
-    Assert(index < numSpecies(),
-        "Could not get the index of species `" + name + "`.",
-        "There is no species called `" + name + "` in the phase.");
-    return index;
-}
-
-auto Phase::indexSpeciesAny(const std::vector<std::string>& names) const -> Index
-{
-    return indexAny(names, species());
-}
-
-auto Phase::indexSpeciesAnyWithError(const std::vector<std::string>& names) const -> Index
-{
-    const Index index = indexSpeciesAny(names);
-    Assert(index < numSpecies(),
-        "Could not get the index of the species with "
-        "any of the following names `" + join(names, ", ") + "`.",
-        "There is no species in phase `" + name() + "` with any of these names.");
-    return index;
-}
-
-auto Phase::standardThermoProps(Index ispecies, real T, real P) const -> StandardThermoProps
-{
-    return pimpl->standard_thermo_model_fn(T, P, pimpl->species[ispecies]);
-}
-
 auto Phase::activityProps(real T, real P, VectorXrConstRef n) const -> ActivityProps
 {
     ActivityProps props;
-    props.ln_activity_coefficients.resize(numSpecies());
-    props.ln_activities.resize(numSpecies());
+    props.ln_g.resize(species().size());
+    props.ln_a.resize(species().size());
     pimpl->activity_model_fn(props, T, P, n);
     return props;
+}
+
+auto Phase::clone() const -> Phase
+{
+    Phase phase;
+    *phase.pimpl = *pimpl;
+    return phase;
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool
