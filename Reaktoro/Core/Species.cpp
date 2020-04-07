@@ -20,10 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Core/AggregateState.hpp>
-#include <Reaktoro/Core/ChemicalFormula.hpp>
-#include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Singletons/CriticalProps.hpp>
 #include <Reaktoro/Singletons/PeriodicTable.hpp>
 
 namespace Reaktoro {
@@ -59,6 +55,15 @@ auto createElements(const Species::ElementSymbols& symbols) -> Species::Elements
         elements.emplace(element.value(), coeff);
     }
     return elements;
+}
+
+/// Return the element symbols and their coefficients in a Species::Elements container.
+auto elementSymbols(const Species::Elements& elements)
+{
+    Species::ElementSymbols symbols;
+    for(auto&& [element, coeff] : elements)
+        symbols[element.symbol()] = coeff;
+    return symbols;
 }
 
 /// Return the molar mass of a species.
@@ -116,6 +121,14 @@ struct Species::Impl
     : symbol(formula), name(detail::removeSuffix(formula)), formula(detail::removeSuffix(formula)),
       elements(detail::createElements(formula)), charge(formula.charge())
     {
+    }
+
+    /// Return a ChemicalFormula object consistent with the elements and charge
+    /// of the species, and not just based on the contents of string `formula`.
+    auto createChemicalFormula() const -> ChemicalFormula
+    {
+        const auto symbols = detail::elementSymbols(elements);
+        return ChemicalFormula(formula, symbols, charge);
     }
 };
 
@@ -209,9 +222,9 @@ auto Species::name() const -> std::string
     return pimpl->name;
 }
 
-auto Species::formula() const -> std::string
+auto Species::formula() const -> ChemicalFormula
 {
-    return pimpl->formula;
+    return pimpl->createChemicalFormula();
 }
 
 auto Species::charge() const -> double
@@ -236,14 +249,6 @@ auto Species::elements() const -> const Elements&
     return pimpl->elements;
 }
 
-auto Species::elementCoefficient(const std::string& symbol) const -> double
-{
-    for(auto&& [element, coeff] : elements())
-        if(element.symbol() == symbol)
-            return coeff;
-    return 0.0;
-}
-
 auto Species::tags() const -> const std::vector<std::string>&
 {
     return pimpl->tags;
@@ -259,6 +264,14 @@ auto Species::criticalProps() const -> std::optional<SubstanceCriticalProps>
 auto Species::attachedData() const -> const std::any&
 {
     return pimpl->attached_data;
+}
+
+auto Species::elementCoefficient(const std::string& symbol) const -> double
+{
+    for(auto&& [element, coeff] : elements())
+        if(element.symbol() == symbol)
+            return coeff;
+    return 0.0;
 }
 
 auto Species::clone() const -> Species
