@@ -31,22 +31,22 @@ namespace Reaktoro {
 /// @see AqueousMixture
 struct AqueousMixtureState : public MixtureState
 {
-    /// The density of water (in units of kg/m3)
+    /// The density of water (in kg/m3)
     real rho = {};
 
     /// The relative dielectric constant of water (no units)
     real epsilon = {};
 
-    /// The effective ionic strength of the aqueous mixture and their partial derivatives (in units of mol/kg)
+    /// The effective ionic strength of the aqueous mixture and their partial derivatives (in mol/kg)
     real Ie = {};
 
-    /// The stoichiometric ionic strength of the aqueous mixture and their partial derivatives (in units of mol/kg)
+    /// The stoichiometric ionic strength of the aqueous mixture and their partial derivatives (in mol/kg)
     real Is = {};
 
-    /// The molalities of the aqueous species and their partial derivatives (in units of mol/kg)
+    /// The molalities of the aqueous species and their partial derivatives (in mol/kg)
     ArrayXr m;
 
-    /// The stoichiometric molalities of the ionic species and their partial derivatives (in units of mol/kg)
+    /// The stoichiometric molalities of the ionic species and their partial derivatives (in mol/kg)
     ArrayXr ms;
 };
 
@@ -83,8 +83,8 @@ public:
     /// Use this method if temperature-pressure interpolation should be used for the calculation of water density and
     /// water dielectric constant. This should be done if the cost of the analytical calculation of these properties
     /// is prohibitive for your application.
-    /// @param temperatures The temperature points (in units of K)
-    /// @param pressures The pressure points (in units of Pa)
+    /// @param temperatures The temperature points (in K)
+    /// @param pressures The pressure points (in Pa)
     auto setInterpolationPoints(const std::vector<double>& temperatures, const std::vector<double>& pressures) -> void;
 
     /// Return the number of neutral aqueous species in the aqueous mixture.
@@ -167,7 +167,7 @@ public:
     auto dissociationMatrix() const -> MatrixXdConstRef;
 
     /// Calculate the molalities of the aqueous species and its molar derivatives.
-    /// @param n The molar abundance of species (in units of mol)
+    /// @param n The molar abundance of species (in mol)
     /// @return The molalities and their partial derivatives
     auto molalities(ArrayXrConstRef n) const -> ArrayXr;
 
@@ -187,10 +187,10 @@ public:
     auto stoichiometricIonicStrength(ArrayXrConstRef ms) const -> real;
 
     /// Calculate the state of the aqueous mixture.
-    /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of Pa)
-    /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(real T, real P, ArrayXrConstRef n) const -> AqueousMixtureState;
+    /// @param T The temperature (in K)
+    /// @param P The pressure (in Pa)
+    /// @param x The mole fractions of the species in the mixture
+    auto state(real T, real P, ArrayXrConstRef x) const -> AqueousMixtureState;
 
 private:
     /// The index of the water species

@@ -326,7 +326,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityModelFn
     }
 
     // Define the chemical model function of the aqueous phase
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
+    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::abs;
         using std::log;
@@ -335,7 +335,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityModelFn
         using std::sqrt;
 
         // Evaluate the state of the aqueous mixture
-        state = mixture.state(T, P, n);
+        state = mixture.state(T, P, x);
 
         // Auxiliary references
         auto& ln_g = res.ln_activity_coefficients;
@@ -343,7 +343,6 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityModelFn
 
         // Auxiliary references to state variables
         const auto& I = state.Ie;
-        const auto& x = state.x;
         const auto& m = state.m;
 
         // The square root of the ionic strength
@@ -371,7 +370,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityModelFn
 
         // Set the activity coefficients of the neutral species to
         // water mole fraction to convert it to molality scale
-        res.ln_activity_coefficients.fill(0.0);
+        res.ln_g.fill(0.0);
 //        res.ln_activity_coefficients = ln_xw;
 
         // Loop over all charged species in the mixture
@@ -413,7 +412,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityModelFn
             const auto log10_gi = -(A*z2*sqrtI)/lambda + log10_xw + (omega_abs * bNaCl + bNapClm - 0.19*(abs(z) - 1.0)) * I;
 
             // Set the activity coefficient of the current charged species
-            ln_g[ispecies] = log10_gi * ln10;
+            res.ln_g[ispecies] = log10_gi * ln10;
 
             // Check if the mole fraction of water is one
             if(xw != 1.0)
@@ -430,14 +429,14 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityModelFn
         }
 
         // Set the activities of the solutes (molality scale)
-        res.ln_activities = res.ln_activity_coefficients + m.log();
+        res.ln_a = res.ln_g + m.log();
 
         // Set the activity of water (in mole fraction scale)
-        if(xw != 1.0) ln_a[iwater] = ln10 * Mw * phi;
-                 else ln_a[iwater] = ln_xw;
+        if(xw != 1.0) res.ln_a[iwater] = ln10 * Mw * phi;
+                 else res.ln_a[iwater] = ln_xw;
 
         // Set the activity coefficient of water (mole fraction scale)
-        ln_g[iwater] = ln_a[iwater] - ln_xw;
+        res.ln_g[iwater] = res.ln_a[iwater] - ln_xw;
     };
 
     return model;

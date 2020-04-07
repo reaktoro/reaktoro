@@ -66,14 +66,8 @@ auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCu
     props.ln_phi.resize(nspecies);
 
     // Define the chemical model function of the gaseous phase
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
+    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
     {
-        // Evaluate the state of the gaseous mixture
-        state = mixture.state(T, P, n);
-
-        // The mole fractions of the species
-        const auto& x = state.x;
-
         // Evaluate the CubicEOS
         eos.compute(props, T, P, x);
 
@@ -84,8 +78,8 @@ auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCu
         const auto ln_Pbar = log(1e-5 * P);
 
         // Fill the chemical properties of the fluid phase
-        res.ln_activity_coefficients = props.ln_phi;
-        res.ln_activities = props.ln_phi + ln_x + ln_Pbar;
+        res.ln_g = props.ln_phi;
+        res.ln_a = props.ln_phi + ln_x + ln_Pbar;
         res.V = props.V;
         res.Gex = props.Gres;
         res.Hex = props.Hres;

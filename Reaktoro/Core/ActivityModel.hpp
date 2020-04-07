@@ -30,10 +30,10 @@ namespace Reaktoro {
 struct ActivityProps
 {
     /// The activity coefficients (natural log) of the species in the phase.
-    ArrayXr ln_activity_coefficients;
+    ArrayXr ln_g;
 
     /// The activities (natural log) of the species in the phase.
-    ArrayXr ln_activities;
+    ArrayXr ln_a;
 
     /// The molar volume *V* of the phase (in m3/mol).
     real V = {};
@@ -55,6 +55,6 @@ struct ActivityProps
 };
 
 /// The function type for the activity model of a phase.
-using ActivityModelFn = std::function<void(ActivityProps&, real, real, VectorXrConstRef)>;
+using ActivityModelFn = std::function<void(ActivityProps&, real, real, ArrayXrConstRef)>;
 
 } // namespace Reaktoro

@@ -1396,10 +1396,10 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityMode
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
+    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
     {
         // Evaluate the state of the aqueous mixture
-        state = mixture.state(T, P, n);
+        state = mixture.state(T, P, x);
 
         // Calculate the activity coefficients of the cations
         for(auto M = 0; M < pitzer.idx_cations.size(); ++M)
@@ -1408,7 +1408,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityMode
             const Index i = pitzer.idx_cations[M];
 
             // Set the activity coefficient of the i-th species
-            res.ln_activity_coefficients[i] = lnActivityCoefficientCation(state, pitzer, M);
+            res.ln_g[i] = lnActivityCoefficientCation(state, pitzer, M);
         }
 
         // Calculate the activity coefficients of the anions
@@ -1418,7 +1418,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityMode
             const Index i = pitzer.idx_anions[X];
 
             // Set the activity coefficient of the i-th species
-            res.ln_activity_coefficients[i] = lnActivityCoefficientAnion(state, pitzer, X);
+            res.ln_g[i] = lnActivityCoefficientAnion(state, pitzer, X);
         }
 
         // Calculate the activity coefficients of the neutral species
@@ -1428,7 +1428,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityMode
             const Index i = pitzer.idx_neutrals[N];
 
             // Set the activity coefficient of the i-th species
-            res.ln_activity_coefficients[i] = lnActivityCoefficientNeutral(state, pitzer, N);
+            res.ln_g[i] = lnActivityCoefficientNeutral(state, pitzer, N);
         }
 
         // Calculate the activity of water
@@ -1438,13 +1438,13 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityMode
         const auto xw = state.x[iwater];
 
         // Set the activities of the solutes
-        res.ln_activities = res.ln_activity_coefficients + log(state.m);
+        res.ln_a = res.ln_g + log(state.m);
 
         // Set the activitiy of water
-        res.ln_activities[iwater] = ln_aw;
+        res.ln_a[iwater] = ln_aw;
 
         // Set the activity coefficient of water (mole fraction scale)
-        res.ln_activity_coefficients[iwater] = ln_aw - log(xw);
+        res.ln_g[iwater] = ln_aw - log(xw);
     };
 
     return model;

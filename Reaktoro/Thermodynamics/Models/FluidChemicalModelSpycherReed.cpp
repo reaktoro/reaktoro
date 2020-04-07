@@ -231,19 +231,10 @@ auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture)-> ActivityMode
     // The universal gas constant of the phase (in units of J/(mol*K))
     const auto R = universalGasConstant;
 
-    // The state of the gaseous mixture
-    MixtureState state;
-
     // Define the chemical model function of the gaseous phase
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
+    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::log;
-
-        // Evaluate the state of the gaseous mixture
-        state = mixture.state(T, P, n);
-
-        // The mole fractions of the species
-        const auto& x = state.x;
 
         // The pressure in units of bar
         const auto Pbar = 1e-5 * P;
@@ -252,7 +243,7 @@ auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture)-> ActivityMode
         const auto ln_Pbar = log(Pbar);
 
         // The ln of mole fractions of the species
-        const auto ln_x = log(x);
+        const auto ln_x = x.log();
 
         // The mole fractions of the gaseous species H2O(g), CO2(g) and CH4(g)
         real y[3] = {};
@@ -329,8 +320,8 @@ auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture)-> ActivityMode
         auto Gres  = res.Gex;
         auto Hres  = res.Hex;
         auto Cpres = res.Cpex;
-        auto ln_g  = res.ln_activity_coefficients;
-        auto ln_a  = res.ln_activities;
+        auto ln_g  = res.ln_g;
+        auto ln_a  = res.ln_a;
 
         // Calculate the molar volume of the phase (in units of m3/mol)
         V = Z*R*T/P;           // from Z := PV/RT, V := ZRT/P

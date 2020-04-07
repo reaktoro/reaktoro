@@ -205,18 +205,12 @@ auto AqueousMixture::chargesAnions() const -> ArrayXr
     return charges()(indicesAnions());
 }
 
-auto AqueousMixture::molalities(ArrayXrConstRef n) const -> ArrayXr
+auto AqueousMixture::molalities(ArrayXrConstRef x) const -> ArrayXr
 {
-    // The amount of solvent water
-    const auto nw = n[idx_water];
-
-    // Check if amount of water is zero
-    if(nw == 0.0)
-        return ArrayXr::Zero(n.size());
-
-    const auto kgH2O = nw * waterMolarMass;
-
-    return n/kgH2O;
+    const auto xw = x[idx_water];
+    if(xw == 0.0)
+        return ArrayXr::Zero(x.size());
+    return waterMolarMass * x/xw;
 }
 
 auto AqueousMixture::stoichiometricMolalities(ArrayXrConstRef m) const -> ArrayXr
@@ -247,15 +241,12 @@ auto AqueousMixture::stoichiometricIonicStrength(ArrayXrConstRef ms) const -> re
     return 0.5 * (zc * zc * ms).sum();
 }
 
-auto AqueousMixture::state(real T, real P, ArrayXrConstRef n) const -> AqueousMixtureState
+auto AqueousMixture::state(real T, real P, ArrayXrConstRef x) const -> AqueousMixtureState
 {
     AqueousMixtureState res;
-    res.T = T;
-    res.P = P;
-    res.x = moleFractions(n);
     res.rho = rho(T, P);
     res.epsilon = epsilon(T, P);
-    res.m  = molalities(n);
+    res.m  = molalities(x);
     res.ms = stoichiometricMolalities(res.m);
     res.Ie = effectiveIonicStrength(res.m);
     res.Is = stoichiometricIonicStrength(res.ms);

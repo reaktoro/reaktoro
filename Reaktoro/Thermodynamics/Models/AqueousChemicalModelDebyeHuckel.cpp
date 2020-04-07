@@ -86,25 +86,24 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     AqueousMixtureState state;
 
     // Define the intermediate chemical model function of the aqueous mixture
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
+    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::log;
         using std::pow;
         using std::sqrt;
 
         // Evaluate the state of the aqueous mixture
-        state = mixture.state(T, P, n);
+        state = mixture.state(T, P, x);
 
         // Auxiliary constant references
         const auto& I = state.Ie;            // ionic strength
-        const auto& x = state.x;             // mole fractions of the species
         const auto& m = state.m;             // molalities of the species
         const auto& rho = state.rho/1000;    // density in units of g/cm3
         const auto& epsilon = state.epsilon; // dielectric constant
 
         // Auxiliary references
-        auto& ln_g = res.ln_activity_coefficients;
-        auto& ln_a = res.ln_activities;
+        auto& ln_g = res.ln_g;
+        auto& ln_a = res.ln_a;
 
         // Auxiliary variables
 		const auto ln_m = m.log();
