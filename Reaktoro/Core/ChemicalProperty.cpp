@@ -25,6 +25,8 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
+#include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
@@ -103,63 +105,66 @@ auto ChemicalProperty::pH(const ChemicalSystem& system) -> ChemicalPropertyFunct
 
 auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunction
 {
-    const Index iaqueousphase = indexAqueousPhase(system);
-    const Index num_aqueous = system.numSpeciesInPhase(iaqueousphase);
-    const Index ifirst = system.indexFirstSpeciesInPhase(iaqueousphase);
-    const Index ielectron = system.phase(iaqueousphase).indexSpeciesAny(alternativeChargedSpeciesNames("e-"));
-    const Index num_species = system.numSpecies();
-    const Index icharge = system.indexElementWithError("Z");
+    // const Index iaqueousphase = indexAqueousPhase(system);
+    // const Index num_aqueous = system.numSpeciesInPhase(iaqueousphase);
+    // const Index ifirst = system.indexFirstSpeciesInPhase(iaqueousphase);
+    // const Index ielectron = system.phase(iaqueousphase).species().indexWithFormula("e-");
+    // const Index num_species = system.numSpecies();
+    // const Index icharge = system.indexElementWithError("Z");
 
-    // Check if there is an aqueous phase in the system
-    if(iaqueousphase >= system.numPhases())
-        return [=](const ChemicalProperties&) { return 0.0; };
+    // // Check if there is an aqueous phase in the system
+    // if(iaqueousphase >= system.numPhases())
+    //     return [=](const ChemicalProperties&) { return 0.0; };
 
-    ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
-    {
-        // The amounts of the aqueous species
-        const auto na = rows(properties.composition(), ifirst, num_aqueous);
+    // ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
+    // {
+    //     // The amounts of the aqueous species
+    //     const auto na = rows(properties.composition(), ifirst, num_aqueous);
 
-        // The ln amounts of aqueous species
-        const VectorXr ln_na = log(na);
+    //     // The ln amounts of aqueous species
+    //     const VectorXr ln_na = log(na);
 
-        // The columns of the formula matrix corresponding to aqueous species
-        const auto Aa = cols(system.formulaMatrix(), ifirst, num_aqueous);
+    //     // The columns of the formula matrix corresponding to aqueous species
+    //     const auto Aa = cols(system.formulaMatrix(), ifirst, num_aqueous);
 
-        // The weights for the weighted-LU decomposition of matrix Aa
-        const VectorXr Wa = ln_na - min(ln_na) + 1;
+    //     // The weights for the weighted-LU decomposition of matrix Aa
+    //     const VectorXr Wa = ln_na - min(ln_na) + 1;
 
-        // The weighted-LU decomposition of formula matrix Aa
-        LU lu(Aa, Wa);
+    //     // The weighted-LU decomposition of formula matrix Aa
+    //     LU lu(Aa, Wa);
 
-        // The RT constant
-        const auto T = properties.temperature();
-        const auto RT = universalGasConstant * T;
+    //     // The RT constant
+    //     const auto T = properties.temperature();
+    //     const auto RT = universalGasConstant * T;
 
-        // The normalized standard chemical potentials of the aqueous species
-        const VectorXr u0a = rows(properties.standardPartialMolarGibbsEnergies(), ifirst, num_aqueous)/RT;
+    //     // The normalized standard chemical potentials of the aqueous species
+    //     const VectorXr u0a = rows(properties.standardPartialMolarGibbsEnergies(), ifirst, num_aqueous)/RT;
 
-        // The ln activities of the aqueous species
-        const VectorXr ln_aa = rows(properties.lnActivities(), ifirst, num_aqueous);
+    //     // The ln activities of the aqueous species
+    //     const VectorXr ln_aa = rows(properties.lnActivities(), ifirst, num_aqueous);
 
-        // The normalized chemical potentials of the aqueous species
-        const VectorXr ua = u0a + ln_aa;
+    //     // The normalized chemical potentials of the aqueous species
+    //     const VectorXr ua = u0a + ln_aa;
 
-        // The standard chemical potential of electron species (zero if not existent in the system)
-        real u0a_electron = {};
-        if(ielectron < num_aqueous)
-            u0a_electron = u0a[ielectron];
+    //     // The standard chemical potential of electron species (zero if not existent in the system)
+    //     real u0a_electron = {};
+    //     if(ielectron < num_aqueous)
+    //         u0a_electron = u0a[ielectron];
 
-        // The dual potentials of the elements and its derivatives
-        VectorXr y;
-        y = lu.trsolve(ua);
+    //     // The dual potentials of the elements and its derivatives
+    //     VectorXr y;
+    //     y = lu.trsolve(ua);
 
-        // The pe of the aqueous phase
-        const auto pe = (y[icharge] - u0a_electron)/ln_10;
+    //     // The pe of the aqueous phase
+    //     const auto pe = (y[icharge] - u0a_electron)/ln_10;
 
-        return pe;
-    };
+    //     return pe;
+    // };
 
-    return f;
+    // return f;
+
+    error(true, "ChemicalProperty::pe is not implemented at the moment.");
+    return [=](const ChemicalProperties& properties) { return 0; };
 }
 
 auto ChemicalProperty::pE(const ChemicalSystem& system, const ReactionEquation& reaction) -> ChemicalPropertyFunction

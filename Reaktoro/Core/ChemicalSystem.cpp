@@ -30,6 +30,8 @@
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Core/SpeciesList.hpp>
+#include <Reaktoro/Core/StateOfMatter.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
@@ -191,7 +193,7 @@ auto ChemicalSystem::numSpecies() const -> unsigned
 
 auto ChemicalSystem::numSpeciesInPhase(Index iphase) const -> unsigned
 {
-    return phase(iphase).numSpecies();
+    return phase(iphase).species().size();
 }
 
 auto ChemicalSystem::numPhases() const -> unsigned
@@ -415,7 +417,7 @@ auto ChemicalSystem::indicesFluidPhases() const -> Indices
     Indices indices;
     indices.reserve(numPhases());
     for(Index i = 0; i < numPhases(); ++i)
-        if(phase(i).isFluid())
+        if(phase(i).physicalState() != StateOfMatter::Solid)
             indices.push_back(i);
     return indices;
 }
@@ -430,7 +432,7 @@ auto ChemicalSystem::indicesSolidPhases() const -> Indices
     Indices indices;
     indices.reserve(numPhases());
     for(Index i = 0; i < numPhases(); ++i)
-        if(phase(i).isSolid())
+        if(phase(i).physicalState() == StateOfMatter::Solid)
             indices.push_back(i);
     return indices;
 }
@@ -465,9 +467,9 @@ auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream
     const std::string bar1(bar_size, '=');
     const std::string bar2(bar_size, '-');
 
-    unsigned max_size = 0;
+    std::size_t max_size = 0;
     for(const auto& phase : phases)
-        max_size = std::max(max_size, phase.numSpecies());
+        max_size = std::max(max_size, phase.species().size());
 
     out << bar1 << std::endl;
     for(const auto& phase : phases)
@@ -481,7 +483,7 @@ auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream
 
         for(const auto& phase : phases)
         {
-            if(i < phase.numSpecies())
+            if(i < phase.species().size())
                 out << std::setw(25) << std::left << phase.species(i).name();
             else
                 out << std::setw(25) << std::left << "";

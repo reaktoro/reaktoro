@@ -27,10 +27,12 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
-#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalProperty.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
 
