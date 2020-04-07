@@ -31,9 +31,6 @@
 
 namespace Reaktoro {
 
-/// Compare two MixtureState instances for equality
-auto operator==(const MixtureState& l, const MixtureState& r) -> bool;
-
 /// Provide a base of implementation for the mixture classes.
 /// @ingroup Mixtures
 class GeneralMixture

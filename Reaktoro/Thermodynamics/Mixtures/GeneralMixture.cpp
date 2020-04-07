@@ -19,12 +19,6 @@
 
 namespace Reaktoro {
 
-/// Compare two MixtureState instances for equality
-auto operator==(const MixtureState& l, const MixtureState& r) -> bool
-{
-    return l.T == r.T && r.P == r.P && (l.x == r.x).all();
-}
-
 GeneralMixture::GeneralMixture()
 {}
 
@@ -95,15 +89,6 @@ auto GeneralMixture::moleFractions(ArrayXrConstRef n) const -> ArrayXr
     const real nsum = n.sum();
     if(nsum == 0.0) return ArrayXr::Zero(nspecies);
     return n/nsum;
-}
-
-auto GeneralMixture::state(real T, real P, ArrayXrConstRef n) const -> MixtureState
-{
-    MixtureState res;
-    res.T = T;
-    res.P = P;
-    res.x = moleFractions(n);
-    return res;
 }
 
 } // namespace Reaktoro
