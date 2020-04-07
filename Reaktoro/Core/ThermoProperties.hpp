@@ -36,39 +36,39 @@ public:
     ThermoProperties(const ChemicalSystem& system);
 
     /// Update the thermodynamic properties of the chemical system.
-    /// @param T The new temperature (in units of K)
-    /// @param P The new pressure (in units of Pa)
+    /// @param T The new temperature (in K)
+    /// @param P The new pressure (in Pa)
     auto update(double T, double P) -> void;
 
-    /// Return the temperature of the phase (in units of K).
+    /// Return the temperature of the phase (in K).
     auto temperature() const -> real;
 
-    /// Return the pressure of the phase (in units of Pa).
+    /// Return the pressure of the phase (in Pa).
     auto pressure() const -> real;
 
-    /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
-    auto standardPartialMolarGibbsEnergies() const -> VectorXr;
+    /// Return the standard partial molar Gibbs energies of the species (in J/mol).
+    auto standardGibbsEnergies() const -> ArrayXr;
 
-    /// Return the standard partial molar enthalpies of the species (in units of J/mol).
-    auto standardPartialMolarEnthalpies() const -> VectorXr;
+    /// Return the standard partial molar enthalpies of the species (in J/mol).
+    auto standardEnthalpies() const -> ArrayXr;
 
-    /// Return the standard partial molar volumes of the species (in units of m3/mol).
-    auto standardPartialMolarVolumes() const -> VectorXr;
+    /// Return the standard partial molar volumes of the species (in m3/mol).
+    auto standardVolumes() const -> ArrayXr;
 
-    /// Return the standard partial molar entropies of the species (in units of J/(mol*K)).
-    auto standardPartialMolarEntropies() const -> VectorXr;
+    /// Return the standard partial molar entropies of the species (in J/(mol*K)).
+    auto standardEntropies() const -> ArrayXr;
 
-    /// Return the standard partial molar internal energies of the species (in units of J/mol).
-    auto standardPartialMolarInternalEnergies() const -> VectorXr;
+    /// Return the standard partial molar internal energies of the species (in J/mol).
+    auto standardInternalEnergies() const -> ArrayXr;
 
-    /// Return the standard partial molar Helmholtz energies of the species (in units of J/mol).
-    auto standardPartialMolarHelmholtzEnergies() const -> VectorXr;
+    /// Return the standard partial molar Helmholtz energies of the species (in J/mol).
+    auto standardHelmholtzEnergies() const -> ArrayXr;
 
-    /// Return the standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    auto standardPartialMolarHeatCapacitiesConstP() const -> VectorXr;
+    /// Return the standard partial molar isobaric heat capacities of the species (in J/(mol*K)).
+    auto standardHeatCapacitiesConstP() const -> ArrayXr;
 
-    /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    auto standardPartialMolarHeatCapacitiesConstV() const -> VectorXr;
+    /// Return the standard partial molar isochoric heat capacities of the species (in J/(mol*K)).
+    auto standardHeatCapacitiesConstV() const -> ArrayXr;
 
 private:
     /// The chemical system
@@ -83,10 +83,10 @@ private:
     // /// The results of the evaluation of the PhaseThermoModel functions of each phase.
     // ThermoModelResult tres;
 
-    /// The temperature of the system (in units of K)
+    /// The temperature of the system (in K)
     real T = {};
 
-    /// The pressure of the system (in units of Pa)
+    /// The pressure of the system (in Pa)
     real P = {};
 };
 

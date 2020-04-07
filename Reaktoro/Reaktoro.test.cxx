@@ -1,6 +1,6 @@
-// Atomik is a library that implements basic chemical concepts such as elements, substances, and reactions.
+// Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2018-2019 Allan Leal and Reaktoro Contributors
+// Copyright (C) 2014-2018 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public

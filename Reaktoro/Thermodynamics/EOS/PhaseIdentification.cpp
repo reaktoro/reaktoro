@@ -49,6 +49,7 @@ auto identifyPhaseUsingIsothermalCompressibility(
     // auto dkdt = (1.0 / (volume * volume)) * volume.ddP * volume.ddT;
 
     // return (dkdt <= 0.0) ? CubicEOSFluidType::Vapor : CubicEOSFluidType::Liquid;
+    return {};
 }
 
 auto pressureComparison(const real& Pressure, const real& Temperature, const real& amix,
