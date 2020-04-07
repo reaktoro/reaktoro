@@ -23,9 +23,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ActivityModel.hpp>
-#include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/StandardThermoModel.hpp>
+#include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/StateOfMatter.hpp>
 
 namespace Reaktoro {
@@ -36,99 +35,39 @@ namespace Reaktoro {
 class Phase
 {
 public:
-    /// Construct a default Phase object.
+    /// Construct a Phase object.
     Phase();
 
     /// Construct a copy of a Phase object.
     Phase(const Phase& other);
 
-    /// Destroy this Phase object.
-    ~Phase();
+    /// Return a copy of this Phase object with a new name.
+    auto withName(std::string name) -> Phase;
 
-    /// Assign another Phase object to this.
-    auto operator=(Phase other) -> Phase&;
+    /// Return a copy of this Phase object with new list of species.
+    auto withSpecies(SpeciesList species) -> Phase;
 
-    /// Set the name of the phase.
-    auto setName(std::string name) -> void;
+    /// Return a copy of this Phase object with a new physical state.
+    auto withPhysicalState(StateOfMatter state) -> Phase;
 
-    /// Set the type of the phase.
-    auto setType(std::string type) -> void;
-
-    /// Set the physical state of the phase.
-    auto setPhysicalState(StateOfMatter state) -> void;
-
-    /// Set the species of the phase.
-    auto setSpecies(const std::vector<Species>& species) -> void;
-
-    /// Set the standard thermodynamic model of the phase.
-    auto setStandardThermoModel(const StandardThermoModelFn& model) -> void;
-
-    /// Set the activity model of the phase.
-    auto setActivityModel(const ActivityModelFn& model) -> void;
-
-    /// Return the number of elements in the phase.
-    auto numElements() const -> unsigned;
-
-    /// Return the number of species in the phase.
-    auto numSpecies() const -> unsigned;
+    /// Return a copy of this Phase object with a new activity model.
+    auto withActivityModel(ActivityModelFn model) -> Phase;
 
     /// Return the name of the phase.
     auto name() const -> std::string;
 
-    /// Return the type of the phase.
-    auto type() const -> std::string;
-
     /// Return the physical state of the phase.
     auto physicalState() const -> StateOfMatter;
 
-    /// Return the elements of the phase.
-    auto elements() const -> const std::vector<Element>&;
-
     /// Return the species of the phase.
-    auto species() const -> const std::vector<Species>&;
+    auto species() const -> const SpeciesList&;
 
-    /// Return the species of the phase with a given index.
-    auto species(Index index) const -> const Species&;
-
-    /// Return true if the state of matter of the phase is liquid, gas or plasma.
-    auto isFluid() const -> bool;
-
-    /// Return true if the phase type is solid.
-    auto isSolid() const -> bool;
-
-    /// Return the standard thermodynamic model of the phase.
-    /// @see StandardThermoModel
-    auto standardThermoModel() const -> const StandardThermoModelFn&;
+    /// Return the species in the phase with given index.
+    auto species(Index idx) const -> const Species&;
 
     /// Return the activity model of the phase.
     /// @see ActivityModel
     auto activityModel() const -> const ActivityModelFn&;
-
-    /// Return the index of a species in the phase.
-    /// @param name The name of the species
-    /// @return The index of the species if found, or the number of species in the phase otherwise.
-    auto indexSpecies(std::string name) const -> Index;
-
-    /// Return the index of a species in the system.
-    /// @param name The name of the species
-    /// @return The index of the species if found, or a runtime exception otherwise.
-    auto indexSpeciesWithError(std::string name) const -> Index;
-
-    /// Return the index of the first species in the phase with any of the given names.
-    /// @param names The tentative names of the species in the phase.
-    /// @return The index of the species if found, or the number of species in the phase otherwise.
-    auto indexSpeciesAny(const std::vector<std::string>& names) const -> Index;
-
-    /// Return the index of the first species in the phase with any of the given names.
-    /// @param names The tentative names of the species in the phase.
-    /// @return The index of the species if found, or a runtime exception otherwise.
-    auto indexSpeciesAnyWithError(const std::vector<std::string>& names) const -> Index;
-
-    /// Calculate the standard thermodynamic properties of a species in the phase.
-    /// @param ispecies The local index of the species in the phase.
-    /// @param T The temperature of the system (in units of K)
-    /// @param P The pressure of the system (in units of Pa)
-    auto standardThermoProps(Index ispecies, real T, real P) const -> StandardThermoProps;
 
     /// Calculate the activity and excess thermodynamic properties of the phase.
     /// @param T The temperature of the system (in units of K)
@@ -136,10 +75,13 @@ public:
     /// @param n The amounts of the species in the phase (in units of mol)
     auto activityProps(real T, real P, VectorXrConstRef n) const -> ActivityProps;
 
+    /// Return a deep copy of this Phase object.
+    auto clone() const -> Phase;
+
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 /// Compare two Phase instances for less than
