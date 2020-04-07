@@ -24,14 +24,13 @@
 #include <unordered_map>
 #include <vector>
 
+// Reaktoro includes
+#include <Reaktoro/Core/AggregateState.hpp>
+#include <Reaktoro/Core/ChemicalFormula.hpp>
+#include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Singletons/CriticalProps.hpp>
+
 namespace Reaktoro {
-
-// Forward declarations (class)
-class Element;
-class SubstanceCriticalProps;
-
-// Forward declarations (enum)
-enum class AggregateState;
 
 /// A type used to represent a chemical species and its attributes.
 class Species
@@ -88,7 +87,7 @@ public:
     auto name() const -> std::string;
 
     /// Return the chemical formula of the species.
-    auto formula() const -> std::string;
+    auto formula() const -> ChemicalFormula;
 
     /// Return the electric charge of the species.
     auto charge() const -> double;
@@ -102,9 +101,6 @@ public:
     /// Return the elements that compose the species and their coefficients.
     auto elements() const -> const Elements&;
 
-    /// Return the coefficient of an element in the species.
-    auto elementCoefficient(const std::string& symbol) const -> double;
-
     /// Return the tags of the species (e.g., `organic`, `mineral`).
     auto tags() const -> const std::vector<std::string>&;
 
@@ -113,6 +109,9 @@ public:
 
     /// Return the attached data of the species whose type is known at runtime only.
     auto attachedData() const -> const std::any&;
+
+    /// Return the coefficient of an element in the species.
+    auto elementCoefficient(const std::string& symbol) const -> double;
 
     /// Return a deep copy of this Species object.
     auto clone() const -> Species;
