@@ -29,8 +29,14 @@ namespace Reaktoro {
 
 /// A type used to describe the state of an aqueous mixture.
 /// @see AqueousMixture
-struct AqueousMixtureState : public MixtureState
+struct AqueousMixtureState
 {
+    /// The temperature of the mixture (in K).
+    real T = {};
+
+    /// The pressure of the mixture (in Pa).
+    real P = {};
+
     /// The density of water (in kg/m3)
     real rho = {};
 
