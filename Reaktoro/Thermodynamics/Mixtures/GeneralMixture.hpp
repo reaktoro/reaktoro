@@ -31,19 +31,6 @@
 
 namespace Reaktoro {
 
-/// A type used to describe the state of a mixture
-struct MixtureState
-{
-    /// The temperature of the mixture (in units of K)
-    real T = {};
-
-    /// The pressure of the mixture (in units of Pa)
-    real P = {};
-
-    /// The mole fractions of the species in the mixture and their partial derivatives
-    ArrayXr x;
-};
-
 /// Compare two MixtureState instances for equality
 auto operator==(const MixtureState& l, const MixtureState& r) -> bool;
 
@@ -96,16 +83,9 @@ public:
     /// Return the charges of the species in the mixture
     auto charges() const -> ArrayXrConstRef;
 
-    /// Calculates the mole fractions of the species and their partial derivatives
+    /// Calculate the mole fractions of the species
     /// @param n The molar abundance of the species (in units of mol)
-    /// @return The mole fractions and their partial derivatives
     auto moleFractions(ArrayXrConstRef n) const -> ArrayXr;
-
-    /// Calculate the state of the mixture.
-    /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of Pa)
-    /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(real T, real P, ArrayXrConstRef n) const -> MixtureState;
 
 private:
     /// The name of mixture

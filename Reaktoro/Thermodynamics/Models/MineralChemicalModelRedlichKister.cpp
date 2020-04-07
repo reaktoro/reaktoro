@@ -29,27 +29,21 @@ auto mineralChemicalModelRedlichKister(const GeneralMixture& mixture, double a0,
     error(mixture.numSpecies() != 2, "Cannot create the chemical model Redlich-Kister for the mineral phase. "
         "The Redlich-Kister model requires a solid solution phase with exactly two species.");
 
-    // The state of the mineral mixture
-    MixtureState state;
-
     // Define the chemical model function of the mineral phase
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
+    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::log;
         using std::pow;
 
-        // Evaluate the state of the mineral mixture
-        state = mixture.state(T, P, n);
+        const auto RT = universalGasConstant * T;
 
-        const auto RT = universalGasConstant * state.T;
+        const auto x1 = x[0];
+        const auto x2 = x[1];
 
-        const auto x1 = state.x[0];
-        const auto x2 = state.x[1];
+        res.ln_g[0] = x2*x2*(a0 + a1*(3*x1 - x2) + a2*(x1 - x2)*(5*x1 - x2));
+        res.ln_g[1] = x1*x1*(a0 - a1*(3*x2 - x1) + a2*(x2 - x1)*(5*x2 - x1));
 
-        res.ln_activity_coefficients[0] = x2*x2*(a0 + a1*(3*x1 - x2) + a2*(x1 - x2)*(5*x1 - x2));
-        res.ln_activity_coefficients[1] = x1*x1*(a0 - a1*(3*x2 - x1) + a2*(x2 - x1)*(5*x2 - x1));
-
-        res.ln_activities = res.ln_activity_coefficients + log(state.x);
+        res.ln_a = res.ln_g + log(x);
 
         res.Gex = (x1*x2*(a0 + a1*(x1 - x2) + a2*pow((x1 - x2), 2))) * RT;
         res.Hex = res.Gex;

@@ -29,23 +29,23 @@ auto aqueousChemicalModelIdeal(const AqueousMixture& mixture)-> ActivityModelFn
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    ActivityModelFn f = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
+    ActivityModelFn f = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::log;
 
         // Evaluate the state of the aqueous mixture
-        state = mixture.state(T, P, n);
+        state = mixture.state(T, P, x);
 
         // The ln of water mole fraction
-        real ln_xw = log(state.x[iH2O]);
+        real ln_xw = log(x[iH2O]);
 
         // Set the activity coefficients of the aqueous species
-        res.ln_activity_coefficients = ln_xw;
-        res.ln_activity_coefficients[iH2O] = 0.0;
+        res.ln_g = ln_xw;
+        res.ln_g[iH2O] = 0.0;
 
         // Set the activities of the aqueous species
-        res.ln_activities = res.ln_activity_coefficients + state.m.log();
-        res.ln_activities[iH2O] = ln_xw;
+        res.ln_a = res.ln_g + state.m.log();
+        res.ln_a[iH2O] = ln_xw;
     };
 
     return f;
