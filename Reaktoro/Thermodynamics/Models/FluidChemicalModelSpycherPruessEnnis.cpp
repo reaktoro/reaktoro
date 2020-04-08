@@ -94,7 +94,7 @@ auto fluidChemicalModelSpycherPruessEnnis(const GeneralMixture& mixture)-> Activ
     const auto nspecies = mixture.numSpecies();
 
     // Define the chemical model function of the gaseous phase
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityModelFn model = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         // Calculate the pressure in bar
         const auto Pb = convertPascalToBar(P);

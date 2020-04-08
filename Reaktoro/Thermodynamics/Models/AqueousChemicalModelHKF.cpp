@@ -326,7 +326,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityModelFn
     }
 
     // Define the chemical model function of the aqueous phase
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityModelFn model = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::abs;
         using std::log;

@@ -1396,7 +1396,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityMode
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityModelFn model = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, x);

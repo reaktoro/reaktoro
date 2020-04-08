@@ -86,7 +86,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     AqueousMixtureState state;
 
     // Define the intermediate chemical model function of the aqueous mixture
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityModelFn model = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::log;
         using std::pow;

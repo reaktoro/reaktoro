@@ -232,7 +232,7 @@ auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture)-> ActivityMode
     const auto R = universalGasConstant;
 
     // Define the chemical model function of the gaseous phase
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityModelFn model = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::log;
 
@@ -314,24 +314,30 @@ auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture)-> ActivityMode
         }
 
         // The result of the chemical model (equation of state) of the phase
-        auto Vex   = res.Vex;
-        auto VexT  = res.VexT;
-        auto VexP  = res.VexP;
-        auto Gres  = res.Gex;
-        auto Hres  = res.Hex;
-        auto Cpres = res.Cpex;
-        auto ln_g  = res.ln_g;
-        auto ln_a  = res.ln_a;
+        auto& Vex   = res.Vex;
+        auto& VexT  = res.VexT;
+        auto& VexP  = res.VexP;
+        auto& Gres  = res.Gex;
+        auto& Hres  = res.Hex;
+        auto& Cpres = res.Cpex;
+        auto& Cvres = res.Cvex;
+        auto& ln_g  = res.ln_g;
+        auto& ln_a  = res.ln_a;
 
         // Calculate the ideal molar volume of the phase (in m3/mol) and its derivatives
         const real V0  =  R*T/P;
         const real V0T =  V0/T;
         const real V0P = -V0/P;
 
+        // Calculate the real volume properties of the phase and its derivatives
+        const real V  = Z*V0;
+        const real VT = ZT*V0 + Z*V0T;
+        const real VP = ZP*V0 + Z*V0P;
+
         // Calculate the excess molar volume of the phase (in m3/mol) and its derivatives
-        Vex  = (Z - 1)*V0;          // Vres = V - V0, where V := ZRT/P and V0 := RT/P
-        VexT = ZT*V0 + (Z - 1)*V0T;
-        VexP = ZP*V0 + (Z - 1)*V0P;
+        Vex  = V - V0;
+        VexT = VT - V0T;
+        VexP = VP - V0P;
 
         // Calculate the residual molar Gibbs energy of the phase
         Gres = R * T*(Bmix + 0.5*Cmix*Pbar)*Pbar;
@@ -341,6 +347,9 @@ auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture)-> ActivityMode
 
         // Calculate the residual molar isobaric heat capacity of the phase
         Cpres = 2 * Hres / T - R * T*T*(BmixTT + 0.5*CmixTT*Pbar)*Pbar;
+
+        // Calculate the residual molar isochoric heat capacity of the phase
+        Cvres = Cpres + R + T*VT*VT/VP;
 
         // Set the ln activity coefficients
         ln_g[iH2O] = ln_phi[0];

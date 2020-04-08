@@ -21,7 +21,7 @@ namespace Reaktoro {
 
 auto ActivityModelIdealSolution::create(const SpeciesList& species) -> ActivityModelFn
 {
-    ActivityModelFn fn = [](ActivityProps& props, real T, real P, ArrayXrConstRef x)
+    ActivityModelFn fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x)
     {
         props.Vex  = 0.0;
         props.VexT = 0.0;

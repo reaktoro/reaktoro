@@ -69,7 +69,7 @@
 //         AqueousMixtureState state;
 
 //         // Define the function that calculates the chemical properties of the phase
-//         ActivityModelFn model = [=](ActivityProps& res, real T, real P, VectorXrConstRef n) mutable
+//         ActivityModelFn model = [=](ActivityProps res, real T, real P, VectorXrConstRef n) mutable
 //         {
 //             // Evaluate the state of the aqueous mixture
 //             state = mixture.state(T, P, n);
