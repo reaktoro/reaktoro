@@ -29,7 +29,7 @@ auto aqueousChemicalModelIdeal(const AqueousMixture& mixture)-> ActivityModelFn
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    ActivityModelFn f = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityModelFn f = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::log;
 

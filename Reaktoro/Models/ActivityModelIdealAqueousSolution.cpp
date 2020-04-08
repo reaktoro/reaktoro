@@ -27,7 +27,7 @@ auto ActivityModelIdealAqueousSolution::create(const SpeciesList& species) -> Ac
     const auto iH2O = species.indexWithFormula("H2O");
     const auto MH2O = waterMolarMass;
 
-    ActivityModelFn fn = [=](ActivityProps& props, real T, real P, ArrayXrConstRef x)
+    ActivityModelFn fn = [=](ActivityProps props, real T, real P, ArrayXrConstRef x)
     {
         using std::log;
         const auto m = x/(MH2O * x[iH2O]); // molalities

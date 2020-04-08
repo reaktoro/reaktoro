@@ -30,7 +30,7 @@ auto mineralChemicalModelRedlichKister(const GeneralMixture& mixture, double a0,
         "The Redlich-Kister model requires a solid solution phase with exactly two species.");
 
     // Define the chemical model function of the mineral phase
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityModelFn model = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::log;
         using std::pow;
