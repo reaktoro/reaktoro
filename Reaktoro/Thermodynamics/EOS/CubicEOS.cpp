@@ -430,22 +430,33 @@ struct CubicEOS::Impl
             IP = I*(betaP/beta - (ZP + epsilon*betaP)/(Z + epsilon*beta)); // @eq{ I_{P}\equiv\left(\frac{\partial I}{\partial P}\right)_{T}=I\left(\frac{\beta_{P}}{\beta}-\frac{Z_{P}+\epsilon\beta_{P}}{Z+\epsilon\beta}\right) }
         }
 
+        // Auxiliary references
+        auto& [Vres, VresT, VresP, Gres, Hres, Cpres, Cvres, ln_phi] = props;
+
         //=========================================================================================
-        // Calculate the ideal volumetric properties of the phase
+        // Calculate the ideal volume properties of the phase
         //=========================================================================================
         const real V0  =  R*T/P;
         const real V0T =  V0/T;
         const real V0P = -V0/P;
 
         //=========================================================================================
+        // Calculate the real volume properties of the phase
+        //=========================================================================================
+        const real V  = Z*V0;
+        const real VT = ZT*V0 + Z*V0T;
+        const real VP = ZP*V0 + Z*V0P;
+
+        //=========================================================================================
         // Calculate the residual properties of the phase
         //=========================================================================================
-        props.Vres  = (Z - 1)*V0;          // Vres = V - V0, where V := ZRT/P and V0 := RT/P
-        props.VresT = ZT*V0 + (Z - 1)*V0T;
-        props.VresP = ZP*V0 + (Z - 1)*V0P;
-        props.Gres  = R*T*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
-        props.Hres  = R*T*(Z - 1 + T*qT*I); // equation after Eq. (13.74), but using T*qT instead of Tr*qTr, which is equivalent
-        props.Cpres = props.Hres/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT); // from Eq. (2.19), Cp(res) := (dH(res)/dT)P === R*(Z - 1 + T*qT*I) + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT) = H_res/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT)
+        Vres  = V - Vres;
+        VresT = VT - VresT;
+        VresP = VP - VresP;
+        Gres  = R*T*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
+        Hres  = R*T*(Z - 1 + T*qT*I); // equation after Eq. (13.74), but using T*qT instead of Tr*qTr, which is equivalent
+        Cpres = Hres/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT); // from Eq. (2.19), Cp(res) := (dH(res)/dT)P === R*(Z - 1 + T*qT*I) + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT) = H_res/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT)
+        Cvres = Cpres + R + T*VT*VT/VP; // from Cv = Cp + T*(VT*VT)/VP and Cv0 = Cp0 - R, Cv(res) = Cp(res) + R + T*(VT*VT)/VP
 
         //=========================================================================================
         // Calculate the fugacity coefficients for each species

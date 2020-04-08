@@ -59,30 +59,25 @@ auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCu
     eos.setStablePhaseIdentificationMethod(options.phase_identification_method);
 
     /// The thermodynamic properties calculated with CubicEOS
-    CubicEOSProps props;
-    props.ln_phi.resize(nspecies);
+    CubicEOSProps res;
+    res.ln_phi.resize(nspecies);
 
     // Define the chemical model function of the gaseous phase
-    ActivityModelFn model = [=](ActivityProps& res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityModelFn model = [=](ActivityProps props, real T, real P, ArrayXrConstRef x) mutable
     {
-        // Evaluate the CubicEOS
-        eos.compute(props, T, P, x);
+        const auto Pbar = P * 1.0e-5; // convert from Pa to bar
 
-        // The ln of mole fractions
-        const auto ln_x = log(x);
+        eos.compute(res, T, P, x);
 
-        // The ln of pressure in bar units
-        const auto ln_Pbar = log(1e-5 * P);
-
-        // Fill the chemical properties of the fluid phase
-        res.Vex  = props.Vres;
-        res.VexT = props.VresT;
-        res.VexP = props.VresP;
-        res.Gex  = props.Gres;
-        res.Hex  = props.Hres;
-        res.Cpex = props.Cpres;
-        res.ln_g = props.ln_phi;
-        res.ln_a = props.ln_phi + ln_x + ln_Pbar;
+        props.Vex  = res.Vres;
+        props.VexT = res.VresT;
+        props.VexP = res.VresP;
+        props.Gex  = res.Gres;
+        props.Hex  = res.Hres;
+        props.Cpex = res.Cpres;
+        props.Cvex = res.Cvres;
+        props.ln_g = res.ln_phi;
+        props.ln_a = res.ln_phi + log(x) + log(P);
     };
 
     return model;
