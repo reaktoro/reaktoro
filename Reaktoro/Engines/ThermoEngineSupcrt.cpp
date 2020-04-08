@@ -52,10 +52,7 @@ auto convert(const SpeciesThermoState& state) -> StandardThermoProps
 {
     StandardThermoProps props;
     props.G0  = state.gibbs_energy;
-    props.A0  = state.helmholtz_energy;
-    props.U0  = state.internal_energy;
     props.H0  = state.enthalpy;
-    props.S0  = state.entropy;
     props.V0  = state.volume;
     props.Cp0 = state.heat_capacity_cp;
     props.Cv0 = state.heat_capacity_cv;

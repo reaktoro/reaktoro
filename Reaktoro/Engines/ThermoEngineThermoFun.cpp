@@ -39,11 +39,8 @@ auto convertProps(const ThermoFun::ThermoPropertiesSubstance& other) -> Standard
 {
     StandardThermoProps converted;
     converted.G0  = convertScalar(other.gibbs_energy);
-    converted.A0  = convertScalar(other.helmholtz_energy);
-    converted.U0  = convertScalar(other.internal_energy);
     converted.H0  = convertScalar(other.enthalpy);
-    converted.S0  = convertScalar(other.entropy);
-    converted.V0  = convertScalar(other.volume*1e-05); // from J/bar to m3/mol
+    converted.V0  = convertScalar(other.volume * 1e-05); // from J/bar to m3/mol
     converted.Cp0 = convertScalar(other.heat_capacity_cp);
     converted.Cv0 = convertScalar(other.heat_capacity_cv);
     return converted;

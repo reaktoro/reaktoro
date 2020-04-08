@@ -22,37 +22,26 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
 
-/// Forward declarations
-class Species;
-
-/// The standard thermodynamic properties of a chemical species.
+/// The primary standard thermodynamic properties of a chemical species.
 struct StandardThermoProps
 {
-    /// The standard molar Gibbs energy @f$G^{\circ}@f$ of the species (in unit of J/mol)
+    /// The standard molar Gibbs energy @f$G^{\circ}@f$ of the species (in J/mol)
     real G0 = {};
 
-    /// The standard molar Helmholtz energy @f$A^{\circ}@f$ of the species (in unit of J/mol)
-    real A0 = {};
-
-    /// The standard molar internal energy @f$U^{\circ}@f$ of the species (in unit of J/mol)
-    real U0 = {};
-
-    /// The standard molar enthalpy @f$H^{\circ}@f$ of the species (in unit of J/mol)
+    /// The standard molar enthalpy @f$H^{\circ}@f$ of the species (in J/mol)
     real H0 = {};
 
-    /// The standard molar entropy @f$S^{\circ}@f$ of the species (in unit of J/K)
-    real S0 = {};
-
-    /// The standard molar volume @f$V^{\circ}@f$ of the species (in unit of m3/mol)
+    /// The standard molar volume @f$V^{\circ}@f$ of the species (in m3/mol)
     real V0 = {};
 
-    /// The standard molar isobaric heat capacity @f$C_{P}^{\circ}@f$ of the species (in unit of J/(mol·K))
+    /// The standard molar isobaric heat capacity @f$C_{P}^{\circ}@f$ of the species (in J/(mol·K))
     real Cp0 = {};
 
-    /// The standard molar isochoric heat capacity @f$C_{V}^{\circ}@f$ of the species (in unit of J/(mol·K))
+    /// The standard molar isochoric heat capacity @f$C_{V}^{\circ}@f$ of the species (in J/(mol·K))
     real Cv0 = {};
 };
 
