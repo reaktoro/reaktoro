@@ -25,18 +25,6 @@
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
-namespace detail {
-
-// struct ActivityModelIdeal
-// {
-//     auto operator()(ActivityProps& props, real T, real P, ArrayXrConstRef x)
-//     {
-//         props.ln_g.fill(0.0);
-//         props.ln_a = x.log();
-//     }
-// }
-
-} // namespace detail
 
 struct Phase::Impl
 {
@@ -48,6 +36,9 @@ struct Phase::Impl
 
     /// The list of Species instances defining the phase
     SpeciesList species;
+
+    /// The standard thermodynamic model of the species in the phase.
+    StandardThermoModelFn standard_thermo_model_fn;
 
     /// The activity model of the phase.
     ActivityModelFn activity_model_fn;
@@ -68,6 +59,13 @@ auto Phase::withName(std::string name) -> Phase
     return copy;
 }
 
+auto Phase::withSpecies(SpeciesList species) -> Phase
+{
+    Phase copy = clone();
+    copy.pimpl->species = std::move(species);
+    return copy;
+}
+
 auto Phase::withPhysicalState(StateOfMatter state) -> Phase
 {
     Phase copy = clone();
@@ -75,10 +73,10 @@ auto Phase::withPhysicalState(StateOfMatter state) -> Phase
     return copy;
 }
 
-auto Phase::withSpecies(SpeciesList species) -> Phase
+auto Phase::withStandardThermoModel(StandardThermoModelFn model) -> Phase
 {
     Phase copy = clone();
-    copy.pimpl->species = std::move(species);
+    copy.pimpl->standard_thermo_model_fn = std::move(model);
     return copy;
 }
 
@@ -109,6 +107,11 @@ auto Phase::species(Index idx) const -> const Species&
     return pimpl->species[idx];
 }
 
+auto Phase::standardThermoModel() const -> const StandardThermoModelFn&
+{
+    return pimpl->standard_thermo_model_fn;
+}
+
 auto Phase::activityModel() const -> const ActivityModelFn&
 {
     return pimpl->activity_model_fn;
@@ -116,11 +119,30 @@ auto Phase::activityModel() const -> const ActivityModelFn&
 
 auto Phase::activityProps(real T, real P, VectorXrConstRef n) const -> ActivityProps
 {
+    assert(activityModel());
     ActivityProps props;
     props.ln_g.resize(species().size());
     props.ln_a.resize(species().size());
-    pimpl->activity_model_fn(props, T, P, n);
+    activityModel()(props, T, P, n);
     return props;
+}
+
+auto Phase::standardThermoProps(real T, real P, Index ispecies) const -> StandardThermoProps
+{
+    assert(standardThermoModel());
+    return standardThermoModel()(T, P, species(ispecies));
+}
+
+auto Phase::props(real T, real P, VectorXrConstRef n) const -> ChemicalPropsPhase
+{
+    ChemicalPropsPhase res;
+    eval(res, T, P, n);
+    return res;
+}
+
+auto Phase::eval(ChemicalPropsPhaseRef props, real T, real P, VectorXrConstRef n) const -> void
+{
+
 }
 
 auto Phase::clone() const -> Phase

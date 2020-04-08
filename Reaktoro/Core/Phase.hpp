@@ -23,8 +23,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ActivityModel.hpp>
+#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
+#include <Reaktoro/Core/StandardThermoModel.hpp>
 #include <Reaktoro/Core/StateOfMatter.hpp>
 
 namespace Reaktoro {
@@ -50,6 +52,9 @@ public:
     /// Return a copy of this Phase object with a new physical state.
     auto withPhysicalState(StateOfMatter state) -> Phase;
 
+    /// Return a copy of this Phase object with a new standard thermodynamic model.
+    auto withStandardThermoModel(StandardThermoModelFn model) -> Phase;
+
     /// Return a copy of this Phase object with a new activity model.
     auto withActivityModel(ActivityModelFn model) -> Phase;
 
@@ -65,15 +70,29 @@ public:
     /// Return the species in the phase with given index.
     auto species(Index idx) const -> const Species&;
 
+    /// Return the standard thermodynamic model of the species in this phase.
+    auto standardThermoModel() const -> const StandardThermoModelFn&;
+
     /// Return the activity model of the phase.
-    /// @see ActivityModel
     auto activityModel() const -> const ActivityModelFn&;
 
+    /// Return the chemical properties of the phase.
+    auto props(real T, real P, VectorXrConstRef n) const -> ChemicalPropsPhase;
+
+    /// Evaluate the chemical properties of the phase.
+    auto eval(ChemicalPropsPhaseRef props, real T, real P, VectorXrConstRef n) const -> void;
+
     /// Calculate the activity and excess thermodynamic properties of the phase.
-    /// @param T The temperature of the system (in units of K)
-    /// @param P The pressure of the system (in units of Pa)
-    /// @param n The amounts of the species in the phase (in units of mol)
+    /// @param T The temperature of the phase (in K)
+    /// @param P The pressure of the phase (in Pa)
+    /// @param n The species amounts in the phase (in mol)
     auto activityProps(real T, real P, VectorXrConstRef n) const -> ActivityProps;
+
+    /// Calculate the standard thermodynamic properties of a species in the phase.
+    /// @param T The temperature of the system (in K)
+    /// @param P The pressure of the system (in Pa)
+    /// @param ispecies The index of the species in the phase
+    auto standardThermoProps(real T, real P, Index ispecies) const -> StandardThermoProps;
 
     /// Return a deep copy of this Phase object.
     auto clone() const -> Phase;
