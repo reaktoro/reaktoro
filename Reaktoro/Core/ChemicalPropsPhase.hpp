@@ -23,50 +23,86 @@
 
 namespace Reaktoro {
 
-// Forward declaration for ChemicalPropsPhaseDataBase
-template<typename ScalarType, typename ArrayType>
-struct ChemicalPropsPhaseDataBase;
+/// The base type for primary chemical property data of a phase from which others are computed.
+template<typename Real, typename Array>
+struct ChemicalPropsPhaseData
+{
+    /// The temperature of the phase (in K).
+    Real T;
 
-/// The primary chemical property data of a phase.
-using ChemicalPropsPhaseData = ChemicalPropsPhaseDataBase<real, ArrayXr>;
+    /// The pressure of the phase (in Pa).
+    Real P;
 
-/// The non-const view to primary chemical property data of a phase.
-using ChemicalPropsPhaseDataRef = ChemicalPropsPhaseDataBase<real&, ArrayXrRef>;
+    /// The amounts of each species in the phase (in mol).
+    Array n;
 
-/// The const view to primary chemical property data of a phase.
-using ChemicalPropsPhaseDataConstRef = ChemicalPropsPhaseDataBase<const real&, ArrayXrConstRef>;
+    /// The sum of species amounts in the phase (in mol).
+    Real amount;
 
-// Forward declaration for ChemicalPropsPhaseBase
-template<typename DataType>
-class ChemicalPropsPhaseBase;
+    /// The mole fractions of the species in the phase (in mol/mol).
+    Array x;
 
-/// The chemical properties of a phase and its species.
-using ChemicalPropsPhase = ChemicalPropsPhaseBase<ChemicalPropsPhaseData>;
+    /// The standard molar Gibbs energies of the species in the phase (in J/mol)
+    Array G0;
 
-/// The non-const view to the chemical properties of a phase and its species.
-using ChemicalPropsPhaseRef = ChemicalPropsPhaseBase<ChemicalPropsPhaseDataRef>;
+    /// The standard molar enthalpies of the species in the phase (in J/mol)
+    Array H0;
 
-/// The const view to the chemical properties of a phase and its species.
-using ChemicalPropsPhaseConstRef = ChemicalPropsPhaseBase<ChemicalPropsPhaseDataConstRef>;
+    /// The standard molar volumes of the species in the phase (in m3/mol)
+    Array V0;
+
+    /// The standard molar isobaric heat capacities of the species in the phase (in J/(mol·K))
+    Array Cp0;
+
+    /// The standard molar isochoric heat capacities of the species in the phase (in J/(mol·K))
+    Array Cv0;
+
+    /// The excess molar volume of the phase (in m3/mol).
+    Real Vex;
+
+    /// The temperature derivative of the excess molar volume at constant pressure (in m3/(mol*K)).
+    Real VexT;
+
+    /// The pressure derivative of the excess molar volume at constant temperature (in m3/(mol*Pa)).
+    Real VexP;
+
+    /// The excess molar Gibbs energy of the phase (in units of J/mol).
+    Real Gex;
+
+    /// The excess molar enthalpy of the phase (in units of J/mol).
+    Real Hex;
+
+    /// The excess molar isobaric heat capacity of the phase (in units of J/(mol*K)).
+    Real Cpex;
+
+    /// The excess molar isochoric heat capacity of the phase (in units of J/(mol*K)).
+    Real Cvex;
+
+    /// The activity coefficients (natural log) of the species in the phase.
+    Array ln_g;
+
+    /// The activities (natural log) of the species in the phase.
+    Array ln_a;
+};
 
 /// The base type for chemical properties of a phase and its species.
-template<typename DataType>
+template<typename R, typename A>
 class ChemicalPropsPhaseBase
 {
 public:
-    /// Construct a default ChemicalPropsPhaseBase instance.
-    ChemicalPropsPhaseBase();
+    /// Construct a ChemicalPropsPhaseBase instance.
+    explicit ChemicalPropsPhaseBase(Index numspecies);
 
     /// Construct a ChemicalPropsPhaseBase instance.
-    explicit ChemicalPropsPhaseBase(DataType data);
+    ChemicalPropsPhaseBase(const ChemicalPropsPhaseData<R, A>& data);
 
     /// Construct a ChemicalPropsPhaseBase instance.
-    template<typename OtherDataType>
-    ChemicalPropsPhaseBase(ChemicalPropsPhaseBase<OtherDataType>& props);
+    template<typename RX, typename AX>
+    ChemicalPropsPhaseBase(ChemicalPropsPhaseBase<RX, AX>& props);
 
     /// Construct a ChemicalPropsPhaseBase instance.
-    template<typename OtherDataType>
-    ChemicalPropsPhaseBase(const ChemicalPropsPhaseBase<OtherDataType>& props);
+    template<typename RX, typename AX>
+    ChemicalPropsPhaseBase(const ChemicalPropsPhaseBase<RX, AX>& props);
 
     /// Return the primary chemical property data of the phase from which others are calculated.
     auto data() const;
@@ -150,88 +186,55 @@ public:
     auto volume() const;
 
     // Ensure other ChemicalPropsPhaseBase types are friend among themselves.
-    template<typename OtherDataType>
+    template<typename RX, typename AX>
     friend class ChemicalPropsPhaseBase;
 
 private:
     /// The primary chemical property data of the phase from which others are calculated.
-    DataType props;
+    ChemicalPropsPhaseData<R, A> props;
 };
 
-/// The base type for primary chemical property data of a phase from which others are computed.
-template<typename ScalarType, typename ArrayType>
-struct ChemicalPropsPhaseDataBase
+//=================================================================================================
+// CONVENIENT TYPE ALIASES
+//=================================================================================================
+
+/// The chemical properties of a phase and its species.
+using ChemicalPropsPhase = ChemicalPropsPhaseBase<real, ArrayXr>;
+
+/// The non-const view to the chemical properties of a phase and its species.
+using ChemicalPropsPhaseRef = ChemicalPropsPhaseBase<real&, ArrayXrRef>;
+
+/// The const view to the chemical properties of a phase and its species.
+using ChemicalPropsPhaseConstRef = ChemicalPropsPhaseBase<const real&, ArrayXrConstRef>;
+
+//=================================================================================================
+
+template<typename Real, typename Array>
+ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const ChemicalPropsPhaseData<Real, Array>& data)
+: props(data)
+{}
+
+template<typename Real, typename Array>
+ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(Index numspecies)
 {
-    /// The temperature of the phase (in K).
-    ScalarType T;
+    props.n.resize(numspecies);
+    props.x.resize(numspecies);
+    props.G0.resize(numspecies);
+    props.H0.resize(numspecies);
+    props.V0.resize(numspecies);
+    props.Cp0.resize(numspecies);
+    props.Cv0.resize(numspecies);
+    props.ln_g.resize(numspecies);
+    props.ln_a.resize(numspecies);
+}
 
-    /// The pressure of the phase (in Pa).
-    ScalarType P;
-
-    /// The sum of species amounts in the phase (in mol).
-    ScalarType amount;
-
-    /// The mole fractions of the species in the phase (in mol/mol).
-    ArrayType x;
-
-    /// The standard molar Gibbs energies of the species in the phase (in J/mol)
-    ArrayType G0;
-
-    /// The standard molar enthalpies of the species in the phase (in J/mol)
-    ArrayType H0;
-
-    /// The standard molar volumes of the species in the phase (in m3/mol)
-    ArrayType V0;
-
-    /// The standard molar isobaric heat capacities of the species in the phase (in J/(mol·K))
-    ArrayType Cp0;
-
-    /// The standard molar isochoric heat capacities of the species in the phase (in J/(mol·K))
-    ArrayType Cv0;
-
-    /// The excess molar volume of the phase (in m3/mol).
-    ScalarType Vex;
-
-    /// The temperature derivative of the excess molar volume at constant pressure (in m3/(mol*K)).
-    ScalarType VexT;
-
-    /// The pressure derivative of the excess molar volume at constant temperature (in m3/(mol*Pa)).
-    ScalarType VexP;
-
-    /// The excess molar Gibbs energy of the phase (in units of J/mol).
-    ScalarType Gex;
-
-    /// The excess molar enthalpy of the phase (in units of J/mol).
-    ScalarType Hex;
-
-    /// The excess molar isobaric heat capacity of the phase (in units of J/(mol*K)).
-    ScalarType Cpex;
-
-    /// The excess molar isochoric heat capacity of the phase (in units of J/(mol*K)).
-    ScalarType Cvex;
-
-    /// The activity coefficients (natural log) of the species in the phase.
-    ArrayType ln_g;
-
-    /// The activities (natural log) of the species in the phase.
-    ArrayType ln_a;
-};
-
-template<typename DataType>
-ChemicalPropsPhaseBase<DataType>::ChemicalPropsPhaseBase()
-{}
-
-template<typename DataType>
-ChemicalPropsPhaseBase<DataType>::ChemicalPropsPhaseBase(DataType data)
-: props(std::move(data))
-{}
-
-template<typename DataType>
-template<typename OtherDataType>
-ChemicalPropsPhaseBase<DataType>::ChemicalPropsPhaseBase(ChemicalPropsPhaseBase<OtherDataType>& other)
+template<typename Real, typename Array>
+template<typename RX, typename AX>
+ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(ChemicalPropsPhaseBase<RX, AX>& other)
 : props{
     other.props.T,
     other.props.P,
+    other.props.n,
     other.props.amount,
     other.props.x,
     other.props.G0,
@@ -250,12 +253,13 @@ ChemicalPropsPhaseBase<DataType>::ChemicalPropsPhaseBase(ChemicalPropsPhaseBase<
     other.props.ln_a }
 {}
 
-template<typename DataType>
-template<typename OtherDataType>
-ChemicalPropsPhaseBase<DataType>::ChemicalPropsPhaseBase(const ChemicalPropsPhaseBase<OtherDataType>& other)
+template<typename Real, typename Array>
+template<typename RX, typename AX>
+ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const ChemicalPropsPhaseBase<RX, AX>& other)
 : props{
     other.props.T,
     other.props.P,
+    other.props.n,
     other.props.amount,
     other.props.x,
     other.props.G0,
@@ -274,123 +278,123 @@ ChemicalPropsPhaseBase<DataType>::ChemicalPropsPhaseBase(const ChemicalPropsPhas
     other.props.ln_a }
 {}
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::data() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::data() const
 {
     return props;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::temperature() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::temperature() const
 {
     return props.T;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::pressure() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::pressure() const
 {
     return props.P;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::speciesAmounts() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::speciesAmounts() const
 {
-    return props.x * props.amount;
+    return props.n;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::moleFractions() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::moleFractions() const
 {
     return props.x;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::lnActivityCoefficients() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::lnActivityCoefficients() const
 {
     return props.ln_g;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::lnActivities() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::lnActivities() const
 {
     return props.ln_a;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::chemicalPotentials() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::chemicalPotentials() const
 {
     const auto R = universalGasConstant;
     return props.G0 + R*props.T * props.ln_a;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::standardGibbsEnergies() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::standardGibbsEnergies() const
 {
     return props.G0;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::standardEnthalpies() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::standardEnthalpies() const
 {
     return props.H0;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::standardVolumes() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::standardVolumes() const
 {
     return props.V0;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::standardEntropies() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::standardEntropies() const
 {
     return (props.H0 - props.G0)/props.T; // from G0 = H0 - T*S0
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::standardInternalEnergies() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::standardInternalEnergies() const
 {
     return props.H0 - props.P * props.V0; // from H0 = U0 + P*V0
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::standardHelmholtzEnergies() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::standardHelmholtzEnergies() const
 {
     return props.G0 - props.P * props.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::standardHeatCapacitiesConstP() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::standardHeatCapacitiesConstP() const
 {
     return props.Cp0;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::standardHeatCapacitiesConstV() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::standardHeatCapacitiesConstV() const
 {
     return props.Cv0;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::molarGibbsEnergy() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::molarGibbsEnergy() const
 {
     return (props.x * props.G0).sum() + props.Gex;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::molarEnthalpy() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::molarEnthalpy() const
 {
     return (props.x * props.H0).sum() + props.Hex;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::molarVolume() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::molarVolume() const
 {
     return (props.x * props.V0).sum() + props.Vex;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::molarEntropy() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::molarEntropy() const
 {
     const auto T = temperature();
     const auto G = molarGibbsEnergy();
@@ -398,8 +402,8 @@ auto ChemicalPropsPhaseBase<DataType>::molarEntropy() const
     return (H - G)/T;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::molarInternalEnergy() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::molarInternalEnergy() const
 {
     const auto P = pressure();
     const auto H = molarEnthalpy();
@@ -407,8 +411,8 @@ auto ChemicalPropsPhaseBase<DataType>::molarInternalEnergy() const
     return H - P*V;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::molarHelmholtzEnergy() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::molarHelmholtzEnergy() const
 {
     const auto T = temperature();
     const auto U = molarInternalEnergy();
@@ -416,32 +420,32 @@ auto ChemicalPropsPhaseBase<DataType>::molarHelmholtzEnergy() const
     return U - T*S;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::molarHeatCapacityConstP() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::molarHeatCapacityConstP() const
 {
     return (props.x * props.Cp0).sum() + props.Cpex;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::molarHeatCapacityConstV() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::molarHeatCapacityConstV() const
 {
     return (props.x * props.Cv0).sum() + props.Cvex;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::molarDensity() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::molarDensity() const
 {
     return 1.0/molarVolume();
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::amount() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::amount() const
 {
     return props.amount;
 }
 
-template<typename DataType>
-auto ChemicalPropsPhaseBase<DataType>::volume() const
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::volume() const
 {
     return molarVolume() * props.amount;
 }
