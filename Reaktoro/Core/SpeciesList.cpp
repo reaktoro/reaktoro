@@ -86,6 +86,11 @@ auto SpeciesList::indexWithFormula(std::string substance) const -> Index
     return indexfn(data(), [&](auto&& s) { return s.formula().equivalent(formula); });
 }
 
+auto SpeciesList::withSymbols(const StringList& symbols) const -> SpeciesList
+{
+    return filter(*this, [&](auto&& s) { return contains(symbols, s.symbol()); });
+}
+
 auto SpeciesList::withNames(const StringList& names) const -> SpeciesList
 {
     return filter(*this, [&](auto&& s) { return contains(names, s.name()); });
