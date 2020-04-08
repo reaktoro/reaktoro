@@ -40,9 +40,6 @@ public:
     /// Construct a Phase object.
     Phase();
 
-    /// Construct a copy of a Phase object.
-    Phase(const Phase& other);
-
     /// Return a copy of this Phase object with a new name.
     auto withName(std::string name) -> Phase;
 
@@ -77,22 +74,10 @@ public:
     auto activityModel() const -> const ActivityModelFn&;
 
     /// Return the chemical properties of the phase.
-    auto props(real T, real P, VectorXrConstRef n) const -> ChemicalPropsPhase;
+    auto props(real T, real P, ArrayXrConstRef n) const -> ChemicalPropsPhase;
 
     /// Evaluate the chemical properties of the phase.
-    auto eval(ChemicalPropsPhaseRef props, real T, real P, VectorXrConstRef n) const -> void;
-
-    /// Calculate the activity and excess thermodynamic properties of the phase.
-    /// @param T The temperature of the phase (in K)
-    /// @param P The pressure of the phase (in Pa)
-    /// @param n The species amounts in the phase (in mol)
-    auto activityProps(real T, real P, VectorXrConstRef n) const -> ActivityProps;
-
-    /// Calculate the standard thermodynamic properties of a species in the phase.
-    /// @param T The temperature of the system (in K)
-    /// @param P The pressure of the system (in Pa)
-    /// @param ispecies The index of the species in the phase
-    auto standardThermoProps(real T, real P, Index ispecies) const -> StandardThermoProps;
+    auto eval(ChemicalPropsPhaseRef props, real T, real P, ArrayXrConstRef n) const -> void;
 
     /// Return a deep copy of this Phase object.
     auto clone() const -> Phase;
