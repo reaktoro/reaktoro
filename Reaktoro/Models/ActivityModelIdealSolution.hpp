@@ -27,7 +27,7 @@ class ActivityModelIdealSolution : public ActivityModel
 {
 public:
     /// Create the activity model function of the phase.
-    virtual auto create(const SpeciesList& species) -> ActivityModelFn;
+    virtual auto create(const SpeciesList& species) -> ActivityPropsFn;
 };
 
 } // namespace Reaktoro

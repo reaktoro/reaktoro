@@ -197,7 +197,7 @@ inline auto computeCTT(const real& T, int i, int j, int k) -> real
 
 } // namespace
 
-auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture)-> ActivityModelFn
+auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture)-> ActivityPropsFn
 {
     // The names of the gases in the mixture, and the supported ones by this model
     std::vector<std::string> provided = names(mixture.species());
@@ -231,8 +231,8 @@ auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture)-> ActivityMode
     // The universal gas constant of the phase (in units of J/(mol*K))
     const auto R = universalGasConstant;
 
-    // Define the chemical model function of the gaseous phase
-    ActivityModelFn model = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
+    // Define the activity model function of the gaseous phase
+    ActivityPropsFn fn = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::log;
 
@@ -360,7 +360,7 @@ auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture)-> ActivityMode
         ln_a = ln_g + ln_x + ln_Pbar;
     };
 
-    return model;
+    return fn;
 }
 
 } // namespace Reaktoro

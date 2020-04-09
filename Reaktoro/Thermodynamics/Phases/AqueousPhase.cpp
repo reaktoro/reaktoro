@@ -39,7 +39,7 @@
 //     AqueousMixture mixture;
 
 //     /// The activity model of the phase (yet to be combined with the custom activity coefficient models below)
-//     ActivityModelFn base_model;
+//     ActivityPropsFn base_model;
 
 //     /// The functions that calculate the ln activity coefficients of selected species
 //     std::map<Index, AqueousActivityModel> ln_activity_coeff_functions;
@@ -54,7 +54,7 @@
 //     {}
 
 //     /// Return the combined chemical model function of the phase
-//     auto combinedChemicalModel()-> ActivityModelFn
+//     auto combinedChemicalModel()-> ActivityPropsFn
 //     {
 //         // Create a copy of the data member `mixture` to be used in the following lambda function
 //         auto mixture = this->mixture;
@@ -69,7 +69,7 @@
 //         AqueousMixtureState state;
 
 //         // Define the function that calculates the chemical properties of the phase
-//         ActivityModelFn model = [=](ActivityProps res, real T, real P, VectorXrConstRef n) mutable
+//         ActivityPropsFn fn = [=](ActivityProps res, real T, real P, VectorXrConstRef n) mutable
 //         {
 //             // Evaluate the state of the aqueous mixture
 //             state = mixture.state(T, P, n);
@@ -89,7 +89,7 @@
 //             }
 //         };
 
-//         return model;
+//         return fn;
 //     }
 // };
 

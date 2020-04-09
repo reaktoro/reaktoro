@@ -1382,7 +1382,7 @@ auto lnActivityCoefficientNeutral(const AqueousMixtureState& state, const Pitzer
 
 } // namespace Pitzer
 
-auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityModelFn
+auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityPropsFn
 {
     // Inject the Pitzer namespace here
     using namespace Pitzer;
@@ -1396,7 +1396,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityMode
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    ActivityModelFn model = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityPropsFn fn = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, x);
@@ -1447,7 +1447,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityMode
         res.ln_g[iwater] = ln_aw - log(xw);
     };
 
-    return model;
+    return fn;
 }
 
 } // namespace Reaktoro

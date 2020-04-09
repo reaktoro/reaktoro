@@ -28,7 +28,7 @@ class AqueousMixture;
 /// Return an equation of state for an aqueous phase based on the ideal model.
 /// @param mixture The aqueous mixture
 /// @return The equation of state function for the aqueous phase
-/// @see AqueousMixture, ActivityModelFn
-auto aqueousChemicalModelIdeal(const AqueousMixture& mixture)-> ActivityModelFn;
+/// @see AqueousMixture, ActivityPropsFn
+auto aqueousChemicalModelIdeal(const AqueousMixture& mixture)-> ActivityPropsFn;
 
 } // namespace Reaktoro

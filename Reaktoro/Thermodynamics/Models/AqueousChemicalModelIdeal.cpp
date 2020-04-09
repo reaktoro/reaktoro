@@ -22,14 +22,14 @@
 
 namespace Reaktoro {
 
-auto aqueousChemicalModelIdeal(const AqueousMixture& mixture)-> ActivityModelFn
+auto aqueousChemicalModelIdeal(const AqueousMixture& mixture)-> ActivityPropsFn
 {
     const Index iH2O = mixture.indexWater();
 
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    ActivityModelFn f = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityPropsFn f = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::log;
 

@@ -22,9 +22,9 @@
 
 namespace Reaktoro {
 
-auto ActivityModelIdealGas::create(const SpeciesList& species) -> ActivityModelFn
+auto ActivityModelIdealGas::create(const SpeciesList& species) -> ActivityPropsFn
 {
-    ActivityModelFn fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x)
+    ActivityPropsFn fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x)
     {
         using std::log;
         const auto R = universalGasConstant;

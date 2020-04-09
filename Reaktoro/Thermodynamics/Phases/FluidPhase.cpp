@@ -64,58 +64,58 @@
 // auto FluidPhase::setChemicalModelIdeal() -> FluidPhase&
 // {
 //     Assert(type() == StateOfMatter::Gas, "Try to set Ideal model in a phase that is not defined as Gas, change StateOfMatter to Gas", "Ideal model can only be used to model a Gas phases");
-//     ActivityModelFn model = fluidChemicalModelIdeal(mixture());
-//     setChemicalModel(model);
+//     ActivityPropsFn fn = fluidChemicalModelIdeal(mixture());
+//     setChemicalModel(fn);
 //     return *this;
 // }
 
 // auto FluidPhase::setChemicalModelVanDerWaals() -> FluidPhase&
 // {
-//     ActivityModelFn model = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::VanDerWaals});
-//     setChemicalModel(model);
+//     ActivityPropsFn fn = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::VanDerWaals});
+//     setChemicalModel(fn);
 //     return *this;
 // }
 
 // auto FluidPhase::setChemicalModelRedlichKwong() -> FluidPhase&
 // {
-//     ActivityModelFn model = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::RedlichKwong});
-//     setChemicalModel(model);
+//     ActivityPropsFn fn = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::RedlichKwong});
+//     setChemicalModel(fn);
 //     return *this;
 // }
 
 // auto FluidPhase::setChemicalModelSoaveRedlichKwong() -> FluidPhase&
 // {
-//     ActivityModelFn model = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::SoaveRedlichKwong});
-//     setChemicalModel(model);
+//     ActivityPropsFn fn = fluidChemicalModelCubicEOS(mixture(), type(), {CubicEOS::SoaveRedlichKwong});
+//     setChemicalModel(fn);
 //     return *this;
 // }
 
 // auto FluidPhase::setChemicalModelPengRobinson(CubicEOS::Params params) -> FluidPhase&
 // {
 //     params.model = CubicEOS::PengRobinson;
-//     ActivityModelFn model = fluidChemicalModelCubicEOS(mixture(), type(), params);
-//     setChemicalModel(model);
+//     ActivityPropsFn fn = fluidChemicalModelCubicEOS(mixture(), type(), params);
+//     setChemicalModel(fn);
 //     return *this;
 // }
 
 // auto FluidPhase::setChemicalModelCubicEOS(CubicEOS::Params params) -> FluidPhase&
 // {
-//     ActivityModelFn model = fluidChemicalModelCubicEOS(mixture(), type(), params);
-//     setChemicalModel(model);
+//     ActivityPropsFn fn = fluidChemicalModelCubicEOS(mixture(), type(), params);
+//     setChemicalModel(fn);
 //     return *this;
 // }
 
 // auto FluidPhase::setChemicalModelSpycherPruessEnnis() -> FluidPhase&
 // {
-//     ActivityModelFn model = fluidChemicalModelSpycherPruessEnnis(mixture());
-//     setChemicalModel(model);
+//     ActivityPropsFn fn = fluidChemicalModelSpycherPruessEnnis(mixture());
+//     setChemicalModel(fn);
 //     return *this;
 // }
 
 // auto FluidPhase::setChemicalModelSpycherReed() -> FluidPhase&
 // {
-//     ActivityModelFn model = fluidChemicalModelSpycherReed(mixture());
-//     setChemicalModel(model);
+//     ActivityPropsFn fn = fluidChemicalModelSpycherReed(mixture());
+//     setChemicalModel(fn);
 //     return *this;
 // }
 

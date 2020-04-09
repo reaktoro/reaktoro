@@ -285,7 +285,7 @@ auto effectiveIonicRadius(const Species& species) -> real
 
 } // namespace
 
-auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityModelFn
+auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityPropsFn
 {
     // The number of species in the mixture
     const auto num_species = mixture.numSpecies();
@@ -325,8 +325,8 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityModelFn
         charges.push_back(species.charge());
     }
 
-    // Define the chemical model function of the aqueous phase
-    ActivityModelFn model = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
+    // Define the activity model function of the aqueous phase
+    ActivityPropsFn fn = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::abs;
         using std::log;
@@ -434,7 +434,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityModelFn
         res.ln_g[iwater] = res.ln_a[iwater] - ln_xw;
     };
 
-    return model;
+    return fn;
 }
 
 } // namespace Reaktoro

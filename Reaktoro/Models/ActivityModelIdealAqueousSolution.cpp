@@ -22,12 +22,12 @@
 
 namespace Reaktoro {
 
-auto ActivityModelIdealAqueousSolution::create(const SpeciesList& species) -> ActivityModelFn
+auto ActivityModelIdealAqueousSolution::create(const SpeciesList& species) -> ActivityPropsFn
 {
     const auto iH2O = species.indexWithFormula("H2O");
     const auto MH2O = waterMolarMass;
 
-    ActivityModelFn fn = [=](ActivityProps props, real T, real P, ArrayXrConstRef x)
+    ActivityPropsFn fn = [=](ActivityProps props, real T, real P, ArrayXrConstRef x)
     {
         using std::log;
         const auto m = x/(MH2O * x[iH2O]); // molalities

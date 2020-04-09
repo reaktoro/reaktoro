@@ -82,7 +82,7 @@ auto volumeCO2(real T, real Pb, real sqrtT) -> real
 
 } // namespace
 
-auto fluidChemicalModelSpycherPruessEnnis(const GeneralMixture& mixture)-> ActivityModelFn
+auto fluidChemicalModelSpycherPruessEnnis(const GeneralMixture& mixture)-> ActivityPropsFn
 {
     // The index of the species H2O(g) in the gaseous mixture
     const auto iH2O = mixture.indexSpecies("H2O(g)");
@@ -93,8 +93,8 @@ auto fluidChemicalModelSpycherPruessEnnis(const GeneralMixture& mixture)-> Activ
     // The number of species in the mixture
     const auto nspecies = mixture.numSpecies();
 
-    // Define the chemical model function of the gaseous phase
-    ActivityModelFn model = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
+    // Define the activity model function of the gaseous phase
+    ActivityPropsFn fn = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         // Calculate the pressure in bar
         const auto Pb = convertPascalToBar(P);
@@ -145,7 +145,7 @@ auto fluidChemicalModelSpycherPruessEnnis(const GeneralMixture& mixture)-> Activ
         if(iCO2 < nspecies) res.ln_a[iCO2] += ln_phiCO2;
     };
 
-    return model;
+    return fn;
 }
 
 } // namespace Reaktoro

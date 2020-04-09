@@ -43,6 +43,6 @@ struct ActivityModelOptionsCubicEOS
 };
 
 /// Return an activity model for a fluid, liquid or gaseous, based on a cubic equation of state.
-auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCubicEOS options) -> ActivityModelFn;
+auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCubicEOS options) -> ActivityPropsFn;
 
 } // namespace Reaktoro

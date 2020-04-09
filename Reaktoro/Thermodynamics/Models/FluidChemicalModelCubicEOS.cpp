@@ -32,7 +32,7 @@ namespace Reaktoro {
 
 using std::log;
 
-auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCubicEOS options) -> ActivityModelFn
+auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCubicEOS options) -> ActivityPropsFn
 {
     // The number of gases in the mixture
     const auto nspecies = mixture.numSpecies();
@@ -62,8 +62,8 @@ auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCu
     CubicEOSProps res;
     res.ln_phi.resize(nspecies);
 
-    // Define the chemical model function of the gaseous phase
-    ActivityModelFn model = [=](ActivityProps props, real T, real P, ArrayXrConstRef x) mutable
+    // Define the activity model function of the gaseous phase
+    ActivityPropsFn fn = [=](ActivityProps props, real T, real P, ArrayXrConstRef x) mutable
     {
         const auto Pbar = P * 1.0e-5; // convert from Pa to bar
 
@@ -80,7 +80,7 @@ auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCu
         props.ln_a = res.ln_phi + log(x) + log(P);
     };
 
-    return model;
+    return fn;
 }
 
 } // namespace Reaktoro
