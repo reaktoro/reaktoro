@@ -26,13 +26,10 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/SpeciesList.hpp>
-#include <Reaktoro/Core/StateOfMatter.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
+#include <Reaktoro/Core/ThermoProps.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -454,6 +451,24 @@ auto ChemicalSystem::properties(double T, double P, VectorXrConstRef n) const ->
     ChemicalProperties prop(*this);
     prop.update(T, P, n);
     return prop;
+}
+
+auto ChemicalSystem::props(double T, double P) const -> ThermoProps
+{
+    ThermoProps res(*this);
+    const auto numphases = phases().size();
+    for(auto i = 0; i < numphases; ++i)
+        phase(i).eval(res.phase(i), T, P);
+    return res;
+}
+
+auto ChemicalSystem::props(double T, double P, VectorXrConstRef n) const -> ChemicalProps
+{
+    ChemicalProps res(*this);
+    const auto numphases = phases().size();
+    for(auto i = 0; i < numphases; ++i)
+        phase(i).eval(res.phase(i), T, P, n);
+    return res;
 }
 
 auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&
