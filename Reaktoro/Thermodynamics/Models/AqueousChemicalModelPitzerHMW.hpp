@@ -36,7 +36,7 @@ class AqueousMixture;
 ///      Journal of Solution Chemistry, 4(3), 249–265.
 /// @param mixture The aqueous mixture
 /// @return The equation of state function for the aqueous phase
-/// @see AqueousMixture, ActivityModelFn
-auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityModelFn;
+/// @see AqueousMixture, ActivityPropsFn
+auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityPropsFn;
 
 } // namespace Reaktoro

@@ -24,7 +24,7 @@
 //
 //namespace Reaktoro {
 //
-//auto mineralChemicalModelVanLaar(const GeneralMixture& mixture, VectorXrConstRef a, MatrixXdConstRef W)-> ActivityModelFn
+//auto mineralChemicalModelVanLaar(const GeneralMixture& mixture, VectorXrConstRef a, MatrixXdConstRef W)-> ActivityPropsFn
 //{
 //    MixtureState state;
 //    PhaseChemicalModelResult res(2);
@@ -37,7 +37,7 @@
 //
 //    Table2D<real> B = table2D<real>(nspecies, nspecies);
 //
-//    ActivityModelFn f = [=](double T, double P, VectorXrConstRef n) mutable
+//    ActivityPropsFn f = [=](double T, double P, VectorXrConstRef n) mutable
 //    {
 //        state = mixture.state(T, P, n);
 //

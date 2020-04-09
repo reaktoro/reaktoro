@@ -81,15 +81,15 @@
 
 // auto MineralPhase::setChemicalModelIdeal() -> MineralPhase&
 // {
-//     ActivityModelFn model = mineralChemicalModelIdeal(mixture());
-//     setChemicalModel(model);
+//     ActivityPropsFn fn = mineralChemicalModelIdeal(mixture());
+//     setChemicalModel(fn);
 //     return *this;
 // }
 
 // auto MineralPhase::setChemicalModelRedlichKister(real a0, real a1, real a2) -> MineralPhase&
 // {
-//     ActivityModelFn model = mineralChemicalModelRedlichKister(mixture(), a0, a1, a2);
-//     setChemicalModel(model);
+//     ActivityPropsFn fn = mineralChemicalModelRedlichKister(mixture(), a0, a1, a2);
+//     setChemicalModel(fn);
 //     return *this;
 // }
 

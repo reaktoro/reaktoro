@@ -50,11 +50,11 @@ public:
     /// Return a copy of this Phase object with a new state of matter.
     auto withStateOfMatter(StateOfMatter state) -> Phase;
 
-    /// Return a copy of this Phase object with a new standard thermodynamic model.
-    auto withStandardThermoModel(StandardThermoModelFn model) -> Phase;
+    /// Return a copy of this Phase object with a new standard thermodynamic model function.
+    auto withStandardThermoModel(StandardThermoModelFn fn) -> Phase;
 
-    /// Return a copy of this Phase object with a new activity model.
-    auto withActivityModel(ActivityModelFn model) -> Phase;
+    /// Return a copy of this Phase object with a new activity model function.
+    auto withActivityModel(ActivityPropsFn fn) -> Phase;
 
     /// Return the name of the phase.
     auto name() const -> std::string;
@@ -68,11 +68,11 @@ public:
     /// Return the species in the phase with given index.
     auto species(Index idx) const -> const Species&;
 
-    /// Return the standard thermodynamic model of the species in this phase.
+    /// Return the standard thermodynamic model function of the species in this phase.
     auto standardThermoModel() const -> const StandardThermoModelFn&;
 
-    /// Return the activity model of the phase.
-    auto activityModel() const -> const ActivityModelFn&;
+    /// Return the activity model function of the phase.
+    auto activityModel() const -> const ActivityPropsFn&;
 
     /// Return the standard thermodynamic properties of the phase.
     auto props(real T, real P) const -> ThermoPropsPhase;

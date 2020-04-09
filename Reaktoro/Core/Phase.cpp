@@ -51,7 +51,7 @@ struct Phase::Impl
     StandardThermoModelFn standard_thermo_model_fn;
 
     /// The activity model of the phase.
-    ActivityModelFn activity_model_fn;
+    ActivityPropsFn activity_props_fn;
 
     /// The molar masses of the species in the phase.
     ArrayXd species_molar_masses;
@@ -139,7 +139,7 @@ struct Phase::Impl
         }
         else
         {
-            activity_model_fn({Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a }, T, P, x);
+            activity_props_fn({Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a }, T, P, x);
         }
     }
 
@@ -202,17 +202,17 @@ auto Phase::withStateOfMatter(StateOfMatter state) -> Phase
     return copy;
 }
 
-auto Phase::withStandardThermoModel(StandardThermoModelFn model) -> Phase
+auto Phase::withStandardThermoModel(StandardThermoModelFn fn) -> Phase
 {
     Phase copy = clone();
-    copy.pimpl->standard_thermo_model_fn = std::move(model);
+    copy.pimpl->standard_thermo_model_fn = std::move(fn);
     return copy;
 }
 
-auto Phase::withActivityModel(ActivityModelFn model) -> Phase
+auto Phase::withActivityModel(ActivityPropsFn fn) -> Phase
 {
     Phase copy = clone();
-    copy.pimpl->activity_model_fn = std::move(model);
+    copy.pimpl->activity_props_fn = std::move(fn);
     return copy;
 }
 
@@ -241,9 +241,9 @@ auto Phase::standardThermoModel() const -> const StandardThermoModelFn&
     return pimpl->standard_thermo_model_fn;
 }
 
-auto Phase::activityModel() const -> const ActivityModelFn&
+auto Phase::activityModel() const -> const ActivityPropsFn&
 {
-    return pimpl->activity_model_fn;
+    return pimpl->activity_props_fn;
 }
 
 auto Phase::props(real T, real P) const -> ThermoPropsPhase

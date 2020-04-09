@@ -20,6 +20,7 @@
 // C++ includes
 #include <cmath>
 #include <functional>
+#include <memory>
 
 // Reaktoro includes
 #include <Reaktoro/Core/SpeciesList.hpp>
@@ -28,7 +29,7 @@
 namespace Reaktoro {
 
 /// The activity and excess thermodynamic properties of a phase.
-/// @see ActivityModelFn, StandardThermoModelFn, StandardThermoProps
+/// @see ActivityPropsFn, StandardThermoModelFn, StandardThermoProps
 struct ActivityProps
 {
     /// The excess molar volume of the phase (in m3/mol).
@@ -60,15 +61,9 @@ struct ActivityProps
 };
 
 /// The function type for the activity model of a phase.
-using ActivityModelFn = std::function<void(ActivityProps, real, real, ArrayXrConstRef)>;
+using ActivityPropsFn = std::function<void(ActivityProps, real, real, ArrayXrConstRef)>;
 
-/// The base type for all thermodynamic activity models for phases.
-class ActivityModel
-{
-public:
-    /// Create the activity model function of the phase.
-    /// @param species The species that compose the phase.
-    virtual auto create(const SpeciesList& species) -> ActivityModelFn = 0;
-};
+/// The function type for activity model of a phase.
+using ActivityModel = std::function<ActivityPropsFn(const SpeciesList&)>;
 
 } // namespace Reaktoro

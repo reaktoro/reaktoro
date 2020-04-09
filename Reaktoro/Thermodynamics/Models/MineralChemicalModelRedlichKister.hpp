@@ -39,6 +39,6 @@ class GeneralMixture;
 /// @param a2 The Redlich-Kister parameter a2
 /// @return The equation of state function for the mineral phase
 /// @see GeneralMixture, MineralChemicalModel
-auto mineralChemicalModelRedlichKister(const GeneralMixture& mixture, double a0, double a1, double a2)-> ActivityModelFn;
+auto mineralChemicalModelRedlichKister(const GeneralMixture& mixture, double a0, double a1, double a2)-> ActivityPropsFn;
 
 } // namespace Reaktoro

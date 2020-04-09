@@ -24,13 +24,13 @@
 
 namespace Reaktoro {
 
-auto mineralChemicalModelRedlichKister(const GeneralMixture& mixture, double a0, double a1, double a2)-> ActivityModelFn
+auto mineralChemicalModelRedlichKister(const GeneralMixture& mixture, double a0, double a1, double a2)-> ActivityPropsFn
 {
     error(mixture.numSpecies() != 2, "Cannot create the chemical model Redlich-Kister for the mineral phase. "
         "The Redlich-Kister model requires a solid solution phase with exactly two species.");
 
-    // Define the chemical model function of the mineral phase
-    ActivityModelFn model = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
+    // Define the activity model function of the mineral phase
+    ActivityPropsFn fn = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
     {
         using std::log;
         using std::pow;
@@ -49,7 +49,7 @@ auto mineralChemicalModelRedlichKister(const GeneralMixture& mixture, double a0,
         res.Hex = res.Gex;
     };
 
-    return model;
+    return fn;
 }
 
 } // namespace Reaktoro
