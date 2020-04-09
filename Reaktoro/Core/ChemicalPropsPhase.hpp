@@ -202,16 +202,17 @@ template<typename Real, typename Array>
 ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const Phase& phase)
 : phase(phase)
 {
-    const auto size = phase.species().size();
-    props.n.resize(size);
-    props.x.resize(size);
-    props.G0.resize(size);
-    props.H0.resize(size);
-    props.V0.resize(size);
-    props.Cp0.resize(size);
-    props.Cv0.resize(size);
-    props.ln_g.resize(size);
-    props.ln_a.resize(size);
+    const auto numspecies = phase.species().size();
+
+    props.n    = ArrayXr::Zero(numspecies);
+    props.x    = ArrayXr::Zero(numspecies);
+    props.G0   = ArrayXr::Zero(numspecies);
+    props.H0   = ArrayXr::Zero(numspecies);
+    props.V0   = ArrayXr::Zero(numspecies);
+    props.Cp0  = ArrayXr::Zero(numspecies);
+    props.Cv0  = ArrayXr::Zero(numspecies);
+    props.ln_g = ArrayXr::Zero(numspecies);
+    props.ln_a = ArrayXr::Zero(numspecies);
 }
 
 template<typename Real, typename Array>
