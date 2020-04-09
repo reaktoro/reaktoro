@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2018 Allan Leal
+// Copyright (C) 2014-2020 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,7 @@ public:
     /// ReactionEquation equation2("CO2(g) + H2O(l) = H+ + HCO3-");
     /// ReactionEquation equation3("Dolomite + 2*H+ = Ca++ + Mg++ + 2*HCO3-");
     /// ~~~
-    /// Note that unity stoichiometry coefficients can be ommited from the equation. 
+    /// Note that unity stoichiometry coefficients can be ommited from the equation.
     /// The operator `*` must be used when this is not the case.
     /// @param equation The string representing the rection equation
     ReactionEquation(std::string equation);
