@@ -414,7 +414,7 @@ auto ChemicalSystem::indicesFluidPhases() const -> Indices
     Indices indices;
     indices.reserve(numPhases());
     for(Index i = 0; i < numPhases(); ++i)
-        if(phase(i).physicalState() != StateOfMatter::Solid)
+        if(phase(i).stateOfMatter() != StateOfMatter::Solid)
             indices.push_back(i);
     return indices;
 }
@@ -429,7 +429,7 @@ auto ChemicalSystem::indicesSolidPhases() const -> Indices
     Indices indices;
     indices.reserve(numPhases());
     for(Index i = 0; i < numPhases(); ++i)
-        if(phase(i).physicalState() == StateOfMatter::Solid)
+        if(phase(i).stateOfMatter() == StateOfMatter::Solid)
             indices.push_back(i);
     return indices;
 }
