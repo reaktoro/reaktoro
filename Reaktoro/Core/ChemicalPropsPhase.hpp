@@ -19,13 +19,14 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Core/ChemicalPropsPhase.fwd.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 
 namespace Reaktoro {
 
 /// The base type for primary chemical property data of a phase from which others are computed.
 template<typename Real, typename Array>
-struct ChemicalPropsPhaseData
+struct ChemicalPropsPhaseBaseData
 {
     /// The temperature of the phase (in K).
     Real T;
@@ -91,10 +92,10 @@ class ChemicalPropsPhaseBase
 {
 public:
     /// Construct a ChemicalPropsPhaseBase instance.
-    explicit ChemicalPropsPhaseBase(Index numspecies);
+    explicit ChemicalPropsPhaseBase(const Phase& phase);
 
     /// Construct a ChemicalPropsPhaseBase instance.
-    ChemicalPropsPhaseBase(const ChemicalPropsPhaseData<R, A>& data);
+    ChemicalPropsPhaseBase(const Phase& phase, const ChemicalPropsPhaseBaseData<R, A>& data);
 
     /// Construct a ChemicalPropsPhaseBase instance.
     template<typename RX, typename AX>
@@ -190,48 +191,38 @@ public:
     friend class ChemicalPropsPhaseBase;
 
 private:
+    /// The phase associated with these primary chemical properties.
+    Phase phase;
+
     /// The primary chemical property data of the phase from which others are calculated.
-    ChemicalPropsPhaseData<R, A> props;
+    ChemicalPropsPhaseBaseData<R, A> props;
 };
 
-//=================================================================================================
-// CONVENIENT TYPE ALIASES
-//=================================================================================================
-
-/// The chemical properties of a phase and its species.
-using ChemicalPropsPhase = ChemicalPropsPhaseBase<real, ArrayXr>;
-
-/// The non-const view to the chemical properties of a phase and its species.
-using ChemicalPropsPhaseRef = ChemicalPropsPhaseBase<real&, ArrayXrRef>;
-
-/// The const view to the chemical properties of a phase and its species.
-using ChemicalPropsPhaseConstRef = ChemicalPropsPhaseBase<const real&, ArrayXrConstRef>;
-
-//=================================================================================================
-
 template<typename Real, typename Array>
-ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const ChemicalPropsPhaseData<Real, Array>& data)
-: props(data)
-{}
-
-template<typename Real, typename Array>
-ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(Index numspecies)
+ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const Phase& phase)
+: phase(phase)
 {
-    props.n.resize(numspecies);
-    props.x.resize(numspecies);
-    props.G0.resize(numspecies);
-    props.H0.resize(numspecies);
-    props.V0.resize(numspecies);
-    props.Cp0.resize(numspecies);
-    props.Cv0.resize(numspecies);
-    props.ln_g.resize(numspecies);
-    props.ln_a.resize(numspecies);
+    const auto size = phase.species().size();
+    props.n.resize(size);
+    props.x.resize(size);
+    props.G0.resize(size);
+    props.H0.resize(size);
+    props.V0.resize(size);
+    props.Cp0.resize(size);
+    props.Cv0.resize(size);
+    props.ln_g.resize(size);
+    props.ln_a.resize(size);
 }
+
+template<typename Real, typename Array>
+ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const Phase& phase, const ChemicalPropsPhaseBaseData<Real, Array>& data)
+: phase(phase), props(data)
+{}
 
 template<typename Real, typename Array>
 template<typename RX, typename AX>
 ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(ChemicalPropsPhaseBase<RX, AX>& other)
-: props{
+: phase(other.phase), props{
     other.props.T,
     other.props.P,
     other.props.n,
@@ -256,7 +247,7 @@ ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(ChemicalPropsPhaseBa
 template<typename Real, typename Array>
 template<typename RX, typename AX>
 ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const ChemicalPropsPhaseBase<RX, AX>& other)
-: props{
+: phase(other.phase), props{
     other.props.T,
     other.props.P,
     other.props.n,

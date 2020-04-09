@@ -23,7 +23,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ActivityModel.hpp>
-#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
+#include <Reaktoro/Core/ChemicalPropsPhase.fwd.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/StandardThermoModel.hpp>
