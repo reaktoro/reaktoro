@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -229,7 +230,7 @@ auto Phase::activityModel() const -> const ActivityModelFn&
 
 auto Phase::props(real T, real P, ArrayXrConstRef n) const -> ChemicalPropsPhase
 {
-    ChemicalPropsPhase res(species().size());
+    ChemicalPropsPhase res(*this);
     eval(res, T, P, n);
     return res;
 }
