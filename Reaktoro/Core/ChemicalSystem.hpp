@@ -23,14 +23,14 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-class Element;
-class Species;
-class Phase;
+class ChemicalProps;
+class ThermoProps;
 class ChemicalProperties;
 class ThermoProperties;
 
@@ -192,15 +192,26 @@ public:
     auto indicesSolidSpecies() const -> Indices;
 
     /// Calculate the standard thermodynamic properties of the species.
-    /// @param T The temperature of the system (in units of K)
-    /// @param P The pressure of the system (in units of Pa)
+    /// @param T The temperature of the system (in K)
+    /// @param P The pressure of the system (in Pa)
     auto properties(double T, double P) const -> ThermoProperties;
 
     /// Calculate the thermodynamic and chemical properties of the chemical system.
-    /// @param T The temperature of the system (in units of K)
-    /// @param P The pressure of the system (in units of Pa)
-    /// @param n The molar amounts of the species (in units of mol)
+    /// @param T The temperature of the system (in K)
+    /// @param P The pressure of the system (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
     auto properties(double T, double P, VectorXrConstRef n) const -> ChemicalProperties;
+
+    /// Calculate the standard thermodynamic properties of the species.
+    /// @param T The temperature of the system (in K)
+    /// @param P The pressure of the system (in Pa)
+    auto props(double T, double P) const -> ThermoProps;
+
+    /// Calculate the thermodynamic and chemical properties of the chemical system.
+    /// @param T The temperature of the system (in K)
+    /// @param P The pressure of the system (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    auto props(double T, double P, VectorXrConstRef n) const -> ChemicalProps;
 
 private:
     struct Impl;
