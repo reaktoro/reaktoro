@@ -29,7 +29,7 @@
 namespace Reaktoro {
 
 /// The activity and excess thermodynamic properties of a phase.
-/// @see ActivityPropsFn, StandardThermoModelFn, StandardThermoProps
+/// @see ActivityPropsFn, StandardThermoPropsFn, StandardThermoProps
 struct ActivityProps
 {
     /// The excess molar volume of the phase (in m3/mol).
@@ -60,7 +60,7 @@ struct ActivityProps
     ArrayXrRef ln_a;
 };
 
-/// The function type for the activity model of a phase.
+/// The function type for calculation of activity and excess thermodynamic properties of a phase.
 using ActivityPropsFn = std::function<void(ActivityProps, real, real, ArrayXrConstRef)>;
 
 /// The function type for activity model of a phase.

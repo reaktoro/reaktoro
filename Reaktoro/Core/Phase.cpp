@@ -47,10 +47,10 @@ struct Phase::Impl
     /// The list of Species instances defining the phase
     SpeciesList species;
 
-    /// The standard thermodynamic model of the species in the phase.
-    StandardThermoModelFn standard_thermo_model_fn;
+    /// The standard thermodynamic model function of the species in the phase.
+    StandardThermoPropsFn standard_thermo_props_fn;
 
-    /// The activity model of the phase.
+    /// The activity model function of the phase.
     ActivityPropsFn activity_props_fn;
 
     /// The molar masses of the species in the phase.
@@ -166,7 +166,7 @@ struct Phase::Impl
         StandardThermoProps stdprops;
         for(auto i = 0; i < size; ++i)
         {
-            stdprops = standard_thermo_model_fn(T, P, species[i]);
+            stdprops = standard_thermo_props_fn(T, P, species[i]);
             G0[i]  = stdprops.G0;
             H0[i]  = stdprops.H0;
             V0[i]  = stdprops.V0;
@@ -202,14 +202,14 @@ auto Phase::withStateOfMatter(StateOfMatter state) -> Phase
     return copy;
 }
 
-auto Phase::withStandardThermoModel(StandardThermoModelFn fn) -> Phase
+auto Phase::withStandardThermoPropsFn(StandardThermoPropsFn fn) -> Phase
 {
     Phase copy = clone();
-    copy.pimpl->standard_thermo_model_fn = std::move(fn);
+    copy.pimpl->standard_thermo_props_fn = std::move(fn);
     return copy;
 }
 
-auto Phase::withActivityModel(ActivityPropsFn fn) -> Phase
+auto Phase::withActivityPropsFn(ActivityPropsFn fn) -> Phase
 {
     Phase copy = clone();
     copy.pimpl->activity_props_fn = std::move(fn);
@@ -236,12 +236,12 @@ auto Phase::species(Index idx) const -> const Species&
     return pimpl->species[idx];
 }
 
-auto Phase::standardThermoModel() const -> const StandardThermoModelFn&
+auto Phase::standardThermoPropsFn() const -> const StandardThermoPropsFn&
 {
-    return pimpl->standard_thermo_model_fn;
+    return pimpl->standard_thermo_props_fn;
 }
 
-auto Phase::activityModel() const -> const ActivityPropsFn&
+auto Phase::activityPropsFn() const -> const ActivityPropsFn&
 {
     return pimpl->activity_props_fn;
 }

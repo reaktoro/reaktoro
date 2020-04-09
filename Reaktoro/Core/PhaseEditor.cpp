@@ -73,7 +73,7 @@ auto PhaseEditor::elements() const -> const Strings&
 
 }
 
-auto PhaseEditor::activityModel() const -> ActivityModelPtr
+auto PhaseEditor::activityPropsFn() const -> ActivityModelPtr
 {
 
 }

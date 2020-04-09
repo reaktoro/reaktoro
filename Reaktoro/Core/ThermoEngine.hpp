@@ -31,13 +31,13 @@ public:
     /// Construct a ThermoEngine object.
     /// @param db The thermodynamic database
     /// @param model The standard thermodynamic model function
-    ThermoEngine(const Database& db, const StandardThermoModelFn& model);
+    ThermoEngine(const Database& db, const StandardThermoPropsFn& model);
 
     /// Return the database of this thermodynamic engine.
     auto database() const -> const Database&;
 
     /// Return the standard thermodynamic model function of this thermodynamic engine.
-    auto standardThermoModelFn() const -> const StandardThermoModelFn&;
+    auto standardThermoModelFn() const -> const StandardThermoPropsFn&;
 
     /// Return the standard thermodynamic properties of a species at given temperature and pressure.
     /// @param T The temperature for the calculation (in unit of K)
@@ -50,7 +50,7 @@ private:
     Database db;
 
     /// The standard thermodynamic model function of this thermodynamic engine
-    StandardThermoModelFn model;
+    StandardThermoPropsFn model;
 };
 
 } // namespace Reaktoro

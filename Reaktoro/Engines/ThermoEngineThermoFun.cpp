@@ -47,13 +47,13 @@ auto convertProps(const ThermoFun::ThermoPropertiesSubstance& other) -> Standard
 }
 
 /// The standard thermodynamic model function object based on ThermoFun
-struct ThermoFunStandardThermoModelFn
+struct ThermoFunStandardThermoPropsFn
 {
     // The ThermoFun::ThermoEngine object
     mutable ThermoFun::ThermoEngine thermofun_engine; // mutable needed because some methods in ThermoFun is not const
 
-    /// Construct a ThermoFunStandardThermoModelFn object
-    ThermoFunStandardThermoModelFn(const DatabaseThermoFun& database)
+    /// Construct a ThermoFunStandardThermoPropsFn object
+    ThermoFunStandardThermoPropsFn(const DatabaseThermoFun& database)
     : thermofun_engine(std::any_cast<ThermoFun::Database>(database.attachedData()))
     {
         // Set solvent symbol, the HGK, JN water solvent model are defined in this record
@@ -71,7 +71,7 @@ struct ThermoFunStandardThermoModelFn
             const auto props = thermofun_engine.thermoPropertiesSubstance(Tval, Pval, species.name());
             return convertProps(props);
         }
-        RuntimeError("Failure at ThermoFunStandardThermoModelFn::operator().",
+        RuntimeError("Failure at ThermoFunStandardThermoPropsFn::operator().",
             "There is no species named " + species.name() + " in the ThermoFun database.");
         return {};
     }
@@ -80,7 +80,7 @@ struct ThermoFunStandardThermoModelFn
 } // namespace
 
 ThermoEngineThermoFun::ThermoEngineThermoFun(const DatabaseThermoFun& database)
-: ThermoEngine(database, ThermoFunStandardThermoModelFn(database))
+: ThermoEngine(database, ThermoFunStandardThermoPropsFn(database))
 {
 }
 
