@@ -41,7 +41,7 @@ struct Phase::Impl
     /// The name of the phase
     std::string name;
 
-    /// The physical state of the phase.
+    /// The state of matter of the phase.
     StateOfMatter state = StateOfMatter::Solid;
 
     /// The list of Species instances defining the phase
@@ -195,7 +195,7 @@ auto Phase::withSpecies(SpeciesList species) -> Phase
     return copy;
 }
 
-auto Phase::withPhysicalState(StateOfMatter state) -> Phase
+auto Phase::withStateOfMatter(StateOfMatter state) -> Phase
 {
     Phase copy = clone();
     copy.pimpl->state = std::move(state);
@@ -221,7 +221,7 @@ auto Phase::name() const -> std::string
     return pimpl->name;
 }
 
-auto Phase::physicalState() const -> StateOfMatter
+auto Phase::stateOfMatter() const -> StateOfMatter
 {
     return pimpl->state;
 }

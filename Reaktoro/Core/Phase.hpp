@@ -47,8 +47,8 @@ public:
     /// Return a copy of this Phase object with new list of species.
     auto withSpecies(SpeciesList species) -> Phase;
 
-    /// Return a copy of this Phase object with a new physical state.
-    auto withPhysicalState(StateOfMatter state) -> Phase;
+    /// Return a copy of this Phase object with a new state of matter.
+    auto withStateOfMatter(StateOfMatter state) -> Phase;
 
     /// Return a copy of this Phase object with a new standard thermodynamic model.
     auto withStandardThermoModel(StandardThermoModelFn model) -> Phase;
@@ -59,8 +59,8 @@ public:
     /// Return the name of the phase.
     auto name() const -> std::string;
 
-    /// Return the physical state of the phase.
-    auto physicalState() const -> StateOfMatter;
+    /// Return the state of matter of the phase.
+    auto stateOfMatter() const -> StateOfMatter;
 
     /// Return the species of the phase.
     auto species() const -> const SpeciesList&;
