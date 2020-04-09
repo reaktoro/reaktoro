@@ -1,6 +1,6 @@
 # Reaktoro is a unified framework for modeling chemically reactive systems.
 #
-# Copyright (C) 2014-2018 Allan Leal
+# Copyright (C) 2014-2020 Allan Leal
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -123,8 +123,8 @@ problem.setPressure(state.pressure())
 problem.add(state)
 problem.add('HCl', 1.0, 'mmol')
 
-# Set Hessian of Gibbs energy to an approximation, since PHREEQC does not 
-# compute molar derivatives of activities 
+# Set Hessian of Gibbs energy to an approximation, since PHREEQC does not
+# compute molar derivatives of activities
 options = EquilibriumOptions()
 options.hessian = GibbsHessian.Approximation
 

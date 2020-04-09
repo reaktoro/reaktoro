@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2018 Allan Leal
+// Copyright (C) 2014-2020 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@ namespace Reaktoro {
 bool isUsingOpenlibm() {
 #if defined(REAKTORO_USE_OPENLIBM) && REAKTORO_USE_OPENLIBM
     return true;
-#else    
+#else
     return false;
 #endif
 }
