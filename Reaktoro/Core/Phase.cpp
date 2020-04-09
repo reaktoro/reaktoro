@@ -21,6 +21,7 @@
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
+#include <Reaktoro/Core/ThermoPropsPhase.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -54,6 +55,45 @@ struct Phase::Impl
 
     /// The molar masses of the species in the phase.
     ArrayXd species_molar_masses;
+
+    /// Evaluate the standard thermodynamic properties of the phase.
+    auto eval(ThermoPropsPhaseRef props, real T, real P) const -> void
+    {
+        auto&& data = props.data();
+
+        const auto updatingT = data.T != T;
+        const auto updatingP = data.P != P;
+
+        if(updatingT || updatingP)
+        {
+            data.T = T;
+            data.P = P;
+            evalStandardThermoProps(props);
+        }
+    }
+
+    /// Evaluate the chemical properties of the phase.
+    auto eval(ChemicalPropsPhaseRef props, real T, real P, ArrayXrConstRef n) const -> void
+    {
+        auto&& data = props.data();
+
+        const auto updatingT = data.T != T;
+        const auto updatingP = data.P != P;
+        const auto updatingN = (data.n != n).all();
+
+        if(updatingT || updatingP)
+        {
+            data.T = T;
+            data.P = P;
+            evalStandardThermoProps(props);
+        }
+        if(updatingT || updatingP || updatingN)
+        {
+            data.n = n;
+            evalMoleFractions(props, n);
+            evalActivityProps(props);
+        }
+    }
 
     /// Evaluate the mole fractions of the species in the phase.
     auto evalMoleFractions(ChemicalPropsPhaseRef props, ArrayXrConstRef n) const -> void
@@ -104,7 +144,8 @@ struct Phase::Impl
     }
 
     /// Evaluate the standard thermodynamic properties of the species in the phase.
-    auto evalStandardThermoProps(ChemicalPropsPhaseRef props) const -> void
+    template<typename ThermoPropsRefType>
+    auto evalStandardThermoProps(ThermoPropsRefType props) const -> void
     {
         auto&& data  = props.data();
         auto& T      = data.T;
@@ -131,29 +172,6 @@ struct Phase::Impl
             V0[i]  = stdprops.V0;
             Cp0[i] = stdprops.Cp0;
             Cv0[i] = stdprops.Cv0;
-        }
-    }
-
-    /// Evaluate the chemical properties of the phase.
-    auto eval(ChemicalPropsPhaseRef props, real T, real P, ArrayXrConstRef n) const -> void
-    {
-        auto&& data = props.data();
-
-        const auto updatingT = data.T != T;
-        const auto updatingP = data.P != P;
-        const auto updatingN = (data.n != n).all();
-
-        if(updatingT || updatingP)
-        {
-            data.T = T;
-            data.P = P;
-            evalStandardThermoProps(props);
-        }
-        if(updatingT || updatingP || updatingN)
-        {
-            data.n = n;
-            evalMoleFractions(props, n);
-            evalActivityProps(props);
         }
     }
 };
@@ -228,11 +246,23 @@ auto Phase::activityModel() const -> const ActivityModelFn&
     return pimpl->activity_model_fn;
 }
 
+auto Phase::props(real T, real P) const -> ThermoPropsPhase
+{
+    ThermoPropsPhase res(*this);
+    eval(res, T, P);
+    return res;
+}
+
 auto Phase::props(real T, real P, ArrayXrConstRef n) const -> ChemicalPropsPhase
 {
     ChemicalPropsPhase res(*this);
     eval(res, T, P, n);
     return res;
+}
+
+auto Phase::eval(ThermoPropsPhaseRef props, real T, real P) const -> void
+{
+    pimpl->eval(props, T, P);
 }
 
 auto Phase::eval(ChemicalPropsPhaseRef props, real T, real P, ArrayXrConstRef n) const -> void
