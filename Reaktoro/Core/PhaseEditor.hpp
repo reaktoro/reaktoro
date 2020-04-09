@@ -71,7 +71,7 @@ public:
     auto elements() const -> const Strings&;
 
     /// Return the specified activity model of the phase.
-    auto activityModel() const -> ActivityModelPtr;
+    auto activityPropsFn() const -> ActivityModelPtr;
 
     /// Convert this PhaseEditor object into a Phase object.
     virtual auto convert(const ThermoEngine& engine, const Strings& elements) -> Phase;

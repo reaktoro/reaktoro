@@ -60,7 +60,7 @@ auto convert(const SpeciesThermoState& state) -> StandardThermoProps
 }
 
 /// The standard thermodynamic model function object based on SUPCRT
-struct SupcrtStandardThermoModelFn
+struct SupcrtStandardThermoPropsFn
 {
     /// The Haar--Gallagher--Kell (1984) equation of state for water
     WaterThermoPropsFn water_thermo_props_hgk_fn;
@@ -74,8 +74,8 @@ struct SupcrtStandardThermoModelFn
     /// The HKF equation of state for the thermodynamic state of aqueous, gaseous and mineral species
     SpeciesThermoPropsFn species_thermo_props_hkf_fn;
 
-    /// Construct a SupcrtStandardThermoModelFn object
-    SupcrtStandardThermoModelFn()
+    /// Construct a SupcrtStandardThermoPropsFn object
+    SupcrtStandardThermoPropsFn()
     {
         // Initialize the Haar--Gallagher--Kell (1984) equation of state for water
         water_thermo_props_hgk_fn = [](real T, real P)
@@ -115,7 +115,7 @@ struct SupcrtStandardThermoModelFn
             return standardThermoPropsAqueousSolventHKF(T, P, species);
         if(data.type() == typeid(ParamsAqueousSoluteHKF))
             return standardThermoPropsAqueousSoluteHKF(T, P, species);
-        RuntimeError("Failure at SupcrtStandardThermoModelFn::operator().",
+        RuntimeError("Failure at SupcrtStandardThermoPropsFn::operator().",
             "There is no SUPCRT parameters for species named " + species.name() + ".");
         return {};
     }
@@ -160,7 +160,7 @@ struct SupcrtStandardThermoModelFn
 } // namespace
 
 ThermoEngineSupcrt::ThermoEngineSupcrt(const DatabaseSupcrt& database)
-: ThermoEngine(database, SupcrtStandardThermoModelFn())
+: ThermoEngine(database, SupcrtStandardThermoPropsFn())
 {
 }
 
