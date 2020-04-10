@@ -24,7 +24,6 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ActivityModel.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.fwd.hpp>
-#include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/StandardThermoModel.hpp>
 #include <Reaktoro/Core/StateOfMatter.hpp>
@@ -45,7 +44,7 @@ public:
     auto withName(std::string name) -> Phase;
 
     /// Return a copy of this Phase object with new list of species.
-    auto withSpecies(SpeciesList species) -> Phase;
+    auto withSpecies(const SpeciesList& species) -> Phase;
 
     /// Return a copy of this Phase object with a new state of matter.
     auto withStateOfMatter(StateOfMatter state) -> Phase;
