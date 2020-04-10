@@ -187,7 +187,7 @@ auto Phase::withName(std::string name) -> Phase
     return copy;
 }
 
-auto Phase::withSpecies(SpeciesList species) -> Phase
+auto Phase::withSpecies(const SpeciesList& species) -> Phase
 {
     Phase copy = clone();
     copy.pimpl->species = std::move(species);
