@@ -42,7 +42,7 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(species.elementCoefficient("H") == 2);
     REQUIRE(species.elementCoefficient("O") == 1);
 
-    species = Species("Na+").withSymbol("Na+(aq)").withTags({"aqueous", "cation", "charged"});
+    species = Species("Na+").withName("Na+(aq)").withTags({"aqueous", "cation", "charged"});
     REQUIRE(species.symbol() == "Na+(aq)");
     REQUIRE(species.name() == "Na+");
     REQUIRE(species.formula() == "Na+");
@@ -55,7 +55,7 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(contains(species.tags(), "cation"));
     REQUIRE(contains(species.tags(), "charged"));
 
-    species = Species("Cl-").withSymbol("Cl-(aq)").withTags({"aqueous", "anion", "charged"});
+    species = Species("Cl-").withName("Cl-(aq)").withTags({"aqueous", "anion", "charged"});
     REQUIRE(species.symbol() == "Cl-(aq)");
     REQUIRE(species.name() == "Cl-");
     REQUIRE(species.formula() == "Cl-");
@@ -68,7 +68,7 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(contains(species.tags(), "anion"));
     REQUIRE(contains(species.tags(), "charged"));
 
-    species = Species("CO3--").withSymbol("CO3--(aq)").withTags({"aqueous", "anion", "charged"});
+    species = Species("CO3--").withName("CO3--(aq)").withTags({"aqueous", "anion", "charged"});
     REQUIRE(species.symbol() == "CO3--(aq)");
     REQUIRE(species.name() == "CO3--");
     REQUIRE(species.formula() == "CO3--");
@@ -94,7 +94,7 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(species.elementCoefficient("O") == 3);
     REQUIRE(species.tags().empty());
 
-    species = Species("H+").withSymbol("H+(aq)");
+    species = Species("H+").withName("H+(aq)");
     REQUIRE(species.symbol() == "H+(aq)");
     REQUIRE(species.name() == "H+");
     REQUIRE(species.formula() == "H+");
@@ -132,8 +132,8 @@ TEST_CASE("Testing Species class", "[Species]")
     REQUIRE(contains(species.tags(), "iron"));
 
     species = Species()
-        .withSymbol("H2S(g)")
-        .withName("HYDROGEN-SULFIDE")
+        .withName("H2S(g)")
+        .withSubstanceName("HYDROGEN-SULFIDE")
         .withFormula("H2S")
         .withElementSymbols({{"H", 2}, {"S", 1}})
         .withAggregateState(AggregateState::Gas)
