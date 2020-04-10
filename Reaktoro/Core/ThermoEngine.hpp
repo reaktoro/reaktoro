@@ -37,13 +37,13 @@ public:
     auto database() const -> const Database&;
 
     /// Return the standard thermodynamic model function of this thermodynamic engine.
-    auto standardThermoModelFn() const -> const StandardThermoPropsFn&;
+    auto standardThermoPropsFn() const -> const StandardThermoPropsFn&;
 
     /// Return the standard thermodynamic properties of a species at given temperature and pressure.
     /// @param T The temperature for the calculation (in unit of K)
     /// @param P The pressure for the calculation (in unit of Pa)
     /// @param species The species object.
-    auto standardThermoProps(real T, real P, const Species& species) const -> StandardThermoProps;
+    auto props(real T, real P, const Species& species) const -> StandardThermoProps;
 
 private:
     /// The thermodynamic database of this thermodynamic engine
