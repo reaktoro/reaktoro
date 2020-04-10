@@ -20,35 +20,30 @@
 // C++ includes
 #include <any>
 #include <memory>
-#include <optional>
-#include <string>
-#include <unordered_map>
-#include <vector>
+
+// Reaktoro includes
+#include <Reaktoro/Core/ElementList.hpp>
+#include <Reaktoro/Core/SpeciesList.hpp>
 
 namespace Reaktoro {
 
-// Forward declarations (class)
-class Element;
-class Species;
-class StringList;
-
-// Forward declarations (enum class)
-enum class AggregateState;
-
-/// Auxiliary type alias for an unordered map of element name to Element object.
-using ElementMap = std::unordered_map<std::string, Element>;
-
-/// Auxiliary type alias for an unordered map of species name to Species object.
-using SpeciesMap = std::unordered_map<std::string, Species>;
-
 /// The class used to store and retrieve data of chemical species.
 /// @see Element, Species
-/// @ingroup Databases
+/// @ingroup Core
 class Database
 {
 public:
     /// Construct a default Database instance.
     Database();
+
+    /// Construct a copy of a Database instance.
+    Database(const Database& other);
+
+    /// Destroy this Database instance.
+    ~Database();
+
+    /// Assign another Database instance to this.
+    auto operator=(Database other) -> Database&;
 
     /// Add a species in the database.
     auto addSpecies(const Species& species) -> void;
@@ -57,31 +52,21 @@ public:
     auto attachData(const std::any& data) -> void;
 
     /// Return all elements in the database.
-    auto elements() const -> std::vector<Element>;
+    auto elements() const -> ElementList;
 
     /// Return all species in the database.
-    auto species() const -> std::vector<Species>;
+    auto species() const -> SpeciesList;
+
+    /// Return all species in the database with given aggregate state.
+    auto speciesWithAggregateState(AggregateState option) const -> SpeciesList;
 
     /// Return the attached data to this database whose type is known at runtime only.
     auto attachedData() const -> const std::any&;
 
-    /// Return an element with given name if it exists in the database.
-    auto elementWithName(std::string name) const -> std::optional<Element>;
-
-    /// Return a species with given name if it exists in the database.
-    auto speciesWithName(std::string name) const -> std::optional<Species>;
-
-    /// Return all species in the database with given aggregate state.
-    auto allSpeciesWithAggregateState(AggregateState state) const -> std::vector<Species>;
-
-    /// Return all species in the database with given elements.
-    /// @param symbols The symbols of the elements.
-    auto allSpeciesWithElements(const StringList& symbols) const -> std::vector<Species>;
-
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
