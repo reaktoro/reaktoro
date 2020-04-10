@@ -17,14 +17,10 @@
 
 #pragma once
 
-// C++ includes
-#include <optional>
-#include <string>
-#include <vector>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/StringList.hpp>
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
@@ -52,25 +48,22 @@ public:
     auto data() const -> const std::vector<Species>&;
 
     /// Return the number of species in the collection.
-    auto size() const -> std::size_t;
+    auto size() const -> Index;
 
     /// Return the Species object with given index.
     auto operator[](Index index) const -> const Species&;
 
-    /// Return the index of the first species with given unique symbol.
-    /// If there is no species with given unique symbol, return number of species.
-    auto indexWithSymbol(std::string symbol) const -> Index;
-
-    /// Return the index of the first species with given name.
+    /// Return the index of the first species with given unique name.
     /// If there is no species with given name, return number of species.
-    auto indexWithName(std::string name) const -> Index;
+    auto indexWithName(String name) const -> Index;
 
     /// Return the index of the first species with equivalent substance formula.
     /// If there is no species with given substance formula, return number of species.
-    auto indexWithFormula(std::string formula) const -> Index;
+    auto indexWithFormula(String formula) const -> Index;
 
-    /// Return all species with given unique symbols.
-    auto withSymbols(const StringList& symbols) const -> SpeciesList;
+    /// Return the index of the first species with given substance name.
+    /// If there is no species with given substance name, return number of species.
+    auto indexWithSubstance(String substance) const -> Index;
 
     /// Return all species with given names.
     auto withNames(const StringList& names) const -> SpeciesList;
@@ -78,11 +71,17 @@ public:
     /// Return all species with given substance formulas.
     auto withFormulas(const StringList& formulas) const -> SpeciesList;
 
+    /// Return all species with given substance names.
+    auto withSubstances(const StringList& formulas) const -> SpeciesList;
+
+    /// Return all species with given aggregate state.
+    auto withAggregateState(AggregateState state) const -> SpeciesList;
+
     /// Return all species with a given tag.
-    auto withTag(std::string tag) const -> SpeciesList;
+    auto withTag(String tag) const -> SpeciesList;
 
     /// Return all species without a given tag.
-    auto withoutTag(std::string tag) const -> SpeciesList;
+    auto withoutTag(String tag) const -> SpeciesList;
 
     /// Return all species with given tags.
     auto withTags(const StringList& tags) const -> SpeciesList;
@@ -101,7 +100,7 @@ public:
     /// SpeciesList list5 = specieslist.withElements("H O Na Cl C");  // H2O H+ OH- H2 O2 Na+ Cl- NaCl CO2 HCO3- CO3-2 CH4
     /// ~~~
     /// @param symbols The element symbols of interest.
-    /// @see Species::withElementsOf
+    /// @see SpeciesList::withElementsOf
     auto withElements(const StringList& symbols) const -> SpeciesList;
 
     /// Return all species with a certain elemental composition.
@@ -116,8 +115,17 @@ public:
     /// SpeciesList list4 = specieslist.withElementsOf("H2O Na+ Cl-"); // H2O H+ OH- H2 O2 Na+ Cl- NaCl
     /// ~~~
     /// @param formulas The formulas of the species from which elements are extracted.
-    /// @see Species::withElements
+    /// @see SpeciesList::withElements
     auto withElementsOf(const StringList& formulas) const -> SpeciesList;
+
+private:
+    /// The species stored in the list.
+    std::vector<Species> m_species;
+
+public:
+    /// Construct an SpeciesList object with given begin and end iterators.
+    template<typename InputIterator>
+    SpeciesList(InputIterator begin, InputIterator end) : m_species(begin, end) {}
 
     /// Return begin const iterator of this SpeciesList instance (for STL compatibility reasons).
     inline auto begin() const { return data().begin(); }
@@ -136,10 +144,6 @@ public:
 
     /// The type of the value stored in a SpeciesList (for STL compatibility reasons).
     using value_type = Species;
-
-private:
-    /// The species stored in the list.
-    std::vector<Species> m_species;
 };
 
 } // namespace Reaktoro

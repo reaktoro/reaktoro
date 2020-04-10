@@ -36,18 +36,18 @@ auto createChemicalFormulas(const StringList& words)
 SpeciesList::SpeciesList()
 {}
 
-SpeciesList::SpeciesList(std::initializer_list<Species> substances)
-: m_species(std::move(substances))
+SpeciesList::SpeciesList(std::initializer_list<Species> species)
+: m_species(std::move(species))
 {}
 
-SpeciesList::SpeciesList(std::vector<Species> substances)
-: m_species(std::move(substances))
+SpeciesList::SpeciesList(std::vector<Species> species)
+: m_species(std::move(species))
 {}
 
 SpeciesList::SpeciesList(StringList formulas)
 : m_species(formulas.size())
 {
-    transform(formulas, m_species, [&](std::string formula) { return Species(formula); });
+    transform(formulas, m_species, [&](String formula) { return Species(formula); });
 }
 
 auto SpeciesList::append(Species substance) -> void
@@ -60,7 +60,7 @@ auto SpeciesList::data() const -> const std::vector<Species>&
     return m_species;
 }
 
-auto SpeciesList::size() const -> std::size_t
+auto SpeciesList::size() const -> Index
 {
     return data().size();
 }
@@ -70,25 +70,20 @@ auto SpeciesList::operator[](Index index) const -> const Species&
     return data()[index];
 }
 
-auto SpeciesList::indexWithSymbol(std::string symbol) const -> Index
-{
-    return indexfn(data(), [&](auto&& s) { return s.symbol() == symbol; });
-}
-
-auto SpeciesList::indexWithName(std::string name) const -> Index
+auto SpeciesList::indexWithName(String name) const -> Index
 {
     return indexfn(data(), [&](auto&& s) { return s.name() == name; });
 }
 
-auto SpeciesList::indexWithFormula(std::string substance) const -> Index
+auto SpeciesList::indexWithFormula(String substance) const -> Index
 {
     ChemicalFormula formula(substance);
     return indexfn(data(), [&](auto&& s) { return s.formula().equivalent(formula); });
 }
 
-auto SpeciesList::withSymbols(const StringList& symbols) const -> SpeciesList
+auto SpeciesList::indexWithSubstance(String substance) const -> Index
 {
-    return filter(*this, [&](auto&& s) { return contains(symbols, s.symbol()); });
+    return indexfn(data(), [&](auto&& s) { return s.substance() == substance; });
 }
 
 auto SpeciesList::withNames(const StringList& names) const -> SpeciesList
@@ -107,13 +102,23 @@ auto SpeciesList::withFormulas(const StringList& words) const -> SpeciesList
     return filter(*this, pred);
 }
 
-auto SpeciesList::withTag(std::string tag) const -> SpeciesList
+auto SpeciesList::withSubstances(const StringList& substances) const -> SpeciesList
+{
+    return filter(*this, [&](auto&& s) { return contains(substances, s.substance()); });
+}
+
+auto SpeciesList::withAggregateState(AggregateState state) const -> SpeciesList
+{
+    return filter(*this, [&](auto&& s) { return s.aggregateState() == state; });
+}
+
+auto SpeciesList::withTag(String tag) const -> SpeciesList
 {
     return filter(*this, [&](auto&& s) { return contains(s.tags(), tag); });
 }
 
 
-auto SpeciesList::withoutTag(std::string tag) const -> SpeciesList
+auto SpeciesList::withoutTag(String tag) const -> SpeciesList
 {
     return filter(*this, [&](auto&& s) { return !contains(s.tags(), tag); });
 }
@@ -142,7 +147,7 @@ auto SpeciesList::withElements(const StringList& symbols) const -> SpeciesList
 
 auto SpeciesList::withElementsOf(const StringList& formulas) const -> SpeciesList
 {
-    std::vector<std::string> symbols;
+    std::vector<String> symbols;
     for(auto&& formula : detail::createChemicalFormulas(formulas))
         for(auto&& [symbol, _] : formula.symbols())
             symbols.push_back(symbol);
