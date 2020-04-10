@@ -85,14 +85,14 @@ auto removeSuffix(std::string formula) -> std::string
 
 struct Species::Impl
 {
-    /// The symbol that uniquely identifies this species such as `H2O(aq)`, `O2(g)`, `H+(aq)`.
-    std::string symbol;
-
-    /// The name of the underlying substance `H2O`, `WATER`, `CARBON-MONOXIDE`, `CO2`.
+    /// The name that uniquely identifies this species such as `H2O(aq)`, `O2(g)`, `H+(aq)`.
     std::string name;
 
     /// The chemical formula of the species such as `H2O`, `O2`, `H+`.
     std::string formula;
+
+    /// The name of the underlying substance such as `H2O`, `WATER`, `CARBON-MONOXIDE`, `CO2`.
+    std::string substance;
 
     /// The elements in the species and their coefficients.
     Elements elements;
@@ -118,7 +118,7 @@ struct Species::Impl
 
     /// Construct a Species::Impl instance
     Impl(ChemicalFormula formula)
-    : symbol(formula), name(detail::removeSuffix(formula)), formula(detail::removeSuffix(formula)),
+    : name(formula), formula(detail::removeSuffix(formula)), substance(detail::removeSuffix(formula)),
       elements(detail::createElements(formula)), charge(formula.charge())
     {
     }
@@ -140,13 +140,6 @@ Species::Species(std::string formula)
 : pimpl(new Impl(formula))
 {}
 
-auto Species::withSymbol(std::string symbol) -> Species
-{
-    Species copy = clone();
-    copy.pimpl->symbol = std::move(symbol);
-    return copy;
-}
-
 auto Species::withName(std::string name) -> Species
 {
     Species copy = clone();
@@ -158,6 +151,13 @@ auto Species::withFormula(std::string formula) -> Species
 {
     Species copy = clone();
     copy.pimpl->formula = std::move(formula);
+    return copy;
+}
+
+auto Species::withSubstance(std::string substance) -> Species
+{
+    Species copy = clone();
+    copy.pimpl->substance = std::move(substance);
     return copy;
 }
 
@@ -208,13 +208,6 @@ auto Species::withAttachedData(std::any data) -> Species
     return copy;
 }
 
-auto Species::symbol() const -> std::string
-{
-    if(pimpl->symbol.empty())
-        return formula();
-    return pimpl->symbol;
-}
-
 auto Species::name() const -> std::string
 {
     if(pimpl->name.empty())
@@ -225,6 +218,13 @@ auto Species::name() const -> std::string
 auto Species::formula() const -> ChemicalFormula
 {
     return pimpl->createChemicalFormula();
+}
+
+auto Species::substance() const -> std::string
+{
+    if(pimpl->substance.empty())
+        return detail::removeSuffix(name());
+    return pimpl->substance;
 }
 
 auto Species::charge() const -> double
@@ -258,7 +258,7 @@ auto Species::criticalProps() const -> std::optional<SubstanceCriticalProps>
 {
     if(pimpl->crprops)
         return pimpl->crprops;
-    return CriticalProps::get({ name(), formula(), symbol() });
+    return CriticalProps::get({ substance(), formula(), name() });
 }
 
 auto Species::attachedData() const -> const std::any&

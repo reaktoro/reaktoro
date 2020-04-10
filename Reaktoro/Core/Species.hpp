@@ -49,14 +49,14 @@ public:
     /// @param formula The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
     Species(std::string formula);
 
-    /// Return a duplicate of this Species object with new symbol that uniquely identifies this species.
-    auto withSymbol(std::string symbol) -> Species;
-
-    /// Return a duplicate of this Species object with new substance name attribute (case insensitive).
+    /// Return a duplicate of this Species object with new name that uniquely identifies this species.
     auto withName(std::string name) -> Species;
 
-    /// Return a duplicate of this Species object with new formula attribute.
+    /// Return a duplicate of this Species object with new formula (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
     auto withFormula(std::string formula) -> Species;
+
+    /// Return a duplicate of this Species object with new case insensitive substance name (e.g. `WATER`, `CARBON-MONOXIDE`).
+    auto withSubstance(std::string substance) -> Species;
 
     /// Return a duplicate of this Species object with new Element objects and respective coefficients.
     auto withElements(Elements elements) -> Species;
@@ -80,14 +80,14 @@ public:
     /// Return a duplicate of this Species object with new attached data whose type is known at runtime only.
     auto withAttachedData(std::any data) -> Species;
 
-    /// Return the symbol that uniquely identifies this species if provided, otherwise, its formula.
-    auto symbol() const -> std::string;
-
-    /// Return the name of the underlying substance of the species if provided, otherwise, its formula.
+    /// Return the name that uniquely identifies this species if provided, otherwise, its formula.
     auto name() const -> std::string;
 
     /// Return the chemical formula of the species.
     auto formula() const -> ChemicalFormula;
+
+    /// Return the name of the underlying substance of the species if provided, otherwise, its formula without any suffix.
+    auto substance() const -> std::string;
 
     /// Return the electric charge of the species.
     auto charge() const -> double;
