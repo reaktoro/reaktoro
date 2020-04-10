@@ -37,12 +37,12 @@ auto ThermoEngine::database() const -> const Database&
     return db;
 }
 
-auto ThermoEngine::standardThermoModelFn() const -> const StandardThermoPropsFn&
+auto ThermoEngine::standardThermoPropsFn() const -> const StandardThermoPropsFn&
 {
     return model;
 }
 
-auto ThermoEngine::standardThermoProps(real T, real P, const Species& species) const -> StandardThermoProps
+auto ThermoEngine::props(real T, real P, const Species& species) const -> StandardThermoProps
 {
     return model(T, P, species);
 }
