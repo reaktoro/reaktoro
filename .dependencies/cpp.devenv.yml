@@ -4,7 +4,7 @@
 dependencies:
   - boost=1.70
   - pybind11
-  - thermofun
+  - thermofun=0.3.3
   {% if not debug %}
   - pugixml                        # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
   {% endif %}
