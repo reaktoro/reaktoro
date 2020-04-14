@@ -105,7 +105,7 @@ inline auto withElementsOf(const Strings& formulas)
     std::vector<ChemicalFormula> cformulas(formulas.begin(), formulas.end());
     Strings symbols;
     for(auto&& formula : cformulas)
-        for(auto&& [symbol, _] : formula.symbols())
+        for(auto&& symbol : formula.symbols())
             symbols.push_back(symbol);
     return withElements(unique(symbols));
 }

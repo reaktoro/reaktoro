@@ -149,7 +149,7 @@ auto SpeciesList::withElementsOf(const StringList& formulas) const -> SpeciesLis
 {
     std::vector<String> symbols;
     for(auto&& formula : detail::createChemicalFormulas(formulas))
-        for(auto&& [symbol, _] : formula.symbols())
+        for(auto&& symbol : formula.symbols())
             symbols.push_back(symbol);
     return withElements(unique(symbols));
 }

@@ -43,9 +43,11 @@ auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCu
     {
         const auto& species = mixture.species()[i];
         const auto crprops = species.criticalProps();
-        error(!crprops.has_value(), "Cannot create any cubic equation of state model (e.g. Peng-Robinson, Soave-Redlich-Kwong, etc.) without "
-            "critical properties for the species with symbol ", species.symbol(), "and with substance name", species.name(), ". "
-            "In order to fix this error, use CriticalProps::append to register the critical properties of this substance.");
+        error(!crprops.has_value(), "Cannot create any cubic equation of state model "
+            "(e.g. Peng-Robinson, Soave-Redlich-Kwong, etc.) without "
+            "critical properties for the species with name ", species.name(), ". "
+            "In order to fix this error, use CriticalProps::append to register the "
+            "critical properties of this substance.");
         Tcr[i] = crprops->temperature();
         Pcr[i] = crprops->pressure();
         omega[i] = crprops->acentricFactor();

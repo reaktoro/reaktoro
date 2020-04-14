@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <cmath>
+using std::abs;
 using std::exp;
 using std::pow;
 
