@@ -3,10 +3,12 @@
 
 dependencies:
   - boost=1.70
-  - pybind11
-  - thermofun=0.3.3
+  # pybind11 version must match the version used to compile ThermoFun
+  - pybind11 >=2.5.0
+  - thermofun
   {% if not debug %}
-  - pugixml                        # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
+  # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
+  - pugixml
   {% endif %}
   {% if use_openlibm %}
   - openlibm
