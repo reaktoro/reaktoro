@@ -24,10 +24,12 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing StringUtils", "[StringUtils]")
 {
+    Strings words;
+
     REQUIRE( stringfy(".", "a", "b") == "a.b");
     REQUIRE( stringfy(".", 1, 2, "abc") == "1.2.abc");
 
-    std::vector<std::string> words = {"alpha", "beta", "gamma"};
+    words = {"alpha", "beta", "gamma"};
 
     REQUIRE( str(words) == "alpha, beta, gamma");
 
@@ -36,4 +38,17 @@ TEST_CASE("Testing StringUtils", "[StringUtils]")
     REQUIRE( replace("CARBON DIOXIDE", " ", "-")   == "CARBON-DIOXIDE" );
     REQUIRE( replace("CARBON DIOXIDE", "O", "x")   == "CARBXN DIXXIDE" );
     REQUIRE( replace("CARBON DIOXIDE", "", "XYZ")  == "CARBON DIOXIDE" );
+
+    words = {"alpha", "beta", "gamma", "beta", "gamma", "beta", "gamma", "alpha"};
+
+    words = makeunique(words, "!");
+
+    REQUIRE( words[0] == "alpha"   );
+    REQUIRE( words[1] == "beta"    );
+    REQUIRE( words[2] == "gamma"   );
+    REQUIRE( words[3] == "beta!"   );
+    REQUIRE( words[4] == "gamma!"  );
+    REQUIRE( words[5] == "beta!!"  );
+    REQUIRE( words[6] == "gamma!!" );
+    REQUIRE( words[7] == "alpha!"  );
 }
