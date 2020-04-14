@@ -21,14 +21,29 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 namespace Reaktoro {
+
+/// Define a type that represents an index
+using Index = std::size_t;
+
+/// Define a type that represents a collection of indices
+using Indices = std::vector<Index>;
 
 /// Convenient alias for `std::string`.
 using String = std::string;
 
 /// Convenient alias for `std::vector<std::string>`.
 using Strings = std::vector<std::string>;
+
+/// Convenient alias for `std::vector<T>`.
+template<typename T>
+using Vec = std::vector<T>;
+
+/// Convenient alias for `std::unordered_map<Key, T>`.
+template<typename Key, typename T>
+using Map = std::unordered_map<Key, T>;
 
 /// Convenient alias for `std::unique_ptr<T>`.
 template<typename T>
