@@ -26,7 +26,6 @@
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>

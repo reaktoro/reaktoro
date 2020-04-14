@@ -127,9 +127,9 @@ struct ChemicalSystem::Impl
         const auto num_elements = elements.size();
         const auto num_species = species.size();
         formula_matrix.resize(num_elements, num_species);
-        for(unsigned i = 0; i < num_species; ++i)
-            for(unsigned j = 0; j < num_elements; ++j)
-                formula_matrix(j, i) = species[i].elementCoefficient(elements[j].name());
+        for(auto i = 0; i < num_species; ++i)
+            for(auto j = 0; j < num_elements; ++j)
+                formula_matrix(j, i) = species[i].elements().coefficient(elements[j].symbol());
     }
 
     // auto initializeThermoModel() -> void
