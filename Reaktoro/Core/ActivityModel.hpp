@@ -58,12 +58,20 @@ struct ActivityProps
 
     /// The activities (natural log) of the species in the phase.
     ArrayXrRef ln_a;
+
+    /// Assign a common value to all properties in this ActivityProps object.
+    auto operator=(real value) -> ActivityProps&
+    {
+        Vex = VexT = VexP = Gex = Hex = Cpex = Cvex = value;
+        ln_g = ln_a = value;
+        return *this;
+    }
 };
 
 /// The function type for calculation of activity and excess thermodynamic properties of a phase.
 using ActivityPropsFn = std::function<void(ActivityProps, real, real, ArrayXrConstRef)>;
 
-/// The function type for activity model of a phase.
+/// The function type for the creation of activity model function of a phase.
 using ActivityModel = std::function<ActivityPropsFn(const SpeciesList&)>;
 
 } // namespace Reaktoro
