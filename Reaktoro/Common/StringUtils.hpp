@@ -27,11 +27,14 @@
 #include <string>
 #include <vector>
 
+// Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
+
 namespace Reaktoro {
 namespace internal {
 
 template<typename T>
-auto operator<<(std::ostream& out, const std::vector<T>& values) -> std::ostream&
+auto operator<<(std::ostream& out, const Vec<T>& values) -> std::ostream&
 {
     for(auto i = 0; i < values.size(); ++i)
         out << ((i == 0) ? "" : ", ") << values[i];
@@ -39,13 +42,13 @@ auto operator<<(std::ostream& out, const std::vector<T>& values) -> std::ostream
 }
 
 template <typename Arg>
-auto stringfy(std::stringstream& ss, const std::string& sep, const Arg& item)
+auto stringfy(std::stringstream& ss, const String& sep, const Arg& item)
 {
     ss << item;
 }
 
 template <typename Arg, typename... Args>
-auto stringfy(std::stringstream& ss, const std::string& sep, const Arg& item, Args... items) -> void
+auto stringfy(std::stringstream& ss, const String& sep, const Arg& item, Args... items) -> void
 {
     ss << item << sep;
     stringfy(ss, sep, items...);
@@ -55,7 +58,7 @@ auto stringfy(std::stringstream& ss, const std::string& sep, const Arg& item, Ar
 
 /// Concatenate the arguments into a string using a given separator string.
 template <typename... Args>
-auto stringfy(const std::string& sep, Args... items) -> std::string
+auto stringfy(const String& sep, Args... items) -> String
 {
     std::stringstream ss;
     internal::stringfy(ss, sep, items...);
@@ -64,16 +67,16 @@ auto stringfy(const std::string& sep, Args... items) -> std::string
 
 /// Concatenate the arguments into a string without any separator string.
 template <typename... Args>
-auto str(Args... items) -> std::string
+auto str(Args... items) -> String
 {
     return stringfy("", items...);
 }
 
 /// Return a new string where `substr` occurrences are replaced by `newsubstr`.
-inline auto replace(std::string original, std::string substr, std::string newsubstr) -> std::string
+inline auto replace(String original, String substr, String newsubstr) -> String
 {
 	auto pos = original.find(substr);
-	while(pos != std::string::npos)
+	while(pos != String::npos)
 	{
 		original.replace(pos, substr.size(), newsubstr);
 		pos = original.find(substr, pos + newsubstr.size());
@@ -82,21 +85,21 @@ inline auto replace(std::string original, std::string substr, std::string newsub
 }
 
 /// Return a string with lower case characters.
-inline auto lowercase(std::string str) -> std::string
+inline auto lowercase(String str) -> String
 {
     std::transform(str.begin(), str.end(), str.begin(), ::tolower);
     return str;
 }
 
 /// Return a string with upper case characters.
-inline auto uppercase(std::string str) -> std::string
+inline auto uppercase(String str) -> String
 {
     std::transform(str.begin(), str.end(), str.begin(), ::toupper);
     return str;
 }
 
 /// Trim the string from start (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
-inline auto leftTrim(std::string& str) -> std::string&
+inline auto leftTrim(String& str) -> String&
 {
     str.erase(str.begin(),
         std::find_if(str.begin(), str.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
@@ -104,7 +107,7 @@ inline auto leftTrim(std::string& str) -> std::string&
 }
 
 /// Trim the string from end (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
-inline auto rightTrim(std::string& str) -> std::string&
+inline auto rightTrim(String& str) -> String&
 {
     str.erase(std::find_if(str.rbegin(), str.rend(),
         std::not1(std::ptr_fun<int, int>(std::isspace))).base(), str.end());
@@ -112,21 +115,20 @@ inline auto rightTrim(std::string& str) -> std::string&
 }
 
 /// Trim the string from both ends (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
-inline auto trim(std::string& str) -> std::string&
+inline auto trim(String& str) -> String&
 {
     return leftTrim(rightTrim(str));
 }
 
 /// Split the string on every occurrence of the specified delimiters
-inline auto split(const std::string& str, const std::string& delims,
-	std::function<std::string&(std::string&)> transform) -> std::vector<std::string>
+inline auto split(const String& str, const String& delims, std::function<String&(String&)> transform) -> Strings
 {
-	std::vector<std::string> words;
+	Strings words;
 	std::size_t start = 0, end = 0;
-	while(end != std::string::npos)
+	while(end != String::npos)
 	{
 		end = str.find_first_of(delims, start);
-		std::string word = str.substr(start, end - start);
+		String word = str.substr(start, end - start);
 		if(word != "") words.push_back(transform ? transform(word) : word);
 		start = end + 1;
 	}
@@ -134,39 +136,54 @@ inline auto split(const std::string& str, const std::string& delims,
 }
 
 /// Split the string on every occurrence of the specified delimiters
-inline auto split(const std::string& str, const std::string& delims = " ") -> std::vector<std::string>
+inline auto split(const String& str, const String& delims = " ") -> Strings
 {
     return split(str, delims, {});
 }
 
 /// Split the string on every occurrence of the specified delimiters and trim each word
-inline auto splitrim(const std::string& str, const std::string& delims = " ") -> std::vector<std::string>
+inline auto splitrim(const String& str, const String& delims = " ") -> Strings
 {
     return split(str, delims, trim);
 }
 
 /// Join several strings into one.
-inline auto join(const std::vector<std::string>& strs, std::string delim = " ") -> std::string
+inline auto join(const Strings& strs, String delim = " ") -> String
 {
-    std::string res;
+    String res;
     for(unsigned i = 0; i < strs.size(); ++i)
         res = res + (i > 0 ? delim : "") + strs[i];
     return res;
 }
 
 /// Convert the string into a floating point number
-inline auto tofloat(const std::string& str) -> double
+inline auto tofloat(const String& str) -> double
 {
     return atof(str.c_str());
 }
 
 /// Convert the string into a list of floating point numbers
-inline auto tofloats(const std::string& str, const std::string& delims = " ") -> std::vector<double>
+inline auto tofloats(const String& str, const String& delims = " ") -> Vec<double>
 {
-    std::vector<double> values;
-    for(const std::string& num : split(str, delims))
+    Vec<double> values;
+    for(const String& num : split(str, delims))
         values.push_back(tofloat(num));
     return values;
+}
+
+/// Return a list of words with duplicate names converted to unique ones.
+inline auto makeunique(Strings words, String suffix) -> Strings
+{
+    const auto size = words.size();
+    for(auto i = 1; i < size; ++i)
+    {
+        auto uniqueword = words[i];
+        for(auto j = 0; j < i; ++j)
+            if(uniqueword == words[j])
+                uniqueword += suffix;
+        words[i] = uniqueword;
+    }
+    return words;
 }
 
 } // namespace Reaktoro
