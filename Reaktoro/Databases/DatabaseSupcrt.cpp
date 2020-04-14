@@ -179,11 +179,11 @@ auto parseParamsMaierKellyHKF(const xml_node& node) -> ParamsMaierKellyHKF
     return data;
 }
 
-auto parseElementSymbols(const xml_node& node) -> Species::ElementSymbols
+auto parseElements(const xml_node& node) -> Map<String, double>
 {
     const auto nodetext = as_text(node, "Elements");
     auto words = split(nodetext, "()");
-    Species::ElementSymbols symbols;
+    Map<String, double> symbols;
     for(unsigned i = 0; i < words.size(); i += 2)
         symbols.emplace(words[i], tofloat(words[i + 1]));
     return symbols;
@@ -213,7 +213,7 @@ auto parseSpecies(const xml_node& node) -> Species
     Species species;
     species = species.withName(as_text(node, "Name"));
     species = species.withFormula(as_text(node, "Formula"));
-    species = species.withElementSymbols(parseElementSymbols(node));
+    species = species.withElements(parseElements(node));
     species = species.withCharge(as_double(node, "Charge", 0.0));
     species = species.withAggregateState(parseAggregateState(node));
     species = species.withAttachedData(parseSpeciesData(node));
