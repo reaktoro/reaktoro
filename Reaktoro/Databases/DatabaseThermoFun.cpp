@@ -40,9 +40,9 @@ auto convert(const ThermoFun::Element& element) -> Element
 /// Return the elements and their coefficients in a species a ThermoFun::Substance object
 /// @param db The ThermoFun::Database object
 /// @param subtance The ThermoFun::Substance object
-auto createElements(ThermoFun::Database& db, const ThermoFun::Substance& substance) -> Species::Elements
+auto createElements(ThermoFun::Database& db, const ThermoFun::Substance& substance) -> Map<Element, double>
 {
-    Species::Elements elements;
+    Map<Element, double> elements;
     for(auto&& [element, coeff] : db.parseSubstanceFormula(substance.formula()))
     {
         if(element.symbol() == "Zz")

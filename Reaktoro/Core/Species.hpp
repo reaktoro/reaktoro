@@ -19,15 +19,13 @@
 
 // C++ includes
 #include <any>
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <vector>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Core/ElementalComposition.hpp>
 #include <Reaktoro/Singletons/CriticalProps.hpp>
 
 namespace Reaktoro {
@@ -36,34 +34,24 @@ namespace Reaktoro {
 class Species
 {
 public:
-    /// The type for the container of Element objects composing the species and their corresponding coefficients.
-    using Elements = std::unordered_map<Element, double>;
-
-    /// The type for the container of chemical element symbols composing the species and their corresponding coefficients.
-    using ElementSymbols = std::unordered_map<std::string, double>;
-
     /// Construct a default Species object.
     Species();
 
     /// Construct a Species object with given chemical formula.
     /// @param formula The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    Species(std::string formula);
+    Species(const String& formula);
 
     /// Return a duplicate of this Species object with new name that uniquely identifies this species.
-    auto withName(std::string name) -> Species;
+    auto withName(const String& name) -> Species;
 
     /// Return a duplicate of this Species object with new formula (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    auto withFormula(std::string formula) -> Species;
+    auto withFormula(const String& formula) -> Species;
 
     /// Return a duplicate of this Species object with new case insensitive substance name (e.g. `WATER`, `CARBON-MONOXIDE`).
-    auto withSubstance(std::string substance) -> Species;
+    auto withSubstance(const String& substance) -> Species;
 
-    /// Return a duplicate of this Species object with new Element objects and respective coefficients.
-    auto withElements(Elements elements) -> Species;
-
-    /// Return a duplicate of this Species object with new Element objects and respective coefficients.
-    /// @note The Element objects in the Species instance will be collected from PeriodicTable.
-    auto withElementSymbols(ElementSymbols symbols) -> Species;
+    /// Return a duplicate of this Species object with new elemental composition.
+    auto withElements(const ElementalComposition& elements) -> Species;
 
     /// Return a duplicate of this Species object with new electric charge attribute.
     auto withCharge(double charge) -> Species;
@@ -72,7 +60,7 @@ public:
     auto withAggregateState(AggregateState option) -> Species;
 
     /// Return a duplicate of this Species object with new tags attribute.
-    auto withTags(std::vector<std::string> tags) -> Species;
+    auto withTags(const Strings& tags) -> Species;
 
     /// Return a duplicate of this Species object with new critical properties.
     auto withCriticalProps(const SubstanceCriticalProps& props) -> Species;
@@ -81,13 +69,13 @@ public:
     auto withAttachedData(std::any data) -> Species;
 
     /// Return the name that uniquely identifies this species if provided, otherwise, its formula.
-    auto name() const -> std::string;
+    auto name() const -> String;
 
     /// Return the chemical formula of the species.
     auto formula() const -> ChemicalFormula;
 
     /// Return the name of the underlying substance of the species if provided, otherwise, its formula without any suffix.
-    auto substance() const -> std::string;
+    auto substance() const -> String;
 
     /// Return the electric charge of the species.
     auto charge() const -> double;
@@ -99,19 +87,16 @@ public:
     auto aggregateState() const -> AggregateState;
 
     /// Return the elements that compose the species and their coefficients.
-    auto elements() const -> const Elements&;
+    auto elements() const -> const ElementalComposition&;
 
     /// Return the tags of the species (e.g., `organic`, `mineral`).
-    auto tags() const -> const std::vector<std::string>&;
+    auto tags() const -> const Strings&;
 
     /// Return the critical properties of the underlying substance of the species if available.
     auto criticalProps() const -> std::optional<SubstanceCriticalProps>;
 
     /// Return the attached data of the species whose type is known at runtime only.
     auto attachedData() const -> const std::any&;
-
-    /// Return the coefficient of an element in the species.
-    auto elementCoefficient(const std::string& symbol) const -> double;
 
     /// Return a deep copy of this Species object.
     auto clone() const -> Species;

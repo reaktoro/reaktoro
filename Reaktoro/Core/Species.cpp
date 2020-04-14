@@ -25,58 +25,8 @@
 namespace Reaktoro {
 namespace detail {
 
-/// Create the Element objects in a Species object using PeriodicTable.
-auto createElements(const ChemicalFormula& formula) -> Species::Elements
-{
-    Species::Elements elements;
-    for(auto&& [symbol, coeff] : formula.symbols())
-    {
-        const auto element = PeriodicTable::elementWithSymbol(symbol);
-        error(!element.has_value(), "Cannot construct Species object with formula",
-            formula.str(), ". PeriodicTable contains no element with symbol ", symbol, ". "
-            "Use method PeriodicTable::append (in C++) or PeriodicTable.append (in Python) "
-            "to add a new Element with this symbol.");
-        elements.emplace(element.value(), coeff);
-    }
-    return elements;
-}
-
-/// Create the Element objects in a Species object using PeriodicTable.
-auto createElements(const Species::ElementSymbols& symbols) -> Species::Elements
-{
-    Species::Elements elements;
-    for(auto&& [symbol, coeff] : symbols)
-    {
-        const auto element = PeriodicTable::elementWithSymbol(symbol);
-        error(!element.has_value(), "Cannot proceed with Species::withElementSymbols. "
-            "PeriodicTable contains no element with symbol ", symbol, ". "
-            "Use method PeriodicTable::append (in C++) or PeriodicTable.append (in Python) "
-            "to add a new Element with this symbol.");
-        elements.emplace(element.value(), coeff);
-    }
-    return elements;
-}
-
-/// Return the element symbols and their coefficients in a Species::Elements container.
-auto elementSymbols(const Species::Elements& elements)
-{
-    Species::ElementSymbols symbols;
-    for(auto&& [element, coeff] : elements)
-        symbols[element.symbol()] = coeff;
-    return symbols;
-}
-
-/// Return the molar mass of a species.
-auto molarMass(const Species::Elements& elements)
-{
-    double molar_mass = {};
-    for(auto&& [element, coeff] : elements)
-        molar_mass += element.molarMass() * coeff;
-    return molar_mass;
-}
-
 /// Return the name of the species from its formula by removing suffix such as (aq), (s, calcite), etc..
-auto removeSuffix(std::string formula) -> std::string
+auto removeSuffix(const String& formula) -> String
 {
     return splitSpeciesNameSuffix(formula).first; // remove suffix
 }
@@ -86,16 +36,16 @@ auto removeSuffix(std::string formula) -> std::string
 struct Species::Impl
 {
     /// The name that uniquely identifies this species such as `H2O(aq)`, `O2(g)`, `H+(aq)`.
-    std::string name;
+    String name;
 
     /// The chemical formula of the species such as `H2O`, `O2`, `H+`.
-    std::string formula;
+    String formula;
 
     /// The name of the underlying substance such as `H2O`, `WATER`, `CARBON-MONOXIDE`, `CO2`.
-    std::string substance;
+    String substance;
 
-    /// The elements in the species and their coefficients.
-    Elements elements;
+    /// The elemental composition of the species with its elements and respective coefficients.
+    ElementalComposition elements;
 
     /// The electric charge of the species.
     double charge = {};
@@ -104,7 +54,7 @@ struct Species::Impl
     AggregateState aggregate_state;
 
     /// The tags of the species such as `organic`, `mineral`.
-    std::vector<std::string> tags;
+    Strings tags;
 
     /// The critical properties of the underlying substance of the species if available.
     std::optional<SubstanceCriticalProps> crprops;
@@ -118,59 +68,46 @@ struct Species::Impl
 
     /// Construct a Species::Impl instance
     Impl(ChemicalFormula formula)
-    : name(formula), formula(detail::removeSuffix(formula)), substance(detail::removeSuffix(formula)),
-      elements(detail::createElements(formula)), charge(formula.charge())
-    {
-    }
-
-    /// Return a ChemicalFormula object consistent with the elements and charge
-    /// of the species, and not just based on the contents of string `formula`.
-    auto createChemicalFormula() const -> ChemicalFormula
-    {
-        const auto symbols = detail::elementSymbols(elements);
-        return ChemicalFormula(formula, symbols, charge);
-    }
+    : name(formula), formula(detail::removeSuffix(formula)),
+      substance(detail::removeSuffix(formula)),
+      elements(formula.elements()), charge(formula.charge())
+    {}
 };
 
 Species::Species()
 : pimpl(new Impl())
 {}
 
-Species::Species(std::string formula)
+Species::Species(const String& formula)
 : pimpl(new Impl(formula))
 {}
 
-auto Species::withName(std::string name) -> Species
+auto Species::withName(const String& name) -> Species
 {
     Species copy = clone();
-    copy.pimpl->name = std::move(name);
+    copy.pimpl->name = name;
     return copy;
 }
 
-auto Species::withFormula(std::string formula) -> Species
+auto Species::withFormula(const String& formula) -> Species
 {
     Species copy = clone();
-    copy.pimpl->formula = std::move(formula);
+    copy.pimpl->formula = formula;
     return copy;
 }
 
-auto Species::withSubstance(std::string substance) -> Species
+auto Species::withSubstance(const String& substance) -> Species
 {
     Species copy = clone();
-    copy.pimpl->substance = std::move(substance);
+    copy.pimpl->substance = substance;
     return copy;
 }
 
-auto Species::withElements(Elements elements) -> Species
+auto Species::withElements(const ElementalComposition& elements) -> Species
 {
     Species copy = clone();
-    copy.pimpl->elements = std::move(elements);
+    copy.pimpl->elements = elements;
     return copy;
-}
-
-auto Species::withElementSymbols(ElementSymbols symbols) -> Species
-{
-    return withElements(detail::createElements(symbols));
 }
 
 auto Species::withCharge(double charge) -> Species
@@ -187,28 +124,28 @@ auto Species::withAggregateState(AggregateState option) -> Species
     return copy;
 }
 
-auto Species::withTags(std::vector<std::string> tags) -> Species
+auto Species::withTags(const Strings& tags) -> Species
 {
     Species copy = clone();
-    copy.pimpl->tags = std::move(tags);
+    copy.pimpl->tags = tags;
     return copy;
 }
 
 auto Species::withCriticalProps(const SubstanceCriticalProps& props) -> Species
 {
     Species copy = clone();
-    copy.pimpl->crprops = std::move(props);
+    copy.pimpl->crprops = props;
     return copy;
 }
 
 auto Species::withAttachedData(std::any data) -> Species
 {
     Species copy = clone();
-    copy.pimpl->attached_data = std::move(data);
+    copy.pimpl->attached_data = data;
     return copy;
 }
 
-auto Species::name() const -> std::string
+auto Species::name() const -> String
 {
     if(pimpl->name.empty())
         return formula();
@@ -217,10 +154,10 @@ auto Species::name() const -> std::string
 
 auto Species::formula() const -> ChemicalFormula
 {
-    return pimpl->createChemicalFormula();
+    return ChemicalFormula(pimpl->formula, pimpl->elements, pimpl->charge);
 }
 
-auto Species::substance() const -> std::string
+auto Species::substance() const -> String
 {
     if(pimpl->substance.empty())
         return detail::removeSuffix(name());
@@ -234,7 +171,7 @@ auto Species::charge() const -> double
 
 auto Species::molarMass() const -> double
 {
-    return detail::molarMass(elements());
+    return elements().molarMass();
 }
 
 auto Species::aggregateState() const -> AggregateState
@@ -244,12 +181,12 @@ auto Species::aggregateState() const -> AggregateState
     return pimpl->aggregate_state;
 }
 
-auto Species::elements() const -> const Elements&
+auto Species::elements() const -> const ElementalComposition&
 {
     return pimpl->elements;
 }
 
-auto Species::tags() const -> const std::vector<std::string>&
+auto Species::tags() const -> const Strings&
 {
     return pimpl->tags;
 }
@@ -264,14 +201,6 @@ auto Species::criticalProps() const -> std::optional<SubstanceCriticalProps>
 auto Species::attachedData() const -> const std::any&
 {
     return pimpl->attached_data;
-}
-
-auto Species::elementCoefficient(const std::string& symbol) const -> double
-{
-    for(auto&& [element, coeff] : elements())
-        if(element.symbol() == symbol)
-            return coeff;
-    return 0.0;
 }
 
 auto Species::clone() const -> Species

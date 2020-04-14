@@ -42,18 +42,18 @@ auto convert(const PhreeqcElement* e) -> Element
 }
 
 /// Create the Element objects and their coefficients with given PhreeqcSpecies pointer.
-auto createElements(const PhreeqcSpecies* s) -> Species::Elements
+auto createElements(const PhreeqcSpecies* s) -> Map<Element, double>
 {
-	Species::Elements elements;
+	Map<Element, double> elements;
 	for(auto&& [element, coeff] : PhreeqcUtils::elements(s))
 		elements.emplace(convert(element), coeff);
 	return elements;
 }
 
 /// Create the Element objects and their coefficients with given PhreeqcPhase pointer.
-auto createElements(const PhreeqcPhase* p) -> Species::Elements
+auto createElements(const PhreeqcPhase* p) -> Map<Element, double>
 {
-	Species::Elements elements;
+	Map<Element, double> elements;
 	for(auto&& [element, coeff] : PhreeqcUtils::elements(p))
 		elements.emplace(convert(element), coeff);
 	return elements;
