@@ -25,30 +25,27 @@
 namespace Reaktoro {
 namespace detail {
 
-using std::pair;
-using std::string;
-using std::unordered_map;
-using std::vector;
+using StringIterator = String::iterator;
 
-auto parseElementAtom(string::iterator begin, string::iterator end) -> pair<string, string::iterator>
+auto parseElementAtom(StringIterator begin, StringIterator end) -> std::pair<String, StringIterator>
 {
     error(!isupper(*begin), "The first character in a chemical formula must be in uppercase.");
     if(begin == end) return {"", begin};
     auto endelement = find_if(begin + 1, end, [](char c){return isupper(c) || !isalpha(c);});
-    string element = string(begin, endelement);
+    String element = String(begin, endelement);
     return {element, endelement};
 }
 
-auto parseNumAtoms(string::iterator begin, string::iterator end) -> pair<double, string::iterator>
+auto parseNumAtoms(StringIterator begin, StringIterator end) -> std::pair<double, StringIterator>
 {
     if(begin == end) return {1.0, begin};
     if(!(isdigit(*begin) || *begin == '.')) return {1.0, begin};
     auto endnumber = find_if(begin, end, [](char c){return !(isdigit(c) || c == '.');});
-    double number = atof(string(begin, endnumber).c_str());
+    double number = atof(String(begin, endnumber).c_str());
     return {number, endnumber};
 }
 
-auto findMatchedParenthesis(string::iterator begin, string::iterator end) -> string::iterator
+auto findMatchedParenthesis(StringIterator begin, StringIterator end) -> StringIterator
 {
     if(begin == end) return end;
     int level = 0;
@@ -62,7 +59,7 @@ auto findMatchedParenthesis(string::iterator begin, string::iterator end) -> str
     return end;
 }
 
-auto findMatchedParenthesisReverse(string::iterator begin, string::iterator end) -> string::iterator
+auto findMatchedParenthesisReverse(StringIterator begin, StringIterator end) -> StringIterator
 {
     if(begin == end) return begin;
     int level = 0;
@@ -76,7 +73,7 @@ auto findMatchedParenthesisReverse(string::iterator begin, string::iterator end)
     return begin;
 }
 
-auto parseChemicalFormulaAux(string::iterator begin, string::iterator end, unordered_map<string, double>& result, double scalar) -> void
+auto parseChemicalFormulaAux(StringIterator begin, StringIterator end, Map<String, double>& result, double scalar) -> void
 {
     if(begin == end) return;
 
@@ -86,15 +83,15 @@ auto parseChemicalFormulaAux(string::iterator begin, string::iterator end, unord
     }
     else if(*begin == '(')
     {
-        string::iterator begin1 = begin + 1;
-        string::iterator end1   = findMatchedParenthesis(begin, end);
+        StringIterator begin1 = begin + 1;
+        StringIterator end1   = findMatchedParenthesis(begin, end);
 
         auto res = parseNumAtoms(end1 + 1, end);
 
         const double number = res.first;
 
-        string::iterator begin2 = res.second;
-        string::iterator end2   = end;
+        StringIterator begin2 = res.second;
+        StringIterator end2   = end;
 
         parseChemicalFormulaAux(begin1, end1, result, scalar * number);
         parseChemicalFormulaAux(begin2, end2, result, scalar);
@@ -105,8 +102,8 @@ auto parseChemicalFormulaAux(string::iterator begin, string::iterator end, unord
 
         const double number = res.first;
 
-        string::iterator begin1 = res.second;
-        string::iterator end1   = end;
+        StringIterator begin1 = res.second;
+        StringIterator end1   = end;
 
         parseChemicalFormulaAux(begin1, end1, result, scalar * number);
     }
@@ -115,34 +112,34 @@ auto parseChemicalFormulaAux(string::iterator begin, string::iterator end, unord
         auto res1 = parseElementAtom(begin, end);
         auto res2 = parseNumAtoms(res1.second, end);
 
-        string element = res1.first;
+        String element = res1.first;
         double natoms  = res2.first;
 
         if(result.count(element)) result[element] += scalar * natoms;
         else result[element] = scalar * natoms;
 
-        string::iterator begin1 = res2.second;
-        string::iterator end1   = end;
+        StringIterator begin1 = res2.second;
+        StringIterator end1   = end;
 
         parseChemicalFormulaAux(begin1, end1, result, scalar);
     }
 }
 
-auto parseChemicalFormula(string formula) -> std::unordered_map<std::string, double>
+auto parseChemicalFormula(String formula) -> Map<String, double>
 {
     // Parse the formula for elements and their coefficients (without charge)
-    unordered_map<string, double> result;
+    Map<String, double> result;
     parseChemicalFormulaAux(formula.begin(), formula.end(), result, 1.0);
     return result;
 }
 
-auto parseElectricChargeModeSignNumber(string formula) -> double
+auto parseElectricChargeModeSignNumber(String formula) -> double
 {
     size_t ipos = formula.find_last_of('+');
     size_t ineg = formula.find_last_of('-');
     size_t imin = std::min(ipos, ineg);
 
-    if(imin == string::npos)
+    if(imin == String::npos)
         return 0.0;
 
     int sign = (imin == ipos) ? +1 : -1;
@@ -150,12 +147,12 @@ auto parseElectricChargeModeSignNumber(string formula) -> double
     if(imin + 1 == formula.size())
         return sign;
 
-    string digits = formula.substr(imin + 1);
+    String digits = formula.substr(imin + 1);
 
     return sign * stod(digits);
 }
 
-auto parseElectricChargeModeMultipleSigns(string formula) -> double
+auto parseElectricChargeModeMultipleSigns(String formula) -> double
 {
     const auto sign = formula.back();
     const auto signval = sign == '+' ? 1 : (sign == '-' ? -1 : 0);
@@ -171,27 +168,27 @@ auto parseElectricChargeModeMultipleSigns(string formula) -> double
     else return 0;
 }
 
-auto parseElectricChargeModeNumberSignBetweenBrackets(string formula) -> double
+auto parseElectricChargeModeNumberSignBetweenBrackets(String formula) -> double
 {
     if(formula.back() != ']') return 0.0;
 
     size_t iparbegin = formula.rfind('[');
 
-    if(iparbegin == string::npos) return 0.0;
+    if(iparbegin == String::npos) return 0.0;
 
     const auto isign = formula.size() - 2;
     const auto sign = formula[isign] == '+' ? +1.0 : formula[isign] == '-' ? -1.0 : 0.0;
 
     if(sign == 0.0) return 0.0;
 
-    string digits(formula.begin() + iparbegin + 1, formula.end() - 2);
+    String digits(formula.begin() + iparbegin + 1, formula.end() - 2);
 
     if(digits.empty()) return sign;
 
     return sign * stod(digits);
 }
 
-auto parseElectricCharge(string formula) -> double
+auto parseElectricCharge(String formula) -> double
 {
     const auto [formula0, suffix] = splitSpeciesNameSuffix(formula);
 
@@ -205,12 +202,12 @@ auto parseElectricCharge(string formula) -> double
 
 } // namespace detail
 
-auto parseChemicalFormula(const std::string& formula) -> std::unordered_map<std::string, double>
+auto parseChemicalFormula(const String& formula) -> Map<String, double>
 {
     return detail::parseChemicalFormula(formula);
 }
 
-auto parseElectricCharge(const std::string& formula) -> double
+auto parseElectricCharge(const String& formula) -> double
 {
     return detail::parseElectricCharge(formula);
 }
@@ -218,36 +215,45 @@ auto parseElectricCharge(const std::string& formula) -> double
 struct ChemicalFormula::Impl
 {
     /// The chemical formula of the substance (e.g., `HCO3-`).
-    std::string formula;
+    String formula;
 
     /// The element symbols and their coefficients (e.g., `{{"H", 1}, {"C", 1}, {"O", 3}}` for `HCO3-`).
-    ElementSymbols symbols;
+    Map<String, double> elements;
 
     /// The electric charge in the chemical formula (e.g., `-1` for `HCO3-`).
     double charge = {};
 
     /// Construct an object of type Impl.
     Impl()
-    {
-    }
+    {}
 
     /// Construct an object of type Impl with given formula.
-    Impl(std::string formula)
-    : formula(formula), symbols(parseChemicalFormula(formula)), charge(parseElectricCharge(formula))
-    {
-    }
+    Impl(String formula)
+    : formula(formula), elements(parseChemicalFormula(formula)), charge(parseElectricCharge(formula))
+    {}
 
     /// Construct an object of type Impl with given data.
-    Impl(std::string formula, ElementSymbols symbols, double charge)
-    : formula(formula), symbols(symbols), charge(charge)
+    Impl(String formula, Map<String, double> elements, double charge)
+    : formula(formula), elements(elements), charge(charge)
+    {}
+
+    /// Return the symbols of the elements.
+    auto symbols() const -> Strings
     {
+        return vectorize(elements, lambda(pair, pair.first));
+    }
+
+    /// Return the coefficients of the elements.
+    auto coefficients() const -> Vec<double>
+    {
+        return vectorize(elements, lambda(pair, pair.second));
     }
 
     /// Return the coefficient of an element symbol in the chemical formula.
-    auto coefficient(const std::string& symbol) const -> double
+    auto coefficient(const String& symbol) const -> double
     {
-        const auto iter = symbols.find(symbol);
-        if(iter != symbols.end()) return iter->second;
+        const auto iter = elements.find(symbol);
+        if(iter != elements.end()) return iter->second;
         return 0.0;
     }
 };
@@ -257,27 +263,40 @@ ChemicalFormula::ChemicalFormula()
 {}
 
 ChemicalFormula::ChemicalFormula(const char* formula)
-: ChemicalFormula(std::string(formula))
-{
-}
+: ChemicalFormula(String(formula))
+{}
 
-ChemicalFormula::ChemicalFormula(std::string formula)
+ChemicalFormula::ChemicalFormula(String formula)
 : pimpl(new Impl(formula))
-{
-}
+{}
 
-ChemicalFormula::ChemicalFormula(std::string formula, ElementSymbols symbols, double charge)
+ChemicalFormula::ChemicalFormula(String formula, Map<String, double> symbols, double charge)
 : pimpl(new Impl(formula, symbols, charge))
 {}
 
-auto ChemicalFormula::str() const -> const std::string&
+auto ChemicalFormula::str() const -> const String&
 {
     return pimpl->formula;
 }
 
-auto ChemicalFormula::symbols() const -> const ElementSymbols&
+auto ChemicalFormula::elements() const -> Map<String, double>
 {
-    return pimpl->symbols;
+    return pimpl->elements;
+}
+
+auto ChemicalFormula::symbols() const -> Strings
+{
+    return pimpl->symbols();
+}
+
+auto ChemicalFormula::coefficients() const -> Vec<double>
+{
+    return pimpl->coefficients();
+}
+
+auto ChemicalFormula::coefficient(const String& symbol) const -> double
+{
+    return pimpl->coefficient(symbol);
 }
 
 auto ChemicalFormula::charge() const -> double
@@ -285,15 +304,9 @@ auto ChemicalFormula::charge() const -> double
     return pimpl->charge;
 }
 
-
-auto ChemicalFormula::coefficient(const std::string& symbol) const -> double
-{
-    return pimpl->coefficient(symbol);
-}
-
 auto ChemicalFormula::equivalent(const ChemicalFormula& other) const -> bool
 {
-    return symbols() == other.symbols() && charge() == other.charge();
+    return elements() == other.elements() && charge() == other.charge();
 }
 
 auto ChemicalFormula::equivalent(const ChemicalFormula& f1, const ChemicalFormula& f2) -> bool
@@ -301,9 +314,14 @@ auto ChemicalFormula::equivalent(const ChemicalFormula& f1, const ChemicalFormul
     return f1.equivalent(f2);
 }
 
-ChemicalFormula::operator std::string() const
+ChemicalFormula::operator String() const
 {
     return str();
+}
+
+ChemicalFormula::operator Map<String, double>() const
+{
+    return pimpl->elements;
 }
 
 auto operator<(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool

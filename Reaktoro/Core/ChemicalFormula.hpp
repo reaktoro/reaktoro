@@ -17,11 +17,8 @@
 
 #pragma once
 
-// C++ includes
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <vector>
+// Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 
 namespace Reaktoro {
 
@@ -29,9 +26,6 @@ namespace Reaktoro {
 class ChemicalFormula
 {
 public:
-    /// The type for the container of chemical element symbols in the formula and their corresponding coefficients.
-    using ElementSymbols = std::unordered_map<std::string, double>;
-
     /// Construct a default ChemicalFormula object.
     ChemicalFormula();
 
@@ -41,25 +35,31 @@ public:
 
     /// Construct a ChemicalFormula object with given formula.
     /// @param formula The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    ChemicalFormula(std::string formula);
+    ChemicalFormula(String formula);
 
     /// Construct a ChemicalFormula object with given formula, element symbols, and charge.
     /// @param formula The chemical formula of the species (e.g., `HCO3-`).
     /// @param symbols The element symbols and their coefficients (e.g., `{{"H", 1}, {"C", 1}, {"O", 3}}` for `HCO3-`).
     /// @param charge The electric charge in the chemical formula (e.g., `-1` for `HCO3-`).
-    ChemicalFormula(std::string formula, ElementSymbols symbols, double charge);
+    ChemicalFormula(String formula, Map<String, double> symbols, double charge);
 
     /// Return the chemical formula of the substance as a string.
-    auto str() const -> const std::string&;
+    auto str() const -> const String&;
 
     /// Return the element symbols and their coefficients in the chemical formula.
-    auto symbols() const -> const ElementSymbols&;
+    auto elements() const -> Map<String, double>;
+
+    /// Return the element symbols in the chemical formula.
+    auto symbols() const -> Strings;
+
+    /// Return the coefficients of the elements in the chemical formula.
+    auto coefficients() const -> Vec<double>;
+
+    /// Return the coefficient of an element symbol in the chemical formula.
+    auto coefficient(const String& symbol) const -> double;
 
     /// Return the electric charge of the chemical formula.
     auto charge() const -> double;
-
-    /// Return the coefficient of an element symbol in the chemical formula.
-    auto coefficient(const std::string& symbol) const -> double;
 
     /// Return true if another chemical formula is equivalent to this one.
     /// Two chemical formulas are equivalent if they have the same elemental
@@ -73,7 +73,10 @@ public:
     static auto equivalent(const ChemicalFormula& f1, const ChemicalFormula& f2) -> bool;
 
     /// Convert this ChemicalFormula object into a string.
-    operator std::string() const;
+    operator String() const;
+
+    /// Convert this ChemicalFormula object into a Map<String, double>.
+    operator Map<String, double>() const;
 
 private:
     struct Impl;
@@ -111,7 +114,7 @@ auto operator==(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool;
 /// auto formula10 = parseChemicalFormula("CO3--");
 /// auto formula11 = parseChemicalFormula("CO3-2");
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-auto parseChemicalFormula(const std::string& formula) -> std::unordered_map<std::string, double>;
+auto parseChemicalFormula(const String& formula) -> Map<String, double>;
 
 /// Return the electric charge in a chemical formula.
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -129,6 +132,6 @@ auto parseChemicalFormula(const std::string& formula) -> std::unordered_map<std:
 /// auto charge11 = parseElectricCharge("CO3-2");        \\ charge11 === -2
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// @see parseChemicalFormula
-auto parseElectricCharge(const std::string& formula) -> double;
+auto parseElectricCharge(const String& formula) -> double;
 
 } // namespace Reaktoro
