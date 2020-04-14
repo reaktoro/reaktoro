@@ -69,6 +69,16 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     REQUIRE( res[3] == 6 );
     REQUIRE( res[4] == 8 );
 
+    // Test the vectorize function
+    std::unordered_map<std::string, int> map { {"C", 1}, {"A", 2}, {"B", 3} };
+
+    res = vectorize(map, lambda(x, x.second));
+
+    REQUIRE( res.size() == 3 );
+    REQUIRE( contains(res, 1) );
+    REQUIRE( contains(res, 2) );
+    REQUIRE( contains(res, 3) );
+
     // Test the merge function
     std::vector<int> vec1 = { 3, 2, 1 };
     std::vector<int> vec2 = { 5, 2, 3, 4 };
