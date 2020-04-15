@@ -67,16 +67,16 @@ struct ChemicalPropsData
     /// The pressure derivative at constant temperature of the excess molar volume of each phase in the system (in m3/(mol*Pa)).
     ArrayXr VexP;
 
-    /// The excess molar Gibbs energy of each phase in the system (in units of J/mol).
+    /// The excess molar Gibbs energy of each phase in the system (in J/mol).
     ArrayXr Gex;
 
-    /// The excess molar enthalpy of each phase in the system (in units of J/mol).
+    /// The excess molar enthalpy of each phase in the system (in J/mol).
     ArrayXr Hex;
 
-    /// The excess molar isobaric heat capacity of each phase in the system (in units of J/(mol*K)).
+    /// The excess molar isobaric heat capacity of each phase in the system (in J/(mol*K)).
     ArrayXr Cpex;
 
-    /// The excess molar isochoric heat capacity of each phase in the system (in units of J/(mol*K)).
+    /// The excess molar isochoric heat capacity of each phase in the system (in J/(mol*K)).
     ArrayXr Cvex;
 
     /// The activity coefficients (natural log) of the species in the system.
@@ -95,6 +95,12 @@ public:
 
     /// Construct a ChemicalProps object.
     ChemicalProps(const ChemicalSystem& system, const ChemicalPropsData& data);
+
+    /// Update the chemical properties of the chemical system.
+    /// @param T The temperature in the system (in K)
+    /// @param P The pressure in the system (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    auto update(double T, double P, VectorXrConstRef n) -> void;
 
     /// Return the chemical system associated with these chemical properties.
     auto system() const -> const ChemicalSystem&;
@@ -152,6 +158,15 @@ public:
 
     /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol*K)).
     auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef;
+
+    /// Return the total volume of the fluid phases in the chemical system.
+    auto fluidVolume() const -> real;
+
+    /// Return the total volume of the solid phases in the chemical system.
+    auto solidVolume() const -> real;
+
+    /// Return the total volume of the chemical system, i.e., the sum of phase volumes.
+    auto volume() const -> real;
 
 private:
     /// The chemical system associated with these chemical properties.
