@@ -19,19 +19,19 @@ from reaktoro import ChemicalState, equilibrate, EquilibriumSolver, EquilibriumO
         (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume")),
     ],
     ids=[
-        "Eq Prob-H2O CO2 NaCl and Halite 60C 300bar",
-        "Eq Prob-H2O CO2 NaCl and Halite already dissolved 60C 300bar",
-        "Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
-        "Eq problem using ThermoFun database aq17",
-        "InvEq Prob-H O Na Cl Ca Mg C with fixed amount and activity",
-        "InvEq Prob-H O Na Cl Ca Mg C with defined pH",
-        "InvEq Prob-H O Na Cl Ca C Calcite with defined pH and fixed amount",
-        "InvEq Prob-H2O CO2 NaCl CaCO3 Calcite with fixed species mass",
-        "InvEq Prob-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity",
-        "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
+        "H2O CO2 NaCl and Halite 60C 300bar",
+        "H2O CO2 NaCl and Halite already dissolved 60C 300bar",
+        "H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
+        "ThermoFun database aq17",
+        "InvEq-H O Na Cl Ca Mg C with fixed amount and activity",
+        "InvEq-H O Na Cl Ca Mg C with defined pH",
+        "InvEq-H O Na Cl Ca C Calcite with defined pH and fixed amount",
+        "InvEq-H2O CO2 NaCl CaCO3 Calcite with fixed species mass",
+        "InvEq-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity",
+        "InvEq-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrium_solver_solve_overload_1(setup, state_regression):
+def test_solve_overload_1(setup, state_regression):
     """
     An integration test that checks result's reproducibility of
     the calculation of an equilibrium of a state using
@@ -62,13 +62,13 @@ def test_equilibrium_solver_solve_overload_1(setup, state_regression):
         (pytest.lazy_fixture("equilibrium_problem_using_thermofun_aq17_database")),
     ],
     ids=[
-        "Eq Prob-H2O CO2 NaCl and Halite 60C 300bar",
-        "Eq Prob-H2O CO2 NaCl and Halite already dissolved 60C 300bar",
-        "Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
-        "Eq problem using ThermoFun database aq17",
+        "H2O CO2 NaCl and Halite 60C 300bar",
+        "H2O CO2 NaCl and Halite already dissolved 60C 300bar",
+        "H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
+        "ThermoFun database aq17",
     ],
 )
-def test_equilibrium_solver_solve_overload_2(setup, state_regression):
+def test_solve_overload_2(setup, state_regression):
     """
     An integration test that checks result's reproducibility of
     the calculation of an equilibrium of a state using
@@ -97,13 +97,13 @@ def test_equilibrium_solver_solve_overload_2(setup, state_regression):
         (pytest.lazy_fixture("equilibrium_problem_using_thermofun_aq17_database")),
     ],
     ids=[
-        "Eq Prob-H2O CO2 NaCl and Halite 60C 300bar",
-        "Eq Prob-H2O CO2 NaCl and Halite already dissolved 60C 300bar",
-        "Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
-        "Eq problem using ThermoFun database aq17",
+        "H2O CO2 NaCl and Halite 60C 300bar",
+        "H2O CO2 NaCl and Halite already dissolved 60C 300bar",
+        "H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
+        "ThermoFun database aq17",
     ],
 )
-def test_equilibrium_solver_solve_overload_3(setup, state_regression):
+def test_solve_overload_3(setup, state_regression):
     """
     An integration test that checks result's reproducibility of
     the calculation of an equilibrium of a state using
@@ -142,19 +142,19 @@ def test_equilibrium_solver_solve_overload_3(setup, state_regression):
         (pytest.lazy_fixture("equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume")),
     ],
     ids=[
-        "Eq Prob-H2O CO2 NaCl and Halite 60C 300bar",
-        "Eq Prob-H2O CO2 NaCl and Halite already dissolved 60C 300bar",
-        "Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
-        "Eq problem using ThermoFun database aq17",
-        "InvEq Prob-H O Na Cl Ca Mg C with fixed amount and activity",
-        "InvEq Prob-H O Na Cl Ca Mg C with defined pH",
-        "InvEq Prob-H O Na Cl Ca C Calcite with defined pH and fixed amount",
-        "InvEq Prob-H2O CO2 NaCl CaCO3 Calcite with fixed species mass",
-        "InvEq Prob-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity",
-        "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
+        "H2O CO2 NaCl and Halite 60C 300bar",
+        "H2O CO2 NaCl and Halite already dissolved 60C 300bar",
+        "H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
+        "ThermoFun database aq17",
+        "InvEq-H O Na Cl Ca Mg C with fixed amount and activity",
+        "InvEq-H O Na Cl Ca Mg C with defined pH",
+        "InvEq-H O Na Cl Ca C Calcite with defined pH and fixed amount",
+        "InvEq-H2O CO2 NaCl CaCO3 Calcite with fixed species mass",
+        "InvEq-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity",
+        "InvEq-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrium_solver_approx_overload_1(setup, state_regression):
+def test_approx_overload_1(setup, state_regression):
     """
     An integration test that checks result's reproducibility of
     the calculation of an equilibrium of a state using
@@ -186,13 +186,13 @@ def test_equilibrium_solver_approx_overload_1(setup, state_regression):
         (pytest.lazy_fixture("equilibrium_problem_using_thermofun_aq17_database")),
     ],
     ids=[
-        "Eq Prob-H2O CO2 NaCl and Halite 60C 300bar",
-        "Eq Prob-H2O CO2 NaCl and Halite already dissolved 60C 300bar",
-        "Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
-        "Eq problem using ThermoFun database aq17",
+        "H2O CO2 NaCl and Halite 60C 300bar",
+        "H2O CO2 NaCl and Halite already dissolved 60C 300bar",
+        "H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
+        "ThermoFun database aq17",
     ],
 )
-def test_equilibrium_solver_approx_overload_2(setup, state_regression):
+def test_approx_overload_2(setup, state_regression):
     """
     An integration test that checks result's reproducibility of
     the calculation of an equilibrium of a state using
@@ -223,13 +223,13 @@ def test_equilibrium_solver_approx_overload_2(setup, state_regression):
         (pytest.lazy_fixture("equilibrium_problem_using_thermofun_aq17_database")),
     ],
     ids=[
-        "Eq Prob-H2O CO2 NaCl and Halite 60C 300bar",
-        "Eq Prob-H2O CO2 NaCl and Halite already dissolved 60C 300bar",
-        "Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
-        "Eq problem using ThermoFun database aq17",
+        "H2O CO2 NaCl and Halite 60C 300bar",
+        "H2O CO2 NaCl and Halite already dissolved 60C 300bar",
+        "H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
+        "ThermoFun database aq17",
     ],
 )
-def test_equilibrium_solver_approx_overload_3(setup, state_regression):
+def test_approx_overload_3(setup, state_regression):
     """
     An integration test that checks result's reproducibility of
     the calculation of an equilibrium of a state using
