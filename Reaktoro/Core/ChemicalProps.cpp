@@ -51,6 +51,11 @@ ChemicalProps::ChemicalProps(const ChemicalSystem& system, const ChemicalPropsDa
 : sys(system), props(data)
 {}
 
+auto ChemicalProps::update(double T, double P, VectorXrConstRef n) -> void
+{
+    *this = sys.props(T, P, n);
+}
+
 auto ChemicalProps::system() const -> const ChemicalSystem&
 {    return sys;
 }
@@ -191,6 +196,32 @@ auto ChemicalProps::standardHeatCapacitiesConstP() const -> ArrayXrConstRef
 auto ChemicalProps::standardHeatCapacitiesConstV() const -> ArrayXrConstRef
 {
     return props.Cv0;
+}
+
+auto ChemicalProps::fluidVolume() const -> real
+{
+    real sum = 0.0;
+    for(auto i = 0; i < sys.phases().size(); ++i)
+        if(sys.phase(i).stateOfMatter() != StateOfMatter::Solid)
+            sum += phase(i).volume();
+    return sum;
+}
+
+auto ChemicalProps::solidVolume() const -> real
+{
+    real sum = 0.0;
+    for(auto i = 0; i < sys.phases().size(); ++i)
+        if(sys.phase(i).stateOfMatter() == StateOfMatter::Solid)
+            sum += phase(i).volume();
+    return sum;
+}
+
+auto ChemicalProps::volume() const -> real
+{
+    real sum = 0.0;
+    for(auto i = 0; i < sys.phases().size(); ++i)
+        sum += phase(i).volume();
+    return sum;
 }
 
 } // namespace Reaktoro
