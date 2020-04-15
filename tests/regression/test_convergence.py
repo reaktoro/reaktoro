@@ -9,11 +9,27 @@ def get_test_data_dir():
     return Path(os.path.abspath(__file__)).parents[1] / "data"
 
 
+def _add_lumped_oil_to_database(db):
+    lumped_oil_db = reaktoro.Database(str(get_test_data_dir() / 'lumped_oil.xml'))
+
+    element_names_in_db = set(e.name() for e in db.elements())
+    for element in lumped_oil_db.elements():
+        if element.name() not in element_names_in_db:
+            db.addElement(element)
+    
+    for species in lumped_oil_db.gaseousSpecies():
+        db.addGaseousSpecies(species)
+    
+    for species in lumped_oil_db.liquidSpecies():
+        db.addLiquidSpecies(species)
+
+
 def test_convergence_with_liquid_phase(num_regression):
     temperature = 343.15
     pressure = 1323.9767e5
 
-    db = reaktoro.Database(str(get_test_data_dir() / 'supcrt07_with_lumped_oil_full.xml'))
+    db = reaktoro.Database('supcrt07.xml')
+    _add_lumped_oil_to_database(db)
 
     editor = reaktoro.ChemicalEditor(db)
 
@@ -33,7 +49,7 @@ def test_convergence_with_liquid_phase(num_regression):
         "Sr++",
     ]
     gaseous_species = ["CO2(g)", "H2S(g)", "CH4(g)"]
-    oil_species = ["H2S(liq)", "CO2(liq)", "LumpOil(liq)"]
+    oil_species = ["H2S(liq)", "CO2(liq)", "LumpedOil(liq)"]
     minerals = ["Anhydrite", "Barite", "Calcite", "Celestite", "Siderite", "Pyrrhotite"]
 
     editor.addAqueousPhase(aqueous_species)
@@ -84,7 +100,7 @@ def test_convergence_with_liquid_phase(num_regression):
     # LIQUID
     state.setSpeciesAmount("CO2(liq)", 821887.77968393208)
     state.setSpeciesAmount("H2S(liq)", 240596.16100715694)
-    state.setSpeciesAmount("LumpOil(liq)", 12676647027.415014)
+    state.setSpeciesAmount("LumpedOil(liq)", 12676647027.415014)
 
     problem.addState(state)
 
