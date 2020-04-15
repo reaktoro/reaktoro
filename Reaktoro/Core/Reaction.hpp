@@ -34,20 +34,20 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
-class ChemicalProperties;
+class ChemicalProps;
 
 /// The function signature of the rate of a reaction (in units of mol/s).
 /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
 /// @return The rate of the reaction and its partial derivatives (in units of mol/s)
 /// @see Reaction
 /// @ingroup Core
-using ReactionRateFunction = std::function<real(const ChemicalProperties&)>;
+using ReactionRateFunction = std::function<real(const ChemicalProps&)>;
 
 /// The function signature of the rates of a collection of reactions (in units of mol/s).
 /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
 /// @see Reaction
 /// @ingroup Core
-using ReactionRateVectorFunction = std::function<VectorXd(const ChemicalProperties&)>;
+using ReactionRateVectorFunction = std::function<VectorXd(const ChemicalProps&)>;
 
 /// Provide a computational representation of a chemical reaction.
 /// The Reaction class provides a representation of a chemical reaction
@@ -113,7 +113,7 @@ public:
 
     /// Calculate the equilibrium constant of the reaction (in natural log).
     /// @param properties The chemical properties of the system
-    auto lnEquilibriumConstant(const ChemicalProperties& properties) const -> real;
+    auto lnEquilibriumConstant(const ChemicalProps& properties) const -> real;
 
     /// Calculate the reaction quotient of the reaction (in natural log scale).
     /// The reaction quotient of a reaction is defined as:
@@ -126,14 +126,14 @@ public:
     /// convention for the stoichiometric coefficients is: *positive* for
     /// products, *negative* for reactants.
     /// @param properties The chemical properties of the system
-    auto lnReactionQuotient(const ChemicalProperties& properties) const -> real;
+    auto lnReactionQuotient(const ChemicalProps& properties) const -> real;
 
     /// Calculate the equilibrium index of the reaction as @f$\ln(Q/K)@f$.
-    auto lnEquilibriumIndex(const ChemicalProperties& properties) const -> real;
+    auto lnEquilibriumIndex(const ChemicalProps& properties) const -> real;
 
     /// Calculate the rate of the reaction (in units of mol/s).
     /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
-    auto rate(const ChemicalProperties& properties) const -> real;
+    auto rate(const ChemicalProps& properties) const -> real;
 
 private:
     struct Impl;

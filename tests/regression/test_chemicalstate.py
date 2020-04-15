@@ -220,12 +220,12 @@ def test_chemical_state():
     state.setSpeciesAmounts(n)
 
     # Calculate the chemical properties of the state
-    properties = state.properties()
+    properties = state.props()
 
-    # Check the usage state.properties().someProperty() works
-    assert all(state.properties().phaseVolumes().val == properties.phaseVolumes().val)
-    assert all(state.properties().lnActivities().val == properties.lnActivities().val)
-    assert all(state.properties().chemicalPotentials().val == properties.chemicalPotentials().val)
+    # Check the usage state.props().someProperty() works
+    assert all(state.props().phaseVolumes().val == properties.phaseVolumes().val)
+    assert all(state.props().lnActivities().val == properties.lnActivities().val)
+    assert all(state.props().chemicalPotentials().val == properties.chemicalPotentials().val)
 
     # Get the volumes of the phases
     volumes = properties.phaseVolumes().val
@@ -244,49 +244,49 @@ def test_chemical_state():
     state.scalePhaseVolume(0, 1.0)
     state.scalePhaseVolume(1, 1.0)
     state.scalePhaseVolume(2, 1.0)
-    assert state.properties().phaseVolumes().val == approx(1.0)
+    assert state.props().phaseVolumes().val == approx(1.0)
 
     # Scale the species amounts in each phase using their indices such that each phase have 1000 ml (= 1e-3 m3)
     state.scalePhaseVolume(0, 1000.0, "ml")
     state.scalePhaseVolume(1, 1000.0, "ml")
     state.scalePhaseVolume(2, 1000.0, "ml")
-    assert state.properties().phaseVolumes().val == approx(1.0e-3)
+    assert state.props().phaseVolumes().val == approx(1.0e-3)
 
     # Scale the species amounts in each phase using their names such that each phase have 1 m3
     state.scalePhaseVolume("Aqueous", 1.0)
     state.scalePhaseVolume("Gaseous", 1.0)
     state.scalePhaseVolume("Graphite", 1.0)
-    assert state.properties().phaseVolumes().val == approx(1.0)
+    assert state.props().phaseVolumes().val == approx(1.0)
 
     # Scale the species amounts in each phase using their names such that each phase have 1000 ml (= 1e-3 m3)
     state.scalePhaseVolume("Aqueous", 1000.0, "ml")
     state.scalePhaseVolume("Gaseous", 1000.0, "ml")
     state.scalePhaseVolume("Graphite", 1000.0, "ml")
-    assert state.properties().phaseVolumes().val == approx(1.0e-3)
+    assert state.props().phaseVolumes().val == approx(1.0e-3)
 
     # Scale the species amounts in each fluid phase such that the total fluid volume is 1 m3
     state.scaleFluidVolume(1.0)
-    assert state.properties().fluidVolume().val == approx(1.0)
+    assert state.props().fluidVolume().val == approx(1.0)
 
     # Scale the species amounts in each fluid phase such that the total fluid volume is 1 cm3 (= 1e-6 m3)
     state.scaleFluidVolume(1.0, "cm3")
-    assert state.properties().fluidVolume().val == approx(1.0e-6)
+    assert state.props().fluidVolume().val == approx(1.0e-6)
 
     # Scale the species amounts in each solid phase such that the total solid volume is 1 m3
     state.scaleSolidVolume(1.0)
-    assert state.properties().solidVolume().val == approx(1.0)
+    assert state.props().solidVolume().val == approx(1.0)
 
     # Scale the species amounts in each solid phase such that the total solid volume is 1 cm3 (= 1e-6 m3)
     state.scaleSolidVolume(100.0, "cm3")
-    assert state.properties().solidVolume().val == approx(100.0e-6)
+    assert state.props().solidVolume().val == approx(100.0e-6)
 
     # Scale the species amounts such that the total system volume is 1 cm3 (= 1e-6 m3)
     state.scaleVolume(1.0)
-    assert state.properties().volume().val == approx(1.0)
+    assert state.props().volume().val == approx(1.0)
 
     # Scale the species amounts such that the total system volume is 100 ml (= 100e-6 m3)
     state.scaleVolume(100.0, "ml")
-    assert state.properties().volume().val == approx(100.0e-6)
+    assert state.props().volume().val == approx(100.0e-6)
 
 
 def test_chemical_state_output_with_gaseous_phase_only(file_regression, tmpdir):

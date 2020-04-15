@@ -21,7 +21,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 
 namespace Reaktoro {
@@ -132,7 +132,7 @@ auto ReactionSystem::system() const -> const ChemicalSystem&
     return pimpl->system;
 }
 
-auto ReactionSystem::lnEquilibriumConstants(const ChemicalProperties& properties) const -> VectorXr
+auto ReactionSystem::lnEquilibriumConstants(const ChemicalProps& properties) const -> VectorXr
 {
     const unsigned num_reactions = numReactions();
     VectorXr res(num_reactions);
@@ -141,7 +141,7 @@ auto ReactionSystem::lnEquilibriumConstants(const ChemicalProperties& properties
     return res;
 }
 
-auto ReactionSystem::lnReactionQuotients(const ChemicalProperties& properties) const -> VectorXd
+auto ReactionSystem::lnReactionQuotients(const ChemicalProps& properties) const -> VectorXd
 {
     const unsigned num_reactions = numReactions();
     const unsigned num_species = system().numSpecies();
@@ -151,7 +151,7 @@ auto ReactionSystem::lnReactionQuotients(const ChemicalProperties& properties) c
     return res;
 }
 
-auto ReactionSystem::rates(const ChemicalProperties& properties) const -> VectorXd
+auto ReactionSystem::rates(const ChemicalProps& properties) const -> VectorXd
 {
     const unsigned num_reactions = numReactions();
     const unsigned num_species = system().numSpecies();

@@ -21,7 +21,7 @@
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 
@@ -30,7 +30,7 @@ namespace Reaktoro {
 void exportReaction(py::module& m)
 {
     auto rate1 = static_cast<const ReactionRateFunction&(Reaction::*)() const>(&Reaction::rate);
-    auto rate2 = static_cast<ChemicalScalar(Reaction::*)(const ChemicalProperties&) const>(&Reaction::rate);
+    auto rate2 = static_cast<ChemicalScalar(Reaction::*)(const ChemicalProps&) const>(&Reaction::rate);
 
     py::class_<Reaction>(m, "Reaction")
         .def(py::init<>())

@@ -27,7 +27,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalProperties;
+class ChemicalProps;
 class ChemicalSystem;
 
 /// Provides a computational representation of the state of a multiphase chemical system.
@@ -365,7 +365,7 @@ public:
     auto phaseStabilityIndices() const -> VectorXr;
 
     /// Return the chemical properties of the system.
-    auto properties() const -> ChemicalProperties;
+    auto props() const -> ChemicalProps;
 
     /// Output the ChemicalState instance to a stream.
     auto output(std::ostream& out, int precision = 6) const -> void;

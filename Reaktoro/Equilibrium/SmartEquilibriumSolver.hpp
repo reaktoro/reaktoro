@@ -26,7 +26,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalProperties;
+class ChemicalProps;
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
@@ -80,7 +80,7 @@ public:
     auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
 
     /// Return the chemical properties of the calculated equilibrium state.
-    auto properties() const -> const ChemicalProperties&;
+    auto props() const -> const ChemicalProps&;
 
 private:
     struct Impl;

@@ -26,12 +26,12 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalProperties;
+class ChemicalProps;
 class ChemicalSystem;
 class ReactionEquation;
 
 /// The signature of a function that calculates a single chemical property.
-using ChemicalPropertyFunction = std::function<real(const ChemicalProperties&)>;
+using ChemicalPropertyFunction = std::function<real(const ChemicalProps&)>;
 
 /// The namespace of all chemical property functions.
 /// @see ChemicalPropertyFunction
@@ -56,10 +56,10 @@ auto pE(const ChemicalSystem& system) -> ChemicalPropertyFunction;
 /// Use this method to specify a half reaction for the calculation of pE.
 /// For example:
 /// ~~~
-/// ChemicalProperties properties(system);
-/// properties.update(T, P, n);
-/// properties.aqueous().pE("Fe++ = Fe+++ + e-");
-/// properties.aqueous().pE("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)");
+/// ChemicalProps props(system);
+/// props.update(T, P, n);
+/// props.aqueous().pE("Fe++ = Fe+++ + e-");
+/// props.aqueous().pE("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)");
 /// ~~~
 /// Note that the electro species `e-` must be present in the half reaction.
 /// If the chemical system has no aqueous phase, then zero is returned.
@@ -75,10 +75,10 @@ auto Eh(const ChemicalSystem& system) -> ChemicalPropertyFunction;
 /// Use this method to specify a half reaction for the calculation of Eh.
 /// For example:
 /// ~~~
-/// ChemicalProperties properties(system);
-/// properties.update(T, P, n);
-/// properties.aqueous().Eh("Fe++ = Fe+++ + e-");
-/// properties.aqueous().Eh("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)");
+/// ChemicalProps props(system);
+/// props.update(T, P, n);
+/// props.aqueous().Eh("Fe++ = Fe+++ + e-");
+/// props.aqueous().Eh("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)");
 /// ~~~
 /// Note that the electro species `e-` must be present in the half reaction.
 /// If the chemical system has no aqueous phase, then zero is returned.

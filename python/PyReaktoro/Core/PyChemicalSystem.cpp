@@ -18,7 +18,7 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>

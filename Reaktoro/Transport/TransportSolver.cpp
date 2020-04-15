@@ -43,14 +43,14 @@ ChemicalField::ChemicalField(Index size, const ChemicalSystem& system)
 : m_size(size),
   m_system(system),
   m_states(size, ChemicalState(system)),
-  m_properties(size, ChemicalProperties(system))
+  m_props(size, ChemicalProps(system))
 {}
 
 ChemicalField::ChemicalField(Index size, const ChemicalState& state)
 : m_size(size),
   m_system(state.system()),
   m_states(size, state),
-  m_properties(size, state.properties())
+  m_props(size, state.props())
 {}
 
 auto ChemicalField::set(const ChemicalState& state) -> void

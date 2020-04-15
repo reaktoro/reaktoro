@@ -70,7 +70,7 @@ def test_chemical_system():
     bp = [ Ap[j] @ np[j] for j in range(Np) ]
 
     # Calculate the chemical properties of the state
-    properties = system.properties(T, P, n)
+    properties = system.props(T, P, n)
 
     # -------------------------------------------------------------------------
     # Check methods ChemicalSystem::num(Elements|Species|Phases)
@@ -277,7 +277,7 @@ def test_chemical_system():
         assert system.elementAmountInSpecies(ielement, [], n) == approx(0.0)
         assert system.elementAmountInSpecies(ielement, range(Ns), n) == approx(b[ielement])
 
-    # Check the usage system.properties(T, P, n).someProperty() works
-    assert all(system.properties(T, P, n).phaseVolumes().val == properties.phaseVolumes().val)
-    assert all(system.properties(T, P, n).lnActivities().val == properties.lnActivities().val)
-    assert all(system.properties(T, P, n).chemicalPotentials().val == properties.chemicalPotentials().val)
+    # Check the usage system.props(T, P, n).someProperty() works
+    assert all(system.props(T, P, n).phaseVolumes().val == properties.phaseVolumes().val)
+    assert all(system.props(T, P, n).lnActivities().val == properties.lnActivities().val)
+    assert all(system.props(T, P, n).chemicalPotentials().val == properties.chemicalPotentials().val)

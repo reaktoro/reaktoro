@@ -13,7 +13,7 @@ def convert_reaktoro_state_to_dict(state, exclude):
     b = state.elementAmounts()
     R = 8.314462618  # universal gas constant in J/(mol*K)
 
-    properties = state.properties()
+    properties = state.props()
 
     system = state.system()
 

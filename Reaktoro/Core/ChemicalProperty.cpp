@@ -21,7 +21,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
@@ -57,7 +57,7 @@ auto ChemicalProperty::ionicStrength(const ChemicalSystem& system) -> ChemicalPr
 
     // Check if there is an aqueous phase in the system
     if(iaqueousphase >= system.numPhases())
-        return [=](const ChemicalProperties&) { return 0.0; };
+        return [=](const ChemicalProps&) { return 0.0; };
 
     // The index of the first aqueous species
     const Index ifirst = system.indexFirstSpeciesInPhase(iaqueousphase);
@@ -69,14 +69,14 @@ auto ChemicalProperty::ionicStrength(const ChemicalSystem& system) -> ChemicalPr
     const Index iwater = indexWaterSpecies(system);
 
     // The electrical charges of the aqueous species
-    const VectorXr za = rows(charges(system.species()), ifirst, num_aqueous);
+    const ArrayXr za = rows(charges(system.species()), ifirst, num_aqueous);
 
-    ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
+    ChemicalPropertyFunction f = [=](const ChemicalProps& props)
     {
-        const auto n = properties.composition();
-        const auto na = rows(n, ifirst, num_aqueous);
+        const auto n = props.speciesAmounts();
+        const auto na = n.segment(ifirst, num_aqueous);
         const auto nw = n[iwater];
-        real res = 0.5 * sum(na % za % za)/(nw * waterMolarMass);
+        real res = 0.5 * (na * za * za).sum()/(nw * waterMolarMass);
         return res;
     };
 
@@ -91,11 +91,11 @@ auto ChemicalProperty::pH(const ChemicalSystem& system) -> ChemicalPropertyFunct
 
     // Check if there is an aqueous phase in the system
     if(iaqueousphase >= system.numPhases())
-        return [=](const ChemicalProperties&) { return 0.0; };
+        return [=](const ChemicalProps&) { return 0.0; };
 
-    ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
+    ChemicalPropertyFunction f = [=](const ChemicalProps& props)
     {
-        real res = -properties.lnActivities()[ihydron]/ln_10;
+        real res = -props.lnActivities()[ihydron]/ln_10;
         return res;
     };
 
@@ -113,37 +113,37 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
 
     // // Check if there is an aqueous phase in the system
     // if(iaqueousphase >= system.numPhases())
-    //     return [=](const ChemicalProperties&) { return 0.0; };
+    //     return [=](const ChemicalProps&) { return 0.0; };
 
-    // ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
+    // ChemicalPropertyFunction f = [=](const ChemicalProps& props)
     // {
     //     // The amounts of the aqueous species
-    //     const auto na = rows(properties.composition(), ifirst, num_aqueous);
+    //     const auto na = rows(props.speciesAmounts(), ifirst, num_aqueous);
 
     //     // The ln amounts of aqueous species
-    //     const VectorXr ln_na = log(na);
+    //     const ArrayXr ln_na = log(na);
 
     //     // The columns of the formula matrix corresponding to aqueous species
     //     const auto Aa = cols(system.formulaMatrix(), ifirst, num_aqueous);
 
     //     // The weights for the weighted-LU decomposition of matrix Aa
-    //     const VectorXr Wa = ln_na - min(ln_na) + 1;
+    //     const ArrayXr Wa = ln_na - min(ln_na) + 1;
 
     //     // The weighted-LU decomposition of formula matrix Aa
     //     LU lu(Aa, Wa);
 
     //     // The RT constant
-    //     const auto T = properties.temperature();
+    //     const auto T = props.temperature();
     //     const auto RT = universalGasConstant * T;
 
     //     // The normalized standard chemical potentials of the aqueous species
-    //     const VectorXr u0a = rows(properties.standardPartialMolarGibbsEnergies(), ifirst, num_aqueous)/RT;
+    //     const ArrayXr u0a = rows(props.standardGibbsEnergies(), ifirst, num_aqueous)/RT;
 
     //     // The ln activities of the aqueous species
-    //     const VectorXr ln_aa = rows(properties.lnActivities(), ifirst, num_aqueous);
+    //     const ArrayXr ln_aa = rows(props.lnActivities(), ifirst, num_aqueous);
 
     //     // The normalized chemical potentials of the aqueous species
-    //     const VectorXr ua = u0a + ln_aa;
+    //     const ArrayXr ua = u0a + ln_aa;
 
     //     // The standard chemical potential of electron species (zero if not existent in the system)
     //     real u0a_electron = {};
@@ -151,7 +151,7 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
     //         u0a_electron = u0a[ielectron];
 
     //     // The dual potentials of the elements and its derivatives
-    //     VectorXr y;
+    //     ArrayXr y;
     //     y = lu.trsolve(ua);
 
     //     // The pe of the aqueous phase
@@ -163,7 +163,7 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
     // return f;
 
     error(true, "ChemicalProperty::pe is not implemented at the moment.");
-    return [=](const ChemicalProperties& properties) { return 0; };
+    return [=](const ChemicalProps& props) { return 0; };
 }
 
 auto ChemicalProperty::pE(const ChemicalSystem& system, const ReactionEquation& reaction) -> ChemicalPropertyFunction
@@ -174,7 +174,7 @@ auto ChemicalProperty::pE(const ChemicalSystem& system, const ReactionEquation& 
 
     // Check if there is an aqueous phase in the system
     if(iaqueousphase >= system.numPhases())
-        return [=](const ChemicalProperties&) { return 0.0; };
+        return [=](const ChemicalProps&) { return 0.0; };
 
     // Find the stoichiometry of e-
     double stoichiometry_eminus = 0.0;
@@ -185,19 +185,19 @@ auto ChemicalProperty::pE(const ChemicalSystem& system, const ReactionEquation& 
     Assert(stoichiometry_eminus != 0.0, "Could not calculate the pe of the system.",
         "There is no `e-` or `e[-]` species in the half reaction.");
 
-    ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
+    ChemicalPropertyFunction f = [=](const ChemicalProps& props)
     {
         // The pE of the aqueous phase
         real pe = {};
 
-        const auto T = properties.temperature();
+        const auto T = props.temperature();
         const auto RT = universalGasConstant * T;
 
         // Find the standard chemical potential of e- (it is not zero if the
         // standard chemical potentials were obtained from log(k)'s of reactions.
         real G0_eminus = {};
         if(ielectron < num_species)
-            G0_eminus = properties.standardPartialMolarGibbsEnergies()[ielectron];
+            G0_eminus = props.standardGibbsEnergies()[ielectron];
 
         // Loop over all species in the reaction
         for(auto pair : reaction.equation())
@@ -210,10 +210,10 @@ auto ChemicalProperty::pE(const ChemicalSystem& system, const ReactionEquation& 
             const auto ispecies = system.indexSpeciesWithError(pair.first);
 
             // Get the standard chemical potential of the current species
-            const auto G0i = properties.standardPartialMolarGibbsEnergies()[ispecies]/RT;
+            const auto G0i = props.standardGibbsEnergies()[ispecies]/RT;
 
             // Get the ln activity of the current species
-            const auto ln_ai = properties.lnActivities()[ispecies];
+            const auto ln_ai = props.lnActivities()[ispecies];
 
             // Get the stoichiometry of current species
             const auto stoichiometry = pair.second;
@@ -237,12 +237,12 @@ auto ChemicalProperty::Eh(const ChemicalSystem& system) -> ChemicalPropertyFunct
 {
     auto pE = ChemicalProperty::pE(system);
 
-    ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
+    ChemicalPropertyFunction f = [=](const ChemicalProps& props)
     {
-        const auto T = properties.temperature();
+        const auto T = props.temperature();
         const auto RT = universalGasConstant * T;
         const auto F = faradayConstant;
-        return ln_10*RT/F*pE(properties);
+        return ln_10*RT/F*pE(props);
     };
 
     return f;
@@ -252,12 +252,12 @@ auto ChemicalProperty::Eh(const ChemicalSystem& system, const ReactionEquation& 
 {
     auto pE = ChemicalProperty::pE(system, reaction);
 
-    ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
+    ChemicalPropertyFunction f = [=](const ChemicalProps& props)
     {
-        const auto T = properties.temperature();
+        const auto T = props.temperature();
         const auto RT = universalGasConstant * T;
         const auto F = faradayConstant;
-        real res = ln_10*RT/F*pE(properties);
+        real res = ln_10*RT/F*pE(props);
         return res;
     };
 
@@ -274,7 +274,7 @@ auto ChemicalProperty::alkalinity(const ChemicalSystem& system) -> ChemicalPrope
 
     // Check if there is an aqueous phase in the system
     if(iaqueousphase >= system.numPhases())
-        return [=](const ChemicalProperties&) { return 0.0; };
+        return [=](const ChemicalProps&) { return 0.0; };
 
     // The ions that contribute to alkalinity
     const std::map<double, std::string> ions = { {1, "Na+"}, {1, "K+"}, {2, "Ca++"}, {2, "Mg++"}, {-1, "Cl-"}, {-2, "SO4--"} };
@@ -295,19 +295,19 @@ auto ChemicalProperty::alkalinity(const ChemicalSystem& system) -> ChemicalPrope
     }
 
     /// The contribution factors of the aqueous species that contribute to alkalinity
-    VectorXr alkalinity_factors(alkalinity_indices.size());
+    ArrayXr alkalinity_factors(alkalinity_indices.size());
     auto j = 0; for(auto i : alkalinity_indices)
         alkalinity_factors[j++] = system.species(i).charge();
 
-    VectorXr n;
+    ArrayXr n;
 
-    ChemicalPropertyFunction f = [=](const ChemicalProperties& properties) mutable
+    ChemicalPropertyFunction f = [=](const ChemicalProps& props) mutable
     {
-        n = properties.composition();
-        const auto n_ions = rows(n, alkalinity_indices);
+        n = props.speciesAmounts();
+        const auto n_ions = n(alkalinity_indices);
         const auto m3_to_liter = 1000.0;
-        const auto volume = properties.phaseVolumes()[iaqueousphase];
-        const auto res = sum(alkalinity_factors % n_ions)/(volume * m3_to_liter);
+        const auto volume = props.phase(iaqueousphase).volume();
+        const auto res = (alkalinity_factors * n_ions).sum()/(volume * m3_to_liter);
         return res;
     };
 
