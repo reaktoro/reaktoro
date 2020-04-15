@@ -183,6 +183,9 @@ public:
     /// Return the sum of species amounts in the phase (in mol).
     auto amount() const;
 
+    /// Return the sum of species masses in the phase (in kg).
+    auto mass() const;
+
     /// Return the volume of the phase (in m3).
     auto volume() const;
 
@@ -434,6 +437,15 @@ template<typename Real, typename Array>
 auto ChemicalPropsPhaseBase<Real, Array>::amount() const
 {
     return props.amount;
+}
+
+template<typename Real, typename Array>
+auto ChemicalPropsPhaseBase<Real, Array>::mass() const
+{
+    real sum = 0.0;
+    for(auto i = 0; i < phase.species().size(); ++i)
+        sum += props.n[i] * phase.species(i).molarMass();
+    return sum;
 }
 
 template<typename Real, typename Array>
