@@ -208,6 +208,16 @@ public:
         fixDuplicatePhaseNames();
     }
 
+    /// Convert this Phases object into a vector of Phase objects.
+    operator Vec<Phase>() const
+    {
+        Vec<Phase> phases;
+        phases.reserve(genericphases.size());
+        for(auto&& genericphase : genericphases)
+            phases.push_back(genericphase.convert(engine, elements));
+        return phases;
+    }
+
 private:
     /// The thermodynamic engine used to deploy the Phase objects from the GenericPhase ones.
     ThermoEngine engine;
