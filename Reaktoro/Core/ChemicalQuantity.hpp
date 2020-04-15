@@ -29,7 +29,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalProperties;
+class ChemicalProps;
 class ChemicalState;
 class ChemicalSystem;
 class ReactionSystem;
@@ -128,7 +128,7 @@ public:
     auto state() const -> const ChemicalState&;
 
     /// Return the chemical properties of the ChemicalQuantity instance.
-    auto properties() const -> const ChemicalProperties&;
+    auto props() const -> const ChemicalProps&;
 
     /// Return the reaction rates of the ChemicalQuantity instance.
     auto rates() const -> const VectorXr&;

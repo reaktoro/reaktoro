@@ -25,7 +25,7 @@
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Core/ChemicalOutput.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
@@ -34,7 +34,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-//class ChemicalProperties;
+//class ChemicalProps;
 //class ChemicalState;
 //class ChemicalSystem;
 
@@ -108,7 +108,7 @@ private:
     std::vector<ChemicalState> m_states;
 
     /// The chemical states in the chemical field
-    std::vector<ChemicalProperties> m_properties;
+    std::vector<ChemicalProps> m_props;
 };
 
 /// A class that defines a Tridiagonal Matrix used on TransportSolver.

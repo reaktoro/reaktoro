@@ -24,7 +24,7 @@
 
 // // Reaktoro includes
 // #include <Reaktoro/Common/Exception.hpp>
-// #include <Reaktoro/Core/ChemicalProperties.hpp>
+// #include <Reaktoro/Core/ChemicalProps.hpp>
 // #include <Reaktoro/Core/ChemicalSystem.hpp>
 // #include <Reaktoro/Core/ChemicalState.hpp>
 // #include <Reaktoro/Core/Partition.hpp>
@@ -51,7 +51,7 @@
 //     EquilibriumSolver solver;
 
 //     /// The tree used to save the calculated equilibrium states and respective sensitivities
-//     std::list<std::tuple<VectorXr, ChemicalState, ChemicalProperties, EquilibriumSensitivity>> tree;
+//     std::list<std::tuple<VectorXr, ChemicalState, ChemicalProps, EquilibriumSensitivity>> tree;
 
 //     /// The vector of amounts of species
 //     VectorXr n;
@@ -84,7 +84,7 @@
 //     auto learn(ChemicalState& state, double T, double P, VectorXrConstRef be) -> EquilibriumResult
 //     {
 //         EquilibriumResult res = solver.solve(state, T, P, be);
-//         tree.emplace_back(be, state, solver.properties(), solver.sensitivity());
+//         tree.emplace_back(be, state, solver.props(), solver.sensitivity());
 //         return res;
 //     }
 
@@ -93,7 +93,7 @@
 //         if(tree.empty())
 //             return {};
 
-//         using TreeNodeType = std::tuple<VectorXr, ChemicalState, ChemicalProperties, EquilibriumSensitivity>;
+//         using TreeNodeType = std::tuple<VectorXr, ChemicalState, ChemicalProps, EquilibriumSensitivity>;
 
 //         EquilibriumResult res;
 
@@ -108,7 +108,7 @@
 
 //         const auto& be0 = std::get<0>(*it);
 //         const ChemicalState& state0 = std::get<1>(*it);
-//         const ChemicalProperties& properties0 = std::get<2>(*it);
+//         const ChemicalProps& properties0 = std::get<2>(*it);
 //         const EquilibriumSensitivity& sensitivity0 = std::get<3>(*it);
 //         const auto& n0 = state0.speciesAmounts();
 
@@ -267,7 +267,7 @@
 //     return solve(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 // }
 
-// auto SmartEquilibriumSolver::properties() const -> const ChemicalProperties&
+// auto SmartEquilibriumSolver::props() const -> const ChemicalProps&
 // {
 //     RuntimeError("Could not calculate the chemical properties.",
 //             "This method has not been implemented yet.");

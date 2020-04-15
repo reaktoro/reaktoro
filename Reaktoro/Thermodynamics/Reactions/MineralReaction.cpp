@@ -29,13 +29,13 @@
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
+#include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/ThermoProperties.hpp>
+#include <Reaktoro/Core/ThermoProps.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 
@@ -46,8 +46,8 @@ using std::pow;
 
 namespace internal {
 
-using MineralCatalystFunction = std::function<real(const ChemicalProperties&)>;
-using MineralMechanismFunction = std::function<real(const ChemicalProperties&)>;
+using MineralCatalystFunction = std::function<real(const ChemicalProps&)>;
+using MineralMechanismFunction = std::function<real(const ChemicalProps&)>;
 
 auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction
 {
@@ -55,9 +55,9 @@ auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const Chem
     const std::string species = catalyst.species;
     const auto ispecies = system.indexSpeciesWithError(species);
 
-    MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable
+    MineralCatalystFunction fn = [=](const ChemicalProps& props) mutable
     {
-        const VectorXd& ln_a = properties.lnActivities();
+        const VectorXd& ln_a = props.lnActivities();
         real ai = exp(ln_a[ispecies]);
         real res = pow(ai, power);
         return res;
@@ -79,17 +79,17 @@ auto mineralCatalystFunctionPartialPressure(const MineralCatalyst& catalyst, con
 
     real res = {};
 
-    MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable
+    MineralCatalystFunction fn = [=](const ChemicalProps& props) mutable
     {
         // The pressure and composition of the system
-        const auto P = properties.pressure();
-        const auto n = properties.composition();
+        const auto P = props.pressure();
+        const auto n = props.speciesAmounts();
 
         // The molar composition of the gaseous species
-        const auto ng = rows(n, ifirst, num_gases);
+        const auto ng = n.segment(ifirst, num_gases);
 
         // The total number of moles in the gaseous phase
-        const auto ngsum = sum(ng);
+        const auto ngsum = ng.sum();
 
         // The mole fraction of the gas
         const auto xi = ng[igas]/ngsum;
@@ -128,17 +128,17 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
         catalysts.push_back(mineralCatalystFunction(catalyst, system));
 
     // Define the mineral mechanism function
-    ReactionRateFunction fn = [=](const ChemicalProperties& properties) mutable
+    ReactionRateFunction fn = [=](const ChemicalProps& props) mutable
     {
         // The temperature and pressure of the system
-        const real T = properties.temperature();
+        const real T = props.temperature();
 
         // The result of this function evaluation
         real res = {};
 
         // Calculate the saturation index of the mineral
-        const auto lnK = reaction.lnEquilibriumConstant(properties);
-        const auto lnQ = reaction.lnReactionQuotient(properties);
+        const auto lnK = reaction.lnEquilibriumConstant(props);
+        const auto lnQ = reaction.lnReactionQuotient(props);
         const auto lnOmega = lnQ - lnK;
 
         // Calculate the rate constant for the current mechanism
@@ -158,7 +158,7 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
         real g = 1.0;
 
         for(const MineralCatalystFunction& catalyst : catalysts)
-            g *= catalyst(properties);
+            g *= catalyst(props);
 
         // Calculate the resulting mechanism function
         res = f * g;
@@ -418,7 +418,7 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
     if(specific_surface_area) return specific_surface_area * molar_mass;
 
     // The standard partial molar volumes at 25 C and 1 bar of all species
-    const auto V = system.properties(T, P).standardVolumes();
+    const auto V = system.props(T, P).standardVolumes();
 
     // The molar volume of the mineral species (in units of m3/mol)
     const auto molar_volume = V[ispecies];
@@ -466,14 +466,14 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
 
     if(mineralrxn.surfaceArea())
     {
-        rate = [=](const ChemicalProperties& properties)
+        rate = [=](const ChemicalProps& props)
         {
             // The mineral reaction rate using specified surface area
             real r = {};
 
             // Iterate over all mechanism functions
             for(const ReactionRateFunction& mechanism : mechanisms)
-                r += mechanism(properties);
+                r += mechanism(props);
 
             // Multiply the mechanism contributions by the surface area of the mineral
             r *= mineralrxn.surfaceArea();
@@ -489,10 +489,10 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
         // The surface area of the mineral
         const auto surface_area = mineralrxn.surfaceArea();
 
-        rate = [=](const ChemicalProperties& properties) mutable
+        rate = [=](const ChemicalProps& props) mutable
         {
             // The composition of the chemical system
-            const auto n = properties.composition();
+            const auto n = props.speciesAmounts();
 
             // The number of moles of the mineral
             auto nm = n[imineral];
@@ -503,7 +503,7 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
             // Iterate over all mechanism functions
             real f = 0.0;
             for(const ReactionRateFunction& mechanism : mechanisms)
-                f += mechanism(properties);
+                f += mechanism(props);
 
             // Multiply the mechanism contributions by the molar surface area of the mineral
             f *= molar_surface_area;

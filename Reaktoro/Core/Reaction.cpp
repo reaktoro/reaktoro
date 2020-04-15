@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
@@ -166,17 +166,17 @@ auto Reaction::stoichiometry(std::string species) const -> double
     return equation().stoichiometry(species);
 }
 
-auto Reaction::lnEquilibriumConstant(const ChemicalProperties& properties) const -> real
+auto Reaction::lnEquilibriumConstant(const ChemicalProps& props) const -> real
 {
     // Get the temperature and pressure of the system
-    const auto T = properties.temperature();
-    const auto P = properties.pressure();
+    const auto T = props.temperature();
+    const auto P = props.pressure();
 
     // Check if a equilibrium constant function was provided
     if(pimpl->lnk) return pimpl->lnk(T, P);
 
     // Calculate the equilibrium constant using the standard Gibbs energies of the species
-    const auto G0 = properties.standardPartialMolarGibbsEnergies();
+    const auto G0 = props.standardGibbsEnergies();
     const auto RT = universalGasConstant * T;
 
     real res = {};
@@ -191,10 +191,10 @@ auto Reaction::lnEquilibriumConstant(const ChemicalProperties& properties) const
     return -res/RT;
 }
 
-auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const -> real
+auto Reaction::lnReactionQuotient(const ChemicalProps& props) const -> real
 {
     const auto num_species = system().numSpecies();
-    const auto ln_a = properties.lnActivities();
+    const auto ln_a = props.lnActivities();
     real ln_Q = {};
     auto counter = 0;
     for(auto i : indices())
@@ -206,16 +206,16 @@ auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const ->
     return ln_Q;
 }
 
-auto Reaction::lnEquilibriumIndex(const ChemicalProperties& properties) const -> real
+auto Reaction::lnEquilibriumIndex(const ChemicalProps& props) const -> real
 {
-	return lnReactionQuotient(properties) - lnEquilibriumConstant(properties);
+	return lnReactionQuotient(props) - lnEquilibriumConstant(props);
 }
 
-auto Reaction::rate(const ChemicalProperties& properties) const -> real
+auto Reaction::rate(const ChemicalProps& props) const -> real
 {
     if(!pimpl->rate)
         errorFunctionNotInitialized("rate", "rate");
-    return pimpl->rate(properties);
+    return pimpl->rate(props);
 }
 
 auto operator<(const Reaction& lhs, const Reaction& rhs) -> bool

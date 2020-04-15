@@ -27,7 +27,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalProperty.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Element.hpp>
@@ -229,9 +229,9 @@ struct ChemicalState::Impl
             "The given volume is negative.");
         Assert(index < system.numPhases(), "Cannot set the volume of the phase.",
             "The given phase index is out of range.");
-        ChemicalProperties properties = system.properties(T, P, n);
-        const VectorXr v = properties.phaseVolumes();
-        const auto scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
+        ChemicalProps props = system.props(T, P, n);
+        const auto vphase = props.phase(index).volume();
+        const auto scalar = (vphase != 0.0) ? volume/vphase : 0.0;
         scaleSpeciesAmountsInPhase(index, scalar);
     }
 
@@ -255,9 +255,9 @@ struct ChemicalState::Impl
 
     auto scaleFluidVolume(real volume) -> void
     {
-        const auto& fluid_volume = properties().fluidVolume();
-        const auto& factor = fluid_volume ? volume/fluid_volume : 0.0;
-        const auto& ifluidspecies = system.indicesFluidSpecies();
+        const auto fluid_volume = props().fluidVolume();
+        const auto factor = fluid_volume ? volume/fluid_volume : 0.0;
+        const auto ifluidspecies = system.indicesFluidSpecies();
         scaleSpeciesAmounts(factor, ifluidspecies);
     }
 
@@ -269,9 +269,9 @@ struct ChemicalState::Impl
 
     auto scaleSolidVolume(real volume) -> void
     {
-        const auto& solid_volume = properties().solidVolume();
-        const auto& factor = solid_volume ? volume/solid_volume : 0.0;
-        const auto& isolidspecies = system.indicesSolidSpecies();
+        const auto solid_volume = props().solidVolume();
+        const auto factor = solid_volume ? volume/solid_volume : 0.0;
+        const auto isolidspecies = system.indicesSolidSpecies();
         scaleSpeciesAmounts(factor, isolidspecies);
     }
 
@@ -285,9 +285,8 @@ struct ChemicalState::Impl
     {
         Assert(volume >= 0.0, "Cannot set the volume of the chemical state.",
             "The given volume is negative.");
-        ChemicalProperties properties = system.properties(T, P, n);
-        const VectorXr v = properties.phaseVolumes();
-        const auto vtotal = sum(v);
+        ChemicalProps props = system.props(T, P, n);
+        const auto vtotal = props.volume();
         const auto scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
         scaleSpeciesAmounts(scalar);
     }
@@ -432,11 +431,9 @@ struct ChemicalState::Impl
         return units::convert(phaseAmount(name), "mol", units);
     }
 
-    auto properties() const -> ChemicalProperties
+    auto props() const -> ChemicalProps
     {
-        ChemicalProperties res(system);
-        res.update(T, P, n);
-        return res;
+        return system.props(T, P, n);
     }
 
     // Return the stability indices of the phases
@@ -789,157 +786,158 @@ auto ChemicalState::phaseStabilityIndices() const -> VectorXr
     return pimpl->phaseStabilityIndices();
 }
 
-auto ChemicalState::properties() const -> ChemicalProperties
+auto ChemicalState::props() const -> ChemicalProps
 {
-    return pimpl->properties();
+    return pimpl->props();
 }
 
 auto ChemicalState::output(std::ostream& out, int precision) const -> void
 {
-    auto const& state = *this;
-    const ChemicalSystem& system = state.system();
-    const auto& T = state.temperature();
-    const auto& P = state.pressure();
-    const auto& R = universalGasConstant;
-    const auto& F = faradayConstant;
-    const auto& n = state.speciesAmounts();
-    const auto& y = state.elementDualPotentials();
-    const auto& z = state.speciesDualPotentials();
-    const ChemicalProperties properties = state.properties();
-    const VectorXr molar_fractions = properties.moleFractions();
-    const VectorXr activity_coeffs = exp(properties.lnActivityCoefficients());
-    const VectorXr activities = exp(properties.lnActivities());
-    const VectorXr chemical_potentials = properties.chemicalPotentials();
-    const VectorXr phase_moles = properties.phaseAmounts();
-    const VectorXr phase_masses = properties.phaseMasses();
-    const VectorXr phase_molar_volumes = properties.phaseMolarVolumes();
-    const VectorXr phase_volumes = properties.phaseVolumes();
-    const VectorXr phase_volume_fractions = phase_volumes/sum(phase_volumes);
-    const VectorXr phase_densities = phase_masses/phase_volumes;
-    const VectorXr phase_stability_indices = state.phaseStabilityIndices();
+    error(true, "ChemicalState::output is deprecated."); // TODO Improve how ChemicalState gets displayed.
+    // auto const& state = *this;
+    // const ChemicalSystem& system = state.system();
+    // const auto& T = state.temperature();
+    // const auto& P = state.pressure();
+    // const auto& R = universalGasConstant;
+    // const auto& F = faradayConstant;
+    // const auto& n = state.speciesAmounts();
+    // const auto& y = state.elementDualPotentials();
+    // const auto& z = state.speciesDualPotentials();
+    // const ChemicalProps properties = state.props();
+    // const VectorXr molar_fractions = properties.moleFractions();
+    // const VectorXr activity_coeffs = exp(properties.lnActivityCoefficients());
+    // const VectorXr activities = exp(properties.lnActivities());
+    // const VectorXr chemical_potentials = properties.chemicalPotentials();
+    // const VectorXr phase_moles = properties.phaseAmounts();
+    // const VectorXr phase_masses = properties.phaseMasses();
+    // const VectorXr phase_molar_volumes = properties.phaseMolarVolumes();
+    // const VectorXr phase_volumes = properties.phaseVolumes();
+    // const VectorXr phase_volume_fractions = phase_volumes/sum(phase_volumes);
+    // const VectorXr phase_densities = phase_masses/phase_volumes;
+    // const VectorXr phase_stability_indices = state.phaseStabilityIndices();
 
-    const auto num_phases = system.numPhases();
-    const auto bar_size = std::max(unsigned(9), num_phases + 2) * 25;
-    const std::string bar1(bar_size, '=');
-    const std::string bar2(bar_size, '-');
+    // const auto num_phases = system.numPhases();
+    // const auto bar_size = std::max(unsigned(9), num_phases + 2) * 25;
+    // const std::string bar1(bar_size, '=');
+    // const std::string bar2(bar_size, '-');
 
-    out << bar1 << std::endl;
-    out << std::left << std::setw(25) << "Temperature [K]";
-    out << std::left << std::setw(25) << "Temperature [C]";
-    out << std::left << std::setw(25) << "Pressure [Pa]";
-    out << std::left << std::setw(25) << "Pressure [bar]";
-    out << std::endl << bar2 << std::endl;
+    // out << bar1 << std::endl;
+    // out << std::left << std::setw(25) << "Temperature [K]";
+    // out << std::left << std::setw(25) << "Temperature [C]";
+    // out << std::left << std::setw(25) << "Pressure [Pa]";
+    // out << std::left << std::setw(25) << "Pressure [bar]";
+    // out << std::endl << bar2 << std::endl;
 
-    out << std::left << std::setw(25) << T;
-    out << std::left << std::setw(25) << T - 273.15;
-    out << std::left << std::setw(25) << P;
-    out << std::left << std::setw(25) << P * 1e-5;
-    out << std::endl;
+    // out << std::left << std::setw(25) << T;
+    // out << std::left << std::setw(25) << T - 273.15;
+    // out << std::left << std::setw(25) << P;
+    // out << std::left << std::setw(25) << P * 1e-5;
+    // out << std::endl;
 
-    // Set output in scientific notation
-    auto flags = out.flags();
-    out << std::setprecision(precision);
+    // // Set output in scientific notation
+    // auto flags = out.flags();
+    // out << std::setprecision(precision);
 
-    // Output the table of the element-related state
-    out << bar1 << std::endl;
-    out << std::left << std::setw(25) << "Element";
-    out << std::left << std::setw(25) << "Amount [mol]";
-    for(const auto& phase : system.phases())
-        out << std::left << std::setw(25) << phase.name() + " [mol]";
-    out << std::left << std::setw(25) << "Dual Potential [kJ/mol]";
-    out << std::endl;
-    out << bar2 << std::endl;
-    for(unsigned i = 0; i < system.numElements(); ++i)
-    {
-        out << std::left << std::setw(25) << system.element(i).name();
-        out << std::left << std::setw(25) << state.elementAmount(i);
-        for(unsigned j = 0; j < system.numPhases(); ++j)
-            out << std::left << std::setw(25) << state.elementAmountInPhase(i, j);
-        out << std::left << std::setw(25) << y[i]/1000; // convert from J/mol to kJ/mol
-        out << std::endl;
-    }
+    // // Output the table of the element-related state
+    // out << bar1 << std::endl;
+    // out << std::left << std::setw(25) << "Element";
+    // out << std::left << std::setw(25) << "Amount [mol]";
+    // for(const auto& phase : system.phases())
+    //     out << std::left << std::setw(25) << phase.name() + " [mol]";
+    // out << std::left << std::setw(25) << "Dual Potential [kJ/mol]";
+    // out << std::endl;
+    // out << bar2 << std::endl;
+    // for(unsigned i = 0; i < system.numElements(); ++i)
+    // {
+    //     out << std::left << std::setw(25) << system.element(i).name();
+    //     out << std::left << std::setw(25) << state.elementAmount(i);
+    //     for(unsigned j = 0; j < system.numPhases(); ++j)
+    //         out << std::left << std::setw(25) << state.elementAmountInPhase(i, j);
+    //     out << std::left << std::setw(25) << y[i]/1000; // convert from J/mol to kJ/mol
+    //     out << std::endl;
+    // }
 
-    // Output the table of the species-related state
-    out << bar1 << std::endl;
-    out << std::left << std::setw(25) << "Species";
-    out << std::left << std::setw(25) << "Amount [mol]";
-    out << std::left << std::setw(25) << "Mole Fraction [mol/mol]";
-    out << std::left << std::setw(25) << "Activity Coefficient [-]";
-    out << std::left << std::setw(25) << "Activity [-]";
-    out << std::left << std::setw(25) << "Potential [kJ/mol]";
-    out << std::left << std::setw(25) << "Dual Potential [kJ/mol]";
-    out << std::endl;
-    out << bar2 << std::endl;
-    for(unsigned i = 0; i < system.numSpecies(); ++i)
-    {
-        out << std::left << std::setw(25) << system.species(i).name();
-        out << std::left << std::setw(25) << n[i];
-        out << std::left << std::setw(25) << molar_fractions[i];
-        out << std::left << std::setw(25) << activity_coeffs[i];
-        out << std::left << std::setw(25) << activities[i];
-        out << std::left << std::setw(25) << chemical_potentials[i]/1000; // convert from J/mol to kJ/mol
-        out << std::left << std::setw(25) << z[i]/1000; // convert from J/mol to kJ/mol
-        out << std::endl;
-    }
+    // // Output the table of the species-related state
+    // out << bar1 << std::endl;
+    // out << std::left << std::setw(25) << "Species";
+    // out << std::left << std::setw(25) << "Amount [mol]";
+    // out << std::left << std::setw(25) << "Mole Fraction [mol/mol]";
+    // out << std::left << std::setw(25) << "Activity Coefficient [-]";
+    // out << std::left << std::setw(25) << "Activity [-]";
+    // out << std::left << std::setw(25) << "Potential [kJ/mol]";
+    // out << std::left << std::setw(25) << "Dual Potential [kJ/mol]";
+    // out << std::endl;
+    // out << bar2 << std::endl;
+    // for(unsigned i = 0; i < system.numSpecies(); ++i)
+    // {
+    //     out << std::left << std::setw(25) << system.species(i).name();
+    //     out << std::left << std::setw(25) << n[i];
+    //     out << std::left << std::setw(25) << molar_fractions[i];
+    //     out << std::left << std::setw(25) << activity_coeffs[i];
+    //     out << std::left << std::setw(25) << activities[i];
+    //     out << std::left << std::setw(25) << chemical_potentials[i]/1000; // convert from J/mol to kJ/mol
+    //     out << std::left << std::setw(25) << z[i]/1000; // convert from J/mol to kJ/mol
+    //     out << std::endl;
+    // }
 
-    // Output the table of the phase-related state
-    out << bar1 << std::endl;
-    out << std::left << std::setw(25) << "Phase";
-    out << std::left << std::setw(25) << "Amount [mol]";
-    out << std::left << std::setw(25) << "Stability";
-    out << std::left << std::setw(25) << "Stability Index [-]";
-    out << std::left << std::setw(25) << "Mass [kg]";
-    out << std::left << std::setw(25) << "Volume [m3]";
-    out << std::left << std::setw(25) << "Density [kg/m3]";
-    out << std::left << std::setw(25) << "Molar Volume [m3/mol]";
-    out << std::left << std::setw(25) << "Volume Fraction [m3/m3]";
-    out << std::endl;
-    out << bar2 << std::endl;
-    for(unsigned i = 0; i < system.numPhases(); ++i)
-    {
-        int extra = (phase_stability_indices[i] < 0 ? 0 : 1);
-        std::string stability = phase_stability_indices[i] < -1e-2 ? "under stable" : phase_stability_indices[i] > 1e-2 ? "super stable" : "stable";
-        out << std::left << std::setw(25) << system.phase(i).name();
-        out << std::left << std::setw(25) << phase_moles[i];
-        out << std::setw(25 + extra) << std::left << stability;
-        out << std::setw(25 - extra) << std::left << phase_stability_indices[i];
-        out << std::left << std::setw(25) << phase_masses[i];
-        out << std::left << std::setw(25) << phase_volumes[i];
-        out << std::left << std::setw(25) << phase_densities[i];
-        out << std::left << std::setw(25) << phase_molar_volumes[i];
-        out << std::left << std::setw(25) << phase_volume_fractions[i];
-        out << std::endl;
-    }
+    // // Output the table of the phase-related state
+    // out << bar1 << std::endl;
+    // out << std::left << std::setw(25) << "Phase";
+    // out << std::left << std::setw(25) << "Amount [mol]";
+    // out << std::left << std::setw(25) << "Stability";
+    // out << std::left << std::setw(25) << "Stability Index [-]";
+    // out << std::left << std::setw(25) << "Mass [kg]";
+    // out << std::left << std::setw(25) << "Volume [m3]";
+    // out << std::left << std::setw(25) << "Density [kg/m3]";
+    // out << std::left << std::setw(25) << "Molar Volume [m3/mol]";
+    // out << std::left << std::setw(25) << "Volume Fraction [m3/m3]";
+    // out << std::endl;
+    // out << bar2 << std::endl;
+    // for(unsigned i = 0; i < system.numPhases(); ++i)
+    // {
+    //     int extra = (phase_stability_indices[i] < 0 ? 0 : 1);
+    //     std::string stability = phase_stability_indices[i] < -1e-2 ? "under stable" : phase_stability_indices[i] > 1e-2 ? "super stable" : "stable";
+    //     out << std::left << std::setw(25) << system.phase(i).name();
+    //     out << std::left << std::setw(25) << phase_moles[i];
+    //     out << std::setw(25 + extra) << std::left << stability;
+    //     out << std::setw(25 - extra) << std::left << phase_stability_indices[i];
+    //     out << std::left << std::setw(25) << phase_masses[i];
+    //     out << std::left << std::setw(25) << phase_volumes[i];
+    //     out << std::left << std::setw(25) << phase_densities[i];
+    //     out << std::left << std::setw(25) << phase_molar_volumes[i];
+    //     out << std::left << std::setw(25) << phase_volume_fractions[i];
+    //     out << std::endl;
+    // }
 
-    // Check if there is an aqueous phase before printing aqueous states
-    if(system.indexPhase("Aqueous") < system.numPhases())
-    {
-        // Calculate pH, pE, and Eh
-        const auto Ifn  = ChemicalProperty::ionicStrength(system);
-        const auto I  = Ifn(properties);
-        const auto pH = ChemicalProperty::pH(system)(properties);
-        const auto pE = ChemicalProperty::pE(system)(properties);
-        const auto Eh = std::log(10)*R*T/F*pE;
-        const auto alk = ChemicalProperty::alkalinity(system)(properties);
+    // // Check if there is an aqueous phase before printing aqueous states
+    // if(system.indexPhase("Aqueous") < system.numPhases())
+    // {
+    //     // Calculate pH, pE, and Eh
+    //     const auto Ifn  = ChemicalProperty::ionicStrength(system);
+    //     const auto I  = Ifn(properties);
+    //     const auto pH = ChemicalProperty::pH(system)(properties);
+    //     const auto pE = ChemicalProperty::pE(system)(properties);
+    //     const auto Eh = std::log(10)*R*T/F*pE;
+    //     const auto alk = ChemicalProperty::alkalinity(system)(properties);
 
-        // Output the table of the aqueous phase related state
-        out << bar1 << std::endl;
-        out << std::left << std::setw(25) << "Ionic Strength [molal]";
-        out << std::left << std::setw(25) << "pH";
-        out << std::left << std::setw(25) << "pE";
-        out << std::left << std::setw(25) << "Reduction Potential [V]";
-        out << std::left << std::setw(25) << "Alkalinity [eq/L]";
-        out << std::endl << bar2 << std::endl;
-        out << std::left << std::setw(25) << I;
-        out << std::left << std::setw(25) << pH;
-        out << std::left << std::setw(25) << pE;
-        out << std::left << std::setw(25) << Eh;
-        out << std::left << std::setw(25) << alk;
-        out << std::endl << bar1 << std::endl;
-    }
+    //     // Output the table of the aqueous phase related state
+    //     out << bar1 << std::endl;
+    //     out << std::left << std::setw(25) << "Ionic Strength [molal]";
+    //     out << std::left << std::setw(25) << "pH";
+    //     out << std::left << std::setw(25) << "pE";
+    //     out << std::left << std::setw(25) << "Reduction Potential [V]";
+    //     out << std::left << std::setw(25) << "Alkalinity [eq/L]";
+    //     out << std::endl << bar2 << std::endl;
+    //     out << std::left << std::setw(25) << I;
+    //     out << std::left << std::setw(25) << pH;
+    //     out << std::left << std::setw(25) << pE;
+    //     out << std::left << std::setw(25) << Eh;
+    //     out << std::left << std::setw(25) << alk;
+    //     out << std::endl << bar1 << std::endl;
+    // }
 
-    // Recover the previous state of `out`
-    out.flags(flags);
+    // // Recover the previous state of `out`
+    // out.flags(flags);
 }
 
 auto ChemicalState::output(std::string const& filename, int precision) const -> void

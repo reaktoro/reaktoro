@@ -25,7 +25,7 @@
 // #include <Reaktoro/Common/Exception.hpp>
 // #include <Reaktoro/Common/StringUtils.hpp>
 // #include <Reaktoro/Common/Units.hpp>
-// #include <Reaktoro/Core/ChemicalProperties.hpp>
+// #include <Reaktoro/Core/ChemicalProps.hpp>
 // #include <Reaktoro/Core/ChemicalState.hpp>
 // #include <Reaktoro/Core/ChemicalSystem.hpp>
 // #include <Reaktoro/Core/Partition.hpp>
@@ -110,7 +110,7 @@
 //     VectorXr benk;
 
 //     /// The chemical properties of the system
-//     ChemicalProperties properties;
+//     ChemicalProps properties;
 
 //     /// The vector with the values of the reaction rates
 //     VectorXd r;
@@ -125,7 +125,7 @@
 //     MatrixXd dqdbe, dqdne, dqdnk, dqdu;
 
 //     /// The function that calculates the source term in the problem
-//     std::function<VectorXd(const ChemicalProperties&)> source_fn;
+//     std::function<VectorXd(const ChemicalProps&)> source_fn;
 
 //     Impl()
 //     {}
@@ -205,7 +205,7 @@
 //         const VectorXr n = state.speciesAmounts();
 //         auto old_source_fn = source_fn;
 
-//         source_fn = [=](const ChemicalProperties& properties)
+//         source_fn = [=](const ChemicalProps& properties)
 //         {
 //             VectorXd q(num_species);
 //             q.val = n;
@@ -225,7 +225,7 @@
 //         real phasevolume = {};
 //         VectorXd q(size);
 
-//         source_fn = [=](const ChemicalProperties& properties) mutable
+//         source_fn = [=](const ChemicalProps& properties) mutable
 //         {
 //             const auto n = properties.composition();
 //             const auto np = rows(n, ifirst, size);
@@ -246,7 +246,7 @@
 //         real fluidvolume = {};
 //         VectorXd q;
 
-//         source_fn = [=](const ChemicalProperties& properties) mutable
+//         source_fn = [=](const ChemicalProps& properties) mutable
 //         {
 //             const auto n = properties.composition();
 //             fluidvolume = properties.fluidVolume();
@@ -266,7 +266,7 @@
 //         real solidvolume = {};
 //         VectorXd q;
 
-//         source_fn = [=](const ChemicalProperties& properties) mutable
+//         source_fn = [=](const ChemicalProps& properties) mutable
 //         {
 //             const auto n = properties.composition();
 //             solidvolume = properties.solidVolume();
@@ -407,7 +407,7 @@
 //             "The equilibrium calculation failed.");
 
 //         // Update the chemical properties of the system
-//         properties = state.properties();
+//         properties = state.props();
 
 //         // Calculate the kinetic rates of the reactions
 //         r = reactions.rates(properties);

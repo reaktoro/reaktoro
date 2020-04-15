@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>

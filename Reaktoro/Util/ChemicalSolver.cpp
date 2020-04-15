@@ -22,7 +22,7 @@
 //
 //// Reaktoro includes
 //#include <Reaktoro/Common/Exception.hpp>
-//#include <Reaktoro/Core/ChemicalProperties.hpp>
+//#include <Reaktoro/Core/ChemicalProps.hpp>
 //#include <Reaktoro/Core/ChemicalState.hpp>
 //#include <Reaktoro/Core/ChemicalSystem.hpp>
 //#include <Reaktoro/Core/Partition.hpp>
@@ -62,7 +62,7 @@
 //    std::vector<ChemicalState> states;
 //
 //    /// The chemical properties at each point in the field
-//    std::vector<ChemicalProperties> properties;
+//    std::vector<ChemicalProps> properties;
 //
 //    /// The equilibrium solver
 //    EquilibriumSolver equilibriumsolver;
@@ -176,7 +176,7 @@
 //            const auto Pk = P.data[k];
 //            const auto bk = b.data + k*Ee;
 //            equilibriumsolver.solve(states[k], Tk, Pk, bk);
-//            properties[k] = states[k].properties();
+//            properties[k] = states[k].props();
 //            sensitivities[k] = equilibriumsolver.sensitivity();
 //        }
 //    }
@@ -205,7 +205,7 @@
 //            for(Index j = 0; j < Ee; ++j)
 //                bk[j] = b.data[j][k];
 //            equilibriumsolver.solve(states[k], Tk, Pk, bk);
-//            properties[k] = states[k].properties();
+//            properties[k] = states[k].props();
 //            sensitivities[k] = equilibriumsolver.sensitivity();
 //        }
 //    }
@@ -216,7 +216,7 @@
 //        for(Index k = 0; k < npoints; ++k)
 //        {
 //            kineticsolver.solve(states[k], t, dt);
-//            properties[k] = states[k].properties();
+//            properties[k] = states[k].props();
 //        }
 //    }
 //

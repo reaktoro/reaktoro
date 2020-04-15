@@ -25,7 +25,7 @@
 // #include <Reaktoro/Common/Exception.hpp>
 // #include <Reaktoro/Common/StringUtils.hpp>
 // #include <Reaktoro/Common/Units.hpp>
-// #include <Reaktoro/Core/ChemicalProperties.hpp>
+// #include <Reaktoro/Core/ChemicalProps.hpp>
 // #include <Reaktoro/Core/ChemicalProperty.hpp>
 // #include <Reaktoro/Core/ChemicalState.hpp>
 // #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -247,7 +247,7 @@
 //         // Define the activity constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
 //         {
-//             ln_ai = state.properties().lnActivities()[ispecies];
+//             ln_ai = state.props().lnActivities()[ispecies];
 //             return ln_ai - ln_val;
 //         };
 
@@ -264,7 +264,7 @@
 //         // Define the activity constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
 //         {
-//             return pE(state.properties()) - value;
+//             return pE(state.props()) - value;
 //         };
 
 //         // Update the list of constraint functions
@@ -280,7 +280,7 @@
 //         // Define the activity constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
 //         {
-//             return Eh(state.properties()) - value;
+//             return Eh(state.props()) - value;
 //         };
 
 //         // Update the list of constraint functions
@@ -296,7 +296,7 @@
 //         // Define the activity constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
 //         {
-//             return alk(state.properties()) - value;
+//             return alk(state.props()) - value;
 //         };
 
 //         // Update the list of constraint functions
@@ -315,7 +315,7 @@
 //         // Define the phase volume constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
 //         {
-//             np = state.properties().phaseAmounts()[iphase];
+//             np = state.props().phaseAmounts()[iphase];
 //             return np - value;
 //         };
 
@@ -335,7 +335,7 @@
 //         // Define the phase volume constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
 //         {
-//             mass = state.properties().phaseMasses()[iphase];
+//             mass = state.props().phaseMasses()[iphase];
 //             return mass - value;
 //         };
 
@@ -355,7 +355,7 @@
 //         // Define the phase volume constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
 //         {
-//             Vp = state.properties().phaseVolumes()[iphase];
+//             Vp = state.props().phaseVolumes()[iphase];
 //             return Vp - value;
 //         };
 
@@ -375,7 +375,7 @@
 //         // Define the phase volume constraint function
 //         EquilibriumConstraint f = [=](VectorXrConstRef x, const ChemicalState& state) mutable
 //         {
-//             Vp = sum(rows(state.properties().phaseVolumes(), iphases));
+//             Vp = sum(rows(state.props().phaseVolumes(), iphases));
 //             return Vp - value;
 //         };
 
@@ -539,7 +539,7 @@
 //         state.setPressure(P);
 
 //         // Define auxiliary instances to avoid memory reallocation
-//         ChemicalProperties properties;
+//         ChemicalProps properties;
 //         ResidualEquilibriumConstraints res;
 //         NonlinearResidual nonlinear_residual;
 

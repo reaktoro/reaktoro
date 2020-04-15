@@ -24,7 +24,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalProperties;
+class ChemicalProps;
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
@@ -37,9 +37,6 @@ struct EquilibriumSensitivity;
 class EquilibriumSolver
 {
 public:
-    /// Construct a default EquilibriumSolver instance
-    EquilibriumSolver();
-
     /// Construct an EquilibriumSolver instance
     explicit EquilibriumSolver(const ChemicalSystem& system);
 
@@ -64,7 +61,7 @@ public:
     /// Find an initial feasible guess for an equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
     /// @param be The molar amounts of the elements in the equilibrium partition
-    auto approximate(ChemicalState& state, double T, double P, VectorXrConstRef be) -> EquilibriumResult;
+    auto approximate(ChemicalState& state, double T, double P, ArrayXrConstRef be) -> EquilibriumResult;
 
     /// Find an initial feasible guess for an equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
@@ -78,7 +75,7 @@ public:
     /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param be The molar amounts of the elements in the equilibrium partition
-    auto solve(ChemicalState& state, double T, double P, VectorXrConstRef be) -> EquilibriumResult;
+    auto solve(ChemicalState& state, double T, double P, ArrayXrConstRef be) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
@@ -97,7 +94,7 @@ public:
     auto solve(ChemicalState& state) -> EquilibriumResult;
 
     /// Return the chemical properties of the calculated equilibrium state.
-    auto properties() const -> const ChemicalProperties&;
+    auto props() const -> const ChemicalProps&;
 
     /// Return the sensitivity of the equilibrium state.
     /// The sensitivity of the equilibrium state is defined as the rate of change of the
@@ -106,13 +103,13 @@ public:
     auto sensitivity() -> const EquilibriumSensitivity&;
 
     /// Compute the sensitivity of the species amounts with respect to temperature.
-    auto dndT() -> VectorXrConstRef;
+    auto dndT() -> ArrayXrConstRef;
 
     /// Compute the sensitivity of the species amounts with respect to pressure.
-    auto dndP() -> VectorXrConstRef;
+    auto dndP() -> ArrayXrConstRef;
 
     /// Compute the sensitivity of the species amounts with respect to element amounts.
-    auto dndb() -> VectorXrConstRef;
+    auto dndb() -> ArrayXrConstRef;
 
 private:
     struct Impl;

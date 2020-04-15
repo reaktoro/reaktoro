@@ -51,5 +51,5 @@ def chemical_properties(chemical_system):
     # A sensible array of species amounts
     n = np.array([55, 1e-7, 1e-7, 0.1, 0.5, 0.01, 1.0, 0.001, 1.0])
 
-    return chemical_system.properties(T, P, n)
+    return chemical_system.props(T, P, n)
 

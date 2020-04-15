@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ReactionEquation.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalProperty.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 

@@ -27,8 +27,6 @@
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/ThermoProps.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
@@ -142,7 +140,7 @@ struct ChemicalSystem::Impl
     //         {
     //             const Index size = phases[iphase].numSpecies();
     //             auto tp = res.phaseProperties(iphase, offset, size);
-    //             phases[iphase].properties(tp, T, P);
+    //             phases[iphase].props(tp, T, P);
     //             offset += size;
     //         }
     //     };
@@ -159,7 +157,7 @@ struct ChemicalSystem::Impl
     //             const Index size = phases[iphase].numSpecies();
     //             const auto np = n.segment(offset, size);
     //             auto cp = res.phaseProperties(iphase, offset, size);
-    //             phases[iphase].properties(cp, T, P, np);
+    //             phases[iphase].props(cp, T, P, np);
     //             offset += size;
     //         }
     //     };
@@ -245,16 +243,6 @@ auto ChemicalSystem::phases() const -> const std::vector<Phase>&
 {
     return pimpl->phases;
 }
-
-// auto ChemicalSystem::thermoModel() const -> const ThermoModel&
-// {
-//     return pimpl->thermo_model;
-// }
-
-// auto ChemicalSystem::chemicalModel() const -> const ChemicalModel&
-// {
-//     return pimpl->chemical_model;
-// }
 
 auto ChemicalSystem::formulaMatrix() const -> MatrixXdConstRef
 {
@@ -437,20 +425,6 @@ auto ChemicalSystem::indicesSolidPhases() const -> Indices
 auto ChemicalSystem::indicesSolidSpecies() const -> Indices
 {
     return indicesSpeciesInPhases(indicesSolidPhases());
-}
-
-auto ChemicalSystem::properties(double T, double P) const -> ThermoProperties
-{
-    ThermoProperties prop(*this);
-    prop.update(T, P);
-    return prop;
-}
-
-auto ChemicalSystem::properties(double T, double P, VectorXrConstRef n) const -> ChemicalProperties
-{
-    ChemicalProperties prop(*this);
-    prop.update(T, P, n);
-    return prop;
 }
 
 auto ChemicalSystem::props(double T, double P) const -> ThermoProps
