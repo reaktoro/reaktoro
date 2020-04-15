@@ -322,18 +322,33 @@ struct CubicEOS::Impl
         const ChemicalScalar BT = 2*(epsilon*sigma - epsilon - sigma)*beta*betaT + qT*beta - (epsilon + sigma - q)*betaT;
         const ChemicalScalar CT = -3*epsilon*sigma*beta*beta*betaT - qT*beta*beta - 2*(epsilon*sigma + q)*beta*betaT;
 
-        // Calculate cubicEOS roots using cardano's method
-        auto cubicEOS_roots = realRoots(cardano(1, A.val, B.val, C.val));
+        // Calculate cubicEOS roots
+        const auto roots = cardano(1, A.val, B.val, C.val);
+
+        //verify if all cubicEOS_roots are greater than bmix
+        std::vector<double> cubicEOS_roots;
+        cubicEOS_roots.reserve(3);
+        if (std::get<0>(roots).imag() == 0 && std::get<0>(roots).real() >= bmix.val)
+            cubicEOS_roots.push_back(std::get<0>(roots).real());
+
+        if (std::get<1>(roots).imag() == 0 && std::get<1>(roots).real() >= bmix.val)
+            cubicEOS_roots.push_back(std::get<1>(roots).real());
+
+        if (std::get<2>(roots).imag() == 0 && std::get<2>(roots).real() >= bmix.val)
+            cubicEOS_roots.push_back(std::get<2>(roots).real());
 
         // All possible Compressibility factor
+        const auto cubic_size = cubicEOS_roots.size();
+
         std::vector<ChemicalScalar> Zs;
-        if (cubicEOS_roots.size() == 1)
+        if (cubic_size == 1 || cubic_size == 2)
         {
+            //even if cubicEOS_roots has 2 roots, assume that the smallest does not have physical meaning
             Zs.push_back(ChemicalScalar(nspecies, cubicEOS_roots[0]));
         }
         else
         {
-            if (cubicEOS_roots.size() != 3) {
+            if (cubic_size != 3) {
                 Exception exception;
                 exception.error << "Could not calculate the cubic equation of state.";
                 exception.reason << "Logic error: it was expected Z roots of size 3, but got: " << Zs.size();
