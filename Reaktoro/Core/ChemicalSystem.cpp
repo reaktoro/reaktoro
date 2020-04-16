@@ -26,8 +26,6 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
-#include <Reaktoro/Core/ChemicalProps.hpp>
-#include <Reaktoro/Core/ThermoProps.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -425,24 +423,6 @@ auto ChemicalSystem::indicesSolidPhases() const -> Indices
 auto ChemicalSystem::indicesSolidSpecies() const -> Indices
 {
     return indicesSpeciesInPhases(indicesSolidPhases());
-}
-
-auto ChemicalSystem::props(double T, double P) const -> ThermoProps
-{
-    ThermoProps res(*this);
-    const auto numphases = phases().size();
-    for(auto i = 0; i < numphases; ++i)
-        phase(i).eval(res.phase(i), T, P);
-    return res;
-}
-
-auto ChemicalSystem::props(double T, double P, VectorXrConstRef n) const -> ChemicalProps
-{
-    ChemicalProps res(*this);
-    const auto numphases = phases().size();
-    for(auto i = 0; i < numphases; ++i)
-        phase(i).eval(res.phase(i), T, P, n);
-    return res;
 }
 
 auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&

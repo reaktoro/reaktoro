@@ -23,11 +23,9 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ActivityModel.hpp>
-#include <Reaktoro/Core/ChemicalPropsPhase.fwd.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/StandardThermoModel.hpp>
 #include <Reaktoro/Core/StateOfMatter.hpp>
-#include <Reaktoro/Core/ThermoPropsPhase.fwd.hpp>
 
 namespace Reaktoro {
 
@@ -72,18 +70,6 @@ public:
 
     /// Return the activity model function of the phase.
     auto activityPropsFn() const -> const ActivityPropsFn&;
-
-    /// Return the standard thermodynamic properties of the phase.
-    auto props(real T, real P) const -> ThermoPropsPhase;
-
-    /// Return the chemical properties of the phase.
-    auto props(real T, real P, ArrayXrConstRef n) const -> ChemicalPropsPhase;
-
-    /// Evaluate the standard thermodynamic properties of the phase.
-    auto eval(ThermoPropsPhaseRef props, real T, real P) const -> void;
-
-    /// Evaluate the chemical properties of the phase.
-    auto eval(ChemicalPropsPhaseRef props, real T, real P, ArrayXrConstRef n) const -> void;
 
     /// Return a deep copy of this Phase object.
     auto clone() const -> Phase;

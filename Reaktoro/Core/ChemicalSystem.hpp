@@ -28,10 +28,6 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class ChemicalProps;
-class ThermoProps;
-
 /// A class to represent a system and its attributes and properties.
 /// @see Species, Phase
 /// @ingroup Core
@@ -188,17 +184,6 @@ public:
 
     /// Return the indices of the species in the solid phases.
     auto indicesSolidSpecies() const -> Indices;
-
-    /// Calculate the standard thermodynamic properties of the species.
-    /// @param T The temperature of the system (in K)
-    /// @param P The pressure of the system (in Pa)
-    auto props(double T, double P) const -> ThermoProps;
-
-    /// Calculate the thermodynamic and chemical properties of the chemical system.
-    /// @param T The temperature of the system (in K)
-    /// @param P The pressure of the system (in Pa)
-    /// @param n The amounts of the species in the system (in mol)
-    auto props(double T, double P, VectorXrConstRef n) const -> ChemicalProps;
 
 private:
     struct Impl;
