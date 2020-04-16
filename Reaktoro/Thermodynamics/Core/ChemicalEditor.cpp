@@ -21,7 +21,6 @@
 // #include <set>
 
 // // Reaktoro includes
-// #include <Reaktoro/Common/ElementUtils.hpp>
 // #include <Reaktoro/Common/InterpolationUtils.hpp>
 // #include <Reaktoro/Common/NamingUtils.hpp>
 // #include <Reaktoro/Common/StringList.hpp>
