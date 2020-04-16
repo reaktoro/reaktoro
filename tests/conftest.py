@@ -3,13 +3,12 @@
 import pytest
 import numpy as np
 
-from reaktoro import ChemicalEditor, ChemicalSystem, Partition
-
 from python_tools import convert_table_to_dict, convert_reaktoro_state_to_dict
 from reaktoro import (
     Database,
     ChemicalEditor,
     ChemicalSystem,
+    Partition,
     EquilibriumProblem,
     EquilibriumInverseProblem,
     isUsingOpenlibm,
