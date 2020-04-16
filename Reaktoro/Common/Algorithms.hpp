@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <algorithm>
+#include <cassert>
 #include <vector>
 
 namespace Reaktoro {
@@ -27,20 +28,21 @@ namespace Reaktoro {
 /// A convenient macro that expands to `[&](auto&& x) { return expr; }`.
 #define lambda(x, expr) [&](auto&& x) { return expr; }
 
+/// Return the index of item `x` in container `c`.
 template<typename Container, typename T>
-auto index(const Container& c, const T& value) -> std::ptrdiff_t
+auto index(const Container& c, const T& x) -> std::size_t
 {
-    auto i = std::find(c.begin(), c.end(), value) - c.begin();
-    return i < c.size() ? i : -1;
+    return std::find(c.begin(), c.end(), x) - c.begin();
 }
 
+/// Return the index of item `x` in container `c` for which `pred(x)` evaluates to true.
 template<typename Container, typename Predicate>
-auto indexfn(const Container& c, const Predicate& pred) -> std::ptrdiff_t
+auto indexfn(const Container& c, const Predicate& pred) -> std::size_t
 {
-    auto i = std::find_if(c.begin(), c.end(), pred) - c.begin();
-    return i < c.size() ? i : -1;
+    return std::find_if(c.begin(), c.end(), pred) - c.begin();
 }
 
+/// Return a container with items `x` for which `pred(x)` evaluates to true.
 template<typename Container, typename Predicate>
 auto filter(const Container& c, const Predicate& pred)
 {
@@ -49,12 +51,14 @@ auto filter(const Container& c, const Predicate& pred)
     return res;
 }
 
+/// Return a container without items `x` for which `pred(x)` evaluates to true.
 template<typename Container, typename Predicate>
 auto remove(const Container& c, const Predicate& pred)
 {
     return filter(c, [&](auto&& x) { return !pred(x); });
 }
 
+/// Return a container without duplicates.
 template<typename Container>
 auto unique(const Container& c)
 {
@@ -64,23 +68,27 @@ auto unique(const Container& c)
     return res;
 }
 
+/// Apply a function `f` on every item in container `c` and store in `res`.
 template<typename Container, typename Result, typename Function>
 auto transform(const Container& c, Result& res, const Function& f)
 {
+    assert(c.size() == res.size());
     std::transform(c.begin(), c.end(), res.begin(), f);
 }
 
+/// Return a vector by applying function `f` on every item in container `c`.
 template<typename Container, typename Function>
 auto vectorize(const Container& c, const Function& f)
 {
     using X = typename Container::value_type;
     using T = std::invoke_result_t<Function, X>;
     std::vector<T> res;
-    res.reserve(c.size());
+    res.resize(c.size());
     transform(c, res, f);
     return res;
 }
 
+/// Return a container with items from both `a` and `b` without duplicates.
 template<typename Container>
 auto merge(const Container& a, const Container& b)
 {
@@ -91,18 +99,21 @@ auto merge(const Container& a, const Container& b)
     return res;
 }
 
+/// Return true if container `a` contains item `x`.
 template<typename Container, typename T>
-auto contains(const Container& c, const T& value)
+auto contains(const Container& c, const T& x)
 {
-    return std::find(c.begin(), c.end(), value) != c.end();
+    return std::find(c.begin(), c.end(), x) != c.end();
 }
 
+/// Return true if container `a` contains item `x` for which `pred(x)` evaluates to true.
 template<typename Container, typename Predicate>
 auto containsfn(const Container& c, const Predicate& pred)
 {
     return std::find_if(c.begin(), c.end(), pred) != c.end();
 }
 
+/// Return true if items in container `a` are also in container `b`.
 template<typename ContainerA, typename ContainerB>
 auto contained(const ContainerA& a, const ContainerB& b)
 {
@@ -112,6 +123,7 @@ auto contained(const ContainerA& a, const ContainerB& b)
     return true;
 }
 
+/// Return true if containers `a` and `b` have distinct items.
 template<typename ContainerA, typename ContainerB>
 auto disjoint(const ContainerA& a, const ContainerB& b)
 {
@@ -119,6 +131,13 @@ auto disjoint(const ContainerA& a, const ContainerB& b)
         if(contains(b, x))
             return false;
     return true;
+}
+
+/// Return true if containers `a` and `b` have identical items.
+template<typename ContainerA, typename ContainerB>
+auto identical(const ContainerA& a, const ContainerB& b)
+{
+    return contained(a, b) && contained(b, a);
 }
 
 } // namespace Reaktoro
