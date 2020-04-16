@@ -27,7 +27,7 @@ TEST_CASE("Testing AggregateState module", "[AggregateState]")
     CHECK( parseAggregateState("g")   == AggregateState::Gas              );
     CHECK( parseAggregateState("l")   == AggregateState::Liquid           );
     CHECK( parseAggregateState("s")   == AggregateState::Solid            );
-    CHECK( parseAggregateState("pl")  == AggregateState::Plasma           );
+    CHECK( parseAggregateState("pl")  == AggregateState::Plasma );
     CHECK( parseAggregateState("cd")  == AggregateState::CondensedPhase   );
     CHECK( parseAggregateState("fl")  == AggregateState::Fluid            );
     CHECK( parseAggregateState("lc")  == AggregateState::LiquidCrystal    );
@@ -46,7 +46,7 @@ TEST_CASE("Testing AggregateState module", "[AggregateState]")
     CHECK( identifyAggregateState("XYZ(l)")       == AggregateState::Liquid           );
     CHECK( identifyAggregateState("XYZ(s)")       == AggregateState::Solid            );
     CHECK( identifyAggregateState("XYZ(s, xyz)")  == AggregateState::Solid            );
-    CHECK( identifyAggregateState("XYZ(pl)")      == AggregateState::Plasma           );
+    CHECK( identifyAggregateState("XYZ(pl)")      == AggregateState::Plasma );
     CHECK( identifyAggregateState("XYZ(cd)")      == AggregateState::CondensedPhase   );
     CHECK( identifyAggregateState("XYZ(fl)")      == AggregateState::Fluid            );
     CHECK( identifyAggregateState("XYZ(lc)")      == AggregateState::LiquidCrystal    );
@@ -61,32 +61,32 @@ TEST_CASE("Testing AggregateState module", "[AggregateState]")
     CHECK( identifyAggregateState("XYZ(aq)")      == AggregateState::Aqueous          );
     CHECK( identifyAggregateState("XYZ(aq, uvw)") == AggregateState::Aqueous          );
 
-    CHECK( identifyAggregateState("XYZ-")         == AggregateState::Aqueous          );
-    CHECK( identifyAggregateState("XYZ--")        == AggregateState::Aqueous          );
-    CHECK( identifyAggregateState("XYZ---")       == AggregateState::Aqueous          );
-    CHECK( identifyAggregateState("XYZ-2")        == AggregateState::Aqueous          );
-    CHECK( identifyAggregateState("XYZ-3")        == AggregateState::Aqueous          );
+    CHECK( identifyAggregateState("XYZ-")         == AggregateState::Aqueous );
+    CHECK( identifyAggregateState("XYZ--")        == AggregateState::Aqueous );
+    CHECK( identifyAggregateState("XYZ---")       == AggregateState::Aqueous );
+    CHECK( identifyAggregateState("XYZ-2")        == AggregateState::Aqueous );
+    CHECK( identifyAggregateState("XYZ-3")        == AggregateState::Aqueous );
 
-    CHECK( identifyAggregateState("XYZ+")         == AggregateState::Aqueous          );
-    CHECK( identifyAggregateState("XYZ++")        == AggregateState::Aqueous          );
-    CHECK( identifyAggregateState("XYZ+++")       == AggregateState::Aqueous          );
-    CHECK( identifyAggregateState("XYZ+2")        == AggregateState::Aqueous          );
-    CHECK( identifyAggregateState("XYZ+3")        == AggregateState::Aqueous          );
-    CHECK( identifyAggregateState("XYZ[2-]")      == AggregateState::Aqueous          );
+    CHECK( identifyAggregateState("XYZ+")         == AggregateState::Aqueous );
+    CHECK( identifyAggregateState("XYZ++")        == AggregateState::Aqueous );
+    CHECK( identifyAggregateState("XYZ+++")       == AggregateState::Aqueous );
+    CHECK( identifyAggregateState("XYZ+2")        == AggregateState::Aqueous );
+    CHECK( identifyAggregateState("XYZ+3")        == AggregateState::Aqueous );
+    CHECK( identifyAggregateState("XYZ[2-]")      == AggregateState::Aqueous );
 
-    CHECK( identifyAggregateState("XYZ-(pl)")     == AggregateState::Plasma           );
-    CHECK( identifyAggregateState("XYZ--(pl)")    == AggregateState::Plasma           );
-    CHECK( identifyAggregateState("XYZ---(pl)")   == AggregateState::Plasma           );
-    CHECK( identifyAggregateState("XYZ-2(pl)")    == AggregateState::Plasma           );
-    CHECK( identifyAggregateState("XYZ-3(pl)")    == AggregateState::Plasma           );
+    CHECK( identifyAggregateState("XYZ-(pl)")     == AggregateState::Plasma );
+    CHECK( identifyAggregateState("XYZ--(pl)")    == AggregateState::Plasma );
+    CHECK( identifyAggregateState("XYZ---(pl)")   == AggregateState::Plasma );
+    CHECK( identifyAggregateState("XYZ-2(pl)")    == AggregateState::Plasma );
+    CHECK( identifyAggregateState("XYZ-3(pl)")    == AggregateState::Plasma );
 
-    CHECK( identifyAggregateState("XYZ+(pl)")     == AggregateState::Plasma           );
-    CHECK( identifyAggregateState("XYZ++(pl)")    == AggregateState::Plasma           );
-    CHECK( identifyAggregateState("XYZ+++(pl)")   == AggregateState::Plasma           );
-    CHECK( identifyAggregateState("XYZ[3+](pl)")  == AggregateState::Plasma           );
-    CHECK( identifyAggregateState("XYZ+2(pl)")    == AggregateState::Plasma           );
-    CHECK( identifyAggregateState("XYZ+3(pl)")    == AggregateState::Plasma           );
+    CHECK( identifyAggregateState("XYZ+(pl)")     == AggregateState::Plasma );
+    CHECK( identifyAggregateState("XYZ++(pl)")    == AggregateState::Plasma );
+    CHECK( identifyAggregateState("XYZ+++(pl)")   == AggregateState::Plasma );
+    CHECK( identifyAggregateState("XYZ[3+](pl)")  == AggregateState::Plasma );
+    CHECK( identifyAggregateState("XYZ+2(pl)")    == AggregateState::Plasma );
+    CHECK( identifyAggregateState("XYZ+3(pl)")    == AggregateState::Plasma );
 
-    CHECK( identifyAggregateState("XYZ")          == AggregateState::Undefined        );
-    CHECK( identifyAggregateState("XYZ(xy)")      == AggregateState::Undefined        );
+    CHECK( identifyAggregateState("XYZ")          == AggregateState::Undefined );
+    CHECK( identifyAggregateState("XYZ(xy)")      == AggregateState::Undefined );
 }
