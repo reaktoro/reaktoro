@@ -25,7 +25,6 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/GlobalOptions.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
@@ -85,12 +84,11 @@ template<class ParamsType>
 auto checkTemperatureValidityHKF(real& T, const ParamsType& params) -> void
 {
     // Check if temperature bounds should be enforced
-    if(global::options.exception.enforce_temperature_bounds)
-        Assert(T >= 0.0 && T <= params.Tmax, "Unable to calculate the "
-            "thermodynamic properties of species" + params.name + "using the "
-                "revised HKF equations of state.", "The provided temperature `" +
-                    std::to_string(T) + " K` is either negative or greater than the "
-                        "maximum allowed `" + std::to_string(params.Tmax) + " K`.");
+    Assert(T >= 0.0 && T <= params.Tmax, "Unable to calculate the "
+        "thermodynamic properties of species" + params.name + "using the "
+            "revised HKF equations of state.", "The provided temperature `" +
+                std::to_string(T) + " K` is either negative or greater than the "
+                    "maximum allowed `" + std::to_string(params.Tmax) + " K`.");
 
     // Ensure temperature is not above the maximum allowed
     T = min(T, params.Tmax);
