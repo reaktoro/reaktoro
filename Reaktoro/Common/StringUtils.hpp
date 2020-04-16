@@ -75,6 +75,7 @@ auto str(Args... items) -> String
 /// Return a new string where `substr` occurrences are replaced by `newsubstr`.
 inline auto replace(String original, String substr, String newsubstr) -> String
 {
+    if(substr.empty()) return original;
 	auto pos = original.find(substr);
 	while(pos != String::npos)
 	{
@@ -99,7 +100,7 @@ inline auto uppercase(String str) -> String
 }
 
 /// Trim the string from start (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
-inline auto leftTrim(String& str) -> String&
+inline auto trimleft(String str) -> String
 {
     str.erase(str.begin(),
         std::find_if(str.begin(), str.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
@@ -107,7 +108,7 @@ inline auto leftTrim(String& str) -> String&
 }
 
 /// Trim the string from end (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
-inline auto rightTrim(String& str) -> String&
+inline auto trimright(String str) -> String
 {
     str.erase(std::find_if(str.rbegin(), str.rend(),
         std::not1(std::ptr_fun<int, int>(std::isspace))).base(), str.end());
@@ -115,13 +116,13 @@ inline auto rightTrim(String& str) -> String&
 }
 
 /// Trim the string from both ends (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
-inline auto trim(String& str) -> String&
+inline auto trim(String str) -> String
 {
-    return leftTrim(rightTrim(str));
+    return trimleft(trimright(str));
 }
 
-/// Split the string on every occurrence of the specified delimiters
-inline auto split(const String& str, const String& delims, std::function<String&(String&)> transform) -> Strings
+/// Split the string on every occurrence of the specified delimiters and apply a transform function.
+inline auto split(const String& str, const String& delims, std::function<String(String)> transform) -> Strings
 {
 	Strings words;
 	std::size_t start = 0, end = 0;
@@ -141,18 +142,12 @@ inline auto split(const String& str, const String& delims = " ") -> Strings
     return split(str, delims, {});
 }
 
-/// Split the string on every occurrence of the specified delimiters and trim each word
-inline auto splitrim(const String& str, const String& delims = " ") -> Strings
-{
-    return split(str, delims, trim);
-}
-
 /// Join several strings into one.
-inline auto join(const Strings& strs, String delim = " ") -> String
+inline auto join(const Strings& strs, String sep = " ") -> String
 {
     String res;
-    for(unsigned i = 0; i < strs.size(); ++i)
-        res = res + (i > 0 ? delim : "") + strs[i];
+    for(auto i = 0; i < strs.size(); ++i)
+        res += (i == 0 ? "" : sep) + strs[i];
     return res;
 }
 
@@ -160,15 +155,6 @@ inline auto join(const Strings& strs, String delim = " ") -> String
 inline auto tofloat(const String& str) -> double
 {
     return atof(str.c_str());
-}
-
-/// Convert the string into a list of floating point numbers
-inline auto tofloats(const String& str, const String& delims = " ") -> Vec<double>
-{
-    Vec<double> values;
-    for(const String& num : split(str, delims))
-        values.push_back(tofloat(num));
-    return values;
 }
 
 /// Return a list of words with duplicate names converted to unique ones.
