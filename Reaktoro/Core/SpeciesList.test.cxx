@@ -101,105 +101,107 @@ TEST_CASE("Testing SpeciesList", "[SpeciesList]")
     filtered = species.withNames("H+(aq) ABC OH-(aq) XYZ H2O(aq)");
 
     REQUIRE( filtered.size() == 3 );
-    REQUIRE( filtered[0].name() == "H+(aq)"  );
-    REQUIRE( filtered[1].name() == "OH-(aq)" );
-    REQUIRE( filtered[2].name() == "H2O(aq)" );
+    REQUIRE( filtered.indexWithName("H+(aq)" ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("OH-(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2O(aq)") < filtered.size() );
 
     // Test method SpeciesList::withNames
-    filtered = species.withNames("H+ ABC OH- XYZ H2O");
+    filtered = species.withFormulas("H+ ABC OH- XYZ H2O");
 
-    REQUIRE( filtered.size() == 3 );
-    REQUIRE( filtered[0].name() == "H+(aq)"  );
-    REQUIRE( filtered[1].name() == "OH-(aq)" );
-    REQUIRE( filtered[2].name() == "H2O(aq)" );
+    REQUIRE( filtered.size() == 4 );
+    REQUIRE( filtered.indexWithName("H+(aq)" ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("OH-(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2O(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2O(g)")  < filtered.size() );
 
     // Test method SpeciesList::withFormulas
     filtered = species.withFormulas({"CO2", "AaBbCc", "HCO3-", "Xx2Yy3", "CO3-2"});
 
-    REQUIRE( filtered.size() == 3 );
-    REQUIRE( filtered[0].name() == "CO2(aq)"   );
-    REQUIRE( filtered[1].name() == "HCO3-(aq)" );
-    REQUIRE( filtered[2].name() == "CO3-2(aq)" );
+    REQUIRE( filtered.size() == 4 );
+    REQUIRE( filtered.indexWithName("CO2(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("HCO3-(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO3-2(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO2(g)"   ) < filtered.size() );
 
     // Test method SpeciesList::withTag
     filtered = species.withTag("charged");
 
     REQUIRE( filtered.size() == 6 );
-    REQUIRE( filtered[0].name() == "H+(aq)"    );
-    REQUIRE( filtered[1].name() == "OH-(aq)"   );
-    REQUIRE( filtered[2].name() == "Na+(aq)"   );
-    REQUIRE( filtered[3].name() == "Cl-(aq)"   );
-    REQUIRE( filtered[4].name() == "HCO3-(aq)" );
-    REQUIRE( filtered[5].name() == "CO3-2(aq)" );
+    REQUIRE( filtered.indexWithName("H+(aq)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("OH-(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("Na+(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("Cl-(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("HCO3-(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO3-2(aq)") < filtered.size() );
 
     // Test method SpeciesList::withTags
     filtered = species.withTags({"cation", "charged"});
 
     REQUIRE( filtered.size() == 2 );
-    REQUIRE( filtered[0].name() == "H+(aq)"  );
-    REQUIRE( filtered[1].name() == "Na+(aq)" );
+    REQUIRE( filtered.indexWithName("H+(aq)" ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("Na+(aq)") < filtered.size() );
 
     // Test method SpeciesList::withTags
     filtered = species.withTags({"anion", "charged"});
 
     REQUIRE( filtered.size() == 4 );
-    REQUIRE( filtered[0].name() == "OH-(aq)"   );
-    REQUIRE( filtered[1].name() == "Cl-(aq)"   );
-    REQUIRE( filtered[2].name() == "HCO3-(aq)" );
-    REQUIRE( filtered[3].name() == "CO3-2(aq)" );
+    REQUIRE( filtered.indexWithName("OH-(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("Cl-(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("HCO3-(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO3-2(aq)") < filtered.size() );
 
     // Test method SpeciesList::withTag
     filtered = species.withTag("aqueous");
 
     REQUIRE( filtered.size() == 12 );
-    REQUIRE( filtered[0].name()  == "H2O(aq)"   );
-    REQUIRE( filtered[1].name()  == "H+(aq)"    );
-    REQUIRE( filtered[2].name()  == "OH-(aq)"   );
-    REQUIRE( filtered[3].name()  == "H2(aq)"    );
-    REQUIRE( filtered[4].name()  == "O2(aq)"    );
-    REQUIRE( filtered[5].name()  == "Na+(aq)"   );
-    REQUIRE( filtered[6].name()  == "Cl-(aq)"   );
-    REQUIRE( filtered[7].name()  == "NaCl(aq)"  );
-    REQUIRE( filtered[8].name()  == "CO2(aq)"   );
-    REQUIRE( filtered[9].name()  == "HCO3-(aq)" );
-    REQUIRE( filtered[10].name() == "CO3-2(aq)" );
-    REQUIRE( filtered[11].name() == "CH4(aq)"   );
+    REQUIRE( filtered.indexWithName("H2O(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("H+(aq)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("OH-(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2(aq)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("O2(aq)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("Na+(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("Cl-(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("NaCl(aq)" ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO2(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("HCO3-(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO3-2(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CH4(aq)"  ) < filtered.size() );
 
     // Test method SpeciesList::withoutTag
     filtered = species.withoutTag("aqueous");
 
     REQUIRE( filtered.size() == 3 );
-    REQUIRE( filtered[0].name() == "H2O(g)" );
-    REQUIRE( filtered[1].name() == "CO2(g)" );
-    REQUIRE( filtered[2].name() == "CH4(g)" );
+    REQUIRE( filtered.indexWithName("H2O(g)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO2(g)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CH4(g)") < filtered.size() );
 
     // Test method SpeciesList::withElements
     filtered = species.withElements("H O");
 
     REQUIRE( filtered.size() == 6 );
-    REQUIRE( filtered[0].name() == "H2O(aq)" );
-    REQUIRE( filtered[1].name() == "H+(aq)" );
-    REQUIRE( filtered[2].name() == "OH-(aq)" );
-    REQUIRE( filtered[3].name() == "H2(aq)" );
-    REQUIRE( filtered[4].name() == "O2(aq)" );
-    REQUIRE( filtered[5].name() == "H2O(g)" );
+    REQUIRE( filtered.indexWithName("H2O(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("H+(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("OH-(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("O2(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2O(g)") < filtered.size() );
 
     // Test method SpeciesList::withElements
     filtered = species.withElements("H O C");
 
     REQUIRE( filtered.size() == 12 );
-    REQUIRE( filtered[0].name()  == "H2O(aq)"   );
-    REQUIRE( filtered[1].name()  == "H+(aq)"    );
-    REQUIRE( filtered[2].name()  == "OH-(aq)"   );
-    REQUIRE( filtered[3].name()  == "H2(aq)"    );
-    REQUIRE( filtered[4].name()  == "O2(aq)"    );
-    REQUIRE( filtered[5].name()  == "CO2(aq)"   );
-    REQUIRE( filtered[6].name()  == "HCO3-(aq)" );
-    REQUIRE( filtered[7].name()  == "CO3-2(aq)" );
-    REQUIRE( filtered[8].name()  == "CH4(aq)"   );
-    REQUIRE( filtered[9].name()  == "H2O(g)"    );
-    REQUIRE( filtered[10].name() == "CO2(g)"    );
-    REQUIRE( filtered[11].name() == "CH4(g)"    );
+    REQUIRE( filtered.indexWithName("H2O(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("H+(aq)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("OH-(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2(aq)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("O2(aq)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO2(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("HCO3-(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO3-2(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CH4(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2O(g)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO2(g)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("CH4(g)"   ) < filtered.size() );
 
     REQUIRE( species.withElements("").size() == 0);
     REQUIRE( species.withElements("Aa Bb Cc Dd Ee").size() == 0 );
@@ -208,44 +210,48 @@ TEST_CASE("Testing SpeciesList", "[SpeciesList]")
     // Test method SpeciesList::withElementsOf
     filtered = species.withElementsOf({"H2O", "NaCl"});
 
-    REQUIRE( filtered.size() == 5 );
-    REQUIRE( filtered[0].name() == "H2O(aq)"   );
-    REQUIRE( filtered[1].name() == "H2(aq)"    );
-    REQUIRE( filtered[2].name() == "O2(aq)"    );
-    REQUIRE( filtered[3].name() == "NaCl(aq)"  );
-    REQUIRE( filtered[4].name() == "H2O(g)"    );
+    REQUIRE( filtered.size() == 9 );
+    REQUIRE( filtered.indexWithName("H2O(aq)")   < filtered.size() );
+    REQUIRE( filtered.indexWithName("H+(aq)")    < filtered.size() );
+    REQUIRE( filtered.indexWithName("OH-(aq)")   < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2(aq)")    < filtered.size() );
+    REQUIRE( filtered.indexWithName("O2(aq)")    < filtered.size() );
+    REQUIRE( filtered.indexWithName("Na+(aq)")   < filtered.size() );
+    REQUIRE( filtered.indexWithName("Cl-(aq)")   < filtered.size() );
+    REQUIRE( filtered.indexWithName("NaCl(aq)")  < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2O(g)")    < filtered.size() );
 
-    filtered = species.withElementsOf("H2O Na+ Cl-");
+    filtered = filtered.withElementsOf("H2O Na+ Cl-");
 
     REQUIRE( filtered.size() == 9 );
-    REQUIRE( filtered[0].name() == "H2O(aq)"   );
-    REQUIRE( filtered[1].name() == "H+(aq)"    );
-    REQUIRE( filtered[2].name() == "OH-(aq)"   );
-    REQUIRE( filtered[3].name() == "H2(aq)"    );
-    REQUIRE( filtered[4].name() == "O2(aq)"    );
-    REQUIRE( filtered[5].name() == "Na+(aq)"   );
-    REQUIRE( filtered[6].name() == "Cl-(aq)"   );
-    REQUIRE( filtered[7].name() == "NaCl(aq)"  );
-    REQUIRE( filtered[8].name() == "H2O(g)"    );
+    REQUIRE( filtered.indexWithName("H2O(aq)")   < filtered.size() );
+    REQUIRE( filtered.indexWithName("H+(aq)")    < filtered.size() );
+    REQUIRE( filtered.indexWithName("OH-(aq)")   < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2(aq)")    < filtered.size() );
+    REQUIRE( filtered.indexWithName("O2(aq)")    < filtered.size() );
+    REQUIRE( filtered.indexWithName("Na+(aq)")   < filtered.size() );
+    REQUIRE( filtered.indexWithName("Cl-(aq)")   < filtered.size() );
+    REQUIRE( filtered.indexWithName("NaCl(aq)")  < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2O(g)")    < filtered.size() );
 
-    filtered = species.withElementsOf("HOCNaClZ");
+    filtered = species.withElementsOf("HOCNaCl");
 
     REQUIRE( filtered.size() == species.size() );
-    REQUIRE( filtered[0].name()  == "H2O(aq)"   );
-    REQUIRE( filtered[1].name()  == "H+(aq)"    );
-    REQUIRE( filtered[2].name()  == "OH-(aq)"   );
-    REQUIRE( filtered[3].name()  == "H2(aq)"    );
-    REQUIRE( filtered[4].name()  == "O2(aq)"    );
-    REQUIRE( filtered[5].name()  == "Na+(aq)"   );
-    REQUIRE( filtered[6].name()  == "Cl-(aq)"   );
-    REQUIRE( filtered[7].name()  == "NaCl(aq)"  );
-    REQUIRE( filtered[8].name()  == "CO2(aq)"   );
-    REQUIRE( filtered[9].name()  == "HCO3-(aq)" );
-    REQUIRE( filtered[10].name() == "CO3-2(aq)" );
-    REQUIRE( filtered[11].name() == "CH4(aq)"   );
-    REQUIRE( filtered[12].name() == "H2O(g)"    );
-    REQUIRE( filtered[13].name() == "CO2(g)"    );
-    REQUIRE( filtered[14].name() == "CH4(g)"    );
+    REQUIRE( filtered.indexWithName("H2O(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("H+(aq)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("OH-(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2(aq)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("O2(aq)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("Na+(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("Cl-(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("NaCl(aq)" ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO2(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("HCO3-(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO3-2(aq)") < filtered.size() );
+    REQUIRE( filtered.indexWithName("CH4(aq)"  ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("H2O(g)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO2(g)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("CH4(g)"   ) < filtered.size() );
 
     // Test method SpeciesList::append
     species.append(Species("CaCO3(calcite)"));
