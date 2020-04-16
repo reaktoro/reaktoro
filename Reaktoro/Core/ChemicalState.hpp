@@ -23,6 +23,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 
 namespace Reaktoro {
 
@@ -357,14 +358,16 @@ public:
     auto phaseAmount(std::string name, std::string units) const -> real;
 
     /// Return the stability indices of the phases with respect to chemical equilibrium.
-    ///
     /// The stability index of a stable phase at chemical equilibrium should
     /// be zero or very close to zero. A negative stability index indicates
     /// that the corresponding phase is under-saturated, while a positive index
     /// indicates the phase is over-saturated.
     auto phaseStabilityIndices() const -> VectorXr;
 
-    /// Return the chemical properties of the system.
+    /// Return the chemical properties of a phase in the chemical system.
+    auto phaseProps(Index iphase) const -> ChemicalPropsPhase;
+
+    /// Return the chemical properties of the chemical system.
     auto props() const -> ChemicalProps;
 
     /// Output the ChemicalState instance to a stream.

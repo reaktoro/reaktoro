@@ -417,19 +417,20 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
     // Check if the specific surface area of the mineral was set
     if(specific_surface_area) return specific_surface_area * molar_mass;
 
-    // The standard partial molar volumes at 25 C and 1 bar of all species
-    const auto V = system.props(T, P).standardVolumes();
+    error(true, "At the moment, only specific surface area for mineral surfaces are allowed. Use unit m2/kg or equivalent.");
+    // // The standard partial molar volumes at 25 C and 1 bar of all species
+    // const auto V = system.props(T, P).standardVolumes();
 
-    // The molar volume of the mineral species (in units of m3/mol)
-    const auto molar_volume = V[ispecies];
+    // // The molar volume of the mineral species (in units of m3/mol)
+    // const auto molar_volume = V[ispecies];
 
-    // The volumetric surface area of the mineral (in units of m2/m3)
-    const auto volumetric_surface_area = reaction.volumetricSurfaceArea();
+    // // The volumetric surface area of the mineral (in units of m2/m3)
+    // const auto volumetric_surface_area = reaction.volumetricSurfaceArea();
 
-    // Check if the volumetric surface area of the mineral was set
-    if(volumetric_surface_area) return volumetric_surface_area * molar_volume;
+    // // Check if the volumetric surface area of the mineral was set
+    // if(volumetric_surface_area) return volumetric_surface_area * molar_volume;
 
-    errroZeroSurfaceArea(reaction);
+    // errroZeroSurfaceArea(reaction);
 
     return 0.0;
 }

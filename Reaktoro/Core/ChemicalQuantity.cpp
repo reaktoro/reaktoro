@@ -217,7 +217,7 @@ struct ChemicalQuantity::Impl
         n = state.speciesAmounts();
 
         // Update the thermodynamic properties of the system
-        props = system.props(T, P, n);
+        props = state.props();
 
         // Update the rates of the reactions
         if(!reactions.reactions().empty())
@@ -598,7 +598,7 @@ auto elementMolarity(const ChemicalQuantity& quantity, std::string arguments) ->
         const ChemicalProps& props = quantity.props();
         const ChemicalState& state = quantity.state();
         const auto amount = state.elementAmountInPhase(ielement, iphase);
-        const auto volume = props.phase(iphase).volume();
+        const auto volume = props.phaseProps(iphase).volume();
         const auto liter = convertCubicMeterToLiter(volume);
         const auto ci = liter ? amount/liter : 0.0;
         return factor * ci;
@@ -675,7 +675,7 @@ auto speciesMolarity(const ChemicalQuantity& quantity, std::string arguments) ->
         const ChemicalProps& props = quantity.props();
         const ChemicalState& state = quantity.state();
         const auto amount = state.speciesAmount(ispecies);
-        const auto volume = props.phase(iphase).volume();
+        const auto volume = props.phaseProps(iphase).volume();
         const auto liter = convertCubicMeterToLiter(volume);
         const auto ci = liter ? amount/liter : 0.0;
         return factor * ci;
@@ -694,7 +694,7 @@ auto phaseAmount(const ChemicalQuantity& quantity, std::string arguments) -> std
     auto func = [=]() -> real
     {
         const ChemicalProps& props = quantity.props();
-        const auto val = props.phase(iphase).amount();
+        const auto val = props.phaseProps(iphase).amount();
         return factor * val;
     };
     return func;
@@ -711,7 +711,7 @@ auto phaseMass(const ChemicalQuantity& quantity, std::string arguments) -> std::
     auto func = [=]() -> real
     {
         const ChemicalProps& props = quantity.props();
-        const auto val = props.phase(iphase).mass();
+        const auto val = props.phaseProps(iphase).mass();
         return factor * val;
     };
     return func;
@@ -728,7 +728,7 @@ auto phaseVolume(const ChemicalQuantity& quantity, std::string arguments) -> std
     auto func = [=]() -> real
     {
         const ChemicalProps& props = quantity.props();
-        const auto val = props.phase(iphase).volume();
+        const auto val = props.phaseProps(iphase).volume();
         return factor * val;
     };
     return func;
