@@ -36,52 +36,48 @@ TEST_CASE("Testing ElementalComposition", "[ElementalComposition]")
         { Element("O"), 3.0 },
     });
 
+    //-----------------------------------------------------------------
     // Testing method ElementalComposition::symbols()
-    REQUIRE( elements.symbols().size() == 3 );
-    REQUIRE( elements.symbols()[0] == "H" );
-    REQUIRE( elements.symbols()[1] == "C" );
-    REQUIRE( elements.symbols()[2] == "O" );
+    //-----------------------------------------------------------------
+    REQUIRE( identical(elements.symbols(), Strings{"H", "C", "O"}) );
 
+    //-----------------------------------------------------------------
     // Testing method ElementalComposition::coefficients()
-    REQUIRE( elements.coefficients().size() == 3 );
-    REQUIRE( elements.coefficients()[0] == 1.0 );
-    REQUIRE( elements.coefficients()[1] == 2.0 );
-    REQUIRE( elements.coefficients()[2] == 3.0 );
+    //-----------------------------------------------------------------
+    REQUIRE( identical(elements.coefficients(), Vec<double>{1.0, 2.0, 3.0}) );
 
-    REQUIRE( contains(elements.symbols(), "C") );
-    REQUIRE( contains(elements.symbols(), "O") );
-
+    //-----------------------------------------------------------------
     // Testing method ElementalComposition::coefficient()
+    //-----------------------------------------------------------------
     REQUIRE( elements.coefficient("H") == 1.0 );
     REQUIRE( elements.coefficient("C") == 2.0 );
     REQUIRE( elements.coefficient("O") == 3.0 );
+    REQUIRE( elements.coefficient("X") == 0.0 );
 
     //-----------------------------------------------------------------
     // Testing constructor ElementalComposition(Map<String, double>)
     //-----------------------------------------------------------------
     elements = ElementalComposition(Map<String, double>{
-        { "H", 1.0 },
-        { "C", 2.0 },
-        { "O", 3.0 },
+        { "Ca", 4.0 },
+        { "Mg", 5.0 },
+        { "F",  6.0 },
     });
 
+    //-----------------------------------------------------------------
     // Testing method ElementalComposition::symbols()
-    REQUIRE( elements.symbols().size() == 3 );
-    REQUIRE( elements.symbols()[0] == "H" );
-    REQUIRE( elements.symbols()[1] == "C" );
-    REQUIRE( elements.symbols()[2] == "O" );
+    //-----------------------------------------------------------------
+    REQUIRE( identical(elements.symbols(), Strings{"Ca", "Mg", "F"}) );
 
+    //-----------------------------------------------------------------
     // Testing method ElementalComposition::coefficients()
-    REQUIRE( elements.coefficients().size() == 3 );
-    REQUIRE( elements.coefficients()[0] == 1.0 );
-    REQUIRE( elements.coefficients()[1] == 2.0 );
-    REQUIRE( elements.coefficients()[2] == 3.0 );
+    //-----------------------------------------------------------------
+    REQUIRE( identical(elements.coefficients(), Vec<double>{4.0, 5.0, 6.0}) );
 
-    REQUIRE( contains(elements.symbols(), "C") );
-    REQUIRE( contains(elements.symbols(), "O") );
-
+    //-----------------------------------------------------------------
     // Testing method ElementalComposition::coefficient()
-    REQUIRE( elements.coefficient("H") == 1.0 );
-    REQUIRE( elements.coefficient("C") == 2.0 );
-    REQUIRE( elements.coefficient("O") == 3.0 );
+    //-----------------------------------------------------------------
+    REQUIRE( elements.coefficient("Ca") == 4.0 );
+    REQUIRE( elements.coefficient("Mg") == 5.0 );
+    REQUIRE( elements.coefficient("F")  == 6.0 );
+    REQUIRE( elements.coefficient("X")  == 0.0 );
 }

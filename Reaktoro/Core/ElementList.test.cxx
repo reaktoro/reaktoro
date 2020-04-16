@@ -27,7 +27,9 @@ TEST_CASE("Testing ElementList", "[ElementList]")
     ElementList elements;
     ElementList filtered;
 
-    // Test constructor ElementList(formulas)
+    //-------------------------------------------------------------------------
+    // TESTING CONSTRUCTOR: ElementList(formulas)
+    //-------------------------------------------------------------------------
     elements = {
         Element({ "H"  , "Hydrogen"      , 1   , 0.001007940 , 2.20, {"tag1"} }),
         Element({ "He" , "Helium"        , 2   , 0.004002602 , 0.00, {"tag1"} }),
@@ -52,7 +54,9 @@ TEST_CASE("Testing ElementList", "[ElementList]")
     REQUIRE( elements[7].symbol()  == "O" );
     REQUIRE( elements[8].symbol()  == "F" );
 
-    // Test method ElementList::indexWithSymbol
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::indexWithSymbol
+    //-------------------------------------------------------------------------
     REQUIRE( elements.indexWithSymbol("H")  == 0);
     REQUIRE( elements.indexWithSymbol("He") == 1);
     REQUIRE( elements.indexWithSymbol("Li") == 2);
@@ -63,7 +67,9 @@ TEST_CASE("Testing ElementList", "[ElementList]")
     REQUIRE( elements.indexWithSymbol("O")  == 7);
     REQUIRE( elements.indexWithSymbol("F")  == 8);
 
-    // Test method ElementList::indexWithName
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::indexWithName
+    //-------------------------------------------------------------------------
     REQUIRE( elements.indexWithName("Hydrogen")  == 0);
     REQUIRE( elements.indexWithName("Helium")    == 1);
     REQUIRE( elements.indexWithName("Lithium")   == 2);
@@ -74,59 +80,71 @@ TEST_CASE("Testing ElementList", "[ElementList]")
     REQUIRE( elements.indexWithName("Oxygen")    == 7);
     REQUIRE( elements.indexWithName("Fluorine")  == 8);
 
-    // Test method ElementList::withSymbols
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::withSymbols
+    //-------------------------------------------------------------------------
     filtered = elements.withSymbols("He ABC O XYZ C");
 
     REQUIRE( filtered.size() == 3 );
-    REQUIRE( filtered[0].symbol() == "He" );
-    REQUIRE( filtered[1].symbol() == "O"  );
-    REQUIRE( filtered[2].symbol() == "C"  );
+    REQUIRE( filtered.indexWithSymbol("He") < filtered.size() );
+    REQUIRE( filtered.indexWithSymbol("O" ) < filtered.size() );
+    REQUIRE( filtered.indexWithSymbol("C" ) < filtered.size() );
 
-    // Test method ElementList::withNames
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::withNames
+    //-------------------------------------------------------------------------
     filtered = elements.withNames("Helium ABC Oxygen XYZ Carbon");
 
     REQUIRE( filtered.size() == 3 );
-    REQUIRE( filtered[0].name() == "Helium" );
-    REQUIRE( filtered[1].name() == "Oxygen" );
-    REQUIRE( filtered[2].name() == "Carbon" );
+    REQUIRE( filtered.indexWithName("Helium") < filtered.size() );
+    REQUIRE( filtered.indexWithName("Oxygen") < filtered.size() );
+    REQUIRE( filtered.indexWithName("Carbon") < filtered.size() );
 
-    // Test method ElementList::withTag
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::withTag
+    //-------------------------------------------------------------------------
     filtered = elements.withTag("tag1");
 
     REQUIRE( filtered.size() == 4 );
-    REQUIRE( filtered[0].symbol()  == "H"  );
-    REQUIRE( filtered[1].symbol()  == "He" );
-    REQUIRE( filtered[2].symbol()  == "Li" );
-    REQUIRE( filtered[3].symbol()  == "F"  );
+    REQUIRE( filtered.indexWithSymbol("H" ) < filtered.size() );
+    REQUIRE( filtered.indexWithSymbol("He") < filtered.size() );
+    REQUIRE( filtered.indexWithSymbol("Li") < filtered.size() );
+    REQUIRE( filtered.indexWithSymbol("F" ) < filtered.size() );
 
-    // Test method ElementList::withoutTag
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::withoutTag
+    //-------------------------------------------------------------------------
     filtered = elements.withoutTag("tag1");
 
-    REQUIRE( filtered.size() == 6 );
-    REQUIRE( filtered[0].symbol()  == "H"  );
-    REQUIRE( filtered[1].symbol()  == "He" );
-    REQUIRE( filtered[2].symbol()  == "Li" );
-    REQUIRE( filtered[3].symbol()  == "Be" );
-    REQUIRE( filtered[4].symbol()  == "B"  );
-    REQUIRE( filtered[5].symbol()  == "C"  );
+    REQUIRE( filtered.size() == 5 );
+    REQUIRE( filtered.indexWithSymbol("Be") < filtered.size() );
+    REQUIRE( filtered.indexWithSymbol("B" ) < filtered.size() );
+    REQUIRE( filtered.indexWithSymbol("C" ) < filtered.size() );
+    REQUIRE( filtered.indexWithSymbol("N" ) < filtered.size() );
+    REQUIRE( filtered.indexWithSymbol("O" ) < filtered.size() );
 
-    // Test method ElementList::withTags
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::withTags
+    //-------------------------------------------------------------------------
     filtered = elements.withTags({"tag1", "tag2"});
 
-    REQUIRE( filtered.size() == 6 );
-    REQUIRE( filtered[0].symbol()  == "H"  );
-    REQUIRE( filtered[1].symbol()  == "He" );
-    REQUIRE( filtered[2].symbol()  == "Li" );
-    REQUIRE( filtered[3].symbol()  == "Be" );
-    REQUIRE( filtered[4].symbol()  == "B"  );
-    REQUIRE( filtered[5].symbol()  == "C"  );
+    REQUIRE( filtered.size() == 0 );
 
-    // Test method ElementList::withoutTags
+    filtered = elements.withTags({"tag1", "tag3"});
+
+    REQUIRE( filtered.size() == 1 );
+    REQUIRE( filtered.indexWithSymbol("F") < filtered.size() );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::withoutTags
+    //-------------------------------------------------------------------------
     filtered = elements.withTags({"tag1", "tag2", "tag3"});
 
     REQUIRE( filtered.size() == 0 );
 
-    // Test method ElementList::append
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::append
+    //-------------------------------------------------------------------------
     elements.append(Element("Xy").withName("Xyrium"));
 
     REQUIRE( elements.indexWithSymbol("Xy")   < elements.size() );
