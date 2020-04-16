@@ -96,7 +96,7 @@ struct GlobalOptions
     EquilibriumOptions equilibrium;
 
     /// The options used for the equilibrium path calculations.
-    EquilibriumPathOptions equilibriumpath;
+    // EquilibriumPathOptions equilibriumpath;
 
     /// The options used for the kinetic calculations.
     KineticOptions kinetics;
