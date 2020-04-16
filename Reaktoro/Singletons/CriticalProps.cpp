@@ -129,7 +129,7 @@ const std::deque<SubstanceCriticalProps> default_substances =
 /// example, `H2O(aq)` becomes `H2O`. It also replaces spaces by dashes and
 /// transforms all characters to upper case, converting, for example, `carbon
 /// dioxide` into `CARBON-DIOXIDE`.
-auto correctName(std::string name) -> std::string
+auto correctName(String name) -> String
 {
     const auto [name0, _] = splitSpeciesNameSuffix(name);
     name = name0;
@@ -139,7 +139,7 @@ auto correctName(std::string name) -> std::string
 }
 
 /// Return a vector of substance names corrected for checking in the ChemicalProps database.
-auto correctNames(std::vector<std::string> names) -> std::vector<std::string>
+auto correctNames(Strings names) -> Strings
 {
     for(auto& name : names)
         name = correctName(name);
@@ -148,14 +148,13 @@ auto correctNames(std::vector<std::string> names) -> std::vector<std::string>
 
 } // namespace detail
 
-SubstanceCriticalProps::SubstanceCriticalProps()
-{
-}
+SubstanceCriticalProps::SubstanceCriticalProps(Strings names)
+: SubstanceCriticalProps({}, names)
+{}
 
-SubstanceCriticalProps::SubstanceCriticalProps(SubstanceCriticalPropsData data, std::vector<std::string> names)
+SubstanceCriticalProps::SubstanceCriticalProps(SubstanceCriticalPropsData data, Strings names)
 : m_data(std::move(data)), m_names(detail::correctNames(names))
-{
-}
+{}
 
 auto SubstanceCriticalProps::setTemperature(real value) -> void
 {
@@ -163,7 +162,7 @@ auto SubstanceCriticalProps::setTemperature(real value) -> void
     m_data.Tcr = value;
 }
 
-auto SubstanceCriticalProps::setTemperature(real value, std::string unit) -> void
+auto SubstanceCriticalProps::setTemperature(real value, String unit) -> void
 {
     setTemperature(units::convert(value, unit, "K"));
 }
@@ -174,7 +173,7 @@ auto SubstanceCriticalProps::setPressure(real value) -> void
     m_data.Pcr = value;
 }
 
-auto SubstanceCriticalProps::setPressure(real value, std::string unit) -> void
+auto SubstanceCriticalProps::setPressure(real value, String unit) -> void
 {
     error(value <= 0.0, "Cannot set non-positive critical pressure value (", value, " ", unit, ") to substance with name identifiers ", names(), ".");
     m_data.Pcr = units::convert(value, unit, "Pa");
@@ -185,7 +184,7 @@ auto SubstanceCriticalProps::setAcentricFactor(real value) -> void
     m_data.omega = value;
 }
 
-auto SubstanceCriticalProps::names() const -> const std::vector<std::string>&
+auto SubstanceCriticalProps::names() const -> const Strings&
 {
     return m_names;
 }
@@ -241,23 +240,35 @@ auto CriticalProps::append(SubstanceCriticalProps substance) -> void
     {
         const auto has_common_name = !disjoint(substance.names(), current.names());
 
-        warning(has_common_name,
-            "Appending critical property data for substance with names ", substance.names(), ". "
-            "However, one of these names conflic with one or more names of another substance with names ", current.names(), ". "
-            "The previously stored substance (with names", current.names(), ") will be overwritten!");
+        error(has_common_name,
+            "Appending critical property data for substance with names {", substance.names(), "}.\n"
+            "However, one of these names conflic with one or more names of another already\n"
+            "stored substance with names {", current.names(), "}.\n"
+            "Use CriticalProps::overwrite instead of CriticalProps::append if you want to\n"
+            "force append and overwrite.");
+    }
+    substances.push_back(substance);
+}
 
+auto CriticalProps::overwrite(SubstanceCriticalProps substance) -> void
+{
+    // Ensure there are no equivalent substances in the database (same name or same aliases).
+    auto& substances = instance().m_substances;
+    for(auto& current : substances)
+    {
+        const auto has_common_name = !disjoint(substance.names(), current.names());
         current = substance;
         return;
     }
     substances.push_back(substance);
 }
 
-auto CriticalProps::size() -> std::size_t
+auto CriticalProps::size() -> Index
 {
     return substances().size();
 }
 
-auto CriticalProps::get(std::string name) -> std::optional<SubstanceCriticalProps>
+auto CriticalProps::get(String name) -> std::optional<SubstanceCriticalProps>
 {
     name = detail::correctName(name);
     const auto idx = indexfn(substances(), [&](auto&& s) { return contains(s.names(), name); });
@@ -265,7 +276,7 @@ auto CriticalProps::get(std::string name) -> std::optional<SubstanceCriticalProp
     return {};
 }
 
-auto CriticalProps::get(std::vector<std::string> names) -> std::optional<SubstanceCriticalProps>
+auto CriticalProps::get(Strings names) -> std::optional<SubstanceCriticalProps>
 {
     for(auto&& name : names)
         if(const auto subs = get(name); subs)

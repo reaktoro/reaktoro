@@ -188,17 +188,22 @@ TEST_CASE("Testing CriticalProps", "[CriticalProps]")
     REQUIRE( withName::pressure("CO2")       == Approx(73.83e+5) );
     REQUIRE( withName::acentricFactor("CO2") == Approx(0.2240)   );
 
-    CriticalProps::append({ { 400.0, 100.0e+5, 0.1234 }, {"HCl"} });
+    REQUIRE_THROWS( CriticalProps::append({ { 400.0, 100.0e+5, 0.1234 }, {"HCl"} }) ); // trying to append new entry with same name as an existing one
+
+    CriticalProps::overwrite({ { 400.0, 100.0e+5, 0.1234 }, {"HCl"} });
 
     REQUIRE( withName::temperature("HCl")    == Approx(400.0)    );
     REQUIRE( withName::pressure("HCl")       == Approx(100.0e+5) );
     REQUIRE( withName::acentricFactor("HCl") == Approx(0.1234)   );
 
-    withName::get("HCl").setTemperature(200, "celsius");
-    withName::get("HCl").setPressure(150, "bar");
-    withName::get("HCl").setAcentricFactor(0.9999);
+    SubstanceCriticalProps crprops({"HCl", "HYDROCHLORIC-ACID"});
+    crprops.setTemperature(200, "celsius");
+    crprops.setPressure(150, "bar");
+    crprops.setAcentricFactor(0.9999);
 
-    REQUIRE( withName::temperature("HCl")    == Approx(473.15)    );
+    CriticalProps::overwrite(crprops); // overwrite instead of append if there is an existing substance with one or more common names
+
+    REQUIRE( withName::temperature("HCl")    == Approx(473.15)   );
     REQUIRE( withName::pressure("HCl")       == Approx(150.0e+5) );
     REQUIRE( withName::acentricFactor("HCl") == Approx(0.9999)   );
 }

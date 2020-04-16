@@ -25,6 +25,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 
 namespace Reaktoro {
@@ -46,8 +47,8 @@ struct SubstanceCriticalPropsData
 class SubstanceCriticalProps
 {
 public:
-    /// Construct a default SubstanceCriticalProps instance.
-    SubstanceCriticalProps();
+    /// Construct a SubstanceCriticalProps instance.
+    SubstanceCriticalProps(Strings names);
 
     /// Construct a SubstanceCriticalProps instance with given data.
     /// The given names will be converted to uppercase, suffix will be removed,
@@ -55,25 +56,25 @@ public:
     /// `carbon dioxide` is replaced by `CARBON-DIOXIDE` and `HCl(g)` by `HCL`.
     /// @param data The critical property data of the substance
     /// @param names The names that can uniquely identify the substance *(case-insensitive)*
-    SubstanceCriticalProps(SubstanceCriticalPropsData data, std::vector<std::string> names);
+    SubstanceCriticalProps(SubstanceCriticalPropsData data, Strings names);
 
     /// Set the critical temperature of the substance (in K)
     auto setTemperature(real value) -> void;
 
     /// Set the critical temperature of the substance with given unit.
-    auto setTemperature(real value, std::string unit) -> void;
+    auto setTemperature(real value, String unit) -> void;
 
     /// Set the critical pressure of the substance (in Pa)
     auto setPressure(real value) -> void;
 
     /// Set the critical pressure of the substance with given unit.
-    auto setPressure(real value, std::string unit) -> void;
+    auto setPressure(real value, String unit) -> void;
 
     /// Set the acentric factor of the substance.
     auto setAcentricFactor(real value) -> void;
 
     /// Return the names that uniquely identify the substance.
-    auto names() const -> const std::vector<std::string>&;
+    auto names() const -> const Strings&;
 
     /// Return the critical temperature of the substance (in K)
     auto temperature() const -> real;
@@ -95,7 +96,7 @@ private:
     SubstanceCriticalPropsData m_data;
 
     /// The names that uniquely identify the substance.
-    std::vector<std::string> m_names;
+    Strings m_names;
 };
 
 /// A type used store a collection of substances and their critical properties.
@@ -117,14 +118,17 @@ public:
     /// Append a substance and its critical properties in to the database.
     static auto append(SubstanceCriticalProps substance) -> void;
 
+    /// Append a substance and its critical properties in the database or overwrite an existing one with conflicting name.
+    static auto overwrite(SubstanceCriticalProps substance) -> void;
+
     /// Return the number of substances in the database.
-    static auto size() -> std::size_t;
+    static auto size() -> Index;
 
     /// Return the substance and its critical properties with given name (e.g. "WATER", "CARBON-DIOXIDE", "HYDROGEN-SULFIDE", etc.).
-    static auto get(std::string name) -> std::optional<SubstanceCriticalProps>;
+    static auto get(String name) -> std::optional<SubstanceCriticalProps>;
 
     /// Return the substance and its critical properties with given alternative names.
-    static auto get(std::vector<std::string> names) -> std::optional<SubstanceCriticalProps>;
+    static auto get(Strings names) -> std::optional<SubstanceCriticalProps>;
 
     /// Return begin const iterator of this CriticalProps instance
     auto begin() const;
