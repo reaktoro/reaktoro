@@ -223,7 +223,7 @@ private:
     ThermoEngine engine;
 
     /// The GenericPhase objects collected so far with each call to Phases::add methods.
-    std::deque<GenericPhase> genericphases;
+    Vec<GenericPhase> genericphases;
 
     /// The element symbols collected so far with each call to Phases::add methods.
     Strings elements;

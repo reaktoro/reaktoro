@@ -112,9 +112,9 @@ auto GenericPhase::activityModel() const -> const ActivityModel&
 
 auto GenericPhase::convert(const ThermoEngine& engine, const Strings& elements) const -> Phase
 {
-    error(aggregatestate != AggregateState::Undefined,
-        "GenericPhase::convert requires an AggregateState value to be specified. "
-        "Use method GenericPhase::set(AggregateState) to fix this.");
+    error(aggregatestate == AggregateState::Undefined,
+        "GenericPhase::convert requires an AggregateState value to be specified.\n"
+        "Use method GenericPhase::setAggregateState to fix this.");
 
     auto species = engine.database().speciesWithAggregateState(aggregatestate);
 
