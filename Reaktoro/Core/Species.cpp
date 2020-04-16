@@ -20,7 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Singletons/PeriodicTable.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -38,7 +37,7 @@ struct Species::Impl
     /// The name that uniquely identifies this species such as `H2O(aq)`, `O2(g)`, `H+(aq)`.
     String name;
 
-    /// The chemical formula of the species such as `H2O`, `O2`, `H+`.
+    /// The chemical formula of the species such as `H2O`, `O2`, `H+`, `CO3--`, `CaMg(CO3)2`.
     String formula;
 
     /// The name of the underlying substance such as `H2O`, `WATER`, `CARBON-MONOXIDE`, `CO2`.
@@ -48,29 +47,29 @@ struct Species::Impl
     ElementalComposition elements;
 
     /// The electric charge of the species.
-    double charge = {};
+    double charge = 0.0;
 
-    /// The aggregate state of the species such as `aqueous`, `gaseous`, `liquid`, `solid`, etc..
-    AggregateState aggregate_state;
+    /// The aggregate state of the species.
+    AggregateState aggregatestate;
 
     /// The tags of the species such as `organic`, `mineral`.
     Strings tags;
 
-    /// The critical properties of the underlying substance of the species if available.
-    std::optional<SubstanceCriticalProps> crprops;
-
     /// The attached data whose type is known at runtime only.
-    std::any attached_data;
+    std::any attacheddata;
 
     /// Construct a default Species::Impl instance
     Impl()
     {}
 
-    /// Construct a Species::Impl instance
-    Impl(ChemicalFormula formula)
-    : name(formula), formula(detail::removeSuffix(formula)),
+    /// Construct a Species::Impl instance with given formula
+    Impl(const ChemicalFormula& formula)
+    : name(formula),
+      formula(detail::removeSuffix(formula)),
       substance(detail::removeSuffix(formula)),
-      elements(formula.elements()), charge(formula.charge())
+      elements(formula.elements()),
+      charge(formula.charge()),
+      aggregatestate(identifyAggregateState(formula))
     {}
 };
 
@@ -120,7 +119,7 @@ auto Species::withCharge(double charge) -> Species
 auto Species::withAggregateState(AggregateState option) -> Species
 {
     Species copy = clone();
-    copy.pimpl->aggregate_state = option;
+    copy.pimpl->aggregatestate = option;
     return copy;
 }
 
@@ -131,17 +130,10 @@ auto Species::withTags(const Strings& tags) -> Species
     return copy;
 }
 
-auto Species::withCriticalProps(const SubstanceCriticalProps& props) -> Species
-{
-    Species copy = clone();
-    copy.pimpl->crprops = props;
-    return copy;
-}
-
 auto Species::withAttachedData(std::any data) -> Species
 {
     Species copy = clone();
-    copy.pimpl->attached_data = data;
+    copy.pimpl->attacheddata = data;
     return copy;
 }
 
@@ -176,9 +168,9 @@ auto Species::molarMass() const -> double
 
 auto Species::aggregateState() const -> AggregateState
 {
-    if(pimpl->aggregate_state == AggregateState::Undefined)
+    if(pimpl->aggregatestate == AggregateState::Undefined)
         return identifyAggregateState(name());
-    return pimpl->aggregate_state;
+    return pimpl->aggregatestate;
 }
 
 auto Species::elements() const -> const ElementalComposition&
@@ -191,16 +183,9 @@ auto Species::tags() const -> const Strings&
     return pimpl->tags;
 }
 
-auto Species::criticalProps() const -> std::optional<SubstanceCriticalProps>
-{
-    if(pimpl->crprops)
-        return pimpl->crprops;
-    return CriticalProps::get({ substance(), formula(), name() });
-}
-
 auto Species::attachedData() const -> const std::any&
 {
-    return pimpl->attached_data;
+    return pimpl->attacheddata;
 }
 
 auto Species::clone() const -> Species

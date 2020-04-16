@@ -42,7 +42,11 @@ auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCu
     for(auto i = 0; i < nspecies; ++i)
     {
         const auto& species = mixture.species()[i];
-        const auto crprops = species.criticalProps();
+        const auto crprops = CriticalProps::get({
+            species.substance(),
+            species.formula(),
+            species.name()
+        });
         error(!crprops.has_value(), "Cannot create any cubic equation of state model "
             "(e.g. Peng-Robinson, Soave-Redlich-Kwong, etc.) without "
             "critical properties for the species with name ", species.name(), ". "
