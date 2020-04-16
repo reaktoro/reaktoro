@@ -194,11 +194,11 @@ auto splitSpeciesNameSuffix(std::string name) -> std::pair<std::string, std::str
         return { name, "" };
 
     const auto pos = name.rfind('(');
-    const auto suffix = name.substr(pos);
+    const auto suffix = name.substr(pos + 1, name.size() - pos - 2); // remove both ( and )
 
-    for(auto i = 1; i < suffix.size() - 1; ++i) // skip first and last char, ( and ) respectively
-        if(!islower(suffix[i])) // if not lower case char only, then it is not an aggregate state suffix
-            return { name, "" };
+    for(auto i = 0; i < suffix.size(); ++i)
+        if(isupper(suffix[i])) // if there is upper case char, then it is not species name suffix
+            return { name, "" }; // it could be part of the chemical formula, e.g., Fe(CO3)
 
     return { name.substr(0, pos), suffix };
 }
