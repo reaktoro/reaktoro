@@ -306,7 +306,7 @@ auto ChemicalProperty::alkalinity(const ChemicalSystem& system) -> ChemicalPrope
         n = props.speciesAmounts();
         const auto n_ions = n(alkalinity_indices);
         const auto m3_to_liter = 1000.0;
-        const auto volume = props.phase(iaqueousphase).volume();
+        const auto volume = props.phaseProps(iaqueousphase).volume();
         const auto res = (alkalinity_factors * n_ions).sum()/(volume * m3_to_liter);
         return res;
     };

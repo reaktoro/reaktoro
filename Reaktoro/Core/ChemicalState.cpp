@@ -229,8 +229,7 @@ struct ChemicalState::Impl
             "The given volume is negative.");
         Assert(index < system.numPhases(), "Cannot set the volume of the phase.",
             "The given phase index is out of range.");
-        ChemicalProps props = system.props(T, P, n);
-        const auto vphase = props.phase(index).volume();
+        const auto vphase = phaseProps(index).volume();
         const auto scalar = (vphase != 0.0) ? volume/vphase : 0.0;
         scaleSpeciesAmountsInPhase(index, scalar);
     }
@@ -285,8 +284,7 @@ struct ChemicalState::Impl
     {
         Assert(volume >= 0.0, "Cannot set the volume of the chemical state.",
             "The given volume is negative.");
-        ChemicalProps props = system.props(T, P, n);
-        const auto vtotal = props.volume();
+        const auto vtotal = props().volume();
         const auto scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
         scaleSpeciesAmounts(scalar);
     }
@@ -431,9 +429,21 @@ struct ChemicalState::Impl
         return units::convert(phaseAmount(name), "mol", units);
     }
 
+    auto phaseProps(Index iphase) const -> ChemicalPropsPhase
+    {
+        const auto offset = system.indexFirstSpeciesInPhase(iphase);
+        const auto length = system.numSpeciesInPhase(iphase);
+        const auto np = n.segment(offset, length);
+        ChemicalPropsPhase res(system.phase(iphase));
+        res.update(T, P, np);
+        return res;
+    }
+
     auto props() const -> ChemicalProps
     {
-        return system.props(T, P, n);
+        ChemicalProps res(system);
+        res.update(T, P, n);
+        return res;
     }
 
     // Return the stability indices of the phases
@@ -784,6 +794,11 @@ auto ChemicalState::phaseAmount(std::string name, std::string units) const -> re
 auto ChemicalState::phaseStabilityIndices() const -> VectorXr
 {
     return pimpl->phaseStabilityIndices();
+}
+
+auto ChemicalState::phaseProps(Index iphase) const -> ChemicalPropsPhase
+{
+    return pimpl->phaseProps(iphase);
 }
 
 auto ChemicalState::props() const -> ChemicalProps
