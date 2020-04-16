@@ -24,37 +24,37 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing DissociationReactions", "[DissociationReactions]")
 {
-    REQUIRE(DissociationReactions::size() == DissociationReactions::reactions().size());
+    REQUIRE( DissociationReactions::size() == DissociationReactions::reactions().size() );
 
-    REQUIRE(DissociationReactions::get("NaCl").has_value());
-    REQUIRE(DissociationReactions::get("CaCO3").has_value());
-    REQUIRE(DissociationReactions::get("Ca(CO3)").has_value());
+    REQUIRE( DissociationReactions::get("NaCl").has_value() );
+    REQUIRE( DissociationReactions::get("CaCO3").has_value() );
+    REQUIRE( DissociationReactions::get("Ca(CO3)").has_value() );
+
+    REQUIRE( DissociationReactions::coefficient("NaCl", "Na+")   == 1.0 );
+    REQUIRE( DissociationReactions::coefficient("NaCl", "Na[+]") == 1.0 );
+
+    REQUIRE( DissociationReactions::coefficient("NaCl", "Cl-")   == 1.0 );
+    REQUIRE( DissociationReactions::coefficient("NaCl", "Cl[-]") == 1.0 );
+
+    REQUIRE( DissociationReactions::coefficient("NaCl", "H+")    == 0.0 );
+    REQUIRE( DissociationReactions::coefficient("NaCl", "H[+]")  == 0.0 );
+
+    REQUIRE( DissociationReactions::coefficient("CaCl2", "Ca++")   == 1.0 );
+    REQUIRE( DissociationReactions::coefficient("CaCl2", "Ca+2")   == 1.0 );
+    REQUIRE( DissociationReactions::coefficient("CaCl2", "Ca[2+]") == 1.0 );
+
+    REQUIRE( DissociationReactions::coefficient("CaCl2", "Cl-") == 2.0 );
+    REQUIRE( DissociationReactions::coefficient("CaCl2", "Cl[-]") == 2.0 );
+
+    REQUIRE( DissociationReactions::coefficient("CaCl2", "H+") == 0.0 );
+    REQUIRE( DissociationReactions::coefficient("CaCl2", "H[+]") == 0.0 );
 
     DissociationReactions::append({ "NaKCl2", {{1, "Na+"}, {1, "K+"}, {2, "Cl-"}} });
 
-    REQUIRE(DissociationReactions::get("NaKClCl2").has_value());
+    REQUIRE( DissociationReactions::get("NaKClCl").has_value() );
 
     DissociationReactions::append({ "NaCl", {} }); // Remove ions in NaCl dissociation reactions
 
-    REQUIRE(DissociationReactions::get("NaCl").has_value());
-    REQUIRE(DissociationReactions::get("NaCl").value().ions.size() == 0);
-
-    REQUIRE(DissociationReactions::coefficient("NaCl", "Na+")   == 1.0);
-    REQUIRE(DissociationReactions::coefficient("NaCl", "Na(+)") == 1.0);
-
-    REQUIRE(DissociationReactions::coefficient("NaCl", "Cl-")   == 1.0);
-    REQUIRE(DissociationReactions::coefficient("NaCl", "Cl(-)") == 1.0);
-
-    REQUIRE(DissociationReactions::coefficient("NaCl", "H+")    == 0.0);
-    REQUIRE(DissociationReactions::coefficient("NaCl", "H(+)")  == 0.0);
-
-    REQUIRE(DissociationReactions::coefficient("CaCl2", "Ca++")   == 1.0);
-    REQUIRE(DissociationReactions::coefficient("CaCl2", "Ca+2")   == 1.0);
-    REQUIRE(DissociationReactions::coefficient("CaCl2", "Ca(2+)") == 1.0);
-
-    REQUIRE(DissociationReactions::coefficient("CaCl2", "Cl-") == 2.0);
-    REQUIRE(DissociationReactions::coefficient("CaCl2", "Cl(-)") == 2.0);
-
-    REQUIRE(DissociationReactions::coefficient("CaCl2", "H+") == 0.0);
-    REQUIRE(DissociationReactions::coefficient("CaCl2", "H(+)") == 0.0);
+    REQUIRE( DissociationReactions::get("NaCl").has_value() );
+    REQUIRE( DissociationReactions::get("NaCl").value().ions.size() == 0 );
 }
