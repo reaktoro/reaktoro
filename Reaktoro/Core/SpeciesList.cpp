@@ -133,14 +133,7 @@ auto SpeciesList::withoutTags(const StringList& tags) const -> SpeciesList
 
 auto SpeciesList::withElements(const StringList& symbols) const -> SpeciesList
 {
-    // Return true if each element symbol in the current species is in symbols
-    auto pred = [&](auto&& s) {
-        for(auto&& [element, _] : s.elements())
-            if(!contains(symbols, element.symbol()))
-                return false;
-        return true;
-    };
-    return filter(*this, pred);
+    return filter(*this, lambda(s, contained(s.elements().symbols(), symbols)));
 }
 
 auto SpeciesList::withElementsOf(const StringList& formulas) const -> SpeciesList
