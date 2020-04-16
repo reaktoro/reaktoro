@@ -26,7 +26,6 @@
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/ElementalComposition.hpp>
-#include <Reaktoro/Singletons/CriticalProps.hpp>
 
 namespace Reaktoro {
 
@@ -37,8 +36,7 @@ public:
     /// Construct a default Species object.
     Species();
 
-    /// Construct a Species object with given chemical formula.
-    /// @param formula The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
+    /// Construct a Species object with given chemical formula (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
     Species(const String& formula);
 
     /// Return a duplicate of this Species object with new name that uniquely identifies this species.
@@ -61,9 +59,6 @@ public:
 
     /// Return a duplicate of this Species object with new tags attribute.
     auto withTags(const Strings& tags) -> Species;
-
-    /// Return a duplicate of this Species object with new critical properties.
-    auto withCriticalProps(const SubstanceCriticalProps& props) -> Species;
 
     /// Return a duplicate of this Species object with new attached data whose type is known at runtime only.
     auto withAttachedData(std::any data) -> Species;
@@ -91,9 +86,6 @@ public:
 
     /// Return the tags of the species (e.g., `organic`, `mineral`).
     auto tags() const -> const Strings&;
-
-    /// Return the critical properties of the underlying substance of the species if available.
-    auto criticalProps() const -> std::optional<SubstanceCriticalProps>;
 
     /// Return the attached data of the species whose type is known at runtime only.
     auto attachedData() const -> const std::any&;
