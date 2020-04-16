@@ -18,10 +18,35 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Core/ThermoPropsPhase.fwd.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 
 namespace Reaktoro {
+
+/// The base type for primary standard thermodynamic property data of a phase.
+template<typename Real, typename Array>
+struct ThermoPropsPhaseBaseData;
+
+/// The primary standard thermodynamic property data of a phase.
+using ThermoPropsPhaseData = ThermoPropsPhaseBaseData<real, ArrayXr>;
+
+/// The primary standard thermodynamic property data of a phase.
+using ThermoPropsPhaseDataRef = ThermoPropsPhaseBaseData<real&, ArrayXrRef>;
+
+/// The primary standard thermodynamic property data of a phase.
+using ThermoPropsPhaseDataConstRef = ThermoPropsPhaseBaseData<const real&, ArrayXrConstRef>;
+
+/// The base type for standard thermodynamic properties of a phase and its species.
+template<typename R, typename A>
+class ThermoPropsPhaseBase;
+
+/// The standard thermodynamic properties of a phase and its species.
+using ThermoPropsPhase = ThermoPropsPhaseBase<real, ArrayXr>;
+
+/// The non-const view to the standard thermodynamic properties of a phase and its species.
+using ThermoPropsPhaseRef = ThermoPropsPhaseBase<real&, ArrayXrRef>;
+
+/// The const view to the standard thermodynamic properties of a phase and its species.
+using ThermoPropsPhaseConstRef = ThermoPropsPhaseBase<const real&, ArrayXrConstRef>;
 
 /// The base type for primary standard thermodynamic property data of a phase.
 template<typename Real, typename Array>
@@ -67,6 +92,11 @@ public:
     /// Construct a ThermoPropsPhaseBase instance.
     template<typename RX, typename AX>
     ThermoPropsPhaseBase(const ThermoPropsPhaseBase<RX, AX>& props);
+
+    /// Update the standard thermodynamic properties of the phase and its species.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    auto update(real T, real P);
 
     /// Return the primary chemical property data of the phase from which others are calculated.
     auto data() const;
@@ -124,6 +154,52 @@ ThermoPropsPhaseBase<Real, Array>::ThermoPropsPhaseBase(const Phase& phase)
     props.V0   = ArrayXr::Zero(numspecies);
     props.Cp0  = ArrayXr::Zero(numspecies);
     props.Cv0  = ArrayXr::Zero(numspecies);
+}
+
+template<typename Real, typename Array>
+auto ThermoPropsPhaseBase<Real, Array>::update(real Tnew, real Pnew)
+{
+    auto& T   = props.T;
+    auto& P   = props.P;
+    auto& G0  = props.G0;
+    auto& H0  = props.H0;
+    auto& V0  = props.V0;
+    auto& Cp0 = props.Cp0;
+    auto& Cv0 = props.Cv0;
+
+    const auto& species = phase.species();
+    const auto size = species.size();
+
+    assert(G0.size()   == size);
+    assert(H0.size()   == size);
+    assert(V0.size()   == size);
+    assert(Cp0.size()  == size);
+    assert(Cv0.size()  == size);
+
+    const auto updatingT = T != Tnew;
+    const auto updatingP = P != Pnew;
+
+    // The function that evaluates the standard thermodynamic properties of the species in the phase.
+    auto evalStandardThermoProps = [&]()
+    {
+        StandardThermoProps aux;
+        for(auto i = 0; i < size; ++i)
+        {
+            aux = phase.standardThermoPropsFn()(T, P, species[i]);
+            G0[i]  = aux.G0;
+            H0[i]  = aux.H0;
+            V0[i]  = aux.V0;
+            Cp0[i] = aux.Cp0;
+            Cv0[i] = aux.Cv0;
+        }
+    };
+
+    if(updatingT || updatingP)
+    {
+        T = Tnew;
+        P = Pnew;
+        evalStandardThermoProps();
+    }
 }
 
 template<typename Real, typename Array>
