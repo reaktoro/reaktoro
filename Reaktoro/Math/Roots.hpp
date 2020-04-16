@@ -46,54 +46,52 @@ auto cardano(const T& b, const T& c, const T& d) -> CubicRoots<T>
 {
     using std::abs;
     using std::acos;
+    using std::cbrt;
     using std::cos;
-    using std::pow;
     using std::sqrt;
+    using std::complex;
 
-    const T xn = -b/3.0;
-    const T yn = xn*xn*xn + b*xn*xn + c*xn + d;
+    const auto xn = -b/3;
+    const auto yn = d + xn*(c + xn*(b + xn));
 
-    const T d2    = (b*b - 3*c)/9.0;
-    const T h2    = 4*d2*d2*d2;
-    const T Delta = yn*yn - h2;
+    const auto delta2 = (b*b - 3*c)/9;
 
-    std::complex<T> x1, x2, x3;
+    const auto u = yn*yn;
+    const auto v = 4*delta2*delta2*delta2;
 
-    if(Delta > 0.0)
-    {
-        const T sqrtDelta = sqrt(Delta);
+    const auto discr = u - v;
 
-        const T operand1 = (-yn + sqrtDelta) * 0.5;
-        const T operand2 = (-yn - sqrtDelta) * 0.5;
+    const auto eps = 100*std::numeric_limits<T>::epsilon();
 
-        const T alpha = xn +
-            pow(abs(operand1), 1.0/3) * abs(operand1)/operand1 +
-            pow(abs(operand2), 1.0/3) * abs(operand2)/operand2;
-
-        const T discr = b*b - 4*c - 2*b*alpha - 3*pow(alpha, 2);
-        const T aux   = sqrt(-discr);
-
-        x1 = {alpha, 0.0};
-        x2 = {(-b - alpha) * 0.5, -aux * 0.5};
-        x3 = {(-b - alpha) * 0.5,  aux * 0.5};
+    if(discr > eps) {
+        const auto sqrtdiscr = sqrt(discr);
+        const auto aux1 = cbrt( 0.5*(-yn + sqrtdiscr) );
+        const auto aux2 = cbrt( 0.5*(-yn - sqrtdiscr) );
+        const auto alpha = xn + aux1 + aux2;
+        const auto z1 = alpha - xn;
+        const auto aux3 = 0.5*sqrt(3*(z1*z1 - 4*delta2));
+        const auto aux4 = xn - 0.5*z1;
+        const auto beta = complex{aux4, -aux3};
+        const auto gamma = complex{aux4, aux3};
+        return {alpha, beta, gamma};
     }
-    else
-    {
-        const T pi    = 3.14159265359;
-        const T delta = sqrt((b*b - 3*c)/9.0);
-        const T h     = 2*delta*delta*delta;
-        const T theta = acos(-yn/h)/3;
-
-        const T alpha = xn + 2*delta*cos(theta);
-        const T beta  = xn + 2*delta*cos(2*pi/3 - theta);
-        const T gamma = xn + 2*delta*cos(2*pi/3 + theta);
-
-        x1 = {alpha, 0.0};
-        x2 = {beta,  0.0};
-        x3 = {gamma, 0.0};
+    else if(discr < -eps) {
+        const auto pi = 3.14159265358979323846;
+        const auto delta = sqrt(delta2);
+        const auto h = 2*delta2*delta;
+        const auto theta = acos(-yn/h) / 3.0;
+        const auto alpha = xn + 2*delta*cos(theta);
+        const auto beta  = xn + 2*delta*cos(2*pi/3 - theta);
+        const auto gamma = xn + 2*delta*cos(2*pi/3 + theta);
+        return {gamma, beta, alpha};
     }
-
-    return {x1, x2, x3};
+    else {
+        const auto delta = cbrt( 0.5*yn );
+        const auto alpha = xn + delta;
+        const auto gamma = xn - 2*delta;
+        if(alpha < gamma) return {alpha, alpha, gamma};
+        else return {gamma, alpha, alpha};
+    }
 }
 
 /// Calculate the root of a non-linear function using Newton's method.
@@ -112,6 +110,7 @@ auto newton(const std::function<std::tuple<T, T>(const T&)>& f, const T& x0, con
     for(auto i = 0; i < maxiter; ++i)
     {
         const auto [fx, dfx] = f(x);
+        assert(dfx != 0.0);
         x -= fx/dfx;
         if(abs(fx) < epsilon)
             return { x, i, true };

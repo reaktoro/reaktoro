@@ -19,6 +19,8 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Math/Roots.hpp>
 using namespace Reaktoro;
 
@@ -26,53 +28,27 @@ TEST_CASE("Testing cardano function in Roots module", "[Roots]")
 {
     double b, c, d;
 
-    //=========================================================================
-    // Solve x**3 - 5 = 0
-    //=========================================================================
+    auto check = [](double b, double c, double d)
     {
-        b = 0.0; c = 0.0; d = -5.0;
         const auto [x1, x2, x3] = cardano(b, c, d);
-        REQUIRE( (x1*x1*x1).real() == Approx(5.0) );
-        REQUIRE( (x1*x1*x1).imag() == Approx(0.0) );
-    }
+        auto checkzero = [&](auto x)
+        {
+            auto res = x*x*x + b*x*x + c*x + d;
+            INFO(str("b = ", b, ", c = ", c, ", d = ", d));
+            REQUIRE( res.real() == Approx(0.0).scale(1.0) );
+            REQUIRE( res.imag() == Approx(0.0).scale(1.0) );
+        };
+        checkzero(x1);
+        checkzero(x2);
+        checkzero(x3);
+    };
 
-    //=========================================================================
-    // Solve x**3 + 5 = 0
-    //=========================================================================
-    {
-        b = 0.0; c = 0.0; d = 5.0;
-        const auto [x1, x2, x3] = cardano(b, c, d);
-        REQUIRE( (x1*x1*x1).real() == Approx(-5.0) );
-        REQUIRE( (x1*x1*x1).imag() == Approx( 0.0) );
-    }
+    Vec<double> coeffs = {-5.0, -3.0, -1.0, 0.0, 1.0, 3.0, 5.0};
 
-    //=========================================================================
-    // Solve x**3 + x**2 + x + 1 = 0
-    //=========================================================================
-    {
-        b = 1.0; c = 1.0; d = 1.0;
-        const auto [x1, x2, x3] = cardano(b, c, d);
-        REQUIRE( x1.real() == Approx(-1.0) );
-        REQUIRE( x1.imag() == Approx( 0.0) );
-        REQUIRE( x2.real() == Approx( 0.0) );
-        REQUIRE( x2.imag() == Approx(-1.0) );
-        REQUIRE( x3.real() == Approx( 0.0) );
-        REQUIRE( x3.imag() == Approx( 1.0) );
-    }
-
-    //=========================================================================
-    // Solve x**3 - x**2 - x + 1 = 0
-    //=========================================================================
-    {
-        b = -1.0; c = -1.0; d = 1.0;
-        const auto [x1, x2, x3] = cardano(b, c, d);
-        REQUIRE( x1.real() == Approx( 1.0) );
-        REQUIRE( x1.imag() == Approx( 0.0) );
-        REQUIRE( x2.real() == Approx(-1.0) );
-        REQUIRE( x2.imag() == Approx( 0.0) );
-        REQUIRE( x3.real() == Approx( 1.0) );
-        REQUIRE( x3.imag() == Approx( 0.0) );
-    }
+    for(auto b : coeffs)
+        for(auto c : coeffs)
+            for(auto d : coeffs)
+                check(b, c, d);
 }
 
 TEST_CASE("Testing newton function in Roots module", "[Roots]")
@@ -83,31 +59,33 @@ TEST_CASE("Testing newton function in Roots module", "[Roots]")
     // Solve cos(x) = 0.0
     //=========================================================================
     {
-        double x0 = 0.0;
+        double x0 = 1.0;
         f = [](const double& x) { return std::make_tuple(std::cos(x), -std::sin(x)); };
 
         const auto [x, iters, success] = newton(f, x0, 1.0e-6, 100);
 
         const auto [fx, _] = f(x);
 
+        INFO(str("newton failed with iters = ", iters, " and residual = ", fx));
         REQUIRE( success );
         REQUIRE( iters < 100 );
-        REQUIRE( fx == Approx(0.0) );
+        REQUIRE( fx == Approx(0.0).scale(1.0) );
     }
 
     //=========================================================================
     // Solve exp(x) = 10.0
     //=========================================================================
     {
-        double x0 = 0.0;
+        double x0 = 1.0;
         f = [](const double& x) { return std::make_tuple(std::exp(x) - 10.0, std::exp(x)); };
 
         const auto [x, iters, success] = newton(f, x0, 1.0e-6, 100);
 
         const auto [fx, _] = f(x);
 
+        INFO(str("newton failed with iters = ", iters, " and residual = ", fx));
         REQUIRE( success );
         REQUIRE( iters < 100 );
-        REQUIRE( fx == Approx(0.0) );
+        REQUIRE( fx == Approx(0.0).scale(1.0) );
     }
 }
