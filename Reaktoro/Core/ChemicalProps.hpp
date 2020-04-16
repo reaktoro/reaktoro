@@ -97,10 +97,10 @@ public:
     ChemicalProps(const ChemicalSystem& system, const ChemicalPropsData& data);
 
     /// Update the chemical properties of the chemical system.
-    /// @param T The temperature in the system (in K)
-    /// @param P The pressure in the system (in Pa)
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
-    auto update(double T, double P, VectorXrConstRef n) -> void;
+    auto update(real T, real P, ArrayXrConstRef n) -> void;
 
     /// Return the chemical system associated with these chemical properties.
     auto system() const -> const ChemicalSystem&;
@@ -109,10 +109,10 @@ public:
     auto data() const -> const ChemicalPropsData&;
 
     /// Return the chemical properties of a phase with given index.
-    auto phase(Index idx) const -> ChemicalPropsPhaseConstRef;
+    auto phaseProps(Index idx) const -> ChemicalPropsPhaseConstRef;
 
     /// Return the chemical properties of a phase with given index.
-    auto phase(Index idx) -> ChemicalPropsPhaseRef;
+    auto phaseProps(Index idx) -> ChemicalPropsPhaseRef;
 
     /// Return the temperature of the system (in K).
     auto temperature() const -> real;

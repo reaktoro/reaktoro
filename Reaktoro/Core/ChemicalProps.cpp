@@ -51,9 +51,17 @@ ChemicalProps::ChemicalProps(const ChemicalSystem& system, const ChemicalPropsDa
 : sys(system), props(data)
 {}
 
-auto ChemicalProps::update(double T, double P, VectorXrConstRef n) -> void
+auto ChemicalProps::update(real T, real P, ArrayXrConstRef n) -> void
 {
-    *this = sys.props(T, P, n);
+    const auto numphases = sys.phases().size();
+    auto offset = 0;
+    for(auto i = 0; i < numphases; ++i)
+    {
+        const auto size = sys.phase(i).species().size();
+        const auto np = n.segment(offset, size);
+        phaseProps(i).update(T, P, np);
+        offset += size;
+    }
 }
 
 auto ChemicalProps::system() const -> const ChemicalSystem&
@@ -64,7 +72,7 @@ auto ChemicalProps::data() const -> const ChemicalPropsData&
 {    return props;
 }
 
-auto ChemicalProps::phase(Index idx) const -> ChemicalPropsPhaseConstRef
+auto ChemicalProps::phaseProps(Index idx) const -> ChemicalPropsPhaseConstRef
 {
     const auto phase = sys.phase(idx);
     const auto begin = sys.indexFirstSpeciesInPhase(idx);
@@ -93,7 +101,7 @@ auto ChemicalProps::phase(Index idx) const -> ChemicalPropsPhaseConstRef
     });
 }
 
-auto ChemicalProps::phase(Index idx) -> ChemicalPropsPhaseRef
+auto ChemicalProps::phaseProps(Index idx) -> ChemicalPropsPhaseRef
 {
     const auto phase = sys.phase(idx);
     const auto begin = sys.indexFirstSpeciesInPhase(idx);
@@ -203,7 +211,7 @@ auto ChemicalProps::fluidVolume() const -> real
     real sum = 0.0;
     for(auto i = 0; i < sys.phases().size(); ++i)
         if(sys.phase(i).stateOfMatter() != StateOfMatter::Solid)
-            sum += phase(i).volume();
+            sum += phaseProps(i).volume();
     return sum;
 }
 
@@ -212,7 +220,7 @@ auto ChemicalProps::solidVolume() const -> real
     real sum = 0.0;
     for(auto i = 0; i < sys.phases().size(); ++i)
         if(sys.phase(i).stateOfMatter() == StateOfMatter::Solid)
-            sum += phase(i).volume();
+            sum += phaseProps(i).volume();
     return sum;
 }
 
@@ -220,7 +228,7 @@ auto ChemicalProps::volume() const -> real
 {
     real sum = 0.0;
     for(auto i = 0; i < sys.phases().size(); ++i)
-        sum += phase(i).volume();
+        sum += phaseProps(i).volume();
     return sum;
 }
 
