@@ -208,7 +208,7 @@ auto GenericPhases::activityModel() const -> const ActivityModel&
 
 auto GenericPhases::convert(const ThermoEngine& engine, const Strings& elements) const -> Vec<GenericPhase>
 {
-    error(aggregatestate != AggregateState::Undefined,
+    error(aggregatestate == AggregateState::Undefined,
         "GenericPhases::convert requires an AggregateState value to be specified. "
         "Use method GenericPhases::set(AggregateState) to fix this.");
 
