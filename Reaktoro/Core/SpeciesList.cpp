@@ -24,11 +24,9 @@ namespace Reaktoro {
 namespace detail {
 
 /// Create ChemicalFormula objects with given formula words.
-auto createChemicalFormulas(const StringList& words)
+auto createChemicalFormulas(const Strings& words)
 {
-    std::vector<ChemicalFormula> formulas;
-    transform(words, formulas, [](auto&& word) { return ChemicalFormula(word); });
-    return formulas;
+    return vectorize(words, lambda(x, ChemicalFormula(x)));
 }
 
 } // namespace detail
