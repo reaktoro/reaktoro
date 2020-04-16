@@ -60,6 +60,11 @@ public:
     /// Construct a ThermoProps object.
     ThermoProps(const ChemicalSystem& system, const ThermoPropsData& data);
 
+    /// Update the standard thermodynamic properties of the phases and its species in the chemical system.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    auto update(real T, real P) -> void;
+
     /// Return the chemical system associated with these standard thermodynamic properties.
     auto system() const -> const ChemicalSystem&;
 
@@ -67,10 +72,10 @@ public:
     auto data() const -> const ThermoPropsData&;
 
     /// Return the standard thermodynamic properties of a phase with given index.
-    auto phase(Index idx) const -> ThermoPropsPhaseConstRef;
+    auto phaseProps(Index idx) const -> ThermoPropsPhaseConstRef;
 
     /// Return the standard thermodynamic properties of a phase with given index.
-    auto phase(Index idx) -> ThermoPropsPhaseRef;
+    auto phaseProps(Index idx) -> ThermoPropsPhaseRef;
 
     /// Return the temperature of the system (in K).
     auto temperature() const -> real;

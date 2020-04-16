@@ -39,6 +39,13 @@ ThermoProps::ThermoProps(const ChemicalSystem& system, const ThermoPropsData& da
 : sys(system), props(data)
 {}
 
+auto ThermoProps::update(real T, real P) -> void
+{
+    const auto numphases = sys.phases().size();
+    for(auto i = 0; i < numphases; ++i)
+        phaseProps(i).update(T, P);
+}
+
 auto ThermoProps::system() const -> const ChemicalSystem&
 {    return sys;
 }
@@ -47,7 +54,7 @@ auto ThermoProps::data() const -> const ThermoPropsData&
 {    return props;
 }
 
-auto ThermoProps::phase(Index idx) const -> ThermoPropsPhaseConstRef
+auto ThermoProps::phaseProps(Index idx) const -> ThermoPropsPhaseConstRef
 {
     const auto phase = sys.phase(idx);
     const auto begin = sys.indexFirstSpeciesInPhase(idx);
@@ -64,11 +71,11 @@ auto ThermoProps::phase(Index idx) const -> ThermoPropsPhaseConstRef
     });
 }
 
-auto ThermoProps::phase(Index idx) -> ThermoPropsPhaseRef
+auto ThermoProps::phaseProps(Index idx) -> ThermoPropsPhaseRef
 {
     const auto phase = sys.phase(idx);
     const auto begin = sys.indexFirstSpeciesInPhase(idx);
-    const auto size = phase.species().size();
+    const auto size = sys.numSpeciesInPhase(idx);
 
     return ThermoPropsPhaseRef(phase, {
         props.T,
