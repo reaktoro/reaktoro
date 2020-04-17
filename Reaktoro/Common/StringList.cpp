@@ -17,6 +17,9 @@
 
 #include "StringList.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/StringUtils.hpp>
+
 namespace Reaktoro {
 namespace {
 
@@ -96,19 +99,19 @@ StringList::StringList(std::vector<std::string> strings)
 {}
 
 StringList::StringList(const char* strings)
-: m_strings(convertStringToStrings(strings, ' '))
+: m_strings(convertStringToStrings(trim(strings), ' '))
 {}
 
 StringList::StringList(const char* strings, char token)
-: m_strings(convertStringToStrings(strings, token))
+: m_strings(convertStringToStrings(trim(strings), token))
 {}
 
 StringList::StringList(std::string strings)
-: m_strings(convertStringToStrings(strings, ' '))
+: m_strings(convertStringToStrings(trim(strings), ' '))
 {}
 
 StringList::StringList(std::string strings, char token)
-: m_strings(convertStringToStrings(strings, token))
+: m_strings(convertStringToStrings(trim(strings), token))
 {}
 
 auto StringList::size() const -> std::size_t
