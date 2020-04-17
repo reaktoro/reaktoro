@@ -23,11 +23,11 @@
 #include <vector>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/Real.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>

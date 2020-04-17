@@ -64,6 +64,15 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     REQUIRE( res == Vec<int>{ 2, 3, 5, 6, 8 } );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: extract
+    //-------------------------------------------------------------------------
+    REQUIRE( extract(Strings{"A", "B", "C", "D"}, Vec<int>{}) == Strings{} );
+    REQUIRE( extract(Strings{"A", "B", "C", "D"}, Vec<int>{0}) == Strings{"A"} );
+    REQUIRE( extract(Strings{"A", "B", "C", "D"}, Vec<int>{0, 2}) == Strings{"A", "C"} );
+    REQUIRE( extract(Strings{"A", "B", "C", "D"}, Vec<int>{0, 2, 1}) == Strings{"A", "C", "B"} );
+    REQUIRE( extract(Strings{"A", "B", "C", "D"}, Vec<int>{0, 2, 1, 2}) == Strings{"A", "C", "B", "C"} );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: vectorize
     //-------------------------------------------------------------------------
     strs = vectorize(Map<String, int>{{"C", 1}, {"A", 2}, {"B", 3}}, RKT_LAMBDA(x, x.first));
@@ -79,6 +88,31 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     REQUIRE( contains(res, 1) );
     REQUIRE( contains(res, 2) );
     REQUIRE( contains(res, 3) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: contains
+    //-------------------------------------------------------------------------
+    REQUIRE(  contains(Vec<int>{1, 2, 3}, 3) );
+    REQUIRE( !contains(Vec<int>{1, 2, 3}, 5) );
+
+    REQUIRE(  contains(Strings{"1", "2", "3"}, "3") );
+    REQUIRE( !contains(Strings{"1", "2", "3"}, "5") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: containsfn
+    //-------------------------------------------------------------------------
+    REQUIRE(  containsfn(Vec<int>{1, 2, 5}, RKT_LAMBDA(x, x == 5)) );
+    REQUIRE( !containsfn(Vec<int>{1, 2, 5}, RKT_LAMBDA(x, x == 3)) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: contained
+    //-------------------------------------------------------------------------
+    REQUIRE(  contained(Vec<int>{},        Vec<int>{1, 2, 3, 4, 5}) );
+    REQUIRE(  contained(Vec<int>{1},       Vec<int>{1, 2, 3, 4, 5}) );
+    REQUIRE(  contained(Vec<int>{5, 3},    Vec<int>{1, 2, 3, 4, 5}) );
+    REQUIRE(  contained(Vec<int>{2, 4, 5}, Vec<int>{1, 2, 3, 4, 5}) );
+    REQUIRE( !contained(Vec<int>{6},       Vec<int>{1, 2, 3, 4, 5}) );
+    REQUIRE( !contained(Vec<int>{2, 9, 5}, Vec<int>{1, 2, 3, 4, 5}) );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: concatenate
@@ -123,29 +157,26 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     REQUIRE( res == Vec<int>{} );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: contains
+    // TESTING METHOD: intersect
     //-------------------------------------------------------------------------
-    REQUIRE(  contains(Vec<int>{1, 2, 3}, 3) );
-    REQUIRE( !contains(Vec<int>{1, 2, 3}, 5) );
-
-    REQUIRE(  contains(Strings{"1", "2", "3"}, "3") );
-    REQUIRE( !contains(Strings{"1", "2", "3"}, "5") );
-
-    //-------------------------------------------------------------------------
-    // TESTING METHOD: containsfn
-    //-------------------------------------------------------------------------
-    REQUIRE(  containsfn(Vec<int>{1, 2, 5}, RKT_LAMBDA(x, x == 5)) );
-    REQUIRE( !containsfn(Vec<int>{1, 2, 5}, RKT_LAMBDA(x, x == 3)) );
+    REQUIRE( intersect(Vec<int>{}, Vec<int>{}) == Vec<int>{} );
+    REQUIRE( intersect(Vec<int>{1, 2, 3}, Vec<int>{}) == Vec<int>{} );
+    REQUIRE( intersect(Vec<int>{}, Vec<int>{1, 2, 3}) == Vec<int>{} );
+    REQUIRE( intersect(Vec<int>{1, 2, 3}, Vec<int>{3, 2, 1}) == Vec<int>{1, 2, 3} );
+    REQUIRE( intersect(Vec<int>{3, 2, 1}, Vec<int>{1, 2, 3}) == Vec<int>{3, 2, 1} );
+    REQUIRE( intersect(Vec<int>{2, 1}, Vec<int>{1, 2, 3}) == Vec<int>{2, 1} );
+    REQUIRE( intersect(Vec<int>{2, 1}, Vec<int>{4, 5, 6}) == Vec<int>{} );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: contained
+    // TESTING METHOD: difference
     //-------------------------------------------------------------------------
-    REQUIRE(  contained(Vec<int>{},        Vec<int>{1, 2, 3, 4, 5}) );
-    REQUIRE(  contained(Vec<int>{1},       Vec<int>{1, 2, 3, 4, 5}) );
-    REQUIRE(  contained(Vec<int>{5, 3},    Vec<int>{1, 2, 3, 4, 5}) );
-    REQUIRE(  contained(Vec<int>{2, 4, 5}, Vec<int>{1, 2, 3, 4, 5}) );
-    REQUIRE( !contained(Vec<int>{6},       Vec<int>{1, 2, 3, 4, 5}) );
-    REQUIRE( !contained(Vec<int>{2, 9, 5}, Vec<int>{1, 2, 3, 4, 5}) );
+    REQUIRE( difference(Vec<int>{}, Vec<int>{}) == Vec<int>{} );
+    REQUIRE( difference(Vec<int>{1, 2, 3}, Vec<int>{}) == Vec<int>{1, 2, 3} );
+    REQUIRE( difference(Vec<int>{}, Vec<int>{1, 2, 3}) == Vec<int>{} );
+    REQUIRE( difference(Vec<int>{1, 2, 3}, Vec<int>{3, 2, 1}) == Vec<int>{} );
+    REQUIRE( difference(Vec<int>{3, 2, 1}, Vec<int>{1, 2, 3}) == Vec<int>{} );
+    REQUIRE( difference(Vec<int>{2, 1}, Vec<int>{1, 2, 3}) == Vec<int>{} );
+    REQUIRE( difference(Vec<int>{2, 1}, Vec<int>{4, 5, 6}) == Vec<int>{2, 1} );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: disjoint
@@ -167,4 +198,14 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     REQUIRE( !identical(Vec<int>{4},       Vec<int>{5}) );
     REQUIRE( !identical(Vec<int>{2, 1, 5}, Vec<int>{2, 1, 6}) );
     REQUIRE( !identical(Vec<int>{2, 1, 5}, Vec<int>{2, 1, 4, 5}) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: range
+    //-------------------------------------------------------------------------
+    REQUIRE( range(1, 1, 2) == Vec<int>{} );
+    REQUIRE( range(1, 5, 2) == Vec<int>{1, 3} );
+    REQUIRE( range(1, 6, 2) == Vec<int>{1, 3, 5} );
+    REQUIRE( range(1, 4) == Vec<int>{1, 2, 3} );
+    REQUIRE( range(0) == Vec<int>{} );
+    REQUIRE( range(3) == Vec<int>{0, 1, 2} );
 }

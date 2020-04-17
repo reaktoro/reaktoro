@@ -21,9 +21,9 @@
 #include <algorithm>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Singletons/DissociationReactions.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>

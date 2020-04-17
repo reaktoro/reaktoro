@@ -21,8 +21,8 @@
 #include <algorithm>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/OptimumMethod.hpp>

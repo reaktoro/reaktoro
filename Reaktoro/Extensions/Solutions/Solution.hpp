@@ -22,9 +22,9 @@
 #include <vector>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Real.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Math/Matrix.hpp>

@@ -21,9 +21,9 @@
 #include <algorithm>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Math/Roots.hpp>
 #include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>

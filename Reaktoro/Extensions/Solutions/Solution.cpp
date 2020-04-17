@@ -64,7 +64,7 @@ auto Solution::indexSpecies(const std::string& name) const -> Index
 
 auto Solution::indexSpeciesAny(const std::vector<std::string>& names) const -> Index
 {
-    return indexAny(names, m_species);
+    return indexfn(m_species, RKT_LAMBDA(s, contains(names, s.name())));
 }
 
 auto Solution::namesSpecies() const -> std::vector<std::string>

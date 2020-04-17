@@ -28,7 +28,6 @@
 #include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/Outputter.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>

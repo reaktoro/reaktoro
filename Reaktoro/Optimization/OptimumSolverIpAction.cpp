@@ -21,9 +21,9 @@
 #include <Reaktoro/deps/eigen3/Eigen/LU>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Outputter.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>

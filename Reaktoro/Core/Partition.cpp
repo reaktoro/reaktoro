@@ -18,8 +18,8 @@
 #include "Partition.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Phase.hpp>
@@ -183,7 +183,7 @@ struct Partition::Impl
     {
         indices_equilibrium_species = ispecies;
         indices_inert_species       = difference(indices_inert_species, ispecies);
-        indices_kinetic_species     = difference(universe_species, unify(ispecies, indices_inert_species));
+        indices_kinetic_species     = difference(universe_species, merge(ispecies, indices_inert_species));
         finalise();
     }
 
@@ -191,7 +191,7 @@ struct Partition::Impl
     {
         indices_kinetic_species     = ispecies;
         indices_inert_species       = difference(indices_inert_species, ispecies);
-        indices_equilibrium_species = difference(universe_species, unify(ispecies, indices_inert_species));
+        indices_equilibrium_species = difference(universe_species, merge(ispecies, indices_inert_species));
         finalise();
     }
 

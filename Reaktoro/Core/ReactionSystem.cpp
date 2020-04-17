@@ -18,8 +18,8 @@
 #include "ReactionSystem.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
