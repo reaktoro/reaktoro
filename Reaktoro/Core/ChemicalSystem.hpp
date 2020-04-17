@@ -23,7 +23,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/ElementList.hpp>
+#include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
@@ -38,10 +41,7 @@ public:
     ChemicalSystem();
 
     /// Construct a ChemicalSystem instance with given phases.
-    explicit ChemicalSystem(const std::vector<Phase>& phases);
-
-    /// Construct a ChemicalSystem instance with given phases and thermodynamic and chemical models.
-    // ChemicalSystem(const std::vector<Phase>& phases, const ThermoModel& thermo_model, const ChemicalModel& chemical_model);
+    explicit ChemicalSystem(const Vec<Phase>& phases);
 
     /// Return the number of elements in the system
     auto numElements() const -> unsigned;
@@ -57,19 +57,13 @@ public:
     auto numPhases() const -> unsigned;
 
     /// Return the list of elements in the system
-    auto elements() const -> const std::vector<Element>&;
+    auto elements() const -> const Vec<Element>&;
 
     /// Return the list of species in the system
-    auto species() const -> const std::vector<Species>&;
+    auto species() const -> const Vec<Species>&;
 
     /// Return the list of phases in the system
-    auto phases() const -> const std::vector<Phase>&;
-
-    // /// Return the thermodynamic model of the system.
-    // auto thermoModel() const -> const ThermoModel&;
-
-    // /// Return the chemical model of the system.
-    // auto chemicalModel() const -> const ChemicalModel&;
+    auto phases() const -> const Vec<Phase>&;
 
     /// Return the formula matrix of the system
     /// The formula matrix is defined as the matrix whose entry *(j, i)* is
