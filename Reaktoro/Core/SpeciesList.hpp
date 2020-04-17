@@ -54,6 +54,10 @@ public:
     /// Construct an SpeciesListBase object with given species formulas.
     SpeciesListBase(const StringList& formulas) : m_species(vectorize(formulas, RKT_LAMBDA(x, Species(x)))) {}
 
+    /// Construct an SpeciesListBase object with given another one.
+    template<typename OtherData>
+    SpeciesListBase(const SpeciesListBase<OtherData>& other) : m_species(other.m_species) {}
+
     /// Append a new species to the list of species.
     auto append(const Species& species)
     {
