@@ -204,7 +204,7 @@ public:
     : engine(engine)
     {
         collectElements(phases...);
-        addPhases(phases...);
+        appendPhases(phases...);
         fixDuplicatePhaseNames();
     }
 
@@ -233,8 +233,7 @@ private:
     template<typename Arg>
     auto collectElements(const Arg& phase) -> void
     {
-        static_assert(std::is_same_v<Arg, GenericPhase>);
-        static_assert(std::is_same_v<Arg, GenericPhases>);
+        static_assert(std::is_base_of_v<GenericPhase, Arg> || std::is_base_of_v<GenericPhases, Arg>);
 
         if(phase.elements().size())
             elements = merge(elements, phase.elements());
@@ -249,36 +248,36 @@ private:
     auto collectElements(const Arg& phase, const Args&... phases) -> void
     {
         collectElements(phase);
-        collectElements(phases...);
+        if constexpr(sizeof...(Args) > 0)
+            collectElements(phases...);
     }
 
-    /// Add a GenericPhase object into the Phases container.
-    auto addPhases(const GenericPhase& phase) -> void
+    /// Append a GenericPhase object into the Phases container.
+    auto append(const GenericPhase& phase) -> void
     {
         genericphases.push_back(phase);
     }
 
-    /// Add all GenericPhase objects into the Phases container.
-    auto addPhases(const Vec<GenericPhase>& phases) -> void
+    /// Append all GenericPhase objects into the Phases container.
+    auto append(const Vec<GenericPhase>& phases) -> void
     {
         genericphases.insert(genericphases.end(), phases.begin(), phases.end());
     }
 
-    /// Add all underlying GenericPhase objects, in given GenericPhases object, into the Phases container.
-    auto addPhases(const GenericPhases& phases) -> void
+    /// Append all underlying GenericPhase objects, in given GenericPhases object, into the Phases container.
+    auto append(const GenericPhases& phases) -> void
     {
-        addPhases(phases.convert(engine, elements));
+        append(phases.convert(engine, elements));
     }
 
-    /// Add one or more GenericPhase or GenericPhases objects into the Phases container.
+    /// Append one or more GenericPhase or GenericPhases objects into the Phases container.
     template<typename Arg, typename... Args>
-    auto addPhases(const Arg& phase, const Args&... phases) -> void
+    auto appendPhases(const Arg& phase, const Args&... phases) -> void
     {
-        static_assert(std::is_same_v<Arg, GenericPhase>);
-        static_assert(std::is_same_v<Arg, GenericPhases>);
-
-        addPhases(phase);
-        addPhases(phases...);
+        static_assert(std::is_base_of_v<GenericPhase, Arg> || std::is_base_of_v<GenericPhases, Arg>);
+        append(phase);
+        if constexpr(sizeof...(Args) > 0)
+            appendPhases(phases...);
     }
 
     /// Replace duplicate phase names with unique names.
@@ -401,19 +400,19 @@ public:
 };
 
 /// The class used to configure automatic selection of pure mineral phases.
-class MineralPhases : public GenericPhases
+class Minerals : public GenericPhases
 {
 public:
-    /// Construct a default MineralPhases object.
-    MineralPhases() : GenericPhases() { initialize(); }
+    /// Construct a default Minerals object.
+    Minerals() : GenericPhases() { initialize(); }
 
-    /// Construct a MineralPhases object with given species names.
-    explicit MineralPhases(const StringList& species) : GenericPhases(species) { initialize(); }
+    /// Construct a Minerals object with given species names.
+    explicit Minerals(const StringList& species) : GenericPhases(species) { initialize(); }
 
-    /// Construct a MineralPhases object with given element symbols.
-    explicit MineralPhases(const Speciate& elements) : GenericPhases(elements) { initialize(); }
+    /// Construct a Minerals object with given element symbols.
+    explicit Minerals(const Speciate& elements) : GenericPhases(elements) { initialize(); }
 
-    /// Initialize the default attributes of this MineralPhases object.
+    /// Initialize the default attributes of this Minerals object.
     auto initialize() -> void
     {
         setStateOfMatter(StateOfMatter::Solid);
