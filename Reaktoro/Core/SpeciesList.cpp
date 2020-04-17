@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -86,23 +87,38 @@ auto SpeciesList::indexWithSubstance(String substance) const -> Index
 
 auto SpeciesList::withNames(const StringList& names) const -> SpeciesList
 {
-    return filter(*this, [&](auto&& s) { return contains(names, s.name()); });
+    SpeciesList res;
+    for(auto name : names)
+    {
+        const auto i = indexWithName(name);
+        error(i >= size(), "Could not find species with name ", name, ".");
+        res.append(m_species[i]);
+    }
+    return res;
 }
 
-auto SpeciesList::withFormulas(const StringList& words) const -> SpeciesList
+auto SpeciesList::withFormulas(const StringList& formulas) const -> SpeciesList
 {
-    const auto formulas = detail::createChemicalFormulas(words);
-    auto pred = [&](auto&& s) {
-        const auto formula = s.formula();
-        return containsfn(formulas, [&](auto&& f) {
-            return formula.equivalent(f); });
-    };
-    return filter(*this, pred);
+    SpeciesList res;
+    for(auto formula : formulas)
+    {
+        const auto i = indexWithFormula(formula);
+        error(i >= size(), "Could not find any species with formula ", formula, ".");
+        res.append(m_species[i]);
+    }
+    return res;
 }
 
 auto SpeciesList::withSubstances(const StringList& substances) const -> SpeciesList
 {
-    return filter(*this, [&](auto&& s) { return contains(substances, s.substance()); });
+    SpeciesList res;
+    for(auto substance : substances)
+    {
+        const auto i = indexWithSubstance(substance);
+        error(i >= size(), "Could not find any species with substance name ", substance, ".");
+        res.append(m_species[i]);
+    }
+    return res;
 }
 
 auto SpeciesList::withAggregateState(AggregateState state) const -> SpeciesList

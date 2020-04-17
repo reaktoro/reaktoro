@@ -97,33 +97,57 @@ TEST_CASE("Testing SpeciesList", "[SpeciesList]")
     REQUIRE( species.indexWithFormula("CO3-2") == 10);
     REQUIRE( species.indexWithFormula("CH4")   == 11);
 
+    //-------------------------------------------------------------------------
     // Test method SpeciesList::withNames
-    filtered = species.withNames("H+(aq) ABC OH-(aq) XYZ H2O(aq)");
-
-    REQUIRE( filtered.size() == 3 );
-    REQUIRE( filtered.indexWithName("H+(aq)" ) < filtered.size() );
-    REQUIRE( filtered.indexWithName("OH-(aq)") < filtered.size() );
-    REQUIRE( filtered.indexWithName("H2O(aq)") < filtered.size() );
-
-    // Test method SpeciesList::withNames
-    filtered = species.withFormulas("H+ ABC OH- XYZ H2O");
+    //-------------------------------------------------------------------------
+    filtered = species.withNames("H+(aq) OH-(aq) H2O(aq) CO2(g)");
 
     REQUIRE( filtered.size() == 4 );
-    REQUIRE( filtered.indexWithName("H+(aq)" ) < filtered.size() );
-    REQUIRE( filtered.indexWithName("OH-(aq)") < filtered.size() );
-    REQUIRE( filtered.indexWithName("H2O(aq)") < filtered.size() );
-    REQUIRE( filtered.indexWithName("H2O(g)")  < filtered.size() );
+    REQUIRE( filtered.indexWithName("H+(aq)" ) == 0 );
+    REQUIRE( filtered.indexWithName("OH-(aq)") == 1 );
+    REQUIRE( filtered.indexWithName("H2O(aq)") == 2 );
+    REQUIRE( filtered.indexWithName("CO2(g)")  == 3 );
 
+    REQUIRE( species.withNames("").size() == 0 );
+
+    REQUIRE_THROWS( species.withNames("ABC") );
+    REQUIRE_THROWS( species.withNames("H+(aq) ABC") );
+
+    //-------------------------------------------------------------------------
     // Test method SpeciesList::withFormulas
-    filtered = species.withFormulas({"CO2", "AaBbCc", "HCO3-", "Xx2Yy3", "CO3-2"});
+    //-------------------------------------------------------------------------
+    filtered = species.withFormulas("CO2 HCO3- CO3-2 CH4");
 
     REQUIRE( filtered.size() == 4 );
-    REQUIRE( filtered.indexWithName("CO2(aq)"  ) < filtered.size() );
-    REQUIRE( filtered.indexWithName("HCO3-(aq)") < filtered.size() );
-    REQUIRE( filtered.indexWithName("CO3-2(aq)") < filtered.size() );
-    REQUIRE( filtered.indexWithName("CO2(g)"   ) < filtered.size() );
+    REQUIRE( filtered.indexWithName("CO2(aq)"  ) == 0 );
+    REQUIRE( filtered.indexWithName("HCO3-(aq)") == 1 );
+    REQUIRE( filtered.indexWithName("CO3-2(aq)") == 2 );
+    REQUIRE( filtered.indexWithName("CH4(aq)")   == 3 );
 
+    REQUIRE( species.withFormulas("").size() == 0 );
+
+    REQUIRE_THROWS( species.withFormulas("AaBbCc") );
+    REQUIRE_THROWS( species.withFormulas("H2O AaBbCc") );
+
+    //-------------------------------------------------------------------------
+    // Test method SpeciesList::withSubstances
+    //-------------------------------------------------------------------------
+    filtered = species.withSubstances("H+ OH- H2O CO2");
+
+    REQUIRE( filtered.size() == 4 );
+    REQUIRE( filtered.indexWithName("H+(aq)" ) == 0 );
+    REQUIRE( filtered.indexWithName("OH-(aq)") == 1 );
+    REQUIRE( filtered.indexWithName("H2O(aq)") == 2 );
+    REQUIRE( filtered.indexWithName("CO2(aq)") == 3 );
+
+    REQUIRE( species.withSubstances("").size() == 0 );
+
+    REQUIRE_THROWS( species.withSubstances("ABC") );
+    REQUIRE_THROWS( species.withSubstances("H+(aq) ABC") );
+
+    //-------------------------------------------------------------------------
     // Test method SpeciesList::withTag
+    //-------------------------------------------------------------------------
     filtered = species.withTag("charged");
 
     REQUIRE( filtered.size() == 6 );
@@ -134,14 +158,18 @@ TEST_CASE("Testing SpeciesList", "[SpeciesList]")
     REQUIRE( filtered.indexWithName("HCO3-(aq)") < filtered.size() );
     REQUIRE( filtered.indexWithName("CO3-2(aq)") < filtered.size() );
 
+    //-------------------------------------------------------------------------
     // Test method SpeciesList::withTags
+    //-------------------------------------------------------------------------
     filtered = species.withTags({"cation", "charged"});
 
     REQUIRE( filtered.size() == 2 );
     REQUIRE( filtered.indexWithName("H+(aq)" ) < filtered.size() );
     REQUIRE( filtered.indexWithName("Na+(aq)") < filtered.size() );
 
+    //-------------------------------------------------------------------------
     // Test method SpeciesList::withTags
+    //-------------------------------------------------------------------------
     filtered = species.withTags({"anion", "charged"});
 
     REQUIRE( filtered.size() == 4 );
@@ -150,7 +178,9 @@ TEST_CASE("Testing SpeciesList", "[SpeciesList]")
     REQUIRE( filtered.indexWithName("HCO3-(aq)") < filtered.size() );
     REQUIRE( filtered.indexWithName("CO3-2(aq)") < filtered.size() );
 
+    //-------------------------------------------------------------------------
     // Test method SpeciesList::withTag
+    //-------------------------------------------------------------------------
     filtered = species.withTag("aqueous");
 
     REQUIRE( filtered.size() == 12 );
