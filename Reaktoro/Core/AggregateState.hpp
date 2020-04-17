@@ -18,6 +18,7 @@
 #pragma once
 
 // C++ includes
+#include <iostream>
 #include <string>
 
 namespace Reaktoro {
@@ -47,6 +48,9 @@ enum class AggregateState
     Aqueous,          ///< for a species in a solution in which water is the solvent (symbol *aq*)
     Undefined         ///< when aggregate state is not explicitly provided (default)
 };
+
+/// Output an AggregateState value.
+auto operator<<(std::ostream& out, AggregateState option) -> std::ostream&;
 
 /// Return the AggregateState value from given aggregate state symbol.
 /// The following table maps a symbol to an aggregate state value.

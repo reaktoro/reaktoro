@@ -25,6 +25,30 @@
 
 namespace Reaktoro {
 
+auto operator<<(std::ostream& out, AggregateState option) -> std::ostream&
+{
+    switch(option)
+    {
+    case AggregateState::Gas:              out << "Gas";              return out;
+    case AggregateState::Liquid:           out << "Liquid";           return out;
+    case AggregateState::Solid:            out << "Solid";            return out;
+    case AggregateState::Plasma:           out << "Plasma";           return out;
+    case AggregateState::CondensedPhase:   out << "CondensedPhase";   return out;
+    case AggregateState::Fluid:            out << "Fluid";            return out;
+    case AggregateState::LiquidCrystal:    out << "LiquidCrystal";    return out;
+    case AggregateState::CrystallineSolid: out << "CrystallineSolid"; return out;
+    case AggregateState::AmorphousSolid:   out << "AmorphousSolid";   return out;
+    case AggregateState::Vitreous:         out << "Vitreous";         return out;
+    case AggregateState::Adsorbed:         out << "Adsorbed";         return out;
+    case AggregateState::Monomeric:        out << "Monomeric";        return out;
+    case AggregateState::Polymeric:        out << "Polymeric";        return out;
+    case AggregateState::SolidSolution:    out << "SolidSolution";    return out;
+    case AggregateState::IonExchange:      out << "IonExchange";      return out;
+    case AggregateState::Aqueous:          out << "Aqueous";          return out;
+    default:                               out << "Undefined";        return out;
+    }
+}
+
 auto parseAggregateState(const std::string& symbol) -> AggregateState
 {
     if(symbol == "g")   return AggregateState::Gas;
