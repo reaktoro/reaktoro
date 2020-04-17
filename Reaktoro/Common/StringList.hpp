@@ -81,21 +81,25 @@ public:
     /// Convert this StringList instance into a std::vector<std::string>.
     operator std::vector<std::string>() const;
 
-    /// Return begin const iterator of this StringList instance
-    inline auto begin() const { return data().begin(); }
-
-    /// Return begin iterator of this StringList instance
-    inline auto begin() { return data().begin(); }
-
-    /// Return end const iterator of this StringList instance
-    inline auto end() const { return data().end(); }
-
-    /// Return end iterator of this StringList instance
-    inline auto end() { return data().end(); }
-
 private:
     /// The list of strings separated by given token
     std::vector<std::string> m_strings;
+
+public:
+    /// Return begin const iterator of this StringList instance (for STL compatibility reasons).
+    inline auto begin() const { return data().begin(); }
+
+    /// Return begin iterator of this StringList instance (for STL compatibility reasons).
+    inline auto begin() { return data().begin(); }
+
+    /// Return end const iterator of this StringList instance (for STL compatibility reasons).
+    inline auto end() const { return data().end(); }
+
+    /// Return end iterator of this StringList instance (for STL compatibility reasons).
+    inline auto end() { return data().end(); }
+
+    /// The type of the value stored in a StringList instance (for STL compatibility reasons).
+    using value_type = std::string;
 };
 
 } // namespace Reaktoro
