@@ -137,37 +137,37 @@ auto AqueousMixture::dissociationMatrix() const -> MatrixXdConstRef
 auto AqueousMixture::indexNeutralSpecies(std::string name) const -> Index
 {
     const Index idx = indexSpecies(name);
-    return index(idx, idx_neutral_species);
+    return index(idx_neutral_species, idx);
 }
 
 auto AqueousMixture::indexNeutralSpeciesAny(const std::vector<std::string>& names) const -> Index
 {
     const Index idx = indexSpeciesAny(names);
-    return index(idx, idx_neutral_species);
+    return index(idx_neutral_species, idx);
 }
 
 auto AqueousMixture::indexChargedSpecies(std::string name) const -> Index
 {
     const Index idx = indexSpecies(name);
-    return index(idx, idx_charged_species);
+    return index(idx_charged_species, idx);
 }
 
 auto AqueousMixture::indexChargedSpeciesAny(const std::vector<std::string>& names) const -> Index
 {
     const Index idx = indexSpeciesAny(names);
-    return index(idx, idx_charged_species);
+    return index(idx_charged_species, idx);
 }
 
 auto AqueousMixture::indexCation(std::string name) const -> Index
 {
     const Index idx = indexSpecies(name);
-    return index(idx, idx_cations);
+    return index(idx_cations, idx);
 }
 
 auto AqueousMixture::indexAnion(std::string name) const -> Index
 {
     const Index idx = indexSpecies(name);
-    return index(idx, idx_anions);
+    return index(idx_anions, idx);
 }
 
 auto AqueousMixture::namesNeutralSpecies() const -> std::vector<std::string>

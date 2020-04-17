@@ -83,7 +83,7 @@ auto ReactionSystem::numReactions() const -> unsigned
 
 auto ReactionSystem::indexReaction(std::string name) const -> Index
 {
-    return index(name, reactions());
+    return indexfn(reactions(), RKT_LAMBDA(s, s.name() == name));
 }
 
 auto ReactionSystem::indexReactionWithError(std::string name) const -> Index

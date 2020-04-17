@@ -65,8 +65,8 @@ const std::vector<unsigned int> supcrt_databases_len =
 auto supcrtEmbeddedDatabaseTextContent(std::string name) -> std::string
 {
     // Get the index of the database, either named, e.g., supcrt98.xml or supcrt98
-    const Index i = index(name, supcrt_databases);
-    const Index j = index(name + ".xml", supcrt_databases);
+    const Index i = index(supcrt_databases, name);
+    const Index j = index(supcrt_databases, name + ".xml");
     const Index idx = std::min(i, j);
 
     // Return empty string if there is no built-in database if such name

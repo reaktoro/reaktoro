@@ -17,38 +17,38 @@
 
 namespace Reaktoro {
 
-template<typename T>
-auto index(const T& value, const std::vector<T>& values) -> Index
-{
-    return std::find(values.begin(), values.end(), value) - values.begin();
-}
+// template<typename T>
+// auto index(const T& value, const std::vector<T>& values) -> Index
+// {
+//     return std::find(values.begin(), values.end(), value) - values.begin();
+// }
 
-inline auto index(const std::string& word, const std::vector<std::string>& strings) -> Index
-{
-    return index<std::string>(word, strings);
-}
+// inline auto index(const std::string& word, const std::vector<std::string>& strings) -> Index
+// {
+//     return index<std::string>(word, strings);
+// }
 
-template<typename NamedValues>
-auto index(const std::string& name, const NamedValues& values) -> Index
-{
-    Index idx = 0;
-    for(const auto& value : values)
-        if(value.name() == name) return idx; else ++idx;
-    return idx;
-}
+// template<typename NamedValues>
+// auto index(const std::string& name, const NamedValues& values) -> Index
+// {
+//     Index idx = 0;
+//     for(const auto& value : values)
+//         if(value.name() == name) return idx; else ++idx;
+//     return idx;
+// }
 
-template<typename NamedValue, typename NamedValues>
-auto index(const NamedValue& value, const NamedValues& values) -> Index
-{
-    return index(value.name(), values);
-}
+// template<typename NamedValue, typename NamedValues>
+// auto index(const NamedValue& value, const NamedValues& values) -> Index
+// {
+//     return index(value.name(), values);
+// }
 
 template<typename Names, typename NamedValues>
 auto indexAny(const Names& names, const NamedValues& values) -> Index
 {
     for(auto& name : names)
     {
-        const Index i = index(name, values);
+        const Index i = index(values, name);
         if(i < values.size())
             return i;
     }
@@ -61,7 +61,7 @@ auto indices(const std::vector<std::string>& names, const NamedValues& values) -
     Indices idxs;
     idxs.reserve(names.size());
     for(const auto& name : names)
-        idxs.push_back(index(name, values));
+        idxs.push_back(index(values, name));
     return idxs;
 }
 
@@ -71,7 +71,7 @@ auto indices(const NamedValues& subvalues, const NamedValues& values) -> Indices
     Indices idxs;
     idxs.reserve(subvalues.size());
     for(const auto& value : subvalues)
-        idxs.push_back(index(value, values));
+        idxs.push_back(index(values, value));
     return idxs;
 }
 
@@ -80,31 +80,31 @@ inline auto indices(const std::vector<std::string>& words, const std::vector<std
     Indices indices;
     indices.reserve(words.size());
     for(const std::string iter : words)
-        indices.push_back(index(iter, strings));
+        indices.push_back(index(strings, iter));
 
     return indices;
 }
 
-template<typename NamedValues>
-auto contained(const std::string& name, const NamedValues& values) -> bool
-{
-    return index(name, values) < values.size();
-}
+// template<typename NamedValues>
+// auto contained(const std::string& name, const NamedValues& values) -> bool
+// {
+//     return index(name, values) < values.size();
+// }
 
-template<typename Container, typename = typename std::enable_if<!std::is_same<typename Container::value_type, std::string>::value>::type>
-auto contained(const typename Container::value_type& value, const Container& values) -> bool
-{
-    return std::count(values.begin(), values.end(), value);
-}
+// template<typename Container, typename = typename std::enable_if<!std::is_same<typename Container::value_type, std::string>::value>::type>
+// auto contained(const typename Container::value_type& value, const Container& values) -> bool
+// {
+//     return std::count(values.begin(), values.end(), value);
+// }
 
-template<typename Container>
-auto contained(const Container& values1, const Container& values2) -> bool
-{
-    for(const auto& value : values1)
-        if(!contained(value, values2))
-            return false;
-    return true;
-}
+// template<typename Container>
+// auto contained(const Container& values1, const Container& values2) -> bool
+// {
+//     for(const auto& value : values1)
+//         if(!contained(value, values2))
+//             return false;
+//     return true;
+// }
 
 template<typename T>
 auto unify(const std::vector<T>& values1, const std::vector<T>& values2) -> std::vector<T>
@@ -123,7 +123,7 @@ auto intersect(const std::vector<T>& values1, const std::vector<T>& values2) -> 
     std::vector<T> intersection;
 
     for(const T& value : values1)
-        if(contained(value, values2))
+        if(contains(values2, value))
             intersection.push_back(value);
 
     return intersection;
@@ -135,7 +135,7 @@ auto difference(const std::vector<T>& values1, const std::vector<T>& values2) ->
     std::vector<T> diff;
 
     for(const T& value : values1)
-        if(!contained(value, values2))
+        if(!contains(values2, value))
             diff.push_back(value);
 
     return diff;
@@ -145,7 +145,7 @@ template<typename T>
 auto emptyIntersection(const std::vector<T>& values1, const std::vector<T>& values2) -> bool
 {
     for(const T& value : values1)
-        if(contained(value, values2))
+        if(contains(values2, value))
             return false;
     return true;
 }
@@ -154,7 +154,7 @@ template<typename T>
 auto emptyDifference(const std::vector<T>& values1, const std::vector<T>& values2) -> bool
 {
     for(const T& value : values1)
-        if(!contained(value, values2))
+        if(!contains(values2, value))
             return false;
     return true;
 }
@@ -165,7 +165,7 @@ auto equal(const Container& values1, const Container& values2) -> bool
     if(values1.size() != values2.size())
         return false;
     for(const auto& value : values1)
-        if(!contained(value, values2))
+        if(!contained(values2, value))
             return false;
     return true;
 }

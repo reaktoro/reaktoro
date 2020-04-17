@@ -41,20 +41,20 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     // TESTING METHOD: indexfn
     //-------------------------------------------------------------------------
     for(auto n : nums)
-        REQUIRE( indexfn(nums, lambda(x, x == n)) == n - 1 );
+        REQUIRE( indexfn(nums, RKT_LAMBDA(x, x == n)) == n - 1 );
 
-    REQUIRE( indexfn(nums, lambda(x, x == 1000)) >= nums.size() );
+    REQUIRE( indexfn(nums, RKT_LAMBDA(x, x == 1000)) >= nums.size() );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: filter
     //-------------------------------------------------------------------------
-    res = filter(nums, lambda(x, x % 2 == 0));
+    res = filter(nums, RKT_LAMBDA(x, x % 2 == 0));
     REQUIRE( res == Vec<int>{2, 4, 6, 8} );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: remove
     //-------------------------------------------------------------------------
-    res = remove(nums, lambda(x, x % 2 == 1));
+    res = remove(nums, RKT_LAMBDA(x, x % 2 == 1));
     REQUIRE( res == Vec<int>{2, 4, 6, 8} );
 
     //-------------------------------------------------------------------------
@@ -66,14 +66,14 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: vectorize
     //-------------------------------------------------------------------------
-    strs = vectorize(Map<String, int>{{"C", 1}, {"A", 2}, {"B", 3}}, lambda(x, x.first));
+    strs = vectorize(Map<String, int>{{"C", 1}, {"A", 2}, {"B", 3}}, RKT_LAMBDA(x, x.first));
 
     REQUIRE( strs.size() == 3 );
     REQUIRE( contains(strs, "A") );
     REQUIRE( contains(strs, "B") );
     REQUIRE( contains(strs, "C") );
 
-    res = vectorize(Map<String, int>{{"C", 1}, {"A", 2}, {"B", 3}}, lambda(x, x.second));
+    res = vectorize(Map<String, int>{{"C", 1}, {"A", 2}, {"B", 3}}, RKT_LAMBDA(x, x.second));
 
     REQUIRE( res.size() == 3 );
     REQUIRE( contains(res, 1) );
@@ -134,8 +134,8 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: containsfn
     //-------------------------------------------------------------------------
-    REQUIRE(  containsfn(Vec<int>{1, 2, 5}, lambda(x, x == 5)) );
-    REQUIRE( !containsfn(Vec<int>{1, 2, 5}, lambda(x, x == 3)) );
+    REQUIRE(  containsfn(Vec<int>{1, 2, 5}, RKT_LAMBDA(x, x == 5)) );
+    REQUIRE( !containsfn(Vec<int>{1, 2, 5}, RKT_LAMBDA(x, x == 3)) );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: contained

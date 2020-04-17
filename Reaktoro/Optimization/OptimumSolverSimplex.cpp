@@ -173,7 +173,7 @@ auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, Optimum
 
     // Check if the basic feasible solution has an artificial variable
     for(unsigned k = n; k < n + m; ++k)
-        if(contained(k, ibasic))
+        if(contains(ibasic, k))
             RuntimeError("A basic feasible solution was calculated, but it contains artificial variables.",
                 "The provided constraints might be linearly dependent.");
 
