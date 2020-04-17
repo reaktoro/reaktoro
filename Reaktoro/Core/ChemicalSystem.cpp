@@ -25,7 +25,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
@@ -237,7 +236,7 @@ auto ChemicalSystem::indexSpeciesWithError(std::string name) const -> Index
 
 auto ChemicalSystem::indexSpeciesAny(const std::vector<std::string>& names) const -> Index
 {
-    return indexAny(names, species());
+    return indexfn(species(), RKT_LAMBDA(s, contains(names, s.name())));
 }
 
 auto ChemicalSystem::indexSpeciesAnyWithError(const std::vector<std::string>& names) const -> Index

@@ -24,10 +24,10 @@
 // #include <Reaktoro/deps/eigen3/Eigen/Dense>
 
 // // Reaktoro includes
+// #include <Reaktoro/Common/Algorithms.hpp>
 // #include <Reaktoro/Common/Constants.hpp>
 // #include <Reaktoro/Common/ConvertUtils.hpp>
 // #include <Reaktoro/Common/Exception.hpp>
-// #include <Reaktoro/Common/SetUtils.hpp>
 // #include <Reaktoro/Core/ChemicalSystem.hpp>
 // #include <Reaktoro/Core/ChemicalState.hpp>
 // #include <Reaktoro/Core/ReactionEquation.hpp>

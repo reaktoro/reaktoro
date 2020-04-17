@@ -78,6 +78,17 @@ auto transform(const Container& c, Result& res, const Function& f)
     std::transform(c.begin(), c.end(), res.begin(), f);
 }
 
+/// Return the items in a container at given indices.
+template<typename Container, typename Indices>
+auto extract(const Container& a, const Indices& indices)
+{
+    Container res;
+    res.reserve(indices.size());
+    for(auto i : indices)
+        res.push_back(a[i]);
+    return res;
+}
+
 /// Return a vector by applying function `f` on every item in container `c`.
 template<typename Container, typename Function>
 auto vectorize(const Container& c, const Function& f)
@@ -87,26 +98,6 @@ auto vectorize(const Container& c, const Function& f)
     std::vector<T> res;
     res.resize(c.size());
     transform(c, res, f);
-    return res;
-}
-
-/// Return a container with items from both `a` and `b`.
-template<typename Container>
-auto concatenate(const Container& a, const Container& b)
-{
-    Container res(a);
-    res.insert(res.end(), b.begin(), b.end());
-    return res;
-}
-
-/// Return a container with items from both `a` and `b` without duplicates.
-template<typename Container>
-auto merge(const Container& a, const Container& b)
-{
-    Container res(a);
-    res.insert(res.end(), b.begin(), b.end());
-    std::sort(res.begin(), res.end());
-    res.erase(std::unique(res.begin(), res.end()), res.end());
     return res;
 }
 
@@ -134,6 +125,40 @@ auto contained(const ContainerA& a, const ContainerB& b)
     return true;
 }
 
+/// Return a container with items from both `a` and `b`.
+template<typename Container>
+auto concatenate(const Container& a, const Container& b)
+{
+    Container res(a);
+    res.insert(res.end(), b.begin(), b.end());
+    return res;
+}
+
+/// Return a container with items from both `a` and `b` without duplicates.
+template<typename Container>
+auto merge(const Container& a, const Container& b)
+{
+    Container res(a);
+    res.insert(res.end(), b.begin(), b.end());
+    std::sort(res.begin(), res.end());
+    res.erase(std::unique(res.begin(), res.end()), res.end());
+    return res;
+}
+
+/// Return the intersection of two containers.
+template<typename Container>
+auto intersect(const Container& a, const Container& b)
+{
+    return filter(a, RKT_LAMBDA(x, contains(b, x)));
+}
+
+/// Return the difference of two containers.
+template<typename Container>
+auto difference(const Container& a, const Container& b)
+{
+    return filter(a, RKT_LAMBDA(x, !contains(b, x)));
+}
+
 /// Return true if containers `a` and `b` have distinct items.
 template<typename ContainerA, typename ContainerB>
 auto disjoint(const ContainerA& a, const ContainerB& b)
@@ -149,6 +174,32 @@ template<typename ContainerA, typename ContainerB>
 auto identical(const ContainerA& a, const ContainerB& b)
 {
     return contained(a, b) && contained(b, a);
+}
+
+/// Return a vector with given range of values and step between them.
+template<typename T>
+auto range(T first, T last, T step)
+{
+    if(last <= first) return std::vector<T>{};
+    auto size = std::size_t((last - first - 1)/step) + 1;
+    std::vector<T> res(size);
+    for(auto i = 0; i < size; ++i)
+        res[i] = first + i*step;
+    return res;
+}
+
+/// Return a vector with given range of values with unit step.
+template<typename T>
+auto range(T first, T last)
+{
+    return range(first, last, static_cast<T>(1));
+}
+
+/// Return a vector with given range of values with unit step and starting from 0.
+template<typename T>
+auto range(T last)
+{
+    return range(static_cast<T>(0), last, static_cast<T>(1));
 }
 
 } // namespace Reaktoro

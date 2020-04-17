@@ -24,7 +24,7 @@
 #include <miniz/zip_file.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Common/Algorithms.hpp>
 #include "embedded/supcrt98.hpp"
 #include "embedded/supcrt07.hpp"
 #include "embedded/supcrt98-organics.hpp"
@@ -65,9 +65,9 @@ const std::vector<unsigned int> supcrt_databases_len =
 auto supcrtEmbeddedDatabaseTextContent(std::string name) -> std::string
 {
     // Get the index of the database, either named, e.g., supcrt98.xml or supcrt98
-    const Index i = index(supcrt_databases, name);
-    const Index j = index(supcrt_databases, name + ".xml");
-    const Index idx = std::min(i, j);
+    const auto i = index(supcrt_databases, name);
+    const auto j = index(supcrt_databases, name + ".xml");
+    const auto idx = std::min(i, j);
 
     // Return empty string if there is no built-in database if such name
     if(idx >= supcrt_databases.size())
