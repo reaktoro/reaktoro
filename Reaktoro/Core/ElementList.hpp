@@ -18,89 +18,139 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Element.hpp>
 
 namespace Reaktoro {
 
+// Forward declaration of ElementListBase
+template<typename Data>
+class ElementListBase;
+
+/// The specialized container to deal with a collection of Element objects.
+using ElementList = ElementListBase<Vec<Element>>;
+
+/// The specialized container to deal with a const reference view of a collection of Element objects.
+using ElementListConstRef = ElementListBase<const Vec<Element>&>;
+
 /// A type used as a collection of elements.
-class ElementList
+template<typename Data>
+class ElementListBase
 {
 public:
-    /// Construct a default ElementList object.
-    ElementList();
+    /// Construct a default ElementListBase object.
+    ElementListBase() {}
 
-    /// Construct an ElementList object with given elements.
-    ElementList(std::initializer_list<Element> elements);
+    /// Construct an ElementListBase object with given elements.
+    ElementListBase(std::initializer_list<Element> elements) : m_elements(std::move(elements)) {}
 
-    /// Construct an ElementList object with given elements.
-    explicit ElementList(std::vector<Element> elements);
+    /// Construct an ElementListBase object with given elements.
+    ElementListBase(const Vec<Element>& elements) : m_elements(elements) {}
+
+    /// Construct an ElementListBase object with given another one.
+    template<typename OtherData>
+    ElementListBase(const ElementListBase<OtherData>& other) : m_elements(other.m_elements) {}
 
     /// Append a new element to the list of elements.
-    auto append(Element element) -> void;
+    auto append(const Element& element)
+    {
+        m_elements.push_back(element);
+    }
 
     /// Return the internal collection of Element objects.
-    auto data() const -> const std::vector<Element>&;
+    auto data() const -> const Vec<Element>&
+    {
+        return m_elements;
+    }
 
     /// Return the number of elements in the collection.
-    auto size() const -> Index;
+    auto size() const -> Index
+    {
+        return m_elements.size();
+    }
 
     /// Return the Element object with given index.
-    auto operator[](Index index) const -> const Element&;
+    auto operator[](Index i) const -> const Element&
+    {
+        return m_elements[i];
+    }
 
-    /// Return the index of the first element with equivalent substance formula.
-    /// If there is no elements with given substance formula, return number of elements.
-    auto indexWithSymbol(String formula) const -> Index;
+    /// Return the index of the first element with given symbol or number of elements if not found.
+    auto indexWithSymbol(const String& symbol) const -> Index
+    {
+        return indexfn(m_elements, RKT_LAMBDA(e, e.symbol() == symbol));
+    }
 
-    /// Return the index of the first element with given unique name.
-    /// If there is no elements with given name, return number of elements.
-    auto indexWithName(String name) const -> Index;
+    /// Return the index of the first element with given unique name or number of elements if not found.
+    auto indexWithName(const String& name) const -> Index
+    {
+        return indexfn(m_elements, RKT_LAMBDA(e, e.name() == name));
+    }
 
     /// Return all elements with given symbols.
-    auto withSymbols(const StringList& symbols) const -> ElementList;
+    auto withSymbols(const StringList& symbols) const -> ElementList
+    {
+        return filter(m_elements, RKT_LAMBDA(e, contains(symbols, e.symbol())));
+    }
 
     /// Return all elements with given names.
-    auto withNames(const StringList& names) const -> ElementList;
+    auto withNames(const StringList& names) const -> ElementList
+    {
+        return filter(m_elements, RKT_LAMBDA(e, contains(names, e.name())));
+    }
 
     /// Return all elements with a given tag.
-    auto withTag(String tag) const -> ElementList;
+    auto withTag(const String& tag) const -> ElementList
+    {
+        return filter(m_elements, RKT_LAMBDA(e, contains(e.tags(), tag)));
+    }
 
     /// Return all elements without a given tag.
-    auto withoutTag(String tag) const -> ElementList;
+    auto withoutTag(const String& tag) const -> ElementList
+    {
+        return filter(m_elements, RKT_LAMBDA(e, !contains(e.tags(), tag)));
+    }
 
     /// Return all elements with given tags.
-    auto withTags(const StringList& tags) const -> ElementList;
+    auto withTags(const StringList& tags) const -> ElementList
+    {
+        return filter(m_elements, RKT_LAMBDA(e, contained(tags, e.tags())));
+    }
 
     /// Return all elements without given tags.
-    auto withoutTags(const StringList& tags) const -> ElementList;
+    auto withoutTags(const StringList& tags) const -> ElementList
+    {
+        return filter(m_elements, RKT_LAMBDA(e, !contained(tags, e.tags())));
+    }
 
 private:
     /// The elements stored in the list.
-    std::vector<Element> m_elements;
+    Vec<Element> m_elements;
 
 public:
-    /// Construct an ElementList object with given begin and end iterators.
+    /// Construct an ElementListBase object with given begin and end iterators.
     template<typename InputIterator>
-    ElementList(InputIterator begin, InputIterator end) : m_elements(begin, end) {}
+    ElementListBase(InputIterator begin, InputIterator end) : m_elements(begin, end) {}
 
-    /// Return begin const iterator of this ElementList instance (for STL compatibility reasons).
+    /// Return begin const iterator of this ElementListBase instance (for STL compatibility reasons).
     inline auto begin() const { return data().begin(); }
 
-    /// Return begin iterator of this ElementList instance (for STL compatibility reasons).
+    /// Return begin iterator of this ElementListBase instance (for STL compatibility reasons).
     inline auto begin() { return data().begin(); }
 
-    /// Return end const iterator of this ElementList instance (for STL compatibility reasons).
+    /// Return end const iterator of this ElementListBase instance (for STL compatibility reasons).
     inline auto end() const { return data().end(); }
 
-    /// Return end iterator of this ElementList instance (for STL compatibility reasons).
+    /// Return end iterator of this ElementListBase instance (for STL compatibility reasons).
     inline auto end() { return data().end(); }
 
     /// Append a new Element at the back of the container (for STL compatibility reasons).
     inline auto push_back(const Element& elements) -> void { append(elements); }
 
-    /// The type of the value stored in a ElementList (for STL compatibility reasons).
+    /// The type of the value stored in a ElementListBase (for STL compatibility reasons).
     using value_type = Element;
 };
 
