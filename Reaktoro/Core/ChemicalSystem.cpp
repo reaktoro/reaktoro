@@ -23,29 +23,34 @@
 #include <set>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
-namespace {
+namespace detail {
 
-// auto fixDuplicatedSpeciesNames(std::vector<Phase> phases) -> std::vector<Phase>
-// {
-//     for(Phase& p1 : phases) for(Species& s1 : p1.species())
-//     {
-//         int suffix = 1;
+/// Replace duplicate phase names with unique names.
+auto fixDuplicatePhaseNames(Vec<Phase>& phases)
+{
+    Strings phasenames = vectorize(phases, RKT_LAMBDA(x, x.name()));
+    phasenames = makeunique(phasenames, "!");
+    for(auto i = 0; i < phases.size(); ++i)
+        if(phases[i].name() != phasenames[i])
+            phases[i] = phases[i].withName(phasenames[i]);
+}
 
-//         for(Phase& p2 : phases) for(Species& s2 : p2.species())
-//             if(&s1 != &s2 && s1.name() == s2.name())
-//                 s2 = s2.withName(s2.name() + "(" + std::to_string(++suffix) + ")");
-
-//         if(suffix > 1)
-//             s1 = s1.withName(s1.name() + "(" + std::to_string(1) + ")");
-//     }
-//     return phases;
-// }
+/// Replace duplicate species names with unique names.
+auto fixDuplicateSpeciesNames(Vec<Species>& species)
+{
+    Strings speciesnames = vectorize(species, RKT_LAMBDA(x, x.name()));
+    speciesnames = makeunique(speciesnames, "!");
+    for(auto i = 0; i < species.size(); ++i)
+        if(species[i].name() != speciesnames[i])
+            species[i] = species[i].withName(speciesnames[i]);
+}
 
 auto collectElements(const std::vector<Species>& species) -> std::vector<Element>
 {
@@ -70,7 +75,7 @@ auto collectSpecies(const std::vector<Phase>& phases) -> std::vector<Species>
     return list;
 }
 
-} // namespace
+} // namespace detail
 
 struct ChemicalSystem::Impl
 {
@@ -99,23 +104,13 @@ struct ChemicalSystem::Impl
     {
         initializePhasesSpeciesElements(phaselist);
         initializeFormulaMatrix();
-        // initializeThermoModel();
-        // initializeChemicalModel();
     }
-
-    // Impl(const std::vector<Phase>& phaselist, const ThermoModel& tm, const ChemicalModel& cm)
-    // {
-    //     initializePhasesSpeciesElements(phaselist);
-    //     initializeFormulaMatrix();
-    //     thermo_model = tm;
-    //     chemical_model = cm;
-    // }
 
     auto initializePhasesSpeciesElements(const std::vector<Phase>& phaselist) -> void
     {
         // phases = fixDuplicatedSpeciesNames(phaselist);
-        species = collectSpecies(phases);
-        elements = collectElements(species);
+        species = detail::collectSpecies(phases);
+        elements = detail::collectElements(species);
     }
 
     auto initializeFormulaMatrix() -> void
@@ -127,39 +122,6 @@ struct ChemicalSystem::Impl
             for(auto j = 0; j < num_elements; ++j)
                 formula_matrix(j, i) = species[i].elements().coefficient(elements[j].symbol());
     }
-
-    // auto initializeThermoModel() -> void
-    // {
-    //     thermo_model = [&](ThermoModelResult& res, double T, double P)
-    //     {
-    //         const Index num_phases = phases.size();
-    //         Index offset = 0;
-    //         for(Index iphase = 0; iphase < num_phases; ++iphase)
-    //         {
-    //             const Index size = phases[iphase].numSpecies();
-    //             auto tp = res.phaseProperties(iphase, offset, size);
-    //             phases[iphase].props(tp, T, P);
-    //             offset += size;
-    //         }
-    //     };
-    // }
-
-    // auto initializeChemicalModel() -> void
-    // {
-    //     chemical_model = [&](ChemicalModelResult& res, double T, double P, VectorXrConstRef n)
-    //     {
-    //         const Index num_phases = phases.size();
-    //         Index offset = 0;
-    //         for(Index iphase = 0; iphase < num_phases; ++iphase)
-    //         {
-    //             const Index size = phases[iphase].numSpecies();
-    //             const auto np = n.segment(offset, size);
-    //             auto cp = res.phaseProperties(iphase, offset, size);
-    //             phases[iphase].props(cp, T, P, np);
-    //             offset += size;
-    //         }
-    //     };
-    // }
 };
 
 ChemicalSystem::ChemicalSystem()
@@ -169,10 +131,6 @@ ChemicalSystem::ChemicalSystem()
 ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases)
 : pimpl(new Impl(phases))
 {}
-
-// ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases, const ThermoModel& thermo_model, const ChemicalModel& chemical_model)
-// : pimpl(new Impl(phases, thermo_model, chemical_model))
-// {}
 
 auto ChemicalSystem::numElements() const -> unsigned
 {
@@ -249,7 +207,7 @@ auto ChemicalSystem::formulaMatrix() const -> MatrixXdConstRef
 
 auto ChemicalSystem::indexElement(std::string name) const -> Index
 {
-    return index(name, elements());
+    return indexfn(elements(), RKT_LAMBDA(x, x.name() == name));
 }
 
 auto ChemicalSystem::indexElementWithError(std::string name) const -> Index
@@ -265,7 +223,7 @@ auto ChemicalSystem::indexElementWithError(std::string name) const -> Index
 
 auto ChemicalSystem::indexSpecies(std::string name) const -> Index
 {
-    return index(name, species());
+    return indexfn(species(), RKT_LAMBDA(x, x.name() == name));
 }
 
 auto ChemicalSystem::indexSpeciesWithError(std::string name) const -> Index
@@ -294,7 +252,7 @@ auto ChemicalSystem::indexSpeciesAnyWithError(const std::vector<std::string>& na
 
 auto ChemicalSystem::indexPhase(std::string name) const -> Index
 {
-    return index(name, phases());
+    return indexfn(phases(), RKT_LAMBDA(x, x.name() == name));
 }
 
 auto ChemicalSystem::indexPhaseWithError(std::string name) const -> Index
