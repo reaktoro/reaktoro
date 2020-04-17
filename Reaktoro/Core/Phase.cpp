@@ -32,6 +32,17 @@ auto molarMasses(const SpeciesList& species)
     return molar_masses;
 }
 
+/// Raise error if there is no common aggregate state for all species in the phase.
+auto ensureCommonAggregateState(const SpeciesList& species)
+{
+    const auto aggregatestate = species[0].aggregateState();
+    for(auto&& s : species)
+        error(s.aggregateState() != aggregatestate,
+            "The species in a phase need to have a common aggregate state.\n"
+            "I got a list of species in which ", species[0].name(), " has\n"
+            "aggregate state ", aggregatestate, " while ", s.name(), " has aggregate state ", s.aggregateState(), ".");
+}
+
 } // namespace detail
 
 struct Phase::Impl
@@ -68,6 +79,7 @@ auto Phase::withName(std::string name) -> Phase
 
 auto Phase::withSpecies(const SpeciesList& species) -> Phase
 {
+    detail::ensureCommonAggregateState(species);
     Phase copy = clone();
     copy.pimpl->species = std::move(species);
     copy.pimpl->species_molar_masses = detail::molarMasses(copy.pimpl->species);
