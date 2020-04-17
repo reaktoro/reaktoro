@@ -24,14 +24,16 @@
 
 namespace Reaktoro {
 
-/// @def lambda(x, expr)
+/// @def RKT_LAMBDA(x, expr)
 /// A convenient macro that expands to `[&](auto&& x) { return expr; }`.
-#define lambda(x, expr) [&](auto&& x) { return expr; }
+#define RKT_LAMBDA(x, expr) [&](const auto& x) { return expr; }
 
 /// Return the index of item `x` in container `c`.
 template<typename Container, typename T>
 auto index(const Container& c, const T& x) -> std::size_t
 {
+    // using U = typename Container::value_type;
+    // static_assert(std::is_convertible_v<U, T>, "Cannot use method index with value types that cannot be convertible among themselves.");
     return std::find(c.begin(), c.end(), x) - c.begin();
 }
 

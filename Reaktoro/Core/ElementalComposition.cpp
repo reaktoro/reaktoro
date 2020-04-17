@@ -51,12 +51,12 @@ auto ElementalComposition::size() const -> Index
 
 auto ElementalComposition::symbols() const -> Strings
 {
-    return vectorize(m_elements, lambda(pair, pair.first.symbol()));
+    return vectorize(m_elements, RKT_LAMBDA(pair, pair.first.symbol()));
 }
 
 auto ElementalComposition::coefficients() const -> Vec<double>
 {
-    return vectorize(m_elements, lambda(pair, pair.second));
+    return vectorize(m_elements, RKT_LAMBDA(pair, pair.second));
 }
 
 auto ElementalComposition::coefficient(const String& symbol) const -> double

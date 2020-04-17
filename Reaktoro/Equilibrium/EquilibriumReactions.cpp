@@ -189,7 +189,7 @@ struct EquilibriumReactions::Impl
         Indices ispecies = system.indicesSpecies(species);
 
         // Convert the global indices to local indices (within the equilibrium partition)
-        for(Index& i : ispecies) i = index(i, iequilibrium);
+        for(Index& i : ispecies) i = index(iequilibrium, i);
 
         // Assert all local indices are within bounds
         for(Index i = 0; i < ispecies.size(); ++i)

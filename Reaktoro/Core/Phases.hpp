@@ -283,7 +283,7 @@ private:
     /// Replace duplicate phase names with unique names.
     auto fixDuplicatePhaseNames() -> void
     {
-        Strings phasenames = vectorize(genericphases, lambda(x, x.name()));
+        Strings phasenames = vectorize(genericphases, RKT_LAMBDA(x, x.name()));
         phasenames = makeunique(phasenames, "!");
         auto i = 0;
         for(auto& phase : genericphases)

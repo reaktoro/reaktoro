@@ -24,25 +24,26 @@
 #include <string>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
 
 namespace Reaktoro {
 
-/// Find the index of a value in a container of values
-template<typename T>
-auto index(const T& value, const std::vector<T>& values) -> Index;
+// /// Find the index of a value in a container of values
+// template<typename T>
+// auto index(const T& value, const std::vector<T>& values) -> Index;
 
-/// Find the index of the @c word in the container of @c strings
-auto index(const std::string& word, const std::vector<std::string>& strings) -> Index;
+// /// Find the index of the @c word in the container of @c strings
+// auto index(const std::string& word, const std::vector<std::string>& strings) -> Index;
 
-/// Return the index of an entry in a container.
-template<typename NamedValues>
-auto index(const std::string& name, const NamedValues& values) -> Index;
+// /// Return the index of an entry in a container.
+// template<typename NamedValues>
+// auto index(const std::string& name, const NamedValues& values) -> Index;
 
-/// Return the index of an entry in a container.
-template<typename NamedValue, typename NamedValues>
-auto index(const NamedValue& value, const NamedValues& values) -> Index;
+// /// Return the index of an entry in a container.
+// template<typename NamedValue, typename NamedValues>
+// auto index(const NamedValue& value, const NamedValues& values) -> Index;
 
 /// Return the index of the first entry in a container of named values with any of the given names.
 template<typename Names, typename NamedValues>
@@ -63,13 +64,13 @@ auto indices(const std::vector<std::string>& words, const std::vector<std::strin
 //template<typename Container, typename = typename std::enable_if<!std::is_same<typename Container::value_type, std::string>::value>::type>
 //auto contained(const typename Container::value_type& value, const Container& values) -> bool;
 
-/// Check if a container of values is contained in another
-template<typename Container>
-auto contained(const Container& values1, const Container& values2) -> bool;
+// /// Check if a container of values is contained in another
+// template<typename Container>
+// auto contained(const Container& values1, const Container& values2) -> bool;
 
-/// Return true if a named value is in a set of values.
-template<typename NamedValues>
-auto contained(const std::string& name, const NamedValues& values) -> bool;
+// /// Return true if a named value is in a set of values.
+// template<typename NamedValues>
+// auto contained(const std::string& name, const NamedValues& values) -> bool;
 
 /// Determine the union of two containers
 template<typename T>

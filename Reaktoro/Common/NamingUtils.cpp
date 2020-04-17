@@ -110,17 +110,17 @@ auto conventionalNeutralSpeciesName(std::string name) -> std::string
 
 auto isAlternativeWaterName(std::string trial) -> bool
 {
-    return contained(trial, alternativeWaterNames());
+    return contains(alternativeWaterNames(), trial);
 }
 
 auto isAlternativeChargedSpeciesName(std::string trial, std::string name) -> bool
 {
-    return contained(trial, alternativeChargedSpeciesNames(name));
+    return contains(alternativeChargedSpeciesNames(name), trial);
 }
 
 auto isAlternativeNeutralSpeciesName(std::string trial, std::string name) -> bool
 {
-    return contained(trial, alternativeNeutralSpeciesNames(name));
+    return contains(alternativeNeutralSpeciesNames(name), trial);
 }
 
 auto splitChargedSpeciesName(std::string name) -> std::pair<std::string, double>

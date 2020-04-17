@@ -240,13 +240,13 @@ struct ChemicalFormula::Impl
     /// Return the symbols of the elements.
     auto symbols() const -> Strings
     {
-        return vectorize(elements, lambda(pair, pair.first));
+        return vectorize(elements, RKT_LAMBDA(pair, pair.first));
     }
 
     /// Return the coefficients of the elements.
     auto coefficients() const -> Vec<double>
     {
-        return vectorize(elements, lambda(pair, pair.second));
+        return vectorize(elements, RKT_LAMBDA(pair, pair.second));
     }
 
     /// Return the coefficient of an element symbol in the chemical formula.

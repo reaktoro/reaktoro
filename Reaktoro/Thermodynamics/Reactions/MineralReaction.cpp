@@ -71,10 +71,9 @@ auto mineralCatalystFunctionPartialPressure(const MineralCatalyst& catalyst, con
     const auto gas         = catalyst.species;                           // the species of the catalyst
     const auto power       = catalyst.power;                             // the power of the catalyst
     const auto idx_phase   = system.indexPhase("Gaseous");               // the index of the gaseous phase
-    const auto gases       = names(system.phase(idx_phase).species());   // the names of the gaseous species
-    const auto igases      = system.indicesSpecies(gases);               // the indices of the gaseous species
+    const auto gases       = system.phase(idx_phase).species();          // the gaseous species
     const auto ifirst      = system.indexFirstSpeciesInPhase(idx_phase); // the index of the first gaseous species
-    const auto igas        = index(gas, gases);                          // the index of the gaseous species
+    const auto igas        = gases.indexWithName(gas);                   // the index of the gaseous species
     const auto num_gases   = gases.size();                               // the number of gases
 
     real res = {};

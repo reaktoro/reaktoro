@@ -60,7 +60,7 @@ auto GeneralMixture::species(const Index& index) const -> const Species&
 
 auto GeneralMixture::indexSpecies(const std::string& name) const -> Index
 {
-    return index(name, _species);
+    return indexfn(_species, RKT_LAMBDA(s, s.name() == name));
 }
 
 auto GeneralMixture::indexSpeciesAny(const std::vector<std::string>& names) const -> Index

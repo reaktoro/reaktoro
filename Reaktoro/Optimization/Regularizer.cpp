@@ -207,7 +207,7 @@ auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& proble
         // Determine the original trivial variables that are fixed at their lower bounds
         for(Index i = 0; i < n; ++i)
             for(Index j = 0; j < m; ++j)
-                if(A(j, i) != 0.0 && contained(j, itrivial_constraints))
+                if(A(j, i) != 0.0 && contains(itrivial_constraints, j))
                     { itrivial_variables.push_back(i); break; }
 
         // Update  the indices of the non-trivial original constraints
