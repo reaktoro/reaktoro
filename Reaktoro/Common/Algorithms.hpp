@@ -88,6 +88,15 @@ auto vectorize(const Container& c, const Function& f)
     return res;
 }
 
+/// Return a container with items from both `a` and `b`.
+template<typename Container>
+auto concatenate(const Container& a, const Container& b)
+{
+    Container res(a);
+    res.insert(res.end(), b.begin(), b.end());
+    return res;
+}
+
 /// Return a container with items from both `a` and `b` without duplicates.
 template<typename Container>
 auto merge(const Container& a, const Container& b)

@@ -81,6 +81,27 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     REQUIRE( contains(res, 3) );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: concatenate
+    //-------------------------------------------------------------------------
+    res = concatenate(Vec<int>{ 3, 2, 1 }, Vec<int>{ 5, 2, 3, 4 });
+    REQUIRE( res == Vec<int>{ 3, 2, 1, 5, 2, 3, 4 } );
+
+    res = concatenate(Vec<int>{ 5, 2, 3, 4 }, Vec<int>{ 3, 2, 1 } );
+    REQUIRE( res == Vec<int>{ 5, 2, 3, 4, 3, 2, 1 } );
+
+    res = concatenate(Vec<int>{ 1, 2, 3, 4 }, Vec<int>{ 7, 6, 5 } );
+    REQUIRE( res == Vec<int>{ 1, 2, 3, 4, 7, 6, 5 } );
+
+    res = concatenate(Vec<int>{ 1, 2, 3, 4 }, Vec<int>{} );
+    REQUIRE( res == Vec<int>{ 1, 2, 3, 4 } );
+
+    res = concatenate(Vec<int>{}, Vec<int>{1, 2, 3, 4} );
+    REQUIRE( res == Vec<int>{ 1, 2, 3, 4 } );
+
+    res = concatenate(Vec<int>{}, Vec<int>{} );
+    REQUIRE( res == Vec<int>{} );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: merge
     //-------------------------------------------------------------------------
     res = merge(Vec<int>{ 3, 2, 1 }, Vec<int>{ 5, 2, 3, 4 });
