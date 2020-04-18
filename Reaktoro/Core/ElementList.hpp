@@ -42,17 +42,24 @@ class ElementListBase
 {
 public:
     /// Construct a default ElementListBase object.
-    ElementListBase() {}
+    ElementListBase()
+    {}
 
     /// Construct an ElementListBase object with given elements.
-    ElementListBase(std::initializer_list<Element> elements) : m_elements(std::move(elements)) {}
+    ElementListBase(std::initializer_list<Element> elements)
+    : m_elements(std::move(elements))
+    {}
 
     /// Construct an ElementListBase object with given elements.
-    ElementListBase(const Vec<Element>& elements) : m_elements(elements) {}
+    ElementListBase(const Vec<Element>& elements)
+    : m_elements(elements)
+    {}
 
     /// Construct an ElementListBase object with given another one.
     template<typename OtherData>
-    ElementListBase(const ElementListBase<OtherData>& other) : m_elements(other.m_elements) {}
+    ElementListBase(const ElementListBase<OtherData>& other)
+    : m_elements(other.m_elements)
+    {}
 
     /// Append a new element to the list of elements.
     auto append(const Element& element)
@@ -78,28 +85,56 @@ public:
         return m_elements[i];
     }
 
-    /// Return the index of the first element with given symbol or number of elements if not found.
-    auto indexWithSymbol(const String& symbol) const -> Index
+    /// Return the index of the first element with given symbol or the number of elements if not found.
+    auto find(const String& symbol) const -> Index
+    {
+        return findWithSymbol(symbol);
+    }
+
+    /// Return the index of the first element with given symbol or the number of elements if not found.
+    auto findWithSymbol(const String& symbol) const -> Index
     {
         return indexfn(m_elements, RKT_LAMBDA(e, e.symbol() == symbol));
     }
 
-    /// Return the index of the first element with given unique name or number of elements if not found.
-    auto indexWithName(const String& name) const -> Index
+    /// Return the index of the first element with given unique name or the number of elements if not found.
+    auto findWithName(const String& name) const -> Index
     {
         return indexfn(m_elements, RKT_LAMBDA(e, e.name() == name));
+    }
+
+    /// Return the index of the first element with given symbol or throw a runtime error if not found.
+    auto index(const String& symbol) const -> Index
+    {
+        return indexWithSymbol(symbol);
+    }
+
+    /// Return the index of the first element with given symbol or throw a runtime error if not found.
+    auto indexWithSymbol(const String& symbol) const -> Index
+    {
+        const auto idx = findWithSymbol(symbol);
+        error(idx >= size(), "Could not find any Element object with symbol ", symbol, ".");
+        return idx;
+    }
+
+    /// Return the index of the first element with given unique name or throw a runtime error if not found.
+    auto indexWithName(const String& name) const -> Index
+    {
+        const auto idx = findWithName(name);
+        error(idx >= size(), "Could not find any Element object with name ", name, ".");
+        return idx;
     }
 
     /// Return all elements with given symbols.
     auto withSymbols(const StringList& symbols) const -> ElementList
     {
-        return filter(m_elements, RKT_LAMBDA(e, contains(symbols, e.symbol())));
+        return vectorize(symbols, RKT_LAMBDA(symbol, m_elements[indexWithSymbol(symbol)]));
     }
 
     /// Return all elements with given names.
     auto withNames(const StringList& names) const -> ElementList
     {
-        return filter(m_elements, RKT_LAMBDA(e, contains(names, e.name())));
+        return vectorize(names, RKT_LAMBDA(name, m_elements[indexWithName(name)]));
     }
 
     /// Return all elements with a given tag.
@@ -126,9 +161,15 @@ public:
         return filter(m_elements, RKT_LAMBDA(e, !contained(tags, e.tags())));
     }
 
+    /// Convert this ElementListBase object into its Data.
+    operator Data() { return m_elements; }
+
+    /// Convert this ElementListBase object into its Data.
+    operator Data() const { return m_elements; }
+
 private:
     /// The elements stored in the list.
-    Vec<Element> m_elements;
+    Data m_elements;
 
 public:
     /// Construct an ElementListBase object with given begin and end iterators.
@@ -136,19 +177,19 @@ public:
     ElementListBase(InputIterator begin, InputIterator end) : m_elements(begin, end) {}
 
     /// Return begin const iterator of this ElementListBase instance (for STL compatibility reasons).
-    inline auto begin() const { return data().begin(); }
+    auto begin() const { return data().begin(); }
 
     /// Return begin iterator of this ElementListBase instance (for STL compatibility reasons).
-    inline auto begin() { return data().begin(); }
+    auto begin() { return data().begin(); }
 
     /// Return end const iterator of this ElementListBase instance (for STL compatibility reasons).
-    inline auto end() const { return data().end(); }
+    auto end() const { return data().end(); }
 
     /// Return end iterator of this ElementListBase instance (for STL compatibility reasons).
-    inline auto end() { return data().end(); }
+    auto end() { return data().end(); }
 
     /// Append a new Element at the back of the container (for STL compatibility reasons).
-    inline auto push_back(const Element& elements) -> void { append(elements); }
+    auto push_back(const Element& elements) -> void { append(elements); }
 
     /// The type of the value stored in a ElementListBase (for STL compatibility reasons).
     using value_type = Element;
