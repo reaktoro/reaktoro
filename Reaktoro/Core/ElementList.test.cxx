@@ -55,6 +55,66 @@ TEST_CASE("Testing ElementList", "[ElementList]")
     REQUIRE( elements[8].symbol()  == "F" );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::find
+    //-------------------------------------------------------------------------
+    REQUIRE( elements.find("H")  == 0);
+    REQUIRE( elements.find("He") == 1);
+    REQUIRE( elements.find("Li") == 2);
+    REQUIRE( elements.find("Be") == 3);
+    REQUIRE( elements.find("B")  == 4);
+    REQUIRE( elements.find("C")  == 5);
+    REQUIRE( elements.find("N")  == 6);
+    REQUIRE( elements.find("O")  == 7);
+    REQUIRE( elements.find("F")  == 8);
+
+    REQUIRE( elements.find("Xy") >= elements.size() );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::findWithSymbol
+    //-------------------------------------------------------------------------
+    REQUIRE( elements.findWithSymbol("H")  == 0);
+    REQUIRE( elements.findWithSymbol("He") == 1);
+    REQUIRE( elements.findWithSymbol("Li") == 2);
+    REQUIRE( elements.findWithSymbol("Be") == 3);
+    REQUIRE( elements.findWithSymbol("B")  == 4);
+    REQUIRE( elements.findWithSymbol("C")  == 5);
+    REQUIRE( elements.findWithSymbol("N")  == 6);
+    REQUIRE( elements.findWithSymbol("O")  == 7);
+    REQUIRE( elements.findWithSymbol("F")  == 8);
+
+    REQUIRE( elements.findWithSymbol("Xy") >= elements.size() );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::findWithName
+    //-------------------------------------------------------------------------
+    REQUIRE( elements.findWithName("Hydrogen")  == 0);
+    REQUIRE( elements.findWithName("Helium")    == 1);
+    REQUIRE( elements.findWithName("Lithium")   == 2);
+    REQUIRE( elements.findWithName("Beryllium") == 3);
+    REQUIRE( elements.findWithName("Boron")     == 4);
+    REQUIRE( elements.findWithName("Carbon")    == 5);
+    REQUIRE( elements.findWithName("Nitrogen")  == 6);
+    REQUIRE( elements.findWithName("Oxygen")    == 7);
+    REQUIRE( elements.findWithName("Fluorine")  == 8);
+
+    REQUIRE( elements.findWithName("Xyrium") >= elements.size() );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::index
+    //-------------------------------------------------------------------------
+    REQUIRE( elements.index("H")  == 0);
+    REQUIRE( elements.index("He") == 1);
+    REQUIRE( elements.index("Li") == 2);
+    REQUIRE( elements.index("Be") == 3);
+    REQUIRE( elements.index("B")  == 4);
+    REQUIRE( elements.index("C")  == 5);
+    REQUIRE( elements.index("N")  == 6);
+    REQUIRE( elements.index("O")  == 7);
+    REQUIRE( elements.index("F")  == 8);
+
+    REQUIRE_THROWS( elements.index("Xy") );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: ElementList::indexWithSymbol
     //-------------------------------------------------------------------------
     REQUIRE( elements.indexWithSymbol("H")  == 0);
@@ -66,6 +126,8 @@ TEST_CASE("Testing ElementList", "[ElementList]")
     REQUIRE( elements.indexWithSymbol("N")  == 6);
     REQUIRE( elements.indexWithSymbol("O")  == 7);
     REQUIRE( elements.indexWithSymbol("F")  == 8);
+
+    REQUIRE_THROWS( elements.indexWithSymbol("Xy") );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ElementList::indexWithName
@@ -80,25 +142,31 @@ TEST_CASE("Testing ElementList", "[ElementList]")
     REQUIRE( elements.indexWithName("Oxygen")    == 7);
     REQUIRE( elements.indexWithName("Fluorine")  == 8);
 
+    REQUIRE_THROWS( elements.indexWithName("Xyrium") );
+
     //-------------------------------------------------------------------------
     // TESTING METHOD: ElementList::withSymbols
     //-------------------------------------------------------------------------
-    filtered = elements.withSymbols("He ABC O XYZ C");
+    filtered = elements.withSymbols("He O C");
 
     REQUIRE( filtered.size() == 3 );
     REQUIRE( filtered.indexWithSymbol("He") < filtered.size() );
     REQUIRE( filtered.indexWithSymbol("O" ) < filtered.size() );
     REQUIRE( filtered.indexWithSymbol("C" ) < filtered.size() );
 
+    REQUIRE_THROWS( elements.withSymbols("He ABC O XYZ C") );
+
     //-------------------------------------------------------------------------
     // TESTING METHOD: ElementList::withNames
     //-------------------------------------------------------------------------
-    filtered = elements.withNames("Helium ABC Oxygen XYZ Carbon");
+    filtered = elements.withNames("Helium Oxygen Carbon");
 
     REQUIRE( filtered.size() == 3 );
     REQUIRE( filtered.indexWithName("Helium") < filtered.size() );
     REQUIRE( filtered.indexWithName("Oxygen") < filtered.size() );
     REQUIRE( filtered.indexWithName("Carbon") < filtered.size() );
+
+    REQUIRE_THROWS( elements.withSymbols("Helium Xylium") );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ElementList::withTag
@@ -127,13 +195,11 @@ TEST_CASE("Testing ElementList", "[ElementList]")
     // TESTING METHOD: ElementList::withTags
     //-------------------------------------------------------------------------
     filtered = elements.withTags({"tag1", "tag2"});
-
     REQUIRE( filtered.size() == 0 );
 
     filtered = elements.withTags({"tag1", "tag3"});
-
     REQUIRE( filtered.size() == 1 );
-    REQUIRE( filtered.indexWithSymbol("F") < filtered.size() );
+    REQUIRE( filtered.index("F") < filtered.size() );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ElementList::withoutTags
