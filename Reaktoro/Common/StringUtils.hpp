@@ -42,7 +42,7 @@ auto operator<<(std::ostream& out, const Vec<T>& values) -> std::ostream&
 }
 
 template <typename Arg>
-auto stringfy(std::stringstream& ss, const String& sep, const Arg& item)
+auto stringfy(std::stringstream& ss, const String& sep, const Arg& item) -> void
 {
     ss << item;
 }
