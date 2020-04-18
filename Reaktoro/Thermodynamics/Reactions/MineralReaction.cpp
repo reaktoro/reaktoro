@@ -53,7 +53,7 @@ auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const Chem
 {
     const auto power = catalyst.power;
     const std::string species = catalyst.species;
-    const auto ispecies = system.indexSpeciesWithError(species);
+    const auto ispecies = system.species().index(species);
 
     MineralCatalystFunction fn = [=](const ChemicalProps& props) mutable
     {
@@ -68,11 +68,11 @@ auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const Chem
 
 auto mineralCatalystFunctionPartialPressure(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction
 {
-    const auto gas         = catalyst.species;                           // the species of the catalyst
-    const auto power       = catalyst.power;                             // the power of the catalyst
-    const auto idx_phase   = system.indexPhase("Gaseous");               // the index of the gaseous phase
+    const auto gas         = catalyst.species; // the species of the catalyst
+    const auto power       = catalyst.power;   // the power of the catalyst
+    const auto idx_phase   = system.phases().indexWithStateOfMatter(StateOfMatter::Gas);
     const auto gases       = system.phase(idx_phase).species();          // the gaseous species
-    const auto ifirst      = system.indexFirstSpeciesInPhase(idx_phase); // the index of the first gaseous species
+    const auto ifirst      = system.phases().numSpeciesUntilPhase(idx_phase); // the index of the first gaseous species
     const auto igas        = gases.indexWithName(gas);                   // the index of the gaseous species
     const auto num_gases   = gases.size();                               // the number of gases
 
@@ -116,7 +116,7 @@ auto mineralCatalystFunction(const MineralCatalyst& catalyst, const ChemicalSyst
 auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction& reaction, const ChemicalSystem& system) -> ReactionRateFunction
 {
     // The number of chemical species in the system
-    const unsigned num_species = system.numSpecies();
+    const unsigned num_species = system.species().size();
 
     // The universal gas constant (in units of kJ/(mol*K))
     const auto R = 8.3144621e-3;
@@ -190,8 +190,8 @@ auto defaultMineralReactionEquation(Index imineral, const ChemicalSystem& system
         "This functionaly has not been developed yet. Please specify the "
         "reaction equation manually.");
 
-    Index E = system.numElements();
-    Index N = system.numSpecies();
+    Index E = system.elements().size();
+    Index N = system.species().size();
     MatrixXd W = system.formulaMatrix();
     W.conservativeResize(E + 1, N);
     W.row(E).fill(0.0);
@@ -405,7 +405,7 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
     const auto P = 1.0e5;  // in units of pascal
 
     // The index of the mineral species
-    const auto ispecies = system.indexSpecies(reaction.mineral());
+    const auto ispecies = system.species().index(reaction.mineral());
 
     // The specific surface area of the mineral (in units of m2/kg)
     const auto specific_surface_area = reaction.specificSurfaceArea();
@@ -437,10 +437,10 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
 auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& system) -> Reaction
 {
     // The number of chemical species in the system
-    const unsigned num_species = system.numSpecies();
+    const unsigned num_species = system.species().size();
 
     // The index of the mineral
-    const auto imineral = system.indexSpeciesWithError(mineralrxn.mineral());
+    const auto imineral = system.species().index(mineralrxn.mineral());
 
     // Check if a default mineral reaction is needed
     ReactionEquation equation = mineralrxn.equation().empty() ?

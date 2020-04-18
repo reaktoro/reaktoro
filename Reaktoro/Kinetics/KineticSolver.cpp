@@ -186,7 +186,7 @@
 //         const MatrixXd Ik = rows(I, iks);
 
 //         // Initialise the coefficient matrix `B` of the source rates
-//         B = zeros(Ee + Nk, system.numSpecies());
+//         B = zeros(Ee + Nk, system.species().size());
 //         B.topRows(Ee) = Ae * Ie;
 //         B.bottomRows(Nk) = Ik;
 
@@ -194,12 +194,12 @@
 //         drdu.resize(reactions.numReactions(), Ee + Nk);
 
 //         // Allocate memory for the partial derivatives of the source rates `q` w.r.t. to `u = [be nk]`
-//         dqdu.resize(system.numSpecies(), Ee + Nk);
+//         dqdu.resize(system.species().size(), Ee + Nk);
 //     }
 
 //     auto addSource(ChemicalState state, double volumerate, std::string units) -> void
 //     {
-//         const Index num_species = system.numSpecies();
+//         const Index num_species = system.species().size();
 //         const double volume = units::convert(volumerate, units, "m3/s");
 //         state.scaleVolume(volume);
 //         const VectorXr n = state.speciesAmounts();
@@ -220,7 +220,7 @@
 //         const double volume = units::convert(volumerate, units, "m3/s");
 //         const Index iphase = system.indexPhaseWithError(phase);
 //         const Index ifirst = system.indexFirstSpeciesInPhase(iphase);
-//         const Index size = system.numSpeciesInPhase(iphase);
+//         const Index size = system.phase(iphase).species().size();
 //         auto old_source_fn = source_fn;
 //         real phasevolume = {};
 //         VectorXd q(size);

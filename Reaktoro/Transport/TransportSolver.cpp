@@ -76,7 +76,7 @@
 // auto ChemicalField::elementAmounts(VectorXdRef values) -> void
 // {
 //     const Index len = size();
-//     const Index num_elements = m_system.numElements();
+//     const Index num_elements = m_system.elements().size();
 //     Index offset = 0;
 //     for(Index i = 0; i < len; ++i, offset += num_elements)
 //         values.segment(offset, num_elements) = m_states[i].elementAmounts();

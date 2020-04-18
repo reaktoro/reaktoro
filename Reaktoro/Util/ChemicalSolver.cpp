@@ -126,8 +126,8 @@
 //      kineticsolver(reactions)
 //    {
 //        // Initialize the number of species and elements in the system
-//        N = system.numSpecies();
-//        E = system.numElements();
+//        N = system.species().size();
+//        E = system.elements().size();
 //
 //        // Initialize the default partition of the chemical system
 //        setPartition(Partition(system));

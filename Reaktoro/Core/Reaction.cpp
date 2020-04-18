@@ -75,11 +75,15 @@ struct Reaction::Impl
         indices.reserve(equation.numSpecies());
         stoichiometries.resize(equation.numSpecies());
         auto i = 0;
-        for(const auto& pair : equation.equation())
+        for(const auto& [name, coeff] : equation.equation())
         {
-            species.push_back(system.species(pair.first));
-            indices.push_back(system.indexSpecies(pair.first));
-            stoichiometries[i] = pair.second;
+            const auto ispecies = system.species().index(name);
+            error(ispecies >= system.species().size(),
+                "Cannot construct Reaction object with species named ", name,
+                " as it is not in the ChemicalSystem object.");
+            species.push_back(system.species(ispecies));
+            indices.push_back(ispecies);
+            stoichiometries[i] = coeff;
             ++i;
         }
     }
@@ -193,7 +197,7 @@ auto Reaction::lnEquilibriumConstant(const ChemicalProps& props) const -> real
 
 auto Reaction::lnReactionQuotient(const ChemicalProps& props) const -> real
 {
-    const auto num_species = system().numSpecies();
+    const auto num_species = system().species().size();
     const auto ln_a = props.lnActivities();
     real ln_Q = {};
     auto counter = 0;

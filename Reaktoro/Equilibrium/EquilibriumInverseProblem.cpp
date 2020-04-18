@@ -135,11 +135,11 @@
 // {
 //     Titrant res;
 //     res.name = titrant;
-//     res.formula = zeros(system.numElements());
+//     res.formula = zeros(system.elements().size());
 
 //     Index idx = system.indexSpecies(titrant);
 
-//     if(idx < system.numSpecies())
+//     if(idx < system.species().size())
 //     {
 //         Species species = system.species(idx);
 //         res.molar_mass = species.molarMass();
@@ -212,7 +212,7 @@
 //         const Index ispecies = system.indexSpeciesWithError(species);
 
 //         // The number of species in the system
-//         const Index num_species = system.numSpecies();
+//         const Index num_species = system.species().size();
 
 //         // Auxiliary chemical scalar to avoid memory reallocation
 //         real ni = {};
@@ -417,7 +417,7 @@
 //         titrants.push_back(createTitrant(titrant, system));
 
 //         // The number of elements in the system
-//         const Index num_elements = system.numElements();
+//         const Index num_elements = system.elements().size();
 
 //         // The index of the last titrant
 //         const Index ilast = titrants.size() - 1;
@@ -485,7 +485,7 @@
 //     /// Return the residual of the equilibrium constraints and their partial molar derivatives.
 //     auto residualEquilibriumConstraints(VectorXrConstRef x, const ChemicalState& state) const -> ResidualEquilibriumConstraints
 //     {
-//         const Index num_species = system.numSpecies();
+//         const Index num_species = system.species().size();
 //         const Index num_constraints = constraints.size();
 //         const Index num_titrants = titrants.size();
 //         ResidualEquilibriumConstraints res;

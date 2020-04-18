@@ -75,7 +75,7 @@ auto ChemicalProps::data() const -> const ChemicalPropsData&
 auto ChemicalProps::phaseProps(Index idx) const -> ChemicalPropsPhaseConstRef
 {
     const auto phase = sys.phase(idx);
-    const auto begin = sys.indexFirstSpeciesInPhase(idx);
+    const auto begin = sys.phases().numSpeciesUntilPhase(idx);
     const auto size = phase.species().size();
 
     return ChemicalPropsPhaseConstRef(phase, {
@@ -104,7 +104,7 @@ auto ChemicalProps::phaseProps(Index idx) const -> ChemicalPropsPhaseConstRef
 auto ChemicalProps::phaseProps(Index idx) -> ChemicalPropsPhaseRef
 {
     const auto phase = sys.phase(idx);
-    const auto begin = sys.indexFirstSpeciesInPhase(idx);
+    const auto begin = sys.phases().numSpeciesUntilPhase(idx);
     const auto size = phase.species().size();
 
     return ChemicalPropsPhaseRef(phase, {

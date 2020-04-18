@@ -22,6 +22,7 @@
 #include <string>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 
@@ -84,13 +85,13 @@ public:
     auto setTemperature(real val) -> void;
 
     /// Set the temperature of the chemical state with given units
-    auto setTemperature(real val, std::string units) -> void;
+    auto setTemperature(real val, String units) -> void;
 
     /// Set the pressure of the chemical state (in units of Pa)
     auto setPressure(real val) -> void;
 
     /// Set the pressure of the chemical state with given units
-    auto setPressure(real val, std::string units) -> void;
+    auto setPressure(real val, String units) -> void;
 
     /// Set the molar amounts of the species with a single value (in units of mol)
     /// @param val The single molar amounts of the species
@@ -113,19 +114,19 @@ public:
     /// Set the molar amount of a species (in units of mol)
     /// @param name The name of the species
     /// @param amount The amount of the species
-    auto setSpeciesAmount(std::string name, real amount) -> void;
+    auto setSpeciesAmount(String name, real amount) -> void;
 
     /// Set the amount of a species with given units
     /// @param index The index of the species
     /// @param amount The amount of the species
     /// @param units The units of the amount (must be convertible to either mol or gram)
-    auto setSpeciesAmount(Index index, real amount, std::string units) -> void;
+    auto setSpeciesAmount(Index index, real amount, String units) -> void;
 
     /// Set the amount of a species with given units
     /// @param name The name of the species
     /// @param amount The amount of the species
     /// @param units The units of the amount (must be convertible to either mol or gram)
-    auto setSpeciesAmount(std::string name, real amount, std::string units) -> void;
+    auto setSpeciesAmount(String name, real amount, String units) -> void;
 
     /// Set the mass of a species (in units of kg)
     /// @param index The index of the species
@@ -135,19 +136,19 @@ public:
     /// Set the mass of a species (in units of kg)
     /// @param name The name of the species
     /// @param mass The mass of the species
-    auto setSpeciesMass(std::string name, real mass) -> void;
+    auto setSpeciesMass(String name, real mass) -> void;
 
     /// Set the mass of a species with given units
     /// @param index The index of the species
     /// @param mass The mass of the species
     /// @param units The units of the mass
-    auto setSpeciesMass(Index index, real mass, std::string units) -> void;
+    auto setSpeciesMass(Index index, real mass, String units) -> void;
 
     /// Set the mass of a species with given units
     /// @param name The name of the species
     /// @param mass The mass of the species
     /// @param units The units of the mass
-    auto setSpeciesMass(std::string name, real mass, std::string units) -> void;
+    auto setSpeciesMass(String name, real mass, String units) -> void;
 
     /// Set the dual potentials of the species (in units of J/mol).
     ///
@@ -185,18 +186,18 @@ public:
     /// @param index The index of the phase
     /// @param volume The volume of the phase
     /// @param units The units of the volume of the phase
-    auto scalePhaseVolume(Index index, real volume, std::string units) -> void;
+    auto scalePhaseVolume(Index index, real volume, String units) -> void;
 
     /// Scale the volume of a phase by adjusting the molar amounts of its species.
     /// @param name The name of the phase
     /// @param volume The volume of the phase (in units of m3)
-    auto scalePhaseVolume(std::string name, real volume) -> void;
+    auto scalePhaseVolume(String name, real volume) -> void;
 
     /// Scale the volume of a phase by adjusting the molar amounts of its species.
     /// @param name The name of the phase
     /// @param volume The volume of the phase
     /// @param units The units of the volume of the phase
-    auto scalePhaseVolume(std::string name, real volume, std::string units) -> void;
+    auto scalePhaseVolume(String name, real volume, String units) -> void;
 
     /// Scale the fluid volume of the chemical system.
     /// This method scales each fluid phase by the same factor.
@@ -211,7 +212,7 @@ public:
     /// the current volume of the fluid phases.
     /// @param volume The scaled fluid volume
     /// @param units The volume units
-    auto scaleFluidVolume(real volume, std::string units) -> void;
+    auto scaleFluidVolume(real volume, String units) -> void;
 
     /// Scale the solid volume of the chemical system.
     /// This method scales each solid phase by the same factor.
@@ -226,7 +227,7 @@ public:
     /// the current volume of the solid phases.
     /// @param volume The scaled solid volume
     /// @param units The volume units
-    auto scaleSolidVolume(real volume, std::string units) -> void;
+    auto scaleSolidVolume(real volume, String units) -> void;
 
     /// Scale the volume of the chemical system by adjusting the molar amounts of all species equally.
     /// @param volume The volume of the chemical system (in units of m3)
@@ -235,7 +236,7 @@ public:
     /// Scale the volume of the chemical system by adjusting the molar amounts of all species equally.
     /// @param volume The volume of the chemical system
     /// @param units The volume units
-    auto scaleVolume(real volume, std::string units) -> void;
+    auto scaleVolume(real volume, String units) -> void;
 
     /// Return the chemical system instance
     auto system() const -> const ChemicalSystem&;
@@ -259,17 +260,17 @@ public:
 
     /// Return the molar amount of a chemical species (in units of mol)
     /// @param name The name of the species
-    auto speciesAmount(std::string name) const -> real;
+    auto speciesAmount(String name) const -> real;
 
     /// Return the amount of a chemical species with given molar units
     /// @param index The index of the species
     /// @param units The units of the species amount
-    auto speciesAmount(Index index, std::string units) const -> real;
+    auto speciesAmount(Index index, String units) const -> real;
 
     /// Return the amount of a chemical species with given molar units
     /// @param name The name of the species
     /// @param units The units of the species amount
-    auto speciesAmount(std::string name, std::string units) const -> real;
+    auto speciesAmount(String name, String units) const -> real;
 
     /// Return the dual potentials of the species (in units of J/mol)
     auto speciesDualPotentials() const -> VectorXrConstRef;
@@ -291,17 +292,17 @@ public:
 
     /// Return the molar amount of an element (in units of mol)
     /// @param name The name of the element
-    auto elementAmount(std::string name) const -> real;
+    auto elementAmount(String name) const -> real;
 
     /// Return the amount of an element with given units.
     /// @param index The index of the element
     /// @param units The units of the element amount
-    auto elementAmount(Index index, std::string units) const -> real;
+    auto elementAmount(Index index, String units) const -> real;
 
     /// Return the amount of an element with given units.
     /// @param name The name of the element
     /// @param units The units of the element amount
-    auto elementAmount(std::string name, std::string units) const -> real;
+    auto elementAmount(String name, String units) const -> real;
 
     /// Return the molar amount of an element in a given phase (in units of mol).
     /// @param ielement The index of the element
@@ -311,19 +312,19 @@ public:
     /// Return the molar amount of an element in a given phase (in units of mol).
     /// @param element The name of the element
     /// @param phase The name of the phase
-    auto elementAmountInPhase(std::string element, std::string phase) const -> real;
+    auto elementAmountInPhase(String element, String phase) const -> real;
 
     /// Return the amount of an element in a given phase with given units.
     /// @param ielement The index of the element
     /// @param iphase The index of the phase
     /// @param units The units of the element amount
-    auto elementAmountInPhase(Index ielement, Index iphase, std::string units) const -> real;
+    auto elementAmountInPhase(Index ielement, Index iphase, String units) const -> real;
 
     /// Return the amount of an element in a given phase with given units.
     /// @param element The name of the element
     /// @param phase The name of the phase
     /// @param units The units of the element amount
-    auto elementAmountInPhase(std::string element, std::string phase, std::string units) const -> real;
+    auto elementAmountInPhase(String element, String phase, String units) const -> real;
 
     /// Return the molar amount of an element in a set of species (in units of mol).
     /// @param ielement The index of the element
@@ -334,7 +335,7 @@ public:
     /// @param ielement The index of the element
     /// @param ispecies The indices of the species
     /// @param units The units of the element amount
-    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> real;
+    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, String units) const -> real;
 
     /// Return the dual potentials of the elements (in units of J/mol).
     auto elementDualPotentials() const -> VectorXrConstRef;
@@ -345,17 +346,17 @@ public:
 
     /// Return the molar amount of a phase (in units of mol).
     /// @param name The name of the phase
-    auto phaseAmount(std::string name) const -> real;
+    auto phaseAmount(String name) const -> real;
 
     /// Return the molar amount of a phase with given units.
     /// @param index The index of the phase
     /// @param units The units of the phase amount
-    auto phaseAmount(Index index, std::string units) const -> real;
+    auto phaseAmount(Index index, String units) const -> real;
 
     /// Return the molar amount of a phase with given units.
     /// @param name The name of the phase
     /// @param units The units of the phase amount
-    auto phaseAmount(std::string name, std::string units) const -> real;
+    auto phaseAmount(String name, String units) const -> real;
 
     /// Return the stability indices of the phases with respect to chemical equilibrium.
     /// The stability index of a stable phase at chemical equilibrium should
@@ -374,7 +375,7 @@ public:
     auto output(std::ostream& out, int precision = 6) const -> void;
 
     /// Output the ChemicalState instance to a file.
-    auto output(std::string const& filename, int precision = 6) const -> void;
+    auto output(String const& filename, int precision = 6) const -> void;
 
 private:
     struct Impl;

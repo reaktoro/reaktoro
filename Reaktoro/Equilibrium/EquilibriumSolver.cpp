@@ -133,8 +133,8 @@
 //         A = system.formulaMatrix();
 
 //         // Initialize the number of species and elements in the system
-//         N = system.numSpecies();
-//         E = system.numElements();
+//         N = system.species().size();
+//         E = system.elements().size();
 
 //         // Set the default partition as all species are in equilibrium
 //         setPartition(partition);

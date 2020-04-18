@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include <Reaktoro/Equilibrium/EquilibriumBalance.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumCompositionProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumInverseSolver.hpp>
