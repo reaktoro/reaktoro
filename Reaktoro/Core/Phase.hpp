@@ -59,8 +59,11 @@ public:
     /// Return the state of matter of the phase.
     auto stateOfMatter() const -> StateOfMatter;
 
+    /// Return the common aggregate state of the species in the phase.
+    auto aggregateState() const -> AggregateState;
+
     /// Return the species of the phase.
-    auto species() const -> const SpeciesList&;
+    auto species() const -> SpeciesListConstRef;
 
     /// Return the species in the phase with given index.
     auto species(Index idx) const -> const Species&;
