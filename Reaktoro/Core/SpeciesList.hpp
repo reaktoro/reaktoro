@@ -43,20 +43,29 @@ class SpeciesListBase
 {
 public:
     /// Construct a default SpeciesListBase object.
-    SpeciesListBase() {}
+    SpeciesListBase()
+    {}
 
     /// Construct an SpeciesListBase object with given species.
-    SpeciesListBase(std::initializer_list<Species> species) : m_species(std::move(species)) {}
+    SpeciesListBase(std::initializer_list<Species> species)
+     : m_species(std::move(species))
+    {}
 
     /// Construct an SpeciesListBase object with given species.
-    SpeciesListBase(const Vec<Species>& species) : m_species(species) {}
+    SpeciesListBase(const Vec<Species>& species)
+     : m_species(species)
+    {}
 
     /// Construct an SpeciesListBase object with given species formulas.
-    SpeciesListBase(const StringList& formulas) : m_species(vectorize(formulas, RKT_LAMBDA(x, Species(x)))) {}
+    SpeciesListBase(const StringList& formulas)
+     : m_species(vectorize(formulas, RKT_LAMBDA(x, Species(x))))
+    {}
 
     /// Construct an SpeciesListBase object with given another one.
     template<typename OtherData>
-    SpeciesListBase(const SpeciesListBase<OtherData>& other) : m_species(other.m_species) {}
+    SpeciesListBase(const SpeciesListBase<OtherData>& other)
+     : m_species(other.data())
+    {}
 
     /// Append a new species to the list of species.
     auto append(const Species& species)
@@ -82,61 +91,76 @@ public:
         return m_species[i];
     }
 
-    /// Return the index of the first species with given unique name or number of species if not found.
-    auto indexWithName(const String& name) const -> Index
+    /// Return the index of the first species with given unique name or the number of species if not found.
+    auto find(const String& name) const -> Index
+    {
+        return findWithName(name);
+    }
+
+    /// Return the index of the first species with given unique name or the number of species if not found.
+    auto findWithName(const String& name) const -> Index
     {
         return indexfn(m_species, RKT_LAMBDA(s, s.name() == name));
     }
 
-    /// Return the index of the first species with equivalent formula or number of species if not found.
-    auto indexWithFormula(const ChemicalFormula& formula) const -> Index
+    /// Return the index of the first species with equivalent formula or the number of species if not found.
+    auto findWithFormula(const ChemicalFormula& formula) const -> Index
     {
         return indexfn(m_species, RKT_LAMBDA(s, formula.equivalent(s.formula())));
     }
 
-    /// Return the index of the first species with given substance name or number of species if not found.
-    auto indexWithSubstance(const String& substance) const -> Index
+    /// Return the index of the first species with given substance name or the number of species if not found.
+    auto findWithSubstance(const String& substance) const -> Index
     {
         return indexfn(m_species, RKT_LAMBDA(s, s.substance() == substance));
+    }
+
+    /// Return the index of the first species with given unique name or throw a runtime error if not found.
+    auto index(const String& name) const -> Index
+    {
+        return indexWithName(name);
+    }
+
+    /// Return the index of the species with given unique name or throw a runtime error if not found.
+    auto indexWithName(const String& name) const -> Index
+    {
+        const auto idx = findWithName(name);
+        error(idx >= size(), "Could not find any Species object with name ", name, ".");
+        return idx;
+    }
+
+    /// Return the index of the first species with equivalent formula or throw a runtime error if not found.
+    auto indexWithFormula(const ChemicalFormula& formula) const -> Index
+    {
+        const auto idx = findWithFormula(formula);
+        error(idx >= size(), "Could not find any Species object with formula ", formula.str(), ".");
+        return idx;
+    }
+
+    /// Return the index of the first species with given substance name or throw a runtime error if not found.
+    auto indexWithSubstance(const String& substance) const -> Index
+    {
+        const auto idx = findWithSubstance(substance);
+        error(idx >= size(), "Could not find any Species object with substance ", substance, ".");
+        return idx;
     }
 
     /// Return all species with given names.
     auto withNames(const StringList& names) const -> SpeciesList
     {
-        Vec<Species> res;
-        res.reserve(names.size());
-        for(auto name : names) {
-            const auto i = indexWithName(name);
-            error(i >= size(), "Could not find species with name ", name, ".");
-            res.push_back(m_species[i]);
-        }
-        return res;
+        return vectorize(names, RKT_LAMBDA(name, m_species[indexWithName(name)]));
     }
 
     /// Return all species with given substance formulas.
     auto withFormulas(const StringList& formulas) const -> SpeciesList
     {
-        Vec<Species> res;
-        res.reserve(formulas.size());
-        for(auto formula : formulas) {
-            const auto i = indexWithFormula(formula);
-            error(i >= size(), "Could not find any species with formula ", formula, ".");
-            res.push_back(m_species[i]);
-        }
-        return res;
+        return vectorize(formulas, RKT_LAMBDA(formula, m_species[indexWithFormula(formula)]));
     }
 
     /// Return all species with given substance names.
     auto withSubstances(const StringList& substances) const -> SpeciesList
     {
-        Vec<Species> res;
-        res.reserve(substances.size());
-        for(auto substance : substances) {
-            const auto i = indexWithSubstance(substance);
-            error(i >= size(), "Could not find any species with substance name ", substance, ".");
-            res.push_back(m_species[i]);
-        }
-        return res;
+        return vectorize(substances, RKT_LAMBDA(substance, m_species[indexWithSubstance(substance)]));
     }
 
     /// Return all species with given aggregate state.
@@ -203,10 +227,15 @@ public:
     {
         Strings symbols;
         for(ChemicalFormula formula : formulas)
-            for(auto symbol : formula.symbols())
-                symbols.push_back(symbol);
-        return withElements(unique(symbols));
+            symbols = merge(symbols, formula.symbols());
+        return withElements(symbols);
     }
+
+    /// Convert this SpeciesListBase object into its Data.
+    operator Data() { return m_species; }
+
+    /// Convert this SpeciesListBase object into its Data.
+    operator Data() const { return m_species; }
 
 private:
     /// The species stored in the list.
@@ -218,19 +247,19 @@ public:
     SpeciesListBase(InputIterator begin, InputIterator end) : m_species(begin, end) {}
 
     /// Return begin const iterator of this SpeciesList instance (for STL compatibility reasons).
-    inline auto begin() const { return data().begin(); }
+    auto begin() const { return data().begin(); }
 
     /// Return begin iterator of this SpeciesList instance (for STL compatibility reasons).
-    inline auto begin() { return data().begin(); }
+    auto begin() { return data().begin(); }
 
     /// Return end const iterator of this SpeciesList instance (for STL compatibility reasons).
-    inline auto end() const { return data().end(); }
+    auto end() const { return data().end(); }
 
     /// Return end iterator of this SpeciesList instance (for STL compatibility reasons).
-    inline auto end() { return data().end(); }
+    auto end() { return data().end(); }
 
     /// Append a new Species at the back of the container (for STL compatibility reasons).
-    inline auto push_back(const Species& species) -> void { append(species); }
+    auto push_back(const Species& species) -> void { append(species); }
 
     /// The type of the value stored in a SpeciesList (for STL compatibility reasons).
     using value_type = Species;
