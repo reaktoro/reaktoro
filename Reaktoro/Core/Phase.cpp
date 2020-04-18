@@ -117,7 +117,12 @@ auto Phase::stateOfMatter() const -> StateOfMatter
     return pimpl->state;
 }
 
-auto Phase::species() const -> const SpeciesList&
+auto Phase::aggregateState() const -> AggregateState
+{
+    return species().size() ? species()[0].aggregateState() : AggregateState::Undefined;
+}
+
+auto Phase::species() const -> SpeciesListConstRef
 {
     return pimpl->species;
 }
