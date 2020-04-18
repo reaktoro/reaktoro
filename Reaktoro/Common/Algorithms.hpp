@@ -28,16 +28,14 @@ namespace Reaktoro {
 /// A convenient macro that expands to `[&](auto&& x) { return expr; }`.
 #define RKT_LAMBDA(x, expr) [&](const auto& x) { return expr; }
 
-/// Return the index of item `x` in container `c`.
+/// Return the index of item `x` in container `c` or the number of items if not found.
 template<typename Container, typename T>
 auto index(const Container& c, const T& x) -> std::size_t
 {
-    // using U = typename Container::value_type;
-    // static_assert(std::is_convertible_v<U, T>, "Cannot use method index with value types that cannot be convertible among themselves.");
     return std::find(c.begin(), c.end(), x) - c.begin();
 }
 
-/// Return the index of item `x` in container `c` for which `pred(x)` evaluates to true.
+/// Return the index of item `x` in container `c` for which `pred(x)` evaluates to true or the number of items if not found.
 template<typename Container, typename Predicate>
 auto indexfn(const Container& c, const Predicate& pred) -> std::size_t
 {
