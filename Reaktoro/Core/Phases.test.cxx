@@ -290,10 +290,11 @@ TEST_CASE("Testing Phases", "[Phases]")
     //-----------------------------------------------------------------------------------------------------------------
     //=================================================================================================================
 
-    auto checkPhase = [&](Phase phase, String name, StringList species, StateOfMatter stateofmatter)
+    auto checkPhase = [&](Phase phase, String name, StringList species, StateOfMatter stateofmatter, AggregateState aggregatestate)
     {
         REQUIRE( phase.name() == name );
         REQUIRE( phase.stateOfMatter() == stateofmatter );
+        REQUIRE( phase.aggregateState() == aggregatestate );
         REQUIRE( phase.activityPropsFn() );
         REQUIRE( phase.standardThermoPropsFn() );
         REQUIRE( phase.species().size() == species.size() );
@@ -306,17 +307,17 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     auto checkAqueousPhase = [&](Phase phase, StringList species)
     {
-        checkPhase(phase, "AqueousSolution", species, StateOfMatter::Liquid );
+        checkPhase(phase, "AqueousSolution", species, StateOfMatter::Liquid, AggregateState::Aqueous);
     };
 
     auto checkGaseousPhase = [&](Phase phase, StringList species)
     {
-        checkPhase(phase, "GaseousSolution", species, StateOfMatter::Gas );
+        checkPhase(phase, "GaseousSolution", species, StateOfMatter::Gas, AggregateState::Gas);
     };
 
     auto checkMineralPhase = [&](Phase phase, StringList species)
     {
-        checkPhase(phase, species[0], species, StateOfMatter::Solid );
+        checkPhase(phase, species[0], species, StateOfMatter::Solid, AggregateState::Solid);
     };
 
     SECTION("Testing Phases with an aqueous solution only")
