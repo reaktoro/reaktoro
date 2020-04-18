@@ -144,7 +144,7 @@ auto ReactionSystem::lnEquilibriumConstants(const ChemicalProps& properties) con
 auto ReactionSystem::lnReactionQuotients(const ChemicalProps& properties) const -> VectorXd
 {
     const unsigned num_reactions = numReactions();
-    const unsigned num_species = system().numSpecies();
+    const unsigned num_species = system().species().size();
     VectorXd res(num_reactions, num_species);
     for(unsigned i = 0; i < num_reactions; ++i)
         res[i] = reaction(i).lnReactionQuotient(properties);
@@ -154,7 +154,7 @@ auto ReactionSystem::lnReactionQuotients(const ChemicalProps& properties) const 
 auto ReactionSystem::rates(const ChemicalProps& properties) const -> VectorXd
 {
     const unsigned num_reactions = numReactions();
-    const unsigned num_species = system().numSpecies();
+    const unsigned num_species = system().species().size();
     VectorXd res(num_reactions, num_species);
     for(unsigned i = 0; i < num_reactions; ++i)
         res[i] = reaction(i).rate(properties);

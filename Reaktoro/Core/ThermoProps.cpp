@@ -57,7 +57,7 @@ auto ThermoProps::data() const -> const ThermoPropsData&
 auto ThermoProps::phaseProps(Index idx) const -> ThermoPropsPhaseConstRef
 {
     const auto phase = sys.phase(idx);
-    const auto begin = sys.indexFirstSpeciesInPhase(idx);
+    const auto begin = sys.phases().numSpeciesUntilPhase(idx);
     const auto size = phase.species().size();
 
     return ThermoPropsPhaseConstRef(phase, {
@@ -74,8 +74,8 @@ auto ThermoProps::phaseProps(Index idx) const -> ThermoPropsPhaseConstRef
 auto ThermoProps::phaseProps(Index idx) -> ThermoPropsPhaseRef
 {
     const auto phase = sys.phase(idx);
-    const auto begin = sys.indexFirstSpeciesInPhase(idx);
-    const auto size = sys.numSpeciesInPhase(idx);
+    const auto begin = sys.phases().numSpeciesUntilPhase(idx);
+    const auto size = sys.phase(idx).species().size();
 
     return ThermoPropsPhaseRef(phase, {
         props.T,

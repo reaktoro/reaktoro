@@ -23,7 +23,7 @@
 // {}
 
 // ThermoProperties::ThermoProperties(const ChemicalSystem& system)
-// : system(system), num_species(system.numSpecies()), num_phases(system.numPhases()),
+// : system(system), num_species(system.species().size()), num_phases(system.phases().size()),
 //   tres(num_phases, num_species), T(298.15), P(1e-5)
 // {}
 
@@ -37,7 +37,7 @@
 //     Index ispecies = 0;
 //     for(Index iphase = 0; iphase < num_phases; ++iphase)
 //     {
-//         const auto nspecies = system.numSpeciesInPhase(iphase);
+//         const auto nspecies = system.phase(iphase).species().size();
 //         auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
 //         system.phase(iphase).thermoModel()(tp, T, P);
 //         ispecies += nspecies;

@@ -67,7 +67,7 @@
 //     : system(partition.system()), T(298.15), P(1.0e+5), partition(partition)
 //     {
 //         // Initialize the amounts of the elements
-//         b = zeros(system.numElements());
+//         b = zeros(system.elements().size());
 //     }
 
 //     /// Set the partition of the chemical system
@@ -171,7 +171,7 @@
 
 // auto EquilibriumProblem::add(std::string name, double amount, std::string units) -> EquilibriumProblem&
 // {
-//     if(system().indexSpecies(name) < system().numSpecies())
+//     if(system().indexSpecies(name) < system().species().size())
 //         return addSpecies(name, amount, units);
 //     return addCompound(name, amount, units);
 // }
