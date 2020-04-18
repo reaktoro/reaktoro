@@ -17,6 +17,9 @@
 
 #pragma once
 
+// C++ includes
+#include <iostream>
+
 namespace Reaktoro {
 
 /// The list of states of matter.
@@ -24,5 +27,17 @@ enum class StateOfMatter
 {
     Solid, Liquid, Gas, Plasma
 };
+
+/// Output a StateOfMatter value.
+inline auto operator<<(std::ostream& out, StateOfMatter option) -> std::ostream&
+{
+    switch(option)
+    {
+    case StateOfMatter::Solid:  out << "Solid";  return out;
+    case StateOfMatter::Liquid: out << "Liquid"; return out;
+    case StateOfMatter::Gas:    out << "Gas";    return out;
+    case StateOfMatter::Plasma: out << "Plasma"; return out;
+    }
+}
 
 } // namespace Reaktoro
