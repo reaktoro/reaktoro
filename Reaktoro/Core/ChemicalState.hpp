@@ -32,338 +32,106 @@ namespace Reaktoro {
 class ChemicalProps;
 class ChemicalSystem;
 
-/// Provides a computational representation of the state of a multiphase chemical system.
-/// The chemical state of a multiphase system is defined by its temperature @f$(T)@f$,
-/// pressure @f$(P)@f$, and molar composition @f$(\mathbf{n})@f$.
-///
-/// **Usage**
-///
-/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// // Create a ChemicalState instance, where system is a ChemicalSystem instance
-/// ChemicalState state(system);
-///
-/// // Set the temperature and pressure states
-/// state.setTemperature(60.0, "celsius");
-/// state.setPressure(  180.0, "bar");
-///
-/// // Set the amount of some species
-/// state.set( "H2O(l)",  1.0, "kg");
-/// state.set(    "Na+",  1.0, "mol");
-/// state.set(    "Cl-",  1.0, "mol");
-/// state.set("CO2(aq)",  0.5, "mol");
-/// state.set("Calcite", 10.0, "g");
-///
-/// // Output the chemical state instance
-/// std::cout << state << std::endl;
-/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// The chemical state of a chemical system.
 /// @see ChemicalSystem
 /// @ingroup Core
 class ChemicalState
 {
 public:
-    /// Disable the default ChemicalState constructor.
-    /// This is to enforce the initialization of a ChemicalState
-    /// instance with a ChemicalSystem instance.
-    ChemicalState() = delete;
-
-    /// Construct a ChemicalState instance with standard conditions
-    /// This constructor creates an instance of ChemicalState with temperature 25 °C,
-    /// pressure 1 bar, and zero mole amounts for the species.
-    /// @param system The chemical system instance
+    /// Construct a ChemicalState instance with standard conditions.
+    /// This constructor creates an instance of ChemicalState with temperature
+    /// 25 °C, pressure 1 bar, and zero mole amounts for the species.
     explicit ChemicalState(const ChemicalSystem& system);
 
-    /// Construct a copy of a ChemicalState instance
+    /// Construct a copy of a ChemicalState instance.
     ChemicalState(const ChemicalState& other);
 
-    /// Destroy the instance
+    /// Destroy this ChemicalState instance.
     virtual ~ChemicalState();
 
-    /// Assign a ChemicalState instance to this instance
+    /// Assign a ChemicalState instance to this instance.
     auto operator=(ChemicalState other) -> ChemicalState&;
 
-    /// Set the temperature of the chemical state (in units of K)
+    /// Set the temperature of the chemical state (in K).
     auto setTemperature(real val) -> void;
 
-    /// Set the temperature of the chemical state with given units
-    auto setTemperature(real val, String units) -> void;
+    /// Set the temperature of the chemical state with given unit.
+    auto setTemperature(real val, String unit) -> void;
 
-    /// Set the pressure of the chemical state (in units of Pa)
+    /// Set the pressure of the chemical state (in Pa).
     auto setPressure(real val) -> void;
 
-    /// Set the pressure of the chemical state with given units
-    auto setPressure(real val, String units) -> void;
+    /// Set the pressure of the chemical state with given unit.
+    auto setPressure(real val, String unit) -> void;
 
-    /// Set the molar amounts of the species with a single value (in units of mol)
-    /// @param val The single molar amounts of the species
+    /// Set the amounts of all species in the chemical state to a common value (in mol).
     auto setSpeciesAmounts(real val) -> void;
 
-    /// Set the molar amounts of the species (in units of mol)
-    /// @param n The vector of molar amounts of the species
-    auto setSpeciesAmounts(VectorXrConstRef n) -> void;
+    /// Set the amounts of the species in the chemical state (in mol).
+    auto setSpeciesAmounts(ArrayXrConstRef n) -> void;
 
-    /// Set the molar amounts of species given by their indices (in units of mol)
-    /// @param n The vector of molar amounts of the species
-    /// @param indices The indices of the species to be set
-    auto setSpeciesAmounts(VectorXrConstRef n, const Indices& indices) -> void;
+    /// Set the amount of a species with given index (in mol).
+    auto setSpeciesAmount(Index ispecies, real amount) -> void;
 
-    /// Set the molar amount of a species (in units of mol)
-    /// @param index The index of the species
-    /// @param amount The molar amount of the species
-    auto setSpeciesAmount(Index index, real amount) -> void;
+    /// Set the amount of a species with given index and molar unit (convertible to mol).
+    auto setSpeciesAmount(Index ispecies, real amount, String unit) -> void;
 
-    /// Set the molar amount of a species (in units of mol)
-    /// @param name The name of the species
-    /// @param amount The amount of the species
+    /// Set the amount of a species with given name (in mol).
     auto setSpeciesAmount(String name, real amount) -> void;
 
-    /// Set the amount of a species with given units
-    /// @param index The index of the species
-    /// @param amount The amount of the species
-    /// @param units The units of the amount (must be convertible to either mol or gram)
-    auto setSpeciesAmount(Index index, real amount, String units) -> void;
+    /// Set the amount of a species with given name and molar unit (convertible to mol).
+    auto setSpeciesAmount(String name, real amount, String unit) -> void;
 
-    /// Set the amount of a species with given units
-    /// @param name The name of the species
-    /// @param amount The amount of the species
-    /// @param units The units of the amount (must be convertible to either mol or gram)
-    auto setSpeciesAmount(String name, real amount, String units) -> void;
+    /// Set the mass of a species with given index (in kg).
+    auto setSpeciesMass(Index ispecies, real mass) -> void;
 
-    /// Set the mass of a species (in units of kg)
-    /// @param index The index of the species
-    /// @param mass The mass of the species
-    auto setSpeciesMass(Index index, real mass) -> void;
+    /// Set the mass of a species with given index and mass unit (convertible to kg).
+    auto setSpeciesMass(Index ispecies, real mass, String unit) -> void;
 
-    /// Set the mass of a species (in units of kg)
-    /// @param name The name of the species
-    /// @param mass The mass of the species
+    /// Set the mass of a species with given name (in kg).
     auto setSpeciesMass(String name, real mass) -> void;
 
-    /// Set the mass of a species with given units
-    /// @param index The index of the species
-    /// @param mass The mass of the species
-    /// @param units The units of the mass
-    auto setSpeciesMass(Index index, real mass, String units) -> void;
+    /// Set the mass of a species with given name and mass unit (convertible to kg).
+    auto setSpeciesMass(String name, real mass, String unit) -> void;
 
-    /// Set the mass of a species with given units
-    /// @param name The name of the species
-    /// @param mass The mass of the species
-    /// @param units The units of the mass
-    auto setSpeciesMass(String name, real mass, String units) -> void;
-
-    /// Set the dual potentials of the species (in units of J/mol).
-    ///
-    /// The dual potentials of the species are the Lagrange multipliers with
-    /// respect to the positive bound constraints on the molar amounts of the
-    /// species in a chemical equilibrium calculation. They can be seen as
-    /// measures of stability of a species at equilibrium, with values closer
-    /// to zero meaning more stability.
-    /// @param z The Lagrange multipliers with respect to the positive constraints.
-    auto setSpeciesDualPotentials(VectorXrConstRef z) -> void;
-
-    /// Set the dual potentials of the elements (in units of J/mol).
-    ///
-    /// The dual potentials of the elements are the Lagrange multipliers with
-    /// respect to the balance constraints on the molar amounts of the elements.
-    /// They can be seen as a dual chemical potential of elements.
-    /// @param values The Lagrange multipliers with respect to the balance constraints.
-    auto setElementDualPotentials(VectorXrConstRef y) -> void;
-
-    /// Scale the molar amounts of the species by a given scalar.
-    /// @param scalar The scale factor of the molar amounts
-    auto scaleSpeciesAmounts(real scalar) -> void;
-
-    /// Scale the molar amounts of the species in a phase by a given scalar.
-    /// @param index The index of the phase
-    /// @param scalar The scale factor of the molar amounts
-    auto scaleSpeciesAmountsInPhase(Index index, real scalar) -> void;
-
-    /// Scale the volume of a phase by adjusting the molar amounts of its species.
-    /// @param index The index of the phase
-    /// @param volume The volume of the phase (in units of m3)
-    auto scalePhaseVolume(Index index, real volume) -> void;
-
-    /// Scale the volume of a phase by adjusting the molar amounts of its species.
-    /// @param index The index of the phase
-    /// @param volume The volume of the phase
-    /// @param units The units of the volume of the phase
-    auto scalePhaseVolume(Index index, real volume, String units) -> void;
-
-    /// Scale the volume of a phase by adjusting the molar amounts of its species.
-    /// @param name The name of the phase
-    /// @param volume The volume of the phase (in units of m3)
-    auto scalePhaseVolume(String name, real volume) -> void;
-
-    /// Scale the volume of a phase by adjusting the molar amounts of its species.
-    /// @param name The name of the phase
-    /// @param volume The volume of the phase
-    /// @param units The units of the volume of the phase
-    auto scalePhaseVolume(String name, real volume, String units) -> void;
-
-    /// Scale the fluid volume of the chemical system.
-    /// This method scales each fluid phase by the same factor.
-    /// This factor is defined as the prescribed volume divided by
-    /// the current volume of the fluid phases.
-    /// @param volume The scaled fluid volume (in units of m3)
-    auto scaleFluidVolume(real volume) -> void;
-
-    /// Scale the fluid volume of the chemical system with given units.
-    /// This method scales each fluid phase by the same factor.
-    /// This factor is defined as the prescribed volume divided by
-    /// the current volume of the fluid phases.
-    /// @param volume The scaled fluid volume
-    /// @param units The volume units
-    auto scaleFluidVolume(real volume, String units) -> void;
-
-    /// Scale the solid volume of the chemical system.
-    /// This method scales each solid phase by the same factor.
-    /// This factor is defined as the prescribed volume divided by
-    /// the current volume of the solid phases.
-    /// @param volume The scaled solid volume (in units of m3)
-    auto scaleSolidVolume(real volume) -> void;
-
-    /// Scale the solid volume of the chemical system with given units.
-    /// This method scales each solid phase by the same factor.
-    /// This factor is defined as the prescribed volume divided by
-    /// the current volume of the solid phases.
-    /// @param volume The scaled solid volume
-    /// @param units The volume units
-    auto scaleSolidVolume(real volume, String units) -> void;
-
-    /// Scale the volume of the chemical system by adjusting the molar amounts of all species equally.
-    /// @param volume The volume of the chemical system (in units of m3)
-    auto scaleVolume(real volume) -> void;
-
-    /// Scale the volume of the chemical system by adjusting the molar amounts of all species equally.
-    /// @param volume The volume of the chemical system
-    /// @param units The volume units
-    auto scaleVolume(real volume, String units) -> void;
-
-    /// Return the chemical system instance
+    /// Return the underlying chemical system for this chemical state.
     auto system() const -> const ChemicalSystem&;
 
-    /// Return the temperature of the chemical state (in units of K)
+    /// Return the temperature in the chemical state (in K).
     auto temperature() const -> real;
 
-    /// Return the pressure of the chemical state (in units of Pa)
+    /// Return the pressure in the chemical state (in Pa).
     auto pressure() const -> real;
 
-    /// Return the molar amounts of the species (in units of mol)
-    auto speciesAmounts() const -> VectorXrConstRef;
+    /// Return the amounts of the species in the chemical state (in mol).
+    auto speciesAmounts() const -> ArrayXrConstRef;
 
-    /// Return the molar amounts of given species (in units of mol)
-    /// @param indices The indices of the species
-    auto speciesAmounts(const Indices& indices) const -> VectorXr;
+    /// Return the amounts of the elements in the chemical state (in mol).
+    auto elementAmounts() const -> ArrayXr;
 
-    /// Return the molar mass of a chemical species (in units of mol)
-    /// @param index The index of the species
-    auto speciesAmount(Index index) const -> real;
+    /// Return the amount of the species in the chemical state with given index (in mol).
+    auto speciesAmount(Index ispecies) const -> real;
 
-    /// Return the molar amount of a chemical species (in units of mol)
-    /// @param name The name of the species
+    /// Return the amount of the species in the chemical state with given index and unit (convertible to mol).
+    auto speciesAmount(Index ispecies, String unit) const -> real;
+
+    /// Return the amount of the species in the chemical state with given name (in mol).
     auto speciesAmount(String name) const -> real;
 
-    /// Return the amount of a chemical species with given molar units
-    /// @param index The index of the species
-    /// @param units The units of the species amount
-    auto speciesAmount(Index index, String units) const -> real;
+    /// Return the amount of the species in the chemical state with given name and unit (convertible to mol).
+    auto speciesAmount(String name, String unit) const -> real;
 
-    /// Return the amount of a chemical species with given molar units
-    /// @param name The name of the species
-    /// @param units The units of the species amount
-    auto speciesAmount(String name, String units) const -> real;
+    /// Return the mass of the species in the chemical state with given index (in kg).
+    auto speciesMass(Index ispecies) const -> real;
 
-    /// Return the dual potentials of the species (in units of J/mol)
-    auto speciesDualPotentials() const -> VectorXrConstRef;
+    /// Return the mass of the species in the chemical state with given index and unit (convertible to kg).
+    auto speciesMass(Index ispecies, String unit) const -> real;
 
-    /// Return the molar amounts of the elements (in units of mol)
-    auto elementAmounts() const -> VectorXr;
+    /// Return the mass of the species in the chemical state with given name (in kg).
+    auto speciesMass(String name) const -> real;
 
-    /// Return the molar amounts of the elements in a phase (in units of mol)
-    /// @param index The index of the phase
-    auto elementAmountsInPhase(Index index) const -> VectorXr;
-
-    /// Return the molar amounts of the elements in a set of species (in units of mol)
-    /// @param indices The indices of the species
-    auto elementAmountsInSpecies(const Indices& indices) const -> VectorXr;
-
-    /// Return the molar amount of an element (in units of mol)
-    /// @param index The index of the element
-    auto elementAmount(Index index) const -> real;
-
-    /// Return the molar amount of an element (in units of mol)
-    /// @param name The name of the element
-    auto elementAmount(String name) const -> real;
-
-    /// Return the amount of an element with given units.
-    /// @param index The index of the element
-    /// @param units The units of the element amount
-    auto elementAmount(Index index, String units) const -> real;
-
-    /// Return the amount of an element with given units.
-    /// @param name The name of the element
-    /// @param units The units of the element amount
-    auto elementAmount(String name, String units) const -> real;
-
-    /// Return the molar amount of an element in a given phase (in units of mol).
-    /// @param ielement The index of the element
-    /// @param iphase The index of the phase
-    auto elementAmountInPhase(Index ielement, Index iphase) const -> real;
-
-    /// Return the molar amount of an element in a given phase (in units of mol).
-    /// @param element The name of the element
-    /// @param phase The name of the phase
-    auto elementAmountInPhase(String element, String phase) const -> real;
-
-    /// Return the amount of an element in a given phase with given units.
-    /// @param ielement The index of the element
-    /// @param iphase The index of the phase
-    /// @param units The units of the element amount
-    auto elementAmountInPhase(Index ielement, Index iphase, String units) const -> real;
-
-    /// Return the amount of an element in a given phase with given units.
-    /// @param element The name of the element
-    /// @param phase The name of the phase
-    /// @param units The units of the element amount
-    auto elementAmountInPhase(String element, String phase, String units) const -> real;
-
-    /// Return the molar amount of an element in a set of species (in units of mol).
-    /// @param ielement The index of the element
-    /// @param ispecies The indices of the species
-    auto elementAmountInSpecies(Index ielement, const Indices& ispecies) const -> real;
-
-    /// Return the amount of an element in a set of species with given units
-    /// @param ielement The index of the element
-    /// @param ispecies The indices of the species
-    /// @param units The units of the element amount
-    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, String units) const -> real;
-
-    /// Return the dual potentials of the elements (in units of J/mol).
-    auto elementDualPotentials() const -> VectorXrConstRef;
-
-    /// Return the molar amount of a phase (in units of mol).
-    /// @param index The index of the phase
-    auto phaseAmount(Index index) const -> real;
-
-    /// Return the molar amount of a phase (in units of mol).
-    /// @param name The name of the phase
-    auto phaseAmount(String name) const -> real;
-
-    /// Return the molar amount of a phase with given units.
-    /// @param index The index of the phase
-    /// @param units The units of the phase amount
-    auto phaseAmount(Index index, String units) const -> real;
-
-    /// Return the molar amount of a phase with given units.
-    /// @param name The name of the phase
-    /// @param units The units of the phase amount
-    auto phaseAmount(String name, String units) const -> real;
-
-    /// Return the stability indices of the phases with respect to chemical equilibrium.
-    /// The stability index of a stable phase at chemical equilibrium should
-    /// be zero or very close to zero. A negative stability index indicates
-    /// that the corresponding phase is under-saturated, while a positive index
-    /// indicates the phase is over-saturated.
-    auto phaseStabilityIndices() const -> VectorXr;
+    /// Return the mass of the species in the chemical state with given name and unit (convertible to kg).
+    auto speciesMass(String name, String unit) const -> real;
 
     /// Return the chemical properties of a phase in the chemical system.
     auto phaseProps(Index iphase) const -> ChemicalPropsPhase;
@@ -371,28 +139,10 @@ public:
     /// Return the chemical properties of the chemical system.
     auto props() const -> ChemicalProps;
 
-    /// Output the ChemicalState instance to a stream.
-    auto output(std::ostream& out, int precision = 6) const -> void;
-
-    /// Output the ChemicalState instance to a file.
-    auto output(String const& filename, int precision = 6) const -> void;
-
 private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;
 };
-
-/// Outputs a ChemicalState instance.
-auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&;
-
-/// Add two ChemicalState instances.
-auto operator+(const ChemicalState& l, const ChemicalState& r) -> ChemicalState;
-
-/// Multiply a ChemicalState instance by a scalar (from the left).
-auto operator*(real scalar, const ChemicalState& state) -> ChemicalState;
-
-/// Multiply a ChemicalState instance by a scalar (from the right).
-auto operator*(const ChemicalState& state, real scalar) -> ChemicalState;
 
 } // namespace Reaktoro
