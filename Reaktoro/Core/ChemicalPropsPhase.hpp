@@ -368,17 +368,23 @@ auto ChemicalPropsPhaseBase<Real, Array>::update(real Tnew, real Pnew, ArrayXrCo
         else phase.activityPropsFn()({ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a }, T, P, x);
     };
 
-    if(updatingT || updatingP)
-    {
-        T = Tnew;
-        P = Pnew;
-        evalStandardThermoProps();
-    }
-    if(updatingT || updatingP || updatingN)
-    {
-        n = nnew;
-        evalActivityProps();
-    }
+    // if(updatingT || updatingP)
+    // {
+    //     T = Tnew;
+    //     P = Pnew;
+    //     evalStandardThermoProps();
+    // }
+    // if(updatingT || updatingP || updatingN)
+    // {
+    //     n = nnew;
+    //     evalActivityProps();
+    // }
+
+    T = Tnew;
+    P = Pnew;
+    n = nnew;
+    evalStandardThermoProps();
+    evalActivityProps();
 }
 
 template<typename Real, typename Array>
