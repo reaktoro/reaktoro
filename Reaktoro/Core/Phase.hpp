@@ -35,7 +35,7 @@ namespace Reaktoro {
 class Phase
 {
 public:
-    /// Construct a Phase object.
+    /// Construct a default Phase object.
     Phase();
 
     /// Return a copy of this Phase object with a new name.
