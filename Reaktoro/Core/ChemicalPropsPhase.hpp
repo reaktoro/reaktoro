@@ -538,7 +538,8 @@ auto ChemicalPropsPhaseBase<Real, Array>::molarHeatCapacityConstV() const
 template<typename Real, typename Array>
 auto ChemicalPropsPhaseBase<Real, Array>::molarDensity() const
 {
-    return 1.0/molarVolume();
+    const auto V = molarVolume();
+    return V ? 1.0/V : 0.0;
 }
 
 template<typename Real, typename Array>
