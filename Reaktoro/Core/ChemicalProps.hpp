@@ -93,9 +93,6 @@ public:
     /// Construct a ChemicalProps object.
     explicit ChemicalProps(const ChemicalSystem& system);
 
-    /// Construct a ChemicalProps object.
-    ChemicalProps(const ChemicalSystem& system, const ChemicalPropsData& data);
-
     /// Update the chemical properties of the chemical system.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)

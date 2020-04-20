@@ -47,10 +47,6 @@ ChemicalProps::ChemicalProps(const ChemicalSystem& system)
     props.ln_a   = ArrayXr::Zero(numspecies);
 }
 
-ChemicalProps::ChemicalProps(const ChemicalSystem& system, const ChemicalPropsData& data)
-: sys(system), props(data)
-{}
-
 auto ChemicalProps::update(real T, real P, ArrayXrConstRef n) -> void
 {
     const auto numphases = sys.phases().size();
