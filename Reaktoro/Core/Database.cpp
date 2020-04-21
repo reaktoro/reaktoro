@@ -48,7 +48,7 @@ struct Database::Impl
     /// Add a species in the database.
     auto addSpecies(Species newspecies) -> void
     {
-        // Ensure a unique name is used when storing this species
+        // Ensure a unique name is used when storing this species!
         auto name = newspecies.name();
         auto unique_name = name;
         auto already_exists = true;
@@ -58,17 +58,37 @@ struct Database::Impl
                 unique_name = unique_name + "!"; // keep adding symbol ! to the name such as H2O, H2O!, H2O!!, H2O!!! if many H2O are given
         }
 
-        // Replace name if not unique
+        // Replace name if not unique.
         if(name != unique_name) {
             newspecies = newspecies.withName(unique_name);
             warning(true, "Species should have unique names in Database, but species ", name, " "
                 "violates this rule. The unique name ", unique_name, " has been assigned instead.");
         }
 
+        // Replace aggregate state to Aqueous if undefined. If this default
+        // aggregate state option is not appropriate for a given scenario,
+        // ensure then that the correct aggregate state of the species has
+        // already been set in the Species object using method
+        // Species::withAggregateState. This permits species names such as H2O,
+        // CO2, H2, O2 as well as ions H+, OH-, HCO3- to be considered as
+        // aqueous species, without requiring explicit aggregate state suffix
+        // aq as in H2O(aq), CO2(aq), H2(aq). For all other species, ensure an
+        // aggregate state suffix is provided, such as H2O(l), H2O(g),
+        // CaCO3(s), Fe3O4(s).
+        if(newspecies.aggregateState() == AggregateState::Undefined)
+            newspecies = newspecies.withAggregateState(AggregateState::Aqueous);
+
+        // Append the new Species object in the species container
         species.push_back(newspecies);
+
+        // Update the list of unique species names.
         species_names.insert(newspecies.name());
+
+        // Update the container of elements with the Element objects in this new species.
         for(auto&& [element, coeff] : newspecies.elements())
             elements.insert(element);
+
+        // Add the new species in the group of species with same aggregate state
         species_with_aggregate_state[newspecies.aggregateState()].push_back(newspecies);
     }
 };
