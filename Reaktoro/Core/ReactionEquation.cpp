@@ -17,10 +17,8 @@
 
 #include "ReactionEquation.hpp"
 
-// C++ includes
-#include <sstream>
-
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 
@@ -29,17 +27,24 @@ namespace Reaktoro {
 ReactionEquation::ReactionEquation()
 {}
 
-ReactionEquation::ReactionEquation(std::string equation)
-: equation_str(equation)
+ReactionEquation::ReactionEquation(Pairs<Species, double> const& species)
+: m_species(species)
+{}
+
+ReactionEquation::ReactionEquation(Pairs<String, double> const& species)
+: m_species(vectorize(species, [&](auto x) { return Pair<Species, double>{ Species(x.first), x.second }; }))
+{}
+
+ReactionEquation::ReactionEquation(String equation)
 {
     // Split the reaction equation into two words: reactants and products
-    auto two_words = split(equation_str, "=");
+    auto two_words = split(equation, "=");
 
     // Assert the equation has a single equal sign `=`
-    Assert(two_words.size() == 2,
-        "Cannot parse the reaction equation `" +  equation + "`.",
+    error(two_words.size() != 2,
+        "Cannot parse the reaction equation `" +  equation + "`. ",
         "Expecting an equation with a single equal sign `=` separating "
-        "reactants from products");
+        "reactants from products.");
 
     // The reactants and products as string
     const auto& reactants_str = two_words[0];
@@ -56,7 +61,7 @@ ReactionEquation::ReactionEquation(std::string equation)
         auto pair = split(word, "*");
         auto number = pair.size() == 2 ? tofloat(pair[0]) : 1.0;
         auto species = pair.size() == 2 ? pair[1] : pair[0];
-        equation_map.emplace(species, -number); // negative sign for reactants
+        m_species.emplace_back(species, -number); // negative sign for reactants
     }
 
     // Iterave over all strings representing pair number and species name in the products
@@ -66,70 +71,72 @@ ReactionEquation::ReactionEquation(std::string equation)
         auto pair = split(word, "*");
         auto number = pair.size() == 2 ? tofloat(pair[0]) : 1.0;
         auto species = pair.size() == 2 ? pair[1] : pair[0];
-        equation_map.emplace(species, number); // positive sign for products
-    }
-}
-
-ReactionEquation::ReactionEquation(const std::map<std::string, double>& equation)
-: equation_map(equation)
-{
-    if(!equation.empty())
-    {
-        std::stringstream reactants;
-        std::stringstream products;
-        for(auto pair : equation)
-        {
-            auto species = pair.first;
-            auto stoichiometry = pair.second;
-            if(stoichiometry == -1)
-                reactants << species << " + ";
-            else if(stoichiometry == +1)
-                products << species << " + ";
-            else if(stoichiometry < 0)
-                reactants << -stoichiometry << "*" << species << " + ";
-            else
-                products << stoichiometry << "*" << species << " + ";
-        }
-
-        std::string reactants_str = reactants.str();
-        std::string products_str = products.str();
-        reactants_str = reactants_str.substr(0, reactants_str.size() - 3); // remove the leading string " + "
-        products_str = products_str.substr(0, products_str.size() - 3); // remove the leading string " + "
-
-        equation_str = reactants_str + " = " + products_str;
+        m_species.emplace_back(species, number); // positive sign for products
     }
 }
 
 auto ReactionEquation::empty() const -> bool
 {
-    return equation_map.empty();
+    return m_species.empty();
 }
 
-auto ReactionEquation::numSpecies() const -> unsigned
+auto ReactionEquation::size() const -> Index
 {
-    return equation_map.size();
+    return m_species.size();
 }
 
-auto ReactionEquation::stoichiometry(std::string species) const -> double
+auto ReactionEquation::species() const -> Vec<Species>
 {
-    auto iter = equation_map.find(species);
-    return iter != equation_map.end() ? iter->second : 0.0;
+    return vectorize(m_species, RKT_LAMBDA(x, x.first));
 }
 
-auto ReactionEquation::equation() const -> const std::map<std::string, double>&
+auto ReactionEquation::coefficients() const -> Vec<double>
 {
-    return equation_map;
+    return vectorize(m_species, RKT_LAMBDA(x, x.second));
 }
 
-ReactionEquation::operator std::string() const
+auto ReactionEquation::coefficient(const String& name) const -> double
 {
-    return equation_str;
+    const auto idx = indexfn(m_species, RKT_LAMBDA(x, x.first.name() == name));
+    return idx < size() ? m_species[idx].second : 0.0;
+}
+
+ReactionEquation::operator String() const
+{
+    auto coeffstr = [](double x) { return (x == 1.0) ? "" : std::to_string(x) + "*"; };
+    String str;
+    for(auto [x, y] : m_species) if(y < 0.0) str += coeffstr(-y) + x.name() + " + ";
+    str = str.substr(0, str.size() - 3); // remove the leading string " + "
+    str += "= ";
+    for(auto [x, y] : m_species) if(y > 0.0) str += coeffstr(y) + x.name() + " ";
+    str = str.substr(0, str.size() - 3); // remove the leading string " + "
+    return str;
 }
 
 auto operator<<(std::ostream& out, const ReactionEquation& equation) -> std::ostream&
 {
-    out << std::string(equation);
+    out << String(equation);
     return out;
+}
+
+auto operator<(const ReactionEquation& lhs, const ReactionEquation& rhs) -> bool
+{
+    return lhs.species().front() < rhs.species().front();
+}
+
+auto operator==(const ReactionEquation& lhs, const ReactionEquation& rhs) -> bool
+{
+    // Check they have the same species
+    if( !identical(lhs.species(), rhs.species()) )
+        return false;
+
+    // Check they have the same stoichiometric coefficients
+    const auto eps = std::numeric_limits<double>::epsilon();
+    for(auto s : lhs.species())
+        if( std::abs(lhs.coefficient(s.name()) - rhs.coefficient(s.name())) > eps )
+            return false;
+
+    return true;
 }
 
 } // namespace Reaktoro

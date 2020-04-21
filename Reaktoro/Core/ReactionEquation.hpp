@@ -17,17 +17,17 @@
 
 #pragma once
 
-// C++ includes
-#include <string>
-#include <map>
+// Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
 
-/// Define a type that describes the equation of a reaction.
-/// The equation of a reaction is assumed as a sequence of pairs
-/// (species, stoichiometry). It is shown below how the equation
-/// of reaction @f$\mathrm{CO_{2}(g)+H_{2}O\rightleftharpoons H^{+}+HCO_{3}^{-}}@f$
-/// can be defined by two equivalent ways:
+/// A type used to represent the equation of a reaction.
+/// The equation of a reaction is assumed as a sequence of pairs (species,
+/// stoichiometry). It is shown below how the equation of reaction
+/// @f$\mathrm{CO_{2}(g)+H_{2}O\rightleftharpoons H^{+}+HCO_{3}^{-}}@f$ can be
+/// defined by two equivalent ways:
 /// ~~~~~~~~~~~~~~
 /// ReactionEquation equation1 = {{"CO2(g)", -1}, {"H2O(l)", -1}, {"H+", 1}, {"HCO3-", 1}};
 /// ReactionEquation equation2 = "CO2(g) + H2O(l) = H+ + HCO3-";
@@ -35,76 +35,71 @@ namespace Reaktoro {
 class ReactionEquation
 {
 public:
-    /// Construct a default ReactionEquation instance
+    /// Construct a default ReactionEquation object.
     ReactionEquation();
 
-    /// Construct a ReactionEquation instance by parsing a string.
-    /// Below are examples of how to set a reaction equation via a formatted string.
+    /// Construct an ReactionEquation object with given species and respective stoichiometric coefficients.
+    ReactionEquation(Pairs<Species, double> const& species);
+
+    /// Construct an ReactionEquation object with given species formulas and respective stoichiometric coefficients.
+    ReactionEquation(Pairs<String, double> const& species);
+
+    /// Construct a ReactionEquation object by parsing a string.
+    /// Below are examples of how to create a ReactionEquation object via a
+    /// formatted string.
     /// ~~~
     /// ReactionEquation equation1("Calcite + H+ = Ca++ + HCO3-");
     /// ReactionEquation equation2("CO2(g) + H2O(l) = H+ + HCO3-");
     /// ReactionEquation equation3("Dolomite + 2*H+ = Ca++ + Mg++ + 2*HCO3-");
     /// ~~~
-    /// Note that unity stoichiometry coefficients can be ommited from the equation.
-    /// The operator `*` must be used when this is not the case.
-    /// @param equation The string representing the rection equation
-    ReactionEquation(std::string equation);
-
-    /// Construct a ReactionEquation instance from a list of species names and a list of stoichiometries
-    /// @param species The names of the participating chemical species
-    /// @param coeffs The stoichiometries of the participating chemical species
-    ReactionEquation(const std::map<std::string, double>& equation);
+    /// Note that unity stoichiometric coefficients can be ommited from the
+    /// equation. The operator `*` must be used when this is not the case.
+    ReactionEquation(String equation);
 
     /// Return true if the rection equation is empty.
     auto empty() const -> bool;
 
     /// Return the number of species in the reaction equation.
-    auto numSpecies() const -> unsigned;
+    auto size() const -> Index;
 
-    /// Return the stoichiometry of a species in the reaction equation.
-    /// @param species The name of the species.
-    auto stoichiometry(std::string species) const -> double;
+    /// Return the species in the reaction equation.
+    auto species() const -> Vec<Species>;
 
-    /// Return the reaction equation as a map of species names and stoichiometries.
-    auto equation() const -> const std::map<std::string, double>&;
+    /// Return the stoichiometric coefficients of the species in the reaction equation.
+    auto coefficients() const -> Vec<double>;
 
-    /// Convert the ReactionEquation instance into a string
-    operator std::string() const;
+    /// Return the stoichiometric coefficient of a species in the reaction equation.
+    auto coefficient(const String& name) const -> double;
+
+    /// Convert this ReactionEquation object into a string.
+    operator String() const;
 
 private:
-    /// The string representation of the reaction equation
-    std::string equation_str;
+    /// The species and their stoichiometric coefficients in the reaction equation.
+    Pairs<Species, double> m_species;
 
-    /// The reaction equation represented as a map of species names and their stoichiometries
-    std::map<std::string, double> equation_map;
+public:
+    /// Return begin const iterator of this ReactionEquation object (for STL compatibility reasons).
+    inline auto begin() const { return m_species.begin(); }
+
+    /// Return begin iterator of this ReactionEquation object (for STL compatibility reasons).
+    inline auto begin() { return m_species.begin(); }
+
+    /// Return end const iterator of this ReactionEquation object (for STL compatibility reasons).
+    inline auto end() const { return m_species.end(); }
+
+    /// Return end iterator of this ReactionEquation object (for STL compatibility reasons).
+    inline auto end() { return m_species.end(); }
 };
 
-/// Output a ReactionEquation instance
+/// Return true if a Species object is less than another for sorting reasons.
+auto operator<(const ReactionEquation& lhs, const ReactionEquation& rhs) -> bool;
+
+/// Return true if two ReactionEquation objects are equal.
+auto operator==(const ReactionEquation& lhs, const ReactionEquation& rhs) -> bool;
+
+/// Output a ReactionEquation object
 auto operator<<(std::ostream& out, const ReactionEquation& equation) -> std::ostream&;
-
-/// Return begin const iterator of a ReactionEquation instance
-inline auto begin(const Reaktoro::ReactionEquation& equation) -> decltype(equation.equation().begin())
-{
-    return equation.equation().begin();
-}
-
-/// Return begin iterator of a ReactionEquation instance
-inline auto begin(Reaktoro::ReactionEquation& equation) -> decltype(equation.equation().begin())
-{
-    return equation.equation().begin();
-}
-
-/// Return end const iterator of a ReactionEquation instance
-inline auto end(const Reaktoro::ReactionEquation& equation) -> decltype(equation.equation().end())
-{
-    return equation.equation().end();
-}
-
-/// Return end iterator of a ReactionEquation instance
-inline auto end(Reaktoro::ReactionEquation& equation) -> decltype(equation.equation().end())
-{
-    return equation.equation().end();
-}
 
 } // namespace Reaktoro
 
