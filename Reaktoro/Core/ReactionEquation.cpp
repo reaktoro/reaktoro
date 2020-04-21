@@ -31,10 +31,6 @@ ReactionEquation::ReactionEquation(Pairs<Species, double> const& species)
 : m_species(species)
 {}
 
-ReactionEquation::ReactionEquation(Pairs<String, double> const& species)
-: m_species(vectorize(species, [&](auto x) { return Pair<Species, double>{ Species(x.first), x.second }; }))
-{}
-
 ReactionEquation::ReactionEquation(String equation)
 {
     // Split the reaction equation into two words: reactants and products
