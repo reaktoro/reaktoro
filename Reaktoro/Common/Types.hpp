@@ -25,10 +25,13 @@
 
 namespace Reaktoro {
 
-/// Define a type that represents an index
+/// The number type used throughout the library.
+using real = double;
+
+/// The type used to represent indices and unsigned integers in the library.
 using Index = std::size_t;
 
-/// Define a type that represents a collection of indices
+/// The type that represents a collection of indices.
 using Indices = std::vector<Index>;
 
 /// Convenient alias for `std::string`.
@@ -44,6 +47,14 @@ using Vec = std::vector<T>;
 /// Convenient alias for `std::unordered_map<Key, T>`.
 template<typename Key, typename T>
 using Map = std::unordered_map<Key, T>;
+
+/// Convenient alias for `std::pair<T, U>`.
+template<typename T, typename U>
+using Pair = std::pair<T, U>;
+
+/// Convenient alias for `std::vector<std::pair<T, U>>`.
+template<typename T, typename U>
+using Pairs = Vec<Pair<T, U>>;
 
 /// Convenient alias for `std::unique_ptr<T>`.
 template<typename T>
