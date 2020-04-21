@@ -24,4 +24,18 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Reaction class", "[Reaction]")
 {
+    Reaction reaction;
+
+    reaction = reaction.withName("Dolomite");
+    reaction = reaction.withEquation("CaCO3(s) = Ca++ + CO3--");
+    reaction = reaction.withEquilibriumConstantFn([](real T, real P) { return T*P; });
+    reaction = reaction.withRateFn([](const ChemicalProps& props) { return 1.0; });
+
+    REQUIRE( reaction.name() == "Dolomite" );
+    REQUIRE( reaction.equation().size() == 3 );
+    REQUIRE( reaction.equation().coefficient("CaCO3(s)") == -1 );
+    REQUIRE( reaction.equation().coefficient("Ca++") == 1 );
+    REQUIRE( reaction.equation().coefficient("CO3--") == 1 );
+    REQUIRE( reaction.equilibriumConstantFn() );
+    REQUIRE( reaction.rateFn() );
 }

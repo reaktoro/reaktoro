@@ -39,7 +39,7 @@ public:
     ReactionEquation();
 
     /// Construct an ReactionEquation object with given species and respective stoichiometric coefficients.
-    explicit ReactionEquation(Pairs<Species, double> const& species);
+    ReactionEquation(Pairs<Species, double> const& species);
 
     /// Construct a ReactionEquation object by parsing a string.
     /// Below are examples of how to create a ReactionEquation object via a
@@ -51,7 +51,10 @@ public:
     /// ~~~
     /// Note that unity stoichiometric coefficients can be ommited from the
     /// equation. The operator `*` must be used when this is not the case.
-    explicit ReactionEquation(String equation);
+    /// {
+    ReactionEquation(const String& equation);
+    ReactionEquation(const char* equation);
+    /// }
 
     /// Return true if the rection equation is empty.
     auto empty() const -> bool;

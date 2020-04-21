@@ -31,7 +31,7 @@ ReactionEquation::ReactionEquation(Pairs<Species, double> const& species)
 : m_species(species)
 {}
 
-ReactionEquation::ReactionEquation(String equation)
+ReactionEquation::ReactionEquation(const String& equation)
 {
     // Split the reaction equation into two words: reactants and products
     auto two_words = split(equation, "=");
@@ -70,6 +70,10 @@ ReactionEquation::ReactionEquation(String equation)
         m_species.emplace_back(species, number); // positive sign for products
     }
 }
+
+ReactionEquation::ReactionEquation(const char* equation)
+: ReactionEquation(String(equation))
+{}
 
 auto ReactionEquation::empty() const -> bool
 {

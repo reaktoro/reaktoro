@@ -18,126 +18,60 @@
 #include "Reaction.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/ChemicalProps.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/ThermoProperties.hpp>
 
 namespace Reaktoro {
-namespace {
-
-auto errorFunctionNotInitialized(std::string method, std::string member) -> void
-{
-    Exception exception;
-    exception.error << "There was an error calling method `Reaktoro::" << method << "`.";
-    exception.reason << "The error resulted because `ReactionData::" << member << "` was not initialized before constructing the Reaction instance.";
-    RaiseError(exception);
-}
-
-} // namespace
 
 struct Reaction::Impl
 {
-    /// The equation of the reaction as a list of species and stoichiometries
+    /// The name that uniquely identifies this reaction.
+    String name;
+
+    /// The equation of the reaction with its species and stoichiometric coefficients.
     ReactionEquation equation;
 
-    /// The chemical system instance
-    ChemicalSystem system;
+    /// The function that computes the equilibrium constant of the reaction (in natural log).
+    EquilibriumConstantFn lnKfn;
 
-    /// The name of the reaction
-    std::string name;
-
-    /// The species in the reaction
-    std::vector<Species> species;
-
-    /// The indices of the species in the reaction
-    Indices indices;
-
-    /// The stoichiometries of the species in the reaction
-    VectorXr stoichiometries;
-
-    /// The function for the equilibrium constant of the reaction (in terms of natural log)
-    std::function<real(real, real)> lnk;
-
-    /// The function for the kinetic rate of the reaction (in units of mol/s)
-    ReactionRateFunction rate;
-
-    Impl()
-    {}
-
-    Impl(const ReactionEquation& equation, const ChemicalSystem& system)
-    : equation(equation), system(system)
-    {
-        // Initialize the species, their indices, and their stoichiometries in the reaction
-        species.reserve(equation.numSpecies());
-        indices.reserve(equation.numSpecies());
-        stoichiometries.resize(equation.numSpecies());
-        auto i = 0;
-        for(const auto& [name, coeff] : equation.equation())
-        {
-            const auto ispecies = system.species().index(name);
-            error(ispecies >= system.species().size(),
-                "Cannot construct Reaction object with species named ", name,
-                " as it is not in the ChemicalSystem object.");
-            species.push_back(system.species(ispecies));
-            indices.push_back(ispecies);
-            stoichiometries[i] = coeff;
-            ++i;
-        }
-    }
+    /// The function that computes the rate of the reaction (in mol/s).
+    ReactionRateFn ratefn;
 };
 
 Reaction::Reaction()
 : pimpl(new Impl())
 {}
 
-Reaction::Reaction(const ReactionEquation& equation, const ChemicalSystem& system)
-: pimpl(new Impl(equation, system))
-{}
-
-Reaction::Reaction(const Reaction& other)
-: pimpl(new Impl(*other.pimpl))
-{}
-
-Reaction::~Reaction()
-{}
-
-auto Reaction::operator=(Reaction other) -> Reaction&
+auto Reaction::withName(String name) const -> Reaction
 {
-    pimpl = std::move(other.pimpl);
-    return *this;
+    Reaction copy = clone();
+    copy.pimpl->name = name;
+    return copy;
 }
 
-auto Reaction::setName(std::string name) -> void
+auto Reaction::withEquation(const ReactionEquation& equation) const -> Reaction
 {
-    pimpl->name = name;
+    Reaction copy = clone();
+    copy.pimpl->equation = equation;
+    return copy;
 }
 
-auto Reaction::setEquilibriumConstant(const std::function<real(real, real)>& lnk) -> void
+auto Reaction::withEquilibriumConstantFn(const EquilibriumConstantFn& fn) const -> Reaction
 {
-    pimpl->lnk = lnk;
+    Reaction copy = clone();
+    copy.pimpl->lnKfn = fn;
+    return copy;
 }
 
-auto Reaction::setRate(const ReactionRateFunction& function) -> void
+auto Reaction::withRateFn(const ReactionRateFn& fn) const -> Reaction
 {
-    pimpl->rate = function;
+    Reaction copy = clone();
+    copy.pimpl->ratefn = fn;
+    return copy;
 }
 
-auto Reaction::name() const -> std::string
+auto Reaction::name() const -> String
 {
     return pimpl->name;
-}
-
-auto Reaction::equilibriumConstant() const -> const std::function<real(real, real)>&
-{
-    return pimpl->lnk;
-}
-
-auto Reaction::rate() const -> const ReactionRateFunction&
-{
-    return pimpl->rate;
 }
 
 auto Reaction::equation() const -> const ReactionEquation&
@@ -145,81 +79,21 @@ auto Reaction::equation() const -> const ReactionEquation&
     return pimpl->equation;
 }
 
-auto Reaction::system() const -> const ChemicalSystem&
+auto Reaction::equilibriumConstantFn() const -> const EquilibriumConstantFn&
 {
-    return pimpl->system;
+    return pimpl->lnKfn;
 }
 
-auto Reaction::species() const -> const std::vector<Species>&
+auto Reaction::rateFn() const -> const ReactionRateFn&
 {
-    return pimpl->species;
+    return pimpl->ratefn;
 }
 
-auto Reaction::indices() const -> const Indices&
+auto Reaction::clone() const -> Reaction
 {
-    return pimpl->indices;
-}
-
-auto Reaction::stoichiometries() const -> VectorXrConstRef
-{
-    return pimpl->stoichiometries;
-}
-
-auto Reaction::stoichiometry(std::string species) const -> double
-{
-    return equation().stoichiometry(species);
-}
-
-auto Reaction::lnEquilibriumConstant(const ChemicalProps& props) const -> real
-{
-    // Get the temperature and pressure of the system
-    const auto T = props.temperature();
-    const auto P = props.pressure();
-
-    // Check if a equilibrium constant function was provided
-    if(pimpl->lnk) return pimpl->lnk(T, P);
-
-    // Calculate the equilibrium constant using the standard Gibbs energies of the species
-    const auto G0 = props.standardGibbsEnergies();
-    const auto RT = universalGasConstant * T;
-
-    real res = {};
-    for(auto i = 0; i < indices().size(); ++i)
-    {
-        const auto ispecies = indices()[i];
-        const auto vi = stoichiometries()[i];
-        const auto G0i = G0[ispecies];
-        res += vi * G0i;
-    }
-
-    return -res/RT;
-}
-
-auto Reaction::lnReactionQuotient(const ChemicalProps& props) const -> real
-{
-    const auto num_species = system().species().size();
-    const auto ln_a = props.lnActivities();
-    real ln_Q = {};
-    auto counter = 0;
-    for(auto i : indices())
-    {
-        const auto vi = stoichiometries()[counter];
-        ln_Q += vi * ln_a[i];
-        ++counter;
-    }
-    return ln_Q;
-}
-
-auto Reaction::lnEquilibriumIndex(const ChemicalProps& props) const -> real
-{
-	return lnReactionQuotient(props) - lnEquilibriumConstant(props);
-}
-
-auto Reaction::rate(const ChemicalProps& props) const -> real
-{
-    if(!pimpl->rate)
-        errorFunctionNotInitialized("rate", "rate");
-    return pimpl->rate(props);
+    Reaction reaction;
+    *reaction.pimpl = *pimpl;
+    return reaction;
 }
 
 auto operator<(const Reaction& lhs, const Reaction& rhs) -> bool
