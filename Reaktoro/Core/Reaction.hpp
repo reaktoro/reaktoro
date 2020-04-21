@@ -19,41 +19,33 @@
 
 // C++ includes
 #include <functional>
-#include <memory>
-#include <string>
-#include <vector>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
-#include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalSystem;
 class ChemicalProps;
 
-/// The function signature of the rate of a reaction (in units of mol/s).
-/// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
-/// @return The rate of the reaction and its partial derivatives (in units of mol/s)
+/// The function type for calculation of equilibrium constant of reaction (in natural log).
+/// @param T The temperature for the calculation (in K)
+/// @param P The pressure for the calculation (in Pa)
+/// @return The ln equilibrium constant of the reaction (@eq{\ln{K}})
+using EquilibriumConstantFn = std::function<real(real T, real P)>;
+
+/// The function type for calculation of reaction rates (in mol/s).
+/// @param props The chemical properties of the chemical system
+/// @return The rate of the reaction (in mol/s)
 /// @see Reaction
 /// @ingroup Core
-using ReactionRateFunction = std::function<real(const ChemicalProps&)>;
+using ReactionRateFn = std::function<real(const ChemicalProps& props)>;
 
-/// The function signature of the rates of a collection of reactions (in units of mol/s).
-/// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
-/// @see Reaction
-/// @ingroup Core
-using ReactionRateVectorFunction = std::function<VectorXd(const ChemicalProps&)>;
-
-/// Provide a computational representation of a chemical reaction.
-/// The Reaction class provides a representation of a chemical reaction
-/// and operations such as the calculation of equilibrium constants at
-/// given temperature and pressure points, reaction quotients, and
-/// reaction rates.
+/// A class to represent a reaction and its attributes.
+/// The Reaction class provides a representation of a chemical reaction and
+/// operations such as the calculation of equilibrium constants at given
+/// temperature and pressure points, reaction quotients, and reaction rates.
 /// @see ReactionRate, EquilibriumConstant
 /// @ingroup Core
 class Reaction
@@ -62,83 +54,37 @@ public:
     /// Construct a default Reaction instance
     Reaction();
 
-    /// Construct a Reaction instance from a ReactionEquation instance
-    Reaction(const ReactionEquation& equation, const ChemicalSystem& system);
+    /// Return a duplicate of this Reaction object with new reaction name.
+    auto withName(String name) const -> Reaction;
 
-    /// Construct a copy of a Reaction instance
-    Reaction(const Reaction& other);
+    /// Return a duplicate of this Reaction object with new reaction equation.
+    auto withEquation(const ReactionEquation& equation) const -> Reaction;
 
-    /// Destroy this instance
-    virtual ~Reaction();
+    /// Return a duplicate of this Reaction object with new equilibrium constant function.
+    auto withEquilibriumConstantFn(const EquilibriumConstantFn& fn) const -> Reaction;
 
-    /// Assign a Reaction instance to this instance
-    auto operator=(Reaction other) -> Reaction&;
-
-    /// Set the name of the reaction.
-    auto setName(std::string name) -> void;
-
-    /// Set the equilibrium constant function of the reaction (in natural log scale).
-    auto setEquilibriumConstant(const std::function<real(real, real)>& lnk) -> void;
-
-    /// Set the rate function of the reaction (in units of mol/s).
-    auto setRate(const ReactionRateFunction& function) -> void;
+    /// Return a duplicate of this Reaction object with new reaction rate function.
+    auto withRateFn(const ReactionRateFn& fn) const -> Reaction;
 
     /// Return the name of the reaction.
-    auto name() const -> std::string;
+    auto name() const -> String;
 
-    /// Return the equilibrium constant function of the reaction.
-    auto equilibriumConstant() const -> const std::function<real(real, real)>&;
-
-    /// Return the rate function of the reaction.
-    auto rate() const -> const ReactionRateFunction&;
-
-    /// Return the equation of the reaction
+    /// Return the equation of the reaction.
     auto equation() const -> const ReactionEquation&;
 
-    /// Return the chemical system instance of the reaction
-    auto system() const -> const ChemicalSystem&;
+    /// Return the equilibrium constant function of the reaction.
+    auto equilibriumConstantFn() const -> const EquilibriumConstantFn&;
 
-    /// Return the reacting species of the reaction
-    auto species() const -> const std::vector<Species>&;
+    /// Return the rate function of the reaction.
+    auto rateFn() const -> const ReactionRateFn&;
 
-    /// Return the indices of the reacting species of the reaction
-    auto indices() const -> const Indices&;
-
-    /// Return the stoichiometries of the reacting species of the reaction
-    auto stoichiometries() const -> VectorXrConstRef;
-
-    /// Return the stoichiometry of a species in the reaction equation.
-    /// @param species The name of the species.
-    auto stoichiometry(std::string species) const -> double;
-
-    /// Calculate the equilibrium constant of the reaction (in natural log).
-    /// @param properties The chemical properties of the system
-    auto lnEquilibriumConstant(const ChemicalProps& properties) const -> real;
-
-    /// Calculate the reaction quotient of the reaction (in natural log scale).
-    /// The reaction quotient of a reaction is defined as:
-    /// @f[\ln Q=\sum_{i=1}^{N}\nu_{i}\ln a_{i},@f]
-    /// where @f$N@f$ denotes the number of species in the multiphase system,
-    /// @f$a_{i}@f$ the activity of the @f$i@f$-th species, and
-    /// @f$\nu_{i}@f$ the stoichiometry of the @f$i@f$-th species in the reaction:
-    /// @f[0\rightleftharpoons\sum_{i=1}^{N}\nu_{i}\alpha_{i},@f]
-    /// with @f$\alpha_{i}@f$ denoting the @f$i@f$-th species. The sign
-    /// convention for the stoichiometric coefficients is: *positive* for
-    /// products, *negative* for reactants.
-    /// @param properties The chemical properties of the system
-    auto lnReactionQuotient(const ChemicalProps& properties) const -> real;
-
-    /// Calculate the equilibrium index of the reaction as @f$\ln(Q/K)@f$.
-    auto lnEquilibriumIndex(const ChemicalProps& properties) const -> real;
-
-    /// Calculate the rate of the reaction (in units of mol/s).
-    /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
-    auto rate(const ChemicalProps& properties) const -> real;
+    /// Return a deep copy of this Reaction object.
+    auto clone() const -> Reaction;
 
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 /// Compare two Reaction instances for less than
