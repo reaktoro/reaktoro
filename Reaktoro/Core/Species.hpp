@@ -37,7 +37,7 @@ public:
     Species();
 
     /// Construct a Species object with given chemical formula (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    Species(const String& formula);
+    explicit Species(const String& formula);
 
     /// Return a duplicate of this Species object with new name that uniquely identifies this species.
     auto withName(const String& name) -> Species;
