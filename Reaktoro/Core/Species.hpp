@@ -99,10 +99,10 @@ private:
     std::shared_ptr<Impl> pimpl;
 };
 
-/// Compare two Species objects for less than
+/// Return true if a Species object is less than another for sorting reasons.
 auto operator<(const Species& lhs, const Species& rhs) -> bool;
 
-/// Compare two Species objects for equality
+/// Return true if two Species objects have the same name.
 auto operator==(const Species& lhs, const Species& rhs) -> bool;
 
 } // namespace Reaktoro
