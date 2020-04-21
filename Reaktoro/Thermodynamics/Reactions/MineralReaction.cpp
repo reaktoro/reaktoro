@@ -113,7 +113,7 @@ auto mineralCatalystFunction(const MineralCatalyst& catalyst, const ChemicalSyst
         return mineralCatalystFunctionPartialPressure(catalyst, system);
 }
 
-auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction& reaction, const ChemicalSystem& system) -> ReactionRateFunction
+auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction& reaction, const ChemicalSystem& system) -> ReactionRateFn
 {
     // The number of chemical species in the system
     const unsigned num_species = system.species().size();
@@ -127,7 +127,7 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
         catalysts.push_back(mineralCatalystFunction(catalyst, system));
 
     // Define the mineral mechanism function
-    ReactionRateFunction fn = [=](const ChemicalProps& props) mutable
+    ReactionRateFn fn = [=](const ChemicalProps& props) mutable
     {
         // The temperature and pressure of the system
         const real T = props.temperature();
@@ -457,12 +457,12 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
         reaction.setEquilibriumConstant(mineralrxn.equilibriumConstant());
 
     // Create the mineral mechanism functions
-    std::vector<ReactionRateFunction> mechanisms;
+    std::vector<ReactionRateFn> mechanisms;
     for(const MineralMechanism& mechanism : mineralrxn.mechanisms())
         mechanisms.push_back(mineralMechanismFunction(mechanism, reaction, system));
 
     // Create the mineral rate function
-    ReactionRateFunction rate;
+    ReactionRateFn rate;
 
     if(mineralrxn.surfaceArea())
     {
@@ -472,7 +472,7 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
             real r = {};
 
             // Iterate over all mechanism functions
-            for(const ReactionRateFunction& mechanism : mechanisms)
+            for(const ReactionRateFn& mechanism : mechanisms)
                 r += mechanism(props);
 
             // Multiply the mechanism contributions by the surface area of the mineral
@@ -502,7 +502,7 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
 
             // Iterate over all mechanism functions
             real f = 0.0;
-            for(const ReactionRateFunction& mechanism : mechanisms)
+            for(const ReactionRateFn& mechanism : mechanisms)
                 f += mechanism(props);
 
             // Multiply the mechanism contributions by the molar surface area of the mineral

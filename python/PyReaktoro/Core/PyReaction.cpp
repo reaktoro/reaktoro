@@ -29,7 +29,7 @@ namespace Reaktoro {
 
 void exportReaction(py::module& m)
 {
-    auto rate1 = static_cast<const ReactionRateFunction&(Reaction::*)() const>(&Reaction::rate);
+    auto rate1 = static_cast<const ReactionRateFn&(Reaction::*)() const>(&Reaction::rate);
     auto rate2 = static_cast<ChemicalScalar(Reaction::*)(const ChemicalProps&) const>(&Reaction::rate);
 
     py::class_<Reaction>(m, "Reaction")
