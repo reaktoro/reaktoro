@@ -26,11 +26,6 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
 {
-    StandardThermoPropsFn standard_thermo_props_fn = [](real T, real P, const Species& species)
-    {
-        return StandardThermoProps{ };
-    };
-
     ActivityPropsFn activity_props_fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x) {};
 
     // Create the ChemicalSystem object
@@ -39,31 +34,26 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
             .withName("AqueousSolution")
             .withSpecies(SpeciesList("H2O(aq) H+(aq) OH-(aq) H2(aq) O2(aq) Na+(aq) Cl-(aq) NaCl(aq) HCO3-(aq) CO2(aq) CO3--(aq)"))
             .withStateOfMatter(StateOfMatter::Liquid)
-            .withStandardThermoPropsFn(standard_thermo_props_fn)
             .withActivityPropsFn(activity_props_fn),
         Phase()
             .withName("GaseousSolution")
             .withSpecies(SpeciesList("H2O(g) CO2(g) H2(g) O2(g)"))
             .withStateOfMatter(StateOfMatter::Gas)
-            .withStandardThermoPropsFn(standard_thermo_props_fn)
             .withActivityPropsFn(activity_props_fn),
         Phase()
             .withName("Halite")
             .withSpecies(SpeciesList("NaCl(s)"))
             .withStateOfMatter(StateOfMatter::Solid)
-            .withStandardThermoPropsFn(standard_thermo_props_fn)
             .withActivityPropsFn(activity_props_fn),
         Phase()
             .withName("CaCO3(s)")
             .withSpecies(SpeciesList("CaCO3(s)"))
             .withStateOfMatter(StateOfMatter::Solid)
-            .withStandardThermoPropsFn(standard_thermo_props_fn)
             .withActivityPropsFn(activity_props_fn),
         Phase()
             .withName("Quartz")
             .withSpecies(SpeciesList("SiO2(s)"))
             .withStateOfMatter(StateOfMatter::Solid)
-            .withStandardThermoPropsFn(standard_thermo_props_fn)
             .withActivityPropsFn(activity_props_fn)
     });
 

@@ -22,8 +22,8 @@
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/ThermoEngine.hpp>
 #include <Reaktoro/Models/ActivityModelIdeal.hpp>
 
 namespace Reaktoro {
@@ -101,7 +101,7 @@ public:
     auto activityModel() const -> const ActivityModel&;
 
     /// Convert this GenericPhase object into a Phase object.
-    auto convert(const ThermoEngine& engine, const Strings& elements) const -> Phase;
+    auto convert(const Database& db, const Strings& elements) const -> Phase;
 
 private:
     /// The name of the phase.
@@ -174,7 +174,7 @@ public:
     auto activityModel() const -> const ActivityModel&;
 
     /// Convert this GenericPhases object into a vector of GenericPhase objects.
-    auto convert(const ThermoEngine& engine, const Strings& elements) const -> Vec<GenericPhase>;
+    auto convert(const Database& db, const Strings& elements) const -> Vec<GenericPhase>;
 
 private:
     /// The common state of matter of the pure phases.
@@ -200,8 +200,8 @@ class Phases
 public:
     /// Construct a Phases object with given GenericPhase and GenericPhases objects.
     template<typename... Args>
-    Phases(const ThermoEngine& engine, const Args&... phases)
-    : engine(engine)
+    Phases(const Database& db, const Args&... phases)
+    : database(db)
     {
         collectElements(phases...);
         appendPhases(phases...);
@@ -214,13 +214,13 @@ public:
         Vec<Phase> phases;
         phases.reserve(genericphases.size());
         for(auto&& genericphase : genericphases)
-            phases.push_back(genericphase.convert(engine, elements));
+            phases.push_back(genericphase.convert(database, elements));
         return phases;
     }
 
 private:
-    /// The thermodynamic engine used to deploy the Phase objects from the GenericPhase ones.
-    ThermoEngine engine;
+    /// The thermodynamic database used to deploy the Phase objects from the GenericPhase ones.
+    Database database;
 
     /// The GenericPhase objects collected so far with each call to Phases::add methods.
     Vec<GenericPhase> genericphases;
@@ -239,7 +239,7 @@ private:
             elements = merge(elements, phase.elements());
 
         if(phase.species().size())
-            for(auto&& s : engine.database().species().withNames(phase.species()))
+            for(auto&& s : database.species().withNames(phase.species()))
                 elements = merge(elements, s.elements().symbols());
     }
 
@@ -267,7 +267,7 @@ private:
     /// Append all underlying GenericPhase objects, in given GenericPhases object, into the Phases container.
     auto append(const GenericPhases& phases) -> void
     {
-        append(phases.convert(engine, elements));
+        append(phases.convert(database, elements));
     }
 
     /// Append one or more GenericPhase or GenericPhases objects into the Phases container.

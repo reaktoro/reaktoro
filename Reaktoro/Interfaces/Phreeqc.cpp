@@ -31,7 +31,7 @@
 // #include <Reaktoro/Core/ChemicalSystem.hpp>
 // #include <Reaktoro/Core/ChemicalState.hpp>
 // #include <Reaktoro/Core/ReactionEquation.hpp>
-// #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+// #include <Reaktoro/Extensions/Water/WaterConstants.hpp>
 // #include <Reaktoro/Interfaces/PhreeqcUtils.hpp>
 
 // // Phreeqc includes

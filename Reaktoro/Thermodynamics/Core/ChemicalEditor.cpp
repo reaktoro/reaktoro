@@ -38,8 +38,8 @@
 // #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
 // #include <Reaktoro/Thermodynamics/Phases/LiquidPhase.hpp>
 // #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
-// #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
-// #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+// #include <Reaktoro/Extensions/Geochemistry/MineralReaction.hpp>
+// #include <Reaktoro/Extensions/Water/WaterConstants.hpp>
 
 // // ThermoFun includes
 // #include <ThermoFun/ThermoFun.h>

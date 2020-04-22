@@ -24,8 +24,8 @@
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
-#include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/ElementalComposition.hpp>
+#include <Reaktoro/Core/StandardThermoProps.hpp>
 
 namespace Reaktoro {
 
@@ -40,28 +40,31 @@ public:
     explicit Species(const String& formula);
 
     /// Return a duplicate of this Species object with new name that uniquely identifies this species.
-    auto withName(const String& name) -> Species;
+    auto withName(const String& name) const -> Species;
 
     /// Return a duplicate of this Species object with new formula (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    auto withFormula(const String& formula) -> Species;
+    auto withFormula(const String& formula) const -> Species;
 
     /// Return a duplicate of this Species object with new case insensitive substance name (e.g. `WATER`, `CARBON-MONOXIDE`).
-    auto withSubstance(const String& substance) -> Species;
+    auto withSubstance(const String& substance) const -> Species;
 
     /// Return a duplicate of this Species object with new elemental composition.
-    auto withElements(const ElementalComposition& elements) -> Species;
+    auto withElements(const ElementalComposition& elements) const -> Species;
 
     /// Return a duplicate of this Species object with new electric charge attribute.
-    auto withCharge(double charge) -> Species;
+    auto withCharge(double charge) const -> Species;
 
     /// Return a duplicate of this Species object with new aggregate state.
-    auto withAggregateState(AggregateState option) -> Species;
+    auto withAggregateState(AggregateState option) const -> Species;
+
+    /// Return a duplicate of this Species object with new function that computes its standard thermodynamic properties.
+    auto withStandardThermoPropsFn(const StandardThermoPropsFn& fn) const -> Species;
 
     /// Return a duplicate of this Species object with new tags attribute.
-    auto withTags(const Strings& tags) -> Species;
+    auto withTags(const Strings& tags) const -> Species;
 
     /// Return a duplicate of this Species object with new attached data whose type is known at runtime only.
-    auto withAttachedData(std::any data) -> Species;
+    auto withAttachedData(std::any data) const -> Species;
 
     /// Return the name that uniquely identifies this species if provided, otherwise, its formula.
     auto name() const -> String;
@@ -80,6 +83,9 @@ public:
 
     /// Return the aggregate state of the species.
     auto aggregateState() const -> AggregateState;
+
+    /// Return the function that computes the standard thermodynamic properties of the species.
+    auto standardThermoPropsFn() const -> const StandardThermoPropsFn&;
 
     /// Return the elements that compose the species and their coefficients.
     auto elements() const -> const ElementalComposition&;

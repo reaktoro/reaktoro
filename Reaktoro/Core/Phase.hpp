@@ -24,7 +24,6 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ActivityModel.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
-#include <Reaktoro/Core/StandardThermoModel.hpp>
 #include <Reaktoro/Core/StateOfMatter.hpp>
 
 namespace Reaktoro {
@@ -47,9 +46,6 @@ public:
     /// Return a copy of this Phase object with a new state of matter.
     auto withStateOfMatter(StateOfMatter state) -> Phase;
 
-    /// Return a copy of this Phase object with a new standard thermodynamic model function.
-    auto withStandardThermoPropsFn(StandardThermoPropsFn fn) -> Phase;
-
     /// Return a copy of this Phase object with a new activity model function.
     auto withActivityPropsFn(ActivityPropsFn fn) -> Phase;
 
@@ -67,9 +63,6 @@ public:
 
     /// Return the species in the phase with given index.
     auto species(Index idx) const -> const Species&;
-
-    /// Return the standard thermodynamic model function of the species in this phase.
-    auto standardThermoPropsFn() const -> const StandardThermoPropsFn&;
 
     /// Return the activity model function of the phase.
     auto activityPropsFn() const -> const ActivityPropsFn&;

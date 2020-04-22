@@ -110,13 +110,13 @@ auto GenericPhase::activityModel() const -> const ActivityModel&
     return activitymodel;
 }
 
-auto GenericPhase::convert(const ThermoEngine& engine, const Strings& elements) const -> Phase
+auto GenericPhase::convert(const Database& db, const Strings& elements) const -> Phase
 {
     error(aggregatestate == AggregateState::Undefined,
         "GenericPhase::convert requires an AggregateState value to be specified.\n"
         "Use method GenericPhase::setAggregateState to fix this.");
 
-    auto species = engine.database().speciesWithAggregateState(aggregatestate);
+    auto species = db.speciesWithAggregateState(aggregatestate);
 
     species =
         names.size() ? species.withNames(names) :
@@ -127,7 +127,6 @@ auto GenericPhase::convert(const ThermoEngine& engine, const Strings& elements) 
     phase = phase.withName(phasename);
     phase = phase.withSpecies(species);
     phase = phase.withStateOfMatter(stateofmatter);
-    phase = phase.withStandardThermoPropsFn(engine.standardThermoPropsFn());
     phase = phase.withActivityPropsFn(activitymodel(species));
 
     return phase;
@@ -206,13 +205,13 @@ auto GenericPhases::activityModel() const -> const ActivityModel&
     return activitymodel;
 }
 
-auto GenericPhases::convert(const ThermoEngine& engine, const Strings& elements) const -> Vec<GenericPhase>
+auto GenericPhases::convert(const Database& db, const Strings& elements) const -> Vec<GenericPhase>
 {
     error(aggregatestate == AggregateState::Undefined,
         "GenericPhases::convert requires an AggregateState value to be specified. "
         "Use method GenericPhases::set(AggregateState) to fix this.");
 
-    auto species = engine.database().speciesWithAggregateState(aggregatestate);
+    auto species = db.speciesWithAggregateState(aggregatestate);
 
     species =
         names.size() ? species.withNames(names) :

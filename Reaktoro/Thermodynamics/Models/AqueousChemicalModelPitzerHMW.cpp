@@ -29,9 +29,9 @@
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Extensions/Water/WaterConstants.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 

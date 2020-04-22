@@ -27,7 +27,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 {
     const auto R = universalGasConstant;
 
-    StandardThermoPropsFn standard_thermo_props_fn_gas = [](real T, real P, const Species& species)
+    StandardThermoPropsFn standard_thermo_props_fn_gas = [](real T, real P)
     {
         StandardThermoProps props;
         props.G0  = 0.1 * (T * P);
@@ -38,7 +38,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         return props;
     };
 
-    StandardThermoPropsFn standard_thermo_props_fn_solid = [](real T, real P, const Species& species)
+    StandardThermoPropsFn standard_thermo_props_fn_solid = [](real T, real P)
     {
         StandardThermoProps props;
         props.G0  = 1.1 * (T * P);
@@ -77,17 +77,20 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
     Vec<Phase> phases
     {
-        Phase().withName("SomeGas")
-               .withStandardThermoPropsFn(standard_thermo_props_fn_gas)
-               .withActivityPropsFn(activity_props_fn_gas)
-               .withStateOfMatter(StateOfMatter::Gas)
-               .withSpecies(SpeciesList("H2O(g) CO2(g)")),
+        Phase()
+            .withName("SomeGas")
+            .withActivityPropsFn(activity_props_fn_gas)
+            .withStateOfMatter(StateOfMatter::Gas)
+            .withSpecies({
+                Species("H2O(g)").withStandardThermoPropsFn(standard_thermo_props_fn_gas),
+                Species("CO2(g)").withStandardThermoPropsFn(standard_thermo_props_fn_gas)}),
 
-        Phase().withName("SomeSolid")
-               .withStandardThermoPropsFn(standard_thermo_props_fn_solid)
-               .withActivityPropsFn(activity_props_fn_solid)
-               .withStateOfMatter(StateOfMatter::Solid)
-               .withSpecies(SpeciesList("CaCO3(s)"))
+        Phase()
+            .withName("SomeSolid")
+            .withActivityPropsFn(activity_props_fn_solid)
+            .withStateOfMatter(StateOfMatter::Solid)
+            .withSpecies({
+                Species("CaCO3(s)").withStandardThermoPropsFn(standard_thermo_props_fn_solid)})
     };
 
     ChemicalSystem system(phases);

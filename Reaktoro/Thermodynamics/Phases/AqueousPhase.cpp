@@ -29,7 +29,7 @@
 // #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
 // #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelIdeal.hpp>
 // #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelPitzerHMW.hpp>
-// #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+// #include <Reaktoro/Extensions/Water/WaterConstants.hpp>
 
 // namespace Reaktoro {
 

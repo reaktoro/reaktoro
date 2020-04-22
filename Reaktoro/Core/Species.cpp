@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
+#include <Reaktoro/Common/OptimizationUtils.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -52,6 +53,9 @@ struct Species::Impl
     /// The aggregate state of the species.
     AggregateState aggregatestate;
 
+    /// The function that computes the standard thermodynamic properties of the species
+    StandardThermoPropsFn standard_thermo_props_fn = [](real, real) { return StandardThermoProps{}; };
+
     /// The tags of the species such as `organic`, `mineral`.
     Strings tags;
 
@@ -81,56 +85,63 @@ Species::Species(const String& formula)
 : pimpl(new Impl(formula))
 {}
 
-auto Species::withName(const String& name) -> Species
+auto Species::withName(const String& name) const -> Species
 {
     Species copy = clone();
     copy.pimpl->name = name;
     return copy;
 }
 
-auto Species::withFormula(const String& formula) -> Species
+auto Species::withFormula(const String& formula) const -> Species
 {
     Species copy = clone();
     copy.pimpl->formula = formula;
     return copy;
 }
 
-auto Species::withSubstance(const String& substance) -> Species
+auto Species::withSubstance(const String& substance) const -> Species
 {
     Species copy = clone();
     copy.pimpl->substance = substance;
     return copy;
 }
 
-auto Species::withElements(const ElementalComposition& elements) -> Species
+auto Species::withElements(const ElementalComposition& elements) const -> Species
 {
     Species copy = clone();
     copy.pimpl->elements = elements;
     return copy;
 }
 
-auto Species::withCharge(double charge) -> Species
+auto Species::withCharge(double charge) const -> Species
 {
     Species copy = clone();
     copy.pimpl->charge = charge;
     return copy;
 }
 
-auto Species::withAggregateState(AggregateState option) -> Species
+auto Species::withAggregateState(AggregateState option) const -> Species
 {
     Species copy = clone();
     copy.pimpl->aggregatestate = option;
     return copy;
 }
 
-auto Species::withTags(const Strings& tags) -> Species
+auto Species::withStandardThermoPropsFn(const StandardThermoPropsFn& fn) const -> Species
+{
+    Species copy = clone();
+    copy.pimpl->standard_thermo_props_fn = memoizeLast(fn); // use memoization to ensure fast re-evaluation when T and P identical to last values are provided
+    return copy;
+}
+
+auto Species::withTags(const Strings& tags) const -> Species
 {
     Species copy = clone();
     copy.pimpl->tags = tags;
     return copy;
 }
 
-auto Species::withAttachedData(std::any data) -> Species
+auto Species::withAttachedData(std::any data) const -> Species
 {
     Species copy = clone();
     copy.pimpl->attacheddata = data;
@@ -171,6 +182,11 @@ auto Species::aggregateState() const -> AggregateState
     if(pimpl->aggregatestate == AggregateState::Undefined)
         return identifyAggregateState(name());
     return pimpl->aggregatestate;
+}
+
+auto Species::standardThermoPropsFn() const -> const StandardThermoPropsFn&
+{
+    return pimpl->standard_thermo_props_fn;
 }
 
 auto Species::elements() const -> const ElementalComposition&
