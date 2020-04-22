@@ -22,7 +22,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
-#include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
 
@@ -45,7 +44,10 @@ struct StandardThermoProps
     real Cv0 = {};
 };
 
-/// The function type for calculation of standard thermodynamic properties of species.
-using StandardThermoPropsFn = std::function<StandardThermoProps(real, real, const Species&)>;
+/// The function type for calculation of standard thermodynamic properties of a species.
+/// @param T The temperature for the calculation (in K)
+/// @param P The pressure for the calculation (in Pa)
+/// @return The standard thermodynamic properties of the species
+using StandardThermoPropsFn = std::function<StandardThermoProps(real T, real P)>;
 
 } // namespace Reaktoro
