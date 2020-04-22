@@ -94,8 +94,6 @@ add_subdirectory(Reaktoro)
 # Build the Python extension module PyReaktoro and the Python packages reaktoro
 if(REAKTORO_BUILD_PYTHON)
     add_subdirectory(python)
-else()
-    add_subdirectory(python EXCLUDE_FROM_ALL)
 endif()
 
 # Build the Python package ireaktoro, the Reaktoro interpreter
