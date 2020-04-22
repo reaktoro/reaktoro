@@ -43,11 +43,13 @@ auto memoizeLast(std::function<Ret(Args...)> f) -> std::function<Ret(Args...)>
 {
     std::tuple<typename std::decay<Args>::type...> cache;
     Ret result = Ret();
+    auto firsttime = true;
     return [=](Args... args) mutable -> Ret
     {
-        if(std::tie(args...) == cache)
+        if(std::tie(args...) == cache && !firsttime)
             return Ret(result);
         cache = std::make_tuple(args...);
+        firsttime = false;
         return result = f(args...);
     };
 }
