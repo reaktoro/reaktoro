@@ -24,27 +24,27 @@
 
 namespace Reaktoro {
 
-ThermoEngine::ThermoEngine(const Database& db, const StandardThermoPropsFn& model)
-: db(db), model(model)
-{
-    // Assert given standard thermodynamic model function is not empty
-    Assert(model, "Failure at ThermoEngine::ThermoEngine(const Database&, const StandardThermoPropsFn&).",
-        "Given StandardThermoPropsFn object is empty.");
-}
+// ThermoEngine::ThermoEngine(const Database& db, const StandardThermoPropsFn& model)
+// : db(db), model(model)
+// {
+//     // Assert given standard thermodynamic model function is not empty
+//     Assert(model, "Failure at ThermoEngine::ThermoEngine(const Database&, const StandardThermoPropsFn&).",
+//         "Given StandardThermoPropsFn object is empty.");
+// }
 
-auto ThermoEngine::database() const -> const Database&
-{
-    return db;
-}
+// auto ThermoEngine::database() const -> const Database&
+// {
+//     return db;
+// }
 
-auto ThermoEngine::standardThermoPropsFn() const -> const StandardThermoPropsFn&
-{
-    return model;
-}
+// auto ThermoEngine::standardThermoPropsFn() const -> const StandardThermoPropsFn&
+// {
+//     return model;
+// }
 
-auto ThermoEngine::props(real T, real P, const Species& species) const -> StandardThermoProps
-{
-    return model(T, P, species);
-}
+// auto ThermoEngine::props(real T, real P, const Species& species) const -> StandardThermoProps
+// {
+//     return model(T, P, species);
+// }
 
 } // namespace Reaktoro

@@ -26,18 +26,11 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Phase", "[Phase]")
 {
-    StandardThermoPropsFn standard_thermo_props_fn = [](real T, real P, const Species& species)
-    {
-        return StandardThermoProps{ };
-    };
-
     ActivityPropsFn activity_props_fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x) {};
 
     Phase phase;
-    phase = phase.withStandardThermoPropsFn(standard_thermo_props_fn);
     phase = phase.withActivityPropsFn(activity_props_fn);
 
-    REQUIRE( phase.standardThermoPropsFn() );
     REQUIRE( phase.activityPropsFn() );
 
     SECTION("Testing PhasePhase::withSpecies with aqueous species")
@@ -65,7 +58,6 @@ TEST_CASE("Testing Phase", "[Phase]")
         phase = phase.withName("GaseousSolution");
         phase = phase.withSpecies(SpeciesList("H2O(g) CO2(g) CH4(g) O2(g) H2(g)"));
         phase = phase.withStateOfMatter(StateOfMatter::Gas);
-        phase = phase.withStandardThermoPropsFn(standard_thermo_props_fn);
         phase = phase.withActivityPropsFn(activity_props_fn);
 
         REQUIRE( phase.name() == "GaseousSolution" );

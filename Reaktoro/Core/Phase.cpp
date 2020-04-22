@@ -56,9 +56,6 @@ struct Phase::Impl
     /// The list of Species instances defining the phase
     SpeciesList species;
 
-    /// The standard thermodynamic model function of the species in the phase.
-    StandardThermoPropsFn standard_thermo_props_fn;
-
     /// The activity model function of the phase.
     ActivityPropsFn activity_props_fn;
 
@@ -93,13 +90,6 @@ auto Phase::withStateOfMatter(StateOfMatter state) -> Phase
     return copy;
 }
 
-auto Phase::withStandardThermoPropsFn(StandardThermoPropsFn fn) -> Phase
-{
-    Phase copy = clone();
-    copy.pimpl->standard_thermo_props_fn = std::move(fn);
-    return copy;
-}
-
 auto Phase::withActivityPropsFn(ActivityPropsFn fn) -> Phase
 {
     Phase copy = clone();
@@ -130,11 +120,6 @@ auto Phase::species() const -> SpeciesListConstRef
 auto Phase::species(Index idx) const -> const Species&
 {
     return pimpl->species[idx];
-}
-
-auto Phase::standardThermoPropsFn() const -> const StandardThermoPropsFn&
-{
-    return pimpl->standard_thermo_props_fn;
 }
 
 auto Phase::activityPropsFn() const -> const ActivityPropsFn&

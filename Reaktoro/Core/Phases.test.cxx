@@ -26,11 +26,6 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Phases", "[Phases]")
 {
-    StandardThermoPropsFn standard_thermo_props_fn = [](real T, real P, const Species& species)
-    {
-        return StandardThermoProps{};
-    };
-
     ActivityModel activity_model = [](const SpeciesList& species)
     {
         ActivityPropsFn fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x) {};
@@ -68,8 +63,6 @@ TEST_CASE("Testing Phases", "[Phases]")
     db.addSpecies( Species("CH4(g)")                             );
     db.addSpecies( Species("CO(g)")                              );
 
-    ThermoEngine engine(db, standard_thermo_props_fn);
-
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
     // TESTING CLASS: GenericPhase
@@ -83,7 +76,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setAggregateState(AggregateState::Aqueous);
         genericphase.setActivityModel(activity_model);
 
-        Phase phase = genericphase.convert(engine, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         REQUIRE( phase.name() == "AqueousSolution" );
         REQUIRE( phase.stateOfMatter() == StateOfMatter::Liquid );
@@ -91,7 +84,6 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phase.species(0).name() == "H2O(aq)" );
         REQUIRE( phase.species(1).name() == "H+"      );
         REQUIRE( phase.species(2).name() == "OH-"     );
-        REQUIRE( phase.standardThermoPropsFn() );
         REQUIRE( phase.activityPropsFn() );
     }
 
@@ -103,7 +95,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setAggregateState(AggregateState::Aqueous);
         genericphase.setActivityModel(activity_model);
 
-        Phase phase = genericphase.convert(engine, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         REQUIRE( phase.name() == "AqueousSolution" );
         REQUIRE( phase.stateOfMatter() == StateOfMatter::Liquid );
@@ -113,7 +105,6 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phase.species(2).name() == "OH-"     );
         REQUIRE( phase.species(3).name() == "H2(aq)"  );
         REQUIRE( phase.species(4).name() == "O2(aq)"  );
-        REQUIRE( phase.standardThermoPropsFn() );
         REQUIRE( phase.activityPropsFn() );
     }
 
@@ -125,7 +116,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setAggregateState(AggregateState::Aqueous);
         genericphase.setActivityModel(activity_model);
 
-        Phase phase = genericphase.convert(engine, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         REQUIRE( phase.name() == "AqueousSolution" );
         REQUIRE( phase.stateOfMatter() == StateOfMatter::Liquid );
@@ -148,7 +139,6 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phase.species(15).name() == "CaCl2(aq)" );
         REQUIRE( phase.species(16).name() == "MgCl2(aq)" );
         REQUIRE( phase.species(17).name() == "SiO2(aq)"  );
-        REQUIRE( phase.standardThermoPropsFn() );
         REQUIRE( phase.activityPropsFn() );
     }
 
@@ -160,7 +150,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setAggregateState(AggregateState::Aqueous);
         genericphase.setActivityModel(activity_model);
 
-        Phase phase = genericphase.convert(engine, {"H", "O", "Cl"});
+        Phase phase = genericphase.convert(db, {"H", "O", "Cl"});
 
         REQUIRE( phase.name() == "AqueousSolution" );
         REQUIRE( phase.stateOfMatter() == StateOfMatter::Liquid );
@@ -172,7 +162,6 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phase.species(4).name() == "O2(aq)"   );
         REQUIRE( phase.species(5).name() == "Cl-"      );
         REQUIRE( phase.species(6).name() == "HCl(aq)"  );
-        REQUIRE( phase.standardThermoPropsFn() );
         REQUIRE( phase.activityPropsFn() );
     }
 
@@ -188,7 +177,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphases.setAggregateState(AggregateState::Solid);
         genericphases.setActivityModel(activity_model);
 
-        Vec<GenericPhase> phases = genericphases.convert(engine, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         REQUIRE( phases.size() == 2 );
 
@@ -210,7 +199,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphases.setAggregateState(AggregateState::Solid);
         genericphases.setActivityModel(activity_model);
 
-        Vec<GenericPhase> phases = genericphases.convert(engine, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         REQUIRE( phases.size() == 3 );
 
@@ -237,7 +226,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphases.setAggregateState(AggregateState::Solid);
         genericphases.setActivityModel(activity_model);
 
-        Vec<GenericPhase> phases = genericphases.convert(engine, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         REQUIRE( phases.size() == 5 );
 
@@ -274,7 +263,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphases.setAggregateState(AggregateState::Solid);
         genericphases.setActivityModel(activity_model);
 
-        Vec<GenericPhase> phases = genericphases.convert(engine, {"Na", "Cl"});
+        Vec<GenericPhase> phases = genericphases.convert(db, {"Na", "Cl"});
 
         REQUIRE( phases.size() == 1 );
 
@@ -296,7 +285,6 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phase.stateOfMatter() == stateofmatter );
         REQUIRE( phase.aggregateState() == aggregatestate );
         REQUIRE( phase.activityPropsFn() );
-        REQUIRE( phase.standardThermoPropsFn() );
         REQUIRE( phase.species().size() == species.size() );
         for(auto i = 0; i < species.size(); ++i)
         {
@@ -322,7 +310,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     SECTION("Testing Phases with an aqueous solution only")
     {
-        Vec<Phase> phases = Phases(engine, AqueousSolution("H2O(aq) H+ OH- Na+ Cl- HCO3- CO3-- CO2(aq)"));
+        Vec<Phase> phases = Phases(db, AqueousSolution("H2O(aq) H+ OH- Na+ Cl- HCO3- CO3-- CO2(aq)"));
 
         REQUIRE( phases.size() == 1 );
 
@@ -331,7 +319,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     SECTION("Testing Phases with an aqueous solution using speciate together with a gaseous phase and a mineral")
     {
-        Vec<Phase> phases = Phases(engine,
+        Vec<Phase> phases = Phases(db,
             AqueousSolution(speciate("H O Na Cl C")),
             GaseousSolution("H2O(g) CO2(g)"),
             Mineral("Halite")
@@ -346,7 +334,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     SECTION("Testing Phases with an aqueous solution speciated automatically together with a gaseous phase and minerals")
     {
-        Vec<Phase> phases = Phases(engine,
+        Vec<Phase> phases = Phases(db,
             AqueousSolution(),
             GaseousSolution(speciate("H O C")),
             Minerals("Halite Calcite Magnesite Dolomite Quartz")
@@ -365,7 +353,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     SECTION("Testing Phases with minerals collected automatically together with aqueous and gaseous phases")
     {
-        Vec<Phase> phases = Phases(engine,
+        Vec<Phase> phases = Phases(db,
             AqueousSolution(speciate("Na Cl C Ca")),
             GaseousSolution(speciate("H O C")),
             Minerals()
@@ -381,7 +369,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     SECTION("Testing Phases with minerals collected automatically from given aqueous species names")
     {
-        Vec<Phase> phases = Phases(engine,
+        Vec<Phase> phases = Phases(db,
             AqueousSolution("H2O(aq) H+ OH- Na+ Cl- CO2(aq) Ca++"),
             Minerals()
         );
@@ -395,7 +383,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     SECTION("Testing Phases with no minerals collected because none exist with H, O, C elements")
     {
-        Vec<Phase> phases = Phases(engine,
+        Vec<Phase> phases = Phases(db,
             AqueousSolution(),
             GaseousSolution(speciate("H O C")),
             Minerals() // there should not have any mineral collected because there is none with elements {H, O, C}

@@ -23,22 +23,24 @@
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 using namespace Reaktoro;
 
+auto createStandardThermoPropsFn(double param)
+{
+    StandardThermoPropsFn fn = [=](real T, real P)
+    {
+        StandardThermoProps props;
+        props.G0  = 0.1 * param * T * P;
+        props.H0  = 0.2 * param * T * P;
+        props.V0  = 0.3 * param * T * P;
+        props.Cp0 = 0.4 * param * T * P;
+        props.Cv0 = 0.5 * param * T * P;
+        return props;
+    };
+    return fn;
+}
+
 TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 {
     const auto R = universalGasConstant;
-
-    StandardThermoPropsFn standard_thermo_props_fn = [](real T, real P, const Species& species)
-    {
-        const auto param = std::any_cast<double>(species.attachedData());
-
-        StandardThermoProps props;
-        props.G0  = 0.1 * param * (T * P);
-        props.H0  = 0.2 * param * (T * P);
-        props.V0  = 0.3 * param * (T * P);
-        props.Cp0 = 0.4 * param * (T * P);
-        props.Cv0 = 0.5 * param * (T * P);
-        return props;
-    };
 
     ActivityPropsFn activity_props_fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x)
     {
@@ -55,14 +57,13 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 
     Phase phase;
     phase = phase.withName("SomeGas");
-    phase = phase.withStandardThermoPropsFn(standard_thermo_props_fn);
     phase = phase.withActivityPropsFn(activity_props_fn);
     phase = phase.withStateOfMatter(StateOfMatter::Gas);
     phase = phase.withSpecies({
-        Species("H2O(g)").withAttachedData(10.0), // param = 10.0 (see standard_thermo_props_fn)
-        Species("CO2(g)").withAttachedData(20.0), // param = 20.0 (see standard_thermo_props_fn)
-        Species("CH4(g)").withAttachedData(30.0), // param = 30.0 (see standard_thermo_props_fn)
-        Species("H2S(g)").withAttachedData(40.0)  // param = 40.0 (see standard_thermo_props_fn)
+        Species("H2O(g)").withStandardThermoPropsFn(createStandardThermoPropsFn(10.0)), // param = 10.0
+        Species("CO2(g)").withStandardThermoPropsFn(createStandardThermoPropsFn(20.0)), // param = 20.0
+        Species("CH4(g)").withStandardThermoPropsFn(createStandardThermoPropsFn(30.0)), // param = 30.0
+        Species("H2S(g)").withStandardThermoPropsFn(createStandardThermoPropsFn(40.0))  // param = 40.0
     });
 
     ChemicalPropsPhase props(phase);

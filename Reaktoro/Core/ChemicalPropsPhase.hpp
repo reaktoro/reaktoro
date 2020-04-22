@@ -341,7 +341,8 @@ auto ChemicalPropsPhaseBase<Real, Array>::update(real Tnew, real Pnew, ArrayXrCo
         StandardThermoProps aux;
         for(auto i = 0; i < size; ++i)
         {
-            aux = phase.standardThermoPropsFn()(T, P, species[i]);
+            assert(phase.species(i).standardThermoPropsFn());
+            aux = phase.species(i).standardThermoPropsFn()(T, P);
             G0[i]  = aux.G0;
             H0[i]  = aux.H0;
             V0[i]  = aux.V0;

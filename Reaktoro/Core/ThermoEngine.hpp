@@ -20,37 +20,37 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Core/Database.hpp>
-#include <Reaktoro/Core/StandardThermoModel.hpp>
+#include <Reaktoro/Core/StandardThermoProps.hpp>
 
 namespace Reaktoro {
 
-/// The thermodynamic engine base class for standard thermodynamic properties calculation.
-class ThermoEngine
-{
-public:
-    /// Construct a ThermoEngine object.
-    /// @param db The thermodynamic database
-    /// @param model The standard thermodynamic model function
-    ThermoEngine(const Database& db, const StandardThermoPropsFn& model);
+// /// The thermodynamic engine base class for standard thermodynamic properties calculation.
+// class ThermoEngine
+// {
+// public:
+//     /// Construct a ThermoEngine object.
+//     /// @param db The thermodynamic database
+//     /// @param model The standard thermodynamic model function
+//     ThermoEngine(const Database& db, const StandardThermoPropsFn& model);
 
-    /// Return the database of this thermodynamic engine.
-    auto database() const -> const Database&;
+//     /// Return the database of this thermodynamic engine.
+//     auto database() const -> const Database&;
 
-    /// Return the standard thermodynamic model function of this thermodynamic engine.
-    auto standardThermoPropsFn() const -> const StandardThermoPropsFn&;
+//     /// Return the standard thermodynamic model function of this thermodynamic engine.
+//     auto standardThermoPropsFn() const -> const StandardThermoPropsFn&;
 
-    /// Return the standard thermodynamic properties of a species at given temperature and pressure.
-    /// @param T The temperature for the calculation (in unit of K)
-    /// @param P The pressure for the calculation (in unit of Pa)
-    /// @param species The species object.
-    auto props(real T, real P, const Species& species) const -> StandardThermoProps;
+//     /// Return the standard thermodynamic properties of a species at given temperature and pressure.
+//     /// @param T The temperature for the calculation (in unit of K)
+//     /// @param P The pressure for the calculation (in unit of Pa)
+//     /// @param species The species object.
+//     auto props(real T, real P, const Species& species) const -> StandardThermoProps;
 
-private:
-    /// The thermodynamic database of this thermodynamic engine
-    Database db;
+// private:
+//     /// The thermodynamic database of this thermodynamic engine
+//     Database db;
 
-    /// The standard thermodynamic model function of this thermodynamic engine
-    StandardThermoPropsFn model;
-};
+//     /// The standard thermodynamic model function of this thermodynamic engine
+//     StandardThermoPropsFn model;
+// };
 
 } // namespace Reaktoro

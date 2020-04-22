@@ -18,7 +18,7 @@
 #include "ActivityModelIdeal.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Extensions/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 

@@ -37,10 +37,10 @@
 // #include <Reaktoro/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
 // #include <Reaktoro/Thermodynamics/Models/SpeciesThermoState.hpp>
 // #include <Reaktoro/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
-// #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
-// #include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
-// #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
-// #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+// #include <Reaktoro/Extensions/Water/WaterElectroState.hpp>
+// #include <Reaktoro/Extensions/Water/WaterElectroStateJohnsonNorton.hpp>
+// #include <Reaktoro/Extensions/Water/WaterThermoState.hpp>
+// #include <Reaktoro/Extensions/Water/WaterThermoStateUtils.hpp>
 
 // namespace Reaktoro {
 // namespace {

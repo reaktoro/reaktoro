@@ -18,7 +18,7 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Reactions/MineralCatalyst.hpp>
+#include <Reaktoro/Extensions/Geochemistry/MineralCatalyst.hpp>
 
 namespace Reaktoro {
 
