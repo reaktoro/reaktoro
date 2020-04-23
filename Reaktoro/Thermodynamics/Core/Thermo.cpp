@@ -107,7 +107,7 @@ struct Thermo::Impl
         engine.setSolventSymbol("H2O@");
 
         // Initialize the substance in ThermoFun database.
-        substances = substances;
+        substances = fundatabase.getSubstances();
 
         // Initialize the HKF equation of state for the thermodynamic state of aqueous, gaseous and mineral species
         species_thermo_state_hkf_fn = [=](double T, double P, std::string species)
