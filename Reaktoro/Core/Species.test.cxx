@@ -178,11 +178,7 @@ TEST_CASE("Testing Species class", "[Species]")
 
     species = Species("H2O");
 
-    REQUIRE(species.standardThermoPropsFn()(0.0, 0.0).G0  == 0.0);
-    REQUIRE(species.standardThermoPropsFn()(0.0, 0.0).H0  == 0.0);
-    REQUIRE(species.standardThermoPropsFn()(0.0, 0.0).V0  == 0.0);
-    REQUIRE(species.standardThermoPropsFn()(0.0, 0.0).Cp0 == 0.0);
-    REQUIRE(species.standardThermoPropsFn()(0.0, 0.0).Cv0 == 0.0);
+    REQUIRE_FALSE( species.standardThermoPropsFn() );
 
     species = species.withStandardThermoPropsFn([](real T, real P) { return StandardThermoProps{1.0, 2.0, 3.0, 4.0, 5.0}; });
 
