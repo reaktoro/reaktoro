@@ -202,44 +202,38 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     if(params.activity_model == "hkf"){
         // HKF full system
-        editor.addAqueousPhase({"H2O(l)",  "H+", "OH-", "HCO3-", "Mg(HCO3)+", "Ca(HCO3)+", "MgCO3(aq)",
-                                "CO3--", "CaCO3(aq)", "Ca++", "CaSO4(aq)", "CaOH+", "Cl-", "FeCl++",
-                                "FeCl2(aq)", "FeCl+", "Fe++", "FeOH+",  "FeOH++", "Fe+++", "H2(aq)", "K+",
-                                "KSO4-", "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+", "Na+", "NaSO4-",
-                                "O2(aq)", "H2S(aq)", "HS-", "S5--", "S4--", "S3--", "S2--", "SO4--",
-                                "NaSO4-", "MgSO4(aq)", "CaSO4(aq)", "KSO4-", "HSO4-"});
+        editor.addAqueousPhase({"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4(aq)", "CaOH+", "Cl-",
+                                "FeCl++", "FeCl2(aq)", "FeCl+", "Fe++", "FeOH+",  "FeOH++", "Fe+++",
+                                "H2(aq)", "HSO4-", "H2S(aq)", "HS-", "H2O(l)",  "H+", "OH-", "HCO3-",
+                                "K+", "KSO4-",
+                                "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+", "Mg(HCO3)+",
+                                "Na+", "NaSO4-",
+                                "O2(aq)",
+                                "S5--", "S4--", "S3--", "S2--", "SO4--"});
     }
     else if(params.activity_model == "pitzer"){
         // Pitzer full system
-        editor.addAqueousPhase({"H2O(l)",  "H+", "OH-",
-                                "HCO3-", "Mg(HCO3)+", "Ca(HCO3)+", "MgCO3(aq)",  "CO3--", "CaCO3(aq)" ,
-                                "Ca++", "CaSO4(aq)", "CaOH+",
-                                "Cl-", "FeCl++", "FeCl2(aq)", "FeCl+",
-                                "Fe++", "FeOH+",  "FeOH++", "Fe+++",
-                                "H2(aq)",
+        editor.addAqueousPhase({"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4(aq)", "CaOH+", "Cl-",
+                                "FeCl++", "FeCl2(aq)", "FeCl+", "Fe++", "FeOH+",  "FeOH++", "Fe+++",
+                                "H2(aq)", "HSO4-", "H2S(aq)", "HS-", "H2O(l)",  "H+", "OH-", "HCO3-",
                                 "K+", "KSO4-",
-                                "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+",
+                                "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+", "Mg(HCO3)+",
                                 "Na+", "NaSO4-",
                                 "O2(aq)",
-                                "H2S(aq)", "HS-", "S5--", "S4--", "S3--", "S2--",
-                                "SO4--", "NaSO4-", "MgSO4(aq)", "CaSO4(aq)", "KSO4-", "HSO4-"})
+                                "S5--", "S4--", "S3--", "S2--", "SO4--"})
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
     else if(params.activity_model == "dk"){
         // Debye-Huckel full system
-        editor.addAqueousPhase({"H2O(l)",  "H+", "OH-",
-                                "HCO3-", "Mg(HCO3)+", "Ca(HCO3)+", "MgCO3(aq)",  "CO3--", "CaCO3(aq)" ,
-                                "Ca++", "CaSO4(aq)", "CaOH+",
-                                "Cl-", "FeCl++", "FeCl2(aq)", "FeCl+",
-                                "Fe++", "FeOH+",  "FeOH++", "Fe+++",
-                                "H2(aq)",
+        editor.addAqueousPhase({"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4(aq)", "CaOH+", "Cl-",
+                                "FeCl++", "FeCl2(aq)", "FeCl+", "Fe++", "FeOH+",  "FeOH++", "Fe+++",
+                                "H2(aq)", "HSO4-", "H2S(aq)", "HS-", "H2O(l)",  "H+", "OH-", "HCO3-",
                                 "K+", "KSO4-",
-                                "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+",
+                                "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+", "Mg(HCO3)+",
                                 "Na+", "NaSO4-",
                                 "O2(aq)",
-                                "H2S(aq)", "HS-", "S5--", "S4--", "S3--", "S2--",
-                                "SO4--", "NaSO4-", "MgSO4(aq)", "CaSO4(aq)", "KSO4-", "HSO4-"})
+                                "S5--", "S4--", "S3--", "S2--", "SO4--"})
                 .setChemicalModelDebyeHuckel(dhModel);
     }
     else if(params.activity_model == "dk-full"){
