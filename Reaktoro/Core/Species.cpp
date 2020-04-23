@@ -54,7 +54,7 @@ struct Species::Impl
     AggregateState aggregatestate;
 
     /// The function that computes the standard thermodynamic properties of the species
-    StandardThermoPropsFn standard_thermo_props_fn = [](real, real) { return StandardThermoProps{}; };
+    StandardThermoPropsFn standard_thermo_props_fn;
 
     /// The tags of the species such as `organic`, `mineral`.
     Strings tags;
