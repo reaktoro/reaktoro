@@ -18,10 +18,11 @@
 #pragma once
 
 // C++ includes
-#include <string>
-#include <vector>
+#include <functional>
 #include <memory>
+#include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace Reaktoro {
 
@@ -63,5 +64,9 @@ using Ptr = std::unique_ptr<T>;
 /// Convenient alias for `std::shared_ptr<T>`.
 template<typename T>
 using SharedPtr = std::shared_ptr<T>;
+
+/// Convenient alias for `std::function<R(Args...)>`.
+template<typename R, typename... Args>
+using Fn = std::function<R(Args...)>;
 
 } // namespace Reaktoro
