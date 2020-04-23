@@ -40,4 +40,7 @@ constexpr auto cubicCentimeterToCubicMeter = 1.0e-06;
 /// The conversion factor from cubic meters to cubic centimeters
 constexpr auto cubicMeterToCubicCentimeter = 1.0e+06;
 
+/// The value of ln(10)
+constexpr auto ln10 = 2.30258509299404590109361379290930926799774169921875;
+
 } // namespace Reaktoro
