@@ -320,6 +320,7 @@ struct SmartEquilibriumSolver::Impl
         result.estimate.accepted = false;
 
         // Skip estimation if no cluster exists yet
+        //std::cout << "is cluster empty: " << database.clusters.empty() << std::endl;
         if(database.clusters.empty())
             return;
 
@@ -430,18 +431,44 @@ struct SmartEquilibriumSolver::Impl
 
                     const auto& ies = partition.indicesEquilibriumSpecies();
                     const auto& iee = partition.indicesEquilibriumElements();
+
+                    // Fetch reference values
                     const auto& be0 = record.be;
                     const auto& n0 = record.state.speciesAmounts();
+                    const auto& P0 = record.state.pressure();
+                    const auto& T0 = record.state.temperature();
                     const auto& y0 = record.state.equilibrium().elementChemicalPotentials();
                     const auto& z0 = record.state.equilibrium().speciesStabilities();
                     const auto& ips0 = record.state.equilibrium().indicesEquilibriumSpecies();
                     const auto& Np0 = record.state.equilibrium().numPrimarySpecies();
                     const auto& dndb0 = record.sensitivity.dndb;
+                    const auto& dndP0 = record.sensitivity.dndP;
+                    const auto& dndT0 = record.sensitivity.dndT;
+
+                    // Fetch reference values restricted to equilibrium species only
                     const auto& dnedbe0 = dndb0(ies, iee);
+                    const auto& dnedbPe0 = dndP0(ies);
+                    const auto& dnedbTe0 = dndT0(ies);
                     const auto& ne0 = n0(ies);
 
+                    /*
+                    std::cout << "dnedbPe0 :" << tr(dnedbPe0) << std::endl;
+                    std::cout << "P :" << P << std::endl;
+                    std::cout << "P0 :" << P0 << std::endl;
+                    */
+
                     // Perform Taylor extrapolation
-                    ne.noalias() = ne0 + dnedbe0 * (be - be0);
+                    //ne.noalias() = ne0 + dnedbe0 * (be - be0);
+                    //std::cout << "ne (only with b):" << tr(ne) << std::endl;
+
+
+                    // Perform Taylor extrapolation
+                    ne.noalias() = ne0 + dnedbe0 * (be - be0) + dnedbPe0 * (P - P0) + dnedbTe0 * (T - T0);
+                    //std::cout << "ne (with b, P, T) = " << tr(ne) << std::endl;
+                    //std::cout << "dnedbPe0 * (P - P0) = " << tr(dnedbPe0 * (P - P0)) << std::endl;
+                    //std::cout << "|| dnedbPe0 * (P - P0) || = " << (dnedbPe0 * (P - P0)).squaredNorm() << std::endl;
+
+                    //getchar();
 
                     // Check if all projected species amounts are positive
                     const double ne_min = min(ne);
@@ -588,9 +615,9 @@ struct SmartEquilibriumSolver::Impl
                 std::cout << system.species(j).name() << " ";
             std::cout << std::endl;
             std::cout << "  NUMBER OF RECORDS: " << database.clusters[i].records.size() << std::endl;
-            std::cout << "  RANK OF RECORDS: ";
-            for(auto j : database.clusters[i].priority.order())
-                std::cout << database.clusters[i].priority.priorities()[j] << " ";
+            //std::cout << "  RANK OF RECORDS: ";
+            //for(auto j : database.clusters[i].priority.order())
+            //    std::cout << database.clusters[i].priority.priorities()[j] << " ";
             std::cout << std::endl;
             std::cout << std::endl;
             i++;
