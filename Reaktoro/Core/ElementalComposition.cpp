@@ -20,11 +20,14 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Singletons/PeriodicTable.hpp>
 
 namespace Reaktoro {
 
 ElementalComposition::ElementalComposition()
+{}
+
+ElementalComposition::ElementalComposition(std::initializer_list<Pair<Element, double>> const& elements)
+: m_elements(elements.begin(), elements.end())
 {}
 
 ElementalComposition::ElementalComposition(Map<Element, double> const& elements)
@@ -34,14 +37,7 @@ ElementalComposition::ElementalComposition(Map<Element, double> const& elements)
 ElementalComposition::ElementalComposition(Map<String, double> const& elements)
 {
     for(auto&& [symbol, coeff] : elements)
-    {
-        const auto element = PeriodicTable::elementWithSymbol(symbol);
-        error(!element.has_value(), "Cannot proceed with ElementalComposition constructor. "
-            "PeriodicTable contains no element with symbol ", symbol, ". "
-            "Use method PeriodicTable::append (in C++) or PeriodicTable.append (in Python) "
-            "to add a new Element with this symbol.");
-        m_elements.emplace(element.value(), coeff);
-    }
+        m_elements.emplace(Element(symbol), coeff);
 }
 
 auto ElementalComposition::size() const -> Index
