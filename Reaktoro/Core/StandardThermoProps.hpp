@@ -28,19 +28,19 @@ namespace Reaktoro {
 /// The primary standard thermodynamic properties of a chemical species.
 struct StandardThermoProps
 {
-    /// The standard molar Gibbs energy @f$G^{\circ}@f$ of the species (in J/mol)
+    /// The standard molar Gibbs energy @f$G^{\circ}@f$ of the species (in J/mol).
     real G0 = {};
 
-    /// The standard molar enthalpy @f$H^{\circ}@f$ of the species (in J/mol)
+    /// The standard molar enthalpy @f$H^{\circ}@f$ of the species (in J/mol).
     real H0 = {};
 
-    /// The standard molar volume @f$V^{\circ}@f$ of the species (in m3/mol)
+    /// The standard molar volume @f$V^{\circ}@f$ of the species (in m3/mol).
     real V0 = {};
 
-    /// The standard molar isobaric heat capacity @f$C_{P}^{\circ}@f$ of the species (in J/(mol·K))
+    /// The standard molar isobaric heat capacity @f$C_{P}^{\circ}@f$ of the species (in J/(mol·K)).
     real Cp0 = {};
 
-    /// The standard molar isochoric heat capacity @f$C_{V}^{\circ}@f$ of the species (in J/(mol·K))
+    /// The standard molar isochoric heat capacity @f$C_{V}^{\circ}@f$ of the species (in J/(mol·K)).
     real Cv0 = {};
 };
 
