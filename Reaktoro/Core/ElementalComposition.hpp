@@ -31,6 +31,9 @@ public:
     ElementalComposition();
 
     /// Construct an ElementalComposition object with given elements and respective coefficients.
+    ElementalComposition(std::initializer_list<Pair<Element, double>> const& elements);
+
+    /// Construct an ElementalComposition object with given elements and respective coefficients.
     ElementalComposition(Map<Element, double> const& elements);
 
     /// Construct an ElementalComposition object with given element symbols and respective coefficients.
