@@ -19,9 +19,11 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
+
+// Forward declarations
+class Species;
 
 /// A class to represent a formation reaction of a chemical species.
 /// @ingroup Core

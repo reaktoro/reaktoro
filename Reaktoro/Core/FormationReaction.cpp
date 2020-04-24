@@ -21,6 +21,7 @@
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
 
@@ -45,6 +46,9 @@ struct FormationReaction::Impl
     /// Return the standard Gibbs energy function of the product species in the formation reaction.
     auto createStandardGibbsEnergyFn() const -> Fn<real,real,real>
     {
+        // Return empty function object if function lgK has not been provided yet
+        if(!lgK) return {};
+
         return [=](real T, real P)
         {
             const auto R = universalGasConstant;
@@ -52,8 +56,7 @@ struct FormationReaction::Impl
             const auto dG0 = -R*T*lnK;
             real G0 = dG0; // G0 = dG0 + sum(vr * G0r)
             for(const auto [reactant, coeff] : reactants) {
-                assert(reactant.standardThermoPropsFn());
-                G0 += coeff * reactant.standardThermoPropsFn()(T, P).G0;
+                G0 += coeff * reactant.props(T, P).G0;
             }
             return G0;
         };
@@ -62,12 +65,14 @@ struct FormationReaction::Impl
     /// Return the standard enthalpy function of the product species in a formation reaction.
     auto createStandardEnthalpyFn() const -> Fn<real,real,real>
     {
+        // Return empty function object if function dH0 has not been provided yet
+        if(!dH0) return {};
+
         return [=](real T, real P)
         {
             real H0 = dH0(T, P); // H0 = dH0 + sum(vr * H0r)
             for(const auto [reactant, coeff] : reactants) {
-                assert(reactant.standardThermoPropsFn());
-                H0 += coeff * reactant.standardThermoPropsFn()(T, P).H0;
+                H0 += coeff * reactant.props(T, P).H0;
             }
             return H0;
         };
@@ -87,12 +92,6 @@ auto FormationReaction::withProduct(String product) const -> FormationReaction
 
 auto FormationReaction::withReactants(Pairs<Species, double> reactants) const -> FormationReaction
 {
-    for(const auto& [species, coeff] : reactants)
-        error(!species.standardThermoPropsFn(),
-            "The Species objects in the method FormationReaction::withReactants "
-            "need to have a non-empty function for ther standard thermodynamic "
-            "property calculations. Use method Species::withStandardThermoPropsFn "
-            "in the Species object with name ", species.name(), " to correct this error.");
     FormationReaction copy = clone();
     copy.pimpl->reactants = reactants;
     return copy;
