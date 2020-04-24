@@ -51,10 +51,10 @@ public:
     /// ~~~
     /// Note that unity stoichiometric coefficients can be ommited from the
     /// equation. The operator `*` must be used when this is not the case.
-    /// {
     ReactionEquation(const String& equation);
+
+    /// Construct a ReactionEquation object by parsing a string.
     ReactionEquation(const char* equation);
-    /// }
 
     /// Return true if the rection equation is empty.
     auto empty() const -> bool;
