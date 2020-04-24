@@ -211,7 +211,7 @@ TEST_CASE("Testing ElementList", "[ElementList]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: ElementList::append
     //-------------------------------------------------------------------------
-    elements.append(Element("Xy").withName("Xyrium"));
+    elements.append(Element().withSymbol("Xy").withName("Xyrium"));
 
     REQUIRE( elements.indexWithSymbol("Xy")   < elements.size() );
     REQUIRE( elements.indexWithName("Xyrium") < elements.size() );

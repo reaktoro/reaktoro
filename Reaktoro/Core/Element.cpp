@@ -19,28 +19,45 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Singletons/PeriodicTable.hpp>
 
 namespace Reaktoro {
+namespace detail {
+
+/// Return an Element object from PeriodicTable with given symbol.
+auto getElementFromPeriodicTable(String symbol) -> Element
+{
+    const auto element = PeriodicTable::elementWithSymbol(symbol);
+    error(!element.has_value(), "Cannot proceed with Elemental(symbol) constructor. "
+        "PeriodicTable contains no element with symbol ", symbol, ". "
+        "Use method PeriodicTable::append (in C++) or PeriodicTable.append (in Python) "
+        "to add a new Element with this symbol. Or construct the Element object without "
+        "using this special constructor.");
+    return element.value();
+}
+
+} // namespace detail
 
 struct Element::Impl
 {
     /// The symbol of the element (e.g., "H", "O", "C", "Na").
-    std::string symbol;
+    String symbol;
 
     /// The name of the element (e.g., "Hydrogen", "Oxygen").
-    std::string name;
+    String name;
 
     /// The atomic number of the element.
-    std::size_t atomic_number = {};
+    Index atomic_number = {};
 
-    /// The atomic weight (or molar mass) of the element (in unit of kg/mol).
+    /// The atomic weight (or molar mass) of the element (in kg/mol).
     double atomic_weight = {};
 
     /// The electronegativity of the element.
     double electronegativity = {};
 
     /// The tags of the element.
-    std::vector<std::string> tags;
+    Strings tags;
 
     /// Construct a default Element::Impl object.
     Impl()
@@ -61,29 +78,29 @@ Element::Element()
 : pimpl(new Impl())
 {}
 
-Element::Element(std::string symbol)
- : pimpl(new Impl({symbol}))
+Element::Element(String symbol)
+ : Element(detail::getElementFromPeriodicTable(symbol))
 {}
 
 Element::Element(const Args& attributes)
  : pimpl(new Impl(attributes))
 {}
 
-auto Element::withSymbol(std::string symbol) const -> Element
+auto Element::withSymbol(String symbol) const -> Element
 {
     Element copy = clone();
     copy.pimpl->symbol = symbol;
     return copy;
 }
 
-auto Element::withName(std::string name) const -> Element
+auto Element::withName(String name) const -> Element
 {
     Element copy = clone();
     copy.pimpl->name = name;
     return copy;
 }
 
-auto Element::withAtomicNumber(std::size_t atomic_number) const -> Element
+auto Element::withAtomicNumber(Index atomic_number) const -> Element
 {
     Element copy = clone();
     copy.pimpl->atomic_number = atomic_number;
@@ -109,24 +126,24 @@ auto Element::withElectronegativity(double electronegativity) const -> Element
     return copy;
 }
 
-auto Element::withTags(std::vector<std::string> tags) const -> Element
+auto Element::withTags(Strings tags) const -> Element
 {
     Element copy = clone();
     copy.pimpl->tags = tags;
     return copy;
 }
 
-auto Element::symbol() const -> std::string
+auto Element::symbol() const -> String
 {
     return pimpl->symbol;
 }
 
-auto Element::name() const -> std::string
+auto Element::name() const -> String
 {
     return pimpl->name;
 }
 
-auto Element::atomicNumber() const -> std::size_t
+auto Element::atomicNumber() const -> Index
 {
     return pimpl->atomic_number;
 }
@@ -146,7 +163,7 @@ auto Element::electronegativity() const -> double
     return pimpl->electronegativity;
 }
 
-auto Element::tags() const -> const std::vector<std::string>&
+auto Element::tags() const -> const Strings&
 {
     return pimpl->tags;
 }

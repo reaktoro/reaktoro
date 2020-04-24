@@ -17,10 +17,8 @@
 
 #pragma once
 
-// C++ includes
-#include <memory>
-#include <string>
-#include <vector>
+// Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 
 namespace Reaktoro {
 
@@ -32,71 +30,70 @@ public:
     struct Args
     {
         /// The symbol of the element (e.g., "H", "O", "C", "Na").
-        std::string symbol;
+        String symbol;
 
         /// The name of the element (e.g., "Hydrogen", "Oxygen").
-        std::string name;
+        String name;
 
         /// The atomic number of the element.
-        std::size_t atomic_number = {};
+        Index atomic_number = {};
 
-        /// The atomic weight (or molar mass) of the element (in unit of kg/mol).
+        /// The atomic weight (or molar mass) of the element (in kg/mol).
         double atomic_weight = {};
 
         /// The electronegativity of the element.
         double electronegativity = {};
 
         /// The tags of the element.
-        std::vector<std::string> tags;
+        Strings tags;
     };
 
     /// Construct a default Element object.
     Element();
 
-    /// Construct an Element object with given symbol.
-    explicit Element(std::string symbol);
+    /// Construct an Element object by looking up to the periodic table with given symbol.
+    explicit Element(String symbol);
 
     /// Construct an Element object with given data.
-    /// @param args The arguments to construct the element.
     explicit Element(const Args& args);
 
     /// Return a duplicate of this Element object with replaced symbol attribute.
-    auto withSymbol(std::string symbol) const -> Element;
+    auto withSymbol(String symbol) const -> Element;
 
     /// Return a duplicate of this Element object with replaced name attribute.
-    auto withName(std::string name) const -> Element;
+    auto withName(String name) const -> Element;
 
     /// Return a duplicate of this Element object with replaced atomic number attribute.
-    auto withAtomicNumber(std::size_t atomic_number) const -> Element;
+    auto withAtomicNumber(Index value) const -> Element;
 
-    /// Return a duplicate of this Element object with replaced atomic weight attribute.
+    /// Return a duplicate of this Element object with replaced atomic weight attribute (in kg/mol).
     /// @note This method is equivalent to withMolarMass
-    auto withAtomicWeight(double atomic_weight) const -> Element;
+    auto withAtomicWeight(double value) const -> Element;
 
-    /// Return a duplicate of this Element object with replaced molar mass attribute.
+    /// Return a duplicate of this Element object with replaced molar mass attribute (in kg/mol).
     /// @note This method is equivalent to withAtomicWeight
-    auto withMolarMass(double molar_mass) const -> Element;
+    auto withMolarMass(double value) const -> Element;
 
     /// Return a duplicate of this Element object with replaced electronegativity attribute.
-    auto withElectronegativity(double electronegativity) const -> Element;
+    auto withElectronegativity(double value) const -> Element;
 
     /// Return a duplicate of this Element object with replaced tags attribute.
-    auto withTags(std::vector<std::string> tags) const -> Element;
+    auto withTags(Strings tags) const -> Element;
 
     /// Return the symbol of the element (e.g., "H", "O", "C", "Na").
-    auto symbol() const -> std::string;
+    auto symbol() const -> String;
 
     /// Return the name of the element (e.g., "Hydrogen", "Oxygen").
-    auto name() const -> std::string;
+    auto name() const -> String;
 
     /// Return the atomic number of the element.
-    auto atomicNumber() const -> std::size_t;
+    auto atomicNumber() const -> Index;
 
-    /// Return the atomic weight of the element (in unit of kg/mol).
+    /// Return the atomic weight of the element (in kg/mol).
     /// @note This method is equivalent to molarMass
     auto atomicWeight() const -> double;
 
-    /// Return the molar mass of the element (in unit of kg/mol).
+    /// Return the molar mass of the element (in kg/mol).
     /// @note This method is equivalent to atomicWeight
     auto molarMass() const -> double;
 
@@ -104,7 +101,7 @@ public:
     auto electronegativity() const -> double;
 
     /// Return the tags of the element.
-    auto tags() const -> const std::vector<std::string>&;
+    auto tags() const -> const Strings&;
 
     /// Return a deep copy of this Element object.
     auto clone() const -> Element;
