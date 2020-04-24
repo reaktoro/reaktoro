@@ -47,7 +47,7 @@ public:
     auto str() const -> const String&;
 
     /// Return the element symbols and their coefficients in the chemical formula.
-    auto elements() const -> Map<String, double>;
+    auto elements() const -> const Map<String, double>&;
 
     /// Return the element symbols in the chemical formula.
     auto symbols() const -> Strings;
