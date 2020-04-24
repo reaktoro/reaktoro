@@ -25,6 +25,7 @@
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/ElementalComposition.hpp>
+#include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 
 namespace Reaktoro {
@@ -37,19 +38,19 @@ public:
     Species();
 
     /// Construct a Species object with given chemical formula (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    explicit Species(const String& formula);
+    explicit Species(String formula);
 
     /// Return a duplicate of this Species object with new name that uniquely identifies this species.
-    auto withName(const String& name) const -> Species;
+    auto withName(String name) const -> Species;
 
     /// Return a duplicate of this Species object with new formula (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    auto withFormula(const String& formula) const -> Species;
+    auto withFormula(String formula) const -> Species;
 
     /// Return a duplicate of this Species object with new case insensitive substance name (e.g. `WATER`, `CARBON-MONOXIDE`).
-    auto withSubstance(const String& substance) const -> Species;
+    auto withSubstance(String substance) const -> Species;
 
     /// Return a duplicate of this Species object with new elemental composition.
-    auto withElements(const ElementalComposition& elements) const -> Species;
+    auto withElements(ElementalComposition elements) const -> Species;
 
     /// Return a duplicate of this Species object with new electric charge attribute.
     auto withCharge(double charge) const -> Species;
@@ -57,7 +58,16 @@ public:
     /// Return a duplicate of this Species object with new aggregate state.
     auto withAggregateState(AggregateState option) const -> Species;
 
-    /// Return a duplicate of this Species object with new function that computes its standard thermodynamic properties.
+    /// Return a duplicate of this Species object with new formation reaction and its thermodynamic properties.
+    auto withFormationReaction(FormationReaction reaction) const -> Species;
+
+    /// Return a duplicate of this Species object with new standard Gibbs energy value (in J/mol).
+    auto withStandardGibbsEnergy(real value) const -> Species;
+
+    /// Return a duplicate of this Species object with new standard Gibbs energy function (in J/mol).
+    auto withStandardGibbsEnergyFn(const Fn<real,real,real>& fn) const -> Species;
+
+    /// Return a duplicate of this Species object with new standard thermodynamic property calculation function.
     auto withStandardThermoPropsFn(const StandardThermoPropsFn& fn) const -> Species;
 
     /// Return a duplicate of this Species object with new tags attribute.
@@ -75,26 +85,32 @@ public:
     /// Return the name of the underlying substance of the species if provided, otherwise, its formula without any suffix.
     auto substance() const -> String;
 
+    /// Return the elements that compose the species and their coefficients.
+    auto elements() const -> const ElementalComposition&;
+
     /// Return the electric charge of the species.
     auto charge() const -> double;
-
-    /// Return the molar mass of the species (in unit of kg/mol).
-    auto molarMass() const -> double;
 
     /// Return the aggregate state of the species.
     auto aggregateState() const -> AggregateState;
 
+    /// Return the formation reaction of the species.
+    auto reaction() const -> const FormationReaction&;
+
     /// Return the function that computes the standard thermodynamic properties of the species.
     auto standardThermoPropsFn() const -> const StandardThermoPropsFn&;
-
-    /// Return the elements that compose the species and their coefficients.
-    auto elements() const -> const ElementalComposition&;
 
     /// Return the tags of the species (e.g., `organic`, `mineral`).
     auto tags() const -> const Strings&;
 
     /// Return the attached data of the species whose type is known at runtime only.
     auto attachedData() const -> const std::any&;
+
+    /// Return the molar mass of the species (in unit of kg/mol).
+    auto molarMass() const -> double;
+
+    /// Return the standard thermodynamic properties of the species at given temperature (in K) and pressure (in Pa).
+    auto props(real T, real P) const -> StandardThermoProps;
 
     /// Return a deep copy of this Species object.
     auto clone() const -> Species;
