@@ -279,7 +279,7 @@ auto ChemicalFormula::str() const -> const String&
     return pimpl->formula;
 }
 
-auto ChemicalFormula::elements() const -> Map<String, double>
+auto ChemicalFormula::elements() const -> const Map<String, double>&
 {
     return pimpl->elements;
 }

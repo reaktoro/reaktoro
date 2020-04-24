@@ -17,9 +17,6 @@
 
 #pragma once
 
-// C++ includes
-#include <functional>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
