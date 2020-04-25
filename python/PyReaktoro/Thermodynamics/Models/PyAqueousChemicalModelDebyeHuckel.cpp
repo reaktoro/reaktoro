@@ -18,11 +18,11 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelDebyeHuckel.hpp>
+#include <Reaktoro/Models/ActivityModelDebyeHuckel.hpp>
 
 namespace Reaktoro {
 
-void exportAqueousChemicalModelDebyeHuckel(py::module& m)
+void exportActivityModelDebyeHuckel(py::module& m)
 {
     auto aiondefault1 = static_cast<void(DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::aiondefault);
     auto aiondefault2 = static_cast<double(DebyeHuckelParams::*)() const>(&DebyeHuckelParams::aiondefault);

@@ -23,8 +23,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Thermodynamics/Models/ChemicalModel.hpp>
-#include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
+#include <Reaktoro/Models/ChemicalModel.hpp>
+#include <Reaktoro/Models/ThermoModel.hpp>
 
 namespace Reaktoro {
 

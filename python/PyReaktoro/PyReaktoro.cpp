@@ -98,7 +98,7 @@ extern void exportStateOfMatter(py::module& m);
 extern void exportChemicalEditor(py::module& m);
 extern void exportDatabase(py::module& m);
 extern void exportThermo(py::module& m);
-extern void exportAqueousChemicalModelDebyeHuckel(py::module& m);
+extern void exportActivityModelDebyeHuckel(py::module& m);
 extern void exportAqueousPhase(py::module& m);
 extern void exportFluidPhase(py::module& m);
 extern void exportMineralPhase(py::module& m);
@@ -198,7 +198,7 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportDatabase(m);
     exportChemicalEditor(m);
     exportThermo(m);
-    exportAqueousChemicalModelDebyeHuckel(m);
+    exportActivityModelDebyeHuckel(m);
     exportAqueousPhase(m);
     exportFluidPhase(m);
     exportMineralPhase(m);
