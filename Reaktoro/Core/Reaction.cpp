@@ -41,6 +41,13 @@ Reaction::Reaction()
 : pimpl(new Impl())
 {}
 
+auto Reaction::clone() const -> Reaction
+{
+    Reaction reaction;
+    *reaction.pimpl = *pimpl;
+    return reaction;
+}
+
 auto Reaction::withName(String name) const -> Reaction
 {
     Reaction copy = clone();
@@ -87,13 +94,6 @@ auto Reaction::equilibriumConstantFn() const -> const EquilibriumConstantFn&
 auto Reaction::rateFn() const -> const ReactionRateFn&
 {
     return pimpl->ratefn;
-}
-
-auto Reaction::clone() const -> Reaction
-{
-    Reaction reaction;
-    *reaction.pimpl = *pimpl;
-    return reaction;
 }
 
 auto operator<(const Reaction& lhs, const Reaction& rhs) -> bool

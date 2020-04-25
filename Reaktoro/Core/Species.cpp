@@ -136,6 +136,13 @@ Species::Species(String formula)
 : pimpl(new Impl(formula))
 {}
 
+auto Species::clone() const -> Species
+{
+    Species species;
+    *species.pimpl = *pimpl;
+    return species;
+}
+
 auto Species::withName(String name) const -> Species
 {
     Species copy = clone();
@@ -191,7 +198,7 @@ auto Species::withStandardGibbsEnergy(real value) const -> Species
     return withStandardGibbsEnergyFn([=](real T, real P) { return value; });
 }
 
-auto Species::withStandardGibbsEnergyFn(const Fn<real,real,real>& fn) const -> Species
+auto Species::withStandardGibbsEnergyFn(const Fn<real(real,real)>& fn) const -> Species
 {
     return withStandardThermoPropsFn([=](real T, real P)
     {
@@ -287,13 +294,6 @@ auto Species::molarMass() const -> double
 auto Species::props(real T, real P) const -> StandardThermoProps
 {
     return pimpl->props_fn(T, P);
-}
-
-auto Species::clone() const -> Species
-{
-    Species species;
-    *species.pimpl = *pimpl;
-    return species;
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool

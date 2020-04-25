@@ -34,17 +34,17 @@ struct FormationReaction::Impl
     Pairs<Species, double> reactants;
 
     /// The equilibrium constant function (log base 10).
-    Fn<real,real,real> lgK;
+    Fn<real(real,real)> lgK;
 
     /// The enthalpy of formation function (in J/mol).
-    Fn<real,real,real> dH0;
+    Fn<real(real,real)> dH0;
 
     /// Construct a default FormationReaction::Impl object
     Impl()
     {}
 
     /// Return the standard Gibbs energy function of the product species in the formation reaction.
-    auto createStandardGibbsEnergyFn() const -> Fn<real,real,real>
+    auto createStandardGibbsEnergyFn() const -> Fn<real(real,real)>
     {
         // Return empty function object if function lgK has not been provided yet
         if(!lgK) return {};
@@ -63,7 +63,7 @@ struct FormationReaction::Impl
     }
 
     /// Return the standard enthalpy function of the product species in a formation reaction.
-    auto createStandardEnthalpyFn() const -> Fn<real,real,real>
+    auto createStandardEnthalpyFn() const -> Fn<real(real,real)>
     {
         // Return empty function object if function dH0 has not been provided yet
         if(!dH0) return {};
@@ -82,6 +82,13 @@ struct FormationReaction::Impl
 FormationReaction::FormationReaction()
 : pimpl(new Impl())
 {}
+
+auto FormationReaction::clone() const -> FormationReaction
+{
+    FormationReaction copy;
+    *copy.pimpl = *pimpl;
+    return copy;
+}
 
 auto FormationReaction::withProduct(String product) const -> FormationReaction
 {
@@ -104,7 +111,7 @@ auto FormationReaction::withEquilibriumConstant(real value) const -> FormationRe
     return copy;
 }
 
-auto FormationReaction::withEquilibriumConstantFn(const Fn<real,real,real>& fn) const -> FormationReaction
+auto FormationReaction::withEquilibriumConstantFn(const Fn<real(real,real)>& fn) const -> FormationReaction
 {
     FormationReaction copy = clone();
     copy.pimpl->lgK = fn;
@@ -118,7 +125,7 @@ auto FormationReaction::withFormationEnthalpy(real value) const -> FormationReac
     return copy;
 }
 
-auto FormationReaction::withFormationEnthalpyFn(const Fn<real,real,real>& fn) const -> FormationReaction
+auto FormationReaction::withFormationEnthalpyFn(const Fn<real(real,real)>& fn) const -> FormationReaction
 {
     FormationReaction copy = clone();
     copy.pimpl->dH0 = fn;
@@ -135,31 +142,24 @@ auto FormationReaction::reactants() const -> const Pairs<Species, double>&
     return pimpl->reactants;
 }
 
-auto FormationReaction::equilibriumConstantFn() const -> const Fn<real,real,real>&
+auto FormationReaction::equilibriumConstantFn() const -> const Fn<real(real,real)>&
 {
     return pimpl->lgK;
 }
 
-auto FormationReaction::formationEnthalpyFn() const -> const Fn<real,real,real>&
+auto FormationReaction::formationEnthalpyFn() const -> const Fn<real(real,real)>&
 {
     return pimpl->dH0;
 }
 
-auto FormationReaction::standardGibbsEnergyFn() const -> Fn<real,real,real>
+auto FormationReaction::standardGibbsEnergyFn() const -> Fn<real(real,real)>
 {
     return pimpl->createStandardGibbsEnergyFn();
 }
 
-auto FormationReaction::standardEnthalpyFn() const -> Fn<real,real,real>
+auto FormationReaction::standardEnthalpyFn() const -> Fn<real(real,real)>
 {
     return pimpl->createStandardEnthalpyFn();
-}
-
-auto FormationReaction::clone() const -> FormationReaction
-{
-    FormationReaction copy;
-    *copy.pimpl = *pimpl;
-    return copy;
 }
 
 } // namespace Reaktoro

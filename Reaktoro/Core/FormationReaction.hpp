@@ -33,6 +33,9 @@ public:
     /// Construct a default FormationReaction object.
     FormationReaction();
 
+    /// Return a deep copy of this FormationReaction object.
+    auto clone() const -> FormationReaction;
+
     /// Return a duplicate of this FormationReaction object with new name of the product species in the formation reaction.
     auto withProduct(String product) const -> FormationReaction;
 
@@ -43,13 +46,13 @@ public:
     auto withEquilibriumConstant(real value) const -> FormationReaction;
 
     /// Return a duplicate of this FormationReaction object with new equilibrium constant function (log base 10).
-    auto withEquilibriumConstantFn(const Fn<real,real,real>& fn) const -> FormationReaction;
+    auto withEquilibriumConstantFn(const Fn<real(real,real)>& fn) const -> FormationReaction;
 
     /// Return a duplicate of this FormationReaction object with new enthalpy of formation value (in J/mol).
     auto withFormationEnthalpy(real value) const -> FormationReaction;
 
     /// Return a duplicate of this FormationReaction object with new enthalpy of formation function (in J/mol).
-    auto withFormationEnthalpyFn(const Fn<real,real,real>& fn) const -> FormationReaction;
+    auto withFormationEnthalpyFn(const Fn<real(real,real)>& fn) const -> FormationReaction;
 
     /// Return the name of the product species in the formation reaction.
     auto product() const -> String;
@@ -58,19 +61,16 @@ public:
     auto reactants() const -> const Pairs<Species, double>&;
 
     /// Return the equilibrium constant function of the formation reaction (log base 10).
-    auto equilibriumConstantFn() const -> const Fn<real,real,real>&;
+    auto equilibriumConstantFn() const -> const Fn<real(real,real)>&;
 
     /// Return the enthalpy function of the formation reaction.
-    auto formationEnthalpyFn() const -> const Fn<real,real,real>&;
+    auto formationEnthalpyFn() const -> const Fn<real(real,real)>&;
 
     /// Return the standard Gibbs energy function of the product species in the formation reaction.
-    auto standardGibbsEnergyFn() const -> Fn<real,real,real>;
+    auto standardGibbsEnergyFn() const -> Fn<real(real,real)>;
 
     /// Return the standard enthalpy function of the product species in the formation reaction.
-    auto standardEnthalpyFn() const -> Fn<real,real,real>;
-
-    /// Return a deep copy of this FormationReaction object.
-    auto clone() const -> FormationReaction;
+    auto standardEnthalpyFn() const -> Fn<real(real,real)>;
 
 private:
     struct Impl;
