@@ -57,6 +57,10 @@ using Pair = std::pair<T, U>;
 template<typename T, typename U>
 using Pairs = Vec<Pair<T, U>>;
 
+/// Convenient alias for `std::tuple<Args...>`.
+template<typename... Args>
+using Tuple = std::tuple<Args...>;
+
 /// Convenient alias for `std::unique_ptr<T>`.
 template<typename T>
 using Ptr = std::unique_ptr<T>;
@@ -66,7 +70,7 @@ template<typename T>
 using SharedPtr = std::shared_ptr<T>;
 
 /// Convenient alias for `std::function<R(Args...)>`.
-template<typename R, typename... Args>
-using Fn = std::function<R(Args...)>;
+template<typename F>
+using Fn = std::function<F>;
 
 } // namespace Reaktoro
