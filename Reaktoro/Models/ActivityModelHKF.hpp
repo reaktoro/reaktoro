@@ -15,30 +15,25 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AqueousActivityModelSetschenow.hpp"
+#pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Extensions/Geochemistry/AqueousMixture.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 
 namespace Reaktoro {
 
-auto aqueousActivityModelSetschenow(const AqueousMixture& mixture, double b) -> AqueousActivityModel
-{
-    // The value of ln(10)
-    const double ln10 = 2.30258509299;
+// Forward declarations
+class AqueousMixture;
 
-    AqueousActivityModel f = [=](const AqueousMixtureState& state)
-    {
-        // The effective ionic strength of the aqueous mixture
-        const auto& I = state.Ie;
-
-        // The activity coefficient of the given species (in molality scale)
-        real ln_gi = ln10 * b * I;
-
-        return ln_gi;
-    };
-
-    return f;
-}
+/// Return an equation of state for an aqueous phase based on HKF model.
+/// The HKF model implemented here was documented in:
+///   - Helgeson, H. C., Kirkham, D. H., Flowers, G. C. (1981). Theoretical prediction of the thermodynamic behavior
+///     of aqueous electrolytes at high pressures and temperatures: IV. Calculation of activity coefficients, osmotic
+///     coefficients, and apparent molal and standard and relative partial molal properties to 600°C.
+///     American Journal of Science, 281(10), 1249–1516.
+/// @param mixture The aqueous mixture
+/// @return The equation of state function for the aqueous phase
+/// @see AqueousMixture, ActivityPropsFn
+auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityPropsFn;
 
 } // namespace Reaktoro
