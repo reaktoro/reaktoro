@@ -18,7 +18,7 @@
 #include "AqueousActivityModelDrummondCO2.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
+#include <Reaktoro/Extensions/Geochemistry/AqueousMixture.hpp>
 
 namespace Reaktoro {
 

@@ -19,22 +19,22 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
+#include <Reaktoro/Extensions/Geochemistry/AqueousMixture.hpp>
 
 namespace Reaktoro {
 
 auto aqueousActivityModelRumpfCO2(const AqueousMixture& mixture) -> AqueousActivityModel
 {
     // The number of speciesn and charged species
-    const auto nspecies = mixture.numSpecies();
-    const auto nions = mixture.numChargedSpecies();
+    const auto nspecies = mixture.species().size();
+    const auto nions = mixture.charged().size();
 
     // The local indices of some charged species among all charged species
-    const auto iNa  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Na+"));  // Na+, Na[+]
-    const auto iK   = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("K+"));   // K+, K[+]
-    const auto iCa  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Ca++")); // Ca++, Ca+2, Ca[+2]
-    const auto iMg  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Mg++")); // Mg++, Mg+2, Mg[+2]
-    const auto iCl  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Cl-"));  // Cl-, Cl[-]
+    const auto iNa  = mixture.charged().indexWithFormula("Na+");
+    const auto iK   = mixture.charged().indexWithFormula("K+");
+    const auto iCa  = mixture.charged().indexWithFormula("Ca++");
+    const auto iMg  = mixture.charged().indexWithFormula("Mg++");
+    const auto iCl  = mixture.charged().indexWithFormula("Cl-");
 
     AqueousActivityModel f = [=](const AqueousMixtureState& state) mutable
     {
