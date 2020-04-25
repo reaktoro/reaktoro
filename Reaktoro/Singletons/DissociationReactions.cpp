@@ -113,6 +113,7 @@ const std::deque<DissociationReaction> default_reactions =
     { "NaF", {{1, "Na+"}, {1, "F-"}} },
     { "NaHCO3", {{1, "Na+"}, {1, "HCO3-"}} },
     { "NaI", {{1, "Na+"}, {1, "I-"}} },
+    { "NaOH", {{1, "Na+"}, {1, "OH-"}} },
     { "NdCl3", {{1, "Nd+++"}, {3, "Cl-"}} },
     { "NdF3", {{1, "Nd+++"}, {3, "F-"}} },
     { "Ni(NO3)2", {{1, "Ni++"}, {2, "NO3-"}} },
