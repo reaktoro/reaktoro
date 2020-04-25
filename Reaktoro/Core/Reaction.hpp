@@ -51,6 +51,9 @@ public:
     /// Construct a default Reaction instance
     Reaction();
 
+    /// Return a deep copy of this Reaction object.
+    auto clone() const -> Reaction;
+
     /// Return a duplicate of this Reaction object with new reaction name.
     auto withName(String name) const -> Reaction;
 
@@ -74,9 +77,6 @@ public:
 
     /// Return the rate function of the reaction.
     auto rateFn() const -> const ReactionRateFn&;
-
-    /// Return a deep copy of this Reaction object.
-    auto clone() const -> Reaction;
 
 private:
     struct Impl;

@@ -40,6 +40,9 @@ public:
     /// Construct a Species object with given chemical formula (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
     explicit Species(String formula);
 
+    /// Return a deep copy of this Species object.
+    auto clone() const -> Species;
+
     /// Return a duplicate of this Species object with new name that uniquely identifies this species.
     auto withName(String name) const -> Species;
 
@@ -65,7 +68,7 @@ public:
     auto withStandardGibbsEnergy(real value) const -> Species;
 
     /// Return a duplicate of this Species object with new standard Gibbs energy function (in J/mol).
-    auto withStandardGibbsEnergyFn(const Fn<real,real,real>& fn) const -> Species;
+    auto withStandardGibbsEnergyFn(const Fn<real(real,real)>& fn) const -> Species;
 
     /// Return a duplicate of this Species object with new standard thermodynamic property calculation function.
     auto withStandardThermoPropsFn(const StandardThermoPropsFn& fn) const -> Species;
@@ -111,9 +114,6 @@ public:
 
     /// Return the standard thermodynamic properties of the species at given temperature (in K) and pressure (in Pa).
     auto props(real T, real P) const -> StandardThermoProps;
-
-    /// Return a deep copy of this Species object.
-    auto clone() const -> Species;
 
 private:
     struct Impl;

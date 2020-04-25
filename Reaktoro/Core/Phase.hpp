@@ -37,6 +37,9 @@ public:
     /// Construct a default Phase object.
     Phase();
 
+    /// Return a deep copy of this Phase object.
+    auto clone() const -> Phase;
+
     /// Return a copy of this Phase object with a new name.
     auto withName(std::string name) -> Phase;
 
@@ -66,9 +69,6 @@ public:
 
     /// Return the activity model function of the phase.
     auto activityPropsFn() const -> const ActivityPropsFn&;
-
-    /// Return a deep copy of this Phase object.
-    auto clone() const -> Phase;
 
 private:
     struct Impl;

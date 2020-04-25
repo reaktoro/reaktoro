@@ -57,6 +57,9 @@ public:
     /// Construct an Element object with given data.
     explicit Element(const Args& args);
 
+    /// Return a deep copy of this Element object.
+    auto clone() const -> Element;
+
     /// Return a duplicate of this Element object with replaced symbol attribute.
     auto withSymbol(String symbol) const -> Element;
 
@@ -102,9 +105,6 @@ public:
 
     /// Return the tags of the element.
     auto tags() const -> const Strings&;
-
-    /// Return a deep copy of this Element object.
-    auto clone() const -> Element;
 
 private:
     struct Impl;

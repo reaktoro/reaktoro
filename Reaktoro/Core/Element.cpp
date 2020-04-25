@@ -86,6 +86,13 @@ Element::Element(const Args& attributes)
  : pimpl(new Impl(attributes))
 {}
 
+auto Element::clone() const -> Element
+{
+    Element element;
+    *element.pimpl = *pimpl;
+    return element;
+}
+
 auto Element::withSymbol(String symbol) const -> Element
 {
     Element copy = clone();
@@ -166,13 +173,6 @@ auto Element::electronegativity() const -> double
 auto Element::tags() const -> const Strings&
 {
     return pimpl->tags;
-}
-
-auto Element::clone() const -> Element
-{
-    Element element;
-    *element.pimpl = *pimpl;
-    return element;
 }
 
 auto operator<(const Element& lhs, const Element& rhs) -> bool

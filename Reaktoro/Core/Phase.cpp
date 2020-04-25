@@ -67,6 +67,13 @@ Phase::Phase()
 : pimpl(new Impl())
 {}
 
+auto Phase::clone() const -> Phase
+{
+    Phase phase;
+    *phase.pimpl = *pimpl;
+    return phase;
+}
+
 auto Phase::withName(std::string name) -> Phase
 {
     Phase copy = clone();
@@ -125,13 +132,6 @@ auto Phase::species(Index idx) const -> const Species&
 auto Phase::activityPropsFn() const -> const ActivityPropsFn&
 {
     return pimpl->activity_props_fn;
-}
-
-auto Phase::clone() const -> Phase
-{
-    Phase phase;
-    *phase.pimpl = *pimpl;
-    return phase;
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool
