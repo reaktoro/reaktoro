@@ -94,8 +94,11 @@ auto fluidChemicalModelSpycherPruessEnnis(const GeneralMixture& mixture)-> Activ
     const auto nspecies = mixture.numSpecies();
 
     // Define the activity model function of the gaseous phase
-    ActivityPropsFn fn = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityPropsFn fn = [=](ActivityProps props, ActivityArgs args) mutable
     {
+        // The arguments for the activity model evaluation
+        const auto& [T, P, x, extra] = args;
+
         // Calculate the pressure in bar
         const auto Pb = convertPascalToBar(P);
         const auto ln_Pb = log(Pb);
@@ -131,18 +134,18 @@ auto fluidChemicalModelSpycherPruessEnnis(const GeneralMixture& mixture)-> Activ
         const auto V = convertCubicCentimeterToCubicMeter(v);
 
         // Set the excess molar volume of the phase (in m3/mol)
-        res.Vex = V - R*T/P;
+        props.Vex = V - R*T/P;
 
         // Set the ln activities of the gaseous species to ideal values
-        res.ln_a = ln_x + ln_Pb;
+        props.ln_a = ln_x + ln_Pb;
 
         // Set the ln activity coefficients of H2O(g) and CO2(g)
-        if(iH2O < nspecies) res.ln_g[iH2O] = ln_phiH2O;
-        if(iCO2 < nspecies) res.ln_g[iCO2] = ln_phiCO2;
+        if(iH2O < nspecies) props.ln_g[iH2O] = ln_phiH2O;
+        if(iCO2 < nspecies) props.ln_g[iCO2] = ln_phiCO2;
 
         // Correct the ln activities of H2O(g) and CO2(g)
-        if(iH2O < nspecies) res.ln_a[iH2O] += ln_phiH2O;
-        if(iCO2 < nspecies) res.ln_a[iCO2] += ln_phiCO2;
+        if(iH2O < nspecies) props.ln_a[iH2O] += ln_phiH2O;
+        if(iCO2 < nspecies) props.ln_a[iCO2] += ln_phiCO2;
     };
 
     return fn;

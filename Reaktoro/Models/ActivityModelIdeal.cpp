@@ -22,15 +22,17 @@
 
 namespace Reaktoro {
 
+using std::log;
+
 auto ActivityModelIdealAqueousSolution::operator()(const SpeciesList& species) -> ActivityPropsFn
 {
     const auto iH2O = species.indexWithFormula("H2O");
     const auto MH2O = waterMolarMass;
 
-    ActivityPropsFn fn = [=](ActivityProps props, real T, real P, ArrayXrConstRef x)
+    ActivityPropsFn fn = [=](ActivityProps props, ActivityArgs args) mutable
     {
-        using std::log;
-        const auto m = x/(MH2O * x[iH2O]); // molalities
+        const auto x = args.x;
+        const auto m = x/(MH2O * args.x[iH2O]); // molalities
         props = 0.0;
         props.ln_a = m.log();
         props.ln_a[iH2O] = log(x[iH2O]);
@@ -41,12 +43,11 @@ auto ActivityModelIdealAqueousSolution::operator()(const SpeciesList& species) -
 
 auto ActivityModelIdealGaseousSolution::operator()(const SpeciesList& species) -> ActivityPropsFn
 {
-    ActivityPropsFn fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x)
+    ActivityPropsFn fn = [](ActivityProps props, ActivityArgs args) mutable
     {
-        using std::log;
-        const auto Pbar = P * 1.0e-5; // from Pa to bar
+        const auto Pbar = args.P * 1.0e-5; // from Pa to bar
         props = 0.0;
-        props.ln_a = x.log() + log(Pbar);
+        props.ln_a = args.x.log() + log(Pbar);
     };
 
     return fn;
@@ -54,10 +55,10 @@ auto ActivityModelIdealGaseousSolution::operator()(const SpeciesList& species) -
 
 auto ActivityModelIdealSolution::operator()(const SpeciesList& species) -> ActivityPropsFn
 {
-    ActivityPropsFn fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x)
+    ActivityPropsFn fn = [=](ActivityProps props, ActivityArgs args) mutable
     {
         props = 0.0;
-        props.ln_a = x.log();
+        props.ln_a = args.x.log();
     };
 
     return fn;

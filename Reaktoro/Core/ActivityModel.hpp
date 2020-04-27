@@ -29,7 +29,7 @@
 namespace Reaktoro {
 
 /// The activity and excess thermodynamic properties of a phase.
-/// @see ActivityPropsFn, StandardThermoPropsFn, StandardThermoProps
+/// @see ActivityPropsFn, ActivityArgs
 struct ActivityProps
 {
     /// The excess molar volume of the phase (in m3/mol).
@@ -62,14 +62,38 @@ struct ActivityProps
     /// Assign a common value to all properties in this ActivityProps object.
     auto operator=(real value) -> ActivityProps&
     {
-        Vex = VexT = VexP = Gex = Hex = Cpex = Cvex = value;
-        ln_g = ln_a = value;
+        Vex  = value;
+        VexT = value;
+        VexP = value;
+        Gex  = value;
+        Hex  = value;
+        Cpex = value;
+        Cvex = value;
+        ln_g = value;
+        ln_a = value;
         return *this;
     }
 };
 
+/// The arguments in an function for calculation of activity properties of a phase.
+/// @see ActivityPropsFn, ActivityProps
+struct ActivityArgs
+{
+    /// The temperature for the calculation (in K).
+    real const& T;
+
+    /// The pressure for the calculation (in Pa).
+    real const& P;
+
+    /// The mole fractions of the species in the phase.
+    ArrayXrConstRef x;
+
+    /// The extra arguments for the activity model evaluation whose type is only known at runtime.
+    std::any& extra;
+};
+
 /// The function type for calculation of activity and excess thermodynamic properties of a phase.
-using ActivityPropsFn = std::function<void(ActivityProps, real, real, ArrayXrConstRef)>;
+using ActivityPropsFn = std::function<void(ActivityProps, ActivityArgs)>;
 
 /// The function type for the creation of activity model function of a phase.
 using ActivityModel = std::function<ActivityPropsFn(const SpeciesList&)>;

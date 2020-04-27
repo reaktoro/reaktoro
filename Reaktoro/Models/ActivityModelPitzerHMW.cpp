@@ -1385,8 +1385,11 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityProp
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    ActivityPropsFn fn = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityPropsFn fn = [=](ActivityProps props, ActivityArgs args) mutable
     {
+        // The arguments for the activity model evaluation
+        const auto& [T, P, x, extra] = args;
+
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, x);
 
@@ -1397,7 +1400,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityProp
             const Index i = pitzer.idx_cations[M];
 
             // Set the activity coefficient of the i-th species
-            res.ln_g[i] = lnActivityCoefficientCation(state, pitzer, M);
+            props.ln_g[i] = lnActivityCoefficientCation(state, pitzer, M);
         }
 
         // Calculate the activity coefficients of the anions
@@ -1407,7 +1410,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityProp
             const Index i = pitzer.idx_anions[X];
 
             // Set the activity coefficient of the i-th species
-            res.ln_g[i] = lnActivityCoefficientAnion(state, pitzer, X);
+            props.ln_g[i] = lnActivityCoefficientAnion(state, pitzer, X);
         }
 
         // Calculate the activity coefficients of the neutral species
@@ -1417,7 +1420,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityProp
             const Index i = pitzer.idx_neutrals[N];
 
             // Set the activity coefficient of the i-th species
-            res.ln_g[i] = lnActivityCoefficientNeutral(state, pitzer, N);
+            props.ln_g[i] = lnActivityCoefficientNeutral(state, pitzer, N);
         }
 
         // Calculate the activity of water
@@ -1427,13 +1430,13 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityProp
         const auto xw = x[iwater];
 
         // Set the activities of the solutes
-        res.ln_a = res.ln_g + log(state.m);
+        props.ln_a = props.ln_g + log(state.m);
 
         // Set the activitiy of water
-        res.ln_a[iwater] = ln_aw;
+        props.ln_a[iwater] = ln_aw;
 
         // Set the activity coefficient of water (mole fraction scale)
-        res.ln_g[iwater] = ln_aw - log(xw);
+        props.ln_g[iwater] = ln_aw - log(xw);
     };
 
     return fn;

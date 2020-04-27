@@ -33,6 +33,10 @@
 
 namespace Reaktoro {
 
+using std::log;
+using std::pow;
+using std::sqrt;
+
 auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeHuckelParams& params)-> ActivityPropsFn
 {
     // The natural log of 10
@@ -86,11 +90,10 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     AqueousMixtureState state;
 
     // Define the activity model function of the aqueous mixture
-    ActivityPropsFn fn = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityPropsFn fn = [=](ActivityProps props, ActivityArgs args) mutable
     {
-        using std::log;
-        using std::pow;
-        using std::sqrt;
+        // The arguments for the activity model evaluation
+        const auto& [T, P, x, extra] = args;
 
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, x);
@@ -102,8 +105,8 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
         const auto& epsilon = state.epsilon; // dielectric constant
 
         // Auxiliary references
-        auto& ln_g = res.ln_g;
-        auto& ln_a = res.ln_a;
+        auto& ln_g = props.ln_g;
+        auto& ln_a = props.ln_a;
 
         // Auxiliary variables
 		const auto ln_m = m.log();
