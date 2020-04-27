@@ -20,7 +20,14 @@
 
 // Reaktoro includes
 #include <Reaktoro/Extensions/Geochemistry/AqueousMixture.hpp>
+#include <Reaktoro/Extensions/Water/WaterConstants.hpp>
 using namespace Reaktoro;
+
+auto moleFractions(Index size) -> ArrayXr
+{
+    const auto n = ArrayXr::Random(size);
+    return n / n.sum();
+}
 
 TEST_CASE("Testing AqueousMixture class", "[AqueousMixture]")
 {
@@ -79,5 +86,32 @@ TEST_CASE("Testing AqueousMixture class", "[AqueousMixture]")
 
         INFO( "dissociation matrix is\n" << mixture.dissociationMatrix() << "\nbut expected is\n" << M );
         REQUIRE( mixture.dissociationMatrix().isApprox(M) );
+
+        // The temperature (in K), pressure (in Pa) and mole fractions of the aqueous species
+        const auto T = 345.67;
+        const auto P = 123.4e+5;
+        const auto x = moleFractions(species.size());
+
+        const auto state = mixture.state(T, P, x);
+
+        const ArrayXd z  = mixture.charges();                            // charges of the species
+        const ArrayXd zc = mixture.charges()(mixture.indicesCharged());  // charges of charged species
+
+        const auto m  = x/(waterMolarMass * x[mixture.indexWater()]); // molalities of spcies
+        const auto mc = m(mixture.indicesCharged()).matrix();         // molalities of charged solutes
+        const auto mn = m(mixture.indicesNeutral()).matrix();         // molalities of neutral solutes
+        const auto ms = (mc + M.transpose() * mn).array();            // stoichiometric molalities (as array)
+        const auto Ie = 0.5 * (m * z * z).sum();                      // effective ionic strength
+        const auto Is = 0.5 * (ms * zc * zc).sum();                   // stoichiometric ionic strength
+
+        REQUIRE( state.T       == T                      );
+        REQUIRE( state.P       == P                      );
+        REQUIRE( state.Ie      == Approx(Ie)             );
+        REQUIRE( state.Is      == Approx(Is)             );
+        REQUIRE( state.rho     == Approx(997.0470390177) );
+        REQUIRE( state.epsilon == Approx(78.2451448082)  );
+
+        REQUIRE( state.m.isApprox(m)   );
+        REQUIRE( state.ms.isApprox(ms) );
     }
 }
