@@ -28,6 +28,9 @@
 #include <Reaktoro/Models/ActivityModelSpycherReed.hpp>
 
 namespace Reaktoro {
+
+using std::log;
+
 namespace {
 
 // The numbers in the constants and functions below are: 1-H2O, 2-CO2, 3-CH4
@@ -232,9 +235,10 @@ auto fluidChemicalModelSpycherReed(SpeciesListConstRef species)-> ActivityPropsF
     const auto R = universalGasConstant;
 
     // Define the activity model function of the gaseous phase
-    ActivityPropsFn fn = [=](ActivityProps res, real T, real P, ArrayXrConstRef x) mutable
+    ActivityPropsFn fn = [=](ActivityProps props, ActivityArgs args) mutable
     {
-        using std::log;
+        // The arguments for the activity model evaluation
+        const auto& [T, P, x, extra] = args;
 
         // The pressure in units of bar
         const auto Pbar = 1e-5 * P;
@@ -314,15 +318,15 @@ auto fluidChemicalModelSpycherReed(SpeciesListConstRef species)-> ActivityPropsF
         }
 
         // The result of the chemical model (equation of state) of the phase
-        auto& Vex   = res.Vex;
-        auto& VexT  = res.VexT;
-        auto& VexP  = res.VexP;
-        auto& Gres  = res.Gex;
-        auto& Hres  = res.Hex;
-        auto& Cpres = res.Cpex;
-        auto& Cvres = res.Cvex;
-        auto& ln_g  = res.ln_g;
-        auto& ln_a  = res.ln_a;
+        auto& Vex   = props.Vex;
+        auto& VexT  = props.VexT;
+        auto& VexP  = props.VexP;
+        auto& Gres  = props.Gex;
+        auto& Hres  = props.Hex;
+        auto& Cpres = props.Cpex;
+        auto& Cvres = props.Cvex;
+        auto& ln_g  = props.ln_g;
+        auto& ln_a  = props.ln_a;
 
         // Calculate the ideal molar volume of the phase (in m3/mol) and its derivatives
         const real V0  =  R*T/P;

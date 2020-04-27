@@ -362,24 +362,22 @@ auto ChemicalPropsPhaseBase<Real, Array>::update(real Tnew, real Pnew, ArrayXrCo
 
         if(amount == 0.0)
         {
-            Vex = VexT = VexP = Gex = Hex = Cpex = Cvex = 0.0;
+            Vex  = 0.0;
+            VexT = 0.0;
+            VexP = 0.0;
+            Gex  = 0.0;
+            Hex  = 0.0;
+            Cpex = 0.0;
+            Cvex = 0.0;
             ln_g = 0.0;
             ln_a = 0.0;
         }
-        else phase.activityPropsFn()({ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a }, T, P, x);
+        else
+        {
+            std::any extra;
+            phase.activityPropsFn()({ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a }, { T, P, x, extra });
+        }
     };
-
-    // if(updatingT || updatingP)
-    // {
-    //     T = Tnew;
-    //     P = Pnew;
-    //     evalStandardThermoProps();
-    // }
-    // if(updatingT || updatingP || updatingN)
-    // {
-    //     n = nnew;
-    //     evalActivityProps();
-    // }
 
     T = Tnew;
     P = Pnew;

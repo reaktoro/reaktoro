@@ -28,7 +28,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 {
     ActivityModel activity_model = [](const SpeciesList& species)
     {
-        ActivityPropsFn fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x) {};
+        ActivityPropsFn fn = [](ActivityProps props, ActivityArgs args) {};
         return fn;
     };
 

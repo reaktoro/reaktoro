@@ -26,7 +26,7 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
 {
-    ActivityPropsFn activity_props_fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x) {};
+    ActivityPropsFn activity_props_fn = [](ActivityProps props, ActivityArgs args) {};
 
     // Create the ChemicalSystem object
     ChemicalSystem system({

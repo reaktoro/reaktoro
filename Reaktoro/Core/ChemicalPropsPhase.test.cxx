@@ -42,8 +42,9 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 {
     const auto R = universalGasConstant;
 
-    ActivityPropsFn activity_props_fn = [](ActivityProps props, real T, real P, ArrayXrConstRef x)
+    ActivityPropsFn activity_props_fn = [](ActivityProps props, ActivityArgs args)
     {
+        const auto [T, P, x, extra] = args;
         props.Vex  = 1.0 * (T * P);
         props.VexT = 2.0 * (T * P);
         props.VexP = 3.0 * (T * P);
