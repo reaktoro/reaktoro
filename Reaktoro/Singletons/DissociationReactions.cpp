@@ -217,6 +217,11 @@ auto DissociationReactions::reactions() -> const std::deque<DissociationReaction
     return instance().m_reactions;
 }
 
+auto DissociationReactions::reset() -> void
+{
+    instance().m_reactions = detail::default_reactions;
+}
+
 auto DissociationReactions::append(DissociationReaction reaction) -> void
 {
     // Ensure there are no equivalent complex substances in the database.

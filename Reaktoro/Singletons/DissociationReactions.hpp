@@ -54,6 +54,9 @@ public:
     /// Return the dissociation reactions in the database.
     static auto reactions() -> const std::deque<DissociationReaction>&;
 
+    /// Reset the DissociationReactions object to its default state.
+    static auto reset() -> void;
+
     /// Append a dissociation reaction in to the database.
     static auto append(DissociationReaction reaction) -> void;
 
