@@ -37,7 +37,7 @@
 // #include <Reaktoro/Kinetics/KineticOptions.hpp>
 // #include <Reaktoro/Kinetics/KineticProblem.hpp>
 // #include <Reaktoro/Math/Matrix.hpp>
-// #include <Reaktoro/Extensions/Water/WaterConstants.hpp>
+// #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 // namespace Reaktoro {
 

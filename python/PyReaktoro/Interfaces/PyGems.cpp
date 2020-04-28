@@ -18,7 +18,7 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Interfaces/Gems.hpp>
+#include <Reaktoro/Extensions/Interfaces/Gems.hpp>
 
 namespace Reaktoro {
 

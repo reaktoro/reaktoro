@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <Reaktoro/Interfaces/Gems.hpp>
-#include <Reaktoro/Interfaces/Phreeqc.hpp>
-#include <Reaktoro/Interfaces/PhreeqcDatabase.hpp>
-#include <Reaktoro/Interfaces/PhreeqcEditor.hpp>
+#include <Reaktoro/Extensions/Interfaces/Gems.hpp>
+#include <Reaktoro/Extensions/Interfaces/Phreeqc.hpp>
+#include <Reaktoro/Extensions/Interfaces/PhreeqcDatabase.hpp>
+#include <Reaktoro/Extensions/Interfaces/PhreeqcEditor.hpp>

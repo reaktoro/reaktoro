@@ -26,8 +26,8 @@ using std::pow;
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroState.hpp>
-#include <Reaktoro/Extensions/Water/WaterThermoState.hpp>
-#include <Reaktoro/Extensions/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 
 namespace Reaktoro {
 namespace {
