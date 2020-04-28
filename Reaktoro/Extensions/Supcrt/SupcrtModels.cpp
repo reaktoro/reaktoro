@@ -29,12 +29,12 @@
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroState.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroStateHKF.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesThermoState.hpp>
-#include <Reaktoro/Extensions/Water/WaterConstants.hpp>
-#include <Reaktoro/Extensions/Water/WaterElectroState.hpp>
-#include <Reaktoro/Extensions/Water/WaterElectroStateJohnsonNorton.hpp>
-#include <Reaktoro/Extensions/Water/WaterThermoState.hpp>
-#include <Reaktoro/Extensions/Water/WaterThermoStateUtils.hpp>
-#include <Reaktoro/Extensions/Water/WaterUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
 
 namespace Reaktoro {
 

@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ReactionEquation.hpp>
-#include <Reaktoro/Interfaces/Phreeqc.hpp>
+#include <Reaktoro/Extensions/Interfaces/Phreeqc.hpp>
 
 namespace Reaktoro {
 

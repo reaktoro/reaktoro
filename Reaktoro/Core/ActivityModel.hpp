@@ -19,10 +19,9 @@
 
 // C++ includes
 #include <cmath>
-#include <functional>
-#include <memory>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
@@ -89,13 +88,13 @@ struct ActivityArgs
     ArrayXrConstRef x;
 
     /// The extra arguments for the activity model evaluation whose type is only known at runtime.
-    std::any& extra;
+    Vec<std::any>& extra;
 };
 
 /// The function type for calculation of activity and excess thermodynamic properties of a phase.
-using ActivityPropsFn = std::function<void(ActivityProps, ActivityArgs)>;
+using ActivityPropsFn = Fn<void(ActivityProps, ActivityArgs)>;
 
 /// The function type for the creation of activity model function of a phase.
-using ActivityModel = std::function<ActivityPropsFn(const SpeciesList&)>;
+using ActivityModel = Fn<ActivityPropsFn(const SpeciesList&)>;
 
 } // namespace Reaktoro

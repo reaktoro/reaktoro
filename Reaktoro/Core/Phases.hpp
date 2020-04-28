@@ -24,7 +24,9 @@
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Models/ActivityModelIdeal.hpp>
+#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealAqueous.hpp>
+#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealGas.hpp>
+#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSolution.hpp>
 
 namespace Reaktoro {
 
@@ -310,7 +312,7 @@ public:
         setName("AqueousSolution");
         setStateOfMatter(StateOfMatter::Liquid);
         setAggregateState(AggregateState::Aqueous);
-        setActivityModel(ActivityModelIdealAqueousSolution());
+        setActivityModel(ActivityModelIdealAqueous());
     }
 };
 
@@ -333,7 +335,7 @@ public:
         setName("GaseousSolution");
         setStateOfMatter(StateOfMatter::Gas);
         setAggregateState(AggregateState::Gas);
-        setActivityModel(ActivityModelIdealGaseousSolution());
+        setActivityModel(ActivityModelIdealGas());
     }
 };
 

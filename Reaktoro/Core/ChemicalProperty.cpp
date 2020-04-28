@@ -28,7 +28,7 @@
 // #include <Reaktoro/Core/Species.hpp>
 // #include <Reaktoro/Core/Utils.hpp>
 // #include <Reaktoro/Math/LU.hpp>
-// #include <Reaktoro/Extensions/Water/WaterConstants.hpp>
+// #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 // namespace Reaktoro {
 // namespace {

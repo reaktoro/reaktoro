@@ -18,7 +18,7 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Extensions/Geochemistry/AqueousMixture.hpp>
+#include <Reaktoro/Reactions/Mineral/AqueousMixture.hpp>
 #include <Reaktoro/Models/ActivityModelDebyeHuckel.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
