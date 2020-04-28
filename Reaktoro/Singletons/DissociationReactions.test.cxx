@@ -57,4 +57,10 @@ TEST_CASE("Testing DissociationReactions", "[DissociationReactions]")
 
     REQUIRE( DissociationReactions::get("NaCl").has_value() );
     REQUIRE( DissociationReactions::get("NaCl").value().ions.size() == 0 );
+
+    // Test when DissociationReactions are reset back to its default state.
+    DissociationReactions::reset();
+
+    REQUIRE( DissociationReactions::coefficient("NaCl", "Na+")   == 1.0 );
+    REQUIRE( DissociationReactions::coefficient("NaCl", "Na[+]") == 1.0 );
 }
