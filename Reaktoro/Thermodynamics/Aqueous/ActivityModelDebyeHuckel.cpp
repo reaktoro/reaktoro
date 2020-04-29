@@ -17,17 +17,9 @@
 
 #include "ActivityModelDebyeHuckel.hpp"
 
-// C++ includes
-#include <cmath>
-#include <map>
-#include <string>
-#include <vector>
-
 // Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
-#include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Math/BilinearInterpolator.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -37,21 +29,353 @@ using std::log;
 using std::pow;
 using std::sqrt;
 
-auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeHuckelParams& params)-> ActivityPropsFn
+namespace detail {
+
+/// The Debye--Hückel parameter `å` used in PHREEQC v3 (Parkhurst and Appelo, 2013)
+const Map<String, real> aions_phreeqc =
 {
-    // The natural log of 10
-    const auto ln10 = std::log(10);
+    { "Al(OH)2+" , 5.4  },
+    { "Al(OH)4-" , 4.5  },
+    { "Al(SO4)2-", 4.5  },
+    { "Al+++"    , 9.0  },
+    { "AlF++"    , 5.4  },
+    { "AlF2+"    , 5.4  },
+    { "AlF4-"    , 4.5  },
+    { "AlOH++"   , 5.4  },
+    { "AlSO4+"   , 4.5  },
+    { "Ba++"     , 4.0  },
+    { "BaOH+"    , 5.0  },
+    { "Br-"      , 3.0  },
+    { "CO3--"    , 5.4  },
+    { "Ca++"     , 5.0  },
+    { "CaH2PO4+" , 5.4  },
+    { "CaHCO3+"  , 6.0  },
+    { "CaPO4-"   , 5.4  },
+    { "Cl-"      , 3.63 },
+    { "Cu+"      , 2.5  },
+    { "Cu++"     , 6.0  },
+    { "CuCl+"    , 4.0  },
+    { "CuCl2-"   , 4.0  },
+    { "CuCl3-"   , 4.0  },
+    { "CuCl3--"  , 5.0  },
+    { "CuCl4--"  , 5.0  },
+    { "CuOH+"    , 4.0  },
+    { "F-"       , 3.5  },
+    { "Fe(OH)2+" , 5.4  },
+    { "Fe(OH)3-" , 5.0  },
+    { "Fe(OH)4-" , 5.4  },
+    { "Fe++"     , 6.0  },
+    { "Fe+++"    , 9.0  },
+    { "FeCl++"   , 5.0  },
+    { "FeCl2+"   , 5.0  },
+    { "FeF++"    , 5.0  },
+    { "FeF2+"    , 5.0  },
+    { "FeH2PO4+" , 5.4  },
+    { "FeH2PO4++", 5.4  },
+    { "FeHPO4+"  , 5.0  },
+    { "FeOH+"    , 5.0  },
+    { "FeOH++"   , 5.0  },
+    { "FeSO4+"   , 5.0  },
+    { "H+"       , 9.0  },
+    { "H2PO4-"   , 5.4  },
+    { "H2SiO4--" , 5.4  },
+    { "H3SiO4-"  , 4.0  },
+    { "HCO3-"    , 5.4  },
+    { "HPO4--"   , 5.0  },
+    { "HS-"      , 3.5  },
+    { "K+"       , 3.5  },
+    { "KHPO4-"   , 5.4  },
+    { "KSO4-"    , 5.4  },
+    { "Li+"      , 6.0  },
+    { "LiSO4-"   , 5.0  },
+    { "Mg++"     , 5.5  },
+    { "MgF+"     , 4.5  },
+    { "MgH2PO4+" , 5.4  },
+    { "MgHCO3+"  , 4.0  },
+    { "MgOH+"    , 6.5  },
+    { "MgPO4-"   , 5.4  },
+    { "Mn(OH)3-" , 5.0  },
+    { "Mn++"     , 6.0  },
+    { "Mn+++"    , 9.0  },
+    { "MnCl+"    , 5.0  },
+    { "MnCl3-"   , 5.0  },
+    { "MnF+"     , 5.0  },
+    { "MnHCO3+"  , 5.0  },
+    { "MnOH+"    , 5.0  },
+    { "NH4+"     , 2.5  },
+    { "NO2-"     , 3.0  },
+    { "NO3-"     , 3.0  },
+    { "Na+"      , 4.08 },
+    { "NaHPO4-"  , 5.4  },
+    { "NaSO4-"   , 5.4  },
+    { "OH-"      , 3.5  },
+    { "PO4---"   , 4.0  },
+    { "S--"      , 5.0  },
+    { "SO4--"    , 5.0  },
+    { "SiF6--"   , 5.0  },
+    { "Sr++"     , 5.26 },
+    { "SrHCO3+"  , 5.4  },
+    { "SrOH+"    , 5.0  },
+    { "Zn++"     , 5.0  },
+    { "ZnCl+"    , 4.0  },
+    { "ZnCl3-"   , 4.0  },
+    { "ZnCl4--"  , 5.0  }
+};
+
+/// The Debye--Hückel parameter `b` used in PHREEQC v3 (Parkhurst and Appelo, 2013)
+const Map<String, real> bions_phreeqc =
+{
+    {"Ba++" ,  0.153 },
+    {"Ca++" ,  0.165 },
+    {"Cl-"  ,  0.017 },
+    {"K+"   ,  0.015 },
+    {"Mg++" ,  0.200 },
+    {"Na+"  ,  0.082 },
+    {"SO4--", -0.040 },
+    {"Sr++" ,  0.121 }
+};
+
+/// The Debye--Hückel parameter `å` used in WATEQ4F (Ball and Nordstrom 1991, Truesdell and Jones 1974)
+const Map<String, real> aions_wateq4f =
+{
+    { "Ca++"      ,  5.00 },
+    { "Mg++"      ,  5.50 },
+    { "Na+"       ,  4.00 },
+    { "K+"        ,  3.50 },
+    { "Cl-"       ,  3.50 },
+    { "SO4--"     ,  5.00 },
+    { "HCO3-"     ,  5.40 },
+    { "CO3--"     ,  5.40 },
+    { "Sr++"      ,  5.26 },
+    { "H+"        ,  9.00 },
+    { "OH-"       ,  3.50 },
+    { "SrHCO3+"   ,  5.40 },
+    { "SrOH+"     ,  5.00 },
+    { "Cu(S4)2---", 23.00 },
+    { "CuS4S5---" , 25.00 },
+    { "S2--"      ,  6.50 },
+    { "S3--"      ,  8.00 },
+    { "S4--"      , 10.00 },
+    { "S5--"      , 12.00 },
+    { "S6--"      , 14.00 },
+    { "Ag(S4)2---", 22.00 },
+    { "AgS4S5---" , 24.00 },
+    { "Ag(HS)S4--", 15.00 }
+};
+
+/// The Debye--Hückel parameter `b` used in WATEQ4F (Ball and Nordstrom 1991, Truesdell and Jones 1974)
+const Map<String, real> bions_wateq4f =
+{
+    { "Ca++"     ,  0.165 },
+    { "Mg++"     ,  0.200 },
+    { "Na+"      ,  0.075 },
+    { "K+"       ,  0.015 },
+    { "Cl-"      ,  0.015 },
+    { "SO4--"    , -0.040 },
+    { "HCO3-"    ,  0.000 },
+    { "CO3--"    ,  0.000 },
+    { "H2CO3(aq)",  0.000 },
+    { "Sr++"     ,  0.121 }
+};
+
+/// The Debye--Hückel parameter `å` from Kielland (1937).
+const Map<String, real> aions_kielland =
+{
+    { "H+"                 ,  9.0 },
+    { "Li+"                ,  6.0 },
+    { "Rb+"                ,  2.5 },
+    { "Cs+"                ,  2.5 },
+    { "NH4+"               ,  2.5 },
+    { "Tl+"                ,  2.5 },
+    { "Ag+"                ,  2.5 },
+    { "K+"                 ,  3.0 },
+    { "Cl-"                ,  3.0 },
+    { "Br-"                ,  3.0 },
+    { "I-"                 ,  3.0 },
+    { "CN-"                ,  3.0 },
+    { "NO2-"               ,  3.0 },
+    { "NO3-"               ,  3.0 },
+    { "OH-"                ,  3.5 },
+    { "F-"                 ,  3.5 },
+    { "NCS-"               ,  3.5 },
+    { "NCO-"               ,  3.5 },
+    { "HS-"                ,  3.5 },
+    { "ClO3-"              ,  3.5 },
+    { "ClO4-"              ,  3.5 },
+    { "BrO3-"              ,  3.5 },
+    { "IO4-"               ,  3.5 },
+    { "MnO4-"              ,  3.5 },
+    { "Na+"                ,  4.0 },
+    { "CdCl+"              ,  4.0 },
+    { "ClO2-"              ,  4.0 },
+    { "IO3-"               ,  4.0 },
+    { "HCO3-"              ,  4.0 },
+    { "H2PO4-"             ,  4.0 },
+    { "HSO3-"              ,  4.0 },
+    { "H2AsO4-"            ,  4.0 },
+    { "Co(NH3)4(NO2)2+"    ,  4.0 },
+    { "Hg2++"              ,  4.0 },
+    { "SO4--"              ,  4.0 },
+    { "S2O3--"             ,  4.0 },
+    { "S2O6--"             ,  4.0 },
+    { "S2O8--"             ,  4.0 },
+    { "SeO4--"             ,  4.0 },
+    { "CrO4--"             ,  4.0 },
+    { "HPO4--"             ,  4.0 },
+    { "Pb++"               ,  4.5 },
+    { "CO3--"              ,  4.5 },
+    { "SO3--"              ,  4.5 },
+    { "MoO4--"             ,  4.5 },
+    { "Co(NH3)5Cl++"       ,  4.5 },
+    { "Fe(CN)5NO--"        ,  4.5 },
+    { "Sr++"               ,  5.0 },
+    { "Ba++"               ,  5.0 },
+    { "Ra++"               ,  5.0 },
+    { "Cd++"               ,  5.0 },
+    { "Hg++"               ,  5.0 },
+    { "S--"                ,  5.0 },
+    { "S2O4--"             ,  5.0 },
+    { "WO4--"              ,  5.0 },
+    { "Ca++"               ,  6.0 },
+    { "Cu++"               ,  6.0 },
+    { "Zn++"               ,  6.0 },
+    { "Sn++"               ,  6.0 },
+    { "Mn++"               ,  6.0 },
+    { "Fe++"               ,  6.0 },
+    { "Ni++"               ,  6.0 },
+    { "Co++"               ,  6.0 },
+    { "Mg++"               ,  8.0 },
+    { "Be++"               ,  8.0 },
+    { "PO4---"             ,  4.0 },
+    { "Fe(CN)6---"         ,  4.0 },
+    { "Cr(NH3)6+++"        ,  4.0 },
+    { "Co(NH3)6+++"        ,  4.0 },
+    { "Co(NH3)5H2O+++"     ,  4.0 },
+    { "Al+++"              ,  9.0 },
+    { "Fe+++"              ,  9.0 },
+    { "Cr+++"              ,  9.0 },
+    { "Sc+++"              ,  9.0 },
+    { "Y+++"               ,  9.0 },
+    { "La+++"              ,  9.0 },
+    { "In+++"              ,  9.0 },
+    { "Ce+++"              ,  9.0 },
+    { "Pr+++"              ,  9.0 },
+    { "Nd+++"              ,  9.0 },
+    { "Sm+++"              ,  9.0 },
+    { "Fe(CN)6----"        ,  5.0 },
+    { "Co(S2O3)(CN)5----"  ,  6.0 },
+    { "Th++++"             , 11.0 },
+    { "Zn++++"             , 11.0 },
+    { "Ce++++"             , 11.0 },
+    { "Sn++++"             , 11.0 },
+    { "Co(SO3)2(CN)4-----" ,  9.0 }
+};
+
+/// Return a parameter value whose key matches a given formula
+auto get(const ChemicalFormula& formula, const Map<String, real>& params, real defaultvalue) -> real
+{
+    for(const auto& [key, value] : params)
+        if(formula.equivalent(key))
+            return value;
+    return defaultvalue;
+};
+
+} // namespace detail
+
+auto ActivityModelDebyeHuckel::Params::aion(const ChemicalFormula& ion) const -> real
+{
+    return detail::get(ion, aions, aiondefault);
+}
+
+auto ActivityModelDebyeHuckel::Params::bion(const ChemicalFormula& ion) const -> real
+{
+    return detail::get(ion, bions, biondefault);
+}
+
+auto ActivityModelDebyeHuckel::Params::bneutral(const ChemicalFormula& neutral) const -> real
+{
+    return detail::get(neutral, bneutrals, bneutraldefault);
+}
+
+auto ActivityModelDebyeHuckel::Params::setLimitingLaw() -> void
+{
+    aiondefault = 0.0;
+    biondefault = 0.0;
+    aions = {};
+    bions = {};
+}
+
+auto ActivityModelDebyeHuckel::Params::setKielland() -> void
+{
+    aions = detail::aions_kielland;
+}
+
+auto ActivityModelDebyeHuckel::Params::setWATEQ4F() -> void
+{
+    aions = detail::aions_wateq4f;
+    bions = detail::bions_wateq4f;
+}
+
+auto ActivityModelDebyeHuckel::Params::setPHREEQC() -> void
+{
+    aions = detail::aions_phreeqc;
+    bions = detail::bions_phreeqc;
+    bneutraldefault = 0.1;
+}
+
+ActivityModelDebyeHuckel::ActivityModelDebyeHuckel()
+{
+    m_params.setPHREEQC();
+}
+
+ActivityModelDebyeHuckel::ActivityModelDebyeHuckel(const Params& params)
+: m_params(params)
+{}
+
+auto ActivityModelDebyeHuckel::setModeLimitingLaw() -> ActivityModelDebyeHuckel&
+{
+    m_params.setLimitingLaw();
+    return *this;
+}
+
+auto ActivityModelDebyeHuckel::setModeKielland() -> ActivityModelDebyeHuckel&
+{
+    m_params.setKielland();
+    return *this;
+}
+
+auto ActivityModelDebyeHuckel::setModeWATEQ4F() -> ActivityModelDebyeHuckel&
+{
+    m_params.setWATEQ4F();
+    return *this;
+}
+
+auto ActivityModelDebyeHuckel::setModePHREEQC() -> ActivityModelDebyeHuckel&
+{
+    m_params.setPHREEQC();
+    return *this;
+}
+
+auto ActivityModelDebyeHuckel::params() -> const Params&
+{
+    return m_params;
+}
+
+auto ActivityModelDebyeHuckel::operator()(const SpeciesList& species) const -> ActivityPropsFn
+{
+    // Create the aqueous mixture
+    AqueousMixture mixture(species);
 
     // The molar mass of water
     const auto Mw = waterMolarMass;
 
     // The number of moles of water per kg
-    const auto nwo = 1/Mw;
+    const auto nwo = 1.0/Mw;
 
-    // The number of species in the mixture
-    const auto num_species = mixture.species().size();
+    // The number of species in the aqueous mixture
+    const auto num_species = species.size();
 
-    // The number of charged and neutral species in the mixture
+    // The number of charged and neutral species in the aqueous mixture
     const auto num_charged_species = mixture.charged().size();
     const auto num_neutral_species = mixture.neutral().size();
 
@@ -75,28 +399,31 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     for(Index i : icharged_species)
     {
         const auto species = mixture.species(i);
-        aions.push_back(params.aion(species.formula()));
-        bions.push_back(params.bion(species.formula()));
+        aions.push_back(m_params.aion(species.formula()));
+        bions.push_back(m_params.bion(species.formula()));
     }
 
     // Collect the Debye-Huckel parameter b of the neutral species
     for(Index i : ineutral_species)
     {
         const auto species = mixture.species(i);
-        bneutral.push_back(params.bneutral(species.formula()));
+        bneutral.push_back(m_params.bneutral(species.formula()));
     }
 
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
     // Define the activity model function of the aqueous mixture
-    ActivityPropsFn fn = [=](ActivityProps props, ActivityArgs args) mutable
+    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x, extra] = args;
 
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, x);
+
+        // Export the aqueous mixture and its state via the extra argument
+        extra = { mixture, state };
 
         // Auxiliary constant references
         const auto& I = state.Ie;            // ionic strength
@@ -125,7 +452,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
         // Set the first contribution to the activity of water
         ln_a[iwater] = mSigma;
 
-        // Loop over all charged species in the mixture
+        // Loop over all charged species in the aqueous mixture
         for(Index i = 0; i < num_charged_species; ++i)
         {
             // The index of the current charged species
@@ -159,7 +486,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
         // Set the activity coefficient of water (mole fraction scale)
         ln_g[iwater] = ln_a[iwater] - ln_xw;
 
-        // Loop over all neutral species in the mixture
+        // Loop over all neutral species in the aqueous mixture
         for(Index i = 0; i < num_neutral_species; ++i)
         {
             // The index of the current neutral species
@@ -174,178 +501,6 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     };
 
     return fn;
-}
-
-struct DebyeHuckelParams::Impl
-{
-    /// The default value of the `a` parameter for ionic species.
-    real aiondefault = 0.0;
-
-    /// The default value of the `b` parameter for ionic species.
-    real biondefault = 0.0;
-
-    /// The default value of the `b` parameter for neutral species.
-    real bneutraldefault = 0.1;
-
-    /// The parameters `a` of the ionic species.
-    std::map<std::string, real> aion;
-
-    /// The parameters `b` of the ionic species.
-    std::map<std::string, real> bion;
-
-    /// The parameters `b` of the neutral species.
-    std::map<std::string, real> bneutral;
-
-    /// The Debye--Hückel parameter `å` used in PHREEQC v3 (Parkhurst and Appelo, 2013)
-    const std::map<std::string, real> aion_phreeqc = {{"Al(OH)2+", 5.4}, {"Al(OH)4-", 4.5}, {"Al(SO4)2-", 4.5}, {"Al+++", 9}, {"AlF++", 5.4}, {"AlF2+", 5.4}, {"AlF4-", 4.5}, {"AlOH++", 5.4}, {"AlSO4+", 4.5}, {"Ba++", 4}, {"BaOH+", 5}, {"Br-", 3}, {"CO3--", 5.4}, {"Ca++", 5}, {"CaH2PO4+", 5.4}, {"CaHCO3+", 6}, {"CaPO4-", 5.4}, {"Cl-", 3.63}, {"Cu+", 2.5}, {"Cu++", 6}, {"CuCl+", 4}, {"CuCl2-", 4}, {"CuCl3-", 4}, {"CuCl3--", 5}, {"CuCl4--", 5}, {"CuOH+", 4}, {"F-", 3.5}, {"Fe(OH)2+", 5.4}, {"Fe(OH)3-", 5}, {"Fe(OH)4-", 5.4}, {"Fe++", 6}, {"Fe+++", 9}, {"FeCl++", 5}, {"FeCl2+", 5}, {"FeF++", 5}, {"FeF2+", 5}, {"FeH2PO4+", 5.4}, {"FeH2PO4++", 5.4}, {"FeHPO4+", 5}, {"FeOH+", 5}, {"FeOH++", 5}, {"FeSO4+", 5}, {"H+", 9}, {"H2PO4-", 5.4}, {"H2SiO4--", 5.4}, {"H3SiO4-", 4}, {"HCO3-", 5.4}, {"HPO4--", 5}, {"HS-", 3.5}, {"K+", 3.5}, {"KHPO4-", 5.4}, {"KSO4-", 5.4}, {"Li+", 6}, {"LiSO4-", 5}, {"Mg++", 5.5}, {"MgF+", 4.5}, {"MgH2PO4+", 5.4}, {"MgHCO3+", 4}, {"MgOH+", 6.5}, {"MgPO4-", 5.4}, {"Mn(OH)3-", 5}, {"Mn++", 6}, {"Mn+++", 9}, {"MnCl+", 5}, {"MnCl3-", 5}, {"MnF+", 5}, {"MnHCO3+", 5}, {"MnOH+", 5}, {"NH4+", 2.5}, {"NO2-", 3}, {"NO3-", 3}, {"Na+", 4.08}, {"NaHPO4-", 5.4}, {"NaSO4-", 5.4}, {"OH-", 3.5}, {"PO4---", 4}, {"S--", 5}, {"SO4--", 5}, {"SiF6--", 5}, {"Sr++", 5.26}, {"SrHCO3+", 5.4}, {"SrOH+", 5}, {"Zn++", 5}, {"ZnCl+", 4}, {"ZnCl3-", 4}, {"ZnCl4--", 5}};
-
-    /// The Debye--Hückel parameter `b` used in PHREEQC v3 (Parkhurst and Appelo, 2013)
-    const std::map<std::string, real> bion_phreeqc = {{"Ba++", 0.153}, {"Ca++", 0.165}, {"Cl-", 0.017}, {"K+", 0.015}, {"Mg++", 0.2}, {"Na+", 0.082}, {"SO4--", -0.04}, {"Sr++", 0.121}};
-
-    /// The Debye--Hückel parameter `å` used in WATEQ4F (Ball and Nordstrom 1991, Truesdell and Jones 1974)
-    const std::map<std::string, real> aion_wateq4f = {{"Ca++", 5.0}, {"Mg++", 5.5}, {"Na+", 4.0}, {"K+", 3.5}, {"Cl-", 3.5}, {"SO4--", 5.0}, {"HCO3-", 5.4}, {"CO3--", 5.4}, {"Sr++", 5.26}, {"H+", 9.0}, {"OH-", 3.5}, {"SrHCO3+", 5.4}, {"SrOH+", 5.0}, {"Cu(S4)2---", 23.0}, {"CuS4S5---", 25.0}, {"S2--", 6.5}, {"S3--", 8.0}, {"S4--", 10.0}, {"S5--", 12.0}, {"S6--", 14.0}, {"Ag(S4)2---", 22.0}, {"AgS4S5---", 24.0}, {"Ag(HS)S4--", 15.0}};
-
-    /// The Debye--Hückel parameter `b` used in WATEQ4F (Ball and Nordstrom 1991, Truesdell and Jones 1974)
-    const std::map<std::string, real> bion_wateq4f = {{"Ca++", 0.165}, {"Mg++", 0.20}, {"Na+", 0.075}, {"K+", 0.015}, {"Cl-", 0.015}, {"SO4--", -0.04}, {"HCO3-", 0.0}, {"CO3--", 0.0}, {"H2CO3(aq)", 0.0}, {"Sr++", 0.121}};
-
-    /// The Debye--Hückel parameter `å` from Kielland (1937).
-    const std::map<std::string, real> aion_kielland = {{"H+" , 9.0}, {"Li+" , 6.0}, {"Rb+" , 2.5}, {"Cs+" , 2.5}, {"NH4+" , 2.5}, {"Tl+" , 2.5}, {"Ag+" , 2.5}, {"K+" , 3.0}, {"Cl-" , 3.0}, {"Br-" , 3.0}, {"I-" , 3.0}, {"CN-" , 3.0}, {"NO2-" , 3.0}, {"NO3-" , 3.0}, {"OH-" , 3.5}, {"F-" , 3.5}, {"NCS-" , 3.5}, {"NCO-" , 3.5}, {"HS-" , 3.5}, {"ClO3-" , 3.5}, {"ClO4-" , 3.5}, {"BrO3-" , 3.5}, {"IO4-" , 3.5}, {"MnO4-" , 3.5}, {"Na+" , 4.0}, {"CdCl+" , 4.0}, {"ClO2-" , 4.0}, {"IO3-" , 4.0}, {"HCO3-" , 4.0}, {"H2PO4-" , 4.0}, {"HSO3-" , 4.0}, {"H2AsO4-" , 4.0}, {"Co(NH3)4(NO2)2+" , 4.0}, {"Hg2++" , 4.0}, {"SO4--" , 4.0}, {"S2O3--" , 4.0}, {"S2O6--" , 4.0}, {"S2O8--" , 4.0}, {"SeO4--" , 4.0}, {"CrO4--" , 4.0}, {"HPO4--" , 4.0}, {"Pb++" , 4.5}, {"CO3--" , 4.5}, {"SO3--" , 4.5}, {"MoO4--" , 4.5}, {"Co(NH3)5Cl++" , 4.5}, {"Fe(CN)5NO--" , 4.5}, {"Sr++" , 5.0}, {"Ba++" , 5.0}, {"Ra++" , 5.0}, {"Cd++" , 5.0}, {"Hg++" , 5.0}, {"S--" , 5.0}, {"S2O4--" , 5.0}, {"WO4--" , 5.0}, {"Ca++" , 6.0}, {"Cu++" , 6.0}, {"Zn++" , 6.0}, {"Sn++" , 6.0}, {"Mn++" , 6.0}, {"Fe++" , 6.0}, {"Ni++" , 6.0}, {"Co++" , 6.0}, {"Mg++" , 8.0}, {"Be++" , 8.0}, {"PO4---" , 4.0}, {"Fe(CN)6---" , 4.0}, {"Cr(NH3)6+++" , 4.0}, {"Co(NH3)6+++" , 4.0}, {"Co(NH3)5H2O+++" , 4.0}, {"Al+++" , 9.0}, {"Fe+++" , 9.0}, {"Cr+++" , 9.0}, {"Sc+++" , 9.0}, {"Y+++" , 9.0}, {"La+++" , 9.0}, {"In+++" , 9.0}, {"Ce+++" , 9.0}, {"Pr+++" , 9.0}, {"Nd+++" , 9.0}, {"Sm+++" , 9.0}, {"Fe(CN)6----" , 5.0}, {"Co(S2O3)(CN)5----" , 6.0}, {"Th++++" , 11.0}, {"Zn++++" , 11.0}, {"Ce++++" , 11.0}, {"Sn++++" , 11.0}, {"Co(SO3)2(CN)4-----" , 9.0}};
-
-    Impl()
-    {
-    }
-};
-
-DebyeHuckelParams::DebyeHuckelParams()
-: pimpl(new Impl())
-{
-	setPHREEQC();
-}
-
-auto DebyeHuckelParams::aiondefault(real value) -> void
-{
-    pimpl->aiondefault = value;
-}
-
-auto DebyeHuckelParams::aiondefault() const -> real
-{
-    return pimpl->aiondefault;
-}
-
-auto DebyeHuckelParams::aion(std::string name, real value) -> void
-{
-    pimpl->aion[name] = value;
-}
-
-auto DebyeHuckelParams::aion(const std::map<std::string, real>& pairs) -> void
-{
-    for(auto pair : pairs)
-        aion(pair.first, pair.second);
-}
-
-auto DebyeHuckelParams::aion(real value) -> void
-{
-    for(auto& pair : pimpl->aion)
-        pair.second = value;
-    aiondefault(value);
-}
-
-auto DebyeHuckelParams::aion(std::string name) const -> real
-{
-    auto it = pimpl->aion.find(name);
-    return it != pimpl->aion.end() ? it->second : aiondefault();
-}
-
-auto DebyeHuckelParams::biondefault(real value) -> void
-{
-    pimpl->biondefault = value;
-}
-
-auto DebyeHuckelParams::biondefault() const -> real
-{
-    return pimpl->biondefault;
-}
-
-auto DebyeHuckelParams::bion(std::string name, real value) -> void
-{
-    pimpl->bion[name] = value;
-}
-
-auto DebyeHuckelParams::bion(const std::map<std::string, real>& pairs) -> void
-{
-    for(auto pair : pairs)
-        bion(pair.first, pair.second);
-}
-
-auto DebyeHuckelParams::bion(real value) -> void
-{
-    for(auto& pair : pimpl->bion)
-        pair.second = value;
-    biondefault(value);
-}
-
-auto DebyeHuckelParams::bion(std::string name) const -> real
-{
-    auto it = pimpl->bion.find(name);
-    return it != pimpl->bion.end() ? it->second : biondefault();
-}
-
-auto DebyeHuckelParams::bneutraldefault(real value) -> void
-{
-    pimpl->bneutraldefault = value;
-}
-
-auto DebyeHuckelParams::bneutraldefault() const -> real
-{
-    return pimpl->bneutraldefault;
-}
-
-auto DebyeHuckelParams::bneutral(std::string name, real value) -> void
-{
-    pimpl->bneutral[name] = value;
-}
-
-auto DebyeHuckelParams::bneutral(const std::map<std::string, real>& pairs) -> void
-{
-    for(auto pair : pairs)
-        bneutral(pair.first, pair.second);
-}
-
-auto DebyeHuckelParams::bneutral(real value) -> void
-{
-    for(auto& pair : pimpl->bneutral)
-        pair.second = value;
-    bneutraldefault(value);
-}
-
-auto DebyeHuckelParams::bneutral(std::string name) const -> real
-{
-    auto it = pimpl->bneutral.find(name);
-    return it != pimpl->bneutral.end() ? it->second : bneutraldefault();
-}
-
-auto DebyeHuckelParams::setLimitingLaw() -> void
-{
-    aion(0.0);
-    bion(0.0);
-}
-
-auto DebyeHuckelParams::setKielland1937() -> void
-{
-    aion(pimpl->aion_kielland);
-}
-
-auto DebyeHuckelParams::setWATEQ4F() -> void
-{
-    aion(pimpl->aion_wateq4f);
-    bion(pimpl->bion_wateq4f);
-}
-
-auto DebyeHuckelParams::setPHREEQC() -> void
-{
-    aion(pimpl->aion_phreeqc);
-    bion(pimpl->bion_phreeqc);
-    bneutraldefault(0.1);
 }
 
 } // namespace Reaktoro
