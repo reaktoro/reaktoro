@@ -228,7 +228,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel::Params", "[ActivityModelDebyeHuckel
 }
 
 /// Return mole fractions for the species.
-auto moleFractions(const SpeciesList& species) -> ArrayXr
+inline auto moleFractions(const SpeciesList& species) -> ArrayXr
 {
     auto idx = [&](auto formula) { return species.indexWithFormula(formula); };
 
@@ -244,7 +244,7 @@ auto moleFractions(const SpeciesList& species) -> ArrayXr
 }
 
 // Check if the activities of the aqueous species are correct assuming activity coefficients are.
-auto checkActivities(ArrayXrConstRef x, ActivityPropsConstRef props)
+inline auto checkActivities(ArrayXrConstRef x, ActivityPropsConstRef props)
 {
     const auto iH2O = 0;
 
