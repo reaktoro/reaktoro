@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-/// The activity model of Drummond (1981) for dissolved gases.
+/// The activity model of Drummond (1981) for a dissolved gas.
 /// In the activity model of Drummond (1981), the activity coefficient of a
 /// dissolved gas (e.g., CO<sub>2</sub>(aq), O<sub>2</sub>(aq),
 /// H<sub>2</sub>S(aq)) is computed using:
@@ -37,7 +37,7 @@ namespace Reaktoro {
 class ActivityModelDrummond : public ActivityModel
 {
 public:
-    /// The parameters in the Drummond (1981) activity model for dissolved gases.
+    /// The parameters in the Drummond (1981) activity model.
     /// The default values correspond to dissolved gas CO<sub>2</sub>(aq).
     struct Params
     {
