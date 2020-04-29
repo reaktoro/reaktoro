@@ -18,17 +18,30 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousActivityModel.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 
 namespace Reaktoro {
 
-/// Create the function for the calculation of ln activity coefficient of CO<sub>2</sub>(aq), based on the model of Rumpf et al. (1994).
-/// The model is documented in the paper *Rumpf, B., Nicolaisen, H., Ocal, C., &
-/// Maurer, G. (1994). Solubility of carbon dioxide in aqueous mixtures of sodium
-/// chloride: Experimental results and correlation. Journal of Solution Chemistry,
-// 23(3), 431–448*.
-/// @param mixture The aqueous mixture instance
-/// @see AqueousMixture, AqueousActivityModel
-auto ActivityModelRumpf(const AqueousMixture& mixture) -> AqueousActivityModel;
+/// The activity model of Duan and Sun (2003) for a dissolved gas.
+/// **References:**
+///  - Rumpf, B., Nicolaisen, H., Ocal, C., & Maurer, G. (1994). Solubility of
+///    carbon dioxide in aqueous mixtures of sodium chloride: Experimental
+///    results and correlation. Journal of Solution Chemistry, 23(3), 431–448*.
+class ActivityModelRumpf : public ActivityModel
+{
+public:
+    /// Construct a default ActivityModelRumpf object for dissolved gas CO<sub>2</sub>(aq).
+    ActivityModelRumpf();
+
+    /// Construct a ActivityModelRumpf object with given dissolved gas formula.
+    ActivityModelRumpf(String gas);
+
+    /// Build the function for activity and thermodynamic excesss property calculations of a phase.
+    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
+
+private:
+    /// The chemical formula of the dissolved gas.
+    String gas = "CO2";
+};
 
 } // namespace Reaktoro
