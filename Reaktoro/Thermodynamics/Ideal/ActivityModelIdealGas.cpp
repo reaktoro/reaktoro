@@ -23,7 +23,7 @@ using std::log;
 
 auto ActivityModelIdealGas::operator()(const SpeciesList& species) -> ActivityPropsFn
 {
-    ActivityPropsFn fn = [](ActivityProps props, ActivityArgs args) mutable
+    ActivityPropsFn fn = [](ActivityPropsRef props, ActivityArgs args) mutable
     {
         const auto Pbar = args.P * 1.0e-5; // from Pa to bar
         props = 0.0;

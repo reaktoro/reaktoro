@@ -236,7 +236,7 @@ auto fluidChemicalModelSpycherReed(SpeciesListConstRef species)-> ActivityPropsF
     const auto R = universalGasConstant;
 
     // Define the activity model function of the gaseous phase
-    ActivityPropsFn fn = [=](ActivityProps props, ActivityArgs args) mutable
+    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x, extra] = args;

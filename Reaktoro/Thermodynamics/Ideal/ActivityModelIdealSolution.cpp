@@ -21,7 +21,7 @@ namespace Reaktoro {
 
 auto ActivityModelIdealSolution::operator()(const SpeciesList& species) -> ActivityPropsFn
 {
-    ActivityPropsFn fn = [=](ActivityProps props, ActivityArgs args) mutable
+    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         props = 0.0;
         props.ln_a = args.x.log();
