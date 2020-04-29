@@ -22,21 +22,32 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class AqueousMixture;
+/// The Harvie-Møller-Weare Pitzer activity model for aqueous solutions.
+/// **References:**
+///   - Harvie, C.E., Møller, N., Weare, J.H. (1984). The prediction of mineral
+///     solubilities in natural waters: The
+///     Na-K-Mg-Ca-H-Cl-SO4-OH-HCO3-CO3-CO2-H2O system to high ionic strengths
+///     at 25°C. Geochimica et Cosmochimica Acta, 48(4), 723–751.
+///   - Harvie, C.E., Weare, J.H. (1980). The prediction of mineral
+///     soluhilities in natural waters: the system from zero to high
+///     concentration at 25°C. Geochimica et Cosmochimica Acta, 44(7), 981–997.
+///   - Pitzer, K. S. (1975). Thermodynamics of electrolytes. V. effects of
+///     higher-order electrostatic terms. Journal of Solution Chemistry, 4(3),
+///     249–265.
+///   - Helgeson, H. C., Kirkham, D. H., Flowers, G. C. (1981). Theoretical
+///     prediction of the thermodynamic behavior of aqueous electrolytes at
+///     high pressures and temperatures: IV. Calculation of activity
+///     coefficients, osmotic coefficients, and apparent molal and standard and
+///     relative partial molal properties to 600°C. American Journal of
+///     Science, 281(10), 1249–1516.
+class ActivityModelPitzerHMW : public ActivityModel
+{
+public:
+    /// Construct a default ActivityModelPitzerHMW object.
+    ActivityModelPitzerHMW();
 
-/// Return an equation of state for an aqueous phase based on a Pitzer model.
-/// The implementation of this Pitzer model was taken from the following references:
-///   1. Harvie, C.E., Møller, N., Weare, J.H. (1984). The prediction of mineral solubilities in natural waters:
-///      The Na-K-Mg-Ca-H-Cl-SO4-OH-HCO3-CO3-CO2-H2O system to high ionic strengths at 25°C.
-///      Geochimica et Cosmochimica Acta, 48(4), 723–751.
-///   2. Harvie, C.E., Weare, J.H. (1980). The prediction of mineral soluhilities in natural waters: the system
-///      from zero to high concentration at 25°C. Geochimica et Cosmochimica Acta, 44(7), 981–997.
-///   3. Pitzer, K. S. (1975). Thermodynamics of electrolytes. V. effects of higher-order electrostatic terms.
-///      Journal of Solution Chemistry, 4(3), 249–265.
-/// @param mixture The aqueous mixture
-/// @return The equation of state function for the aqueous phase
-/// @see AqueousMixture, ActivityPropsFn
-auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityPropsFn;
+	/// Build the function for activity and thermodynamic excesss property calculations of a phase.
+    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
+};
 
 } // namespace Reaktoro

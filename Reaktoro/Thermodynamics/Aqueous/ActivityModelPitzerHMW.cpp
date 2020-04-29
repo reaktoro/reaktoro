@@ -1371,10 +1371,16 @@ auto lnActivityCoefficientNeutral(const AqueousMixtureState& state, const Pitzer
 
 } // namespace Pitzer
 
-auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityPropsFn
+ActivityModelPitzerHMW::ActivityModelPitzerHMW()
+{}
+
+auto ActivityModelPitzerHMW::build(const SpeciesList& species) const -> ActivityPropsFn
 {
     // Inject the Pitzer namespace here
     using namespace Pitzer;
+
+    // Create the aqueous mixture
+    AqueousMixture mixture(species);
 
     // The index of water in the mixture
     const Index iwater = mixture.indexWater();
@@ -1392,6 +1398,9 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture)-> ActivityProp
 
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, x);
+
+        // Export the aqueous mixture and its state via the extra argument
+        extra = { mixture, state };
 
         // Calculate the activity coefficients of the cations
         for(auto M = 0; M < pitzer.idx_cations.size(); ++M)

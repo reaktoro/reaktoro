@@ -30,10 +30,10 @@ namespace Reaktoro {
 /// where I is the ionic strength of the aqueous solution (in molal) and T is
 /// temperature (in K).
 ///
-/// **Reference:**
-///
-/// *Drummond, S. E. (1981). Boiling and mixing of hydrothermal fluids:
-/// chemical effects on mineral precipitation. Pennsylvania State University.*
+/// **References:**
+///  - Drummond, S. E. (1981). Boiling and mixing of hydrothermal fluids:
+///    chemical effects on mineral precipitation. Pennsylvania State
+///    University.*
 class ActivityModelDrummond : public ActivityModel
 {
 public:
