@@ -18,26 +18,40 @@
 #include "ActivityModelRumpf.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 
 namespace Reaktoro {
 
-auto ActivityModelRumpf(const AqueousMixture& mixture) -> AqueousActivityModel
+using std::log;
+
+ActivityModelRumpf::ActivityModelRumpf()
+{}
+
+ActivityModelRumpf::ActivityModelRumpf(String gas)
+: gas(gas)
+{}
+
+auto ActivityModelRumpf::build(const SpeciesList& species) const -> ActivityPropsFn
 {
-    // The number of speciesn and charged species
-    const auto nspecies = mixture.species().size();
-    const auto nions = mixture.charged().size();
+    // The index of the dissolved gas in the aqueous phase.
+    const auto igas = species.indexWithFormula(gas);
 
-    // The local indices of some charged species among all charged species
-    const auto iNa  = mixture.charged().indexWithFormula("Na+");
-    const auto iK   = mixture.charged().indexWithFormula("K+");
-    const auto iCa  = mixture.charged().indexWithFormula("Ca++");
-    const auto iMg  = mixture.charged().indexWithFormula("Mg++");
-    const auto iCl  = mixture.charged().indexWithFormula("Cl-");
-
-    AqueousActivityModel f = [=](const AqueousMixtureState& state) mutable
+    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
     {
+        // The aqueous mixture and its state exported by a base aqueous activity model.
+        const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
+        const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
+
+        // The number of species and charged species
+        const auto nions = mixture.charged().size();
+
+        // The local indices of some charged species among all charged species
+        static const auto iNa  = mixture.charged().findWithFormula("Na+");
+        static const auto iK   = mixture.charged().findWithFormula("K+");
+        static const auto iCa  = mixture.charged().findWithFormula("Ca++");
+        static const auto iMg  = mixture.charged().findWithFormula("Mg++");
+        static const auto iCl  = mixture.charged().findWithFormula("Cl-");
+
         // Extract temperature from the parameters
         const auto T = state.T;
 
@@ -45,21 +59,21 @@ auto ActivityModelRumpf(const AqueousMixture& mixture) -> AqueousActivityModel
         const auto& ms = state.ms;
 
         // Extract the stoichiometric molalities of specific ions
-        const real mNa = (iNa < nions) ? ms[iNa] : 0.0;
-        const real mK  = (iK  < nions) ? ms[iK]  : 0.0;
-        const real mCa = (iCa < nions) ? ms[iCa] : 0.0;
-        const real mMg = (iMg < nions) ? ms[iMg] : 0.0;
-        const real mCl = (iCl < nions) ? ms[iCl] : 0.0;
+        const auto mNa = (iNa < nions) ? ms[iNa] : real(0.0);
+        const auto mK  = (iK  < nions) ? ms[iK]  : real(0.0);
+        const auto mCa = (iCa < nions) ? ms[iCa] : real(0.0);
+        const auto mMg = (iMg < nions) ? ms[iMg] : real(0.0);
+        const auto mCl = (iCl < nions) ? ms[iCl] : real(0.0);
 
         // The Pitzer's parameters of the Rumpf et al. (1994) model
         const auto B = 0.254 - 76.82/T - 10656.0/(T*T) + 6312.0e+3/(T*T*T);
         const auto Gamma = -0.0028;
 
-        // Return the ln activity coefficient of CO2(aq)
-        return 2*B*(mNa + mK + 2*mCa + 2*mMg) + 3*Gamma*(mNa + mK + mCa + mMg)*mCl;
+        props.ln_g[igas] = 2*B*(mNa + mK + 2*mCa + 2*mMg) + 3*Gamma*(mNa + mK + mCa + mMg)*mCl;
+        props.ln_a[igas] = props.ln_g[igas] + log(state.m[igas]);
     };
 
-    return f;
+    return fn;
 }
 
 } // namespace Reaktoro
