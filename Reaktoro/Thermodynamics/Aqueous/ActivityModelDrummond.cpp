@@ -35,7 +35,7 @@ ActivityModelDrummond::ActivityModelDrummond(String gas, Params params)
 : gas(gas), params(params)
 {}
 
-auto ActivityModelDrummond::operator()(const SpeciesList& species) const -> ActivityPropsFn
+auto ActivityModelDrummond::build(const SpeciesList& species) const -> ActivityPropsFn
 {
     // The index of the dissolved gas in the aqueous phase.
     const auto igas = species.indexWithFormula(gas);

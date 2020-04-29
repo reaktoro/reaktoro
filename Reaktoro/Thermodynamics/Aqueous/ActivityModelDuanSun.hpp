@@ -29,7 +29,7 @@ namespace Reaktoro {
 /// *Duan, Z., Sun, R. (2003). An improved model calculating CO2 solubility in
 /// pure water and aqueous NaCl mixtures from 273 to 533 K and from 0 to 2000
 /// bar. Chemical Geology, 193(3-4), 257–271*
-class ActivityModelDuanSun
+class ActivityModelDuanSun : public ActivityModel
 {
 public:
     /// Construct a default ActivityModelDuanSun object for dissolved gas CO<sub>2</sub>(aq).
@@ -38,8 +38,8 @@ public:
     /// Construct a ActivityModelDuanSun object with given dissolved gas formula.
     ActivityModelDuanSun(String gas);
 
-    /// Construct the activity function with given list of species.
-    auto operator()(const SpeciesList& species) const -> ActivityPropsFn;
+    /// Build the function for activity and thermodynamic excesss property calculations of a phase.
+    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
 
 private:
     /// The chemical formula of the dissolved gas.

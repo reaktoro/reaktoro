@@ -70,7 +70,7 @@ public:
     auto setAggregateState(AggregateState option) -> GenericPhase&;
 
     /// Set the activity model for the phase.
-    auto setActivityModel(const ActivityModel& model) -> GenericPhase&;
+    auto setActivityModel(const ActivityModelFn& model) -> GenericPhase&;
 
     /// Set a unique name for the phase (equivalent to GenericPhase::setName).
     auto named(String name) -> GenericPhase&;
@@ -82,7 +82,7 @@ public:
     auto set(AggregateState option) -> GenericPhase&;
 
     /// Set the activity model for the phase (equivalent to GenericPhase::setActivityModel).
-    auto set(const ActivityModel& model) -> GenericPhase&;
+    auto set(const ActivityModelFn& model) -> GenericPhase&;
 
     /// Return the name of the phase.
     auto name() const -> String;
@@ -100,7 +100,7 @@ public:
     auto elements() const -> const Strings&;
 
     /// Return the specified activity model of the phase.
-    auto activityModel() const -> const ActivityModel&;
+    auto activityModel() const -> const ActivityModelFn&;
 
     /// Convert this GenericPhase object into a Phase object.
     auto convert(const Database& db, const Strings& elements) const -> Phase;
@@ -122,7 +122,7 @@ private:
     Strings symbols;
 
     /// The activity model of the phase.
-    ActivityModel activitymodel;
+    ActivityModelFn activitymodel;
 };
 
 /// The base type for all other classes defining generic pure phases at once.
@@ -149,7 +149,7 @@ public:
     auto setAggregateState(AggregateState option) -> GenericPhases&;
 
     /// Set the common activity model for the pure phases.
-    auto setActivityModel(const ActivityModel& model) -> GenericPhases&;
+    auto setActivityModel(const ActivityModelFn& model) -> GenericPhases&;
 
     /// Set the common state of matter for the pure phases (equivalent to GenericPhases::setStateOfMatter).
     auto set(StateOfMatter option) -> GenericPhases&;
@@ -158,7 +158,7 @@ public:
     auto set(AggregateState option) -> GenericPhases&;
 
     /// Set the common activity model for the pure phases (equivalent to GenericPhases::setActivityModel).
-    auto set(const ActivityModel& model) -> GenericPhases&;
+    auto set(const ActivityModelFn& model) -> GenericPhases&;
 
     /// Return the common state of matter of the phase.
     auto stateOfMatter() const -> StateOfMatter;
@@ -173,7 +173,7 @@ public:
     auto elements() const -> const Strings&;
 
     /// Return the specified common activity model of the pure phases.
-    auto activityModel() const -> const ActivityModel&;
+    auto activityModel() const -> const ActivityModelFn&;
 
     /// Convert this GenericPhases object into a vector of GenericPhase objects.
     auto convert(const Database& db, const Strings& elements) const -> Vec<GenericPhase>;
@@ -192,7 +192,7 @@ private:
     Strings symbols;
 
     /// The common activity model of the pure phases.
-    ActivityModel activitymodel;
+    ActivityModelFn activitymodel;
 };
 
 /// The class used to define the phases that will constitute the chemical system of interest.

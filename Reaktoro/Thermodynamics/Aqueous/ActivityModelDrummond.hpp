@@ -34,7 +34,7 @@ namespace Reaktoro {
 ///
 /// *Drummond, S. E. (1981). Boiling and mixing of hydrothermal fluids:
 /// chemical effects on mineral precipitation. Pennsylvania State University.*
-class ActivityModelDrummond
+class ActivityModelDrummond : public ActivityModel
 {
 public:
     /// The parameters in the Drummond (1981) activity model for dissolved gases.
@@ -57,8 +57,8 @@ public:
     /// Construct a ActivityModelDrummond object with given dissolved gas formula and model parameters.
     ActivityModelDrummond(String gas, Params params);
 
-    /// Construct the activity function with given list of species.
-    auto operator()(const SpeciesList& species) const -> ActivityPropsFn;
+    /// Build the function for activity and thermodynamic excesss property calculations of a phase.
+    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
 
 private:
     /// The chemical formula of the dissolved gas.
