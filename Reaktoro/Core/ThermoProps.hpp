@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ThermoPropsPhase.hpp>
+#include <Reaktoro/Core/PhaseThermoProps.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
@@ -72,10 +72,10 @@ public:
     auto data() const -> const ThermoPropsData&;
 
     /// Return the standard thermodynamic properties of a phase with given index.
-    auto phaseProps(Index idx) const -> ThermoPropsPhaseConstRef;
+    auto phaseProps(Index idx) const -> PhaseThermoPropsConstRef;
 
     /// Return the standard thermodynamic properties of a phase with given index.
-    auto phaseProps(Index idx) -> ThermoPropsPhaseRef;
+    auto phaseProps(Index idx) -> PhaseThermoPropsRef;
 
     /// Return the temperature of the system (in K).
     auto temperature() const -> real;

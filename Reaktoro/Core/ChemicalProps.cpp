@@ -18,7 +18,7 @@
 #include "ChemicalProps.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
+#include <Reaktoro/Core/PhaseChemicalProps.hpp>
 
 namespace Reaktoro {
 
@@ -68,13 +68,13 @@ auto ChemicalProps::data() const -> const ChemicalPropsData&
 {    return props;
 }
 
-auto ChemicalProps::phaseProps(Index idx) const -> ChemicalPropsPhaseConstRef
+auto ChemicalProps::phaseProps(Index idx) const -> PhaseChemicalPropsConstRef
 {
     const auto phase = sys.phase(idx);
     const auto begin = sys.phases().numSpeciesUntilPhase(idx);
     const auto size = phase.species().size();
 
-    return ChemicalPropsPhaseConstRef(phase, {
+    return PhaseChemicalPropsConstRef(phase, {
         props.T,
         props.P,
         props.n.segment(begin, size),
@@ -97,13 +97,13 @@ auto ChemicalProps::phaseProps(Index idx) const -> ChemicalPropsPhaseConstRef
     });
 }
 
-auto ChemicalProps::phaseProps(Index idx) -> ChemicalPropsPhaseRef
+auto ChemicalProps::phaseProps(Index idx) -> PhaseChemicalPropsRef
 {
     const auto phase = sys.phase(idx);
     const auto begin = sys.phases().numSpeciesUntilPhase(idx);
     const auto size = phase.species().size();
 
-    return ChemicalPropsPhaseRef(phase, {
+    return PhaseChemicalPropsRef(phase, {
         props.T,
         props.P,
         props.n.segment(begin, size),

@@ -20,8 +20,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
-#include <Reaktoro/Core/ThermoPropsPhase.hpp>
+#include <Reaktoro/Core/PhaseChemicalProps.hpp>
+#include <Reaktoro/Core/PhaseThermoProps.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing Phase", "[Phase]")

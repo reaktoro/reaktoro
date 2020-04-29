@@ -24,33 +24,33 @@ namespace Reaktoro {
 
 /// The base type for primary standard thermodynamic property data of a phase.
 template<typename Real, typename Array>
-struct ThermoPropsPhaseBaseData;
+struct PhaseThermoPropsBaseData;
 
 /// The primary standard thermodynamic property data of a phase.
-using ThermoPropsPhaseData = ThermoPropsPhaseBaseData<real, ArrayXr>;
+using PhaseThermoPropsData = PhaseThermoPropsBaseData<real, ArrayXr>;
 
 /// The primary standard thermodynamic property data of a phase.
-using ThermoPropsPhaseDataRef = ThermoPropsPhaseBaseData<real&, ArrayXrRef>;
+using PhaseThermoPropsDataRef = PhaseThermoPropsBaseData<real&, ArrayXrRef>;
 
 /// The primary standard thermodynamic property data of a phase.
-using ThermoPropsPhaseDataConstRef = ThermoPropsPhaseBaseData<const real&, ArrayXrConstRef>;
+using PhaseThermoPropsDataConstRef = PhaseThermoPropsBaseData<const real&, ArrayXrConstRef>;
 
 /// The base type for standard thermodynamic properties of a phase and its species.
 template<typename R, typename A>
-class ThermoPropsPhaseBase;
+class PhaseThermoPropsBase;
 
 /// The standard thermodynamic properties of a phase and its species.
-using ThermoPropsPhase = ThermoPropsPhaseBase<real, ArrayXr>;
+using PhaseThermoProps = PhaseThermoPropsBase<real, ArrayXr>;
 
 /// The non-const view to the standard thermodynamic properties of a phase and its species.
-using ThermoPropsPhaseRef = ThermoPropsPhaseBase<real&, ArrayXrRef>;
+using PhaseThermoPropsRef = PhaseThermoPropsBase<real&, ArrayXrRef>;
 
 /// The const view to the standard thermodynamic properties of a phase and its species.
-using ThermoPropsPhaseConstRef = ThermoPropsPhaseBase<const real&, ArrayXrConstRef>;
+using PhaseThermoPropsConstRef = PhaseThermoPropsBase<const real&, ArrayXrConstRef>;
 
 /// The base type for primary standard thermodynamic property data of a phase.
 template<typename Real, typename Array>
-struct ThermoPropsPhaseBaseData
+struct PhaseThermoPropsBaseData
 {
     /// The temperature of the phase (in K).
     Real T;
@@ -76,22 +76,22 @@ struct ThermoPropsPhaseBaseData
 
 /// The base type for standard thermodynamic properties of a phase and its species.
 template<typename R, typename A>
-class ThermoPropsPhaseBase
+class PhaseThermoPropsBase
 {
 public:
-    /// Construct a ThermoPropsPhaseBase instance.
-    explicit ThermoPropsPhaseBase(const Phase& phase);
+    /// Construct a PhaseThermoPropsBase instance.
+    explicit PhaseThermoPropsBase(const Phase& phase);
 
-    /// Construct a ThermoPropsPhaseBase instance.
-    ThermoPropsPhaseBase(const Phase& phase, const ThermoPropsPhaseBaseData<R, A>& data);
+    /// Construct a PhaseThermoPropsBase instance.
+    PhaseThermoPropsBase(const Phase& phase, const PhaseThermoPropsBaseData<R, A>& data);
 
-    /// Construct a ThermoPropsPhaseBase instance.
+    /// Construct a PhaseThermoPropsBase instance.
     template<typename RX, typename AX>
-    ThermoPropsPhaseBase(ThermoPropsPhaseBase<RX, AX>& props);
+    PhaseThermoPropsBase(PhaseThermoPropsBase<RX, AX>& props);
 
-    /// Construct a ThermoPropsPhaseBase instance.
+    /// Construct a PhaseThermoPropsBase instance.
     template<typename RX, typename AX>
-    ThermoPropsPhaseBase(const ThermoPropsPhaseBase<RX, AX>& props);
+    PhaseThermoPropsBase(const PhaseThermoPropsBase<RX, AX>& props);
 
     /// Update the standard thermodynamic properties of the phase and its species.
     /// @param T The temperature condition (in K)
@@ -131,20 +131,20 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species (in J/(mol*K)).
     auto standardHeatCapacitiesConstV() const;
 
-    // Ensure other ThermoPropsPhaseBase types are friend among themselves.
+    // Ensure other PhaseThermoPropsBase types are friend among themselves.
     template<typename RX, typename AX>
-    friend class ThermoPropsPhaseBase;
+    friend class PhaseThermoPropsBase;
 
 private:
     /// The phase associated with these primary standard thermodynamic properties.
     Phase phase;
 
     /// The primary standard thermodynamic property data of the phase from which others are calculated.
-    ThermoPropsPhaseBaseData<R, A> props;
+    PhaseThermoPropsBaseData<R, A> props;
 };
 
 template<typename Real, typename Array>
-ThermoPropsPhaseBase<Real, Array>::ThermoPropsPhaseBase(const Phase& phase)
+PhaseThermoPropsBase<Real, Array>::PhaseThermoPropsBase(const Phase& phase)
 : phase(phase)
 {
     const auto numspecies = phase.species().size();
@@ -157,7 +157,7 @@ ThermoPropsPhaseBase<Real, Array>::ThermoPropsPhaseBase(const Phase& phase)
 }
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::update(real Tnew, real Pnew)
+auto PhaseThermoPropsBase<Real, Array>::update(real Tnew, real Pnew)
 {
     auto& T   = props.T;
     auto& P   = props.P;
@@ -204,13 +204,13 @@ auto ThermoPropsPhaseBase<Real, Array>::update(real Tnew, real Pnew)
 }
 
 template<typename Real, typename Array>
-ThermoPropsPhaseBase<Real, Array>::ThermoPropsPhaseBase(const Phase& phase, const ThermoPropsPhaseBaseData<Real, Array>& data)
+PhaseThermoPropsBase<Real, Array>::PhaseThermoPropsBase(const Phase& phase, const PhaseThermoPropsBaseData<Real, Array>& data)
 : phase(phase), props(data)
 {}
 
 template<typename Real, typename Array>
 template<typename RX, typename AX>
-ThermoPropsPhaseBase<Real, Array>::ThermoPropsPhaseBase(ThermoPropsPhaseBase<RX, AX>& other)
+PhaseThermoPropsBase<Real, Array>::PhaseThermoPropsBase(PhaseThermoPropsBase<RX, AX>& other)
 : phase(other.phase), props{
     other.props.T,
     other.props.P,
@@ -223,7 +223,7 @@ ThermoPropsPhaseBase<Real, Array>::ThermoPropsPhaseBase(ThermoPropsPhaseBase<RX,
 
 template<typename Real, typename Array>
 template<typename RX, typename AX>
-ThermoPropsPhaseBase<Real, Array>::ThermoPropsPhaseBase(const ThermoPropsPhaseBase<RX, AX>& other)
+PhaseThermoPropsBase<Real, Array>::PhaseThermoPropsBase(const PhaseThermoPropsBase<RX, AX>& other)
 : phase(other.phase), props{
     other.props.T,
     other.props.P,
@@ -235,67 +235,67 @@ ThermoPropsPhaseBase<Real, Array>::ThermoPropsPhaseBase(const ThermoPropsPhaseBa
 {}
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::data() const
+auto PhaseThermoPropsBase<Real, Array>::data() const
 {
     return props;
 }
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::temperature() const
+auto PhaseThermoPropsBase<Real, Array>::temperature() const
 {
     return props.T;
 }
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::pressure() const
+auto PhaseThermoPropsBase<Real, Array>::pressure() const
 {
     return props.P;
 }
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::standardGibbsEnergies() const
+auto PhaseThermoPropsBase<Real, Array>::standardGibbsEnergies() const
 {
     return props.G0;
 }
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::standardEnthalpies() const
+auto PhaseThermoPropsBase<Real, Array>::standardEnthalpies() const
 {
     return props.H0;
 }
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::standardVolumes() const
+auto PhaseThermoPropsBase<Real, Array>::standardVolumes() const
 {
     return props.V0;
 }
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::standardEntropies() const
+auto PhaseThermoPropsBase<Real, Array>::standardEntropies() const
 {
     return (props.H0 - props.G0)/props.T; // from G0 = H0 - T*S0
 }
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::standardInternalEnergies() const
+auto PhaseThermoPropsBase<Real, Array>::standardInternalEnergies() const
 {
     return props.H0 - props.P * props.V0; // from H0 = U0 + P*V0
 }
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::standardHelmholtzEnergies() const
+auto PhaseThermoPropsBase<Real, Array>::standardHelmholtzEnergies() const
 {
     return props.G0 - props.P * props.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
 }
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::standardHeatCapacitiesConstP() const
+auto PhaseThermoPropsBase<Real, Array>::standardHeatCapacitiesConstP() const
 {
     return props.Cp0;
 }
 
 template<typename Real, typename Array>
-auto ThermoPropsPhaseBase<Real, Array>::standardHeatCapacitiesConstV() const
+auto PhaseThermoPropsBase<Real, Array>::standardHeatCapacitiesConstV() const
 {
     return props.Cv0;
 }

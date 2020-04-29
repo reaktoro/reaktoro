@@ -25,7 +25,7 @@ namespace Reaktoro {
 
 /// The base type for primary chemical property data of a phase from which others are computed.
 template<typename Real, typename Array>
-struct ChemicalPropsPhaseBaseData
+struct PhaseChemicalPropsBaseData
 {
     /// The temperature of the phase (in K).
     Real T;
@@ -86,32 +86,32 @@ struct ChemicalPropsPhaseBaseData
 };
 
 /// The primary chemical property data of a phase from which others are computed.
-using ChemicalPropsPhaseData = ChemicalPropsPhaseBaseData<real, ArrayXr>;
+using PhaseChemicalPropsData = PhaseChemicalPropsBaseData<real, ArrayXr>;
 
 /// The primary chemical property data of a phase from which others are computed.
-using ChemicalPropsPhaseDataRef = ChemicalPropsPhaseBaseData<real&, ArrayXrRef>;
+using PhaseChemicalPropsDataRef = PhaseChemicalPropsBaseData<real&, ArrayXrRef>;
 
 /// The primary chemical property data of a phase from which others are computed.
-using ChemicalPropsPhaseDataConstRef = ChemicalPropsPhaseBaseData<const real&, ArrayXrConstRef>;
+using PhaseChemicalPropsDataConstRef = PhaseChemicalPropsBaseData<const real&, ArrayXrConstRef>;
 
 /// The base type for chemical properties of a phase and its species.
 template<typename R, typename A>
-class ChemicalPropsPhaseBase
+class PhaseChemicalPropsBase
 {
 public:
-    /// Construct a ChemicalPropsPhaseBase instance.
-    explicit ChemicalPropsPhaseBase(const Phase& phase);
+    /// Construct a PhaseChemicalPropsBase instance.
+    explicit PhaseChemicalPropsBase(const Phase& phase);
 
-    /// Construct a ChemicalPropsPhaseBase instance.
-    ChemicalPropsPhaseBase(const Phase& phase, const ChemicalPropsPhaseBaseData<R, A>& data);
+    /// Construct a PhaseChemicalPropsBase instance.
+    PhaseChemicalPropsBase(const Phase& phase, const PhaseChemicalPropsBaseData<R, A>& data);
 
-    /// Construct a ChemicalPropsPhaseBase instance.
+    /// Construct a PhaseChemicalPropsBase instance.
     template<typename RX, typename AX>
-    ChemicalPropsPhaseBase(ChemicalPropsPhaseBase<RX, AX>& props);
+    PhaseChemicalPropsBase(PhaseChemicalPropsBase<RX, AX>& props);
 
-    /// Construct a ChemicalPropsPhaseBase instance.
+    /// Construct a PhaseChemicalPropsBase instance.
     template<typename RX, typename AX>
-    ChemicalPropsPhaseBase(const ChemicalPropsPhaseBase<RX, AX>& props);
+    PhaseChemicalPropsBase(const PhaseChemicalPropsBase<RX, AX>& props);
 
     /// Update the chemical properties of the phase.
     /// @param T The temperature condition (in K)
@@ -203,29 +203,29 @@ public:
     /// Return the volume of the phase (in m3).
     auto volume() const;
 
-    // Ensure other ChemicalPropsPhaseBase types are friend among themselves.
+    // Ensure other PhaseChemicalPropsBase types are friend among themselves.
     template<typename RX, typename AX>
-    friend class ChemicalPropsPhaseBase;
+    friend class PhaseChemicalPropsBase;
 
 private:
     /// The phase associated with these primary chemical properties.
     Phase phase;
 
     /// The primary chemical property data of the phase from which others are calculated.
-    ChemicalPropsPhaseBaseData<R, A> props;
+    PhaseChemicalPropsBaseData<R, A> props;
 };
 
 /// The chemical properties of a phase and its species.
-using ChemicalPropsPhase = ChemicalPropsPhaseBase<real, ArrayXr>;
+using PhaseChemicalProps = PhaseChemicalPropsBase<real, ArrayXr>;
 
 /// The non-const view to the chemical properties of a phase and its species.
-using ChemicalPropsPhaseRef = ChemicalPropsPhaseBase<real&, ArrayXrRef>;
+using PhaseChemicalPropsRef = PhaseChemicalPropsBase<real&, ArrayXrRef>;
 
 /// The const view to the chemical properties of a phase and its species.
-using ChemicalPropsPhaseConstRef = ChemicalPropsPhaseBase<const real&, ArrayXrConstRef>;
+using PhaseChemicalPropsConstRef = PhaseChemicalPropsBase<const real&, ArrayXrConstRef>;
 
 template<typename Real, typename Array>
-ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const Phase& phase)
+PhaseChemicalPropsBase<Real, Array>::PhaseChemicalPropsBase(const Phase& phase)
 : phase(phase)
 {
     const auto numspecies = phase.species().size();
@@ -242,13 +242,13 @@ ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const Phase& phase)
 }
 
 template<typename Real, typename Array>
-ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const Phase& phase, const ChemicalPropsPhaseBaseData<Real, Array>& data)
+PhaseChemicalPropsBase<Real, Array>::PhaseChemicalPropsBase(const Phase& phase, const PhaseChemicalPropsBaseData<Real, Array>& data)
 : phase(phase), props(data)
 {}
 
 template<typename Real, typename Array>
 template<typename RX, typename AX>
-ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(ChemicalPropsPhaseBase<RX, AX>& other)
+PhaseChemicalPropsBase<Real, Array>::PhaseChemicalPropsBase(PhaseChemicalPropsBase<RX, AX>& other)
 : phase(other.phase), props{
     other.props.T,
     other.props.P,
@@ -273,7 +273,7 @@ ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(ChemicalPropsPhaseBa
 
 template<typename Real, typename Array>
 template<typename RX, typename AX>
-ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const ChemicalPropsPhaseBase<RX, AX>& other)
+PhaseChemicalPropsBase<Real, Array>::PhaseChemicalPropsBase(const PhaseChemicalPropsBase<RX, AX>& other)
 : phase(other.phase), props{
     other.props.T,
     other.props.P,
@@ -297,7 +297,7 @@ ChemicalPropsPhaseBase<Real, Array>::ChemicalPropsPhaseBase(const ChemicalPropsP
 {}
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::update(real Tnew, real Pnew, ArrayXrConstRef nnew)
+auto PhaseChemicalPropsBase<Real, Array>::update(real Tnew, real Pnew, ArrayXrConstRef nnew)
 {
     auto& T      = props.T;
     auto& P      = props.P;
@@ -375,9 +375,7 @@ auto ChemicalPropsPhaseBase<Real, Array>::update(real Tnew, real Pnew, ArrayXrCo
         else
         {
             Vec<std::any> extra;
-            ActivityPropsRef props{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
-
-            phase.activityPropsFn()(props, { T, P, x, extra });
+            phase.activityPropsFn()({ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a }, { T, P, x, extra });
         }
     };
 
@@ -389,122 +387,122 @@ auto ChemicalPropsPhaseBase<Real, Array>::update(real Tnew, real Pnew, ArrayXrCo
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::data() const
+auto PhaseChemicalPropsBase<Real, Array>::data() const
 {
     return props;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::temperature() const
+auto PhaseChemicalPropsBase<Real, Array>::temperature() const
 {
     return props.T;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::pressure() const
+auto PhaseChemicalPropsBase<Real, Array>::pressure() const
 {
     return props.P;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::speciesAmounts() const
+auto PhaseChemicalPropsBase<Real, Array>::speciesAmounts() const
 {
     return props.n;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::moleFractions() const
+auto PhaseChemicalPropsBase<Real, Array>::moleFractions() const
 {
     return props.x;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::lnActivityCoefficients() const
+auto PhaseChemicalPropsBase<Real, Array>::lnActivityCoefficients() const
 {
     return props.ln_g;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::lnActivities() const
+auto PhaseChemicalPropsBase<Real, Array>::lnActivities() const
 {
     return props.ln_a;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::chemicalPotentials() const
+auto PhaseChemicalPropsBase<Real, Array>::chemicalPotentials() const
 {
     const auto R = universalGasConstant;
     return props.G0 + R*props.T * props.ln_a;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::standardGibbsEnergies() const
+auto PhaseChemicalPropsBase<Real, Array>::standardGibbsEnergies() const
 {
     return props.G0;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::standardEnthalpies() const
+auto PhaseChemicalPropsBase<Real, Array>::standardEnthalpies() const
 {
     return props.H0;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::standardVolumes() const
+auto PhaseChemicalPropsBase<Real, Array>::standardVolumes() const
 {
     return props.V0;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::standardEntropies() const
+auto PhaseChemicalPropsBase<Real, Array>::standardEntropies() const
 {
     return (props.H0 - props.G0)/props.T; // from G0 = H0 - T*S0
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::standardInternalEnergies() const
+auto PhaseChemicalPropsBase<Real, Array>::standardInternalEnergies() const
 {
     return props.H0 - props.P * props.V0; // from H0 = U0 + P*V0
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::standardHelmholtzEnergies() const
+auto PhaseChemicalPropsBase<Real, Array>::standardHelmholtzEnergies() const
 {
     return props.G0 - props.P * props.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::standardHeatCapacitiesConstP() const
+auto PhaseChemicalPropsBase<Real, Array>::standardHeatCapacitiesConstP() const
 {
     return props.Cp0;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::standardHeatCapacitiesConstV() const
+auto PhaseChemicalPropsBase<Real, Array>::standardHeatCapacitiesConstV() const
 {
     return props.Cv0;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::molarGibbsEnergy() const
+auto PhaseChemicalPropsBase<Real, Array>::molarGibbsEnergy() const
 {
     return (props.x * props.G0).sum() + props.Gex;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::molarEnthalpy() const
+auto PhaseChemicalPropsBase<Real, Array>::molarEnthalpy() const
 {
     return (props.x * props.H0).sum() + props.Hex;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::molarVolume() const
+auto PhaseChemicalPropsBase<Real, Array>::molarVolume() const
 {
     return (props.x * props.V0).sum() + props.Vex;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::molarEntropy() const
+auto PhaseChemicalPropsBase<Real, Array>::molarEntropy() const
 {
     const auto T = temperature();
     const auto G = molarGibbsEnergy();
@@ -513,7 +511,7 @@ auto ChemicalPropsPhaseBase<Real, Array>::molarEntropy() const
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::molarInternalEnergy() const
+auto PhaseChemicalPropsBase<Real, Array>::molarInternalEnergy() const
 {
     const auto P = pressure();
     const auto H = molarEnthalpy();
@@ -522,7 +520,7 @@ auto ChemicalPropsPhaseBase<Real, Array>::molarInternalEnergy() const
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::molarHelmholtzEnergy() const
+auto PhaseChemicalPropsBase<Real, Array>::molarHelmholtzEnergy() const
 {
     const auto T = temperature();
     const auto U = molarInternalEnergy();
@@ -531,32 +529,32 @@ auto ChemicalPropsPhaseBase<Real, Array>::molarHelmholtzEnergy() const
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::molarHeatCapacityConstP() const
+auto PhaseChemicalPropsBase<Real, Array>::molarHeatCapacityConstP() const
 {
     return (props.x * props.Cp0).sum() + props.Cpex;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::molarHeatCapacityConstV() const
+auto PhaseChemicalPropsBase<Real, Array>::molarHeatCapacityConstV() const
 {
     return (props.x * props.Cv0).sum() + props.Cvex;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::molarDensity() const
+auto PhaseChemicalPropsBase<Real, Array>::molarDensity() const
 {
     const auto V = molarVolume();
     return V ? 1.0/V : 0.0;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::amount() const
+auto PhaseChemicalPropsBase<Real, Array>::amount() const
 {
     return props.amount;
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::mass() const
+auto PhaseChemicalPropsBase<Real, Array>::mass() const
 {
     real sum = 0.0;
     for(auto i = 0; i < phase.species().size(); ++i)
@@ -565,7 +563,7 @@ auto ChemicalPropsPhaseBase<Real, Array>::mass() const
 }
 
 template<typename Real, typename Array>
-auto ChemicalPropsPhaseBase<Real, Array>::volume() const
+auto PhaseChemicalPropsBase<Real, Array>::volume() const
 {
     return molarVolume() * props.amount;
 }
