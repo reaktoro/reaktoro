@@ -37,7 +37,7 @@ namespace Reaktoro {
 class ActivityModelDrummond
 {
 public:
-    /// The parameters in the Drummond (1981) activity correction model.
+    /// The parameters in the Drummond (1981) activity model for dissolved gases.
     /// The default values correspond to dissolved gas CO<sub>2</sub>(aq).
     struct Params
     {
@@ -64,7 +64,7 @@ private:
     /// The chemical formula of the dissolved gas.
     String gas = "CO2";
 
-    /// The model parameters.
+    /// The parameters of the activity model.
     Params params;
 };
 

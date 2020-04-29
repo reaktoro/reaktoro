@@ -93,7 +93,7 @@ auto ActivityModelDuanSun::operator()(const SpeciesList& species) const -> Activ
     // The index of the dissolved gas in the aqueous phase.
     const auto igas = species.indexWithFormula(gas);
 
-    ActivityPropsFn fn = [=](ActivityProps props, ActivityArgs args)
+    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
     {
         // The aqueous mixture and its state exported by a base aqueous activity model.
         const auto& mixture = std::any_cast<AqueousMixture>(args.extra[0]);

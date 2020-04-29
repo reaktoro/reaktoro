@@ -375,7 +375,9 @@ auto ChemicalPropsPhaseBase<Real, Array>::update(real Tnew, real Pnew, ArrayXrCo
         else
         {
             Vec<std::any> extra;
-            phase.activityPropsFn()({ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a }, { T, P, x, extra });
+            ActivityPropsRef props{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
+
+            phase.activityPropsFn()(props, { T, P, x, extra });
         }
     };
 
