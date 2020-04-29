@@ -18,27 +18,34 @@
 #include "ActivityModelSetschenow.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 
 namespace Reaktoro {
 
-auto ActivityModelSetschenow(const AqueousMixture& mixture, double b) -> AqueousActivityModel
+using std::log;
+
+ActivityModelSetschenow::ActivityModelSetschenow(String neutral, real b)
+: neutral(neutral), b(b)
+{}
+
+auto ActivityModelSetschenow::build(const SpeciesList& species) const -> ActivityPropsFn
 {
-    // The value of ln(10)
-    const double ln10 = 2.30258509299;
+    // The index of the neutral aqueous species in the aqueous phase.
+    const auto ineutral = species.indexWithFormula(neutral);
 
-    AqueousActivityModel f = [=](const AqueousMixtureState& state)
+    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
     {
-        // The effective ionic strength of the aqueous mixture
-        const auto& I = state.Ie;
+        // The aqueous mixture and its state exported by a base aqueous activity model.
+        const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
+        const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
 
-        // The activity coefficient of the given species (in molality scale)
-        real ln_gi = ln10 * b * I;
-
-        return ln_gi;
+        const auto& I = state.Is;
+        props.ln_g[ineutral] = ln10 * b * I;
+        props.ln_a[ineutral] = props.ln_g[ineutral] + log(state.m[ineutral]);
     };
 
-    return f;
+    return fn;
 }
 
 } // namespace Reaktoro
