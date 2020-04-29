@@ -23,12 +23,10 @@
 namespace Reaktoro {
 
 /// The activity model of Duan and Sun (2003) for dissolved gases.
-///
-/// **Reference:**
-///
-/// *Duan, Z., Sun, R. (2003). An improved model calculating CO2 solubility in
-/// pure water and aqueous NaCl mixtures from 273 to 533 K and from 0 to 2000
-/// bar. Chemical Geology, 193(3-4), 257–271*
+/// **References:**
+///  - Duan, Z., Sun, R. (2003). An improved model calculating CO2 solubility
+///    in pure water and aqueous NaCl mixtures from 273 to 533 K and from 0 to
+///    2000 bar. Chemical Geology, 193(3-4), 257–271
 class ActivityModelDuanSun : public ActivityModel
 {
 public:

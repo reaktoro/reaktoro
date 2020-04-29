@@ -22,9 +22,6 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class AqueousMixture;
-
 /// The HKF activity model for aqueous solutions.
 /// **References:**
 ///   - Helgeson, H. C., Kirkham, D. H., Flowers, G. C. (1981). Theoretical
