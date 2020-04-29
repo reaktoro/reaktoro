@@ -18,15 +18,29 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousActivityModel.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 
 namespace Reaktoro {
 
-/// Create the aqueous activity function of a neutral species based on the Setschenow model.
-/// @param mixture The aqueous mixture instance containing the aqueous species
-/// @param b The Setschenow constant
-/// @return The aqueous activity function of the aqueous species
-/// @see AqueousMixture, AqueousActivityModel
-auto ActivityModelSetschenow(const AqueousMixture& mixture, double b) -> AqueousActivityModel;
+/// The Setschenow activity model for a neutral aqueous species.
+class ActivityModelSetschenow : public ActivityModel
+{
+public:
+    /// Construct a ActivityModelSetschenow object.
+    /// @param neutral The formula of the neutral aqueous species (e.g., `NaCl`).
+    /// @param b The Setschenow *b* coefficient.
+    ActivityModelSetschenow(String neutral, real b);
+
+	/// Build the function for activity and thermodynamic excesss property calculations of a phase.
+    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
+
+private:
+    /// The formula of the neutral aqueous species.
+    String neutral;
+
+    /// The Setschenow *b* coefficient.
+    real b;
+};
+
 
 } // namespace Reaktoro
