@@ -18,7 +18,7 @@
 #include "ThermoProps.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Core/ThermoPropsPhase.hpp>
+#include <Reaktoro/Core/PhaseThermoProps.hpp>
 
 namespace Reaktoro {
 
@@ -54,13 +54,13 @@ auto ThermoProps::data() const -> const ThermoPropsData&
 {    return props;
 }
 
-auto ThermoProps::phaseProps(Index idx) const -> ThermoPropsPhaseConstRef
+auto ThermoProps::phaseProps(Index idx) const -> PhaseThermoPropsConstRef
 {
     const auto phase = sys.phase(idx);
     const auto begin = sys.phases().numSpeciesUntilPhase(idx);
     const auto size = phase.species().size();
 
-    return ThermoPropsPhaseConstRef(phase, {
+    return PhaseThermoPropsConstRef(phase, {
         props.T,
         props.P,
         props.G0.segment(begin, size),
@@ -71,13 +71,13 @@ auto ThermoProps::phaseProps(Index idx) const -> ThermoPropsPhaseConstRef
     });
 }
 
-auto ThermoProps::phaseProps(Index idx) -> ThermoPropsPhaseRef
+auto ThermoProps::phaseProps(Index idx) -> PhaseThermoPropsRef
 {
     const auto phase = sys.phase(idx);
     const auto begin = sys.phases().numSpeciesUntilPhase(idx);
     const auto size = sys.phase(idx).species().size();
 
-    return ThermoPropsPhaseRef(phase, {
+    return PhaseThermoPropsRef(phase, {
         props.T,
         props.P,
         props.G0.segment(begin, size),

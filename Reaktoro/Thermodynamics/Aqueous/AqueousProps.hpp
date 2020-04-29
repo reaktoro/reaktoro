@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
+#include <Reaktoro/Core/PhaseChemicalProps.hpp>
 
 namespace Reaktoro {
 
@@ -32,7 +32,7 @@ class ChemicalSystem;
 
 /// The chemical properties of an aqueous phase.
 /// @ingroup GeochemistryExtension
-class AqueousProps : public ChemicalPropsPhase
+class AqueousProps : public PhaseChemicalProps
 {
 public:
     /// Construct a AqueousProps instance with standard conditions.

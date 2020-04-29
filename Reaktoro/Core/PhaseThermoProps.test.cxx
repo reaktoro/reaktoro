@@ -19,9 +19,9 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ThermoPropsPhase.hpp>
+#include <Reaktoro/Core/PhaseThermoProps.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
+TEST_CASE("Testing PhaseThermoProps class", "[PhaseThermoProps]")
 {
 }

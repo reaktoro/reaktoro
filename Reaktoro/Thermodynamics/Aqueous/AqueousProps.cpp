@@ -36,13 +36,13 @@ struct AqueousProps::Impl
 };
 
 AqueousProps::AqueousProps(const Phase& phase)
-: ChemicalPropsPhase(phase), pimpl(new Impl(phase))
+: PhaseChemicalProps(phase), pimpl(new Impl(phase))
 {
     error(true, "AqueousProps class has not been implemented yet.");
 }
 
 AqueousProps::AqueousProps(const AqueousProps& other)
-: ChemicalPropsPhase(other.phase()), pimpl(new Impl(*other.pimpl))
+: PhaseChemicalProps(other.phase()), pimpl(new Impl(*other.pimpl))
 {
     error(true, "AqueousProps class has not been implemented yet.");
 }
@@ -52,7 +52,7 @@ AqueousProps::~AqueousProps()
 
 auto AqueousProps::operator=(AqueousProps other) -> AqueousProps&
 {
-    ChemicalPropsPhase::operator=(other);
+    PhaseChemicalProps::operator=(other);
     pimpl = std::move(other.pimpl);
     return *this;
 }

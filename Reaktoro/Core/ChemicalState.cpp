@@ -173,12 +173,12 @@ struct ChemicalState::Impl
         return A * n.matrix();
     }
 
-    auto phaseProps(Index iphase) const -> ChemicalPropsPhase
+    auto phaseProps(Index iphase) const -> PhaseChemicalProps
     {
         const auto offset = system.phases().numSpeciesUntilPhase(iphase);
         const auto length = system.phase(iphase).species().size();
         const auto np = n.segment(offset, length);
-        ChemicalPropsPhase res(system.phase(iphase));
+        PhaseChemicalProps res(system.phase(iphase));
         res.update(T, P, np);
         return res;
     }
@@ -343,7 +343,7 @@ auto ChemicalState::speciesMass(String name, String unit) const -> real
     return pimpl->speciesMass(name, unit);
 }
 
-auto ChemicalState::phaseProps(Index iphase) const -> ChemicalPropsPhase
+auto ChemicalState::phaseProps(Index iphase) const -> PhaseChemicalProps
 {
     return pimpl->phaseProps(iphase);
 }
