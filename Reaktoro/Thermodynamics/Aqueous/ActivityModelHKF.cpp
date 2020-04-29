@@ -292,8 +292,14 @@ auto effectiveIonicRadius(const Species& species) -> real
 
 } // namespace
 
-auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityPropsFn
+ActivityModelHKF::ActivityModelHKF()
+{}
+
+auto ActivityModelHKF::build(const SpeciesList& species) const -> ActivityPropsFn
 {
+    // Create the aqueous mixture
+    AqueousMixture mixture(species);
+
     // The number of species in the mixture
     const auto num_species = mixture.species().size();
 
@@ -341,14 +347,18 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityPropsFn
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, x);
 
+        // Export the aqueous mixture and its state via the extra argument
+        extra = { mixture, state };
+
         // Auxiliary references to state variables
-        const auto& I = state.Ie;
-        const auto& m = state.m;
+        const auto& I = state.Is;  // the stoichiometric ionic strength
+        const auto& m = state.m;   // the molalities of all species
+        const auto& ms = state.ms; // the stoichiometric molalities of the charged species
 
         // The square root of the ionic strength
         const auto sqrtI = sqrt(I);
 
-        // The mole fraction of the water species and its molar derivatives
+        // The mole fraction of the water species
         const auto xw = x[iwater];
 
         // The ln and log10 of water mole fraction
@@ -367,22 +377,17 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityPropsFn
         // The osmotic coefficient of the aqueous phase
         real phi = {};
 
-        // Set the activity coefficients of the neutral species to
-        // water mole fraction to convert it to molality scale
-        props.ln_g.fill(0.0);
-//        props.ln_activity_coefficients = ln_xw;
-
         // Loop over all charged species in the mixture
         for(auto i = 0; i < num_charged_species; ++i)
         {
             // The index of the charged species in the mixture
             const auto ispecies = icharged_species[i];
 
-            // The molality of the charged species and its molar derivatives
-            const auto mi = m[ispecies];
+            // The stoichiometric molality of the charged species
+            const auto msi = ms[i];
 
             // Check if the molality of the charged species is zero
-            if(mi == 0.0)
+            if(msi == 0.0)
                 continue;
 
             // The electrical charge of the charged species
@@ -403,10 +408,10 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityPropsFn
                 2.0*(eff_radius + 1.91*abs(z))/(abs(z) + 1.0) :
                 2.0*(eff_radius + 1.81*abs(z))/(abs(z) + 1.0);
 
-            // The \Lamba parameter of the HKF activity coefficient model and its molar derivatives
+            // The \Lamba parameter of the HKF activity coefficient model
             const auto lambda = 1.0 + a*B*sqrtI;
 
-            // The log10 of the activity coefficient of the charged species (in mole fraction scale) and its molar derivatives
+            // The log10 of the activity coefficient of the charged species (in mole fraction scale)
             // This is the equation (298) in Helgeson et a. (1981) paper, page 230.
             const auto log10_gi = -(A*z2*sqrtI)/lambda + log10_xw + (omega_abs * bNaCl + bNapClm - 0.19*(abs(z) - 1.0)) * I;
 
@@ -416,14 +421,14 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityPropsFn
             // Check if the mole fraction of water is one
             if(xw != 1.0)
             {
-                // The sigma parameter of the current ion and its molar derivatives
+                // The sigma parameter of the current ion
                 const auto sigma = 3.0/pow(a*B*sqrtI, 3) * (lambda - 1.0/lambda - 2.0*log(lambda));
 
-                // The psi contribution of the current ion and its molar derivatives
+                // The psi contribution of the current ion
                 const auto psi = A*z2*sqrtI*sigma/3.0 + alpha - 0.5*(omega*bNaCl + bNapClm - 0.19*(abs(z) - 1.0)) * I;
 
                 // Update the osmotic coefficient with the contribution of the current charged species
-                phi += mi * psi;
+                phi += msi * psi;
             }
         }
 

@@ -25,15 +25,22 @@ namespace Reaktoro {
 // Forward declarations
 class AqueousMixture;
 
-/// Return an equation of state for an aqueous phase based on HKF model.
-/// The HKF model implemented here was documented in:
-///   - Helgeson, H. C., Kirkham, D. H., Flowers, G. C. (1981). Theoretical prediction of the thermodynamic behavior
-///     of aqueous electrolytes at high pressures and temperatures: IV. Calculation of activity coefficients, osmotic
-///     coefficients, and apparent molal and standard and relative partial molal properties to 600°C.
-///     American Journal of Science, 281(10), 1249–1516.
-/// @param mixture The aqueous mixture
-/// @return The equation of state function for the aqueous phase
-/// @see AqueousMixture, ActivityPropsFn
-auto aqueousChemicalModelHKF(const AqueousMixture& mixture)-> ActivityPropsFn;
+/// The HKF activity model for aqueous solutions.
+/// **References:**
+///   - Helgeson, H. C., Kirkham, D. H., Flowers, G. C. (1981). Theoretical
+///     prediction of the thermodynamic behavior of aqueous electrolytes at
+///     high pressures and temperatures: IV. Calculation of activity
+///     coefficients, osmotic coefficients, and apparent molal and standard and
+///     relative partial molal properties to 600°C. American Journal of
+///     Science, 281(10), 1249–1516.
+class ActivityModelHKF : public ActivityModel
+{
+public:
+    /// Construct a default ActivityModelHKF object.
+    ActivityModelHKF();
+
+	/// Build the function for activity and thermodynamic excesss property calculations of a phase.
+    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
+};
 
 } // namespace Reaktoro
