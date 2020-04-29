@@ -426,10 +426,11 @@ auto ActivityModelDebyeHuckel::build(const SpeciesList& species) const -> Activi
         extra = { mixture, state };
 
         // Auxiliary constant references
-        const auto& I = state.Ie;            // ionic strength
-        const auto& m = state.m;             // molalities of the species
-        const auto& rho = state.rho/1000;    // density in units of g/cm3
-        const auto& epsilon = state.epsilon; // dielectric constant
+        const auto& m = state.m;             // the molalities of all species
+        const auto& ms = state.ms;           // the stoichiometric molalities of the charged species
+        const auto& I = state.Is;            // the stoichiometric ionic strength
+        const auto& rho = state.rho/1000;    // the density of water (in g/cm3)
+        const auto& epsilon = state.epsilon; // the dielectric constant of water
 
         // Auxiliary references
         auto& ln_g = props.ln_g;
@@ -458,8 +459,8 @@ auto ActivityModelDebyeHuckel::build(const SpeciesList& species) const -> Activi
             // The index of the current charged species
             const auto ispecies = icharged_species[i];
 
-            // The molality of the charged species and its molar derivatives
-            const auto mi = m[ispecies];
+            // The stoichiometric molality of the charged species
+            const auto msi = ms[i];
 
             // The electrical charge of the charged species
             const auto z = charges[i];
@@ -477,7 +478,7 @@ auto ActivityModelDebyeHuckel::build(const SpeciesList& species) const -> Activi
             ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
 
             // Calculate the contribution of current ion to the ln activity of water
-			ln_a[iwater] += mi*ln_g[ispecies] + sigmacoeff*sigma*ln10 - I2*bions[i]/(z*z)*ln10;
+			ln_a[iwater] += msi*ln_g[ispecies] + sigmacoeff*sigma*ln10 - I2*bions[i]/(z*z)*ln10;
         }
 
         // Finalize the computation of the activity of water (in mole fraction scale)
