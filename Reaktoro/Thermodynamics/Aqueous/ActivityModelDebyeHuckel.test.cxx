@@ -290,7 +290,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
         model.setModePHREEQC();
 
         // Construct the activity props function with the given aqueous species.
-        ActivityPropsFn fn = model(species);
+        ActivityPropsFn fn = model.build(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());

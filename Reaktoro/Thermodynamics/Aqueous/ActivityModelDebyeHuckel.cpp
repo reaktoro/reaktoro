@@ -361,7 +361,7 @@ auto ActivityModelDebyeHuckel::params() -> const Params&
     return m_params;
 }
 
-auto ActivityModelDebyeHuckel::operator()(const SpeciesList& species) const -> ActivityPropsFn
+auto ActivityModelDebyeHuckel::build(const SpeciesList& species) const -> ActivityPropsFn
 {
     // Create the aqueous mixture
     AqueousMixture mixture(species);

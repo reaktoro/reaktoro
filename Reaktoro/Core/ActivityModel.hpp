@@ -26,7 +26,19 @@
 
 namespace Reaktoro {
 
+/// The base class for all other activity model classes.
+class ActivityModel
+{
+public:
+    /// Build the function for activity and thermodynamic excesss property calculations of a phase.
+    /// @param species The species in the phase.
+    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn = 0;
+
+    /// Convert the derived activity model object into an activity property function.
+    auto operator()(const SpeciesList& species) -> ActivityPropsFn { return build(species); }
+};
+
 /// The function type for the creation of activity model function of a phase.
-using ActivityModel = Fn<ActivityPropsFn(const SpeciesList&)>;
+using ActivityModelFn = Fn<ActivityPropsFn(const SpeciesList&)>;
 
 } // namespace Reaktoro

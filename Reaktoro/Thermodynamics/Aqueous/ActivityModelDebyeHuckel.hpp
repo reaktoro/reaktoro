@@ -92,7 +92,7 @@ namespace Reaktoro {
 ///
 /// \eqc{\Lambda_{i}=1+B\mathring{a}_{i}\sqrt{I}.}
 ///
-class ActivityModelDebyeHuckel
+class ActivityModelDebyeHuckel : public ActivityModel
 {
 public:
 	/// The parameters in the Debye--Hückel activity model for aqueous solutions.
@@ -290,8 +290,8 @@ public:
     /// Return the activity model parameters.
 	auto params() -> const Params&;
 
-    /// Construct the activity function with given list of species.
-    auto operator()(const SpeciesList& species) const -> ActivityPropsFn;
+	/// Build the function for activity and thermodynamic excesss property calculations of a phase.
+    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
 
 private:
 	/// The parameters of the activity model.

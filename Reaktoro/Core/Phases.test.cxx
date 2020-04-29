@@ -26,7 +26,7 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Phases", "[Phases]")
 {
-    ActivityModel activity_model = [](const SpeciesList& species)
+    ActivityModelFn activitymodel = [](const SpeciesList& species)
     {
         ActivityPropsFn fn = [](ActivityPropsRef props, ActivityArgs args) {};
         return fn;
@@ -74,7 +74,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setName("AqueousSolution");
         genericphase.setStateOfMatter(StateOfMatter::Liquid);
         genericphase.setAggregateState(AggregateState::Aqueous);
-        genericphase.setActivityModel(activity_model);
+        genericphase.setActivityModel(activitymodel);
 
         Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -93,7 +93,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setName("AqueousSolution");
         genericphase.setStateOfMatter(StateOfMatter::Liquid);
         genericphase.setAggregateState(AggregateState::Aqueous);
-        genericphase.setActivityModel(activity_model);
+        genericphase.setActivityModel(activitymodel);
 
         Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -114,7 +114,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setName("AqueousSolution");
         genericphase.setStateOfMatter(StateOfMatter::Liquid);
         genericphase.setAggregateState(AggregateState::Aqueous);
-        genericphase.setActivityModel(activity_model);
+        genericphase.setActivityModel(activitymodel);
 
         Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -148,7 +148,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setName("AqueousSolution");
         genericphase.setStateOfMatter(StateOfMatter::Liquid);
         genericphase.setAggregateState(AggregateState::Aqueous);
-        genericphase.setActivityModel(activity_model);
+        genericphase.setActivityModel(activitymodel);
 
         Phase phase = genericphase.convert(db, {"H", "O", "Cl"});
 
@@ -175,7 +175,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         GenericPhases genericphases("Calcite Magnesite");
         genericphases.setStateOfMatter(StateOfMatter::Solid);
         genericphases.setAggregateState(AggregateState::Solid);
-        genericphases.setActivityModel(activity_model);
+        genericphases.setActivityModel(activitymodel);
 
         Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -197,7 +197,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         GenericPhases genericphases(speciate("Ca Mg C O"));
         genericphases.setStateOfMatter(StateOfMatter::Solid);
         genericphases.setAggregateState(AggregateState::Solid);
-        genericphases.setActivityModel(activity_model);
+        genericphases.setActivityModel(activitymodel);
 
         Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -224,7 +224,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         GenericPhases genericphases;
         genericphases.setStateOfMatter(StateOfMatter::Solid);
         genericphases.setAggregateState(AggregateState::Solid);
-        genericphases.setActivityModel(activity_model);
+        genericphases.setActivityModel(activitymodel);
 
         Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -261,7 +261,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         GenericPhases genericphases;
         genericphases.setStateOfMatter(StateOfMatter::Solid);
         genericphases.setAggregateState(AggregateState::Solid);
-        genericphases.setActivityModel(activity_model);
+        genericphases.setActivityModel(activitymodel);
 
         Vec<GenericPhase> phases = genericphases.convert(db, {"Na", "Cl"});
 

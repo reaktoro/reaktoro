@@ -88,7 +88,7 @@ ActivityModelDuanSun::ActivityModelDuanSun(String gas)
 : gas(gas)
 {}
 
-auto ActivityModelDuanSun::operator()(const SpeciesList& species) const -> ActivityPropsFn
+auto ActivityModelDuanSun::build(const SpeciesList& species) const -> ActivityPropsFn
 {
     // The index of the dissolved gas in the aqueous phase.
     const auto igas = species.indexWithFormula(gas);
