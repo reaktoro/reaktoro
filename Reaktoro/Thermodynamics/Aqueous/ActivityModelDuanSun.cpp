@@ -96,8 +96,8 @@ auto ActivityModelDuanSun::build(const SpeciesList& species) const -> ActivityPr
     ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
     {
         // The aqueous mixture and its state exported by a base aqueous activity model.
-        const auto& mixture = std::any_cast<AqueousMixture>(args.extra[0]);
-        const auto& state = std::any_cast<AqueousMixtureState>(args.extra[1]);
+        const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
+        const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
 
         // The local indices of some charged species among all charged species
         static const auto iNa  = mixture.charged().findWithFormula("Na+");
@@ -123,7 +123,6 @@ auto ActivityModelDuanSun::build(const SpeciesList& species) const -> ActivityPr
         const auto mCl  = (iCl  < nions) ? ms[iCl]  : real(0.0);
         const auto mSO4 = (iSO4 < nions) ? ms[iSO4] : real(0.0);
 
-        // Return the ln activity coefficient of CO2(aq)
         props.ln_g[igas] = 2*lambda*(mNa + mK + 2*mCa + 2*mMg) + zeta*(mNa + mK + mCa + mMg)*mCl - 0.07*mSO4;
         props.ln_a[igas] = props.ln_g[igas] + log(state.m[igas]);
     };
