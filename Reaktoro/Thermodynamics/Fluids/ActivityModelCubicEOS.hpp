@@ -26,15 +26,9 @@ namespace Reaktoro {
 // Forward declarations
 class GeneralMixture;
 
-/// The options for the activity model based on cubic equation of state.
-struct ActivityModelOptionsCubicEOS
+/// The parameters for the activity model based on cubic equations of state.
+struct ActivityModelCubicEOSParams
 {
-    /// The fluid type for which the equation of state should be confifured.
-    CubicEOSFluidType fluidtype = CubicEOSFluidType::Vapor;
-
-    /// The cubic equation of state model to be used.
-    CubicEOSModel model = CubicEOSModel::PengRobinson;
-
     /// The function that calculates interaction parameters @eq{k_{ij}} in @eq{a_{ij}=(1-k_{ij})(a_{i}a_{j})^{1/2}}.
     CubicEOSInteractionParamsFn interaction_params_fn;
 
@@ -42,7 +36,16 @@ struct ActivityModelOptionsCubicEOS
     PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
 };
 
-/// Return an activity model for a fluid, liquid or gaseous, based on a cubic equation of state.
-auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCubicEOS options) -> ActivityPropsFn;
+/// Return the activity model for fluid phases based on the Van der Waals cubic equation of state.
+auto ActivityModelVanDerWaals(ActivityModelCubicEOSParams params = {}) -> ActivityModel;
+
+/// Return the activity model for fluid phases based on the Redlich-Kwong cubic equation of state.
+auto ActivityModelRedlichKwong(ActivityModelCubicEOSParams params = {}) -> ActivityModel;
+
+/// Return the activity model for fluid phases based on the Soave-Redlich-Kwong cubic equation of state.
+auto ActivityModelSoaveRedlichKwong(ActivityModelCubicEOSParams params = {}) -> ActivityModel;
+
+/// Return the activity model for fluid phases based on the Peng-Robinson cubic equation of state.
+auto ActivityModelPengRobinson(ActivityModelCubicEOSParams params = {}) -> ActivityModel;
 
 } // namespace Reaktoro

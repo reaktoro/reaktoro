@@ -29,24 +29,23 @@ namespace Reaktoro {
 
 using std::log;
 
-auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCubicEOS options) -> ActivityPropsFn
+auto activityPropsFnCubicEOS(const SpeciesList& species, ActivityModelCubicEOSParams params, CubicEOSModel type) -> ActivityPropsFn
 {
-    // The number of gases in the mixture
-    const auto nspecies = mixture.numSpecies();
+    // The number of gases
+    const auto nspecies = species.size();
 
     // Get the the critical temperatures, pressures and acentric factors of the gases
     ArrayXr Tcr(nspecies), Pcr(nspecies), omega(nspecies);
     for(auto i = 0; i < nspecies; ++i)
     {
-        const auto& species = mixture.species()[i];
         const auto crprops = CriticalProps::get({
-            species.substance(),
-            species.formula(),
-            species.name()
+            species[i].substance(),
+            species[i].formula(),
+            species[i].name()
         });
         error(!crprops.has_value(), "Cannot create any cubic equation of state model "
             "(e.g. Peng-Robinson, Soave-Redlich-Kwong, etc.) without "
-            "critical properties for the species with name ", species.name(), ". "
+            "critical properties for the species with name ", species[i].name(), ". "
             "In order to fix this error, use CriticalProps::append to register the "
             "critical properties of this substance.");
         Tcr[i] = crprops->temperature();
@@ -54,12 +53,23 @@ auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCu
         omega[i] = crprops->acentricFactor();
     }
 
+    const auto aggregatestate = species[0].aggregateState();
+
+    error(aggregatestate != AggregateState::Gas && aggregatestate != AggregateState::Liquid,
+        "Cannot create a cubic equation of state model if the species "
+        "in the phase have aggregate state ", aggregatestate, ". "
+        "Only Gas or Liquid AggregateState values are permitted.");
+
     // Initialize the CubicEOS instance
     CubicEOS eos({nspecies, Tcr, Pcr, omega});
-    eos.setFluidType(options.fluidtype);
-    eos.setModel(options.model);
-    eos.setInteractionParamsFunction(options.interaction_params_fn);
-    eos.setStablePhaseIdentificationMethod(options.phase_identification_method);
+
+    if( aggregatestate == AggregateState::Gas )
+        eos.setFluidType(CubicEOSFluidType::Vapor);
+    else eos.setFluidType(CubicEOSFluidType::Liquid);
+
+    eos.setModel(type);
+    eos.setInteractionParamsFunction(params.interaction_params_fn);
+    eos.setStablePhaseIdentificationMethod(params.phase_identification_method);
 
     /// The thermodynamic properties calculated with CubicEOS
     CubicEOSProps res;
@@ -83,10 +93,38 @@ auto activityModelCubicEOS(const GeneralMixture& mixture, ActivityModelOptionsCu
         props.Cpex = res.Cpres;
         props.Cvex = res.Cvres;
         props.ln_g = res.ln_phi;
-        props.ln_a = res.ln_phi + log(x) + log(P);
+        props.ln_a = res.ln_phi + log(x) + log(Pbar);
     };
 
     return fn;
+}
+
+auto ActivityModelCubicEOS(ActivityModelCubicEOSParams params, CubicEOSModel type) -> ActivityModel
+{
+    return [=](const SpeciesList& species)
+    {
+        return activityPropsFnCubicEOS(species, params, type);
+    };
+}
+
+auto ActivityModelVanDerWaals(ActivityModelCubicEOSParams params) -> ActivityModel
+{
+    return ActivityModelCubicEOS(params, CubicEOSModel::VanDerWaals);
+}
+
+auto ActivityModelRedlichKwong(ActivityModelCubicEOSParams params) -> ActivityModel
+{
+    return ActivityModelCubicEOS(params, CubicEOSModel::RedlichKwong);
+}
+
+auto ActivityModelSoaveRedlichKwong(ActivityModelCubicEOSParams params) -> ActivityModel
+{
+    return ActivityModelCubicEOS(params, CubicEOSModel::SoaveRedlichKwong);
+}
+
+auto ActivityModelPengRobinson(ActivityModelCubicEOSParams params) -> ActivityModel
+{
+    return ActivityModelCubicEOS(params, CubicEOSModel::PengRobinson);
 }
 
 } // namespace Reaktoro
