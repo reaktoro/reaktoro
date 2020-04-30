@@ -22,10 +22,7 @@
 
 namespace Reaktoro {
 
-/// The activity model for an ideal gaseous solution.
-struct ActivityModelIdealGas
-{
-    auto operator()(const SpeciesList& species) -> ActivityPropsFn;
-};
+/// Return the activity model for an ideal gaseous solution.
+auto ActivityModelIdealGas() -> ActivityModel;
 
 } // namespace Reaktoro

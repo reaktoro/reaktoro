@@ -22,10 +22,7 @@
 
 namespace Reaktoro {
 
-/// The activity model for an ideal aqueous solution.
-struct ActivityModelIdealAqueous
-{
-    auto operator()(const SpeciesList& species) -> ActivityPropsFn;
-};
+/// Return the activity model for an ideal aqueous solution.
+auto ActivityModelIdealAqueous() -> ActivityModel;
 
 } // namespace Reaktoro

@@ -24,21 +24,26 @@ namespace Reaktoro {
 
 using std::log;
 
-auto ActivityModelIdealAqueous::operator()(const SpeciesList& species) -> ActivityPropsFn
+auto ActivityModelIdealAqueous() -> ActivityModel
 {
-    const auto iH2O = species.indexWithFormula("H2O");
-    const auto MH2O = waterMolarMass;
-
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel model = [](const SpeciesList& species)
     {
-        const auto x = args.x;
-        const auto m = x/(MH2O * args.x[iH2O]); // molalities
-        props = 0.0;
-        props.ln_a = m.log();
-        props.ln_a[iH2O] = log(x[iH2O]);
+        const auto iH2O = species.indexWithFormula("H2O");
+        const auto MH2O = waterMolarMass;
+
+        ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+        {
+            const auto x = args.x;
+            const auto m = x/(MH2O * args.x[iH2O]); // molalities
+            props = 0.0;
+            props.ln_a = m.log();
+            props.ln_a[iH2O] = log(x[iH2O]);
+        };
+
+        return fn;
     };
 
-    return fn;
+    return model;
 }
 
 } // namespace Reaktoro
