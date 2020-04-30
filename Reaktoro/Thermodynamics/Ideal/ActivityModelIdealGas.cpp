@@ -21,16 +21,21 @@ namespace Reaktoro {
 
 using std::log;
 
-auto ActivityModelIdealGas::operator()(const SpeciesList& species) -> ActivityPropsFn
+auto ActivityModelIdealGas() -> ActivityModel
 {
-    ActivityPropsFn fn = [](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel model = [](const SpeciesList& species)
     {
-        const auto Pbar = args.P * 1.0e-5; // from Pa to bar
-        props = 0.0;
-        props.ln_a = args.x.log() + log(Pbar);
+        ActivityPropsFn fn = [](ActivityPropsRef props, ActivityArgs args)
+        {
+            const auto Pbar = args.P * 1.0e-5; // from Pa to bar
+            props = 0.0;
+            props.ln_a = args.x.log() + log(Pbar);
+        };
+
+        return fn;
     };
 
-    return fn;
+    return model;
 }
 
 } // namespace Reaktoro

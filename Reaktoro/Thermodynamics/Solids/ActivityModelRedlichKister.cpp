@@ -20,41 +20,45 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Thermodynamics/Solutions/GeneralMixture.hpp>
 
 namespace Reaktoro {
 
 using std::log;
 using std::pow;
 
-auto mineralChemicalModelRedlichKister(const GeneralMixture& mixture, double a0, double a1, double a2)-> ActivityPropsFn
+auto ActivityModelRedlichKister(real a0, real a1, real a2) -> ActivityModel
 {
-    error(mixture.numSpecies() != 2, "Cannot create the chemical model Redlich-Kister for the mineral phase. "
-        "The Redlich-Kister model requires a solid solution phase with exactly two species.");
-
-    // Define the activity model function of the mineral phase
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel model = [=](const SpeciesList& species)
     {
-        // The arguments for the activity model evaluation
-        const auto& [T, P, x, extra] = args;
+        error(species.size() != 2, "Cannot create the chemical model Redlich-Kister for the mineral phase. "
+            "The Redlich-Kister model requires a solid solution phase with exactly two species.");
 
+        // Define the activity model function of the mineral phase
+        ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+        {
+            // The arguments for the activity model evaluation
+            const auto& [T, P, x, extra] = args;
 
-        const auto RT = universalGasConstant * T;
+            const auto RT = universalGasConstant * T;
 
-        const auto x1 = x[0];
-        const auto x2 = x[1];
+            const auto x1 = x[0];
+            const auto x2 = x[1];
 
-        props.ln_g[0] = x2*x2*(a0 + a1*(3*x1 - x2) + a2*(x1 - x2)*(5*x1 - x2));
-        props.ln_g[1] = x1*x1*(a0 - a1*(3*x2 - x1) + a2*(x2 - x1)*(5*x2 - x1));
+            props.ln_g[0] = x2*x2*(a0 + a1*(3*x1 - x2) + a2*(x1 - x2)*(5*x1 - x2));
+            props.ln_g[1] = x1*x1*(a0 - a1*(3*x2 - x1) + a2*(x2 - x1)*(5*x2 - x1));
 
-        props.ln_a = props.ln_g + log(x);
+            props.ln_a = props.ln_g + log(x);
 
-        props.Gex = (x1*x2*(a0 + a1*(x1 - x2) + a2*pow((x1 - x2), 2))) * RT;
-        props.Hex = props.Gex;
+            props.Gex = (x1*x2*(a0 + a1*(x1 - x2) + a2*pow((x1 - x2), 2))) * RT;
+            props.Hex = props.Gex;
+        };
+
+        return fn;
     };
 
-    return fn;
+    return model;
 }
+
 
 } // namespace Reaktoro
 

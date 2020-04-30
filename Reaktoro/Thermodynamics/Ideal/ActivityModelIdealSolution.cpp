@@ -19,15 +19,20 @@
 
 namespace Reaktoro {
 
-auto ActivityModelIdealSolution::operator()(const SpeciesList& species) -> ActivityPropsFn
+auto ActivityModelIdealSolution() -> ActivityModel
 {
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel model = [](const SpeciesList& species)
     {
-        props = 0.0;
-        props.ln_a = args.x.log();
+        ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+        {
+            props = 0.0;
+            props.ln_a = args.x.log();
+        };
+
+        return fn;
     };
 
-    return fn;
+    return model;
 }
 
 } // namespace Reaktoro

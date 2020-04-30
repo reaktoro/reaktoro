@@ -25,7 +25,7 @@ namespace Reaktoro {
 // Forward declarations
 class GeneralMixture;
 
-/// Return an equation of state for a binary mineral solid solution based on Redlich-Kister model.
+/// Return the activity model for a binary solid solution phase based on Redlich-Kister model.
 /// The Redlich-Kister model calculates the activity coefficient of the end-members in a
 /// solid solution using the equations:
 /// @f[\ln\gamma_{1}=x_{2}^{2}[a_{0}+a_{1}(3x_{1}-x_{2})+a_{2}(x_{1}-x_{2})(5x_{1}-x_{2})]@f]
@@ -38,7 +38,7 @@ class GeneralMixture;
 /// @param a1 The Redlich-Kister parameter a1
 /// @param a2 The Redlich-Kister parameter a2
 /// @return The equation of state function for the mineral phase
-/// @see GeneralMixture, ActivityModel
-auto mineralChemicalModelRedlichKister(const GeneralMixture& mixture, double a0, double a1, double a2)-> ActivityPropsFn;
+/// @see ActivityModel
+auto ActivityModelRedlichKister(real a0, real a1, real a2) -> ActivityModel;
 
 } // namespace Reaktoro
