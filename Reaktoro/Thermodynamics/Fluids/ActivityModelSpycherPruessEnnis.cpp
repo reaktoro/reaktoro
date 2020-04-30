@@ -20,7 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Math/Roots.hpp>
-#include <Reaktoro/Thermodynamics/Solutions/GeneralMixture.hpp>
 
 namespace Reaktoro {
 
@@ -82,10 +81,7 @@ auto volumeCO2(real T, real Pb, real sqrtT) -> real
 
 } // namespace
 
-ActivityModelSpycherPruessEnnis::ActivityModelSpycherPruessEnnis()
-{}
-
-auto ActivityModelSpycherPruessEnnis::build(const SpeciesList& species) const -> ActivityPropsFn
+auto activityPropsFnSpycherPruessEnnis(const SpeciesList& species) -> ActivityPropsFn
 {
     // The indices of gases H2O(g) and CO2(g)
     const auto iH2O = species.findWithFormula("H2O");
@@ -150,6 +146,14 @@ auto ActivityModelSpycherPruessEnnis::build(const SpeciesList& species) const ->
     };
 
     return fn;
+}
+
+auto ActivityModelSpycherPruessEnnis() -> ActivityModel
+{
+    return [](const SpeciesList& species)
+    {
+        return activityPropsFnSpycherPruessEnnis(species);
+    };
 }
 
 } // namespace Reaktoro

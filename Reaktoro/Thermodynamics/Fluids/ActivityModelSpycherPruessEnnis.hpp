@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-/// The activity model for a gaseous phase formulated in Spycher et al. (2003).
+/// Return the activity model for gaseous phases formulated in Spycher et al. (2003).
 /// This is an activity model for a gaseous phase supporting only the gases
 /// H<sub>2</sub>2O(g) and CO<sub>2</sub>(g).
 ///
@@ -31,14 +31,6 @@ namespace Reaktoro {
 ///   geological sequestration of CO2. I. Assessment and calculation of mutual
 ///   solubilities from 12 to 100C and up to 600 bar. Geochimica et
 ///   Cosmochimica Acta, 67(16), 3015-3031.
-class ActivityModelSpycherPruessEnnis : public ActivityModel
-{
-public:
-    /// Construct a default ActivityModelSpycherPruessEnnis object.
-    ActivityModelSpycherPruessEnnis();
-
-	/// Build the function for activity and thermodynamic excesss property calculations of a phase.
-    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
-};
+auto ActivityModelSpycherPruessEnnis() -> ActivityModel;
 
 } // namespace Reaktoro
