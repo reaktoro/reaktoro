@@ -200,10 +200,7 @@ inline auto computeCTT(const real& T, int i, int j, int k) -> real
 
 } // namespace
 
-ActivityModelSpycherReed::ActivityModelSpycherReed()
-{}
-
-auto ActivityModelSpycherReed::build(const SpeciesList& species) const -> ActivityPropsFn
+auto activityPropsFnSpycherReed(const SpeciesList& species) -> ActivityPropsFn
 {
     // The names of the gases in the mixture, and the supported ones by this model
     Strings provided = vectorize(species, RKT_LAMBDA(x, x.formula().str()));
@@ -357,6 +354,14 @@ auto ActivityModelSpycherReed::build(const SpeciesList& species) const -> Activi
     };
 
     return fn;
+}
+
+auto ActivityModelSpycherReed() -> ActivityModel
+{
+    return [](const SpeciesList& species)
+    {
+        return activityPropsFnSpycherReed(species);
+    };
 }
 
 } // namespace Reaktoro

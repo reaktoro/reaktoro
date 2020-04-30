@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-/// The activity model for a gaseous phase formulated in Spycher and Reed (1988).
+/// Return the activity model for gaseous phases formulated in Spycher and Reed (1988).
 /// This is an activity model for a gaseous phase supporting only the gases
 /// H<sub>2</sub>2O(g), CO<sub>2</sub>(g), and CH<sub>4</sub>(g).
 ///
@@ -31,14 +31,6 @@ namespace Reaktoro {
 ///   and of H2O--CO2--CH4 mixtures: A virial equation treatment for moderate
 ///   pressures and temperatures applicable to calculations of hydrothermal
 ///   boiling. Geochimica et Cosmochimica Acta, 52(3), 739-749.
-class ActivityModelSpycherReed : public ActivityModel
-{
-public:
-    /// Construct a default ActivityModelSpycherReed object.
-    ActivityModelSpycherReed();
-
-	/// Build the function for activity and thermodynamic excesss property calculations of a phase.
-    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
-};
+auto ActivityModelSpycherReed() ->  ActivityModel;
 
 } // namespace Reaktoro
