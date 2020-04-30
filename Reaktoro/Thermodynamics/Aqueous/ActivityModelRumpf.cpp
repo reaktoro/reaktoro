@@ -24,56 +24,54 @@ namespace Reaktoro {
 
 using std::log;
 
-ActivityModelRumpf::ActivityModelRumpf()
-{}
-
-ActivityModelRumpf::ActivityModelRumpf(String gas)
-: gas(gas)
-{}
-
-auto ActivityModelRumpf::build(const SpeciesList& species) const -> ActivityPropsFn
+auto ActivityModelRumpf(String gas) -> ActivityModel
 {
-    // The index of the dissolved gas in the aqueous phase.
-    const auto igas = species.indexWithFormula(gas);
-
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+    ActivityModel model = [=](const SpeciesList& species)
     {
-        // The aqueous mixture and its state exported by a base aqueous activity model.
-        const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
-        const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
+        // The index of the dissolved gas in the aqueous phase.
+        const auto igas = species.indexWithFormula(gas);
 
-        // The number of species and charged species
-        const auto nions = mixture.charged().size();
+        ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+        {
+            // The aqueous mixture and its state exported by a base aqueous activity model.
+            const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
+            const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
 
-        // The local indices of some charged species among all charged species
-        static const auto iNa  = mixture.charged().findWithFormula("Na+");
-        static const auto iK   = mixture.charged().findWithFormula("K+");
-        static const auto iCa  = mixture.charged().findWithFormula("Ca++");
-        static const auto iMg  = mixture.charged().findWithFormula("Mg++");
-        static const auto iCl  = mixture.charged().findWithFormula("Cl-");
+            // The number of species and charged species
+            const auto nions = mixture.charged().size();
 
-        // Extract temperature from the parameters
-        const auto T = state.T;
+            // The local indices of some charged species among all charged species
+            static const auto iNa  = mixture.charged().findWithFormula("Na+");
+            static const auto iK   = mixture.charged().findWithFormula("K+");
+            static const auto iCa  = mixture.charged().findWithFormula("Ca++");
+            static const auto iMg  = mixture.charged().findWithFormula("Mg++");
+            static const auto iCl  = mixture.charged().findWithFormula("Cl-");
 
-        // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
-        const auto& ms = state.ms;
+            // Extract temperature from the parameters
+            const auto T = state.T;
 
-        // Extract the stoichiometric molalities of specific ions
-        const auto mNa = (iNa < nions) ? ms[iNa] : real(0.0);
-        const auto mK  = (iK  < nions) ? ms[iK]  : real(0.0);
-        const auto mCa = (iCa < nions) ? ms[iCa] : real(0.0);
-        const auto mMg = (iMg < nions) ? ms[iMg] : real(0.0);
-        const auto mCl = (iCl < nions) ? ms[iCl] : real(0.0);
+            // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
+            const auto& ms = state.ms;
 
-        // The Pitzer's parameters of the Rumpf et al. (1994) model
-        const auto B = 0.254 - 76.82/T - 10656.0/(T*T) + 6312.0e+3/(T*T*T);
-        const auto Gamma = -0.0028;
+            // Extract the stoichiometric molalities of specific ions
+            const auto mNa = (iNa < nions) ? ms[iNa] : real(0.0);
+            const auto mK  = (iK  < nions) ? ms[iK]  : real(0.0);
+            const auto mCa = (iCa < nions) ? ms[iCa] : real(0.0);
+            const auto mMg = (iMg < nions) ? ms[iMg] : real(0.0);
+            const auto mCl = (iCl < nions) ? ms[iCl] : real(0.0);
 
-        props.ln_g[igas] = 2*B*(mNa + mK + 2*mCa + 2*mMg) + 3*Gamma*(mNa + mK + mCa + mMg)*mCl;
-        props.ln_a[igas] = props.ln_g[igas] + log(state.m[igas]);
+            // The Pitzer's parameters of the Rumpf et al. (1994) model
+            const auto B = 0.254 - 76.82/T - 10656.0/(T*T) + 6312.0e+3/(T*T*T);
+            const auto Gamma = -0.0028;
+
+            props.ln_g[igas] = 2*B*(mNa + mK + 2*mCa + 2*mMg) + 3*Gamma*(mNa + mK + mCa + mMg)*mCl;
+            props.ln_a[igas] = props.ln_g[igas] + log(state.m[igas]);
+        };
+
+        return fn;
     };
 
-    return fn;
+    return model;
 }
 
 } // namespace Reaktoro

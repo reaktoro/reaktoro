@@ -292,10 +292,7 @@ auto effectiveIonicRadius(const Species& species) -> real
 
 } // namespace
 
-ActivityModelHKF::ActivityModelHKF()
-{}
-
-auto ActivityModelHKF::build(const SpeciesList& species) const -> ActivityPropsFn
+auto activityPropsFnHKF(const SpeciesList& species) -> ActivityPropsFn
 {
     // Create the aqueous mixture
     AqueousMixture mixture(species);
@@ -444,6 +441,11 @@ auto ActivityModelHKF::build(const SpeciesList& species) const -> ActivityPropsF
     };
 
     return fn;
+}
+
+auto ActivityModelHKF() -> ActivityModel
+{
+    return [](const SpeciesList& species) { return activityPropsFnHKF(species); };
 }
 
 } // namespace Reaktoro

@@ -22,6 +22,31 @@
 
 namespace Reaktoro {
 
+/// The parameters in the Drummond (1981) activity model.
+/// The default values correspond to dissolved gas CO<sub>2</sub>(aq).
+struct ActivityModelDrummondParams
+{
+    real a1 = -1.0312;    ///< The coefficient @eq{a_1} in the activity model.
+    real a2 =  1.2806e-3; ///< The coefficient @eq{a_2} in the activity model.
+    real a3 =  255.9;     ///< The coefficient @eq{a_3} in the activity model.
+    real a4 =  0.4445;    ///< The coefficient @eq{a_4} in the activity model.
+    real a5 = -1.6060e-3; ///< The coefficient @eq{a_5} in the activity model.
+};
+
+/// Return the activity model for a dissolved gas species in an aqueous phase based on Drummond (1981).
+/// @param gas The chemical formula of the dissolved gas in the aqueous phase.
+/// @ingroup ActivityModels
+auto ActivityModelDrummond(String gas) -> ActivityModel;
+
+/// Return the activity model for a dissolved gas species in an aqueous phase based on Drummond (1981).
+/// @param gas The chemical formula of the dissolved gas in the aqueous phase.
+/// @param params The custom parameters for the activity model.
+/// @ingroup ActivityModels
+auto ActivityModelDrummond(String gas, ActivityModelDrummondParams params) -> ActivityModel;
+
+
+//=====================================================================================================================
+/// @page ActivityModelDrummond Drummond (1981) activity model
 /// The activity model of Drummond (1981) for a dissolved gas.
 /// In the activity model of Drummond (1981), the activity coefficient of a
 /// dissolved gas (e.g., CO<sub>2</sub>(aq), O<sub>2</sub>(aq),
@@ -34,38 +59,6 @@ namespace Reaktoro {
 ///  - Drummond, S. E. (1981). Boiling and mixing of hydrothermal fluids:
 ///    chemical effects on mineral precipitation. Pennsylvania State
 ///    University.*
-class ActivityModelDrummond : public ActivityModel
-{
-public:
-    /// The parameters in the Drummond (1981) activity model.
-    /// The default values correspond to dissolved gas CO<sub>2</sub>(aq).
-    struct Params
-    {
-        real a1 = -1.0312;    ///< The coefficient @eq{a_1} in the activity model.
-        real a2 =  1.2806e-3; ///< The coefficient @eq{a_2} in the activity model.
-        real a3 =  255.9;     ///< The coefficient @eq{a_3} in the activity model.
-        real a4 =  0.4445;    ///< The coefficient @eq{a_4} in the activity model.
-        real a5 = -1.6060e-3; ///< The coefficient @eq{a_5} in the activity model.
-    };
-
-    /// Construct a default ActivityModelDrummond object for dissolved gas CO<sub>2</sub>(aq).
-    ActivityModelDrummond();
-
-    /// Construct a ActivityModelDrummond object with given dissolved gas formula.
-    ActivityModelDrummond(String gas);
-
-    /// Construct a ActivityModelDrummond object with given dissolved gas formula and model parameters.
-    ActivityModelDrummond(String gas, Params params);
-
-    /// Build the function for activity and thermodynamic excesss property calculations of a phase.
-    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
-
-private:
-    /// The chemical formula of the dissolved gas.
-    String gas = "CO2";
-
-    /// The parameters of the activity model.
-    Params params;
-};
+//=====================================================================================================================
 
 } // namespace Reaktoro

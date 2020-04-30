@@ -1371,10 +1371,7 @@ auto lnActivityCoefficientNeutral(const AqueousMixtureState& state, const Pitzer
 
 } // namespace Pitzer
 
-ActivityModelPitzerHMW::ActivityModelPitzerHMW()
-{}
-
-auto ActivityModelPitzerHMW::build(const SpeciesList& species) const -> ActivityPropsFn
+auto activityPropsFnPitzerHMW(const SpeciesList& species) -> ActivityPropsFn
 {
     // Inject the Pitzer namespace here
     using namespace Pitzer;
@@ -1449,6 +1446,11 @@ auto ActivityModelPitzerHMW::build(const SpeciesList& species) const -> Activity
     };
 
     return fn;
+}
+
+auto ActivityModelPitzerHMW() -> ActivityModel
+{
+    return [](const SpeciesList& species) { return activityPropsFnPitzerHMW(species); };
 }
 
 } // namespace Reaktoro

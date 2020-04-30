@@ -54,7 +54,7 @@ auto GenericPhase::setAggregateState(AggregateState option) -> GenericPhase&
     return *this;
 }
 
-auto GenericPhase::setActivityModel(const ActivityModelFn& model) -> GenericPhase&
+auto GenericPhase::setActivityModel(const ActivityModel& model) -> GenericPhase&
 {
     activitymodel = model;
     return *this;
@@ -75,7 +75,7 @@ auto GenericPhase::set(AggregateState option) -> GenericPhase&
     return setAggregateState(option);
 }
 
-auto GenericPhase::set(const ActivityModelFn& model) -> GenericPhase&
+auto GenericPhase::set(const ActivityModel& model) -> GenericPhase&
 {
     return setActivityModel(model);
 }
@@ -105,7 +105,7 @@ auto GenericPhase::elements() const -> const Strings&
     return symbols;
 }
 
-auto GenericPhase::activityModel() const -> const ActivityModelFn&
+auto GenericPhase::activityModel() const -> const ActivityModel&
 {
     return activitymodel;
 }
@@ -159,7 +159,7 @@ auto GenericPhases::setAggregateState(AggregateState option) -> GenericPhases&
     return *this;
 }
 
-auto GenericPhases::setActivityModel(const ActivityModelFn& model) -> GenericPhases&
+auto GenericPhases::setActivityModel(const ActivityModel& model) -> GenericPhases&
 {
     activitymodel = model;
     return *this;
@@ -175,7 +175,7 @@ auto GenericPhases::set(AggregateState option) -> GenericPhases&
     return setAggregateState(option);
 }
 
-auto GenericPhases::set(const ActivityModelFn& model) -> GenericPhases&
+auto GenericPhases::set(const ActivityModel& model) -> GenericPhases&
 {
     return setActivityModel(model);
 }
@@ -200,7 +200,7 @@ auto GenericPhases::elements() const -> const Strings&
     return symbols;
 }
 
-auto GenericPhases::activityModel() const -> const ActivityModelFn&
+auto GenericPhases::activityModel() const -> const ActivityModel&
 {
     return activitymodel;
 }

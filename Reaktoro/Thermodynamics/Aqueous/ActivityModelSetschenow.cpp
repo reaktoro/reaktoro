@@ -25,27 +25,28 @@ namespace Reaktoro {
 
 using std::log;
 
-ActivityModelSetschenow::ActivityModelSetschenow(String neutral, real b)
-: neutral(neutral), b(b)
-{}
-
-auto ActivityModelSetschenow::build(const SpeciesList& species) const -> ActivityPropsFn
+auto ActivityModelSetschenow(String neutral, real b) -> ActivityModel
 {
-    // The index of the neutral aqueous species in the aqueous phase.
-    const auto ineutral = species.indexWithFormula(neutral);
-
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+    ActivityModel model = [=](const SpeciesList& species)
     {
-        // The aqueous mixture and its state exported by a base aqueous activity model.
-        const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
-        const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
+        // The index of the neutral aqueous species in the aqueous phase.
+        const auto ineutral = species.indexWithFormula(neutral);
 
-        const auto& I = state.Is;
-        props.ln_g[ineutral] = ln10 * b * I;
-        props.ln_a[ineutral] = props.ln_g[ineutral] + log(state.m[ineutral]);
+        ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+        {
+            // The aqueous mixture and its state exported by a base aqueous activity model.
+            const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
+            const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
+
+            const auto& I = state.Is;
+            props.ln_g[ineutral] = ln10 * b * I;
+            props.ln_a[ineutral] = props.ln_g[ineutral] + log(state.m[ineutral]);
+        };
+
+        return fn;
     };
 
-    return fn;
+    return model;
 }
 
 } // namespace Reaktoro

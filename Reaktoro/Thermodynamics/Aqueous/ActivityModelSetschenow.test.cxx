@@ -58,8 +58,6 @@ inline auto checkActivities(ArrayXrConstRef x, ActivityPropsConstRef props)
 
 TEST_CASE("Testing ActivityModelSetschenow", "[ActivityModelSetschenow]")
 {
-    ActivityModelDebyeHuckel debyehuckel;
-
     const auto species = SpeciesList("H2O H+ OH- Na+ Cl- Ca++ HCO3- CO3-- CO2 NaCl HCl NaOH");
 
     const auto T = 300.0;
@@ -69,7 +67,7 @@ TEST_CASE("Testing ActivityModelSetschenow", "[ActivityModelSetschenow]")
     Vec<std::any> extra;
 
     // Construct the activity props function with the given aqueous species.
-    ActivityPropsFn debyehuckelfn = debyehuckel.build(species);
+    ActivityPropsFn debyehuckelfn = ActivityModelDebyeHuckel()(species);
 
     // Create the ActivityProps object with the results.
     ActivityProps props = ActivityProps::create(species.size());
@@ -79,8 +77,7 @@ TEST_CASE("Testing ActivityModelSetschenow", "[ActivityModelSetschenow]")
 
     WHEN("Using ActivityModelSetschenow(CO2) constructor")
     {
-        ActivityModelSetschenow setschenow("CO2", 0.5);
-        ActivityPropsFn fn = setschenow.build(species);
+        ActivityPropsFn fn = ActivityModelSetschenow("CO2", 0.5)(species);
         fn(props, {T, P, x, extra});
 
         CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
@@ -101,8 +98,7 @@ TEST_CASE("Testing ActivityModelSetschenow", "[ActivityModelSetschenow]")
 
     WHEN("A base activity model, such as Debye-Huckel, has not been used previously")
     {
-        ActivityModelSetschenow setschenow("NaCl", 0.8);
-        ActivityPropsFn fn = setschenow.build(species);
+        ActivityPropsFn fn = ActivityModelSetschenow("NaCl", 0.8)(species);
         extra = {}; // there is no AqueousMixture not AqueousMixtureState in the extra arguments
 
         REQUIRE_THROWS( fn(props, {T, P, x, extra}) );

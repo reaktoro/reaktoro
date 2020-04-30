@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-/// The HKF activity model for aqueous solutions.
+/// Return the activity model for aqueous phases based on the HKF model.
 /// **References:**
 ///   - Helgeson, H. C., Kirkham, D. H., Flowers, G. C. (1981). Theoretical
 ///     prediction of the thermodynamic behavior of aqueous electrolytes at
@@ -30,14 +30,7 @@ namespace Reaktoro {
 ///     coefficients, osmotic coefficients, and apparent molal and standard and
 ///     relative partial molal properties to 600°C. American Journal of
 ///     Science, 281(10), 1249–1516.
-class ActivityModelHKF : public ActivityModel
-{
-public:
-    /// Construct a default ActivityModelHKF object.
-    ActivityModelHKF();
-
-	/// Build the function for activity and thermodynamic excesss property calculations of a phase.
-    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
-};
+/// @ingroup ActivityModels
+auto ActivityModelHKF() -> ActivityModel;
 
 } // namespace Reaktoro

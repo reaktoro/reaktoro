@@ -57,8 +57,6 @@ inline auto checkActivities(ArrayXrConstRef x, ActivityPropsConstRef props)
 
 TEST_CASE("Testing ActivityModelPitzerHMW", "[ActivityModelPitzerHMW]")
 {
-    ActivityModelPitzerHMW model;
-
     const auto species = SpeciesList("H2O H+ OH- Na+ Cl- Ca++ HCO3- CO3-- CO2 NaCl HCl NaOH");
 
     const auto T = 300.0;
@@ -68,7 +66,7 @@ TEST_CASE("Testing ActivityModelPitzerHMW", "[ActivityModelPitzerHMW]")
     Vec<std::any> extra;
 
     // Construct the activity props function with the given aqueous species.
-    ActivityPropsFn fn = model.build(species);
+    ActivityPropsFn fn = ActivityModelPitzerHMW()(species);
 
     // Create the ActivityProps object with the results.
     ActivityProps props = ActivityProps::create(species.size());

@@ -23,9 +23,9 @@
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing ActivityModelDebyeHuckel::Params", "[ActivityModelDebyeHuckel]")
+TEST_CASE("Testing ActivityModelDebyeHuckelParams", "[ActivityModelDebyeHuckel]")
 {
-    ActivityModelDebyeHuckel::Params params;
+    ActivityModelDebyeHuckelParams params;
 
     params.setKielland();
 
@@ -261,8 +261,6 @@ inline auto checkActivities(ArrayXrConstRef x, ActivityPropsConstRef props)
 
 TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
 {
-    ActivityModelDebyeHuckel model;
-
     const auto species = SpeciesList("H2O H+ OH- Na+ Cl- Ca++ HCO3- CO3-- CO2 NaCl HCl NaOH");
 
     const auto T = 300.0;
@@ -271,26 +269,37 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
 
     Vec<std::any> extra;
 
-    SECTION("Checking the default Debye--Huckel parameters are those from PHREEQC")
+    SECTION("Checking the activity coefficients")
     {
-        ActivityModelDebyeHuckel::Params params;
-        params.setPHREEQC();
+        // Construct the activity props function with the given aqueous species.
+        ActivityPropsFn fn = ActivityModelDebyeHuckel()(species);
 
-        // Ensure the parameters in the activity model object is equivalent to PHREEQC parameters.
-        REQUIRE( model.params().aiondefault     == params.aiondefault );
-        REQUIRE( model.params().biondefault     == params.biondefault );
-        REQUIRE( model.params().bneutraldefault == params.bneutraldefault );
-        REQUIRE( model.params().aions           == params.aions );
-        REQUIRE( model.params().bions           == params.bions );
-        REQUIRE( model.params().bneutrals       == params.bneutrals );
+        // Create the ActivityProps object with the results.
+        ActivityProps props = ActivityProps::create(species.size());
+
+        // Evaluate the activity props function
+        fn(props, {T, P, x, extra});
+
+        CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
+        CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
+        CHECK( exp(props.ln_g[2])  == Approx(0.5772424599) ); // OH-
+        CHECK( exp(props.ln_g[3])  == Approx(0.7363279956) ); // Na+
+        CHECK( exp(props.ln_g[4])  == Approx(0.6080001197) ); // Cl-
+        CHECK( exp(props.ln_g[5])  == Approx(0.2501338902) ); // Ca++
+        CHECK( exp(props.ln_g[6])  == Approx(0.6538562298) ); // HCO3-
+        CHECK( exp(props.ln_g[7])  == Approx(0.1827801645) ); // CO3--
+        CHECK( exp(props.ln_g[8])  == Approx(1.2735057287) ); // CO2
+        CHECK( exp(props.ln_g[9])  == Approx(1.2735057287) ); // NaCl
+        CHECK( exp(props.ln_g[10]) == Approx(1.2735057287) ); // HCl
+        CHECK( exp(props.ln_g[11]) == Approx(1.2735057287) ); // NaOH
+
+        checkActivities(x, props);
     }
 
     SECTION("Checking the activity coefficients when using PHREEQC mode")
     {
-        model.setModePHREEQC();
-
         // Construct the activity props function with the given aqueous species.
-        ActivityPropsFn fn = model.build(species);
+        ActivityPropsFn fn = ActivityModelDebyeHuckel()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
@@ -316,10 +325,8 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
 
     SECTION("Checking the activity coefficients when using WATEQ4F mode")
     {
-        model.setModeWATEQ4F();
-
         // Construct the activity props function with the given aqueous species.
-        ActivityPropsFn fn = model(species);
+        ActivityPropsFn fn = ActivityModelDebyeHuckelWATEQ4F()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
@@ -345,10 +352,8 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
 
     SECTION("Checking the activity coefficients when using Kielland mode")
     {
-        model.setModeKielland();
-
         // Construct the activity props function with the given aqueous species.
-        ActivityPropsFn fn = model(species);
+        ActivityPropsFn fn = ActivityModelDebyeHuckelKielland()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
@@ -356,12 +361,12 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
         // Evaluate the activity props function
         fn(props, {T, P, x, extra});
 
-        CHECK( exp(props.ln_g[0])  == Approx(0.9241988604) ); // H2O
+        CHECK( exp(props.ln_g[0])  == Approx(0.9209334298) ); // H2O
         CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
         CHECK( exp(props.ln_g[2])  == Approx(0.5772424599) ); // OH-
-        CHECK( exp(props.ln_g[3])  == Approx(0.7320824868) ); // Na+
-        CHECK( exp(props.ln_g[4])  == Approx(0.5744423862) ); // Cl-
-        CHECK( exp(props.ln_g[5])  == Approx(0.3051469683) ); // Ca++
+        CHECK( exp(props.ln_g[3])  == Approx(0.6004257058) ); // Na+
+        CHECK( exp(props.ln_g[4])  == Approx(0.5513105763) ); // Cl-
+        CHECK( exp(props.ln_g[5])  == Approx(0.2047658694) ); // Ca++
         CHECK( exp(props.ln_g[6])  == Approx(0.6004257058) ); // HCO3-
         CHECK( exp(props.ln_g[7])  == Approx(0.1489680248) ); // CO3--
         CHECK( exp(props.ln_g[8])  == Approx(1.2735057287) ); // CO2
@@ -374,10 +379,8 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
 
     SECTION("Checking the activity coefficients when using limiting law mode")
     {
-        model.setModeLimitingLaw();
-
         // Construct the activity props function with the given aqueous species.
-        ActivityPropsFn fn = model(species);
+        ActivityPropsFn fn = ActivityModelDebyeHuckelLimitingLaw()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());

@@ -26,7 +26,7 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Phases", "[Phases]")
 {
-    ActivityModelFn activitymodel = [](const SpeciesList& species)
+    ActivityModel activitymodel = [](const SpeciesList& species)
     {
         ActivityPropsFn fn = [](ActivityPropsRef props, ActivityArgs args) {};
         return fn;
