@@ -82,16 +82,17 @@ auto volumeCO2(real T, real Pb, real sqrtT) -> real
 
 } // namespace
 
-auto fluidChemicalModelSpycherPruessEnnis(const GeneralMixture& mixture)-> ActivityPropsFn
+ActivityModelSpycherPruessEnnis::ActivityModelSpycherPruessEnnis()
+{}
+
+auto ActivityModelSpycherPruessEnnis::build(const SpeciesList& species) const -> ActivityPropsFn
 {
-    // The index of the species H2O(g) in the gaseous mixture
-    const auto iH2O = mixture.indexSpecies("H2O(g)");
+    // The indices of gases H2O(g) and CO2(g)
+    const auto iH2O = species.findWithFormula("H2O");
+    const auto iCO2 = species.findWithFormula("CO2");
 
-    // The index of the species CO2(g) in the gaseous mixture
-    const auto iCO2 = mixture.indexSpecies("CO2(g)");
-
-    // The number of species in the mixture
-    const auto nspecies = mixture.numSpecies();
+    // The number of species
+    const auto nspecies = species.size();
 
     // Define the activity model function of the gaseous phase
     ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable

@@ -22,16 +22,23 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class GeneralMixture;
+/// The activity model for a gaseous phase formulated in Spycher et al. (2003).
+/// This is an activity model for a gaseous phase supporting only the gases
+/// H<sub>2</sub>2O(g) and CO<sub>2</sub>(g).
+///
+/// **References:**
+/// - Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2-H2O mixtures in the
+///   geological sequestration of CO2. I. Assessment and calculation of mutual
+///   solubilities from 12 to 100C and up to 600 bar. Geochimica et
+///   Cosmochimica Acta, 67(16), 3015-3031.
+class ActivityModelSpycherPruessEnnis : public ActivityModel
+{
+public:
+    /// Construct a default ActivityModelSpycherPruessEnnis object.
+    ActivityModelSpycherPruessEnnis();
 
-/// Return a chemical model function for a gaseous phase based on the Spycher et al. (2003) model.
-/// This model only supports a gaseous phase with species `CO2(g)` and `H2O(g)`.
-/// The model is documented in: *Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2-H2O mixtures in the
-/// geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100�C
-/// and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015�3031*.
-/// @param mixture The gaseous mixture instance
-/// @see GeneralMixture, ActivityPropsFn
-auto fluidChemicalModelSpycherPruessEnnis(const GeneralMixture& mixture) -> ActivityPropsFn;
+	/// Build the function for activity and thermodynamic excesss property calculations of a phase.
+    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
+};
 
 } // namespace Reaktoro

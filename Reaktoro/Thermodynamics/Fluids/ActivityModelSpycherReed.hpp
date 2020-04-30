@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-/// The Spycher and Reed (1988) activity model for a gaseous phase.
+/// The activity model for a gaseous phase formulated in Spycher and Reed (1988).
 /// This is an activity model for a gaseous phase supporting only the gases
 /// H<sub>2</sub>2O(g), CO<sub>2</sub>(g), and CH<sub>4</sub>(g).
 ///
@@ -30,7 +30,7 @@ namespace Reaktoro {
 /// - Spycher, N., Reed, M. (1988). Fugacity coefficients of H2, CO2, CH4, H2O
 ///   and of H2O--CO2--CH4 mixtures: A virial equation treatment for moderate
 ///   pressures and temperatures applicable to calculations of hydrothermal
-///   boiling. Geochimica et Cosmochimica Acta, 52(3), 739�749*.
+///   boiling. Geochimica et Cosmochimica Acta, 52(3), 739-749.
 class ActivityModelSpycherReed : public ActivityModel
 {
 public:
