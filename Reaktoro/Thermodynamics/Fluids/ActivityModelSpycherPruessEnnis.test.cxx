@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Fluids/ActivityModelSpycherReed.hpp>
+#include <Reaktoro/Thermodynamics/Fluids/ActivityModelSpycherPruessEnnis.hpp>
 using namespace Reaktoro;
 
 // Check if the activities of the fluid species are correct assuming activity coefficients are.
@@ -36,37 +36,16 @@ inline auto checkActivities(ArrayXrConstRef x, real P, ActivityPropsConstRef pro
     }
 }
 
-TEST_CASE("Testing ActivityModelSpycherReed", "[ActivityModelSpycherReed]")
+TEST_CASE("Testing ActivityModelSpycherPruessEnnis", "[ActivityModelSpycherPruessEnnis]")
 {
-    ActivityModelSpycherReed model;
+    ActivityModelSpycherPruessEnnis model;
 
     const auto T = 300.0;
     const auto P = 12.3e5;
 
     Vec<std::any> extra;
 
-    WHEN("All supported gases, H2O(g), CO2(g), CH4(g), are considered.")
-    {
-        const auto species = SpeciesList("H2O CO2 CH4");
-        const ArrayXr x = ArrayXr{{0.1, 0.6, 0.3}};
-
-        // Construct the activity props function with the given gaseous species.
-        ActivityPropsFn fn = model.build(species);
-
-        // Create the ActivityProps object with the results.
-        ActivityProps props = ActivityProps::create(species.size());
-
-        // Evaluate the activity props function
-        fn(props, {T, P, x, extra});
-
-        CHECK( exp(props.ln_g[0]) == Approx(0.8867907637) ); // H2O
-        CHECK( exp(props.ln_g[1]) == Approx(0.9316186544) ); // CO2
-        CHECK( exp(props.ln_g[2]) == Approx(0.9966357760) ); // CH4
-
-        checkActivities(x, P, props);
-    }
-
-    WHEN("Only H2O(g) and CO2(g) are considered.")
+    WHEN("All supported gases, H2O(g) and CO2(g), are considered.")
     {
         const auto species = SpeciesList("H2O CO2");
         const ArrayXr x = ArrayXr{{0.1, 0.9}};
@@ -80,15 +59,15 @@ TEST_CASE("Testing ActivityModelSpycherReed", "[ActivityModelSpycherReed]")
         // Evaluate the activity props function
         fn(props, {T, P, x, extra});
 
-        CHECK( exp(props.ln_g[0]) == Approx(0.8803341849) ); // H2O
-        CHECK( exp(props.ln_g[1]) == Approx(0.9296515107) ); // CO2
+        CHECK( exp(props.ln_g[0]) == Approx(0.8867779770) ); // H2O
+        CHECK( exp(props.ln_g[1]) == Approx(0.9423386345) ); // CO2
 
         checkActivities(x, P, props);
     }
 
-    WHEN("Only CH4(g) is considered.")
+    WHEN("Only CO2(g) is considered.")
     {
-        const auto species = SpeciesList("CH4");
+        const auto species = SpeciesList("CO2");
         const ArrayXr x = ArrayXr{{1.0}};
 
         // Construct the activity props function with the given gaseous species.
@@ -100,7 +79,26 @@ TEST_CASE("Testing ActivityModelSpycherReed", "[ActivityModelSpycherReed]")
         // Evaluate the activity props function
         fn(props, {T, P, x, extra});
 
-        CHECK( exp(props.ln_g[0]) == Approx(0.9791724134) ); // CH4
+        CHECK( exp(props.ln_g[0]) == Approx(0.9423386345) ); // CO2
+
+        checkActivities(x, P, props);
+    }
+
+    WHEN("Only H2O(g) is considered.")
+    {
+        const auto species = SpeciesList("H2O");
+        const ArrayXr x = ArrayXr{{1.0}};
+
+        // Construct the activity props function with the given gaseous species.
+        ActivityPropsFn fn = model.build(species);
+
+        // Create the ActivityProps object with the results.
+        ActivityProps props = ActivityProps::create(species.size());
+
+        // Evaluate the activity props function
+        fn(props, {T, P, x, extra});
+
+        CHECK( exp(props.ln_g[0]) == Approx(0.8867779770) ); // H2O
 
         checkActivities(x, P, props);
     }
