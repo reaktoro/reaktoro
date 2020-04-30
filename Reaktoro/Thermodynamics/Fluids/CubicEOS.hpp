@@ -104,7 +104,7 @@ public:
     struct Args
     {
         /// The number of species in the fluid phase.
-        const unsigned nspecies = {};
+        const Index nspecies = {};
 
         /// The critical temperatures of the substances (in K).
         ArrayXrConstRef Tcr;
