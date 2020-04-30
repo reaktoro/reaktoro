@@ -20,11 +20,10 @@
 //// Reaktoro includes
 //#include <Reaktoro/Common/Constants.hpp>
 //#include <Reaktoro/Common/TableUtils.hpp>
-//#include <Reaktoro/Thermodynamics/Solutions/GeneralMixture.hpp>
 //
 //namespace Reaktoro {
 //
-//auto mineralChemicalModelVanLaar(const GeneralMixture& mixture, VectorXrConstRef a, MatrixXdConstRef W) -> ActivityPropsFn
+//auto mineralChemicalModelVanLaar(const SpeciesList& species, VectorXrConstRef a, MatrixXdConstRef W) -> ActivityPropsFn
 //{
 //    MixtureState state;
 //    PhaseChemicalModelResult res(2);
@@ -33,14 +32,12 @@
 //
 //    real avg = {};
 //
-//    const Index nspecies = mixture.numSpecies();
+//    const Index nspecies = species.size();
 //
 //    Table2D<real> B = table2D<real>(nspecies, nspecies);
 //
-//    ActivityPropsFn f = [=](double T, double P, VectorXrConstRef n) mutable
+//    ActivityPropsFn f = [=](double T, double P, ArrayxXrConstRef x) mutable
 //    {
-//        state = mixture.state(T, P, n);
-//
 //        const auto RT = universalGasConstant * state.T;
 //        const auto& x = state.x;
 //

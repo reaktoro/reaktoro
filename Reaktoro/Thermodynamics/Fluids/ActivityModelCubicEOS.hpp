@@ -23,9 +23,6 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class GeneralMixture;
-
 /// The parameters for the activity model based on cubic equations of state.
 struct ActivityModelCubicEOSParams
 {

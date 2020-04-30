@@ -23,7 +23,6 @@
 #include <Reaktoro/Core/StateOfMatter.hpp>
 #include <Reaktoro/Singletons/CriticalProps.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/CubicEOS.hpp>
-#include <Reaktoro/Thermodynamics/Solutions/GeneralMixture.hpp>
 
 namespace Reaktoro {
 

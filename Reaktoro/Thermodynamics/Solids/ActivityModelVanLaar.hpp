@@ -22,9 +22,6 @@
 //
 //namespace Reaktoro {
 //
-//// Forward declarations
-//class GeneralMixture;
-//
 ///// Return an equation of state for a binary mineral solid solution based on Van Laar model.
 ///// The Van Laar model calculates the activity coefficient of the end-members in a
 ///// solid solution using the equations:
@@ -33,7 +30,7 @@
 ///// @param a The size parameters for the solid solution end-members
 ///// @param W The binary interaction parameters for the solid solution end-members
 ///// @return The equation of state function for the mineral phase
-///// @see GeneralMixture, ActivityModel
-//auto mineralChemicalModelVanLaar(const GeneralMixture& mixture, VectorXrConstRef a, MatrixXdConstRef W) -> ActivityPropsFn;
+///// @see ActivityModel
+//auto mineralChemicalModelVanLaar(VectorXrConstRef a, MatrixXdConstRef W) -> ActivityPropsFn;
 //
 //} // namespace Reaktoro
