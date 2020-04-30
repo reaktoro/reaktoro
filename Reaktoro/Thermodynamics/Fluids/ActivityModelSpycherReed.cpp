@@ -26,7 +26,6 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Utils.hpp>
-#include <Reaktoro/Thermodynamics/Solutions/GeneralMixture.hpp>
 
 namespace Reaktoro {
 
@@ -201,33 +200,25 @@ inline auto computeCTT(const real& T, int i, int j, int k) -> real
 
 } // namespace
 
-auto fluidChemicalModelSpycherReed(SpeciesListConstRef species)-> ActivityPropsFn
+ActivityModelSpycherReed::ActivityModelSpycherReed()
+{}
+
+auto ActivityModelSpycherReed::build(const SpeciesList& species) const -> ActivityPropsFn
 {
     // The names of the gases in the mixture, and the supported ones by this model
     Strings provided = vectorize(species, RKT_LAMBDA(x, x.formula().str()));
     Strings supported = { "H2O", "CO2", "CH4" };
 
     // Assert the provided gases consists of only a combination of H2O(g), CO2(g) and CH4(g)
-    error(!identical(provided, supported), "Could not initialize the "
+    error(!contained(provided, supported), "Could not initialize the "
         "Spycher and Reed (1988) equation of state for the gaseous phase.",
         "This model expects the gaseous phase to be composed of "
-        "species H2O(g), CO2(g) and CH4(g) only.");
+        "species H2O(g), CO2(g) and/or CH4(g) only.");
 
     // The indices of the species H2O(g), CO2(g) and CH4(g) in the gaseous mixture
-    const auto iH2O = species.indexWithFormula("H2O");
-    const auto iCO2 = species.indexWithFormula("CO2");
-    const auto iCH4 = species.indexWithFormula("CH4");
-
-    // Assert the gaseous species H2O(g), CO2(g) and CH4(g) exist.
-    Assert(iH2O < species.size(),
-        "Could not create the chemical model Spycher & Reed (1988) for the gaseous phase.",
-        "This model requires the species H2O(g) in the gaseous phase.");
-    Assert(iCO2 < species.size(),
-        "Could not create the chemical model Spycher & Reed (1988) for the gaseous phase.",
-        "This model requires the species CO2(g) in the gaseous phase.");
-    Assert(iCH4 < species.size(),
-        "Could not create the chemical model Spycher & Reed (1988) for the gaseous phase.",
-        "This model requires the species CH4(g) in the gaseous phase.");
+    const auto iH2O = species.findWithFormula("H2O");
+    const auto iCO2 = species.findWithFormula("CO2");
+    const auto iCH4 = species.findWithFormula("CH4");
 
     // The number of species in the mixture
     const auto nspecies = species.size();
@@ -252,15 +243,15 @@ auto fluidChemicalModelSpycherReed(SpeciesListConstRef species)-> ActivityPropsF
 
         // The mole fractions of the gaseous species H2O(g), CO2(g) and CH4(g)
         real y[3] = {};
-        if(iH2O < nspecies) y[0] = x[iH2O]; else y[0] = {};
-        if(iCO2 < nspecies) y[1] = x[iCO2]; else y[1] = {};
-        if(iCH4 < nspecies) y[2] = x[iCH4]; else y[2] = {};
+        if(iH2O < nspecies) y[0] = x[iH2O]; else y[0] = 0.0;
+        if(iCO2 < nspecies) y[1] = x[iCO2]; else y[1] = 0.0;
+        if(iCH4 < nspecies) y[2] = x[iCH4]; else y[2] = 0.0;
 
         // Calculate the Bij, BijT, BijTT coefficients
         real B[3][3] = {};
         real BT[3][3] = {};
         real BTT[3][3] = {};
-        for (int i = 0; i < 3; ++i) for (int k = 0; k < 3; ++k)
+        for(auto i = 0; i < 3; ++i) for(auto k = 0; k < 3; ++k)
         {
             B[i][k] = computeB(T, i, k);
             BT[i][k] = computeBT(T, i, k);
@@ -271,7 +262,7 @@ auto fluidChemicalModelSpycherReed(SpeciesListConstRef species)-> ActivityPropsF
         real C[3][3][3] = {};
         real CT[3][3][3] = {};
         real CTT[3][3][3] = {};
-        for (int i = 0; i < 3; ++i) for (int k = 0; k < 3; ++k) for (int l = 0; l < 3; ++l)
+        for(auto i = 0; i < 3; ++i) for(auto k = 0; k < 3; ++k) for(auto l = 0; l < 3; ++l)
         {
             C[i][k][l] = computeC(T, i, k, l);
             CT[i][k][l] = computeCT(T, i, k, l);
@@ -282,7 +273,7 @@ auto fluidChemicalModelSpycherReed(SpeciesListConstRef species)-> ActivityPropsF
         real Bmix = {};
         real BmixT = {};
         real BmixTT = {};
-        for (int i = 0; i < 3; ++i) for (int k = 0; k < 3; ++k)
+        for(auto i = 0; i < 3; ++i) for(auto k = 0; k < 3; ++k)
         {
             Bmix += y[i] * y[k] * B[i][k];
             BmixT += y[i] * y[k] * BT[i][k];
@@ -293,7 +284,7 @@ auto fluidChemicalModelSpycherReed(SpeciesListConstRef species)-> ActivityPropsF
         real Cmix = {};
         real CmixT = {};
         real CmixTT = {};
-        for (int i = 0; i < 3; ++i) for (int k = 0; k < 3; ++k) for (int l = 0; l < 3; ++l)
+        for(auto i = 0; i < 3; ++i) for(auto k = 0; k < 3; ++k) for(auto l = 0; l < 3; ++l)
         {
             Cmix += y[i] * y[k] * y[l] * C[i][k][l];
             CmixT += y[i] * y[k] * y[l] * CT[i][k][l];
@@ -307,13 +298,13 @@ auto fluidChemicalModelSpycherReed(SpeciesListConstRef species)-> ActivityPropsF
 
         // Calculate the ln fugacity coefficients of the gaseous species
         real ln_phi[3] = {};
-        for (int i = 0; i < 3; ++i)
+        for(auto i = 0; i < 3; ++i)
         {
             ln_phi[i] = 1 - Z;
-            for (int k = 0; k < 3; ++k)
+            for(auto k = 0; k < 3; ++k)
             {
                 ln_phi[i] += 2 * y[k] * B[i][k] * Pbar;
-                for (int l = 0; l < 3; ++l)
+                for(auto l = 0; l < 3; ++l)
                     ln_phi[i] += 1.5*y[k] * y[l] * C[i][k][l] * Pbar*Pbar;
             }
         }
@@ -357,9 +348,9 @@ auto fluidChemicalModelSpycherReed(SpeciesListConstRef species)-> ActivityPropsF
         Cvres = Cpres + R + T*VT*VT/VP;
 
         // Set the ln activity coefficients
-        ln_g[iH2O] = ln_phi[0];
-        ln_g[iCO2] = ln_phi[1];
-        ln_g[iCH4] = ln_phi[2];
+        if(iH2O < nspecies) ln_g[iH2O] = ln_phi[0];
+        if(iCO2 < nspecies) ln_g[iCO2] = ln_phi[1];
+        if(iCH4 < nspecies) ln_g[iCH4] = ln_phi[2];
 
         // Calculate the ln activities of the species
         ln_a = ln_g + ln_x + ln_Pbar;

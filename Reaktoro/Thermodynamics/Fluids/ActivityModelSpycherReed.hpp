@@ -22,18 +22,23 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class GeneralMixture;
-
-/// Return a chemical model function for a gaseous phase based on the Spycher and Reed (1988) model.
-/// This model only supports the gaseous species `H2O(g)`, `CO2(g)`, and `CH4(g)`.
+/// The Spycher and Reed (1988) activity model for a gaseous phase.
+/// This is an activity model for a gaseous phase supporting only the gases
+/// H<sub>2</sub>2O(g), CO<sub>2</sub>(g), and CH<sub>4</sub>(g).
 ///
-/// Reference: *Spycher, N., Reed, M. (1988). Fugacity coefficients of H2, CO2,
-/// CH4, H2O and of H2O--CO2--CH4 mixtures: A virial equation treatment for
-/// moderate pressures and temperatures applicable to calculations of
-/// hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739�749*.
-/// @param mixture The gaseous mixture instance
-/// @see GeneralMixture
-auto fluidChemicalModelSpycherReed(const GeneralMixture& mixture) -> ActivityPropsFn;
+/// **References:**
+/// - Spycher, N., Reed, M. (1988). Fugacity coefficients of H2, CO2, CH4, H2O
+///   and of H2O--CO2--CH4 mixtures: A virial equation treatment for moderate
+///   pressures and temperatures applicable to calculations of hydrothermal
+///   boiling. Geochimica et Cosmochimica Acta, 52(3), 739�749*.
+class ActivityModelSpycherReed : public ActivityModel
+{
+public:
+    /// Construct a default ActivityModelSpycherReed object.
+    ActivityModelSpycherReed();
+
+	/// Build the function for activity and thermodynamic excesss property calculations of a phase.
+    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
+};
 
 } // namespace Reaktoro
