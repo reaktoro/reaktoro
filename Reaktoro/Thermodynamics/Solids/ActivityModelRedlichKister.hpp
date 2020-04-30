@@ -22,9 +22,6 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class GeneralMixture;
-
 /// Return the activity model for a binary solid solution phase based on Redlich-Kister model.
 /// The Redlich-Kister model calculates the activity coefficient of the end-members in a
 /// solid solution using the equations:
