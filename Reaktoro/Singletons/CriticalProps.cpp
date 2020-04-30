@@ -257,8 +257,11 @@ auto CriticalProps::overwrite(SubstanceCriticalProps substance) -> void
     for(auto& current : substances)
     {
         const auto has_common_name = !disjoint(substance.names(), current.names());
-        current = substance;
-        return;
+        if(has_common_name)
+        {
+            current = substance;
+            return;
+        }
     }
     substances.push_back(substance);
 }
