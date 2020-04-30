@@ -81,53 +81,51 @@ auto paramDuanSun(const real& T, const real& P, const real coeffs[]) -> real
 
 } // namespace
 
-ActivityModelDuanSun::ActivityModelDuanSun()
-{}
-
-ActivityModelDuanSun::ActivityModelDuanSun(String gas)
-: gas(gas)
-{}
-
-auto ActivityModelDuanSun::build(const SpeciesList& species) const -> ActivityPropsFn
+auto ActivityModelDuanSun(String gas) -> ActivityModel
 {
-    // The index of the dissolved gas in the aqueous phase.
-    const auto igas = species.indexWithFormula(gas);
-
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+    ActivityModel model = [=](const SpeciesList& species)
     {
-        // The aqueous mixture and its state exported by a base aqueous activity model.
-        const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
-        const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
+        // The index of the dissolved gas in the aqueous phase.
+        const auto igas = species.indexWithFormula(gas);
 
-        // The local indices of some charged species among all charged species
-        static const auto iNa  = mixture.charged().findWithFormula("Na+");
-        static const auto iK   = mixture.charged().findWithFormula("K+");
-        static const auto iCa  = mixture.charged().findWithFormula("Ca++");
-        static const auto iMg  = mixture.charged().findWithFormula("Mg++");
-        static const auto iCl  = mixture.charged().findWithFormula("Cl-");
-        static const auto iSO4 = mixture.charged().findWithFormula("SO4--");
+        ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+        {
+            // The aqueous mixture and its state exported by a base aqueous activity model.
+            const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
+            const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
 
-        const auto& T  = state.T;
-        const auto& P  = state.P;
-        const auto& ms = state.ms;
+            // The local indices of some charged species among all charged species
+            static const auto iNa  = mixture.charged().findWithFormula("Na+");
+            static const auto iK   = mixture.charged().findWithFormula("K+");
+            static const auto iCa  = mixture.charged().findWithFormula("Ca++");
+            static const auto iMg  = mixture.charged().findWithFormula("Mg++");
+            static const auto iCl  = mixture.charged().findWithFormula("Cl-");
+            static const auto iSO4 = mixture.charged().findWithFormula("SO4--");
 
-        const auto lambda = paramDuanSun(T, P, lambda_coeffs);
-        const auto zeta   = paramDuanSun(T, P, zeta_coeffs);
+            const auto& T  = state.T;
+            const auto& P  = state.P;
+            const auto& ms = state.ms;
 
-        const auto nions = mixture.charged().size();
+            const auto lambda = paramDuanSun(T, P, lambda_coeffs);
+            const auto zeta   = paramDuanSun(T, P, zeta_coeffs);
 
-        const auto mNa  = (iNa  < nions) ? ms[iNa]  : real(0.0);
-        const auto mK   = (iK   < nions) ? ms[iK]   : real(0.0);
-        const auto mCa  = (iCa  < nions) ? ms[iCa]  : real(0.0);
-        const auto mMg  = (iMg  < nions) ? ms[iMg]  : real(0.0);
-        const auto mCl  = (iCl  < nions) ? ms[iCl]  : real(0.0);
-        const auto mSO4 = (iSO4 < nions) ? ms[iSO4] : real(0.0);
+            const auto nions = mixture.charged().size();
 
-        props.ln_g[igas] = 2*lambda*(mNa + mK + 2*mCa + 2*mMg) + zeta*(mNa + mK + mCa + mMg)*mCl - 0.07*mSO4;
-        props.ln_a[igas] = props.ln_g[igas] + log(state.m[igas]);
+            const auto mNa  = (iNa  < nions) ? ms[iNa]  : real(0.0);
+            const auto mK   = (iK   < nions) ? ms[iK]   : real(0.0);
+            const auto mCa  = (iCa  < nions) ? ms[iCa]  : real(0.0);
+            const auto mMg  = (iMg  < nions) ? ms[iMg]  : real(0.0);
+            const auto mCl  = (iCl  < nions) ? ms[iCl]  : real(0.0);
+            const auto mSO4 = (iSO4 < nions) ? ms[iSO4] : real(0.0);
+
+            props.ln_g[igas] = 2*lambda*(mNa + mK + 2*mCa + 2*mMg) + zeta*(mNa + mK + mCa + mMg)*mCl - 0.07*mSO4;
+            props.ln_a[igas] = props.ln_g[igas] + log(state.m[igas]);
+        };
+
+        return fn;
     };
 
-    return fn;
+    return model;
 }
 
 } // namespace Reaktoro

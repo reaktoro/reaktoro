@@ -22,25 +22,10 @@
 
 namespace Reaktoro {
 
-/// The Setschenow activity model for a neutral aqueous species.
-class ActivityModelSetschenow : public ActivityModel
-{
-public:
-    /// Construct a ActivityModelSetschenow object.
-    /// @param neutral The formula of the neutral aqueous species (e.g., `NaCl`).
-    /// @param b The Setschenow *b* coefficient.
-    ActivityModelSetschenow(String neutral, real b);
-
-	/// Build the function for activity and thermodynamic excesss property calculations of a phase.
-    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
-
-private:
-    /// The formula of the neutral aqueous species.
-    String neutral;
-
-    /// The Setschenow *b* coefficient.
-    real b;
-};
-
+/// Return the Setschenow activity model for a neutral aqueous species.
+/// @param neutral The formula of the neutral aqueous species (e.g., `NaCl`).
+/// @param b The Setschenow *b* coefficient.
+/// @ingroup ActivityModels
+auto ActivityModelSetschenow(String neutral, real b) -> ActivityModel;
 
 } // namespace Reaktoro

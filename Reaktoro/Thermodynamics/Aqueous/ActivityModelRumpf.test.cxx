@@ -58,8 +58,6 @@ inline auto checkActivities(ArrayXrConstRef x, ActivityPropsConstRef props)
 
 TEST_CASE("Testing ActivityModelRumpf", "[ActivityModelRumpf]")
 {
-    ActivityModelDebyeHuckel debyehuckel;
-
     const auto species = SpeciesList("H2O H+ OH- Na+ Cl- Ca++ HCO3- CO3-- CO2 NaCl HCl NaOH");
 
     const auto T = 300.0;
@@ -69,7 +67,7 @@ TEST_CASE("Testing ActivityModelRumpf", "[ActivityModelRumpf]")
     Vec<std::any> extra;
 
     // Construct the activity props function with the given aqueous species.
-    ActivityPropsFn debyehuckelfn = debyehuckel.build(species);
+    ActivityPropsFn debyehuckelfn = ActivityModelDebyeHuckel()(species);
 
     // Create the ActivityProps object with the results.
     ActivityProps props = ActivityProps::create(species.size());
@@ -77,32 +75,9 @@ TEST_CASE("Testing ActivityModelRumpf", "[ActivityModelRumpf]")
     // Evaluate the activity props function
     debyehuckelfn(props, {T, P, x, extra});
 
-    WHEN("Using ActivityModelRumpf() constructor")
-    {
-        ActivityModelRumpf rumpf;
-        ActivityPropsFn fn = rumpf.build(species);
-        fn(props, {T, P, x, extra});
-
-        CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
-        CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
-        CHECK( exp(props.ln_g[2])  == Approx(0.5772424599) ); // OH-
-        CHECK( exp(props.ln_g[3])  == Approx(0.7363279956) ); // Na+
-        CHECK( exp(props.ln_g[4])  == Approx(0.6080001197) ); // Cl-
-        CHECK( exp(props.ln_g[5])  == Approx(0.2501338902) ); // Ca++
-        CHECK( exp(props.ln_g[6])  == Approx(0.6538562298) ); // HCO3-
-        CHECK( exp(props.ln_g[7])  == Approx(0.1827801645) ); // CO3--
-        CHECK( exp(props.ln_g[8])  == Approx(1.1689628021) ); // CO2
-        CHECK( exp(props.ln_g[9])  == Approx(1.2735057287) ); // NaCl
-        CHECK( exp(props.ln_g[10]) == Approx(1.2735057287) ); // HCl
-        CHECK( exp(props.ln_g[11]) == Approx(1.2735057287) ); // NaOH
-
-        checkActivities(x, props);
-    }
-
     WHEN("Using ActivityModelRumpf(CO2) constructor")
     {
-        ActivityModelRumpf rumpf("CO2");
-        ActivityPropsFn fn = rumpf.build(species);
+        ActivityPropsFn fn = ActivityModelRumpf("CO2")(species);
         fn(props, {T, P, x, extra});
 
         CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
@@ -123,8 +98,7 @@ TEST_CASE("Testing ActivityModelRumpf", "[ActivityModelRumpf]")
 
     WHEN("Using ActivityModelRumpf(NaCl) constructor")
     {
-        ActivityModelRumpf rumpf("NaCl");
-        ActivityPropsFn fn = rumpf.build(species);
+        ActivityPropsFn fn = ActivityModelRumpf("NaCl")(species);
         fn(props, {T, P, x, extra});
 
         CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
@@ -145,8 +119,7 @@ TEST_CASE("Testing ActivityModelRumpf", "[ActivityModelRumpf]")
 
     WHEN("A base activity model, such as Debye-Huckel, has not been used previously")
     {
-        ActivityModelRumpf rumpf;
-        ActivityPropsFn fn = rumpf.build(species);
+        ActivityPropsFn fn = ActivityModelRumpf("CO2")(species);
         extra = {}; // there is no AqueousMixture not AqueousMixtureState in the extra arguments
 
         REQUIRE_THROWS( fn(props, {T, P, x, extra}) );

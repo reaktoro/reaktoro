@@ -22,6 +22,77 @@
 
 namespace Reaktoro {
 
+/// The parameters in the Debye--Hückel activity model for aqueous solutions.
+/// @ingroup ActivityModels
+struct ActivityModelDebyeHuckelParams
+{
+	/// The default value of the *å* parameter for ionic species.
+	real aiondefault = 0.0;
+
+	/// The default value of the *b* parameter for ionic species.
+	real biondefault = 0.0;
+
+	/// The default value of the *b* parameter for neutral species.
+	real bneutraldefault = 0.1;
+
+	/// The parameters *å* of specific ionic species.
+	Map<String, real> aions;
+
+	/// The parameters *b* of specific ionic species.
+	Map<String, real> bions;
+
+	/// The parameters *b* of specific neutral species.
+	Map<String, real> bneutrals;
+
+	/// Return the *å* parameter of the ionic species with given formula.
+	auto aion(const ChemicalFormula& ion) const -> real;
+
+	/// Return the *b* parameter of the ionic species with given formula.
+	auto bion(const ChemicalFormula& ion) const -> real;
+
+	/// Return the *b* parameter of the neutral species with given formula.
+	auto bneutral(const ChemicalFormula& neutral) const -> real;
+
+	/// Set the parameters *å* and *b* of the ionic species to zero.
+	auto setLimitingLaw() -> void;
+
+	/// Set the parameters *å* of the ionic species according to Kielland (1937).
+	auto setKielland() -> void;
+
+	/// Set the parameters *å* and *b* of the ionic species according to WATEQ4F.
+	auto setWATEQ4F() -> void;
+
+	/// Set the parameters *å* and *b* of the ionic species according to PHREEQC.
+	auto setPHREEQC() -> void;
+};
+
+/// Return the activity model for aqueous phases based on the Debye--Hückel model.
+/// @ingroup ActivityModels
+auto ActivityModelDebyeHuckel() -> ActivityModel;
+
+/// Return the activity model for aqueous phases based on the Debye--Hückel model with given custom parameters.
+/// @ingroup ActivityModels
+auto ActivityModelDebyeHuckel(ActivityModelDebyeHuckelParams params) -> ActivityModel;
+
+/// Return the activity model for aqueous phases based on the Debye--Hückel limiting law model.
+/// @ingroup ActivityModels
+auto ActivityModelDebyeHuckelLimitingLaw() -> ActivityModel;
+
+/// Return the activity model for aqueous phases based on the Debye--Hückel model with Kielland (1937) parameters.
+/// @ingroup ActivityModels
+auto ActivityModelDebyeHuckelKielland() -> ActivityModel;
+
+/// Return the activity model for aqueous phases based on the Debye--Hückel model using PHREEQC parameters.
+/// @ingroup ActivityModels
+auto ActivityModelDebyeHuckelPHREEQC() -> ActivityModel;
+
+/// Return the activity model for aqueous phases based on the Debye--Hückel model using WATEQ4F parameters.
+/// @ingroup ActivityModels
+auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel;
+
+
+//=====================================================================================================================
+/// @page ActivityModelDebyeHuckel Debye--Hückel activity model
 /// The Debye--Hückel activity model for aqueous solutions.
 /// An instance of this class can be used to control how activity coefficients
 /// of ionic and neutral species, @eq{\gamma_i} and @eq{\gamma_n} respectively,
@@ -91,211 +162,171 @@ namespace Reaktoro {
 /// with \eq{\Lambda_{i}} given by:
 ///
 /// \eqc{\Lambda_{i}=1+B\mathring{a}_{i}\sqrt{I}.}
+//=====================================================================================================================
+
+
+//=====================================================================================================================
+/// @fn auto ActivityModelDebyeHuckel() -> ActivityModel;
+/// The activity model for aqueous phases based on the Debye--Hückel model.
+/// @note This method is equivalent to ActivityModelDebyeHuckelPHREEQC().
+//=====================================================================================================================
+
+
+//=====================================================================================================================
+/// @fn auto ActivityModelDebyeHuckel(const ActivityModelDebyeHuckelParams& params) -> ActivityModel;
+/// The activity model for aqueous phases based on the Debye--Hückel model with given custom parameters.
+//=====================================================================================================================
+
+
+//=====================================================================================================================
+/// @fn auto ActivityModelDebyeHuckelLimitingLaw() -> ActivityModel;
+/// The activity model for aqueous phases based on the Debye--Hückel limiting law model.
+/// Use this method to indicate that the activity coefficients of the ionic
+/// species are calculated using the Debye--Hückel limiting law equation. In
+/// this model, the Debye--Hückel parameters *å* and *b* of the ionic species
+/// are zero.
+//=====================================================================================================================
+
+
+//=====================================================================================================================
+/// @fn auto ActivityModelDebyeHuckelKielland() -> ActivityModel;
+/// The activity model for aqueous phases based on the Debye--Hückel model with Kielland (1937) parameters.
+/// In this model, the ion-size parameters *å* are taken from Kielland
+/// (1937)\sup{\cite Kielland1937}:
 ///
-class ActivityModelDebyeHuckel : public ActivityModel
-{
-public:
-	/// The parameters in the Debye--Hückel activity model for aqueous solutions.
-	struct Params
-	{
-		/// The default value of the *å* parameter for ionic species.
-		real aiondefault = 0.0;
+/// | Ion                                                                                              | *å* (Ångström)
+/// | -------------------------------------------------------------------------------------------------| --------------
+/// | `H+`                                                                                             | 9
+/// | `Li+`                                                                                            | 6
+/// | `Rb+`, `Cs+`, `NH4+`, `Tl+`, `Ag+`                                                               | 2.5
+/// | `K+`, `Cl-`, `Br-`, `I-`, `CN-`, `NO2-`, `NO3-`                                                  | 3
+/// | `OH-`, `F-`, `NCS-`, `NCO-`, `HS-`, `ClO3-`, `ClO4-`, `BrO3-`, `IO4-`, `MnO4-`                   | 3.5
+/// | `Na+`, `CdCl+`, `ClO2-`, `IO3-`, `HCO3-`, `H2PO4-`, `HSO3-`, `H2AsO4-`, `Co(NH3)4(NO2)2+`        | 4-4.5
+/// | `Hg2+2`, `SO4-2`, `S2O3-2`, `S2O6-2`, `S2O8-2`, `SeO4-2`, `CrO4-2`, `HPO4-2`                     | 4
+/// | `Pb+2`, `CO3-2`, `SO3-2`, `MoO4-2`, `Co(NH3)5Cl+2`, `Fe(CN)5NO-2`                                | 4.5
+/// | `Sr+2`, `Ba+2`, `Ra+2`, `Cd+2`, `Hg+2`, `S-2`, `S2O4-2`, `WO4-2`                                 | 5
+/// | `Ca+2`, `Cu+2`, `Zn+2`, `Sn+2`, `Mn+2`, `Fe+2`, `Ni+2`, `Co+2`                                   | 6
+/// | `Mg+2`, `Be+2`                                                                                   | 8
+/// | `PO4-3`, `Fe(CN)6-3`, `Cr(NH3)6+3`, `Co(NH3)6+3`, `Co(NH3)5H2O+3`                                | 4
+/// | `Al+3`, `Fe+3`, `Cr+3`, `Sc+3`, `Y+3`, `La+3`, `In+3`, `Ce+3`, `Pr+3`, `Nd+3`, `Sm+3`            | 9
+/// | `Fe(CN)6-4`                                                                                      | 5
+/// | `Co(S2O3)(CN)5-4`                                                                                | 6
+/// | `Th+4`, `Zn+4`, `Ce+4`, `Sn+4`                                                                   | 11
+/// | `Co(SO3)2(CN)4-5`                                                                                | 9
+//=====================================================================================================================
 
-		/// The default value of the *b* parameter for ionic species.
-		real biondefault = 0.0;
 
-		/// The default value of the *b* parameter for neutral species.
-		real bneutraldefault = 0.1;
+//=====================================================================================================================
+/// @fn auto ActivityModelDebyeHuckelPHREEQC() -> ActivityModel;
+/// The activity model for aqueous phases based on the Debye--Hückel model using PHREEQC parameters.
+/// This method sets the ion-size parameters *å* and the parameter *b* of
+/// the ionic species according to those used in PHREEQC v3. Their values
+/// were taken from the database file `phreeqc.dat` and are listed below:
+///
+/// | Ion            | *å* (Å) | *b*   | Ion            | *å* (Å) | *b*
+/// | -              | -       | -     | -              | -       | -
+/// | `Al(OH)2+`     | 5.4     | 0     | `Al(OH)4-`     | 4.5     | 0
+/// | `Al(SO4)2-`    | 4.5     | 0     | `Al+++`        | 9       | 0
+/// | `AlF++`        | 5.4     | 0     | `AlF2+`        | 5.4     | 0
+/// | `AlF4-`        | 4.5     | 0     | `AlOH++`       | 5.4     | 0
+/// | `AlSO4+`       | 4.5     | 0     | `Ba++`         | 4       | 0.153
+/// | `BaOH+`        | 5       | 0     | `Br-`          | 3       | 0
+/// | `CO3--`        | 5.4     | 0     | `Ca++`         | 5       | 0.165
+/// | `CaH2PO4+`     | 5.4     | 0     | `CaHCO3+`      | 6       | 0
+/// | `CaPO4-`       | 5.4     | 0     | `Cl-`          | 3.63    | 0.017
+/// | `Cu+`          | 2.5     | 0     | `Cu++`         | 6       | 0
+/// | `CuCl+`        | 4       | 0     | `CuCl2-`       | 4       | 0
+/// | `CuCl3-`       | 4       | 0     | `CuCl3--`      | 5       | 0
+/// | `CuCl4--`      | 5       | 0     | `CuOH+`        | 4       | 0
+/// | `F-`           | 3.5     | 0     | `Fe(OH)2+`     | 5.4     | 0
+/// | `Fe(OH)3-`     | 5       | 0     | `Fe(OH)4-`     | 5.4     | 0
+/// | `Fe++`         | 6       | 0     | `Fe+++`        | 9       | 0
+/// | `FeCl++`       | 5       | 0     | `FeCl2+`       | 5       | 0
+/// | `FeF++`        | 5       | 0     | `FeF2+`        | 5       | 0
+/// | `FeH2PO4+`     | 5.4     | 0     | `FeH2PO4++`    | 5.4     | 0
+/// | `FeHPO4+`      | 5       | 0     | `FeOH+`        | 5       | 0
+/// | `FeOH++`       | 5       | 0     | `FeSO4+`       | 5       | 0
+/// | `H+`           | 9       | 0     | `H2PO4-`       | 5.4     | 0
+/// | `H2SiO4--`     | 5.4     | 0     | `H3SiO4-`      | 4       | 0
+/// | `HCO3-`        | 5.4     | 0     | `HPO4--`       | 5       | 0
+/// | `HS-`          | 3.5     | 0     | `K+`           | 3.5     | 0.015
+/// | `KHPO4-`       | 5.4     | 0     | `KSO4-`        | 5.4     | 0
+/// | `Li+`          | 6       | 0     | `LiSO4-`       | 5       | 0
+/// | `Mg++`         | 5.5     | 0.2   | `MgF+`         | 4.5     | 0
+/// | `MgH2PO4+`     | 5.4     | 0     | `MgHCO3+`      | 4       | 0
+/// | `MgOH+`        | 6.5     | 0     | `MgPO4-`       | 5.4     | 0
+/// | `Mn(OH)3-`     | 5       | 0     | `Mn++`         | 6       | 0
+/// | `Mn+++`        | 9       | 0     | `MnCl+`        | 5       | 0
+/// | `MnCl3-`       | 5       | 0     | `MnF+`         | 5       | 0
+/// | `MnHCO3+`      | 5       | 0     | `MnOH+`        | 5       | 0
+/// | `NH4+`         | 2.5     | 0     | `NO2-`         | 3       | 0
+/// | `NO3-`         | 3       | 0     | `Na+`          | 4.08    | 0.082
+/// | `NaHPO4-`      | 5.4     | 0     | `NaSO4-`       | 5.4     | 0
+/// | `OH-`          | 3.5     | 0     | `PO4---`       | 4       | 0
+/// | `S--`          | 5       | 0     | `SO4--`        | 5       | -0.04
+/// | `SiF6--`       | 5       | 0     | `Sr++`         | 5.26    | 0.121
+/// | `SrHCO3+`      | 5.4     | 0     | `SrOH+`        | 5       | 0
+/// | `Zn++`         | 5       | 0     | `ZnCl+`        | 4       | 0
+/// | `ZnCl3-`       | 4       | 0     | `ZnCl4--`      | 5       | 0
+///
+/// @note This method also sets the default value of *b* for neutral
+/// species to 0.1, which is the default value used in PHREEQC.
+///
+/// **References:**
+/// - Parkhurst, D. L., Appelo, C. A. J. (2013). Description of input and
+///   examples for PHREEQC version 3 --- A computer program for speciation,
+///   batch-reaction, one-dimensional transport, and inverse geochemical
+///   calculations. In Groundwater Book 6, Modeling Techniques (p. 497).
+///   U.S. Geological Survey Techniques and Methods.
+//=====================================================================================================================
 
-		/// The parameters *å* of specific ionic species.
-		Map<String, real> aions;
 
-		/// The parameters *b* of specific ionic species.
-		Map<String, real> bions;
-
-		/// The parameters *b* of specific neutral species.
-		Map<String, real> bneutrals;
-
-		/// Return the *å* parameter of the ionic species with given formula.
-		auto aion(const ChemicalFormula& ion) const -> real;
-
-		/// Return the *b* parameter of the ionic species with given formula.
-		auto bion(const ChemicalFormula& ion) const -> real;
-
-		/// Return the *b* parameter of the neutral species with given formula.
-		auto bneutral(const ChemicalFormula& neutral) const -> real;
-
-		/// Set the parameters *å* and *b* of the ionic species to zero.
-		auto setLimitingLaw() -> void;
-
-		/// Set the parameters *å* of the ionic species according to Kielland (1937).
-		auto setKielland() -> void;
-
-		/// Set the parameters *å* and *b* of the ionic species according to WATEQ4F.
-		auto setWATEQ4F() -> void;
-
-		/// Set the parameters *å* and *b* of the ionic species according to PHREEQC.
-		auto setPHREEQC() -> void;
-	};
-
-	/// Construct a default ActivityModelDebyeHuckel object.
-	ActivityModelDebyeHuckel();
-
-	/// Construct an ActivityModelDebyeHuckel object with given parameters.
-	ActivityModelDebyeHuckel(const Params& params);
-
-	/// Set the Debye--Hückel limiting law mode.
-	/// Use this method to indicate that the activity coefficients of the ionic
-	/// species are calculated using the Debye--Hückel limiting law equation.
-	/// In this mode, the Debye--Hückel parameters *å* and *b* of the ionic
-	/// species are zero.
-	auto setModeLimitingLaw() -> ActivityModelDebyeHuckel&;
-
-	/// Set the Debye--Hückel mode in which parameters from Kielland (1937) are used.
-	/// In this mode, the ion-size parameters *å* are taken from Kielland
-	/// (1937)\sup{\cite Kielland1937}:
-	///
-	/// | Ion                                                                                              | *å* (Ångström)
-	/// | -------------------------------------------------------------------------------------------------| --------------
-	/// | `H+`                                                                                             | 9
-	/// | `Li+`                                                                                            | 6
-	/// | `Rb+`, `Cs+`, `NH4+`, `Tl+`, `Ag+`                                                               | 2.5
-	/// | `K+`, `Cl-`, `Br-`, `I-`, `CN-`, `NO2-`, `NO3-`                                                  | 3
-	/// | `OH-`, `F-`, `NCS-`, `NCO-`, `HS-`, `ClO3-`, `ClO4-`, `BrO3-`, `IO4-`, `MnO4-`                   | 3.5
-	/// | `Na+`, `CdCl+`, `ClO2-`, `IO3-`, `HCO3-`, `H2PO4-`, `HSO3-`, `H2AsO4-`, `Co(NH3)4(NO2)2+`        | 4-4.5
-	/// | `Hg2+2`, `SO4-2`, `S2O3-2`, `S2O6-2`, `S2O8-2`, `SeO4-2`, `CrO4-2`, `HPO4-2`                     | 4
-	/// | `Pb+2`, `CO3-2`, `SO3-2`, `MoO4-2`, `Co(NH3)5Cl+2`, `Fe(CN)5NO-2`                                | 4.5
-	/// | `Sr+2`, `Ba+2`, `Ra+2`, `Cd+2`, `Hg+2`, `S-2`, `S2O4-2`, `WO4-2`                                 | 5
-	/// | `Ca+2`, `Cu+2`, `Zn+2`, `Sn+2`, `Mn+2`, `Fe+2`, `Ni+2`, `Co+2`                                   | 6
-	/// | `Mg+2`, `Be+2`                                                                                   | 8
-	/// | `PO4-3`, `Fe(CN)6-3`, `Cr(NH3)6+3`, `Co(NH3)6+3`, `Co(NH3)5H2O+3`                                | 4
-	/// | `Al+3`, `Fe+3`, `Cr+3`, `Sc+3`, `Y+3`, `La+3`, `In+3`, `Ce+3`, `Pr+3`, `Nd+3`, `Sm+3`            | 9
-	/// | `Fe(CN)6-4`                                                                                      | 5
-	/// | `Co(S2O3)(CN)5-4`                                                                                | 6
-	/// | `Th+4`, `Zn+4`, `Ce+4`, `Sn+4`                                                                   | 11
-	/// | `Co(SO3)2(CN)4-5`                                                                                | 9
-	///
-	/// @note This mode also sets the Debye--Hückel parameters *b* of the ionic
-	/// species to zero.
-	auto setModeKielland() -> ActivityModelDebyeHuckel&;
-
-	/// Set the Debye--Hückel mode equivalent to WATEQ4F\sup{\cite Truesdell1974 \cite Ball1991}.
-	/// This method sets both *å* and *b* of ionic species according to the
-	/// ones used in WATEQ4F (Ball and Nordstrom \cite Ball1991, Truesdell and
-	/// Jones \cite Truesdell1974), which are listed in the following table:
-	///
-	/// | Ion          | *å*  (Å)       | *b*
-	/// |--------------|----------------|--------
-	/// | `Ca+2`       |  5.00          |  0.165
-	/// | `Mg+2`       |  5.50          |  0.200
-	/// | `Na+`        |  4.00          |  0.075
-	/// | `K+`         |  3.50          |  0.015
-	/// | `Cl-`        |  3.50          |  0.015
-	/// | `SO4-2`      |  5.00          | -0.040
-	/// | `HCO3-`      |  5.40          |  0.000
-	/// | `CO3-2`      |  5.40          |  0.000
-	/// | `Sr+2`       |  5.26          |  0.121
-	/// | `H+`         |  9.00          |  0.000
-	/// | `OH-`        |  3.50          |  0.000
-	/// | `SrHCO3+`    |  5.40          |  0.000
-	/// | `SrOH+`      |  5.00          |  0.000
-	/// | `Cu(S4)2-3`  | 23.00          |  0.000
-	/// | `CuS4S5-3`   | 25.00          |  0.000
-	/// | `S2-2`       |  6.50          |  0.000
-	/// | `S3-2`       |  8.00          |  0.000
-	/// | `S4-2`       | 10.00          |  0.000
-	/// | `S5-2`       | 12.00          |  0.000
-	/// | `S6-2`       | 14.00          |  0.000
-	/// | `Ag(S4)2-3`  | 22.00          |  0.000
-	/// | `AgS4S5-3`   | 24.00          |  0.000
-	/// | `Ag(HS)S4-2` | 15.00          |  0.000
-	///
-	/// These values for *å* and *b* are empirical. They were determined by
-	/// fitting the modified Debye--Hückel equation to experimental mean-salt
-	/// activity coefficient data.
-	///
-	/// **References:**
-	/// - Ball, J. W., Nordstrom, D. K. (1991). User’s Manual for WATEQ4F, with
-	///   revised thermodynamic data base and test cases for calculating
-	///   speciation of major, trace, and redox elements in natural waters.
-	///   U.S. Geological Survey Water-Resources Investigations Report, 91–183,
-	///   1–188.
-	/// - Truesdell, A. H., Jones, B. F. (1974). WATEQ--A computer program for
-	///   calculating chemical equilibrium of natural waters. U.S. Geological
-	///   Survey, Journal of Research, 2(2), 233–248.
-	auto setModeWATEQ4F() -> ActivityModelDebyeHuckel&;
-
-	/// Set the Debye--Hückel mode equivalent to PHREEQC v3.
-	/// This method sets the ion-size parameters *å* and the parameter *b* of
-	/// the ionic species according to those used in PHREEQC v3. Their values
-	/// were taken from the database file `phreeqc.dat` and are listed below:
-	///
-	/// | Ion            | *å* (Å) | *b*   | Ion            | *å* (Å) | *b*
-	/// | -              | -       | -     | -              | -       | -
-	/// | `Al(OH)2+`     | 5.4     | 0     | `Al(OH)4-`     | 4.5     | 0
-	/// | `Al(SO4)2-`    | 4.5     | 0     | `Al+++`        | 9       | 0
-	/// | `AlF++`        | 5.4     | 0     | `AlF2+`        | 5.4     | 0
-	/// | `AlF4-`        | 4.5     | 0     | `AlOH++`       | 5.4     | 0
-	/// | `AlSO4+`       | 4.5     | 0     | `Ba++`         | 4       | 0.153
-	/// | `BaOH+`        | 5       | 0     | `Br-`          | 3       | 0
-	/// | `CO3--`        | 5.4     | 0     | `Ca++`         | 5       | 0.165
-	/// | `CaH2PO4+`     | 5.4     | 0     | `CaHCO3+`      | 6       | 0
-	/// | `CaPO4-`       | 5.4     | 0     | `Cl-`          | 3.63    | 0.017
-	/// | `Cu+`          | 2.5     | 0     | `Cu++`         | 6       | 0
-	/// | `CuCl+`        | 4       | 0     | `CuCl2-`       | 4       | 0
-	/// | `CuCl3-`       | 4       | 0     | `CuCl3--`      | 5       | 0
-	/// | `CuCl4--`      | 5       | 0     | `CuOH+`        | 4       | 0
-	/// | `F-`           | 3.5     | 0     | `Fe(OH)2+`     | 5.4     | 0
-	/// | `Fe(OH)3-`     | 5       | 0     | `Fe(OH)4-`     | 5.4     | 0
-	/// | `Fe++`         | 6       | 0     | `Fe+++`        | 9       | 0
-	/// | `FeCl++`       | 5       | 0     | `FeCl2+`       | 5       | 0
-	/// | `FeF++`        | 5       | 0     | `FeF2+`        | 5       | 0
-	/// | `FeH2PO4+`     | 5.4     | 0     | `FeH2PO4++`    | 5.4     | 0
-	/// | `FeHPO4+`      | 5       | 0     | `FeOH+`        | 5       | 0
-	/// | `FeOH++`       | 5       | 0     | `FeSO4+`       | 5       | 0
-	/// | `H+`           | 9       | 0     | `H2PO4-`       | 5.4     | 0
-	/// | `H2SiO4--`     | 5.4     | 0     | `H3SiO4-`      | 4       | 0
-	/// | `HCO3-`        | 5.4     | 0     | `HPO4--`       | 5       | 0
-	/// | `HS-`          | 3.5     | 0     | `K+`           | 3.5     | 0.015
-	/// | `KHPO4-`       | 5.4     | 0     | `KSO4-`        | 5.4     | 0
-	/// | `Li+`          | 6       | 0     | `LiSO4-`       | 5       | 0
-	/// | `Mg++`         | 5.5     | 0.2   | `MgF+`         | 4.5     | 0
-	/// | `MgH2PO4+`     | 5.4     | 0     | `MgHCO3+`      | 4       | 0
-	/// | `MgOH+`        | 6.5     | 0     | `MgPO4-`       | 5.4     | 0
-	/// | `Mn(OH)3-`     | 5       | 0     | `Mn++`         | 6       | 0
-	/// | `Mn+++`        | 9       | 0     | `MnCl+`        | 5       | 0
-	/// | `MnCl3-`       | 5       | 0     | `MnF+`         | 5       | 0
-	/// | `MnHCO3+`      | 5       | 0     | `MnOH+`        | 5       | 0
-	/// | `NH4+`         | 2.5     | 0     | `NO2-`         | 3       | 0
-	/// | `NO3-`         | 3       | 0     | `Na+`          | 4.08    | 0.082
-	/// | `NaHPO4-`      | 5.4     | 0     | `NaSO4-`       | 5.4     | 0
-	/// | `OH-`          | 3.5     | 0     | `PO4---`       | 4       | 0
-	/// | `S--`          | 5       | 0     | `SO4--`        | 5       | -0.04
-	/// | `SiF6--`       | 5       | 0     | `Sr++`         | 5.26    | 0.121
-	/// | `SrHCO3+`      | 5.4     | 0     | `SrOH+`        | 5       | 0
-	/// | `Zn++`         | 5       | 0     | `ZnCl+`        | 4       | 0
-	/// | `ZnCl3-`       | 4       | 0     | `ZnCl4--`      | 5       | 0
-	///
-	/// @note This method also sets the default value of *b* for neutral
-	/// species to 0.1, which is the default value used in PHREEQC.
-	///
-	/// **References:**
-	/// - Parkhurst, D. L., Appelo, C. A. J. (2013). Description of input and
-	///   examples for PHREEQC version 3 --- A computer program for speciation,
-	///   batch-reaction, one-dimensional transport, and inverse geochemical
-	///   calculations. In Groundwater Book 6, Modeling Techniques (p. 497).
-	///   U.S. Geological Survey Techniques and Methods.
-	auto setModePHREEQC() -> ActivityModelDebyeHuckel&;
-
-    /// Return the activity model parameters.
-	auto params() -> const Params&;
-
-	/// Build the function for activity and thermodynamic excesss property calculations of a phase.
-    virtual auto build(const SpeciesList& species) const -> ActivityPropsFn;
-
-private:
-	/// The parameters of the activity model.
-	Params m_params;
-};
+//=====================================================================================================================
+/// @fn auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel;
+/// The activity model for aqueous phases based on the Debye--Hückel model using WATEQ4F parameters.
+/// This method sets both *å* and *b* of ionic species according to the
+/// ones used in WATEQ4F (Ball and Nordstrom \cite Ball1991, Truesdell and
+/// Jones \cite Truesdell1974), which are listed in the following table:
+///
+/// | Ion          | *å*  (Å)       | *b*
+/// |--------------|----------------|--------
+/// | `Ca+2`       |  5.00          |  0.165
+/// | `Mg+2`       |  5.50          |  0.200
+/// | `Na+`        |  4.00          |  0.075
+/// | `K+`         |  3.50          |  0.015
+/// | `Cl-`        |  3.50          |  0.015
+/// | `SO4-2`      |  5.00          | -0.040
+/// | `HCO3-`      |  5.40          |  0.000
+/// | `CO3-2`      |  5.40          |  0.000
+/// | `Sr+2`       |  5.26          |  0.121
+/// | `H+`         |  9.00          |  0.000
+/// | `OH-`        |  3.50          |  0.000
+/// | `SrHCO3+`    |  5.40          |  0.000
+/// | `SrOH+`      |  5.00          |  0.000
+/// | `Cu(S4)2-3`  | 23.00          |  0.000
+/// | `CuS4S5-3`   | 25.00          |  0.000
+/// | `S2-2`       |  6.50          |  0.000
+/// | `S3-2`       |  8.00          |  0.000
+/// | `S4-2`       | 10.00          |  0.000
+/// | `S5-2`       | 12.00          |  0.000
+/// | `S6-2`       | 14.00          |  0.000
+/// | `Ag(S4)2-3`  | 22.00          |  0.000
+/// | `AgS4S5-3`   | 24.00          |  0.000
+/// | `Ag(HS)S4-2` | 15.00          |  0.000
+///
+/// These values for *å* and *b* are empirical. They were determined by
+/// fitting the modified Debye--Hückel equation to experimental mean-salt
+/// activity coefficient data.
+///
+/// **References:**
+/// - Ball, J. W., Nordstrom, D. K. (1991). User’s Manual for WATEQ4F, with
+///   revised thermodynamic data base and test cases for calculating
+///   speciation of major, trace, and redox elements in natural waters.
+///   U.S. Geological Survey Water-Resources Investigations Report, 91–183,
+///   1–188.
+/// - Truesdell, A. H., Jones, B. F. (1974). WATEQ--A computer program for
+///   calculating chemical equilibrium of natural waters. U.S. Geological
+///   Survey, Journal of Research, 2(2), 233–248.
+//=====================================================================================================================
 
 } // namespace Reaktoro

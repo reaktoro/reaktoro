@@ -280,88 +280,8 @@ auto get(const ChemicalFormula& formula, const Map<String, real>& params, real d
     return defaultvalue;
 };
 
-} // namespace detail
-
-auto ActivityModelDebyeHuckel::Params::aion(const ChemicalFormula& ion) const -> real
-{
-    return detail::get(ion, aions, aiondefault);
-}
-
-auto ActivityModelDebyeHuckel::Params::bion(const ChemicalFormula& ion) const -> real
-{
-    return detail::get(ion, bions, biondefault);
-}
-
-auto ActivityModelDebyeHuckel::Params::bneutral(const ChemicalFormula& neutral) const -> real
-{
-    return detail::get(neutral, bneutrals, bneutraldefault);
-}
-
-auto ActivityModelDebyeHuckel::Params::setLimitingLaw() -> void
-{
-    aiondefault = 0.0;
-    biondefault = 0.0;
-    aions = {};
-    bions = {};
-}
-
-auto ActivityModelDebyeHuckel::Params::setKielland() -> void
-{
-    aions = detail::aions_kielland;
-}
-
-auto ActivityModelDebyeHuckel::Params::setWATEQ4F() -> void
-{
-    aions = detail::aions_wateq4f;
-    bions = detail::bions_wateq4f;
-}
-
-auto ActivityModelDebyeHuckel::Params::setPHREEQC() -> void
-{
-    aions = detail::aions_phreeqc;
-    bions = detail::bions_phreeqc;
-    bneutraldefault = 0.1;
-}
-
-ActivityModelDebyeHuckel::ActivityModelDebyeHuckel()
-{
-    m_params.setPHREEQC();
-}
-
-ActivityModelDebyeHuckel::ActivityModelDebyeHuckel(const Params& params)
-: m_params(params)
-{}
-
-auto ActivityModelDebyeHuckel::setModeLimitingLaw() -> ActivityModelDebyeHuckel&
-{
-    m_params.setLimitingLaw();
-    return *this;
-}
-
-auto ActivityModelDebyeHuckel::setModeKielland() -> ActivityModelDebyeHuckel&
-{
-    m_params.setKielland();
-    return *this;
-}
-
-auto ActivityModelDebyeHuckel::setModeWATEQ4F() -> ActivityModelDebyeHuckel&
-{
-    m_params.setWATEQ4F();
-    return *this;
-}
-
-auto ActivityModelDebyeHuckel::setModePHREEQC() -> ActivityModelDebyeHuckel&
-{
-    m_params.setPHREEQC();
-    return *this;
-}
-
-auto ActivityModelDebyeHuckel::params() -> const Params&
-{
-    return m_params;
-}
-
-auto ActivityModelDebyeHuckel::build(const SpeciesList& species) const -> ActivityPropsFn
+/// Return the ActivityPropsFn object based on the Debye-Huckel model.
+auto activityPropsFnDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHuckelParams params) -> ActivityPropsFn
 {
     // Create the aqueous mixture
     AqueousMixture mixture(species);
@@ -399,15 +319,15 @@ auto ActivityModelDebyeHuckel::build(const SpeciesList& species) const -> Activi
     for(Index i : icharged_species)
     {
         const auto species = mixture.species(i);
-        aions.push_back(m_params.aion(species.formula()));
-        bions.push_back(m_params.bion(species.formula()));
+        aions.push_back(params.aion(species.formula()));
+        bions.push_back(params.bion(species.formula()));
     }
 
     // Collect the Debye-Huckel parameter b of the neutral species
     for(Index i : ineutral_species)
     {
         const auto species = mixture.species(i);
-        bneutral.push_back(m_params.bneutral(species.formula()));
+        bneutral.push_back(params.bneutral(species.formula()));
     }
 
     // The state of the aqueous mixture
@@ -502,6 +422,93 @@ auto ActivityModelDebyeHuckel::build(const SpeciesList& species) const -> Activi
     };
 
     return fn;
+}
+
+} // namespace detail
+
+auto ActivityModelDebyeHuckelParams::aion(const ChemicalFormula& ion) const -> real
+{
+    return detail::get(ion, aions, aiondefault);
+}
+
+auto ActivityModelDebyeHuckelParams::bion(const ChemicalFormula& ion) const -> real
+{
+    return detail::get(ion, bions, biondefault);
+}
+
+auto ActivityModelDebyeHuckelParams::bneutral(const ChemicalFormula& neutral) const -> real
+{
+    return detail::get(neutral, bneutrals, bneutraldefault);
+}
+
+auto ActivityModelDebyeHuckelParams::setLimitingLaw() -> void
+{
+    aiondefault = 0.0;
+    biondefault = 0.0;
+    aions = {};
+    bions = {};
+}
+
+auto ActivityModelDebyeHuckelParams::setKielland() -> void
+{
+    aiondefault = 0.0;
+    biondefault = 0.0;
+    aions = detail::aions_kielland;
+    bions = {};
+}
+
+auto ActivityModelDebyeHuckelParams::setWATEQ4F() -> void
+{
+    aions = detail::aions_wateq4f;
+    bions = detail::bions_wateq4f;
+}
+
+auto ActivityModelDebyeHuckelParams::setPHREEQC() -> void
+{
+    aions = detail::aions_phreeqc;
+    bions = detail::bions_phreeqc;
+    bneutraldefault = 0.1;
+}
+
+auto ActivityModelDebyeHuckel() -> ActivityModel
+{
+    return ActivityModelDebyeHuckelPHREEQC();
+}
+
+auto ActivityModelDebyeHuckel(ActivityModelDebyeHuckelParams params) -> ActivityModel
+{
+    return [=](const SpeciesList& species)
+    {
+        return detail::activityPropsFnDebyeHuckel(species, params);
+    };
+}
+
+auto ActivityModelDebyeHuckelLimitingLaw() -> ActivityModel
+{
+    ActivityModelDebyeHuckelParams params;
+    params.setLimitingLaw();
+    return ActivityModelDebyeHuckel(params);
+}
+
+auto ActivityModelDebyeHuckelKielland() -> ActivityModel
+{
+    ActivityModelDebyeHuckelParams params;
+    params.setKielland();
+    return ActivityModelDebyeHuckel(params);
+}
+
+auto ActivityModelDebyeHuckelPHREEQC() -> ActivityModel
+{
+    ActivityModelDebyeHuckelParams params;
+    params.setPHREEQC();
+    return ActivityModelDebyeHuckel(params);
+}
+
+auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel
+{
+    ActivityModelDebyeHuckelParams params;
+    params.setWATEQ4F();
+    return ActivityModelDebyeHuckel(params);
 }
 
 } // namespace Reaktoro

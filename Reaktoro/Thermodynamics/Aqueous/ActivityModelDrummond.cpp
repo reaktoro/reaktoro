@@ -24,38 +24,37 @@ namespace Reaktoro {
 
 using std::log;
 
-ActivityModelDrummond::ActivityModelDrummond()
-{}
-
-ActivityModelDrummond::ActivityModelDrummond(String gas)
-: gas(gas)
-{}
-
-ActivityModelDrummond::ActivityModelDrummond(String gas, Params params)
-: gas(gas), params(params)
-{}
-
-auto ActivityModelDrummond::build(const SpeciesList& species) const -> ActivityPropsFn
+auto ActivityModelDrummond(String gas) -> ActivityModel
 {
-    // The index of the dissolved gas in the aqueous phase.
-    const auto igas = species.indexWithFormula(gas);
+    return ActivityModelDrummond(gas, {});
+}
 
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+auto ActivityModelDrummond(String gas, ActivityModelDrummondParams params) -> ActivityModel
+{
+    ActivityModel model = [=](const SpeciesList& species)
     {
-        // The aqueous mixture and its state exported by a base aqueous activity model.
-        const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
-        const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
+        // The index of the dissolved gas in the aqueous phase.
+        const auto igas = species.indexWithFormula(gas);
 
-        const auto& [a1, a2, a3, a4, a5] = params;
-        const auto& T = state.T;
-        const auto& I = state.Is;
-        const auto c1 = a1 + a2*T + a3/T;
-        const auto c2 = a4 + a5*T;
-        props.ln_g[igas] = c1 * I - c2 * I/(I + 1);
-        props.ln_a[igas] = props.ln_g[igas] + log(state.m[igas]);
+        ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+        {
+            // The aqueous mixture and its state exported by a base aqueous activity model.
+            const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
+            const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
+
+            const auto& [a1, a2, a3, a4, a5] = params;
+            const auto& T = state.T;
+            const auto& I = state.Is;
+            const auto c1 = a1 + a2*T + a3/T;
+            const auto c2 = a4 + a5*T;
+            props.ln_g[igas] = c1 * I - c2 * I/(I + 1);
+            props.ln_a[igas] = props.ln_g[igas] + log(state.m[igas]);
+        };
+
+        return fn;
     };
 
-    return fn;
+    return model;
 }
 
 } // namespace Reaktoro
