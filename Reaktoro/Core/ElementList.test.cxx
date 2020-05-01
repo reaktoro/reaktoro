@@ -100,6 +100,51 @@ TEST_CASE("Testing ElementList", "[ElementList]")
     REQUIRE( elements.findWithName("Xyrium") >= elements.size() );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::get
+    //-------------------------------------------------------------------------
+    REQUIRE( elements.get("H").symbol()  == "H"  );
+    REQUIRE( elements.get("He").symbol() == "He" );
+    REQUIRE( elements.get("Li").symbol() == "Li" );
+    REQUIRE( elements.get("Be").symbol() == "Be" );
+    REQUIRE( elements.get("B").symbol()  == "B"  );
+    REQUIRE( elements.get("C").symbol()  == "C"  );
+    REQUIRE( elements.get("N").symbol()  == "N"  );
+    REQUIRE( elements.get("O").symbol()  == "O"  );
+    REQUIRE( elements.get("F").symbol()  == "F"  );
+
+    REQUIRE_THROWS( elements.get("Xy") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::getWithSymbol
+    //-------------------------------------------------------------------------
+    REQUIRE( elements.getWithSymbol("H") .symbol() == "H"  );
+    REQUIRE( elements.getWithSymbol("He").symbol() == "He" );
+    REQUIRE( elements.getWithSymbol("Li").symbol() == "Li" );
+    REQUIRE( elements.getWithSymbol("Be").symbol() == "Be" );
+    REQUIRE( elements.getWithSymbol("B") .symbol() == "B"  );
+    REQUIRE( elements.getWithSymbol("C") .symbol() == "C"  );
+    REQUIRE( elements.getWithSymbol("N") .symbol() == "N"  );
+    REQUIRE( elements.getWithSymbol("O") .symbol() == "O"  );
+    REQUIRE( elements.getWithSymbol("F") .symbol() == "F"  );
+
+    REQUIRE_THROWS( elements.getWithSymbol("Xy") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::getWithName
+    //-------------------------------------------------------------------------
+    REQUIRE( elements.getWithName("Hydrogen") .name() == "Hydrogen" );
+    REQUIRE( elements.getWithName("Helium")   .name() == "Helium"   );
+    REQUIRE( elements.getWithName("Lithium")  .name() == "Lithium"  );
+    REQUIRE( elements.getWithName("Beryllium").name() == "Beryllium");
+    REQUIRE( elements.getWithName("Boron")    .name() == "Boron"    );
+    REQUIRE( elements.getWithName("Carbon")   .name() == "Carbon"   );
+    REQUIRE( elements.getWithName("Nitrogen") .name() == "Nitrogen" );
+    REQUIRE( elements.getWithName("Oxygen")   .name() == "Oxygen"   );
+    REQUIRE( elements.getWithName("Fluorine") .name() == "Fluorine" );
+
+    REQUIRE_THROWS( elements.getWithName("Xyrium") );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: ElementList::index
     //-------------------------------------------------------------------------
     REQUIRE( elements.index("H")  == 0);

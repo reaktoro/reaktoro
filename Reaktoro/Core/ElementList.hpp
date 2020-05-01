@@ -125,6 +125,24 @@ public:
         return idx;
     }
 
+    /// Return the element with given symbol.
+    auto get(const String& symbol) const -> const Element&
+    {
+        return getWithSymbol(symbol);
+    }
+
+    /// Return the element with given symbol.
+    auto getWithSymbol(const String& symbol) const -> const Element&
+    {
+        return m_elements[indexWithSymbol(symbol)];
+    }
+
+    /// Return the element with given name.
+    auto getWithName(const String& name) const -> const Element&
+    {
+        return m_elements[indexWithName(name)];
+    }
+
     /// Return all elements with given symbols.
     auto withSymbols(const StringList& symbols) const -> ElementList
     {
@@ -166,6 +184,10 @@ public:
 
     /// Convert this ElementListBase object into its Data.
     operator Data() const { return m_elements; }
+
+    // Ensure other ElementListBase types are friend among themselves.
+    template<typename DataOther>
+    friend class ElementListBase;
 
 private:
     /// The elements stored in the list.
