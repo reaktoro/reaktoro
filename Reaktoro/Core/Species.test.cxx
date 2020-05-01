@@ -110,7 +110,7 @@ TEST_CASE("Testing Species class", "[Species]")
             FormationReaction()
                 .withReactants({{R1, 1.0}, {R2, 2.0}})
                 .withEquilibriumConstantFn([](real T, real P) { return T + P; })
-                .withFormationEnthalpyFn([](real T, real P) { return T - P; }));
+                .withEnthalpyChangeFn([](real T, real P) { return T - P; }));
 
         REQUIRE( species.props(T, P).G0 == species.reaction().standardGibbsEnergyFn()(T, P) );
         REQUIRE( species.props(T, P).H0 == species.reaction().standardEnthalpyFn()(T, P) );

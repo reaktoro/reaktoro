@@ -118,14 +118,14 @@ auto FormationReaction::withEquilibriumConstantFn(const Fn<real(real,real)>& fn)
     return copy;
 }
 
-auto FormationReaction::withFormationEnthalpy(real value) const -> FormationReaction
+auto FormationReaction::withEnthalpyChange(real value) const -> FormationReaction
 {
     FormationReaction copy = clone();
     copy.pimpl->dH0 = [=](real T, real P) { return value; };
     return copy;
 }
 
-auto FormationReaction::withFormationEnthalpyFn(const Fn<real(real,real)>& fn) const -> FormationReaction
+auto FormationReaction::withEnthalpyChangeFn(const Fn<real(real,real)>& fn) const -> FormationReaction
 {
     FormationReaction copy = clone();
     copy.pimpl->dH0 = fn;
@@ -147,7 +147,7 @@ auto FormationReaction::equilibriumConstantFn() const -> const Fn<real(real,real
     return pimpl->lgK;
 }
 
-auto FormationReaction::formationEnthalpyFn() const -> const Fn<real(real,real)>&
+auto FormationReaction::enthalpyChangeFn() const -> const Fn<real(real,real)>&
 {
     return pimpl->dH0;
 }
