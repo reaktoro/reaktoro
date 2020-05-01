@@ -31,3 +31,12 @@ using PhreeqcPhase = phase;
 #undef Phreeqc
 #undef protected
 #undef pi
+
+//==================================================
+// WARNING WARNING WARNING WARNING WARNING WARNING
+//==================================================
+// This header file must not be included by another
+// header file that will be exposed to users.
+// If so, this propagates the need for phreeqc
+// header files to available in the user system.
+//==================================================
