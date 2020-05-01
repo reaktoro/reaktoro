@@ -200,4 +200,13 @@ auto range(T last)
     return range(static_cast<T>(0), last, static_cast<T>(1));
 }
 
+/// Return true if `x` is equal to at least one of the other arguments.
+template<typename X, typename X0, typename... XS>
+auto oneof(const X x, const X0& x0, const XS&... xs)
+{
+    if constexpr(sizeof...(XS) > 0)
+        return x == x0 || oneof(x, xs...);
+    return x == x0;
+}
+
 } // namespace Reaktoro

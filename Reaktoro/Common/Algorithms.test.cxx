@@ -208,4 +208,13 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     REQUIRE( range(1, 4) == Vec<int>{1, 2, 3} );
     REQUIRE( range(0) == Vec<int>{} );
     REQUIRE( range(3) == Vec<int>{0, 1, 2} );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: oneof
+    //-------------------------------------------------------------------------
+    REQUIRE( oneof(1, 1) );
+    REQUIRE( oneof(1, 3, 4, 5, 1, 7) );
+
+    REQUIRE_FALSE( oneof(1, 2) );
+    REQUIRE_FALSE( oneof(1, 4, 5) );
 }
