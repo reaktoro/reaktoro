@@ -48,11 +48,11 @@ public:
     /// Return a duplicate of this FormationReaction object with new equilibrium constant function (log base 10).
     auto withEquilibriumConstantFn(const Fn<real(real,real)>& fn) const -> FormationReaction;
 
-    /// Return a duplicate of this FormationReaction object with new enthalpy of formation value (in J/mol).
-    auto withFormationEnthalpy(real value) const -> FormationReaction;
+    /// Return a duplicate of this FormationReaction object with new reaction enthalpy value (in J/mol).
+    auto withEnthalpyChange(real value) const -> FormationReaction;
 
-    /// Return a duplicate of this FormationReaction object with new enthalpy of formation function (in J/mol).
-    auto withFormationEnthalpyFn(const Fn<real(real,real)>& fn) const -> FormationReaction;
+    /// Return a duplicate of this FormationReaction object with new reaction enthalpy function (in J/mol).
+    auto withEnthalpyChangeFn(const Fn<real(real,real)>& fn) const -> FormationReaction;
 
     /// Return the name of the product species in the formation reaction.
     auto product() const -> String;
@@ -63,8 +63,8 @@ public:
     /// Return the equilibrium constant function of the formation reaction (log base 10).
     auto equilibriumConstantFn() const -> const Fn<real(real,real)>&;
 
-    /// Return the enthalpy function of the formation reaction.
-    auto formationEnthalpyFn() const -> const Fn<real(real,real)>&;
+    /// Return the reaction enthalpy function of the formation reaction.
+    auto enthalpyChangeFn() const -> const Fn<real(real,real)>&;
 
     /// Return the standard Gibbs energy function of the product species in the formation reaction.
     auto standardGibbsEnergyFn() const -> Fn<real(real,real)>;
