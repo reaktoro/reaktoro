@@ -191,6 +191,66 @@ TEST_CASE("Testing SpeciesList", "[SpeciesList]")
     REQUIRE_THROWS( species.indexWithFormula("XYZ") );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: SpeciesList::get
+    //-------------------------------------------------------------------------
+    REQUIRE( species.get("H2O(aq)")  .name() == "H2O(aq)"   );
+    REQUIRE( species.get("H+(aq)")   .name() == "H+(aq)"    );
+    REQUIRE( species.get("OH-(aq)")  .name() == "OH-(aq)"   );
+    REQUIRE( species.get("H2(aq)")   .name() == "H2(aq)"    );
+    REQUIRE( species.get("O2(aq)")   .name() == "O2(aq)"    );
+    REQUIRE( species.get("Na+(aq)")  .name() == "Na+(aq)"   );
+    REQUIRE( species.get("Cl-(aq)")  .name() == "Cl-(aq)"   );
+    REQUIRE( species.get("NaCl(aq)") .name() == "NaCl(aq)"  );
+    REQUIRE( species.get("CO2(aq)")  .name() == "CO2(aq)"   );
+    REQUIRE( species.get("HCO3-(aq)").name() == "HCO3-(aq)" );
+    REQUIRE( species.get("CO3-2(aq)").name() == "CO3-2(aq)" );
+    REQUIRE( species.get("CH4(aq)")  .name() == "CH4(aq)"   );
+    REQUIRE( species.get("H2O(g)")   .name() == "H2O(g)"    );
+    REQUIRE( species.get("CO2(g)")   .name() == "CO2(g)"    );
+    REQUIRE( species.get("CH4(g)")   .name() == "CH4(g)"    );
+
+    REQUIRE_THROWS( species.get("XYZ(g)") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: SpeciesList::getWithName
+    //-------------------------------------------------------------------------
+    REQUIRE( species.getWithName("H2O(aq)")  .name() == "H2O(aq)"   );
+    REQUIRE( species.getWithName("H+(aq)")   .name() == "H+(aq)"    );
+    REQUIRE( species.getWithName("OH-(aq)")  .name() == "OH-(aq)"   );
+    REQUIRE( species.getWithName("H2(aq)")   .name() == "H2(aq)"    );
+    REQUIRE( species.getWithName("O2(aq)")   .name() == "O2(aq)"    );
+    REQUIRE( species.getWithName("Na+(aq)")  .name() == "Na+(aq)"   );
+    REQUIRE( species.getWithName("Cl-(aq)")  .name() == "Cl-(aq)"   );
+    REQUIRE( species.getWithName("NaCl(aq)") .name() == "NaCl(aq)"  );
+    REQUIRE( species.getWithName("CO2(aq)")  .name() == "CO2(aq)"   );
+    REQUIRE( species.getWithName("HCO3-(aq)").name() == "HCO3-(aq)" );
+    REQUIRE( species.getWithName("CO3-2(aq)").name() == "CO3-2(aq)" );
+    REQUIRE( species.getWithName("CH4(aq)")  .name() == "CH4(aq)"   );
+    REQUIRE( species.getWithName("H2O(g)")   .name() == "H2O(g)"    );
+    REQUIRE( species.getWithName("CO2(g)")   .name() == "CO2(g)"    );
+    REQUIRE( species.getWithName("CH4(g)")   .name() == "CH4(g)"    );
+
+    REQUIRE_THROWS( species.getWithName("XYZ(g)") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: SpeciesList::getWithFormula
+    //-------------------------------------------------------------------------
+    REQUIRE( species.getWithFormula("H2O")  .formula() == "H2O"   );
+    REQUIRE( species.getWithFormula("H+")   .formula() == "H+"    );
+    REQUIRE( species.getWithFormula("OH-")  .formula() == "OH-"   );
+    REQUIRE( species.getWithFormula("H2")   .formula() == "H2"    );
+    REQUIRE( species.getWithFormula("O2")   .formula() == "O2"    );
+    REQUIRE( species.getWithFormula("Na+")  .formula() == "Na+"   );
+    REQUIRE( species.getWithFormula("Cl-")  .formula() == "Cl-"   );
+    REQUIRE( species.getWithFormula("NaCl") .formula() == "NaCl"  );
+    REQUIRE( species.getWithFormula("CO2")  .formula() == "CO2"   );
+    REQUIRE( species.getWithFormula("HCO3-").formula() == "HCO3-" );
+    REQUIRE( species.getWithFormula("CO3-2").formula() == "CO3-2" );
+    REQUIRE( species.getWithFormula("CH4")  .formula() == "CH4"   );
+
+    REQUIRE_THROWS( species.getWithFormula("XYZ") );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: SpeciesList::withNames
     //-------------------------------------------------------------------------
     filtered = species.withNames("H+(aq) OH-(aq) H2O(aq) CO2(g)");

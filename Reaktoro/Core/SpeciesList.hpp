@@ -145,6 +145,30 @@ public:
         return idx;
     }
 
+    /// Return the species with given name.
+    auto get(const String& name) const -> const Species&
+    {
+        return getWithName(name);
+    }
+
+    /// Return the species with given name.
+    auto getWithName(const String& name) const -> const Species&
+    {
+        return m_species[indexWithName(name)];
+    }
+
+    /// Return the species with given formula.
+    auto getWithFormula(const ChemicalFormula& formula) const -> const Species&
+    {
+        return m_species[indexWithFormula(formula)];
+    }
+
+    /// Return the species with given substance name.
+    auto getWithSubstance(const String substance) const -> const Species&
+    {
+        return m_species[indexWithSubstance(substance)];
+    }
+
     /// Return all species with given names.
     auto withNames(const StringList& names) const -> SpeciesList
     {
@@ -236,6 +260,10 @@ public:
 
     /// Convert this SpeciesListBase object into its Data.
     operator Data() const { return m_species; }
+
+    // Ensure other SpeciesListBase types are friend among themselves.
+    template<typename DataOther>
+    friend class SpeciesListBase;
 
 private:
     /// The species stored in the list.
