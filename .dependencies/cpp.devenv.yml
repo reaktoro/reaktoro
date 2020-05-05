@@ -2,7 +2,6 @@
 {% set use_openlibm = os.environ.get("REAKTORO_USE_OPENLIBM", "0").strip() != "0" %}
 
 dependencies:
-  - boost=1.70
   - pybind11
   - thermofun
   {% if not debug %}
