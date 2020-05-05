@@ -142,6 +142,21 @@ auto isSurfaceSpecies(const PhreeqcSpecies* species) -> bool
     return oneof(species->type, SURF, SURF_PSI, SURF_PSI1, SURF_PSI2);
 }
 
+auto symbol(const PhreeqcElement* element) -> String
+{
+    return element->name; // element symbol is H, H(0), C, Fe, Fe(3), etc.
+}
+
+auto name(const PhreeqcElement* element) -> String
+{
+    return element->master->s->name; // element name is H+, H2, CO3-2, Fe+2, Fe+3, etc.
+}
+
+auto molarMass(const PhreeqcElement* element) -> double
+{
+    return element->gfw / 1000.0; // convert molar mass from g/mol to kg/mol
+}
+
 auto name(const PhreeqcSpecies* species) -> String
 {
     return species->name;
@@ -162,19 +177,19 @@ auto formula(const PhreeqcPhase* phase) -> String
     return phase->formula;
 }
 
-auto elements(const PhreeqcSpecies* species) -> Map<String, double>
+auto elements(const PhreeqcSpecies* species) -> Map<PhreeqcElement*, double>
 {
-    Map<String, double> elements;
+    Map<PhreeqcElement*, double> elements;
     for(auto iter = species->next_elt; iter->elt != nullptr; iter++)
-        elements.emplace(iter->elt->name, iter->coef);
+        elements.emplace(iter->elt, iter->coef);
     return elements;
 }
 
-auto elements(const PhreeqcPhase* phase) -> Map<String, double>
+auto elements(const PhreeqcPhase* phase) -> Map<PhreeqcElement*, double>
 {
-    Map<String, double> elements;
+    Map<PhreeqcElement*, double> elements;
     for(auto iter = phase->next_elt; iter->elt != nullptr; iter++)
-        elements.emplace(iter->elt->name, iter->coef);
+        elements.emplace(iter->elt, iter->coef);
     return elements;
 }
 
@@ -270,52 +285,38 @@ auto reactionEquation(const PhreeqcPhase* phase) -> Pairs<String, double>
     return pairs;
 }
 
-auto reactants(const PhreeqcSpecies* species) -> Pairs<String, double>
+auto reactants(const PhreeqcSpecies* species) -> Pairs<PhreeqcSpecies*, double>
 {
     // Check if there is any reaction defined by this species.
-    if(species->rxn_x == nullptr) return {};
+    if(species->rxn == nullptr) return {};
 
     // The reactants in the formation reaction of the species (and their stoichiometric coefficients)
-    Pairs<String, double> reactants;
+    Pairs<PhreeqcSpecies*, double> reactants;
 
     // Iterate over all species in the reaction, get their names and stoichiometries.
-    for(auto iter = species->rxn_x->token; iter->s != nullptr; iter++)
+    for(auto iter = species->rxn->token; iter->s != nullptr; iter++)
         if(iter->s->name != species->name)
-            reactants.emplace_back(iter->s->name, -iter->coef);
+            reactants.emplace_back(iter->s, iter->coef);
 
-	// Note 1: The minus sign on `iter->coef` above is needed to ensure
-	// positive values for reactants. This is because the reactions for PHREEQC
-	// species have the convention that species on the left of the reaction
-	// have negative stoichiometric coefficients. For example, for CO2, the
-	// reaction is given as `CO3-2 + 2 H+ = CO2 + H2O`. Thus, `CO3-2`, `H+` and
-	// `H2O` have opposite signs in an interpretation of formation reaction.
-
-    // Note 2: The species in the reaction with same name as the product
+    // Note: The species in the reaction with same name as the product
     // species is skiped from the list of reactants.
 
     return reactants;
 }
 
-auto reactants(const PhreeqcPhase* phase) -> Pairs<String, double>
+auto reactants(const PhreeqcPhase* phase) -> Pairs<PhreeqcSpecies*, double>
 {
     // Check if there is any reaction defined by this species.
-    if(phase->rxn_x == nullptr) return {};
+    if(phase->rxn == nullptr) return {};
 
     // The reactants in the formation reaction of the species (and their stoichiometric coefficients)
-    Pairs<String, double> reactants;
+    Pairs<PhreeqcSpecies*, double> reactants;
 
     // Iterate over all species in the reaction, get their names and stoichiometries.
-    for(auto iter = phase->rxn_x->token + 1; iter->s != nullptr; iter++)
-        reactants.emplace_back(iter->s->name, iter->coef);
+    for(auto iter = phase->rxn->token + 1; iter->s != nullptr; iter++)
+        reactants.emplace_back(iter->s, iter->coef);
 
-    // Note 1: No need to change sign in the stoichiometric coefficient of
-    // reactants because the reaction for non-aqueous species in PHREEQC (e.g.,
-    // gases, minerals) already have positive coefficients for the reactant
-    // species. For example, for Calcite, the reaction is given as `Calcite =
-    // CO3-2 + Ca+2`. Thus, both `Ca+2` and `CO3-2` have positive
-    // stoichiometric coefficients already.
-
-    // Note 2: The species in the reaction with same name as the product species
+    // Note: The species in the reaction with same name as the product species
     // is skiped from the list of reactants.
 
     return reactants;
@@ -473,45 +474,55 @@ auto useAnalytic(const double* logk) -> bool
 }
 
 template<typename SpeciesType>
-auto lgEquilibriumConstantHelper(const SpeciesType* species, real T, real P) -> real
+auto lgEquilibriumConstantFnHelper(const SpeciesType* species) -> Fn<real(real,real)>
 {
     //--------------------------------------------------------------------------------
     // The implementation of this method is based on PHREEQC method `Phreeqc::k_calc`
     //--------------------------------------------------------------------------------
     using std::log10;
 
-    // Auxiliary variables
     const auto R = universalGasConstant; // in J/(mol*K)
+
     const auto logk = species->logk;
+
+    const auto lgK0 = logk[logK_T0];
     const auto dH0 = logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
+
+    const auto A1 = logk[T_A1];
+    const auto A2 = logk[T_A2];
+    const auto A3 = logk[T_A3];
+    const auto A4 = logk[T_A4];
+    const auto A5 = logk[T_A5];
+    const auto A6 = logk[T_A6];
 
     // Check if the PHREEQC analytical expression for logk should be used
     if(useAnalytic(logk))
-        return (logk[T_A1] + logk[T_A2]*T + logk[T_A3]/T +
-            logk[T_A4]*log10(T) + logk[T_A5]/(T*T) + logk[T_A6]*(T*T));
+        return [=](real T, real P) { return A1 + A2*T + A3/T + A4*log10(T) + A5/(T*T) + A6*(T*T); };
 
     // Use the Van't Hoff equation instead
-    return logk[logK_T0] - dH0 * (298.15 - T)/(R*T*298.15*ln10);
+    return [=](real T, real P) { return lgK0 - dH0 * (298.15 - T)/(R*T*298.15*ln10); };
 }
 
-auto lgEquilibriumConstant(const PhreeqcSpecies* species, real T, real P) -> real
+auto lgEquilibriumConstantFn(const PhreeqcSpecies* species) -> Fn<real(real,real)>
 {
-    return lgEquilibriumConstantHelper(species, T, P);
+    return lgEquilibriumConstantFnHelper(species);
 }
 
-auto lgEquilibriumConstant(const PhreeqcPhase* phase, real T, real P) -> real
+auto lgEquilibriumConstantFn(const PhreeqcPhase* phase) -> Fn<real(real,real)>
 {
-    return lgEquilibriumConstantHelper(phase, T, P);
+    return lgEquilibriumConstantFnHelper(phase);
 }
 
-auto enthalpyChange(const PhreeqcSpecies* species, real T, real P) -> real
+auto enthalpyChangeFn(const PhreeqcSpecies* species) -> Fn<real(real,real)>
 {
-    return species->logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
+    const auto dH0 = species->logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
+    return [=](real T, real P) { return dH0; };
 }
 
-auto enthalpyChange(const PhreeqcPhase* phase, real T, real P) -> real
+auto enthalpyChangeFn(const PhreeqcPhase* phase) -> Fn<real(real,real)>
 {
-    return phase->logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
+    const auto dH0 = phase->logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
+    return [=](real T, real P) { return dH0; };
 }
 
 } // namespace PhreeqcUtils

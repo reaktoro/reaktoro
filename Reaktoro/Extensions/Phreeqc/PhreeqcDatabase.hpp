@@ -18,59 +18,29 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Database.hpp>
 
 namespace Reaktoro {
 
-/// The class that reads and retrieves data from a PHREEQC thermodynamic database.
-class PhreeqcDatabase
+/// The class used to store and retrieve data of chemical species from PHREEQC databases.
+class PhreeqcDatabase : public Database
 {
 public:
     /// Construct a default PhreeqcDatabase object.
     PhreeqcDatabase();
 
-    /// Construct a PhreeqcDatabase object with given database. This
-    /// constructor supports initialization of the PhreeqcDatabase object with
-    /// either a path to the database file, including its file name, or a
+    /// Construct a PhreeqcDatabase object with given database.
+    /// This constructor supports initialization of the PhreeqcDatabase object
+    /// with either a path to the database file, including its file name, or a
     /// multi-line string containing the database contents itself.
     /// @param database The path to the database file or its contents in a string
     explicit PhreeqcDatabase(String database);
 
-    /// Return the elements in the database.
-    auto elements() const -> ElementListConstRef;
-
-    /// Return the species in the database.
-    auto species() const -> SpeciesListConstRef;
-
-private:
-    struct Impl;
-
-    std::shared_ptr<Impl> pimpl;
-};
-
-/// The data of a chemical species in any PHREEQC database.
-struct PhreeqcSpeciesData
-{
-    /// The reactants and their stoichiometric coefficientsformation reaction of the species.
-    Pairs<String, double> reactants;
-
-    /// The equilibrium constant of the formation reaction at 25 °C.
-    real log_k = 0.0;
-
-    /// The standard enthalpy of the formation reaction at 25 °C (in kJ/mol).
-    /// This parameter is used in the Van't Hoff equation to calculate the
-    /// equilibrium constant of the reaction at temperature *T*:
-    /// @f[\ln K=\ln K^{298.15\mathrm{K}}-\frac{\Delta H^{\circ}}{R}\left(\frac{1}{T}-\frac{1}{298.15}\right)@f],
-    /// where *R* is the universal gas constant. This equation requires the
-    /// standard enthalpy of reaction and its equilibrium constant at 25 °C.
-    double delta_h;
-
-    /// The coefficients of equilibrium constant function of the formation reaction.
-    /// The analytical expression is:
-    /// @eqc{\log_{10}K=A_{1}+A_{2}T+\frac{A_{3}}{T}+A_{4}\log_{10}T+\frac{A_{5}}{T^{2}}+A_{6}T^{2}},
-    /// where @f$T@f$ is temperature in K, and @f$A_i@f$ are the coefficients.
-    Vec<double> analytic;
+    /// Extend this PhreeqcDatabase object with contents in given database file.
+    /// This method supports either a path to a database file, including its
+    /// file name, or a multi-line string containing the database contents.
+    /// @param database The path to the database file or its contents as a string
+    auto load(String filename) -> PhreeqcDatabase&;
 };
 
 } // namespace Reaktoro
