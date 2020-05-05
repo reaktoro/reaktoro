@@ -18,10 +18,12 @@
 #pragma once
 
 // C++ includes
+#include <any>
 #include <functional>
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace Reaktoro {
@@ -49,6 +51,10 @@ using Vec = std::vector<T>;
 template<typename Key, typename T>
 using Map = std::unordered_map<Key, T>;
 
+// Conveniet alias to `std::unordered_set<T>`
+template<typename T>
+using Set = std::unordered_set<T>;
+
 /// Convenient alias for `std::pair<T, U>`.
 template<typename T, typename U>
 using Pair = std::pair<T, U>;
@@ -72,5 +78,8 @@ using SharedPtr = std::shared_ptr<T>;
 /// Convenient alias for `std::function<R(Args...)>`.
 template<typename F>
 using Fn = std::function<F>;
+
+/// Convenient alias for `std::any`.
+using Any = std::any;
 
 } // namespace Reaktoro
