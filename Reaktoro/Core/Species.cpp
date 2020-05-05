@@ -293,7 +293,7 @@ auto Species::molarMass() const -> double
 
 auto Species::props(real T, real P) const -> StandardThermoProps
 {
-    return pimpl->props_fn(T, P);
+    return pimpl->props(T, P);
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool
