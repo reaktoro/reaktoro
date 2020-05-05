@@ -7,11 +7,11 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 # Use ccache to speed up repeated compilations
 include(CCache)
 
-# Set the name of the project
-project(Reaktoro VERSION 1.2.2 LANGUAGES CXX)
+# Use CMakeRC to enable easy and convenient access to resources
+include(CMakeRC)
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
+# Set the name of the projectw
+project(Reaktoro VERSION 1.0.6 LANGUAGES CXX)
 
 # Check if a conda environment is active
 include(CondaAware)
@@ -91,6 +91,9 @@ include(ReaktoroFindDeps)
 
 # Build the third-party libraries
 add_subdirectory(thirdparty)
+
+# Build the C++ resource library containing embedded databases
+add_subdirectory(databases)
 
 # Build the C++ library Reaktoro
 add_subdirectory(Reaktoro)
