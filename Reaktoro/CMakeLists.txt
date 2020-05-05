@@ -29,7 +29,7 @@ add_library(Reaktoro ${HPP_FILES} ${CPP_FILES})
 add_library(Reaktoro::Reaktoro ALIAS Reaktoro)
 
 # Specify the external dependencies of Reaktoro to ensure proper build sequence
-add_dependencies(Reaktoro ${THIRDPARTY_TARGETS})
+add_dependencies(Reaktoro Reaktoro::Databases ${THIRDPARTY_TARGETS})
 
 # Add the include paths to Reaktoro library target
 target_include_directories(Reaktoro
@@ -41,7 +41,7 @@ target_include_directories(Reaktoro
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro
     PRIVATE ${THIRDPARTY_LIBS}
-    PUBLIC Boost::boost)
+    PRIVATE Reaktoro::Databases)
 
 if(REAKTORO_USE_OPENLIBM)
     configure_target_to_use_openlibm(Reaktoro)

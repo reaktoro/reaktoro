@@ -1,6 +1,3 @@
-# Find Boost library
-find_package(Boost REQUIRED)
-
 if(REAKTORO_USE_OPENLIBM)
     find_package(openlibm REQUIRED)
 endif()
