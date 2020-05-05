@@ -72,6 +72,9 @@ public:
     /// Return the standard enthalpy function of the product species in the formation reaction.
     auto standardEnthalpyFn() const -> Fn<real(real,real)>;
 
+    /// Return the stoichiometric coefficient of a reactant with given name in the formation reaction.
+    auto stoichiometry(String reactant) const -> double;
+
 private:
     struct Impl;
 
