@@ -17,10 +17,8 @@
 
 #pragma once
 
-// C++ includes
-#include <string>
-
 // Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Database.hpp>
 
 namespace Reaktoro {

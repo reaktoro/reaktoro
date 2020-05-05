@@ -83,6 +83,22 @@ auto isExchangeSpecies(const PhreeqcSpecies* species) -> bool;
 /// Return true if the Phreeqc species instance is a surface species.
 auto isSurfaceSpecies(const PhreeqcSpecies* species) -> bool;
 
+/// Return the symbol of a Phreeqc element.
+/// @param element The pointer to the Phreeqc element
+auto symbol(const PhreeqcElement* species) -> String;
+
+/// Return the name of a Phreeqc element.
+/// @param element The pointer to the Phreeqc element
+auto name(const PhreeqcElement* species) -> String;
+
+/// Return the molar mass of a Phreeqc element (in kg/mol).
+/// @param element The pointer to the Phreeqc element
+auto molarMass(const PhreeqcElement* species) -> double;
+
+/// Return the name of a Phreeqc phase.
+/// @param phase The pointer to the Phreeqc phase
+auto name(const PhreeqcPhase* phase) -> String;
+
 /// Return the name of a Phreeqc species.
 /// @param species The pointer to the Phreeqc species
 auto name(const PhreeqcSpecies* species) -> String;
@@ -101,11 +117,11 @@ auto formula(const PhreeqcPhase* phase) -> String;
 
 /// Return the element symbols and their coefficients in a Phreeqc species.
 /// @param species The pointer to the Phreeqc species
-auto elements(const PhreeqcSpecies* species) -> Map<String, double>;
+auto elements(const PhreeqcSpecies* species) -> Map<PhreeqcElement*, double>;
 
 /// Return the element symbols and their coefficients in a Phreeqc phase.
 /// @param phase The pointer to the Phreeqc phase
-auto elements(const PhreeqcPhase* phase) -> Map<String, double>;
+auto elements(const PhreeqcPhase* phase) -> Map<PhreeqcElement*, double>;
 
 /// Return the charge of a Phreeqc species.
 /// @param species The pointer to the Phreeqc species
@@ -149,14 +165,14 @@ auto reactionEquation(const PhreeqcPhase* phase) -> Pairs<String, double>;
 /// reaction `CO3-2 + 10 H+ + 8 e- = CH4 + 3 H2O`, the returned
 /// pairs are: `{ {"CO3-2", 1}, {"H+", 10}, {"e-", 8}, {"H2O", -3} }`.
 /// @param species The pointer to the Phreeqc species
-auto reactants(const PhreeqcSpecies* species) -> Pairs<String, double>;
+auto reactants(const PhreeqcSpecies* species) -> Pairs<PhreeqcSpecies*, double>;
 
 /// Return the reactants and their stoichiometric coefficients in a PHREEQC phase.
 /// For example, for the mineral species `K-feldspar`, with
 /// reaction `KAlSi3O8 + 8 H2O = K+ + Al(OH)4- + 3 H4SiO4`, the returned
 /// pairs are: `{ {"K+", 1}, {"Al(OH)4-", 1}, {"H4SiO4", 3}, {"H2O", -8} }`.
 /// @param phase The pointer to the Phreeqc phase
-auto reactants(const PhreeqcPhase* phase) -> Pairs<String, double>;
+auto reactants(const PhreeqcPhase* phase) -> Pairs<PhreeqcSpecies*, double>;
 
 /// Return the index of a Phreeqc species in a set of species.
 /// @param name The name of the Phreeqc species
@@ -202,29 +218,21 @@ auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcSpecies*>& species)
 /// @param phases The pointers to Phreeqc phase instances
 auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcPhase*>& phases) -> ArrayXr;
 
-/// Return the equilibrium constant (log base 10) of a Phreeqc species at given temperature and pressure.
+/// Return the equilibrium constant function (log base 10) of a Phreeqc species.
 /// @param species The pointer to the Phreeqc species
-/// @param T The temperature value (in K)
-/// @param P The pressure value (in Pa)
-auto lgEquilibriumConstant(const PhreeqcSpecies* species, real T, real P) -> real;
+auto lgEquilibriumConstantFn(const PhreeqcSpecies* species) -> Fn<real(real,real)>;
 
-/// Return the equilibrium constant (log base 10) of a Phreeqc phase at given temperature and pressure.
+/// Return the equilibrium constant function (log base 10) of a Phreeqc phase.
 /// @param phase The pointer to the Phreeqc phase
-/// @param T The temperature value (in K)
-/// @param P The pressure value (in Pa)
-auto lgEquilibriumConstant(const PhreeqcPhase* phase, real T, real P) -> real;
+auto lgEquilibriumConstantFn(const PhreeqcPhase* phase) -> Fn<real(real,real)>;
 
-/// Return the enthalpy reaction (in J/mol) of a Phreeqc species at given temperature and pressure.
+/// Return the enthalpy of reaction function (in J/mol) of a Phreeqc species.
 /// @param species The pointer to the Phreeqc species
-/// @param T The temperature value (in K)
-/// @param P The pressure value (in Pa)
-auto enthalpyChange(const PhreeqcSpecies* species, real T, real P) -> real;
+auto enthalpyChangeFn(const PhreeqcSpecies* species) -> Fn<real(real,real)>;
 
-/// Return the enthalpy reaction (in J/mol) of a Phreeqc phase at given temperature and pressure.
+/// Return the enthalpy of reaction function (in J/mol) of a Phreeqc phase.
 /// @param phase The pointer to the Phreeqc phase
-/// @param T The temperature value (in K)
-/// @param P The pressure value (in Pa)
-auto enthalpyChange(const PhreeqcPhase* phase, real T, real P) -> real;
+auto enthalpyChangeFn(const PhreeqcPhase* phase) -> Fn<real(real,real)>;
 
 } // namespace PhreeqcUtils
 } // namespace Reaktoro

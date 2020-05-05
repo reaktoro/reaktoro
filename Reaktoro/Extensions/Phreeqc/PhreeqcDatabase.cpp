@@ -17,9 +17,10 @@
 
 #include "PhreeqcDatabase.hpp"
 
-// C++ includes
-#include <iostream>
-#include <iomanip>
+// CMakeRC includes
+#include <cmrc/cmrc.hpp>
+
+CMRC_DECLARE(ReaktoroDatabases);
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
@@ -27,8 +28,10 @@
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
 
 namespace Reaktoro {
+namespace detail {
 
-struct PhreeqcDatabase::Impl
+/// An auxiliary type to create the Species objects from a PHREEQC database.
+struct PhreeqcDatabaseHelper
 {
 	/// The PHREEQC instance
 	PHREEQC phreeqc;
@@ -39,167 +42,182 @@ struct PhreeqcDatabase::Impl
 	/// The list of species in the database
 	SpeciesList species;
 
-	/// Construct a default PhreeqcDatabase::Impl object.
-	Impl()
+	/// The symbols of the elements already in the database (needed for fast existence check)
+	Set<String> element_symbols;
+
+	/// The names of the species already in the database (needed for fast existence check)
+	Set<String> species_names;
+
+	/// Construct a default PhreeqcDatabaseHelper object.
+	PhreeqcDatabaseHelper()
 	{}
 
-	/// Construct a PhreeqcDatabase::Impl object with given database.
-	auto load(String database) -> void
+	/// Construct a PhreeqcDatabaseHelper object with given database.
+	PhreeqcDatabaseHelper(String database)
 	{
 		// Load the PHREEQC database
 		PhreeqcUtils::load(phreeqc, database);
 
 		// Create the Element objects
 		for(auto i = 0; i < phreeqc.count_elements; ++i)
-			elements.append(createElement(phreeqc.elements[i]));
+			addElement(phreeqc.elements[i]);
 
 		// Create the Species objects using PhreeqcSpecies pointers (aqueous, exchange, surface species)
 		for(auto i = 0; i < phreeqc.count_s; ++i)
-			species.append(createSpecies(phreeqc.s[i]));
+			addSpecies(phreeqc.s[i]);
 
 		// Create the Species objects using PhreeqcPhase pointers (gases and minerals)
 		for(auto i = 0; i < phreeqc.count_phases; ++i)
-			species.append(createSpecies(phreeqc.phases[i]));
-
-		auto typestr = [](int val)
-		{
-			if(val == AQ       ) return "AQ";
-			if(val == HPLUS    ) return "HPLUS";
-			if(val == H2O      ) return "H2O";
-			if(val == EMINUS   ) return "EMINUS";
-			if(val == SOLID    ) return "SOLID";
-			if(val == EX       ) return "EX";
-			if(val == SURF     ) return "SURF";
-			if(val == SURF_PSI ) return "SURF_PSI";
-			if(val == SURF_PSI1) return "SURF_PSI1";
-			if(val == SURF_PSI2) return "SURF_PSI2";
-		};
-
-		std::cout << "SPECIES" << '\n';
-		for(auto i = 0; i < phreeqc.count_s; ++i)
-		{
-			std::cout << std::left << std::setw(20) << typestr(phreeqc.s[i]->type);
-			std::cout << std::left << std::setw(20) << phreeqc.s[i]->name;
-			std::cout << std::left << std::setw(20) << phreeqc.s[i]->z;
-			std::cout << std::left << std::setw(20) << phreeqc.s[i]->logk[logK_T0];
-			std::cout << std::left << std::setw(20) << phreeqc.s[i]->logk[delta_h];
-			std::cout << std::left << std::setw(20) << phreeqc.s[i]->dha;
-			std::cout << std::left << std::setw(20) << phreeqc.s[i]->dhb;
-			std::cout << std::left << std::setw(20) << phreeqc.s[i]->a_f;
-			std::cout << '\n';
-		}
-
-		std::cout << "PHASES" << '\n';
-		for(auto i = 0; i < phreeqc.count_phases; ++i)
-		{
-			std::cout << std::left << std::setw(20) << typestr(phreeqc.phases[i]->type);
-			std::cout << std::left << std::setw(20) << phreeqc.phases[i]->name;
-			std::cout << std::left << std::setw(20) << phreeqc.phases[i]->formula;
-			std::cout << std::left << std::setw(20) << phreeqc.phases[i]->logk[logK_T0];
-			std::cout << std::left << std::setw(20) << phreeqc.phases[i]->logk[delta_h];
-			std::cout << std::left << std::setw(20) << phreeqc.phases[i]->t_c;
-			std::cout << '\n';
-		}
+			addSpecies(phreeqc.phases[i]);
 	}
 
-	/// Create an Element object with given PhreeqcElement pointer.
-	auto createElement(const PhreeqcElement* e) const -> Element
+	/// Return true if an Element object with given symbol already exists in the database.
+	auto containsElement(String symbol) -> bool
 	{
-		Element element;
-		element = element.withName(e->master->s->name);
-		element = element.withSymbol(e->name);
-		element = element.withMolarMass(e->gfw / 1000.0); // convert from g/mol to kg/mol
-		return element;
+		return element_symbols.find(symbol) != element_symbols.end();
 	}
 
-	/// Create the elemental composition of a Species object with given Phreeqc species pointer
-	template<typename SpeciesType>
-	auto createElementalComposition(const SpeciesType* s) const -> Map<Element, double>
+	/// Return true if a Species object with given name already exists in the database.
+	auto containsSpecies(String name) -> bool
 	{
-		Map<Element, double> pairs;
-		for(auto&& [symbol, coeff] : PhreeqcUtils::elements(s))
-			pairs.emplace(elements.get(symbol), coeff);
-		return pairs;
+		return species_names.find(name) != species_names.end();
 	}
 
-	/// Create the reactant species and their stoichiometries in a formation reaction.
-	template<typename SpeciesType>
-	auto createReactants(const SpeciesType* s) const -> Pairs<Species, double>
+	/// Append an Element object with given PhreeqcElement pointer.
+	auto addElement(const PhreeqcElement* e) -> void
 	{
-		Pairs<Species, double> pairs;
-		for(const auto& [reactant, coeff] : PhreeqcUtils::reactants(s))
-			pairs.emplace_back(species.get(reactant), coeff);
-		return pairs;
-	}
+		// Skip if element with same symbol has already been appended!
+		if(containsElement(PhreeqcUtils::symbol(e)))
+			return;
 
-	/// Create the equilibrium constant function (log base 10) of the formation reaction.
-	template<typename SpeciesType>
-	auto createEquilibriumConstantFn(const SpeciesType* s) const -> Fn<real(real, real)>
-	{
-		const auto fn = [=](real T, real P)
-		{
-			return PhreeqcUtils::lgEquilibriumConstant(s, T, P);
-		};
-		return fn;
-	}
+		elements.append(Element()
+			.withSymbol(PhreeqcUtils::symbol(e)) // element symbol is H, H(0), C, Fe, Fe(3), etc.
+			.withName(PhreeqcUtils::name(e))     // element name is H+, H2, CO3-2, Fe+2, Fe+3, etc.
+			.withMolarMass(PhreeqcUtils::molarMass(e)));
 
-	/// Create the enthalpy change function of the formation reaction (in J/mol).
-	template<typename SpeciesType>
-	auto createEnthalpyChangeFn(const SpeciesType* s) const -> Fn<real(real, real)>
-	{
-		const auto fn = [=](real T, real P)
-		{
-			return PhreeqcUtils::enthalpyChange(s, T, P);
-		};
-		return fn;
-	}
-
-	/// Create the formation reaction of a product species.
-	template<typename SpeciesType>
-	auto createFormationReaction(const SpeciesType* s) const -> FormationReaction
-	{
-		FormationReaction reaction;
-		reaction = reaction.withProduct(PhreeqcUtils::name(s));
-		reaction = reaction.withReactants(createReactants(s));
-		reaction = reaction.withEquilibriumConstantFn(createEquilibriumConstantFn(s));
-		reaction = reaction.withEnthalpyChangeFn(createEnthalpyChangeFn(s));
-		return reaction;
+		element_symbols.insert(PhreeqcUtils::symbol(e));
 	}
 
 	/// Create a Species object with given Phreeqc species pointer.
 	template<typename SpeciesType>
-	auto createSpecies(const SpeciesType* s) const -> Species
+	auto addSpecies(const SpeciesType* s) -> void
 	{
-		Species species;
-		species = species.withName(PhreeqcUtils::name(s));
-		species = species.withFormula(PhreeqcUtils::formula(s));
-		species = species.withElements(createElementalComposition(s));
-		species = species.withCharge(PhreeqcUtils::charge(s));
-		species = species.withAggregateState(PhreeqcUtils::aggregateState(s));
-		species = species.withFormationReaction(createFormationReaction(s));
-		species = species.withAttachedData(s);
-		return species;
+		// Skip if species with same name has already been appended!
+		if(containsSpecies(PhreeqcUtils::name(s)))
+			return;
+
+		species.append(Species()
+			.withName(PhreeqcUtils::name(s))
+			.withFormula(PhreeqcUtils::formula(s))
+			.withElements(createElements(s))
+			.withCharge(PhreeqcUtils::charge(s))
+			.withAggregateState(PhreeqcUtils::aggregateState(s))
+			.withFormationReaction(createFormationReaction(s))
+			.withAttachedData(s));
+
+		species_names.insert(PhreeqcUtils::name(s));
+	}
+
+	/// Create the elements of a Species object with given Phreeqc species pointer
+	template<typename SpeciesType>
+	auto createElements(const SpeciesType* s) -> Map<Element, double>
+	{
+		Map<Element, double> pairs;
+		for(auto&& [element, coeff] : PhreeqcUtils::elements(s))
+		{
+			const auto idx = elements.find(PhreeqcUtils::symbol(element));
+			if(idx == elements.size())
+				addElement(element); // create and append an Element object for this PHREEQC element first!
+			pairs.emplace(elements[idx], coeff);
+		}
+
+		return pairs;
+	}
+
+	/// Create the formation reaction of a product species.
+	template<typename SpeciesType>
+	auto createFormationReaction(const SpeciesType* s) -> FormationReaction
+	{
+		return FormationReaction()
+			.withProduct(PhreeqcUtils::name(s))
+			.withReactants(createReactants(s))
+			.withEquilibriumConstantFn(PhreeqcUtils::lgEquilibriumConstantFn(s))
+			.withEnthalpyChangeFn(PhreeqcUtils::enthalpyChangeFn(s));
+	}
+
+	/// Create the reactant species and their stoichiometries in a formation reaction.
+	template<typename SpeciesType>
+	auto createReactants(const SpeciesType* s) -> Pairs<Species, double>
+	{
+		// Note: This method may introduce recursion on purpose with the
+		// addSpecies method call below, when a Species object for one of its
+		// reactants in its formation reaction does not yet exist.
+
+		Pairs<Species, double> pairs;
+		for(const auto& [reactant, coeff] : PhreeqcUtils::reactants(s))
+		{
+			const auto idx = species.find(PhreeqcUtils::name(reactant));
+			if(idx == species.size())
+				addSpecies(reactant); // create and append a Species object for this PHREEQC reactant species first!
+			pairs.emplace_back(species[idx], coeff);
+		}
+		return pairs;
 	}
 };
 
+/// Return the contents of the embedded PHREEQC database with given name (or empty)
+auto getPhreeqcDatabaseString(String name) -> String
+{
+	error(!oneof(name,
+		"Amm.dat",
+		"frezchem.dat",
+		"iso.dat",
+		"llnl.dat",
+		"minteq.dat",
+		"minteq.v4.dat",
+		"phreeqc.dat",
+		"pitzer.dat",
+		"sit.dat",
+		"wateq4f.dat"),
+		"Could not load embedded PHREEQC database file with name `", name, "`. ",
+		"The currently supported names are: \n"
+		"    - Amm.dat       \n",
+		"    - frezchem.dat  \n",
+		"    - iso.dat       \n",
+		"    - llnl.dat      \n",
+		"    - minteq.dat    \n",
+		"    - minteq.v4.dat \n",
+		"    - phreeqc.dat   \n",
+		"    - pitzer.dat    \n",
+		"    - sit.dat       \n",
+		"    - wateq4f.dat   \n",
+		"");
+	auto fs = cmrc::ReaktoroDatabases::get_filesystem();
+    auto contents = fs.open("databases/phreeqc/" + name);
+	return String(contents.begin(), contents.end());
+}
+
+/// Create the Species objects from given PHREEQC database.
+auto createSpecies(String database)
+{
+	PhreeqcDatabaseHelper helper(database);
+	return helper.species;
+}
+
+} // namespace detail
+
 PhreeqcDatabase::PhreeqcDatabase()
-: pimpl(new Impl())
+: Database()
 {}
 
 PhreeqcDatabase::PhreeqcDatabase(String database)
-: PhreeqcDatabase()
-{
-	pimpl->load(database);
-}
+: Database(detail::createSpecies(detail::getPhreeqcDatabaseString(database)))
+{}
 
-auto PhreeqcDatabase::elements() const -> ElementListConstRef
+auto PhreeqcDatabase::load(String filename) -> PhreeqcDatabase&
 {
-	return pimpl->elements;
-}
-
-auto PhreeqcDatabase::species() const -> SpeciesListConstRef
-{
-	return pimpl->species;
+	addSpecies(detail::createSpecies(filename));
+	return *this;
 }
 
 } // namespace Reaktoro
