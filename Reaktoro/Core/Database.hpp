@@ -17,11 +17,8 @@
 
 #pragma once
 
-// C++ includes
-#include <any>
-#include <memory>
-
 // Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ElementList.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 
@@ -39,6 +36,9 @@ public:
     /// Construct a copy of a Database instance.
     Database(const Database& other);
 
+    /// Construct a Database instance with given species.
+    explicit Database(SpeciesListConstRef species);
+
     /// Destroy this Database instance.
     ~Database();
 
@@ -48,20 +48,23 @@ public:
     /// Add a species in the database.
     auto addSpecies(const Species& species) -> void;
 
+    /// Add a list of species in the database.
+    auto addSpecies(SpeciesListConstRef species) -> void;
+
     /// Attach data to this database whose type is known at runtime only.
-    auto attachData(const std::any& data) -> void;
+    auto attachData(const Any& data) -> void;
 
     /// Return all elements in the database.
-    auto elements() const -> ElementList;
+    auto elements() const -> ElementListConstRef;
 
     /// Return all species in the database.
-    auto species() const -> SpeciesList;
+    auto species() const -> SpeciesListConstRef;
 
     /// Return all species in the database with given aggregate state.
     auto speciesWithAggregateState(AggregateState option) const -> SpeciesList;
 
     /// Return the attached data to this database whose type is known at runtime only.
-    auto attachedData() const -> const std::any&;
+    auto attachedData() const -> const Any&;
 
 private:
     struct Impl;

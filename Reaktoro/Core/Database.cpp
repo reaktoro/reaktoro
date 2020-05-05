@@ -17,11 +17,6 @@
 
 #include "Database.hpp"
 
-// C++ includes
-#include <deque>
-#include <set>
-#include <unordered_map>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
@@ -31,19 +26,22 @@ namespace Reaktoro {
 struct Database::Impl
 {
     /// The Species objects in the database.
-    std::deque<Species> species;
+    SpeciesList species;
 
     /// The Element objects in the database.
-    std::set<Element> elements;
+    ElementList elements;
 
     /// The additional data in the database whose type is known at runtime only.
-    std::any attached_data;
+    Any attached_data;
+
+    /// The symbols of all elements already in the database.
+    Set<String> element_symbols;
 
     /// The names of all species already in the database.
-    std::set<std::string> species_names;
+    Set<String> species_names;
 
     /// The species in the database grouped in terms of their aggregate state
-    std::unordered_map<AggregateState, std::deque<Species>> species_with_aggregate_state;
+    Map<AggregateState, SpeciesList> species_with_aggregate_state;
 
     /// Add a species in the database.
     auto addSpecies(Species newspecies) -> void
@@ -51,12 +49,8 @@ struct Database::Impl
         // Ensure a unique name is used when storing this species!
         auto name = newspecies.name();
         auto unique_name = name;
-        auto already_exists = true;
-        while(already_exists) {
-            already_exists = species_names.find(unique_name) != species_names.end();
-            if(already_exists)
-                unique_name = unique_name + "!"; // keep adding symbol ! to the name such as H2O, H2O!, H2O!!, H2O!!! if many H2O are given
-        }
+        while(species_names.find(unique_name) != species_names.end())
+            unique_name = unique_name + "!"; // keep adding symbol ! to the name such as H2O, H2O!, H2O!!, H2O!!! if many H2O are given
 
         // Replace name if not unique.
         if(name != unique_name) {
@@ -79,14 +73,18 @@ struct Database::Impl
             newspecies = newspecies.withAggregateState(AggregateState::Aqueous);
 
         // Append the new Species object in the species container
-        species.push_back(newspecies);
+        species.append(newspecies);
 
         // Update the list of unique species names.
         species_names.insert(newspecies.name());
 
         // Update the container of elements with the Element objects in this new species.
-        for(auto&& [element, coeff] : newspecies.elements())
-            elements.insert(element);
+        for(auto&& [element, coeff] : newspecies.elements()) {
+            if(!contains(element_symbols, element.symbol())) {
+               elements.append(element);
+               element_symbols.insert(element.symbol());
+            }
+        }
 
         // Add the new species in the group of species with same aggregate state
         species_with_aggregate_state[newspecies.aggregateState()].push_back(newspecies);
@@ -100,6 +98,13 @@ Database::Database()
 Database::Database(const Database& other)
 : pimpl(new Impl(*other.pimpl))
 {}
+
+Database::Database(SpeciesListConstRef species)
+: Database()
+{
+    for(const auto& x : species)
+        addSpecies(x);
+}
 
 Database::~Database()
 {}
@@ -115,23 +120,25 @@ auto Database::addSpecies(const Species& species) -> void
     pimpl->addSpecies(species);
 }
 
-auto Database::attachData(const std::any& data) -> void
+auto Database::addSpecies(SpeciesListConstRef species) -> void
+{
+    for(const auto& x : species)
+        addSpecies(species);
+}
+
+auto Database::attachData(const Any& data) -> void
 {
     pimpl->attached_data = data;
 }
 
-auto Database::elements() const -> ElementList
+auto Database::elements() const -> ElementListConstRef
 {
-    const auto begin = pimpl->elements.begin();
-    const auto end = pimpl->elements.end();
-    return ElementList(begin, end);
+    return pimpl->elements;
 }
 
-auto Database::species() const -> SpeciesList
+auto Database::species() const -> SpeciesListConstRef
 {
-    const auto begin = pimpl->species.begin();
-    const auto end = pimpl->species.end();
-    return SpeciesList(begin, end);
+    return pimpl->species;
 }
 
 auto Database::speciesWithAggregateState(AggregateState option) const -> SpeciesList
@@ -139,12 +146,10 @@ auto Database::speciesWithAggregateState(AggregateState option) const -> Species
     auto it = pimpl->species_with_aggregate_state.find(option);
     if(it == pimpl->species_with_aggregate_state.end())
         return {};
-    const auto begin = it->second.begin();
-    const auto end = it->second.end();
-    return SpeciesList(begin, end);
+    return it->second;
 }
 
-auto Database::attachedData() const -> const std::any&
+auto Database::attachedData() const -> const Any&
 {
     return pimpl->attached_data;
 }
