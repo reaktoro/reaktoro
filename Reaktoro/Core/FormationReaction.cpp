@@ -162,4 +162,12 @@ auto FormationReaction::standardEnthalpyFn() const -> Fn<real(real,real)>
     return pimpl->createStandardEnthalpyFn();
 }
 
+auto FormationReaction::stoichiometry(String reactant) const -> double
+{
+    for(const auto& [species, coeff] : reactants())
+        if(reactant == species.name())
+            return coeff;
+    return 0.0;
+}
+
 } // namespace Reaktoro

@@ -81,14 +81,14 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     REQUIRE(  A.reaction().product() == ""         );
     REQUIRE(  A.reaction().reactants().size() == 0 );
     REQUIRE( !A.reaction().equilibriumConstantFn() );
-    REQUIRE( !A.reaction().enthalpyChangeFn()   );
+    REQUIRE( !A.reaction().enthalpyChangeFn()      );
     REQUIRE( !A.reaction().standardGibbsEnergyFn() );
     REQUIRE( !A.reaction().standardEnthalpyFn()    );
 
     REQUIRE(  B.reaction().product() == ""         );
     REQUIRE(  B.reaction().reactants().size() == 0 );
     REQUIRE( !B.reaction().equilibriumConstantFn() );
-    REQUIRE( !B.reaction().enthalpyChangeFn()   );
+    REQUIRE( !B.reaction().enthalpyChangeFn()      );
     REQUIRE( !B.reaction().standardGibbsEnergyFn() );
     REQUIRE( !B.reaction().standardEnthalpyFn()    );
 
@@ -99,9 +99,11 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     REQUIRE( C.reaction().reactants().at(0).second == 1.0       );
     REQUIRE( C.reaction().reactants().at(1).second == 2.0       );
     REQUIRE( C.reaction().equilibriumConstantFn()               );
-    REQUIRE( C.reaction().enthalpyChangeFn()                 );
+    REQUIRE( C.reaction().enthalpyChangeFn()                    );
     REQUIRE( C.reaction().standardGibbsEnergyFn()               );
     REQUIRE( C.reaction().standardEnthalpyFn()                  );
+    REQUIRE( C.reaction().stoichiometry("A") == 1.0             );
+    REQUIRE( C.reaction().stoichiometry("B") == 2.0             );
 
     REQUIRE( D.reaction().product() == "D"                      );
     REQUIRE( D.reaction().reactants().size() == 2               );
@@ -110,9 +112,11 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     REQUIRE( D.reaction().reactants().at(0).second == 1.0       );
     REQUIRE( D.reaction().reactants().at(1).second == 3.0       );
     REQUIRE( D.reaction().equilibriumConstantFn()               );
-    REQUIRE( D.reaction().enthalpyChangeFn()                 );
+    REQUIRE( D.reaction().enthalpyChangeFn()                    );
     REQUIRE( D.reaction().standardGibbsEnergyFn()               );
     REQUIRE( D.reaction().standardEnthalpyFn()                  );
+    REQUIRE( D.reaction().stoichiometry("B") == 1.0             );
+    REQUIRE( D.reaction().stoichiometry("C") == 3.0             );
 
     REQUIRE( E.reaction().product() == "E"                      );
     REQUIRE( E.reaction().reactants().size() == 2               );
@@ -121,9 +125,11 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     REQUIRE( E.reaction().reactants().at(0).second ==  1.0      );
     REQUIRE( E.reaction().reactants().at(1).second == -2.0      );
     REQUIRE( E.reaction().equilibriumConstantFn()               );
-    REQUIRE( E.reaction().enthalpyChangeFn()                 );
+    REQUIRE( E.reaction().enthalpyChangeFn()                    );
     REQUIRE( E.reaction().standardGibbsEnergyFn()               );
     REQUIRE( E.reaction().standardEnthalpyFn()                  );
+    REQUIRE( E.reaction().stoichiometry("C") ==  1.0            );
+    REQUIRE( E.reaction().stoichiometry("D") == -2.0            );
 
     const auto T = 300.0;
     const auto P = 1.0e5;
