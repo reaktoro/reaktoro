@@ -103,4 +103,12 @@ TEST_CASE("Testing Database class", "[Database]")
     db.attachData( String("SomeData") );
 
     REQUIRE( std::any_cast<String>(db.attachedData()) == "SomeData" );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: Database::clear
+    //-------------------------------------------------------------------------
+    db.clear();
+
+    REQUIRE( db.elements().size() == 0 );
+    REQUIRE( db.species().size()  == 0 );
 }

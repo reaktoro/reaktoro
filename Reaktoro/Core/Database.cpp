@@ -115,6 +115,11 @@ auto Database::operator=(Database other) -> Database&
     return *this;
 }
 
+auto Database::clear() -> void
+{
+    *pimpl = Database::Impl();
+}
+
 auto Database::addSpecies(const Species& species) -> void
 {
     pimpl->addSpecies(species);
@@ -123,7 +128,7 @@ auto Database::addSpecies(const Species& species) -> void
 auto Database::addSpecies(SpeciesListConstRef species) -> void
 {
     for(const auto& x : species)
-        addSpecies(species);
+        addSpecies(x);
 }
 
 auto Database::attachData(const Any& data) -> void

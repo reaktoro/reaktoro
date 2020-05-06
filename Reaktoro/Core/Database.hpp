@@ -45,6 +45,9 @@ public:
     /// Assign another Database instance to this.
     auto operator=(Database other) -> Database&;
 
+    /// Remove all species and elements from the database.
+    auto clear() -> void;
+
     /// Add a species in the database.
     auto addSpecies(const Species& species) -> void;
 
