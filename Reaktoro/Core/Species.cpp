@@ -75,7 +75,7 @@ struct Species::Impl
     Strings tags;
 
     /// The attached data whose type is known at runtime only.
-    std::any attacheddata;
+    Any attacheddata;
 
     /// Construct a default Species::Impl instance
     Impl()
@@ -94,12 +94,12 @@ struct Species::Impl
     /// Initialize the final function for standard thermodynamic property evaluations of the species.
     auto initializePropsFn()
     {
+        const auto zeroprops = [](real T, real P) { return StandardThermoProps{}; }; // return zeros for all standard properties
+        const auto baseprops = standard_thermo_props_fn ? standard_thermo_props_fn : zeroprops; // ensure non-empty standard thermo props fn
         if(reaction.reactants().size())
         {
             const auto G0 = reaction.standardGibbsEnergyFn();
             const auto H0 = reaction.standardEnthalpyFn();
-            const auto zeroprops = [](real T, real P) { return StandardThermoProps{}; }; // return zeros for all standard properties
-            auto baseprops = standard_thermo_props_fn ? standard_thermo_props_fn : zeroprops; // ensure non-empty standard thermo props fn
             props_fn = [=](real T, real P)
             {
                 StandardThermoProps props = baseprops(T, P);
@@ -108,7 +108,7 @@ struct Species::Impl
                 return props;
             };
         }
-        else props_fn = standard_thermo_props_fn;
+        else props_fn = baseprops;
 
         // Use memoization to ensure fast re-evaluation when new
         // T and P inputs are identical to last ones.
@@ -223,7 +223,7 @@ auto Species::withTags(const Strings& tags) const -> Species
     return copy;
 }
 
-auto Species::withAttachedData(std::any data) const -> Species
+auto Species::withAttachedData(Any data) const -> Species
 {
     Species copy = clone();
     copy.pimpl->attacheddata = data;
@@ -281,7 +281,7 @@ auto Species::tags() const -> const Strings&
     return pimpl->tags;
 }
 
-auto Species::attachedData() const -> const std::any&
+auto Species::attachedData() const -> const Any&
 {
     return pimpl->attacheddata;
 }
