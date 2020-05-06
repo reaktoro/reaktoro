@@ -29,11 +29,21 @@ public:
     /// Construct a default PhreeqcDatabase object.
     PhreeqcDatabase();
 
-    /// Construct a PhreeqcDatabase object with given database.
-    /// This constructor supports initialization of the PhreeqcDatabase object
-    /// with either a path to the database file, including its file name, or a
-    /// multi-line string containing the database contents itself.
-    /// @param database The path to the database file or its contents in a string
+    /// Construct a PhreeqcDatabase object with given name of embedded PHREEQC database.
+    /// This constructor initializes the PhreeqcDatabase object with an
+    /// embedded PHREEQC database file. The following embedded file names are
+    /// currently supported:"
+    /// - Amm.dat
+    /// - frezchem.dat
+    /// - iso.dat
+    /// - llnl.dat
+    /// - minteq.dat
+    /// - minteq.v4.dat
+    /// - phreeqc.dat
+    /// - pitzer.dat
+    /// - sit.dat
+    /// - wateq4f.dat
+    /// @param database The name of the embedded PHREEQC database file
     explicit PhreeqcDatabase(String database);
 
     /// Extend this PhreeqcDatabase object with contents in given database file.
@@ -41,6 +51,9 @@ public:
     /// file name, or a multi-line string containing the database contents.
     /// @param database The path to the database file or its contents as a string
     auto load(String filename) -> PhreeqcDatabase&;
+
+    /// Return the contents of an embedded PHREEQC database as a string.
+    static auto contents(String database) -> String;
 };
 
 } // namespace Reaktoro
