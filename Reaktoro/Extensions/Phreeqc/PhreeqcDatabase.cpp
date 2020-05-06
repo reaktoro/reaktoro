@@ -216,8 +216,13 @@ PhreeqcDatabase::PhreeqcDatabase(String database)
 
 auto PhreeqcDatabase::load(String filename) -> PhreeqcDatabase&
 {
-	addSpecies(detail::createSpecies(filename));
+	Database::clear();
+	Database::addSpecies(detail::createSpecies(filename));
 	return *this;
+}
+auto PhreeqcDatabase::contents(String database) -> String
+{
+	return detail::getPhreeqcDatabaseString(database);
 }
 
 } // namespace Reaktoro
