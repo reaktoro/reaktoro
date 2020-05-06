@@ -17,9 +17,6 @@
 
 #pragma once
 
-// C++ includes
-#include <any>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
@@ -77,7 +74,7 @@ public:
     auto withTags(const Strings& tags) const -> Species;
 
     /// Return a duplicate of this Species object with new attached data whose type is known at runtime only.
-    auto withAttachedData(std::any data) const -> Species;
+    auto withAttachedData(Any data) const -> Species;
 
     /// Return the name that uniquely identifies this species if provided, otherwise, its formula.
     auto name() const -> String;
@@ -107,7 +104,7 @@ public:
     auto tags() const -> const Strings&;
 
     /// Return the attached data of the species whose type is known at runtime only.
-    auto attachedData() const -> const std::any&;
+    auto attachedData() const -> const Any&;
 
     /// Return the molar mass of the species (in unit of kg/mol).
     auto molarMass() const -> double;
