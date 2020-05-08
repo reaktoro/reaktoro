@@ -2,10 +2,7 @@ if(REAKTORO_USE_OPENLIBM)
     find_package(openlibm REQUIRED)
 endif()
 
-# Find nlohmann_json installed from conda-forge
-find_package(nlohmann_json 3.4.0 REQUIRED)
-
-# Find ThermoFun library and define a pre-processor macro REAKTORO_USING_THERMOFUN if so
+find_package(Optima REQUIRED)
 find_package(ThermoFun REQUIRED)
 
 if(ThermoFun_FOUND)
