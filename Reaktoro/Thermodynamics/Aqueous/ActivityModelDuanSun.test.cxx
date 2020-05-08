@@ -52,7 +52,7 @@ inline auto checkActivities(ArrayXrConstRef x, ActivityPropsConstRef props)
     for(auto i = 0; i < x.size(); ++i)
     {
         INFO("i = " << i);
-        CHECK( exp(props.ln_a[i] - props.ln_g[i]) == Approx(0.0) );
+        CHECK( exp(props.ln_a[i] - props.ln_g[i]) == Approx(c[i]) );
     }
 }
 
