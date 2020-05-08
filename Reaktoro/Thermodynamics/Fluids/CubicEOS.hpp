@@ -17,16 +17,8 @@
 
 #pragma once
 
-// C++ includes
-#include <functional>
-#include <memory>
-#include <string>
-#include <tuple>
-#include <vector>
-
 // Reaktoro includes
-#include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/PhaseIdentification.hpp>
 

@@ -41,7 +41,9 @@ TEST_CASE("Testing ActivityModelCubicEOS", "[ActivityModelCubicEOS]")
     const auto T = 300.0;
     const auto P = 12.3e5;
 
-    Vec<std::any> extra;
+    Vec<Any> extra;
+
+    CubicEOSInteractionParamsFn interaction_params_fn;
 
     WHEN("The gases are H2O(g), CO2(g), CH4(g).")
     {

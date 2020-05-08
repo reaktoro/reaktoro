@@ -41,7 +41,7 @@ TEST_CASE("Testing ActivityModelSpycherPruessEnnis", "[ActivityModelSpycherPrues
     const auto T = 300.0;
     const auto P = 12.3e5;
 
-    Vec<std::any> extra;
+    Vec<Any> extra;
 
     WHEN("All supported gases, H2O(g) and CO2(g), are considered.")
     {

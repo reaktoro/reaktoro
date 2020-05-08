@@ -129,7 +129,7 @@ struct ActivityArgs
     ArrayXrConstRef x;
 
     /// The extra arguments for the activity model evaluation whose type is only known at runtime.
-    Vec<std::any>& extra;
+    Vec<Any>& extra;
 };
 
 /// The function type for the calculation of activity and excess thermodynamic properties of a phase.
