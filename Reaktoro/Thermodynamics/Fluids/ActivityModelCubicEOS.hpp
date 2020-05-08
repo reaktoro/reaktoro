@@ -27,7 +27,7 @@ namespace Reaktoro {
 struct ActivityModelCubicEOSParams
 {
     /// The function that calculates interaction parameters @eq{k_{ij}} in @eq{a_{ij}=(1-k_{ij})(a_{i}a_{j})^{1/2}}.
-    CubicEOSInteractionParamsFn interaction_params_fn;
+    CubicEOSInteractionParamsFn interaction_params_fn = nullptr;
 
     /// The method to identify whether liquid or vapor phases is stable.
     PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;

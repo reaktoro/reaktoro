@@ -43,8 +43,6 @@ TEST_CASE("Testing ActivityModelCubicEOS", "[ActivityModelCubicEOS]")
 
     Vec<Any> extra;
 
-    CubicEOSInteractionParamsFn interaction_params_fn;
-
     WHEN("The gases are H2O(g), CO2(g), CH4(g).")
     {
         const auto species = SpeciesList("H2O(g) CO2(g) CH4(g)");
