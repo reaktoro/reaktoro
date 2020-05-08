@@ -17,13 +17,9 @@
 
 #pragma once
 
-// C++ includes
-#include <memory>
-#include <vector>
-
 // Reaktoro includes
-#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/ElementList.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
@@ -32,7 +28,7 @@
 
 namespace Reaktoro {
 
-/// A class to represent a system and its attributes and properties.
+/// The class used to represent a chemical system and its attributes and properties.
 /// @see Species, Phase
 /// @ingroup Core
 class ChemicalSystem
@@ -41,8 +37,11 @@ public:
     /// Construct a default ChemicalSystem instance.
     ChemicalSystem();
 
-    /// Construct a ChemicalSystem instance with given phases.
-    explicit ChemicalSystem(const Vec<Phase>& phases);
+    /// Construct a ChemicalSystem instance with given database and phases.
+    ChemicalSystem(const Database& database, const Vec<Phase>& phases);
+
+    /// Return the database used to construct the chemical system.
+    auto database() const -> const Database&;
 
     /// Return the element in the system with given index.
     auto element(Index index) const -> const Element&;

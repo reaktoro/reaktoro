@@ -93,6 +93,9 @@ auto formulaMatrix(const Vec<Species>& species, const Vec<Element>& elements) ->
 
 struct ChemicalSystem::Impl
 {
+    /// The database used to construct the chemical system.
+    Database database;
+
     /// The list of phases in the system.
     Vec<Phase> phases;
 
@@ -110,8 +113,8 @@ struct ChemicalSystem::Impl
     {}
 
     /// Construct a ChemicalSystem::Impl object with given phases.
-    Impl(const Vec<Phase>& phaselist)
-    : phases(phaselist)
+    Impl(const Database& database, const Vec<Phase>& phaselist)
+    : database(database), phases(phaselist)
     {
         species = detail::collectSpecies(phases);
         elements = detail::collectElements(species);
@@ -126,9 +129,14 @@ ChemicalSystem::ChemicalSystem()
 : pimpl(new Impl())
 {}
 
-ChemicalSystem::ChemicalSystem(const Vec<Phase>& phases)
-: pimpl(new Impl(phases))
+ChemicalSystem::ChemicalSystem(const Database& database, const Vec<Phase>& phases)
+: pimpl(new Impl(database, phases))
 {}
+
+auto ChemicalSystem::database() const -> const Database&
+{
+    return pimpl->database;
+}
 
 auto ChemicalSystem::element(Index index) const -> const Element&
 {

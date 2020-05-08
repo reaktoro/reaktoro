@@ -26,36 +26,48 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
 {
+    // Create the Database object for the ChemicalSystem
+    Database db;
+    db.addSpecies( SpeciesList("H2O(aq) H+(aq) OH-(aq) H2(aq) O2(aq) Na+(aq) Cl-(aq) NaCl(aq) HCO3-(aq) CO2(aq) CO3--(aq)") );
+    db.addSpecies( SpeciesList("H2O(g) CO2(g) H2(g) O2(g)") );
+    db.addSpecies( SpeciesList("NaCl(s) CaCO3(s) SiO2(s)")  );
+
+    // Create the ActivityPropsFn of the Phase objects for the ChemicalSystem
     ActivityPropsFn activity_props_fn = [](ActivityPropsRef props, ActivityArgs args) {};
 
-    // Create the ChemicalSystem object
-    ChemicalSystem system({
+    // Create the Phase objects for the ChemicalSystem
+    const Vec<Phase> phases =
+    {
         Phase()
             .withName("AqueousSolution")
-            .withSpecies(SpeciesList("H2O(aq) H+(aq) OH-(aq) H2(aq) O2(aq) Na+(aq) Cl-(aq) NaCl(aq) HCO3-(aq) CO2(aq) CO3--(aq)"))
+            .withSpecies(db.speciesWithAggregateState(AggregateState::Aqueous))
             .withStateOfMatter(StateOfMatter::Liquid)
             .withActivityPropsFn(activity_props_fn),
         Phase()
             .withName("GaseousSolution")
-            .withSpecies(SpeciesList("H2O(g) CO2(g) H2(g) O2(g)"))
+            .withSpecies(db.speciesWithAggregateState(AggregateState::Gas))
             .withStateOfMatter(StateOfMatter::Gas)
             .withActivityPropsFn(activity_props_fn),
         Phase()
             .withName("Halite")
-            .withSpecies(SpeciesList("NaCl(s)"))
+            .withSpecies({ db.species().get("NaCl(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
             .withActivityPropsFn(activity_props_fn),
         Phase()
             .withName("CaCO3(s)")
-            .withSpecies(SpeciesList("CaCO3(s)"))
+            .withSpecies({ db.species().get("CaCO3(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
             .withActivityPropsFn(activity_props_fn),
         Phase()
             .withName("Quartz")
-            .withSpecies(SpeciesList("SiO2(s)"))
+            .withSpecies({ db.species().get("SiO2(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
             .withActivityPropsFn(activity_props_fn)
-    });
+    };
+
+
+    // Create the ChemicalSystem object
+    ChemicalSystem system(db, phases);
 
     ChemicalState state(system);
 

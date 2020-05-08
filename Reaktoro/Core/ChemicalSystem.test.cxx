@@ -24,35 +24,46 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
 {
-    // Create the Phase objects in the ChemicalSystem
+    // Create the Database object for the ChemicalSystem
+    Database db;
+    db.addSpecies( SpeciesList("H2O(aq) H+(aq) OH-(aq) H2(aq) O2(aq) Na+(aq) Cl-(aq) NaCl(aq) HCO3-(aq) CO2(aq) CO3--(aq)") );
+    db.addSpecies( SpeciesList("H2O(g) CO2(g) H2(g) O2(g)") );
+    db.addSpecies( SpeciesList("NaCl(s) CaCO3(s) SiO2(s)")  );
+
+    // Create the Phase objects for the ChemicalSystem
     const Vec<Phase> phases =
     {
         Phase()
             .withName("AqueousSolution")
-            .withSpecies(SpeciesList("H2O(aq) H+(aq) OH-(aq) H2(aq) O2(aq) Na+(aq) Cl-(aq) NaCl(aq) HCO3-(aq) CO2(aq) CO3--(aq)"))
+            .withSpecies(db.speciesWithAggregateState(AggregateState::Aqueous))
             .withStateOfMatter(StateOfMatter::Liquid),
         Phase()
             .withName("GaseousSolution")
-            .withSpecies(SpeciesList("H2O(g) CO2(g) H2(g) O2(g)"))
+            .withSpecies(db.speciesWithAggregateState(AggregateState::Gas))
             .withStateOfMatter(StateOfMatter::Gas),
         Phase()
             .withName("Halite")
-            .withSpecies(SpeciesList("NaCl(s)"))
+            .withSpecies({ db.species().get("NaCl(s)") })
             .withStateOfMatter(StateOfMatter::Solid),
         Phase()
             .withName("Calcite")
-            .withSpecies(SpeciesList("CaCO3(s)"))
+            .withSpecies({ db.species().get("CaCO3(s)") })
             .withStateOfMatter(StateOfMatter::Solid),
         Phase()
             .withName("Quartz")
-            .withSpecies(SpeciesList("SiO2(s)"))
+            .withSpecies({ db.species().get("SiO2(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
     };
 
     //-------------------------------------------------------------------------
     // TESTING CONSTRUCTOR: ChemicalSystem::ChemicalSystem(phases)
     //-------------------------------------------------------------------------
-    ChemicalSystem system(phases);
+    ChemicalSystem system(db, phases);
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalSystem::database()
+    //-------------------------------------------------------------------------
+    REQUIRE( system.database().species().size() == db.species().size() );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::phases()
