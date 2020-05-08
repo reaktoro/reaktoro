@@ -31,8 +31,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 option(REAKTORO_BUILD_ALL         "Build everything." OFF)
 option(REAKTORO_BUILD_DEMOS       "Build demos." OFF)
 option(REAKTORO_BUILD_DOCS        "Build documentation." OFF)
-option(REAKTORO_BUILD_INTERPRETER "Build the interpreter executable reaktoro." ON)
-option(REAKTORO_BUILD_PYTHON      "Build the python wrappers and python package reaktoro." ON)
+option(REAKTORO_BUILD_INTERPRETER "Build the interpreter executable reaktoro." OFF)
+option(REAKTORO_BUILD_PYTHON      "Build the python wrappers and python package reaktoro." OFF)
 option(REAKTORO_BUILD_TESTS       "Build tests." OFF)
 
 # Modify the REAKTORO_BUILD_* variables accordingly to BUILD_ALL

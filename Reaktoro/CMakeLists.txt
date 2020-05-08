@@ -7,10 +7,6 @@ file(GLOB_RECURSE CPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 # Recursively collect all test files from the current directory
 file(GLOB_RECURSE CXX_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.test.cxx)
 
-# The name of the shared and static libraries
-set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
-set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
-
 # Set the list of names of the third-party targets and libraries
 set(THIRDPARTY_TARGETS PUGIXML MINIZ CVODE PHREEQC GEMS)
 set(THIRDPARTY_LIBS pugixml miniz sundials_cvode sundials_nvecserial phreeqc gems)
@@ -41,7 +37,8 @@ target_include_directories(Reaktoro
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro
     PRIVATE ${THIRDPARTY_LIBS}
-    PRIVATE Reaktoro::Databases)
+    PRIVATE Reaktoro::Databases
+    PUBLIC Optima::Optima)
 
 if(REAKTORO_USE_OPENLIBM)
     configure_target_to_use_openlibm(Reaktoro)
