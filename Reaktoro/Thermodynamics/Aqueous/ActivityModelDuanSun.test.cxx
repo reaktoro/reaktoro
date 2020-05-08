@@ -64,7 +64,7 @@ TEST_CASE("Testing ActivityModelDuanSun", "[ActivityModelDuanSun]")
     const auto P = 12.3e5;
     const auto x = moleFractions(species);
 
-    Vec<std::any> extra;
+    Vec<Any> extra;
 
     // Construct the activity props function with the given aqueous species.
     ActivityPropsFn debyehuckelfn = ActivityModelDebyeHuckel()(species);
