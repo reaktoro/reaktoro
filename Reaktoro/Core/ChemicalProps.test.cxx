@@ -77,6 +77,12 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.ln_a = 9.1 * x;
     };
 
+    Database db;
+
+    db.addSpecies( Species("H2O(g)").withStandardThermoPropsFn(standard_thermo_props_fn_gas) );
+    db.addSpecies( Species("CO2(g)").withStandardThermoPropsFn(standard_thermo_props_fn_gas) );
+    db.addSpecies( Species("CaCO3(s)").withStandardThermoPropsFn(standard_thermo_props_fn_solid) );
+
     Vec<Phase> phases
     {
         Phase()
@@ -84,18 +90,18 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
             .withActivityPropsFn(activity_props_fn_gas)
             .withStateOfMatter(StateOfMatter::Gas)
             .withSpecies({
-                Species("H2O(g)").withStandardThermoPropsFn(standard_thermo_props_fn_gas),
-                Species("CO2(g)").withStandardThermoPropsFn(standard_thermo_props_fn_gas)}),
+                db.species().get("H2O(g)"),
+                db.species().get("CO2(g)")}),
 
         Phase()
             .withName("SomeSolid")
             .withActivityPropsFn(activity_props_fn_solid)
             .withStateOfMatter(StateOfMatter::Solid)
             .withSpecies({
-                Species("CaCO3(s)").withStandardThermoPropsFn(standard_thermo_props_fn_solid)})
+                db.species().get("CaCO3(s)") })
     };
 
-    ChemicalSystem system(phases);
+    ChemicalSystem system(db, phases);
 
     ChemicalProps props(system);
 
