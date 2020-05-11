@@ -20,6 +20,9 @@
 // Eigen includes
 #include <Reaktoro/deps/eigen3/Eigen/Core>
 
+// autodiff includes
+#include <autodiff/forward/real/eigen.hpp>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Real.hpp>
@@ -50,7 +53,7 @@ using RowVectorX = Eigen::Matrix<T, 1, -1, 0, 1, -1>;
 // == VECTOR TYPE ALIASES ==
 //---------------------------------------------------------------------------------------------------------------------
 
-using VectorXr                = VectorX<real>;                                       ///< Convenient alias to Eigen type.
+using VectorXr                = autodiff::VectorXreal;                               ///< Convenient alias to Eigen type.
 using VectorXrRef             = Eigen::Ref<VectorXr>;                                ///< Convenient alias to Eigen type.
 using VectorXrConstRef        = Eigen::Ref<const VectorXr>;                          ///< Convenient alias to Eigen type.
 using VectorXrMap             = Eigen::Map<VectorXr>;                                ///< Convenient alias to Eigen type.
@@ -79,7 +82,7 @@ using VectorXdStridedConstRef = Eigen::Ref<const VectorXd, 0, Eigen::InnerStride
 // == ARRAY TYPE ALIASES ==
 //---------------------------------------------------------------------------------------------------------------------
 
-using ArrayXr                = ArrayX<real>;                                       ///< Convenient alias to Eigen type.
+using ArrayXr                = autodiff::ArrayXreal;                               ///< Convenient alias to Eigen type.
 using ArrayXrRef             = Eigen::Ref<ArrayXr>;                                ///< Convenient alias to Eigen type.
 using ArrayXrConstRef        = Eigen::Ref<const ArrayXr>;                          ///< Convenient alias to Eigen type.
 using ArrayXrMap             = Eigen::Map<ArrayXr>;                                ///< Convenient alias to Eigen type.
@@ -107,7 +110,7 @@ using ArrayXdStridedConstRef = Eigen::Ref<const ArrayXd, 0, Eigen::InnerStride<>
 // == MATRIX TYPE ALIASES ==
 //---------------------------------------------------------------------------------------------------------------------
 
-using MatrixXr                = MatrixX<real>;              ///< Convenient alias to Eigen type.
+using MatrixXr                = autodiff::MatrixXreal;      ///< Convenient alias to Eigen type.
 using MatrixXrRef             = Eigen::Ref<MatrixXr>;       ///< Convenient alias to Eigen type.
 using MatrixXrConstRef        = Eigen::Ref<const MatrixXr>; ///< Convenient alias to Eigen type.
 using MatrixXrMap             = Eigen::Map<MatrixXr>;       ///< Convenient alias to Eigen type.
@@ -123,7 +126,7 @@ using MatrixXdConstMap        = Eigen::Map<const MatrixXd>; ///< Convenient alia
 // == ROW VECTOR TYPE ALIASES ==
 //---------------------------------------------------------------------------------------------------------------------
 
-using RowVectorXr                = RowVectorX<real>;              ///< Convenient alias to Eigen type.
+using RowVectorXr                = autodiff::RowVectorXreal;      ///< Convenient alias to Eigen type.
 using RowVectorXrRef             = Eigen::Ref<RowVectorXr>;       ///< Convenient alias to Eigen type.
 using RowVectorXrConstRef        = Eigen::Ref<const RowVectorXr>; ///< Convenient alias to Eigen type.
 using RowVectorXrMap             = Eigen::Map<RowVectorXr>;       ///< Convenient alias to Eigen type.

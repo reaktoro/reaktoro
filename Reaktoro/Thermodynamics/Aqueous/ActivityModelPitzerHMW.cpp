@@ -336,7 +336,7 @@ const Vec<Tuple<ChemicalFormula, ChemicalFormula, ChemicalFormula, Vec<real>>> z
 };
 
 /// The calculated values of function J0(x) on the points x[i] = 0.0 + i*0.01 in the region (0.0, 1.0)
-const Vec<real> J0region1 =
+const Vec<double> J0region1 =
 {
     0.00000000e+00, 7.06207558e-05, 2.38544646e-04, 4.80518193e-04, 7.84985974e-04, 1.14430570e-03, 1.55285818e-03, 2.00625822e-03, 2.50094831e-03, 3.03396197e-03,
     3.60277406e-03, 4.20520037e-03, 4.83932706e-03, 5.50345931e-03, 6.19608287e-03, 6.91583456e-03, 7.66147916e-03, 8.43189104e-03, 9.22603924e-03, 1.00429754e-02,
@@ -351,7 +351,7 @@ const Vec<real> J0region1 =
 };
 
 /// The calculated values of function J0(x) on the points x[i] = 1.0 + i*0.1 in the region (1.0, 10.0)
-const Vec<real> J0region2 =
+const Vec<double> J0region2 =
 {
     1.16437258e-01, 1.32715063e-01, 1.49411766e-01, 1.66486062e-01, 1.83902904e-01, 2.01632240e-01, 2.19648056e-01, 2.37927656e-01, 2.56451090e-01, 2.75200712e-01,
     2.94160824e-01, 3.13317387e-01, 3.32657787e-01, 3.52170640e-01, 3.71845632e-01, 3.91673386e-01, 4.11645345e-01, 4.31753678e-01, 4.51991199e-01, 4.72351292e-01,
@@ -365,7 +365,7 @@ const Vec<real> J0region2 =
 };
 
 /// The calculated values of function J0(x) on the points x[i] = 10.0 + i*1.0 in the region (10.0, 100.0)
-const Vec<real> J0region3 =
+const Vec<double> J0region3 =
 {
     2.06328427e+00, 2.29822044e+00, 2.53446209e+00, 2.77181680e+00, 3.01013128e+00, 3.24928140e+00, 3.48916529e+00, 3.72969829e+00, 3.97080934e+00, 4.21243822e+00,
     4.45453343e+00, 4.69705062e+00, 4.93995136e+00, 5.18320209e+00, 5.42677335e+00, 5.67063917e+00, 5.91477653e+00, 6.15916491e+00, 6.40378598e+00, 6.64862328e+00,
@@ -379,19 +379,19 @@ const Vec<real> J0region3 =
 };
 
 /// The calculated values of function J0(x) on the points x[i] = 100.0 + i*100.0 in the region (100.0, 1000.0)
-const Vec<real> J0region4 =
+const Vec<double> J0region4 =
 {
     2.42386152e+01, 4.91709893e+01, 7.41388190e+01, 9.91190695e+01, 1.24105388e+02, 1.49095205e+02, 1.74087256e+02, 1.99080833e+02, 2.24075510e+02, 2.49071007e+02
 };
 
 /// The calculated values of function J0(x) on the points x[i] = 1000.0 + i*1000.0 in the region (1000.0, 10000.0)
-const Vec<real> J0region5 =
+const Vec<double> J0region5 =
 {
     2.49071007e+02, 4.99046818e+02, 7.49036364e+02, 9.99030282e+02, 1.24902622e+03, 1.49902328e+03, 1.74902104e+03, 1.99901926e+03, 2.24901780e+03, 2.49901659e+03
 };
 
 /// The calculated values of function J1(x) on the points x[i] = 0.0 + i*0.01 in the region (0.0, 1.0)
-const Vec<real> J1region1 =
+const Vec<double> J1region1 =
 {
     0.00000000e-00, 1.25151744e-04, 4.14749318e-04, 8.24176731e-04, 1.33185071e-03, 1.92376087e-03, 2.58976962e-03, 3.32207863e-03, 4.11444419e-03, 4.96172312e-03,
     5.85958733e-03, 6.80433336e-03, 7.79274934e-03, 8.82201875e-03, 9.88964869e-03, 1.09934151e-02, 1.21313201e-02, 1.33015585e-02, 1.45024900e-02, 1.57326178e-02,
@@ -406,7 +406,7 @@ const Vec<real> J1region1 =
 };
 
 /// The calculated values of function J1(x) on the points x[i] = 1.0 + i*0.1 in the region (1.0, 10.0)
-const Vec<real> J1region2 =
+const Vec<double> J1region2 =
 {
     1.60526953e-01, 1.81442105e-01, 2.02701762e-01, 2.24262453e-01, 2.46088272e-01, 2.68149211e-01, 2.90419926e-01, 3.12878818e-01, 3.35507329e-01, 3.58289398e-01,
     3.81211036e-01, 4.04259985e-01, 4.27425447e-01, 4.50697864e-01, 4.74068736e-01, 4.97530475e-01, 5.21076279e-01, 5.44700030e-01, 5.68396207e-01, 5.92159812e-01,
@@ -420,7 +420,7 @@ const Vec<real> J1region2 =
 };
 
 /// The calculated values of function J1(x) on the points x[i] = 10.0 + i*1.0 in the region (10.0, 100.0)
-const Vec<real> J1region3 =
+const Vec<double> J1region3 =
 {
     2.34206827e+00, 2.59187348e+00, 2.84191919e+00, 3.09214678e+00, 3.34251316e+00, 3.59298607e+00, 3.84354101e+00, 4.09415916e+00, 4.34482586e+00, 4.59552961e+00,
     4.84626133e+00, 5.09701375e+00, 5.34778108e+00, 5.59855865e+00, 5.84934266e+00, 6.10013007e+00, 6.35091839e+00, 6.60170559e+00, 6.85249003e+00, 7.10327038e+00,
@@ -434,25 +434,25 @@ const Vec<real> J1region3 =
 };
 
 /// The calculated values of function J1(x) on the points x[i] = 100.0 + i*100.0 in the region (100.0, 1000.0)
-const Vec<real> J1region4 =
+const Vec<double> J1region4 =
 {
     2.48905984e+01, 4.99141212e+01, 7.49270387e+01, 9.99355618e+01, 1.24941747e+02, 1.49946507e+02, 1.74950320e+02, 1.99953466e+02, 2.24956118e+02, 2.49958395e+02
 };
 
 /// The calculated values of function J1(x) on the points x[i] = 1000.0 + i*1000.0 in the region (1000.0, 10000.0)
-const Vec<real> J1region5 =
+const Vec<double> J1region5 =
 {
     2.49958395e+02, 4.99971193e+02, 7.49977057e+02, 9.99980578e+02, 1.24998298e+03, 1.49998474e+03, 1.74998611e+03, 1.99998720e+03, 2.24998810e+03, 2.49998886e+03
 };
 
 /// The temperature points for the interpolation of Aphi (in units of celsius)
-const Vec<real> Aphi_temperatures =
+const Vec<double> Aphi_temperatures =
 {
     0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350
 };
 
 /// The pressure points for the interpolation of Aphi (in units of bar)
-const Vec<real> Aphi_pressures =
+const Vec<double> Aphi_pressures =
 {
     1, 100, 200, 400, 600, 800, 1000, 1500, 2000, 3000, 4000, 5000
 };
@@ -463,7 +463,7 @@ const Vec<real> Aphi_pressures =
 ///      A^{\phi}=1.400684\cdot10^{6}\frac{1}{\rho_{w}}\left(\frac{\rho_{w}}{\epsilon_{w}T}\right)^{\frac{3}{2}},
 /// \f]
 /// where @f$T@f$ is temperature in K, @f$\epsilon_{w}@f$ is the dielectric constant of water, and @f$\rho_{w}@f$ its density in g/m<sup>3<\sup>
-const Vec<real> Aphi_data =
+const Vec<double> Aphi_data =
 {
     0.37674222, 0.39147278, 0.41031975, 0.43330198, 0.46058910, 0.49248630, 0.52954906, 0.57258689, 0.62280952, 0.68208055, 0.75343848, 0.84226817, 0.95932062, 1.13030749, 1.43881804,
     0.37511283, 0.38962104, 0.40816127, 0.43071699, 0.45741532, 0.48854946, 0.52461006, 0.56635820, 0.61497721, 0.67238823, 0.74195091, 0.83021165, 0.95211387, 1.13030749, 1.43881804,
@@ -663,7 +663,7 @@ auto createZetaTable(const Vec<ChemicalFormula>& neutrals, const Vec<ChemicalFor
     return table;
 }
 
-auto interpolate(real x, real x0, real x1, const Vec<real>& ypoints) -> real
+auto interpolate(real x, real x0, real x1, const Vec<double>& ypoints) -> real
 {
     const auto n  = ypoints.size();
     const auto dx = (x1 - x0)/(n - 1);
@@ -786,8 +786,8 @@ PitzerParams::PitzerParams(const AqueousMixture& mixture)
 
     zeta = createZetaTable(neutrals, cations, anions);
 
-    Vec<real> temperatures = Aphi_temperatures;
-    Vec<real> pressures = Aphi_pressures;
+    auto temperatures = Aphi_temperatures;
+    auto pressures = Aphi_pressures;
 
     for(auto& x : temperatures) x = convertCelsiusToKelvin(x);
     for(auto& x : pressures) x = convertBarToPascal(x);

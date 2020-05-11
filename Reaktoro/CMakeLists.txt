@@ -31,14 +31,18 @@ add_dependencies(Reaktoro Reaktoro::Databases ${THIRDPARTY_TARGETS})
 target_include_directories(Reaktoro
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/eigen3>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro/deps/eigen3>
     PRIVATE ${REAKTORO_THIRDPARTY_INCLUDE_PATH})
 
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro
     PRIVATE ${THIRDPARTY_LIBS}
     PRIVATE Reaktoro::Databases
-    PUBLIC Optima::Optima)
+    PUBLIC autodiff::autodiff
+    PUBLIC Optima::Optima
+)
 
 if(REAKTORO_USE_OPENLIBM)
     configure_target_to_use_openlibm(Reaktoro)

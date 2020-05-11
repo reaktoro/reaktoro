@@ -17,9 +17,12 @@
 
 #pragma once
 
+// autodiff includes
+#include <autodiff/forward/real.hpp>
+
 namespace Reaktoro {
 
 /// The number type used throughout the library.
-using real = double;
+using real = autodiff::real;
 
 } // namespace Reaktoro

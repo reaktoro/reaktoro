@@ -23,33 +23,33 @@
 namespace Reaktoro {
 
 auto interpolate(
-    const std::vector<real>& temperatures,
-    const std::vector<real>& pressures,
-    const std::vector<real>& scalars) -> std::function<real(real, real)>
+    const Vec<double>& temperatures,
+    const Vec<double>& pressures,
+    const Vec<double>& scalars) -> Fn<real(real, real)>
 {
     return BilinearInterpolator(temperatures, pressures, scalars);
 }
 
 auto interpolate(
-    const std::vector<real>& temperatures,
-    const std::vector<real>& pressures,
-    const std::function<real(real, real)>& func) -> std::function<real(real, real)>
+    const Vec<double>& temperatures,
+    const Vec<double>& pressures,
+    const Fn<double(double, double)>& func) -> Fn<real(real, real)>
 {
     return BilinearInterpolator(temperatures, pressures, func);
 }
 
 auto interpolate(
-    const std::vector<real>& temperatures,
-    const std::vector<real>& pressures,
-    const std::vector<std::function<real(real, real)>>& fs) -> std::function<VectorXr(real, real)>
+    const Vec<double>& temperatures,
+    const Vec<double>& pressures,
+    const Vec<Fn<double(double, double)>>& fs) -> Fn<ArrayXr(real, real)>
 {
     const auto size = fs.size();
 
-    std::vector<BilinearInterpolator> interps(size);
+    Vec<BilinearInterpolator> interps(size);
     for(unsigned i = 0; i < size; ++i)
         interps[i] = BilinearInterpolator(temperatures, pressures, fs[i]);
 
-    VectorXr res(size);
+    ArrayXr res(size);
 
     auto func = [=](real T, real P) mutable
     {
