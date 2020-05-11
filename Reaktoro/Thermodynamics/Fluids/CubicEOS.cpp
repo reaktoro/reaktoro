@@ -276,9 +276,9 @@ struct CubicEOS::Impl
         {
             for(auto j = 0; j < nspecies; ++j)
             {
-                const real r   = ip.k.size()   ? 1.0 - ip.k(i, j)   : 1.0;
-                const real rT  = ip.kT.size()  ?     - ip.kT(i, j)  : 0.0;
-                const real rTT = ip.kTT.size() ?     - ip.kTT(i, j) : 0.0;
+                const real r   = ip.k.size()   ? 1.0 - ip.k(i, j)   : real(1.0);
+                const real rT  = ip.kT.size()  ?     - ip.kT(i, j)  : real(0.0);
+                const real rTT = ip.kTT.size() ?     - ip.kTT(i, j) : real(0.0);
 
                 const real s   = sqrt(a[i]*a[j]); // Eq. (13.93)
                 const real sT  = 0.5*s/(a[i]*a[j]) * (aT[i]*a[j] + a[i]*aT[j]);

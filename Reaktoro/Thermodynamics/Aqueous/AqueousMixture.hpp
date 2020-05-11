@@ -114,7 +114,7 @@ public:
     auto indexWater() const -> Index;
 
     /// Return the charges of the aqueous species in the mixture.
-    auto charges() const -> ArrayXrConstRef;
+    auto charges() const -> ArrayXdConstRef;
 
     /// Return the dissociation matrix of the neutral species into charged species.
     /// The dissociation matrix of the aqueous mixture is defined so that its

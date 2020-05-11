@@ -23,7 +23,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Common/InterpolationUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Singletons/DissociationReactions.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
@@ -329,7 +328,7 @@ auto AqueousMixture::dissociationMatrix() const -> MatrixXdConstRef
     return pimpl->dissociation_matrix;
 }
 
-auto AqueousMixture::charges() const -> ArrayXrConstRef
+auto AqueousMixture::charges() const -> ArrayXdConstRef
 {
     return pimpl->z;
 }

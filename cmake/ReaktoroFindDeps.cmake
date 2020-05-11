@@ -2,6 +2,7 @@ if(REAKTORO_USE_OPENLIBM)
     find_package(openlibm REQUIRED)
 endif()
 
+find_package(autodiff REQUIRED)
 find_package(Optima REQUIRED)
 find_package(ThermoFun REQUIRED)
 

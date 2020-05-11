@@ -142,10 +142,10 @@ struct Phreeqc::Impl
     Eigen::FullPivLU<MatrixXd> lu;
 
     // The electrical charges of the species
-    ArrayXr species_charges;
+    ArrayXd species_charges;
 
     // The molar masses of the elements (in mol/kg)
-    ArrayXr element_molar_masses;
+    ArrayXd element_molar_masses;
 
     // The ln activity coefficients of the species
     ArrayXr ln_activity_coefficients;
@@ -599,10 +599,10 @@ auto Phreeqc::Impl::initializeReactions() -> void
 
 auto Phreeqc::Impl::initializeFormulaMatrix() -> void
 {
-    const unsigned num_elements = element_names.size();
-    const unsigned num_species = species_names.size();
+    const auto num_elements = element_names.size();
+    const auto num_species = species_names.size();
 
-    auto get_element_stoichiometry = [&](unsigned ielement, unsigned ispecies)
+    auto get_element_stoichiometry = [&](auto ielement, auto ispecies) -> double
     {
         // Check if the element index corresponds to the charge index (last index)
         if(ielement == element_names.size() - 1)
@@ -816,7 +816,7 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
     // Calculate the natural log of the activities of the aqueous species
     for(auto i = 0; i < num_aqueous_species; ++i)
         ln_a[i] = std::isfinite(aqueous_species[i]->lm) ?
-            ln_g[i] + aqueous_species[i]->lm*ln_10 : 0.0;
+            ln_g[i] + aqueous_species[i]->lm*ln_10 : real(0.0);
 
     // Get the molar amounts of the aqueous species
     const auto n_aqueous = n.head(num_aqueous_species);
@@ -838,7 +838,7 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
     const auto v_aqueous = standard_molar_volumes_TPI.head(num_aqueous_species);
 
     // Calculate the molar volume of the aqueous phase with T, P, I corrections
-    molar_volume_aqueous_phase = (n_total > 0) ? (v_aqueous * n_aqueous).sum()/n_total : 0.0;
+    molar_volume_aqueous_phase = (n_total > 0) ? (v_aqueous * n_aqueous).sum()/n_total : real(0.0);
 }
 
 auto Phreeqc::Impl::updateGaseousProperties() -> void

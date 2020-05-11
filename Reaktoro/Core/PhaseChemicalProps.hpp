@@ -544,7 +544,7 @@ template<typename Real, typename Array>
 auto PhaseChemicalPropsBase<Real, Array>::molarDensity() const
 {
     const auto V = molarVolume();
-    return V ? 1.0/V : 0.0;
+    return V ? 1.0/V : real(0.0);
 }
 
 template<typename Real, typename Array>

@@ -26,10 +26,10 @@
 #include <unordered_set>
 #include <vector>
 
-namespace Reaktoro {
+// Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
 
-/// The number type used throughout the library.
-using real = double;
+namespace Reaktoro {
 
 /// The type used to represent indices and unsigned integers in the library.
 using Index = std::size_t;

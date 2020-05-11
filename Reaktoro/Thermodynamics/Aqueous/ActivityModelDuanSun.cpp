@@ -26,7 +26,7 @@ namespace {
 using std::log;
 
 /// The lambda coefficients for the activity coefficient of CO2(aq)
-const double lambda_coeffs[] =
+const real lambda_coeffs[] =
 {
     -0.411370585,
      6.07632013e-4,
@@ -42,7 +42,7 @@ const double lambda_coeffs[] =
 };
 
 /// The zeta coefficients for the activity coefficient of CO2(aq)
-const double zeta_coeffs[] =
+const real zeta_coeffs[] =
 {
      3.36389723e-4,
     -1.98298980e-5,

@@ -89,7 +89,7 @@ auto identifyPhaseUsingGibbsEnergyAndEos(
     const real& B,
     const real& C,
     std::vector<real> Zs,
-    const double epsilon,
-    const double sigma) -> CubicEOSFluidType;
+    const real epsilon,
+    const real sigma) -> CubicEOSFluidType;
 
 }

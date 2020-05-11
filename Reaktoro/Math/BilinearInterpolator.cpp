@@ -31,7 +31,7 @@
 namespace Reaktoro {
 namespace {
 
-auto binarySearchHelper(real p, const std::vector<real>& coordinates, Index begin, Index end) -> Index
+auto binarySearchHelper(double p, const std::vector<double>& coordinates, Index begin, Index end) -> Index
 {
     if(end - begin == 1)
         return begin;
@@ -44,7 +44,7 @@ auto binarySearchHelper(real p, const std::vector<real>& coordinates, Index begi
         return binarySearchHelper(p, coordinates, mid, end);
 }
 
-auto binarySearch(real p, const std::vector<real>& coordinates) -> Index
+auto binarySearch(double p, const std::vector<double>& coordinates) -> Index
 {
     return binarySearchHelper(p, coordinates, 0, coordinates.size());
 }
@@ -55,18 +55,18 @@ BilinearInterpolator::BilinearInterpolator()
 {}
 
 BilinearInterpolator::BilinearInterpolator(
-    const std::vector<real>& xcoordinates,
-    const std::vector<real>& ycoordinates,
-    const std::vector<real>& data)
+    const std::vector<double>& xcoordinates,
+    const std::vector<double>& ycoordinates,
+    const std::vector<double>& data)
 : m_xcoordinates(xcoordinates),
   m_ycoordinates(ycoordinates),
   m_data(data)
 {}
 
 BilinearInterpolator::BilinearInterpolator(
-    const std::vector<real>& xcoordinates,
-    const std::vector<real>& ycoordinates,
-    const std::function<real(real, real)>& function)
+    const std::vector<double>& xcoordinates,
+    const std::vector<double>& ycoordinates,
+    const std::function<double(double, double)>& function)
 : m_xcoordinates(xcoordinates),
   m_ycoordinates(ycoordinates),
   m_data(xcoordinates.size() * ycoordinates.size())
@@ -77,32 +77,32 @@ BilinearInterpolator::BilinearInterpolator(
             m_data[k] = function(xcoordinates[i], ycoordinates[j]);
 }
 
-auto BilinearInterpolator::setCoordinatesX(const std::vector<real>& xcoordinates) -> void
+auto BilinearInterpolator::setCoordinatesX(const std::vector<double>& xcoordinates) -> void
 {
     m_xcoordinates = xcoordinates;
 }
 
-auto BilinearInterpolator::setCoordinatesY(const std::vector<real>& ycoordinates) -> void
+auto BilinearInterpolator::setCoordinatesY(const std::vector<double>& ycoordinates) -> void
 {
     m_ycoordinates = ycoordinates;
 }
 
-auto BilinearInterpolator::setData(const std::vector<real>& data) -> void
+auto BilinearInterpolator::setData(const std::vector<double>& data) -> void
 {
     m_data = data;
 }
 
-auto BilinearInterpolator::xCoordinates() const -> const std::vector<real>&
+auto BilinearInterpolator::xCoordinates() const -> const std::vector<double>&
 {
     return m_xcoordinates;
 }
 
-auto BilinearInterpolator::yCoordinates() const -> const std::vector<real>&
+auto BilinearInterpolator::yCoordinates() const -> const std::vector<double>&
 {
     return m_ycoordinates;
 }
 
-auto BilinearInterpolator::data() const -> const std::vector<real>&
+auto BilinearInterpolator::data() const -> const std::vector<double>&
 {
     return m_data;
 }
@@ -122,8 +122,8 @@ auto BilinearInterpolator::operator()(real x, real y) const -> real
     const auto yA = m_ycoordinates.front();
     const auto yB = m_ycoordinates.back();
 
-    x = std::max(xA, std::min(x, xB));
-    y = std::max(yA, std::min(y, yB));
+    error(x < xA || x > xB, "Cannot interpolate with x = ", x, " when xmin = ", xA, " and xmax = ", xB, ".");
+    error(y < yA || y > yB, "Cannot interpolate with y = ", y, " when ymin = ", yA, " and ymax = ", yB, ".");
 
     const auto size_x = m_xcoordinates.size();
     const auto size_y = m_ycoordinates.size();
