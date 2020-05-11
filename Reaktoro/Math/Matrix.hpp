@@ -39,11 +39,11 @@ using MatrixX = Eigen::Matrix<T, -1, -1, 0, -1, -1>;
 
 ///< Convenient alias to Eigen type.
 template<typename T>
-using ArrayX = Eigen::Array<T, -1, 1,  0,  -1, 1>;
+using ArrayX = Eigen::Array<T, -1, 1, 0, -1, 1>;
 
 ///< Convenient alias to Eigen type.
 template<typename T>
-using ArrayXX = Eigen::Array<T, -1, -1,  0,  -1, -1>;
+using ArrayXX = Eigen::Array<T, -1, -1, 0, -1, -1>;
 
 ///< Convenient alias to Eigen type.
 template<typename T>
