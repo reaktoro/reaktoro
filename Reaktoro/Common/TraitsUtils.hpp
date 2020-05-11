@@ -25,6 +25,9 @@ namespace Reaktoro {
 template<typename Condition>
 using EnableIf = typename std::enable_if<Condition::value, void>::type;
 
+template<typename T>
+using Decay = std::decay_t<T>;
+
 template<typename Type>
 using IsScalar = std::is_scalar<Type>;
 
