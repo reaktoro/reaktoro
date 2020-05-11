@@ -382,7 +382,7 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
 	const Map<String, Vec<real>> coefficients_data =
 	{   // Name         A1, A2, A3, A4, A5, A6
 		{ "CO2"    , {{ 464.1965, 0.09344813, -26986.16, -165.75951, 2248628.9, 0 }} },
-		{ "CaCO3"  , {{ -1228.732, -0.299440, 35512.75, 485.818, 0 }} },
+		{ "CaCO3"  , {{ -1228.732, -0.299440, 35512.75, 485.818, 0, 0 }} },
 		{ "SrCO3"  , {{ -1.019, 0.012826, 0, 0, 0, 0 }} },
 		{ "Calcite", {{ -171.9065, -0.077993, 2839.319, 71.595, 0, 0 }} },
 	};
@@ -446,6 +446,7 @@ auto lgK_vantHoff(real T, real log_k0, real delta_h0) -> real
 
 auto lgK_analytic(real T, const Vec<real>& A) -> real
 {
+	assert(A.size() == 6);
 	return A[0] + A[1]*T + A[2]/T + A[3]*log10(T) + A[4]/(T*T) + A[5]*T*T;
 }
 
