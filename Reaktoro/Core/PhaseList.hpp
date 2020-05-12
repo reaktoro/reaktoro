@@ -92,6 +92,18 @@ public:
         return indexfn(m_phases, RKT_LAMBDA(p, p.name() == name));
     }
 
+    /// Return the index of the phase containing the species with given index or number of phases if not found.
+    auto findWithSpecies(Index index) const -> Index
+    {
+        auto counter = 0;
+        for(auto i = 0; i < size(); ++i) {
+            counter += m_phases[i].species().size();
+            if(counter > index)
+                return i;
+        }
+        return size();
+    }
+
     /// Return the index of the phase with given unique species name or the number of phases if not found.
     auto findWithSpecies(const String& name) const -> Index
     {
@@ -121,6 +133,14 @@ public:
     {
         const auto idx = findWithName(name);
         error(idx >= size(), "Could not find any Phase object with name ", name, ".");
+        return idx;
+    }
+
+    /// Return the index of the phase containing the species with given index or throw a runtime error if not found.
+    auto indexWithSpecies(Index index) const -> Index
+    {
+        const auto idx = findWithSpecies(index);
+        error(idx >= size(), "Could not find any Phase object containing a Species object with index ", index, ".");
         return idx;
     }
 
