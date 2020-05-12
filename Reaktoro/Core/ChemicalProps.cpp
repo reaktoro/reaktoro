@@ -28,26 +28,26 @@ ChemicalProps::ChemicalProps(const ChemicalSystem& system)
     const auto numspecies = sys.species().size();
     const auto numphases = sys.phases().size();
 
-    props.n      = ArrayXr::Zero(numspecies);
-    props.amount = ArrayXr::Zero(numphases);
-    props.x      = ArrayXr::Zero(numspecies);
-    props.G0     = ArrayXr::Zero(numspecies);
-    props.H0     = ArrayXr::Zero(numspecies);
-    props.V0     = ArrayXr::Zero(numspecies);
-    props.Cp0    = ArrayXr::Zero(numspecies);
-    props.Cv0    = ArrayXr::Zero(numspecies);
-    props.Vex    = ArrayXr::Zero(numphases);
-    props.VexT   = ArrayXr::Zero(numphases);
-    props.VexP   = ArrayXr::Zero(numphases);
-    props.Gex    = ArrayXr::Zero(numphases);
-    props.Hex    = ArrayXr::Zero(numphases);
-    props.Cpex   = ArrayXr::Zero(numphases);
-    props.Cvex   = ArrayXr::Zero(numphases);
-    props.ln_g   = ArrayXr::Zero(numspecies);
-    props.ln_a   = ArrayXr::Zero(numspecies);
+    props.n    = ArrayXr::Zero(numspecies);
+    props.nsum = ArrayXr::Zero(numphases);
+    props.x    = ArrayXr::Zero(numspecies);
+    props.G0   = ArrayXr::Zero(numspecies);
+    props.H0   = ArrayXr::Zero(numspecies);
+    props.V0   = ArrayXr::Zero(numspecies);
+    props.Cp0  = ArrayXr::Zero(numspecies);
+    props.Cv0  = ArrayXr::Zero(numspecies);
+    props.Vex  = ArrayXr::Zero(numphases);
+    props.VexT = ArrayXr::Zero(numphases);
+    props.VexP = ArrayXr::Zero(numphases);
+    props.Gex  = ArrayXr::Zero(numphases);
+    props.Hex  = ArrayXr::Zero(numphases);
+    props.Cpex = ArrayXr::Zero(numphases);
+    props.Cvex = ArrayXr::Zero(numphases);
+    props.ln_g = ArrayXr::Zero(numspecies);
+    props.ln_a = ArrayXr::Zero(numspecies);
 }
 
-auto ChemicalProps::update(real T, real P, ArrayXrConstRef n) -> void
+auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> void
 {
     const auto numphases = sys.phases().size();
     auto offset = 0;
@@ -60,12 +60,32 @@ auto ChemicalProps::update(real T, real P, ArrayXrConstRef n) -> void
     }
 }
 
+auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n, real& wrtvar) -> void
+{
+    autodiff::seed(wrtvar);
+    update(T, P, n);
+    autodiff::unseed(wrtvar);
+}
+
+auto ChemicalProps::update(const real& T, const real& P, ArrayXrRef n, Index wrtvar) -> void
+{
+    autodiff::seed(n[wrtvar]);
+    const auto iphase = sys.phases().indexWithSpecies(wrtvar);
+    const auto offset = sys.phases().numSpeciesUntilPhase(iphase);
+    const auto length = sys.phase(iphase).species().size();
+    const auto np = n.segment(offset, length);
+    phaseProps(iphase).update(T, P, np);
+    autodiff::unseed(n[wrtvar]);
+}
+
 auto ChemicalProps::system() const -> const ChemicalSystem&
-{    return sys;
+{
+    return sys;
 }
 
 auto ChemicalProps::data() const -> const ChemicalPropsData&
-{    return props;
+{
+    return props;
 }
 
 auto ChemicalProps::phaseProps(Index idx) const -> PhaseChemicalPropsConstRef
@@ -78,7 +98,7 @@ auto ChemicalProps::phaseProps(Index idx) const -> PhaseChemicalPropsConstRef
         props.T,
         props.P,
         props.n.segment(begin, size),
-        props.amount[idx],
+        props.nsum[idx],
         props.x.segment(begin, size),
         props.G0.segment(begin, size),
         props.H0.segment(begin, size),
@@ -107,7 +127,7 @@ auto ChemicalProps::phaseProps(Index idx) -> PhaseChemicalPropsRef
         props.T,
         props.P,
         props.n.segment(begin, size),
-        props.amount[idx],
+        props.nsum[idx],
         props.x.segment(begin, size),
         props.G0.segment(begin, size),
         props.H0.segment(begin, size),

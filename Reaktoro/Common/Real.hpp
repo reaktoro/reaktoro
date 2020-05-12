@@ -25,4 +25,11 @@ namespace Reaktoro {
 /// The number type used throughout the library.
 using real = autodiff::real;
 
+/// The method that extracts derivatives from real numbers and vectors/arrays of such numbers.
+using autodiff::grad;
+
+/// Convenient method to specify which variable autodiff is to be carried out with respect to.
+template<typename T>
+auto wrt(T& x) -> T& { return x; }
+
 } // namespace Reaktoro
