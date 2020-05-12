@@ -36,7 +36,6 @@
 // #include <Reaktoro/Core/ReactionEquation.hpp>
 // #include <Reaktoro/Core/Species.hpp>
 // #include <Reaktoro/Core/ThermoProps.hpp>
-// #include <Reaktoro/Core/Utils.hpp>
 // #include <Reaktoro/Math/MathUtils.hpp>
 
 // namespace Reaktoro {
