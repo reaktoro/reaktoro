@@ -92,7 +92,20 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     REQUIRE( phases.findWithName("@#$") >= phases.size() );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: PhaseList::findWithSpecies
+    // TESTING METHOD: PhaseList::findWithSpecies(index)
+    //-------------------------------------------------------------------------
+    REQUIRE( phases.findWithSpecies(0)  == 0 ); //  idx(0) -- H2O(aq)
+    REQUIRE( phases.findWithSpecies(5)  == 0 ); //  idx(5) -- Na+
+    REQUIRE( phases.findWithSpecies(8)  == 1 ); //  idx(8) -- H2O(g)
+    REQUIRE( phases.findWithSpecies(13) == 1 ); // idx(13) -- CO(g)
+    REQUIRE( phases.findWithSpecies(14) == 2 ); // idx(14) -- Calcite
+    REQUIRE( phases.findWithSpecies(15) == 3 ); // idx(15) -- Halite
+    REQUIRE( phases.findWithSpecies(16) == 4 ); // idx(16) -- Magnesite
+
+    REQUIRE( phases.findWithSpecies(100) >= phases.size() );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: PhaseList::findWithSpecies(name)
     //-------------------------------------------------------------------------
     REQUIRE( phases.findWithSpecies("H2O(aq)")   == 0 );
     REQUIRE( phases.findWithSpecies("Na+")       == 0 );
@@ -145,7 +158,20 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     REQUIRE_THROWS( phases.indexWithName("@#$") );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: PhaseList::indexWithSpecies
+    // TESTING METHOD: PhaseList::indexWithSpecies(index)
+    //-------------------------------------------------------------------------
+    REQUIRE( phases.indexWithSpecies(0)  == 0 ); //  idx(0) -- H2O(aq)
+    REQUIRE( phases.indexWithSpecies(5)  == 0 ); //  idx(5) -- Na+
+    REQUIRE( phases.indexWithSpecies(8)  == 1 ); //  idx(8) -- H2O(g)
+    REQUIRE( phases.indexWithSpecies(13) == 1 ); // idx(13) -- CO(g)
+    REQUIRE( phases.indexWithSpecies(14) == 2 ); // idx(14) -- Calcite
+    REQUIRE( phases.indexWithSpecies(15) == 3 ); // idx(15) -- Halite
+    REQUIRE( phases.indexWithSpecies(16) == 4 ); // idx(16) -- Magnesite
+
+    REQUIRE_THROWS( phases.indexWithSpecies(100) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: PhaseList::indexWithSpecies(name)
     //-------------------------------------------------------------------------
     REQUIRE( phases.indexWithSpecies("H2O(aq)") == 0 );
     REQUIRE( phases.indexWithSpecies("Na+")     == 0 );
