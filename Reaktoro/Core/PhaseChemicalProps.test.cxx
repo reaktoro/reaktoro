@@ -21,9 +21,10 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Core/PhaseChemicalProps.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 using namespace Reaktoro;
 
-auto createStandardThermoPropsFn(double param)
+inline auto createStandardThermoPropsFn(double param)
 {
     StandardThermoPropsFn fn = [=](real T, real P)
     {
@@ -69,12 +70,12 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
 
     PhaseChemicalProps props(phase);
 
-    SECTION("testing when species have non-zero amounts")
+    SECTION("Testing when species have non-zero amounts")
     {
-        const real T = 300.0;
-        const real P = 123.0e5;
+        real T = 300.0;
+        real P = 123.0e5;
+        ArrayXr n = ArrayXr{{ 1.0, 2.0, 3.0, 4.0 }};
 
-        const ArrayXr n = ArrayXr{{ 1.0, 2.0, 3.0, 4.0 }};
         const ArrayXr x = ArrayXr{{ 0.1, 0.2, 0.3, 0.4 }};
 
         const ArrayXr G0  = 0.1 * ArrayXr{{ 10.0, 20.0, 30.0, 40.0 }} * T * P;
@@ -107,47 +108,191 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         const real U  = H - P*V;
         const real A  = G - P*V;
 
-        const real amount = n.sum();
+        const real nsum = n.sum();
 
         real mass = 0.0;
         for(auto i = 0; i < phase.species().size(); ++i)
             mass += n[i] * phase.species(i).molarMass();
 
+        const real rho = 1.0 / V;
+        const real vol = V * nsum;
+
         REQUIRE_NOTHROW( props.update(T, P, n) );
 
         REQUIRE( props.temperature() == T );
-        REQUIRE( props.pressure() == P );
+        REQUIRE( props.pressure()    == P );
 
-        REQUIRE( props.speciesAmounts()        .isApprox(n)    );
-        REQUIRE( props.moleFractions()         .isApprox(x)    );
-        REQUIRE( props.lnActivityCoefficients().isApprox(ln_g) );
-        REQUIRE( props.lnActivities()          .isApprox(ln_a) );
-        REQUIRE( props.chemicalPotentials()    .isApprox(u)    );
+        REQUIRE( props.speciesAmounts()               .isApprox(n)    );
+        REQUIRE( props.moleFractions()                .isApprox(x)    );
+        REQUIRE( props.lnActivityCoefficients()       .isApprox(ln_g) );
+        REQUIRE( props.lnActivities()                 .isApprox(ln_a) );
+        REQUIRE( props.chemicalPotentials()           .isApprox(u)    );
+        REQUIRE( props.standardGibbsEnergies()        .isApprox(G0)   );
+        REQUIRE( props.standardEnthalpies()           .isApprox(H0)   );
+        REQUIRE( props.standardVolumes()              .isApprox(V0)   );
+        REQUIRE( props.standardEntropies()            .isApprox(S0)   );
+        REQUIRE( props.standardInternalEnergies()     .isApprox(U0)   );
+        REQUIRE( props.standardHelmholtzEnergies()    .isApprox(A0)   );
+        REQUIRE( props.standardHeatCapacitiesConstP() .isApprox(Cp0)  );
+        REQUIRE( props.standardHeatCapacitiesConstV() .isApprox(Cv0)  );
 
-        REQUIRE( (props.standardGibbsEnergies()        == G0  ).all() );
-        REQUIRE( (props.standardEnthalpies()           == H0  ).all() );
-        REQUIRE( (props.standardVolumes()              == V0  ).all() );
-        REQUIRE( (props.standardEntropies()            == S0  ).all() );
-        REQUIRE( (props.standardInternalEnergies()     == U0  ).all() );
-        REQUIRE( (props.standardHelmholtzEnergies()    == A0  ).all() );
-        REQUIRE( (props.standardHeatCapacitiesConstP() == Cp0 ).all() );
-        REQUIRE( (props.standardHeatCapacitiesConstV() == Cv0 ).all() );
+        REQUIRE( props.molarGibbsEnergy()        == Approx(G)    );
+        REQUIRE( props.molarEnthalpy()           == Approx(H)    );
+        REQUIRE( props.molarVolume()             == Approx(V)    );
+        REQUIRE( props.molarEntropy()            == Approx(S)    );
+        REQUIRE( props.molarInternalEnergy()     == Approx(U)    );
+        REQUIRE( props.molarHelmholtzEnergy()    == Approx(A)    );
+        REQUIRE( props.molarHeatCapacityConstP() == Approx(Cp)   );
+        REQUIRE( props.molarHeatCapacityConstV() == Approx(Cv)   );
+        REQUIRE( props.molarDensity()            == Approx(rho)  );
+        REQUIRE( props.amount()                  == Approx(nsum) );
+        REQUIRE( props.mass()                    == Approx(mass) );
+        REQUIRE( props.volume()                  == Approx(vol)  );
 
-        REQUIRE( props.molarGibbsEnergy()        == Approx(G)          );
-        REQUIRE( props.molarEnthalpy()           == Approx(H)          );
-        REQUIRE( props.molarVolume()             == Approx(V)          );
-        REQUIRE( props.molarEntropy()            == Approx(S)          );
-        REQUIRE( props.molarInternalEnergy()     == Approx(U)          );
-        REQUIRE( props.molarHelmholtzEnergy()    == Approx(A)          );
-        REQUIRE( props.molarHeatCapacityConstP() == Approx(Cp)         );
-        REQUIRE( props.molarHeatCapacityConstV() == Approx(Cv)         );
-        REQUIRE( props.molarDensity()            == Approx(1.0 / V)    );
-        REQUIRE( props.amount()                  == Approx(amount)     );
-        REQUIRE( props.mass()                    == Approx(mass)       );
-        REQUIRE( props.volume()                  == Approx(V * amount) );
+        //---------------------------------------------------------------------
+        // Testing temperature derivatives of the properties
+        //---------------------------------------------------------------------
+        const ArrayXd n_T = ArrayXd{{ 0.0, 0.0, 0.0, 0.0 }};
+        const ArrayXd x_T = ArrayXd{{ 0.0, 0.0, 0.0, 0.0 }};
+
+        const ArrayXd  G0_T = 0.1 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
+        const ArrayXd  H0_T = 0.2 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
+        const ArrayXd  V0_T = 0.3 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
+        const ArrayXd Cp0_T = 0.4 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
+        const ArrayXd Cv0_T = 0.5 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
+        const ArrayXd  S0_T = (H0_T - G0_T)/T - (H0 - G0)/(T*T);
+        const ArrayXd  U0_T = H0_T - P*V0_T;
+        const ArrayXd  A0_T = G0_T - P*V0_T;
+
+        const double  Vex_T = 1.0 * P;
+        const double VexT_T = 2.0 * P;
+        const double VexP_T = 3.0 * P;
+        const double  Gex_T = 4.0 * P;
+        const double  Hex_T = 5.0 * P;
+        const double Cpex_T = 6.0 * P;
+        const double Cvex_T = 7.0 * P;
+
+        const ArrayXd ln_g_T = ArrayXd{{0.0, 0.0, 0.0, 0.0}};
+        const ArrayXd ln_a_T = ArrayXd{{0.0, 0.0, 0.0, 0.0}};
+        const ArrayXd    u_T = G0_T + R*ln_a;
+
+        const double  G_T = ( G0_T * x).sum() +  Gex_T;
+        const double  H_T = ( H0_T * x).sum() +  Hex_T;
+        const double  V_T = ( V0_T * x).sum() +  Vex_T;
+        const double Cp_T = (Cp0_T * x).sum() + Cpex_T;
+        const double Cv_T = (Cv0_T * x).sum() + Cvex_T;
+        const double  S_T = (H_T - G_T)/T - (H - G)/(T*T);
+        const double  U_T = H_T - P*V_T;
+        const double  A_T = G_T - P*V_T;
+
+        const double rho_T = -V_T/(V*V);
+        const double vol_T = V_T * nsum;
+
+        REQUIRE_NOTHROW( props.update(T, P, n, wrt(T)) );
+
+        REQUIRE( grad(props.temperature()) == 1.0 );
+        REQUIRE( grad(props.pressure())    == 0.0 );
+
+        REQUIRE( grad(props.speciesAmounts())               .isApprox(n_T)    );
+        REQUIRE( grad(props.moleFractions())                .isApprox(x_T)    );
+        REQUIRE( grad(props.lnActivityCoefficients())       .isApprox(ln_g_T) );
+        REQUIRE( grad(props.lnActivities())                 .isApprox(ln_a_T) );
+        REQUIRE( grad(props.chemicalPotentials())           .isApprox(u_T)    );
+        REQUIRE( grad(props.standardGibbsEnergies())        .isApprox(G0_T)   );
+        REQUIRE( grad(props.standardEnthalpies())           .isApprox(H0_T)   );
+        REQUIRE( grad(props.standardVolumes())              .isApprox(V0_T)   );
+        REQUIRE( grad(props.standardEntropies())            .isApprox(S0_T)   );
+        REQUIRE( grad(props.standardInternalEnergies())     .isApprox(U0_T)   );
+        REQUIRE( grad(props.standardHelmholtzEnergies())    .isApprox(A0_T)   );
+        REQUIRE( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_T)  );
+        REQUIRE( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_T)  );
+
+        REQUIRE( grad(props.molarGibbsEnergy())        == Approx(G_T)   );
+        REQUIRE( grad(props.molarEnthalpy())           == Approx(H_T)   );
+        REQUIRE( grad(props.molarVolume())             == Approx(V_T)   );
+        REQUIRE( grad(props.molarEntropy())            == Approx(S_T)   );
+        REQUIRE( grad(props.molarInternalEnergy())     == Approx(U_T)   );
+        REQUIRE( grad(props.molarHelmholtzEnergy())    == Approx(A_T)   );
+        REQUIRE( grad(props.molarHeatCapacityConstP()) == Approx(Cp_T)  );
+        REQUIRE( grad(props.molarHeatCapacityConstV()) == Approx(Cv_T)  );
+        REQUIRE( grad(props.molarDensity())            == Approx(rho_T) );
+        REQUIRE( grad(props.amount())                  == Approx(0.0)   );
+        REQUIRE( grad(props.mass())                    == Approx(0.0)   );
+        REQUIRE( grad(props.volume())                  == Approx(vol_T) );
+
+        //---------------------------------------------------------------------
+        // Testing pressure derivatives of the properties
+        //---------------------------------------------------------------------
+        const ArrayXd n_P = ArrayXd{{ 0.0, 0.0, 0.0, 0.0 }};
+        const ArrayXd x_P = ArrayXd{{ 0.0, 0.0, 0.0, 0.0 }};
+
+        const ArrayXd  G0_P = 0.1 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
+        const ArrayXd  H0_P = 0.2 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
+        const ArrayXd  V0_P = 0.3 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
+        const ArrayXd Cp0_P = 0.4 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
+        const ArrayXd Cv0_P = 0.5 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
+        const ArrayXd  S0_P = (H0_P - G0_P)/T;
+        const ArrayXd  U0_P = H0_P - V0 - P*V0_P;
+        const ArrayXd  A0_P = G0_P - V0 - P*V0_P;
+
+        const double  Vex_P = 1.0 * T;
+        const double VexT_P = 2.0 * T;
+        const double VexP_P = 3.0 * T;
+        const double  Gex_P = 4.0 * T;
+        const double  Hex_P = 5.0 * T;
+        const double Cpex_P = 6.0 * T;
+        const double Cvex_P = 7.0 * T;
+
+        const ArrayXd ln_g_P = ArrayXd{{0.0, 0.0, 0.0, 0.0}};
+        const ArrayXd ln_a_P = ArrayXd{{0.0, 0.0, 0.0, 0.0}};
+        const ArrayXd    u_P = G0_P;
+
+        const double  G_P = ( G0_P * x).sum() +  Gex_P;
+        const double  H_P = ( H0_P * x).sum() +  Hex_P;
+        const double  V_P = ( V0_P * x).sum() +  Vex_P;
+        const double Cp_P = (Cp0_P * x).sum() + Cpex_P;
+        const double Cv_P = (Cv0_P * x).sum() + Cvex_P;
+        const double  S_P = (H_P - G_P)/T;
+        const double  U_P = H_P - V - P*V_P;
+        const double  A_P = G_P - V - P*V_P;
+
+        const double rho_P = -V_P/(V*V);
+        const double vol_P = V_P * nsum;
+
+        REQUIRE_NOTHROW( props.update(T, P, n, wrt(P)) );
+
+        REQUIRE( grad(props.temperature()) == 0.0 );
+        REQUIRE( grad(props.pressure())    == 1.0 );
+
+        REQUIRE( grad(props.speciesAmounts())               .isApprox(n_P)    );
+        REQUIRE( grad(props.moleFractions())                .isApprox(x_P)    );
+        REQUIRE( grad(props.lnActivityCoefficients())       .isApprox(ln_g_P) );
+        REQUIRE( grad(props.lnActivities())                 .isApprox(ln_a_P) );
+        REQUIRE( grad(props.chemicalPotentials())           .isApprox(u_P)    );
+        REQUIRE( grad(props.standardGibbsEnergies())        .isApprox(G0_P)   );
+        REQUIRE( grad(props.standardEnthalpies())           .isApprox(H0_P)   );
+        REQUIRE( grad(props.standardVolumes())              .isApprox(V0_P)   );
+        REQUIRE( grad(props.standardEntropies())            .isApprox(S0_P)   );
+        REQUIRE( grad(props.standardInternalEnergies())     .isApprox(U0_P)   );
+        REQUIRE( grad(props.standardHelmholtzEnergies())    .isApprox(A0_P)   );
+        REQUIRE( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_P)  );
+        REQUIRE( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_P)  );
+
+        REQUIRE( grad(props.molarGibbsEnergy())        == Approx(G_P)   );
+        REQUIRE( grad(props.molarEnthalpy())           == Approx(H_P)   );
+        REQUIRE( grad(props.molarVolume())             == Approx(V_P)   );
+        REQUIRE( grad(props.molarEntropy())            == Approx(S_P)   );
+        REQUIRE( grad(props.molarInternalEnergy())     == Approx(U_P)   );
+        REQUIRE( grad(props.molarHelmholtzEnergy())    == Approx(A_P)   );
+        REQUIRE( grad(props.molarHeatCapacityConstP()) == Approx(Cp_P)  );
+        REQUIRE( grad(props.molarHeatCapacityConstV()) == Approx(Cv_P)  );
+        REQUIRE( grad(props.molarDensity())            == Approx(rho_P) );
+        REQUIRE( grad(props.amount())                  == Approx(0.0)   );
+        REQUIRE( grad(props.mass())                    == Approx(0.0)   );
+        REQUIRE( grad(props.volume())                  == Approx(vol_P) );
     }
 
-    SECTION("testing when species have zero amounts")
+    SECTION("Testing when species have zero amounts")
     {
         const real T = 300.0;
         const real P = 123.0e5;
@@ -190,20 +335,19 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         REQUIRE( props.temperature() == T );
         REQUIRE( props.pressure()    == P );
 
-        REQUIRE( props.speciesAmounts()        .isApprox(n)    );
-        REQUIRE( props.moleFractions()         .isApprox(x)    );
-        REQUIRE( props.lnActivityCoefficients().isApprox(ln_g) );
-        REQUIRE( props.lnActivities()          .isApprox(ln_a) );
-        REQUIRE( props.chemicalPotentials()    .isApprox(u)    );
-
-        REQUIRE( (props.standardGibbsEnergies()        == G0  ).all() );
-        REQUIRE( (props.standardEnthalpies()           == H0  ).all() );
-        REQUIRE( (props.standardVolumes()              == V0  ).all() );
-        REQUIRE( (props.standardEntropies()            == S0  ).all() );
-        REQUIRE( (props.standardInternalEnergies()     == U0  ).all() );
-        REQUIRE( (props.standardHelmholtzEnergies()    == A0  ).all() );
-        REQUIRE( (props.standardHeatCapacitiesConstP() == Cp0 ).all() );
-        REQUIRE( (props.standardHeatCapacitiesConstV() == Cv0 ).all() );
+        REQUIRE( props.speciesAmounts()               .isApprox(n)    );
+        REQUIRE( props.moleFractions()                .isApprox(x)    );
+        REQUIRE( props.lnActivityCoefficients()       .isApprox(ln_g) );
+        REQUIRE( props.lnActivities()                 .isApprox(ln_a) );
+        REQUIRE( props.chemicalPotentials()           .isApprox(u)    );
+        REQUIRE( props.standardGibbsEnergies()        .isApprox(G0)   );
+        REQUIRE( props.standardEnthalpies()           .isApprox(H0)   );
+        REQUIRE( props.standardVolumes()              .isApprox(V0)   );
+        REQUIRE( props.standardEntropies()            .isApprox(S0)   );
+        REQUIRE( props.standardInternalEnergies()     .isApprox(U0)   );
+        REQUIRE( props.standardHelmholtzEnergies()    .isApprox(A0)   );
+        REQUIRE( props.standardHeatCapacitiesConstP() .isApprox(Cp0)  );
+        REQUIRE( props.standardHeatCapacitiesConstV() .isApprox(Cv0)  );
 
         REQUIRE( props.molarGibbsEnergy()        == Approx(0.0) );
         REQUIRE( props.molarEnthalpy()           == Approx(0.0) );

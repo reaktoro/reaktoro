@@ -38,7 +38,7 @@ struct ChemicalPropsData
     ArrayXr n;
 
     /// The sum of species amounts in each phase of the system (in mol).
-    ArrayXr amount;
+    ArrayXr nsum;
 
     /// The mole fractions of the species in the system (in mol/mol).
     ArrayXr x;
@@ -97,7 +97,21 @@ public:
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
-    auto update(real T, real P, ArrayXrConstRef n) -> void;
+    auto update(const real& T, const real& P, ArrayXrConstRef n) -> void;
+
+    /// Update the chemical properties of the chemical system.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
+    auto update(const real& T, const real& P, ArrayXrConstRef n, real& wrtvar) -> void;
+
+    /// Update the chemical properties of the chemical system.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    /// @param wrtvar The index of the species amount variable for which automatic differentiation is carried out.
+    auto update(const real& T, const real& P, ArrayXrRef n, Index wrtvar) -> void;
 
     /// Return the chemical system associated with these chemical properties.
     auto system() const -> const ChemicalSystem&;
