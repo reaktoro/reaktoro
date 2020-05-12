@@ -25,7 +25,6 @@
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 

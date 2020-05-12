@@ -32,7 +32,6 @@
 #include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 /// @defgroup Core Core

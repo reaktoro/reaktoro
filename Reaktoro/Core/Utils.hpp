@@ -17,40 +17,29 @@
 
 #pragma once
 
-// C++ includes
-#include <string>
-#include <vector>
-
 // Reaktoro includes
-#include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
-/// Return the names of the entries in a container.
-template<typename NamedValues>
-auto names(const NamedValues& values) -> std::vector<std::string>;
-
-/// Return the electrical charges of all species in a list of species
-template<typename ChargedValues>
-auto charges(const ChargedValues& values) -> VectorXr;
-
-/// Return the molar masses of all species in a list of species (in units of kg/mol)
-template<typename SpeciesValues>
-auto molarMasses(const SpeciesValues& species) -> VectorXr;
-
-/// Return the mole fractions of the species.
-inline auto moleFractions(VectorXrConstRef n) -> VectorXr
+/// Return the mole fractions of the species with given amounts.
+inline auto moleFractions(ArrayXrConstRef n) -> ArrayXr
 {
     const auto nspecies = n.size();
     if(nspecies == 1)
-        return ones(nspecies);
-    const real nt = sum(n);
-    if(nt != 0.0) return n/nt;
-    else return zeros(nspecies);
+        return ArrayXr{{1.0}};
+    const auto nsum = n.sum();
+    if(nsum != 0.0) return n/nsum;
+    else return ArrayXr::Zero(nspecies);
+}
+
+/// Return the derivatives of the mole fractions of the species with respect to their amounts.
+inline auto moleFractionsJacobian(ArrayXrRef n) -> MatrixXd
+{
+    using autodiff::jacobian;
+    using autodiff::wrt;
+    using autodiff::at;
+    return jacobian(moleFractions, wrt(n), at(n));
 }
 
 } // namespace Reaktoro
-
-#include "Utils.hxx"
