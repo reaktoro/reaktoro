@@ -209,4 +209,22 @@ auto oneof(const X x, const X0& x0, const XS&... xs)
     return x == x0;
 }
 
+/// Return the sum `f(ibegin) + ... + f(iend-1)` for a given function `f`.
+template<typename Function>
+auto sum(std::size_t ibegin, std::size_t iend, const Function& f)
+{
+    using T = std::invoke_result_t<Function, std::size_t>;
+    T res = static_cast<T>(0);
+    for(auto i = ibegin; i < iend; ++i)
+        res += f(i);
+    return res;
+}
+
+/// Return the sum `f(0) + ... + f(iend-1)` for a given function `f`.
+template<typename Function>
+auto sum(std::size_t iend, const Function& f)
+{
+    return sum(0, iend, f);
+}
+
 } // namespace Reaktoro

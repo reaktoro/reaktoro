@@ -217,4 +217,10 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
 
     REQUIRE_FALSE( oneof(1, 2) );
     REQUIRE_FALSE( oneof(1, 4, 5) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: sum
+    //-------------------------------------------------------------------------
+    REQUIRE( sum(2, 5, [](int i) { return i*i; }) == Approx(2*2 + 3*3 + 4*4) );
+    REQUIRE( sum(3, [](int i) { return i*i; }) == Approx(0*0 + 1*1 + 2*2) );
 }
