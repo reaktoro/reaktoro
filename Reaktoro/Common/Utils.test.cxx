@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Common/Utils.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing Utils module", "[Utils]")

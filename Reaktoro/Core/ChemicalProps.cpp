@@ -60,7 +60,7 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
     }
 }
 
-auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n, real& wrtvar) -> void
+auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void
 {
     autodiff::seed(wrtvar);
     update(T, P, n);

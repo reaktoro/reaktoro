@@ -32,7 +32,6 @@
 #include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
 /// @defgroup Core Core
 /// This is the main module in Reaktoro, in which the essential classes are defined.

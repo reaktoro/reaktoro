@@ -23,6 +23,7 @@
 
 // // Reaktoro includes
 // #include <Reaktoro/Common/Exception.hpp>
+// #include <Reaktoro/Common/Matrix.hpp>
 // #include <Reaktoro/Common/StringUtils.hpp>
 // #include <Reaktoro/Common/Units.hpp>
 // #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -36,7 +37,6 @@
 // #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 // #include <Reaktoro/Kinetics/KineticOptions.hpp>
 // #include <Reaktoro/Kinetics/KineticProblem.hpp>
-// #include <Reaktoro/Math/Matrix.hpp>
 // #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 // namespace Reaktoro {

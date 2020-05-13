@@ -22,6 +22,5 @@
 #include <Reaktoro/Math/LagrangeInterpolator.hpp>
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Math/ODE.hpp>
 #include <Reaktoro/Math/Roots.hpp>

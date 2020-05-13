@@ -82,29 +82,45 @@ using VectorXdStridedConstRef = Eigen::Ref<const VectorXd, 0, Eigen::InnerStride
 // == ARRAY TYPE ALIASES ==
 //---------------------------------------------------------------------------------------------------------------------
 
-using ArrayXr                = autodiff::ArrayXreal;                               ///< Convenient alias to Eigen type.
-using ArrayXrRef             = Eigen::Ref<ArrayXr>;                                ///< Convenient alias to Eigen type.
-using ArrayXrConstRef        = Eigen::Ref<const ArrayXr>;                          ///< Convenient alias to Eigen type.
-using ArrayXrMap             = Eigen::Map<ArrayXr>;                                ///< Convenient alias to Eigen type.
-using ArrayXrConstMap        = Eigen::Map<const ArrayXr>;                          ///< Convenient alias to Eigen type.
-using ArrayXrStridedRef      = Eigen::Ref<ArrayXr, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
-using ArrayXrStridedConstRef = Eigen::Ref<const ArrayXr, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
+using ArrayXr                 = autodiff::ArrayXreal;                                ///< Convenient alias to Eigen type.
+using ArrayXrRef              = Eigen::Ref<ArrayXr>;                                 ///< Convenient alias to Eigen type.
+using ArrayXrConstRef         = Eigen::Ref<const ArrayXr>;                           ///< Convenient alias to Eigen type.
+using ArrayXrMap              = Eigen::Map<ArrayXr>;                                 ///< Convenient alias to Eigen type.
+using ArrayXrConstMap         = Eigen::Map<const ArrayXr>;                           ///< Convenient alias to Eigen type.
+using ArrayXrStridedRef       = Eigen::Ref<ArrayXr, 0, Eigen::InnerStride<>>;        ///< Convenient alias to Eigen type.
+using ArrayXrStridedConstRef  = Eigen::Ref<const ArrayXr, 0, Eigen::InnerStride<>>;  ///< Convenient alias to Eigen type.
 
-using ArrayXl                = ArrayX<long>;                                       ///< Convenient alias to Eigen type.
-using ArrayXlRef             = Eigen::Ref<ArrayXl>;                                ///< Convenient alias to Eigen type.
-using ArrayXlConstRef        = Eigen::Ref<const ArrayXl>;                          ///< Convenient alias to Eigen type.
-using ArrayXlMap             = Eigen::Map<ArrayXl>;                                ///< Convenient alias to Eigen type.
-using ArrayXlConstMap        = Eigen::Map<const ArrayXl>;                          ///< Convenient alias to Eigen type.
-using ArrayXlStridedRef      = Eigen::Ref<ArrayXl, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
-using ArrayXlStridedConstRef = Eigen::Ref<const ArrayXl, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
+using ArrayXl                 = ArrayX<long>;                                        ///< Convenient alias to Eigen type.
+using ArrayXlRef              = Eigen::Ref<ArrayXl>;                                 ///< Convenient alias to Eigen type.
+using ArrayXlConstRef         = Eigen::Ref<const ArrayXl>;                           ///< Convenient alias to Eigen type.
+using ArrayXlMap              = Eigen::Map<ArrayXl>;                                 ///< Convenient alias to Eigen type.
+using ArrayXlConstMap         = Eigen::Map<const ArrayXl>;                           ///< Convenient alias to Eigen type.
+using ArrayXlStridedRef       = Eigen::Ref<ArrayXl, 0, Eigen::InnerStride<>>;        ///< Convenient alias to Eigen type.
+using ArrayXlStridedConstRef  = Eigen::Ref<const ArrayXl, 0, Eigen::InnerStride<>>;  ///< Convenient alias to Eigen type.
 
-using ArrayXd                = Eigen::ArrayXd;                                     ///< Convenient alias to Eigen type.
-using ArrayXdRef             = Eigen::Ref<ArrayXd>;                                ///< Convenient alias to Eigen type.
-using ArrayXdConstRef        = Eigen::Ref<const ArrayXd>;                          ///< Convenient alias to Eigen type.
-using ArrayXdMap             = Eigen::Map<ArrayXd>;                                ///< Convenient alias to Eigen type.
-using ArrayXdConstMap        = Eigen::Map<const ArrayXd>;                          ///< Convenient alias to Eigen type.
-using ArrayXdStridedRef      = Eigen::Ref<ArrayXd, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
-using ArrayXdStridedConstRef = Eigen::Ref<const ArrayXd, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
+using ArrayXd                 = Eigen::ArrayXd;                                      ///< Convenient alias to Eigen type.
+using ArrayXdRef              = Eigen::Ref<ArrayXd>;                                 ///< Convenient alias to Eigen type.
+using ArrayXdConstRef         = Eigen::Ref<const ArrayXd>;                           ///< Convenient alias to Eigen type.
+using ArrayXdMap              = Eigen::Map<ArrayXd>;                                 ///< Convenient alias to Eigen type.
+using ArrayXdConstMap         = Eigen::Map<const ArrayXd>;                           ///< Convenient alias to Eigen type.
+using ArrayXdStridedRef       = Eigen::Ref<ArrayXd, 0, Eigen::InnerStride<>>;        ///< Convenient alias to Eigen type.
+using ArrayXdStridedConstRef  = Eigen::Ref<const ArrayXd, 0, Eigen::InnerStride<>>;  ///< Convenient alias to Eigen type.
+
+using ArrayXXr                = autodiff::ArrayXXreal;                               ///< Convenient alias to Eigen type.
+using ArrayXXrRef             = Eigen::Ref<ArrayXXr>;                                ///< Convenient alias to Eigen type.
+using ArrayXXrConstRef        = Eigen::Ref<const ArrayXXr>;                          ///< Convenient alias to Eigen type.
+using ArrayXXrMap             = Eigen::Map<ArrayXXr>;                                ///< Convenient alias to Eigen type.
+using ArrayXXrConstMap        = Eigen::Map<const ArrayXXr>;                          ///< Convenient alias to Eigen type.
+using ArrayXXrStridedRef      = Eigen::Ref<ArrayXXr, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
+using ArrayXXrStridedConstRef = Eigen::Ref<const ArrayXXr, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
+
+using ArrayXXd                = Eigen::ArrayXXd;                                     ///< Convenient alias to Eigen type.
+using ArrayXXdRef             = Eigen::Ref<ArrayXXd>;                                ///< Convenient alias to Eigen type.
+using ArrayXXdConstRef        = Eigen::Ref<const ArrayXXd>;                          ///< Convenient alias to Eigen type.
+using ArrayXXdMap             = Eigen::Map<ArrayXXd>;                                ///< Convenient alias to Eigen type.
+using ArrayXXdConstMap        = Eigen::Map<const ArrayXXd>;                          ///< Convenient alias to Eigen type.
+using ArrayXXdStridedRef      = Eigen::Ref<ArrayXXd, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
+using ArrayXXdStridedConstRef = Eigen::Ref<const ArrayXXd, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
 
 //---------------------------------------------------------------------------------------------------------------------
 // == MATRIX TYPE ALIASES ==
@@ -296,78 +312,6 @@ auto submatrix(Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indi
 /// @param icols The indices of the columns of the matrix
 template<typename Derived, typename Indices>
 auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> decltype(mat(irows, icols));
-
-/// Return a block mapped view of a matrix.
-/// @param mat The matrix from which the mapped view is created.
-/// @param row The index of the row at which the view starts.
-/// @param col The index of the column at which the view starts.
-/// @param nrows The number of rows of the mapped view.
-/// @param ncols The number of columns of the mapped view.
-template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto blockmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
-{
-    Eigen::Stride<Rows,Cols> stride(mat.outerStride(), mat.innerStride());
-    return Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows,MaxCols>>(
-        mat.block(row, col, nrows, ncols).data(), nrows, ncols, stride);
-}
-
-/// Return a const block mapped view of a matrix.
-/// @param mat The matrix from which the mapped view is created.
-/// @param row The index of the row at which the view starts.
-/// @param col The index of the column at which the view starts.
-/// @param nrows The number of rows of the mapped view.
-/// @param ncols The number of columns of the mapped view.
-template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto blockmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
-{
-    Eigen::Stride<Rows,Cols> stride(mat.outerStride(), mat.innerStride());
-    return Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows,MaxCols>>(
-        mat.block(row, col, nrows, ncols).data(), nrows, ncols, stride);
-}
-
-/// Return a mapped view of a sequence of rows of a matrix.
-/// @param mat The matrix from which the mapped view is created.
-/// @param row The index of the row at which the view starts.
-/// @param nrows The number of rows of the mapped view.
-template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto rowsmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
-{
-    return blockmap(mat, row, 0, nrows, mat.cols());
-}
-
-/// Return a const mapped view of a sequence of rows of a matrix.
-/// @param mat The matrix from which the mapped view is created.
-/// @param row The index of the row at which the view starts.
-/// @param nrows The number of rows of the mapped view.
-template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto rowsmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
-{
-    return blockmap(mat, row, 0, nrows, mat.cols());
-}
-
-/// Return a mapped view of a sequence of columns of a matrix.
-/// @param mat The matrix from which the mapped view is created.
-/// @param row The index of the row at which the view starts.
-/// @param col The index of the column at which the view starts.
-/// @param nrows The number of rows of the mapped view.
-/// @param ncols The number of columns of the mapped view.
-template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto colsmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
-{
-    return blockmap(mat, 0, col, mat.rows(), ncols);
-}
-
-/// Return a const mapped view of a sequence of columns of a matrix.
-/// @param mat The matrix from which the mapped view is created.
-/// @param row The index of the row at which the view starts.
-/// @param col The index of the column at which the view starts.
-/// @param nrows The number of rows of the mapped view.
-/// @param ncols The number of columns of the mapped view.
-template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-auto colsmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
-{
-    return blockmap(mat, 0, col, mat.rows(), ncols);
-}
 
 /// Return the transpose of the matrix
 template<typename Derived>

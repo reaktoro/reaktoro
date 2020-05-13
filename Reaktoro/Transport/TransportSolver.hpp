@@ -23,13 +23,13 @@
 
 // // Reaktoro includes
 // #include <Reaktoro/Common/Index.hpp>
+// #include <Reaktoro/Common/Matrix.hpp>
 // #include <Reaktoro/Common/StringList.hpp>
 // #include <Reaktoro/Core/ChemicalOutput.hpp>
 // #include <Reaktoro/Core/ChemicalProps.hpp>
 // #include <Reaktoro/Core/ChemicalState.hpp>
 // #include <Reaktoro/Core/ChemicalSystem.hpp>
 // #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
-// #include <Reaktoro/Math/Matrix.hpp>
 
 // namespace Reaktoro {
 

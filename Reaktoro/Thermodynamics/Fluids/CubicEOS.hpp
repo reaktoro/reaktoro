@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/PhaseIdentification.hpp>
 
 namespace Reaktoro {

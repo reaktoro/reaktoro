@@ -18,9 +18,9 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/PhaseChemicalProps.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -104,7 +104,7 @@ public:
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
     /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
-    auto update(const real& T, const real& P, ArrayXrConstRef n, real& wrtvar) -> void;
+    auto update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void;
 
     /// Update the chemical properties of the chemical system.
     /// @param T The temperature condition (in K)

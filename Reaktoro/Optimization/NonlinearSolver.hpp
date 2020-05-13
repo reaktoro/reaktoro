@@ -22,7 +22,7 @@
 #include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Outputter.hpp>
 
 namespace Reaktoro {

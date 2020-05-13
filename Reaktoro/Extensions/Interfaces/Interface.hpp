@@ -22,7 +22,7 @@
 #include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Models/ChemicalModel.hpp>
 #include <Reaktoro/Models/ThermoModel.hpp>
 

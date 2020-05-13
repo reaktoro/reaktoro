@@ -26,6 +26,7 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalProps;
 class ChemicalSystem;
+class ChemicalState;
 
 // TODO: Implement PorousRockState class in the PorousMedia extension.
 

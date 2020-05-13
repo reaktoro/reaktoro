@@ -22,8 +22,8 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Gnuplot.hpp>
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/InterpolationUtils.hpp>
 #include <Reaktoro/Common/Json.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/Outputter.hpp>
@@ -34,3 +34,4 @@
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Common/Utils.hpp>
