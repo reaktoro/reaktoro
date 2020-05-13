@@ -20,8 +20,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Utils.hpp>
 #include <Reaktoro/Core/PhaseChemicalProps.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 using namespace Reaktoro;
 
 inline auto createStandardThermoPropsFn(double param)
@@ -68,6 +68,13 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         Species("H2S(g)").withStandardThermoPropsFn(createStandardThermoPropsFn(40.0))  // param = 40.0
     });
 
+    const auto molar_masses = ArrayXd{{
+        phase.species(0).molarMass(),
+        phase.species(1).molarMass(),
+        phase.species(2).molarMass(),
+        phase.species(3).molarMass(),
+    }};
+
     PhaseChemicalProps props(phase);
 
     SECTION("Testing when species have non-zero amounts")
@@ -109,10 +116,7 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         const real A  = G - P*V;
 
         const real nsum = n.sum();
-
-        real mass = 0.0;
-        for(auto i = 0; i < phase.species().size(); ++i)
-            mass += n[i] * phase.species(i).molarMass();
+        const real mass = (n * molar_masses).sum();
 
         const real rho = 1.0 / V;
         const real vol = V * nsum;
@@ -290,6 +294,88 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         REQUIRE( grad(props.amount())                  == Approx(0.0)   );
         REQUIRE( grad(props.mass())                    == Approx(0.0)   );
         REQUIRE( grad(props.volume())                  == Approx(vol_P) );
+
+        //---------------------------------------------------------------------
+        // Testing compositional derivatives of the properties
+        //---------------------------------------------------------------------
+        const ArrayXXd n_n = MatrixXd::Identity(4, 4);
+        const ArrayXXd x_n = moleFractionsJacobian(n);
+
+        const ArrayXXd  G0_n = ArrayXXd::Zero(4, 4);
+        const ArrayXXd  H0_n = ArrayXXd::Zero(4, 4);
+        const ArrayXXd  V0_n = ArrayXXd::Zero(4, 4);
+        const ArrayXXd Cp0_n = ArrayXXd::Zero(4, 4);
+        const ArrayXXd Cv0_n = ArrayXXd::Zero(4, 4);
+        const ArrayXXd  S0_n = ArrayXXd::Zero(4, 4);
+        const ArrayXXd  U0_n = ArrayXXd::Zero(4, 4);
+        const ArrayXXd  A0_n = ArrayXXd::Zero(4, 4);
+
+        const ArrayXd  Vex_n = ArrayXd::Zero(4);
+        const ArrayXd VexT_n = ArrayXd::Zero(4);
+        const ArrayXd VexP_n = ArrayXd::Zero(4);
+        const ArrayXd  Gex_n = ArrayXd::Zero(4);
+        const ArrayXd  Hex_n = ArrayXd::Zero(4);
+        const ArrayXd Cpex_n = ArrayXd::Zero(4);
+        const ArrayXd Cvex_n = ArrayXd::Zero(4);
+
+        const ArrayXXd ln_g_n = 8.0 * x_n;
+        const ArrayXXd ln_a_n = 9.0 * x_n;
+        const ArrayXXd u_n    = R*T*ln_a_n;
+
+        auto dot = [](auto A, auto x)
+        {
+            return (A.matrix().transpose() * x.matrix()).array();
+        };
+
+        const ArrayXd  G_n = dot(x_n,  G0) +  Gex_n;
+        const ArrayXd  H_n = dot(x_n,  H0) +  Hex_n;
+        const ArrayXd  V_n = dot(x_n,  V0) +  Vex_n;
+        const ArrayXd Cp_n = dot(x_n, Cp0) + Cpex_n;
+        const ArrayXd Cv_n = dot(x_n, Cv0) + Cvex_n;
+        const ArrayXd  S_n = (H_n - G_n)/T;
+        const ArrayXd  U_n = H_n - P*V_n;
+        const ArrayXd  A_n = G_n - P*V_n;
+
+        const ArrayXd nsum_n = ArrayXd::Ones(4);
+        const ArrayXd mass_n = molar_masses;
+
+        const ArrayXd rho_n = -V_n / (V*V);
+        const ArrayXd vol_n = V_n * nsum + V * nsum_n;
+
+        for(auto i = 0; i < 4; ++i)
+        {
+            REQUIRE_NOTHROW( props.update(T, P, n, wrtn(i)) );
+
+            REQUIRE( grad(props.temperature()) == 0.0 );
+            REQUIRE( grad(props.pressure())    == 0.0 );
+
+            REQUIRE( grad(props.speciesAmounts())               .isApprox(   n_n.col(i)) );
+            REQUIRE( grad(props.moleFractions())                .isApprox(   x_n.col(i)) );
+            REQUIRE( grad(props.lnActivityCoefficients())       .isApprox(ln_g_n.col(i)) );
+            REQUIRE( grad(props.lnActivities())                 .isApprox(ln_a_n.col(i)) );
+            REQUIRE( grad(props.chemicalPotentials())           .isApprox(   u_n.col(i)) );
+            REQUIRE( grad(props.standardGibbsEnergies())        .isApprox(  G0_n.col(i)) );
+            REQUIRE( grad(props.standardEnthalpies())           .isApprox(  H0_n.col(i)) );
+            REQUIRE( grad(props.standardVolumes())              .isApprox(  V0_n.col(i)) );
+            REQUIRE( grad(props.standardEntropies())            .isApprox(  S0_n.col(i)) );
+            REQUIRE( grad(props.standardInternalEnergies())     .isApprox(  U0_n.col(i)) );
+            REQUIRE( grad(props.standardHelmholtzEnergies())    .isApprox(  A0_n.col(i)) );
+            REQUIRE( grad(props.standardHeatCapacitiesConstP()) .isApprox( Cp0_n.col(i)) );
+            REQUIRE( grad(props.standardHeatCapacitiesConstV()) .isApprox( Cv0_n.col(i)) );
+
+            REQUIRE( grad(props.molarGibbsEnergy())        == Approx(   G_n[i]) );
+            REQUIRE( grad(props.molarEnthalpy())           == Approx(   H_n[i]) );
+            REQUIRE( grad(props.molarVolume())             == Approx(   V_n[i]) );
+            REQUIRE( grad(props.molarEntropy())            == Approx(   S_n[i]) );
+            REQUIRE( grad(props.molarInternalEnergy())     == Approx(   U_n[i]) );
+            REQUIRE( grad(props.molarHelmholtzEnergy())    == Approx(   A_n[i]) );
+            REQUIRE( grad(props.molarHeatCapacityConstP()) == Approx(  Cp_n[i]) );
+            REQUIRE( grad(props.molarHeatCapacityConstV()) == Approx(  Cv_n[i]) );
+            REQUIRE( grad(props.molarDensity())            == Approx( rho_n[i]) );
+            REQUIRE( grad(props.amount())                  == Approx(nsum_n[i]) );
+            REQUIRE( grad(props.mass())                    == Approx(mass_n[i]) );
+            REQUIRE( grad(props.volume())                  == Approx( vol_n[i]) );
+        }
     }
 
     SECTION("Testing when species have zero amounts")
