@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ArrayStream.hpp>
+#include <Reaktoro/Common/AutoDiff.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 
@@ -269,7 +270,7 @@ public:
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the phase (in mol)
     /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
-    auto update(const real& T, const real& P, ArrayXrConstRef n, real& wrtvar)
+    auto update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar)
     {
         autodiff::seed(wrtvar);
         update(T, P, n);
@@ -283,7 +284,7 @@ public:
     /// @param wrtvar The index of the species amount variable for which automatic differentiation is carried out.
     auto update(const real& T, const real& P, ArrayXrRef n, Index wrtvar)
     {
-        update(T, P, n, n[wrtvar]);
+        update(T, P, n, wrt(n[wrtvar]));
     }
 
     /// Return the underlying Phase object.
