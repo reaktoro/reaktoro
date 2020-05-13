@@ -119,7 +119,13 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         const real mass = (n * molar_masses).sum();
 
         const real rho = 1.0 / V;
-        const real vol = V * nsum;
+
+        const real Gtot = G * nsum;
+        const real Htot = H * nsum;
+        const real Vtot = V * nsum;
+        const real Stot = S * nsum;
+        const real Utot = U * nsum;
+        const real Atot = A * nsum;
 
         REQUIRE_NOTHROW( props.update(T, P, n) );
 
@@ -151,7 +157,12 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         REQUIRE( props.molarDensity()            == Approx(rho)  );
         REQUIRE( props.amount()                  == Approx(nsum) );
         REQUIRE( props.mass()                    == Approx(mass) );
-        REQUIRE( props.volume()                  == Approx(vol)  );
+        REQUIRE( props.gibbsEnergy()             == Approx(Gtot) );
+        REQUIRE( props.enthalpy()                == Approx(Htot) );
+        REQUIRE( props.volume()                  == Approx(Vtot) );
+        REQUIRE( props.entropy()                 == Approx(Stot) );
+        REQUIRE( props.internalEnergy()          == Approx(Utot) );
+        REQUIRE( props.helmholtzEnergy()         == Approx(Atot) );
 
         //---------------------------------------------------------------------
         // Testing temperature derivatives of the properties
@@ -190,7 +201,13 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         const double  A_T = G_T - P*V_T;
 
         const double rho_T = -V_T/(V*V);
-        const double vol_T = V_T * nsum;
+
+        const double Gtot_T = G_T * nsum;
+        const double Htot_T = H_T * nsum;
+        const double Vtot_T = V_T * nsum;
+        const double Stot_T = S_T * nsum;
+        const double Utot_T = U_T * nsum;
+        const double Atot_T = A_T * nsum;
 
         REQUIRE_NOTHROW( props.update(T, P, n, wrt(T)) );
 
@@ -211,18 +228,23 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         REQUIRE( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_T)  );
         REQUIRE( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_T)  );
 
-        REQUIRE( grad(props.molarGibbsEnergy())        == Approx(G_T)   );
-        REQUIRE( grad(props.molarEnthalpy())           == Approx(H_T)   );
-        REQUIRE( grad(props.molarVolume())             == Approx(V_T)   );
-        REQUIRE( grad(props.molarEntropy())            == Approx(S_T)   );
-        REQUIRE( grad(props.molarInternalEnergy())     == Approx(U_T)   );
-        REQUIRE( grad(props.molarHelmholtzEnergy())    == Approx(A_T)   );
-        REQUIRE( grad(props.molarHeatCapacityConstP()) == Approx(Cp_T)  );
-        REQUIRE( grad(props.molarHeatCapacityConstV()) == Approx(Cv_T)  );
-        REQUIRE( grad(props.molarDensity())            == Approx(rho_T) );
-        REQUIRE( grad(props.amount())                  == Approx(0.0)   );
-        REQUIRE( grad(props.mass())                    == Approx(0.0)   );
-        REQUIRE( grad(props.volume())                  == Approx(vol_T) );
+        REQUIRE( grad(props.molarGibbsEnergy())        == Approx(G_T)    );
+        REQUIRE( grad(props.molarEnthalpy())           == Approx(H_T)    );
+        REQUIRE( grad(props.molarVolume())             == Approx(V_T)    );
+        REQUIRE( grad(props.molarEntropy())            == Approx(S_T)    );
+        REQUIRE( grad(props.molarInternalEnergy())     == Approx(U_T)    );
+        REQUIRE( grad(props.molarHelmholtzEnergy())    == Approx(A_T)    );
+        REQUIRE( grad(props.molarHeatCapacityConstP()) == Approx(Cp_T)   );
+        REQUIRE( grad(props.molarHeatCapacityConstV()) == Approx(Cv_T)   );
+        REQUIRE( grad(props.molarDensity())            == Approx(rho_T)  );
+        REQUIRE( grad(props.amount())                  == Approx(0.0)    );
+        REQUIRE( grad(props.mass())                    == Approx(0.0)    );
+        REQUIRE( grad(props.gibbsEnergy())             == Approx(Gtot_T) );
+        REQUIRE( grad(props.enthalpy())                == Approx(Htot_T) );
+        REQUIRE( grad(props.volume())                  == Approx(Vtot_T) );
+        REQUIRE( grad(props.entropy())                 == Approx(Stot_T) );
+        REQUIRE( grad(props.internalEnergy())          == Approx(Utot_T) );
+        REQUIRE( grad(props.helmholtzEnergy())         == Approx(Atot_T) );
 
         //---------------------------------------------------------------------
         // Testing pressure derivatives of the properties
@@ -261,7 +283,13 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         const double  A_P = G_P - V - P*V_P;
 
         const double rho_P = -V_P/(V*V);
-        const double vol_P = V_P * nsum;
+
+        const double Gtot_P = G_P * nsum;
+        const double Htot_P = H_P * nsum;
+        const double Vtot_P = V_P * nsum;
+        const double Stot_P = S_P * nsum;
+        const double Utot_P = U_P * nsum;
+        const double Atot_P = A_P * nsum;
 
         REQUIRE_NOTHROW( props.update(T, P, n, wrt(P)) );
 
@@ -282,18 +310,23 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         REQUIRE( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_P)  );
         REQUIRE( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_P)  );
 
-        REQUIRE( grad(props.molarGibbsEnergy())        == Approx(G_P)   );
-        REQUIRE( grad(props.molarEnthalpy())           == Approx(H_P)   );
-        REQUIRE( grad(props.molarVolume())             == Approx(V_P)   );
-        REQUIRE( grad(props.molarEntropy())            == Approx(S_P)   );
-        REQUIRE( grad(props.molarInternalEnergy())     == Approx(U_P)   );
-        REQUIRE( grad(props.molarHelmholtzEnergy())    == Approx(A_P)   );
-        REQUIRE( grad(props.molarHeatCapacityConstP()) == Approx(Cp_P)  );
-        REQUIRE( grad(props.molarHeatCapacityConstV()) == Approx(Cv_P)  );
-        REQUIRE( grad(props.molarDensity())            == Approx(rho_P) );
-        REQUIRE( grad(props.amount())                  == Approx(0.0)   );
-        REQUIRE( grad(props.mass())                    == Approx(0.0)   );
-        REQUIRE( grad(props.volume())                  == Approx(vol_P) );
+        REQUIRE( grad(props.molarGibbsEnergy())        == Approx(G_P)    );
+        REQUIRE( grad(props.molarEnthalpy())           == Approx(H_P)    );
+        REQUIRE( grad(props.molarVolume())             == Approx(V_P)    );
+        REQUIRE( grad(props.molarEntropy())            == Approx(S_P)    );
+        REQUIRE( grad(props.molarInternalEnergy())     == Approx(U_P)    );
+        REQUIRE( grad(props.molarHelmholtzEnergy())    == Approx(A_P)    );
+        REQUIRE( grad(props.molarHeatCapacityConstP()) == Approx(Cp_P)   );
+        REQUIRE( grad(props.molarHeatCapacityConstV()) == Approx(Cv_P)   );
+        REQUIRE( grad(props.molarDensity())            == Approx(rho_P)  );
+        REQUIRE( grad(props.amount())                  == Approx(0.0)    );
+        REQUIRE( grad(props.mass())                    == Approx(0.0)    );
+        REQUIRE( grad(props.gibbsEnergy())             == Approx(Gtot_P) );
+        REQUIRE( grad(props.enthalpy())                == Approx(Htot_P) );
+        REQUIRE( grad(props.volume())                  == Approx(Vtot_P) );
+        REQUIRE( grad(props.entropy())                 == Approx(Stot_P) );
+        REQUIRE( grad(props.internalEnergy())          == Approx(Utot_P) );
+        REQUIRE( grad(props.helmholtzEnergy())         == Approx(Atot_P) );
 
         //---------------------------------------------------------------------
         // Testing compositional derivatives of the properties
@@ -340,7 +373,13 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         const ArrayXd mass_n = molar_masses;
 
         const ArrayXd rho_n = -V_n / (V*V);
-        const ArrayXd vol_n = V_n * nsum + V * nsum_n;
+
+        const ArrayXd Gtot_n = G_n * nsum + G * nsum_n;
+        const ArrayXd Htot_n = H_n * nsum + H * nsum_n;
+        const ArrayXd Vtot_n = V_n * nsum + V * nsum_n;
+        const ArrayXd Stot_n = S_n * nsum + S * nsum_n;
+        const ArrayXd Utot_n = U_n * nsum + U * nsum_n;
+        const ArrayXd Atot_n = A_n * nsum + A * nsum_n;
 
         for(auto i = 0; i < 4; ++i)
         {
@@ -374,7 +413,12 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
             REQUIRE( grad(props.molarDensity())            == Approx( rho_n[i]) );
             REQUIRE( grad(props.amount())                  == Approx(nsum_n[i]) );
             REQUIRE( grad(props.mass())                    == Approx(mass_n[i]) );
-            REQUIRE( grad(props.volume())                  == Approx( vol_n[i]) );
+            REQUIRE( grad(props.gibbsEnergy())             == Approx(Gtot_n[i]) );
+            REQUIRE( grad(props.enthalpy())                == Approx(Htot_n[i]) );
+            REQUIRE( grad(props.volume())                  == Approx(Vtot_n[i]) );
+            REQUIRE( grad(props.entropy())                 == Approx(Stot_n[i]) );
+            REQUIRE( grad(props.internalEnergy())          == Approx(Utot_n[i]) );
+            REQUIRE( grad(props.helmholtzEnergy())         == Approx(Atot_n[i]) );
         }
     }
 

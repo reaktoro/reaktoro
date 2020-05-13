@@ -469,10 +469,40 @@ public:
         return sum;
     }
 
+    /// Return the Gibbs energy of the phase (in J).
+    auto gibbsEnergy() const -> real
+    {
+        return molarGibbsEnergy() * amount();
+    }
+
+    /// Return the enthalpy of the phase (in J).
+    auto enthalpy() const -> real
+    {
+        return molarEnthalpy() * amount();
+    }
+
     /// Return the volume of the phase (in m3).
     auto volume() const -> real
     {
-        return molarVolume() * _data.nsum;
+        return molarVolume() * amount();
+    }
+
+    /// Return the entropy of the phase (in J/K).
+    auto entropy() const -> real
+    {
+        return molarEntropy() * amount();
+    }
+
+    /// Return the internal energy of the phase (in J).
+    auto internalEnergy() const -> real
+    {
+        return molarInternalEnergy() * amount();
+    }
+
+    /// Return the Helmholtz energy of the phase (in J).
+    auto helmholtzEnergy() const -> real
+    {
+        return molarHelmholtzEnergy() * amount();
     }
 
     /// Assign the given array data to this PhaseChemicalPropsBase object.
