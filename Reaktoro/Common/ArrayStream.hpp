@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/TraitsUtils.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
 
 namespace Reaktoro {
 namespace detail {

@@ -18,9 +18,9 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
 
 // Phreeqc includes
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcLegacy.hpp>

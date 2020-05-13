@@ -18,7 +18,7 @@
 //#pragma once
 //
 //// Reaktoro includes
-////#include <Reaktoro/Math/Matrix.hpp>
+////#include <Reaktoro/Common/Matrix.hpp>
 //#include <Reaktoro/Core/Partition.hpp>
 //
 //namespace Reaktoro {

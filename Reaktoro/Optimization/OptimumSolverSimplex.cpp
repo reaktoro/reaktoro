@@ -23,7 +23,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>

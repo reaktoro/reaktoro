@@ -19,12 +19,12 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/ElementList.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/PhaseList.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
