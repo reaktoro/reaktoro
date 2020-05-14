@@ -27,7 +27,7 @@ namespace Reaktoro {
 
 /// The base type for primary chemical property data of a phase from which others are computed.
 template<typename Real, typename Array>
-struct PhaseChemicalPropsBaseData
+struct ChemicalPropsPhaseBaseData
 {
     /// The temperature of the phase (in K).
     Real T;
@@ -86,38 +86,79 @@ struct PhaseChemicalPropsBaseData
     /// The activities (natural log) of the species in the phase.
     Array ln_a;
 
-    /// Assign the given array data to this PhaseChemicalPropsBaseData object.
+    /// Assign a ChemicalPropsPhaseBaseData object to this.
+    template<typename RX, typename AX>
+    auto operator=(const ChemicalPropsPhaseBaseData<RX, AX>& other)
+    {
+        T    = other.T;
+        P    = other.P;
+        n    = other.n;
+        nsum = other.nsum;
+        x    = other.x;
+        G0   = other.G0;
+        H0   = other.H0;
+        V0   = other.V0;
+        Cp0  = other.Cp0;
+        Cv0  = other.Cv0;
+        Vex  = other.Vex;
+        VexT = other.VexT;
+        VexP = other.VexP;
+        Gex  = other.Gex;
+        Hex  = other.Hex;
+        Cpex = other.Cpex;
+        Cvex = other.Cvex;
+        ln_g = other.ln_g;
+        ln_a = other.ln_a;
+        return *this;
+    }
+
+    /// Convert this ChemicalPropsPhaseBaseData object into another.
+    template<typename RX, typename AX>
+    operator ChemicalPropsPhaseBaseData<RX, AX>()
+    {
+        return { T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
+    }
+
+    /// Convert this ChemicalPropsPhaseBaseData object into another.
+    template<typename RX, typename AX>
+    operator ChemicalPropsPhaseBaseData<RX, AX>() const
+    {
+        return { T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
+    }
+
+    /// Assign the given array data to this ChemicalPropsPhaseBaseData object.
     auto operator=(const ArrayStream<Real>& array)
     {
         array.to(T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a);
         return *this;
     }
 
-    /// Convert this PhaseChemicalPropsBaseData object into an array.
+    /// Convert this ChemicalPropsPhaseBaseData object into an array.
     operator ArrayStream<Real>() const
     {
         return {T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a};
     }
 };
 
+/// The primary chemical property data of a phase from which others are computed.
+using ChemicalPropsPhaseData = ChemicalPropsPhaseBaseData<real, ArrayXr>;
 
 /// The primary chemical property data of a phase from which others are computed.
-using PhaseChemicalPropsData = PhaseChemicalPropsBaseData<real, ArrayXr>;
+using ChemicalPropsPhaseDataRef = ChemicalPropsPhaseBaseData<real&, ArrayXrRef>;
 
 /// The primary chemical property data of a phase from which others are computed.
-using PhaseChemicalPropsDataRef = PhaseChemicalPropsBaseData<real&, ArrayXrRef>;
+using ChemicalPropsPhaseDataConstRef = ChemicalPropsPhaseBaseData<const real&, ArrayXrConstRef>;
 
-/// The primary chemical property data of a phase from which others are computed.
-using PhaseChemicalPropsDataConstRef = PhaseChemicalPropsBaseData<const real&, ArrayXrConstRef>;
-
+/// The type of functions that computes the primary chemical property data of a phase.
+using ChemicalPropsPhaseFn = Fn<void(ChemicalPropsPhaseDataRef, const real&, const real&, ArrayXrConstRef)>;
 
 /// The base type for chemical properties of a phase and its species.
 template<typename Real, typename Array>
-class PhaseChemicalPropsBase
+class ChemicalPropsPhaseBase
 {
 public:
-    /// Construct a PhaseChemicalPropsBase instance.
-    explicit PhaseChemicalPropsBase(const Phase& phase)
+    /// Construct a ChemicalPropsPhaseBase instance.
+    explicit ChemicalPropsPhaseBase(const Phase& phase)
     : _phase(phase)
     {
         const auto numspecies = phase.species().size();
@@ -133,59 +174,21 @@ public:
         _data.ln_a = ArrayXr::Zero(numspecies);
     }
 
-    /// Construct a PhaseChemicalPropsBase instance.
-    PhaseChemicalPropsBase(const Phase& phase, const PhaseChemicalPropsBaseData<Real, Array>& data)
+    /// Construct a ChemicalPropsPhaseBase instance.
+    ChemicalPropsPhaseBase(const Phase& phase, const ChemicalPropsPhaseBaseData<Real, Array>& data)
     : _phase(phase), _data(data)
     {}
 
-    /// Construct a PhaseChemicalPropsBase instance.
+    /// Construct a ChemicalPropsPhaseBase instance.
     template<typename RX, typename AX>
-    PhaseChemicalPropsBase(PhaseChemicalPropsBase<RX, AX>& other)
-    : _phase(other.phase), _data{
-        other._data.T,
-        other._data.P,
-        other._data.n,
-        other._data.nsum,
-        other._data.x,
-        other._data.G0,
-        other._data.H0,
-        other._data.V0,
-        other._data.Cp0,
-        other._data.Cv0,
-        other._data.Vex,
-        other._data.VexT,
-        other._data.VexP,
-        other._data.Gex,
-        other._data.Hex,
-        other._data.Cpex,
-        other._data.Cvex,
-        other._data.ln_g,
-        other._data.ln_a }
+    ChemicalPropsPhaseBase(ChemicalPropsPhaseBase<RX, AX>& other)
+    : _phase(other._phase), _data(other._data)
     {}
 
-    /// Construct a PhaseChemicalPropsBase instance.
+    /// Construct a ChemicalPropsPhaseBase instance.
     template<typename RX, typename AX>
-    PhaseChemicalPropsBase(const PhaseChemicalPropsBase<RX, AX>& other)
-    : _phase(other.phase), _data{
-        other._data.T,
-        other._data.P,
-        other._data.n,
-        other._data.nsum,
-        other._data.x,
-        other._data.G0,
-        other._data.H0,
-        other._data.V0,
-        other._data.Cp0,
-        other._data.Cv0,
-        other._data.Vex,
-        other._data.VexT,
-        other._data.VexP,
-        other._data.Gex,
-        other._data.Hex,
-        other._data.Cpex,
-        other._data.Cvex,
-        other._data.ln_g,
-        other._data.ln_a }
+    ChemicalPropsPhaseBase(const ChemicalPropsPhaseBase<RX, AX>& other)
+    : _phase(other._phase), _data(other._data)
     {}
 
     /// Update the chemical properties of the phase.
@@ -194,6 +197,10 @@ public:
     /// @param n The amounts of the species in the phase (in mol)
     auto update(const real& T, const real& P, ArrayXrConstRef n)
     {
+        // Check if this update call can be skipped if T, P, n conditions remain the same
+        if(T == _data.T && P == _data.P && (n == _data.n).all())
+            return;
+
         _data.T = T;
         _data.P = P;
         _data.n = n;
@@ -227,42 +234,33 @@ public:
         assert(ln_g.size() == size);
         assert(ln_a.size() == size);
 
-        // The function that evaluates the standard thermodynamic properties of the species in the phase.
-        auto evalStandardThermoProps = [&]()
+        // Compute the standard thermodynamic properties of the species in the phase.
+        StandardThermoProps aux;
+        for(auto i = 0; i < size; ++i)
         {
-            StandardThermoProps aux;
-            for(auto i = 0; i < size; ++i)
-            {
-                auto standard_thermo_props_fn = _phase.species(i).standardThermoPropsFn();
-                aux = standard_thermo_props_fn ? standard_thermo_props_fn(T, P) : StandardThermoProps{};
-                G0[i]  = aux.G0;
-                H0[i]  = aux.H0;
-                V0[i]  = aux.V0;
-                Cp0[i] = aux.Cp0;
-                Cv0[i] = aux.Cv0;
-            }
-        };
+            auto standard_thermo_props_fn = _phase.species(i).standardThermoPropsFn();
+            aux = standard_thermo_props_fn ? standard_thermo_props_fn(T, P) : StandardThermoProps{};
+            G0[i]  = aux.G0;
+            H0[i]  = aux.H0;
+            V0[i]  = aux.V0;
+            Cp0[i] = aux.Cp0;
+            Cv0[i] = aux.Cv0;
+        }
 
-        // The function that evaluates the activity properties of the phase.
-        auto evalActivityProps = [&]()
-        {
-            nsum = n.sum();
+        // Compute the activity properties of the phase.
+        nsum = n.sum();
 
-            if(nsum == 0.0)
-                x = (size == 1) ? 1.0 : 0.0;
-            else x = n / nsum;
+        if(nsum == 0.0)
+            x = (size == 1) ? 1.0 : 0.0;
+        else x = n / nsum;
 
-            Vec<Any> extra;
-            ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
-            ActivityArgs args{ T, P, x, extra };
+        Vec<Any> extra;
+        ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
+        ActivityArgs args{ T, P, x, extra };
 
-            if(nsum == 0.0)
-                aprops = 0.0;
-            else _phase.activityPropsFn()(aprops, args);
-        };
-
-        evalStandardThermoProps();
-        evalActivityProps();
+        if(nsum == 0.0)
+            aprops = 0.0;
+        else _phase.activityPropsFn()(aprops, args);
     }
 
     /// Update the chemical properties of the phase.
@@ -284,7 +282,7 @@ public:
     }
 
     /// Return the primary chemical property data of the phase from which others are calculated.
-    auto data() const -> const PhaseChemicalPropsBaseData<Real, Array>&
+    auto data() const -> const ChemicalPropsPhaseBaseData<Real, Array>&
     {
         return _data;
     }
@@ -495,38 +493,38 @@ public:
         return molarHelmholtzEnergy() * amount();
     }
 
-    /// Assign the given array data to this PhaseChemicalPropsBase object.
+    /// Assign the given array data to this ChemicalPropsPhaseBase object.
     auto operator=(const ArrayStream<Real>& array)
     {
         _data = array;
         return *this;
     }
 
-    /// Convert this PhaseChemicalPropsBase object into an array.
+    /// Convert this ChemicalPropsPhaseBase object into an array.
     operator ArrayStream<Real>() const
     {
         return _data;
     }
 
-    // Ensure other PhaseChemicalPropsBase types are friend among themselves.
+    // Ensure other ChemicalPropsPhaseBase types are friend among themselves.
     template<typename RX, typename AX>
-    friend class PhaseChemicalPropsBase;
+    friend class ChemicalPropsPhaseBase;
 
 private:
     /// The phase associated with these primary chemical properties.
     Phase _phase;
 
     /// The primary chemical property data of the phase from which others are calculated.
-    PhaseChemicalPropsBaseData<Real, Array> _data;
+    ChemicalPropsPhaseBaseData<Real, Array> _data;
 };
 
 /// The chemical properties of a phase and its species.
-using PhaseChemicalProps = PhaseChemicalPropsBase<real, ArrayXr>;
+using ChemicalPropsPhase = ChemicalPropsPhaseBase<real, ArrayXr>;
 
 /// The non-const view to the chemical properties of a phase and its species.
-using PhaseChemicalPropsRef = PhaseChemicalPropsBase<real&, ArrayXrRef>;
+using ChemicalPropsPhaseRef = ChemicalPropsPhaseBase<real&, ArrayXrRef>;
 
 /// The const view to the chemical properties of a phase and its species.
-using PhaseChemicalPropsConstRef = PhaseChemicalPropsBase<const real&, ArrayXrConstRef>;
+using ChemicalPropsPhaseConstRef = ChemicalPropsPhaseBase<const real&, ArrayXrConstRef>;
 
 } // namespace Reaktoro
