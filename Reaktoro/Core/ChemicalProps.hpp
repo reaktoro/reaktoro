@@ -106,13 +106,6 @@ public:
     /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
     auto update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void;
 
-    /// Update the chemical properties of the chemical system.
-    /// @param T The temperature condition (in K)
-    /// @param P The pressure condition (in Pa)
-    /// @param n The amounts of the species in the system (in mol)
-    /// @param wrtvar The index of the species amount variable for which automatic differentiation is carried out.
-    auto update(const real& T, const real& P, ArrayXrRef n, Index wrtvar) -> void;
-
     /// Return the chemical system associated with these chemical properties.
     auto system() const -> const ChemicalSystem&;
 
@@ -170,14 +163,23 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol*K)).
     auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef;
 
-    /// Return the total volume of the fluid phases in the chemical system.
-    auto fluidVolume() const -> real;
+    /// Return the Gibbs energy of the system (in J).
+    auto gibbsEnergy() const -> real;
 
-    /// Return the total volume of the solid phases in the chemical system.
-    auto solidVolume() const -> real;
+    /// Return the enthalpy of the system (in J).
+    auto enthalpy() const -> real;
 
-    /// Return the total volume of the chemical system, i.e., the sum of phase volumes.
+    /// Return the volume of the system (in m3).
     auto volume() const -> real;
+
+    /// Return the entropy of the system (in J/K).
+    auto entropy() const -> real;
+
+    /// Return the internal energy of the system (in J).
+    auto internalEnergy() const -> real;
+
+    /// Return the Helmholtz energy of the system (in J).
+    auto helmholtzEnergy() const -> real;
 
 private:
     /// The chemical system associated with these chemical properties.

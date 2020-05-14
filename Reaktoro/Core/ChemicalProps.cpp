@@ -18,6 +18,7 @@
 #include "ChemicalProps.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Core/PhaseChemicalProps.hpp>
 
 namespace Reaktoro {
@@ -65,17 +66,6 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n, Wrt<
     autodiff::seed(wrtvar);
     update(T, P, n);
     autodiff::unseed(wrtvar);
-}
-
-auto ChemicalProps::update(const real& T, const real& P, ArrayXrRef n, Index wrtvar) -> void
-{
-    autodiff::seed(n[wrtvar]);
-    const auto iphase = sys.phases().indexWithSpecies(wrtvar);
-    const auto offset = sys.phases().numSpeciesUntilPhase(iphase);
-    const auto length = sys.phase(iphase).species().size();
-    const auto np = n.segment(offset, length);
-    phaseProps(iphase).update(T, P, np);
-    autodiff::unseed(n[wrtvar]);
 }
 
 auto ChemicalProps::system() const -> const ChemicalSystem&
@@ -222,30 +212,40 @@ auto ChemicalProps::standardHeatCapacitiesConstV() const -> ArrayXrConstRef
     return props.Cv0;
 }
 
-auto ChemicalProps::fluidVolume() const -> real
+auto ChemicalProps::gibbsEnergy() const -> real
 {
-    real sum = 0.0;
-    for(auto i = 0; i < sys.phases().size(); ++i)
-        if(sys.phase(i).stateOfMatter() != StateOfMatter::Solid)
-            sum += phaseProps(i).volume();
-    return sum;
+    const auto iend = sys.phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).gibbsEnergy(); });
 }
 
-auto ChemicalProps::solidVolume() const -> real
+auto ChemicalProps::enthalpy() const -> real
 {
-    real sum = 0.0;
-    for(auto i = 0; i < sys.phases().size(); ++i)
-        if(sys.phase(i).stateOfMatter() == StateOfMatter::Solid)
-            sum += phaseProps(i).volume();
-    return sum;
+    const auto iend = sys.phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).enthalpy(); });
 }
 
 auto ChemicalProps::volume() const -> real
 {
-    real sum = 0.0;
-    for(auto i = 0; i < sys.phases().size(); ++i)
-        sum += phaseProps(i).volume();
-    return sum;
+    const auto iend = sys.phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).volume(); });
+}
+
+auto ChemicalProps::entropy() const -> real
+{
+    const auto iend = sys.phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).entropy(); });
+}
+
+auto ChemicalProps::internalEnergy() const -> real
+{
+    const auto iend = sys.phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).internalEnergy(); });
+}
+
+auto ChemicalProps::helmholtzEnergy() const -> real
+{
+    const auto iend = sys.phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).helmholtzEnergy(); });
 }
 
 } // namespace Reaktoro
