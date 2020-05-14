@@ -17,12 +17,9 @@
 
 #pragma once
 
-// C++ includes
-#include <memory>
-#include <string>
-
 // Reaktoro includes
-#include <Reaktoro/Core/ActivityModel.hpp>
+#include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/ActivityProps.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/StateOfMatter.hpp>
 
@@ -41,7 +38,7 @@ public:
     auto clone() const -> Phase;
 
     /// Return a copy of this Phase object with a new name.
-    auto withName(std::string name) -> Phase;
+    auto withName(String name) -> Phase;
 
     /// Return a copy of this Phase object with new list of species.
     auto withSpecies(const SpeciesList& species) -> Phase;
@@ -53,7 +50,7 @@ public:
     auto withActivityPropsFn(ActivityPropsFn fn) -> Phase;
 
     /// Return the name of the phase.
-    auto name() const -> std::string;
+    auto name() const -> String;
 
     /// Return the state of matter of the phase.
     auto stateOfMatter() const -> StateOfMatter;
@@ -67,13 +64,13 @@ public:
     /// Return the species in the phase with given index.
     auto species(Index idx) const -> const Species&;
 
-    /// Return the activity model function of the phase.
+    /// Return the function that computes activity properties of the phase.
     auto activityPropsFn() const -> const ActivityPropsFn&;
 
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    SharedPtr<Impl> pimpl;
 };
 
 /// Compare two Phase instances for less than
