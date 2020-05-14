@@ -24,8 +24,8 @@
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Json.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/Outputter.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Common/StringList.hpp>
