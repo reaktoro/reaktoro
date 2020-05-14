@@ -20,68 +20,48 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/PhaseThermoProps.hpp>
+#include <Reaktoro/Core/ThermoPropsPhase.hpp>
 
 namespace Reaktoro {
 
-/// The primary standard thermodynamic property data of the phases and species in a chemical system.
-/// @see ThermoProps
-struct ThermoPropsData
-{
-    /// The temperature of the system (in K).
-    real T = {};
-
-    /// The pressure of the system (in Pa).
-    real P = {};
-
-    /// The standard molar Gibbs energies of the species in the system (in J/mol).
-    ArrayXr G0;
-
-    /// The standard molar enthalpies of the species in the system (in J/mol).
-    ArrayXr H0;
-
-    /// The standard molar volumes of the species in the system (in m3/mol).
-    ArrayXr V0;
-
-    /// The standard molar isobaric heat capacities of the species in the system (in J/(mol·K)).
-    ArrayXr Cp0;
-
-    /// The standard molar isochoric heat capacities of the species in the system (in J/(mol·K)).
-    ArrayXr Cv0;
-};
-
-/// The standard thermodynamic properties of the phases and species in a chemical system.
+/// The standard thermodynamic properties of the species in a chemical system.
 class ThermoProps
 {
 public:
     /// Construct a ThermoProps object.
     explicit ThermoProps(const ChemicalSystem& system);
 
-    /// Construct a ThermoProps object.
-    ThermoProps(const ChemicalSystem& system, const ThermoPropsData& data);
+    /// Construct a copy of a ThermoProps object.
+    ThermoProps(const ThermoProps& other);
 
-    /// Update the standard thermodynamic properties of the phases and its species in the chemical system.
+    /// Destroy this ThermoProps object.
+    ~ThermoProps();
+
+    /// Assign a ThermoProps object to this.
+    auto operator=(ThermoProps other) -> ThermoProps&;
+
+    /// Update the standard thermodynamic properties of the species in the chemical system.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
-    auto update(real T, real P) -> void;
+    auto update(const real& T, const real& P) -> void;
+
+    /// Update the standard thermodynamic properties of the species in the chemical system.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
+    auto update(const real& T, const real& P, Wrt<real&> wrtvar) -> void;
 
     /// Return the chemical system associated with these standard thermodynamic properties.
     auto system() const -> const ChemicalSystem&;
 
-    /// Return the primary standard thermodynamic property data of the system from which others are calculated.
-    auto data() const -> const ThermoPropsData&;
-
     /// Return the standard thermodynamic properties of a phase with given index.
-    auto phaseProps(Index idx) const -> PhaseThermoPropsConstRef;
-
-    /// Return the standard thermodynamic properties of a phase with given index.
-    auto phaseProps(Index idx) -> PhaseThermoPropsRef;
+    auto phaseProps(Index idx) const -> ThermoPropsPhaseConstRef;
 
     /// Return the temperature of the system (in K).
-    auto temperature() const -> real;
+    auto temperature() const -> const real&;
 
     /// Return the pressure of the system (in Pa).
-    auto pressure() const -> real;
+    auto pressure() const -> const real&;
 
     /// Return the standard partial molar Gibbs energies of the species in the system (in J/mol).
     auto standardGibbsEnergies() const -> ArrayXrConstRef;
@@ -108,11 +88,9 @@ public:
     auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef;
 
 private:
-    /// The chemical system associated with these standard thermodynamic properties.
-    ChemicalSystem sys;
+    struct Impl;
 
-    /// The primary standard thermodynamic property data of the system from which others are calculated.
-    ThermoPropsData props;
+    Ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
