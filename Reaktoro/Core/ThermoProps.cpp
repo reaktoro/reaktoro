@@ -18,124 +18,181 @@
 #include "ThermoProps.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Core/PhaseThermoProps.hpp>
+#include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Core/ThermoPropsPhase.hpp>
 
 namespace Reaktoro {
 
-ThermoProps::ThermoProps(const ChemicalSystem& system)
-: sys(system)
+struct ThermoProps::Impl
 {
-    const auto numspecies = sys.species().size();
-    const auto numphases = sys.phases().size();
+    /// The chemical system associated with these standard thermodynamic properties.
+    ChemicalSystem system;
 
-    props.G0  = ArrayXr::Zero(numspecies);
-    props.H0  = ArrayXr::Zero(numspecies);
-    props.V0  = ArrayXr::Zero(numspecies);
-    props.Cp0 = ArrayXr::Zero(numspecies);
-    props.Cv0 = ArrayXr::Zero(numspecies);
-}
+    /// The temperature of the system (in K).
+    real T = 0.0;
 
-ThermoProps::ThermoProps(const ChemicalSystem& system, const ThermoPropsData& data)
-: sys(system), props(data)
+    /// The pressure of the system (in Pa).
+    real P = 0.0;
+
+    /// The temperatures of each phase (in K).
+    ArrayXr Ts;
+
+    /// The pressures of each phase (in Pa).
+    ArrayXr Ps;
+
+    /// The standard molar Gibbs energies of the species in the system (in J/mol).
+    ArrayXr G0;
+
+    /// The standard molar enthalpies of the species in the system (in J/mol).
+    ArrayXr H0;
+
+    /// The standard molar volumes of the species in the system (in m3/mol).
+    ArrayXr V0;
+
+    /// The standard molar isobaric heat capacities of the species in the system (in J/(mol·K)).
+    ArrayXr Cp0;
+
+    /// The standard molar isochoric heat capacities of the species in the system (in J/(mol·K)).
+    ArrayXr Cv0;
+
+    /// Construct a ThermoProps::Impl object.
+    Impl(const ChemicalSystem& system)
+    : system(system)
+    {
+        const auto numspecies = system.species().size();
+        const auto numphases = system.phases().size();
+
+        Ts   = ArrayXr::Zero(numphases);
+        Ps   = ArrayXr::Zero(numphases);
+        G0   = ArrayXr::Zero(numspecies);
+        H0   = ArrayXr::Zero(numspecies);
+        V0   = ArrayXr::Zero(numspecies);
+        Cp0  = ArrayXr::Zero(numspecies);
+        Cv0  = ArrayXr::Zero(numspecies);
+    }
+
+    /// Update the standard thermodynamic properties of the chemical system.
+    auto update(const real& T, const real& P) -> void
+    {
+        this->T = T;
+        this->P = P;
+        const auto numphases = system.phases().size();
+        for(auto i = 0; i < numphases; ++i)
+            phaseProps(i).update(T, P);
+    }
+
+    /// Update the standard thermodynamic properties of the chemical system.
+    auto update(const real& T, const real& P, Wrt<real&> wrtvar) -> void
+    {
+        autodiff::seed(wrtvar);
+        update(T, P);
+        autodiff::unseed(wrtvar);
+    }
+
+    /// Return the standard thermodynamic properties of a phase with given index.
+    auto phaseProps(Index idx) -> ThermoPropsPhaseRef
+    {
+        const auto phase = system.phase(idx);
+        const auto begin = system.phases().numSpeciesUntilPhase(idx);
+        const auto size = phase.species().size();
+
+        return ThermoPropsPhaseRef(phase, {
+            Ts[idx],
+            Ps[idx],
+            G0.segment(begin, size),
+            H0.segment(begin, size),
+            V0.segment(begin, size),
+            Cp0.segment(begin, size),
+            Cv0.segment(begin, size),
+        });
+    }
+};
+
+ThermoProps::ThermoProps(const ChemicalSystem& system)
+: pimpl(new Impl(system))
 {}
 
-auto ThermoProps::update(real T, real P) -> void
+ThermoProps::ThermoProps(const ThermoProps& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+ThermoProps::~ThermoProps()
+{}
+
+auto ThermoProps::operator=(ThermoProps other) -> ThermoProps&
 {
-    const auto numphases = sys.phases().size();
-    for(auto i = 0; i < numphases; ++i)
-        phaseProps(i).update(T, P);
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
+
+auto ThermoProps::update(const real& T, const real& P) -> void
+{
+    pimpl->update(T, P);
+}
+
+auto ThermoProps::update(const real& T, const real& P, Wrt<real&> wrtvar) -> void
+{
+    pimpl->update(T, P, wrtvar);
 }
 
 auto ThermoProps::system() const -> const ChemicalSystem&
-{    return sys;
-}
-
-auto ThermoProps::data() const -> const ThermoPropsData&
-{    return props;
-}
-
-auto ThermoProps::phaseProps(Index idx) const -> PhaseThermoPropsConstRef
 {
-    const auto phase = sys.phase(idx);
-    const auto begin = sys.phases().numSpeciesUntilPhase(idx);
-    const auto size = phase.species().size();
-
-    return PhaseThermoPropsConstRef(phase, {
-        props.T,
-        props.P,
-        props.G0.segment(begin, size),
-        props.H0.segment(begin, size),
-        props.V0.segment(begin, size),
-        props.Cp0.segment(begin, size),
-        props.Cv0.segment(begin, size),
-    });
+    return pimpl->system;
 }
 
-auto ThermoProps::phaseProps(Index idx) -> PhaseThermoPropsRef
+auto ThermoProps::phaseProps(Index idx) const -> ThermoPropsPhaseConstRef
 {
-    const auto phase = sys.phase(idx);
-    const auto begin = sys.phases().numSpeciesUntilPhase(idx);
-    const auto size = sys.phase(idx).species().size();
-
-    return PhaseThermoPropsRef(phase, {
-        props.T,
-        props.P,
-        props.G0.segment(begin, size),
-        props.H0.segment(begin, size),
-        props.V0.segment(begin, size),
-        props.Cp0.segment(begin, size),
-        props.Cv0.segment(begin, size),
-    });
+    return pimpl->phaseProps(idx);
 }
 
-auto ThermoProps::temperature() const -> real
+auto ThermoProps::temperature() const -> const real&
 {
-    return props.T;
+    return pimpl->T;
 }
 
-auto ThermoProps::pressure() const -> real
+auto ThermoProps::pressure() const -> const real&
 {
-    return props.P;
+    return pimpl->P;
 }
 
 auto ThermoProps::standardGibbsEnergies() const -> ArrayXrConstRef
 {
-    return props.G0;
+    return pimpl->G0;
 }
 
 auto ThermoProps::standardEnthalpies() const -> ArrayXrConstRef
 {
-    return props.H0;
+    return pimpl->H0;
 }
 
 auto ThermoProps::standardVolumes() const -> ArrayXrConstRef
 {
-    return props.V0;
+    return pimpl->V0;
 }
 
 auto ThermoProps::standardEntropies() const -> ArrayXr
 {
-    return (props.H0 - props.G0)/props.T; // from G0 = H0 - T*S0
+    return (pimpl->H0 - pimpl->G0)/pimpl->T; // from G0 = H0 - T*S0
 }
 
 auto ThermoProps::standardInternalEnergies() const -> ArrayXr
 {
-    return props.H0 - props.P * props.V0; // from H0 = U0 + P*V0
+    return pimpl->H0 - pimpl->P * pimpl->V0; // from H0 = U0 + P*V0
 }
 
 auto ThermoProps::standardHelmholtzEnergies() const -> ArrayXr
 {
-    return props.G0 - props.P * props.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
+    return pimpl->G0 - pimpl->P * pimpl->V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
 }
 
 auto ThermoProps::standardHeatCapacitiesConstP() const -> ArrayXrConstRef
 {
-    return props.Cp0;
+    return pimpl->Cp0;
 }
 
 auto ThermoProps::standardHeatCapacitiesConstV() const -> ArrayXrConstRef
 {
-    return props.Cv0;
+    return pimpl->Cv0;
 }
 
 } // namespace Reaktoro
