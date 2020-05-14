@@ -277,16 +277,6 @@ public:
         autodiff::unseed(wrtvar);
     }
 
-    /// Update the chemical properties of the phase.
-    /// @param T The temperature condition (in K)
-    /// @param P The pressure condition (in Pa)
-    /// @param n The amounts of the species in the phase (in mol)
-    /// @param wrtvar The index of the species amount variable for which automatic differentiation is carried out.
-    auto update(const real& T, const real& P, ArrayXrRef n, Index wrtvar)
-    {
-        update(T, P, n, wrt(n[wrtvar]));
-    }
-
     /// Return the underlying Phase object.
     auto phase() const -> const Phase&
     {

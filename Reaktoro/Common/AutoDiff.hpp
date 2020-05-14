@@ -27,7 +27,4 @@ using autodiff::grad;
 using autodiff::wrt;
 using autodiff::Wrt;
 
-/// Alternative method to `wrt` in case of derivatives with respect to species amount `n[i]`.
-inline auto wrtn(Index i) { return i; }
-
 } // namespace Reaktoro
