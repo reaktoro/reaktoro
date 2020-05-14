@@ -21,7 +21,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Utils.hpp>
-#include <Reaktoro/Core/PhaseChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 using namespace Reaktoro;
 
 inline auto createStandardThermoPropsFn(double param)
@@ -39,7 +39,7 @@ inline auto createStandardThermoPropsFn(double param)
     return fn;
 }
 
-TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
+TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 {
     const auto R = universalGasConstant;
 
@@ -75,7 +75,7 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
         phase.species(3).molarMass(),
     }};
 
-    PhaseChemicalProps props(phase);
+    ChemicalPropsPhase props(phase);
 
     SECTION("Testing when species have non-zero amounts")
     {
