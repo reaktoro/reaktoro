@@ -19,232 +19,307 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
-#include <Reaktoro/Core/PhaseChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 
 namespace Reaktoro {
 
-ChemicalProps::ChemicalProps(const ChemicalSystem& system)
-: sys(system)
+struct ChemicalProps::Impl
 {
-    const auto numspecies = sys.species().size();
-    const auto numphases = sys.phases().size();
+    /// The chemical system associated with these chemical properties.
+    ChemicalSystem system;
 
-    props.n    = ArrayXr::Zero(numspecies);
-    props.nsum = ArrayXr::Zero(numphases);
-    props.x    = ArrayXr::Zero(numspecies);
-    props.G0   = ArrayXr::Zero(numspecies);
-    props.H0   = ArrayXr::Zero(numspecies);
-    props.V0   = ArrayXr::Zero(numspecies);
-    props.Cp0  = ArrayXr::Zero(numspecies);
-    props.Cv0  = ArrayXr::Zero(numspecies);
-    props.Vex  = ArrayXr::Zero(numphases);
-    props.VexT = ArrayXr::Zero(numphases);
-    props.VexP = ArrayXr::Zero(numphases);
-    props.Gex  = ArrayXr::Zero(numphases);
-    props.Hex  = ArrayXr::Zero(numphases);
-    props.Cpex = ArrayXr::Zero(numphases);
-    props.Cvex = ArrayXr::Zero(numphases);
-    props.ln_g = ArrayXr::Zero(numspecies);
-    props.ln_a = ArrayXr::Zero(numspecies);
+    /// The temperature of the system (in K).
+    real T = 0.0;
+
+    /// The pressure of the system (in Pa).
+    real P = 0.0;
+
+    /// The temperatures of each phase (in K).
+    ArrayXr Ts;
+
+    /// The pressures of each phase (in Pa).
+    ArrayXr Ps;
+
+    /// The amounts of each species in the system (in mol).
+    ArrayXr n;
+
+    /// The sum of species amounts in each phase of the system (in mol).
+    ArrayXr nsum;
+
+    /// The mole fractions of the species in the system (in mol/mol).
+    ArrayXr x;
+
+    /// The standard molar Gibbs energies of the species in the system (in J/mol).
+    ArrayXr G0;
+
+    /// The standard molar enthalpies of the species in the system (in J/mol).
+    ArrayXr H0;
+
+    /// The standard molar volumes of the species in the system (in m3/mol).
+    ArrayXr V0;
+
+    /// The standard molar isobaric heat capacities of the species in the system (in J/(mol·K)).
+    ArrayXr Cp0;
+
+    /// The standard molar isochoric heat capacities of the species in the system (in J/(mol·K)).
+    ArrayXr Cv0;
+
+    /// The excess molar volume of each phase in the system (in m3/mol).
+    ArrayXr Vex;
+
+    /// The temperature derivative at constant pressure of the excess molar volume of each phase in the system (in m3/(mol*K)).
+    ArrayXr VexT;
+
+    /// The pressure derivative at constant temperature of the excess molar volume of each phase in the system (in m3/(mol*Pa)).
+    ArrayXr VexP;
+
+    /// The excess molar Gibbs energy of each phase in the system (in J/mol).
+    ArrayXr Gex;
+
+    /// The excess molar enthalpy of each phase in the system (in J/mol).
+    ArrayXr Hex;
+
+    /// The excess molar isobaric heat capacity of each phase in the system (in J/(mol*K)).
+    ArrayXr Cpex;
+
+    /// The excess molar isochoric heat capacity of each phase in the system (in J/(mol*K)).
+    ArrayXr Cvex;
+
+    /// The activity coefficients (natural log) of the species in the system.
+    ArrayXr ln_g;
+
+    /// The activities (natural log) of the species in the system.
+    ArrayXr ln_a;
+
+    /// Construct a ChemicalProps::Impl object.
+    Impl(const ChemicalSystem& system)
+    : system(system)
+    {
+        const auto numspecies = system.species().size();
+        const auto numphases = system.phases().size();
+
+        Ts   = ArrayXr::Zero(numphases);
+        Ps   = ArrayXr::Zero(numphases);
+        n    = ArrayXr::Zero(numspecies);
+        nsum = ArrayXr::Zero(numphases);
+        x    = ArrayXr::Zero(numspecies);
+        G0   = ArrayXr::Zero(numspecies);
+        H0   = ArrayXr::Zero(numspecies);
+        V0   = ArrayXr::Zero(numspecies);
+        Cp0  = ArrayXr::Zero(numspecies);
+        Cv0  = ArrayXr::Zero(numspecies);
+        Vex  = ArrayXr::Zero(numphases);
+        VexT = ArrayXr::Zero(numphases);
+        VexP = ArrayXr::Zero(numphases);
+        Gex  = ArrayXr::Zero(numphases);
+        Hex  = ArrayXr::Zero(numphases);
+        Cpex = ArrayXr::Zero(numphases);
+        Cvex = ArrayXr::Zero(numphases);
+        ln_g = ArrayXr::Zero(numspecies);
+        ln_a = ArrayXr::Zero(numspecies);
+    }
+
+    /// Update the chemical properties of the chemical system.
+    auto update(const real& T, const real& P, ArrayXrConstRef n) -> void
+    {
+        this->T = T;
+        this->P = P;
+        const auto numphases = system.phases().size();
+        auto offset = 0;
+        for(auto i = 0; i < numphases; ++i)
+        {
+            const auto size = system.phase(i).species().size();
+            const auto np = n.segment(offset, size);
+            phaseProps(i).update(T, P, np);
+            offset += size;
+        }
+    }
+
+    /// Update the chemical properties of the chemical system.
+    auto update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void
+    {
+        autodiff::seed(wrtvar);
+        update(T, P, n);
+        autodiff::unseed(wrtvar);
+    }
+
+    /// Return the chemical properties of a phase with given index.
+    auto phaseProps(Index idx) -> ChemicalPropsPhaseRef
+    {
+        const auto phase = system.phase(idx);
+        const auto begin = system.phases().numSpeciesUntilPhase(idx);
+        const auto size = phase.species().size();
+
+        return ChemicalPropsPhaseRef(phase, {
+            Ts[idx],
+            Ps[idx],
+            n.segment(begin, size),
+            nsum[idx],
+            x.segment(begin, size),
+            G0.segment(begin, size),
+            H0.segment(begin, size),
+            V0.segment(begin, size),
+            Cp0.segment(begin, size),
+            Cv0.segment(begin, size),
+            Vex[idx],
+            VexT[idx],
+            VexP[idx],
+            Gex[idx],
+            Hex[idx],
+            Cpex[idx],
+            Cvex[idx],
+            ln_g.segment(begin, size),
+            ln_a.segment(begin, size)
+        });
+    }
+};
+
+ChemicalProps::ChemicalProps(const ChemicalSystem& system)
+: pimpl(new Impl(system))
+{}
+
+ChemicalProps::ChemicalProps(const ChemicalProps& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+ChemicalProps::~ChemicalProps()
+{}
+
+auto ChemicalProps::operator=(ChemicalProps other) -> ChemicalProps&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
 }
 
 auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> void
 {
-    const auto numphases = sys.phases().size();
-    auto offset = 0;
-    for(auto i = 0; i < numphases; ++i)
-    {
-        const auto size = sys.phase(i).species().size();
-        const auto np = n.segment(offset, size);
-        phaseProps(i).update(T, P, np);
-        offset += size;
-    }
+    pimpl->update(T, P, n);
 }
 
 auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void
 {
-    autodiff::seed(wrtvar);
-    update(T, P, n);
-    autodiff::unseed(wrtvar);
+    pimpl->update(T, P, n, wrtvar);
 }
 
 auto ChemicalProps::system() const -> const ChemicalSystem&
 {
-    return sys;
+    return pimpl->system;
 }
 
-auto ChemicalProps::data() const -> const ChemicalPropsData&
+auto ChemicalProps::phaseProps(Index idx) const -> ChemicalPropsPhaseConstRef
 {
-    return props;
+    return pimpl->phaseProps(idx);
 }
 
-auto ChemicalProps::phaseProps(Index idx) const -> PhaseChemicalPropsConstRef
+auto ChemicalProps::temperature() const -> const real&
 {
-    const auto phase = sys.phase(idx);
-    const auto begin = sys.phases().numSpeciesUntilPhase(idx);
-    const auto size = phase.species().size();
-
-    return PhaseChemicalPropsConstRef(phase, {
-        props.T,
-        props.P,
-        props.n.segment(begin, size),
-        props.nsum[idx],
-        props.x.segment(begin, size),
-        props.G0.segment(begin, size),
-        props.H0.segment(begin, size),
-        props.V0.segment(begin, size),
-        props.Cp0.segment(begin, size),
-        props.Cv0.segment(begin, size),
-        props.Vex[idx],
-        props.VexT[idx],
-        props.VexP[idx],
-        props.Gex[idx],
-        props.Hex[idx],
-        props.Cpex[idx],
-        props.Cvex[idx],
-        props.ln_g.segment(begin, size),
-        props.ln_a.segment(begin, size)
-    });
+    return pimpl->T;
 }
 
-auto ChemicalProps::phaseProps(Index idx) -> PhaseChemicalPropsRef
+auto ChemicalProps::pressure() const -> const real&
 {
-    const auto phase = sys.phase(idx);
-    const auto begin = sys.phases().numSpeciesUntilPhase(idx);
-    const auto size = phase.species().size();
-
-    return PhaseChemicalPropsRef(phase, {
-        props.T,
-        props.P,
-        props.n.segment(begin, size),
-        props.nsum[idx],
-        props.x.segment(begin, size),
-        props.G0.segment(begin, size),
-        props.H0.segment(begin, size),
-        props.V0.segment(begin, size),
-        props.Cp0.segment(begin, size),
-        props.Cv0.segment(begin, size),
-        props.Vex[idx],
-        props.VexT[idx],
-        props.VexP[idx],
-        props.Gex[idx],
-        props.Hex[idx],
-        props.Cpex[idx],
-        props.Cvex[idx],
-        props.ln_g.segment(begin, size),
-        props.ln_a.segment(begin, size)
-    });
-}
-
-auto ChemicalProps::temperature() const -> real
-{
-    return props.T;
-}
-
-auto ChemicalProps::pressure() const -> real
-{
-    return props.P;
+    return pimpl->P;
 }
 
 auto ChemicalProps::speciesAmounts() const -> ArrayXrConstRef
 {
-    return props.n;
+    return pimpl->n;
 }
 
 auto ChemicalProps::moleFractions() const -> ArrayXrConstRef
 {
-    return props.x;
+    return pimpl->x;
 }
 
 auto ChemicalProps::lnActivityCoefficients() const -> ArrayXrConstRef
 {
-    return props.ln_g;
+    return pimpl->ln_g;
 }
 
 auto ChemicalProps::lnActivities() const -> ArrayXrConstRef
 {
-    return props.ln_a;
+    return pimpl->ln_a;
 }
 
 auto ChemicalProps::chemicalPotentials() const -> ArrayXr
 {
     const auto R = universalGasConstant;
-    return props.G0 + R*props.T * props.ln_a;
+    return pimpl->G0 + R*pimpl->T * pimpl->ln_a;
 }
 
 auto ChemicalProps::standardGibbsEnergies() const -> ArrayXrConstRef
 {
-    return props.G0;
+    return pimpl->G0;
 }
 
 auto ChemicalProps::standardEnthalpies() const -> ArrayXrConstRef
 {
-    return props.H0;
+    return pimpl->H0;
 }
 
 auto ChemicalProps::standardVolumes() const -> ArrayXrConstRef
 {
-    return props.V0;
+    return pimpl->V0;
 }
 
 auto ChemicalProps::standardEntropies() const -> ArrayXr
 {
-    return (props.H0 - props.G0)/props.T; // from G0 = H0 - T*S0
+    return (pimpl->H0 - pimpl->G0)/pimpl->T; // from G0 = H0 - T*S0
 }
 
 auto ChemicalProps::standardInternalEnergies() const -> ArrayXr
 {
-    return props.H0 - props.P * props.V0; // from H0 = U0 + P*V0
+    return pimpl->H0 - pimpl->P * pimpl->V0; // from H0 = U0 + P*V0
 }
 
 auto ChemicalProps::standardHelmholtzEnergies() const -> ArrayXr
 {
-    return props.G0 - props.P * props.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
+    return pimpl->G0 - pimpl->P * pimpl->V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
 }
 
 auto ChemicalProps::standardHeatCapacitiesConstP() const -> ArrayXrConstRef
 {
-    return props.Cp0;
+    return pimpl->Cp0;
 }
 
 auto ChemicalProps::standardHeatCapacitiesConstV() const -> ArrayXrConstRef
 {
-    return props.Cv0;
+    return pimpl->Cv0;
 }
 
 auto ChemicalProps::gibbsEnergy() const -> real
 {
-    const auto iend = sys.phases().size();
+    const auto iend = system().phases().size();
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).gibbsEnergy(); });
 }
 
 auto ChemicalProps::enthalpy() const -> real
 {
-    const auto iend = sys.phases().size();
+    const auto iend = system().phases().size();
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).enthalpy(); });
 }
 
 auto ChemicalProps::volume() const -> real
 {
-    const auto iend = sys.phases().size();
+    const auto iend = system().phases().size();
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).volume(); });
 }
 
 auto ChemicalProps::entropy() const -> real
 {
-    const auto iend = sys.phases().size();
+    const auto iend = system().phases().size();
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).entropy(); });
 }
 
 auto ChemicalProps::internalEnergy() const -> real
 {
-    const auto iend = sys.phases().size();
+    const auto iend = system().phases().size();
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).internalEnergy(); });
 }
 
 auto ChemicalProps::helmholtzEnergy() const -> real
 {
-    const auto iend = sys.phases().size();
+    const auto iend = system().phases().size();
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).helmholtzEnergy(); });
 }
 

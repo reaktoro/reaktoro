@@ -24,7 +24,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/PhaseChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 
 namespace Reaktoro {
 
@@ -134,7 +134,7 @@ public:
     auto speciesMass(String name, String unit) const -> real;
 
     /// Return the chemical properties of a phase in the chemical system.
-    auto phaseProps(Index iphase) const -> PhaseChemicalProps;
+    auto phaseProps(Index iphase) const -> ChemicalPropsPhase;
 
     /// Return the chemical properties of the chemical system.
     auto props() const -> ChemicalProps;
