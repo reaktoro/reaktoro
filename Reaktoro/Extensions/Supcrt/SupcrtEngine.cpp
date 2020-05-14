@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/OptimizationUtils.hpp>
+#include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroState.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroStateHKF.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesThermoState.hpp>
