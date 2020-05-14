@@ -383,7 +383,7 @@ TEST_CASE("Testing PhaseChemicalProps class", "[PhaseChemicalProps]")
 
         for(auto i = 0; i < 4; ++i)
         {
-            REQUIRE_NOTHROW( props.update(T, P, n, wrtn(i)) );
+            REQUIRE_NOTHROW( props.update(T, P, n, wrt(n[i])) );
 
             REQUIRE( grad(props.temperature()) == 0.0 );
             REQUIRE( grad(props.pressure())    == 0.0 );
