@@ -48,7 +48,7 @@ auto ensureCommonAggregateState(const SpeciesList& species)
 struct Phase::Impl
 {
     /// The name of the phase
-    std::string name;
+    String name;
 
     /// The state of matter of the phase.
     StateOfMatter state = StateOfMatter::Solid;
@@ -74,7 +74,7 @@ auto Phase::clone() const -> Phase
     return phase;
 }
 
-auto Phase::withName(std::string name) -> Phase
+auto Phase::withName(String name) -> Phase
 {
     Phase copy = clone();
     copy.pimpl->name = std::move(name);
@@ -104,7 +104,7 @@ auto Phase::withActivityPropsFn(ActivityPropsFn fn) -> Phase
     return copy;
 }
 
-auto Phase::name() const -> std::string
+auto Phase::name() const -> String
 {
     return pimpl->name;
 }
