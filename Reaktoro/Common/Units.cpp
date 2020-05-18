@@ -116,9 +116,7 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"amu"          , {{1.660538921e-27, "kg" , 1}}},
     {"ton"          , {{2000 , "lb" , 1}}},
     {"gram"         , {{1, "g", 1}}},
-    {"grams"        , {{1, "g", 1}}},
     {"kilogram"     , {{1, "kg" , 1}}},
-    {"kilograms"    , {{1, "kg" , 1}}},
     {"lbm"          , {{1, "lb" , 1}}},
 
     // Length Units
@@ -141,13 +139,9 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"feet"         , {{1, "ft" , 1}}},
     {"foot"         , {{1, "ft" , 1}}},
     {"inch"         , {{1, "in" , 1}}},
-    {"inches"       , {{1, "in" , 1}}},
     {"meter"        , {{1, "m", 1}}},
-    {"meters"       , {{1, "m", 1}}},
     {"mile"         , {{1, "mi" , 1}}},
-    {"miles"        , {{1, "mi" , 1}}},
     {"yard"         , {{1, "yd" , 1}}},
-    {"yards"        , {{1, "yd" , 1}}},
 
     // Time Units
     {"s"            , {{1, "s", 1}}},
@@ -164,13 +158,6 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"year"         , {{365.2422 , "day", 1}}},
     {"yr"           , {{365.2422 , "day", 1}}},
     {"second"       , {{1, "s", 1}}},
-    {"seconds"      , {{1, "s", 1}}},
-    {"minutes"      , {{1, "minute" , 1}}},
-    {"hours"        , {{1, "hour" , 1}}},
-    {"days"         , {{1, "day", 1}}},
-    {"weeks"        , {{1, "week" , 1}}},
-    {"months"       , {{1, "month", 1}}},
-    {"years"        , {{1, "year" , 1}}},
 
     // Electrical Current Units
     {"A"            , {{1, "A", 1}}},
@@ -181,7 +168,6 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"nA"           , {{nano , "A", 1}}},
     {"pA"           , {{pico , "A", 1}}},
     {"ampere"       , {{1, "A", 1}}},
-    {"amperes"      , {{1, "A", 1}}},
 
     // Amount of Substance Units
     {"mol"          , {{1, "mol", 1}}},
@@ -190,7 +176,6 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"mcmol"        , {{micro, "mol", 1}}},
     {"kmol"         , {{kilo , "mol", 1}}},
     {"mole"         , {{1, "mol", 1}}},
-    {"moles"        , {{1, "mol", 1}}},
 
     // Luminous Intensity Units
     {"cd"           , {{1, "cd" , 1}}},
@@ -202,7 +187,6 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"uradian"      , {{micro, "radian" , 1}}},
     {"deg"          , {{pi/180 , "radian" , 1}}},
     {"degree"       , {{1, "deg", 1}}},
-    {"degrees"      , {{1, "deg", 1}}},
 
     // Solid Angle Units
     {"sr"           , {{1, "sr" , 1}}},
@@ -228,9 +212,6 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"hectare"      , {{10000, "m2" , 1}}},
     {"acre"         , {{4046.8726, "m2" , 1}}},
     {"barn"         , {{1.0e-28, "m2" , 1}}},
-    {"hectares"     , {{1, "hectare", 1}}},
-    {"acres"        , {{1, "acre" , 1}}},
-    {"barns"        , {{1, "barn" , 1}}},
 
     // Volume Units
     {"m3"           , {{1, "m", 3}}},
@@ -263,11 +244,8 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"quart"        , {{0.25 , "gal", 1}}},
     {"cc"           , {{1, "cm3", 1}}},
     {"gallon"       , {{1, "gal", 1}}},
-    {"gallons"      , {{1, "gal", 1}}},
     {"liter"        , {{1, "l", 1}}},
-    {"liters"       , {{1, "l", 1}}},
     {"litre"        , {{1, "l", 1}}},
-    {"litres"       , {{1, "l", 1}}},
 
     // Velocity Units
     {"mps"          , {{1 , "m", 1}, {1 , "s", -1}}},
@@ -303,9 +281,7 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"kN"           , {{kilo, "N", 1}}},
     {"lbf"          , {{4.44822162 , "N", 1}}},
     {"dyne"         , {{1.0e-5 , "N", 1}}},
-    {"dynes"        , {{1, "dyne" , 1}}},
     {"newton"       , {{1, "N", 1}}},
-    {"newtons"      , {{1, "N", 1}}},
 
     // Pressure Units
     {"Pa"           , {{1 , "N", 1}, {1 , "m2" , -1}}},
@@ -327,7 +303,6 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"inH2O"        , {{249.08891, "Pa" , 1}}},
     {"ftH2O"        , {{12 , "inH2O", 1}}},
     {"pascal"       , {{1, "Pa" , 1}}},
-    {"pascals"      , {{1, "Pa" , 1}}},
 
     // Energy Units
     {"J"            , {{1 , "N", 1}, {1 , "m", 1}}},
@@ -342,29 +317,24 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"GeV"          , {{giga , "eV" , 1}}},
     {"btu"          , {{1055.05585 , "J", 1}}},
     {"calorie"      , {{1, "cal", 1}}},
-    {"calories"     , {{1, "cal", 1}}},
     {"joule"        , {{1, "J", 1}}},
-    {"joules"       , {{1, "J", 1}}},
 
     // Power Units
     {"W"            , {{1 , "J", 1}, {1 , "s", -1}}},
-    {"watts"        , {{1, "W", 1}}},
+    {"watt"        , {{1, "W", 1}}},
 
     // Charge Units
     {"C"            , {{1 , "A", 1}, {1 , "s", 1}}},
     {"coulomb"      , {{1, "C", 1}}},
-    {"coulombs"     , {{1, "C", 1}}},
     {"mC"           , {{milli, "C", 1}}},
 
     // Voltage Units
     {"V"            , {{1 , "J", 1}, {1 , "C", -1}}},
     {"volt"         , {{1, "V", 1}}},
-    {"volts"        , {{1, "V", 1}}},
     {"mV"           , {{milli, "V", 1}}},
 
     // Resistance Units
     {"ohm"          , {{1 , "V", 1}, {1 , "A", -1}}},
-    {"ohms"         , {{1, "ohm", 1}}},
 
     // Conductance Units
     {"S"            , {{1, "ohm", -1}}},
@@ -377,18 +347,15 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"uF"           , {{micro, "F", 1}}},
     {"mF"           , {{milli, "F", 1}}},
     {"farad"        , {{1, "F", 1}}},
-    {"farads"       , {{1, "F", 1}}},
 
     // Magnetic Flux Units
     {"Wb"           , {{1 , "V", 1}, {1 , "s", 1}}},
     {"weber"        , {{1, "Wb" , 1}}},
-    {"webers"       , {{1, "Wb" , 1}}},
 
     // Magnetic Flux Density Units
     {"T"            , {{1 , "Wb" , 1}, {1 , "m", 2}}},
     {"gauss"        , {{0.0001 , "T", 1}}},
     {"tesla"        , {{1, "T", 1}}},
-    {"teslas"       , {{1, "T", 1}}},
 
     // Inductance Units
     {"H"            , {{1 , "Wb" , 1}, {1 , "A", -1}}},
@@ -642,14 +609,21 @@ inline void checkConvertibleUnits(const DerivedUnit& from, const DerivedUnit& to
 
 } // namespace internal
 
-double convert(double value, const string& from, const string& to)
+auto slope(const std::string& from, const std::string& to) -> double
 {
     if(internal::temperatureUnitsMap.count(from) && internal::temperatureUnitsMap.count(to))
-        return internal::convertTemperature(value, from, to);
+        return internal::convertTemperature(1.0, from, to) - internal::convertTemperature(0.0, from, to);
     auto parsed_from = internal::parseUnit(from);
     auto parsed_to   = internal::parseUnit(to);
     internal::checkConvertibleUnits(parsed_from, parsed_to, from, to);
-    return value * internal::factor(parsed_from)/internal::factor(parsed_to);
+    return internal::factor(parsed_from)/internal::factor(parsed_to);
+}
+
+auto intercept(const std::string& from, const std::string& to) -> double
+{
+    if(internal::temperatureUnitsMap.count(from) && internal::temperatureUnitsMap.count(to))
+        return internal::convertTemperature(0.0, from, to);
+    return 0.0;
 }
 
 bool convertible(const std::string& from, const std::string& to)
