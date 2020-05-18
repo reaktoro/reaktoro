@@ -22,15 +22,31 @@
 
 namespace units {
 
+/// Return the slope factor in the linear function that converts a numeric value from a unit to another.
+/// @param from The string representing the unit from which the conversion is made
+/// @param to The string representing the unit to which the conversion is made
+/// @return The slope factor
+auto slope(const std::string& from, const std::string& to) -> double;
+
+/// Return the intercept term in the linear function that converts a numeric value from a unit to another.
+/// @param from The string representing the unit from which the conversion is made
+/// @param to The string representing the unit to which the conversion is made
+/// @return The intercept term
+auto intercept(const std::string& from, const std::string& to) -> double;
+
+/// Check if two units are convertible among each other
+/// @return True if they are convertible, false otherwise
+auto convertible(const std::string& from, const std::string& to) -> bool;
+
 /// Convert a numeric value from a unit to another
 /// @param value The value
 /// @param from The string representing the unit from which the conversion is made
 /// @param to The string representing the unit to which the conversion is made
 /// @return The converted value
-auto convert(double value, const std::string& from, const std::string& to) -> double;
-
-/// Check if two units are convertible among each other
-/// @return True if they are convertible, false otherwise
-auto convertible(const std::string& from, const std::string& to) -> bool;
+template<typename T>
+auto convert(const T& value, const std::string& from, const std::string& to) -> double
+{
+    return value * slope(from, to) + intercept(from, to);
+}
 
 } /* namespace units */
