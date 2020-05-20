@@ -22,7 +22,10 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
+namespace test {
+
+/// Return a mock ChemicalSystem object for test reasons.
+auto createChemicalSystem() -> ChemicalSystem
 {
     // Create the Database object for the ChemicalSystem
     Database db;
@@ -55,15 +58,22 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
             .withStateOfMatter(StateOfMatter::Solid)
     };
 
+    return ChemicalSystem(db, phases);
+}
+
+} // namespace test
+
+TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
+{
     //-------------------------------------------------------------------------
     // TESTING CONSTRUCTOR: ChemicalSystem::ChemicalSystem(phases)
     //-------------------------------------------------------------------------
-    ChemicalSystem system(db, phases);
+    ChemicalSystem system = test::createChemicalSystem();
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::database()
     //-------------------------------------------------------------------------
-    REQUIRE( system.database().species().size() == db.species().size() );
+    REQUIRE( system.database().species().size() );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::phases()
