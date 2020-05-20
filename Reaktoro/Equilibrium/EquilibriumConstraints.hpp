@@ -29,30 +29,39 @@ class ChemicalProps;
 class ChemicalState;
 class ChemicalSystem;
 
-/// The type of functions implementing equilibrium and chemical potential constraints.
-using ConstraintFn = Fn<real(const ChemicalProps&)>;
+//=================================================================================================
+//
+// Auxiliary Types
+//
+//=================================================================================================
 
-/// The data describing an equilibrium constraint and its associated controlling variable.
-struct EquilibriumConstraint
+/// The type of functions implementing equilibrium constraints.
+using EquilibriumConstraintFn = Fn<real(const ChemicalProps&)>;
+
+/// The functional equilibrium constraints in a chemical equilibrium calculation.
+struct FunctionalConstraints
 {
-    /// The string denoting what is controlled (either "Temperature", "Pressure", or a species name).
-    String control;
+    /// The imposed equilibrium constraint while controling temperature.
+    EquilibriumConstraintFn dfdT;
 
-    /// The equilibrium constraint function to be imposed as the controling variable is regulated.
-    ConstraintFn fn;
+    /// The imposed equilibrium constraint while controling pressure.
+    EquilibriumConstraintFn dfdP;
+
+    /// The imposed equilibrium constraints while controlling the titration of substances.
+    Pairs<ChemicalFormula, EquilibriumConstraintFn> dfdq;
 };
 
-/// The data describing a chemical potential constraint.
+/// The description of a chemical potential constraint in a chemical equilibrium calculation.
 struct ChemicalPotentialConstraint
 {
     /// The chemical formula of the substance for which the chemical potential is constrained.
     ChemicalFormula formula;
 
-    /// The function that computes the constrained chemical potential value.
-    ConstraintFn fn;
+    /// The function of temperature and pressure that evaluates the constrained chemical potential value.
+    Fn<real(real,real)> fn;
 };
 
-/// The data describing the reactivity constraints during the chemical equilibrium calculation.
+/// The reactivity constraints in a chemical equilibrium calculation.
 struct ReactivityConstraints
 {
     /// The indices of the species whose amounts cannot change.
@@ -68,19 +77,24 @@ struct ReactivityConstraints
     Vec<Pairs<Index, double>> reactions_cannot_react;
 };
 
+//=================================================================================================
+//
+// EquilibriumConstraints
+//
+//=================================================================================================
+
 /// The class used to define equilibrium constraints.
 class EquilibriumConstraints
 {
 public:
     // Forward declarations
-    class Control;
-    class Until;
-    class Attained;
-    class Fix;
-    class Prevent;
+    class Control; class Until; class Attained; class Fix; class Prevent; struct Data;
 
     /// Construct a EquilibriumConstraints object.
     EquilibriumConstraints(const ChemicalSystem& system);
+
+    /// Destroy this EquilibriumConstraints object.
+    ~EquilibriumConstraints();
 
     /// Return a Control object to initiate the imposition of a general equilibrium constraint.
     auto control() -> Control;
@@ -91,19 +105,28 @@ public:
     /// Return a Prevent object to initiate the imposition of a reactivity constraint.
     auto prevent() -> Prevent;
 
+    /// Return the imposed constraints.
+    auto data() const -> const Data&;
+
 private:
     struct Impl;
 
     Ptr<Impl> pimpl;
 };
 
-/// The auxiliary class used to define the controlled variable associated with the desired equilibrium constraint.
+//=================================================================================================
+//
+// EquilibriumConstraints::Control
+//
+//=================================================================================================
+
+/// The auxiliary class used to define the controlled variable in an equilibrium constraint.
 class EquilibriumConstraints::Control
 {
 public:
     /// Construct an EquilibriumConstraints::Control object.
-    /// @param constraints The container of constraints to be filled in by this Control object.
-    explicit Control(Vec<EquilibriumConstraint>& constraints);
+    /// @param constraints The reference to the underlying functional constraints in EquilibriumConstraints.
+    explicit Control(FunctionalConstraints& fconstraints);
 
     /// Deleted copy constructor.
     Control(const Control&) = delete;
@@ -121,39 +144,51 @@ public:
     auto titrationOfEither(String titrant1, String titrant2) -> Until;
 
 private:
-    /// The container of constraints to be filled in by this Control object.
-    Vec<EquilibriumConstraint>& constraints;
+    /// The reference to the underlying functional constraints in EquilibriumConstraints.
+    FunctionalConstraints& fconstraints;
 };
+
+//=================================================================================================
+//
+// EquilibriumConstraints::Until
+//
+//=================================================================================================
 
 /// The intermediate auxiliary class used to define the desired equilibrium constraint.
 class EquilibriumConstraints::Until
 {
 public:
     /// Construct an EquilibriumConstraints::Until object.
-    /// @param constraintfn The equilibrium constraint function to be filled in by this Until object or by an Attained object.
-    explicit Until(ConstraintFn& constraintfn);
+    /// @param constraintfn The reference to the underlying equilibrium constraint function to be filled in.
+    explicit Until(EquilibriumConstraintFn& constraintfn);
 
     /// Deleted copy constructor.
     Until(const Until&) = delete;
 
-    /// Return an EquilibriumConstraints::Attained object for setting the associated equilibrium constraint function.
+    /// Return an Attained object for setting the underlying equilibrium constraint function.
     auto until() const -> Attained;
 
     /// Enforce a custom equilibrium constraint at chemical equilibrium.
-    auto until(const ConstraintFn& fn) -> void;
+    auto until(const EquilibriumConstraintFn& customfn) -> void;
 
 private:
-    /// The equilibrium constraint function to be transfered to an Attained object.
-    ConstraintFn& constraintfn;
+    /// The reference to the underlying equilibrium constraint function to be filled in.
+    EquilibriumConstraintFn& constraintfn;
 };
 
-/// The auxiliary class used to define the equilibrium constraints to be attained.
+//=================================================================================================
+//
+// EquilibriumConstraints::Attained
+//
+//=================================================================================================
+
+/// The auxiliary class used to define the equilibrium constraint function.
 class EquilibriumConstraints::Attained
 {
 public:
     /// Construct an EquilibriumConstraints::Attained object.
-    /// @param constraintfn The equilibrium constraint function to be filled in by this Attained object.
-    explicit Attained(ConstraintFn& constraintfn);
+    /// @param constraintfn The reference to the underlying equilibrium constraint function to be filled in.
+    explicit Attained(EquilibriumConstraintFn& constraintfn);
 
     /// Deleted copy constructor.
     Attained(const Attained&) = delete;
@@ -189,9 +224,15 @@ public:
     auto entropy(real value, String unit) -> void;
 
 private:
-    /// The equilibrium constraint function to be filled in by this Attained object.
-    ConstraintFn& constraintfn;
+    /// The reference to the underlying equilibrium constraint function to be filled in.
+    EquilibriumConstraintFn& constraintfn;
 };
+
+//=================================================================================================
+//
+// EquilibriumConstraints::Fix
+//
+//=================================================================================================
 
 /// The class used to define constraints on chemical potentials of substances.
 class EquilibriumConstraints::Fix
@@ -263,6 +304,12 @@ private:
     ChemicalPotentialConstraint& uconstraint;
 };
 
+//=================================================================================================
+//
+// EquilibriumConstraints::Prevent
+//
+//=================================================================================================
+
 /// The auxiliary class used to define reactivity constraints.
 class EquilibriumConstraints::Prevent
 {
@@ -308,6 +355,25 @@ private:
 
     /// The reactivity constraints to be filled in by this Prevent object.
     ReactivityConstraints& constraints;
+};
+
+//=================================================================================================
+//
+// EquilibriumConstraints::Data
+//
+//=================================================================================================
+
+/// The auxiliary struct used to store the imposed equilibrium constraints.
+struct EquilibriumConstraints::Data
+{
+    /// The functional equilibrium constraints imposed via method @ref EquilibriumConstraints::control.
+    FunctionalConstraints fconstraints;
+
+    /// The description of a chemical potential constraint imposed via method @ref EquilibriumConstraints::fix.
+    Vec<ChemicalPotentialConstraint> uconstraints;
+
+    /// The reactivity constraints imposed via method @ref EquilibriumConstraints::prevent.
+    ReactivityConstraints rconstraints;
 };
 
 } // namespace Reaktoro
