@@ -27,16 +27,16 @@ namespace detail {
 
 using StringIterator = String::iterator;
 
-auto parseElementAtom(StringIterator begin, StringIterator end) -> std::pair<String, StringIterator>
+auto parseElementAtom(StringIterator begin, StringIterator end) -> Pair<String, StringIterator>
 {
-    error(!isupper(*begin), "The first character in a chemical formula must be in uppercase.");
     if(begin == end) return {"", begin};
     auto endelement = find_if(begin + 1, end, [](char c){return isupper(c) || !isalpha(c);});
     String element = String(begin, endelement);
+    if(islower(element[0])) return {"", endelement};
     return {element, endelement};
 }
 
-auto parseNumAtoms(StringIterator begin, StringIterator end) -> std::pair<double, StringIterator>
+auto parseNumAtoms(StringIterator begin, StringIterator end) -> Pair<double, StringIterator>
 {
     if(begin == end) return {1.0, begin};
     if(!(isdigit(*begin) || *begin == '.')) return {1.0, begin};

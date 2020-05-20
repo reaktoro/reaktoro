@@ -71,6 +71,13 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     REQUIRE( formula.equivalent("H+(aq)") );
     REQUIRE( formula.equivalent("H[+]") );
 
+    formula = ChemicalFormula("e-");
+    REQUIRE( formula.str()             == "e-" );
+    REQUIRE( formula.charge()          == -1 );
+    REQUIRE( formula.elements().size() == 0 );
+    REQUIRE( formula.equivalent("e-(aq)") );
+    REQUIRE( formula.equivalent("e[-]") );
+
     formula = ChemicalFormula("Na+");
     REQUIRE( formula.str()             == "Na+" );
     REQUIRE( formula.charge()          == 1 );
