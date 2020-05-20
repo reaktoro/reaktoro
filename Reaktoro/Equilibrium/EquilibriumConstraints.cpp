@@ -36,29 +36,11 @@ namespace Reaktoro {
 
 struct EquilibriumConstraints::Impl
 {
-    // ConstraintFn gT;
-    // ConstraintFn gP;
-
-    // /// The derivatives of the objective function f with respect to x = n.
-    // Vec<ConstraintFn> dfdx;
-
-    // /// The derivatives of the objective function f with respect to p = (T, P).
-    // Vec<ConstraintFn> dfdp;
-
-    // /// The derivatives of the objective function f with respect to q (the amounts of titrants).
-    // Vec<ConstraintFn> dfdq;
-
     /// The chemical system associated with the equilibrium constraints.
     ChemicalSystem system;
 
-    /// The list of general equilibrium constraints to be imposed.
-    Vec<EquilibriumConstraint> eqconstraints;
-
-    /// The list of chemical potential constraints to be imposed.
-    Vec<ChemicalPotentialConstraint> uconstraints;
-
-    /// The reactivity constraints to be imposed.
-    ReactivityConstraints rconstraints;
+    /// The imposed equilibrium constraints.
+    Data data;
 
     /// Construct a EquilibriumConstraints::Impl object.
     Impl(const ChemicalSystem& system)
@@ -68,37 +50,99 @@ struct EquilibriumConstraints::Impl
     /// Return a Control object to initiate the imposition of a general equilibrium constraint.
     auto control() -> Control
     {
-        return Control(eqconstraints);
+        return Control(data.fconstraints);
     }
 
     /// Return a Fix object to initiate the imposition of a chemical potential constraint.
     auto fix() -> Fix
     {
-        uconstraints.push_back(ChemicalPotentialConstraint());
-        return Fix(system, uconstraints.back());
+        data.uconstraints.push_back({});
+        return Fix(system, data.uconstraints.back());
     }
 
     /// Return a Prevent object to initiate the imposition of a reactivity constraint.
     auto prevent() -> Prevent
     {
-        return Prevent(system, rconstraints);
+        return Prevent(system, data.rconstraints);
+    }
+
+    /// Assemble the matrix block A in the conservation matrix C.
+    auto assembleMatrixA(MatrixXdRef A) -> void
+    {
+        A = system.formulaMatrix();
+    }
+
+    /// Assemble the matrix block B = [BT BP Bq] in the conservation matrix C.
+    auto assembleMatrixB(MatrixXdRef B) -> void
+    {
+        const auto num_elements = system.elements().size();
+        assert(B.cols() == 2 + data.fconstraints.dfdq.size()); // T, P and number of titrants
+        assert(B.rows() == 1 + num_elements);              // number of elements plus charge
+
+        auto fill_matrix_col = [&](const auto& formula, auto col)
+        {
+            col[num_elements] = formula.charge(); // last entry in the column vector is charge of substance
+            for(const auto& [element, coeff] : formula.elements()) {
+                const auto ielem = system.elements().index(element);
+                col[ielem] = coeff;
+            }
+        };
+
+        auto j = 2; // skip columns BT and BP, since these are zeros
+        for(const auto& [formula, fn] : data.fconstraints.dfdq)
+            fill_matrix_col(formula, B.col(j++));
+    }
+
+    /// Assemble the matrix block S in the conservation matrix C.
+    auto assembleMatrixS(MatrixXdRef S) -> void
+    {
+        assert(S.rows() == data.rconstraints.reactions_cannot_react.size());
+
+        auto fill_matrix_row = [&](const auto& pairs, auto row)
+        {
+            for(auto [ispecies, coeff] : pairs)
+                row[ispecies] = coeff;
+        };
+
+        auto i = 0;
+        for(const auto& pairs : data.rconstraints.reactions_cannot_react)
+            fill_matrix_row(pairs, S.row(i++));
     }
 
     /// Return the conservation matrix associated with the equilibrium constraints.
+    /// The conservation matrix is:
+    ///
+    /// C = [ A B ]
+    ///     [ S 0 ]
+    ///
+    /// where A is the formula matrix of the species with respect to elements
+    /// and charge; B = [BT BP Bq], with BT and BP being zero column vectors
+    /// and Bq the formula matrix of the introduced titrants whose amounts are
+    /// controlled to attain imposed equilibrium constraints; and S is the
+    /// stoichiometric matrix of reactions that cannot progress during the
+    /// equilibrium calculation (inert reactions).
     auto conservationMatrix() -> MatrixXd
     {
-        // const auto num_elements = system.elements().size();
-        // const auto num_species = system.species().size();
-        // const auto num_inert_reactions = rconstraints.reactions_cannot_react.size();
-        // const auto num_charge = 1;
-        // const auto num_titrants = eqconstraints.size() + uconstraints.size();
+        const auto num_elements = system.elements().size();
+        const auto num_species = system.species().size();
+        const auto num_charge = 1;
+        const auto num_inert_reactions = data.rconstraints.reactions_cannot_react.size();
+        const auto num_controls = 2 + data.fconstraints.dfdq.size();
 
-        // const auto num_rows = num_elements + num_charge + num_inert_reactions;
-        // const auto num_columns = num_species + num_titrants;
+        const auto num_rows = num_elements + num_charge + num_inert_reactions;
+        const auto num_cols = num_species + num_controls;
 
-        // const auto& A = system.formulaMatrix();
-        // const auto nrows = A.rows() + rconstraints.reactions_cannot_react.size();
-        // MatrixXd C(nrows, ncols);
+        MatrixXd C = MatrixXd::Zero(num_rows, num_cols);
+
+        auto A = C.topLeftCorner(num_elements + num_charge, num_species);
+        auto B = C.topRightCorner(num_elements + num_charge, num_controls);
+        auto S = C.bottomLeftCorner(num_inert_reactions, num_species);
+
+        assembleMatrixA(A);
+        assembleMatrixB(B);
+        assembleMatrixS(S);
+
+        return C;
     }
 };
 
@@ -109,23 +153,30 @@ struct EquilibriumConstraints::Impl
 //=================================================================================================
 
 EquilibriumConstraints::EquilibriumConstraints(const ChemicalSystem& system)
-{
+: pimpl(new Impl(system))
+{}
 
-}
+EquilibriumConstraints::~EquilibriumConstraints()
+{}
 
 auto EquilibriumConstraints::control() -> Control
 {
-
+    return pimpl->control();
 }
 
 auto EquilibriumConstraints::fix() -> Fix
 {
-
+    return pimpl->fix();
 }
 
 auto EquilibriumConstraints::prevent() -> Prevent
 {
+    return pimpl->prevent();
+}
 
+auto EquilibriumConstraints::data() const -> const Data&
+{
+    return pimpl->data;
 }
 
 //=================================================================================================
@@ -134,35 +185,36 @@ auto EquilibriumConstraints::prevent() -> Prevent
 //
 //=================================================================================================
 
-EquilibriumConstraints::Control::Control(Vec<EquilibriumConstraint>& constraints)
-: constraints(constraints)
+EquilibriumConstraints::Control::Control(FunctionalConstraints& fconstraints)
+: fconstraints(fconstraints)
 {}
 
 auto EquilibriumConstraints::Control::temperature() -> Until
 {
-    constraints.push_back(EquilibriumConstraint());
-    constraints.back().control = "Temperature";
-    return EquilibriumConstraints::Until(constraints.back().fn);
+    return EquilibriumConstraints::Until(fconstraints.dfdT);
 }
 
 auto EquilibriumConstraints::Control::pressure() -> Until
 {
-    constraints.push_back(EquilibriumConstraint());
-    constraints.back().control = "Pressure";
-    return EquilibriumConstraints::Until(constraints.back().fn);
+    return EquilibriumConstraints::Until(fconstraints.dfdP);
 }
 
 auto EquilibriumConstraints::Control::titrationOf(String titrant) -> Until
 {
-    constraints.push_back(EquilibriumConstraint());
-    constraints.back().control = titrant;
-    return EquilibriumConstraints::Until(constraints.back().fn);
+    // TODO: Adapt Optima lib so that Ax + Bq = b can be imposed by B^T
+    // (transpose) is not considered in the first-order conditions for minimum.
+    error(true, "Method EquilibriumConstraints::Control::titrationOf is not supported yet.");
+    fconstraints.dfdq.push_back({});
+    auto& [formula, fn] = fconstraints.dfdq.back();
+    formula = ChemicalFormula(titrant);
+    return EquilibriumConstraints::Until(fn);
 }
 
 auto EquilibriumConstraints::Control::titrationOfEither(String titrant1, String titrant2) -> Until
 {
     error(true, "Method EquilibriumConstraints::Control::titrationOfEither has not been implemented yet.");
-    return EquilibriumConstraints::Until(constraints.back().fn);
+    EquilibriumConstraintFn fn;
+    return EquilibriumConstraints::Until(fn);
 }
 
 //=================================================================================================
@@ -171,7 +223,7 @@ auto EquilibriumConstraints::Control::titrationOfEither(String titrant1, String 
 //
 //=================================================================================================
 
-EquilibriumConstraints::Until::Until(ConstraintFn& constraintfn)
+EquilibriumConstraints::Until::Until(EquilibriumConstraintFn& constraintfn)
 : constraintfn(constraintfn)
 {}
 
@@ -180,9 +232,9 @@ auto EquilibriumConstraints::Until::until() const -> EquilibriumConstraints::Att
     return EquilibriumConstraints::Attained(constraintfn);
 }
 
-auto EquilibriumConstraints::Until::until(const ConstraintFn& fn) -> void
+auto EquilibriumConstraints::Until::until(const EquilibriumConstraintFn& customfn) -> void
 {
-    constraintfn = fn;
+    constraintfn = customfn;
 }
 
 //=================================================================================================
@@ -191,7 +243,7 @@ auto EquilibriumConstraints::Until::until(const ConstraintFn& fn) -> void
 //
 //=================================================================================================
 
-EquilibriumConstraints::Attained::Attained(ConstraintFn& constraintfn)
+EquilibriumConstraints::Attained::Attained(EquilibriumConstraintFn& constraintfn)
 : constraintfn(constraintfn)
 {}
 
@@ -246,9 +298,7 @@ auto lnActivityConstraint(const Species& species, real value) -> ChemicalPotenti
     const auto R = universalGasConstant;
     ChemicalPotentialConstraint constraint;
     constraint.formula = species.formula();
-    constraint.fn = [=](const ChemicalProps& props) {
-        const auto T = props.temperature();
-        const auto P = props.pressure();
+    constraint.fn = [=](real T, real P) {
         const auto u0 = species.props(T, P).G0; // the standard chemical potential of the species
         return u0 + R*T*value;
     };
@@ -265,7 +315,7 @@ auto EquilibriumConstraints::Fix::chemicalPotential(String substance, real value
 {
     value = units::convert(value, unit, "J/mol");
     uconstraint.formula = ChemicalFormula(substance);
-    uconstraint.fn = [=](const ChemicalProps& props) { return value; };
+    uconstraint.fn = [=](real T, real P) { return value; };
 }
 
 auto EquilibriumConstraints::Fix::lnActivity(String name, real value) -> void
@@ -328,19 +378,16 @@ auto EquilibriumConstraints::Fix::pe(real value) -> void
     const auto lnae = -value * ln10; // the ln activity of the electron species
     const auto R = universalGasConstant;
     uconstraint.formula = ChemicalFormula("e-");
-    uconstraint.fn = [=](const ChemicalProps& props) {
-        const auto T = props.temperature();
-        return ue0 + R*T*lnae;
-    };
+    uconstraint.fn = [=](real T, real P) { return ue0 + R*T*lnae; };
 }
 
 auto EquilibriumConstraints::Fix::Eh(real value, String unit) -> void
 {
     value = units::convert(value, unit, "V"); // in V = J/C
-    const auto F = faradayConstant; // in C/mol
-    const auto ue = -F * value; // in J/mol (chemical potential of electron)
+    const auto F = faradayConstant;           // in C/mol
+    const auto ue = -F * value;               // in J/mol (chemical potential of electron)
     uconstraint.formula = ChemicalFormula("e-");
-    uconstraint.fn = [=](const ChemicalProps& props) { return ue; };
+    uconstraint.fn = [=](real T, real P) { return ue; };
 }
 
 //=================================================================================================
