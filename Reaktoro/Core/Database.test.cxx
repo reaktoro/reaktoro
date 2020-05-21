@@ -22,7 +22,9 @@
 #include <Reaktoro/Core/Database.hpp>
 using namespace Reaktoro;
 
-auto testingDatabase() -> Database
+namespace test {
+
+auto createDatabase() -> Database
 {
     Database db;
 
@@ -64,9 +66,11 @@ auto testingDatabase() -> Database
     return db;
 }
 
+} // namespace test
+
 TEST_CASE("Testing Database class", "[Database]")
 {
-    Database db = testingDatabase();
+    Database db = test::createDatabase();
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: Database::elements
