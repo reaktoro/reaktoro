@@ -46,7 +46,7 @@ auto convertible(const std::string& from, const std::string& to) -> bool;
 template<typename T>
 auto convert(const T& value, const std::string& from, const std::string& to) -> double
 {
-    return value * slope(from, to) + intercept(from, to);
+    return (from == to) ? value : value * slope(from, to) + intercept(from, to);
 }
 
 } /* namespace units */
