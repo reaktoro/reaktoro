@@ -26,56 +26,8 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalProps;
-class ChemicalState;
 class ChemicalSystem;
-
-//=================================================================================================
-//
-// Auxiliary Types
-//
-//=================================================================================================
-
-/// The type of functions implementing equilibrium constraints.
-using EquilibriumConstraintFn = Fn<real(const ChemicalProps&)>;
-
-/// The functional equilibrium constraints in a chemical equilibrium calculation.
-struct FunctionalConstraints
-{
-    /// The imposed equilibrium constraint while controling temperature.
-    EquilibriumConstraintFn dfdT;
-
-    /// The imposed equilibrium constraint while controling pressure.
-    EquilibriumConstraintFn dfdP;
-
-    /// The imposed equilibrium constraints while controlling the titration of substances.
-    Pairs<ChemicalFormula, EquilibriumConstraintFn> dfdq;
-};
-
-/// The description of a chemical potential constraint in a chemical equilibrium calculation.
-struct ChemicalPotentialConstraint
-{
-    /// The chemical formula of the substance for which the chemical potential is constrained.
-    ChemicalFormula formula;
-
-    /// The function of temperature and pressure that evaluates the constrained chemical potential value.
-    Fn<real(real,real)> fn;
-};
-
-/// The reactivity constraints in a chemical equilibrium calculation.
-struct ReactivityConstraints
-{
-    /// The indices of the species whose amounts cannot change.
-    Set<Index> species_cannot_react;
-
-    /// The indices of the species whose amounts cannot increase.
-    Set<Index> species_cannot_increase;
-
-    /// The indices of the species whose amounts cannot decrease.
-    Set<Index> species_cannot_decrease;
-
-    /// The inert reactions as pairs of species index and its stoichiometric coefficient.
-    Vec<Pairs<Index, double>> reactions_cannot_react;
-};
+class Species;
 
 //=================================================================================================
 //
@@ -88,16 +40,22 @@ class EquilibriumConstraints
 {
 public:
     // Forward declarations
-    class Control; class Until; class Attained; class Fix; class Prevent; struct Data;
+    class Control; class Until; class Fix; class Preserve; class Prevent; struct Data;
 
-    /// Construct a EquilibriumConstraints object.
+    /// Construct an EquilibriumConstraints object.
     EquilibriumConstraints(const ChemicalSystem& system);
 
     /// Destroy this EquilibriumConstraints object.
     ~EquilibriumConstraints();
 
-    /// Return a Control object to initiate the imposition of a general equilibrium constraint.
+    /// Return a Control object to initiate the indication of control variables.
     auto control() -> Control;
+
+    /// Return a Until object to initiate the imposition of a functional equilibrium constraint.
+    auto until() -> Until;
+
+    /// Return a Preserve object to initiate the imposition of properties that must be preserved.
+    auto preserve() -> Preserve;
 
     /// Return a Fix object to initiate the imposition of a chemical potential constraint.
     auto fix() -> Fix;
@@ -125,27 +83,27 @@ class EquilibriumConstraints::Control
 {
 public:
     /// Construct an EquilibriumConstraints::Control object.
-    /// @param constraints The reference to the underlying functional constraints in EquilibriumConstraints.
-    explicit Control(FunctionalConstraints& fconstraints);
+    /// @param data The underlying data of the EquilibriumConstraints object.
+    explicit Control(EquilibriumConstraints::Data& data);
+
+    /// Enable temperature control during the chemical equilibrium calculation.
+    auto temperature() -> Control&;
+
+    /// Enable pressure control during the chemical equilibrium calculation.
+    auto pressure() -> Control&;
+
+    /// Enable titration control of a substance during the chemical equilibrium calculation.
+    auto titrationOf(String titrant) -> Control&;
+
+    /// Enable titration control of one of the given substances during the chemical equilibrium calculation.
+    auto titrationOfEither(String titrant1, String titrant2) -> Control&;
+
+private:
+    /// The underlying data of the EquilibriumConstraints object.
+    EquilibriumConstraints::Data& data;
 
     /// Deleted copy constructor.
     Control(const Control&) = delete;
-
-    /// Enable temperature control during the chemical equilibrium calculation.
-    auto temperature() -> Until;
-
-    /// Enable pressure control during the chemical equilibrium calculation.
-    auto pressure() -> Until;
-
-    /// Enable titration of a substance during the chemical equilibrium calculation.
-    auto titrationOf(String titrant) -> Until;
-
-    /// Enable titration of one of the given substances during the chemical equilibrium calculation.
-    auto titrationOfEither(String titrant1, String titrant2) -> Until;
-
-private:
-    /// The reference to the underlying functional constraints in EquilibriumConstraints.
-    FunctionalConstraints& fconstraints;
 };
 
 //=================================================================================================
@@ -154,78 +112,117 @@ private:
 //
 //=================================================================================================
 
-/// The intermediate auxiliary class used to define the desired equilibrium constraint.
+/// The type of functions implementing equilibrium constraints.
+struct EquilibriumConstraintArgs
+{
+    /// The current chemical properties of the chemical system during the calculation.
+    const ChemicalProps& props;
+
+    /// The current amounts of the controlled titrants during the calculation.
+    VectorXrConstRef t;
+
+    /// The current amounts of the controlled titrants during the calculation as a map.
+    const Map<String, real>& titrants;
+};
+
+/// The type of functions implementing functional constraints to be satisfied at chemical equilibrium.
+using EquilibriumConstraintFn = Fn<real(EquilibriumConstraintArgs)>;
+
+/// The auxiliary class used to impose a functional equilibrium constraint.
 class EquilibriumConstraints::Until
 {
 public:
     /// Construct an EquilibriumConstraints::Until object.
-    /// @param constraintfn The reference to the underlying equilibrium constraint function to be filled in.
-    explicit Until(EquilibriumConstraintFn& constraintfn);
-
-    /// Deleted copy constructor.
-    Until(const Until&) = delete;
-
-    /// Return an Attained object for setting the underlying equilibrium constraint function.
-    auto until() const -> Attained;
-
-    /// Enforce a custom equilibrium constraint at chemical equilibrium.
-    auto until(const EquilibriumConstraintFn& customfn) -> void;
-
-private:
-    /// The reference to the underlying equilibrium constraint function to be filled in.
-    EquilibriumConstraintFn& constraintfn;
-};
-
-//=================================================================================================
-//
-// EquilibriumConstraints::Attained
-//
-//=================================================================================================
-
-/// The auxiliary class used to define the equilibrium constraint function.
-class EquilibriumConstraints::Attained
-{
-public:
-    /// Construct an EquilibriumConstraints::Attained object.
-    /// @param constraintfn The reference to the underlying equilibrium constraint function to be filled in.
-    explicit Attained(EquilibriumConstraintFn& constraintfn);
-
-    /// Deleted copy constructor.
-    Attained(const Attained&) = delete;
+    /// @param data The underlying data of the EquilibriumConstraints object.
+    explicit Until(EquilibriumConstraints::Data& data);
 
     /// Enforce a value for the **volume** of the system at chemical equilibrium.
     /// @param value The constrained volume of the system
     /// @param unit The unit of the constrained volume value (must be convertible to m@sup{3})
-    auto volume(real value, String unit) -> void;
+    auto volume(real value, String unit) -> Until&;
 
     /// Enforce a value for the **internal energy** of the system at chemical equilibrium.
     /// @param value The constrained internal energy of the system
     /// @param unit The unit of the constrained internal energy value (must be convertible to J)
-    auto internalEnergy(real value, String unit) -> void;
+    auto internalEnergy(real value, String unit) -> Until&;
 
     /// Enforce a value for the **enthalpy** of the system at chemical equilibrium.
     /// @param value The constrained enthalpy of the system
     /// @param unit The unit of the constrained enthalpy value (must be convertible to J)
-    auto enthalpy(real value, String unit) -> void;
+    auto enthalpy(real value, String unit) -> Until&;
 
     /// Enforce a value for the **Gibbs energy** of the system at chemical equilibrium.
     /// @param value The constrained Gibbs energy of the system
     /// @param unit The unit of the constrained Gibbs energy value (must be convertible to J)
-    auto gibbsEnergy(real value, String unit) -> void;
+    auto gibbsEnergy(real value, String unit) -> Until&;
 
     /// Enforce a value for the **Helmholtz energy** of the system at chemical equilibrium.
     /// @param value The constrained Helmholtz energy of the system
     /// @param unit The unit of the constrained Helmholtz energy value (must be convertible to J)
-    auto helmholtzEnergy(real value, String unit) -> void;
+    auto helmholtzEnergy(real value, String unit) -> Until&;
 
     /// Enforce a value for the **entropy** of the system at chemical equilibrium.
     /// @param value The constrained entropy of the system
     /// @param unit The unit of the constrained entropy value (must be convertible to J/K)
-    auto entropy(real value, String unit) -> void;
+    auto entropy(real value, String unit) -> Until&;
+
+    /// Enforce a custom equilibrium constraint at chemical equilibrium.
+    /// @param fn The custom functional equilibrium constraint
+    auto custom(const EquilibriumConstraintFn& fn) -> Until&;
 
 private:
-    /// The reference to the underlying equilibrium constraint function to be filled in.
-    EquilibriumConstraintFn& constraintfn;
+    /// The underlying data of the EquilibriumConstraints object.
+    EquilibriumConstraints::Data& data;
+
+    /// Deleted copy constructor.
+    Until(const Until&) = delete;
+};
+
+//=================================================================================================
+//
+// EquilibriumConstraints::Preserve
+//
+//=================================================================================================
+
+/// The type of functions that compute or retrieve a chemical property.
+using ChemicalPropertyFn = Fn<real(const ChemicalProps&)>;
+
+/// The auxiliary class used to impose a property preservation constraint.
+class EquilibriumConstraints::Preserve
+{
+public:
+    /// Construct an EquilibriumConstraints::Preserve object.
+    /// @param data The underlying data of the EquilibriumConstraints object.
+    explicit Preserve(EquilibriumConstraints::Data& data);
+
+    /// Preserve the **volume** of the system during the chemical equilibrium calculation.
+    auto volume() -> Preserve&;
+
+    /// Preserve the **internal energy** of the system during the chemical equilibrium calculation.
+    auto internalEnergy() -> Preserve&;
+
+    /// Preserve the **enthalpy** of the system during the chemical equilibrium calculation.
+    auto enthalpy() -> Preserve&;
+
+    /// Preserve the **Gibbs energy** of the system during the chemical equilibrium calculation.
+    auto gibbsEnergy() -> Preserve&;
+
+    /// Preserve the **Helmholtz energy** of the system during the chemical equilibrium calculation.
+    auto helmholtzEnergy() -> Preserve&;
+
+    /// Preserve the **entropy** of the system during the chemical equilibrium calculation.
+    auto entropy() -> Preserve&;
+
+    /// Preserve a **custom property** of the system during the chemical equilibrium calculation.
+    /// @param fn The function that computes the custom chemical property.
+    auto custom(const ChemicalPropertyFn& fn) -> Preserve&;
+
+private:
+    /// The underlying data of the EquilibriumConstraints object.
+    EquilibriumConstraints::Data& data;
+
+    /// Deleted copy constructor.
+    Preserve(const Preserve&) = delete;
 };
 
 //=================================================================================================
@@ -238,38 +235,52 @@ private:
 class EquilibriumConstraints::Fix
 {
 public:
-    /// Construct a default EquilibriumConstraints::Fix object.
-    Fix(const ChemicalSystem& system, ChemicalPotentialConstraint& uconstraint);
+    /// Construct an EquilibriumConstraints::Fix object.
+    /// @param system The underlying chemical system of the EquilibriumConstraints object.
+    /// @param data The underlying data of the EquilibriumConstraints object.
+    Fix(const ChemicalSystem& system, EquilibriumConstraints::Data& data);
 
     /// Deleted copy constructor.
     Fix(const Fix&) = delete;
 
     /// Enforce a value for the **chemical potential** of a substance at chemical equilibrium.
     /// @param substance The chemical formula of the substance
+    /// @param fn The function of temperature and pressure that computes the constrained chemical potential value (in J/mol)
+    auto chemicalPotential(const ChemicalFormula& substance, const Fn<real(real,real)>& fn) -> Fix&;
+
+    /// Enforce a value for the **chemical potential** of a substance at chemical equilibrium.
+    /// @param substance The chemical formula of the substance
     /// @param value The constrained chemical potential value
     /// @param unit The unit for the constrained chemical potential value (must be convertible to J/mol)
-    auto chemicalPotential(String substance, real value, String unit) -> void;
+    auto chemicalPotential(String substance, real value, String unit) -> Fix&;
+
+    /// Enforce a value for the **ln activity** of a species at chemical equilibrium.
+    /// @param species The chemical species
+    /// @param value The constrained ln activity value
+    /// @note The chemical species does not need to be in the chemical system; only in the database.
+    /// @warning An error will be raised if the database does not contain a species with given name.
+    auto lnActivity(const Species& species, real value) -> Fix&;
 
     /// Enforce a value for the **ln activity** of a species at chemical equilibrium.
     /// @param species The name of the chemical species as found in the database in use
     /// @param value The constrained ln activity value
     /// @note The chemical species does not need to be in the chemical system; only in the database.
     /// @warning An error will be raised if the database does not contain a species with given name.
-    auto lnActivity(String species, real value) -> void;
+    auto lnActivity(String species, real value) -> Fix&;
 
     /// Enforce a value for the **lg activity** of a species at chemical equilibrium.
     /// @param species The name of the chemical species as found in the database in use
     /// @param value The constrained ln activity value
     /// @note The chemical species does not need to be in the chemical system; only in the database.
     /// @warning An error will be raised if the database does not contain a species with given name.
-    auto lgActivity(String species, real value) -> void;
+    auto lgActivity(String species, real value) -> Fix&;
 
     /// Enforce a value for the **activity** of a species at chemical equilibrium.
     /// @param species The name of the chemical species as found in the database in use
     /// @param value The constrained activity value
     /// @note The chemical species does not need to be in the chemical system; only in the database.
     /// @warning An error will be raised if the database does not contain a species with given name.
-    auto activity(String species, real value) -> void;
+    auto activity(String species, real value) -> Fix&;
 
     /// Enforce a value for the **fugacity** of a gaseous species at chemical equilibrium.
     /// @param species The name of the gaseous species as found in the database in use
@@ -277,31 +288,31 @@ public:
     /// @param unit The unit for the constrained fugacity value (must be convertible to Pa)
     /// @note The gaseous species does not need to be in the chemical system; only in the database.
     /// @warning An error will be raised if the database does not contain a gaseous species with given name.
-    auto fugacity(String species, real value, String unit) -> void;
+    auto fugacity(String species, real value, String unit) -> Fix&;
 
     /// Enforce a value for pH at chemical equilibrium.
     /// @param value The constrained value for pH
-    auto pH(real value) -> void;
+    auto pH(real value) -> Fix&;
 
     /// Enforce a value for pMg at chemical equilibrium.
     /// @param value The constrained value for pMg
-    auto pMg(real value) -> void;
+    auto pMg(real value) -> Fix&;
 
     /// Enforce a value for pe at chemical equilibrium.
     /// @param value The constrained value for pe
-    auto pe(real value) -> void;
+    auto pe(real value) -> Fix&;
 
     /// Enforce a value for Eh at chemical equilibrium.
     /// @param value The constrained value for Eh
     /// @param unit The unit of the constrained value for Eh (must be convertible to V)
-    auto Eh(real value, String unit) -> void;
+    auto Eh(real value, String unit) -> Fix&;
 
 private:
-    /// The chemical system associated with the equilibrium constraints.
+    /// The underlying chemical system of the EquilibriumConstraints object.
     const ChemicalSystem& system;
 
-    /// The substance formula and its associated function that evaluates its constrained chemical potential.
-    ChemicalPotentialConstraint& uconstraint;
+    /// The underlying data of the EquilibriumConstraints object.
+    EquilibriumConstraints::Data& data;
 };
 
 //=================================================================================================
@@ -315,46 +326,47 @@ class EquilibriumConstraints::Prevent
 {
 public:
     /// Construct an EquilibriumConstraints::Prevent object.
-    /// @param constraints The reactivity constraints to be filled in by this Prevent object.
-    explicit Prevent(const ChemicalSystem& system, ReactivityConstraints& constraints);
+    /// @param system The underlying chemical system of the EquilibriumConstraints object.
+    /// @param data The underlying data of the EquilibriumConstraints object.
+    Prevent(const ChemicalSystem& system, EquilibriumConstraints::Data& data);
 
     /// Deleted copy constructor.
     Prevent(const Prevent&) = delete;
 
     /// Prevent the amount of a species from changing during the chemical equilibrium calculation.
     /// @param ispecies The index of the species that should be inert
-    auto fromReacting(Index ispecies) -> void;
+    auto fromReacting(Index ispecies) -> Prevent&;
 
     /// Prevent a reaction from undergoing any progress during the chemical equilibrium calculation.
     /// @param equation The reaction equation (pairs of species index and stoichiometry) that should be inert
-    auto fromReacting(Pairs<Index, double> reaction) -> void;
+    auto fromReacting(Pairs<Index, double> reaction) -> Prevent&;
 
     /// Prevent a species from reacting or a reaction from undergoing any progress during the chemical equilibrium calculation.
     /// @param what The species name or the reaction equation that should be inert
-    auto fromReacting(String what) -> void;
+    auto fromReacting(String what) -> Prevent&;
 
     /// Prevent the amount of a species from increasing during the chemical equilibrium calculation.
     /// @param ispecies The index of the species whose amount cannot increase
-    auto fromIncreasing(Index ispecies) -> void;
+    auto fromIncreasing(Index ispecies) -> Prevent&;
 
     /// Prevent the amount of a species from increasing during the chemical equilibrium calculation.
     /// @param species The name of the species whose amount cannot increase
-    auto fromIncreasing(String species) -> void;
+    auto fromIncreasing(String species) -> Prevent&;
 
     /// Prevent the amount of a species from decreasing during the chemical equilibrium calculation.
     /// @param ispecies The index of the species whose amount cannot decrease
-    auto fromDecreasing(Index ispecies) -> void;
+    auto fromDecreasing(Index ispecies) -> Prevent&;
 
     /// Prevent the amount of a species from decreasing during the chemical equilibrium calculation.
     /// @param species The name of the species whose amount cannot decrease
-    auto fromDecreasing(String species) -> void;
+    auto fromDecreasing(String species) -> Prevent&;
 
 private:
-    /// The chemical system associated with the equilibrium constraints.
+    /// The underlying chemical system of the EquilibriumConstraints object.
     const ChemicalSystem& system;
 
-    /// The reactivity constraints to be filled in by this Prevent object.
-    ReactivityConstraints& constraints;
+    /// The underlying data of the EquilibriumConstraints object.
+    EquilibriumConstraints::Data& data;
 };
 
 //=================================================================================================
@@ -366,10 +378,58 @@ private:
 /// The auxiliary struct used to store the imposed equilibrium constraints.
 struct EquilibriumConstraints::Data
 {
-    /// The functional equilibrium constraints imposed via method @ref EquilibriumConstraints::control.
-    FunctionalConstraints fconstraints;
+    /// Auxiliary struct containing details of the control variables.
+    struct Controls
+    {
+        /// The boolean flag that indicates whether temperature is controlled.
+        bool T = false;
 
-    /// The description of a chemical potential constraint imposed via method @ref EquilibriumConstraints::fix.
+        /// The boolean flag that indicates whether pressure is controlled.
+        bool P = false;
+
+        /// The chemical formulas of the titrants whose amounts are controlled.
+        Vec<ChemicalFormula> titrants;
+
+        /// Return the number of introduced control variables.
+        auto size() const -> Index { return titrants.size() + T + P; }
+    };
+
+    /// The description of a chemical potential constraint in a chemical equilibrium calculation.
+    struct ChemicalPotentialConstraint
+    {
+        /// The chemical formula of the substance for which the chemical potential is constrained.
+        ChemicalFormula formula;
+
+        /// The function of temperature and pressure that evaluates the constrained chemical potential value.
+        Fn<real(real,real)> fn;
+    };
+
+    /// The reactivity constraints in a chemical equilibrium calculation.
+    struct ReactivityConstraints
+    {
+        /// The indices of the species whose amounts cannot change.
+        Set<Index> species_cannot_react;
+
+        /// The indices of the species whose amounts cannot increase.
+        Set<Index> species_cannot_increase;
+
+        /// The indices of the species whose amounts cannot decrease.
+        Set<Index> species_cannot_decrease;
+
+        /// The inert reactions as pairs of species index and its stoichiometric coefficient.
+        Vec<Pairs<Index, double>> reactions_cannot_react;
+    };
+
+    /// The introduced control variables via method @ref EquilibriumConstraints::control.
+    Controls controls;
+
+    /// The vector of equilibrium constraints imposed via method @ref EquilibriumConstraints::until.
+    Vec<EquilibriumConstraintFn> fconstraints;
+
+    /// The vector of chemical property preservation constraints imposed via method @ref EquilibriumConstraints::preserve.
+    Vec<ChemicalPropertyFn> pconstraints;
+
+    /// The vector of chemical potential constraints imposed via method @ref EquilibriumConstraints::fix.
     Vec<ChemicalPotentialConstraint> uconstraints;
 
     /// The reactivity constraints imposed via method @ref EquilibriumConstraints::prevent.
