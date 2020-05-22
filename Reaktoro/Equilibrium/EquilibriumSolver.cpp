@@ -1,69 +1,50 @@
-// // Reaktoro is a unified framework for modeling chemically reactive systems.
-// //
-// // Copyright (C) 2014-2020 Allan Leal
-// //
-// // This library is free software; you can redistribute it and/or
-// // modify it under the terms of the GNU Lesser General Public
-// // License as published by the Free Software Foundation; either
-// // version 2.1 of the License, or (at your option) any later version.
-// //
-// // This library is distributed in the hope that it will be useful,
-// // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// // Lesser General Public License for more details.
-// //
-// // You should have received a copy of the GNU Lesser General Public License
-// // along with this library. If not, see <http://www.gnu.org/licenses/>.
+// Reaktoro is a unified framework for modeling chemically reactive systems.
+//
+// Copyright (C) 2014-2020 Allan Leal
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// #include "EquilibriumSolver.hpp"
+#include "EquilibriumSolver.hpp"
 
-// // Reaktoro includes
-// #include <Reaktoro/Common/Constants.hpp>
-// #include <Reaktoro/Common/ConvertUtils.hpp>
-// #include <Reaktoro/Common/Exception.hpp>
-// #include <Reaktoro/Core/ChemicalProps.hpp>
-// #include <Reaktoro/Core/ChemicalState.hpp>
-// #include <Reaktoro/Core/ChemicalSystem.hpp>
-// #include <Reaktoro/Core/Element.hpp>
-// #include <Reaktoro/Core/Partition.hpp>
-// #include <Reaktoro/Core/Species.hpp>
-// #include <Reaktoro/Core/ThermoProperties.hpp>
-// #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
-// #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
-// #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
-// #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
-// #include <Reaktoro/Math/MathUtils.hpp>
-// #include <Reaktoro/Optimization/OptimumOptions.hpp>
-// #include <Reaktoro/Optimization/OptimumProblem.hpp>
-// #include <Reaktoro/Optimization/OptimumResult.hpp>
-// #include <Reaktoro/Optimization/OptimumSolver.hpp>
-// #include <Reaktoro/Optimization/OptimumSolverRefiner.hpp>
-// #include <Reaktoro/Optimization/OptimumState.hpp>
+// Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 
-// namespace Reaktoro {
+namespace Reaktoro {
 
-// struct EquilibriumSolver::Impl
-// {
-//     /// The chemical system instance
-//     ChemicalSystem system;
+struct EquilibriumSolver::Impl
+{
+    /// The chemical system
+    ChemicalSystem system;
 
-//     /// The partition of the chemical system
-//     Partition partition;
+    /// The equilibrium constraints
+    EquilibriumConstraints constraints;
 
-//     /// The options of the equilibrium solver
-//     EquilibriumOptions options;
+    /// The options of the equilibrium solver
+    EquilibriumOptions options;
 
 //     /// The solver for the optimisation calculations
 //     OptimumSolver solver;
 
 //     /// The chemical properties of the chemical system
 //     ChemicalProps props;
-
-//     /// The sensitivity derivatives of the equilibrium state
-//     EquilibriumSensitivity sensitivities;
-//     ArrayXr zerosEe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
-//     ArrayXr zerosNe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
-//     ArrayXr unitjEe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
 
 //     /// The molar amounts of the species
 //     ArrayXr n;
@@ -125,20 +106,20 @@
 //     /// The formula matrix of the inert species
 //     MatrixXd Ai;
 
-//     /// Construct a Impl instance with given Partition
-//     Impl(const Partition& partition)
-//     : system(partition.system()), props(partition.system())
-//     {
-//         // Initialize the formula matrix
-//         A = system.formulaMatrix();
+    /// Construct a Impl instance with given EquilibriumConstraints object
+    Impl(const EquilibriumConstraints& constraints)
+    : system(constraints.system()), constraints(constraints)
+    {
+        // // Initialize the formula matrix
+        // A = system.formulaMatrix();
 
-//         // Initialize the number of species and elements in the system
-//         N = system.species().size();
-//         E = system.elements().size();
+        // // Initialize the number of species and elements in the system
+        // N = system.species().size();
+        // E = system.elements().size();
 
-//         // Set the default partition as all species are in equilibrium
-//         setPartition(partition);
-//     }
+        // // Set the default partition as all species are in equilibrium
+        // setPartition(partition);
+    }
 
 //     /// Set the partition of the chemical system
 //     auto setPartition(const Partition& partition_) -> void
@@ -571,42 +552,38 @@
 //         }
 //         return sensitivities.dndb;
 //     }
-// };
+};
 
-// EquilibriumSolver::EquilibriumSolver()
-// : pimpl(new Impl())
-// {}
+EquilibriumSolver::EquilibriumSolver(const ChemicalSystem& system)
+: pimpl(new Impl(EquilibriumConstraints(system)))
+{}
 
-// EquilibriumSolver::EquilibriumSolver(const ChemicalSystem& system)
-// : pimpl(new Impl(Partition(system)))
-// {}
+EquilibriumSolver::EquilibriumSolver(const EquilibriumConstraints& constraints)
+: pimpl(new Impl(constraints))
+{}
 
-// EquilibriumSolver::EquilibriumSolver(const Partition& partition)
-// : pimpl(new Impl(partition))
-// {}
+EquilibriumSolver::EquilibriumSolver(const EquilibriumSolver& other)
+: pimpl(new Impl(*other.pimpl))
+{}
 
-// EquilibriumSolver::EquilibriumSolver(const EquilibriumSolver& other)
-// : pimpl(new Impl(*other.pimpl))
-// {}
+EquilibriumSolver::~EquilibriumSolver()
+{}
 
-// EquilibriumSolver::~EquilibriumSolver()
-// {}
+auto EquilibriumSolver::operator=(EquilibriumSolver other) -> EquilibriumSolver&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
 
-// auto EquilibriumSolver::operator=(EquilibriumSolver other) -> EquilibriumSolver&
-// {
-//     pimpl = std::move(other.pimpl);
-//     return *this;
-// }
+auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
+{
+    pimpl->options = options;
+}
 
-// auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
-// {
-//     pimpl->options = options;
-// }
-
-// auto EquilibriumSolver::setPartition(const Partition& partition) -> void
-// {
-//     pimpl->setPartition(partition);
-// }
+auto EquilibriumSolver::solve(ChemicalState& state) -> EquilibriumResult
+{
+    return {};
+}
 
 // auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, ArrayXrConstRef be) -> EquilibriumResult
 // {
@@ -650,24 +627,4 @@
 //     return pimpl->properties;
 // }
 
-// auto EquilibriumSolver::sensitivity() -> const EquilibriumSensitivity&
-// {
-//     return pimpl->sensitivity();
-// }
-
-// auto EquilibriumSolver::dndT() -> ArrayXrConstRef
-// {
-//     return pimpl->dndT();
-// }
-
-// auto EquilibriumSolver::dndP() -> ArrayXrConstRef
-// {
-//     return pimpl->dndP();
-// }
-
-// auto EquilibriumSolver::dndb() -> ArrayXrConstRef
-// {
-//     return pimpl->dndb();
-// }
-
-// } // namespace Reaktoro
+} // namespace Reaktoro
