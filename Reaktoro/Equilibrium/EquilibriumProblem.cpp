@@ -1,277 +1,308 @@
-// // Reaktoro is a unified framework for modeling chemically reactive systems.
-// //
-// // Copyright (C) 2014-2020 Allan Leal
-// //
-// // This library is free software; you can redistribute it and/or
-// // modify it under the terms of the GNU Lesser General Public
-// // License as published by the Free Software Foundation; either
-// // version 2.1 of the License, or (at your option) any later version.
-// //
-// // This library is distributed in the hope that it will be useful,
-// // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// // Lesser General Public License for more details.
-// //
-// // You should have received a copy of the GNU Lesser General Public License
-// // along with this library. If not, see <http://www.gnu.org/licenses/>.
+// Reaktoro is a unified framework for modeling chemically reactive systems.
+//
+// Copyright (C) 2014-2020 Allan Leal
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// #include "EquilibriumProblem.hpp"
+#include "EquilibriumProblem.hpp"
 
-// // C++ includes
-// #include <memory>
+// Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
 
-// // Reaktoro includes
-// #include <Reaktoro/Common/Exception.hpp>
-// #include <Reaktoro/Common/Units.hpp>
-// #include <Reaktoro/Core/ChemicalState.hpp>
-// #include <Reaktoro/Core/ChemicalSystem.hpp>
-// #include <Reaktoro/Core/Element.hpp>
-// #include <Reaktoro/Core/Partition.hpp>
-// #include <Reaktoro/Core/Species.hpp>
-// #include <Reaktoro/Math/MathUtils.hpp>
+namespace Reaktoro {
 
-// namespace Reaktoro {
-// namespace {
+struct EquilibriumProblem::Impl
+{
+    /// The chemical system associated with this equilibrium problem
+    ChemicalSystem system;
 
-// /// Throw a non-amount or non-mass error if units no compatible
-// auto errorNonAmountOrMassUnits(std::string units) -> void
-// {
-//     Exception exception;
-//     exception.error << "Cannot set the amount of a species or element.";
-//     exception.reason << "The provided units `" << units << "` is not convertible to units of amount or mass (e.g., mol and g).";
-//     RaiseError(exception);
-// }
+    /// The equilibrium constraints associated with this equilibrium problem
+    EquilibriumConstraints constraints;
 
-// } // namespace
+    /// Construct an EquilibriumProblem::Impl object
+    Impl(const EquilibriumConstraints& constraints)
+    : system(constraints.system()), constraints(constraints)
+    {
+    }
 
-// struct EquilibriumProblem::Impl
-// {
-//     /// The reference to the ChemicalSystem instance
-//     ChemicalSystem system;
+    /// Return the number of chemical potential constraints.
+    auto numChemicalPotentialConstraints() const -> Index
+    {
+        return constraints.data().uconstraints.size();
+    }
 
-//     /// The reference to the Partition instance
-//     Partition partition;
+    /// Return the number of components associated with given equilibrium constraints.
+    auto numComponents() const -> Index
+    {
+        const auto& restrictions = constraints.data().restrictions;
 
-//     /// The temperature for the equilibrium problem (in units of K)
-//     double T;
+        const auto num_elements = system.elements().size();
+        const auto num_charge = 1;
+        const auto num_inert_reactions = restrictions.reactions_cannot_react.size();
 
-//     /// The pressure for the equilibrium problem (in units of Pa)
-//     double P;
+        return num_elements + num_charge + num_inert_reactions;
+    }
 
-//     /// The amounts of the elements for the equilibrium problem (in units of mol)
-//     VectorXr b;
+    /// Return the total number of variables associated with given equilibrium constraints.
+    auto numVariables() const -> Index
+    {
+        const auto& uconstraints = constraints.data().uconstraints;
+        const auto& controls = constraints.data().controls;
 
-//     /// Construct a EquilibriumProblem::Impl instance
-//     Impl(const Partition& partition)
-//     : system(partition.system()), T(298.15), P(1.0e+5), partition(partition)
-//     {
-//         // Initialize the amounts of the elements
-//         b = zeros(system.elements().size());
-//     }
+        const auto num_species = system.species().size();
+        const auto num_uconstraints = uconstraints.size();
+        const auto num_controls = controls.size();
 
-//     /// Set the partition of the chemical system
-//     auto setPartition(const Partition& part) -> void
-//     {
-//         partition = part;
-//     }
-// };
+        return num_species + num_uconstraints + num_controls;
+    }
 
-// EquilibriumProblem::EquilibriumProblem(const ChemicalSystem& system)
-// : pimpl(new Impl(Partition(system)))
-// {}
+    /// Assemble the vector with the element and charge coefficients of a chemical formula.
+    auto assembleFormulaVector(VectorXdRef vec, const ChemicalFormula& formula) const -> void
+    {
+        const auto num_elements = system.elements().size();
+        assert(vec.size() == num_elements + 1);
+        vec[num_elements] = formula.charge(); // last entry in the column vector is charge of substance
+        for(const auto& [element, coeff] : formula.elements()) {
+            const auto ielem = system.elements().index(element);
+            vec[ielem] = coeff;
+        }
+    }
 
-// EquilibriumProblem::EquilibriumProblem(const Partition& partition)
-// : pimpl(new Impl(partition))
-// {}
+    /// Assemble the matrix block A in the conservation matrix C.
+    auto assembleMatrixA(MatrixXdRef A) const -> void
+    {
+        A = system.formulaMatrix();
+    }
 
-// EquilibriumProblem::EquilibriumProblem(const EquilibriumProblem& other)
-// : pimpl(new Impl(*other.pimpl))
-// {}
+    /// Assemble the matrix block U in the conservation matrix C.
+    auto assembleMatrixU(MatrixXdRef U) const -> void
+    {
+        const auto& uconstraints = constraints.data().uconstraints;
 
-// EquilibriumProblem::~EquilibriumProblem()
-// {}
+        const auto num_elements = system.elements().size();
+        const auto num_substances = uconstraints.size();
 
-// auto EquilibriumProblem::operator=(EquilibriumProblem other) -> EquilibriumProblem&
-// {
-//     pimpl = std::move(other.pimpl);
-//     return *this;
-// }
+        assert(U.rows() == 1 + num_elements); // number of elements plus charge
+        assert(U.cols() == num_substances);   // number of introduced chemical potential constraints
 
-// auto EquilibriumProblem::setPartition(const Partition& partition) -> EquilibriumProblem&
-// {
-//     pimpl->setPartition(partition);
-//     return *this;
-// }
+        auto j = 0;
+        for(const auto& [formula, _] : uconstraints)
+            assembleFormulaVector(U.col(j++), formula);
+    }
 
-// auto EquilibriumProblem::setTemperature(double val) -> EquilibriumProblem&
-// {
-//     Assert(val > 0.0, "Cannot set temperature of the equilibrium problem.",
-//         "Given value must be positive.");
-//     pimpl->T = val;
-//     return *this;
-// }
+    /// Assemble the matrix block B = [BT BP Bq] in the conservation matrix C.
+    auto assembleMatrixB(MatrixXdRef B) const -> void
+    {
+        const auto& controls = constraints.data().controls;
 
-// auto EquilibriumProblem::setTemperature(double val, std::string units) -> EquilibriumProblem&
-// {
-//     return setTemperature(units::convert(val, units, "kelvin"));
-// }
+        const auto num_elements = system.elements().size();
+        const auto num_controls = controls.size();
 
-// auto EquilibriumProblem::setPressure(double val) -> EquilibriumProblem&
-// {
-//     Assert(val > 0.0, "Cannot set pressure of the equilibrium problem.",
-//         "Given value must be positive.");
-//     pimpl->P = val;
-//     return *this;
-// }
+        assert(B.rows() == 1 + num_elements); // number of elements plus charge
+        assert(B.cols() == num_controls);     // number of introduced control variables
 
-// auto EquilibriumProblem::setPressure(double val, std::string units) -> EquilibriumProblem&
-// {
-//     return setPressure(units::convert(val, units, "pascal"));
-// }
+        auto j = controls.T + controls.P; // skip columns BT and BP (if applicable), since these are zeros
+        for(const auto& formula : controls.titrants)
+            assembleFormulaVector(B.col(j++), formula);
+    }
 
-// auto EquilibriumProblem::setElementAmounts(VectorXrConstRef b) -> EquilibriumProblem&
-// {
-//     Assert(pimpl->b.size() == b.size(),
-//         "Could not set the initial mole amounts of the elements.",
-//         "Dimension mismatch between given vector of values and number of elements.");
-//     pimpl->b = b;
-//     return *this;
-// }
+    /// Assemble the matrix block S in the conservation matrix C.
+    auto assembleMatrixS(MatrixXdRef S) const -> void
+    {
+        const auto& inert_reactions = constraints.data().restrictions.reactions_cannot_react;
 
-// auto EquilibriumProblem::setElementAmounts(double amount) -> EquilibriumProblem&
-// {
-//     pimpl->b.fill(amount);
-//     return *this;
-// }
+        assert(S.rows() == inert_reactions.size());
 
-// auto EquilibriumProblem::setElementAmount(Index ielement, double amount) -> EquilibriumProblem&
-// {
-//     Assert(ielement < system().numElements(),
-//         "Could not set the initial mole amount of the given element.",
-//         "Dimension mismatch between given vector of values and number of elements.");
-//     pimpl->b[ielement] = amount;
-//     return *this;
-// }
+        auto fill_matrix_row = [&](const auto& pairs, auto row)
+        {
+            for(auto [ispecies, coeff] : pairs)
+                row[ispecies] = coeff;
+        };
 
-// auto EquilibriumProblem::setElementAmount(std::string element, double amount) -> EquilibriumProblem&
-// {
-//     Index ielement = system().indexElement(element);
-//     Assert(ielement < system().numElements(),
-//         "Could not set the initial mole amount of the given element `" + element + "`.",
-//         "The chemical system was not initialized with this element.");
-//     pimpl->b[ielement] = amount;
-//     return *this;
-// }
+        auto i = 0;
+        for(const auto& pairs : inert_reactions)
+            fill_matrix_row(pairs, S.row(i++));
+    }
 
-// auto EquilibriumProblem::setElectricalCharge(double amount) -> EquilibriumProblem&
-// {
-//     return setElementAmount("Z", amount);
-// }
+    /// Assemble the conservation matrix based on the given equilibrium constraints.
+    /// The conservation matrix is:
+    ///
+    /// C = [ A U B ]
+    ///     [ S 0 0 ]
+    ///
+    /// where A is the formula matrix of the species with respect to elements
+    /// and charge; U is the formula matrix of the substances with fixed
+    /// chemical potentials; B = [BT BP Bq], with BT and BP being zero column
+    /// vectors and Bq the formula matrix of the introduced titrants whose
+    /// amounts are controlled to attain imposed equilibrium constraints; and S
+    /// is the stoichiometric matrix of reactions that cannot progress during
+    /// the equilibrium calculation (inert reactions).
+    auto conservationMatrix() const -> MatrixXd
+    {
+        const auto& restrictions = constraints.data().restrictions;
+        const auto& uconstraints = constraints.data().uconstraints;
+        const auto& controls = constraints.data().controls;
 
-// auto EquilibriumProblem::add(std::string name, double amount, std::string units) -> EquilibriumProblem&
-// {
-//     if(system().indexSpecies(name) < system().species().size())
-//         return addSpecies(name, amount, units);
-//     return addCompound(name, amount, units);
-// }
+        const auto num_elements = system.elements().size();
+        const auto num_species = system.species().size();
+        const auto num_charge = 1;
+        const auto num_inert_reactions = restrictions.reactions_cannot_react.size();
+        const auto num_fixed_chemical_potentials = uconstraints.size();
+        const auto num_controls = controls.size();
 
-// auto EquilibriumProblem::add(const ChemicalState& state) -> EquilibriumProblem&
-// {
-//     return addState(state);
-// }
+        const auto num_rows = num_elements + num_charge + num_inert_reactions;
+        const auto num_cols = num_species + num_fixed_chemical_potentials + num_controls;
 
-// auto EquilibriumProblem::addCompound(std::string name, double amount, std::string units) -> EquilibriumProblem&
-// {
-//     double molar_amount = 0.0;
+        MatrixXd C = MatrixXd::Zero(num_rows, num_cols);
 
-//     if(units::convertible(units, "mol"))
-//     {
-//         molar_amount = units::convert(amount, units, "mol");
-//     }
-//     else if(units::convertible(units, "kg"))
-//     {
-//         const double mass = units::convert(amount, units, "kg");
-//         const double molar_mass = molarMass(name);
-//         molar_amount = mass / molar_mass;
-//     }
-//     else errorNonAmountOrMassUnits(units);
+        auto A = C.topRows(num_elements + num_charge).leftCols(num_species);
+        auto U = C.topRows(num_elements + num_charge).middleCols(num_species, num_fixed_chemical_potentials);
+        auto B = C.topRows(num_elements + num_charge).rightCols(num_controls);
+        auto S = C.bottomLeftCorner(num_inert_reactions, num_species);
 
-//     for(const auto& pair : elements(name))
-//     {
-//         const auto element = pair.first;
-//         const auto coeffficient = pair.second;
-//         const auto ielement = system().indexElement(element);
-//         Assert(ielement < system().numElements(),
-//             "Cannot add the compound `" + name + "` to the equilibrium problem.",
-//             "This compound has element `" + element + "`, which is not present in the chemical system. "
-//             "Please note that this error can happen if this element is present in different valence state. "
-//             "In such case, check if there is a chemical species with same chemical formula, "
-//             "and use its name instead (e.g., instead of SiO2, use Quartz).");
-//         pimpl->b[ielement] += coeffficient * molar_amount;
-//     }
+        assembleMatrixA(A);
+        assembleMatrixU(U);
+        assembleMatrixB(B);
+        assembleMatrixS(S);
 
-//     return *this;
-// }
+        return C;
+    }
 
-// auto EquilibriumProblem::addSpecies(std::string name, double amount, std::string units) -> EquilibriumProblem&
-// {
-//     double molar_amount = 0.0;
+    /// Assemble the objective function to be minimized based on the given equilibrium constraints.
+    auto objective() const -> EquilibriumObjective
+    {
+        EquilibriumObjective obj;
 
-//     const Species& species = system().species(name);
+        const auto& uconstraints = constraints.data().uconstraints;
+        const auto& econstraints = constraints.data().econstraints;
+        const auto& pconstraints = constraints.data().pconstraints;
 
-//     if(units::convertible(units, "mol"))
-//     {
-//         molar_amount = units::convert(amount, units, "mol");
-//     }
-//     else if(units::convertible(units, "kg"))
-//     {
-//         const double mass = units::convert(amount, units, "kg");
-//         const double molar_mass = species.molarMass();
-//         molar_amount = mass / molar_mass;
-//     }
-//     else errorNonAmountOrMassUnits(units);
+        const auto Nx = system.species().size();
+        const auto Nq = constraints.numChemicalPotentialConstraints();
+        const auto Np = constraints.numControlVariables();
 
-//     for(const auto& pair : species.elements())
-//     {
-//         const auto element = pair.first.name();
-//         const auto coeffficient = pair.second;
-//         const auto ielement = system().indexElement(element);
-//         pimpl->b[ielement] += coeffficient * molar_amount;
-//     }
+        const auto Nec = constraints.numEquationConstraints();
+        const auto Npc = constraints.numPropertyPreservationConstraints();
 
-//     return *this;
-// }
+        error(Np != Nec + Npc,
+            "Could not assemble the objective function for the "
+            "chemical equilibrium calculation with given constraints. "
+            "The number of control variables, ", Np, " must match the sum of "
+            "the number of equation constraints, ", Nec, " and "
+            "the number of property preservation constraints, ", Npc, ".");
 
-// auto EquilibriumProblem::addState(const ChemicalState& state) -> EquilibriumProblem&
-// {
-//     const Indices ies = pimpl->partition.indicesEquilibriumSpecies();
-//     pimpl->b += state.elementAmountsInSpecies(ies);
-//     return *this;
-// }
+        obj.f = [](const ChemicalProps& props)
+        {
+            const auto& n = props.speciesAmounts();
+            const auto& u = props.chemicalPotentials();
+            return (n * u).sum();
+        };
 
-// auto EquilibriumProblem::system() const -> const ChemicalSystem&
-// {
-//     return pimpl->system;
-// }
+        obj.g = [=](const ChemicalProps& props, VectorXrRef res)
+        {
+            // assert(res.size() == Nx + Nq + Np);
+            assert(res.size() == Nx);
 
-// auto EquilibriumProblem::partition() const -> const Partition&
-// {
-//     return pimpl->partition;
-// }
+            const auto& u = props.chemicalPotentials();
 
-// auto EquilibriumProblem::temperature() const -> double
-// {
-//     return pimpl->T;
-// }
+            auto gx = res.head(Nx);
+            // auto gq = res.segment(Nx, Nq);
+            // auto gp = res.tail(Np);
 
-// auto EquilibriumProblem::pressure() const -> double
-// {
-//     return pimpl->P;
-// }
+            // auto gec = gp.head(Nec);
+            // auto gpc = gp.tail(Npc);
 
-// auto EquilibriumProblem::elementAmounts() const -> VectorXrConstRef
-// {
-//     return pimpl->b;
-// }
+            // const auto T = props.temperature();
+            // const auto P = props.pressure();
 
-// } // namespace Reaktoro
+            gx = u;
+
+            // for(auto i = 0; i < Nq; ++i)
+            //     gq[i] = uconstraints[i].fn(T, P);
+
+            // for(auto i = 0; i < Nec; ++i)
+            //     gec[i] = econstraints[i]({props, });
+
+            // gp = u;
+
+            // assert(res.size() == numSpecies() + num)
+            // const auto& n = props.speciesAmounts();
+            // return (n * u).sum();
+        };
+
+        obj.H = [=](const ChemicalProps& props, MatrixXdRef res)
+        {
+            // assert(res.size() == Nx + Nq + Np);
+
+            // const auto& u = props.chemicalPotentials();
+
+            // auto gx = res.head(Nx);
+            // auto gq = res.segment(Nx, Nq);
+            // auto gp = res.tail(Np);
+
+            // auto gec = gp.head(Nec);
+            // auto gpc = gp.tail(Npc);
+
+            // const auto T = props.temperature();
+            // const auto P = props.pressure();
+
+            // for(auto )
+            // gx = u;
+
+            // for(auto i = 0; i < Nq; ++i)
+            //     gq[i] = uconstraints[i].fn(T, P);
+
+            // for(auto i = 0; i < Nec; ++i)
+            //     gec[i] = econstraints[i]({props, });
+
+            // gp = u;
+
+            // assert(res.size() == numSpecies() + num)
+            // const auto& n = props.speciesAmounts();
+            // return (n * u).sum();
+        };
+    }
+};
+
+EquilibriumProblem::EquilibriumProblem(const EquilibriumConstraints& constraints)
+: pimpl(new Impl(constraints))
+{}
+
+EquilibriumProblem::EquilibriumProblem(const EquilibriumProblem& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+EquilibriumProblem::~EquilibriumProblem()
+{}
+
+auto EquilibriumProblem::operator=(EquilibriumProblem other) -> EquilibriumProblem&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
+
+auto EquilibriumProblem::conservationMatrix() const -> MatrixXd
+{
+    return pimpl->conservationMatrix();
+}
+
+auto EquilibriumProblem::objective() const -> EquilibriumObjective
+{
+
+}
+
+} // namespace Reaktoro
