@@ -78,7 +78,7 @@ public:
     auto lnActivities() const -> ArrayXrConstRef;
 
     /// Return the chemical potentials of the species in the system (in J/mol).
-    auto chemicalPotentials() const -> ArrayXr;
+    auto chemicalPotentials() const -> ArrayXrConstRef;
 
     /// Return the standard partial molar Gibbs energies of the species in the system (in J/mol).
     auto standardGibbsEnergies() const -> ArrayXrConstRef;
