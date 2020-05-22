@@ -45,26 +45,50 @@ public:
     /// Construct an EquilibriumConstraints object.
     EquilibriumConstraints(const ChemicalSystem& system);
 
+    /// Construct a copy of an EquilibriumConstraints object.
+    EquilibriumConstraints(const EquilibriumConstraints& other);
+
     /// Destroy this EquilibriumConstraints object.
     ~EquilibriumConstraints();
 
-    /// Return a Control object to initiate the indication of control variables.
+    /// Assign a copy of an EquilibriumConstraints object to this.
+    auto operator=(EquilibriumConstraints other) -> EquilibriumConstraints&;
+
+    /// Return a Control object to initiate the introduction of **control variables**.
     auto control() -> Control;
 
-    /// Return a Until object to initiate the imposition of a functional equilibrium constraint.
+    /// Return a Until object to initiate the imposition of an **equation constraint**.
     auto until() -> Until;
 
-    /// Return a Preserve object to initiate the imposition of properties that must be preserved.
+    /// Return a Preserve object to initiate the imposition of a **property preservation constraint**.
     auto preserve() -> Preserve;
 
-    /// Return a Fix object to initiate the imposition of a chemical potential constraint.
+    /// Return a Fix object to initiate the imposition of a **chemical potential constraint**.
     auto fix() -> Fix;
 
-    /// Return a Prevent object to initiate the imposition of a reactivity constraint.
+    /// Return a Prevent object to initiate the imposition of a **reactivity restriction**.
     auto prevent() -> Prevent;
 
-    /// Return the imposed constraints.
+    /// Return the chemical system associated with the equilibrium constraints.
+    auto system() const -> const ChemicalSystem&;
+
+    /// Return the data with details of the imposed constraints.
     auto data() const -> const Data&;
+
+    /// Return the number of **control variables** introduced with method @ref control.
+    auto numControlVariables() const -> Index;
+
+    /// Return the number of **equation constraints** introduced with method @ref until.
+    auto numEquationConstraints() const -> Index;
+
+    /// Return the number of **property preservation constraints** introduced with method @ref preserve.
+    auto numPropertyPreservationConstraints() const -> Index;
+
+    /// Return the number of **chemical potential constraints** introduced with method @ref fix.
+    auto numChemicalPotentialConstraints() const -> Index;
+
+    /// Return the number of inert reactions introduced with method @ref prevent.
+    auto numInertReactions() const -> Index;
 
 private:
     struct Impl;
@@ -112,8 +136,8 @@ private:
 //
 //=================================================================================================
 
-/// The type of functions implementing equilibrium constraints.
-struct EquilibriumConstraintArgs
+/// The arguments of functions defining equation constraints to be satisfied at chemical equilibrium.
+struct EquilibriumEquationArgs
 {
     /// The current chemical properties of the chemical system during the calculation.
     const ChemicalProps& props;
@@ -125,10 +149,10 @@ struct EquilibriumConstraintArgs
     const Map<String, real>& titrants;
 };
 
-/// The type of functions implementing functional constraints to be satisfied at chemical equilibrium.
-using EquilibriumConstraintFn = Fn<real(EquilibriumConstraintArgs)>;
+/// The type of functions defining equation constraints to be satisfied at chemical equilibrium.
+using EquilibriumEquationFn = Fn<real(EquilibriumEquationArgs)>;
 
-/// The auxiliary class used to impose a functional equilibrium constraint.
+/// The auxiliary class used to impose equations constraints at chemical equilibrium.
 class EquilibriumConstraints::Until
 {
 public:
@@ -166,9 +190,9 @@ public:
     /// @param unit The unit of the constrained entropy value (must be convertible to J/K)
     auto entropy(real value, String unit) -> Until&;
 
-    /// Enforce a custom equilibrium constraint at chemical equilibrium.
-    /// @param fn The custom functional equilibrium constraint
-    auto custom(const EquilibriumConstraintFn& fn) -> Until&;
+    /// Enforce a custom constraint equation at chemical equilibrium.
+    /// @param fn The function implemeting the custom constraint equation
+    auto custom(const EquilibriumEquationFn& fn) -> Until&;
 
 private:
     /// The underlying data of the EquilibriumConstraints object.
@@ -321,7 +345,7 @@ private:
 //
 //=================================================================================================
 
-/// The auxiliary class used to define reactivity constraints.
+/// The auxiliary class used to define reactivity restrictions.
 class EquilibriumConstraints::Prevent
 {
 public:
@@ -404,8 +428,8 @@ struct EquilibriumConstraints::Data
         Fn<real(real,real)> fn;
     };
 
-    /// The reactivity constraints in a chemical equilibrium calculation.
-    struct ReactivityConstraints
+    /// The reactivity restrictions in a chemical equilibrium calculation.
+    struct ReactivityRestrictions
     {
         /// The indices of the species whose amounts cannot change.
         Set<Index> species_cannot_react;
@@ -423,17 +447,17 @@ struct EquilibriumConstraints::Data
     /// The introduced control variables via method @ref EquilibriumConstraints::control.
     Controls controls;
 
-    /// The vector of equilibrium constraints imposed via method @ref EquilibriumConstraints::until.
-    Vec<EquilibriumConstraintFn> fconstraints;
+    /// The vector of equation constraints imposed via method @ref EquilibriumConstraints::until.
+    Vec<EquilibriumEquationFn> econstraints;
 
-    /// The vector of chemical property preservation constraints imposed via method @ref EquilibriumConstraints::preserve.
+    /// The vector of property preservation constraints imposed via method @ref EquilibriumConstraints::preserve.
     Vec<ChemicalPropertyFn> pconstraints;
 
     /// The vector of chemical potential constraints imposed via method @ref EquilibriumConstraints::fix.
     Vec<ChemicalPotentialConstraint> uconstraints;
 
-    /// The reactivity constraints imposed via method @ref EquilibriumConstraints::prevent.
-    ReactivityConstraints rconstraints;
+    /// The reactivity restrictions imposed via method @ref EquilibriumConstraints::prevent.
+    ReactivityRestrictions restrictions;
 };
 
 } // namespace Reaktoro
