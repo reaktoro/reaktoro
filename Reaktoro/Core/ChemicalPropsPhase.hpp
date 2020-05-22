@@ -86,6 +86,9 @@ struct ChemicalPropsPhaseBaseData
     /// The activities (natural log) of the species in the phase.
     Array ln_a;
 
+    /// The chemical potentials of the species in the phase.
+    Array u;
+
     /// Assign a ChemicalPropsPhaseBaseData object to this.
     template<typename RX, typename AX>
     auto operator=(const ChemicalPropsPhaseBaseData<RX, AX>& other)
@@ -109,6 +112,7 @@ struct ChemicalPropsPhaseBaseData
         Cvex = other.Cvex;
         ln_g = other.ln_g;
         ln_a = other.ln_a;
+        u    = other.u;
         return *this;
     }
 
@@ -116,27 +120,27 @@ struct ChemicalPropsPhaseBaseData
     template<typename RX, typename AX>
     operator ChemicalPropsPhaseBaseData<RX, AX>()
     {
-        return { T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
+        return { T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u };
     }
 
     /// Convert this ChemicalPropsPhaseBaseData object into another.
     template<typename RX, typename AX>
     operator ChemicalPropsPhaseBaseData<RX, AX>() const
     {
-        return { T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
+        return { T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u };
     }
 
     /// Assign the given array data to this ChemicalPropsPhaseBaseData object.
     auto operator=(const ArrayStream<Real>& array)
     {
-        array.to(T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a);
+        array.to(T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
         return *this;
     }
 
     /// Convert this ChemicalPropsPhaseBaseData object into an array.
     operator ArrayStream<Real>() const
     {
-        return {T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a};
+        return { T, P, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u };
     }
 };
 
@@ -172,6 +176,7 @@ public:
         _data.Cv0  = ArrayXr::Zero(numspecies);
         _data.ln_g = ArrayXr::Zero(numspecies);
         _data.ln_a = ArrayXr::Zero(numspecies);
+        _data.u    = ArrayXr::Zero(numspecies);
     }
 
     /// Construct a ChemicalPropsPhaseBase instance.
@@ -205,6 +210,8 @@ public:
         _data.P = P;
         _data.n = n;
 
+        const auto R = universalGasConstant;
+
         auto& nsum = _data.nsum;
         auto& x    = _data.x;
         auto& G0   = _data.G0;
@@ -221,18 +228,20 @@ public:
         auto& Cvex = _data.Cvex;
         auto& ln_g = _data.ln_g;
         auto& ln_a = _data.ln_a;
+        auto& u    = _data.u;
 
         const auto& species = _phase.species();
         const auto size = species.size();
 
-        assert(n.size() == size);
-        assert(G0.size()   == size);
-        assert(H0.size()   == size);
-        assert(V0.size()   == size);
-        assert(Cp0.size()  == size);
-        assert(Cv0.size()  == size);
-        assert(ln_g.size() == size);
-        assert(ln_a.size() == size);
+        assert(    n.size() == size );
+        assert(   G0.size() == size );
+        assert(   H0.size() == size );
+        assert(   V0.size() == size );
+        assert(  Cp0.size() == size );
+        assert(  Cv0.size() == size );
+        assert( ln_g.size() == size );
+        assert( ln_a.size() == size );
+        assert(    u.size() == size );
 
         // Compute the standard thermodynamic properties of the species in the phase.
         StandardThermoProps aux;
@@ -261,6 +270,9 @@ public:
         if(nsum == 0.0)
             aprops = 0.0;
         else _phase.activityPropsFn()(aprops, args);
+
+        // Compute the chemical potentials of the species
+        u = G0 + R*T*ln_a;
     }
 
     /// Update the chemical properties of the phase.
@@ -324,10 +336,9 @@ public:
     }
 
     /// Return the chemical potentials of the species (in J/mol).
-    auto chemicalPotentials() const -> ArrayXr
+    auto chemicalPotentials() const -> ArrayXrConstRef
     {
-        const auto R = universalGasConstant;
-        return _data.G0 + R*_data.T * _data.ln_a;
+        return _data.u;
     }
 
     /// Return the standard partial molar Gibbs energies of the species (in J/mol).

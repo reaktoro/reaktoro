@@ -91,6 +91,9 @@ struct ChemicalProps::Impl
     /// The activities (natural log) of the species in the system.
     ArrayXr ln_a;
 
+    /// The chemical potentials of the species in the system.
+    ArrayXr u;
+
     /// Construct a ChemicalProps::Impl object.
     Impl(const ChemicalSystem& system)
     : system(system)
@@ -117,6 +120,7 @@ struct ChemicalProps::Impl
         Cvex = ArrayXr::Zero(numphases);
         ln_g = ArrayXr::Zero(numspecies);
         ln_a = ArrayXr::Zero(numspecies);
+        u    = ArrayXr::Zero(numspecies);
     }
 
     /// Update the chemical properties of the chemical system.
@@ -133,6 +137,7 @@ struct ChemicalProps::Impl
             phaseProps(i).update(T, P, np);
             offset += size;
         }
+
     }
 
     /// Update the chemical properties of the chemical system.
@@ -169,7 +174,8 @@ struct ChemicalProps::Impl
             Cpex[idx],
             Cvex[idx],
             ln_g.segment(begin, size),
-            ln_a.segment(begin, size)
+            ln_a.segment(begin, size),
+            u.segment(begin, size)
         });
     }
 };
@@ -241,10 +247,9 @@ auto ChemicalProps::lnActivities() const -> ArrayXrConstRef
     return pimpl->ln_a;
 }
 
-auto ChemicalProps::chemicalPotentials() const -> ArrayXr
+auto ChemicalProps::chemicalPotentials() const -> ArrayXrConstRef
 {
-    const auto R = universalGasConstant;
-    return pimpl->G0 + R*pimpl->T * pimpl->ln_a;
+    return pimpl->u;
 }
 
 auto ChemicalProps::standardGibbsEnergies() const -> ArrayXrConstRef
