@@ -47,138 +47,64 @@ struct EquilibriumConstraints::Impl
     : system(system)
     {}
 
-    /// Return a Control object to initiate the imposition of a general equilibrium constraint.
+    /// Return a Control object to initiate the introduction of **control variables**.
     auto control() -> Control
     {
         return Control(data);
     }
 
-    /// Return a Until object to initiate the imposition of a functional equilibrium constraint.
+    /// Return a Until object to initiate the imposition of an **equation constraint**.
     auto until() -> Until
     {
         return Until(data);
     }
 
-    /// Return a Preserve object to initiate the imposition of properties that must be preserved.
+    /// Return a Preserve object to initiate the imposition of a **property preservation constraint**.
     auto preserve() -> Preserve
     {
         return Preserve(data);
     }
 
-    /// Return a Fix object to initiate the imposition of a chemical potential constraint.
+    /// Return a Fix object to initiate the imposition of a **chemical potential constraint**.
     auto fix() -> Fix
     {
         return Fix(system, data);
     }
 
-    /// Return a Prevent object to initiate the imposition of a reactivity constraint.
+    /// Return a Prevent object to initiate the imposition of a **reactivity restriction**.
     auto prevent() -> Prevent
     {
         return Prevent(system, data);
     }
 
-    /// Assemble the vector with the element and charge coefficients of a chemical formula.
-    auto assembleFormulaVector(VectorXdRef vec, const ChemicalFormula& formula) -> void
+    /// Return the number of **control variables** introduced with method @ref control.
+    auto numControlVariables() const -> Index
     {
-        const auto num_elements = system.elements().size();
-        assert(vec.size() == num_elements + 1);
-        vec[num_elements] = formula.charge(); // last entry in the column vector is charge of substance
-        for(const auto& [element, coeff] : formula.elements()) {
-            const auto ielem = system.elements().index(element);
-            vec[ielem] = coeff;
-        }
+        return data.controls.size();
     }
 
-    /// Assemble the matrix block A in the conservation matrix C.
-    auto assembleMatrixA(MatrixXdRef A) -> void
+    /// Return the number of **equation constraints** introduced with method @ref until.
+    auto numEquationConstraints() const -> Index
     {
-        A = system.formulaMatrix();
+        return data.econstraints.size();
     }
 
-    /// Assemble the matrix block U in the conservation matrix C.
-    auto assembleMatrixU(MatrixXdRef U) -> void
+    /// Return the number of **property preservation constraints** introduced with method @ref preserve.
+    auto numPropertyPreservationConstraints() const -> Index
     {
-        const auto num_elements = system.elements().size();
-        const auto num_substances = data.uconstraints.size();
-
-        assert(U.rows() == 1 + num_elements); // number of elements plus charge
-        assert(U.cols() == num_substances);   // number of introduced chemical potential constraints
-
-        auto j = 0;
-        for(const auto& [formula, _] : data.uconstraints)
-            assembleFormulaVector(U.col(j++), formula);
+        return data.pconstraints.size();
     }
 
-    /// Assemble the matrix block B = [BT BP Bq] in the conservation matrix C.
-    auto assembleMatrixB(MatrixXdRef B) -> void
+    /// Return the number of **chemical potential constraints** introduced with method @ref fix.
+    auto numChemicalPotentialConstraints() const -> Index
     {
-        const auto num_elements = system.elements().size();
-        const auto num_controls = data.controls.size();
-
-        assert(B.rows() == 1 + num_elements); // number of elements plus charge
-        assert(B.cols() == num_controls);     // number of introduced control variables
-
-        auto j = data.controls.T + data.controls.P; // skip columns BT and BP (if applicable), since these are zeros
-        for(const auto& formula : data.controls.titrants)
-            assembleFormulaVector(B.col(j++), formula);
+        return data.uconstraints.size();
     }
 
-    /// Assemble the matrix block S in the conservation matrix C.
-    auto assembleMatrixS(MatrixXdRef S) -> void
+    /// Return the number of inert reactions introduced with method @ref prevent.
+    auto numInertReactions() const -> Index
     {
-        auto inert_reactions = data.rconstraints.reactions_cannot_react;
-
-        assert(S.rows() == inert_reactions.size());
-
-        auto fill_matrix_row = [&](const auto& pairs, auto row)
-        {
-            for(auto [ispecies, coeff] : pairs)
-                row[ispecies] = coeff;
-        };
-
-        auto i = 0;
-        for(const auto& pairs : inert_reactions)
-            fill_matrix_row(pairs, S.row(i++));
-    }
-
-    /// Return the conservation matrix associated with the equilibrium constraints.
-    /// The conservation matrix is:
-    ///
-    /// C = [ A U B ]
-    ///     [ S 0 0 ]
-    ///
-    /// where A is the formula matrix of the species with respect to elements
-    /// and charge; U is the formula matrix of the substances with fixed
-    /// chemical potentials; B = [BT BP Bq], with BT and BP being zero column
-    /// vectors and Bq the formula matrix of the introduced titrants whose
-    /// amounts are controlled to attain imposed equilibrium constraints; and S
-    /// is the stoichiometric matrix of reactions that cannot progress during
-    /// the equilibrium calculation (inert reactions).
-    auto conservationMatrix() -> MatrixXd
-    {
-        const auto num_elements = system.elements().size();
-        const auto num_species = system.species().size();
-        const auto num_charge = 1;
-        const auto num_inert_reactions = data.rconstraints.reactions_cannot_react.size();
-        const auto num_fixed_chemical_potentials = data.uconstraints.size();
-        const auto num_controls = data.controls.size();
-
-        const auto num_rows = num_elements + num_charge + num_inert_reactions;
-        const auto num_cols = num_species + num_fixed_chemical_potentials + num_controls;
-
-        MatrixXd C = MatrixXd::Zero(num_rows, num_cols);
-
-        auto A = C.topRows(num_elements + num_charge).leftCols(num_species);
-        auto U = C.topRows(num_elements + num_charge).middleCols(num_species, num_fixed_chemical_potentials);
-        auto B = C.topRows(num_elements + num_charge).rightCols(num_controls);
-        auto S = C.bottomLeftCorner(num_inert_reactions, num_species);
-
-        assembleMatrixA(A);
-        assembleMatrixU(U);
-        assembleMatrixB(B);
-        assembleMatrixS(S);
-
-        return C;
+        return data.restrictions.reactions_cannot_react.size();
     }
 };
 
@@ -192,8 +118,18 @@ EquilibriumConstraints::EquilibriumConstraints(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
 
+EquilibriumConstraints::EquilibriumConstraints(const EquilibriumConstraints& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
 EquilibriumConstraints::~EquilibriumConstraints()
 {}
+
+auto EquilibriumConstraints::operator=(EquilibriumConstraints other) -> EquilibriumConstraints&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
 
 auto EquilibriumConstraints::control() -> Control
 {
@@ -220,9 +156,39 @@ auto EquilibriumConstraints::prevent() -> Prevent
     return pimpl->prevent();
 }
 
+auto EquilibriumConstraints::system() const -> const ChemicalSystem&
+{
+    return pimpl->system;
+}
+
 auto EquilibriumConstraints::data() const -> const Data&
 {
     return pimpl->data;
+}
+
+auto EquilibriumConstraints::numControlVariables() const -> Index
+{
+    return pimpl->numControlVariables();
+}
+
+auto EquilibriumConstraints::numEquationConstraints() const -> Index
+{
+    return pimpl->numEquationConstraints();
+}
+
+auto EquilibriumConstraints::numPropertyPreservationConstraints() const -> Index
+{
+    return pimpl->numPropertyPreservationConstraints();
+}
+
+auto EquilibriumConstraints::numChemicalPotentialConstraints() const -> Index
+{
+    return pimpl->numChemicalPotentialConstraints();
+}
+
+auto EquilibriumConstraints::numInertReactions() const -> Index
+{
+    return pimpl->numInertReactions();
 }
 
 //=================================================================================================
@@ -275,42 +241,43 @@ EquilibriumConstraints::Until::Until(EquilibriumConstraints::Data& data)
 auto EquilibriumConstraints::Until::volume(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "m3");
-    return custom([=](EquilibriumConstraintArgs args) { return args.props.volume() - value; });
+    return custom([=](EquilibriumEquationArgs args) { return args.props.volume() - value; });
 }
 
 auto EquilibriumConstraints::Until::internalEnergy(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "J");
-    return custom([=](EquilibriumConstraintArgs args) { return args.props.internalEnergy() - value; });
+    return custom([=](EquilibriumEquationArgs args) { return args.props.internalEnergy() - value; });
 }
 
 auto EquilibriumConstraints::Until::enthalpy(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "J");
-    return custom([=](EquilibriumConstraintArgs args) { return args.props.enthalpy() - value; });
+    return custom([=](EquilibriumEquationArgs args) { return args.props.enthalpy() - value; });
 }
 
 auto EquilibriumConstraints::Until::gibbsEnergy(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "J");
-    return custom([=](EquilibriumConstraintArgs args) { return args.props.gibbsEnergy() - value; });
+    return custom([=](EquilibriumEquationArgs args) { return args.props.gibbsEnergy() - value; });
 }
 
 auto EquilibriumConstraints::Until::helmholtzEnergy(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "J");
-    return custom([=](EquilibriumConstraintArgs args) { return args.props.helmholtzEnergy() - value; });
+    return custom([=](EquilibriumEquationArgs args) { return args.props.helmholtzEnergy() - value; });
 }
 
 auto EquilibriumConstraints::Until::entropy(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "J/K");
-    return custom([=](EquilibriumConstraintArgs args) { return args.props.entropy() - value; });
+    return custom([=](EquilibriumEquationArgs args) { return args.props.entropy() - value; });
 }
 
-auto EquilibriumConstraints::Until::custom(const EquilibriumConstraintFn& fn) -> Until&
+auto EquilibriumConstraints::Until::custom(const EquilibriumEquationFn& fn) -> Until&
 {
-    data.fconstraints.push_back(fn);
+    error(!fn, "Imposing an empty custom equation constraint is not allowed.");
+    data.econstraints.push_back(fn);
     return *this;
 }
 
@@ -479,13 +446,13 @@ auto EquilibriumConstraints::Prevent::fromReacting(Index ispecies) -> Prevent&
     error(ispecies >= size,
         "The given species index ", ispecies, " is out of bounds, "
         "since there are only ", size, " species in the chemical system.");
-    data.rconstraints.species_cannot_react.insert(ispecies);
+    data.restrictions.species_cannot_react.insert(ispecies);
     return *this;
 }
 
 auto EquilibriumConstraints::Prevent::fromReacting(Pairs<Index, double> equation) -> Prevent&
 {
-    data.rconstraints.reactions_cannot_react.push_back(equation);
+    data.restrictions.reactions_cannot_react.push_back(equation);
     return *this;
 }
 
@@ -508,7 +475,7 @@ auto EquilibriumConstraints::Prevent::fromIncreasing(Index ispecies) -> Prevent&
     error(ispecies >= size,
         "The given species index ", ispecies, " is out of bounds, "
         "since there are only ", size, " species in the chemical system.");
-    data.rconstraints.species_cannot_increase.insert(ispecies);
+    data.restrictions.species_cannot_increase.insert(ispecies);
     return *this;
 }
 
@@ -523,7 +490,7 @@ auto EquilibriumConstraints::Prevent::fromDecreasing(Index ispecies) -> Prevent&
     error(ispecies >= size,
         "The given species index ", ispecies, " is out of bounds, "
         "since there are only ", size, " species in the chemical system.");
-    data.rconstraints.species_cannot_decrease.insert(ispecies);
+    data.restrictions.species_cannot_decrease.insert(ispecies);
     return *this;
 }
 

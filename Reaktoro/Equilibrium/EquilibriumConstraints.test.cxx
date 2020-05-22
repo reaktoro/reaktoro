@@ -27,7 +27,7 @@ using namespace Reaktoro;
 
 namespace test { extern auto createChemicalSystem() -> ChemicalSystem; }
 
-TEST_CASE("Testing EquilibriumConstraint", "[EquilibriumConstraint]")
+TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
 {
     ChemicalSystem system = test::createChemicalSystem();
 
@@ -46,6 +46,8 @@ TEST_CASE("Testing EquilibriumConstraint", "[EquilibriumConstraint]")
         constraints.control().pressure();
         REQUIRE( controls.P == true );
 
+        REQUIRE( constraints.numControlVariables() == 2 );
+
         REQUIRE_THROWS( constraints.control().titrationOf("HCl") );               // not supported yet!
         REQUIRE_THROWS( constraints.control().titrationOfEither("HCl", "NaOH") ); // not supported yet!
 
@@ -63,7 +65,7 @@ TEST_CASE("Testing EquilibriumConstraint", "[EquilibriumConstraint]")
     SECTION("Testing method EquilibriumConstraints::until")
     {
         // Reference to the functional equilibrium constraints data
-        const auto& fconstraints = constraints.data().fconstraints;
+        const auto& econstraints = constraints.data().econstraints;
 
         ChemicalProps props(system);
 
@@ -71,25 +73,27 @@ TEST_CASE("Testing EquilibriumConstraint", "[EquilibriumConstraint]")
 
         const auto titrants = Map<String, real>{{"HCl", 2.1}, {"NaOH", 3.1}};
 
-        EquilibriumConstraintArgs args{props, t, titrants};
+        EquilibriumEquationArgs args{props, t, titrants};
 
         constraints.until().internalEnergy(1.0, "kJ");
 
-        REQUIRE( fconstraints.size() == 1 );
-        REQUIRE( fconstraints[0](args) == -1.0e+3 );
+        REQUIRE( econstraints.size() == 1 );
+        REQUIRE( econstraints[0](args) == -1.0e+3 );
 
         constraints.until().volume(1.0, "mm3");
 
-        REQUIRE( fconstraints.size() == 2 );
-        REQUIRE( fconstraints[0](args) == -1.0e+3 );
-        REQUIRE( fconstraints[1](args) == -1.0e-9 );
+        REQUIRE( econstraints.size() == 2 );
+        REQUIRE( econstraints[0](args) == -1.0e+3 );
+        REQUIRE( econstraints[1](args) == -1.0e-9 );
 
         constraints.until().enthalpy(1.0, "J");
 
-        REQUIRE( fconstraints.size() == 3 );
-        REQUIRE( fconstraints[0](args) == -1.0e+3 );
-        REQUIRE( fconstraints[1](args) == -1.0e-9 );
-        REQUIRE( fconstraints[2](args) == -1.0 );
+        REQUIRE( econstraints.size() == 3 );
+        REQUIRE( econstraints[0](args) == -1.0e+3 );
+        REQUIRE( econstraints[1](args) == -1.0e-9 );
+        REQUIRE( econstraints[2](args) == -1.0 );
+
+        REQUIRE( constraints.numEquationConstraints() == 3 );
     }
 
     SECTION("Testing method EquilibriumConstraints::preserve")
@@ -116,6 +120,8 @@ TEST_CASE("Testing EquilibriumConstraint", "[EquilibriumConstraint]")
         REQUIRE( pconstraints[0](props) == 0.0 );
         REQUIRE( pconstraints[1](props) == 0.0 );
         REQUIRE( pconstraints[2](props) == 0.0 );
+
+        REQUIRE( constraints.numPropertyPreservationConstraints() == 3 );
     }
 
     SECTION("Testing method EquilibriumConstraints::fix")
@@ -143,12 +149,14 @@ TEST_CASE("Testing EquilibriumConstraint", "[EquilibriumConstraint]")
         REQUIRE( uconstraints.size() == 2 );
         REQUIRE( uconstraints[1].formula.equivalent("O2") );
         REQUIRE( uconstraints[1].fn );
+
+        REQUIRE( constraints.numChemicalPotentialConstraints() == 2 );
     }
 
     SECTION("Testing method EquilibriumConstraints::prevent")
     {
         // Reference to the reactivity constraints data
-        const auto& get = constraints.data().rconstraints;
+        const auto& get = constraints.data().restrictions;
 
         // Return the index of a species with given name
         const auto idx = [&](auto name) { return system.species().index(name); };
@@ -187,5 +195,7 @@ TEST_CASE("Testing EquilibriumConstraint", "[EquilibriumConstraint]")
         REQUIRE( get.reactions_cannot_react.size() == 2                                 );
         REQUIRE( get.reactions_cannot_react[0] == equation("O2(aq) + H2(aq) = H2O(aq)") );
         REQUIRE( get.reactions_cannot_react[1] == equation("CO2(g) = CO2(aq)")          );
+
+        REQUIRE( constraints.numInertReactions() == 2 );
     }
 }
