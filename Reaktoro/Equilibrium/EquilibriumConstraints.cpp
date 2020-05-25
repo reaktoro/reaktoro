@@ -234,6 +234,15 @@ auto EquilibriumConstraints::Control::titrationOfEither(String titrant1, String 
 //
 //=================================================================================================
 
+auto EquilibriumEquationArgs::titrantAmount(const String& formula) const -> real
+{
+    const auto idx = index(titrants, formula);
+    error(idx >= titrants.size(),
+        "Could not get the amount of titrant `", formula, "`. "
+        "No titrant found with this name.");
+    return q[idx];
+}
+
 EquilibriumConstraints::Until::Until(EquilibriumConstraints::Data& data)
 : data(data)
 {}

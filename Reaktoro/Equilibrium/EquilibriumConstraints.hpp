@@ -143,10 +143,13 @@ struct EquilibriumEquationArgs
     const ChemicalProps& props;
 
     /// The current amounts of the controlled titrants during the calculation.
-    VectorXrConstRef t;
+    VectorXrConstRef q;
 
-    /// The current amounts of the controlled titrants during the calculation as a map.
-    const Map<String, real>& titrants;
+    /// The chemical formulas of the controlled titrants.
+    const Vec<ChemicalFormula>& titrants;
+
+    /// Return the amount of a controlled titrant with given formula.
+    auto titrantAmount(const String& formula) const -> real;
 };
 
 /// The type of functions defining equation constraints to be satisfied at chemical equilibrium.

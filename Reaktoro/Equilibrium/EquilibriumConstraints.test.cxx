@@ -64,16 +64,17 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
 
     SECTION("Testing method EquilibriumConstraints::until")
     {
+        // Reference to the controls data
+        const auto& controls = constraints.data().controls;
+
         // Reference to the functional equilibrium constraints data
         const auto& econstraints = constraints.data().econstraints;
 
         ChemicalProps props(system);
 
-        const auto t = VectorXr{{ 1.0, 2.0 }};
+        const auto q = VectorXr{{ 1.0, 2.0 }};
 
-        const auto titrants = Map<String, real>{{"HCl", 2.1}, {"NaOH", 3.1}};
-
-        EquilibriumEquationArgs args{props, t, titrants};
+        EquilibriumEquationArgs args{props, q, controls.titrants};
 
         constraints.until().internalEnergy(1.0, "kJ");
 
