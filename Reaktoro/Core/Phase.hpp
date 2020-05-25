@@ -49,6 +49,9 @@ public:
     /// Return a copy of this Phase object with a new activity model function.
     auto withActivityPropsFn(ActivityPropsFn fn) -> Phase;
 
+    /// Return a copy of this Phase object with a new ideal activity model function.
+    auto withIdealActivityPropsFn(ActivityPropsFn fn) -> Phase;
+
     /// Return the name of the phase.
     auto name() const -> String;
 
@@ -66,6 +69,9 @@ public:
 
     /// Return the function that computes activity properties of the phase.
     auto activityPropsFn() const -> const ActivityPropsFn&;
+
+    /// Return the function that computes ideal activity properties of the phase.
+    auto idealActivityPropsFn() const -> const ActivityPropsFn&;
 
 private:
     struct Impl;

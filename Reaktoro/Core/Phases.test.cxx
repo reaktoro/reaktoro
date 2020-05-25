@@ -73,6 +73,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setStateOfMatter(StateOfMatter::Liquid);
         genericphase.setAggregateState(AggregateState::Aqueous);
         genericphase.setActivityModel(activitymodel);
+        genericphase.setIdealActivityModel(activitymodel);
 
         Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -83,6 +84,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phase.species(1).name() == "H+"      );
         REQUIRE( phase.species(2).name() == "OH-"     );
         REQUIRE( phase.activityPropsFn() );
+        REQUIRE( phase.idealActivityPropsFn() );
     }
 
     SECTION("Testing GenericPhase::GenericPhase(const Speciate&)")
@@ -92,6 +94,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setStateOfMatter(StateOfMatter::Liquid);
         genericphase.setAggregateState(AggregateState::Aqueous);
         genericphase.setActivityModel(activitymodel);
+        genericphase.setIdealActivityModel(activitymodel);
 
         Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -104,6 +107,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phase.species(3).name() == "H2(aq)"  );
         REQUIRE( phase.species(4).name() == "O2(aq)"  );
         REQUIRE( phase.activityPropsFn() );
+        REQUIRE( phase.idealActivityPropsFn() );
     }
 
     SECTION("Testing GenericPhase::GenericPhase() with all elements during phase conversion process")
@@ -113,6 +117,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setStateOfMatter(StateOfMatter::Liquid);
         genericphase.setAggregateState(AggregateState::Aqueous);
         genericphase.setActivityModel(activitymodel);
+        genericphase.setIdealActivityModel(activitymodel);
 
         Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -138,6 +143,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phase.species(16).name() == "MgCl2(aq)" );
         REQUIRE( phase.species(17).name() == "SiO2(aq)"  );
         REQUIRE( phase.activityPropsFn() );
+        REQUIRE( phase.idealActivityPropsFn() );
     }
 
     SECTION("Testing GenericPhase::GenericPhase() with H, O, and Cl elements during phase conversion process")
@@ -147,6 +153,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphase.setStateOfMatter(StateOfMatter::Liquid);
         genericphase.setAggregateState(AggregateState::Aqueous);
         genericphase.setActivityModel(activitymodel);
+        genericphase.setIdealActivityModel(activitymodel);
 
         Phase phase = genericphase.convert(db, {"H", "O", "Cl"});
 
@@ -161,6 +168,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phase.species(5).name() == "Cl-"      );
         REQUIRE( phase.species(6).name() == "HCl(aq)"  );
         REQUIRE( phase.activityPropsFn() );
+        REQUIRE( phase.idealActivityPropsFn() );
     }
 
     //=================================================================================================================
@@ -174,6 +182,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphases.setStateOfMatter(StateOfMatter::Solid);
         genericphases.setAggregateState(AggregateState::Solid);
         genericphases.setActivityModel(activitymodel);
+        genericphases.setIdealActivityModel(activitymodel);
 
         Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -183,11 +192,13 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phases[0].stateOfMatter() == StateOfMatter::Solid );
         REQUIRE( phases[0].aggregateState() == AggregateState::Solid );
         REQUIRE( phases[0].activityModel() );
+        REQUIRE( phases[0].idealActivityModel() );
 
         REQUIRE( phases[1].name() == "Magnesite" );
         REQUIRE( phases[1].stateOfMatter() == StateOfMatter::Solid );
         REQUIRE( phases[1].aggregateState() == AggregateState::Solid );
         REQUIRE( phases[1].activityModel() );
+        REQUIRE( phases[1].idealActivityModel() );
     }
 
     SECTION("Testing GenericPhases::GenericPhases(const Speciate&)")
@@ -196,6 +207,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphases.setStateOfMatter(StateOfMatter::Solid);
         genericphases.setAggregateState(AggregateState::Solid);
         genericphases.setActivityModel(activitymodel);
+        genericphases.setIdealActivityModel(activitymodel);
 
         Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -205,16 +217,19 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phases[0].stateOfMatter() == StateOfMatter::Solid );
         REQUIRE( phases[0].aggregateState() == AggregateState::Solid );
         REQUIRE( phases[0].activityModel() );
+        REQUIRE( phases[0].idealActivityModel() );
 
         REQUIRE( phases[1].name() == "Magnesite" );
         REQUIRE( phases[1].stateOfMatter() == StateOfMatter::Solid );
         REQUIRE( phases[1].aggregateState() == AggregateState::Solid );
         REQUIRE( phases[1].activityModel() );
+        REQUIRE( phases[1].idealActivityModel() );
 
         REQUIRE( phases[2].name() == "Dolomite" );
         REQUIRE( phases[2].stateOfMatter() == StateOfMatter::Solid );
         REQUIRE( phases[2].aggregateState() == AggregateState::Solid );
         REQUIRE( phases[2].activityModel() );
+        REQUIRE( phases[2].idealActivityModel() );
     }
 
     SECTION("Testing GenericPhases::GenericPhases() with all elements during phase conversion process")
@@ -223,6 +238,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphases.setStateOfMatter(StateOfMatter::Solid);
         genericphases.setAggregateState(AggregateState::Solid);
         genericphases.setActivityModel(activitymodel);
+        genericphases.setIdealActivityModel(activitymodel);
 
         Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
@@ -232,26 +248,31 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phases[0].stateOfMatter() == StateOfMatter::Solid );
         REQUIRE( phases[0].aggregateState() == AggregateState::Solid );
         REQUIRE( phases[0].activityModel() );
+        REQUIRE( phases[0].idealActivityModel() );
 
         REQUIRE( phases[1].name() == "Calcite" );
         REQUIRE( phases[1].stateOfMatter() == StateOfMatter::Solid );
         REQUIRE( phases[1].aggregateState() == AggregateState::Solid );
         REQUIRE( phases[1].activityModel() );
+        REQUIRE( phases[1].idealActivityModel() );
 
         REQUIRE( phases[2].name() == "Magnesite" );
         REQUIRE( phases[2].stateOfMatter() == StateOfMatter::Solid );
         REQUIRE( phases[2].aggregateState() == AggregateState::Solid );
         REQUIRE( phases[2].activityModel() );
+        REQUIRE( phases[2].idealActivityModel() );
 
         REQUIRE( phases[3].name() == "Dolomite" );
         REQUIRE( phases[3].stateOfMatter() == StateOfMatter::Solid );
         REQUIRE( phases[3].aggregateState() == AggregateState::Solid );
         REQUIRE( phases[3].activityModel() );
+        REQUIRE( phases[3].idealActivityModel() );
 
         REQUIRE( phases[4].name() == "Quartz" );
         REQUIRE( phases[4].stateOfMatter() == StateOfMatter::Solid );
         REQUIRE( phases[4].aggregateState() == AggregateState::Solid );
         REQUIRE( phases[4].activityModel() );
+        REQUIRE( phases[4].idealActivityModel() );
     }
 
     SECTION("Testing GenericPhases::GenericPhases() with Na and Cl elements during phase conversion process")
@@ -260,6 +281,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         genericphases.setStateOfMatter(StateOfMatter::Solid);
         genericphases.setAggregateState(AggregateState::Solid);
         genericphases.setActivityModel(activitymodel);
+        genericphases.setIdealActivityModel(activitymodel);
 
         Vec<GenericPhase> phases = genericphases.convert(db, {"Na", "Cl"});
 
@@ -269,6 +291,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phases[0].stateOfMatter() == StateOfMatter::Solid );
         REQUIRE( phases[0].aggregateState() == AggregateState::Solid );
         REQUIRE( phases[0].activityModel() );
+        REQUIRE( phases[0].idealActivityModel() );
     }
 
     //=================================================================================================================
@@ -283,6 +306,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phase.stateOfMatter() == stateofmatter );
         REQUIRE( phase.aggregateState() == aggregatestate );
         REQUIRE( phase.activityPropsFn() );
+        REQUIRE( phase.idealActivityPropsFn() );
         REQUIRE( phase.species().size() == species.size() );
         for(auto i = 0; i < species.size(); ++i)
         {
