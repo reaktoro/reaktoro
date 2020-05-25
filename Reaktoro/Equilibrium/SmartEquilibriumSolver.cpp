@@ -161,6 +161,8 @@ struct SmartEquilibriumSolver::Impl
     Impl(const ChemicalSystem& system)
     : Impl(Partition(system))
     {
+        // Initialize the canonicalizer with the formula matrix Ae of the equilibrium species
+        canonicalizer.compute(partition.formulaMatrixEquilibriumPartition());
     }
 
     /// Construct an SmartEquilibriumSolver::Impl instance with given partition of the chemical system.
@@ -320,7 +322,6 @@ struct SmartEquilibriumSolver::Impl
         result.estimate.accepted = false;
 
         // Skip estimation if no cluster exists yet
-        //std::cout << "is cluster empty: " << database.clusters.empty() << std::endl;
         if(database.clusters.empty())
             return;
 
@@ -451,25 +452,10 @@ struct SmartEquilibriumSolver::Impl
                     const auto& dnedbTe0 = dndT0(ies);
                     const auto& ne0 = n0(ies);
 
-                    /*
-                    std::cout << "dnedbPe0 :" << tr(dnedbPe0) << std::endl;
-                    std::cout << "P :" << P << std::endl;
-                    std::cout << "P0 :" << P0 << std::endl;
-                    */
-
                     // Perform Taylor extrapolation
                     //ne.noalias() = ne0 + dnedbe0 * (be - be0);
-                    //std::cout << "ne (only with b):" << tr(ne) << std::endl;
-
-
-                    // Perform Taylor extrapolation
                     ne.noalias() = ne0 + dnedbe0 * (be - be0) + dnedbPe0 * (P - P0) + dnedbTe0 * (T - T0);
-                    //std::cout << "ne (with b, P, T) = " << tr(ne) << std::endl;
-                    //std::cout << "dnedbPe0 * (P - P0) = " << tr(dnedbPe0 * (P - P0)) << std::endl;
-                    //std::cout << "|| dnedbPe0 * (P - P0) || = " << (dnedbPe0 * (P - P0)).squaredNorm() << std::endl;
-
-                    //getchar();
-
+                    
                     // Check if all projected species amounts are positive
                     const double ne_min = min(ne);
                     const double ne_sum = sum(ne);
@@ -498,6 +484,7 @@ struct SmartEquilibriumSolver::Impl
                     // DATABASE PRIORITY UPDATE STEP DURING THE ESTIMATE PROCESS
                     //---------------------------------------------------------------------
                     tic(PRIORITY_UPDATE_STEP);
+
 
                     // Increment priority of the current record (irecord) in the current cluster (jcluster)
                     database.clusters[jcluster].priority.increment(irecord);
@@ -528,8 +515,8 @@ struct SmartEquilibriumSolver::Impl
         const auto& ies = partition.indicesEquilibriumSpecies();
         const auto T = state.temperature();
         const auto P = state.pressure();
-        be = state.elementAmountsInSpecies(ies)(iee);
-        return solve(state, T, P, be);
+        be_aux = state.elementAmountsInSpecies(ies)(iee);
+        return solve(state, T, P, be_aux);
     }
 
     /// Solve the equilibrium problem with given problem definition

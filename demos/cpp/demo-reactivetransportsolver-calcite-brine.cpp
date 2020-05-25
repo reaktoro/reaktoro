@@ -51,7 +51,6 @@ struct Params
     bool use_smart_eqilibirum_solver;
     bool track_statistics;
     double smart_equlibrium_reltol;
-
     double amount_fraction_cutoff;
     double mole_fraction_cutoff;
 
@@ -196,6 +195,9 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
     smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
 
+    smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
+    smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
+
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
     // Default chemical model (HKF extended Debye-Hückel model)
@@ -268,6 +270,9 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     problem_bc.add("MgCl2", 0.05, "mol");
     problem_bc.add("CaCl2", 0.01, "mol");
     problem_bc.add("CO2",   0.75, "mol");
+
+    Partition partition(system);
+    partition.setInertSpecies({"Quartz"});
 
     // Step **: Calculate the equilibrium states for the IC and BC
     ChemicalState state_ic = equilibrate(problem_ic);
@@ -361,10 +366,11 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     }
 
     if(params.use_smart_eqilibirum_solver)
+    {
         rtsolver.outputClusterInfo();
-
-    if(params.use_smart_eqilibirum_solver)
         results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
+    }
+        
     else results.time_reactive_transport_conventional = toc(REACTIVE_TRANSPORT_STEPS);
 
     // Step **: Collect the analytics related to reactive transport performance
