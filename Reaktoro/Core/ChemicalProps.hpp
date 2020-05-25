@@ -24,7 +24,7 @@
 
 namespace Reaktoro {
 
-/// The chemical properties of the phases and species in a chemical system.
+/// The class that computes chemical properties of a chemical system.
 class ChemicalProps
 {
 public:
@@ -52,6 +52,19 @@ public:
     /// @param n The amounts of the species in the system (in mol)
     /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
     auto update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void;
+
+    /// Update the chemical properties of the chemical system using ideal activity models.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void;
+
+    /// Update the chemical properties of the chemical system using ideal activity models.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
+    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void;
 
     /// Return the chemical system associated with these chemical properties.
     auto system() const -> const ChemicalSystem&;

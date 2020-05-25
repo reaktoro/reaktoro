@@ -137,7 +137,6 @@ struct ChemicalProps::Impl
             phaseProps(i).update(T, P, np);
             offset += size;
         }
-
     }
 
     /// Update the chemical properties of the chemical system.
@@ -145,6 +144,30 @@ struct ChemicalProps::Impl
     {
         autodiff::seed(wrtvar);
         update(T, P, n);
+        autodiff::unseed(wrtvar);
+    }
+
+    /// Update the chemical properties of the chemical system using ideal activity models.
+    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void
+    {
+        this->T = T;
+        this->P = P;
+        const auto numphases = system.phases().size();
+        auto offset = 0;
+        for(auto i = 0; i < numphases; ++i)
+        {
+            const auto size = system.phase(i).species().size();
+            const auto np = n.segment(offset, size);
+            phaseProps(i).updateIdeal(T, P, np);
+            offset += size;
+        }
+    }
+
+    /// Update the chemical properties of the chemical system using ideal activity models.
+    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void
+    {
+        autodiff::seed(wrtvar);
+        updateIdeal(T, P, n);
         autodiff::unseed(wrtvar);
     }
 
@@ -205,6 +228,16 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
 auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void
 {
     pimpl->update(T, P, n, wrtvar);
+}
+
+auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void
+{
+    pimpl->updateIdeal(T, P, n);
+}
+
+auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void
+{
+    pimpl->updateIdeal(T, P, n, wrtvar);
 }
 
 auto ChemicalProps::system() const -> const ChemicalSystem&

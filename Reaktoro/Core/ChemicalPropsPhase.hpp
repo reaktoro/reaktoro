@@ -202,77 +202,7 @@ public:
     /// @param n The amounts of the species in the phase (in mol)
     auto update(const real& T, const real& P, ArrayXrConstRef n)
     {
-        // Check if this update call can be skipped if T, P, n conditions remain the same
-        if(T == _data.T && P == _data.P && (n == _data.n).all())
-            return;
-
-        _data.T = T;
-        _data.P = P;
-        _data.n = n;
-
-        const auto R = universalGasConstant;
-
-        auto& nsum = _data.nsum;
-        auto& x    = _data.x;
-        auto& G0   = _data.G0;
-        auto& H0   = _data.H0;
-        auto& V0   = _data.V0;
-        auto& Cp0  = _data.Cp0;
-        auto& Cv0  = _data.Cv0;
-        auto& Vex  = _data.Vex;
-        auto& VexT = _data.VexT;
-        auto& VexP = _data.VexP;
-        auto& Gex  = _data.Gex;
-        auto& Hex  = _data.Hex;
-        auto& Cpex = _data.Cpex;
-        auto& Cvex = _data.Cvex;
-        auto& ln_g = _data.ln_g;
-        auto& ln_a = _data.ln_a;
-        auto& u    = _data.u;
-
-        const auto& species = _phase.species();
-        const auto size = species.size();
-
-        assert(    n.size() == size );
-        assert(   G0.size() == size );
-        assert(   H0.size() == size );
-        assert(   V0.size() == size );
-        assert(  Cp0.size() == size );
-        assert(  Cv0.size() == size );
-        assert( ln_g.size() == size );
-        assert( ln_a.size() == size );
-        assert(    u.size() == size );
-
-        // Compute the standard thermodynamic properties of the species in the phase.
-        StandardThermoProps aux;
-        for(auto i = 0; i < size; ++i)
-        {
-            auto standard_thermo_props_fn = _phase.species(i).standardThermoPropsFn();
-            aux = standard_thermo_props_fn ? standard_thermo_props_fn(T, P) : StandardThermoProps{};
-            G0[i]  = aux.G0;
-            H0[i]  = aux.H0;
-            V0[i]  = aux.V0;
-            Cp0[i] = aux.Cp0;
-            Cv0[i] = aux.Cv0;
-        }
-
-        // Compute the activity properties of the phase.
-        nsum = n.sum();
-
-        if(nsum == 0.0)
-            x = (size == 1) ? 1.0 : 0.0;
-        else x = n / nsum;
-
-        Vec<Any> extra;
-        ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
-        ActivityArgs args{ T, P, x, extra };
-
-        if(nsum == 0.0)
-            aprops = 0.0;
-        else _phase.activityPropsFn()(aprops, args);
-
-        // Compute the chemical potentials of the species
-        u = G0 + R*T*ln_a;
+        _update<false>(T, P, n);
     }
 
     /// Update the chemical properties of the phase.
@@ -284,6 +214,27 @@ public:
     {
         autodiff::seed(wrtvar);
         update(T, P, n);
+        autodiff::unseed(wrtvar);
+    }
+
+    /// Update the chemical properties of the phase using ideal activity models.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the phase (in mol)
+    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n)
+    {
+        _update<true>(T, P, n);
+    }
+
+    /// Update the chemical properties of the phase using ideal activity models.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the phase (in mol)
+    /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
+    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar)
+    {
+        autodiff::seed(wrtvar);
+        updateIdeal(T, P, n);
         autodiff::unseed(wrtvar);
     }
 
@@ -527,6 +478,88 @@ private:
 
     /// The primary chemical property data of the phase from which others are calculated.
     ChemicalPropsPhaseBaseData<Real, Array> _data;
+
+private:
+    /// Update the chemical properties of the phase.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the phase (in mol)
+    template<bool use_ideal_activity_model>
+    auto _update(const real& T, const real& P, ArrayXrConstRef n)
+    {
+        // Check if this update call can be skipped if T, P, n conditions remain the same
+        if(T == _data.T && P == _data.P && (n == _data.n).all())
+            return;
+
+        _data.T = T;
+        _data.P = P;
+        _data.n = n;
+
+        const auto R = universalGasConstant;
+
+        auto& nsum = _data.nsum;
+        auto& x    = _data.x;
+        auto& G0   = _data.G0;
+        auto& H0   = _data.H0;
+        auto& V0   = _data.V0;
+        auto& Cp0  = _data.Cp0;
+        auto& Cv0  = _data.Cv0;
+        auto& Vex  = _data.Vex;
+        auto& VexT = _data.VexT;
+        auto& VexP = _data.VexP;
+        auto& Gex  = _data.Gex;
+        auto& Hex  = _data.Hex;
+        auto& Cpex = _data.Cpex;
+        auto& Cvex = _data.Cvex;
+        auto& ln_g = _data.ln_g;
+        auto& ln_a = _data.ln_a;
+        auto& u    = _data.u;
+
+        const auto& species = _phase.species();
+        const auto size = species.size();
+
+        assert(    n.size() == size );
+        assert(   G0.size() == size );
+        assert(   H0.size() == size );
+        assert(   V0.size() == size );
+        assert(  Cp0.size() == size );
+        assert(  Cv0.size() == size );
+        assert( ln_g.size() == size );
+        assert( ln_a.size() == size );
+        assert(    u.size() == size );
+
+        // Compute the standard thermodynamic properties of the species in the phase.
+        StandardThermoProps aux;
+        for(auto i = 0; i < size; ++i)
+        {
+            auto standard_thermo_props_fn = _phase.species(i).standardThermoPropsFn();
+            aux = standard_thermo_props_fn ? standard_thermo_props_fn(T, P) : StandardThermoProps{};
+            G0[i]  = aux.G0;
+            H0[i]  = aux.H0;
+            V0[i]  = aux.V0;
+            Cp0[i] = aux.Cp0;
+            Cv0[i] = aux.Cv0;
+        }
+
+        // Compute the activity properties of the phase.
+        nsum = n.sum();
+
+        if(nsum == 0.0)
+            x = (size == 1) ? 1.0 : 0.0;
+        else x = n / nsum;
+
+        Vec<Any> extra;
+        ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
+        ActivityArgs args{ T, P, x, extra };
+        ActivityPropsFn activity_props_fn = use_ideal_activity_model ?
+            _phase.idealActivityPropsFn() : _phase.activityPropsFn();
+
+        if(nsum == 0.0) aprops = 0.0;
+        else activity_props_fn(aprops, args);
+
+        // Compute the chemical potentials of the species
+        u = G0 + R*T*ln_a;
+    }
 };
 
 /// The chemical properties of a phase and its species.
