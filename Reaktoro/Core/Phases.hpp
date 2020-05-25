@@ -60,28 +60,31 @@ public:
     /// Destroy this GenericPhase object.
     virtual ~GenericPhase();
 
-    /// Set a unique name for the phase.
+    /// Set the unique name of the phase.
     auto setName(String name) -> GenericPhase&;
 
-    /// Set the state of matter for the phase.
+    /// Set the state of matter of the phase.
     auto setStateOfMatter(StateOfMatter option) -> GenericPhase&;
 
     /// Set the aggregate state of the species in the phase.
     auto setAggregateState(AggregateState option) -> GenericPhase&;
 
-    /// Set the activity model for the phase.
+    /// Set the activity model of the phase.
     auto setActivityModel(const ActivityModel& model) -> GenericPhase&;
 
-    /// Set a unique name for the phase (equivalent to GenericPhase::setName).
+    /// Set the ideal activity model of the phase.
+    auto setIdealActivityModel(const ActivityModel& model) -> GenericPhase&;
+
+    /// Set a unique name of the phase (equivalent to GenericPhase::setName).
     auto named(String name) -> GenericPhase&;
 
-    /// Set the state of matter for the phase (equivalent to GenericPhase::setStateOfMatter).
+    /// Set the state of matter of the phase (equivalent to GenericPhase::setStateOfMatter).
     auto set(StateOfMatter option) -> GenericPhase&;
 
     /// Set the aggregate state of the species in the phase (equivalent to GenericPhase::setAggregateState).
     auto set(AggregateState option) -> GenericPhase&;
 
-    /// Set the activity model for the phase (equivalent to GenericPhase::setActivityModel).
+    /// Set the activity model of the phase (equivalent to GenericPhase::setActivityModel).
     auto set(const ActivityModel& model) -> GenericPhase&;
 
     /// Return the name of the phase.
@@ -101,6 +104,9 @@ public:
 
     /// Return the specified activity model of the phase.
     auto activityModel() const -> const ActivityModel&;
+
+    /// Return the specified ideal activity model of the phase.
+    auto idealActivityModel() const -> const ActivityModel&;
 
     /// Convert this GenericPhase object into a Phase object.
     auto convert(const Database& db, const Strings& elements) const -> Phase;
@@ -122,7 +128,10 @@ private:
     Strings symbols;
 
     /// The activity model of the phase.
-    ActivityModel activitymodel;
+    ActivityModel activity_model;
+
+    /// The ideal activity model of the phase.
+    ActivityModel ideal_activity_model;
 };
 
 /// The base type for all other classes defining generic pure phases at once.
@@ -142,22 +151,25 @@ public:
     /// Destroy this GenericPhases object.
     virtual ~GenericPhases();
 
-    /// Set the common state of matter for the pure phases.
+    /// Set the common state of matter of the pure phases.
     auto setStateOfMatter(StateOfMatter option) -> GenericPhases&;
 
     /// Set the common aggregate state of the species in the pure phases.
     auto setAggregateState(AggregateState option) -> GenericPhases&;
 
-    /// Set the common activity model for the pure phases.
+    /// Set the common activity model of the pure phases.
     auto setActivityModel(const ActivityModel& model) -> GenericPhases&;
 
-    /// Set the common state of matter for the pure phases (equivalent to GenericPhases::setStateOfMatter).
+    /// Set the common ideal activity model of the pure phases.
+    auto setIdealActivityModel(const ActivityModel& model) -> GenericPhases&;
+
+    /// Set the common state of matter of the pure phases (equivalent to GenericPhases::setStateOfMatter).
     auto set(StateOfMatter option) -> GenericPhases&;
 
     /// Set the common aggregate state of the species in the pure phases (equivalent to GenericPhases::setAggregateState).
     auto set(AggregateState option) -> GenericPhases&;
 
-    /// Set the common activity model for the pure phases (equivalent to GenericPhases::setActivityModel).
+    /// Set the common activity model of the pure phases (equivalent to GenericPhases::setActivityModel).
     auto set(const ActivityModel& model) -> GenericPhases&;
 
     /// Return the common state of matter of the phase.
@@ -174,6 +186,9 @@ public:
 
     /// Return the specified common activity model of the pure phases.
     auto activityModel() const -> const ActivityModel&;
+
+    /// Return the specified common ideal activity model of the pure phases.
+    auto idealActivityModel() const -> const ActivityModel&;
 
     /// Convert this GenericPhases object into a vector of GenericPhase objects.
     auto convert(const Database& db, const Strings& elements) const -> Vec<GenericPhase>;
@@ -192,7 +207,10 @@ private:
     Strings symbols;
 
     /// The common activity model of the pure phases.
-    ActivityModel activitymodel;
+    ActivityModel activity_model;
+
+    /// The common ideal activity model of the pure phases.
+    ActivityModel ideal_activity_model;
 };
 
 /// The class used to define the phases that will constitute the chemical system of interest.
@@ -313,6 +331,7 @@ public:
         setStateOfMatter(StateOfMatter::Liquid);
         setAggregateState(AggregateState::Aqueous);
         setActivityModel(ActivityModelIdealAqueous());
+        setIdealActivityModel(ActivityModelIdealAqueous());
     }
 };
 
@@ -336,6 +355,7 @@ public:
         setStateOfMatter(StateOfMatter::Gas);
         setAggregateState(AggregateState::Gas);
         setActivityModel(ActivityModelIdealGas());
+        setIdealActivityModel(ActivityModelIdealGas());
     }
 };
 
@@ -359,6 +379,7 @@ public:
         setStateOfMatter(StateOfMatter::Liquid);
         setAggregateState(AggregateState::Liquid);
         setActivityModel(ActivityModelIdealSolution());
+        setIdealActivityModel(ActivityModelIdealSolution());
     }
 };
 
@@ -381,6 +402,7 @@ public:
         setStateOfMatter(StateOfMatter::Solid);
         setAggregateState(AggregateState::Solid);
         setActivityModel(ActivityModelIdealSolution());
+        setIdealActivityModel(ActivityModelIdealSolution());
     }
 };
 
@@ -398,6 +420,7 @@ public:
         setStateOfMatter(StateOfMatter::Solid);
         setAggregateState(AggregateState::Solid);
         setActivityModel(ActivityModelIdealSolution());
+        setIdealActivityModel(ActivityModelIdealSolution());
     }
 };
 
@@ -420,6 +443,7 @@ public:
         setStateOfMatter(StateOfMatter::Solid);
         setAggregateState(AggregateState::Solid);
         setActivityModel(ActivityModelIdealSolution());
+        setIdealActivityModel(ActivityModelIdealSolution());
     }
 };
 

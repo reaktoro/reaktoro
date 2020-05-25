@@ -56,7 +56,13 @@ auto GenericPhase::setAggregateState(AggregateState option) -> GenericPhase&
 
 auto GenericPhase::setActivityModel(const ActivityModel& model) -> GenericPhase&
 {
-    activitymodel = model;
+    activity_model = model;
+    return *this;
+}
+
+auto GenericPhase::setIdealActivityModel(const ActivityModel& model) -> GenericPhase&
+{
+    ideal_activity_model = model;
     return *this;
 }
 
@@ -107,7 +113,12 @@ auto GenericPhase::elements() const -> const Strings&
 
 auto GenericPhase::activityModel() const -> const ActivityModel&
 {
-    return activitymodel;
+    return activity_model;
+}
+
+auto GenericPhase::idealActivityModel() const -> const ActivityModel&
+{
+    return ideal_activity_model;
 }
 
 auto GenericPhase::convert(const Database& db, const Strings& elements) const -> Phase
@@ -127,7 +138,8 @@ auto GenericPhase::convert(const Database& db, const Strings& elements) const ->
     phase = phase.withName(phasename);
     phase = phase.withSpecies(species);
     phase = phase.withStateOfMatter(stateofmatter);
-    phase = phase.withActivityPropsFn(activitymodel(species));
+    phase = phase.withActivityPropsFn(activity_model(species));
+    phase = phase.withIdealActivityPropsFn(ideal_activity_model(species));
 
     return phase;
 }
@@ -161,7 +173,13 @@ auto GenericPhases::setAggregateState(AggregateState option) -> GenericPhases&
 
 auto GenericPhases::setActivityModel(const ActivityModel& model) -> GenericPhases&
 {
-    activitymodel = model;
+    activity_model = model;
+    return *this;
+}
+
+auto GenericPhases::setIdealActivityModel(const ActivityModel& model) -> GenericPhases&
+{
+    ideal_activity_model = model;
     return *this;
 }
 
@@ -202,7 +220,12 @@ auto GenericPhases::elements() const -> const Strings&
 
 auto GenericPhases::activityModel() const -> const ActivityModel&
 {
-    return activitymodel;
+    return activity_model;
+}
+
+auto GenericPhases::idealActivityModel() const -> const ActivityModel&
+{
+    return ideal_activity_model;
 }
 
 auto GenericPhases::convert(const Database& db, const Strings& elements) const -> Vec<GenericPhase>
@@ -227,6 +250,7 @@ auto GenericPhases::convert(const Database& db, const Strings& elements) const -
         phase.setStateOfMatter(stateOfMatter());
         phase.setAggregateState(aggregateState());
         phase.setActivityModel(activityModel());
+        phase.setIdealActivityModel(idealActivityModel());
 
         phases.push_back( phase );
     }

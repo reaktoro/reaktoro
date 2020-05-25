@@ -59,6 +59,9 @@ struct Phase::Impl
     /// The activity model function of the phase.
     ActivityPropsFn activity_props_fn;
 
+    /// The ideal activity model function of the phase.
+    ActivityPropsFn ideal_activity_props_fn;
+
     /// The molar masses of the species in the phase.
     ArrayXd species_molar_masses;
 };
@@ -104,6 +107,13 @@ auto Phase::withActivityPropsFn(ActivityPropsFn fn) -> Phase
     return copy;
 }
 
+auto Phase::withIdealActivityPropsFn(ActivityPropsFn fn) -> Phase
+{
+    Phase copy = clone();
+    copy.pimpl->ideal_activity_props_fn = std::move(fn);
+    return copy;
+}
+
 auto Phase::name() const -> String
 {
     return pimpl->name;
@@ -132,6 +142,11 @@ auto Phase::species(Index idx) const -> const Species&
 auto Phase::activityPropsFn() const -> const ActivityPropsFn&
 {
     return pimpl->activity_props_fn;
+}
+
+auto Phase::idealActivityPropsFn() const -> const ActivityPropsFn&
+{
+    return pimpl->ideal_activity_props_fn;
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool
