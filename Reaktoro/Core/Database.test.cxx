@@ -24,44 +24,105 @@ using namespace Reaktoro;
 
 namespace test {
 
+/// Return mock standard thermodynamic properties for an aqueous species.
+auto standardThermoPropsAqueous(real T, real P) -> StandardThermoProps
+{
+    StandardThermoProps props;
+    props.G0  = 2.1 * (T*P)*(T*P);
+    props.H0  = 2.2 * (T*P)*(T*P);
+    props.V0  = 2.3 * (T*P)*(T*P);
+    props.Cp0 = 2.4 * (T*P)*(T*P);
+    props.Cv0 = 2.5 * (T*P)*(T*P);
+    return props;
+};
+
+/// Return mock standard thermodynamic properties for a gaseous species.
+auto standardThermoPropsGaseous(real T, real P) -> StandardThermoProps
+{
+    StandardThermoProps props;
+    props.G0  = 0.1 * (T*P)*(T*P);
+    props.H0  = 0.2 * (T*P)*(T*P);
+    props.V0  = 0.3 * (T*P)*(T*P);
+    props.Cp0 = 0.4 * (T*P)*(T*P);
+    props.Cv0 = 0.5 * (T*P)*(T*P);
+    return props;
+};
+
+/// Return mock standard thermodynamic properties for a solid species.
+auto standardThermoPropsSolid(real T, real P) -> StandardThermoProps
+{
+    StandardThermoProps props;
+    props.G0  = 1.1 * (T*P)*(T*P);
+    props.H0  = 1.2 * (T*P)*(T*P);
+    props.V0  = 1.3 * (T*P)*(T*P);
+    props.Cp0 = 1.4 * (T*P)*(T*P);
+    props.Cv0 = 1.5 * (T*P)*(T*P);
+    return props;
+};
+
+/// Return a mock Species object of aqueous type for test reasons.
+auto createAqueousSpecies(String name)
+{
+    return Species(name)
+        .withAggregateState(AggregateState::Aqueous)
+        .withStandardThermoPropsFn(standardThermoPropsAqueous);
+}
+
+/// Return a mock Species object of gas type for test reasons.
+auto createGaseousSpecies(String name)
+{
+    return Species(name)
+        .withAggregateState(AggregateState::Gas)
+        .withStandardThermoPropsFn(standardThermoPropsGaseous);
+}
+
+/// Return a mock Species object of solid type for test reasons.
+auto createSolidSpecies(String name)
+{
+    return Species(name)
+        .withAggregateState(AggregateState::Solid)
+        .withStandardThermoPropsFn(standardThermoPropsSolid);
+}
+
+/// Return a mock ChemicalSystem object for test reasons.
 auto createDatabase() -> Database
 {
     Database db;
 
     // AQUEOUS SPECIES
-    db.addSpecies( Species("H2O(aq)"  ) );
-    db.addSpecies( Species("H+"       ) );
-    db.addSpecies( Species("OH-"      ) );
-    db.addSpecies( Species("H2(aq)"   ) );
-    db.addSpecies( Species("O2(aq)"   ) );
-    db.addSpecies( Species("Na+"      ) );
-    db.addSpecies( Species("Cl-"      ) );
-    db.addSpecies( Species("NaCl(aq)" ) );
-    db.addSpecies( Species("HCl(aq)"  ) );
-    db.addSpecies( Species("NaOH(aq)" ) );
-    db.addSpecies( Species("Ca++"     ) );
-    db.addSpecies( Species("Mg++"     ) );
-    db.addSpecies( Species("CO2(aq)"  ) );
-    db.addSpecies( Species("HCO3-"    ) );
-    db.addSpecies( Species("CO3--"    ) );
-    db.addSpecies( Species("CaCl2(aq)") );
-    db.addSpecies( Species("MgCl2(aq)") );
-    db.addSpecies( Species("SiO2(aq)" ) );
-
-    // SOLID SPECIES
-    db.addSpecies( Species("NaCl(s)"       ).withName("Halite")    );
-    db.addSpecies( Species("CaCO3(s)"      ).withName("Calcite")   );
-    db.addSpecies( Species("MgCO3(s)"      ).withName("Magnesite") );
-    db.addSpecies( Species("CaMg(CO3)2(s)" ).withName("Dolomite")  );
-    db.addSpecies( Species("SiO2(s)"       ).withName("Quartz")    );
+    db.addSpecies( createAqueousSpecies("H2O(aq)"  ) );
+    db.addSpecies( createAqueousSpecies("H+(aq)"   ) );
+    db.addSpecies( createAqueousSpecies("OH-(aq)"  ) );
+    db.addSpecies( createAqueousSpecies("H2(aq)"   ) );
+    db.addSpecies( createAqueousSpecies("O2(aq)"   ) );
+    db.addSpecies( createAqueousSpecies("Na+(aq)"  ) );
+    db.addSpecies( createAqueousSpecies("Cl-(aq)"  ) );
+    db.addSpecies( createAqueousSpecies("NaCl(aq)" ) );
+    db.addSpecies( createAqueousSpecies("HCl(aq)"  ) );
+    db.addSpecies( createAqueousSpecies("NaOH(aq)" ) );
+    db.addSpecies( createAqueousSpecies("Ca++(aq)" ) );
+    db.addSpecies( createAqueousSpecies("Mg++(aq)" ) );
+    db.addSpecies( createAqueousSpecies("CO2(aq)"  ) );
+    db.addSpecies( createAqueousSpecies("HCO3-(aq)") );
+    db.addSpecies( createAqueousSpecies("CO3--(aq)") );
+    db.addSpecies( createAqueousSpecies("CaCl2(aq)") );
+    db.addSpecies( createAqueousSpecies("MgCl2(aq)") );
+    db.addSpecies( createAqueousSpecies("SiO2(aq)" ) );
 
     // GASEOUS SPECIES
-    db.addSpecies( Species("CO2(g)" ) );
-    db.addSpecies( Species("O2(g)"  ) );
-    db.addSpecies( Species("H2(g)"  ) );
-    db.addSpecies( Species("H2O(g)" ) );
-    db.addSpecies( Species("CH4(g)" ) );
-    db.addSpecies( Species("CO(g)"  ) );
+    db.addSpecies( createGaseousSpecies("CO2(g)" ) );
+    db.addSpecies( createGaseousSpecies("O2(g)"  ) );
+    db.addSpecies( createGaseousSpecies("H2(g)"  ) );
+    db.addSpecies( createGaseousSpecies("H2O(g)" ) );
+    db.addSpecies( createGaseousSpecies("CH4(g)" ) );
+    db.addSpecies( createGaseousSpecies("CO(g)"  ) );
+
+    // SOLID SPECIES
+    db.addSpecies( createSolidSpecies("NaCl(s)"      ) );
+    db.addSpecies( createSolidSpecies("CaCO3(s)"     ) );
+    db.addSpecies( createSolidSpecies("MgCO3(s)"     ) );
+    db.addSpecies( createSolidSpecies("CaMg(CO3)2(s)") );
+    db.addSpecies( createSolidSpecies("SiO2(s)"      ) );
 
     return db;
 }
@@ -88,9 +149,9 @@ TEST_CASE("Testing Database class", "[Database]")
     // TESTING METHOD: Database::speciesWithAggregateState
     //-------------------------------------------------------------------------
     REQUIRE_NOTHROW( db.speciesWithAggregateState(AggregateState::Aqueous).index("H2O(aq)") );
-    REQUIRE_NOTHROW( db.speciesWithAggregateState(AggregateState::Aqueous).index("H+")      );
+    REQUIRE_NOTHROW( db.speciesWithAggregateState(AggregateState::Aqueous).index("H+(aq)")  );
     REQUIRE_NOTHROW( db.speciesWithAggregateState(AggregateState::Gas).index("CO2(g)")      );
-    REQUIRE_NOTHROW( db.speciesWithAggregateState(AggregateState::Solid).index("Halite")    );
+    REQUIRE_NOTHROW( db.speciesWithAggregateState(AggregateState::Solid).index("NaCl(s)")   );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: Database::addSpecies
