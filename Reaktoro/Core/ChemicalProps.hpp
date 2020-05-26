@@ -24,6 +24,9 @@
 
 namespace Reaktoro {
 
+// Forward declarations
+class ChemicalState;
+
 /// The class that computes chemical properties of a chemical system.
 class ChemicalProps
 {
@@ -41,6 +44,10 @@ public:
     auto operator=(ChemicalProps other) -> ChemicalProps&;
 
     /// Update the chemical properties of the chemical system.
+    /// @param state The chemical state of the system
+    auto update(const ChemicalState& state) -> void;
+
+    /// Update the chemical properties of the chemical system.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
@@ -52,6 +59,10 @@ public:
     /// @param n The amounts of the species in the system (in mol)
     /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
     auto update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void;
+
+    /// Update the chemical properties of the chemical system using ideal activity models.
+    /// @param state The chemical state of the system
+    auto updateIdeal(const ChemicalState& state) -> void;
 
     /// Update the chemical properties of the chemical system using ideal activity models.
     /// @param T The temperature condition (in K)
