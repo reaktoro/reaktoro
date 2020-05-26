@@ -18,6 +18,7 @@
 #include "EquilibriumDims.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
 
@@ -34,9 +35,16 @@ EquilibriumDims::EquilibriumDims(const EquilibriumConstraints& constraints)
     Np  = Npe + Npp;
     Nq  = constraints.data().uconstraints.size();
     Nir = constraints.data().restrictions.reactions_cannot_react.size();
-    Nc  = constraints.data().controls.size();
+    Ncv = constraints.data().controls.size() + Nq;
     Nx  = Nn + Np + Nq;
-    Nb  = Ne + Nir;
+    Nc  = Ne + Nir;
+
+    error(Np + Nq != Ncv,
+        "The number of introduced control variables (", Ncv - Nq, ") "
+        "using method EquilibriumConstraints::control must be equal to the "
+        "number of functional constraints introduced with methods "
+        "EquilibriumConstraints::until (", Npe, ") and "
+        "EquilibriumConstraints::preserve (", Npp, ").");
 }
 
 } // namespace Reaktoro
