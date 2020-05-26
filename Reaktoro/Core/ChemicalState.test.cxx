@@ -162,6 +162,8 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     state.setPressure(123.0e5);
     state.setSpeciesAmounts(1.0);
 
+    state.props().update(state);
+
     for(auto i = 0; i < system.phases().size(); ++i)
     {
         auto phaseprops = state.phaseProps(i);
@@ -176,6 +178,8 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     state.setTemperature(500.0);
     state.setPressure(453.0e5);
     state.setSpeciesAmounts(3.0);
+
+    state.props().update(state);
 
     auto props = state.props();
     REQUIRE(  props.temperature()    == 500.0      );

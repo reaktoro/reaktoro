@@ -38,6 +38,9 @@ class ChemicalSystem;
 class ChemicalState
 {
 public:
+    // Forward declarations
+    class Equilibrium;
+
     /// Construct a ChemicalState instance with standard conditions.
     /// This constructor creates an instance of ChemicalState with temperature
     /// 25 °C, pressure 1 bar, and zero mole amounts for the species.
@@ -134,15 +137,109 @@ public:
     auto speciesMass(String name, String unit) const -> real;
 
     /// Return the chemical properties of a phase in the chemical system.
-    auto phaseProps(Index iphase) const -> ChemicalPropsPhase;
+    auto phaseProps(Index iphase) const -> ChemicalPropsPhaseConstRef;
 
     /// Return the chemical properties of the chemical system.
-    auto props() const -> ChemicalProps;
+    auto props() const -> const ChemicalProps&;
+
+    /// Return the chemical properties of the chemical system.
+    auto props() -> ChemicalProps&;
+
+    /// Return the equilibrium properties of a calculated chemical equilibrium state.
+    auto equilibrium() const -> const Equilibrium&;
+
+    /// Return the equilibrium properties of a calculated chemical equilibrium state.
+    auto equilibrium() -> Equilibrium&;
 
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    Ptr<Impl> pimpl;
+};
+
+/// The access to the properties related to an equilibrium state in a ChemicalState object.
+class ChemicalState::Equilibrium
+{
+public:
+    /// Construct a ChemicalState::Equilibrium instance.
+    Equilibrium(const ChemicalSystem& system);
+
+    /// Construct a copy of a ChemicalState::Equilibrium instance
+    Equilibrium(const Equilibrium& other);
+
+    /// Destroy this ChemicalState::Equilibrium instance
+    virtual ~Equilibrium();
+
+    /// Assign a ChemicalState::Equilibrium instance to this instance
+    auto operator=(Equilibrium other) -> Equilibrium&;
+
+    /// Set the indices of the primary and secondary species at the equilibrium state.
+    /// @param ips The indices of the equilibrium species ordered as (primary, secondary)
+    /// @param kp The number of primary species
+    auto setIndicesPrimarySecondarySpecies(ArrayXlConstRef ips, Index kp) -> void;
+
+    /// Set the indices of elements whose amounts should be positive, but given amount was less or equal to zero.
+    auto setIndicesStrictlyUnstableElements(ArrayXlConstRef isue) -> void;
+
+    /// Set the indices of species that contain one or more strictly unstable elements.
+    /// @see setIndicesElementsStrictlyUnstable
+    auto setIndicesStrictlyUnstableSpecies(ArrayXlConstRef isus) -> void;
+
+    /// Set the chemical potentials of the species in the equilibrium state (in units of J/mol)
+    auto setSpeciesChemicalPotentials(ArrayXdConstRef u) -> void;
+
+    /// Set the chemical potentials of the elements in the equilibrium state (in units of J/mol)
+    auto setElementChemicalPotentials(ArrayXdConstRef y) -> void;
+
+    /// Set the stabilities of the species in the equilibrium state (in units of J/mol)
+    auto setSpeciesStabilities(ArrayXdConstRef z) -> void;
+
+    /// Set the values of the control variables in the constrained equilibrium state.
+    auto setControlVariables(ArrayXdConstRef pq) -> void;
+
+    /// Return the number of primary species.
+    auto numPrimarySpecies() const -> Index;
+
+    /// Return the number of secondary species.
+    auto numSecondarySpecies() const -> Index;
+
+    /// Return the indices of the primary species.
+    auto indicesPrimarySpecies() const -> ArrayXlConstRef;
+
+    /// Return the indices of the secondary species.
+    auto indicesSecondarySpecies() const -> ArrayXlConstRef;
+
+    /// Return the indices of elements whose amounts should be positive, but given amount was less or equal to zero.
+    auto indicesStrictlyUnstableElements() const -> ArrayXlConstRef;
+
+    /// Return the indices of species that contain one or more strictly unstable elements.
+    auto indicesStrictlyUnstableSpecies() const -> ArrayXlConstRef;
+
+    /// Return the chemical potentials of the species (in units of J/mol).
+    /// The chemical potentials of the species are the gradient of the Gibbs
+    /// energy function with respect to species amounts.
+    auto speciesChemicalPotentials() const -> ArrayXdConstRef;
+
+    /// Return the chemical potentials of the elements (in units of J/mol).
+    /// The chemical potentials of the elements are the Lagrange multipliers with
+    /// respect to the mass conservation constraints on the amounts of the elements.
+    auto elementChemicalPotentials() const -> ArrayXdConstRef;
+
+    /// Return the stabilities of the species (in units of J/mol)
+    /// The stabilities of the species are the slack variables with
+    /// respect to the non-negative bound constraints on the amounts of the
+    /// species in a chemical equilibrium calculation. They can be seen as
+    /// measures of stability of a species at equilibrium, with values closer
+    /// to zero meaning more stable.
+    auto speciesStabilities() const -> ArrayXdConstRef;
+
+    /// Return the values of the control variables in the constrained equilibrium state.
+    auto controlVariables() const -> ArrayXdConstRef;
+
+private:
+    struct Impl;
+
+    Ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
