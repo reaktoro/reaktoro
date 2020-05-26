@@ -46,8 +46,6 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
         constraints.control().pressure();
         REQUIRE( controls.P == true );
 
-        REQUIRE( constraints.numControlVariables() == 2 );
-
         REQUIRE_THROWS( constraints.control().titrationOf("HCl") );               // not supported yet!
         REQUIRE_THROWS( constraints.control().titrationOfEither("HCl", "NaOH") ); // not supported yet!
 
@@ -93,8 +91,6 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
         REQUIRE( econstraints[0](args) == -1.0e+3 );
         REQUIRE( econstraints[1](args) == -1.0e-9 );
         REQUIRE( econstraints[2](args) == -1.0 );
-
-        REQUIRE( constraints.numEquationConstraints() == 3 );
     }
 
     SECTION("Testing method EquilibriumConstraints::preserve")
@@ -121,8 +117,6 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
         REQUIRE( pconstraints[0](props) == 0.0 );
         REQUIRE( pconstraints[1](props) == 0.0 );
         REQUIRE( pconstraints[2](props) == 0.0 );
-
-        REQUIRE( constraints.numPropertyPreservationConstraints() == 3 );
     }
 
     SECTION("Testing method EquilibriumConstraints::fix")
@@ -150,8 +144,6 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
         REQUIRE( uconstraints.size() == 2 );
         REQUIRE( uconstraints[1].formula.equivalent("O2") );
         REQUIRE( uconstraints[1].fn );
-
-        REQUIRE( constraints.numChemicalPotentialConstraints() == 2 );
     }
 
     SECTION("Testing method EquilibriumConstraints::prevent")
@@ -196,7 +188,5 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
         REQUIRE( get.reactions_cannot_react.size() == 2                                 );
         REQUIRE( get.reactions_cannot_react[0] == equation("O2(aq) + H2(aq) = H2O(aq)") );
         REQUIRE( get.reactions_cannot_react[1] == equation("CO2(g) = CO2(aq)")          );
-
-        REQUIRE( constraints.numInertReactions() == 2 );
     }
 }

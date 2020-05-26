@@ -75,21 +75,6 @@ public:
     /// Return the data with details of the imposed constraints.
     auto data() const -> const Data&;
 
-    /// Return the number of **control variables** introduced with method @ref control.
-    auto numControlVariables() const -> Index;
-
-    /// Return the number of **equation constraints** introduced with method @ref until.
-    auto numEquationConstraints() const -> Index;
-
-    /// Return the number of **property preservation constraints** introduced with method @ref preserve.
-    auto numPropertyPreservationConstraints() const -> Index;
-
-    /// Return the number of **chemical potential constraints** introduced with method @ref fix.
-    auto numChemicalPotentialConstraints() const -> Index;
-
-    /// Return the number of inert reactions introduced with method @ref prevent.
-    auto numInertReactions() const -> Index;
-
 private:
     struct Impl;
 

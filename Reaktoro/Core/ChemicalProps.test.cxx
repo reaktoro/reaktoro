@@ -23,6 +23,8 @@
 #include <Reaktoro/Core/ChemicalProps.hpp>
 using namespace Reaktoro;
 
+namespace test { extern auto createDatabase() -> Database; }
+
 TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 {
     const auto R = universalGasConstant;
