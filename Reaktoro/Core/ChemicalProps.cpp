@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 
 namespace Reaktoro {
 
@@ -220,6 +221,14 @@ auto ChemicalProps::operator=(ChemicalProps other) -> ChemicalProps&
     return *this;
 }
 
+auto ChemicalProps::update(const ChemicalState& state) -> void
+{
+    const auto& T = state.temperature();
+    const auto& P = state.pressure();
+    const auto& n = state.speciesAmounts();
+    update(T, P, n);
+}
+
 auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> void
 {
     pimpl->update(T, P, n);
@@ -228,6 +237,14 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
 auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void
 {
     pimpl->update(T, P, n, wrtvar);
+}
+
+auto ChemicalProps::updateIdeal(const ChemicalState& state) -> void
+{
+    const auto& T = state.temperature();
+    const auto& P = state.pressure();
+    const auto& n = state.speciesAmounts();
+    updateIdeal(T, P, n);
 }
 
 auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void
