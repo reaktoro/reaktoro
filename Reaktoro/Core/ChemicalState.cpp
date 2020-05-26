@@ -25,10 +25,22 @@
 
 namespace Reaktoro {
 
+//=================================================================================================
+//
+// ChemicalState
+//
+//=================================================================================================
+
 struct ChemicalState::Impl
 {
     /// The chemical system instance
-    const ChemicalSystem system;
+    ChemicalSystem system;
+
+    /// The chemical properties of the chemical system.
+    ChemicalProps props;
+
+    /// The properties related to an equilibrium state.
+    Equilibrium equilibrium;
 
     /// The temperature state of the chemical system (in K)
     real T = 298.15;
@@ -41,12 +53,14 @@ struct ChemicalState::Impl
 
     /// Construct a ChemicalState::Impl instance with given chemical system.
     Impl(const ChemicalSystem& system)
-    : system(system), n(ArrayXr::Zero(system.species().size()))
+    : system(system), props(system), equilibrium(system),
+      n(ArrayXr::Zero(system.species().size()))
     {}
 
     auto setTemperature(real val) -> void
     {
-        error(val <= 0.0, "Cannot set a non-positive temperature value, ", val, "K, in a ChemicalState object.");
+        error(val <= 0.0, "Cannot set a non-positive temperature "
+            "value, ", val, "K, in a ChemicalState object.");
         T = val;
     }
 
@@ -57,19 +71,22 @@ struct ChemicalState::Impl
 
     auto setPressure(real val) -> void
     {
-        error(val <= 0.0, "Cannot set a non-positive pressure value, ", val, "Pa, in a ChemicalState object.");
+        error(val <= 0.0, "Cannot set a non-positive pressure "
+            "value, ", val, "Pa, in a ChemicalState object.");
         P = val;
     }
 
     auto setPressure(real val, String unit) -> void
     {
-        error(val <= 0.0, "Cannot set a non-positive pressure value, ", val, unit, ", in a ChemicalState object.");
+        error(val <= 0.0, "Cannot set a non-positive pressure "
+            "value, ", val, unit, ", in a ChemicalState object.");
         setPressure(units::convert(val, unit, "Pa"));
     }
 
     auto setSpeciesAmounts(real val) -> void
     {
-        error(val < 0.0, "Cannot set a negative amount value, ", val, "mol, to the species in a ChemicalState object.");
+        error(val < 0.0, "Cannot set a negative species "
+            "amount, ", val, " mol, in a ChemicalState object.");
         n.fill(val);
     }
 
@@ -171,23 +188,6 @@ struct ChemicalState::Impl
     {
         const auto& A = system.formulaMatrix();
         return A * n.matrix();
-    }
-
-    auto phaseProps(Index iphase) const -> ChemicalPropsPhase
-    {
-        const auto offset = system.phases().numSpeciesUntilPhase(iphase);
-        const auto length = system.phase(iphase).species().size();
-        const auto np = n.segment(offset, length);
-        ChemicalPropsPhase res(system.phase(iphase));
-        res.update(T, P, np);
-        return res;
-    }
-
-    auto props() const -> ChemicalProps
-    {
-        ChemicalProps res(system);
-        res.update(T, P, n);
-        return res;
     }
 };
 
@@ -343,14 +343,175 @@ auto ChemicalState::speciesMass(String name, String unit) const -> real
     return pimpl->speciesMass(name, unit);
 }
 
-auto ChemicalState::phaseProps(Index iphase) const -> ChemicalPropsPhase
+auto ChemicalState::phaseProps(Index iphase) const -> ChemicalPropsPhaseConstRef
 {
-    return pimpl->phaseProps(iphase);
+    return props().phaseProps(iphase);
 }
 
-auto ChemicalState::props() const -> ChemicalProps
+auto ChemicalState::props() const -> const ChemicalProps&
 {
-    return pimpl->props();
+    return pimpl->props;
+}
+
+auto ChemicalState::props() -> ChemicalProps&
+{
+    return pimpl->props;
+}
+
+auto ChemicalState::equilibrium() const -> const Equilibrium&
+{
+    return pimpl->equilibrium;
+}
+
+auto ChemicalState::equilibrium() -> Equilibrium&
+{
+    return pimpl->equilibrium;
+}
+
+//=================================================================================================
+//
+// ChemicalState::Equilibrium
+//
+//=================================================================================================
+
+struct ChemicalState::Equilibrium::Impl
+{
+    /// The indices of the species partitioned as (primary, secondary).
+    ArrayXl ips;
+
+    /// The number of primary species among the species.
+    Index kp = 0;
+
+    /// The chemical potentials of the species in the equilibrium state (in units of J/mol)
+    ArrayXd u;
+
+    /// The chemical potentials of the elements in the equilibrium state (in units of J/mol)
+    ArrayXd y;
+
+    /// The stabilities of the species in the equilibrium state (in units of J/mol)
+    ArrayXd z;
+
+    /// The values of the control variables (p, q) in the constrained equilibrium state.
+    ArrayXd pq;
+
+    /// The indices of elements whose amounts should be positive, but given amount was less or equal to zero.
+    ArrayXl isue;
+
+    /// The indices of species that contain one or more strictly unstable elements.
+    ArrayXl isus;
+
+    /// Construct a default ChemicalState::Equilibrium::Impl instance
+    Impl(const ChemicalSystem& system)
+    : u(system.species().size()),
+      y(system.elements().size()),
+      z(system.species().size())
+    {}
+};
+
+ChemicalState::Equilibrium::Equilibrium(const ChemicalSystem& system)
+: pimpl(new Impl(system))
+{}
+
+ChemicalState::Equilibrium::Equilibrium(const ChemicalState::Equilibrium& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+ChemicalState::Equilibrium::~Equilibrium()
+{}
+
+auto ChemicalState::Equilibrium::operator=(ChemicalState::Equilibrium other) -> Equilibrium&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
+
+auto ChemicalState::Equilibrium::setIndicesPrimarySecondarySpecies(ArrayXlConstRef ips, Index kp) -> void
+{
+    pimpl->ips = ips;
+    pimpl->kp = kp;
+}
+
+auto ChemicalState::Equilibrium::setIndicesStrictlyUnstableElements(ArrayXlConstRef isue) -> void
+{
+    pimpl->isue = isue;
+}
+
+auto ChemicalState::Equilibrium::setIndicesStrictlyUnstableSpecies(ArrayXlConstRef isus) -> void
+{
+    pimpl->isus = isus;
+}
+
+auto ChemicalState::Equilibrium::setSpeciesChemicalPotentials(ArrayXdConstRef u) -> void
+{
+    assert(u.size() == pimpl->u.size());
+    pimpl->u = u;
+}
+
+auto ChemicalState::Equilibrium::setElementChemicalPotentials(ArrayXdConstRef y) -> void
+{
+    assert(y.size() == pimpl->y.size());
+    pimpl->y = y;
+}
+
+auto ChemicalState::Equilibrium::setSpeciesStabilities(ArrayXdConstRef z) -> void
+{
+    assert(z.size() == pimpl->z.size());
+    pimpl->z = z;
+}
+
+auto ChemicalState::Equilibrium::setControlVariables(ArrayXdConstRef pq) -> void
+{
+    pimpl->pq = pq;
+}
+
+auto ChemicalState::Equilibrium::numPrimarySpecies() const -> Index
+{
+    return pimpl->kp;
+}
+
+auto ChemicalState::Equilibrium::numSecondarySpecies() const -> Index
+{
+    return pimpl->ips.size() - pimpl->kp;
+}
+
+auto ChemicalState::Equilibrium::indicesPrimarySpecies() const -> ArrayXlConstRef
+{
+    return pimpl->ips.head(numPrimarySpecies());
+}
+
+auto ChemicalState::Equilibrium::indicesSecondarySpecies() const -> ArrayXlConstRef
+{
+    return pimpl->ips.tail(numSecondarySpecies());
+}
+
+auto ChemicalState::Equilibrium::indicesStrictlyUnstableElements() const -> ArrayXlConstRef
+{
+    return pimpl->isue;
+}
+
+auto ChemicalState::Equilibrium::indicesStrictlyUnstableSpecies() const -> ArrayXlConstRef
+{
+    return pimpl->isus;
+}
+
+auto ChemicalState::Equilibrium::speciesChemicalPotentials() const -> ArrayXdConstRef
+{
+    return pimpl->u;
+}
+
+auto ChemicalState::Equilibrium::elementChemicalPotentials() const -> ArrayXdConstRef
+{
+    return pimpl->y;
+}
+
+auto ChemicalState::Equilibrium::speciesStabilities() const -> ArrayXdConstRef
+{
+    return pimpl->z;
+}
+
+auto ChemicalState::Equilibrium::controlVariables() const -> ArrayXdConstRef
+{
+    return pimpl->pq;
 }
 
 } // namespace Reaktoro
