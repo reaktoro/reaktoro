@@ -27,6 +27,7 @@ namespace Reaktoro {
 class ChemicalProps;
 class ChemicalSystem;
 class EquilibriumConstraints;
+class EquilibriumDims;
 
 /// The objective function to be minimized in a chemical equilibrium calculation.
 struct EquilibriumObjective
@@ -48,25 +49,17 @@ public:
     /// Construct an EquilibriumProblem object with given constraints.
     explicit EquilibriumProblem(const EquilibriumConstraints& constraints);
 
-    // /// Construct a copy of an EquilibriumProblem object.
-    // EquilibriumProblem(const EquilibriumProblem& other);
+    /// Construct a copy of an EquilibriumProblem object.
+    EquilibriumProblem(const EquilibriumProblem& other);
 
-    // /// Destroy this EquilibriumProblem object.
-    // ~EquilibriumProblem();
+    /// Destroy this EquilibriumProblem object.
+    ~EquilibriumProblem();
 
-    // /// Assign a copy of an EquilibriumProblem object to this.
-    // auto operator=(EquilibriumProblem other) -> EquilibriumProblem&;
+    /// Assign a copy of an EquilibriumProblem object to this.
+    auto operator=(EquilibriumProblem other) -> EquilibriumProblem&;
 
-    /// Return the number of components associated with given equilibrium constraints.
-    /// The number of components is the sum of the number of elements in the
-    /// system, including electric charge, and the number of inert reactions.
-    auto numComponents() const -> Index;
-
-    /// Return the total number of variables associated with given equilibrium constraints.
-    /// The number of variables is the sum of the number of species, the number
-    /// of chemical potential constraints, and the number of introduced control
-    /// variables such as temperature, pressure and/or the amounts of titrants.
-    auto numVariables() const -> Index;
+    /// Return the dimensions of the variables in the equilibrium problem.
+    auto dims() const -> const EquilibriumDims&;
 
     /// Return the conservation matrix based on the given equilibrium constraints.
     auto conservationMatrix() const -> MatrixXd;
@@ -85,8 +78,7 @@ public:
 private:
     struct Impl;
 
-    // Ptr<Impl> pimpl;
-    SharedPtr<Impl> pimpl;
+    Ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
