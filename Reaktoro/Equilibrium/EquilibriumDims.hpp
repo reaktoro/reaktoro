@@ -33,12 +33,12 @@ struct EquilibriumDims
     Index Nn  = 0; ///< The number of species in the chemical system.
     Index Npe = 0; ///< The number of equation constraints among the functional constraints.
     Index Npp = 0; ///< The number of property preservation constraints among the functional constraints.
-    Index Np  = 0; ///< The number of functional constraints (Np = Npe + Npp).
+    Index Np  = 0; ///< The number of functional constraints (`Np = Npe + Npp`).
     Index Nq  = 0; ///< The number of chemical potential constraints.
     Index Nir = 0; ///< The number of reactions prevented from reacting during the equilibrium calculation.
-    Index Nc  = 0; ///< The number of introduced control variables (must be equal to Np)
-    Index Nx  = 0; ///< The number of variables (Nx = Nn + Np + Nq).
-    Index Nb  = 0; ///< The number of components (Nb = Ne + Nir).
+    Index Ncv = 0; ///< The number of introduced control variables (must be equal to `Np + Nq`)
+    Index Nx  = 0; ///< The number of variables (`Nx = Nn + Np + Nq`).
+    Index Nc  = 0; ///< The number of components (`Nc = Ne + Nir`).
 
     /// Construct a default EquilibriumDims object.
     EquilibriumDims() = default;
@@ -46,6 +46,5 @@ struct EquilibriumDims
     /// Construct an EquilibriumDims object with given equilibrium constraints.
     explicit EquilibriumDims(const EquilibriumConstraints& constraints);
 };
-
 
 } // namespace Reaktoro

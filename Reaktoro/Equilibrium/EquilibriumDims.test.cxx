@@ -38,13 +38,8 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
     constraints.control().pressure();
 
     constraints.until().internalEnergy(1.0, "kJ");
-    constraints.until().volume(1.0, "mm3");
-    constraints.until().enthalpy(1.0, "J");
 
-    constraints.preserve().internalEnergy();
     constraints.preserve().volume();
-    constraints.preserve().enthalpy();
-    constraints.preserve().entropy();
 
     constraints.fix().pH(4.5);
     constraints.fix().fugacity("O2(g)", 1.0, "bar");
@@ -62,14 +57,14 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
 
     const auto Ne  = system.elements().size() + 1;
     const auto Nn  = system.species().size();
-    const auto Npe = 3; // 3x calls to until()
-    const auto Npp = 4; // 4x calls to preserve()
+    const auto Npe = 1; // 3x calls to until()
+    const auto Npp = 1; // 4x calls to preserve()
     const auto Np  = Npe + Npp;
     const auto Nq  = 2; // 2x calls to fix()
     const auto Nir = 2; // 2x calls to prevent().fromReacting(reaction)
-    const auto Nc  = 2; // 2x calls to control()
+    const auto Ncv = 4; // 2x calls to control() and 2x calls to fix()
     const auto Nx  = Nn + Np + Nq;
-    const auto Nb  = Ne + Nir;
+    const auto Nc  = Ne + Nir;
 
     REQUIRE( dims.Ne  == Ne  );
     REQUIRE( dims.Nn  == Nn  );
@@ -78,7 +73,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
     REQUIRE( dims.Np  == Np  );
     REQUIRE( dims.Nq  == Nq  );
     REQUIRE( dims.Nir == Nir );
-    REQUIRE( dims.Nc  == Nc  );
+    REQUIRE( dims.Ncv == Ncv );
     REQUIRE( dims.Nx  == Nx  );
-    REQUIRE( dims.Nb  == Nb  );
+    REQUIRE( dims.Nc  == Nc  );
 }
