@@ -30,6 +30,7 @@ class  EquilibriumConstraints;
 struct EquilibriumOptions;
 struct EquilibriumResult;
 
+
 /// A solver class for solving chemical equilibrium calculations.
 class EquilibriumSolver
 {
