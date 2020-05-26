@@ -17,6 +17,13 @@
 
 #include "EquilibriumSolver.hpp"
 
+// Optima includes
+#include <Optima/Options.hpp>
+#include <Optima/Problem.hpp>
+#include <Optima/Result.hpp>
+#include <Optima/Solver.hpp>
+#include <Optima/State.hpp>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
@@ -24,137 +31,177 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 
 namespace Reaktoro {
+namespace detail {
+
+
+// auto createOptimaProblem(const EquilibriumConstraints& constraints) -> Optima::Problem
+// {
+
+// }
+
+// auto createOptimaProblem(const EquilibriumConstraints& constraints) -> Optima::Problem
+// {
+
+// }
+
+// auto updateOptimaProblem(const EquilibriumConstraints& constraints, Optima::Problem& problem)
+// {
+
+// }
+
+
+
+
+/// Return the Optima::Dims object with dimensions of the optimization problem.
+auto dims(const EquilibriumProblem& problem) -> Optima::Dims
+{
+    Optima::Dims dims;
+    dims.x = problem.dims().Nx;
+    dims.be = problem.dims().Nc;
+    return dims;
+}
+
+} // namespace detail
 
 struct EquilibriumSolver::Impl
 {
-    /// The chemical system
+    /// The chemical system associated with this equilibrium solver
     ChemicalSystem system;
 
-    /// The equilibrium constraints
+    /// The equilibrium constraints associated with this equilibrium solver
     EquilibriumConstraints constraints;
 
+    /// The equilibrium problem with conservation matrix and objective function
+    EquilibriumProblem eqproblem;
+
     /// The options of the equilibrium solver
-    EquilibriumOptions options;
+    EquilibriumOptions eqoptions;
 
-//     /// The solver for the optimisation calculations
-//     OptimumSolver solver;
+    /// The optimization problem corresponding to the constrained equilibrium calculation.
+    Optima::Problem optproblem;
 
-//     /// The chemical properties of the chemical system
-//     ChemicalProps props;
+    /// The optimization state of the calculation
+    Optima::State optstate;
 
-//     /// The molar amounts of the species
-//     ArrayXr n;
+    /// The solver for the optimization calculations
+    Optima::Solver optsolver;
 
-//     /// The dual potentials of the elements
-//     ArrayXr y;
+    /// The result of the optimization calculations
+    Optima::Result optresult;
 
-//     /// The dual potentials of the species
-//     ArrayXr z;
+    /// The options of the optimization solver
+    Optima::Options optoptions;
 
-//     /// The molar amounts of the elements in the equilibrium partition
-//     ArrayXr be;
-
-//     /// The standard chemical potentials of the species
-//     ArrayXr u0;
-
-//     /// The chemical potentials of the species
-//     VectorXd u;
-
-//     /// The chemical potentials of the equilibrium species
-//     VectorXd ue;
-
-//     /// The chemical potentials of the inert species
-//     ArrayXr ui;
-
-//     /// The mole fractions of the equilibrium species
-//     VectorXd xe;
-
-//     /// The optimisation problem
-//     OptimumProblem optimum_problem;
-
-//     /// The state of the optimisation calculation
-//     OptimumState optimum_state;
-
-//     /// The options for the optimisation calculation
-//     OptimumOptions optimum_options;
-
-//     /// The indices of the species in the equilibrium partition
-//     Indices ies;
-
-//     /// The indices of the elements in the equilibrium partition
-//     Indices iee;
-
-//     /// The indices of the inert species (i.e., the species in disequilibrium)
-//     Indices iis;
-
-//     /// The number of species and elements in the system
-//     unsigned N, E;
-
-//     /// The number of species and elements in the equilibrium partition
-//     unsigned Ne, Ee;
-
-//     /// The formula matrix of the species in the system
-//     MatrixXd A;
-
-//     /// The formula matrix of the species in the equilibrium partition
-//     MatrixXd Ae;
-
-//     /// The formula matrix of the inert species
-//     MatrixXd Ai;
+    Index Ne  = 0; ///< The number of chemical elements and electric charge in the chemical system.
+    Index Nn  = 0; ///< The number of species in the chemical system.
+    Index Npe = 0; ///< The number of equation constraints among the functional constraints.
+    Index Npp = 0; ///< The number of property preservation constraints among the functional constraints.
+    Index Np  = 0; ///< The number of functional constraints (Np = Npe + Npp).
+    Index Nq  = 0; ///< The number of chemical potential constraints.
+    Index Nir = 0; ///< The number of reactions prevented from reacting during the equilibrium calculation.
+    Index Nc  = 0; ///< The number of introduced control variables (must be equal to Np)
+    Index Nx  = 0; ///< The number of variables (Nx = Nn + Np + Nq).
+    Index Nb  = 0; ///< The number of components (Nb = Ne + Nir).
 
     /// Construct a Impl instance with given EquilibriumConstraints object
     Impl(const EquilibriumConstraints& constraints)
-    : system(constraints.system()), constraints(constraints)
+    : system(constraints.system()),
+      constraints(constraints),
+      eqproblem(constraints),
+      optproblem(detail::dims(eqproblem)),
+      optstate(detail::dims(eqproblem)),
+      optsolver(optproblem)
     {
-        // // Initialize the formula matrix
-        // A = system.formulaMatrix();
-
-        // // Initialize the number of species and elements in the system
-        // N = system.species().size();
-        // E = system.elements().size();
-
-        // // Set the default partition as all species are in equilibrium
-        // setPartition(partition);
+        // Initialize the auxiliary number variables
+        Ne  = system.elements().size() + 1;
+        Nn  = system.species().size();
+        Npe = constraints.data().econstraints.size();
+        Npp = constraints.data().pconstraints.size();
+        Np  = Npe + Npp;
+        Nq  = constraints.data().uconstraints.size();
+        Nir = constraints.data().restrictions.reactions_cannot_react.size();
+        Nc  = constraints.data().controls.size();
+        Nx  = Nn + Np + Nq;
+        Nb  = Ne + Nir;
     }
 
-//     /// Set the partition of the chemical system
-//     auto setPartition(const Partition& partition_) -> void
-//     {
-//         // Set the partition of the chemical system
-//         partition = partition_;
+    /// Update the equilibrium constraints before a new calculation
+    auto updateConstraints(const EquilibriumConstraints& constraints)
+    {
+        // Update the equilibrium problem with updated equilibrium constraints
+        eqproblem.update(constraints);
+    }
 
-//         // Initialize the number of species and elements in the equilibrium partition
-//         Ne = partition.numEquilibriumSpecies();
-//         Ee = partition.numEquilibriumElements();
+    /// Update the optimization problem before a new equilibrium calculation.
+    auto updateOptProblem(const ChemicalProps& props0)
+    {
+        // Create the objective function corresponding to the constrained equilibrium calculation
+        EquilibriumObjective obj = eqproblem.objective(props0);
 
-//         // Initialize the formula matrix of the equilibrium species
-//         Ae = partition.formulaMatrixEquilibriumPartition();
+        // Update the objective function in the Optima::Problem object
+        optproblem.f = [=](VectorXdConstRef x, Optima::ObjectiveResult& res)
+        {
+            if(res.requires.f) res.f = obj.f(x);
+            if(res.requires.g) obj.g(x, res.g);
+            if(res.requires.H) obj.H(x, res.H);
+        };
+    }
 
-//         // Initialize the indices of the equilibrium species and elements
-//         ies = partition.indicesEquilibriumSpecies();
-//         iee = partition.indicesEquilibriumElements();
+    /// Update the initial state variables before the new equilibrium calculation.
+    auto updateOptState(const ChemicalProps& props0)
+    {
+        auto n = optstate.x.head(Nn);
+        auto p = optstate.x.segment(Nn, Np);
+        auto q = optstate.x.tail(Nq);
 
-//         // Initialize the indices of the inert species
-//         iis.clear();
-//         iis.reserve(partition.numInertSpecies() + partition.numKineticSpecies());
-//         iis.insert(iis.end(), partition.indicesInertSpecies().begin(), partition.indicesInertSpecies().end());
-//         iis.insert(iis.end(), partition.indicesKineticSpecies().begin(), partition.indicesKineticSpecies().end());
+        // n = props0.speciesAmounts();
+        // p =
+    }
 
-//         // Initialize the formula matrix of the inert species
-//         Ai = cols(A, iis);
-//     }
+    /// Return the objective function in Optima's format.
+    auto objectiveFunction(const ChemicalProps& props0) const -> Optima::ObjectiveFunction
+    {
+        EquilibriumObjective obj = eqproblem.objective(props0);
+
+        return [=](VectorXdConstRef x, Optima::ObjectiveResult& res)
+        {
+            if(res.requires.f) res.f = obj.f(x);
+            if(res.requires.g) obj.g(x, res.g);
+            if(res.requires.H) obj.H(x, res.H);
+        };
+    }
+
+    /// Solve an equilibrium problem with given chemical state in disequilibrium.
+    auto solve(ChemicalState& state) -> EquilibriumResult
+    {
+        EquilibriumResult eqresult;
+
+        ChemicalProps props0 = state.props();
+
+        optproblem.f = objectiveFunction(props0);
+
+        // updateOptOptions(options);
+        // updateOptProblem(props0);
+        // updateOptState(props0);
+
+        optresult = optsolver.solve(optstate, optproblem);
+
+        return eqresult;
+    }
 
 //     /// Update the OptimumOptions instance with given EquilibriumOptions instance
 //     auto updateOptimumOptions() -> void
 //     {
-//         // Initialize the options for the optimisation calculation
+//         // Initialize the options for the optimization calculation
 //         optimum_options = options.optimum;
 
-//         // Set the parameters of the optimisation algorithms that control how small can be the amount of a species
+//         // Set the parameters of the optimization algorithms that control how small can be the amount of a species
 //         optimum_options.ipaction.mu = options.epsilon;
 //         optimum_options.ipnewton.mu = options.epsilon;
 //         optimum_options.ipopt.mu.push_back(options.epsilon);
@@ -348,7 +395,7 @@ struct EquilibriumSolver::Impl
 //         // Get the ln activity constants of the equilibrium species
 //         const ArrayXr ln_ce = props.lnActivityConstants()(ies);
 
-//         // Define the optimisation problem
+//         // Define the optimization problem
 //         OptimumProblem optimum_problem;
 //         optimum_problem.n = Ne;
 //         optimum_problem.c = ge0/RT + ln_ce;
@@ -366,7 +413,7 @@ struct EquilibriumSolver::Impl
 //         // Update the optimum options
 //         updateOptimumOptions();
 
-//         // Set the method for the optimisation calculation
+//         // Set the method for the optimization calculation
 //         solver.setMethod(options.method);
 
 //         // Solve the linear programming problem
@@ -468,7 +515,7 @@ struct EquilibriumSolver::Impl
 //         // Update the optimum state
 //         updateOptimumState(state);
 
-//         // Set the method for the optimisation calculation
+//         // Set the method for the optimization calculation
 //         solver.setMethod(options.method);
 
 //         // Set the maximum number of iterations in each optimization pass
@@ -478,7 +525,7 @@ struct EquilibriumSolver::Impl
 //         auto counter = 0;
 //         while(counter < options.optimum.max_iterations)
 //         {
-//             // Solve the optimisation problem
+//             // Solve the optimization problem
 //             result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
 
 //             // Exit this loop if last solve succeeded
@@ -577,7 +624,7 @@ auto EquilibriumSolver::operator=(EquilibriumSolver other) -> EquilibriumSolver&
 
 auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
 {
-    pimpl->options = options;
+    pimpl->eqoptions = options;
 }
 
 auto EquilibriumSolver::solve(ChemicalState& state) -> EquilibriumResult
