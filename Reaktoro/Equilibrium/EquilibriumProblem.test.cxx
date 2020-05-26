@@ -22,6 +22,7 @@
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 using namespace Reaktoro;
 
@@ -49,21 +50,16 @@ TEST_CASE("Testing EquilibriumProblem", "[EquilibriumProblem]")
 
     EquilibriumProblem problem(constraints);
 
-    const auto N = system.species().size();
-    const auto E = system.elements().size();
-
-    REQUIRE( problem.numComponents() == E + 1 + 2 ); // elements, charge, inert reactions
-    REQUIRE( problem.numVariables() == N + 4 ); // species, temperature, pressure, control H+ (from fixed pH), control O2 (from fixed fugacity)
-
-    const auto Nx = problem.numVariables();
 
     //-------------------------------------------------------------------------
     // Testing EquilibriumProblem::conservationMatrix
     //-------------------------------------------------------------------------
+    const auto dims = problem.dims();
+
     const auto C = problem.conservationMatrix();
 
-    REQUIRE( C.rows() == problem.numComponents() );
-    REQUIRE( C.cols() == problem.numVariables() );
+    REQUIRE( C.rows() == dims.Nc ); // the number of components
+    REQUIRE( C.cols() == dims.Nx ); // the number of variables
 
     const auto Cx = MatrixXd // the expected conservation matrix!
     {{
@@ -93,10 +89,10 @@ TEST_CASE("Testing EquilibriumProblem", "[EquilibriumProblem]")
 
     auto obj = problem.objective(props0);
 
-    VectorXd x = VectorXd::Ones(Nx);
+    VectorXd x = VectorXd::Ones(dims.Nx);
 
-    VectorXd g(Nx);
-    MatrixXd H(Nx, Nx);
+    VectorXd g(dims.Nx);
+    MatrixXd H(dims.Nx, dims.Nx);
 
     REQUIRE_NOTHROW( obj.f(x) );
     REQUIRE_NOTHROW( obj.g(x, g) );
