@@ -32,13 +32,13 @@ class EquilibriumConstraints;
 struct EquilibriumObjective
 {
     /// The function that computes the value of the objective function.
-    Fn<real(const ChemicalProps&)> f;
+    Fn<double(VectorXdConstRef x)> f;
 
     /// The function that computes the gradient vector of the objective function.
-    Fn<void(const ChemicalProps&, VectorXrRef)> g;
+    Fn<void(VectorXdConstRef x, VectorXdRef res)> g;
 
     /// The function that computes the Hessian matrix of the objective function.
-    Fn<void(const ChemicalProps&, MatrixXdRef)> H;
+    Fn<void(VectorXdConstRef x, MatrixXdRef res)> H;
 };
 
 /// The class used to define an equilibrium problem.
@@ -48,14 +48,14 @@ public:
     /// Construct an EquilibriumProblem object with given constraints.
     explicit EquilibriumProblem(const EquilibriumConstraints& constraints);
 
-    /// Construct a copy of an EquilibriumProblem object.
-    EquilibriumProblem(const EquilibriumProblem& other);
+    // /// Construct a copy of an EquilibriumProblem object.
+    // EquilibriumProblem(const EquilibriumProblem& other);
 
-    /// Destroy this EquilibriumProblem object.
-    ~EquilibriumProblem();
+    // /// Destroy this EquilibriumProblem object.
+    // ~EquilibriumProblem();
 
-    /// Assign a copy of an EquilibriumProblem object to this.
-    auto operator=(EquilibriumProblem other) -> EquilibriumProblem&;
+    // /// Assign a copy of an EquilibriumProblem object to this.
+    // auto operator=(EquilibriumProblem other) -> EquilibriumProblem&;
 
     /// Return the number of components associated with given equilibrium constraints.
     /// The number of components is the sum of the number of elements in the
@@ -68,34 +68,25 @@ public:
     /// variables such as temperature, pressure and/or the amounts of titrants.
     auto numVariables() const -> Index;
 
-    /// Return the total number of introduced control variables associated with given equilibrium constraints.
-    /// The control variables are those, which must match with the number of imposed functional constraints, is the number of sum of the number of species, the number
-    /// of chemical potential constraints, and the number of introduced control
-    /// variables such as temperature, pressure and/or the amounts of titrants.
-    auto numControlVariables() const -> Index;
-
-    /// Assemble the conservation matrix based on the given equilibrium constraints.
+    /// Return the conservation matrix based on the given equilibrium constraints.
     auto conservationMatrix() const -> MatrixXd;
 
-    /// Assemble the objective function to be minimized based on the given equilibrium constraints.
-    auto objective() const -> EquilibriumObjective;
+    /// Return the objective function to be minimized based on the given equilibrium constraints.
+    /// @param props0 The initial chemical properties of the system.
+    auto objective(const ChemicalProps& props0) const -> EquilibriumObjective;
+
+    /// Update the equilibrium constraints for the next chemical equilibrium calculation.
+    /// @warning An error will result if new constraints are imposed. This
+    /// method should only be used to update the parameters in the existing
+    /// constraints. For example, a calculation was done before with a fixed pH
+    /// value, and a new value needs to be imposed for the next calculation.
+    auto update(const EquilibriumConstraints& constraints) -> void;
 
 private:
     struct Impl;
 
-    Ptr<Impl> pimpl;
+    // Ptr<Impl> pimpl;
+    SharedPtr<Impl> pimpl;
 };
-
-/// Write here a brief about this class
-class GibbsHessian
-{
-public:
-    /// Construct a default GibbsHessian object.
-    GibbsHessian();
-
-private:
-
-};
-
 
 } // namespace Reaktoro

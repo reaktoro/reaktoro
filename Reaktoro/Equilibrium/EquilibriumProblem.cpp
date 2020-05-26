@@ -17,6 +17,9 @@
 
 #include "EquilibriumProblem.hpp"
 
+// Optima includes
+#include <Optima/Problem.hpp>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -33,49 +36,70 @@ struct EquilibriumProblem::Impl
     /// The equilibrium constraints associated with this equilibrium problem
     EquilibriumConstraints constraints;
 
+    /// The auxiliary chemical properties of the system.
+    ChemicalProps props;
+
+    Index Ne  = 0; ///< The number of chemical elements and electric charge in the chemical system.
+    Index Nn  = 0; ///< The number of species in the chemical system.
+    Index Npe = 0; ///< The number of equation constraints among the functional constraints.
+    Index Npp = 0; ///< The number of property preservation constraints among the functional constraints.
+    Index Np  = 0; ///< The number of functional constraints (Np = Npe + Npp).
+    Index Nq  = 0; ///< The number of chemical potential constraints.
+    Index Nir = 0; ///< The number of reactions prevented from reacting during the equilibrium calculation.
+    Index Nc  = 0; ///< The number of introduced control variables (must be equal to Np)
+    Index Nx  = 0; ///< The number of variables (Nx = Nn + Np + Nq).
+    Index Nb  = 0; ///< The number of components (Nb = Ne + Nir).
+
+    real T = 0.0;  ///< The current temperature of the chemical system (in K).
+    real P = 0.0;  ///< The current pressure of the chemical system (in Pa).
+    ArrayXr n;     ///< The current amounts of the species (in mol).
+    ArrayXr p;     ///< The current values of the introduced control variables for the functional constraints.
+    ArrayXr q;     ///< The current amounts of the introduced substances whose chemical potentials are constrained.
+    VectorXr npq;  ///< The auxiliary vector (n, p, q).
+    ArrayXr pp0;   ///< The initial values of the preserved properties.
+    VectorXr g;    ///< The gradient vector of the objective function.
+    MatrixXd H;    ///< The Hessian matrix of the objective function.
+
     /// Construct an EquilibriumProblem::Impl object
     Impl(const EquilibriumConstraints& constraints)
-    : system(constraints.system()), constraints(constraints)
+    : system(constraints.system()),
+      constraints(constraints),
+      props(constraints.system())
     {
-    }
+        // Initialize the auxiliary number variables
+        Ne  = system.elements().size() + 1;
+        Nn  = system.species().size();
+        Npe = constraints.data().econstraints.size();
+        Npp = constraints.data().pconstraints.size();
+        Np  = Npe + Npp;
+        Nq  = constraints.data().uconstraints.size();
+        Nir = constraints.data().restrictions.reactions_cannot_react.size();
+        Nc  = constraints.data().controls.size();
+        Nx  = Nn + Np + Nq;
+        Nb  = Ne + Nir;
 
-    /// Return the number of chemical potential constraints.
-    auto numChemicalPotentialConstraints() const -> Index
-    {
-        return constraints.data().uconstraints.size();
-    }
+        // Assert dimensions are proper
+        error(Np != Nc, "The number of introduced control variables (", Nc, ") "
+            "using method EquilibriumConstraints::control must be equal to the "
+            "number of functional constraints introduced with methods "
+            "EquilibriumConstraints::until (", Npe, ") and "
+            "EquilibriumConstraints::preserve (", Npp, ").");
 
-    /// Return the number of components associated with given equilibrium constraints.
-    auto numComponents() const -> Index
-    {
-        const auto& restrictions = constraints.data().restrictions;
-
-        const auto num_elements = system.elements().size();
-        const auto num_charge = 1;
-        const auto num_inert_reactions = restrictions.reactions_cannot_react.size();
-
-        return num_elements + num_charge + num_inert_reactions;
-    }
-
-    /// Return the total number of variables associated with given equilibrium constraints.
-    auto numVariables() const -> Index
-    {
-        const auto& uconstraints = constraints.data().uconstraints;
-        const auto& controls = constraints.data().controls;
-
-        const auto num_species = system.species().size();
-        const auto num_uconstraints = uconstraints.size();
-        const auto num_controls = controls.size();
-
-        return num_species + num_uconstraints + num_controls;
+        // Initialize the auxiliary scalars, vectors and matrices
+        n.resize(Nn);
+        p.resize(Np);
+        q.resize(Nq);
+        npq.resize(Nx);
+        pp0.resize(Npp);
+        g.resize(Nx);
+        H.resize(Nx, Nx);
     }
 
     /// Assemble the vector with the element and charge coefficients of a chemical formula.
     auto assembleFormulaVector(VectorXdRef vec, const ChemicalFormula& formula) const -> void
     {
-        const auto num_elements = system.elements().size();
-        assert(vec.size() == num_elements + 1);
-        vec[num_elements] = formula.charge(); // last entry in the column vector is charge of substance
+        assert(vec.size() == Ne);
+        vec[Ne - 1] = formula.charge(); // last entry in the column vector is charge of substance
         for(const auto& [element, coeff] : formula.elements()) {
             const auto ielem = system.elements().index(element);
             vec[ielem] = coeff;
@@ -88,46 +112,40 @@ struct EquilibriumProblem::Impl
         A = system.formulaMatrix();
     }
 
-    /// Assemble the matrix block U in the conservation matrix C.
-    auto assembleMatrixU(MatrixXdRef U) const -> void
-    {
-        const auto& uconstraints = constraints.data().uconstraints;
-
-        const auto num_elements = system.elements().size();
-        const auto num_substances = uconstraints.size();
-
-        assert(U.rows() == 1 + num_elements); // number of elements plus charge
-        assert(U.cols() == num_substances);   // number of introduced chemical potential constraints
-
-        auto j = 0;
-        for(const auto& [formula, _] : uconstraints)
-            assembleFormulaVector(U.col(j++), formula);
-    }
-
     /// Assemble the matrix block B = [BT BP Bq] in the conservation matrix C.
     auto assembleMatrixB(MatrixXdRef B) const -> void
     {
         const auto& controls = constraints.data().controls;
 
-        const auto num_elements = system.elements().size();
-        const auto num_controls = controls.size();
-
-        assert(B.rows() == 1 + num_elements); // number of elements plus charge
-        assert(B.cols() == num_controls);     // number of introduced control variables
+        assert(B.rows() == Ne); // number of elements plus charge
+        assert(B.cols() == Nc); // number of introduced control variables
 
         auto j = controls.T + controls.P; // skip columns BT and BP (if applicable), since these are zeros
         for(const auto& formula : controls.titrants)
             assembleFormulaVector(B.col(j++), formula);
     }
 
+    /// Assemble the matrix block U in the conservation matrix C.
+    auto assembleMatrixU(MatrixXdRef U) const -> void
+    {
+        const auto& uconstraints = constraints.data().uconstraints;
+
+        assert(U.rows() == Ne); // number of elements plus charge
+        assert(U.cols() == Nq); // number of introduced chemical potential constraints
+
+        auto j = 0;
+        for(const auto& [formula, _] : uconstraints)
+            assembleFormulaVector(U.col(j++), formula);
+    }
+
     /// Assemble the matrix block S in the conservation matrix C.
     auto assembleMatrixS(MatrixXdRef S) const -> void
     {
+        assert(S.rows() == Nir);
+
         const auto& inert_reactions = constraints.data().restrictions.reactions_cannot_react;
 
-        assert(S.rows() == inert_reactions.size());
-
-        auto fill_matrix_row = [&](const auto& pairs, auto row)
+        auto fill_matrix_row = [=](const auto& pairs, auto row)
         {
             for(auto [ispecies, coeff] : pairs)
                 row[ispecies] = coeff;
@@ -141,140 +159,127 @@ struct EquilibriumProblem::Impl
     /// Assemble the conservation matrix based on the given equilibrium constraints.
     /// The conservation matrix is:
     ///
-    /// C = [ A U B ]
+    /// C = [ A B U ]
     ///     [ S 0 0 ]
     ///
     /// where A is the formula matrix of the species with respect to elements
-    /// and charge; U is the formula matrix of the substances with fixed
-    /// chemical potentials; B = [BT BP Bq], with BT and BP being zero column
-    /// vectors and Bq the formula matrix of the introduced titrants whose
-    /// amounts are controlled to attain imposed equilibrium constraints; and S
-    /// is the stoichiometric matrix of reactions that cannot progress during
-    /// the equilibrium calculation (inert reactions).
+    /// and charge; B = [BT BP Bq], with BT and BP being zero column vectors
+    /// and Bq the formula matrix of the introduced titrants whose amounts are
+    /// controlled to attain imposed equilibrium constraints; U is the formula
+    /// matrix of the substances with fixed chemical potentials; and S is the
+    /// stoichiometric matrix of reactions that cannot progress during the
+    /// equilibrium calculation (inert reactions).
     auto conservationMatrix() const -> MatrixXd
     {
-        const auto& restrictions = constraints.data().restrictions;
-        const auto& uconstraints = constraints.data().uconstraints;
-        const auto& controls = constraints.data().controls;
+        MatrixXd C = MatrixXd::Zero(Nb, Nx);
 
-        const auto num_elements = system.elements().size();
-        const auto num_species = system.species().size();
-        const auto num_charge = 1;
-        const auto num_inert_reactions = restrictions.reactions_cannot_react.size();
-        const auto num_fixed_chemical_potentials = uconstraints.size();
-        const auto num_controls = controls.size();
-
-        const auto num_rows = num_elements + num_charge + num_inert_reactions;
-        const auto num_cols = num_species + num_fixed_chemical_potentials + num_controls;
-
-        MatrixXd C = MatrixXd::Zero(num_rows, num_cols);
-
-        auto A = C.topRows(num_elements + num_charge).leftCols(num_species);
-        auto U = C.topRows(num_elements + num_charge).middleCols(num_species, num_fixed_chemical_potentials);
-        auto B = C.topRows(num_elements + num_charge).rightCols(num_controls);
-        auto S = C.bottomLeftCorner(num_inert_reactions, num_species);
+        auto A = C.topRows(Ne).leftCols(Nn);
+        auto B = C.topRows(Ne).middleCols(Nn, Np);
+        auto U = C.topRows(Ne).rightCols(Nq);
+        auto S = C.bottomLeftCorner(Nir, Nn);
 
         assembleMatrixA(A);
-        assembleMatrixU(U);
         assembleMatrixB(B);
+        assembleMatrixU(U);
         assembleMatrixS(S);
 
         return C;
     }
 
-    /// Assemble the objective function to be minimized based on the given equilibrium constraints.
-    auto objective() const -> EquilibriumObjective
+    /// Return the objective function to be minimized based on the given equilibrium constraints.
+    auto objective(const ChemicalProps& props0)
     {
-        EquilibriumObjective obj;
-
+        // AUXILIARY REFERENCES
+        const auto& controls = constraints.data().controls;
         const auto& uconstraints = constraints.data().uconstraints;
         const auto& econstraints = constraints.data().econstraints;
         const auto& pconstraints = constraints.data().pconstraints;
 
-        const auto Nx = system.species().size();
-        const auto Nq = constraints.numChemicalPotentialConstraints();
-        const auto Np = constraints.numControlVariables();
+        // INITIALIZE TEMPERATURE AND PRESSURE IN CASE THEY ARE PRESERVED/CONSTANT
+        T = props0.temperature();
+        P = props0.pressure();
 
-        const auto Nec = constraints.numEquationConstraints();
-        const auto Npc = constraints.numPropertyPreservationConstraints();
+        // INITIALIZE THE VALUES OF PROPERTIES THAT MUST BE PRESERVED
+        for(auto i = 0; i < Npp; ++i)
+            pp0[i] = pconstraints[i](props0); // property value from initial chemical properties (props0)
 
-        error(Np != Nec + Npc,
-            "Could not assemble the objective function for the "
-            "chemical equilibrium calculation with given constraints. "
-            "The number of control variables, ", Np, " must match the sum of "
-            "the number of equation constraints, ", Nec, " and "
-            "the number of property preservation constraints, ", Npc, ".");
-
-        obj.f = [](const ChemicalProps& props)
+        // DEFINE THE CHEMICAL PROPERTIES UPDATE FUNCTION
+        auto update_props = [=](const VectorXr& npq)
         {
+            n = npq.head(Nn);
+            p = npq.segment(Nn, Np);
+
+            // Update temperature and pressure if they are variable
+            if(controls.T && controls.P) {
+                T = p[0];
+                P = p[1];
+            } else if(controls.T) {
+                T = p[0];
+            } else if(controls.P) {
+                P = p[0];
+            }
+
+            props.update(T, P, n);
+        };
+
+        // CREATE THE OBJECTIVE FUNCTION
+        auto objective_f = [=](const VectorXr& npq)
+        {
+            update_props(npq);
             const auto& n = props.speciesAmounts();
             const auto& u = props.chemicalPotentials();
             return (n * u).sum();
         };
 
-        obj.g = [=](const ChemicalProps& props, VectorXrRef res)
+        // CREATE THE OBJECTIVE GRADIENT FUNCTION
+        auto objective_g = [=](const VectorXr& npq)
         {
-            // assert(res.size() == Nx + Nq + Np);
-            assert(res.size() == Nx);
+            update_props(npq); // update the chemical properties of the system with updated n, p, q
 
-            const auto& u = props.chemicalPotentials();
+            auto gn = g.head(Nn);        // where we set the chemical potentials of the species
+            auto gp = g.segment(Nn, Np); // where we set the residuals of functional constraints
+            auto gq = g.tail(Nq);        // where we set the desired chemical potentials of certain substances
 
-            auto gx = res.head(Nx);
-            // auto gq = res.segment(Nx, Nq);
-            // auto gp = res.tail(Np);
+            auto gpe = gp.head(Npe); // where we set the residuals of the equation constraints
+            auto gpp = gp.tail(Npp); // where we set the residuals of the property preservation constraints
 
-            // auto gec = gp.head(Nec);
-            // auto gpc = gp.tail(Npc);
+            gn = props.chemicalPotentials(); // set the current chemical potentials of species
 
-            // const auto T = props.temperature();
-            // const auto P = props.pressure();
+            for(auto i = 0; i < Nq; ++i)
+                gq[i] = uconstraints[i].fn(T, P); // set the fixed chemical potentials using current T and P
 
-            gx = u;
+            EquilibriumEquationArgs args{props, q, controls.titrants};
+            for(auto i = 0; i < Npe; ++i)
+                gpe[i] = econstraints[i](args); // set the residuals of the equation constraints
 
-            // for(auto i = 0; i < Nq; ++i)
-            //     gq[i] = uconstraints[i].fn(T, P);
+            for(auto i = 0; i < Npp; ++i)
+                gpp[i] = pconstraints[i](props) - pp0[i]; // set the residuals of the property preservation constraints
 
-            // for(auto i = 0; i < Nec; ++i)
-            //     gec[i] = econstraints[i]({props, });
-
-            // gp = u;
-
-            // assert(res.size() == numSpecies() + num)
-            // const auto& n = props.speciesAmounts();
-            // return (n * u).sum();
+            return g;
         };
 
-        obj.H = [=](const ChemicalProps& props, MatrixXdRef res)
+        // CREATE THE OBJECTIVE HESSIAN FUNCTION
+        auto objective_H = [=](VectorXr& npq)
         {
-            // assert(res.size() == Nx + Nq + Np);
-
-            // const auto& u = props.chemicalPotentials();
-
-            // auto gx = res.head(Nx);
-            // auto gq = res.segment(Nx, Nq);
-            // auto gp = res.tail(Np);
-
-            // auto gec = gp.head(Nec);
-            // auto gpc = gp.tail(Npc);
-
-            // const auto T = props.temperature();
-            // const auto P = props.pressure();
-
-            // for(auto )
-            // gx = u;
-
-            // for(auto i = 0; i < Nq; ++i)
-            //     gq[i] = uconstraints[i].fn(T, P);
-
-            // for(auto i = 0; i < Nec; ++i)
-            //     gec[i] = econstraints[i]({props, });
-
-            // gp = u;
-
-            // assert(res.size() == numSpecies() + num)
-            // const auto& n = props.speciesAmounts();
-            // return (n * u).sum();
+            H = autodiff::jacobian(objective_g, autodiff::wrt(npq), autodiff::at(npq));
+            return H;
         };
+
+        // CONSTRUCT THE OBJECTIVE FUNCTION, ITS GRADIENT AND HESSIAN
+        EquilibriumObjective obj;
+        obj.f = [=](VectorXdConstRef x) {
+            npq = x;
+            return objective_f(npq);
+            };
+        obj.g = [=](VectorXdConstRef x, VectorXdRef res) { npq = x; res = objective_g(npq); };
+        obj.H = [=](VectorXdConstRef x, MatrixXdRef res) { npq = x; res = objective_H(npq); };
+
+        return obj;
+    }
+
+    auto update(const EquilibriumConstraints& constraints) -> void
+    {
+        error(true, "EquilibriumProblem::update not implemented yet.");
     }
 };
 
@@ -282,17 +287,27 @@ EquilibriumProblem::EquilibriumProblem(const EquilibriumConstraints& constraints
 : pimpl(new Impl(constraints))
 {}
 
-EquilibriumProblem::EquilibriumProblem(const EquilibriumProblem& other)
-: pimpl(new Impl(*other.pimpl))
-{}
+// EquilibriumProblem::EquilibriumProblem(const EquilibriumProblem& other)
+// : pimpl(new Impl(*other.pimpl))
+// {}
 
-EquilibriumProblem::~EquilibriumProblem()
-{}
+// EquilibriumProblem::~EquilibriumProblem()
+// {}
 
-auto EquilibriumProblem::operator=(EquilibriumProblem other) -> EquilibriumProblem&
+// auto EquilibriumProblem::operator=(EquilibriumProblem other) -> EquilibriumProblem&
+// {
+//     pimpl = std::move(other.pimpl);
+//     return *this;
+// }
+
+auto EquilibriumProblem::numComponents() const -> Index
 {
-    pimpl = std::move(other.pimpl);
-    return *this;
+    return pimpl->Nb;
+}
+
+auto EquilibriumProblem::numVariables() const -> Index
+{
+    return pimpl->Nx;
 }
 
 auto EquilibriumProblem::conservationMatrix() const -> MatrixXd
@@ -300,9 +315,14 @@ auto EquilibriumProblem::conservationMatrix() const -> MatrixXd
     return pimpl->conservationMatrix();
 }
 
-auto EquilibriumProblem::objective() const -> EquilibriumObjective
+auto EquilibriumProblem::objective(const ChemicalProps& props0) const -> EquilibriumObjective
 {
+    return pimpl->objective(props0);
+}
 
+auto EquilibriumProblem::update(const EquilibriumConstraints& constraints) -> void
+{
+    pimpl->update(constraints);
 }
 
 } // namespace Reaktoro

@@ -76,36 +76,6 @@ struct EquilibriumConstraints::Impl
     {
         return Prevent(system, data);
     }
-
-    /// Return the number of **control variables** introduced with method @ref control.
-    auto numControlVariables() const -> Index
-    {
-        return data.controls.size();
-    }
-
-    /// Return the number of **equation constraints** introduced with method @ref until.
-    auto numEquationConstraints() const -> Index
-    {
-        return data.econstraints.size();
-    }
-
-    /// Return the number of **property preservation constraints** introduced with method @ref preserve.
-    auto numPropertyPreservationConstraints() const -> Index
-    {
-        return data.pconstraints.size();
-    }
-
-    /// Return the number of **chemical potential constraints** introduced with method @ref fix.
-    auto numChemicalPotentialConstraints() const -> Index
-    {
-        return data.uconstraints.size();
-    }
-
-    /// Return the number of inert reactions introduced with method @ref prevent.
-    auto numInertReactions() const -> Index
-    {
-        return data.restrictions.reactions_cannot_react.size();
-    }
 };
 
 //=================================================================================================
@@ -164,31 +134,6 @@ auto EquilibriumConstraints::system() const -> const ChemicalSystem&
 auto EquilibriumConstraints::data() const -> const Data&
 {
     return pimpl->data;
-}
-
-auto EquilibriumConstraints::numControlVariables() const -> Index
-{
-    return pimpl->numControlVariables();
-}
-
-auto EquilibriumConstraints::numEquationConstraints() const -> Index
-{
-    return pimpl->numEquationConstraints();
-}
-
-auto EquilibriumConstraints::numPropertyPreservationConstraints() const -> Index
-{
-    return pimpl->numPropertyPreservationConstraints();
-}
-
-auto EquilibriumConstraints::numChemicalPotentialConstraints() const -> Index
-{
-    return pimpl->numChemicalPotentialConstraints();
-}
-
-auto EquilibriumConstraints::numInertReactions() const -> Index
-{
-    return pimpl->numInertReactions();
 }
 
 //=================================================================================================
