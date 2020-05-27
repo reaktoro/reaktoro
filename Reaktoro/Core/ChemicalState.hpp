@@ -109,6 +109,9 @@ public:
     /// Return the amounts of the species in the chemical state (in mol).
     auto speciesAmounts() const -> ArrayXrConstRef;
 
+    /// Return the amounts of the species in the chemical state (in mol).
+    auto speciesAmounts() -> ArrayXrRef;
+
     /// Return the amounts of the elements in the chemical state (in mol).
     auto elementAmounts() const -> ArrayXr;
 
@@ -185,14 +188,11 @@ public:
     /// @see setIndicesElementsStrictlyUnstable
     auto setIndicesStrictlyUnstableSpecies(ArrayXlConstRef isus) -> void;
 
-    /// Set the chemical potentials of the species in the equilibrium state (in units of J/mol)
-    auto setSpeciesChemicalPotentials(ArrayXdConstRef u) -> void;
+    /// Set the Lagrange multipliers in the constrained equilibrium state (in units of J/mol)
+    auto setLagrangeMultipliers(ArrayXdConstRef y) -> void;
 
-    /// Set the chemical potentials of the elements in the equilibrium state (in units of J/mol)
-    auto setElementChemicalPotentials(ArrayXdConstRef y) -> void;
-
-    /// Set the stabilities of the species in the equilibrium state (in units of J/mol)
-    auto setSpeciesStabilities(ArrayXdConstRef z) -> void;
+    /// Set the complementarity variables in the equilibrium state (in units of J/mol)
+    auto setComplementarityVariables(ArrayXdConstRef z) -> void;
 
     /// Set the values of the control variables in the constrained equilibrium state.
     auto setControlVariables(ArrayXdConstRef pq) -> void;
@@ -215,26 +215,32 @@ public:
     /// Return the indices of species that contain one or more strictly unstable elements.
     auto indicesStrictlyUnstableSpecies() const -> ArrayXlConstRef;
 
-    /// Return the chemical potentials of the species (in units of J/mol).
-    /// The chemical potentials of the species are the gradient of the Gibbs
-    /// energy function with respect to species amounts.
-    auto speciesChemicalPotentials() const -> ArrayXdConstRef;
+    /// Return the Lagrange multipliers in the constrained equilibrium state (in units of J/mol).
+    /// These are the Lagrange multipliers with respect to the conservation
+    /// constraints. Those associated with chemical elements and electric
+    /// charge can be interpreted as chemical potentials of these components.
+    ///@{
+    auto lagrangeMultipliers() const -> ArrayXdConstRef;
+    auto lagrangeMultipliers() -> ArrayXd&;
+    ///@}
 
-    /// Return the chemical potentials of the elements (in units of J/mol).
-    /// The chemical potentials of the elements are the Lagrange multipliers with
-    /// respect to the mass conservation constraints on the amounts of the elements.
-    auto elementChemicalPotentials() const -> ArrayXdConstRef;
+    /// Return the complementarity variables in the constrained equilibrium state (in units of J/mol).
+    /// These are the slack variables with respect to the non-negative bound
+    /// constraints on the amounts of the species in a chemical equilibrium
+    /// calculation. They can be interpreted as measures of stability of a
+    /// species at equilibrium, with values closer to zero meaning more stable.
+    ///@{
+    auto complementarityVariables() const -> ArrayXdConstRef;
+    auto complementarityVariables() -> ArrayXd&;
+    ///@}
 
-    /// Return the stabilities of the species (in units of J/mol)
-    /// The stabilities of the species are the slack variables with
-    /// respect to the non-negative bound constraints on the amounts of the
-    /// species in a chemical equilibrium calculation. They can be seen as
-    /// measures of stability of a species at equilibrium, with values closer
-    /// to zero meaning more stable.
-    auto speciesStabilities() const -> ArrayXdConstRef;
-
-    /// Return the values of the control variables in the constrained equilibrium state.
+    /// Return the control variables in the constrained equilibrium state.
+    /// These are the values of the control variables introduced in a
+    /// constrained equilibrium problem.
+    ///@{
     auto controlVariables() const -> ArrayXdConstRef;
+    auto controlVariables() -> ArrayXd&;
+    ///@}
 
 private:
     struct Impl;
