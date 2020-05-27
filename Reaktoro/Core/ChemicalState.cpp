@@ -298,6 +298,11 @@ auto ChemicalState::speciesAmounts() const -> ArrayXrConstRef
     return pimpl->n;
 }
 
+auto ChemicalState::speciesAmounts() -> ArrayXrRef
+{
+    return pimpl->n;
+}
+
 auto ChemicalState::elementAmounts() const -> ArrayXr
 {
     return pimpl->elementAmounts();
@@ -382,17 +387,14 @@ struct ChemicalState::Equilibrium::Impl
     /// The number of primary species among the species.
     Index kp = 0;
 
-    /// The chemical potentials of the species in the equilibrium state (in units of J/mol)
-    ArrayXd u;
-
-    /// The chemical potentials of the elements in the equilibrium state (in units of J/mol)
+    /// The Lagrange multipliers in the constrained equilibrium state (in units of J/mol)
     ArrayXd y;
 
-    /// The stabilities of the species in the equilibrium state (in units of J/mol)
+    /// The complementarity variables in the constrained equilibrium state (in units of J/mol)
     ArrayXd z;
 
-    /// The values of the control variables (p, q) in the constrained equilibrium state.
-    ArrayXd pq;
+    /// The control variables v = (p, q) in the constrained equilibrium state.
+    ArrayXd v;
 
     /// The indices of elements whose amounts should be positive, but given amount was less or equal to zero.
     ArrayXl isue;
@@ -402,9 +404,6 @@ struct ChemicalState::Equilibrium::Impl
 
     /// Construct a default ChemicalState::Equilibrium::Impl instance
     Impl(const ChemicalSystem& system)
-    : u(system.species().size()),
-      y(system.elements().size()),
-      z(system.species().size())
     {}
 };
 
@@ -441,27 +440,19 @@ auto ChemicalState::Equilibrium::setIndicesStrictlyUnstableSpecies(ArrayXlConstR
     pimpl->isus = isus;
 }
 
-auto ChemicalState::Equilibrium::setSpeciesChemicalPotentials(ArrayXdConstRef u) -> void
+auto ChemicalState::Equilibrium::setLagrangeMultipliers(ArrayXdConstRef y) -> void
 {
-    assert(u.size() == pimpl->u.size());
-    pimpl->u = u;
-}
-
-auto ChemicalState::Equilibrium::setElementChemicalPotentials(ArrayXdConstRef y) -> void
-{
-    assert(y.size() == pimpl->y.size());
     pimpl->y = y;
 }
 
-auto ChemicalState::Equilibrium::setSpeciesStabilities(ArrayXdConstRef z) -> void
+auto ChemicalState::Equilibrium::setComplementarityVariables(ArrayXdConstRef z) -> void
 {
-    assert(z.size() == pimpl->z.size());
     pimpl->z = z;
 }
 
-auto ChemicalState::Equilibrium::setControlVariables(ArrayXdConstRef pq) -> void
+auto ChemicalState::Equilibrium::setControlVariables(ArrayXdConstRef v) -> void
 {
-    pimpl->pq = pq;
+    pimpl->v = v;
 }
 
 auto ChemicalState::Equilibrium::numPrimarySpecies() const -> Index
@@ -494,24 +485,34 @@ auto ChemicalState::Equilibrium::indicesStrictlyUnstableSpecies() const -> Array
     return pimpl->isus;
 }
 
-auto ChemicalState::Equilibrium::speciesChemicalPotentials() const -> ArrayXdConstRef
-{
-    return pimpl->u;
-}
-
-auto ChemicalState::Equilibrium::elementChemicalPotentials() const -> ArrayXdConstRef
+auto ChemicalState::Equilibrium::lagrangeMultipliers() const -> ArrayXdConstRef
 {
     return pimpl->y;
 }
 
-auto ChemicalState::Equilibrium::speciesStabilities() const -> ArrayXdConstRef
+auto ChemicalState::Equilibrium::lagrangeMultipliers() -> ArrayXd&
+{
+    return pimpl->y;
+}
+
+auto ChemicalState::Equilibrium::complementarityVariables() const -> ArrayXdConstRef
+{
+    return pimpl->z;
+}
+
+auto ChemicalState::Equilibrium::complementarityVariables() -> ArrayXd&
 {
     return pimpl->z;
 }
 
 auto ChemicalState::Equilibrium::controlVariables() const -> ArrayXdConstRef
 {
-    return pimpl->pq;
+    return pimpl->v;
+}
+
+auto ChemicalState::Equilibrium::controlVariables() -> ArrayXd&
+{
+    return pimpl->v;
 }
 
 } // namespace Reaktoro
