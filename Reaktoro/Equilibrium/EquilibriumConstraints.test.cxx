@@ -33,6 +33,15 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
 
     EquilibriumConstraints constraints(system);
 
+    // The mock temperature, pressure, and species amounts used for the tests below.
+    const auto T = 1.0;
+    const auto P = 11.0;
+    const auto n = ArrayXr::Ones(system.species().size()).eval();
+
+    // The mock chemical properties of the system used for the tests below
+    ChemicalProps props(system);
+    props.update(T, P, n);
+
     SECTION("Testing method EquilibriumConstraints::control")
     {
         // Reference to the controls data
@@ -68,8 +77,6 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
         // Reference to the functional equilibrium constraints data
         const auto& econstraints = constraints.data().econstraints;
 
-        ChemicalProps props(system);
-
         const auto q = VectorXr{{ 1.0, 2.0 }};
 
         EquilibriumEquationArgs args{props, q, controls.titrants};
@@ -77,20 +84,32 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
         constraints.until().internalEnergy(1.0, "kJ");
 
         REQUIRE( econstraints.size() == 1 );
-        REQUIRE( econstraints[0](args) == -1.0e+3 );
+        REQUIRE( econstraints[0].fn(args) == props.internalEnergy() - 1.0e+3 );
 
         constraints.until().volume(1.0, "mm3");
 
         REQUIRE( econstraints.size() == 2 );
-        REQUIRE( econstraints[0](args) == -1.0e+3 );
-        REQUIRE( econstraints[1](args) == -1.0e-9 );
+        REQUIRE( econstraints[0].fn(args) == props.internalEnergy() - 1.0e+3 );
+        REQUIRE( econstraints[1].fn(args) == props.volume() - 1.0e-9 );
 
         constraints.until().enthalpy(1.0, "J");
 
         REQUIRE( econstraints.size() == 3 );
-        REQUIRE( econstraints[0](args) == -1.0e+3 );
-        REQUIRE( econstraints[1](args) == -1.0e-9 );
-        REQUIRE( econstraints[2](args) == -1.0 );
+        REQUIRE( econstraints[0].fn(args) == props.internalEnergy() - 1.0e+3 );
+        REQUIRE( econstraints[1].fn(args) == props.volume() - 1.0e-9 );
+        REQUIRE( econstraints[2].fn(args) == props.enthalpy() - 1.0 );
+
+        //---------------------------------------------------------------------
+        // Impose an enthalpy constraint again with updated value and ensure
+        // that the existing constraint is updated instead of creating a new one.
+        //---------------------------------------------------------------------
+        constraints.until().enthalpy(300.0, "J");
+
+        // Ensure the number of constraints remain unchanged!
+        REQUIRE( econstraints.size() == 3 );
+
+        // Ensure the existing enthalpy constraint gets updated!
+        REQUIRE( econstraints[2].fn(args) == props.enthalpy() - 300.0 );
     }
 
     SECTION("Testing method EquilibriumConstraints::preserve")
@@ -98,25 +117,35 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
         // Reference to the chemical property preservation constraints data
         const auto& pconstraints = constraints.data().pconstraints;
 
-        ChemicalProps props(system);
-
         constraints.preserve().internalEnergy();
 
         REQUIRE( pconstraints.size() == 1 );
-        REQUIRE( pconstraints[0](props) == 0.0 ); // TODO: Create a mock ChemicalProps object with non-zero properties to ensure the correct method is called.
+        REQUIRE( pconstraints[0].fn(props) == props.internalEnergy() );
 
         constraints.preserve().volume();
 
         REQUIRE( pconstraints.size() == 2 );
-        REQUIRE( pconstraints[0](props) == 0.0 );
-        REQUIRE( pconstraints[1](props) == 0.0 );
+        REQUIRE( pconstraints[0].fn(props) == props.internalEnergy() );
+        REQUIRE( pconstraints[1].fn(props) == props.volume() );
 
         constraints.preserve().enthalpy();
 
         REQUIRE( pconstraints.size() == 3 );
-        REQUIRE( pconstraints[0](props) == 0.0 );
-        REQUIRE( pconstraints[1](props) == 0.0 );
-        REQUIRE( pconstraints[2](props) == 0.0 );
+        REQUIRE( pconstraints[0].fn(props) == props.internalEnergy() );
+        REQUIRE( pconstraints[1].fn(props) == props.volume() );
+        REQUIRE( pconstraints[2].fn(props) == props.enthalpy() );
+
+        //---------------------------------------------------------------------
+        // Impose the preservation constraint on volume again and ensure
+        // that the existing constraint is updated instead of creating a new one.
+        //---------------------------------------------------------------------
+        constraints.preserve().volume();
+
+        // Ensure the number of constraints remain unchanged!
+        REQUIRE( pconstraints.size() == 3 );
+        REQUIRE( pconstraints[0].fn(props) == props.internalEnergy() );
+        REQUIRE( pconstraints[1].fn(props) == props.volume() );
+        REQUIRE( pconstraints[2].fn(props) == props.enthalpy() );
     }
 
     SECTION("Testing method EquilibriumConstraints::fix")
@@ -124,26 +153,53 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
         // Reference to the chemical potential constraints data
         const auto& uconstraints = constraints.data().uconstraints;
 
-        ChemicalProps props(system);
+        // The Species objects for H+(aq) and O2(g)
+        const auto hplus = system.database().species().getWithName("H+(aq)");
+        const auto o2g = system.database().species().getWithName("O2(g)");
 
+        // The standard chemical potentials of H+(aq) and O2(g) at (T, P)
+        auto u0hplus = hplus.props(T, P).G0;
+        auto u0o2g = o2g.props(T, P).G0;
+
+        // The universal gas constant (in J/(mol*K))
         const auto R = universalGasConstant;
-
-        const auto T = props.temperature();
-        const auto P = props.pressure();
-
-        REQUIRE( uconstraints.size() == 0 );
 
         constraints.fix().pH(4.5);
 
         REQUIRE( uconstraints.size() == 1 );
-        REQUIRE( uconstraints[0].formula.equivalent("H+") );
-        REQUIRE( uconstraints[0].fn );
+        REQUIRE( uconstraints.back().formula.equivalent("H+") );
+        REQUIRE( uconstraints.back().fn(T, P) == Approx(u0hplus + R*T*log(pow(10.0, -4.5))) );
 
-        constraints.fix().fugacity("O2(g)", 1.0, "bar");
+        constraints.fix().fugacity("O2(g)", 10.0, "bar");
 
         REQUIRE( uconstraints.size() == 2 );
-        REQUIRE( uconstraints[1].formula.equivalent("O2") );
-        REQUIRE( uconstraints[1].fn );
+        REQUIRE( uconstraints.back().formula.equivalent("O2") );
+        REQUIRE( uconstraints.back().fn(T, P) == Approx(u0o2g + R*T*log(10.0)) );
+
+        //---------------------------------------------------------------------
+        // Impose pH with an updated value. Ensure the existing chemical
+        // potential constraint for H+ is used instead of creating a new one.
+        //---------------------------------------------------------------------
+
+        constraints.fix().pH(8.0);
+
+        // Ensure the number of constraints remain unchanged!
+        REQUIRE( uconstraints.size() == 2 );
+
+        // Ensure the existing chemical potential constraint for H+ has been updated!
+        REQUIRE( uconstraints[0].fn(T, P) == Approx(u0hplus + R*T*log(pow(10.0, -8.0))) );
+
+        //---------------------------------------------------------------------
+        // Impose activity of H+ and ensure the existing chemical potential
+        // constraint for H+ is reused instead of creating a new one.
+        //---------------------------------------------------------------------
+        constraints.fix().activity("H+(aq)", 1e-6);
+
+        // Ensure the number of constraints remain unchanged!
+        REQUIRE( uconstraints.size() == 2 );
+
+        // Ensure the existing chemical potential constraint for H+ has been updated!
+        REQUIRE( uconstraints[0].fn(T, P) == Approx(u0hplus + R*T*log(1e-6)) );
     }
 
     SECTION("Testing method EquilibriumConstraints::prevent")
