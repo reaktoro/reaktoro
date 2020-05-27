@@ -160,8 +160,8 @@ auto EquilibriumConstraints::Control::pressure() -> Control&
 
 auto EquilibriumConstraints::Control::titrationOf(String titrant) -> Control&
 {
-    // TODO: Adapt Optima lib so that Ax + Bq = b can be imposed by B^T
-    // (transpose) is not considered in the first-order conditions for minimum.
+    // TODO: Adapt Optima lib so that Ax + Bq = b can be imposed while B^T
+    // is not considered in the first-order conditions for minimum.
     error(true, "Method EquilibriumConstraints::Control::titrationOf is not supported yet.");
     data.controls.titrants.push_back(titrant);
     return *this;
@@ -195,43 +195,46 @@ EquilibriumConstraints::Until::Until(EquilibriumConstraints::Data& data)
 auto EquilibriumConstraints::Until::volume(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "m3");
-    return custom([=](EquilibriumEquationArgs args) { return args.props.volume() - value; });
+    return custom(":V:", [=](EquilibriumEquationArgs args) { return args.props.volume() - value; });
 }
 
 auto EquilibriumConstraints::Until::internalEnergy(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "J");
-    return custom([=](EquilibriumEquationArgs args) { return args.props.internalEnergy() - value; });
+    return custom(":U:", [=](EquilibriumEquationArgs args) { return args.props.internalEnergy() - value; });
 }
 
 auto EquilibriumConstraints::Until::enthalpy(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "J");
-    return custom([=](EquilibriumEquationArgs args) { return args.props.enthalpy() - value; });
+    return custom(":H:", [=](EquilibriumEquationArgs args) { return args.props.enthalpy() - value; });
 }
 
 auto EquilibriumConstraints::Until::gibbsEnergy(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "J");
-    return custom([=](EquilibriumEquationArgs args) { return args.props.gibbsEnergy() - value; });
+    return custom(":G:", [=](EquilibriumEquationArgs args) { return args.props.gibbsEnergy() - value; });
 }
 
 auto EquilibriumConstraints::Until::helmholtzEnergy(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "J");
-    return custom([=](EquilibriumEquationArgs args) { return args.props.helmholtzEnergy() - value; });
+    return custom(":A:", [=](EquilibriumEquationArgs args) { return args.props.helmholtzEnergy() - value; });
 }
 
 auto EquilibriumConstraints::Until::entropy(real value, String unit) -> Until&
 {
     value = units::convert(value, unit, "J/K");
-    return custom([=](EquilibriumEquationArgs args) { return args.props.entropy() - value; });
+    return custom(":S:", [=](EquilibriumEquationArgs args) { return args.props.entropy() - value; });
 }
 
-auto EquilibriumConstraints::Until::custom(const EquilibriumEquationFn& fn) -> Until&
+auto EquilibriumConstraints::Until::custom(const String& id, const EquilibriumEquationFn& fn) -> Until&
 {
     error(!fn, "Imposing an empty custom equation constraint is not allowed.");
-    data.econstraints.push_back(fn);
+    const auto idx = indexfn(data.econstraints, RKT_LAMBDA(x, x.id == id));
+    const auto size = data.econstraints.size();
+    if(idx < size) data.econstraints[idx].fn = fn;
+    else data.econstraints.push_back({id, fn});
     return *this;
 }
 
@@ -247,38 +250,41 @@ EquilibriumConstraints::Preserve::Preserve(EquilibriumConstraints::Data& data)
 
 auto EquilibriumConstraints::Preserve::volume() -> Preserve&
 {
-    return custom([](const ChemicalProps& props) { return props.volume(); });
+    return custom(":V:", [](const ChemicalProps& props) { return props.volume(); });
 }
 
 auto EquilibriumConstraints::Preserve::internalEnergy() -> Preserve&
 {
-    return custom([](const ChemicalProps& props) { return props.internalEnergy(); });
+    return custom(":U:", [](const ChemicalProps& props) { return props.internalEnergy(); });
 }
 
 auto EquilibriumConstraints::Preserve::enthalpy() -> Preserve&
 {
-    return custom([](const ChemicalProps& props) { return props.enthalpy(); });
+    return custom(":H:", [](const ChemicalProps& props) { return props.enthalpy(); });
 }
 
 auto EquilibriumConstraints::Preserve::gibbsEnergy() -> Preserve&
 {
-    return custom([](const ChemicalProps& props) { return props.gibbsEnergy(); });
+    return custom(":G:", [](const ChemicalProps& props) { return props.gibbsEnergy(); });
 }
 
 auto EquilibriumConstraints::Preserve::helmholtzEnergy() -> Preserve&
 {
-    return custom([](const ChemicalProps& props) { return props.helmholtzEnergy(); });
+    return custom(":A:", [](const ChemicalProps& props) { return props.helmholtzEnergy(); });
 }
 
 auto EquilibriumConstraints::Preserve::entropy() -> Preserve&
 {
-    return custom([](const ChemicalProps& props) { return props.entropy(); });
+    return custom(":S:", [](const ChemicalProps& props) { return props.entropy(); });
 }
 
-auto EquilibriumConstraints::Preserve::custom(const ChemicalPropertyFn& fn) -> Preserve&
+auto EquilibriumConstraints::Preserve::custom(const String& id, const ChemicalPropertyFn& fn) -> Preserve&
 {
     error(!fn, "Imposing an empty custom chemical property function is not allowed.");
-    data.pconstraints.push_back(fn);
+    const auto idx = indexfn(data.pconstraints, RKT_LAMBDA(x, x.id == id));
+    const auto size = data.pconstraints.size();
+    if(idx < size) data.pconstraints[idx].fn = fn;
+    else data.pconstraints.push_back({id, fn});
     return *this;
 }
 
@@ -287,6 +293,30 @@ auto EquilibriumConstraints::Preserve::custom(const ChemicalPropertyFn& fn) -> P
 // EquilibriumConstraints::Fix
 //
 //=================================================================================================
+namespace detail {
+
+/// Return a Species object in a Database with given formula and aggregate state
+auto getSpecies(const Database& db, const String& formula, AggregateState aggstate) -> Species
+{
+    const auto selected = db.speciesWithAggregateState(aggstate);
+    const auto idx = selected.findWithFormula(formula);
+    if(idx < selected.size()) return selected[idx];
+    else return Species();
+}
+
+/// Return a Species object in a Database with given formula and aqueous aggregate state.
+auto getAqueousSpecies(const Database& db, const String& formula) -> Species
+{
+    return getSpecies(db, formula, AggregateState::Aqueous);
+}
+
+/// Return a Species object in a Database with given formula and gaseous aggregate state.
+auto getGaseousSpecies(const Database& db, const String& formula) -> Species
+{
+    return getSpecies(db, formula, AggregateState::Gas);
+}
+
+} // namespace detail
 
 EquilibriumConstraints::Fix::Fix(const ChemicalSystem& system, EquilibriumConstraints::Data& data)
 : system(system), data(data)
@@ -294,7 +324,11 @@ EquilibriumConstraints::Fix::Fix(const ChemicalSystem& system, EquilibriumConstr
 
 auto EquilibriumConstraints::Fix::chemicalPotential(const ChemicalFormula& substance, const Fn<real(real,real)>& fn) -> Fix&
 {
-    data.uconstraints.push_back({substance, fn});
+    const auto id = substance.str();
+    const auto idx = indexfn(data.uconstraints, RKT_LAMBDA(x, x.formula.equivalent(substance)));
+    const auto size = data.uconstraints.size();
+    if(idx < size) data.uconstraints[idx].fn = fn;
+    else data.uconstraints.push_back({substance, fn});
     return *this;
 }
 
@@ -339,49 +373,48 @@ auto EquilibriumConstraints::Fix::activity(String name, real value) -> Fix&
 
 auto EquilibriumConstraints::Fix::fugacity(String gas, real value, String unit) -> Fix&
 {
-    value = units::convert(value, unit, "bar");
-    const auto& gases = system.database().speciesWithAggregateState(AggregateState::Gas);
-    const auto idx = gases.findWithFormula(gas);
-    error(idx >= gases.size(),
-        "Could not impose a fugacity constraint for gas `", gas, "` because "
+    static const auto species = detail::getGaseousSpecies(system.database(), gas);
+    error(species.name().empty(),
+        "Could not impose the fugacity constraint for gas `", gas, "` because "
         "there is no gaseous species in the database with this chemical formula.");
-    return lnActivity(gases[idx], value);
+    value = units::convert(value, unit, "bar");
+    return lnActivity(species, log(value));
 }
 
 auto EquilibriumConstraints::Fix::pH(real value) -> Fix&
 {
-    const auto aqspecies = system.database().speciesWithAggregateState(AggregateState::Aqueous);
-    const auto idx = aqspecies.findWithFormula("H+");
-    error(idx >= aqspecies.size(),
+    static const auto species = detail::getAqueousSpecies(system.database(), "H+");
+    error(species.name().empty(),
         "Could not impose pH constraint because the database has "
         "no aqueous species with chemical formula `H+`.");
-    return lnActivity(aqspecies[idx], -value * ln10); // pH = -log10(a[H+]) => ln(a[H+]) = -pH * ln10
+    return lnActivity(species, -value * ln10); // pH = -log10(a[H+]) => ln(a[H+]) = -pH * ln10
 }
 
 auto EquilibriumConstraints::Fix::pMg(real value) -> Fix&
 {
-    const auto aqspecies = system.database().speciesWithAggregateState(AggregateState::Aqueous);
-    const auto idx = aqspecies.findWithFormula("Mg+2");
-    error(idx >= aqspecies.size(),
+    static const auto species = detail::getAqueousSpecies(system.database(), "Mg+2");
+    error(species.name().empty(),
         "Could not impose pMg constraint because the database has "
         "no aqueous species with chemical formula `Mg+2`.");
-    return lnActivity(aqspecies[idx], -value * ln10); // pMg = -log10(a[Mg+2]) => ln(a[Mg+2]) = -pH * ln10
+    return lnActivity(species, -value * ln10); // pMg = -log10(a[Mg+2]) => ln(a[Mg+2]) = -pH * ln10
 }
 
 auto EquilibriumConstraints::Fix::pe(real value) -> Fix&
 {
+    static const auto eminus = ChemicalFormula("e-");
     const auto ue0 = 0.0;            // the standard chemical potential of the electron species
     const auto lnae = -value * ln10; // the ln activity of the electron species
     const auto R = universalGasConstant;
-    return chemicalPotential("e-", [=](real T, real P) { return ue0 + R*T*lnae; });
+    return chemicalPotential(eminus, [=](real T, real P) { return ue0 + R*T*lnae; });
 }
 
 auto EquilibriumConstraints::Fix::Eh(real value, String unit) -> Fix&
 {
+    static const auto eminus = ChemicalFormula("e-");
     value = units::convert(value, unit, "V"); // in V = J/C
     const auto F = faradayConstant;           // in C/mol
     const auto ue = -F * value;               // in J/mol (chemical potential of electron)
-    return chemicalPotential("e-", [=](real T, real P) { return ue; });
+    return chemicalPotential(eminus, [=](real T, real P) { return ue; });
 }
 
 //=================================================================================================

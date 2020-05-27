@@ -178,9 +178,10 @@ public:
     /// @param unit The unit of the constrained entropy value (must be convertible to J/K)
     auto entropy(real value, String unit) -> Until&;
 
-    /// Enforce a custom constraint equation at chemical equilibrium.
+    /// Enforce a custom equation constraint at chemical equilibrium.
+    /// @param id The unique identifier string of this custom equation constraint
     /// @param fn The function implemeting the custom constraint equation
-    auto custom(const EquilibriumEquationFn& fn) -> Until&;
+    auto custom(const String& id, const EquilibriumEquationFn& fn) -> Until&;
 
 private:
     /// The underlying data of the EquilibriumConstraints object.
@@ -226,8 +227,9 @@ public:
     auto entropy() -> Preserve&;
 
     /// Preserve a **custom property** of the system during the chemical equilibrium calculation.
+    /// @param id The unique identifier string of this custom property preservation constraint
     /// @param fn The function that computes the custom chemical property.
-    auto custom(const ChemicalPropertyFn& fn) -> Preserve&;
+    auto custom(const String& id, const ChemicalPropertyFn& fn) -> Preserve&;
 
 private:
     /// The underlying data of the EquilibriumConstraints object.
@@ -406,7 +408,27 @@ struct EquilibriumConstraints::Data
         auto size() const -> Index { return titrants.size() + T + P; }
     };
 
-    /// The description of a chemical potential constraint in a chemical equilibrium calculation.
+    /// The details of an equation constraint in a chemical equilibrium calculation.
+    struct EquationConstraint
+    {
+        /// The unique identifier string of this equation constraint.
+        String id;
+
+        /// The function defining the equation constraint in residual form.
+        EquilibriumEquationFn fn;
+    };
+
+    /// The details of a property preservation constraint in a chemical equilibrium calculation.
+    struct PropertyPreservationConstraint
+    {
+        /// The unique identifier string of this property preservation constraint.
+        String id;
+
+        /// The function that computes or retrieves the preserved chemical property.
+        ChemicalPropertyFn fn;
+    };
+
+    /// The details of a chemical potential constraint in a chemical equilibrium calculation.
     struct ChemicalPotentialConstraint
     {
         /// The chemical formula of the substance for which the chemical potential is constrained.
@@ -435,13 +457,13 @@ struct EquilibriumConstraints::Data
     /// The introduced control variables via method @ref EquilibriumConstraints::control.
     Controls controls;
 
-    /// The vector of equation constraints imposed via method @ref EquilibriumConstraints::until.
-    Vec<EquilibriumEquationFn> econstraints;
+    /// The equation constraints imposed via method @ref EquilibriumConstraints::until.
+    Vec<EquationConstraint> econstraints;
 
-    /// The vector of property preservation constraints imposed via method @ref EquilibriumConstraints::preserve.
-    Vec<ChemicalPropertyFn> pconstraints;
+    /// The property preservation constraints imposed via method @ref EquilibriumConstraints::preserve.
+    Vec<PropertyPreservationConstraint> pconstraints;
 
-    /// The vector of chemical potential constraints imposed via method @ref EquilibriumConstraints::fix.
+    /// The chemical potential constraints imposed via method @ref EquilibriumConstraints::fix.
     Vec<ChemicalPotentialConstraint> uconstraints;
 
     /// The reactivity restrictions imposed via method @ref EquilibriumConstraints::prevent.
