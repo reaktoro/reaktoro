@@ -136,6 +136,11 @@ auto EquilibriumConstraints::data() const -> const Data&
     return pimpl->data;
 }
 
+auto EquilibriumConstraints::lock() -> void
+{
+    pimpl->data.locked = true;
+}
+
 //=================================================================================================
 //
 // EquilibriumConstraints::Control
@@ -144,7 +149,10 @@ auto EquilibriumConstraints::data() const -> const Data&
 
 EquilibriumConstraints::Control::Control(EquilibriumConstraints::Data& data)
 : data(data)
-{}
+{
+    error(data.locked, "You cannot introduce new control variables "
+        "with a locked EquilibriumConstraints object.");
+}
 
 auto EquilibriumConstraints::Control::temperature() -> Control&
 {
@@ -234,7 +242,12 @@ auto EquilibriumConstraints::Until::custom(const String& id, const EquilibriumEq
     const auto idx = indexfn(data.econstraints, RKT_LAMBDA(x, x.id == id));
     const auto size = data.econstraints.size();
     if(idx < size) data.econstraints[idx].fn = fn;
-    else data.econstraints.push_back({id, fn});
+    else
+    {
+        error(data.locked, "You cannot introduce new functional constraints "
+            "with a locked EquilibriumConstraints object.");
+        data.econstraints.push_back({id, fn});
+    }
     return *this;
 }
 
@@ -246,7 +259,10 @@ auto EquilibriumConstraints::Until::custom(const String& id, const EquilibriumEq
 
 EquilibriumConstraints::Preserve::Preserve(EquilibriumConstraints::Data& data)
 : data(data)
-{}
+{
+    error(data.locked, "You cannot introduce new property preservation constraints "
+        "with a locked EquilibriumConstraints object.");
+}
 
 auto EquilibriumConstraints::Preserve::volume() -> Preserve&
 {
@@ -328,7 +344,12 @@ auto EquilibriumConstraints::Fix::chemicalPotential(const ChemicalFormula& subst
     const auto idx = indexfn(data.uconstraints, RKT_LAMBDA(x, x.formula.equivalent(substance)));
     const auto size = data.uconstraints.size();
     if(idx < size) data.uconstraints[idx].fn = fn;
-    else data.uconstraints.push_back({substance, fn});
+    else
+    {
+        error(data.locked, "You cannot introduce new chemical potential constraints "
+            "with a locked EquilibriumConstraints object.");
+        data.uconstraints.push_back({substance, fn});
+    }
     return *this;
 }
 
@@ -373,7 +394,7 @@ auto EquilibriumConstraints::Fix::activity(String name, real value) -> Fix&
 
 auto EquilibriumConstraints::Fix::fugacity(String gas, real value, String unit) -> Fix&
 {
-    static const auto species = detail::getGaseousSpecies(system.database(), gas);
+    const auto species = detail::getGaseousSpecies(system.database(), gas);
     error(species.name().empty(),
         "Could not impose the fugacity constraint for gas `", gas, "` because "
         "there is no gaseous species in the database with this chemical formula.");
@@ -439,6 +460,8 @@ auto EquilibriumConstraints::Prevent::fromReacting(Index ispecies) -> Prevent&
 
 auto EquilibriumConstraints::Prevent::fromReacting(Pairs<Index, double> equation) -> Prevent&
 {
+    error(data.locked, "You cannot introduce new inert reactions "
+        "with a locked EquilibriumConstraints object.");
     data.restrictions.reactions_cannot_react.push_back(equation);
     return *this;
 }
