@@ -30,7 +30,6 @@ class  EquilibriumConstraints;
 struct EquilibriumOptions;
 struct EquilibriumResult;
 
-
 /// A solver class for solving chemical equilibrium calculations.
 class EquilibriumSolver
 {
@@ -52,6 +51,12 @@ public:
 
     /// Set the options of the equilibrium solver.
     auto setOptions(const EquilibriumOptions& options) -> void;
+
+    /// Return the equilibrium constraints associated with this equilibrium solver.
+    auto constraints() const -> const EquilibriumConstraints&;
+
+    /// Return the equilibrium constraints associated with this equilibrium solver.
+    auto constraints() -> EquilibriumConstraints&;
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation

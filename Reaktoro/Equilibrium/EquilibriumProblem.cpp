@@ -176,7 +176,7 @@ struct EquilibriumProblem::Impl
 
         // INITIALIZE THE VALUES OF PROPERTIES THAT MUST BE PRESERVED
         for(auto i = 0; i < dims.Npp; ++i)
-            pp0[i] = pconstraints[i](props0); // property value from initial chemical properties (props0)
+            pp0[i] = pconstraints[i].fn(props0); // property value from initial chemical properties (props0)
 
         // DEFINE THE CHEMICAL PROPERTIES UPDATE FUNCTION
         auto update_props = [=](const VectorXr& npq)
@@ -225,10 +225,10 @@ struct EquilibriumProblem::Impl
 
             EquilibriumEquationArgs args{props, q, controls.titrants};
             for(auto i = 0; i < dims.Npe; ++i)
-                gpe[i] = econstraints[i](args); // set the residuals of the equation constraints
+                gpe[i] = econstraints[i].fn(args); // set the residuals of the equation constraints
 
             for(auto i = 0; i < dims.Npp; ++i)
-                gpp[i] = pconstraints[i](props) - pp0[i]; // set the residuals of the property preservation constraints
+                gpp[i] = pconstraints[i].fn(props) - pp0[i]; // set the residuals of the property preservation constraints
 
             return g;
         };
