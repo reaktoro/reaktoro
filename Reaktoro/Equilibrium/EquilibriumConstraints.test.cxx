@@ -245,4 +245,31 @@ TEST_CASE("Testing EquilibriumConstraints", "[EquilibriumConstraints]")
         REQUIRE( get.reactions_cannot_react[0] == equation("O2(aq) + H2(aq) = H2O(aq)") );
         REQUIRE( get.reactions_cannot_react[1] == equation("CO2(g) = CO2(aq)")          );
     }
+
+    SECTION("Testing when the EquilibriumConstraints object is locked.")
+    {
+        constraints.control().temperature();
+
+        constraints.until().volume(1.0, "m3");
+
+        constraints.fix().pH(5.0);
+        constraints.fix().fugacity("H2(g)", 5.0, "bar");
+
+        constraints.prevent().fromReacting("H2O(aq) = H+(aq) + OH-(aq)");
+
+        constraints.lock();
+
+        REQUIRE_NOTHROW( constraints.until().volume(10.0, "m3")           );
+        REQUIRE_NOTHROW( constraints.fix().pH(2.0)                        );
+        REQUIRE_NOTHROW( constraints.fix().fugacity("H2(g)", 10.0, "bar") );
+        REQUIRE_NOTHROW( constraints.prevent().fromReacting("CaCO3(s)")   );
+        REQUIRE_NOTHROW( constraints.prevent().fromIncreasing("SiO2(s)")  );
+        REQUIRE_NOTHROW( constraints.prevent().fromDecreasing("NaCl(s)")  );
+
+        REQUIRE_THROWS( constraints.control()                                  );
+        REQUIRE_THROWS( constraints.preserve()                                 );
+        REQUIRE_THROWS( constraints.until().internalEnergy(1.0, "J")           );
+        REQUIRE_THROWS( constraints.until().enthalpy(1.0, "J")                 );
+        REQUIRE_THROWS( constraints.prevent().fromReacting("CO2(g) = CO2(aq)") );
+    }
 }

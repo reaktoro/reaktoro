@@ -75,6 +75,18 @@ public:
     /// Return the data with details of the imposed constraints.
     auto data() const -> const Data&;
 
+    /// Lock this object to prevent certain changes.
+    /// Once locked, an EquilibriumConstraints object will not allow:
+    ///   1. the introduction of new control variables;
+    ///   2. the imposition of new functional and chemical potential constraints;
+    ///   3. the introduction of new inert reactions.
+    /// Thus, calling methods @ref control and @ref preserve will result in an
+    /// error. Method @ref until can still be called, but only to update an
+    /// existing constraint, not to introduce a new one. Method @ref prevent
+    /// can be called, as long as it does not introduce a new inert reaction
+    /// using method `fromReacting`.
+    auto lock() -> void;
+
 private:
     struct Impl;
 
@@ -468,6 +480,9 @@ struct EquilibriumConstraints::Data
 
     /// The reactivity restrictions imposed via method @ref EquilibriumConstraints::prevent.
     ReactivityRestrictions restrictions;
+
+    /// The flag that indicates whether the EquilibriumConstraints object is locked.
+    bool locked = false;
 };
 
 } // namespace Reaktoro
