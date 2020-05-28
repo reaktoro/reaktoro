@@ -23,6 +23,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
@@ -68,6 +69,14 @@ struct EquilibriumProblem::Impl
         pp0.resize(dims.Npp);
         g.resize(dims.Nx);
         H.resize(dims.Nx, dims.Nx);
+    }
+
+    /// Update the equilibrium constraints for the next chemical equilibrium calculation.
+    auto update(const EquilibriumConstraints& _constraints) -> void
+    {
+        error(!_constraints.data().locked, "EquilibriumProblem::update "
+            "accepts only a locked EquilibriumConstraints object.");
+        constraints = _constraints;
     }
 
     /// Assemble the vector with the element and charge coefficients of a chemical formula.
@@ -162,7 +171,7 @@ struct EquilibriumProblem::Impl
     }
 
     /// Return the objective function to be minimized based on the given equilibrium constraints.
-    auto objective(const ChemicalProps& props0)
+    auto objective(const ChemicalState& state0)
     {
         // AUXILIARY REFERENCES
         const auto& controls = constraints.data().controls;
@@ -171,12 +180,12 @@ struct EquilibriumProblem::Impl
         const auto& pconstraints = constraints.data().pconstraints;
 
         // INITIALIZE TEMPERATURE AND PRESSURE IN CASE THEY ARE PRESERVED/CONSTANT
-        T = props0.temperature();
-        P = props0.pressure();
+        T = state0.temperature();
+        P = state0.pressure();
 
         // INITIALIZE THE VALUES OF PROPERTIES THAT MUST BE PRESERVED
         for(auto i = 0; i < dims.Npp; ++i)
-            pp0[i] = pconstraints[i].fn(props0); // property value from initial chemical properties (props0)
+            pp0[i] = pconstraints[i].fn(state0.props()); // property value from initial chemical properties (props0)
 
         // DEFINE THE CHEMICAL PROPERTIES UPDATE FUNCTION
         auto update_props = [=](const VectorXr& npq)
@@ -249,9 +258,22 @@ struct EquilibriumProblem::Impl
         return obj;
     }
 
-    auto update(const EquilibriumConstraints& constraints) -> void
+    /// Set the lower bounds of the species amounts based on the given equilibrium constraints.
+    auto xlower(const ChemicalState& state0, ArrayXdRef res) const -> void
     {
-        error(true, "EquilibriumProblem::update not implemented yet.");
+        const auto& n = state0.speciesAmounts();
+        const auto& restrictions = constraints.data().restrictions;
+        for(auto i : restrictions.species_cannot_decrease) res[i] = n[i];
+        for(auto i : restrictions.species_cannot_react) res[i] = n[i];
+    }
+
+    /// Set the upper bounds of the species amounts based on the given equilibrium constraints.
+    auto xupper(const ChemicalState& state0, ArrayXdRef res) const -> void
+    {
+        const auto& n = state0.speciesAmounts();
+        const auto& restrictions = constraints.data().restrictions;
+        for(auto i : restrictions.species_cannot_increase) res[i] = n[i];
+        for(auto i : restrictions.species_cannot_react) res[i] = n[i];
     }
 };
 
@@ -272,6 +294,11 @@ auto EquilibriumProblem::operator=(EquilibriumProblem other) -> EquilibriumProbl
     return *this;
 }
 
+auto EquilibriumProblem::update(const EquilibriumConstraints& constraints) -> void
+{
+    pimpl->update(constraints);
+}
+
 auto EquilibriumProblem::dims() const -> const EquilibriumDims&
 {
     return pimpl->dims;
@@ -282,14 +309,19 @@ auto EquilibriumProblem::conservationMatrix() const -> MatrixXd
     return pimpl->conservationMatrix();
 }
 
-auto EquilibriumProblem::objective(const ChemicalProps& props0) const -> EquilibriumObjective
+auto EquilibriumProblem::objective(const ChemicalState& state0) const -> EquilibriumObjective
 {
-    return pimpl->objective(props0);
+    return pimpl->objective(state0);
 }
 
-auto EquilibriumProblem::update(const EquilibriumConstraints& constraints) -> void
+auto EquilibriumProblem::xlower(const ChemicalState& state0, ArrayXdRef res) const -> void
 {
-    pimpl->update(constraints);
+    pimpl->xlower(state0, res);
+}
+
+auto EquilibriumProblem::xupper(const ChemicalState& state0, ArrayXdRef res) const -> void
+{
+    pimpl->xupper(state0, res);
 }
 
 } // namespace Reaktoro
