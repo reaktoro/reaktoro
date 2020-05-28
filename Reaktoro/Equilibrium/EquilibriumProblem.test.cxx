@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
@@ -47,9 +47,11 @@ TEST_CASE("Testing EquilibriumProblem", "[EquilibriumProblem]")
 
     constraints.prevent().fromReacting("H2O(aq) = H+(aq) + OH-(aq)");
     constraints.prevent().fromReacting("CO2(g) = CO2(aq)");
+    constraints.prevent().fromReacting("CaCO3(s)");
+    constraints.prevent().fromIncreasing("NaCl(s)");
+    constraints.prevent().fromDecreasing("SiO2(s)");
 
     EquilibriumProblem problem(constraints);
-
 
     //-------------------------------------------------------------------------
     // Testing EquilibriumProblem::conservationMatrix
@@ -85,9 +87,12 @@ TEST_CASE("Testing EquilibriumProblem", "[EquilibriumProblem]")
     //-------------------------------------------------------------------------
     // Testing EquilibriumProblem::objective
     //-------------------------------------------------------------------------
-    ChemicalProps props0(system);
+    ChemicalState state0(system);
+    state0.setTemperature(298.15);
+    state0.setPressure(1.0e5);
+    state0.setSpeciesAmounts(1.0);
 
-    auto obj = problem.objective(props0);
+    auto obj = problem.objective(state0);
 
     VectorXd x = VectorXd::Ones(dims.Nx);
 
@@ -97,4 +102,24 @@ TEST_CASE("Testing EquilibriumProblem", "[EquilibriumProblem]")
     REQUIRE_NOTHROW( obj.f(x) );
     REQUIRE_NOTHROW( obj.g(x, g) );
     REQUIRE_NOTHROW( obj.H(x, H) );
+
+    //-------------------------------------------------------------------------
+    // Testing EquilibriumProblem::xlower
+    //-------------------------------------------------------------------------
+    ArrayXd xlower(dims.Nx);
+
+    problem.xlower(state0, xlower);
+
+    REQUIRE( xlower[system.species().index("CaCO3(s)")] == state0.speciesAmount("CaCO3(s)") );
+    REQUIRE( xlower[system.species().index("SiO2(s)")]  == state0.speciesAmount("SiO2(s)")  );
+
+    //-------------------------------------------------------------------------
+    // Testing EquilibriumProblem::xupper
+    //-------------------------------------------------------------------------
+    ArrayXd xupper(dims.Nx);
+
+    problem.xupper(state0, xupper);
+
+    REQUIRE( xupper[system.species().index("CaCO3(s)")] == state0.speciesAmount("CaCO3(s)") );
+    REQUIRE( xupper[system.species().index("NaCl(s)")]  == state0.speciesAmount("NaCl(s)")  );
 }

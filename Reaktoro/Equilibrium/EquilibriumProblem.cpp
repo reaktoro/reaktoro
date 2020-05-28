@@ -261,19 +261,21 @@ struct EquilibriumProblem::Impl
     /// Set the lower bounds of the species amounts based on the given equilibrium constraints.
     auto xlower(const ChemicalState& state0, ArrayXdRef res) const -> void
     {
+        auto nlower = res.head(dims.Nn);
         const auto& n = state0.speciesAmounts();
         const auto& restrictions = constraints.data().restrictions;
-        for(auto i : restrictions.species_cannot_decrease) res[i] = n[i];
-        for(auto i : restrictions.species_cannot_react) res[i] = n[i];
+        for(auto i : restrictions.species_cannot_decrease) nlower[i] = n[i];
+        for(auto i : restrictions.species_cannot_react) nlower[i] = n[i];
     }
 
     /// Set the upper bounds of the species amounts based on the given equilibrium constraints.
     auto xupper(const ChemicalState& state0, ArrayXdRef res) const -> void
     {
+        auto nupper = res.head(dims.Nn);
         const auto& n = state0.speciesAmounts();
         const auto& restrictions = constraints.data().restrictions;
-        for(auto i : restrictions.species_cannot_increase) res[i] = n[i];
-        for(auto i : restrictions.species_cannot_react) res[i] = n[i];
+        for(auto i : restrictions.species_cannot_increase) nupper[i] = n[i];
+        for(auto i : restrictions.species_cannot_react) nupper[i] = n[i];
     }
 };
 
