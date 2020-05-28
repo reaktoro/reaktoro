@@ -37,7 +37,7 @@ public:
     Database(const Database& other);
 
     /// Construct a Database instance with given species.
-    explicit Database(SpeciesListConstRef species);
+    explicit Database(const Vec<Species>& species);
 
     /// Destroy this Database instance.
     ~Database();
@@ -52,7 +52,7 @@ public:
     auto addSpecies(const Species& species) -> void;
 
     /// Add a list of species in the database.
-    auto addSpecies(SpeciesListConstRef species) -> void;
+    auto addSpecies(const Vec<Species>& species) -> void;
 
     /// Attach data to this database whose type is known at runtime only.
     auto attachData(const Any& data) -> void;
