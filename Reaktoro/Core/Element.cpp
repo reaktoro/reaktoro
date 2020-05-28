@@ -29,7 +29,7 @@ namespace detail {
 auto getElementFromPeriodicTable(String symbol) -> Element
 {
     const auto element = PeriodicTable::elementWithSymbol(symbol);
-    error(!element.has_value(), "Cannot proceed with Elemental(symbol) constructor. "
+    error(!element.has_value(), "Cannot proceed with Element(symbol) constructor. "
         "PeriodicTable contains no element with symbol ", symbol, ". "
         "Use method PeriodicTable::append (in C++) or PeriodicTable.append (in Python) "
         "to add a new Element with this symbol. Or construct the Element object without "
