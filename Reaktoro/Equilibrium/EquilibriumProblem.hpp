@@ -24,7 +24,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalProps;
+class ChemicalState;
 class ChemicalSystem;
 class EquilibriumConstraints;
 class EquilibriumDims;
@@ -58,6 +58,13 @@ public:
     /// Assign a copy of an EquilibriumProblem object to this.
     auto operator=(EquilibriumProblem other) -> EquilibriumProblem&;
 
+    /// Update the equilibrium constraints for the next chemical equilibrium calculation.
+    /// @warning An error will result if new constraints are imposed. This
+    /// method should only be used to update the parameters in the existing
+    /// constraints. For example, a calculation was done before with a fixed pH
+    /// value, and a new value needs to be imposed for the next calculation.
+    auto update(const EquilibriumConstraints& constraints) -> void;
+
     /// Return the dimensions of the variables in the equilibrium problem.
     auto dims() const -> const EquilibriumDims&;
 
@@ -65,15 +72,18 @@ public:
     auto conservationMatrix() const -> MatrixXd;
 
     /// Return the objective function to be minimized based on the given equilibrium constraints.
-    /// @param props0 The initial chemical properties of the system.
-    auto objective(const ChemicalProps& props0) const -> EquilibriumObjective;
+    /// @param state0 The initial chemical state of the system.
+    auto objective(const ChemicalState& state0) const -> EquilibriumObjective;
 
-    /// Update the equilibrium constraints for the next chemical equilibrium calculation.
-    /// @warning An error will result if new constraints are imposed. This
-    /// method should only be used to update the parameters in the existing
-    /// constraints. For example, a calculation was done before with a fixed pH
-    /// value, and a new value needs to be imposed for the next calculation.
-    auto update(const EquilibriumConstraints& constraints) -> void;
+    /// Set the lower bounds of the species amounts based on the given equilibrium constraints.
+    /// @param state0 The initial chemical state of the system.
+    /// @param res The array where the lower bounds are set.
+    auto xlower(const ChemicalState& state0, ArrayXdRef res) const -> void;
+
+    /// Set the upper bounds of the species amounts based on the given equilibrium constraints.
+    /// @param state0 The initial chemical state of the system.
+    /// @param res The array where the upper bounds are set.
+    auto xupper(const ChemicalState& state0, ArrayXdRef res) const -> void;
 
 private:
     struct Impl;
