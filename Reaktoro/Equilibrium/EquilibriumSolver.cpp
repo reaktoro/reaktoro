@@ -39,25 +39,6 @@
 namespace Reaktoro {
 namespace detail {
 
-
-// auto createOptimaProblem(const EquilibriumConstraints& constraints) -> Optima::Problem
-// {
-
-// }
-
-// auto createOptimaProblem(const EquilibriumConstraints& constraints) -> Optima::Problem
-// {
-
-// }
-
-// auto updateOptimaProblem(const EquilibriumConstraints& constraints, Optima::Problem& problem)
-// {
-
-// }
-
-
-
-
 /// Return the Optima::Dims object with dimensions of the optimization problem.
 auto dims(const EquilibriumProblem& problem) -> Optima::Dims
 {
@@ -65,6 +46,26 @@ auto dims(const EquilibriumProblem& problem) -> Optima::Dims
     dims.x = problem.dims().Nx;
     dims.be = problem.dims().Nc;
     return dims;
+}
+
+/// Return a partially initialized Optima::Problem object
+auto initOptProblem(const EquilibriumProblem& problem) -> Optima::Problem
+{
+    Optima::Problem oproblem(dims(problem));
+    // TODO: This needs to be improved in Optima. Create a Constraints class
+    // where constraints can be set. Implement Solver(const Constraints&).
+    // Ensure the Ae matrix is not pure zeros! Use:
+    //
+    // solver.problem.f = new_objective_fn()
+    // solver.problem.be = new_be_values()
+    // solver.problem.xlower = new_lower_bounds()
+    // solver.problem.Ae does not exist because cannot be changed after construction!
+    // solver.solve(state)
+
+    // Set the coefficient matrix of the linear equality constraints
+    oproblem.Ae = problem.conservationMatrix();
+
+    return oproblem;
 }
 
 } // namespace detail
@@ -81,10 +82,10 @@ struct EquilibriumSolver::Impl
     EquilibriumDims dims;
 
     /// The equilibrium problem with conservation matrix and objective function
-    EquilibriumProblem eqproblem;
+    EquilibriumProblem problem;
 
     /// The options of the equilibrium solver
-    EquilibriumOptions eqoptions;
+    EquilibriumOptions options;
 
     /// The optimization problem corresponding to the constrained equilibrium calculation.
     Optima::Problem optproblem;
@@ -106,32 +107,42 @@ struct EquilibriumSolver::Impl
     : system(ecs.system()),
       constraints(ecs),
       dims(ecs),
-      eqproblem(ecs),
-      optproblem(detail::dims(eqproblem)),
-      optstate(detail::dims(eqproblem)),
+      problem(ecs),
+      optproblem(detail::initOptProblem(problem)),
+      optstate(detail::dims(problem)),
       optsolver(optproblem)
     {
         // Prevent new control variables, functional constraints, and inert reactions
         constraints.lock();
+
+        // Initialize the equilibrium solver with the default options
+        updateOptions(options);
+    }
+
+    /// Update the options for the equilibrium calculation.
+    auto updateOptions(const EquilibriumOptions& options) -> void
+    {
+        // Set the lower bounds of the species amounts
+        optproblem.xlower.head(dims.Nn).fill(options.epsilon);
     }
 
     /// Update the optimization options before a new equilibrium calculation.
     auto updateOptOptions()
     {
-        // TODO: Implement updateOptOptions in EquilibriumSolver::Impl
+        optoptions.output.active = options.optimum.output.active;
     }
 
     /// Update the optimization problem before a new equilibrium calculation.
-    auto updateOptProblem(ChemicalState& state0)
+    auto updateOptProblem(ChemicalState& state0, ArrayXdConstRef b)
     {
         // Update the equilibrium problem with updated equilibrium constraints
-        eqproblem.update(constraints);
+        problem.update(constraints);
 
         // Ensure the chemical properties in state0 are in sync with its (T,P,n)
-        state0.props().update(state0);
+        state0.props().update(state0); // TODO: This needs to be improved to avoid accidental unsync issues!
 
         // Create the objective function corresponding to the constrained equilibrium calculation
-        EquilibriumObjective obj = eqproblem.objective(state0.props());
+        EquilibriumObjective obj = problem.objective(state0);
 
         // Update the objective function in the Optima::Problem object
         optproblem.f = [=](VectorXdConstRef x, Optima::ObjectiveResult& res)
@@ -140,17 +151,29 @@ struct EquilibriumSolver::Impl
             if(res.requires.g) obj.g(x, res.g);
             if(res.requires.H) obj.H(x, res.H);
         };
+
+        /// Update the right-hand side vector of the linear equality constraints
+        optproblem.be = b;
+
+        // Update the lower and upper bounds of the variables
+        problem.xlower(state0, optproblem.xlower);
+        problem.xupper(state0, optproblem.xupper);
     }
 
     /// Update the initial state variables before the new equilibrium calculation.
     auto updateOptState(const ChemicalState& state0)
     {
-        optstate.x.head(dims.Nn)  = state0.speciesAmounts();
-        optstate.x.tail(dims.Ncv) = state0.equilibrium().controlVariables();
+        const auto& n = state0.speciesAmounts();
+        const auto& y = state0.equilibrium().lagrangeMultipliers();
+        const auto& z = state0.equilibrium().complementarityVariables();
+        const auto& v = state0.equilibrium().controlVariables();
 
-        optstate.y = state0.equilibrium().lagrangeMultipliers();
+        optstate.x.head(dims.Nn) = n;
 
-        optstate.z.head(dims.Nn) = state0.equilibrium().complementarityVariables();
+        if(v.size() == dims.Ncv) optstate.x.tail(dims.Ncv) = v;
+        if(y.size() == dims.Nc)  optstate.y = y;
+        if(z.size() == dims.Ne)  optstate.z.head(dims.Nn) = z;
+
         optstate.z.tail(dims.Ncv).fill(0.0); // because the control variables don't have lower/upper bounds
     }
 
@@ -158,7 +181,6 @@ struct EquilibriumSolver::Impl
     auto updateChemicalState(ChemicalState& state)
     {
         state.speciesAmounts() = optstate.x.head(dims.Nn);
-
         state.equilibrium().controlVariables() = optstate.x.tail(dims.Ncv);
         state.equilibrium().lagrangeMultipliers() = optstate.y;
         state.equilibrium().complementarityVariables() = optstate.z.head(dims.Nn);
@@ -167,10 +189,27 @@ struct EquilibriumSolver::Impl
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
     auto solve(ChemicalState& state0) -> EquilibriumResult
     {
+        // The conservation matrix Cn in C = [Cn Cp Cq] corresponding to the
+        // chemical species (not the control variables!)
+        const MatrixXd Cn = optproblem.Ae.leftCols(dims.Ne);
+
+        // The initial amounts of the species
+        const VectorXd n0 = state0.speciesAmounts();
+
+        // Compute the amounts of the components that need to be conserved
+        optproblem.be = Cn * n0;
+
+        // Solve the equilibrium problem
+        return solve(state0, optproblem.be);
+    }
+
+    /// Solve an equilibrium problem with given chemical state in disequilibrium.
+    auto solve(ChemicalState& state0, ArrayXdConstRef b) -> EquilibriumResult
+    {
         EquilibriumResult eqresult;
 
         updateOptOptions();
-        updateOptProblem(state0);
+        updateOptProblem(state0, b);
         updateOptState(state0);
 
         optresult = optsolver.solve(optstate, optproblem);
@@ -609,7 +648,7 @@ auto EquilibriumSolver::operator=(EquilibriumSolver other) -> EquilibriumSolver&
 
 auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
 {
-    pimpl->eqoptions = options;
+    pimpl->options = options;
 }
 
 auto EquilibriumSolver::constraints() const -> const EquilibriumConstraints&
