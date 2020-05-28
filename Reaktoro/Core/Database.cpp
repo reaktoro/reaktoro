@@ -99,7 +99,7 @@ Database::Database(const Database& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-Database::Database(SpeciesListConstRef species)
+Database::Database(const Vec<Species>& species)
 : Database()
 {
     for(const auto& x : species)
@@ -125,7 +125,7 @@ auto Database::addSpecies(const Species& species) -> void
     pimpl->addSpecies(species);
 }
 
-auto Database::addSpecies(SpeciesListConstRef species) -> void
+auto Database::addSpecies(const Vec<Species>& species) -> void
 {
     for(const auto& x : species)
         addSpecies(x);
