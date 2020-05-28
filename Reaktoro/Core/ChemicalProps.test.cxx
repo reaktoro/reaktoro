@@ -386,69 +386,19 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         }
     }
 
-    SECTION("testing when species have zero amounts")
+    SECTION("testing when species have zero mole fractions")
     {
         const real T = 300.0;
         const real P = 123.0e5;
 
-        const ArrayXr n = ArrayXr{{ 0.0, 0.0, 0.0 }};
-        const ArrayXr x = ArrayXr{{ 0.0, 0.0, 1.0 }}; // the solid phase has only one species, so xi = 1 for that species
+        // The gas phase has last species with zero mole fraction!
+        const ArrayXr n1 = ArrayXr{{ 1.0, 0.0, 1.0 }};
 
-        const ArrayXd nsumphases = ArrayXd{{ 0.0, 0.0 }};
+        REQUIRE_THROWS( props.update(T, P, n1) );
 
-        const ArrayXr G0  = ArrayXr{{ 0.1, 0.1, 1.1 }} * (T*P)*(T*P);
-        const ArrayXr H0  = ArrayXr{{ 0.2, 0.2, 1.2 }} * (T*P)*(T*P);
-        const ArrayXr V0  = ArrayXr{{ 0.3, 0.3, 1.3 }} * (T*P)*(T*P);
-        const ArrayXr Cp0 = ArrayXr{{ 0.4, 0.4, 1.4 }} * (T*P)*(T*P);
-        const ArrayXr Cv0 = ArrayXr{{ 0.5, 0.5, 1.5 }} * (T*P)*(T*P);
-        const ArrayXr S0  = (H0 - G0)/T;
-        const ArrayXr U0  = H0 - P*V0;
-        const ArrayXr A0  = G0 - P*V0;
+        // The single-species solid phase has unit mole fraction!
+        const ArrayXr n2 = ArrayXr{{ 1.0, 1.0, 0.0 }};
 
-        const ArrayXr Vex  = ArrayXr{{ 0.0, 0.0 }};
-        const ArrayXr VexT = ArrayXr{{ 0.0, 0.0 }};
-        const ArrayXr VexP = ArrayXr{{ 0.0, 0.0 }};
-        const ArrayXr Gex  = ArrayXr{{ 0.0, 0.0 }};
-        const ArrayXr Hex  = ArrayXr{{ 0.0, 0.0 }};
-        const ArrayXr Cpex = ArrayXr{{ 0.0, 0.0 }};
-        const ArrayXr Cvex = ArrayXr{{ 0.0, 0.0 }};
-
-        const ArrayXr ln_g = ArrayXr{{ 0.0, 0.0, 0.0 }};
-        const ArrayXr ln_a = ArrayXr{{ 0.0, 0.0, 0.0 }};
-        const ArrayXr u    = G0 + R*T*ln_a;
-
-        REQUIRE_NOTHROW( props.update(T, P, n) );
-
-        REQUIRE( props.temperature() == T );
-        REQUIRE( props.pressure() == P );
-
-        REQUIRE( props.standardGibbsEnergies()       .isApprox(G0)  );
-        REQUIRE( props.standardEnthalpies()          .isApprox(H0)  );
-        REQUIRE( props.standardVolumes()             .isApprox(V0)  );
-        REQUIRE( props.standardEntropies()           .isApprox(S0)  );
-        REQUIRE( props.standardInternalEnergies()    .isApprox(U0)  );
-        REQUIRE( props.standardHelmholtzEnergies()   .isApprox(A0)  );
-        REQUIRE( props.standardHeatCapacitiesConstP().isApprox(Cp0) );
-        REQUIRE( props.standardHeatCapacitiesConstV().isApprox(Cv0) );
-
-        REQUIRE( props.speciesAmounts()        .isApprox(n)    );
-        REQUIRE( props.moleFractions()         .isApprox(x)    );
-        REQUIRE( props.lnActivityCoefficients().isApprox(ln_g) );
-        REQUIRE( props.lnActivities()          .isApprox(ln_a) );
-        REQUIRE( props.chemicalPotentials()    .isApprox(u)    );
-
-        const real Gtot = (G0 * n).sum() + (nsumphases * Gex).sum();
-        const real Htot = (H0 * n).sum() + (nsumphases * Hex).sum();
-        const real Vtot = (V0 * n).sum() + (nsumphases * Vex).sum();
-        const real Stot = (Htot - Gtot)/T;
-        const real Utot = Htot - P*Vtot;
-        const real Atot = Gtot - P*Vtot;
-
-        REQUIRE( grad(props.gibbsEnergy())     == Approx(Gtot) );
-        REQUIRE( grad(props.enthalpy())        == Approx(Htot) );
-        REQUIRE( grad(props.volume())          == Approx(Vtot) );
-        REQUIRE( grad(props.entropy())         == Approx(Stot) );
-        REQUIRE( grad(props.internalEnergy())  == Approx(Utot) );
-        REQUIRE( grad(props.helmholtzEnergy()) == Approx(Atot) );
+        REQUIRE_NOTHROW( props.update(T, P, n2) );
     }
 }

@@ -414,8 +414,8 @@ public:
     auto mass() const -> real
     {
         Real sum = 0.0;
-        for(auto i = 0; i < _phase.species().size(); ++i)
-            sum += _data.n[i] * _phase.species(i).molarMass();
+        for(auto i = 0; i < phase().species().size(); ++i)
+            sum += _data.n[i] * phase().species(i).molarMass();
         return sum;
     }
 
@@ -515,7 +515,7 @@ private:
         auto& ln_a = _data.ln_a;
         auto& u    = _data.u;
 
-        const auto& species = _phase.species();
+        const auto& species = phase().species();
         const auto size = species.size();
 
         assert(    n.size() == size );
@@ -532,7 +532,7 @@ private:
         StandardThermoProps aux;
         for(auto i = 0; i < size; ++i)
         {
-            auto standard_thermo_props_fn = _phase.species(i).standardThermoPropsFn();
+            auto standard_thermo_props_fn = phase().species(i).standardThermoPropsFn();
             aux = standard_thermo_props_fn ? standard_thermo_props_fn(T, P) : StandardThermoProps{};
             G0[i]  = aux.G0;
             H0[i]  = aux.H0;
@@ -548,11 +548,15 @@ private:
             x = (size == 1) ? 1.0 : 0.0;
         else x = n / nsum;
 
+        // Ensure there are no zero mole fractions
+        error(x.minCoeff() == 0.0, "Could not compute the chemical properties of phase ",
+            phase().name(), " because it has one or more species with zero amounts.");
+
         Vec<Any> extra;
         ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
         ActivityArgs args{ T, P, x, extra };
         ActivityPropsFn activity_props_fn = use_ideal_activity_model ?
-            _phase.idealActivityPropsFn() : _phase.activityPropsFn();
+            phase().idealActivityPropsFn() : phase().activityPropsFn();
 
         if(nsum == 0.0) aprops = 0.0;
         else activity_props_fn(aprops, args);
