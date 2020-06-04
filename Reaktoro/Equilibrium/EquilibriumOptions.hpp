@@ -17,10 +17,8 @@
 
 #pragma once
 
-// Reaktoro includes
-#include <Reaktoro/Optimization/OptimumMethod.hpp>
-#include <Reaktoro/Optimization/OptimumOptions.hpp>
-#include <Reaktoro/Optimization/NonlinearSolver.hpp>
+// Optima includes
+#include <Optima/Options.hpp>
 
 namespace Reaktoro {
 
@@ -53,37 +51,25 @@ struct SmartEquilibriumOptions
 /// The options for the equilibrium calculations
 struct EquilibriumOptions
 {
-    /// Construct a default EquilibriumOptions instance
-    EquilibriumOptions();
+    /// The options for the optimisation solver.
+    Optima::Options optima;
 
-    /// Construct a custom EquilibriumOptions instance by parsing a string
-    EquilibriumOptions(const char* str);
+    /// The default lower bound for the amounts of the species.
+    double epsilon = 1e-40;
 
-    /// The parameter ε for the numerical representation of a zero molar amount.
-    /// The molar amount of the `i`-th species is considered zero if `n[i] < ε*min(b)`,
-    /// where `b` is the vector of element molar amounts.
-    double epsilon = 1e-20;
-
-    /// The boolean flag that indicates if warm-start strategy should be used when possible.
-    /// Setting this flag to true will cause equilibrium calculations to use the currect
-    /// chemical state as an initial guess to the equilibrium calculation. If the current
-    /// chemical state is detected to be uninitiallized (e.g., all species with
-    /// zero molar amounts), then cold-start is inevitably used. In this case, a first estimate
-    /// of a initial guess will be done using a simplex algorithm, which in most cases generates
-    /// a chemical state that works well as initial guess for all equilibrium algorithms.
+    /// The boolean flag that indicates if warm-start strategy should be used
+    /// when possible. Setting this flag to true will cause equilibrium
+    /// calculations to use the currect chemical state as an initial guess to
+    /// the equilibrium calculation. If the current chemical state is detected
+    /// to be uninitiallized (e.g., all species with zero molar amounts), then
+    /// cold-start is inevitably used. In this case, a first estimate of a
+    /// initial guess will be done using a simplex algorithm, which in most
+    /// cases generates a chemical state that works well as initial guess for
+    /// all equilibrium algorithms.
     bool warmstart = true;
 
     /// The calculation mode of the Hessian of the Gibbs energy function
     GibbsHessian hessian = GibbsHessian::ApproximationDiagonal;
-
-    /// The optimisation method to be used for the equilibrium calculation.
-    OptimumMethod method = OptimumMethod::IpNewton;
-
-    /// The options for the optimisation calculation.
-    OptimumOptions optimum;
-
-    /// The options for the nonlinear solver.
-    NonlinearOptions nonlinear;
 
     /// The options for the smart equilibrium calculation.
     SmartEquilibriumOptions smart;
