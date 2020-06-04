@@ -97,6 +97,13 @@ struct ChemicalState::Impl
         n = values;
     }
 
+    auto setSpeciesAmounts(ArrayXdConstRef values) -> void
+    {
+        assert(n.size() == values.size());
+        assert(values.minCoeff() >= 0.0);
+        n = values;
+    }
+
     auto setSpeciesAmount(Index ispecies, real amount) -> void
     {
         assert(ispecies < system.species().size());
@@ -234,6 +241,11 @@ auto ChemicalState::setSpeciesAmounts(real val) -> void
 }
 
 auto ChemicalState::setSpeciesAmounts(ArrayXrConstRef n) -> void
+{
+    pimpl->setSpeciesAmounts(n);
+}
+
+auto ChemicalState::setSpeciesAmounts(ArrayXdConstRef n) -> void
 {
     pimpl->setSpeciesAmounts(n);
 }
