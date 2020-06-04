@@ -73,6 +73,9 @@ public:
     /// Set the amounts of the species in the chemical state (in mol).
     auto setSpeciesAmounts(ArrayXrConstRef n) -> void;
 
+    /// Set the amounts of the species in the chemical state (in mol).
+    auto setSpeciesAmounts(ArrayXdConstRef n) -> void;
+
     /// Set the amount of a species with given index (in mol).
     auto setSpeciesAmount(Index ispecies, real amount) -> void;
 
