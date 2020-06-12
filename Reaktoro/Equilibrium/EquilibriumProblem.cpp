@@ -227,7 +227,10 @@ struct EquilibriumProblem::Impl
             auto gpe = gp.head(dims.Npe); // where we set the residuals of the equation constraints
             auto gpp = gp.tail(dims.Npp); // where we set the residuals of the property preservation constraints
 
+            const auto RT = universalGasConstant * T;
+
             gn = props.chemicalPotentials(); // set the current chemical potentials of species
+            gn /= RT;
 
             for(auto i = 0; i < dims.Nq; ++i)
                 gq[i] = uconstraints[i].fn(T, P); // set the fixed chemical potentials using current T and P
