@@ -17,8 +17,8 @@
 
 #pragma once
 
-// Reaktoro includes
-#include <Reaktoro/Optimization/OptimumResult.hpp>
+// Optima includes
+#include <Optima/Result.hpp>
 
 namespace Reaktoro {
 
@@ -33,8 +33,8 @@ struct SmartEquilibriumResult
 /// @see ChemicalState
 struct EquilibriumResult
 {
-    /// The result of the optimisation calculation
-    OptimumResult optimum;
+    /// The result of the optimisation calculation using Optima.
+    Optima::Result optima;
 
     /// The boolean flag that indicates if smart equilibrium calculation was used.
     SmartEquilibriumResult smart;
