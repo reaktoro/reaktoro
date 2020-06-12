@@ -122,8 +122,6 @@ struct EquilibriumSolver::Impl
     /// The formula matrix of the inert species
     Matrix Ai;
 
-    int skipped = 0;
-
     /// Construct a default Impl instance
     Impl()
     {}
