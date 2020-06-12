@@ -18,7 +18,16 @@
 // Catch includes
 #include <catch2/catch.hpp>
 
+
+
+// C++ includes
+#include <iostream>
+
+
+
+
 // Reaktoro includes
+#include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -32,23 +41,26 @@ using namespace Reaktoro;
 TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 {
     const auto db = Database({
-        Species("H2O(aq)"       ).withStandardGibbsEnergy( -237181.72),
+        Species("H2O"           ).withStandardGibbsEnergy( -237181.72),
         Species("H+"            ).withStandardGibbsEnergy(       0.00),
         Species("OH-"           ).withStandardGibbsEnergy( -157297.48),
-        Species("H2(aq)"        ).withStandardGibbsEnergy(   17723.42),
-        Species("O2(aq)"        ).withStandardGibbsEnergy(   16543.54),
+        Species("H2"            ).withStandardGibbsEnergy(   17723.42),
+        Species("O2"            ).withStandardGibbsEnergy(   16543.54),
         Species("Na+"           ).withStandardGibbsEnergy( -261880.74),
         Species("Cl-"           ).withStandardGibbsEnergy( -131289.74),
-        Species("NaCl(aq)"      ).withStandardGibbsEnergy( -388735.44),
-        Species("HCl(aq)"       ).withStandardGibbsEnergy( -127235.44),
-        Species("NaOH(aq)"      ).withStandardGibbsEnergy( -417981.60),
+        Species("NaCl"          ).withStandardGibbsEnergy( -388735.44),
+        Species("HCl"           ).withStandardGibbsEnergy( -127235.44),
+        Species("NaOH"          ).withStandardGibbsEnergy( -417981.60),
         Species("Ca++"          ).withStandardGibbsEnergy( -552790.08),
         Species("Mg++"          ).withStandardGibbsEnergy( -453984.92),
-        Species("CO2(aq)"       ).withStandardGibbsEnergy( -385974.00),
+        Species("CH4"           ).withStandardGibbsEnergy(  -34451.06),
+        Species("CO2"           ).withStandardGibbsEnergy( -385974.00),
         Species("HCO3-"         ).withStandardGibbsEnergy( -586939.89),
         Species("CO3--"         ).withStandardGibbsEnergy( -527983.14),
-        Species("CaCl2(aq)"     ).withStandardGibbsEnergy( -811696.00),
-        Species("SiO2(aq)"      ).withStandardGibbsEnergy( -833410.96),
+        Species("CaCl2"         ).withStandardGibbsEnergy( -811696.00),
+        Species("CaCO3"         ).withStandardGibbsEnergy(-1099764.40),
+        Species("MgCO3"         ).withStandardGibbsEnergy( -998971.84),
+        Species("SiO2"          ).withStandardGibbsEnergy( -833410.96),
         Species("CO2(g)"        ).withStandardGibbsEnergy( -394358.74),
         Species("O2(g)"         ).withStandardGibbsEnergy(       0.00),
         Species("H2(g)"         ).withStandardGibbsEnergy(       0.00),
@@ -62,23 +74,160 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         Species("SiO2(s)"       ).withStandardGibbsEnergy( -856238.86).withName("Quartz"   ),
     });
 
-    Phases phases(db, AqueousSolution("H2O(aq) H+ OH-"));
+    // auto aqueous_solution = GENERATE(
+    //     AqueousSolution(speciate("H O")),
+    //     AqueousSolution(speciate("H O Na Cl")),
+    //     AqueousSolution(speciate("H O Na Cl C")),
+    //     AqueousSolution(speciate("H O Na Cl C Ca")),
+    //     AqueousSolution(speciate("H O Na Cl C Ca Mg")),
+    //     AqueousSolution(speciate("H O Na Cl C Ca Mg Si"))
+    // );
 
-    ChemicalSystem system(db, phases);
+    // auto gaseous_solution = GENERATE(
+    //     GaseousSolution("CO2(g)"),
+    //     GaseousSolution("CO2(g) H2O(g)"),
+    //     GaseousSolution("CO2(g) H2O(g) O2(g)"),
+    //     GaseousSolution("CO2(g) H2O(g) O2(g) H2(g)")
+    // );
+
+    // auto minerals = GENERATE(
+    //     Minerals("Halite"),
+    //     Minerals("Halite Calcite"),
+    //     Minerals("Halite Calcite Magnesite"),
+    //     Minerals("Halite Calcite Magnesite Dolomite"),
+    //     Minerals("Halite Calcite Magnesite Dolomite Quartz")
+    // );
+
+    // auto phases = GENERATE_COPY(
+    //     Phases(db, aqueous_solution),
+    //     Phases(db, aqueous_solution, gaseous_solution),
+    //     Phases(db, aqueous_solution, gaseous_solution, minerals),
+    //     Phases(db, aqueous_solution, minerals)
+    // );
+
+    const auto phases = Phases(db,
+        // AqueousSolution(speciate("H O"))
+        AqueousSolution(speciate("H O Na Cl C Ca Mg Si"))
+        // GaseousSolution(speciate("H O C")),
+        // Minerals("Halite Calcite Magnesite Dolomite Quartz")
+        // Minerals("Quartz")
+    );
+
+    const auto system = ChemicalSystem(db, phases);
+
+    // const auto T = GENERATE(25.0, 60.0);
+    // const auto P = GENERATE(1.0, 100.0);
+
+    // const auto nH2O    = GENERATE(55.0);
+    // const auto nNaCl   = GENERATE(0.0, 1.0, 5.0, 10.0);
+    // const auto nCO2    = GENERATE(0.0, 0.1, 1.0, 5.0);
+    // const auto nO2     = GENERATE(0.0, 0.1);
+    // const auto nH2     = GENERATE(0.0, 0.1);
+    // const auto nCH4    = GENERATE(0.0, 0.1);
+    // const auto nCaCO3  = GENERATE(0.0, 1e-3, 5.0);
+    // const auto nMgCO3  = GENERATE(0.0, 1e-3, 5.0);
+    // const auto nSiO2   = GENERATE(0.0, 1e-6, 1.0);
+
+    // const auto T = 60.0;
+    // const auto P = 100.0;
+
+    const auto T = 25.0;
+    const auto P = 1.0;
+
+    const auto nH2O    = 55.0;
+    const auto nNaCl   = 0.0e-2;
+    const auto nCO2    = 0.0e-2;
+    const auto nO2     = 0.0e-2;
+    const auto nH2     = 0.0e-2;
+    const auto nCH4    = 0.0e-2;
+    const auto nCaCO3  = 0.0e-2;
+    const auto nMgCO3  = 0.0e-2;
+    const auto nSiO2   = 0.0e-2;
 
     ChemicalState state(system);
-    state.setTemperature(25.0, "celsius");
-    state.setPressure(1.0, "bar");
-    state.setSpeciesAmounts(1e-6);
-    state.setSpeciesMass("H2O(aq)", 1.0, "kg");
+    state.setTemperature(T, "celsius");
+    state.setPressure(P, "bar");
+    state.setSpeciesAmount("H2O"   , nH2O   , "mol");
+    // state.setSpeciesAmount("NaCl"  , nNaCl  , "mol");
+    // state.setSpeciesAmount("CO2"   , nCO2   , "mol");
+    // state.setSpeciesAmount("O2"    , nO2    , "mol");
+    // state.setSpeciesAmount("H2"    , nH2    , "mol");
+    // state.setSpeciesAmount("CH4"   , nCH4   , "mol");
+    // state.setSpeciesAmount("CaCO3" , nCaCO3 , "mol");
+    // state.setSpeciesAmount("MgCO3" , nMgCO3 , "mol");
+    // state.setSpeciesAmount("SiO2"  , nSiO2  , "mol");
+
+    // VectorXd n(5); n << 55, 2.51011e-13, 2.51011e-13, 2.28356e-31 ,1.14178e-31;
+    // state.setSpeciesAmounts(n);
+
 
     EquilibriumOptions options;
-    options.optimum.output.active = true;
+    options.optima.output = true;
+    options.epsilon = 1e-40;
+    options.optima.tolerance = 1e-10;
+    // options.optima.tolerance = 1e-20;
+    options.optima.kkt.method = Optima::SaddlePointMethod::Rangespace;
+    // options.optima.kkt.method = Optima::SaddlePointMethod::Fullspace;
+    // options.optima.kkt.method = Optima::SaddlePointMethod::Nullspace;
 
     EquilibriumSolver solver(system);
     solver.setOptions(options);
 
-    solver.solve(state);
+    auto start = time();
 
-    std::cout << state.speciesAmounts() << std::endl;
+    ChemicalState copy(state);
+    auto result = solver.solve(copy);
+
+    std::cout << "Time (s) = " << elapsed(start) << std::endl;
+
+
+    // const auto kktmethod = GENERATE(
+    //     // Optima::SaddlePointMethod::Fullspace,
+    //     // Optima::SaddlePointMethod::Nullspace,
+    //     Optima::SaddlePointMethod::Rangespace
+    // );
+
+    // EquilibriumOptions options;
+    // options.optima.output = true;
+    // options.epsilon = 1e-90;
+    // options.optima.kkt.method = kktmethod;
+
+    // try
+    // {
+    //     EquilibriumSolver solver(system);
+    //     solver.setOptions(options);
+
+    //     ChemicalState copy(state);
+    //     auto result = solver.solve(copy);
+
+    //     if(!result.optima.succeeded)
+    //         throw std::runtime_error("equilibrium calculation failed");
+    // }
+    // catch(...)
+    // {
+    //     EquilibriumSolver solver(system);
+
+    //     options.optima.output = true;
+    //     solver.setOptions(options);
+
+    //     ChemicalState copy(state);
+    //     auto result = solver.solve(copy);
+
+    //     options.optima.output = false;
+    //     solver.setOptions(options);
+
+    //     INFO("      T = " << T      );
+    //     INFO("      P = " << P      );
+    //     INFO("   nH2O = " << nH2O   );
+    //     INFO("  nNaCl = " << nNaCl  );
+    //     INFO("   nCO2 = " << nCO2   );
+    //     INFO("    nO2 = " << nO2    );
+    //     INFO("    nH2 = " << nH2    );
+    //     INFO("   nCH4 = " << nCH4   );
+    //     INFO(" nCaCO3 = " << nCaCO3 );
+    //     INFO(" nMgCO3 = " << nMgCO3 );
+    //     INFO("  nSiO2 = " << nSiO2  );
+
+    //     REQUIRE(false);
+    // }
 }
