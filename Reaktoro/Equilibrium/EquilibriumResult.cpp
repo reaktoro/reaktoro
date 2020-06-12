@@ -21,7 +21,7 @@ namespace Reaktoro {
 
 auto EquilibriumResult::operator+=(const EquilibriumResult& other) -> EquilibriumResult&
 {
-    optimum += other.optimum;
+    optima += other.optima;
     return *this;
 }
 
