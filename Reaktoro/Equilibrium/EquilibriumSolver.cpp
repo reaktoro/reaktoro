@@ -20,13 +20,11 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Connectivity.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
@@ -36,9 +34,7 @@
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
-#include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumSolver.hpp>
-#include <Reaktoro/Optimization/OptimumSolverRefiner.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 
 namespace Reaktoro {
@@ -111,12 +107,6 @@ struct EquilibriumSolver::Impl
     /// The indices of the inert species (i.e., the species in disequilibrium)
     Indices iis;
 
-    /// The indices of the fluid species (i.e., the species in disequilibrium)
-    Indices ifs;
-
-    /// The indices of the solid species (i.e., the species in disequilibrium)
-    Indices iss;
-
     /// The number of species and elements in the system
     unsigned N, E;
 
@@ -159,8 +149,6 @@ struct EquilibriumSolver::Impl
         // Initialize the indices of the equilibrium species and elements
         ies = partition.indicesEquilibriumSpecies();
         iee = partition.indicesEquilibriumElements();
-        ifs = partition.indicesEquilibriumFluidSpecies();
-        iss = partition.indicesEquilibriumSolidSpecies();
 
         // Initialize the indices of the inert species
         iis.clear();
@@ -518,17 +506,6 @@ struct EquilibriumSolver::Impl
         // Set the molar amounts of the elements
         be = Vector::Map(_be, Ee);
 
-        /*
-        // If be is not changed from be_prev too much, skip this simulation
-        Vector be_prev = state.elementAmountsInSpecies(ifs)(iee) + state.elementAmountsInSpecies(iss)(iee);
-        const double diff = (be_prev - be).norm() / be.norm();
-
-        if(diff < 1e-12)
-        {
-            skipped++;
-            return result;
-        }
-        */
         // Set temperature and pressure of the chemical state
         state.setTemperature(T);
         state.setPressure(P);
