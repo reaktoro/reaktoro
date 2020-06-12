@@ -254,7 +254,7 @@ struct SmartEquilibriumSolver::Impl
         state.equilibrium().setIndicesEquilibriumSpecies(ips, Np);
 
         // The indices of the primary species at the calculated equilibrium state
-        const auto& iprimary = ips.head(Np);
+        VectorXiConstRef iprimary = ips.head(Np);
 
         // The chemical potentials at the calculated equilibrium state
         u = properties.chemicalPotentials();
@@ -549,41 +549,6 @@ struct SmartEquilibriumSolver::Impl
         return result;
     }
 
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be, Index istep, Index icell) -> SmartEquilibriumResult
-    {
-        tic(SOLVE_STEP);
-
-        // Absolutely ensure an exact Hessian of the Gibbs energy function is used in the calculations
-        setOptions(options);
-
-        // Reset the result of the last smart equilibrium calculation
-        result = {};
-
-        // Perform a smart estimate of the chemical state
-        timeit( estimate(state, T, P, be),
-                result.timing.estimate= );
-
-        // Perform a learning step if the smart prediction is not sactisfatory
-        if(!result.estimate.accepted)
-        timeit( learn(state, T, P, be), result.timing.learn= );
-
-        result.timing.solve = toc(SOLVE_STEP);
-
-        // Print
-        if(istep == 0 || istep == 19 || istep == 2399)
-        {
-            const auto Ae = partition.formulaMatrixEquilibriumPartition();
-            const auto& ies = partition.indicesEquilibriumSpecies();
-            const auto& n = state.speciesAmounts();
-            const auto& ne = n(ies);
-
-            Vector res = abs(Ae*ne - be);
-            if(icell == 0) std::cout << "res on istep " << istep << "\n" << tr(res) << std::endl;
-            else std::cout << tr(res)  << std::endl;
-        }
-        return result;
-    }
-
     auto outputClusterInfo() const -> void
     {
         //std::cout << "***********************************************************************************" << std::endl;
@@ -669,11 +634,6 @@ auto SmartEquilibriumSolver::setOptions(const SmartEquilibriumOptions& options) 
 auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
-}
-
-auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be, Index istep, Index icell) -> SmartEquilibriumResult
-{
-    return pimpl->solve(state, T, P, be, istep, icell);
 }
 
 auto SmartEquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResult
