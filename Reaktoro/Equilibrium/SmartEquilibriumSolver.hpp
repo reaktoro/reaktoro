@@ -54,6 +54,10 @@ public:
     /// Destroy this SmartEquilibriumSolver instance.
     virtual ~SmartEquilibriumSolver();
 
+    /// Set the partition of the chemical system
+    [[deprecated("EquilibriumSolver::setPartition is deprecated. Use constructor EquilibriumSolver(const Partition&) instead.")]]
+    auto setPartition(const Partition& partition) -> void;
+
     /// Set the options for the equilibrium calculation.
     auto setOptions(const SmartEquilibriumOptions& options) -> void;
 

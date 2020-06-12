@@ -485,7 +485,6 @@ struct SmartEquilibriumSolver::Impl
                     //---------------------------------------------------------------------
                     tic(PRIORITY_UPDATE_STEP);
 
-
                     // Increment priority of the current record (irecord) in the current cluster (jcluster)
                     database.clusters[jcluster].priority.increment(irecord);
 
@@ -515,8 +514,8 @@ struct SmartEquilibriumSolver::Impl
         const auto& ies = partition.indicesEquilibriumSpecies();
         const auto T = state.temperature();
         const auto P = state.pressure();
-        be_aux = state.elementAmountsInSpecies(ies)(iee);
-        return solve(state, T, P, be_aux);
+        be = state.elementAmountsInSpecies(ies)(iee);
+        return solve(state, T, P, be);
     }
 
     /// Solve the equilibrium problem with given problem definition
@@ -654,6 +653,13 @@ auto SmartEquilibriumSolver::operator=(SmartEquilibriumSolver other) -> SmartEqu
 
 SmartEquilibriumSolver::~SmartEquilibriumSolver()
 {
+}
+
+auto SmartEquilibriumSolver::setPartition(const Partition& partition) -> void
+{
+    RuntimeError("Cannot proceed with EquilibriumSolver::setPartition.",
+                 "EquilibriumSolver::setPartition is deprecated. "
+                 "Use constructor EquilibriumSolver(const Partition&) instead.");
 }
 
 auto SmartEquilibriumSolver::setOptions(const SmartEquilibriumOptions& options) -> void
