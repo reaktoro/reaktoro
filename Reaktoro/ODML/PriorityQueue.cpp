@@ -83,6 +83,18 @@ auto PriorityQueue::increment(Index identity) -> void
     //       PRIORITIES AFTER SORTING: 13  5  3 (3) 2 [2] 1
     _priorities[identity] += 1;
 
+    // == CORNER CASES:
+    // IF identity = 0 (the priority of the very first element is increased)
+    // NO SORTING IS APPLIED (THE CHANGE IN PRIORITIES DIDN'T AFFECT THE ORDER)
+    // PRIORITIES BEFORE INCREMENTING: (13)  5  3  2  2  2  1    --- incrementing from 13 to 14
+    //  PRIORITIES AFTER INCREMENTING: (14)  5  3  2  2  3  1  --- (14) does not need to be swapped with anyone
+
+    // == CORNER CASES:
+    // IF _priorities[identity - 1] >= _priorities[identity]
+    // NO SORTING IS APPLIED (THE CHANGE IN PRIORITIES DIDN'T AFFECT THE ORDER)
+    // PRIORITIES BEFORE INCREMENTING: 13  5 (3)  2  2  2  1    --- incrementing from 3 to 4
+    //  PRIORITIES AFTER INCREMENTING: 13  5 (4)  2  2  3  1  --- (4) is still smaller than 5, it does not need to be swapped with anyone
+
     // Avoid sorting if the identity == 0 (the priority of the very first element is increased)
     // or if the increase of priority does not ruin the order in _priorities
     if(!((identity == 0) || (_priorities[identity - 1] >= _priorities[identity]))){
