@@ -271,9 +271,6 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     problem_bc.add("CaCl2", 0.01, "mol");
     problem_bc.add("CO2",   0.75, "mol");
 
-    Partition partition(system);
-    partition.setInertSpecies({"Quartz"});
-
     // Step **: Calculate the equilibrium states for the IC and BC
     ChemicalState state_ic = equilibrate(problem_ic);
     ChemicalState state_bc = equilibrate(problem_bc);

@@ -254,8 +254,7 @@ struct SmartEquilibriumSolver::Impl
         state.equilibrium().setIndicesEquilibriumSpecies(ips, Np);
 
         // The indices of the primary species at the calculated equilibrium state
-        // TODO: is this operation needed? Can't we access primary indices as const auto& iprimary = ips.head(Np);
-        const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
+        const auto& iprimary = ips.head(Np);
 
         // The chemical potentials at the calculated equilibrium state
         u = properties.chemicalPotentials();
