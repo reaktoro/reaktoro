@@ -1,15 +1,27 @@
 # Recommended cmake macro use to write a cmake config file.
 @PACKAGE_INIT@
 
+# Create the REAKTORO_INSTALL_CONFIGDIR variable
+set_and_check(REAKTORO_INSTALL_CONFIGDIR "@PACKAGE_REAKTORO_INSTALL_CONFIGDIR@")
+
 # Ensure dependencies from the conda environment are used (e.g., Boost).
 list(APPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX})
 
 # Find all dependencies below.
 find_package(Boost REQUIRED)
+find_package(nlohmann_json 3.6.1 REQUIRED)
+
+# Find ThermoFun library
+find_package(ThermoFun)
+
+# Define the pre-processor macro REAKTORO_USING_THERMOFUN if found.
+if(ThermoFun_FOUND)
+    add_compile_definitions(REAKTORO_USING_THERMOFUN)
+endif()
 
 # Include the cmake targets of the project if they have not been yet.
 if(NOT TARGET Reaktoro::Reaktoro)
-    include("@PACKAGE_REAKTORO_INSTALL_CONFIGDIR@/ReaktoroTargets.cmake")
+    include("${REAKTORO_INSTALL_CONFIGDIR}/ReaktoroTargets.cmake")
 endif()
 
 # Recommended check at the end of a cmake config file.
