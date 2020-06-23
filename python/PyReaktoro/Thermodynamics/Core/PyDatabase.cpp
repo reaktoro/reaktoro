@@ -25,8 +25,10 @@
 #include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
+#ifdef REAKTORO_USING_THERMOFUN
 // ThermoFun includes
 #include <ThermoFun/Database.h>
+#endif
 
 namespace Reaktoro {
 
@@ -47,7 +49,9 @@ void exportDatabase(py::module& m)
     py::class_<Database>(m, "Database")
         .def(py::init<>())
         .def(py::init<std::string>())
+        #ifdef REAKTORO_USING_THERMOFUN
         .def(py::init<const ThermoFun::Database&>())
+        #endif
         .def("elements", &Database::elements)
 		.def("addElement", &Database::addElement)
         .def("aqueousSpecies", aqueousSpecies1)

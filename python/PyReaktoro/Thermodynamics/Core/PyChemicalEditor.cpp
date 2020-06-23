@@ -33,8 +33,10 @@
 #include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
+#ifdef REAKTORO_USING_THERMOFUN
 // ThermoFun includes
 #include <ThermoFun/Database.h>
+#endif
 
 namespace Reaktoro {
 
@@ -75,7 +77,9 @@ void exportChemicalEditor(py::module& m)
     py::class_<ChemicalEditor>(m, "ChemicalEditor")
         .def(py::init<>())
         .def(py::init<const Database&>())
+        #ifdef REAKTORO_USING_THERMOFUN
         .def(py::init<const ThermoFun::Database&>())
+        #endif
         .def("setTemperatures", setTemperatures)
         .def("setPressures", setPressures)
         .def("addPhase", addPhase1, py::return_value_policy::reference_internal)

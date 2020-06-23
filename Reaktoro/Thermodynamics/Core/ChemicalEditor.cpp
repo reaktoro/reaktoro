@@ -49,8 +49,12 @@
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
+#ifdef REAKTORO_USING_THERMOFUN
+
 // ThermoFun includes
 #include <ThermoFun/ThermoFun.h>
+
+#endif
 
 namespace Reaktoro {
 namespace {
@@ -152,11 +156,15 @@ public:
         thermo = Thermo(database);
     }
 
+#ifdef REAKTORO_USING_THERMOFUN
+
     Impl(const ThermoFun::Database& db)
     : thermo(db), database(db)
     {
         setDefaultInterpolation();
     }
+
+#endif
 
     explicit Impl(const Database& db)
     : database(db), thermo(database)
@@ -519,9 +527,13 @@ ChemicalEditor::ChemicalEditor()
 : pimpl(new Impl())
 {}
 
+#ifdef REAKTORO_USING_THERMOFUN
+
 ChemicalEditor::ChemicalEditor(const ThermoFun::Database& db)
 : pimpl(new Impl(db))
 {}
+
+#endif
 
 ChemicalEditor::ChemicalEditor(const Database& db)
 : pimpl(new Impl(db))

@@ -40,7 +40,9 @@
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // ThermoFun includes
+#ifdef REAKTORO_USING_THERMOFUN
 #include <ThermoFun/ThermoFun.h>
+#endif
 
 // miniz includes
 #include <miniz/zip_file.hpp>
@@ -420,8 +422,10 @@ struct Database::Impl
     /// The set of all mineral species in the database
     MineralSpeciesMap mineral_species_map;
 
+#ifdef REAKTORO_USING_THERMOFUN
     /// ThermoFun database
     ThermoFun::Database fundb;
+#endif
 
     Impl() = default;
 
@@ -458,6 +462,8 @@ struct Database::Impl
         // Parse the xml document
         parse(doc, filename);
     }
+
+#ifdef REAKTORO_USING_THERMOFUN
 
     Impl(const ThermoFun::Database& fundatabase)
     {
@@ -569,6 +575,7 @@ struct Database::Impl
         return species;
     }
 // ThermoFun Integration END
+#endif
 
     template<typename Key, typename Value>
     auto collectValues(const std::map<Key, Value>& map) -> std::vector<Value>
@@ -897,9 +904,13 @@ Database::Database(std::string filename)
 : pimpl(new Impl(filename))
 {}
 
+#ifdef REAKTORO_USING_THERMOFUN
+
 Database::Database(const ThermoFun::Database& fundatabase)
 : pimpl(new Impl(fundatabase))
 {}
+
+#endif
 
 auto Database::addElement(const Element& element) -> void
 {

@@ -22,13 +22,10 @@
 #include <string>
 #include <vector>
 
-
 // Forward declarations for ThermoFun
-namespace ThermoFun {
-
-class Database;
-
-} // namespace ThermoFun
+#ifdef REAKTORO_USING_THERMOFUN
+namespace ThermoFun { class Database; }
+#endif
 
 namespace Reaktoro {
 
@@ -88,8 +85,10 @@ public:
     /// @param filename The name of the database file
     explicit Database(std::string filename);
 
+#ifdef REAKTORO_USING_THERMOFUN
     /// Construct a Database instance with a given ThermoFun database.
     explicit Database(const ThermoFun::Database& fundatabase);
+#endif
 
     /// Add an Element instance in the database.
     auto addElement(const Element& element) -> void;

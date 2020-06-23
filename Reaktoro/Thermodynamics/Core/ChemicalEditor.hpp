@@ -23,11 +23,9 @@
 #include <vector>
 
 // Forward declarations for ThermoFun
-namespace ThermoFun {
-
-class Database;
-
-} // namespace ThermoFun
+#ifdef REAKTORO_USING_THERMOFUN
+namespace ThermoFun { class Database; }
+#endif
 
 namespace Reaktoro {
 
@@ -95,7 +93,9 @@ public:
     explicit ChemicalEditor(const Database& database);
 
     /// Construct a ChemicalEditor instance with a provided ThermoFun database.
+#ifdef REAKTORO_USING_THERMOFUN
     explicit ChemicalEditor(const ThermoFun::Database& database);
+#endif
 
     /// Construct a copy of the provided ChemicalEditor instance.
     ChemicalEditor(const ChemicalEditor& other);

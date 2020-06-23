@@ -6,7 +6,6 @@ project(reaktoro-app)
 
 # Find the Reaktoro dependency.
 find_package(Reaktoro REQUIRED)
-find_package(ThermoFun REQUIRED)
 
 # Create an executable named app with source code main.cpp
 add_executable(app main.cpp)

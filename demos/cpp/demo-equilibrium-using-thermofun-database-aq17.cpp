@@ -1,5 +1,8 @@
+
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
+
+#ifdef REAKTORO_USING_THERMOFUN
 
 #include <ThermoFun/ThermoFun.h>
 
@@ -55,3 +58,12 @@ int main()
 
     state.output("result.txt");
 }
+
+#else
+
+int main()
+{
+    std::cout << "Reaktoro was compiled without ThermoFun support." << std::endl;
+}
+
+#endif

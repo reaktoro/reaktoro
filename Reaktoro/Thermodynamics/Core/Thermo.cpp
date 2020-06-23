@@ -22,7 +22,9 @@
 using namespace std::placeholders;
 
 // ThermoFun includes
+#ifdef REAKTORO_USING_THERMOFUN
 #include <ThermoFun/ThermoFun.h>
+#endif
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
@@ -75,6 +77,8 @@ struct Thermo::Impl
     /// The database instance
     Database database;
 
+#ifdef REAKTORO_USING_THERMOFUN
+
     // The ThermoFun engine instance
     ThermoFun::ThermoEngine engine;
 
@@ -83,6 +87,8 @@ struct Thermo::Impl
 
     /// The substances in the ThermoFun database (workaround ThermoFun::Database::getSubstances() that do not return an internal const reference, but a copy)
     std::vector<ThermoFun::Substance> substances;
+
+#endif
 
     /// The Haar--Gallagher--Kell (1984) equation of state for water
     WaterThermoStateFunction water_thermo_state_hgk_fn;
@@ -95,6 +101,8 @@ struct Thermo::Impl
 
     /// The HKF equation of state for the thermodynamic state of aqueous, gaseous and mineral species
     SpeciesThermoStateFunction species_thermo_state_hkf_fn;
+
+#ifdef REAKTORO_USING_THERMOFUN
 
     Impl()
     : engine(ThermoFun::Database())
@@ -118,8 +126,14 @@ struct Thermo::Impl
         species_thermo_state_hkf_fn = memoize(species_thermo_state_hkf_fn);
     }
 
+#endif
+
     Impl(const Database& database)
-    : database(database), engine(ThermoFun::Database())
+    : database(database)
+#ifdef REAKTORO_USING_THERMOFUN
+    , engine(ThermoFun::Database())
+#endif
+
     {
         // Initialize the Haar--Gallagher--Kell (1984) equation of state for water
         water_thermo_state_hgk_fn = [](Temperature T, Pressure P)
@@ -155,6 +169,8 @@ struct Thermo::Impl
         species_thermo_state_hkf_fn = memoize(species_thermo_state_hkf_fn);
     }
 
+#ifdef REAKTORO_USING_THERMOFUN
+
     auto convertScalar(Reaktoro_::ThermoScalar funscalar) -> ThermoScalar
     {
         ThermoScalar ts;
@@ -183,6 +199,8 @@ struct Thermo::Impl
         errorNonExistentSpecies(species);
         return {};
     }
+
+#endif
 
     auto speciesThermoStateHKF(double T, double P, std::string species) -> SpeciesThermoState
     {
@@ -228,7 +246,11 @@ struct Thermo::Impl
         if(phreeqc_thermo_params)
 			return standardGibbsEnergyFromPhreeqcReaction(T, P, species, *phreeqc_thermo_params);
 
-        if(hasThermoParamsHKF(species) || substances.size() > 0)
+        if(hasThermoParamsHKF(species)
+        #ifdef REAKTORO_USING_THERMOFUN
+         || substances.size() > 0
+        #endif
+         )
             return species_thermo_state_hkf_fn(T, P, species).gibbs_energy;
 
         return {};
@@ -244,7 +266,11 @@ struct Thermo::Impl
         if(reaction_thermo_properties && !reaction_thermo_properties->helmholtz_energy.empty())
             return standardHelmholtzEnergyFromReaction(T, P, species, *reaction_thermo_properties);
 
-        if(hasThermoParamsHKF(species) || substances.size() > 0)
+        if(hasThermoParamsHKF(species)
+        #ifdef REAKTORO_USING_THERMOFUN
+         || substances.size() > 0
+        #endif
+         )
             return species_thermo_state_hkf_fn(T, P, species).helmholtz_energy;
 
         return {};
@@ -260,7 +286,11 @@ struct Thermo::Impl
         if(reaction_thermo_properties && !reaction_thermo_properties->internal_energy.empty())
             return standardInternalEnergyFromReaction(T, P, species, *reaction_thermo_properties);
 
-        if(hasThermoParamsHKF(species) || substances.size() > 0)
+        if(hasThermoParamsHKF(species)
+        #ifdef REAKTORO_USING_THERMOFUN
+         || substances.size() > 0
+        #endif
+         )
             return species_thermo_state_hkf_fn(T, P, species).internal_energy;
 
         return {};
@@ -276,7 +306,11 @@ struct Thermo::Impl
         if(reaction_thermo_properties && !reaction_thermo_properties->enthalpy.empty())
             return standardEnthalpyFromReaction(T, P, species, *reaction_thermo_properties);
 
-        if(hasThermoParamsHKF(species) || substances.size() > 0)
+        if(hasThermoParamsHKF(species)
+        #ifdef REAKTORO_USING_THERMOFUN
+         || substances.size() > 0
+        #endif
+         )
             return species_thermo_state_hkf_fn(T, P, species).enthalpy;
 
         return {};
@@ -292,7 +326,11 @@ struct Thermo::Impl
         if(reaction_thermo_properties && !reaction_thermo_properties->entropy.empty())
             return standardEntropyFromReaction(T, P, species, *reaction_thermo_properties);
 
-        if(hasThermoParamsHKF(species) || substances.size() > 0)
+        if(hasThermoParamsHKF(species)
+        #ifdef REAKTORO_USING_THERMOFUN
+         || substances.size() > 0
+        #endif
+         )
             return species_thermo_state_hkf_fn(T, P, species).entropy;
 
         return {};
@@ -308,7 +346,11 @@ struct Thermo::Impl
         if(reaction_thermo_properties && !reaction_thermo_properties->volume.empty())
             return standardVolumeFromReaction(T, P, species, *reaction_thermo_properties);
 
-        if(hasThermoParamsHKF(species) || substances.size() > 0)
+        if(hasThermoParamsHKF(species)
+        #ifdef REAKTORO_USING_THERMOFUN
+         || substances.size() > 0
+        #endif
+         )
             return species_thermo_state_hkf_fn(T, P, species).volume;
 
         return {};
@@ -324,7 +366,11 @@ struct Thermo::Impl
         if(reaction_thermo_properties && !reaction_thermo_properties->heat_capacity_cp.empty())
             return standardHeatCapacityConstPFromReaction(T, P, species, *reaction_thermo_properties);
 
-        if(hasThermoParamsHKF(species) || substances.size() > 0)
+        if(hasThermoParamsHKF(species)
+        #ifdef REAKTORO_USING_THERMOFUN
+         || substances.size() > 0
+        #endif
+         )
             return species_thermo_state_hkf_fn(T, P, species).heat_capacity_cp;
 
         return {};
@@ -341,7 +387,11 @@ struct Thermo::Impl
         if(reaction_thermo_properties && !reaction_thermo_properties->heat_capacity_cv.empty())
             return standardHeatCapacityConstVFromReaction(T, P, species, *reaction_thermo_properties);
 
-        if(hasThermoParamsHKF(species) || substances.size() > 0)
+        if(hasThermoParamsHKF(species)
+        #ifdef REAKTORO_USING_THERMOFUN
+         || substances.size() > 0
+        #endif
+         )
             return species_thermo_state_hkf_fn(T, P, species).heat_capacity_cv;
 
         return {};
@@ -555,9 +605,13 @@ struct Thermo::Impl
     }
 };
 
+#ifdef REAKTORO_USING_THERMOFUN
+
 Thermo::Thermo(const ThermoFun::Database& database)
 : pimpl(new Impl(database))
 {}
+
+#endif
 
 Thermo::Thermo(const Database& database)
 : pimpl(new Impl(database))

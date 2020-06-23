@@ -5,9 +5,10 @@ if(REAKTORO_USE_OPENLIBM)
     find_package(openlibm REQUIRED)
 endif()
 
-# Find ThermoFun library and define a pre-processor macro REAKTORO_USING_THERMOFUN if so
-find_package(ThermoFun REQUIRED)
+# Find ThermoFun library
+find_package(ThermoFun)
 
+# Define the pre-processor macro REAKTORO_USING_THERMOFUN if found.
 if(ThermoFun_FOUND)
     add_compile_definitions(REAKTORO_USING_THERMOFUN)
 endif()
