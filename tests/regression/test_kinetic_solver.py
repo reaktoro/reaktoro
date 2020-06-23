@@ -43,8 +43,7 @@ def kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite():
     partition = Partition(system)
     partition.setKineticPhases(["Calcite"])
 
-    problem = EquilibriumProblem(system)
-    problem.setPartition(partition)
+    problem = EquilibriumProblem(partition)
     problem.add("H2O", 1, "kg")
     problem.add("HCl", 1, "mmol")
 
@@ -98,8 +97,7 @@ def kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite
     partition = Partition(system)
     partition.setKineticSpecies(["Calcite", "Magnesite", "Dolomite"])
 
-    problem = EquilibriumProblem(system)
-    problem.setPartition(partition)
+    problem = EquilibriumProblem(partition)
     problem.add("H2O", 1, "kg")
     problem.add("NaCl", 1, "mol")
     problem.add("CO2", 1, "mol")
@@ -213,13 +211,11 @@ def test_kinetic_path_solve_complete_path(
     (problem, reactions, partition) = setup
 
     state = equilibrate(problem)
- 
+
     for mineral in minerals_to_add:
         state.setSpeciesMass(mineral.mineral_name, mineral.amount, mineral.unit)
 
-    path = KineticPath(reactions)
-
-    path.setPartition(partition)
+    path = KineticPath(reactions, partition)
 
     output = path.output()
     output.precision(16)
@@ -307,9 +303,7 @@ def test_kinetic_path_solve_final_state(
     for mineral in minerals_to_add:
         state.setSpeciesMass(mineral.mineral_name, mineral.amount, mineral.unit)
 
-    path = KineticPath(reactions)
-
-    path.setPartition(partition)
+    path = KineticPath(reactions, partition)
 
     path.solve(state, time_span.ti, time_span.tf, time_span.unit)
 

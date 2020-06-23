@@ -55,8 +55,7 @@ def brine_co2_path():
     partition = Partition(system)
     partition.setKineticSpecies(["Calcite", "Magnesite", "Dolomite"])
 
-    problem = EquilibriumProblem(system)
-    problem.setPartition(partition)
+    problem = EquilibriumProblem(partition)
     problem.setTemperature(60, "celsius")
     problem.setPressure(100, "bar")
     problem.add("H2O", 1, "kg")
@@ -68,8 +67,7 @@ def brine_co2_path():
     state.setSpeciesMass("Calcite", 100, "g")
     state.setSpeciesMass("Dolomite", 50, "g")
 
-    path = KineticPath(reactions)
-    path.setPartition(partition)
+    path = KineticPath(reactions, partition)
 
     return path, state
 

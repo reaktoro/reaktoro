@@ -1,6 +1,6 @@
 import numpy as np
 
-from reaktoro import ChemicalProperty
+from reaktoro import ChemicalProperty, phaseStabilityIndices
 
 
 def convert_reaktoro_state_to_dict(state, exclude):
@@ -35,7 +35,7 @@ def convert_reaktoro_state_to_dict(state, exclude):
 
     phase_densities = properties.phaseDensities().val
 
-    phase_stability_indices = state.phaseStabilityIndices()
+    phase_stability_indices = phaseStabilityIndices(state)
 
     pH = ChemicalProperty.pH(system)(properties).val
 

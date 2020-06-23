@@ -33,7 +33,7 @@ def get_reaktoro_case():
 
 
 def test_different_results(state_regression):
-    from reaktoro import ChemicalEditor, ChemicalState, ChemicalSystem, Database, EquilibriumProblem, EquilibriumSolver, Partition
+    from reaktoro import ChemicalEditor, ChemicalState, ChemicalSystem, Database, EquilibriumProblem, EquilibriumOptions, EquilibriumSolver, Partition
 
     database = Database('supcrt07.xml')
     editor = ChemicalEditor(database)
@@ -57,14 +57,12 @@ def test_different_results(state_regression):
 
     reaktoro_case = get_reaktoro_case()
 
-    equilibrium_problem = EquilibriumProblem(chemical_system)
-    equilibrium_problem.setTemperature(reaktoro_case.temperature_in_K)
-    equilibrium_problem.setPressure(reaktoro_case.pressure_in_Pa)
-
     partition = Partition(chemical_system)
     partition.setInertPhases([phase_index['Gaseous']])
 
-    equilibrium_problem.setPartition(partition)
+    equilibrium_problem = EquilibriumProblem(partition)
+    equilibrium_problem.setTemperature(reaktoro_case.temperature_in_K)
+    equilibrium_problem.setPressure(reaktoro_case.pressure_in_Pa)
 
     chemical_state = ChemicalState(chemical_system)
     for name, index, molar_amount in reaktoro_case.species_amounts:
@@ -73,8 +71,11 @@ def test_different_results(state_regression):
 
     equilibrium_problem.addState(chemical_state)
 
-    solver = EquilibriumSolver(chemical_system)
-    solver.setPartition(partition)
+    options = EquilibriumOptions()
+    options.optimum.output.active = True
+
+    solver = EquilibriumSolver(partition)
+    solver.setOptions(options)
 
     result = solver.solve(chemical_state, equilibrium_problem)
 
