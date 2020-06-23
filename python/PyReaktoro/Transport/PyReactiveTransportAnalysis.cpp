@@ -24,6 +24,14 @@ namespace Reaktoro {
 
 void exportReactiveTransportAnalysis(py::module& m)
 {
+    py::class_<ReactiveTransportAnalysis>(m, "ReactiveTransportAnalysis")
+            .def(py::init<>())
+            .def_readwrite("transport", &ReactiveTransportAnalysis::transport)
+            .def_readwrite("equilibrium", &ReactiveTransportAnalysis::equilibrium)
+            .def_readwrite("smart_equilibrium", &ReactiveTransportAnalysis::smart_equilibrium)
+            .def_readwrite("computing_costs_per_time_step", &ReactiveTransportAnalysis::computing_costs_per_time_step)
+            ;
+
     py::class_<ReactiveTransportAnalysis::TransportAnalysis>(m, "ReactiveTransportAnalysis_TransportAnalysis")
         .def_readwrite("timing", &ReactiveTransportAnalysis::TransportAnalysis::timing)
         ;
@@ -43,7 +51,7 @@ void exportReactiveTransportAnalysis(py::module& m)
         .def_readwrite("smart_equilibrium", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium)
         .def_readwrite("smart_equilibrium_with_ideal_search", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_with_ideal_search)
         .def_readwrite("smart_equilibrium_estimate", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_estimate)
-        .def_readwrite("smart_equilibrium_nearest_neighbor_search", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_nearest_neighbor_search)
+        .def_readwrite("smart_equilibrium_search", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_search)
         .def_readwrite("smart_equilibrium_gibbs_energy_minimization", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_gibbs_energy_minimization)
         .def_readwrite("smart_equilibrium_storage", &ReactiveTransportAnalysis::ComputingCostsPerTimeStep::smart_equilibrium_storage)
         ;

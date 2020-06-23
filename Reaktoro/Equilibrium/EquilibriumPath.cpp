@@ -200,9 +200,10 @@ EquilibriumPath::EquilibriumPath(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
 
-EquilibriumPath::EquilibriumPath(const EquilibriumPath& other)
-: pimpl(new Impl(*other.pimpl))
+EquilibriumPath::EquilibriumPath(const Partition& other)
+: pimpl(new Impl(other))
 {}
+
 
 EquilibriumPath::~EquilibriumPath()
 {}

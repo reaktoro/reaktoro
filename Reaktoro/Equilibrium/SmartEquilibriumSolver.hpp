@@ -54,11 +54,12 @@ public:
     /// Destroy this SmartEquilibriumSolver instance.
     virtual ~SmartEquilibriumSolver();
 
+    /// Set the partition of the chemical system
+    [[deprecated("EquilibriumSolver::setPartition is deprecated. Use constructor EquilibriumSolver(const Partition&) instead.")]]
+    auto setPartition(const Partition& partition) -> void;
+
     /// Set the options for the equilibrium calculation.
     auto setOptions(const SmartEquilibriumOptions& options) -> void;
-
-    /// Set the partition of the chemical system.
-    auto setPartition(const Partition& partition) -> void;
 
     /// Solve a chemical equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
@@ -72,11 +73,15 @@ public:
     /// @param problem The equilibrium problem with given temperature, pressure, and element amounts.
     auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResult;
 
+
     /// Return the chemical properties of the calculated equilibrium state.
     auto properties() const -> const ChemicalProperties&;
 
     /// Return the result of the last smart equilibrium calculation.
     auto result() const -> const SmartEquilibriumResult&;
+
+    /// Output clusters created during the ODML algorithm
+    auto outputClusterInfo() const -> void;
 
 private:
     struct Impl;

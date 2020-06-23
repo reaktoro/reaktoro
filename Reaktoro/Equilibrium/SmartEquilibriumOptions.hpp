@@ -45,8 +45,6 @@ struct SmartEquilibriumOptions
     /// The relative tolerance used in the acceptance test.
     double reltol = 1.0e-3;
 
-    /// The absolute tolerance used in the acceptance test.
-    double abstol = 1.0e-8;
 };
 
 } // namespace Reaktoro

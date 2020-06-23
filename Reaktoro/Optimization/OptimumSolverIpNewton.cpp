@@ -136,8 +136,8 @@ struct OptimumSolverIpNewton::Impl
         // This provides even further regularization to the problem,
         // as non-zero gamma and delta prevent unbounded primal and dual
         // variables x and y respectively.
-        gamma = gamma ? gamma : mu;
-        delta = delta ? delta : mu;
+        //gamma = gamma ? gamma : mu;
+        //delta = delta ? delta : mu;
 
         // Ensure the initial guesses for `x` and `y` have adequate dimensions
         if(x.rows() != n) x = zeros(n);

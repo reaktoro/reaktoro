@@ -72,9 +72,11 @@ void to_json(json& j, const SmartEquilibriumTiming& obj) {
     j["learning_storage"] = obj.learning_storage;
     j["estimate"] = obj.estimate;
     j["estimate_search"] = obj.estimate_search;
-    j["estimate_taylor"] = obj.estimate_taylor;
     j["estimate_error_control"] = obj.estimate_error_control;
+    j["estimate_taylor"] = obj.estimate_taylor;
+    j["estimate_database_priority_update"] = obj.estimate_database_priority_update;
 }
+
 
 void from_json(const json& j, SmartEquilibriumTiming& obj) {
     j.at("solve").get_to(obj.solve);
@@ -85,8 +87,9 @@ void from_json(const json& j, SmartEquilibriumTiming& obj) {
     j.at("learning_storage").get_to(obj.learning_storage);
     j.at("estimate").get_to(obj.estimate);
     j.at("estimate_search").get_to(obj.estimate_search);
-    j.at("estimate_taylor").get_to(obj.estimate_taylor);
     j.at("estimate_error_control").get_to(obj.estimate_error_control);
+    j.at("estimate_taylor").get_to(obj.estimate_taylor);
+    j.at("estimate_database_priority_update").get_to(obj.estimate_database_priority_update);
 }
 
 } // namespace Reaktoro

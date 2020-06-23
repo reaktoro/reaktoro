@@ -18,12 +18,10 @@
 // C++ includes
 #include <algorithm>
 #include <deque>
-#include <functional>
 #include <numeric>
 #include <tuple>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -91,7 +89,7 @@ struct SmartEquilibriumSolver::Impl
     Vector ne;
 
     /// The amounts of the elements in the equilibrium partition
-    Vector be_aux;
+    Vector be;
 
     /// The storage for matrix du/db = du/dn * dn/db
     Matrix dudb;
@@ -102,7 +100,7 @@ struct SmartEquilibriumSolver::Impl
     /// The storage for matrix Mbe = inv(u(iprimary)) * du(iprimary)/db.
     Matrix Mbe;
 
-    /// The record of the knowledge database containing input, output and derivatives data.
+    /// The record of the knowledge database containing input, output, and derivatives data.
     struct Record
     {
         /// The temperature of the equilibrium state (in units of K).
@@ -163,6 +161,8 @@ struct SmartEquilibriumSolver::Impl
     Impl(const ChemicalSystem& system)
     : Impl(Partition(system))
     {
+        // Initialize the canonicalizer with the formula matrix Ae of the equilibrium species
+        canonicalizer.compute(partition.formulaMatrixEquilibriumPartition());
     }
 
     /// Construct an SmartEquilibriumSolver::Impl instance with given partition of the chemical system.
@@ -247,14 +247,14 @@ struct SmartEquilibriumSolver::Impl
         for(auto i = 0; i < ips.size(); ++i)  // TODO: type Indices should be alias to VectorXi, to avoid such kind of codes
             ips[i] = ies[iorder[i]];
 
-        // The number of primary species among the equilibrium species
+        // The number of primary species among the equilibrium species (Np <= Ne)
         const auto& Np = canonicalizer.numBasicVariables();
 
         // Store the indices of primary and secondary species in state
         state.equilibrium().setIndicesEquilibriumSpecies(ips, Np);
 
         // The indices of the primary species at the calculated equilibrium state
-        const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
+        VectorXiConstRef iprimary = ips.head(Np);
 
         // The chemical potentials at the calculated equilibrium state
         u = properties.chemicalPotentials();
@@ -289,7 +289,7 @@ struct SmartEquilibriumSolver::Impl
         auto iter = std::find_if(database.clusters.begin(), database.clusters.end(),
             [&](const Cluster& cluster) { return cluster.label == label; });
 
-        // If cluster found, store the new record in it, otherwise, create a new cluster
+        // If cluster is found, store the new record in it, otherwise, create a new cluster
         if(iter < database.clusters.end())
         {
             auto& cluster = *iter;
@@ -326,7 +326,6 @@ struct SmartEquilibriumSolver::Impl
 
         // Auxiliary relative and absolute tolerance parameters
         const auto reltol = options.reltol;
-        const auto abstol = options.abstol;
 
         // The threshold used to determine elements with insignificant amounts
         const auto eps_b = options.amount_fraction_cutoff * sum(be);
@@ -381,11 +380,12 @@ struct SmartEquilibriumSolver::Impl
             if(iprimary.size() == 0)
                 return database.clusters.size();
 
-            // Find the index of the cluster with same set of primary species (search those with highest count first)
+            // Find the index of the cluster with the same set of primary species (search those with highest count first)
             for(auto icluster : database.priority.order())
                 if(database.clusters[icluster].label == label)
                     return icluster;
 
+            // In no cluster with the same set of primary species if found, then return number of clusters
             return database.clusters.size();
         };
 
@@ -400,13 +400,14 @@ struct SmartEquilibriumSolver::Impl
         //---------------------------------------------------------------------
         tic(SEARCH_STEP);
 
-        // Iterate over all clusters starting with icluster
+        // Iterate over all clusters (starting with icluster)
         for(auto jcluster : clusters_ordering)
         {
+            // Fetch records from the cluster and the order they have to be processed in
             const auto& records = database.clusters[jcluster].records;
             const auto& records_ordering = database.clusters[jcluster].priority.order();
 
-            // Iterate over all records in current cluster
+            // Iterate over all records in current cluster (using the  order based on the priorities)
             for(auto irecord : records_ordering)
             {
                 const auto& record = records[irecord];
@@ -416,6 +417,7 @@ struct SmartEquilibriumSolver::Impl
                 //---------------------------------------------------------------------
                 tic(ERROR_CONTROL_STEP);
 
+                // Check if the current record passes the error test
                 const auto [success, error, iprimaryspecies] = pass_error_test(record);
 
                 result.timing.estimate_error_control += toc(ERROR_CONTROL_STEP);
@@ -429,30 +431,46 @@ struct SmartEquilibriumSolver::Impl
 
                     const auto& ies = partition.indicesEquilibriumSpecies();
                     const auto& iee = partition.indicesEquilibriumElements();
+
+                    // Fetch reference values
                     const auto& be0 = record.be;
                     const auto& n0 = record.state.speciesAmounts();
+                    const auto& P0 = record.state.pressure();
+                    const auto& T0 = record.state.temperature();
                     const auto& y0 = record.state.equilibrium().elementChemicalPotentials();
                     const auto& z0 = record.state.equilibrium().speciesStabilities();
                     const auto& ips0 = record.state.equilibrium().indicesEquilibriumSpecies();
                     const auto& Np0 = record.state.equilibrium().numPrimarySpecies();
                     const auto& dndb0 = record.sensitivity.dndb;
+                    const auto& dndP0 = record.sensitivity.dndP;
+                    const auto& dndT0 = record.sensitivity.dndT;
+
+                    // Fetch reference values restricted to equilibrium species only
                     const auto& dnedbe0 = dndb0(ies, iee);
+                    const auto& dnedbPe0 = dndP0(ies);
+                    const auto& dnedbTe0 = dndT0(ies);
                     const auto& ne0 = n0(ies);
 
-                    n(ies) = ne;
-
+                    // Perform Taylor extrapolation
+                    //ne.noalias() = ne0 + dnedbe0 * (be - be0);
+                    ne.noalias() = ne0 + dnedbe0 * (be - be0) + dnedbPe0 * (P - P0) + dnedbTe0 * (T - T0);
+                    
+                    // Check if all projected species amounts are positive
                     const double ne_min = min(ne);
                     const double ne_sum = sum(ne);
-
                     const auto eps_n = options.amount_fraction_cutoff * ne_sum;
-
-                    // Check if all projected species amounts are positive
                     if(ne_min <= -eps_n)
                         continue;
 
                     result.timing.estimate_search = toc(SEARCH_STEP);
 
-                    // Set the chemical state result with estimated amounts
+                    // After the search is finished successfully
+                    //---------------------------------------------------------------------
+
+                    // Update the amounts of elements for the equilibrium species
+                    n(ies) = ne;
+
+                    // Update the chemical state result with estimated amounts
                     state = record.state; // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transfered from reference state to new state
                     state.setSpeciesAmounts(n);
 
@@ -478,6 +496,7 @@ struct SmartEquilibriumSolver::Impl
                     result.timing.estimate_database_priority_update = toc(PRIORITY_UPDATE_STEP);
 
                     result.estimate.accepted = true;
+
                     return;
                 }
             }
@@ -494,8 +513,8 @@ struct SmartEquilibriumSolver::Impl
         const auto& ies = partition.indicesEquilibriumSpecies();
         const auto T = state.temperature();
         const auto P = state.pressure();
-        be_aux = state.elementAmountsInSpecies(ies)(iee);
-        return solve(state, T, P, be_aux);
+        be = state.elementAmountsInSpecies(ies)(iee);
+        return solve(state, T, P, be);
     }
 
     /// Solve the equilibrium problem with given problem definition
@@ -504,8 +523,8 @@ struct SmartEquilibriumSolver::Impl
         const auto T = problem.temperature();
         const auto P = problem.pressure();
         const auto& iee = partition.indicesEquilibriumElements();
-        be_aux = problem.elementAmounts()(iee);
-        return solve(state, T, P, be_aux);
+        be = problem.elementAmounts()(iee);
+        return solve(state, T, P, be);
     }
 
     auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
@@ -519,8 +538,7 @@ struct SmartEquilibriumSolver::Impl
         result = {};
 
         // Perform a smart estimate of the chemical state
-        timeit( estimate(state, T, P, be),
-            result.timing.estimate= );
+        timeit( estimate(state, T, P, be), result.timing.estimate= );
 
         // Perform a learning step if the smart prediction is not sactisfatory
         if(!result.estimate.accepted)
@@ -533,6 +551,28 @@ struct SmartEquilibriumSolver::Impl
 
     auto outputClusterInfo() const -> void
     {
+        //std::cout << "***********************************************************************************" << std::endl;
+        //std::cout << "Clusters ordered by order of their creation" << std::endl;
+        //std::cout << "***********************************************************************************" << std::endl;
+
+        Index i = 0;
+        for(auto cluster : database.clusters)
+        {
+            std::cout << "CLUSTER #" << i << std::endl;
+            std::cout << "  RANK OF CLUSTER: " << database.priority.priorities()[i] << std::endl;
+            std::cout << "  PRIMARY SPECIES: ";
+            for(auto j : database.clusters[i].iprimary)
+                std::cout << system.species(j).name() << " ";
+            std::cout << std::endl;
+            std::cout << "  NUMBER OF RECORDS: " << database.clusters[i].records.size() << std::endl;
+            //std::cout << "  RANK OF RECORDS: ";
+            //for(auto j : database.clusters[i].priority.order())
+            //    std::cout << database.clusters[i].priority.priorities()[j] << " ";
+            std::cout << std::endl;
+            std::cout << std::endl;
+            i++;
+        }
+        /*
         for(auto i : database.priority.order())
         {
             std::cout << "CLUSTER #" << i << std::endl;
@@ -553,6 +593,7 @@ struct SmartEquilibriumSolver::Impl
             std::cout << std::endl;
             std::cout << std::endl;
         }
+        */
     }
 };
 
@@ -576,12 +617,13 @@ auto SmartEquilibriumSolver::operator=(SmartEquilibriumSolver other) -> SmartEqu
 
 SmartEquilibriumSolver::~SmartEquilibriumSolver()
 {
-    // TODO Remove this from the desctructor.
-    // TODO Remove this from the desctructor.
-    // TODO Remove this from the desctructor.
-    // TODO Remove this from the desctructor.
-    // TODO Remove this from the desctructor.
-    pimpl->outputClusterInfo();
+}
+
+auto SmartEquilibriumSolver::setPartition(const Partition& partition) -> void
+{
+    RuntimeError("Cannot proceed with EquilibriumSolver::setPartition.",
+                 "EquilibriumSolver::setPartition is deprecated. "
+                 "Use constructor EquilibriumSolver(const Partition&) instead.");
 }
 
 auto SmartEquilibriumSolver::setOptions(const SmartEquilibriumOptions& options) -> void
@@ -607,6 +649,11 @@ auto SmartEquilibriumSolver::properties() const -> const ChemicalProperties&
 auto SmartEquilibriumSolver::result() const -> const SmartEquilibriumResult&
 {
     return pimpl->result;
+}
+
+auto SmartEquilibriumSolver::outputClusterInfo() const -> void
+{
+    return pimpl->outputClusterInfo();
 }
 
 } // namespace Reaktoro

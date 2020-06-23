@@ -96,9 +96,18 @@ struct ReactiveTransportProfiler::Impl
         info.equilibrium.resize(num_time_steps);
         info.smart_equilibrium.resize(num_time_steps);
         info.smart_equilibrium_with_ideal_search.resize(num_time_steps);
+
         info.smart_equilibrium_estimate.resize(num_time_steps);
-        info.smart_equilibrium_nearest_neighbor_search.resize(num_time_steps);
+        info.smart_equilibrium_search.resize(num_time_steps);
+        info.smart_equilibrium_error_control.resize(num_time_steps);
+        info.smart_equilibrium_taylor.resize(num_time_steps);
+        info.smart_equilibrium_database_priority_update.resize(num_time_steps);
+
+        info.smart_equilibrium_learn.resize(num_time_steps);
         info.smart_equilibrium_gibbs_energy_minimization.resize(num_time_steps);
+        info.smart_equilibrium_chemical_properties.resize(num_time_steps);
+        info.smart_equilibrium_sensitivity_matrix.resize(num_time_steps);
+        info.smart_equilibrium_error_control_matrices.resize(num_time_steps);
         info.smart_equilibrium_storage.resize(num_time_steps);
 
         for(Index i = 0; i < num_time_steps; ++i)
@@ -106,10 +115,19 @@ struct ReactiveTransportProfiler::Impl
             info.transport[i] = timing_transport_at_step[i].step;
             info.equilibrium[i] = timing_equilibrium_at_step[i].solve;
             info.smart_equilibrium[i] = timing_smart_equilibrium_at_step[i].solve;
-            info.smart_equilibrium_with_ideal_search[i] = info.smart_equilibrium[i] - timing_smart_equilibrium_at_step[i].estimate_search;
+            info.smart_equilibrium_with_ideal_search[i] = info.smart_equilibrium[i] - timing_smart_equilibrium_at_step[i].estimate_search - timing_smart_equilibrium_at_step[i].estimate_database_priority_update;
+
             info.smart_equilibrium_estimate[i] = timing_smart_equilibrium_at_step[i].estimate;
-            info.smart_equilibrium_nearest_neighbor_search[i] = timing_smart_equilibrium_at_step[i].estimate_search;
+            info.smart_equilibrium_search[i] = timing_smart_equilibrium_at_step[i].estimate_search;
+            info.smart_equilibrium_error_control[i] = timing_smart_equilibrium_at_step[i].estimate_error_control;
+            info.smart_equilibrium_taylor[i] = timing_smart_equilibrium_at_step[i].estimate_taylor;
+            info.smart_equilibrium_database_priority_update[i] = timing_smart_equilibrium_at_step[i].estimate_database_priority_update;
+
+            info.smart_equilibrium_learn[i] = timing_smart_equilibrium_at_step[i].learn;
             info.smart_equilibrium_gibbs_energy_minimization[i] = timing_smart_equilibrium_at_step[i].learning_gibbs_energy_minimization;
+            info.smart_equilibrium_chemical_properties[i] = timing_smart_equilibrium_at_step[i].learning_chemical_properties;
+            info.smart_equilibrium_sensitivity_matrix[i] = timing_smart_equilibrium_at_step[i].learning_sensitivity_matrix;
+            info.smart_equilibrium_error_control_matrices[i] = timing_smart_equilibrium_at_step[i].learning_error_control_matrices;
             info.smart_equilibrium_storage[i] = timing_smart_equilibrium_at_step[i].learning_storage;
         }
 
@@ -265,7 +283,7 @@ auto ReactiveTransportProfiler::results() const -> const std::deque<ReactiveTran
 //     out << "smart_equilibrium" << ",";
 //     out << "smart_equilibrium_with_ideal_search" << ",";
 //     out << "smart_equilibrium_estimate" << ",";
-//     out << "smart_equilibrium_nearest_neighbor_search" << ",";
+//     out << "smart_equilibrium_search" << ",";
 //     out << "smart_equilibrium_gibbs_energy_minimization" << ",";
 //     out << "smart_equilibrium_storage";
 //     out << std::endl;
@@ -279,7 +297,7 @@ auto ReactiveTransportProfiler::results() const -> const std::deque<ReactiveTran
 //         out << costs.smart_equilibrium[i] << ",";
 //         out << costs.smart_equilibrium_with_ideal_search[i] << ",";
 //         out << costs.smart_equilibrium_estimate[i] << ",";
-//         out << costs.smart_equilibrium_nearest_neighbor_search[i] << ",";
+//         out << costs.smart_equilibrium_search[i] << ",";
 //         out << costs.smart_equilibrium_gibbs_energy_minimization[i] << ",";
 //         out << costs.smart_equilibrium_storage[i];
 //         out << std::endl;

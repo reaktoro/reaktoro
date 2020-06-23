@@ -22,8 +22,6 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
-#include <Reaktoro/Interfaces/Gems.hpp>
-#include <Reaktoro/Interfaces/Phreeqc.hpp>
 
 namespace Reaktoro {
 namespace {

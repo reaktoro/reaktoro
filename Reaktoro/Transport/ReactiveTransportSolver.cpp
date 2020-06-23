@@ -283,6 +283,15 @@ struct ReactiveTransportSolver::Impl
 
         return rt_result;
     }
+
+    // Show clusters created by the ODML method
+    auto outputClusterInfo() const -> void {
+        if (options.use_smart_equilibrium_solver) {
+            smart_equilibrium_solver.outputClusterInfo();
+        } else {
+            std::cout << "No clusters were created in the conventional algorithm!" << std::endl;
+        }
+    }
 };
 
 ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem& system)
@@ -368,6 +377,11 @@ auto ReactiveTransportSolver::system() const -> const ChemicalSystem&
 auto ReactiveTransportSolver::timeStep() const -> double
 {
     return pimpl->transport_solver.timeStep();
+}
+
+auto ReactiveTransportSolver::outputClusterInfo() const -> void
+{
+    return pimpl->outputClusterInfo();
 }
 
 } // namespace Reaktoro
