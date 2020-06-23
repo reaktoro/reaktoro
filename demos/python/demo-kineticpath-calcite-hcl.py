@@ -39,8 +39,7 @@ partition = Partition(system)
 partition.setKineticSpecies(["Calcite"])
 
 # Step 6: Define the chemical equilibrium problem for the equilibrium partition
-problem = EquilibriumProblem(system)
-problem.setPartition(partition)
+problem = EquilibriumProblem(partition)
 problem.setTemperature(30, "celsius")
 problem.setPressure(1, "bar")
 problem.add("H2O", 1, "kg")
@@ -54,8 +53,7 @@ state0.output('demo-kineticpath-calcite-hcl-before-kinetics')
 state0.setSpeciesMass("Calcite", 100, "g")
 
 # Step 9: Define the kinetic path problem
-path = KineticPath(reactions)
-path.setPartition(partition)
+path = KineticPath(reactions, partition)
 
 # Step 10: Plot different properties of the chemical system during kinetics
 plot1 = path.plot()

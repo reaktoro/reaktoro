@@ -55,8 +55,7 @@ partition = Partition(system)
 partition.setKineticSpecies(["Calcite", "Magnesite", "Dolomite"])
 
 # Step 6: Define the initial chemical equilibrium state
-problem = EquilibriumProblem(system)
-problem.setPartition(partition)
+problem = EquilibriumProblem(partition)
 problem.setTemperature(60, "celsius")
 problem.setPressure(100, "bar")
 problem.add("H2O", 1, "kg")
@@ -72,8 +71,7 @@ state0.setSpeciesMass("Calcite", 100, "g")
 state0.setSpeciesMass("Dolomite", 50, "g")
 
 # Step 9: Create a kinetic path solver
-path = KineticPath(reactions)
-path.setPartition(partition)
+path = KineticPath(reactions, partition)
 
 # Step 10: Create plots for the kinetic path calculation
 plot0 = path.plot()
