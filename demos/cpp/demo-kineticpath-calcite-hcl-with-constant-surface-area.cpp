@@ -37,8 +37,7 @@ int main()
     Partition partition(system);
     partition.setKineticPhases({"Calcite"});
 
-    EquilibriumProblem problem(system);
-    problem.setPartition(partition);
+    EquilibriumProblem problem(partition);
     problem.add("H2O", 1, "kg");
     problem.add("HCl", 1, "mmol");
 

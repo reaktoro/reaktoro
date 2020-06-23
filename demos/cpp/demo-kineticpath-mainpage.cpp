@@ -36,8 +36,7 @@ int main()
     Partition partition(system);
     partition.setKineticSpecies({"Calcite"});
 
-    EquilibriumProblem problem(system);
-    problem.setPartition(partition);
+    EquilibriumProblem problem(partition);
     problem.setTemperature(60, "celsius");
     problem.setPressure(100, "bar");
     problem.add("H2O", 1, "kg");

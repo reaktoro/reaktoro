@@ -65,8 +65,7 @@ int main()
     state0.setSpeciesMass("Calcite", 100, "g");
     state0.setSpeciesMass("Dolomite", 50, "g");
 
-    KineticPath path(reactions);
-    path.setPartition(partition);
+    KineticPath path(reactions, partition);
 
     ChemicalPlot plot0 = path.plot();
     plot0.x("time(units=hour)");
