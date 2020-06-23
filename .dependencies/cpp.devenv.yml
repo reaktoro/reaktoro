@@ -1,0 +1,16 @@
+{% set debug = os.environ.get("CONFIG", "").lower() == "debug" %}
+{% set use_openlibm = os.environ.get("REAKTORO_USE_OPENLIBM", "0").strip() != "0" %}
+
+dependencies:
+  - boost=1.70
+  # pybind11 version must match the version used to compile ThermoFun
+  - pybind11 >=2.5.0
+  - nlohmann_json
+  - thermofun==0.3.3
+  {% if not debug %}
+  # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
+  - pugixml
+  {% endif %}
+  {% if use_openlibm %}
+  - openlibm
+  {% endif %}

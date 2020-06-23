@@ -46,6 +46,16 @@ target_link_libraries(Reaktoro
     PRIVATE nlohmann_json::nlohmann_json
     PUBLIC Boost::boost)
 
+if(REAKTORO_USE_OPENLIBM)
+    configure_target_to_use_openlibm(Reaktoro)
+    target_compile_definitions(Reaktoro PUBLIC REAKTORO_USE_OPENLIBM=1)
+endif()
+
+# Link Reaktoro library against ThermoFun if found
+if(ThermoFun_FOUND)
+    target_link_libraries(Reaktoro PUBLIC ThermoFun::ThermoFun)
+endif()
+
 # Set compilation features to be propagated to dependent codes.
 target_compile_features(Reaktoro PUBLIC cxx_std_17)
 

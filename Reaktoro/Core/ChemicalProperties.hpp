@@ -88,6 +88,9 @@ public:
     /// Return the ln activities of the species.
     auto lnActivities() const -> ChemicalVectorConstRef;
 
+    /// Return the partial molar volume of the species in that phase (in units of m3/mol).
+    auto partialMolarVolumes() const -> ChemicalVectorConstRef;
+
     /// Return the chemical potentials of the species (in units of J/mol).
     auto chemicalPotentials() const -> ChemicalVector;
 

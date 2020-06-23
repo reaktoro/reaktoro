@@ -42,7 +42,10 @@
 #define EIGEN_EXPLICIT_CAST(tgt_type) operator tgt_type()
 #endif
 
+<<<<<<< HEAD
 #include <sstream>
+=======
+>>>>>>> master
 
 namespace Eigen {
 

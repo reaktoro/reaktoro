@@ -105,7 +105,11 @@ template<> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE double2 pset1<double2>(const do
 // We need to distinguish ‘clang as the CUDA compiler’ from ‘clang as the host compiler,
 // invoked by NVCC’ (e.g. on MacOS). The former needs to see both host and device implementation
 // of the functions, while the latter can only deal with one of them.
+<<<<<<< HEAD
 #if defined(EIGEN_CUDA_ARCH) || defined(EIGEN_HIPCC) || (defined(EIGEN_CUDACC) && EIGEN_COMP_CLANG && !EIGEN_COMP_NVCC)
+=======
+#if defined(EIGEN_CUDA_ARCH) || defined(EIGEN_HIP_DEVICE_COMPILE) || (defined(EIGEN_CUDACC) && EIGEN_COMP_CLANG && !EIGEN_COMP_NVCC)
+>>>>>>> master
 namespace {
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE float bitwise_and(const float& a,
@@ -156,6 +160,7 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE double eq_mask(const double& a,
   return __longlong_as_double(a == b ? 0xffffffffffffffffull : 0ull);
 }
 
+<<<<<<< HEAD
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE float lt_mask(const float& a,
                                                     const float& b) {
   return __int_as_float(a < b ? 0xffffffffu : 0u);
@@ -165,6 +170,8 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE double lt_mask(const double& a,
   return __longlong_as_double(a < b ? 0xffffffffffffffffull : 0ull);
 }
 
+=======
+>>>>>>> master
 }  // namespace
 
 template <>
@@ -222,21 +229,27 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE float4 pcmp_eq<float4>(const float4& a,
                      eq_mask(a.w, b.w));
 }
 template <>
+<<<<<<< HEAD
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE float4 pcmp_lt<float4>(const float4& a,
                                                              const float4& b) {
   return make_float4(lt_mask(a.x, b.x), lt_mask(a.y, b.y), lt_mask(a.z, b.z),
                      lt_mask(a.w, b.w));
 }
 template <>
+=======
+>>>>>>> master
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE double2
 pcmp_eq<double2>(const double2& a, const double2& b) {
   return make_double2(eq_mask(a.x, b.x), eq_mask(a.y, b.y));
 }
+<<<<<<< HEAD
 template <>
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE double2
 pcmp_lt<double2>(const double2& a, const double2& b) {
   return make_double2(lt_mask(a.x, b.x), lt_mask(a.y, b.y));
 }
+=======
+>>>>>>> master
 #endif  // EIGEN_CUDA_ARCH || defined(EIGEN_HIP_DEVICE_COMPILE)
 
 template<> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE float4 plset<float4>(const float& a) {
@@ -667,6 +680,7 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE half2 pcmp_eq<half2>(const half2& a,
 }
 
 template <>
+<<<<<<< HEAD
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE half2 pcmp_lt<half2>(const half2& a,
                                                            const half2& b) {
   half true_half = half_impl::raw_uint16_to_half(0xffffu);
@@ -681,6 +695,8 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE half2 pcmp_lt<half2>(const half2& a,
 }
 
 template <>
+=======
+>>>>>>> master
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE half2 pand<half2>(const half2& a,
                                                         const half2& b) {
   half a1 = __low2half(a);

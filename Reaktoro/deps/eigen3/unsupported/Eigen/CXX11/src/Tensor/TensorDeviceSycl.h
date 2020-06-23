@@ -16,6 +16,10 @@
 #define EIGEN_CXX11_TENSOR_TENSOR_DEVICE_SYCL_H
 #include <unordered_set>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 namespace Eigen {
 
 namespace TensorSycl {
@@ -69,9 +73,15 @@ struct SyclDeviceInfo {
 }  // end namespace TensorSycl
 
 typedef TensorSycl::internal::buffer_data_type_t buffer_scalar_t;
+<<<<<<< HEAD
 // All devices (even AMD CPU with intel OpenCL runtime) that support OpenCL and
 // can consume SPIR or SPIRV can use the Eigen SYCL backend and consequently
 // TensorFlow via the Eigen SYCL Backend.
+=======
+// All devices (even AMD CPU with intel OpenCL runtime) that support OpenCL and 
+// can consume SPIR or SPIRV can use the Eigen SYCL backend and consequently 
+// TensorFlow via the Eigen SYCL Backend. 
+>>>>>>> master
 EIGEN_STRONG_INLINE auto get_sycl_supported_devices()
     -> decltype(cl::sycl::device::get_devices()) {
 #ifdef EIGEN_SYCL_USE_DEFAULT_SELECTOR
@@ -420,6 +430,7 @@ class QueueInterface {
     return pMapper.get_offset(ptr);
   }
 
+<<<<<<< HEAD
   template <typename OutScalar, typename sycl_kernel, typename Lhs,
             typename Rhs, typename OutPtr, typename Range, typename Index,
             typename... T>
@@ -505,6 +516,8 @@ class QueueInterface {
   }
 
 
+=======
+>>>>>>> master
   EIGEN_STRONG_INLINE void synchronize() const {
 #ifdef EIGEN_EXCEPTIONS
     m_queue.wait_and_throw();
@@ -513,7 +526,10 @@ class QueueInterface {
 #endif
   }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
   EIGEN_STRONG_INLINE void async_synchronize(cl::sycl::event e) const {
     set_latest_event(e);
 #ifndef EIGEN_SYCL_ASYNC_EXECUTION
@@ -542,10 +558,18 @@ class QueueInterface {
   /// This is used to prepare the number of threads and also the number of
   /// threads per block for sycl kernels
   template <typename Index>
+<<<<<<< HEAD
   EIGEN_STRONG_INLINE void parallel_for_setup(
       const std::array<Index, 2> &input_dim, cl::sycl::range<2> &global_range,
       cl::sycl::range<2> &local_range) const {
     std::array<Index, 2> input_range = input_dim;
+=======
+  EIGEN_STRONG_INLINE void parallel_for_setup(Index dim0, Index dim1,
+                                              Index &tileSize0,
+                                              Index &tileSize1, Index &rng0,
+                                              Index &rng1, Index &GRange0,
+                                              Index &GRange1) const {
+>>>>>>> master
     Index max_workgroup_Size =
         static_cast<Index>(getNearestPowerOfTwoWorkGroupSize());
     max_workgroup_Size =
@@ -553,6 +577,7 @@ class QueueInterface {
                                     EIGEN_SYCL_LOCAL_THREAD_DIM1),
                  static_cast<Index>(max_workgroup_Size));
     Index pow_of_2 = static_cast<Index>(std::log2(max_workgroup_Size));
+<<<<<<< HEAD
     local_range[1] =
         static_cast<Index>(std::pow(2, static_cast<Index>(pow_of_2 / 2)));
     input_range[1] = input_dim[1];
@@ -575,6 +600,28 @@ class QueueInterface {
       Index xMode = static_cast<Index>(global_range[0] % local_range[0]);
       if (xMode != 0)
         global_range[0] += static_cast<Index>(local_range[0] - xMode);
+=======
+    tileSize1 =
+        static_cast<Index>(std::pow(2, static_cast<Index>(pow_of_2 / 2)));
+    rng1 = dim1;
+    if (rng1 == 0) rng1 = static_cast<Index>(1);
+    GRange1 = rng1;
+    if (tileSize1 > GRange1)
+      tileSize1 = GRange1;
+    else if (GRange1 > tileSize1) {
+      Index xMode = static_cast<Index>(GRange1 % tileSize1);
+      if (xMode != 0) GRange1 += static_cast<Index>(tileSize1 - xMode);
+    }
+    tileSize0 = static_cast<Index>(max_workgroup_Size / tileSize1);
+    rng0 = dim0;
+    if (rng0 == 0) rng0 = static_cast<Index>(1);
+    GRange0 = rng0;
+    if (tileSize0 > GRange0)
+      tileSize0 = GRange0;
+    else if (GRange0 > tileSize0) {
+      Index xMode = static_cast<Index>(GRange0 % tileSize0);
+      if (xMode != 0) GRange0 += static_cast<Index>(tileSize0 - xMode);
+>>>>>>> master
     }
   }
 
@@ -582,9 +629,15 @@ class QueueInterface {
   /// threads per block for sycl kernels
   template <typename Index>
   EIGEN_STRONG_INLINE void parallel_for_setup(
+<<<<<<< HEAD
       const std::array<Index, 3> &input_dim, cl::sycl::range<3> &global_range,
       cl::sycl::range<3> &local_range) const {
     std::array<Index, 3> input_range = input_dim;
+=======
+      Index dim0, Index dim1, Index dim2, Index &tileSize0, Index &tileSize1,
+      Index &tileSize2, Index &rng0, Index &rng1, Index &rng2, Index &GRange0,
+      Index &GRange1, Index &GRange2) const {
+>>>>>>> master
     Index max_workgroup_Size =
         static_cast<Index>(getNearestPowerOfTwoWorkGroupSize());
     max_workgroup_Size =
@@ -592,6 +645,7 @@ class QueueInterface {
                                     EIGEN_SYCL_LOCAL_THREAD_DIM1),
                  static_cast<Index>(max_workgroup_Size));
     Index pow_of_2 = static_cast<Index>(std::log2(max_workgroup_Size));
+<<<<<<< HEAD
     local_range[2] =
         static_cast<Index>(std::pow(2, static_cast<Index>(pow_of_2 / 3)));
     input_range[2] = input_dim[2];
@@ -629,11 +683,51 @@ class QueueInterface {
       Index xMode = static_cast<Index>(global_range[0] % local_range[0]);
       if (xMode != 0)
         global_range[0] += static_cast<Index>(local_range[0] - xMode);
+=======
+    tileSize2 =
+        static_cast<Index>(std::pow(2, static_cast<Index>(pow_of_2 / 3)));
+    rng2 = dim2;
+    if (rng2 == 0) rng1 = static_cast<Index>(1);
+    GRange2 = rng2;
+    if (tileSize2 > GRange2)
+      tileSize2 = GRange2;
+    else if (GRange2 > tileSize2) {
+      Index xMode = static_cast<Index>(GRange2 % tileSize2);
+      if (xMode != 0) GRange2 += static_cast<Index>(tileSize2 - xMode);
+    }
+    pow_of_2 = static_cast<Index>(
+        std::log2(static_cast<Index>(max_workgroup_Size / tileSize2)));
+    tileSize1 =
+        static_cast<Index>(std::pow(2, static_cast<Index>(pow_of_2 / 2)));
+    rng1 = dim1;
+    if (rng1 == 0) rng1 = static_cast<Index>(1);
+    GRange1 = rng1;
+    if (tileSize1 > GRange1)
+      tileSize1 = GRange1;
+    else if (GRange1 > tileSize1) {
+      Index xMode = static_cast<Index>(GRange1 % tileSize1);
+      if (xMode != 0) GRange1 += static_cast<Index>(tileSize1 - xMode);
+    }
+    tileSize0 =
+        static_cast<Index>(max_workgroup_Size / (tileSize1 * tileSize2));
+    rng0 = dim0;
+    if (rng0 == 0) rng0 = static_cast<Index>(1);
+    GRange0 = rng0;
+    if (tileSize0 > GRange0)
+      tileSize0 = GRange0;
+    else if (GRange0 > tileSize0) {
+      Index xMode = static_cast<Index>(GRange0 % tileSize0);
+      if (xMode != 0) GRange0 += static_cast<Index>(tileSize0 - xMode);
+>>>>>>> master
     }
   }
 
   EIGEN_STRONG_INLINE bool has_local_memory() const {
+<<<<<<< HEAD
 #if !defined(EIGEN_SYCL_LOCAL_MEM) && defined(EIGEN_SYCL_NO_LOCAL_MEM)
+=======
+#if !defined(EIGEN_SYCL_LOCA_MEM) && defined(EIGEN_SYCL_NO_LOCAL_MEM)
+>>>>>>> master
     return false;
 #elif defined(EIGEN_SYCL_LOCAL_MEM) && !defined(EIGEN_SYCL_NO_LOCAL_MEM)
     return true;
@@ -857,19 +951,38 @@ struct SyclDevice : public SyclDeviceBase {
   /// This is used to prepare the number of threads and also the number of
   /// threads per block for sycl kernels
   template <typename Index>
+<<<<<<< HEAD
   EIGEN_STRONG_INLINE void parallel_for_setup(
       const std::array<Index, 2> &input_dim, cl::sycl::range<2> &global_range,
       cl::sycl::range<2> &local_range) const {
     queue_stream()->parallel_for_setup(input_dim, global_range, local_range);
+=======
+  EIGEN_STRONG_INLINE void parallel_for_setup(Index dim0, Index dim1,
+                                              Index &tileSize0,
+                                              Index &tileSize1, Index &rng0,
+                                              Index &rng1, Index &GRange0,
+                                              Index &GRange1) const {
+    queue_stream()->parallel_for_setup(dim0, dim1, tileSize0, tileSize1, rng0,
+                                       rng1, GRange0, GRange1);
+>>>>>>> master
   }
 
   /// This is used to prepare the number of threads and also the number of
   /// threads per block for sycl kernels
   template <typename Index>
   EIGEN_STRONG_INLINE void parallel_for_setup(
+<<<<<<< HEAD
       const std::array<Index, 3> &input_dim, cl::sycl::range<3> &global_range,
       cl::sycl::range<3> &local_range) const {
     queue_stream()->parallel_for_setup(input_dim, global_range, local_range);
+=======
+      Index dim0, Index dim1, Index dim2, Index &tileSize0, Index &tileSize1,
+      Index &tileSize2, Index &rng0, Index &rng1, Index &rng2, Index &GRange0,
+      Index &GRange1, Index &GRange2) const {
+    queue_stream()->parallel_for_setup(dim0, dim1, dim2, tileSize0, tileSize1,
+                                       tileSize2, rng0, rng1, rng2, GRange0,
+                                       GRange1, GRange2);
+>>>>>>> master
   }
 
   /// allocate device memory
@@ -1026,6 +1139,7 @@ struct SyclDevice : public SyclDeviceBase {
   EIGEN_STRONG_INLINE std::string getDeviceVendor() const {
     return queue_stream()->getDeviceVendor();
   }
+<<<<<<< HEAD
   template <typename OutScalar, typename KernelType, typename... T>
   EIGEN_ALWAYS_INLINE void binary_kernel_launcher(T... var) const {
     queue_stream()->template binary_kernel_launcher<OutScalar, KernelType>(
@@ -1042,6 +1156,8 @@ struct SyclDevice : public SyclDeviceBase {
     queue_stream()->template nullary_kernel_launcher<OutScalar, KernelType>(
         var...);
   }
+=======
+>>>>>>> master
 };
 }  // end namespace Eigen
 

@@ -78,9 +78,12 @@ template<typename _Scalar> class AlignedVector3
     { return m_coeffs.coeffRef(index);}
 
 
+<<<<<<< HEAD
     inline AlignedVector3()
     {}
 
+=======
+>>>>>>> master
     inline AlignedVector3(const Scalar& x, const Scalar& y, const Scalar& z)
       : m_coeffs(x, y, z, Scalar(0))
     {}
@@ -134,9 +137,12 @@ template<typename _Scalar> class AlignedVector3
     inline AlignedVector3 operator-(const AlignedVector3& other) const
     { return AlignedVector3(m_coeffs - other.m_coeffs); }
 
+<<<<<<< HEAD
     inline AlignedVector3 operator-() const
     { return AlignedVector3(-m_coeffs); }
 
+=======
+>>>>>>> master
     inline AlignedVector3 operator-=(const AlignedVector3& other)
     { m_coeffs -= other.m_coeffs; return *this; }
 

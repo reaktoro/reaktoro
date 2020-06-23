@@ -123,6 +123,9 @@ void exportChemicalState(py::module& m)
         .def("speciesStabilities", &EquilibriumProperties::speciesStabilities, py::return_value_policy::reference_internal)
         ;
 
+    auto output1 = static_cast<void(ChemicalState::*)(std::ostream&, int) const>(&ChemicalState::output);
+    auto output2 = static_cast<void(ChemicalState::*)(std::string const&, int) const>(&ChemicalState::output);
+
     py::class_<ChemicalState>(m, "ChemicalState")
         .def(py::init<const ChemicalSystem&>())
         .def("assign", assignChemicalState)
@@ -183,7 +186,8 @@ void exportChemicalState(py::module& m)
         .def("properties", &ChemicalState::properties, py::keep_alive<1, 0>()) // keep returned ChemicalProperties object alive until ChemicalState object is garbage collected!
         .def("equilibrium", equilibrium1, py::return_value_policy::reference_internal)
         .def("equilibrium", equilibrium2, py::return_value_policy::reference_internal)
-        .def("output", &ChemicalState::output)
+        .def("output", output1, py::arg("out"), py::arg("precision") = 6)
+        .def("output", output2, py::arg("out"), py::arg("precision") = 6)
         .def("__repr__", [](const ChemicalState& self) { std::stringstream ss; ss << self; return ss.str(); })
         .def(py::self + py::self)
         .def(double() * py::self)

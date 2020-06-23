@@ -93,6 +93,10 @@ struct TensorEvaluator<const TensorInflationOp<Strides, ArgType>, Device>
     IsAligned = /*TensorEvaluator<ArgType, Device>::IsAligned*/ false,
     PacketAccess = TensorEvaluator<ArgType, Device>::PacketAccess,
     BlockAccess = false,
+<<<<<<< HEAD
+=======
+    BlockAccessV2 = false,
+>>>>>>> master
     PreferBlockAccess = false,
     Layout = TensorEvaluator<ArgType, Device>::Layout,
     CoordAccess = false,  // to be implemented
@@ -100,7 +104,11 @@ struct TensorEvaluator<const TensorInflationOp<Strides, ArgType>, Device>
   };
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
+<<<<<<< HEAD
   typedef internal::TensorBlockNotImplemented TensorBlock;
+=======
+  typedef internal::TensorBlockNotImplemented TensorBlockV2;
+>>>>>>> master
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device)

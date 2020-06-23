@@ -472,6 +472,7 @@ pabs<cl::sycl::cl_double2>(const cl::sycl::cl_double2& a) {
   return cl::sycl::cl_double2(cl::sycl::fabs(a.x()), cl::sycl::fabs(a.y()));
 }
 
+<<<<<<< HEAD
 template <typename Packet>
 EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE Packet sycl_pcmp_le(const Packet &a,
                                                           const Packet &b) {
@@ -581,6 +582,8 @@ SYCL_PANDNOT(cl::sycl::cl_float4)
 SYCL_PANDNOT(cl::sycl::cl_double2)
 #undef SYCL_PANDNOT
 
+=======
+>>>>>>> master
 EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE void ptranspose(
     PacketBlock<cl::sycl::cl_float4, 4>& kernel) {
   float tmp = kernel.packet[0].y();

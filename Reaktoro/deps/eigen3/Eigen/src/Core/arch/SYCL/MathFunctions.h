@@ -236,6 +236,7 @@ SYCL_PROUND(cl::sycl::cl_float4)
 SYCL_PROUND(cl::sycl::cl_double2)
 #undef SYCL_PROUND
 
+<<<<<<< HEAD
 #define SYCL_PRINT(packet_type)                                         \
   template<>                                                            \
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE packet_type print<packet_type>( \
@@ -247,6 +248,8 @@ SYCL_PRINT(cl::sycl::cl_float4)
 SYCL_PRINT(cl::sycl::cl_double2)
 #undef SYCL_PRINT
 
+=======
+>>>>>>> master
 #define SYCL_FLOOR(packet_type)                                          \
   template <>                                                            \
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE packet_type pfloor<packet_type>( \

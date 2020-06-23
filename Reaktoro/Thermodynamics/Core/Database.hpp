@@ -22,6 +22,14 @@
 #include <string>
 #include <vector>
 
+
+// Forward declarations for ThermoFun
+namespace ThermoFun {
+
+class Database;
+
+} // namespace ThermoFun
+
 namespace Reaktoro {
 
 // Forward declarations
@@ -32,6 +40,7 @@ using GaseousSpecies = FluidSpecies;
 using LiquidSpecies = FluidSpecies;
 class MineralSpecies;
 
+
 /// Provides operations to retrieve physical and thermodynamic data of chemical species.
 ///
 /// The Database class is used to retrieve information of chemical species. It is initialized
@@ -39,29 +48,29 @@ class MineralSpecies;
 /// one can, for example, retrieve thermodynamic information of an aqueous species that will be
 /// used to calculate its standard chemical potential.
 ///
-//////*Usage**
+/// **Usage**
 ///
 /// In the example below, a Database instance is initialized and
 /// queries are made to retrieve information of aqueous, gaseous
 /// and liquid species.
 /// Note that an exception is thrown if a species is not present in the database.
-/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+///
+/// ~~~
 /// using namespace Reaktoro;
 ///
 /// // Create a Database instance by parsing a local database file
-/// Database database("geodb.xml")
+/// Database db("supcrt98.xml")
 ///
 /// // Retrieve information of species H2O(l), CO2(g) and CO2(liq)
-/// AqueousSpecies aqueousSpecies = database.aqueousSpecies("H2O(l)");
-/// GaseousSpecies gaseousSpecies = database.gaseousSpecies("CO2(g)");
-/// LiquidSpecies liquidSpecies = database.liquidSpecies("CO2(liq)");
-
+/// AqueousSpecies aqueous_species = db.aqueousSpecies("H2O(l)");
+/// GaseousSpecies gaseous_species = db.gaseousSpecies("CO2(g)");
+/// LiquidSpecies liquid_species = db.liquidSpecies("CO2(liq)");
 ///
 /// // Output the data of the species H2O(l), CO2(g), CO2(liq)
-/// std::cout << aqueousSpecies << std::endl;
-/// std::cout << gaseousSpecies << std::endl;
-/// std::cout << liquidSpecies << std::endl;
-/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// std::cout << aqueous_species << std::endl;
+/// std::cout << gaseous_species << std::endl;
+/// std::cout << liquid_species << std::endl;
+/// ~~~
 ///
 /// @see AqueousSpecies, GaseousSpecies, LiquidSpecies, MineralSpecies
 /// @ingroup Core
@@ -78,6 +87,9 @@ public:
     /// exists with a given name, an exception will be thrown.
     /// @param filename The name of the database file
     explicit Database(std::string filename);
+
+    /// Construct a Database instance with a given ThermoFun database.
+    explicit Database(const ThermoFun::Database& fundatabase);
 
     /// Add an Element instance in the database.
     auto addElement(const Element& element) -> void;
@@ -115,7 +127,7 @@ public:
 
     /// Return all liquid species in the database
     auto liquidSpecies() -> std::vector<LiquidSpecies>;
-	
+
     /// Return a liquid species in the database.
     /// **Note:** An exception is thrown if the database does not contain the species.
     /// @param name The name of the liquid species

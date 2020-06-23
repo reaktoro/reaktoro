@@ -90,6 +90,7 @@ def _get_cmake_command(
             -DCMAKE_INCLUDE_PATH="{cmake_include_path}"
             -DCMAKE_INSTALL_PREFIX="{relative_artifacts_dir.as_posix()}"
             {f'-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON' if verbose else ''}
+            {f'-DREAKTORO_USE_OPENLIBM:BOOL=ON' if os.environ.get('REAKTORO_USE_OPENLIBM', '0').strip() != '0' else ''}
             {f'"-DREAKTORO_THIRDPARTY_EXTRA_BUILD_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"' if verbose else ''}
             "{str(relative_root_dir)}"
     """)

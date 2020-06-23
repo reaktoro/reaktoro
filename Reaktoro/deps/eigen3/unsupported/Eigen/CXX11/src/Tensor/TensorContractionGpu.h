@@ -531,7 +531,11 @@ EigenContractionKernel(const LhsMapper lhs, const RhsMapper rhs,
 template<typename Index, typename LhsMapper,
          typename RhsMapper, typename OutputMapper, bool CHECK_LHS_BOUNDARY,
          bool CHECK_RHS_BOUNDARY>
+<<<<<<< HEAD
 __device__ __forceinline__ void
+=======
+__device__ EIGEN_STRONG_INLINE void
+>>>>>>> master
 EigenFloatContractionKernelInternal16x16(const LhsMapper lhs, const RhsMapper rhs,
                        const OutputMapper output, float2 lhs_shmem2[][16],
                        float2 rhs_shmem2[][8], const Index m_size,
@@ -771,7 +775,11 @@ EigenFloatContractionKernelInternal16x16(const LhsMapper lhs, const RhsMapper rh
 template<typename Index, typename LhsMapper,
          typename RhsMapper, typename OutputMapper, bool CHECK_LHS_BOUNDARY,
          bool CHECK_RHS_BOUNDARY>
+<<<<<<< HEAD
 __device__ __forceinline__ void
+=======
+__device__ EIGEN_STRONG_INLINE void
+>>>>>>> master
 EigenFloatContractionKernelInternal(const LhsMapper lhs, const RhsMapper rhs,
                        const OutputMapper output, float2 lhs_shmem2[][32],
                        float2 rhs_shmem2[][8], const Index m_size,

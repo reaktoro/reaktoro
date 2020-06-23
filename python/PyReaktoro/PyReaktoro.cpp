@@ -25,6 +25,7 @@ namespace Reaktoro {
 extern void exportAutoDiff(py::module& m);
 extern void exportEigen(py::module& m);
 extern void exportIndex(py::module& m);
+extern void exportOpenlibm(py::module& m);
 extern void exportMatrix(py::module& m);
 extern void exportOutputter(py::module& m);
 extern void exportReactionEquation(py::module& m);
@@ -135,6 +136,7 @@ PYBIND11_MODULE(PyReaktoro, m)
     // Common module
     exportAutoDiff(m);
     exportIndex(m);
+    exportOpenlibm(m);
     exportMatrix(m);
     exportOutputter(m);
     exportReactionEquation(m);

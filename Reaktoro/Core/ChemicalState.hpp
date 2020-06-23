@@ -371,8 +371,11 @@ public:
     /// Return the equilibrium properties of a calculated chemical equilibrium state.
     auto equilibrium() -> EquilibriumProperties&;
 
+    /// Output the ChemicalState instance to a stream.
+    auto output(std::ostream& out, int precision = 6) const -> void;
+
     /// Output the ChemicalState instance to a file.
-    auto output(std::string filename) const -> void;
+    auto output(std::string const& filename, int precision = 6) const -> void;
 
 private:
     struct Impl;

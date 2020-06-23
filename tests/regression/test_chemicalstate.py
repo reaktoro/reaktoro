@@ -289,7 +289,7 @@ def test_chemical_state():
     assert state.properties().volume().val == approx(100.0e-6)
 
 
-def test_chemical_state_output_with_gaseous_phase_only():
+def test_chemical_state_output_with_gaseous_phase_only(file_regression, tmpdir):
     """
     Test if a ChemicalState object outputs without raising an
     exception when there is only a single gaseous phase.
@@ -298,4 +298,11 @@ def test_chemical_state_output_with_gaseous_phase_only():
     editor.addGaseousPhase("H2O(g) CO2(g) O2(g) H2(g) CH4(g)".split())
     system = ChemicalSystem(editor)
     state = ChemicalState(system)
-    repr(state)
+    state.setSpeciesAmount("H2O(g)", 1.2345678901234567);
+    state.setSpeciesAmount("CO2(g)", 0.0);
+    state.setSpeciesAmount("O2(g)", 1.0);
+    state.setSpeciesAmount("H2(g)", 2.0);
+    state.setSpeciesAmount("CH4(g)", 1e-15);
+    filepath = tmpdir / 'test_chemical_state_output_with_gaseous_phase_only.txt'
+    state.output(str(filepath), precision=17)
+    file_regression.check(filepath.read_text('utf-8'))

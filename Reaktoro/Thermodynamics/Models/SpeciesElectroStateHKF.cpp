@@ -126,7 +126,7 @@ auto functionG(Temperature T, Pressure P, const WaterThermoState& wts) -> Functi
 auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectroState
 {
     // Get the HKF thermodynamic parameters of the aqueous species
-    const auto& hkf = species.thermoData().hkf.value();
+    const auto& hkf = *species.thermoData().hkf;
 
     // The species electro instance to be calculated
     SpeciesElectroState se;

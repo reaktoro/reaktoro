@@ -209,7 +209,11 @@ std::ostream & print_matrix(std::ostream & s, const Derived& _m, const IOFormat&
       s.fill(fmt.fill);
       s.width(width);
     }
+<<<<<<< HEAD
     s << static_cast<PrintType>(m.coeff(i, 0));
+=======
+    s << m.coeff(i, 0);
+>>>>>>> master
     for(Index j = 1; j < m.cols(); ++j)
     {
       s << fmt.coeffSeparator;
@@ -217,7 +221,11 @@ std::ostream & print_matrix(std::ostream & s, const Derived& _m, const IOFormat&
         s.fill(fmt.fill);
         s.width(width);
       }
+<<<<<<< HEAD
       s << static_cast<PrintType>(m.coeff(i, j));
+=======
+      s << m.coeff(i, j);
+>>>>>>> master
     }
     s << fmt.rowSuffix;
     if( i < m.rows() - 1)

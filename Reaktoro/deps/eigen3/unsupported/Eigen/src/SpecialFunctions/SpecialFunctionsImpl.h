@@ -713,6 +713,7 @@ struct cephes_helper<double> {
 
 enum IgammaComputationMode { VALUE, DERIVATIVE, SAMPLE_DERIVATIVE };
 
+<<<<<<< HEAD
 template <typename Scalar>
 EIGEN_DEVICE_FUNC
 static EIGEN_STRONG_INLINE Scalar main_igamma_term(Scalar a, Scalar x) {
@@ -726,6 +727,8 @@ static EIGEN_STRONG_INLINE Scalar main_igamma_term(Scalar a, Scalar x) {
     return numext::exp(logax);
 }
 
+=======
+>>>>>>> master
 template <typename Scalar, IgammaComputationMode mode>
 EIGEN_DEVICE_FUNC
 int igamma_num_iterations() {
@@ -768,6 +771,7 @@ struct igammac_cf_impl {
       return zero;
     }
 
+<<<<<<< HEAD
     Scalar ax = main_igamma_term<Scalar>(a, x);
     // This is independent of mode. If this value is zero,
     // then the function value is zero. If the function value is zero,
@@ -777,6 +781,8 @@ struct igammac_cf_impl {
       return zero;
     }
 
+=======
+>>>>>>> master
     // continued fraction
     Scalar y = one - a;
     Scalar z = x + y + one;
@@ -847,7 +853,13 @@ struct igammac_cf_impl {
     }
 
     /* Compute  x**a * exp(-x) / gamma(a)  */
+<<<<<<< HEAD
     Scalar dlogax_da = numext::log(x) - digamma_impl<Scalar>::run(a);
+=======
+    Scalar logax = a * numext::log(x) - x - lgamma_impl<Scalar>::run(a);
+    Scalar dlogax_da = numext::log(x) - digamma_impl<Scalar>::run(a);
+    Scalar ax = numext::exp(logax);
+>>>>>>> master
     Scalar dax_da = ax * dlogax_da;
 
     switch (mode) {
@@ -878,6 +890,7 @@ struct igamma_series_impl {
     const Scalar one = 1;
     const Scalar machep = cephes_helper<Scalar>::machep();
 
+<<<<<<< HEAD
     Scalar ax = main_igamma_term<Scalar>(a, x);
 
     // This is independent of mode. If this value is zero,
@@ -890,6 +903,8 @@ struct igamma_series_impl {
 
     ax /= a;
 
+=======
+>>>>>>> master
     /* power series */
     Scalar r = a;
     Scalar c = one;
@@ -918,7 +933,14 @@ struct igamma_series_impl {
       }
     }
 
+<<<<<<< HEAD
     Scalar dlogax_da = numext::log(x) - digamma_impl<Scalar>::run(a + one);
+=======
+    /* Compute  x**a * exp(-x) / gamma(a + 1)  */
+    Scalar logax = a * numext::log(x) - x - lgamma_impl<Scalar>::run(a + one);
+    Scalar dlogax_da = numext::log(x) - digamma_impl<Scalar>::run(a + one);
+    Scalar ax = numext::exp(logax);
+>>>>>>> master
     Scalar dax_da = ax * dlogax_da;
 
     switch (mode) {

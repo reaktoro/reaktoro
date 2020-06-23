@@ -33,10 +33,25 @@
 #include <Reaktoro/Thermodynamics/Species/LiquidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
+// ThermoFun includes
+#include <ThermoFun/Database.h>
+
 namespace Reaktoro {
 
 void exportChemicalEditor(py::module& m)
 {
+    auto setTemperatures = [](ChemicalEditor& self, py::array_t<double> values, std::string units)
+    {
+        std::vector<double> copy(values.data(), values.data() + values.size());
+        self.setTemperatures(copy, units);
+    };
+
+    auto setPressures = [](ChemicalEditor& self, py::array_t<double> values, std::string units)
+    {
+        std::vector<double> copy(values.data(), values.data() + values.size());
+        self.setPressures(copy, units);
+    };
+
     auto addPhase1 = static_cast<AqueousPhase&(ChemicalEditor::*)(const AqueousPhase&)>(&ChemicalEditor::addPhase);
     auto addPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(const GaseousPhase&)>(&ChemicalEditor::addPhase);
     auto addPhase3 = static_cast<LiquidPhase&(ChemicalEditor::*)(const LiquidPhase&)>(&ChemicalEditor::addPhase);
@@ -60,14 +75,15 @@ void exportChemicalEditor(py::module& m)
     py::class_<ChemicalEditor>(m, "ChemicalEditor")
         .def(py::init<>())
         .def(py::init<const Database&>())
-        .def("setTemperatures", &ChemicalEditor::setTemperatures)
-        .def("setPressures", &ChemicalEditor::setPressures)
+        .def(py::init<const ThermoFun::Database&>())
+        .def("setTemperatures", setTemperatures)
+        .def("setPressures", setPressures)
         .def("addPhase", addPhase1, py::return_value_policy::reference_internal)
         .def("addPhase", addPhase2, py::return_value_policy::reference_internal)
         .def("addPhase", addPhase3, py::return_value_policy::reference_internal)
         .def("addPhase", addPhase4, py::return_value_policy::reference_internal)
         .def("addReaction", &ChemicalEditor::addReaction, py::return_value_policy::reference_internal)
-        
+
         .def("addAqueousPhase", &ChemicalEditor::addAqueousPhase, py::return_value_policy::reference_internal)
         .def("addAqueousPhaseWithElements", &ChemicalEditor::addAqueousPhaseWithElements, py::return_value_policy::reference_internal)
         .def("addAqueousPhaseWithElementsOf", &ChemicalEditor::addAqueousPhaseWithElementsOf, py::return_value_policy::reference_internal)

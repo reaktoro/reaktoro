@@ -3,40 +3,14 @@
 name: reaktoro
 
 {% set python_version = os.environ.get("PY_VER", "3.7") %}
-{% set debug = os.environ.get("CONFIG", "").lower() == "debug" %}
 
-dependencies:
-  - boost=1.70
-  - cmake=3.15
-  - invoke
-  - ninja>=1.9.0
-  - numpy
-  - pandas
-  - pip
-  - pip:
-    - sphinx
-    - sphinx-autobuild
-    - sphinx_rtd_theme
-    - sphinxcontrib-images
-  - nlohmann_json
-  - pybind11=2.3.0
-  - pytest
-  - pytest-cpp
-  - pytest-datadir
-  - pytest-lazy-fixture
-  - pytest-regressions
-  - pytest-timeout
-  - pytest-xdist
-  - python={{ python_version }}
-  - tabulate
-  - gxx_linux-64=7.3.0             # [linux]
-  - libstdcxx-ng                   # [linux]
-  - ccache                         # [unix]
-  - clcache                        # [win]
-  {% if not debug %}
-  # Cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
-  - pugixml
-  {% endif %}
+includes:
+  - {{ root }}/.dependencies/compilers.devenv.yml
+  - {{ root }}/.dependencies/cpp.devenv.yml
+  - {{ root }}/.dependencies/python.devenv.yml
+  - {{ root }}/.dependencies/docs.devenv.yml
+  - {{ root }}/.dependencies/tests.devenv.yml
+  - {{ root }}/.dependencies/utilities.devenv.yml
 
 environment:
 

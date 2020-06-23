@@ -149,6 +149,10 @@ struct TensorEvaluator<const TensorChippingOp<DimId, ArgType>, Device>
     Layout            = TensorEvaluator<ArgType, Device>::Layout,
     PacketAccess      = TensorEvaluator<ArgType, Device>::PacketAccess,
     BlockAccess       = TensorEvaluator<ArgType, Device>::BlockAccess,
+<<<<<<< HEAD
+=======
+    BlockAccessV2     = false,
+>>>>>>> master
     // Chipping of outer-most dimension is a trivial operation, because we can
     // read and write directly from the underlying tensor using single offset.
     IsOuterChipping   = (static_cast<int>(Layout) == ColMajor && DimId == NumInputDims - 1) ||
@@ -156,16 +160,22 @@ struct TensorEvaluator<const TensorChippingOp<DimId, ArgType>, Device>
     // Chipping inner-most dimension.
     IsInnerChipping   = (static_cast<int>(Layout) == ColMajor && DimId == 0) ||
                         (static_cast<int>(Layout) == RowMajor && DimId == NumInputDims - 1),
+<<<<<<< HEAD
     // Prefer block access if the underlying expression prefers it, otherwise
     // only if chipping is not trivial.
     PreferBlockAccess = TensorEvaluator<ArgType, Device>::PreferBlockAccess ||
                         !IsOuterChipping,
+=======
+    // Do not choose block access if chipping is trivial.
+    PreferBlockAccess = !IsOuterChipping,
+>>>>>>> master
     CoordAccess       = false,  // to be implemented
     RawAccess         = false
   };
 
   typedef typename internal::remove_const<Scalar>::type ScalarNoConst;
 
+<<<<<<< HEAD
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
   typedef internal::TensorBlockDescriptor<NumDims, Index> TensorBlockDesc;
   typedef internal::TensorBlockScratchAllocator<Device> TensorBlockScratch;
@@ -178,6 +188,15 @@ struct TensorEvaluator<const TensorChippingOp<DimId, ArgType>, Device>
   typedef typename internal::TensorMaterializedBlock<ScalarNoConst, NumDims,
                                                      Layout, Index>
       TensorBlock;
+=======
+  typedef internal::TensorBlock<ScalarNoConst, Index, NumInputDims, Layout>
+      InputTensorBlock;
+  typedef internal::TensorBlock<ScalarNoConst, Index, NumDims, Layout>
+      OutputTensorBlock;
+
+  //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
+  typedef internal::TensorBlockNotImplemented TensorBlockV2;
+>>>>>>> master
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device)
@@ -212,6 +231,23 @@ struct TensorEvaluator<const TensorChippingOp<DimId, ArgType>, Device>
     }
     m_inputStride *= input_dims[m_dim.actualDim()];
     m_inputOffset = m_stride * op.offset();
+<<<<<<< HEAD
+=======
+
+    if (BlockAccess) {
+      if (static_cast<int>(Layout) == static_cast<int>(ColMajor)) {
+        m_inputStrides[0] = 1;
+        for (int i = 1; i < NumInputDims; ++i) {
+          m_inputStrides[i] = m_inputStrides[i - 1] * input_dims[i - 1];
+        }
+      } else {
+        m_inputStrides[NumInputDims - 1] = 1;
+        for (int i = NumInputDims - 2; i >= 0; --i) {
+          m_inputStrides[i] = m_inputStrides[i + 1] * input_dims[i + 1];
+        }
+      }
+    }
+>>>>>>> master
   }
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE const Dimensions& dimensions() const { return m_dimensions; }
@@ -294,6 +330,7 @@ struct TensorEvaluator<const TensorChippingOp<DimId, ArgType>, Device>
            TensorOpCost(0, 0, cost, vectorized, PacketSize);
   }
 
+<<<<<<< HEAD
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   internal::TensorBlockResourceRequirements getResourceRequirements() const {
     const size_t target_size = m_device.lastLevelCacheSize();
@@ -360,6 +397,61 @@ struct TensorEvaluator<const TensorChippingOp<DimId, ArgType>, Device>
 
       return block_storage.AsTensorMaterializedBlock();
     }
+=======
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void getResourceRequirements(
+      std::vector<internal::TensorOpResourceRequirements>* resources) const {
+    Eigen::Index block_total_size_max = numext::maxi<Eigen::Index>(
+        1, m_device.lastLevelCacheSize() / sizeof(Scalar));
+    resources->push_back(internal::TensorOpResourceRequirements(
+        internal::kSkewedInnerDims, block_total_size_max));
+    m_impl.getResourceRequirements(resources);
+  }
+
+  // TODO(andydavis) Reduce the overhead of this function (experiment with
+  // using a fixed block size).
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void block(
+      OutputTensorBlock* output_block) const {
+    // Calculate input block sizes.
+    const DSizes<Index, NumDims>& output_block_sizes =
+        output_block->block_sizes();
+    const DSizes<Index, NumDims>& output_block_strides =
+        output_block->block_strides();
+    const Index chip_dim = m_dim.actualDim();
+    DSizes<Index, NumInputDims> input_block_sizes;
+    DSizes<Index, NumInputDims> input_block_strides;
+    for (Index i = 0; i < NumInputDims; ++i) {
+      if (i < chip_dim) {
+        input_block_sizes[i] = output_block_sizes[i];
+        input_block_strides[i] = output_block_strides[i];
+      } else if (i > chip_dim) {
+        input_block_sizes[i] = output_block_sizes[i - 1];
+        input_block_strides[i] = output_block_strides[i - 1];
+      } else {
+        input_block_sizes[i] = 1;
+      }
+    }
+    // Fix up input_block_stride for chip dimension.
+    if (static_cast<int>(Layout) == static_cast<int>(ColMajor)) {
+      if (chip_dim == 0) {
+        input_block_strides[chip_dim] = 1;
+      } else {
+        input_block_strides[chip_dim] =
+            input_block_strides[chip_dim - 1] * input_block_sizes[chip_dim - 1];
+      }
+    } else {
+      if (chip_dim == NumInputDims - 1) {
+        input_block_strides[chip_dim] = 1;
+      } else {
+        input_block_strides[chip_dim] =
+            input_block_strides[chip_dim + 1] * input_block_sizes[chip_dim + 1];
+      }
+    }
+    // Instantiate and read input block from input tensor.
+    InputTensorBlock input_block(srcCoeff(output_block->first_coeff_index()),
+                                 input_block_sizes, input_block_strides,
+                                 m_inputStrides, output_block->data());
+    m_impl.block(&input_block);
+>>>>>>> master
   }
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename Storage::Type data() const {
@@ -415,6 +507,10 @@ struct TensorEvaluator<const TensorChippingOp<DimId, ArgType>, Device>
   Index m_stride;
   Index m_inputOffset;
   Index m_inputStride;
+<<<<<<< HEAD
+=======
+  DSizes<Index, NumInputDims> m_inputStrides;
+>>>>>>> master
   TensorEvaluator<ArgType, Device> m_impl;
   const internal::DimensionId<DimId> m_dim;
   const Device EIGEN_DEVICE_REF m_device;
@@ -438,6 +534,7 @@ struct TensorEvaluator<TensorChippingOp<DimId, ArgType>, Device>
   static const int PacketSize = PacketType<CoeffReturnType, Device>::size;
 
   enum {
+<<<<<<< HEAD
     IsAligned     = false,
     PacketAccess  = TensorEvaluator<ArgType, Device>::PacketAccess,
     BlockAccess   = TensorEvaluator<ArgType, Device>::RawAccess,
@@ -448,6 +545,21 @@ struct TensorEvaluator<TensorChippingOp<DimId, ArgType>, Device>
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
   typedef internal::TensorBlockDescriptor<NumDims, Index> TensorBlockDesc;
   //===--------------------------------------------------------------------===//
+=======
+    IsAligned    = false,
+    PacketAccess = TensorEvaluator<ArgType, Device>::PacketAccess,
+    BlockAccess  = TensorEvaluator<ArgType, Device>::BlockAccess,
+    Layout       = TensorEvaluator<ArgType, Device>::Layout,
+    RawAccess    = false
+  };
+
+  typedef typename internal::remove_const<Scalar>::type ScalarNoConst;
+
+  typedef internal::TensorBlock<ScalarNoConst, Index, NumInputDims, Layout>
+      InputTensorBlock;
+  typedef internal::TensorBlock<ScalarNoConst, Index, NumDims, Layout>
+      OutputTensorBlock;
+>>>>>>> master
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device)
     : Base(op, device)
@@ -497,6 +609,7 @@ struct TensorEvaluator<TensorChippingOp<DimId, ArgType>, Device>
     }
   }
 
+<<<<<<< HEAD
   template <typename TensorBlock>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void writeBlock(
       const TensorBlockDesc& desc, const TensorBlock& block) {
@@ -525,6 +638,50 @@ struct TensorEvaluator<TensorChippingOp<DimId, ArgType>, Device>
             internal::strides<Layout>(this->m_impl.dimensions()),
             this->m_impl.data(), this->srcCoeff(desc.offset())),
         block.expr().reshape(input_block_dims));
+=======
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void writeBlock(
+      const OutputTensorBlock& output_block) {
+    // Calculate input block sizes.
+    const DSizes<Index, NumDims>& output_block_sizes =
+        output_block.block_sizes();
+    const DSizes<Index, NumDims>& output_block_strides =
+        output_block.block_strides();
+    const Index chip_dim = this->m_dim.actualDim();
+    DSizes<Index, NumInputDims> input_block_sizes;
+    DSizes<Index, NumInputDims> input_block_strides;
+    for (Index i = 0; i < NumInputDims; ++i) {
+      if (i < chip_dim) {
+        input_block_sizes[i] = output_block_sizes[i];
+        input_block_strides[i] = output_block_strides[i];
+      } else if (i > chip_dim) {
+        input_block_sizes[i] = output_block_sizes[i - 1];
+        input_block_strides[i] = output_block_strides[i - 1];
+      } else {
+        input_block_sizes[i] = 1;
+      }
+    }
+    // Fix up input_block_stride for chip dimension.
+    if (static_cast<int>(Layout) == static_cast<int>(ColMajor)) {
+      if (chip_dim == 0) {
+        input_block_strides[chip_dim] = 1;
+      } else {
+        input_block_strides[chip_dim] =
+            input_block_strides[chip_dim - 1] * input_block_sizes[chip_dim - 1];
+      }
+    } else {
+      if (chip_dim == NumInputDims - 1) {
+        input_block_strides[chip_dim] = 1;
+      } else {
+        input_block_strides[chip_dim] =
+            input_block_strides[chip_dim + 1] * input_block_sizes[chip_dim + 1];
+      }
+    }
+    // Write input block.
+    this->m_impl.writeBlock(InputTensorBlock(
+        this->srcCoeff(output_block.first_coeff_index()), input_block_sizes,
+        input_block_strides, this->m_inputStrides,
+        const_cast<ScalarNoConst*>(output_block.data())));
+>>>>>>> master
   }
 };
 

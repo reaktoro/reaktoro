@@ -14,3 +14,22 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+#include <PyReaktoro/PyReaktoro.hpp>
+
+namespace Reaktoro {
+
+bool isUsingOpenlibm() {
+#if defined(REAKTORO_USE_OPENLIBM) && REAKTORO_USE_OPENLIBM
+    return true;
+#else
+    return false;
+#endif
+}
+
+void exportOpenlibm(py::module& m)
+{
+    m.def("isUsingOpenlibm", &isUsingOpenlibm);
+}
+
+} // namespace Reaktoro

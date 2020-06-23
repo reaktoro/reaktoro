@@ -8,7 +8,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CCache)
 
 # Set the name of the project
-project(Reaktoro VERSION 1.0.2 LANGUAGES CXX)
+project(Reaktoro VERSION 1.0.6 LANGUAGES CXX)
+
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17) # -std=c++17
 
@@ -46,6 +47,9 @@ endif()
 # Set the CTest option BUILD_TESTING to the value of BUILD_TESTS
 set(BUILD_TESTING BUILD_TEST)
 
+# Define is Reaktoro should be built linking against openlibm instead of system's default libm
+option(REAKTORO_USE_OPENLIBM      "Build linking with openlibm." OFF)
+
 # Define if shared library should be build instead of static.
 option(BUILD_SHARED_LIBS "Build shared libraries." ON)
 
@@ -70,6 +74,7 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
         /EHsc
         /D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
         /DNOMINMAX
+        /Zc:__cplusplus  # This is needed to ensure __cplusplus is replaced with a correct value (e.g. 201703L) instead of fixed 199711L (see more on https://docs.microsoft.com/bs-cyrl-ba/cpp/build/reference/zc-cplusplus?view=vs-2019)
     )
 endif()
 

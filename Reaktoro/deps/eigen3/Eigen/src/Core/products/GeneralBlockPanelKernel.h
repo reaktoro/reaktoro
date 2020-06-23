@@ -602,6 +602,7 @@ public:
   EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, RhsPacketType& dest) const
   {
     dest = pset1<RhsPacketType>(*b);
+<<<<<<< HEAD
   }
 
   EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, RhsPacketx4& dest) const
@@ -609,6 +610,15 @@ public:
     pbroadcast4(b, dest.B_0, dest.B1, dest.B2, dest.B3);
   }
 
+=======
+  }
+
+  EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, RhsPacketx4& dest) const
+  {
+    pbroadcast4(b, dest.B_0, dest.B1, dest.B2, dest.B3);
+  }
+
+>>>>>>> master
   template<typename RhsPacketType>
   EIGEN_STRONG_INLINE void updateRhs(const RhsScalar* b, RhsPacketType& dest) const
   {
@@ -629,6 +639,7 @@ public:
     // what we want here is a ploadheight
     RhsScalar tmp[4] = {b[0],b[0],b[1],b[1]};
     dest = ploadquad<RhsPacket>(tmp);
+<<<<<<< HEAD
   }
 
   EIGEN_STRONG_INLINE void loadRhsQuad_impl(const RhsScalar* b, RhsPacket& dest, const false_type&) const
@@ -645,6 +656,24 @@ public:
   template<typename LhsPacketType>
   EIGEN_STRONG_INLINE void loadLhsUnaligned(const LhsScalar* a, LhsPacketType& dest) const
   {
+=======
+  }
+
+  EIGEN_STRONG_INLINE void loadRhsQuad_impl(const RhsScalar* b, RhsPacket& dest, const false_type&) const
+  {
+    eigen_internal_assert(RhsPacketSize<=8);
+    dest = pset1<RhsPacket>(*b);
+  }
+
+  EIGEN_STRONG_INLINE void loadLhs(const LhsScalar* a, LhsPacket& dest) const
+  {
+    dest = pload<LhsPacket>(a);
+  }
+
+  template<typename LhsPacketType>
+  EIGEN_STRONG_INLINE void loadLhsUnaligned(const LhsScalar* a, LhsPacketType& dest) const
+  {
+>>>>>>> master
     dest = ploadu<LhsPacketType>(a);
   }
 
@@ -733,8 +762,13 @@ template<typename Scalar, typename RealPacket>
 void loadQuadToDoublePacket(const Scalar* b, DoublePacket<RealPacket>& dest,
                             typename enable_if<unpacket_traits<RealPacket>::size<=8>::type* = 0)
 {
+<<<<<<< HEAD
   dest.first  = pset1<RealPacket>(numext::real(*b));
   dest.second = pset1<RealPacket>(numext::imag(*b));
+=======
+  dest.first  = pset1<RealPacket>(real(*b));
+  dest.second = pset1<RealPacket>(imag(*b));
+>>>>>>> master
 }
 
 template<typename Scalar, typename RealPacket>
@@ -743,8 +777,13 @@ void loadQuadToDoublePacket(const Scalar* b, DoublePacket<RealPacket>& dest,
 {
   // yes, that's pretty hackish too :(
   typedef typename NumTraits<Scalar>::Real RealScalar;
+<<<<<<< HEAD
   RealScalar r[4] = {numext::real(b[0]), numext::real(b[0]), numext::real(b[1]), numext::real(b[1])};
   RealScalar i[4] = {numext::imag(b[0]), numext::imag(b[0]), numext::imag(b[1]), numext::imag(b[1])};
+=======
+  RealScalar r[4] = {real(b[0]), real(b[0]), real(b[1]), real(b[1])};
+  RealScalar i[4] = {imag(b[0]), imag(b[0]), imag(b[1]), imag(b[1])};
+>>>>>>> master
   dest.first  = ploadquad<RealPacket>(r);
   dest.second = ploadquad<RealPacket>(i);
 }
@@ -824,8 +863,13 @@ public:
   template<typename RealPacketType>
   EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, DoublePacket<RealPacketType>& dest) const
   {
+<<<<<<< HEAD
     dest.first  = pset1<RealPacketType>(numext::real(*b));
     dest.second = pset1<RealPacketType>(numext::imag(*b));
+=======
+    dest.first  = pset1<RealPacketType>(real(*b));
+    dest.second = pset1<RealPacketType>(imag(*b));
+>>>>>>> master
   }
 
   EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, RhsPacketx4& dest) const
@@ -1052,6 +1096,7 @@ public:
 
 protected:
 
+<<<<<<< HEAD
 };
 
 
@@ -1194,6 +1239,150 @@ struct gebp_traits <double, double, false, false,Architecture::NEON>
   }
 };
 
+=======
+};
+
+
+#if EIGEN_ARCH_ARM64 && defined EIGEN_VECTORIZE_NEON
+
+template<>
+struct gebp_traits <float, float, false, false,Architecture::NEON,GEBPPacketFull>
+ : gebp_traits<float,float,false,false,Architecture::Generic,GEBPPacketFull>
+{
+  typedef float RhsPacket;
+
+  typedef float32x4_t RhsPacketx4;
+
+  EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, RhsPacket& dest) const
+  {
+    dest = *b;
+  }
+
+  EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, RhsPacketx4& dest) const
+  {
+    dest = vld1q_f32(b);
+  }
+
+  EIGEN_STRONG_INLINE void updateRhs(const RhsScalar* b, RhsPacket& dest) const
+  {
+    dest = *b;
+  }
+
+  EIGEN_STRONG_INLINE void updateRhs(const RhsScalar* b, RhsPacketx4& dest) const
+  {}
+
+  EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar* b, RhsPacket& dest) const
+  {
+    loadRhs(b,dest);
+  }
+
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacket& b, AccPacket& c, RhsPacket& /*tmp*/, const FixedInt<0>&) const
+  {
+    c = vfmaq_n_f32(c, a, b);
+  }
+
+  // NOTE: Template parameter inference failed when compiled with Android NDK:
+  // "candidate template ignored: could not match 'FixedInt<N>' against 'Eigen::internal::FixedInt<0>".
+
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacketx4& b, AccPacket& c, RhsPacket& /*tmp*/, const FixedInt<0>&) const
+  { madd_helper<0>(a, b, c); }
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacketx4& b, AccPacket& c, RhsPacket& /*tmp*/, const FixedInt<1>&) const
+  { madd_helper<1>(a, b, c); }
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacketx4& b, AccPacket& c, RhsPacket& /*tmp*/, const FixedInt<2>&) const
+  { madd_helper<2>(a, b, c); }
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacketx4& b, AccPacket& c, RhsPacket& /*tmp*/, const FixedInt<3>&) const
+  { madd_helper<3>(a, b, c); }
+
+ private:
+  template<int LaneID>
+  EIGEN_STRONG_INLINE void madd_helper(const LhsPacket& a, const RhsPacketx4& b, AccPacket& c) const
+  {
+    #if EIGEN_COMP_GNUC_STRICT && !(EIGEN_GNUC_AT_LEAST(9,0))
+    // workaround gcc issue https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89101
+    // vfmaq_laneq_f32 is implemented through a costly dup
+         if(LaneID==0)  asm("fmla %0.4s, %1.4s, %2.s[0]\n" : "+w" (c) : "w" (a), "w" (b) :  );
+    else if(LaneID==1)  asm("fmla %0.4s, %1.4s, %2.s[1]\n" : "+w" (c) : "w" (a), "w" (b) :  );
+    else if(LaneID==2)  asm("fmla %0.4s, %1.4s, %2.s[2]\n" : "+w" (c) : "w" (a), "w" (b) :  );
+    else if(LaneID==3)  asm("fmla %0.4s, %1.4s, %2.s[3]\n" : "+w" (c) : "w" (a), "w" (b) :  );
+    #else
+    c = vfmaq_laneq_f32(c, a, b, LaneID);
+    #endif
+  }
+};
+
+
+template<>
+struct gebp_traits <double, double, false, false,Architecture::NEON>
+ : gebp_traits<double,double,false,false,Architecture::Generic>
+{
+  typedef double RhsPacket;
+
+  struct RhsPacketx4 {
+    float64x2_t B_0, B_1;
+  };
+
+  EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, RhsPacket& dest) const
+  {
+    dest = *b;
+  }
+
+  EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, RhsPacketx4& dest) const
+  {
+    dest.B_0 = vld1q_f64(b);
+    dest.B_1 = vld1q_f64(b+2);
+  }
+
+  EIGEN_STRONG_INLINE void updateRhs(const RhsScalar* b, RhsPacket& dest) const
+  {
+    loadRhs(b,dest);
+  }
+
+  EIGEN_STRONG_INLINE void updateRhs(const RhsScalar* b, RhsPacketx4& dest) const
+  {}
+
+  EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar* b, RhsPacket& dest) const
+  {
+    loadRhs(b,dest);
+  }
+
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacket& b, AccPacket& c, RhsPacket& /*tmp*/, const FixedInt<0>&) const
+  {
+    c = vfmaq_n_f64(c, a, b);
+  }
+
+  // NOTE: Template parameter inference failed when compiled with Android NDK:
+  // "candidate template ignored: could not match 'FixedInt<N>' against 'Eigen::internal::FixedInt<0>".
+
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacketx4& b, AccPacket& c, RhsPacket& /*tmp*/, const FixedInt<0>&) const
+  { madd_helper<0>(a, b, c); }
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacketx4& b, AccPacket& c, RhsPacket& /*tmp*/, const FixedInt<1>&) const
+  { madd_helper<1>(a, b, c); }
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacketx4& b, AccPacket& c, RhsPacket& /*tmp*/, const FixedInt<2>&) const
+  { madd_helper<2>(a, b, c); }
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacketx4& b, AccPacket& c, RhsPacket& /*tmp*/, const FixedInt<3>&) const
+  { madd_helper<3>(a, b, c); }
+
+ private:
+  template <int LaneID>
+  EIGEN_STRONG_INLINE void madd_helper(const LhsPacket& a, const RhsPacketx4& b, AccPacket& c) const
+  {
+    #if EIGEN_COMP_GNUC_STRICT && !(EIGEN_GNUC_AT_LEAST(9,0))
+    // workaround gcc issue https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89101
+    // vfmaq_laneq_f64 is implemented through a costly dup
+         if(LaneID==0)  asm("fmla %0.2d, %1.2d, %2.d[0]\n" : "+w" (c) : "w" (a), "w" (b.B_0) :  );
+    else if(LaneID==1)  asm("fmla %0.2d, %1.2d, %2.d[1]\n" : "+w" (c) : "w" (a), "w" (b.B_0) :  );
+    else if(LaneID==2)  asm("fmla %0.2d, %1.2d, %2.d[0]\n" : "+w" (c) : "w" (a), "w" (b.B_1) :  );
+    else if(LaneID==3)  asm("fmla %0.2d, %1.2d, %2.d[1]\n" : "+w" (c) : "w" (a), "w" (b.B_1) :  );
+    #else
+         if(LaneID==0) c = vfmaq_laneq_f64(c, a, b.B_0, 0);
+    else if(LaneID==1) c = vfmaq_laneq_f64(c, a, b.B_0, 1);
+    else if(LaneID==2) c = vfmaq_laneq_f64(c, a, b.B_1, 0);
+    else if(LaneID==3) c = vfmaq_laneq_f64(c, a, b.B_1, 1);
+    #endif
+  }
+};
+
+>>>>>>> master
 #endif
 
 /* optimized General packed Block * packed Panel product kernel

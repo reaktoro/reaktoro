@@ -201,6 +201,21 @@ struct nested<const TensorFixedSize<Scalar_, Dimensions, Options, IndexType_> >
 };
 
 
+<<<<<<< HEAD
+=======
+template <typename PlainObjectType, int Options, template <class> class MakePointer>
+struct nested<TensorMap<PlainObjectType, Options, MakePointer> >
+{
+  typedef const TensorMap<PlainObjectType, Options, MakePointer>EIGEN_DEVICE_REF type;
+};
+
+template <typename PlainObjectType, int Options, template <class> class MakePointer>
+struct nested<const TensorMap<PlainObjectType, Options, MakePointer> >
+{
+  typedef const TensorMap<PlainObjectType, Options, MakePointer>EIGEN_DEVICE_REF type;
+};
+
+>>>>>>> master
 template <typename PlainObjectType>
 struct nested<TensorRef<PlainObjectType> >
 {

@@ -8,6 +8,6 @@ setup(name='reaktoro',
       url='www.reaktoro.org',
       license='LGPLv2.1',
       package_dir={'reaktoro': ''},
-      packages=['reaktoro'],
+      packages=['reaktoro', 'reaktoro._extensions'],
       package_data={'reaktoro': ['@REAKTORO_PYTHON_MODULE_FILENAME@', '*.pdb']}
       )

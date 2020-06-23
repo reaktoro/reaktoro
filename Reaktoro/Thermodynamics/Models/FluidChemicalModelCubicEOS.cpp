@@ -83,10 +83,11 @@ auto fluidChemicalModelCubicEOS(
         // Create an alias to the ln fugacity coefficients
         const auto& ln_phi = eosres.ln_fugacity_coefficients;
 
-        // Fill the chemical properties of the gaseous phase
+        // Fill the chemical properties of the fluid phase
         res.ln_activity_coefficients = ln_phi;
         res.ln_activities = ln_phi + ln_x + ln_Pbar;
         res.molar_volume = eosres.molar_volume;
+        res.partial_molar_volumes = eosres.partial_molar_volumes;
         res.residual_molar_gibbs_energy = eosres.residual_molar_gibbs_energy;
         res.residual_molar_enthalpy = eosres.residual_molar_enthalpy;
         res.residual_molar_heat_capacity_cp = eosres.residual_molar_heat_capacity_cp;

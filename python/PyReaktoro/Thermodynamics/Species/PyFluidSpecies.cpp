@@ -35,6 +35,10 @@ void exportFluidSpecies(py::module& m)
         .def("acentricFactor", &FluidSpecies::acentricFactor)
         .def("thermoData", &FluidSpecies::thermoData, py::return_value_policy::reference_internal)
         ;
+
+    m.attr("GaseousSpecies") = m.attr("FluidSpecies");
+    m.attr("LiquidSpecies") = m.attr("FluidSpecies");
+
 }
 
 } // namespace Reaktoro

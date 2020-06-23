@@ -77,6 +77,7 @@ class TensorForcedEvalOp : public TensorBase<TensorForcedEvalOp<XprType>, ReadOn
     typename XprType::Nested m_xpr;
 };
 
+<<<<<<< HEAD
 namespace internal {
 template <typename Device, typename CoeffReturnType>
 struct non_integral_type_placement_new{
@@ -99,6 +100,8 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void operator()(Index, StorageType) {
 }
 };
 } // end namespace internal
+=======
+>>>>>>> master
 
 template<typename ArgType_, typename Device>
 struct TensorEvaluator<const TensorForcedEvalOp<ArgType_>, Device>
@@ -119,11 +122,16 @@ struct TensorEvaluator<const TensorForcedEvalOp<ArgType_>, Device>
     IsAligned         = true,
     PacketAccess      = (PacketType<CoeffReturnType, Device>::size > 1),
     BlockAccess       = internal::is_arithmetic<CoeffReturnType>::value,
+<<<<<<< HEAD
+=======
+    BlockAccessV2     = false,
+>>>>>>> master
     PreferBlockAccess = false,
     Layout            = TensorEvaluator<ArgType, Device>::Layout,
     RawAccess         = true
   };
 
+<<<<<<< HEAD
   static const int NumDims = internal::traits<ArgType>::NumDimensions;
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
@@ -133,6 +141,17 @@ struct TensorEvaluator<const TensorForcedEvalOp<ArgType_>, Device>
   typedef typename internal::TensorMaterializedBlock<CoeffReturnType, NumDims,
                                                      Layout, Index>
       TensorBlock;
+=======
+  typedef typename internal::TensorBlock<
+      CoeffReturnType, Index, internal::traits<ArgType>::NumDimensions, Layout>
+      TensorBlock;
+  typedef typename internal::TensorBlockReader<
+      CoeffReturnType, Index, internal::traits<ArgType>::NumDimensions, Layout>
+      TensorBlockReader;
+
+  //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
+  typedef internal::TensorBlockNotImplemented TensorBlockV2;
+>>>>>>> master
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC TensorEvaluator(const XprType& op, const Device& device)
@@ -148,9 +167,20 @@ struct TensorEvaluator<const TensorForcedEvalOp<ArgType_>, Device>
   EIGEN_STRONG_INLINE bool evalSubExprsIfNeeded(EvaluatorPointerType) {
     const Index numValues =  internal::array_prod(m_impl.dimensions());
     m_buffer = m_device.get((CoeffReturnType*)m_device.allocate_temp(numValues * sizeof(CoeffReturnType)));
+<<<<<<< HEAD
 
    internal::non_integral_type_placement_new<Device, CoeffReturnType>()(numValues, m_buffer);
 
+=======
+    #ifndef EIGEN_USE_SYCL
+    // Should initialize the memory in case we're dealing with non POD types.
+    if (NumTraits<CoeffReturnType>::RequireInitialization) {
+      for (Index i = 0; i < numValues; ++i) {
+        new(m_buffer+i) CoeffReturnType();
+      }
+    }
+    #endif
+>>>>>>> master
     typedef TensorEvalToOp< const typename internal::remove_const<ArgType>::type > EvalTo;
     EvalTo evalToTmp(m_device.get(m_buffer), m_op);
 
@@ -162,6 +192,7 @@ struct TensorEvaluator<const TensorForcedEvalOp<ArgType_>, Device>
 
     return true;
   }
+<<<<<<< HEAD
 
 #ifdef EIGEN_USE_THREADS
   template <typename EvalSubExprsCallback>
@@ -185,6 +216,8 @@ struct TensorEvaluator<const TensorForcedEvalOp<ArgType_>, Device>
   }
 #endif
 
+=======
+>>>>>>> master
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void cleanup() {
     m_device.deallocate_temp(m_buffer);
     m_buffer = NULL;
@@ -201,6 +234,7 @@ struct TensorEvaluator<const TensorForcedEvalOp<ArgType_>, Device>
     return internal::ploadt<PacketReturnType, LoadMode>(m_buffer + index);
   }
 
+<<<<<<< HEAD
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   internal::TensorBlockResourceRequirements getResourceRequirements() const {
     return internal::TensorBlockResourceRequirements::any();
@@ -211,6 +245,14 @@ struct TensorEvaluator<const TensorForcedEvalOp<ArgType_>, Device>
           bool /*root_of_expr_ast*/ = false) const {
     assert(m_buffer != NULL);
     return TensorBlock::materialize(m_buffer, m_impl.dimensions(), desc, scratch);
+=======
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void getResourceRequirements(
+      std::vector<internal::TensorOpResourceRequirements>*) const {}
+
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void block(TensorBlock* block) const {
+    assert(m_buffer != NULL);
+    TensorBlockReader::Run(block, m_buffer);
+>>>>>>> master
   }
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorOpCost costPerCoeff(bool vectorized) const {

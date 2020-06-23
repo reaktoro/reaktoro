@@ -15,7 +15,11 @@ namespace Eigen {
 namespace internal {
 
 // Disable the code for older versions of gcc that don't support many of the required avx512 instrinsics.
+<<<<<<< HEAD
 #if EIGEN_GNUC_AT_LEAST(5, 3) || EIGEN_COMP_CLANG  || EIGEN_COMP_MSVC >= 1923
+=======
+#if EIGEN_GNUC_AT_LEAST(5, 3) || EIGEN_COMP_CLANG
+>>>>>>> master
 
 #define _EIGEN_DECLARE_CONST_Packet16f(NAME, X) \
   const Packet16f p16f_##NAME = pset1<Packet16f>(X)
@@ -432,6 +436,37 @@ EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f
 pcos<Packet16f>(const Packet16f& _x) {
   return pcos_float(_x);
 }
+
+template <>
+EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f
+ptanh<Packet16f>(const Packet16f& _x) {
+  return internal::generic_fast_tanh_float(_x);
+}
+
+
+template <>
+EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f
+psin<Packet16f>(const Packet16f& _x) {
+  return psin_float(_x);
+}
+
+template <>
+EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f
+pcos<Packet16f>(const Packet16f& _x) {
+  return pcos_float(_x);
+}
+
+#if defined(EIGEN_VECTORIZE_AVX512DQ)
+template<> EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED
+Packet16f plog1p<Packet16f>(const Packet16f& _x) {
+  return generic_plog1p(_x);
+}
+
+template<> EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED
+Packet16f pexpm1<Packet16f>(const Packet16f& _x) {
+  return generic_expm1(_x);
+}
+#endif
 
 template <>
 EIGEN_DEFINE_FUNCTION_ALLOWING_MULTIPLE_DEFINITIONS EIGEN_UNUSED Packet16f

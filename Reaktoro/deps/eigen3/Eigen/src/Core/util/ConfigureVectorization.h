@@ -212,6 +212,10 @@
   #endif
 #endif
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 #if !(defined(EIGEN_DONT_VECTORIZE) || defined(EIGEN_GPUCC))
 
   #if defined (EIGEN_SSE2_ON_NON_MSVC_BUT_NOT_OLD_GCC) || defined(EIGEN_SSE2_ON_MSVC_2008_OR_LATER)
@@ -271,11 +275,17 @@
       #error Please enable FMA in your compiler flags (e.g. -mfma): compiling with AVX512 alone without SSE/AVX FMA is not supported (bug 1638).
       #endif
       #endif
+<<<<<<< HEAD
       #ifndef EIGEN_USE_SYCL
         #define EIGEN_VECTORIZE_AVX512
         #define EIGEN_VECTORIZE_AVX2
         #define EIGEN_VECTORIZE_AVX
       #endif
+=======
+      #define EIGEN_VECTORIZE_AVX512
+      #define EIGEN_VECTORIZE_AVX2
+      #define EIGEN_VECTORIZE_AVX
+>>>>>>> master
       #define EIGEN_VECTORIZE_FMA
       #define EIGEN_VECTORIZE_SSE3
       #define EIGEN_VECTORIZE_SSSE3
@@ -411,7 +421,11 @@
   #endif
 #endif
 
+<<<<<<< HEAD
 #if defined(__F16C__) && (!defined(EIGEN_GPUCC) && (!defined(EIGEN_COMP_CLANG) || EIGEN_COMP_CLANG>=380))
+=======
+#if defined(__F16C__) && (!defined(EIGEN_COMP_CLANG) || EIGEN_COMP_CLANG>=380)
+>>>>>>> master
   // We can use the optimized fp16 to float and float to fp16 conversion routines
   #define EIGEN_HAS_FP16_C
 

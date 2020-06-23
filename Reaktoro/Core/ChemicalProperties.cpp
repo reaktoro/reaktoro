@@ -136,6 +136,11 @@ auto ChemicalProperties::lnActivities() const -> ChemicalVectorConstRef
     return cres.lnActivities();
 }
 
+auto ChemicalProperties::partialMolarVolumes() const -> ChemicalVectorConstRef
+{
+    return cres.partialMolarVolumes();
+}
+
 auto ChemicalProperties::chemicalPotentials() const -> ChemicalVector
 {
     const auto& R = universalGasConstant;

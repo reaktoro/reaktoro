@@ -105,7 +105,11 @@ namespace {
     return __umul64hi(a, b);
 #elif defined(SYCL_DEVICE_ONLY)
     return cl::sycl::mul_hi(a, static_cast<uint64_t>(b));
+<<<<<<< HEAD
 #elif EIGEN_HAS_BUILTIN_INT128
+=======
+#elif defined(__SIZEOF_INT128__)
+>>>>>>> master
     __uint128_t v = static_cast<__uint128_t>(a) * static_cast<__uint128_t>(b);
     return static_cast<uint64_t>(v >> 64);
 #else
@@ -124,7 +128,11 @@ namespace {
   template <typename T>
   struct DividerHelper<64, T> {
     static EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE uint64_t computeMultiplier(const int log_div, const T divider) {
+<<<<<<< HEAD
 #if EIGEN_HAS_BUILTIN_INT128 && !defined(EIGEN_GPU_COMPILE_PHASE) && !defined(SYCL_DEVICE_ONLY)
+=======
+#if defined(__SIZEOF_INT128__) && !defined(EIGEN_GPU_COMPILE_PHASE) && !defined(SYCL_DEVICE_ONLY)
+>>>>>>> master
       return static_cast<uint64_t>((static_cast<__uint128_t>(1) << (64+log_div)) / static_cast<__uint128_t>(divider) - (static_cast<__uint128_t>(1) << 64) + 1);
 #else
       const uint64_t shift = 1ULL << log_div;

@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
 
 import pytest
+import numpy as np
 
 from python_tools import convert_table_to_dict, convert_reaktoro_state_to_dict
 from reaktoro import (
     Database,
     ChemicalEditor,
     ChemicalSystem,
+    Partition,
     EquilibriumProblem,
     EquilibriumInverseProblem,
+    isUsingOpenlibm,
 )
 
+import thermofun.PyThermoFun as thermofun
 
 @pytest.fixture(scope="function")
 def equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar():
@@ -83,6 +87,62 @@ def equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite():
     problem.add("Fe(OH)2", 1, "mol")
     problem.add("Fe(OH)3", 2, "mol")
     problem.add("NH3", 1, "mol")
+
+    return (system, problem)
+
+
+@pytest.fixture(scope="function")
+def equilibrium_problem_using_thermofun_aq17_database():
+    """
+    Build a problem using ThermoFun database aq17
+    """
+
+    database = thermofun.Database("databases/thermofun/aq17-thermofun.json")
+
+    editor = ChemicalEditor(database)
+    editor.setTemperatures([500.0], "celsius")
+    editor.setPressures([3000.0], "bar")
+
+    editor.addAqueousPhase([
+        "Al(OH)2+", "Al(OH)3@", "Al(OH)4-", "Al+3", "AlH3SiO4+2", "AlOH+2",
+        "Ca+2", "CaCO3@", "CaCl+", "CaCl2@", "CaHCO3+", "CaHSiO3+", "CaOH+", "CaSiO3@", "K+", "KAlO2@",
+        "KCl@", "KOH@", "KCO3-", "KHCO3@", "Mg+2", "MgCO3@", "MgCl+", "MgCl2@", "MgHCO3+", "MgHSiO3+",
+        "MgOH+", "MgSiO3@", "Na+", "NaAl(OH)4@", "NaCO3-", "NaCl@", "NaHCO3@", "NaHSiO3@",
+        "NaOH@", "HSiO3-", "SiO2@", "CO@", "CO2@", "CO3-2", "HCO3-", "CH4@", "Cl-",
+        "HCl@", "H2@", "O2@", "OH-", "H+", "H2O@"])
+
+    editor.addMineralPhase("Albite")
+    editor.addMineralPhase("Andalusite")
+    editor.addMineralPhase("Calcite")
+    editor.addMineralPhase("Corundum")
+    editor.addMineralPhase("Diopside")
+    editor.addMineralPhase("Dolomite")
+    editor.addMineralPhase("Enstatite")
+    editor.addMineralPhase("Grossular")
+    editor.addMineralPhase("Margarite")
+    editor.addMineralPhase("Microcline")
+    editor.addMineralPhase("Muscovite")
+    editor.addMineralPhase("Pargasite-Mg")
+    editor.addMineralPhase("Phlogopite")
+    editor.addMineralPhase("Quartz")
+    editor.addMineralPhase("Sanidine")
+    editor.addMineralPhase("Sillimanite")
+    editor.addMineralPhase("Zoisite")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumProblem(system)
+    problem.add("H2O",             	1000,	"g")
+    problem.add("CO2",             	0.001,  "g")
+    problem.add("CaCO3",           	1,	    "g")
+    problem.add("MgSiO3",          	1,	    "g")
+    problem.add("NaCl",            	5,      "g")
+    problem.add("NaAlSi3O8",        37,	    "g")
+    problem.add("KAl3Si3O10(OH)2",  13,	    "g")
+    problem.add("SiO2",          	30,	    "g")
+    problem.add("KAlSi3O8",        	20,	    "g")
+    problem.setTemperature(500.0, "celsius")
+    problem.setPressure(3000.0, "bar")
 
     return (system, problem)
 
@@ -230,14 +290,21 @@ def equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume():
     return (system, problem)
 
 
+def _get_basename(request):
+    if isUsingOpenlibm():
+        import re
+        return re.sub(r"[\W]", "_", request.node.name) + ".openlibm"
+    return None  # use default
+
+
 @pytest.fixture(scope="function")
-def state_regression(num_regression):
+def state_regression(num_regression, request):
+
     class StateRegression:
         def check(self, state, tol=None, default_tol=None, exclude=None):
             num_regression.check(
                 convert_reaktoro_state_to_dict(state, exclude),
-                basename=None,
-                fullpath=None,
+                basename=_get_basename(request),
                 tolerances=tol,
                 default_tolerance=default_tol,
                 data_index=None,
@@ -248,13 +315,12 @@ def state_regression(num_regression):
 
 
 @pytest.fixture(scope="function")
-def table_regression(num_regression):
+def table_regression(num_regression, request):
     class TableRegression:
         def check(self, table, tol=None, default_tol=None):
             num_regression.check(
                 convert_table_to_dict(table),
-                basename=None,
-                fullpath=None,
+                basename=_get_basename(request),
                 tolerances=tol,
                 default_tolerance=default_tol,
                 data_index=None,
@@ -262,3 +328,53 @@ def table_regression(num_regression):
             )
 
     return TableRegression()
+
+
+@pytest.fixture
+def chemical_editor():
+    editor = ChemicalEditor()
+    editor.addAqueousPhase("H2O(l) H+ OH- HCO3- CO2(aq) CO3--".split())
+    editor.addGaseousPhase("H2O(g) CO2(g)".split())
+    editor.addMineralPhase("Graphite")
+    return editor
+
+
+@pytest.fixture
+def chemical_system_adding_argon(chemical_editor):
+    chemical_editor.addGaseousPhase("H2O(g) CO2(g) Ar(g)".split())
+    return ChemicalSystem(chemical_editor)
+
+
+@pytest.fixture
+def chemical_system(chemical_editor):
+    return ChemicalSystem(chemical_editor)
+
+
+@pytest.fixture
+def partition_with_inert_gaseous_phase(chemical_system):
+    partition = Partition(chemical_system)
+    partition.setInertPhases(['Gaseous'])
+
+    return partition
+
+
+@pytest.fixture
+def partition_with_inert_gaseous_phase_adding_argon(chemical_system_adding_argon):
+    partition = Partition(chemical_system_adding_argon)
+    partition.setInertPhases(['Gaseous'])
+
+    return partition
+
+
+@pytest.fixture
+def chemical_properties(chemical_system):
+    # A sensible value for temperature (in K)
+    T = 300
+
+    # A sensible value for pressure (in Pa)
+    P = 1e5
+
+    # A sensible array of species amounts
+    n = np.array([55, 1e-7, 1e-7, 0.1, 0.5, 0.01, 1.0, 0.001, 1.0])
+
+    return chemical_system.properties(T, P, n)

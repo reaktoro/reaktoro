@@ -9,14 +9,14 @@ cache: ccache
 matrix:
   include:
     - os: linux
-      env: PY_VER=3.6
+      env: PY_VER=3.6 REAKTORO_USE_OPENLIBM=1
 
     - os: linux
       env: PY_VER=3.7
 
     - os: osx
       osx_image: xcode11
-      env: PY_VER=3.6
+      env: PY_VER=3.6 REAKTORO_USE_OPENLIBM=1
 
     - os: osx
       osx_image: xcode11

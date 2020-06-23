@@ -545,10 +545,13 @@ class TensorContractionInputMapper
   EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE VectorMapper getVectorMapper(Index i, Index j) const {
     return VectorMapper(*this, i, j);
   }
+<<<<<<< HEAD
   
   EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE const CoeffLoader<Tensor, Tensor::RawAccess, MakePointer_>& get_tensor() const {
     return Base::m_tensor;
   }
+=======
+>>>>>>> master
 };
 
 

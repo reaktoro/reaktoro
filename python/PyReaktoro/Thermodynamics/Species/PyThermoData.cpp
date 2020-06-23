@@ -21,35 +21,55 @@
 
 namespace Reaktoro {
 
-void exportThermoData(py::module& m) 
+//TODO: Fix for pybind bug, where it moves optional attributes, losing its dynamic content.
+//https://github.com/pybind/pybind11/issues/1919
+template <typename _Property>
+_Property* get_optional(std::optional<_Property>& prop)
+{
+    if (prop.has_value())
+        return &(*prop);
+
+    return nullptr;
+}
+
+void exportThermoData(py::module& m)
 {
     py::class_<SpeciesThermoData>(m, "SpeciesThermoData")
         .def(py::init<>())
-        .def_readwrite("properties", &SpeciesThermoData::properties)
-        .def_readwrite("reaction", &SpeciesThermoData::reaction)
-        .def_readwrite("phreeqc", &SpeciesThermoData::phreeqc)
+        .def_property("properties", [] (SpeciesThermoData& self) { return get_optional(self.properties);},
+                                    [] (SpeciesThermoData& self, SpeciesThermoInterpolatedProperties& property) {self.properties = property;} )
+        .def_property("reaction", [] (SpeciesThermoData& self) { return get_optional(self.reaction);},
+                                  [] (SpeciesThermoData& self, ReactionThermoInterpolatedProperties& property) {self.reaction = property;})
+        .def_property("phreeqc", [] (SpeciesThermoData& self) { return get_optional(self.phreeqc);},
+                                 [] (SpeciesThermoData& self, SpeciesThermoParamsPhreeqc& property) {self.phreeqc = property;})
         ;
 
     py::class_<AqueousSpeciesThermoData, SpeciesThermoData>(m, "AqueousSpeciesThermoData")
         .def(py::init<>())
-        .def_readwrite("hkf", &AqueousSpeciesThermoData::hkf)
+        .def_property("hkf", [] (AqueousSpeciesThermoData& self) { return get_optional(self.hkf);},
+                             [] (AqueousSpeciesThermoData& self, AqueousSpeciesThermoParamsHKF& hkf) {self.hkf = hkf;})
         ;
 
     py::class_<FluidSpeciesThermoData, SpeciesThermoData>(m, "FluidSpeciesThermoData")
         .def(py::init<>())
-        .def_readwrite("hkf", &FluidSpeciesThermoData::hkf)
+        .def_property("hkf", [] (FluidSpeciesThermoData& self) { return get_optional(self.hkf);},
+                             [] (FluidSpeciesThermoData& self, FluidSpeciesThermoParamsHKF& hkf) {self.hkf = hkf;})
         ;
 
     m.attr("LiquidSpeciesThermoData") = m.attr("FluidSpeciesThermoData");
     m.attr("GaseousSpeciesThermoData") = m.attr("FluidSpeciesThermoData");
 
-    py::class_<MineralSpeciesThermoData, SpeciesThermoData>(m, "MineralSpeciesThermoData")
+    {
+        py::class_<MineralSpeciesThermoData, SpeciesThermoData> (m, "MineralSpeciesThermoData")
         .def(py::init<>())
-        .def_readwrite("hkf", &MineralSpeciesThermoData::hkf)
+        .def_property("hkf", [] (MineralSpeciesThermoData& self) { return get_optional(self.hkf);},
+                             [] (MineralSpeciesThermoData& self, MineralSpeciesThermoParamsHKF& hkf) {self.hkf = hkf;})
         ;
+    }
+
 }
 
-void exportThermoDataProperties(py::module& m) 
+void exportThermoDataProperties(py::module& m)
 {
     py::class_<SpeciesThermoInterpolatedProperties>(m, "SpeciesThermoInterpolatedProperties")
         .def(py::init<>())
@@ -96,7 +116,7 @@ void exportThermoDataProperties(py::module& m)
         .def_readwrite("wref", &AqueousSpeciesThermoParamsHKF::wref)
         ;
 
-    py::class_<FluidSpeciesThermoParamsHKF>(m, "_FluidSpeciesThermoParamsHKF")
+    py::class_<FluidSpeciesThermoParamsHKF>(m, "FluidSpeciesThermoParamsHKF")
         .def(py::init<>())
         .def_readwrite("Gf", &FluidSpeciesThermoParamsHKF::Gf)
         .def_readwrite("Hf", &FluidSpeciesThermoParamsHKF::Hf)
@@ -107,15 +127,8 @@ void exportThermoDataProperties(py::module& m)
         .def_readwrite("Tmax", &FluidSpeciesThermoParamsHKF::Tmax)
         ;
 
-    py::class_<GaseousSpeciesThermoParamsHKF, FluidSpeciesThermoParamsHKF>(
-        m, "GaseousSpeciesThermoParamsHKF")
-        .def(py::init<>())
-        ;
-
-    py::class_<LiquidSpeciesThermoParamsHKF, FluidSpeciesThermoParamsHKF>(
-        m, "LiquidSpeciesThermoParamsHKF")
-        .def(py::init<>())
-        ;
+    m.attr("LiquidSpeciesThermoParamsHKF") = m.attr("FluidSpeciesThermoParamsHKF");
+    m.attr("GaseousSpeciesThermoParamsHKF") = m.attr("FluidSpeciesThermoParamsHKF");
 
     py::class_<MineralSpeciesThermoParamsHKF>(m, "MineralSpeciesThermoParamsHKF")
         .def(py::init<>())

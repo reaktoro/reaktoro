@@ -190,7 +190,11 @@ template<> struct unpacket_traits<Packet4i>
 {
   typedef int       type;
   typedef Packet4i  half;
+<<<<<<< HEAD
   enum {size=4, alignment=Aligned16, vectorizable=true, masked_load_available=false, masked_store_available=false};
+=======
+  enum {size=4, alignment=Aligned16, vectorizable=false, masked_load_available=false, masked_store_available=false};
+>>>>>>> master
 };
 
 inline std::ostream & operator <<(std::ostream & s, const Packet16uc & v)
