@@ -63,7 +63,6 @@ template <typename ExpressionType, typename DeviceType> class TensorDevice {
     ExpressionType& m_expression;
 };
 
-<<<<<<< HEAD
 /** \class TensorAsyncDevice
  * \ingroup CXX11_Tensor_Module
  *
@@ -76,20 +75,6 @@ template <typename ExpressionType, typename DeviceType> class TensorDevice {
  * Example:
  *    auto done = []() { ... expression evaluation done ... };
  *    C.device(thread_pool_device, std::move(done)) = A + B;
-=======
-#ifdef EIGEN_USE_THREADS
-
-/** \class TensorAsyncDevice
-  * \ingroup CXX11_Tensor_Module
-  *
-  * \brief Pseudo expression providing an operator = that will evaluate its
-  * argument asynchronously on the specified device (currently supports only
-  * ThreadPoolDevice).
-  *
-  * Example:
-  *    auto done = []() { ... expression evaluation done ... };
-  *    C.device(EIGEN_THREAD_POOL, std::move(done)) = A + B;
->>>>>>> master
  */
 
 template <typename ExpressionType, typename DeviceType, typename DoneCallback>
@@ -102,7 +87,6 @@ class TensorAsyncDevice {
   template <typename OtherDerived>
   EIGEN_STRONG_INLINE TensorAsyncDevice& operator=(const OtherDerived& other) {
     typedef TensorAssignOp<ExpressionType, const OtherDerived> Assign;
-<<<<<<< HEAD
     typedef internal::TensorExecutor<const Assign, DeviceType> Executor;
 
     Assign assign(m_expression, other);
@@ -131,9 +115,6 @@ class TensorAsyncDevice<ExpressionType, ThreadPoolDevice, DoneCallback> {
   EIGEN_STRONG_INLINE TensorAsyncDevice& operator=(const OtherDerived& other) {
     typedef TensorAssignOp<ExpressionType, const OtherDerived> Assign;
     typedef internal::TensorAsyncExecutor<const Assign, ThreadPoolDevice, DoneCallback> Executor;
-=======
-    typedef internal::TensorAsyncExecutor<const Assign, DeviceType, DoneCallback> Executor;
->>>>>>> master
 
     // WARNING: After assignment 'm_done' callback will be in undefined state.
     Assign assign(m_expression, other);
@@ -143,20 +124,11 @@ class TensorAsyncDevice<ExpressionType, ThreadPoolDevice, DoneCallback> {
   }
 
  protected:
-<<<<<<< HEAD
   const ThreadPoolDevice& m_device;
   ExpressionType& m_expression;
   DoneCallback m_done;
 };
 #endif
-=======
-  const DeviceType& m_device;
-  ExpressionType& m_expression;
-  DoneCallback m_done;
-};
-
-#endif  // EIGEN_USE_THREADS
->>>>>>> master
 
 } // end namespace Eigen
 

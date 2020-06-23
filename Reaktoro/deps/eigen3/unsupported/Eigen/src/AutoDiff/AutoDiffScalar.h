@@ -453,7 +453,6 @@ struct auto_diff_special_op<_DerType, false>
   void operator+() const;
 };
 
-<<<<<<< HEAD
 template<typename BinOp, typename A, typename B, typename RefType>
 void make_coherent_expression(CwiseBinaryOp<BinOp,A,B> xpr, const RefType &ref)
 {
@@ -472,8 +471,6 @@ template<typename UnaryOp, typename A, typename RefType>
 void make_coherent_expression(const CwiseNullaryOp<UnaryOp,A> &, const RefType &)
 {}
 
-=======
->>>>>>> master
 template<typename A_Scalar, int A_Rows, int A_Cols, int A_Options, int A_MaxRows, int A_MaxCols, typename B>
 struct make_coherent_impl<Matrix<A_Scalar, A_Rows, A_Cols, A_Options, A_MaxRows, A_MaxCols>, B> {
   typedef Matrix<A_Scalar, A_Rows, A_Cols, A_Options, A_MaxRows, A_MaxCols> A;
@@ -483,13 +480,10 @@ struct make_coherent_impl<Matrix<A_Scalar, A_Rows, A_Cols, A_Options, A_MaxRows,
       a.resize(b.size());
       a.setZero();
     }
-<<<<<<< HEAD
     else if (B::SizeAtCompileTime==Dynamic && a.size()!=0 && b.size()==0)
     {
       make_coherent_expression(b,a);
     }
-=======
->>>>>>> master
   }
 };
 
@@ -502,24 +496,17 @@ struct make_coherent_impl<A, Matrix<B_Scalar, B_Rows, B_Cols, B_Options, B_MaxRo
       b.resize(a.size());
       b.setZero();
     }
-<<<<<<< HEAD
     else if (A::SizeAtCompileTime==Dynamic && b.size()!=0 && a.size()==0)
     {
       make_coherent_expression(a,b);
     }
-=======
->>>>>>> master
   }
 };
 
 template<typename A_Scalar, int A_Rows, int A_Cols, int A_Options, int A_MaxRows, int A_MaxCols,
          typename B_Scalar, int B_Rows, int B_Cols, int B_Options, int B_MaxRows, int B_MaxCols>
 struct make_coherent_impl<Matrix<A_Scalar, A_Rows, A_Cols, A_Options, A_MaxRows, A_MaxCols>,
-<<<<<<< HEAD
                           Matrix<B_Scalar, B_Rows, B_Cols, B_Options, B_MaxRows, B_MaxCols> > {
-=======
-                             Matrix<B_Scalar, B_Rows, B_Cols, B_Options, B_MaxRows, B_MaxCols> > {
->>>>>>> master
   typedef Matrix<A_Scalar, A_Rows, A_Cols, A_Options, A_MaxRows, A_MaxCols> A;
   typedef Matrix<B_Scalar, B_Rows, B_Cols, B_Options, B_MaxRows, B_MaxCols> B;
   static void run(A& a, B& b) {
@@ -579,21 +566,17 @@ struct ScalarBinaryOpTraits<typename DerType::Scalar,AutoDiffScalar<DerType>, Bi
   }
 
 template<typename DerType>
-<<<<<<< HEAD
 struct CleanedUpDerType {
   typedef AutoDiffScalar<typename Eigen::internal::remove_all<DerType>::type::PlainObject> type;
 };
 
 template<typename DerType>
-=======
->>>>>>> master
 inline const AutoDiffScalar<DerType>& conj(const AutoDiffScalar<DerType>& x)  { return x; }
 template<typename DerType>
 inline const AutoDiffScalar<DerType>& real(const AutoDiffScalar<DerType>& x)  { return x; }
 template<typename DerType>
 inline typename DerType::Scalar imag(const AutoDiffScalar<DerType>&)    { return 0.; }
 template<typename DerType, typename T>
-<<<<<<< HEAD
 inline typename CleanedUpDerType<DerType>::type (min)(const AutoDiffScalar<DerType>& x, const T& y) {
   typedef typename CleanedUpDerType<DerType>::type ADS;
   return (x <= y ? ADS(x) : ADS(y));
@@ -619,33 +602,6 @@ inline typename CleanedUpDerType<DerType>::type (min)(const AutoDiffScalar<DerTy
 }
 template<typename DerType>
 inline typename CleanedUpDerType<DerType>::type (max)(const AutoDiffScalar<DerType>& x, const AutoDiffScalar<DerType>& y) {
-=======
-inline AutoDiffScalar<typename Eigen::internal::remove_all<DerType>::type::PlainObject> (min)(const AutoDiffScalar<DerType>& x, const T& y) {
-  typedef AutoDiffScalar<typename Eigen::internal::remove_all<DerType>::type::PlainObject> ADS;
-  return (x <= y ? ADS(x) : ADS(y));
-}
-template<typename DerType, typename T>
-inline AutoDiffScalar<typename Eigen::internal::remove_all<DerType>::type::PlainObject> (max)(const AutoDiffScalar<DerType>& x, const T& y) {
-  typedef AutoDiffScalar<typename Eigen::internal::remove_all<DerType>::type::PlainObject> ADS;
-  return (x >= y ? ADS(x) : ADS(y));
-}
-template<typename DerType, typename T>
-inline AutoDiffScalar<typename Eigen::internal::remove_all<DerType>::type::PlainObject> (min)(const T& x, const AutoDiffScalar<DerType>& y) {
-  typedef AutoDiffScalar<typename Eigen::internal::remove_all<DerType>::type::PlainObject> ADS;
-  return (x < y ? ADS(x) : ADS(y));
-}
-template<typename DerType, typename T>
-inline AutoDiffScalar<typename Eigen::internal::remove_all<DerType>::type::PlainObject> (max)(const T& x, const AutoDiffScalar<DerType>& y) {
-  typedef AutoDiffScalar<typename Eigen::internal::remove_all<DerType>::type::PlainObject> ADS;
-  return (x > y ? ADS(x) : ADS(y));
-}
-template<typename DerType>
-inline AutoDiffScalar<typename Eigen::internal::remove_all<DerType>::type::PlainObject> (min)(const AutoDiffScalar<DerType>& x, const AutoDiffScalar<DerType>& y) {
-  return (x.value() < y.value() ? x : y);
-}
-template<typename DerType>
-inline AutoDiffScalar<typename Eigen::internal::remove_all<DerType>::type::PlainObject> (max)(const AutoDiffScalar<DerType>& x, const AutoDiffScalar<DerType>& y) {
->>>>>>> master
   return (x.value() >= y.value() ? x : y);
 }
 

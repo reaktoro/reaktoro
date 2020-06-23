@@ -98,12 +98,7 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
   enum {
     IsAligned         = true,
     PacketAccess      = TensorEvaluator<ArgType, Device>::PacketAccess,
-<<<<<<< HEAD
     BlockAccess       = TensorEvaluator<ArgType, Device>::RawAccess,
-=======
-    BlockAccess       = false,
-    BlockAccessV2     = TensorEvaluator<ArgType, Device>::RawAccess,
->>>>>>> master
     PreferBlockAccess = true,
     Layout            = TensorEvaluator<ArgType, Device>::Layout,
     CoordAccess       = true,
@@ -118,11 +113,7 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
 
   typedef typename internal::TensorMaterializedBlock<ScalarNoConst, NumDims,
                                                      Layout, Index>
-<<<<<<< HEAD
       TensorBlock;
-=======
-      TensorBlockV2;
->>>>>>> master
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device)
@@ -164,7 +155,6 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
     m_impl.evalSubExprsIfNeeded(NULL);
     return true;
   }
-<<<<<<< HEAD
 
 #ifdef EIGEN_USE_THREADS
   template <typename EvalSubExprsCallback>
@@ -174,8 +164,6 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
   }
 #endif  // EIGEN_USE_THREADS
 
-=======
->>>>>>> master
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void cleanup() {
     m_impl.cleanup();
   }
@@ -239,7 +227,6 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
     return cost;
   }
 
-<<<<<<< HEAD
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   internal::TensorBlockResourceRequirements getResourceRequirements() const {
     const size_t target_size = m_device.lastLevelCacheSize();
@@ -259,43 +246,6 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
 
     static const bool IsColMajor = Layout == static_cast<int>(ColMajor);
     const int inner_dim_idx = IsColMajor ? 0 : NumDims - 1;
-=======
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void getResourceRequirements(
-      std::vector<internal::TensorOpResourceRequirements>* resources) const {
-    Eigen::Index block_total_size_max = numext::maxi<Eigen::Index>(
-        1, m_device.lastLevelCacheSize() / sizeof(Scalar));
-    resources->push_back(internal::TensorOpResourceRequirements(
-        internal::kSkewedInnerDims, block_total_size_max));
-
-    m_impl.getResourceRequirements(resources);
-  }
-
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorBlockV2
-  blockV2(TensorBlockDesc& desc, TensorBlockScratch& scratch) const {
-    // If one of the dimensions is zero, return empty block view.
-    if (desc.size() == 0) {
-      return TensorBlockV2(internal::TensorBlockKind::kView, NULL,
-                           desc.dimensions());
-    }
-
-    // Check if we can reuse `desc` destination, or allocate new scratch buffer.
-    ScalarNoConst* materialized_output =
-        desc.template destination<ScalarNoConst, Layout>();
-
-    bool materialized_in_output;
-    if (materialized_output != NULL) {
-      desc.DropDestinationBuffer();
-      materialized_in_output = true;
-
-    } else {
-      const size_t materialized_output_size = desc.size() * sizeof(Scalar);
-      void* output_scratch_mem = scratch.allocate(materialized_output_size);
-      materialized_output = static_cast<ScalarNoConst*>(output_scratch_mem);
-      materialized_in_output = false;
-    }
-
-    static const bool IsColMajor = Layout == static_cast<int>(ColMajor);
->>>>>>> master
 
     Index offset = desc.offset();
 
@@ -307,11 +257,7 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
       output_offsets[dim] = offset / m_outputStrides[stride_dim];
       offset -= output_offsets[dim] * m_outputStrides[stride_dim];
     }
-<<<<<<< HEAD
     output_offsets[inner_dim_idx] = offset;
-=======
-    output_offsets[IsColMajor ? 0 : NumDims - 1] = offset;
->>>>>>> master
 
     // Offsets in the input corresponding to output offsets.
     DSizes<Index, NumDims> input_offsets = output_offsets;
@@ -357,12 +303,8 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
       it[i].output_span = it[i].output_stride * (it[i].size - 1);
     }
 
-<<<<<<< HEAD
     const Index input_inner_dim_size =
         static_cast<Index>(m_impl.dimensions()[inner_dim_idx]);
-=======
-    const int inner_dim_idx = IsColMajor ? 0 : NumDims - 1;
->>>>>>> master
 
     // Total output size.
     const Index output_size = desc.size();
@@ -385,16 +327,11 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
         // Want to copy from input.
         (output_inner_dim_size - output_inner_pad_before_size),
         // Can copy from input.
-<<<<<<< HEAD
         numext::maxi(input_inner_dim_size - (input_offsets[inner_dim_idx] +
                                              output_inner_pad_before_size),
                      Index(0)));
 
     eigen_assert(output_inner_copy_size >= 0);
-=======
-        (static_cast<Index>(m_impl.dimensions()[inner_dim_idx]) -
-         numext::maxi(input_offsets[inner_dim_idx], Index(0))));
->>>>>>> master
 
     // How many values to fill with padding AFTER reading from the input inner
     // dimension.
@@ -417,7 +354,6 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
 
     typedef internal::StridedLinearBufferCopy<ScalarNoConst, Index> LinCopy;
 
-<<<<<<< HEAD
     // Prepare storage for the materialized padding result.
     const typename TensorBlock::Storage block_storage =
         TensorBlock::prepareStorage(desc, scratch);
@@ -450,10 +386,6 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
 
     // Iterate copying data from `m_impl.data()` to the output buffer.
     for (Index size = 0; size < output_size;) {
-=======
-    // Iterate copying data from `m_impl.data()` to the output buffer.
-    for (Index size = 0; size < output_size; size += output_inner_dim_size) {
->>>>>>> master
       // Detect if we are in the padded region (exclude innermost dimension).
       bool is_padded = false;
       for (int j = 1; j < NumDims; ++j) {
@@ -463,7 +395,6 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
       }
 
       if (is_padded) {
-<<<<<<< HEAD
         // Fill single innermost dimension with padding value.
         size += output_inner_dim_size;
 
@@ -497,24 +428,11 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
         // Single read from innermost dimension.
         size += output_inner_dim_size;
 
-=======
-        // Fill with padding value.
-        LinCopy::template Run<LinCopy::Kind::FillLinear>(
-            typename LinCopy::Dst(output_offset, 1, materialized_output),
-            typename LinCopy::Src(0, 0, &m_paddingValue),
-            output_inner_dim_size);
-
-      } else {
->>>>>>> master
         {  // Fill with padding before copying from input inner dimension.
           const Index out = output_offset;
 
           LinCopy::template Run<LinCopy::Kind::FillLinear>(
-<<<<<<< HEAD
               typename LinCopy::Dst(out, 1, block_storage.data()),
-=======
-              typename LinCopy::Dst(out, 1, materialized_output),
->>>>>>> master
               typename LinCopy::Src(0, 0, &m_paddingValue),
               output_inner_pad_before_size);
         }
@@ -526,11 +444,7 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
           eigen_assert(output_inner_copy_size == 0 || m_impl.data() != NULL);
 
           LinCopy::template Run<LinCopy::Kind::Linear>(
-<<<<<<< HEAD
               typename LinCopy::Dst(out, 1, block_storage.data()),
-=======
-              typename LinCopy::Dst(out, 1, materialized_output),
->>>>>>> master
               typename LinCopy::Src(in, 1, m_impl.data()),
               output_inner_copy_size);
         }
@@ -540,11 +454,7 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
                             output_inner_copy_size;
 
           LinCopy::template Run<LinCopy::Kind::FillLinear>(
-<<<<<<< HEAD
               typename LinCopy::Dst(out, 1, block_storage.data()),
-=======
-              typename LinCopy::Dst(out, 1, materialized_output),
->>>>>>> master
               typename LinCopy::Src(0, 0, &m_paddingValue),
               output_inner_pad_after_size);
         }
@@ -568,15 +478,7 @@ struct TensorEvaluator<const TensorPaddingOp<PaddingDimensions, ArgType>, Device
       }
     }
 
-<<<<<<< HEAD
     return block_storage.AsTensorMaterializedBlock();
-=======
-    return TensorBlockV2(materialized_in_output
-                         ? internal::TensorBlockKind::kMaterializedInOutput
-                         : internal::TensorBlockKind::kMaterializedInScratch,
-                         materialized_output,
-                         desc.dimensions());
->>>>>>> master
   }
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE EvaluatorPointerType data() const { return NULL; }

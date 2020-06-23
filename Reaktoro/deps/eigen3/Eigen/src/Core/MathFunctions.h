@@ -574,7 +574,6 @@ struct expm1_impl<std::complex<RealScalar> > {
   EIGEN_DEVICE_FUNC static inline std::complex<RealScalar> run(
       const std::complex<RealScalar>& x) {
     EIGEN_STATIC_ASSERT_NON_INTEGER(RealScalar)
-<<<<<<< HEAD
     RealScalar xr = x.real();
     RealScalar xi = x.imag();
     // expm1(z) = exp(z) - 1
@@ -596,9 +595,6 @@ struct expm1_impl<std::complex<RealScalar> > {
     RealScalar s = sin(xi);
     RealScalar real_part = erm1 - RealScalar(2.) * er * sin2;
     return std::complex<RealScalar>(real_part, er * s);
-=======
-    return std_fallback::expm1(x);
->>>>>>> master
   }
 };
 
@@ -1242,7 +1238,6 @@ SYCL_SPECIALIZE_FLOATING_TYPES_UNARY_FUNC_RET_TYPE(isnan, isnan, bool)
 SYCL_SPECIALIZE_FLOATING_TYPES_UNARY_FUNC_RET_TYPE(isinf, isinf, bool)
 SYCL_SPECIALIZE_FLOATING_TYPES_UNARY_FUNC_RET_TYPE(isfinite, isfinite, bool)
 #endif
-<<<<<<< HEAD
 
 template<typename Scalar>
 EIGEN_DEVICE_FUNC
@@ -1250,8 +1245,6 @@ inline EIGEN_MATHFUNC_RETVAL(rint, Scalar) rint(const Scalar& x)
 {
   return EIGEN_MATHFUNC_IMPL(rint, Scalar)::run(x);
 }
-=======
->>>>>>> master
 
 template<typename Scalar>
 EIGEN_DEVICE_FUNC

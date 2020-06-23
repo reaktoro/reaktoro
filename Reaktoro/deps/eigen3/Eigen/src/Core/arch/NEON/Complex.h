@@ -65,13 +65,7 @@ template<> struct packet_traits<std::complex<float> > : default_packet_traits
   };
 };
 
-<<<<<<< HEAD
 template<> struct unpacket_traits<Packet2cf>
-=======
-template<> struct unpacket_traits<Packet2cf> { typedef std::complex<float> type; enum {size=2, alignment=Aligned16, vectorizable=true, masked_load_available=false, masked_store_available=false}; typedef Packet2cf half; };
-
-template<> EIGEN_STRONG_INLINE Packet2cf pset1<Packet2cf>(const std::complex<float>&  from)
->>>>>>> master
 {
   typedef std::complex<float> type;
   typedef Packet2cf half;
@@ -126,21 +120,6 @@ template<> EIGEN_STRONG_INLINE Packet2cf pmul<Packet2cf>(const Packet2cf& a, con
 }
 
 template<> EIGEN_STRONG_INLINE Packet2cf pcmp_eq(const Packet2cf& a, const Packet2cf& b)
-<<<<<<< HEAD
-=======
-{
-  // Compare real and imaginary parts of a and b to get the mask vector:
-  // [re(a[0])==re(b[0]), im(a[0])==im(b[0]), re(a[1])==re(b[1]), im(a[1])==im(b[1])]
-  Packet4f eq = pcmp_eq<Packet4f>(a.v, b.v);
-  // Swap real/imag elements in the mask in to get:
-  // [im(a[0])==im(b[0]), re(a[0])==re(b[0]), im(a[1])==im(b[1]), re(a[1])==re(b[1])]
-  Packet4f eq_swapped = vrev64q_f32(eq);
-  // Return re(a)==re(b) && im(a)==im(b) by computing bitwise AND of eq and eq_swapped
-  return Packet2cf(pand<Packet4f>(eq, eq_swapped));
-}
-
-template<> EIGEN_STRONG_INLINE Packet2cf pand   <Packet2cf>(const Packet2cf& a, const Packet2cf& b)
->>>>>>> master
 {
   // Compare real and imaginary parts of a and b to get the mask vector:
   // [re(a[0])==re(b[0]), im(a[0])==im(b[0]), re(a[1])==re(b[1]), im(a[1])==im(b[1])]
@@ -202,11 +181,7 @@ template<> EIGEN_STRONG_INLINE void prefetch<std::complex<float> >(const std::co
 template<> EIGEN_STRONG_INLINE std::complex<float> pfirst<Packet2cf>(const Packet2cf& a)
 {
   EIGEN_ALIGN16 std::complex<float> x[2];
-<<<<<<< HEAD
   vst1q_f32(reinterpret_cast<float*>(x), a.v);
-=======
-  vst1q_f32((float *)x, a.v);
->>>>>>> master
   return x[0];
 }
 
@@ -358,7 +333,6 @@ template<> struct packet_traits<std::complex<double> >  : default_packet_traits
   };
 };
 
-<<<<<<< HEAD
 template<> struct unpacket_traits<Packet1cd>
 {
   typedef std::complex<double> type;
@@ -375,9 +349,6 @@ template<> struct unpacket_traits<Packet1cd>
 
 template<> EIGEN_STRONG_INLINE Packet1cd pload<Packet1cd>(const std::complex<double>* from)
 { EIGEN_DEBUG_ALIGNED_LOAD return Packet1cd(pload<Packet2d>(reinterpret_cast<const double*>(from))); }
-=======
-template<> struct unpacket_traits<Packet1cd> { typedef std::complex<double> type; enum {size=1, alignment=Aligned16, vectorizable=true, masked_load_available=false, masked_store_available=false}; typedef Packet1cd half; };
->>>>>>> master
 
 template<> EIGEN_STRONG_INLINE Packet1cd ploadu<Packet1cd>(const std::complex<double>* from)
 { EIGEN_DEBUG_UNALIGNED_LOAD return Packet1cd(ploadu<Packet2d>(reinterpret_cast<const double*>(from))); }
@@ -421,29 +392,6 @@ template<> EIGEN_STRONG_INLINE Packet1cd pmul<Packet1cd>(const Packet1cd& a, con
 }
 
 template<> EIGEN_STRONG_INLINE Packet1cd pcmp_eq(const Packet1cd& a, const Packet1cd& b)
-<<<<<<< HEAD
-=======
-{
-  // Compare real and imaginary parts of a and b to get the mask vector:
-  // [re(a)==re(b), im(a)==im(b)]
-  Packet2d eq = pcmp_eq<Packet2d>(a.v, b.v);
-  // Swap real/imag elements in the mask in to get:
-  // [im(a)==im(b), re(a)==re(b)]
-  Packet2d eq_swapped = vreinterpretq_f64_u32(vrev64q_u32(vreinterpretq_u32_f64(eq)));
-  // Return re(a)==re(b) & im(a)==im(b) by computing bitwise AND of eq and eq_swapped
-  return Packet1cd(pand<Packet2d>(eq, eq_swapped));
-}
-
-template<> EIGEN_STRONG_INLINE Packet1cd pand   <Packet1cd>(const Packet1cd& a, const Packet1cd& b)
-{
-  return Packet1cd(vreinterpretq_f64_u64(vandq_u64(vreinterpretq_u64_f64(a.v),vreinterpretq_u64_f64(b.v))));
-}
-template<> EIGEN_STRONG_INLINE Packet1cd por    <Packet1cd>(const Packet1cd& a, const Packet1cd& b)
-{
-  return Packet1cd(vreinterpretq_f64_u64(vorrq_u64(vreinterpretq_u64_f64(a.v),vreinterpretq_u64_f64(b.v))));
-}
-template<> EIGEN_STRONG_INLINE Packet1cd pxor   <Packet1cd>(const Packet1cd& a, const Packet1cd& b)
->>>>>>> master
 {
   // Compare real and imaginary parts of a and b to get the mask vector:
   // [re(a)==re(b), im(a)==im(b)]

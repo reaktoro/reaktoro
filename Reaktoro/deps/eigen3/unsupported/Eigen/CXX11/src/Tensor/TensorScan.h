@@ -100,10 +100,6 @@ struct TensorEvaluator<const TensorScanOp<Op, ArgType>, Device> {
     IsAligned = false,
     PacketAccess = (PacketType<CoeffReturnType, Device>::size > 1),
     BlockAccess = false,
-<<<<<<< HEAD
-=======
-    BlockAccessV2 = false,
->>>>>>> master
     PreferBlockAccess = false,
     Layout = TensorEvaluator<ArgType, Device>::Layout,
     CoordAccess = false,
@@ -111,11 +107,7 @@ struct TensorEvaluator<const TensorScanOp<Op, ArgType>, Device> {
   };
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
-<<<<<<< HEAD
   typedef internal::TensorBlockNotImplemented TensorBlock;
-=======
-  typedef internal::TensorBlockNotImplemented TensorBlockV2;
->>>>>>> master
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op,

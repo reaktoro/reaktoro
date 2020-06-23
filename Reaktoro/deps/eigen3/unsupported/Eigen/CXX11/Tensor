@@ -13,22 +13,7 @@
 
 #include "../../../Eigen/Core"
 
-<<<<<<< HEAD
 #if EIGEN_HAS_CXX11
-=======
-#if defined(EIGEN_USE_SYCL)
-#undef min
-#undef max
-#undef isnan
-#undef isinf
-#undef isfinite
-#include <CL/sycl.hpp>
-#include <iostream>
-#include <map>
-#include <memory>
-#include <utility>
-#endif
->>>>>>> master
 
 #include "../SpecialFunctions"
 
@@ -51,10 +36,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstring>
-<<<<<<< HEAD
 #include <random>
-=======
->>>>>>> master
 
 #ifdef _WIN32
 typedef __int16 int16_t;
@@ -69,13 +51,6 @@ typedef unsigned __int64 uint64_t;
 #include <unistd.h>
 #endif
 
-<<<<<<< HEAD
-=======
-#if __cplusplus > 199711 || EIGEN_COMP_MSVC >= 1900
-#include <random>
-#endif
-
->>>>>>> master
 #ifdef _WIN32
 #include <windows.h>
 #elif defined(__APPLE__)
@@ -84,11 +59,7 @@ typedef unsigned __int64 uint64_t;
 #include <time.h>
 #endif
 
-<<<<<<< HEAD
 #if defined(EIGEN_USE_THREADS) || defined(EIGEN_USE_SYCL)
-=======
-#ifdef EIGEN_USE_THREADS
->>>>>>> master
 #include "ThreadPool"
 #endif
 
@@ -99,15 +70,8 @@ typedef unsigned __int64 uint64_t;
   #else
     #include <cuda_runtime.h>
   #endif
-<<<<<<< HEAD
   #include <atomic>
   #include <unistd.h>
-=======
-  #if __cplusplus >= 201103L
-    #include <atomic>
-    #include <unistd.h>
-  #endif
->>>>>>> master
 #endif
 
 #include "src/Tensor/TensorMacros.h"
@@ -134,10 +98,6 @@ typedef unsigned __int64 uint64_t;
 
 #include "src/Tensor/TensorBase.h"
 #include "src/Tensor/TensorBlock.h"
-<<<<<<< HEAD
-=======
-#include "src/Tensor/TensorBlockV2.h"
->>>>>>> master
 
 #include "src/Tensor/TensorEvaluator.h"
 #include "src/Tensor/TensorExpr.h"
@@ -173,7 +133,6 @@ typedef unsigned __int64 uint64_t;
 #include "src/Tensor/TensorScan.h"
 #include "src/Tensor/TensorTrace.h"
 
-<<<<<<< HEAD
 #ifdef EIGEN_USE_SYCL
 #include "src/Tensor/TensorReductionSycl.h"
 #include "src/Tensor/TensorConvolutionSycl.h"
@@ -181,9 +140,6 @@ typedef unsigned __int64 uint64_t;
 #include "src/Tensor/TensorScanSycl.h"
 #endif
 
-=======
-#include "src/Tensor/TensorSycl.h"
->>>>>>> master
 #include "src/Tensor/TensorExecutor.h"
 #include "src/Tensor/TensorDevice.h"
 
@@ -197,8 +153,5 @@ typedef unsigned __int64 uint64_t;
 
 #include "../../../Eigen/src/Core/util/ReenableStupidWarnings.h"
 
-<<<<<<< HEAD
 #endif  // EIGEN_HAS_CXX11
-=======
->>>>>>> master
 //#endif // EIGEN_CXX11_TENSOR_MODULE

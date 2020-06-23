@@ -89,23 +89,14 @@ struct TensorEvaluator<const TensorIndexTupleOp<ArgType>, Device>
     IsAligned = /*TensorEvaluator<ArgType, Device>::IsAligned*/ false,
     PacketAccess = /*TensorEvaluator<ArgType, Device>::PacketAccess*/ false,
     BlockAccess = false,
-<<<<<<< HEAD
     PreferBlockAccess = TensorEvaluator<ArgType, Device>::PreferBlockAccess,
-=======
-    BlockAccessV2 = false,
-    PreferBlockAccess = false,
->>>>>>> master
     Layout = TensorEvaluator<ArgType, Device>::Layout,
     CoordAccess = false,  // to be implemented
     RawAccess = false
   };
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
-<<<<<<< HEAD
   typedef internal::TensorBlockNotImplemented TensorBlock;
-=======
-  typedef internal::TensorBlockNotImplemented TensorBlockV2;
->>>>>>> master
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device)
@@ -236,7 +227,6 @@ struct TensorEvaluator<const TensorTupleReducerOp<ReduceOp, Dims, ArgType>, Devi
   typedef StorageMemory<TupleType, Device> TupleStorageMem;
 
   enum {
-<<<<<<< HEAD
     IsAligned         = /*TensorEvaluator<ArgType, Device>::IsAligned*/ false,
     PacketAccess      = /*TensorEvaluator<ArgType, Device>::PacketAccess*/ false,
     BlockAccess       = false,
@@ -248,20 +238,6 @@ struct TensorEvaluator<const TensorTupleReducerOp<ReduceOp, Dims, ArgType>, Devi
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
   typedef internal::TensorBlockNotImplemented TensorBlock;
-=======
-    IsAligned = /*TensorEvaluator<ArgType, Device>::IsAligned*/ false,
-    PacketAccess = /*TensorEvaluator<ArgType, Device>::PacketAccess*/ false,
-    BlockAccess = false,
-    BlockAccessV2 = false,
-    PreferBlockAccess = false,
-    Layout = TensorEvaluator<const TensorReductionOp<ReduceOp, Dims, const TensorIndexTupleOp<ArgType> >, Device>::Layout,
-    CoordAccess = false,  // to be implemented
-    RawAccess = false
-  };
-
-  //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
-  typedef internal::TensorBlockNotImplemented TensorBlockV2;
->>>>>>> master
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device)

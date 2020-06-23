@@ -310,10 +310,6 @@ struct TensorEvaluator<const TensorConvolutionOp<Indices, InputArgType, KernelAr
     IsAligned = TensorEvaluator<InputArgType, Device>::IsAligned & TensorEvaluator<KernelArgType, Device>::IsAligned,
     PacketAccess = TensorEvaluator<InputArgType, Device>::PacketAccess & TensorEvaluator<KernelArgType, Device>::PacketAccess,
     BlockAccess = false,
-<<<<<<< HEAD
-=======
-    BlockAccessV2 = false,
->>>>>>> master
     PreferBlockAccess = false,
     Layout = TensorEvaluator<InputArgType, Device>::Layout,
     CoordAccess = false,  // to be implemented
@@ -321,11 +317,7 @@ struct TensorEvaluator<const TensorConvolutionOp<Indices, InputArgType, KernelAr
   };
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
-<<<<<<< HEAD
   typedef internal::TensorBlockNotImplemented TensorBlock;
-=======
-  typedef internal::TensorBlockNotImplemented TensorBlockV2;
->>>>>>> master
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device)
@@ -795,10 +787,6 @@ struct TensorEvaluator<const TensorConvolutionOp<Indices, InputArgType, KernelAr
     IsAligned = TensorEvaluator<InputArgType, GpuDevice>::IsAligned & TensorEvaluator<KernelArgType, GpuDevice>::IsAligned,
     PacketAccess = false,
     BlockAccess = false,
-<<<<<<< HEAD
-=======
-    BlockAccessV2 = false,
->>>>>>> master
     PreferBlockAccess = false,
     Layout = TensorEvaluator<InputArgType, GpuDevice>::Layout,
     CoordAccess = false,  // to be implemented
@@ -806,11 +794,7 @@ struct TensorEvaluator<const TensorConvolutionOp<Indices, InputArgType, KernelAr
   };
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
-<<<<<<< HEAD
   typedef internal::TensorBlockNotImplemented TensorBlock;
-=======
-  typedef internal::TensorBlockNotImplemented TensorBlockV2;
->>>>>>> master
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC TensorEvaluator(const XprType& op, const GpuDevice& device)

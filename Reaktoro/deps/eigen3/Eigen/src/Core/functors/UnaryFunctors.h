@@ -924,15 +924,11 @@ struct scalar_logistic_op {
   }
 };
 
-<<<<<<< HEAD
 #ifndef EIGEN_GPU_COMPILE_PHASE
-=======
->>>>>>> master
 /** \internal
   * \brief Template specialization of the logistic function for float.
   *
   *  Uses just a 9/10-degree rational interpolant which
-<<<<<<< HEAD
   *  interpolates 1/(1+exp(-x)) - 0.5 up to a couple of ulps in the range
   *  [-9, 18]. Below -9 we use the more accurate approximation
   *  1/(1+exp(-x)) ~= exp(x), and above 18 the logistic function is 1 withing
@@ -940,19 +936,10 @@ struct scalar_logistic_op {
   *  make the fit converge.
   *
   */
-=======
-  *  interpolates 1/(1+exp(-x)) - 0.5 up to a couple of ulp in the range
-  *  [-18, 18], outside of which the fl(logistic(x)) = {0|1}. The shifted
-  *  logistic is interpolated because it was easier to make the fit converge.
-  *
-  */
-
->>>>>>> master
 template <>
 struct scalar_logistic_op<float> {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_logistic_op)
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE float operator()(const float& x) const {
-<<<<<<< HEAD
     // The upper cut-off is the smallest x for which the rational approximation evaluates to 1.
     // Choosing this value saves us a few instructions clamping the results at the end.
 #ifdef EIGEN_VECTORIZE_FMA
@@ -963,16 +950,11 @@ struct scalar_logistic_op<float> {
     const float cutoff_lower = -9.f;
     if (x > cutoff_upper) return 1.0f;
     else if (x < cutoff_lower) return numext::exp(x);
-=======
-    if (x < -18.0f) return 0.0f;
-    else if (x > 18.0f) return 1.0f;
->>>>>>> master
     else return 1.0f / (1.0f + numext::exp(-x));
   }
 
   template <typename Packet> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   Packet packetOp(const Packet& _x) const {
-<<<<<<< HEAD
     const Packet cutoff_lower = pset1<Packet>(-9.f);
     const Packet lt_mask = pcmp_lt<Packet>(_x, cutoff_lower);
     const bool any_small = predux(lt_mask);
@@ -999,26 +981,6 @@ struct scalar_logistic_op<float> {
     const Packet beta_6 = pset1<Packet>(6.29106785017040e-06f);
     const Packet beta_8 = pset1<Packet>(5.76102136993427e-09f);
     const Packet beta_10 = pset1<Packet>(6.10247389755681e-13f);
-=======
-    // Clamp the inputs to the range [-18, 18] since anything outside
-    // this range is 0.0f or 1.0f in single-precision.
-    const Packet x = pmax(pmin(_x, pset1<Packet>(18.0)), pset1<Packet>(-18.0));
-
-    // The monomial coefficients of the numerator polynomial (odd).
-    const Packet alpha_1 = pset1<Packet>(2.48287947061529e-01);
-    const Packet alpha_3 = pset1<Packet>(8.51377133304701e-03);
-    const Packet alpha_5 = pset1<Packet>(6.08574864600143e-05);
-    const Packet alpha_7 = pset1<Packet>(1.15627324459942e-07);
-    const Packet alpha_9 = pset1<Packet>(4.37031012579801e-11);
-
-    // The monomial coefficients of the denominator polynomial (even).
-    const Packet beta_0 = pset1<Packet>(9.93151921023180e-01);
-    const Packet beta_2 = pset1<Packet>(1.16817656904453e-01);
-    const Packet beta_4 = pset1<Packet>(1.70198817374094e-03);
-    const Packet beta_6 = pset1<Packet>(6.29106785017040e-06);
-    const Packet beta_8 = pset1<Packet>(5.76102136993427e-09);
-    const Packet beta_10 = pset1<Packet>(6.10247389755681e-13);
->>>>>>> master
 
     // Since the polynomials are odd/even, we need x^2.
     const Packet x2 = pmul(x, x);
@@ -1030,17 +992,12 @@ struct scalar_logistic_op<float> {
     p = pmadd(x2, p, alpha_1);
     p = pmul(x, p);
 
-<<<<<<< HEAD
     // Evaluate the denominator polynomial q.
-=======
-    // Evaluate the denominator polynomial p.
->>>>>>> master
     Packet q = pmadd(x2, beta_10, beta_8);
     q = pmadd(x2, q, beta_6);
     q = pmadd(x2, q, beta_4);
     q = pmadd(x2, q, beta_2);
     q = pmadd(x2, q, beta_0);
-<<<<<<< HEAD
     // Divide the numerator by the denominator and shift it up.
     const Packet logistic = padd(pdiv(p, q), pset1<Packet>(0.5f));
     if (EIGEN_PREDICT_FALSE(any_small)) {
@@ -1052,29 +1009,15 @@ struct scalar_logistic_op<float> {
   }
 };
 #endif  // #ifndef EIGEN_GPU_COMPILE_PHASE
-=======
-
-    // Divide the numerator by the denominator and shift it up.
-    return pmax(pmin(padd(pdiv(p, q), pset1<Packet>(0.5)), pset1<Packet>(1.0)),
-                pset1<Packet>(0.0));
-  }
-};
->>>>>>> master
 
 template <typename T>
 struct functor_traits<scalar_logistic_op<T> > {
   enum {
-<<<<<<< HEAD
     // The cost estimate for float here here is for the common(?) case where
     // all arguments are greater than -9.
     Cost = scalar_div_cost<T, packet_traits<T>::HasDiv>::value +
            (internal::is_same<T, float>::value
                 ? NumTraits<T>::AddCost * 15 + NumTraits<T>::MulCost * 11
-=======
-    Cost = scalar_div_cost<T, packet_traits<T>::HasDiv>::value +
-           (internal::is_same<T, float>::value
-                ? NumTraits<T>::AddCost * 12 + NumTraits<T>::MulCost * 11
->>>>>>> master
                 : NumTraits<T>::AddCost * 2 +
                       functor_traits<scalar_exp_op<T> >::Cost),
     PacketAccess =

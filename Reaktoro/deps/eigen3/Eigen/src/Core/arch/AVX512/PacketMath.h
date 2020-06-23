@@ -353,36 +353,24 @@ EIGEN_STRONG_INLINE Packet16f cat256(Packet8f a, Packet8f b) { return _mm512_ins
 template<int I_> EIGEN_STRONG_INLINE Packet8f extract256(Packet16f x) {
   return  _mm256_castsi256_ps(_mm512_extracti64x4_epi64( _mm512_castps_si512(x),I_));
 }
-<<<<<<< HEAD
 
 // AVX512F does not define _mm512_extractf64x2_pd to extract _m128 from _m512
 template<int I_> EIGEN_STRONG_INLINE Packet2d extract128(Packet8d x) {
   return _mm_castsi128_pd(_mm512_extracti32x4_epi32( _mm512_castpd_si512(x),I_));
 }
 
-=======
-
-// AVX512F does not define _mm512_extractf64x2_pd to extract _m128 from _m512
-template<int I_> EIGEN_STRONG_INLINE Packet2d extract128(Packet8d x) {
-  return _mm_castsi128_pd(_mm512_extracti32x4_epi32( _mm512_castpd_si512(x),I_));
-}
-
->>>>>>> master
 EIGEN_STRONG_INLINE Packet16f cat256(Packet8f a, Packet8f b) {
   return _mm512_castsi512_ps(_mm512_inserti64x4(_mm512_castsi256_si512(_mm256_castps_si256(a)),
                                                 _mm256_castps_si256(b),1));
 }
 #endif
 
-<<<<<<< HEAD
 template <>
 EIGEN_STRONG_INLINE Packet16f pcmp_eq(const Packet16f& a, const Packet16f& b) {
   __mmask16 mask = _mm512_cmp_ps_mask(a, b, _CMP_EQ_OQ);
   return _mm512_castsi512_ps(
       _mm512_mask_set1_epi32(_mm512_set1_epi32(0), mask, 0xffffffffu));
 }
-=======
->>>>>>> master
 template<> EIGEN_STRONG_INLINE Packet16f pcmp_le(const Packet16f& a, const Packet16f& b) {
   __mmask16 mask = _mm512_cmp_ps_mask(a, b, _CMP_LE_OQ);
   return _mm512_castsi512_ps(
@@ -406,15 +394,6 @@ template<> EIGEN_STRONG_INLINE Packet16i pcmp_eq(const Packet16i& a, const Packe
   return _mm512_mask_set1_epi32(_mm512_set1_epi32(0), mask, 0xffffffffu);
 }
 
-<<<<<<< HEAD
-=======
-template <>
-EIGEN_STRONG_INLINE Packet16f pcmp_eq(const Packet16f& a, const Packet16f& b) {
-  __mmask16 mask = _mm512_cmp_ps_mask(a, b, _CMP_EQ_OQ);
-  return _mm512_castsi512_ps(
-      _mm512_mask_set1_epi32(_mm512_set1_epi32(0), mask, 0xffffffffu));
-}
->>>>>>> master
 
 template <>
 EIGEN_STRONG_INLINE Packet8d pcmp_eq(const Packet8d& a, const Packet8d& b) {
@@ -422,7 +401,6 @@ EIGEN_STRONG_INLINE Packet8d pcmp_eq(const Packet8d& a, const Packet8d& b) {
   return _mm512_castsi512_pd(
       _mm512_mask_set1_epi64(_mm512_set1_epi64(0), mask, 0xffffffffffffffffu));
 }
-<<<<<<< HEAD
 template <>
 EIGEN_STRONG_INLINE Packet8d pcmp_le(const Packet8d& a, const Packet8d& b) {
   __mmask8 mask = _mm512_cmp_pd_mask(a, b, _CMP_LE_OQ);
@@ -441,8 +419,6 @@ EIGEN_STRONG_INLINE Packet8d pcmp_lt_or_nan(const Packet8d& a, const Packet8d& b
   return _mm512_castsi512_pd(
       _mm512_mask_set1_epi64(_mm512_set1_epi64(0), mask, 0xffffffffffffffffu));
 }
-=======
->>>>>>> master
 
 template <>
 EIGEN_STRONG_INLINE Packet16i ptrue<Packet16i>(const Packet16i& /*a*/) {
@@ -493,21 +469,12 @@ EIGEN_STRONG_INLINE Packet8d pand<Packet8d>(const Packet8d& a,
 #endif
 }
 
-<<<<<<< HEAD
 template <>
 EIGEN_STRONG_INLINE Packet16i por<Packet16i>(const Packet16i& a, const Packet16i& b) {
   return _mm512_or_si512(a, b);
 }
 
 template <>
-=======
-template <>
-EIGEN_STRONG_INLINE Packet16i por<Packet16i>(const Packet16i& a, const Packet16i& b) {
-  return _mm512_or_si512(a, b);
-}
-
-template <>
->>>>>>> master
 EIGEN_STRONG_INLINE Packet16f por<Packet16f>(const Packet16f& a, const Packet16f& b) {
 #ifdef EIGEN_VECTORIZE_AVX512DQ
   return _mm512_or_ps(a, b);

@@ -245,7 +245,6 @@ pshiftleft(const long int& a) { return a << N; }
 /** \internal \returns the significant and exponent of the underlying floating point numbers
   * See https://en.cppreference.com/w/cpp/numeric/math/frexp
   */
-<<<<<<< HEAD
 template <typename Packet>
 EIGEN_DEVICE_FUNC inline Packet pfrexp(const Packet& a, Packet& exponent) {
   int exp;
@@ -254,23 +253,15 @@ EIGEN_DEVICE_FUNC inline Packet pfrexp(const Packet& a, Packet& exponent) {
   exponent = static_cast<Packet>(exp);
   return result;
 }
-=======
-template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-pfrexp(const Packet &a, Packet &exponent) { return std::frexp(a,&exponent); }
->>>>>>> master
 
 /** \internal \returns a * 2^exponent
   * See https://en.cppreference.com/w/cpp/numeric/math/ldexp
   */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
-<<<<<<< HEAD
 pldexp(const Packet &a, const Packet &exponent) {
   EIGEN_USING_STD_MATH(ldexp);
   return ldexp(a, static_cast<int>(exponent));
 }
-=======
-pldexp(const Packet &a, const Packet &exponent) { return std::ldexp(a,exponent); }
->>>>>>> master
 
 /** \internal \returns zeros */
 template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
@@ -278,11 +269,7 @@ pzero(const Packet& a) { return pxor(a,a); }
 
 template<> EIGEN_DEVICE_FUNC inline float pzero<float>(const float& a) {
   EIGEN_UNUSED_VARIABLE(a);
-<<<<<<< HEAD
   return 0.f;
-=======
-  return 0.;
->>>>>>> master
 }
 
 template<> EIGEN_DEVICE_FUNC inline double pzero<double>(const double& a) {

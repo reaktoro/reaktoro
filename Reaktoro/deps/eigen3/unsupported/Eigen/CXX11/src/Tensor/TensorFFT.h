@@ -10,13 +10,6 @@
 #ifndef EIGEN_CXX11_TENSOR_TENSOR_FFT_H
 #define EIGEN_CXX11_TENSOR_TENSOR_FFT_H
 
-<<<<<<< HEAD
-=======
-// This code requires the ability to initialize arrays of constant
-// values directly inside a class.
-#if __cplusplus >= 201103L || EIGEN_COMP_MSVC >= 1900
-
->>>>>>> master
 namespace Eigen {
 
 /** \class TensorFFT
@@ -141,10 +134,6 @@ struct TensorEvaluator<const TensorFFTOp<FFT, ArgType, FFTResultType, FFTDir>, D
     IsAligned = false,
     PacketAccess = true,
     BlockAccess = false,
-<<<<<<< HEAD
-=======
-    BlockAccessV2 = false,
->>>>>>> master
     PreferBlockAccess = false,
     Layout = TensorEvaluator<ArgType, Device>::Layout,
     CoordAccess = false,
@@ -152,11 +141,7 @@ struct TensorEvaluator<const TensorFFTOp<FFT, ArgType, FFTResultType, FFTDir>, D
   };
 
   //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
-<<<<<<< HEAD
   typedef internal::TensorBlockNotImplemented TensorBlock;
-=======
-  typedef internal::TensorBlockNotImplemented TensorBlockV2;
->>>>>>> master
   //===--------------------------------------------------------------------===//
 
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device) : m_fft(op.fft()), m_impl(op.expression(), device), m_data(NULL), m_device(device) {
@@ -681,10 +666,4 @@ struct TensorEvaluator<const TensorFFTOp<FFT, ArgType, FFTResultType, FFTDir>, D
 
 }  // end namespace Eigen
 
-<<<<<<< HEAD
-=======
-#endif  // EIGEN_HAS_CONSTEXPR
-
-
->>>>>>> master
 #endif  // EIGEN_CXX11_TENSOR_TENSOR_FFT_H

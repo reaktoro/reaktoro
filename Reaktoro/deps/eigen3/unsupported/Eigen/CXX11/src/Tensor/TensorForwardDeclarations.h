@@ -123,11 +123,7 @@ struct StorageMemory<T, const SyclDevice> : StorageMemory<T, SyclDevice> {};
 
 namespace TensorSycl {
 namespace internal{
-<<<<<<< HEAD
 template <typename Evaluator, typename Op> class GenericNondeterministicReducer;
-=======
-template <typename Evaluator, typename Op> class ReductionFunctor;
->>>>>>> master
 }
 }
 #endif
@@ -159,26 +155,10 @@ struct IsVectorizable<GpuDevice, Expression> {
 };
 
 // Tiled evaluation strategy.
-<<<<<<< HEAD
 enum TiledEvaluation {
   Off = 0,    // tiled evaluation is not supported
   On = 1,     // still work in progress (see TensorBlock.h)
 };
-=======
-#if !EIGEN_HAS_CXX11
-// To be able to use `TiledEvaluation::Off` in C++03 we need a namespace.
-// (Use of enumeration in a nested name specifier is a c++11 extension).
-namespace TiledEvaluation {
-#endif
-enum TiledEvaluation {
-  Off = 0,    // tiled evaluation is not supported
-  On = 1,     // still work in progress (see TensorBlockV2.h)
-  Legacy = 2  // soon to be deprecated (see TensorBock.h)
-};
-#if !EIGEN_HAS_CXX11
-}   // namespace TiledEvaluation
-#endif
->>>>>>> master
 
 template <typename Device, typename Expression>
 struct IsTileable {
@@ -189,36 +169,14 @@ struct IsTileable {
       TensorEvaluator<Expression, Device>::BlockAccess &&
       TensorEvaluator<Expression, Device>::PreferBlockAccess;
 
-<<<<<<< HEAD
   static const TiledEvaluation value =
       BlockAccess ? TiledEvaluation::On : TiledEvaluation::Off;
 };
 
-=======
-  static const bool BlockAccessV2 =
-      TensorEvaluator<Expression, Device>::BlockAccessV2 &&
-      TensorEvaluator<Expression, Device>::PreferBlockAccess;
-
-#if EIGEN_HAS_CXX11
-  static const TiledEvaluation value =
-      BlockAccessV2
-          ? TiledEvaluation::On
-          : (BlockAccess ? TiledEvaluation::Legacy : TiledEvaluation::Off);
-#else
-  static const TiledEvaluation::TiledEvaluation value =
-      BlockAccessV2
-          ? TiledEvaluation::On
-          : (BlockAccess ? TiledEvaluation::Legacy : TiledEvaluation::Off);
-#endif
-};
-
-#if EIGEN_HAS_CXX11
->>>>>>> master
 template <typename Expression, typename Device,
           bool Vectorizable      = IsVectorizable<Device, Expression>::value,
           TiledEvaluation Tiling = IsTileable<Device, Expression>::value>
 class TensorExecutor;
-<<<<<<< HEAD
 
 template <typename Expression, typename Device, typename DoneCallback,
           bool Vectorizable = IsVectorizable<Device, Expression>::value,
@@ -226,21 +184,6 @@ template <typename Expression, typename Device, typename DoneCallback,
 class TensorAsyncExecutor;
 
 
-=======
-#else
-template <typename Expression, typename Device,
-          bool Vectorizable = IsVectorizable<Device, Expression>::value,
-          TiledEvaluation::TiledEvaluation Tiling = IsTileable<Device, Expression>::value>
-class TensorExecutor;
-#endif
-
-// TODO(ezhulenev): Add TiledEvaluation support to async executor.
-template <typename Expression, typename Device, typename DoneCallback,
-          bool Vectorizable = IsVectorizable<Device, Expression>::value,
-          bool Tileable     = IsTileable<Device, Expression>::BlockAccess>
-class TensorAsyncExecutor;
-
->>>>>>> master
 }  // end namespace internal
 
 }  // end namespace Eigen
