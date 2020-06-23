@@ -128,7 +128,7 @@ struct EquilibriumSolver::Impl
 
     /// Construct a Impl instance with given Partition
     Impl(const Partition& partition)
-    : system(partition.system()), properties(partition.system())
+    : system(partition.system()), partition(partition), properties(partition.system())
     {
         // Initialize the formula matrix
         A = system.formulaMatrix();
