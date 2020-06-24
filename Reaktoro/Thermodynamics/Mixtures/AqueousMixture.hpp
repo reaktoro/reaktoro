@@ -44,6 +44,12 @@ struct AqueousMixtureState : public MixtureState
 
     /// The stoichiometric molalities of the ionic species and their partial derivatives (in units of mol/kg)
     ChemicalVector ms;
+
+    AqueousMixtureState() = default; // required by icpc (ICC) 19.0.4.243 20190416
+    AqueousMixtureState(const AqueousMixtureState&) = default; // required by icpc (ICC) 19.0.4.243 20190416
+    AqueousMixtureState(AqueousMixtureState&&) = default; // required by icpc (ICC) 19.0.4.243 20190416
+    auto operator=(const AqueousMixtureState& other) -> AqueousMixtureState&; // required by icpc (ICC) 19.0.4.243 20190416
+    auto operator=(AqueousMixtureState&& other) -> AqueousMixtureState& = default; // required by icpc (ICC) 19.0.4.243 20190416
 };
 
 /// A type used to describe an aqueous mixture.

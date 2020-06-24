@@ -55,6 +55,18 @@ auto defaultWaterDielectricConstantFunction() -> ThermoScalarFunction
 
 } // namespace internal
 
+auto AqueousMixtureState::operator=(const AqueousMixtureState& other) -> AqueousMixtureState&
+{
+    MixtureState::operator=(other);
+    rho     = other.rho;
+    epsilon = other.epsilon;
+    Ie      = other.Ie;
+    Is      = other.Is;
+    m       = other.m;
+    ms      = other.ms;
+    return *this;
+}
+
 AqueousMixture::AqueousMixture()
 {}
 
