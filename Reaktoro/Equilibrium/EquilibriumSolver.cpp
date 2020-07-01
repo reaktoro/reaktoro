@@ -128,6 +128,20 @@ struct EquilibriumSolver::Impl
         // Set the lower bounds of the species amounts
         optproblem.xlower.head(dims.Nn).fill(options.epsilon);
 
+        // Initialize the names of the primal and dual variables
+        if(options.optima.output.active)
+        {
+            // Use `n` instead of `x` to name the variables
+            options.optima.output.xprefix = "n";
+
+            // Define some auxiliary references to the variables names
+            auto& xnames = options.optima.output.xnames;
+
+            // Initialize the names of the primal variables `n`
+            for(auto species : system.species())
+                xnames.push_back(species.name());
+        }
+
         // Set the options of the optimization solver
         optsolver.setOptions(options.optima);
     }
