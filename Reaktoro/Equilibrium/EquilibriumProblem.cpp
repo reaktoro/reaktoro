@@ -212,7 +212,8 @@ struct EquilibriumProblem::Impl
             update_props(npq);
             const auto& n = props.speciesAmounts();
             const auto& u = props.chemicalPotentials();
-            return (n * u).sum();
+            const auto RT = universalGasConstant * T;
+            return (n * u).sum()/RT;
         };
 
         // CREATE THE OBJECTIVE GRADIENT FUNCTION
