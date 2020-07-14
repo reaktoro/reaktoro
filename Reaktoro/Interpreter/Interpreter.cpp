@@ -105,7 +105,8 @@ auto Interpreter::executeJsonObject(json input) -> void
 
 auto Interpreter::executeJsonString(std::string input) -> void
 {
-    json jsoninput = json::parse(input);
+    auto input_stream = std::istringstream(input);
+    json jsoninput = json::parse(input_stream);
     executeJsonObject(jsoninput);
 }
 
