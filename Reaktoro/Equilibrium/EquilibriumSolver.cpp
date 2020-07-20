@@ -122,11 +122,11 @@ struct EquilibriumSolver::Impl
     /// The formula matrix of the inert species
     Matrix Ai;
 
-    /// Construct a default Impl instance
+    /// Construct a default Impl instance.
     Impl()
     {}
 
-    /// Construct a Impl instance with given Partition
+    /// Construct a Impl instance with given Partition.
     Impl(const Partition& partition)
     : system(partition.system()), partition(partition), properties(partition.system())
     {
@@ -180,7 +180,7 @@ struct EquilibriumSolver::Impl
         sensitivities_e.dzdb = zeros(Ne, Ee);
     }
 
-    /// Update the OptimumOptions instance with given EquilibriumOptions instance
+    /// Update the OptimumOptions instance with given EquilibriumOptions instance.
     auto updateOptimumOptions() -> void
     {
         // Initialize the options for the optimisation calculation
@@ -216,7 +216,7 @@ struct EquilibriumSolver::Impl
         }
     }
 
-    /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
+    /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances.
     auto updateOptimumProblem(const ChemicalState& state) -> void
     {
         // The temperature and pressure of the equilibrium calculation
@@ -291,7 +291,7 @@ struct EquilibriumSolver::Impl
         optimum_problem.l.setConstant(Ne, options.epsilon);
     }
 
-    /// Initialize the optimum state from a chemical state
+    /// Initialize the optimum state from a chemical state.
     auto updateOptimumState(const ChemicalState& state) -> void
     {
         // The temperature and the RT factor
@@ -313,7 +313,7 @@ struct EquilibriumSolver::Impl
         optimum_state.z = z(ies);
     }
 
-    /// Initialize the chemical state from a optimum state
+    /// Initialize the chemical state from a optimum state.
     auto updateChemicalState(ChemicalState& state) -> void
     {
         // The temperature and the RT factor
@@ -431,10 +431,10 @@ struct EquilibriumSolver::Impl
         auto result = approximate(state, T, P, be);
 
         // Check the approximate calculation was successful
-        Assert(result.optimum.succeeded,
-            "Cannot proceed with the equilibrium calculation.",
-            "The calculation of initial guess failed, most "
-            "probably because no feasible solution exists.");
+//        Assert(result.optimum.succeeded,
+//            "Cannot proceed with the equilibrium calculation.",
+//            "The calculation of initial guess failed, most "
+//            "probably because no feasible solution exists.");
 
         // Preserve the values of n that are greater than z. For all others, set n to sqrt(epsilon)
         n = (n.array() > z.array()).select(n, std::sqrt(options.epsilon));
@@ -494,6 +494,40 @@ struct EquilibriumSolver::Impl
     }
 
     /// Solve the equilibrium problem
+    auto optimize(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
+    {
+        // Update the optimum options
+        updateOptimumOptions();
+
+        // Update the optimum problem
+        updateOptimumProblem(state);
+
+        // Update the optimum state
+        updateOptimumState(state);
+
+        // Set the method for the optimisation calculation
+        solver.setMethod(options.method);
+
+        // Set the maximum number of iterations in each optimization pass
+        optimum_options.max_iterations = 10;
+
+        // Start the several optimization passes (stop if convergence attained)
+        auto counter = 0;
+        while(counter < options.optimum.max_iterations)
+        {
+            // Solve the optimisation problem
+            result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
+
+            // Exit this loop if last solve succeeded
+            if(result.optimum.succeeded)
+                break;
+
+            counter += optimum_options.max_iterations;
+        }
+        return result;
+    }
+
+    /// Solve the equilibrium problem
     auto solve(ChemicalState& state, double T, double P, const double* _be) -> EquilibriumResult
     {
         tic(SOLVE);
@@ -511,6 +545,60 @@ struct EquilibriumSolver::Impl
         // Check if a simplex cold-start approximation must be performed
         if(coldstart(state))
             initialguess(state, T, P, be);
+        result += optimize(state, T, P, be);
+
+        // Check if the calculation failed
+        if (!result.optimum.succeeded)
+        {
+            // Reset the initial state
+            initialguess(state, T, P, be);
+            result += optimize(state, T, P, be);
+        }
+        // Check if the calculation failed
+        if (!result.optimum.succeeded) {
+            std::cout << "**************************************************" << std::endl;
+            std::cout << "opt_succeeded = " << result.optimum.succeeded << std::endl;
+            std::cout << "optimum_state = " << tr(optimum_state.x) << std::endl;
+            std::cout << "iterations    = " << (result.optimum.iterations) << std::endl;
+            std::cout << "error         = " << (result.optimum.error) << std::endl;
+            std::cout << "**************************************************" << std::endl;
+            //        Assert(result.optimum.succeeded,
+            //               "Cannot proceed with method EquilibriumSolver::solve.",
+            //               "The OptimumSolver solver is not converging, i.e., `result.optimum.succeeded` returns `false`");
+
+        }
+
+        // Update the chemical state from the optimum state
+        updateChemicalState(state);
+
+        result.timing.solve = toc(SOLVE);
+
+        return result;
+    }
+    /*
+    /// Solve the equilibrium problem
+    auto solve(ChemicalState& state, double T, double P, const double* _be) -> EquilibriumResult
+    {
+        tic(SOLVE);
+
+        // Reset the result of last equilibrium calculation
+        result = {};
+
+        // Set the molar amounts of the elements
+        be = Vector::Map(_be, Ee);
+
+        //std::cout << "be = " << tr(be) << std::endl;
+
+        // Set temperature and pressure of the chemical state
+        state.setTemperature(T);
+        state.setPressure(P);
+
+        // Check if a simplex cold-start approximation must be performed
+        if(coldstart(state))
+            initialguess(state, T, P, be);
+        //initialguess(state, T, P, be);
+        //optimize(state, T, P, be);
+        //std::cout << "n = " << tr(state.speciesAmounts()) << std::endl;
 
         // Update the optimum options
         updateOptimumOptions();
@@ -527,7 +615,7 @@ struct EquilibriumSolver::Impl
         // Set the maximum number of iterations in each optimization pass
         optimum_options.max_iterations = 10;
 
-        // Start the several opmization passes (stop if convergence attained)
+        // Start the several optimization passes (stop if convergence attained)
         auto counter = 0;
         while(counter < options.optimum.max_iterations)
         {
@@ -540,7 +628,58 @@ struct EquilibriumSolver::Impl
 
             counter += optimum_options.max_iterations;
         }
+        // Check if the calculation failed
+        if (!result.optimum.succeeded)
+        {
+            //std::cout << "**************************************************" << std::endl;
+            //std::cout << "reset initial guess"  << std::endl;
+            //std::cout << "**************************************************" << std::endl;
 
+            initialguess(state, T, P, be);
+
+            // Update the optimum options
+            updateOptimumOptions();
+
+            // Update the optimum problem
+            updateOptimumProblem(state);
+
+            // Update the optimum state
+            updateOptimumState(state);
+
+            // Set the method for the optimisation calculation
+            solver.setMethod(options.method);
+
+            // Set the maximum number of iterations in each optimization pass
+            optimum_options.max_iterations = 10;
+
+            // Start the several optimization passes (stop if convergence attained)
+            auto counter = 0;
+            while(counter < options.optimum.max_iterations)
+            {
+                // Solve the optimisation problem
+                result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
+
+                // Exit this loop if last solve succeeded
+                if(result.optimum.succeeded)
+                    break;
+
+                counter += optimum_options.max_iterations;
+            }
+        }
+        // Check if the calculation failed
+        if (!result.optimum.succeeded) {
+            std::cout << "**************************************************" << std::endl;
+            std::cout << "opt_succeeded = " << result.optimum.succeeded << std::endl;
+            std::cout << "optimum_state = " << tr(optimum_state.x) << std::endl;
+            std::cout << "iterations    = " << (result.optimum.iterations) << std::endl;
+            std::cout << "error         = " << (result.optimum.error) << std::endl;
+            std::cout << "**************************************************" << std::endl;
+        }
+
+//            Assert(result.optimum.succeeded,
+//                    "Cannot proceed with method EquilibriumSolver::solve.",
+//                    "The OptimumSolver solver is not converging, i.e., `result.optimum.succeeded` returns `false`");
+//
         // Update the chemical state from the optimum state
         updateChemicalState(state);
 
@@ -548,7 +687,7 @@ struct EquilibriumSolver::Impl
 
         return result;
     }
-
+    */
     /// Return the sensitivity of the equilibrium state.
     auto sensitivity() -> const EquilibriumSensitivity&
     {

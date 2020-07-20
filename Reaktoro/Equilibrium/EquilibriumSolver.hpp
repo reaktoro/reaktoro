@@ -39,29 +39,29 @@ struct EquilibriumSensitivity;
 class EquilibriumSolver
 {
 public:
-    /// Construct a default EquilibriumSolver instance
+    /// Construct a default EquilibriumSolver instance.
     [[deprecated("EquilibriumSolver() is deprecated. Use constructor EquilibriumSolver(const ChemicalSystem&) or EquilibriumSolver(const Partition&) instead.")]]
     EquilibriumSolver();
 
-    /// Construct an EquilibriumSolver instance
+    /// Construct an EquilibriumSolver instance.
     explicit EquilibriumSolver(const ChemicalSystem& system);
 
-    /// Construct an EquilibriumSolver instance with given partition
+    /// Construct an EquilibriumSolver instance with given partition.
     explicit EquilibriumSolver(const Partition& partition);
 
-    /// Construct a copy of an EquilibriumSolver instance
+    /// Construct a copy of an EquilibriumSolver instance.
     EquilibriumSolver(const EquilibriumSolver& other);
 
-    /// Destroy this EquilibriumSolver instance
+    /// Destroy this EquilibriumSolver instance.
     virtual ~EquilibriumSolver();
 
-    /// Assign a copy of an EquilibriumSolver instance
+    /// Assign a copy of an EquilibriumSolver instance.
     auto operator=(EquilibriumSolver other) -> EquilibriumSolver&;
 
-    /// Set the options of the equilibrium solver
+    /// Set the options of the equilibrium solver.
     auto setOptions(const EquilibriumOptions& options) -> void;
 
-    /// Set the partition of the chemical system
+    /// Set the partition of the chemical system.
     [[deprecated("EquilibriumSolver::setPartition is deprecated. Use constructor EquilibriumSolver(const Partition&) instead.")]]
     auto setPartition(const Partition& partition) -> void;
 
