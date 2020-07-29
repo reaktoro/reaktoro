@@ -34,58 +34,56 @@ using namespace Reaktoro;
 struct Params
 {
     // Discretisation params
-    int ncells; // the number of cells in the spacial discretization
-    int nsteps; // the number of steps in the reactive transport simulation
-    double xl; // the x-coordinates of the left boundaries
-    double xr; // the x-coordinates of the right boundaries
-    double dx; // the space step (in units of m)
-    double dt; // the time step (in units of s)
+    int ncells = 0; // the number of cells in the spacial discretization
+    int nsteps = 0; // the number of steps in the reactive transport simulation
+    double xl = 0; // the x-coordinates of the left boundaries
+    double xr = 0; // the x-coordinates of the right boundaries
+    double dx = 0; // the space step (in units of m)
+    double dt = 0; // the time step (in units of s)
 
     // Physical params
-    double D; // the diffusion coefficient (in units of m2/s)
-    double v; // the Darcy velocity (in units of m/s)
-    double T; // the temperature (in units of degC)
-    double P; // the pressure (in units of bar)
+    double D = 0; // the diffusion coefficient (in units of m2/s)
+    double v = 0; // the Darcy velocity (in units of m/s)
+    double T = 0; // the temperature (in units of degC)
+    double P = 0; // the pressure (in units of bar)
 
     // Solver params
-    bool use_smart_eqilibirum_solver;
-    bool track_statistics;
-    double smart_equlibrium_reltol;
-    double amount_fraction_cutoff;
-    double mole_fraction_cutoff;
+    bool use_smart_eqilibirum_solver = false;
+    double smart_equlibrium_reltol = 0;
+    double amount_fraction_cutoff = 0;
+    double mole_fraction_cutoff = 0;
 
-    std::string activity_model;
-
+    std::string activity_model = "";
 };
 
 struct Results
 {
     /// Total CPU time (in s) required by smart equilibrium scheme
-    double smart_total;
+    double smart_total = 0.0;
 
     /// Total CPU time (in s) excluding the costs for the search of the closest reference states.
-    double smart_total_ideal_search;
+    double smart_total_ideal_search = 0.0;
 
     /// Total CPU time (in s) required by smart equilibrium scheme
     /// excluding the costs for the search and storage of the closest reference states.
-    double smart_total_ideal_search_store;
+    double smart_total_ideal_search_store = 0.0;
 
     /// Total CPU time (in s) required by conventional equilibrium scheme
-    double conventional_total;
+    double conventional_total = 0.0;
 
     /// The total time taken to perform all time steps using conventional equilibrium algorithm
-    double time_reactive_transport_conventional;
+    double time_reactive_transport_conventional = 0.0;
 
     /// The total time taken to perform all time steps using smart equilibrium algorithm
-    double time_reactive_transport_smart;
+    double time_reactive_transport_smart = 0.0;
 
     /// The accumulated timing information of all equilibrium calculations.
-    EquilibriumTiming equilibrium_timing;
+    EquilibriumTiming equilibrium_timing = {};
 
     /// The accumulated timing information of all smart equilibrium calculations.
-    SmartEquilibriumTiming smart_equilibrium_timing;
+    SmartEquilibriumTiming smart_equilibrium_timing = {};
 
-    // Rate of the smart equlibrium estimation w.r.t to the total chemical equilibrium calculation
+    // Rate of the smart equilibrium estimation w.r.t to the total chemical equilibrium calculation
     double smart_equilibrium_acceptance_rate = 0.0;
 };
 
@@ -100,24 +98,13 @@ int main()
     Time start = time();
 
     // Step 1: Initialise auxiliary time-related constants
-    int second = 1;
     int minute = 60;
-    int hour = 60 * minute;
-    int day = 24 * hour;
-    int week = 7 * day;
-    int month = 30 * day;
-    int year = 365 * day;
 
     // Step 2: Define parameters for the reactive transport simulation
     Params params;
 
     // Define discretization parameters
     params.xl = 0.0; // the x-coordinates of the left boundaries
-    /*
-    params.xr = 0.1; // the x-coordinates of the right boundaries
-    params.ncells = 10; // the number of cells in the spacial discretization
-    */
-    ///*
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
     params.nsteps = 1000; // the number of steps in the reactive transport simulation
@@ -132,9 +119,9 @@ int main()
 
     // Define parameters of the equilibrium solvers
     params.smart_equlibrium_reltol = 0.005;
-    //params.activity_model = "hkf-full";
+    params.activity_model = "hkf-full";
     //params.activity_model = "hkf-selected-species";
-    params.activity_model = "pitzer-full";
+    //params.activity_model = "pitzer-full";
     //params.activity_model = "pitzer-selected-species";
     //params.activity_model = "dk-full";
     //params.activity_model = "dk-selected-species";
@@ -155,12 +142,12 @@ int main()
     results.conventional_total = results.equilibrium_timing.solve;
     results.smart_total = results.smart_equilibrium_timing.solve;
     results.smart_total_ideal_search = results.smart_equilibrium_timing.solve
-                                        - results.smart_equilibrium_timing.estimate_search
-                                        - results.smart_equilibrium_timing.estimate_database_priority_update;
+                                       - results.smart_equilibrium_timing.estimate_search
+                                       - results.smart_equilibrium_timing.estimate_database_priority_update;
     results.smart_total_ideal_search_store = results.smart_equilibrium_timing.solve
-                                                - results.smart_equilibrium_timing.estimate_search
-                                                - results.smart_equilibrium_timing.estimate_database_priority_update
-                                                - results.smart_equilibrium_timing.learning_storage;
+                                             - results.smart_equilibrium_timing.estimate_search
+                                             - results.smart_equilibrium_timing.estimate_database_priority_update
+                                             - results.smart_equilibrium_timing.learning_storage;
 
     // Output speed-us
     std::cout << "speed up                            : "
@@ -200,6 +187,11 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
+    // Default chemical model (HKF extended Debye-Hückel model)
+    // editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
+    // Create aqueous phase with all possible elements
+    // Set a chemical model of the phase with the Pitzer equation of state
+    // With an exception for the CO2, for which Drummond model is set
 
     std::string elements = "C Cl H Na O Z";
     if(params.activity_model == "hkf-full"){
@@ -236,25 +228,22 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     element_amounts[1] = 1.0;   // Cl - index 1
     element_amounts[3] = 1.0;   // Na - index 3
     problem_ic.setElementInitialAmounts(element_amounts);
+    problem_ic.add("CO2", 1e-6, "mol");
     problem_ic.fixSpeciesMass("H2O(l)", 1.0, "kg", "H2O(l)");
     problem_ic.pH(8.0, "HCl(aq)");
 
     // Step **: Calculate the equilibrium states for the IC and BC
     ChemicalState state_ic = equilibrate(problem_ic);
-    //std::cout << state_ic << std::endl;
-    auto water = state_ic.speciesAmount("H2O(l)");
-    //std::cout << "water = " << water << std::endl;
-    //state_ic.scaleSpeciesAmounts(1 / water);
     state_ic.scaleVolume(1.0, "m3");
-    //std::cout << state_ic << std::endl;
-    //getchar();
 
     // Step **: Define the boundary condition (BC)  of the reactive transport modeling problem
-    EquilibriumProblem problem_bc(system);
+    EquilibriumInverseProblem problem_bc(system);
     problem_bc.setTemperature(params.T, "celsius");
     problem_bc.setPressure(params.P, "atm");
     problem_bc.add("H2O",   1.00, "kg");
-    problem_bc.add("CO2",   0.75, "mol");
+    problem_bc.add("NaCl",  1.00, "mol");
+    problem_ic.add("CO2", 1e-6, "mol");
+    problem_bc.pH(3.0, "HCl(aq)");
 
     ChemicalState state_bc = equilibrate(problem_bc);
 
@@ -262,6 +251,12 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     state_bc.scaleVolume(1.0, "m3");
     //std::cout << state_bc << std::endl;
     //getchar();
+
+
+    // Step **: Scale the volumes of the phases in the initial condition
+    //state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");    // 10% if the 1.0m3
+    //state_ic.scalePhaseVolume("Quartz", 0.882, "m3");   // 0.882 = 0.98 * 0.9 (0.9 is 90% of 1.0m3, 0.98 is 98% quartz of the rock)
+    //state_ic.scalePhaseVolume("Calcite", 0.018, "m3");  // 0.018 = 0.02 * 0.9 (0.9 is 90% of 1.0m3, 0.02 is 2% calcite of the rock)
 
     // Step **: Create the mesh for the column
     Mesh mesh(params.ncells, params.xl, params.xr);
@@ -337,7 +332,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
         rtsolver.outputClusterInfo();
         results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
     }
-        
+
     else results.time_reactive_transport_conventional = toc(REACTIVE_TRANSPORT_STEPS);
 
     // Step **: Collect the analytics related to reactive transport performance
@@ -393,17 +388,16 @@ auto makeResultsFolder(const Params& params) -> std::string
                                  "-ncells-" + std::to_string(params.ncells) +
                                  "-nsteps-" + std::to_string(params.nsteps) +
                                  "-reltol-" + reltol_stream.str() +
-                                 "-" + params.activity_model +
-                                 "-smart";
+                                 "-" + params.activity_model + "-smart";
 
-    std::string folder = "results-shell-example";
+    std::string folder = "results-shell-example-3-with-allan-tip";
     folder = (params.use_smart_eqilibirum_solver) ?
              folder + smart_test_tag :
              folder + test_tag;
 
-    if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str());
+    if (stat(folder.c_str(), &status) == -1) mkdir(folder);
 
-    std::cout << "\nsolver                         : " << (params.use_smart_eqilibirum_solver == true ? "smart" : "conventional") << std::endl;
+    std::cout << "\nsolver                         : " << (params.use_smart_eqilibirum_solver ? "smart" : "conventional") << std::endl;
 
     return folder;
 }
@@ -423,4 +417,8 @@ auto outputConsole(const Params& params) -> void {
     std::cout << "activity model : " << params.activity_model << std::endl;
 
 }
+
+//
+// Created by skyas on 17.07.20.
+//
 

@@ -34,58 +34,56 @@ using namespace Reaktoro;
 struct Params
 {
     // Discretisation params
-    int ncells; // the number of cells in the spacial discretization
-    int nsteps; // the number of steps in the reactive transport simulation
-    double xl; // the x-coordinates of the left boundaries
-    double xr; // the x-coordinates of the right boundaries
-    double dx; // the space step (in units of m)
-    double dt; // the time step (in units of s)
+    int ncells = 0; // the number of cells in the spacial discretization
+    int nsteps = 0; // the number of steps in the reactive transport simulation
+    double xl = 0; // the x-coordinates of the left boundaries
+    double xr = 0; // the x-coordinates of the right boundaries
+    double dx = 0; // the space step (in units of m)
+    double dt = 0; // the time step (in units of s)
 
     // Physical params
-    double D; // the diffusion coefficient (in units of m2/s)
-    double v; // the Darcy velocity (in units of m/s)
-    double T; // the temperature (in units of degC)
-    double P; // the pressure (in units of bar)
+    double D = 0; // the diffusion coefficient (in units of m2/s)
+    double v = 0; // the Darcy velocity (in units of m/s)
+    double T = 0; // the temperature (in units of degC)
+    double P = 0; // the pressure (in units of bar)
 
     // Solver params
-    bool use_smart_eqilibirum_solver;
-    bool track_statistics;
-    double smart_equlibrium_reltol;
-    double amount_fraction_cutoff;
-    double mole_fraction_cutoff;
+    bool use_smart_eqilibirum_solver = false;
+    double smart_equlibrium_reltol = 0;
+    double amount_fraction_cutoff = 0;
+    double mole_fraction_cutoff = 0;
 
-    std::string activity_model;
-
+    std::string activity_model = "";
 };
 
 struct Results
 {
     /// Total CPU time (in s) required by smart equilibrium scheme
-    double smart_total;
+    double smart_total = 0.0;
 
     /// Total CPU time (in s) excluding the costs for the search of the closest reference states.
-    double smart_total_ideal_search;
+    double smart_total_ideal_search = 0.0;
 
     /// Total CPU time (in s) required by smart equilibrium scheme
     /// excluding the costs for the search and storage of the closest reference states.
-    double smart_total_ideal_search_store;
+    double smart_total_ideal_search_store = 0.0;
 
     /// Total CPU time (in s) required by conventional equilibrium scheme
-    double conventional_total;
+    double conventional_total = 0.0;
 
     /// The total time taken to perform all time steps using conventional equilibrium algorithm
-    double time_reactive_transport_conventional;
+    double time_reactive_transport_conventional = 0.0;
 
     /// The total time taken to perform all time steps using smart equilibrium algorithm
-    double time_reactive_transport_smart;
+    double time_reactive_transport_smart = 0.0;
 
     /// The accumulated timing information of all equilibrium calculations.
-    EquilibriumTiming equilibrium_timing;
+    EquilibriumTiming equilibrium_timing = {};
 
     /// The accumulated timing information of all smart equilibrium calculations.
-    SmartEquilibriumTiming smart_equilibrium_timing;
+    SmartEquilibriumTiming smart_equilibrium_timing = {};
 
-    // Rate of the smart equlibrium estimation w.r.t to the total chemical equilibrium calculation
+    // Rate of the smart equilibrium estimation w.r.t to the total chemical equilibrium calculation
     double smart_equilibrium_acceptance_rate = 0.0;
 };
 
@@ -100,13 +98,10 @@ int main()
     Time start = time();
 
     // Step 1: Initialise auxiliary time-related constants
-    int second = 1;
     int minute = 60;
     int hour = 60 * minute;
     int day = 24 * hour;
     int week = 7 * day;
-    int month = 30 * day;
-    int year = 365 * day;
 
     // Step 2: Define parameters for the reactive transport simulation
     Params params;
@@ -120,7 +115,11 @@ int main()
     ///*
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
+<<<<<<< HEAD:demos/cpp/demo-rtsolver-dolomitization.cpp
     params.nsteps = 100; // the number of steps in the reactive transport simulation
+=======
+    params.nsteps = 1000; // the number of steps in the reactive transport simulation
+>>>>>>> Renamed demos for ReactiveTransportSolver.cpp transport with SmartEquilibriumSolver:demos/cpp/demo-rtsolver-calcite-brine.cpp
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 30 * minute; // the time step (in units of s)
 
@@ -433,7 +432,7 @@ auto makeResultsFolder(const Params& params) -> std::string
 
     if (stat(folder.c_str(), &status) == -1) mkdir(folder);
 
-    std::cout << "\nsolver                         : " << (params.use_smart_eqilibirum_solver == true ? "smart" : "conventional") << std::endl;
+    std::cout << "\nsolver                         : " << (params.use_smart_eqilibirum_solver ? "smart" : "conventional") << std::endl;
 
     return folder;
 }
