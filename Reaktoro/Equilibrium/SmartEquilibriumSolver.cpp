@@ -138,7 +138,7 @@ struct SmartEquilibriumSolver::Impl
         VectorXi iprimary;
 
         /// The hash of the indices of the primary species for this cluster.
-        std::size_t label;
+        std::size_t label = 0;
 
         /// The records stored in this cluster with learning data.
         std::deque<Record> records;
@@ -517,7 +517,7 @@ struct SmartEquilibriumSolver::Impl
 
                     // Update the chemical properties of the system as well as temperature and pressure
                     properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
-                    
+
                     result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
                     //---------------------------------------------------------------------
