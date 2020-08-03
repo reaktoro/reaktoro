@@ -15,14 +15,6 @@
 
 #include "ReactiveTransportSolver.hpp"
 
-// C++ includes
-#include <algorithm>
-#include <fstream>
-#include <iomanip>
-
-// Eigen includes
-#include <Reaktoro/deps/eigen3/Eigen/Dense>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Profiling.hpp>
@@ -78,6 +70,9 @@ struct ReactiveTransportSolver::Impl
 
     /// The amounts of equilibrium elements on each cell of the mesh.
     Matrix be;
+
+    /// The amounts of equilibrium elements on each cell of the mesh.
+    Matrix be_bar;
 
     /// The current number of steps in the solution of the reactive transport equations.
     Index steps = 0;
@@ -173,7 +168,7 @@ struct ReactiveTransportSolver::Impl
     auto step(ChemicalField& field) -> ReactiveTransportResult
     {
         // The result of the reactive transport step
-        ReactiveTransportResult rt_result;
+        ReactiveTransportResult rt_result = {};
 
         // Auxiliary variables
         const auto& mesh = transport_solver.mesh();
@@ -227,6 +222,7 @@ struct ReactiveTransportSolver::Impl
 
         result.timing.transport = toc(TRANSPORT_STEP);
 
+        /*
         //---------------------------------------------------------------------------
         // Step 2: Perform a time step equilibrium calculation for each cell
         //---------------------------------------------------------------------------
@@ -242,8 +238,14 @@ struct ReactiveTransportSolver::Impl
                 const auto T = field[icell].temperature();
                 const auto P = field[icell].pressure();
 
+                //std::cout << "be.row(icell)   = " << (be.row(icell)) << std::endl;
+
                 // Solve with a smart equilibrium solver
                 smart_equilibrium_solver.solve(field[icell], T, P, be.row(icell));
+
+                //std::cout << "field[icell]   = " << tr(field[icell].speciesAmounts()) << std::endl;
+
+                //getchar();
 
                 // Save the result of this cell's smart equilibrium calculation
                 result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver.result();
@@ -266,9 +268,70 @@ struct ReactiveTransportSolver::Impl
                 result.equilibrium_at_cell[icell] = equilibrium_solver.result();
             }
         }
-
         result.timing.equilibrium = toc(EQUILIBRIUM_STEP);
+        */
+        ///*
+        //---------------------------------------------------------------------------
+        // Step 2: Perform a time step equilibrium calculation for each cell
+        //---------------------------------------------------------------------------
+        tic(EQUILIBRIUM_STEP);
 
+        if(options.use_smart_equilibrium_solver)
+        {
+            // Ensure the result of each cell's smart equilibrium calculation can be saved
+            result.smart_equilibrium_at_cell.resize(num_cells);
+
+            for(Index icell = 0; icell < num_cells; ++icell)
+            {
+                const auto T = field[icell].temperature();
+                const auto P = field[icell].pressure();
+
+                // Scaling vector of element amounts
+                double be_total = sum(be.row(icell));
+                be_bar.noalias() = be.row(icell) / be_total;
+
+                // Scale the initial vector of species amounts
+                field[icell].scaleSpeciesAmounts(1 / be_total);
+
+                // Solve with a smart equilibrium solver
+                smart_equilibrium_solver.solve(field[icell], T, P, be_bar);
+
+                // Scale back the vector of species amounts
+                field[icell].scaleSpeciesAmounts(be_total);
+
+                // Save the result of this cell's smart equilibrium calculation
+                result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver.result();
+            }
+        }
+        else
+        {
+            // Ensure the result of each cell's equilibrium calculation can be saved.
+            result.equilibrium_at_cell.resize(num_cells);
+
+            for(Index icell = 0; icell < num_cells; ++icell)
+            {
+                const auto T = field[icell].temperature();
+                const auto P = field[icell].pressure();
+
+                // Scale vector of element amounts
+                double be_total = sum(be.row(icell));
+                be_bar.noalias() = be.row(icell) / be_total;
+
+                // Scale the initial vector of species amounts
+                field[icell].scaleSpeciesAmounts(1 / be_total);
+
+                // Solve with a conventional equilibrium solver
+                equilibrium_solver.solve(field[icell], T, P, be_bar);
+
+                // Scale back the vector of species amounts
+                field[icell].scaleSpeciesAmounts(be_total);
+
+                // Save the result of this cell's smart equilibrium calculation.
+                result.equilibrium_at_cell[icell] = equilibrium_solver.result();
+            }
+        }
+        result.timing.equilibrium = toc(EQUILIBRIUM_STEP);
+        //*/
         // Update the output files with the chemical state of every cell
         for(Index icell = 0; icell < num_cells; ++icell)
             for(auto output : outputs)
