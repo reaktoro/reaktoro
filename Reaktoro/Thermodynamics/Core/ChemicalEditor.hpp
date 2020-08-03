@@ -109,12 +109,12 @@ public:
     /// Set the temperatures for constructing interpolation tables of thermodynamic properties.
     /// @param values The temperature values
     /// @param units The units of the temperature values
-    auto setTemperatures(std::vector<double> values, std::string units) -> void;
+    auto setTemperatures(const std::vector<double>&, const std::string& units) -> void;
 
     /// Set the pressures for constructing interpolation tables of thermodynamic properties.
     /// @param values The pressure values
     /// @param units The units of the pressure values
-    auto setPressures(std::vector<double> values, std::string units) -> void;
+    auto setPressures(const std::vector<double>& values, const std::string& units) -> void;
 
     /// Initialize all possible phases that can exist with given elements.
     /// @param elements The element symbols of interest.
@@ -398,7 +398,7 @@ public:
     /// @see addAqueousPhase, addLiquidPhase, addGaseousPhase
     ///
     /// @note The old use of this function to add elements and/or compounds was removed. To use these
-    /// functionalities, use addMineralPhaseWitElements to add eslements and addMineralPhaseWitElementsOf
+    /// functionalities, use addMineralPhaseWitElements to add elements and addMineralPhaseWitElementsOf
     /// to add compounds.
     auto addMineralPhase(const StringList& species) -> MineralPhase&;
 
@@ -465,7 +465,7 @@ public:
     /// Add a mineral reaction in the chemical editor.
     /// @param mineral The name of the mineral for which the reaction will be defined.
     /// @return A reference to the created MineralReaction object.
-    auto addMineralReaction(std::string mineral) -> MineralReaction&;
+    auto addMineralReaction(const std::string& mineral) -> MineralReaction&;
 
     /// Return the aqueous phase in the chemical editor.
     auto aqueousPhase() const -> const AqueousPhase&;

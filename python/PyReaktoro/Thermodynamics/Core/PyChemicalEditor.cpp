@@ -60,7 +60,7 @@ void exportChemicalEditor(py::module& m)
     auto addPhase4 = static_cast<MineralPhase&(ChemicalEditor::*)(const MineralPhase&)>(&ChemicalEditor::addPhase);
 
     auto addMineralReaction1 = static_cast<MineralReaction&(ChemicalEditor::*)(const MineralReaction&)>(&ChemicalEditor::addMineralReaction);
-    auto addMineralReaction2 = static_cast<MineralReaction&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addMineralReaction);
+    auto addMineralReaction2 = static_cast<MineralReaction&(ChemicalEditor::*)(const std::string&)>(&ChemicalEditor::addMineralReaction);
 
     auto aqueousPhase1 = static_cast<const AqueousPhase&(ChemicalEditor::*)() const>(&ChemicalEditor::aqueousPhase);
     auto aqueousPhase2 = static_cast<AqueousPhase&(ChemicalEditor::*)()>(&ChemicalEditor::aqueousPhase);
