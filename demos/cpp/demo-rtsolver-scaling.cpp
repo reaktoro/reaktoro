@@ -33,7 +33,7 @@ using namespace Reaktoro;
 
 struct Params
 {
-    // Discretisation params
+    // Discretization params
     int ncells = 0; // the number of cells in the spacial discretization
     double xl = 0; // the x-coordinates of the left boundaries
     double xr = 0; // the x-coordinates of the right boundaries
@@ -52,8 +52,8 @@ struct Params
     double water_kg = 1.0;  // amount of water used in the experiment
 
     // Solver params
-    bool use_smart_eqilibirum_solver = false;
-    double smart_equlibrium_reltol = 0;
+    bool use_smart_equilibrium_solver = false;
+    double smart_equilibrium_reltol = 0;
     double amount_fraction_cutoff = 0;
     double mole_fraction_cutoff = 0;
 
@@ -104,7 +104,6 @@ int main()
     // Step 1: Initialise auxiliary time-related constants
     int minute = 60;
     int hour = 60 * minute;
-    int day = 24 * hour;
 
     // Step 2: Define parameters for the reactive transport simulation
     Params params;
@@ -127,9 +126,9 @@ int main()
     params.P = 200 * 1.01325;   // the pressure (in units of bar)
 
     // Define parameters of the equilibrium solvers
-    //params.smart_equlibrium_reltol = 0.001;
-    params.smart_equlibrium_reltol = 0.004;
-    //params.smart_equlibrium_reltol = 0.01;
+    //params.smart_equilibrium_reltol = 0.001;
+    params.smart_equilibrium_reltol = 0.004;
+    //params.smart_equilibrium_reltol = 0.01;
     params.activity_model = "dk-full";
     //params.activity_model = "pitzer-full";
     //params.activity_model = "hkf-full";
@@ -144,8 +143,8 @@ int main()
     Results results;
 
     // Execute reactive transport with different solvers
-    params.use_smart_eqilibirum_solver = true; runReactiveTransport(params, results);
-    params.use_smart_eqilibirum_solver = false; runReactiveTransport(params, results);
+    params.use_smart_equilibrium_solver = true; runReactiveTransport(params, results);
+    params.use_smart_equilibrium_solver = false; runReactiveTransport(params, results);
 
     results.conventional_total = results.equilibrium_timing.solve;
     results.smart_total = results.smart_equilibrium_timing.solve;
@@ -183,7 +182,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     // Step **: Define smart chemical equilibrium solver options
     SmartEquilibriumOptions smart_equilibrium_options;
-    smart_equilibrium_options.reltol = params.smart_equlibrium_reltol;
+    smart_equilibrium_options.reltol = params.smart_equilibrium_reltol;
 
     smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
     smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
@@ -217,7 +216,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
-    //if(params.use_smart_eqilibirum_solver) std::cout << "system = \n" << system << std:: endl;
+    //if(params.use_smart_equilibrium_solver) std::cout << "system = \n" << system << std:: endl;
     //getchar();
 
     // ************************************************************************************************************** //
@@ -309,7 +308,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     // Step **: Define the options for the reactive transport solver
     ReactiveTransportOptions reactive_transport_options;
-    reactive_transport_options.use_smart_equilibrium_solver = params.use_smart_eqilibirum_solver;
+    reactive_transport_options.use_smart_equilibrium_solver = params.use_smart_equilibrium_solver;
     reactive_transport_options.equilibrium = equilibrium_options;
     reactive_transport_options.smart_equilibrium = smart_equilibrium_options;
 
@@ -395,10 +394,10 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
         step += 1;
     }
 
-    if(params.use_smart_eqilibirum_solver)
+    if(params.use_smart_equilibrium_solver)
         rtsolver.outputClusterInfo();
 
-    if(params.use_smart_eqilibirum_solver)
+    if(params.use_smart_equilibrium_solver)
         results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
     else results.time_reactive_transport_conventional = toc(REACTIVE_TRANSPORT_STEPS);
 
@@ -407,11 +406,11 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     auto rt_results = profiler.results();
 
     // Step **: Generate json output file with collected profiling data
-    if(params.use_smart_eqilibirum_solver)  JsonOutput(folder + "/" + "analysis-smart.json") << analysis;
+    if(params.use_smart_equilibrium_solver)  JsonOutput(folder + "/" + "analysis-smart.json") << analysis;
     else    JsonOutput(folder + "/" + "analysis-conventional.json") << analysis;
 
     // Step **: Save equilibrium timing to compare the speedup of smart equilibrium solver versus conventional one
-    if(params.use_smart_eqilibirum_solver) {
+    if(params.use_smart_equilibrium_solver) {
         results.smart_equilibrium_timing = analysis.smart_equilibrium.timing;
         results.smart_equilibrium_acceptance_rate = analysis.smart_equilibrium.smart_equilibrium_estimate_acceptance_rate;
 
@@ -444,7 +443,7 @@ auto makeResultsFolder(const Params& params) -> std::string
 
     std::ostringstream reltol_stream, dt_stream;
     dt_stream << params.dt;
-    reltol_stream << std::scientific << std::setprecision(1) << params.smart_equlibrium_reltol;
+    reltol_stream << std::scientific << std::setprecision(1) << params.smart_equilibrium_reltol;
 
     std::string test_tag = "-dt-" + dt_stream.str() +
                            "-ncells-" + std::to_string(params.ncells) +
@@ -459,13 +458,13 @@ auto makeResultsFolder(const Params& params) -> std::string
                                  "-smart";
 
     std::string folder = "results-scaling";
-    folder = (params.use_smart_eqilibirum_solver) ?
+    folder = (params.use_smart_equilibrium_solver) ?
              folder + smart_test_tag :
              folder + test_tag;
 
-    if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str());
+    if (stat(folder.c_str(), &status) == -1) mkdir(folder);
 
-    std::cout << "\nsolver                         : " << (params.use_smart_eqilibirum_solver == true ? "smart" : "conventional") << std::endl;
+    std::cout << "\nsolver                         : " << (params.use_smart_equilibrium_solver ? "smart" : "conventional") << std::endl;
 
     return folder;
 }
@@ -481,7 +480,7 @@ auto outputConsole(const Params& params) -> void {
     std::cout << "CFD     : " << params.v * params.dt / params.dx << std::endl;
     std::cout << "T       : " << params.T << std::endl;
     std::cout << "P       : " << params.P << std::endl;
-    std::cout << "eqreltol       : " << params.smart_equlibrium_reltol << std::endl;
+    std::cout << "eqreltol       : " << params.smart_equilibrium_reltol << std::endl;
     std::cout << "activity model : " << params.activity_model << std::endl;
 
 }
