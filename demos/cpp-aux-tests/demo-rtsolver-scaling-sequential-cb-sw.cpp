@@ -34,7 +34,6 @@ int main()
     // Step 1: Initialise auxiliary time-related constants
     int minute = 60;
     int hour = 60 * minute;
-    int day = 24 * hour;
 
     // Step 2: Define parameters for the reactive transport simulation
     ReactiveTransportParams params;
