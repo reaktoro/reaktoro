@@ -107,10 +107,24 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
     const auto phases = Phases(db,
         // AqueousSolution(speciate("H O"))
-        AqueousSolution(speciate("H O Na Cl C Ca Mg Si"))
-        // GaseousSolution(speciate("H O C")),
-        // Minerals("Halite Calcite Magnesite Dolomite Quartz")
-        // Minerals("Quartz")
+        // AqueousSolution(speciate("H O C"))
+        AqueousSolution(speciate("H O Na Cl C Ca Mg Si")),
+        GaseousSolution(speciate("H O C"))
+        // , Minerals("Halite") // OK
+        // , Minerals("Calcite") // OK
+        // , Minerals("Magnesite") // OK
+        // , Minerals("Dolomite") // OK
+        // , Minerals("Quartz") // OK
+        // , Minerals("Quartz Calcite") // OK
+        // , Minerals("Halite Calcite") // OK
+        // , Minerals("Calcite Magnesite") // OK
+        // , Minerals("Calcite Magnesite Halite") // ~~FAIL!~~NOW IT WORKS USING zeps to determine stability!
+        // , Minerals("Halite Calcite Magnesite Quartz") // WORKS with z > -eps
+        // , Minerals("Calcite Dolomite") // OK
+        // , Minerals("Magnesite Dolomite") // OK
+        // , Minerals("Calcite Magnesite Dolomite") // FAIL!
+        // , Minerals("Halite Calcite Magnesite Dolomite")
+        , Minerals("Halite Calcite Magnesite Dolomite Quartz")
     );
 
     const auto system = ChemicalSystem(db, phases);
@@ -135,27 +149,29 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
     const auto P = 1.0;
 
     const auto nH2O    = 55.0;
-    const auto nNaCl   = 0.0e-2;
-    const auto nCO2    = 0.0e-2;
+    const auto nNaCl   = 1.0e-2;
+    const auto nCO2    = 100.0e-2;
     const auto nO2     = 0.0e-2;
     const auto nH2     = 0.0e-2;
     const auto nCH4    = 0.0e-2;
-    const auto nCaCO3  = 0.0e-2;
-    const auto nMgCO3  = 0.0e-2;
-    const auto nSiO2   = 0.0e-2;
+    const auto nCaCO3  = 1.0e-2;
+    const auto nMgCO3  = 2.0e-2;
+    const auto nSiO2   = 1.0e-2;
 
     ChemicalState state(system);
     state.setTemperature(T, "celsius");
     state.setPressure(P, "bar");
     state.setSpeciesAmount("H2O"   , nH2O   , "mol");
-    // state.setSpeciesAmount("NaCl"  , nNaCl  , "mol");
-    // state.setSpeciesAmount("CO2"   , nCO2   , "mol");
+    state.setSpeciesAmount("NaCl"  , nNaCl  , "mol");
+    state.setSpeciesAmount("CO2"   , nCO2   , "mol");
+    // state.setSpeciesAmount("CO2(g)"   , nCO2   , "mol");
     // state.setSpeciesAmount("O2"    , nO2    , "mol");
     // state.setSpeciesAmount("H2"    , nH2    , "mol");
     // state.setSpeciesAmount("CH4"   , nCH4   , "mol");
-    // state.setSpeciesAmount("CaCO3" , nCaCO3 , "mol");
-    // state.setSpeciesAmount("MgCO3" , nMgCO3 , "mol");
-    // state.setSpeciesAmount("SiO2"  , nSiO2  , "mol");
+    state.setSpeciesAmount("CaCO3" , nCaCO3 , "mol");
+    // state.setSpeciesAmount("Calcite" , nCaCO3 , "mol");
+    state.setSpeciesAmount("MgCO3" , nMgCO3 , "mol");
+    state.setSpeciesAmount("SiO2"  , nSiO2  , "mol");
 
     // VectorXd n(5); n << 55, 2.51011e-13, 2.51011e-13, 2.28356e-31 ,1.14178e-31;
     // state.setSpeciesAmounts(n);
@@ -164,11 +180,22 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
     EquilibriumOptions options;
     options.optima.output = true;
     options.epsilon = 1e-40;
+    options.optima.max_iterations = 100;
     options.optima.tolerance = 1e-10;
+    options.optima.tolerance_linear_equality_constraints = options.optima.tolerance;
     // options.optima.tolerance = 1e-20;
     options.optima.kkt.method = Optima::SaddlePointMethod::Rangespace;
     // options.optima.kkt.method = Optima::SaddlePointMethod::Fullspace;
     // options.optima.kkt.method = Optima::SaddlePointMethod::Nullspace;
+
+
+    options.optima.linesearch.trigger_when_current_error_is_greater_than_initial_error_by_factor = 1e10;
+    options.optima.linesearch.trigger_when_current_error_is_greater_than_previous_error_by_factor = 1e10;
+
+    // options.optima.linesearch.trigger_when_current_error_is_greater_than_initial_error_by_factor = 1;
+    // options.optima.linesearch.trigger_when_current_error_is_greater_than_previous_error_by_factor = 1;
+
+
 
     EquilibriumSolver solver(system);
     solver.setOptions(options);
@@ -176,7 +203,16 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
     auto start = time();
 
     ChemicalState copy(state);
+
     auto result = solver.solve(copy);
+
+    // copy.setSpeciesAmount("CO2", copy.speciesAmount("CO2") + 0.1);
+
+    // solver.solve(copy);
+
+    // copy.setSpeciesAmount("CO2(g)", copy.speciesAmount("CO2(g)") + 0.1);
+
+    // solver.solve(copy);
 
     std::cout << "Time (s) = " << elapsed(start) << std::endl;
 
