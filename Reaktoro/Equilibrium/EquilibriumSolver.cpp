@@ -63,7 +63,7 @@ auto initOptProblem(const EquilibriumProblem& problem) -> Optima::Problem
     // solver.solve(state)
 
     // Set the coefficient matrix of the linear equality constraints
-    oproblem.Ae = problem.conservationMatrix();
+    oproblem.Aex = problem.conservationMatrix();
 
     return oproblem;
 }
@@ -164,11 +164,11 @@ struct EquilibriumSolver::Impl
         EquilibriumObjective obj = problem.objective(state0);
 
         // Update the objective function in the Optima::Problem object
-        optproblem.f = [=](VectorXdConstRef x, Optima::ObjectiveResult& res)
+        optproblem.f = [=](VectorXdConstRef x, VectorXdConstRef p, Optima::ObjectiveResult& res)
         {
             if(res.requires.f) res.f = obj.f(x);
-            if(res.requires.g) obj.g(x, res.g);
-            if(res.requires.H) obj.H(x, res.H);
+            if(res.requires.fx) obj.g(x, res.fx);
+            if(res.requires.fxx) obj.H(x, res.fxx);
         };
 
         /// Update the right-hand side vector of the linear equality constraints
@@ -210,7 +210,7 @@ struct EquilibriumSolver::Impl
     {
         // The conservation matrix Cn in C = [Cn Cp Cq] corresponding to the
         // chemical species (not the control variables!)
-        const auto Cn = optproblem.Ae.leftCols(dims.Nn);
+        const auto Cn = optproblem.Aex.leftCols(dims.Nn);
 
         // The initial amounts of the species
         n0 = state0.speciesAmounts();
