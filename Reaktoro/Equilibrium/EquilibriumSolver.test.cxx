@@ -18,14 +18,6 @@
 // Catch includes
 #include <catch2/catch.hpp>
 
-
-
-// C++ includes
-#include <iostream>
-
-
-
-
 // Reaktoro includes
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -182,19 +174,15 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
     options.epsilon = 1e-40;
     options.optima.max_iterations = 100;
     options.optima.tolerance = 1e-10;
-    options.optima.tolerance_linear_equality_constraints = options.optima.tolerance;
+    // options.optima.tolerance_linear_equality_constraints = options.optima.tolerance;
     // options.optima.tolerance = 1e-20;
     options.optima.kkt.method = Optima::SaddlePointMethod::Rangespace;
     // options.optima.kkt.method = Optima::SaddlePointMethod::Fullspace;
     // options.optima.kkt.method = Optima::SaddlePointMethod::Nullspace;
 
 
-    options.optima.linesearch.trigger_when_current_error_is_greater_than_initial_error_by_factor = 1e10;
-    options.optima.linesearch.trigger_when_current_error_is_greater_than_previous_error_by_factor = 1e10;
-
-    // options.optima.linesearch.trigger_when_current_error_is_greater_than_initial_error_by_factor = 1;
-    // options.optima.linesearch.trigger_when_current_error_is_greater_than_previous_error_by_factor = 1;
-
+    options.optima.linesearch.trigger_when_current_error_is_greater_than_initial_error_by_factor = 1;
+    options.optima.linesearch.trigger_when_current_error_is_greater_than_previous_error_by_factor = 2;
 
 
     EquilibriumSolver solver(system);
@@ -216,54 +204,6 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
     std::cout << "Time (s) = " << elapsed(start) << std::endl;
 
-
-    // const auto kktmethod = GENERATE(
-    //     // Optima::SaddlePointMethod::Fullspace,
-    //     // Optima::SaddlePointMethod::Nullspace,
-    //     Optima::SaddlePointMethod::Rangespace
-    // );
-
-    // EquilibriumOptions options;
-    // options.optima.output = true;
-    // options.epsilon = 1e-90;
-    // options.optima.kkt.method = kktmethod;
-
-    // try
-    // {
-    //     EquilibriumSolver solver(system);
-    //     solver.setOptions(options);
-
-    //     ChemicalState copy(state);
-    //     auto result = solver.solve(copy);
-
-    //     if(!result.optima.succeeded)
-    //         throw std::runtime_error("equilibrium calculation failed");
-    // }
-    // catch(...)
-    // {
-    //     EquilibriumSolver solver(system);
-
-    //     options.optima.output = true;
-    //     solver.setOptions(options);
-
-    //     ChemicalState copy(state);
-    //     auto result = solver.solve(copy);
-
-    //     options.optima.output = false;
-    //     solver.setOptions(options);
-
-    //     INFO("      T = " << T      );
-    //     INFO("      P = " << P      );
-    //     INFO("   nH2O = " << nH2O   );
-    //     INFO("  nNaCl = " << nNaCl  );
-    //     INFO("   nCO2 = " << nCO2   );
-    //     INFO("    nO2 = " << nO2    );
-    //     INFO("    nH2 = " << nH2    );
-    //     INFO("   nCH4 = " << nCH4   );
-    //     INFO(" nCaCO3 = " << nCaCO3 );
-    //     INFO(" nMgCO3 = " << nMgCO3 );
-    //     INFO("  nSiO2 = " << nSiO2  );
-
-    //     REQUIRE(false);
-    // }
+    CHECK( result.optima.succeeded );
+    CHECK( result.optima.iterations <= 48 );
 }

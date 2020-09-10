@@ -184,16 +184,16 @@ struct EquilibriumSolver::Impl
     {
         const auto& n = state0.speciesAmounts();
         const auto& y = state0.equilibrium().lagrangeMultipliers();
-        const auto& z = state0.equilibrium().complementarityVariables();
+        const auto& s = state0.equilibrium().complementarityVariables();
         const auto& v = state0.equilibrium().controlVariables();
 
         optstate.x.head(dims.Nn) = n;
 
         if(v.size() == dims.Ncv) optstate.x.tail(dims.Ncv) = v;
         if(y.size() == dims.Nc)  optstate.y = y;
-        if(z.size() == dims.Ne)  optstate.z.head(dims.Nn) = z;
+        if(s.size() == dims.Ne)  optstate.s.head(dims.Nn) = s;
 
-        optstate.z.tail(dims.Ncv).fill(0.0); // because the control variables don't have lower/upper bounds
+        optstate.s.tail(dims.Ncv).fill(0.0); // because the control variables don't have lower/upper bounds
     }
 
     /// Update the initial state variables before the new equilibrium calculation.
@@ -202,7 +202,7 @@ struct EquilibriumSolver::Impl
         state.speciesAmounts() = optstate.x.head(dims.Nn);
         state.equilibrium().controlVariables() = optstate.x.tail(dims.Ncv);
         state.equilibrium().lagrangeMultipliers() = optstate.y;
-        state.equilibrium().complementarityVariables() = optstate.z.head(dims.Nn);
+        state.equilibrium().complementarityVariables() = optstate.s.head(dims.Nn);
     }
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
