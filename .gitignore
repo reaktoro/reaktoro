@@ -10,8 +10,9 @@ _build/
 .ptp-sync-folder
 .ptp-sync/
 
-# vscode related files
-.vscode/
+# Visual Studio Code related files
+.vscode
+.history
 
 # JetBrains related files
 .idea
