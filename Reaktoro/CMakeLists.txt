@@ -9,7 +9,7 @@ file(GLOB_RECURSE CXX_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.test.cxx)
 
 # Set the list of names of the third-party targets and libraries
 set(THIRDPARTY_TARGETS PUGIXML MINIZ CVODE PHREEQC GEMS)
-set(THIRDPARTY_LIBS pugixml miniz sundials_cvode sundials_nvecserial phreeqc gems)
+set(THIRDPARTY_LIBS pugixml miniz sundials_cvode sundials_nvecserial phreeqc gems nlohmann_json::nlohmann_json)
 
 # Enable automatic creation of a module definition (.def) file for a SHARED library on Windows.
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)

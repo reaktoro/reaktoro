@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<Database>
+  <Element>
+    <Name>LumpedOil</Name>
+    <MolarMass units="g/mol">252.48</MolarMass>
+  </Element>
+  <Species>
+    <Name>LumpedOil(g)</Name>
+    <Formula>LumpedOil</Formula>
+    <Elements>LumpedOil(1)</Elements>
+    <Type>Gaseous</Type>
+    <MolarMass units="g/mol">252.48</MolarMass>
+    <Gas>Lumped-Oil</Gas>
+    <CriticalTemperature units="K">617.7</CriticalTemperature>
+    <CriticalPressure units="bar">21.1</CriticalPressure>
+    <AcentricFactor>0.491</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>6,8</References>
+        <Date>27.Dec.89</Date>
+        <Gf units="cal/mol">-12122.4</Gf>
+        <Hf units="cal/mol">-17880.0</Hf>
+        <Sr units="cal/(mol*K)">44.518</Sr>
+        <a units="cal/(mol*K)">5.65</a>
+        <b units="cal/(mol*K^2)">0.01144</b>
+        <c units="(cal*K)/mol">-46000.0</c>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+</Database>

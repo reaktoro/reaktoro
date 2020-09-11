@@ -18,7 +18,7 @@
 #pragma once
 
 // json includes
-#include <Reaktoro/deps/json/json.hpp>
+#include <nlohmann/json.hpp>
 
 namespace Reaktoro {
 
