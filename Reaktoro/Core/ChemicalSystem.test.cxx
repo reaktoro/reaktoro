@@ -128,76 +128,76 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::database()
     //-------------------------------------------------------------------------
-    REQUIRE( system.database().species().size() );
+    CHECK( system.database().species().size() );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::phases()
     //-------------------------------------------------------------------------
-    REQUIRE( system.phases().size() == 5 );
+    CHECK( system.phases().size() == 5 );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::phase(i)
     //-------------------------------------------------------------------------
-    REQUIRE( system.phase(0).name() == "AqueousSolution" );
-    REQUIRE( system.phase(1).name() == "GaseousSolution" );
-    REQUIRE( system.phase(2).name() == "Halite"          );
-    REQUIRE( system.phase(3).name() == "Calcite"         );
-    REQUIRE( system.phase(4).name() == "Quartz"          );
+    CHECK( system.phase(0).name() == "AqueousSolution" );
+    CHECK( system.phase(1).name() == "GaseousSolution" );
+    CHECK( system.phase(2).name() == "Halite"          );
+    CHECK( system.phase(3).name() == "Calcite"         );
+    CHECK( system.phase(4).name() == "Quartz"          );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::species()
     //-------------------------------------------------------------------------
-    REQUIRE( system.species().size() == 27 );
+    CHECK( system.species().size() == 27 );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::species(i)
     //-------------------------------------------------------------------------
-    REQUIRE( system.species(0).name()  == "H2O(aq)"   );
-    REQUIRE( system.species(1).name()  == "H+(aq)"    );
-    REQUIRE( system.species(2).name()  == "OH-(aq)"   );
-    REQUIRE( system.species(3).name()  == "H2(aq)"    );
-    REQUIRE( system.species(4).name()  == "O2(aq)"    );
-    REQUIRE( system.species(5).name()  == "Na+(aq)"   );
-    REQUIRE( system.species(6).name()  == "Cl-(aq)"   );
-    REQUIRE( system.species(7).name()  == "NaCl(aq)"  );
-    REQUIRE( system.species(8).name()  == "HCl(aq)"   );
-    REQUIRE( system.species(9).name()  == "NaOH(aq)"  );
-    REQUIRE( system.species(10).name() == "Ca++(aq)"  );
-    REQUIRE( system.species(11).name() == "Mg++(aq)"  );
-    REQUIRE( system.species(12).name() == "CO2(aq)"   );
-    REQUIRE( system.species(13).name() == "HCO3-(aq)" );
-    REQUIRE( system.species(14).name() == "CO3--(aq)" );
-    REQUIRE( system.species(15).name() == "CaCl2(aq)" );
-    REQUIRE( system.species(16).name() == "MgCl2(aq)" );
-    REQUIRE( system.species(17).name() == "SiO2(aq)"  );
-    REQUIRE( system.species(18).name() == "CO2(g)"    );
-    REQUIRE( system.species(19).name() == "O2(g)"     );
-    REQUIRE( system.species(20).name() == "H2(g)"     );
-    REQUIRE( system.species(21).name() == "H2O(g)"    );
-    REQUIRE( system.species(22).name() == "CH4(g)"    );
-    REQUIRE( system.species(23).name() == "CO(g)"     );
-    REQUIRE( system.species(24).name() == "NaCl(s)"   );
-    REQUIRE( system.species(25).name() == "CaCO3(s)"  );
-    REQUIRE( system.species(26).name() == "SiO2(s)"   );
+    CHECK( system.species(0).name()  == "H2O(aq)"   );
+    CHECK( system.species(1).name()  == "H+(aq)"    );
+    CHECK( system.species(2).name()  == "OH-(aq)"   );
+    CHECK( system.species(3).name()  == "H2(aq)"    );
+    CHECK( system.species(4).name()  == "O2(aq)"    );
+    CHECK( system.species(5).name()  == "Na+(aq)"   );
+    CHECK( system.species(6).name()  == "Cl-(aq)"   );
+    CHECK( system.species(7).name()  == "NaCl(aq)"  );
+    CHECK( system.species(8).name()  == "HCl(aq)"   );
+    CHECK( system.species(9).name()  == "NaOH(aq)"  );
+    CHECK( system.species(10).name() == "Ca++(aq)"  );
+    CHECK( system.species(11).name() == "Mg++(aq)"  );
+    CHECK( system.species(12).name() == "CO2(aq)"   );
+    CHECK( system.species(13).name() == "HCO3-(aq)" );
+    CHECK( system.species(14).name() == "CO3--(aq)" );
+    CHECK( system.species(15).name() == "CaCl2(aq)" );
+    CHECK( system.species(16).name() == "MgCl2(aq)" );
+    CHECK( system.species(17).name() == "SiO2(aq)"  );
+    CHECK( system.species(18).name() == "CO2(g)"    );
+    CHECK( system.species(19).name() == "O2(g)"     );
+    CHECK( system.species(20).name() == "H2(g)"     );
+    CHECK( system.species(21).name() == "H2O(g)"    );
+    CHECK( system.species(22).name() == "CH4(g)"    );
+    CHECK( system.species(23).name() == "CO(g)"     );
+    CHECK( system.species(24).name() == "NaCl(s)"   );
+    CHECK( system.species(25).name() == "CaCO3(s)"  );
+    CHECK( system.species(26).name() == "SiO2(s)"   );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::elements()
     //-------------------------------------------------------------------------
-    REQUIRE( system.elements().size() == 8 );
+    CHECK( system.elements().size() == 8 );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::element(i)
     //-------------------------------------------------------------------------
     Strings symbols = { "H", "O", "Na", "Cl", "C", "Ca", "Mg", "Si" };
 
-    REQUIRE( contains(symbols, system.element(0).symbol()) );
-    REQUIRE( contains(symbols, system.element(1).symbol()) );
-    REQUIRE( contains(symbols, system.element(2).symbol()) );
-    REQUIRE( contains(symbols, system.element(3).symbol()) );
-    REQUIRE( contains(symbols, system.element(4).symbol()) );
-    REQUIRE( contains(symbols, system.element(5).symbol()) );
-    REQUIRE( contains(symbols, system.element(6).symbol()) );
-    REQUIRE( contains(symbols, system.element(7).symbol()) );
+    CHECK( contains(symbols, system.element(0).symbol()) );
+    CHECK( contains(symbols, system.element(1).symbol()) );
+    CHECK( contains(symbols, system.element(2).symbol()) );
+    CHECK( contains(symbols, system.element(3).symbol()) );
+    CHECK( contains(symbols, system.element(4).symbol()) );
+    CHECK( contains(symbols, system.element(5).symbol()) );
+    CHECK( contains(symbols, system.element(6).symbol()) );
+    CHECK( contains(symbols, system.element(7).symbol()) );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::formulaMatrix()
@@ -234,5 +234,5 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
         { 0,  0,  2,  0,  0,  1,  0,  0,  0 }  // SiO2(s)
     };
 
-    REQUIRE( Atr.transpose() == system.formulaMatrix() );
+    CHECK( Atr.transpose() == system.formulaMatrix() );
 }
