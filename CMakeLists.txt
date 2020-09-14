@@ -29,7 +29,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 
 # Define which components of Reaktoro to build
 option(REAKTORO_BUILD_ALL         "Build everything." OFF)
-option(REAKTORO_BUILD_DEMOS       "Build demos." OFF)
+option(REAKTORO_BUILD_EXAMPLES    "Build examples." OFF)
 option(REAKTORO_BUILD_DOCS        "Build documentation." OFF)
 option(REAKTORO_BUILD_INTERPRETER "Build the interpreter executable reaktoro." OFF)
 option(REAKTORO_BUILD_PYTHON      "Build the python wrappers and python package reaktoro." OFF)
@@ -37,8 +37,8 @@ option(REAKTORO_BUILD_TESTS       "Build tests." OFF)
 
 # Modify the REAKTORO_BUILD_* variables accordingly to BUILD_ALL
 if(REAKTORO_BUILD_ALL MATCHES ON)
-    set(REAKTORO_BUILD_DEMOS       ON)
     set(REAKTORO_BUILD_DOCS        ON)
+    set(REAKTORO_BUILD_EXAMPLES    ON)
     set(REAKTORO_BUILD_INTERPRETER ON)
     set(REAKTORO_BUILD_PYTHON      ON)
     set(REAKTORO_BUILD_TESTS       ON)
@@ -107,9 +107,9 @@ if(REAKTORO_BUILD_INTERPRETER)
     add_subdirectory(interpreter)
 endif()
 
-# Build the demonstration applications
-if(REAKTORO_BUILD_DEMOS)
-    add_subdirectory(demos)
+# Build the examples
+if(REAKTORO_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()
 
 # Build the project documentation
@@ -135,8 +135,8 @@ add_custom_target(interpreter
     COMMAND ${CMAKE_MAKE_PROGRAM}
     WORKING_DIRECTORY "${CURRENT_BINARY_DIR}/interpreter")
 
-# Add target "demos" for manual building of demos, as `make demos`, if REAKTORO_BUILD_DEMOS is OFF
-add_custom_target(demos
+# Add target "examples" for manual building of examples, as `make examples`, if REAKTORO_BUILD_EXAMPLES is OFF
+add_custom_target(examples
     COMMAND ${CMAKE_MAKE_PROGRAM}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/demos")
 
