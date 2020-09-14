@@ -61,10 +61,7 @@ auto moleFractionsJacobian(ArrayConstRef&& n, MatrixRef&& J)
     //-----------------------------------------------------------------------------------------------------
     // == LATEX ==
     //-----------------------------------------------------------------------------------------------------
-    // \frac{\partial\ln x_{i}}{\partial n_{j}}	=\frac{\partial\ln n_{i}-\ln n_{\Sigma}}{\partial n_{j}}
-	// =\frac{\partial\ln n_{i}}{\partial n_{j}}-\frac{\partial\ln n_{\Sigma}}{\partial n_{j}}
-	// =\frac{\delta_{ij}}{n_{i}}-\frac{1}{n_{\Sigma}}
-	// =\frac{1}{n_{i}}(\delta_{ij}-x_{i})
+    // \frac{\partial x_{i}}{\partial n_{j}}=\frac{x_{i}}{n_{i}}\left(\delta_{ij}-x_{i}\right)=\frac{1}{n_{\Sigma}}\left(\delta_{ij}-x_{i}\right)
     //-----------------------------------------------------------------------------------------------------
     const auto N = n.size();
     assert(J.rows() == N);
@@ -72,12 +69,12 @@ auto moleFractionsJacobian(ArrayConstRef&& n, MatrixRef&& J)
     const auto nsum = n.sum();
     if(nsum == 0.0) J.fill(0.0);
     else for(auto i = 0; i < N; ++i) {
-        const auto xi = n[i]/nsum;
-        const auto aux1 = xi/n[i];
-        const auto aux2 = -xi*aux1;
+        const auto ni = n[i];
+        const auto xi = ni/nsum;
+        const auto aux = -xi/nsum;
         for(auto j = 0; j < N; ++j)
-            J(i, j) = aux2; // J(i, j) = -xi*xi/ni;
-        J(i, i) += aux1; // J(i, i) = xi/ni * (1 - xi);
+            J(i, j) = aux; // J(i, j) = -xi/nsum
+        J(i, i) = (1 - xi)/nsum; // J(i, i) = (1 - xi)/nsum
     }
 }
 
@@ -104,10 +101,7 @@ auto lnMoleFractionsJacobian(ArrayConstRef&& n, MatrixRef&& J) -> void
     //-----------------------------------------------------------------------------------------------------
     // == LATEX ==
     //-----------------------------------------------------------------------------------------------------
-    // \frac{\partial\ln x_{i}}{\partial n_{j}}	=\frac{\partial\ln n_{i}-\ln n_{\Sigma}}{\partial n_{j}}
-	// =\frac{\partial\ln n_{i}}{\partial n_{j}}-\frac{\partial\ln n_{\Sigma}}{\partial n_{j}}
-	// =\frac{\delta_{ij}}{n_{i}}-\frac{1}{n_{\Sigma}}
-	// =\frac{1}{n_{i}}(\delta_{ij}-x_{i})
+    // \frac{\partial\ln x_{i}}{\partial n_{j}}=\frac{\delta_{ij}}{n_{i}}-\frac{1}{n_{\Sigma}}=\frac{1}{n_{i}}\left(\delta_{ij}-x_{i}\right)
     //-----------------------------------------------------------------------------------------------------
     const auto N = n.size();
     assert(J.rows() == N);
@@ -115,12 +109,12 @@ auto lnMoleFractionsJacobian(ArrayConstRef&& n, MatrixRef&& J) -> void
     const auto nsum = n.sum();
     if(nsum == 0.0) J.fill(0.0);
     else for(auto i = 0; i < N; ++i) {
-        const auto xi = n[i]/nsum;
-        const auto aux1 = 1.0/n[i];
-        const auto aux2 = -xi*aux1;
+        const auto ni = n[i];
+        const auto xi = ni/nsum;
+        const auto aux = -xi/ni;
         for(auto j = 0; j < N; ++j)
-            J(i, j) = aux2; // J(i, j) = -xi/ni;
-        J(i, i) += aux1; // J(i, i) = 1/ni * (1 - xi);
+            J(i, j) = aux; // J(i, j) = -xi/ni
+        J(i, i) = (1 - xi)/ni; // J(i, i) = (1 - xi)/ni
     }
 }
 
