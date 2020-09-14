@@ -53,11 +53,14 @@ auto fixDuplicateSpeciesNames(Vec<Species>& species)
 /// Collect all Element objects in the given Species objects.
 auto collectElements(const Vec<Species>& species) -> Vec<Element>
 {
-    Map<String, Element> elements;
+    Map<String, Element> collected;
     for(const auto& s : species)
         for(const auto& [element, coeff] : s.elements())
-            elements.emplace(element.symbol(), element);
-    return vectorize(elements, RKT_LAMBDA(x, x.second));
+            collected.emplace(element.symbol(), element);
+    auto elements = vectorize(collected, RKT_LAMBDA(x, x.second));
+    std::sort(elements.begin(), elements.end(),
+        [](auto l, auto r) { return l.molarMass() < r.molarMass(); }); // sort in ascending order of molar mass (atomic weight)
+    return elements;
 }
 
 /// Collect all Species objects in the given Phase objects.
