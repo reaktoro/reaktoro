@@ -17,6 +17,11 @@
 
 #include "SupcrtDatabase.hpp"
 
+// CMakeRC includes
+#include <cmrc/cmrc.hpp>
+
+CMRC_DECLARE(ReaktoroDatabases);
+
 // C++ includes
 #include <clocale>
 #include <sstream>
@@ -81,7 +86,7 @@ auto as_double(const xml_node& node, const char* childname, double if_empty=9999
 }
 
 /// Return the text value stored in a xml node if not empty.
-auto as_text(const xml_node& node, const char* childname, std::string if_empty="999999") -> std::string
+auto as_text(const xml_node& node, const char* childname, String if_empty="999999") -> String
 {
     if(node.child(childname).text().empty())
         return if_empty;
@@ -89,7 +94,7 @@ auto as_text(const xml_node& node, const char* childname, std::string if_empty="
 }
 
 /// Return the text value stored in a xml node if not empty (in lower case).
-auto as_lowercase_text(const xml_node& node, const char* childname, std::string if_empty="999999") -> std::string
+auto as_lowercase_text(const xml_node& node, const char* childname, String if_empty="999999") -> String
 {
     return lowercase(as_text(node, childname, if_empty));
 }
@@ -234,7 +239,7 @@ auto parseStandardThermoPropsFn(const xml_node& node) -> StandardThermoPropsFn
 {
     const auto formula = as_text(node, "Formula");
     const auto type = as_lowercase_text(node, "Type");
-    if(type == "aqueous" && formula == "H2O") return createStandardThermoPropsFn(parseParamsAqueousSoluteHKF(node));
+    if(type == "aqueous" && formula == "H2O") return createStandardThermoPropsFn(parseParamsAqueousSolventHKF(node));
     if(type == "aqueous") return createStandardThermoPropsFn(parseParamsAqueousSoluteHKF(node));
     if(type == "gaseous") return createStandardThermoPropsFn(parseParamsMaierKelly(node));
     if(type == "mineral") return createStandardThermoPropsFn(parseParamsMaierKellyHKF(node));
@@ -265,13 +270,33 @@ auto parseDatabase(const xml_document& doc) -> SupcrtDatabase
     return db;
 }
 
+/// Return the contents of the embedded SUPCRT database with given name (or empty)
+auto getSupcrtDatabaseContent(String name) -> String
+{
+	error(!oneof(name,
+		"supcrt98.xml",
+		"supcrt07.xml",
+		"supcrt98-organics.xml",
+		"supcrt07-organics.xml"),
+		"Could not load embedded Supcrt database file with name `", name, "`. ",
+		"The currently supported names are: \n"
+		"    - supcrt98.xml          \n",
+		"    - supcrt07.xml          \n",
+		"    - supcrt98-organics.xml \n",
+		"    - supcrt07-organics.xml \n",
+		"");
+	auto fs = cmrc::ReaktoroDatabases::get_filesystem();
+    auto contents = fs.open("databases/supcrt/" + name);
+	return String(contents.begin(), contents.end());
+}
+
 } // namespace
 
 /// An auxiliary type to change locale and ensure its return to original.
 /// This is needed to avoid certain issues with pugixml related to how decimal numbers are represented in different languages.
 struct ChangeLocale
 {
-    const std::string old_locale;
+    const String old_locale;
 
     explicit ChangeLocale(const char* new_locale) : old_locale(std::setlocale(LC_NUMERIC, nullptr))
     {
@@ -287,13 +312,17 @@ struct ChangeLocale
 SupcrtDatabase::SupcrtDatabase()
 {}
 
-auto SupcrtDatabase::withName(std::string name) ->  SupcrtDatabase
+SupcrtDatabase::SupcrtDatabase(String name)
+: SupcrtDatabase(SupcrtDatabase::withName(name))
+{}
+
+auto SupcrtDatabase::withName(String name) ->  SupcrtDatabase
 {
     // Change locale to C at construction and reset at destruction.
     const auto guard = ChangeLocale("C");
 
-    // Get the text content of a SUPCRT database
-    std::string text = supcrtEmbeddedDatabaseTextContent(name);
+    // Get the text content of an embedded SUPCRT database
+    String text = getSupcrtDatabaseContent(name);
 
     // Assert the given database name is valid
     Assert(text.size(), "Could not create a SupcrtDatabase object.",
@@ -306,13 +335,13 @@ auto SupcrtDatabase::withName(std::string name) ->  SupcrtDatabase
     // Assert the xml parsing is successfull
     error(!result, "Could not create a SupcrtDatabase object. ",
         "There was an error parsing the embedded SUPCRT database with name " + name + ". "
-        "The parsing error was:\n" + std::string(result.description()));
+        "The parsing error was:\n" + String(result.description()));
 
     // Parse the xml document into a SupcrtDatabase object
     return parseDatabase(doc);
 }
 
-auto SupcrtDatabase::fromFile(std::string path) ->  SupcrtDatabase
+auto SupcrtDatabase::fromFile(String path) ->  SupcrtDatabase
 {
     // Change locale to C at construction and reset at destruction.
     const auto guard = ChangeLocale("C");
@@ -323,7 +352,7 @@ auto SupcrtDatabase::fromFile(std::string path) ->  SupcrtDatabase
 
     // Assert the xml parsing is successfull
     Assert(result, "Could not create a SupcrtDatabase object.",
-        "There was an error parsing the SUPCRT database at given path: " + path + ". The parsing error was:\n" + std::string(result.description()));
+        "There was an error parsing the SUPCRT database at given path: " + path + ". The parsing error was:\n" + String(result.description()));
 
     // Parse the xml document into a SupcrtDatabase object
     return parseDatabase(doc);
