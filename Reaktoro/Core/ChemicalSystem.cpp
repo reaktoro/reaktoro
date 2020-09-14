@@ -53,11 +53,11 @@ auto fixDuplicateSpeciesNames(Vec<Species>& species)
 /// Collect all Element objects in the given Species objects.
 auto collectElements(const Vec<Species>& species) -> Vec<Element>
 {
-    Vec<Element> elements;
+    Map<String, Element> elements;
     for(const auto& s : species)
         for(const auto& [element, coeff] : s.elements())
-            elements.push_back(element);
-    return unique(elements);
+            elements.emplace(element.symbol(), element);
+    return vectorize(elements, RKT_LAMBDA(x, x.second));
 }
 
 /// Collect all Species objects in the given Phase objects.
