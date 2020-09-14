@@ -17,10 +17,3 @@
 
 #pragma once
 
-#include <Reaktoro/Math/BilinearInterpolator.hpp>
-#include <Reaktoro/Math/Derivatives.hpp>
-#include <Reaktoro/Math/LagrangeInterpolator.hpp>
-#include <Reaktoro/Math/LU.hpp>
-#include <Reaktoro/Math/MathUtils.hpp>
-#include <Reaktoro/Math/ODE.hpp>
-#include <Reaktoro/Math/Roots.hpp>

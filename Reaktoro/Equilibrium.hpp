@@ -17,7 +17,9 @@
 
 #pragma once
 
-#include <Reaktoro/Equilibrium/EquilibriumCompositionProblem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumHessian.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumInverseSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
@@ -28,3 +30,4 @@
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
