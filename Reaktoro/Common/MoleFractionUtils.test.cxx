@@ -30,8 +30,8 @@ TEST_CASE("Testing MoleFractionUtils module", "[MoleFractionUtils]")
     auto nsingle     = ArrayXr{{2.0}};
     auto nsinglezero = ArrayXr{{0.0}};
 
-    ArrayXr x;
-    MatrixXd dxdn;
+    ArrayXr x, lnx;
+    MatrixXd dxdn, dlnxdn;
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: moleFractions
@@ -64,6 +64,13 @@ TEST_CASE("Testing MoleFractionUtils module", "[MoleFractionUtils]")
     //-------------------------------------------------------------------------
     dxdn = moleFractionsJacobian(n);
 
+    const auto dxdn_expected = MatrixXd{{
+        { 0.09, -0.01, -0.01, -0.01},
+        {-0.02,  0.08, -0.02, -0.02},
+        {-0.03, -0.03,  0.07, -0.03},
+        {-0.04, -0.04, -0.04,  0.06}
+    }};
+
     INFO("dxdn = \n" << dxdn);
     REQUIRE( dxdn.isApprox(MatrixXd{{
         { 0.09, -0.01, -0.01, -0.01},
@@ -86,4 +93,32 @@ TEST_CASE("Testing MoleFractionUtils module", "[MoleFractionUtils]")
 
     INFO("dxdn = \n" << dxdn);
     REQUIRE( dxdn.isApprox(MatrixXd::Zero(1, 1)) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: lnMoleFractionsJacobian
+    //-------------------------------------------------------------------------
+    dlnxdn = lnMoleFractionsJacobian(n);
+
+    INFO("dlnxdn = \n" << dlnxdn);
+    REQUIRE( dlnxdn.isApprox(MatrixXd{{
+        { 0.9/1,   -0.1,   -0.1,   -0.1},
+        {  -0.1,  0.8/2,   -0.1,   -0.1},
+        {  -0.1,   -0.1,  0.7/3,   -0.1},
+        {  -0.1,   -0.1,   -0.1,  0.6/4},
+    }}));
+
+    dlnxdn = lnMoleFractionsJacobian(nzero);
+
+    INFO("dlnxdn = \n" << dlnxdn);
+    REQUIRE( dlnxdn.isApprox(MatrixXd::Zero(4, 4)) );
+
+    dlnxdn = lnMoleFractionsJacobian(nsingle);
+
+    INFO("dlnxdn = \n" << dlnxdn);
+    REQUIRE( dlnxdn.isApprox(MatrixXd::Zero(1, 1)) );
+
+    dlnxdn = lnMoleFractionsJacobian(nsinglezero);
+
+    INFO("dlnxdn = \n" << dlnxdn);
+    REQUIRE( dlnxdn.isApprox(MatrixXd::Zero(1, 1)) );
 }
