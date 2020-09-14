@@ -20,6 +20,7 @@
 #include <Reaktoro/Common.hpp>
 #include <Reaktoro/Core.hpp>
 #include <Reaktoro/Equilibrium.hpp>
+#include <Reaktoro/Extensions.hpp>
 #include <Reaktoro/Kinetics.hpp>
 #include <Reaktoro/Math.hpp>
 #include <Reaktoro/Thermodynamics.hpp>
