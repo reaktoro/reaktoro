@@ -31,19 +31,28 @@ public:
     /// Construct a default SupcrtDatabase object.
     SupcrtDatabase();
 
-    /// Construct a SupcrtDatabase object with given name of a built-in database file.
+    /// Construct a SupcrtDatabase object using an embedded database file.
     /// If `name` does not correspond to one of the following names, an exception is thrown:
     /// - `supcrt98`
     /// - `supcrt07`
     /// - `supcrt98-organics`
     /// - `supcrt07-organics`
-    /// @param name The name of the built-in SUPCRT database.
-    static auto withName(std::string name) ->  SupcrtDatabase;
+    /// @param name The name of the embedded SUPCRT database.
+    SupcrtDatabase(String name);
 
-    /// Construct a SupcrtDatabase object with given database file.
+    /// Return a SupcrtDatabase object initialized using an embedded database file.
+    /// If `name` does not correspond to one of the following names, an exception is thrown:
+    /// - `supcrt98`
+    /// - `supcrt07`
+    /// - `supcrt98-organics`
+    /// - `supcrt07-organics`
+    /// @param name The name of the embedded SUPCRT database.
+    static auto withName(String name) -> SupcrtDatabase;
+
+    /// Return a SupcrtDatabase object initialized using a given path to a database file.
     /// If `path` does not point to a valid database file, an exception is thrown.
     /// @param path The path, including file name, to the database file.
-    static auto fromFile(std::string path) ->  SupcrtDatabase;
+    static auto fromFile(String path) -> SupcrtDatabase;
 };
 
 } // namespace Reaktoro
