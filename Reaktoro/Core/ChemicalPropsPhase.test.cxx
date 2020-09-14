@@ -20,7 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Common/Utils.hpp>
+#include <Reaktoro/Common/MoleFractionUtils.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 using namespace Reaktoro;
 
