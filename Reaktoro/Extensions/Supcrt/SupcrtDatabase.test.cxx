@@ -24,7 +24,7 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing SupcrtDatabase module", "[SupcrtDatabase]")
 {
-    SupcrtDatabase db = SupcrtDatabase::withName("supcrt98");
+    SupcrtDatabase db = SupcrtDatabase::withName("supcrt98.xml");
 
     CHECK( db.species().findWithName("H2O(l)") );
     CHECK( db.species().findWithName("H+") );
