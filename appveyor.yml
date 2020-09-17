@@ -16,6 +16,7 @@ environment:
   # Testing only Debug + Python 3.6 and Release + Python 3.7 so that the number of jobs is still 2 instead of 4.
   - CONFIG: Debug
     PY_VER: 3.6
+    REAKTORO_USE_OPENLIBM: 1
     #Temporally disabling regression tests, which otherwise would cause timeout failure (> 1 hour build time)
     TEST_DIR: Reaktoro
   - CONFIG: Release
@@ -24,6 +25,7 @@ environment:
     TEST_DIR: .
   - CONFIG: Release
     PY_VER: 3.7
+    REAKTORO_USE_OPENLIBM: 1
     TEST_DIR: .
 cache:
   - C:\Users\appveyor\clcache
