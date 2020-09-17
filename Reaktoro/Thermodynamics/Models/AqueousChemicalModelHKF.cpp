@@ -291,11 +291,13 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
     // The number of species in the mixture
     const unsigned num_species = mixture.numSpecies();
 
-    // The number of charged species in the mixture
-    const unsigned num_charged_species = mixture.numChargedSpecies();
+    // The number of charged and neutral species in the mixture
+    const Index num_charged_species = mixture.numChargedSpecies();
+    const Index num_neutral_species = mixture.numNeutralSpecies();
 
-    // The indices of the charged species
+    // The indices of the charged and neutral species
     const Indices icharged_species = mixture.indicesChargedSpecies();
+    const Indices ineutral_species = mixture.indicesNeutralSpecies();
 
     // The index of the water species
     const Index iwater = mixture.indexWater();
@@ -332,6 +334,10 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, n);
 
+        // Auxiliary references
+        auto& ln_g = res.ln_activity_coefficients;
+        auto& ln_a = res.ln_activities;
+
         // Auxiliary references to state variables
         const auto& I = state.Ie;
         const auto& x = state.x;
@@ -343,9 +349,10 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         // The mole fraction of the water species and its molar derivatives
         const auto xw = x[iwater];
 
-        // The ln and log10 of water mole fraction
+        // The ln and log10 of water mole fraction and molalites
         const auto ln_xw = log(xw);
         const auto log10_xw = log10(xw);
+        const auto ln_m = log(m);
 
         // The alpha parameter
         const ChemicalScalar alpha = xw/(1.0 - xw) * log10_xw;
@@ -359,16 +366,24 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         // The osmotic coefficient of the aqueous phase
         ChemicalScalar phi(num_species);
 
-        // Set the activity coefficients of the neutral species to
-        // water mole fraction to convert it to molality scale
-        res.ln_activity_coefficients = 0.0;
-//        res.ln_activity_coefficients = ln_xw;
+        // Loop over all neutral species in the mixture
+        for(auto i = 0; i < num_neutral_species; ++i)
+        {
+            // The index of the current neutral species
+            const auto ispecies = ineutral_species[i];
+
+            // The b coefficient in lg(gammai) = b*I (0.1 as in PHREEQC)
+            const auto b = 0.1;
+
+            // Calculate the ln activity coefficient of the current neutral species
+            ln_g[ispecies] = ln10 * b * I;
+        }
 
         // Loop over all charged species in the mixture
-        for(unsigned i = 0; i < num_charged_species; ++i)
+        for(auto i = 0; i < num_charged_species; ++i)
         {
             // The index of the charged species in the mixture
-            const Index ispecies = icharged_species[i];
+            const auto ispecies = icharged_species[i];
 
             // The molality of the charged species and its molar derivatives
             const auto mi = m[ispecies];
@@ -403,7 +418,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
             const ChemicalScalar log10_gi = -(A*z2*sqrtI)/lambda + log10_xw + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
 
             // Set the activity coefficient of the current charged species
-            res.ln_activity_coefficients[ispecies] = log10_gi * ln10;
+            ln_g[ispecies] = log10_gi * ln10;
 
             // Check if the mole fraction of water is one
             if(xw != 1.0)
@@ -419,15 +434,15 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
             }
         }
 
-        // Set the activities of the solutes (molality scale)
-        res.ln_activities = res.ln_activity_coefficients + log(m);
+        // Set the activities of the neutral and charged solutes (molality scale)
+        ln_a = ln_g + log(m);
 
         // Set the activity of water (in mole fraction scale)
-        if(xw != 1.0) res.ln_activities[iwater] = ln10 * Mw * phi;
-                 else res.ln_activities[iwater] = ln_xw;
+        if(xw != 1.0) ln_a[iwater] = ln10 * Mw * phi;
+                 else ln_a[iwater] = ln_xw;
 
         // Set the activity coefficient of water (mole fraction scale)
-        res.ln_activity_coefficients[iwater] = res.ln_activities[iwater] - ln_xw;
+        ln_g[iwater] = ln_a[iwater] - ln_xw;
     };
 
     return model;
