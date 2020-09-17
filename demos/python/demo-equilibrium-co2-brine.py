@@ -31,7 +31,7 @@ problem.setTemperature(60, "celsius")
 problem.setPressure(300, "bar")
 problem.add("H2O", 1, "kg")
 problem.add("CO2", 100, "g")
-problem.add("NaCl", 12, "mol")
+problem.add("NaCl", 0.1, "mol")
 
 state = equilibrate(problem)
 
