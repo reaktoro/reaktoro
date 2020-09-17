@@ -121,6 +121,19 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
 		B = 50.29158649 * sqrt_rho/sqrt_T_epsilon;
 		sigmacoeff = (2.0/3.0)*A*I*sqrtI;
 
+        // Loop over all neutral species in the mixture
+        for(Index i = 0; i < num_neutral_species; ++i)
+        {
+            // The index of the current neutral species
+            const Index ispecies = ineutral_species[i];
+
+            // Calculate the ln activity coefficient of the current neutral species
+            ln_g[ispecies] = ln10 * bneutral[i] * I;
+
+            // Calculate the ln activity coefficient of the current neutral species
+            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
+        }
+
         // Set the first contribution to the activity of water
         ln_a[iwater] = mSigma;
 
@@ -158,19 +171,6 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
 
         // Set the activity coefficient of water (mole fraction scale)
         ln_g[iwater] = ln_a[iwater] - ln_xw;
-
-        // Loop over all neutral species in the mixture
-        for(Index i = 0; i < num_neutral_species; ++i)
-        {
-            // The index of the current neutral species
-            const Index ispecies = ineutral_species[i];
-
-            // Calculate the ln activity coefficient of the current neutral species
-            ln_g[ispecies] = ln10 * bneutral[i] * I;
-
-            // Calculate the ln activity coefficient of the current neutral species
-            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
-        }
     };
 
     return model;
