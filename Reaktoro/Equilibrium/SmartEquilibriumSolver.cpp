@@ -197,6 +197,17 @@ struct SmartEquilibriumSolver::Impl
         // Perform a full chemical equilibrium calculation
         result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
 
+        // Check if the EquilibriumSolver calculation failed, if so, use cold-start
+        if(!result.learning.gibbs_energy_minimization.optimum.succeeded){
+            state.setSpeciesAmounts(0.0);
+            result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
+
+            // If solve has not converged, do not store output.
+            if(!result.learning.gibbs_energy_minimization.optimum.succeeded){
+                return;
+            }
+        }
+
         result.timing.learning_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
 
         //---------------------------------------------------------------------
@@ -466,6 +477,9 @@ struct SmartEquilibriumSolver::Impl
 
                     // After the search is finished successfully
                     //---------------------------------------------------------------------
+
+                    // Assign small values to all the amount in the interval [cutoff, 0] (instead of mirroring above)
+                    for(unsigned int i = 0; i < ne.size(); ++i) if(ne[i] < 0) ne[i] = options.learning.epsilon;
 
                     // Update the amounts of elements for the equilibrium species
                     n(ies) = ne;
