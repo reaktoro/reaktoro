@@ -173,18 +173,18 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
-    // TESTING CLASS: GenericPhases
+    // TESTING CLASS: GenericPhasesGenerator
     //-----------------------------------------------------------------------------------------------------------------
     //=================================================================================================================
-    SECTION("Testing GenericPhases::GenericPhases(const StringList&)")
+    SECTION("Testing GenericPhasesGenerator::GenericPhasesGenerator(const StringList&)")
     {
-        GenericPhases genericphases("Calcite Magnesite");
-        genericphases.setStateOfMatter(StateOfMatter::Solid);
-        genericphases.setAggregateState(AggregateState::Solid);
-        genericphases.setActivityModel(activitymodel);
-        genericphases.setIdealActivityModel(activitymodel);
+        GenericPhasesGenerator generator("Calcite Magnesite");
+        generator.setStateOfMatter(StateOfMatter::Solid);
+        generator.setAggregateState(AggregateState::Solid);
+        generator.setActivityModel(activitymodel);
+        generator.setIdealActivityModel(activitymodel);
 
-        Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Vec<GenericPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         REQUIRE( phases.size() == 2 );
 
@@ -201,15 +201,15 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phases[1].idealActivityModel() );
     }
 
-    SECTION("Testing GenericPhases::GenericPhases(const Speciate&)")
+    SECTION("Testing GenericPhasesGenerator::GenericPhasesGenerator(const Speciate&)")
     {
-        GenericPhases genericphases(speciate("Ca Mg C O"));
-        genericphases.setStateOfMatter(StateOfMatter::Solid);
-        genericphases.setAggregateState(AggregateState::Solid);
-        genericphases.setActivityModel(activitymodel);
-        genericphases.setIdealActivityModel(activitymodel);
+        GenericPhasesGenerator generator(speciate("Ca Mg C O"));
+        generator.setStateOfMatter(StateOfMatter::Solid);
+        generator.setAggregateState(AggregateState::Solid);
+        generator.setActivityModel(activitymodel);
+        generator.setIdealActivityModel(activitymodel);
 
-        Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Vec<GenericPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         REQUIRE( phases.size() == 3 );
 
@@ -232,15 +232,15 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phases[2].idealActivityModel() );
     }
 
-    SECTION("Testing GenericPhases::GenericPhases() with all elements during phase conversion process")
+    SECTION("Testing GenericPhasesGenerator::GenericPhasesGenerator() with all elements during phase conversion process")
     {
-        GenericPhases genericphases;
-        genericphases.setStateOfMatter(StateOfMatter::Solid);
-        genericphases.setAggregateState(AggregateState::Solid);
-        genericphases.setActivityModel(activitymodel);
-        genericphases.setIdealActivityModel(activitymodel);
+        GenericPhasesGenerator generator;
+        generator.setStateOfMatter(StateOfMatter::Solid);
+        generator.setAggregateState(AggregateState::Solid);
+        generator.setActivityModel(activitymodel);
+        generator.setIdealActivityModel(activitymodel);
 
-        Vec<GenericPhase> phases = genericphases.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Vec<GenericPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         REQUIRE( phases.size() == 5 );
 
@@ -275,15 +275,15 @@ TEST_CASE("Testing Phases", "[Phases]")
         REQUIRE( phases[4].idealActivityModel() );
     }
 
-    SECTION("Testing GenericPhases::GenericPhases() with Na and Cl elements during phase conversion process")
+    SECTION("Testing GenericPhasesGenerator::GenericPhasesGenerator() with Na and Cl elements during phase conversion process")
     {
-        GenericPhases genericphases;
-        genericphases.setStateOfMatter(StateOfMatter::Solid);
-        genericphases.setAggregateState(AggregateState::Solid);
-        genericphases.setActivityModel(activitymodel);
-        genericphases.setIdealActivityModel(activitymodel);
+        GenericPhasesGenerator generator;
+        generator.setStateOfMatter(StateOfMatter::Solid);
+        generator.setAggregateState(AggregateState::Solid);
+        generator.setActivityModel(activitymodel);
+        generator.setIdealActivityModel(activitymodel);
 
-        Vec<GenericPhase> phases = genericphases.convert(db, {"Na", "Cl"});
+        Vec<GenericPhase> phases = generator.convert(db, {"Na", "Cl"});
 
         REQUIRE( phases.size() == 1 );
 
@@ -332,88 +332,101 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     SECTION("Testing Phases with an aqueous solution only")
     {
-        Vec<Phase> phases = Phases(db, AqueousSolution("H2O(aq) H+ OH- Na+ Cl- HCO3- CO3-- CO2(aq)"));
+        Phases phases(db);
+        phases.add( AqueousSolution("H2O(aq) H+ OH- Na+ Cl- HCO3- CO3-- CO2(aq)") );
 
-        REQUIRE( phases.size() == 1 );
+        Vec<Phase> phasevec = phases;
 
-        checkAqueousPhase(phases[0], "H2O(aq) H+ OH- Na+ Cl- HCO3- CO3-- CO2(aq)");
+        REQUIRE( phasevec.size() == 1 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- Na+ Cl- HCO3- CO3-- CO2(aq)");
     }
 
     SECTION("Testing Phases with an aqueous solution using speciate together with a gaseous phase and a mineral")
     {
-        Vec<Phase> phases = Phases(db,
-            AqueousSolution(speciate("H O Na Cl C")),
-            GaseousSolution("H2O(g) CO2(g)"),
-            Mineral("Halite")
-        );
+        Phases phases(db);
 
-        REQUIRE( phases.size() == 3 );
+        phases.add( AqueousSolution(speciate("H O Na Cl C")) );
+        phases.add( GaseousSolution("H2O(g) CO2(g)") );
+        phases.add( Mineral("Halite") );
 
-        checkAqueousPhase(phases[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3--");
-        checkGaseousPhase(phases[1], "H2O(g) CO2(g)");
-        checkMineralPhase(phases[2], "Halite");
+        Vec<Phase> phasevec = phases;
+
+        REQUIRE( phasevec.size() == 3 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3--");
+        checkGaseousPhase(phasevec[1], "H2O(g) CO2(g)");
+        checkMineralPhase(phasevec[2], "Halite");
     }
 
     SECTION("Testing Phases with an aqueous solution speciated automatically together with a gaseous phase and minerals")
     {
-        Vec<Phase> phases = Phases(db,
-            AqueousSolution(),
-            GaseousSolution(speciate("H O C")),
-            Minerals("Halite Calcite Magnesite Dolomite Quartz")
-        );
+        Phases phases(db);
 
-        REQUIRE( phases.size() == 7 );
+        phases.add( AqueousSolution() );
+        phases.add( GaseousSolution(speciate("H O C")) );
+        phases.add( Minerals("Halite Calcite Magnesite Dolomite Quartz") );
 
-        checkAqueousPhase(phases[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) Ca++ Mg++ CO2(aq) HCO3- CO3-- CaCl2(aq) MgCl2(aq) SiO2(aq)");
-        checkGaseousPhase(phases[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
-        checkMineralPhase(phases[2], "Halite");
-        checkMineralPhase(phases[3], "Calcite");
-        checkMineralPhase(phases[4], "Magnesite");
-        checkMineralPhase(phases[5], "Dolomite");
-        checkMineralPhase(phases[6], "Quartz");
+        Vec<Phase> phasevec = phases;
+
+        REQUIRE( phasevec.size() == 7 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) Ca++ Mg++ CO2(aq) HCO3- CO3-- CaCl2(aq) MgCl2(aq) SiO2(aq)");
+        checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
+        checkMineralPhase(phasevec[2], "Halite");
+        checkMineralPhase(phasevec[3], "Calcite");
+        checkMineralPhase(phasevec[4], "Magnesite");
+        checkMineralPhase(phasevec[5], "Dolomite");
+        checkMineralPhase(phasevec[6], "Quartz");
     }
 
     SECTION("Testing Phases with minerals collected automatically together with aqueous and gaseous phases")
     {
-        Vec<Phase> phases = Phases(db,
-            AqueousSolution(speciate("Na Cl C Ca")),
-            GaseousSolution(speciate("H O C")),
-            Minerals()
-        );
+        Phases phases(db);
 
-        REQUIRE( phases.size() == 4 );
+        phases.add( AqueousSolution(speciate("Na Cl C Ca")) );
+        phases.add( GaseousSolution(speciate("H O C")) );
+        phases.add( Minerals() );
 
-        checkAqueousPhase(phases[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) Ca++ CO2(aq) HCO3- CO3-- CaCl2(aq)");
-        checkGaseousPhase(phases[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
-        checkMineralPhase(phases[2], "Halite");
-        checkMineralPhase(phases[3], "Calcite");
+        Vec<Phase> phasevec = phases;
+
+        REQUIRE( phasevec.size() == 4 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) Ca++ CO2(aq) HCO3- CO3-- CaCl2(aq)");
+        checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
+        checkMineralPhase(phasevec[2], "Halite");
+        checkMineralPhase(phasevec[3], "Calcite");
     }
 
     SECTION("Testing Phases with minerals collected automatically from given aqueous species names")
     {
-        Vec<Phase> phases = Phases(db,
-            AqueousSolution("H2O(aq) H+ OH- Na+ Cl- CO2(aq) Ca++"),
-            Minerals()
-        );
+        Phases phases(db);
 
-        REQUIRE( phases.size() == 3 );
+        phases.add( AqueousSolution("H2O(aq) H+ OH- Na+ Cl- CO2(aq) Ca++") );
+        phases.add( Minerals() );
 
-        checkAqueousPhase(phases[0], "H2O(aq) H+ OH- Na+ Cl- CO2(aq) Ca++");
-        checkMineralPhase(phases[1], "Halite");
-        checkMineralPhase(phases[2], "Calcite");
+        Vec<Phase> phasevec = phases;
+
+        REQUIRE( phasevec.size() == 3 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- Na+ Cl- CO2(aq) Ca++");
+        checkMineralPhase(phasevec[1], "Halite");
+        checkMineralPhase(phasevec[2], "Calcite");
     }
 
     SECTION("Testing Phases with no minerals collected because none exist with H, O, C elements")
     {
-        Vec<Phase> phases = Phases(db,
-            AqueousSolution(),
-            GaseousSolution(speciate("H O C")),
-            Minerals() // there should not have any mineral collected because there is none with elements {H, O, C}
-        );
+        Phases phases(db);
 
-        REQUIRE( phases.size() == 2 );
+        phases.add( AqueousSolution() );
+        phases.add( GaseousSolution(speciate("H O C")) );
+        phases.add( Minerals() ); // no mineral should be collected because there is none with elements {H, O, C}
 
-        checkAqueousPhase(phases[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3--");
-        checkGaseousPhase(phases[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
+        Vec<Phase> phasevec = phases;
+
+        REQUIRE( phasevec.size() == 2 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3--");
+        checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
     }
 }

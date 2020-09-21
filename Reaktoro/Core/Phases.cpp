@@ -145,94 +145,94 @@ auto GenericPhase::convert(const Database& db, const Strings& elements) const ->
 }
 
 
-GenericPhases::GenericPhases()
+GenericPhasesGenerator::GenericPhasesGenerator()
 {}
 
-GenericPhases::GenericPhases(const StringList& species)
+GenericPhasesGenerator::GenericPhasesGenerator(const StringList& species)
 : names(species)
 {}
 
-GenericPhases::GenericPhases(const Speciate& elements)
+GenericPhasesGenerator::GenericPhasesGenerator(const Speciate& elements)
 : symbols(elements.symbols)
 {}
 
-GenericPhases::~GenericPhases()
+GenericPhasesGenerator::~GenericPhasesGenerator()
 {}
 
-auto GenericPhases::setStateOfMatter(StateOfMatter option) -> GenericPhases&
+auto GenericPhasesGenerator::setStateOfMatter(StateOfMatter option) -> GenericPhasesGenerator&
 {
     stateofmatter = option;
     return *this;
 }
 
-auto GenericPhases::setAggregateState(AggregateState option) -> GenericPhases&
+auto GenericPhasesGenerator::setAggregateState(AggregateState option) -> GenericPhasesGenerator&
 {
     aggregatestate = option;
     return *this;
 }
 
-auto GenericPhases::setActivityModel(const ActivityModel& model) -> GenericPhases&
+auto GenericPhasesGenerator::setActivityModel(const ActivityModel& model) -> GenericPhasesGenerator&
 {
     activity_model = model;
     return *this;
 }
 
-auto GenericPhases::setIdealActivityModel(const ActivityModel& model) -> GenericPhases&
+auto GenericPhasesGenerator::setIdealActivityModel(const ActivityModel& model) -> GenericPhasesGenerator&
 {
     ideal_activity_model = model;
     return *this;
 }
 
-auto GenericPhases::set(StateOfMatter option) -> GenericPhases&
+auto GenericPhasesGenerator::set(StateOfMatter option) -> GenericPhasesGenerator&
 {
     return setStateOfMatter(option);
 }
 
-auto GenericPhases::set(AggregateState option) -> GenericPhases&
+auto GenericPhasesGenerator::set(AggregateState option) -> GenericPhasesGenerator&
 {
     return setAggregateState(option);
 }
 
-auto GenericPhases::set(const ActivityModel& model) -> GenericPhases&
+auto GenericPhasesGenerator::set(const ActivityModel& model) -> GenericPhasesGenerator&
 {
     return setActivityModel(model);
 }
 
-auto GenericPhases::stateOfMatter() const -> StateOfMatter
+auto GenericPhasesGenerator::stateOfMatter() const -> StateOfMatter
 {
     return stateofmatter;
 }
 
-auto GenericPhases::aggregateState() const -> AggregateState
+auto GenericPhasesGenerator::aggregateState() const -> AggregateState
 {
     return aggregatestate;
 }
 
-auto GenericPhases::species() const -> const Strings&
+auto GenericPhasesGenerator::species() const -> const Strings&
 {
     return names;
 }
 
-auto GenericPhases::elements() const -> const Strings&
+auto GenericPhasesGenerator::elements() const -> const Strings&
 {
     return symbols;
 }
 
-auto GenericPhases::activityModel() const -> const ActivityModel&
+auto GenericPhasesGenerator::activityModel() const -> const ActivityModel&
 {
     return activity_model;
 }
 
-auto GenericPhases::idealActivityModel() const -> const ActivityModel&
+auto GenericPhasesGenerator::idealActivityModel() const -> const ActivityModel&
 {
     return ideal_activity_model;
 }
 
-auto GenericPhases::convert(const Database& db, const Strings& elements) const -> Vec<GenericPhase>
+auto GenericPhasesGenerator::convert(const Database& db, const Strings& elements) const -> Vec<GenericPhase>
 {
     error(aggregatestate == AggregateState::Undefined,
-        "GenericPhases::convert requires an AggregateState value to be specified. "
-        "Use method GenericPhases::set(AggregateState) to fix this.");
+        "GenericPhasesGenerator::convert requires an AggregateState value to be specified. "
+        "Use method GenericPhasesGenerator::set(AggregateState) to fix this.");
 
     auto species = db.speciesWithAggregateState(aggregatestate);
 
@@ -254,6 +254,90 @@ auto GenericPhases::convert(const Database& db, const Strings& elements) const -
 
         phases.push_back( phase );
     }
+
+    return phases;
+}
+
+Phases::Phases(const Database& db)
+: db(db)
+{}
+
+auto Phases::add(const GenericPhase& phase) -> void
+{
+    genericphases.push_back(phase);
+}
+
+auto Phases::add(const GenericPhasesGenerator& generator) -> void
+{
+    generators.push_back(generator);
+}
+
+auto Phases::database() const -> const Database&
+{
+    return db;
+}
+
+Phases::operator Vec<Phase>() const
+{
+    // Return the element symbols in all stored GenericPhase and GenericPhasesGenerator objects.
+    auto collect_all_element_symbols = [&]() -> Strings
+    {
+        Strings symbols;
+
+        const auto collect_element_symbols_in_genericphase_or_generator = [&](const auto& phase)
+        {
+            Strings result;
+            if(phase.elements().size())
+                result = merge(result, phase.elements());
+            if(phase.species().size())
+                for(auto&& s : db.species().withNames(phase.species()))
+                    result = merge(result, s.elements().symbols());
+            return result;
+        };
+
+        for(const auto& phase : genericphases)
+            symbols = merge(symbols, collect_element_symbols_in_genericphase_or_generator(phase));
+
+        for(const auto& generator : generators)
+            symbols = merge(symbols, collect_element_symbols_in_genericphase_or_generator(generator));
+
+        return symbols;
+    };
+
+    // Return all given GenericPhase objects together with the generated ones.
+    auto collect_all_generic_phases = [&](const Strings& symbols) -> Vec<GenericPhase>
+    {
+        Vec<GenericPhase> collected(genericphases);
+
+        for(auto generator : generators)
+        {
+            const Vec<GenericPhase> generated = generator.convert(db, symbols);
+            collected.insert(collected.end(), generated.begin(), generated.end());
+        }
+
+        return collected;
+    };
+
+    // Replace duplicate phase names with unique names.
+    auto fix_duplicate_phase_names = [](Vec<GenericPhase>& phases)
+    {
+        Strings phasenames = vectorize(phases, RKT_LAMBDA(x, x.name()));
+        phasenames = makeunique(phasenames, "!");
+        auto i = 0;
+        for(auto& phase : phases)
+            phase.setName(phasenames[i++]);
+    };
+
+    Strings symbols = collect_all_element_symbols();
+
+    Vec<GenericPhase> allgenericphases = collect_all_generic_phases(symbols);
+
+    fix_duplicate_phase_names(allgenericphases);
+
+    Vec<Phase> phases;
+    phases.reserve(allgenericphases.size());
+    for(const auto& genericphase : allgenericphases)
+        phases.push_back(genericphase.convert(db, symbols));
 
     return phases;
 }

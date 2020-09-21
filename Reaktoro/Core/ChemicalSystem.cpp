@@ -132,6 +132,10 @@ ChemicalSystem::ChemicalSystem()
 : pimpl(new Impl())
 {}
 
+ChemicalSystem::ChemicalSystem(const Phases& phases)
+: pimpl(new Impl(phases.database(), phases))
+{}
+
 ChemicalSystem::ChemicalSystem(const Database& database, const Vec<Phase>& phases)
 : pimpl(new Impl(database, phases))
 {}

@@ -134,82 +134,82 @@ private:
     ActivityModel ideal_activity_model;
 };
 
-/// The base type for all other classes defining generic pure phases at once.
+/// The base type for a generator of generic phases with a single species.
 /// @ingroup Core
-class GenericPhases
+class GenericPhasesGenerator
 {
 public:
-    /// Construct a default GenericPhases object.
-    GenericPhases();
+    /// Construct a default GenericPhasesGenerator object.
+    GenericPhasesGenerator();
 
-    /// Construct a GenericPhases object with given species names.
-    explicit GenericPhases(const StringList& species);
+    /// Construct a GenericPhasesGenerator object with given species names.
+    explicit GenericPhasesGenerator(const StringList& species);
 
-    /// Construct a GenericPhases object with given element symbols.
-    explicit GenericPhases(const Speciate& elements);
+    /// Construct a GenericPhasesGenerator object with given element symbols.
+    explicit GenericPhasesGenerator(const Speciate& elements);
 
-    /// Destroy this GenericPhases object.
-    virtual ~GenericPhases();
+    /// Destroy this GenericPhasesGenerator object.
+    virtual ~GenericPhasesGenerator();
 
-    /// Set the common state of matter of the pure phases.
-    auto setStateOfMatter(StateOfMatter option) -> GenericPhases&;
+    /// Set the common state of matter of the generated phases.
+    auto setStateOfMatter(StateOfMatter option) -> GenericPhasesGenerator&;
 
-    /// Set the common aggregate state of the species in the pure phases.
-    auto setAggregateState(AggregateState option) -> GenericPhases&;
+    /// Set the common aggregate state of the species in the generated phases.
+    auto setAggregateState(AggregateState option) -> GenericPhasesGenerator&;
 
-    /// Set the common activity model of the pure phases.
-    auto setActivityModel(const ActivityModel& model) -> GenericPhases&;
+    /// Set the common activity model of the generated phases.
+    auto setActivityModel(const ActivityModel& model) -> GenericPhasesGenerator&;
 
-    /// Set the common ideal activity model of the pure phases.
-    auto setIdealActivityModel(const ActivityModel& model) -> GenericPhases&;
+    /// Set the common ideal activity model of the generated phases.
+    auto setIdealActivityModel(const ActivityModel& model) -> GenericPhasesGenerator&;
 
-    /// Set the common state of matter of the pure phases (equivalent to GenericPhases::setStateOfMatter).
-    auto set(StateOfMatter option) -> GenericPhases&;
+    /// Set the common state of matter of the generated phases (equivalent to GenericPhasesGenerator::setStateOfMatter).
+    auto set(StateOfMatter option) -> GenericPhasesGenerator&;
 
-    /// Set the common aggregate state of the species in the pure phases (equivalent to GenericPhases::setAggregateState).
-    auto set(AggregateState option) -> GenericPhases&;
+    /// Set the common aggregate state of the species in the generated phases (equivalent to GenericPhasesGenerator::setAggregateState).
+    auto set(AggregateState option) -> GenericPhasesGenerator&;
 
-    /// Set the common activity model of the pure phases (equivalent to GenericPhases::setActivityModel).
-    auto set(const ActivityModel& model) -> GenericPhases&;
+    /// Set the common activity model of the generated phases (equivalent to GenericPhasesGenerator::setActivityModel).
+    auto set(const ActivityModel& model) -> GenericPhasesGenerator&;
 
-    /// Return the common state of matter of the phase.
+    /// Return the common state of matter of the generated phases.
     auto stateOfMatter() const -> StateOfMatter;
 
-    /// Return the common aggregate state of the species composing the pure phases.
+    /// Return the common aggregate state of the species composing the generated phases.
     auto aggregateState() const -> AggregateState;
 
-    /// Return the names of the selected species to compose the pure phase (empty if not given).
+    /// Return the names of the selected species to compose the generated phase (empty if not given).
     auto species() const -> const Strings&;
 
-    /// Return the element symbols for automatic species selection that will compose the pure phases (empty if not given).
+    /// Return the element symbols for automatic species selection that will compose the generated phases (empty if not given).
     auto elements() const -> const Strings&;
 
-    /// Return the specified common activity model of the pure phases.
+    /// Return the specified common activity model of the generated phases.
     auto activityModel() const -> const ActivityModel&;
 
-    /// Return the specified common ideal activity model of the pure phases.
+    /// Return the specified common ideal activity model of the generated phases.
     auto idealActivityModel() const -> const ActivityModel&;
 
-    /// Convert this GenericPhases object into a vector of GenericPhase objects.
+    /// Convert this GenericPhasesGenerator object into a vector of GenericPhase objects.
     auto convert(const Database& db, const Strings& elements) const -> Vec<GenericPhase>;
 
 private:
-    /// The common state of matter of the pure phases.
+    /// The common state of matter of the generated phases.
     StateOfMatter stateofmatter = StateOfMatter::Solid;
 
-    /// The common aggregate state of the species composing the pure phases.
+    /// The common aggregate state of the species composing the generated phases.
     AggregateState aggregatestate = AggregateState::Undefined;
 
-    /// The names of the selected species to compose the pure phases.
+    /// The names of the selected species to compose each generated phase.
     Strings names;
 
-    /// The element symbols for automatic selection of the species composing the pure phases.
+    /// The element symbols for automatic selection of the species composing the generated phases.
     Strings symbols;
 
-    /// The common activity model of the pure phases.
+    /// The common activity model of the generated phases.
     ActivityModel activity_model;
 
-    /// The common ideal activity model of the pure phases.
+    /// The common ideal activity model of the generated phases.
     ActivityModel ideal_activity_model;
 };
 
@@ -218,97 +218,31 @@ private:
 class Phases
 {
 public:
-    /// Construct a Phases object with given GenericPhase and GenericPhases objects.
-    template<typename... Args>
-    Phases(const Database& db, const Args&... phases)
-    : database(db)
-    {
-        collectElements(phases...);
-        appendPhases(phases...);
-        fixDuplicatePhaseNames();
-    }
+    /// Construct a Phases object.
+    /// @param db The database used to construct the species and elements in the phases.
+    Phases(const Database& db);
+
+    /// Add a GenericPhase object into the Phases container.
+    auto add(const GenericPhase& phase) -> void;
+
+    /// Add a GenericPhasesGenerator object into the Phases container.
+    auto add(const GenericPhasesGenerator& generator) -> void;
+
+    /// Return the database object used to construct the species and elements in the phases.
+    auto database() const -> const Database&;
 
     /// Convert this Phases object into a vector of Phase objects.
-    operator Vec<Phase>() const
-    {
-        Vec<Phase> phases;
-        phases.reserve(genericphases.size());
-        for(auto&& genericphase : genericphases)
-            phases.push_back(genericphase.convert(database, elements));
-        return phases;
-    }
+    operator Vec<Phase>() const;
 
 private:
     /// The thermodynamic database used to deploy the Phase objects from the GenericPhase ones.
-    Database database;
+    Database db;
 
-    /// The GenericPhase objects collected so far with each call to Phases::add methods.
+    /// The GenericPhase objects collected so far with each call to Phases::add method.
     Vec<GenericPhase> genericphases;
 
-    /// The element symbols collected so far with each call to Phases::add methods.
-    Strings elements;
-
-private:
-    /// Collect the element symbols in a GenericPhase or GenericPhases object.
-    template<typename Arg>
-    auto collectElements(const Arg& phase) -> void
-    {
-        static_assert(std::is_base_of_v<GenericPhase, Arg> || std::is_base_of_v<GenericPhases, Arg>);
-
-        if(phase.elements().size())
-            elements = merge(elements, phase.elements());
-
-        if(phase.species().size())
-            for(auto&& s : database.species().withNames(phase.species()))
-                elements = merge(elements, s.elements().symbols());
-    }
-
-    /// Collect the element symbols in one or more GenericPhase or GenericPhases objects.
-    template<typename Arg, typename... Args>
-    auto collectElements(const Arg& phase, const Args&... phases) -> void
-    {
-        collectElements(phase);
-        if constexpr(sizeof...(Args) > 0)
-            collectElements(phases...);
-    }
-
-    /// Append a GenericPhase object into the Phases container.
-    auto append(const GenericPhase& phase) -> void
-    {
-        genericphases.push_back(phase);
-    }
-
-    /// Append all GenericPhase objects into the Phases container.
-    auto append(const Vec<GenericPhase>& phases) -> void
-    {
-        genericphases.insert(genericphases.end(), phases.begin(), phases.end());
-    }
-
-    /// Append all underlying GenericPhase objects, in given GenericPhases object, into the Phases container.
-    auto append(const GenericPhases& phases) -> void
-    {
-        append(phases.convert(database, elements));
-    }
-
-    /// Append one or more GenericPhase or GenericPhases objects into the Phases container.
-    template<typename Arg, typename... Args>
-    auto appendPhases(const Arg& phase, const Args&... phases) -> void
-    {
-        static_assert(std::is_base_of_v<GenericPhase, Arg> || std::is_base_of_v<GenericPhases, Arg>);
-        append(phase);
-        if constexpr(sizeof...(Args) > 0)
-            appendPhases(phases...);
-    }
-
-    /// Replace duplicate phase names with unique names.
-    auto fixDuplicatePhaseNames() -> void
-    {
-        Strings phasenames = vectorize(genericphases, RKT_LAMBDA(x, x.name()));
-        phasenames = makeunique(phasenames, "!");
-        auto i = 0;
-        for(auto& phase : genericphases)
-            phase.setName(phasenames[i++]);
-    }
+    /// The GenericPhaseGenerator objects collected so far with each call to Phases::add method.
+    Vec<GenericPhasesGenerator> generators;
 };
 
 /// The class used to configure an aqueous solution phase.
@@ -425,17 +359,17 @@ public:
 };
 
 /// The class used to configure automatic selection of pure mineral phases.
-class Minerals : public GenericPhases
+class Minerals : public GenericPhasesGenerator
 {
 public:
     /// Construct a default Minerals object.
-    Minerals() : GenericPhases() { initialize(); }
+    Minerals() : GenericPhasesGenerator() { initialize(); }
 
     /// Construct a Minerals object with given species names.
-    explicit Minerals(const StringList& species) : GenericPhases(species) { initialize(); }
+    explicit Minerals(const StringList& species) : GenericPhasesGenerator(species) { initialize(); }
 
     /// Construct a Minerals object with given element symbols.
-    explicit Minerals(const Speciate& elements) : GenericPhases(elements) { initialize(); }
+    explicit Minerals(const Speciate& elements) : GenericPhasesGenerator(elements) { initialize(); }
 
     /// Initialize the default attributes of this Minerals object.
     auto initialize() -> void

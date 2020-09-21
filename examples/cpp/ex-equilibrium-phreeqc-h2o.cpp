@@ -30,11 +30,11 @@ int main()
     GaseousSolution gaseousphase("CO2(g)");
     gaseousphase.setActivityModel(ActivityModelPengRobinson());
 
-    // Phases phases(db, AqueousSolution("H2O H+ OH- O2 H2"));
-    // Phases phases(db,  AqueousSolution("H2O H+ OH-"));
-    Phases phases(db, aqueousphase, gaseousphase);
+    Phases phases(db);
+    phases.add(aqueousphase);
+    phases.add(gaseousphase);
 
-    ChemicalSystem system(db, phases);
+    ChemicalSystem system(phases);
 
     const auto A = system.formulaMatrix();
 
