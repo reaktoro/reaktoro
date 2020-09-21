@@ -52,367 +52,376 @@ auto lgK_vantHoff(real T, real log_k0, real delta_h0) -> real;
 /// @param delta_h0 The enthalpy of reaction at 298.15K (in J/mol)
 auto lgK_analytic(real T, const Vec<real>& A) -> real;
 
+/// Return -1 for gases and minerals, 1 for other species.
+/// This method is needed because Reaktoro considers all reactions in a
+/// formation reaction format (i.e., the species associated with the reaction
+/// is on the right-hand side; it's a product species). However, PHREEQC
+/// considers reactions for gases and minerals in a dissociation format (i.e.,
+/// the species associated with the reaction is on the left-hand side; it's a
+/// reactant species).
+auto lgK_sign(const PhreeqcDatabase& db, String name) -> real;
+
 /// Calculate the expected equilibrium constant of a reaction using standard molar Gibbs energies of species.
 auto lgK_fromG0(const PhreeqcDatabase& db, real T, real P, Pairs<String, double> reaction) -> real;
 
 TEST_CASE("Testing PhreeqcDatabase constructor and load method", "[PhreeqcDatabase]")
 {
-	//-------------------------------------------------------------------------
-	// Testing constructor with name of embedded database file
-	//-------------------------------------------------------------------------
-	REQUIRE_NOTHROW( PhreeqcDatabase("phreeqc.dat") );
-	REQUIRE_NOTHROW( PhreeqcDatabase("pitzer.dat") );
+    //-------------------------------------------------------------------------
+    // Testing constructor with name of embedded database file
+    //-------------------------------------------------------------------------
+    CHECK_NOTHROW( PhreeqcDatabase("phreeqc.dat") );
+    CHECK_NOTHROW( PhreeqcDatabase("pitzer.dat") );
 
-	REQUIRE_THROWS( PhreeqcDatabase("xyz.dat") ); // there is no xyz.dat embedded database!
+    CHECK_THROWS( PhreeqcDatabase("xyz.dat") ); // there is no xyz.dat embedded database!
 
-	//-------------------------------------------------------------------------
-	// Testing method PhreeqcDatabase::load
-	//-------------------------------------------------------------------------
-	PhreeqcDatabase db;
+    //-------------------------------------------------------------------------
+    // Testing method PhreeqcDatabase::load
+    //-------------------------------------------------------------------------
+    PhreeqcDatabase db;
 
-	// Load using a string containing the database contents in PHREEQC format
-	db.load(PhreeqcDatabase::contents("pitzer.dat"));
+    // Load using a string containing the database contents in PHREEQC format
+    db.load(PhreeqcDatabase::contents("pitzer.dat"));
 
-	// Checking the existence of elements in the customized database
-	REQUIRE_NOTHROW( db.elements().index("H")  );
-	REQUIRE_NOTHROW( db.elements().index("C")  );
-	REQUIRE_NOTHROW( db.elements().index("O")  );
-	REQUIRE_NOTHROW( db.elements().index("Na") );
-	REQUIRE_NOTHROW( db.elements().index("Cl") );
-	REQUIRE_NOTHROW( db.elements().index("Ca") );
+    // Checking the existence of elements in the customized database
+    CHECK_NOTHROW( db.elements().index("H")  );
+    CHECK_NOTHROW( db.elements().index("C")  );
+    CHECK_NOTHROW( db.elements().index("O")  );
+    CHECK_NOTHROW( db.elements().index("Na") );
+    CHECK_NOTHROW( db.elements().index("Cl") );
+    CHECK_NOTHROW( db.elements().index("Ca") );
 
-	// Checking the inexistence of element U (which will be added later with a database complement)
-	REQUIRE_THROWS( db.elements().index("U")  );
+    // Checking the inexistence of element U (which will be added later with a database complement)
+    CHECK_THROWS( db.elements().index("U")  );
 
-	// Checking the existence of species in the customized database
-	REQUIRE_NOTHROW( db.species().index("H2O")   );
-	REQUIRE_NOTHROW( db.species().index("H+")    );
-	REQUIRE_NOTHROW( db.species().index("OH-")   );
-	REQUIRE_NOTHROW( db.species().index("CO2")   );
-	REQUIRE_NOTHROW( db.species().index("CO3-2") );
-	REQUIRE_NOTHROW( db.species().index("HCO3-") );
+    // Checking the existence of species in the customized database
+    CHECK_NOTHROW( db.species().index("H2O")   );
+    CHECK_NOTHROW( db.species().index("H+")    );
+    CHECK_NOTHROW( db.species().index("OH-")   );
+    CHECK_NOTHROW( db.species().index("CO2")   );
+    CHECK_NOTHROW( db.species().index("CO3-2") );
+    CHECK_NOTHROW( db.species().index("HCO3-") );
 
-	// Checking the inexistence of species with element U (which will be added later with a database complement)
-	REQUIRE_THROWS( db.species().index("U+4")           );
-	REQUIRE_THROWS( db.species().index("UO2+")          );
-	REQUIRE_THROWS( db.species().index("UO2+2")         );
-	REQUIRE_THROWS( db.species().index("U(OH)4")        );
-	REQUIRE_THROWS( db.species().index("U(OH)5-")       );
-	REQUIRE_THROWS( db.species().index("UO2OH+")        );
-	REQUIRE_THROWS( db.species().index("(UO2)2(OH)2+2") );
-	REQUIRE_THROWS( db.species().index("(UO2)3(OH)5+")  );
-	REQUIRE_THROWS( db.species().index("UO2CO3")        );
-	REQUIRE_THROWS( db.species().index("UO2(CO3)2-2")   );
-	REQUIRE_THROWS( db.species().index("UO2(CO3)3-4")   );
+    // Checking the inexistence of species with element U (which will be added later with a database complement)
+    CHECK_THROWS( db.species().index("U+4")           );
+    CHECK_THROWS( db.species().index("UO2+")          );
+    CHECK_THROWS( db.species().index("UO2+2")         );
+    CHECK_THROWS( db.species().index("U(OH)4")        );
+    CHECK_THROWS( db.species().index("U(OH)5-")       );
+    CHECK_THROWS( db.species().index("UO2OH+")        );
+    CHECK_THROWS( db.species().index("(UO2)2(OH)2+2") );
+    CHECK_THROWS( db.species().index("(UO2)3(OH)5+")  );
+    CHECK_THROWS( db.species().index("UO2CO3")        );
+    CHECK_THROWS( db.species().index("UO2(CO3)2-2")   );
+    CHECK_THROWS( db.species().index("UO2(CO3)3-4")   );
 
-	// // // In this new load operation, complement the PhreeqcDatabase object with more contents
-	// db.extend(getStringContentsPhreeqcDatabaseComplement()); // TODO Implement PhreeqcDatabase::extend method using PhreeqcUtis::execute for this.
+    // // // In this new load operation, complement the PhreeqcDatabase object with more contents
+    // db.extend(getStringContentsPhreeqcDatabaseComplement()); // TODO Implement PhreeqcDatabase::extend method using PhreeqcUtis::execute for this.
 
-	// // Checking the existence of newly added element U
-	// REQUIRE_NOTHROW( db.elements().index("U")  );
+    // // Checking the existence of newly added element U
+    // CHECK_NOTHROW( db.elements().index("U")  );
 
-	// // Checking the existence of newly added species with element U
-	// REQUIRE_NOTHROW( db.species().index("U+4")           );
-	// REQUIRE_NOTHROW( db.species().index("UO2+")          );
-	// REQUIRE_NOTHROW( db.species().index("UO2+2")         );
-	// REQUIRE_NOTHROW( db.species().index("U(OH)4")        );
-	// REQUIRE_NOTHROW( db.species().index("U(OH)5-")       );
-	// REQUIRE_NOTHROW( db.species().index("UO2OH+")        );
-	// REQUIRE_NOTHROW( db.species().index("(UO2)2(OH)2+2") );
-	// REQUIRE_NOTHROW( db.species().index("(UO2)3(OH)5+")  );
-	// REQUIRE_NOTHROW( db.species().index("UO2CO3")        );
-	// REQUIRE_NOTHROW( db.species().index("UO2(CO3)2-2")   );
-	// REQUIRE_NOTHROW( db.species().index("UO2(CO3)3-4")   );
+    // // Checking the existence of newly added species with element U
+    // CHECK_NOTHROW( db.species().index("U+4")           );
+    // CHECK_NOTHROW( db.species().index("UO2+")          );
+    // CHECK_NOTHROW( db.species().index("UO2+2")         );
+    // CHECK_NOTHROW( db.species().index("U(OH)4")        );
+    // CHECK_NOTHROW( db.species().index("U(OH)5-")       );
+    // CHECK_NOTHROW( db.species().index("UO2OH+")        );
+    // CHECK_NOTHROW( db.species().index("(UO2)2(OH)2+2") );
+    // CHECK_NOTHROW( db.species().index("(UO2)3(OH)5+")  );
+    // CHECK_NOTHROW( db.species().index("UO2CO3")        );
+    // CHECK_NOTHROW( db.species().index("UO2(CO3)2-2")   );
+    // CHECK_NOTHROW( db.species().index("UO2(CO3)3-4")   );
 
-	// // Ensure previously existing elements are still present
-	// REQUIRE_NOTHROW( db.elements().index("H")  );
-	// REQUIRE_NOTHROW( db.elements().index("C")  );
-	// REQUIRE_NOTHROW( db.elements().index("O")  );
-	// REQUIRE_NOTHROW( db.elements().index("Na") );
-	// REQUIRE_NOTHROW( db.elements().index("Cl") );
-	// REQUIRE_NOTHROW( db.elements().index("Ca") );
+    // // Ensure previously existing elements are still present
+    // CHECK_NOTHROW( db.elements().index("H")  );
+    // CHECK_NOTHROW( db.elements().index("C")  );
+    // CHECK_NOTHROW( db.elements().index("O")  );
+    // CHECK_NOTHROW( db.elements().index("Na") );
+    // CHECK_NOTHROW( db.elements().index("Cl") );
+    // CHECK_NOTHROW( db.elements().index("Ca") );
 
-	// // Ensure previously existing species are still present
-	// REQUIRE_NOTHROW( db.species().index("H2O")   );
-	// REQUIRE_NOTHROW( db.species().index("H+")    );
-	// REQUIRE_NOTHROW( db.species().index("OH-")   );
-	// REQUIRE_NOTHROW( db.species().index("CO2")   );
-	// REQUIRE_NOTHROW( db.species().index("CO3-2") );
-	// REQUIRE_NOTHROW( db.species().index("HCO3-") );
+    // // Ensure previously existing species are still present
+    // CHECK_NOTHROW( db.species().index("H2O")   );
+    // CHECK_NOTHROW( db.species().index("H+")    );
+    // CHECK_NOTHROW( db.species().index("OH-")   );
+    // CHECK_NOTHROW( db.species().index("CO2")   );
+    // CHECK_NOTHROW( db.species().index("CO3-2") );
+    // CHECK_NOTHROW( db.species().index("HCO3-") );
 }
 
 TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase", "[PhreeqcDatabase]")
 {
     const PhreeqcDatabase db("phreeqc.dat");
 
-	//-------------------------------------------------------------------------
-	// Testing for the existence of selected elements
-	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // Testing for the existence of selected elements
+    //-------------------------------------------------------------------------
 
-	REQUIRE_NOTHROW( db.elements().index("H")  );
-	REQUIRE_NOTHROW( db.elements().index("C")  );
-	REQUIRE_NOTHROW( db.elements().index("O")  );
-	REQUIRE_NOTHROW( db.elements().index("Na") );
-	REQUIRE_NOTHROW( db.elements().index("Cl") );
-	REQUIRE_NOTHROW( db.elements().index("K")  );
-	REQUIRE_NOTHROW( db.elements().index("Ca") );
-	REQUIRE_NOTHROW( db.elements().index("Mg") );
-	REQUIRE_NOTHROW( db.elements().index("Si") );
-	REQUIRE_NOTHROW( db.elements().index("Fe") );
+    CHECK_NOTHROW( db.elements().index("H")  );
+    CHECK_NOTHROW( db.elements().index("C")  );
+    CHECK_NOTHROW( db.elements().index("O")  );
+    CHECK_NOTHROW( db.elements().index("Na") );
+    CHECK_NOTHROW( db.elements().index("Cl") );
+    CHECK_NOTHROW( db.elements().index("K")  );
+    CHECK_NOTHROW( db.elements().index("Ca") );
+    CHECK_NOTHROW( db.elements().index("Mg") );
+    CHECK_NOTHROW( db.elements().index("Si") );
+    CHECK_NOTHROW( db.elements().index("Fe") );
 
-	//-------------------------------------------------------------------------
-	// Testing for the existence of selected species
-	//-------------------------------------------------------------------------
-	REQUIRE_NOTHROW( db.species().index("H2O")         );
-	REQUIRE_NOTHROW( db.species().index("H+")          );
-	REQUIRE_NOTHROW( db.species().index("CO3-2")       );
-	REQUIRE_NOTHROW( db.species().index("Calcite")     );
-	REQUIRE_NOTHROW( db.species().index("Quartz")      );
-	REQUIRE_NOTHROW( db.species().index("CO2(g)")      );
-	REQUIRE_NOTHROW( db.species().index("NaX")         );
-	REQUIRE_NOTHROW( db.species().index("X-")          );
-	REQUIRE_NOTHROW( db.species().index("Hfo_sOHCa+2") );
+    //-------------------------------------------------------------------------
+    // Testing for the existence of selected species
+    //-------------------------------------------------------------------------
+    CHECK_NOTHROW( db.species().index("H2O")         );
+    CHECK_NOTHROW( db.species().index("H+")          );
+    CHECK_NOTHROW( db.species().index("CO3-2")       );
+    CHECK_NOTHROW( db.species().index("Calcite")     );
+    CHECK_NOTHROW( db.species().index("Quartz")      );
+    CHECK_NOTHROW( db.species().index("CO2(g)")      );
+    CHECK_NOTHROW( db.species().index("NaX")         );
+    CHECK_NOTHROW( db.species().index("X-")          );
+    CHECK_NOTHROW( db.species().index("Hfo_sOHCa+2") );
 
-	Species species;
+    Species species;
 
-	species = db.species().get("H2O");
+    species = db.species().get("H2O");
 
-	CHECK( species.name() == "H2O"                             );
-	CHECK( species.formula().str() == "H2O"                    );
-	CHECK( species.substance() == "H2O"                        );
-	CHECK( species.charge() == 0                               );
-	CHECK( species.aggregateState() == AggregateState::Aqueous );
-	CHECK( species.molarMass() == Approx(0.0180160)            );
-	CHECK( species.elements().size() == 2                      );
-	CHECK( species.elements().coefficient("H") == 2            );
-	CHECK( species.elements().coefficient("O") == 1            );
-	CHECK( species.reaction().product() == "H2O"               );
-	CHECK( species.reaction().reactants().size() == 0          );
-	CHECK( species.reaction().equilibriumConstantFn()          );
-	CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "H2O"                             );
+    CHECK( species.formula().str() == "H2O"                    );
+    CHECK( species.substance() == "H2O"                        );
+    CHECK( species.charge() == 0                               );
+    CHECK( species.aggregateState() == AggregateState::Aqueous );
+    CHECK( species.molarMass() == Approx(0.0180160)            );
+    CHECK( species.elements().size() == 2                      );
+    CHECK( species.elements().coefficient("H") == 2            );
+    CHECK( species.elements().coefficient("O") == 1            );
+    CHECK( species.reaction().product() == "H2O"               );
+    CHECK( species.reaction().reactants().size() == 0          );
+    CHECK( species.reaction().equilibriumConstantFn()          );
+    CHECK( species.reaction().enthalpyChangeFn()               );
 
-	species = db.species().get("e-");
+    species = db.species().get("e-");
 
-	CHECK( species.name() == "e-"                              );
-	CHECK( species.formula().str() == "e-"                     );
-	CHECK( species.substance() == "e-"                         );
-	CHECK( species.charge() == -1                              );
-	CHECK( species.aggregateState() == AggregateState::Aqueous );
-	CHECK( species.molarMass() == Approx(0.0)                  );
-	CHECK( species.elements().size() == 1                      );
-	CHECK( species.elements().coefficient("e") == 1            );
-	CHECK( species.reaction().product() == "e-"                );
-	CHECK( species.reaction().reactants().size() == 0          );
-	CHECK( species.reaction().equilibriumConstantFn()          );
-	CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "e-"                              );
+    CHECK( species.formula().str() == "e-"                     );
+    CHECK( species.substance() == "e-"                         );
+    CHECK( species.charge() == -1                              );
+    CHECK( species.aggregateState() == AggregateState::Aqueous );
+    CHECK( species.molarMass() == Approx(0.0)                  );
+    CHECK( species.elements().size() == 1                      );
+    CHECK( species.elements().coefficient("e") == 1            );
+    CHECK( species.reaction().product() == "e-"                );
+    CHECK( species.reaction().reactants().size() == 0          );
+    CHECK( species.reaction().equilibriumConstantFn()          );
+    CHECK( species.reaction().enthalpyChangeFn()               );
 
-	species = db.species().get("CO2");
+    species = db.species().get("CO2");
 
-	CHECK( species.name() == "CO2"                             );
-	CHECK( species.formula().str() == "CO2"                    );
-	CHECK( species.substance() == "CO2"                        );
-	CHECK( species.charge() == 0                               );
-	CHECK( species.aggregateState() == AggregateState::Aqueous );
-	CHECK( species.molarMass() == Approx(0.0440111)            );
-	CHECK( species.elements().size() == 2                      );
-	CHECK( species.elements().coefficient("C") == 1            );
-	CHECK( species.elements().coefficient("O") == 2            );
-	CHECK( species.reaction().product() == "CO2"               );
-	CHECK( species.reaction().reactants().size() == 3          );
-	CHECK( species.reaction().stoichiometry("CO3-2") == 1      );
-	CHECK( species.reaction().stoichiometry("H+") == 2         );
-	CHECK( species.reaction().stoichiometry("H2O") == -1       );
-	CHECK( species.reaction().equilibriumConstantFn()          );
-	CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "CO2"                             );
+    CHECK( species.formula().str() == "CO2"                    );
+    CHECK( species.substance() == "CO2"                        );
+    CHECK( species.charge() == 0                               );
+    CHECK( species.aggregateState() == AggregateState::Aqueous );
+    CHECK( species.molarMass() == Approx(0.0440111)            );
+    CHECK( species.elements().size() == 2                      );
+    CHECK( species.elements().coefficient("C") == 1            );
+    CHECK( species.elements().coefficient("O") == 2            );
+    CHECK( species.reaction().product() == "CO2"               );
+    CHECK( species.reaction().reactants().size() == 3          );
+    CHECK( species.reaction().stoichiometry("CO3-2") == 1      );
+    CHECK( species.reaction().stoichiometry("H+") == 2         );
+    CHECK( species.reaction().stoichiometry("H2O") == -1       );
+    CHECK( species.reaction().equilibriumConstantFn()          );
+    CHECK( species.reaction().enthalpyChangeFn()               );
 
-	species = db.species().get("CO3-2");
+    species = db.species().get("CO3-2");
 
-	CHECK( species.name() == "CO3-2"                           );
-	CHECK( species.formula().str() == "CO3-2"                  );
-	CHECK( species.substance() == "CO3-2"                      );
-	CHECK( species.charge() == -2                              );
-	CHECK( species.aggregateState() == AggregateState::Aqueous );
-	CHECK( species.molarMass() == Approx(0.0600111)            );
-	CHECK( species.elements().size() == 2                      );
-	CHECK( species.elements().coefficient("C") == 1            );
-	CHECK( species.elements().coefficient("O") == 3            );
-	CHECK( species.reaction().product() == "CO3-2"             );
-	CHECK( species.reaction().reactants().size() == 0          );
-	CHECK( species.reaction().equilibriumConstantFn()          );
-	CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "CO3-2"                           );
+    CHECK( species.formula().str() == "CO3-2"                  );
+    CHECK( species.substance() == "CO3-2"                      );
+    CHECK( species.charge() == -2                              );
+    CHECK( species.aggregateState() == AggregateState::Aqueous );
+    CHECK( species.molarMass() == Approx(0.0600111)            );
+    CHECK( species.elements().size() == 2                      );
+    CHECK( species.elements().coefficient("C") == 1            );
+    CHECK( species.elements().coefficient("O") == 3            );
+    CHECK( species.reaction().product() == "CO3-2"             );
+    CHECK( species.reaction().reactants().size() == 0          );
+    CHECK( species.reaction().equilibriumConstantFn()          );
+    CHECK( species.reaction().enthalpyChangeFn()               );
 
-	species = db.species().get("Pb2OH+3");
+    species = db.species().get("Pb2OH+3");
 
-	CHECK( species.name() == "Pb2OH+3"                         );
-	CHECK( species.formula().str() == "Pb2OH+3"                );
-	CHECK( species.substance() == "Pb2OH+3"                    );
-	CHECK( species.charge() == +3                              );
-	CHECK( species.aggregateState() == AggregateState::Aqueous );
-	CHECK( species.molarMass() == Approx(0.4313880)            );
-	CHECK( species.elements().size() == 3                      );
-	CHECK( species.elements().coefficient("Pb") == 2           );
-	CHECK( species.elements().coefficient("O") == 1            );
-	CHECK( species.elements().coefficient("H") == 1            );
-	CHECK( species.reaction().product() == "Pb2OH+3"           );
-	CHECK( species.reaction().reactants().size() == 3          );
-	CHECK( species.reaction().stoichiometry("Pb+2") == 2       );
-	CHECK( species.reaction().stoichiometry("H2O") == 1        );
-	CHECK( species.reaction().stoichiometry("H+") == -1        );
-	CHECK( species.reaction().equilibriumConstantFn()          );
-	CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "Pb2OH+3"                         );
+    CHECK( species.formula().str() == "Pb2OH+3"                );
+    CHECK( species.substance() == "Pb2OH+3"                    );
+    CHECK( species.charge() == +3                              );
+    CHECK( species.aggregateState() == AggregateState::Aqueous );
+    CHECK( species.molarMass() == Approx(0.4313880)            );
+    CHECK( species.elements().size() == 3                      );
+    CHECK( species.elements().coefficient("Pb") == 2           );
+    CHECK( species.elements().coefficient("O") == 1            );
+    CHECK( species.elements().coefficient("H") == 1            );
+    CHECK( species.reaction().product() == "Pb2OH+3"           );
+    CHECK( species.reaction().reactants().size() == 3          );
+    CHECK( species.reaction().stoichiometry("Pb+2") == 2       );
+    CHECK( species.reaction().stoichiometry("H2O") == 1        );
+    CHECK( species.reaction().stoichiometry("H+") == -1        );
+    CHECK( species.reaction().equilibriumConstantFn()          );
+    CHECK( species.reaction().enthalpyChangeFn()               );
 
-	species = db.species().get("CO2(g)");
+    species = db.species().get("CO2(g)");
 
-	CHECK( species.name() == "CO2(g)"                          );
-	CHECK( species.formula().str() == "CO2"                    );
-	CHECK( species.substance() == "CO2"                        );
-	CHECK( species.charge() == 0                               );
-	CHECK( species.aggregateState() == AggregateState::Gas     );
-	CHECK( species.molarMass() == Approx(0.0440111)            );
-	CHECK( species.elements().size() == 2                      );
-	CHECK( species.elements().coefficient("C") == 1            );
-	CHECK( species.elements().coefficient("O") == 2            );
-	CHECK( species.reaction().product() == "CO2(g)"            );
-	CHECK( species.reaction().reactants().size() == 1          );
-	CHECK( species.reaction().stoichiometry("CO2") == 1        );
-	CHECK( species.reaction().equilibriumConstantFn()          );
-	CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "CO2(g)"                          );
+    CHECK( species.formula().str() == "CO2"                    );
+    CHECK( species.substance() == "CO2"                        );
+    CHECK( species.charge() == 0                               );
+    CHECK( species.aggregateState() == AggregateState::Gas     );
+    CHECK( species.molarMass() == Approx(0.0440111)            );
+    CHECK( species.elements().size() == 2                      );
+    CHECK( species.elements().coefficient("C") == 1            );
+    CHECK( species.elements().coefficient("O") == 2            );
+    CHECK( species.reaction().product() == "CO2(g)"            );
+    CHECK( species.reaction().reactants().size() == 1          );
+    CHECK( species.reaction().stoichiometry("CO2") == 1        );
+    CHECK( species.reaction().equilibriumConstantFn()          );
+    CHECK( species.reaction().enthalpyChangeFn()               );
 
-	species = db.species().get("H2S(g)");
+    species = db.species().get("H2S(g)");
 
-	CHECK( species.name() == "H2S(g)"                          );
-	CHECK( species.formula().str() == "H2S"                    );
-	CHECK( species.substance() == "H2S"                        );
-	CHECK( species.charge() == 0                               );
-	CHECK( species.aggregateState() == AggregateState::Gas     );
-	CHECK( species.molarMass() == Approx(0.0340800)            );
-	CHECK( species.elements().size() == 2                      );
-	CHECK( species.elements().coefficient("H") == 2            );
-	CHECK( species.elements().coefficient("S") == 1            );
-	CHECK( species.reaction().product() == "H2S(g)"            );
-	CHECK( species.reaction().reactants().size() == 2          );
-	CHECK( species.reaction().stoichiometry("H+") == 1         );
-	CHECK( species.reaction().stoichiometry("HS-") == 1        );
-	CHECK( species.reaction().equilibriumConstantFn()          );
-	CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "H2S(g)"                          );
+    CHECK( species.formula().str() == "H2S"                    );
+    CHECK( species.substance() == "H2S"                        );
+    CHECK( species.charge() == 0                               );
+    CHECK( species.aggregateState() == AggregateState::Gas     );
+    CHECK( species.molarMass() == Approx(0.0340800)            );
+    CHECK( species.elements().size() == 2                      );
+    CHECK( species.elements().coefficient("H") == 2            );
+    CHECK( species.elements().coefficient("S") == 1            );
+    CHECK( species.reaction().product() == "H2S(g)"            );
+    CHECK( species.reaction().reactants().size() == 2          );
+    CHECK( species.reaction().stoichiometry("H+") == 1         );
+    CHECK( species.reaction().stoichiometry("HS-") == 1        );
+    CHECK( species.reaction().equilibriumConstantFn()          );
+    CHECK( species.reaction().enthalpyChangeFn()               );
 
-	species = db.species().get("Calcite");
+    species = db.species().get("Calcite");
 
-	CHECK( species.name() == "Calcite"                         );
-	CHECK( species.formula().str() == "CaCO3"                  );
-	CHECK( species.substance() == "Calcite"                    );
-	CHECK( species.charge() == 0                               );
-	CHECK( species.aggregateState() == AggregateState::Solid   );
-	CHECK( species.molarMass() == Approx(0.1000911)            );
-	CHECK( species.elements().size() == 3                      );
-	CHECK( species.elements().coefficient("Ca") == 1           );
-	CHECK( species.elements().coefficient("C") == 1            );
-	CHECK( species.elements().coefficient("O") == 3            );
-	CHECK( species.reaction().product() == "Calcite"           );
-	CHECK( species.reaction().reactants().size() == 2          );
-	CHECK( species.reaction().stoichiometry("Ca+2") == 1       );
-	CHECK( species.reaction().stoichiometry("CO3-2") == 1      );
-	CHECK( species.reaction().equilibriumConstantFn()          );
-	CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "Calcite"                         );
+    CHECK( species.formula().str() == "CaCO3"                  );
+    CHECK( species.substance() == "Calcite"                    );
+    CHECK( species.charge() == 0                               );
+    CHECK( species.aggregateState() == AggregateState::Solid   );
+    CHECK( species.molarMass() == Approx(0.1000911)            );
+    CHECK( species.elements().size() == 3                      );
+    CHECK( species.elements().coefficient("Ca") == 1           );
+    CHECK( species.elements().coefficient("C") == 1            );
+    CHECK( species.elements().coefficient("O") == 3            );
+    CHECK( species.reaction().product() == "Calcite"           );
+    CHECK( species.reaction().reactants().size() == 2          );
+    CHECK( species.reaction().stoichiometry("Ca+2") == 1       );
+    CHECK( species.reaction().stoichiometry("CO3-2") == 1      );
+    CHECK( species.reaction().equilibriumConstantFn()          );
+    CHECK( species.reaction().enthalpyChangeFn()               );
 
-	species = db.species().get("Hydroxyapatite");
+    species = db.species().get("Hydroxyapatite");
 
-	CHECK( species.name() == "Hydroxyapatite"                  );
-	CHECK( species.formula().str() == "Ca5(PO4)3OH"            );
-	CHECK( species.substance() == "Hydroxyapatite"             );
-	CHECK( species.charge() == 0                               );
-	CHECK( species.aggregateState() == AggregateState::Solid   );
-	CHECK( species.molarMass() == Approx(0.5023294)            );
-	CHECK( species.elements().size() == 4                      );
-	CHECK( species.elements().coefficient("Ca") == 5           );
-	CHECK( species.elements().coefficient("P") == 3            );
-	CHECK( species.elements().coefficient("O") == 13           );
-	CHECK( species.elements().coefficient("H") == 1            );
-	CHECK( species.reaction().product() == "Hydroxyapatite"    );
-	CHECK( species.reaction().reactants().size() == 4          );
-	CHECK( species.reaction().stoichiometry("H2O") == 1        );
-	CHECK( species.reaction().stoichiometry("HPO4-2") == 3     );
-	CHECK( species.reaction().stoichiometry("Ca+2") == 5       );
-	CHECK( species.reaction().stoichiometry("H+") == -4        );
-	CHECK( species.reaction().equilibriumConstantFn()          );
-	CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "Hydroxyapatite"                  );
+    CHECK( species.formula().str() == "Ca5(PO4)3OH"            );
+    CHECK( species.substance() == "Hydroxyapatite"             );
+    CHECK( species.charge() == 0                               );
+    CHECK( species.aggregateState() == AggregateState::Solid   );
+    CHECK( species.molarMass() == Approx(0.5023294)            );
+    CHECK( species.elements().size() == 4                      );
+    CHECK( species.elements().coefficient("Ca") == 5           );
+    CHECK( species.elements().coefficient("P") == 3            );
+    CHECK( species.elements().coefficient("O") == 13           );
+    CHECK( species.elements().coefficient("H") == 1            );
+    CHECK( species.reaction().product() == "Hydroxyapatite"    );
+    CHECK( species.reaction().reactants().size() == 4          );
+    CHECK( species.reaction().stoichiometry("H2O") == 1        );
+    CHECK( species.reaction().stoichiometry("HPO4-2") == 3     );
+    CHECK( species.reaction().stoichiometry("Ca+2") == 5       );
+    CHECK( species.reaction().stoichiometry("H+") == -4        );
+    CHECK( species.reaction().equilibriumConstantFn()          );
+    CHECK( species.reaction().enthalpyChangeFn()               );
 }
 
 TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDatabase]")
 {
-	static const PhreeqcDatabase db("phreeqc.dat"); // if not static, GENERATE causes many instantiations of PhreeqcDatabase
+    static const PhreeqcDatabase db("phreeqc.dat"); // if not static, GENERATE causes many instantiations of PhreeqcDatabase
 
-	// const auto T = GENERATE( 298.15, 303.15, 333.15, 363.15 );
-	// const auto P = GENERATE( 1.0e5, 10.0e5, 50.0e5, 100.0e5 );
-	const auto T = GENERATE( 298.15 );
-	const auto P = GENERATE( 1.0e5 );
+    // const auto T = GENERATE( 298.15, 303.15, 333.15, 363.15 );
+    // const auto P = GENERATE( 1.0e5, 10.0e5, 50.0e5, 100.0e5 );
+    const auto T = GENERATE( 298.15 );
+    const auto P = GENERATE( 1.0e5 );
 
-	//---------------------------------------------------------------------------------------------
-	// Testing temperature correction of equilibrium constants using van't Hoff equation
-	//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
+    // Testing temperature correction of equilibrium constants using van't Hoff equation
+    //---------------------------------------------------------------------------------------------
 
-	// The conversion constant from kcal to J.
-	const auto kcal_to_joule = 4184.0;
+    // The conversion constant from kcal to J.
+    const auto kcal_to_joule = 4184.0;
 
-	// The equilibrium constant (log_k) and enthalpy of reaction (delta_h) (in J) of some selected species
-	const Map<String, Pair<real, real>> vanthoff_data =
-	{
-		{ "SrSO4"    , {  2.29  ,  2.08   * kcal_to_joule} },
-		{ "Cu+"      , {  2.72  ,  1.65   * kcal_to_joule} },
-		{ "CuCl2-"   , {  5.50  , -0.42   * kcal_to_joule} },
-		{ "CuCO3"    , {  6.73  ,  0.00   * kcal_to_joule} },
-		{ "Zn(OH)4-2", { -41.2  ,  0.00   * kcal_to_joule} },
-		{ "Kaolinite", {  7.435 , -35.300 * kcal_to_joule} },
-		{ "Albite"   , { -18.002,  25.896 * kcal_to_joule} },
-	};
+    // The equilibrium constant (log_k) and enthalpy of reaction (delta_h) (in J) of some selected species
+    const Map<String, Pair<real, real>> vanthoff_data =
+    {
+        { "SrSO4"    , {  2.29  ,  2.08   * kcal_to_joule} },
+        { "Cu+"      , {  2.72  ,  1.65   * kcal_to_joule} },
+        { "CuCl2-"   , {  5.50  , -0.42   * kcal_to_joule} },
+        { "CuCO3"    , {  6.73  ,  0.00   * kcal_to_joule} },
+        { "Zn(OH)4-2", { -41.2  ,  0.00   * kcal_to_joule} },
+        { "Kaolinite", {  7.435 , -35.300 * kcal_to_joule} },
+        { "Albite"   , { -18.002,  25.896 * kcal_to_joule} },
+    };
 
-	for(auto [species, pair] : vanthoff_data)
-	{
-		INFO("species: " << species);
-		INFO("T: " << T << " K");
-		INFO("P: " << P << " Pa");
-		CHECK( lgK(db, T, P, species) == Approx(lgK_vantHoff(T, pair.first, pair.second)) );
-	}
+    for(auto [species, pair] : vanthoff_data)
+    {
+        INFO("species: " << species);
+        INFO("T: " << T << " K");
+        INFO("P: " << P << " Pa");
+        CHECK( lgK(db, T, P, species) == Approx(lgK_vantHoff(T, pair.first, pair.second) * lgK_sign(db, species)) );
+    }
 
-	//---------------------------------------------------------------------------------------------
-	// Testing temperature correction of equilibrium constants using analytic expression
-	//---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
+    // Testing temperature correction of equilibrium constants using analytic expression
+    //---------------------------------------------------------------------------------------------
 
-	// The analytic coefficients for temperature correction of logK of some selected species
-	const Map<String, Vec<real>> coefficients_data =
-	{   // Name         A1, A2, A3, A4, A5, A6
-		{ "CO2"    , {{ 464.1965, 0.09344813, -26986.16, -165.75951, 2248628.9, 0 }} },
-		{ "CaCO3"  , {{ -1228.732, -0.299440, 35512.75, 485.818, 0, 0 }} },
-		{ "SrCO3"  , {{ -1.019, 0.012826, 0, 0, 0, 0 }} },
-		{ "Calcite", {{ -171.9065, -0.077993, 2839.319, 71.595, 0, 0 }} },
-	};
+    // The analytic coefficients for temperature correction of logK of some selected species
+    const Map<String, Vec<real>> coefficients_data =
+    {   // Name         A1, A2, A3, A4, A5, A6
+        { "CO2"    , {{ 464.1965, 0.09344813, -26986.16, -165.75951, 2248628.9, 0 }} },
+        { "CaCO3"  , {{ -1228.732, -0.299440, 35512.75, 485.818, 0, 0 }} },
+        { "SrCO3"  , {{ -1.019, 0.012826, 0, 0, 0, 0 }} },
+        { "Calcite", {{ -171.9065, -0.077993, 2839.319, 71.595, 0, 0 }} },
+    };
 
-	for(auto [species, A] : coefficients_data)
-	{
-		INFO("species: " << species);
-		INFO("T: " << T << " K");
-		INFO("P: " << P << " Pa");
-		CHECK( lgK(db, T, P, species) == Approx(lgK_analytic(T, A)) );
-	}
+    for(auto [species, A] : coefficients_data)
+    {
+        INFO("species: " << species);
+        INFO("T: " << T << " K");
+        INFO("P: " << P << " Pa");
+        CHECK( lgK(db, T, P, species) == Approx(lgK_analytic(T, A) * lgK_sign(db, species)) );
+    }
 
-	// The analytic coefficients for temperature correction of logK of some selected species
-	const Map<String, Pairs<String, double>> reactions =
-	{   // Species   Reaction
-		{ "OH-"    , parseReactionEquation("H2O = OH- + H+")           },
-		{ "CO2"    , parseReactionEquation("CO3-2 + 2*H+ = CO2 + H2O") },
-		{ "CaCO3"  , parseReactionEquation("Ca+2 + CO3-2 = CaCO3")     },
-		{ "SrCO3"  , parseReactionEquation("Sr+2 + CO3-2 = SrCO3")     },
-		{ "CO2(g)" , parseReactionEquation("CO2 = CO2(g)")             },
-		{ "Calcite", parseReactionEquation("CO3-2 + Ca+2 = Calcite")   },
-	};
+    // The analytic coefficients for temperature correction of logK of some selected species
+    const Map<String, Pairs<String, double>> reactions =
+    {   // Species   Reaction
+        { "OH-"    , parseReactionEquation("H2O = OH- + H+")           },
+        { "CO2"    , parseReactionEquation("CO3-2 + 2*H+ = CO2 + H2O") },
+        { "CaCO3"  , parseReactionEquation("Ca+2 + CO3-2 = CaCO3")     },
+        { "SrCO3"  , parseReactionEquation("Sr+2 + CO3-2 = SrCO3")     },
+        { "CO2(g)" , parseReactionEquation("CO2 = CO2(g)")             },
+        { "Calcite", parseReactionEquation("CO3-2 + Ca+2 = Calcite")   },
+    };
 
-	for(auto [species, reaction] : reactions)
-	{
-		INFO("species: " << species);
-		INFO("T: " << T << " K");
-		INFO("P: " << P << " Pa");
-		CHECK( lgK(db, T, P, species) == Approx(lgK_fromG0(db, T, P, reaction)) );
-	}
+    for(auto [species, reaction] : reactions)
+    {
+        INFO("species: " << species);
+        INFO("T: " << T << " K");
+        INFO("P: " << P << " Pa");
+        CHECK( lgK(db, T, P, species) == Approx(lgK_fromG0(db, T, P, reaction)) );
+    }
 }
 
 //=================================================================================================
@@ -421,48 +430,62 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
 
 auto lgK(const PhreeqcDatabase& db, real T, real P, String name) -> real
 {
-	const auto species = db.species().get(name);
-	return species.reaction().equilibriumConstantFn()(T, P);
+    const auto species = db.species().get(name);
+    return species.reaction().equilibriumConstantFn()(T, P);
 }
 
 auto dH0(const PhreeqcDatabase& db, real T, real P, String name) -> real
 {
-	const auto species = db.species().get(name);
-	return species.reaction().enthalpyChangeFn()(T, P);
+    const auto species = db.species().get(name);
+    return species.reaction().enthalpyChangeFn()(T, P);
 }
 
 auto G0(const PhreeqcDatabase& db, real T, real P, String name) -> real
 {
-	const auto species = db.species().get(name);
-	return species.props(T, P).G0;
+    const auto species = db.species().get(name);
+    return species.props(T, P).G0;
 }
 
 auto lgK_vantHoff(real T, real log_k0, real delta_h0) -> real
 {
-	const auto T0 = 298.15;
-	const auto R  = universalGasConstant;
-	return log_k0 - (delta_h0 * (1.0/T - 1.0/T0)/R) / ln10;
+    const auto T0 = 298.15;
+    const auto R  = universalGasConstant;
+    return log_k0 - (delta_h0 * (1.0/T - 1.0/T0)/R) / ln10;
 }
 
 auto lgK_analytic(real T, const Vec<real>& A) -> real
 {
-	assert(A.size() == 6);
-	return A[0] + A[1]*T + A[2]/T + A[3]*log10(T) + A[4]/(T*T) + A[5]*T*T;
+    assert(A.size() == 6);
+    return A[0] + A[1]*T + A[2]/T + A[3]*log10(T) + A[4]/(T*T) + A[5]*T*T;
+}
+
+auto lgK_sign(const PhreeqcDatabase& db, String name) -> real
+{
+    // NOTE: The logic below is needed because in Reaktoro any reaction
+    // associated with a chemical species is represented as a formation
+    // reaction, i.e., a reaction in which the species it self is on the
+    // product side (right-hand side of the reaction). In PHREEQC, this does
+    // not for gases and minerals. That's why we multiply the log(K) by -1 for
+    // chemical species with gas and solid aggregate state.
+    const auto species = db.species().get(name);
+    const auto is_phreeqc_phase = oneof(species.aggregateState(), AggregateState::Gas, AggregateState::Solid);
+    const auto sign = is_phreeqc_phase ? -1.0 : 1.0;
+    return sign;
 }
 
 auto lgK_fromG0(const PhreeqcDatabase& db, real T, real P, Pairs<String, double> reaction) -> real
 {
-	real lnK = 0.0;
-	for(auto [species, coeff] : reaction)
-		lnK += coeff * G0(db, T, P, species);
-	lnK /= -universalGasConstant * T;
-	const auto lgK = lnK/ln10;
-	return lgK;
+    real lnK = 0.0;
+    for(auto [species, coeff] : reaction)
+        lnK += coeff * G0(db, T, P, species);
+    lnK /= -universalGasConstant * T;
+    const auto lgK = lnK/ln10;
+    return lgK;
 }
 
 auto getStringContentsPhreeqcDatabaseComplement() -> String
 {
-	return R"xyz(
+    return R"xyz(
 SOLUTION_MASTER_SPECIES
         U       U+4     0.0     238.0290     238.0290
         U(4)    U+4     0.0     238.0290
