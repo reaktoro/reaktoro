@@ -67,27 +67,27 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
     });
 
     // auto aqueous_solution = GENERATE(
-    //     AqueousSolution(speciate("H O")),
-    //     AqueousSolution(speciate("H O Na Cl")),
-    //     AqueousSolution(speciate("H O Na Cl C")),
-    //     AqueousSolution(speciate("H O Na Cl C Ca")),
-    //     AqueousSolution(speciate("H O Na Cl C Ca Mg")),
-    //     AqueousSolution(speciate("H O Na Cl C Ca Mg Si"))
+    //     AqueousPhase(speciate("H O")),
+    //     AqueousPhase(speciate("H O Na Cl")),
+    //     AqueousPhase(speciate("H O Na Cl C")),
+    //     AqueousPhase(speciate("H O Na Cl C Ca")),
+    //     AqueousPhase(speciate("H O Na Cl C Ca Mg")),
+    //     AqueousPhase(speciate("H O Na Cl C Ca Mg Si"))
     // );
 
     // auto gaseous_solution = GENERATE(
-    //     GaseousSolution("CO2(g)"),
-    //     GaseousSolution("CO2(g) H2O(g)"),
-    //     GaseousSolution("CO2(g) H2O(g) O2(g)"),
-    //     GaseousSolution("CO2(g) H2O(g) O2(g) H2(g)")
+    //     GaseousPhase("CO2(g)"),
+    //     GaseousPhase("CO2(g) H2O(g)"),
+    //     GaseousPhase("CO2(g) H2O(g) O2(g)"),
+    //     GaseousPhase("CO2(g) H2O(g) O2(g) H2(g)")
     // );
 
     // auto minerals = GENERATE(
-    //     Minerals("Halite"),
-    //     Minerals("Halite Calcite"),
-    //     Minerals("Halite Calcite Magnesite"),
-    //     Minerals("Halite Calcite Magnesite Dolomite"),
-    //     Minerals("Halite Calcite Magnesite Dolomite Quartz")
+    //     MineralPhases("Halite"),
+    //     MineralPhases("Halite Calcite"),
+    //     MineralPhases("Halite Calcite Magnesite"),
+    //     MineralPhases("Halite Calcite Magnesite Dolomite"),
+    //     MineralPhases("Halite Calcite Magnesite Dolomite Quartz")
     // );
 
     // auto phases = GENERATE_COPY(
@@ -98,48 +98,48 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
     // );
 
     // const auto phases = Phases(db,
-    //     // AqueousSolution(speciate("H O"))
-    //     // AqueousSolution(speciate("H O C"))
-    //     AqueousSolution(speciate("H O Na Cl C Ca Mg Si")),
-    //     GaseousSolution(speciate("H O C"))
-    //     // , Minerals("Halite") // OK
-    //     // , Minerals("Calcite") // OK
-    //     // , Minerals("Magnesite") // OK
-    //     // , Minerals("Dolomite") // OK
-    //     // , Minerals("Quartz") // OK
-    //     // , Minerals("Quartz Calcite") // OK
-    //     // , Minerals("Halite Calcite") // OK
-    //     // , Minerals("Calcite Magnesite") // OK
-    //     // , Minerals("Calcite Magnesite Halite") // ~~FAIL!~~NOW IT WORKS USING zeps to determine stability!
-    //     // , Minerals("Halite Calcite Magnesite Quartz") // WORKS with z > -eps
-    //     // , Minerals("Calcite Dolomite") // OK
-    //     // , Minerals("Magnesite Dolomite") // OK
-    //     // , Minerals("Calcite Magnesite Dolomite") // FAIL!
-    //     // , Minerals("Halite Calcite Magnesite Dolomite")
-    //     , Minerals("Halite Calcite Magnesite Dolomite Quartz")
+    //     // AqueousPhase(speciate("H O"))
+    //     // AqueousPhase(speciate("H O C"))
+    //     AqueousPhase(speciate("H O Na Cl C Ca Mg Si")),
+    //     GaseousPhase(speciate("H O C"))
+    //     // , MineralPhases("Halite") // OK
+    //     // , MineralPhases("Calcite") // OK
+    //     // , MineralPhases("Magnesite") // OK
+    //     // , MineralPhases("Dolomite") // OK
+    //     // , MineralPhases("Quartz") // OK
+    //     // , MineralPhases("Quartz Calcite") // OK
+    //     // , MineralPhases("Halite Calcite") // OK
+    //     // , MineralPhases("Calcite Magnesite") // OK
+    //     // , MineralPhases("Calcite Magnesite Halite") // ~~FAIL!~~NOW IT WORKS USING zeps to determine stability!
+    //     // , MineralPhases("Halite Calcite Magnesite Quartz") // WORKS with z > -eps
+    //     // , MineralPhases("Calcite Dolomite") // OK
+    //     // , MineralPhases("Magnesite Dolomite") // OK
+    //     // , MineralPhases("Calcite Magnesite Dolomite") // FAIL!
+    //     // , MineralPhases("Halite Calcite Magnesite Dolomite")
+    //     , MineralPhases("Halite Calcite Magnesite Dolomite Quartz")
     // );
 
     Phases phases(db);
 
-    // phases.add( AqueousSolution(speciate("H O") );
-    // phases.add( AqueousSolution(speciate("H O C") );
-    phases.add( AqueousSolution(speciate("H O Na Cl C Ca Mg Si")) );
-    phases.add( GaseousSolution(speciate("H O C")) );
-    // phases.add( Minerals("Halite") );
-    // phases.add( Minerals("Calcite") );
-    // phases.add( Minerals("Magnesite") );
-    // phases.add( Minerals("Dolomite") );
-    // phases.add( Minerals("Quartz") );
-    // phases.add( Minerals("Quartz Calcite") );
-    // phases.add( Minerals("Halite Calcite") );
-    // phases.add( Minerals("Calcite Magnesite") );
-    // phases.add( Minerals("Calcite Magnesite Halite") );
-    // phases.add( Minerals("Halite Calcite Magnesite Quartz") );
-    // phases.add( Minerals("Calcite Dolomite") );
-    // phases.add( Minerals("Magnesite Dolomite") );
-    // phases.add( Minerals("Calcite Magnesite Dolomite") );
-    // phases.add( Minerals("Halite Calcite Magnesite Dolomite") );
-    phases.add( Minerals("Halite Calcite Magnesite Dolomite Quartz") );
+    // phases.add( AqueousPhase(speciate("H O") );
+    // phases.add( AqueousPhase(speciate("H O C") );
+    phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
+    phases.add( GaseousPhase(speciate("H O C")) );
+    // phases.add( MineralPhases("Halite") );
+    // phases.add( MineralPhases("Calcite") );
+    // phases.add( MineralPhases("Magnesite") );
+    // phases.add( MineralPhases("Dolomite") );
+    // phases.add( MineralPhases("Quartz") );
+    // phases.add( MineralPhases("Quartz Calcite") );
+    // phases.add( MineralPhases("Halite Calcite") );
+    // phases.add( MineralPhases("Calcite Magnesite") );
+    // phases.add( MineralPhases("Calcite Magnesite Halite") );
+    // phases.add( MineralPhases("Halite Calcite Magnesite Quartz") );
+    // phases.add( MineralPhases("Calcite Dolomite") );
+    // phases.add( MineralPhases("Magnesite Dolomite") );
+    // phases.add( MineralPhases("Calcite Magnesite Dolomite") );
+    // phases.add( MineralPhases("Halite Calcite Magnesite Dolomite") );
+    phases.add( MineralPhases("Halite Calcite Magnesite Dolomite Quartz") );
 
     const auto system = ChemicalSystem(phases);
 

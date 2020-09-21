@@ -33,11 +33,11 @@ TEST_CASE("Testing Phase", "[Phase]")
 
     SECTION("Testing PhasePhase::withSpecies with aqueous species")
     {
-        phase = phase.withName("AqueousSolution");
+        phase = phase.withName("AqueousPhase");
         phase = phase.withSpecies(SpeciesList("H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3--"));
         phase = phase.withStateOfMatter(StateOfMatter::Liquid);
 
-        REQUIRE( phase.name() == "AqueousSolution" );
+        REQUIRE( phase.name() == "AqueousPhase" );
         REQUIRE( phase.stateOfMatter() == StateOfMatter::Liquid );
         REQUIRE( phase.species().size() == 8 );
         REQUIRE( phase.species(0).name() == "H2O(aq)" );
@@ -53,12 +53,12 @@ TEST_CASE("Testing Phase", "[Phase]")
     SECTION("Testing PhasePhase::withSpecies with gaseous species")
     {
         Phase phase;
-        phase = phase.withName("GaseousSolution");
+        phase = phase.withName("GaseousPhase");
         phase = phase.withSpecies(SpeciesList("H2O(g) CO2(g) CH4(g) O2(g) H2(g)"));
         phase = phase.withStateOfMatter(StateOfMatter::Gas);
         phase = phase.withActivityPropsFn(activity_props_fn);
 
-        REQUIRE( phase.name() == "GaseousSolution" );
+        REQUIRE( phase.name() == "GaseousPhase" );
         REQUIRE( phase.stateOfMatter() == StateOfMatter::Gas );
         REQUIRE( phase.species().size() == 5 );
         REQUIRE( phase.species(0).name() == "H2O(g)" );
@@ -84,7 +84,7 @@ TEST_CASE("Testing Phase", "[Phase]")
     SECTION("Testing PhasePhase::withSpecies with species having uncommon aggregate states")
     {
         Phase phase;
-        phase = phase.withName("AqueousSolution");
+        phase = phase.withName("AqueousPhase");
         phase = phase.withStateOfMatter(StateOfMatter::Liquid);
 
         REQUIRE_THROWS( phase.withSpecies(SpeciesList("H2O H+ OH-")) );

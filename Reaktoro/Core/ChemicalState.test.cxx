@@ -54,12 +54,12 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     const Vec<Phase> phases =
     {
         Phase()
-            .withName("AqueousSolution")
+            .withName("AqueousPhase")
             .withSpecies(db.speciesWithAggregateState(AggregateState::Aqueous))
             .withStateOfMatter(StateOfMatter::Liquid)
             .withActivityPropsFn(activity_props_fn),
         Phase()
-            .withName("GaseousSolution")
+            .withName("GaseousPhase")
             .withSpecies(db.speciesWithAggregateState(AggregateState::Gas))
             .withStateOfMatter(StateOfMatter::Gas)
             .withActivityPropsFn(activity_props_fn),
