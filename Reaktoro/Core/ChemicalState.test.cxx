@@ -28,9 +28,24 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
 {
     // Create the Database object for the ChemicalSystem
     Database db;
-    db.addSpecies( SpeciesList("H2O(aq) H+(aq) OH-(aq) H2(aq) O2(aq) Na+(aq) Cl-(aq) NaCl(aq) HCO3-(aq) CO2(aq) CO3--(aq)") );
-    db.addSpecies( SpeciesList("H2O(g) CO2(g) H2(g) O2(g)") );
-    db.addSpecies( SpeciesList("NaCl(s) CaCO3(s) SiO2(s)")  );
+    db.addSpecies( Species("H2O(aq)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("H+(aq)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("OH-(aq)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("H2(aq)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("O2(aq)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("Na+(aq)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("Cl-(aq)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("NaCl(aq)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("HCO3-(aq)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("CO2(aq)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("CO3--(aq)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("H2O(g)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("CO2(g)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("H2(g)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("O2(g)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("NaCl(s)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("CaCO3(s)").withStandardGibbsEnergy(0.0) );
+    db.addSpecies( Species("SiO2(s)").withStandardGibbsEnergy(0.0) );
 
     // Create the ActivityPropsFn of the Phase objects for the ChemicalSystem
     ActivityPropsFn activity_props_fn = [](ActivityPropsRef props, ActivityArgs args) {};
