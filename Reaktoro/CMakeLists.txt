@@ -5,7 +5,7 @@ file(GLOB_RECURSE HPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp *.hxx)
 file(GLOB_RECURSE CPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
 # Recursively collect all test files from the current directory
-file(GLOB_RECURSE CXX_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.test.cxx)
+file(GLOB_RECURSE TEST_CXX_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.test.cxx)
 
 # Set the list of names of the third-party targets and libraries
 set(THIRDPARTY_TARGETS PUGIXML MINIZ CVODE PHREEQC GEMS)
@@ -63,9 +63,54 @@ set_target_properties(Reaktoro PROPERTIES
     CXX_EXTENSIONS OFF)
 
 # Create a test executable target for Reaktoro
-add_executable(tests ${CXX_FILES})
+add_executable(tests ${TEST_CXX_FILES})
 target_link_libraries(tests Reaktoro)
 target_include_directories(tests PUBLIC ${PROJECT_SOURCE_DIR})
+
+#==============================================================================
+#
+# PYTHON BINDINGS COMPILATION CONFIGURATION
+#
+#==============================================================================
+
+if(REAKTORO_BUILD_PYTHON)
+
+    # Include the Eigen include path for pybind11
+    include_directories(${PROJECT_SOURCE_DIR}/Reaktoro/deps/eigen3)
+
+    # Ensure pybind11 uses C++17 standard
+    set(PYBIND11_CPP_STANDARD -std=c++17)
+
+    # Find pybind11, needed to compile the python bindings
+    find_package(pybind11 REQUIRED)
+
+    # Recursively collect all python binding files from the current directory
+    file(GLOB_RECURSE PY_CXX_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.py.cxx)
+
+    # Compile Reaktoro *.py.cxx files into a Python module
+    pybind11_add_module(reaktoro4py ${PY_CXX_FILES})
+
+    # Create an install target for the python module
+    install(TARGETS reaktoro4py DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries)
+
+    # Add the root directory of the project to the include list
+    target_include_directories(reaktoro4py PRIVATE ${PROJECT_SOURCE_DIR})
+
+    # Link reaktoro4py against Reaktoro C++ library
+    target_link_libraries(reaktoro4py LINK_PRIVATE Reaktoro::Reaktoro)
+
+    # This is needed to avoid compilation issues when using clang-9 and c++17
+    if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 10.0.0)
+        target_compile_options(optima PRIVATE -fsized-deallocation)
+    endif()
+
+endif()
+
+#==============================================================================
+#
+# INSTALL CONFIGURATION
+#
+#==============================================================================
 
 # Install Reaktoro C++ library
 install(TARGETS Reaktoro
