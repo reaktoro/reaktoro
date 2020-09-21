@@ -510,7 +510,8 @@ auto lgEquilibriumConstantFn(const PhreeqcSpecies* species) -> Fn<real(real,real
 
 auto lgEquilibriumConstantFn(const PhreeqcPhase* phase) -> Fn<real(real,real)>
 {
-    return lgEquilibriumConstantFnHelper(phase);
+    const auto aux_lgK = lgEquilibriumConstantFnHelper(phase);
+    return [=](real T, real P) { return -aux_lgK(T, P); };
 }
 
 auto enthalpyChangeFn(const PhreeqcSpecies* species) -> Fn<real(real,real)>
