@@ -170,7 +170,8 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
 
     EquilibriumOptions options;
-    options.optima.output = true;
+    // options.optima.output = true;
+    options.optima.output = false;
     options.epsilon = 1e-40;
     options.optima.max_iterations = 100;
     options.optima.tolerance = 1e-10;
@@ -202,7 +203,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
     // solver.solve(copy);
 
-    std::cout << "Time (s) = " << elapsed(start) << std::endl;
+    // std::cout << "Time (s) = " << elapsed(start) << std::endl;
 
     CHECK( result.optima.succeeded );
     CHECK( result.optima.iterations <= 48 );
