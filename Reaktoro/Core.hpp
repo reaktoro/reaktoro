@@ -23,7 +23,6 @@
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
-#include <Reaktoro/Core/ChemicalProperty.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/ChemicalQuantity.hpp>
@@ -35,7 +34,6 @@
 #include <Reaktoro/Core/ElementList.hpp>
 #include <Reaktoro/Core/EquilibriumProps.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
-#include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/PhaseList.hpp>
 #include <Reaktoro/Core/Phases.hpp>

@@ -99,9 +99,9 @@ add_subdirectory(databases)
 add_subdirectory(Reaktoro)
 
 # Build the Python extension module PyReaktoro and the Python packages reaktoro
-if(REAKTORO_BUILD_PYTHON)
-    add_subdirectory(python)
-endif()
+# if(REAKTORO_BUILD_PYTHON)
+#     add_subdirectory(python)
+# endif()
 
 # Build the Python package ireaktoro, the Reaktoro interpreter
 if(REAKTORO_BUILD_INTERPRETER)
@@ -127,9 +127,9 @@ endif()
 add_subdirectory(utilities EXCLUDE_FROM_ALL)
 
 # Add target "python" for manual building of python wrappers, as `make python`, if REAKTORO_BUILD_PYTHON is OFF
-add_custom_target(python
-    COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/python")
+# add_custom_target(python
+#     COMMAND ${CMAKE_MAKE_PROGRAM}
+#     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/python")
 
 # Add target "interpreter" for manual building of interpreter, as `make interpreter`, if REAKTORO_BUILD_INTERPRETER is OFF
 add_custom_target(interpreter
