@@ -128,9 +128,9 @@ int main()
     params.P = 200 * 1.01325;   // the pressure (in units of bar)
 
     // Define parameters of the equilibrium solvers
-    //params.smart_equlibrium_reltol = 0.001;
-    params.smart_equlibrium_reltol = 0.005;
-    params.smart_equlibrium_reltol = 0.01;
+    params.smart_equlibrium_reltol = 0.001;
+    //params.smart_equlibrium_reltol = 0.005;
+    //params.smart_equlibrium_reltol = 0.01;
     //params.activity_model = "dk-full";
     params.activity_model = "pitzer-full";
     //params.activity_model = "hkf-full";
@@ -146,7 +146,7 @@ int main()
 
     // Execute reactive transport with different solvers
     params.use_smart_eqilibirum_solver = true; runReactiveTransport(params, results);
-    params.use_smart_eqilibirum_solver = false; runReactiveTransport(params, results);
+    //params.use_smart_eqilibirum_solver = false; runReactiveTransport(params, results);
 
     results.conventional_total = results.equilibrium_timing.solve;
     results.smart_total = results.smart_equilibrium_timing.solve;
@@ -218,7 +218,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
-    //if(params.use_smart_eqilibirum_solver) std::cout << "system = \n" << system << std:: endl;
+    //if(params.use_smart_equilibrium_solver) std::cout << "system = \n" << system << std:: endl;
     //getchar();
 
     // ************************************************************************************************************** //
@@ -348,6 +348,9 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     output.add("elementmolality(Si)");
     output.add("elementmolality(Sr)");
     output.add("elementmolality(Z)");
+    output.add("phaseAmount(Barite)");
+    output.add("phaseMass(Barite)");
+    output.add("phaseVolume(Barite)");
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create RTProfiler to track the timing and results of reactive transport

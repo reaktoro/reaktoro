@@ -127,7 +127,10 @@ int main()
 
     // Define parameters of the equilibrium solvers
     //params.smart_equilibrium_reltol = 0.001;
-    params.smart_equilibrium_reltol = 0.004;
+    params.smart_equilibrium_reltol = 0.002;
+    //params.smart_equilibrium_reltol = 0.003;
+    //params.smart_equilibrium_reltol = 0.004;
+    //params.smart_equilibrium_reltol = 0.005;
     //params.smart_equilibrium_reltol = 0.01;
     params.activity_model = "dk-full";
     //params.activity_model = "pitzer-full";
@@ -216,6 +219,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
+    //std::cout << "system = \n" << system << std:: endl;
     //if(params.use_smart_equilibrium_solver) std::cout << "system = \n" << system << std:: endl;
     //getchar();
 
@@ -224,23 +228,23 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     // ************************************************************************************************************** //
 
     // Define the initial condition *with formation water)
-    EquilibriumInverseProblem problem_ic(system);
-    problem_ic.setTemperature(params.T, "celsius");
-    problem_ic.setPressure(params.P, "atm");
-    problem_ic.add("H2O", params.water_kg, "kg");
-    problem_ic.add("SO4", 10 * params.water_kg, "ug");
-    problem_ic.add("Ca", 995 * params.water_kg, "mg");
-    problem_ic.add("Ba", 995 * params.water_kg, "mg");
-    problem_ic.add("Sr", 105 * params.water_kg, "mg");
-    problem_ic.add("Na", 27250 * params.water_kg, "mg");
-    problem_ic.add("K", 1730 * params.water_kg, "mg");
-    problem_ic.add("Mg", 110 * params.water_kg, "mg");
-    problem_ic.add("Cl", 45150 * params.water_kg, "mg");
-    problem_ic.add("HCO3", 1980 * params.water_kg, "mg");
-    problem_ic.pH(7.0, "HCl", "NaOH");
+    EquilibriumInverseProblem problem_ic_fw(system);
+    problem_ic_fw.setTemperature(params.T, "celsius");
+    problem_ic_fw.setPressure(params.P, "atm");
+    problem_ic_fw.add("H2O", params.water_kg, "kg");
+    problem_ic_fw.add("SO4", 10 * params.water_kg, "ug");
+    problem_ic_fw.add("Ca", 995 * params.water_kg, "mg");
+    problem_ic_fw.add("Ba", 995 * params.water_kg, "mg");
+    problem_ic_fw.add("Sr", 105 * params.water_kg, "mg");
+    problem_ic_fw.add("Na", 27250 * params.water_kg, "mg");
+    problem_ic_fw.add("K", 1730 * params.water_kg, "mg");
+    problem_ic_fw.add("Mg", 110 * params.water_kg, "mg");
+    problem_ic_fw.add("Cl", 45150 * params.water_kg, "mg");
+    problem_ic_fw.add("HCO3", 1980 * params.water_kg, "mg");
+    problem_ic_fw.pH(7.0, "HCl", "NaOH");
 
     // Equilibrate the initial condition
-    ChemicalState state_ic = equilibrate(problem_ic);
+    ChemicalState state_ic = equilibrate(problem_ic_fw);
     // Scale the percentage of the aqueous phase and the whole volume
     state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");    // 10% if the 1.0m3
     state_ic.scaleVolume(1.0, "m3");
@@ -253,6 +257,9 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     ChemicalScalar pH_ic = evaluate_pH(props);
     std::cout << "ph(FW) = " << pH_ic.val << std:: endl;
 
+    std::cout << "names b   : "; for (auto elem : system.elements()) std::cout << elem.name() << " "; std::cout << std::endl;
+    std::cout << "state_ic b: " << tr(state_ic.elementAmounts()) << std::endl;
+
     // ************************************************************************************************************** //
     // Boundary condition (BC)
     // ************************************************************************************************************** //
@@ -262,7 +269,18 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     problem_bc_cb.setTemperature(params.T, "celsius");
     problem_bc_cb.setPressure(params.P, "atm");
     problem_bc_cb.add("H2O", params.water_kg, "kg");
-    problem_bc_cb.add("NaCl", 7, "mol");
+    problem_bc_cb.add("NaCl", 0.7, "mol");
+
+//    problem_ic_fw.add("SO4", 10 * params.water_kg, "ug");
+//    problem_ic_fw.add("Ca", 995 * params.water_kg, "mg");
+//    problem_ic_fw.add("Ba", 995 * params.water_kg, "mg");
+//    problem_ic_fw.add("Sr", 105 * params.water_kg, "mg");
+//    problem_ic_fw.add("Na", 27250 * params.water_kg, "mg");
+//    problem_ic_fw.add("K", 1730 * params.water_kg, "mg");
+//    problem_ic_fw.add("Mg", 110 * params.water_kg, "mg");
+//    problem_ic_fw.add("Cl", 45150 * params.water_kg, "mg");
+//    problem_ic_fw.add("HCO3", 1980 * params.water_kg, "mg");
+
 
     // Equilibrate the initial condition
     ChemicalState state_bc_cb = equilibrate(problem_bc_cb);
@@ -273,6 +291,10 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     props = state_bc_cb.properties();
     ChemicalScalar pH_bc = evaluate_pH(props);
     std::cout << "ph(CB) = " << pH_bc.val << std:: endl;
+
+    std::cout << "state_bc_cb b: " << tr(state_bc_cb.elementAmounts()) << std::endl;
+    //std::cout << "state_bc_cb: " << state_bc_cb << std::endl;
+    //getchar();
 
     // Define the first boundary condition (with seawater)
     EquilibriumInverseProblem problem_bc_sw(system);
@@ -299,6 +321,9 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     props = state_bc_sw.properties();
     ChemicalScalar pH_sw = evaluate_pH(props);
     std::cout << "ph(SW) = " << pH_sw.val << std:: endl;
+
+    std::cout << "state_bc_sw b: " << tr(state_bc_sw.elementAmounts()) << std::endl;
+    //getchar();
 
     // Step **: Create the mesh for the column
     Mesh mesh(params.ncells, params.xl, params.xr);
@@ -346,6 +371,10 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     output.add("elementmolality(Si)");
     output.add("elementmolality(Sr)");
     output.add("elementmolality(Z)");
+    output.add("phaseAmount(Barite)");
+    output.add("phaseMass(Barite)");
+    output.add("phaseVolume(Barite)");
+
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create RTProfiler to track the timing and results of reactive transport
@@ -457,7 +486,7 @@ auto makeResultsFolder(const Params& params) -> std::string
                                  "-" + params.activity_model +
                                  "-smart";
 
-    std::string folder = "results-scaling";
+    std::string folder = "results-scaling-new-cb-nacl-0.7";
     folder = (params.use_smart_equilibrium_solver) ?
              folder + smart_test_tag :
              folder + test_tag;
