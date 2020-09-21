@@ -29,10 +29,8 @@ public:
     /// Construct a default PhreeqcDatabase object.
     PhreeqcDatabase();
 
-    /// Construct a PhreeqcDatabase object with given name of embedded PHREEQC database.
-    /// This constructor initializes the PhreeqcDatabase object with an
-    /// embedded PHREEQC database file. The following embedded file names are
-    /// currently supported:"
+    /// Construct a PhreeqcDatabase object using an embedded PHREEQC database.
+    /// If `name` does not correspond to one of the following names, an exception is thrown:
     /// - Amm.dat
     /// - frezchem.dat
     /// - iso.dat
@@ -43,17 +41,39 @@ public:
     /// - pitzer.dat
     /// - sit.dat
     /// - wateq4f.dat
-    /// @param database The name of the embedded PHREEQC database file
-    explicit PhreeqcDatabase(String database);
+    /// @param name The name of the embedded PHREEQC database file
+    PhreeqcDatabase(std::string name);
+
+    /// Return a PhreeqcDatabase object initialized using an embedded PHREEQC database.
+    /// If `name` does not correspond to one of the following names, an exception is thrown:
+    /// - Amm.dat
+    /// - frezchem.dat
+    /// - iso.dat
+    /// - llnl.dat
+    /// - minteq.dat
+    /// - minteq.v4.dat
+    /// - phreeqc.dat
+    /// - pitzer.dat
+    /// - sit.dat
+    /// - wateq4f.dat
+    /// @param name The name of the embedded PHREEQC database file
+    static auto withName(std::string name) -> PhreeqcDatabase;
+
+    /// Construct a PhreeqcDatabase object with given path to a database file.
+    /// If `path` does not point to a valid database file, an exception is thrown.
+    /// @param path The path, including file name, to the database file.
+    static auto fromFile(std::string path) -> PhreeqcDatabase;
+
+    /// Return the contents of an embedded PHREEQC database as a string.
+    /// @param name The name of the embedded PHREEQC database file
+    /// @see withName
+    static auto contents(String name) -> String;
 
     /// Extend this PhreeqcDatabase object with contents in given database file.
     /// This method supports either a path to a database file, including its
     /// file name, or a multi-line string containing the database contents.
     /// @param database The path to the database file or its contents as a string
-    auto load(String filename) -> PhreeqcDatabase&;
-
-    /// Return the contents of an embedded PHREEQC database as a string.
-    static auto contents(String database) -> String;
+    auto load(String database) -> PhreeqcDatabase&;
 };
 
 } // namespace Reaktoro
