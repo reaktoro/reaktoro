@@ -166,7 +166,7 @@ struct PhreeqcDatabaseHelper
 };
 
 /// Return the contents of the embedded PHREEQC database with given name (or empty)
-auto getPhreeqcDatabaseString(String name) -> String
+auto getPhreeqcDatabaseContent(String name) -> String
 {
 	error(!oneof(name,
 		"Amm.dat",
@@ -198,7 +198,7 @@ auto getPhreeqcDatabaseString(String name) -> String
 }
 
 /// Create the Species objects from given PHREEQC database.
-auto createSpecies(String database)
+auto createSpeciesWithDatabaseContentOrPath(String database)
 {
 	PhreeqcDatabaseHelper helper(database);
 	return helper.species;
@@ -210,19 +210,38 @@ PhreeqcDatabase::PhreeqcDatabase()
 : Database()
 {}
 
-PhreeqcDatabase::PhreeqcDatabase(String database)
-: Database(detail::createSpecies(detail::getPhreeqcDatabaseString(database)))
+PhreeqcDatabase::PhreeqcDatabase(String name)
+: PhreeqcDatabase(PhreeqcDatabase::withName(name))
 {}
+
+auto PhreeqcDatabase::withName(std::string name) -> PhreeqcDatabase
+{
+	PhreeqcDatabase db;
+	const auto content = detail::getPhreeqcDatabaseContent(name);
+	const auto species = detail::createSpeciesWithDatabaseContentOrPath(content);
+	db.addSpecies(species);
+	return db;
+}
+
+auto PhreeqcDatabase::fromFile(std::string path) -> PhreeqcDatabase
+{
+	PhreeqcDatabase db;
+	const auto species = detail::createSpeciesWithDatabaseContentOrPath(path);
+	db.addSpecies(species);
+	return db;
+}
 
 auto PhreeqcDatabase::load(String filename) -> PhreeqcDatabase&
 {
 	Database::clear();
-	Database::addSpecies(detail::createSpecies(filename));
+	const auto species = detail::createSpeciesWithDatabaseContentOrPath(filename);
+	Database::addSpecies(species);
 	return *this;
 }
+
 auto PhreeqcDatabase::contents(String database) -> String
 {
-	return detail::getPhreeqcDatabaseString(database);
+	return detail::getPhreeqcDatabaseContent(database);
 }
 
 } // namespace Reaktoro
