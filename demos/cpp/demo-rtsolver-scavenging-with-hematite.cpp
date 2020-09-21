@@ -123,6 +123,8 @@ int main()
 
     // Define parameters of the equilibrium solvers
     params.smart_equilibrium_reltol = 0.01;
+    //params.smart_equilibrium_reltol = 0.005;
+    //params.smart_equilibrium_reltol = 0.001;
     //params.activity_model = "dk-full";
     params.activity_model = "pitzer-full";
     //params.activity_model = "dk";
@@ -252,7 +254,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     problem_ic.add("K+", 23.142e-3, "kg");
     problem_ic.add("HCO3-", 8.236e-3, "kg");
     problem_ic.add("O2(aq)", 58e-12, "kg");
-    problem_ic.add("Siderite", 0.5, "mol");
+    problem_ic.add("Siderite", 0.0, "mol");
     problem_ic.add("Pyrite", 0.0, "mol");
     problem_ic.add("Hematite", 0.5, "mol");
     problem_ic.pH(8.951);

@@ -128,7 +128,8 @@ int main()
 
     // Define parameters of the equilibrium solvers
     //params.smart_equlibrium_reltol = 0.001;
-    params.smart_equlibrium_reltol = 0.005;
+    params.smart_equlibrium_reltol = 0.002;
+    params.smart_equlibrium_reltol = 0.003;
     //params.smart_equlibrium_reltol = 0.01;
     params.activity_model = "dk-full";
     //params.activity_model = "pitzer-full";
@@ -417,6 +418,10 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     output_sw.add("elementmolality(Si)");
     output_sw.add("elementmolality(Sr)");
     output_sw.add("elementmolality(Z)");
+    output.add("phaseAmount(Barite)");
+    output.add("phaseMass(Barite)");
+    output.add("phaseVolume(Barite)");
+
     output_sw.filename(folder + "/" + "test-sw.txt");
 
     // Step **: Create RTProfiler to track the timing and results of reactive transport
