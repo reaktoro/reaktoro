@@ -31,12 +31,12 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     // TESTING METHOD: PhaseList::append
     //-------------------------------------------------------------------------
     phases.append(Phase()
-        .withName("AqueousSolution")
+        .withName("AqueousPhase")
         .withSpecies(SpeciesList("H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq)"))
         .withStateOfMatter(StateOfMatter::Liquid));
 
     phases.append(Phase()
-        .withName("GaseousSolution")
+        .withName("GaseousPhase")
         .withSpecies(SpeciesList("H2O(g) CO2(g) CH4(g) O2(g) H2(g) CO(g)"))
         .withStateOfMatter(StateOfMatter::Gas));
 
@@ -63,8 +63,8 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: PhaseList::operator[](Index)
     //-------------------------------------------------------------------------
-    REQUIRE( phases[0].name() == "AqueousSolution" );
-    REQUIRE( phases[1].name() == "GaseousSolution" );
+    REQUIRE( phases[0].name() == "AqueousPhase" );
+    REQUIRE( phases[1].name() == "GaseousPhase" );
     REQUIRE( phases[2].name() == "Calcite"         );
     REQUIRE( phases[3].name() == "Halite"          );
     REQUIRE( phases[4].name() == "Magnesite"       );
@@ -72,8 +72,8 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: PhaseList::find
     //-------------------------------------------------------------------------
-    REQUIRE( phases.find("AqueousSolution") == 0 );
-    REQUIRE( phases.find("GaseousSolution") == 1 );
+    REQUIRE( phases.find("AqueousPhase") == 0 );
+    REQUIRE( phases.find("GaseousPhase") == 1 );
     REQUIRE( phases.find("Calcite")         == 2 );
     REQUIRE( phases.find("Halite")          == 3 );
     REQUIRE( phases.find("Magnesite")       == 4 );
@@ -83,8 +83,8 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: PhaseList::findWithName
     //-------------------------------------------------------------------------
-    REQUIRE( phases.findWithName("AqueousSolution") == 0 );
-    REQUIRE( phases.findWithName("GaseousSolution") == 1 );
+    REQUIRE( phases.findWithName("AqueousPhase") == 0 );
+    REQUIRE( phases.findWithName("GaseousPhase") == 1 );
     REQUIRE( phases.findWithName("Calcite")         == 2 );
     REQUIRE( phases.findWithName("Halite")          == 3 );
     REQUIRE( phases.findWithName("Magnesite")       == 4 );
@@ -138,8 +138,8 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: PhaseList::index
     //-------------------------------------------------------------------------
-    REQUIRE( phases.index("AqueousSolution") == 0 );
-    REQUIRE( phases.index("GaseousSolution") == 1 );
+    REQUIRE( phases.index("AqueousPhase") == 0 );
+    REQUIRE( phases.index("GaseousPhase") == 1 );
     REQUIRE( phases.index("Calcite")         == 2 );
     REQUIRE( phases.index("Halite")          == 3 );
     REQUIRE( phases.index("Magnesite")         == 4 );
@@ -149,8 +149,8 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: PhaseList::indexWithName
     //-------------------------------------------------------------------------
-    REQUIRE( phases.indexWithName("AqueousSolution") == 0 );
-    REQUIRE( phases.indexWithName("GaseousSolution") == 1 );
+    REQUIRE( phases.indexWithName("AqueousPhase") == 0 );
+    REQUIRE( phases.indexWithName("GaseousPhase") == 1 );
     REQUIRE( phases.indexWithName("Calcite")         == 2 );
     REQUIRE( phases.indexWithName("Halite")          == 3 );
     REQUIRE( phases.indexWithName("Magnesite")         == 4 );
@@ -204,11 +204,11 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: PhaseList::withNames
     //-------------------------------------------------------------------------
-    filtered = phases.withNames("AqueousSolution GaseousSolution");
+    filtered = phases.withNames("AqueousPhase GaseousPhase");
 
     REQUIRE( filtered.size() == 2 );
-    REQUIRE( filtered[0].name() == "AqueousSolution" );
-    REQUIRE( filtered[1].name() == "GaseousSolution" );
+    REQUIRE( filtered[0].name() == "AqueousPhase" );
+    REQUIRE( filtered[1].name() == "GaseousPhase" );
 
     REQUIRE_THROWS( filtered.withNames("Calcite @#$") );
 
@@ -228,7 +228,7 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     filtered = phases.withAggregateState(AggregateState::Aqueous);
 
     REQUIRE( filtered.size() == 1 );
-    REQUIRE( filtered[0].name() == "AqueousSolution" );
+    REQUIRE( filtered[0].name() == "AqueousPhase" );
 
     filtered = phases.withAggregateState(AggregateState::Solid);
 

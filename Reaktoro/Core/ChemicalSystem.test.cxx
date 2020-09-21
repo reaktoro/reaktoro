@@ -82,13 +82,13 @@ auto createChemicalSystem() -> ChemicalSystem
     const Vec<Phase> phases =
     {
         Phase()
-            .withName("AqueousSolution")
+            .withName("AqueousPhase")
             .withSpecies(db.speciesWithAggregateState(AggregateState::Aqueous))
             .withStateOfMatter(StateOfMatter::Liquid)
             .withActivityPropsFn(activityPropsAqueous)
             .withIdealActivityPropsFn(activityPropsAqueous),
         Phase()
-            .withName("GaseousSolution")
+            .withName("GaseousPhase")
             .withSpecies(db.speciesWithAggregateState(AggregateState::Gas))
             .withStateOfMatter(StateOfMatter::Gas)
             .withActivityPropsFn(activityPropsGaseous)
@@ -138,8 +138,8 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::phase(i)
     //-------------------------------------------------------------------------
-    CHECK( system.phase(0).name() == "AqueousSolution" );
-    CHECK( system.phase(1).name() == "GaseousSolution" );
+    CHECK( system.phase(0).name() == "AqueousPhase" );
+    CHECK( system.phase(1).name() == "GaseousPhase" );
     CHECK( system.phase(2).name() == "Halite"          );
     CHECK( system.phase(3).name() == "Calcite"         );
     CHECK( system.phase(4).name() == "Quartz"          );

@@ -246,22 +246,22 @@ private:
 };
 
 /// The class used to configure an aqueous solution phase.
-class AqueousSolution : public GenericPhase
+class AqueousPhase : public GenericPhase
 {
 public:
-    /// Construct a default AqueousSolution object.
-    AqueousSolution() : GenericPhase() { initialize(); }
+    /// Construct a default AqueousPhase object.
+    AqueousPhase() : GenericPhase() { initialize(); }
 
-    /// Construct a AqueousSolution object with given species names.
-    explicit AqueousSolution(const StringList& species) : GenericPhase(species) { initialize(); }
+    /// Construct a AqueousPhase object with given species names.
+    explicit AqueousPhase(const StringList& species) : GenericPhase(species) { initialize(); }
 
-    /// Construct a AqueousSolution object with given element symbols.
-    explicit AqueousSolution(Speciate elements) : GenericPhase(elements += {"H", "O"}) { initialize(); }
+    /// Construct a AqueousPhase object with given element symbols.
+    explicit AqueousPhase(Speciate elements) : GenericPhase(elements += {"H", "O"}) { initialize(); }
 
-    /// Initialize the default attributes of this AqueousSolution object.
+    /// Initialize the default attributes of this AqueousPhase object.
     auto initialize() -> void
     {
-        setName("AqueousSolution");
+        setName("AqueousPhase");
         setStateOfMatter(StateOfMatter::Liquid);
         setAggregateState(AggregateState::Aqueous);
         setActivityModel(ActivityModelIdealAqueous());
@@ -270,22 +270,22 @@ public:
 };
 
 /// The class used to configure a gaseous solution phase.
-class GaseousSolution : public GenericPhase
+class GaseousPhase : public GenericPhase
 {
 public:
-    /// Construct a default GaseousSolution object.
-    GaseousSolution() : GenericPhase() { initialize(); }
+    /// Construct a default GaseousPhase object.
+    GaseousPhase() : GenericPhase() { initialize(); }
 
-    /// Construct a GaseousSolution object with given species names.
-    explicit GaseousSolution(const StringList& species) : GenericPhase(species) { initialize(); }
+    /// Construct a GaseousPhase object with given species names.
+    explicit GaseousPhase(const StringList& species) : GenericPhase(species) { initialize(); }
 
-    /// Construct a GaseousSolution object with given element symbols.
-    explicit GaseousSolution(const Speciate& elements) : GenericPhase(elements) { initialize(); }
+    /// Construct a GaseousPhase object with given element symbols.
+    explicit GaseousPhase(const Speciate& elements) : GenericPhase(elements) { initialize(); }
 
-    /// Initialize the default attributes of this GaseousSolution object.
+    /// Initialize the default attributes of this GaseousPhase object.
     auto initialize() -> void
     {
-        setName("GaseousSolution");
+        setName("GaseousPhase");
         setStateOfMatter(StateOfMatter::Gas);
         setAggregateState(AggregateState::Gas);
         setActivityModel(ActivityModelIdealGas());
@@ -294,22 +294,22 @@ public:
 };
 
 /// The class used to configure a liquid solution phase.
-class LiquidSolution : public GenericPhase
+class LiquidPhase : public GenericPhase
 {
 public:
-    /// Construct a default LiquidSolution object.
-    LiquidSolution() : GenericPhase() { initialize(); }
+    /// Construct a default LiquidPhase object.
+    LiquidPhase() : GenericPhase() { initialize(); }
 
-    /// Construct a LiquidSolution object with given species names.
-    explicit LiquidSolution(const StringList& species) : GenericPhase(species) { initialize(); }
+    /// Construct a LiquidPhase object with given species names.
+    explicit LiquidPhase(const StringList& species) : GenericPhase(species) { initialize(); }
 
-    /// Construct a LiquidSolution object with given element symbols.
-    explicit LiquidSolution(const Speciate& elements) : GenericPhase(elements) { initialize(); }
+    /// Construct a LiquidPhase object with given element symbols.
+    explicit LiquidPhase(const Speciate& elements) : GenericPhase(elements) { initialize(); }
 
-    /// Initialize the default attributes of this LiquidSolution object.
+    /// Initialize the default attributes of this LiquidPhase object.
     auto initialize() -> void
     {
-        setName("LiquidSolution");
+        setName("LiquidPhase");
         setStateOfMatter(StateOfMatter::Liquid);
         setAggregateState(AggregateState::Liquid);
         setActivityModel(ActivityModelIdealSolution());
@@ -318,13 +318,13 @@ public:
 };
 
 /// The class used to configure a solid solution phase.
-class SolidSolution : public GenericPhase
+class SolidPhase : public GenericPhase
 {
 public:
-    /// Construct a SolidSolution object with given species names.
-    explicit SolidSolution(const StringList& species) : GenericPhase(species) { initialize(); }
+    /// Construct a SolidPhase object with given species names.
+    explicit SolidPhase(const StringList& species) : GenericPhase(species) { initialize(); }
 
-    /// Initialize the default attributes of this SolidSolution object.
+    /// Initialize the default attributes of this SolidPhase object.
     auto initialize() -> void
     {
         String phasename;
@@ -332,7 +332,7 @@ public:
         for(auto&& name : species())
             phasename += (i++ == 0) ? name : "-" + name;
 
-        setName("SolidSolution");
+        setName("SolidPhase");
         setStateOfMatter(StateOfMatter::Solid);
         setAggregateState(AggregateState::Solid);
         setActivityModel(ActivityModelIdealSolution());
@@ -341,13 +341,13 @@ public:
 };
 
 /// The class used to configure a pure mineral phase.
-class Mineral : public GenericPhase
+class MineralPhase : public GenericPhase
 {
 public:
-    /// Construct a default Mineral object.
-    explicit Mineral(String mineral) : GenericPhase(mineral) { initialize(); }
+    /// Construct a default MineralPhase object.
+    explicit MineralPhase(String mineral) : GenericPhase(mineral) { initialize(); }
 
-    /// Initialize the default attributes of this Mineral object.
+    /// Initialize the default attributes of this MineralPhase object.
     auto initialize() -> void
     {
         setName(species().front());
@@ -359,19 +359,19 @@ public:
 };
 
 /// The class used to configure automatic selection of pure mineral phases.
-class Minerals : public GenericPhasesGenerator
+class MineralPhases : public GenericPhasesGenerator
 {
 public:
-    /// Construct a default Minerals object.
-    Minerals() : GenericPhasesGenerator() { initialize(); }
+    /// Construct a default MineralPhases object.
+    MineralPhases() : GenericPhasesGenerator() { initialize(); }
 
-    /// Construct a Minerals object with given species names.
-    explicit Minerals(const StringList& species) : GenericPhasesGenerator(species) { initialize(); }
+    /// Construct a MineralPhases object with given species names.
+    explicit MineralPhases(const StringList& species) : GenericPhasesGenerator(species) { initialize(); }
 
-    /// Construct a Minerals object with given element symbols.
-    explicit Minerals(const Speciate& elements) : GenericPhasesGenerator(elements) { initialize(); }
+    /// Construct a MineralPhases object with given element symbols.
+    explicit MineralPhases(const Speciate& elements) : GenericPhasesGenerator(elements) { initialize(); }
 
-    /// Initialize the default attributes of this Minerals object.
+    /// Initialize the default attributes of this MineralPhases object.
     auto initialize() -> void
     {
         setStateOfMatter(StateOfMatter::Solid);

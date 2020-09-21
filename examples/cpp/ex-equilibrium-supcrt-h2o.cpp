@@ -22,11 +22,11 @@ int main()
 {
     SupcrtDatabase db("supcrt98.xml");
 
-    AqueousSolution aqueousphase(speciate("H O C Na Cl"));
-    // AqueousSolution aqueousphase("H2O H+ OH- HCO3- CO2");
+    AqueousPhase aqueousphase(speciate("H O C Na Cl"));
+    // AqueousPhase aqueousphase("H2O H+ OH- HCO3- CO2");
     aqueousphase.setActivityModel(ActivityModelHKF());
 
-    GaseousSolution gaseousphase("CO2(g)");
+    GaseousPhase gaseousphase("CO2(g)");
     gaseousphase.setActivityModel(ActivityModelPengRobinson());
 
     Phases phases(db);
