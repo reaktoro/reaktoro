@@ -33,5 +33,9 @@ void exportPhases(py::module& m)
     m.def("speciate", speciate);
 
     py::class_<Phases>(m, "Phases")
+        .def(py::init<const Database&>())
+        .def("add", py::overload_cast<const GenericPhase&>(&Phases::add))
+        .def("add", py::overload_cast<const GenericPhasesGenerator&>(&Phases::add))
+        .def("database", &Phases::database)
         ;
 }
