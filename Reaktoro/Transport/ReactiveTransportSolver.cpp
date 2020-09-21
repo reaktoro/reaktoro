@@ -71,7 +71,7 @@ struct ReactiveTransportSolver::Impl
     /// The amounts of equilibrium elements on each cell of the mesh.
     Matrix be;
 
-    /// The amounts of equilibrium elements on each cell of the mesh.
+    /// The amounts of scaled equilibrium elements on each cell of the mesh.
     Matrix be_bar;
 
     /// The current number of steps in the solution of the reactive transport equations.
