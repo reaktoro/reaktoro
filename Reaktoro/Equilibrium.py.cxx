@@ -19,11 +19,17 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
-void exportCore(py::module& m);
-void exportEquilibrium(py::module& m);
+void exportEquilibriumConstraints(py::module& m);
+void exportEquilibriumDims(py::module& m);
+void exportEquilibriumOptions(py::module& m);
+void exportEquilibriumResult(py::module& m);
+void exportEquilibriumSolver(py::module& m);
 
-PYBIND11_MODULE(reaktoro4py, m)
+void exportEquilibrium(py::module& m)
 {
-    exportCore(m);
-    exportEquilibrium(m);
+    exportEquilibriumConstraints(m);
+    exportEquilibriumDims(m);
+    exportEquilibriumOptions(m);
+    exportEquilibriumResult(m);
+    exportEquilibriumSolver(m);
 }

@@ -19,11 +19,15 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
-void exportCore(py::module& m);
-void exportEquilibrium(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+using namespace Reaktoro;
 
-PYBIND11_MODULE(reaktoro4py, m)
+void exportEquilibriumOptions(py::module& m)
 {
-    exportCore(m);
-    exportEquilibrium(m);
+    py::class_<EquilibriumOptions>(m, "EquilibriumOptions")
+        .def(py::init<>())
+        .def_readwrite("optima", &EquilibriumOptions::optima)
+        .def_readwrite("epsilon", &EquilibriumOptions::epsilon)
+        ;
 }
