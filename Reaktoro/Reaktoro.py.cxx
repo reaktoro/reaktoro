@@ -19,53 +19,9 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
-void exportActivityProps(py::module& m);
-void exportAggregateState(py::module& m);
-void exportChemicalFormula(py::module& m);
-void exportChemicalProps(py::module& m);
-void exportChemicalPropsPhase(py::module& m);
-void exportChemicalState(py::module& m);
-void exportChemicalSystem(py::module& m);
-void exportDatabase(py::module& m);
-void exportElement(py::module& m);
-void exportElementalComposition(py::module& m);
-void exportElementList(py::module& m);
-void exportFormationReaction(py::module& m);
-void exportPhase(py::module& m);
-void exportPhaseList(py::module& m);
-void exportPhases(py::module& m);
-void exportReaction(py::module& m);
-void exportReactionEquation(py::module& m);
-void exportSpecies(py::module& m);
-void exportSpeciesList(py::module& m);
-void exportStandardThermoProps(py::module& m);
-void exportStateOfMatter(py::module& m);
-void exportThermoProps(py::module& m);
-void exportThermoPropsPhase(py::module& m);
+void exportCore(py::module& m);
 
 PYBIND11_MODULE(reaktoro4py, m)
 {
-    exportActivityProps(m);
-    exportAggregateState(m);
-    exportChemicalFormula(m);
-    exportChemicalProps(m);
-    exportChemicalPropsPhase(m);
-    exportChemicalState(m);
-    exportChemicalSystem(m);
-    exportDatabase(m);
-    exportElement(m);
-    exportElementalComposition(m);
-    exportElementList(m);
-    exportFormationReaction(m);
-    exportPhase(m);
-    exportPhaseList(m);
-    exportPhases(m);
-    exportReaction(m);
-    exportReactionEquation(m);
-    exportSpecies(m);
-    exportSpeciesList(m);
-    exportStandardThermoProps(m);
-    exportStateOfMatter(m);
-    exportThermoProps(m);
-    exportThermoPropsPhase(m);
+    exportCore(m);
 }

@@ -32,7 +32,6 @@
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/ElementalComposition.hpp>
 #include <Reaktoro/Core/ElementList.hpp>
-#include <Reaktoro/Core/EquilibriumProps.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/PhaseList.hpp>
