@@ -7,16 +7,12 @@ file(GLOB_RECURSE CPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 # Recursively collect all test files from the current directory
 file(GLOB_RECURSE TEST_CXX_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.test.cxx)
 
-# Set the list of names of the third-party targets and libraries
-set(THIRDPARTY_TARGETS PUGIXML MINIZ CVODE PHREEQC GEMS)
-set(THIRDPARTY_LIBS pugixml miniz sundials_cvode sundials_nvecserial phreeqc gems nlohmann_json::nlohmann_json)
-
 # Enable automatic creation of a module definition (.def) file for a SHARED library on Windows.
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 
 # Add the library path of the external dependencies to link directories
 # Note: cmake v3.13 is needed to use target_link_directories command!
-link_directories(${REAKTORO_THIRDPARTY_LIBRARY_PATH})
+link_directories(${REAKTORO_DEPS_LIBRARY_PATH})
 
 # Create a library target for Reaktoro
 add_library(Reaktoro ${HPP_FILES} ${CPP_FILES})
@@ -25,7 +21,7 @@ add_library(Reaktoro ${HPP_FILES} ${CPP_FILES})
 add_library(Reaktoro::Reaktoro ALIAS Reaktoro)
 
 # Specify the external dependencies of Reaktoro to ensure proper build sequence
-add_dependencies(Reaktoro Reaktoro::Databases ${THIRDPARTY_TARGETS})
+add_dependencies(Reaktoro Reaktoro::Databases)
 
 # Add the include paths to Reaktoro library target
 target_include_directories(Reaktoro
@@ -34,11 +30,16 @@ target_include_directories(Reaktoro
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/eigen3>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro/deps/eigen3>
-    PRIVATE ${REAKTORO_THIRDPARTY_INCLUDE_PATH})
+    PRIVATE ${REAKTORO_DEPS_INCLUDE_PATH})
 
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro
-    PRIVATE ${THIRDPARTY_LIBS}
+    PRIVATE pugixml
+    PRIVATE sundials_cvode
+    PRIVATE sundials_nvecserial
+    PRIVATE phreeqc
+    PRIVATE gems
+    PRIVATE nlohmann_json::nlohmann_json
     PRIVATE Reaktoro::Databases
     PUBLIC autodiff::autodiff
     PUBLIC Optima::Optima
@@ -134,6 +135,10 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers
     FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
 
-# Install deps header files
+# Install Reaktoro/deps header files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro/deps
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro COMPONENT headers)
+
+# Install public external deps libraries
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/deps/build/install/public/
+    DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT libraries)

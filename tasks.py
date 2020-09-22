@@ -84,14 +84,14 @@ def _get_cmake_command(
             -G "{cmake_generator}"
             {f'-A "{cmake_arch}"' if cmake_arch is not None else ""}
             -DPYBIND11_PYTHON_VERSION={os.environ.get("PY_VER", "3.7")}
-            -DREAKTORO_BUILD_ALL=ON            
+            -DREAKTORO_BUILD_ALL=ON
             -DREAKTORO_PYTHON_INSTALL_PREFIX="{(artifacts_dir / 'python').as_posix()}"
             -DCMAKE_BUILD_TYPE={config}
             -DCMAKE_INCLUDE_PATH="{cmake_include_path}"
             -DCMAKE_INSTALL_PREFIX="{relative_artifacts_dir.as_posix()}"
             {f'-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON' if verbose else ''}
             {f'-DREAKTORO_USE_OPENLIBM:BOOL=ON' if os.environ.get('REAKTORO_USE_OPENLIBM', '0').strip() != '0' else ''}
-            {f'"-DREAKTORO_THIRDPARTY_EXTRA_BUILD_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"' if verbose else ''}
+            {f'"-DREAKTORO_DEPS_EXTRA_BUILD_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"' if verbose else ''}
             "{str(relative_root_dir)}"
     """)
 

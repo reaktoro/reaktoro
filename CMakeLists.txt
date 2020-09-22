@@ -79,17 +79,24 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 endif()
 
 # Set the local directory where the third-party libraries are installed
-set(REAKTORO_THIRDPARTY_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/thirdparty/install)
+set(REAKTORO_DEPS_INSTALL_PATH ${CMAKE_SOURCE_DIR}/deps/build/install)
 
 # Set path variables for the include and lib directories of the installed dependencies
-set(REAKTORO_THIRDPARTY_INCLUDE_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/include)
-set(REAKTORO_THIRDPARTY_LIBRARY_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/lib)
+set(REAKTORO_DEPS_INCLUDE_PATH
+    ${REAKTORO_DEPS_INSTALL_PATH}/public/include
+    ${REAKTORO_DEPS_INSTALL_PATH}/private/include)
+
+set(REAKTORO_DEPS_LIBRARY_PATH
+    ${REAKTORO_DEPS_INSTALL_PATH}/public/lib
+    ${REAKTORO_DEPS_INSTALL_PATH}/private/lib)
+
+# Append the path to the installed dependency libraries to CMAKE_PREFIX_PATH
+list(APPEND CMAKE_PREFIX_PATH
+    ${REAKTORO_DEPS_INSTALL_PATH}/public
+    ${REAKTORO_DEPS_INSTALL_PATH}/private)
 
 # Find all Reaktoro dependencies
 include(ReaktoroFindDeps)
-
-# Build the third-party libraries
-add_subdirectory(thirdparty)
 
 # Build the C++ resource library containing embedded databases
 add_subdirectory(databases)
