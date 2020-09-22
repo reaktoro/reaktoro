@@ -17,26 +17,20 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 using namespace Reaktoro;
 
-void exportChemicalSystem(py::module& m)
+void exportWaterConstants(py::module& m)
 {
-    py::class_<ChemicalSystem>(m, "ChemicalSystem")
-        .def(py::init<>())
-        .def(py::init<const Phases&>())
-        .def(py::init<const Database&, const Vec<Phase>&>())
-        .def("database", &ChemicalSystem::database)
-        .def("element", &ChemicalSystem::element)
-        .def("elements", &ChemicalSystem::elements)
-        .def("species", py::overload_cast<>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("species", py::overload_cast<Index>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("phase", &ChemicalSystem::phase)
-        .def("phases", &ChemicalSystem::phases)
-        .def("formulaMatrix", &ChemicalSystem::formulaMatrix)
-        ;
+    m.attr("waterMolarMass") = waterMolarMass;
+    m.attr("waterCriticalTemperature") = waterCriticalTemperature;
+    m.attr("waterCriticalPressure") = waterCriticalPressure;
+    m.attr("waterCriticalDensity") = waterCriticalDensity;
+    m.attr("waterTriplePointTemperature") = waterTriplePointTemperature;
+    m.attr("waterTriplePointPressure") = waterTriplePointPressure;
+    m.attr("waterTriplePointDensityLiquid") = waterTriplePointDensityLiquid;
+    m.attr("waterTriplePointDensityVapour") = waterTriplePointDensityVapour;
 }

@@ -17,6 +17,8 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
 namespace py = pybind11;
 
 // Reaktoro includes
@@ -25,6 +27,8 @@ using namespace Reaktoro;
 
 void exportPhases(py::module& m)
 {
+    const auto return_internal_ref = py::return_value_policy::reference_internal;
+
     py::class_<Speciate>(m, "Speciate")
         .def(py::init<>())
         .def_readwrite("symbols", &Speciate::symbols)
@@ -43,22 +47,22 @@ void exportPhases(py::module& m)
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
-        .def("setName", &GenericPhase::setName, py::return_value_policy::reference_internal)
-        .def("setStateOfMatter", &GenericPhase::setStateOfMatter, py::return_value_policy::reference_internal)
-        .def("setAggregateState", &GenericPhase::setAggregateState, py::return_value_policy::reference_internal)
-        .def("setActivityModel", &GenericPhase::setActivityModel, py::return_value_policy::reference_internal)
-        .def("setIdealActivityModel", &GenericPhase::setIdealActivityModel, py::return_value_policy::reference_internal)
-        .def("named", &GenericPhase::named, py::return_value_policy::reference_internal)
-        .def("set", py::overload_cast<StateOfMatter>(&GenericPhase::set), py::return_value_policy::reference_internal)
-        .def("set", py::overload_cast<AggregateState>(&GenericPhase::set), py::return_value_policy::reference_internal)
-        .def("set", py::overload_cast<const ActivityModel&>(&GenericPhase::set), py::return_value_policy::reference_internal)
+        .def("setName", &GenericPhase::setName, return_internal_ref)
+        .def("setStateOfMatter", &GenericPhase::setStateOfMatter, return_internal_ref)
+        .def("setAggregateState", &GenericPhase::setAggregateState, return_internal_ref)
+        .def("setActivityModel", &GenericPhase::setActivityModel, return_internal_ref)
+        .def("setIdealActivityModel", &GenericPhase::setIdealActivityModel, return_internal_ref)
+        .def("named", &GenericPhase::named, return_internal_ref)
+        .def("set", py::overload_cast<StateOfMatter>(&GenericPhase::set), return_internal_ref)
+        .def("set", py::overload_cast<AggregateState>(&GenericPhase::set), return_internal_ref)
+        .def("set", py::overload_cast<const ActivityModel&>(&GenericPhase::set), return_internal_ref)
         .def("name", &GenericPhase::name)
         .def("stateOfMatter", &GenericPhase::stateOfMatter)
         .def("aggregateState", &GenericPhase::aggregateState)
-        .def("species", &GenericPhase::species, py::return_value_policy::reference_internal)
-        .def("elements", &GenericPhase::elements, py::return_value_policy::reference_internal)
-        .def("activityModel", &GenericPhase::activityModel, py::return_value_policy::reference_internal)
-        .def("idealActivityModel", &GenericPhase::idealActivityModel, py::return_value_policy::reference_internal)
+        .def("species", &GenericPhase::species, return_internal_ref)
+        .def("elements", &GenericPhase::elements, return_internal_ref)
+        .def("activityModel", &GenericPhase::activityModel, return_internal_ref)
+        .def("idealActivityModel", &GenericPhase::idealActivityModel, return_internal_ref)
         .def("convert", &GenericPhase::convert)
         ;
 
@@ -66,19 +70,19 @@ void exportPhases(py::module& m)
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
-        .def("setStateOfMatter", &GenericPhasesGenerator::setStateOfMatter, py::return_value_policy::reference_internal)
-        .def("setAggregateState", &GenericPhasesGenerator::setAggregateState, py::return_value_policy::reference_internal)
-        .def("setActivityModel", &GenericPhasesGenerator::setActivityModel, py::return_value_policy::reference_internal)
-        .def("setIdealActivityModel", &GenericPhasesGenerator::setIdealActivityModel, py::return_value_policy::reference_internal)
-        .def("set", py::overload_cast<StateOfMatter>(&GenericPhasesGenerator::set), py::return_value_policy::reference_internal)
-        .def("set", py::overload_cast<AggregateState>(&GenericPhasesGenerator::set), py::return_value_policy::reference_internal)
-        .def("set", py::overload_cast<const ActivityModel&>(&GenericPhasesGenerator::set), py::return_value_policy::reference_internal)
+        .def("setStateOfMatter", &GenericPhasesGenerator::setStateOfMatter, return_internal_ref)
+        .def("setAggregateState", &GenericPhasesGenerator::setAggregateState, return_internal_ref)
+        .def("setActivityModel", &GenericPhasesGenerator::setActivityModel, return_internal_ref)
+        .def("setIdealActivityModel", &GenericPhasesGenerator::setIdealActivityModel, return_internal_ref)
+        .def("set", py::overload_cast<StateOfMatter>(&GenericPhasesGenerator::set), return_internal_ref)
+        .def("set", py::overload_cast<AggregateState>(&GenericPhasesGenerator::set), return_internal_ref)
+        .def("set", py::overload_cast<const ActivityModel&>(&GenericPhasesGenerator::set), return_internal_ref)
         .def("stateOfMatter", &GenericPhasesGenerator::stateOfMatter)
         .def("aggregateState", &GenericPhasesGenerator::aggregateState)
-        .def("species", &GenericPhasesGenerator::species, py::return_value_policy::reference_internal)
-        .def("elements", &GenericPhasesGenerator::elements, py::return_value_policy::reference_internal)
-        .def("activityModel", &GenericPhasesGenerator::activityModel, py::return_value_policy::reference_internal)
-        .def("idealActivityModel", &GenericPhasesGenerator::idealActivityModel, py::return_value_policy::reference_internal)
+        .def("species", &GenericPhasesGenerator::species, return_internal_ref)
+        .def("elements", &GenericPhasesGenerator::elements, return_internal_ref)
+        .def("activityModel", &GenericPhasesGenerator::activityModel, return_internal_ref)
+        .def("idealActivityModel", &GenericPhasesGenerator::idealActivityModel, return_internal_ref)
         .def("convert", &GenericPhasesGenerator::convert)
         ;
 

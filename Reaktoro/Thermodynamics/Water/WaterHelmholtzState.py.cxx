@@ -17,26 +17,25 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
 using namespace Reaktoro;
 
-void exportChemicalSystem(py::module& m)
+void exportWaterHelmholtzState(py::module& m)
 {
-    py::class_<ChemicalSystem>(m, "ChemicalSystem")
+    py::class_<WaterHelmholtzState>(m, "WaterHelmholtzState")
         .def(py::init<>())
-        .def(py::init<const Phases&>())
-        .def(py::init<const Database&, const Vec<Phase>&>())
-        .def("database", &ChemicalSystem::database)
-        .def("element", &ChemicalSystem::element)
-        .def("elements", &ChemicalSystem::elements)
-        .def("species", py::overload_cast<>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("species", py::overload_cast<Index>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("phase", &ChemicalSystem::phase)
-        .def("phases", &ChemicalSystem::phases)
-        .def("formulaMatrix", &ChemicalSystem::formulaMatrix)
+        .def_readwrite("helmholtz", &WaterHelmholtzState::helmholtz)
+        .def_readwrite("helmholtzT", &WaterHelmholtzState::helmholtzT)
+        .def_readwrite("helmholtzD", &WaterHelmholtzState::helmholtzD)
+        .def_readwrite("helmholtzTT", &WaterHelmholtzState::helmholtzTT)
+        .def_readwrite("helmholtzTD", &WaterHelmholtzState::helmholtzTD)
+        .def_readwrite("helmholtzDD", &WaterHelmholtzState::helmholtzDD)
+        .def_readwrite("helmholtzTTT", &WaterHelmholtzState::helmholtzTTT)
+        .def_readwrite("helmholtzTTD", &WaterHelmholtzState::helmholtzTTD)
+        .def_readwrite("helmholtzTDD", &WaterHelmholtzState::helmholtzTDD)
+        .def_readwrite("helmholtzDDD", &WaterHelmholtzState::helmholtzDDD)
         ;
 }
