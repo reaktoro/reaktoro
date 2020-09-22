@@ -17,26 +17,28 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <pybind11/functional.h>
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Fluids/ActivityModelCubicEOS.hpp>
 using namespace Reaktoro;
 
-void exportChemicalSystem(py::module& m)
+void exportActivityModelCubicEOS(py::module& m)
 {
-    py::class_<ChemicalSystem>(m, "ChemicalSystem")
+    py::class_<ActivityModelCubicEOSParams>(m, "ActivityModelCubicEOSParams")
         .def(py::init<>())
-        .def(py::init<const Phases&>())
-        .def(py::init<const Database&, const Vec<Phase>&>())
-        .def("database", &ChemicalSystem::database)
-        .def("element", &ChemicalSystem::element)
-        .def("elements", &ChemicalSystem::elements)
-        .def("species", py::overload_cast<>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("species", py::overload_cast<Index>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("phase", &ChemicalSystem::phase)
-        .def("phases", &ChemicalSystem::phases)
-        .def("formulaMatrix", &ChemicalSystem::formulaMatrix)
         ;
+
+    m.def("ActivityModelVanDerWaals", ActivityModelVanDerWaals,
+        py::arg("params") = ActivityModelCubicEOSParams());
+
+    m.def("ActivityModelRedlichKwong", ActivityModelRedlichKwong,
+        py::arg("params") = ActivityModelCubicEOSParams());
+
+    m.def("ActivityModelSoaveRedlichKwong", ActivityModelSoaveRedlichKwong,
+        py::arg("params") = ActivityModelCubicEOSParams());
+
+    m.def("ActivityModelPengRobinson", ActivityModelPengRobinson,
+        py::arg("params") = ActivityModelCubicEOSParams());
 }

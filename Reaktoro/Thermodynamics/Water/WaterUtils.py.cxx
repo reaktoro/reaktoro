@@ -17,26 +17,23 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
 using namespace Reaktoro;
 
-void exportChemicalSystem(py::module& m)
+void exportWaterUtils(py::module& m)
 {
-    py::class_<ChemicalSystem>(m, "ChemicalSystem")
-        .def(py::init<>())
-        .def(py::init<const Phases&>())
-        .def(py::init<const Database&, const Vec<Phase>&>())
-        .def("database", &ChemicalSystem::database)
-        .def("element", &ChemicalSystem::element)
-        .def("elements", &ChemicalSystem::elements)
-        .def("species", py::overload_cast<>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("species", py::overload_cast<Index>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("phase", &ChemicalSystem::phase)
-        .def("phases", &ChemicalSystem::phases)
-        .def("formulaMatrix", &ChemicalSystem::formulaMatrix)
-        ;
+    m.def("waterDensityHGK", waterDensityHGK);
+    m.def("waterDensityWagnerPruss", waterDensityWagnerPruss);
+    m.def("waterLiquidDensityHGK", waterLiquidDensityHGK);
+    m.def("waterLiquidDensityWagnerPruss", waterLiquidDensityWagnerPruss);
+    m.def("waterVaporDensityHGK", waterVaporDensityHGK);
+    m.def("waterVaporDensityWagnerPruss", waterVaporDensityWagnerPruss);
+    m.def("waterPressureHGK", waterPressureHGK);
+    m.def("waterPressureWagnerPruss", waterPressureWagnerPruss);
+    m.def("waterSaturatedPressureWagnerPruss", waterSaturatedPressureWagnerPruss);
+    m.def("waterSaturatedLiquidDensityWagnerPruss", waterSaturatedLiquidDensityWagnerPruss);
+    m.def("waterSaturatedVapourDensityWagnerPruss", waterSaturatedVapourDensityWagnerPruss);
 }

@@ -17,26 +17,24 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <pybind11/functional.h>
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelDrummond.hpp>
 using namespace Reaktoro;
 
-void exportChemicalSystem(py::module& m)
+void exportActivityModelDrummond(py::module& m)
 {
-    py::class_<ChemicalSystem>(m, "ChemicalSystem")
+    py::class_<ActivityModelDrummondParams>(m, "ActivityModelDrummondParams")
         .def(py::init<>())
-        .def(py::init<const Phases&>())
-        .def(py::init<const Database&, const Vec<Phase>&>())
-        .def("database", &ChemicalSystem::database)
-        .def("element", &ChemicalSystem::element)
-        .def("elements", &ChemicalSystem::elements)
-        .def("species", py::overload_cast<>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("species", py::overload_cast<Index>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("phase", &ChemicalSystem::phase)
-        .def("phases", &ChemicalSystem::phases)
-        .def("formulaMatrix", &ChemicalSystem::formulaMatrix)
+        .def_readwrite("a1", &ActivityModelDrummondParams::a1)
+        .def_readwrite("a2", &ActivityModelDrummondParams::a2)
+        .def_readwrite("a3", &ActivityModelDrummondParams::a3)
+        .def_readwrite("a4", &ActivityModelDrummondParams::a4)
+        .def_readwrite("a5", &ActivityModelDrummondParams::a5)
         ;
+
+    m.def("ActivityModelDrummond", py::overload_cast<String>(ActivityModelDrummond));
+    m.def("ActivityModelDrummond", py::overload_cast<String, ActivityModelDrummondParams>(ActivityModelDrummond));
 }

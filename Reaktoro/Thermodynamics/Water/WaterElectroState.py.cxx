@@ -17,26 +17,27 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
 using namespace Reaktoro;
 
-void exportChemicalSystem(py::module& m)
+void exportWaterElectroState(py::module& m)
 {
-    py::class_<ChemicalSystem>(m, "ChemicalSystem")
+    py::class_<WaterElectroState>(m, "WaterElectroState")
         .def(py::init<>())
-        .def(py::init<const Phases&>())
-        .def(py::init<const Database&, const Vec<Phase>&>())
-        .def("database", &ChemicalSystem::database)
-        .def("element", &ChemicalSystem::element)
-        .def("elements", &ChemicalSystem::elements)
-        .def("species", py::overload_cast<>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("species", py::overload_cast<Index>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("phase", &ChemicalSystem::phase)
-        .def("phases", &ChemicalSystem::phases)
-        .def("formulaMatrix", &ChemicalSystem::formulaMatrix)
+        .def_readwrite("epsilon", &WaterElectroState::epsilon)
+        .def_readwrite("epsilonT", &WaterElectroState::epsilonT)
+        .def_readwrite("epsilonP", &WaterElectroState::epsilonP)
+        .def_readwrite("epsilonTT", &WaterElectroState::epsilonTT)
+        .def_readwrite("epsilonTP", &WaterElectroState::epsilonTP)
+        .def_readwrite("epsilonPP", &WaterElectroState::epsilonPP)
+        .def_readwrite("bornZ", &WaterElectroState::bornZ)
+        .def_readwrite("bornY", &WaterElectroState::bornY)
+        .def_readwrite("bornQ", &WaterElectroState::bornQ)
+        .def_readwrite("bornN", &WaterElectroState::bornN)
+        .def_readwrite("bornU", &WaterElectroState::bornU)
+        .def_readwrite("bornX", &WaterElectroState::bornX)
         ;
 }

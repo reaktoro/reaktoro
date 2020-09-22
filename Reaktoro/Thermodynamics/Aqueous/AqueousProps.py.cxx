@@ -17,26 +17,21 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
 using namespace Reaktoro;
 
-void exportChemicalSystem(py::module& m)
+void exportAqueousProps(py::module& m)
 {
-    py::class_<ChemicalSystem>(m, "ChemicalSystem")
-        .def(py::init<>())
-        .def(py::init<const Phases&>())
-        .def(py::init<const Database&, const Vec<Phase>&>())
-        .def("database", &ChemicalSystem::database)
-        .def("element", &ChemicalSystem::element)
-        .def("elements", &ChemicalSystem::elements)
-        .def("species", py::overload_cast<>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("species", py::overload_cast<Index>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
-        .def("phase", &ChemicalSystem::phase)
-        .def("phases", &ChemicalSystem::phases)
-        .def("formulaMatrix", &ChemicalSystem::formulaMatrix)
+    py::class_<AqueousProps, ChemicalPropsPhase>(m, "AqueousProps")
+        .def(py::init<const Phase&>())
+        .def("ionicStrength", &AqueousProps::ionicStrength)
+        .def("pH", &AqueousProps::pH)
+        .def("pE", &AqueousProps::pE)
+        .def("Eh", &AqueousProps::Eh)
+        .def("alkalinity", &AqueousProps::alkalinity)
+        .def("phase", &AqueousProps::phase, py::return_value_policy::reference_internal)
         ;
 }
