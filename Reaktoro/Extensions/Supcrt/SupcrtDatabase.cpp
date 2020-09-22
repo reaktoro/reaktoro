@@ -31,7 +31,6 @@ CMRC_DECLARE(ReaktoroDatabases);
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Extensions/Supcrt/SupcrtEmbeddedDatabases.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtParams.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtEngine.hpp>
 
