@@ -17,7 +17,5 @@
 
 #pragma once
 
-#include <Reaktoro/Extensions/Phreeqc.hpp>
-#include <Reaktoro/Extensions/PorousMedia.hpp>
-#include <Reaktoro/Extensions/Supcrt.hpp>
-#include <Reaktoro/Extensions/ThermoFun.hpp>
+#include <Reaktoro/Extensions/ThermoFun/ThermoFunDatabase.hpp>
+#include <Reaktoro/Extensions/ThermoFun/ThermoFunEngine.hpp>
