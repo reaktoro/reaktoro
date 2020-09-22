@@ -17,7 +17,12 @@
 
 #pragma once
 
-#include <Reaktoro/Extensions/Phreeqc.hpp>
-#include <Reaktoro/Extensions/PorousMedia.hpp>
-#include <Reaktoro/Extensions/Supcrt.hpp>
-#include <Reaktoro/Extensions/ThermoFun.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesThermoState.hpp>
+#include <Reaktoro/Extensions/Supcrt/SupcrtModels.hpp>
+#include <Reaktoro/Extensions/Supcrt/Supcrt.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesElectroState.hpp>
+#include <Reaktoro/Extensions/Supcrt/SupcrtEmbeddedDatabases.hpp>
+#include <Reaktoro/Extensions/Supcrt/SupcrtParams.hpp>
+#include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
+#include <Reaktoro/Extensions/Supcrt/SupcrtEngine.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesElectroStateHKF.hpp>

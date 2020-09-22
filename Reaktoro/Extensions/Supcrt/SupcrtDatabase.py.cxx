@@ -15,9 +15,20 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
-#include <Reaktoro/Extensions/Phreeqc.hpp>
-#include <Reaktoro/Extensions/PorousMedia.hpp>
-#include <Reaktoro/Extensions/Supcrt.hpp>
-#include <Reaktoro/Extensions/ThermoFun.hpp>
+// Reaktoro includes
+#include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
+using namespace Reaktoro;
+
+void exportSupcrtDatabase(py::module& m)
+{
+    py::class_<SupcrtDatabase, Database>(m, "SupcrtDatabase")
+        .def(py::init<>())
+        .def(py::init<String>())
+        .def_static("withName", &SupcrtDatabase::withName)
+        .def_static("fromFile", &SupcrtDatabase::fromFile)
+        ;
+}

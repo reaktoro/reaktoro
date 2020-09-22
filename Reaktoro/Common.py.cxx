@@ -15,9 +15,13 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
-#include <Reaktoro/Extensions/Phreeqc.hpp>
-#include <Reaktoro/Extensions/PorousMedia.hpp>
-#include <Reaktoro/Extensions/Supcrt.hpp>
-#include <Reaktoro/Extensions/ThermoFun.hpp>
+void exportStringList(py::module& m);
+
+void exportCommon(py::module& m)
+{
+    exportStringList(m);
+}
