@@ -21,7 +21,6 @@
 #include <Reaktoro/Extensions/Supcrt/SupcrtModels.hpp>
 #include <Reaktoro/Extensions/Supcrt/Supcrt.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroState.hpp>
-#include <Reaktoro/Extensions/Supcrt/SupcrtEmbeddedDatabases.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtParams.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtEngine.hpp>
