@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from reaktoro.PyReaktoro import ChemicalOutput
+from reaktoro.reaktoro4py import ChemicalOutput
 
 
 def _ChemicalOutput_to_array(self):

@@ -30,7 +30,7 @@ target_include_directories(Reaktoro
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/eigen3>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro/deps/eigen3>
-    PRIVATE ${REAKTORO_DEPS_INCLUDE_PATH})
+    PRIVATE ${REAKTORO_INCLUDE_PATH_DEPS})
 
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro
@@ -90,9 +90,6 @@ if(REAKTORO_BUILD_PYTHON)
 
     # Compile Reaktoro *.py.cxx files into a Python module
     pybind11_add_module(reaktoro4py ${PY_CXX_FILES})
-
-    # Create an install target for the python module
-    install(TARGETS reaktoro4py DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries)
 
     # Add the root directory of the project to the include list
     target_include_directories(reaktoro4py PRIVATE ${PROJECT_SOURCE_DIR})
