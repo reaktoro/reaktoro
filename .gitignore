@@ -2,6 +2,10 @@
 build/
 _build/
 
+# Build directories
+deps/build/
+deps/git/
+
 # Eclipse IDE files
 .settings
 .project
