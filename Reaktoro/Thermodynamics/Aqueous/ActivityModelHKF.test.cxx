@@ -82,10 +82,10 @@ TEST_CASE("Testing ActivityModelHKF", "[ActivityModelHKF]")
     CHECK( exp(props.ln_g[5])  == Approx(0.1860570160) ); // Ca++
     CHECK( exp(props.ln_g[6])  == Approx(0.6537644018) ); // HCO3-
     CHECK( exp(props.ln_g[7])  == Approx(0.1948494354) ); // CO3--
-    CHECK( exp(props.ln_g[8])  == Approx(1.0000000000) ); // CO2
-    CHECK( exp(props.ln_g[9])  == Approx(1.0000000000) ); // NaCl
-    CHECK( exp(props.ln_g[10]) == Approx(1.0000000000) ); // HCl
-    CHECK( exp(props.ln_g[11]) == Approx(1.0000000000) ); // NaOH
+    CHECK( exp(props.ln_g[8])  == Approx(1.2735100000) ); // CO2
+    CHECK( exp(props.ln_g[9])  == Approx(1.2735100000) ); // NaCl
+    CHECK( exp(props.ln_g[10]) == Approx(1.2735100000) ); // HCl
+    CHECK( exp(props.ln_g[11]) == Approx(1.2735100000) ); // NaOH
 
     checkActivities(x, props);
 }

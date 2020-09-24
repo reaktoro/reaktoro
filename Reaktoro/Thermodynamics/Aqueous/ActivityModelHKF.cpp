@@ -300,11 +300,13 @@ auto activityPropsFnHKF(const SpeciesList& species) -> ActivityPropsFn
     // The number of species in the mixture
     const auto num_species = mixture.species().size();
 
-    // The number of charged species in the mixture
+    // The number of charged and neutral species in the mixture
     const auto num_charged_species = mixture.charged().size();
+    const auto num_neutral_species = mixture.neutral().size();
 
-    // The indices of the charged species
+    // The indices of the charged and neutral species
     const auto icharged_species = mixture.indicesCharged();
+    const auto ineutral_species = mixture.indicesNeutral();
 
     // The index of the water species
     const auto iwater = mixture.indexWater();
@@ -373,6 +375,20 @@ auto activityPropsFnHKF(const SpeciesList& species) -> ActivityPropsFn
 
         // The osmotic coefficient of the aqueous phase
         real phi = {};
+
+        // Loop over all neutral species in the mixture
+        for(auto i = 0; i < num_neutral_species; ++i)
+        {
+            // The index of the current neutral species
+            const auto ispecies = ineutral_species[i];
+
+            // The b coefficient in lg(gammai) = b*I (0.1 as in PHREEQC)
+            const auto b = 0.1;
+
+            // Calculate the ln activity coefficient of the current neutral species
+            props.ln_g[ispecies] = ln10 * b * I;
+        }
+
 
         // Loop over all charged species in the mixture
         for(auto i = 0; i < num_charged_species; ++i)
