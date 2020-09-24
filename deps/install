@@ -3,15 +3,26 @@
 # In other words, from the root of the main project.
 #-------------------------------------------------------------
 
-# Set the build type to Release by default, if not provided
+# Configure the build type when compiling the external dependencies
 if(NOT DEFINED BUILD_TYPE)
     set(BUILD_TYPE Release)
 endif()
 
-# Set the BUILD_PATH variable
+message(STATUS "Using ${BUILD_TYPE} as the build type for compiling the external dependencies.")
+
+# Configure the path where the external dependencies are built
 if(NOT DEFINED BUILD_PATH)
     set(BUILD_PATH ${CMAKE_SOURCE_DIR}/deps/build)
 endif()
+
+message(STATUS "Using ${BUILD_PATH} as the path where the external dependencies are built.")
+
+# Configure the cmake generator to build/install the external dependencies
+if(NOT DEFINED GENERATOR)
+    set(GENERATOR "Ninja") # Use Ninja by default, which is cross-platform
+endif()
+
+message(STATUS "Using ${GENERATOR} as the build tool.")
 
 # Create the build directory for the external dependencies
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_PATH})
@@ -19,7 +30,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_PATH})
 # Configure the installation of the external dependencies
 execute_process(COMMAND
     ${CMAKE_COMMAND} -E chdir ${BUILD_PATH}
-    ${CMAKE_COMMAND} -G Ninja ${CMAKE_SOURCE_DIR}/deps
+    ${CMAKE_COMMAND} -G ${GENERATOR} ${CMAKE_SOURCE_DIR}/deps
         -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
         -DCMAKE_INSTALL_PREFIX=${BUILD_PATH}/install)
 
