@@ -21,6 +21,7 @@
 #include <cmath>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ActivityProps.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 
@@ -29,5 +30,19 @@ namespace Reaktoro {
 /// The type for functions that construct an ActivityPropsFn for a phase.
 /// @param species The species in the phase.
 using ActivityModel = Fn<ActivityPropsFn(const SpeciesList& species)>;
+
+/// Return an activity model resulting from chaining other activity models.
+auto chain(const Vec<ActivityModel>& models) -> ActivityModel;
+
+/// Return an activity model resulting from chaining other activity models.
+auto chain(const ActivityModel& model) -> ActivityModel;
+
+/// Return an activity model resulting from chaining other activity models.
+template<typename... Models>
+auto chain(const ActivityModel& model, const Models&... models) -> ActivityModel
+{
+    Vec<ActivityModel> vec = {model, models...};
+    return chain(vec);
+}
 
 } // namespace Reaktoro

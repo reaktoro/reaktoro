@@ -19,6 +19,7 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
+void exportActivityModel(py::module& m);
 void exportActivityProps(py::module& m);
 void exportAggregateState(py::module& m);
 void exportChemicalFormula(py::module& m);
@@ -45,6 +46,7 @@ void exportThermoPropsPhase(py::module& m);
 
 void exportCore(py::module& m)
 {
+    exportActivityModel(m);
     exportActivityProps(m);
     exportAggregateState(m);
     exportChemicalFormula(m);
