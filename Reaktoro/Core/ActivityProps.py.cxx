@@ -17,7 +17,6 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
 namespace py = pybind11;
 
 // Reaktoro includes
@@ -39,14 +38,34 @@ void exportActivityProps(py::module& m)
         .def_readwrite("ln_a", &ActivityProps::ln_a)
         ;
 
+    #define get(field) [](const ActivityPropsRef& self) { return self.field; }
+    #define set(field) [](ActivityPropsRef& self, const real& val) { self.field = val; }
+
+    py::class_<ActivityPropsRef>(m, "ActivityPropsRef")
+        .def_property("Vex", get(Vex), set(Vex))
+        .def_property("VexT", get(VexT), set(VexT))
+        .def_property("VexP", get(VexP), set(VexP))
+        .def_property("Gex", get(Gex), set(Gex))
+        .def_property("Hex", get(Hex), set(Hex))
+        .def_property("Cpex", get(Cpex), set(Cpex))
+        .def_property("Cvex", get(Cvex), set(Cvex))
+        .def_readwrite("ln_g", &ActivityPropsRef::ln_g)
+        .def_readwrite("ln_a", &ActivityPropsRef::ln_a)
+        ;
+
+    #undef get
+    #undef set
+
+    #define get(field) [](const ActivityPropsConstRef& self) { return self.field; }
+
     py::class_<ActivityPropsConstRef>(m, "ActivityPropsConstRef")
-        .def_property_readonly("Vex", [](const ActivityPropsConstRef& self) { return self.Vex; })
-        .def_property_readonly("VexT", [](const ActivityPropsConstRef& self) { return self.VexT; })
-        .def_property_readonly("VexP", [](const ActivityPropsConstRef& self) { return self.VexP; })
-        .def_property_readonly("Gex", [](const ActivityPropsConstRef& self) { return self.Gex; })
-        .def_property_readonly("Hex", [](const ActivityPropsConstRef& self) { return self.Hex; })
-        .def_property_readonly("Cpex", [](const ActivityPropsConstRef& self) { return self.Cpex; })
-        .def_property_readonly("Cvex", [](const ActivityPropsConstRef& self) { return self.Cvex; })
+        .def_property_readonly("Vex", get(Vex))
+        .def_property_readonly("VexT", get(VexT))
+        .def_property_readonly("VexP", get(VexP))
+        .def_property_readonly("Gex", get(Gex))
+        .def_property_readonly("Hex", get(Hex))
+        .def_property_readonly("Cpex", get(Cpex))
+        .def_property_readonly("Cvex", get(Cvex))
         .def_readonly("ln_g", &ActivityPropsConstRef::ln_g)
         .def_readonly("ln_a", &ActivityPropsConstRef::ln_a)
         ;
