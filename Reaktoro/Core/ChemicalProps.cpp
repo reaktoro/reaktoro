@@ -124,6 +124,22 @@ struct ChemicalProps::Impl
         u    = ArrayXr::Zero(numspecies);
     }
 
+    /// Construct a ChemicalProps::Impl object.
+    Impl(const ChemicalState& state)
+    : Impl(state.system())
+    {
+        update(state);
+    }
+
+    /// Update the chemical properties of the chemical system.
+    auto update(const ChemicalState& state) -> void
+    {
+        const auto& T = state.temperature();
+        const auto& P = state.pressure();
+        const auto& n = state.speciesAmounts();
+        update(T, P, n);
+    }
+
     /// Update the chemical properties of the chemical system.
     auto update(const real& T, const real& P, ArrayXrConstRef n) -> void
     {
@@ -146,6 +162,15 @@ struct ChemicalProps::Impl
         autodiff::seed(wrtvar);
         update(T, P, n);
         autodiff::unseed(wrtvar);
+    }
+
+    /// Update the chemical properties of the chemical system using ideal activity models.
+    auto updateIdeal(const ChemicalState& state) -> void
+    {
+        const auto& T = state.temperature();
+        const auto& P = state.pressure();
+        const auto& n = state.speciesAmounts();
+        updateIdeal(T, P, n);
     }
 
     /// Update the chemical properties of the chemical system using ideal activity models.
@@ -208,6 +233,10 @@ ChemicalProps::ChemicalProps(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
 
+ChemicalProps::ChemicalProps(const ChemicalState& state)
+: pimpl(new Impl(state))
+{}
+
 ChemicalProps::ChemicalProps(const ChemicalProps& other)
 : pimpl(new Impl(*other.pimpl))
 {}
@@ -223,10 +252,7 @@ auto ChemicalProps::operator=(ChemicalProps other) -> ChemicalProps&
 
 auto ChemicalProps::update(const ChemicalState& state) -> void
 {
-    const auto& T = state.temperature();
-    const auto& P = state.pressure();
-    const auto& n = state.speciesAmounts();
-    update(T, P, n);
+    pimpl->update(state);
 }
 
 auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> void
@@ -241,10 +267,7 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n, Wrt<
 
 auto ChemicalProps::updateIdeal(const ChemicalState& state) -> void
 {
-    const auto& T = state.temperature();
-    const auto& P = state.pressure();
-    const auto& n = state.speciesAmounts();
-    updateIdeal(T, P, n);
+    pimpl->updateIdeal(state);
 }
 
 auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void

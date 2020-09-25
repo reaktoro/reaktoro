@@ -217,6 +217,12 @@ public:
         autodiff::unseed(wrtvar);
     }
 
+    /// Update the chemical properties of the phase.
+    auto update(const ChemicalPropsPhaseBaseData<Real, Array>& data)
+    {
+        _data = data;
+    }
+
     /// Update the chemical properties of the phase using ideal activity models.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)

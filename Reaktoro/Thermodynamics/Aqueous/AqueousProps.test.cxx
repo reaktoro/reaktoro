@@ -24,4 +24,5 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
 {
+    // TODO: Implement tests for AqueousProps class.
 }

@@ -19,39 +19,54 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalProps;
+class ChemicalState;
 class ChemicalSystem;
-
-// TODO: Implement AqueousProps class in the Geochemistry extension.
+class Phase;
 
 /// The chemical properties of an aqueous phase.
-/// @ingroup GeochemistryExtension
-class AqueousProps : public ChemicalPropsPhase
+class AqueousProps
 {
 public:
-    /// Construct a AqueousProps instance with standard conditions.
-    /// This constructor creates an instance of AqueousProps with temperature
-    /// 25 °C, pressure 1 bar, zero mole amounts for the aqueous solutes, and 1
-    /// kg of solvent water.
-    explicit AqueousProps(const Phase& phase);
+    /// Construct an uninitialized AqueousProps object with given chemical system.
+    explicit AqueousProps(const ChemicalSystem& system);
 
-    /// Construct a copy of a AqueousProps instance.
+    /// Construct an AqueousProps object with given chemical state of the system.
+    explicit AqueousProps(const ChemicalState& state);
+
+    /// Construct an AqueousProps object with given chemical properties of the system.
+    explicit AqueousProps(const ChemicalProps& props);
+
+    /// Construct a copy of a AqueousProps object.
     AqueousProps(const AqueousProps& other);
 
-    /// Destroy this AqueousProps instance.
+    /// Destroy this AqueousProps object.
     virtual ~AqueousProps();
 
-    /// Assign a AqueousProps instance to this instance.
+    /// Assign a AqueousProps object to this object.
     auto operator=(AqueousProps other) -> AqueousProps&;
 
-    /// Return the ionic strength of the aqueous phase (in molal).
+    /// Update the aqueous properties with given chemical state of the system.
+    auto update(const ChemicalState& state) -> void;
+
+    /// Update the aqueous properties with given chemical properties of the system.
+    auto update(const ChemicalProps& props) -> void;
+
+    /// Return the molality of an element (in molal).
+    auto elementMolality(const String& symbol) const -> real;
+
+    /// Return the molality of an aqueous solute species (in molal).
+    auto speciesMolality(const String& name) const -> real;
+
+    /// Return the effective ionic strength of the aqueous phase (in molal).
     auto ionicStrength() const -> real;
+
+    /// Return the stoichiometric ionic strength of the aqueous phase (in molal).
+    auto ionicStrengthStoichiometric() const -> real;
 
     /// Return the pH of the aqueous phase.
     auto pH() const -> real;
@@ -83,7 +98,7 @@ private:
     std::unique_ptr<Impl> pimpl;
 };
 
-/// Output a AqueousProps instance.
+/// Output a AqueousProps object.
 auto operator<<(std::ostream& out, const AqueousProps& state) -> std::ostream&;
 
 } // namespace Reaktoro
