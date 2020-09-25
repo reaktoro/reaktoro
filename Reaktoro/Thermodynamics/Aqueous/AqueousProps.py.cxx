@@ -20,14 +20,26 @@
 namespace py = pybind11;
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
 using namespace Reaktoro;
 
 void exportAqueousProps(py::module& m)
 {
-    py::class_<AqueousProps, ChemicalPropsPhase>(m, "AqueousProps")
-        .def(py::init<const Phase&>())
+    py::class_<AqueousProps>(m, "AqueousProps")
+        .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const ChemicalState&>())
+        .def(py::init<const ChemicalProps&>())
+        .def("update", py::overload_cast<const ChemicalState&>(&AqueousProps::update))
+        .def("update", py::overload_cast<const ChemicalProps&>(&AqueousProps::update))
+        .def("elementMolality", &AqueousProps::elementMolality)
+        .def("speciesMolality", &AqueousProps::speciesMolality)
         .def("ionicStrength", &AqueousProps::ionicStrength)
+        .def("ionicStrengthStoichiometric", &AqueousProps::ionicStrengthStoichiometric)
         .def("pH", &AqueousProps::pH)
         .def("pE", &AqueousProps::pE)
         .def("Eh", &AqueousProps::Eh)

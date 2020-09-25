@@ -31,8 +31,11 @@ class ChemicalState;
 class ChemicalProps
 {
 public:
-    /// Construct a ChemicalProps object.
+    /// Construct an uninitialized ChemicalProps object with given chemical system.
     explicit ChemicalProps(const ChemicalSystem& system);
+
+    /// Construct a ChemicalProps object with given chemical state of the system.
+    explicit ChemicalProps(const ChemicalState& state);
 
     /// Construct a copy of a ChemicalProps object.
     ChemicalProps(const ChemicalProps& other);
