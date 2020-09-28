@@ -1,4 +1,4 @@
-#  $Id: minteq.v4.dat 10038 2015-08-03 13:41:50Z dlpark $
+#  $Id: minteq.v4.dat 11091 2016-04-21 15:20:05Z dlpark $
 SOLUTION_MASTER_SPECIES
 Alkalinity	CO3-2		2.0     HCO3    61.0173
 E		e-		0	0	0
@@ -11586,7 +11586,7 @@ CrI3
 	CrI3 + 2H2O = Cr(OH)2+ + 3I- + 2H+
 	log_k	20.4767
 	delta_h	-134.419	kJ
-Cerrusite
+Cerussite
 	PbCO3 = Pb+2 + CO3-2
 	log_k	-13.13
 	delta_h	24.79	kJ
@@ -11598,7 +11598,7 @@ Pb3O2CO3
 	Pb3O2CO3 + 4H+ = 3Pb+2 + CO3-2 + 2H2O
 	log_k	11.02
 	delta_h	-110.583	kJ
-Hydrocerrusite
+Hydrocerussite
 	Pb3(OH)2(CO3)2 + 2H+ = 3Pb+2 + 2H2O + 2CO3-2
 	log_k	-18.7705
 	delta_h	-0	kJ

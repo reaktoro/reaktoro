@@ -1,4 +1,4 @@
-#  $Id: minteq.dat 3568 2009-07-13 16:15:14Z dlpark $
+#  $Id: minteq.dat 11091 2016-04-21 15:20:05Z dlpark $
 SOLUTION_MASTER_SPECIES
 #######################################################
 #               essential definitions
@@ -4231,7 +4231,7 @@ Phosgenite
         PbCl2:PbCO3 = 2Pb+2 + 2Cl- + CO3-2
         log_k   -19.81
         delta_h -0      kcal
-Cerrusite
+Cerussite
         PbCO3 = Pb+2 + CO3-2
         log_k   -13.13
         delta_h 4.86    kcal
@@ -4331,7 +4331,7 @@ Pb2(OH)3Cl
         Pb2(OH)3Cl + 3H+ = 2Pb+2 + 3H2O + Cl-
         log_k   8.793
         delta_h -0      kcal
-Hydcerrusite
+Hydcerussite
         Pb(OH)2:2PbCO3 + 2H+ = 3Pb+2 + 2CO3-2 + 2H2O
         log_k   -17.46
         delta_h -0      kcal

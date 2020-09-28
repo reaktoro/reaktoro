@@ -1,21 +1,21 @@
 # PHREEQC database
-# Thermodynamic database ANDRA â€“ THERMOCHIMIE (www.thermochimie-tdb.com)
-# Version 9a
-# Nom: ThermoChimie project
-# BDD Date: 7/28/2014
+# Thermodynamic database ANDRA/RWM - THERMOCHIMIE-TDB (www.thermochimie-tdb.com)
+# Version 9b0
+# Nom : ThermoChimie project
+# BDD Date: 10/8/2015
 # Comment: no comment
 
-NAMED_EXPRESSIONS
+# NAMED_EXPRESSIONS
 
 #
 # formation of O2 from H2O
 # 2H2O =  O2 + 4H+ + 4e-
 #
-      Log_K_O2
-      log_k -85.980
-      delta_H  559.526  kJ/mol
+#      Log_K_O2
+#      log_k -85.980
+#      delta_H  559.526  kJ/mol
 #
-      -analytic 1.20446E+1 0E+0 -2.9226E+4 0E+0 0E+0
+#      -analytic 1.20446E+1 0E+0 -2.9226E+4 0E+0 0E+0
 
 SOLUTION_MASTER_SPECIES
 
@@ -71,7 +71,7 @@ H(0)          H2             0            H             1.0079
 Hf            Hf+4          -4            Hf            178.49
 Hg            Hg+2           0            Hg            200.59
 Hg(+2)        Hg+2           0            Hg            200.59
-Hg(+1)        Hg+            0            Hg            200.59
+Hg(+1)        Hg2+2          0            Hg2           401.18
 Ho            Ho+3           0            Ho            164.9303
 I             I-             0            I             126.9045
 I(+5)         IO3-           0            I             126.9045
@@ -79,6 +79,7 @@ I(-1)         I-             0            I             126.9045
 Isa           HIsa-          0            HIsa          180.1548
 K             K+             0            K             39.0983
 Li            Li+            0            Li            6.941
+Malonate      Malonate-2     0            Malonate      63.99
 Mg            Mg+2           0            Mg            24.305
 Mn            Mn+2           0            Mn            54.938
 Mo            MoO4-2         0            Mo            95.94
@@ -133,6 +134,8 @@ Sn            Sn+2          -1            Sn            118.71
 Sn(+2)        Sn+2          -1            Sn            118.71
 Sn(+4)        Sn+4          -4            Sn            118.71
 Sr            Sr+2           0            Sr            87.62
+Suberate      Suberate-2     0            Suberate      170.16
+Succinat      Succinat-2     0            Succinat      116.07
 Tc            TcO(OH)2       0            Tc            98
 Tc(+4)        TcO(OH)2       0            Tc            98
 Tc(+6)        TcO4-2         0            Tc            98
@@ -320,7 +323,7 @@ HfF2+2 ClO4- 0.47
 HfNO3+3 ClO4- 0.91
 Hg(SeO3)2-2 Na+ 0.008
 Hg+2 Cl- 0.168
-Hg+ Cl- 0.054
+Hg2+2 Cl- 0.054
 Ho(CO3)+ Cl- 0.129
 Ho(CO3)+ ClO4- 0.17
 Ho(CO3)2- Na+ -0.14
@@ -750,7 +753,7 @@ SOLUTION_SPECIES
 1.000AsO4-3     = AsO4-3
      log_k     0.000     
      delta_h   0.000     #kJ/mol        
-     # Enthalpy of formation:           -888.14        #kJ/mol        #10RAN/FUG
+     # Enthalpy of formation:           -888.14        #kJ/mol        #09RAN/FUG
      -analytic 0E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000B(OH)4-     = B(OH)4-
@@ -804,7 +807,7 @@ SOLUTION_SPECIES
 1.000Cm+3     = Cm+3
      log_k     0.000     
      delta_h   0.000     #kJ/mol        
-     # Enthalpy of formation:           -615        #kJ/mol        #01KON
+     # Enthalpy of formation:           -615        #kJ/mol        #01KON2
      -analytic 0E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Cn-     = Cn-
@@ -816,7 +819,7 @@ SOLUTION_SPECIES
 1.000Co+2     = Co+2
      log_k     0.000     
      delta_h   0.000     #kJ/mol        
-     # Enthalpy of formation:           -57.6        #kJ/mol        #98PLY/ZHA
+     # Enthalpy of formation:           -57.6        #kJ/mol        #98PLY/ZHA1
      -analytic 0E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000CrO4-2     = CrO4-2
@@ -916,6 +919,12 @@ SOLUTION_SPECIES
      -analytic 0E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Li+     = Li+
+     log_k     0.000     
+     delta_h   0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 0E+0 0E+0 0E+0 0E+0 0E+0
+
+1.000Malonate-2     = Malonate-2
      log_k     0.000     
      delta_h   0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
@@ -1062,13 +1071,25 @@ SOLUTION_SPECIES
 1.000Sn+2     = Sn+2
      log_k     0.000     
      delta_h   0.000     #kJ/mol        
-     # Enthalpy of formation:           -9.617        #kJ/mol        #12GAJ/SAN
+     # Enthalpy of formation:           -9.617        #kJ/mol        #12GAM/GAJ
      -analytic 0E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     = Sr+2
      log_k     0.000     
      delta_h   0.000     #kJ/mol        
      # Enthalpy of formation:           -550.9        #kJ/mol        #84BUS/PLUS
+     -analytic 0E+0 0E+0 0E+0 0E+0 0E+0
+
+1.000Suberate-2     = Suberate-2
+     log_k     0.000     
+     delta_h   0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 0E+0 0E+0 0E+0 0E+0 0E+0
+
+1.000Succinat-2     = Succinat-2
+     log_k     0.000     
+     delta_h   0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
      -analytic 0E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000TcO(OH)2     = TcO(OH)2
@@ -1171,7 +1192,7 @@ SOLUTION_SPECIES
 3.000H+     + 1.000AsO4-3     - 0.500O2     = H3(AsO3)
      log_k    -2.960     
      delta_h  139.873    #kJ/mol        
-     # Enthalpy of formation:           -742.2        #kJ/mol        #10RAN/FUG
+     # Enthalpy of formation:           -742.2        #kJ/mol        #09RAN/FUG
      -analytic 2.15447E+1 0E+0 -7.30606E+3 0E+0 0E+0
 
 1.000H+     + 1.000SO4-2     - 2.000O2     = HS-
@@ -1186,17 +1207,17 @@ SOLUTION_SPECIES
      # Enthalpy of formation:           14.3        #kJ/mol        #05OLI/NOL
      -analytic 1.35922E+1 0E+0 -3.10023E+4 0E+0 0E+0
 
-1.000Hg+2     + 0.500H2O     - 1.000H+     - 0.2500O2     = Hg+
-     log_k   -6.100     
-     delta_h  53.107    #kJ/mol        
+2.000Hg+2     + 1.000H2O     - 2.000H+     - 0.500O2     = Hg2+2
+     log_k   -12.200     
+     delta_h  106.213    #kJ/mol        
      # Enthalpy of formation:           166.87        #kJ/mol        #01LEM/FUG
-     -analytic -6.09069E+0 0E+0 2.77396E+0 0E+0 0E+0
+     -analytic 6.40769E+0 0E+0 -5.54788E+3 0E+0 0E+0
 
 1.000I-     + 1.500O2     = IO3-
      log_k    17.410     #92GRE/FUG
-     # delta_h  0.000     #kJ/mol         
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:           -219.7        #kJ/mol        #92GRE/FUG
-     -analytic  1.7410E+1 0E+0 0E+0 0E+0 0E+0
+     -analytic 1.741E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000H+     + 1.000NO3-     + 1.000H2O     - 2.000O2     = NH3
      log_k   -61.960     #95SIL/BID
@@ -1230,7 +1251,7 @@ SOLUTION_SPECIES
 
 - 3.000H+     + 1.000Pa+4     + 1.500H2O     + 0.250O2     = PaO2+
      log_k    25.715     #85BAR/PAR, 76BAE/MES
-     # delta_h 0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.5715E+1 0E+0 0E+0 0E+0 0E+0
 
@@ -1272,7 +1293,7 @@ SOLUTION_SPECIES
 
 1.000Sb(OH)3     + 1.000H2O     + 0.500O2     = Sb(OH)5
      log_k    21.250     #99LOT/OCH recalculated
-     # delta_h 0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.125E+1 0E+0 0E+0 0E+0 0E+0
 
@@ -1283,7 +1304,7 @@ SOLUTION_SPECIES
      -analytic 8.65128E-1 0E+0 -4.71528E+3 0E+0 0E+0
 
 1.000Sn+2     - 1.000H2O     + 2.000H+     + 0.500O2     = Sn+4
-     log_k    30.010     #12GAJ/SAN; EÂ¿=0.384V  for Sn2+/Sn4+ reaction ( I=0)
+     log_k    30.010     #12GAM/GAJ; E¿=0.384V  for Sn2+/Sn4+ reaction ( I=0)
      delta_h -301.645    #kJ/mol        
      # Enthalpy of formation:           -31.499        #kJ/mol        
      -analytic -2.28359E+1 0E+0 1.5756E+4 0E+0 0E+0
@@ -1296,7 +1317,7 @@ SOLUTION_SPECIES
 
 1.000TcO4-     + 0.500H2O     - 1.000H+     - 0.250O2     = TcO4-2
      log_k   -32.295     #99RAR/RAN
-     # delta_h  0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -3.2295E+1 0E+0 0E+0 0E+0 0E+0
 
@@ -1362,7 +1383,7 @@ SOLUTION_SPECIES
      -analytic -3.96225E+0 0E+0 -2.03868E+3 0E+0 0E+0
 
 2.000Th+4     - 2.000H+     + 2.000Edta-4     + 2.000H2O     = (Th(OH)(Edta))2-2
-     log_k    43.700     #96AKR/BOU
+     log_k    43.700     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 4.37E+1 0E+0 0E+0 0E+0 0E+0
@@ -1482,13 +1503,13 @@ SOLUTION_SPECIES
      -analytic -4.44259E+0 0E+0 -5.83104E+3 0E+0 0E+0
 
 1.000Ag+     + 1.000S2O3-2     = Ag(S2O3)-
-     log_k     9.230     #74BEL/MAR in 82HÂ¿G
-     delta_h  -58.994    #kJ/mol        #74BEL/MAR in 82HÂ¿G
+     log_k     9.230     #74BEL/MAR in 82H¿G
+     delta_h  -58.994    #kJ/mol        #74BEL/MAR in 82H¿G
      # Enthalpy of formation:           -601.724        #kJ/mol        
      -analytic -1.10529E+0 0E+0 3.08147E+3 0E+0 0E+0
 
 1.000Ag+     + 2.000S2O3-2     = Ag(S2O3)2-3
-     log_k    13.640     #72POU/RIG in 82HÂ¿G
+     log_k    13.640     #72POU/RIG in 82H¿G
      delta_h  -94.450    #kJ/mol        
      # Enthalpy of formation:           -1285.7        #kJ/mol        #82WAG/EVA
      -analytic -2.90691E+0 0E+0 4.93346E+3 0E+0 0E+0
@@ -1507,7 +1528,7 @@ SOLUTION_SPECIES
 
 1.000Ag+     + 3.000H+     + 3.000Cn-     + 3.000HSe-     - 3.000H2O     + 1.500O2     = Ag(SeCn)3-2
      log_k   181.900     
-     # delta_h 0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.819E+2 0E+0 0E+0 0E+0 0E+0
 
@@ -1590,49 +1611,49 @@ SOLUTION_SPECIES
      -analytic -4.19642E-1 0E+0 3.86528E+1 0E+0 0E+0
 
 1.000Al+3     + 1.000Cit-3     = Al(Cit)
-     log_k     9.900     #96AKR/BOU
+     log_k     9.900     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 9.9E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     - 1.000H+     + 2.000Cit-3     + 1.000H2O     = Al(Cit)2(OH)-4
-     log_k    10.190     #96AKR/BOU
+     log_k    10.190     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.019E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     + 2.000Cit-3     = Al(Cit)2-3
-     log_k    14.130     #96AKR/BOU
+     log_k    14.130     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.413E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     + 1.000Edta-4     = Al(Edta)-
-     log_k    19.080     #96AKR/BOU
+     log_k    19.080     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.908E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     + 1.000H+     + 1.000Cit-3     = Al(HCit)+
-     log_k    12.900     #96AKR/BOU
+     log_k    12.900     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.29E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     + 1.000H+     + 1.000Edta-4     = Al(HEdta)
-     log_k    21.820     #96AKR/BOU
+     log_k    21.820     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.182E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     + 1.000H+     + 1.000Nta-3     = Al(HNta)+
-     log_k    15.130     #96AKR/BOU
+     log_k    15.130     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.513E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     + 1.000H+     + 1.000Ox-2     = Al(HOx)+2
-     log_k     7.500     #96AKR/BOU
+     log_k     7.500     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 7.5E+0 0E+0 0E+0 0E+0 0E+0
@@ -1650,37 +1671,37 @@ SOLUTION_SPECIES
      -analytic 4.3E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     + 1.000Nta-3     = Al(Nta)
-     log_k    13.230     #96AKR/BOU
+     log_k    13.230     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.323E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     - 2.000H+     + 1.000Nta-3     + 2.000H2O     = Al(Nta)(OH)2-2
-     log_k    -0.300     #96AKR/BOU
+     log_k    -0.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -3E-1 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     + 2.000Nta-3     = Al(Nta)2-3
-     log_k    20.800     #96AKR/BOU
+     log_k    20.800     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.08E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     - 1.000H+     + 1.000Cit-3     + 1.000H2O     = Al(OH)(Cit)-
-     log_k     8.100     #96AKR/BOU
+     log_k     8.100     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 8.1E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     - 1.000H+     + 1.000Edta-4     + 1.000H2O     = Al(OH)(Edta)-2
-     log_k    13.000     #96AKR/BOU
+     log_k    13.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.3E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     - 1.000H+     + 1.000Nta-3     + 1.000H2O     = Al(OH)(Nta)-
-     log_k     6.790     #96AKR/BOU
+     log_k     6.790     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.79E+0 0E+0 0E+0 0E+0 0E+0
@@ -1692,7 +1713,7 @@ SOLUTION_SPECIES
      -analytic 3.76756E+0 0E+0 -2.59914E+3 0E+0 0E+0
 
 1.000Al+3     - 2.000H+     + 1.000Edta-4     + 2.000H2O     = Al(OH)2(Edta)-3
-     log_k     2.300     #96AKR/BOU
+     log_k     2.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.3E+0 0E+0 0E+0 0E+0 0E+0
@@ -1728,19 +1749,19 @@ SOLUTION_SPECIES
      -analytic 8.81894E+0 0E+0 -9.44806E+3 0E+0 0E+0
 
 1.000Al+3     + 1.000Ox-2     = Al(Ox)+
-     log_k     9.400     #96AKR/BOU
+     log_k     9.400     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 9.4E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     + 2.000Ox-2     = Al(Ox)2-
-     log_k    15.390     #96AKR/BOU
+     log_k    15.390     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.539E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Al+3     + 3.000Ox-2     = Al(Ox)3-3
-     log_k    18.300     #96AKR/BOU
+     log_k    18.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.83E+1 0E+0 0E+0 0E+0 0E+0
@@ -1752,25 +1773,25 @@ SOLUTION_SPECIES
      -analytic 6.47588E+0 0E+0 -9.85647E+2 0E+0 0E+0
 
 2.000Al+3     - 2.000H+     + 4.000Ox-2     + 2.000H2O     = Al2(Ox)4(OH)2-4
-     log_k    -6.000     #96AKR/BOU
+     log_k    -6.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -6E+0 0E+0 0E+0 0E+0 0E+0
 
 3.000Al+3     - 4.000H+     + 3.000Cit-3     + 4.000H2O     = Al3(Cit)3(OH)4-4
-     log_k    20.600     #96AKR/BOU
+     log_k    20.600     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.06E+1 0E+0 0E+0 0E+0 0E+0
 
 3.000Al+3     - 3.000H+     + 3.000Ox-2     + 3.000H2O     = Al3(Ox)3(OH)3
-     log_k    16.000     #96AKR/BOU
+     log_k    16.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.6E+1 0E+0 0E+0 0E+0 0E+0
 
 4.000Al+3     - 4.000H+     + 4.000Ox-2     + 4.000H2O     = Al4(Ox)4(OH)4
-     log_k    21.000     #96AKR/BOU
+     log_k    21.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.1E+1 0E+0 0E+0 0E+0 0E+0
@@ -1920,31 +1941,31 @@ SOLUTION_SPECIES
      -analytic 1.64535E+0 0E+0 -9.40204E+1 0E+0 0E+0
 
 1.000Am+3     + 1.000Nta-3     = Am(Nta)
-     log_k    13.000     #96AKR/BOU
+     log_k    13.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.3E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Am+3     + 2.000Nta-3     = Am(Nta)2-3
-     log_k    22.000     #96AKR/BOU
+     log_k    22.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.2E+1 0E+0 0E+0 0E+0 0E+0
 
 - 1.000H+     + 1.000Am+3     + 1.000H2O     = Am(OH)+2
-     log_k    -7.200     #03GUI/FAN, 88STA/KIM, 94RUN/KIM, 83EDE/BUC, 83CAC/CHO, 92WIM/KLE
+     log_k    -7.200     #03GUI/FAN, 88STA/KIM1, 94RUN/KIM, 83EDE/BUC, 83CAC/CHO, 92WIM/KLE
      delta_h  78.411     #kJ/mol        
      # Enthalpy of formation:           -824.119        #kJ/mol        
      -analytic 6.537E+0 0E+0 -4.09569E+3 0E+0 0E+0
 
 - 2.000H+     + 1.000Am+3     + 2.000H2O     = Am(OH)2+
-     log_k   -15.100     #03GUI/FAN, 88STA/KIM, 94RUN/KIM, 83EDE/BUC, 83CAC/CHO, 92WIM/KLE
+     log_k   -15.100     #03GUI/FAN, 88STA/KIM1, 94RUN/KIM, 83EDE/BUC, 83CAC/CHO, 92WIM/KLE
      delta_h  143.704    #kJ/mol        
      # Enthalpy of formation:           -1044.656        #kJ/mol        
      -analytic 1.00758E+1 0E+0 -7.50617E+3 0E+0 0E+0
 
 - 3.000H+     + 1.000Am+3     + 3.000H2O     = Am(OH)3
-     log_k   -26.200     #03GUI/FAN, 88STA/KIM, 94RUN/KIM, 83EDE/BUC, 83CAC/CHO, 92WIM/KLE
+     log_k   -26.200     #03GUI/FAN, 88STA/KIM1, 94RUN/KIM, 83EDE/BUC, 83CAC/CHO, 92WIM/KLE
      delta_h  230.125    #kJ/mol        
      # Enthalpy of formation:           -1244.065        #kJ/mol        
      -analytic 1.41161E+1 0E+0 -1.20202E+4 0E+0 0E+0
@@ -1962,7 +1983,7 @@ SOLUTION_SPECIES
      -analytic -2.15E+1 0E+0 0E+0 0E+0 0E+0
 
 - 4.000H+     + 1.000Am+3     + 4.000H2O     = Am(OH)4-
-     log_k   -40.700     #07NEC/ALT
+     log_k   -40.700     #07NEC/ALT2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -4.07E+1 0E+0 0E+0 0E+0 0E+0
@@ -1998,25 +2019,25 @@ SOLUTION_SPECIES
      -analytic 4.93E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Am+3     + 1.000SO4-2     = Am(SO4)+
-     log_k     3.450     #12GRI/COL
+     log_k     3.450     #12GRI/GAR1
      delta_h  15.493     #kJ/mol        
      # Enthalpy of formation:           -1510.547        #kJ/mol        
      -analytic 6.16425E+0 0E+0 -8.09255E+2 0E+0 0E+0
 
 1.000Am+3     + 2.000SO4-2     = Am(SO4)2-
-     log_k     4.570     #12GRI/COL
+     log_k     4.570     #12GRI/GAR1
      delta_h  20.927     #kJ/mol        
      # Enthalpy of formation:           -2414.453        #kJ/mol        
      -analytic 8.23625E+0 0E+0 -1.09309E+3 0E+0 0E+0
 
 1.000Am+3     + 1.000Cl-     = AmCl+2
-     log_k     0.240     #97KÂ¿N/FAN
+     log_k     0.240     #97K¿N/FAN
      delta_h  25.106     #kJ/mol        
      # Enthalpy of formation:           -758.674        #kJ/mol        
      -analytic 4.63838E+0 0E+0 -1.31138E+3 0E+0 0E+0
 
 1.000Am+3     + 2.000Cl-     = AmCl2+
-     log_k    -0.740     #97KÂ¿N/FAN
+     log_k    -0.740     #97K¿N/FAN
      delta_h  40.568     #kJ/mol        
      # Enthalpy of formation:           -910.292        #kJ/mol        
      -analytic 6.3672E+0 0E+0 -2.11901E+3 0E+0 0E+0
@@ -2262,7 +2283,7 @@ SOLUTION_SPECIES
      -analytic 1.39E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Ca+2     + 1.000H+     + 1.000CO3-2     = Ca(HCO3)+
-     log_k    11.430     #96BOU
+     log_k    11.430     #96BOU1
      delta_h  -23.597    #kJ/mol        
      # Enthalpy of formation:           -1241.827        #kJ/mol        
      -analytic 7.29599E+0 0E+0 1.23256E+3 0E+0 0E+0
@@ -2291,14 +2312,20 @@ SOLUTION_SPECIES
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.7E+0 0E+0 0E+0 0E+0 0E+0
 
+1.000Ca+2     + 1.000H+     + 1.000Malonate-2     = Ca(HMalonate)+
+     log_k     6.640     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 6.64E+0 0E+0 0E+0 0E+0 0E+0
+
 1.000Ca+2     + 1.000H+     + 1.000Nta-3     = Ca(HNta)
-     log_k    13.400     #96AKR/BOU
+     log_k    13.400     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.34E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Ca+2     + 2.000H+     + 2.000Nta-3     = Ca(HNta)2-2
-     log_k    23.630     #96AKR/BOU
+     log_k    23.630     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.363E+1 0E+0 0E+0 0E+0 0E+0
@@ -2321,6 +2348,12 @@ SOLUTION_SPECIES
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.38E+1 0E+0 0E+0 0E+0 0E+0
 
+1.000Ca+2     + 1.000H+     + 1.000Succinat-2     = Ca(HSuccinat)+
+     log_k     6.790     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 6.79E+0 0E+0 0E+0 0E+0 0E+0
+
 1.000Ca+2     - 3.000H+     + 1.000Ho+3     + 3.000H2O     = Ca(Ho(OH)3)+2
      log_k   -26.300     #07RAB/ALT
      # delta_h  0.000     #kJ/mol        
@@ -2338,6 +2371,12 @@ SOLUTION_SPECIES
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -1.04E+1 0E+0 0E+0 0E+0 0E+0
+
+1.000Ca+2     + 1.000Malonate-2     = Ca(Malonate)
+     log_k     2.430     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 2.43E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Ca+2     + 1.000NH3     = Ca(NH3)+2
      log_k    -0.100     #88CHA/NEW
@@ -2364,7 +2403,7 @@ SOLUTION_SPECIES
      -analytic -2.6E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Ca+2     + 1.000Nta-3     = Ca(Nta)-
-     log_k     7.730     #96AKR/BOU
+     log_k     7.730     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 7.73E+0 0E+0 0E+0 0E+0 0E+0
@@ -2434,6 +2473,12 @@ SOLUTION_SPECIES
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -2.63E+1 0E+0 0E+0 0E+0 0E+0
+
+1.000Ca+2     + 1.000Succinat-2     = Ca(Succinat)
+     log_k     2.340     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 2.34E+0 0E+0 0E+0 0E+0 0E+0
 
 2.000Ca+2     - 4.000H+     + 1.000Am+3     + 4.000H2O     = Ca2(Am(OH)4)+3
      log_k   -37.200     #07RAB/ALT
@@ -2514,9 +2559,9 @@ SOLUTION_SPECIES
      -analytic 1.8E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Ca+2     + 1.000CO3-2     = CaCO3
-     log_k     3.220     #96BOU
+     log_k     3.220     #96BOU1
      delta_h  14.830     #kJ/mol        
-     # Enthalpy of formation:           -1203.4        #kJ/mol        #96BOU
+     # Enthalpy of formation:           -1203.4        #kJ/mol        #96BOU1
      -analytic 5.8181E+0 0E+0 -7.74624E+2 0E+0 0E+0
 
 1.000Ca+2     + 1.000CrO4-2     = CaCrO4
@@ -2526,7 +2571,7 @@ SOLUTION_SPECIES
      -analytic 2.77E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Ca+2     + 1.000F-     = CaF+
-     log_k     0.940     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; SÂ¿lection de donnÂ¿es thermodynamiques affÂ¿rentes aux corrections de TempÂ¿rature sur les principaux Â¿quilibres chimiques en milieu naturel
+     log_k     0.940     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; S¿lection de donn¿es thermodynamiques aff¿rentes aux corrections de Temp¿rature sur les principaux ¿quilibres chimiques en milieu naturel
      delta_h  17.238     #kJ/mol        
      # Enthalpy of formation:           -861.112        #kJ/mol        
      -analytic 3.95996E+0 0E+0 -9.00402E+2 0E+0 0E+0
@@ -2562,13 +2607,13 @@ SOLUTION_SPECIES
      -analytic 2.718E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Cd+2     + 1.000CO3-2     = Cd(CO3)
-     log_k     4.700     #91RAI/FEL
+     log_k     4.700     #91RAI/FEL1
      delta_h   4.299     #kJ/mol        
      # Enthalpy of formation:           -746.851        #kJ/mol        
      -analytic 5.45315E+0 0E+0 -2.24552E+2 0E+0 0E+0
 
 1.000Cd+2     + 2.000CO3-2     = Cd(CO3)2-2
-     log_k     6.500     #91RAI/FEL
+     log_k     6.500     #91RAI/FEL1
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.5E+0 0E+0 0E+0 0E+0 0E+0
@@ -2640,7 +2685,7 @@ SOLUTION_SPECIES
      -analytic -1.40951E+0 0E+0 2.59674E+3 0E+0 0E+0
 
 1.000Cd+2     + 1.000NO3-     = Cd(NO3)+
-     log_k     0.460     #74FED/ROB in 82HÂ¿G
+     log_k     0.460     #74FED/ROB in 82H¿G
      delta_h  -21.757    #kJ/mol        #74NAU/RYZ in 91BAL/NOR
      # Enthalpy of formation:           -304.527        #kJ/mol        
      -analytic -3.35166E+0 0E+0 1.13645E+3 0E+0 0E+0
@@ -2658,7 +2703,7 @@ SOLUTION_SPECIES
      -analytic -4.77714E-1 0E+0 -2.86292E+3 0E+0 0E+0
 
 1.000Cd+2     - 2.000H+     + 2.000H2O     = Cd(OH)2
-     log_k   -20.900     #91RAI/FEL
+     log_k   -20.900     #91RAI/FEL1
      delta_h  114.900    #kJ/mol        
      # Enthalpy of formation:           -532.68        #kJ/mol        
      -analytic -7.70414E-1 0E+0 -6.00164E+3 0E+0 0E+0
@@ -2670,13 +2715,13 @@ SOLUTION_SPECIES
      -analytic -5.89713E+0 0E+0 -8.17016E+3 0E+0 0E+0
 
 1.000Cd+2     - 4.000H+     + 4.000H2O     = Cd(OH)4-2
-     log_k   -47.480     #91RAI/FEL
+     log_k   -47.480     #91RAI/FEL1
      delta_h  229.571    #kJ/mol        
      # Enthalpy of formation:           -989.669        #kJ/mol        
      -analytic -7.26095E+0 0E+0 -1.19913E+4 0E+0 0E+0
 
 1.000Cd+2     + 1.000Pyrophos-4     = Cd(Pyrophos)-2
-     log_k     8.700     #92CLE/JOH
+     log_k     8.700     #92CLE/DER
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 8.7E+0 0E+0 0E+0 0E+0 0E+0
@@ -2707,19 +2752,19 @@ SOLUTION_SPECIES
 
 1.000Cd+2     + 2.000H+     + 2.000Cn-     + 2.000HSe-     - 2.000H2O     + 1.000O2     = Cd(SeCn)2
      log_k   115.370     
-     # delta_h 0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.1537E+2 0E+0 0E+0 0E+0 0E+0
 
 1.000Cd+2     + 3.000H+     + 3.000Cn-     + 3.000HSe-     - 3.000H2O     + 1.500O2     = Cd(SeCn)3-
      log_k   171.860     
-     # delta_h 0.000    #kJ/mol         
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.7186E+2 0E+0 0E+0 0E+0 0E+0
 
 1.000Cd+2     + 4.000H+     + 4.000Cn-     + 4.000HSe-     - 4.000H2O     + 2.000O2     = Cd(SeCn)4-2
      log_k   228.670     
-     # delta_h 0.000    #kJ/mol         
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.2867E+2 0E+0 0E+0 0E+0 0E+0
 
@@ -2832,7 +2877,7 @@ SOLUTION_SPECIES
      -analytic 3.01E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Cm+3     + 2.000Acetate-     = Cm(Acetate)2+
-     log_k     4.960     #12GRI/GAR
+     log_k     4.960     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 4.96E+0 0E+0 0E+0 0E+0 0E+0
@@ -2892,25 +2937,25 @@ SOLUTION_SPECIES
      -analytic 1.43877E+1 0E+0 -1.21012E+4 0E+0 0E+0
 
 - 4.000H+     + 1.000Cm+3     + 4.000H2O     = Cm(OH)4-
-     log_k   -40.700     #07NEC/ALT
+     log_k   -40.700     #07NEC/ALT2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -4.07E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Ox-2     + 1.000Cm+3     = Cm(Ox)+
-     log_k     6.480     #96AKR/BOU
+     log_k     6.480     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.48E+0 0E+0 0E+0 0E+0 0E+0
 
 2.000Ox-2     + 1.000Cm+3     = Cm(Ox)2-
-     log_k    10.400     #96AKR/BOU
+     log_k    10.400     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.04E+1 0E+0 0E+0 0E+0 0E+0
 
 3.000Ox-2     + 1.000Cm+3     = Cm(Ox)3-3
-     log_k    12.840     #96AKR/BOU
+     log_k    12.840     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.284E+1 0E+0 0E+0 0E+0 0E+0
@@ -2922,7 +2967,7 @@ SOLUTION_SPECIES
      -analytic -1.923E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Cm+3     + 1.000Phthalat-2     = Cm(Phthalat)+
-     log_k     4.930     #11GRI/COL from 95PAN/KLE
+     log_k     4.930     #11GRI/COL3 from 95PAN/KLE
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 4.93E+0 0E+0 0E+0 0E+0 0E+0
@@ -3006,25 +3051,25 @@ SOLUTION_SPECIES
      -analytic 8.77E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Co+2     - 1.000H+     + 1.000H2O     = Co(OH)+
-     log_k    -9.230     #98PLY/ZHA
+     log_k    -9.230     #98PLY/ZHA1
      delta_h  45.962     #kJ/mol        
      # Enthalpy of formation:           -297.468        #kJ/mol        
      -analytic -1.17782E+0 0E+0 -2.40076E+3 0E+0 0E+0
 
 1.000Co+2     - 2.000H+     + 2.000H2O     = Co(OH)2
-     log_k   -18.600     #98PLY/ZHA
+     log_k   -18.600     #98PLY/ZHA1
      delta_h  105.707    #kJ/mol        
      # Enthalpy of formation:           -523.553        #kJ/mol        
      -analytic -8.09557E-2 0E+0 -5.52145E+3 0E+0 0E+0
 
 1.000Co+2     - 3.000H+     + 3.000H2O     = Co(OH)3-
-     log_k   -31.700     #98PLY/ZHA
+     log_k   -31.700     #98PLY/ZHA1
      delta_h  160.297    #kJ/mol        
      # Enthalpy of formation:           -754.792        #kJ/mol        
      -analytic -3.61721E+0 0E+0 -8.37288E+3 0E+0 0E+0
 
 1.000Co+2     - 4.000H+     + 4.000H2O     = Co(OH)4-2
-     log_k   -46.420     #98PLY/ZHA
+     log_k   -46.420     #98PLY/ZHA1
      delta_h  214.483    #kJ/mol        
      # Enthalpy of formation:           -986.436        #kJ/mol        
      -analytic -8.84425E+0 0E+0 -1.12032E+4 0E+0 0E+0
@@ -3042,15 +3087,15 @@ SOLUTION_SPECIES
      -analytic 2.05985E+0 0E+0 1.90861E+2 0E+0 0E+0
 
 2.000Co+2     - 1.000H+     + 1.000H2O     = Co2(OH)+3
-     log_k    -9.830     #98PLY/ZHA
+     log_k    -9.830     #98PLY/ZHA1
      delta_h  30.030     #kJ/mol        
-     # Enthalpy of formation:           -371        #kJ/mol        #98PLY/ZHA
+     # Enthalpy of formation:           -371        #kJ/mol        #98PLY/ZHA1
      -analytic -4.56898E+0 0E+0 -1.56857E+3 0E+0 0E+0
 
 4.000Co+2     - 4.000H+     + 4.000H2O     = Co4(OH)4+4
-     log_k   -29.880     #98PLY/ZHA
+     log_k   -29.880     #98PLY/ZHA1
      delta_h  149.720    #kJ/mol        
-     # Enthalpy of formation:           -1224        #kJ/mol        #98PLY/ZHA
+     # Enthalpy of formation:           -1224        #kJ/mol        #98PLY/ZHA1
      -analytic -3.65022E+0 0E+0 -7.82041E+3 0E+0 0E+0
 
 1.000Co+2     + 1.000CO3-2     = CoCO3
@@ -3066,20 +3111,20 @@ SOLUTION_SPECIES
      -analytic 1.88081E-1 0E+0 1.13869E+2 0E+0 0E+0
 
 1.000Co+2     + 2.000Cl-     = CoCl2
-     log_k     0.020     #06BLA/ING
-     delta_h   4.074     #kJ/mol        #06BLA/ING
+     log_k     0.020     #06BLA/IGN
+     delta_h   4.074     #kJ/mol        #06BLA/IGN
      # Enthalpy of formation:           -387.686        #kJ/mol        
      -analytic 7.33733E-1 0E+0 -2.128E+2 0E+0 0E+0
 
 1.000Co+2     + 3.000Cl-     = CoCl3-
-     log_k    -1.710     #06BLA/ING
-     delta_h   6.688     #kJ/mol        #06BLA/ING
+     log_k    -1.710     #06BLA/IGN
+     delta_h   6.688     #kJ/mol        #06BLA/IGN
      # Enthalpy of formation:           -552.152        #kJ/mol        
      -analytic -5.38314E-1 0E+0 -3.49338E+2 0E+0 0E+0
 
 1.000Co+2     + 4.000Cl-     = CoCl4-2
-     log_k    -2.090     #06BLA/ING
-     delta_h  22.570     #kJ/mol        #06BLA/ING
+     log_k    -2.090     #06BLA/IGN
+     delta_h  22.570     #kJ/mol        #06BLA/IGN
      # Enthalpy of formation:           -703.35        #kJ/mol        
      -analytic 1.86409E+0 0E+0 -1.17891E+3 0E+0 0E+0
 
@@ -3132,7 +3177,7 @@ SOLUTION_SPECIES
      -analytic 2.25E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Cr+3     + 2.000CO3-2     + 1.000H2O     - 1.000H+     = Cr(OH)(CO3)2-2
-     log_k     9.730     #07RAI/MON
+     log_k     9.730     #07RAI/MOO
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 9.73E+0 0E+0 0E+0 0E+0 0E+0
@@ -3150,7 +3195,7 @@ SOLUTION_SPECIES
      -analytic 3.09102E+0 0E+0 -1.94126E+3 0E+0 0E+0
 
 - 2.000H+     + 1.000Cr+3     + 2.000H2O     = Cr(OH)2+
-     log_k    -8.900     #11GRI/COL
+     log_k    -8.900     #11GRI/COL4
      delta_h  93.201     #kJ/mol        
      # Enthalpy of formation:           -718.958        #kJ/mol        
      -analytic 7.42809E+0 0E+0 -4.86822E+3 0E+0 0E+0
@@ -3216,7 +3261,7 @@ SOLUTION_SPECIES
      -analytic 2.28952E-3 0E+0 -1.70908E+3 0E+0 0E+0
 
 - 2.000H+     + 2.000Cr+3     + 2.000H2O     = Cr2(OH)2+4
-     log_k    -4.000     #11GRI/COL
+     log_k    -4.000     #11GRI/COL4
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -4E+0 0E+0 0E+0 0E+0 0E+0
@@ -3228,7 +3273,7 @@ SOLUTION_SPECIES
      -analytic 1.40927E+1 0E+0 1.9598E+2 0E+0 0E+0
 
 - 4.000H+     + 3.000Cr+3     + 4.000H2O     = Cr3(OH)4+5
-     log_k    -7.600     #11GRI/COL
+     log_k    -7.600     #11GRI/COL4
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -7.6E+0 0E+0 0E+0 0E+0 0E+0
@@ -3288,19 +3333,19 @@ SOLUTION_SPECIES
      -analytic 4.61E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Cs+     + 1.000Cit-3     = Cs(Cit)-2
-     log_k     0.980     #96AKR/BOU
+     log_k     0.980     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 9.8E-1 0E+0 0E+0 0E+0 0E+0
 
 1.000Cs+     + 1.000Edta-4     = Cs(Edta)-3
-     log_k     1.300     #96AKR/BOU
+     log_k     1.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.3E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Cs+     + 1.000Nta-3     = Cs(Nta)-2
-     log_k     0.850     #96AKR/BOU
+     log_k     0.850     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 8.5E-1 0E+0 0E+0 0E+0 0E+0
@@ -3308,7 +3353,7 @@ SOLUTION_SPECIES
 1.000Cs+     - 1.000H+     + 1.000H2O     = Cs(OH)
      log_k   -15.640     
      delta_h  65.736     #kJ/mol        
-     # Enthalpy of formation:           -478.094        #kJ/mol        #97SHO/SAS
+     # Enthalpy of formation:           -478.094        #kJ/mol        #97SHO/SAS2
      -analytic -4.12356E+0 0E+0 -3.43363E+3 0E+0 0E+0
 
 1.000Cs+     + 1.000Br-     = CsBr
@@ -3360,19 +3405,19 @@ SOLUTION_SPECIES
      -analytic 2.2E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Eu+3     + 1.000Acetate-     = Eu(Acetate)+2
-     log_k     2.900     #12GRI/GAR
+     log_k     2.900     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.9E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Eu+3     + 2.000Acetate-     = Eu(Acetate)2+
-     log_k     4.800     #12GRI/GAR
+     log_k     4.800     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 4.8E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Eu+3     + 3.000Acetate-     = Eu(Acetate)3
-     log_k     5.600     #12GRI/GAR
+     log_k     5.600     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 5.6E+0 0E+0 0E+0 0E+0 0E+0
@@ -3390,7 +3435,7 @@ SOLUTION_SPECIES
      -analytic 1.29E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Eu+3     + 3.000CO3-2     = Eu(CO3)3-3
-     log_k    14.800     #05VER/VIT
+     log_k    14.800     #05VER/VIT2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.48E+1 0E+0 0E+0 0E+0 0E+0
@@ -3419,8 +3464,20 @@ SOLUTION_SPECIES
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -4.82E+0 0E+0 0E+0 0E+0 0E+0
 
+1.000Eu+3     + 1.000Malonate-2     = Eu(Malonate)+
+     log_k     5.430     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 5.43E+0 0E+0 0E+0 0E+0 0E+0
+
+1.000Eu+3     + 2.000Malonate-2     = Eu(Malonate)2-
+     log_k     7.780     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 7.78E+0 0E+0 0E+0 0E+0 0E+0
+
 1.000Eu+3     + 1.000NO3-     = Eu(NO3)+2
-     log_k     1.210     #09RAO/TIA (Calculated usig SIT)
+     log_k     1.210     #09RAO/TIA1 (Calculated usig SIT)
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.21E+0 0E+0 0E+0 0E+0 0E+0
@@ -3432,13 +3489,13 @@ SOLUTION_SPECIES
      -analytic 6.18454E+0 0E+0 -4.16949E+3 0E+0 0E+0
 
 1.000Eu+3     - 2.000H+     + 2.000H2O     = Eu(OH)2+
-     log_k   -15.700     #07NEC/ALT
+     log_k   -15.700     #07NEC/ALT2
      delta_h  144.521    #kJ/mol        
      # Enthalpy of formation:           -1032.471        #kJ/mol        
      -analytic 9.61896E+0 0E+0 -7.54885E+3 0E+0 0E+0
 
 1.000Eu+3     - 3.000H+     + 3.000H2O     = Eu(OH)3
-     log_k   -26.200     #07NEC/ALT
+     log_k   -26.200     #07NEC/ALT2
      delta_h  226.860    #kJ/mol        
      # Enthalpy of formation:           -1235.961        #kJ/mol        
      -analytic 1.35441E+1 0E+0 -1.18497E+4 0E+0 0E+0
@@ -3450,7 +3507,7 @@ SOLUTION_SPECIES
      -analytic -2.09E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Eu+3     - 4.000H+     + 4.000H2O     = Eu(OH)4-
-     log_k   -40.700     #07NEC/ALT
+     log_k   -40.700     #07NEC/ALT2
      delta_h  296.791    #kJ/mol        
      # Enthalpy of formation:           -1451.86        #kJ/mol        
      -analytic 1.12955E+1 0E+0 -1.55025E+4 0E+0 0E+0
@@ -3486,13 +3543,13 @@ SOLUTION_SPECIES
      -analytic -1.846E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Eu+3     + 1.000Phthalat-2     = Eu(Phthalat)+
-     log_k     4.960     #11GRI/COL
+     log_k     4.960     #11GRI/COL3
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 4.96E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Eu+3     + 2.000Phthalat-2     = Eu(Phthalat)2-
-     log_k     7.340     #11GRI/COL
+     log_k     7.340     #11GRI/COL3
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 7.34E+0 0E+0 0E+0 0E+0 0E+0
@@ -3508,6 +3565,18 @@ SOLUTION_SPECIES
      delta_h  27.787     #kJ/mol        
      # Enthalpy of formation:           -2396.224        #kJ/mol        
      -analytic 1.00681E+1 0E+0 -1.45141E+3 0E+0 0E+0
+
+1.000Eu+3     + 1.000Succinat-2     = Eu(Succinat)+
+     log_k     4.360     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 4.36E+0 0E+0 0E+0 0E+0 0E+0
+
+1.000Eu+3     + 2.000Succinat-2     = Eu(Succinat)2-
+     log_k     6.500     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 6.5E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Eu+3     + 1.000Br-     = EuBr+2
      log_k     0.250     #95SPA/BRU
@@ -3552,7 +3621,7 @@ SOLUTION_SPECIES
      -analytic 9.13837E+0 0E+0 4.35785E+2 0E+0 0E+0
 
 1.000Eu+3     - 1.000H+     + 1.000H4(SiO4)     = EuSiO(OH)3+2
-     log_k    -2.620     #Original data 07THA/SIN and 96JEN/CHO
+     log_k    -2.620     #Original data 07THA/SIN and 96JEN/CHO1
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -2.62E+0 0E+0 0E+0 0E+0 0E+0
@@ -3570,13 +3639,13 @@ SOLUTION_SPECIES
      -analytic 1.554E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 1.000CO3-2     = Fe(CO3)
-     log_k     5.690     #99CHIb
+     log_k     5.690     #99CHI3
      delta_h  -5.764     #kJ/mol        
      # Enthalpy of formation:           -770.994        #kJ/mol        
      -analytic 4.68019E+0 0E+0 3.01074E+2 0E+0 0E+0
 
 1.000Fe+2     + 2.000CO3-2     = Fe(CO3)2-2
-     log_k     7.450     #98KIN in 99CHIb
+     log_k     7.450     #98KIN in 99CHI3
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 7.45E+0 0E+0 0E+0 0E+0 0E+0
@@ -3588,31 +3657,31 @@ SOLUTION_SPECIES
      -analytic 2.424E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 1.000Cit-3     = Fe(Cit)
-     log_k    12.650     #96AKR/BOU
+     log_k    12.650     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.265E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     - 1.000H+     + 1.000Cit-3     + 1.000H2O     = Fe(Cit)(OH)-
-     log_k    10.330     #96AKR/BOU
+     log_k    10.330     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.033E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 1.000Cit-3     = Fe(Cit)-
-     log_k     6.100     #96AKR/BOU
+     log_k     6.100     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.1E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     - 2.000H+     + 2.000Cit-3     + 2.000H2O     = Fe(Cit)2(OH)2-5
-     log_k     3.440     #96AKR/BOU
+     log_k     3.440     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 3.44E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 2.000Cit-3     = Fe(Cit)2-3
-     log_k    18.150     #96AKR/BOU
+     log_k    18.150     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.815E+1 0E+0 0E+0 0E+0 0E+0
@@ -3630,25 +3699,25 @@ SOLUTION_SPECIES
      -analytic 3.54E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 1.000Edta-4     = Fe(Edta)-
-     log_k    27.700     #96AKR/BOU
+     log_k    27.700     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.77E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 1.000Edta-4     = Fe(Edta)-2
-     log_k    16.020     #96AKR/BOU
+     log_k    16.020     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.602E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 2.000H+     + 1.000Cit-3     = Fe(H2Cit)+
-     log_k    24.700     #96AKR/BOU
+     log_k    24.700     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.47E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 2.000H+     + 1.000Cit-3     = Fe(H2Cit)+2
-     log_k    30.400     #96AKR/BOU
+     log_k    30.400     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 3.04E+1 0E+0 0E+0 0E+0 0E+0
@@ -3672,49 +3741,49 @@ SOLUTION_SPECIES
      -analytic 3.6E-1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 1.000H+     + 1.000Cit-3     = Fe(HCit)
-     log_k    10.020     #96AKR/BOU
+     log_k    10.020     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.002E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 1.000H+     + 2.000Cit-3     = Fe(HCit)(Cit)-2
-     log_k    19.300     #96AKR/BOU
+     log_k    19.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.93E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 1.000H+     + 1.000Cit-3     = Fe(HCit)+
-     log_k    13.560     #96AKR/BOU
+     log_k    13.560     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.356E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 2.000H+     + 2.000Cit-3     = Fe(HCit)2-
-     log_k    24.920     #96AKR/BOU
+     log_k    24.920     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.492E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 1.000H+     + 1.000Edta-4     = Fe(HEdta)
-     log_k    29.200     #96AKR/BOU
+     log_k    29.200     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.92E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 1.000H+     + 1.000Edta-4     = Fe(HEdta)-
-     log_k    18.300     #96AKR/BOU
+     log_k    18.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.83E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 1.000H+     + 1.000Nta-3     = Fe(HNta)
-     log_k    12.300     #96AKR/BOU
+     log_k    12.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.23E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 1.000H+     + 1.000Ox-2     = Fe(HOx)+2
-     log_k     9.300     #96AKR/BOU
+     log_k     9.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 9.3E+0 0E+0 0E+0 0E+0 0E+0
@@ -3726,7 +3795,7 @@ SOLUTION_SPECIES
      -analytic -3.61E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     - 1.000H+     + 1.000H2(PO4)-     = Fe(HPO4)+
-     log_k     1.630     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; SÂ¿lection de donnÂ¿es thermodynamiques affÂ¿rentes aux corrections de TempÂ¿rature sur les principaux Â¿quilibres chimiques en milieu naturel
+     log_k     1.630     #96BOU4
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.63E+0 0E+0 0E+0 0E+0 0E+0
@@ -3750,7 +3819,7 @@ SOLUTION_SPECIES
      -analytic 3.07E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 1.000H+     + 1.000SeO3-2     = Fe(HSeO3)+2
-     log_k    12.350     #01SEB/POT
+     log_k    12.350     #01SEB/POT2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.235E+1 0E+0 0E+0 0E+0 0E+0
@@ -3780,61 +3849,61 @@ SOLUTION_SPECIES
      -analytic 9.5E-1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 1.000Nta-3     = Fe(Nta)
-     log_k    18.600     #96AKR/BOU
+     log_k    18.600     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.86E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 1.000Nta-3     = Fe(Nta)-
-     log_k    10.600     #96AKR/BOU
+     log_k    10.600     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.06E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 2.000Nta-3     = Fe(Nta)2-3
-     log_k    27.000     #96AKR/BOU
+     log_k    27.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.7E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 2.000Nta-3     = Fe(Nta)2-4
-     log_k    13.500     #96AKR/BOU
+     log_k    13.500     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.35E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     - 1.000H+     + 1.000Cit-3     + 1.000H2O     = Fe(OH)(Cit)-2
-     log_k     1.500     #96AKR/BOU
+     log_k     1.500     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.5E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     - 1.000H+     + 1.000Edta-4     + 1.000H2O     = Fe(OH)(Edta)-2
-     log_k    20.840     #96AKR/BOU
+     log_k    20.840     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.084E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     - 1.000H+     + 1.000Edta-4     + 1.000H2O     = Fe(OH)(Edta)-3
-     log_k     6.400     #96AKR/BOU
+     log_k     6.400     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.4E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     - 1.000H+     + 1.000Nta-3     + 1.000H2O     = Fe(OH)(Nta)-
-     log_k    14.600     #96AKR/BOU
+     log_k    14.600     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.46E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     - 1.000H+     + 1.000Nta-3     + 1.000H2O     = Fe(OH)(Nta)-2
-     log_k    -0.120     #96AKR/BOU
+     log_k    -0.120     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -1.2E-1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     - 1.000H+     + 1.000H2O     = Fe(OH)+
-     log_k    -9.500     #76BAE/MES in 99CHIa
+     log_k    -9.500     #76BAE/MES in 99CHI3
      delta_h  55.304     #kJ/mol        
      # Enthalpy of formation:           -320.526        #kJ/mol        
      -analytic 1.88831E-1 0E+0 -2.88872E+3 0E+0 0E+0
@@ -3846,31 +3915,31 @@ SOLUTION_SPECIES
      -analytic 5.43331E+0 0E+0 -2.27289E+3 0E+0 0E+0
 
 1.000Fe+2     - 2.000H+     + 2.000H2O     = Fe(OH)2
-     log_k   -20.600     #76BAE/MES in 99CHIa
+     log_k   -20.600     #76BAE/MES in 99CHI3
      delta_h  119.662    #kJ/mol        
      # Enthalpy of formation:           -541.998        #kJ/mol        
      -analytic 3.63852E-1 0E+0 -6.25037E+3 0E+0 0E+0
 
 1.000Fe+3     - 2.000H+     + 1.000Cit-3     + 2.000H2O     = Fe(OH)2(Cit)-2
-     log_k     2.900     #96AKR/BOU
+     log_k     2.900     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.9E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     - 2.000H+     + 1.000Edta-4     + 2.000H2O     = Fe(OH)2(Edta)-3
-     log_k    10.060     #96AKR/BOU
+     log_k    10.060     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.006E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     - 2.000H+     + 1.000Edta-4     + 2.000H2O     = Fe(OH)2(Edta)-4
-     log_k    -4.400     #96AKR/BOU
+     log_k    -4.400     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -4.4E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     - 2.000H+     + 1.000Nta-3     + 2.000H2O     = Fe(OH)2(Nta)-2
-     log_k     6.000     #96AKR/BOU
+     log_k     6.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6E+0 0E+0 0E+0 0E+0 0E+0
@@ -3882,67 +3951,67 @@ SOLUTION_SPECIES
      -analytic 6.8643E+0 0E+0 -3.7371E+3 0E+0 0E+0
 
 1.000Fe+3     - 3.000H+     + 3.000H2O     = Fe(OH)3
-     log_k   -12.560     #91PEA/VER in 98CHI
+     log_k   -12.560     #91PEA/BER in 98CHI
      delta_h  103.764    #kJ/mol        
      # Enthalpy of formation:           -802.726        #kJ/mol        
      -analytic 5.61865E+0 0E+0 -5.41996E+3 0E+0 0E+0
 
 1.000Fe+3     - 3.000H+     + 1.000Edta-4     + 3.000H2O     = Fe(OH)3(Edta)-4
-     log_k     8.300     #96AKR/BOU
+     log_k     8.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 8.3E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     - 3.000H+     + 3.000H2O     = Fe(OH)3-
-     log_k   -31.900     #76BAE/MES in 99CHIa
+     log_k   -31.900     #76BAE/MES in 99CHI3
      delta_h  138.072    #kJ/mol        
      # Enthalpy of formation:           -809.418        #kJ/mol        
      -analytic -7.71086E+0 0E+0 -7.21199E+3 0E+0 0E+0
 
 1.000Fe+3     - 4.000H+     + 4.000H2O     = Fe(OH)4-
-     log_k   -21.600     #76BAE/MES in 76CHI
+     log_k   -21.600     #76BAE/MES in 98CHI
      delta_h  133.471    #kJ/mol        
      # Enthalpy of formation:           -1058.849        #kJ/mol        
      -analytic 1.78308E+0 0E+0 -6.97167E+3 0E+0 0E+0
 
 1.000Fe+2     - 4.000H+     + 4.000H2O     = Fe(OH)4-2
-     log_k   -46.000     #76BAE/MES in 99CHIa
+     log_k   -46.000     #76BAE/MES in 99CHI3
      delta_h  158.797    #kJ/mol        
      # Enthalpy of formation:           -1074.523        #kJ/mol        
      -analytic -1.818E+1 0E+0 -8.29453E+3 0E+0 0E+0
 
 1.000Fe+2     + 1.000Ox-2     = Fe(Ox)
-     log_k     4.100     #96AKR/BOU
+     log_k     4.100     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 4.1E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 1.000Ox-2     = Fe(Ox)+
-     log_k     9.530     #96AKR/BOU
+     log_k     9.530     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 9.53E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 2.000Ox-2     = Fe(Ox)2-
-     log_k    15.750     #96AKR/BOU
+     log_k    15.750     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.575E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 2.000Ox-2     = Fe(Ox)2-2
-     log_k     6.200     #96AKR/BOU
+     log_k     6.200     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.2E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 3.000Ox-2     = Fe(Ox)3-3
-     log_k    20.200     #96AKR/BOU
+     log_k    20.200     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.02E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 3.000Ox-2     = Fe(Ox)3-4
-     log_k     5.220     #96AKR/BOU
+     log_k     5.220     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 5.22E+0 0E+0 0E+0 0E+0 0E+0
@@ -3972,19 +4041,19 @@ SOLUTION_SPECIES
      -analytic 1.115E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     + 1.000SeO4-2     = Fe(SeO4)
-     log_k     2.710     #01SEB/POT
+     log_k     2.710     #01SEB/POT2
      delta_h  -12.601    #kJ/mol        
      # Enthalpy of formation:           -706.101        #kJ/mol        
      -analytic 5.02403E-1 0E+0 6.58195E+2 0E+0 0E+0
 
 2.000Fe+3     - 2.000H+     + 2.000Cit-3     + 2.000H2O     = Fe2(Cit)2(OH)2-2
-     log_k    45.000     #96AKR/BOU
+     log_k    45.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 4.5E+1 0E+0 0E+0 0E+0 0E+0
 
 2.000Fe+3     - 2.000H+     + 2.000Edta-4     + 2.000H2O     = Fe2(OH)2(Edta)2-4
-     log_k    68.000     #96AKR/BOU
+     log_k    68.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.8E+1 0E+0 0E+0 0E+0 0E+0
@@ -4020,7 +4089,7 @@ SOLUTION_SPECIES
      -analytic 1.076E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+2     - 1.000H+     + 1.000CO3-2     + 1.000H2O     = FeCO3OH-
-     log_k    -4.030     #98KIN in 99CHIb
+     log_k    -4.030     #98KIN in 99CHI3
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -4.03E+0 0E+0 0E+0 0E+0 0E+0
@@ -4116,7 +4185,7 @@ SOLUTION_SPECIES
      -analytic 4.47E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Fe+3     + 1.000I-     = FeI+2
-     log_k     2.100     #96BOU
+     log_k     2.100     #96BOU2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.1E+0 0E+0 0E+0 0E+0 0E+0
@@ -4148,7 +4217,7 @@ SOLUTION_SPECIES
 1.000H+     + 1.000AsO4-3     = H(AsO4)-2
      log_k    11.600     
      delta_h  -18.200    #kJ/mol        
-     # Enthalpy of formation:           -906.34        #kJ/mol        #10RAN/FUG
+     # Enthalpy of formation:           -906.34        #kJ/mol        #09RAN/FUG
      -analytic 8.4115E+0 0E+0 9.50651E+2 0E+0 0E+0
 
 1.000H+     + 1.000Cit-3     = H(Cit)-2
@@ -4163,8 +4232,14 @@ SOLUTION_SPECIES
      # Enthalpy of formation:           -1724.6        #kJ/mol        
      -analytic 7.77119E+0 0E+0 1.03422E+3 0E+0 0E+0
 
+1.000H+     + 1.000Malonate-2     = H(Malonate)-
+     log_k     5.710     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 5.71E+0 0E+0 0E+0 0E+0 0E+0
+
 1.000H+     + 1.000Nta-3     = H(Nta)-2
-     log_k    10.280     #96AKR/BOU
+     log_k    10.280     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.028E+1 0E+0 0E+0 0E+0 0E+0
@@ -4211,6 +4286,18 @@ SOLUTION_SPECIES
      # Enthalpy of formation:           -582.7        #kJ/mol        
      -analytic 5.394E+0 0E+0 -1.08646E+3 0E+0 0E+0
 
+1.000H+     + 1.000Suberate-2     = H(Suberate)-
+     log_k     5.400     #31GAN/ING
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 5.4E+0 0E+0 0E+0 0E+0 0E+0
+
+1.000H+     + 1.000Succinat-2     = H(Succinat)-
+     log_k     5.710     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 5.71E+0 0E+0 0E+0 0E+0 0E+0
+
 2.000H+     + 1.000Adipate-2     = H2(Adipate)
      log_k     9.890     #04MAR/SMI
      # delta_h  0.000     #kJ/mol        
@@ -4226,7 +4313,7 @@ SOLUTION_SPECIES
 2.000H+     + 1.000AsO4-3     = H2(AsO4)-
      log_k    18.370     
      delta_h  -21.420    #kJ/mol        
-     # Enthalpy of formation:           -909.56        #kJ/mol        #10RAN/FUG
+     # Enthalpy of formation:           -909.56        #kJ/mol        #09RAN/FUG
      -analytic 1.46174E+1 0E+0 1.11884E+3 0E+0 0E+0
 
 2.000H+     + 1.000Cit-3     = H2(Cit)-
@@ -4241,8 +4328,14 @@ SOLUTION_SPECIES
      # Enthalpy of formation:           -1739.8        #kJ/mol        
      -analytic 1.19083E+1 0E+0 1.82817E+3 0E+0 0E+0
 
+2.000H+     + 1.000Malonate-2     = H2(Malonate)
+     log_k     8.670     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 8.67E+0 0E+0 0E+0 0E+0 0E+0
+
 2.000H+     + 1.000Nta-3     = H2(Nta)-
-     log_k    13.200     #96AKR/BOU
+     log_k    13.200     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.32E+1 0E+0 0E+0 0E+0 0E+0
@@ -4283,6 +4376,18 @@ SOLUTION_SPECIES
      # Enthalpy of formation:           -1386.194        #kJ/mol        
      -analytic -1.00006E+1 0E+0 -3.91752E+3 0E+0 0E+0
 
+2.000H+     + 1.000Suberate-2     = H2(Suberate)
+     log_k     9.920     #31GAN/ING
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 9.92E+0 0E+0 0E+0 0E+0 0E+0
+
+2.000H+     + 1.000Succinat-2     = H2(Succinat)
+     log_k     9.950     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 9.95E+0 0E+0 0E+0 0E+0 0E+0
+
 2.000H+     + 1.000CrO4-2     = H2CrO4
      log_k     6.320     #76BAE/MES, 04CHI
      delta_h  39.596     #kJ/mol        
@@ -4292,7 +4397,7 @@ SOLUTION_SPECIES
 2.000H+     + 1.000H2(PO4)-     + 1.000CrO4-2     - 1.000H2O     = H2CrPO7-
      log_k     9.020     
      delta_h  -51.490    #kJ/mol        
-     # Enthalpy of formation:           -1947.26        #kJ/mol        #76DEL/HWP
+     # Enthalpy of formation:           -1947.26        #kJ/mol        #76DEL/HAL
      -analytic -6.47544E-4 0E+0 2.68951E+3 0E+0 0E+0
 
 1.000H+     + 1.000HGlu-     = H2Glu
@@ -4314,7 +4419,7 @@ SOLUTION_SPECIES
      -analytic 8.15E+0 0E+0 0E+0 0E+0 0E+0
 
 2.000H+     + 1.000Phthalat-2     = H2Phthalat
-     log_k     8.320     #10RIC/SAB
+     log_k     8.320     #10RIC/SAB1
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 8.32E+0 0E+0 0E+0 0E+0 0E+0
@@ -4340,7 +4445,7 @@ SOLUTION_SPECIES
 3.000H+     + 1.000AsO4-3     = H3(AsO4)
      log_k    20.630     
      delta_h  -14.360    #kJ/mol        
-     # Enthalpy of formation:           -902.5        #kJ/mol        #10RAN/FUG
+     # Enthalpy of formation:           -902.5        #kJ/mol        #09RAN/FUG
      -analytic 1.81142E+1 0E+0 7.50074E+2 0E+0 0E+0
 
 3.000H+     + 1.000Cit-3     = H3(Cit)
@@ -4356,7 +4461,7 @@ SOLUTION_SPECIES
      -analytic 1.63021E+1 0E+0 1.45732E+3 0E+0 0E+0
 
 3.000H+     + 1.000Nta-3     = H3(Nta)
-     log_k    15.330     #96AKR/BOU
+     log_k    15.330     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.533E+1 0E+0 0E+0 0E+0 0E+0
@@ -4386,7 +4491,7 @@ SOLUTION_SPECIES
      -analytic 1.8865E+1 0E+0 1.35807E+3 0E+0 0E+0
 
 4.000H+     + 1.000Nta-3     = H4(Nta)+
-     log_k    16.130     #96AKR/BOU
+     log_k    16.130     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.613E+1 0E+0 0E+0 0E+0 0E+0
@@ -4458,7 +4563,7 @@ SOLUTION_SPECIES
      -analytic -6.57931E+0 0E+0 -1.88041E+2 0E+0 0E+0
 
 1.000H+     + 1.000Phthalat-2     = HPhthalat-
-     log_k     5.340     #10RIC/SAB
+     log_k     5.340     #10RIC/SAB1
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 5.34E+0 0E+0 0E+0 0E+0 0E+0
@@ -4585,7 +4690,7 @@ SOLUTION_SPECIES
 
 1.000Hg+2     + 3.000H+     + 3.000Cn-     + 3.000HSe-     - 3.000H2O     + 1.500O2     = Hg(SeCn)3-
      log_k   194.850     
-     # delta_h  0.000     #kJ/mol       
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.9485E+2 0E+0 0E+0 0E+0 0E+0
 
@@ -4626,7 +4731,7 @@ SOLUTION_SPECIES
      -analytic 1.33E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Ho+3     + 3.000CO3-2     = Ho(CO3)3-3
-     log_k    14.800     #05VER/VIT
+     log_k    14.800     #05VER/VIT2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.48E+1 0E+0 0E+0 0E+0 0E+0
@@ -4668,19 +4773,19 @@ SOLUTION_SPECIES
      -analytic 6.09786E+0 0E+0 -4.17346E+3 0E+0 0E+0
 
 - 2.000H+     + 1.000Ho+3     + 2.000H2O     = Ho(OH)2+
-     log_k   -15.700     #07NEC/ALT
+     log_k   -15.700     #07NEC/ALT2
      delta_h  143.846    #kJ/mol        
      # Enthalpy of formation:           -1134.856        #kJ/mol        
      -analytic 9.5007E+0 0E+0 -7.51359E+3 0E+0 0E+0
 
 - 3.000H+     + 1.000Ho+3     + 3.000H2O     = Ho(OH)3
-     log_k   -26.200     #07NEC/ALT
+     log_k   -26.200     #07NEC/ALT2
      delta_h  226.067    #kJ/mol        
      # Enthalpy of formation:           -1338.465        #kJ/mol        
      -analytic 1.34052E+1 0E+0 -1.18083E+4 0E+0 0E+0
 
 - 4.000H+     + 1.000Ho+3     + 4.000H2O     = Ho(OH)4-
-     log_k   -40.700     #07NEC/ALT
+     log_k   -40.700     #07NEC/ALT2
      delta_h  295.822    #kJ/mol        
      # Enthalpy of formation:           -1554.54        #kJ/mol        
      -analytic 1.11257E+1 0E+0 -1.54518E+4 0E+0 0E+0
@@ -4734,7 +4839,7 @@ SOLUTION_SPECIES
      -analytic 1.02183E+1 0E+0 -1.10265E+3 0E+0 0E+0
 
 - 1.000H+     + 1.000Ho+3     + 1.000H4(SiO4)     = HoSiO(OH)3+2
-     log_k    -2.620     #Original data from 07THA/SIN and 96JEN/CHO
+     log_k    -2.620     #Original data from 07THA/SIN and 96JEN/CHO1
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -2.62E+0 0E+0 0E+0 0E+0 0E+0
@@ -4753,9 +4858,9 @@ SOLUTION_SPECIES
 
 1.000I-     + 0.500O2     = IO-
      log_k    -1.010     #96FAL/REA
-     # delta_h  0.000     #kJ/mol       
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
-     -analytic -1.0100E+0 0E+0 0E+0 0E+0 0E+0
+     -analytic -1.01E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000I-     + 2.000O2     = IO4-
      log_k     6.980     
@@ -4770,7 +4875,7 @@ SOLUTION_SPECIES
      -analytic 1.8E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000K+     + 1.000H+     + 1.000Nta-3     = K(HNta)-
-     log_k    10.300     #96AKR/BOU
+     log_k    10.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.03E+1 0E+0 0E+0 0E+0 0E+0
@@ -4788,7 +4893,7 @@ SOLUTION_SPECIES
      -analytic 2E-2 0E+0 0E+0 0E+0 0E+0
 
 1.000K+     + 1.000Nta-3     = K(Nta)-2
-     log_k     1.300     #96AKR/BOU
+     log_k     1.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.3E+0 0E+0 0E+0 0E+0 0E+0
@@ -4802,7 +4907,7 @@ SOLUTION_SPECIES
 1.000K+     + 1.000Al+3     - 4.000H+     + 4.000H2O     = KAl(OH)4
      log_k   -24.220     
      delta_h  211.675    #kJ/mol        
-     # Enthalpy of formation:           -1722.185        #kJ/mol        #97POK/HEL
+     # Enthalpy of formation:           -1722.185        #kJ/mol        #97POK/HEL2
      -analytic 1.28638E+1 0E+0 -1.10565E+4 0E+0 0E+0
 
 1.000K+     + 1.000H2(PO4)-     = KH2PO4
@@ -4849,7 +4954,7 @@ SOLUTION_SPECIES
 
 1.000Mg+2     + 1.000H2(PO4)-     = Mg(H2PO4)+
      log_k     1.170     #81TUR/WHI
-     delta_h  13.514     #kJ/mol        #96BOU
+     delta_h  13.514     #kJ/mol        #96BOU1
      # Enthalpy of formation:           -1756.086        #kJ/mol        
      -analytic 3.53755E+0 0E+0 -7.05884E+2 0E+0 0E+0
 
@@ -4877,17 +4982,35 @@ SOLUTION_SPECIES
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.54E+1 0E+0 0E+0 0E+0 0E+0
 
+1.000Mg+2     + 1.000H+     + 1.000Malonate-2     = Mg(HMalonate)+
+     log_k     7.050     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 7.05E+0 0E+0 0E+0 0E+0 0E+0
+
 1.000Mg+2     - 1.000H+     + 1.000H2(PO4)-     = Mg(HPO4)
      log_k    -4.300     #76SMI/MAR
      delta_h  16.152     #kJ/mol        #76SMI/MAR
      # Enthalpy of formation:           -1753.448        #kJ/mol        
      -analytic -1.4703E+0 0E+0 -8.43676E+2 0E+0 0E+0
 
+1.000Mg+2     + 1.000H+     + 1.000Succinat-2     = Mg(HSuccinat)+
+     log_k     6.720     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 6.72E+0 0E+0 0E+0 0E+0 0E+0
+
 1.000Mg+2     + 1.000IO3-     = Mg(IO3)+
      log_k     0.700     #estimation NEA87     08/2/95 ;
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 7E-1 0E+0 0E+0 0E+0 0E+0
+
+1.000Mg+2     + 1.000Malonate-2     = Mg(Malonate)
+     log_k     2.860     #76KLA/OST
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 2.86E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Mg+2     + 1.000NH3     = Mg(NH3)+2
      log_k     0.100     #NAGRA, TR 91-18; F.J. PEARSON, U. BERNER, W. HUMMEL; Nagra thermochemical data base, supplemental data 05/92
@@ -4908,13 +5031,13 @@ SOLUTION_SPECIES
      -analytic -1E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Mg+2     + 1.000Nta-3     = Mg(Nta)-
-     log_k     6.790     #96AKR/BOU
+     log_k     6.790     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.79E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Mg+2     - 1.000H+     + 1.000H2O     = Mg(OH)+
-     log_k   -11.680     #97SHO/SAS
+     log_k   -11.680     #97SHO/SAS2
      delta_h  62.835     #kJ/mol        
      # Enthalpy of formation:           -689.995        #kJ/mol        
      -analytic -6.71797E-1 0E+0 -3.2821E+3 0E+0 0E+0
@@ -4933,7 +5056,7 @@ SOLUTION_SPECIES
 
 1.000Mg+2     - 2.000H+     + 1.000H2(PO4)-     = Mg(PO4)-
      log_k   -14.710     #81TUR/WHI
-     delta_h  31.170     #kJ/mol        #96BOU
+     delta_h  31.170     #kJ/mol        #96BOU1
      # Enthalpy of formation:           -1738.43        #kJ/mol        
      -analytic -9.24926E+0 0E+0 -1.62812E+3 0E+0 0E+0
 
@@ -4961,6 +5084,12 @@ SOLUTION_SPECIES
      # Enthalpy of formation:           -1077.114        #kJ/mol        
      -analytic 1.04128E+0 0E+0 3.45473E+2 0E+0 0E+0
 
+1.000Mg+2     + 1.000Succinat-2     = Mg(Succinat)
+     log_k     2.270     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 2.27E+0 0E+0 0E+0 0E+0 0E+0
+
 4.000Mg+2     - 4.000H+     + 4.000H2O     = Mg4(OH)4+4
      log_k   -39.750     #76BAE/MES
      delta_h  229.186    #kJ/mol        
@@ -4980,13 +5109,13 @@ SOLUTION_SPECIES
      -analytic -1.4E-1 0E+0 0E+0 0E+0 0E+0
 
 1.000Mg+2     + 1.000Cl-     = MgCl+
-     log_k     0.350     #96BOU
+     log_k     0.350     #96BOU1
      delta_h  -1.729     #kJ/mol        
      # Enthalpy of formation:           -635.809        #kJ/mol        
      -analytic 4.70926E-2 0E+0 9.03118E+1 0E+0 0E+0
 
 1.000Mg+2     + 1.000F-     = MgF+
-     log_k     1.800     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; SÂ¿lection de donnÂ¿es thermodynamiques affÂ¿rentes aux corrections de TempÂ¿rature sur les principaux Â¿quilibres chimiques en milieu naturel
+     log_k     1.800     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; S¿lection de donn¿es thermodynamiques aff¿rentes aux corrections de Temp¿rature sur les principaux ¿quilibres chimiques en milieu naturel
      delta_h  13.389     #kJ/mol        
      # Enthalpy of formation:           -788.961        #kJ/mol        
      -analytic 4.14565E+0 0E+0 -6.99355E+2 0E+0 0E+0
@@ -5082,7 +5211,7 @@ SOLUTION_SPECIES
      -analytic -3.48E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Mn+2     - 4.000H+     + 4.000H2O     = Mn(OH)4-2
-     log_k   -48.300     #NAGRA, TR 91-18; F.J. PEARSON, U. BERNER, W. HUMMEL; Nagra thermochemical data base, supplemental data 05/92EUR 11891 EN ; Nagra TR 91-18 (mai 1992, Hatches 3.0) (provient de la base 0391 MINEQL- PSY)
+     log_k   -48.300     #NAGRA, TR 91-18; F.J. PEARSON, U. BERNER, W. HUMMEL; Nagra thermochemical data base, supplemental data 05/91PEA/BER 11891 EN ; Nagra TR 91-18 (mai 1992, Hatches 3.0) (provient de la base 0391 MINEQL- PSY)
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -4.83E+1 0E+0 0E+0 0E+0 0E+0
@@ -5119,7 +5248,7 @@ SOLUTION_SPECIES
 
 1.000Mn+2     - 0.500H2O     + 1.000H+     + 0.250O2     = Mn+3
      log_k    -4.015     #96FAL/REA
-     # delta_h 0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -4.015E+0 0E+0 0E+0 0E+0 0E+0
 
@@ -5215,13 +5344,13 @@ SOLUTION_SPECIES
 
 1.000Mn+2     - 5.000H+     + 2.500H2O     + 0.750O2     = MnO4-3
      log_k   -48.515     #96FAL/REA
-     # delta_h 0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -4.8515E+1 0E+0 0E+0 0E+0 0E+0
 
 5.000H+     + 1.000MoO4-2     - 2.500H2O     - 0.750O2     = Mo+3
      log_k   -42.725     #68SAS/SIL
-     # delta_h  0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -4.2725E+1 0E+0 0E+0 0E+0 0E+0
 
@@ -5286,7 +5415,7 @@ SOLUTION_SPECIES
      -analytic 5.50275E+0 0E+0 1.36471E+3 0E+0 0E+0
 
 1.000Na+     + 1.000H+     + 1.000Nta-3     = Na(HNta)-
-     log_k    10.320     #96AKR/BOU
+     log_k    10.320     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.032E+1 0E+0 0E+0 0E+0 0E+0
@@ -5304,7 +5433,7 @@ SOLUTION_SPECIES
      -analytic 6E-2 0E+0 0E+0 0E+0 0E+0
 
 1.000Na+     + 1.000Nta-3     = Na(Nta)-2
-     log_k     1.880     #96AKR/BOU
+     log_k     1.880     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.88E+0 0E+0 0E+0 0E+0 0E+0
@@ -5334,7 +5463,7 @@ SOLUTION_SPECIES
      -analytic 1.14786E-1 0E+0 -6.40383E+1 0E+0 0E+0
 
 1.000Na+     + 1.000F-     = NaF
-     log_k    -0.450     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; SÂ¿lection de donnÂ¿es thermodynamiques affÂ¿rentes aux corrections de TempÂ¿rature sur les principaux Â¿quilibres chimiques en milieu naturel
+     log_k    -0.450     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; S¿lection de donn¿es thermodynamiques aff¿rentes aux corrections de Temp¿rature sur les principaux ¿quilibres chimiques en milieu naturel
      delta_h  -12.552    #kJ/mol        
      # Enthalpy of formation:           -588.242        #kJ/mol        
      -analytic -2.64901E+0 0E+0 6.55636E+2 0E+0 0E+0
@@ -5382,25 +5511,25 @@ SOLUTION_SPECIES
      -analytic -7.0983E+0 0E+0 -5.31215E+2 0E+0 0E+0
 
 5.000H+     + 1.000Nb(OH)6-     + 1.000Cit-3     - 4.000H2O     = NbO2(H3Cit)+
-     log_k    25.640     #96AKR/BOU
+     log_k    25.640     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.564E+1 0E+0 0E+0 0E+0 0E+0
 
 3.000H+     + 1.000Nb(OH)6-     + 1.000Ox-2     - 4.000H2O     = NbO2(HOx)
-     log_k    13.700     #96AKR/BOU
+     log_k    13.700     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.37E+1 0E+0 0E+0 0E+0 0E+0
 
 4.000H+     + 1.000Nb(OH)6-     + 2.000Ox-2     - 4.000H2O     = NbO2(HOx)2-
-     log_k    20.960     #96AKR/BOU
+     log_k    20.960     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.096E+1 0E+0 0E+0 0E+0 0E+0
 
 2.000H+     + 1.000Nb(OH)6-     + 1.000Ox-2     - 4.000H2O     = NbO2(Ox)-
-     log_k    10.940     #96AKR/BOU
+     log_k    10.940     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.094E+1 0E+0 0E+0 0E+0 0E+0
@@ -5478,7 +5607,7 @@ SOLUTION_SPECIES
      -analytic 2.42E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Ni+2     + 1.000HIsa-     = Ni(HIsa)+
-     log_k     2.800     #12GRI/COL
+     log_k     2.800     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.8E+0 0E+0 0E+0 0E+0 0E+0
@@ -5495,26 +5624,38 @@ SOLUTION_SPECIES
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.11E+1 0E+0 0E+0 0E+0 0E+0
 
+1.000Ni+2     + 1.000Malonate-2     = Ni(Malonate)
+     log_k     4.390     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 4.39E+0 0E+0 0E+0 0E+0 0E+0
+
+1.000Ni+2     + 2.000Malonate-2     = Ni(Malonate)2-2
+     log_k     8.150     #98KHA/RAD
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 8.15E+0 0E+0 0E+0 0E+0 0E+0
+
 1.000Ni+2     + 1.000NH3     = Ni(NH3)+2
-     log_k     2.610     #70LET/ROC in 82HOG
+     log_k     2.610     #70LET
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.61E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Ni+2     + 2.000NH3     = Ni(NH3)2+2
-     log_k     4.760     #70LET/ROC in 82HOG
+     log_k     4.760     #70LET
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 4.76E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Ni+2     + 3.000NH3     = Ni(NH3)3+2
-     log_k     6.790     #70LET/ROC in 82HOG
+     log_k     6.790     #70LET
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.79E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Ni+2     + 4.000NH3     = Ni(NH3)4+2
-     log_k     8.340     #70LET/ROC in 82HOG
+     log_k     8.340     #70LET
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 8.34E+0 0E+0 0E+0 0E+0 0E+0
@@ -5532,19 +5673,19 @@ SOLUTION_SPECIES
      -analytic -6E-1 0E+0 0E+0 0E+0 0E+0
 
 1.000Ni+2     + 1.000Nta-3     = Ni(Nta)-
-     log_k    12.750     #96AKR/BOU
+     log_k    12.750     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.275E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Ni+2     + 2.000Nta-3     = Ni(Nta)2-4
-     log_k    16.950     #96AKR/BOU
+     log_k    16.950     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.695E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Ni+2     - 1.000H+     + 1.000Nta-3     + 1.000H2O     = Ni(OH)(Nta)-2
-     log_k     1.470     #96AKR/BOU
+     log_k     1.470     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.47E+0 0E+0 0E+0 0E+0 0E+0
@@ -5568,7 +5709,7 @@ SOLUTION_SPECIES
      -analytic -2.324E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Ni+2     + 1.000HIsa-     + 3.000H2O     - 3.000H+     = Ni(OH)3(HIsa)-2
-     log_k   -26.500     #12GRI/COL
+     log_k   -26.500     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -2.65E+1 0E+0 0E+0 0E+0 0E+0
@@ -5592,7 +5733,7 @@ SOLUTION_SPECIES
      -analytic 6.2735E+0 0E+0 4.07422E+2 0E+0 0E+0
 
 1.000Ni+2     + 1.000Phthalat-2     = Ni(Phthalat)
-     log_k     3.000     #11GRI/COL
+     log_k     3.000     #11GRI/COL3
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 3E+0 0E+0 0E+0 0E+0 0E+0
@@ -5641,13 +5782,13 @@ SOLUTION_SPECIES
 
 1.000Ni+2     + 1.000H+     + 1.000Cn-     + 1.000HSe-     - 1.000H2O     + 0.500O2     = Ni(SeCn)+
      log_k    57.790     
-     # delta_h 0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 5.779E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Ni+2     + 2.000H+     + 2.000Cn-     + 2.000HSe-     - 2.000H2O     + 1.000O2     = Ni(SeCn)2
      log_k   114.270     
-     # delta_h 0.000    #kJ/mol         
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.1427E+2 0E+0 0E+0 0E+0 0E+0
 
@@ -5700,7 +5841,7 @@ SOLUTION_SPECIES
      -analytic 5.5E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Np+4     + 1.000Acetate-     = Np(Acetate)+3
-     log_k     5.830     #12GRI/GAR
+     log_k     5.830     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 5.83E+0 0E+0 0E+0 0E+0 0E+0
@@ -5772,19 +5913,19 @@ SOLUTION_SPECIES
      -analytic 1.9E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Np+3     + 1.000Nta-3     = Np(Nta)
-     log_k    13.000     #96AKR/BOU
+     log_k    13.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.3E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Np+4     + 1.000Nta-3     = Np(Nta)+
-     log_k    20.700     #96AKR/BOU
+     log_k    20.700     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.07E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Np+4     + 2.000Nta-3     = Np(Nta)2-2
-     log_k    36.300     #96AKR/BOU
+     log_k    36.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 3.63E+1 0E+0 0E+0 0E+0 0E+0
@@ -5802,7 +5943,7 @@ SOLUTION_SPECIES
      -analytic 7.24094E+0 0E+0 -1.9949E+3 0E+0 0E+0
 
 1.000Np+4     - 2.000H+     + 2.000CO3-2     + 2.000H2O     = Np(OH)2(CO3)2-2
-     log_k    15.170     #99RAI/HES
+     log_k    15.170     #99RAI/HES2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.517E+1 0E+0 0E+0 0E+0 0E+0
@@ -5880,19 +6021,19 @@ SOLUTION_SPECIES
      -analytic -2.2E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Np+4     + 1.000Ox-2     = Np(Ox)+2
-     log_k    11.160     #12GRI/GAR
+     log_k    11.160     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.116E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Np+4     + 2.000Ox-2     = Np(Ox)2
-     log_k    19.940     #12GRI/GAR
+     log_k    19.940     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.994E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Np+4     + 3.000Ox-2     = Np(Ox)3-2
-     log_k    25.190     #12GRI/GAR
+     log_k    25.190     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.519E+1 0E+0 0E+0 0E+0 0E+0
@@ -6066,7 +6207,7 @@ SOLUTION_SPECIES
      -analytic 1.706E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000NpO2+     + 1.000H+     + 1.000Nta-3     = NpO2(HNta)-
-     log_k    11.700     #96AKR/BOU
+     log_k    11.700     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.17E+1 0E+0 0E+0 0E+0 0E+0
@@ -6084,19 +6225,19 @@ SOLUTION_SPECIES
      -analytic -4.92E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000NpO2+2     + 1.000NO3-     = NpO2(NO3)+
-     log_k     0.100     #12GRI/GAR in analogy to UO2(NO3)+
+     log_k     0.100     #12GRI/GAR2 in analogy to UO2(NO3)+
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1E-1 0E+0 0E+0 0E+0 0E+0
 
 1.000NpO2+2     + 1.000Nta-3     = NpO2(Nta)-
-     log_k    11.000     #96AKR/BOU
+     log_k    11.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.1E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000NpO2+     + 1.000Nta-3     = NpO2(Nta)-2
-     log_k     7.460     #96AKR/BOU
+     log_k     7.460     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 7.46E+0 0E+0 0E+0 0E+0 0E+0
@@ -6108,7 +6249,7 @@ SOLUTION_SPECIES
      -analytic 4.98281E-2 0E+0 -3.38395E+3 0E+0 0E+0
 
 1.000NpO2+     - 1.000H+     + 1.000Nta-3     + 1.000H2O     = NpO2(OH)(Nta)-3
-     log_k    -4.700     #96AKR/BOU
+     log_k    -4.700     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -4.7E+0 0E+0 0E+0 0E+0 0E+0
@@ -6366,7 +6507,7 @@ SOLUTION_SPECIES
      -analytic 3.47E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Pb+2     + 1.000SeO3-2     = Pb(SeO3)
-     log_k     5.730     #01SEB/POT
+     log_k     5.730     #01SEB/POT2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 5.73E+0 0E+0 0E+0 0E+0 0E+0
@@ -6390,19 +6531,19 @@ SOLUTION_SPECIES
      -analytic -9.01559E+0 0E+0 -1.0037E+4 0E+0 0E+0
 
 1.000Pb+2     + 1.000Br-     = PbBr+
-     log_k     1.700     #82HÂ¿G
+     log_k     1.700     #82H¿G
      delta_h   4.228     #kJ/mol        
      # Enthalpy of formation:           -116.262        #kJ/mol        
      -analytic 2.44071E+0 0E+0 -2.20843E+2 0E+0 0E+0
 
 1.000Pb+2     + 2.000Br-     = PbBr2
-     log_k     1.900     #82HÂ¿G
+     log_k     1.900     #82H¿G
      delta_h  10.991     #kJ/mol        
      # Enthalpy of formation:           -230.909        #kJ/mol        
      -analytic 3.82554E+0 0E+0 -5.74099E+2 0E+0 0E+0
 
 1.000Pb+2     + 3.000Br-     = PbBr3-
-     log_k     2.900     #82HÂ¿G
+     log_k     2.900     #82H¿G
      delta_h  10.653     #kJ/mol        
      # Enthalpy of formation:           -352.657        #kJ/mol        
      -analytic 4.76632E+0 0E+0 -5.56444E+2 0E+0 0E+0
@@ -6450,25 +6591,25 @@ SOLUTION_SPECIES
      -analytic -4.11E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Pb+2     + 1.000I-     = PbI+
-     log_k     1.980     #82HÂ¿G
+     log_k     1.980     #82H¿G
      delta_h   3.874     #kJ/mol        
      # Enthalpy of formation:           -51.986        #kJ/mol        
      -analytic 2.65869E+0 0E+0 -2.02353E+2 0E+0 0E+0
 
 1.000Pb+2     + 2.000I-     = PbI2
-     log_k     3.150     #82HÂ¿G
+     log_k     3.150     #82H¿G
      delta_h   7.106     #kJ/mol        
      # Enthalpy of formation:           -105.534        #kJ/mol        
      -analytic 4.39492E+0 0E+0 -3.71172E+2 0E+0 0E+0
 
 1.000Pb+2     + 3.000I-     = PbI3-
-     log_k     3.810     #82HÂ¿G
+     log_k     3.810     #82H¿G
      delta_h   3.163     #kJ/mol        
      # Enthalpy of formation:           -166.257        #kJ/mol        
      -analytic 4.36413E+0 0E+0 -1.65215E+2 0E+0 0E+0
 
 1.000Pb+2     + 4.000I-     = PbI4-2
-     log_k     3.750     #82HÂ¿G
+     log_k     3.750     #82H¿G
      delta_h  -15.561    #kJ/mol        
      # Enthalpy of formation:           -241.761        #kJ/mol        
      -analytic 1.02383E+0 0E+0 8.12806E+2 0E+0 0E+0
@@ -6666,7 +6807,7 @@ SOLUTION_SPECIES
      -analytic 3.44013E+1 0E+0 -7.97889E+3 0E+0 0E+0
 
 1.000Pu+4     - 2.000H+     + 2.000CO3-2     + 2.000H2O     = Pu(CO3)2(OH)2-2
-     log_k    16.760     #99RAI/HES
+     log_k    16.760     #99RAI/HES1
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.676E+1 0E+0 0E+0 0E+0 0E+0
@@ -6744,13 +6885,13 @@ SOLUTION_SPECIES
      -analytic 1.95E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Pu+3     + 1.000Nta-3     = Pu(Nta)
-     log_k    13.100     #96AKR/BOU
+     log_k    13.100     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.31E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Pu+4     + 1.000Nta-3     = Pu(Nta)+
-     log_k    21.000     #96AKR/BOU
+     log_k    21.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.1E+1 0E+0 0E+0 0E+0 0E+0
@@ -6846,7 +6987,7 @@ SOLUTION_SPECIES
      -analytic 2.06E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Pu+3     + 2.000Ox-2     = Pu(Ox)2-
-     log_k    10.620     #12GRI/GAR
+     log_k    10.620     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.062E+1 0E+0 0E+0 0E+0 0E+0
@@ -6858,7 +6999,7 @@ SOLUTION_SPECIES
      -analytic 2.569E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Pu+3     + 3.000Ox-2     = Pu(Ox)3-3
-     log_k    13.220     #12GRI/GAR
+     log_k    13.220     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.322E+1 0E+0 0E+0 0E+0 0E+0
@@ -6996,13 +7137,13 @@ SOLUTION_SPECIES
      -analytic -4.86E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000PuO2+2     + 1.000Nta-3     = PuO2(Nta)-
-     log_k    11.000     #96AKR/BOU
+     log_k    11.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.1E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000PuO2+     + 1.000Nta-3     = PuO2(Nta)-2
-     log_k     7.500     #96AKR/BOU
+     log_k     7.500     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 7.5E+0 0E+0 0E+0 0E+0 0E+0
@@ -7026,19 +7167,19 @@ SOLUTION_SPECIES
      -analytic -3.64E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000PuO2+2     + 1.000Ox-2     = PuO2(Ox)
-     log_k     7.000     #96AKR/BOU
+     log_k     7.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 7E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000PuO2+2     + 2.000Ox-2     = PuO2(Ox)2-2
-     log_k    10.500     #73POR/PAO in 96AKR/BOU
+     log_k    10.500     #73POR/DEP in 95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.05E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000PuO2+2     + 1.000Phthalat-2     = PuO2(Phthalat)
-     log_k     5.760     #11GRI/COL
+     log_k     5.760     #11GRI/COL3
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 5.76E+0 0E+0 0E+0 0E+0 0E+0
@@ -7104,7 +7245,7 @@ SOLUTION_SPECIES
      -analytic 1.00106E+1 0E+0 -1.25413E+2 0E+0 0E+0
 
 1.000PuO2+2     + 1.000NO3-     = PuO2NO3+
-     log_k     0.100     #12GRI/GAR (LogK selected in analogy to U (NEA recommendation), logK(UO2NO3 +))
+     log_k     0.100     #12GRI/GAR1 (LogK selected in analogy to U (NEA recommendation), logK(UO2NO3 +))
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1E-1 0E+0 0E+0 0E+0 0E+0
@@ -7116,7 +7257,7 @@ SOLUTION_SPECIES
      -analytic 1.28336E+0 0E+0 -3.75173E+3 0E+0 0E+0
 
 1.000Pu+3     + 1.000Ox-2     = PuOx+
-     log_k     6.490     #12GRI/GAR
+     log_k     6.490     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.49E+0 0E+0 0E+0 0E+0 0E+0
@@ -7134,7 +7275,7 @@ SOLUTION_SPECIES
      -analytic 3.28766E+0 0E+0 -2.34842E+2 0E+0 0E+0
 
 1.000H+     + 1.000Ra+2     + 1.000CO3-2     = Ra(HCO3)+
-     log_k    10.920     #01ILE/TWE
+     log_k    10.920     #02ILE/TWE
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.092E+1 0E+0 0E+0 0E+0 0E+0
@@ -7202,7 +7343,7 @@ SOLUTION_SPECIES
 - 1.000H+     + 1.000Rb+     + 1.000H2O     = RbOH
      log_k   -14.260     
      delta_h  64.158     #kJ/mol        
-     # Enthalpy of formation:           -472.792        #kJ/mol        #97SHO/SAS
+     # Enthalpy of formation:           -472.792        #kJ/mol        #97SHO/SAS2
      -analytic -3.02002E+0 0E+0 -3.3512E+3 0E+0 0E+0
 
 - 1.000H+     + 1.000HS-     = S-2
@@ -7278,7 +7419,7 @@ SOLUTION_SPECIES
      -analytic 7.4E-1 0E+0 0E+0 0E+0 0E+0
 
 1.000H+     + 1.000Sb(OH)3     - 1.000H2O     = Sb(OH)2+
-     log_k     1.330     #77ANT/NET and others recalculated
+     log_k     1.330     #77ANT/NEV and others recalculated
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.33E+0 0E+0 0E+0 0E+0 0E+0
@@ -7387,27 +7528,27 @@ SOLUTION_SPECIES
 
 2.000HSe-     - 1.000H2O     + 0.500O2     = Se2-2
      log_k    38.490     #05OLI/NOL
-     # delta_h 0.000   #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
-     -analytic 3.8490E+1 0E+0 0E+0 0E+0 0E+0
+     -analytic 3.849E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000H+     + 3.000HSe-     - 2.000H2O     + 1.000O2     = Se3-2
      log_k    91.220     #05OLI/NOL
-     # delta_h 0.000   #kJ/mol      
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
-     -analytic 9.1220E+1 0E+0 0E+0 0E+0 0E+0
+     -analytic 9.122E+1 0E+0 0E+0 0E+0 0E+0
 
 2.000H+     + 4.000HSe-     - 3.000H2O     + 1.500O2     = Se4-2
      log_k   142.350     #05OLI/NOL
-     # delta_h 0.000   #kJ/mol      
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.4235E+2 0E+0 0E+0 0E+0 0E+0
 
 1.000H+     + 1.000Cn-     + 1.000HSe-     - 1.000H2O     + 0.500O2     = SeCn-
      log_k    56.020     
-     # delta_h 0.000   #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
-     -analytic 5.6020E+1 0E+0 0E+0 0E+0 0E+0
+     -analytic 5.602E+1 0E+0 0E+0 0E+0 0E+0
 
 - 1.000H+     + 2.000H4(SiO4)     - 1.000H2O     = Si2O2(OH)5-
      log_k    -8.500     #01FEL/CHO
@@ -7470,7 +7611,7 @@ SOLUTION_SPECIES
      -analytic 1.28E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sm+3     + 3.000CO3-2     = Sm(CO3)3-3
-     log_k    14.800     #05VER/VIT
+     log_k    14.800     #05VER/VIT2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.48E+1 0E+0 0E+0 0E+0 0E+0
@@ -7512,19 +7653,19 @@ SOLUTION_SPECIES
      -analytic 6.34383E+0 0E+0 -4.2468E+3 0E+0 0E+0
 
 1.000Sm+3     - 2.000H+     + 2.000H2O     = Sm(OH)2+
-     log_k   -15.700     #07NEC/ALT
+     log_k   -15.700     #07NEC/ALT2
      delta_h  145.698    #kJ/mol        
      # Enthalpy of formation:           -1117.161        #kJ/mol        
      -analytic 9.82516E+0 0E+0 -7.61033E+3 0E+0 0E+0
 
 1.000Sm+3     - 3.000H+     + 3.000H2O     = Sm(OH)3
-     log_k   -26.200     #07NEC/ALT
+     log_k   -26.200     #07NEC/ALT2
      delta_h  228.395    #kJ/mol        
      # Enthalpy of formation:           -1320.294        #kJ/mol        
      -analytic 1.3813E+1 0E+0 -1.19299E+4 0E+0 0E+0
 
 1.000Sm+3     - 4.000H+     + 4.000H2O     = Sm(OH)4-
-     log_k   -40.700     #07NEC/ALT
+     log_k   -40.700     #07NEC/ALT2
      delta_h  298.594    #kJ/mol        
      # Enthalpy of formation:           -1535.925        #kJ/mol        
      -analytic 1.16113E+1 0E+0 -1.55966E+4 0E+0 0E+0
@@ -7578,55 +7719,55 @@ SOLUTION_SPECIES
      -analytic 9.73237E+0 0E+0 -9.84603E+2 0E+0 0E+0
 
 1.000Sm+3     - 1.000H+     + 1.000H4(SiO4)     = SmSiO(OH)3+2
-     log_k    -2.620     #Orginal data 07THA/SIN and 96JEN/CHO
+     log_k    -2.620     #Orginal data 07THA/SIN and 96JEN/CHO1
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -2.62E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 1.000Cit-3     = Sn(Cit)-
-     log_k     8.700     #96AKR/BOU
+     log_k     8.700     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 8.7E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 2.000Cit-3     = Sn(Cit)2-4
-     log_k    11.900     #96AKR/BOU
+     log_k    11.900     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.19E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 1.000Edta-4     = Sn(Edta)-2
-     log_k    24.600     #96AKR/BOU
+     log_k    24.600     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.46E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 2.000H+     + 1.000Edta-4     = Sn(H2Edta)
-     log_k    24.300     #96AKR/BOU
+     log_k    24.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.43E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 1.000H+     + 1.000Edta-4     = Sn(HEdta)-
-     log_k    23.400     #96AKR/BOU
+     log_k    23.400     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.34E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 1.000Nta-3     = Sn(Nta)-
-     log_k    13.400     #96AKR/BOU
+     log_k    13.400     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.34E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     - 1.000H+     + 1.000H2O     = Sn(OH)+
-     log_k    -3.530     #12GAJ/SAN
+     log_k    -3.530     #12GAM/GAJ
      delta_h  18.612     #kJ/mol        
      # Enthalpy of formation:           -276.835        #kJ/mol        
      -analytic -2.69322E-1 0E+0 -9.72171E+2 0E+0 0E+0
 
 1.000Sn+2     - 2.000H+     + 2.000H2O     = Sn(OH)2
-     log_k    -7.680     #12GAJ/SAN
+     log_k    -7.680     #12GAM/GAJ
      delta_h  40.762     #kJ/mol        
      # Enthalpy of formation:           -540.515        #kJ/mol        
      -analytic -5.38815E-1 0E+0 -2.12914E+3 0E+0 0E+0
@@ -7662,115 +7803,115 @@ SOLUTION_SPECIES
      -analytic -3.1E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 1.000Ox-2     = Sn(Ox)
-     log_k     6.500     #96AKR/BOU
+     log_k     6.500     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.5E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 2.000Ox-2     = Sn(Ox)2-2
-     log_k    12.900     #96AKR/BOU
+     log_k    12.900     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.29E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 3.000Ox-2     = Sn(Ox)3-4
-     log_k    17.100     #96AKR/BOU
+     log_k    17.100     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.71E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 1.000SO4-2     = Sn(SO4)
-     log_k     3.430     #12GAJ/SAN
-     delta_h  16.900     #kJ/mol        #Suggested but not selected in 12GAJ/SAN
+     log_k     3.430     #12GAM/GAJ
+     delta_h  16.900     #kJ/mol        #Suggested but not selected in 12GAM/GAJ
      # Enthalpy of formation:           -902.057        #kJ/mol        
      -analytic 6.39075E+0 0E+0 -8.82747E+2 0E+0 0E+0
 
 3.000Sn+2     - 4.000H+     + 4.000H2O     = Sn3(OH)4+2
-     log_k    -5.600     #12GAJ/SAN
+     log_k    -5.600     #12GAM/GAJ
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -5.6E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 1.000Br-     = SnBr+
-     log_k     1.330     #12GAJ/SAN
+     log_k     1.330     #12GAM/GAJ
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.33E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 2.000Br-     = SnBr2
-     log_k     1.970     #12GAJ/SAN
+     log_k     1.970     #12GAM/GAJ
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.97E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 3.000Br-     = SnBr3-
-     log_k     1.930     #12GAJ/SAN
+     log_k     1.930     #12GAM/GAJ
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.93E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 1.000Cl-     = SnCl+
-     log_k     1.520     #12GAJ/SAN
-     delta_h  12.700     #kJ/mol        #12GAJ/SAN
+     log_k     1.520     #12GAM/GAJ
+     delta_h  12.700     #kJ/mol        #12GAM/GAJ
      # Enthalpy of formation:           -163.997        #kJ/mol        
      -analytic 3.74494E+0 0E+0 -6.63366E+2 0E+0 0E+0
 
 1.000Sn+2     + 2.000Cl-     = SnCl2
-     log_k     2.170     #12GAJ/SAN
-     delta_h  19.700     #kJ/mol        #12GAJ/SAN
+     log_k     2.170     #12GAM/GAJ
+     delta_h  19.700     #kJ/mol        #12GAM/GAJ
      # Enthalpy of formation:           -324.077        #kJ/mol        
      -analytic 5.62129E+0 0E+0 -1.029E+3 0E+0 0E+0
 
 1.000Sn+2     + 3.000Cl-     = SnCl3-
-     log_k     2.130     #12GAJ/SAN
+     log_k     2.130     #12GAM/GAJ
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.13E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 4.000Cl-     = SnCl4-2
-     log_k     2.030     #12GAJ/SAN
+     log_k     2.030     #12GAM/GAJ
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.03E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 1.000F-     = SnF+
-     log_k     5.250     #12GAJ/SAN
+     log_k     5.250     #12GAM/GAJ
      delta_h  -9.579     #kJ/mol        
      # Enthalpy of formation:           -354.546        #kJ/mol        
      -analytic 3.57183E+0 0E+0 5.00345E+2 0E+0 0E+0
 
 1.000Sn+2     + 2.000F-     = SnF2
-     log_k     8.890     #12GAJ/SAN
+     log_k     8.890     #12GAM/GAJ
      delta_h  -9.968     #kJ/mol        
      # Enthalpy of formation:           -690.285        #kJ/mol        
      -analytic 7.14368E+0 0E+0 5.20664E+2 0E+0 0E+0
 
 1.000Sn+2     + 3.000F-     = SnF3-
-     log_k    11.500     #12GAJ/SAN
+     log_k    11.500     #12GAM/GAJ
      delta_h  -4.478     #kJ/mol        
      # Enthalpy of formation:           -1020.145        #kJ/mol        
      -analytic 1.07155E+1 0E+0 2.33902E+2 0E+0 0E+0
 
 1.000Sn+2     - 1.000H+     + 1.000H2(PO4)-     = SnHPO4
-     log_k     2.290     #00CIA/MUL
+     log_k     2.290     #00CIA/IUL
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.29E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 1.000I-     = SnI+
-     log_k     1.740     #68HAI/JOH recalculated
+     log_k     1.740     #68HAI/JOH1 recalculated
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.74E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     + 2.000I-     = SnI2
-     log_k     2.690     #68HAI/JOH recalculated
+     log_k     2.690     #68HAI/JOH1 recalculated
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.69E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sn+2     - 2.000H+     + 1.000H2(PO4)-     = SnPO4-
-     log_k    -1.560     #00CIA/MUL
+     log_k    -1.560     #00CIA/IUL
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -1.56E+0 0E+0 0E+0 0E+0 0E+0
@@ -7782,19 +7923,19 @@ SOLUTION_SPECIES
      -analytic 6.6334E+0 0E+0 -1.13995E+3 0E+0 0E+0
 
 1.000Sr+2     + 1.000Cit-3     = Sr(Cit)-
-     log_k     4.240     #96AKR/BOU
+     log_k     4.240     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 4.24E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     - 1.000H+     + 2.000Cit-3     + 1.000H2O     = Sr(Cit)2(OH)-5
-     log_k    -1.780     #96AKR/BOU
+     log_k    -1.780     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -1.78E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     + 2.000Cit-3     = Sr(Cit)2-4
-     log_k     4.840     #96AKR/BOU
+     log_k     4.840     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 4.84E+0 0E+0 0E+0 0E+0 0E+0
@@ -7812,13 +7953,13 @@ SOLUTION_SPECIES
      -analytic 2E-1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     + 1.000Edta-4     = Sr(Edta)-2
-     log_k    10.300     #96AKR/BOU
+     log_k    10.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.03E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     + 2.000H+     + 1.000Cit-3     = Sr(H2Cit)+
-     log_k    12.460     #96AKR/BOU
+     log_k    12.460     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.246E+1 0E+0 0E+0 0E+0 0E+0
@@ -7836,25 +7977,25 @@ SOLUTION_SPECIES
      -analytic 1.33667E+1 0E+0 -5.53571E+2 0E+0 0E+0
 
 1.000Sr+2     + 1.000H+     + 1.000Cit-3     = Sr(HCit)
-     log_k     9.000     #96AKR/BOU
+     log_k     9.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 9E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     + 1.000H+     + 1.000Edta-4     = Sr(HEdta)-
-     log_k    14.700     #96AKR/BOU
+     log_k    14.700     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.47E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     + 1.000H+     + 1.000Ox-2     = Sr(HOx)+
-     log_k     5.800     #96AKR/BOU
+     log_k     5.800     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 5.8E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     + 2.000H+     + 2.000Ox-2     = Sr(HOx)2
-     log_k    10.800     #96AKR/BOU
+     log_k    10.800     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.08E+1 0E+0 0E+0 0E+0 0E+0
@@ -7896,7 +8037,7 @@ SOLUTION_SPECIES
      -analytic 3.1E-1 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     + 1.000Nta-3     = Sr(Nta)-
-     log_k     6.250     #96AKR/BOU
+     log_k     6.250     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 6.25E+0 0E+0 0E+0 0E+0 0E+0
@@ -7908,19 +8049,19 @@ SOLUTION_SPECIES
      -analytic 1.18245E+0 0E+0 -4.31496E+3 0E+0 0E+0
 
 1.000Sr+2     + 1.000Ox-2     = Sr(Ox)
-     log_k     2.540     #96AKR/BOU
+     log_k     2.540     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.54E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     + 2.000Ox-2     = Sr(Ox)2-2
-     log_k     3.000     #96AKR/BOU
+     log_k     3.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 3E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     - 2.000H+     + 1.000H2(PO4)-     = Sr(PO4)-
-     log_k   -13.560     #96BOU
+     log_k   -13.560     #96BOU1
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -1.356E+1 0E+0 0E+0 0E+0 0E+0
@@ -7938,13 +8079,13 @@ SOLUTION_SPECIES
      -analytic 2.04E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     + 1.000SO4-2     = Sr(SO4)
-     log_k     2.300     #06BLA/ING
-     delta_h   7.029     #kJ/mol        #06BLA/ING
+     log_k     2.300     #06BLA/IGN
+     delta_h   7.029     #kJ/mol        #06BLA/IGN
      # Enthalpy of formation:           -1453.211        #kJ/mol        
      -analytic 3.53143E+0 0E+0 -3.6715E+2 0E+0 0E+0
 
 2.000Sr+2     - 1.000H+     + 1.000Cit-3     + 1.000H2O     = Sr2(Cit)(OH)
-     log_k     0.380     #96AKR/BOU
+     log_k     0.380     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 3.8E-1 0E+0 0E+0 0E+0 0E+0
@@ -7956,7 +8097,7 @@ SOLUTION_SPECIES
      -analytic 1.55E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Sr+2     + 1.000Cl-     = SrCl+
-     log_k     0.230     #96BOU
+     log_k     0.230     #96BOU1
      delta_h   4.924     #kJ/mol        
      # Enthalpy of formation:           -713.054        #kJ/mol        
      -analytic 1.09265E+0 0E+0 -2.57198E+2 0E+0 0E+0
@@ -8004,19 +8145,19 @@ SOLUTION_SPECIES
      -analytic 5.55E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000TcO(OH)2     + 1.000H+     + 1.000Edta-4     - 1.000H2O     = TcO(OH)(Edta)-3
-     log_k    19.000     #96AKR/BOU
+     log_k    19.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.9E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000TcO(OH)2     + 1.000H+     + 1.000Nta-3     - 1.000H2O     = TcO(OH)(Nta)-2
-     log_k    13.300     #96AKR/BOU
+     log_k    13.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.33E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000TcO(OH)2     + 1.000H+     + 2.000Nta-3     - 1.000H2O     = TcO(OH)(Nta)2-5
-     log_k    11.700     #96AKR/BOU
+     log_k    11.700     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.17E+1 0E+0 0E+0 0E+0 0E+0
@@ -8082,19 +8223,19 @@ SOLUTION_SPECIES
      -analytic 3.1E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     + 1.000Cit-3     = Th(Cit)+
-     log_k    16.800     #96AKR/BOU
+     log_k    16.800     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.68E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     + 2.000Cit-3     = Th(Cit)2-2
-     log_k    25.800     #96AKR/BOU
+     log_k    25.800     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.58E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     + 1.000Edta-4     = Th(Edta)
-     log_k    26.950     #96AKR/BOU
+     log_k    26.950     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.695E+1 0E+0 0E+0 0E+0 0E+0
@@ -8124,28 +8265,46 @@ SOLUTION_SPECIES
      -analytic 4.03E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     + 1.000H+     + 1.000Edta-4     = Th(HEdta)+
-     log_k    28.700     #96AKR/BOU
+     log_k    28.700     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.87E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     + 1.000H+     + 1.000Ox-2     = Th(HOx)+3
-     log_k    11.000     #96AKR/BOU
+     log_k    11.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.1E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     + 2.000H+     + 2.000Ox-2     = Th(HOx)2+2
-     log_k    18.130     #96AKR/BOU
+     log_k    18.130     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.813E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     + 4.000H+     + 4.000Ox-2     = Th(HOx)4
-     log_k    24.300     #96AKR/BOU
+     log_k    24.300     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.43E+1 0E+0 0E+0 0E+0 0E+0
+
+1.000Th+4     + 1.000Malonate-2     = Th(Malonate)+2
+     log_k     9.320     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 9.32E+0 0E+0 0E+0 0E+0 0E+0
+
+1.000Th+4     + 2.000Malonate-2     = Th(Malonate)2
+     log_k    16.070     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 1.607E+1 0E+0 0E+0 0E+0 0E+0
+
+1.000Th+4     + 3.000Malonate-2     = Th(Malonate)3-2
+     log_k    19.630     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 1.963E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     + 1.000NO3-     = Th(NO3)+3
      log_k     1.300     #09RAN/FUG
@@ -8160,7 +8319,7 @@ SOLUTION_SPECIES
      -analytic 2.3E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     + 1.000Nta-3     = Th(Nta)+
-     log_k    17.150     #96AKR/BOU
+     log_k    17.150     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.715E+1 0E+0 0E+0 0E+0 0E+0
@@ -8172,13 +8331,13 @@ SOLUTION_SPECIES
      -analytic 2.16E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     - 1.000H+     + 1.000Edta-4     + 1.000H2O     = Th(OH)(Edta)-
-     log_k    19.500     #96AKR/BOU
+     log_k    19.500     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.95E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     - 1.000H+     + 1.000Nta-3     + 1.000H2O     = Th(OH)(Nta)
-     log_k    25.200     #96AKR/BOU
+     log_k    25.200     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.52E+1 0E+0 0E+0 0E+0 0E+0
@@ -8202,7 +8361,7 @@ SOLUTION_SPECIES
      -analytic 8.8E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     - 2.000H+     + 1.000Nta-3     + 2.000H2O     = Th(OH)2(Nta)-
-     log_k    35.200     #96AKR/BOU
+     log_k    35.200     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 3.52E+1 0E+0 0E+0 0E+0 0E+0
@@ -8238,7 +8397,7 @@ SOLUTION_SPECIES
      -analytic -4.9E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Th+4     - 3.000H+     + 3.000H2O     = Th(OH)3+
-     log_k   -11.000     #09GRI/RIB
+     log_k   -11.000     #10GRI/RIB
      delta_h  125.623    #kJ/mol        
      # Enthalpy of formation:           -1500.554        #kJ/mol        
      -analytic 1.10082E+1 0E+0 -6.56174E+3 0E+0 0E+0
@@ -8315,6 +8474,24 @@ SOLUTION_SPECIES
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.075E+1 0E+0 0E+0 0E+0 0E+0
 
+1.000Th+4     + 1.000Succinat-2     = Th(Succinat)+2
+     log_k     8.490     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 8.49E+0 0E+0 0E+0 0E+0 0E+0
+
+1.000Th+4     + 2.000Succinat-2     = Th(Succinat)2
+     log_k    12.920     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 1.292E+1 0E+0 0E+0 0E+0 0E+0
+
+1.000Th+4     + 3.000Succinat-2     = Th(Succinat)3-2
+     log_k    16.620     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 1.662E+1 0E+0 0E+0 0E+0 0E+0
+
 2.000Th+4     - 2.000H+     + 2.000H2O     = Th2(OH)2+6
      log_k    -5.900     #09RAN/FUG
      delta_h  58.300     #kJ/mol        #09RAN/FUG
@@ -8328,7 +8505,7 @@ SOLUTION_SPECIES
      -analytic -6.8E+0 0E+0 0E+0 0E+0 0E+0
 
 2.000Th+4     - 1.000H+     + 1.000Ox-2     + 1.000H2O     = Th2(Ox)(OH)+5
-     log_k    26.240     #96AKR/BOU
+     log_k    26.240     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.624E+1 0E+0 0E+0 0E+0 0E+0
@@ -8388,13 +8565,13 @@ SOLUTION_SPECIES
      -analytic 2.558E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000U+4     + 1.000Acetate-     = U(Acetate)+3
-     log_k     5.640     #12GRI/GAR
+     log_k     5.640     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 5.64E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000U+4     + 2.000Acetate-     = U(Acetate)2+2
-     log_k     9.810     #12GRI/GAR
+     log_k     9.810     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 9.81E+0 0E+0 0E+0 0E+0 0E+0
@@ -8430,7 +8607,7 @@ SOLUTION_SPECIES
      -analytic 2.3E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000U+4     + 1.000Nta-3     = U(Nta)+
-     log_k    20.000     #96AKR/BOU
+     log_k    20.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2E+1 0E+0 0E+0 0E+0 0E+0
@@ -8508,13 +8685,13 @@ SOLUTION_SPECIES
      -analytic -5.1E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000U+4     + 2.000Ox-2     = U(Ox)2
-     log_k    18.630     #12GRI/GAR
+     log_k    18.630     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.863E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000U+4     + 3.000Ox-2     = U(Ox)3-2
-     log_k    24.190     #12GRI/GAR
+     log_k    24.190     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.419E+1 0E+0 0E+0 0E+0 0E+0
@@ -8712,7 +8889,7 @@ SOLUTION_SPECIES
      -analytic 8.5E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000UO2+2     + 1.000H+     + 1.000Nta-3     = UO2(HNta)
-     log_k     9.000     #96AKR/BOU
+     log_k     9.000     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 9E+0 0E+0 0E+0 0E+0 0E+0
@@ -8725,9 +8902,9 @@ SOLUTION_SPECIES
 
 1.000UO2+2     + 2.000I-     + 3.000O2     = UO2(IO3)2
      log_k    38.400     #92GRE/FUG
-     # delta_h 0.000   #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
-     -analytic 3.8400E+1 0E+0 0E+0 0E+0 0E+0
+     -analytic 3.84E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000UO2+2     + 1.000NO3-     = UO2(NO3)+
      log_k     0.100     #08RAO/TIA
@@ -8736,7 +8913,7 @@ SOLUTION_SPECIES
      -analytic 7.8325E-1 0E+0 -2.03711E+2 0E+0 0E+0
 
 1.000UO2+2     + 1.000Nta-3     = UO2(Nta)-
-     log_k    10.800     #96AKR/BOU
+     log_k    10.800     #95AKR/BOU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.08E+1 0E+0 0E+0 0E+0 0E+0
@@ -8802,7 +8979,7 @@ SOLUTION_SPECIES
      -analytic -6.33E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000UO2+2     + 1.000Phthalat-2     = UO2(Phthalat)
-     log_k     5.560     #11GRI/COL
+     log_k     5.560     #11GRI/COL3
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 5.56E+0 0E+0 0E+0 0E+0 0E+0
@@ -8848,6 +9025,12 @@ SOLUTION_SPECIES
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 3.1E+0 0E+0 0E+0 0E+0 0E+0
+
+1.000UO2+2     + 1.000Succinat-2     = UO2(Succinat)
+     log_k     5.280     #13GRI/CAM
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic 5.28E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000UO2+2     + 1.000Br-     = UO2Br+
      log_k     0.220     #92GRE/FUG
@@ -8916,20 +9099,20 @@ SOLUTION_SPECIES
      -analytic -1.84E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000U+4     + 1.000Ox-2     = UOx+2
-     log_k    10.670     #12GRI/GAR
+     log_k    10.670     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.067E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Zn+2     + 1.000H+     + 1.000Cn-     + 1.000HSe-     - 1.000H2O     + 0.500O2     = Zn(SeCn)+
      log_k    57.230     
-     # delta_h  0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
-     -analytic 5.7230E+1 0E+0 0E+0 0E+0 0E+0
+     -analytic 5.723E+1 0E+0 0E+0 0E+0 0E+0
 
 1.000Zn+2     + 2.000H+     + 2.000Cn-     + 2.000HSe-     - 2.000H2O     + 1.000O2     = Zn(SeCn)2
      log_k   113.710     
-     # delta_h  0.000    #kJ/mol       
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.1371E+2 0E+0 0E+0 0E+0 0E+0
 
@@ -9121,9 +9304,9 @@ NaFeSi2O6     = 1.000Na+     + 1.000Fe+3     - 4.000H+     + 2.000H4(SiO4)     -
 
 Afwillite
 Ca3Si2O4(OH)6     = 3.000Ca+2     - 6.000H+     + 2.000H4(SiO4)     + 2.000H2O
-     log_k    49.420     #10BLA/BOU
+     log_k    49.420     #10BLA/BOU1
      delta_h -269.228    #kJ/mol        
-     # Enthalpy of formation:           -4853.82        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -4853.82        #kJ/mol        #10BLA/BOU1
      -analytic 2.25335E+0 0E+0 1.40627E+4 0E+0 0E+0
 
 Ag(OH)(s)
@@ -9136,7 +9319,7 @@ Ag(OH)     = 1.000Ag+     - 1.000H+     + 1.000H2O
 Ag(SeCn)(cr)
 Ag(SeCn)     = 1.000Ag+     + 1.000H+     + 1.000Cn-     + 1.000HSe-     - 1.000H2O     + 0.500O2
      log_k   -70.020     
-     #delta_h  0.0    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -7.002E+1 0E+0 0E+0 0E+0 0E+0
 
@@ -9191,7 +9374,7 @@ Ag2Se     = 2.000Ag+     - 1.000H+     + 1.000HSe-
 
 Ag3(PO4)(s)
 Ag3(PO4)     = 3.000Ag+     - 2.000H+     + 1.000H2(PO4)-
-     log_k     2.010     #03BÂ¿T in 76SMI/MAR
+     log_k     2.010     #03B¿T in 76SMI/MAR
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.01E+0 0E+0 0E+0 0E+0 0E+0
@@ -9310,7 +9493,7 @@ Am(OH)3     = - 3.000H+     + 1.000Am+3     + 3.000H2O
 
 Am(OH)3(cr)
 Am(OH)3     = - 3.000H+     + 1.000Am+3     + 3.000H2O
-     log_k    15.600     #03GUI/FAN, 82SIL, 88STA/KIM
+     log_k    15.600     #03GUI/FAN, 82SIL, 88STA/KIM1
      delta_h -120.992    #kJ/mol        
      # Enthalpy of formation:           -1353.2        #kJ/mol        
      -analytic -5.59686E+0 0E+0 6.31984E+3 0E+0 0E+0
@@ -9417,7 +9600,7 @@ Amesite-Fe
 Fe4Al4Si2O10(OH)8     = 4.000Fe+2     + 4.000Al+3     - 20.000H+     + 2.000H4(SiO4)     + 10.000H2O
      log_k    57.040     
      delta_h -686.828    #kJ/mol        
-     # Enthalpy of formation:           -7607.46        #kJ/mol        #05VID/VIE
+     # Enthalpy of formation:           -7607.46        #kJ/mol        #05VID/PAR
      -analytic -6.32869E+1 0E+0 3.58755E+4 0E+0 0E+0
 
 Analcime
@@ -9473,7 +9656,7 @@ Antigorite
 Mg48Si34O85(OH)62     = 48.000Mg+2     - 96.000H+     + 34.000H4(SiO4)     + 11.000H2O
      log_k   500.160     
      delta_h -3822.746   #kJ/mol        
-     # Enthalpy of formation:           -71417.98        #kJ/mol        #98HOL/POL
+     # Enthalpy of formation:           -71417.98        #kJ/mol        #98HOL/POW
      -analytic -1.69555E+2 0E+0 1.99676E+5 0E+0 0E+0
 
 Aragonite
@@ -9501,7 +9684,7 @@ As(s)
 As     = 3.000H+     + 1.000AsO4-3     - 1.500H2O     - 1.250O2
      log_k    54.885     
      delta_h -444.228    #kJ/mol        
-     # Enthalpy of formation:           0        #kJ/mol        #10RAN/FUG
+     # Enthalpy of formation:           0        #kJ/mol        #09RAN/FUG
      -analytic -2.29402E+1 0E+0 2.32036E+4 0E+0 0E+0
 
 As2O5(s)
@@ -9660,31 +9843,31 @@ Ca(UO2)6O4(OH)6:8H2O     = 1.000Ca+2     + 6.000UO2+2     - 14.000H+     + 18.00
 
 Beidellite-Ca
 Ca0.17Al2.34Si3.66O10(OH)2     = 0.170Ca+2     + 2.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k     4.930     
-     delta_h -201.995    #kJ/mol        
-     # Enthalpy of formation:           -5743.55        #kJ/mol        #13BLA/VIE
-     -analytic -3.0458E+1 0E+0 1.05509E+4 0E+0 0E+0
+     log_k     5.770     
+     delta_h -207.635    #kJ/mol        
+     # Enthalpy of formation:           -5737.91        #kJ/mol        #15BLA/VIE
+     -analytic -3.0606E+1 0E+0 1.08455E+4 0E+0 0E+0
 
 Beidellite-K
 K0.34Al2.34Si3.66O10(OH)2     = 0.340K+     + 2.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k     2.660     
-     delta_h -177.652    #kJ/mol        
-     # Enthalpy of formation:           -5761.31        #kJ/mol        #13BLA/VIE
-     -analytic -2.84632E+1 0E+0 9.2794E+3 0E+0 0E+0
+     log_k     4.600     
+     delta_h -189.102    #kJ/mol        
+     # Enthalpy of formation:           -5749.86        #kJ/mol        #15BLA/VIE
+     -analytic -2.85292E+1 0E+0 9.87747E+3 0E+0 0E+0
 
 Beidellite-Mg
 Mg0.17Al2.34Si3.66O10(OH)2     = 0.170Mg+2     + 2.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k     5.130     
-     delta_h -201.865    #kJ/mol        
-     # Enthalpy of formation:           -5730.76        #kJ/mol        #13BLA/VIE
-     -analytic -3.02352E+1 0E+0 1.05441E+4 0E+0 0E+0
+     log_k     5.230     
+     delta_h -208.815    #kJ/mol        
+     # Enthalpy of formation:           -5723.81        #kJ/mol        #15BLA/VIE
+     -analytic -3.13528E+1 0E+0 1.09072E+4 0E+0 0E+0
 
 Beidellite-Na
 Na0.34Al2.34Si3.66O10(OH)2     = 0.340Na+     + 2.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k     3.370     
-     delta_h -187.490    #kJ/mol        
-     # Enthalpy of formation:           -5747.46        #kJ/mol        #13BLA/VIE
-     -analytic -2.94768E+1 0E+0 9.79327E+3 0E+0 0E+0
+     log_k     5.100     
+     delta_h -197.720    #kJ/mol        
+     # Enthalpy of formation:           -5737.23        #kJ/mol        #15BLA/VIE
+     -analytic -2.9539E+1 0E+0 1.03276E+4 0E+0 0E+0
 
 Beidellite_SBld-1
 Ca0.185K0.104(Si3.574Al0.426)(Al1.812Mg0.090Fe0.112)O10(OH)2     = 0.185Ca+2     + 0.090Mg+2     + 0.104K+     + 0.112Fe+3     + 2.238Al+3     - 7.704H+     + 3.574H4(SiO4)     - 2.296H2O
@@ -9711,28 +9894,28 @@ Berndtite
 SnS2     = 1.000Sn+4     - 2.000H+     + 2.000HS-
      log_k   -37.560     
      delta_h  87.401     #kJ/mol        
-     # Enthalpy of formation:           -151.5        #kJ/mol        #12GAJ/SAN
+     # Enthalpy of formation:           -151.5        #kJ/mol        #12GAM/GAJ
      -analytic -2.2248E+1 0E+0 -4.56527E+3 0E+0 0E+0
 
 Berthierine(FeII)
 (Fe2Al)(SiAl)O5(OH)4     = 2.000Al+3     + 1.000H4(SiO4)     + 2.000Fe+2     + 5.000H2O     - 10.000H+
-     log_k    33.290     
-     delta_h -369.354    #kJ/mol        
-     # Enthalpy of formation:           -3777.79        #kJ/mol        #13BLA/VIE
-     -analytic -3.14179E+1 0E+0 1.92927E+4 0E+0 0E+0
+     log_k    34.560     
+     delta_h -376.684    #kJ/mol        
+     # Enthalpy of formation:           -3770.46        #kJ/mol        #15BLA/VIE
+     -analytic -3.14321E+1 0E+0 1.96755E+4 0E+0 0E+0
 
 Berthierine(FeIII)
 (Fe2.34Fe0.33Al0.33)(Si1.34Al0.66)O5(OH)4     = 0.330Fe+3     + 2.340Fe+2     + 0.990Al+3     - 8.640H+     + 1.340H4(SiO4)     + 3.640H2O
-     log_k    29.290     
-     delta_h -301.967    #kJ/mol        
-     # Enthalpy of formation:           -3456.24        #kJ/mol        #13BLA/VIE
-     -analytic -2.36123E+1 0E+0 1.57728E+4 0E+0 0E+0
+     log_k    28.800     
+     delta_h -300.177    #kJ/mol        
+     # Enthalpy of formation:           -3458.03        #kJ/mol        #15BLA/VIE
+     -analytic -2.37887E+1 0E+0 1.56793E+4 0E+0 0E+0
 
 Berthierine_ISGS
 (Si1.332Al0.668)(Al0.976Fe0.182Fe1.44Mg0.157)O5(OH)4     = 0.157Mg+2     + 0.182Fe+3     + 1.644Al+3     + 1.332H4(SiO4)     + 1.440Fe+2     + 3.672H2O     - 8.672H+
      log_k    27.930     
      delta_h -318.385    #kJ/mol        
-     # Enthalpy of formation:           -3774.46        #kJ/mol        #13BLA/GAI
+     # Enthalpy of formation:           -3774.46        #kJ/mol        #13BLA/GAI2
      -analytic -2.78486E+1 0E+0 1.66304E+4 0E+0 0E+0
 
 Berthierine_Lorraine
@@ -9809,12 +9992,12 @@ C2SH(alpha)
 Ca2(HSiO4)(OH)     = 2.000Ca+2     - 4.000H+     + 1.000H4(SiO4)     + 1.000H2O
      log_k    35.540     
      delta_h -198.104    #kJ/mol        
-     # Enthalpy of formation:           -2634.92        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -2634.92        #kJ/mol        #10BLA/BOU1
      -analytic 8.3372E-1 0E+0 1.03477E+4 0E+0 0E+0
 
 C3AH6
 Ca3Al2(OH)12     = 3.000Ca+2     + 2.000Al+3     - 12.000H+     + 12.000H2O
-     log_k    80.320     #10BLA/BOU
+     log_k    80.320     #10BLA/BOU2
      delta_h -584.260    #kJ/mol        
      # Enthalpy of formation:           -5551.5        #kJ/mol        #99SCH/NAV
      -analytic -2.20378E+1 0E+0 3.0518E+4 0E+0 0E+0
@@ -9823,12 +10006,12 @@ C3FH6
 Ca3Fe2(OH)12     = 3.000Ca+2     + 2.000Fe+3     - 12.000H+     + 12.000H2O
      log_k    72.390     
      delta_h -509.370    #kJ/mol        
-     # Enthalpy of formation:           -4647.59        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -4647.59        #kJ/mol        #10BLA/BOU2
      -analytic -1.68477E+1 0E+0 2.66062E+4 0E+0 0E+0
 
 C4AH13
 Ca4Al2(OH)14:6H2O     = 4.000Ca+2     + 2.000Al+3     - 14.000H+     + 20.000H2O
-     log_k   103.650     #10BLA/BOU
+     log_k   103.650     #10BLA/BOU2
      delta_h -647.400    #kJ/mol        
      # Enthalpy of formation:           -8318        #kJ/mol        #76HOU/STE
      -analytic -9.76944E+0 0E+0 3.3816E+4 0E+0 0E+0
@@ -9837,33 +10020,33 @@ C4FH13
 Ca4Fe2(OH)14:6H2O     = 4.000Ca+2     + 2.000Fe+3     - 14.000H+     + 20.000H2O
      log_k    95.160     
      delta_h -569.200    #kJ/mol        
-     # Enthalpy of formation:           -7417.4        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -7417.4        #kJ/mol        #10BLA/BOU2
      -analytic -4.55941E+0 0E+0 2.97313E+4 0E+0 0E+0
 
 CSH0.8
 Ca0.8SiO2.8:1.54H2O     = 0.800Ca+2     - 1.600H+     + 1.000H4(SiO4)     + 0.340H2O
-     log_k    11.050     #10BLA/BOU
+     log_k    11.050     #10BLA/BOU1
      delta_h  -47.646    #kJ/mol        
-     # Enthalpy of formation:           -1945.13        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -1945.13        #kJ/mol        #10BLA/BOU1
      -analytic 2.70279E+0 0E+0 2.48872E+3 0E+0 0E+0
 
 CSH1.2
 Ca1.2SiO3.2:2.06H2O     = 1.200Ca+2     - 2.400H+     + 1.000H4(SiO4)     + 1.260H2O
-     log_k    19.300     #10BLA/BOU
+     log_k    19.300     #10BLA/BOU1
      delta_h  -88.600    #kJ/mol        
-     # Enthalpy of formation:           -2384.34        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -2384.34        #kJ/mol        #10BLA/BOU1
      -analytic 3.77797E+0 0E+0 4.62789E+3 0E+0 0E+0
 
 CSH1.6
 Ca1.6SiO3.6:2.58H2O     = 1.600Ca+2     - 3.200H+     + 1.000H4(SiO4)     + 2.180H2O
-     log_k    28.000     #10BLA/BOU
+     log_k    28.000     #10BLA/BOU1
      delta_h -133.313    #kJ/mol        
-     # Enthalpy of formation:           -2819.79        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -2819.79        #kJ/mol        #10BLA/BOU1
      -analytic 4.6446E+0 0E+0 6.96341E+3 0E+0 0E+0
 
 Ca(Adipate)(s)
 Ca(Adipate)     = 1.000Ca+2     + 1.000Adipate-2
-     log_k    -3.300     #12GRI/GAR
+     log_k    -3.300     #12GRI/GAR2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -3.3E+0 0E+0 0E+0 0E+0 0E+0
@@ -9975,7 +10158,7 @@ Ca2ZrSi3O12     = 2.000Ca+2     - 8.000H+     + 3.000H4(SiO4)     + 1.000Zr+4   
 
 Ca3(AsO4)2:xH2O
 Ca3(AsO4)2     = 3.000Ca+2     + 2.000AsO4-3
-     log_k   -21.000     #11GRI/COL
+     log_k   -21.000     #11GRI/COL4
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -2.1E+1 0E+0 0E+0 0E+0 0E+0
@@ -10129,7 +10312,7 @@ CaO     = 1.000Ca+2     - 2.000H+     + 1.000H2O
 
 CaSn(OH)6(s)
 CaSn(OH)6     = 1.000Ca+2     + 1.000Sn+4     - 6.000H+     + 6.000H2O
-     log_k    -0.740     #Log KÂ¿ estimated as the mean value of data in 00LOT/OCH (uncertainty to include both values) recalculated using  values of Sn(OH)6-2 selected in this work
+     log_k    -0.740     #Log K¿ estimated as the mean value of data in 00LOT/OCH2 (uncertainty to include both values) recalculated using  values of Sn(OH)6-2 selected in this work
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -7.4E-1 0E+0 0E+0 0E+0 0E+0
@@ -10166,7 +10349,7 @@ Cassiterite
 SnO2     = 1.000Sn+4     - 4.000H+     + 2.000H2O
      log_k   -15.600     
      delta_h  -25.529    #kJ/mol        
-     # Enthalpy of formation:           -577.63        #kJ/mol        #12GAJ/SAN
+     # Enthalpy of formation:           -577.63        #kJ/mol        #12GAM/GAJ
      -analytic -2.00725E+1 0E+0 1.33347E+3 0E+0 0E+0
 
 Cattierite
@@ -10178,14 +10361,14 @@ CoS2     = 1.000Co+2     + 2.000HS-     - 1.000H2O     + 0.500O2
 
 Cd(CO3)(s)
 Cd(CO3)     = 1.000Cd+2     + 1.000CO3-2
-     log_k   -12.100     #91RAI/FEL
+     log_k   -12.100     #91RAI/FEL1
      delta_h   1.482     #kJ/mol        
      # Enthalpy of formation:           -752.632        #kJ/mol        
      -analytic -1.18404E+1 0E+0 -7.74101E+1 0E+0 0E+0
 
 Cd(OH)2(s)
 Cd(OH)2     = 1.000Cd+2     - 2.000H+     + 2.000H2O
-     log_k    13.860     #91RAI/FEL
+     log_k    13.860     #91RAI/FEL1
      delta_h  -87.730    #kJ/mol        
      # Enthalpy of formation:           -559.85        #kJ/mol        
      -analytic -1.50961E+0 0E+0 4.58245E+3 0E+0 0E+0
@@ -10285,7 +10468,7 @@ CdS(s)
 CdS     = 1.000Cd+2     - 1.000H+     + 1.000HS-
      log_k   -14.820     #99WAN/TES
      delta_h  56.570     #kJ/mol        
-     # Enthalpy of formation:           -148.79        #kJ/mol        #06DEO/WAV
+     # Enthalpy of formation:           -148.79        #kJ/mol        #06DEO/NAV
      -analytic -4.90938E+0 0E+0 -2.95485E+3 0E+0 0E+0
 
 CdSiO3(cr)
@@ -10334,7 +10517,7 @@ Chamosite
 Fe5Al2Si3O10(OH)8     = 5.000Fe+2     + 2.000Al+3     - 16.000H+     + 3.000H4(SiO4)     + 6.000H2O
      log_k    47.600     
      delta_h -504.512    #kJ/mol        
-     # Enthalpy of formation:           -7120.85        #kJ/mol        #05VID/VIE
+     # Enthalpy of formation:           -7120.85        #kJ/mol        #05VID/PAR
      -analytic -4.07866E+1 0E+0 2.63525E+4 0E+0 0E+0
 
 Chloroapatite
@@ -10376,7 +10559,7 @@ Clinochlore
 Mg5Al2Si3O10(OH)8     = 5.000Mg+2     + 2.000Al+3     - 16.000H+     + 3.000H4(SiO4)     + 6.000H2O
      log_k    61.720     
      delta_h -600.772    #kJ/mol        
-     # Enthalpy of formation:           -8909.59        #kJ/mol        #05VID/VIE
+     # Enthalpy of formation:           -8909.59        #kJ/mol        #05VID/PAR
      -analytic -4.35306E+1 0E+0 3.13805E+4 0E+0 0E+0
 
 Clinoptilolite_Ca
@@ -10437,7 +10620,7 @@ Cm(PO4)     = - 2.000H+     + 1.000H2(PO4)-     + 1.000Cm+3
 
 Cm(cr)
 Cm     = 1.000Cm+3     + 1.500H2O     - 3.000H+     - 0.750O2
-     log_k   168.795     #01KON
+     log_k   168.795     #01KON2
      delta_h -1034.645   #kJ/mol        
      # Enthalpy of formation:           0        #kJ/mol        
      -analytic -1.24667E+1 0E+0 5.40432E+4 0E+0 0E+0
@@ -10453,7 +10636,7 @@ Cm2O3(cr)
 Cm2O3     = - 6.000H+     + 2.000Cm+3     + 3.000H2O
      log_k    53.100     
      delta_h -403.490    #kJ/mol        
-     # Enthalpy of formation:           -1684        #kJ/mol        #01KON
+     # Enthalpy of formation:           -1684        #kJ/mol        #01KON2
      -analytic -1.75883E+1 0E+0 2.10757E+4 0E+0 0E+0
 
 CmCl3(cr)
@@ -10493,23 +10676,23 @@ Co(FeO2)2     = 2.000Fe+3     + 1.000Co+2     - 8.000H+     + 4.000H2O
 
 Co(OH)2(s,blue)
 Co(OH)2     = 1.000Co+2     - 2.000H+     + 2.000H2O
-     log_k    13.800     #98PLY/ZHA
+     log_k    13.800     #98PLY/ZHA1
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 1.38E+1 0E+0 0E+0 0E+0 0E+0
 
 Co(OH)2(s,rose1)
 Co(OH)2     = 1.000Co+2     - 2.000H+     + 2.000H2O
-     log_k    12.200     #98PLY/ZHA
+     log_k    12.200     #98PLY/ZHA1
      delta_h  -88.460    #kJ/mol        
-     # Enthalpy of formation:           -540.8        #kJ/mol        #98PLY/ZHA
+     # Enthalpy of formation:           -540.8        #kJ/mol        #98PLY/ZHA1
      -analytic -3.2975E+0 0E+0 4.62058E+3 0E+0 0E+0
 
 Co(OH)2(s,rose2)
 Co(OH)2     = 1.000Co+2     - 2.000H+     + 2.000H2O
-     log_k    13.200     #98PLY/ZHA
+     log_k    13.200     #98PLY/ZHA1
      delta_h  -93.560    #kJ/mol        
-     # Enthalpy of formation:           -535.7        #kJ/mol        #98PLY/ZHA
+     # Enthalpy of formation:           -535.7        #kJ/mol        #98PLY/ZHA1
      -analytic -3.19098E+0 0E+0 4.88697E+3 0E+0 0E+0
 
 Co(SeO3):2H2O(s)
@@ -10793,11 +10976,11 @@ PbCrO4     = 1.000Pb+2     + 1.000CrO4-2
      -analytic -3.97609E+0 0E+0 -2.55631E+3 0E+0 0E+0
 
 Cronstedtite-Th
-Fe2Fe(SiAl)O5(OH)4     = 1.000Fe+3     + 2.000Fe+2     + 1.000Al+3     - 10.000H+     + 1.000H4(SiO4)     + 5.000H2O
-     log_k    99.200     
-     delta_h -743.194    #kJ/mol        
-     # Enthalpy of formation:           -2914.55        #kJ/mol        #13BLA/VIE
-     -analytic -3.10018E+1 0E+0 3.88197E+4 0E+0 0E+0
+Fe4SiO5(OH)4     = 2.000Fe+3     + 2.000Fe+2     - 10.000H+     + 1.000H4(SiO4)     + 5.000H2O
+     log_k    16.110     
+     delta_h -253.794    #kJ/mol        
+     # Enthalpy of formation:           -2914.55        #kJ/mol        #15BLA/VIE
+     -analytic -2.83527E+1 0E+0 1.32566E+4 0E+0 0E+0
 
 Cs(s)
 Cs     = 1.000Cs+     + 0.500H2O     - 1.000H+     - 0.250O2
@@ -10850,7 +11033,7 @@ CsCl      = 1.000Cs+     + 1.000Cl-
 
 Cu(SeO3):2H2O(s)
 Cu(SeO3):2H2O     = 1.000Cu+2     + 1.000SeO3-2     + 2.000H2O
-     log_k    -9.500     #Average value from 56CHU and 93SLA/POP in 05OLI/NOL
+     log_k    -9.500     #Average value from 56CHU2 and 93SLA/POP in 05OLI/NOL
      delta_h  -15.320    #kJ/mol        
      # Enthalpy of formation:           -998.6        #kJ/mol        #05OLI/NOL
      -analytic -1.21839E+1 0E+0 8.00218E+2 0E+0 0E+0
@@ -10871,7 +11054,7 @@ Cu     = 1.000Cu+2     + 1.000H2O     - 2.000H+     - 0.500O2
 
 Cu2Se(alfa)
 Cu2Se     = 2.000Cu+     - 1.000H+     + 1.000HSe-
-     log_k   -45.890     #01SEB/POT
+     log_k   -45.890     #01SEB/POT2
      delta_h  216.940    #kJ/mol        
      # Enthalpy of formation:           -59.3        #kJ/mol        #05OLI/NOL
      -analytic -7.8838E+0 0E+0 -1.13315E+4 0E+0 0E+0
@@ -10915,7 +11098,7 @@ Dickite
 Al2Si2O5(OH)4     = 2.000Al+3     - 6.000H+     + 2.000H4(SiO4)     + 1.000H2O
      log_k     9.390     
      delta_h -185.218    #kJ/mol        
-     # Enthalpy of formation:           -4099.8        #kJ/mol        #93FIA/MAZ
+     # Enthalpy of formation:           -4099.8        #kJ/mol        #03FIA/MAJ
      -analytic -2.30588E+1 0E+0 9.6746E+3 0E+0 0E+0
 
 Dolomite
@@ -10948,14 +11131,14 @@ Mg(SO4):7H2O      = 1.000Mg+2     + 1.000SO4-2     + 7.000H2O
 
 Ettringite
 Ca6Al2(SO4)3(OH)12:26H2O     = 6.000Ca+2     + 2.000Al+3     - 12.000H+     + 3.000SO4-2     + 38.000H2O
-     log_k    56.970     #10BLA/BOU
+     log_k    56.970     #10BLA/BOU2
      delta_h -379.830    #kJ/mol        
-     # Enthalpy of formation:           -17544.53        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -17544.53        #kJ/mol        #10BLA/BOU2
      -analytic -9.57326E+0 0E+0 1.98399E+4 0E+0 0E+0
 
 Ettringite-Fe
 Ca6Fe2(SO4)3(OH)12:26H2O     = 6.000Ca+2     + 2.000Fe+3     - 12.000H+     + 3.000SO4-2     + 38.000H2O
-     log_k    54.550     #10BLA/BOU
+     log_k    54.550     #10BLA/BOU2
      delta_h -343.754    #kJ/mol        
      # Enthalpy of formation:           -16601.806        #kJ/mol        
      -analytic -5.67303E+0 0E+0 1.79555E+4 0E+0 0E+0
@@ -11228,7 +11411,7 @@ FeSe2     = 1.000Fe+2     + 2.000HSe-     - 1.000H2O     + 0.500O2
 
 Ferrosilite
 FeSiO3     = 1.000Fe+2     - 2.000H+     + 1.000H4(SiO4)     - 1.000H2O
-     log_k    32.710     #95TRO: CEA, N.T.SESD nÂ¿ 95/49, L. TROTIGNON avril 1996; Critique et sÂ¿lection de donnÂ¿es thermodynamiques en vue de modÂ¿liser les Â¿quilibres minÂ¿ral - solution, rapport annuel 1995
+     log_k    32.710     #95TRO: CEA, N.T.SESD n¿ 95/49, L. TROTIGNON avril 1996; Critique et s¿lection de donn¿es thermodynamiques en vue de mod¿liser les ¿quilibres min¿ral - solution, rapport annuel 1995
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 3.271E+1 0E+0 0E+0 0E+0 0E+0
@@ -11256,14 +11439,14 @@ CaF2     = 1.000Ca+2     + 2.000F-
 
 Foshagite
 Ca4Si3O9(OH)2:0.5H2O     = 4.000Ca+2     - 8.000H+     + 3.000H4(SiO4)     - 0.500H2O
-     log_k    65.960     #10BLA/BOU
+     log_k    65.960     #10BLA/BOU1
      delta_h -380.237    #kJ/mol        
      # Enthalpy of formation:           -6032.43        #kJ/mol        #56NEW
      -analytic -6.54565E-1 0E+0 1.98611E+4 0E+0 0E+0
 
 Friedel-salt
 Ca4Al2(OH)12Cl2:4H2O      = 4.000Ca+2     + 2.000Al+3     - 12.000H+     + 2.000Cl-     + 16.000H2O
-     log_k    74.930     #10BLA/BOU
+     log_k    74.930     #10BLA/BOU2
      delta_h -486.200    #kJ/mol        
      # Enthalpy of formation:           -7670.04        #kJ/mol        #76HOU/STE
      -analytic -1.02485E+1 0E+0 2.5396E+4 0E+0 0E+0
@@ -11312,10 +11495,10 @@ Na2Ca(SO4)2     = 1.000Ca+2     + 2.000Na+     + 2.000SO4-2
 
 Glauconite
 (K0.75Mg0.25Fe1.5Al0.25)(Al0.25Si3.75)O10(OH)2     = 0.250Mg+2     + 0.750K+     + 1.250Fe+3     + 0.250Fe+2     + 0.500Al+3     - 7.000H+     + 3.750H4(SiO4)     - 3.000H2O
-     log_k     2.550     
-     delta_h -124.732    #kJ/mol        
-     # Enthalpy of formation:           -5156.06        #kJ/mol        #13BLA/VIE
-     -analytic -1.93021E+1 0E+0 6.5152E+3 0E+0 0E+0
+     log_k     1.860     
+     delta_h -129.662    #kJ/mol        
+     # Enthalpy of formation:           -5151.13        #kJ/mol        #15BLA/VIE
+     -analytic -2.08558E+1 0E+0 6.77271E+3 0E+0 0E+0
 
 Goethite
 FeOOH     = 1.000Fe+3     - 3.000H+     + 2.000H2O
@@ -11340,9 +11523,9 @@ CaSO4:2H2O     = 1.000Ca+2     + 1.000SO4-2     + 2.000H2O
 
 Gyrolite
 Ca2Si3O7.5(OH):2H2O     = 2.000Ca+2     - 4.000H+     + 3.000H4(SiO4)     - 1.500H2O
-     log_k    22.340     #10BLA/BOU
+     log_k    22.340     #10BLA/BOU1
      delta_h -122.847    #kJ/mol        
-     # Enthalpy of formation:           -4917.99        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -4917.99        #kJ/mol        #10BLA/BOU1
      -analytic 8.18161E-1 0E+0 6.41674E+3 0E+0 0E+0
 
 H2MoO4(s)
@@ -11579,9 +11762,9 @@ Al2Si2O5(OH)4     = 2.000Al+3     - 6.000H+     + 2.000H4(SiO4)     + 1.000H2O
 Hausmannite
 Mn3O4     = 3.000Mn+2     - 6.000H+     + 3.000H2O     + 0.500O2
      log_k    18.330     #96FAL/REA
-     # delta_h  0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
-     -analytic 1.8330E+1 0E+0 0E+0 0E+0 0E+0
+     -analytic 1.833E+1 0E+0 0E+0 0E+0 0E+0
 
 Heazlewoodite
 Ni3S2     = 3.000Ni+2     - 4.000H+     + 2.000HS-     + 1.000H2O     - 0.500O2
@@ -11599,7 +11782,7 @@ Fe2O3     = 2.000Fe+3     - 6.000H+     + 3.000H2O
 
 Hemicarboaluminate
 Ca6O6:Al4O6:CaCO3:Ca(OH)2:21H2O     = 8.000Ca+2     + 4.000Al+3     - 26.000H+     + 1.000CO3-2     + 35.000H2O
-     log_k   173.200     #07MAT/LOT
+     log_k   173.200     #07MAT/LOT1
      delta_h -1188.595   #kJ/mol        
      # Enthalpy of formation:           -15988.285        #kJ/mol        
      -analytic -3.50326E+1 0E+0 6.20845E+4 0E+0 0E+0
@@ -11608,7 +11791,7 @@ Herzenbergite
 SnS     = 1.000Sn+2     - 1.000H+     + 1.000HS-
      log_k   -16.210     
      delta_h  83.683     #kJ/mol        
-     # Enthalpy of formation:           -109.6        #kJ/mol        #12GAJ/SAN
+     # Enthalpy of formation:           -109.6        #kJ/mol        #12GAM/GAJ
      -analytic -1.54939E+0 0E+0 -4.37106E+3 0E+0 0E+0
 
 Heulandite_Ca
@@ -11639,6 +11822,13 @@ Hf(HPO4)2:H2O     = - 2.000H+     + 2.000H2(PO4)-     + 1.000Hf+4     + 1.000H2O
      # Enthalpy of formation:           -3481.6        #kJ/mol        #97KAR/CHE
      -analytic -2.105E+1 0E+0 0E+0 0E+0 0E+0
 
+#Hf(cr)
+#Hf     = 1.000Hf+4     + 2.000H2O     - 4.000H+     - 1.000O2
+     # log_k             
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:           0        #kJ/mol        
+     # -analytic 0E+0 0E+0 0E+0 0E+0 0E+0 
+
 HfO2(am)
 HfO2     = - 4.000H+     + 1.000Hf+4     + 2.000H2O
      log_k     0.900     #01RAI/XIA
@@ -11654,7 +11844,7 @@ HfO2     = - 4.000H+     + 1.000Hf+4     + 2.000H2O
      -analytic -5.6E+0 0E+0 0E+0 0E+0 0E+0
 
 Hg2SeO3(s)
-Hg2SeO3     = 1.000SeO3-2     + 2.000Hg+
+Hg2SeO3     = 1.000SeO3-2     + 1.000Hg2+2
      log_k   -15.200     #05OLI/NOL
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
@@ -11669,7 +11859,7 @@ HgSeO3     = 1.000Hg+2     + 1.000SeO3-2
 
 Hillebrandite
 Ca2SiO3(OH)2:0.17H2O     = 2.000Ca+2     - 4.000H+     + 1.000H4(SiO4)     + 1.170H2O
-     log_k    36.950     #10BLA/BOU
+     log_k    36.950     #10BLA/BOU1
      delta_h -219.135    #kJ/mol        
      # Enthalpy of formation:           -2662.48        #kJ/mol        #56NEW
      -analytic -1.44075E+0 0E+0 1.14462E+4 0E+0 0E+0
@@ -11774,24 +11964,24 @@ Ca5(OH)(PO4)3     = 5.000Ca+2     - 7.000H+     + 3.000H2(PO4)-     + 1.000H2O
 
 Illite-Al
 K0.85Al2.85Si3.15O10(OH)2     = 0.850K+     + 2.850Al+3     - 9.400H+     + 3.150H4(SiO4)     - 0.600H2O
-     log_k    10.130     
-     delta_h -252.452    #kJ/mol        
-     # Enthalpy of formation:           -5927.57        #kJ/mol        #13BLA/VIE
-     -analytic -3.40976E+1 0E+0 1.31865E+4 0E+0 0E+0
+     log_k    13.020     
+     delta_h -266.372    #kJ/mol        
+     # Enthalpy of formation:           -5913.65        #kJ/mol        #15BLA/VIE
+     -analytic -3.36463E+1 0E+0 1.39136E+4 0E+0 0E+0
 
 Illite-FeII
 K0.85Fe0.25Al2.35Si3.4O10(OH)2     = 0.850K+     + 0.250Fe+2     + 2.350Al+3     - 8.400H+     + 3.400H4(SiO4)     - 1.600H2O
-     log_k     7.280     
-     delta_h -203.311    #kJ/mol        
-     # Enthalpy of formation:           -5809.48        #kJ/mol        #13BLA/VIE
-     -analytic -2.83385E+1 0E+0 1.06197E+4 0E+0 0E+0
+     log_k     9.450     
+     delta_h -216.501    #kJ/mol        
+     # Enthalpy of formation:           -5796.29        #kJ/mol        #15BLA/VIE
+     -analytic -2.84793E+1 0E+0 1.13086E+4 0E+0 0E+0
 
 Illite-Mg
 K0.85Mg0.25Al2.35Si3.4O10(OH)2     = 0.250Mg+2     + 0.850K+     + 2.350Al+3     - 8.400H+     + 3.400H4(SiO4)     - 1.600H2O
-     log_k     9.690     
-     delta_h -218.351    #kJ/mol        
-     # Enthalpy of formation:           -5888.69        #kJ/mol        #13BLA/VIE
-     -analytic -2.85634E+1 0E+0 1.14053E+4 0E+0 0E+0
+     log_k    11.010     
+     delta_h -225.651    #kJ/mol        
+     # Enthalpy of formation:           -5881.39        #kJ/mol        #15BLA/VIE
+     -analytic -2.85223E+1 0E+0 1.17866E+4 0E+0 0E+0
 
 Illite-Smec_ISCz-1(2.996H2O)
 (Na0.134K0.53)(Si3.565Al0.435)(Al1.717Fe0.05Fe0.017Mg0.218)O10(OH)2:2.996H2O     = 0.218Mg+2     + 0.530K+     + 0.134Na+     + 0.050Fe+3     + 0.017Fe+2     + 2.152Al+3     - 7.740H+     + 3.565H4(SiO4)     + 0.736H2O
@@ -11818,14 +12008,14 @@ Jaffeite
 Ca6(Si2O7)(OH)6     = 6.000Ca+2     - 12.000H+     + 2.000H4(SiO4)     + 5.000H2O
      log_k   114.060     
      delta_h -636.768    #kJ/mol        
-     # Enthalpy of formation:           -6972.77        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -6972.77        #kJ/mol        #10BLA/BOU1
      -analytic 2.5032E+0 0E+0 3.32607E+4 0E+0 0E+0
 
 Jennite
 Ca9Si6O16(OH)10:6(H2O)     = 9.000Ca+2     - 18.000H+     + 6.000H4(SiO4)     + 8.000H2O
-     log_k   147.330     #10BLA/BOU
+     log_k   147.330     #10BLA/BOU1
      delta_h -751.764    #kJ/mol        
-     # Enthalpy of formation:           -15189.04        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -15189.04        #kJ/mol        #10BLA/BOU1
      -analytic 1.56268E+1 0E+0 3.92673E+4 0E+0 0E+0
 
 K(NO3)(s)
@@ -11915,13 +12105,13 @@ KBr     = 1.000K+     + 1.000Br-
 KFe(CrO4)2:2H2O(s)
 KFe(CrO4)2:2H2O     = 1.000K+     + 1.000Fe+3     + 2.000CrO4-2     + 2.000H2O
      log_k   -19.390     #98BAR/PAL
-     delta_h  27.540     #kJ/mol        #85BAR/PAL
+     delta_h  27.540     #kJ/mol        #98BAR/PAL
      # Enthalpy of formation:           -2658.34        #kJ/mol        
      -analytic -1.45652E+1 0E+0 -1.43851E+3 0E+0 0E+0
 
 KFe3(CrO4)2(OH)6(cr)
 KFe3(CrO4)2(OH)6     = 1.000K+     + 3.000Fe+3     - 6.000H+     + 2.000CrO4-2     + 6.000H2O
-     log_k   -18.400     #95BAR/PAL
+     log_k   -18.400     #96BAR/PAL
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -1.84E+1 0E+0 0E+0 0E+0 0E+0
@@ -11963,7 +12153,7 @@ Al2(Si2O5)(OH)4     = 2.000Al+3     - 6.000H+     + 2.000H4(SiO4)     + 1.000H2O
 
 Katoite
 Ca3Al2(SiO4)(OH)8     = 3.000Ca+2     + 2.000Al+3     - 12.000H+     + 1.000H4(SiO4)     + 8.000H2O
-     log_k    71.160     #10BLA/BOU
+     log_k    71.160     #10BLA/BOU2
      delta_h -545.657    #kJ/mol        
      # Enthalpy of formation:           -5907.977        #kJ/mol        
      -analytic -2.44349E+1 0E+0 2.85016E+4 0E+0 0E+0
@@ -12019,7 +12209,7 @@ K2Mg(SO4)2:4H2O     = 1.000Mg+2     + 2.000K+     + 2.000SO4-2     + 4.000H2O
 
 Lepidocrocite
 FeOOH     = 1.000Fe+3     - 3.000H+     + 2.000H2O
-     log_k     0.750     #98DIA in 98CHI
+     log_k     0.750     #98DIA2 in 98CHI
      delta_h  -64.260    #kJ/mol        
      # Enthalpy of formation:           -556.4        #kJ/mol        
      -analytic -1.05079E+1 0E+0 3.35653E+3 0E+0 0E+0
@@ -12054,14 +12244,14 @@ FeS     = 1.000Fe+2     - 1.000H+     + 1.000HS-
 
 Maghemite(disord)
 Fe2O3     = 2.000Fe+3     - 6.000H+     + 3.000H2O
-     log_k     3.310     #98DIA in 98CHI
+     log_k     3.310     #98DIA1 in 98CHI
      delta_h -149.690    #kJ/mol        
      # Enthalpy of formation:           -805.8        #kJ/mol        
      -analytic -2.29145E+1 0E+0 7.81884E+3 0E+0 0E+0
 
 Maghemite(ord)
 Fe2O3     = 2.000Fe+3     - 6.000H+     + 3.000H2O
-     log_k     3.520     #98DIA in 98CHI
+     log_k     3.520     #98DIA1 in 98CHI
      delta_h -149.690    #kJ/mol        
      # Enthalpy of formation:           -805.8        #kJ/mol        
      -analytic -2.27045E+1 0E+0 7.81884E+3 0E+0 0E+0
@@ -12090,9 +12280,9 @@ Fe3O4      = 2.000Fe+3     + 1.000Fe+2     - 8.000H+     + 4.000H2O
 Manganite
 MnOOH     = 1.000Mn+2     - 2.000H+     + 1.500H2O     + 0.250O2
      log_k     3.775     #96FAL/REA
-     # delta_h  0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
-	 -analytic 3.775E+0 0E+0 0E+0 0E+0 0E+0
+     -analytic 3.775E+0 0E+0 0E+0 0E+0 0E+0
 
 Margarite
 CaAl4Si2O10(OH)2     = 1.000Ca+2     + 4.000Al+3     - 14.000H+     + 2.000H4(SiO4)     + 4.000H2O
@@ -12360,6 +12550,13 @@ Mn(SeO3):2H2O     = 1.000Mn+2     + 1.000SeO3-2     + 2.000H2O
      # Enthalpy of formation:           -1280.7        #kJ/mol        #05OLI/NOL
      -analytic -1.09146E+1 0E+0 9.88259E+2 0E+0 0E+0
 
+#Mn(cr)
+#Mn     = 1.000Mn+2     + 1.000H2O     - 2.000H+     - 0.500O2
+     # log_k             
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:           0        #kJ/mol        #82WAG/EVA in 05OLI/NOL
+     # -analytic 0E+0 0E+0 0E+0 0E+0 0E+0 
+
 Mn2(Pyrophos)(s)
 Mn2(Pyrophos)     = 2.000Mn+2     + 1.000Pyrophos-4
      log_k   -19.500     #88CHA/NEW
@@ -12412,9 +12609,9 @@ MnO     = 1.000Mn+2     - 2.000H+     + 1.000H2O
 MnO2(s)
 MnO2     = 1.000Mn+2     - 2.000H+     + 1.000H2O     + 0.500O2
      log_k    -0.990     #NAGRA, TR 91-18; F.J. PEARSON, U. BERNER, W. HUMMEL; Nagra thermochemical data base, supplemental data 05/92
-     # delta_h  0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
-     -analytic -0.99E+0 0E+0 0E+0 0E+0 0E+0
+     -analytic -9.9E-1 0E+0 0E+0 0E+0 0E+0
 
 MnSe(alfa)
 MnSe     = 1.000Mn+2     - 1.000H+     + 1.000HSe-
@@ -12440,9 +12637,9 @@ Mo     = 2.000H+     + 1.000MoO4-2     - 1.000H2O     - 1.500O2
 Mo3O8(s)
 Mo3O8     = 6.000H+     + 3.000MoO4-2     - 3.000H2O     - 0.500O2
      log_k   -20.570     
-     #delta_h 0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
-     -analytic -2.0570E+1 0E+0 0E+0 0E+0 0E+0
+     -analytic -2.057E+1 0E+0 0E+0 0E+0 0E+0
 
 MoO2(s)
 MoO2     = 2.000H+     + 1.000MoO4-2     - 1.000H2O     - 0.500O2
@@ -12476,78 +12673,78 @@ Monocarboaluminate
 (CaO)3Al2O3:CaCO3:10.68H2O     = 4.000Ca+2     + 2.000Al+3     - 12.000H+     + 1.000CO3-2     + 16.680H2O
      log_k    70.300     #95DAM/GLA
      delta_h -515.924    #kJ/mol        
-     # Enthalpy of formation:           -8175.75        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -8175.75        #kJ/mol        #10BLA/BOU2
      -analytic -2.00859E+1 0E+0 2.69485E+4 0E+0 0E+0
 
 Monosulfate-Fe
 Ca4Fe2(SO4)(OH)12:6H2O     = 4.000Ca+2     + 2.000Fe+3     - 12.000H+     + 1.000SO4-2     + 18.000H2O
-     log_k    66.050     #10BLA/BOU
+     log_k    66.050     #10BLA/BOU2
      delta_h -477.312    #kJ/mol        
      # Enthalpy of formation:           -7846.968        #kJ/mol        
      -analytic -1.75714E+1 0E+0 2.49317E+4 0E+0 0E+0
 
 Monosulfoaluminate
 Ca4Al2(SO4)(OH)12:6H2O     = 4.000Ca+2     + 2.000Al+3     - 12.000H+     + 1.000SO4-2     + 18.000H2O
-     log_k    73.070     #10BLA/BOU
+     log_k    73.070     #10BLA/BOU2
      delta_h -539.400    #kJ/mol        
-     # Enthalpy of formation:           -8763.68        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -8763.68        #kJ/mol        #10BLA/BOU2
      -analytic -2.14287E+1 0E+0 2.81748E+4 0E+0 0E+0
 
 Montmorillonite-BCCa
 Ca0.17Mg0.34Al1.66Si4O10(OH)2     = 0.170Ca+2     + 0.340Mg+2     + 1.660Al+3     - 6.000H+     + 4.000H4(SiO4)     - 4.000H2O
-     log_k     5.020     
-     delta_h -160.060    #kJ/mol        
-     # Enthalpy of formation:           -5686.23        #kJ/mol        #13BLA/VIE
-     -analytic -2.30213E+1 0E+0 8.3605E+3 0E+0 0E+0
+     log_k     4.200     
+     delta_h -156.000    #kJ/mol        
+     # Enthalpy of formation:           -5690.29        #kJ/mol        #15BLA/VIE
+     -analytic -2.313E+1 0E+0 8.14844E+3 0E+0 0E+0
 
 Montmorillonite-BCK
 K0.34Mg0.34Al1.66Si4O10(OH)2     = 0.340Mg+2     + 0.340K+     + 1.660Al+3     - 6.000H+     + 4.000H4(SiO4)     - 4.000H2O
-     log_k     2.510     
-     delta_h -134.338    #kJ/mol        
-     # Enthalpy of formation:           -5705.37        #kJ/mol        #13BLA/VIE
-     -analytic -2.1025E+1 0E+0 7.01695E+3 0E+0 0E+0
+     log_k     2.810     
+     delta_h -136.198    #kJ/mol        
+     # Enthalpy of formation:           -5703.51        #kJ/mol        #15BLA/VIE
+     -analytic -2.10508E+1 0E+0 7.11411E+3 0E+0 0E+0
 
 Montmorillonite-BCMg
 Mg0.17Mg0.34Al1.66Si4O10(OH)2     = 0.510Mg+2     + 1.660Al+3     - 6.000H+     + 4.000H4(SiO4)     - 4.000H2O
-     log_k     5.240     
-     delta_h -160.080    #kJ/mol        
-     # Enthalpy of formation:           -5673.29        #kJ/mol        #13BLA/VIE
-     -analytic -2.28048E+1 0E+0 8.36155E+3 0E+0 0E+0
+     log_k     3.690     
+     delta_h -157.360    #kJ/mol        
+     # Enthalpy of formation:           -5676.01        #kJ/mol        #15BLA/VIE
+     -analytic -2.38782E+1 0E+0 8.21947E+3 0E+0 0E+0
 
 Montmorillonite-BCNa
 Na0.34Mg0.34Al1.66Si4O10(OH)2     = 0.340Mg+2     + 0.340Na+     + 1.660Al+3     - 6.000H+     + 4.000H4(SiO4)     - 4.000H2O
-     log_k     3.300     
-     delta_h -144.656    #kJ/mol        
-     # Enthalpy of formation:           -5691.04        #kJ/mol        #13BLA/VIE
-     -analytic -2.20426E+1 0E+0 7.5559E+3 0E+0 0E+0
+     log_k     3.390     
+     delta_h -145.286    #kJ/mol        
+     # Enthalpy of formation:           -5690.41        #kJ/mol        #15BLA/VIE
+     -analytic -2.2063E+1 0E+0 7.58881E+3 0E+0 0E+0
 
 Montmorillonite-HCCa
 Ca0.3Mg0.6Al1.4Si4O10(OH)2     = 0.300Ca+2     + 0.600Mg+2     + 1.400Al+3     - 6.000H+     + 4.000H4(SiO4)     - 4.000H2O
-     log_k     9.000     
-     delta_h -175.636    #kJ/mol        
-     # Enthalpy of formation:           -5722.68        #kJ/mol        #13BLA/VIE
-     -analytic -2.17701E+1 0E+0 9.17409E+3 0E+0 0E+0
+     log_k     6.890     
+     delta_h -163.896    #kJ/mol        
+     # Enthalpy of formation:           -5734.42        #kJ/mol        #15BLA/VIE
+     -analytic -2.18233E+1 0E+0 8.56087E+3 0E+0 0E+0
 
 Montmorillonite-HCK
 K0.6Mg0.6Al1.4Si4O10(OH)2     = 0.600Mg+2     + 0.600K+     + 1.400Al+3     - 6.000H+     + 4.000H4(SiO4)     - 4.000H2O
-     log_k     4.680     
-     delta_h -130.240    #kJ/mol        
-     # Enthalpy of formation:           -5756.46        #kJ/mol        #13BLA/VIE
-     -analytic -1.8137E+1 0E+0 6.8029E+3 0E+0 0E+0
+     log_k     4.430     
+     delta_h -128.960    #kJ/mol        
+     # Enthalpy of formation:           -5757.74        #kJ/mol        #15BLA/VIE
+     -analytic -1.81628E+1 0E+0 6.73604E+3 0E+0 0E+0
 
 Montmorillonite-HCMg
 Mg0.3Mg0.6Al1.4Si4O10(OH)2     = 0.900Mg+2     + 1.400Al+3     - 6.000H+     + 4.000H4(SiO4)     - 4.000H2O
-     log_k     9.390     
-     delta_h -175.686    #kJ/mol        
-     # Enthalpy of formation:           -5699.83        #kJ/mol        #13BLA/VIE
-     -analytic -2.13888E+1 0E+0 9.17671E+3 0E+0 0E+0
+     log_k     5.980     
+     delta_h -166.296    #kJ/mol        
+     # Enthalpy of formation:           -5709.22        #kJ/mol        #15BLA/VIE
+     -analytic -2.31538E+1 0E+0 8.68623E+3 0E+0 0E+0
 
 Montmorillonite-HCNa
 Na0.6Mg0.6Al1.4Si4O10(OH)2     = 0.600Mg+2     + 0.600Na+     + 1.400Al+3     - 6.000H+     + 4.000H4(SiO4)     - 4.000H2O
-     log_k     6.070     
-     delta_h -148.460    #kJ/mol        
-     # Enthalpy of formation:           -5731.16        #kJ/mol        #13BLA/VIE
-     -analytic -1.9939E+1 0E+0 7.75459E+3 0E+0 0E+0
+     log_k     5.450     
+     delta_h -144.990    #kJ/mol        
+     # Enthalpy of formation:           -5734.63        #kJ/mol        #15BLA/VIE
+     -analytic -1.99511E+1 0E+0 7.57334E+3 0E+0 0E+0
 
 Mordenite_Ca
 Ca0.515Al1.03Si4.97O12:3.1H2O     = 0.515Ca+2     + 1.030Al+3     - 4.120H+     + 4.970H4(SiO4)     - 4.780H2O
@@ -12672,7 +12869,7 @@ Na3PO4(cr)
 Na3PO4     = 3.000Na+     - 2.000H+     + 1.000H2(PO4)-
      log_k    23.520     
      delta_h -106.218    #kJ/mol        
-     # Enthalpy of formation:           -1917.402        #kJ/mol        #74NAU/RIZ
+     # Enthalpy of formation:           -1917.402        #kJ/mol        #74NAU/RYZ
      -analytic 4.91143E+0 0E+0 5.54814E+3 0E+0 0E+0
 
 Na4Zr2Si3O12(cr)
@@ -12691,7 +12888,7 @@ Na6Th(CO3)5:12H2O     = 6.000Na+     + 1.000Th+4     + 5.000CO3-2     + 12.000H2
 
 NaAmO2CO3(s)
 NaAmO2CO3     = 1.000Na+     + 1.000AmO2+     + 1.000CO3-2
-     log_k   -10.900     #94GIF, 94RUN/KIM, 94RUN/NEU
+     log_k   -10.900     #94GIF, 94RUN/KIM, 96RUN/NEU
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -1.09E+1 0E+0 0E+0 0E+0 0E+0
@@ -12712,7 +12909,7 @@ NaCm(CO3)2:5H2O     = 1.000Na+     + 2.000CO3-2     + 1.000Cm+3     + 5.000H2O
 
 NaEu(CO3)2:5H2O(s)
 NaEu(CO3)2:5H2O     = 1.000Na+     + 1.000Eu+3     + 2.000CO3-2     + 5.000H2O
-     log_k   -20.900     #05VER/VIT
+     log_k   -20.900     #05VER/VIT2
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -2.09E+1 0E+0 0E+0 0E+0 0E+0
@@ -12801,6 +12998,13 @@ Ni(BO2)2     = 1.000Ni+2     + 2.000B(OH)4-     - 4.000H2O
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -8.7E+0 0E+0 0E+0 0E+0 0E+0
 
+#Ni(CO3)(cr)
+#Ni(CO3)     = 1.000Ni+2     + 1.000CO3-2
+     # log_k             
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:           -713.32        #kJ/mol        #05GAM/BUG
+     # -analytic 0E+0 0E+0 0E+0 0E+0 0E+0 
+
 Ni(CO3):5.5H2O(cr)
 Ni(CO3):5.5H2O     = 1.000Ni+2     + 1.000CO3-2     + 5.500H2O
      log_k    -7.520     
@@ -12864,6 +13068,13 @@ Ni(SeO4):6H2O     = 1.000Ni+2     + 1.000SeO4-2     + 6.000H2O
      # Enthalpy of formation:           -2369.705        #kJ/mol        
      -analytic -2.04445E+0 0E+0 1.97808E+2 0E+0 0E+0
 
+#Ni(SiO3)(s)
+#Ni(SiO3)     = 1.000Ni+2     - 2.000H+     + 1.000H4(SiO4)     - 1.000H2O
+     # log_k             
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     # -analytic 0E+0 0E+0 0E+0 0E+0 0E+0 
+
 Ni(s)
 Ni     = 1.000Ni+2     + 1.000H2O     - 2.000H+     - 0.500O2
      log_k    51.010     
@@ -12895,9 +13106,9 @@ Ni2(Pyrophos)     = 2.000Ni+2     + 1.000Pyrophos-4
 Ni3(AsO3)2(s)
 Ni3(AsO3)2     = 3.000Ni+2     + 2.000AsO4-3     - 1.000O2
      log_k    34.500     
-     # delta_h 0.000    #kJ/mol        
+     # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
-     -analytic 3.4500E+1 0E+0 0E+0 0E+0 0E+0
+     -analytic 3.45E+1 0E+0 0E+0 0E+0 0E+0
 
 Ni3(AsO4)2:8H2O(s)
 Ni3(AsO4)2:8H2O     = 3.000Ni+2     + 2.000AsO4-3     + 8.000H2O
@@ -12912,6 +13123,13 @@ Ni3(PO4)2     = 3.000Ni+2     - 4.000H+     + 2.000H2(PO4)-
      delta_h -188.236    #kJ/mol        
      # Enthalpy of formation:           -2582        #kJ/mol        #89BAE/McK
      -analytic -2.27245E+1 0E+0 9.83224E+3 0E+0 0E+0
+
+#Ni3O4(s)
+#Ni3O4     = 3.000Ni+2     - 6.000H+     + 3.000H2O     + 0.500O2
+     # log_k             
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:           -819.308        #kJ/mol        
+     # -analytic 0E+0 0E+0 0E+0 0E+0 0E+0 
 
 Ni5As2(cr)
 Ni5As2     = 5.000Ni+2     - 4.000H+     + 2.000AsO4-3     + 2.000H2O     - 5.000O2
@@ -12985,31 +13203,31 @@ NiSe2     = 1.000Ni+2     + 2.000HSe-     - 1.000H2O     + 0.500O2
 
 Nontronite-Ca
 Ca0.17Fe1.67Al0.67Si3.66O10(OH)2     = 0.170Ca+2     + 1.670Fe+3     + 0.670Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k    -0.010     
-     delta_h -151.357    #kJ/mol        
-     # Enthalpy of formation:           -4976.89        #kJ/mol        #13BLA/VIE
-     -analytic -2.65266E+1 0E+0 7.90592E+3 0E+0 0E+0
+     log_k    -2.830     
+     delta_h -145.927    #kJ/mol        
+     # Enthalpy of formation:           -4982.32        #kJ/mol        #15BLA/VIE
+     -analytic -2.83953E+1 0E+0 7.62229E+3 0E+0 0E+0
 
 Nontronite-K
 K0.34Fe1.67Al0.67Si3.66O10(OH)2     = 0.340K+     + 1.670Fe+3     + 0.670Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k    -2.280     
-     delta_h -127.024    #kJ/mol        
-     # Enthalpy of formation:           -4994.64        #kJ/mol        #13BLA/VIE
-     -analytic -2.45336E+1 0E+0 6.63492E+3 0E+0 0E+0
+     log_k    -4.000     
+     delta_h -127.394    #kJ/mol        
+     # Enthalpy of formation:           -4994.27        #kJ/mol        #15BLA/VIE
+     -analytic -2.63184E+1 0E+0 6.65424E+3 0E+0 0E+0
 
 Nontronite-Mg
 Mg0.17Fe1.67Al0.67Si3.66O10(OH)2     = 0.170Mg+2     + 1.670Fe+3     + 0.670Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k     0.360     
-     delta_h -151.227    #kJ/mol        
-     # Enthalpy of formation:           -4964.1        #kJ/mol        #13BLA/VIE
-     -analytic -2.61338E+1 0E+0 7.89912E+3 0E+0 0E+0
+     log_k    -3.370     
+     delta_h -147.107    #kJ/mol        
+     # Enthalpy of formation:           -4968.22        #kJ/mol        #15BLA/VIE
+     -analytic -2.9142E+1 0E+0 7.68392E+3 0E+0 0E+0
 
 Nontronite-Na
 Na0.34Fe1.67Al0.67Si3.66O10(OH)2     = 0.340Na+     + 1.670Fe+3     + 0.670Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k    -1.580     
-     delta_h -136.852    #kJ/mol        
-     # Enthalpy of formation:           -4980.8        #kJ/mol        #13BLA/VIE
-     -analytic -2.55554E+1 0E+0 7.14827E+3 0E+0 0E+0
+     log_k    -3.500     
+     delta_h -136.012    #kJ/mol        
+     # Enthalpy of formation:           -4981.64        #kJ/mol        #15BLA/VIE
+     -analytic -2.73282E+1 0E+0 7.10439E+3 0E+0 0E+0
 
 Nontronite_Nau-2
 Ca0.247K0.02(Si3.458Al0.542)(Fe1.688Al0.276Mg0.068)O10(OH)2     = 0.247Ca+2     + 0.068Mg+2     + 0.020K+     + 1.688Fe+3     + 0.818Al+3     + 3.458H4(SiO4)     - 1.832H2O     - 8.168H+
@@ -13120,8 +13338,15 @@ Okenite
 CaSi2O5:2H2O     = 1.000Ca+2     - 2.000H+     + 2.000H4(SiO4)     - 1.000H2O
      log_k     9.180     
      delta_h  -44.388    #kJ/mol        
-     # Enthalpy of formation:           -3135.17        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -3135.17        #kJ/mol        #10BLA/BOU1
      -analytic 1.40357E+0 0E+0 2.31854E+3 0E+0 0E+0
+
+#Olivine
+#Ni2(SiO4)      = 2.000Ni+2     - 4.000H+     + 1.000H4(SiO4)
+     # log_k             
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:           -1396        #kJ/mol        #05GAM/BUG
+     # -analytic 0E+0 0E+0 0E+0 0E+0 0E+0 
 
 Orpiment
 As2S3     = 9.000H+     + 3.000HS-     + 2.000AsO4-3     - 6.000H2O     - 1.000O2
@@ -13440,7 +13665,7 @@ K2MgCa2(SO4)4:2H2O     = 2.000Ca+2     + 1.000Mg+2     + 2.000K+     + 4.000SO4-
 
 Portlandite
 Ca(OH)2     = 1.000Ca+2     - 2.000H+     + 2.000H2O
-     log_k    22.810     #10BLA/BOU
+     log_k    22.810     #10BLA/BOU1
      delta_h -130.078    #kJ/mol        
      # Enthalpy of formation:           -984.582        #kJ/mol        
      -analytic 2.13461E-2 0E+0 6.79444E+3 0E+0 0E+0
@@ -13538,7 +13763,7 @@ PuO2(Ox):3H2O     = 1.000PuO2+2     + 1.000Ox-2     + 3.000H2O
 
 PuO2(coll,hyd)
 PuO2     = 1.000Pu+4     - 4.000H+     + 2.000H2O
-     log_k     0.200     #07NEC/ALT
+     log_k     0.200     #07NEC/ALT3
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2E-1 0E+0 0E+0 0E+0 0E+0
@@ -13701,14 +13926,14 @@ Ripidolite_Cca-2
 (Mg2.964Fe1.712Fe0.215Al1.116Ca0.011)(Si2.633Al1.367)O10(OH)8     = 0.011Ca+2     + 2.964Mg+2     + 0.215Fe+3     + 1.712Fe+2     + 2.483Al+3     - 17.468H+     + 2.633H4(SiO4)     + 7.468H2O
      log_k    61.350     
      delta_h -633.385    #kJ/mol        
-     # Enthalpy of formation:           -8240.14        #kJ/mol        #13BLA/GAI
+     # Enthalpy of formation:           -8240.14        #kJ/mol        #13BLA/GAI2
      -analytic -4.96141E+1 0E+0 3.3084E+4 0E+0 0E+0
 
 Romarchite
 SnO     = 1.000Sn+2     - 2.000H+     + 1.000H2O
      log_k     1.590     
      delta_h  -11.207    #kJ/mol        
-     # Enthalpy of formation:           -284.24        #kJ/mol        #12GAJ/SAN
+     # Enthalpy of formation:           -284.24        #kJ/mol        #12GAM/GAJ
      -analytic -3.73379E-1 0E+0 5.85382E+2 0E+0 0E+0
 
 Rutherfordine
@@ -13741,59 +13966,59 @@ KAlSi3O8     = 1.000K+     + 1.000Al+3     - 4.000H+     + 3.000H4(SiO4)     - 4
 
 Saponite-Ca
 Ca0.17Mg3Al0.34Si3.66O10(OH)2     = 0.170Ca+2     + 3.000Mg+2     + 0.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k    31.210     
-     delta_h -281.165    #kJ/mol        
-     # Enthalpy of formation:           -5988.58        #kJ/mol        #13BLA/VIE
-     -analytic -1.80479E+1 0E+0 1.46862E+4 0E+0 0E+0
+     log_k    29.340     
+     delta_h -271.305    #kJ/mol        
+     # Enthalpy of formation:           -5998.44        #kJ/mol        #15BLA/VIE
+     -analytic -1.81905E+1 0E+0 1.41712E+4 0E+0 0E+0
 
 Saponite-FeCa
 Ca0.17Mg2FeAl0.34Si3.66O10(OH)2     = 0.170Ca+2     + 2.000Mg+2     + 1.000Fe+2     + 0.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k    30.800     
-     delta_h -277.055    #kJ/mol        
-     # Enthalpy of formation:           -5615.69        #kJ/mol        #13BLA/VIE
-     -analytic -1.77379E+1 0E+0 1.44716E+4 0E+0 0E+0
+     log_k    26.550     
+     delta_h -259.175    #kJ/mol        
+     # Enthalpy of formation:           -5633.57        #kJ/mol        #15BLA/VIE
+     -analytic -1.88554E+1 0E+0 1.35376E+4 0E+0 0E+0
 
 Saponite-FeK
 K0.34Mg2FeAl0.34Si3.66O10(OH)2     = 2.000Mg+2     + 0.340K+     + 1.000Fe+2     + 0.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k    28.530     
-     delta_h -252.722    #kJ/mol        
-     # Enthalpy of formation:           -5633.44        #kJ/mol        #13BLA/VIE
-     -analytic -1.57449E+1 0E+0 1.32006E+4 0E+0 0E+0
+     log_k    25.380     
+     delta_h -240.632    #kJ/mol        
+     # Enthalpy of formation:           -5645.53        #kJ/mol        #15BLA/VIE
+     -analytic -1.67769E+1 0E+0 1.25691E+4 0E+0 0E+0
 
 Saponite-FeMg
 Mg0.17Mg2FeAl0.34Si3.66O10(OH)2     = 2.170Mg+2     + 1.000Fe+2     + 0.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k    30.960     
-     delta_h -276.935    #kJ/mol        
-     # Enthalpy of formation:           -5602.89        #kJ/mol        #13BLA/VIE
-     -analytic -1.75569E+1 0E+0 1.44653E+4 0E+0 0E+0
+     log_k    26.000     
+     delta_h -260.345    #kJ/mol        
+     # Enthalpy of formation:           -5619.48        #kJ/mol        #15BLA/VIE
+     -analytic -1.96104E+1 0E+0 1.35987E+4 0E+0 0E+0
 
 Saponite-FeNa
 Na0.34Mg2FeAl0.34Si3.66O10(OH)2     = 2.000Mg+2     + 0.340Na+     + 1.000Fe+2     + 0.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k    29.230     
-     delta_h -262.550    #kJ/mol        
-     # Enthalpy of formation:           -5619.6        #kJ/mol        #13BLA/VIE
-     -analytic -1.67667E+1 0E+0 1.37139E+4 0E+0 0E+0
+     log_k    25.700     
+     delta_h -248.260    #kJ/mol        
+     # Enthalpy of formation:           -5633.89        #kJ/mol        #15BLA/VIE
+     -analytic -1.77932E+1 0E+0 1.29675E+4 0E+0 0E+0
 
 Saponite-K
 K0.34Mg3Al0.34Si3.66O10(OH)2     = 3.000Mg+2     + 0.340K+     + 0.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k    28.940     
-     delta_h -256.832    #kJ/mol        
-     # Enthalpy of formation:           -6006.33        #kJ/mol        #13BLA/VIE
-     -analytic -1.6055E+1 0E+0 1.34152E+4 0E+0 0E+0
+     log_k    28.170     
+     delta_h -252.772    #kJ/mol        
+     # Enthalpy of formation:           -6010.39        #kJ/mol        #15BLA/VIE
+     -analytic -1.61137E+1 0E+0 1.32032E+4 0E+0 0E+0
 
 Saponite-Mg
 Mg0.17Mg3Al0.34Si3.66O10(OH)2     = 3.170Mg+2     + 0.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k    31.390     
-     delta_h -281.035    #kJ/mol        
-     # Enthalpy of formation:           -5975.79        #kJ/mol        #13BLA/VIE
-     -analytic -1.78451E+1 0E+0 1.46795E+4 0E+0 0E+0
+     log_k    28.790     
+     delta_h -272.485    #kJ/mol        
+     # Enthalpy of formation:           -5984.34        #kJ/mol        #15BLA/VIE
+     -analytic -1.89473E+1 0E+0 1.42329E+4 0E+0 0E+0
 
 Saponite-Na
 Na0.34Mg3Al0.34Si3.66O10(OH)2     = 3.000Mg+2     + 0.340Na+     + 0.340Al+3     - 7.360H+     + 3.660H4(SiO4)     - 2.640H2O
-     log_k    29.640     
-     delta_h -266.660    #kJ/mol        
-     # Enthalpy of formation:           -5992.49        #kJ/mol        #13BLA/VIE
-     -analytic -1.70768E+1 0E+0 1.39286E+4 0E+0 0E+0
+     log_k    28.670     
+     delta_h -261.390    #kJ/mol        
+     # Enthalpy of formation:           -5997.76        #kJ/mol        #15BLA/VIE
+     -analytic -1.71235E+1 0E+0 1.36533E+4 0E+0 0E+0
 
 Saponite_SapCa
 (Na0.394K0.021Ca0.038)(Si3.569Al0.397)(Mg2.949Fe0.034Fe0.021)O10(OH)2     = 0.038Ca+2     + 2.949Mg+2     + 0.021K+     + 0.394Na+     + 0.034Fe+3     + 0.021Fe+2     + 0.397Al+3     - 7.724H+     + 3.569H4(SiO4)     - 2.276H2O
@@ -14023,7 +14248,7 @@ Sn(cr)(alfa)
 Sn     = 1.000Sn+2     + 1.000H2O     - 2.000H+     - 0.500O2
      log_k    47.810     
      delta_h -287.400    #kJ/mol        
-     # Enthalpy of formation:           -1.98        #kJ/mol        #12GAJ/SAN
+     # Enthalpy of formation:           -1.98        #kJ/mol        #12GAM/GAJ
      -analytic -2.54024E+0 0E+0 1.50119E+4 0E+0 0E+0
 
 Sn(cr)(beta)
@@ -14035,10 +14260,10 @@ Sn     = 1.000Sn+2     + 1.000H2O     - 2.000H+     - 0.500O2
 
 SnO2(am)
 SnO2     = 1.000Sn+4     - 4.000H+     + 2.000H2O
-     log_k   -15.600     
-     delta_h  -25.529    #kJ/mol        
-     # Enthalpy of formation:           -577.63        #kJ/mol        #12GAJ/SAN
-     -analytic -2.00725E+1 0E+0 1.33347E+3 0E+0 0E+0
+     log_k   -14.770     
+     # delta_h  0.000     #kJ/mol        
+     # Enthalpy of formation:                   #kJ/mol        
+     -analytic -1.477E+1 0E+0 0E+0 0E+0 0E+0
 
 SnSe(alfa)
 SnSe     = 1.000Sn+2     - 1.000H+     + 1.000HSe-
@@ -14077,7 +14302,7 @@ Na2(UO2)6O4(OH)6:7H2O     = 2.000Na+     + 6.000UO2+2     - 14.000H+     + 17.00
 
 Sphaerocobaltite
 CoCO3     = 1.000Co+2     + 1.000CO3-2
-     log_k   -11.200     #99GRA
+     log_k   -11.200     #99GRA2
      delta_h  -9.421     #kJ/mol        
      # Enthalpy of formation:           -723.409        #kJ/mol        
      -analytic -1.28505E+1 0E+0 4.92092E+2 0E+0 0E+0
@@ -14161,7 +14386,7 @@ Sr3(AsO4)2     = 3.000Sr+2     + 2.000AsO4-3
 
 Sr3(PO4)2(s)
 Sr3(PO4)2     = 3.000Sr+2     - 4.000H+     + 2.000H2(PO4)-
-     log_k    10.530     #06BLA/ING
+     log_k    10.530     #06BLA/IGN
      delta_h -147.900    #kJ/mol        
      # Enthalpy of formation:           -4110        #kJ/mol        #97KHA/JEM
      -analytic -1.53809E+1 0E+0 7.72534E+3 0E+0 0E+0
@@ -14301,7 +14526,7 @@ ZnSe     = 1.000Zn+2     - 1.000H+     + 1.000HSe-
 
 Stratlingite
 Ca2Al2SiO3(OH)8:4H2O     = 2.000Ca+2     + 2.000Al+3     - 10.000H+     + 1.000H4(SiO4)     + 11.000H2O
-     log_k    49.660     #10BLA/BOU
+     log_k    49.660     #10BLA/BOU2
      delta_h -397.795    #kJ/mol        
      # Enthalpy of formation:           -6370.329        #kJ/mol        
      -analytic -2.00306E+1 0E+0 2.07782E+4 0E+0 0E+0
@@ -14469,16 +14694,16 @@ HgSe     = 1.000Hg+2     - 1.000H+     + 1.000HSe-
 
 Tobermorite-11A
 Ca5Si6O16.5(OH):5H2O     = 5.000Ca+2     - 10.000H+     + 6.000H4(SiO4)     - 1.500H2O
-     log_k    65.580     #10BLA/BOU
+     log_k    65.580     #10BLA/BOU1
      delta_h -372.499    #kJ/mol        
      # Enthalpy of formation:           -10680.92        #kJ/mol        #00ZUE/FEH
      -analytic 3.21072E-1 0E+0 1.94569E+4 0E+0 0E+0
 
 Tobermorite-14A
 Ca5Si6O16.5(OH):10H2O     = 5.000Ca+2     - 10.000H+     + 6.000H4(SiO4)     + 3.500H2O
-     log_k    62.940     #10BLA/BOU
+     log_k    62.940     #10BLA/BOU1
      delta_h -307.419    #kJ/mol        
-     # Enthalpy of formation:           -12175.15        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -12175.15        #kJ/mol        #10BLA/BOU1
      -analytic 9.08258E+0 0E+0 1.60576E+4 0E+0 0E+0
 
 Trevorite
@@ -14506,7 +14731,7 @@ Truscottite
 Ca7Si12O29(OH)4:H2O     = 7.000Ca+2     - 14.000H+     + 12.000H4(SiO4)     - 14.000H2O
      log_k    77.080     
      delta_h -479.088    #kJ/mol        
-     # Enthalpy of formation:           -16854.62        #kJ/mol        #10BLA/BOU
+     # Enthalpy of formation:           -16854.62        #kJ/mol        #10BLA/BOU1
      -analytic -6.85249E+0 0E+0 2.50245E+4 0E+0 0E+0
 
 U(HPO4)2:4H2O(s)
@@ -14805,7 +15030,7 @@ NiS2     = 1.000Ni+2     + 2.000HS-     - 1.000H2O     + 0.500O2
 
 Valentinite
 Sb2O3     = 2.000Sb(OH)3     - 3.000H2O
-     log_k    -8.480     #52GAY/GAY in 76BAE/MES
+     log_k    -8.480     #52GAY/GAR in 76BAE/MES
      delta_h  18.500     #kJ/mol        
      # Enthalpy of formation:           -708.77        #kJ/mol        #62MAH in 03ZOT/SHI
      -analytic -5.23894E+0 0E+0 -9.66321E+2 0E+0 0E+0
@@ -14819,31 +15044,31 @@ CaCO3     = 1.000Ca+2     + 1.000CO3-2
 
 Vermiculite-Ca
 Ca0.43Mg3Si3.14Al0.86O10(OH)2     = 0.430Ca+2     + 3.000Mg+2     + 0.860Al+3     - 9.440H+     + 3.140H4(SiO4)     - 0.560H2O
-     log_k    41.990     
-     delta_h -392.788    #kJ/mol        
-     # Enthalpy of formation:           -6132.81        #kJ/mol        #13BLA/VIE
-     -analytic -2.68234E+1 0E+0 2.05167E+4 0E+0 0E+0
+     log_k    39.550     
+     delta_h -377.538    #kJ/mol        
+     # Enthalpy of formation:           -6148.06        #kJ/mol        #15BLA/VIE
+     -analytic -2.65917E+1 0E+0 1.97202E+4 0E+0 0E+0
 
 Vermiculite-K
 K0.86Mg3.00Si3.14Al0.86O10(OH)2     = 3.000Mg+2     + 0.860K+     + 0.860Al+3     - 9.440H+     + 3.140H4(SiO4)     - 0.560H2O
-     log_k    37.510     
-     delta_h -336.599    #kJ/mol        
-     # Enthalpy of formation:           -6172.35        #kJ/mol        #13BLA/VIE
-     -analytic -2.14595E+1 0E+0 1.75818E+4 0E+0 0E+0
+     log_k    37.440     
+     delta_h -335.539    #kJ/mol        
+     # Enthalpy of formation:           -6173.41        #kJ/mol        #15BLA/VIE
+     -analytic -2.13438E+1 0E+0 1.75264E+4 0E+0 0E+0
 
 Vermiculite-Mg
 Mg0.43Mg3Si3.14Al0.86O10(OH)2     = 3.430Mg+2     + 0.860Al+3     - 9.440H+     + 3.140H4(SiO4)     - 0.560H2O
-     log_k    42.360     
-     delta_h -391.858    #kJ/mol        
-     # Enthalpy of formation:           -6101.06        #kJ/mol        #13BLA/VIE
-     -analytic -2.62905E+1 0E+0 2.04681E+4 0E+0 0E+0
+     log_k    38.040     
+     delta_h -379.808    #kJ/mol        
+     # Enthalpy of formation:           -6113.11        #kJ/mol        #15BLA/VIE
+     -analytic -2.84994E+1 0E+0 1.98387E+4 0E+0 0E+0
 
 Vermiculite-Na
 Na0.86Mg3.00Si3.14Al0.86O10(OH)2     = 3.000Mg+2     + 0.860Na+     + 0.860Al+3     - 9.440H+     + 3.140H4(SiO4)     - 0.560H2O
-     log_k    38.960     
-     delta_h -359.571    #kJ/mol        
-     # Enthalpy of formation:           -6139.23        #kJ/mol        #13BLA/VIE
-     -analytic -2.4034E+1 0E+0 1.87817E+4 0E+0 0E+0
+     log_k    38.390     
+     delta_h -355.541    #kJ/mol        
+     # Enthalpy of formation:           -6143.26        #kJ/mol        #15BLA/VIE
+     -analytic -2.3898E+1 0E+0 1.85712E+4 0E+0 0E+0
 
 Vermiculite_SO
 (Ca0.445)(Si2.778Al1.222)(Al0.216Fe0.226Fe0.028Mg2.475)O10(OH)2     = 0.445Ca+2     + 2.475Mg+2     + 0.226Fe+3     + 1.438Al+3     + 2.778H4(SiO4)     + 0.028Fe+2     + 0.888H2O     - 10.888H+
@@ -14875,7 +15100,7 @@ Ba(CO3)     = 1.000Ba+2     + 1.000CO3-2
 
 Xonotlite
 Ca6Si6O17(OH)2     = 6.000Ca+2     - 12.000H+     + 6.000H4(SiO4)     - 5.000H2O
-     log_k    91.340     #10BLA/BOU
+     log_k    91.340     #10BLA/BOU1
      delta_h -573.864    #kJ/mol        
      # Enthalpy of formation:           -10022.15        #kJ/mol        #56NEW
      -analytic -9.19651E+0 0E+0 2.9975E+4 0E+0 0E+0
@@ -15036,10 +15261,10 @@ ZrSiO4     = - 4.000H+     + 1.000H4(SiO4)     + 1.000Zr+4
 
 illite-FeIII
 K0.85Fe0.25Al2.6Si3.15O10(OH)2     = 0.850K+     + 0.250Fe+3     + 2.600Al+3     - 9.400H+     + 3.150H4(SiO4)     - 0.600H2O
-     log_k    11.510     
-     delta_h -256.622    #kJ/mol        
-     # Enthalpy of formation:           -5801.05        #kJ/mol        #13BLA/VIE
-     -analytic -3.34482E+1 0E+0 1.34043E+4 0E+0 0E+0
+     log_k    12.370     
+     delta_h -262.282    #kJ/mol        
+     # Enthalpy of formation:           -5795.39        #kJ/mol        #15BLA/VIE
+     -analytic -3.35798E+1 0E+0 1.36999E+4 0E+0 0E+0
 
 
 

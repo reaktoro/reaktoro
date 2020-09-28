@@ -1,4 +1,4 @@
-# $Id$ 
+#  $Id: wateq4f.dat 6895 2012-08-21 18:10:05Z dlpark $
 # Revised arsenic data from Archer and Nordstrom (2002)
 
 SOLUTION_MASTER_SPECIES
@@ -1357,8 +1357,8 @@ SOLUTION_SPECIES
 	delta_h	84.73	kJ
 
 #H4AsO3+             481
-  H3AsO3 + H+ = H4AsO3+ 
-  log_k           -0.305
+        H3AsO3 + H+ = H4AsO3+ 
+        log_k           -0.305
 
 #H2AsO4- 		482	
 	H3AsO4 = H2AsO4- + H+
@@ -2808,7 +2808,7 @@ Phosgenite          364
         PbCl2:PbCO3 = 2Pb+2 + 2Cl- + CO3-2 
         log_k           -19.810
 
-Cerussite           365
+Cerrusite           365
         PbCO3 = Pb+2 + CO3-2 
         log_k           -13.13
         delta_h 4.86 kcal
@@ -2934,7 +2934,7 @@ Pb2(OH)3Cl          391
         Pb2(OH)3Cl + 3H+ = 2Pb+2 + 3H2O + Cl- 
         log_k           8.793
 
-Hydrocerussite      392
+Hydrocerrusite      392
         Pb(OH)2:2PbCO3 + 2H+ = 3Pb+2 + 2CO3-2 + 2H2O 
         log_k           -17.460
 
@@ -3715,297 +3715,195 @@ SURFACE_SPECIES
 # Carbonate: Van Geen et al., 1994 reoptimized for HFO
 # 0.15 g HFO/L has 0.344 mM sites == 2 g of Van Geen's Goethite/L
 #
-       Hfo_wOH + CO3-2 + H+ = Hfo_wCO3- + H2O
-       log_k   12.56
-
-       Hfo_wOH + CO3-2 + 2H+= Hfo_wHCO3 + H2O
-       log_k   20.62
-#
-# Silicate: Swedlund, P.J. and Webster, J.G., 1999. Water Research, 33, 3413-3422.
-#
-	Hfo_wOH + H4SiO4 = Hfo_wH3SiO4 + H2O        ; log_K   4.28 
-	Hfo_wOH + H4SiO4 = Hfo_wH2SiO4- + H+ + H2O  ; log_K  -3.22 
-	Hfo_wOH + H4SiO4 = Hfo_wHSiO4-2 + 2H+ + H2O ; log_K -11.69
+#        Hfo_wOH + CO3-2 + H+ = Hfo_wCO3- + H2O
+#        log_k   12.56
+# 
+#        Hfo_wOH + CO3-2 + 2H+= Hfo_wHCO3 + H2O
+#        log_k   20.62
 
 RATES
-###########
-#Quartz
-###########
-#
-#######
-# Example of quartz kinetic rates block:
-#	KINETICS
-#	Quartz
-#		-m0  158.8	    # 90 % Qu
-#		-parms 0.146  1.5
-#		-step 3.1536e8 in 10
-#		-tol 1e-12
-
-Quartz
-  -start
-1  REM  Specific rate k from Rimstidt and Barnes, 1980, GCA 44,1683
-2  REM  k = 10^-13.7 mol/m2/s (25 C), Ea = 90 kJ/mol
-3  REM  sp. rate * parm(2) due to salts (Dove and Rimstidt, MSA Rev. 29, 259)
-4  REM  PARM(1) = Specific area of Quartz, m^2/mol Quartz
-5  REM  PARM(2) = salt correction: (1 + 1.5 * c_Na (mM)), < 35
-
-10 dif_temp = 1/TK - 1/298
-20 pk_w = 13.7 + 4700.4 * dif_temp
-40 moles = PARM(1) * M0 * PARM(2) * (M/M0)^0.67 * 10^-pk_w * (1 -  SR("Quartz"))
-#			 Integrate...
-50 SAVE moles * TIME
-  -end
 
 ###########
 #K-feldspar
 ###########
 #
-# Sverdrup and Warfvinge, 1995, Estimating field weathering rates
-# using laboratory kinetics: Reviews in mineralogy and geochemistry,
-# vol. 31, p. 485-541.
-#
-# As described in:
-# Appelo and Postma, 2005, Geochemistry, groundwater
-# and pollution, 2nd Edition: A.A. Balkema Publishers,
-# p. 162-163 and 395-399.
-#
-# Assume soil is 10% K-feldspar by mass in 1 mm spheres (radius 0.05 mm)
-# Assume density of rock and Kspar is 2600 kg/m^3 = 2.6 kg/L
-# GFW Kspar 0.278 kg/mol
-#
-# Moles of Kspar per liter pore space calculation:
-#   Mass of rock per liter pore space = 0.7*2.6/0.3       = 6.07     kg rock/L pore space
-#   Mass of Kspar per liter pore space 6.07x0.1           = 0.607    kg Kspar/L pore space
-#   Moles of Kspar per liter pore space 0.607/0.278       = 2.18     mol Kspar/L pore space
-#
-# Specific area calculation:
-#   Volume of sphere 4/3 x pi x r^3                       = 5.24e-13 m^3 Kspar/sphere
-#   Mass of sphere 2600 x 5.24e-13                        = 1.36e-9  kg Kspar/sphere
-#   Moles of Kspar in sphere 1.36e-9/0.278                = 4.90e-9  mol Kspar/sphere
-#   Surface area of one sphere 4 x pi x r^2               = 3.14e-8  m^2/sphere
-#   Specific area of K-feldspar in sphere 3.14e-8/4.90e-9 = 6.41 m^2/mol Kspar
-#
+# Sverdrup, H.U., 1990, The kinetics of base cation release due to 
+# chemical weathering: Lund University Press, Lund, 246 p.
 #
 # Example of KINETICS data block for K-feldspar rate:
 #       KINETICS 1
 #       K-feldspar
-#               -m0 2.18            # 10% Kspar, 0.1 mm cubes
-#               -m  2.18            # Moles per L pore space
-#               -parms 6.41  0.1    # m^2/mol Kspar, fraction adjusts lab rate to field rate
-#               -time 1.5 year in 40
+#               -m0 2.16  # 10% K-fsp, 0.1 mm cubes
+#               -m  1.94
+#               -parms 1.36e4  0.1
 
 K-feldspar
  -start
-1   REM Sverdrup and Warfvinge, 1995, mol m^-2 s^-1
-2   REM PARM(1) = Specific area of Kspar m^2/mol Kspar
-3   REM PARM(2) = Adjusts lab rate to field rate
-4   REM temp corr: from A&P, p. 162. E (kJ/mol) / R / 2.303 = H in H*(1/T-1/281)
-5   REM K-Feldspar parameters
-10  DATA 11.7, 0.5, 4e-6, 0.4, 500e-6, 0.15, 14.5, 0.14, 0.15, 13.1, 0.3
-20  RESTORE 10
-30  READ pK_H, n_H, lim_Al, x_Al, lim_BC, x_BC, pK_H2O, z_Al, z_BC, pK_OH, o_OH
-40  DATA 3500, 2000, 2500, 2000
-50  RESTORE 40
-60  READ e_H, e_H2O, e_OH, e_CO2
-70  pk_CO2 = 13
-80  n_CO2 = 0.6
-100 REM Generic rate follows
-110 dif_temp = 1/TK - 1/281
-120 BC       = ACT("Na+") + ACT("K+") + ACT("Mg+2") + ACT("Ca+2")
-130 REM rate by H+
-140 pk_H     = pk_H + e_H * dif_temp
-150 rate_H   = 10^-pk_H * ACT("H+")^n_H / ((1 + ACT("Al+3") / lim_Al)^x_Al * (1 + BC / lim_BC)^x_BC)
-160 REM rate by hydrolysis
-170 pk_H2O   = pk_H2O + e_H2O * dif_temp
-180 rate_H2O = 10^-pk_H2O / ((1 + ACT("Al+3") / lim_Al)^z_Al * (1 + BC / lim_BC)^z_BC)
-190 REM rate by OH-
-200 pk_OH    = pk_OH + e_OH * dif_temp
-210 rate_OH  = 10^-pk_OH * ACT("OH-")^o_OH
-220 REM rate by CO2
-230 pk_CO2   = pk_CO2 + e_CO2 * dif_temp
-240 rate_CO2 = 10^-pk_CO2 * (SR("CO2(g)"))^n_CO2
-250 rate     = rate_H + rate_H2O + rate_OH + rate_CO2
-260 area     = PARM(1) * M0 *(M/M0)^0.67
-270 rate     = PARM(2) * area * rate * (1-SR("K-feldspar"))
-280 moles    = rate * TIME
-290 SAVE moles
+   1 rem specific rate from Sverdrup, 1990, in kmol/m2/s
+   2 rem parm(1) = 10 * (A/V, 1/dm) (recalc's sp. rate to mol/kgw)
+   3 rem parm(2) = corrects for field rate relative to lab rate
+   4 rem temp corr: from p. 162. E (kJ/mol) / R / 2.303 = H in H*(1/T-1/298)
+   
+   10    dif_temp = 1/TK - 1/298
+   20    pk_H = 12.5 + 3134 * dif_temp
+   30    pk_w = 15.3 + 1838 * dif_temp
+   40    pk_OH = 14.2 + 3134 * dif_temp
+   50    pk_CO2 = 14.6 + 1677 * dif_temp
+   #60   pk_org = 13.9 + 1254 * dif_temp  # rate increase with DOC
+   70    rate = 10^-pk_H * ACT("H+")^0.5 + 10^-pk_w + 10^-pk_OH * ACT("OH-")^0.3
+   71    rate = rate + 10^-pk_CO2 * (10^SI("CO2(g)"))^0.6 
+   #72   rate = rate + 10^-pk_org * TOT("Doc")^0.4
+   80    moles = parm(1) * parm(2) * rate * (1 - SR("K-feldspar")) * time
+   81 rem decrease rate on precipitation
+   90    if SR("K-feldspar") > 1 then moles = moles * 0.1
+   100   save moles
  -end
-
 
 ###########
 #Albite
 ###########
 #
-# Sverdrup and Warfvinge, 1995, Estimating field weathering rates
-# using laboratory kinetics: Reviews in mineralogy and geochemistry,
-# vol. 31, p. 485-541.
-#
-# As described in:
-# Appelo and Postma, 2005, Geochemistry, groundwater
-# and pollution, 2nd Edition: A.A. Balkema Publishers,
-# p. 162-163 and 395-399.
+# Sverdrup, H.U., 1990, The kinetics of base cation release due to 
+# chemical weathering: Lund University Press, Lund, 246 p.
 #
 # Example of KINETICS data block for Albite rate:
 #       KINETICS 1
 #       Albite
-#               -m0 0.46            # 2% Albite, 0.1 mm cubes
-#               -m  0.46            # Moles per L pore space
-#               -parms 6.04  0.1    # m^2/mol Albite, fraction adjusts lab rate to field rate
-#               -time 1.5 year in 40
-#
-# Assume soil is 2% Albite by mass in 1 mm spheres (radius 0.05 mm)
-# Assume density of rock and Albite is 2600 kg/m^3 = 2.6 kg/L
-# GFW Albite 0.262 kg/mol
-#
-# Moles of Albite per liter pore space calculation:
-#   Mass of rock per liter pore space = 0.7*2.6/0.3       = 6.07     kg rock/L pore space
-#   Mass of Albite per liter pore space 6.07x0.02         = 0.121    kg Albite/L pore space
-#   Moles of Albite per liter pore space 0.607/0.262      = 0.46     mol Albite/L pore space
-#
-# Specific area calculation:
-#   Volume of sphere 4/3 x pi x r^3                       = 5.24e-13 m^3 Albite/sphere
-#   Mass of sphere 2600 x 5.24e-13                        = 1.36e-9  kg Albite/sphere
-#   Moles of Albite in sphere 1.36e-9/0.262               = 5.20e-9  mol Albite/sphere
-#   Surface area of one sphere 4 x pi x r^2               = 3.14e-8  m^2/sphere
-#   Specific area of Albite in sphere 3.14e-8/5.20e-9     = 6.04 m^2/mol Albite
+#               -m0 0.43  # 2% Albite, 0.1 mm cubes
+#               -parms 2.72e3  0.1
 
 Albite
  -start
-1   REM Sverdrup and Warfvinge, 1995, mol m^-2 s^-1
-2   REM PARM(1) = Specific area of Albite m^2/mol Albite
-3   REM PARM(2) = Adjusts lab rate to field rate
-4   REM temp corr: from A&P, p. 162. E (kJ/mol) / R / 2.303 = H in H*(1/T-1/281)
-5   REM Albite parameters
-10  DATA 11.5, 0.5, 4e-6, 0.4, 500e-6, 0.2, 13.7, 0.14, 0.15, 11.8, 0.3
-20  RESTORE 10
-30  READ pK_H, n_H, lim_Al, x_Al, lim_BC, x_BC, pK_H2O, z_Al, z_BC, pK_OH, o_OH
-40  DATA 3500, 2000, 2500, 2000
-50  RESTORE 40
-60  READ e_H, e_H2O, e_OH, e_CO2
-70  pk_CO2 = 13
-80  n_CO2 = 0.6
-100 REM Generic rate follows
-110 dif_temp = 1/TK - 1/281
-120 BC       = ACT("Na+") + ACT("K+") + ACT("Mg+2") + ACT("Ca+2")
-130 REM rate by H+
-140 pk_H     = pk_H + e_H * dif_temp
-150 rate_H   = 10^-pk_H * ACT("H+")^n_H / ((1 + ACT("Al+3") / lim_Al)^x_Al * (1 + BC / lim_BC)^x_BC)
-160 REM rate by hydrolysis
-170 pk_H2O   = pk_H2O + e_H2O * dif_temp
-180 rate_H2O = 10^-pk_H2O / ((1 + ACT("Al+3") / lim_Al)^z_Al * (1 + BC / lim_BC)^z_BC)
-190 REM rate by OH-
-200 pk_OH    = pk_OH + e_OH * dif_temp
-210 rate_OH  = 10^-pk_OH * ACT("OH-")^o_OH
-220 REM rate by CO2
-230 pk_CO2   = pk_CO2 + e_CO2 * dif_temp
-240 rate_CO2 = 10^-pk_CO2 * (SR("CO2(g)"))^n_CO2
-250 rate     = rate_H + rate_H2O + rate_OH + rate_CO2
-260 area     = PARM(1) * M0 *(M/M0)^0.67
-270 rate     = PARM(2) * area * rate * (1-SR("Albite"))
-280 moles    = rate * TIME
-290 SAVE moles
+   1 rem specific rate from Sverdrup, 1990, in kmol/m2/s
+   2 rem parm(1) = 10 * (A/V, 1/dm) (recalc's sp. rate to mol/kgw)
+   3 rem parm(2) = corrects for field rate relative to lab rate
+   4 rem temp corr: from p. 162. E (kJ/mol) / R / 2.303 = H in H*(1/T-1/298)
+   
+   10    dif_temp = 1/TK - 1/298
+   20    pk_H = 12.5 + 3359 * dif_temp
+   30    pk_w = 14.8 + 2648 * dif_temp
+   40    pk_OH = 13.7 + 3359 * dif_temp
+   #41 rem         ^12.9 in Sverdrup, but larger than for oligoclase...
+   50    pk_CO2 = 14.0 + 1677 * dif_temp
+   #60   pk_org = 12.5 + 1254 * dif_temp # ...rate increase for DOC
+   70    rate = 10^-pk_H * ACT("H+")^0.5 + 10^-pk_w + 10^-pk_OH * ACT("OH-")^0.3
+   71    rate = rate + 10^-pk_CO2 * (10^SI("CO2(g)"))^0.6 
+   #72   rate = rate + 10^-pk_org * TOT("Doc")^0.4
+   80    moles = parm(1) * parm(2) * rate * (1 - SR("Albite")) * time
+   81 rem decrease rate on precipitation
+   90    if SR("Albite") > 1 then moles = moles * 0.1
+   100   save moles
  -end
 
 ########
 #Calcite
 ########
-# Example of KINETICS data block for calcite rate,
-#   in mmol/cm2/s, Plummer et al., 1978, AJS 278, 179; Appelo et al., AG 13, 257.
-# KINETICS 1
-# Calcite
-# -tol   1e-8
-# -m0    3.e-3
-# -m     3.e-3
-# -parms 1.67e5   0.6  # cm^2/mol calcite, exp factor
-# -time  1 day
-
+#
+# Plummer, L.N., Wigley, T.M.L., and Parkhurst, D.L., 1978, 
+# American Journal of Science, v. 278, p. 179-216.
+#
+# Example of KINETICS data block for calcite rate:
+#
+#       KINETICS 1
+#       Calcite 
+#               -tol    1e-8
+#               -m0     3.e-3
+#               -m      3.e-3
+#               -parms  5.0      0.6
 Calcite
-   -start
-1   REM   PARM(1) = specific surface area of calcite, cm^2/mol calcite
-2   REM   PARM(2) = exponent for M/M0
-
-10  si_cc = SI("Calcite")
-20  IF (M <= 0  and si_cc < 0) THEN GOTO 200
-30  k1 = 10^(0.198 - 444.0 / TK )
-40  k2 = 10^(2.84 - 2177.0 /TK )
-50  IF TC <= 25 THEN k3 = 10^(-5.86 - 317.0 / TK)
-60  IF TC > 25 THEN k3 = 10^(-1.1 - 1737.0 / TK )
-80  IF M0 > 0 THEN area = PARM(1)*M0*(M/M0)^PARM(2) ELSE area = PARM(1)*M
-110 rate = area * (k1 * ACT("H+") + k2 * ACT("CO2") + k3 * ACT("H2O"))
-120 rate = rate * (1 - 10^(2/3*si_cc))
-130 moles = rate * 0.001 * TIME # convert from mmol to mol
-200 SAVE moles
-   -end
+  -start
+   1 REM        Modified from Plummer and others, 1978
+   2 REM        M = current moles of calcite
+   3 REM        M0 = initial moles of calcite
+   4 REM        parm(1) = Area/Volume, cm^2/L   (or cm^2 per cell)
+   5 REM        parm(2) = exponent for M/M0 for surface area correction
+   10  REM rate = 0 if no calcite and undersaturated
+   20    si_cc = SI("Calcite")
+   30    if (M <= 0  and si_cc < 0) then goto 300
+   40    k1 = 10^(0.198 - 444.0 / TK )
+   50    k2 = 10^(2.84 - 2177.0 / TK )
+   60    if TC <= 25 then k3 = 10^(-5.86 - 317.0 / TK )
+   70    if TC > 25 then k3 = 10^(-1.1 - 1737.0 / TK )
+   80  REM surface area calculation
+   90    t = 1
+   100   if M0 > 0 then t = M/M0
+   110   if t = 0 then t = 1
+   120   area = PARM(1) * (t)^PARM(2)
+   130   rf = k1 * ACT("H+") + k2 * ACT("CO2") + k3 * ACT("H2O")
+   140 REM 1e-3 converts mmol to mol
+   150   rate = area * 1e-3 * rf * (1 - 10^(2/3*si_cc))
+   160   moles = rate * TIME
+   170 REM do not dissolve more calcite than present
+   180   if (moles > M) then moles = M
+   190   if (moles >= 0) then goto 300
+   200 REM do not precipitate more Ca or C(4) than present
+   210   temp = TOT("Ca")
+   220   mc  = TOT("C(4)")
+   230   if mc < temp then temp = mc
+   240   if -moles > temp then moles = -temp
+   300 SAVE moles
+  -end
 
 #######
 #Pyrite
 #######
 #
-# Williamson, M.A. and Rimstidt, J.D., 1994,
-# Geochimica et Cosmochimica Acta, v. 58, p. 5443-5454,
-# rate equation is mol m^-2 s^-1.
+# Williamson, M.A. and Rimstidt, J.D., 1994, 
+# Geochimica et Cosmochimica Acta, v. 58, p. 5443-5454.
 #
 # Example of KINETICS data block for pyrite rate:
 #       KINETICS 1
-#       Pyrite
+#       Pyrite  
 #               -tol    1e-8
 #               -m0     5.e-4
 #               -m      5.e-4
-#               -parms  0.3     0.67     .5      -0.11
-#               -time 1 day in 10
+#               -parms  2.0     0.67     .5      -0.11 
 Pyrite
   -start
-1   REM        Williamson and Rimstidt, 1994
-2   REM        PARM(1) = log10(specific area), log10(m^2 per mole pyrite)
-3   REM        PARM(2) = exp for (M/M0)
-4   REM        PARM(3) = exp for O2
-5   REM        PARM(4) = exp for H+
-
-10  REM Dissolution in presence of DO
-20  if (M <= 0) THEN GOTO 200
-30  if (SI("Pyrite") >= 0) THEN GOTO 200
-40  log_rate = -8.19 + PARM(3)*LM("O2") + PARM(4)*LM("H+")
-50  log_area = PARM(1) + LOG10(M0) + PARM(2)*LOG10(M/M0)
-60  moles = 10^(log_area + log_rate) * TIME
-200 SAVE moles
+   1 rem        Williamson and Rimstidt, 1994
+   2 rem        parm(1) = log10(A/V, 1/dm)      parm(2) = exp for (m/m0)
+   3 rem        parm(3) = exp for O2            parm(4) = exp for H+
+      
+   10 if (m <= 0) then goto 200
+   20 if (si("Pyrite") >= 0) then goto 200
+   25  rate = -10.19 + parm(1) + parm(3)*lm("O2") + parm(4)*lm("H+") + parm(2)*log10(m/m0)
+   30  moles = 10^rate * time
+   40 if (moles > m) then moles = m
+   200 save moles
   -end
 
 ##########
 #Organic_C
 ##########
 #
-# Example of KINETICS data block for SOC (sediment organic carbon):
+# Example of KINETICS data block for Organic_C rate:
 #       KINETICS 1
 #       Organic_C
-#               -formula C
 #               -tol    1e-8
-#               -m      5e-3   # SOC in mol
-#               -time 30 year in 15
+#              # m in mol/kgw
+#               -m0     5e-3
+#               -m      5e-3
 Organic_C
  -start
-1   REM      Additive Monod kinetics for SOC (sediment organic carbon)
-2   REM      Electron acceptors: O2, NO3, and SO4
+   1  rem      Additive Monod kinetics
+   2  rem      Electron acceptors: O2, NO3, and SO4
 
-10  if (M <= 0) THEN GOTO 200
-20  mO2   = MOL("O2")
-30  mNO3  = TOT("N(5)")
-40  mSO4  = TOT("S(6)")
-50  k_O2  = 1.57e-9    # 1/sec
-60  k_NO3 = 1.67e-11   # 1/sec
-70  k_SO4 = 1.e-13     # 1/sec
-80  rate  = k_O2 * mO2/(2.94e-4 + mO2)
-90  rate  = rate + k_NO3 * mNO3/(1.55e-4 + mNO3)
-100 rate  = rate + k_SO4 * mSO4/(1.e-4 + mSO4)
-110 moles = rate * M * (M/M0) * TIME
-200 SAVE moles
+   10 if (m <= 0) then goto 200
+   20  mO2 = mol("O2")
+   30  mNO3 = tot("N(5)")
+   40  mSO4 = tot("S(6)")
+   50   rate = 1.57e-9*mO2/(2.94e-4 + mO2) + 1.67e-11*mNO3/(1.55e-4 + mNO3)
+   60   rate = rate + 1.e-13*mSO4/(1.e-4 + mSO4)
+   70  moles = rate * m * (m/m0) * time
+   80 if (moles > m) then moles = m
+   200 save moles
  -end
 
 ###########
 #Pyrolusite
 ###########
 #
-# Postma, D. and Appelo, C.A.J., 2000, GCA, vol. 64, pp. 1237-1247.
-# Rate equation given as mol L^-1 s^-1
+# Postma, D. and Appelo, C.A.J., 2000, GCA 64, in press
 #
 # Example of KINETICS data block for Pyrolusite
 #       KINETICS 1-12
@@ -4013,20 +3911,224 @@ Organic_C
 #               -tol    1.e-7
 #               -m0     0.1
 #               -m      0.1
-#               -time 0.5 day in 10
 Pyrolusite
   -start
-10  if (M <= 0) THEN GOTO 200
-20  sr_pl = SR("Pyrolusite")
-30  if (sr_pl > 1) THEN GOTO 100
-40  REM sr_pl <= 1, undersaturated
-50  Fe_t = TOT("Fe(2)")
-60  if Fe_t < 1e-8 then goto 200
-70  moles = 6.98e-5 * Fe_t  * (M/M0)^0.67 * TIME * (1 - sr_pl)
-80  GOTO 200
-100 REM sr_pl > 1, supersaturated
-110 moles = 2e-3 * 6.98e-5 * (1 - sr_pl) * TIME
-200 SAVE moles * SOLN_VOL
+   5    if (m <= 0.0) then goto 200
+   7    sr_pl = sr("Pyrolusite")
+   9    if abs(1 - sr_pl) < 0.1 then goto 200
+   10   if (sr_pl > 1.0) then goto 100
+   #20 rem      initially 1 mol Fe+2 = 0.5 mol pyrolusite. k*A/V = 1/time (3 cells)
+   #22 rem       time (3 cells) = 1.432e4.  1/time = 6.98e-5
+   30   Fe_t = tot("Fe(2)")
+   32   if Fe_t < 1.e-8 then goto 200
+   40   moles = 6.98e-5 * Fe_t  * (m/m0)^0.67 * time * (1 - sr_pl)
+   50   if moles > Fe_t / 2 then moles = Fe_t / 2
+   70   if moles > m then moles = m
+   90   goto 200
+   100  Mn_t = tot("Mn")
+   110  moles = 2e-3 * 6.98e-5 * (1-sr_pl) * time
+   120  if moles <= -Mn_t then moles = -Mn_t
+   200  save moles
   -end
-END
+SURFACE_MASTER_SPECIES
+# Monodentate 60%
+  H_a  H_aH;  H_b  H_bH;  H_c  H_cH;  H_d  H_dH
+  H_e  H_eH;  H_f  H_fH;  H_g  H_gH;  H_h  H_hH
+# Diprotic 40%
+  H_ab H_abH2;  H_ad H_adH2;  H_af H_afH2;  H_ah H_ahH2
+  H_bc H_bcH2;  H_be H_beH2;  H_bg H_bgH2;  H_cd H_cdH2
+  H_cf H_cfH2;  H_ch H_chH2;  H_de H_deH2;  H_dg H_dgH2
+SURFACE_SPECIES
+  H_aH = H_aH; log_k 0;  H_bH = H_bH; log_k 0;  H_cH = H_cH; log_k 0;  H_dH = H_dH; log_k 0;
+  H_eH = H_eH; log_k 0;  H_fH = H_fH; log_k 0;  H_gH = H_gH; log_k 0;  H_hH = H_hH; log_k 0;
 
+  H_abH2 = H_abH2; log_k 0;  H_adH2 = H_adH2; log_k 0;  H_afH2 = H_afH2; log_k 0;
+  H_ahH2 = H_ahH2; log_k 0;  H_bcH2 = H_bcH2; log_k 0;  H_beH2 = H_beH2; log_k 0;
+  H_bgH2 = H_bgH2; log_k 0;  H_cdH2 = H_cdH2; log_k 0;  H_cfH2 = H_cfH2; log_k 0;
+  H_chH2 = H_chH2; log_k 0;  H_deH2 = H_deH2; log_k 0;  H_dgH2 = H_dgH2; log_k 0;
+# Protons
+  H_aH = H_a- + H+; log_k  -1.59
+  H_bH = H_b- + H+; log_k  -2.70
+  H_cH = H_c- + H+; log_k  -3.82
+  H_dH = H_d- + H+; log_k  -4.93
+  
+  H_eH = H_e- + H+; log_k  -6.88
+  H_fH = H_f- + H+; log_k  -8.72
+  H_gH = H_g- + H+; log_k  -10.56
+  H_hH = H_h- + H+; log_k  -12.40
+  
+  H_abH2 = H_abH- + H+; log_k -1.59;  H_abH- = H_ab-2 + H+; log_k -2.70
+  H_adH2 = H_adH- + H+; log_k -1.59;  H_adH- = H_ad-2 + H+; log_k -4.93
+  H_afH2 = H_afH- + H+; log_k -1.59;  H_afH- = H_af-2 + H+; log_k -8.72
+  H_ahH2 = H_ahH- + H+; log_k -1.59;  H_ahH- = H_ah-2 + H+; log_k -12.40
+  H_bcH2 = H_bcH- + H+; log_k -2.70;  H_bcH- = H_bc-2 + H+; log_k -3.82
+  H_beH2 = H_beH- + H+; log_k -2.70;  H_beH- = H_be-2 + H+; log_k -6.88
+  H_bgH2 = H_bgH- + H+; log_k -2.70;  H_bgH- = H_bg-2 + H+; log_k -10.56
+  H_cdH2 = H_cdH- + H+; log_k -3.82;  H_cdH- = H_cd-2 + H+; log_k -4.93
+  H_cfH2 = H_cfH- + H+; log_k -3.82;  H_cfH- = H_cf-2 + H+; log_k -8.72
+  H_chH2 = H_chH- + H+; log_k -3.82;  H_chH- = H_ch-2 + H+; log_k -12.40
+  H_deH2 = H_deH- + H+; log_k -4.93;  H_deH- = H_de-2 + H+; log_k -6.88
+  H_dgH2 = H_dgH- + H+; log_k -4.93;  H_dgH- = H_dg-2 + H+; log_k -10.56
+# Mg From Lofts and Tipping, 2000
+  H_aH + Mg+2 = H_aMg+ + H+; log_k  -3.30
+  H_bH + Mg+2 = H_bMg+ + H+; log_k  -3.30
+  H_cH + Mg+2 = H_cMg+ + H+; log_k  -3.30
+  H_dH + Mg+2 = H_dMg+ + H+; log_k  -3.30
+
+  H_eH + Mg+2 = H_eMg+ + H+; log_k  -7.12
+  H_fH + Mg+2 = H_fMg+ + H+; log_k  -7.12
+  H_gH + Mg+2 = H_gMg+ + H+; log_k  -7.12
+  H_hH + Mg+2 = H_hMg+ + H+; log_k  -7.12
+
+  H_abH2 + Mg+2 = H_abMg + 2H+; log_k -6.60
+  H_adH2 + Mg+2 = H_adMg + 2H+; log_k -6.60
+  H_afH2 + Mg+2 = H_afMg + 2H+; log_k -10.42
+  H_ahH2 + Mg+2 = H_ahMg + 2H+; log_k -10.42
+  H_bcH2 + Mg+2 = H_bcMg + 2H+; log_k -6.60
+  H_beH2 + Mg+2 = H_beMg + 2H+; log_k -10.42
+  H_bgH2 + Mg+2 = H_bgMg + 2H+; log_k -10.42
+  H_cdH2 + Mg+2 = H_cdMg + 2H+; log_k -6.60
+  H_cfH2 + Mg+2 = H_cfMg + 2H+; log_k -10.42
+  H_chH2 + Mg+2 = H_chMg + 2H+; log_k -10.42
+  H_deH2 + Mg+2 = H_deMg + 2H+; log_k -10.42
+  H_dgH2 + Mg+2 = H_dgMg + 2H+; log_k -10.42
+# Calcium, Lofts and Tipping, 2000
+  H_aH + Ca+2 = H_aCa+ + H+; log_k  -3.20
+  H_bH + Ca+2 = H_bCa+ + H+; log_k  -3.20
+  H_cH + Ca+2 = H_cCa+ + H+; log_k  -3.20
+  H_dH + Ca+2 = H_dCa+ + H+; log_k  -3.20
+
+  H_eH + Ca+2 = H_eCa+ + H+; log_k  -6.99
+  H_fH + Ca+2 = H_fCa+ + H+; log_k  -6.99
+  H_gH + Ca+2 = H_gCa+ + H+; log_k  -6.99
+  H_hH + Ca+2 = H_hCa+ + H+; log_k  -6.99
+
+  H_abH2 + Ca+2 = H_abCa + 2H+; log_k -6.40
+  H_adH2 + Ca+2 = H_adCa + 2H+; log_k -6.40
+  H_afH2 + Ca+2 = H_afCa + 2H+; log_k -7.45
+  H_ahH2 + Ca+2 = H_ahCa + 2H+; log_k -10.2
+  H_bcH2 + Ca+2 = H_bcCa + 2H+; log_k -6.40
+  H_beH2 + Ca+2 = H_beCa + 2H+; log_k -10.2
+  H_bgH2 + Ca+2 = H_bgCa + 2H+; log_k -10.2
+  H_cdH2 + Ca+2 = H_cdCa + 2H+; log_k -6.40
+  H_cfH2 + Ca+2 = H_cfCa + 2H+; log_k -10.2
+  H_chH2 + Ca+2 = H_chCa + 2H+; log_k -10.2
+  H_deH2 + Ca+2 = H_deCa + 2H+; log_k -10.2
+  H_dgH2 + Ca+2 = H_dgCa + 2H+; log_k -10.2
+# Nickel
+  H_aH + Ni+2 = H_aNi+ + H+; log_k  -1.4
+  H_bH + Ni+2 = H_bNi+ + H+; log_k  -1.4
+  H_cH + Ni+2 = H_cNi+ + H+; log_k  -1.4
+  H_dH + Ni+2 = H_dNi+ + H+; log_k  -1.4
+
+  H_eH + Ni+2 = H_eNi+ + H+; log_k  -4.5
+  H_fH + Ni+2 = H_fNi+ + H+; log_k  -4.5
+  H_gH + Ni+2 = H_gNi+ + H+; log_k  -4.5
+  H_hH + Ni+2 = H_hNi+ + H+; log_k  -4.5
+
+  H_abH2 + Ni+2 = H_abNi + 2H+; log_k -2.8
+  H_adH2 + Ni+2 = H_adNi + 2H+; log_k -2.8
+  H_afH2 + Ni+2 = H_afNi + 2H+; log_k -5.9
+  H_ahH2 + Ni+2 = H_ahNi + 2H+; log_k -5.9
+  H_bcH2 + Ni+2 = H_bcNi + 2H+; log_k -2.8
+  H_beH2 + Ni+2 = H_beNi + 2H+; log_k -5.9
+  H_bgH2 + Ni+2 = H_bgNi + 2H+; log_k -5.9
+  H_cdH2 + Ni+2 = H_cdNi + 2H+; log_k -2.8
+  H_cfH2 + Ni+2 = H_cfNi + 2H+; log_k -5.9
+  H_chH2 + Ni+2 = H_chNi + 2H+; log_k -5.9
+  H_deH2 + Ni+2 = H_deNi + 2H+; log_k -5.9
+  H_dgH2 + Ni+2 = H_dgNi + 2H+; log_k -5.9
+# Copper
+  H_aH + Cu+2 = H_aCu+ + H+; log_k  -0.63
+  H_bH + Cu+2 = H_bCu+ + H+; log_k  -0.63
+  H_cH + Cu+2 = H_cCu+ + H+; log_k  -0.63
+  H_dH + Cu+2 = H_dCu+ + H+; log_k  -0.63
+
+  H_eH + Cu+2 = H_eCu+ + H+; log_k  -3.75
+  H_fH + Cu+2 = H_fCu+ + H+; log_k  -3.75
+  H_gH + Cu+2 = H_gCu+ + H+; log_k  -3.75
+  H_hH + Cu+2 = H_hCu+ + H+; log_k  -3.75
+
+  H_abH2 + Cu+2 = H_abCu + 2H+; log_k -1.26
+  H_adH2 + Cu+2 = H_adCu + 2H+; log_k -1.26
+  H_afH2 + Cu+2 = H_afCu + 2H+; log_k -4.38
+  H_ahH2 + Cu+2 = H_ahCu + 2H+; log_k -4.38
+  H_bcH2 + Cu+2 = H_bcCu + 2H+; log_k -1.26
+  H_beH2 + Cu+2 = H_beCu + 2H+; log_k -4.38
+  H_bgH2 + Cu+2 = H_bgCu + 2H+; log_k -4.38
+  H_cdH2 + Cu+2 = H_cdCu + 2H+; log_k -1.26
+  H_cfH2 + Cu+2 = H_cfCu + 2H+; log_k -4.38
+  H_chH2 + Cu+2 = H_chCu + 2H+; log_k -4.38
+  H_deH2 + Cu+2 = H_deCu + 2H+; log_k -4.38
+  H_dgH2 + Cu+2 = H_dgCu + 2H+; log_k -4.38
+# Zinc
+  H_aH + Zn+2 = H_aZn+ + H+; log_k  -1.7
+  H_bH + Zn+2 = H_bZn+ + H+; log_k  -1.7
+  H_cH + Zn+2 = H_cZn+ + H+; log_k  -1.7
+  H_dH + Zn+2 = H_dZn+ + H+; log_k  -1.7
+
+  H_eH + Zn+2 = H_eZn+ + H+; log_k  -4.9
+  H_fH + Zn+2 = H_fZn+ + H+; log_k  -4.9
+  H_gH + Zn+2 = H_gZn+ + H+; log_k  -4.9
+  H_hH + Zn+2 = H_hZn+ + H+; log_k  -4.9
+
+  H_abH2 + Zn+2 = H_abZn + 2H+; log_k -2.4
+  H_adH2 + Zn+2 = H_adZn + 2H+; log_k -2.4
+  H_afH2 + Zn+2 = H_afZn + 2H+; log_k -6.6
+  H_ahH2 + Zn+2 = H_ahZn + 2H+; log_k -6.6
+  H_bcH2 + Zn+2 = H_bcZn + 2H+; log_k -2.4
+  H_beH2 + Zn+2 = H_beZn + 2H+; log_k -6.6
+  H_bgH2 + Zn+2 = H_bgZn + 2H+; log_k -6.6
+  H_cdH2 + Zn+2 = H_cdZn + 2H+; log_k -2.4
+  H_cfH2 + Zn+2 = H_cfZn + 2H+; log_k -6.6
+  H_chH2 + Zn+2 = H_chZn + 2H+; log_k -6.6
+  H_deH2 + Zn+2 = H_deZn + 2H+; log_k -6.6
+  H_dgH2 + Zn+2 = H_dgZn + 2H+; log_k -6.6
+# Cadmium
+  H_aH + Cd+2 = H_aCd+ + H+; log_k  -1.52
+  H_bH + Cd+2 = H_bCd+ + H+; log_k  -1.52
+  H_cH + Cd+2 = H_cCd+ + H+; log_k  -1.52
+  H_dH + Cd+2 = H_dCd+ + H+; log_k  -1.52
+
+  H_eH + Cd+2 = H_eCd+ + H+; log_k  -5.57
+  H_fH + Cd+2 = H_fCd+ + H+; log_k  -5.57
+  H_gH + Cd+2 = H_gCd+ + H+; log_k  -5.57
+  H_hH + Cd+2 = H_hCd+ + H+; log_k  -5.57
+
+  H_abH2 + Cd+2 = H_abCd + 2H+; log_k -3.04
+  H_adH2 + Cd+2 = H_adCd + 2H+; log_k -3.04
+  H_afH2 + Cd+2 = H_afCd + 2H+; log_k -7.09
+  H_ahH2 + Cd+2 = H_ahCd + 2H+; log_k -7.09
+  H_bcH2 + Cd+2 = H_bcCd + 2H+; log_k -3.04
+  H_beH2 + Cd+2 = H_beCd + 2H+; log_k -7.09
+  H_bgH2 + Cd+2 = H_bgCd + 2H+; log_k -7.09
+  H_cdH2 + Cd+2 = H_cdCd + 2H+; log_k -3.04
+  H_cfH2 + Cd+2 = H_cfCd + 2H+; log_k -7.09
+  H_chH2 + Cd+2 = H_chCd + 2H+; log_k -7.09
+  H_deH2 + Cd+2 = H_deCd + 2H+; log_k -7.09
+  H_dgH2 + Cd+2 = H_dgCd + 2H+; log_k -7.09
+# Plumbum (Lead)
+  H_aH + Pb+2 = H_aPb+ + H+; log_k  -0.81
+  H_bH + Pb+2 = H_bPb+ + H+; log_k  -0.81
+  H_cH + Pb+2 = H_cPb+ + H+; log_k  -0.81
+  H_dH + Pb+2 = H_dPb+ + H+; log_k  -0.81
+
+  H_eH + Pb+2 = H_ePb+ + H+; log_k  -3.04
+  H_fH + Pb+2 = H_fPb+ + H+; log_k  -3.04
+  H_gH + Pb+2 = H_gPb+ + H+; log_k  -3.04
+  H_hH + Pb+2 = H_hPb+ + H+; log_k  -3.04
+
+  H_abH2 + Pb+2 = H_abPb + 2H+; log_k -1.62
+  H_adH2 + Pb+2 = H_adPb + 2H+; log_k -1.62
+  H_afH2 + Pb+2 = H_afPb + 2H+; log_k -3.85
+  H_ahH2 + Pb+2 = H_ahPb + 2H+; log_k -3.85
+  H_bcH2 + Pb+2 = H_bcPb + 2H+; log_k -1.62
+  H_beH2 + Pb+2 = H_bePb + 2H+; log_k -3.85
+  H_bgH2 + Pb+2 = H_bgPb + 2H+; log_k -3.85
+  H_cdH2 + Pb+2 = H_cdPb + 2H+; log_k -1.62
+  H_cfH2 + Pb+2 = H_cfPb + 2H+; log_k -3.85
+  H_chH2 + Pb+2 = H_chPb + 2H+; log_k -3.85
+  H_deH2 + Pb+2 = H_dePb + 2H+; log_k -3.85
+  H_dgH2 + Pb+2 = H_dgPb + 2H+; log_k -3.85
+  
+END
