@@ -1,4 +1,4 @@
-#  $Id: llnl.dat 9461 2015-04-02 21:46:29Z dlpark $
+#  $Id: llnl.dat 12758 2017-08-01 22:09:36Z dlpark $
 #Data are from 'thermo.com.V8.R6.230' prepared by Jim Johnson at
 #Lawrence Livermore National Laboratory, in Geochemist's Workbench
 #format. Converted to Phreeqc format by Greg Anderson with help from
@@ -860,7 +860,7 @@ Cyanide- = Cyanide-
         log_k            -228.6072
 	-delta_H	0	      	# Not possible to calculate enthalpy of reaction	C2H6
 #	Enthalpy of formation:	-0 kcal/mol
-        -analytic    0.10777E+02    0.72105E-01   -0.67489E+05   -0.13915E+02   -0.10531E+04
+        -analytic    -0.10777E+02    0.72105E-01   -0.67489E+05   -0.13915E+02   -0.10531E+04
 #       -Range:  0-300
 
  2.000 H+  + 2.0000 HCO3-  = C2H4 + 3.0000 O2
@@ -19204,10 +19204,7 @@ Calcite
 40  k2 = 10^(2.84 - 2177.0 /TK )
 50  IF TC <= 25 THEN k3 = 10^(-5.86 - 317.0 / TK)
 60  IF TC > 25 THEN k3 = 10^(-1.1 - 1737.0 / TK )
-70  t = 1
-80  IF M0 > 0 THEN t = M/M0
-90  IF t = 0 THEN t = 1
-100 area = PARM(1) * M0 * t^PARM(2)
+80  IF M0 > 0 THEN area = PARM(1)*M0*(M/M0)^PARM(2) ELSE area = PARM(1)*M
 110 rate = area * (k1 * ACT("H+") + k2 * ACT("CO2") + k3 * ACT("H2O"))
 120 rate = rate * (1 - 10^(2/3*si_cc))
 130 moles = rate * 0.001 * TIME # convert from mmol to mol

@@ -36,31 +36,33 @@ Ntg		Ntg	 0	Ntg		28.0134 # N2 gas
 
 SOLUTION_SPECIES
 H+ = H+
-	-dw	 9.31e-9
+	-dw	 9.31e-9  1000  0.46  1e-10 # The dw parameters are defined in ref. 4.
+# Dw(TK) = 9.31e-9 * exp(1000 / TK - 1000 / 298.15) * TK * 0.89 / (298.15 * viscos)
+# Dw(I) = Dw(TK) * exp(-0.46 * DH_A * |z_H+| * I^0.5 / (1 + DH_B * I^0.5 * 1e-10 / (1 + I^0.75)))
 e- = e-
 H2O = H2O
 Li+ = Li+
-	-dw	 1.03e-9
+	-dw	 1.03e-9  80
 	-Vm  -0.419  -0.069  13.16  -2.78  0.416  0  0.296  -12.4  -2.74e-3  1.26 # ref. 2 and Ellis, 1968, J. Chem. Soc. A, 1138
 Na+ = Na+
-	-dw	 1.33e-9
+	-dw	 1.33e-9  122  1.52  3.70
 	-Vm   2.28  -4.38  -4.1  -0.586  0.09  4  0.3  52  -3.33e-3  0.566 # ref. 1
 # for calculating densities (rho) when I > 3...
 	# -Vm   2.28  -4.38  -4.1  -0.586  0.09  4  0.3  52  -3.33e-3  0.45
 K+ = K+
-	-dw	 1.96e-9
+	-dw	 1.96e-9  395  2.5  21
 	-Vm  3.322  -1.473  6.534  -2.712  9.06e-2  3.5  0  29.70  0  1 # ref. 1
 Mg+2 = Mg+2
-	-dw	 0.705e-9
+	-dw	 0.705e-9  111  2.4  13.7
 	-Vm  -1.410  -8.6  11.13  -2.39  1.332  5.5  1.29  -32.9  -5.86e-3  1 # ref. 1
 Ca+2 = Ca+2
-	-dw	 0.793e-9
+	-dw	 0.793e-9  97  3.4  24.6
 	-Vm  -0.3456  -7.252  6.149  -2.479  1.239  5  1.60  -57.1  -6.12e-3  1 # ref. 1
 Sr+2 = Sr+2
-	-dw	 0.794e-9
+	-dw	 0.794e-9  161
 	-Vm  -1.57e-2  -10.15  10.18  -2.36  0.860  5.26  0.859  -27.0  -4.1e-3  1.97 # ref. 1
 Ba+2 = Ba+2
-	-dw	 0.848e-9
+	-dw	 0.848e-9  46
 	-Vm  2.063  -10.06  1.9534  -2.36  0.4218  5  1.58  -12.03  -8.35e-3  1 # ref. 1
 Mn+2 = Mn+2
 	-dw	 0.688e-9
@@ -69,20 +71,20 @@ Fe+2 = Fe+2
 	-dw	 0.719e-9
 	-Vm  -0.3255  -9.687  1.536  -2.379  0.3033  6  -4.21e-2  39.7  0  1 # ref. 1
 Cl- = Cl-
-	-dw	 2.03e-9
+	-dw	 2.03e-9  194  1.6  6.9
 	-Vm  4.465  4.801  4.325  -2.847  1.748  0  -0.331  20.16  0  1 # ref. 1
 CO3-2 = CO3-2
-	-dw	 0.955e-9
+	-dw	 0.955e-9  0  1.12  2.84
 	-Vm  4.91  0  0  -5.41  4.76  0  0.386  89.7  -1.57e-2  1 # ref. 1
 SO4-2 = SO4-2
-	-dw	 1.07e-9
+	-dw	 1.07e-9  34  4.46  25.9
 	-Vm  -7.77  43.17  141.1  -42.45  3.794  0  4.97  26.5  -5.77e-2  0.45 # ref. 1
 B(OH)3 = B(OH)3
 	-dw	1.1e-9
 	-Vm 7.0643   8.8547   3.5844   -3.1451 -.2000  # supcrt
 Br- = Br-
-	-dw	 2.01e-9
-	-Vm   7.05  3.95  2.03  -3.14  2.07  0  -0.983  39.9  4.05e-3  1 # ref. 2
+	-dw	 2.01e-9  258
+	-Vm   6.72  2.85  4.21  -3.14  1.38  0  -9.56e-2  7.08  -1.56e-3  1 # ref. 2
 H4SiO4 = H4SiO4
 	-dw  1.10e-9
 	-Vm  10.5  1.7  20  -2.7  0.1291 # supcrt + 2*H2O in a1
@@ -105,13 +107,13 @@ H2Sg = H2Sg # H2S
 # aqueous species
 H2O = OH- + H+
 	-analytic  293.29227  0.1360833  -10576.913  -123.73158  0  -6.996455e-5
-	-dw	 5.27e-9
+	-dw	 5.27e-9  548  0.52  1e-10
 	-Vm  -9.66  28.5  80.0 -22.9 1.89 0 1.09 0 0 1 # ref. 1
 CO3-2 + H+ = HCO3-
 	log_k	   10.3393
 	delta_h -3.561  kcal
 	-analytic    107.8975    0.03252849  -5151.79   -38.92561    563713.9
-	-dw	 1.18e-9
+	-dw	 1.18e-9  0  1.43  1e-10
 	-Vm  8.54  0  -11.7  0  1.6  0  0  116  0  1 # ref. 1
 CO3-2 + 2 H+ = CO2 + H2O
 	log_k	   16.6767
@@ -129,7 +131,7 @@ H2Sg = HSg- + H+
 	log_k	-6.994
 	delta_h 5.30	kcal
 	-analytical  11.17   -0.02386  -3279.0
-	-dw	 2.1e-9
+	-dw	 1.73e-9
 	-Vm 5.0119   4.9799   3.4765   -2.9849 1.4410 # supcrt
 B(OH)3 + H2O = B(OH)4- + H+
 	log_k	   -9.239
@@ -897,11 +899,17 @@ SURFACE_SPECIES
 # Carbonate: Van Geen et al., 1994 reoptimized for HFO
 # 0.15 g HFO/L has 0.344 mM sites == 2 g of Van Geen's Goethite/L
 #
-#	Hfo_wOH + CO3-2 + H+ = Hfo_wCO3- + H2O
-#	log_k   12.56
+	Hfo_wOH + CO3-2 + H+ = Hfo_wCO3- + H2O
+	log_k   12.56
+
+	Hfo_wOH + CO3-2 + 2H+= Hfo_wHCO3 + H2O
+	log_k   20.62
 #
-#	Hfo_wOH + CO3-2 + 2H+= Hfo_wHCO3 + H2O
-#	log_k   20.62
+# Silicate: Swedlund, P.J. and Webster, J.G., 1999. Water Research 33, 3413-3422.
+#
+	Hfo_wOH + H4SiO4 = Hfo_wH3SiO4 + H2O        ; log_K   4.28 
+	Hfo_wOH + H4SiO4 = Hfo_wH2SiO4- + H+ + H2O  ; log_K  -3.22 
+	Hfo_wOH + H4SiO4 = Hfo_wHSiO4-2 + 2H+ + H2O ; log_K -11.69
 
 
 END
@@ -971,6 +979,7 @@ END
 # ref. 3: Appelo, 2015, Appl. Geochem. 55, 62–71.
 #                 http://www.hydrochemistry.eu/pub/pitzer_db/appendix.zip contains example files
 #                 for the high P,T Pitzer model and improvements for Calcite.
+# ref. 4: Appelo, 2017, Cem. Concr. Res. 101, 102-113.
 #
 # =============================================================================================
 # It remains the responsibility of the user to check the calculated results, for example with

@@ -30,6 +30,7 @@ N(-3)        NH4+           0       N
 P            PO4-3          2.0     P               30.9738
 F            F-             0.0     F               18.9984
 Br           Br-            0.0     Br              79.904
+Alkalinity   CO2            0.0     50.05           50.05
 
 SOLUTION_SPECIES
 H3O+ = H3O+
