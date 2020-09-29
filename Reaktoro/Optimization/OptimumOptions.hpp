@@ -28,11 +28,11 @@ namespace Reaktoro {
 /// The available stepping modes for some optimization algorithms.
 enum StepMode
 {
-	/// Use convervative step in which its direction is not changed.
-	Conservative,
+    /// Use convervative step in which its direction is not changed.
+    Conservative,
 
-	/// Use aggressive step that results in faster approach of variables to the bounds.
-	Aggressive
+    /// Use aggressive step that results in faster approach of variables to the bounds.
+    Aggressive
 };
 
 struct OptimumParamsActNewton

@@ -39,14 +39,14 @@ public:
     auto operator()(double x) const -> double;
 
 private:
-	/// The interpolation points on the x-axis
-	std::vector<double> xi;
+    /// The interpolation points on the x-axis
+    std::vector<double> xi;
 
-	/// The interpolation points on the y-axis
-	std::vector<double> yi;
+    /// The interpolation points on the y-axis
+    std::vector<double> yi;
 
-	/// The order of the interpolation
-	unsigned order;
+    /// The order of the interpolation
+    unsigned order;
 };
 
 } // namespace Reaktoro

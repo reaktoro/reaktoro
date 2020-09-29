@@ -33,8 +33,8 @@ std::string location(const std::string& file, int line)
 {
     std::string str = "Reaktoro/";
     auto pos = std::find_end(file.begin(), file.end(), str.begin(), str.end()) - file.begin();
-	std::stringstream ss;
-	ss << file.substr(pos, file.size() - pos) << ":" << line;
+    std::stringstream ss;
+    ss << file.substr(pos, file.size() - pos) << ":" << line;
     return ss.str();
 }
 

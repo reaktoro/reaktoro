@@ -26,44 +26,44 @@ namespace Reaktoro {
 /// @ingroup ActivityModels
 struct ActivityModelDebyeHuckelParams
 {
-	/// The default value of the *å* parameter for ionic species.
-	real aiondefault = 0.0;
+    /// The default value of the *å* parameter for ionic species.
+    real aiondefault = 0.0;
 
-	/// The default value of the *b* parameter for ionic species.
-	real biondefault = 0.0;
+    /// The default value of the *b* parameter for ionic species.
+    real biondefault = 0.0;
 
-	/// The default value of the *b* parameter for neutral species.
-	real bneutraldefault = 0.1;
+    /// The default value of the *b* parameter for neutral species.
+    real bneutraldefault = 0.1;
 
-	/// The parameters *å* of specific ionic species.
-	Map<String, real> aions;
+    /// The parameters *å* of specific ionic species.
+    Map<String, real> aions;
 
-	/// The parameters *b* of specific ionic species.
-	Map<String, real> bions;
+    /// The parameters *b* of specific ionic species.
+    Map<String, real> bions;
 
-	/// The parameters *b* of specific neutral species.
-	Map<String, real> bneutrals;
+    /// The parameters *b* of specific neutral species.
+    Map<String, real> bneutrals;
 
-	/// Return the *å* parameter of the ionic species with given formula.
-	auto aion(const ChemicalFormula& ion) const -> real;
+    /// Return the *å* parameter of the ionic species with given formula.
+    auto aion(const ChemicalFormula& ion) const -> real;
 
-	/// Return the *b* parameter of the ionic species with given formula.
-	auto bion(const ChemicalFormula& ion) const -> real;
+    /// Return the *b* parameter of the ionic species with given formula.
+    auto bion(const ChemicalFormula& ion) const -> real;
 
-	/// Return the *b* parameter of the neutral species with given formula.
-	auto bneutral(const ChemicalFormula& neutral) const -> real;
+    /// Return the *b* parameter of the neutral species with given formula.
+    auto bneutral(const ChemicalFormula& neutral) const -> real;
 
-	/// Set the parameters *å* and *b* of the ionic species to zero.
-	auto setLimitingLaw() -> void;
+    /// Set the parameters *å* and *b* of the ionic species to zero.
+    auto setLimitingLaw() -> void;
 
-	/// Set the parameters *å* of the ionic species according to Kielland (1937).
-	auto setKielland() -> void;
+    /// Set the parameters *å* of the ionic species according to Kielland (1937).
+    auto setKielland() -> void;
 
-	/// Set the parameters *å* and *b* of the ionic species according to WATEQ4F.
-	auto setWATEQ4F() -> void;
+    /// Set the parameters *å* and *b* of the ionic species according to WATEQ4F.
+    auto setWATEQ4F() -> void;
 
-	/// Set the parameters *å* and *b* of the ionic species according to PHREEQC.
-	auto setPHREEQC() -> void;
+    /// Set the parameters *å* and *b* of the ionic species according to PHREEQC.
+    auto setPHREEQC() -> void;
 };
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model.
