@@ -48,56 +48,56 @@ auto waterThermoStateWagnerPruss(real T, real P, StateOfMatter stateofmatter) ->
 
 auto waterThermoState(real T, real P, const WaterHelmholtzState& whs) -> WaterThermoState
 {
-	WaterThermoState wt;
+    WaterThermoState wt;
 
-	// Calculate water density using relation P = \rho^{2}\left(\frac{\partial f}{\partial\rho}\right)_{T}
+    // Calculate water density using relation P = \rho^{2}\left(\frac{\partial f}{\partial\rho}\right)_{T}
     auto D = sqrt(P/whs.helmholtzD);
 
-	// Set the temperature of the thermodynamic state of water
-	wt.temperature = T;
+    // Set the temperature of the thermodynamic state of water
+    wt.temperature = T;
 
-	// Set the pressure and its partial derivatives of the thermodynamic state of water
-	// wt.pressure   = P;
-	wt.pressure   = D*D*whs.helmholtzD;
-	wt.pressureD  = 2*D*whs.helmholtzD + D*D*whs.helmholtzDD;
-	wt.pressureT  = D*D*whs.helmholtzTD;
-	wt.pressureDD = 2*whs.helmholtzD + 4*D*whs.helmholtzDD + D*D*whs.helmholtzDDD;
-	wt.pressureTD = 2*D*whs.helmholtzTD + D*D*whs.helmholtzTDD;
-	wt.pressureTT = D*D*whs.helmholtzTTD;
+    // Set the pressure and its partial derivatives of the thermodynamic state of water
+    // wt.pressure   = P;
+    wt.pressure   = D*D*whs.helmholtzD;
+    wt.pressureD  = 2*D*whs.helmholtzD + D*D*whs.helmholtzDD;
+    wt.pressureT  = D*D*whs.helmholtzTD;
+    wt.pressureDD = 2*whs.helmholtzD + 4*D*whs.helmholtzDD + D*D*whs.helmholtzDDD;
+    wt.pressureTD = 2*D*whs.helmholtzTD + D*D*whs.helmholtzTDD;
+    wt.pressureTT = D*D*whs.helmholtzTTD;
 
-	// Set the density and its partial derivatives of the thermodynamic state of water
-	wt.density   = D;
-	wt.densityT  = -wt.pressureT/wt.pressureD;
-	wt.densityP  =  1.0/wt.pressureD;
-	wt.densityTT = -wt.densityT*wt.densityP*(wt.densityT*wt.pressureDD + 2*wt.pressureTD + wt.pressureTT/wt.densityT);
-	wt.densityTP = -wt.densityP*wt.densityP*(wt.densityT*wt.pressureDD + wt.pressureTD);
-	wt.densityPP = -wt.densityP*wt.densityP*wt.densityP*wt.pressureDD;
+    // Set the density and its partial derivatives of the thermodynamic state of water
+    wt.density   = D;
+    wt.densityT  = -wt.pressureT/wt.pressureD;
+    wt.densityP  =  1.0/wt.pressureD;
+    wt.densityTT = -wt.densityT*wt.densityP*(wt.densityT*wt.pressureDD + 2*wt.pressureTD + wt.pressureTT/wt.densityT);
+    wt.densityTP = -wt.densityP*wt.densityP*(wt.densityT*wt.pressureDD + wt.pressureTD);
+    wt.densityPP = -wt.densityP*wt.densityP*wt.densityP*wt.pressureDD;
 
-	// Set the specific volume of water
-	wt.volume = 1/D;
+    // Set the specific volume of water
+    wt.volume = 1/D;
 
-	// Set the specific entropy of water
-	wt.entropy = -whs.helmholtzT;
+    // Set the specific entropy of water
+    wt.entropy = -whs.helmholtzT;
 
-	// Set the specific Helmholtz free energy of water
-	wt.helmholtz = whs.helmholtz;
+    // Set the specific Helmholtz free energy of water
+    wt.helmholtz = whs.helmholtz;
 
-	// Set the specific internal energy of water
-	wt.internal_energy = wt.helmholtz + T * wt.entropy;
+    // Set the specific internal energy of water
+    wt.internal_energy = wt.helmholtz + T * wt.entropy;
 
-	// Set the specific enthalpy of water
-	wt.enthalpy = wt.internal_energy + P/D;
+    // Set the specific enthalpy of water
+    wt.enthalpy = wt.internal_energy + P/D;
 
-	// Set the specific Gibbs free energy of water
-	wt.gibbs = wt.enthalpy - T * wt.entropy;
+    // Set the specific Gibbs free energy of water
+    wt.gibbs = wt.enthalpy - T * wt.entropy;
 
-	// Set the specific isochoric heat capacity of water
-	wt.cv = -T * whs.helmholtzTT;
+    // Set the specific isochoric heat capacity of water
+    wt.cv = -T * whs.helmholtzTT;
 
-	// Set the specific isobaric heat capacity of water
-	wt.cp = wt.cv + T/(D*D)*wt.pressureT*wt.pressureT/wt.pressureD;
+    // Set the specific isobaric heat capacity of water
+    wt.cp = wt.cv + T/(D*D)*wt.pressureT*wt.pressureT/wt.pressureD;
 
-	return wt;
+    return wt;
 }
 
 } // namespace Reaktoro

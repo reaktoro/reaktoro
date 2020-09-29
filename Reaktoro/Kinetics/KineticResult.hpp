@@ -22,7 +22,7 @@ namespace Reaktoro {
 class KineticResult
 {
 public:
-	KineticResult();
+    KineticResult();
 };
 
 } // namespace Reaktoro

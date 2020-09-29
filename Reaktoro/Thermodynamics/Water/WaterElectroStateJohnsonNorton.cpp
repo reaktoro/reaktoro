@@ -43,17 +43,17 @@ const double kReferenceDensity = 1000.0;
 
 const double a[] =
 {
-	 0.0000000000e+00,
-	 0.1470333593e+02,
-	 0.2128462733e+03,
-	-0.1154445173e+03,
-	 0.1955210915e+02,
-	-0.8330347980e+02,
-	 0.3213240048e+02,
-	-0.6694098645e+01,
-	-0.3786202045e+02,
-	 0.6887359646e+02,
-	-0.2729401652e+02
+     0.0000000000e+00,
+     0.1470333593e+02,
+     0.2128462733e+03,
+    -0.1154445173e+03,
+     0.1955210915e+02,
+    -0.8330347980e+02,
+     0.3213240048e+02,
+    -0.6694098645e+01,
+    -0.3786202045e+02,
+     0.6887359646e+02,
+    -0.2729401652e+02
 };
 
 inline auto k0(real t)    -> real { return 1.0; }
@@ -82,9 +82,9 @@ real (*k_tt[5])(real) = {k0_tt, k1_tt, k2_tt, k3_tt, k4_tt};
 
 auto waterElectroStateJohnsonNorton(real T, real P, const WaterThermoState& wt) -> WaterElectroState
 {
-	WaterElectroState we;
+    WaterElectroState we;
 
-	const auto alpha  = -wt.densityT/wt.density;
+    const auto alpha  = -wt.densityT/wt.density;
     const auto beta   =  wt.densityP/wt.density;
     const auto alphaT = -wt.densityTT/wt.density + alpha*alpha;
     const auto betaT  =  wt.densityTP/wt.density + alpha*beta;
@@ -93,34 +93,34 @@ auto waterElectroStateJohnsonNorton(real T, real P, const WaterThermoState& wt) 
     const auto Tr = kReferenceTemperature;
     const auto Dr = kReferenceDensity;
 
-	const auto t = T/Tr;
-	const auto r = wt.density/Dr;
+    const auto t = T/Tr;
+    const auto r = wt.density/Dr;
 
-	for(int i = 0; i <= 4; ++i)
-	{
-		const auto ri    = pow(r, i);
-		const auto ki    = k[i](t);
-		const auto ki_t  = k_t[i](t)/Tr;
-		const auto ki_tt = k_tt[i](t)/Tr/Tr;
+    for(int i = 0; i <= 4; ++i)
+    {
+        const auto ri    = pow(r, i);
+        const auto ki    = k[i](t);
+        const auto ki_t  = k_t[i](t)/Tr;
+        const auto ki_tt = k_tt[i](t)/Tr/Tr;
 
-		we.epsilon   += ki*ri;
-		we.epsilonT  += ri*(ki_t - i*alpha*ki);
-		we.epsilonP  += ri*ki*i*beta;
-		we.epsilonTT += ri*(ki_tt - i*(alpha*ki_t + ki*alphaT) - i*alpha*(ki_t - i*alpha*ki));
-		we.epsilonTP += ri*ki*i*beta*(ki_t/ki - i*alpha + betaT/beta);
-		we.epsilonPP += ri*ki*i*beta*(i*beta + betaP/beta);
-	}
+        we.epsilon   += ki*ri;
+        we.epsilonT  += ri*(ki_t - i*alpha*ki);
+        we.epsilonP  += ri*ki*i*beta;
+        we.epsilonTT += ri*(ki_tt - i*(alpha*ki_t + ki*alphaT) - i*alpha*(ki_t - i*alpha*ki));
+        we.epsilonTP += ri*ki*i*beta*(ki_t/ki - i*alpha + betaT/beta);
+        we.epsilonPP += ri*ki*i*beta*(i*beta + betaP/beta);
+    }
 
-	const auto epsilon2 = we.epsilon * we.epsilon;
+    const auto epsilon2 = we.epsilon * we.epsilon;
 
-	we.bornZ = -1.0/we.epsilon;
-	we.bornY = we.epsilonT/epsilon2;
-	we.bornQ = we.epsilonP/epsilon2;
-	we.bornU = we.epsilonTP/epsilon2 - 2.0*we.bornY*we.bornQ*we.epsilon;
-	we.bornN = we.epsilonPP/epsilon2 - 2.0*we.bornQ*we.bornQ*we.epsilon;
-	we.bornX = we.epsilonTT/epsilon2 - 2.0*we.bornY*we.bornY*we.epsilon;
+    we.bornZ = -1.0/we.epsilon;
+    we.bornY = we.epsilonT/epsilon2;
+    we.bornQ = we.epsilonP/epsilon2;
+    we.bornU = we.epsilonTP/epsilon2 - 2.0*we.bornY*we.bornQ*we.epsilon;
+    we.bornN = we.epsilonPP/epsilon2 - 2.0*we.bornQ*we.bornQ*we.epsilon;
+    we.bornX = we.epsilonTT/epsilon2 - 2.0*we.bornY*we.bornY*we.epsilon;
 
-	return we;
+    return we;
 }
 
 } // namespace Reaktoro

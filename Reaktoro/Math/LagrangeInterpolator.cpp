@@ -48,22 +48,22 @@ LagrangeInterpolator::LagrangeInterpolator(const std::vector<double>& xi, const 
 
 auto LagrangeInterpolator::operator()(double x) const -> double
 {
-	// The number of interpolation points
-	const unsigned size = xi.size();
+    // The number of interpolation points
+    const unsigned size = xi.size();
 
-	// Check if x is less than the smallest interpolation x-point
-	if(x <= xi.front()) return yi.front();
+    // Check if x is less than the smallest interpolation x-point
+    if(x <= xi.front()) return yi.front();
 
-	// Check if x is larger than the largest interpolation x-point
-	if(x >= xi.back()) return yi.back();
+    // Check if x is larger than the largest interpolation x-point
+    if(x >= xi.back()) return yi.back();
 
-	// Otherwise, find the interval where x lives
-	unsigned i = 0; while(xi[i] < x) ++i;
+    // Otherwise, find the interval where x lives
+    unsigned i = 0; while(xi[i] < x) ++i;
 
-	// The number of points to be used in the interpolation
-	unsigned npoints = (i + order + 1 > size) ? size - i : order + 1;
+    // The number of points to be used in the interpolation
+    unsigned npoints = (i + order + 1 > size) ? size - i : order + 1;
 
-	return interpolate(x, &xi[i], &yi[i], npoints);
+    return interpolate(x, &xi[i], &yi[i], npoints);
 }
 
 } // namespace Reaktoro

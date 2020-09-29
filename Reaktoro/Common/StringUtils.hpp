@@ -76,12 +76,12 @@ auto str(Args... items) -> String
 inline auto replace(String original, String substr, String newsubstr) -> String
 {
     if(substr.empty()) return original;
-	auto pos = original.find(substr);
-	while(pos != String::npos)
-	{
-		original.replace(pos, substr.size(), newsubstr);
-		pos = original.find(substr, pos + newsubstr.size());
-	}
+    auto pos = original.find(substr);
+    while(pos != String::npos)
+    {
+        original.replace(pos, substr.size(), newsubstr);
+        pos = original.find(substr, pos + newsubstr.size());
+    }
     return original;
 }
 
@@ -124,16 +124,16 @@ inline auto trim(String str) -> String
 /// Split the string on every occurrence of the specified delimiters and apply a transform function.
 inline auto split(const String& str, const String& delims, std::function<String(String)> transform) -> Strings
 {
-	Strings words;
-	std::size_t start = 0, end = 0;
-	while(end != String::npos)
-	{
-		end = str.find_first_of(delims, start);
-		String word = str.substr(start, end - start);
-		if(word != "") words.push_back(transform ? transform(word) : word);
-		start = end + 1;
-	}
-	return words;
+    Strings words;
+    std::size_t start = 0, end = 0;
+    while(end != String::npos)
+    {
+        end = str.find_first_of(delims, start);
+        String word = str.substr(start, end - start);
+        if(word != "") words.push_back(transform ? transform(word) : word);
+        start = end + 1;
+    }
+    return words;
 }
 
 /// Split the string on every occurrence of the specified delimiters

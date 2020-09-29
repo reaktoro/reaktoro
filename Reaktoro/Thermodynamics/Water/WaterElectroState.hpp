@@ -24,41 +24,41 @@ namespace Reaktoro {
 
 struct WaterElectroState
 {
-	/// The dielectric constant of water
-	real epsilon = {};
+    /// The dielectric constant of water
+    real epsilon = {};
 
-	/// The first-order partial derivative of the dielectric constant with respect to temperature
-	real epsilonT = {};
+    /// The first-order partial derivative of the dielectric constant with respect to temperature
+    real epsilonT = {};
 
-	/// The first-order partial derivative of the dielectric constant with respect to pressure
-	real epsilonP = {};
+    /// The first-order partial derivative of the dielectric constant with respect to pressure
+    real epsilonP = {};
 
-	/// The second-order partial derivative of the dielectric constant with respect to temperature
-	real epsilonTT = {};
+    /// The second-order partial derivative of the dielectric constant with respect to temperature
+    real epsilonTT = {};
 
-	/// The second-order partial derivative of the dielectric constant with respect to temperature and pressure
-	real epsilonTP = {};
+    /// The second-order partial derivative of the dielectric constant with respect to temperature and pressure
+    real epsilonTP = {};
 
-	/// The second-order partial derivative of the dielectric constant with respect to pressure
-	real epsilonPP = {};
+    /// The second-order partial derivative of the dielectric constant with respect to pressure
+    real epsilonPP = {};
 
-	/// The Born function \f$ Z\equiv-\frac{1}{\epsilon} \f$ (see Helgeson and Kirkham, 1974)
-	real bornZ = {};
+    /// The Born function \f$ Z\equiv-\frac{1}{\epsilon} \f$ (see Helgeson and Kirkham, 1974)
+    real bornZ = {};
 
-	/// The Born function \f$ Y\equiv\left[\frac{\partial Z}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
-	real bornY = {};
+    /// The Born function \f$ Y\equiv\left[\frac{\partial Z}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
+    real bornY = {};
 
-	/// The Born function \f$ Q\equiv\left[\frac{\partial Z}{\partial P}\right]_{T} \f$ (see Helgeson and Kirkham, 1974)
-	real bornQ = {};
+    /// The Born function \f$ Q\equiv\left[\frac{\partial Z}{\partial P}\right]_{T} \f$ (see Helgeson and Kirkham, 1974)
+    real bornQ = {};
 
-	/// The Born function \f$ N\equiv\left[\frac{\partial Q}{\partial P}\right]_{T} \f$ (see Helgeson and Kirkham, 1974)
-	real bornN = {};
+    /// The Born function \f$ N\equiv\left[\frac{\partial Q}{\partial P}\right]_{T} \f$ (see Helgeson and Kirkham, 1974)
+    real bornN = {};
 
-	/// The Born function \f$ U\equiv\left[\frac{\partial Q}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
-	real bornU = {};
+    /// The Born function \f$ U\equiv\left[\frac{\partial Q}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
+    real bornU = {};
 
-	/// The Born function \f$ X\equiv\left[\frac{\partial Y}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
-	real bornX = {};
+    /// The Born function \f$ X\equiv\left[\frac{\partial Y}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
+    real bornX = {};
 };
 
 } // namespace Reaktoro

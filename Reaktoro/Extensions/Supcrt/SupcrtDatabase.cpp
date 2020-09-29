@@ -272,21 +272,21 @@ auto parseDatabase(const xml_document& doc) -> SupcrtDatabase
 /// Return the contents of the embedded SUPCRT database with given name (or empty)
 auto getSupcrtDatabaseContent(String name) -> String
 {
-	error(!oneof(name,
-		"supcrt98.xml",
-		"supcrt07.xml",
-		"supcrt98-organics.xml",
-		"supcrt07-organics.xml"),
-		"Could not load embedded Supcrt database file with name `", name, "`. ",
-		"The currently supported names are: \n"
-		"    - supcrt98.xml          \n",
-		"    - supcrt07.xml          \n",
-		"    - supcrt98-organics.xml \n",
-		"    - supcrt07-organics.xml \n",
-		"");
-	auto fs = cmrc::ReaktoroDatabases::get_filesystem();
+    error(!oneof(name,
+        "supcrt98.xml",
+        "supcrt07.xml",
+        "supcrt98-organics.xml",
+        "supcrt07-organics.xml"),
+        "Could not load embedded Supcrt database file with name `", name, "`. ",
+        "The currently supported names are: \n"
+        "    - supcrt98.xml          \n",
+        "    - supcrt07.xml          \n",
+        "    - supcrt98-organics.xml \n",
+        "    - supcrt07-organics.xml \n",
+        "");
+    auto fs = cmrc::ReaktoroDatabases::get_filesystem();
     auto contents = fs.open("databases/supcrt/" + name);
-	return String(contents.begin(), contents.end());
+    return String(contents.begin(), contents.end());
 }
 
 } // namespace

@@ -357,18 +357,18 @@ auto activityPropsFnDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHu
         auto& ln_a = props.ln_a;
 
         // Auxiliary variables
-		const auto ln_m = m.log();
-		const auto xw = x[iwater];
-		const auto ln_xw = log(xw);
-		const auto mSigma = nwo * (1 - xw)/xw;
-		const auto I2 = I*I;
-		const auto sqrtI = sqrt(I);
-		const auto sqrt_rho = sqrt(rho);
-		const auto T_epsilon = T * epsilon;
-		const auto sqrt_T_epsilon = sqrt(T_epsilon);
-		const auto A = 1.824829238e+6 * sqrt_rho/(T_epsilon*sqrt_T_epsilon);
-		const auto B = 50.29158649 * sqrt_rho/sqrt_T_epsilon;
-		const auto sigmacoeff = (2.0/3.0)*A*I*sqrtI;
+        const auto ln_m = m.log();
+        const auto xw = x[iwater];
+        const auto ln_xw = log(xw);
+        const auto mSigma = nwo * (1 - xw)/xw;
+        const auto I2 = I*I;
+        const auto sqrtI = sqrt(I);
+        const auto sqrt_rho = sqrt(rho);
+        const auto T_epsilon = T * epsilon;
+        const auto sqrt_T_epsilon = sqrt(T_epsilon);
+        const auto A = 1.824829238e+6 * sqrt_rho/(T_epsilon*sqrt_T_epsilon);
+        const auto B = 50.29158649 * sqrt_rho/sqrt_T_epsilon;
+        const auto sigmacoeff = (2.0/3.0)*A*I*sqrtI;
 
         // Set the first contribution to the activity of water
         ln_a[iwater] = mSigma;
@@ -388,7 +388,7 @@ auto activityPropsFnDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHu
             // Update the Lambda parameter of the Debye-Huckel activity coefficient model
             const auto Lambda = 1.0 + aions[i]*B*sqrtI;
 
-			// Update the sigma parameter of the current ion
+            // Update the sigma parameter of the current ion
             const real sigma = (aions[i] != 0.0) ? 3.0*pow(Lambda - 1, -3) * ((Lambda - 1)*(Lambda - 3) + 2*log(Lambda)) : real(2.0);
 
             // Calculate the ln activity coefficient of the current charged species
@@ -398,7 +398,7 @@ auto activityPropsFnDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHu
             ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
 
             // Calculate the contribution of current ion to the ln activity of water
-			ln_a[iwater] += msi*ln_g[ispecies] + sigmacoeff*sigma*ln10 - I2*bions[i]/(z*z)*ln10;
+            ln_a[iwater] += msi*ln_g[ispecies] + sigmacoeff*sigma*ln10 - I2*bions[i]/(z*z)*ln10;
         }
 
         // Finalize the computation of the activity of water (in mole fraction scale)

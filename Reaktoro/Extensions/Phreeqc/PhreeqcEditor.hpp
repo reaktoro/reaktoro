@@ -32,48 +32,48 @@
 // class PhreeqcEditor
 // {
 // public:
-// 	/// Construct a default PhreeqcEditor instance.
-// 	PhreeqcEditor();
+// /// Construct a default PhreeqcEditor instance.
+// PhreeqcEditor();
 
-// 	/// Construct a PhreeqcEditor instance with given database file.
-// 	/// @param database The path, including name, to the PHREEQC database file.
-// 	PhreeqcEditor(std::string database);
+// /// Construct a PhreeqcEditor instance with given database file.
+// /// @param database The path, including name, to the PHREEQC database file.
+// PhreeqcEditor(std::string database);
 
-// 	/// Construct a copy of a PhreeqcEditor instance.
-// 	PhreeqcEditor(const PhreeqcEditor& other);
+// /// Construct a copy of a PhreeqcEditor instance.
+// PhreeqcEditor(const PhreeqcEditor& other);
 
-// 	/// Destroy this PhreeqcEditor instance
-// 	virtual ~PhreeqcEditor();
+// /// Destroy this PhreeqcEditor instance
+// virtual ~PhreeqcEditor();
 
-// 	/// Assign another PhreeqcEditor instance to this.
-// 	auto operator=(PhreeqcEditor other) -> PhreeqcEditor&;
+// /// Assign another PhreeqcEditor instance to this.
+// auto operator=(PhreeqcEditor other) -> PhreeqcEditor&;
 
-// 	/// Set the PHREEQC database file to be used by the PhreeqcEditor.
-// 	/// @param database The path, including name, to the PHREEQC database file.
-// 	auto setDatabase(std::string database) -> void;
+// /// Set the PHREEQC database file to be used by the PhreeqcEditor.
+// /// @param database The path, including name, to the PHREEQC database file.
+// auto setDatabase(std::string database) -> void;
 
-// 	/// Set the aqueous species in the system by specifying which elements should exist.
-// 	/// @param elements The names of the elements either as a vector of strings or as space-separated string list.
-// 	auto setAqueousPhase(StringList elements) -> void;
+// /// Set the aqueous species in the system by specifying which elements should exist.
+// /// @param elements The names of the elements either as a vector of strings or as space-separated string list.
+// auto setAqueousPhase(StringList elements) -> void;
 
-// 	/// Set the gaseous phase in the system by specifying the end-member gases.
-// 	/// @param elements The names of the gases either as a vector of strings or as space-separated string list.
-// 	auto setGaseousPhase(StringList gases) -> void;
+// /// Set the gaseous phase in the system by specifying the end-member gases.
+// /// @param elements The names of the gases either as a vector of strings or as space-separated string list.
+// auto setGaseousPhase(StringList gases) -> void;
 
-// 	/// Set the mineral phases in the system by specifying the names of the pure minerals.
-// 	/// @param elements The names of the pure minerals either as a vector of strings or as space-separated string list.
-// 	auto setMineralPhases(StringList minerals) -> void;
+// /// Set the mineral phases in the system by specifying the names of the pure minerals.
+// /// @param elements The names of the pure minerals either as a vector of strings or as space-separated string list.
+// auto setMineralPhases(StringList minerals) -> void;
 
-// 	/// Convert this PhreeqcEditor instance into a ChemicalSystem instance
-// 	operator ChemicalSystem() const;
+// /// Convert this PhreeqcEditor instance into a ChemicalSystem instance
+// operator ChemicalSystem() const;
 
-// 	/// Convert this PhreeqcEditor instance into a Phreeqc instance
-// 	operator Phreeqc() const;
+// /// Convert this PhreeqcEditor instance into a Phreeqc instance
+// operator Phreeqc() const;
 
 // private:
-// 	struct Impl;
+// struct Impl;
 
-// 	std::unique_ptr<Impl> pimpl;
+// std::unique_ptr<Impl> pimpl;
 // };
 
 // } // namespace Reaktoro
