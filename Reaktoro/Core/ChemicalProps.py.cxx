@@ -57,6 +57,7 @@ void exportChemicalProps(py::module& m)
     };
 
     py::class_<ChemicalProps>(m, "ChemicalProps")
+        .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ChemicalState&>())
         .def("update", update1)
         .def("update", update2)
