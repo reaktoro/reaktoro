@@ -100,6 +100,14 @@ auto activityPropsFnSpycherPruessEnnis(const SpeciesList& species) -> ActivityPr
         const auto Pb = convertPascalToBar(P);
         const auto ln_Pb = log(Pb);
 
+        // Check valid ranges for temperature and pressure
+        warning(Pb > 600.0, "ActivityModelSpycherPruessEnnis is only valid "
+            "for pressures up to 600 bar, but given pressure is ", Pb, " bar!");
+        warning(T > 373.15, "ActivityModelSpycherPruessEnnis is only valid for "
+            "temperatures up to 100 degC, but given temperature is ", T - 273.15, "degC!");
+        warning(T < 285.15, "ActivityModelSpycherPruessEnnis is not valid for "
+            "temperatures below 12 degC, but given temperature is ", T - 273.15, "degC!");
+
         // Auxiliary variables
         const auto T05 = sqrt(T);
         const auto T15 = T * T05;
