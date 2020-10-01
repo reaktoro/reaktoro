@@ -46,7 +46,7 @@ struct PhreeqcWaterElectroProps
     real DH_B = {};
 
     // The Debye-Hueckel limiting slope (in (cm3/mol)(mol/kg)^-0.5).
-    real DH_Av;
+    real DH_Av = {};
 
     // The Born function (-1/eps_r + 1) * 41.84004, for supcrt calc'n of molal volume
     real ZBrn = {};
