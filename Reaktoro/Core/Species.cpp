@@ -59,17 +59,8 @@ struct Species::Impl
     /// The aggregate state of the species.
     AggregateState aggregatestate;
 
-    /// The base function that computes the standard thermodynamic properties of the species (if any).
-    /// The result of this function may be overwritten if a formation reaction with thermo props are given.
-    StandardThermoPropsFn standard_thermo_props_fn;
-
-    /// The function used by method props(T, P) to compute the standard thermo props of the species.
-    /// This function combines the function `standard_thermo_props_fn` with the
-    /// functions `reaction.standardGibbsEnergy()` and `reaction.standardEnthalpy()`
-    /// so that if thermodynamic data is provided in terms of formation reaction, namely
-    /// lg(K) and delta(H0), these can be used together with others provided directly as standard
-    /// thermodynamic properties (e.g., V0, Cp0, CV0).
-    StandardThermoPropsFn props_fn;
+    /// The standard thermodynamic model function of the species (if any).
+    StandardThermoPropsFn propsfn;
 
     /// The tags of the species such as `organic`, `mineral`.
     Strings tags;
@@ -89,42 +80,15 @@ struct Species::Impl
       elements(formula.elements()),
       charge(formula.charge()),
       aggregatestate(identifyAggregateState(formula))
-    {}
-
-    /// Initialize the final function for standard thermodynamic property evaluations of the species.
-    auto initializePropsFn()
     {
-        const auto zeroprops = [](real T, real P) { return StandardThermoProps{}; }; // return zeros for all standard properties
-        const auto baseprops = standard_thermo_props_fn ? standard_thermo_props_fn : zeroprops; // ensure non-empty standard thermo props fn
-        if(reaction.reactants().size())
+        propsfn = [=](real, real) -> StandardThermoProps
         {
-            const auto G0 = reaction.standardGibbsEnergyFn();
-            const auto H0 = reaction.standardEnthalpyFn();
-            props_fn = [=](real T, real P)
-            {
-                StandardThermoProps props = baseprops(T, P);
-                if(G0) props.G0 = G0(T, P); // overwrite G0 value if reaction has lgK data
-                if(H0) props.H0 = H0(T, P); // overwrite H0 value if reaction has dH0 data
-                return props;
-            };
-        }
-        else props_fn = baseprops;
-
-        // Use memoization to ensure fast re-evaluation when new
-        // T and P inputs are identical to last ones.
-        if(props_fn) props_fn = memoizeLast(props_fn);
-    }
-
-    /// Return the standard thermodynamic properties of the species at given temperature (in K) and pressure (in Pa).
-    auto props(real T, real P) const -> StandardThermoProps
-    {
-        error(!props_fn, "Cannot compute the standard thermodynamic properties of Species object with name ", name, ". \n"
-            "To fix this error, use one of the methods below in this Species object: \n"
-            "    1) Species::withStandardThermoPropsFn\n"
-            "    2) Species::withStandardGibbsEnergyFn\n"
-            "    3) Species::withStandardGibbsEnergy\n"
-            "    4) Species::withFormationReaction");
-        return props_fn(T, P);
+            error(true, "Cannot compute the standard thermodynamic properties of Species object with name ", name, ". \n"
+                "To fix this error, use one of the methods below in this Species object: \n"
+                "    1) Species::withStandardThermoPropsFn\n"
+                "    2) Species::withStandardGibbsEnergy\n"
+                "    3) Species::withFormationReaction");
+        };
     }
 };
 
@@ -188,22 +152,17 @@ auto Species::withAggregateState(AggregateState option) const -> Species
 auto Species::withFormationReaction(FormationReaction reaction) const -> Species
 {
     Species copy = clone();
+    copy = copy.withStandardThermoPropsFn(reaction.standardThermoPropsFn());
     copy.pimpl->reaction = std::move(reaction);
-    copy.pimpl->initializePropsFn();
     return copy;
 }
 
-auto Species::withStandardGibbsEnergy(real value) const -> Species
-{
-    return withStandardGibbsEnergyFn([=](real T, real P) { return value; });
-}
-
-auto Species::withStandardGibbsEnergyFn(const Fn<real(real,real)>& fn) const -> Species
+auto Species::withStandardGibbsEnergy(real G0) const -> Species
 {
     return withStandardThermoPropsFn([=](real T, real P)
     {
         StandardThermoProps props = {};
-        props.G0 = fn(T, P);
+        props.G0 = G0;
         return props;
     });
 }
@@ -211,8 +170,7 @@ auto Species::withStandardGibbsEnergyFn(const Fn<real(real,real)>& fn) const -> 
 auto Species::withStandardThermoPropsFn(const StandardThermoPropsFn& fn) const -> Species
 {
     Species copy = clone();
-    copy.pimpl->standard_thermo_props_fn = memoizeLast(fn);
-    copy.pimpl->initializePropsFn();
+    copy.pimpl->propsfn = memoizeLast(fn);
     return copy;
 }
 
@@ -273,7 +231,7 @@ auto Species::reaction() const -> const FormationReaction&
 
 auto Species::standardThermoPropsFn() const -> const StandardThermoPropsFn&
 {
-    return pimpl->standard_thermo_props_fn;
+    return pimpl->propsfn;
 }
 
 auto Species::tags() const -> const Strings&
@@ -293,7 +251,7 @@ auto Species::molarMass() const -> double
 
 auto Species::props(real T, real P) const -> StandardThermoProps
 {
-    return pimpl->props(T, P);
+    return pimpl->propsfn(T, P);
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool
