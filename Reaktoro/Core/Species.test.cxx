@@ -79,14 +79,6 @@ TEST_CASE("Testing Species class", "[Species]")
         REQUIRE( species.props(T, P).Cp0 == 0.0    );
         REQUIRE( species.props(T, P).Cv0 == 0.0    );
 
-        species = species.withStandardGibbsEnergyFn([](real T, real P) { return T*P; });
-
-        REQUIRE( species.props(T, P).G0  == Approx(T*P) );
-        REQUIRE( species.props(T, P).H0  == 0.0         );
-        REQUIRE( species.props(T, P).V0  == 0.0         );
-        REQUIRE( species.props(T, P).Cp0 == 0.0         );
-        REQUIRE( species.props(T, P).Cv0 == 0.0         );
-
         species = species.withStandardThermoPropsFn([](real T, real P) {
             return StandardThermoProps{
                 1.0*T*P, // G0
@@ -109,11 +101,16 @@ TEST_CASE("Testing Species class", "[Species]")
         species = species.withFormationReaction(
             FormationReaction()
                 .withReactants({{R1, 1.0}, {R2, 2.0}})
-                .withEquilibriumConstantFn([](real T, real P) { return T + P; })
-                .withEnthalpyChangeFn([](real T, real P) { return T - P; }));
+                .withReactionThermoPropsFn([](real T, real P) {
+                    ReactionThermoProps props;
+                    props.dG0 = T + P;
+                    props.dH0 = T - P;
+                    return props;
+                })
+            );
 
-        REQUIRE( species.props(T, P).G0 == species.reaction().standardGibbsEnergyFn()(T, P) );
-        REQUIRE( species.props(T, P).H0 == species.reaction().standardEnthalpyFn()(T, P) );
+        REQUIRE( species.props(T, P).G0 == species.reaction().standardThermoPropsFn()(T, P).G0 );
+        REQUIRE( species.props(T, P).H0 == species.reaction().standardThermoPropsFn()(T, P).H0 );
     }
 
     SECTION("Testing automatic construction of chemical species with given chemical formula")

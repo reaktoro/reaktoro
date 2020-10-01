@@ -58,16 +58,29 @@ public:
     /// Return a duplicate of this Species object with new aggregate state.
     auto withAggregateState(AggregateState option) const -> Species;
 
-    /// Return a duplicate of this Species object with new formation reaction and its thermodynamic properties.
+    /// Return a duplicate of this Species object with new formation reaction and new standard thermodynamic model.
+    /// This method will also set the standard thermodynamic model of the species
+    /// using the standard thermodynamic model assigned to the formation reaction.
+    /// Use this method thus to assign a standard thermodynamic model to the
+    /// Species object instead of using method @ref withStandardThermoPropsFn.
     auto withFormationReaction(FormationReaction reaction) const -> Species;
 
-    /// Return a duplicate of this Species object with new standard Gibbs energy value (in J/mol).
-    auto withStandardGibbsEnergy(real value) const -> Species;
+    /// Return a duplicate of this Species object with new standard thermodynamic model.
+    /// This method exists for convenience only. Its use results in a standard
+    /// thermodynamic model for this species in which its standard Gibbs energy
+    /// is constant. All other standard thermodynamic properties are set to
+    /// zero. For a more complete standard thermodynamic model, use method @ref
+    /// withStandardThermoModel or @ref withFormationReaction, in case the
+    /// thermodynamic model is based on reaction properties.
+    /// @param G0 The constant standard Gibbs energy of the species (in J/mol).
+    auto withStandardGibbsEnergy(real G0) const -> Species;
 
-    /// Return a duplicate of this Species object with new standard Gibbs energy function (in J/mol).
-    auto withStandardGibbsEnergyFn(const Fn<real(real,real)>& fn) const -> Species;
-
-    /// Return a duplicate of this Species object with new standard thermodynamic property calculation function.
+    /// Return a duplicate of this Species object with new standard thermodynamic model.
+    /// This method assigns a standard thermodynamic model for the computation
+    /// of standard thermodynamic properties of the species at given
+    /// temperature and pressure. Alternatively, methods @ref
+    /// withStandardGibbsEnergy and @ref withFormationReaction can be used to
+    /// indirectly assign a standard thermodynamic model to this species.
     auto withStandardThermoPropsFn(const StandardThermoPropsFn& fn) const -> Species;
 
     /// Return a duplicate of this Species object with new tags attribute.
