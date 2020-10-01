@@ -184,167 +184,149 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
 
     Species species;
 
-    species = db.species().get("H2O");
+    species = db.species().get("H2O"                             );
 
-    CHECK( species.name() == "H2O"                             );
-    CHECK( species.formula().str() == "H2O"                    );
-    CHECK( species.substance() == "H2O"                        );
-    CHECK( species.charge() == 0                               );
-    CHECK( species.aggregateState() == AggregateState::Aqueous );
-    CHECK( species.molarMass() == Approx(0.0180160)            );
-    CHECK( species.elements().size() == 2                      );
-    CHECK( species.elements().coefficient("H") == 2            );
-    CHECK( species.elements().coefficient("O") == 1            );
-    CHECK( species.reaction().product() == "H2O"               );
-    CHECK( species.reaction().reactants().size() == 0          );
-    CHECK( species.reaction().equilibriumConstantFn()          );
-    CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "H2O"                               );
+    CHECK( species.formula().str() == "H2O"                      );
+    CHECK( species.substance() == "H2O"                          );
+    CHECK( species.charge() == 0                                 );
+    CHECK( species.aggregateState() == AggregateState::Aqueous   );
+    CHECK( species.molarMass() == Approx(0.0180160)              );
+    CHECK( species.elements().size() == 2                        );
+    CHECK( species.elements().coefficient("H") == 2              );
+    CHECK( species.elements().coefficient("O") == 1              );
+    CHECK( species.reaction().product() == "H2O"                 );
+    CHECK( species.reaction().reactants().size() == 0            );
 
-    species = db.species().get("e-");
+    species = db.species().get("e-"                              );
 
-    CHECK( species.name() == "e-"                              );
-    CHECK( species.formula().str() == "e-"                     );
-    CHECK( species.substance() == "e-"                         );
-    CHECK( species.charge() == -1                              );
-    CHECK( species.aggregateState() == AggregateState::Aqueous );
-    CHECK( species.molarMass() == Approx(0.0)                  );
-    CHECK( species.elements().size() == 1                      );
-    CHECK( species.elements().coefficient("e") == 1            );
-    CHECK( species.reaction().product() == "e-"                );
-    CHECK( species.reaction().reactants().size() == 0          );
-    CHECK( species.reaction().equilibriumConstantFn()          );
-    CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "e-"                                );
+    CHECK( species.formula().str() == "e-"                       );
+    CHECK( species.substance() == "e-"                           );
+    CHECK( species.charge() == -1                                );
+    CHECK( species.aggregateState() == AggregateState::Aqueous   );
+    CHECK( species.molarMass() == Approx(0.0)                    );
+    CHECK( species.elements().size() == 1                        );
+    CHECK( species.elements().coefficient("e") == 1              );
+    CHECK( species.reaction().product() == "e-"                  );
+    CHECK( species.reaction().reactants().size() == 0            );
 
-    species = db.species().get("CO2");
+    species = db.species().get("CO2"                             );
 
-    CHECK( species.name() == "CO2"                             );
-    CHECK( species.formula().str() == "CO2"                    );
-    CHECK( species.substance() == "CO2"                        );
-    CHECK( species.charge() == 0                               );
-    CHECK( species.aggregateState() == AggregateState::Aqueous );
-    CHECK( species.molarMass() == Approx(0.0440111)            );
-    CHECK( species.elements().size() == 2                      );
-    CHECK( species.elements().coefficient("C") == 1            );
-    CHECK( species.elements().coefficient("O") == 2            );
-    CHECK( species.reaction().product() == "CO2"               );
-    CHECK( species.reaction().reactants().size() == 3          );
-    CHECK( species.reaction().stoichiometry("CO3-2") == 1      );
-    CHECK( species.reaction().stoichiometry("H+") == 2         );
-    CHECK( species.reaction().stoichiometry("H2O") == -1       );
-    CHECK( species.reaction().equilibriumConstantFn()          );
-    CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "CO2"                               );
+    CHECK( species.formula().str() == "CO2"                      );
+    CHECK( species.substance() == "CO2"                          );
+    CHECK( species.charge() == 0                                 );
+    CHECK( species.aggregateState() == AggregateState::Aqueous   );
+    CHECK( species.molarMass() == Approx(0.0440111)              );
+    CHECK( species.elements().size() == 2                        );
+    CHECK( species.elements().coefficient("C") == 1              );
+    CHECK( species.elements().coefficient("O") == 2              );
+    CHECK( species.reaction().product() == "CO2"                 );
+    CHECK( species.reaction().reactants().size() == 3            );
+    CHECK( species.reaction().stoichiometry("CO3-2") == 1        );
+    CHECK( species.reaction().stoichiometry("H+") == 2           );
+    CHECK( species.reaction().stoichiometry("H2O") == -1         );
 
-    species = db.species().get("CO3-2");
+    species = db.species().get("CO3-2"                           );
 
-    CHECK( species.name() == "CO3-2"                           );
-    CHECK( species.formula().str() == "CO3-2"                  );
-    CHECK( species.substance() == "CO3-2"                      );
-    CHECK( species.charge() == -2                              );
-    CHECK( species.aggregateState() == AggregateState::Aqueous );
-    CHECK( species.molarMass() == Approx(0.0600111)            );
-    CHECK( species.elements().size() == 2                      );
-    CHECK( species.elements().coefficient("C") == 1            );
-    CHECK( species.elements().coefficient("O") == 3            );
-    CHECK( species.reaction().product() == "CO3-2"             );
-    CHECK( species.reaction().reactants().size() == 0          );
-    CHECK( species.reaction().equilibriumConstantFn()          );
-    CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "CO3-2"                             );
+    CHECK( species.formula().str() == "CO3-2"                    );
+    CHECK( species.substance() == "CO3-2"                        );
+    CHECK( species.charge() == -2                                );
+    CHECK( species.aggregateState() == AggregateState::Aqueous   );
+    CHECK( species.molarMass() == Approx(0.0600111)              );
+    CHECK( species.elements().size() == 2                        );
+    CHECK( species.elements().coefficient("C") == 1              );
+    CHECK( species.elements().coefficient("O") == 3              );
+    CHECK( species.reaction().product() == "CO3-2"               );
+    CHECK( species.reaction().reactants().size() == 0            );
 
-    species = db.species().get("Pb2OH+3");
+    species = db.species().get("Pb2OH+3"                         );
 
-    CHECK( species.name() == "Pb2OH+3"                         );
-    CHECK( species.formula().str() == "Pb2OH+3"                );
-    CHECK( species.substance() == "Pb2OH+3"                    );
-    CHECK( species.charge() == +3                              );
-    CHECK( species.aggregateState() == AggregateState::Aqueous );
-    CHECK( species.molarMass() == Approx(0.4313880)            );
-    CHECK( species.elements().size() == 3                      );
-    CHECK( species.elements().coefficient("Pb") == 2           );
-    CHECK( species.elements().coefficient("O") == 1            );
-    CHECK( species.elements().coefficient("H") == 1            );
-    CHECK( species.reaction().product() == "Pb2OH+3"           );
-    CHECK( species.reaction().reactants().size() == 3          );
-    CHECK( species.reaction().stoichiometry("Pb+2") == 2       );
-    CHECK( species.reaction().stoichiometry("H2O") == 1        );
-    CHECK( species.reaction().stoichiometry("H+") == -1        );
-    CHECK( species.reaction().equilibriumConstantFn()          );
-    CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "Pb2OH+3"                           );
+    CHECK( species.formula().str() == "Pb2OH+3"                  );
+    CHECK( species.substance() == "Pb2OH+3"                      );
+    CHECK( species.charge() == +3                                );
+    CHECK( species.aggregateState() == AggregateState::Aqueous   );
+    CHECK( species.molarMass() == Approx(0.4313880)              );
+    CHECK( species.elements().size() == 3                        );
+    CHECK( species.elements().coefficient("Pb") == 2             );
+    CHECK( species.elements().coefficient("O") == 1              );
+    CHECK( species.elements().coefficient("H") == 1              );
+    CHECK( species.reaction().product() == "Pb2OH+3"             );
+    CHECK( species.reaction().reactants().size() == 3            );
+    CHECK( species.reaction().stoichiometry("Pb+2") == 2         );
+    CHECK( species.reaction().stoichiometry("H2O") == 1          );
+    CHECK( species.reaction().stoichiometry("H+") == -1          );
 
-    species = db.species().get("CO2(g)");
+    species = db.species().get("CO2(g)"                          );
 
-    CHECK( species.name() == "CO2(g)"                          );
-    CHECK( species.formula().str() == "CO2"                    );
-    CHECK( species.substance() == "CO2"                        );
-    CHECK( species.charge() == 0                               );
-    CHECK( species.aggregateState() == AggregateState::Gas     );
-    CHECK( species.molarMass() == Approx(0.0440111)            );
-    CHECK( species.elements().size() == 2                      );
-    CHECK( species.elements().coefficient("C") == 1            );
-    CHECK( species.elements().coefficient("O") == 2            );
-    CHECK( species.reaction().product() == "CO2(g)"            );
-    CHECK( species.reaction().reactants().size() == 1          );
-    CHECK( species.reaction().stoichiometry("CO2") == 1        );
-    CHECK( species.reaction().equilibriumConstantFn()          );
-    CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "CO2(g)"                            );
+    CHECK( species.formula().str() == "CO2"                      );
+    CHECK( species.substance() == "CO2"                          );
+    CHECK( species.charge() == 0                                 );
+    CHECK( species.aggregateState() == AggregateState::Gas       );
+    CHECK( species.molarMass() == Approx(0.0440111)              );
+    CHECK( species.elements().size() == 2                        );
+    CHECK( species.elements().coefficient("C") == 1              );
+    CHECK( species.elements().coefficient("O") == 2              );
+    CHECK( species.reaction().product() == "CO2(g)"              );
+    CHECK( species.reaction().reactants().size() == 1            );
+    CHECK( species.reaction().stoichiometry("CO2") == 1          );
 
-    species = db.species().get("H2S(g)");
+    species = db.species().get("H2S(g)"                          );
 
-    CHECK( species.name() == "H2S(g)"                          );
-    CHECK( species.formula().str() == "H2S"                    );
-    CHECK( species.substance() == "H2S"                        );
-    CHECK( species.charge() == 0                               );
-    CHECK( species.aggregateState() == AggregateState::Gas     );
-    CHECK( species.molarMass() == Approx(0.0340800)            );
-    CHECK( species.elements().size() == 2                      );
-    CHECK( species.elements().coefficient("H") == 2            );
-    CHECK( species.elements().coefficient("S") == 1            );
-    CHECK( species.reaction().product() == "H2S(g)"            );
-    CHECK( species.reaction().reactants().size() == 2          );
-    CHECK( species.reaction().stoichiometry("H+") == 1         );
-    CHECK( species.reaction().stoichiometry("HS-") == 1        );
-    CHECK( species.reaction().equilibriumConstantFn()          );
-    CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "H2S(g)"                            );
+    CHECK( species.formula().str() == "H2S"                      );
+    CHECK( species.substance() == "H2S"                          );
+    CHECK( species.charge() == 0                                 );
+    CHECK( species.aggregateState() == AggregateState::Gas       );
+    CHECK( species.molarMass() == Approx(0.0340800)              );
+    CHECK( species.elements().size() == 2                        );
+    CHECK( species.elements().coefficient("H") == 2              );
+    CHECK( species.elements().coefficient("S") == 1              );
+    CHECK( species.reaction().product() == "H2S(g)"              );
+    CHECK( species.reaction().reactants().size() == 2            );
+    CHECK( species.reaction().stoichiometry("H+") == 1           );
+    CHECK( species.reaction().stoichiometry("HS-") == 1          );
 
-    species = db.species().get("Calcite");
+    species = db.species().get("Calcite"                         );
 
-    CHECK( species.name() == "Calcite"                         );
-    CHECK( species.formula().str() == "CaCO3"                  );
-    CHECK( species.substance() == "Calcite"                    );
-    CHECK( species.charge() == 0                               );
-    CHECK( species.aggregateState() == AggregateState::Solid   );
-    CHECK( species.molarMass() == Approx(0.1000911)            );
-    CHECK( species.elements().size() == 3                      );
-    CHECK( species.elements().coefficient("Ca") == 1           );
-    CHECK( species.elements().coefficient("C") == 1            );
-    CHECK( species.elements().coefficient("O") == 3            );
-    CHECK( species.reaction().product() == "Calcite"           );
-    CHECK( species.reaction().reactants().size() == 2          );
-    CHECK( species.reaction().stoichiometry("Ca+2") == 1       );
-    CHECK( species.reaction().stoichiometry("CO3-2") == 1      );
-    CHECK( species.reaction().equilibriumConstantFn()          );
-    CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "Calcite"                           );
+    CHECK( species.formula().str() == "CaCO3"                    );
+    CHECK( species.substance() == "Calcite"                      );
+    CHECK( species.charge() == 0                                 );
+    CHECK( species.aggregateState() == AggregateState::Solid     );
+    CHECK( species.molarMass() == Approx(0.1000911)              );
+    CHECK( species.elements().size() == 3                        );
+    CHECK( species.elements().coefficient("Ca") == 1             );
+    CHECK( species.elements().coefficient("C") == 1              );
+    CHECK( species.elements().coefficient("O") == 3              );
+    CHECK( species.reaction().product() == "Calcite"             );
+    CHECK( species.reaction().reactants().size() == 2            );
+    CHECK( species.reaction().stoichiometry("Ca+2") == 1         );
+    CHECK( species.reaction().stoichiometry("CO3-2") == 1        );
 
-    species = db.species().get("Hydroxyapatite");
+    species = db.species().get("Hydroxyapatite"                  );
 
-    CHECK( species.name() == "Hydroxyapatite"                  );
-    CHECK( species.formula().str() == "Ca5(PO4)3OH"            );
-    CHECK( species.substance() == "Hydroxyapatite"             );
-    CHECK( species.charge() == 0                               );
-    CHECK( species.aggregateState() == AggregateState::Solid   );
-    CHECK( species.molarMass() == Approx(0.5023294)            );
-    CHECK( species.elements().size() == 4                      );
-    CHECK( species.elements().coefficient("Ca") == 5           );
-    CHECK( species.elements().coefficient("P") == 3            );
-    CHECK( species.elements().coefficient("O") == 13           );
-    CHECK( species.elements().coefficient("H") == 1            );
-    CHECK( species.reaction().product() == "Hydroxyapatite"    );
-    CHECK( species.reaction().reactants().size() == 4          );
-    CHECK( species.reaction().stoichiometry("H2O") == 1        );
-    CHECK( species.reaction().stoichiometry("HPO4-2") == 3     );
-    CHECK( species.reaction().stoichiometry("Ca+2") == 5       );
-    CHECK( species.reaction().stoichiometry("H+") == -4        );
-    CHECK( species.reaction().equilibriumConstantFn()          );
-    CHECK( species.reaction().enthalpyChangeFn()               );
+    CHECK( species.name() == "Hydroxyapatite"                    );
+    CHECK( species.formula().str() == "Ca5(PO4)3OH"              );
+    CHECK( species.substance() == "Hydroxyapatite"               );
+    CHECK( species.charge() == 0                                 );
+    CHECK( species.aggregateState() == AggregateState::Solid     );
+    CHECK( species.molarMass() == Approx(0.5023294)              );
+    CHECK( species.elements().size() == 4                        );
+    CHECK( species.elements().coefficient("Ca") == 5             );
+    CHECK( species.elements().coefficient("P") == 3              );
+    CHECK( species.elements().coefficient("O") == 13             );
+    CHECK( species.elements().coefficient("H") == 1              );
+    CHECK( species.reaction().product() == "Hydroxyapatite"      );
+    CHECK( species.reaction().reactants().size() == 4            );
+    CHECK( species.reaction().stoichiometry("H2O") == 1          );
+    CHECK( species.reaction().stoichiometry("HPO4-2") == 3       );
+    CHECK( species.reaction().stoichiometry("Ca+2") == 5         );
+    CHECK( species.reaction().stoichiometry("H+") == -4          );
 }
 
 TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDatabase]")
@@ -431,13 +413,17 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
 auto lgK(const PhreeqcDatabase& db, real T, real P, String name) -> real
 {
     const auto species = db.species().get(name);
-    return species.reaction().equilibriumConstantFn()(T, P);
+    const auto dG0 = species.reaction().reactionThermoPropsFn()(T, P).dG0;
+    const auto R = universalGasConstant;
+    const auto lnK = -dG0/(R*T);
+    return lnK / ln10;
 }
 
 auto dH0(const PhreeqcDatabase& db, real T, real P, String name) -> real
 {
     const auto species = db.species().get(name);
-    return species.reaction().enthalpyChangeFn()(T, P);
+    const auto dH0 = species.reaction().reactionThermoPropsFn()(T, P).dH0;
+    return dH0;
 }
 
 auto G0(const PhreeqcDatabase& db, real T, real P, String name) -> real

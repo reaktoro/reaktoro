@@ -42,7 +42,7 @@ namespace Reaktoro {
 namespace {
 
 /// The calculator of standard thermodynamic properties based on SUPCRT
-SupcrtEngine engine;
+SupcrtEngine engine; // TODO: This should be a data member in SupcrtDatabase.
 
 /// Return the standard thermodynamic property function of solvent water using the HKF model.
 auto createStandardThermoPropsFn(const SupcrtParamsAqueousSolventHKF& params) -> StandardThermoPropsFn

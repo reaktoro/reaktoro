@@ -38,5 +38,5 @@ using PhreeqcPhase = phase;
 // This header file must not be included by another
 // header file that will be exposed to users.
 // If so, this propagates the need for phreeqc
-// header files to available in the user system.
+// header files to be available in the user system.
 //==================================================
