@@ -1,0 +1,61 @@
+// Reaktoro is a unified framework for modeling chemically reactive systems.
+//
+// Copyright (C) 2014-2020 Allan Leal
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+#pragma once
+
+// Reaktoro includes
+#include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Core/ReactionThermoProps.hpp>
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcLegacy.hpp> // ***BECAUSE PhreeqcLegacy.hpp IS INCLUDED HERE, MAKE SURE THIS HEADER FILE IS NOT EXPORTED!***
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
+
+namespace Reaktoro {
+namespace PhreeqcUtils {
+
+/// Return the standard molar volume of a PHREEQC species using same model as used in PHREEQC (in cm3/mol).
+/// @param species The pointer to the Phreeqc species
+/// @param T The temperature value (in K)
+/// @param P The pressure value (in Pa)
+/// @param wprops The thermodynamic and electrostatic properties of water
+auto standardVolume(const PhreeqcSpecies* species, real T, real P, const PhreeqcWaterProps& wprops) -> real;
+
+/// Return the standard molar volume of a PHREEQC phase using same model as used in PHREEQC (in cm3/mol).
+/// @param phase The pointer to the Phreeqc phase
+/// @param T The temperature value (in K)
+/// @param P The pressure value (in Pa)
+auto standardVolume(const PhreeqcPhase* phase, real T, real P) -> real;
+
+/// Return the extra energy in the standard Gibbs energy and enthalpy of a PHREEQC species as a result of pressure variation (in J/mol).
+/// @param species The pointer to the Phreeqc species
+/// @param P The pressure value (in Pa)
+/// @param V0 The standard molar volume of the species (in m3/mol)
+auto pressureCorrectionEnergy(const PhreeqcSpecies* species, real P, real V0) -> real;
+
+/// Return the extra energy in the standard Gibbs energy and enthalpy of a PHREEQC phase as a result of pressure variation (in J/mol).
+/// @param species The pointer to the Phreeqc species
+/// @param P The pressure value (in Pa)
+/// @param V0 The standard molar volume of the species (in m3/mol)
+auto pressureCorrectionEnergy(const PhreeqcPhase* phase, real P, real V0) -> real;
+
+/// Create a standard thermodynamic model for a PHREEQC species.
+auto reactionThermoPropsFn(const PhreeqcSpecies* species) -> ReactionThermoPropsFn;
+
+/// Create a standard thermodynamic model for a PHREEQC phase.
+auto reactionThermoPropsFn(const PhreeqcPhase* phase) -> ReactionThermoPropsFn;
+
+} // namespace PhreeqcUtils
+} // namespace Reaktoro

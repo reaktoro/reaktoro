@@ -25,7 +25,12 @@ CMRC_DECLARE(ReaktoroDatabases);
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Memoization.hpp>
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcEngine.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcThermo.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelAnalyticalPHREEQC.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -33,8 +38,13 @@ namespace detail {
 /// An auxiliary type to create the Species objects from a PHREEQC database.
 struct PhreeqcDatabaseHelper
 {
-    /// The PHREEQC instance
-    PHREEQC phreeqc;
+    /// The PHREEQC instance.
+    /// Note: Shared pointer ensures that the pointers in PHREEQC to
+    /// species/phase objects remain valid throughout.
+    SharedPtr<PHREEQC> phreeqc;
+
+    /// The PHREEQC engine object used to ammend standard properties for the species.
+    PhreeqcUtils::PhreeqcEngine engine;
 
     /// The list of elements in the database
     ElementList elements;
@@ -50,25 +60,27 @@ struct PhreeqcDatabaseHelper
 
     /// Construct a default PhreeqcDatabaseHelper object.
     PhreeqcDatabaseHelper()
+    : phreeqc(new PHREEQC())
     {}
 
     /// Construct a PhreeqcDatabaseHelper object with given database.
     PhreeqcDatabaseHelper(String database)
+    : PhreeqcDatabaseHelper()
     {
         // Load the PHREEQC database
-        PhreeqcUtils::load(phreeqc, database);
+        PhreeqcUtils::load(*phreeqc, database);
 
         // Create the Element objects
-        for(auto i = 0; i < phreeqc.count_elements; ++i)
-            addElement(phreeqc.elements[i]);
+        for(auto i = 0; i < phreeqc->count_elements; ++i)
+            addElement(phreeqc->elements[i]);
 
         // Create the Species objects using PhreeqcSpecies pointers (aqueous, exchange, surface species)
-        for(auto i = 0; i < phreeqc.count_s; ++i)
-            addSpecies(phreeqc.s[i]);
+        for(auto i = 0; i < phreeqc->count_s; ++i)
+            addSpecies(phreeqc->s[i]);
 
         // Create the Species objects using PhreeqcPhase pointers (gases and minerals)
-        for(auto i = 0; i < phreeqc.count_phases; ++i)
-            addSpecies(phreeqc.phases[i]);
+        for(auto i = 0; i < phreeqc->count_phases; ++i)
+            addSpecies(phreeqc->phases[i]);
     }
 
     /// Return true if an Element object with given symbol already exists in the database.
@@ -141,8 +153,7 @@ struct PhreeqcDatabaseHelper
         return FormationReaction()
             .withProduct(PhreeqcUtils::name(s))
             .withReactants(createReactants(s))
-            .withEquilibriumConstantFn(PhreeqcUtils::lgEquilibriumConstantFn(s))
-            .withEnthalpyChangeFn(PhreeqcUtils::enthalpyChangeFn(s));
+            .withReactionThermoPropsFn(PhreeqcUtils::reactionThermoPropsFn(s));
     }
 
     /// Create the reactant species and their stoichiometries in a formation reaction.
@@ -162,6 +173,26 @@ struct PhreeqcDatabaseHelper
             pairs.emplace_back(species[idx], coeff);
         }
         return pairs;
+    }
+
+    /// Create the standard thermodynamic model of the species.
+    template<typename SpeciesType>
+    auto createStandardThermoPropsFn(const SpeciesType* s, const FormationReaction& reaction) -> StandardThermoPropsFn
+    {
+        auto base_props_fn = reaction.standardThermoPropsFn();
+
+        // Note: base_props_fn is able to compute G0 and H0 of the species
+        // using temperature dependent logK model. It remains to provide V0 to
+        // the species and a pressure correction for G0 and H0, which is done
+        // next, by producing an update standard thermo function for the species.
+
+        return [=](real T, real P) -> StandardThermoProps
+        {
+            StandardThermoProps props = base_props_fn(T, P);
+            engine.addStandardVolume(props, s, T, P);
+            engine.addPressureCorrection(props, s, P);
+            return props;
+        };
     }
 };
 

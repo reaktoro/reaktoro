@@ -218,21 +218,5 @@ auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcSpecies*>& species)
 /// @param phases The pointers to Phreeqc phase instances
 auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcPhase*>& phases) -> ArrayXr;
 
-/// Return the equilibrium constant function (log base 10) of a Phreeqc species.
-/// @param species The pointer to the Phreeqc species
-auto lgEquilibriumConstantFn(const PhreeqcSpecies* species) -> Fn<real(real,real)>;
-
-/// Return the equilibrium constant function (log base 10) of a Phreeqc phase.
-/// @param phase The pointer to the Phreeqc phase
-auto lgEquilibriumConstantFn(const PhreeqcPhase* phase) -> Fn<real(real,real)>;
-
-/// Return the enthalpy of reaction function (in J/mol) of a Phreeqc species.
-/// @param species The pointer to the Phreeqc species
-auto enthalpyChangeFn(const PhreeqcSpecies* species) -> Fn<real(real,real)>;
-
-/// Return the enthalpy of reaction function (in J/mol) of a Phreeqc phase.
-/// @param phase The pointer to the Phreeqc phase
-auto enthalpyChangeFn(const PhreeqcPhase* phase) -> Fn<real(real,real)>;
-
 } // namespace PhreeqcUtils
 } // namespace Reaktoro

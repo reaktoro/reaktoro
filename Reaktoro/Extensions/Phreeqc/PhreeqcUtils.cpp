@@ -69,8 +69,8 @@ auto execute(PHREEQC& phreeqc, String input, String output) -> void
     std::ofstream* out = output.empty() ? nullptr : new std::ofstream(output);
 
     // Set the output and error streams
-	phreeqc.Get_phrq_io()->Set_output_ostream(out);
-	phreeqc.Get_phrq_io()->Set_error_ostream(out);
+    phreeqc.Get_phrq_io()->Set_output_ostream(out);
+    phreeqc.Get_phrq_io()->Set_error_ostream(out);
 
     // Set the input stream and execute the simulation
     phreeqc.Get_phrq_io()->push_istream(in_cookie);
@@ -116,13 +116,13 @@ auto isAqueousSpecies(const PhreeqcSpecies* species) -> bool
 
 auto isGaseousSpecies(const PhreeqcPhase* phase) -> bool
 {
-	String name(phase->name);
-	return name.find("(g)") < name.size();
+    String name(phase->name);
+    return name.find("(g)") < name.size();
 }
 
 auto isMineralSpecies(const PhreeqcPhase* phase) -> bool
 {
-	return !isGaseousSpecies(phase) && phase->type == SOLID;
+    return !isGaseousSpecies(phase) && phase->type == SOLID;
 
     // Note 1: Gases are marked SOLID as well. That's why we also check whether
     // this phase pointer is not a gaseous species!
@@ -443,87 +443,6 @@ auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcPhase*>& phases) ->
     }
 
     return n;
-}
-
-template<typename SpeciesType>
-auto delta_h_in_original_units(const SpeciesType* species) -> double
-{
-    const auto delta_h_in_kjoule = species->logk[delta_h];
-    const auto kjoule_per_cal = 4.184e-3;
-    const auto kjoule_per_kcal = kjoule_per_cal * 1e+3;
-    const auto kjoule_per_joule = 1e-3;
-    switch(species->original_units)
-    {
-        case kcal:    return delta_h_in_kjoule/kjoule_per_kcal;
-        case cal:     return delta_h_in_kjoule/kjoule_per_cal;
-        case kjoules: return delta_h_in_kjoule;
-        case joules:  return delta_h_in_kjoule/kjoule_per_joule;
-    }
-    RuntimeError("Could not convert PHREEQC reaction data `delta_h` to kilo joule.",
-        "The species or phase `" + String(species->name) + "` does not have a valid"
-            "`original_units` data-member value.");
-}
-
-// Returns true if the PHREEQC analytical logk expression can be used, false otherwise.
-auto useAnalytic(const double* logk) -> bool
-{
-    for(int i = T_A1; i <= T_A6; ++i)
-        if(logk[i] != 0.0)
-            return true;
-    return false;
-}
-
-template<typename SpeciesType>
-auto lgEquilibriumConstantFnHelper(const SpeciesType* species) -> Fn<real(real,real)>
-{
-    //--------------------------------------------------------------------------------
-    // The implementation of this method is based on PHREEQC method `Phreeqc::k_calc`
-    //--------------------------------------------------------------------------------
-    using std::log10;
-
-    const auto R = universalGasConstant; // in J/(mol*K)
-
-    const auto logk = species->logk;
-
-    const auto lgK0 = logk[logK_T0];
-    const auto dH0 = logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
-
-    const auto A1 = logk[T_A1];
-    const auto A2 = logk[T_A2];
-    const auto A3 = logk[T_A3];
-    const auto A4 = logk[T_A4];
-    const auto A5 = logk[T_A5];
-    const auto A6 = logk[T_A6];
-
-    // Check if the PHREEQC analytical expression for logk should be used
-    if(useAnalytic(logk))
-        return [=](real T, real P) { return A1 + A2*T + A3/T + A4*log10(T) + A5/(T*T) + A6*(T*T); };
-
-    // Use the Van't Hoff equation instead
-    return [=](real T, real P) { return lgK0 - dH0 * (298.15 - T)/(R*T*298.15*ln10); };
-}
-
-auto lgEquilibriumConstantFn(const PhreeqcSpecies* species) -> Fn<real(real,real)>
-{
-    return lgEquilibriumConstantFnHelper(species);
-}
-
-auto lgEquilibriumConstantFn(const PhreeqcPhase* phase) -> Fn<real(real,real)>
-{
-    const auto aux_lgK = lgEquilibriumConstantFnHelper(phase);
-    return [=](real T, real P) { return -aux_lgK(T, P); };
-}
-
-auto enthalpyChangeFn(const PhreeqcSpecies* species) -> Fn<real(real,real)>
-{
-    const auto dH0 = species->logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
-    return [=](real T, real P) { return dH0; };
-}
-
-auto enthalpyChangeFn(const PhreeqcPhase* phase) -> Fn<real(real,real)>
-{
-    const auto dH0 = phase->logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
-    return [=](real T, real P) { return dH0; };
 }
 
 } // namespace PhreeqcUtils
