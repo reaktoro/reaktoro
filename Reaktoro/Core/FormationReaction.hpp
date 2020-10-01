@@ -19,6 +19,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/StandardThermoProps.hpp>
+#include <Reaktoro/Core/ReactionThermoProps.hpp>
 
 namespace Reaktoro {
 
@@ -42,17 +44,22 @@ public:
     /// Return a duplicate of this FormationReaction object with new reactant species in the formation reaction.
     auto withReactants(Pairs<Species, double> reactants) const -> FormationReaction;
 
-    /// Return a duplicate of this FormationReaction object with new equilibrium constant value (log base 10).
-    auto withEquilibriumConstant(real value) const -> FormationReaction;
+    /// Return a duplicate of this FormationReaction object with new equilibrium constant value.
+    /// Note that this method exists for convenience only. Its use results in a
+    /// thermodynamic model for this reaction in which its standard enthalpy is
+    /// zero. For a more complete thermodynamic model, use method
+    /// @ref withReactionThermoPropsFn.
+    /// @param lgK0 The equilibrium constant of the reaction (in log base 10)
+    auto withEquilibriumConstant(real lgK0) const -> FormationReaction;
 
-    /// Return a duplicate of this FormationReaction object with new equilibrium constant function (log base 10).
-    auto withEquilibriumConstantFn(const Fn<real(real,real)>& fn) const -> FormationReaction;
+    /// Return a duplicate of this FormationReaction object with new reaction thermodynamic model function.
+    auto withReactionThermoPropsFn(const ReactionThermoPropsFn& fn) const -> FormationReaction;
 
-    /// Return a duplicate of this FormationReaction object with new reaction enthalpy value (in J/mol).
-    auto withEnthalpyChange(real value) const -> FormationReaction;
-
-    /// Return a duplicate of this FormationReaction object with new reaction enthalpy function (in J/mol).
-    auto withEnthalpyChangeFn(const Fn<real(real,real)>& fn) const -> FormationReaction;
+    /// Return a duplicate of this FormationReaction object with new reaction thermodynamic model function.
+    /// Note that this method exists for convenience only. Consider, for example,
+    /// `reaction.with(ReactionThermoModelVantHoff(lgK0, dH0))`, which is equivalent to
+    /// `reaction.withReactionThermoPropsFn(ReactionThermoModelVantHoff(lgK0, dH0))`.
+    auto with(const ReactionThermoPropsFn& fn) const -> FormationReaction;
 
     /// Return the name of the product species in the formation reaction.
     auto product() const -> String;
@@ -60,17 +67,15 @@ public:
     /// Return the reactant species in the formation reaction.
     auto reactants() const -> const Pairs<Species, double>&;
 
-    /// Return the equilibrium constant function of the formation reaction (log base 10).
-    auto equilibriumConstantFn() const -> const Fn<real(real,real)>&;
+    /// Return the reaction thermodynamic model function of the formation reaction.
+    auto reactionThermoPropsFn() const -> const ReactionThermoPropsFn&;
 
-    /// Return the reaction enthalpy function of the formation reaction.
-    auto enthalpyChangeFn() const -> const Fn<real(real,real)>&;
-
-    /// Return the standard Gibbs energy function of the product species in the formation reaction.
-    auto standardGibbsEnergyFn() const -> Fn<real(real,real)>;
-
-    /// Return the standard enthalpy function of the product species in the formation reaction.
-    auto standardEnthalpyFn() const -> Fn<real(real,real)>;
+    /// Return the standard thermodynamic model function of the product species.
+    /// This method constructs a standard thermodynamic model function for the
+    /// product species using the assigned thermodynamic model of the formation
+    /// reaction. An empty model is returned if no reaction thermodynamic model
+    /// has been previously assigned.
+    auto standardThermoPropsFn() const -> StandardThermoPropsFn;
 
     /// Return the stoichiometric coefficient of a reactant with given name in the formation reaction.
     auto stoichiometry(String reactant) const -> double;

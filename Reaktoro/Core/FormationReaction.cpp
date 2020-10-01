@@ -22,6 +22,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelConstLgK.hpp>
 
 namespace Reaktoro {
 
@@ -33,48 +34,32 @@ struct FormationReaction::Impl
     /// The reactant species in the formation reaction.
     Pairs<Species, double> reactants;
 
-    /// The equilibrium constant function (log base 10).
-    Fn<real(real,real)> lgK;
-
-    /// The enthalpy of formation function (in J/mol).
-    Fn<real(real,real)> dH0;
+    /// The function that computes the standard thermodynamic properties of this reaction.
+    ReactionThermoPropsFn rxnpropsfn;
 
     /// Construct a default FormationReaction::Impl object
     Impl()
     {}
 
-    /// Return the standard Gibbs energy function of the product species in the formation reaction.
-    auto createStandardGibbsEnergyFn() const -> Fn<real(real,real)>
+    /// Return the standard thermodynamic model function of the product species.
+    auto standardThermoPropsFn() const -> StandardThermoPropsFn
     {
-        // Return empty function object if function lgK has not been provided yet
-        if(!lgK) return {};
+        if(rxnpropsfn == nullptr) return {};
 
-        return [=](real T, real P)
+        return [=](real T, real P) -> StandardThermoProps
         {
             const auto R = universalGasConstant;
-            const auto lnK = ln10 * lgK(T, P);
-            const auto dG0 = -R*T*lnK;
-            real G0 = dG0; // G0 = dG0 + sum(vr * G0r)
-            for(const auto [reactant, coeff] : reactants) {
-                G0 += coeff * reactant.props(T, P).G0;
-            }
-            return G0;
-        };
-    }
+            StandardThermoProps props;
+            ReactionThermoProps rxnprops = rxnpropsfn(T, P);
 
-    /// Return the standard enthalpy function of the product species in a formation reaction.
-    auto createStandardEnthalpyFn() const -> Fn<real(real,real)>
-    {
-        // Return empty function object if function dH0 has not been provided yet
-        if(!dH0) return {};
-
-        return [=](real T, real P)
-        {
-            real H0 = dH0(T, P); // H0 = dH0 + sum(vr * H0r)
+            props.G0 = rxnprops.dG0; // G0 = dG0 + sum(vr * G0r)
+            props.H0 = rxnprops.dH0; // H0 = dH0 + sum(vr * H0r)
             for(const auto [reactant, coeff] : reactants) {
-                H0 += coeff * reactant.props(T, P).H0;
+                const auto reactantprops = reactant.props(T, P);
+                props.G0 += coeff * reactantprops.G0;
+                props.H0 += coeff * reactantprops.H0;
             }
-            return H0;
+            return props;
         };
     }
 };
@@ -104,32 +89,21 @@ auto FormationReaction::withReactants(Pairs<Species, double> reactants) const ->
     return copy;
 }
 
-auto FormationReaction::withEquilibriumConstant(real value) const -> FormationReaction
+auto FormationReaction::withEquilibriumConstant(real lgK0) const -> FormationReaction
+{
+    return with(ReactionThermoModelConstLgK(lgK0));
+}
+
+auto FormationReaction::withReactionThermoPropsFn(const ReactionThermoPropsFn& fn) const -> FormationReaction
 {
     FormationReaction copy = clone();
-    copy.pimpl->lgK = [=](real T, real P) { return value; };
+    copy.pimpl->rxnpropsfn = fn;
     return copy;
 }
 
-auto FormationReaction::withEquilibriumConstantFn(const Fn<real(real,real)>& fn) const -> FormationReaction
+auto FormationReaction::with(const ReactionThermoPropsFn& fn) const -> FormationReaction
 {
-    FormationReaction copy = clone();
-    copy.pimpl->lgK = fn;
-    return copy;
-}
-
-auto FormationReaction::withEnthalpyChange(real value) const -> FormationReaction
-{
-    FormationReaction copy = clone();
-    copy.pimpl->dH0 = [=](real T, real P) { return value; };
-    return copy;
-}
-
-auto FormationReaction::withEnthalpyChangeFn(const Fn<real(real,real)>& fn) const -> FormationReaction
-{
-    FormationReaction copy = clone();
-    copy.pimpl->dH0 = fn;
-    return copy;
+    return withReactionThermoPropsFn(fn);
 }
 
 auto FormationReaction::product() const -> String
@@ -142,24 +116,14 @@ auto FormationReaction::reactants() const -> const Pairs<Species, double>&
     return pimpl->reactants;
 }
 
-auto FormationReaction::equilibriumConstantFn() const -> const Fn<real(real,real)>&
+auto FormationReaction::reactionThermoPropsFn() const -> const ReactionThermoPropsFn&
 {
-    return pimpl->lgK;
+    return pimpl->rxnpropsfn;
 }
 
-auto FormationReaction::enthalpyChangeFn() const -> const Fn<real(real,real)>&
+auto FormationReaction::standardThermoPropsFn() const -> StandardThermoPropsFn
 {
-    return pimpl->dH0;
-}
-
-auto FormationReaction::standardGibbsEnergyFn() const -> Fn<real(real,real)>
-{
-    return pimpl->createStandardGibbsEnergyFn();
-}
-
-auto FormationReaction::standardEnthalpyFn() const -> Fn<real(real,real)>
-{
-    return pimpl->createStandardEnthalpyFn();
+    return pimpl->standardThermoPropsFn();
 }
 
 auto FormationReaction::stoichiometry(String reactant) const -> double
