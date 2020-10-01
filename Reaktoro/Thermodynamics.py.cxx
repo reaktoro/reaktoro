@@ -40,6 +40,12 @@ void exportActivityModelIdealAqueous(py::module& m);
 void exportActivityModelIdealGas(py::module& m);
 void exportActivityModelIdealSolution(py::module& m);
 
+// Thermodynamics/Reactions
+void exportReactionThermoModelAnalyticalGEMS(py::module& m);
+void exportReactionThermoModelAnalyticalPHREEQC(py::module& m);
+void exportReactionThermoModelConstLgK(py::module& m);
+void exportReactionThermoModelVantHoff(py::module& m);
+
 // Thermodynamics/Solids
 void exportActivityModelRedlichKister(py::module& m);
 void exportActivityModelVanLaar(py::module& m);
@@ -77,6 +83,12 @@ void exportThermodynamics(py::module& m)
     exportActivityModelIdealAqueous(m);
     exportActivityModelIdealGas(m);
     exportActivityModelIdealSolution(m);
+
+    // Thermodynamics/Reactions
+    exportReactionThermoModelAnalyticalGEMS(m);
+    exportReactionThermoModelAnalyticalPHREEQC(m);
+    exportReactionThermoModelConstLgK(m);
+    exportReactionThermoModelVantHoff(m);
 
     // Thermodynamics/Solids
     exportActivityModelRedlichKister(m);
