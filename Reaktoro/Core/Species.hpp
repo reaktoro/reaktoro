@@ -22,10 +22,12 @@
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/ElementalComposition.hpp>
-#include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 
 namespace Reaktoro {
+
+// Forward declaration
+class FormationReaction;
 
 /// A type used to represent a chemical species and its attributes.
 class Species
@@ -63,7 +65,7 @@ public:
     /// using the standard thermodynamic model assigned to the formation reaction.
     /// Use this method thus to assign a standard thermodynamic model to the
     /// Species object instead of using method @ref withStandardThermoPropsFn.
-    auto withFormationReaction(FormationReaction reaction) const -> Species;
+    auto withFormationReaction(const FormationReaction& reaction) const -> Species;
 
     /// Return a duplicate of this Species object with new standard thermodynamic model.
     /// This method exists for convenience only. Its use results in a standard

@@ -43,6 +43,10 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     const auto dH0_D = 234.5;
     const auto dH0_E = 345.6;
 
+    const auto V0_C = 16.324;
+    const auto V0_D = 17.435;
+    const auto V0_E = 18.546;
+
     const auto A = Species()
         .withName("A")
         .withStandardGibbsEnergy(0.0);
@@ -57,6 +61,7 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
             FormationReaction()
                 .withProduct("C")
                 .withReactants({{A, 1}, {B, 2}})
+                .withProductStandardVolume(V0_C)
                 .withEquilibriumConstant(lgK_C)
             );
 
@@ -66,12 +71,14 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
             FormationReaction()
                 .withProduct("D")
                 .withReactants({{B, 1}, {C, 3}})
-                .withReactionThermoPropsFn([=](real T, real P) {
-                    ReactionThermoProps res;
-                    res.dG0 = -R*T*ln10*lgK_D;
-                    res.dH0 = dH0_D;
-                    return res;
-                })
+                .withProductStandardVolume(V0_D)
+                .withReactionThermoModel(ReactionThermoModel(
+                    [=](ReactionThermoProps& res, ReactionThermoArgs args) {
+                        ReactionThermoArgsDecl(args);
+                        res.dG0 = -R*T*ln10*lgK_D;
+                        res.dH0 = dH0_D;
+                        return res;
+                    }))
             );
 
     const auto E = Species()
@@ -80,23 +87,27 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
             FormationReaction()
                 .withProduct("E")
                 .withReactants({{C, 1}, {D, -2}})
-                .withReactionThermoPropsFn([=](real T, real P) {
-                    ReactionThermoProps res;
-                    res.dG0 = -R*T*ln10*lgK_E;
-                    res.dH0 = dH0_E;
-                    return res;
-                })
+                .withProductStandardVolume(V0_E)
+                .withReactionThermoModel(ReactionThermoModel(
+                    [=](ReactionThermoProps& res, ReactionThermoArgs args) {
+                        ReactionThermoArgsDecl(args);
+                        res.dG0 = -R*T*ln10*lgK_E;
+                        res.dH0 = dH0_E;
+                        return res;
+                    }))
             );
 
     REQUIRE(  A.reaction().product() == ""         );
     REQUIRE(  A.reaction().reactants().size() == 0 );
-    REQUIRE( !A.reaction().reactionThermoPropsFn() );
-    REQUIRE( !A.reaction().standardThermoPropsFn() );
+    REQUIRE( !A.reaction().reactionThermoModel()   );
+
+    REQUIRE_THROWS( A.reaction().standardThermoPropsFn() );
 
     REQUIRE(  B.reaction().product() == ""         );
     REQUIRE(  B.reaction().reactants().size() == 0 );
-    REQUIRE( !B.reaction().reactionThermoPropsFn() );
-    REQUIRE( !B.reaction().standardThermoPropsFn() );
+    REQUIRE( !B.reaction().reactionThermoModel()   );
+
+    REQUIRE_THROWS( B.reaction().standardThermoPropsFn() );
 
     REQUIRE( C.reaction().product() == "C"                      );
     REQUIRE( C.reaction().reactants().size() == 2               );
@@ -104,8 +115,8 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     REQUIRE( C.reaction().reactants().at(1).first.name() == "B" );
     REQUIRE( C.reaction().reactants().at(0).second == 1.0       );
     REQUIRE( C.reaction().reactants().at(1).second == 2.0       );
-    REQUIRE( C.reaction().reactionThermoPropsFn()               );
-    REQUIRE( C.reaction().standardThermoPropsFn()                    );
+    REQUIRE( C.reaction().reactionThermoModel()                 );
+    REQUIRE( C.reaction().standardThermoPropsFn()               );
     REQUIRE( C.reaction().stoichiometry("A") == 1.0             );
     REQUIRE( C.reaction().stoichiometry("B") == 2.0             );
 
@@ -115,8 +126,8 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     REQUIRE( D.reaction().reactants().at(1).first.name() == "C" );
     REQUIRE( D.reaction().reactants().at(0).second == 1.0       );
     REQUIRE( D.reaction().reactants().at(1).second == 3.0       );
-    REQUIRE( D.reaction().reactionThermoPropsFn()               );
-    REQUIRE( D.reaction().standardThermoPropsFn()                    );
+    REQUIRE( D.reaction().reactionThermoModel()                 );
+    REQUIRE( D.reaction().standardThermoPropsFn()               );
     REQUIRE( D.reaction().stoichiometry("B") == 1.0             );
     REQUIRE( D.reaction().stoichiometry("C") == 3.0             );
 
@@ -126,8 +137,8 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     REQUIRE( E.reaction().reactants().at(1).first.name() == "D" );
     REQUIRE( E.reaction().reactants().at(0).second ==  1.0      );
     REQUIRE( E.reaction().reactants().at(1).second == -2.0      );
-    REQUIRE( E.reaction().reactionThermoPropsFn()               );
-    REQUIRE( E.reaction().standardThermoPropsFn()                    );
+    REQUIRE( E.reaction().reactionThermoModel()                 );
+    REQUIRE( E.reaction().standardThermoPropsFn()               );
     REQUIRE( E.reaction().stoichiometry("C") ==  1.0            );
     REQUIRE( E.reaction().stoichiometry("D") == -2.0            );
 

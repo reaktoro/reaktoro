@@ -44,22 +44,48 @@ public:
     /// Return a duplicate of this FormationReaction object with new reactant species in the formation reaction.
     auto withReactants(Pairs<Species, double> reactants) const -> FormationReaction;
 
-    /// Return a duplicate of this FormationReaction object with new equilibrium constant value.
-    /// Note that this method exists for convenience only. Its use results in a
-    /// thermodynamic model for this reaction in which its standard enthalpy is
-    /// zero. For a more complete thermodynamic model, use method
-    /// @ref withReactionThermoPropsFn.
+    /// Return a duplicate of this FormationReaction object with new reaction
+    /// thermodynamic model function.
+    ///
+    /// This method sets a constant equilibrium constant for the formation reaction.
+    /// It also sets the standard molar enthalpy and volume of the reaction to zero.
+    ///
+    /// For a more advanced thermodynamic model setup, use methods
+    /// @ref withProductStandardVolumeModel and @ref withReactionThermoModel.
+    ///
     /// @param lgK0 The equilibrium constant of the reaction (in log base 10)
     auto withEquilibriumConstant(real lgK0) const -> FormationReaction;
 
-    /// Return a duplicate of this FormationReaction object with new reaction thermodynamic model function.
-    auto withReactionThermoPropsFn(const ReactionThermoPropsFn& fn) const -> FormationReaction;
+    /// Return a duplicate of this FormationReaction object with new standard
+    /// molar volume function for the product species.
+    ///
+    /// The standard molar volume of the product species is needed to enable
+    /// the calculation of the standard molar volume of the reaction.
+    ///
+    /// @warning Ensure the standard molar volume of the product species is set
+    /// using either @ref withProductStandardVolume or @ref withProductStandardVolumeModel.
+    /// Calling @ref withEquilibriumConstant also sets the standard molar volume of the
+    /// product species, but to zero.
+    ///
+    /// @param V0p The constant standard molar volume of the product species (in m3/mol).
+    auto withProductStandardVolume(real V0p) const -> FormationReaction;
+
+    /// Return a duplicate of this FormationReaction object with new standard
+    /// molar volume function for the product species.
+    ///
+    /// The standard molar volume of the product species is needed to enable
+    /// the calculation of the standard molar volume of the reaction.
+    ///
+    /// @warning Ensure the standard molar volume of the product species is set
+    /// using either @ref withProductStandardVolume or @ref withProductStandardVolumeModel.
+    /// Calling @ref withEquilibriumConstant also sets the standard molar volume of the
+    /// product species, but to zero.
+    ///
+    /// @param fn The standard molar volume model of the product species (in m3/mol).
+    auto withProductStandardVolumeModel(Model<real(real,real)> fn) const -> FormationReaction;
 
     /// Return a duplicate of this FormationReaction object with new reaction thermodynamic model function.
-    /// Note that this method exists for convenience only. Consider, for example,
-    /// `reaction.with(ReactionThermoModelVantHoff(lgK0, dH0))`, which is equivalent to
-    /// `reaction.withReactionThermoPropsFn(ReactionThermoModelVantHoff(lgK0, dH0))`.
-    auto with(const ReactionThermoPropsFn& fn) const -> FormationReaction;
+    auto withReactionThermoModel(const ReactionThermoModel& fn) const -> FormationReaction;
 
     /// Return the name of the product species in the formation reaction.
     auto product() const -> String;
@@ -67,14 +93,22 @@ public:
     /// Return the reactant species in the formation reaction.
     auto reactants() const -> const Pairs<Species, double>&;
 
+    /// Return the standard molar volume function of the product species.
+    auto productStandardVolumeModel() const -> const Model<real(real,real)>&;
+
     /// Return the reaction thermodynamic model function of the formation reaction.
-    auto reactionThermoPropsFn() const -> const ReactionThermoPropsFn&;
+    auto reactionThermoModel() const -> const ReactionThermoModel&;
 
     /// Return the standard thermodynamic model function of the product species.
+    ///
     /// This method constructs a standard thermodynamic model function for the
     /// product species using the assigned thermodynamic model of the formation
     /// reaction. An empty model is returned if no reaction thermodynamic model
     /// has been previously assigned.
+    ///
+    /// @warning This method will throw a runtime error if methods
+    /// @ref withProductStandardVolumeModel and @ref withReactionThermoModel
+    /// are not
     auto standardThermoPropsFn() const -> StandardThermoPropsFn;
 
     /// Return the stoichiometric coefficient of a reactant with given name in the formation reaction.
