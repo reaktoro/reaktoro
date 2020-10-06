@@ -18,6 +18,7 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Core/Params.hpp>
@@ -85,12 +86,6 @@ public:
         return Model(_creatorfn, params);
     }
 
-    /// Return the parameters in this Model function object.
-    auto params() const -> const Params&
-    {
-        return _params;
-    }
-
     /// Evaluate the model with given arguments.
     auto apply(ResultRef res, const Args&... args) const -> void
     {
@@ -117,6 +112,24 @@ public:
     operator bool() const
     {
         return initialized();
+    }
+
+    /// Return the model creator function of this Model function object.
+    auto creatorFn() const -> const ModelCreator<ResultRef, Args...>&
+    {
+        return _creatorfn;
+    }
+
+    /// Return the model evaluator function of this Model function object.
+    auto evaluatorFn() const -> const ModelEvaluator<ResultRef, Args...>&
+    {
+        return _evalfn;
+    }
+
+    /// Return the model parameters of this Model function object.
+    auto params() const -> const Params&
+    {
+        return _params;
     }
 
     /// Return a constant Model function object.
@@ -150,5 +163,50 @@ private:
     /// The underlying model function that performs property evaluations.
     ModelEvaluator<ResultRef, Args...> _evalfn;
 };
+
+/// Return a reaction thermodynamic model resulting from chaining other models.
+template<typename Result, typename... Args>
+auto chain(const Vec<Model<Result(Args...)>>& models) -> Model<Result(Args...)>
+{
+    using ResultRef = Ref<Result>;
+
+    auto creatorfn = [=](const Params& params)
+    {
+        Vec<Model<Result(Args...)>> updated_models;
+
+        for(auto i = 0; i < models.size(); ++i)
+            updated_models.push_back(models[i].withParams(params.at(str(i))));
+
+        const auto evalfns = vectorize(updated_models, RKT_LAMBDA(model, model.evaluatorFn()));
+
+        return [=](ResultRef res, const Args&... args)
+        {
+            for(auto i = 0; i < evalfns.size(); ++i)
+                evalfns[i](res, args...);
+        };
+    };
+
+    Params params;
+
+    for(auto i = 0; i < models.size(); ++i)
+        params.set(str(i), models[i].params());
+
+    return Model<Result(Args...)>(creatorfn, params);
+}
+
+/// Return a reaction thermodynamic model resulting from chaining other models.
+template<typename Signature>
+auto chain(const Model<Signature>& model) -> Model<Signature>
+{
+    return model;
+}
+
+/// Return a reaction thermodynamic model resulting from chaining other models.
+template<typename Result, typename... Args, typename... Models>
+auto chain(const Model<Result(Args...)>& model, const Models&... models) -> Model<Result(Args...)>
+{
+    Vec<Model<Result(Args...)>> vec = {model, models...};
+    return chain(vec);
+}
 
 } // namespace Reaktoro
