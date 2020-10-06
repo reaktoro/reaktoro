@@ -15,32 +15,25 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ReactionThermoModelConstLgK.hpp"
+#pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Core/ReactionThermoProps.hpp>
 
 namespace Reaktoro {
 
-auto ReactionThermoModelConstLgK(real lgK0) -> ReactionThermoModel
-{
-    auto creatorfn = [](const Params& params)
-    {
-        const real lgK0 = params.get("lgK0");
-
-        return [=](ReactionThermoProps& props, ReactionThermoArgs args)
-        {
-            ReactionThermoArgsDecl(args);
-            const auto R = universalGasConstant;
-            const auto lnK0 = lgK0 * ln10;
-            props.dG0 = -R*T*lnK0;
-        };
-    };
-
-    Params params;
-    params.set("lgK0", lgK0);
-
-    return ReactionThermoModel(creatorfn, params);
-}
+/// Return a function that calculates pressure correction for standard Gibbs energy and enthalpy a reaction.
+///
+/// In this model, the standard Gibbs energy and enthalpy of reaction are computed using:
+///
+/// @eqc{\Delta G^{\circ}=\Delta G_{\mathrm{base}}^{\circ}+\Delta V^{\circ}(P-P_{r})}
+/// @eqc{\Delta H^{\circ}=\Delta H_{\mathrm{base}}^{\circ}+\Delta V^{\circ}(P-P_{r})}
+///
+/// where @eq{\Delta G_{\mathrm{base}}^{\circ}} and @eq{\Delta H_{\mathrm{base}}^{\circ}}
+/// denote standard properties computed using a given base thermodynamic model
+/// function of the reaction.
+///
+/// @param Pr The reference pressure for the pressure correction (in Pa).
+auto ReactionThermoModelPressureCorrection(real Pr) -> ReactionThermoModel;
 
 } // namespace Reaktoro

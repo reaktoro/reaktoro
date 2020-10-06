@@ -19,30 +19,23 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPressureCorrection.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing ReactionThermoModelConstLgK class", "[ReactionThermoModelConstLgK]")
+TEST_CASE("Testing ReactionThermoModelPressureCorrection class", "[ReactionThermoModelPressureCorrection]")
 {
-    const auto lgK0 = 1.0;
+    const auto Pref = 4.0;
 
     const auto T = 5.0;
     const auto P = 7.0;
     const auto dV0 = 9.0;
 
-    const auto model = ReactionThermoModelConstLgK(lgK0);
-
-    const auto rpropsfn = model;
-
-    const auto R = universalGasConstant;
-
-    const auto lnK0 = lgK0 * ln10;
-
-    const auto dG0x = -R*T*lnK0; // expected dG0 at (T, P)
-    const auto dH0x = 0.0; // expected dH0 at (T, P)
+    const auto model = ReactionThermoModelPressureCorrection(Pref);
 
     ReactionThermoProps rprops = model({T, P, dV0});
+
+    const auto dG0x = (P - Pref) * dV0; // expected dG0 at (T, P)
+    const auto dH0x = (P - Pref) * dV0; // expected dH0 at (T, P)
 
     CHECK( rprops.dG0 == Approx(dG0x) );
     CHECK( rprops.dH0 == Approx(dH0x) );
