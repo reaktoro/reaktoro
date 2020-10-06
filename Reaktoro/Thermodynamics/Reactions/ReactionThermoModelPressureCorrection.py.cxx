@@ -15,35 +15,16 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// Catch includes
-#include <catch2/catch.hpp>
+// pybind11 includes
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPressureCorrection.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing ReactionThermoModelConstLgK class", "[ReactionThermoModelConstLgK]")
+void exportReactionThermoModelPressureCorrection(py::module& m)
 {
-    const auto lgK0 = 1.0;
-
-    const auto T = 5.0;
-    const auto P = 7.0;
-    const auto dV0 = 9.0;
-
-    const auto model = ReactionThermoModelConstLgK(lgK0);
-
-    const auto rpropsfn = model;
-
-    const auto R = universalGasConstant;
-
-    const auto lnK0 = lgK0 * ln10;
-
-    const auto dG0x = -R*T*lnK0; // expected dG0 at (T, P)
-    const auto dH0x = 0.0; // expected dH0 at (T, P)
-
-    ReactionThermoProps rprops = model({T, P, dV0});
-
-    CHECK( rprops.dG0 == Approx(dG0x) );
-    CHECK( rprops.dH0 == Approx(dH0x) );
+    m.def("ReactionThermoModelPressureCorrection", ReactionThermoModelPressureCorrection);
 }

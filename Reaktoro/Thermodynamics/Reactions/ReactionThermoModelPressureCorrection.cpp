@@ -15,30 +15,27 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ReactionThermoModelConstLgK.hpp"
+#include "ReactionThermoModelPressureCorrection.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 
 namespace Reaktoro {
 
-auto ReactionThermoModelConstLgK(real lgK0) -> ReactionThermoModel
+auto ReactionThermoModelPressureCorrection(real Pr) -> ReactionThermoModel
 {
-    auto creatorfn = [](const Params& params)
+    auto creatorfn = [Pr](const Params& params)
     {
-        const real lgK0 = params.get("lgK0");
-
         return [=](ReactionThermoProps& props, ReactionThermoArgs args)
         {
             ReactionThermoArgsDecl(args);
-            const auto R = universalGasConstant;
-            const auto lnK0 = lgK0 * ln10;
-            props.dG0 = -R*T*lnK0;
+            const auto dE = (P - Pr) * dV0; // delta energy (in J/mol)
+            props.dG0 += dE;
+            props.dH0 += dE;
         };
     };
 
     Params params;
-    params.set("lgK0", lgK0);
 
     return ReactionThermoModel(creatorfn, params);
 }

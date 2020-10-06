@@ -27,6 +27,7 @@ TEST_CASE("Testing ReactionThermoModelAnalyticalPHREEQC class", "[ReactionThermo
 {
     const auto T = 5.0;
     const auto P = 7.0;
+    const auto dV0 = 9.0;
 
     const auto A1 = 1.0;
     const auto A2 = 2.0;
@@ -48,7 +49,7 @@ TEST_CASE("Testing ReactionThermoModelAnalyticalPHREEQC class", "[ReactionThermo
     const auto dG0x = -R*T*lnK;     // expected dG0 at (T, P)
     const auto dH0x =  R*T*T*lnK_T; // expected dH0 at (T, P)
 
-    const auto rprops = model(T, P);
+    ReactionThermoProps rprops = model({T, P, dV0});
 
     CHECK( rprops.dG0 == Approx(dG0x) );
     CHECK( rprops.dH0 == Approx(dH0x) );

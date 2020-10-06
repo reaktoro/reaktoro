@@ -42,6 +42,6 @@ namespace Reaktoro {
 /// @param lgK0 The equilibrium constant (log base 10) of the reaction at reference temperature.
 /// @param dH0 The change in standard molar enthalpy of the reaction at reference temperature (in J/mol).
 /// @param Tr The reference temperature (in K).
-auto ReactionThermoModelVantHoff(real lgK0, real dH0, real Tr) -> ReactionThermoPropsFn;
+auto ReactionThermoModelVantHoff(real lgK0, real dH0, real Tr) -> ReactionThermoModel;
 
 } // namespace Reaktoro

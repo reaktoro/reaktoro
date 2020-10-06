@@ -31,8 +31,11 @@ TEST_CASE("Testing ReactionThermoModelVantHoff class", "[ReactionThermoModelVant
 
     const auto T = 5.0;
     const auto P = 7.0;
+    const auto dV0 = 9.0;
 
     const auto model = ReactionThermoModelVantHoff(lgK0, dH0, Tref);
+
+    const auto rpropsfn = model;
 
     const auto R = universalGasConstant;
 
@@ -43,7 +46,7 @@ TEST_CASE("Testing ReactionThermoModelVantHoff class", "[ReactionThermoModelVant
     const auto dG0x = -R*T*lnK; // expected dG0 at (T, P)
     const auto dH0x = dH0; // expected dH0 at (T, P)
 
-    const auto rprops = model(T, P);
+    ReactionThermoProps rprops = model({T, P, dV0});
 
     CHECK( rprops.dG0 == Approx(dG0x) );
     CHECK( rprops.dH0 == Approx(dH0x) );
