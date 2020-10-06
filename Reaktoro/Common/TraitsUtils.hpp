@@ -22,16 +22,26 @@
 
 namespace Reaktoro {
 
-template<typename Condition>
-using EnableIf = typename std::enable_if<Condition::value, void>::type;
+template<bool value>
+using EnableIf = std::enable_if_t<value>;
 
 template<typename T>
 using Decay = std::decay_t<T>;
 
-template<typename Type>
-using IsScalar = std::is_scalar<Type>;
+template<typename T>
+constexpr auto isArithmetic = std::is_arithmetic_v<T>;
 
-template<typename Type>
-using EnableIfScalar = EnableIf<IsScalar<Type>>;
+//======================================================================
+// Reference type traits
+//======================================================================
+namespace detail { template<typename T> struct Ref { using type = T&; }; }
+
+template<typename T>
+using Ref = typename detail::Ref<T>::type;
+
+#define REAKTORO_DEFINE_REFERENCE_TYPE_OF(basetype, reftype) \
+    namespace detail { template<> struct Ref<basetype> { using type = reftype; }; }
+
+//======================================================================
 
 } // namespace Reaktoro
