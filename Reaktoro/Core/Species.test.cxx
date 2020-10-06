@@ -23,6 +23,7 @@
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Singletons/PeriodicTable.hpp>
 using namespace Reaktoro;
@@ -101,12 +102,14 @@ TEST_CASE("Testing Species class", "[Species]")
         species = species.withFormationReaction(
             FormationReaction()
                 .withReactants({{R1, 1.0}, {R2, 2.0}})
-                .withReactionThermoPropsFn([](real T, real P) {
-                    ReactionThermoProps props;
-                    props.dG0 = T + P;
-                    props.dH0 = T - P;
-                    return props;
-                })
+                .withProductStandardVolume(0.1)
+                .withReactionThermoModel(ReactionThermoModel(
+                    [](ReactionThermoProps& props, ReactionThermoArgs args) {
+                        ReactionThermoArgsDecl(args);
+                        props.dG0 = T + P;
+                        props.dH0 = T - P;
+                        return props;
+                    }))
             );
 
         REQUIRE( species.props(T, P).G0 == species.reaction().standardThermoPropsFn()(T, P).G0 );

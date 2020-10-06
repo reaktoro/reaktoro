@@ -34,8 +34,11 @@ struct FormationReaction::Impl
     /// The reactant species in the formation reaction.
     Pairs<Species, double> reactants;
 
+    /// The function that computes the standard molar volume of the product species.
+    Model<real(real,real)> std_volume_model;
+
     /// The function that computes the standard thermodynamic properties of this reaction.
-    ReactionThermoPropsFn rxnpropsfn;
+    ReactionThermoModel rxn_thermo_model;
 
     /// Construct a default FormationReaction::Impl object
     Impl()
@@ -44,18 +47,56 @@ struct FormationReaction::Impl
     /// Return the standard thermodynamic model function of the product species.
     auto standardThermoPropsFn() const -> StandardThermoPropsFn
     {
-        if(rxnpropsfn == nullptr) return {};
+        error(!rxn_thermo_model.initialized(), "Could not create the standard thermodynamic "
+            "model function of species ", product, " because no reaction thermodynamic "
+            "model has been set. Use one of the methods below to correct this: \n"
+            "    1) FormationReaction::withEquilibriumConstant\n"
+            "    2) FormationReaction::withReactionThermoModel");
 
-        return [=](real T, real P) -> StandardThermoProps
+        error(!std_volume_model.initialized(), "Could not create the standard thermodynamic "
+            "model function of species ", product, " because no standard molar volume "
+            "constant or function has been set. Use one of the methods below to correct this: \n"
+            "    1) FormationReaction::withProductStandardVolume\n"
+            "    2) FormationReaction::withProductStandardVolumeModel");
+
+        const auto num_reactants = reactants.size();
+
+        Vec<StandardThermoProps> reactants_props(num_reactants);
+
+        return [=](real T, real P) mutable -> StandardThermoProps
         {
-            const auto R = universalGasConstant;
-            StandardThermoProps props;
-            ReactionThermoProps rxnprops = rxnpropsfn(T, P);
+            // Precompute the standard thermo properties of each reactant species
+            for(auto i = 0; i < num_reactants; ++i)
+            {
+                const auto& reactant = reactants[i].first;
+                reactants_props[i] = reactant.props(T, P);
+            }
 
+            // Compute the standard molar volume of the product species
+            const auto V0p = std_volume_model(T, P);
+
+            // Compute the standard molar volume change of the reaction
+            auto dV0 = V0p;
+            for(auto i = 0; i < num_reactants; ++i)
+            {
+                const auto& coeff = reactants[i].second;
+                dV0 -= coeff * reactants_props[i].V0; // coeff is positve for left-hand side reactant, negative for right-hand side
+            }
+
+            // Compute the rest of the standard thermodynamic properties of the reaction
+            ReactionThermoProps rxnprops;
+            rxn_thermo_model.apply(rxnprops, {T, P, dV0});
+
+            // Compute finally the standard thermodynamic properties of the product species
+            StandardThermoProps props;
+
+            props.V0 = V0p;
             props.G0 = rxnprops.dG0; // G0 = dG0 + sum(vr * G0r)
             props.H0 = rxnprops.dH0; // H0 = dH0 + sum(vr * H0r)
-            for(const auto [reactant, coeff] : reactants) {
-                const auto reactantprops = reactant.props(T, P);
+            for(auto i = 0; i < num_reactants; ++i)
+            {
+                const auto& coeff = reactants[i].second;
+                const auto& reactantprops = reactants_props[i];
                 props.G0 += coeff * reactantprops.G0;
                 props.H0 += coeff * reactantprops.H0;
             }
@@ -91,19 +132,29 @@ auto FormationReaction::withReactants(Pairs<Species, double> reactants) const ->
 
 auto FormationReaction::withEquilibriumConstant(real lgK0) const -> FormationReaction
 {
-    return with(ReactionThermoModelConstLgK(lgK0));
-}
-
-auto FormationReaction::withReactionThermoPropsFn(const ReactionThermoPropsFn& fn) const -> FormationReaction
-{
     FormationReaction copy = clone();
-    copy.pimpl->rxnpropsfn = fn;
+    copy = copy.withReactionThermoModel(ReactionThermoModelConstLgK(lgK0));
+    copy = copy.withProductStandardVolume(0.0);
     return copy;
 }
 
-auto FormationReaction::with(const ReactionThermoPropsFn& fn) const -> FormationReaction
+auto FormationReaction::withProductStandardVolume(real V0p) const -> FormationReaction
 {
-    return withReactionThermoPropsFn(fn);
+    return withProductStandardVolumeModel(Model<real(real,real)>::Constant(V0p, "V0"));
+}
+
+auto FormationReaction::withProductStandardVolumeModel(Model<real(real,real)> fn) const -> FormationReaction
+{
+    FormationReaction copy = clone();
+    copy.pimpl->std_volume_model = fn;
+    return copy;
+}
+
+auto FormationReaction::withReactionThermoModel(const ReactionThermoModel& fn) const -> FormationReaction
+{
+    FormationReaction copy = clone();
+    copy.pimpl->rxn_thermo_model = fn;
+    return copy;
 }
 
 auto FormationReaction::product() const -> String
@@ -116,9 +167,9 @@ auto FormationReaction::reactants() const -> const Pairs<Species, double>&
     return pimpl->reactants;
 }
 
-auto FormationReaction::reactionThermoPropsFn() const -> const ReactionThermoPropsFn&
+auto FormationReaction::reactionThermoModel() const -> const ReactionThermoModel&
 {
-    return pimpl->rxnpropsfn;
+    return pimpl->rxn_thermo_model;
 }
 
 auto FormationReaction::standardThermoPropsFn() const -> StandardThermoPropsFn

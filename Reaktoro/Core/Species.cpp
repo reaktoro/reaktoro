@@ -149,11 +149,11 @@ auto Species::withAggregateState(AggregateState option) const -> Species
     return copy;
 }
 
-auto Species::withFormationReaction(FormationReaction reaction) const -> Species
+auto Species::withFormationReaction(const FormationReaction& reaction) const -> Species
 {
     Species copy = clone();
+    copy.pimpl->reaction = reaction;
     copy = copy.withStandardThermoPropsFn(reaction.standardThermoPropsFn());
-    copy.pimpl->reaction = std::move(reaction);
     return copy;
 }
 

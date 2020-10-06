@@ -31,6 +31,11 @@ namespace Reaktoro {
 /// @param species The species in the phase.
 using ActivityModel = Fn<ActivityPropsFn(const SpeciesList& species)>;
 
+// TODO: Rename this ActivityModel type by ActivityModelGenerator
+// TODO: Use the name ActivityModel instead of ActivityPropsFn.
+// TODO: Use Model type to define ActivityModel.
+// TODO: Define these chain methods for Model type.
+
 /// Return an activity model resulting from chaining other activity models.
 auto chain(const Vec<ActivityModel>& models) -> ActivityModel;
 
