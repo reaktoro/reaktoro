@@ -18,9 +18,20 @@
 #pragma once
 
 // C++ includes
+#include <functional>
 #include <type_traits>
 
 namespace Reaktoro {
+
+namespace detail {
+
+template<typename T>
+struct isFunction { static constexpr auto value = false; };
+
+template<typename Signature>
+struct isFunction<std::function<Signature>> { static constexpr auto value = true; };
+
+} // namespace detail
 
 template<bool value>
 using EnableIf = std::enable_if_t<value>;
@@ -30,6 +41,9 @@ using Decay = std::decay_t<T>;
 
 template<typename T>
 constexpr auto isArithmetic = std::is_arithmetic_v<T>;
+
+template<typename T>
+constexpr auto isFunction = detail::isFunction<Decay<T>>::value;
 
 //======================================================================
 // Reference type traits
