@@ -19,12 +19,22 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelAnalyticalPHREEQC.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPressureCorrection.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelVantHoff.hpp>
 
 namespace Reaktoro {
 namespace PhreeqcUtils {
+
+auto memoizedPhreeqcWaterProps(real T, real P)
+{
+    static auto memoized_water_props = memoizeLast(PhreeqcUtils::waterProps);
+    return memoized_water_props(T, P);
+}
 
 auto standardVolume(const PhreeqcSpecies* species, real T, real P, const PhreeqcWaterProps& wprops) -> real
 {
@@ -68,7 +78,7 @@ auto standardVolume(const PhreeqcSpecies* species, real T, real P, const Phreeqc
     const auto a4 = species->logk[vma4];
     const auto wr = species->logk[wref];
 
-    if(species->name == "H2O")
+    if(PhreeqcUtils::name(species) == "H2O")
         return 18.016 / rho_0; // in cm3/mol
 
     if(species->logk[vma1])
@@ -87,36 +97,16 @@ auto standardVolume(const PhreeqcSpecies* species, real T, real P, const Phreeqc
 
 auto standardVolume(const PhreeqcPhase* phase, real T, real P) -> real
 {
-    const auto R = universalGasConstant;
-    const auto m3_to_cm3 = 1.0e6;
-
-    if(isGaseousSpecies(phase))
-        return R*T/P * m3_to_cm3; // ideal gas volume in cm3/mol
-
-    return phase->logk[vm0]; // constant solid volume in cm3/mol
-}
-
-auto pressureCorrectionEnergy(const PhreeqcSpecies* species, real P, real V0) -> real
-{
-    const auto P0 = 101325.0; // reference pressure in Pa (1 atm = 101325 Pa)
-    const auto deltaP = P - P0;
-    return (deltaP > 0.0) ? deltaP*V0 : real{0.0}; // correction energy in J/mol
-}
-
-auto pressureCorrectionEnergy(const PhreeqcPhase* phase, real P, real V0) -> real
-{
-    if(isGaseousSpecies(phase))
-        return 0.0; // zero energy correction for gases as done in PHREEQC
-
-    const auto P0 = 101325.0; // reference pressure in Pa (1 atm = 101325 Pa)
-    const auto deltaP = P - P0;
-    return (deltaP > 0.0) ? deltaP*V0 : real{0.0}; // correction energy in J/mol
+    return phase->logk[vm0]; // constant solid volume in cm3/mol or zero volume for gases
 }
 
 /// Create the standard thermodynamic model of the formation reaction.
 template<typename SpeciesType>
-auto reactionThermoPropsFnAux(const SpeciesType* s) -> ReactionThermoPropsFn
+auto reactionThermoModelAux(const SpeciesType* s, double sign) -> ReactionThermoModel
 {
+    if(PhreeqcUtils::reactants(s).empty())
+        return ReactionThermoModelConstLgK(0.0);
+
     const auto logk = s->logk;
 
     const auto use_analytic_expression = [&]() -> bool
@@ -127,43 +117,63 @@ auto reactionThermoPropsFnAux(const SpeciesType* s) -> ReactionThermoPropsFn
         return false;
     };
 
+    ReactionThermoModel basemodel;
+
     if(use_analytic_expression())
     {
-        const auto A1 = logk[T_A1];
-        const auto A2 = logk[T_A2];
-        const auto A3 = logk[T_A3];
-        const auto A4 = logk[T_A4];
-        const auto A5 = logk[T_A5];
-        const auto A6 = logk[T_A6];
-        return ReactionThermoModelAnalyticalPHREEQC(A1, A2, A3, A4, A5, A6);
+        const auto A1 = sign * logk[T_A1];
+        const auto A2 = sign * logk[T_A2];
+        const auto A3 = sign * logk[T_A3];
+        const auto A4 = sign * logk[T_A4];
+        const auto A5 = sign * logk[T_A5];
+        const auto A6 = sign * logk[T_A6];
+        basemodel = ReactionThermoModelAnalyticalPHREEQC(A1, A2, A3, A4, A5, A6);
     }
     else
     {
-        const auto lgK0 = logk[logK_T0];
-        const auto dH0 = logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
+        const auto lgK0 = sign * logk[logK_T0];
+        const auto dH0 = sign * logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
         const auto Tref = 298.15; // reference temperature (in K)
-        return ReactionThermoModelVantHoff(lgK0, dH0, Tref);
+        basemodel = ReactionThermoModelVantHoff(lgK0, dH0, Tref);
     }
+
+    const auto Pref = 101325; // Pref = 1 atm = 101325 Pa
+
+    ReactionThermoModel pcorrectionmodel = ReactionThermoModelPressureCorrection(Pref);
+
+    return chain(basemodel, pcorrectionmodel);
 }
 
-auto reactionThermoPropsFn(const PhreeqcSpecies* species) -> ReactionThermoPropsFn
+auto reactionThermoModel(const PhreeqcSpecies* species) -> ReactionThermoModel
 {
-    return reactionThermoPropsFnAux(species);
+    const auto sign = 1.0;
+    return reactionThermoModelAux(species, sign);
 }
 
-auto reactionThermoPropsFn(const PhreeqcPhase* phase) -> ReactionThermoPropsFn
+auto reactionThermoModel(const PhreeqcPhase* phase) -> ReactionThermoModel
 {
     // Note: PHREEQC is not consisent with the direction of the reactions. For
     // gases and minerals, we need to invert the sign of the delta properties
     // of the reaction.
-    const auto fn = reactionThermoPropsFnAux(phase);
-    return [=](real T, real P)
+    const auto sign = -1.0;
+    return reactionThermoModelAux(phase, sign);
+}
+
+auto standardVolumeModel(const PhreeqcSpecies* species) -> Model<real(real,real)>
+{
+    return Model<real(real,real)>([=](real T, real P) -> real
     {
-        ReactionThermoProps props = fn(T, P);
-        props.dG0 *= -1.0;
-        props.dH0 *= -1.0;
-        return props;
-    };
+        const auto wprops = memoizedPhreeqcWaterProps(T, P); // TODO: Ensure phreeqc_water_props has been properly memoized
+        return standardVolume(species, T, P, wprops) * cubicCentimeterToCubicMeter;
+    });
+}
+
+auto standardVolumeModel(const PhreeqcPhase* phase) -> Model<real(real,real)>
+{
+    return Model<real(real,real)>([=](real T, real P) -> real
+    {
+        return standardVolume(phase, T, P) * cubicCentimeterToCubicMeter;
+    });
 }
 
 } // namespace PhreeqcUtils

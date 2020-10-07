@@ -39,23 +39,17 @@ auto standardVolume(const PhreeqcSpecies* species, real T, real P, const Phreeqc
 /// @param P The pressure value (in Pa)
 auto standardVolume(const PhreeqcPhase* phase, real T, real P) -> real;
 
-/// Return the extra energy in the standard Gibbs energy and enthalpy of a PHREEQC species as a result of pressure variation (in J/mol).
-/// @param species The pointer to the Phreeqc species
-/// @param P The pressure value (in Pa)
-/// @param V0 The standard molar volume of the species (in m3/mol)
-auto pressureCorrectionEnergy(const PhreeqcSpecies* species, real P, real V0) -> real;
-
-/// Return the extra energy in the standard Gibbs energy and enthalpy of a PHREEQC phase as a result of pressure variation (in J/mol).
-/// @param species The pointer to the Phreeqc species
-/// @param P The pressure value (in Pa)
-/// @param V0 The standard molar volume of the species (in m3/mol)
-auto pressureCorrectionEnergy(const PhreeqcPhase* phase, real P, real V0) -> real;
-
 /// Create a standard thermodynamic model for a PHREEQC species.
-auto reactionThermoPropsFn(const PhreeqcSpecies* species) -> ReactionThermoPropsFn;
+auto reactionThermoModel(const PhreeqcSpecies* species) -> ReactionThermoModel;
 
 /// Create a standard thermodynamic model for a PHREEQC phase.
-auto reactionThermoPropsFn(const PhreeqcPhase* phase) -> ReactionThermoPropsFn;
+auto reactionThermoModel(const PhreeqcPhase* phase) -> ReactionThermoModel;
+
+/// Create a standard molar volume model for a PHREEQC species.
+auto standardVolumeModel(const PhreeqcSpecies* species) -> Model<real(real,real)>;
+
+/// Create a standard molar volume model for a PHREEQC phase.
+auto standardVolumeModel(const PhreeqcPhase* phase) -> Model<real(real,real)>;
 
 } // namespace PhreeqcUtils
 } // namespace Reaktoro

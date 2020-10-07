@@ -26,7 +26,7 @@ CMRC_DECLARE(ReaktoroDatabases);
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Memoization.hpp>
-#include <Reaktoro/Extensions/Phreeqc/PhreeqcEngine.hpp>
+#include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcThermo.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelVantHoff.hpp>
@@ -42,9 +42,6 @@ struct PhreeqcDatabaseHelper
     /// Note: Shared pointer ensures that the pointers in PHREEQC to
     /// species/phase objects remain valid throughout.
     SharedPtr<PHREEQC> phreeqc;
-
-    /// The PHREEQC engine object used to ammend standard properties for the species.
-    PhreeqcUtils::PhreeqcEngine engine;
 
     /// The list of elements in the database
     ElementList elements;
@@ -153,7 +150,8 @@ struct PhreeqcDatabaseHelper
         return FormationReaction()
             .withProduct(PhreeqcUtils::name(s))
             .withReactants(createReactants(s))
-            .withReactionThermoPropsFn(PhreeqcUtils::reactionThermoPropsFn(s));
+            .withProductStandardVolumeModel(PhreeqcUtils::standardVolumeModel(s))
+            .withReactionThermoModel(PhreeqcUtils::reactionThermoModel(s));
     }
 
     /// Create the reactant species and their stoichiometries in a formation reaction.
@@ -173,26 +171,6 @@ struct PhreeqcDatabaseHelper
             pairs.emplace_back(species[idx], coeff);
         }
         return pairs;
-    }
-
-    /// Create the standard thermodynamic model of the species.
-    template<typename SpeciesType>
-    auto createStandardThermoPropsFn(const SpeciesType* s, const FormationReaction& reaction) -> StandardThermoPropsFn
-    {
-        auto base_props_fn = reaction.standardThermoPropsFn();
-
-        // Note: base_props_fn is able to compute G0 and H0 of the species
-        // using temperature dependent logK model. It remains to provide V0 to
-        // the species and a pressure correction for G0 and H0, which is done
-        // next, by producing an update standard thermo function for the species.
-
-        return [=](real T, real P) -> StandardThermoProps
-        {
-            StandardThermoProps props = base_props_fn(T, P);
-            engine.addStandardVolume(props, s, T, P);
-            engine.addPressureCorrection(props, s, P);
-            return props;
-        };
     }
 };
 
@@ -247,26 +225,43 @@ PhreeqcDatabase::PhreeqcDatabase(String name)
 
 auto PhreeqcDatabase::withName(std::string name) -> PhreeqcDatabase
 {
+    // PhreeqcDatabase db;
+    // const auto content = detail::getPhreeqcDatabaseContent(name);
+    // const auto species = detail::createSpeciesWithDatabaseContentOrPath(content);
+    // db.addSpecies(species);
+    // return db;
     PhreeqcDatabase db;
     const auto content = detail::getPhreeqcDatabaseContent(name);
-    const auto species = detail::createSpeciesWithDatabaseContentOrPath(content);
-    db.addSpecies(species);
+    detail::PhreeqcDatabaseHelper helper(content);
+    db.addSpecies(helper.species);
+    db.attachData(helper);
     return db;
 }
 
 auto PhreeqcDatabase::fromFile(std::string path) -> PhreeqcDatabase
 {
+    // PhreeqcDatabase db;
+    // const auto species = detail::createSpeciesWithDatabaseContentOrPath(path);
+    // db.addSpecies(species);
+    // return db;
+
+    detail::PhreeqcDatabaseHelper helper(path);
     PhreeqcDatabase db;
-    const auto species = detail::createSpeciesWithDatabaseContentOrPath(path);
-    db.addSpecies(species);
+    db.addSpecies(helper.species);
+    db.attachData(helper);
     return db;
 }
 
 auto PhreeqcDatabase::load(String filename) -> PhreeqcDatabase&
 {
+    // Database::clear();
+    // const auto species = detail::createSpeciesWithDatabaseContentOrPath(filename);
+    // Database::addSpecies(species);
+    // return *this;
+    detail::PhreeqcDatabaseHelper helper(filename);
     Database::clear();
-    const auto species = detail::createSpeciesWithDatabaseContentOrPath(filename);
-    Database::addSpecies(species);
+    Database::addSpecies(helper.species);
+    Database::attachData(helper);
     return *this;
 }
 
