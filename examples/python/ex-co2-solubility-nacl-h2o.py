@@ -27,7 +27,6 @@ def solubility_co2(system, T, P, mNaCl):
     n0CO2g = 10.0
 
     state = ChemicalState(system)
-
     state.setTemperature(T, "celsius")
     state.setPressure(P, "bar")
     state.setSpeciesMass("H2O", 1.0, "kg")
@@ -35,25 +34,40 @@ def solubility_co2(system, T, P, mNaCl):
     state.setSpeciesAmount("Na+", mNaCl, "mol")
     state.setSpeciesAmount("Cl-", mNaCl, "mol")
 
+    options = EquilibriumOptions()
+    options.optima.output.active = False
+    options.optima.max_iterations = 100
+    options.optima.kkt.method = optima.SaddlePointMethod.Nullspace
+    options.optima.linesearch.trigger_when_current_error_is_greater_than_initial_error_by_factor = 1000000000000000000000.0  # zero to disable line search
+    options.optima.linesearch.trigger_when_current_error_is_greater_than_previous_error_by_factor = 1000000000000000000000.0
+    options.epsilon = 1e-40
+
     solver = EquilibriumSolver(system)
+    solver.setOptions(options)
 
-    solver.solve(state)
+    res = solver.solve(state)
 
-    nCO2g = state.speciesAmount("CO2(g)")
+    if not res.optima.succeeded:
+        raise RuntimeError("Equilibrium calculation did not succeed!")
 
-    return n0CO2g - nCO2g
+    aqprops = AqueousProps(state)
+
+    return aqprops.elementMolality("C")[0]
 
 
 
 db = PhreeqcDatabase("phreeqc.dat")
+# db = PhreeqcDatabase("pitzer.dat")
 
 aqueousphase = AqueousPhase(speciate("H O C Na Cl"))
 aqueousphase.setActivityModel(chain(
     ActivityModelHKF(),
     ActivityModelDrummond("CO2"),
+    # ActivityModelPitzerHMW(),
 ))
 
 gaseousphase = GaseousPhase("CO2(g)")
+# gaseousphase.setActivityModel(ActivityModelSpycherPruessEnnis())
 gaseousphase.setActivityModel(ActivityModelPengRobinson())
 
 phases = Phases(db)
@@ -62,12 +76,14 @@ phases.add(gaseousphase)
 
 system = ChemicalSystem(phases)
 
+# T = np.arange(50.0, 90.0, 5.0)
 T = np.arange(25.0, 90.0, 5.0)
-P = 1.0
+# P = 1.0
+P = 100.0
 
-mCO2_1 = [solubility_co2(system, x, P, mNaCl=1.0)[0] for x in T]  # [0] is needed to get the value of autodiff.real
-mCO2_2 = [solubility_co2(system, x, P, mNaCl=2.0)[0] for x in T]  # [0] is needed to get the value of autodiff.real
-mCO2_3 = [solubility_co2(system, x, P, mNaCl=4.0)[0] for x in T]  # [0] is needed to get the value of autodiff.real
+mCO2_1 = [solubility_co2(system, x, P, mNaCl=1.0) for x in T]  # [0] is needed to get the value of autodiff.real
+mCO2_2 = [solubility_co2(system, x, P, mNaCl=2.0) for x in T]  # [0] is needed to get the value of autodiff.real
+mCO2_3 = [solubility_co2(system, x, P, mNaCl=4.0) for x in T]  # [0] is needed to get the value of autodiff.real
 
 fig, ax = plt.subplots()
 
@@ -76,10 +92,11 @@ ax.plot(T, mCO2_2, label=f"2 NaCl molal")
 ax.plot(T, mCO2_3, label=f"4 NaCl molal")
 
 ax.legend(loc="upper right")
+ax.grid(True)
 
-ax.set(xlabel='Temperature [degC]', ylabel='Solubility [mol/kgw]',
-       title='Solubility of CO2 in NaCl brine')
-ax.grid()
+ax.set(xlabel='Temperature [°C]')
+ax.set(ylabel='Solubility [mol/kgw]')
+ax.set(title='Solubility of CO2 in NaCl brine')
 
-fig.savefig("co2-solubility-nacl-h2o.png")
-plt.show()
+# fig.savefig("co2-solubility-nacl-h2o-1bar.png")
+fig.savefig("co2-solubility-nacl-h2o-100bar.png")
