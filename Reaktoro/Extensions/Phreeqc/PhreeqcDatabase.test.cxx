@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
 using namespace Reaktoro;
@@ -184,7 +185,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
 
     Species species;
 
-    species = db.species().get("H2O"                             );
+    species = db.species().get("H2O");
 
     CHECK( species.name() == "H2O"                               );
     CHECK( species.formula().str() == "H2O"                      );
@@ -198,7 +199,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.reaction().product() == "H2O"                 );
     CHECK( species.reaction().reactants().size() == 0            );
 
-    species = db.species().get("e-"                              );
+    species = db.species().get("e-");
 
     CHECK( species.name() == "e-"                                );
     CHECK( species.formula().str() == "e-"                       );
@@ -211,7 +212,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.reaction().product() == "e-"                  );
     CHECK( species.reaction().reactants().size() == 0            );
 
-    species = db.species().get("CO2"                             );
+    species = db.species().get("CO2");
 
     CHECK( species.name() == "CO2"                               );
     CHECK( species.formula().str() == "CO2"                      );
@@ -228,7 +229,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.reaction().stoichiometry("H+") == 2           );
     CHECK( species.reaction().stoichiometry("H2O") == -1         );
 
-    species = db.species().get("CO3-2"                           );
+    species = db.species().get("CO3-2");
 
     CHECK( species.name() == "CO3-2"                             );
     CHECK( species.formula().str() == "CO3-2"                    );
@@ -242,7 +243,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.reaction().product() == "CO3-2"               );
     CHECK( species.reaction().reactants().size() == 0            );
 
-    species = db.species().get("Pb2OH+3"                         );
+    species = db.species().get("Pb2OH+3");
 
     CHECK( species.name() == "Pb2OH+3"                           );
     CHECK( species.formula().str() == "Pb2OH+3"                  );
@@ -260,7 +261,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.reaction().stoichiometry("H2O") == 1          );
     CHECK( species.reaction().stoichiometry("H+") == -1          );
 
-    species = db.species().get("CO2(g)"                          );
+    species = db.species().get("CO2(g)");
 
     CHECK( species.name() == "CO2(g)"                            );
     CHECK( species.formula().str() == "CO2"                      );
@@ -275,7 +276,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.reaction().reactants().size() == 1            );
     CHECK( species.reaction().stoichiometry("CO2") == 1          );
 
-    species = db.species().get("H2S(g)"                          );
+    species = db.species().get("H2S(g)");
 
     CHECK( species.name() == "H2S(g)"                            );
     CHECK( species.formula().str() == "H2S"                      );
@@ -291,7 +292,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.reaction().stoichiometry("H+") == 1           );
     CHECK( species.reaction().stoichiometry("HS-") == 1          );
 
-    species = db.species().get("Calcite"                         );
+    species = db.species().get("Calcite");
 
     CHECK( species.name() == "Calcite"                           );
     CHECK( species.formula().str() == "CaCO3"                    );
@@ -308,7 +309,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.reaction().stoichiometry("Ca+2") == 1         );
     CHECK( species.reaction().stoichiometry("CO3-2") == 1        );
 
-    species = db.species().get("Hydroxyapatite"                  );
+    species = db.species().get("Hydroxyapatite");
 
     CHECK( species.name() == "Hydroxyapatite"                    );
     CHECK( species.formula().str() == "Ca5(PO4)3OH"              );
@@ -406,14 +407,174 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
     }
 }
 
+TEST_CASE("Testing pressure correction in standard thermodynamic properties calculations", "[PhreeqcDatabase]")
+{
+    static const PhreeqcDatabase db("phreeqc.dat"); // if not static, GENERATE causes many instantiations of PhreeqcDatabase
+
+    const auto T = GENERATE( 298.15 );
+    const auto P = GENERATE( 1.0e5 );
+
+    const auto T0 = 298.15;   // in K (equivalent to 25 C)
+    const auto P0 = 101325.0; // in Pa (equivalent to 1 atm)
+
+    const auto T1 = 298.15 + 60.0; // in K (equivalent to 85 C)
+    const auto P1 = 101325.0 * 10; // in Pa (equivalent to 10 atm)
+
+    {
+        const auto species = db.species().get("H2O");
+
+        const auto propsT0P0 = species.props(T0, P0);
+        const auto propsT1P0 = species.props(T1, P0);
+        const auto propsT0P1 = species.props(T0, P1);
+        const auto propsT1P1 = species.props(T1, P1);
+
+        INFO("species: " << species.name());
+
+        CHECK(propsT0P0.G0  == Approx(0.0)         );
+        CHECK(propsT0P0.H0  == Approx(0.0)         );
+        CHECK(propsT0P0.V0  == Approx(1.80694e-05) );
+        CHECK(propsT0P0.Cp0 == Approx(0.0)         );
+        CHECK(propsT0P0.Cv0 == Approx(0.0)         );
+
+        CHECK(propsT1P0.G0  == Approx(0.0)         );
+        CHECK(propsT1P0.H0  == Approx(0.0)         );
+        CHECK(propsT1P0.V0  == Approx(1.85999e-05) );
+        CHECK(propsT1P0.Cp0 == Approx(0.0)         );
+        CHECK(propsT1P0.Cv0 == Approx(0.0)         );
+
+        CHECK(propsT0P1.G0  == Approx(0.0)         );
+        CHECK(propsT0P1.H0  == Approx(0.0)         );
+        CHECK(propsT0P1.V0  == Approx(1.80621e-05) );
+        CHECK(propsT0P1.Cp0 == Approx(0.0)         );
+        CHECK(propsT0P1.Cv0 == Approx(0.0)         );
+
+        CHECK(propsT1P1.G0  == Approx(0.0)         );
+        CHECK(propsT1P1.H0  == Approx(0.0)         );
+        CHECK(propsT1P1.V0  == Approx(1.85919e-05) );
+        CHECK(propsT1P1.Cp0 == Approx(0.0)         );
+        CHECK(propsT1P1.Cv0 == Approx(0.0)         );
+    }
+
+    {
+        const auto species = db.species().get("H+");
+
+        const auto propsT0P0 = species.props(T0, P0);
+        const auto propsT1P0 = species.props(T1, P0);
+        const auto propsT0P1 = species.props(T0, P1);
+        const auto propsT1P1 = species.props(T1, P1);
+
+        INFO("species: " << species.name());
+
+        CHECK(propsT0P0.G0  == Approx(0.0) );
+        CHECK(propsT0P0.H0  == Approx(0.0) );
+        CHECK(propsT0P0.V0  == Approx(0.0) );
+        CHECK(propsT0P0.Cp0 == Approx(0.0) );
+        CHECK(propsT0P0.Cv0 == Approx(0.0) );
+
+        CHECK(propsT1P0.G0  == Approx(0.0) );
+        CHECK(propsT1P0.H0  == Approx(0.0) );
+        CHECK(propsT1P0.V0  == Approx(0.0) );
+        CHECK(propsT1P0.Cp0 == Approx(0.0) );
+        CHECK(propsT1P0.Cv0 == Approx(0.0) );
+
+        CHECK(propsT0P1.G0  == Approx(0.0) );
+        CHECK(propsT0P1.H0  == Approx(0.0) );
+        CHECK(propsT0P1.V0  == Approx(0.0) );
+        CHECK(propsT0P1.Cp0 == Approx(0.0) );
+        CHECK(propsT0P1.Cv0 == Approx(0.0) );
+
+        CHECK(propsT1P1.G0  == Approx(0.0) );
+        CHECK(propsT1P1.H0  == Approx(0.0) );
+        CHECK(propsT1P1.V0  == Approx(0.0) );
+        CHECK(propsT1P1.Cp0 == Approx(0.0) );
+        CHECK(propsT1P1.Cv0 == Approx(0.0) );
+    }
+
+    {
+        const auto species = db.species().get("CO2");
+
+        const auto propsT0P0 = species.props(T0, P0);
+        const auto propsT1P0 = species.props(T1, P0);
+        const auto propsT0P1 = species.props(T0, P1);
+        const auto propsT1P1 = species.props(T1, P1);
+
+        INFO("species: " << species.name());
+
+        CHECK(propsT0P0.G0  == Approx(-95213.7)    );
+        CHECK(propsT0P0.H0  == Approx(-24010.3)    );
+        CHECK(propsT0P0.V0  == Approx(3.44329e-05) );
+        CHECK(propsT0P0.Cp0 == Approx(0.0)         );
+        CHECK(propsT0P0.Cv0 == Approx(0.0)         );
+
+        CHECK(propsT1P0.G0  == Approx(-113039)     );
+        CHECK(propsT1P0.H0  == Approx(12124.6)     );
+        CHECK(propsT1P0.V0  == Approx(3.77425e-05) );
+        CHECK(propsT1P0.Cp0 == Approx(0.0)         );
+        CHECK(propsT1P0.Cv0 == Approx(0.0)         );
+
+        CHECK(propsT0P1.G0  == Approx(-95161)    );
+        CHECK(propsT0P1.H0  == Approx(-23957.6)    );
+        CHECK(propsT0P1.V0  == Approx(3.44286e-05) );
+        CHECK(propsT0P1.Cp0 == Approx(0.0)         );
+        CHECK(propsT0P1.Cv0 == Approx(0.0)         );
+
+        CHECK(propsT1P1.G0  == Approx(-112978)     );
+        CHECK(propsT1P1.H0  == Approx(12185.4)     );
+        CHECK(propsT1P1.V0  == Approx(3.77222e-05) );
+        CHECK(propsT1P1.Cp0 == Approx(0.0)         );
+        CHECK(propsT1P1.Cv0 == Approx(0.0)         );
+    }
+
+    {
+        const auto species = db.species().get("Calcite");
+
+        const auto propsT0P0 = species.props(T0, P0);
+        const auto propsT1P0 = species.props(T1, P0);
+        const auto propsT0P1 = species.props(T0, P1);
+        const auto propsT1P1 = species.props(T1, P1);
+
+        INFO("species: " << species.name());
+
+        CHECK(propsT0P0.G0  == Approx(-48402.9) );
+        CHECK(propsT0P0.H0  == Approx(9608.99)  );
+        CHECK(propsT0P0.V0  == Approx(3.69e-05) );
+        CHECK(propsT0P0.Cp0 == Approx(0.0)      );
+        CHECK(propsT0P0.Cv0 == Approx(0.0)      );
+
+        CHECK(propsT1P0.G0  == Approx(-62078.3) );
+        CHECK(propsT1P0.H0  == Approx(32690.1)  );
+        CHECK(propsT1P0.V0  == Approx(3.69e-05) );
+        CHECK(propsT1P0.Cp0 == Approx(0.0)      );
+        CHECK(propsT1P0.Cv0 == Approx(0.0)      );
+
+        CHECK(propsT0P1.G0  == Approx(-48347.9) );
+        CHECK(propsT0P1.H0  == Approx(9664.07)  );
+        CHECK(propsT0P1.V0  == Approx(3.69e-05) );
+        CHECK(propsT0P1.Cp0 == Approx(0.0)      );
+        CHECK(propsT0P1.Cv0 == Approx(0.0)      );
+
+        CHECK(propsT1P1.G0  == Approx(-62017.7) );
+        CHECK(propsT1P1.H0  == Approx(32750.7)  );
+        CHECK(propsT1P1.V0  == Approx(3.69e-05) );
+        CHECK(propsT1P1.Cp0 == Approx(0.0)      );
+        CHECK(propsT1P1.Cv0 == Approx(0.0)      );
+    }
+}
+
 //=================================================================================================
 // AUXILIARY FUNCTIONS: DEFINITION
 //=================================================================================================
 
+auto evalReactionThermoProps(const Species& species, real T, real P)
+{
+    const auto dV0 = 0.0;
+    return species.reaction().reactionThermoModel()({T, P, dV0});
+}
+
 auto lgK(const PhreeqcDatabase& db, real T, real P, String name) -> real
 {
     const auto species = db.species().get(name);
-    const auto dG0 = species.reaction().reactionThermoPropsFn()(T, P).dG0;
+    const auto dG0 = evalReactionThermoProps(species, T, P).dG0;
     const auto R = universalGasConstant;
     const auto lnK = -dG0/(R*T);
     return lnK / ln10;
@@ -422,7 +583,7 @@ auto lgK(const PhreeqcDatabase& db, real T, real P, String name) -> real
 auto dH0(const PhreeqcDatabase& db, real T, real P, String name) -> real
 {
     const auto species = db.species().get(name);
-    const auto dH0 = species.reaction().reactionThermoPropsFn()(T, P).dH0;
+    const auto dH0 = evalReactionThermoProps(species, T, P).dH0;
     return dH0;
 }
 
