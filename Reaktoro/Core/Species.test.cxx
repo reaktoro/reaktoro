@@ -103,13 +103,13 @@ TEST_CASE("Testing Species class", "[Species]")
             FormationReaction()
                 .withReactants({{R1, 1.0}, {R2, 2.0}})
                 .withProductStandardVolume(0.1)
-                .withReactionThermoModel(ReactionThermoModel(
+                .withReactionThermoModel(
                     [](ReactionThermoProps& props, ReactionThermoArgs args) {
                         ReactionThermoArgsDecl(args);
                         props.dG0 = T + P;
                         props.dH0 = T - P;
                         return props;
-                    }))
+                    })
             );
 
         REQUIRE( species.props(T, P).G0 == species.reaction().standardThermoPropsFn()(T, P).G0 );
