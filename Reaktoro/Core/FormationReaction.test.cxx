@@ -72,13 +72,13 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
                 .withProduct("D")
                 .withReactants({{B, 1}, {C, 3}})
                 .withProductStandardVolume(V0_D)
-                .withReactionThermoModel(ReactionThermoModel(
+                .withReactionThermoModel(
                     [=](ReactionThermoProps& res, ReactionThermoArgs args) {
                         ReactionThermoArgsDecl(args);
                         res.dG0 = -R*T*ln10*lgK_D;
                         res.dH0 = dH0_D;
                         return res;
-                    }))
+                    })
             );
 
     const auto E = Species()
@@ -88,13 +88,13 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
                 .withProduct("E")
                 .withReactants({{C, 1}, {D, -2}})
                 .withProductStandardVolume(V0_E)
-                .withReactionThermoModel(ReactionThermoModel(
+                .withReactionThermoModel(
                     [=](ReactionThermoProps& res, ReactionThermoArgs args) {
                         ReactionThermoArgsDecl(args);
                         res.dG0 = -R*T*ln10*lgK_E;
                         res.dH0 = dH0_E;
                         return res;
-                    }))
+                    })
             );
 
     REQUIRE(  A.reaction().product() == ""         );

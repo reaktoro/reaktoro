@@ -19,8 +19,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
-#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Params.hpp>
 
 namespace Reaktoro {
@@ -76,8 +76,22 @@ public:
 
     /// Construct a Model function object with given direct model evaluator that returns the calculated result.
     /// @param fn The function that evaluates the properties and return them.
-    Model(const ModelCalculator<Result, Args...>& fn)
-    : Model([=](ResultRef res, const Args&... args) { res = fn(args...); })
+    Model(const ModelCalculator<Result, Args...>& calcfn)
+    : Model([=](ResultRef res, const Args&... args) { res = calcfn(args...); })
+    {}
+
+    /// Construct a Model function object with either a model evaluator or a model calculator function.
+
+    /// This constructor exists so that functions that are not wrapped
+    /// into an `std::function` object can be used to construct a Model
+    /// function object. Without this constructor, an explicit wrap must
+    /// be performed by the used. For example,
+    /// `Model(ModelCalculator<real(real,real)>([](real T, real P) { return A + B*T + C*T*P; }))`
+    /// can be replaced with `Model([](real T, real P) { return A + B*T + C*T*P; })`.
+    /// @param f A model evaluator or a model calculator function.
+    template<typename Fun, EnableIf<!isFunction<Fun>>...>
+    Model(const Fun& f)
+    : Model(std::function(f))
     {}
 
     /// Return a new Model function object with updated parameters.
