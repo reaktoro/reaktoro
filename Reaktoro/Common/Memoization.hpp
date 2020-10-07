@@ -18,14 +18,16 @@
 #pragma once
 
 // C++ includes
-#include <functional>
 #include <map>
 #include <memory>
 #include <tuple>
 
+// Reaktoro includes
+#include <Reaktoro/Common/TraitsUtils.hpp>
+
 namespace Reaktoro {
 
-template <typename Ret, typename... Args>
+template<typename Ret, typename... Args>
 auto memoize(std::function<Ret(Args...)> f) -> std::function<Ret(Args...)>
 {
     auto cache = std::make_shared<std::map<std::tuple<Args...>, Ret>>();
@@ -36,6 +38,12 @@ auto memoize(std::function<Ret(Args...)> f) -> std::function<Ret(Args...)>
             (*cache)[t] = f(args...);
         return (*cache)[t];
     };
+}
+
+template<typename Fun, EnableIf<!isFunction<Fun>>...>
+auto memoize(Fun f)
+{
+    return memoize(std::function(f));
 }
 
 template<typename Ret, typename... Args>
@@ -52,6 +60,12 @@ auto memoizeLast(std::function<Ret(Args...)> f) -> std::function<Ret(Args...)>
         firsttime = false;
         return result = f(args...);
     };
+}
+
+template<typename Fun, EnableIf<!isFunction<Fun>>...>
+auto memoizeLast(Fun f)
+{
+    return memoizeLast(std::function(f));
 }
 
 template<typename Ret, typename... Args>
