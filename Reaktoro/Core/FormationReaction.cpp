@@ -167,6 +167,11 @@ auto FormationReaction::reactants() const -> const Pairs<Species, double>&
     return pimpl->reactants;
 }
 
+auto FormationReaction::productStandardVolumeModel() const -> const Model<real(real,real)>&
+{
+    return pimpl->std_volume_model;
+}
+
 auto FormationReaction::reactionThermoModel() const -> const ReactionThermoModel&
 {
     return pimpl->rxn_thermo_model;
