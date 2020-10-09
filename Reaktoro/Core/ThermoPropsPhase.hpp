@@ -169,8 +169,8 @@ public:
         StandardThermoProps aux;
         for(auto i = 0; i < size; ++i)
         {
-            auto standard_thermo_props_fn = _phase.species(i).standardThermoPropsFn();
-            aux = standard_thermo_props_fn ? standard_thermo_props_fn(T, P) : StandardThermoProps{};
+            const auto& standard_thermo_model = _phase.species(i).standardThermoModel();
+            aux = standard_thermo_model ? standard_thermo_model(T, P) : StandardThermoProps{};
             G0[i]  = aux.G0;
             H0[i]  = aux.H0;
             V0[i]  = aux.V0;

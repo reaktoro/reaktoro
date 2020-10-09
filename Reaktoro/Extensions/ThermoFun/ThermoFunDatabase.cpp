@@ -30,7 +30,7 @@ namespace Reaktoro {
 namespace {
 
 /// Return the standard thermodynamic property function of a species with given name.
-auto createStandardThermoPropsFn(const ThermoFunEngine& engine, const String& species) -> StandardThermoPropsFn
+auto createStandardThermoModel(const ThermoFunEngine& engine, const String& species) -> StandardThermoModel
 {
     return [=](real T, real P) -> StandardThermoProps
     {
@@ -72,7 +72,7 @@ auto createSpecies(const ThermoFunEngine& engine, const ThermoFun::Substance& su
     species = species.withElements(createElements(engine, substance));
     species = species.withCharge(substance.charge());
     // species = species.withAggregateState(aggregateState(substance));
-    species = species.withStandardThermoPropsFn(createStandardThermoPropsFn(engine, substance.symbol()));
+    species = species.withStandardThermoModel(createStandardThermoModel(engine, substance.symbol()));
     species = species.withAttachedData(substance);
     return species;
 }

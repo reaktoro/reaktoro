@@ -45,25 +45,25 @@ namespace {
 SupcrtEngine engine; // TODO: This should be a data member in SupcrtDatabase.
 
 /// Return the standard thermodynamic property function of solvent water using the HKF model.
-auto createStandardThermoPropsFn(const SupcrtParamsAqueousSolventHKF& params) -> StandardThermoPropsFn
+auto createStandardThermoModel(const SupcrtParamsAqueousSolventHKF& params) -> StandardThermoModel
 {
     return [=](real T, real P) { return engine.props(T, P, params); };
 }
 
 /// Return the standard thermodynamic property function of an aqueous solute using the HKF model.
-auto createStandardThermoPropsFn(const SupcrtParamsAqueousSoluteHKF& params) -> StandardThermoPropsFn
+auto createStandardThermoModel(const SupcrtParamsAqueousSoluteHKF& params) -> StandardThermoModel
 {
     return [=](real T, real P) { return engine.props(T, P, params); };
 }
 
 /// Return the standard thermodynamic property function of a fluid species using the Maier-Kelly model.
-auto createStandardThermoPropsFn(const SupcrtParamsMaierKelly& params) -> StandardThermoPropsFn
+auto createStandardThermoModel(const SupcrtParamsMaierKelly& params) -> StandardThermoModel
 {
     return [=](real T, real P) { return engine.props(T, P, params); };
 }
 
 /// Return the standard thermodynamic property function of a mineral species using the Maier-Kelly-HKF model.
-auto createStandardThermoPropsFn(const SupcrtParamsMaierKellyHKF& params) -> StandardThermoPropsFn
+auto createStandardThermoModel(const SupcrtParamsMaierKellyHKF& params) -> StandardThermoModel
 {
     return [=](real T, real P) { return engine.props(T, P, params); };
 }
@@ -234,15 +234,15 @@ auto parseAggregateState(const xml_node& node)
 }
 
 /// Return the standard thermo props function of the species node based on SUPCRT.
-auto parseStandardThermoPropsFn(const xml_node& node) -> StandardThermoPropsFn
+auto parseStandardThermoModel(const xml_node& node) -> StandardThermoModel
 {
     const auto formula = as_text(node, "Formula");
     const auto type = as_lowercase_text(node, "Type");
-    if(type == "aqueous" && formula == "H2O") return createStandardThermoPropsFn(parseParamsAqueousSolventHKF(node));
-    if(type == "aqueous") return createStandardThermoPropsFn(parseParamsAqueousSoluteHKF(node));
-    if(type == "gaseous") return createStandardThermoPropsFn(parseParamsMaierKelly(node));
-    if(type == "mineral") return createStandardThermoPropsFn(parseParamsMaierKellyHKF(node));
-    return createStandardThermoPropsFn(parseParamsMaierKelly(node)); // assume Maier-Kelly data by default
+    if(type == "aqueous" && formula == "H2O") return createStandardThermoModel(parseParamsAqueousSolventHKF(node));
+    if(type == "aqueous") return createStandardThermoModel(parseParamsAqueousSoluteHKF(node));
+    if(type == "gaseous") return createStandardThermoModel(parseParamsMaierKelly(node));
+    if(type == "mineral") return createStandardThermoModel(parseParamsMaierKellyHKF(node));
+    return createStandardThermoModel(parseParamsMaierKelly(node)); // assume Maier-Kelly data by default
 }
 
 auto parseSpecies(const xml_node& node) -> Species
@@ -253,7 +253,7 @@ auto parseSpecies(const xml_node& node) -> Species
     species = species.withElements(parseElements(node));
     species = species.withCharge(as_double(node, "Charge", 0.0));
     species = species.withAggregateState(parseAggregateState(node));
-    species = species.withStandardThermoPropsFn(parseStandardThermoPropsFn(node));
+    species = species.withStandardThermoModel(parseStandardThermoModel(node));
     species = species.withAttachedData(parseParams(node));
     return species;
 }

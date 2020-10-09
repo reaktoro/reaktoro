@@ -22,9 +22,9 @@
 #include <Reaktoro/Core/ThermoPropsPhase.hpp>
 using namespace Reaktoro;
 
-inline auto createStandardThermoPropsFn(double param)
+inline auto createStandardThermoModel(double param)
 {
-    StandardThermoPropsFn fn = [=](real T, real P)
+    StandardThermoModel model = [=](real T, real P)
     {
         StandardThermoProps props;
         props.G0  = 0.1 * param * T * P;
@@ -34,7 +34,7 @@ inline auto createStandardThermoPropsFn(double param)
         props.Cv0 = 0.5 * param * T * P;
         return props;
     };
-    return fn;
+    return model;
 }
 
 TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
@@ -46,10 +46,10 @@ TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
     phase = phase.withActivityPropsFn(activity_props_fn);
     phase = phase.withStateOfMatter(StateOfMatter::Gas);
     phase = phase.withSpecies({
-        Species("H2O(g)").withStandardThermoPropsFn(createStandardThermoPropsFn(10.0)), // param = 10.0
-        Species("CO2(g)").withStandardThermoPropsFn(createStandardThermoPropsFn(20.0)), // param = 20.0
-        Species("CH4(g)").withStandardThermoPropsFn(createStandardThermoPropsFn(30.0)), // param = 30.0
-        Species("H2S(g)").withStandardThermoPropsFn(createStandardThermoPropsFn(40.0))  // param = 40.0
+        Species("H2O(g)").withStandardThermoModel(createStandardThermoModel(10.0)), // param = 10.0
+        Species("CO2(g)").withStandardThermoModel(createStandardThermoModel(20.0)), // param = 20.0
+        Species("CH4(g)").withStandardThermoModel(createStandardThermoModel(30.0)), // param = 30.0
+        Species("H2S(g)").withStandardThermoModel(createStandardThermoModel(40.0))  // param = 40.0
     });
 
     ThermoPropsPhase props(phase);

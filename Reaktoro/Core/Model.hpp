@@ -63,6 +63,13 @@ public:
     {
         assert(_creatorfn);
         assert(_evalfn);
+        const auto evalfn = _evalfn; // create copy of  to be used in _calcfn
+        _calcfn = [evalfn](const Args&... args) -> Result
+        {
+            Result res;
+            evalfn(res, args...);
+            return res;
+        };
     }
 
     /// Construct a Model function object with given model evaluator.
@@ -71,7 +78,7 @@ public:
     /// the underlying model creator function will always return the same evaluator.
     /// @param evalfn The function that evaluates the properties without dependence on Params.
     Model(const ModelEvaluator<ResultRef, Args...>& evalfn)
-    : _creatorfn([=](const Params&) { return evalfn; }), _params(), _evalfn(evalfn)
+    : Model([=](const Params&) { return evalfn; }, Params())
     {}
 
     /// Construct a Model function object with given direct model evaluator that returns the calculated result.
@@ -100,6 +107,14 @@ public:
         return Model(_creatorfn, params);
     }
 
+    /// Return a new Model function object with memoization for the model calculator.
+    auto withMemoization() const -> Model
+    {
+        Model copy = *this;
+        copy._calcfn = memoizeLast(copy._calcfn);
+        return copy;
+    }
+
     /// Evaluate the model with given arguments.
     auto apply(ResultRef res, const Args&... args) const -> void
     {
@@ -110,10 +125,8 @@ public:
     /// Evaluate the model with given arguments and return the result of the evaluation.
     auto operator()(const Args&... args) const -> Result
     {
-        assert(_evalfn);
-        Result res;
-        _evalfn(res, args...);
-        return res;
+        assert(_calcfn);
+        return _calcfn(args...);
     }
 
     /// Return true if this Model function object has been initialized.
@@ -138,6 +151,12 @@ public:
     auto evaluatorFn() const -> const ModelEvaluator<ResultRef, Args...>&
     {
         return _evalfn;
+    }
+
+    /// Return the model calculator function of this Model function object.
+    auto calculatorFn() const -> const ModelCalculator<Result, Args...>&
+    {
+        return _calcfn;
     }
 
     /// Return the model parameters of this Model function object.
@@ -176,6 +195,9 @@ private:
 
     /// The underlying model function that performs property evaluations.
     ModelEvaluator<ResultRef, Args...> _evalfn;
+
+    /// The underlying model function that performs property calculations.
+    ModelCalculator<Result, Args...> _calcfn;
 };
 
 /// Return a reaction thermodynamic model resulting from chaining other models.

@@ -41,7 +41,7 @@ void exportFormationReaction(py::module& m)
         .def("reactants", &FormationReaction::reactants)
         .def("productStandardVolumeModel", &FormationReaction::productStandardVolumeModel)
         .def("reactionThermoModel", &FormationReaction::reactionThermoModel)
-        .def("standardThermoPropsFn", &FormationReaction::standardThermoPropsFn)
+        .def("standardThermoModel", &FormationReaction::standardThermoModel)
         .def("stoichiometry", &FormationReaction::stoichiometry)
         ;
 }

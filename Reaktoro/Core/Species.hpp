@@ -64,7 +64,7 @@ public:
     /// This method will also set the standard thermodynamic model of the species
     /// using the standard thermodynamic model assigned to the formation reaction.
     /// Use this method thus to assign a standard thermodynamic model to the
-    /// Species object instead of using method @ref withStandardThermoPropsFn.
+    /// Species object instead of using method @ref withStandardThermoModel.
     auto withFormationReaction(const FormationReaction& reaction) const -> Species;
 
     /// Return a duplicate of this Species object with new standard thermodynamic model.
@@ -83,7 +83,7 @@ public:
     /// temperature and pressure. Alternatively, methods @ref
     /// withStandardGibbsEnergy and @ref withFormationReaction can be used to
     /// indirectly assign a standard thermodynamic model to this species.
-    auto withStandardThermoPropsFn(const StandardThermoPropsFn& fn) const -> Species;
+    auto withStandardThermoModel(const StandardThermoModel& model) const -> Species;
 
     /// Return a duplicate of this Species object with new tags attribute.
     auto withTags(const Strings& tags) const -> Species;
@@ -113,7 +113,7 @@ public:
     auto reaction() const -> const FormationReaction&;
 
     /// Return the function that computes the standard thermodynamic properties of the species.
-    auto standardThermoPropsFn() const -> const StandardThermoPropsFn&;
+    auto standardThermoModel() const -> const StandardThermoModel&;
 
     /// Return the tags of the species (e.g., `organic`, `mineral`).
     auto tags() const -> const Strings&;

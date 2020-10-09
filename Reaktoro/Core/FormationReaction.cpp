@@ -45,7 +45,7 @@ struct FormationReaction::Impl
     {}
 
     /// Return the standard thermodynamic model function of the product species.
-    auto standardThermoPropsFn() const -> StandardThermoPropsFn
+    auto standardThermoModel() const -> StandardThermoModel
     {
         error(!rxn_thermo_model.initialized(), "Could not create the standard thermodynamic "
             "model function of species ", product, " because no reaction thermodynamic "
@@ -177,9 +177,9 @@ auto FormationReaction::reactionThermoModel() const -> const ReactionThermoModel
     return pimpl->rxn_thermo_model;
 }
 
-auto FormationReaction::standardThermoPropsFn() const -> StandardThermoPropsFn
+auto FormationReaction::standardThermoModel() const -> StandardThermoModel
 {
-    return pimpl->standardThermoPropsFn();
+    return pimpl->standardThermoModel();
 }
 
 auto FormationReaction::stoichiometry(String reactant) const -> double

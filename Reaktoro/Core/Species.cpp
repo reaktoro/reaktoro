@@ -34,6 +34,20 @@ auto removeSuffix(const String& formula) -> String
     return splitSpeciesNameSuffix(formula).first; // remove suffix
 }
 
+/// Return a default standard thermodynamic model for a species that always indicate failure to initialize the model.
+auto defaultStandardThermoModel() -> StandardThermoModel
+{
+    return [](real T, real P) -> StandardThermoProps
+    {
+        error(true, "Cannot compute the standard thermodynamic properties of this Species object. \n"
+            "To fix this error, use one of the methods below in this Species object: \n"
+            "    1) Species::withStandardThermoModel\n"
+            "    2) Species::withStandardGibbsEnergy\n"
+            "    3) Species::withFormationReaction");
+        return {};
+    };
+};
+
 } // namespace detail
 
 struct Species::Impl
@@ -60,7 +74,7 @@ struct Species::Impl
     AggregateState aggregatestate;
 
     /// The standard thermodynamic model function of the species (if any).
-    StandardThermoPropsFn propsfn;
+    StandardThermoModel propsfn = detail::defaultStandardThermoModel();
 
     /// The tags of the species such as `organic`, `mineral`.
     Strings tags;
@@ -80,16 +94,7 @@ struct Species::Impl
       elements(formula.elements()),
       charge(formula.charge()),
       aggregatestate(identifyAggregateState(formula))
-    {
-        propsfn = [=](real, real) -> StandardThermoProps
-        {
-            error(true, "Cannot compute the standard thermodynamic properties of Species object with name ", name, ". \n"
-                "To fix this error, use one of the methods below in this Species object: \n"
-                "    1) Species::withStandardThermoPropsFn\n"
-                "    2) Species::withStandardGibbsEnergy\n"
-                "    3) Species::withFormationReaction");
-        };
-    }
+    {}
 };
 
 Species::Species()
@@ -153,13 +158,13 @@ auto Species::withFormationReaction(const FormationReaction& reaction) const -> 
 {
     Species copy = clone();
     copy.pimpl->reaction = reaction;
-    copy = copy.withStandardThermoPropsFn(reaction.standardThermoPropsFn());
+    copy = copy.withStandardThermoModel(reaction.standardThermoModel());
     return copy;
 }
 
 auto Species::withStandardGibbsEnergy(real G0) const -> Species
 {
-    return withStandardThermoPropsFn([=](real T, real P)
+    return withStandardThermoModel([=](real T, real P)
     {
         StandardThermoProps props = {};
         props.G0 = G0;
@@ -167,10 +172,10 @@ auto Species::withStandardGibbsEnergy(real G0) const -> Species
     });
 }
 
-auto Species::withStandardThermoPropsFn(const StandardThermoPropsFn& fn) const -> Species
+auto Species::withStandardThermoModel(const StandardThermoModel& model) const -> Species
 {
     Species copy = clone();
-    copy.pimpl->propsfn = memoizeLast(fn);
+    copy.pimpl->propsfn = model.withMemoization();
     return copy;
 }
 
@@ -229,7 +234,7 @@ auto Species::reaction() const -> const FormationReaction&
     return pimpl->reaction;
 }
 
-auto Species::standardThermoPropsFn() const -> const StandardThermoPropsFn&
+auto Species::standardThermoModel() const -> const StandardThermoModel&
 {
     return pimpl->propsfn;
 }
