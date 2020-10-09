@@ -18,10 +18,8 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Model.hpp>
-#include <Reaktoro/Core/Params.hpp>
 
 namespace Reaktoro {
 

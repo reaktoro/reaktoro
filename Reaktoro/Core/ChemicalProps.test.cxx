@@ -30,7 +30,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 {
     const auto R = universalGasConstant;
 
-    StandardThermoPropsFn standard_thermo_props_fn_gas = [](real T, real P)
+    StandardThermoModel standard_thermo_model_gas = [](real T, real P)
     {
         StandardThermoProps props;
         props.G0  = 0.1 * (T*P)*(T*P);
@@ -41,7 +41,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         return props;
     };
 
-    StandardThermoPropsFn standard_thermo_props_fn_solid = [](real T, real P)
+    StandardThermoModel standard_thermo_model_solid = [](real T, real P)
     {
         StandardThermoProps props;
         props.G0  = 1.1 * (T*P)*(T*P);
@@ -82,9 +82,9 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
     Database db;
 
-    db.addSpecies( Species("H2O(g)").withStandardThermoPropsFn(standard_thermo_props_fn_gas) );
-    db.addSpecies( Species("CO2(g)").withStandardThermoPropsFn(standard_thermo_props_fn_gas) );
-    db.addSpecies( Species("CaCO3(s)").withStandardThermoPropsFn(standard_thermo_props_fn_solid) );
+    db.addSpecies( Species("H2O(g)").withStandardThermoModel(standard_thermo_model_gas) );
+    db.addSpecies( Species("CO2(g)").withStandardThermoModel(standard_thermo_model_gas) );
+    db.addSpecies( Species("CaCO3(s)").withStandardThermoModel(standard_thermo_model_solid) );
 
     Vec<Phase> phases
     {

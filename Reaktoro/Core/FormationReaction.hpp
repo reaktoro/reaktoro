@@ -109,7 +109,7 @@ public:
     /// @warning This method will throw a runtime error if methods
     /// @ref withProductStandardVolumeModel and @ref withReactionThermoModel
     /// are not
-    auto standardThermoPropsFn() const -> StandardThermoPropsFn;
+    auto standardThermoModel() const -> StandardThermoModel;
 
     /// Return the stoichiometric coefficient of a reactant with given name in the formation reaction.
     auto stoichiometry(String reactant) const -> double;

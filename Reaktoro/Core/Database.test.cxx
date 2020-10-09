@@ -24,8 +24,8 @@ using namespace Reaktoro;
 
 namespace test {
 
-/// Return mock standard thermodynamic properties for an aqueous species.
-auto standardThermoPropsAqueous(real T, real P) -> StandardThermoProps
+/// Return mock standard thermodynamic model for an aqueous species.
+auto standardThermoModelAqueous(real T, real P) -> StandardThermoProps
 {
     StandardThermoProps props;
     props.G0  = 2.1 * (T*P)*(T*P);
@@ -36,8 +36,8 @@ auto standardThermoPropsAqueous(real T, real P) -> StandardThermoProps
     return props;
 };
 
-/// Return mock standard thermodynamic properties for a gaseous species.
-auto standardThermoPropsGaseous(real T, real P) -> StandardThermoProps
+/// Return mock standard thermodynamic model for a gaseous species.
+auto standardThermoModelGaseous(real T, real P) -> StandardThermoProps
 {
     StandardThermoProps props;
     props.G0  = 0.1 * (T*P)*(T*P);
@@ -48,8 +48,8 @@ auto standardThermoPropsGaseous(real T, real P) -> StandardThermoProps
     return props;
 };
 
-/// Return mock standard thermodynamic properties for a solid species.
-auto standardThermoPropsSolid(real T, real P) -> StandardThermoProps
+/// Return mock standard thermodynamic model for a solid species.
+auto standardThermoModelSolid(real T, real P) -> StandardThermoProps
 {
     StandardThermoProps props;
     props.G0  = 1.1 * (T*P)*(T*P);
@@ -65,7 +65,7 @@ auto createAqueousSpecies(String name)
 {
     return Species(name)
         .withAggregateState(AggregateState::Aqueous)
-        .withStandardThermoPropsFn(standardThermoPropsAqueous);
+        .withStandardThermoModel(standardThermoModelAqueous);
 }
 
 /// Return a mock Species object of gas type for test reasons.
@@ -73,7 +73,7 @@ auto createGaseousSpecies(String name)
 {
     return Species(name)
         .withAggregateState(AggregateState::Gas)
-        .withStandardThermoPropsFn(standardThermoPropsGaseous);
+        .withStandardThermoModel(standardThermoModelGaseous);
 }
 
 /// Return a mock Species object of solid type for test reasons.
@@ -81,7 +81,7 @@ auto createSolidSpecies(String name)
 {
     return Species(name)
         .withAggregateState(AggregateState::Solid)
-        .withStandardThermoPropsFn(standardThermoPropsSolid);
+        .withStandardThermoModel(standardThermoModelSolid);
 }
 
 /// Return a mock ChemicalSystem object for test reasons.

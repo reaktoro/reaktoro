@@ -80,7 +80,7 @@ TEST_CASE("Testing Species class", "[Species]")
         REQUIRE( species.props(T, P).Cp0 == 0.0    );
         REQUIRE( species.props(T, P).Cv0 == 0.0    );
 
-        species = species.withStandardThermoPropsFn([](real T, real P) {
+        species = species.withStandardThermoModel([](real T, real P) {
             return StandardThermoProps{
                 1.0*T*P, // G0
                 2.0*T*P, // H0
@@ -112,8 +112,8 @@ TEST_CASE("Testing Species class", "[Species]")
                     })
             );
 
-        REQUIRE( species.props(T, P).G0 == species.reaction().standardThermoPropsFn()(T, P).G0 );
-        REQUIRE( species.props(T, P).H0 == species.reaction().standardThermoPropsFn()(T, P).H0 );
+        REQUIRE( species.props(T, P).G0 == species.reaction().standardThermoModel()(T, P).G0 );
+        REQUIRE( species.props(T, P).H0 == species.reaction().standardThermoModel()(T, P).H0 );
     }
 
     SECTION("Testing automatic construction of chemical species with given chemical formula")

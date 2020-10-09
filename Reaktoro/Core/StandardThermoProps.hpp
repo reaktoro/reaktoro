@@ -17,11 +17,9 @@
 
 #pragma once
 
-// C++ includes
-#include <functional>
-
 // Reaktoro includes
-#include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/Model.hpp>
 
 namespace Reaktoro {
 
@@ -48,6 +46,6 @@ struct StandardThermoProps
 /// @param T The temperature for the calculation (in K)
 /// @param P The pressure for the calculation (in Pa)
 /// @return The standard thermodynamic properties of the species
-using StandardThermoPropsFn = std::function<StandardThermoProps(real T, real P)>;
+using StandardThermoModel = Model<StandardThermoProps(real T, real P)>;
 
 } // namespace Reaktoro
