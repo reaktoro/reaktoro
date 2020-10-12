@@ -13,21 +13,10 @@ if(NOT DEFINED BUILD_TYPE)
 endif()
 
 #------------------------------------------------------------------------------
-# Configure the number of parallel jobs for the compilation of dependencies
-#------------------------------------------------------------------------------
-if(NOT DEFINED JOBS)
-set(JOBS "")
-endif()
-
-set(jJOBS "-j${JOBS}")
-
-message(STATUS "Using ${jJOBS} as instruction for parallel jobs for compiling the external dependencies.")
-
-#------------------------------------------------------------------------------
 # Configure the path where the external dependencies are built
 #------------------------------------------------------------------------------
 if(NOT DEFINED BUILD_PATH)
-set(BUILD_PATH ${CMAKE_SOURCE_DIR}/deps/build)
+    set(BUILD_PATH ${CMAKE_SOURCE_DIR}/deps/build)
 endif()
 
 message(STATUS "Using ${BUILD_PATH} as the path where the external dependencies are built.")
@@ -36,18 +25,31 @@ message(STATUS "Using ${BUILD_PATH} as the path where the external dependencies 
 # Configure the cmake generator to build/install the external dependencies
 #------------------------------------------------------------------------------
 if(DEFINED GENERATOR AND GENERATOR MATCHES "make")
-set(GENERATOR "Unix Makefiles")
+    set(GENERATOR "Unix Makefiles")
 endif()
 
 if(DEFINED GENERATOR AND GENERATOR MATCHES "ninja")
-set(GENERATOR "Ninja")
+    set(GENERATOR "Ninja")
 endif()
 
 if(NOT DEFINED GENERATOR)
-set(GENERATOR "Ninja") # Use Ninja by default, which is cross-platform
+    set(GENERATOR "Ninja") # Use Ninja by default, which is cross-platform
 endif()
 
 message(STATUS "Using ${GENERATOR} as the build tool.")
+
+#------------------------------------------------------------------------------
+# Configure the number of parallel jobs for the compilation of dependencies
+#------------------------------------------------------------------------------
+if(NOT DEFINED JOBS AND GENERATOR MATCHES "Ninja")
+    set(JOBS "0")
+endif()
+
+if(NOT DEFINED JOBS AND GENERATOR MATCHES "Unix Makefiles")
+    set(JOBS "")
+endif()
+
+message(STATUS "Using -j${JOBS} as instruction for parallel jobs for compiling the external dependencies.")
 
 #------------------------------------------------------------------------------
 # Create the build directory for the external dependencies
@@ -58,12 +60,12 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_PATH})
 # Configure the installation of the external dependencies
 #------------------------------------------------------------------------------
 execute_process(COMMAND
-${CMAKE_COMMAND} -E chdir ${BUILD_PATH}
-${CMAKE_COMMAND} -G ${GENERATOR} ${CMAKE_SOURCE_DIR}/deps
--DCMAKE_BUILD_TYPE=${BUILD_TYPE}
--DCMAKE_INSTALL_PREFIX=${BUILD_PATH}/install)
+    ${CMAKE_COMMAND} -E chdir ${BUILD_PATH}
+    ${CMAKE_COMMAND} -G ${GENERATOR} ${CMAKE_SOURCE_DIR}/deps
+        -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+        -DCMAKE_INSTALL_PREFIX=${BUILD_PATH}/install)
 
 #------------------------------------------------------------------------------
 # Build and install the external dependencies
 #------------------------------------------------------------------------------
-execute_process(COMMAND ${CMAKE_COMMAND} --build ${BUILD_PATH} -- ${jJOBS})
+execute_process(COMMAND ${CMAKE_COMMAND} --build ${BUILD_PATH} -- -j ${JOBS})
