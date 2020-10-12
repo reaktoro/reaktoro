@@ -28,7 +28,7 @@ endif()
 # Set the common cmake arguments to all external projects
 set(REAKTORO_DEPS_COMMON_INSTALL_ARGS
     -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
-    $<$<BOOL:CMAKE_GENERATOR_PLATFORM>:-DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}>
+        $<$<BOOL:CMAKE_GENERATOR_PLATFORM>:-DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}>
     -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     -DCMAKE_C_COMPILER_LAUNCHER=${CMAKE_C_COMPILER_LAUNCHER}
@@ -41,37 +41,28 @@ set(REAKTORO_DEPS_COMMON_INSTALL_ARGS
     -DBUILD_SHARED_LIBS=OFF
     -DCMAKE_CXX_STANDARD=17
     -DCMAKE_CXX_STANDARD_REQUIRED=ON
-    # Disables the cmake warning message `Manually-specified
-     # variables were not used by the project` because of
-     # unused arguments above
-    --no-warn-unused-cli
-    # Allows the specification of extra args via command-line
-    ${REAKTORO_DEPS_EXTRA_BUILD_ARGS}
+    -DCMAKE_INSTALL_MESSAGE=LAZY # Print "Installing" but not "Up-to-date messages" during installation step.
+    --no-warn-unused-cli # Disables the cmake warning message `Manually-specified variables were not used by the project` because of unused arguments above
+    ${REAKTORO_DEPS_EXTRA_BUILD_ARGS} # Allows the specification of extra args via command-line
 )
 
 # Build Eigen library
 ExternalProject_Add(EIGEN
-    PREFIX         etc
-    SOURCE_DIR     ../git/eigen
-    GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-    GIT_TAG        master
-    GIT_SHALLOW    TRUE
-    GIT_PROGRESS   TRUE
+    PREFIX etc
+    URL ${CMAKE_CURRENT_SOURCE_DIR}/eigen/eigen-master-9a4d04c05fbaad6e6de750b13cfeab9edeb71c90.tar.gz
     CMAKE_ARGS
-        -DBUILD_TESTING=FALSE
+        ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/public
+        -DBUILD_TESTING=FALSE
 )
 
 # Build Optima library
 ExternalProject_Add(OPTIMA
-    PREFIX         etc
-    SOURCE_DIR     ../git/optima
-    GIT_REPOSITORY https://github.com/allanleal/optima
-    GIT_TAG        develop
-    GIT_SHALLOW    TRUE
-    GIT_PROGRESS   TRUE
-    DEPENDS        EIGEN
+    PREFIX etc
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/optima
+    DEPENDS EIGEN
     CMAKE_ARGS
+        ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/public
         -DOPTIMA_BUILD_PYTHON=ON
         -DOPTIMA_BUILD_DEMOS=OFF
@@ -79,14 +70,11 @@ ExternalProject_Add(OPTIMA
 
 # Build autodiff library
 ExternalProject_Add(AUTODIFF
-    PREFIX         etc
-    SOURCE_DIR     ../git/autodiff
-    GIT_REPOSITORY https://github.com/allanleal/autodiff
-    GIT_TAG        develop
-    GIT_SHALLOW    TRUE
-    GIT_PROGRESS   TRUE
-    DEPENDS        EIGEN
+    PREFIX etc
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/autodiff
+    DEPENDS EIGEN
     CMAKE_ARGS
+        ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/public
         -DAUTODIFF_BUILD_PYTHON=ON
         -DAUTODIFF_BUILD_EXAMPLES=OFF
@@ -96,22 +84,28 @@ ExternalProject_Add(AUTODIFF
 # Build and install the cvode library
 ExternalProject_Add(CVODE
     PREFIX etc
-    URL ${CMAKE_CURRENT_SOURCE_DIR}/embedded/cvode/cvode-2.8.2.tar.gz
-    CMAKE_ARGS ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
+    URL ${CMAKE_CURRENT_SOURCE_DIR}/cvode/cvode-2.8.2.tar.gz
+    CMAKE_ARGS
+        ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/private
         -DEXAMPLES_ENABLE=OFF
-        -DEXAMPLES_INSTALL=OFF)
+        -DEXAMPLES_INSTALL=OFF
+)
 
 # Build and install the Phreeqc library
 ExternalProject_Add(PHREEQC
     PREFIX etc
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/embedded/phreeqc
-    CMAKE_ARGS ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/private)
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/phreeqc
+    CMAKE_ARGS
+        ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
+        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/private
+)
 
 # Build and install the Gems library
 ExternalProject_Add(GEMS
     PREFIX etc
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/embedded/gems
-    CMAKE_ARGS ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/private)
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gems
+    CMAKE_ARGS
+        ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
+        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/private
+)

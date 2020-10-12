@@ -1,0 +1,8 @@
+[submodule "deps/optima"]
+	path = deps/optima
+	url = https://github.com/allanleal/optima
+	branch = develop
+[submodule "deps/autodiff"]
+	path = deps/autodiff
+	url = https://github.com/allanleal/autodiff
+	branch = develop
