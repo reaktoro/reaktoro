@@ -46,6 +46,10 @@ set(REAKTORO_DEPS_COMMON_INSTALL_ARGS
     ${REAKTORO_DEPS_EXTRA_BUILD_ARGS} # Allows the specification of extra args via command-line
 )
 
+# Ensure the dependencies handled by git submodules are initialized
+execute_process(COMMAND git submodule update --init --recursive
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
 # Build Eigen library
 ExternalProject_Add(EIGEN
     PREFIX etc
