@@ -153,8 +153,6 @@ Reaktoro using Conda, these are the steps:
 #. Activate the environment: ``source activate reaktoro`` from Linux/macOS or ``activate reaktoro`` from Windows
 #. Create a ``build`` directory and call ``cmake`` from it (for now check the `.travis.yml` file for an example on CMake parameters), OR, on Windows, call the ``inv msvc`` task to generate a project under ``build\msvc`` directory, open it in the IDE and build the ``INSTALL`` project. (``inv`` is short for ``invoke``, from the `Invoke <https://www.pyinvoke.org/>`_ tool.)
 
-Note: an ``inv compile`` task will be added in the future in order to simplify
-compilation in all platforms.
 
 License
 =======
