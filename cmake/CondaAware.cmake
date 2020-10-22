@@ -19,6 +19,18 @@ if(DEFINED ENV{CONDA_PREFIX})
     message(STATUS "CondaAware: conda environment recognized!")
     message(STATUS "CondaAware: CONDA_PREFIX=$ENV{CONDA_PREFIX}")
 
+    # Set python executable to that in the conda environment (unix)
+    if(UNIX AND DEFINED ENV{CONDA_PYTHON_EXE})
+        set(PYTHON_EXECUTABLE "$ENV{CONDA_PREFIX}/bin/python")
+        message(STATUS "CondaAware: PYTHON_EXECUTABLE=CONDA_PREFIX/bin/python (${PYTHON_EXECUTABLE})")
+    endif()
+
+    # Set python executable to that in the conda environment (unix)
+    if(WIN32 AND DEFINED ENV{CONDA_PYTHON_EXE})
+        set(PYTHON_EXECUTABLE "$ENV{CONDA_PREFIX}\\python.exe")
+        message(STATUS "CondaAware: PYTHON_EXECUTABLE=CONDA_PREFIX\\python.exe (${PYTHON_EXECUTABLE})")
+    endif()
+
     # Check if in Unix and not in a conda build task
     if(UNIX AND NOT DEFINED ENV{CONDA_BUILD})
         set(CONDA_AWARE_PREFIX "$ENV{CONDA_PREFIX}")
