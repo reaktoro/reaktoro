@@ -5,4 +5,5 @@ dependencies:
   - pandas
   - pip
   - tabulate
+  - colorama
   - python={{ python_version }}
