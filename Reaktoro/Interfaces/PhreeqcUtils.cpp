@@ -62,8 +62,8 @@ auto execute(PHREEQC& phreeqc, std::string input, std::string output) -> void
     int errors = phreeqc.run_simulations();
     phreeqc.Get_phrq_io()->clear_istream();
 
-    // Delete the dynamically allocated stream objects
-    if(out != nullptr) delete out;
+    // Set nullptr to stream object (to avoid delete an already deleted pointer in Phreeqc destructor)
+    out = nullptr;
 
     // Check if there was any error
     Assert(errors == 0, "Failed to execute the PHREEQC input script `" + input + "`.",
