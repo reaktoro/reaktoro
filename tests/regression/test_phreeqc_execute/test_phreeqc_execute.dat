@@ -60,15 +60,15 @@ Initial solution 0.
 
                                        pH  =   7.000    
                                        pe  =   4.000    
-   Specific Conductance (Ã‚ÂµS/cm,  25Â°C)  = 53883
-                         Density (g/cmÂ³)  =   1.02369
+      Specific Conductance (µS/cm,  25°C)  = 53883
+                          Density (g/cm³)  =   1.02369
                                Volume (L)  =   1.01327
                         Activity of water  =   0.980
                  Ionic strength (mol/kgw)  =   6.754e-01
                        Mass of water (kg)  =   1.000e+00
                     Total carbon (mol/kg)  =   2.191e-02
                        Total CO2 (mol/kg)  =   2.191e-02
-                        Temperature (Â°C)  =  25.00
+                         Temperature (°C)  =  25.00
                   Electrical balance (eq)  =   7.607e-13
  Percent error, 100*(Cat-|An|)/(Cat+|An|)  =   0.00
                                Iterations  =  10
@@ -84,7 +84,7 @@ Initial solution 0.
 ----------------------------Distribution of species----------------------------
 
                                                Log       Log       Log    mole V
-   Species          Molality    Activity  Molality  Activity     GammacmÃ‚Â³/mol
+   Species          Molality    Activity  Molality  Activity     Gamma   cm³/mol
 
    OH-             1.629e-07   9.920e-08    -6.788    -7.003    -0.216     -2.63
    H+              1.325e-07   1.000e-07    -6.878    -7.000    -0.122      0.00
