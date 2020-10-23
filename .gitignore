@@ -33,4 +33,3 @@ _build/
 
 # temp files created by tests
 tests/IW
-tests/regression/IW

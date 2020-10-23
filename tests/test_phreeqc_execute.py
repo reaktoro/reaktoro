@@ -16,19 +16,21 @@
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from reaktoro import *
+from pytest import approx
 
-
-def test_phreeqc_execute(file_regression, shared_datadir):
+def test_phreeqc_execute(shared_datadir):
     """Test function the execute() method from class Phreeqc."""
-
-    output = shared_datadir / 'IW.pqo'
 
     # all '\' (from Windows path format) needs to be change to '/'.
     database_path = '/'.join([i.replace('\\', '') for i in (shared_datadir / 'phreeqc.dat').parts])
     input_path = '/'.join([i.replace('\\', '') for i in (shared_datadir / 'IW.pqi').parts])
-    output_path = '/'.join([i.replace('\\', '') for i in output.parts])
 
     p = Phreeqc(database_path)
-    p.execute(input_path, output_path)
+    p.execute(input_path)
 
-    file_regression.check(output.read_text(), extension=".dat")
+    assert approx(p.temperature()) == 298.15
+    assert approx(p.pressure()) == 101324.99997084374
+    assert approx(p.numElements()) == 11
+    assert approx(p.numSpecies()) == 44
+    assert approx(p.numPhases()) == 1
+
