@@ -181,6 +181,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     problem_bc.add("NaCl",   1e-6, "mol");
     problem_bc.add("CO2",   0.75, "mol");
     problem_bc.add("NaCl",   1e-6, "mol");
+    problem_bc.add("CO2",   0.75, "mol");
 
     ChemicalState state_bc = equilibrate(problem_bc);
 
