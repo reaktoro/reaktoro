@@ -318,27 +318,27 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     // Step **: Define the quantities that should be output for every cell, every time step
     ChemicalOutput output(rtsolver.output());
     output.add("pH");
-    output.add("speciesMolality(H+)");
-    output.add("speciesMolality(HS-)");
-    output.add("speciesMolality(S2--)");
-    output.add("speciesMolality(CO3--)");
-    output.add("speciesMolality(HSO4-)");
-    output.add("speciesMolality(H2S(aq))");
-    output.add("speciesMolality(Fe++)");
-    output.add("speciesMolality(Siderite)");
-    output.add("speciesMolality(Pyrite)");
-    output.add("speciesMolality(Hematite)");
-    output.add("elementmolality(C)");
-    output.add("elementmolality(Ca)");
-    output.add("elementmolality(Cl)");
-    output.add("elementmolality(Fe)");
-    output.add("elementmolality(H)");
-    output.add("elementmolality(K)");
-    output.add("elementmolality(Mg)");
-    output.add("elementmolality(Na)");
-    output.add("elementmolality(O)");
-    output.add("elementmolality(S)");
-    output.add("elementmolality(Z)");
+    output.add("speciesAmount(H+)");
+    output.add("speciesAmount(HS-)");
+    output.add("speciesAmount(S2--)");
+    output.add("speciesAmount(CO3--)");
+    output.add("speciesAmount(HSO4-)");
+    output.add("speciesAmount(H2S(aq))");
+    output.add("speciesAmount(Fe++)");
+    output.add("speciesAmount(Siderite)");
+    output.add("speciesAmount(Pyrite)");
+    output.add("speciesAmount(Hematite)");
+    output.add("elementAmount(C)");
+    output.add("elementAmount(Ca)");
+    output.add("elementAmount(Cl)");
+    output.add("elementAmount(Fe)");
+    output.add("elementAmount(H)");
+    output.add("elementAmount(K)");
+    output.add("elementAmount(Mg)");
+    output.add("elementAmount(Na)");
+    output.add("elementAmount(O)");
+    output.add("elementAmount(S)");
+    output.add("elementAmount(Z)");
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create RTProfiler to track the timing and results of reactive transport
