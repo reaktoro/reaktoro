@@ -27,7 +27,7 @@ using namespace Reaktoro;
 
 int main()
 {
-    std::string path = "results_demo_transport_and_scaveging"; //folder
+    std::string path = "results_demo_transport_and_scavenging"; //folder
 #ifdef _WIN32
     return ::_mkdir(path.c_str());
 #else
@@ -59,14 +59,14 @@ int main()
 
      ChemicalEditor editor(database);
 
-     editor.addAqueousPhase({ "H2O(l)",  "H+", "OH-",
+     editor.addAqueousPhase({ "H2O(l)",  "H+", "OH-", 
                             "HCO3-", "Mg(HCO3)+", "Ca(HCO3)+", "MgCO3(aq)",  "CO3--", "CaCO3(aq)" ,
-                            "Ca++", "CaSO4(aq)", "CaOH+",
-                            "Cl-", "FeCl++", "FeCl2(aq)", "FeCl+",
+                            "Ca++", "CaSO4(aq)", "CaOH+", 
+                            "Cl-", "FeCl++", "FeCl2(aq)", "FeCl+", 
                             "Fe++", "FeOH+",  "FeOH++", "Fe+++",
                             "H2(aq)",
-                            "K+", "KSO4-",
-                            "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+",
+                            "K+", "KSO4-", 
+                            "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+", 
                             "Na+", "NaSO4-",
                             "O2(aq)",
                             "H2S(aq)", "HS-", "S5--", "S4--", "S3--", "S2--",
@@ -76,7 +76,7 @@ int main()
      editor.addMineralPhase("Siderite");
 
      ChemicalSystem system(editor);
-
+ 
      EquilibriumInverseProblem problem_ic(system);
      problem_ic.setTemperature(T, "celsius");
      problem_ic.setPressure(P, "bar");
@@ -94,7 +94,7 @@ int main()
      problem_ic.pH(8.951);
      problem_ic.pE(8.676);
 
-
+ 
      EquilibriumInverseProblem problem_bc(system);
      problem_bc.setTemperature(T, "celsius");
      problem_bc.setPressure(P, "bar");
@@ -118,17 +118,17 @@ int main()
      ChemicalState state_bc = equilibrate(problem_bc);
 
      Mesh mesh(ncells, xl, xr);
-
+ 
      ChemicalField field(mesh.numCells(), state_ic);
-
+ 
      ReactiveTransportSolver rt(system);
      rt.setMesh(mesh);
      rt.setVelocity(v);
      rt.setDiffusionCoeff(D);
      rt.setBoundaryState(state_bc);
      rt.setTimeStep(dt);
-
-
+ 
+ 
      auto output = rt.output();
      output.filename(path+"\\reative_transport_siderite_pyrrhotite_pyrite.txt");
      output.add("pH");
@@ -145,12 +145,12 @@ int main()
 
      auto t = 0.0;
      auto step = 0.0;
-
+ 
      while (step <= nsteps) {
          std::cout << step << std::endl;
-
+    
          rt.step(field);
-
+ 
          t += dt;
          step += 1;
      }
