@@ -105,11 +105,6 @@ int main()
 
     // Define discretization parameters
     params.xl = 0.0; // the x-coordinates of the left boundaries
-    /*
-    params.xr = 0.1; // the x-coordinates of the right boundaries
-    params.ncells = 10; // the number of cells in the spacial discretization
-    */
-    ///*
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
     params.nsteps = 1000; // the number of steps in the reactive transport simulation
@@ -124,6 +119,8 @@ int main()
 
     // Define parameters of the equilibrium solvers
     params.smart_equilibrium_reltol = 0.005;
+
+    // Define the activity model for the aqueous species
     params.activity_model = "hkf-full";
     //params.activity_model = "hkf-selected-species";
     //params.activity_model = "pitzer-full";
@@ -131,6 +128,7 @@ int main()
     //params.activity_model = "dk-full";
     //params.activity_model = "dk-selected-species";
 
+    // Define equilibrium solver cutoff tolerances
     params.amount_fraction_cutoff = 1e-14;
     params.mole_fraction_cutoff = 1e-14;
 
@@ -144,6 +142,7 @@ int main()
     params.use_smart_equilibrium_solver = true; runReactiveTransport(params, results);
     params.use_smart_equilibrium_solver = false; runReactiveTransport(params, results);
 
+    // Collect the time spent for total simulation (excluding search and store procedures costs)
     results.conventional_total = results.equilibrium_timing.solve;
     results.smart_total = results.smart_equilibrium_timing.solve;
     results.smart_total_ideal_search = results.smart_equilibrium_timing.solve
@@ -164,11 +163,11 @@ int main()
     std::cout << " smart equilibrium acceptance rate   : " << results.smart_equilibrium_acceptance_rate << " / "
               << (1 - results.smart_equilibrium_acceptance_rate) * params.ncells *params.nsteps
               << " fully evaluated GEMS out of " << params.ncells * params.nsteps  << std::endl;
-
+    // Output reactive transport times and speedup
     std::cout << "time_reactive_transport_conventional: " << results.time_reactive_transport_conventional << std::endl;
     std::cout << "time_reactive_transport_smart       : " << results.time_reactive_transport_smart << std::endl;
     std::cout << "reactive_transport_speedup          : " << results.time_reactive_transport_conventional / results.time_reactive_transport_smart << std::endl;
-
+    // Output total time
     std::cout << "total time                          : " << elapsed(start) << std::endl;
 
     return 0;
@@ -186,19 +185,16 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     smart_equilibrium_options.reltol = params.smart_equilibrium_reltol;
     smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
     smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
-
     smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
     smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
 
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
-    // Default chemical model (HKF extended Debye-Hückel model)
-    // editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
-    // Create aqueous phase with all possible elements
-    // Set a chemical model of the phase with the Pitzer equation of state
-    // With an exception for the CO2, for which Drummond model is set
 
+    // Define the list of selected elements
     std::string elements = "C Cl H Na O Z";
+
+    // Define activity model depending on the parameter
     if(params.activity_model == "hkf-full"){
         // HKF full system
         editor.addAqueousPhaseWithElements(elements);
@@ -220,10 +216,6 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
-    //if (params.use_smart_equilibrium_solver) std::cout << "system = \n" << system << std:: endl;
-
-    Partition partition(system);
-    //std::cout << "system = " << (system) << std::endl;
 
     // Step **: Define the initial condition (IC) of the reactive transport modeling problem
     EquilibriumInverseProblem problem_ic(system);
@@ -268,7 +260,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     reactive_transport_options.smart_equilibrium = smart_equilibrium_options;
 
     // Step **: Define the reactive transport modeling
-    ReactiveTransportSolver rtsolver(partition);
+    ReactiveTransportSolver rtsolver(system);
     rtsolver.setOptions(reactive_transport_options);
     rtsolver.setMesh(mesh);
     rtsolver.setVelocity(params.v);
@@ -309,8 +301,8 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     // Reactive transport simulations in the cycle
     while (step < params.nsteps)
     {
-        // Print some progress
-        //std::cout << "Step " << step << " of " << params.nsteps << std::endl;
+        // Print simulation progress
+        std::cout << "Step " << step << " of " << params.nsteps << std::endl;
 
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
         rtsolver.step(field);
@@ -388,7 +380,7 @@ auto makeResultsFolder(const Params& params) -> std::string
                                  "-" + params.activity_model +
                                  "-smart";
 
-    std::string folder = "results-shell-example-2-with-allan-tip";
+    std::string folder = "results-shell-bc-nacl-fixed-ph";
     folder = (params.use_smart_equilibrium_solver) ?
              folder + smart_test_tag :
              folder + test_tag;
