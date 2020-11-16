@@ -7,3 +7,4 @@ file(COPY json DESTINATION ${CMAKE_BINARY_DIR}/bin)
 # Build the python and cpp demos
 add_subdirectory(python)
 add_subdirectory(cpp)
+add_subdirectory(cpp-aux-tests)

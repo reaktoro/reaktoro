@@ -123,12 +123,13 @@ int main()
 
     // Define parameters of the equilibrium solvers
     params.smart_equilibrium_reltol = 0.01;
-    //params.smart_equilibrium_reltol = 0.005;
-    //params.smart_equilibrium_reltol = 0.001;
+
+    // Define the activity model for the aqueous species
     //params.activity_model = "dk-full";
     params.activity_model = "pitzer-full";
     //params.activity_model = "dk";
 
+    // Define equilibrium solver cutoff tolerances
     params.amount_fraction_cutoff = 1e-14;
     params.mole_fraction_cutoff = 1e-14;
 
@@ -142,6 +143,7 @@ int main()
     params.use_smart_equilibrium_solver = true; runReactiveTransport(params, results);
     params.use_smart_equilibrium_solver = false; runReactiveTransport(params, results);
 
+    // Collect the time spent for total simulation (excluding search and store procedures costs)
     results.conventional_total = results.equilibrium_timing.solve;
     results.smart_total = results.smart_equilibrium_timing.solve;
     results.smart_total_ideal_search = results.smart_equilibrium_timing.solve
@@ -159,11 +161,11 @@ int main()
               << results.conventional_total / results.smart_total_ideal_search << std::endl;
     std::cout << "speed up (with ideal search & store): "
               << results.conventional_total / results.smart_total_ideal_search_store << std::endl << std::endl;
-
+    // Output reactive transport times and speedup
     std::cout << "time_reactive_transport_conventional: " << results.time_reactive_transport_conventional << std::endl;
     std::cout << "time_reactive_transport_smart       : " << results.time_reactive_transport_smart << std::endl;
     std::cout << "reactive_transport_speedup          : " << results.time_reactive_transport_conventional / results.time_reactive_transport_smart << std::endl;
-
+    // Output total time
     std::cout << "total time                          : " << elapsed(start) << std::endl;
 
     return 0;
@@ -179,23 +181,20 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     // Step **: Define smart chemical equilibrium solver options
     SmartEquilibriumOptions smart_equilibrium_options;
     smart_equilibrium_options.reltol = params.smart_equilibrium_reltol;
-
     smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
     smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
 
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     Database database("supcrt07.xml");
 
+    // Step **: Define Debye-Huckel parameters
     DebyeHuckelParams dhModel{};
     dhModel.setPHREEQC();
 
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor(database);
-    // Default chemical model (HKF extended Debye-Hückel model)
-    // editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
-    // Create aqueous phase with all possible elements
-    // Set a chemical model of the phase with the Pitzer equation of state
-    // With an exception for the CO2, for which Drummond model is set
+
+    // Define the list of selected species
     StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4(aq)", "CaOH+", "Cl-",
                                    "FeCl++", "FeCl2(aq)", "FeCl+", "Fe++", "FeOH+",  "FeOH++", "Fe+++",
                                    "H2(aq)", "HSO4-", "H2S(aq)", "HS-", "H2O(l)",  "H+", "OH-", "HCO3-",
@@ -204,8 +203,10 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
                                    "Na+", "NaSO4-",
                                    "O2(aq)",
                                    "S5--", "S4--", "S3--", "S2--", "SO4--"};
+    // Define the list of selected elements
     StringList selected_elements = "C Ca Cl Fe H K Mg Na O S";
 
+    // Define activity model depending on the parameter
     if(params.activity_model == "hkf"){
         // HKF full system
         editor.addAqueousPhase(selected_species);
@@ -238,8 +239,6 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
-    //if(params.use_smart_equilibrium_solver) std::cout << "system = \n" << system << std:: endl;
-    //getchar();
 
     // Step **: Define the initial condition (IC) of the reactive transport modeling problem
     EquilibriumInverseProblem problem_ic(system);
@@ -280,7 +279,6 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     problem_bc.add("H2S(aq)", 0.167794, "mol");
     problem_bc.pH(5.726);
     problem_bc.pE(8.220);
-
 
     // Step **: Calculate the equilibrium states for the IC and BC
     ChemicalState state_ic = equilibrate(problem_ic);
@@ -353,8 +351,8 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     // Reactive transport simulations in the cycle
     while (step < params.nsteps)
     {
-        // Print some progress
-        //std::cout << "Step " << step << " of " << params.nsteps << std::endl;
+        // Print simulation progress
+        std::cout << "Step " << step << " of " << params.nsteps << std::endl;
 
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
         rtsolver.step(field);

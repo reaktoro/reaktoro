@@ -35,21 +35,17 @@ struct Params
 {
     // Discretization params
     int ncells = 0; // the number of cells in the spacial discretization
+    int nsteps = 0; // the number of steps in the reactive transport simulation
     double xl = 0; // the x-coordinates of the left boundaries
     double xr = 0; // the x-coordinates of the right boundaries
     double dx = 0; // the space step (in units of m)
     double dt = 0; // the time step (in units of s)
-
-    int nsteps_cb = 0;  // the number of steps in the reactive transport simulation of the first injection phase
-    int nsteps_sw = 0;  // the number of steps in the reactive transport simulation of the second injection phase
-    int nsteps = 0;     // the total number of steps in the reactive transport simulation
 
     // Physical params
     double D = 0; // the diffusion coefficient (in units of m2/s)
     double v = 0; // the Darcy velocity (in units of m/s)
     double T = 0; // the temperature (in units of degC)
     double P = 0; // the pressure (in units of bar)
-    double water_kg = 1.0;  // amount of water used in the experiment
 
     // Solver params
     bool use_smart_equilibrium_solver = false;
@@ -103,39 +99,36 @@ int main()
 
     // Step 1: Initialise auxiliary time-related constants
     int minute = 60;
-    int hour = 60 * minute;
 
     // Step 2: Define parameters for the reactive transport simulation
     Params params;
 
     // Define discretization parameters
     params.xl = 0.0; // the x-coordinates of the left boundaries
-    params.xr = 25.0; // the x-coordinates of the right boundaries
-    params.ncells = 243; // the number of cells in the spacial discretization
+    params.xr = 1.0; // the x-coordinates of the right boundaries
+    params.ncells = 100; // the number of cells in the spacial discretization
+    params.nsteps = 1000; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
-    params.dt = 1*hour; // the time step (in units of s)
-
-    params.nsteps_cb = 45;  // the number of steps in the reactive transport simulation of the first injection phase
-    params.nsteps_sw = 855;  // the number of steps in the reactive transport simulation of the second injection phase
-    params.nsteps = params.nsteps_cb + params.nsteps_sw;     // the total number of steps in the reactive transport simulation
+    params.dt = 5 * minute; // the time step (in units of s)
 
     // Define physical and chemical parameters
-    params.D = 0.0;             // the diffusion coefficient (in units of m2/s)
-    params.v = 0.8e-5;          // the Darcy velocity (in units of m/s)
-    params.T = 60.0;            // the temperature (in units of degC)
-    params.P = 200 * 1.01325;   // the pressure (in units of bar)
+    params.D = 0.0;     // the diffusion coefficient (in units of m2/s)
+    params.v = 1e-5; // the Darcy velocity (in units of m/s)
+    params.T = 25.0;                     // the temperature (in units of degC)
+    params.P = 1.0;                      // the pressure (in units of atm)
 
     // Define parameters of the equilibrium solvers
-    //params.smart_equilibrium_reltol = 0.001;
-    params.smart_equilibrium_reltol = 0.002;
-    //params.smart_equilibrium_reltol = 0.003;
-    //params.smart_equilibrium_reltol = 0.004;
-    //params.smart_equilibrium_reltol = 0.005;
-    //params.smart_equilibrium_reltol = 0.01;
-    params.activity_model = "dk-full";
-    //params.activity_model = "pitzer-full";
-    //params.activity_model = "hkf-full";
+    params.smart_equilibrium_reltol = 0.005;
 
+    // Define the activity model for the aqueous species
+    params.activity_model = "hkf-full";
+    //params.activity_model = "hkf-selected-species";
+    //params.activity_model = "pitzer-full";
+    //params.activity_model = "pitzer-selected-species";
+    //params.activity_model = "dk-full";
+    //params.activity_model = "dk-selected-species";
+
+    // Define equilibrium solver cutoff tolerances
     params.amount_fraction_cutoff = 1e-14;
     params.mole_fraction_cutoff = 1e-14;
 
@@ -149,6 +142,7 @@ int main()
     params.use_smart_equilibrium_solver = true; runReactiveTransport(params, results);
     params.use_smart_equilibrium_solver = false; runReactiveTransport(params, results);
 
+    // Collect the time spent for total simulation (excluding search and store procedures costs)
     results.conventional_total = results.equilibrium_timing.solve;
     results.smart_total = results.smart_equilibrium_timing.solve;
     results.smart_total_ideal_search = results.smart_equilibrium_timing.solve
@@ -166,11 +160,14 @@ int main()
               << results.conventional_total / results.smart_total_ideal_search << std::endl;
     std::cout << "speed up (with ideal search & store): "
               << results.conventional_total / results.smart_total_ideal_search_store << std::endl << std::endl;
-
+    std::cout << " smart equilibrium acceptance rate   : " << results.smart_equilibrium_acceptance_rate << " / "
+              << (1 - results.smart_equilibrium_acceptance_rate) * params.ncells *params.nsteps
+              << " fully evaluated GEMS out of " << params.ncells * params.nsteps  << std::endl;
+    // Output reactive transport times and speedup
     std::cout << "time_reactive_transport_conventional: " << results.time_reactive_transport_conventional << std::endl;
     std::cout << "time_reactive_transport_smart       : " << results.time_reactive_transport_smart << std::endl;
     std::cout << "reactive_transport_speedup          : " << results.time_reactive_transport_conventional / results.time_reactive_transport_smart << std::endl;
-
+    // Output total time
     std::cout << "total time                          : " << elapsed(start) << std::endl;
 
     return 0;
@@ -186,144 +183,69 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     // Step **: Define smart chemical equilibrium solver options
     SmartEquilibriumOptions smart_equilibrium_options;
     smart_equilibrium_options.reltol = params.smart_equilibrium_reltol;
-
+    smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
+    smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
     smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
     smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
 
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
-    Database database("supcrt07.xml");
+    ChemicalEditor editor;
 
-    DebyeHuckelParams dhModel{};
-    dhModel.setPHREEQC();
+    // Define the list of selected elements
+    std::string elements = "C Cl H Na O Z";
 
-    // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
-    ChemicalEditor editor(database);
-    // Default chemical model (HKF extended Debye-Hückel model)
-    // editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3--");
-    // Create aqueous phase with all possible elements
-    // Set a chemical model of the phase with the Pitzer equation of state
-    // With an exception for the CO2, for which Drummond model is set
-    StringList selected_elements = "H Cl S O Ba Ca Sr Na K Mg C Si";
-    if(params.activity_model == "dk-full"){
-        // Debye-Huckel full system
-        editor.addAqueousPhaseWithElements(selected_elements)
-                .setChemicalModelDebyeHuckel(dhModel);
+    // Define activity model depending on the parameter
+    if(params.activity_model == "hkf-full"){
+        // HKF full system
+        editor.addAqueousPhaseWithElements(elements);
     }
     else if(params.activity_model == "pitzer-full"){
-        // Debye-Huckel full system
-        editor.addAqueousPhaseWithElements(selected_elements)
+        // Pitzer full system
+        editor.addAqueousPhaseWithElements(elements)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    editor.addMineralPhase("Barite");
+    else if(params.activity_model == "dk-full"){
+        // Debye-Huckel full system
+        editor.addAqueousPhaseWithElements(elements)
+                .setChemicalModelDebyeHuckel()
+                .setActivityModelDrummondCO2();
+    }
+    editor.addGaseousPhase("CO2(g)");
+    editor.addMineralPhase("Halite");
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
-    //std::cout << "system = \n" << system << std:: endl;
-    //if(params.use_smart_equilibrium_solver) std::cout << "system = \n" << system << std:: endl;
-    //getchar();
 
-    // ************************************************************************************************************** //
-    // Initial condition (IC)
-    // ************************************************************************************************************** //
+    // Step **: Define the initial condition (IC) of the reactive transport modeling problem
+    EquilibriumInverseProblem problem_ic(system);
+    problem_ic.setTemperature(params.T, "celsius");
+    problem_ic.setPressure(params.P, "atm");
+    Vector element_amounts = Vector::Zero(system.numElements()); // "C Cl H Na O Z";
+    element_amounts[1] = 1.0;   // Cl - index 1
+    element_amounts[3] = 1.0;   // Na - index 3
+    problem_ic.setElementInitialAmounts(element_amounts);
+    problem_ic.add("CO2", 1e-6, "mol");
+    problem_ic.fixSpeciesMass("H2O(l)", 1.0, "kg", "H2O(l)");
+    problem_ic.pH(8.0, "HCl(aq)");
 
-    // Define the initial condition *with formation water)
-    EquilibriumInverseProblem problem_ic_fw(system);
-    problem_ic_fw.setTemperature(params.T, "celsius");
-    problem_ic_fw.setPressure(params.P, "atm");
-    problem_ic_fw.add("H2O", params.water_kg, "kg");
-    problem_ic_fw.add("SO4", 10 * params.water_kg, "ug");
-    problem_ic_fw.add("Ca", 995 * params.water_kg, "mg");
-    problem_ic_fw.add("Ba", 995 * params.water_kg, "mg");
-    problem_ic_fw.add("Sr", 105 * params.water_kg, "mg");
-    problem_ic_fw.add("Na", 27250 * params.water_kg, "mg");
-    problem_ic_fw.add("K", 1730 * params.water_kg, "mg");
-    problem_ic_fw.add("Mg", 110 * params.water_kg, "mg");
-    problem_ic_fw.add("Cl", 45150 * params.water_kg, "mg");
-    problem_ic_fw.add("HCO3", 1980 * params.water_kg, "mg");
-    problem_ic_fw.pH(7.0, "HCl", "NaOH");
-
-    // Equilibrate the initial condition
-    ChemicalState state_ic = equilibrate(problem_ic_fw);
-    // Scale the percentage of the aqueous phase and the whole volume
-    state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");    // 10% if the 1.0m3
+    // Step **: Calculate the equilibrium states for the IC and BC
+    ChemicalState state_ic = equilibrate(problem_ic);
     state_ic.scaleVolume(1.0, "m3");
 
-    // Define function to evaluate ph of the chemical system
-    auto evaluate_pH = ChemicalProperty::pH(system);
+    // Step **: Define the boundary condition (BC)  of the reactive transport modeling problem
+    EquilibriumInverseProblem problem_bc(system);
+    problem_bc.setTemperature(params.T, "celsius");
+    problem_bc.setPressure(params.P, "atm");
+    problem_bc.add("H2O",   1.00, "kg");
+    problem_bc.add("NaCl",  1.00, "mol");
+    problem_ic.add("CO2", 1e-6, "mol");
+    problem_bc.pH(3.0, "HCl(aq)");
 
-    // Fetch the pH of the initial sate
-    ChemicalProperties props = state_ic.properties();
-    ChemicalScalar pH_ic = evaluate_pH(props);
-    std::cout << "ph(FW) = " << pH_ic.val << std:: endl;
+    ChemicalState state_bc = equilibrate(problem_bc);
 
-    std::cout << "names b   : "; for (auto elem : system.elements()) std::cout << elem.name() << " "; std::cout << std::endl;
-    std::cout << "state_ic b: " << tr(state_ic.elementAmounts()) << std::endl;
-
-    // ************************************************************************************************************** //
-    // Boundary condition (BC)
-    // ************************************************************************************************************** //
-
-    // Define the first boundary condition (with completion brine)
-    EquilibriumProblem problem_bc_cb(system);
-    problem_bc_cb.setTemperature(params.T, "celsius");
-    problem_bc_cb.setPressure(params.P, "atm");
-    problem_bc_cb.add("H2O", params.water_kg, "kg");
-    problem_bc_cb.add("NaCl", 0.7, "mol");
-
-//    problem_ic_fw.add("SO4", 10 * params.water_kg, "ug");
-//    problem_ic_fw.add("Ca", 995 * params.water_kg, "mg");
-//    problem_ic_fw.add("Ba", 995 * params.water_kg, "mg");
-//    problem_ic_fw.add("Sr", 105 * params.water_kg, "mg");
-//    problem_ic_fw.add("Na", 27250 * params.water_kg, "mg");
-//    problem_ic_fw.add("K", 1730 * params.water_kg, "mg");
-//    problem_ic_fw.add("Mg", 110 * params.water_kg, "mg");
-//    problem_ic_fw.add("Cl", 45150 * params.water_kg, "mg");
-//    problem_ic_fw.add("HCO3", 1980 * params.water_kg, "mg");
-
-
-    // Equilibrate the initial condition
-    ChemicalState state_bc_cb = equilibrate(problem_bc_cb);
-    // Scale the percentage of the aqueous phase and the whole volume
-    state_bc_cb.scaleVolume(1.0, "m3");
-
-    // Fetch the pH of the initial sate
-    props = state_bc_cb.properties();
-    ChemicalScalar pH_bc = evaluate_pH(props);
-    std::cout << "ph(CB) = " << pH_bc.val << std:: endl;
-
-    std::cout << "state_bc_cb b: " << tr(state_bc_cb.elementAmounts()) << std::endl;
-    //std::cout << "state_bc_cb: " << state_bc_cb << std::endl;
-    //getchar();
-
-    // Define the first boundary condition (with seawater)
-    EquilibriumInverseProblem problem_bc_sw(system);
-    problem_bc_sw.setTemperature(params.T, "celsius");
-    problem_bc_sw.setPressure(params.P, "atm");
-    problem_bc_sw.add("H2O", params.water_kg, "kg");
-    problem_bc_sw.add("SO4--", 2710 * params.water_kg, "mg");
-    problem_bc_sw.add("Ca++", 411 * params.water_kg, "mg");
-    problem_bc_sw.add("Ba++", 0.01 * params.water_kg, "mg");
-    problem_bc_sw.add("Sr++", 8 * params.water_kg, "mg");
-    problem_bc_sw.add("Na+", 10760 * params.water_kg, "mg");
-    problem_bc_sw.add("K+", 399 * params.water_kg, "mg");
-    problem_bc_sw.add("Mg++", 1290 * params.water_kg, "mg");
-    problem_bc_sw.add("Cl-", 19350 * params.water_kg, "mg");
-    problem_bc_sw.add("HCO3-", 142 * params.water_kg, "mg");
-    problem_bc_sw.pH(8.1, "HCl", "NaOH");
-
-    // Equilibrate the initial condition
-    ChemicalState state_bc_sw = equilibrate(problem_bc_sw);
-    // Scale the percentage of the aqueous phase and the whole volume
-    state_bc_sw.scaleVolume(1.0, "m3");
-
-    // Fetch the pH of the initial sate
-    props = state_bc_sw.properties();
-    ChemicalScalar pH_sw = evaluate_pH(props);
-    std::cout << "ph(SW) = " << pH_sw.val << std:: endl;
-
-    std::cout << "state_bc_sw b: " << tr(state_bc_sw.elementAmounts()) << std::endl;
-    //getchar();
+    // Step **: Scale the boundary condition state
+    state_bc.scaleVolume(1.0, "m3");
 
     // Step **: Create the mesh for the column
     Mesh mesh(params.ncells, params.xl, params.xr);
@@ -343,38 +265,28 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     rtsolver.setMesh(mesh);
     rtsolver.setVelocity(params.v);
     rtsolver.setDiffusionCoeff(params.D);
-    rtsolver.setBoundaryState(state_bc_cb);
+    rtsolver.setBoundaryState(state_bc);
     rtsolver.setTimeStep(params.dt);
     rtsolver.initialize();
 
     // Step **: Define the quantities that should be output for every cell, every time step
     ChemicalOutput output(rtsolver.output());
     output.add("pH");
-    output.add("speciesAmount(H+)");
-    output.add("speciesAmount(Cl-)");
-    output.add("speciesAmount(SO4--)");
-    output.add("speciesAmount(Ba++)");
-    output.add("speciesAmount(Ca++)");
-    output.add("speciesAmount(Sr++)");
-    output.add("speciesAmount(Na+)");
-    output.add("speciesAmount(Barite)");
-    output.add("elementAmount(Ba)");
-    output.add("elementAmount(C)");
-    output.add("elementAmount(Ca)");
-    output.add("elementAmount(Cl)");
-    output.add("elementAmount(H)");
-    output.add("elementAmount(K)");
-    output.add("elementAmount(Mg)");
-    output.add("elementAmount(Na)");
-    output.add("elementAmount(O)");
-    output.add("elementAmount(S)");
-    output.add("elementAmount(Si)");
-    output.add("elementAmount(Sr)");
-    output.add("elementAmount(Z)");
-    output.add("phaseAmount(Barite)");
-    output.add("phaseMass(Barite)");
-    output.add("phaseVolume(Barite)");
-
+    output.add("speciesMolality(H+)");
+    output.add("speciesMolality(HCO3-)");
+    output.add("speciesMolality(CO2(aq))");
+    output.add("speciesMolality(Cl-)");
+    output.add("speciesMolality(Na+)");
+    output.add("speciesMolality(NaCl(aq))");
+    output.add("speciesMolality(NaOH(aq))");
+    output.add("speciesMolality(Halite)");
+    output.add("speciesMolality(OH-)");
+    output.add("elementmolality(C)");
+    output.add("elementmolality(Cl)");
+    output.add("elementmolality(H)");
+    output.add("elementmolality(Na)");
+    output.add("elementmolality(O)");
+    output.add("elementmolality(Z)");
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create RTProfiler to track the timing and results of reactive transport
@@ -387,29 +299,10 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     tic(REACTIVE_TRANSPORT_STEPS);
 
     // Reactive transport simulations in the cycle
-    while (step <  params.nsteps_cb)
+    while (step < params.nsteps)
     {
-        // Print some progress
-        //std::cout << "Step " << step << " of " << params.nsteps << std::endl;
-
-        // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
-        rtsolver.step(field);
-
-        // Update the profiler after every call to step method
-        profiler.update(rtsolver.result());
-
-        // Increment time step and number of time steps
-        t += params.dt;
-
-        step += 1;
-    }
-
-    rtsolver.setBoundaryState(state_bc_sw);
-
-    while (step < params.nsteps_cb + params.nsteps_sw)
-    {
-        // Print some progress
-        //std::cout << "Step " << step << " of " << params.nsteps << std::endl;
+        // Print simulation progress
+        std::cout << "Step " << step << " of " << params.nsteps << std::endl;
 
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
         rtsolver.step(field);
@@ -424,10 +317,11 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     }
 
     if(params.use_smart_equilibrium_solver)
+    {
         rtsolver.outputClusterInfo();
-
-    if(params.use_smart_equilibrium_solver)
         results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
+    }
+
     else results.time_reactive_transport_conventional = toc(REACTIVE_TRANSPORT_STEPS);
 
     // Step **: Collect the analytics related to reactive transport performance
@@ -483,10 +377,9 @@ auto makeResultsFolder(const Params& params) -> std::string
                                  "-ncells-" + std::to_string(params.ncells) +
                                  "-nsteps-" + std::to_string(params.nsteps) +
                                  "-reltol-" + reltol_stream.str() +
-                                 "-" + params.activity_model +
-                                 "-smart";
+                                 "-" + params.activity_model + "-smart";
 
-    std::string folder = "results-scaling-new-cb-nacl-0.7";
+    std::string folder = "results-shell-example-bc-nacl";
     folder = (params.use_smart_equilibrium_solver) ?
              folder + smart_test_tag :
              folder + test_tag;
@@ -513,4 +406,5 @@ auto outputConsole(const Params& params) -> void {
     std::cout << "activity model : " << params.activity_model << std::endl;
 
 }
+
 
