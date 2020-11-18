@@ -13,89 +13,16 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// C++ includes
-#include <sstream>      // for using stringstream
-#include <iomanip>      // for setprecition
-
-#if defined _WIN32      // for creating a new folder
-#include <windows.h>
-#ifdef __MINGW32__
-#include <sys/stat.h>
-#endif
-#else
-#include <sys/stat.h>
-#endif
-
 // Reaktoro includes
 #include <Reaktoro/Reaktoro.hpp>
 
+// Reactive transport test includes
+#include <demos/cpp/RTSolverTest.h>
+
 using namespace Reaktoro;
 
-struct Params
-{
-    // Discretization params
-    int ncells = 0; // the number of cells in the spacial discretization
-    double xl = 0; // the x-coordinates of the left boundaries
-    double xr = 0; // the x-coordinates of the right boundaries
-    double dx = 0; // the space step (in units of m)
-    double dt = 0; // the time step (in units of s)
-
-    int nsteps_cb = 0;  // the number of steps in the reactive transport simulation of the first injection phase
-    int nsteps_sw = 0;  // the number of steps in the reactive transport simulation of the second injection phase
-    int nsteps = 0;     // the total number of steps in the reactive transport simulation
-
-    // Physical params
-    double D = 0; // the diffusion coefficient (in units of m2/s)
-    double v = 0; // the Darcy velocity (in units of m/s)
-    double T = 0; // the temperature (in units of degC)
-    double P = 0; // the pressure (in units of bar)
-    double water_kg = 1.0;  // amount of water used in the experiment
-
-    // Solver params
-    bool use_smart_equilibrium_solver = false;
-    double smart_equilibrium_reltol = 0;
-    double amount_fraction_cutoff = 0;
-    double mole_fraction_cutoff = 0;
-
-    std::string activity_model = "";
-};
-
-struct Results
-{
-    /// Total CPU time (in s) required by smart equilibrium scheme
-    double smart_total = 0.0;
-
-    /// Total CPU time (in s) excluding the costs for the search of the closest reference states.
-    double smart_total_ideal_search = 0.0;
-
-    /// Total CPU time (in s) required by smart equilibrium scheme
-    /// excluding the costs for the search and storage of the closest reference states.
-    double smart_total_ideal_search_store = 0.0;
-
-    /// Total CPU time (in s) required by conventional equilibrium scheme
-    double conventional_total = 0.0;
-
-    /// The total time taken to perform all time steps using conventional equilibrium algorithm
-    double time_reactive_transport_conventional = 0.0;
-
-    /// The total time taken to perform all time steps using smart equilibrium algorithm
-    double time_reactive_transport_smart = 0.0;
-
-    /// The accumulated timing information of all equilibrium calculations.
-    EquilibriumTiming equilibrium_timing = {};
-
-    /// The accumulated timing information of all smart equilibrium calculations.
-    SmartEquilibriumTiming smart_equilibrium_timing = {};
-
-    // Rate of the smart equilibrium estimation w.r.t to the total chemical equilibrium calculation
-    double smart_equilibrium_acceptance_rate = 0.0;
-};
-
 /// Forward declaration
-auto mkdir(const std::string& folder) -> bool;
-auto outputConsole(const Params& params) -> void;
-auto makeResultsFolder(const Params& params) -> std::string;
-auto runReactiveTransport(const Params& params, Results& results) -> void;
+auto runReactiveTransport(Params& params, Results& results) -> void;
 
 int main()
 {
@@ -115,7 +42,7 @@ int main()
     params.ncells = 243;                                    // the number of cells in the spacial discretization
     params.dx = (params.xr - params.xl) / params.ncells;    // the time step (in units of s)
     params.dt = 1*hour;                                     // the time step (in units of s)
-    params.nsteps = 1000;                                   // the total number of steps in the reactive transport simulation
+    params.nsteps = 100;                                   // the total number of steps in the reactive transport simulation
 
     // Define physical and chemical parameters
     params.D = 0.0;             // the diffusion coefficient (in units of m2/s)
@@ -123,27 +50,38 @@ int main()
     params.T = 60.0;            // the temperature (in units of degC)
     params.P = 200 * 1.01325;   // the pressure (in units of bar)
 
-    // Define parameters of the equilibrium solvers
-    params.smart_equilibrium_reltol = 0.001;
-
     // Define the activity model for the aqueous species
-    //params.activity_model = "dk-full";
-    params.activity_model = "pitzer-full";
-    //params.activity_model = "hkf-full";
+    params.activity_model = "dk-full";
+    //params.activity_model = "pitzer-full";
 
     // Define activity model depending on the parameter
     params.amount_fraction_cutoff = 1e-14;
     params.mole_fraction_cutoff = 1e-14;
 
+    // Define smart algorithm and related tolerances
+    // -----------------------------------------------
+
+//    // Run smart algorithm with clustering
+//    params.smart_method = "eq-clustering";
+//    params.smart_equilibrium_reltol = 1e-3;
+
+    // Run smart algorithm with priority queue
+    params.smart_method = "eq-priority";
+    params.smart_equilibrium_reltol = 2e-3;
+
+//    // Run smart algorithm with nn search algorithm
+//    params.smart_method = "eq-nnsearch";
+//    params.smart_equilibrium_reltol = 1e-1;
+
     // Output
-    outputConsole(params);
+    params.outputConsole();
 
     // Results
     Results results;
 
     // Execute reactive transport with different solvers
     params.use_smart_equilibrium_solver = true; runReactiveTransport(params, results);
-    //params.use_smart_equilibrium_solver = false; runReactiveTransport(params, results);
+    params.use_smart_equilibrium_solver = false; runReactiveTransport(params, results);
 
     // Collect the time spent for total simulation (excluding search and store procedures costs)
     results.conventional_total = results.equilibrium_timing.solve;
@@ -154,7 +92,7 @@ int main()
     results.smart_total_ideal_search_store = results.smart_equilibrium_timing.solve
                                              - results.smart_equilibrium_timing.estimate_search
                                              - results.smart_equilibrium_timing.estimate_database_priority_update
-                                             - results.smart_equilibrium_timing.learning_storage;
+                                             - results.smart_equilibrium_timing.learn_storage;
 
     // Output speed-us
     std::cout << "speed up                            : "
@@ -172,10 +110,10 @@ int main()
 
     return 0;
 }
-auto runReactiveTransport(const Params& params, Results& results) -> void
+auto runReactiveTransport(Params& params, Results& results) -> void
 {
     // Step **: Create the results folder
-    auto folder = makeResultsFolder(params);
+    auto folder = params.makeResultsFolder("scaling-only-seawater");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
@@ -223,16 +161,17 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     EquilibriumInverseProblem problem_ic(system);
     problem_ic.setTemperature(params.T, "celsius");
     problem_ic.setPressure(params.P, "atm");
-    problem_ic.add("H2O", params.water_kg, "kg");
-    problem_ic.add("SO4", 10 * params.water_kg, "ug");
-    problem_ic.add("Ca", 995 * params.water_kg, "mg");
-    problem_ic.add("Ba", 995 * params.water_kg, "mg");
-    problem_ic.add("Sr", 105 * params.water_kg, "mg");
-    problem_ic.add("Na", 27250 * params.water_kg, "mg");
-    problem_ic.add("K", 1730 * params.water_kg, "mg");
-    problem_ic.add("Mg", 110 * params.water_kg, "mg");
-    problem_ic.add("Cl", 45150 * params.water_kg, "mg");
-    problem_ic.add("HCO3", 1980 * params.water_kg, "mg");
+    double water_kg = 1.0;
+    problem_ic.add("H2O", water_kg, "kg");
+    problem_ic.add("SO4", 10 * water_kg, "ug");
+    problem_ic.add("Ca", 995 * water_kg, "mg");
+    problem_ic.add("Ba", 995 * water_kg, "mg");
+    problem_ic.add("Sr", 105 * water_kg, "mg");
+    problem_ic.add("Na", 27250 * water_kg, "mg");
+    problem_ic.add("K", 1730 * water_kg, "mg");
+    problem_ic.add("Mg", 110 * water_kg, "mg");
+    problem_ic.add("Cl", 45150 * water_kg, "mg");
+    problem_ic.add("HCO3", 1980 * water_kg, "mg");
     problem_ic.pH(7.0, "HCl", "NaOH");
 
     // Equilibrate the initial condition
@@ -257,7 +196,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     EquilibriumProblem problem_bc_cb(system);
     problem_bc_cb.setTemperature(params.T, "celsius");
     problem_bc_cb.setPressure(params.P, "atm");
-    problem_bc_cb.add("H2O", params.water_kg, "kg");
+    problem_bc_cb.add("H2O", water_kg, "kg");
     problem_bc_cb.add("NaCl", 7, "mol");
 
     // Equilibrate the initial condition
@@ -274,16 +213,16 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     EquilibriumInverseProblem problem_bc_sw(system);
     problem_bc_sw.setTemperature(params.T, "celsius");
     problem_bc_sw.setPressure(params.P, "atm");
-    problem_bc_sw.add("H2O", params.water_kg, "kg");
-    problem_bc_sw.add("SO4--", 2710 * params.water_kg, "mg");
-    problem_bc_sw.add("Ca++", 411 * params.water_kg, "mg");
-    problem_bc_sw.add("Ba++", 0.01 * params.water_kg, "mg");
-    problem_bc_sw.add("Sr++", 8 * params.water_kg, "mg");
-    problem_bc_sw.add("Na+", 10760 * params.water_kg, "mg");
-    problem_bc_sw.add("K+", 399 * params.water_kg, "mg");
-    problem_bc_sw.add("Mg++", 1290 * params.water_kg, "mg");
-    problem_bc_sw.add("Cl-", 19350 * params.water_kg, "mg");
-    problem_bc_sw.add("HCO3-", 142 * params.water_kg, "mg");
+    problem_bc_sw.add("H2O", water_kg, "kg");
+    problem_bc_sw.add("SO4--", 2710 * water_kg, "mg");
+    problem_bc_sw.add("Ca++", 411 * water_kg, "mg");
+    problem_bc_sw.add("Ba++", 0.01 * water_kg, "mg");
+    problem_bc_sw.add("Sr++", 8 * water_kg, "mg");
+    problem_bc_sw.add("Na+", 10760 * water_kg, "mg");
+    problem_bc_sw.add("K+", 399 * water_kg, "mg");
+    problem_bc_sw.add("Mg++", 1290 * water_kg, "mg");
+    problem_bc_sw.add("Cl-", 19350 * water_kg, "mg");
+    problem_bc_sw.add("HCO3-", 142 * water_kg, "mg");
     problem_bc_sw.pH(8.1, "HCl", "NaOH");
 
     // Equilibrate the initial condition
@@ -374,11 +313,12 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
         step += 1;
     }
 
-    if(params.use_smart_equilibrium_solver)
+    // Print the content of the cluster if the smart equilibrium with clustering is used
+    if(params.use_smart_equilibrium_solver && params.smart_method == "eq-clustering")
         rtsolver.outputClusterInfo();
 
-    if(params.use_smart_equilibrium_solver)
-        results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
+    // Stop the time for the reactive transport simulation
+    if(params.use_smart_equilibrium_solver) results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
     else results.time_reactive_transport_conventional = toc(REACTIVE_TRANSPORT_STEPS);
 
     // Step **: Collect the analytics related to reactive transport performance
@@ -401,67 +341,3 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     }
     else results.equilibrium_timing = analysis.equilibrium.timing;
 }
-
-/// Make directory for Windows and Linux
-auto mkdir(const std::string& folder) -> bool
-{
-#if defined _WIN32
-    // Replace slash by backslash
-    std::transform(begin(folder), end(folder), begin(folder),
-                   [](char ch) { return ch == '/' ? '\\' : ch; });
-    return 0 != CreateDirectory(folder.c_str(), NULL);
-#else
-    // Create the directory with Read + Write + Execute rights for user, group, and others
-    return ::mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-#endif
-}
-
-/// Create results file with parameters of the test
-auto makeResultsFolder(const Params& params) -> std::string
-{
-    struct stat status = {0};               // structure to get the file status
-
-    std::ostringstream reltol_stream, dt_stream;
-    dt_stream << params.dt;
-    reltol_stream << std::scientific << std::setprecision(1) << params.smart_equilibrium_reltol;
-
-    std::string test_tag = "-dt-" + dt_stream.str() +
-                           "-ncells-" + std::to_string(params.ncells) +
-                           "-nsteps-" + std::to_string(params.nsteps) +
-                           "-" + params.activity_model + "-reference";
-
-    std::string smart_test_tag = "-dt-" + dt_stream.str() +
-                                 "-ncells-" + std::to_string(params.ncells) +
-                                 "-nsteps-" + std::to_string(params.nsteps) +
-                                 "-reltol-" + reltol_stream.str() +
-                                 "-" + params.activity_model +
-                                 "-smart";
-
-    std::string folder = "results-scaling-only-sw";
-    folder = (params.use_smart_equilibrium_solver) ?
-             folder + smart_test_tag :
-             folder + test_tag;
-
-    if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str());
-
-    std::cout << "\nsolver                         : " << (params.use_smart_equilibrium_solver == true ? "smart" : "conventional") << std::endl;
-
-    return folder;
-}
-
-auto outputConsole(const Params& params) -> void {
-
-    // Log the parameters in the console
-    std::cout << "dt      : " << params.dt << std::endl;
-    std::cout << "ncells  : " << params.ncells << std::endl;
-    std::cout << "nsteps  : " << params.nsteps << std::endl;
-    std::cout << "D       : " << params.D << std::endl;
-    std::cout << "v       : " << params.v << std::endl;
-    std::cout << "CFD     : " << params.v * params.dt / params.dx << std::endl;
-    std::cout << "T       : " << params.T << std::endl;
-    std::cout << "P       : " << params.P << std::endl;
-    std::cout << "eqreltol       : " << params.smart_equilibrium_reltol << std::endl;
-    std::cout << "activity model : " << params.activity_model << std::endl;
-
-}
-
