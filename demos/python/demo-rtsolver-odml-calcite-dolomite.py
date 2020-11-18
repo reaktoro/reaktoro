@@ -79,11 +79,11 @@ year = 365 * day
 # throughout the whole tutorial.
 
 # +
-# Discretisation parameters
+# Discretization parameters
 xl = 0.0                # the x-coordinate of the left boundary
 xr = 1.0                # the x-coordinate of the right boundary
 ncells = 100            # the number of cells in the discretization
-nsteps = 50            # the number of steps in the reactive transport simulation
+nsteps = 100            # the number of steps in the reactive transport simulation
 dt = 30*minute          # the time step (30 minutes in units of s)
 dx = (xr - xl)/ncells   # length of the mesh cells (in units of m)
 
@@ -94,7 +94,6 @@ T = 60.0                # the temperature (in units of degC)
 P = 100                 # the pressure (in units of bar)
 phi = 0.1               # the porosity
 # -
-
 
 # Activity model for the aqueous species:
 
@@ -110,10 +109,10 @@ activity_model = "hkf-full"
 # Parameters for the ODML algorithm:
 
 # +
-smart_equlibrium_reltol = 0.001
+smart_method = "eq-clustering"
+smart_equlibrium_reltol = 1e-3
 amount_fraction_cutoff = 1e-14
 mole_fraction_cutoff = 1e-14
-use_smart_equilibrium_solver = True
 # -
 
 tag = "-dt-" + "{:d}".format(dt) + \
@@ -121,7 +120,10 @@ tag = "-dt-" + "{:d}".format(dt) + \
       "-nsteps-" + str(nsteps) + \
       "-reltol-" + "{:.{}e}".format(smart_equlibrium_reltol, 1) + \
       "-" + activity_model
-folder_results = 'results-odml' + tag
+folder_results = 'results-rtsolver-odml-calcite-dolomite'
+os.system('mkdir -p ' + folder_results)
+
+folder_videos  = 'videos-rtsolver-odml-calcite-dolomite'
 
 # The seconds spent on equilibrium and transport calculations per time step
 time_steps = np.linspace(0, nsteps, nsteps)
@@ -140,7 +142,7 @@ learnings = np.zeros(nsteps)
 # the number of cells `ncells`. The length between each consecutive mesh nodes is computed and stored in `dx` (the
 # length of the mesh cells).
 
-xcells = np.linspace(xl, xr, ncells)    # interval [xl, xr] split into ncells
+xcells = np.linspace(xl, xr, ncells)    # interval [xl, xr] split into `ncells`
 
 # To make sure that the applied finite-volume scheme is stable, we need to keep track of Courant–Friedrichs–Lewy (CFL)
 # number, which should be less than 1.0.
@@ -150,15 +152,15 @@ assert CFL <= 1.0, f"Make sure that CFL = {CFL} is less that 1.0"
 
 # Using **os** package, we create required folders for outputting the obtained results and folders to save video files.
 
-folder_results = 'results-rt-calcite-brine'
-folder_videos  = 'videos-rt-calcite-brine'
-def make_results_folders(use_smart_equilibrium_solver):
-    if use_smart_equilibrium_solver: os.system('mkdir -p ' + folder_results + "-smart")
-    else: os.system('mkdir -p ' + folder_results + "-reference")
+def make_results_folders(folder_results, use_smart_equilibrium_solver):
+    if use_smart_equilibrium_solver: folder_results = folder_results + tag + "-smart"
+    else: folder_results = folder_results  + tag + "-reference"
     os.system('mkdir -p ' + folder_results)
-    os.system('mkdir -p ' + folder_videos)
+    #os.system('mkdir -p ' + folder_videos)
+    return folder_results
 
-def reactive_transport(use_smart_equilibrium_solver):
+def reactive_transport(params):
+
 
     # ## Reactive transport simulations
     #
@@ -179,7 +181,6 @@ def reactive_transport(use_smart_equilibrium_solver):
             .setActivityModelDrummondCO2()
     elif activity_model == "hkf-full":
         editor.addAqueousPhaseWithElements('H O Na Cl Ca Mg C')
-
     elif activity_model == "dk-full":
         editor.addAqueousPhaseWithElements('H O Na Cl Ca Mg C') \
             .setChemicalModelDebyeHuckel()
@@ -199,6 +200,10 @@ def reactive_transport(use_smart_equilibrium_solver):
     # chemical system definition details stored in the object ``editor``.
 
     system = ChemicalSystem(editor)
+
+    # Create the Partition of inert and equilibrium species
+    partition = Partition(system)
+    partition.setInertSpecies(["Quartz"])
 
     # ### Initial condition for the fluid composition
     #
@@ -229,7 +234,7 @@ def reactive_transport(use_smart_equilibrium_solver):
     problem_bc.setTemperature(T, 'celsius')
     problem_bc.setPressure(P, 'bar')
     problem_bc.add('H2O', 1.0, 'kg')
-    problem_ic.add("O2",  1.0, "umol")
+    problem_bc.add("O2", 1.0, "umol")
     problem_bc.add('NaCl', 0.90, 'mol')
     problem_bc.add('MgCl2', 0.05, 'mol')
     problem_bc.add('CaCl2', 0.01, 'mol')
@@ -255,7 +260,7 @@ def reactive_transport(use_smart_equilibrium_solver):
     # below:
 
     # Scale the volumes of the phases in the initial condition
-    state_ic.scalePhaseVolume('Aqueous', 0.1, 'm3') # corresponds to the initial porosity of 10%.
+    state_ic.scalePhaseVolume('Aqueous', phi, 'm3') # corresponds to the initial porosity of 10%.
     state_ic.scalePhaseVolume('Quartz', 0.882, 'm3') # 0.882 = 0.9 * 0.98
     state_ic.scalePhaseVolume('Calcite', 0.018, 'm3') # 0.018 = 0.9 * 0.02
 
@@ -272,14 +277,6 @@ def reactive_transport(use_smart_equilibrium_solver):
     # > all mineral phases have zero or negligible amounts such as 10<sup>-21</sup> mol).
 
     state_bc.scaleVolume(1.0, 'm3')
-
-
-    #partition = Partition(system)
-    #partition.setInertSpecies(["Quartz"])
-
-    #print("state_ic = ", state_ic)
-    #print("state_bc = ", state_bc)
-    #input()
 
     # ### Creating the mesh
     #
@@ -311,16 +308,20 @@ def reactive_transport(use_smart_equilibrium_solver):
     # chemical field object specified on the previous step, at this point containing the initial condition for theuse_smart_eqilibirum_solver
     # chemical state of each mesh cell.
 
+    equilibrium_options = EquilibriumOptions()
+
     smart_equilibrium_options = SmartEquilibriumOptions()
     smart_equilibrium_options.reltol = smart_equlibrium_reltol
     smart_equilibrium_options.amount_fraction_cutoff = amount_fraction_cutoff
     smart_equilibrium_options.mole_fraction_cutoff = mole_fraction_cutoff
+    smart_equilibrium_options.smart_method = params["smart_method"]
 
     reactive_transport_options = ReactiveTransportOptions()
-    reactive_transport_options.use_smart_equilibrium_solver = use_smart_equilibrium_solver
+    reactive_transport_options.use_smart_equilibrium_solver = params["use_smart_equilibrium_solver"]
+    reactive_transport_options.equilibrium = equilibrium_options
     reactive_transport_options.smart_equilibrium = smart_equilibrium_options
 
-    rtsolver = ReactiveTransportSolver(system)
+    rtsolver = ReactiveTransportSolver(partition)
     rtsolver.setOptions(reactive_transport_options)
     rtsolver.setMesh(mesh)
     rtsolver.setVelocity(v)
@@ -331,6 +332,7 @@ def reactive_transport(use_smart_equilibrium_solver):
 
     profiler = ReactiveTransportProfiler()
 
+
     # ### Defining the output quantities
     #
     # Before starting the reactive transport calculations, we define the quantities that will be output for every mesh
@@ -340,6 +342,11 @@ def reactive_transport(use_smart_equilibrium_solver):
     # outputting. In this case, it is pH, molality of `H+`, `Ca++`, `Mg++`, `HCO3-`, `CO2(aq)`, as well as a phase volume
     # of calcite and dolomite.
 
+    # +
+    # Make auxiliary folders to save generated results, their plots, or videos
+    folder = make_results_folders(folder_results, params["use_smart_equilibrium_solver"])
+
+    # Create output class
     output = rtsolver.output()
     output.add("pH")
     output.add("speciesMolality(H+)")
@@ -349,15 +356,14 @@ def reactive_transport(use_smart_equilibrium_solver):
     output.add("speciesMolality(CO2(aq))")
     output.add("phaseVolume(Calcite)")
     output.add("phaseVolume(Dolomite)")
-    output.add("speciesMolality(CO3--)");
-    output.add("speciesMolality(CaCl+)");
-    output.add("speciesMolality(Ca(HCO3)+)");
-    output.add("speciesMolality(MgCl+)");
-    output.add("speciesMolality(Mg(HCO3)+)");
-    output.filename(folder_results + '/state.txt')  # Set the name of the output files
-
-    # Make auxiliary folders to save generated results, their plots, or videos
-    make_results_folders(use_smart_equilibrium_solver)
+    output.add("speciesMolality(CO3--)")
+    output.add("speciesMolality(CaCl+)")
+    output.add("speciesMolality(Ca(HCO3)+)")
+    output.add("speciesMolality(MgCl+)")
+    output.add("speciesMolality(Mg(HCO3)+)")
+    output.add("speciesMolality(OH-)")
+    output.filename(folder + '/state.txt')  # Set the name of the output files
+    # -
 
     # ### Running the reactive transport simulation
     #
@@ -382,8 +388,6 @@ def reactive_transport(use_smart_equilibrium_solver):
     bar = IncrementalBar('Run reactive transport:', max = nsteps)
     while step < nsteps:  # step until the number of steps are achieved
 
-        print(f"Step {step}")
-
         # Perform one reactive transport time step
         rtsolver.step(field)
 
@@ -400,54 +404,47 @@ def reactive_transport(use_smart_equilibrium_solver):
 
     bar.finish()
 
-    rtsolver.outputClusterInfo()
+    if params["use_smart_equilibrium_solver"] and params["smart_method"] == "eq-clustering":
+        rtsolver.outputClusterInfo()
 
     # Collect the analytics related to reactive transport performance
-    analysis = ReactiveTransportAnalysis()
     analysis = profiler.analysis()
-    if use_smart_equilibrium_solver:
-        timings_equilibrium_smart = np.array(analysis.computing_costs_per_time_step.smart_equilibrium)
+    if params["use_smart_equilibrium_solver"]:
+        timings_equilibrium = np.array(analysis.computing_costs_per_time_step.smart_equilibrium)
         indices = analysis.smart_equilibrium.cells_where_learning_was_required_at_step
         size = len(indices)
         for i in range(size):
             learnings[i] = len(indices[i])
-        #print("smart_equlibrium_times : ", timings_equilibrium_smart)
+
         print("learnings : ", learnings)
+        print("smart_equlibrium_times : ", timings_equilibrium)
+
     else:
-        timings_equilibrium_conv = np.array(analysis.computing_costs_per_time_step.equilibrium)
-        #print("conv_equlibrium_times : ", timings_equilibrium_conv)
+        timings_equilibrium = np.array(analysis.computing_costs_per_time_step.equilibrium)
+        print("conv_equlibrium_times : ", timings_equilibrium)
 
-    #timings_transport = np.array(analysis.computing_costs_per_time_step.transport)
-    #print("transport_times : ", timings_transport)
+    timings_transport = np.array(analysis.computing_costs_per_time_step.transport)
 
-    #if use_smart_eqilibirum_solver:  json_output = JsonOutput(folder + "/" + "analysis-smart.json");
-    #else: json_output = JsonOutput(folder + "/" + "analysis-conventional.json");
-    #print(json_output)
-
-    # if use_smart_equilibrium_solver:  filename = 'analysis-smart-json.json'
-    # else: filename = 'analysis-conventional-json.json'
-    # with open(filename, 'w') as outfile:
-    #     json.dump(analysis, outfile)
-    # #print(json_output);
-    #json_output << analysis;
+    return folder, timings_equilibrium, timings_transport
 
 
 print("Smart algorithm: ")
-use_smart_equilibrium_solver = True
+params = dict(use_smart_equilibrium_solver=True,
+              smart_method=smart_method)
 start_rt = time.time()
-reactive_transport(use_smart_equilibrium_solver)
+folder_results_smart, timings_equilibrium_smart, timings_transport = reactive_transport(params)
 timing_rt_smart = time.time() - start_rt
 
 
 print("Conventional algorithm: ")
-use_smart_equilibrium_solver = False
+params = dict(use_smart_equilibrium_solver=False,
+              smart_method=smart_method)
 start_rt = time.time()
-reactive_transport(use_smart_equilibrium_solver)
+folder_results_ref, timings_equilibrium_conv, timings_transport = reactive_transport(params)
 timing_rt_conv = time.time() - start_rt
 
-print(f"Total learnings: {np.sum(learnings)} out of {ncells * nsteps}")
-#print("Speed up = ", np.sum(timings_equilibrium_conv) / np.sum(timings_equilibrium_smart))
-
+print(f"Total learnings: {int(np.sum(learnings))} out of {ncells * nsteps}")
+print(f"Speed up : {np.sum(timings_equilibrium_conv) / np.sum(timings_equilibrium_smart)}")
 
 def plot_on_demand_learning_countings_mpl():
 
@@ -463,7 +460,6 @@ def plot_on_demand_learning_countings_mpl():
 
 def plot_computing_costs_mpl(step):
 
-    print("speed up = ", np.sum(timings_equilibrium_conv) / np.sum(timings_equilibrium_smart))
     plt.xlabel('Time Step')
     plt.ylabel('Computing Cost [μs]')
     plt.xlim(left=0, right=nsteps)
@@ -494,12 +490,12 @@ def plot_speedups_mpl(step):
     plt.close()
 
 # Plotting of the number of the learning:
-#plot_on_demand_learning_countings_mpl()
+plot_on_demand_learning_countings_mpl()
 
 # Plot with the CPU time comparison and speedup:
 step = 1
-#plot_computing_costs_mpl(1)
-#plot_speedups_mpl(1)
+plot_computing_costs_mpl(1)
+plot_speedups_mpl(1)
 
 # ## Plotting of the obtained results
 # The last block of the main routine is dedicated to plotting of the results and generating a video from the plots to
@@ -516,7 +512,7 @@ files = [file for file in natsorted( os.listdir(folder_results) ) ]
 
 # +
 from matplotlib import animation
-from IPython.display import Video
+#from IPython.display import Video
 
 animation_starts_at_frame = 0      # the first frame index to be considered
 animation_ends_at_frame = nsteps  # the last frame index to be considered

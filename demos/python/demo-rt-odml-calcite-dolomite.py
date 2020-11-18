@@ -31,7 +31,6 @@
 # +
 from reaktoro import *
 import numpy as np
-from natsort import natsorted
 import matplotlib.pyplot as plt
 #from tqdm.notebook import tqdm
 from progress.bar import IncrementalBar
@@ -78,7 +77,7 @@ year = 365 * day
 xl = 0.0                # x-coordinate of the left boundary
 xr = 1.0                # x-coordinate of the right boundary
 ncells = 100            # number of cells in the discretization
-nsteps = 50          # number of steps in the reactive transport simulation
+nsteps = 100          # number of steps in the reactive transport simulation
 dx = (xr - xl) / ncells # length of the mesh cells (in units of m)
 dt = 30 * minute        # time step
 
@@ -107,7 +106,6 @@ activity_model = "hkf-full"
 smart_equlibrium_reltol = 0.001
 amount_fraction_cutoff = 1e-14
 mole_fraction_cutoff = 1e-14
-use_smart_equilibrium_solver = True
 # -
 
 tag = "-dt-" + "{:d}".format(dt) + \
@@ -115,7 +113,7 @@ tag = "-dt-" + "{:d}".format(dt) + \
       "-nsteps-" + str(nsteps) + \
       "-reltol-" + "{:.{}e}".format(smart_equlibrium_reltol, 1) + \
       "-" + activity_model
-folder_results = 'results-odml' + tag
+folder_results = 'results-rt-odml-calcite-dolomite' + tag
 
 # The seconds spent on equilibrium and transport calculations per time step
 time_steps = np.linspace(0, nsteps, nsteps)
@@ -226,10 +224,10 @@ df_conv = pd.DataFrame(columns=columns)
 # Using **os** package, we create required folders for outputting the obtained results and for the plot and video
 # files later.
 
-def make_results_folders(use_smart_equilibrium_solver):
+def make_results_folders():
 
     os.system('mkdir -p ' + folder_results)
-    #if use_smart_equilibrium_solver: os.system('mkdir -p ' + folder_results + "-smart")
+    #if params["use_smart_equilibrium_solver"]: os.system('mkdir -p ' + folder_results + "-smart")
     #else: os.system('mkdir -p ' + folder_results + "-reference")
 
 # ## Performing the reactive transport simulation
@@ -262,7 +260,7 @@ def make_results_folders(use_smart_equilibrium_solver):
 # and thus causes mineral dissolution or precipitation, depending on how much the amount of mineral species changes.
 # This can then be used, for example, to compute new porosity value for the cell.
 
-def simulate(use_smart_equilibrium_solver):
+def simulate(params):
 
     # Construct the chemical system with its phases and species
     system = define_chemical_system()
@@ -286,24 +284,31 @@ def simulate(use_smart_equilibrium_solver):
     #partition.setInertSpecies(["Quartz"])
 
     # Create the equilibrium solver object for the repeated equilibrium calculation
-    if use_smart_equilibrium_solver:
-        #from reaktoro import SmartEquilibriumOptions as smart_equilibrium_options
+    if params["use_smart_equilibrium_solver"]:
+
         smart_equilibrium_options = SmartEquilibriumOptions()
         smart_equilibrium_options.reltol = smart_equlibrium_reltol
         smart_equilibrium_options.amount_fraction_cutoff = amount_fraction_cutoff
         smart_equilibrium_options.mole_fraction_cutoff = mole_fraction_cutoff
 
-        solver = SmartEquilibriumSolver(system)
+        if params["smart_method"] == "eq-clustering":
+            solver = SmartEquilibriumSolverClustering(system)
+        elif params["smart_method"] == "eq-priority":
+            solver = SmartEquilibriumSolverPriorityQueue(system)
+        elif params["smart_method"] == "eq-nnsearch":
+            solver = SmartEquilibriumSolverNN(system)
+
         solver.setOptions(smart_equilibrium_options)
 
-    else: solver = EquilibriumSolver(system)
+    else:
+        solver = EquilibriumSolver(system)
 
     # Running the reactive transport simulation loop
     step = 0  # the current step number
     t = 0.0  # the current time (in seconds)
 
     # Output the initial state of the reactive transport calculation
-    outputstate_df(step, system, states, use_smart_equilibrium_solver)
+    outputstate_df(step, system, states, params["use_smart_equilibrium_solver"])
 
     #with tqdm(total=nsteps, desc="Reactive transport simulations") as pbar:
     bar = IncrementalBar('Run reactive transport:', max = nsteps)
@@ -317,8 +322,8 @@ def simulate(use_smart_equilibrium_solver):
 
         start_equilibrium = time.time()
         # Perform reactive chemical calculations
-        states = reactive_chemistry(solver, states, b, use_smart_equilibrium_solver)
-        if use_smart_equilibrium_solver:
+        states = reactive_chemistry(solver, states, b, params["use_smart_equilibrium_solver"])
+        if params["use_smart_equilibrium_solver"]:
             timings_equilibrium_smart[step] = time.time() - start_equilibrium
             smart_cells[step, :] = smart_cells_per_step
             learnings[step] = ncells - np.count_nonzero(smart_cells_per_step)
@@ -330,15 +335,16 @@ def simulate(use_smart_equilibrium_solver):
         step += 1
 
         # Output the current state of the reactive transport calculation
-        outputstate_df(step, system, states, use_smart_equilibrium_solver)
+        outputstate_df(step, system, states, params["use_smart_equilibrium_solver"])
 
         # Update a progress bar
         # pbar.update(1)
         bar.next()
 
     bar.finish()
-    if use_smart_equilibrium_solver:
-        solver.outputClusterInfo();
+
+    if params["use_smart_equilibrium_solver"] and params["smart_method"] == "eq-clustering":
+        solver.outputClusterInfo()
 
 # Subsections below correspond to the methods responsible for each of the functional parts of `simulate()` method.
 #
@@ -491,7 +497,7 @@ def define_boundary_condition(system):
     problem_bc.setTemperature(T)
     problem_bc.setPressure(P)
     problem_bc.add('H2O', 1.0, 'kg')
-    problem_bc.add("O2", 1.0, "umol");
+    problem_bc.add("O2", 1.0, "umol")
     problem_bc.add('NaCl', 0.90, 'mol')
     problem_bc.add('MgCl2', 0.05, 'mol')
     problem_bc.add('CaCl2', 0.01, 'mol')
@@ -671,9 +677,11 @@ def thomas(a, b, c, d):
 def reactive_chemistry(solver, states, b, use_smart_equilibrium_solver):
     # Equilibrating all cells with the updated element amounts
     for icell in range(ncells):
+
         res = solver.solve(states[icell], T, P, b[icell])
         if use_smart_equilibrium_solver:
             smart_cells_per_step[icell] = res.estimate.accepted
+
     return states
 
 
@@ -930,7 +938,7 @@ def plot_on_demand_learning_countings_mpl():
 
 def plot_computing_costs_mpl(step):
 
-    print("speed up = ", np.sum(timings_equilibrium_conv) / np.sum(timings_equilibrium_smart))
+    print("Chemical equilibrium speedup : ", np.sum(timings_equilibrium_conv) / np.sum(timings_equilibrium_smart))
     plt.xlabel('Time Step')
     plt.ylabel('Computing Cost [μs]')
     plt.xlim(left=0, right=nsteps)
@@ -964,15 +972,16 @@ def plot_speedups_mpl(step):
 #
 # Run the reactive transport simulations with the ODML approach:
 
+make_results_folders()
 
 # +
-print("ODML algorithm: ")
-use_smart_equilibrium_solver = True
-make_results_folders(use_smart_equilibrium_solver)
+print("ODML algorithm : ")
+params = dict(use_smart_equilibrium_solver=True,
+              smart_method="eq-clustering")
 start_rt = time.time()
-simulate(use_smart_equilibrium_solver)
+simulate(params)
 timing_rt_smart = time.time() - start_rt
-print("Learnings: ", learnings)
+print("Learnings : ", learnings)
 df_smart.to_csv(folder_results + '/smart.csv', index=False)
 
 # -
@@ -989,21 +998,21 @@ df_smart.to_csv(folder_results + '/smart.csv', index=False)
 
 # +
 print("Conventional algorithm: ")
-use_smart_equilibrium_solver = False
-make_results_folders(use_smart_equilibrium_solver)
+params = dict(use_smart_equilibrium_solver=False,
+              smart_method="eq-clustering")
 start_rt = time.time()
-simulate(use_smart_equilibrium_solver)
+simulate(params)
 df_smart.to_csv(folder_results + '/conv.csv', index=False)
 timing_rt_conv = time.time() - start_rt
 # -
 
 
-print("Total speedup: ", timing_rt_conv/timing_rt_smart)
-print(f"Total learnings: {int(np.sum(learnings))} out of {ncells * nsteps}")
+print(f"Total speedup : {timing_rt_conv/timing_rt_smart}")
+print(f"Total learnings : {int(np.sum(learnings))} out of {ncells * nsteps}")
 
 # Select the steps, on which results must plotted:
 
-selected_steps_to_plot = [1, 5, 10]
+selected_steps_to_plot = [1, 10, 50, 100]
 assert all(step <= nsteps for step in selected_steps_to_plot), f"Make sure that selected steps are less than " \
                                                                f"total amount of steps {nsteps}"
 
@@ -1032,10 +1041,6 @@ plot_on_demand_learning_countings_mpl()
 step = 1
 plot_computing_costs_mpl(1)
 plot_speedups_mpl(1)
-
-#print("conv_equlibrium_times : ", conv_equlibrium_times)
-#print("smart_equlibrium_times : ", smart_equlibrium_times)
-#print("transport_times : ", transport_times)
 
 # To study the time-dependent behavior of the chemical properties, we create a Bokeh application using function
 # `modify_doc(doc)`. It creates Bokeh content and adds it to the app. Streaming of the reactive transport data:
