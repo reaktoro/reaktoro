@@ -18,37 +18,60 @@
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolverClustering.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolverPriorityQueue.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolverNN.hpp>
 
 namespace Reaktoro {
 
-void exportSmartEquilibriumSolver(py::module& m)
+void exportSmartEquilibriumSolverClustering(py::module& m)
 {
-    auto solve1 = static_cast<SmartEquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolver::solve);
-    auto solve2 = static_cast<SmartEquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::solve);
+    auto solve1 = static_cast<SmartEquilibriumResult(SmartEquilibriumSolverClustering::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolverClustering::solve);
+    auto solve2 = static_cast<SmartEquilibriumResult(SmartEquilibriumSolverClustering::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolverClustering::solve);
 
-    py::class_<SmartEquilibriumSolver>(m, "SmartEquilibriumSolver")
+    py::class_<SmartEquilibriumSolverClustering>(m, "SmartEquilibriumSolverClustering")
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const Partition&>())
-        .def("setOptions", &SmartEquilibriumSolver::setOptions)
+        .def("setOptions", &SmartEquilibriumSolverClustering::setOptions)
         .def("solve", solve1)
         .def("solve", solve2)
-        .def("properties", &SmartEquilibriumSolver::properties, py::return_value_policy::reference_internal)
-        .def("result", &SmartEquilibriumSolver::result, py::return_value_policy::reference_internal)
-        .def("outputClusterInfo", &SmartEquilibriumSolver::outputClusterInfo)
-
-         // DEPRECATED METHODS: TO BE REMOVED
-        .def("setPartition", &SmartEquilibriumSolver::setPartition)
-        ;
+        .def("getProperties", &SmartEquilibriumSolverClustering::getProperties, py::return_value_policy::reference_internal)
+        .def("getResult", &SmartEquilibriumSolverClustering::getResult, py::return_value_policy::reference_internal)
+        .def("outputClusterInfo", &SmartEquilibriumSolverClustering::outputClusterInfo);
 }
 
+void exportSmartEquilibriumSolverPriorityQueue(py::module& m)
+{
+    auto solve1 = static_cast<SmartEquilibriumResult(SmartEquilibriumSolverPriorityQueue::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolverPriorityQueue::solve);
+    auto solve2 = static_cast<SmartEquilibriumResult(SmartEquilibriumSolverPriorityQueue::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolverPriorityQueue::solve);
+
+    py::class_<SmartEquilibriumSolverPriorityQueue>(m, "SmartEquilibriumSolverPriorityQueue")
+        .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const Partition&>())
+        .def("setOptions", &SmartEquilibriumSolverPriorityQueue::setOptions)
+        .def("solve", solve1)
+        .def("solve", solve2)
+        .def("getProperties", &SmartEquilibriumSolverPriorityQueue::getProperties, py::return_value_policy::reference_internal)
+        .def("getResult", &SmartEquilibriumSolverPriorityQueue::getResult, py::return_value_policy::reference_internal);
+}
+
+    void exportSmartEquilibriumSolverNN(py::module& m)
+    {
+        auto solve1 = static_cast<SmartEquilibriumResult(SmartEquilibriumSolverNN::*)(ChemicalState&, double, double, VectorConstRef)>(&SmartEquilibriumSolverNN::solve);
+        auto solve2 = static_cast<SmartEquilibriumResult(SmartEquilibriumSolverNN::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolverNN::solve);
+
+        py::class_<SmartEquilibriumSolverNN>(m, "SmartEquilibriumSolverNN")
+                .def(py::init<const ChemicalSystem&>())
+                .def(py::init<const Partition&>())
+                .def("setOptions", &SmartEquilibriumSolverNN::setOptions)
+                .def("solve", solve1)
+                .def("solve", solve2)
+                .def("getProperties", &SmartEquilibriumSolverNN::getProperties, py::return_value_policy::reference_internal)
+                .def("getResult", &SmartEquilibriumSolverNN::getResult, py::return_value_policy::reference_internal);
+    }
 } // namespace Reaktoro

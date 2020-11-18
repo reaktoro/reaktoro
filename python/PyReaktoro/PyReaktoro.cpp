@@ -64,9 +64,12 @@ extern void exportEquilibriumSolver(py::module& m);
 extern void exportEquilibriumUtils(py::module& m);
 extern void exportSmartEquilibriumOptions(py::module& m);
 extern void exportSmartEquilibriumResult(py::module& m);
-extern void exportSmartEquilibriumSolver(py::module& m);
+extern void exportSmartEquilibriumSolverClustering(py::module& m);
+extern void exportSmartEquilibriumSolverPriorityQueue(py::module& m);
+extern void exportSmartEquilibriumSolverNN(py::module& m);
 
-// Backends module
+
+    // Backends module
 extern void exportGems(py::module& m);
 extern void exportInterface(py::module& m);
 extern void exportPhreeqc(py::module& m);
@@ -174,7 +177,9 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportEquilibriumUtils(m);
     exportSmartEquilibriumOptions(m);
     exportSmartEquilibriumResult(m);
-    exportSmartEquilibriumSolver(m);
+    exportSmartEquilibriumSolverClustering(m);
+    exportSmartEquilibriumSolverPriorityQueue(m);
+    exportSmartEquilibriumSolverNN(m);
 
     // Backends module
     exportInterface(m); // *** Warning *** exportInterface must be called before exportGems, exportPhreeqc, etc.
