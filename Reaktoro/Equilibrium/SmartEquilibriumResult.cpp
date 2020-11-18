@@ -1,7 +1,5 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2018 Allan Leal
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -23,11 +21,11 @@ auto SmartEquilibriumTiming::operator+=(const SmartEquilibriumTiming& other) -> 
 {
     solve += other.solve;
     learn += other.learn;
-    learning_gibbs_energy_minimization += other.learning_gibbs_energy_minimization;
-    learning_chemical_properties += other.learning_chemical_properties;
-    learning_sensitivity_matrix += other.learning_sensitivity_matrix;
-    learning_error_control_matrices += other.learning_error_control_matrices;
-    learning_storage += other.learning_storage;
+    learn_gibbs_energy_minimization += other.learn_gibbs_energy_minimization;
+    learn_chemical_properties += other.learn_chemical_properties;
+    learn_sensitivity_matrix += other.learn_sensitivity_matrix;
+    learn_error_control_matrices += other.learn_error_control_matrices;
+    learn_storage += other.learn_storage;
     estimate += other.estimate;
     estimate_search += other.estimate_search;
     estimate_error_control += other.estimate_error_control;
