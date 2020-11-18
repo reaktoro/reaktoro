@@ -124,11 +124,11 @@ struct ReactiveTransportProfiler::Impl
             info.smart_equilibrium_database_priority_update[i] = timing_smart_equilibrium_at_step[i].estimate_database_priority_update;
 
             info.smart_equilibrium_learn[i] = timing_smart_equilibrium_at_step[i].learn;
-            info.smart_equilibrium_gibbs_energy_minimization[i] = timing_smart_equilibrium_at_step[i].learning_gibbs_energy_minimization;
-            info.smart_equilibrium_chemical_properties[i] = timing_smart_equilibrium_at_step[i].learning_chemical_properties;
-            info.smart_equilibrium_sensitivity_matrix[i] = timing_smart_equilibrium_at_step[i].learning_sensitivity_matrix;
-            info.smart_equilibrium_error_control_matrices[i] = timing_smart_equilibrium_at_step[i].learning_error_control_matrices;
-            info.smart_equilibrium_storage[i] = timing_smart_equilibrium_at_step[i].learning_storage;
+            info.smart_equilibrium_gibbs_energy_minimization[i] = timing_smart_equilibrium_at_step[i].learn_gibbs_energy_minimization;
+            info.smart_equilibrium_chemical_properties[i] = timing_smart_equilibrium_at_step[i].learn_chemical_properties;
+            info.smart_equilibrium_sensitivity_matrix[i] = timing_smart_equilibrium_at_step[i].learn_sensitivity_matrix;
+            info.smart_equilibrium_error_control_matrices[i] = timing_smart_equilibrium_at_step[i].learn_error_control_matrices;
+            info.smart_equilibrium_storage[i] = timing_smart_equilibrium_at_step[i].learn_storage;
         }
 
         return info;

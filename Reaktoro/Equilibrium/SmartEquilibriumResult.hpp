@@ -1,7 +1,5 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2018 Allan Leal
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -35,19 +33,19 @@ struct SmartEquilibriumTiming
     double learn = 0.0;
 
     /// The time spent in seconds for a conventional Gibbs energy minimization calculation during learning operation.
-    double learning_gibbs_energy_minimization = 0.0;
+    double learn_gibbs_energy_minimization = 0.0;
 
     /// The time spent in seconds for computing the chemical properties during learning operation.
-    double learning_chemical_properties = 0.0;
+    double learn_chemical_properties = 0.0;
 
     /// The time spent in seconds for computing the sensitivity matrix during learning operation.
-    double learning_sensitivity_matrix = 0.0;
+    double learn_sensitivity_matrix = 0.0;
 
     /// The time spent in seconds for computing the error control matrices during learning operation.
-    double learning_error_control_matrices = 0.0;
+    double learn_error_control_matrices = 0.0;
 
     /// The time spent in seconds for storing the computed chemical state into the tree of knowledge.
-    double learning_storage = 0.0;
+    double learn_storage = 0.0;
 
     /// The time spent in seconds for the smart chemical equilibrium state estimation.
     double estimate = 0.0;
