@@ -45,6 +45,15 @@ struct SmartEquilibriumOptions
     /// The relative tolerance used in the acceptance test.
     double reltol = 1.0e-3;
 
+    /// The relative tolerance used in the acceptance test.
+    double abstol = 1.0e-2;
+
+    /// The small negative cutoff value for estimated species mole amounts.
+    double cutoff = -1e-5;
+
+    /// The tag indicating the implementation of the ODML method.
+    std::string smart_method = "kin-clustering-eq-clustering";
+
 };
 
 } // namespace Reaktoro
