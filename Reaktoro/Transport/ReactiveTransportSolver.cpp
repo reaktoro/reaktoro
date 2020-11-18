@@ -25,7 +25,9 @@
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolverClustering.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolverPriorityQueue.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolverNN.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Transport/ChemicalField.hpp>
 #include <Reaktoro/Transport/Mesh.hpp>
@@ -54,7 +56,10 @@ struct ReactiveTransportSolver::Impl
     EquilibriumSolver equilibrium_solver;
 
     /// The equilibrium solver using a smart on-demand learning strategy.
-    SmartEquilibriumSolver smart_equilibrium_solver;
+    //SmartEquilibriumSolver smart_equilibrium_solver;
+    SmartEquilibriumSolverClustering smart_equilibrium_solver_clustering;
+    SmartEquilibriumSolverPriorityQueue smart_equilibrium_solver_queue;
+    SmartEquilibriumSolverNN smart_equilibrium_solver_nn;
 
     /// The list of chemical output objects
     std::vector<ChemicalOutput> outputs;
@@ -89,7 +94,10 @@ struct ReactiveTransportSolver::Impl
     /// Construct a ReactiveTransportSolver::Impl instance with given partition of the chemical system.
     Impl(const Partition& partition)
     : system(partition.system()), partition(partition),
-      equilibrium_solver(partition), smart_equilibrium_solver(partition)
+      equilibrium_solver(partition),
+      smart_equilibrium_solver_clustering(partition),
+      smart_equilibrium_solver_nn(partition),
+      smart_equilibrium_solver_queue(partition)
     {
         setBoundaryState(ChemicalState(system));
     }
@@ -99,7 +107,10 @@ struct ReactiveTransportSolver::Impl
     {
         this->options = options;
         equilibrium_solver.setOptions(options.equilibrium);
-        smart_equilibrium_solver.setOptions(options.smart_equilibrium);
+        //smart_equilibrium_solver.setOptions(options.smart_equilibrium);
+        smart_equilibrium_solver_clustering.setOptions(options.smart_equilibrium);
+        smart_equilibrium_solver_nn.setOptions(options.smart_equilibrium);
+        smart_equilibrium_solver_queue.setOptions(options.smart_equilibrium);
     }
 
     /// Initialize the mesh discretizing the computational domain for reactive transport.
@@ -294,13 +305,24 @@ struct ReactiveTransportSolver::Impl
                 field[icell].scaleSpeciesAmounts(1 / be_total);
 
                 // Solve with a smart equilibrium solver
-                smart_equilibrium_solver.solve(field[icell], T, P, be_bar);
+                if(options.smart_equilibrium.smart_method == "kin-clustering-eq-clustering" || options.smart_equilibrium.smart_method == "eq-clustering")
+                    smart_equilibrium_solver_clustering.solve(field[icell], T, P, be_bar);
+                else if (options.smart_equilibrium.smart_method == "kin-priority-eq-priority" || options.smart_equilibrium.smart_method == "eq-priority")
+                    smart_equilibrium_solver_queue.solve(field[icell], T, P, be_bar);
+                else if (options.smart_equilibrium.smart_method == "kin-nnsearch-eq-nnsearch" || options.smart_equilibrium.smart_method == "eq-nnsearch")
+                    smart_equilibrium_solver_nn.solve(field[icell], T, P, be_bar);
 
                 // Scale back the vector of species amounts
                 field[icell].scaleSpeciesAmounts(be_total);
 
                 // Save the result of this cell's smart equilibrium calculation
-                result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver.result();
+                if(options.smart_equilibrium.smart_method == "kin-clustering-eq-clustering" || options.smart_equilibrium.smart_method == "eq-clustering")
+                    result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver_clustering.getResult();
+                else if (options.smart_equilibrium.smart_method == "kin-priority-eq-priority" || options.smart_equilibrium.smart_method == "eq-priority")
+                    result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver_queue.getResult();
+                else if (options.smart_equilibrium.smart_method == "kin-nnsearch-eq-nnsearch" || options.smart_equilibrium.smart_method == "eq-nnsearch")
+                    result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver_nn.getResult();
+
             }
         }
         else
@@ -350,7 +372,7 @@ struct ReactiveTransportSolver::Impl
     // Show clusters created by the ODML method
     auto outputClusterInfo() const -> void {
         if (options.use_smart_equilibrium_solver) {
-            smart_equilibrium_solver.outputClusterInfo();
+            smart_equilibrium_solver_clustering.outputClusterInfo();
         } else {
             std::cout << "No clusters were created in the conventional algorithm!" << std::endl;
         }

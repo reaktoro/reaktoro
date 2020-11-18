@@ -31,6 +31,7 @@ void exportSmartEquilibriumOptions(py::module& m)
         .def_readwrite("mole_fraction_cutoff", &SmartEquilibriumOptions::mole_fraction_cutoff)
         .def_readwrite("amount_fraction_cutoff", &SmartEquilibriumOptions::amount_fraction_cutoff)
         .def_readwrite("reltol", &SmartEquilibriumOptions::reltol)
+        .def_readwrite("smart_method", &SmartEquilibriumOptions::smart_method)
         ;
 }
 
