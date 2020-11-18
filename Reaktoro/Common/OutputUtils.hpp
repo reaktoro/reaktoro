@@ -30,6 +30,7 @@ auto operator<<(std::ostream& out, const std::vector<T>& items) -> std::ostream&
     for(std::size_t i = 0; i < items.size(); ++i)
         out << (i > 0 ? ", " : "") << items[i];
     out << std::endl;
+    return out;
 }
 
 } // namespace Reaktoro
