@@ -13,85 +13,16 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// C++ includes
-#include <sstream>      // for using stringstream
-#include <iomanip>      // for setprecition
-
-#if defined _WIN32      // for creating a new folder
-#include <windows.h>
-#ifdef __MINGW32__
-#include <sys/stat.h>
-#endif
-#else
-#include <sys/stat.h>
-#endif
-
 // Reaktoro includes
 #include <Reaktoro/Reaktoro.hpp>
 
+// Reactive transport test includes
+#include <demos/cpp/RTSolverTest.h>
+
 using namespace Reaktoro;
 
-struct Params
-{
-    // Discretization params
-    int ncells = 0; // the number of cells in the spacial discretization
-    int nsteps = 0; // the number of steps in the reactive transport simulation
-    double xl = 0; // the x-coordinates of the left boundaries
-    double xr = 0; // the x-coordinates of the right boundaries
-    double dx = 0; // the space step (in units of m)
-    double dt = 0; // the time step (in units of s)
-
-    // Physical params
-    double D = 0; // the diffusion coefficient (in units of m2/s)
-    double v = 0; // the Darcy velocity (in units of m/s)
-    double T = 0; // the temperature (in units of degC)
-    double P = 0; // the pressure (in units of bar)
-
-    // Solver params
-    bool use_smart_equilibrium_solver = false;
-    double smart_equilibrium_reltol = 0;
-    double amount_fraction_cutoff = 0;
-    double mole_fraction_cutoff = 0;
-
-    std::string activity_model = "";
-};
-
-struct Results
-{
-    /// Total CPU time (in s) required by smart equilibrium scheme
-    double smart_total = 0.0;
-
-    /// Total CPU time (in s) excluding the costs for the search of the closest reference states.
-    double smart_total_ideal_search = 0.0;
-
-    /// Total CPU time (in s) required by smart equilibrium scheme
-    /// excluding the costs for the search and storage of the closest reference states.
-    double smart_total_ideal_search_store = 0.0;
-
-    /// Total CPU time (in s) required by conventional equilibrium scheme
-    double conventional_total = 0.0;
-
-    /// The total time taken to perform all time steps using conventional equilibrium algorithm
-    double time_reactive_transport_conventional = 0.0;
-
-    /// The total time taken to perform all time steps using smart equilibrium algorithm
-    double time_reactive_transport_smart = 0.0;
-
-    /// The accumulated timing information of all equilibrium calculations.
-    EquilibriumTiming equilibrium_timing = {};
-
-    /// The accumulated timing information of all smart equilibrium calculations.
-    SmartEquilibriumTiming smart_equilibrium_timing = {};
-
-    // Rate of the smart equilibrium estimation w.r.t to the total chemical equilibrium calculation
-    double smart_equilibrium_acceptance_rate = 0.0;
-};
-
 /// Forward declaration
-auto mkdir(const std::string& folder) -> bool;
-auto outputConsole(const Params& params) -> void;
-auto makeResultsFolder(const Params& params) -> std::string;
-auto runReactiveTransport(const Params& params, Results& results) -> void;
+auto runReactiveTransport(Params& params, Results& results) -> void;
 
 int main()
 {
@@ -109,7 +40,7 @@ int main()
     params.xl = 0.0; // the x-coordinates of the left boundaries
     params.xr = 100.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
-    params.nsteps = 5000; // the number of steps in the reactive transport simulation
+    params.nsteps = 50; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 0.1*day; // the time step (in units of s)
 
@@ -121,20 +52,34 @@ int main()
     params.T = 25.0;                     // the temperature (in units of degC)
     params.P = 1.01325;                      // the pressure (in units of bar)
 
-    // Define parameters of the equilibrium solvers
-    params.smart_equilibrium_reltol = 0.01;
-
     // Define the activity model for the aqueous species
     //params.activity_model = "dk-full";
     params.activity_model = "pitzer-full";
     //params.activity_model = "dk";
+    params.activity_model = "dk";
 
     // Define equilibrium solver cutoff tolerances
     params.amount_fraction_cutoff = 1e-14;
     params.mole_fraction_cutoff = 1e-14;
 
+
+    // Define smart algorithm and related tolerances
+    // -----------------------------------------------
+
+    // Run smart algorithm with clustering
+    params.smart_method = "eq-clustering";
+    params.smart_equilibrium_reltol = 0.01;
+
+//    // Run smart algorithm with priority queue
+//    params.smart_method = "eq-priority";
+//    params.smart_equilibrium_reltol = 2e-3;
+
+//    // Run smart algorithm with nn search algorithm
+//    params.smart_method = "eq-nnsearch";
+//    params.smart_equilibrium_reltol = 1e-1;
+
     // Output
-    outputConsole(params);
+    params.outputConsole();
 
     // Results
     Results results;
@@ -152,7 +97,7 @@ int main()
     results.smart_total_ideal_search_store = results.smart_equilibrium_timing.solve
                                              - results.smart_equilibrium_timing.estimate_search
                                              - results.smart_equilibrium_timing.estimate_database_priority_update
-                                             - results.smart_equilibrium_timing.learning_storage;
+                                             - results.smart_equilibrium_timing.learn_storage;
 
     // Output speed-us
     std::cout << "speed up                            : "
@@ -170,10 +115,10 @@ int main()
 
     return 0;
 }
-auto runReactiveTransport(const Params& params, Results& results) -> void
+auto runReactiveTransport(Params& params, Results& results) -> void
 {
     // Step **: Create the results folder
-    auto folder = makeResultsFolder(params);
+    auto folder = params.makeResultsFolder("scavenging-with-hematite");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
@@ -366,11 +311,12 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
         step += 1;
     }
 
-    if(params.use_smart_equilibrium_solver)
+    // Print the content of the cluster if the smart equilibrium with clustering is used
+    if(params.use_smart_equilibrium_solver && params.smart_method == "eq-clustering")
         rtsolver.outputClusterInfo();
 
-    if(params.use_smart_equilibrium_solver)
-        results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
+    // Stop the time for the reactive transport simulation
+    if(params.use_smart_equilibrium_solver) results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
     else results.time_reactive_transport_conventional = toc(REACTIVE_TRANSPORT_STEPS);
 
     // Step **: Collect the analytics related to reactive transport performance
@@ -393,67 +339,3 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
     }
     else results.equilibrium_timing = analysis.equilibrium.timing;
 }
-
-/// Make directory for Windows and Linux
-auto mkdir(const std::string& folder) -> bool
-{
-#if defined _WIN32
-    // Replace slash by backslash
-    std::transform(begin(folder), end(folder), begin(folder),
-                   [](char ch) { return ch == '/' ? '\\' : ch; });
-    return 0 != CreateDirectory(folder.c_str(), NULL);
-#else
-    // Create the directory with Read + Write + Execute rights for user, group, and others
-    return ::mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-#endif
-}
-
-/// Create results file with parameters of the test
-auto makeResultsFolder(const Params& params) -> std::string
-{
-    struct stat status = {0};               // structure to get the file status
-
-    std::ostringstream reltol_stream, dt_stream;
-    dt_stream << params.dt;
-    reltol_stream << std::scientific << std::setprecision(1) << params.smart_equilibrium_reltol;
-
-    std::string test_tag = "-dt-" + dt_stream.str() +
-                           "-ncells-" + std::to_string(params.ncells) +
-                           "-nsteps-" + std::to_string(params.nsteps) +
-                           "-" + params.activity_model + "-reference";
-
-    std::string smart_test_tag = "-dt-" + dt_stream.str() +
-                                 "-ncells-" + std::to_string(params.ncells) +
-                                 "-nsteps-" + std::to_string(params.nsteps) +
-                                 "-reltol-" + reltol_stream.str() +
-                                 "-" + params.activity_model +
-                                 "-smart";
-
-    std::string folder = "results-scavenging-with-hematite";
-    folder = (params.use_smart_equilibrium_solver) ?
-             folder + smart_test_tag :
-             folder + test_tag;
-
-    if (stat(folder.c_str(), &status) == -1) mkdir(folder);
-
-    std::cout << "\nsolver                         : " << (params.use_smart_equilibrium_solver ? "smart" : "conventional") << std::endl;
-
-    return folder;
-}
-
-auto outputConsole(const Params& params) -> void {
-
-    // Log the parameters in the console
-    std::cout << "dt      : " << params.dt << std::endl;
-    std::cout << "ncells  : " << params.ncells << std::endl;
-    std::cout << "nsteps  : " << params.nsteps << std::endl;
-    std::cout << "D       : " << params.D << std::endl;
-    std::cout << "v       : " << params.v << std::endl;
-    std::cout << "CFD     : " << params.v * params.dt / params.dx << std::endl;
-    std::cout << "T       : " << params.T << std::endl;
-    std::cout << "P       : " << params.P << std::endl;
-    std::cout << "eqreltol       : " << params.smart_equilibrium_reltol << std::endl;
-    std::cout << "activity model : " << params.activity_model << std::endl;
-
-}
-
