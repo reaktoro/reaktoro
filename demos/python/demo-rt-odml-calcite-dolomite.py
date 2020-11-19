@@ -271,17 +271,18 @@ def simulate(params):
     # Define the boundary condition of the reactive transport modeling problem
     state_bc = define_boundary_condition(system)
 
+    # Define partition to inert and equilibrium species
+    partition = Partition(system)
+    partition.setInertSpecies(["Quartz"])
+
     # Generate indices of partitioning fluid and solid species
-    nelems, ifluid_species, isolid_species = partition_indices(system)
+    Ee, ifs, iss = partition_indices(partition)
 
     # Partitioning fluid and solid species
-    b, bfluid, bsolid, b_bc = partition_elements_in_mesh_cell(ncells, nelems, state_ic, state_bc)
+    be, be_fluid, be_solid, be_bc = partition_elements_in_mesh_cell(Ee, state_ic, state_bc, partition)
 
     # Create a list of chemical states for the mesh cells (one for each cell, initialized to state_ic)
     states = [state_ic.clone() for _ in range(ncells + 1)]
-
-    #partition = Partition(system)
-    #partition.setInertSpecies(["Quartz"])
 
     # Create the equilibrium solver object for the repeated equilibrium calculation
     if params["use_smart_equilibrium_solver"]:
@@ -292,16 +293,16 @@ def simulate(params):
         smart_equilibrium_options.mole_fraction_cutoff = mole_fraction_cutoff
 
         if params["smart_method"] == "eq-clustering":
-            solver = SmartEquilibriumSolverClustering(system)
+            solver = SmartEquilibriumSolverClustering(partition)
         elif params["smart_method"] == "eq-priority":
-            solver = SmartEquilibriumSolverPriorityQueue(system)
+            solver = SmartEquilibriumSolverPriorityQueue(partition)
         elif params["smart_method"] == "eq-nnsearch":
-            solver = SmartEquilibriumSolverNN(system)
+            solver = SmartEquilibriumSolverNN(partition)
 
         solver.setOptions(smart_equilibrium_options)
 
     else:
-        solver = EquilibriumSolver(system)
+        solver = EquilibriumSolver(partition)
 
     # Running the reactive transport simulation loop
     step = 0  # the current step number
@@ -317,12 +318,12 @@ def simulate(params):
 
         start_transport = time.time()
         # Perform transport calculations
-        bfluid, bsolid, b = transport(states, bfluid, bsolid, b, b_bc, nelems, ifluid_species, isolid_species)
+        be_fluid, be_solid, be = transport(states, be_fluid, be_solid, be, be_bc, Ee, ifs, iss, partition)
         timings_transport[step] = time.time() - start_transport
 
         start_equilibrium = time.time()
         # Perform reactive chemical calculations
-        states = reactive_chemistry(solver, states, b, params["use_smart_equilibrium_solver"])
+        states = reactive_chemistry(solver, states, be, params["use_smart_equilibrium_solver"])
         if params["use_smart_equilibrium_solver"]:
             timings_equilibrium_smart[step] = time.time() - start_equilibrium
             smart_cells[step, :] = smart_cells_per_step
@@ -511,101 +512,114 @@ def define_boundary_condition(system):
     return state_bc
 
 
-# ### Indices of partitioning fluid and solid species
+# ### Indices of partitioning fluid and solid species (in equilibrium partition)
 #
 # Only species in fluid phases are mobile and transported by advection and diffusion mechanisms. The solid phases are
-# immobile. The code below identifies the indices of the fluid and solid species. We use methods
+# immobile. The code below identifies the indices of the fluid and solid species (in equilibrium partition). We use methods
 # [indicesFluidSpecies](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalSystem.html#ac2a8b713f46f7a66b2731ba63faa95ad)
 # and [indicesSolidSpecies](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalSystem.html#a8b0c237fff1d827f7bf2dbc911fa5bbf)
 # of class [ChemicalSystem](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalSystem.html) to get the indices of the
-# fluid and solid species, which are stored in the lists `ifluid_species` and `isolid_species`, respectively.
+# fluid and solid species, which are stored in the lists `ifs` and `iss`, respectively.
 
-def partition_indices(system):
-    nelems = system.numElements()
+def partition_indices(partition):
 
-    ifluid_species = system.indicesFluidSpecies()
-    isolid_species = system.indicesSolidSpecies()
+    # Amount of elements in equilibrium partition
+    Ee = partition.numEquilibriumElements()
 
-    return nelems, ifluid_species, isolid_species
+    # Indices of the fluid and solid species
+    ifs = partition.indicesEquilibriumFluidSpecies()
+    iss = partition.indicesEquilibriumSolidSpecies()
+
+    return Ee, ifs, iss
 
 
-# ### Partitioning fluid and solid species
+# ### Partitioning fluid and solid species (in equilibrium partition)
 #
 # In this function, we create arrays to keep track of the amounts of elements in the fluid and solid partition
 # (i.e., the amounts of elements among all fluid phases, here only an aqueous phase, and the amounts of elements among
-# all solid phases, here the mineral phases). For that, we define the arrays `b`, `bfluid`, `bsolid`, that
-# will store, respectively, the concentrations (mol/m<sup>3</sup>) of each element in the system, in the fluid
-# partition, and in the solid partition at every time step.
+# all solid phases, here the mineral phases). For that, we define the arrays `be`, `be_fluid`, `be_solid`, that
+# will store, respectively, the concentrations (mol/m<sup>3</sup>) of each element in the equilibrium partition of the
+# system, in the fluid partition, and in the solid partition at every time step.
 #
-# The array `b` is initialized with the concentrations of the elements at the initial chemical state, `state_ic`,
+# The array `be` is initialized with the concentrations of the elements at the initial chemical state, `state_ic`,
 # using method [elementAmounts](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html#a827457e68a90f89920c13f0cc06fda78)
-# of class [ChemicalState](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html). The array `b_bc` stores
+# of class [ChemicalState](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html). The array `be_bc` stores
 # the concentrations of each element on the boundary in mol/m<sup>3</sup><sub>fluid</sub>.
 
-def partition_elements_in_mesh_cell(ncells, nelems, state_ic, state_bc):
+def partition_elements_in_mesh_cell(Ee, state_ic, state_bc, partition):
+
+    # Indices of equilibrium partition
+    iee = partition.indicesEquilibriumElements()
+
     # The concentrations of each element in each mesh cell (in the current time step)
-    b = np.zeros((ncells, nelems))
+    be = np.zeros((ncells, Ee))
+
     # Initialize the concentrations (mol/m3) of the elements in each mesh cell
-    b[:] = state_ic.elementAmounts()
+    be[:] = state_ic.elementAmounts()[iee]
 
     # The concentrations (mol/m3) of each element in the fluid partition, in each mesh cell
-    bfluid = np.zeros((ncells, nelems))
+    be_fluid = np.zeros((ncells, Ee))
 
     # The concentrations (mol/m3) of each element in the solid partition, in each mesh cell
-    bsolid = np.zeros((ncells, nelems))
+    be_solid = np.zeros((ncells, Ee))
 
     # Initialize the concentrations (mol/m3) of each element on the boundary
-    b_bc = state_bc.elementAmounts()
+    be_bc = state_bc.elementAmounts()[iee]
 
-    return b, bfluid, bsolid, b_bc
+    return be, be_fluid, be_solid, be_bc
+
 
 
 # ### Reactive transport cycle
 #
 # #### Transport
 #
-# This step updates in the fluid partition `bfluid` using the transport equations (without reactions).
+# This step updates in the fluid partition `be_fluid` using the transport equations (without reactions).
 # The `transport_fullimplicit()` function below is responsible for solving an advection-diffusion equation, that is
 # later applied to transport the concentrations (mol/m<sup>3</sup>) of elements in the fluid partition (*a
 # simplification that is possible because of common diffusion coefficients and velocities of the fluid species,
 # otherwise the transport of individual fluid species would be needed*).
 #
 # To match the units of concentrations of the elements in the fluid measure in mol/m<sup>3</sup><sub>bulk</sub> and the
-# imposed concentration `b_bc[j]` mol/m<sup>3</sup><sub>fluid</sub>, e need to multiply it by the porosity `phi_bc` on the
+# imposed concentration `be_bc[j]` mol/m<sup>3</sup><sub>fluid</sub>, we need to multiply it by the porosity `phi_bc` on the
 # boundary cell m<sup>3</sup><sub>fluid</sub>/m<sup>3</sup><sub>bulk</sub>. We use function
 # [properties](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html#ad3fa8fd9e1b948da7a698eb020513f3d)
 # of the class [ChemicalState](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html) to retrieve fluid volume
 # m<sup>3</sup><sub>fluid</sub> and total volume m<sup>3</sup><sub>bulk</sub> in the inflow boundary cell.
 #
 # The updated amounts of elements in the fluid partition are then summed with the amounts of elements in the solid partition
-# `bsolid`, which remained constant during the transport step), and thus updating the amounts of elements in the
-# chemical system `b`. Reactive transport calculations involve the solution of a system of
+# `be_solid` (which remained constant during the transport step), and thus updating the amounts of elements in the
+# chemical system `be`. Reactive transport calculations involve the solution of a system of
 # advection-diffusion-reaction equations.
 
-def transport(states, bfluid, bsolid, b, b_bc, nelems, ifluid_species, isolid_species):
-    # Collect the amounts of elements from fluid and solid partitions
+def transport(states, be_fluid, be_solid, be, be_bc, Ee, ifs, iss, partition):
+
+    # Indices of the elements in equilibrium partition
+    iee = partition.indicesEquilibriumElements()
+
+    # Collect the amounts of elements from fluid and solid partitions from equilibrium partition
     for icell in range(ncells):
-        bfluid[icell] = states[icell].elementAmountsInSpecies(ifluid_species)
-        bsolid[icell] = states[icell].elementAmountsInSpecies(isolid_species)
+        be_fluid[icell] = states[icell].elementAmountsInSpecies(ifs)[iee]
+        be_solid[icell] = states[icell].elementAmountsInSpecies(iss)[iee]
 
     # Get the porosity of the boundary cell
     bc_cell = 0
     phi_bc = states[bc_cell].properties().fluidVolume().val / states[bc_cell].properties().volume().val
 
     # Transport each element in the fluid phase
-    for j in range(nelems):
-        transport_fullimplicit(bfluid[:, j], dt, dx, v, D, phi_bc * b_bc[j])
+    for j in range(Ee):
+        transport_fullimplicit(be_fluid[:, j], dt, dx, v, D, phi_bc * be_bc[j])
 
     # Update the amounts of elements in both fluid and solid partitions
-    b[:] = bsolid + bfluid
+    be[:] = be_solid + be_fluid
 
-    return bfluid, bsolid, b
+    return be_fluid, be_solid, be
 
 
 # ##### Transport calculation with finite-volume scheme
 #
 # The function `transport()` expects a conservative property (argument `u`) (e.g., the concentration mol/m<sup>3</sup>
-# of *j*th element in the fluid given by `bfluid[j]`), the time step (`dt`), the mesh cell length (`dx`),
+# of *j*th element in the fluid given by `be_fluid[j]`), the time step (`dt`), the mesh cell length (`dx`),
 # the fluid velocity (`v`), the diffusion coefficient (`D`), and the boundary condition of the conservative property
 # (`g`) (e.g., the concentration of the *j*th element in the fluid on the left boundary).
 #
