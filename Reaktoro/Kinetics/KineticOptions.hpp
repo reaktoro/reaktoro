@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
 #include <Reaktoro/Math/ODE.hpp>
 
 namespace Reaktoro {
@@ -34,8 +35,14 @@ struct KineticOutputOptions
 /// @see KineticProblem, KineticSolver
 struct KineticOptions
 {
+    /// The boolean flag that indicates whether smart equilibrium solver should be used.
+    bool use_smart_equilibrium_solver = false;
+
     /// The options for the equilibrium solver.
     EquilibriumOptions equilibrium;
+
+    /// The options for the smart equilibrium solver.
+    SmartEquilibriumOptions smart_equilibrium;
 
     /// The options for the ODE solver.
     ODEOptions ode;

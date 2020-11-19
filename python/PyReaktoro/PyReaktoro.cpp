@@ -69,7 +69,7 @@ extern void exportSmartEquilibriumSolverPriorityQueue(py::module& m);
 extern void exportSmartEquilibriumSolverNN(py::module& m);
 
 
-    // Backends module
+// Backends module
 extern void exportGems(py::module& m);
 extern void exportInterface(py::module& m);
 extern void exportPhreeqc(py::module& m);
