@@ -48,7 +48,7 @@ P = 100           # the pressure (in units of bar)
 dx = (xr - xl)/ncells
 alpha = v*dt/dx
 ndigits = len(str(nsteps))
-folder = 'results'
+folder = 'results-rtsolver-dolomitization'
 
 # Step 4: The list of quantities to be output for each mesh cell, each time step
 output_quantities = """
