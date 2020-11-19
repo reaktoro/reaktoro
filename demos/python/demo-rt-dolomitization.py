@@ -147,7 +147,7 @@ def simulate():
         ndigits = len(str(nsteps))
 
         # Provide the output file name, which will correspond
-        output.filename('results/{}.txt'.format(str(step).zfill(ndigits)))
+        output.filename('results-rt-dolomitization/{}.txt'.format(str(step).zfill(ndigits)))
 
         # We define the columns' tags filled with the name of the quantities
         # The first column has a tag 'x' (which corresponds to the center coordinates of the cells )
@@ -217,7 +217,7 @@ def plotfile(file):
     print('Plotting figure', step, '...')
 
     t = step * dt
-    filearray = loadtxt('results/' + file, skiprows=1)
+    filearray = loadtxt('results-rt-dolomitization/' + file, skiprows=1)
     data = filearray.T
 
     ndigits = len(str(nsteps))
@@ -267,7 +267,7 @@ def plotfile(file):
 # Step 8: Plot all result files and generate a video
 def plot():
     # Plot all result files
-    files = sorted(os.listdir('results'))
+    files = sorted(os.listdir('results-rt-dolomitization'))
     #for file in files:
     #    plotfile(file);
     Parallel(n_jobs=16)(delayed(plotfile)(file) for file in files)
@@ -404,7 +404,7 @@ def transport_implicit_explicit(u, dt, dx, v, D, ul):
 
 # Step 6: Creating folders for the results' output
 def make_results_folders():
-    os.system('mkdir -p results')
+    os.system('mkdir -p results-rt-dolomitization')
     os.system('mkdir -p figures/ph')
     os.system('mkdir -p figures/aqueous-species')
     os.system('mkdir -p figures/calcite-dolomite')

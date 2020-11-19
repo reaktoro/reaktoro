@@ -113,7 +113,7 @@ tag = "-dt-" + "{:d}".format(dt) + \
       "-nsteps-" + str(nsteps) + \
       "-reltol-" + "{:.{}e}".format(smart_equlibrium_reltol, 1) + \
       "-" + activity_model
-folder_results = 'results-rt-odml-calcite-dolomite' + tag
+folder_results = 'results-rt-odml-dolomitization' + tag
 
 # The seconds spent on equilibrium and transport calculations per time step
 time_steps = np.linspace(0, nsteps, nsteps)
