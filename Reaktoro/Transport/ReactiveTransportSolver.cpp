@@ -56,7 +56,6 @@ struct ReactiveTransportSolver::Impl
     EquilibriumSolver equilibrium_solver;
 
     /// The equilibrium solver using a smart on-demand learning strategy.
-    //SmartEquilibriumSolver smart_equilibrium_solver;
     SmartEquilibriumSolverClustering smart_equilibrium_solver_clustering;
     SmartEquilibriumSolverPriorityQueue smart_equilibrium_solver_queue;
     SmartEquilibriumSolverNN smart_equilibrium_solver_nn;
