@@ -34,6 +34,8 @@ void exportKineticOptions(py::module& m)
         .def_readwrite("equilibrium", &KineticOptions::equilibrium)
         .def_readwrite("ode", &KineticOptions::ode)
         .def_readwrite("output", &KineticOptions::output)
+        .def_readwrite("use_smart_equilibrium_solver", &KineticOptions::use_smart_equilibrium_solver)
+        .def_readwrite("smart_equilibrium", &KineticOptions::smart_equilibrium)
         ;
 }
 
