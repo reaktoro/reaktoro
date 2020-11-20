@@ -19,15 +19,15 @@
 using namespace Reaktoro;
 
 // Reactive transport test includes
-#include <demos/cpp/KPathTest.h>
+#include <demos/cpp/TestUtils.h>
 
-auto runKinetics(Params &) -> void;
+auto runKinetics(KineticPathParams &) -> void;
 
 int main()
 {
     int minute(60);
 
-    Params params = {};
+    KineticPathParams params = {};
 
     params.t0 = 0;
     params.tfinal = 30 * minute;
@@ -35,7 +35,7 @@ int main()
     runKinetics(params);
 }
 
-auto runKinetics(Params & params) -> void{
+auto runKinetics(KineticPathParams & params) -> void{
 
     auto folder = params.makeResultsFolder();
     std::vector<double> surface_areas = {1, 10, 100, 1000};

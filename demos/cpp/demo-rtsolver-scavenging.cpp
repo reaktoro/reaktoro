@@ -17,12 +17,12 @@
 #include <Reaktoro/Reaktoro.hpp>
 
 // Reactive transport test includes
-#include <demos/cpp/RTSolverTest.h>
+#include <demos/cpp/TestUtils.h>
 
 using namespace Reaktoro;
 
 /// Forward declaration
-auto runReactiveTransport(Params& params, Results& results) -> void;
+auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResults& results) -> void;
 
 int main()
 {
@@ -34,7 +34,7 @@ int main()
     int day = 24 * hour;
 
     // Step 2: Define parameters for the reactive transport simulation
-    Params params;
+    ReactiveTransportParams params;
 
     // Define discretization parameters
     params.xl = 0.0; // the x-coordinates of the left boundaries
@@ -81,7 +81,7 @@ int main()
     params.outputConsole();
 
     // Results
-    Results results;
+    ReactiveTransportResults results;
 
     // Execute reactive transport with different solvers
     params.use_smart_equilibrium_solver = true; runReactiveTransport(params, results);
@@ -114,7 +114,7 @@ int main()
 
     return 0;
 }
-auto runReactiveTransport(Params& params, Results& results) -> void
+auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResults& results) -> void
 {
     // Step **: Create the results folder
     auto folder = params.makeResultsFolder("scavenging");
