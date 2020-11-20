@@ -50,7 +50,7 @@ auto mkdir(const std::string& folder) -> bool
 #endif
 }
 
-struct Params
+struct ReactiveTransportParams
 {
     // Discretization params
     int ncells = 0; // the number of cells in the spacial discretization
@@ -126,7 +126,7 @@ struct Params
     }
 };
 
-struct Results
+struct ReactiveTransportResults
 {
     /// Total CPU time (in s) required by smart equilibrium scheme
     double smart_total = 0.0;
@@ -155,4 +155,30 @@ struct Results
 
     // Rate of the smart equilibrium estimation w.r.t to the total chemical equilibrium calculation
     double smart_equilibrium_acceptance_rate = 0.0;
+};
+
+struct KineticPathParams{
+
+    // Discretisation params
+    double t0;      // starting time of simulations
+    double tfinal;  // final time of simulation
+
+    /// Create results file with parameters of the test
+    /// Create results file with parameters of the test
+    auto makeResultsFolder() -> std::string
+    {
+        struct stat status = {0};               // structure to get the file status
+
+        std::ostringstream tol_stream, t0_stream, tfinal_stream;
+        t0_stream << t0;
+        tfinal_stream << tfinal;
+
+        std::string test_tag = "-t0-" + t0_stream.str() +
+                               "-tfinal-" + tfinal_stream.str();      // name of the folder with results
+        std::string folder = "../kinetics-perturbed-co2" + test_tag;
+        if (stat(folder.c_str(), &status) == -1) mkdir(folder);
+
+        return folder;
+    }
+
 };
