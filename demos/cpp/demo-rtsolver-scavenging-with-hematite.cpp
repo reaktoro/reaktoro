@@ -26,7 +26,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
 
 int main()
 {
-    Time start = time();
+    tic(TOTAL_TIME);
 
     // Step 1: Initialise auxiliary time-related constants
     int minute = 60;
@@ -111,7 +111,7 @@ int main()
     std::cout << "time_reactive_transport_smart       : " << results.time_reactive_transport_smart << std::endl;
     std::cout << "reactive_transport_speedup          : " << results.time_reactive_transport_conventional / results.time_reactive_transport_smart << std::endl;
     // Output total time
-    std::cout << "total time                          : " << elapsed(start) << std::endl;
+    std::cout << "total time                          : " << toc(TOTAL_TIME) << std::endl;
 
     return 0;
 }
