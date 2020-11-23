@@ -22,6 +22,24 @@
 
 namespace Reaktoro {
 
+/// The options for the implementation of the search and acceptance criterion in the ODML algorithm
+// @see SmartEquilibriumSolver
+enum struct SmartEquilibriumStrategy
+{
+    /// The chemical equilibrium states (obtained by training/learning/full-GEMs) are arranged in the deque
+    /// and the search procedure is based on the (geometric) nearest neighbour algorithm.
+    NearestNeighbour,
+
+    /// The chemical equilibrium states (obtained by training/learning/full-GEMs) are arranged in the priority queue
+    /// the search procedure is based on the comparison of chemical potentials of the major species.
+    PriorityQueue,
+
+    /// The chemical equilibrium states (obtained by training/learning/full-GEMs) are arranged in the cluster
+    /// (organized with priority queue), where clustering is based on the primary/secondary species, and the search
+    /// procedure is based on the comparison of chemical potentials of the primary species
+    Clustering,
+
+};
 /// The options for the smart equilibrium calculations.
 /// @see SmartEquilibriumSolver
 struct SmartEquilibriumOptions
@@ -51,8 +69,8 @@ struct SmartEquilibriumOptions
     /// The small negative cutoff value for estimated species mole amounts.
     double cutoff = -1e-5;
 
-    /// The tag indicating the implementation of the ODML method.
-    std::string smart_method = "kin-clustering-eq-clustering";
+    /// The enum indicating the implementation of the ODML method of the chemical equilibrium.
+    SmartEquilibriumStrategy method = SmartEquilibriumStrategy::Clustering;
 
 };
 
