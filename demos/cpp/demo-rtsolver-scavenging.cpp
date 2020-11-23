@@ -54,23 +54,26 @@ int main()
     params.smart_equilibrium_reltol = 0.01;
 
     // Define the activity model for the aqueous species
-    //params.activity_model = "dk-full";
-    //params.activity_model = "pitzer";
-    params.activity_model = "dk";
+    params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies;
 
     // Define smart algorithm and related tolerances
     // -----------------------------------------------
 
-//    // Run smart algorithm with clustering
-//    params.smart_method = "eq-clustering";
-//    params.smart_equilibrium_reltol = 1e-3;
+    // Run smart algorithm with clustering
+    params.method = SmartEquilibriumStrategy::Clustering;;
+    params.smart_equilibrium_reltol = 1e-3;
 
-    // Run smart algorithm with priority queue
-    params.smart_method = "eq-priority";
-    params.smart_equilibrium_reltol = 2e-3;
+//    // Run smart algorithm with priority queue
+//    params.method = SmartEquilibriumStrategy::PriorityQueue;
+//    params.smart_equilibrium_reltol = 2e-3;
 
 //    // Run smart algorithm with nn search algorithm
-//    params.smart_method = "eq-nnsearch";
+//    params.method =  SmartEquilibriumStrategy::NearestNeighbour;
 //    params.smart_equilibrium_reltol = 1e-1;
 
     // Define equilibrium solver cutoff tolerances
@@ -151,26 +154,32 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     StringList selected_elements = "C Ca Cl Fe H K Mg Na O S";
 
     // Define activity model depending on the parameter
-    if(params.activity_model == "hkf"){
+    if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKF){
         // HKF full system
+        editor.addAqueousPhaseWithElements(selected_elements);
+    }
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies){
+        // HKF with selected species
         editor.addAqueousPhase(selected_species);
     }
-    else if(params.activity_model == "hkf-full"){
-        // Debye-Huckel full system
-        editor.addAqueousPhaseWithElements("C Ca Cl Fe H K Mg Na O S");
-    }
-    else if(params.activity_model == "pitzer"){
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies){
         // Pitzer full system
+        editor.addAqueousPhaseWithElements(selected_elements)
+                .setChemicalModelPitzerHMW()
+                .setActivityModelDrummondCO2();
+    }
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies){
+        // Pitzer with selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == "dk"){
-        // Debye-Huckel full system
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies){
+        // Debye-Huckel with selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelDebyeHuckel(dhModel);
     }
-    else if(params.activity_model == "dk-full"){
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
         // Debye-Huckel full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel(dhModel);
@@ -307,8 +316,8 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     }
 
     // Print the content of the cluster if the smart equilibrium with clustering is used
-    if(params.use_smart_equilibrium_solver && params.smart_method == "eq-clustering")
-        rtsolver.outputClusterInfo();
+    if(params.use_smart_equilibrium_solver)
+        rtsolver.outputSmartSolverInfo();
 
     // Stop the time for the reactive transport simulation
     if(params.use_smart_equilibrium_solver) results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);

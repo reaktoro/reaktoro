@@ -25,13 +25,19 @@ namespace Reaktoro {
 
 void exportSmartEquilibriumOptions(py::module& m)
 {
+    py::enum_<SmartEquilibriumStrategy>(m, "SmartEquilibriumStrategy")
+        .value("NearestNeighbour", SmartEquilibriumStrategy::NearestNeighbour)
+        .value("PriorityQueue", SmartEquilibriumStrategy::PriorityQueue)
+        .value("Clustering", SmartEquilibriumStrategy::Clustering)
+        ;
+
     py::class_<SmartEquilibriumOptions>(m, "SmartEquilibriumOptions")
         .def(py::init<>())
         .def_readwrite("learning", &SmartEquilibriumOptions::learning)
         .def_readwrite("mole_fraction_cutoff", &SmartEquilibriumOptions::mole_fraction_cutoff)
         .def_readwrite("amount_fraction_cutoff", &SmartEquilibriumOptions::amount_fraction_cutoff)
         .def_readwrite("reltol", &SmartEquilibriumOptions::reltol)
-        .def_readwrite("smart_method", &SmartEquilibriumOptions::smart_method)
+        .def_readwrite("method", &SmartEquilibriumOptions::method)
         ;
 }
 

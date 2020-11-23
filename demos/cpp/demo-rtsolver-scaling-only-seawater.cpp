@@ -51,8 +51,9 @@ int main()
     params.P = 200 * 1.01325;   // the pressure (in units of bar)
 
     // Define the activity model for the aqueous species
-    params.activity_model = "dk-full";
-    //params.activity_model = "pitzer-full";
+    params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
 
     // Define activity model depending on the parameter
     params.amount_fraction_cutoff = 1e-14;
@@ -61,16 +62,16 @@ int main()
     // Define smart algorithm and related tolerances
     // -----------------------------------------------
 
-//    // Run smart algorithm with clustering
-//    params.smart_method = "eq-clustering";
-//    params.smart_equilibrium_reltol = 1e-3;
+    // Run smart algorithm with clustering
+    params.method = SmartEquilibriumStrategy::Clustering;;
+    params.smart_equilibrium_reltol = 1e-3;
 
-    // Run smart algorithm with priority queue
-    params.smart_method = "eq-priority";
-    params.smart_equilibrium_reltol = 2e-3;
+//    // Run smart algorithm with priority queue
+//    params.method = SmartEquilibriumStrategy::PriorityQueue;
+//    params.smart_equilibrium_reltol = 2e-3;
 
 //    // Run smart algorithm with nn search algorithm
-//    params.smart_method = "eq-nnsearch";
+//    params.method =  SmartEquilibriumStrategy::NearestNeighbour;
 //    params.smart_equilibrium_reltol = 1e-1;
 
     // Output
@@ -137,12 +138,12 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     StringList selected_elements = "H Cl S O Ba Ca Sr Na K Mg C Si";
 
     // Depending on the activity model, define it using ChemicalEditor
-    if(params.activity_model == "dk-full"){
+    if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKF){
         // Debye-Huckel full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel(dhModel);
     }
-    else if(params.activity_model == "pitzer-full"){
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::Pitzer){
         // Pitzer full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelPitzerHMW()
@@ -314,8 +315,8 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     }
 
     // Print the content of the cluster if the smart equilibrium with clustering is used
-    if(params.use_smart_equilibrium_solver && params.smart_method == "eq-clustering")
-        rtsolver.outputClusterInfo();
+    if(params.use_smart_equilibrium_solver)
+        rtsolver.outputSmartSolverInfo();
 
     // Stop the time for the reactive transport simulation
     if(params.use_smart_equilibrium_solver) results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);

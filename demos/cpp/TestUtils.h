@@ -52,6 +52,23 @@ auto mkdir(const std::string& folder) -> bool
 
 struct ReactiveTransportParams
 {
+    /// The options for the activity model of aqueous species
+    enum struct AqueousActivityModel
+    {
+        HKF,
+
+        DebyeHuckel,
+
+        Pitzer,
+
+        HKFSelectedSpecies,
+
+        DebyeHuckelSelectedSpecies,
+
+        PitzerSelectedSpecies,
+
+    };
+
     // Discretization params
     int ncells = 0; // the number of cells in the spacial discretization
     int nsteps = 0; // the number of steps in the reactive transport simulation
@@ -72,9 +89,9 @@ struct ReactiveTransportParams
     double amount_fraction_cutoff = 0;
     double mole_fraction_cutoff = 0;
 
-    std::string activity_model = "";
+    AqueousActivityModel activity_model = AqueousActivityModel::HKF;
 
-    std::string smart_method = "";
+    SmartEquilibriumStrategy method = SmartEquilibriumStrategy::Clustering;
 
     auto outputConsole() -> void
     {
@@ -88,8 +105,32 @@ struct ReactiveTransportParams
         std::cout << "T       : " << T << std::endl;
         std::cout << "P       : " << P << std::endl;
         std::cout << "eqreltol       : " << smart_equilibrium_reltol << std::endl;
-        std::cout << "activity model : " << activity_model << std::endl;
-        std::cout << "smart method   : " << smart_method << std::endl;
+        std::cout << "activity model : " << getActivityModel() << std::endl;
+        std::cout << "smart method   : " << getSmartMethodtag() << std::endl;
+
+    }
+
+    auto getSmartMethodtag() -> std::string
+    {
+        switch(method)
+        {
+            case SmartEquilibriumStrategy::Clustering: return "eq-clustering";
+            case SmartEquilibriumStrategy::PriorityQueue: return "eq-priority";
+            case SmartEquilibriumStrategy::NearestNeighbour: return "eq-nnsearch";
+        }
+    }
+
+    auto getActivityModel() -> std::string
+    {
+        switch(activity_model)
+        {
+            case AqueousActivityModel::HKF: return "hkf-full";
+            case AqueousActivityModel::DebyeHuckel: return "dk-full";
+            case AqueousActivityModel::Pitzer: return "pitzer-full";
+            case AqueousActivityModel::HKFSelectedSpecies: return "hkf-selected-species";
+            case AqueousActivityModel::DebyeHuckelSelectedSpecies: return "dk-selected-species";
+            case AqueousActivityModel::PitzerSelectedSpecies: return "pitzer-selected-species";
+        }
     }
 
     /// Create results file with parameters of the test
@@ -104,14 +145,14 @@ struct ReactiveTransportParams
         std::string test_tag = "-dt-" + dt_stream.str() +
                                "-ncells-" + std::to_string(ncells) +
                                "-nsteps-" + std::to_string(nsteps) +
-                               "-" + activity_model + "-reference";
+                               "-" + getActivityModel() + "-reference";
 
-        std::string smart_test_tag = "-" + smart_method +
+        std::string smart_test_tag = "-" + getSmartMethodtag() +
                                      "-dt-" + dt_stream.str() +
                                      "-ncells-" + std::to_string(ncells) +
                                      "-nsteps-" + std::to_string(nsteps) +
                                      "-reltol-" + reltol_stream.str() +
-                                     "-" + activity_model + "-smart";
+                                     "-" + getActivityModel() + "-smart";
 
         std::string folder = "results-" + demo_tag;
         folder = (use_smart_equilibrium_solver) ?
