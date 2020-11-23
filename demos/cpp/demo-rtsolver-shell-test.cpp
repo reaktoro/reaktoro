@@ -49,9 +49,9 @@ int main()
     params.P = 300.0;                      // the pressure (in units of atm)
 
     // Define the activity model for the aqueous species
-    params.activity_model = "hkf-full";
-    //params.activity_model = "pitzer-full";
-    //params.activity_model = "dk-full";
+    params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
 
     // Define equilibrium solver cutoff tolerances
     params.amount_fraction_cutoff = 1e-14;
@@ -60,17 +60,17 @@ int main()
     // Define smart algorithm and related tolerances
     // -----------------------------------------------
 
-//    // Run smart algorithm with clustering
-//    params.smart_method = "eq-clustering";
-//    params.smart_equilibrium_reltol = 0.004;
+    // Run smart algorithm with clustering
+    params.method = SmartEquilibriumStrategy::Clustering;;
+    params.smart_equilibrium_reltol = 1e-3;
 
 //    // Run smart algorithm with priority queue
-//    params.smart_method = "eq-priority";
-//    params.smart_equilibrium_reltol = 1e-2;
+//    params.method = SmartEquilibriumStrategy::PriorityQueue;
+//    params.smart_equilibrium_reltol = 2e-3;
 
-    // Run smart algorithm with nn search algorithm
-    params.smart_method = "eq-nnsearch";
-    params.smart_equilibrium_reltol = 1e-1;
+//    // Run smart algorithm with nn search algorithm
+//    params.method =  SmartEquilibriumStrategy::NearestNeighbour;
+//    params.smart_equilibrium_reltol = 1e-1;
 
     // Output
     params.outputConsole();
@@ -135,17 +135,17 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     std::string elements = "C Cl H Na O Z";
 
     // Define activity model depending on the parameter
-    if(params.activity_model == "hkf-full"){
+    if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKF){
         // HKF full system
         editor.addAqueousPhaseWithElements(elements);
     }
-    else if(params.activity_model == "pitzer-full"){
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::Pitzer){
         // Pitzer full system
         editor.addAqueousPhaseWithElements(elements)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == "dk-full"){
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
         // Debye-Huckel full system
         editor.addAqueousPhaseWithElements(elements)
                 .setChemicalModelDebyeHuckel()
@@ -256,8 +256,8 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     }
 
     // Print the content of the cluster if the smart equilibrium with clustering is used
-    if(params.use_smart_equilibrium_solver && params.smart_method == "eq-clustering")
-        rtsolver.outputClusterInfo();
+    if(params.use_smart_equilibrium_solver)
+        rtsolver.outputSmartSolverInfo();
 
     // Stop the time for the reactive transport simulation
     if(params.use_smart_equilibrium_solver) results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
