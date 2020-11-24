@@ -47,7 +47,7 @@ problem.add("HCl", 1, "mmol")
 
 # Step 7: Calculate the chemical equilibrium state in the equilibrium partition
 state0 = equilibrate(problem)
-state0.output('demo-kineticpath-calcite-hcl-before-kinetics')
+state0.output('demo-kineticpath-calcite-hcl-before-kinetics.txt')
 
 # Step 8: Set the initial mass of the kinetic species
 state0.setSpeciesMass("Calcite", 100, "g")
@@ -55,38 +55,57 @@ state0.setSpeciesMass("Calcite", 100, "g")
 # Step 9: Define the kinetic path problem
 path = KineticPath(reactions, partition)
 
-# Step 10: Plot different properties of the chemical system during kinetics
-plot1 = path.plot()
-plot1.x("time(units=minute)")
-plot1.y("elementMolality(Ca units=mmolal)", "Ca")
-plot1.xlabel("Time [minute]")
-plot1.ylabel("Concentration [mmolal]")
-plot1.legend("right center")
+# Step 10: Define properties to be output
+output = path.output()
+output.filename("result.txt")
+output.add("time(units=minute)")
+output.add("elementMolality(Ca units=mmolal)", "Ca")
+output.add("phaseMass(Calcite units=g)", "Calcite")
+output.add("speciesMolality(Ca++ units=mmolal)", "Ca++")
+output.add("speciesMolality(HCO3- units=mmolal)", "HCO3-")
+output.add("pH")
 
-plot2 = path.plot()
-plot2.x("time(units=minute)")
-plot2.y("phaseMass(Calcite units=g)", "Calcite")
-plot2.xlabel("Time [minute]")
-plot2.ylabel("Mass [g]")
-
-plot3 = path.plot()
-plot3.x("time(units=minute)")
-plot3.y("pH")
-plot3.xlabel("Time [minute]")
-plot3.ylabel("pH")
-plot3.legend("right center")
-
-plot4 = path.plot()
-plot4.x("time(units=minute)")
-plot4.y("speciesMolality(Ca++ units=mmolal)", "Ca++")
-plot4.y("speciesMolality(HCO3- units=mmolal)", "HCO3-")
-plot4.xlabel("Time [minute]")
-plot4.ylabel("Concentration [mmolal]")
-plot4.legend("right center")
-
-# Step 11: Perform the kinetic path calculation
+# Step 10: Perform the kinetic path calculation
 t0, t1 = 0.0, 5.0
 path.solve(state0, t0, t1, "minute")
 
-# Step 12: Output the final state of the chemical system
+# Step 11: Output the final state of the chemical system
 state0.output('demo-kineticpath-calcite-hcl-after-kinetics')
+
+# Step 12: Plot different properties of the chemical system during kinetics
+
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib as mpl
+mpl.set_loglevel("critical")
+
+filearray = np.loadtxt("result.txt", skiprows=1)
+data = filearray.T
+[t_indx, ca_indx, calcite_indx, ca2_indx, hco3_indx, ph_indx] = np.arange(6)
+
+plt.figure()
+plt.plot(data[t_indx], data[ca_indx], label="Ca", color="C1")
+plt.xlabel("Time [minute]")
+plt.ylabel("Concentration [mmolal]")
+plt.legend(loc='center right')
+plt.savefig("ca-concentration.png")
+
+plt.figure()
+plt.plot(data[t_indx], data[calcite_indx], label="Calcite", color="C2")
+plt.xlabel("Time [minute]")
+plt.ylabel("Phase mass [g]")
+plt.legend(loc='center right')
+plt.savefig("calcite-phase-mass.png")
+
+plt.figure()
+plt.plot(data[t_indx], data[ph_indx], color="C3")
+plt.xlabel("Time [minute]")
+plt.ylabel("pH [-]")
+plt.savefig("ph.png")
+
+plt.figure()
+plt.plot(data[t_indx], data[ca2_indx], label="Ca++", color="C4")
+plt.xlabel("Time [minute]")
+plt.ylabel("Concentration [mmolal]")
+plt.legend(loc='center right')
+plt.savefig("aqueous-species-concentration.png")
