@@ -81,6 +81,9 @@ struct SmartEquilibriumResultDuringEstimate
 
     /// The amount of the species that caused the smart approximation to fail.
     double failed_with_chemical_potential;
+
+    // Self addition assignment to accumulate results.
+    auto operator+=(const SmartEquilibriumResultDuringEstimate& other) -> SmartEquilibriumResultDuringEstimate&;
 };
 
 /// A type used to define the result status of a learning operation in a smart equilibrium calculation.
@@ -89,6 +92,9 @@ struct SmartEquilibriumResultDuringLearning
 {
     /// The result of the full Gibbs energy minimization calculation.
     EquilibriumResult gibbs_energy_minimization;
+
+    /// Self addition assignment to accumulate results.
+    auto operator+=(const SmartEquilibriumResultDuringLearning& other) -> SmartEquilibriumResultDuringLearning&;
 };
 
 /// A type used to describe the result of a smart equilibrium calculation.
@@ -102,6 +108,9 @@ struct SmartEquilibriumResult
 
     /// The timing information of the operations during a smart equilibrium calculation.
     SmartEquilibriumTiming timing;
+
+    /// Self addition assignment to accumulate results.
+    auto operator+=(const SmartEquilibriumResult& other) -> SmartEquilibriumResult&;
 };
 
 } // namespace Reaktoro

@@ -23,4 +23,4 @@
 #include <pybind11/stl.h>
 namespace py = pybind11;
 
-PYBIND11_MAKE_OPAQUE(std::vector<double>);
+PYBIND11_MAKE_OPAQUE(std::vector<double>)

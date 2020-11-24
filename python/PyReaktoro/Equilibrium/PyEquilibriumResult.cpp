@@ -34,6 +34,7 @@ void exportEquilibriumResult(py::module& m)
     py::class_<EquilibriumResult>(m, "EquilibriumResult")
         .def_readwrite("optimum", &EquilibriumResult::optimum)
         .def_readwrite("timing", &EquilibriumResult::timing)
+        .def(py::self += py::self)
         ;
 }
 
