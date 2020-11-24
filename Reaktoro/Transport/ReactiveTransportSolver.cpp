@@ -16,7 +16,6 @@
 #include "ReactiveTransportSolver.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -25,9 +24,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumSolverClustering.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumSolverPriorityQueue.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumSolverNN.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Transport/ChemicalField.hpp>
 #include <Reaktoro/Transport/Mesh.hpp>
@@ -56,9 +53,7 @@ struct ReactiveTransportSolver::Impl
     EquilibriumSolver equilibrium_solver;
 
     /// The equilibrium solver using a smart on-demand learning strategy.
-    SmartEquilibriumSolverClustering smart_equilibrium_solver_clustering;
-    SmartEquilibriumSolverPriorityQueue smart_equilibrium_solver_queue;
-    SmartEquilibriumSolverNN smart_equilibrium_solver_nn;
+    SmartEquilibriumSolver smart_equilibrium_solver;
 
     /// The list of chemical output objects
     std::vector<ChemicalOutput> outputs;
@@ -94,22 +89,17 @@ struct ReactiveTransportSolver::Impl
     Impl(const Partition& partition)
     : system(partition.system()), partition(partition),
       equilibrium_solver(partition),
-      smart_equilibrium_solver_clustering(partition),
-      smart_equilibrium_solver_nn(partition),
-      smart_equilibrium_solver_queue(partition)
+      smart_equilibrium_solver(partition)
     {
         setBoundaryState(ChemicalState(system));
     }
 
     /// Set the options for the reactive transport calculations.
-    auto setOptions(const ReactiveTransportOptions& options) -> void
+    auto setOptions(const ReactiveTransportOptions& _options) -> void
     {
-        this->options = options;
+        this->options = _options;
         equilibrium_solver.setOptions(options.equilibrium);
-        //smart_equilibrium_solver.setOptions(options.smart_equilibrium);
-        smart_equilibrium_solver_clustering.setOptions(options.smart_equilibrium);
-        smart_equilibrium_solver_nn.setOptions(options.smart_equilibrium);
-        smart_equilibrium_solver_queue.setOptions(options.smart_equilibrium);
+        smart_equilibrium_solver.setOptions(options.smart_equilibrium);
     }
 
     /// Initialize the mesh discretizing the computational domain for reactive transport.
@@ -178,7 +168,7 @@ struct ReactiveTransportSolver::Impl
     auto step(ChemicalField& field) -> ReactiveTransportResult
     {
         // The result of the reactive transport step
-        ReactiveTransportResult rt_result = {};
+        result = {};
 
         // Auxiliary variables
         const auto& mesh = transport_solver.mesh();
@@ -198,7 +188,7 @@ struct ReactiveTransportSolver::Impl
         //---------------------------------------------------------------------------
         // Step 1: Perform a time step transport calculation for each fluid element
         //---------------------------------------------------------------------------
-        tic(TRANSPORT_STEP);
+        tic(TRANSPORT_STEP)
 
         // Collect the amounts of elements in the solid and fluid species
         for(Index icell = 0; icell < num_cells; ++icell)
@@ -232,59 +222,10 @@ struct ReactiveTransportSolver::Impl
 
         result.timing.transport = toc(TRANSPORT_STEP);
 
-        /*
         //---------------------------------------------------------------------------
         // Step 2: Perform a time step equilibrium calculation for each cell
         //---------------------------------------------------------------------------
-        tic(EQUILIBRIUM_STEP);
-
-        if(options.use_smart_equilibrium_solver)
-        {
-            // Ensure the result of each cell's smart equilibrium calculation can be saved
-            result.smart_equilibrium_at_cell.resize(num_cells);
-
-            for(Index icell = 0; icell < num_cells; ++icell)
-            {
-                const auto T = field[icell].temperature();
-                const auto P = field[icell].pressure();
-
-                //std::cout << "be.row(icell)   = " << (be.row(icell)) << std::endl;
-
-                // Solve with a smart equilibrium solver
-                smart_equilibrium_solver.solve(field[icell], T, P, be.row(icell));
-
-                //std::cout << "field[icell]   = " << tr(field[icell].speciesAmounts()) << std::endl;
-
-                //getchar();
-
-                // Save the result of this cell's smart equilibrium calculation
-                result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver.result();
-            }
-        }
-        else
-        {
-            // Ensure the result of each cell's equilibrium calculation can be saved.
-            result.equilibrium_at_cell.resize(num_cells);
-
-            for(Index icell = 0; icell < num_cells; ++icell)
-            {
-                const auto T = field[icell].temperature();
-                const auto P = field[icell].pressure();
-
-                // Solve with a conventional equilibrium solver
-                equilibrium_solver.solve(field[icell], T, P, be.row(icell));
-
-                // Save the result of this cell's smart equilibrium calculation.
-                result.equilibrium_at_cell[icell] = equilibrium_solver.result();
-            }
-        }
-        result.timing.equilibrium = toc(EQUILIBRIUM_STEP);
-        */
-        ///*
-        //---------------------------------------------------------------------------
-        // Step 2: Perform a time step equilibrium calculation for each cell
-        //---------------------------------------------------------------------------
-        tic(EQUILIBRIUM_STEP);
+        tic(EQUILIBRIUM_STEP)
 
         if(options.use_smart_equilibrium_solver)
         {
@@ -303,24 +244,13 @@ struct ReactiveTransportSolver::Impl
                 // Scale the initial vector of species amounts
                 field[icell].scaleSpeciesAmounts(1 / be_total);
 
-                // Solve with a smart equilibrium solver
-                if(options.smart_equilibrium.smart_method == "kin-clustering-eq-clustering" || options.smart_equilibrium.smart_method == "eq-clustering")
-                    smart_equilibrium_solver_clustering.solve(field[icell], T, P, be_bar);
-                else if (options.smart_equilibrium.smart_method == "kin-priority-eq-priority" || options.smart_equilibrium.smart_method == "eq-priority")
-                    smart_equilibrium_solver_queue.solve(field[icell], T, P, be_bar);
-                else if (options.smart_equilibrium.smart_method == "kin-nnsearch-eq-nnsearch" || options.smart_equilibrium.smart_method == "eq-nnsearch")
-                    smart_equilibrium_solver_nn.solve(field[icell], T, P, be_bar);
+                smart_equilibrium_solver.solve(field[icell], T, P, be_bar);
 
                 // Scale back the vector of species amounts
                 field[icell].scaleSpeciesAmounts(be_total);
 
                 // Save the result of this cell's smart equilibrium calculation
-                if(options.smart_equilibrium.smart_method == "kin-clustering-eq-clustering" || options.smart_equilibrium.smart_method == "eq-clustering")
-                    result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver_clustering.getResult();
-                else if (options.smart_equilibrium.smart_method == "kin-priority-eq-priority" || options.smart_equilibrium.smart_method == "eq-priority")
-                    result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver_queue.getResult();
-                else if (options.smart_equilibrium.smart_method == "kin-nnsearch-eq-nnsearch" || options.smart_equilibrium.smart_method == "eq-nnsearch")
-                    result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver_nn.getResult();
+                result.smart_equilibrium_at_cell[icell] = smart_equilibrium_solver.result();
 
             }
         }
@@ -352,7 +282,7 @@ struct ReactiveTransportSolver::Impl
             }
         }
         result.timing.equilibrium = toc(EQUILIBRIUM_STEP);
-        //*/
+
         // Update the output files with the chemical state of every cell
         for(Index icell = 0; icell < num_cells; ++icell)
             for(auto output : outputs)
@@ -365,16 +295,12 @@ struct ReactiveTransportSolver::Impl
         // Increment the current number of reactive transport steps
         ++steps;
 
-        return rt_result;
+        return result;
     }
 
     // Show clusters created by the ODML method
-    auto outputClusterInfo() const -> void {
-        if (options.use_smart_equilibrium_solver) {
-            smart_equilibrium_solver_clustering.outputClusterInfo();
-        } else {
-            std::cout << "No clusters were created in the conventional algorithm!" << std::endl;
-        }
+    auto outputSmartSolverInfo() const -> void {
+        smart_equilibrium_solver.outputInfo();
     }
 };
 
@@ -388,20 +314,20 @@ ReactiveTransportSolver::ReactiveTransportSolver(const Partition& partition)
 {
 }
 
-ReactiveTransportSolver::ReactiveTransportSolver(const ReactiveTransportSolver& other)
-: pimpl(new Impl(*other.pimpl))
-{
-}
+//ReactiveTransportSolver::ReactiveTransportSolver(const ReactiveTransportSolver& other)
+//: pimpl(new Impl(*other.pimpl))
+//{
+//}
 
 ReactiveTransportSolver::~ReactiveTransportSolver()
 {
 }
 
-auto ReactiveTransportSolver::operator=(ReactiveTransportSolver other) -> ReactiveTransportSolver&
-{
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
+//auto ReactiveTransportSolver::operator=(ReactiveTransportSolver other) -> ReactiveTransportSolver&
+//{
+//    pimpl = std::move(other.pimpl);
+//    return *this;
+//}
 
 auto ReactiveTransportSolver::setOptions(const ReactiveTransportOptions& options) -> void
 {
@@ -463,9 +389,9 @@ auto ReactiveTransportSolver::timeStep() const -> double
     return pimpl->transport_solver.timeStep();
 }
 
-auto ReactiveTransportSolver::outputClusterInfo() const -> void
+auto ReactiveTransportSolver::outputSmartSolverInfo() const -> void
 {
-    return pimpl->outputClusterInfo();
+    return pimpl->outputSmartSolverInfo();
 }
 
 } // namespace Reaktoro

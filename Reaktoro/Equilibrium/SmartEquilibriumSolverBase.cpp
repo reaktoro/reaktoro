@@ -19,17 +19,17 @@ namespace Reaktoro {
 
 /// Construct an SmartEquilibriumSolverBase instance with given chemical system.
 SmartEquilibriumSolverBase::SmartEquilibriumSolverBase(const ChemicalSystem& system)
-        : system(system), partition(Partition(system)),
-          properties(system), solver(system)
+        : system(system), _partition(Partition(system)),
+          _properties(system), solver(system)
 {
     // Initialize the canonicalizer with the formula matrix Ae of the equilibrium species
-    canonicalizer.compute(partition.formulaMatrixEquilibriumPartition());
+    canonicalizer.compute(_partition.formulaMatrixEquilibriumPartition());
 }
 
 /// Construct an SmartEquilibriumSolverBase instance with given partition of the chemical system.
 SmartEquilibriumSolverBase::SmartEquilibriumSolverBase(const Partition& partition)
-        : system(partition.system()), partition(partition),
-          properties(partition.system()), solver(partition)
+        : system(partition.system()), _partition(partition),
+          _properties(partition.system()), solver(partition)
 {
     // Initialize the canonicalizer with the formula matrix Ae of the equilibrium species
     canonicalizer.compute(partition.formulaMatrixEquilibriumPartition());
@@ -46,6 +46,7 @@ SmartEquilibriumSolverBase::~SmartEquilibriumSolverBase()
 /// Set the options for the equilibrium calculation.
 auto SmartEquilibriumSolverBase::setOptions(const SmartEquilibriumOptions& options_) -> void
 {
+    // Initialize the smart equilibrium options
     options = options_;
 
     // Tweak the options for the Gibbs energy minimization during learning operations.
@@ -55,46 +56,49 @@ auto SmartEquilibriumSolverBase::setOptions(const SmartEquilibriumOptions& optio
     solver.setOptions(options.learning);
 }
 
-/// Solve the equilibrium problem with given problem definition
 auto SmartEquilibriumSolverBase::solve(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResult
 {
     const auto T = problem.temperature();
     const auto P = problem.pressure();
-    const auto& iee = partition.indicesEquilibriumElements();
     be = problem.elementAmounts()(iee);
     return solve(state, T, P, be);
 }
 
-auto SmartEquilibriumSolverBase::solve(ChemicalState& state, double T, double P, VectorConstRef be) -> SmartEquilibriumResult
+auto SmartEquilibriumSolverBase::solve(ChemicalState& state, double T, double P, VectorConstRef _be) -> SmartEquilibriumResult
 {
-    tic(SOLVE_STEP);
+    tic(SOLVE_STEP)
 
     // Absolutely ensure an exact Hessian of the Gibbs energy function is used in the calculations
     setOptions(options);
 
     // Reset the result of the last smart equilibrium calculation
-    result = {};
+    _result = {};
 
     // Perform a smart estimate of the chemical state
-    timeit( estimate(state, T, P, be), result.timing.estimate= );
+    timeit( estimate(state, T, P, _be), _result.timing.estimate= )
 
     // Perform a learning step if the smart prediction is not sactisfatory
-    if(!result.estimate.accepted)
-        timeit( learn(state, T, P, be), result.timing.learn= );
+    if(!_result.estimate.accepted)
+        timeit( learn(state, T, P, _be), _result.timing.learn= )
 
-    result.timing.solve = toc(SOLVE_STEP);
+    _result.timing.solve = toc(SOLVE_STEP);
 
-    return result;
+    return _result;
 }
 
-auto SmartEquilibriumSolverBase::getProperties() const -> const ChemicalProperties&
+auto SmartEquilibriumSolverBase::properties() const -> const ChemicalProperties&
 {
-    return properties;
+    return _properties;
 }
 
-auto SmartEquilibriumSolverBase::getResult() const -> const SmartEquilibriumResult&
+auto SmartEquilibriumSolverBase::result() const -> const SmartEquilibriumResult&
 {
-    return result;
+    return _result;
+}
+
+auto SmartEquilibriumSolverBase::partition() const -> const Partition&
+{
+    return _partition;
 }
 
 } // namespace Reaktoro

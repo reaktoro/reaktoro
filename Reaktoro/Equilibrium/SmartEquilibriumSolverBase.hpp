@@ -42,6 +42,12 @@ public:
     /// Construct an SmartEquilibriumSolverBase instance with given partition
     explicit SmartEquilibriumSolverBase(const Partition& partition);
 
+//    /// Construct a copy of an SmartEquilibriumSolver instance.
+//    SmartEquilibriumSolverBase(const SmartEquilibriumSolverBase& other);
+//
+//    /// Assign an SmartEquilibriumSolver instance to this.
+//    auto operator=(SmartEquilibriumSolverBase other) -> SmartEquilibriumSolverBase&;
+
     /// Destroy this SmartEquilibriumSolverBase instance.
     virtual ~SmartEquilibriumSolverBase();
 
@@ -67,21 +73,27 @@ public:
     /// Learn how to perform a full equilibrium calculation (with tracking)
     virtual auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> void = 0;
 
-    /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
-    virtual auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> void = 0;
+    /// Estimate the equilibrium state using sensitivity derivatives (profiling the expenses)
+    virtual auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> void  = 0;
 
     /// Return the chemical properties of the calculated equilibrium state.
-    auto getProperties() const -> const ChemicalProperties&;
+    auto properties() const -> const ChemicalProperties&;
 
     /// Return the result of the last smart equilibrium calculation.
-    auto getResult() const -> const SmartEquilibriumResult&;
+    auto result() const -> const SmartEquilibriumResult&;
+
+    /// Return the partition of the equilibrium calculation.
+    auto partition() const -> const Partition&;
+
+    /// Output into about the ODML algorithm
+    virtual auto outputInfo() const -> void  = 0;
 
 protected:
     /// The chemical system instance
     ChemicalSystem system;
 
     /// The partition of the chemical system
-    Partition partition;
+    Partition _partition;
 
     /// The canonicalizer used to determine primary and secondary species
     Canonicalizer canonicalizer;
@@ -90,13 +102,13 @@ protected:
     SmartEquilibriumOptions options;
 
     /// The result of the last smart equilibrium calculation.
-    SmartEquilibriumResult result;
+    SmartEquilibriumResult _result;
 
     /// The solver for the equilibrium calculations
     EquilibriumSolver solver;
 
     /// The chemical properties of the chemical system
-    ChemicalProperties properties;
+    ChemicalProperties _properties;
 
     /// The amounts of the species in the chemical system
     Vector n;

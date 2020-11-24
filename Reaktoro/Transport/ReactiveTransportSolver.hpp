@@ -43,9 +43,6 @@ public:
     /// Construct a ReactiveTransportSolver instance with given partition.
     explicit ReactiveTransportSolver(const Partition& partition);
 
-    /// Construct a copy of a ReactiveTransportSolver instance.
-    ReactiveTransportSolver(const ReactiveTransportSolver& other);
-
     /// Destroy this ReactiveTransportSolver instance.
     virtual ~ReactiveTransportSolver();
 
@@ -96,7 +93,7 @@ public:
     auto timeStep() const -> double;
 
     /// Output clusters created by the ODML method
-    auto outputClusterInfo() const -> void;
+    auto outputSmartSolverInfo() const -> void;
 
 private:
     struct Impl;
