@@ -292,12 +292,7 @@ def simulate(params):
         smart_equilibrium_options.amount_fraction_cutoff = amount_fraction_cutoff
         smart_equilibrium_options.mole_fraction_cutoff = mole_fraction_cutoff
 
-        if params["smart_method"] == "eq-clustering":
-            solver = SmartEquilibriumSolverClustering(partition)
-        elif params["smart_method"] == "eq-priority":
-            solver = SmartEquilibriumSolverPriorityQueue(partition)
-        elif params["smart_method"] == "eq-nnsearch":
-            solver = SmartEquilibriumSolverNN(partition)
+        solver = SmartEquilibriumSolver(partition)
 
         solver.setOptions(smart_equilibrium_options)
 
@@ -344,8 +339,8 @@ def simulate(params):
 
     bar.finish()
 
-    if params["use_smart_equilibrium_solver"] and params["smart_method"] == "eq-clustering":
-        solver.outputClusterInfo()
+    if params["use_smart_equilibrium_solver"]:
+        solver.outputInfo()
 
 # Subsections below correspond to the methods responsible for each of the functional parts of `simulate()` method.
 #

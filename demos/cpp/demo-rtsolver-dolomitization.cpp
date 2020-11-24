@@ -26,7 +26,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
 
 int main()
 {
-    tic(TOTAL_TIME);
+    tic(TOTAL_TIME)
 
     // Step 1: Initialise auxiliary time-related constants
     int minute = 60;
@@ -52,12 +52,12 @@ int main()
     params.P = 100;                      // the pressure (in units of bar)
 
     // Define the activity model for the aqueous species
-    params.activity_model = "hkf-full";
-    //params.activity_model = "hkf-selected-species";
-    //params.activity_model = "pitzer-full";
-    //params.activity_model = "pitzer-selected-species";
-    //params.activity_model = "dk-full";
-    //params.activity_model = "dk-selected-species";
+    params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies;
 
     // Define activity model depending on the parameter
     params.amount_fraction_cutoff = 1e-14;
@@ -67,15 +67,15 @@ int main()
     // -----------------------------------------------
 
     // Run smart algorithm with clustering
-    params.smart_method = "eq-clustering";
+    params.method = SmartEquilibriumStrategy::Clustering;
     params.smart_equilibrium_reltol = 1e-3;
 
 //    // Run smart algorithm with priority queue
-//    params.smart_method = "eq-priority";
+//    params.method = SmartEquilibriumStrategy::PriorityQueue;
 //    params.smart_equilibrium_reltol = 2e-3;
 
 //    // Run smart algorithm with nn search algorithm
-//    params.smart_method = "eq-nnsearch";
+//    params.method =  SmartEquilibriumStrategy::NearestNeighbour;
 //    params.smart_equilibrium_reltol = 1e-1;
 
     // Output
@@ -131,41 +131,48 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     smart_equilibrium_options.reltol = params.smart_equilibrium_reltol;
     smart_equilibrium_options.amount_fraction_cutoff = params.amount_fraction_cutoff;
     smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
-    smart_equilibrium_options.smart_method = params.smart_method;
+    smart_equilibrium_options.method = params.method;
 
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor;
 
+    // Define the list of selected elements
+    StringList selected_elements = "H O Na Cl Ca Mg C";
+
+    // Define the list of selected species
+    StringList selected_species = "H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3-- CaCl+ Ca(HCO3)+ MgCl+ Mg(HCO3)+";
+
+
     // Depending on the activity model, define it using ChemicalEditor
-    if(params.activity_model == "hkf-full"){
+    if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKF){
         // HKF full system
-        editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C");
+        editor.addAqueousPhaseWithElements(selected_elements);
     }
-    else if(params.activity_model == "hkf-selected-species"){
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies){
         // HKF selected species
-        editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3-- CaCl+ Ca(HCO3)+ MgCl+ Mg(HCO3)+");
+        editor.addAqueousPhase(selected_species);
     }
-    else if(params.activity_model == "pitzer-full"){
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::Pitzer){
         // Pitzer full system
-        editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
+        editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == "pitzer-selected-species"){
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies){
         // Pitzer selected species
-        editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3-- CaCl+ Ca(HCO3)+ MgCl+ Mg(HCO3)+")
+        editor.addAqueousPhase(selected_species)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == "dk-full"){
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
         // Debye-Huckel full system
-        editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C")
+        editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == "dk-selected-species"){
+    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies){
         // Debye-Huckel selected species
-        editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3-- CaCl+ Ca(HCO3)+ MgCl+ Mg(HCO3)+")
+        editor.addAqueousPhase(selected_species)
                 .setChemicalModelDebyeHuckel()
                 .setActivityModelDrummondCO2();
     }
@@ -273,7 +280,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     double t = 0.0;
     int step = 0;
 
-    tic(REACTIVE_TRANSPORT_STEPS);
+    tic(REACTIVE_TRANSPORT_STEPS)
 
      // Reactive transport simulations in the cycle
     while (step < params.nsteps)
@@ -284,7 +291,6 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
         rtsolver.step(field);
 
-        // Update the profiler after every call to step method
         profiler.update(rtsolver.result());
 
         // Increment time step and number of time steps
@@ -295,8 +301,8 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     std::cout << std::endl;
 
     // Print the content of the cluster if the smart equilibrium with clustering is used
-    if(params.use_smart_equilibrium_solver && params.smart_method == "eq-clustering")
-        rtsolver.outputClusterInfo();
+    if(params.use_smart_equilibrium_solver)
+        rtsolver.outputSmartSolverInfo();
 
     // Stop the time for the reactive transport simulation
     if(params.use_smart_equilibrium_solver) results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
