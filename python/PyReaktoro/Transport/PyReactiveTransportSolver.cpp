@@ -45,7 +45,7 @@ void exportReactiveTransportSolver(py::module& m)
         .def("initialize", &ReactiveTransportSolver::initialize)
         .def("step", &ReactiveTransportSolver::step)
         .def("result", &ReactiveTransportSolver::result)
-        .def("outputClusterInfo", &ReactiveTransportSolver::outputClusterInfo)
+        .def("outputSmartSolverInfo", &ReactiveTransportSolver::outputSmartSolverInfo)
         ;
 }
 
