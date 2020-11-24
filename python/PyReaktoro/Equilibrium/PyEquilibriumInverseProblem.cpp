@@ -59,7 +59,6 @@ void exportEquilibriumInverseProblem(py::module& m)
     py::class_<EquilibriumInverseProblem>(m, "EquilibriumInverseProblem")
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const EquilibriumInverseProblem&>())
-        .def("setPartition", &EquilibriumInverseProblem::setPartition, py::return_value_policy::reference_internal)
         .def("setTemperature", setTemperature1, py::return_value_policy::reference_internal)
         .def("setTemperature", setTemperature2, py::return_value_policy::reference_internal)
         .def("setPressure", setPressure1, py::return_value_policy::reference_internal)
@@ -96,6 +95,9 @@ void exportEquilibriumInverseProblem(py::module& m)
         .def("formulaMatrixTitrants", &EquilibriumInverseProblem::formulaMatrixTitrants)
         .def("elementInitialAmounts", &EquilibriumInverseProblem::elementInitialAmounts)
         .def("titrantInitialAmounts", &EquilibriumInverseProblem::titrantInitialAmounts)
+
+        // DEPRECATED METHODS: TO BE REMOVED
+        .def("setPartition", &EquilibriumInverseProblem::setPartition, py::return_value_policy::reference_internal)
         ;
 }
 
