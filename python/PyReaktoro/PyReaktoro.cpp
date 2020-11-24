@@ -79,6 +79,7 @@ extern void exportInterpreter(py::module& m);
 extern void exportKineticOptions(py::module& m);
 extern void exportKineticPath(py::module& m);
 extern void exportKineticSolver(py::module& m);
+extern void exportKineticResult(py::module& m);
 
 // Math module
 extern void exportODE(py::module& m);
@@ -189,6 +190,7 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportKineticOptions(m);
     exportKineticPath(m);
     exportKineticSolver(m);
+    exportKineticResult(m);
 
     // Math module
     exportODE(m);

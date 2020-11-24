@@ -19,10 +19,27 @@
 
 namespace Reaktoro {
 
-KineticResult::KineticResult()
+auto KineticTiming::operator+=(const KineticTiming& other) -> KineticTiming&
 {
-	// TODO Auto-generated constructor stub
+    solve += other.solve;
+    initialize += other.initialize;
 
+    integrate += other.integrate;
+    integrate_chemical_properties += other.integrate_chemical_properties;
+    integrate_reaction_rates += other.integrate_reaction_rates;
+    integrate_sensitivity += other.integrate_sensitivity;
+    integrate_equilibration += other.integrate_equilibration;
+
+    equilibrate += other.equilibrate;
+
+    return *this;
 }
 
+auto KineticResult::operator+=(const KineticResult& other) -> KineticResult&
+{
+    timing += other.timing;
+    equilibrium += other.equilibrium;
+    smart_equilibrium += other.smart_equilibrium;
+    return *this;
+}
 } // namespace Reaktoro
