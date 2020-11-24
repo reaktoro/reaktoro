@@ -24,21 +24,21 @@ using namespace std::placeholders;
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
-#include <Reaktoro/Kinetics/KineticProblem.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Kinetics/KineticResult.hpp>
 
 namespace Reaktoro {
 
@@ -56,8 +56,14 @@ struct KineticSolver::Impl
     /// The options of the kinetic solver
     KineticOptions options;
 
+    /// The result of the kinetic solver
+    KineticResult result;
+
     /// The equilibrium solver instance
     EquilibriumSolver equilibrium;
+
+    /// The equilibrium solver instance
+    SmartEquilibriumSolver smart_equilibrium;
 
     /// The sensitivity of the equilibrium state
     EquilibriumSensitivity sensitivity;
@@ -78,13 +84,10 @@ struct KineticSolver::Impl
     Index Ee, Ek;
 
     /// The formula matrix of the equilibrium species
-    Matrix Ae;
+    Matrix Ae, Ak;
 
-    /// The stoichiometric matrix w.r.t. the equilibrium species
-    Matrix Se;
-
-    /// The stoichiometric matrix w.r.t. the kinetic species
-    Matrix Sk;
+    /// The stoichiometric matrix w.r.t. the equilibrium and kinetic species
+    Matrix Se, Sk;
 
     /// The coefficient matrix `A` of the kinetic rates
     Matrix A;
@@ -98,11 +101,8 @@ struct KineticSolver::Impl
     /// The pressure of the chemical system (in units of Pa)
     double P;
 
-    /// The molar composition of the equilibrium species
-    Vector ne;
-
-    /// The molar composition of the kinetic species
-    Vector nk;
+    /// The molar composition of the equilibrium and kinetic species
+    Vector ne, nk;
 
     /// The molar abundance of the elements in the equilibrium species
     Vector be;
@@ -133,7 +133,8 @@ struct KineticSolver::Impl
     : reactions(reactions),
       system(partition.system()),
       partition(partition),
-      equilibrium(partition)
+      equilibrium(partition),
+      smart_equilibrium(partition)
     {
         // Set the indices of the equilibrium and kinetic species
         ies = partition.indicesEquilibriumSpecies();
@@ -153,6 +154,22 @@ struct KineticSolver::Impl
 
         // Initialise the formula matrix of the equilibrium partition
         Ae = partition.formulaMatrixEquilibriumPartition();
+
+        // Initialise the formula matrix of the kinetic partition
+        // Ak_tmp is of the size (Indices of elements that are included in kinetic species) x Nk
+        Matrix Ak_tmp = partition.formulaMatrixKineticPartition();
+        if(Nk)
+        {
+            // Initialize formula matrix of the kinetic partition
+            // Ak is of the size N x Nk
+            Ak = Matrix::Zero(system.numElements(), Nk);
+
+            for(Index i = 0; i < ike.size(); ++i)
+            {
+                // Copy the rows of Ak_tmp to the positions of the kinetic elements
+                Ak.row(ike[i]) << Ak_tmp.row(i);
+            }
+        }
 
         // Initialise the stoichiometric matrices w.r.t. the equilibrium and kinetic species
         Se = cols(reactions.stoichiometricMatrix(), ies);
@@ -188,7 +205,7 @@ struct KineticSolver::Impl
         options = options_;
     }
 
-    auto addSource(ChemicalState state, double volumerate, std::string units) -> void
+    auto addSource(ChemicalState state, double volumerate, const std::string& units) -> void
     {
         const Index num_species = system.numSpecies();
         const double volume = units::convert(volumerate, units, "m3/s");
@@ -196,17 +213,17 @@ struct KineticSolver::Impl
         const Vector n = state.speciesAmounts();
         auto old_source_fn = source_fn;
 
-        source_fn = [=](const ChemicalProperties& properties)
+        source_fn = [=](const ChemicalProperties& _properties)
         {
-            ChemicalVector q(num_species);
-            q.val = n;
+            ChemicalVector _q(num_species);
+            _q.val = n;
             if(old_source_fn)
-                q += old_source_fn(properties);
-            return q;
+                _q += old_source_fn(_properties);
+            return _q;
         };
     }
 
-    auto addPhaseSink(std::string phase, double volumerate, std::string units) -> void
+    auto addPhaseSink(const std::string& phase, double volumerate, const std::string& units) -> void
     {
         const double volume = units::convert(volumerate, units, "m3/s");
         const Index iphase = system.indexPhaseWithError(phase);
@@ -214,58 +231,58 @@ struct KineticSolver::Impl
         const Index size = system.numSpeciesInPhase(iphase);
         auto old_source_fn = source_fn;
         ChemicalScalar phasevolume;
-        ChemicalVector q(size);
+        ChemicalVector _q(size);
 
-        source_fn = [=](const ChemicalProperties& properties) mutable
+        source_fn = [=](const ChemicalProperties& _properties) mutable
         {
-            const auto n = properties.composition();
+            const auto n = _properties.composition();
             const auto np = rows(n, ifirst, size);
-            auto qp = rows(q, ifirst, size);
-            phasevolume = properties.phaseVolumes()[iphase];
+            auto qp = rows(_q, ifirst, size);
+            phasevolume = _properties.phaseVolumes()[iphase];
             qp = -volume*np/phasevolume;
             if(old_source_fn)
-                q += old_source_fn(properties);
-            return q;
+                _q += old_source_fn(_properties);
+            return _q;
         };
     }
 
-    auto addFluidSink(double volumerate, std::string units) -> void
+    auto addFluidSink(double volumerate, const std::string& units) -> void
     {
         const double volume = units::convert(volumerate, units, "m3/s");
         const Indices& isolid_species = partition.indicesSolidSpecies();
         auto old_source_fn = source_fn;
         ChemicalScalar fluidvolume;
-        ChemicalVector q;
+        ChemicalVector _q;
 
-        source_fn = [=](const ChemicalProperties& properties) mutable
+        source_fn = [=](const ChemicalProperties& _properties) mutable
         {
-            const auto n = properties.composition();
-            fluidvolume = properties.fluidVolume();
-            q = -volume*n/fluidvolume;
+            const auto n = _properties.composition();
+            fluidvolume = _properties.fluidVolume();
+            _q = -volume*n/fluidvolume;
             rows(q, isolid_species).fill(0.0);
             if(old_source_fn)
-                q += old_source_fn(properties);
-            return q;
+                _q += old_source_fn(_properties);
+            return _q;
         };
     }
 
-    auto addSolidSink(double volumerate, std::string units) -> void
+    auto addSolidSink(double volumerate, const std::string& units) -> void
     {
         const double volume = units::convert(volumerate, units, "m3/s");
         const Indices& ifluid_species = partition.indicesFluidSpecies();
         auto old_source_fn = source_fn;
         ChemicalScalar solidvolume;
-        ChemicalVector q;
+        ChemicalVector _q;
 
-        source_fn = [=](const ChemicalProperties& properties) mutable
+        source_fn = [=](const ChemicalProperties& _properties) mutable
         {
             const auto n = properties.composition();
             solidvolume = properties.solidVolume();
-            q = -volume*n/solidvolume;
-            rows(q, ifluid_species).fill(0.0);
+            _q = -volume*n/solidvolume;
+            rows(_q, ifluid_species).fill(0.0);
             if(old_source_fn)
-                q += old_source_fn(properties);
-            return q;
+                _q += old_source_fn(properties);
+            return _q;
         };
     }
 
@@ -284,6 +301,17 @@ struct KineticSolver::Impl
         benk.resize(Ee + Nk);
         benk.head(Ee) = Ae * ne;
         benk.tail(Nk) = nk;
+
+        // Initialize
+        initialize(state, tstart, benk);
+
+    }
+
+    auto initialize(ChemicalState& state, double tstart, VectorConstRef _benk) -> void
+    {
+        // Initialise the temperature and pressure variables
+        T = state.temperature();
+        P = state.pressure();
 
         // Define the ODE function
         ODEFunction ode_function = [&](double t, VectorConstRef u, VectorRef res)
@@ -309,15 +337,16 @@ struct KineticSolver::Impl
         // Set the ODE problem and initialize the ODE solver
         ode.setProblem(problem);
         ode.setOptions(options_ode);
-        ode.initialize(tstart, benk);
+        ode.initialize(tstart, _benk);
 
         // Set the options of the equilibrium solver
         equilibrium.setOptions(options.equilibrium);
+        smart_equilibrium.setOptions(options.smart_equilibrium);
     }
 
     auto step(ChemicalState& state, double t) -> double
     {
-        const double tfinal = Index(-1);
+        const double tfinal = Index(-1); // implicit conversion of unsigned long to double
         step(state, t, tfinal);
         return t;
     }
@@ -344,18 +373,45 @@ struct KineticSolver::Impl
         state.setSpeciesAmounts(nk, iks);
 
         // Update the composition of the equilibrium species
-        equilibrium.solve(state, T, P, be);
+        if(options.use_smart_equilibrium_solver)
+            smart_equilibrium.solve(state, T, P, be);
+        else
+            equilibrium.solve(state, T, P, be);
 
         return t;
     }
 
-    auto solve(ChemicalState& state, double t, double dt) -> void
+    auto solve(ChemicalState& state, double t, double dt) -> double
     {
-        // Initialise the chemical kinetics solver
-        initialize(state, t);
+        // Initialize result structure
+        result = {};
+
+        tic(SOLVE_STEP)
+
+        //------------------------------------------------------------------------------------------
+        // INITIALIZE OF THE VARIABLES DURING THE KINETICS SOLVE STEP
+        //------------------------------------------------------------------------------------------
+        tic(INITIALIZE_STEP)
+
+        // Extract the composition of the kinetic species from the state
+        const auto &n = state.speciesAmounts();
+        ne = n(ies);
+        nk = n(iks);
+
+        // Assemble the vector benk = [be nk]
+        benk.resize(Ee + Nk);
+        benk.tail(Nk) = nk;
+
+        result.timing.initialize=toc(INITIALIZE_STEP);
+
+        //------------------------------------------------------------------------------------------
+        // INTEGRATE ELEMENTS AND KINETICS' SPECIES STORED IN 'BENK' DURING THE KINETICS SOLVE STEP
+        //------------------------------------------------------------------------------------------
+        tic(INTEGRATE_STEP)
 
         // Integrate the chemical kinetics ODE from `t` to `t + dt`
         ode.solve(t, dt, benk);
+        //ode.solve_implicit_1st_order(t, dt, benk);
 
         // Extract the `be` and `nk` entries of the vector `benk`
         be = benk.head(Ee);
@@ -364,18 +420,106 @@ struct KineticSolver::Impl
         // Update the composition of the kinetic species
         state.setSpeciesAmounts(nk, iks);
 
-        // Update the composition of the equilibrium species
-        equilibrium.solve(state, T, P, be);
+        result.timing.integrate = toc(INTEGRATE_STEP);
+
+        //------------------------------------------------------------------------------------------
+        // EQUILIBRATE EQUILIBRIUM SPECIES STORED IN 'NE' DURING THE KINETICS SOLVE STEP
+        //------------------------------------------------------------------------------------------
+
+        tic(EQUILIBRATE_STEP)
+
+        if(options.use_smart_equilibrium_solver){
+            SmartEquilibriumResult res = {};
+            res += smart_equilibrium.solve(state, T, P, be);
+            result.smart_equilibrium += res;
+        }
+        else{
+            EquilibriumResult res = {};
+            res += equilibrium.solve(state, T, P, be);
+            result.equilibrium += res;
+        }
+
+        //std::cout << "# iter = " << result.equilibrium.optimum.iterations << std::endl;
+
+        result.timing.equilibrate = toc(EQUILIBRATE_STEP);
+
+        result.timing.solve = toc(SOLVE_STEP);
+
+        return t;
     }
 
-    auto function(ChemicalState& state, double t, VectorConstRef u, VectorRef res) -> int
+    auto solve(ChemicalState& state, double t, double dt, VectorConstRef b) -> void
+    {
+        // Initialize result structure
+        result = {};
+
+        tic(SOLVE_STEP)
+
+        //------------------------------------------------------------------------------------------
+        // INITIALIZE OF THE VARIABLES DURING THE KINETICS SOLVE STEP
+        //------------------------------------------------------------------------------------------
+        tic(INITIALIZE_STEP)
+
+        // Extract the composition of the kinetic species from the state
+        const auto &n = state.speciesAmounts();
+        nk = n(iks);
+
+        // Assemble the vector benk = [be nk]
+        benk.resize(Ee + Nk);
+        benk.head(Ee) = b - Ak * nk;
+        benk.tail(Nk) = nk;
+
+        // Initialise the chemical kinetics solver
+        initialize(state, t, benk);
+
+        result.timing.initialize=toc(INITIALIZE_STEP);
+
+        //------------------------------------------------------------------------------------------
+        // INTEGRATE ELEMENTS AND KINETICS' SPECIES STORED IN 'BENK' DURING THE KINETICS SOLVE STEP
+        //------------------------------------------------------------------------------------------
+        tic(INTEGRATE_STEP)
+
+        // Integrate the chemical kinetics ODE from `t` to `t + dt`
+        ode.solve(t, dt, benk);
+        //ode.solve_implicit_1st_order(t, dt, benk);
+
+        // Extract the `be` and `nk` entries of the vector `benk`
+        be = benk.head(Ee);
+        nk = benk.tail(Nk);
+
+        // Update the composition of the kinetic species
+        state.setSpeciesAmounts(nk, iks);
+
+        //------------------------------------------------------------------------------------------
+        // EQUILIBRATE EQUILIBRIUM SPECIES STORED IN 'NE' DURING THE KINETICS SOLVE STEP
+        //------------------------------------------------------------------------------------------
+
+        tic(EQUILIBRATE_STEP)
+
+        if(options.use_smart_equilibrium_solver){
+            SmartEquilibriumResult res = {};
+            res += smart_equilibrium.solve(state, T, P, be);
+            result.smart_equilibrium += res;
+        }
+        else{
+            EquilibriumResult res = {};
+            res += equilibrium.solve(state, T, P, be);
+            result.equilibrium += res;
+        }
+
+        result.timing.equilibrate = toc(EQUILIBRATE_STEP);
+
+        result.timing.solve = toc(SOLVE_STEP);
+    }
+
+    auto function(ChemicalState& state, double t, VectorConstRef u, VectorRef rhs) -> int
     {
         // Extract the `be` and `nk` entries of the vector [be, nk]
         be = u.head(Ee);
         nk = u.tail(Nk);
 
         // Check for non-finite values in the vector `benk`
-        for(int i = 0; i < u.rows(); ++i)
+        for(Index i = 0; i < u.rows(); ++i)
             if(!std::isfinite(u[i]))
                 return 1; // ensure the ode solver will reduce the time step
 
@@ -383,28 +527,65 @@ struct KineticSolver::Impl
         state.setSpeciesAmounts(nk, iks);
 
         // Solve the equilibrium problem using the elemental molar abundance `be`
-        auto result = equilibrium.solve(state, T, P, be);
-
-        // Check if the calculation failed, if so, use cold-start
-        if(!result.optimum.succeeded)
+        //if(options.use_smart_equilibrium_solver) // using smart equilibrium solver
+        if(false) // block using smart equilibrium solver (doesn't work very efficient  for now)
         {
-            state.setSpeciesAmounts(0.0);
-            result = equilibrium.solve(state, T, P, be);
+            SmartEquilibriumResult res = {};
+
+            // Run smart_equilibrium solver and return the obtained result
+            timeit(res += smart_equilibrium.solve(state, T, P, be), result.timing.integrate_equilibration+=)
+
+            // Add-up the obtained equilibrium results to the kinetic results
+            result.smart_equilibrium += res;
+
+            // If smart calculation failed, use cold-start
+            if(!res.estimate.accepted && !res.learning.gibbs_energy_minimization.optimum.succeeded)
+            {
+                state.setSpeciesAmounts(0.0);
+                timeit( res = smart_equilibrium.solve(state, T, P, be), result.timing.integrate_equilibration+=)
+
+            }
+
+            // Assert the smart equilibrium calculation did not fail
+            Assert(res.estimate.accepted || res.learning.gibbs_energy_minimization.optimum.succeeded,
+                   "Could not calculate the rates of the species.",
+                   "The smart equilibrium calculation failed.")
+
+        }
+        else  // using conventional equilibrium solver
+        {
+            EquilibriumResult res = {};
+
+            // Run equilibrium solver and return the obtained result
+            timeit(res += equilibrium.solve(state, T, P, be), result.timing.integrate_equilibration +=)
+
+            // Add-up the obtained equilibrium results to the kinetic results
+            result.equilibrium += res;
+
+            // Check if the calculation failed, if so, use cold-start
+            if (!res.optimum.succeeded) {
+                state.setSpeciesAmounts(0.0);
+                timeit(res = equilibrium.solve(state, T, P, be), result.timing.integrate_equilibration +=)
+
+            }
+            // Check if the calculation failed again and return 1, which will force CVODE shorten the kinetic step
+            if (!res.optimum.succeeded) {
+                return 1; // ensure CVODE reduces the time step
+            }
+            // Assert the equilibrium calculation did not fail
+            Assert(res.optimum.succeeded,
+                   "Could not calculate the rates of the species.",
+                   "The equilibrium calculation failed.")
         }
 
-        // Assert the equilibrium calculation did not fail
-        Assert(result.optimum.succeeded,
-            "Could not calculate the rates of the species.",
-            "The equilibrium calculation failed.");
-
         // Update the chemical properties of the system
-        properties = state.properties();
+        timeit(properties = state.properties(), result.timing.integrate_chemical_properties+=)
 
         // Calculate the kinetic rates of the reactions
-        r = reactions.rates(properties);
+        timeit(r = reactions.rates(properties), result.timing.integrate_reaction_rates+=)
 
         // Calculate the right-hand side function of the ODE
-        res = A * r.val;
+        rhs = A * r.val;
 
         // Add the function contribution from the source rates
         if(source_fn)
@@ -413,7 +594,7 @@ struct KineticSolver::Impl
             q = source_fn(properties);
 
             // Add the contribution of the source rates
-            res += B * q.val;
+            rhs += B * q.val;
         }
 
         return 0;
@@ -465,14 +646,14 @@ KineticSolver::KineticSolver()
 {
     RuntimeError("Cannot proceed with KineticSolver().",
         "KineticSolver() constructor is deprecated. "
-        "Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.");
+        "Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.")
 }
 
 KineticSolver::KineticSolver(const ReactionSystem& reactions)
 {
     RuntimeError("Cannot proceed with KineticSolver(const ReactionSystem&).",
         "KineticSolver(const ReactionSystem&) constructor is deprecated. "
-        "Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.");
+        "Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.")
 }
 
 KineticSolver::KineticSolver(const ReactionSystem& reactions, const Partition& partition)
@@ -497,25 +678,25 @@ auto KineticSolver::setPartition(const Partition& partition) -> void
 {
     RuntimeError("Cannot proceed with KineticSolver::setPartition.",
         "KineticSolver::setPartition is deprecated. "
-        "Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.");
+        "Use constructor KineticSolver(const ReactionSystem&, const Partition&) instead.")
 }
 
-auto KineticSolver::addSource(const ChemicalState& state, double volumerate, std::string units) -> void
+auto KineticSolver::addSource(const ChemicalState& state, double volumerate, const std::string& units) -> void
 {
     pimpl->addSource(state, volumerate, units);
 }
 
-auto KineticSolver::addPhaseSink(std::string phase, double volumerate, std::string units) -> void
+auto KineticSolver::addPhaseSink(const std::string& phase, double volumerate, const std::string& units) -> void
 {
     pimpl->addPhaseSink(phase, volumerate, units);
 }
 
-auto KineticSolver::addFluidSink(double volumerate, std::string units) -> void
+auto KineticSolver::addFluidSink(double volumerate, const std::string& units) -> void
 {
     pimpl->addFluidSink(volumerate, units);
 }
 
-auto KineticSolver::addSolidSink(double volumerate, std::string units) -> void
+auto KineticSolver::addSolidSink(double volumerate, const std::string& units) -> void
 {
     pimpl->addSolidSink(volumerate, units);
 }
@@ -525,19 +706,39 @@ auto KineticSolver::initialize(ChemicalState& state, double tstart) -> void
     pimpl->initialize(state, tstart);
 }
 
+auto KineticSolver::initialize(ChemicalState& state, double tstart, VectorConstRef benk) -> void
+{
+    pimpl->initialize(state, tstart, benk);
+}
+
 auto KineticSolver::step(ChemicalState& state, double t) -> double
 {
     return pimpl->step(state, t);
 }
 
-auto KineticSolver::step(ChemicalState& state, double t, double dt) -> double
+auto KineticSolver::step(ChemicalState& state, double t, double tfinal) -> double
 {
-    return pimpl->step(state, t, dt);
+    return pimpl->step(state, t, tfinal);
 }
 
-auto KineticSolver::solve(ChemicalState& state, double t, double dt) -> void
+auto KineticSolver::solve(ChemicalState& state, double t, double dt) -> double
 {
     pimpl->solve(state, t, dt);
+}
+
+auto KineticSolver::solve(ChemicalState& state, double t, double dt, VectorConstRef b) -> void
+{
+    pimpl->solve(state, t, dt, b);
+}
+
+auto KineticSolver::properties() const -> const ChemicalProperties&
+{
+    return pimpl->properties;
+}
+
+auto KineticSolver::result() const -> const KineticResult&
+{
+    return pimpl->result;
 }
 
 } // namespace Reaktoro
