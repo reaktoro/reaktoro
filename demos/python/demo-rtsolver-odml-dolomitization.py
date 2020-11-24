@@ -109,7 +109,7 @@ activity_model = "hkf-full"
 # Parameters for the ODML algorithm:
 
 # +
-smart_method = "eq-clustering"
+smart_method = SmartEquilibriumStrategy.Clustering
 smart_equlibrium_reltol = 1e-3
 amount_fraction_cutoff = 1e-14
 mole_fraction_cutoff = 1e-14
@@ -314,7 +314,7 @@ def reactive_transport(params):
     smart_equilibrium_options.reltol = smart_equlibrium_reltol
     smart_equilibrium_options.amount_fraction_cutoff = amount_fraction_cutoff
     smart_equilibrium_options.mole_fraction_cutoff = mole_fraction_cutoff
-    smart_equilibrium_options.smart_method = params["smart_method"]
+    smart_equilibrium_options.method = params["smart_method"]
 
     reactive_transport_options = ReactiveTransportOptions()
     reactive_transport_options.use_smart_equilibrium_solver = params["use_smart_equilibrium_solver"]
@@ -404,8 +404,8 @@ def reactive_transport(params):
 
     bar.finish()
 
-    if params["use_smart_equilibrium_solver"] and params["smart_method"] == "eq-clustering":
-        rtsolver.outputClusterInfo()
+    if params["use_smart_equilibrium_solver"]:
+        rtsolver.outputSmartSolverInfo()
 
     # Collect the analytics related to reactive transport performance
     analysis = profiler.analysis()
@@ -428,6 +428,7 @@ def reactive_transport(params):
     return folder, timings_equilibrium, timings_transport
 
 
+#smart_method = SmartEquilibriumStrategy
 print("Smart algorithm: ")
 params = dict(use_smart_equilibrium_solver=True,
               smart_method=smart_method)
