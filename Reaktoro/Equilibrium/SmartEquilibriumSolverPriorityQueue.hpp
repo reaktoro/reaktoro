@@ -47,6 +47,8 @@ public:
     /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
     auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> void;
 
+    /// Output clusters created during the ODML algorithm
+    auto outputInfo() const -> void;
 private:
 
     struct TreeNode

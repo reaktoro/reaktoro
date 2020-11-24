@@ -33,42 +33,40 @@ SmartEquilibriumSolverNN::~SmartEquilibriumSolverNN()
 {
 }
 
-/// Learn how to perform a full equilibrium calculation (with tracking)
 auto SmartEquilibriumSolverNN::learn(ChemicalState& state, double T, double P, VectorConstRef be) -> void
 {
     //---------------------------------------------------------------------
     // GIBBS ENERGY MINIMIZATION CALCULATION DURING THE LEARNING PROCESS
     //---------------------------------------------------------------------
-    tic(EQUILIBRIUM_STEP);
+    tic(EQUILIBRIUM_STEP)
 
     // Calculate the equilibrium state using conventional Gibbs energy minimization approach
     // and store the result of the Gibbs energy minimization calculation performed during learning
-    result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
+    _result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
 
-    result.timing.learn_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
+    _result.timing.learn_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
 
     //---------------------------------------------------------------------
     // CHEMICAL PROPERTIES UPDATE STEP DURING THE LEARNING PROCESS
     //---------------------------------------------------------------------
-    tic(CHEMICAL_PROPERTIES_STEP);
+    tic(CHEMICAL_PROPERTIES_STEP)
 
     // Update the chemical properties of the system
-    properties = solver.properties();
+    _properties =solver.properties();
 
-    result.timing.learn_chemical_properties = toc(CHEMICAL_PROPERTIES_STEP);
+    _result.timing.learn_chemical_properties = toc(CHEMICAL_PROPERTIES_STEP);
 
     //---------------------------------------------------------------------
     // STORAGE STEP DURING THE LEARNING PROCESS
     //---------------------------------------------------------------------
-    tic(STORAGE_STEP);
+    tic(STORAGE_STEP)
 
     // Store the computed solution into the knowledge tree
-    tree.push_back({be, state, properties, solver.sensitivity()});
+    tree.push_back({be, state, _properties, solver.sensitivity()});
 
-    result.timing.learn_storage = toc(STORAGE_STEP);
+    _result.timing.learn_storage = toc(STORAGE_STEP);
 }
 
-/// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
 auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> void
 {
     // Skip estimation if no previous full computation has been done
@@ -78,7 +76,7 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
     //---------------------------------------------------------------------
     // SEARCH STEP DURING THE ESTIMATE PROCESS
     //---------------------------------------------------------------------
-    tic(SEARCH_STEP);
+    tic(SEARCH_STEP)
 
     // Comparison function based on the Euclidean distance
     auto distancefn = [&](const TreeNode& a, const TreeNode& b)
@@ -91,12 +89,12 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
     // Find the entry with minimum "input" distance
     auto it = std::min_element(tree.begin(), tree.end(), distancefn);
 
-    result.timing.estimate_search = toc(SEARCH_STEP);
+    _result.timing.estimate_search = toc(SEARCH_STEP);
 
     //---------------------------------------------------------------------
     // TAYLOR STEP DURING THE ESTIMATE PROCESS
     //---------------------------------------------------------------------
-    tic(TAYLOR_STEP);
+    tic(TAYLOR_STEP)
 
     // Get all the data stored in the reference element
     const auto& be0 = it->be;
@@ -122,12 +120,12 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
     ne.noalias() = ne0 + dne;                                                   // n = n0 + delta(n)
     dlnae.noalias() = dlnae_dne * dne;                                          // delta(ln(a)) = d(lna)/dn * delta(n)
 
-    result.timing.estimate_taylor = toc(TAYLOR_STEP);
+    _result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
     //---------------------------------------------------------------------
     // ERROR CONTROL STEP DURING THE ESTIMATE PROCESS
     //---------------------------------------------------------------------
-    tic(ERROR_CONTROL_STEP);
+    tic(ERROR_CONTROL_STEP)
 
     // Fetch mole fractions
     const auto& x0 = properties0.moleFractions().val;
@@ -136,7 +134,7 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
     // Perform the check for the negative amounts
     const bool amount_check = ne.minCoeff() > options.cutoff;
     if(!amount_check){
-        result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
+        _result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
         return;
     }
 
@@ -149,14 +147,14 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
 
         // Perform the variational check
         if(std::abs(dlnae[i]) > options.abstol + options.reltol * std::abs(lnae0[i])) {
-            result.estimate.failed_with_species = system.species(ies[i]).name();
-            result.estimate.failed_with_amount = ne[i];
-            result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
+            _result.estimate.failed_with_species = system.species(ies[i]).name();
+            _result.estimate.failed_with_amount = ne[i];
+            _result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
             return;
         }
     }
 
-    result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
+    _result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
 
     //---------------------------------------------------------------------
     // After the search is finished successfully
@@ -169,8 +167,12 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
     state.setSpeciesAmounts(ne, ies);
 
     // Set the estimate accepted status to true
-    result.estimate.accepted = true;
+    _result.estimate.accepted = true;
 
+}
+
+auto SmartEquilibriumSolverNN::outputInfo() const -> void
+{
 }
 
 } // namespace Reaktoro

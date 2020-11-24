@@ -48,7 +48,7 @@ public:
     auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> void;
 
     /// Output clusters created during the ODML algorithm
-    auto outputClusterInfo() const -> void;
+    auto outputInfo() const -> void;
 
 private:
 
