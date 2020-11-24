@@ -27,6 +27,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalState;
+class ChemicalProperties;
 class ChemicalSystem;
 class ReactionSystem;
 class StringList;
@@ -106,6 +107,9 @@ public:
 
     /// Update the output with a new chemical state and its tag.
     auto update(const ChemicalState& state, double t) -> void;
+
+    /// Update the output with a new chemical state and its properties with its tag.
+    auto update(const ChemicalState& state, const ChemicalProperties& properties, double t) -> void;
 
     /// Close the output file.
     auto close() -> void;

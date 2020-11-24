@@ -22,6 +22,7 @@
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 
 namespace Reaktoro {
@@ -40,6 +41,9 @@ void exportChemicalOutput(py::module& m)
     auto attach1 = static_cast<void(ChemicalOutput::*)(int)>(&ChemicalOutput::attach);
     auto attach2 = static_cast<void(ChemicalOutput::*)(double)>(&ChemicalOutput::attach);
     auto attach3 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::attach);
+
+    auto update1 = static_cast<void(ChemicalOutput::*)(const ChemicalState&, double)>(&ChemicalOutput::update);
+    auto update2 = static_cast<void(ChemicalOutput::*)(const ChemicalState&, const ChemicalProperties&, double)>(&ChemicalOutput::update);
 
     py::class_<ChemicalOutput>(m, "ChemicalOutput")
         .def(py::init<>())
@@ -63,7 +67,8 @@ void exportChemicalOutput(py::module& m)
         .def("quantities", &ChemicalOutput::quantities)
         .def("headings", &ChemicalOutput::headings)
         .def("open", &ChemicalOutput::open)
-        .def("update", &ChemicalOutput::update)
+        .def("update", update1)
+        .def("update", update2)
         .def("close", &ChemicalOutput::close)
         ;
 }

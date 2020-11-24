@@ -30,6 +30,7 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalQuantity.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 
@@ -187,6 +188,30 @@ struct ChemicalOutput::Impl
         ++iteration;
     }
 
+    auto update(const ChemicalState& state, const ChemicalProperties& properties, double t) -> void
+    {
+        // Output values on a new line
+        if(datafile.is_open()) datafile << std::endl;
+        if(terminal) std::cout << std::endl;
+
+        // Output the current chemical state to the data file.
+        quantity.update(state, properties, t);
+
+        // For each quantity, ouput its value on each column
+        icolumn = 0;
+        for(auto word : data)
+        {
+            auto space = spacings[icolumn];
+            auto val = (word == "i") ? iteration : quantity.value(word);
+            if(datafile.is_open()) datafile << std::left << std::setw(space) << val;
+            if(terminal) std::cout << std::left << std::setw(space) << val;
+            ++icolumn;
+        }
+
+        // Update the iteration number
+        ++iteration;
+    }
+
     template<typename ValueType>
     auto attach(ValueType value) -> void
     {
@@ -310,6 +335,11 @@ auto ChemicalOutput::open() -> void
 auto ChemicalOutput::update(const ChemicalState& state, double t) -> void
 {
     pimpl->update(state, t);
+}
+
+auto ChemicalOutput::update(const ChemicalState& state, const ChemicalProperties& properties, double t) -> void
+{
+    pimpl->update(state, properties, t);
 }
 
 auto ChemicalOutput::close() -> void
