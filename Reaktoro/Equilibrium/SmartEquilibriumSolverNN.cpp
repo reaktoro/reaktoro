@@ -193,5 +193,9 @@ auto SmartEquilibriumSolverNN::outputInfo() const -> void
 {
 }
 
+auto SmartEquilibriumSolverNN::outputInfo() const -> void
+{
+}
+
 } // namespace Reaktoro
 
