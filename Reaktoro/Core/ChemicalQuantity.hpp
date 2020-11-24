@@ -138,8 +138,11 @@ public:
     /// Update the state of this ChemicalQuantity instance.
     auto update(const ChemicalState& state) -> ChemicalQuantity&;
 
-    /// Update the state of this ChemicalQuantity instance.
+    /// Update the state of this ChemicalQuantity instance at the time t.
     auto update(const ChemicalState& state, double t) -> ChemicalQuantity&;
+
+    /// Update the state of this ChemicalQuantity instance using provided properties and at the tag.
+    auto update(const ChemicalState& state, const ChemicalProperties& properties, double t) -> ChemicalQuantity&;
 
     /// Return the value of the quantity given as a formatted string.
     auto value(std::string str) const -> double;

@@ -219,6 +219,28 @@ struct ChemicalQuantity::Impl
             rates = reactions.rates(properties);
     }
 
+    /// Update the state of the chemical quantity instance using provided properties and the tag
+    auto update(const ChemicalState& state_, const ChemicalProperties& properties_, double t_) -> void
+    {
+        // Update the chemical state of the system
+        state = state_;
+
+        // Update the progress variable
+        tag = t_;
+
+        // Update the temperature, pressure and molar composition of the system
+        T = state.temperature();
+        P = state.pressure();
+        n = state.speciesAmounts();
+
+        // Update the thermodynamic properties of the system
+        properties = properties_;
+
+        // Update the rates of the reactions
+        if(!reactions.reactions().empty())
+            rates = reactions.rates(properties);
+    }
+
     auto function(const ChemicalQuantity& quantity, std::string str) -> const Function&
     {
         auto it = function_map.find(str);
@@ -299,6 +321,12 @@ auto ChemicalQuantity::update(const ChemicalState& state) -> ChemicalQuantity&
 auto ChemicalQuantity::update(const ChemicalState& state, double t) -> ChemicalQuantity&
 {
     pimpl->update(state, t);
+    return *this;
+}
+
+auto ChemicalQuantity::update(const ChemicalState& state, const ChemicalProperties& properties, double t) -> ChemicalQuantity&
+{
+    pimpl->update(state, properties, t);
     return *this;
 }
 
