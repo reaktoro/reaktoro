@@ -59,19 +59,19 @@ using ReactionRateVectorFunction = std::function<ChemicalVector(const ChemicalPr
 class Reaction
 {
 public:
-    /// Construct a default Reaction instance
+    /// Construct a default Reaction instance.
     Reaction();
 
-    /// Construct a Reaction instance from a ReactionEquation instance
+    /// Construct a Reaction instance from a ReactionEquation instance.
     Reaction(const ReactionEquation& equation, const ChemicalSystem& system);
 
-    /// Construct a copy of a Reaction instance
+    /// Construct a copy of a Reaction instance.
     Reaction(const Reaction& other);
 
-    /// Destroy this instance
+    /// Destroy this instance.
     virtual ~Reaction();
 
-    /// Assign a Reaction instance to this instance
+    /// Assign a Reaction instance to this instance.
     auto operator=(Reaction other) -> Reaction&;
 
     /// Set the name of the reaction.
@@ -83,6 +83,9 @@ public:
     /// Set the rate function of the reaction (in units of mol/s).
     auto setRate(const ReactionRateFunction& function) -> void;
 
+    // Set the initial amount of the species.
+    auto setInitialAmounts(VectorConstRef n_) -> void;
+
     /// Return the name of the reaction.
     auto name() const -> std::string;
 
@@ -92,19 +95,22 @@ public:
     /// Return the rate function of the reaction.
     auto rate() const -> const ReactionRateFunction&;
 
-    /// Return the equation of the reaction
+    /// Return the equation of the reaction.
     auto equation() const -> const ReactionEquation&;
 
-    /// Return the chemical system instance of the reaction
+    /// Return the chemical system instance of the reaction.
     auto system() const -> const ChemicalSystem&;
 
-    /// Return the reacting species of the reaction
+    /// Return the reacting species of the reaction.
     auto species() const -> const std::vector<Species>&;
 
-    /// Return the indices of the reacting species of the reaction
+    /// Return the indices of the reacting species of the reaction.
     auto indices() const -> const Indices&;
 
-    /// Return the stoichiometries of the reacting species of the reaction
+    /// Return the initial amount of species in reaction.
+    auto initialAmounts() const -> const VectorRef;
+
+    /// Return the stoichiometries of the reacting species of the reaction.
     auto stoichiometries() const -> VectorConstRef;
 
     /// Return the stoichiometry of a species in the reaction equation.

@@ -67,6 +67,9 @@ struct Reaction::Impl
     /// The function for the kinetic rate of the reaction (in units of mol/s)
     ReactionRateFunction rate;
 
+    /// The initial amounts of the species in the reaction (in units of mol)
+    Vector n0;
+
     Impl()
     {}
 
@@ -124,6 +127,11 @@ auto Reaction::setRate(const ReactionRateFunction& function) -> void
     pimpl->rate = function;
 }
 
+auto Reaction::setInitialAmounts(VectorConstRef n_) -> void
+{
+    pimpl->n0 = n_;
+}
+
 auto Reaction::name() const -> std::string
 {
     return pimpl->name;
@@ -157,6 +165,11 @@ auto Reaction::species() const -> const std::vector<Species>&
 auto Reaction::indices() const -> const Indices&
 {
     return pimpl->indices;
+}
+
+auto Reaction::initialAmounts() const -> const VectorRef
+{
+    return pimpl->n0;
 }
 
 auto Reaction::stoichiometries() const -> VectorConstRef
