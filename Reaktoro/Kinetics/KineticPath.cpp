@@ -17,6 +17,9 @@
 
 #include "KineticPath.hpp"
 
+// C++ includes
+#include <ostream>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
@@ -28,6 +31,7 @@
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
+#include <Reaktoro/Kinetics/KineticPathProfiler.hpp>
 
 namespace Reaktoro {
 
@@ -114,6 +118,9 @@ struct KineticPath::Impl
 
         double t = t0;
 
+        // Step **: Create KineticPathProfiler to track the timing and results of kinetic path
+        KineticPathProfiler profiler;
+
         // Initialize the output of the equilibrium path calculation
         if(output) output.open();
 
@@ -133,6 +140,9 @@ struct KineticPath::Impl
             // Integrate one time step only
             t = kineticsolver.solve(state, t, dt);
 
+            // Update the profiler after every call to step method
+            profiler.update(kineticsolver.result());
+
             // Update the output with current state
             if(output) output.update(state, t);
 
@@ -144,8 +154,19 @@ struct KineticPath::Impl
 
         }
 
+        // Step **: Collect the analytics related to reactive transport performance
+        auto analysis = profiler.analysis();
+        auto rt_results = profiler.results();
+
         if(options.use_smart_equilibrium_solver)
+        {
+            // Output characteristics of the smart solver (e.g., clusters)
             kineticsolver.outputSmartSolverInfo();
+
+            // Output to console time and statistics characterising kinetic solver
+            //std::cout << profiler;
+        }
+
 
     }
 };
@@ -154,7 +175,7 @@ KineticPath::KineticPath(const ReactionSystem& reactions)
 {
     RuntimeError("Cannot proceed with KineticPath().",
         "KineticPath() constructor is deprecated. "
-        "Use constructor KineticPath(const ReactionSystem&, const Partition&) instead.");
+        "Use constructor KineticPath(const ReactionSystem&, const Partition&) instead.")
 }
 
 KineticPath::KineticPath(const ReactionSystem& reactions, const Partition& partition)
@@ -179,7 +200,7 @@ auto KineticPath::setPartition(const Partition& partition) -> void
 {
     RuntimeError("Cannot proceed with KineticPath::setPartition.",
         "KineticPath::setPartition is deprecated. "
-        "Use constructor KineticPath(const ReactionSystem&, const Partition&) instead.");
+        "Use constructor KineticPath(const ReactionSystem&, const Partition&) instead.")
 }
 
 auto KineticPath::addSource(const ChemicalState& state, double volumerate, const std::string& units) -> void
