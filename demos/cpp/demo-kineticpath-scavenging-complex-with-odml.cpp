@@ -42,6 +42,12 @@ int main()
     params.method = SmartEquilibriumStrategy::Clustering;
     params.smart_equilibrium_reltol = 1e-1;
 
+    //params.method = SmartEquilibriumStrategy::PriorityQueue;
+    //params.smart_equilibrium_reltol = 1e-1;
+
+    //params.method = SmartEquilibriumStrategy::NearestNeighbour;
+    //params.smart_equilibrium_reltol = 1e-2;
+
     params.use_smart_equilibrium_solver = true; runKinetics(params);
     params.use_smart_equilibrium_solver = false; runKinetics(params);
 }
@@ -102,7 +108,6 @@ auto runKinetics(KineticPathParams & params) -> void
                 .setChemicalModelDebyeHuckel(dhModel);
 
     editor.addMineralPhase("Pyrrhotite");
-    //editor.addMineralPhase("Pyrite");
     editor.addMineralPhase("Calcite");
     editor.addMineralPhase("Daphnite,14A"); // Chlorite
     editor.addMineralPhase("Siderite");
@@ -111,9 +116,6 @@ auto runKinetics(KineticPathParams & params) -> void
 
     // Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
-
-    //std::cout << "system = \n" << system << std:: endl;
-    //getchar();
 
     const auto I = ChemicalProperty::ionicStrength(system);
 
@@ -150,14 +152,9 @@ auto runKinetics(KineticPathParams & params) -> void
         const auto lnK = reaction_calcite.lnEquilibriumConstant(properties);
         const auto lnQ = reaction_calcite.lnReactionQuotient(properties);
         const auto lnOmega = lnQ - lnK;
-        //std::cout << "lnK = " << lnK << std::endl;
-        //std::cout << "lnQ = " << lnQ << std::endl;
-        //std::cout << "lnOmega = " << lnOmega << std::endl;
 
         // Calculate the saturation index
         const auto Omega = exp(lnOmega).val;
-//        std::cout << "Omega(Calcite) = " << Omega << std::endl;
-//        getchar();
 
         // The composition of the chemical system
         const auto n = properties.composition();
@@ -353,8 +350,7 @@ auto runKinetics(KineticPathParams & params) -> void
             res += res_growth + res_nuc;
 
         }
-        //std::cout << "res = " << res << std::endl;
-        //getchar();
+
         return res;
 
     };
@@ -397,8 +393,6 @@ auto runKinetics(KineticPathParams & params) -> void
 
         // Calculate the saturation index
         const auto Omega = exp(lnOmega).val;
-//        std::cout << "SR(Daphnite) = " << Omega << std::endl;
-//        std::cout << "SI(Daphnite) = " << std::log10(Omega) << std::endl;
 
         // The composition of the chemical system
         const auto n = properties.composition();
@@ -490,16 +484,7 @@ auto runKinetics(KineticPathParams & params) -> void
 //            double total_moles = nm.val; // current amount of mols of available minerals
 //            if (res > nm.val) res += nm.val;
 
-//            std::cout << "nm = " << nm << std::endl;
-//            std::cout << "nm0 = " << nm0 << std::endl;
-//            std::cout << "kappa_neu = " << kappa_neu << std::endl;
-//            std::cout << "kappa_acid = " << kappa_acid << std::endl;
-//            std::cout << "kappa_oh = " << kappa_oh << std::endl;
-//            std::cout << "kappa = " << kappa << std::endl;
-
         }
-//        std::cout << "res = " << res << std::endl;
-//        getchar();
         return res;
 
     };
@@ -541,14 +526,9 @@ auto runKinetics(KineticPathParams & params) -> void
         const auto lnK = reaction.lnEquilibriumConstant(properties);
         const auto lnQ = reaction.lnReactionQuotient(properties);
         const auto lnOmega = lnQ - lnK;
-        //std::cout << "lnK = " << lnK << std::endl;
-        //std::cout << "lnQ = " << lnQ << std::endl;
-        //std::cout << "lnOmega = " << lnOmega << std::endl;
 
         // Calculate the saturation index
         const auto Omega = exp(lnOmega).val;
-        //std::cout << "Omega(Siderite) = " << Omega << std::endl;
-        //getchar();
 
         // The composition of the chemical system
         const auto n = properties.composition();
@@ -636,14 +616,6 @@ auto runKinetics(KineticPathParams & params) -> void
 
         if(Omega < 1) // dissolution kinetics
         {
-            /*
-             * 60 knu = 2.1E-09 * exp((-56000 / 8.314) * ((1 / TK) - (1 / 298.15)))
-                70 k1 = 5.9E-06 * exp((-56000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("H3O+") ^ 0.60)
-                80 k = knu + k1 + k2
-                90 rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - SRmin)
-                100 moles = rate * Time
-             */
-
             // knu = 2.1E-09 * exp((-56000 / 8.314) * ((1 / TK) - (1 / 298.15)))
             const auto kappa_neu = 2.1E-09 * exp(- 56.0 / R * (1.0/T - 1.0/298.15));
 
@@ -734,16 +706,9 @@ auto runKinetics(KineticPathParams & params) -> void
             // rate = S * m * Mm * kpre * (SRmin - 1)
             res_growth += f * ssa * nm * molar_mass * kappa_growth * std::abs(Omega - 1);
 
-            // TODO: check that this res_growth is not a zero
-            // std::cout << "res = " << res << std::endl;
-
-
-            // moles = moles_nuc + moles_growth
             res += res_growth + res_nuc;
 
         }
-        //std::cout << "res = " << res << std::endl;
-        //getchar();
         return res;
 
     };
@@ -789,8 +754,6 @@ auto runKinetics(KineticPathParams & params) -> void
 
         // Calculate the saturation index
         auto Omega = exp(lnOmega).val;
-        //std::cout << "Omega(Kaolinite) = " << Omega << std::endl;
-        //getchar();
 
         // The composition of the chemical system
         const auto n = properties.composition();
@@ -1004,18 +967,8 @@ auto runKinetics(KineticPathParams & params) -> void
 
             // moles_growth = S * m * Mm * kpre * (ABS((SRmin ^ 0.06) - 1) ^ 1.68) * Time
             res_growth += f * ssa * nm * molar_mass * kappa_growth * std::pow(std::abs(std::pow(Omega, 0.06) - 1), 1.68);
-            //std::cout << "ssa = " << ssa << std::endl;
-            //std::cout << "nm = " << nm << std::endl;
-            //std::cout << "molar_mass = " << molar_mass << std::endl;
-            //std::cout << "f(Omega) = " << std::pow(std::abs(std::pow(Omega, 0.06) - 1), 1.68) << std::endl;
-            //std::cout << "res_growth = " << res_growth << std::endl;
 
-            //std::cout << "res_nuc = " << res_nuc << std::endl;
-
-            // moles = moles_nuc + moles_growth
-            res += (res_growth + res_nuc);
-            //std::cout << "res = " << res << std::endl;
-            //getchar();
+             res += (res_growth + res_nuc);
 
         }
 
@@ -1061,8 +1014,6 @@ auto runKinetics(KineticPathParams & params) -> void
 
         // Calculate the saturation index
         auto Omega = exp(lnOmega).val;
-        //std::cout << "Omega(Quartz) = " << Omega << std::endl;
-        //getchar();
 
         // The composition of the chemical system
         const auto n = properties.composition();
@@ -1211,9 +1162,6 @@ auto runKinetics(KineticPathParams & params) -> void
 //                res +=  nm.val;
 
         }
-        //std::cout << "res = " << res << std::endl;
-        //getchar();
-
 
         return res;
 
@@ -1318,4 +1266,6 @@ auto runKinetics(KineticPathParams & params) -> void
     double total_time = toc(TRANSPORT);
     std::cout << filename << std::endl;
     std::cout << "total_time = " << total_time << std::endl;
+
 }
+
