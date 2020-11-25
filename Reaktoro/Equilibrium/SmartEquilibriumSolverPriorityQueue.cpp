@@ -64,7 +64,7 @@ auto SmartEquilibriumSolverPriorityQueue::learn(ChemicalState& state, double T, 
     // Update the chemical properties of the system
     _properties = solver.properties();
 
-    _result.timing.learn_chemical_properties =toc(CHEMICAL_PROPERTIES_STEP);
+    _result.timing.learn_chemical_properties = toc(CHEMICAL_PROPERTIES_STEP);
 
     //---------------------------------------------------------------------
     // SENSITIVITY MATRIX COMPUTATION STEP DURING THE LEARNING PROCESS
@@ -220,7 +220,7 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
 
         if(success)
         {
-            _result.timing.estimate_error_control += toc(ERROR_CONTROL_STEP);
+            _result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
 
             //---------------------------------------------------------------------
             // TAYLOR EXTRAPOLATION STEP DURING THE LEARNING PROCESS
@@ -255,6 +255,20 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
                 continue;
 
             _result.timing.estimate_search = toc(SEARCH_STEP);
+
+            //---------------------------------------------------------------------
+            // After the search is finished successfully
+            //---------------------------------------------------------------------
+
+            // Assign small values to all the amount  in the interval [cutoff, 0] (instead of mirroring above)
+            for(unsigned int i = 0; i < ne.size(); ++i) if(ne[i] < 0) ne[i] = options.learning.epsilon;
+
+            // Update the amounts of elements for the equilibrium species
+            //state = node.state; // this line was removed because it was destroying kinetics simulations
+            state.setSpeciesAmounts(ne, ies);
+
+            // Update the chemical properties of the system
+            _properties = node.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
 
             //-----------------------------------------------------------------------
             // DATABASE PRIORITY AND RANKING UPDATE STEP DURING THE ESTIMATE PROCESS

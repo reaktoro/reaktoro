@@ -303,10 +303,10 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
             // Check if the current record passes the error test
             const auto [success, error, iprimaryspecies] = pass_error_test(record);
 
-            _result.timing.estimate_error_control += toc(ERROR_CONTROL_STEP);
-
             if(success)
             {
+                _result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
+
                 //---------------------------------------------------------------------
                 // TAYLOR PREDICTION STEP DURING THE ESTIMATE PROCESS
                 //---------------------------------------------------------------------
@@ -334,6 +334,8 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
                 // Perform Taylor extrapolation
                 //ne.noalias() = ne0 + dnedbe0 * (be - be0);
                 ne.noalias() = ne0 + dnedbe0*(be - be0) + dnedbPe0*(P - P0) + dnedbTe0*(T - T0);
+
+                _result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
                 // Check if all projected species amounts are positive
                 const double ne_min = min(ne);
@@ -366,13 +368,10 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
                 // Update the chemical properties of the system
                 _properties =  record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
 
-                _result.timing.estimate_taylor = toc(TAYLOR_STEP);
-
                 //---------------------------------------------------------------------
                 // DATABASE PRIORITY UPDATE STEP DURING THE ESTIMATE PROCESS
                 //---------------------------------------------------------------------
                 tic(PRIORITY_UPDATE_STEP)
-
 
                 // Increment priority of the current record (irecord) in the current cluster (jcluster)
                 database.clusters[jcluster].priority.increment(irecord);
@@ -385,6 +384,7 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
 
                 _result.timing.estimate_database_priority_update = toc(PRIORITY_UPDATE_STEP);
 
+                // Mark the estimated state as accepted
                 _result.estimate.accepted = true;
 
                 return;
