@@ -39,36 +39,28 @@ using namespace Reaktoro;
 /// Make directory for Windows and Linux
 auto mkdir(std::string& folder) -> bool
 {
-#if defined _WIN32
-    // Replace slash by backslash
-    std::transform(begin(folder), end(folder), begin(folder),
-                   [](char ch) { return ch == '/' ? '\\' : ch; });
-    return 0 != CreateDirectory(folder.c_str(), NULL);
-#else
-    // Create the directory with Read + Write + Execute rights for user, group, and others
-    return ::mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-#endif
-}
+    HKF,
+
+    DebyeHuckel,
+
+    Pitzer,
+
+    HKFSelectedSpecies,
+
+    DebyeHuckelSelectedSpecies,
+
+    PitzerSelectedSpecies,
+
+};
+
+// Forward declaration
+auto getSmartMethodTag(enum SmartEquilibriumStrategy method) -> std::string;
+auto getActivityModelTag(enum ActivityModel activity_model) -> std::string;
+auto mkdir(const std::string& folder) -> bool;
+
 
 struct ReactiveTransportParams
 {
-    /// The options for the activity model of aqueous species
-    enum struct AqueousActivityModel
-    {
-        HKF,
-
-        DebyeHuckel,
-
-        Pitzer,
-
-        HKFSelectedSpecies,
-
-        DebyeHuckelSelectedSpecies,
-
-        PitzerSelectedSpecies,
-
-    };
-
     // Discretization params
     int ncells = 0; // the number of cells in the spacial discretization
     int nsteps = 0; // the number of steps in the reactive transport simulation
@@ -83,13 +75,13 @@ struct ReactiveTransportParams
     double T = 0; // the temperature (in units of degC)
     double P = 0; // the pressure (in units of bar)
 
-    // Solver params
+    // ODML params
     bool use_smart_equilibrium_solver = false;
     double smart_equilibrium_reltol = 0;
     double amount_fraction_cutoff = 0;
     double mole_fraction_cutoff = 0;
 
-    AqueousActivityModel activity_model = AqueousActivityModel::HKF;
+    ActivityModel activity_model = ActivityModel::HKF;
 
     SmartEquilibriumStrategy method = SmartEquilibriumStrategy::Clustering;
 
@@ -105,8 +97,8 @@ struct ReactiveTransportParams
         std::cout << "T       : " << T << std::endl;
         std::cout << "P       : " << P << std::endl;
         std::cout << "eqreltol       : " << smart_equilibrium_reltol << std::endl;
-        std::cout << "activity model : " << getActivityModel() << std::endl;
-        std::cout << "smart method   : " << getSmartMethodtag() << std::endl;
+        std::cout << "activity model : " << getActivityModelTag(activity_model) << std::endl;
+        std::cout << "smart method   : " << getSmartMethodTag(method) << std::endl;
 
     }
 
@@ -145,14 +137,14 @@ struct ReactiveTransportParams
         std::string test_tag = "-dt-" + dt_stream.str() +
                                "-ncells-" + std::to_string(ncells) +
                                "-nsteps-" + std::to_string(nsteps) +
-                               "-" + getActivityModel() + "-reference";
+                               "-" + getActivityModelTag(activity_model) + "-reference";
 
-        std::string smart_test_tag = "-" + getSmartMethodtag() +
+        std::string smart_test_tag = "-" + getActivityModelTag(activity_model) +
                                      "-dt-" + dt_stream.str() +
                                      "-ncells-" + std::to_string(ncells) +
                                      "-nsteps-" + std::to_string(nsteps) +
                                      "-reltol-" + reltol_stream.str() +
-                                     "-" + getActivityModel() + "-smart";
+                                     "-" + getActivityModelTag(activity_model) + "-smart";
 
         std::string folder = "results-" + demo_tag;
         folder = (use_smart_equilibrium_solver) ?
@@ -200,26 +192,107 @@ struct ReactiveTransportResults
 
 struct KineticPathParams{
 
-    // Discretisation params
-    double t0;      // starting time of simulations
-    double tfinal;  // final time of simulation
+    // Discretization params
+    double t0 = 0;      // starting time of simulations
+    double tfinal = 0;  // final time of simulation
+
+    double dt = 0.0;    // discretization step in time
+    int n = 0;          // number of steps
+
+    // Thermodynamic parameters
+    double T = 0; // the temperature (in units of degC)
+    double P = 0; // the pressure (in units of bar)
+
+    ActivityModel activity_model = ActivityModel::HKF;
+
+    // ODML parameters
+    bool use_smart_equilibrium_solver = false;
+    double smart_equilibrium_reltol = 1e-3;
+
+    SmartEquilibriumStrategy method = SmartEquilibriumStrategy::Clustering;
 
     /// Create results file with parameters of the test
-    /// Create results file with parameters of the test
-    auto makeResultsFolder() -> std::string
+    auto makeResultsFile(const std::string& demo_tag) -> std::string
     {
-        struct stat status = {0};               // structure to get the file status
+        std::ostringstream eqtol_stream, kinreltol_stream, kinabstol_stream, kintol_stream;
+        eqtol_stream << std::scientific << std::setprecision(1) << smart_equilibrium_reltol;
+        //kinreltol_stream << std::scientific << std::setprecision(1) << smart_kinetic_options.reltol;
+        //kinabstol_stream << std::scientific << std::setprecision(1) << smart_kinetic_options.abstol;
+        //kintol_stream << std::scientific << std::setprecision(1) << smart_kinetic_options.tol;
 
-        std::ostringstream tol_stream, t0_stream, tfinal_stream;
-        t0_stream << t0;
-        tfinal_stream << tfinal;
+        std::string smart_test_tag = "-t0-" + std::to_string(t0) +
+                                     "-tfinal-" + std::to_string(tfinal) +
+                                     "-n-" + std::to_string(n) +
+                                     "-" + getSmartMethodTag() +
+                                     "-eqtol-" + eqtol_stream.str() +
+                                     //"-kintol-" + kintol_stream.str() +
+                                     //"-kinrel-" + kinreltol_stream.str() +
+                                     //"-kinabs-" + kinabstol_stream.str() +
+                                     "-" + getActivityModelTag(activity_model) +
+                                     //(use_smart_kinetic_solver ? "-smart-kin" : "-conv-kin") +
+                                     (use_smart_equilibrium_solver ? "-smart-eq"  : "-conv-eq");      // name of the folder with results
 
-        std::string test_tag = "-t0-" + t0_stream.str() +
-                               "-tfinal-" + tfinal_stream.str();      // name of the folder with results
-        std::string folder = "../kinetics-perturbed-co2" + test_tag;
-        if (stat(folder.c_str(), &status) == -1) mkdir(folder);
+        std::string class_test_tag = "-t0-" + std::to_string(t0) +
+                                     "-tfinal-" + std::to_string(tfinal) +
+                                     "-n-" + std::to_string(n) +
+                                     "-" + getActivityModelTag(activity_model) +
+                                     //(use_smart_kinetic_solver ? "-smart-kin" : "-conv-kin") +
+                                     (use_smart_equilibrium_solver ? "-smart-eq"  : "-conv-eq");      // name of the folder with results
+        std::string filename;
+        if(use_smart_equilibrium_solver)
+            filename = "kineticpath-" + demo_tag + smart_test_tag + ".txt";
+        else
+            filename = "kineticpath-" + demo_tag + class_test_tag + ".txt";
 
-        return folder;
+        return filename;
+    }
+    auto getSmartMethodTag() -> std::string
+    {
+        switch(method)
+        {
+            case SmartEquilibriumStrategy::Clustering: return "clustering";
+            case SmartEquilibriumStrategy::PriorityQueue: return "priority";
+            case SmartEquilibriumStrategy::NearestNeighbour: return "nnsearch";
+        }
     }
 
 };
+
+// Return string tag depending on the selected activity model
+auto getActivityModelTag(enum ActivityModel activity_model) -> std::string
+{
+    switch(activity_model)
+    {
+        case ActivityModel::HKF: return "hkf-full";
+        case ActivityModel::DebyeHuckel: return "dk-full";
+        case ActivityModel::Pitzer: return "pitzer-full";
+        case ActivityModel::HKFSelectedSpecies: return "hkf-selected-species";
+        case ActivityModel::DebyeHuckelSelectedSpecies: return "dk-selected-species";
+        case ActivityModel::PitzerSelectedSpecies: return "pitzer-selected-species";
+    }
+}
+
+// Return string tag depending on the selected method
+auto getSmartMethodTag(enum SmartEquilibriumStrategy method) -> std::string
+{
+    switch(method)
+    {
+        case SmartEquilibriumStrategy::Clustering: return "eq-clustering";
+        case SmartEquilibriumStrategy::PriorityQueue: return "eq-priority";
+        case SmartEquilibriumStrategy::NearestNeighbour: return "eq-nnsearch";
+    }
+}
+
+/// Make directory for Windows and Linux
+auto mkdir(const std::string& folder) -> bool
+{
+#if defined _WIN32
+    // Replace slash by backslash
+    std::transform(begin(folder), end(folder), begin(folder),
+                   [](char ch) { return ch == '/' ? '\\' : ch; });
+    return 0 != CreateDirectory(folder.c_str(), NULL);
+#else
+    // Create the directory with Read + Write + Execute rights for user, group, and others
+    return ::mkdir(folder.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+#endif
+}
