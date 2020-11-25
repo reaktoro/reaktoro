@@ -36,9 +36,9 @@ int main()
     runKinetics(params);
 }
 
-auto runKinetics(KineticPathParams & params) -> void{
-
-    auto folder = params.makeResultsFolder();
+auto runKinetics(KineticPathParams & params) -> void
+{
+    auto file = params.makeResultsFile("perturbed-co2");
 
     ChemicalEditor editor;
     editor.addAqueousPhaseWithElementsOf("H2O HCl CaCO3");
@@ -94,7 +94,7 @@ auto runKinetics(KineticPathParams & params) -> void{
         std::cout << i + 1 << std::endl;
         std::cout << "**********************************************************************************" << std::endl;
 
-        output.filename(folder + "/path" + std::to_string(i + 1));
+        output.filename(file + std::to_string(i + 1));
 
         // Output initial values
         double initial_calcite = chemical_states[i].speciesAmount("Calcite");
