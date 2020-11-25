@@ -66,7 +66,7 @@ public:
     /// @param state The chemical state representing the source.
     /// @param volumerate The volumetric rate of the source.
     /// @param units The units of the volumetric rate (compatible with m3/s).
-    auto addSource(const ChemicalState& state, double volumerate, std::string units) -> void;
+    auto addSource(const ChemicalState& state, double volumerate, const std::string& units) -> void;
 
     /// Add a phase sink to the chemical kinetics problem.
     /// This method allows the chemical kinetics problem to account for
@@ -74,28 +74,36 @@ public:
     /// @param phase The name of the phase.
     /// @param volumerate The volumetric rate of the phase removal.
     /// @param units The units of the volumetric rate (compatible with m3/s).
-    auto addPhaseSink(std::string phase, double volumerate, std::string units) -> void;
+    auto addPhaseSink(const std::string& phase, double volumerate, const std::string& units) -> void;
 
     /// Add a fluid sink to the chemical kinetics problem.
     /// This method allows the chemical kinetics problem to account for
     /// the sink (i.e., the removal) of fluid from the system.
     /// @param volumerate The volumetric rate of the fluid removal.
     /// @param units The units of the volumetric rate (compatible with m3/s).
-    auto addFluidSink(double volumerate, std::string units) -> void;
+    auto addFluidSink(double volumerate, const std::string& units) -> void;
 
     /// Add a solid sink to the chemical kinetics problem.
     /// This method allows the chemical kinetics problem to account for
     /// the sink (i.e., the removal) of solid from the system.
     /// @param volumerate The volumetric rate of the solid removal.
     /// @param units The units of the volumetric rate (compatible with m3/s).
-    auto addSolidSink(double volumerate, std::string units) -> void;
+    auto addSolidSink(double volumerate, const std::string& units) -> void;
 
-    /// Solve the kinetic path problem.
+    /// Solve the kinetic path problem (adaptively within the interval `[t0, t1]` with CVODE).
     /// @param state The initial state of the chemical system
     /// @param t0 The initial time of the kinetic path
     /// @param t1 The final time of the kinetic path
     /// @param units The time units of `t0` and `t1` (e.g., `s`, `minute`, `day`, `year`, etc.).
-    auto solve(ChemicalState& state, double t0, double t1, std::string units = "s") -> void;
+    auto solve(ChemicalState& state, double t0, double t1, const std::string& units = "s") -> void;
+
+    /// Solve the kinetic path problem (uniformly with the `n` time steps of the size `dt` starting from the time `t0`,
+    /// where each time step `[t0, t0 + dt]` is solved with internal CVODE-solver adaptively).
+    /// @param state The initial state of the chemical system
+    /// @param t0 The initial time of the kinetic path
+    /// @param t1 The final time of the kinetic path
+    /// @param units The time units of `t0` and `t1` (e.g., `s`, `minute`, `day`, `year`, etc.).
+    auto solve(ChemicalState& state, double t0, double dt, int n, const std::string& units) -> void;
 
     /// Return a ChemicalPlot instance.
     /// The returned ChemicalOutput instance must be properly configured
