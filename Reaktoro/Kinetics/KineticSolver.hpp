@@ -144,6 +144,9 @@ public:
     /// Return properties of the chemical state provided by the KineticSolver
     auto properties() const -> const ChemicalProperties&;
 
+    // Output statistics related to the ODML method
+    auto outputSmartSolverInfo() const -> void;
+
 private:
     struct Impl;
 

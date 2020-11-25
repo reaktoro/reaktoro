@@ -205,6 +205,11 @@ struct KineticSolver::Impl
         options = options_;
     }
 
+    auto outputSmartSolverInfo() const -> void
+    {
+        smart_equilibrium.outputInfo();
+    }
+
     auto addSource(ChemicalState state, double volumerate, const std::string& units) -> void
     {
         const Index num_species = system.numSpecies();
@@ -438,8 +443,6 @@ struct KineticSolver::Impl
             res += equilibrium.solve(state, T, P, be);
             result.equilibrium += res;
         }
-
-        //std::cout << "# iter = " << result.equilibrium.optimum.iterations << std::endl;
 
         result.timing.equilibrate = toc(EQUILIBRATE_STEP);
 
@@ -739,6 +742,11 @@ auto KineticSolver::properties() const -> const ChemicalProperties&
 auto KineticSolver::result() const -> const KineticResult&
 {
     return pimpl->result;
+}
+
+auto KineticSolver::outputSmartSolverInfo() const -> void
+{
+    return pimpl->outputSmartSolverInfo();
 }
 
 } // namespace Reaktoro
