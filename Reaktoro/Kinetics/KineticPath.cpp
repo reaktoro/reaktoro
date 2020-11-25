@@ -72,7 +72,7 @@ struct KineticPath::Impl
         kineticsolver.setOptions(options);
     }
 
-    auto solve(ChemicalState& state, double t0, double t1, std::string units) -> void
+    auto solve(ChemicalState& state, double t0, double t1, const std::string& units) -> void
     {
         t0 = units::convert(t0, units, "s");
         t1 = units::convert(t1, units, "s");
@@ -103,6 +103,50 @@ struct KineticPath::Impl
 
         // Update the plots with the final state
         for(auto& plot : plots) plot.update(state, t1);
+    }
+
+    auto solve(ChemicalState& state, double t0, double dt, int n, const std::string& units) -> void
+    {
+        t0 = units::convert(t0, units, "s");
+        dt = units::convert(dt, units, "s");
+
+        kineticsolver.initialize(state, t0);
+
+        double t = t0;
+
+        // Initialize the output of the equilibrium path calculation
+        if(output) output.open();
+
+        // Initialize the plots of the equilibrium path calculation
+        for(auto& plot : plots) plot.open();
+
+        // Update the output at initial time
+        if(output) output.update(state, t);
+
+        // Update the plots at initial time
+        for(auto& plot : plots) plot.update(state, t);
+
+        // Loop through the steps
+        unsigned int k = 0;
+        while(k < n)
+        {
+            // Integrate one time step only
+            t = kineticsolver.solve(state, t, dt);
+
+            // Update the output with current state
+            if(output) output.update(state, t);
+
+            // Update the plots with current state
+            for(auto& plot : plots) plot.update(state, t);
+
+            // Increase the counter of the steps
+            k++;
+
+        }
+
+        if(options.use_smart_equilibrium_solver)
+            kineticsolver.outputSmartSolverInfo();
+
     }
 };
 
@@ -138,29 +182,33 @@ auto KineticPath::setPartition(const Partition& partition) -> void
         "Use constructor KineticPath(const ReactionSystem&, const Partition&) instead.");
 }
 
-auto KineticPath::addSource(const ChemicalState& state, double volumerate, std::string units) -> void
+auto KineticPath::addSource(const ChemicalState& state, double volumerate, const std::string& units) -> void
 {
     pimpl->kineticsolver.addSource(state, volumerate, units);
 }
 
-auto KineticPath::addPhaseSink(std::string phase, double volumerate, std::string units) -> void
+auto KineticPath::addPhaseSink(const std::string& phase, double volumerate, const std::string& units) -> void
 {
     pimpl->kineticsolver.addPhaseSink(phase, volumerate, units);
 }
 
-auto KineticPath::addFluidSink(double volumerate, std::string units) -> void
+auto KineticPath::addFluidSink(double volumerate, const std::string& units) -> void
 {
     pimpl->kineticsolver.addFluidSink(volumerate, units);
 }
 
-auto KineticPath::addSolidSink(double volumerate, std::string units) -> void
+auto KineticPath::addSolidSink(double volumerate, const std::string& units) -> void
 {
     pimpl->kineticsolver.addSolidSink(volumerate, units);
 }
 
-auto KineticPath::solve(ChemicalState& state, double t0, double t1, std::string units) -> void
+auto KineticPath::solve(ChemicalState& state, double t0, double t1, const std::string& units) -> void
 {
     pimpl->solve(state, t0, t1, units);
+}
+
+auto KineticPath::solve(ChemicalState& state, double t0, double dt, int n, const std::string& units) -> void{
+    pimpl->solve(state, t0, dt, n, units);
 }
 
 auto KineticPath::output() -> ChemicalOutput
@@ -171,7 +219,7 @@ auto KineticPath::output() -> ChemicalOutput
 
 auto KineticPath::plot() -> ChemicalPlot
 {
-    pimpl->plots.push_back(ChemicalPlot(pimpl->reactions));
+    pimpl->plots.emplace_back(ChemicalPlot(pimpl->reactions));
     return pimpl->plots.back();
 }
 

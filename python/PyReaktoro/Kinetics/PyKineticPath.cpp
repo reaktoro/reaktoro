@@ -31,6 +31,9 @@ namespace Reaktoro {
 
 void exportKineticPath(py::module& m)
 {
+    auto solve1 = static_cast<void(KineticPath::*)(ChemicalState&, double, double, const std::string&)>(&KineticPath::solve);
+    auto solve2 = static_cast<void(KineticPath::*)(ChemicalState& , double, double, int, const std::string&)>(&KineticPath::solve);
+
     py::class_<KineticPath>(m, "KineticPath")
         .def(py::init<const ReactionSystem&, const Partition&>())
         .def("setOptions", &KineticPath::setOptions)
@@ -38,7 +41,8 @@ void exportKineticPath(py::module& m)
         .def("addPhaseSink", &KineticPath::addPhaseSink)
         .def("addFluidSink", &KineticPath::addFluidSink)
         .def("addSolidSink", &KineticPath::addSolidSink)
-        .def("solve", &KineticPath::solve)
+        .def("solve", solve1)
+        .def("solve", solve2)
         .def("output", &KineticPath::output)
         .def("plot", &KineticPath::plot)
         .def("plots", &KineticPath::plots)
