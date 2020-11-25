@@ -73,9 +73,16 @@ void exportChemicalScalar(py::module& m)
         .def_readwrite("ddT", &ChemicalScalar::ddT)
         .def_readwrite("ddP", &ChemicalScalar::ddP)
         .def_readwrite("ddn", &ChemicalScalar::ddn)
+        .def("__mul__", [](const ChemicalScalar &a, float b) -> ChemicalScalar { return a * b; })
+        .def("__mul__", [](float b, const ChemicalScalar &a) -> ChemicalScalar { return a * b; })
+        .def("__add__", [](const ChemicalScalar &a, const ChemicalScalar &b) -> ChemicalScalar { return a + b; })
         ;
 }
 
+auto Composition_getitem(const Composition& self, Index i) -> const ChemicalScalar
+{
+    return { self.val[i], 0.0, 0.0, unitrow(self.val.size(), i) };
+}
 void exportChemicalVector(py::module& m)
 {
     py::class_<ChemicalVector>(m, "ChemicalVector")
@@ -102,6 +109,10 @@ void exportChemicalVector(py::module& m)
         .def_readonly("ddP", &ChemicalVectorConstRef::ddP)
         .def_readonly("ddn", &ChemicalVectorConstRef::ddn)
         ;
+
+    py::class_<Composition>(m, "Composition")
+        .def(py::init<VectorConstRef>())
+        .def("__getitem__", Composition_getitem, py::return_value_policy::reference_internal);
 }
 
 void exportTemperature(py::module& m)

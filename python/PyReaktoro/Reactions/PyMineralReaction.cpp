@@ -53,6 +53,8 @@ void exportMineralReaction(py::module& m)
         .def("volumetricSurfaceArea", &MineralReaction::volumetricSurfaceArea)
         .def("mechanisms", &MineralReaction::mechanisms, py::return_value_policy::reference_internal)
         ;
+
+    m.def("createReaction", &createReaction);
 }
 
 } // namespace Reaktoro
