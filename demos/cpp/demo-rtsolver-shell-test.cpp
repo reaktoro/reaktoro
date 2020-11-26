@@ -49,9 +49,9 @@ int main()
     params.P = 300.0;                      // the pressure (in units of atm)
 
     // Define the activity model for the aqueous species
-    params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
+    params.activity_model = ActivityModel::HKF;
+    //params.activity_model = ActivityModel::Pitzer;
+    //params.activity_model = ActivityModel::DebyeHuckel;
 
     // Define equilibrium solver cutoff tolerances
     params.amount_fraction_cutoff = 1e-14;
@@ -135,17 +135,17 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     std::string elements = "C Cl H Na O Z";
 
     // Define activity model depending on the parameter
-    if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKF){
+    if(params.activity_model == ActivityModel::HKF){
         // HKF full system
         editor.addAqueousPhaseWithElements(elements);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::Pitzer){
+    else if(params.activity_model == ActivityModel::Pitzer){
         // Pitzer full system
         editor.addAqueousPhaseWithElements(elements)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
+    else if(params.activity_model == ActivityModel::DebyeHuckel){
         // Debye-Huckel full system
         editor.addAqueousPhaseWithElements(elements)
                 .setChemicalModelDebyeHuckel()

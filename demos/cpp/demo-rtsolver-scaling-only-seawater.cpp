@@ -147,7 +147,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel(dhModel);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::Pitzer){
+    else if(params.activity_model == ActivityModel::Pitzer){
         // Pitzer full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelPitzerHMW()
