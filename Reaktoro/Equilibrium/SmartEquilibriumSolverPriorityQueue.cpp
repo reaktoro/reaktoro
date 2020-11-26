@@ -268,7 +268,7 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
             state.setSpeciesAmounts(ne, ies);
 
             // Update the chemical properties of the system
-            _properties = node.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+            _properties = record.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
 
             //-----------------------------------------------------------------------
             // DATABASE PRIORITY AND RANKING UPDATE STEP DURING THE ESTIMATE PROCESS

@@ -71,8 +71,8 @@ auto SmartEquilibriumSolverNN::learn(ChemicalState& state, double T, double P, V
     //---------------------------------------------------------------------
     tic(STORAGE_STEP)
 
-    // Store the computed solution into the knowledge tree
-    tree.push_back({be, state, _properties, solver.sensitivity()});
+    // Store the computed solution into the knowledge database
+    database.push_back({be, state, _properties, solver.sensitivity()});
 
     _result.timing.learn_storage = toc(STORAGE_STEP);
 }
@@ -80,7 +80,7 @@ auto SmartEquilibriumSolverNN::learn(ChemicalState& state, double T, double P, V
 auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> void
 {
     // Skip estimation if no previous full computation has been done
-    if(tree.empty())
+    if(database.empty())
         return;
 
     //---------------------------------------------------------------------
@@ -89,7 +89,7 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
     tic(SEARCH_STEP)
 
     // Comparison function based on the Euclidean distance
-    auto distancefn = [&](const TreeNode& a, const TreeNode& b)
+    auto distancefn = [&](const Record& a, const Record& b)
     {
         const auto& be_a = a.be;
         const auto& be_b = b.be;
