@@ -52,15 +52,23 @@ public:
 private:
 
     // The structure to store the information about learned equilibrium
-    struct TreeNode
+    struct Record
     {
+        /// The amounts of elements in the equilibrium state (in units of mol).
         Vector be;
+
+        /// The calculated equilibrium state at `T`, `P`, `be`.
         ChemicalState state;
+
+        /// The chemical properties at the calculated equilibrium state.
         ChemicalProperties properties;
+
+        /// The sensitivity derivatives at the calculated equilibrium state.
         EquilibriumSensitivity sensitivity;
     };
-    /// The tree used to save the calculated equilibrium states and respective sensitivities
-    std::deque<TreeNode> tree;
+
+    /// The database used to save the calculated equilibrium states and respective sensitivities
+    std::deque<Record> database;
 };
 
 } // namespace Reaktoro
