@@ -50,7 +50,7 @@ struct EquilibriumSolver::Impl
     /// The options of the equilibrium solver
     EquilibriumOptions options;
 
-    /// The result of the last equilibrium calculation.
+    /// The result of the last equilibrium calculation
     EquilibriumResult result;
 
     /// The solver for the optimisation calculations
@@ -229,7 +229,7 @@ struct EquilibriumSolver::Impl
 
         // Update the standard thermodynamic properties of the chemical system
         timeit( properties.update(T, P),
-            result.timing.standard_thermodynamic_properties+= );
+            result.timing.standard_thermodynamic_properties+= )
 
         // Update the normalized standard Gibbs energies of the species
         u0 = properties.standardPartialMolarGibbsEnergies()/RT;
@@ -245,7 +245,7 @@ struct EquilibriumSolver::Impl
 
             // Update the chemical properties of the chemical system
             timeit( properties.update(n),
-                result.timing.chemical_properties+= );
+                result.timing.chemical_properties+= )
 
             // Set the scaled chemical potentials of the species
             u = u0 + properties.lnActivities();
@@ -348,19 +348,19 @@ struct EquilibriumSolver::Impl
     /// Find a feasible approximation for an equilibrium problem with all elements present on chemical system.
     auto approximate_with_all_element_amounts(ChemicalState& state, double T, double P, VectorConstRef b) -> EquilibriumResult
     {
-        Vector be = b(iee);
-        return approximate(state, T, P, be);
+        Vector _be = b(iee);
+        return approximate(state, T, P, _be);
     }
 
     /// Find a feasible approximation for an equilibrium problem.
-    auto approximate(ChemicalState& state, double T, double P, Vector be) -> EquilibriumResult
+    auto approximate(ChemicalState& state, double T, double P, Vector _be) -> EquilibriumResult
     {
-        // Check the dimension of the vector `be`
-        Assert(unsigned(be.rows()) == Ee,
+        // Check the dimension of the vector `_be`
+        Assert(unsigned(_be.rows()) == Ee,
             "Cannot proceed with method EquilibriumSolver::approximate.",
             "The dimension of the given vector of molar amounts of the "
             "elements does not match the number of elements in the "
-            "equilibrium partition.");
+            "equilibrium partition.")
 
         // Set temperature and pressure of the chemical state
         state.setTemperature(T);
@@ -377,7 +377,7 @@ struct EquilibriumSolver::Impl
 
         // Update the standard thermodynamic properties of the system
         timeit( properties.update(T, P),
-                result.timing.standard_thermodynamic_properties+= );
+                result.timing.standard_thermodynamic_properties+= )
 
         // Get the standard Gibbs energies of the equilibrium species
         const Vector ge0 = properties.standardPartialMolarGibbsEnergies().val(ies);
@@ -386,19 +386,19 @@ struct EquilibriumSolver::Impl
         const Vector ln_ce = properties.lnActivityConstants().val(ies);
 
         // Define the optimisation problem
-        OptimumProblem optimum_problem;
-        optimum_problem.n = Ne;
-        optimum_problem.c = ge0/RT + ln_ce;
-        optimum_problem.A = Ae;
-        optimum_problem.b = be;
-        optimum_problem.l = zeros(Ne);
-        optimum_problem.u = ones(Ne) * inf;
+        OptimumProblem opt_problem;
+        opt_problem.n = Ne;
+        opt_problem.c = ge0/RT + ln_ce;
+        opt_problem.A = Ae;
+        opt_problem.b = _be;
+        opt_problem.l = zeros(Ne);
+        opt_problem.u = ones(Ne) * inf;
 
         // Initialize the optimum state
-        OptimumState optimum_state;
+        OptimumState opt_state;
 
         // The result of the linear programming calculation
-        EquilibriumResult result;
+        EquilibriumResult res;
 
         // Update the optimum options
         updateOptimumOptions();
@@ -407,28 +407,28 @@ struct EquilibriumSolver::Impl
         solver.setMethod(options.method);
 
         // Solve the linear programming problem
-        result.optimum = solver.solve(optimum_problem, optimum_state, optimum_options);
+        res.optimum = solver.solve(opt_problem, opt_state, optimum_options);
 
         // Update the molar amounts of the equilibrium species
-        n(ies) = optimum_state.x;
+        n(ies) = opt_state.x;
 
         // Update the dual potentials of the species and elements (in units of J/mol)
-        z = zeros(N); z(ies) = optimum_state.z * RT;
-        y = zeros(E); y(iee) = optimum_state.y * RT;
+        z = zeros(N); z(ies) = opt_state.z * RT;
+        y = zeros(E); y(iee) = opt_state.y * RT;
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
         state.equilibrium().setElementChemicalPotentials(y);
         state.equilibrium().setSpeciesStabilities(z);
 
-        return result;
+        return res;
     }
 
     /// Find an initial guess for an equilibrium problem.
-    auto initialguess(ChemicalState& state, double T, double P, Vector be) -> EquilibriumResult
+    auto initialguess(ChemicalState& state, double T, double P, Vector _be) -> EquilibriumResult
     {
         // Solve the linear programming problem to obtain an approximation
-        auto result = approximate(state, T, P, be);
+        auto res = approximate(state, T, P, _be);
 
         // Check the approximate calculation was successful
 //        Assert(result.optimum.succeeded,
@@ -439,14 +439,14 @@ struct EquilibriumSolver::Impl
         // Preserve the values of n that are greater than z. For all others, set n to sqrt(epsilon)
         n = (n.array() > z.array()).select(n, std::sqrt(options.epsilon));
 
-        // Set z to zero, which will later be set to epsilon / n.
+        // Set z to zero, which will later _be set to epsilon / n.
         z.fill(0.0);
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
         state.equilibrium().setSpeciesStabilities(z);
 
-        return result;
+        return res;
     }
 
     /// Return true if cold-start is needed.
@@ -460,7 +460,7 @@ struct EquilibriumSolver::Impl
         return zero || !options.warmstart;
     }
 
-    /// Solve the equilibrium problem with given initial state
+    /// Solve the equilibrium problem with given initial state.
     auto solve(ChemicalState& state) -> EquilibriumResult
     {
         const auto T = state.temperature();
@@ -469,32 +469,32 @@ struct EquilibriumSolver::Impl
         return solve(state, T, P, be);
     }
 
-    /// Solve the equilibrium problem with given problem definition
+    /// Solve the equilibrium problem with given problem definition.
     auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
     {
         Assert(problem.partition() == partition,
             "Cannot proceed with method EquilibriumSolver::solve(ChemicalState&, const EquilibriumProblem&).",
-            "This EquilibriumSolver and the given EquilibriumProblem objects were not initialized with the same Partition object.");
+            "This EquilibriumSolver and the given EquilibriumProblem objects were not initialized with the same Partition object.")
         const auto T = problem.temperature();
         const auto P = problem.pressure();
         be = problem.elementAmounts()(iee);
         return solve(state, T, P, be);
     }
 
-    /// Solve the equilibrium problem
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
+    /// Solve the equilibrium problem.
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef _be) -> EquilibriumResult
     {
-        // Check the dimension of the vector `be`
-        Assert(be.size() == static_cast<int>(Ee),
+        // Check the dimension of the vector `_be`
+        Assert(_be.size() == static_cast<int>(Ee),
             "Cannot proceed with method EquilibriumSolver::solve.",
             "The dimension of the given vector of molar amounts of the "
             "elements does not match the number of elements in the "
-            "equilibrium partition.");
-        return solve(state, T, P, be.data());
+            "equilibrium partition.")
+        return solve(state, T, P, _be.data());
     }
 
-    /// Solve the equilibrium problem
-    auto optimize(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
+    /// Solve the equilibrium problem.
+    auto optimize(ChemicalState& state) -> EquilibriumResult
     {
         // Update the optimum options
         updateOptimumOptions();
@@ -527,10 +527,10 @@ struct EquilibriumSolver::Impl
         return result;
     }
 
-    /// Solve the equilibrium problem
+    /// Solve the equilibrium problem.
     auto solve(ChemicalState& state, double T, double P, const double* _be) -> EquilibriumResult
     {
-        tic(SOLVE);
+        tic(SOLVE)
 
         // Reset the result of last equilibrium calculation
         result = {};
@@ -545,14 +545,14 @@ struct EquilibriumSolver::Impl
         // Check if a simplex cold-start approximation must be performed
         if(coldstart(state))
             initialguess(state, T, P, be);
-        result += optimize(state, T, P, be);
+        result += optimize(state);
 
         // Check if the calculation failed
         if (!result.optimum.succeeded)
         {
             // Reset the initial state
             initialguess(state, T, P, be);
-            result += optimize(state, T, P, be);
+            result += optimize(state);
         }
         // Check if the calculation failed
         if (!result.optimum.succeeded) {
@@ -623,6 +623,7 @@ struct EquilibriumSolver::Impl
 
         return result;
     }
+
     /// Return the sensitivity of the equilibrium state.
     auto sensitivity() -> const EquilibriumSensitivity&
     {
@@ -677,7 +678,7 @@ EquilibriumSolver::EquilibriumSolver()
 {
     RuntimeError("Cannot proceed with EquilibriumSolver().",
         "EquilibriumSolver() constructor is deprecated. "
-        "Use constructors EquilibriumSolver(const ChemicalSystem&) or EquilibriumSolver(const Partition&) instead.");
+        "Use constructors EquilibriumSolver(const ChemicalSystem&) or EquilibriumSolver(const Partition&) instead.")
 }
 
 EquilibriumSolver::EquilibriumSolver(const ChemicalSystem& system)
@@ -710,7 +711,7 @@ auto EquilibriumSolver::setPartition(const Partition& partition) -> void
 {
     RuntimeError("Cannot proceed with EquilibriumSolver::setPartition.",
         "EquilibriumSolver::setPartition is deprecated. "
-        "Use constructor EquilibriumSolver(const Partition&) instead.");
+        "Use constructor EquilibriumSolver(const Partition&) instead.")
 }
 
 auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
