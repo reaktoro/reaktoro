@@ -70,7 +70,7 @@ struct ODEOptions
     double max_step = 0.0;
 
     /// The scalar relative error tolerance.
-    double reltol = 1e-4;
+    double reltol = 1.0e-4;
 
     /// The scalar absolute error tolerance.
     double abstol = 1.0e-6;
@@ -84,7 +84,7 @@ struct ODEOptions
     unsigned max_order_adams = 5;
 
     /// The maximum allowed number of steps before reaching the final time.
-    unsigned max_num_steps = 500;
+    unsigned max_num_steps = 5000;
 
     /// The maximum number of warnings for `t + h = t`, with `h` being too small compared to `t`.
     unsigned max_hnil_warnings = 10;
@@ -103,6 +103,26 @@ struct ODEOptions
 
     /// The vector of absolute error tolerances for each component.
     Vector abstols;
+};
+
+// The structure used to describe the state of the system of ODEs
+/// @see ODE
+struct ODEState
+{
+    /// Start time of the integration.
+    double t0;
+    /// Final time of the integration.
+    double t;
+
+    /// Initial state values at the time t_0.
+    Vector u0;
+    /// State values at the time t.
+    Vector u;
+
+    /// The partial derivatives @f$\left.\frac{\partial u}{\partial u_0}\right|@f$.
+    /// These derivatives provide a measure of how much @f$u@f$ changes with an infinitesimal
+    /// change in its initial condition @f$u_0@f$.
+    Matrix dudu0;
 };
 
 /// A class that defines a system of ordinary differential equations (ODE) problem.
@@ -172,7 +192,7 @@ public:
     ODESolver();
 
     /// Construct a copy of an ODESolver instance.
-    ODESolver(const ODESolver& other) = delete;
+    ODESolver(const ODESolver& other);
 
     /// Destroy this ODESolver instance.
     virtual ~ODESolver();
@@ -205,11 +225,42 @@ public:
     /// @param tfinal The final time that the integration must satisfy
     auto integrate(double& t, VectorRef y, double tfinal) -> void;
 
+    /// Integrate the ODE performing a single step not going over a given time and calculating 1st order approximation
+    /// of sensitivity derivatives.
+    /// @param[in,out] t The current time of the integration as input, the new current time as output
+    /// @param[in,out] y The current variables as input, the new current variables as output
+    /// @param tfinal The final time that the integration must satisfy
+    /// @param[in,out] S The sensitivity derivatives of y w.r.t. the initial condition
+    auto integrate(double& t, VectorRef y, double tfinal, MatrixRef S) -> void;
+
     /// Solve the ODE equations from a given start time to a final one.
     /// @param[in,out] t The current time of the integration as input, the new current time as output
     /// @param dt The value of the time step
     /// @param[in,out] y The current variables as input, the new current variables as output
     auto solve(double& t, double dt, VectorRef y) -> void;
+
+    /// Solve the ODE equations from a given start time to a final one and calculating 1st order approximation
+    //  sensitivity derivatives.
+    /// @param[in,out] t The current time of the integration as input, the new current time as output
+    /// @param dt The value of the time step
+    /// @param[in,out] y The current variables as input, the new current variables as output
+    /// @param[in,out] S The new sensitivity as output
+    auto solve(double& t, double dt, VectorRef y, MatrixRef S) -> void;
+
+    // Methods independent on CVODE
+
+    /// Solve the ODE equations from a given start time to a final one with implicit 1st order Runge-Kutta scheme.
+    /// @param[in,out] t The current time of the integration as input, the new current time as output
+    /// @param dt The value of the time step
+    /// @param[in,out] y The current variables as input, the new current variables as output
+    auto solveWithImplicitRKI(double& t, double dt, VectorRef y) -> void;
+
+    /// Solve the ODE equations from a given start time to a final one with implicit 1st order Runge-Kutta scheme and
+    /// calculating 1st order approximation sensitivity derivatives.
+    /// @param[in,out] t The current time of the integration as input, the new current time as output
+    /// @param dt The value of the time step
+    /// @param[in,out] y The current variables as input, the new current variables as output
+    auto solveWithImplicitRKI(double& t, double dt, VectorRef y, MatrixRef S) -> void;
 
 private:
     struct Impl;
