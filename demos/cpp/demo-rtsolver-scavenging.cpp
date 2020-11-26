@@ -154,32 +154,32 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     StringList selected_elements = "C Ca Cl Fe H K Mg Na O S";
 
     // Define activity model depending on the parameter
-    if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKF){
+    if(params.activity_model == ActivityModel::HKF){
         // HKF full system
         editor.addAqueousPhaseWithElements(selected_elements);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies){
+    else if(params.activity_model == ActivityModel::HKFSelectedSpecies){
         // HKF with selected species
         editor.addAqueousPhase(selected_species);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies){
+    else if(params.activity_model == ActivityModel::PitzerSelectedSpecies){
         // Pitzer full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies){
+    else if(params.activity_model == ActivityModel::PitzerSelectedSpecies){
         // Pitzer with selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies){
+    else if(params.activity_model == ActivityModel::DebyeHuckelSelectedSpecies){
         // Debye-Huckel with selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelDebyeHuckel(dhModel);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
+    else if(params.activity_model == ActivityModel::DebyeHuckel){
         // Debye-Huckel full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel(dhModel);

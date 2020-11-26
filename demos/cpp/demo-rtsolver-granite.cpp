@@ -145,33 +145,33 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     // Missing: NaAl(OH)4(aq), KAl(OH)4(aq), Al(OH)2+, Al(OH)3(aq),  Al(OH)4-
 
     // Depending on the activity model, define it using ChemicalEditor
-    if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKF){
+    if(params.activity_model == ActivityModel::HKF){
         // HKF full system
         editor.addAqueousPhaseWithElements(selected_elements);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies){
+    else if(params.activity_model == ActivityModel::HKFSelectedSpecies){
         // HKF selected species
         editor.addAqueousPhase(selected_species);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::Pitzer){
+    else if(params.activity_model == ActivityModel::Pitzer){
         // Pitzer full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies){
+    else if(params.activity_model == ActivityModel::PitzerSelectedSpecies){
         // Pitzer selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
+    else if(params.activity_model == ActivityModel::DebyeHuckel){
         // Debye-Huckel full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies){
+    else if(params.activity_model == ActivityModel::DebyeHuckelSelectedSpecies){
         // Debye-Huckel selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelDebyeHuckel()
