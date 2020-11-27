@@ -557,13 +557,12 @@ struct EquilibriumSolver::Impl
         // Check if the calculation failed
         if (!result.optimum.succeeded) {
             // Log the unsuccessful state
-            std::cout << "*******************************************************************************" << std::endl;
-            std::cout << "Warning: EquilibriumSolver failed to compute the chemical equilibrium state \n"
-                         "with given conditions." << std::endl;
-            std::cout << "*******************************************************************************" << std::endl;
+            std::cout << "**************************************************************************************************" << std::endl;
+            std::cout << "Warning: EquilibriumSolver failed to compute the chemical equilibrium state with given conditions." << std::endl;
+            std::cout << "**************************************************************************************************" << std::endl;
             std::cout << "n    = " << tr(optimum_state.x) << std::endl;
             std::cout << "e(n) = " << (result.optimum.error) << std::endl;
-            std::cout << "**************************************************" << std::endl;
+            std::cout << "**************************************************************************************************" << std::endl;
         }
 
         // Update the chemical state from the optimum state
