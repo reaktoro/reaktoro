@@ -30,7 +30,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumSolverBase.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumSolverClustering.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumSolverPriorityQueue.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumSolverNN.hpp>
