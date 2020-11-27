@@ -203,11 +203,16 @@ struct KineticSolver::Impl
     {
         // Initialise the options of the kinetic solver
         options = options_;
+
+        // Set options for the equilibrium calculations
+        equilibrium.setOptions(options.equilibrium);
+        smart_equilibrium.setOptions(options.smart_equilibrium);
     }
 
     auto outputSmartSolverInfo() const -> void
     {
-        smart_equilibrium.outputInfo();
+        if(options.use_smart_equilibrium_solver)
+            smart_equilibrium.outputInfo();
     }
 
     auto addSource(ChemicalState state, double volumerate, const std::string& units) -> void
@@ -726,7 +731,7 @@ auto KineticSolver::step(ChemicalState& state, double t, double tfinal) -> doubl
 
 auto KineticSolver::solve(ChemicalState& state, double t, double dt) -> double
 {
-    pimpl->solve(state, t, dt);
+    return pimpl->solve(state, t, dt);
 }
 
 auto KineticSolver::solve(ChemicalState& state, double t, double dt, VectorConstRef b) -> void
