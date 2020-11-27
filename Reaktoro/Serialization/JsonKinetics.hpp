@@ -1,7 +1,5 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2018 Allan Leal
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -17,37 +15,31 @@
 
 #pragma once
 
-// C++ includes
-#include <fstream>
-
-// json includes
-#include <nlohmann/json.hpp>
+// Reaktoro includes
+#include <Reaktoro/Common/Json.hpp>
 
 namespace Reaktoro {
 
-/// A type alias for nlohmann::json
-using json = nlohmann::json;
+// Forward declarations (struct)
+struct KineticResult;
+struct KineticTiming;
+struct SmartKineticResult;
+struct SmartKineticTiming;
 
-/// Provides a convenient mechanism for outputting json files.
-class JsonOutput
-{
-public:
-    /// Construct a JsonOutput object.
-    JsonOutput(std::string filename)
-    : file(filename)
-    {}
+// Json converters for KineticResult
+void to_json(json& j, const KineticResult& obj);
+void from_json(const json& j, KineticResult& obj);
 
-    /// Output a value (converted to json object) to a file.
-    template<typename T>
-    auto operator<<(const T& val) -> JsonOutput&
-    {
-        file << json(val);
-        file.close();
-        return *this;
-    }
+// Json converters for KineticTiming
+void to_json(json& j, const KineticTiming& obj);
+void from_json(const json& j, KineticTiming& obj);
 
-private:
-    std::ofstream file;
-};
+// Json converters for SmartKineticResult
+void to_json(json& j, const SmartKineticResult& obj);
+void from_json(const json& j, SmartKineticResult& obj);
+
+// Json converters for SmartKineticTiming
+void to_json(json& j, const SmartKineticTiming& obj);
+void from_json(const json& j, SmartKineticTiming& obj);
 
 } // namespace Reaktoro

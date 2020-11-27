@@ -1,7 +1,5 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2018 Allan Leal
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -17,37 +15,16 @@
 
 #pragma once
 
-// C++ includes
-#include <fstream>
-
-// json includes
-#include <nlohmann/json.hpp>
+// Reaktoro includes
+#include <Reaktoro/Common/Json.hpp>
 
 namespace Reaktoro {
 
-/// A type alias for nlohmann::json
-using json = nlohmann::json;
+// Forward declarations (struct)
+struct KineticPathAnalysis;
 
-/// Provides a convenient mechanism for outputting json files.
-class JsonOutput
-{
-public:
-    /// Construct a JsonOutput object.
-    JsonOutput(std::string filename)
-    : file(filename)
-    {}
-
-    /// Output a value (converted to json object) to a file.
-    template<typename T>
-    auto operator<<(const T& val) -> JsonOutput&
-    {
-        file << json(val);
-        file.close();
-        return *this;
-    }
-
-private:
-    std::ofstream file;
-};
+// Json converters for KineticPathAnalysis
+void to_json(json& j, const KineticPathAnalysis& obj);
+void from_json(const json& j, KineticPathAnalysis& obj);
 
 } // namespace Reaktoro
