@@ -23,12 +23,14 @@
 
 namespace Reaktoro {
 
-SmartEquilibriumSolver::SmartEquilibriumSolver(const ChemicalSystem& system) {
-    solverptr = std::make_unique<SmartEquilibriumSolverClustering>(system);
+SmartEquilibriumSolver::SmartEquilibriumSolver(const ChemicalSystem& system)
+: SmartEquilibriumSolver(Partition(system))
+{
 }
 
-SmartEquilibriumSolver::SmartEquilibriumSolver(const Partition& partition) {
-    solverptr = std::make_unique<SmartEquilibriumSolverClustering>(partition);
+SmartEquilibriumSolver::SmartEquilibriumSolver(const Partition& partition)
+: solverptr(std::make_unique<SmartEquilibriumSolverClustering>(partition))
+{
 }
 
 SmartEquilibriumSolver::~SmartEquilibriumSolver()
@@ -51,9 +53,9 @@ auto SmartEquilibriumSolver::setOptions(const SmartEquilibriumOptions& options) 
             solverptr = std::make_unique<SmartEquilibriumSolverClustering>(solverptr->partition());
             break;
     }
+    
     // Set options of the smart equilibrium options
-    solverptr.get()->setOptions(options);
-
+    solverptr->setOptions(options);
 }
 
 auto SmartEquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResult
@@ -77,4 +79,3 @@ auto SmartEquilibriumSolver::outputInfo() const -> void
 }
 
 } // namespace Reaktoro
-
