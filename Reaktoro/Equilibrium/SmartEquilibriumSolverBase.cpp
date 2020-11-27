@@ -19,8 +19,7 @@ namespace Reaktoro {
 
 /// Construct an SmartEquilibriumSolverBase instance with given chemical system.
 SmartEquilibriumSolverBase::SmartEquilibriumSolverBase(const ChemicalSystem& system)
-        : system(system), _partition(Partition(system)),
-          _properties(system), solver(system)
+: system(system), _partition(Partition(system)), _properties(system), solver(system)
 {
     // Initialize the canonicalizer with the formula matrix Ae of the equilibrium species
     canonicalizer.compute(_partition.formulaMatrixEquilibriumPartition());
@@ -28,8 +27,7 @@ SmartEquilibriumSolverBase::SmartEquilibriumSolverBase(const ChemicalSystem& sys
 
 /// Construct an SmartEquilibriumSolverBase instance with given partition of the chemical system.
 SmartEquilibriumSolverBase::SmartEquilibriumSolverBase(const Partition& partition)
-        : system(partition.system()), _partition(partition),
-          _properties(partition.system()), solver(partition)
+: system(partition.system()), _partition(partition), _properties(partition.system()), solver(partition)
 {
     // Initialize the canonicalizer with the formula matrix Ae of the equilibrium species
     canonicalizer.compute(partition.formulaMatrixEquilibriumPartition());
@@ -102,4 +100,3 @@ auto SmartEquilibriumSolverBase::partition() const -> const Partition&
 }
 
 } // namespace Reaktoro
-
