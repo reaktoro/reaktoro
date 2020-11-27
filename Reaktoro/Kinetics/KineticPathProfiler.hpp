@@ -44,6 +44,9 @@ public:
     /// Update the profiler with the result of the last kinetic path time step.
     auto update(const KineticResult& result) -> void;
 
+    /// Update the profiler with the result of the last kinetic path time step.
+    auto update(const SmartKineticResult& result) -> void;
+
     /// Return the performance analysis of all operations in the kinetic path simulation.
     auto analysis() const -> KineticPathAnalysis;
 
