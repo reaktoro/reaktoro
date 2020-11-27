@@ -33,6 +33,7 @@ class ChemicalState;
 class Partition;
 class ReactionSystem;
 struct KineticOptions;
+struct KineticPathOptions;
 
 /// A class that conveniently solves kinetic path calculations.
 class KineticPath
@@ -54,8 +55,8 @@ public:
     /// Assign a KineticPath instance to this instance.
     auto operator=(KineticPath other) -> KineticPath&;
 
-    /// Set the options for the chemical kinetics calculation.
-    auto setOptions(const KineticOptions& options) -> void;
+    /// Set the options for the kinetic path calculations.
+    auto setOptions(const KineticPathOptions& options) -> void;
 
     /// Set the partition of the chemical system.
     /// Use this method to specify the equilibrium, kinetic, and inert species.

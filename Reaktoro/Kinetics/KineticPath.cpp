@@ -29,9 +29,12 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
-#include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
 #include <Reaktoro/Kinetics/KineticPathProfiler.hpp>
+#include <Reaktoro/Kinetics/KineticPathOptions.hpp>
+#include <Reaktoro/Kinetics/SmartKineticSolver.hpp>
+#include <Reaktoro/Common/Json.hpp>
+#include <Reaktoro/Serialization/JsonKineticPath.hpp>
 
 namespace Reaktoro {
 
@@ -47,10 +50,13 @@ struct KineticPath::Impl
     Partition partition;
 
     /// The kinetic solver instance
-    KineticSolver kineticsolver;
+    KineticSolver kinetic_solver;
+
+    /// The smart kinetic solver instance
+    SmartKineticSolver smart_kinetic_solver;
 
     /// The options of the kinetic path
-    KineticOptions options;
+    KineticPathOptions options;
 
     /// The output instance of the kinetic path calculation
     ChemicalOutput output;
@@ -63,24 +69,34 @@ struct KineticPath::Impl
     : reactions(reactions),
       system(partition.system()),
       partition(partition),
-      kineticsolver(reactions, partition)
+      kinetic_solver(reactions, partition),
+      smart_kinetic_solver(reactions, partition)
     {
     }
 
-    auto setOptions(const KineticOptions& options_) -> void
+    auto setOptions(const KineticPathOptions& _options) -> void
     {
         // Initialise the options of the kinetic path
-        options = options_;
+        options = _options;
 
-        // Set the options of the kinetic solver
-        kineticsolver.setOptions(options);
+        // Set options of kinetic solvers
+        kinetic_solver.setOptions(options.kinetics);
+
+        // Set options of smart kinetic solvers
+        smart_kinetic_solver.setOptions(options.smart_kinetics);
+
+        // Set options of equilibrium solvers
+        options.equilibrium = options.equilibrium;
+        options.smart_equilibrium = options.smart_equilibrium;
+
     }
 
     auto solve(ChemicalState& state, double t0, double t1, const std::string& units) -> void
     {
         t0 = units::convert(t0, units, "s");
         t1 = units::convert(t1, units, "s");
-        kineticsolver.initialize(state, t0);
+
+        kinetic_solver.initialize(state, t0);
 
         double t = t0;
 
@@ -99,7 +115,7 @@ struct KineticPath::Impl
             for(auto& plot : plots) plot.update(state, t);
 
             // Integrate one time step only
-            t = kineticsolver.step(state, t, t1);
+            t = kinetic_solver.step(state, t, t1);
         }
 
         // Update the output with the final state
@@ -114,7 +130,10 @@ struct KineticPath::Impl
         t0 = units::convert(t0, units, "s");
         dt = units::convert(dt, units, "s");
 
-        kineticsolver.initialize(state, t0);
+        if(!options.use_smart_kinetic_solver)
+            kinetic_solver.initialize(state, t0);
+        else
+            smart_kinetic_solver.initialize(state, t0);
 
         double t = t0;
 
@@ -135,13 +154,26 @@ struct KineticPath::Impl
 
         // Loop through the steps
         unsigned int k = 0;
+
         while(k < n)
         {
             // Integrate one time step only
-            t = kineticsolver.solve(state, t, dt);
+            if(!options.use_smart_kinetic_solver) {
+                // Run kinetic calculations
+                t = kinetic_solver.solve(state, t, dt);
 
-            // Update the profiler after every call to step method
-            profiler.update(kineticsolver.result());
+                // Update the profiler after every call to step method
+                profiler.update(kinetic_solver.result());
+            }
+            else
+            {
+                // Run smart kinetic calculations
+                t = smart_kinetic_solver.solve(state, t, dt);
+
+                SmartKineticResult result = smart_kinetic_solver.result();
+                // Update the profiler after every call to step method
+                profiler.update(smart_kinetic_solver.result());
+            }
 
             // Update the output with current state
             if(output) output.update(state, t);
@@ -160,15 +192,57 @@ struct KineticPath::Impl
 
         if(options.use_smart_equilibrium_solver)
         {
-            // Output characteristics of the smart solver (e.g., clusters)
-            kineticsolver.outputSmartSolverInfo();
+            // Output characteristics of the smart equilibrium solver (e.g., clusters)
+            kinetic_solver.outputSmartSolverInfo();
 
             // Output to console time and statistics characterising kinetic solver
             //std::cout << profiler;
         }
+        if(options.use_smart_kinetic_solver)
+        {
+            // Output characteristics of the smart kinetic solver (e.g., clusters)
+            smart_kinetic_solver.outputSmartMethodInfo();
 
-
+            // Output to console time and statistics characterising kinetic solver
+            //std::cout << profiler;
+        }
+        // Generate json output file with collected profiling data
+        JsonOutput(output.filename() + "-analysis.json") << analysis;
     }
+
+
+    auto addSource(const ChemicalState& state, double volumerate, const std::string& units) -> void
+    {
+        if(!options.use_smart_kinetic_solver)
+            kinetic_solver.addSource(state, volumerate, units);
+        else
+            smart_kinetic_solver.addSource(state, volumerate, units);
+    }
+
+    auto addPhaseSink(const std::string& phase, double volumerate, const std::string& units) -> void
+    {
+        if(!options.use_smart_kinetic_solver)
+            kinetic_solver.addPhaseSink(phase, volumerate, units);
+        else
+            smart_kinetic_solver.addPhaseSink(phase, volumerate, units);
+    }
+
+    auto addFluidSink(double volumerate, const std::string& units) -> void
+    {
+        if(!options.use_smart_kinetic_solver)
+            kinetic_solver.addFluidSink(volumerate, units);
+        else
+            smart_kinetic_solver.addFluidSink(volumerate, units);
+    }
+
+    auto addSolidSink(double volumerate, const std::string& units) -> void
+    {
+        if(!options.use_smart_kinetic_solver)
+            kinetic_solver.addSolidSink(volumerate, units);
+        else
+            smart_kinetic_solver.addSolidSink(volumerate, units);
+    }
+
 };
 
 KineticPath::KineticPath(const ReactionSystem& reactions)
@@ -191,7 +265,7 @@ auto KineticPath::operator=(KineticPath other) -> KineticPath&
     return *this;
 }
 
-auto KineticPath::setOptions(const KineticOptions& options) -> void
+auto KineticPath::setOptions(const KineticPathOptions& options) -> void
 {
     pimpl->setOptions(options);
 }
@@ -205,22 +279,22 @@ auto KineticPath::setPartition(const Partition& partition) -> void
 
 auto KineticPath::addSource(const ChemicalState& state, double volumerate, const std::string& units) -> void
 {
-    pimpl->kineticsolver.addSource(state, volumerate, units);
+    pimpl->addSource(state, volumerate, units);
 }
 
 auto KineticPath::addPhaseSink(const std::string& phase, double volumerate, const std::string& units) -> void
 {
-    pimpl->kineticsolver.addPhaseSink(phase, volumerate, units);
+    pimpl->addPhaseSink(phase, volumerate, units);
 }
 
 auto KineticPath::addFluidSink(double volumerate, const std::string& units) -> void
 {
-    pimpl->kineticsolver.addFluidSink(volumerate, units);
+    pimpl->addFluidSink(volumerate, units);
 }
 
 auto KineticPath::addSolidSink(double volumerate, const std::string& units) -> void
 {
-    pimpl->kineticsolver.addSolidSink(volumerate, units);
+    pimpl->addSolidSink(volumerate, units);
 }
 
 auto KineticPath::solve(ChemicalState& state, double t0, double t1, const std::string& units) -> void

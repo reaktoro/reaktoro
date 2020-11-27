@@ -24,7 +24,7 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
-#include <Reaktoro/Kinetics/KineticOptions.hpp>
+#include <Reaktoro/Kinetics/KineticPathOptions.hpp>
 #include <Reaktoro/Kinetics/KineticPath.hpp>
 
 namespace Reaktoro {
