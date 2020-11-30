@@ -17,7 +17,7 @@
 #include <Reaktoro/Reaktoro.hpp>
 
 // Reactive transport test includes
-#include <demos/cpp/TestUtils.h>
+#include <demos/cpp/DemosUtils.h>
 
 using namespace Reaktoro;
 
