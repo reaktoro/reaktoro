@@ -17,7 +17,7 @@
 #include <Reaktoro/Reaktoro.hpp>
 
 // Reactive transport test includes
-#include <demos/cpp/DemosUtils.h>
+#include <demos/cpp/TestUtils.h>
 
 using namespace Reaktoro;
 
@@ -26,7 +26,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
 
 int main()
 {
-    tic(TOTAL_TIME);
+    tic(TOTAL_TIME)
 
     // Step 1: Initialise auxiliary time-related constants
     int minute = 60;
@@ -41,7 +41,7 @@ int main()
     params.xl = 0.0; // the x-coordinates of the left boundaries
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
-    params.nsteps = 100; // the number of steps in the reactive transport simulation
+    params.nsteps = 1000; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 30 * minute; // the time step (in units of s)
 
@@ -50,14 +50,16 @@ int main()
     params.v = 1.0 / week; // the Darcy velocity (in units of m/s)
     params.T = 300;        // the temperature (in units of degC)
     params.P = 85.88;      // the pressure (in units of bar)
+    // Calculate the water saturation pressure using the Wagner and Pruss (1995) equation of state
+    params.P = Reaktoro::waterSaturatedPressureWagnerPruss(Temperature(params.T + 273.15)).val * 1e-5;
 
     // Define the activity model for the aqueous species
-    params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies;
+    params.activity_model = ActivityModel::HKF;
+    //params.activity_model = ActivityModel::HKFSelectedSpecies;
+    //params.activity_model = ActivityModel::Pitzer;
+    //params.activity_model = ActivityModel::PitzerSelectedSpecies;
+    //params.activity_model = ActivityModel::DebyeHuckel;
+    //params.activity_model = ActivityModel::DebyeHuckelSelectedSpecies;
 
     // Define activity model depending on the parameter
     params.amount_fraction_cutoff = 1e-14;
@@ -67,7 +69,7 @@ int main()
     // -----------------------------------------------
 
     // Run smart algorithm with clustering
-    params.method = SmartEquilibriumStrategy::Clustering;;
+    params.method = SmartEquilibriumStrategy::Clustering;
     params.smart_equilibrium_reltol = 1e-3;
 
 //    // Run smart algorithm with priority queue
@@ -85,7 +87,7 @@ int main()
     ReactiveTransportResults results;
 
     // Execute reactive transport with different solvers
-    params.use_smart_equilibrium_solver = true; runReactiveTransport(params, results);
+    //params.use_smart_equilibrium_solver = true; runReactiveTransport(params, results);
     params.use_smart_equilibrium_solver = false; runReactiveTransport(params, results);
 
     // Collect the time spent for total simulation (excluding search and store procedures costs)
@@ -121,7 +123,7 @@ int main()
 auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResults& results) -> void
 {
     // Step **: Create the results folder
-    auto folder = params.makeResultsFolder("granite");
+    auto folder = params.makeResultsFolder("granite-diff-rock");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
@@ -144,33 +146,33 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     // Missing: NaAl(OH)4(aq), KAl(OH)4(aq), Al(OH)2+, Al(OH)3(aq),  Al(OH)4-
 
     // Depending on the activity model, define it using ChemicalEditor
-    if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKF){
+    if(params.activity_model == ActivityModel::HKF){
         // HKF full system
         editor.addAqueousPhaseWithElements(selected_elements);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies){
+    else if(params.activity_model == ActivityModel::HKFSelectedSpecies){
         // HKF selected species
         editor.addAqueousPhase(selected_species);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::Pitzer){
+    else if(params.activity_model == ActivityModel::Pitzer){
         // Pitzer full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies){
+    else if(params.activity_model == ActivityModel::PitzerSelectedSpecies){
         // Pitzer selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
+    else if(params.activity_model == ActivityModel::DebyeHuckel){
         // Debye-Huckel full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies){
+    else if(params.activity_model == ActivityModel::DebyeHuckelSelectedSpecies){
         // Debye-Huckel selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelDebyeHuckel()
@@ -300,7 +302,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     double t = 0.0;
     int step = 0;
 
-    tic(REACTIVE_TRANSPORT_STEPS);
+    tic(REACTIVE_TRANSPORT_STEPS)
 
      // Reactive transport simulations in the cycle
     while (step < params.nsteps)

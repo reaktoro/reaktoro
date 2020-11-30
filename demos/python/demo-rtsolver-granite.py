@@ -62,15 +62,16 @@ year = 365 * day
 xl = 0.0                # the x-coordinate of the left boundary
 xr = 1.0                # the x-coordinate of the right boundary
 ncells = 100            # the number of cells in the discretization
-nsteps = 1000           # the number of steps in the reactive transport simulation
+nsteps = 100000           # the number of steps in the reactive transport simulation
 dt = 30*minute          # the time step (30 minutes in units of s)
 dx = (xr - xl)/ncells   # length of the mesh cells (in units of m)
 
 # Physical and chemical parameters
-D  = 1.0e-9             # the diffusion coefficient (in units of m2/s)
-v  = 1.0/week           # the fluid pore velocity (1 m/week in units of m/s)
+D = 1.0e-9             # the diffusion coefficient (in units of m2/s)
+v = 1.0/week           # the fluid pore velocity (1 m/week in units of m/s)
 T = 300.0               # the temperature (in units of degC)
-P = 85.88               # the pressure (in units of bar)
+# Calculate the water saturation pressure using the Wagner and Pruss (1995) equation of state
+P = waterSaturatedPressureWagnerPruss(Temperature(T + 273.15)).val * 1e-5 # the pressure (in units of bar)
 phi = 0.1               # the porosity
 # -
 
@@ -89,7 +90,8 @@ tag = "-dt-" + "{:d}".format(dt) + \
       "-ncells-" + str(ncells) + \
       "-nsteps-" + str(nsteps) + \
       "-" + activity_model
-folder_results = 'results-rtsolver-granite'
+#folder_results = 'results-rtsolver-granite-diff'
+folder_results = 'results-rtsolver-granite' + tag
 os.system('mkdir -p ' + folder_results)
 folder_result_plots = "plots-" + folder_results
 os.system('mkdir -p ' + folder_result_plots)
@@ -226,7 +228,6 @@ state_ic.scalePhaseVolume("Quartz", 0.3 * 0.9, "m3") # 30% of 90% of remaining v
 state_ic.scalePhaseVolume("Muscovite", 0.05 * 0.9, "m3") # 5% of 90% of remaining volume
 state_ic.scalePhaseVolume("Albite", 0.33 * 0.9, "m3") # 33% of 90% of remaining volume
 state_ic.scalePhaseVolume("K-Feldspar", 0.32 * 0.9, "m3") # 32% of 90% of remaining volume
-
 
 # > **Note**: After this scaling step, the sum of the phase volumes in ``state_ic`` is 1 m<sup>3</sup>. This also
 # > ensures that the amounts of the species in the chemical system are normalized by m<sup>3</sup>, and thus they can
@@ -372,6 +373,7 @@ bar.finish()
 files = [file for file in natsorted( os.listdir(folder_results) ) ]
 
 indx_ph         = 0
+
 indx_Clanion    = 1
 indx_HClaq      = 2
 indx_Nacation   = 3
@@ -399,7 +401,10 @@ indx_Albite       = 23
 indx_KFeldspar    = 24
 
 #plot_at_selected_steps = [1, 10, 60, 100]
-plot_at_selected_steps = [1, 10, 60, 120, 240, 480, 860, 960, 1000]
+#plot_at_selected_steps = [1, 10, 60, 120, 240, 480, 860, 960, 1000]
+#plot_at_selected_steps = [1, 10, 60, 120, 240, 480, 860, 960, 1000, 1600, 2400, 3600, 4800, 5000]
+#plot_at_selected_steps = [960, 1200, 2400, 3600, 4800, 5200, 6400, 7200, 8400, 9600]
+plot_at_selected_steps = [1200, 2400, 3600, 4800, 5400, 6000, 7200, 8400, 9600, 12000, 24000, 36000, 48000, 54000, 60000, 66000, 72000, 78000, 84000, 90000, 96000]
 
 def titlestr(t):
     d = int(t / day)                 # The number of days
@@ -418,13 +423,33 @@ def plot_figures_quartz():
         data = filearray.T
         data_quartz = data[indx_Quartz]
 
-        plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(130.0, 190.0))
+        plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(0.0, 190.0)) # Quartz 30%
+        #plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(530.0, 550.0)) # Quartz 98%
+        #plt.axes(xlim=(xl - 0.01, xr + 0.01))
         plt.ylabel('Concentration [mol/m3]')
         plt.xlabel('Distance [m]')
         plt.title(titlestr(t))
-        plt.plot(xcells, data_quartz, label='Quartz', **line('darkviolet'))
+        plt.plot(xcells, data_quartz, label='Quartz', **line('gold'))
         plt.legend(loc='center right')
         plt.savefig(folder_result_plots + '/quarzt-{}.png'.format(i))
+        plt.tight_layout()
+        plt.close()
+
+def plot_figures_pyrophyllite():
+
+    for i in plot_at_selected_steps:
+        t = i * dt
+        filearray = np.loadtxt(folder_results + '/' + files[i-1], skiprows=1)
+        data = filearray.T
+        data_pyrophyllite = data[indx_Pyrophyllite]
+
+        plt.axes(xlim=(xl - 0.01, xr + 0.01))
+        plt.ylabel('Concentration [mol/m3]')
+        plt.xlabel('Distance [m]')
+        plt.title(titlestr(t))
+        plt.plot(xcells, data_pyrophyllite, label='Pyrophyllite', **line('darkviolet'))
+        plt.legend(loc='center right')
+        plt.savefig(folder_result_plots + '/pyrophyllite-{}.png'.format(i))
         plt.tight_layout()
         plt.close()
 
@@ -436,7 +461,8 @@ def plot_figures_kfeldspar():
         data = filearray.T
         data_kfeldspar = data[indx_KFeldspar]
 
-        plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(22.0, 38.0))
+        #plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(22.0, 38.0))
+        plt.axes(xlim=(xl - 0.01, xr + 0.01))
         plt.ylabel('Concentration [mol/m3]')
         plt.xlabel('Distance [m]')
         plt.title(titlestr(t))
@@ -454,7 +480,8 @@ def plot_figures_muscovite():
         data = filearray.T
         data_muscovite = data[indx_Muscovite]
 
-        plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(3.0, 14.0))
+        #plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(3.0, 14.0))
+        plt.axes(xlim=(xl - 0.01, xr + 0.01))
         plt.ylabel('Concentration [mol/m3]')
         plt.xlabel('Distance [m]')
         plt.title(titlestr(t))
@@ -472,7 +499,8 @@ def plot_figures_albite():
         data = filearray.T
         data_albite = data[indx_Albite]
 
-        plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(10.0, 42.0))
+        #plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(10.0, 42.0))
+        plt.axes(xlim=(xl - 0.01, xr + 0.01))
         plt.ylabel('Concentration [mol/m3]')
         plt.xlabel('Distance [m]')
         plt.title(titlestr(t))
@@ -482,7 +510,123 @@ def plot_figures_albite():
         plt.tight_layout()
         plt.close()
 
-plot_figures_albite()
-plot_figures_muscovite()
-plot_figures_kfeldspar()
-plot_figures_quartz()
+def plot_figures_ph():
+
+    for i in plot_at_selected_steps:
+        t = i * dt
+        filearray = np.loadtxt(folder_results + '/' + files[i-1], skiprows=1)
+        data = filearray.T
+        data_ph = data[indx_ph]
+
+        #plt.axes(xlim=(xl - 0.01, xr + 0.01))
+        plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(1.0, 6.0)) # Quartz 98%
+        plt.ylabel('Concentration [mol/m3]')
+        plt.xlabel('Distance [m]')
+        plt.title(titlestr(t))
+        plt.plot(xcells, data_ph, label='pH', **line('C2'))
+        plt.legend(loc='center right')
+        plt.savefig(folder_result_plots + '/pH-{}.png'.format(i))
+        plt.tight_layout()
+        plt.close()
+
+def plot_figures_minerals():
+
+    for i in plot_at_selected_steps:
+        t = i * dt
+        filearray = np.loadtxt(folder_results + '/' + files[i-1], skiprows=1)
+        data = filearray.T
+        data_albite = data[indx_Albite]
+        data_muscovite = data[indx_Muscovite]
+        data_kfeldspar = data[indx_KFeldspar]
+        data_pyrophyllite = data[indx_Pyrophyllite]
+        data_quartz = data[indx_Quartz]
+
+        #plt.axes(xlim=(xl - 0.01, xr + 0.01))
+        plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(-5, 175.0)) # Quartz 98%
+        plt.ylabel('Concentration [mol/m3]')
+        plt.xlabel('Distance [m]')
+        plt.title(titlestr(t))
+        plt.plot(xcells, data_muscovite, label='Muscovite', **line('C1'))
+        plt.plot(xcells, data_albite, label='Albite', **line('C2'))
+        plt.plot(xcells, data_kfeldspar, label='K-Feldspar', **line('C3'))
+        plt.plot(xcells, data_pyrophyllite, label='Pyrophyllite', **line('darkviolet'))
+        plt.plot(xcells, data_quartz, label='Quartz', **line('gold'))
+
+        plt.legend(loc='center right')
+        plt.savefig(folder_result_plots + '/minerals-{}.png'.format(i))
+        plt.tight_layout()
+        plt.close()
+
+def plot_figures_aqueous_species():
+
+    for i in plot_at_selected_steps:
+        t = i * dt
+        filearray = np.loadtxt(folder_results + '/' + files[i-1], skiprows=1)
+        data_class = filearray.T
+
+        data_class_HClaq  = data_class[indx_HClaq]
+        data_class_KClaq  = data_class[indx_KClaq]
+        data_class_KOHaq = data_class[indx_KOHaq]
+        data_class_Alcation = data_class[indx_Alcation]
+        data_class_Clanion = data_class[indx_Clanion]
+        data_class_AlOHcation = data_class[indx_AlOHcation]
+        data_class_Kcation = data_class[indx_Kcation]
+
+        data_class_Nacation = data_class[indx_Nacation]
+        data_class_NaClaq = data_class[indx_NaClaq]
+        data_class_OHanion = data_class[indx_OHanion]
+        data_class_NaOHaq = data_class[indx_NaOHaq]
+        data_class_NaHSiO3aq = data_class[indx_NaHSiO3aq]
+
+        plt.axes(xlim=(xl - 0.01, xr + 0.01))
+        plt.xlabel('Distance [m]')
+        plt.ylabel('Concentration [molal]')
+        plt.yscale('log')
+        plt.title(titlestr(t))
+
+        plt.plot(xcells, data_class_HClaq, label=r'HCl(aq)', **line('darkviolet'))[0],
+        plt.plot(xcells, data_class_KClaq, label=r'KCl(aq)', **line('C0'))[0],
+        plt.plot(xcells, data_class_KOHaq, label=r'KOH(aq))', **line('C1'))[0],
+        plt.plot(xcells, data_class_Alcation, label=r'Al$^{3+}$',**line('C2'))[0],
+        plt.plot(xcells, data_class_Clanion, label=r'Cl$^{-}$',**line('red'))[0],
+        plt.plot(xcells, data_class_AlOHcation, label=r'AlOH$^{2+}$', **line('gold'))[0],
+        plt.plot(xcells, data_class_Kcation, label=r'K$^{+}$', **line('C9'))[0],
+        plt.plot(xcells, data_class_Nacation, label=r'Na$^+$', **line('C3'))[0],
+        plt.plot(xcells, data_class_NaClaq, label=r'NaCl(aq)',**line('C4'))[0],
+        plt.plot(xcells, data_class_OHanion, label=r'OH$^{-}$',**line('C5'))[0],
+        plt.plot(xcells, data_class_NaOHaq, label=r'NaOH(aq)', **line('C6'))[0],
+        plt.plot(xcells, data_class_NaHSiO3aq, label=r'NaHSiO$_3$(aq))', **line('C7'))[0],
+
+        plt.legend(loc='upper right')
+        plt.savefig(folder_result_plots + '/aqueous-species-{}.png'.format(i))
+        plt.tight_layout()
+        plt.close()
+
+def plot_figures_kfeldspar_muscovite_albite_pyrophyllite():
+
+    for i in plot_at_selected_steps:
+        t = i * dt
+        filearray = np.loadtxt(folder_results + '/' + files[i-1], skiprows=1)
+        data = filearray.T
+        data_kfeldspar = data[indx_KFeldspar]
+        data_muscovite = data[indx_Muscovite]
+        data_albite = data[indx_Albite]
+        data_pyrophyllite = data[indx_Pyrophyllite]
+
+        plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(-1.0, 43.0))
+        plt.ylabel('Concentration [mol/m3]')
+        plt.xlabel('Distance [m]')
+        plt.title(titlestr(t))
+        plt.plot(xcells, data_kfeldspar, label='K-Feldspar', **line('C3'))
+        plt.plot(xcells, data_albite, label='Albite', **line('C2'))
+        plt.plot(xcells, data_muscovite, label='Muscovite', **line('C1'))
+        plt.plot(xcells, data_pyrophyllite, label='Pyrophyllite', **line('darkviolet'))
+        plt.legend(loc='center right')
+        plt.savefig(folder_result_plots + '/kfeldspar-muscovite-albite-pyrophyllite-{}.png'.format(i))
+        plt.tight_layout()
+        plt.close()
+
+plot_figures_minerals()
+plot_figures_ph()
+plot_figures_aqueous_species()
+plot_figures_kfeldspar_muscovite_albite_pyrophyllite()
