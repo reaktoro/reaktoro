@@ -42,12 +42,6 @@ public:
     /// Construct an SmartEquilibriumSolverBase instance with given partition
     explicit SmartEquilibriumSolverBase(const Partition& partition);
 
-//    /// Construct a copy of an SmartEquilibriumSolver instance.
-//    SmartEquilibriumSolverBase(const SmartEquilibriumSolverBase& other);
-//
-//    /// Assign an SmartEquilibriumSolver instance to this.
-//    auto operator=(SmartEquilibriumSolverBase other) -> SmartEquilibriumSolverBase&;
-
     /// Destroy this SmartEquilibriumSolverBase instance.
     virtual ~SmartEquilibriumSolverBase();
 
