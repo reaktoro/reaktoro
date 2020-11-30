@@ -66,7 +66,7 @@ int main()
 
     KineticOptions options;
     options.use_smart_equilibrium_solver = false;
-    options.smart_equilibrium.smart_method = "eq-priority";
+    options.smart_equilibrium.method = SmartEquilibriumStrategy::PriorityQueue;
 
     KineticPath path(reactions, partition);
     path.setOptions(options);
