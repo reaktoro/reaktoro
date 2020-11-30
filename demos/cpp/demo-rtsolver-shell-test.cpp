@@ -19,7 +19,7 @@
 using namespace Reaktoro;
 
 // Reactive transport test includes
-#include <demos/cpp/TestUtils.h>
+#include <demos/cpp/DemosUtils.h>
 
 /// Forward declaration
 auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResults& results) -> void;
