@@ -1,7 +1,5 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2018 Allan Leal
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -205,55 +203,87 @@ struct KineticPathParams{
 
     ActivityModel activity_model = ActivityModel::HKF;
 
-    // ODML parameters
+    /// -------------------------------------------------------------------------- ///
+    /// Smart equilibrium calculations
+    /// -------------------------------------------------------------------------- ///
+
+    // ODML parameters for smart equilibrium calculations
     bool use_smart_equilibrium_solver = false;
+
+    // Smart equilibrium method with clustering
+    SmartEquilibriumStrategy smart_eq_method = SmartEquilibriumStrategy::Clustering;
     double smart_equilibrium_reltol = 1e-3;
 
-    SmartEquilibriumStrategy method = SmartEquilibriumStrategy::Clustering;
+    /// -------------------------------------------------------------------------- ///
+    /// Smart kinetics calculations
+    /// -------------------------------------------------------------------------- ///
+
+    // ODML parameters for smart kinetic calculations
+    bool use_smart_kinetic_solver = false;
+
+    // Smart equilibrium method with clustering
+    SmartKineticStrategy smart_kin_method = SmartKineticStrategy::Clustering;
+    double smart_kinetic_tol = 1e-3;
+    double smart_kinetic_abstol = 1e-4;
+    double smart_kinetic_reltol = 1e-1;
 
     /// Create results file with parameters of the test
     auto makeResultsFile(const std::string& demo_tag) -> std::string
     {
         std::ostringstream eqtol_stream, kinreltol_stream, kinabstol_stream, kintol_stream;
         eqtol_stream << std::scientific << std::setprecision(1) << smart_equilibrium_reltol;
-        //kinreltol_stream << std::scientific << std::setprecision(1) << smart_kinetic_options.reltol;
-        //kinabstol_stream << std::scientific << std::setprecision(1) << smart_kinetic_options.abstol;
-        //kintol_stream << std::scientific << std::setprecision(1) << smart_kinetic_options.tol;
+        kintol_stream << std::scientific << std::setprecision(1) << smart_kinetic_tol;
+        kinreltol_stream << std::scientific << std::setprecision(1) << smart_kinetic_reltol;
+        kinabstol_stream << std::scientific << std::setprecision(1) << smart_kinetic_abstol;
 
-        std::string smart_test_tag = "-t0-" + std::to_string(t0) +
-                                     "-tfinal-" + std::to_string(tfinal) +
+        std::string smart_test_tag = "-t0-" + std::to_string(int(t0)) +
+                                     "-tfinal-" + std::to_string(int(tfinal)) +
                                      "-n-" + std::to_string(n) +
-                                     "-" + getSmartMethodTag() +
+                                     "-eq-" + getSmartEquilibriumMethodTag() +
+                                     "-kin-" + getSmartKineticMethodTag() +
                                      "-eqtol-" + eqtol_stream.str() +
-                                     //"-kintol-" + kintol_stream.str() +
-                                     //"-kinrel-" + kinreltol_stream.str() +
-                                     //"-kinabs-" + kinabstol_stream.str() +
+                                     "-kintol-" + kintol_stream.str() +
+                                     "-kinrel-" + kinreltol_stream.str() +
+                                     "-kinabs-" + kinabstol_stream.str() +
                                      "-" + getActivityModelTag(activity_model) +
-                                     //(use_smart_kinetic_solver ? "-smart-kin" : "-conv-kin") +
+                                     (use_smart_kinetic_solver ? "-smart-kin" : "-conv-kin") +
                                      (use_smart_equilibrium_solver ? "-smart-eq"  : "-conv-eq");      // name of the folder with results
 
-        std::string class_test_tag = "-t0-" + std::to_string(t0) +
-                                     "-tfinal-" + std::to_string(tfinal) +
+        std::string class_test_tag = "-t0-" + std::to_string(int(t0)) +
+                                     "-tfinal-" + std::to_string(int(tfinal)) +
                                      "-n-" + std::to_string(n) +
                                      "-" + getActivityModelTag(activity_model) +
-                                     //(use_smart_kinetic_solver ? "-smart-kin" : "-conv-kin") +
+                                     (use_smart_kinetic_solver ? "-smart-kin" : "-conv-kin") +
                                      (use_smart_equilibrium_solver ? "-smart-eq"  : "-conv-eq");      // name of the folder with results
         std::string filename;
-        if(use_smart_equilibrium_solver)
+        if(use_smart_equilibrium_solver || use_smart_kinetic_solver)
             filename = "kineticpath-" + demo_tag + smart_test_tag + ".txt";
         else
             filename = "kineticpath-" + demo_tag + class_test_tag + ".txt";
 
         return filename;
     }
-    auto getSmartMethodTag() -> std::string
+    auto getSmartEquilibriumMethodTag() -> std::string
     {
-        switch(method)
+        switch(smart_eq_method)
         {
             case SmartEquilibriumStrategy::Clustering: return "clustering";
             case SmartEquilibriumStrategy::PriorityQueue: return "priority";
             case SmartEquilibriumStrategy::NearestNeighbour: return "nnsearch";
         }
+        return "";
+    }
+    auto getSmartKineticMethodTag() -> std::string
+    {
+        switch(smart_kin_method)
+        {
+            case SmartKineticStrategy::Clustering: return "clustering";
+            case SmartKineticStrategy::ClusteringExtended: return "clustering-extended";
+            case SmartKineticStrategy::PriorityQueue: return "priority-major";
+            case SmartKineticStrategy::PriorityQueuePrimary: return "priority-primary";
+            case SmartKineticStrategy::NearestNeighbour: return "nnsearch";
+        }
+        return "";
     }
 
 };
@@ -270,6 +300,7 @@ auto getActivityModelTag(enum ActivityModel activity_model) -> std::string
         case ActivityModel::DebyeHuckelSelectedSpecies: return "dk-selected-species";
         case ActivityModel::PitzerSelectedSpecies: return "pitzer-selected-species";
     }
+    return "";
 }
 
 // Return string tag depending on the selected method
@@ -281,6 +312,7 @@ auto getSmartMethodTag(enum SmartEquilibriumStrategy method) -> std::string
         case SmartEquilibriumStrategy::PriorityQueue: return "eq-priority";
         case SmartEquilibriumStrategy::NearestNeighbour: return "eq-nnsearch";
     }
+    return "";
 }
 
 /// Make directory for Windows and Linux
