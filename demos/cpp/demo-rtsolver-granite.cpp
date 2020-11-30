@@ -73,11 +73,11 @@ int main()
     params.smart_equilibrium_reltol = 1e-3;
 
 //    // Run smart algorithm with priority queue
-//    params.smart_method = SmartEquilibriumStrategy::PriorityQueue;
+//    params.method = SmartEquilibriumStrategy::PriorityQueue;
 //    params.smart_equilibrium_reltol = 2e-3;
 
 //    // Run smart algorithm with nn search algorithm
-//    params.smart_method =  SmartEquilibriumStrategy::NearestNeighbour;
+//    params.method =  SmartEquilibriumStrategy::NearestNeighbour;
 //    params.smart_equilibrium_reltol = 1e-1;
 
     // Output
