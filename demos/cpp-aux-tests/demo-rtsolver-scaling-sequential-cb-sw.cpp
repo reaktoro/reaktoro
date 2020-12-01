@@ -157,7 +157,7 @@ int main()
     results.smart_total_ideal_search_store = results.smart_equilibrium_timing.solve
                                              - results.smart_equilibrium_timing.estimate_search
                                              - results.smart_equilibrium_timing.estimate_database_priority_update
-                                             - results.smart_equilibrium_timing.learning_storage;
+                                             - results.smart_equilibrium_timing.learn_storage;
 
     // Output speed-us
     std::cout << "speed up                            : "
@@ -378,7 +378,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
         std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
         std::cout << " CLUSTERS: " << std::endl;
         std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
-        rtsolver.outputClusterInfo();
+        rtsolver.outputSmartSolverInfo();
     }
 
     // Step **: Define new reactive transport instance for injecting seawater
@@ -448,7 +448,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
         std::cout << "-----------------------------------------------------" << std::endl;
         std::cout << " CLUSTERS: " << std::endl;
         std::cout << "-----------------------------------------------------" << std::endl;
-        rtsolver_sw.outputClusterInfo();
+        rtsolver_sw.outputSmartSolverInfo();
     }
 
     if(params.use_smart_equilibrium_solver) results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
