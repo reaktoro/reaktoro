@@ -151,7 +151,7 @@ int main()
     results.smart_total_ideal_search_store = results.smart_equilibrium_timing.solve
                                              - results.smart_equilibrium_timing.estimate_search
                                              - results.smart_equilibrium_timing.estimate_database_priority_update
-                                             - results.smart_equilibrium_timing.learning_storage;
+                                             - results.smart_equilibrium_timing.learn_storage;
 
     // Output speed-us
     std::cout << "speed up                            : "
@@ -318,7 +318,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 
     if(params.use_smart_equilibrium_solver)
     {
-        rtsolver.outputClusterInfo();
+        rtsolver.outputSmartSolverInfo();
         results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);
     }
 
