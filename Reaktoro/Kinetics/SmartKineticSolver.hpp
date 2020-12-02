@@ -59,6 +59,7 @@ public:
     virtual ~SmartKineticSolver();
 
     /// Set the options for the chemical kinetics calculation.
+    /// @see SmartKineticOptions
     auto setOptions(const SmartKineticOptions& options) -> void;
 
     /// Set the partition of the chemical system.
@@ -96,40 +97,44 @@ public:
 
     /// Initialize the chemical kinetics solver before integration.
     /// This method should be invoked whenever the user intends to make a call to `KineticsSolver::step`.
-    /// @param state The state of the chemical system
+    /// @param[in,out] state The state of the chemical system
     /// @param tstart The start time of the integration.
     auto initialize(ChemicalState& state, double tstart) -> void;
 
     /// Initialize the chemical kinetics solver before integration
     /// with the provided vector of unknowns `benk` = [be, nk].
     /// This method should be invoked whenever the user intends to make a call to `KineticsSolver::solve`.
-    /// @param state The state of the chemical system
+    /// @param[in,out] state The state of the chemical system
     /// @param tstart The start time of the integration
     /// @param benk The initial vector of unknowns `benk` = [be, nk].
     auto initialize(ChemicalState& state, double tstart, VectorConstRef benk) -> void;
 
-    /// Solve the chemical kinetics problem from a given initial time to a final time (used in KineticPath)
-    /// @param state The kinetic state of the system
+    /// Solve the chemical kinetics problem from a given initial time to a final time (used in KineticPath).
+    /// @param[in,out] state The kinetic state of the system
     /// @param t The start time of the integration (in units of seconds)
     /// @param dt The step to be used for the integration from `t` to `t + dt` (in units of seconds)
+    /// @see KineticPath
     auto solve(ChemicalState& state, double t, double dt) -> double;
 
-    /// Solve the chemical kinetics problem from a given initial time to a final time.
+    /// Solve the chemical kinetics problem from a given initial time to a final time with the given elements
+    /// amount vector (used in ReactiveTransportSolver).
     /// Used in reactive transport solver, which provides updated element amounts.
-    /// @param state The kinetic state of the system
+    /// @param[in,out] state The kinetic state of the system
     /// @param t The start time of the integration (in units of seconds)
     /// @param dt The step to be used for the integration from `t` to `t + dt` (in units of seconds)
     /// @param b The amount of elements updated from the transport
+    /// @see ReactiveTransportSolver
     auto solve(ChemicalState& state, double t, double dt, VectorConstRef b) -> void;
-    auto solve(ChemicalState& state, double t, double dt, VectorConstRef b, Index step, Index icell) -> void;
 
     /// Return the result of the last smart kinetic calculation.
+    /// @see SmartKineticResult
     auto result() const -> const SmartKineticResult&;
 
-    // Return properties of the chemical state provided by the KineticSolver
+    // Return properties of the chemical state provided by the KineticSolver.
+    /// @see ChemicalProperties
     auto properties() const -> const ChemicalProperties&;
 
-    /// Output clusters created during the ODML algorithm
+    /// Output clusters created during the ODML algorithm.
     auto outputSmartMethodInfo() const -> void;
 
 private:

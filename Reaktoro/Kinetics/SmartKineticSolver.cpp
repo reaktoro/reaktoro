@@ -59,11 +59,12 @@ auto hash(Vec& vec) -> std::size_t
     return seed;
 }
 
+/// Sort partially sorted array
 void insertion_sort_from_assigned_start(VectorXi &array, Vector values, int start)
 {
     // We obtain:
-    // `array` is indices (of species) that must be correctly shuffled in correspondence to the `values`
-    // `values` is values (amount of species) corresponding to `indices` (in chemical state)
+    // `array` is array of indices (of species) that must be correctly shuffled in correspondence to the `values`
+    // `values` is array of values (amount of species) corresponding to `indices` (in chemical state)
     // `start` is the index, from which `values` is not sorted and `array` must be shuffled in correspondence
     //
     // Example of algorithm functionality:
@@ -127,7 +128,7 @@ void insertion_sort_from_assigned_start(VectorXi &array, Vector values, int star
 
 } // namespace detail
 
-/// The record of the knowledge database containing input, output, and derivatives data.
+/// A structure used to store the record of the knowledge database containing input, output, and derivatives data.
 struct KineticRecord
 {
     /// The temperature of the equilibrium state (in units of K).
@@ -158,21 +159,29 @@ struct KineticRecord
     ChemicalVector rates;
 };
 
-/// A structure used to store the node of tree for smart equilibrium calculations.
+/// A structure used to store the node of tree for smart kinetic calculations.
 struct SmartKineticNode{
 
-    ODEState ode_state;
+    /// The calculated equilibrium state at `T`, `P`, `be`.
     ChemicalState chemical_state;
-    ChemicalProperties properties;
-    EquilibriumSensitivity sensitivity;
-    ChemicalVector rates;
 
-    // For priority based search and error control with potentials
+    /// The chemical properties at the calculated equilibrium state.
+    ChemicalProperties properties;
+
+    /// The sensitivity derivatives at the calculated equilibrium state.
+    EquilibriumSensitivity sensitivity;
+
+    /// The matrix used to compute relative change of chemical potentials due to change in `be`.
     Matrix Mb;
+
+    // Indices of the major species
     VectorXi imajor;
 
-    // The count of how often the element was successfully used for estimation
-    // unsigned int usage_count = 0;
+    /// Calculated kinetic state, containing initial and final value of [be, nk], initial and final time, and sensitivities
+    ODEState ode_state;
+
+    // Chemical kinetic rates
+    ChemicalVector rates;
 };
 
 struct SmartKineticSolver::Impl
@@ -288,10 +297,12 @@ struct SmartKineticSolver::Impl
     /// The sensitivity matrix of combined vector of elemental molar abundance and composition of kinetic species [be nk]
     Matrix benk_S;
 
-
     /// ------------------------------------------------
     /// Structures needed for the priority-based queue
     /// ------------------------------------------------
+
+    /// The storage for vector u(imajor)
+    Vector um;
 
     std::deque<Index> kinetics_priority;
 
@@ -605,8 +616,12 @@ struct SmartKineticSolver::Impl
 
     /// Learn by performing a full kinetics calculation using integration of system of ODEs
     /// and save the learned state to the simple queue
-    auto learn_nn_search(ChemicalState& state, double t, double dt) -> void
+    auto learn_nn_search(ChemicalState& state, double& t, double dt) -> void
     {
+        //---------------------------------------------------------------------
+        // INITIALIZATION
+        //---------------------------------------------------------------------
+
         // Initialize sensitivity matrix by the identity matrix
         benk_S.setIdentity();
 
@@ -641,7 +656,7 @@ struct SmartKineticSolver::Impl
         state.setSpeciesAmounts(nk, iks);
 
         // Save the kinetic state to the tree of learned states
-        tree.emplace_back(SmartKineticNode{ode_state, state, properties, sensitivity, rates, Matrix::Zero(10, 10), VectorXi::Zero(10)});
+        tree.emplace_back(SmartKineticNode{state, properties, sensitivity, Matrix::Zero(10, 10), VectorXi::Zero(10), ode_state, rates});
 
         result.timing.learn_storage = toc(STORAGE_STEP);
 
@@ -649,8 +664,12 @@ struct SmartKineticSolver::Impl
 
     /// Learn by performing a full kinetics calculation using integration of system of ODEs
     /// and save the learned state (with the major potentials) to the priority queue
-    auto learn_priority_based_acceptance_potential(ChemicalState& state, double t, double dt) -> void
+    auto learn_priority_based_acceptance_potential(ChemicalState& state, double& t, double dt) -> void
     {
+        //---------------------------------------------------------------------
+        // INITIALIZATION
+        //---------------------------------------------------------------------
+
         // Initialize sensitivity matrix by the identity matrix
         benk_S.setIdentity();
 
@@ -686,18 +705,17 @@ struct SmartKineticSolver::Impl
 
         // The amounts of the species at the calculated equilibrium state
         VectorConstRef n = state.speciesAmounts();
+
         // The amounts of the equilibrium species amounts at the calculated equilibrium state
         ne = n(ies);
 
-        const auto u = properties.chemicalPotentials();
+        // Mole fraction of the species at the calculated equilibrium state
         const auto& x = properties.moleFractions();
+
+        // Mole fraction of the equilibrium species species at the calculated equilibrium state
         Vector xe = x.val(ies);
 
-        const auto& dndb = sensitivity.dndb;
-        const auto& dudn = u.ddn;
-        const Matrix dudb = dudn * dndb;
-
-        // Define the canonicalizer with priority weights set by the species amounts
+        // Update the canonical form of formula matrix Ae so that we can identify primary species
         canonicalizer.updateWithPriorityWeights(ne);
 
         // Set tolerances for species' elements and fractions
@@ -711,12 +729,27 @@ struct SmartKineticSolver::Impl
                               - imajorminor.begin();
         const auto imajor = imajorminor.head(nummajor);
 
-        // Calculate matrix Mb for the error control based on the potentials
-        const Vector um = u.val(imajor);
-        const auto dumdb = rows(dudb, imajor);
+        // The chemical potentials at the calculated equilibrium state
+        const auto u = properties.chemicalPotentials();
+
+        // Auxiliary references to the derivatives dn/db and du/dn
+        const auto& dndb = sensitivity.dndb;
+        const auto& dudn = u.ddn;
+
+        // Compute the matrix du/db = du/dn * dn/db
+        dudb = dudn * dndb;
+
+        // The vector u(imajor) with chemical potentials of major species
+        um.noalias() = u.val(imajor);
+
+        // The vector u(imajor) with chemical potentials of major species
+        um.noalias() = u.val(imajor);
+
+        // The matrix du(imajor)/dbe with derivatives of chemical potentials (major species only)
         const auto dumdbe = dudb(imajor, iee);
-        const Matrix Mb = diag(inv(um)) * dumdb;
-        const Matrix Mbe = diag(inv(um)) * dumdbe;
+
+        // Compute matrix Mbe = 1/um * dum/db
+        Mbe.noalias() = diag(inv(um)) * dumdbe;
 
         result.timing.learn_error_control_matrices = toc(ERROR_CONTROL_MATRICES);
 
@@ -726,12 +759,13 @@ struct SmartKineticSolver::Impl
         tic(STORAGE_STEP);
 
         // Save the kinetic state to the tree of learned states
-        tree.emplace_back(SmartKineticNode{ode_state, state, properties, sensitivity, rates, Mbe, imajor});
+        tree.emplace_back(SmartKineticNode{state, properties, sensitivity, Mbe, imajor, ode_state, rates});
 
         // Update the priority queue
         // ----------------------------------------------
         // Add new element in the priority queue
         kinetics_priority.push_back(kinetics_priority.size());
+
         // Set its rank to zero
         kinetics_ranking.push_back(0);
 
@@ -740,7 +774,7 @@ struct SmartKineticSolver::Impl
 
     /// Learn by performing a full kinetics calculation using integration of system of ODEs
     /// and save the learned state (with the primary potentials) to the priority queue
-    auto learn_priority_based_acceptance_primary_potential(ChemicalState& state, double t, double dt) -> void
+    auto learn_priority_based_acceptance_primary_potential(ChemicalState& state, double& t, double dt) -> void
     {
         // Initialize sensitivity matrix by the identity matrix
         benk_S.setIdentity();
@@ -769,31 +803,13 @@ struct SmartKineticSolver::Impl
         state.setSpeciesAmounts(nk, iks);
 
         //---------------------------------------------------------------------
-        // CHEMICAL PROPERTIES UPDATE STEP DURING THE LEARNING PROCESS
-        //---------------------------------------------------------------------
-        tic(CHEMICAL_PROPERTIES_STEP);
-        properties = state.properties();
-        result.timing.learn_chemical_properties += toc(CHEMICAL_PROPERTIES_STEP);
-        //---------------------------------------------------------------------
-        // SENSITIVITY MATRIX COMPUTATION STEP DURING THE LEARNING PROCESS
-        //---------------------------------------------------------------------
-        tic(CHEMICAL_RATES_STEP);
-        rates = reactions.rates(properties);
-        result.timing.learn_reaction_rates += toc(CHEMICAL_RATES_STEP);
-        //---------------------------------------------------------------------
-        // SENSITIVITY MATRIX COMPUTATION STEP DURING THE LEARNING PROCESS
-        //---------------------------------------------------------------------
-        tic(SENSITIVITY_STEP);
-        sensitivity = equilibrium.sensitivity();
-        result.timing.learn_sensitivity += toc(SENSITIVITY_STEP);
-
-        //---------------------------------------------------------------------
         // ERROR CONTROL MATRICES ASSEMBLING STEP DURING THE LEARNING PROCESS
         //---------------------------------------------------------------------
         tic(ERROR_CONTROL_MATRICES);
 
         // The amounts of the species at the calculated equilibrium state
         VectorConstRef n = state.speciesAmounts();
+
         // The amounts of the equilibrium species amounts at the calculated equilibrium state
         ne = n(ies);
 
@@ -844,12 +860,13 @@ struct SmartKineticSolver::Impl
         tic(STORAGE_STEP);
 
         // Save the kinetic state to the tree of learned states
-        tree.emplace_back(SmartKineticNode{ode_state, state, properties, sensitivity, rates, Mbe, iprimary});
+        tree.emplace_back(SmartKineticNode{state, properties, sensitivity, Mbe, iprimary, ode_state, rates});
 
         // Update the priority queue
         // ----------------------------------------------
         // Add new element in the priority queue
         kinetics_priority.push_back(kinetics_priority.size());
+
         // Set its rank to zero
         kinetics_ranking.push_back(0);
 
@@ -858,7 +875,7 @@ struct SmartKineticSolver::Impl
 
     /// Learn by performing a full kinetics calculation using integration of system of ODEs
     /// and save the learned state (with the primary potentials) to the priority-based cluster
-    auto learn_clustering(ChemicalState& state, double t, double dt) -> void
+    auto learn_clustering(ChemicalState& state, double& t, double dt) -> void
     {
         // Initialize sensitivity matrix by the identity matrix
         benk_S.setIdentity();
@@ -875,8 +892,7 @@ struct SmartKineticSolver::Impl
 
         // Calculate `benk` by the conventional numerical integration
         ode.solve(t, dt, benk, benk_S);
-        //ode.solve_implicit_1st_order(t, dt, benk, benk_S); // TODO: compare CVODE and 1st order implicit scheme
-        //ode.integrate(t, benk, t + dt, benk_S); // TODO: produces a delayed estimations, why?
+
         result.timing.learn_integration = toc(INTEGRATE_STEP);
 
         // Save the sensitivity values, the result time, and the obtain species' amount
@@ -980,7 +996,7 @@ struct SmartKineticSolver::Impl
 
     /// Learn by performing a full kinetics calculation using integration of system of ODEs
     /// and save the learned state (with the primary potentials) to the priority-based cluster
-    auto learn_clustering_extended(ChemicalState& state, double t, double dt) -> void
+    auto learn_clustering_extended(ChemicalState& state, double& t, double dt) -> void
     {
         SmartKineticResult res = {};
 
@@ -1140,7 +1156,7 @@ struct SmartKineticSolver::Impl
 
     /// Estimate the equilibrium state using priority-based cluster for the search of the reference state and
     /// potentials of primary species for the acceptance criteria
-    auto estimate_clustering_extended(ChemicalState& state, double& t) -> void
+    auto estimate_clustering_extended(ChemicalState& state, double& t, double dt) -> void
     {
         result.estimate.accepted = false;
 
@@ -1443,6 +1459,9 @@ struct SmartKineticSolver::Impl
                     // Mark estimated result as accepted
                     result.estimate.accepted = true;
 
+                    // Update the time
+                    t += dt;
+
                     return;
                 }
                 record_count++;
@@ -1457,7 +1476,7 @@ struct SmartKineticSolver::Impl
 
     /// Estimate the equilibrium state using priority-based cluster for the search of the reference state and
     /// potentials of primary species for the acceptance criteria
-    auto estimate_clustering(ChemicalState& state, double& t) -> void
+    auto estimate_clustering(ChemicalState& state, double& t, double dt) -> void
     {
         result.estimate.accepted = false;
 
@@ -1725,6 +1744,9 @@ struct SmartKineticSolver::Impl
                     // Mark estimated result as accepted
                     result.estimate.accepted = true;
 
+                    // Update the time
+                    t += dt;
+
                     return;
                 }
             }
@@ -1736,7 +1758,7 @@ struct SmartKineticSolver::Impl
 
     /// Estimate the equilibrium state using the nearest neighbour for the search of the reference state and
     /// logarithms of activities for the acceptance criteria
-    auto estimate_nn_search_acceptance_based_lna(ChemicalState& state, double& t) -> void
+    auto estimate_nn_search_acceptance_based_lna(ChemicalState& state, double& t, double dt) -> void
     {
         // Skip estimation if no previous full computation has been done
         if(tree.empty())
@@ -1912,11 +1934,14 @@ struct SmartKineticSolver::Impl
         // Mark estimated result as accepted
         result.estimate.accepted = true;
 
+        // Update the time
+        t += dt;
+
     }
 
     /// Estimate the equilibrium state using the nearest neighbour for the search of the reference state and
     /// residual of the mass action equation for the acceptance criteria
-    auto estimate_nn_search_acceptance_based_residual(ChemicalState& state, double& t) -> void
+    auto estimate_nn_search_acceptance_based_residual(ChemicalState& state, double& t, double dt) -> void
     {
         // Refresh acceptance result
         result.estimate.accepted = false;
@@ -2156,6 +2181,9 @@ struct SmartKineticSolver::Impl
         // Mark estimated result as accepted
         result.estimate.accepted = true;
 
+        // Update the time
+        t += dt;
+
     }
 
     /// Estimate the equilibrium state using the priority-based queue for the search of the reference state and
@@ -2372,6 +2400,9 @@ struct SmartKineticSolver::Impl
 
                 // Mark estimated result as accepted
                 result.estimate.accepted = true;
+
+                // Update the time
+                t += dt;
 
                 return;
             }
@@ -2608,6 +2639,9 @@ struct SmartKineticSolver::Impl
                 // Mark estimated result as accepted
                 result.estimate.accepted = true;
 
+                // Update the time
+                t += dt;
+
                 return;
             }
             else {
@@ -2654,11 +2688,11 @@ struct SmartKineticSolver::Impl
 
         // Perform a smart estimate for the chemical state
         if(options.method == SmartKineticStrategy::Clustering)
-            estimate_clustering(state, t);
+            estimate_clustering(state, t, dt);
         else if(options.method == SmartKineticStrategy::PriorityQueue)
             estimate_priority_based_acceptance_potential(state, t, dt);
         else if(options.method == SmartKineticStrategy::NearestNeighbour)
-            estimate_nn_search_acceptance_based_lna(state, t);
+            estimate_nn_search_acceptance_based_lna(state, t, dt);
 
         result.timing.estimate = toc(ESTIMATE_STEP);
 
@@ -2746,15 +2780,15 @@ struct SmartKineticSolver::Impl
 
         // Perform a smart estimate for the chemical state
         if(options.method == SmartKineticStrategy::Clustering)
-            estimate_clustering(state, t);
+            estimate_clustering(state, t, dt);
         else if(options.method == SmartKineticStrategy::ClusteringExtended)
-            estimate_clustering_extended(state, t);
+            estimate_clustering_extended(state, t, dt);
         else if(options.method == SmartKineticStrategy::PriorityQueue)
             estimate_priority_based_acceptance_potential(state, t, dt);
         else if(options.method == SmartKineticStrategy::PriorityQueuePrimary)
             estimate_priority_based_acceptance_primary_potential(state, t, dt);
         else if(options.method == SmartKineticStrategy::NearestNeighbour)
-            estimate_nn_search_acceptance_based_lna(state, t);
+            estimate_nn_search_acceptance_based_lna(state, t, dt);
 
         result.timing.estimate = toc(ESTIMATE_STEP);
 
