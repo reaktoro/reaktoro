@@ -86,7 +86,10 @@ auto SmartEquilibriumSolverPriorityQueue::learn(ChemicalState& state, double T, 
     // The amounts of the equilibrium species amounts at the calculated equilibrium state
     ne = n(ies);
 
+ADdd    // Mole fraction of the species at the calculated equilibrium state
     const auto& x = _properties.moleFractions();
+
+    // Mole fraction of the equilibrium species species at the calculated equilibrium state
     Vector xe = x.val(ies);
 
     // Update the canonical form of formula matrix Ae so that we can identify primary species
