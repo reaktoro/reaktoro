@@ -159,6 +159,12 @@ add_custom_target(deps
     COMMAND ${CMAKE_COMMAND} -P deps/install
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
+# Add target "optima" for building and installing Optima
+add_custom_target(optima
+    COMMAND ${CMAKE_COMMAND} --build . --parallel
+    COMMAND ${CMAKE_COMMAND} --install .
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/deps/build/etc/src/OPTIMA-build")
+
 # Package Reaktoro
 include(PackageReaktoro)
 
