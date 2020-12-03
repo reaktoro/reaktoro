@@ -18,6 +18,7 @@
 #pragma once
 
 // C++ includes
+#include <memory>
 #include <vector>
 
 // Reaktoro includes
@@ -30,60 +31,71 @@
 
 namespace Reaktoro {
 
+/// Use this class for storing the collection of states and their properties
 class ChemicalField
 {
 public:
     using Iterator = std::vector<ChemicalState>::iterator;
-
     using ConstIterator = std::vector<ChemicalState>::const_iterator;
 
+    /// Construct a ChemicalField instance when the number of the states(cells) and system is provided.
     ChemicalField(Index size, const ChemicalSystem& system);
 
+    /// Construct a ChemicalField instance when the number of the states(cells) and an instance of one state.
     ChemicalField(Index size, const ChemicalState& state);
 
-    auto size() const -> Index { return m_size; }
+    /// Construct a copy of a ChemicalField instance.
+    ChemicalField(const ChemicalField& other);
 
-    auto begin() const -> ConstIterator { return m_states.cbegin(); }
+    /// Destroy this ChemicalField instance.
+    virtual ~ChemicalField();
 
-    auto begin() -> Iterator { return m_states.begin(); }
+    /// Assign a copy of an ChemicalField instance.
+    auto operator=(ChemicalField other) -> ChemicalField&;
 
-    auto end() const -> ConstIterator { return m_states.cend(); }
+    /// Return the number of states in chamical field
+    auto size() const -> Index;
 
-    auto end() -> Iterator { return m_states.end(); }
+    // Wrapper functions from begin(), end(), and [] operators
+    auto begin() const -> ConstIterator;
+    auto begin() -> Iterator;
+    auto end() const -> ConstIterator;
+    auto end() -> Iterator;
+    auto operator[](Index index) const -> const ChemicalState&;
+    auto operator[](Index index) -> ChemicalState&;
 
-    auto operator[](Index index) const -> const ChemicalState& { return m_states[index]; }
-
-    auto operator[](Index index) -> ChemicalState& { return m_states[index]; }
-
+    /// Set all the states of the chemical field by the provided one
+    /// @param state The chemical state to be assigned to each state of the checmial field
+    /// @see ChemicalState
     auto set(const ChemicalState& state) -> void;
 
+    /// Fetch the vector with temperatures in the states
     auto temperature(VectorRef values) -> void;
 
+    /// Fetch the vector with pressures in the states
     auto pressure(VectorRef values) -> void;
 
+    /// Fetch the vector with element amounts in the states
     auto elementAmounts(VectorRef values) -> void;
 
-    auto output(std::string filename, StringList quantities) -> void;
+    /// Function responsible for the output of the checmial field to the file
+    /// @param filename The name of the file for the outputting
+    /// @param quantities The list of quantaties to output
+    /// @see ChemicalOutput
+    auto output(const std::string& filename, const StringList& quantities) -> void;
+
+    // Return the collection with properties
+    auto properties() -> std::vector<ChemicalProperties>&;
+
+    // Return the collection with states
+    auto states() -> std::vector<ChemicalState>&;
 
 private:
-    /// The number of degrees of freedom in the chemical field.
-    Index m_size;
 
-//    Vector temperatures;
-//
-//    Vector pressures;
-//
-//    /// The matrix of amounts for every element (
-//    Matrix element_amounts;
+    struct Impl;
 
-    /// The chemical system common to all degrees of freedom in the chemical field.
-    ChemicalSystem m_system;
+    std::unique_ptr<Impl> pimpl;
 
-    /// The chemical states in the chemical field
-    std::vector<ChemicalState> m_states;
-
-    /// The chemical states in the chemical field
-    std::vector<ChemicalProperties> m_properties;
 };
 
 } // namespace Reaktoro
