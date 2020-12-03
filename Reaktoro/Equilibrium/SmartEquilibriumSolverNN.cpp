@@ -21,11 +21,13 @@
 
 namespace Reaktoro {
 
-SmartEquilibriumSolverNN::SmartEquilibriumSolverNN(const ChemicalSystem &system) : SmartEquilibriumSolverBase(Partition(system))
+SmartEquilibriumSolverNN::SmartEquilibriumSolverNN(const ChemicalSystem &system)
+: SmartEquilibriumSolverBase(Partition(system))
 {
 }
 
-SmartEquilibriumSolverNN::SmartEquilibriumSolverNN(const Partition& partition) : SmartEquilibriumSolverBase(partition)
+SmartEquilibriumSolverNN::SmartEquilibriumSolverNN(const Partition& partition)
+: SmartEquilibriumSolverBase(partition)
 {
 }
 

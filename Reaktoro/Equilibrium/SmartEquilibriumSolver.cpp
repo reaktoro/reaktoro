@@ -35,7 +35,6 @@ SmartEquilibriumSolver::~SmartEquilibriumSolver()
 {
 }
 
-/// Set the options for the equilibrium calculation.
 auto SmartEquilibriumSolver::setOptions(const SmartEquilibriumOptions& options) -> void
 {
     // Initialize smart equilibrium solver depending on the chosen options

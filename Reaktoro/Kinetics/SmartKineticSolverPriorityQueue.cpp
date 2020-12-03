@@ -368,12 +368,12 @@ auto SmartKineticSolverPriorityQueue::outputInfo() const -> void
 {
 }
 
+/// Implementation of the SmartKineticSolverPriorityQueuePrimary functionality
+
 SmartKineticSolverPriorityQueuePrimary::SmartKineticSolverPriorityQueuePrimary(const ReactionSystem& reactions, const Partition& partition)
  : SmartKineticSolverBase(reactions, partition)
 {
 }
-
-/// Implementation of the SmartKineticSolverPriorityQueuePrimary functionality
 
 SmartKineticSolverPriorityQueuePrimary::~SmartKineticSolverPriorityQueuePrimary()
 {
