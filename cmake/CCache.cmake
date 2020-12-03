@@ -24,7 +24,10 @@
 find_program(CCACHE_PROGRAM ccache)
 
 if(NOT CCACHE_IGNORE AND CCACHE_PROGRAM)
-    message(STATUS "Using ccache to potentially speed up the build operation.")
+    message(STATUS "CCache: Found ccache installed.")
+    message(STATUS "CCache: Using ccache to potentially speed up the build operation.")
     set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
     set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+else()
+    message(STATUS "CCache: Could not find ccache. Install it to speed up the build operation.")
 endif()
