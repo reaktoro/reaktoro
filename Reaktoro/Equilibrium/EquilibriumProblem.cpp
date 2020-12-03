@@ -27,6 +27,7 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 
 namespace Reaktoro {
 
@@ -43,6 +44,9 @@ struct EquilibriumProblem::Impl
 
     /// The dimensions of the variables in the equilibrium problem.
     EquilibriumDims dims;
+
+    /// The options for the solution of the equilibrium problem.
+    EquilibriumOptions options;
 
     real T = 0.0;  ///< The current temperature of the chemical system (in K).
     real P = 0.0;  ///< The current pressure of the chemical system (in Pa).
@@ -179,6 +183,8 @@ struct EquilibriumProblem::Impl
         const auto& econstraints = constraints.data().econstraints;
         const auto& pconstraints = constraints.data().pconstraints;
 
+        const auto tau = options.epsilon * options.logarithm_barrier_factor;
+
         // INITIALIZE TEMPERATURE AND PRESSURE IN CASE THEY ARE PRESERVED/CONSTANT
         T = state0.temperature();
         P = state0.pressure();
@@ -213,13 +219,18 @@ struct EquilibriumProblem::Impl
             const auto& n = props.speciesAmounts();
             const auto& u = props.chemicalPotentials();
             const auto RT = universalGasConstant * T;
-            return (n * u).sum()/RT;
+            const auto barrier = -tau * n.log().sum();
+            return (n * u).sum()/RT + barrier;
         };
 
         // CREATE THE OBJECTIVE GRADIENT FUNCTION
         auto objective_g = [=](const VectorXr& npq)
         {
             update_props(npq); // update the chemical properties of the system with updated n, p, q
+
+            const auto& n = props.speciesAmounts();
+            const auto& u = props.chemicalPotentials();
+            const auto RT = universalGasConstant * T;
 
             auto gn = g.head(dims.Nn);        // where we set the chemical potentials of the species
             auto gp = g.segment(dims.Nn, dims.Np); // where we set the residuals of functional constraints
@@ -228,10 +239,7 @@ struct EquilibriumProblem::Impl
             auto gpe = gp.head(dims.Npe); // where we set the residuals of the equation constraints
             auto gpp = gp.tail(dims.Npp); // where we set the residuals of the property preservation constraints
 
-            const auto RT = universalGasConstant * T;
-
-            gn = props.chemicalPotentials(); // set the current chemical potentials of species
-            gn /= RT;
+            gn = u/RT - tau/n; // set the current chemical potentials of species
 
             for(auto i = 0; i < dims.Nq; ++i)
                 gq[i] = uconstraints[i].fn(T, P); // set the fixed chemical potentials using current T and P
@@ -298,6 +306,11 @@ auto EquilibriumProblem::operator=(EquilibriumProblem other) -> EquilibriumProbl
 {
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto EquilibriumProblem::setOptions(const EquilibriumOptions& opts) -> void
+{
+    pimpl->options = opts;
 }
 
 auto EquilibriumProblem::update(const EquilibriumConstraints& constraints) -> void

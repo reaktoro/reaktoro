@@ -28,6 +28,7 @@ class ChemicalState;
 class ChemicalSystem;
 class EquilibriumConstraints;
 class EquilibriumDims;
+class EquilibriumOptions;
 
 /// The objective function to be minimized in a chemical equilibrium calculation.
 struct EquilibriumObjective
@@ -57,6 +58,9 @@ public:
 
     /// Assign a copy of an EquilibriumProblem object to this.
     auto operator=(EquilibriumProblem other) -> EquilibriumProblem&;
+
+    /// Set the options for the solution of the equilibrium problem.
+    auto setOptions(const EquilibriumOptions& options) -> void;
 
     /// Update the equilibrium constraints for the next chemical equilibrium calculation.
     /// @warning An error will result if new constraints are imposed. This

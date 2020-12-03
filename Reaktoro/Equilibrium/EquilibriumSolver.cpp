@@ -149,6 +149,9 @@ struct EquilibriumSolver::Impl
     /// Update the optimization problem before a new equilibrium calculation.
     auto updateOptProblem(ChemicalState& state0, ArrayXdConstRef b)
     {
+        // Pass along to the equilibrium problem the options used for the calculation
+        problem.setOptions(options);
+
         // Update the equilibrium problem with updated equilibrium constraints
         problem.update(constraints);
 
@@ -164,11 +167,17 @@ struct EquilibriumSolver::Impl
         EquilibriumObjective obj = problem.objective(state0);
 
         // Update the objective function in the Optima::Problem object
-        optproblem.f = [=](VectorXdConstRef x, VectorXdConstRef p, Optima::ObjectiveResult& res)
+        optproblem.f = [=](Optima::ObjectiveResultRef res, VectorXdConstRef x, VectorXdConstRef p, Optima::ObjectiveOptions opts)
         {
-            if(res.requires.f) res.f = obj.f(x);
-            if(res.requires.fx) obj.g(x, res.fx);
-            if(res.requires.fxx) obj.H(x, res.fxx);
+            res.f = obj.f(x);
+            obj.g(x, res.fx);
+
+            if(opts.eval.fxx)
+                obj.H(x, res.fxx);
+
+            // TODO: Implement diagonal approximation mode for Hessian matrix in EquilibriumSolver.
+            // res.fxx = res.fxx.diagonal().asDiagonal();
+            // res.diagfxx = true;
         };
 
         /// Update the right-hand side vector of the linear equality constraints
@@ -230,7 +239,7 @@ struct EquilibriumSolver::Impl
         updateOptProblem(state0, b);
         updateOptState(state0);
 
-        eqresult.optima = optsolver.solve(optstate, optproblem);
+        eqresult.optima = optsolver.solve(optproblem, optstate);
 
         updateChemicalState(state0);
 
