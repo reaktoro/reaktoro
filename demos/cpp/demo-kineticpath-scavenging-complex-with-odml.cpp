@@ -31,15 +31,27 @@ int main()
     KineticPathParams params = {};
 
     params.t0 = 0;
-    params.tfinal = 1440 * hour;
 
     params.dt = hour;
     params.n = 1400;
+    //params.n = 10;
+
+    params.tfinal = params.n * hour;
+    //params.tfinal = 10 * hour;
+
 
     params.T = 25;
     params.P = 1.01325; // 1 atm = 1.01325 bar
 
-    params.method = SmartEquilibriumStrategy::Clustering;
+    params.activity_model = ActivityModel::DebyeHuckel;
+
+    // ----------------------------------------------------------- //
+    // Smart equilibrium parameters
+    // ----------------------------------------------------------- //
+
+    params.use_smart_equilibrium_solver = false;
+
+    params.smart_eq_method = SmartEquilibriumStrategy::Clustering;
     params.smart_equilibrium_reltol = 1e-1;
 
     //params.method = SmartEquilibriumStrategy::PriorityQueue;
@@ -48,14 +60,37 @@ int main()
     //params.method = SmartEquilibriumStrategy::NearestNeighbour;
     //params.smart_equilibrium_reltol = 1e-2;
 
-    params.use_smart_equilibrium_solver = true; runKinetics(params);
-    params.use_smart_equilibrium_solver = false; runKinetics(params);
+    // ----------------------------------------------------------- //
+    // Smart kinetic parameters
+    // ----------------------------------------------------------- //
+
+    // Select clustering approach
+//    params.smart_kin_method = SmartKineticStrategy::Clustering;
+//    params.smart_kinetic_tol = 1e-4; // 1e-3;
+//    params.smart_kinetic_abstol = 1e-4;
+//    params.smart_kinetic_reltol = 1e-1;
+
+//    // Select priority queue approach
+//    params.smart_kin_method = SmartKineticStrategy::PriorityQueue;
+//    params.smart_kinetic_tol = 1e-3;
+//    params.smart_kinetic_abstol = 1e-4;
+//    params.smart_kinetic_reltol = 1e-1;
+//
+    // Select nearest neighbour approach
+    params.smart_kin_method = SmartKineticStrategy::NearestNeighbour;
+    params.smart_kinetic_tol = 1e-3;
+    params.smart_kinetic_abstol = 1e-4;
+    params.smart_kinetic_reltol = 1e-4;
+
+    params.use_smart_kinetic_solver = true; runKinetics(params);
+    params.use_smart_kinetic_solver = false; runKinetics(params);
 }
 
 auto runKinetics(KineticPathParams & params) -> void
 {
     // Create results folder
     auto filename = params.makeResultsFile("scavenging-complex");
+    //auto filename = params.makeResultsFile("scavenging-complex-with-benk");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
@@ -65,29 +100,32 @@ auto runKinetics(KineticPathParams & params) -> void
     SmartEquilibriumOptions smart_equilibrium_options;
     smart_equilibrium_options.reltol = params.smart_equilibrium_reltol;
     smart_equilibrium_options.learning.hessian = equilibrium_options.hessian;
-    smart_equilibrium_options.method = params.method;
+    smart_equilibrium_options.method = params.smart_eq_method;
 
     // Step **: Define chemical kinetic solver options
     KineticOptions kinetic_options;
     kinetic_options.equilibrium = equilibrium_options;
     kinetic_options.smart_equilibrium = smart_equilibrium_options;
     kinetic_options.use_smart_equilibrium_solver = params.use_smart_equilibrium_solver;
-    //kinetic_path_options.kinetics = kinetic_options;
-    //kinetic_path_options.smart_kinetics = smart_kinetic_options;
 
-//    // Step **: Define smart chemical kinetic solver options
-//    SmartKineticOptions smart_kinetic_options;
-//    smart_kinetic_options.reltol = 1e-1;
-//    smart_kinetic_options.abstol = 1e-4;
-//    smart_kinetic_options.tol = 1e-3;
-//    smart_kinetic_options.learning = kinetic_options;
-//    smart_kinetic_options.learning.equilibrium = equilibrium_options;
-//    smart_kinetic_options.smart_equilibrium = smart_equilibrium_options;
-//    smart_kinetic_options.use_smart_equilibrium_solver = kinetic_options.use_smart_equilibrium_solver;
-//    smart_kinetic_options.smart_method = "kin-clustering-eq-clustering";
+    // Step **: Define smart chemical kinetic solver options
+    SmartKineticOptions smart_kinetic_options;
+    smart_kinetic_options.tol = params.smart_kinetic_tol;
+    smart_kinetic_options.reltol = params.smart_kinetic_reltol;
+    smart_kinetic_options.abstol = params.smart_kinetic_abstol;
+    smart_kinetic_options.learning = kinetic_options;
+    smart_kinetic_options.learning.equilibrium = equilibrium_options;
+    smart_kinetic_options.smart_equilibrium = smart_equilibrium_options;
+    smart_kinetic_options.use_smart_equilibrium_solver = kinetic_options.use_smart_equilibrium_solver;
+    smart_kinetic_options.method = params.smart_kin_method;
 
-    //std::string activity_model = "pitzer";
-    std::string activity_model = "dh";
+    KineticPathOptions kineticpath_options;
+    kineticpath_options.use_smart_kinetic_solver = params.use_smart_kinetic_solver;
+    kineticpath_options.use_smart_equilibrium_solver = kinetic_options.use_smart_equilibrium_solver;
+    kineticpath_options.equilibrium = equilibrium_options;
+    kineticpath_options.smart_equilibrium = smart_equilibrium_options;
+    kineticpath_options.kinetics = kinetic_options;
+    kineticpath_options.smart_kinetics = smart_kinetic_options;
 
     Database database("supcrt07.xml");
 
@@ -98,12 +136,12 @@ auto runKinetics(KineticPathParams & params) -> void
     ChemicalEditor editor(database);
     StringList selected_elements = "Al C Ca Cl Fe H K Mg Na O S Si";
 
-    if(activity_model=="pitzer")
+    if(params.activity_model == ActivityModel::Pitzer)
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel(dhModel)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
-    else if(activity_model=="dh")
+    else if(params.activity_model == ActivityModel::DebyeHuckel)
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel(dhModel);
 
@@ -266,7 +304,7 @@ auto runKinetics(KineticPathParams & params) -> void
 
             // Calculate the resulting mechanism function
             // rate = (knu + k1) * S * m * Mm * ((m/m0)^(2/3)) * (1 - SRmin)
-            res += f * ssa * nm * molar_mass * pow(nm / nm0, 2 / 3) * kappa * (1 - Omega);
+            res += f * ssa * nm * molar_mass * pow(nm / nm0, 2.0 / 3.0) * kappa * (1 - Omega);
 
             // Do not dissolve more than what is available
             // IF (moles > M) THEN moles = M
@@ -477,7 +515,7 @@ auto runKinetics(KineticPathParams & params) -> void
 
             // Calculate the resulting mechanism function
             // rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - SRmin) # by default
-            res += f * ssa * nm * molar_mass * pow(nm / nm0, 2 / 3) * kappa * (1 - Omega);
+            res += f * ssa * nm * molar_mass * pow(nm / nm0, 2.0 / 3.0) * kappa * (1 - Omega);
 
             // Do not dissolve more than what is available
             // IF (moles > M) THEN moles = M
@@ -707,7 +745,6 @@ auto runKinetics(KineticPathParams & params) -> void
             res_growth += f * ssa * nm * molar_mass * kappa_growth * std::abs(Omega - 1);
 
             res += res_growth + res_nuc;
-
         }
         return res;
 
@@ -969,7 +1006,6 @@ auto runKinetics(KineticPathParams & params) -> void
             res_growth += f * ssa * nm * molar_mass * kappa_growth * std::pow(std::abs(std::pow(Omega, 0.06) - 1), 1.68);
 
              res += (res_growth + res_nuc);
-
         }
 
         return res;
@@ -1154,7 +1190,7 @@ auto runKinetics(KineticPathParams & params) -> void
             const auto kappa = kappa_neu + kappa_oh;
 
             // rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - SRmin) # by default
-            res += f * ssa * nm * molar_mass * pow(nm / nm0, 2 / 3) * kappa * (1 - Omega);
+            res += f * ssa * nm * molar_mass * pow(nm / nm0, 2.0 / 3.0) * kappa * (1 - Omega);
 
 //            // Do not dissolve more than what is available
 //            double total_moles = nm.val; // current amount of mols of available minerals
@@ -1210,29 +1246,9 @@ auto runKinetics(KineticPathParams & params) -> void
     reaction_kaolinite.setInitialAmounts(state_ic.speciesAmounts());
     reaction_quartz.setInitialAmounts(state_ic.speciesAmounts());
 
-    // Define the first boundary condition (with seawater)
-    // Step **: Define the boundary condition (BC)  of the reactive transport modeling problem
-    EquilibriumInverseProblem problem_bc(partition);
-    problem_bc.setTemperature(params.T, "celsius");
-    problem_bc.setPressure(params.P, "atm");
-    problem_bc.add("H2O", water_kg, "kg");
-    problem_bc.add("HCO3-", 1441.11, "mg"); // 1441.11 mg/l
-    problem_bc.add("Ca++", 310, "mg"); // 310 mg/l
-    problem_bc.add("Cl-", 19100, "mg"); // 19100 charge
-    problem_bc.add("Fe++", 0.0034, "mg"); // 0.0034 mg/l
-    problem_bc.add("Mg++", 1240, "mg"); // 1240 mg/l
-    problem_bc.add("Na+", 11400, "mg"); // 11400 mg/l
-    problem_bc.add("SO4--", 2420, "mg"); // 2420 mg/l
-    problem_bc.add("S", 100, "mg"); // 100 mg/l
-    problem_bc.pH(7.1015);
-    problem_bc.pE(-3.6887);
-
-    // Equilibrate the initial condition
-    ChemicalState state_bc = equilibrate(problem_bc);
-
     // Initialize kinetic path
     KineticPath path(reactions, partition);
-    path.setOptions(kinetic_options);
+    path.setOptions(kineticpath_options);
 
     // -------------------------------------------------------------------------------------------------//
     // Approach III: solve the path with embedded in the KineticPath uniform time-stepping procedure
@@ -1260,7 +1276,7 @@ auto runKinetics(KineticPathParams & params) -> void
     output.add("speciesAmount(Siderite)");
     output.filename(filename);
 
-    tic(TRANSPORT);
+    tic(TRANSPORT)
     path.solve(state_ic, params.t0, params.dt, params.n, "second");
 
     double total_time = toc(TRANSPORT);
