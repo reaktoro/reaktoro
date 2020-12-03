@@ -94,7 +94,7 @@ auto runKinetics(KineticPathParams & params) -> void
         std::cout << i + 1 << std::endl;
         std::cout << "**********************************************************************************" << std::endl;
 
-        output.filename(file + std::to_string(i + 1));
+        output.filename(std::to_string(i + 1) + "-" + file);
 
         // Output initial values
         double initial_calcite = chemical_states[i].speciesAmount("Calcite");
