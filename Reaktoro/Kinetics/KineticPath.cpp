@@ -159,6 +159,7 @@ struct KineticPath::Impl
         {
             // Integrate one time step only
             if(!options.use_smart_kinetic_solver) {
+
                 // Run kinetic calculations
                 t = kinetic_solver.solve(state, t, dt);
 
@@ -170,7 +171,6 @@ struct KineticPath::Impl
                 // Run smart kinetic calculations
                 t = smart_kinetic_solver.solve(state, t, dt);
 
-                SmartKineticResult result = smart_kinetic_solver.result();
                 // Update the profiler after every call to step method
                 profiler.update(smart_kinetic_solver.result());
             }
@@ -193,7 +193,7 @@ struct KineticPath::Impl
         if(options.use_smart_equilibrium_solver)
         {
             // Output characteristics of the smart equilibrium solver (e.g., clusters)
-            kinetic_solver.outputSmartSolverInfo();
+            //kinetic_solver.outputSmartSolverInfo();
 
             // Output to console time and statistics characterising kinetic solver
             //std::cout << profiler;
@@ -201,15 +201,14 @@ struct KineticPath::Impl
         if(options.use_smart_kinetic_solver)
         {
             // Output characteristics of the smart kinetic solver (e.g., clusters)
-            smart_kinetic_solver.outputSmartMethodInfo();
+            //smart_kinetic_solver.outputSmartMethodInfo();
 
             // Output to console time and statistics characterising kinetic solver
-            //std::cout << profiler;
+            std::cout << profiler;
         }
         // Generate json output file with collected profiling data
         JsonOutput(output.filename() + "-analysis.json") << analysis;
     }
-
 
     auto addSource(const ChemicalState& state, double volumerate, const std::string& units) -> void
     {
