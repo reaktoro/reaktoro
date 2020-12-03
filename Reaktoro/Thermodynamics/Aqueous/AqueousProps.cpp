@@ -18,7 +18,7 @@
 #include "AqueousProps.hpp"
 
 // Optima includes
-#include <Optima/Canonicalizer.hpp>
+#include <Optima/Echelonizer.hpp>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
@@ -80,8 +80,8 @@ struct AqueousProps::Impl
     /// The formula matrix of the aqueous species.
     MatrixXd Aaq;
 
-    /// The canonical form of the formula matrix of the aqueous species.
-    Optima::Canonicalizer canonicalizer;
+    /// The echelon form of the formula matrix of the aqueous species.
+    Optima::Echelonizer echelonizer;
 
     /// Construct an AqueousProps::Impl object.
     Impl(const ChemicalSystem& system)
@@ -111,7 +111,7 @@ struct AqueousProps::Impl
 
         Aaq = A.middleCols(ifirst, size);
 
-        canonicalizer.compute(Aaq); // canonical form of Aaq (columns of A corresponding to aqueous species)
+        echelonizer.compute(Aaq); // echelon form of Aaq (columns of A corresponding to aqueous species)
     }
 
     /// Construct an AqueousProps::Impl object.
@@ -193,8 +193,8 @@ struct AqueousProps::Impl
     {
         const auto T = props.temperature();
         const auto u = props.chemicalPotentials();
-        const auto ib = canonicalizer.indicesBasicVariables();
-        const auto R = canonicalizer.R();
+        const auto ib = echelonizer.indicesBasicVariables();
+        const auto R = echelonizer.R();
         const VectorXr ub = u(ib);
         const auto lambda = -R.transpose() * ub;
         const auto E = system.elements().size();
