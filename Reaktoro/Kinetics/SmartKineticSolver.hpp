@@ -17,61 +17,38 @@
 
 // C++ includes
 #include <memory>
-#include <string>
 
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
+#include <Reaktoro/Kinetics/SmartKineticSolverBase.hpp>
 
 namespace Reaktoro {
 
-// Forward declarations (classes)
-class ChemicalState;
-class ChemicalProperties;
-class Partition;
-class ReactionSystem;
-class ChemicalOutput;
-class ChemicalPlot;
-
-// Forward declarations (structs)
-struct SmartKineticOptions;
-struct SmartKineticResult;
-
-/// A class that represents a solver for chemical kinetics problems.
-/// @see KineticProblem
+/// A class used to perform kinetic calculations using machine learning scheme.
 class SmartKineticSolver
 {
 public:
-    /// Construct a default SmartKineticSolver instance.
-    [[deprecated("SmartKineticSolver() is deprecated. Use constructor SmartKineticSolver(const ReactionSystem&, const Partition&) instead.")]]
-    SmartKineticSolver();
-
-    /// Construct a SmartKineticSolver instance.
-    [[deprecated("SmartKineticSolver(const ReactionSystem&) is deprecated. Use constructor SmartKineticSolver(const ReactionSystem&, const Partition&) instead.")]]
-    explicit SmartKineticSolver(const ReactionSystem& reactions);
-
-    /// Construct a SmartKineticSolver instance.
+    /// Construct a SmartKineticSolver instance with given reaction system and partition.
     explicit SmartKineticSolver(const ReactionSystem& reactions, const Partition& partition);
 
-    /// Assign a SmartKineticSolver instance to this instance.
-    auto operator=(SmartKineticSolver other) -> SmartKineticSolver&;
-
-    /// Destroy the SmartKineticSolver instance.
+    /// Destroy this SmartKineticSolverBase instance.
     virtual ~SmartKineticSolver();
 
     /// Set the options for the chemical kinetics calculation.
     /// @see SmartKineticOptions
     auto setOptions(const SmartKineticOptions& options) -> void;
 
-    /// Set the partition of the chemical system.
-    /// Use this method to specify the equilibrium, kinetic, and inert species.
-    [[deprecated("SmartKineticSolver::setPartition is deprecated. Use constructor SmartKineticSolver(const ReactionSystem&, const Partition&) instead.")]]
-    auto setPartition(const Partition& partition) -> void;
+    /// Initialize the chemical kinetics solver before integration.
+    /// This method should be invoked whenever the user intends to make a call to `KineticsSolver::step`.
+    /// @param[in,out] state The state of the chemical system
+    /// @param tstart The start time of the integration.
+    auto initialize(ChemicalState& state, double tstart) -> void;
 
     /// Add a source to the chemical kinetics problem.
     /// @param state The chemical state representing the source.
     /// @param volumerate The volumetric rate of the source.
     /// @param units The units of the volumetric rate (compatible with m3/s).
-    auto addSource(const ChemicalState& state, double volumerate, const std::string& units) -> void;
+    auto addSource(ChemicalState state, double volumerate, const std::string& units) -> void;
 
     /// Add a phase sink to the chemical kinetics problem.
     /// This method allows the chemical kinetics problem to account for
@@ -95,20 +72,6 @@ public:
     /// @param units The units of the volumetric rate (compatible with m3/s).
     auto addSolidSink(double volumerate, const std::string& units) -> void;
 
-    /// Initialize the chemical kinetics solver before integration.
-    /// This method should be invoked whenever the user intends to make a call to `KineticsSolver::step`.
-    /// @param[in,out] state The state of the chemical system
-    /// @param tstart The start time of the integration.
-    auto initialize(ChemicalState& state, double tstart) -> void;
-
-    /// Initialize the chemical kinetics solver before integration
-    /// with the provided vector of unknowns `benk` = [be, nk].
-    /// This method should be invoked whenever the user intends to make a call to `KineticsSolver::solve`.
-    /// @param[in,out] state The state of the chemical system
-    /// @param tstart The start time of the integration
-    /// @param benk The initial vector of unknowns `benk` = [be, nk].
-    auto initialize(ChemicalState& state, double tstart, VectorConstRef benk) -> void;
-
     /// Solve the chemical kinetics problem from a given initial time to a final time (used in KineticPath).
     /// @param[in,out] state The kinetic state of the system
     /// @param t The start time of the integration (in units of seconds)
@@ -130,17 +93,11 @@ public:
     /// @see SmartKineticResult
     auto result() const -> const SmartKineticResult&;
 
-    // Return properties of the chemical state provided by the KineticSolver.
-    /// @see ChemicalProperties
-    auto properties() const -> const ChemicalProperties&;
-
-    /// Output clusters created during the ODML algorithm.
-    auto outputSmartMethodInfo() const -> void;
+    /// Output into about the ODML algorithm
+    auto outputInfo() const -> void;
 
 private:
-    struct Impl;
-
-    std::unique_ptr<Impl> pimpl;
+    std::unique_ptr<SmartKineticSolverBase> solverptr;
 };
 
 } // namespace Reaktoro
