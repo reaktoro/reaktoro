@@ -590,12 +590,12 @@ auto SmartKineticSolverClustering::outputInfo() const -> void
     */
 }
 
+/// Implementation of the SmartKineticSolverClusteringExtended functionality
+
 SmartKineticSolverClusteringExtended::SmartKineticSolverClusteringExtended(const ReactionSystem& reactions, const Partition& partition)
-        : SmartKineticSolverBase(reactions, partition)
+: SmartKineticSolverBase(reactions, partition)
 {
 }
-
-/// Implementation of the SmartKineticSolverClusteringExtended functionality
 
 SmartKineticSolverClusteringExtended::~SmartKineticSolverClusteringExtended()
 {
@@ -1144,6 +1144,5 @@ auto SmartKineticSolverClusteringExtended::outputInfo() const -> void
     }
     */
 }
-
 
 } // namespace Reaktoro

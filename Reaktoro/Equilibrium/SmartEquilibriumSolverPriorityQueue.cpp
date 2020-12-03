@@ -22,11 +22,13 @@
 namespace Reaktoro {
 
 
-SmartEquilibriumSolverPriorityQueue::SmartEquilibriumSolverPriorityQueue(const ChemicalSystem &system) : SmartEquilibriumSolverBase(Partition(system))
+SmartEquilibriumSolverPriorityQueue::SmartEquilibriumSolverPriorityQueue(const ChemicalSystem &system)
+: SmartEquilibriumSolverBase(Partition(system))
 {
 }
 
-SmartEquilibriumSolverPriorityQueue::SmartEquilibriumSolverPriorityQueue(const Partition& partition) : SmartEquilibriumSolverBase(partition)
+SmartEquilibriumSolverPriorityQueue::SmartEquilibriumSolverPriorityQueue(const Partition& partition)
+: SmartEquilibriumSolverBase(partition)
 {
 }
 
@@ -86,7 +88,7 @@ auto SmartEquilibriumSolverPriorityQueue::learn(ChemicalState& state, double T, 
     // The amounts of the equilibrium species amounts at the calculated equilibrium state
     ne = n(ies);
 
-ADdd    // Mole fraction of the species at the calculated equilibrium state
+    // Mole fraction of the species at the calculated equilibrium state
     const auto& x = _properties.moleFractions();
 
     // Mole fraction of the equilibrium species species at the calculated equilibrium state

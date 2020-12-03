@@ -19,7 +19,7 @@ namespace Reaktoro {
 
 SmartKineticSolverBase::SmartKineticSolverBase(const ReactionSystem& reactions, const Partition& partition)
 : _reactions(reactions), system(partition.system()), _partition(partition),
-  equilibrium(partition), smart_equilibrium(partition)
+equilibrium(partition), smart_equilibrium(partition)
 {
     // Set the indices of the equilibrium, kinetic, and inert species
     ies = _partition.indicesEquilibriumSpecies();
