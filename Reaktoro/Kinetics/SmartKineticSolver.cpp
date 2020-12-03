@@ -562,6 +562,10 @@ struct SmartKineticSolver::Impl
         nk = n(iks);
         ne = n(ies);
 
+        // Initialize be
+        be.resize(Ee + Nk);
+        be = Ae * ne;
+
         // Assemble the vector benk = [be nk]
         benk.resize(Ee + Nk);
         benk.head(Ee) = Ae * ne;
@@ -2676,7 +2680,8 @@ struct SmartKineticSolver::Impl
         nk = n(iks);
 
         // Assemble the vector benk = [be nk]
-        benk.resize(Ee + Nk);
+        //benk.head(Ee) = be;
+        benk.head(Ee) = Ae * ne; // TODO: consider if initializing with Ae * ne or be is better
         benk.tail(Nk) = nk;
 
         result.timing.initialize = toc(INITIALIZE_STEP);
@@ -2744,6 +2749,7 @@ struct SmartKineticSolver::Impl
         return t;
 
     }
+
     /// Solve the chemical kinetics problem from a given initial time to a final time.
     auto solve(ChemicalState& state, double t, double dt, VectorConstRef b) -> void
     {
