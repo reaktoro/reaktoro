@@ -31,6 +31,8 @@ class ChemicalState;
 class ChemicalProperties;
 class Partition;
 class ReactionSystem;
+class ODESolver;
+class EquilibriumSensitivity;
 
 // Forward declarations (structs)
 struct KineticOptions;
@@ -143,6 +145,16 @@ public:
 
     /// Return properties of the chemical state provided by the KineticSolver
     auto properties() const -> const ChemicalProperties&;
+
+    /// Return the sensitivity of the current equilibrium state.
+    /// The sensitivity of the equilibrium state is defined as the rate of change of the
+    /// molar amounts of the equilibrium species with respect to temperature `T`, pressure `P`,
+    /// and molar amounts of equilibrium elements `be`.
+    auto sensitivity() -> const EquilibriumSensitivity&;
+
+    /// Return instance of the ODESolver class of the chemical the KineticSolver
+    /// @see ODESolver
+    auto ode() const -> const ODESolver&;
 
     // Output statistics related to the ODML method
     auto outputSmartSolverInfo() const -> void;

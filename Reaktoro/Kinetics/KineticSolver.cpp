@@ -307,6 +307,10 @@ struct KineticSolver::Impl
         ne = n(ies);
         nk = n(iks);
 
+        // Initialize be
+        be.resize(Ee + Nk);
+        be = Ae * ne;
+
         // Assemble the vector benk = [be nk]
         benk.resize(Ee + Nk);
         benk.head(Ee) = Ae * ne;
@@ -409,7 +413,8 @@ struct KineticSolver::Impl
         nk = n(iks);
 
         // Assemble the vector benk = [be nk]
-        benk.resize(Ee + Nk);
+        benk.head(Ee) = be;
+        //benk.head(Ee) = Ae * ne; // TODO: consider if initializing with Ae * ne or be is better
         benk.tail(Nk) = nk;
 
         result.timing.initialize=toc(INITIALIZE_STEP);
@@ -489,7 +494,6 @@ struct KineticSolver::Impl
 
         // Integrate the chemical kinetics ODE from `t` to `t + dt`
         ode.solve(t, dt, benk);
-        //ode.solve_implicit_1st_order(t, dt, benk);
 
         // Extract the `be` and `nk` entries of the vector `benk`
         be = benk.head(Ee);
@@ -752,6 +756,16 @@ auto KineticSolver::result() const -> const KineticResult&
 auto KineticSolver::outputSmartSolverInfo() const -> void
 {
     return pimpl->outputSmartSolverInfo();
+}
+
+auto KineticSolver::ode() const -> const ODESolver&
+{
+    return pimpl->ode;
+}
+
+auto KineticSolver::sensitivity() -> const EquilibriumSensitivity&
+{
+    return pimpl->equilibrium.sensitivity();
 }
 
 } // namespace Reaktoro
