@@ -22,6 +22,7 @@ auto ReactiveTransportTiming::operator+=(const ReactiveTransportTiming& other) -
     step += other.step;
     transport += other.transport;
     equilibrium += other.equilibrium;
+    kinetics += other.kinetics;
     return *this;
 }
 
