@@ -18,6 +18,8 @@
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
+#include <Reaktoro/Kinetics/KineticOptions.hpp>
+#include <Reaktoro/Kinetics/SmartKineticOptions.hpp>
 #include <Reaktoro/Transport/TransportOptions.hpp>
 
 namespace Reaktoro {
@@ -34,8 +36,17 @@ struct ReactiveTransportOptions
     /// The options for the smart equilibrium calculations.
     SmartEquilibriumOptions smart_equilibrium;
 
-    /// The boolean flag that indicates whether SmartEquilibriumSolver should be used.
+    /// The options for the kinetic calculations.
+    KineticOptions kinetics;
+
+    /// The options for the smart kinetic calculations.
+    SmartKineticOptions smart_kinetics;
+
+    /// The boolean flag that indicates whether smart equilibrium solver should be used.
     bool use_smart_equilibrium_solver = false;
+
+    /// The boolean flag that indicates whether smart kinetic solver should be used.
+    bool use_smart_kinetic_solver = false;
 };
 
 } // namespace Reaktoro
