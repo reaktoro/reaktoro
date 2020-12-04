@@ -22,6 +22,10 @@
 #include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Transport/ReactiveTransportOptions.hpp>
 #include <Reaktoro/Transport/ReactiveTransportResult.hpp>
+#include <Reaktoro/Transport/TransportSolver.hpp>
+#include <Reaktoro/Transport/Mesh.hpp>
+#include <Reaktoro/Kinetics/KineticSolver.hpp>
+#include <Reaktoro/Kinetics/SmartKineticSolver.hpp>
 
 namespace Reaktoro {
 
@@ -40,13 +44,19 @@ public:
     /// Construct a ReactiveTransportSolver instance with given chemical system.
     explicit ReactiveTransportSolver(const ChemicalSystem& system);
 
-    /// Construct a ReactiveTransportSolver instance with given partition.
+    /// Construct a ReactiveTransportSolver instance with given chemical system.
     explicit ReactiveTransportSolver(const Partition& partition);
+
+    /// Construct a ReactiveTransportSolver instance when system, reactions, and partition are provided.
+    ReactiveTransportSolver(const ReactionSystem& reactions, const Partition& partition);
+
+    /// Construct a copy of a ReactiveTransportSolver instance.
+    ReactiveTransportSolver(const ReactiveTransportSolver& other);
 
     /// Destroy this ReactiveTransportSolver instance.
     virtual ~ReactiveTransportSolver();
 
-    /// Assign a copy of an ReactiveTransportSolver instance
+    /// Assign a copy of an ReactiveTransportSolver instance.
     auto operator=(ReactiveTransportSolver other) -> ReactiveTransportSolver&;
 
     /// Set the options for the reactive transport calculations.
@@ -80,8 +90,8 @@ public:
     /// This method should be called before the first call to method ReactiveTransportSolver::step.
     auto initialize() -> void;
 
-    /// Perform one time step of a reactive transport calculation.
-    auto step(ChemicalField& field) -> ReactiveTransportResult;
+    /// Perform one time step of a reactive transport calculation with pure equilibrium.
+    auto step(ChemicalField& field) -> void;
 
     /// Return the result of the last reactive transport time step calculation.
     auto result() const -> const ReactiveTransportResult&;
