@@ -137,7 +137,7 @@ struct ReactiveTransportParams
                                "-nsteps-" + std::to_string(nsteps) +
                                "-" + getActivityModelTag(activity_model) + "-reference";
 
-        std::string smart_test_tag = "-" + getActivityModelTag(activity_model) +
+        std::string smart_test_tag = "-" + getSmartMethodTag(method) +
                                      "-dt-" + dt_stream.str() +
                                      "-ncells-" + std::to_string(ncells) +
                                      "-nsteps-" + std::to_string(nsteps) +
@@ -294,10 +294,10 @@ auto getActivityModelTag(enum ActivityModel activity_model) -> std::string
     switch(activity_model)
     {
         case ActivityModel::HKF: return "hkf-full";
-        case ActivityModel::DebyeHuckel: return "dk-full";
+        case ActivityModel::DebyeHuckel: return "dh-full";
         case ActivityModel::Pitzer: return "pitzer-full";
         case ActivityModel::HKFSelectedSpecies: return "hkf-selected-species";
-        case ActivityModel::DebyeHuckelSelectedSpecies: return "dk-selected-species";
+        case ActivityModel::DebyeHuckelSelectedSpecies: return "dh-selected-species";
         case ActivityModel::PitzerSelectedSpecies: return "pitzer-selected-species";
     }
     return "";
