@@ -71,14 +71,14 @@ struct KineticSolver::Impl
     /// The ODE solver instance
     ODESolver ode;
 
-    /// The indices of the equilibrium and kinetic species
-    Indices ies, iks;
+    /// The indices of the equilibrium, kinetic, and inert species
+    Indices ies, iks, iis;
 
     /// The indices of the elements in the equilibrium and kinetic partition
     Indices iee, ike;
 
-    /// The number of equilibrium and kinetic species
-    Index Ne, Nk;
+    /// The number of equilibrium, kinetic, and inert species
+    Index Ne, Nk, Ni;
 
     /// The number of elements in the equilibrium and kinetic partition
     Index Ee, Ek;
@@ -136,9 +136,10 @@ struct KineticSolver::Impl
       equilibrium(partition),
       smart_equilibrium(partition)
     {
-        // Set the indices of the equilibrium and kinetic species
+        // Set the indices of the equilibrium, kinetic, and inert species
         ies = partition.indicesEquilibriumSpecies();
         iks = partition.indicesKineticSpecies();
+        iis = partition.indicesInertSpecies();
 
         // Set the indices of the equilibrium and kinetic elements
         iee = partition.indicesEquilibriumElements();
@@ -147,6 +148,7 @@ struct KineticSolver::Impl
         // Set the number of equilibrium and kinetic species
         Ne = ies.size();
         Nk = iks.size();
+        Ni = iis.size();
 
         // Set the number of equilibrium and kinetic elements
         Ee = iee.size();
@@ -181,7 +183,7 @@ struct KineticSolver::Impl
         A.bottomRows(Nk) = tr(Sk);
 
         // Auxiliary identity matrix
-        const Matrix I = identity(Ne + Nk, Ne + Nk);
+        const Matrix I = identity(Ne + Nk + Ni, Ne + Nk + Ni);
 
         // Auxiliary selected equilibrium and kinetic rows of the identity matrix
         const Matrix Ie = rows(I, ies);
@@ -189,6 +191,17 @@ struct KineticSolver::Impl
 
         // Initialise the coefficient matrix `B` of the source rates
         B = zeros(Ee + Nk, system.numSpecies());
+
+//        //std::cout << system.numSpecies() << std::endl;
+//        //std::cout << B << std::endl;
+//        std::cout << B.innerSize() << ", " << B.outerSize() << std::endl;
+//        //std::cout << Ie.innerSize() << ", " << Ie.outerSize() << std::endl;
+//        const Matrix B_ = Ae * Ie;
+//        //std::cout << B_ << std::endl;
+//        //std::cout << "B_ = " << B_ << std::endl;
+//        std::cout << B_.innerSize() << ", " << B_.outerSize() << std::endl;
+//        getchar();
+
         B.topRows(Ee) = Ae * Ie;
         B.bottomRows(Nk) = Ik;
 
