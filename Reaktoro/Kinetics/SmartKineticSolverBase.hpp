@@ -190,14 +190,14 @@ protected:
     /// The canonicalizer used to determine primary and secondary species
     Canonicalizer canonicalizer;
 
-    /// The indices of the equilibrium and kinetic species
-    Indices ies, iks;
+    /// The indices of the equilibrium, kinetic, and inert species
+    Indices ies, iks, iis;
 
     /// The indices of the elements in the equilibrium and kinetic partition
     Indices iee, ike;
 
-    /// The number of equilibrium, kinetic, and all species
-    Index Ne, Nk, N;
+    /// The number of equilibrium, kinetic, inert, and all species
+    Index Ne, Nk, Ni, N;
 
     /// The number of elements in the equilibrium partition
     Index Ee, E;

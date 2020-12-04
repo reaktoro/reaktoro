@@ -24,10 +24,12 @@ equilibrium(partition), smart_equilibrium(partition)
     // Set the indices of the equilibrium, kinetic, and inert species
     ies = _partition.indicesEquilibriumSpecies();
     iks = _partition.indicesKineticSpecies();
+    iis = _partition.indicesInertSpecies();
 
     // Set the indices of the equilibrium and kinetic elements
     iee = _partition.indicesEquilibriumElements();
     ike = _partition.indicesKineticElements();
+    Ni = iis.size();
 
     // Set the number of equilibrium, kinetic, and inert species
     Ne = ies.size();
@@ -70,7 +72,7 @@ equilibrium(partition), smart_equilibrium(partition)
     A.bottomRows(Nk) = tr(Sk);
 
     // Auxiliary identity matrix
-    const Matrix I = identity(Ne + Nk, Ne + Nk);
+    const Matrix I = identity(Ne + Nk + Ni, Ne + Nk + Ni);
 
     // Auxiliary selected equilibrium and kinetic rows of the identity matrix
     const Matrix Ie = rows(I, ies);
