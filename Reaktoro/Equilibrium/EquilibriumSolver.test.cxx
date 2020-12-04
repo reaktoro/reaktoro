@@ -66,167 +66,159 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         Species("SiO2(s)"       ).withStandardGibbsEnergy( -856238.86).withName("Quartz"   ),
     });
 
-    // auto aqueous_solution = GENERATE(
-    //     AqueousPhase(speciate("H O")),
-    //     AqueousPhase(speciate("H O Na Cl")),
-    //     AqueousPhase(speciate("H O Na Cl C")),
-    //     AqueousPhase(speciate("H O Na Cl C Ca")),
-    //     AqueousPhase(speciate("H O Na Cl C Ca Mg")),
-    //     AqueousPhase(speciate("H O Na Cl C Ca Mg Si"))
-    // );
-
-    // auto gaseous_solution = GENERATE(
-    //     GaseousPhase("CO2(g)"),
-    //     GaseousPhase("CO2(g) H2O(g)"),
-    //     GaseousPhase("CO2(g) H2O(g) O2(g)"),
-    //     GaseousPhase("CO2(g) H2O(g) O2(g) H2(g)")
-    // );
-
-    // auto minerals = GENERATE(
-    //     MineralPhases("Halite"),
-    //     MineralPhases("Halite Calcite"),
-    //     MineralPhases("Halite Calcite Magnesite"),
-    //     MineralPhases("Halite Calcite Magnesite Dolomite"),
-    //     MineralPhases("Halite Calcite Magnesite Dolomite Quartz")
-    // );
-
-    // auto phases = GENERATE_COPY(
-    //     Phases(db, aqueous_solution),
-    //     Phases(db, aqueous_solution, gaseous_solution),
-    //     Phases(db, aqueous_solution, gaseous_solution, minerals),
-    //     Phases(db, aqueous_solution, minerals)
-    // );
-
-    // const auto phases = Phases(db,
-    //     // AqueousPhase(speciate("H O"))
-    //     // AqueousPhase(speciate("H O C"))
-    //     AqueousPhase(speciate("H O Na Cl C Ca Mg Si")),
-    //     GaseousPhase(speciate("H O C"))
-    //     // , MineralPhases("Halite") // OK
-    //     // , MineralPhases("Calcite") // OK
-    //     // , MineralPhases("Magnesite") // OK
-    //     // , MineralPhases("Dolomite") // OK
-    //     // , MineralPhases("Quartz") // OK
-    //     // , MineralPhases("Quartz Calcite") // OK
-    //     // , MineralPhases("Halite Calcite") // OK
-    //     // , MineralPhases("Calcite Magnesite") // OK
-    //     // , MineralPhases("Calcite Magnesite Halite") // ~~FAIL!~~NOW IT WORKS USING zeps to determine stability!
-    //     // , MineralPhases("Halite Calcite Magnesite Quartz") // WORKS with z > -eps
-    //     // , MineralPhases("Calcite Dolomite") // OK
-    //     // , MineralPhases("Magnesite Dolomite") // OK
-    //     // , MineralPhases("Calcite Magnesite Dolomite") // FAIL!
-    //     // , MineralPhases("Halite Calcite Magnesite Dolomite")
-    //     , MineralPhases("Halite Calcite Magnesite Dolomite Quartz")
-    // );
-
-    Phases phases(db);
-
-    // phases.add( AqueousPhase(speciate("H O") );
-    // phases.add( AqueousPhase(speciate("H O C") );
-    phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
-    phases.add( GaseousPhase(speciate("H O C")) );
-    // phases.add( MineralPhases("Halite") );
-    // phases.add( MineralPhases("Calcite") );
-    // phases.add( MineralPhases("Magnesite") );
-    // phases.add( MineralPhases("Dolomite") );
-    // phases.add( MineralPhases("Quartz") );
-    // phases.add( MineralPhases("Quartz Calcite") );
-    // phases.add( MineralPhases("Halite Calcite") );
-    // phases.add( MineralPhases("Calcite Magnesite") );
-    // phases.add( MineralPhases("Calcite Magnesite Halite") );
-    // phases.add( MineralPhases("Halite Calcite Magnesite Quartz") );
-    // phases.add( MineralPhases("Calcite Dolomite") );
-    // phases.add( MineralPhases("Magnesite Dolomite") );
-    // phases.add( MineralPhases("Calcite Magnesite Dolomite") );
-    // phases.add( MineralPhases("Halite Calcite Magnesite Dolomite") );
-    phases.add( MineralPhases("Halite Calcite Magnesite Dolomite Quartz") );
-
-    const auto system = ChemicalSystem(phases);
-
-    // const auto T = GENERATE(25.0, 60.0);
-    // const auto P = GENERATE(1.0, 100.0);
-
-    // const auto nH2O    = GENERATE(55.0);
-    // const auto nNaCl   = GENERATE(0.0, 1.0, 5.0, 10.0);
-    // const auto nCO2    = GENERATE(0.0, 0.1, 1.0, 5.0);
-    // const auto nO2     = GENERATE(0.0, 0.1);
-    // const auto nH2     = GENERATE(0.0, 0.1);
-    // const auto nCH4    = GENERATE(0.0, 0.1);
-    // const auto nCaCO3  = GENERATE(0.0, 1e-3, 5.0);
-    // const auto nMgCO3  = GENERATE(0.0, 1e-3, 5.0);
-    // const auto nSiO2   = GENERATE(0.0, 1e-6, 1.0);
-
-    // const auto T = 60.0;
-    // const auto P = 100.0;
-
-    const auto T = 25.0;
-    const auto P = 1.0;
-
-    const auto nH2O    = 55.0;
-    const auto nNaCl   = 1.0e-2;
-    const auto nCO2    = 100.0e-2;
-    const auto nO2     = 0.0e-2;
-    const auto nH2     = 0.0e-2;
-    const auto nCH4    = 0.0e-2;
-    const auto nCaCO3  = 1.0e-2;
-    const auto nMgCO3  = 2.0e-2;
-    const auto nSiO2   = 1.0e-2;
-
-    ChemicalState state(system);
-    state.setTemperature(T, "celsius");
-    state.setPressure(P, "bar");
-    state.setSpeciesAmount("H2O"   , nH2O   , "mol");
-    state.setSpeciesAmount("NaCl"  , nNaCl  , "mol");
-    state.setSpeciesAmount("CO2"   , nCO2   , "mol");
-    // state.setSpeciesAmount("CO2(g)"   , nCO2   , "mol");
-    // state.setSpeciesAmount("O2"    , nO2    , "mol");
-    // state.setSpeciesAmount("H2"    , nH2    , "mol");
-    // state.setSpeciesAmount("CH4"   , nCH4   , "mol");
-    state.setSpeciesAmount("CaCO3" , nCaCO3 , "mol");
-    // state.setSpeciesAmount("Calcite" , nCaCO3 , "mol");
-    state.setSpeciesAmount("MgCO3" , nMgCO3 , "mol");
-    state.setSpeciesAmount("SiO2"  , nSiO2  , "mol");
-
-    // VectorXd n(5); n << 55, 2.51011e-13, 2.51011e-13, 2.28356e-31 ,1.14178e-31;
-    // state.setSpeciesAmounts(n);
-
+    const auto T = 60.0;  // in celsius
+    const auto P = 100.0; // in bar
 
     EquilibriumOptions options;
-    // options.optima.output = true;
-    options.optima.output = false;
-    options.epsilon = 1e-40;
-    options.optima.max_iterations = 100;
-    options.optima.tolerance = 1e-10;
-    // options.optima.tolerance_linear_equality_constraints = options.optima.tolerance;
-    // options.optima.tolerance = 1e-20;
-    options.optima.kkt.method = Optima::SaddlePointMethod::Rangespace;
-    // options.optima.kkt.method = Optima::SaddlePointMethod::Fullspace;
-    // options.optima.kkt.method = Optima::SaddlePointMethod::Nullspace;
+    // options.optima.output.active = true;
+    options.optima.maxiterations = 100;
+    options.optima.convergence.tolerance = 1e-10;
 
+    WHEN("there is only pure water")
+    {
+        Phases phases(db);
+        phases.add( AqueousPhase(speciate("H O")) );
 
-    options.optima.linesearch.trigger_when_current_error_is_greater_than_initial_error_by_factor = 1;
-    options.optima.linesearch.trigger_when_current_error_is_greater_than_previous_error_by_factor = 2;
+        ChemicalSystem system(phases);
 
+        ChemicalState state(system);
+        state.setTemperature(T, "celsius");
+        state.setPressure(P, "bar");
+        state.setSpeciesAmount("H2O", 55, "mol");
 
-    EquilibriumSolver solver(system);
-    solver.setOptions(options);
+        EquilibriumSolver solver(system);
+        solver.setOptions(options);
 
-    auto start = time();
+        auto result = solver.solve(state);
 
-    ChemicalState copy(state);
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations <= 15 );
+    }
 
-    auto result = solver.solve(copy);
+    WHEN("there is only pure water with allowed extremely tiny species amounts")
+    {
+        Phases phases(db);
+        phases.add( AqueousPhase(speciate("H O")) );
 
-    // copy.setSpeciesAmount("CO2", copy.speciesAmount("CO2") + 0.1);
+        ChemicalSystem system(phases);
 
-    // solver.solve(copy);
+        ChemicalState state(system);
+        state.setTemperature(T, "celsius");
+        state.setPressure(P, "bar");
+        state.setSpeciesAmount("H2O", 55, "mol");
 
-    // copy.setSpeciesAmount("CO2(g)", copy.speciesAmount("CO2(g)") + 0.1);
+        EquilibriumOptions opts;
+        opts = options;
+        opts.epsilon = 1e-40;
 
-    // solver.solve(copy);
+        EquilibriumSolver solver(system);
+        solver.setOptions(opts);
 
-    // std::cout << "Time (s) = " << elapsed(start) << std::endl;
+        auto result = solver.solve(state);
 
-    CHECK( result.optima.succeeded );
-    CHECK( result.optima.iterations <= 48 );
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations <= 29 );
+    }
+
+    WHEN("there is only pure water but there are other elements besides H and O with zero amounts")
+    {
+        Phases phases(db);
+        phases.add( AqueousPhase(speciate("H O C Na Cl Ca")) );
+
+        ChemicalSystem system(phases);
+
+        ChemicalState state(system);
+        state.setTemperature(T, "celsius");
+        state.setPressure(P, "bar");
+        state.setSpeciesAmount("H2O", 55, "mol"); // no amount given for species with elements C, Na, Cl, Ca
+
+        EquilibriumSolver solver(system);
+        solver.setOptions(options);
+
+        auto result = solver.solve(state);
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations <= 15 );
+    }
+
+    WHEN("there is a more complicated aqueous solution")
+    {
+        Phases phases(db);
+        phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
+
+        ChemicalSystem system(phases);
+
+        ChemicalState state(system);
+        state.setTemperature(T, "celsius");
+        state.setPressure(P, "bar");
+        state.setSpeciesAmount("H2O"   , 55.0 , "mol");
+        state.setSpeciesAmount("NaCl"  , 0.01 , "mol");
+        state.setSpeciesAmount("CO2"   , 10.0 , "mol");
+        state.setSpeciesAmount("CaCO3" , 0.01 , "mol");
+        state.setSpeciesAmount("MgCO3" , 0.02 , "mol");
+        state.setSpeciesAmount("SiO2"  , 0.01 , "mol");
+
+        EquilibriumSolver solver(system);
+        solver.setOptions(options);
+
+        auto result = solver.solve(state);
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations <= 28 );
+    }
+
+    WHEN("there is an aqueous solution and a gaseous solution")
+    {
+        Phases phases(db);
+        phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
+        phases.add( GaseousPhase(speciate("H O C")) );
+
+        ChemicalSystem system(phases);
+
+        ChemicalState state(system);
+        state.setTemperature(T, "celsius");
+        state.setPressure(P, "bar");
+        state.setSpeciesAmount("H2O"   , 55.0 , "mol");
+        state.setSpeciesAmount("NaCl"  , 0.01 , "mol");
+        state.setSpeciesAmount("CO2"   , 10.0 , "mol");
+        state.setSpeciesAmount("CaCO3" , 0.01 , "mol");
+        state.setSpeciesAmount("MgCO3" , 0.02 , "mol");
+        state.setSpeciesAmount("SiO2"  , 0.01 , "mol");
+
+        EquilibriumSolver solver(system);
+        solver.setOptions(options);
+
+        auto result = solver.solve(state);
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations <= 29 );
+    }
+
+    WHEN("there is an aqueous solution, gaseous solution, several minerals")
+    {
+        Phases phases(db);
+        phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
+        phases.add( GaseousPhase(speciate("H O C")) );
+        phases.add( MineralPhases("Halite Calcite Magnesite Dolomite Quartz") );
+
+        ChemicalSystem system(phases);
+
+        ChemicalState state(system);
+        state.setTemperature(T, "celsius");
+        state.setPressure(P, "bar");
+        state.setSpeciesAmount("H2O"   , 55.0 , "mol");
+        state.setSpeciesAmount("NaCl"  , 0.01 , "mol");
+        state.setSpeciesAmount("CO2"   , 10.0 , "mol");
+        state.setSpeciesAmount("CaCO3" , 0.01 , "mol");
+        state.setSpeciesAmount("MgCO3" , 0.02 , "mol");
+        state.setSpeciesAmount("SiO2"  , 0.01 , "mol");
+
+        EquilibriumSolver solver(system);
+        solver.setOptions(options);
+
+        auto result = solver.solve(state);
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations <= 28 );
+    }
 }
