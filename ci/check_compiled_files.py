@@ -27,10 +27,10 @@ elif sys.platform == 'win32':
     assert (artifacts / 'lib/Reaktoro.lib').is_file()
     assert (artifacts / 'bin/Reaktoro.dll').is_file()
     assert (artifacts / 'include/Reaktoro/Reaktoro.hpp').is_file()
-    assert (artifacts / f'python/Lib/site-packages/reaktoro/PyReaktoro{ext_suffix}').is_file()
+    assert (artifacts / f'python/Lib/site-packages/reaktoro/reaktoro4py{ext_suffix}').is_file()
     if os.environ.get('CONFIG', '').lower() == 'debug':
         assert (artifacts / 'bin/Reaktoro.pdb').is_file()
-        assert (artifacts / f'python/Lib/site-packages/reaktoro/PyReaktoro{pdb_suffix}').is_file()
+        assert (artifacts / f'python/Lib/site-packages/reaktoro/reaktoro4py{pdb_suffix}').is_file()
 
 elif sys.platform == 'darwin':
     assert (artifacts / 'lib/libReaktoro.dylib').is_file()
