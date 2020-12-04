@@ -20,8 +20,6 @@
 #include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumHessian.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumInverseSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumPath.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
