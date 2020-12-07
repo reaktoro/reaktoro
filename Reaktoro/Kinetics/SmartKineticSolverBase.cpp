@@ -414,7 +414,6 @@ auto SmartKineticSolverBase::solve(ChemicalState& state, double t, double dt) ->
     nk = _n(iks);
 
     // Assemble the vector benk = [be nk]
-    //benk.head(Ee) = be;
     benk.head(Ee) = Ae * ne;
     benk.tail(Nk) = nk;
 
