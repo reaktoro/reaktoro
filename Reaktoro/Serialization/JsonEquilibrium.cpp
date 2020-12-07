@@ -66,9 +66,9 @@ void from_json(const json& j, SmartEquilibriumResult& obj) {
 void to_json(json& j, const SmartEquilibriumTiming& obj) {
     j["solve"] = obj.solve;
     j["learn"] = obj.learn;
-    j["learning_gibbs_energy_minimization"] = obj.learn_gibbs_energy_minimization;
-    j["learning_chemical_properties"] = obj.learn_chemical_properties;
-    j["learning_sensitivity_matrix"] = obj.learn_sensitivity_matrix;
+    j["learn_gibbs_energy_minimization"] = obj.learn_gibbs_energy_minimization;
+    j["learn_chemical_properties"] = obj.learn_chemical_properties;
+    j["learn_sensitivity_matrix"] = obj.learn_sensitivity_matrix;
     j["learning_storage"] = obj.learn_storage;
     j["estimate"] = obj.estimate;
     j["estimate_search"] = obj.estimate_search;
@@ -77,13 +77,12 @@ void to_json(json& j, const SmartEquilibriumTiming& obj) {
     j["estimate_database_priority_update"] = obj.estimate_database_priority_update;
 }
 
-
 void from_json(const json& j, SmartEquilibriumTiming& obj) {
     j.at("solve").get_to(obj.solve);
     j.at("learn").get_to(obj.learn);
-    j.at("learning_gibbs_energy_minimization").get_to(obj.learn_gibbs_energy_minimization);
-    j.at("learning_chemical_properties").get_to(obj.learn_chemical_properties);
-    j.at("learning_sensitivity_matrix").get_to(obj.learn_sensitivity_matrix);
+    j.at("learn_gibbs_energy_minimization").get_to(obj.learn_gibbs_energy_minimization);
+    j.at("learn_chemical_properties").get_to(obj.learn_chemical_properties);
+    j.at("learn_sensitivity_matrix").get_to(obj.learn_sensitivity_matrix);
     j.at("learning_storage").get_to(obj.learn_storage);
     j.at("estimate").get_to(obj.estimate);
     j.at("estimate_search").get_to(obj.estimate_search);

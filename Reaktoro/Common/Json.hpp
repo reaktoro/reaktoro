@@ -33,7 +33,7 @@ class JsonOutput
 {
 public:
     /// Construct a JsonOutput object.
-    JsonOutput(std::string filename)
+    JsonOutput(const std::string& filename)
     : file(filename)
     {}
 
