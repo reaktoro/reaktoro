@@ -262,7 +262,7 @@ struct KineticSolver::Impl
             const auto np = rows(n, ifirst, size);
             auto qp = rows(_q, ifirst, size);
             phasevolume = _properties.phaseVolumes()[iphase];
-            qp = -volume*np/phasevolume;
+            qp = -volume*np/phasevolume; // TODO: check if this is correct, since this value is never used
             if(old_source_fn)
                 _q += old_source_fn(_properties);
             return _q;
@@ -426,8 +426,7 @@ struct KineticSolver::Impl
         nk = n(iks);
 
         // Assemble the vector benk = [be nk]
-        benk.head(Ee) = be;
-        //benk.head(Ee) = Ae * ne; // TODO: consider if initializing with Ae * ne or be is better
+        benk.head(Ee) = Ae * ne;
         benk.tail(Nk) = nk;
 
         result.timing.initialize=toc(INITIALIZE_STEP);
