@@ -7,7 +7,6 @@ from collections import namedtuple
 # a and b values of a linear source: q = a*x+b
 source_parameters = namedtuple("source_parameters", ["a", "b"])
 
-
 @pytest.mark.parametrize(
     "source_parameters",
     [
