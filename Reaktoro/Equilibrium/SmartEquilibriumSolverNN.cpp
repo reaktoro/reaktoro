@@ -115,20 +115,28 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
     const auto& sensitivity0 = record->sensitivity;
     const auto& n0 = state0.speciesAmounts();
     const auto& ne0 = n0(ies);
+    const auto& P0 = state0.pressure();
+    const auto& T0 = state0.temperature();
+
 
     // Get the sensitivity derivatives dln(a) / dn (assuming all species are equilibrium species)
     MatrixConstRef dlna_dn = properties0.lnActivities().ddn;
     VectorConstRef lna0 = properties0.lnActivities().val;
-    MatrixConstRef dsdn0 = sensitivity0.dndb;
+    MatrixConstRef dndb = sensitivity0.dndb;
+    const auto& dndP0 = sensitivity0.dndP;
+    const auto& dndT0 = sensitivity0.dndT;
 
     // Get the sensitivity derivatives w.r.t. the equilibrium species dln(ae) / dne
     MatrixConstRef dlnae_dne = dlna_dn(ies, ies);
     VectorConstRef lnae0 = lna0(ies);
-    MatrixConstRef dsdne0 = dsdn0(ies, iee);
+    MatrixConstRef dnedbe0 = dndb(ies, iee);
+    const auto& dnedP0 = dndP0(ies);
+    const auto& dnedT0 = dndT0(ies);
 
     /// Auxiliary vectors delta(n) and delta(lna) in estimate function version v0
     Vector dne, dlnae;
-    dne.noalias() = dsdne0 * (be - be0); // delta(ne) = dne/db * (b - b0)
+    //dne.noalias() = dnedbe0 * (be - be0); // delta(ne) = dne/db * (b - b0)
+    dne.noalias() = dnedbe0 * (be - be0) + dnedP0 * (P - P0) + dnedT0 * (T - T0); // delta(ne) = dne/db * (b - b0)
     ne.noalias() = ne0 + dne;                                                   // n = n0 + delta(n)
     dlnae.noalias() = dlnae_dne * dne;                                          // delta(ln(a)) = d(lna)/dn * delta(n)
 

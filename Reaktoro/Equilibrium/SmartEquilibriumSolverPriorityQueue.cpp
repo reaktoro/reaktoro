@@ -243,11 +243,11 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
             // Fetch reference values restricted to equilibrium species only
             const auto& ne0 = n0(ies);
             const auto& dnedbe0 = dndb0(ies, iee);
-            const auto& dnedbPe0 = dndP0(ies);
-            const auto& dnedbTe0 = dndT0(ies);
+            const auto& dnedP0 = dndP0(ies);
+            const auto& dnedT0 = dndT0(ies);
 
             // Perform Taylor extrapolation
-            ne.noalias() = ne0 + dnedbe0 * (be - be0) + dnedbPe0 * (P - P0) + dnedbTe0 * (T - T0);
+            ne.noalias() = ne0 + dnedbe0 * (be - be0) + dnedP0 * (P - P0) + dnedT0 * (T - T0);
 
             _result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
@@ -268,12 +268,15 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
             // Assign small values to all the amount  in the interval [cutoff, 0] (instead of mirroring above)
             for(unsigned int i = 0; i < ne.size(); ++i) if(ne[i] < 0) ne[i] = options.learning.epsilon;
 
+            // Update the chemical properties of the system
+            _properties = record.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+
             // Update the amounts of elements for the equilibrium species
             //state = node.state; // this line was removed because it was destroying kinetics simulations
             state.setSpeciesAmounts(ne, ies);
-
-            // Update the chemical properties of the system
-            _properties = record.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+            // Make sure that pressure and temperature is set to the current one we are trying to predict
+            state.setPressure(P);
+            state.setTemperature(T);
 
             //-----------------------------------------------------------------------
             // DATABASE PRIORITY AND RANKING UPDATE STEP DURING THE ESTIMATE PROCESS
