@@ -458,13 +458,13 @@ struct SmartEquilibriumSolver::Impl
 
                     // Fetch reference values restricted to equilibrium species only
                     const auto& dnedbe0 = dndb0(ies, iee);
-                    const auto& dnedbPe0 = dndP0(ies);
-                    const auto& dnedbTe0 = dndT0(ies);
+                    const auto& dnedP0 = dndP0(ies);
+                    const auto& dnedT0 = dndT0(ies);
                     const auto& ne0 = n0(ies);
 
                     // Perform Taylor extrapolation
                     //ne.noalias() = ne0 + dnedbe0 * (be - be0);
-                    ne.noalias() = ne0 + dnedbe0 * (be - be0) + dnedbPe0 * (P - P0) + dnedbTe0 * (T - T0);
+                    ne.noalias() = ne0 + dnedbe0 * (be - be0) + dnedP0 * (P - P0) + dnedT0 * (T - T0);
                     
                     // Check if all projected species amounts are positive
                     const double ne_min = min(ne);
@@ -481,15 +481,23 @@ struct SmartEquilibriumSolver::Impl
                     // Assign small values to all the amount in the interval [cutoff, 0] (instead of mirroring above)
                     for(unsigned int i = 0; i < ne.size(); ++i) if(ne[i] < 0) ne[i] = options.learning.epsilon;
 
+                    // Update the chemical properties of the system
+                    properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+
+                    double T_ = properties.temperature();
+                    double P_ = properties.pressure();
+                    std::cout << "T_ = " << T_ << std::endl;
+                    std::cout << "P_ = " << P_ << std::endl;
+
                     // Update the amounts of elements for the equilibrium species
                     n(ies) = ne;
 
                     // Update the chemical state result with estimated amounts
                     state = record.state; // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transfered from reference state to new state
                     state.setSpeciesAmounts(n);
-
-                    // Update the chemical properties of the system
-                    properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+                    // Make sure that pressure and temperature is set to the current one we are trying to predict
+                    state.setPressure(P);
+                    state.setTemperature(T);
 
                     result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
