@@ -240,8 +240,14 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
             //state = node.state; // this line was removed because it was destroying kinetics simulations
             state.setSpeciesAmounts(ne, ies);
 
+            // Make sure that pressure and temperature is set to the current one
+            state.setTemperature(T);
+            state.setPressure(P);
+
             // Update the chemical properties of the system
             _properties = node.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+            _properties.update(T, P);
+
             _result.estimate.accepted = true;
 
             return;

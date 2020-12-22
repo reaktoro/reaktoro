@@ -338,8 +338,13 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
                 //state = record.state; // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transfered from reference state to new state
                 state.setSpeciesAmounts(ne, ies);
 
+                // Make sure that pressure and temperature is set to the current one
+                state.setTemperature(T);
+                state.setPressure(P);
+
                 // Update the chemical properties of the system
                 _properties =  record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+                _properties.update(T, P);
 
                 _result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
