@@ -481,23 +481,20 @@ struct SmartEquilibriumSolver::Impl
                     // Assign small values to all the amount in the interval [cutoff, 0] (instead of mirroring above)
                     for(unsigned int i = 0; i < ne.size(); ++i) if(ne[i] < 0) ne[i] = options.learning.epsilon;
 
-                    // Update the chemical properties of the system
-                    properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
-
-                    double T_ = properties.temperature();
-                    double P_ = properties.pressure();
-                    std::cout << "T_ = " << T_ << std::endl;
-                    std::cout << "P_ = " << P_ << std::endl;
-
                     // Update the amounts of elements for the equilibrium species
                     n(ies) = ne;
 
                     // Update the chemical state result with estimated amounts
                     state = record.state; // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transfered from reference state to new state
                     state.setSpeciesAmounts(n);
-                    // Make sure that pressure and temperature is set to the current one we are trying to predict
-                    state.setPressure(P);
+
+                    // Make sure that pressure and temperature is set to the current one
                     state.setTemperature(T);
+                    state.setPressure(P);
+
+                    // Update the chemical properties of the system as well as temperature and pressure
+                    properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+                    properties.update(T, P);
 
                     result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
