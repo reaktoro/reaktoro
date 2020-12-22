@@ -91,14 +91,17 @@ struct SmartEquilibriumSolver::Impl
     /// The amounts of the elements in the equilibrium partition
     Vector be;
 
-    /// The storage for matrix du/db = du/dn * dn/db
-    Matrix dudb;
+    /// The storage for matrix du/db = du/dn * dn/db, du/dT = du/dn * dn/dT, and du/dP = du/dn * dn/dP
+    Matrix dudb, dudT, dudP;
 
     /// The storage for vector u(iprimary)
     Vector up;
 
     /// The storage for matrix Mbe = inv(u(iprimary)) * du(iprimary)/db.
     Matrix Mbe;
+
+    /// The storage for matrix MT = inv(u(iprimary)) * du(iprimary)/dT and MP = inv(u(iprimary)) * du(iprimary)/dP
+    Vector MT, MP;
 
     /// The record of the knowledge database containing input, output, and derivatives data.
     struct Record
@@ -123,6 +126,9 @@ struct SmartEquilibriumSolver::Impl
 
         /// The matrix used to compute relative change of chemical potentials due to change in `be`.
         Matrix Mbe;
+
+        /// The vectors used to compute relative change of chemical potentials due to change in `T` and `P`.
+        Vector MT, MP;
     };
 
     /// The cluster storing learned input-output data with same classification.
@@ -270,21 +276,29 @@ struct SmartEquilibriumSolver::Impl
         // The chemical potentials at the calculated equilibrium state
         u = properties.chemicalPotentials();
 
-        // Auxiliary references to the derivatives dn/db and du/dn
+        // Auxiliary references to the derivatives dn/db, dn/dT, dn/dP, and du/dn
         const auto& dndb = solver.sensitivity().dndb;
+        const auto& dndT = solver.sensitivity().dndT;
+        const auto& dndP = solver.sensitivity().dndP;
         const auto& dudn = u.ddn;
 
         // Compute the matrix du/db = du/dn * dn/db
         dudb = dudn * dndb;
+        dudT = dudn * dndT;
+        dudP = dudn * dndP;
 
         // The vector u(iprimary) with chemical potentials of primary species
         up.noalias() = u.val(iprimary);
 
         // The matrix du(iprimary)/dbe with derivatives of chemical potentials (primary species only)
         const auto dupdbe = dudb(iprimary, iee);
+        const auto dupdT = dudT(iprimary, 0);
+        const auto dupdP = dudP(iprimary, 0);
 
         // Compute matrix Mbe = 1/up * dup/db
         Mbe.noalias() = diag(inv(up)) * dupdbe;
+        MT.noalias() = diag(inv(up)) * dupdT;
+        MP.noalias() = diag(inv(up)) * dupdP;
 
         result.timing.learning_error_control_matrices = toc(ERROR_CONTROL_MATRICES);
 
@@ -304,7 +318,7 @@ struct SmartEquilibriumSolver::Impl
         if(iter < database.clusters.end())
         {
             auto& cluster = *iter;
-            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mbe});
+            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mbe, MT, MP});
             cluster.priority.extend();
         }
         else
@@ -313,7 +327,7 @@ struct SmartEquilibriumSolver::Impl
             Cluster cluster;
             cluster.iprimary = iprimary;
             cluster.label = label;
-            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mbe});
+            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mbe, MT, MP});
             cluster.priority.extend();
 
             // Append the new cluster in the database
@@ -345,6 +359,7 @@ struct SmartEquilibriumSolver::Impl
         const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
 
         Vector dbe;
+        double dT, dP;
 
         // The function that checks if a record in the database pass the error test.
         // It returns (`success`, `error`, `iprimaryspecies`), where
@@ -374,6 +389,42 @@ struct SmartEquilibriumSolver::Impl
             const auto size = Mbe0.rows();
             for(auto i = 1; i <= size; ++i) {
                 error = max(error, abs(Mbe0.row(size - i) * dbe)); // start checking primary species with least amount first
+                if(error >= reltol)
+                    return { false, error, size - i };
+            }
+
+            return { true, error, -1 };
+        };
+        auto pass_error_test_full = [&be, &dbe, &T, &dT, &P, &dP, &reltol, &eps_b](const Record& record) -> std::tuple<bool, double, Index>
+        {
+            using std::abs;
+            using std::max;
+            const auto& state0 = record.state;
+            const auto& be0 = record.be;
+            const auto& Mbe0 = record.Mbe;
+            const double& T0 = record.T;
+            const auto& MT0 = record.MT;
+            const double& P0 = record.P;
+            const auto& MP0 = record.MP;
+            const auto& isue0 = state0.equilibrium().indicesStrictlyUnstableElements();
+
+            dbe.noalias() = be - be0;
+            dT = T - T0;
+            dP = P - P0;
+
+            // Check if state0 has strictly unstable elements (i.e. elements with zero amounts)
+            // which cannot be used for Taylor estimation if positive amounts for those elements are given.
+            if((dbe(isue0).array() > eps_b).any())
+            {
+                assert((be0(isue0).array() < eps_b).any()); // ensure this condition is never broken (effective during debug only)
+                return { false, 9999, -1 };
+            }
+
+            double error = 0.0;
+            const auto size = Mbe0.rows();
+            for(auto i = 1; i <= size; ++i) {
+                auto delta_mu = Mbe0.row(size - i) * dbe + (MT0.row(size - i) * dT + MP0.row(size - i) * dP)(0);
+                error = max(error, abs(delta_mu(0))); // start checking primary species with least amount first
                 if(error >= reltol)
                     return { false, error, size - i };
             }
@@ -429,7 +480,7 @@ struct SmartEquilibriumSolver::Impl
                 tic(ERROR_CONTROL_STEP);
 
                 // Check if the current record passes the error test
-                const auto [success, error, iprimaryspecies] = pass_error_test(record);
+                const auto [success, error, iprimaryspecies] = pass_error_test_full(record);
 
                 result.timing.estimate_error_control += toc(ERROR_CONTROL_STEP);
 
