@@ -355,7 +355,7 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
                         ne[i] = options.learning.epsilon;
 
                 // Update the chemical properties of the system
-                _properties =  record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+                //_properties =  record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
 
                 // Update the amounts of elements for the equilibrium species
                 n(ies) = ne;

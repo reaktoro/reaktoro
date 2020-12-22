@@ -1032,7 +1032,11 @@ auto SmartKineticSolverClusteringExtended::estimate(ChemicalState& state, double
                 // Update the solution of kinetic problem by new estimated value
                 // -------------------------------------------------------------------------------------------------------------
                 benk = benk_new;
-                state = record.state; // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transfered from reference state to new state
+                state = record.state; // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transferred from reference state to new state
+
+                // Make sure that pressure and temperature is set to the current one
+                state.setTemperature(T);
+                state.setPressure(P);
 
                 // Update the chemical properties of the system
                 //properties = record.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!

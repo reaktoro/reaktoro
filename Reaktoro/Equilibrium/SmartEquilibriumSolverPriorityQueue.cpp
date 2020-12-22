@@ -268,15 +268,17 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
             // Assign small values to all the amount  in the interval [cutoff, 0] (instead of mirroring above)
             for(unsigned int i = 0; i < ne.size(); ++i) if(ne[i] < 0) ne[i] = options.learning.epsilon;
 
-            // Update the chemical properties of the system
-            _properties = record.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
-
             // Update the amounts of elements for the equilibrium species
             //state = node.state; // this line was removed because it was destroying kinetics simulations
             state.setSpeciesAmounts(ne, ies);
+
             // Make sure that pressure and temperature is set to the current one we are trying to predict
             state.setPressure(P);
             state.setTemperature(T);
+
+            // Update the chemical properties of the system
+            _properties = record.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+            _properties.update(T, P);
 
             //-----------------------------------------------------------------------
             // DATABASE PRIORITY AND RANKING UPDATE STEP DURING THE ESTIMATE PROCESS
