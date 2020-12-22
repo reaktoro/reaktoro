@@ -685,7 +685,11 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
             // -------------------------------------------------------------------------------------------------------------
             //state = node.chemical_state;
             benk = benk_new;
-            state = node.chemical_state;
+
+            state = node.chemical_state;  // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transfered from reference state to new state
+            // Make sure that pressure and temperature is set to the current one
+            state.setTemperature(T);
+            state.setPressure(P);
 
             // Update the chemical properties of the system
             //properties = node.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
