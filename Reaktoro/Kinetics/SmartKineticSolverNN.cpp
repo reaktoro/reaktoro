@@ -249,7 +249,8 @@ auto SmartKineticSolverNN::estimate(ChemicalState& state, double& t, double dt) 
     benk = benk_new;
 
     // Update properties by the reference one
-    // properties = properties_ref; // does not influence results
+    _properties = properties_ref;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+    _properties.update(T, P);
 
     // Mark estimated result as accepted
     _result.estimate.accepted = true;
