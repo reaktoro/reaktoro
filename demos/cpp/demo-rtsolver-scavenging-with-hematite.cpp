@@ -40,11 +40,9 @@ int main()
     params.xl = 0.0; // the x-coordinates of the left boundaries
     params.xr = 100.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
-    params.nsteps = 50; // the number of steps in the reactive transport simulation
+    params.nsteps = 100; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
-    params.dt = 0.1*day; // the time step (in units of s)
-
-
+    params.dt = 0.05*day; // the time step (in units of s)
 
     // Define physical and chemical parameters
     params.D = 0.0;     // the diffusion coefficient (in units of m2/s)
@@ -53,9 +51,9 @@ int main()
     params.P = 1.01325;                      // the pressure (in units of bar)
 
     // Define the activity model for the aqueous species
-    params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
     //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
+    params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
 
     // Define equilibrium solver cutoff tolerances
     params.amount_fraction_cutoff = 1e-14;
@@ -296,7 +294,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     while (step < params.nsteps)
     {
         // Print simulation progress
-        std::cout << "Step " << step << " of " << params.nsteps << std::endl;
+        //std::cout << "Step " << step << " of " << params.nsteps << std::endl;
 
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
         rtsolver.step(field);

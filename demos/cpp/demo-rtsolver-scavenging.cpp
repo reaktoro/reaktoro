@@ -54,11 +54,11 @@ int main()
     params.smart_equilibrium_reltol = 0.01;
 
     // Define the activity model for the aqueous species
-    params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
+    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
     //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies;
     //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
     //params.activity_model = ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
+    params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
     //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies;
 
     // Define smart algorithm and related tolerances
@@ -301,7 +301,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     while (step < params.nsteps)
     {
         // Print the progress of simulations
-        std::cout << "Step " << step << " of " << params.nsteps << std::endl;
+        //std::cout << "Step " << step << " of " << params.nsteps << std::endl;
 
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
         rtsolver.step(field);
