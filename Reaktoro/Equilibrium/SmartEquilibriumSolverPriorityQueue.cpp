@@ -161,18 +161,18 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
         return { true, error, n.size() };
     };
 
-    auto inode_prev = priority.begin();
-    for(auto inode=priority.begin(); inode!=priority.end(); ++inode)
+    auto irecord_prev = priority.begin();
+    for(auto irecord=priority.begin(); irecord!=priority.end(); ++irecord)
     {
-        const auto& node = tree[*inode];
-        const auto& imajor = node.imajor;
+        const auto& record = tree[*irecord];
+        const auto& imajor = record.imajor;
 
         //---------------------------------------------------------------------
         // ERROR CONTROL STEP DURING THE LEARNING PROCESS
         //---------------------------------------------------------------------
         tic(ERROR_CONTROL_STEP)
 
-        const auto [success, error, ispecies] = pass_error_test(node);
+        const auto [success, error, ispecies] = pass_error_test(record);
 
         if(success)
         {
@@ -183,13 +183,13 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
             //---------------------------------------------------------------------
             tic(TAYLOR_STEP)
 
-            const auto& be0 = node.be;
-            const auto& P0 = node.state.pressure();
-            const auto& T0 = node.state.temperature();
-            const auto& n0 = node.state.speciesAmounts();
-            const auto& dndb0 = node.sensitivity.dndb;
-            const auto& dndP0 = node.sensitivity.dndP;
-            const auto& dndT0 = node.sensitivity.dndT;
+            const auto& be0 = record.be;
+            const auto& P0 = record.state.pressure();
+            const auto& T0 = record.state.temperature();
+            const auto& n0 = record.state.speciesAmounts();
+            const auto& dndb0 = record.sensitivity.dndb;
+            const auto& dndP0 = record.sensitivity.dndP;
+            const auto& dndT0 = record.sensitivity.dndT;
 
             // Fetch reference values restricted to equilibrium species only
             const auto& ne0 = n0(ies);
@@ -218,13 +218,13 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
             tic(PRIORITY_UPDATE_STEP)
 
             // Increase ranking of of the used node
-            ranking[*inode] += 1;
+            ranking[*irecord] += 1;
 
             // Make sure the indices in the priority are ordered such that:
             // rank[priority[i-1]] > rank[priority[i]]
             auto comp = [&](Index l, Index r) { return ranking[l] > ranking[r]; };
-            if( !((inode == priority.begin()) || (ranking[*inode_prev] >= ranking[*inode])) ) {
-                std::stable_sort(priority.begin(), inode + 1, comp);
+            if( !((irecord == priority.begin()) || (ranking[*irecord_prev] >= ranking[*irecord])) ) {
+                std::stable_sort(priority.begin(), irecord + 1, comp);
             }
 
             _result.timing.estimate_database_priority_update = toc(PRIORITY_UPDATE_STEP);
@@ -245,7 +245,7 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
             state.setPressure(P);
 
             // Update the chemical properties of the system
-            _properties = node.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+            _properties = record.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
             _properties.update(T, P);
 
             _result.estimate.accepted = true;
@@ -253,7 +253,7 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
             return;
         }
         else {
-            inode_prev = inode;
+            irecord_prev = irecord;
             continue;
         }
     }

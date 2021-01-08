@@ -313,6 +313,9 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
                 const auto& ne0 = n0(ies);
 
                 // Perform Taylor extrapolation
+                // Ae*ne = Ae*ne0 + Ae * dnedb0 * (be - be0);
+                // be*   = be0 + Ae * dnedb0 * (be - be0);
+                // If we want be* = be   =>   Ae * dnedn0 = I
                 //ne.noalias() = ne0 + dnedbe0 * (be - be0);
                 ne.noalias() = ne0 + dnedbe0 * (be - be0) + dnedbPe0 * (P - P0) + dnedbTe0 * (T - T0);
 

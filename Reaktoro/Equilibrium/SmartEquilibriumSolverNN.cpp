@@ -87,7 +87,7 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
     };
 
     // Find the entry with minimum "input" distance
-    auto it = std::min_element(tree.begin(), tree.end(), distancefn);
+    auto record = std::min_element(tree.begin(), tree.end(), distancefn);
 
     _result.timing.estimate_search = toc(SEARCH_STEP);
 
@@ -97,10 +97,10 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
     tic(TAYLOR_STEP)
 
     // Get all the data stored in the reference element
-    const auto& be0 = it->be;
-    const auto& state0 = it->state;
-    const auto& properties0 = it->properties;
-    const auto& sensitivity0 = it->sensitivity;
+    const auto& be0 = record->be;
+    const auto& state0 = record->state;
+    const auto& properties0 = record->properties;
+    const auto& sensitivity0 = record->sensitivity;
     const auto& n0 = state0.speciesAmounts();
     const auto& ne0 = n0(ies);
 
