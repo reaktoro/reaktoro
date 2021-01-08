@@ -37,7 +37,7 @@ using namespace Reaktoro;
 
 
 /// Make directory for Windows and Linux
-auto mkdir(const std::string& folder) -> bool
+auto mkdir(std::string& folder) -> bool
 {
 #if defined _WIN32
     // Replace slash by backslash
