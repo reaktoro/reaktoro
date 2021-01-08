@@ -125,10 +125,10 @@ struct ReactiveTransportParams
         switch(activity_model)
         {
             case AqueousActivityModel::HKF: return "hkf-full";
-            case AqueousActivityModel::DebyeHuckel: return "dk-full";
+            case AqueousActivityModel::DebyeHuckel: return "dh-full";
             case AqueousActivityModel::Pitzer: return "pitzer-full";
             case AqueousActivityModel::HKFSelectedSpecies: return "hkf-selected-species";
-            case AqueousActivityModel::DebyeHuckelSelectedSpecies: return "dk-selected-species";
+            case AqueousActivityModel::DebyeHuckelSelectedSpecies: return "dh-selected-species";
             case AqueousActivityModel::PitzerSelectedSpecies: return "pitzer-selected-species";
         }
     }
