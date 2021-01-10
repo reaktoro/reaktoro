@@ -4,7 +4,7 @@
 # the geochemical reactions that occur along a porous rock column with granite as an acidic brine is continuously
 # injected on its left side.
 #
-# ## Import the reaktoro python package (and other packages)
+# ## Import the reaktoro Python package (and other packages)
 #
 # First, we import the **reaktoro** Python package so that we can use its classes
 # and methods for performing the chemical reaction calculations.
@@ -16,7 +16,6 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from natsort import natsorted
-import time
 from progress.bar import IncrementalBar
 
 mpl.set_loglevel("critical")
@@ -76,7 +75,7 @@ tag = "-dt-" + "{:d}".format(dt) + \
       "-ncells-" + str(ncells) + \
       "-nsteps-" + str(nsteps) + \
       "-" + activity_model
-folder_results = 'results-rtsolver-granite' + tag
+folder_results = 'results-rtsolver-granite-with-thermofun' + tag
 os.system('mkdir -p ' + folder_results)
 folder_result_plots = "plots-" + folder_results
 os.system('mkdir -p ' + folder_result_plots)
@@ -103,14 +102,18 @@ assert CFL <= 1.0, f"Make sure that CFL = {CFL} is less that 1.0"
 #
 # We need to define a chemical system that can represent both our fluid and rock. We use class
 # [ChemicalEditor](https://reaktoro.org/cpp/classReaktoro_1_1ChemicalEditor.html) below to define a system with an
-# aqueous phase and twelve mineral phases.
+# aqueous phase and twelve mineral phases. Below, we use thermofun library `aq17-thermofun.json` that includes all the
+# needed aqueous species and Microcline is used as the K-Feldspar at the low temperature.
 
 # +
-editor = ChemicalEditor()
+import thermofun.PyThermoFun as thermofun
+database = thermofun.Database("databases/thermofun/aq17-thermofun.json")
+
+editor = ChemicalEditor(database)
 
 selected_elements = "Al Cl H K Na O Si"
-selected_species = "H2O(l) H+ OH- Cl- HCl(aq) Na+ NaOH(aq) NaHSiO3(aq) NaCl(aq) " \
-                    "K+ KOH(aq) KCl(aq) Al+++ AlOH++"
+selected_species = "H2O@ H+ OH- Cl- HCl@ Na+ NaOH@ NaHSiO3@ NaCl@ NaAl(OH)4@ " \
+                    "K+ KOH@ KCl@ KAlO2@ Al+3 AlOH+2 Al(OH)2+ Al(OH)3@ Al(OH)4-"
 
 if activity_model == "pitzer-full":
     editor.addAqueousPhaseWithElements(selected_elements) \
@@ -142,8 +145,8 @@ editor.addMineralPhase("Paragonite") # NaAl2(AlSi3)O10(OH)2
 editor.addMineralPhase("Pyrophyllite") # Al2Si4O10(OH)2
 editor.addMineralPhase("Kaolinite") # Al2Si2O5(OH)4
 editor.addMineralPhase("Albite") # Na(AlSi3)O8
-editor.addMineralPhase("K-Feldspar") # K(AlSi3)O8
-# -
+editor.addMineralPhase("Microcline") # K(AlSi3)O8
+#-
 
 # > **Note**: The aqueous phase is defined above by using a list of compounds, which is then broken automatically by
 # > Reaktoro into a list of element names. These element names are then used to find in the database all the aqueous
@@ -203,7 +206,7 @@ state_ic.scalePhaseVolume("Aqueous", 0.1, "m3") # 10% if the 1.0m3
 state_ic.scalePhaseVolume("Quartz", 0.3 * 0.9, "m3") # 30% of 90% of remaining volume
 state_ic.scalePhaseVolume("Muscovite", 0.05 * 0.9, "m3") # 5% of 90% of remaining volume
 state_ic.scalePhaseVolume("Albite", 0.33 * 0.9, "m3") # 33% of 90% of remaining volume
-state_ic.scalePhaseVolume("K-Feldspar", 0.32 * 0.9, "m3") # 32% of 90% of remaining volume
+state_ic.scalePhaseVolume("Microcline", 0.32 * 0.9, "m3") # 32% of 90% of remaining volume
 
 # > **Note**: After this scaling step, the sum of the phase volumes in ``state_ic`` is 1 m<sup>3</sup>. This also
 # > ensures that the amounts of the species in the chemical system are normalized by m<sup>3</sup>, and thus they can
@@ -279,18 +282,19 @@ profiler = ReactiveTransportProfiler()
 # Create output class
 output = rtsolver.output()
 output.add("pH")
+
 output.add("speciesMolality(Cl-)")
-output.add("speciesMolality(HCl(aq))")
+output.add("speciesMolality(HCl@)")
 output.add("speciesMolality(Na+)")
-output.add("speciesMolality(NaCl(aq))")
+output.add("speciesMolality(NaCl@)")
 output.add("speciesMolality(OH-)")
-output.add("speciesMolality(NaOH(aq))")
-output.add("speciesMolality(NaHSiO3(aq))")
+output.add("speciesMolality(NaOH@)")
+output.add("speciesMolality(NaHSiO3@)")
 output.add("speciesMolality(K+)")
-output.add("speciesMolality(KOH(aq))")
-output.add("speciesMolality(KCl(aq))")
-output.add("speciesMolality(Al+++)")
-output.add("speciesMolality(AlOH++)")
+output.add("speciesMolality(KOH@)")
+output.add("speciesMolality(KCl@)")
+output.add("speciesMolality(Al+3)")
+output.add("speciesMolality(AlOH+2)")
 output.add("speciesMolality(Quartz)")
 output.add("speciesMolality(Diaspore)")
 output.add("speciesMolality(Gibbsite)")
@@ -302,7 +306,12 @@ output.add("speciesMolality(Paragonite)")
 output.add("speciesMolality(Pyrophyllite)")
 output.add("speciesMolality(Kaolinite)")
 output.add("speciesMolality(Albite)")
-output.add("speciesMolality(K-Feldspar)")
+output.add("speciesMolality(Microcline)")
+output.add("speciesMolality(KAlO2@)")
+output.add("speciesMolality(NaAl(OH)4@)")
+output.add("speciesMolality(Al(OH)2+)")
+output.add("speciesMolality(Al(OH)3@)")
+output.add("speciesMolality(Al(OH)4-)")
 output.filename(folder_results + '/state.txt')  # Set the name of the output files
 # -
 
@@ -362,7 +371,13 @@ indx_Paragonite   = 20
 indx_Pyrophyllite = 21
 indx_Kaolinite    = 22
 indx_Albite       = 23
-indx_KFeldspar    = 24
+indx_Microcline    = 24
+
+indx_KAlO2aq     = 25
+indx_NaAlOH4aq   = 26
+indx_AlOH2cation = 27
+indx_AlOH3aq     = 28
+indx_AlOH4anion  = 29
 
 plot_at_selected_steps = [1200, 2400, 3600, 4800, 5400, 6000, 7200, 8400, 9600, 12000, 24000, 36000, 48000, 54000, 60000, 66000, 72000, 78000, 84000, 90000, 96000]
 
@@ -419,14 +434,14 @@ def plot_figures_kfeldspar():
         t = i * dt
         filearray = np.loadtxt(folder_results + '/' + files[i-1], skiprows=1)
         data = filearray.T
-        data_kfeldspar = data[indx_KFeldspar]
+        data_kfeldspar = data[indx_Microcline]
 
         #plt.axes(xlim=(xl - 0.01, xr + 0.01), ylim=(22.0, 38.0))
         plt.axes(xlim=(xl - 0.01, xr + 0.01))
         plt.ylabel('Concentration [mol/m3]')
         plt.xlabel('Distance [m]')
         plt.title(titlestr(t))
-        plt.plot(xcells, data_kfeldspar, label='K-Feldspar', **line('C3'))
+        plt.plot(xcells, data_kfeldspar, label='Microcline', **line('C3'))
         plt.legend(loc='center right')
         plt.savefig(folder_result_plots + '/kfeldspar-{}.png'.format(i))
         plt.tight_layout()
@@ -497,7 +512,7 @@ def plot_figures_minerals():
         data = filearray.T
         data_albite = data[indx_Albite]
         data_muscovite = data[indx_Muscovite]
-        data_kfeldspar = data[indx_KFeldspar]
+        data_kfeldspar = data[indx_Microcline]
         data_pyrophyllite = data[indx_Pyrophyllite]
         data_quartz = data[indx_Quartz]
 
@@ -508,7 +523,7 @@ def plot_figures_minerals():
         plt.title(titlestr(t))
         plt.plot(xcells, data_muscovite, label='Muscovite', **line('C1'))
         plt.plot(xcells, data_albite, label='Albite', **line('C2'))
-        plt.plot(xcells, data_kfeldspar, label='K-Feldspar', **line('C3'))
+        plt.plot(xcells, data_kfeldspar, label='Microcline', **line('C3'))
         plt.plot(xcells, data_pyrophyllite, label='Pyrophyllite', **line('darkviolet'))
         plt.plot(xcells, data_quartz, label='Quartz', **line('gold'))
 
@@ -538,6 +553,12 @@ def plot_figures_aqueous_species():
         data_class_NaOHaq = data_class[indx_NaOHaq]
         data_class_NaHSiO3aq = data_class[indx_NaHSiO3aq]
 
+        data_class_KAlO2aq = data_class[indx_KAlO2aq]
+        data_class_NaAlOH4aq = data_class[indx_NaAlOH4aq]
+        data_class_AlOH2cation = data_class[indx_AlOH2cation]
+        data_class_AlOH3aq = data_class[indx_AlOH3aq]
+        data_class_AlOH4anion = data_class[indx_AlOH4anion]
+
         plt.axes(xlim=(xl - 0.01, xr + 0.01))
         plt.xlabel('Distance [m]')
         plt.ylabel('Concentration [molal]')
@@ -556,6 +577,12 @@ def plot_figures_aqueous_species():
         plt.plot(xcells, data_class_OHanion, label=r'OH$^{-}$',**line('C5'))[0],
         plt.plot(xcells, data_class_NaOHaq, label=r'NaOH(aq)', **line('C6'))[0],
         plt.plot(xcells, data_class_NaHSiO3aq, label=r'NaHSiO$_3$(aq))', **line('C7'))[0],
+        plt.plot(xcells, data_class_KAlO2aq, label=r'KAlO$_2$(aq)', **line('C8'))[0],
+        plt.plot(xcells, data_class_NaAlOH4aq, label=r'NaAl(OH)$_4$(aq)', **line('teal'))[0],
+        plt.plot(xcells, data_class_AlOH2cation, label=r'Al(OH)$_2^+$', **line('firebrick'))[0],
+        plt.plot(xcells, data_class_AlOH3aq, label=r'Al(OH)$_3$(aq)', **line('slategray'))[0],
+        plt.plot(xcells, data_class_AlOH4anion, label=r'Al(OH)$_4^-$', **line('darkblue'))[0],
+
 
         plt.legend(loc='upper right')
         plt.savefig(folder_result_plots + '/aqueous-species-{}.png'.format(i))
@@ -568,7 +595,7 @@ def plot_figures_kfeldspar_muscovite_albite_pyrophyllite():
         t = i * dt
         filearray = np.loadtxt(folder_results + '/' + files[i-1], skiprows=1)
         data = filearray.T
-        data_kfeldspar = data[indx_KFeldspar]
+        data_kfeldspar = data[indx_Microcline]
         data_muscovite = data[indx_Muscovite]
         data_albite = data[indx_Albite]
         data_pyrophyllite = data[indx_Pyrophyllite]
@@ -577,7 +604,7 @@ def plot_figures_kfeldspar_muscovite_albite_pyrophyllite():
         plt.ylabel('Concentration [mol/m3]')
         plt.xlabel('Distance [m]')
         plt.title(titlestr(t))
-        plt.plot(xcells, data_kfeldspar, label='K-Feldspar', **line('C3'))
+        plt.plot(xcells, data_kfeldspar, label='Microcline', **line('C3'))
         plt.plot(xcells, data_albite, label='Albite', **line('C2'))
         plt.plot(xcells, data_muscovite, label='Muscovite', **line('C1'))
         plt.plot(xcells, data_pyrophyllite, label='Pyrophyllite', **line('darkviolet'))
