@@ -18,6 +18,7 @@
 
 // Reactive transport test includes
 #include <demos/cpp/DemosUtils.h>
+#include <ThermoFun/ThermoFun.h>
 
 using namespace Reaktoro;
 
@@ -53,6 +54,7 @@ int main()
     params.P = Reaktoro::waterSaturatedPressureWagnerPruss(Temperature(params.T + 273.15)).val * 1e-5;
 
     // Define the activity model for the aqueous species
+    //params.activity_model = ActivityModel::HKF;
     //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
     params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies;
     //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
@@ -69,14 +71,14 @@ int main()
 
     // Run smart algorithm with clustering
     params.method = SmartEquilibriumStrategy::Clustering;
-    params.smart_equilibrium_reltol = 1e-3;
+    params.smart_equilibrium_reltol = 1e-2;
 
 //    // Run smart algorithm with priority queue
-//    params.method = SmartEquilibriumStrategy::PriorityQueue;
+//    params.smart_method = SmartEquilibriumStrategy::PriorityQueue;
 //    params.smart_equilibrium_reltol = 2e-3;
 
 //    // Run smart algorithm with nn search algorithm
-//    params.method =  SmartEquilibriumStrategy::NearestNeighbour;
+//    params.smart_method =  SmartEquilibriumStrategy::NearestNeighbour;
 //    params.smart_equilibrium_reltol = 1e-1;
 
     // Output
@@ -122,7 +124,7 @@ int main()
 auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResults& results) -> void
 {
     // Step **: Create the results folder
-    auto folder = params.makeResultsFolder("granite");
+    auto folder = params.makeResultsFolder("granite-thermofun");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
@@ -134,44 +136,51 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     smart_equilibrium_options.mole_fraction_cutoff = params.mole_fraction_cutoff;
     smart_equilibrium_options.method = params.method;
 
+
+    ThermoFun::Database database("databases/thermofun/aq17-thermofun.json");
+
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
-    ChemicalEditor editor;
+    ChemicalEditor editor(database);
+    editor.setTemperatures({params.T}, "celsius");
+    editor.setPressures({params.P}, "bar");
 
     // Define the list of selected elements
     StringList selected_elements = "Al Cl H K Na O Si";
 
     // Define the list of selected species
-    StringList selected_species = "H2O(l) H+ OH- Cl- HCl(aq) Na+ NaOH(aq) NaHSiO3(aq) NaCl(aq) K+ KOH(aq) KCl(aq) Al+++ AlOH++";
-    // Missing: NaAl(OH)4(aq), KAl(OH)4(aq), Al(OH)2+, Al(OH)3(aq),  Al(OH)4-
+    StringList selected_species = "H2O@ H+ OH- Cl- HCl@ "
+                                  "Na+ NaOH@ NaHSiO3@ NaCl@ NaAl(OH)4@ "
+                                  "K+ KOH@ KCl@ KAlO2@ "
+                                  "Al+3 AlOH+2 Al(OH)2+ Al(OH)3@ Al(OH)4-";
 
     // Depending on the activity model, define it using ChemicalEditor
-    if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKF){
+    if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::HKF){
         // HKF full system
         editor.addAqueousPhaseWithElements(selected_elements);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies){
+    else if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies){
         // HKF selected species
         editor.addAqueousPhase(selected_species);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::Pitzer){
+    else if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::Pitzer){
         // Pitzer full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies){
+    else if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies){
         // Pitzer selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
+    else if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
         // Debye-Huckel full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies){
+    else if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies){
         // Debye-Huckel selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelDebyeHuckel()
@@ -188,7 +197,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     editor.addMineralPhase("Pyrophyllite"); // Al2Si4O10(OH)2
     editor.addMineralPhase("Kaolinite"); // Al2Si2O5(OH)4
     editor.addMineralPhase("Albite"); // Na(AlSi3)O8
-    editor.addMineralPhase("K-Feldspar"); // K(AlSi3)O8
+    editor.addMineralPhase("Microcline"); // K(AlSi3)O8
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
@@ -235,7 +244,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     state_ic.scalePhaseVolume("Quartz", 0.3 * 0.9, "m3");    // 30% of 90% of remaining volume
     state_ic.scalePhaseVolume("Muscovite", 0.05 * 0.9, "m3");    // 5% of 90% of remaining volume
     state_ic.scalePhaseVolume("Albite", 0.33 * 0.9, "m3");    // 33% of 90% of remaining volume
-    state_ic.scalePhaseVolume("K-Feldspar", 0.32 * 0.9, "m3");    // 32% of 90% of remaining volume
+    state_ic.scalePhaseVolume("Microcline", 0.32 * 0.9, "m3");    // 32% of 90% of remaining volume
 
     // Step **: Create the mesh for the column
     Mesh mesh(params.ncells, params.xl, params.xr);
@@ -263,17 +272,22 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     ChemicalOutput output(rtsolver.output());
     output.add("pH");
     output.add("speciesMolality(Cl-)");
-    output.add("speciesMolality(HCl(aq))");
+    output.add("speciesMolality(HCl@)");
     output.add("speciesMolality(Na+)");
-    output.add("speciesMolality(NaCl(aq))");
+    output.add("speciesMolality(NaCl@)");
     output.add("speciesMolality(OH-)");
-    output.add("speciesMolality(NaOH(aq))");
-    output.add("speciesMolality(NaHSiO3(aq))");
+    output.add("speciesMolality(NaOH@)");
+    output.add("speciesMolality(NaHSiO3@)");
     output.add("speciesMolality(K+)");
-    output.add("speciesMolality(KOH(aq))");
-    output.add("speciesMolality(KCl(aq))");
-    output.add("speciesMolality(Al+++)");
-    output.add("speciesMolality(AlOH++)");
+    output.add("speciesMolality(KOH@)");
+    output.add("speciesMolality(KCl@)");
+    output.add("speciesMolality(Al+3)");
+    output.add("speciesMolality(AlOH+2)");
+    output.add("speciesMolality(KAlO2@)");
+    output.add("speciesMolality(NaAl(OH)4@)");
+    output.add("speciesMolality(Al(OH)2+)");
+    output.add("speciesMolality(Al(OH)3@)");
+    output.add("speciesMolality(Al(OH)4-)");
     output.add("speciesMolality(Quartz)");
     output.add("speciesMolality(Diaspore)");
     output.add("speciesMolality(Gibbsite)");
@@ -285,7 +299,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     output.add("speciesMolality(Pyrophyllite)");
     output.add("speciesMolality(Kaolinite)");
     output.add("speciesMolality(Albite)");
-    output.add("speciesMolality(K-Feldspar)");
+    output.add("speciesMolality(Microcline)");
     output.filename(folder + "/" + "test.txt");
 
     // Step **: Create RTProfiler to track the timing and results of reactive transport
