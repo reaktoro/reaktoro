@@ -54,6 +54,12 @@ struct ReactiveTransportProfiler::Impl
     /// The accumulated timing for the operations during smart equilibrium calculations per time step.
     std::deque<SmartEquilibriumTiming> timing_smart_equilibrium_at_step;
 
+    /// The accumulated timing for the operations during kinetics calculations per time step.
+    std::deque<KineticTiming> timing_kinetics_at_step;
+
+    /// The accumulated timing for the operations during smart kinetics calculations per time step.
+    std::deque<SmartKineticTiming> timing_smart_kinetics_at_step;
+
     /// The total accumulated timing for fluid element transport calculations.
     TransportTiming accumulated_timing_transport;
 
@@ -62,6 +68,12 @@ struct ReactiveTransportProfiler::Impl
 
     /// The total accumulated timing for smart equilibrium calculations.
     SmartEquilibriumTiming accumulated_timing_smart_equilibrium;
+
+    /// The total accumulated timing for smart equilibrium calculations.
+    KineticTiming accumulated_timing_kinetics;
+
+    /// The total accumulated timing for smart kinetics calculations.
+    SmartKineticTiming accumulated_timing_smart_kinetics;
 
     /// Construct an instance of ReactiveTransportProfiler::Impl.
     Impl()
@@ -78,11 +90,15 @@ struct ReactiveTransportProfiler::Impl
         timing_transport_at_step.push_back( internal::accumulateTimingsFromResults(result.transport_of_element) );
         timing_equilibrium_at_step.push_back( internal::accumulateTimingsFromResults(result.equilibrium_at_cell) );
         timing_smart_equilibrium_at_step.push_back( internal::accumulateTimingsFromResults(result.smart_equilibrium_at_cell) );
+        timing_kinetics_at_step.push_back( internal::accumulateTimingsFromResults(result.kinetics_at_cell) );
+        timing_smart_kinetics_at_step.push_back( internal::accumulateTimingsFromResults(result.smart_kinetics_at_cell) );
 
         // Accumulate the total times (at steps) to track the time over all cells
         accumulated_timing_transport += timing_transport_at_step.back();
         accumulated_timing_equilibrium += timing_equilibrium_at_step.back();
         accumulated_timing_smart_equilibrium += timing_smart_equilibrium_at_step.back();
+        accumulated_timing_kinetics += timing_kinetics_at_step.back();
+        accumulated_timing_smart_kinetics += timing_smart_kinetics_at_step.back();
     }
 
     /// Return the computing costs of all operations during a reactive transport calculation.
@@ -94,6 +110,7 @@ struct ReactiveTransportProfiler::Impl
 
         info.transport.resize(num_time_steps);
         info.equilibrium.resize(num_time_steps);
+
         info.smart_equilibrium.resize(num_time_steps);
         info.smart_equilibrium_with_ideal_search.resize(num_time_steps);
 
@@ -110,10 +127,28 @@ struct ReactiveTransportProfiler::Impl
         info.smart_equilibrium_error_control_matrices.resize(num_time_steps);
         info.smart_equilibrium_storage.resize(num_time_steps);
 
+        info.kinetics.resize(num_time_steps);
+        info.kinetics_equilibration.resize(num_time_steps);
+        info.kinetics_properties.resize(num_time_steps);
+        info.kinetics_with_ideal_properties.resize(num_time_steps);
+
+        info.smart_kinetics.resize(num_time_steps);
+        info.smart_kinetics_with_ideal_search.resize(num_time_steps);
+
+        info.smart_kinetics_estimate.resize(num_time_steps);
+        info.smart_kinetics_search.resize(num_time_steps);
+        info.smart_kinetics_error_control.resize(num_time_steps);
+        info.smart_kinetics_taylor.resize(num_time_steps);
+
+        info.smart_kinetics_learn.resize(num_time_steps);
+        info.smart_kinetics_chemical_properties.resize(num_time_steps);
+        info.smart_kinetics_equilibration.resize(num_time_steps);
+
         for(Index i = 0; i < num_time_steps; ++i)
         {
             info.transport[i] = timing_transport_at_step[i].step;
             info.equilibrium[i] = timing_equilibrium_at_step[i].solve;
+
             info.smart_equilibrium[i] = timing_smart_equilibrium_at_step[i].solve;
             info.smart_equilibrium_with_ideal_search[i] = info.smart_equilibrium[i] - timing_smart_equilibrium_at_step[i].estimate_search - timing_smart_equilibrium_at_step[i].estimate_database_priority_update;
 
@@ -129,6 +164,22 @@ struct ReactiveTransportProfiler::Impl
             info.smart_equilibrium_sensitivity_matrix[i] = timing_smart_equilibrium_at_step[i].learn_sensitivity_matrix;
             info.smart_equilibrium_error_control_matrices[i] = timing_smart_equilibrium_at_step[i].learn_error_control_matrices;
             info.smart_equilibrium_storage[i] = timing_smart_equilibrium_at_step[i].learn_storage;
+
+            info.kinetics[i] = timing_kinetics_at_step[i].solve;
+            info.kinetics_equilibration[i] = timing_kinetics_at_step[i].integrate_equilibration;
+            info.kinetics_properties[i] = timing_kinetics_at_step[i].integrate_chemical_properties;
+
+            info.smart_kinetics[i] = timing_smart_kinetics_at_step[i].solve;
+            info.smart_kinetics_with_ideal_search[i] = info.smart_kinetics[i] - timing_smart_kinetics_at_step[i].estimate_search;
+
+            info.smart_kinetics_estimate[i] = timing_smart_kinetics_at_step[i].estimate;
+            info.smart_kinetics_search[i] = timing_smart_kinetics_at_step[i].estimate_search;
+            info.smart_kinetics_error_control[i] = timing_smart_kinetics_at_step[i].estimate_error_control;
+            info.smart_kinetics_taylor[i] = timing_smart_kinetics_at_step[i].estimate_taylor;
+
+            info.smart_kinetics_learn[i] = timing_smart_kinetics_at_step[i].learn;
+            info.smart_kinetics_chemical_properties[i] = timing_smart_kinetics_at_step[i].learn_chemical_properties;
+            info.smart_kinetics_equilibration[i] = timing_smart_kinetics_at_step[i].learn_equilibration;
         }
 
         return info;
@@ -147,6 +198,14 @@ struct ReactiveTransportProfiler::Impl
     {
         ReactiveTransportAnalysis::EquilibriumAnalysis info;
         info.timing = accumulated_timing_equilibrium;
+        return info;
+    }
+
+    /// Return a summary of the performance analysis of all equilibrium calculations.
+    auto kineticsAnalysis() const -> ReactiveTransportAnalysis::KineticsAnalysis
+    {
+        ReactiveTransportAnalysis::KineticsAnalysis info;
+        info.timing = accumulated_timing_kinetics;
         return info;
     }
 
@@ -182,8 +241,49 @@ struct ReactiveTransportProfiler::Impl
             // For each cell, check if the smart estimation was accepted at current time step number
             const auto num_cells = results[i].smart_equilibrium_at_cell.size();
             for(Index j = 0; j < num_cells; ++j)
-                if(results[i].smart_equilibrium_at_cell[j].estimate.accepted == false)
+                if(!results[i].smart_equilibrium_at_cell[j].estimate.accepted)
                     info.cells_where_learning_was_required_at_step[i].push_back(j);
+        }
+
+        return info;
+    }
+
+    /// Return a summary of the performance analysis of all smart equilibrium calculations.
+    auto smartKineticsAnalysis() const -> ReactiveTransportAnalysis::SmartKineticsAnalysis
+    {
+        ReactiveTransportAnalysis::SmartKineticsAnalysis info;
+        info.timing = accumulated_timing_smart_kinetics;
+
+        // Count the accepted smart equilibrium estimates and required learning operations
+        for(const auto& result : results)
+            for(const auto& smart_kinetics_result : result.smart_kinetics_at_cell)
+                if(smart_kinetics_result.estimate.accepted) ++info.num_smart_kinetics_accepted_estimates;
+                else ++info.num_smart_kinetics_required_learnings;
+
+        // Set the total number of equilibrium calculations
+        info.num_kinetics_calculations =
+                info.num_smart_kinetics_accepted_estimates + info.num_smart_kinetics_required_learnings;
+
+        // Set the success rate at which smart equilibrium estimates were accepted
+        info.smart_kinetics_estimate_acceptance_rate =
+                static_cast<double>(info.num_smart_kinetics_accepted_estimates) / info.num_kinetics_calculations;
+
+
+        // The number of time steps (= the number of collected ReactiveTransportResult objects)
+        const auto num_time_steps = results.size();
+
+        // Set the table of indicators that shows where the smart kinetics estimate was accepted at a cell in a time step.
+        info.cells_where_learning_was_required_at_step.resize(num_time_steps);
+
+        // For each time step, identify the cells where learning was required
+        for(Index i = 0; i < num_time_steps; ++i)
+        {
+            // For each cell, check if the smart estimation was accepted at current time step number
+            const auto num_cells = results[i].smart_kinetics_at_cell.size();
+            for(Index j = 0; j < num_cells; ++j)
+                if (!results[i].smart_kinetics_at_cell[j].estimate.accepted)
+                    info.cells_where_learning_was_required_at_step[i].push_back(j);
+
         }
 
         return info;
@@ -197,6 +297,9 @@ struct ReactiveTransportProfiler::Impl
         info.transport = transportAnalysis();
         info.equilibrium = equilibriumAnalysis();
         info.smart_equilibrium = smartEquilibriumAnalysis();
+        info.kinetics = kineticsAnalysis();
+        info.smart_kinetics = smartKineticsAnalysis();
+
         return info;
     }
 };
@@ -246,9 +349,9 @@ auto ReactiveTransportProfiler::results() const -> const std::deque<ReactiveTran
 //     out << "# -------------------------------------------------------------------------------------" << std::endl;
 //     out << "# solve                         = " << seconds(timing.solve) << std::endl;
 //     out << "#   learning                      = " << status(timing.learning, timing.solve, "of total solve time") << std::endl;
-//     out << "#     gibbs_energy_minimization     = " << status(timing.learning_gibbs_energy_minimization, timing.learning, "of learning time") << std::endl;
-//     out << "#     chemical_properties           = " << status(timing.learning_chemical_properties, timing.learning, "of learning time") << std::endl;
-//     out << "#     sensitivity_matrix            = " << status(timing.learning_sensitivity_matrix, timing.learning, "of learning time") << std::endl;
+//     out << "#     gibbs_energy_minimization     = " << status(timing.learn_gibbs_energy_minimization, timing.learning, "of learning time") << std::endl;
+//     out << "#     chemical_properties           = " << status(timing.learn_chemical_properties, timing.learning, "of learning time") << std::endl;
+//     out << "#     sensitivity_matrix            = " << status(timing.learn_sensitivity_matrix, timing.learning, "of learning time") << std::endl;
 //     out << "#     storage                       = " << status(timing.learning_storage, timing.learning, "of learning time") << std::endl;
 //     out << "#   estimate                      = " << status(timing.estimate, timing.solve, "of total solve time") << std::endl;
 //     out << "#     search                        = " << status(timing.estimate_search, timing.estimate, "of estimate time") << std::endl;
