@@ -46,8 +46,7 @@ int main()
     state.scalePhaseVolume("Aqueous", 1, "m3");
     state.scalePhaseVolume("Calcite", 1, "m3");
 
-    KineticPath path(reactions);
-    path.setPartition(partition);
+    KineticPath path(reactions, partition);
 
     ChemicalPlot plot1 = path.plot();
     plot1.x("time(units=minute)");
