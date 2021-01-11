@@ -282,8 +282,8 @@ struct SmartEquilibriumSolver::Impl
         const auto& dndb = sensitivity.dndb;
 
         // Compute the matrices du/dT, du/dP, du/db
-        dudT = u.ddn * dndT + u.ddT; // du/dT = ∂u/∂n*∂n/∂b + ∂u/∂T
-        dudP = u.ddn * dndP + u.ddP; // du/dP = ∂u/∂n*∂n/∂b + ∂u/∂P
+        dudT = u.ddn * dndT + u.ddT; // du/dT = ∂u/∂n*∂n/∂T + ∂u/∂T
+        dudP = u.ddn * dndP + u.ddP; // du/dP = ∂u/∂n*∂n/∂P + ∂u/∂P
         dudb = u.ddn * dndb;         // du/du = ∂u/∂n*∂n/∂b
 
         // The vector u(iprimary) with chemical potentials of primary species
