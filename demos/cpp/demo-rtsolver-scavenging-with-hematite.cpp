@@ -150,8 +150,12 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
 
     // Define activity model depending on the parameter
     if(params.activity_model == ActivityModel::HKFSelectedSpecies){
-        // HKF full system
+        // HKF selected species
         editor.addAqueousPhase(selected_species);
+    }
+    if(params.activity_model == ActivityModel::HKF){
+        // HKF full system
+        editor.addAqueousPhaseWithElements(selected_elements);
     }
     else if(params.activity_model == ActivityModel::PitzerSelectedSpecies){
         // Pitzer selected species system
