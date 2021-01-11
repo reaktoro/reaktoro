@@ -52,9 +52,10 @@ enum ActivityModel
 
 // Forward declaration
 auto getSmartMethodTag(enum SmartEquilibriumStrategy method) -> std::string;
+auto getSmartMethodTag(enum SmartKineticStrategy method) -> std::string;
 auto getActivityModelTag(enum ActivityModel activity_model) -> std::string;
-auto mkdir(const std::string& folder) -> bool;
-
+auto getGibbsHessianTag(enum GibbsHessian hessian) -> std::string;
+auto mkdir(std::string& folder) -> bool;
 
 struct ReactiveTransportParams
 {
@@ -80,16 +81,18 @@ struct ReactiveTransportParams
     double amount_fraction_cutoff = 0;
     double mole_fraction_cutoff = 0;
 
-    double smart_kinetics_tol = 0.0;
-    double smart_kinetics_reltol = 0.0;
-    double smart_kinetics_abstol = 0.0;
+    double smart_kinetic_tol = 0.0;
+    double smart_kinetic_reltol = 0.0;
+    double smart_kinetic_abstol = 0.0;
 
     ActivityModel activity_model = ActivityModel::HKF;
 
     GibbsHessian hessian = GibbsHessian::Exact;
 
     SmartEquilibriumStrategy method = SmartEquilibriumStrategy::Clustering;
+    SmartKineticStrategy smart_kin_method = SmartKineticStrategy::Clustering;
 
+    /// Output test parameters to the console for the reactive transport with equilibrium only
     auto outputConsole() -> void
     {
         // Log the parameters in the console
@@ -101,13 +104,24 @@ struct ReactiveTransportParams
         std::cout << "CFD     : " << v * dt / dx << std::endl;
         std::cout << "T       : " << T << std::endl;
         std::cout << "P       : " << P << std::endl;
-        std::cout << "eqreltol       : " << smart_equilibrium_reltol << std::endl;
-        std::cout << "activity model : " << getActivityModelTag(activity_model) << std::endl;
-        std::cout << "smart method   : " << getSmartMethodTag(method) << std::endl;
-
+        std::cout << "activity model  : " << getActivityModelTag(activity_model) << std::endl;
+        std::cout << "hessian         : " << getGibbsHessianTag(hessian) << std::endl;
+        std::cout << "smart eq method : " << getSmartMethodTag(method) << std::endl;
+        std::cout << "eqreltol        : " << smart_equilibrium_reltol << std::endl;
     }
 
-    /// Create results file with parameters of the test
+    /// Output test parameters to the console for the reactive transport with kinetics only
+    auto outputConsoleKinetics() -> void
+    {
+        // Log the parameters in the console
+        outputConsole();
+        std::cout << "smart kin method : " << getSmartMethodTag(smart_kin_method) << std::endl;
+        std::cout << "kinetics tol     : " << smart_kinetic_tol << std::endl;
+        std::cout << "kinetics reltol  : " << smart_kinetic_reltol << std::endl;
+        std::cout << "kinetics abstol  : " << smart_kinetic_abstol << std::endl;
+    }
+
+    /// Create results file with parameters of the test for the reactive transport with equilibrium only
     auto makeResultsFolder(const std::string& demo_tag) -> std::string
     {
         struct stat status = {0};               // structure to get the file status
@@ -119,7 +133,7 @@ struct ReactiveTransportParams
         std::string test_tag = "-dt-" + dt_stream.str() +
                                "-ncells-" + std::to_string(ncells) +
                                "-nsteps-" + std::to_string(nsteps) +
-                               "-" + getActivityModelTag(activity_model) + "-reference";
+                               "-" + getActivityModelTag(activity_model) + "-conventional";
 
         std::string smart_test_tag = "-" + getSmartMethodTag(method) +
                                      "-dt-" + dt_stream.str() +
@@ -139,6 +153,58 @@ struct ReactiveTransportParams
 
         return folder;
     }
+
+    /// Create results file with parameters of the test for the reactive transport with kinetics
+    auto makeResultsFolderKinetics(const std::string& demo_tag) -> std::string
+    {
+        struct stat status = {0};               // structure to get the file status
+
+        std::ostringstream eqreltol_stream,
+                eqabstol_stream,
+                eqcutoff_stream,
+                eqtol_stream,
+                dt_stream,
+                kinreltol_stream,
+                kinabstol_stream,
+                kintol_stream;
+        dt_stream << dt;
+        eqreltol_stream << std::scientific << std::setprecision(1) << smart_equilibrium_reltol;
+        kinreltol_stream << std::scientific << std::setprecision(1) << smart_kinetic_reltol;
+        kinabstol_stream << std::scientific << std::setprecision(1) << smart_kinetic_abstol;
+        kintol_stream << std::scientific << std::setprecision(1) << smart_kinetic_tol;
+        std::string test_tag = "-dt-" + dt_stream.str() +
+                               "-ncells-" + std::to_string(ncells) +
+                               "-nsteps-" + std::to_string(nsteps) +
+                               "-" + getActivityModelTag(activity_model) +
+                               (use_smart_kinetics_solver ? "-smart-kin" : "-conv-kin") +
+                               (use_smart_equilibrium_solver ? "-smart-eq"  : "-conv-eq");      // name of the folder with results
+        std::string smart_test_tag = "-" + getSmartMethodTag(method) +
+                                     "-dt-" + dt_stream.str() +
+                                     "-ncells-" + std::to_string(ncells) +
+                                     "-nsteps-" + std::to_string(nsteps) +
+                                     "-eqrel-" + eqreltol_stream.str() +
+                                     "-kinrel-" + kinreltol_stream.str() +
+                                     "-kinabs-" + kinabstol_stream.str() +
+                                     "-kintol-" + kintol_stream.str() +
+                                     "-" + getActivityModelTag(activity_model) +
+                                     (use_smart_kinetics_solver ? "-smart-kin" : "-conv-kin") +
+                                     (use_smart_equilibrium_solver ? "-smart-eq"  : "-conv-eq");      // name of the folder with results
+
+        std::string folder = "results-" + demo_tag;
+        folder = (use_smart_kinetics_solver || use_smart_equilibrium_solver) ?
+                 demo_tag + smart_test_tag :
+                 demo_tag + test_tag;
+        if (stat(folder.c_str(), &status) == -1) mkdir(folder);
+
+        std::cout << "*********************************************************************" << std::endl;
+        std::cout << "*********************************************************************" << std::endl;
+        std::cout << "\nsolver                         : "
+                  << (use_smart_kinetics_solver ? "smart_kin & " : "conv_kin & ")
+                  << (use_smart_equilibrium_solver ? "smart_eq" : "conv_eq") << std::endl;
+
+        return folder;
+    }
+
 };
 
 struct ReactiveTransportResults
@@ -288,8 +354,6 @@ struct ReactiveTransportKineticsResults
     /// The accumulated timing information of all smart kinetic calculations.
     SmartKineticTiming smart_kinetic_timing = {};
 
-
-
     auto outputStatisticsSmartKineticsConventionalEquilibrium(const ReactiveTransportParams& params) -> void
     {
         smart_kin_conv_eq_total = smart_kinetic_timing.solve;
@@ -317,7 +381,7 @@ struct ReactiveTransportKineticsResults
         std::cout << "   - equilibrate           : " << smart_kinetic_timing.equilibrate << " (" << smart_kinetic_timing.equilibrate / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
         std::cout << "-----------------------------------------------------" << std::endl;
         std::cout << "-----------------------------------------------------" << std::endl;
-        std::cout << " acceptance rate      : " << smart_kin_conv_eq_acceptance_rate << " / " << (1 - smart_kin_conv_eq_acceptance_rate) * params.ncells *params.nsteps << " learnings out of " << params.ncells *params.nsteps  << std::endl;
+        std::cout << " acceptance rate      : " << smart_kin_conv_eq_acceptance_rate << " / " << (1 - smart_kin_conv_eq_acceptance_rate) * params.ncells * params.nsteps << " learnings out of " << params.ncells * params.nsteps  << std::endl;
         std::cout << "-----------------------------------------------------" << std::endl;
         std::cout << "-----------------------------------------------------" << std::endl;
         std::cout << " - solve - search                 : " << smart_kin_conv_eq_total_ideal_search << std::endl;
@@ -364,13 +428,13 @@ struct ReactiveTransportKineticsResults
         std::cout << "-----------------------------------------------------" << std::endl;
         std::cout << " smart kinetics acceptance rate      : " << smart_kin_smart_eq_acceptance_rate << " ( "
                   << smart_kin_smart_eq_acceptance_rate * 100 << " % ) / "
-                  << (1 - smart_kin_smart_eq_acceptance_rate) * params.ncells *params.nsteps
-                  << " learnings out of " << params.ncells *params.nsteps
+                  << (1 - smart_kin_smart_eq_acceptance_rate) * params.ncells * params.nsteps
+                  << " learnings out of " << params.ncells * params.nsteps
                   << " ( " << (1 - smart_kin_smart_eq_acceptance_rate) * 100 << "% )" << std::endl;
         std::cout << " smart equilibrium acceptance rate   : " << smart_kin_smart_eq_equilibrium_acceptance_rate << " ( "
                   << smart_kin_smart_eq_equilibrium_acceptance_rate * 100 << " % ) / "
-                  << (1 - smart_kin_smart_eq_equilibrium_acceptance_rate) * params.ncells *params.nsteps
-                  << " learnings states out of " << params.ncells *params.nsteps
+                  << (1 - smart_kin_smart_eq_equilibrium_acceptance_rate) * params.ncells * params.nsteps
+                  << " learnings states out of " << params.ncells * params.nsteps
                   << " ( " << (1 - smart_kin_smart_eq_equilibrium_acceptance_rate) * 100 << "% )" << std::endl;
         std::cout << "-----------------------------------------------------" << std::endl;
         std::cout << " - solve - search                 : " << smart_kin_smart_eq_total_ideal_search << std::endl;
@@ -423,8 +487,8 @@ struct ReactiveTransportKineticsResults
         std::cout << "-----------------------------------------------------" << std::endl;
         std::cout << " smart equilibrium acceptance rate   : " << conv_kin_smart_eq_equilibrium_acceptance_rate << " ( "
                   << conv_kin_smart_eq_equilibrium_acceptance_rate * 100 << " % ) / "
-                  << (1 - conv_kin_smart_eq_equilibrium_acceptance_rate) * params.ncells *params.nsteps
-                  << " learnings states out of " << params.ncells *params.nsteps
+                  << (1 - conv_kin_smart_eq_equilibrium_acceptance_rate) * params.ncells * params.nsteps
+                  << " learnings states out of " << params.ncells * params.nsteps
                   << " ( " << (1 - conv_kin_smart_eq_equilibrium_acceptance_rate) * 100 << "% )" << std::endl;
         std::cout << "-----------------------------------------------------" << std::endl;
         std::cout << " - solve - search              : " << kinetic_timing.solve
@@ -568,8 +632,33 @@ auto getSmartMethodTag(enum SmartEquilibriumStrategy method) -> std::string
     return "";
 }
 
+// Return string tag depending on the selected method (smart kinetics strategy)
+auto getSmartMethodTag(enum SmartKineticStrategy method) -> std::string
+{
+    switch(method)
+    {
+        case SmartKineticStrategy::Clustering: return "eq-clustering";
+        case SmartKineticStrategy::PriorityQueue: return "eq-priority";
+        case SmartKineticStrategy::NearestNeighbour: return "eq-nnsearch";
+    }
+    return "";
+}
+
+// Return string tag depending on the selected method fpr the hessian calculation
+auto getGibbsHessianTag(enum GibbsHessian hessian) -> std::string
+{
+    switch(hessian)
+    {
+        case GibbsHessian::Exact: return "hessian-exact";
+        case GibbsHessian::ExactDiagonal: return "hessian-exact-diagonal";
+        case GibbsHessian::Approximation: return "hessian-approximation";
+        case GibbsHessian::ApproximationDiagonal: return "hessian-approximation-diagonal";
+    }
+    return "";
+}
+
 /// Make directory for Windows and Linux
-auto mkdir(const std::string& folder) -> bool
+auto mkdir(std::string& folder) -> bool
 {
 #if defined _WIN32
     // Replace slash by backslash
