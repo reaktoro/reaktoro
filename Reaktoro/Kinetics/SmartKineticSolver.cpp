@@ -49,7 +49,7 @@ auto SmartKineticSolver::setOptions(const SmartKineticOptions& options) -> void
             solverptr = std::make_unique<SmartKineticSolverClustering>(solverptr->reactions(), solverptr->partition());
             break;
         case SmartKineticStrategy::ClusteringExtended:
-            solverptr = std::make_unique<SmartKineticSolverClustering>(solverptr->reactions(), solverptr->partition());
+            solverptr = std::make_unique<SmartKineticSolverClusteringExtended>(solverptr->reactions(), solverptr->partition());
             break;
     }
     // Set options of the smart equilibrium options
