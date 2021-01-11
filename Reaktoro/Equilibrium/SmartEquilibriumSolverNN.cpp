@@ -44,6 +44,16 @@ auto SmartEquilibriumSolverNN::learn(ChemicalState& state, double T, double P, V
     // and store the result of the Gibbs energy minimization calculation performed during learning
     _result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
 
+    // Check if the EquilibriumSolver calculation failed, if so, use cold-start
+    if(!_result.learning.gibbs_energy_minimization.optimum.succeeded)
+    {
+        state.setSpeciesAmounts(0.0);
+        _result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
+        if(!_result.learning.gibbs_energy_minimization.optimum.succeeded)
+                return;
+        
+    }
+
     _result.timing.learn_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
 
     //---------------------------------------------------------------------
@@ -133,7 +143,8 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
 
     // Perform the check for the negative amounts
     const bool amount_check = ne.minCoeff() > options.cutoff;
-    if(!amount_check){
+    if(!amount_check)
+    {
         _result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
         return;
     }
@@ -146,7 +157,8 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
             continue;
 
         // Perform the variational check
-        if(std::abs(dlnae[i]) > options.abstol + options.reltol * std::abs(lnae0[i])) {
+        if(std::abs(dlnae[i]) > options.abstol + options.reltol * std::abs(lnae0[i])) 
+        {
             _result.estimate.failed_with_species = system.species(ies[i]).name();
             _result.estimate.failed_with_amount = ne[i];
             _result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
@@ -161,7 +173,9 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
     //---------------------------------------------------------------------
 
     // Assign small values to all the amount  in the interval [cutoff, 0] (instead of mirroring above)
-    for(unsigned int i = 0; i < ne.size(); ++i) if(ne[i] < 0) ne[i] = options.learning.epsilon;
+    for(unsigned int i = 0; i < ne.size(); ++i) 
+        if(ne[i] < 0) 
+            ne[i] = options.learning.epsilon;
 
     // Update equilibrium species
     state.setSpeciesAmounts(ne, ies);
@@ -170,7 +184,7 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
     state.setTemperature(T);
     state.setPressure(P);
 
-     // Set the estimate accepted status to true
+    // Set the estimate accepted status to true
     _result.estimate.accepted = true;
 
 }

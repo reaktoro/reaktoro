@@ -63,7 +63,7 @@ struct EquilibriumOptions
     /// a chemical state that works well as initial guess for all equilibrium algorithms.
     bool warmstart = true;
 
-    /// The calculation mode of the Hessian of the Gibbs energy function
+    /// The calculation mode of the Hessian of the Gibbs energy function.
     GibbsHessian hessian = GibbsHessian::ApproximationDiagonal;
 
     /// The optimisation method to be used for the equilibrium calculation.
