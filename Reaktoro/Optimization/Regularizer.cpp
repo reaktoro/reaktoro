@@ -537,6 +537,10 @@ auto Regularizer::Impl::regularize(Matrix& dgdp, Matrix& dbdp) -> void
 
 auto Regularizer::Impl::recover(OptimumState& state) -> void
 {
+    // Skip if echelonization should not be performed or A(echelon) was not computed
+    if(!params.echelonize || !A_echelon.size())
+        return;
+
     // Calculate dual variables y w.r.t. original equality constraints
     state.y = lu_star.trsolve(state.f.grad - state.z);
 
@@ -577,6 +581,10 @@ auto Regularizer::Impl::recover(OptimumState& state) -> void
 
 auto Regularizer::Impl::recover(const Matrix& dgdp, const Matrix& dbdp, Matrix& dxdp, Matrix& dydp, Matrix& dzdp) -> void
 {
+    // Skip if echelonization should not be performed or A(echelon) was not computed
+    if(!params.echelonize || !A_echelon.size())
+        return;
+
     // Calculate dual variables y w.r.t. original equality constraints
     dydp = lu_star.trsolve(dgdp - dzdp);
 
