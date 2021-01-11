@@ -517,8 +517,7 @@ struct SmartEquilibriumSolver::Impl
 
                     // Update the chemical properties of the system as well as temperature and pressure
                     properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
-                    properties.update(T, P);
-
+                    
                     result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
                     //---------------------------------------------------------------------
