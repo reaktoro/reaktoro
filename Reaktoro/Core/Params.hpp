@@ -37,6 +37,9 @@ public:
     /// Return the child parameter with given key.
     auto get(const String& key) const -> const Param&;
 
+    /// Return true if a child parameter exists with given key.
+    auto exists(const String& key) const -> bool;
+
     /// Set the child block of parameters with given key to a given block of parameters.
     auto set(const String& key, const Params& node) -> void;
 

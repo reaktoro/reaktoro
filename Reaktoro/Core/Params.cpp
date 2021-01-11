@@ -40,6 +40,12 @@ auto Params::get(const String& key) const -> const Param&
     return std::any_cast<const Param&>(it->second);
 }
 
+auto Params::exists(const String& key) const -> bool
+{
+    const auto it = tree.find(key);
+    return it != tree.end();
+}
+
 auto Params::set(const String& key, const Params& node) -> void
 {
     tree[key] = node;
