@@ -27,7 +27,8 @@ namespace detail {
 /// Return the hash number of a vector.
 /// https://stackoverflow.com/questions/20511347/a-good-hash-function-for-a-vector
 template<typename Vec>
-auto hash(Vec &vec) -> std::size_t {
+auto hash(Vec &vec) -> std::size_t 
+{
     using T = decltype(vec[0]);
     std::hash<T> hasher;
     std::size_t seed = vec.size();
@@ -63,12 +64,13 @@ auto SmartEquilibriumSolverClustering::learn(ChemicalState& state, double T, dou
     _result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
 
     // Check if the EquilibriumSolver calculation failed, if so, use cold-start
-    if(!_result.learning.gibbs_energy_minimization.optimum.succeeded){
+    if(!_result.learning.gibbs_energy_minimization.optimum.succeeded)
+    {
         state.setSpeciesAmounts(0.0);
         _result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
-        if(!_result.learning.gibbs_energy_minimization.optimum.succeeded){
+        if(!_result.learning.gibbs_energy_minimization.optimum.succeeded)
                 return;
-        }
+        
     }
     _result.timing.learn_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
 
@@ -124,21 +126,28 @@ auto SmartEquilibriumSolverClustering::learn(ChemicalState& state, double T, dou
     // The chemical potentials at the calculated equilibrium state
     u = _properties.chemicalPotentials();
 
-    // Auxiliary references to the derivatives dn/db and du/dn
-    const auto& dndb = solver.sensitivity().dndb;
-    const auto& dudn = u.ddn;
+    // Auxiliary references to the derivatives dn/db, dn/dT, dn/dP, and du/dn
+    const auto& dndT = sensitivity.dndT;
+    const auto& dndP = sensitivity.dndP;
+    const auto& dndb = sensitivity.dndb;
 
-    // Compute the matrix du/db = du/dn * dn/db
-    dudb = dudn * dndb;
+    // Compute the matrices du/dT, du/dP, du/db
+    dudT = u.ddn * dndT + u.ddT; // du/dT = ∂u/∂n*∂n/∂T + ∂u/∂T
+    dudP = u.ddn * dndP + u.ddP; // du/dP = ∂u/∂n*∂n/∂P + ∂u/∂P
+    dudb = u.ddn * dndb;         // du/du = ∂u/∂n*∂n/∂b
 
     // The vector u(iprimary) with chemical potentials of primary species
     up.noalias() = u.val(iprimary);
 
     // The matrix du(iprimary)/dbe with derivatives of chemical potentials (primary species only)
     const auto dupdbe = dudb(iprimary, iee);
-
+    const auto dupdT = dudT(iprimary, 0);
+    const auto dupdP = dudP(iprimary, 0);
+    
     // Compute matrix Mbe = 1/up * dup/db
     Mbe.noalias() = diag(inv(up)) * dupdbe;
+    MT.noalias()  = diag(inv(up)) * dupdT;
+    MP.noalias()  = diag(inv(up)) * dupdP;
 
     _result.timing.learn_error_control_matrices = toc(ERROR_CONTROL_MATRICES);
 
@@ -158,7 +167,7 @@ auto SmartEquilibriumSolverClustering::learn(ChemicalState& state, double T, dou
     if(iter < database.clusters.end())
     {
         auto& cluster = *iter;
-        cluster.records.push_back({T, P, be, state, _properties, sensitivity, Mbe});
+        cluster.records.push_back({T, P, be, state, _properties, sensitivity, Mbe, MT, MP});
         cluster.priority.extend();
     }
     else
@@ -167,7 +176,7 @@ auto SmartEquilibriumSolverClustering::learn(ChemicalState& state, double T, dou
         Cluster cluster;
         cluster.iprimary = iprimary;
         cluster.label = label;
-        cluster.records.push_back({T, P, be, state, _properties, sensitivity, Mbe});
+        cluster.records.push_back({T, P, be, state, _properties, sensitivity, Mbe, MT, MP});
         cluster.priority.extend();
 
         // Append the new cluster in the database
@@ -197,23 +206,31 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
     // The current set of primary species in the chemical state
     const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
 
+    // Variations in be, T, and P
     Vector dbe;
+    double dT, dP;
 
     // The function that checks if a record in the database pass the error test.
     // It returns (`success`, `error`, `iprimaryspecies`), where
     // * `success` is true if error test succeeds, false otherwise.
     // * `error` is the first error value violating the tolerance
     // * `iprimaryspecies` is the index of the primary species that fails the error test
-    auto pass_error_test = [&be, &dbe, &reltol, &eps_b](const Record& record) -> std::tuple<bool, double, Index>
+    auto pass_error_test = [&be, &dbe, &T, &dT, &P, &dP, &reltol, &eps_b](const Record& record) -> std::tuple<bool, double, Index>
     {
         using std::abs;
         using std::max;
         const auto& state0 = record.state;
         const auto& be0 = record.be;
+        const auto& T0 = record.T;
+        const auto& P0 = record.P;
         const auto& Mbe0 = record.Mbe;
+        const auto& MT0 = record.MT;
+        const auto& MP0 = record.MP;
         const auto& isue0 = state0.equilibrium().indicesStrictlyUnstableElements();
 
         dbe.noalias() = be - be0;
+        dT = T - T0;
+        dP = P - P0;
 
         // Check if state0 has strictly unstable elements (i.e. elements with zero amounts)
         // which cannot be used for Taylor estimation if positive amounts for those elements are given.
@@ -225,8 +242,10 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
 
         double error = 0.0;
         const auto size = Mbe0.rows();
-        for(auto i = 1; i <= size; ++i) {
-            error = max(error, abs(Mbe0.row(size - i) * dbe)); // start checking primary species with least amount first
+        for(auto i = 1; i <= size; ++i)
+        {
+            const double delta_mu = Mbe0.row(size - i).dot(dbe) + MT0[size - i] * dT + MP0[size - i] * dP;
+            error = max(error, abs(delta_mu)); // start checking primary species with least amount first
             if(error >= reltol)
                 return { false, error, size - i };
         }
@@ -313,11 +332,8 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
                 const auto& ne0 = n0(ies);
 
                 // Perform Taylor extrapolation
-                // Ae*ne = Ae*ne0 + Ae * dnedb0 * (be - be0);
-                // be*   = be0 + Ae * dnedb0 * (be - be0);
-                // If we want be* = be   =>   Ae * dnedn0 = I
                 //ne.noalias() = ne0 + dnedbe0 * (be - be0);
-                ne.noalias() = ne0 + dnedbe0 * (be - be0) + dnedbPe0 * (P - P0) + dnedbTe0 * (T - T0);
+                ne.noalias() = ne0 + dnedbe0*(be - be0) + dnedbPe0*(P - P0) + dnedbTe0*(T - T0);
 
                 // Check if all projected species amounts are positive
                 const double ne_min = min(ne);
@@ -332,7 +348,9 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
                 //---------------------------------------------------------------------
 
                 // Assign small values to all the amount in the interval [cutoff, 0] (instead of mirroring above)
-                for(unsigned int i = 0; i < ne.size(); ++i) if(ne[i] < 0) ne[i] = options.learning.epsilon;
+                for(unsigned int i = 0; i < ne.size(); ++i) 
+                    if(ne[i] < 0) 
+                        ne[i] = options.learning.epsilon;
 
                 // Update the amounts of elements for the equilibrium species
                 n(ies) = ne;
@@ -344,10 +362,9 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
                 // Make sure that pressure and temperature is set to the current one
                 state.setTemperature(T);
                 state.setPressure(P);
-
+                    
                 // Update the chemical properties of the system
                 _properties =  record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
-                _properties.update(T, P);
 
                 _result.timing.estimate_taylor = toc(TAYLOR_STEP);
 

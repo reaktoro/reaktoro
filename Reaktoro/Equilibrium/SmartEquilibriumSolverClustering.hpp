@@ -41,13 +41,13 @@ public:
     /// Destroy this SmartEquilibriumSolverClustering instance.
     virtual ~SmartEquilibriumSolverClustering();
 
-    /// Learn how to perform a full equilibrium calculation (with tracking)
+    /// Learn how to perform a full equilibrium calculation (with tracking).
     auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> void;
 
-    /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences)
+    /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences).
     auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> void;
 
-    /// Output clusters created during the ODML algorithm
+    /// Output clusters created during the ODML algorithm.
     auto outputInfo() const -> void;
 
 private:
@@ -55,14 +55,17 @@ private:
     /// The chemical potentials at the calculated equilibrium state
     ChemicalVector u;
 
-    /// The storage for matrix du/db = du/dn * dn/db
-    Matrix dudb;
+    /// The storage for matrix du/db, du/dT, and du/dP
+    Matrix dudb, dudT, dudP;
 
     /// The storage for vector u(iprimary)
     Vector up;
 
     /// The storage for matrix Mbe = inv(u(iprimary)) * du(iprimary)/db.
     Matrix Mbe;
+
+    /// The storage for vector MT = inv(u(iprimary)) * du(iprimary)/dT and MP = inv(u(iprimary)) * du(iprimary)/dP
+    Vector MT, MP;
 
     /// The record of the knowledge database containing input, output, and derivatives data.
     struct Record
@@ -87,6 +90,9 @@ private:
 
         /// The matrix used to compute relative change of chemical potentials due to change in `be`.
         Matrix Mbe;
+
+        /// The vectors used to compute relative change of chemical potentials due to change in `T` and `P`.
+        Vector MT, MP;
     };
 
     /// The cluster storing learned input-output data with same classification.
