@@ -51,22 +51,58 @@ public:
     auto outputInfo() const -> void;
 private:
 
-    struct TreeNode
+    /// The chemical potentials at the calculated equilibrium state
+    ChemicalVector u;
+
+    /// The storage for matrix du/db, du/dT, and du/dP
+    Matrix dudb, dudT, dudP;
+
+    /// The storage for vector u(iprimary)
+    Vector um;
+
+    /// The storage for matrix Mbe = inv(u(iprimary)) * du(iprimary)/db.
+    Matrix Mbe;
+
+    /// The storage for vector MT = inv(u(iprimary)) * du(iprimary)/dT and MP = inv(u(iprimary)) * du(iprimary)/dP
+    Vector MT, MP;
+
+    struct Record
     {
+        /// The temperature of the equilibrium state (in units of K).
+        double T;
+
+        /// The pressure of the equilibrium state (in units of Pa).
+        double P;
+        
+        /// The amounts of elements in the equilibrium state (in units of mol).
         Vector be;
+
+        /// The calculated equilibrium state at `T`, `P`, `be`.
         ChemicalState state;
+
+        /// The chemical properties at the calculated equilibrium state.
         ChemicalProperties properties;
+
+        /// The sensitivity derivatives at the calculated equilibrium state.
         EquilibriumSensitivity sensitivity;
+
+        /// The matrix used to compute relative change of chemical potentials due to change in `be`.
         Matrix Mb;
+
+        /// The vectors used to compute relative change of chemical potentials due to change in `T` and `P`.
+        Vector MT, MP;
+
+        // Indices of the major species in the chemical state. 
         VectorXi imajor;
     };
-    /// The tree used to save the calculated equilibrium states and respective sensitivities
-    std::deque<TreeNode> tree;
 
-    // The queue with priority indices, in which equilibrium states of the `tree` must be considered
+    /// The tree used to save the calculated equilibrium states and respective sensitivities
+    std::deque<Record> database;
+
+    // The queue with priority indices, in which equilibrium states of the `database` must be considered
     std::deque<Index> priority;
 
-    // The queue with the rank of each equilibrium states in the `tree`
+    // The queue with the rank of each equilibrium states in the `database`
     std::deque<Index> ranking;
 };
 

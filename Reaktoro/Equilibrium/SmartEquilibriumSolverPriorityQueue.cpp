@@ -45,6 +45,15 @@ auto SmartEquilibriumSolverPriorityQueue::learn(ChemicalState& state, double T, 
     // and store the result of the Gibbs energy minimization calculation performed during learning
     _result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
 
+    // Check if the EquilibriumSolver calculation failed, if so, use cold-start
+    if(!_result.learning.gibbs_energy_minimization.optimum.succeeded)
+    {
+        state.setSpeciesAmounts(0.0);
+        _result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
+        if(!_result.learning.gibbs_energy_minimization.optimum.succeeded)
+                return;
+        
+    }
     _result.timing.learn_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
 
     //---------------------------------------------------------------------
@@ -56,6 +65,15 @@ auto SmartEquilibriumSolverPriorityQueue::learn(ChemicalState& state, double T, 
     _properties = solver.properties();
 
     _result.timing.learn_chemical_properties =toc(CHEMICAL_PROPERTIES_STEP);
+
+    //---------------------------------------------------------------------
+    // SENSITIVITY MATRIX COMPUTATION STEP DURING THE LEARNING PROCESS
+    //---------------------------------------------------------------------
+    tic(SENSITIVITY_STEP);
+
+    const auto& sensitivity = solver.sensitivity();
+
+    _result.timing.learn_sensitivity_matrix = toc(SENSITIVITY_STEP);
 
     //---------------------------------------------------------------------
     // ERROR CONTROL MATRICES ASSEMBLING STEP DURING THE LEARNING PROCESS
@@ -86,16 +104,31 @@ auto SmartEquilibriumSolverPriorityQueue::learn(ChemicalState& state, double T, 
     const auto imajor = imajorminor.head(nummajor);
 
     // Fetch chemical potentials and their derivatives
-    const auto u = _properties.chemicalPotentials();
-    const auto& dndb = solver.sensitivity().dndb;
-    const auto& dudn = u.ddn;
-    const Matrix dudb = dudn * dndb;
+    u = _properties.chemicalPotentials();
 
-    // Calculate matrix Mb for the error control based on the potentials
-    const Vector um = u.val(imajor);
-    const auto dumdb = rows(dudb, imajor);
+    // Auxiliary references to the derivatives dn/db, dn/dT, dn/dP, and du/dn
+    const auto& dndT = sensitivity.dndT;
+    const auto& dndP = sensitivity.dndP;
+    const auto& dndb = sensitivity.dndb;
+
+    // Compute the matrices du/dT, du/dP, du/db
+    dudT = u.ddn * dndT + u.ddT; // du/dT = ∂u/∂n*∂n/∂T + ∂u/∂T
+    dudP = u.ddn * dndP + u.ddP; // du/dP = ∂u/∂n*∂n/∂P + ∂u/∂P
+    dudb = u.ddn * dndb;         // du/du = ∂u/∂n*∂n/∂b
+
+
+    // The vector u(iprimary) with chemical potentials of primary species
+    um.noalias() = u.val(imajor);
+
+    // The matrix du(imajor)/dbe with derivatives of chemical potentials (imajor species only)
     const auto dumdbe = dudb(imajor, iee);
-    const Matrix Mbe = diag(inv(um)) * dumdbe;
+    const auto dumdT = dudT(imajor, 0);
+    const auto dumdP = dudP(imajor, 0);
+
+    // Compute matrix Mbe = 1/up * dup/db
+    Mbe.noalias() = diag(inv(um)) * dumdbe;
+    MT.noalias()  = diag(inv(um)) * dumdT;
+    MP.noalias()  = diag(inv(um)) * dumdP;
 
     _result.timing.learn_error_control_matrices = toc(ERROR_CONTROL_MATRICES);
 
@@ -104,13 +137,14 @@ auto SmartEquilibriumSolverPriorityQueue::learn(ChemicalState& state, double T, 
     //---------------------------------------------------------------------
     tic(STORAGE_STEP)
 
-    // Store the computed solution into the knowledge tree
-    tree.push_back({be, state, _properties, solver.sensitivity(), Mbe, imajor});
+    // Store the computed solution into the knowledge database
+    database.push_back({T, P, be, state, _properties, solver.sensitivity(), Mbe, MT, MP, imajor});
 
     // Update the priority queue
     // ----------------------------------------------
     // Add new element in the priority queue
     priority.push_back(priority.size());
+
     // Set its rank to zero
     ranking.push_back(0);
 
@@ -122,7 +156,7 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
     _result.estimate.accepted = false;
 
     // Skip estimation if no previous full computation has been done
-    if(tree.empty())
+    if(database.empty())
         return;
 
     // Relative and absolute tolerance parameters
@@ -135,36 +169,46 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
 
     // Variations of the elements
     Vector dbe;
-
+    double dT, dP;
+    
     // Check if an entry in the database pass the error test.
     // It returns (`success`, `error`, `ispecies`), where
     //   - `success` is true if error test succeeds, false otherwise.
     //   - `error` is the first error violating the tolerance
     //   - `ispecies` is the index of the species that fails the error test
-    auto pass_error_test = [&](const auto& node) -> std::tuple<bool, double, Index>
+    auto pass_error_test = [&be, &dbe, &T, &dT, &P, &dP, &reltol](const Record& record) -> std::tuple<bool, double, Index>
     {
         using std::abs;
         using std::max;
-        const auto& be0 = node.be;
-        const auto& Mb0 = node.Mb;
-        const auto& imajor = node.imajor;
+        const auto& be0 = record.be;
+        const auto& T0 = record.T;
+        const auto& P0 = record.P;
+        const auto& Mbe0 = record.Mb;
+        const auto& MT0 = record.MT;
+        const auto& MP0 = record.MP;
+        const auto& imajor = record.imajor;
 
         dbe.noalias() = be - be0;
+        dT = T - T0;
+        dP = P - P0;
 
         double error = 0.0;
-        for(auto i = 0; i < imajor.size(); ++i) {
-            error = max(error, abs(Mb0.row(i) * dbe));
+        const auto size = Mbe0.rows();
+        for(auto i = 1; i <= size; ++i)
+        {
+            const double delta_mu = Mbe0.row(size - i).dot(dbe) + MT0[size - i] * dT + MP0[size - i] * dP;
+            error = max(error, abs(delta_mu)); // start checking primary species with least amount first
             if(error >= reltol)
-                return { false, error, imajor[i] };
+                return { false, error, size - i };
         }
 
-        return { true, error, n.size() };
+        return { true, error, -1 };
     };
 
     auto irecord_prev = priority.begin();
     for(auto irecord=priority.begin(); irecord!=priority.end(); ++irecord)
     {
-        const auto& record = tree[*irecord];
+        const auto& record = database[*irecord];
         const auto& imajor = record.imajor;
 
         //---------------------------------------------------------------------
@@ -217,13 +261,14 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
             //-----------------------------------------------------------------------
             tic(PRIORITY_UPDATE_STEP)
 
-            // Increase ranking of of the used node
+            // Increase ranking of of the used record
             ranking[*irecord] += 1;
 
             // Make sure the indices in the priority are ordered such that:
             // rank[priority[i-1]] > rank[priority[i]]
             auto comp = [&](Index l, Index r) { return ranking[l] > ranking[r]; };
-            if( !((irecord == priority.begin()) || (ranking[*irecord_prev] >= ranking[*irecord])) ) {
+            if( !((irecord == priority.begin()) || (ranking[*irecord_prev] >= ranking[*irecord])) ) 
+            {
                 std::stable_sort(priority.begin(), irecord + 1, comp);
             }
 
@@ -234,10 +279,12 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
             //---------------------------------------------------------------------
 
             // Assign small values to all the amount  in the interval [cutoff, 0] (instead of mirroring above)
-            for(unsigned int i = 0; i < ne.size(); ++i) if(ne[i] < 0) ne[i] = options.learning.epsilon;
+            for(unsigned int i = 0; i < ne.size(); ++i) 
+                if(ne[i] < 0) 
+                    ne[i] = options.learning.epsilon;
 
             // Update the amounts of elements for the equilibrium species
-            //state = node.state; // this line was removed because it was destroying kinetics simulations
+            //state = record.state; // this line was removed because it was destroying kinetics simulations
             state.setSpeciesAmounts(ne, ies);
 
             // Make sure that pressure and temperature is set to the current one
@@ -246,8 +293,7 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
 
             // Update the chemical properties of the system
             _properties = record.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
-            _properties.update(T, P);
-
+            
             _result.estimate.accepted = true;
 
             return;
