@@ -44,6 +44,11 @@ TEST_CASE("Testing Params class", "[Params]")
     CHECK( bar.get("D").value() == 6.0 );
     CHECK( bar.get("E").value() == 7.0 );
 
+    CHECK( bar.exists("C") == true );
+    CHECK( bar.exists("D") == true );
+    CHECK( bar.exists("E") == true );
+    CHECK( bar.exists("F") == false );
+
     CHECK( params.at("Foo").get("A").value() == 1.0 );
     CHECK( params.at("Foo").get("B").value() == 2.0 );
 
