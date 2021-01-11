@@ -63,8 +63,9 @@ int main()
     params.amount_fraction_cutoff = 1e-14;
     params.mole_fraction_cutoff = 1e-14;
 
-    // Define smart algorithm and related tolerances
-    // -----------------------------------------------
+    // ----------------------------------------------------------- //
+    // Smart equilibrium algorithm  tolerances
+    // ----------------------------------------------------------- //
 
     // Run smart algorithm with clustering
     params.method = SmartEquilibriumStrategy::Clustering;
@@ -125,6 +126,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
+    equilibrium_options.hessian = params.hessian;
 
     // Step **: Define smart chemical equilibrium solver options
     SmartEquilibriumOptions smart_equilibrium_options;
@@ -141,7 +143,6 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
 
     // Define the list of selected species
     StringList selected_species = "H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ HCO3- CO2(aq) CO3-- CaCl+ Ca(HCO3)+ MgCl+ Mg(HCO3)+";
-
 
     // Depending on the activity model, define it using ChemicalEditor
     if(params.activity_model == ActivityModel::HKF){

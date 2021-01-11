@@ -50,9 +50,6 @@ int main()
     params.T = 25.0;                     // the temperature (in units of degC)
     params.P = 1.01325;                      // the pressure (in units of bar)
 
-    // Define parameters of the equilibrium solvers
-    params.smart_equilibrium_reltol = 0.01;
-
     // Define the activity model for the aqueous species
     //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
     //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies;
@@ -61,8 +58,9 @@ int main()
     params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
     //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies;
 
-    // Define smart algorithm and related tolerances
-    // -----------------------------------------------
+    // ----------------------------------------------------------- //
+    // Smart equilibrium algorithm  tolerances
+    // ----------------------------------------------------------- //
 
     // Run smart algorithm with clustering
     params.method = SmartEquilibriumStrategy::Clustering;;
@@ -79,6 +77,13 @@ int main()
     // Define equilibrium solver cutoff tolerances
     params.amount_fraction_cutoff = 1e-14;
     params.mole_fraction_cutoff = 1e-14;
+
+    // ----------------------------------------------------------- //
+    // Optimization algorithm parameters
+    // ----------------------------------------------------------- //
+
+    params.hessian = GibbsHessian::Exact;
+    //params.hessian = GibbsHessian::Approximation;
 
     // Output
     params.outputConsole();
@@ -124,6 +129,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
+    equilibrium_options.hessian = params.hessian;
 
     // Step **: Define smart chemical equilibrium solver options
     SmartEquilibriumOptions smart_equilibrium_options;
@@ -145,11 +151,8 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4(aq)", "CaOH+", "Cl-",
                                    "FeCl++", "FeCl2(aq)", "FeCl+", "Fe++", "FeOH+",  "FeOH++", "Fe+++",
                                    "H2(aq)", "HSO4-", "H2S(aq)", "HS-", "H2O(l)",  "H+", "OH-", "HCO3-",
-                                   "K+", "KSO4-",
-                                   "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+", "Mg(HCO3)+",
-                                   "Na+", "NaSO4-",
-                                   "O2(aq)",
-                                   "S5--", "S4--", "S3--", "S2--", "SO4--"};
+                                   "K+", "KSO4-", "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+", "Mg(HCO3)+",
+                                   "Na+", "NaSO4-", "O2(aq)", "S5--", "S4--", "S3--", "S2--", "SO4--"};
     // Define the list of selected elements
     StringList selected_elements = "C Ca Cl Fe H K Mg Na O S";
 
