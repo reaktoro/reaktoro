@@ -517,7 +517,8 @@ auto SmartKineticSolverBase::solve(ChemicalState& state, double t, double dt, Ve
     tic(LEARN_STEP)
 
     // Perform a learning step if the smart prediction is not satisfactory
-    learn(state, t, dt);
+    if(!_result.estimate.accepted)
+        learn(state, t, dt);
 
     // Extract the `be` and `nk` entries of the vector `benk`
     be = benk.head(Ee);
