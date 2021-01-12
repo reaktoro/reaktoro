@@ -247,8 +247,8 @@ auto SmartKineticSolverBase::initialize(ChemicalState& state, double tstart, Vec
     ode.initialize(tstart, _benk);
 
     // Set the options of the equilibrium solver
-    smart_equilibrium.setOptions(options.learning.smart_equilibrium);
-    equilibrium.setOptions(options.learning.equilibrium);
+    //smart_equilibrium.setOptions(options.learning.smart_equilibrium);
+    //equilibrium.setOptions(options.learning.equilibrium);
 
 }
 
