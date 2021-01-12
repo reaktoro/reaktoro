@@ -91,14 +91,17 @@ struct SmartEquilibriumSolver::Impl
     /// The amounts of the elements in the equilibrium partition
     Vector be;
 
-    /// The storage for matrix du/db = du/dn * dn/db
-    Matrix dudb;
+    /// The storage for matrix du/db, du/dT, and du/dP
+    Matrix dudb, dudT, dudP;
 
     /// The storage for vector u(iprimary)
     Vector up;
 
     /// The storage for matrix Mbe = inv(u(iprimary)) * du(iprimary)/db.
     Matrix Mbe;
+
+    /// The storage for matrix MT = inv(u(iprimary)) * du(iprimary)/dT and MP = inv(u(iprimary)) * du(iprimary)/dP
+    Vector MT, MP;
 
     /// The record of the knowledge database containing input, output, and derivatives data.
     struct Record
@@ -123,6 +126,9 @@ struct SmartEquilibriumSolver::Impl
 
         /// The matrix used to compute relative change of chemical potentials due to change in `be`.
         Matrix Mbe;
+
+        /// The vectors used to compute relative change of chemical potentials due to change in `T` and `P`.
+        Vector MT, MP;
     };
 
     /// The cluster storing learned input-output data with same classification.
@@ -198,14 +204,14 @@ struct SmartEquilibriumSolver::Impl
         result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
 
         // Check if the EquilibriumSolver calculation failed, if so, use cold-start
-        if(!result.learning.gibbs_energy_minimization.optimum.succeeded){
+        if(!result.learning.gibbs_energy_minimization.optimum.succeeded)
+        {
             state.setSpeciesAmounts(0.0);
             result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
 
             // If solve has not converged, do not store output.
-            if(!result.learning.gibbs_energy_minimization.optimum.succeeded){
+            if(!result.learning.gibbs_energy_minimization.optimum.succeeded)
                 return;
-            }
         }
 
         result.timing.learning_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
@@ -270,21 +276,28 @@ struct SmartEquilibriumSolver::Impl
         // The chemical potentials at the calculated equilibrium state
         u = properties.chemicalPotentials();
 
-        // Auxiliary references to the derivatives dn/db and du/dn
-        const auto& dndb = solver.sensitivity().dndb;
-        const auto& dudn = u.ddn;
+        // Auxiliary references to the derivatives dn/db, dn/dT, dn/dP, and du/dn
+        const auto& dndT = sensitivity.dndT;
+        const auto& dndP = sensitivity.dndP;
+        const auto& dndb = sensitivity.dndb;
 
-        // Compute the matrix du/db = du/dn * dn/db
-        dudb = dudn * dndb;
+        // Compute the matrices du/dT, du/dP, du/db
+        dudT = u.ddn * dndT + u.ddT; // du/dT = ∂u/∂n*∂n/∂T + ∂u/∂T
+        dudP = u.ddn * dndP + u.ddP; // du/dP = ∂u/∂n*∂n/∂P + ∂u/∂P
+        dudb = u.ddn * dndb;         // du/du = ∂u/∂n*∂n/∂b
 
         // The vector u(iprimary) with chemical potentials of primary species
         up.noalias() = u.val(iprimary);
 
         // The matrix du(iprimary)/dbe with derivatives of chemical potentials (primary species only)
         const auto dupdbe = dudb(iprimary, iee);
+        const auto dupdT = dudT(iprimary, 0);
+        const auto dupdP = dudP(iprimary, 0);
 
         // Compute matrix Mbe = 1/up * dup/db
         Mbe.noalias() = diag(inv(up)) * dupdbe;
+        MT.noalias()  = diag(inv(up)) * dupdT;
+        MP.noalias()  = diag(inv(up)) * dupdP;
 
         result.timing.learning_error_control_matrices = toc(ERROR_CONTROL_MATRICES);
 
@@ -304,7 +317,7 @@ struct SmartEquilibriumSolver::Impl
         if(iter < database.clusters.end())
         {
             auto& cluster = *iter;
-            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mbe});
+            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mbe, MT, MP});
             cluster.priority.extend();
         }
         else
@@ -313,7 +326,7 @@ struct SmartEquilibriumSolver::Impl
             Cluster cluster;
             cluster.iprimary = iprimary;
             cluster.label = label;
-            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mbe});
+            cluster.records.push_back({T, P, be, state, properties, sensitivity, Mbe, MT, MP});
             cluster.priority.extend();
 
             // Append the new cluster in the database
@@ -345,22 +358,29 @@ struct SmartEquilibriumSolver::Impl
         const auto& iprimary = state.equilibrium().indicesPrimarySpecies();
 
         Vector dbe;
+        double dT, dP;
 
         // The function that checks if a record in the database pass the error test.
         // It returns (`success`, `error`, `iprimaryspecies`), where
         // * `success` is true if error test succeeds, false otherwise.
         // * `error` is the first error value violating the tolerance
         // * `iprimaryspecies` is the index of the primary species that fails the error test
-        auto pass_error_test = [&be, &dbe, &reltol, &eps_b](const Record& record) -> std::tuple<bool, double, Index>
+        auto pass_error_test = [&be, &dbe, &T, &dT, &P, &dP, &reltol, &eps_b](const Record& record) -> std::tuple<bool, double, Index>
         {
             using std::abs;
             using std::max;
             const auto& state0 = record.state;
             const auto& be0 = record.be;
+            const auto& T0 = record.T;
+            const auto& P0 = record.P;
             const auto& Mbe0 = record.Mbe;
+            const auto& MT0 = record.MT;
+            const auto& MP0 = record.MP;
             const auto& isue0 = state0.equilibrium().indicesStrictlyUnstableElements();
 
             dbe.noalias() = be - be0;
+            dT = T - T0;
+            dP = P - P0;
 
             // Check if state0 has strictly unstable elements (i.e. elements with zero amounts)
             // which cannot be used for Taylor estimation if positive amounts for those elements are given.
@@ -372,8 +392,10 @@ struct SmartEquilibriumSolver::Impl
 
             double error = 0.0;
             const auto size = Mbe0.rows();
-            for(auto i = 1; i <= size; ++i) {
-                error = max(error, abs(Mbe0.row(size - i) * dbe)); // start checking primary species with least amount first
+            for(auto i = 1; i <= size; ++i)
+            {
+                const double delta_mu = Mbe0.row(size - i).dot(dbe) + MT0[size - i] * dT + MP0[size - i] * dP;
+                error = max(error, abs(delta_mu)); // start checking primary species with least amount first
                 if(error >= reltol)
                     return { false, error, size - i };
             }
@@ -458,14 +480,13 @@ struct SmartEquilibriumSolver::Impl
 
                     // Fetch reference values restricted to equilibrium species only
                     const auto& dnedbe0 = dndb0(ies, iee);
-                    const auto& dnedbPe0 = dndP0(ies);
-                    const auto& dnedbTe0 = dndT0(ies);
+                    const auto& dnedP0 = dndP0(ies);
+                    const auto& dnedT0 = dndT0(ies);
                     const auto& ne0 = n0(ies);
 
                     // Perform Taylor extrapolation
-                    //ne.noalias() = ne0 + dnedbe0 * (be - be0);
-                    ne.noalias() = ne0 + dnedbe0 * (be - be0) + dnedbPe0 * (P - P0) + dnedbTe0 * (T - T0);
-                    
+                    ne.noalias() = ne0 + dnedbe0*(be - be0) + dnedP0*(P - P0) + dnedT0*(T - T0);
+
                     // Check if all projected species amounts are positive
                     const double ne_min = min(ne);
                     const double ne_sum = sum(ne);
@@ -479,7 +500,9 @@ struct SmartEquilibriumSolver::Impl
                     //---------------------------------------------------------------------
 
                     // Assign small values to all the amount in the interval [cutoff, 0] (instead of mirroring above)
-                    for(unsigned int i = 0; i < ne.size(); ++i) if(ne[i] < 0) ne[i] = options.learning.epsilon;
+                    for(auto i = 0; i < ne.size(); ++i)
+                        if(ne[i] < 0)
+                            ne[i] = options.learning.epsilon;
 
                     // Update the amounts of elements for the equilibrium species
                     n(ies) = ne;
@@ -488,9 +511,13 @@ struct SmartEquilibriumSolver::Impl
                     state = record.state; // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transfered from reference state to new state
                     state.setSpeciesAmounts(n);
 
-                    // Update the chemical properties of the system
-                    properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+                    // Make sure that pressure and temperature is set to the current one
+                    state.setTemperature(T);
+                    state.setPressure(P);
 
+                    // Update the chemical properties of the system as well as temperature and pressure
+                    properties = record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+                    
                     result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
                     //---------------------------------------------------------------------

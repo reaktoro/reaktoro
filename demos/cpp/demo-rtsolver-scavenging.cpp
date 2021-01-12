@@ -91,7 +91,7 @@ struct Results
 };
 
 /// Forward declaration
-auto mkdir(const std::string& folder) -> bool;
+auto mkdir(std::string& folder) -> bool;
 auto outputConsole(const Params& params) -> void;
 auto makeResultsFolder(const Params& params) -> std::string;
 auto runReactiveTransport(const Params& params, Results& results) -> void;
@@ -116,7 +116,7 @@ int main()
     params.xl = 0.0; // the x-coordinates of the left boundaries
     params.xr = 100.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
-    params.nsteps = 5000; // the number of steps in the reactive transport simulation
+    params.nsteps = 100; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 0.05*day; // the time step (in units of s)
 
@@ -129,7 +129,8 @@ int main()
     // Define parameters of the equilibrium solvers
     params.smart_equlibrium_reltol = 0.001;
     //params.activity_model = "hkf";
-    params.activity_model = "pitzer";
+    params.activity_model = "hkf-full";
+    //params.activity_model = "pitzer";
     //params.activity_model = "dk";
 
     params.amount_fraction_cutoff = 1e-14;
@@ -143,7 +144,7 @@ int main()
 
     // Execute reactive transport with different solvers
     params.use_smart_eqilibirum_solver = true; runReactiveTransport(params, results);
-    //params.use_smart_eqilibirum_solver = false; runReactiveTransport(params, results);
+    params.use_smart_eqilibirum_solver = false; runReactiveTransport(params, results);
 
     results.conventional_total = results.equilibrium_timing.solve;
     results.smart_total = results.smart_equilibrium_timing.solve;
@@ -210,6 +211,10 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
                                 "Na+", "NaSO4-",
                                 "O2(aq)",
                                 "S5--", "S4--", "S3--", "S2--", "SO4--"});
+    }
+    else if(params.activity_model == "hkf-full"){
+        // Debye-Huckel full system
+        editor.addAqueousPhaseWithElements("C Ca Cl Fe H K Mg Na O S");
     }
     else if(params.activity_model == "pitzer"){
         // Pitzer full system
@@ -404,7 +409,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 }
 
 /// Make directory for Windows and Linux
-auto mkdir(const std::string& folder) -> bool
+auto mkdir(std::string& folder) -> bool
 {
 #if defined _WIN32
     // Replace slash by backslash
@@ -443,7 +448,7 @@ auto makeResultsFolder(const Params& params) -> std::string
              folder + smart_test_tag :
              folder + test_tag;
 
-    if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str());
+    if (stat(folder.c_str(), &status) == -1) mkdir(folder);
 
     std::cout << "\nsolver                         : " << (params.use_smart_eqilibirum_solver == true ? "smart" : "conventional") << std::endl;
 

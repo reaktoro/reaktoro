@@ -90,7 +90,7 @@ struct Results
 };
 
 /// Forward declaration
-auto mkdir(const std::string& folder) -> bool;
+auto mkdir(std::string& folder) -> bool;
 auto outputConsole(const Params& params) -> void;
 auto makeResultsFolder(const Params& params) -> std::string;
 auto runReactiveTransport(const Params& params, Results& results) -> void;
@@ -120,7 +120,7 @@ int main()
     ///*
     params.xr = 1.0; // the x-coordinates of the right boundaries
     params.ncells = 100; // the number of cells in the spacial discretization
-    params.nsteps = 50; // the number of steps in the reactive transport simulation
+    params.nsteps = 100; // the number of steps in the reactive transport simulation
     params.dx = (params.xr - params.xl) / params.ncells; // the time step (in units of s)
     params.dt = 30 * minute; // the time step (in units of s)
 
@@ -392,7 +392,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 }
 
 /// Make directory for Windows and Linux
-auto mkdir(const std::string& folder) -> bool
+auto mkdir(std::string& folder) -> bool
 {
 #if defined _WIN32
     // Replace slash by backslash
@@ -431,7 +431,7 @@ auto makeResultsFolder(const Params& params) -> std::string
              folder + smart_test_tag :
              folder + test_tag;
 
-    if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str());
+    if (stat(folder.c_str(), &status) == -1) mkdir(folder);
 
     std::cout << "\nsolver                         : " << (params.use_smart_eqilibirum_solver == true ? "smart" : "conventional") << std::endl;
 

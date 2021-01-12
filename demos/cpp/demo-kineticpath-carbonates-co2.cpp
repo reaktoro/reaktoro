@@ -52,8 +52,7 @@ int main()
     Partition partition(system);
     partition.setKineticSpecies({"Calcite", "Magnesite", "Dolomite"});
 
-    EquilibriumProblem problem(system);
-    problem.setPartition(partition);
+    EquilibriumProblem problem(partition);
     problem.add("H2O", 1, "kg");
     problem.add("NaCl", 1, "mol");
     problem.add("CO2", 1, "mol");

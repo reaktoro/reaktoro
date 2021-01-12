@@ -476,6 +476,9 @@ struct OptimumSolverIpNewton::Impl
         // The KKT matrix
         KktMatrix lhs(f.hessian, A, x, z, gamma, delta);
 
+        // Update the decomposition of the KKT matrix with update Hessian matrix
+        kkt.decompose(lhs);
+
         // Calculate sensitivity derivatives for each parameter
         for(auto i = 0; i < np; ++i)
         {
@@ -483,9 +486,6 @@ struct OptimumSolverIpNewton::Impl
             rhs.rx.noalias() = -dgdp.col(i);
             rhs.ry.noalias() =  dbdp.col(i);
             rhs.rz.fill(0.0);
-
-            // Update the decomposition of the KKT matrix with update Hessian matrix
-            kkt.decompose(lhs);
 
             // Solve the KKT equations to get the derivatives
             kkt.solve(rhs, sol);
