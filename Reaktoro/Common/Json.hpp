@@ -43,6 +43,7 @@ public:
     {
         file << json(val);
         file.close();
+        return *this;
     }
 
 private:
