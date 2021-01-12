@@ -91,7 +91,7 @@ struct Results
 };
 
 /// Forward declaration
-auto mkdir(const std::string& folder) -> bool;
+auto mkdir(std::string& folder) -> bool;
 auto outputConsole(const Params& params) -> void;
 auto makeResultsFolder(const Params& params) -> std::string;
 auto runReactiveTransport(const Params& params, Results& results) -> void;
@@ -409,7 +409,7 @@ auto runReactiveTransport(const Params& params, Results& results) -> void
 }
 
 /// Make directory for Windows and Linux
-auto mkdir(const std::string& folder) -> bool
+auto mkdir(std::string& folder) -> bool
 {
 #if defined _WIN32
     // Replace slash by backslash
@@ -448,7 +448,7 @@ auto makeResultsFolder(const Params& params) -> std::string
              folder + smart_test_tag :
              folder + test_tag;
 
-    if (stat(folder.c_str(), &status) == -1) mkdir(folder.c_str());
+    if (stat(folder.c_str(), &status) == -1) mkdir(folder);
 
     std::cout << "\nsolver                         : " << (params.use_smart_eqilibirum_solver == true ? "smart" : "conventional") << std::endl;
 
