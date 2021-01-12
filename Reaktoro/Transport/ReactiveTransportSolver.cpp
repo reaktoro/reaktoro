@@ -182,7 +182,7 @@ struct ReactiveTransportSolver::Impl
         const Index Ee = partition.numEquilibriumElements();
 
         // Initialize the number of the kinetic species
-        Nk = partition.numKineticElements();
+        Nk = partition.numKineticSpecies();
 
         // Initialize amount of elements in fluid and solid phases
         bef.resize(num_cells, Ee);
