@@ -503,7 +503,7 @@ struct Database::Impl
                 element.setName("Z");
             else
                 element.setName(e.first.symbol());
-            element.setMolarMass(e.first.molarMass());
+            element.setMolarMass(e.first.molarMass()/1000); // from g/mol to SI kg/mol
             elements[element] = e.second;
             element_map[element.name()] = element;
         }
