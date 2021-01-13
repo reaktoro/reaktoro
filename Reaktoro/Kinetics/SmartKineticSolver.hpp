@@ -97,7 +97,12 @@ public:
     auto outputInfo() const -> void;
 
 private:
+    // Pointer to the smart kinetics solver instance
     std::unique_ptr<SmartKineticSolverBase> solverptr;
+
+    // Flag to indicate whether the solver has been initialized
+    bool initialized = false;
+
 };
 
 } // namespace Reaktoro

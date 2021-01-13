@@ -37,18 +37,27 @@ SmartEquilibriumSolver::~SmartEquilibriumSolver()
 
 auto SmartEquilibriumSolver::setOptions(const SmartEquilibriumOptions& options) -> void
 {
-    // Initialize smart equilibrium solver depending on the chosen options
-    switch(options.method)
+    if(!initialized)
     {
-        case SmartEquilibriumStrategy::NearestNeighbour:
-            solverptr = std::make_unique<SmartEquilibriumSolverNN>(solverptr->partition());
-            break;
-        case SmartEquilibriumStrategy::PriorityQueue:
-            solverptr = std::make_unique<SmartEquilibriumSolverPriorityQueue>(solverptr->partition());
-            break;
-        case SmartEquilibriumStrategy::Clustering:
-            solverptr = std::make_unique<SmartEquilibriumSolverClustering>(solverptr->partition());
-            break;
+        // Switch the tag as smart equilibrium solver is initialized
+        initialized = true;
+
+        // Initialize smart equilibrium solver depending on the chosen options
+        switch(options.method)
+        {
+            case SmartEquilibriumStrategy::NearestNeighbour:
+                solverptr = std::make_unique<SmartEquilibriumSolverNN>(solverptr->partition());
+                break;
+            case SmartEquilibriumStrategy::PriorityQueue:
+                solverptr = std::make_unique<SmartEquilibriumSolverPriorityQueue>(solverptr->partition());
+                break;
+            case SmartEquilibriumStrategy::Clustering:
+                solverptr = std::make_unique<SmartEquilibriumSolverClustering>(solverptr->partition());
+                break;
+            default:
+                solverptr = std::make_unique<SmartEquilibriumSolverClustering>(solverptr->partition());
+                break;
+        }
     }
     // Set options of the smart equilibrium options
     solverptr.get()->setOptions(options);

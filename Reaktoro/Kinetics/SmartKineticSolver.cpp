@@ -33,24 +33,33 @@ SmartKineticSolver::~SmartKineticSolver()
 
 auto SmartKineticSolver::setOptions(const SmartKineticOptions& options) -> void
 {
-    // Initialize smart equilibrium solver depending on the chosen options
-    switch(options.method)
+    if(!initialized)
     {
-        case SmartKineticStrategy::NearestNeighbour:
-            solverptr = std::make_unique<SmartKineticSolverNN>(solverptr->reactions(), solverptr->partition());
-            break;
-        case SmartKineticStrategy::PriorityQueue:
-            solverptr = std::make_unique<SmartKineticSolverPriorityQueue>(solverptr->reactions(), solverptr->partition());
-            break;
-        case SmartKineticStrategy::PriorityQueuePrimary:
-            solverptr = std::make_unique<SmartKineticSolverPriorityQueue>(solverptr->reactions(), solverptr->partition());
-            break;
-        case SmartKineticStrategy::Clustering:
-            solverptr = std::make_unique<SmartKineticSolverClustering>(solverptr->reactions(), solverptr->partition());
-            break;
-        case SmartKineticStrategy::ClusteringExtended:
-            solverptr = std::make_unique<SmartKineticSolverClusteringExtended>(solverptr->reactions(), solverptr->partition());
-            break;
+        // Switch the tag as smart kinetic solver is initialized
+        initialized = true;
+
+        // Initialize smart kinetic solver depending on the chosen options
+        switch(options.method)
+        {
+            case SmartKineticStrategy::NearestNeighbour:
+                solverptr = std::make_unique<SmartKineticSolverNN>(solverptr->reactions(), solverptr->partition());
+                break;
+            case SmartKineticStrategy::PriorityQueue:
+                solverptr = std::make_unique<SmartKineticSolverPriorityQueue>(solverptr->reactions(), solverptr->partition());
+                break;
+            case SmartKineticStrategy::PriorityQueuePrimary:
+                solverptr = std::make_unique<SmartKineticSolverPriorityQueue>(solverptr->reactions(), solverptr->partition());
+                break;
+            case SmartKineticStrategy::Clustering:
+                solverptr = std::make_unique<SmartKineticSolverClustering>(solverptr->reactions(), solverptr->partition());
+                break;
+            case SmartKineticStrategy::ClusteringExtended:
+                solverptr = std::make_unique<SmartKineticSolverClusteringExtended>(solverptr->reactions(), solverptr->partition());
+                break;
+            default:
+                solverptr = std::make_unique<SmartKineticSolverClustering>(solverptr->reactions(), solverptr->partition());
+                break;
+        }
     }
     // Set options of the smart equilibrium options
     solverptr.get()->setOptions(options);

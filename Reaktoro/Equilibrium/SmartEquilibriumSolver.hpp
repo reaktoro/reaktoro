@@ -59,7 +59,11 @@ public:
     auto outputInfo() const -> void;
 
 private:
+    // Pointer to the smart equilibrium solver instance
     std::unique_ptr<SmartEquilibriumSolverBase> solverptr;
+
+    // Flag to indicate whether the solver has been initialized
+    bool initialized = false;
 };
 
 } // namespace Reaktoro
