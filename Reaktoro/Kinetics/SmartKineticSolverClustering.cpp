@@ -448,7 +448,6 @@ auto SmartKineticSolverClustering::estimate(ChemicalState& state, double& t, dou
 
                     // Initialize reaction rates
                     Vector drates = rates_ref.ddn * dn;
-                    //rates.val = rates_ref.val + drates;
 
                     // Fetch mole fractions
                     const auto& x_ref = properties_ref.moleFractions().val;
@@ -488,7 +487,6 @@ auto SmartKineticSolverClustering::estimate(ChemicalState& state, double& t, dou
 
                 // Update the chemical properties of the system
                 _properties = record.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
-                _properties.update(T, P);
 
                 _result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
@@ -1044,7 +1042,7 @@ auto SmartKineticSolverClusteringExtended::estimate(ChemicalState& state, double
                 state.setPressure(P);
 
                 // Update the chemical properties of the system
-                //properties = record.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+                _properties = record.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
 
                 _result.timing.estimate_taylor = toc(TAYLOR_STEP);
 

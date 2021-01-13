@@ -349,7 +349,6 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
 
             // Update the chemical properties of the system
             _properties = node.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
-            _properties.update(T, P);
 
             // Mark estimated result as accepted
             _result.estimate.accepted = true;
@@ -699,7 +698,6 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
 
             // Update the chemical properties of the system
             _properties = node.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
-            _properties.update(T, P);
 
             // Mark estimated result as accepted
             _result.estimate.accepted = true;
