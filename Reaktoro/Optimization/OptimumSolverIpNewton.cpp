@@ -280,7 +280,7 @@ struct OptimumSolverIpNewton::Impl
                 // Return false if the calculation did not succeeded
                 if(delta > 1e-2) return false;
 
-                // Update the residual of the feasibility conditition
+                // Update the residual of the feasibility condition
                 rhs.ry -= -delta*delta*y;
 
                 // Update the decomposition of the KKT matrix with update Hessian matrix
