@@ -219,7 +219,7 @@ struct ChemicalQuantity::Impl
             rates = reactions.rates(properties);
     }
 
-    auto function(const ChemicalQuantity& quantity, std::string str) -> const Function&
+    auto function(const ChemicalQuantity& quantity, std::string str) -> Function
     {
         auto it = function_map.find(str);
         if(it != function_map.end())
