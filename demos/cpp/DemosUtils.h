@@ -92,6 +92,9 @@ struct ReactiveTransportParams
     SmartEquilibriumStrategy method = SmartEquilibriumStrategy::Clustering;
     SmartKineticStrategy smart_kin_method = SmartKineticStrategy::Clustering;
 
+    // Outputting params
+    double output_results = true;
+
     /// Output test parameters to the console for the reactive transport with equilibrium only
     auto outputConsole() -> void
     {
@@ -106,15 +109,23 @@ struct ReactiveTransportParams
         std::cout << "P       : " << P << std::endl;
         std::cout << "activity model  : " << getActivityModelTag(activity_model) << std::endl;
         std::cout << "hessian         : " << getGibbsHessianTag(hessian) << std::endl;
+
+    }
+
+    /// Output test parameters to the console for the reactive transport with equilibrium only
+    auto outputEquilibriumMethod() -> void
+    {
+        std::cout << "smart eq used   : " << use_smart_equilibrium_solver << std::endl;
         std::cout << "smart eq method : " << getSmartMethodTag(method) << std::endl;
         std::cout << "eqreltol        : " << smart_equilibrium_reltol << std::endl;
     }
 
     /// Output test parameters to the console for the reactive transport with kinetics only
-    auto outputConsoleKinetics() -> void
+    auto outputConsoleKineticMethod() -> void
     {
         // Log the parameters in the console
-        outputConsole();
+        outputEquilibriumMethod();
+        std::cout << "smart kin used   : " << use_smart_kinetics_solver << std::endl;
         std::cout << "smart kin method : " << getSmartMethodTag(smart_kin_method) << std::endl;
         std::cout << "kinetics tol     : " << smart_kinetic_tol << std::endl;
         std::cout << "kinetics reltol  : " << smart_kinetic_reltol << std::endl;
@@ -637,9 +648,9 @@ auto getSmartMethodTag(enum SmartKineticStrategy method) -> std::string
 {
     switch(method)
     {
-        case SmartKineticStrategy::Clustering: return "eq-clustering";
-        case SmartKineticStrategy::PriorityQueue: return "eq-priority";
-        case SmartKineticStrategy::NearestNeighbour: return "eq-nnsearch";
+        case SmartKineticStrategy::Clustering: return "kin-clustering";
+        case SmartKineticStrategy::PriorityQueue: return "kin-priority";
+        case SmartKineticStrategy::NearestNeighbour: return "kin-nnsearch";
     }
     return "";
 }
