@@ -75,7 +75,7 @@ auto SmartEquilibriumSolverBase::solve(ChemicalState& state, double T, double P,
     // Perform a smart estimate of the chemical state
     timeit( estimate(state, T, P, _be), _result.timing.estimate= )
 
-    // Perform a learning step if the smart prediction is not sactisfatory
+    // Perform a learning step if the smart prediction is not satisfactory
     if(!_result.estimate.accepted)
         timeit( learn(state, T, P, _be), _result.timing.learn= )
 
