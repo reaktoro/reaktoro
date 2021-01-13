@@ -65,10 +65,13 @@ int main()
     // ----------------------------------------------------------- //
 
     // Select clustering approach
-//    params.smart_kin_method = SmartKineticStrategy::Clustering;
-//    params.smart_kinetic_tol = 1e-4; // 1e-3;
-//    params.smart_kinetic_abstol = 1e-4;
-//    params.smart_kinetic_reltol = 1e-1;
+    params.smart_kin_method = SmartKineticStrategy::Clustering;
+    //params.smart_kinetic_tol = 1e-2;
+    //params.smart_kinetic_tol = 1e-3;
+    //params.smart_kinetic_tol = 5e-4;
+    params.smart_kinetic_tol = 1e-5;
+    params.smart_kinetic_abstol = 1e-4;
+    params.smart_kinetic_reltol = 1e-1;
 
 //    // Select priority queue approach
 //    params.smart_kin_method = SmartKineticStrategy::PriorityQueue;
@@ -76,11 +79,11 @@ int main()
 //    params.smart_kinetic_abstol = 1e-4;
 //    params.smart_kinetic_reltol = 1e-1;
 //
-    // Select nearest neighbour approach
-    params.smart_kin_method = SmartKineticStrategy::NearestNeighbour;
-    params.smart_kinetic_tol = 1e-3;
-    params.smart_kinetic_abstol = 1e-4;
-    params.smart_kinetic_reltol = 1e-4;
+//    // Select nearest neighbour approach
+//    params.smart_kin_method = SmartKineticStrategy::NearestNeighbour;
+//    params.smart_kinetic_tol = 1e-3;
+//    params.smart_kinetic_abstol = 1e-4;
+//    params.smart_kinetic_reltol = 1e-4;
 
     params.use_smart_kinetic_solver = true; runKinetics(params);
     params.use_smart_kinetic_solver = false; runKinetics(params);
@@ -89,7 +92,7 @@ int main()
 auto runKinetics(KineticPathParams & params) -> void
 {
     // Create results folder
-    auto filename = params.makeResultsFile("scavenging-complex");
+    auto filename = params.makeResultsFile("scavenging-complex-no-nuc-calcite");
     //auto filename = params.makeResultsFile("scavenging-complex-with-benk");
 
     // Step **: Define chemical equilibrium solver options
@@ -209,183 +212,90 @@ auto runKinetics(KineticPathParams & params) -> void
         VectorConstRef lna = properties.lnActivities().val;
         const Index i_h = system.indexSpeciesWithError("H+");
         double activity_h = std::exp(lna(i_h));
+        const Index i_hco3 = system.indexSpeciesWithError("HCO3-");
+        double activity_hco3 = std::exp(lna(i_hco3));
 
         // The molar mass of the mineral (in units of kg/mol)
         const double molar_mass = system.species(imineral).molarMass();
-
-        /*
-         * Calcite
-        # original compilation from 15mar/cla
-        # kinetic data extracted from 04pal/kha 07lio/par 98zha/gra 85ins/blo 95shi/bra 92rom/gro 98zah/daw 98leb/sua
-        # surface area data extracted from 15mar/cla
-        # Confidence level: 5
-        -start
-        10 moles = 0 											# zero moles
-        20 SRmin = SR("Calcite") 								# Mineral saturation ratio
-        30 If (SRmin <= 1) and (m = 0) Then GoTo 390
-        40 If (SRmin = 1) Then GoTo 390
-        50 S = 0.7 												# average BET; suggested value in m2/g
-        60 Mm = 100.087 										# molar mass in g/mol
-        70 Mv = 3.693E-05 										# molar volume in m3/mol
-        80 If (SRmin > 1) Then GoTo 160
-        ########## start dissolution bloc ##########
-        # kinetic data extracted from 04pal/kha
-        90 knu = 1.6E-6 * exp((-24000 / 8.314) * ((1 / TK) - (1 / 298.15)))
-        100 k1 = 5E-1 * exp((-14000 / 8.314) * ((1 / TK) - (1 / 298.15))) * ACT("H+")
-        110 rate = (knu + k1) * S * m * Mm * ((m/m0)^(2/3)) * (1 - SRmin)
-        120 moles = rate * Time
-        130 REM Do not dissolve more than what is available
-        140 IF (moles > M) THEN moles = M
-        150 GoTo 390
-        ########## end dissolution bloc ##########
-        ########## start precipitation bloc ##########
-        160 surf_energy = 0.047 								# interfacial energy in J m-2
-        170 molvol = 6.13E-29 									# molecular volume in m3
-        180	u = ( 16 * 3.14159 * surf_energy^3 * molvol ^ 2 ) / ( 3 * (1.38E-23 * TK)^3 )
-        190 J0 = 1E20  											# nucleation rate in nuclei m-2 sec-1
-        200 SRcrit = exp( sqrt( u / LOG( J0 ) ) ) 				# critical saturation threshold
-        210 IF ( SRmin < SRcrit ) Then GoTo 290
-        220 nuclie = J0 * exp( -u / LOG(SRmin)^2 ) * Time 		# nucleation rate in nuclie sec-1
-        230 IF ( nuclie < 1 ) THEN GoTo 290
-        240 nj = ( 2 * u ) / ( LOG(SRmin)^3 ) 					# number of growth units in critical nuclie radius
-        250 vol = nj * molvol 									# critical nuclie volume
-        260 moles_nuc = ( -nuclie * vol ) / Mv 					# moles of nuclie formed
-        280 GoTo 300
-        290 moles_nuc = 0
-        # kinetic data extracted from 07lio/par 98zha/gra 85ins/blo 95shi/bra 92rom/gro 98zah/daw 98leb/sua
-        300 IF ( m = 0 ) THEN GoTo 350
-        310 knu = 1.8E-7 * exp((-66000 / 8.314) * ((1 / TK) - (1 / 298.15)))
-        320 k1 = 1.9E-3 * exp((-67000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("HCO3-") ^ 1.63)
-        330 kpre = (knu + k1)
-        340 moles_growth = -1 * S * m * Mm * kpre * (( ( SRmin^0.5 ) - 1 )^1.12) * Time
-        350 moles = moles_nuc + moles_growth
-        355 IF ( moles = 0 ) THEN GoTo 390
-        ########## Do not precipitate more than the elements in solution ##########
-        360 maxMol = MOL("Ca+2")
-        370 IF (maxMol > MOL("HCO3-")) THEN maxMol = MOL("HCO3-")
-        380 IF (maxMol < -moles) THEN moles = -maxMol
-        ########## end precipitation bloc ##########
-        390 Save moles
-        -end
-         */
 
         // If (m <= 0) and (SRmin < 1) Then GoTo 350
         // If (SRmin = 1) Then GoTo 350
         if((nm <= 0 && Omega < 1) || Omega == 1) // the is no way to precipitate further
             return res;
-
-        // S = 0.7 # average BET; suggested value in m2/g
-        const auto ssa = 0.7 * 1e3;
+        // S = 0.7 # average BET; suggested value in m2/g = 0.7 * 1e3 m2/kg
+        const auto ssa = 0.7 * 1e3; // = min_reaction_calcite.specificSurfaceArea();
         // Mv = 3.693E-05
         const auto molar_volume = 3.693E-05;
 
         if(Omega < 1) // dissolution kinetics
         {
-            /*
-             * ######### start dissolution bloc ##########
-            # kinetic data extracted from 04pal/kha
-            90 knu = 1.6E-6 * exp((-24000 / 8.314) * ((1 / TK) - (1 / 298.15)))
-            100 k1 = 5E-1 * exp((-14000 / 8.314) * ((1 / TK) - (1 / 298.15))) * ACT("H+")
-            110 rate = (knu + k1) * S * m * Mm * ((m/m0)^(2/3)) * (1 - SRmin)
-            120 moles = rate * Time
-            130 REM Do not dissolve more than what is available
-            140 IF (moles > M) THEN moles = M
-            150 GoTo 390
-            ########## end dissolution bloc ##########
-            */
-
             // knu = 1.6E-6 * exp((-24000 / 8.314) * ((1 / TK) - (1 / 298.15)))
-            const auto kappa_neu = 1.6E-6 * exp(- 24.0 / R * (1.0/T - 1.0/298.15));
+            const auto kappa_neu = 1.6E-6 * exp(- 24.0 / R * (1.0 / T - 1.0 / 298.15));
 
             // k1 = 5E-1 * exp((-14000 / 8.314) * ((1 / TK) - (1 / 298.15))) * ACT("H+")
-            const auto kappa_acid = 5E-1 * exp(- 14.0 / R * (1.0/T - 1.0/298.15)) * activity_h;
+            const auto kappa_acid = 5E-1 * exp(- 14.0 / R * (1.0 / T - 1.0 / 298.15)) * activity_h;
 
+            // total rate constant
             const auto kappa = kappa_neu + kappa_acid;
 
             // Calculate the resulting mechanism function
             // rate = (knu + k1) * S * m * Mm * ((m/m0)^(2/3)) * (1 - SRmin)
-            res += f * ssa * nm * molar_mass * pow(nm / nm0, 2.0 / 3.0) * kappa * (1 - Omega);
+            res += f * kappa * ssa * nm * molar_mass * pow(nm / nm0, 2.0 / 3.0) * (1 - Omega);
 
             // Do not dissolve more than what is available
             // IF (moles > M) THEN moles = M
-//            double total_moles = nm.val; // current amount of mols of available minerals
-//            if (res > nm.val) res += nm.val;
+            // double total_moles = nm.val; // current amount of mols of available minerals
+            // if (res > nm.val) res += nm.val;
 
         }
-        else // precipitation kinetics
+        else // Omega > 1, precipitation kinetics
         {
-            /*
-             * ########## start precipitation bloc ##########
-            160 surf_energy = 0.047 								# interfacial energy in J m-2
-            170 molvol = 6.13E-29 									# molecular volume in m3
-            180	u = ( 16 * 3.14159 * surf_energy^3 * molvol ^ 2 ) / ( 3 * (1.38E-23 * TK)^3 )
-            190 J0 = 1E20  											# nucleation rate in nuclei m-2 sec-1
-            200 SRcrit = exp( sqrt( u / LOG( J0 ) ) ) 				# critical saturation threshold
-            210 IF ( SRmin < SRcrit ) Then GoTo 290
-            220 nuclie = J0 * exp( -u / LOG(SRmin)^2 ) * Time 		# nucleation rate in nuclie sec-1
-            230 IF ( nuclie < 1 ) THEN GoTo 290
-            240 nj = ( 2 * u ) / ( LOG(SRmin)^3 ) 					# number of growth units in critical nuclie radius
-            250 vol = nj * molvol 									# critical nuclie volume
-            260 moles_nuc = ( -nuclie * vol ) / Mv 					# moles of nuclie formed
-            280 GoTo 300
-            290 moles_nuc = 0
-            # kinetic data extracted from 07lio/par 98zha/gra 85ins/blo 95shi/bra 92rom/gro 98zah/daw 98leb/sua
-            300 IF ( m = 0 ) THEN GoTo 350
-            310 knu = 1.8E-7 * exp((-66000 / 8.314) * ((1 / TK) - (1 / 298.15)))
-            320 k1 = 1.9E-3 * exp((-67000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("HCO3-") ^ 1.63)
-            330 kpre = (knu + k1)
-            340 moles_growth = -1 * S * m * Mm * kpre * (( ( SRmin^0.5 ) - 1 )^1.12) * Time
-            350 moles = moles_nuc + moles_growth
-            355 IF ( moles = 0 ) THEN GoTo 390
-            ########## Do not precipitate more than the elements in solution ##########
-             */
-
             // surf_energy = 0.047 # interfacial energy in J m-2
-            const auto surf_energy = 0.047;
-
-            // molvol = 6.13E-29	# molecular volume in m3
-            const auto molecular_volume = 6.13E-29;
-
-            // u = ( 16 * 3.14159 * surf_energy^3 * molvol ^ 2 ) / ( 3 * (1.38E-23 * TK)^3 )
-            const auto u = 16 * 3.14159 * std::pow(surf_energy, 3.0) * std::pow(molecular_volume, 2.0) / (3 * std::pow(1.38E-23 * T.val, 3.0));
-
-            // J0 = 1E20 # nucleation rate in nuclei kg-1 sec-1 (after Fritz et al 2009)
-            const auto j0 = 1E20;
-
-            // SRcrit = exp( sqrt( u / LOG( J0 ) ) ) # critical saturation threshold
-            const auto Omega_crit = std::exp(sqrt(u / std::log10(j0)));
-
-            if(Omega < Omega_crit)
-            {
-                // nuclie = J0 * exp( -u / LOG(SRmin)^2 ) * time # --- nucleation rate in nuclie sec-1 multiplied by time to account for nucleation over time
-                const auto nuclie = j0 * exp(- u / std::pow(std::log10(Omega), 2.0));
-
-                // IF ( nuclie < 1 ) THEN GoTo 250      # condition that rate needs to be bigger than 1 nucl per sec (Arbitrary)
-                // nj = ( 2 * u ) / (LOG(SRmin)^3) 		# number of growth units in critical nuclie radius
-                const auto nj = 2 * u / std::pow(std::log10(Omega), 3.0);
-
-                // vol = nj * molvol 					# critical nuclie volume
-                const auto vol = nj * molecular_volume;
-
-                // moles_nuc = ( -nuclie * vol ) / Mv 	# moles of nuclie formed
-                res_nuc += - nuclie * vol / molar_volume;
-
-            }
+//            const auto surf_energy = 0.047;
+//
+//            // molvol = 6.13E-29	# molecular volume in m3
+//            const auto molecular_volume = 6.13E-29;
+//
+//            // u = ( 16 * 3.14159 * surf_energy^3 * molvol ^ 2 ) / ( 3 * (1.38E-23 * TK)^3 )
+//            const auto u = 16.0 * 3.14159 * std::pow(surf_energy, 3.0) * std::pow(molecular_volume, 2.0) / (3.0 * std::pow(1.38E-23 * T.val, 3.0));
+//
+//            // J0 = 1E20 # nucleation rate in nuclei kg-1 sec-1 (after Fritz et al 2009)
+//            const auto j0 = 1E20;
+//
+//            // SRcrit = exp( sqrt( u / LOG( J0 ) ) ) # critical saturation threshold
+//            const auto Omega_crit = std::exp(sqrt(u / std::log10(j0)));
+//
+//            if(Omega < Omega_crit)
+//            {
+//                // nuclie = J0 * exp( -u / LOG(SRmin)^2 ) * time # --- nucleation rate in nuclie sec-1 multiplied by time to account for nucleation over time
+//                const auto nuclie = j0 * exp(- u / std::pow(std::log10(Omega), 2.0));
+//
+//                // IF ( nuclie < 1 ) THEN GoTo 250      # condition that rate needs to be bigger than 1 nucl per sec (Arbitrary)
+//                // nj = ( 2 * u ) / (LOG(SRmin)^3) 		# number of growth units in critical nuclie radius
+//                const auto nj = 2 * u / std::pow(std::log10(Omega), 3.0);
+//
+//                // vol = nj * molvol 					# critical nuclie volume
+//                const auto vol = nj * molecular_volume;
+//
+//                // moles_nuc = ( -nuclie * vol ) / Mv 	# moles of nuclie formed
+//                res_nuc += - nuclie * vol / molar_volume;
+//            }
 
             // knu = 1.8E-7 * exp((-66000 / 8.314) * ((1 / TK) - (1 / 298.15)))
-            const auto kappa_neu = -1.6E-11 * exp(- 108 / R * (1.0 / T - 1.0 / 298.15));
+            const auto kappa_neu = 1.8E-7 * exp(- 66.0 / R * (1.0 / T - 1.0 / 298.15));
 
             // k1 = 1.9E-3 * exp((-67000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("HCO3-") ^ 1.63)
-            const auto kappa_acid = 5.9E-06 * exp(- 56.0 / R * (1.0/T - 1.0/298.15)) * std::pow(activity_h, 0.6);
+            const auto kappa_acid = 1.9E-3 * exp(- 67.0 / R * (1.0 / T - 1.0 / 298.15)) * std::pow(activity_hco3, 1.63);
 
             // kpre = - (knu + k1)
-            const auto kappa_growth = - (kappa_neu + kappa_acid);
+            const auto k_pre = - (kappa_neu + kappa_acid);
 
             // moles_growth = S * m * Mm * kpre * (( ( SRmin^0.5 ) - 1 )^1.12) * Time
-            res_growth += f * ssa * nm * molar_mass * kappa_growth * std::pow(std::pow(Omega, 0.5) - 1, 1.12);
+            res_growth += f * ssa * nm * molar_mass * k_pre * std::pow(std::pow(Omega, 0.5) - 1, 1.12);
 
             // moles = moles_nuc + moles_growth
-            res += res_growth + res_nuc;
+            //res += res_growth + res_nuc;
+            res += res_growth;
 
         }
 
@@ -400,7 +310,6 @@ auto runKinetics(KineticPathParams & params) -> void
     //     delta_h -504.518    #kJ/mol        #01vid/par
     //     -analytic -2.6210061E+3  -4.2497094E-1  1.5576281E+5  9.4858884E+2  -6.610337E+6
     //     #References = LogK/DGf: Internal calculation; DHf/DHr: 01vid/par; S°: 01vid/par; Cp: 05vid/par; V°: 05vid/par;
-
     std::string eq_str_daphnite = "Daphnite,14A + 16*H+ = 2*Al+++ + 5*Fe++ + 3*SiO2(aq) + 12*H2O(l)";
     MineralReaction min_reaction_daphnite = editor.addMineralReaction("Daphnite,14A")
             .setEquation(eq_str_daphnite)
@@ -1237,7 +1146,7 @@ auto runKinetics(KineticPathParams & params) -> void
     state_ic.setSpeciesAmount("Daphnite,14A", 0.1, "mol"); // MM(Daphnite) = 713.5 g / mol
     state_ic.setSpeciesAmount("Siderite", 0.1, "mol"); // MM(Siderite) = 115.86 g / mol
     state_ic.setSpeciesAmount("Kaolinite", 0.1, "mol"); // MM(Kaolinite) = 258.071 g / mol
-    state_ic.setSpeciesAmount("Quartz", 0.1, "mol"); // MM(Quartz) = 60.083 g / mol
+    state_ic.setSpeciesAmount("Quartz", 1.0, "mol"); // MM(Quartz) = 60.083 g / mol
 
     // Set initial value of minerals reacting
     reaction_calcite.setInitialAmounts(state_ic.speciesAmounts());
