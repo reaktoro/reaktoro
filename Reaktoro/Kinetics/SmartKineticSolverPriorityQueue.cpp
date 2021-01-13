@@ -166,15 +166,15 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
     //   - `success` is true if error test succeeds, false otherwise.
     //   - `error` is the first error violating the tolerance
     //   - `ispecies` is the index of the species that fails the error test
-    auto pass_equilibrium_potential_error_test = [&](const auto& node) -> std::tuple<bool, double, Index>
+    auto pass_equilibrium_potential_error_test = [&](const auto& record) -> std::tuple<bool, double, Index>
     {
         using std::abs;
         using std::max;
 
-        const auto& benk_ref = node.ode_state.u0;
+        const auto& benk_ref = record.ode_state.u0;
         const auto& be_ref = benk_ref.head(Ee);
-        const auto& Mb_ref = node.Mb;
-        const auto& imajor_ref = node.imajor;
+        const auto& Mb_ref = record.Mb;
+        const auto& imajor_ref = record.imajor;
 
         dbe.noalias() = be - be_ref;
 
@@ -188,20 +188,20 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
         return { true, error, -1 };
     };
 
-    // Initialize the inode_prev node
-    auto inode_prev = kinetics_priority.begin();
+    // Initialize the irecord_prev record
+    auto irecord_prev = kinetics_priority.begin();
 
-    // Loop through all the nodes in priority ques
-    for(auto inode=kinetics_priority.begin(); inode != kinetics_priority.end(); ++inode)
+    // Loop through all the records in priority ques
+    for(auto irecord=kinetics_priority.begin(); irecord != kinetics_priority.end(); ++irecord)
     {
-        const auto& node = database[*inode];
+        const auto& record = database[*irecord];
 
         //---------------------------------------------------------------------
         // SEARCH CONTROL DURING THE ESTIMATE PROCESS
         //---------------------------------------------------------------------
         tic(EQUILIBRIUM_SPECIES_ERROR_CONTROL_STEP)
 
-        const auto [success, error, ispecies] = pass_equilibrium_potential_error_test(node);
+        const auto [success, error, ispecies] = pass_equilibrium_potential_error_test(record);
 
         if(success)
         {
@@ -213,9 +213,9 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
             tic(TAYLOR_STEP)
 
             // Fetch the data stored in the reference element
-            const auto& benk0_ref = node.ode_state.u0;
-            const auto& benk_ref = node.ode_state.u;
-            const auto& dndn0_ref = node.ode_state.dudu0;
+            const auto& benk0_ref = record.ode_state.u0;
+            const auto& benk_ref = record.ode_state.u;
+            const auto& dndn0_ref = record.ode_state.dudu0;
 
             // Algorithm:
             // the reference state contains:
@@ -245,12 +245,12 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
             // -------------------------------------------------------------------------------------------------------------
 
             // Define the function checking the negativity of the equilibrium species amounts
-            auto pass_negative_equilibrium_species_amounts_error_test = [&](const auto& node) -> std::tuple<bool, VectorConstRef>
+            auto pass_negative_equilibrium_species_amounts_error_test = [&](const auto& record) -> std::tuple<bool, VectorConstRef>
             {
 
                 // Fetch properties of the reference state
-                const auto& state_ref = node.chemical_state;
-                const auto& sensitivity_ref = node.sensitivity;
+                const auto& state_ref = record.chemical_state;
+                const auto& sensitivity_ref = record.sensitivity;
 
                 const auto& N = ies.size() + iks.size();
                 const auto& be_ref = benk_ref.head(Ee);
@@ -271,7 +271,7 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
 
             };
             // Check if the `negative equilibrium species amounts` pass the test
-            auto [is_neg_equilibrium_test_passed, dne] = pass_negative_equilibrium_species_amounts_error_test(node);
+            auto [is_neg_equilibrium_test_passed, dne] = pass_negative_equilibrium_species_amounts_error_test(record);
             if(!is_neg_equilibrium_test_passed)
                 continue;
 
@@ -280,11 +280,11 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
             // -------------------------------------------------------------------------------------------------------------
 
             // Define the function checking the variation of kinetics rates
-            auto pass_kinetic_rate_variation_error_test = [&](const auto& node, VectorConstRef dne) -> bool
+            auto pass_kinetic_rate_variation_error_test = [&](const auto& record, VectorConstRef dne) -> bool
             {
-                const auto& rates_ref = node.rates;
+                const auto& rates_ref = record.rates;
                 const auto& nk_ref = benk_ref.tail(Nk);
-                const auto& properties_ref = node.properties;
+                const auto& properties_ref = record.properties;
 
                 // Initialize delta_n = [dne; dnk]
                 Vector dnk;
@@ -313,7 +313,7 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
                 return true;
             };
             // Check if the variation in the kinetics rates pass the test
-            const auto is_kin_rate_variation_test_passed = pass_kinetic_rate_variation_error_test(node, dne);
+            const auto is_kin_rate_variation_test_passed = pass_kinetic_rate_variation_error_test(record, dne);
             if(!is_kin_rate_variation_test_passed)
                 continue;
 
@@ -325,13 +325,13 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
             // Update the ranking and priority
             // -------------------------------------------------------------------------------------------------------------
 
-            // Increase the raking of the node
-            kinetics_ranking[*inode] += 1;
+            // Increase the raking of the record
+            kinetics_ranking[*irecord] += 1;
 
-            // Sort the priority queue after increasing the ranking of the node
+            // Sort the priority queue after increasing the ranking of the record
             auto comp = [&](Index l, Index r) { return kinetics_ranking[l] > kinetics_ranking[r]; };
-            if( !((inode == kinetics_priority.begin()) || (kinetics_ranking[*inode_prev] >= kinetics_ranking[*inode])) ) {
-                std::stable_sort(kinetics_priority.begin(), inode + 1, comp);
+            if( !((irecord == kinetics_priority.begin()) || (kinetics_ranking[*irecord_prev] >= kinetics_ranking[*irecord])) ) {
+                std::stable_sort(kinetics_priority.begin(), irecord + 1, comp);
             }
 
             // Assign small values to all the amount in the interval [cutoff, 0] (instead of mirroring above)
@@ -340,7 +340,7 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
             // -------------------------------------------------------------------------------------------------------------
             // Update the solution of kinetic problem by new estimated value
             // -------------------------------------------------------------------------------------------------------------
-            //state = node.chemical_state; // this update doesn't work good for kinetics
+            //state = record.chemical_state; // this update doesn't work good for kinetics
             benk = benk_new;
 
             // Make sure that pressure and temperature is set to the current one
@@ -348,7 +348,7 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
             state.setPressure(P);
 
             // Update the chemical properties of the system
-            _properties = node.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+            _properties = record.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
 
             // Mark estimated result as accepted
             _result.estimate.accepted = true;
@@ -359,7 +359,7 @@ auto SmartKineticSolverPriorityQueue::estimate(ChemicalState& state, double& t, 
             return;
         }
         else {
-            inode_prev = inode;
+            irecord_prev = irecord;
             continue;
         }
     }
@@ -512,14 +512,14 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
     // * `success` is true if error test succeeds, false otherwise.
     // * `error` is the first error value violating the tolerance
     // * `iprimaryspecies` is the index of the primary species that fails the error test
-    auto pass_equilibrium_potential_error_test = [&](const KineticRecord& node) -> std::tuple<bool, double, Index>
+    auto pass_equilibrium_potential_error_test = [&](const KineticRecord& record) -> std::tuple<bool, double, Index>
     {
         using std::abs;
         using std::max;
-        const auto& state_ref = node.chemical_state;
-        const auto& benk_ref = node.ode_state.u;
+        const auto& state_ref = record.chemical_state;
+        const auto& benk_ref = record.ode_state.u;
         const auto& be_ref = benk_ref.head(Ee);
-        const auto& Mbe0 = node.Mb;
+        const auto& Mbe0 = record.Mb;
         const auto& isue_ref = state_ref.equilibrium().indicesStrictlyUnstableElements();
 
         dbe.noalias() = be - be_ref;
@@ -535,17 +535,17 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
         return { true, error, -1 };
     };
 
-    auto inode_prev = kinetics_priority.begin();
-    for(auto inode=kinetics_priority.begin(); inode != kinetics_priority.end(); ++inode)
+    auto irecord_prev = kinetics_priority.begin();
+    for(auto irecord=kinetics_priority.begin(); irecord != kinetics_priority.end(); ++irecord)
     {
-        const auto& node = database[*inode];
+        const auto& record = database[*irecord];
 
         //---------------------------------------------------------------------
         // SEARCH CONTROL DURING THE ESTIMATE PROCESS
         //---------------------------------------------------------------------
         tic(EQUILIBRIUM_SPECIES_ERROR_CONTROL_STEP)
 
-        const auto [success, error, ispecies] = pass_equilibrium_potential_error_test(node);
+        const auto [success, error, ispecies] = pass_equilibrium_potential_error_test(record);
 
         if(success)
         {
@@ -557,9 +557,9 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
             tic(TAYLOR_STEP)
 
             // Fetch the data stored in the reference element
-            const auto& benk0_ref = node.ode_state.u0;
-            const auto& benk_ref = node.ode_state.u;
-            const auto& dndn0_ref = node.ode_state.dudu0;
+            const auto& benk0_ref = record.ode_state.u0;
+            const auto& benk_ref = record.ode_state.u;
+            const auto& dndn0_ref = record.ode_state.dudu0;
 
             // Algorithm:
             // the reference state : u, u0, S = du/du0, t, f = du/dt
@@ -591,12 +591,12 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
             // Check the variations of equilibrium species
             // -------------------------------------------------------------------------------------------------------------
 
-            auto pass_negative_equilibrium_species_amounts_error_test = [&](const auto& node) -> std::tuple<bool, VectorConstRef>
+            auto pass_negative_equilibrium_species_amounts_error_test = [&](const auto& record) -> std::tuple<bool, VectorConstRef>
             {
 
                 // Fetch properties of the reference state
-                const auto& state_ref = node.chemical_state;
-                const auto& sensitivity_ref = node.sensitivity;
+                const auto& state_ref = record.chemical_state;
+                const auto& sensitivity_ref = record.sensitivity;
 
                 const auto& N = ies.size() + iks.size();
                 const auto& be_ref = benk_ref.head(Ee);
@@ -620,7 +620,7 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
                 //return {ne.minCoeff() > 1e-2 * options.cutoff, dne};
             };
 
-            auto [is_neg_equilibrium_test_passed, dne] = pass_negative_equilibrium_species_amounts_error_test(node);
+            auto [is_neg_equilibrium_test_passed, dne] = pass_negative_equilibrium_species_amounts_error_test(record);
 
             if(!is_neg_equilibrium_test_passed)
                 continue;
@@ -629,12 +629,12 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
             // Check the variations of kinetic species
             // -------------------------------------------------------------------------------------------------------------
 
-            auto pass_kinetic_rate_variation_error_test = [&](const auto& node, VectorConstRef dne) -> bool
+            auto pass_kinetic_rate_variation_error_test = [&](const auto& record, VectorConstRef dne) -> bool
             {
 
-                const auto& rates_ref = node.rates;
+                const auto& rates_ref = record.rates;
                 const auto& nk_ref = benk_ref.tail(Nk);
-                const auto& properties_ref = node.properties;
+                const auto& properties_ref = record.properties;
 
                 // Initialize delta_n = [dne; delta_nk]
                 Vector dnk;
@@ -662,7 +662,7 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
                 return true;
             };
 
-            const auto is_kin_rate_variation_test_passed = pass_kinetic_rate_variation_error_test(node, dne);
+            const auto is_kin_rate_variation_test_passed = pass_kinetic_rate_variation_error_test(record, dne);
 
             if(!is_kin_rate_variation_test_passed)
                 continue;
@@ -674,11 +674,11 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
             // Update the ranking and priority
             // -------------------------------------------------------------------------------------------------------------
 
-            kinetics_ranking[*inode] += 1;
+            kinetics_ranking[*irecord] += 1;
 
             auto comp = [&](Index l, Index r) { return kinetics_ranking[l] > kinetics_ranking[r]; };
-            if( !((inode == kinetics_priority.begin()) || (kinetics_ranking[*inode_prev] >= kinetics_ranking[*inode])) ) {
-                std::stable_sort(kinetics_priority.begin(), inode + 1, comp);
+            if( !((irecord == kinetics_priority.begin()) || (kinetics_ranking[*irecord_prev] >= kinetics_ranking[*irecord])) ) {
+                std::stable_sort(kinetics_priority.begin(), irecord + 1, comp);
             }
 
             // Assign small values to all the amount in the interval [cutoff, 0] (instead of mirroring above)
@@ -687,17 +687,17 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
             // -------------------------------------------------------------------------------------------------------------
             // Update the solution of kinetic problem by new estimated value
             // -------------------------------------------------------------------------------------------------------------
-            //state = node.chemical_state;
+            //state = record.chemical_state;
             benk = benk_new;
 
-            state = node.chemical_state;  // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transfered from reference state to new state
+            state = record.chemical_state;  // ATTENTION: If this changes one day, make sure indices of equilibrium primary/secondary species, and indices of strictly unstable species/elements are also transfered from reference state to new state
 
             // Make sure that pressure and temperature is set to the current one
             state.setTemperature(T);
             state.setPressure(P);
 
             // Update the chemical properties of the system
-            _properties = node.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
+            _properties = record.properties;  // FIXME: We actually want to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
 
             // Mark estimated result as accepted
             _result.estimate.accepted = true;
@@ -708,7 +708,7 @@ auto SmartKineticSolverPriorityQueuePrimary::estimate(ChemicalState& state, doub
             return;
         }
         else {
-            inode_prev = inode;
+            irecord_prev = irecord;
             continue;
         }
     }
