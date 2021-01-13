@@ -431,12 +431,12 @@ auto SmartKineticSolverClustering::estimate(ChemicalState& state, double& t, dou
                 // -------------------------------------------------------------------------------------------------------------
 
                 // Define the function checking the variations in the kinetics rate
-                auto pass_kinetic_rate_variation_error_test = [&](const auto& node, VectorConstRef dne) -> bool
+                auto pass_kinetic_rate_variation_error_test = [&](const auto& record, VectorConstRef dne) -> bool
                 {
 
-                    const auto& rates_ref = node.rates;
+                    const auto& rates_ref = record.rates;
                     const auto& nk_ref = benk_ref.tail(Nk);
-                    const auto& properties_ref = node.properties;
+                    const auto& properties_ref = record.properties;
 
                     // Initialize delta_n = [dne; dnk]
                     Vector dnk;
@@ -985,12 +985,12 @@ auto SmartKineticSolverClusteringExtended::estimate(ChemicalState& state, double
                 // -------------------------------------------------------------------------------------------------------------
 
                 // Define the function checking the variations in the kinetics rate
-                auto pass_kinetic_rate_variation_error_test = [&](const auto& node, VectorConstRef dne) -> bool
+                auto pass_kinetic_rate_variation_error_test = [&](const auto& record, VectorConstRef dne) -> bool
                 {
 
-                    const auto& rates_ref = node.rates;
+                    const auto& rates_ref = record.rates;
                     const auto& nk_ref = benk_ref.tail(Nk);
-                    const auto& properties_ref = node.properties;
+                    const auto& properties_ref = record.properties;
 
                     // Initialize delta_n = [dne; dnk]
                     Vector dnk;

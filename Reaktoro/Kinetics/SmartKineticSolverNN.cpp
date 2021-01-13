@@ -90,7 +90,7 @@ auto SmartKineticSolverNN::estimate(ChemicalState& state, double& t, double dt) 
     // Comparison function based on the Euclidean distance
     auto distancefn = [&](const KineticRecord& a, const KineticRecord& b)
     {
-        // Fetch benk0 from each TreeNode saved as u0 in ChemicalState
+        // Fetch benk0 from each database saved as u0 in ChemicalState
         const auto& benk0_a = a.ode_state.u0;
         const auto& benk0_b = b.ode_state.u0;
 
@@ -103,7 +103,7 @@ auto SmartKineticSolverNN::estimate(ChemicalState& state, double& t, double dt) 
     tic(SEARCH_STEP)
 
     // Find the reference element (nearest to the new state benk)
-    auto it = std::min_element(database.begin(), database.end(), distancefn);
+    auto record = std::min_element(database.begin(), database.end(), distancefn);
 
     _result.timing.estimate_search = toc(SEARCH_STEP);
 
@@ -113,9 +113,9 @@ auto SmartKineticSolverNN::estimate(ChemicalState& state, double& t, double dt) 
     tic(TAYLOR_STEP)
 
     // Fetch the data stored in the reference element
-    const auto& benk0_ref = it->ode_state.u0;
-    const auto& benk_ref = it->ode_state.u;
-    const auto& dndn0_ref = it->ode_state.dudu0;
+    const auto& benk0_ref = record->ode_state.u0;
+    const auto& benk_ref = record->ode_state.u;
+    const auto& dndn0_ref = record->ode_state.dudu0;
 
     // Algorithm:
     // the reference state contains:
@@ -141,10 +141,10 @@ auto SmartKineticSolverNN::estimate(ChemicalState& state, double& t, double dt) 
     VectorConstRef nk_new = benk_new.tail(Nk);
 
     // Fetch properties of the reference state
-    const auto& state_ref = it->chemical_state;
-    const auto& properties_ref = it->properties;
-    const auto& sensitivity_ref = it->sensitivity;
-    const auto& rates_ref = it->rates;
+    const auto& state_ref = record->chemical_state;
+    const auto& properties_ref = record->properties;
+    const auto& sensitivity_ref = record->sensitivity;
+    const auto& rates_ref = record->rates;
     const auto& n_ref = state_ref.speciesAmounts();
 
     const auto& be_ref = benk_ref.head(Ee);

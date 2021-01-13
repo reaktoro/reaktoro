@@ -187,6 +187,9 @@ auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P
         if(ne[i] < 0) 
             ne[i] = options.learning.epsilon;
 
+    // Update the amounts of elements for the equilibrium species
+    n(ies) = ne;
+
     // Update equilibrium species
     state.setSpeciesAmounts(ne, ies);
 
