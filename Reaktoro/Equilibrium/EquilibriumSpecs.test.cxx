@@ -31,55 +31,55 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
     // The mock chemical system for the tests below.
     ChemicalSystem system = test::createChemicalSystem();
 
-    // The mock temperature, pressure, and species amounts used for the tests below.
-    const auto T = 1.0;
-    const auto P = 11.0;
-    const auto n = ArrayXr::Ones(system.species().size()).eval();
+    // // The mock temperature, pressure, and species amounts used for the tests below.
+    // const auto T = 1.0;
+    // const auto P = 11.0;
+    // const auto n = ArrayXr::Ones(system.species().size()).eval();
 
-    // The mock chemical properties of the system used for the tests below.
-    ChemicalProps props(system);
-    props.update(T, P, n);
+    // // The mock chemical properties of the system used for the tests below.
+    // ChemicalProps props(system);
+    // props.update(T, P, n);
 
-    // The EquilibriumSpecs object tested below.
-    EquilibriumSpecs specs(system);
+    // // The EquilibriumSpecs object tested below.
+    // EquilibriumSpecs specs(system);
 
-    REQUIRE( specs.details().unknownT == true );
-    specs.temperature();
-    REQUIRE( specs.details().unknownT == false );
+    // REQUIRE( specs.details().unknownT == true );
+    // specs.temperature();
+    // REQUIRE( specs.details().unknownT == false );
 
-    REQUIRE( specs.details().unknownP == true );
-    specs.pressure();
-    REQUIRE( specs.details().unknownP == false );
+    // REQUIRE( specs.details().unknownP == true );
+    // specs.pressure();
+    // REQUIRE( specs.details().unknownP == false );
 
-    specs.volume();
-    specs.internalEnergy();
-    specs.enthalpy();
-    specs.gibbsEnergy();
-    specs.helmholtzEnergy();
-    specs.entropy();
+    // specs.volume();
+    // specs.internalEnergy();
+    // specs.enthalpy();
+    // specs.gibbsEnergy();
+    // specs.helmholtzEnergy();
+    // specs.entropy();
 
-    REQUIRE( specs.details().econstraints.size() == 6 );
-    REQUIRE( specs.details().econstraints[0].id == "volume" );
-    REQUIRE( specs.details().econstraints[1].id == "internalEnergy" );
-    REQUIRE( specs.details().econstraints[2].id == "enthalpy" );
-    REQUIRE( specs.details().econstraints[3].id == "gibbsEnergy" );
-    REQUIRE( specs.details().econstraints[4].id == "helmholtzEnergy" );
-    REQUIRE( specs.details().econstraints[5].id == "entropy" );
+    // REQUIRE( specs.details().econstraints.size() == 6 );
+    // REQUIRE( specs.details().econstraints[0].id == "volume" );
+    // REQUIRE( specs.details().econstraints[1].id == "internalEnergy" );
+    // REQUIRE( specs.details().econstraints[2].id == "enthalpy" );
+    // REQUIRE( specs.details().econstraints[3].id == "gibbsEnergy" );
+    // REQUIRE( specs.details().econstraints[4].id == "helmholtzEnergy" );
+    // REQUIRE( specs.details().econstraints[5].id == "entropy" );
 
-    Params params;
-    params.set("V", 1.0);
-    params.set("U", 2.0);
-    params.set("H", 3.0);
-    params.set("G", 4.0);
-    params.set("A", 5.0);
-    params.set("S", 6.0);
+    // Params params;
+    // params.set("V", 1.0);
+    // params.set("U", 2.0);
+    // params.set("H", 3.0);
+    // params.set("G", 4.0);
+    // params.set("A", 5.0);
+    // params.set("S", 6.0);
 
-    REQUIRE( specs.details().econstraints[0].fn(props, params) == props.volume() - 1.0 );
-    REQUIRE( specs.details().econstraints[1].fn(props, params) == props.internalEnergy() - 2.0 );
-    REQUIRE( specs.details().econstraints[2].fn(props, params) == props.enthalpy() - 3.0 );
-    REQUIRE( specs.details().econstraints[3].fn(props, params) == props.gibbsEnergy() - 4.0 );
-    REQUIRE( specs.details().econstraints[4].fn(props, params) == props.helmholtzEnergy() - 5.0 );
-    REQUIRE( specs.details().econstraints[5].fn(props, params) == props.entropy() - 6.0 );
+    // REQUIRE( specs.details().econstraints[0].fn(props, params) == props.volume() - 1.0 );
+    // REQUIRE( specs.details().econstraints[1].fn(props, params) == props.internalEnergy() - 2.0 );
+    // REQUIRE( specs.details().econstraints[2].fn(props, params) == props.enthalpy() - 3.0 );
+    // REQUIRE( specs.details().econstraints[3].fn(props, params) == props.gibbsEnergy() - 4.0 );
+    // REQUIRE( specs.details().econstraints[4].fn(props, params) == props.helmholtzEnergy() - 5.0 );
+    // REQUIRE( specs.details().econstraints[5].fn(props, params) == props.entropy() - 6.0 );
 
 
     // SECTION("Testing method EquilibriumSpecs::temperature")
