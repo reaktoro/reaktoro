@@ -37,22 +37,33 @@ TEST_CASE("Testing Params class", "[Params]")
     params.set("Foo", foo);
     params.set("Bar", bar);
 
+    CHECK( foo.size() == 2 );
     CHECK( foo.get("A").value() == 1.0 );
     CHECK( foo.get("B").value() == 2.0 );
+    CHECK( foo.exists("A") == true );
+    CHECK( foo.exists("B") == true );
+    CHECK( foo.exists("C") == false );
 
+    CHECK( bar.size() == 3 );
     CHECK( bar.get("C").value() == 5.0 );
     CHECK( bar.get("D").value() == 6.0 );
     CHECK( bar.get("E").value() == 7.0 );
-
     CHECK( bar.exists("C") == true );
     CHECK( bar.exists("D") == true );
     CHECK( bar.exists("E") == true );
     CHECK( bar.exists("F") == false );
 
+    CHECK( params.size() == 5 );
     CHECK( params.at("Foo").get("A").value() == 1.0 );
     CHECK( params.at("Foo").get("B").value() == 2.0 );
-
     CHECK( params.at("Bar").get("C").value() == 5.0 );
     CHECK( params.at("Bar").get("D").value() == 6.0 );
     CHECK( params.at("Bar").get("E").value() == 7.0 );
+    CHECK( params.exists("Foo") == true );
+    CHECK( params.exists("Bar") == true );
+    CHECK( params.exists("Joe") == false );
+    CHECK( params.at("Foo").exists("A") == true );
+    CHECK( params.at("Foo").exists("Z") == false );
+    CHECK( params.at("Bar").exists("C") == true );
+    CHECK( params.at("Bar").exists("Z") == false );
 }

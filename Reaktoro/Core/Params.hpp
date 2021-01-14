@@ -31,6 +31,9 @@ public:
     /// Construct a default Params instance.
     Params();
 
+    /// Return the number of child parameters.
+    auto size() const -> Index;
+
     /// Return the child block of parameters with given key.
     auto at(const String& key) const -> const Params&;
 
