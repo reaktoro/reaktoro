@@ -23,10 +23,12 @@
 namespace Reaktoro {
 
 // Forward declarations
-class  ChemicalProps;
-class  ChemicalState;
-class  ChemicalSystem;
-class  EquilibriumConstraints;
+class ChemicalProps;
+class ChemicalState;
+class ChemicalSystem;
+class EquilibriumConditions;
+class EquilibriumRestrictions;
+class EquilibriumSpecs;
 struct EquilibriumOptions;
 struct EquilibriumResult;
 
@@ -37,8 +39,8 @@ public:
     /// Construct an EquilibriumSolver object with given chemical system.
     explicit EquilibriumSolver(const ChemicalSystem& system);
 
-    /// Construct an EquilibriumSolver object with given constraints.
-    explicit EquilibriumSolver(const EquilibriumConstraints& constraints);
+    /// Construct an EquilibriumSolver object with given chemical equilibrium specifications.
+    explicit EquilibriumSolver(const EquilibriumSpecs& specs);
 
     /// Construct a copy of an EquilibriumSolver object.
     EquilibriumSolver(const EquilibriumSolver& other);
@@ -52,15 +54,20 @@ public:
     /// Set the options of the equilibrium solver.
     auto setOptions(const EquilibriumOptions& options) -> void;
 
-    /// Return the equilibrium constraints associated with this equilibrium solver.
-    auto constraints() const -> const EquilibriumConstraints&;
-
-    /// Return the equilibrium constraints associated with this equilibrium solver.
-    auto constraints() -> EquilibriumConstraints&;
-
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     auto solve(ChemicalState& state) -> EquilibriumResult;
+
+    /// Solve an equilibrium problem with given chemical state in disequilibrium and equilibrium conditions.
+    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
+    /// @param conditions The conditions to be attained at chemical equilibrium
+    auto solve(ChemicalState& state, const EquilibriumConditions& conditions) -> EquilibriumResult;
+
+    /// Solve an equilibrium problem with given chemical state in disequilibrium and equilibrium conditions.
+    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
+    /// @param conditions The conditions to be attained at chemical equilibrium
+    /// @param restrictions The restrictions on the reactivity amounts of the species
+    auto solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
 
 private:
     struct Impl;

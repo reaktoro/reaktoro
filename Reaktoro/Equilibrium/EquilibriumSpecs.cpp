@@ -407,7 +407,8 @@ auto EquilibriumSpecs::addConstraint(const EquilibriumConstraintChemicalPotentia
 
 auto EquilibriumSpecs::addParameter(String param) -> void
 {
-    parameters.push_back(param);
+    if(!contains(parameters, param))
+        parameters.push_back(param);
 }
 
 //=================================================================================================
