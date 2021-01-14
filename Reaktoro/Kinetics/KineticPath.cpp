@@ -158,7 +158,8 @@ struct KineticPath::Impl
         while(k < n)
         {
             // Integrate one time step only
-            if(!options.use_smart_kinetic_solver) {
+            if(!options.use_smart_kinetic_solver)
+            {
 
                 // Run kinetic calculations
                 t = kinetic_solver.solve(state, t, dt);
@@ -205,9 +206,10 @@ struct KineticPath::Impl
 
             // Output to console time and statistics characterising kinetic solver
             std::cout << profiler;
+
+            // Generate json output file with collected profiling data
+            JsonOutput(output.basename() + "-analysis.json") << analysis;
         }
-        // Generate json output file with collected profiling data
-        JsonOutput(output.filename() + "-analysis.json") << analysis;
     }
 
     auto addSource(const ChemicalState& state, double volumerate, const std::string& units) -> void
@@ -301,7 +303,8 @@ auto KineticPath::solve(ChemicalState& state, double t0, double t1, const std::s
     pimpl->solve(state, t0, t1, units);
 }
 
-auto KineticPath::solve(ChemicalState& state, double t0, double dt, int n, const std::string& units) -> void{
+auto KineticPath::solve(ChemicalState& state, double t0, double dt, int n, const std::string& units) -> void
+{
     pimpl->solve(state, t0, dt, n, units);
 }
 
