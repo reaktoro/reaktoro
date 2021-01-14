@@ -153,7 +153,7 @@ struct ReactiveTransportParams
                                      "-reltol-" + reltol_stream.str() +
                                      "-" + getActivityModelTag(activity_model) + "-smart";
 
-        std::string folder = "results-" + demo_tag;
+        std::string folder = "rt-" + demo_tag;
         folder = (use_smart_equilibrium_solver) ?
                  folder + smart_test_tag :
                  folder + test_tag;
@@ -201,7 +201,7 @@ struct ReactiveTransportParams
                                      (use_smart_kinetics_solver ? "-smart-kin" : "-conv-kin") +
                                      (use_smart_equilibrium_solver ? "-smart-eq"  : "-conv-eq");      // name of the folder with results
 
-        std::string folder = "results-" + demo_tag;
+        std::string folder = "rt-kinetics-" + demo_tag;
         folder = (use_smart_kinetics_solver || use_smart_equilibrium_solver) ?
                  demo_tag + smart_test_tag :
                  demo_tag + test_tag;
@@ -516,8 +516,8 @@ struct ReactiveTransportKineticsResults
 
 };
 
-struct KineticPathParams{
-
+struct KineticPathParams
+{
     // Discretization params
     double t0 = 0;      // starting time of simulations
     double tfinal = 0;  // final time of simulation

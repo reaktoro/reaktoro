@@ -205,7 +205,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
 {
 
     // Step **: Create the results folder
-    auto folder = params.makeResultsFolderKinetics("results-kinetics-dolomitization-with-record");
+    auto folder = params.makeResultsFolderKinetics("dolomitization-calcite-dolomite");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;

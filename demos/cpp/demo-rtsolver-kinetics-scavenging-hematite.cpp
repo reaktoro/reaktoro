@@ -238,7 +238,7 @@ int main()
 auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKineticsResults& results) -> void
 {
     // Step **: Create the results folder
-    auto folder = params.makeResultsFolderKinetics("results-kinetics-scavenging");
+    auto folder = params.makeResultsFolderKinetics("scavenging-hematite");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
