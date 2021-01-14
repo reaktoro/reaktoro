@@ -25,6 +25,16 @@ namespace Reaktoro {
 Params::Params()
 {}
 
+auto Params::size() const -> Index
+{
+    auto count = 0;
+    for(auto const& [key, val] : tree)
+        if(val.type() == typeid(Params))
+            count += std::any_cast<const Params&>(val).size();
+        else count += 1;
+    return count;
+}
+
 auto Params::at(const String& key) const -> const Params&
 {
     const auto it = tree.find(key);
