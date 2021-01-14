@@ -234,7 +234,7 @@ int main()
 
     return 0;
 }
-uto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKineticsResults& results) -> void
+auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKineticsResults& results) -> void
 {
     // Step **: Create the results folder
     auto folder = params.makeResultsFolderKinetics("results-kinetics-scavenging-goethite");

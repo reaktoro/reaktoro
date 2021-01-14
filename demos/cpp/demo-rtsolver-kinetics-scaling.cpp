@@ -239,7 +239,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
 {
 
     // Step **: Create the results folder
-    auto folder = params.makeResultsFolderKinetics("results-kinetics-scaling");
+    auto folder = params.makeResultsFolderKinetics("scaling-barite");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
