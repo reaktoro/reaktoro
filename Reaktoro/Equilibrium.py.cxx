@@ -19,17 +19,21 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
-void exportEquilibriumConstraints(py::module& m);
+void exportEquilibriumConditions(py::module& m);
 void exportEquilibriumDims(py::module& m);
 void exportEquilibriumOptions(py::module& m);
+void exportEquilibriumRestrictions(py::module& m);
 void exportEquilibriumResult(py::module& m);
 void exportEquilibriumSolver(py::module& m);
+void exportEquilibriumSpecs(py::module& m);
 
 void exportEquilibrium(py::module& m)
 {
-    exportEquilibriumConstraints(m);
+    exportEquilibriumConditions(m);
     exportEquilibriumDims(m);
     exportEquilibriumOptions(m);
+    exportEquilibriumRestrictions(m);
     exportEquilibriumResult(m);
     exportEquilibriumSolver(m);
+    exportEquilibriumSpecs(m);
 }
