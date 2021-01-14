@@ -17,6 +17,9 @@
 
 #include "ChemicalState.hpp"
 
+// Optima includes
+#include <Optima/State.hpp>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
@@ -393,20 +396,20 @@ auto ChemicalState::equilibrium() -> Equilibrium&
 
 struct ChemicalState::Equilibrium::Impl
 {
+    /// The number of species in the chemical system.
+    const Index Nn;
+
+    /// The number of elements in the chemical system.
+    const Index Ne;
+
+    /// The Optima::State object used for warm start Optima optimization calculations.
+    Optima::State optstate;
+
     /// The indices of the species partitioned as (primary, secondary).
     ArrayXl ips;
 
     /// The number of primary species among the species.
     Index kp = 0;
-
-    /// The Lagrange multipliers in the constrained equilibrium state (in units of J/mol)
-    ArrayXd y;
-
-    /// The complementarity variables in the constrained equilibrium state (in units of J/mol)
-    ArrayXd z;
-
-    /// The control variables v = (p, q) in the constrained equilibrium state.
-    ArrayXd v;
 
     /// The indices of elements whose amounts should be positive, but given amount was less or equal to zero.
     ArrayXl isue;
@@ -416,6 +419,7 @@ struct ChemicalState::Equilibrium::Impl
 
     /// Construct a default ChemicalState::Equilibrium::Impl instance
     Impl(const ChemicalSystem& system)
+    : Nn(system.species().size()), Ne(system.elements().size() + 1)
     {}
 };
 
@@ -436,6 +440,16 @@ auto ChemicalState::Equilibrium::operator=(ChemicalState::Equilibrium other) -> 
     return *this;
 }
 
+auto ChemicalState::Equilibrium::setOptimaState(const Optima::State& state) -> void
+{
+    pimpl->optstate = state;
+}
+
+auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&
+{
+    return pimpl->optstate;
+}
+
 auto ChemicalState::Equilibrium::setIndicesPrimarySecondarySpecies(ArrayXlConstRef ips, Index kp) -> void
 {
     pimpl->ips = ips;
@@ -450,21 +464,6 @@ auto ChemicalState::Equilibrium::setIndicesStrictlyUnstableElements(ArrayXlConst
 auto ChemicalState::Equilibrium::setIndicesStrictlyUnstableSpecies(ArrayXlConstRef isus) -> void
 {
     pimpl->isus = isus;
-}
-
-auto ChemicalState::Equilibrium::setLagrangeMultipliers(ArrayXdConstRef y) -> void
-{
-    pimpl->y = y;
-}
-
-auto ChemicalState::Equilibrium::setComplementarityVariables(ArrayXdConstRef z) -> void
-{
-    pimpl->z = z;
-}
-
-auto ChemicalState::Equilibrium::setControlVariables(ArrayXdConstRef v) -> void
-{
-    pimpl->v = v;
 }
 
 auto ChemicalState::Equilibrium::numPrimarySpecies() const -> Index
@@ -497,34 +496,33 @@ auto ChemicalState::Equilibrium::indicesStrictlyUnstableSpecies() const -> Array
     return pimpl->isus;
 }
 
-auto ChemicalState::Equilibrium::lagrangeMultipliers() const -> ArrayXdConstRef
+auto ChemicalState::Equilibrium::elementChemicalPotentials() const -> ArrayXdConstRef
 {
-    return pimpl->y;
+    if(pimpl->optstate.ye.size())
+        return pimpl->optstate.ye.head(pimpl->Ne);
+    else return pimpl->optstate.ye;
 }
 
-auto ChemicalState::Equilibrium::lagrangeMultipliers() -> ArrayXd&
+auto ChemicalState::Equilibrium::speciesStabilities() const -> ArrayXdConstRef
 {
-    return pimpl->y;
+    if(pimpl->optstate.s.size())
+        return pimpl->optstate.s.head(pimpl->Nn);
+    else return pimpl->optstate.s;
 }
 
-auto ChemicalState::Equilibrium::complementarityVariables() const -> ArrayXdConstRef
+auto ChemicalState::Equilibrium::explicitTitrantAmounts() const -> ArrayXdConstRef
 {
-    return pimpl->z;
+    return pimpl->optstate.p;
 }
 
-auto ChemicalState::Equilibrium::complementarityVariables() -> ArrayXd&
+auto ChemicalState::Equilibrium::implicitTitrantAmounts() const -> ArrayXdConstRef
 {
-    return pimpl->z;
-}
-
-auto ChemicalState::Equilibrium::controlVariables() const -> ArrayXdConstRef
-{
-    return pimpl->v;
-}
-
-auto ChemicalState::Equilibrium::controlVariables() -> ArrayXd&
-{
-    return pimpl->v;
+    const auto Nx = pimpl->optstate.x.size();
+    const auto Nn = pimpl->Nn;
+    const auto Nq = Nx - Nn;
+    if(pimpl->optstate.x.size())
+        return pimpl->optstate.x.tail(Nq);
+    else return pimpl->optstate.x;
 }
 
 } // namespace Reaktoro

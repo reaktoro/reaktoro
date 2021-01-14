@@ -26,6 +26,9 @@
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 
+// Forward declarations (Optima)
+namespace Optima { class State; }
+
 namespace Reaktoro {
 
 // Forward declarations
@@ -179,6 +182,12 @@ public:
     /// Assign a ChemicalState::Equilibrium instance to this instance
     auto operator=(Equilibrium other) -> Equilibrium&;
 
+    /// Set the Optima::State object obtained during an Optima optimization calculation.
+    auto setOptimaState(const Optima::State& state) -> void;
+
+    /// Return the last set Optima::State object.
+    auto optimaState() const -> const Optima::State&;
+
     /// Set the indices of the primary and secondary species at the equilibrium state.
     /// @param ips The indices of the equilibrium species ordered as (primary, secondary)
     /// @param kp The number of primary species
@@ -190,15 +199,6 @@ public:
     /// Set the indices of species that contain one or more strictly unstable elements.
     /// @see setIndicesElementsStrictlyUnstable
     auto setIndicesStrictlyUnstableSpecies(ArrayXlConstRef isus) -> void;
-
-    /// Set the Lagrange multipliers in the constrained equilibrium state (in units of J/mol)
-    auto setLagrangeMultipliers(ArrayXdConstRef y) -> void;
-
-    /// Set the complementarity variables in the equilibrium state (in units of J/mol)
-    auto setComplementarityVariables(ArrayXdConstRef z) -> void;
-
-    /// Set the values of the control variables in the constrained equilibrium state.
-    auto setControlVariables(ArrayXdConstRef pq) -> void;
 
     /// Return the number of primary species.
     auto numPrimarySpecies() const -> Index;
@@ -218,32 +218,21 @@ public:
     /// Return the indices of species that contain one or more strictly unstable elements.
     auto indicesStrictlyUnstableSpecies() const -> ArrayXlConstRef;
 
-    /// Return the Lagrange multipliers in the constrained equilibrium state (in units of J/mol).
-    /// These are the Lagrange multipliers with respect to the conservation
-    /// constraints. Those associated with chemical elements and electric
-    /// charge can be interpreted as chemical potentials of these components.
-    ///@{
-    auto lagrangeMultipliers() const -> ArrayXdConstRef;
-    auto lagrangeMultipliers() -> ArrayXd&;
-    ///@}
+    /// Return the chemical potentials of the elements in the equilibrium state (in unit of J/mol).
+    auto elementChemicalPotentials() const -> ArrayXdConstRef;
 
-    /// Return the complementarity variables in the constrained equilibrium state (in units of J/mol).
-    /// These are the slack variables with respect to the non-negative bound
-    /// constraints on the amounts of the species in a chemical equilibrium
-    /// calculation. They can be interpreted as measures of stability of a
-    /// species at equilibrium, with values closer to zero meaning more stable.
-    ///@{
-    auto complementarityVariables() const -> ArrayXdConstRef;
-    auto complementarityVariables() -> ArrayXd&;
-    ///@}
+    /// Return the stabilities of the chemical species in the equilibrium state (in unit of J/mol).
+    /// These are the slack variables with respect to bound constraints on the
+    /// amounts of the species in a chemical equilibrium calculation. They can
+    /// be interpreted as measures of stability of a species at equilibrium,
+    /// with values closer to zero meaning more stable and away from the bounds.
+    auto speciesStabilities() const -> ArrayXdConstRef;
 
-    /// Return the control variables in the constrained equilibrium state.
-    /// These are the values of the control variables introduced in a
-    /// constrained equilibrium problem.
-    ///@{
-    auto controlVariables() const -> ArrayXdConstRef;
-    auto controlVariables() -> ArrayXd&;
-    ///@}
+    /// Return the amounts of the explicit titrants in the equilibrium state (in unit of mol).
+    auto explicitTitrantAmounts() const -> ArrayXdConstRef;
+
+    /// Return the amounts of the implicit titrants in the equilibrium state (in unit of mol).
+    auto implicitTitrantAmounts() const -> ArrayXdConstRef;
 
 private:
     struct Impl;
