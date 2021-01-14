@@ -26,160 +26,167 @@
 #include <Reaktoro/Core/ReactionEquation.hpp>
 
 namespace Reaktoro {
+namespace {
+
+/// Throw an error if an input parameter has not been registered in the equilibrium specifications.
+/// @param params The list of registered input parameters in the equilibrium specifications (e.g., {"T", "P", "pH"}).
+/// @param param The input parameter that needs to be checked in the equilibrium specifications (e.g., "T").
+/// @param propertymsg The message about the property being constrained (e.g., "temperature").
+auto throwErrorIfNotRegisteredParam(const Strings& params, const String& param, const String& propertymsg) -> void
+{
+    const auto registered = contains(params, param);
+    error(!registered, "Cannot set ", propertymsg, " for the equilibrium calculation "
+        "because it is not a registered input parameter in the equilibrium specifications.");
+}
+
+} // namespace
 
 EquilibriumConditions::EquilibriumConditions(const EquilibriumSpecs& specs)
-: mspecs(specs), mparamsmaster(specs.details().params)
+: m_system(specs.system()), m_parameters(specs.namesParameters())
 {
 }
 
 auto EquilibriumConditions::temperature(real value, String unit) -> void
 {
-    error(!mparamsmaster.exists("T"), "Cannot set temperature for the equilibrium "
-        "calculation because it is not a registered input parameter in the specifications.");
+    throwErrorIfNotRegisteredParam(m_parameters, "T", "temperature");
     value = units::convert(value, unit, "K");
-    mparams.set("T", value);
+    m_params.set("T", value);
 }
 
 auto EquilibriumConditions::pressure(real value, String unit) -> void
 {
-    error(!mparamsmaster.exists("P"), "Cannot set pressure for the equilibrium "
-        "calculation because it is not a registered input parameter in the specifications.");
+    throwErrorIfNotRegisteredParam(m_parameters, "P", "pressure");
     value = units::convert(value, unit, "Pa");
-    mparams.set("P", value);
+    m_params.set("P", value);
 }
 
 auto EquilibriumConditions::volume(real value, String unit) -> void
 {
-    error(!mparamsmaster.exists("V"), "Cannot set volume for the equilibrium "
-        "calculation because it is not a registered input parameter in the specifications.");
+    throwErrorIfNotRegisteredParam(m_parameters, "V", "volume");
     value = units::convert(value, unit, "m3");
-    mparams.set("V", value);
+    m_params.set("V", value);
 }
 
 auto EquilibriumConditions::internalEnergy(real value, String unit) -> void
 {
-    error(!mparamsmaster.exists("U"), "Cannot set internal energy for the equilibrium "
-        "calculation because it is not a registered input parameter in the specifications.");
+    throwErrorIfNotRegisteredParam(m_parameters, "U", "internal energy");
     value = units::convert(value, unit, "J");
-    mparams.set("U", value);
+    m_params.set("U", value);
 }
 
 auto EquilibriumConditions::enthalpy(real value, String unit) -> void
 {
-    error(!mparamsmaster.exists("H"), "Cannot set enthalpy for the equilibrium "
-        "calculation because it is not a registered input parameter in the specifications.");
+    throwErrorIfNotRegisteredParam(m_parameters, "H", "enthalpy");
     value = units::convert(value, unit, "J");
-    mparams.set("H", value);
+    m_params.set("H", value);
 }
 
 auto EquilibriumConditions::gibbsEnergy(real value, String unit) -> void
 {
-    error(!mparamsmaster.exists("G"), "Cannot set Gibbs energy for the equilibrium "
-        "calculation because it is not a registered input parameter in the specifications.");
+    throwErrorIfNotRegisteredParam(m_parameters, "G", "Gibbs energy");
     value = units::convert(value, unit, "J");
-    mparams.set("G", value);
+    m_params.set("G", value);
 }
 
 auto EquilibriumConditions::helmholtzEnergy(real value, String unit) -> void
 {
-    error(!mparamsmaster.exists("A"), "Cannot set Helmholtz energy for the equilibrium "
-        "calculation because it is not a registered input parameter in the specifications.");
+    throwErrorIfNotRegisteredParam(m_parameters, "A", "Helmholtz energy");
     value = units::convert(value, unit, "J");
-    mparams.set("A", value);
+    m_params.set("A", value);
 }
 
 auto EquilibriumConditions::entropy(real value, String unit) -> void
 {
-    error(!mparamsmaster.exists("S"), "Cannot set entropy for the equilibrium "
-        "calculation because it is not a registered input parameter in the specifications.");
+    throwErrorIfNotRegisteredParam(m_parameters, "S", "entropy");
     value = units::convert(value, unit, "J/K");
-    mparams.set("S", value);
+    m_params.set("S", value);
 }
 
 auto EquilibriumConditions::chemicalPotential(String substance, real value, String unit) -> void
 {
     const auto paramname = "u[" + substance + "]";
-    error(!mparamsmaster.exists(paramname), "Cannot set the chemical potential of ", substance, " for "
-        "the equilibrium calculation because it is not a registered input parameter in the specifications.");
+    throwErrorIfNotRegisteredParam(m_parameters, paramname, "the chemical potential of " + substance);
     value = units::convert(value, unit, "J/mol");
-    mparams.set(paramname, value);
+    m_params.set(paramname, value);
 }
 
 auto EquilibriumConditions::lnActivity(String species, real value) -> void
 {
     const auto paramname = "lnActivity[" + species + "]";
-    error(!mparamsmaster.exists(paramname), "Cannot set the activity of ", species, " for "
-        "the equilibrium calculation because it is not a registered input parameter in the specifications.");
-    mparams.set(paramname, value);
+    throwErrorIfNotRegisteredParam(m_parameters, paramname, "the activity of " + species);
+    m_params.set(paramname, value);
 }
 
 auto EquilibriumConditions::lgActivity(String species, real value) -> void
 {
     const auto paramname = "lnActivity[" + species + "]";
-    error(!mparamsmaster.exists(paramname), "Cannot set the activity of ", species, " for "
-        "the equilibrium calculation because it is not a registered input parameter in the specifications.");
-    mparams.set(paramname, value * ln10);
+    throwErrorIfNotRegisteredParam(m_parameters, paramname, "the activity of " + species);
+    m_params.set(paramname, value * ln10);
 }
 
 auto EquilibriumConditions::activity(String species, real value) -> void
 {
     const auto paramname = "lnActivity[" + species + "]";
-    error(!mparamsmaster.exists(paramname), "Cannot set the activity of ", species, " for "
-        "the equilibrium calculation because it is not a registered input parameter in the specifications.");
-    mparams.set(paramname, log(value));
+    throwErrorIfNotRegisteredParam(m_parameters, paramname, "the activity of " + species);
+    m_params.set(paramname, log(value));
 }
 
 auto EquilibriumConditions::fugacity(String gas, real value, String unit) -> void
 {
     const auto paramname = "f[" + gas + "]";
-    error(!mparamsmaster.exists(paramname), "Cannot set the fugacity of ", gas, " for "
-        "the equilibrium calculation because it is not a registered input parameter in the specifications.");
+    throwErrorIfNotRegisteredParam(m_parameters, paramname, "the fugacity of " + gas);
     value = units::convert(value, unit, "bar");
-    mparams.set(paramname, value);
+    m_params.set(paramname, value);
 }
 
 auto EquilibriumConditions::pH(real value) -> void
 {
-    error(!mparamsmaster.exists("pH"), "Cannot set pH for the equilibrium calculation "
-        "because it is not a registered input parameter in the specifications.");
-    mparams.set("pH", value);
+    throwErrorIfNotRegisteredParam(m_parameters, "pH", "pH");
+    m_params.set("pH", value);
 }
 
 auto EquilibriumConditions::pMg(real value) -> void
 {
-    error(!mparamsmaster.exists("pMg"), "Cannot set pMg for the equilibrium calculation "
-        "because it is not a registered input parameter in the specifications.");
-    mparams.set("pMg", value);
+    throwErrorIfNotRegisteredParam(m_parameters, "pMg", "pMg");
+    m_params.set("pMg", value);
 }
 
 auto EquilibriumConditions::pE(real value) -> void
 {
-    error(!mparamsmaster.exists("pE"), "Cannot set pE for the equilibrium calculation "
-        "because it is not a registered input parameter in the specifications.");
-    mparams.set("pE", value);
+    throwErrorIfNotRegisteredParam(m_parameters, "pE", "pE");
+    m_params.set("pE", value);
 }
 
 auto EquilibriumConditions::Eh(real value, String unit) -> void
 {
-    error(!mparamsmaster.exists("Eh"), "Cannot set Eh for the equilibrium calculation "
-        "because it is not a registered input parameter in the specifications.");
-    mparams.set("Eh", value);
+    throwErrorIfNotRegisteredParam(m_parameters, "Eh", "Eh");
+    m_params.set("Eh", value);
+}
+
+auto EquilibriumConditions::initialComponentAmounts(VectorXrConstRef values) -> void
+{
+    const auto numcomponents = m_system.elements().size() + 1;
+    error(values.size() != 0 && values.size() != numcomponents, "The number of conservative "
+        "components is ", numcomponents, " but only ", values.size(), " values "
+        "have been given for their amounts.");
+    m_initial_component_amounts = values;
+}
+
+auto EquilibriumConditions::initialComponentAmounts() const -> VectorXrConstRef
+{
+    return m_initial_component_amounts;
 }
 
 auto EquilibriumConditions::system() const -> const ChemicalSystem&
 {
-    return mspecs.system();
-}
-
-auto EquilibriumConditions::specs() const -> const EquilibriumSpecs&
-{
-    return mspecs;
+    return m_system;
 }
 
 auto EquilibriumConditions::params() const -> const Params&
 {
-    return mparams;
+    return m_params;
 }
+
 
 // auto EquilibriumConditions::conservationMatrix() const -> MatrixXd
 // {

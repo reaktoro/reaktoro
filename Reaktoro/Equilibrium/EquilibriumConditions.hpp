@@ -150,9 +150,13 @@ public:
     //=================================================================================================
 
     /// Set the initial amounts of the conservative components in the equilibrium calculation.
-    /// These amounts are conserved at chemical equilibrium if the system is closed.
+    /// These amounts are conserved at chemical equilibrium if the system is
+    /// closed. If the system is open to one or more substances, these initial
+    /// amounts will differ from those computed at chemical equilibrium. The
+    /// difference correspond to how much each titrant (i.e., the substance for
+    /// which the system is open to) entered/leaved the system.
     /// @param values The initial amounts of the components in the system.
-    auto setInitialComponentAmounts(VectorXrConstRef values) -> void;
+    auto initialComponentAmounts(VectorXrConstRef values) -> void;
 
     /// Return the initial amounts of the conservative components in the equilibrium calculation.
     auto initialComponentAmounts() const -> VectorXrConstRef;
@@ -160,24 +164,21 @@ public:
     /// Return the chemical system associated with the equilibrium conditions.
     auto system() const -> const ChemicalSystem&;
 
-    /// Return the specifications for the equilibrium conditions.
-    auto specs() const -> const EquilibriumSpecs&;
-
     /// Return the input parameters associated with the equilibrium conditions.
     auto params() const -> const Params&;
 
 private:
-    /// The specifications for the equilibrium conditions.
-    EquilibriumSpecs mspecs;
+    /// The chemical system associated with the given equilibrium specifications.
+    const ChemicalSystem m_system;
 
-    /// The master input parameters associated with the equilibrium conditions.
-    const Params mparamsmaster;
+    /// The list of input parameter names registered in the given equilibrium specifications.
+    const Strings m_parameters;
 
-    /// The input parameters associated with the equilibrium conditions.
-    Params mparams;
+    /// The input parameters defining the equilibrium conditions according to given equilibrium specifications.
+    Params m_params;
 
     /// The initial amounts of the conservative components in the equilibrium calculation.
-    VectorXr minitial_comp_amounts;
+    VectorXr m_initial_component_amounts;
 };
 
 } // namespace Reaktoro

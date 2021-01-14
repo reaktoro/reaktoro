@@ -31,61 +31,61 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 {
     ChemicalSystem system = test::createChemicalSystem();
 
-    EquilibriumConditions conditions(system);
+    // EquilibriumConditions conditions(system);
 
-    // The mock temperature, pressure, and species amounts used for the tests below.
-    const auto T = 1.0;
-    const auto P = 11.0;
-    const auto n = ArrayXr::Ones(system.species().size()).eval();
+    // // The mock temperature, pressure, and species amounts used for the tests below.
+    // const auto T = 1.0;
+    // const auto P = 11.0;
+    // const auto n = ArrayXr::Ones(system.species().size()).eval();
 
-    // The mock chemical properties of the system used for the tests below
-    ChemicalProps props(system);
-    props.update(T, P, n);
+    // // The mock chemical properties of the system used for the tests below
+    // ChemicalProps props(system);
+    // props.update(T, P, n);
 
-    SECTION("Testing method EquilibriumConditions::temperature")
-    {
-        const auto& details = conditions.details();
+    // SECTION("Testing method EquilibriumConditions::temperature")
+    // {
+    //     const auto& details = conditions.details();
 
-        REQUIRE( details.unknownT == true );
-        REQUIRE( details.constantT == false );
+    //     REQUIRE( details.unknownT == true );
+    //     REQUIRE( details.constantT == false );
 
-        conditions.temperature(T);
+    //     conditions.temperature(T);
 
-        REQUIRE( details.unknownT == false );
-        REQUIRE( details.constantT == false );
+    //     REQUIRE( details.unknownT == false );
+    //     REQUIRE( details.constantT == false );
 
-        conditions.constantTemperature();
+    //     conditions.constantTemperature();
 
-        REQUIRE( details.unknownT == false );
-        REQUIRE( details.constantT == true );
-    }
+    //     REQUIRE( details.unknownT == false );
+    //     REQUIRE( details.constantT == true );
+    // }
 
-    SECTION("Testing method EquilibriumConditions::pressure")
-    {
-        const auto& details = conditions.details();
+    // SECTION("Testing method EquilibriumConditions::pressure")
+    // {
+    //     const auto& details = conditions.details();
 
-        REQUIRE( details.unknownP == true );
-        REQUIRE( details.constantP == false );
+    //     REQUIRE( details.unknownP == true );
+    //     REQUIRE( details.constantP == false );
 
-        conditions.pressure(P);
+    //     conditions.pressure(P);
 
-        REQUIRE( details.unknownP == false );
-        REQUIRE( details.constantP == false );
+    //     REQUIRE( details.unknownP == false );
+    //     REQUIRE( details.constantP == false );
 
-        conditions.constantPressure();
+    //     conditions.constantPressure();
 
-        REQUIRE( details.unknownP == false );
-        REQUIRE( details.constantP == true );
-    }
+    //     REQUIRE( details.unknownP == false );
+    //     REQUIRE( details.constantP == true );
+    // }
 
-    SECTION("Testing method EquilibriumConditions::titrate")
-    {
-        const auto& details = conditions.details();
+    // SECTION("Testing method EquilibriumConditions::titrate")
+    // {
+    //     const auto& details = conditions.details();
 
-        conditions.titrate("CO2");
+    //     conditions.titrate("CO2");
 
-        REQUIRE( details.titrants.back().str() == "CO2" );
-    }
+    //     REQUIRE( details.titrants.back().str() == "CO2" );
+    // }
 
     // SECTION("Testing method EquilibriumConditions::until")
     // {
