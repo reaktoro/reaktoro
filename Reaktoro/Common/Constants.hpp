@@ -17,6 +17,9 @@
 
 #pragma once
 
+// C++ includes
+#include <limits>
+
 namespace Reaktoro {
 
 /// The universal gas constant (in units of J/(mol*K))
@@ -42,5 +45,11 @@ constexpr auto cubicMeterToCubicCentimeter = 1.0e+06;
 
 /// The value of ln(10)
 constexpr auto ln10 = 2.30258509299404590109361379290930926799774169921875;
+
+/// The value of infinity
+constexpr auto inf = std::numeric_limits<double>::infinity();
+
+/// The value of machine precision epsilon
+constexpr auto epsilon = std::numeric_limits<double>::epsilon();
 
 } // namespace Reaktoro
