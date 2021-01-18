@@ -169,35 +169,4 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     state.setSpeciesMass("CaCO3(s)", 7.0, "g");
     CHECK( state.speciesMass(idx("CaCO3(s)")) == 0.007 );
     CHECK( state.speciesMass(idx("CaCO3(s)"), "g") == 7.0 );
-
-    //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::phaseProps(iphase)
-    //-------------------------------------------------------------------------
-    state.setTemperature(400.0);
-    state.setPressure(123.0e5);
-    state.setSpeciesAmounts(1.0);
-
-    state.props().update(state);
-
-    for(auto i = 0; i < system.phases().size(); ++i)
-    {
-        auto phaseprops = state.phaseProps(i);
-        REQUIRE(  phaseprops.temperature()    == 400.0      );
-        REQUIRE(  phaseprops.pressure()       == 123.0e5    );
-        REQUIRE( (phaseprops.speciesAmounts() == 1.0).all() );
-    }
-
-    //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::props()
-    //-------------------------------------------------------------------------
-    state.setTemperature(500.0);
-    state.setPressure(453.0e5);
-    state.setSpeciesAmounts(3.0);
-
-    state.props().update(state);
-
-    auto props = state.props();
-    REQUIRE(  props.temperature()    == 500.0      );
-    REQUIRE(  props.pressure()       == 453.0e5    );
-    REQUIRE( (props.speciesAmounts() == 3.0).all() );
 }

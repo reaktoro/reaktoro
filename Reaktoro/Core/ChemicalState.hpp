@@ -24,7 +24,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 
 // Forward declarations (Optima)
 namespace Optima { class State; }
@@ -32,7 +31,6 @@ namespace Optima { class State; }
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalProps;
 class ChemicalSystem;
 
 /// The chemical state of a chemical system.
@@ -115,9 +113,6 @@ public:
     /// Return the amounts of the species in the chemical state (in mol).
     auto speciesAmounts() const -> ArrayXrConstRef;
 
-    /// Return the amounts of the species in the chemical state (in mol).
-    auto speciesAmounts() -> ArrayXrRef;
-
     /// Return the amounts of the elements in the chemical state (in mol).
     auto elementAmounts() const -> ArrayXr;
 
@@ -144,15 +139,6 @@ public:
 
     /// Return the mass of the species in the chemical state with given name and unit (convertible to kg).
     auto speciesMass(String name, String unit) const -> real;
-
-    /// Return the chemical properties of a phase in the chemical system.
-    auto phaseProps(Index iphase) const -> ChemicalPropsPhaseConstRef;
-
-    /// Return the chemical properties of the chemical system.
-    auto props() const -> const ChemicalProps&;
-
-    /// Return the chemical properties of the chemical system.
-    auto props() -> ChemicalProps&;
 
     /// Return the equilibrium properties of a calculated chemical equilibrium state.
     auto equilibrium() const -> const Equilibrium&;

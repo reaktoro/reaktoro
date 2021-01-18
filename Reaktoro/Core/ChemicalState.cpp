@@ -23,7 +23,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
-#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 
 namespace Reaktoro {
@@ -39,9 +38,6 @@ struct ChemicalState::Impl
     /// The chemical system instance
     ChemicalSystem system;
 
-    /// The chemical properties of the chemical system.
-    ChemicalProps props;
-
     /// The properties related to an equilibrium state.
     Equilibrium equilibrium;
 
@@ -56,7 +52,7 @@ struct ChemicalState::Impl
 
     /// Construct a ChemicalState::Impl instance with given chemical system.
     Impl(const ChemicalSystem& system)
-    : system(system), props(system), equilibrium(system),
+    : system(system), equilibrium(system),
       n(ArrayXr::Zero(system.species().size()))
     {}
 
@@ -313,11 +309,6 @@ auto ChemicalState::speciesAmounts() const -> ArrayXrConstRef
     return pimpl->n;
 }
 
-auto ChemicalState::speciesAmounts() -> ArrayXrRef
-{
-    return pimpl->n;
-}
-
 auto ChemicalState::elementAmounts() const -> ArrayXr
 {
     return pimpl->elementAmounts();
@@ -361,21 +352,6 @@ auto ChemicalState::speciesMass(String name) const -> real
 auto ChemicalState::speciesMass(String name, String unit) const -> real
 {
     return pimpl->speciesMass(name, unit);
-}
-
-auto ChemicalState::phaseProps(Index iphase) const -> ChemicalPropsPhaseConstRef
-{
-    return props().phaseProps(iphase);
-}
-
-auto ChemicalState::props() const -> const ChemicalProps&
-{
-    return pimpl->props;
-}
-
-auto ChemicalState::props() -> ChemicalProps&
-{
-    return pimpl->props;
 }
 
 auto ChemicalState::equilibrium() const -> const Equilibrium&
