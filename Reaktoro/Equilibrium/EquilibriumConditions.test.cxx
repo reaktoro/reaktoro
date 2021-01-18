@@ -19,9 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 using namespace Reaktoro;
 
@@ -31,263 +29,139 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 {
     ChemicalSystem system = test::createChemicalSystem();
 
-    // EquilibriumConditions conditions(system);
+    EquilibriumSpecs specs(system);
 
-    // // The mock temperature, pressure, and species amounts used for the tests below.
-    // const auto T = 1.0;
-    // const auto P = 11.0;
-    // const auto n = ArrayXr::Ones(system.species().size()).eval();
+    WHEN("temperature and pressure are input parameters - the Gibbs energy minimization formulation")
+    {
+        specs.temperature();
+        specs.pressure();
 
-    // // The mock chemical properties of the system used for the tests below
-    // ChemicalProps props(system);
-    // props.update(T, P, n);
+        EquilibriumConditions conditions(specs);
 
-    // SECTION("Testing method EquilibriumConditions::temperature")
-    // {
-    //     const auto& details = conditions.details();
+        conditions.temperature(50, "celsius");
+        conditions.pressure(100, "bar");
 
-    //     REQUIRE( details.unknownT == true );
-    //     REQUIRE( details.constantT == false );
+        auto params = conditions.params();
 
-    //     conditions.temperature(T);
+        CHECK( params.size() == 2 );
+        CHECK( params.get("T").value() ==  50.0 + 273.15 ); // in K
+        CHECK( params.get("P").value() == 100.0 * 1.0e+5 ); // in Pa
 
-    //     REQUIRE( details.unknownT == false );
-    //     REQUIRE( details.constantT == false );
+        CHECK_THROWS( conditions.volume(1, "m3") );
+    }
 
-    //     conditions.constantTemperature();
+    WHEN("temperature and volume are input parameters - the Helmholtz energy minimization formulation")
+    {
+        specs.temperature();
+        specs.volume();
 
-    //     REQUIRE( details.unknownT == false );
-    //     REQUIRE( details.constantT == true );
-    // }
+        EquilibriumConditions conditions(specs);
 
-    // SECTION("Testing method EquilibriumConditions::pressure")
-    // {
-    //     const auto& details = conditions.details();
+        conditions.temperature(40, "celsius");
+        conditions.volume(2.0, "m3");
 
-    //     REQUIRE( details.unknownP == true );
-    //     REQUIRE( details.constantP == false );
+        auto params = conditions.params();
 
-    //     conditions.pressure(P);
+        CHECK( params.size() == 2 );
+        CHECK( params.get("T").value() == 40.0 + 273.15 ); // in K
+        CHECK( params.get("V").value() == 2.0 ); // in m3
 
-    //     REQUIRE( details.unknownP == false );
-    //     REQUIRE( details.constantP == false );
+        CHECK_THROWS( conditions.entropy(1, "J/K") );
+    }
 
-    //     conditions.constantPressure();
+    WHEN("volume and internal energy are input parameters - the entropy maximization formulation")
+    {
+        specs.volume();
+        specs.internalEnergy();
 
-    //     REQUIRE( details.unknownP == false );
-    //     REQUIRE( details.constantP == true );
-    // }
+        EquilibriumConditions conditions(specs);
 
-    // SECTION("Testing method EquilibriumConditions::titrate")
-    // {
-    //     const auto& details = conditions.details();
+        conditions.volume(1, "cm3");
+        conditions.internalEnergy(1, "kJ");
 
-    //     conditions.titrate("CO2");
+        auto params = conditions.params();
 
-    //     REQUIRE( details.titrants.back().str() == "CO2" );
-    // }
+        CHECK( params.size() == 2 );
+        CHECK( params.get("V").value() == Approx(1.0e-6) ); // in m3
+        CHECK( params.get("U").value() == Approx(1.0e+3) ); // in J
 
-    // SECTION("Testing method EquilibriumConditions::until")
-    // {
-    //     // Reference to the details data
-    //     const auto& details = conditions.data().details;
+        CHECK_THROWS( conditions.enthalpy(1, "J") );
+    }
 
-    //     // Reference to the functional equilibrium conditions data
-    //     const auto& econstraints = conditions.data().econstraints;
+    WHEN("temperature, pressure, and pH are input parameters")
+    {
+        specs.temperature();
+        specs.pressure();
+        specs.pH();
 
-    //     const auto q = VectorXr{{ 1.0, 2.0 }};
+        EquilibriumConditions conditions(specs);
 
-    //     EquilibriumEquationArgs args{props, q, details.titrants};
+        conditions.temperature(35, "celsius");
+        conditions.pressure(23, "bar");
+        conditions.pH(3.5);
 
-    //     conditions.until().internalEnergy(1.0, "kJ");
+        auto params = conditions.params();
 
-    //     REQUIRE( econstraints.size() == 1 );
-    //     REQUIRE( econstraints[0].fn(args) == props.internalEnergy() - 1.0e+3 );
+        CHECK( params.size() == 3 );
+        CHECK( params.get("T").value()  == Approx(35.0 + 273.15) ); // in K
+        CHECK( params.get("P").value()  == Approx(23.0 * 1.0e+5) ); // in Pa
+        CHECK( params.get("pH").value() == 3.5 );
 
-    //     conditions.until().volume(1.0, "mm3");
+        CHECK_THROWS( conditions.pE(5.0) );
+    }
 
-    //     REQUIRE( econstraints.size() == 2 );
-    //     REQUIRE( econstraints[0].fn(args) == props.internalEnergy() - 1.0e+3 );
-    //     REQUIRE( econstraints[1].fn(args) == props.volume() - 1.0e-9 );
+    WHEN("volume, entropy, and activity[CO2(g)] are input parameters")
+    {
+        specs.volume();
+        specs.entropy();
+        specs.activity("CO2(g)");
 
-    //     conditions.until().enthalpy(1.0, "J");
+        EquilibriumConditions conditions(specs);
 
-    //     REQUIRE( econstraints.size() == 3 );
-    //     REQUIRE( econstraints[0].fn(args) == props.internalEnergy() - 1.0e+3 );
-    //     REQUIRE( econstraints[1].fn(args) == props.volume() - 1.0e-9 );
-    //     REQUIRE( econstraints[2].fn(args) == props.enthalpy() - 1.0 );
+        conditions.volume(2.3, "dm3");
+        conditions.entropy(1.0, "kJ/K");
+        conditions.activity("CO2(g)", 40.0);
 
-    //     //---------------------------------------------------------------------
-    //     // Impose an enthalpy constraint again with updated value and ensure
-    //     // that the existing constraint is updated instead of creating a new one.
-    //     //---------------------------------------------------------------------
-    //     conditions.until().enthalpy(300.0, "J");
+        auto params = conditions.params();
 
-    //     // Ensure the number of conditions remain unchanged!
-    //     REQUIRE( econstraints.size() == 3 );
+        CHECK( params.size() == 3 );
+        CHECK( params.get("V").value() == Approx(2.3 * 1.0e-3) ); // in m3
+        CHECK( params.get("S").value() == Approx(1.0e+3) );       // in J/K
+        CHECK( params.get("lnActivity[CO2(g)]").value() == Approx(log(40.0)) );
 
-    //     // Ensure the existing enthalpy constraint gets updated!
-    //     REQUIRE( econstraints[2].fn(args) == props.enthalpy() - 300.0 );
-    // }
-
-    // SECTION("Testing method EquilibriumConditions::preserve")
-    // {
-    //     // Reference to the chemical property preservation conditions data
-    //     const auto& pconstraints = conditions.data().pconstraints;
-
-    //     conditions.preserve().internalEnergy();
-
-    //     REQUIRE( pconstraints.size() == 1 );
-    //     REQUIRE( pconstraints[0].fn(props) == props.internalEnergy() );
-
-    //     conditions.preserve().volume();
-
-    //     REQUIRE( pconstraints.size() == 2 );
-    //     REQUIRE( pconstraints[0].fn(props) == props.internalEnergy() );
-    //     REQUIRE( pconstraints[1].fn(props) == props.volume() );
-
-    //     conditions.preserve().enthalpy();
-
-    //     REQUIRE( pconstraints.size() == 3 );
-    //     REQUIRE( pconstraints[0].fn(props) == props.internalEnergy() );
-    //     REQUIRE( pconstraints[1].fn(props) == props.volume() );
-    //     REQUIRE( pconstraints[2].fn(props) == props.enthalpy() );
-
-    //     //---------------------------------------------------------------------
-    //     // Impose the preservation constraint on volume again and ensure
-    //     // that the existing constraint is updated instead of creating a new one.
-    //     //---------------------------------------------------------------------
-    //     conditions.preserve().volume();
-
-    //     // Ensure the number of conditions remain unchanged!
-    //     REQUIRE( pconstraints.size() == 3 );
-    //     REQUIRE( pconstraints[0].fn(props) == props.internalEnergy() );
-    //     REQUIRE( pconstraints[1].fn(props) == props.volume() );
-    //     REQUIRE( pconstraints[2].fn(props) == props.enthalpy() );
-    // }
-
-    // SECTION("Testing method EquilibriumConditions::fix")
-    // {
-    //     // Reference to the chemical potential conditions data
-    //     const auto& uconstraints = conditions.data().uconstraints;
-
-    //     // The Species objects for H+(aq) and O2(g)
-    //     const auto hplus = system.database().species().getWithName("H+(aq)");
-    //     const auto o2g = system.database().species().getWithName("O2(g)");
-
-    //     // The standard chemical potentials of H+(aq) and O2(g) at (T, P)
-    //     auto u0hplus = hplus.props(T, P).G0;
-    //     auto u0o2g = o2g.props(T, P).G0;
-
-    //     // The universal gas constant (in J/(mol*K))
-    //     const auto R = universalGasConstant;
-
-    //     conditions.fix().pH(4.5);
-
-    //     REQUIRE( uconstraints.size() == 1 );
-    //     REQUIRE( uconstraints.back().formula.equivalent("H+") );
-    //     REQUIRE( uconstraints.back().fn(T, P) == Approx(u0hplus + R*T*log(pow(10.0, -4.5))) );
-
-    //     conditions.fix().fugacity("O2(g)", 10.0, "bar");
-
-    //     REQUIRE( uconstraints.size() == 2 );
-    //     REQUIRE( uconstraints.back().formula.equivalent("O2") );
-    //     REQUIRE( uconstraints.back().fn(T, P) == Approx(u0o2g + R*T*log(10.0)) );
-
-    //     //---------------------------------------------------------------------
-    //     // Impose pH with an updated value. Ensure the existing chemical
-    //     // potential constraint for H+ is used instead of creating a new one.
-    //     //---------------------------------------------------------------------
-
-    //     conditions.fix().pH(8.0);
-
-    //     // Ensure the number of conditions remain unchanged!
-    //     REQUIRE( uconstraints.size() == 2 );
-
-    //     // Ensure the existing chemical potential constraint for H+ has been updated!
-    //     REQUIRE( uconstraints[0].fn(T, P) == Approx(u0hplus + R*T*log(pow(10.0, -8.0))) );
-
-    //     //---------------------------------------------------------------------
-    //     // Impose activity of H+ and ensure the existing chemical potential
-    //     // constraint for H+ is reused instead of creating a new one.
-    //     //---------------------------------------------------------------------
-    //     conditions.fix().activity("H+(aq)", 1e-6);
-
-    //     // Ensure the number of conditions remain unchanged!
-    //     REQUIRE( uconstraints.size() == 2 );
-
-    //     // Ensure the existing chemical potential constraint for H+ has been updated!
-    //     REQUIRE( uconstraints[0].fn(T, P) == Approx(u0hplus + R*T*log(1e-6)) );
-    // }
-
-    // SECTION("Testing method EquilibriumConditions::prevent")
-    // {
-    //     // Reference to the reactivity conditions data
-    //     const auto& get = conditions.data().restrictions;
-
-    //     // Return the index of a species with given name
-    //     const auto idx = [&](auto name) { return system.species().index(name); };
-
-    //     // Return the pairs of species index and stoichiometries in a reaction equation
-    //     const auto equation = [&](auto reaction) -> Pairs<Index, double>
-    //     {
-    //         auto pairs = parseReactionEquation(reaction);
-    //         return vectorize(pairs, RKT_LAMBDA(x, std::make_pair(idx(x.first), x.second)));
-    //     };
-
-    //     conditions.prevent().fromIncreasing("NaCl(aq)");
-    //     conditions.prevent().fromIncreasing("H2(g)");
-
-    //     conditions.prevent().fromDecreasing("SiO2(s)");
-    //     conditions.prevent().fromDecreasing("O2(g)");
-
-    //     conditions.prevent().fromReacting("CaCO3(s)");
-    //     conditions.prevent().fromReacting("CO2(g)");
-
-    //     conditions.prevent().fromReacting("O2(aq) + H2(aq) = H2O(aq)");
-    //     conditions.prevent().fromReacting("CO2(g) = CO2(aq)");
-
-    //     REQUIRE( get.species_cannot_increase.size() == 2         );
-    //     REQUIRE( get.species_cannot_increase.count(idx("NaCl(aq)"))  );
-    //     REQUIRE( get.species_cannot_increase.count(idx("H2(g)")) );
-
-    //     REQUIRE( get.species_cannot_decrease.size() == 2           );
-    //     REQUIRE( get.species_cannot_decrease.count(idx("SiO2(s)")) );
-    //     REQUIRE( get.species_cannot_decrease.count(idx("O2(g)"))   );
-
-    //     REQUIRE( get.species_cannot_react.size() == 2            );
-    //     REQUIRE( get.species_cannot_react.count(idx("CaCO3(s)")) );
-    //     REQUIRE( get.species_cannot_react.count(idx("CO2(g)"))   );
-
-    //     REQUIRE( get.reactions_cannot_react.size() == 2                                 );
-    //     REQUIRE( get.reactions_cannot_react[0] == equation("O2(aq) + H2(aq) = H2O(aq)") );
-    //     REQUIRE( get.reactions_cannot_react[1] == equation("CO2(g) = CO2(aq)")          );
-    // }
-
-    // SECTION("Testing when the EquilibriumConditions object is locked.")
-    // {
-    //     conditions.control().temperature();
-
-    //     conditions.until().volume(1.0, "m3");
-
-    //     conditions.fix().pH(5.0);
-    //     conditions.fix().fugacity("H2(g)", 5.0, "bar");
-
-    //     conditions.prevent().fromReacting("H2O(aq) = H+(aq) + OH-(aq)");
-
-    //     conditions.lock();
-
-    //     REQUIRE_NOTHROW( conditions.until().volume(10.0, "m3")           );
-    //     REQUIRE_NOTHROW( conditions.fix().pH(2.0)                        );
-    //     REQUIRE_NOTHROW( conditions.fix().fugacity("H2(g)", 10.0, "bar") );
-    //     REQUIRE_NOTHROW( conditions.prevent().fromReacting("CaCO3(s)")   );
-    //     REQUIRE_NOTHROW( conditions.prevent().fromIncreasing("SiO2(s)")  );
-    //     REQUIRE_NOTHROW( conditions.prevent().fromDecreasing("NaCl(s)")  );
-
-    //     REQUIRE_THROWS( conditions.control()                                  );
-    //     REQUIRE_THROWS( conditions.preserve()                                 );
-    //     REQUIRE_THROWS( conditions.until().internalEnergy(1.0, "J")           );
-    //     REQUIRE_THROWS( conditions.until().enthalpy(1.0, "J")                 );
-    //     REQUIRE_THROWS( conditions.prevent().fromReacting("CO2(g) = CO2(aq)") );
-    // }
+        CHECK_THROWS( conditions.chemicalPotential("H2O(aq)", 100.0, "J/mol") );
+    }
+
+    WHEN("temperature, pressure, volume, internal energy, pH, and pE are input parameters")
+    {
+        specs.temperature();
+        specs.pressure();
+        specs.volume();
+        specs.internalEnergy();
+        specs.pH();
+        specs.pE();
+        specs.openTo("CO2");
+        specs.openTo("CH4");
+
+        EquilibriumConditions conditions(specs);
+
+        conditions.temperature(60, "celsius");
+        conditions.pressure(200, "MPa");
+        conditions.volume(5.0, "mm3");
+        conditions.internalEnergy(2.0, "MJ");
+        conditions.pH(2.7);
+        conditions.pE(4.0);
+
+        auto params = conditions.params();
+
+        CHECK( params.size() == 6 );
+        CHECK( params.get("T").value()  == Approx(60.0 + 273.15) );  // in K
+        CHECK( params.get("P").value()  == Approx(200.0 * 1.0e+6) ); // in Pa
+        CHECK( params.get("V").value()  == Approx(5.0 * 1.0e-9) );   // in m3
+        CHECK( params.get("U").value()  == Approx(2.0e+6) );         // in J
+        CHECK( params.get("pH").value() == 2.7 );
+        CHECK( params.get("pE").value() == 4.0 );
+
+        CHECK_THROWS( conditions.Eh(14.0, "mV") );
+    }
 }
