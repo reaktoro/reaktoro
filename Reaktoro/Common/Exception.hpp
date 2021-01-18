@@ -109,4 +109,22 @@ auto error(bool condition, Args... items) -> void
         throw std::runtime_error(str("\033[1;31m***ERROR***\n", str(items...), "\n\033[0m"));
 }
 
+/// Define a macro to print a warning messageif condition is true.
+/// @ingroup Common
+#define warningif(condition, args...) \
+    { \
+        if((condition)) { \
+            std::cerr << "\033[1;33m***WARNING***\n" << str(args) << "\n\033[0m"; \
+        } \
+    }
+
+/// Define a macro to raise a runtime exception if condition is true.
+/// @ingroup Common
+#define errorif(condition, args...) \
+    { \
+        if((condition)) { \
+            throw std::runtime_error(str("\033[1;31m***ERROR***\n", str(args), "\n\033[0m")); \
+        } \
+    }
+
 } // namespace Reaktoro
