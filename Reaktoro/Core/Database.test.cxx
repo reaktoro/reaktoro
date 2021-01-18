@@ -108,6 +108,7 @@ auto createDatabase() -> Database
     db.addSpecies( createAqueousSpecies("CaCl2(aq)") );
     db.addSpecies( createAqueousSpecies("MgCl2(aq)") );
     db.addSpecies( createAqueousSpecies("SiO2(aq)" ) );
+    db.addSpecies( createAqueousSpecies("e-(aq)" ) );
 
     // GASEOUS SPECIES
     db.addSpecies( createGaseousSpecies("CO2(g)" ) );
