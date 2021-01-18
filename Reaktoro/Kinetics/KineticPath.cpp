@@ -160,7 +160,6 @@ struct KineticPath::Impl
             // Integrate one time step only
             if(!options.use_smart_kinetic_solver)
             {
-
                 // Run kinetic calculations
                 t = kinetic_solver.solve(state, t, dt);
 
@@ -184,7 +183,6 @@ struct KineticPath::Impl
 
             // Increase the counter of the steps
             k++;
-
         }
 
         // Step **: Collect the analytics related to reactive transport performance
@@ -206,10 +204,10 @@ struct KineticPath::Impl
 
             // Output to console time and statistics characterising kinetic solver
             std::cout << profiler;
-
-            // Generate json output file with collected profiling data
-            JsonOutput(output.basename() + "-analysis.json") << analysis;
         }
+
+        // Generate json output file with collected profiling data
+        JsonOutput(output.basename() + "-analysis.json") << analysis;
     }
 
     auto addSource(const ChemicalState& state, double volumerate, const std::string& units) -> void
