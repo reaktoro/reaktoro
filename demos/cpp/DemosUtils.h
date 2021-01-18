@@ -189,7 +189,8 @@ struct ReactiveTransportParams
                                "-" + getActivityModelTag(activity_model) +
                                (use_smart_kinetics_solver ? "-smart-kin" : "-conv-kin") +
                                (use_smart_equilibrium_solver ? "-smart-eq"  : "-conv-eq");      // name of the folder with results
-        std::string smart_test_tag = "-" + getSmartMethodTag(method) +
+        std::string smart_test_tag = "-" + getSmartMethodTag(smart_kin_method) +
+                                     "-" + getSmartMethodTag(method) +
                                      "-dt-" + dt_stream.str() +
                                      "-ncells-" + std::to_string(ncells) +
                                      "-nsteps-" + std::to_string(nsteps) +
@@ -203,8 +204,8 @@ struct ReactiveTransportParams
 
         std::string folder = "rt-kinetics-" + demo_tag;
         folder = (use_smart_kinetics_solver || use_smart_equilibrium_solver) ?
-                 demo_tag + smart_test_tag :
-                 demo_tag + test_tag;
+                 folder + smart_test_tag :
+                 folder + test_tag;
         if (stat(folder.c_str(), &status) == -1) mkdir(folder);
 
         std::cout << "*********************************************************************" << std::endl;
@@ -531,6 +532,8 @@ struct KineticPathParams
 
     ActivityModel activity_model = ActivityModel::HKF;
 
+    GibbsHessian hessian = GibbsHessian::Exact;
+
     /// -------------------------------------------------------------------------- ///
     /// Smart equilibrium calculations
     /// -------------------------------------------------------------------------- ///
@@ -612,6 +615,39 @@ struct KineticPathParams
             case SmartKineticStrategy::NearestNeighbour: return "nnsearch";
         }
         return "";
+    }
+
+    /// Output test parameters to the console for the reactive transport with equilibrium only
+    auto outputConsole() -> void
+    {
+        // Log the parameters in the console
+        std::cout << "dt      : " << dt << std::endl;
+        std::cout << "tfinal  : " << tfinal << std::endl;
+        std::cout << "T       : " << T << std::endl;
+        std::cout << "P       : " << P << std::endl;
+        std::cout << "activity model  : " << getActivityModelTag(activity_model) << std::endl;
+        std::cout << "hessian         : " << getGibbsHessianTag(hessian) << std::endl;
+
+    }
+
+    /// Output test parameters to the console for the reactive transport with equilibrium only
+    auto outputEquilibriumMethod() -> void
+    {
+        std::cout << "smart eq used   : " << use_smart_equilibrium_solver << std::endl;
+        std::cout << "smart eq method : " << getSmartMethodTag(smart_eq_method) << std::endl;
+        std::cout << "eqreltol        : " << smart_equilibrium_reltol << std::endl;
+    }
+
+    /// Output test parameters to the console for the reactive transport with kinetics only
+    auto outputConsoleKineticMethod() -> void
+    {
+        // Log the parameters in the console
+        outputEquilibriumMethod();
+        std::cout << "smart kin used   : " << use_smart_kinetic_solver << std::endl;
+        std::cout << "smart kin method : " << getSmartMethodTag(smart_kin_method) << std::endl;
+        std::cout << "kinetics tol     : " << smart_kinetic_tol << std::endl;
+        std::cout << "kinetics reltol  : " << smart_kinetic_reltol << std::endl;
+        std::cout << "kinetics abstol  : " << smart_kinetic_abstol << std::endl;
     }
 
 };
