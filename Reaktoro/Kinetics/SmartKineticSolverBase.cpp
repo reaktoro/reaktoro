@@ -413,9 +413,17 @@ auto SmartKineticSolverBase::solve(ChemicalState& state, double t, double dt) ->
     ne = _n(ies);
     nk = _n(iks);
 
+    //std::cout << "benk = " << tr(benk) << std::endl;
+
     // Assemble the vector benk = [be nk]
-    benk.head(Ee) = Ae * ne;
+    //benk.head(Ee) = Ae * ne;
+    benk.resize(Ee + Nk);
     benk.tail(Nk) = nk;
+
+//    std::cout << "be           =" << tr(be) << std::endl;
+//    std::cout << "be = Ae * ne = " << tr(Ae * ne) << std::endl;
+//    std::cout << "benk         = " << tr(benk) << std::endl;
+//    getchar();
 
     _result.timing.initialize = toc(INITIALIZE_STEP);
 

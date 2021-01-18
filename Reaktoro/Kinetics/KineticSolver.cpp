@@ -320,10 +320,6 @@ struct KineticSolver::Impl
         ne = n(ies);
         nk = n(iks);
 
-        // Initialize be
-        be.resize(Ee + Nk);
-        be = Ae * ne;
-
         // Assemble the vector benk = [be nk]
         benk.resize(Ee + Nk);
         benk.head(Ee) = Ae * ne;
@@ -425,9 +421,17 @@ struct KineticSolver::Impl
         ne = n(ies);
         nk = n(iks);
 
+        //std::cout << "benk = " << tr(benk) << std::endl;
+
         // Assemble the vector benk = [be nk]
-        benk.head(Ee) = Ae * ne;
+        //benk.head(Ee) = Ae * ne;
+        benk.resize(Ee + Nk);
         benk.tail(Nk) = nk;
+
+//        std::cout << "be           =" << tr(be) << std::endl;
+//        std::cout << "be = Ae * ne = " << tr(Ae * ne) << std::endl;
+//        std::cout << "benk         = " << tr(benk) << std::endl;
+//        getchar();
 
         result.timing.initialize=toc(INITIALIZE_STEP);
 
