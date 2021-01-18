@@ -134,9 +134,9 @@ int main()
     /// **************************************************************************************************************///
     /// CONVENTIONAL kinetics & CONVENTIONAL equilibrium
     /// **************************************************************************************************************///
-//    params.use_smart_kinetics_solver = false; params.use_smart_equilibrium_solver = false;
-//    params.outputConsoleKineticMethod();
-//    runReactiveTransport(params, results);
+    params.use_smart_kinetics_solver = false; params.use_smart_equilibrium_solver = false;
+    params.outputConsoleKineticMethod();
+    runReactiveTransport(params, results);
 
     // **************************************************************************************************************///
     // SPEED-UP analysis
@@ -463,7 +463,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
     //delta_h  -65.360    #kJ/mol        #95rob/hem
     //                                    -analytic -1.7923634E+3  -2.8963524E-1  9.9594493E+4  6.5114488E+2  -5.6008392E+6
     //#References = LogK/DGf: Internal calculation; DHf/DHr: 95rob/hem; S°: 95rob/hem; Cp: 95rob/hem; V°: 78hel/del,92ajoh;
-    std::string eq_str_dolomite = "Dolomite + 2 * H+ = 2 * HCO3- + Ca++ + Mg++";
+    std::string eq_str_dolomite = "Dolomite + 2*H+ = 2*HCO3- + Ca++ + Mg++";
     MineralReaction min_reaction_dolomite = editor.addMineralReaction("Dolomite")
             .setEquation(eq_str_dolomite)
             .setSpecificSurfaceArea(0.13, "m2/g");
