@@ -60,7 +60,7 @@ int main()
 //    // *********************************************************************************************************** //
 //    // Clustering approach
 //    // *********************************************************************************************************** //
-
+//
 //    // ----------------------------------------------------------- //
 //    // Smart equilibrium parameters
 //    // ----------------------------------------------------------- //
@@ -89,7 +89,7 @@ int main()
 
     // Run smart algorithm with clustering
     params.method = SmartEquilibriumStrategy::PriorityQueue;
-    params.smart_equilibrium_reltol = 1e-2;
+    params.smart_equilibrium_reltol = 5e-4;
 
     // ----------------------------------------------------------- //
     // Smart kinetic parameters
@@ -97,7 +97,7 @@ int main()
 
     // Select priority queue approach
     params.smart_kin_method = SmartKineticStrategy::PriorityQueue;
-    params.smart_kinetic_tol = 1e-2;
+    params.smart_kinetic_tol = 5e-4;
     params.smart_kinetic_abstol = 1e-5;
     params.smart_kinetic_reltol = 1e-1;
 
@@ -282,7 +282,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
                                    "H2(aq)", "HSO4-", "H2S(aq)", "HS-", "H2O(l)",  "H+", "OH-", "HCO3-",
                                    "K+", "KSO4-", "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+", "Mg(HCO3)+",
                                    "Na+", "NaSO4-", "O2(aq)", "S5--", "S4--", "S3--", "S2--", "SO4--"};
-    StringList selected_elements = "C Ca Cl Fe H K Mg Na O S";
+    StringList selected_elements = "Al C Ca Cl Fe H K Mg Na O S Si";
 
     // Depending on the activity model, define it using ChemicalEditor
     if(params.activity_model == ActivityModel::HKF){
@@ -328,6 +328,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
     // Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
 
+    // Ionic strength function
     const auto I = ChemicalProperty::ionicStrength(system);
 
     // The number of chemical species in the system
@@ -381,6 +382,13 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
         auto nm = n[imineral].val;
         auto nm0 = n0[imineral];
 
+        // Calculate  MOL("Ca+2")
+        // const Index i_ca = system.indexSpeciesWithError("Ca++");
+        // const auto mol_ca = n[i_ca].val;
+        // Calculate TOT("HCO3-")
+        // const Index i_hco3 = system.indexSpeciesWithError("HCO3-");
+        // const auto mol_hco3 = n[i_hco3].val;
+
         // Calculate activities for H+ and OH- species
         VectorConstRef lna = properties.lnActivities().val;
         const Index i_h = system.indexSpeciesWithError("H+");
@@ -393,7 +401,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
 
         // If (m <= 0) and (SRmin < 1) Then GoTo 350
         // If (SRmin = 1) Then GoTo 350
-        if((nm <= 0 && Omega < 1) || Omega == 1) // the is no way to precipitate further
+        if((nm <= 0 && Omega < 1) || Omega == 1) // the is no way to dissolve further
             return res;
 
         // Average BET
@@ -472,6 +480,15 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
 
             // Precipitation kinetic includes kinetic growth and nucleation
             res += res_growth + res_nuc;
+
+            // TODO: implement upper bound in precipitation kinetics
+            // 360 maxMol = MOL("Ca+2")
+            // 370 IF (maxMol > MOL("HCO3-")) THEN maxMol = MOL("HCO3-")
+            // 380 IF (maxMol < -moles) THEN moles = -maxMol
+
+            // auto max_mol = mol_ca;
+            // if(max_mol > mol_hco3) max_mol = mol_hco3;
+            // if(max_mol < -res) res = - max_mol;
         }
 
         return res;
@@ -533,7 +550,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
         const double molar_mass = system.species(imineral).molarMass();
 
         // If (m <= 0) and (SRmin < 1) Then GoTo 250
-        if(nm <= 0 && Omega < 1) // the is no way to precipitate further
+        if(nm <= 0 && Omega < 1) // the is no way to dissolve further
             res = ChemicalScalar(num_species, 0.0);
 
         // 0.2% BET (03bra/bos)
@@ -547,8 +564,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
             // Acidic mechanism: k1 = 8.2E-09 * exp((-17000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("H+") ^ 0.28)
             const auto kappa_acid = 8.2E-09 * exp(- 17.0 / R * (1.0/T - 1.0/298.15)) * std::pow(activity_h, 0.28);
 
-            // Mechanism with OH- catalyzer (hydroxide promotion)
-            // k2 = 6.9E-09 * exp((-16000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("OH-") ^ 0.34)
+            // Mechanism with OH- catalyzer (hydroxide promotion): k2 = 6.9E-09 * exp((-16000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("OH-") ^ 0.34)
             const auto kappa_oh = 6.9E-09 * exp(- 16.0 / R * (1.0/T - 1.0/298.15)) * std::pow(activity_oh, 0.34);
 
             const auto kappa_diss = kappa_neu + kappa_acid + kappa_oh;
@@ -584,6 +600,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
 
         // Auxiliary variables with chemical scalars of value one
         ChemicalScalar f(num_species, 1.0);
+
         // The temperature and pressure of the system
         const Temperature T = properties.temperature();
 
@@ -606,6 +623,13 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
         auto nm = n[imineral].val;
         auto nm0 = n0[imineral];
 
+        // Calculate TOT("Fe")
+        // const Index i_fe = system.indexElementWithError("Fe");
+        // const auto tot_fe = b(i_fe);
+        // Calculate TOT("C")
+        // const Index i_c = system.indexElementWithError("c");
+        // const auto tot_c = b(i_c);
+
         // Calculate activities for H+ and OH- species
         VectorConstRef lna = properties.lnActivities().val;
         const Index i_h = system.indexSpeciesWithError("H+");
@@ -616,7 +640,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
 
         // If (m <= 0) and (SRmin < 1) Then GoTo 350
         // If (SRmin = 1) Then GoTo 350
-        if((nm <= 0 && Omega < 1) || Omega == 1) // the is no way to precipitate further
+        if((nm <= 0 && Omega < 1) || Omega == 1) // the is no way to dissolve further
             return res;
 
         // Average BET
@@ -691,6 +715,16 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
 
             // Precipitation kinetic includes kinetic growth and nucleation
             res += res_growth + res_nuc;
+
+            // TODO: implement upper bound in precipitation kinetics
+            // Do not precipitate more than the elements in solution ####
+            // 320 maxMol = TOT("Fe(2)")
+            // 330 IF (maxMol > TOT("C")) THEN maxMol = TOT("C")
+            // 340 IF (maxMol < -moles) THEN moles = -maxMol
+
+            // auto max_mol = tot_fe;
+            // if(max_mol > tot_c) max_mol = tot_c;
+            // if(max_mol < -res) res = - max_mol;
         }
 
         return res;
@@ -709,16 +743,13 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
             .setSpecificSurfaceArea(11.8, "m2/g"); // S = 11.8 # average BET; suggested value in m2/g
     Reaction reaction_kaolinite = createReaction(min_reaction_kaolinite, system);
     reaction_kaolinite.setName("Kaolinite reaction");
-    ReactionRateFunction rate_func_kaolinite = [&min_reaction_kaolinite, &reaction_kaolinite, &system, &num_species, &R, &dt](const ChemicalProperties& properties) -> ChemicalScalar {
+    ReactionRateFunction rate_func_kaolinite_olimse_dat = [&min_reaction_kaolinite, &reaction_kaolinite, &system, &num_species, &R, &dt](const ChemicalProperties& properties) -> ChemicalScalar {
 
         // The mineral reaction rate
         ChemicalScalar res(num_species, 0.0), res_growth(num_species, 0.0), res_nuc(num_species, 0.0);
 
         // Auxiliary variable for calculating mineral reaction rate
         ChemicalScalar f(num_species, 1.0);
-
-        // The universal gas constant (in units of kJ/(mol*K))
-        const double R = 8.3144621e-3;
 
         // The temperature and pressure of the system
         const Temperature T = properties.temperature();
@@ -738,12 +769,12 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
         const auto b = system.elementAmounts(n.val);
 
         // Calculate TOT("Si")
-        const Index i_si = system.indexElementWithError("Si");
-        const auto tot_si = b(i_si);
+        // const Index i_si = system.indexElementWithError("Si");
+        // const auto tot_si = b(i_si);
 
         // Calculate TOT("Al")
-        const Index i_al = system.indexElementWithError("Al");
-        const auto tot_al = b(i_al);
+        // const Index i_al = system.indexElementWithError("Al");
+        // const auto tot_al = b(i_al);
 
         // The index of the mineral
         const Index imineral = system.indexSpeciesWithError(min_reaction_kaolinite.mineral());
@@ -777,7 +808,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
             // Neutral mechanism: knu = 1.1E-14 * exp((-38000 / 8.314) * ((1 / TK) - (1 / 298.15)))
             const auto kappa_neu = 1.1E-14 * exp(- 38.0 / R * (1.0/T - 1.0/298.15));
 
-            // Neutral acidic: k1 = 7.5E-12 * exp((-43000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("H+") ^ 0.51)
+            // Acidic mechanism: k1 = 7.5E-12 * exp((-43000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("H+") ^ 0.51)
             const auto kappa_acid = 7.5E-12 * exp(- 43.0 / R * (1.0/T - 1.0/298.15)) * std::pow(activity_h, 0.51);
 
             // OH- catalyzer mechanism (hydroxide promotion): k2 = 2.5E-11 * exp((-46000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("OH-") ^ 0.58)
@@ -841,12 +872,22 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
             // moles_growth = S * m * Mm * kpre * (ABS((SRmin ^ 0.06) - 1) ^ 1.68) * Time
             res_growth += f * ssa * nm * molar_mass * kappa_pre * std::pow(std::abs(std::pow(Omega, 0.06) - 1), 1.68);
 
-            res += (res_growth + res_nuc);
+            res += res_growth + res_nuc;
+
+            // TODO: implement upper bound in precipitation kinetics
+            // Do not precipitate more than the elements in solution ####
+            // 360 maxMol = TOT("Al")/2
+            // 370 IF (maxMol > TOT("Si")/2) THEN maxMol = TOT("Si")/2
+            // 380 IF (maxMol < -moles) THEN moles = -maxMol
+
+            // auto max_mol = tot_al / 2;
+            // if(max_mol > tot_si / 2) max_mol = tot_si / 2;
+            // if(max_mol < -res) res = - max_mol;
         }
 
         return res;
     };
-    reaction_kaolinite.setRate(rate_func_kaolinite);
+    reaction_kaolinite.setRate(rate_func_kaolinite_olimse_dat);
 
     // Quartz(alpha)
     //SiO2 + 2.000H2O = 1.000H4SiO4
@@ -858,22 +899,16 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
     //std::string eq_str_quartz = "Quartz = SiO2(aq)";
     MineralReaction min_reaction_quartz = editor.addMineralReaction("Quartz")
             .setEquation(eq_str_quartz)
-            .addMechanism("logk = -13.99 mol/(m2*s); Ea = 87.7 kJ/mol")
-            .setSpecificSurfaceArea(0.1, "m2/g");
+            .setSpecificSurfaceArea(0.03, "m2/g"); // S = 0.03 # average BET; suggested value in m2/g
     Reaction reaction_quartz = createReaction(min_reaction_quartz, system);
     reaction_quartz.setName("Quartz reaction");
-    ReactionRateFunction rate_func_quartz = [&min_reaction_quartz, &reaction_quartz, &system](const ChemicalProperties& properties) -> ChemicalScalar {
-
-        // The number of chemical species in the system
-        const unsigned num_species = system.numSpecies();
+    ReactionRateFunction rate_func_quartz_olimse_dat = [&min_reaction_quartz, &reaction_quartz, &system, &num_species, &R, &dt](const ChemicalProperties& properties) -> ChemicalScalar {
 
         // The mineral reaction rate
         ChemicalScalar res(num_species, 0.0);
+
         // Auxiliary variable for calculating mineral reaction rate
         ChemicalScalar f(num_species, 1.0);
-
-        // The universal gas constant (in units of kJ/(mol*K))
-        const double R = 8.3144621e-3;
 
         // The temperature and pressure of the system
         const Temperature T = properties.temperature();
@@ -895,8 +930,8 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
         const auto b = system.elementAmounts(n.val);
 
         // Calculate TOT("Si")
-        const Index i_si = system.indexElementWithError("Si");
-        const auto tot_si = b(i_si);
+        // const Index i_si = system.indexElementWithError("Si");
+        // const auto tot_si = b(i_si);
 
         // The index of the mineral
         const Index imineral = system.indexSpeciesWithError(min_reaction_quartz.mineral());
@@ -914,61 +949,56 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
 
         // If (m <= 0) and (SRmin < 1) Then GoTo 240
         // If (SRmin = 1) Then GoTo 240
-        if((nm <= 0 && Omega < 1) || (Omega == 1)) // the is no way to precipitate further
+        if((nm <= 0 && Omega < 1) || (Omega == 1)) // the is no way to dissolve further
             return res;
-        // S = 0.006 # average BET from 16zhe/did ; suggested value in m2/g
-        const auto ssa = 0.03 * 1e3; // m2 / kg
 
-        // If (SRmin > 1) Then GoTo 130
-        if(Omega > 1) // precipitation kinetics
+        // Specific surface area, average BET
+        const auto ssa = min_reaction_quartz.specificSurfaceArea();
+
+        if(Omega < 1) // Omega < 1, dissolution kinetics
         {
-            // If (m <= 1e-5) then GoTo 170
-            if(nm > 1e-8)
+            // Neutral mechanism: knu = 6.42E-14 * exp((-76700 / 8.314) * ((1 / TK) - (1 / 298.15)))
+            const auto kappa_neu = 6.42E-14 * exp(- 76.7 / R * (1.0/T - 1.0/298.15));
+
+            // OH- catalyzer mechanism (hydroxide promotion): k1 = 0.000000000192 * exp((-80000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("OH-") ^ 0.339)
+            const auto kappa_oh = 0.000000000192 * exp(- 80.0 / R * (1.0/T - 1.0/298.15)) * std::pow(activity_oh, 0.339);
+
+            const auto kappa_diss = kappa_neu + kappa_oh;
+
+            // rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - SRmin) # by default
+            res += f * ssa * nm * molar_mass * pow(nm / nm0, 2.0 / 3.0) * kappa_diss * (1 - Omega);
+
+            // TODO: Do not dissolve more than what is available
+            // IF (moles > M) THEN moles = M
+            // if (res > nm.val) res = nm.val;
+        }
+        else // Omega > 1, precipitation kinetics
+        {
+            // If (m <= 1e-8) then GoTo 170 # in complex souring-example run in PHREEQC
+            // If (m <= 1e-5) then GoTo 170 # in the latest OLIMSE.dat
+            if(nm > 1e-8) // start precipitation
             {
                 // knu = 3.24e-12
                 // kpre = (-1) * knu
-                const auto kappa_pre = -3.24e-12;
+                const auto kappa_pre = - 3.24e-12;
 
                 // rate = S * m * Mm * kpre * (ABS((SRmin ^ 4.58) - 1) ^ 0.54)
                 res += f * ssa * nm * molar_mass * kappa_pre * std::pow(std::abs(std::pow(Omega, 4.58) - 1), 0.54);
             }
-            else
+            else // start nucleation
+            {
                 // Set nucleation rate
-                res = -1e-10 * f;
+                res += - 1e-10 * f;
+            }
 
-            // TODO: implement if in the kinetic solver
-//            // Implement upper bound in precipitation kinetics
-//            auto max_mol = tot_ba;
-//            if(max_mol > tot_so4) max_mol = tot_so4;
-//            if(max_mol < -res) return -max_mol * f;
-
-
+            // TODO: implement upper bound in precipitation kinetics
+            // auto max_mol = tot_si;
+            // if(max_mol < -res) res = - max_mol;
         }
-        else // dissolution kinetics
-        {
-            // knu = 6.42E-14 * exp((-76700 / 8.314) * ((1 / TK) - (1 / 298.15)));
-            const auto kappa_neu = 6.42E-14 * exp(- 76.7 / R * (1.0/T - 1.0/298.15));
-
-            // k1 = 0.000000000192 * exp((-80000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("OH-") ^ 0.339)
-            const auto kappa_oh = 0.000000000192 * exp(- 80.0 / R * (1.0/T - 1.0/298.15)) * std::pow(activity_oh, 0.339);
-
-            // k = knu + k1
-            const auto kappa = kappa_neu + kappa_oh;
-
-            // rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - SRmin) # by default
-            res += f * ssa * nm * molar_mass * pow(nm / nm0, 2 / 3) * kappa * (1 - Omega);
-
-//            // Do not dissolve more than what is available
-//            double total_moles = nm.val; // current amount of mols of available minerals
-//            if (lnOmega <= 0 && res > nm.val)
-//                res +=  nm.val;
-
-        }
-
         return res;
 
     };
-    reaction_quartz.setRate(rate_func_quartz);
+    reaction_quartz.setRate(rate_func_quartz_olimse_dat);
 
     // Step **: Create the ReactionSystem instances
     ReactionSystem reactions(system, {reaction_calcite, reaction_siderite, reaction_daphnite, reaction_kaolinite, reaction_quartz});
@@ -1007,10 +1037,12 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
     state_ic.setSpeciesAmount("Quartz", 1.0, "mol"); // MM(Quartz) = 60.083 g / mol
     state_ic.setSpeciesAmount("Kaolinite", 0.1, "mol"); // MM(Kaolinite) = 258.071 g / mol
 
-    // Set initial value of minerals in reactions
+    // Set initial value of minerals reacting
+    reaction_calcite.setInitialAmounts(state_ic.speciesAmounts());
     reaction_daphnite.setInitialAmounts(state_ic.speciesAmounts());
     reaction_siderite.setInitialAmounts(state_ic.speciesAmounts());
-
+    reaction_kaolinite.setInitialAmounts(state_ic.speciesAmounts());
+    reaction_quartz.setInitialAmounts(state_ic.speciesAmounts());
 
     // Step **: Define the boundary condition (BC)  of the reactive transport modeling problem
     EquilibriumInverseProblem problem_bc(partition);
@@ -1097,7 +1129,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
     {
         // Print some progress
         //if (!(step % 1))
-        std::cout << "Step " << step << " of " << params.nsteps << std::endl;
+        //std::cout << "Step " << step << " of " << params.nsteps << std::endl;
 
         // Perform one reactive transport time step (with profiling of some parts of the transport simulations)
         rtsolver.step(field);
