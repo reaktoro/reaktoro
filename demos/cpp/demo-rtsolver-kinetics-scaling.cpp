@@ -67,7 +67,7 @@ int main()
 
     // Run smart algorithm with clustering
     params.method = SmartEquilibriumStrategy::Clustering;
-    params.smart_equilibrium_reltol = 1e-3;
+    params.smart_equilibrium_reltol = 1e-2;
 
     // ----------------------------------------------------------- //
     // Smart kinetic parameters
@@ -75,7 +75,9 @@ int main()
 
     // Select clustering approach
     params.smart_kin_method = SmartKineticStrategy::Clustering;
-    params.smart_kinetic_tol = 1e-3; // 5e-3; // 1e-4;
+    //params.smart_kinetic_tol = 1e-3;
+    //params.smart_kinetic_tol = 5e-3;
+    params.smart_kinetic_tol = 1e-2;
     params.smart_kinetic_reltol = 1e-1;
     params.smart_kinetic_abstol = 1e-4;
 
@@ -239,7 +241,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
 {
 
     // Step **: Create the results folder
-    auto folder = params.makeResultsFolderKinetics("scaling-barite");
+    auto folder = params.makeResultsFolderKinetics("scaling-barite-ssa-0.06-m2kg-");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
@@ -304,15 +306,15 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
     std::string eq_str_barite = "Barite = SO4-- + Ba++";
     MineralReaction min_reaction_barite = editor.addMineralReaction("Barite")
             .setEquation(eq_str_barite)
-            .addMechanism("logk = -8.6615 mol/(m2*s); Ea = 22 kJ/mol")
-            .setSpecificSurfaceArea(0.006, "m2/g");
+            .setSpecificSurfaceArea(0.06, "m2/kg");
+            //.setSpecificSurfaceArea(0.006, "m2/kg");
     Reaction reaction_barite = createReaction(min_reaction_barite, system);
     reaction_barite.setName("Barite kinetics");
 
     // Ionic strength function
     const auto I = ChemicalProperty::ionicStrength(system);
     // Barite kinetic rate function
-    ReactionRateFunction rate_func_barite_shell = [&min_reaction_barite, &reaction_barite, &system, &I](const ChemicalProperties& properties) -> ChemicalScalar {
+    ReactionRateFunction rate_func_barite_olimse_dat = [&min_reaction_barite, &reaction_barite, &system, &I](const ChemicalProperties& properties) -> ChemicalScalar {
 
         // The number of chemical species in the system
         const unsigned num_species = system.numSpecies();
@@ -384,16 +386,32 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
         //const auto ssa = 0.006 * 1e3;
         const auto ssa = 0.006;
 
-        // If (SRmin > 1) Then GoTo 130
-        if(Omega > 1) // precipitation kinetics
+
+        if(Omega < 1) // dissolution kinetics
         {
+            // Acidic mechanism: k1 = 2.75E-08 * exp((-25000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("H3O+") ^ 0.03) * (10 ^ (0.6 * MU^0.5))
+            const auto kappa = 2.75e-8 * exp(- 25 / R * (1.0/T - 1.0/298.15))
+                               * std::pow(activity_h, 0.03)
+                               * pow(10, 0.6 * pow(ionic_strength, 0.5));
+
+            // rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - (SRmin ^ 0.2))
+            res += f * ssa * nm * molar_mass * pow(nm / nm0, 2 / 3) * kappa * (1 - pow(Omega, 0.2));
+
+            // TODO: do not dissolve more than what is available
+            // double total_moles = nm.val; // current amount of mols of available minerals
+            // if (lnOmega <= 0 && res > nm.val)
+            //     res +=  nm.val;
+        }
+        else // precipitation kinetics
+        {
+
             // If (m <= 1e-5) then GoTo 170
             if(nm > 1e-5)
             {
                 // knu = 2.18E-09 * exp((-22000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (10 ^ (0.6 * MU^0.5))
                 // kpre = (-1) * knu
-                const auto kappa_pre = -2.18e-9 * exp(- 22 / R * (1.0/T - 1.0/298.15))
-                                       * pow(10, 0.6 * pow(ionic_strength, 0.5));
+                const auto kappa_pre = -2.18e-9 * exp(- 22.0 / R * (1.0/T - 1.0/298.15))
+                                                * pow(10, 0.6 * pow(ionic_strength, 0.5));
 
                 // rate = S * m * Mm * kpre * (SRmin - 1)
                 res += f * ssa * nm * molar_mass * kappa_pre * (Omega - 1);
@@ -403,35 +421,17 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
                 res = -1e-12 * f;
 
             // TODO: implement if in the kinetic solver
-//            // Implement upper bound in precipitation kinetics
-//            auto max_mol = tot_ba;
-//            if(max_mol > tot_so4) max_mol = tot_so4;
-//            if(max_mol < -res) return -max_mol * f;
-
-
+            // auto max_mol = tot_ba;
+            // if(max_mol > tot_so4) max_mol = tot_so4;
+            // if(max_mol < -res) return -max_mol * f;
         }
-        else // dissolution kinetics
-        {
-            // k1 = 2.75E-08 * exp((-25000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("H3O+") ^ 0.03) * (10 ^ (0.6 * MU^0.5))
-            const auto kappa = 2.75e-8 * exp(- 25 / R * (1.0/T - 1.0/298.15))
-                               * std::pow(activity_h, 0.03)
-                               * pow(10, 0.6 * pow(ionic_strength, 0.5));
 
-            // rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - (SRmin ^ 0.2))
-            res += f * ssa * nm * molar_mass * pow(nm / nm0, 2 / 3) * kappa * (1 - pow(Omega, 0.2));
-
-//            // Do not dissolve more than what is available
-//            double total_moles = nm.val; // current amount of mols of available minerals
-//            if (lnOmega <= 0 && res > nm.val)
-//                res +=  nm.val;
-        }
         return res;
 
     };
-    reaction_barite.setRate(rate_func_barite_shell);
+    reaction_barite.setRate(rate_func_barite_olimse_dat);
 
     // Step **: Create the ReactionSystem instances
-    //ReactionSystem reactions(editor);
     ReactionSystem reactions(system, {reaction_barite});
 
     // Step **: Create the ReactionSystem instances

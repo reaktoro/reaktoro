@@ -42,6 +42,9 @@ int main()
     params.P = 1.01325; // 1 atm = 1.01325 bar
 
     params.activity_model = ActivityModel::DebyeHuckel;
+    params.hessian = GibbsHessian::Exact;
+
+    params.outputConsole();
 
     // ----------------------------------------------------------- //
     // Smart equilibrium parameters
@@ -66,8 +69,8 @@ int main()
     params.smart_kin_method = SmartKineticStrategy::Clustering;
     //params.smart_kinetic_tol = 1e-2;
     //params.smart_kinetic_tol = 1e-3;
-    params.smart_kinetic_tol = 1e-4;
-    //params.smart_kinetic_tol = 1e-5;
+    //params.smart_kinetic_tol = 1e-4;
+    params.smart_kinetic_tol = 1e-5;
     //params.smart_kinetic_tol = 1e-6;
     params.smart_kinetic_abstol = 1e-4;
     params.smart_kinetic_reltol = 1e-1;
@@ -84,18 +87,25 @@ int main()
 //    params.smart_kinetic_abstol = 1e-4;
 //    params.smart_kinetic_reltol = 1e-4;
 
-    params.use_smart_kinetic_solver = true; runKinetics(params);
-    //params.use_smart_kinetic_solver = false; runKinetics(params);
+//    // Run simulation with smart kinetic solver
+//    params.use_smart_kinetic_solver = true;
+//    params.outputConsoleKineticMethod();
+//    runKinetics(params);
+
+    // Run simulation with conventional kinetic solver
+    params.use_smart_kinetic_solver = false;
+    params.outputConsoleKineticMethod();
+    runKinetics(params);
 }
 
 auto runKinetics(KineticPathParams & params) -> void
 {
     // Create results folder
-    auto filename = params.makeResultsFile("scavenging-complex-no-nuc");
+    auto filename = params.makeResultsFile("scavenging-complex");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
-    equilibrium_options.hessian = GibbsHessian::Exact;
+    equilibrium_options.hessian = params.hessian;
 
     // Step **: Define smart chemical equilibrium solver options
     SmartEquilibriumOptions smart_equilibrium_options;
@@ -156,6 +166,7 @@ auto runKinetics(KineticPathParams & params) -> void
     // Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
 
+    // Ionic strength function
     const auto I = ChemicalProperty::ionicStrength(system);
 
     // The number of chemical species in the system
@@ -228,7 +239,7 @@ auto runKinetics(KineticPathParams & params) -> void
 
         // If (m <= 0) and (SRmin < 1) Then GoTo 350
         // If (SRmin = 1) Then GoTo 350
-        if((nm <= 0 && Omega < 1) || Omega == 1) // the is no way to precipitate further
+        if((nm <= 0 && Omega < 1) || Omega == 1) // the is no way to dissolve further
             return res;
 
         // Average BET
@@ -274,24 +285,24 @@ auto runKinetics(KineticPathParams & params) -> void
             // Critical saturation threshold # SRcrit = exp( sqrt( u / LOG( J0 ) ) )
             const auto Omega_crit = std::exp(sqrt(u / std::log10(j0)));
 
-//            // Nucleation occurs only if saturation index above the threshold
-//            if(Omega >= Omega_crit)
-//            {
-//                // Nucleation rate in nuclie sec-1 # nuclie = J0 * exp( -u / LOG(SRmin)^2 ) * Time
-//                const auto nuclie = j0 * exp(- u / std::pow(std::log10(Omega), 2.0));
-//
-//                if(nuclie * dt >= 1) // Condition that rate needs to be bigger than 1 nucl per sec (Arbitrary)
-//                {
-//                    // Number of growth units in critical nuclie radius // nj = ( 2 * u ) / (LOG(SRmin)^3)
-//                    const auto nj = 2 * u / std::pow(std::log10(Omega), 3.0);
-//
-//                    // Critical nuclie volume # vol = nj * molvol
-//                    const auto vol = nj * molecular_volume;
-//
-//                    // Moles of nuclie formed # moles_nuc = ( -nuclie * vol ) / Mv
-//                    res_nuc += - nuclie * vol / molar_volume;
-//                }
-//            }
+            // Nucleation occurs only if saturation index above the threshold
+            if(Omega >= Omega_crit)
+            {
+                // Nucleation rate in nuclie sec-1 # nuclie = J0 * exp( -u / LOG(SRmin)^2 ) * Time
+                const auto nuclie = j0 * exp(- u / std::pow(std::log10(Omega), 2.0));
+
+                if(nuclie * dt >= 1) // Condition that rate needs to be bigger than 1 nucl per sec (Arbitrary)
+                {
+                    // Number of growth units in critical nuclie radius // nj = ( 2 * u ) / (LOG(SRmin)^3)
+                    const auto nj = 2 * u / std::pow(std::log10(Omega), 3.0);
+
+                    // Critical nuclie volume # vol = nj * molvol
+                    const auto vol = nj * molecular_volume;
+
+                    // Moles of nuclie formed # moles_nuc = ( -nuclie * vol ) / Mv
+                    res_nuc += - nuclie * vol / molar_volume;
+                }
+            }
 
             // Neutral mechanism # knu = 1.8E-7 * exp((-66000 / 8.314) * ((1 / TK) - (1 / 298.15)))
             const auto kappa_neu = 1.8E-7 * exp(- 66.0 / R * (1.0 / T - 1.0 / 298.15));
@@ -307,7 +318,6 @@ auto runKinetics(KineticPathParams & params) -> void
 
             // Precipitation kinetic includes kinetic growth and nucleation
             res += res_growth + res_nuc;
-
 
             // TODO: implement upper bound in precipitation kinetics
             // 360 maxMol = MOL("Ca+2")
@@ -378,7 +388,7 @@ auto runKinetics(KineticPathParams & params) -> void
         const double molar_mass = system.species(imineral).molarMass();
 
         // If (m <= 0) and (SRmin < 1) Then GoTo 250
-        if(nm <= 0 && Omega < 1) // the is no way to precipitate further
+        if(nm <= 0 && Omega < 1) // the is no way to dissolve further
             res = ChemicalScalar(num_species, 0.0);
 
         // 0.2% BET (03bra/bos)
@@ -428,6 +438,7 @@ auto runKinetics(KineticPathParams & params) -> void
 
         // Auxiliary variables with chemical scalars of value one
         ChemicalScalar f(num_species, 1.0);
+
         // The temperature and pressure of the system
         const Temperature T = properties.temperature();
 
@@ -467,7 +478,7 @@ auto runKinetics(KineticPathParams & params) -> void
 
         // If (m <= 0) and (SRmin < 1) Then GoTo 350
         // If (SRmin = 1) Then GoTo 350
-        if((nm <= 0 && Omega < 1) || Omega == 1) // the is no way to precipitate further
+        if((nm <= 0 && Omega < 1) || Omega == 1) // the is no way to dissolve further
             return res;
 
         // Average BET
@@ -512,24 +523,24 @@ auto runKinetics(KineticPathParams & params) -> void
             // Critical saturation threshold # SRcrit = exp( sqrt( u / LOG( J0 ) ) )
             const auto Omega_crit = std::exp(sqrt(u / std::log10(j0)));
 
-//            // Nucleation occurs only if saturation index above the threshold
-//            if(Omega >= Omega_crit)
-//            {
-//                // Nucleation rate in nuclie sec-1 # nuclie = J0 * exp( -u / LOG(SRmin)^2 ) * time
-//                const auto nuclie = j0 * exp(- u / std::pow(std::log10(Omega), 2.0));
-//
-//                if(nuclie * dt >= 1) // Condition that rate needs to be bigger than 1 nucl per sec (Arbitrary)
-//                {
-//                    // Number of growth units in critical nuclie radius # nj = ( 2 * u ) / (LOG(SRmin)^3) 		#
-//                    const auto nj = 2 * u / std::pow(std::log10(Omega), 3.0);
-//
-//                    // Critical nuclie volume # vol = nj * molvol
-//                    const auto vol = nj * molecular_volume;
-//
-//                    // Moles of nuclie formed # moles_nuc = ( -nuclie * vol ) / Mv
-//                    res_nuc += - nuclie * vol / molar_volume;
-//                }
-//            }
+            // Nucleation occurs only if saturation index above the threshold
+            if(Omega >= Omega_crit)
+            {
+                // Nucleation rate in nuclie sec-1 # nuclie = J0 * exp( -u / LOG(SRmin)^2 ) * time
+                const auto nuclie = j0 * exp(- u / std::pow(std::log10(Omega), 2.0));
+
+                if(nuclie * dt >= 1) // Condition that rate needs to be bigger than 1 nucl per sec (Arbitrary)
+                {
+                    // Number of growth units in critical nuclie radius # nj = ( 2 * u ) / (LOG(SRmin)^3) 		#
+                    const auto nj = 2 * u / std::pow(std::log10(Omega), 3.0);
+
+                    // Critical nuclie volume # vol = nj * molvol
+                    const auto vol = nj * molecular_volume;
+
+                    // Moles of nuclie formed # moles_nuc = ( -nuclie * vol ) / Mv
+                    res_nuc += - nuclie * vol / molar_volume;
+                }
+            }
 
             // Neutral mechanism: knu = 1.6E-11 * exp((-108000 / 8.314) * ((1 / TK) - (1 / 298.15)))
             const auto kappa_neu = 1.6E-11 * exp(- 108.0 / R * (1.0 / T - 1.0 / 298.15));
@@ -671,24 +682,24 @@ auto runKinetics(KineticPathParams & params) -> void
             // Critical saturation threshold # SRcrit = exp( u / LOG( J0 ) )
             const auto Omega_crit = std::exp(u / std::log10(j0));
 
-//            // Nucleation occurs only if saturation index above the threshold
-//            if(Omega >= Omega_crit)
-//            {
-//                // Nucleation rate in nuclie sec-1 # nuclie = J0 * exp( -u / LOG(SRmin) ) * Time
-//                const auto nuclie = j0 * exp(- u / std::log10(Omega));
-//
-//                if(nuclie * dt >= 1) // Condition that rate needs to be bigger than 1 nucl per sec (Arbitrary)
-//                {
-//                    // Number of growth units in critical nuclie radius # 250 nj = u / (LOG(SRmin)^2)
-//                    const auto nj = 2 * u / std::pow(std::log10(Omega), 3.0);
-//
-//                    // Critical nuclie volume # vol = nj * molvol
-//                    const auto vol = nj * molecular_volume;
-//
-//                    // Moles of nuclie formed # moles_nuc = ( -nuclie * vol ) / Mv
-//                    res_nuc += - nuclie * vol / molar_volume;
-//                }
-//            }
+            // Nucleation occurs only if saturation index above the threshold
+            if(Omega >= Omega_crit)
+            {
+                // Nucleation rate in nuclie sec-1 # nuclie = J0 * exp( -u / LOG(SRmin) ) * Time
+                const auto nuclie = j0 * exp(- u / std::log10(Omega));
+
+                if(nuclie * dt >= 1) // Condition that rate needs to be bigger than 1 nucl per sec (Arbitrary)
+                {
+                    // Number of growth units in critical nuclie radius # 250 nj = u / (LOG(SRmin)^2)
+                    const auto nj = 2 * u / std::pow(std::log10(Omega), 3.0);
+
+                    // Critical nuclie volume # vol = nj * molvol
+                    const auto vol = nj * molecular_volume;
+
+                    // Moles of nuclie formed # moles_nuc = ( -nuclie * vol ) / Mv
+                    res_nuc += - nuclie * vol / molar_volume;
+                }
+            }
 
             // knu = 5.5E-13 * exp((-66000 / 8.314) * ((1 / TK) - (1 / 298.15)))
             const auto kappa_neu = 5.5E-13 * exp(- 66.0 / R * (1.0 / T - 1.0 / 298.15));
@@ -776,7 +787,7 @@ auto runKinetics(KineticPathParams & params) -> void
 
         // If (m <= 0) and (SRmin < 1) Then GoTo 240
         // If (SRmin = 1) Then GoTo 240
-        if((nm <= 0 && Omega < 1) || (Omega == 1)) // the is no way to precipitate further
+        if((nm <= 0 && Omega < 1) || (Omega == 1)) // the is no way to dissolve further
             return res;
 
         // Specific surface area, average BET
@@ -801,8 +812,9 @@ auto runKinetics(KineticPathParams & params) -> void
         }
         else // Omega > 1, precipitation kinetics
         {
-            // If (m <= 1e-5) then GoTo 170
-            if(nm > 1e-5) // start precipitation
+            // If (m <= 1e-8) then GoTo 170 # in complex souring-example run in PHREEQC
+            // If (m <= 1e-5) then GoTo 170 # in the latest OLIMSE.dat
+            if(nm > 1e-8) // start precipitation
             {
                 // knu = 3.24e-12
                 // kpre = (-1) * knu

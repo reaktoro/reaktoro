@@ -56,30 +56,8 @@ int main()
     params.amount_fraction_cutoff = 1e-14;
     params.mole_fraction_cutoff = 1e-14;
 
-//    // *********************************************************************************************************** //
-//    // Clustering approach
-//    // *********************************************************************************************************** //
-
-//    // ----------------------------------------------------------- //
-//    // Smart equilibrium parameters
-//    // ----------------------------------------------------------- //
-//
-//    // Run smart algorithm with clustering
-//    params.method = SmartEquilibriumStrategy::Clustering;
-//    params.smart_equilibrium_reltol = 1e-3;
-//
-//    // ----------------------------------------------------------- //
-//    // Smart kinetic parameters
-//    // ----------------------------------------------------------- //
-//
-//    // Select clustering approach
-//    params.smart_kin_method = SmartKineticStrategy::Clustering;
-//    params.smart_kinetic_tol = 1e-3; // 5e-3; // 1e-4;
-//    params.smart_kinetic_reltol = 1e-1;
-//    params.smart_kinetic_abstol = 1e-4;
-
     // *********************************************************************************************************** //
-    // Priority queue approach
+    // Clustering approach
     // *********************************************************************************************************** //
 
     // ----------------------------------------------------------- //
@@ -87,18 +65,40 @@ int main()
     // ----------------------------------------------------------- //
 
     // Run smart algorithm with clustering
-    params.method = SmartEquilibriumStrategy::PriorityQueue;
-    params.smart_equilibrium_reltol = 1e-2;
+    params.method = SmartEquilibriumStrategy::Clustering;
+    params.smart_equilibrium_reltol = 1e-3;
 
     // ----------------------------------------------------------- //
     // Smart kinetic parameters
     // ----------------------------------------------------------- //
 
-    // Select priority queue approach
-    params.smart_kin_method = SmartKineticStrategy::PriorityQueue;
-    params.smart_kinetic_tol = 1e-2;
-    params.smart_kinetic_abstol = 1e-5;
+    // Select clustering approach
+    params.smart_kin_method = SmartKineticStrategy::Clustering;
+    params.smart_kinetic_tol = 1e-3; // 5e-3; // 1e-4;
     params.smart_kinetic_reltol = 1e-1;
+    params.smart_kinetic_abstol = 1e-4;
+
+//    // *********************************************************************************************************** //
+//    // Priority queue approach
+//    // *********************************************************************************************************** //
+//
+//    // ----------------------------------------------------------- //
+//    // Smart equilibrium parameters
+//    // ----------------------------------------------------------- //
+//
+//    // Run smart algorithm with clustering
+//    params.method = SmartEquilibriumStrategy::PriorityQueue;
+//    params.smart_equilibrium_reltol = 1e-1;
+//
+//    // ----------------------------------------------------------- //
+//    // Smart kinetic parameters
+//    // ----------------------------------------------------------- //
+//
+//    // Select priority queue approach
+//    params.smart_kin_method = SmartKineticStrategy::PriorityQueue;
+//    params.smart_kinetic_tol = 1e-2;
+//    params.smart_kinetic_abstol = 1e-5;
+//    params.smart_kinetic_reltol = 1e-1;
 
 //    // *********************************************************************************************************** //
 //    // Nearest neighbour approach
@@ -331,7 +331,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
             .setSpecificSurfaceArea(1.0, "m2/g");
     Reaction reaction_hematite = createReaction(min_reaction_hematite, system);
     reaction_hematite.setName("Hematite reaction");
-    ReactionRateFunction rate_func_hematite_shell = [&min_reaction_hematite, &reaction_hematite, &system](const ChemicalProperties& properties) -> ChemicalScalar {
+    ReactionRateFunction rate_func_hematite_olimse_dat = [&min_reaction_hematite, &reaction_hematite, &system](const ChemicalProperties& properties) -> ChemicalScalar {
 
         // The number of chemical species in the system
         const unsigned num_species = system.numSpecies();
@@ -339,17 +339,14 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
         // The mineral reaction rate using specified surface area
         ChemicalScalar res(num_species, 0.0);
 
+        // Auxiliary variable for calculating mineral reaction rate
+        ChemicalScalar f(num_species, 1.0);
+
         // The universal gas constant (in units of kJ/(mol*K))
         const double R = 8.3144621e-3;
 
         // The temperature and pressure of the system
         const Temperature T = properties.temperature();
-
-        // Create a Reaction instance
-        Reaction reaction(min_reaction_hematite.equation(), system);
-
-        // Auxiliary variables
-        ChemicalScalar f(num_species, 1.0);
 
         // Calculate the saturation index of the mineral
         const auto lnK = reaction_hematite.lnEquilibriumConstant(properties);
@@ -370,7 +367,11 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
         auto nm = n[imineral];
         auto nm0 = n0[imineral];
 
+        // Prevent negative mole numbers here for the solution of the ODEs
+        nm = std::max(nm, 0.0);
+        nm0 = std::max(nm0, 0.0);
 
+        // Get H+ and HS- activity and ionic strength
         VectorConstRef lna = properties.lnActivities().val;
         const Index i_h = system.indexSpeciesWithError("H+");
         double activity_h = std::exp(lna(i_h));
@@ -380,31 +381,6 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
         // The molar mass of the mineral (in units of kg/mol)
         const double molar_mass = system.species(imineral).molarMass();
 
-        /*
-         * Hematite
-        # kinetic data extracted from 04pal/kha 04pou/kro
-        # warning dissolution only
-        # Confidence level: 4
-        -start
-        1 SRmin = SR("Hematite")
-        10 moles = 0
-        20 If (m <= 0) and (SRmin < 1) Then GoTo 250
-        30 S = PARM(1) # Default value
-        40 Mm = 159.7 # molar mass in g/mol
-        50 If (SRmin > 1) Then GoTo 250
-        ########## start dissolution bloc ##########
-        60 knu = 2.51E-15 * exp((-66200 / 8.314) * ((1 / TK) - (1 / 298.15)))
-        70 k1 = 0.000000000407 * exp((-66200 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("H3O+") ^ 1.0)
-        80 k2 = 3.50E-9 * exp((-40000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("HS-") ^ 0.5)
-        90 k = knu + k1 + k2
-        100 rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - SRmin) # by default
-        110 moles = rate * Time
-        120 REM Do not dissolve more than what is available
-        130 IF (moles > M) THEN moles = M
-        ########## end dissolution bloc ##########
-        250 Save moles
-        -end
-         */
         // If (m <= 0) and (SRmin < 1) Then GoTo 250
         if(nm <= 0 && Omega < 1) // the is no way to precipitate further
             res = ChemicalScalar(num_species, 0.0);
@@ -413,31 +389,16 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
 
         if(Omega < 1) // dissolution kinetics
         {
-            /*
-             * ########## start dissolution bloc ##########
-            60 knu = 2.51E-15 * exp((-66200 / 8.314) * ((1 / TK) - (1 / 298.15)))
-            70 k1 = 0.000000000407 * exp((-66200 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("H3O+") ^ 1.0)
-            80 k2 = 3.50E-9 * exp((-40000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("HS-") ^ 0.5)
-            90 k = knu + k1 + k2
-            100 rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - SRmin) # by default
-            110 moles = rate * Time
-            120 REM Do not dissolve more than what is available
-            130 IF (moles > M) THEN moles = M
-            ########## end dissolution bloc ##########
-             */
-
-            // knu = 2.51E-15 * exp((-66200 / 8.314) * ((1 / TK) - (1 / 298.15)))
+            // Neutral mechanism: knu = 2.51E-15 * exp((-66200 / 8.314) * ((1 / TK) - (1 / 298.15)))
             const auto kappa_1 = 2.51e-15 * exp(- 66.2 / R * (1.0/T - 1.0/298.15));
 
-            // k1 = 0.000000000407 * exp((-66200 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("H3O+") ^ 1.0)
+            // Acidic mechanism: k1 = 0.000000000407 * exp((-66200 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("H3O+") ^ 1.0)
             const auto kappa_2 = 0.000000000407 * exp( -66.2 / R * (1.0/T - 1.0/298.15)) * std::pow(activity_h, 1.0);
 
-            // Sulfide catalyzer (sulfide promotion)
-            // k2 = 3.50E-9 * exp((-40000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("HS-") ^ 0.5)
-            const auto kappa_3 = 3.50e-9 * exp(- 40 / R * (1.0/T - 1.0/298.15)) * std::pow(activity_hs, 0.5);
+            // Sulfide catalyzer (sulfide promotion): k2 = 3.50E-9 * exp((-40000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("HS-") ^ 0.5)
+            const auto kappa_3 = 3.50e-9 * exp(- 40.0 / R * (1.0/T - 1.0/298.15)) * std::pow(activity_hs, 0.5);
 
             const auto kappa = kappa_1 + kappa_2 + kappa_3;
-            //std::cout << "kappa = " << kappa << std:: endl;
 
             // Calculate the resulting mechanism function
             // rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - SRmin) # by default
@@ -445,15 +406,14 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
 
             // Do not dissolve more than what is available
             // IF (moles > M) THEN moles = M
-//            double total_moles = nm.val; // current amount of mols of available minerals
-//            if (res > nm.val) res += nm.val;
-
+            // double total_moles = nm.val; // current amount of mols of available minerals
+            // if (res > nm.val) res += nm.val;
         }
 
         return res;
 
     };
-    reaction_hematite.setRate(rate_func_hematite_shell);
+    reaction_hematite.setRate(rate_func_hematite_olimse_dat);
 
     // Step **: Create the ReactionSystem instances
     ReactionSystem reactions(system, {reaction_hematite});

@@ -51,7 +51,7 @@ int main()
     params.T = 25.0;    // the temperature (in units of degC)
     params.P = 1.01325; // the pressure (in units of bar)
 
-// Define activity model depending on the parameter
+    // Define activity model depending on the parameter
     params.amount_fraction_cutoff = 1e-14;
     params.mole_fraction_cutoff = 1e-14;
 
@@ -87,7 +87,7 @@ int main()
 
     // Run smart algorithm with clustering
     params.method = SmartEquilibriumStrategy::PriorityQueue;
-    params.smart_equilibrium_reltol = 1e-2;
+    params.smart_equilibrium_reltol = 1e-1;
 
     // ----------------------------------------------------------- //
     // Smart kinetic parameters
@@ -95,7 +95,7 @@ int main()
 
     // Select priority queue approach
     params.smart_kin_method = SmartKineticStrategy::PriorityQueue;
-    params.smart_kinetic_tol = 1e-2;
+    params.smart_kinetic_tol = 1e-3;
     params.smart_kinetic_abstol = 1e-5;
     params.smart_kinetic_reltol = 1e-1;
 
@@ -167,9 +167,9 @@ int main()
     /// **************************************************************************************************************///
     /// CONVENTIONAL kinetics & CONVENTIONAL equilibrium
     /// **************************************************************************************************************///
-//    params.use_smart_kinetics_solver = false; params.use_smart_equilibrium_solver = false;
-//    params.outputConsoleKineticMethod();
-//    runReactiveTransport(params, results);
+    params.use_smart_kinetics_solver = false; params.use_smart_equilibrium_solver = false;
+    params.outputConsoleKineticMethod();
+    runReactiveTransport(params, results);
 
     // **************************************************************************************************************///
     // SPEED-UP analysis
@@ -237,7 +237,7 @@ int main()
 auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKineticsResults& results) -> void
 {
     // Step **: Create the results folder
-    auto folder = params.makeResultsFolderKinetics("results-kinetics-scavenging-goethite");
+    auto folder = params.makeResultsFolderKinetics("scavenging-goethite");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
@@ -275,7 +275,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKine
     // Step **: Construct the chemical system with its phases and species (using ChemicalEditor)
     ChemicalEditor editor(database);
 
-StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4(aq)", "CaOH+", "Cl-",
+    StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4(aq)", "CaOH+", "Cl-",
                                "FeCl++", "FeCl2(aq)", "FeCl+", "Fe++", "FeOH+",  "FeOH++", "Fe+++",
                                "H2(aq)", "HSO4-", "H2S(aq)", "HS-", "H2O(l)",  "H+", "OH-", "HCO3-",
                                "K+", "KSO4-", "Mg++", "MgSO4(aq)", "MgCO3(aq)", "MgOH+", "Mg(HCO3)+",
@@ -320,8 +320,6 @@ StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4
 
     // Step **: Create the ChemicalSystem object using the configured editor
     ChemicalSystem system(editor);
-    //std::cout << "system = \n" << system << std:: endl;
-    //getchar();
 
     // Goethite: FeOOH
     // Goethite
@@ -336,7 +334,7 @@ StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4
             .setSpecificSurfaceArea(1.0, "m2/g");
     Reaction reaction_goethite = createReaction(min_reaction_goethite, system);
     reaction_goethite.setName("Goethite reaction");
-    ReactionRateFunction rate_func_goethite_shell = [&min_reaction_goethite, &reaction_goethite, &system](const ChemicalProperties& properties) -> ChemicalScalar {
+    ReactionRateFunction rate_func_goethite_olimse_dat = [&min_reaction_goethite, &reaction_goethite, &system](const ChemicalProperties& properties) -> ChemicalScalar {
 
         // The number of chemical species in the system
         const unsigned num_species = system.numSpecies();
@@ -344,14 +342,14 @@ StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4
         // The mineral reaction rate using specified surface area
         ChemicalScalar res(num_species, 0.0);
 
+        // Auxiliary variable for calculating mineral reaction rate
+        ChemicalScalar f(num_species, 1.0);
+
         // The universal gas constant (in units of kJ/(mol*K))
         const double R = 8.3144621e-3;
 
         // The temperature and pressure of the system
         const Temperature T = properties.temperature();
-
-        // Auxiliary variables
-        ChemicalScalar f(num_species, 1.0);
 
         // Calculate the saturation index of the mineral
         const auto lnK = reaction_goethite.lnEquilibriumConstant(properties);
@@ -372,6 +370,10 @@ StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4
         auto nm = n[imineral].val;
         auto nm0 = n0[imineral];
 
+        // Prevent negative mole numbers here for the solution of the ODEs
+        nm = std::max(nm, 0.0);
+        nm0 = std::max(nm0, 0.0);
+
         // Calculate the activity of species HS-
         VectorConstRef lna = properties.lnActivities().val;
         const Index i_hs = system.indexSpeciesWithError("HS-");
@@ -380,56 +382,20 @@ StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4
         // The molar mass of the mineral (in units of kg/mol)
         const double molar_mass = system.species(imineral).molarMass();
 
-        /*
-         * Goethite
-            # kinetic data extracted from 04pal/kha 04pou/kro
-            # warning dissolution only
-            # Confidence level: 4
-            -start
-            1 SRmin = SR("Goethite")
-            10 moles = 0
-            20 If (m <= 0) and (SRmin < 1) Then GoTo 250
-            30 S = 1 # Default value
-            40 Mm = 88.85 # molar mass in g/mol
-            50 If (SRmin > 1) Then GoTo 250
-            ########## start dissolution bloc ##########
-            60 knu = 1.148E-08 * exp((-86500 / 8.314) * ((1 / TK) - (1 / 298.15)))
-            70 k1 = 1.22E-9 * exp((-40000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("HS-") ^ 0.5)
-            80 k = knu + k1
-            90 rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - SRmin) # by default
-            100 moles = rate * Time
-            110 REM Do not dissolve more than what is available
-            120 IF (moles > M) THEN moles = M
-            ########## end dissolution bloc ##########
-            250 Save moles
-            -end
-         */
         // If (m <= 0) and (SRmin < 1) Then GoTo 250
         if(nm <= 0 && Omega < 1) // the is no way to precipitate further
             res = ChemicalScalar(num_species, 0.0);
-        // S = 1 # default value in m2/g
-        //const auto ssa = 1.0 * 1e3; // needs testing, might influence results of the ODML negatively
+        // Specific surface areas: S = 1 # default value in m2/g
         const auto ssa = 1.0;
+        //const auto ssa = 1.0 * 1e3; // TODO: needs testing, might influence results of the ODML
 
-        if(Omega < 1) // dissolution kinetics
+        if(Omega < 1) // Omega < 1, dissolution kinetics
         {
-            /*
-             * ########## start dissolution bloc ##########
-            60 knu = 1.148E-08 * exp((-86500 / 8.314) * ((1 / TK) - (1 / 298.15)))
-            70 k1 = 1.22E-9 * exp((-40000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("HS-") ^ 0.5)
-            80 k = knu + k1
-            90 rate = S * m * Mm * ((m/m0)^(2/3)) * k * (1 - SRmin) # by default
-            100 moles = rate * Time
-            110 REM Do not dissolve more than what is available
-            120 IF (moles > M) THEN moles = M
-            ########## end dissolution bloc ##########
-             */
 
-            // knu = 1.148E-08 * exp((-86500 / 8.314) * ((1 / TK) - (1 / 298.15)))
+            // Neutral mechanism: knu = 1.148E-08 * exp((-86500 / 8.314) * ((1 / TK) - (1 / 298.15)))
             const auto kappa_neu = 1.148E-08 * exp(- 86.5 / R * (1.0/T - 1.0/298.15));
 
-            // Sulfide catalyzer (sulfide promotion)
-            // k1 = 1.22E-9 * exp((-40000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("HS-") ^ 0.5)
+            // Sulfide catalyzer (sulfide promotion): k1 = 1.22E-9 * exp((-40000 / 8.314) * ((1 / TK) - (1 / 298.15))) * (ACT("HS-") ^ 0.5)
             const auto kappa_sulf = 1.22E-9 * exp(- 40.0 / R * (1.0/T - 1.0/298.15)) * std::pow(activity_hs, 0.5);
 
             const auto kappa = kappa_neu + kappa_sulf;
@@ -440,22 +406,18 @@ StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4
 
             // Do not dissolve more than what is available
             // IF (moles > M) THEN moles = M
-//            double total_moles = nm.val; // current amount of mols of available minerals
-//            if (res > nm.val) res += nm.val;
+            // double total_moles = nm.val; // current amount of mols of available minerals
+            // if (res > nm.val) res += nm.val;
 
         }
 
         return res;
 
     };
-    reaction_goethite.setRate(rate_func_goethite_shell);
+    reaction_goethite.setRate(rate_func_goethite_olimse_dat);
 
     // Step **: Create the ReactionSystem instances
     ReactionSystem reactions(system, {reaction_goethite});
-
-    //std::cout << "system = \n" << system << std:: endl;
-    // getchar();
-    //std::cout << "reactions number = " << reactions.numReactions() << std:: endl;
 
     // Step **: Create the ReactionSystem instances
     Partition partition(system);
@@ -478,9 +440,6 @@ StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4
     problem_ic.pE(8.676);
 
     ChemicalState state_ic = equilibrate(problem_ic);
-
-//    std::cout << "state_ic = \n" << state_ic << std:: endl;
-//    getchar();
 
     // Step **: Define the boundary condition (BC)  of the reactive transport modeling problem
     EquilibriumInverseProblem problem_bc(partition);
@@ -512,8 +471,6 @@ StringList selected_species = {"Ca(HCO3)+", "CO3--", "CaCO3(aq)", "Ca++", "CaSO4
     // Step **: Scale the volumes of the phases in the initial condition
     state_ic.scalePhaseVolume("Aqueous", 0.1, "m3");    // 10% if the 1.0m3
     state_ic.scaleVolume(1.0, "m3");
-//    std::cout << "state_ic = \n" << state_ic << std:: endl;
-//    getchar();
 
     // Set initial value of minerals
     reaction_goethite.setInitialAmounts(state_ic.speciesAmounts());
