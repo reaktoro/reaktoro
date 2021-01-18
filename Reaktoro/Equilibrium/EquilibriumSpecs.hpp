@@ -28,7 +28,6 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalProps;
 class Params;
-class Species;
 
 /// The details of an equation constraint in a chemical equilibrium calculation.
 struct EquilibriumConstraintEquation
@@ -144,7 +143,6 @@ struct EquilibriumConstraintChemicalPotential
 /// specs.volume();      // volume is an input parameter in the chemical equilibrium problem.
 /// specs.openTo("CO2"); // a titrant named [CO2] is introduced, and its amount computed at the end of the equilibrium calculation.
 /// ~~~
-
 class EquilibriumSpecs
 {
 public:
@@ -468,13 +466,13 @@ public:
     auto isPressureUnknown() const -> bool;
 
     /// Return the chemical formulas of the explicit and implicit titrant substances.
-    auto titrants() const -> Vec<ChemicalFormula> const&;
+    auto titrants() const -> Vec<ChemicalFormula>;
 
     /// Return the chemical formulas of the explicit titrant substances.
-    auto titrantsExplicit() const -> Vec<ChemicalFormula> const&;
+    auto titrantsExplicit() const -> Vec<ChemicalFormula>;
 
     /// Return the chemical formulas of the implicit titrant substances.
-    auto titrantsImplicit() const -> Vec<ChemicalFormula> const&;
+    auto titrantsImplicit() const -> Vec<ChemicalFormula>;
 
     /// Return the equation constraints to be satisfied at chemical equilibrium.
     auto constraintsEquationType() const -> Vec<EquilibriumConstraintEquation> const&;

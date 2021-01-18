@@ -183,7 +183,7 @@ auto EquilibriumSpecs::lnActivity(String name) -> void
     const auto specieslist = msystem.database().species();
     const auto idx = specieslist.findWithName(name);
     error(idx >= specieslist.size(),
-        "Could not impose an activity constraint for species with name`", name, "` "
+        "Could not impose an activity constraint for species with name `", name, "` "
         "because it is not in the database.");
     const auto species = specieslist[idx];
     lnActivity(species);
@@ -402,7 +402,6 @@ auto EquilibriumSpecs::addConstraint(const EquilibriumConstraintChemicalPotentia
     throwErrorIfTitrantHasBeenRegistered(constraint.substance);
     uconstraints.push_back(constraint);
     titrants_implicit.push_back(constraint.substance);
-    throwErrorIfTitrantHasBeenRegistered(constraint.substance);
 }
 
 auto EquilibriumSpecs::addParameter(String param) -> void
@@ -432,17 +431,17 @@ auto EquilibriumSpecs::isPressureUnknown() const -> bool
     return unknownP;
 }
 
-auto EquilibriumSpecs::titrants() const -> Vec<ChemicalFormula> const&
+auto EquilibriumSpecs::titrants() const -> Vec<ChemicalFormula>
 {
     return concatenate(titrants_explicit, titrants_implicit);
 }
 
-auto EquilibriumSpecs::titrantsExplicit() const -> Vec<ChemicalFormula> const&
+auto EquilibriumSpecs::titrantsExplicit() const -> Vec<ChemicalFormula>
 {
     return titrants_explicit;
 }
 
-auto EquilibriumSpecs::titrantsImplicit() const -> Vec<ChemicalFormula> const&
+auto EquilibriumSpecs::titrantsImplicit() const -> Vec<ChemicalFormula>
 {
     return titrants_implicit;
 }
@@ -466,11 +465,11 @@ auto EquilibriumSpecs::constraintsChemicalPotentialType() const -> Vec<Equilibri
 auto EquilibriumSpecs::throwErrorIfTitrantHasBeenRegistered(const ChemicalFormula& substance) const -> void
 {
     const auto already_an_explicit_titrant = containsfn(titrants_explicit, RKT_LAMBDA(x, x.equivalent(substance)));
-    error(already_an_explicit_titrant, "Cannot specify again that the chemical system is open to substance ", substance.str(), ". "
+    errorif(already_an_explicit_titrant, "Cannot specify again that the chemical system is open to substance ", substance.str(), ". "
         "You have already explicitly specified that the chemical system is open to this substance.");
     const auto idx = indexfn(titrants_implicit, RKT_LAMBDA(x, x.equivalent(substance)));
     const auto already_an_implicit_titrant = idx < titrants_implicit.size();
-    error(already_an_implicit_titrant, "Cannot specify again that the chemical system is open to substance ", substance.str(), ". "
+    errorif(already_an_implicit_titrant, "Cannot specify again that the chemical system is open to substance ", substance.str(), ". "
         "You have implicitly specified that the chemical system is open to this substance "
         "when imposing the ", uconstraints[idx].name, " constraint.");
 }
