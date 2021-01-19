@@ -189,7 +189,7 @@ struct EquilibriumSolver::Impl
     /// Update the initial state variables before the new equilibrium calculation.
     auto updateChemicalState(ChemicalState& state)
     {
-        state.speciesAmounts() = optstate.x.head(dims.Nn); // TODO: Why not use ChemicalState::setSpeciesAmounts?
+        state.setSpeciesAmounts(optstate.x.head(dims.Nn));
         state.equilibrium().setOptimaState(optstate);
     }
 
