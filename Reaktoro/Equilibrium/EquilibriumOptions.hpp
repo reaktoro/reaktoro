@@ -58,7 +58,7 @@ struct EquilibriumOptions
     double epsilon = 1e-16;
 
     /// The value multiplied by `epsilon` to compute the logarithm barrier penalty parameter @eq{\tau}.
-    bool logarithm_barrier_factor = 1.0;
+    double logarithm_barrier_factor = 1.0;
 
     /// The boolean flag that indicates if warm-start strategy should be used
     /// when possible. Setting this flag to true will cause equilibrium
