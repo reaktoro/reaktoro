@@ -19,107 +19,391 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSetup.hpp>
 using namespace Reaktoro;
 
 namespace test { extern auto createChemicalSystem() -> ChemicalSystem; }
 
-TEST_CASE("Testing EquilibriumProblem", "[EquilibriumProblem]")
+TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 {
     ChemicalSystem system = test::createChemicalSystem();
 
-    // EquilibriumConditions conditions(system);
+    const auto Wn = system.formulaMatrix();
+    const auto Ne = Wn.rows();
+    const auto Nn = Wn.cols();
 
-    // // conditions.temperature();
-    // // conditions.pressure();
+    EquilibriumSpecs specs(system);
 
-    // // REQUIRE_THROWS( EquilibriumProblem(conditions) ); // two functional constraints are needed for the two control variables
+    ChemicalState state(system);
+    state.setTemperature(50.0, "celsius");
+    state.setPressure(100.0, "bar");
+    state.setSpeciesAmount("H2O(aq)", 55.0, "mol");
+    state.setSpeciesAmount("Na+(aq)", 0.1, "mol");
+    state.setSpeciesAmount("Cl-(aq)", 0.1, "mol");
+    state.setSpeciesAmount("CO2(g)", 1.0, "mol");
+    state.setSpeciesAmount("O2(g)", 0.1, "mol");
+    state.setSpeciesAmount("CaCO3(s)", 0.2, "mol");
 
-    // conditions.volume(1.0, "m3");
-    // conditions.internalEnergy(1.0, "kJ");
+    // const auto n = state.speciesAmounts().matrix();
 
-    // conditions.pH(3.0);
-    // conditions.fugacity("O2(g)", 1.0, "bar");
+    SECTION("Checking matrices `Aex` and `Aep` of the optimization problem")
+    {
+        WHEN("temperature and pressure are input parameters - the Gibbs energy minimization formulation")
+        {
+            specs.temperature();
+            specs.pressure();
 
-    // conditions.cannotReact("H2O(aq) = H+(aq) + OH-(aq)");
-    // conditions.cannotReact("CO2(g) = CO2(aq)");
-    // conditions.cannotReact("CaCO3(s)");
-    // conditions.cannotIncrease("NaCl(s)");
-    // conditions.cannotDecrease("SiO2(s)");
+            EquilibriumSetup setup(specs);
 
-    // EquilibriumProblem problem(conditions);
+            const auto Aex = setup.assembleMatrixAex();
+            const auto Aep = setup.assembleMatrixAep();
 
-    // //-------------------------------------------------------------------------
-    // // Testing EquilibriumProblem::conservationMatrix
-    // //-------------------------------------------------------------------------
-    // const auto dims = problem.dims();
+            CHECK( Aex == Wn );
+            CHECK( Aep.size() == 0 );
+        }
 
-    // const auto C = problem.conservationMatrix();
+        WHEN("temperature and volume are input parameters - the Helmholtz energy minimization formulation")
+        {
+            specs.temperature();
+            specs.volume();
 
-    // REQUIRE( C.rows() == dims.Nc ); // the number of components
-    // REQUIRE( C.cols() == dims.Nx ); // the number of variables
+            EquilibriumSetup setup(specs);
 
-    // const auto Cx = MatrixXd // the expected conservation matrix!
-    // {{
-    //     { 2,  1,  1,  2,  0,  0,  0,  0,  1,  1,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  2,  2,  4,  0,  0,  0,  0,  0,  0,  1,  0 },
-    //     { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  0,  0,  0,  1,  0,  0,  0,  1,  1,  0,  1,  0,  0,  0,  0,  0 },
-    //     { 1,  0,  1,  0,  2,  0,  0,  0,  0,  1,  0,  0,  2,  3,  3,  0,  0,  2,  2,  2,  0,  1,  0,  1,  0,  3,  2,  0,  0,  0,  2 },
-    //     { 0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0 },
-    //     { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-    //     { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0 },
-    //     { 0,  0,  0,  0,  0,  0,  1,  1,  1,  0,  0,  0,  0,  0,  0,  2,  2,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0 },
-    //     { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0 },
-    //     { 0,  1, -1,  0,  0,  1, -1,  0,  0,  0,  2,  2,  0, -1, -2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0 },
-    //     {-1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-    //     { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0, -1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-    // }};
+            const auto Np = 1;
 
-    // {
-    //     INFO("C(assembled) = (transpose)\n" << C.transpose());
-    //     INFO("C(expected) = (transpose)\n" << Cx.transpose());
-    //     REQUIRE( C.isApprox(Cx) );
-    // }
+            const auto Aex = setup.assembleMatrixAex();
+            const auto Aep = setup.assembleMatrixAep();
 
-    // //-------------------------------------------------------------------------
-    // // Testing EquilibriumProblem::objective
-    // //-------------------------------------------------------------------------
-    // ChemicalState state0(system);
-    // state0.setTemperature(298.15);
-    // state0.setPressure(1.0e5);
-    // state0.setSpeciesAmounts(1.0);
+            CHECK( Aex == Wn );
+            CHECK( Aep == zeros(Ne, Np) );
+        }
 
-    // auto obj = problem.objective(state0);
+        WHEN("volume and internal energy are input parameters - the entropy maximization formulation")
+        {
+            specs.volume();
+            specs.internalEnergy();
 
-    // VectorXd x = VectorXd::Ones(dims.Nx);
+            EquilibriumSetup setup(specs);
 
-    // VectorXd g(dims.Nx);
-    // MatrixXd H(dims.Nx, dims.Nx);
+            const auto Np = 2;
 
-    // REQUIRE_NOTHROW( obj.f(x) );
-    // REQUIRE_NOTHROW( obj.g(x, g) );
-    // REQUIRE_NOTHROW( obj.H(x, H) );
+            const auto Aex = setup.assembleMatrixAex();
+            const auto Aep = setup.assembleMatrixAep();
 
-    // //-------------------------------------------------------------------------
-    // // Testing EquilibriumProblem::xlower
-    // //-------------------------------------------------------------------------
-    // ArrayXd xlower(dims.Nx);
+            CHECK( Aex == Wn );
+            CHECK( Aep == zeros(Ne, Np) );
+        }
 
-    // problem.xlower(state0, xlower);
+        WHEN("temperature, pressure, and pH are input parameters")
+        {
+            specs.temperature();
+            specs.pressure();
+            specs.pH();
 
-    // REQUIRE( xlower[system.species().index("CaCO3(s)")] == state0.speciesAmount("CaCO3(s)") );
-    // REQUIRE( xlower[system.species().index("SiO2(s)")]  == state0.speciesAmount("SiO2(s)")  );
+            EquilibriumSetup setup(specs);
 
-    // //-------------------------------------------------------------------------
-    // // Testing EquilibriumProblem::xupper
-    // //-------------------------------------------------------------------------
-    // ArrayXd xupper(dims.Nx);
+            const auto Np = 0;
+            const auto Nq = 1;
 
-    // problem.xupper(state0, xupper);
+            const auto Aex = setup.assembleMatrixAex();
+            const auto Aep = setup.assembleMatrixAep();
 
-    // REQUIRE( xupper[system.species().index("CaCO3(s)")] == state0.speciesAmount("CaCO3(s)") );
-    // REQUIRE( xupper[system.species().index("NaCl(s)")]  == state0.speciesAmount("NaCl(s)")  );
+            const auto Aen = Aex.leftCols(Nn);
+            const auto Aeq = Aex.rightCols(Nq);
+
+            CHECK( Aen == Wn );
+            CHECK( Aeq == Wn.col(system.species().index("H+(aq)")) );
+            CHECK( Aep == zeros(Ne, Np) );
+        }
+
+        WHEN("volume, entropy, and activity[CO2(g)] are input parameters")
+        {
+            specs.volume();
+            specs.entropy();
+            specs.activity("CO2(g)");
+
+            EquilibriumSetup setup(specs);
+
+            const auto Np = 2;
+            const auto Nq = 1;
+
+            const auto Aex = setup.assembleMatrixAex();
+            const auto Aep = setup.assembleMatrixAep();
+
+            const auto Aen = Aex.leftCols(Nn);
+            const auto Aeq = Aex.rightCols(Nq);
+
+            CHECK( Aen == Wn );
+            CHECK( Aeq == Wn.col(system.species().index("CO2(g)")) );
+            CHECK( Aep == zeros(Ne, Np) );
+        }
+
+        WHEN("temperature, pressure, volume, internal energy, pH, and pE are input parameters")
+        {
+            specs.temperature();
+            specs.pressure();
+            specs.volume();
+            specs.internalEnergy();
+            specs.pH();
+            specs.pE();
+            specs.openTo("CO2");
+            specs.openTo("CH4");
+
+            EquilibriumSetup setup(specs);
+
+            const auto Np = 2;
+            const auto Nq = 2;
+
+            const auto Aex = setup.assembleMatrixAex();
+            const auto Aep = setup.assembleMatrixAep();
+
+            const auto Aen = Aex.leftCols(Nn);
+            const auto Aeq = Aex.rightCols(Nq);
+
+            CHECK( Aen == Wn );
+            CHECK( Aeq.col(0) == Wn.col(system.species().index("H+(aq)")) );
+            CHECK( Aeq.col(1) == Wn.col(system.species().index("e-(aq)")) );
+            CHECK( Aep.col(0) == Wn.col(system.species().index("CO2(g)")) );
+            CHECK( Aep.col(1) == Wn.col(system.species().index("CH4(g)")) );
+        }
+    }
+
+    SECTION("Checking vector `be` of the optimization problem")
+    {
+        specs.temperature();
+        specs.pressure();
+        specs.volume();
+        specs.pH();
+        specs.openTo("CO2");
+
+        EquilibriumConditions conditions(specs);
+        conditions.temperature(50.0, "celsius");
+        conditions.pressure(100.0, "bar");
+        conditions.pH(3.0);
+
+        WHEN("component amounts are not provided to EquilibriumConditions object")
+        {
+            EquilibriumSetup setup(specs);
+
+            const auto n = state.speciesAmounts();
+            const auto be_expected = Wn * n.matrix();
+            const auto be_actual = setup.assembleVectorBe(conditions, state);
+
+            INFO("be_expected = " << be_expected);
+            INFO("be_actual   = " << be_actual);
+            CHECK( be_expected.isApprox(be_actual) );
+        }
+
+        WHEN("component amounts are provided to EquilibriumConditions object")
+        {
+            EquilibriumSetup setup(specs);
+
+            const VectorXr be = VectorXr::Random(Ne);
+            conditions.initialComponentAmounts(be);
+
+            const auto be_expected = be;
+            const auto be_actual = setup.assembleVectorBe(conditions, state);
+
+            INFO("be_expected = " << be_expected);
+            INFO("be_actual   = " << be_actual);
+            CHECK( be_expected.isApprox(be_actual) );
+        }
+    }
+
+    SECTION("Checking evalObjectiveValue function")
+    {
+        const auto T = 0.7; // purely numerical value - not physically meaningful!
+        const auto P = 1.3; // purely numerical value - not physically meaningful!
+
+        WHEN("temperature and pressure are given parameters")
+        {
+            EquilibriumSpecs specs(system);
+            specs.temperature();
+            specs.pressure();
+
+            const auto Np = 0; // there are no *p* control variables in the problem
+            const auto Nq = 0; // there are no *q* control variables in the problem
+
+            const auto n = ArrayXr::LinSpaced(Nn, 1.0, Nn);
+            const auto q = ArrayXr{};
+            const auto p = ArrayXr{};
+
+            ArrayXr x(Nn + Nq); // the vector x = (n, q)
+            x << n, q;
+
+            EquilibriumSetup setup(specs);
+
+            Params params;
+            params.set("T", T);
+            params.set("P", P);
+
+            ChemicalProps props(system);
+            props.update(T, P, n);
+
+            const auto RT = universalGasConstant * T;
+
+            const auto u = props.chemicalPotentials();
+
+            const auto G = (n * u).sum();
+
+            const auto tau = setup.options().epsilon * setup.options().logarithm_barrier_factor;
+
+            const auto f  = G/RT - tau * n.log().sum();
+            const VectorXr fn = u/RT - tau/n;
+
+            CHECK( f  == Approx(setup.evalObjectiveValue(x, p, params)) );
+            CHECK( fn.isApprox(setup.evalObjectiveGradX(x, p, params)) );
+
+            CHECK( setup.evalEquationConstraintsGradX(x, p, params).size() == 0 );
+            CHECK( setup.evalEquationConstraintsGradP(x, p, params).size() == 0 );
+        }
+
+        WHEN("temperature and pressure are not given parameters")
+        {
+            EquilibriumSpecs specs(system);
+            specs.volume();
+            specs.internalEnergy();
+            specs.enthalpy();
+            specs.pH();
+            specs.pE();
+            specs.openTo("CO2");
+
+            const auto Np = 3; // p control variables: T, P, and amount of titrant [CO2] from open to CO2 condition
+            const auto Nq = 2; // q control variables: the amount of titrant [H+] from pH constraint, and amount of titrant [e-] from pE constraint
+            const auto Nx = Nn + Nq;
+
+            const auto tHp  = 1.3; // current amount of titrant [H+]
+            const auto tem  = 1.9; // current amount of titrant [e-]
+            const auto tCO2 = 2.7; // current amount of titrant [CO2]
+
+            auto n = ArrayXr::LinSpaced(Nn, 1.0, Nn);
+            auto q = ArrayXr{{tHp, tem}};
+            auto p = ArrayXr{{T, P, tCO2}};
+
+            ArrayXr x(Nn + Nq); // the vector x = (n, q)
+            x << n, q;
+
+            EquilibriumSetup setup(specs);
+
+            Params params;
+            params.set("V", 1.0);
+            params.set("U", 2.0);
+            params.set("H", 3.0);
+            params.set("pH", 4.0);
+            params.set("pE", 5.0);
+
+            ChemicalProps props(system);
+            props.update(T, P, n);
+
+            const auto RT = universalGasConstant * T;
+
+            const auto u = props.chemicalPotentials();
+
+            const auto G = (n * u).sum();
+
+            const auto tau = setup.options().epsilon * setup.options().logarithm_barrier_factor;
+
+            //-------------------------------------------------------------------------------
+            // Check the value of the objective function at current conditions of [n, p, q]
+            //-------------------------------------------------------------------------------
+            const real f = G/RT - tau * n.log().sum();
+            CHECK( f == Approx(setup.evalObjectiveValue(x, p, params)) );
+
+            //------------------------------------------------------------------------------------------------------------
+            // Check the gradient of the objective function at current conditions of [n, p, q] with respect to x = (n, q)
+            //------------------------------------------------------------------------------------------------------------
+            VectorXr fx(Nx);
+            auto fn = fx.head(Nn);
+            auto fq = fx.tail(Nq);
+
+            fn = u/RT - tau/n;
+
+            fq[0] = specs.constraintsChemicalPotentialType()[0].fn(props, params); // the pH constraint
+            fq[1] = specs.constraintsChemicalPotentialType()[1].fn(props, params); // the pE constraint
+
+            CHECK( fx.isApprox(setup.evalObjectiveGradX(x, p, params)) );
+
+            //----------------------------------------------------------------------------------------------------
+            // Check the Jacobian of the gradient of the objective function at current conditions of [n, p, q]
+            //----------------------------------------------------------------------------------------------------
+            auto gfn = [&system, &Nn, &Nx, &tau, &specs, &params](VectorXrConstRef x, VectorXrConstRef p)
+            {
+                ChemicalProps auxprops(system);
+                const auto T = p[0]; // in tested equilibrium specs, p[0] is temperature (this is not necessarily always true!)
+                const auto P = p[1]; // in tested equilibrium specs, p[1] is pressure (this is not necessarily always true!)
+                const auto n = x.head(Nn);
+                auxprops.update(T, P, n);
+
+                const auto u = auxprops.chemicalPotentials();
+                const auto RT = universalGasConstant * T;
+
+                VectorXr g(Nx);
+                auto gn = g.head(Nn);
+                auto gq = g.tail(Nq);
+
+                gn = u/RT - tau/n.array();
+
+                gq[0] = specs.constraintsChemicalPotentialType()[0].fn(auxprops, params); // the pH constraint
+                gq[1] = specs.constraintsChemicalPotentialType()[1].fn(auxprops, params); // the pE constraint
+
+                return g;
+            };
+
+            using autodiff::jacobian;
+            using autodiff::wrt;
+            using autodiff::at;
+
+            const MatrixXd Hxx = jacobian(gfn, wrt(x), at(x, p));
+            const MatrixXd Hxp = jacobian(gfn, wrt(p), at(x, p));
+
+            CHECK( Hxx.isApprox(setup.evalObjectiveHessianX(x, p, params)) );
+            CHECK( Hxp.isApprox(setup.evalObjectiveHessianP(x, p, params)) );
+
+            //-------------------------------------------------------------------------------------------------
+            // Check the value of the constraint functions of equation type at current conditions of [n, p, q]
+            //-------------------------------------------------------------------------------------------------
+            VectorXr v(Np);
+
+            v[0] = specs.constraintsEquationType()[0].fn(props, params); // the volume constraint equation
+            v[1] = specs.constraintsEquationType()[1].fn(props, params); // the internal energy constraint equation
+            v[2] = specs.constraintsEquationType()[2].fn(props, params); // the enthalpy constraint equation
+
+            CHECK( v.isApprox(setup.evalEquationConstraints(x, p, params)) );
+
+            //----------------------------------------------------------------------------------------------------
+            // Check the Jacobian of the constraint functions of equation type at current conditions of [n, p, q]
+            //----------------------------------------------------------------------------------------------------
+            auto vfn = [&system, &Nn, &Np, &specs, &params](VectorXrConstRef x, VectorXrConstRef p)
+            {
+                ChemicalProps auxprops(system);
+                const auto T = p[0]; // in tested equilibrium specs, p[0] is temperature (this is not necessarily always true!)
+                const auto P = p[1]; // in tested equilibrium specs, p[1] is pressure (this is not necessarily always true!)
+                const auto n = x.head(Nn);
+                auxprops.update(T, P, n);
+
+                VectorXr v(Np);
+                v[0] = specs.constraintsEquationType()[0].fn(auxprops, params); // the volume constraint equation
+                v[1] = specs.constraintsEquationType()[1].fn(auxprops, params); // the internal energy constraint equation
+                v[2] = specs.constraintsEquationType()[2].fn(auxprops, params); // the enthalpy constraint equation
+
+                return v;
+            };
+
+            using autodiff::jacobian;
+            using autodiff::wrt;
+            using autodiff::at;
+
+            const MatrixXd Vpx = jacobian(vfn, wrt(x), at(x, p));
+            const MatrixXd Vpp = jacobian(vfn, wrt(p), at(x, p));
+
+            CHECK( Vpx.isApprox(setup.evalEquationConstraintsGradX(x, p, params)) );
+            CHECK( Vpp.isApprox(setup.evalEquationConstraintsGradP(x, p, params)) );
+        }
+    }
 }
