@@ -17,10 +17,6 @@
 
 #pragma once
 
-// Optima includes
-#include <Optima/Problem.hpp>
-#include <Optima/State.hpp>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
@@ -58,6 +54,9 @@ public:
 
     /// Return the dimensions of the variables in the equilibrium problem.
     auto dims() const -> const EquilibriumDims&;
+
+    /// Return the options for the solution of the equilibrium problem.
+    auto options() const -> const EquilibriumOptions&;
 
     // /// Return the objective function to be minimized based on the given equilibrium conditions.
     // /// @param state0 The initial chemical state of the system.

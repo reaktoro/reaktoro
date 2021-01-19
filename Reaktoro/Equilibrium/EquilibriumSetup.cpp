@@ -17,9 +17,6 @@
 
 #include "EquilibriumSetup.hpp"
 
-// Optima includes
-#include <Optima/Problem.hpp>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
@@ -34,6 +31,30 @@
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
 namespace Reaktoro {
+namespace {
+
+/// Return the number of control variables *p* in the equilibrium specifications.
+/// The control variables *p* are temperature, pressure and/or amounts of explicit titrants.
+auto numControlVariablesTypeP(const EquilibriumSpecs& specs) -> Index
+{
+    return specs.numControlVariables() - specs.numTitrantsImplicit();
+}
+
+/// Return the number of control variables *q* in the equilibrium specifications.
+/// The control variables *q* are the amounts of implicit titrants.
+auto numControlVariablesTypeQ(const EquilibriumSpecs& specs) -> Index
+{
+    return specs.numTitrantsImplicit();
+}
+
+/// Return the number of components in the equilibrium specifications.
+/// These are the independent primary species in the equilibrium problem.
+auto numComponents(const EquilibriumSpecs& specs) -> Index
+{
+    return specs.system().elements().size() + 1;
+}
+
+} // namespace
 
 using autodiff::jacobian;
 using autodiff::wrt;
@@ -73,9 +94,9 @@ struct EquilibriumSetup::Impl
     Impl(const EquilibriumSpecs& specs)
     : system(specs.system()), specs(specs), dims(specs), props(specs.system())
     {
-        const auto Nn = dims.Nn;
-        const auto Np = dims.Np;
-        const auto Nq = dims.Nq;
+        const auto Nn = system.species().size();
+        const auto Np = numControlVariablesTypeP(specs);
+        const auto Nq = numControlVariablesTypeQ(specs);
         const auto Nx = Nn + Nq;
 
         n.resize(Nn);
@@ -108,8 +129,8 @@ struct EquilibriumSetup::Impl
     {
         const auto Ne = system.elements().size() + 1;
         const auto Nn = system.species().size();
-        const auto Nq = dims.Nq;
-        const auto Nc = dims.Nc;
+        const auto Nq = numControlVariablesTypeQ(specs);
+        const auto Nc = numComponents(specs);
         const auto Nx = Nn + Nq;
 
         assert(Nc == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
@@ -132,8 +153,8 @@ struct EquilibriumSetup::Impl
     auto assembleMatrixAep() const -> MatrixXd
     {
         const auto Ne = system.elements().size() + 1;
-        const auto Np = dims.Np;
-        const auto Nc = dims.Nc;
+        const auto Np = numControlVariablesTypeP(specs);
+        const auto Nc = numComponents(specs);
 
         assert(Nc == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
 
@@ -154,16 +175,16 @@ struct EquilibriumSetup::Impl
         if(conditions.initialComponentAmounts().size())
             return conditions.initialComponentAmounts();
         const auto Wn = system.formulaMatrix();
-        const auto n0 = state0.speciesAmounts().matrix();
-        VectorXd be = Wn * n0;
+        const auto n0 = state0.speciesAmounts();
+        const auto be = Wn * n0.matrix();
         return be;
     }
 
     /// Assemble the lower bound vector `xlower` in the optimization problem where *x = (n, q)*.
     auto assembleLowerBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd
     {
-        const auto Nn = dims.Nn;
-        const auto Nq = dims.Nq;
+        const auto Nn = system.species().size();
+        const auto Nq = numControlVariablesTypeQ(specs);
         const auto Nx = Nn + Nq;
         VectorXd xlower = constants(Nx, -inf);
         auto nlower = xlower.head(Nn);
@@ -176,8 +197,8 @@ struct EquilibriumSetup::Impl
     /// Assemble the upper bound vector `xupper` in the optimization problem where *x = (n, q)*.
     auto assembleUpperBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd
     {
-        const auto Nn = dims.Nn;
-        const auto Nq = dims.Nq;
+        const auto Nn = system.species().size();
+        const auto Nq = numControlVariablesTypeP(specs);
         const auto Nx = Nn + Nq;
         VectorXd xupper = constants(Nx, inf);
         auto nupper = xupper.head(Nn);
@@ -346,7 +367,8 @@ struct EquilibriumSetup::Impl
         //======================================================================
         // Update chemical properties of the chemical system
         //======================================================================
-        const auto n = x.head(dims.Nn);
+        const auto Nn = system.species().size();
+        const auto n = x.head(Nn);
 
         props.update(T, P, n);
     }
@@ -367,8 +389,8 @@ struct EquilibriumSetup::Impl
     {
         updateChemicalProps(x, p, params);
 
-        const auto Nn = dims.Nn;
-        const auto Nq = dims.Nq;
+        const auto Nn = system.species().size();
+        const auto Nq = numControlVariablesTypeQ(specs);
 
         const auto& T = props.temperature();
         const auto& n = props.speciesAmounts();
@@ -416,7 +438,7 @@ struct EquilibriumSetup::Impl
     {
         updateChemicalProps(x, p, params);
 
-        const auto Np = dims.Np;
+        const auto Np = numControlVariablesTypeP(specs);
 
         const auto& econstraints = specs.constraintsEquationType();
 
@@ -474,6 +496,11 @@ auto EquilibriumSetup::setOptions(const EquilibriumOptions& opts) -> void
 auto EquilibriumSetup::dims() const -> const EquilibriumDims&
 {
     return pimpl->dims;
+}
+
+auto EquilibriumSetup::options() const -> const EquilibriumOptions&
+{
+    return pimpl->options;
 }
 
 auto EquilibriumSetup::assembleMatrixAex() const -> MatrixXd
