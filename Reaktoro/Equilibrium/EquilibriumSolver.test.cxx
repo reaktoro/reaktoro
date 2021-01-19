@@ -92,7 +92,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations <= 15 );
+        CHECK( result.optima.iterations == 14 );
     }
 
     WHEN("there is only pure water with allowed extremely tiny species amounts")
@@ -117,7 +117,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations <= 29 );
+        CHECK( result.optima.iterations == 28 );
     }
 
     WHEN("there is only pure water but there are other elements besides H and O with zero amounts")
@@ -138,7 +138,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations <= 15 );
+        CHECK( result.optima.iterations == 14 );
     }
 
     WHEN("there is a more complicated aqueous solution")
@@ -164,7 +164,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations <= 28 );
+        CHECK( result.optima.iterations == 27 );
     }
 
     WHEN("there is an aqueous solution and a gaseous solution")
@@ -191,7 +191,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations <= 29 );
+        CHECK( result.optima.iterations == 28 );
     }
 
     WHEN("there is an aqueous solution, gaseous solution, several minerals")
@@ -219,6 +219,6 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations <= 28 );
+        CHECK( result.optima.iterations == 28 );
     }
 }
