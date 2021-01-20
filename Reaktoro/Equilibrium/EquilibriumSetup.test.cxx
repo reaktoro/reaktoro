@@ -25,6 +25,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSetup.hpp>
 using namespace Reaktoro;
 
@@ -33,6 +34,8 @@ namespace test { extern auto createChemicalSystem() -> ChemicalSystem; }
 TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 {
     ChemicalSystem system = test::createChemicalSystem();
+
+    const auto idx = [&](auto speciesname) { return system.species().index(speciesname); };
 
     const auto Wn = system.formulaMatrix();
     const auto Ne = Wn.rows();
@@ -49,8 +52,6 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
     state.setSpeciesAmount("CO2(g)", 1.0, "mol");
     state.setSpeciesAmount("O2(g)", 0.1, "mol");
     state.setSpeciesAmount("CaCO3(s)", 0.2, "mol");
-
-    // const auto n = state.speciesAmounts().matrix();
 
     SECTION("Checking matrices `Aex` and `Aep` of the optimization problem")
     {
@@ -213,6 +214,88 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             INFO("be_expected = " << be_expected);
             INFO("be_actual   = " << be_actual);
             CHECK( be_expected.isApprox(be_actual) );
+        }
+    }
+
+    SECTION("Checking functions to set/get options")
+    {
+        EquilibriumSetup setup(specs);
+
+        EquilibriumOptions options;
+
+        CHECK( setup.options().epsilon == options.epsilon );
+
+        options.epsilon = 1.0e-12;
+        setup.setOptions(options);
+
+        CHECK( setup.options().epsilon == options.epsilon );
+    }
+
+    SECTION("Checking functions to evaluate lower and upper bounds of the variables")
+    {
+        EquilibriumOptions options;
+        options.epsilon = 1.0e-10;
+
+        EquilibriumRestrictions restrictions(system);
+
+        WHEN("no restrictions are actually imposed and there are no q control variables")
+        {
+            EquilibriumSetup setup(specs);
+
+            const auto xlower = setup.assembleLowerBoundsVector(restrictions, state);
+            const auto xupper = setup.assembleLowerBoundsVector(restrictions, state);
+
+            CHECK( xlower.size() == Ne );
+            CHECK( xupper.size() == Ne );
+
+            CHECK( (xlower.array() == options.epsilon).all() );
+            CHECK( (xupper.array() == inf).all() );
+        }
+
+        WHEN("restrictions are imposed and there are ")
+        {
+            specs.pH(); // this adds one q control variable for the amount of titrant H+
+            specs.pE(); // this adds one q control variable for the amount of titrant e-
+
+            const auto Nq = 2; // the number of q control variables
+
+            EquilibriumSetup setup(specs);
+
+            restrictions.cannotDecrease("Na+(aq)");
+            restrictions.cannotDecreaseBelow("O2(g)", 1.0, "umol");
+            restrictions.cannotDecreaseBelow("Cl-(aq)", 3.0, "umol");
+            restrictions.cannotDecreaseBelow("H+(aq)", 1e-50, "mol");
+
+            restrictions.cannotReact("CaCO3(s)");
+            restrictions.cannotIncrease("CO2(g)");
+            restrictions.cannotIncreaseAbove("O2(g)", 2.0, "mmol");
+            restrictions.cannotIncreaseAbove("OH-(aq)", 1e-60, "mol");
+
+            const auto xlower = setup.assembleLowerBoundsVector(restrictions, state);
+            const auto xupper = setup.assembleLowerBoundsVector(restrictions, state);
+
+            CHECK( xlower.size() == Ne + Nq );
+            CHECK( xupper.size() == Ne + Nq );
+
+            CHECK( xlower[idx("CaCO3(s)")] == state.speciesAmount("CaCO3(s)") );
+            CHECK( xlower[idx("Na+(aq)")] == state.speciesAmount("Na+(aq)") );
+            CHECK( xlower[idx("O2(g)")] == 1.0e-6 );
+            CHECK( xlower[idx("Cl-(aq)")] == 3.0e-6 );
+            CHECK( xlower[idx("H+(aq)")] == options.epsilon ); // should not be 1e-50, which is less than options.epsilon = 1e-10
+
+            CHECK( xupper[idx("CaCO3(s)")] == state.speciesAmount("CaCO3(s)") );
+            CHECK( xupper[idx("CO2(g)")] == state.speciesAmount("CO2(g)") );
+            CHECK( xupper[idx("O2(g)")] == 0.002 );
+            CHECK( xupper[idx("OH-(aq)")] == options.epsilon ); // should not be 1e-60, which is less than options.epsilon = 1e-10
+
+            CHECK( (xlower.array() > options.epsilon).count() == 4 ); // CaCO3(s), Na+(aq), O2(g), Cl-(aq)
+            CHECK( (xupper.array() < inf).count() == 3 ); // CaCO3(s), CO2(g), O2(g)
+
+            CHECK( (xlower.tail(Nq).array() < 0.0).all() ); // lower bounds of q variables are -inf
+            CHECK( (xupper.tail(Nq).array() > 0.0).all() ); // upper bounds of q variables are -inf
+
+            CHECK( xlower.tail(Nq).allFinite() == false ); // lower bounds of q variables are -inf
+            CHECK( xupper.tail(Nq).allFinite() == false ); // upper bounds of q variables are -inf
         }
     }
 
@@ -405,10 +488,5 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             CHECK( Vpx.isApprox(setup.evalEquationConstraintsGradX(x, p, params)) );
             CHECK( Vpp.isApprox(setup.evalEquationConstraintsGradP(x, p, params)) );
         }
-    }
-
-    SECTION("Checking functions to evaluate lower and upper bounds of the variables")
-    {
-        // TODO: Implement tests for functions to evaluate lower and upper bounds of the variables in EquilibriumSetup.
     }
 }

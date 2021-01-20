@@ -58,20 +58,6 @@ public:
     /// Return the options for the solution of the equilibrium problem.
     auto options() const -> const EquilibriumOptions&;
 
-    // /// Return the objective function to be minimized based on the given equilibrium conditions.
-    // /// @param state0 The initial chemical state of the system.
-    // auto objective(const ChemicalState& state0) const -> EquilibriumObjective;
-
-    // /// Set the lower bounds of the species amounts based on the given equilibrium conditions.
-    // /// @param state0 The initial chemical state of the system.
-    // /// @param res The array where the lower bounds are set.
-    // auto xlower(const ChemicalState& state0, ArrayXdRef res) const -> void;
-
-    // /// Set the upper bounds of the species amounts based on the given equilibrium conditions.
-    // /// @param state0 The initial chemical state of the system.
-    // /// @param res The array where the upper bounds are set.
-    // auto xupper(const ChemicalState& state0, ArrayXdRef res) const -> void;
-
     /// Assemble the coefficient matrix `Aex` in the optimization problem.
     auto assembleMatrixAex() const -> MatrixXd;
 
