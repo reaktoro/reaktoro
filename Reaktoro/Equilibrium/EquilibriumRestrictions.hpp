@@ -78,44 +78,44 @@ public:
     /// @param unit The unit of the lower bound value (must be convertible to mol or kg).
     auto cannotDecreaseBelow(String species, double value, String unit="mol") -> void;
 
-    /// Allow the amount of a species to change during the chemical equilibrium calculation.
-    /// @param ispecies The index of the species whose amount is allowed to change.
-    auto canReact(Index ispecies) -> void;
+    /// Remove any previously set increase/decrease restriction on the amount of a species.
+    /// @param ispecies The index of the species whose amount is now allowed to change without bounds.
+    auto canReactFreely(Index ispecies) -> void;
 
-    /// Allow the amount of a species to change during the chemical equilibrium calculation.
-    /// @param species The name of the species whose amount is allowed to change.
-    auto canReact(String species) -> void;
+    /// Remove any previously set increase/decrease restriction on the amount of a species.
+    /// @param species The name of the species whose amount is now allowed to change without bounds.
+    auto canReactFreely(String species) -> void;
 
-    /// Allow the amount of a species to increase during the chemical equilibrium calculation.
-    /// @param ispecies The index of the species whose amount is allowed to increase.
-    auto canIncrease(Index ispecies) -> void;
+    /// Remove any previously set increase restriction on the amount of a species.
+    /// @param ispecies The index of the species whose amount is now allowed to increase without bounds.
+    auto canIncreaseFreely(Index ispecies) -> void;
 
-    /// Allow the amount of a species to increase during the chemical equilibrium calculation.
-    /// @param species The name of the species whose amount is allowed to increase.
-    auto canIncrease(String species) -> void;
+    /// Remove any previously set increase restriction on the amount of a species.
+    /// @param species The name of the species whose amount is now allowed to increase without bounds.
+    auto canIncreaseFreely(String species) -> void;
 
-    /// Allow the amount of a species to decrease during the chemical equilibrium calculation.
-    /// @param ispecies The index of the species whose amount is allowed to decrease.
-    auto canDecrease(Index ispecies) -> void;
+    /// Remove any previously set decrease restriction on the amount of a species.
+    /// @param ispecies The index of the species whose amount is now allowed to decrease without bounds.
+    auto canDecreaseFreely(Index ispecies) -> void;
 
-    /// Allow the amount of a species to decrease during the chemical equilibrium calculation.
-    /// @param species The name of the species whose amount is allowed to decrease.
-    auto canDecrease(String species) -> void;
+    /// Remove any previously set decrease restriction on the amount of a species.
+    /// @param species The name of the species whose amount is now allowed to decrease without bounds.
+    auto canDecreaseFreely(String species) -> void;
 
     /// Return the chemical system associated with the equilibrium conditions.
     auto system() const -> const ChemicalSystem&;
 
     /// Return the indices of the species whose amounts cannot increase.
-    auto indicesSpeciesCannotIncrease() const -> Set<Index> const&;
+    auto speciesCannotIncrease() const -> Set<Index> const&;
 
     /// Return the indices of the species whose amounts cannot decrease.
-    auto indicesSpeciesCannotDecrease() const -> Set<Index> const&;
+    auto speciesCannotDecrease() const -> Set<Index> const&;
 
     /// Return the indices of the species whose amounts cannot increase above a given value.
-    auto indicesSpeciesCannotIncreaseAbove() const -> Map<Index, double> const&;
+    auto speciesCannotIncreaseAbove() const -> Map<Index, double> const&;
 
     /// Return the indices of the species whose amounts cannot decrease below a given value.
-    auto indicesSpeciesCannotDecreaseBelow() const -> Map<Index, double> const&;
+    auto speciesCannotDecreaseBelow() const -> Map<Index, double> const&;
 
 private:
     /// The chemical system associated with the equilibrium restrictions.
