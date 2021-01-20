@@ -32,6 +32,7 @@ TEST_CASE("Testing EquilibriumRestrictions", "[EquilibriumRestrictions]")
 
     EquilibriumRestrictions restrictions(system);
 
+    // Check when reactivity restrictions are set for some species
     restrictions.cannotReact("SiO2(s)");
 
     restrictions.cannotIncrease("CaCO3(s)");
@@ -64,12 +65,14 @@ TEST_CASE("Testing EquilibriumRestrictions", "[EquilibriumRestrictions]")
     CHECK( restrictions.speciesCannotDecreaseBelow().at(idx("NaCl(s)")) == Approx(0.1e-3) );
     CHECK( restrictions.speciesCannotDecreaseBelow().at(idx("HCl(aq)")) == Approx(0.1e-6) );
 
+    // Check when previously set restrictions are updated
     restrictions.cannotIncreaseAbove("HCl(aq)", 100.0, "mol");
     restrictions.cannotDecreaseBelow("HCl(aq)", 1.0e-6, "mol");
 
     CHECK( restrictions.speciesCannotIncreaseAbove().at(idx("HCl(aq)")) == Approx(100.0) ); // check the previous change in bounds of HCl(aq) is correct
     CHECK( restrictions.speciesCannotDecreaseBelow().at(idx("HCl(aq)")) == Approx(1.0e-6) ); // check the previous change in bounds of HCl(aq) is correct
 
+    // Check when all previously set restrictions are lifted one by one
     restrictions.canReactFreely("SiO2(s)");
 
     restrictions.canIncreaseFreely("CaCO3(s)");
@@ -82,11 +85,37 @@ TEST_CASE("Testing EquilibriumRestrictions", "[EquilibriumRestrictions]")
     restrictions.canDecreaseFreely("NaCl(s)");
     restrictions.canDecreaseFreely("HCl(aq)");
 
-    CHECK_NOTHROW( restrictions.canIncreaseFreely("H2O(aq)") ); // no bounds were set for H2O(aq) before, so ensure this call does not raise any error
-    CHECK_NOTHROW( restrictions.canDecreaseFreely("H2O(aq)") ); // no bounds were set for H2O(aq) before, so ensure this call does not raise any error
-
     CHECK( restrictions.speciesCannotIncrease().size() == 0 );
     CHECK( restrictions.speciesCannotIncreaseAbove().size() == 0 );
     CHECK( restrictions.speciesCannotDecrease().size() == 0 );
     CHECK( restrictions.speciesCannotDecreaseBelow().size() == 0 );
+
+    // Check when a restriction is lifted for a species without any previous set restriction
+    CHECK_NOTHROW( restrictions.canIncreaseFreely("H2O(aq)") ); // no bounds were set for H2O(aq) before, so ensure this call does not raise any error
+    CHECK_NOTHROW( restrictions.canDecreaseFreely("H2O(aq)") ); // no bounds were set for H2O(aq) before, so ensure this call does not raise any error
+
+    // Check when one restriction overwrites another
+    restrictions.cannotIncreaseAbove("HCl(aq)", 1.0, "mol");
+    restrictions.cannotIncrease("HCl(aq)");
+
+    CHECK( restrictions.speciesCannotIncreaseAbove().size() == 0 );
+    CHECK( restrictions.speciesCannotIncrease().size() == 1 );
+
+    restrictions.cannotIncrease("HCl(aq)");
+    restrictions.cannotIncreaseAbove("HCl(aq)", 1.0, "mol");
+
+    CHECK( restrictions.speciesCannotIncreaseAbove().size() == 1 );
+    CHECK( restrictions.speciesCannotIncrease().size() == 0 );
+
+    restrictions.cannotDecreaseBelow("HCl(aq)", 1.0, "mol");
+    restrictions.cannotDecrease("HCl(aq)");
+
+    CHECK( restrictions.speciesCannotDecreaseBelow().size() == 0 );
+    CHECK( restrictions.speciesCannotDecrease().size() == 1 );
+
+    restrictions.cannotDecrease("HCl(aq)");
+    restrictions.cannotDecreaseBelow("HCl(aq)", 1.0, "mol");
+
+    CHECK( restrictions.speciesCannotDecreaseBelow().size() == 1 );
+    CHECK( restrictions.speciesCannotDecrease().size() == 0 );
 }
