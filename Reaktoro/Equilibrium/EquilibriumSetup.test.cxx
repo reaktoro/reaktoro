@@ -219,6 +219,10 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
     SECTION("Checking functions to set/get options")
     {
+        EquilibriumSpecs specs(system);
+        specs.temperature();
+        specs.pressure();
+
         EquilibriumSetup setup(specs);
 
         EquilibriumOptions options;
@@ -240,13 +244,18 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
         WHEN("no restrictions are actually imposed and there are no q control variables")
         {
+            EquilibriumSpecs specs(system);
+            specs.temperature();
+            specs.pressure();
+
             EquilibriumSetup setup(specs);
+            setup.setOptions(options);
 
             const auto xlower = setup.assembleLowerBoundsVector(restrictions, state);
-            const auto xupper = setup.assembleLowerBoundsVector(restrictions, state);
+            const auto xupper = setup.assembleUpperBoundsVector(restrictions, state);
 
-            CHECK( xlower.size() == Ne );
-            CHECK( xupper.size() == Ne );
+            CHECK( xlower.size() == Nn );
+            CHECK( xupper.size() == Nn );
 
             CHECK( (xlower.array() == options.epsilon).all() );
             CHECK( (xupper.array() == inf).all() );
@@ -254,12 +263,16 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
         WHEN("restrictions are imposed and there are ")
         {
+            EquilibriumSpecs specs(system);
+            specs.temperature();
+            specs.pressure();
             specs.pH(); // this adds one q control variable for the amount of titrant H+
             specs.pE(); // this adds one q control variable for the amount of titrant e-
 
             const auto Nq = 2; // the number of q control variables
 
             EquilibriumSetup setup(specs);
+            setup.setOptions(options);
 
             restrictions.cannotDecrease("Na+(aq)");
             restrictions.cannotDecreaseBelow("O2(g)", 1.0, "umol");
@@ -272,10 +285,10 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             restrictions.cannotIncreaseAbove("OH-(aq)", 1e-60, "mol");
 
             const auto xlower = setup.assembleLowerBoundsVector(restrictions, state);
-            const auto xupper = setup.assembleLowerBoundsVector(restrictions, state);
+            const auto xupper = setup.assembleUpperBoundsVector(restrictions, state);
 
-            CHECK( xlower.size() == Ne + Nq );
-            CHECK( xupper.size() == Ne + Nq );
+            CHECK( xlower.size() == Nn + Nq );
+            CHECK( xupper.size() == Nn + Nq );
 
             CHECK( xlower[idx("CaCO3(s)")] == state.speciesAmount("CaCO3(s)") );
             CHECK( xlower[idx("Na+(aq)")] == state.speciesAmount("Na+(aq)") );
@@ -289,7 +302,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             CHECK( xupper[idx("OH-(aq)")] == options.epsilon ); // should not be 1e-60, which is less than options.epsilon = 1e-10
 
             CHECK( (xlower.array() > options.epsilon).count() == 4 ); // CaCO3(s), Na+(aq), O2(g), Cl-(aq)
-            CHECK( (xupper.array() < inf).count() == 3 ); // CaCO3(s), CO2(g), O2(g)
+            CHECK( (xupper.array() < inf).count() == 4 ); // CaCO3(s), CO2(g), O2(g), OH-(aq)
 
             CHECK( (xlower.tail(Nq).array() < 0.0).all() ); // lower bounds of q variables are -inf
             CHECK( (xupper.tail(Nq).array() > 0.0).all() ); // upper bounds of q variables are -inf
@@ -407,8 +420,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             fn = u/RT - tau/n;
 
-            fq[0] = specs.constraintsChemicalPotentialType()[0].fn(props, params); // the pH constraint
-            fq[1] = specs.constraintsChemicalPotentialType()[1].fn(props, params); // the pE constraint
+            fq[0] = specs.constraintsChemicalPotentialType()[0].fn(props, params)/RT; // the pH constraint
+            fq[1] = specs.constraintsChemicalPotentialType()[1].fn(props, params)/RT; // the pE constraint
 
             CHECK( fx.isApprox(setup.evalObjectiveGradX(x, p, params)) );
 
@@ -432,8 +445,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
                 gn = u/RT - tau/n.array();
 
-                gq[0] = specs.constraintsChemicalPotentialType()[0].fn(auxprops, params); // the pH constraint
-                gq[1] = specs.constraintsChemicalPotentialType()[1].fn(auxprops, params); // the pE constraint
+                gq[0] = specs.constraintsChemicalPotentialType()[0].fn(auxprops, params)/RT; // the pH constraint
+                gq[1] = specs.constraintsChemicalPotentialType()[1].fn(auxprops, params)/RT; // the pE constraint
 
                 return g;
             };

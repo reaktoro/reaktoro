@@ -139,21 +139,22 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::phases()
     //-------------------------------------------------------------------------
-    CHECK( system.phases().size() == 5 );
+    CHECK( system.phases().size() == 6 );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::phase(i)
     //-------------------------------------------------------------------------
     CHECK( system.phase(0).name() == "AqueousPhase" );
     CHECK( system.phase(1).name() == "GaseousPhase" );
-    CHECK( system.phase(2).name() == "Halite"          );
-    CHECK( system.phase(3).name() == "Calcite"         );
-    CHECK( system.phase(4).name() == "Quartz"          );
+    CHECK( system.phase(2).name() == "Halite"       );
+    CHECK( system.phase(3).name() == "Calcite"      );
+    CHECK( system.phase(4).name() == "Magnesite"    );
+    CHECK( system.phase(5).name() == "Quartz"       );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::species()
     //-------------------------------------------------------------------------
-    CHECK( system.species().size() == 27 );
+    CHECK( system.species().size() == 29 );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::species(i)
@@ -176,15 +177,17 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     CHECK( system.species(15).name() == "CaCl2(aq)" );
     CHECK( system.species(16).name() == "MgCl2(aq)" );
     CHECK( system.species(17).name() == "SiO2(aq)"  );
-    CHECK( system.species(18).name() == "CO2(g)"    );
-    CHECK( system.species(19).name() == "O2(g)"     );
-    CHECK( system.species(20).name() == "H2(g)"     );
-    CHECK( system.species(21).name() == "H2O(g)"    );
-    CHECK( system.species(22).name() == "CH4(g)"    );
-    CHECK( system.species(23).name() == "CO(g)"     );
-    CHECK( system.species(24).name() == "NaCl(s)"   );
-    CHECK( system.species(25).name() == "CaCO3(s)"  );
-    CHECK( system.species(26).name() == "SiO2(s)"   );
+    CHECK( system.species(18).name() == "e-(aq)"    );
+    CHECK( system.species(19).name() == "CO2(g)"    );
+    CHECK( system.species(20).name() == "O2(g)"     );
+    CHECK( system.species(21).name() == "H2(g)"     );
+    CHECK( system.species(22).name() == "H2O(g)"    );
+    CHECK( system.species(23).name() == "CH4(g)"    );
+    CHECK( system.species(24).name() == "CO(g)"     );
+    CHECK( system.species(25).name() == "NaCl(s)"   );
+    CHECK( system.species(26).name() == "CaCO3(s)"  );
+    CHECK( system.species(27).name() == "MgCO3(s)"  );
+    CHECK( system.species(28).name() == "SiO2(s)"   );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::elements()
@@ -229,6 +232,7 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
         { 0,  0,  0,  0,  0,  0,  2,  1,  0 }, // CaCl2
         { 0,  0,  0,  0,  1,  0,  2,  0,  0 }, // MgCl2
         { 0,  0,  2,  0,  0,  1,  0,  0,  0 }, // SiO2
+        { 0,  0,  0,  0,  0,  0,  0,  0, -1 }, // e-
         { 0,  1,  2,  0,  0,  0,  0,  0,  0 }, // CO2(g)
         { 0,  0,  2,  0,  0,  0,  0,  0,  0 }, // O2(g)
         { 2,  0,  0,  0,  0,  0,  0,  0,  0 }, // H2(g)
@@ -237,6 +241,7 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
         { 0,  1,  1,  0,  0,  0,  0,  0,  0 }, // CO(g)
         { 0,  0,  0,  1,  0,  0,  1,  0,  0 }, // NaCl(s)
         { 0,  1,  3,  0,  0,  0,  0,  1,  0 }, // CaCO3(s)
+        { 0,  1,  3,  0,  1,  0,  0,  0,  0 }, // MgCO3(s)
         { 0,  0,  2,  0,  0,  1,  0,  0,  0 }  // SiO2(s)
     };
 
