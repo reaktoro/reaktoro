@@ -58,6 +58,11 @@ public:
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     auto solve(ChemicalState& state) -> EquilibriumResult;
 
+    /// Solve an equilibrium problem with given chemical state in disequilibrium.
+    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
+    /// @param restrictions The restrictions on the reactivity amounts of the species
+    auto solve(ChemicalState& state, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
+
     /// Solve an equilibrium problem with given chemical state in disequilibrium and equilibrium conditions.
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param conditions The conditions to be attained at chemical equilibrium

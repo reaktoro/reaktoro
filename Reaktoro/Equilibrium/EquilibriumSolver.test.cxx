@@ -26,6 +26,7 @@
 #include <Reaktoro/Core/Phases.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
@@ -210,17 +211,38 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         state.setSpeciesAmount("H2O"   , 55.0 , "mol");
         state.setSpeciesAmount("NaCl"  , 0.01 , "mol");
         state.setSpeciesAmount("CO2"   , 10.0 , "mol");
-        state.setSpeciesAmount("CaCO3" , 0.01 , "mol");
-        state.setSpeciesAmount("MgCO3" , 0.02 , "mol");
+        state.setSpeciesAmount("CaCO3" , 0.10 , "mol");
+        state.setSpeciesAmount("MgCO3" , 0.20 , "mol");
         state.setSpeciesAmount("SiO2"  , 0.01 , "mol");
+        state.setSpeciesAmount("Halite", 0.03 , "mol");
 
         EquilibriumSolver solver(system);
         solver.setOptions(options);
 
-        auto result = solver.solve(state);
+        WHEN("reactivity restrictions are not imposed")
+        {
+            auto result = solver.solve(state);
 
-        CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations == 28 );
+            CHECK( result.optima.succeeded );
+            CHECK( result.optima.iterations == 30 );
+        }
+
+        WHEN("reactivity restrictions are imposed")
+        {
+            EquilibriumRestrictions restrictions(system);
+            restrictions.cannotIncreaseAbove("Quartz", 0.007, "mol"); // Quartz will precipitate out of 0.01 mol of SiO2(aq) but this will limit to 0.007 mol instead of 0.00973917 mol
+            restrictions.cannotDecreaseBelow("MgCO3", 0.10, "mol"); // MgCO3 will be consumed to precipitate Magnesite and Dolomite, but this restriction will prevent it from going below 0.10 moles (without this restriction, it would go to 0.0380553 moles)
+            restrictions.cannotReact("Halite"); // the initial amount of Halite, 0.03 mol, would be completely dissolved if this restriction was not imposed
+
+            auto result = solver.solve(state, restrictions);
+
+            CHECK( result.optima.succeeded );
+            CHECK( result.optima.iterations == 28 );
+
+            CHECK( state.speciesAmount("Quartz") == Approx(0.007) );
+            CHECK( state.speciesAmount("MgCO3")  == Approx(0.1) );
+            CHECK( state.speciesAmount("Halite") == Approx(0.03) );
+        }
     }
 
     SECTION("there is only pure water with given pH")

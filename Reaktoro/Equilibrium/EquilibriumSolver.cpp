@@ -209,10 +209,17 @@ struct EquilibriumSolver::Impl
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
     auto solve(ChemicalState& state0) -> EquilibriumResult
     {
+        EquilibriumRestrictions restrictions(system);
+        return solve(state0, restrictions);
+    }
+
+    /// Solve an equilibrium problem with given chemical state in disequilibrium.
+    auto solve(ChemicalState& state0, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
+    {
         EquilibriumConditions conditions(specs);
         conditions.temperature(state0.temperature());
         conditions.pressure(state0.pressure());
-        return solve(state0, conditions);
+        return solve(state0, conditions, restrictions);
     }
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
@@ -267,6 +274,11 @@ auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
 auto EquilibriumSolver::solve(ChemicalState& state) -> EquilibriumResult
 {
     return pimpl->solve(state);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
+{
+    return pimpl->solve(state, restrictions);
 }
 
 auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumConditions& conditions) -> EquilibriumResult
