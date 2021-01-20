@@ -24,10 +24,11 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phases.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
@@ -74,7 +75,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
     options.optima.maxiterations = 100;
     options.optima.convergence.tolerance = 1e-10;
 
-    WHEN("there is only pure water")
+    SECTION("there is only pure water")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O")) );
@@ -92,10 +93,10 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations == 14 );
+        CHECK( result.optima.iterations == 15 );
     }
 
-    WHEN("there is only pure water with allowed extremely tiny species amounts")
+    SECTION("there is only pure water with allowed extremely tiny species amounts")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O")) );
@@ -117,10 +118,10 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations == 28 );
+        CHECK( result.optima.iterations == 29 );
     }
 
-    WHEN("there is only pure water but there are other elements besides H and O with zero amounts")
+    SECTION("there is only pure water but there are other elements besides H and O with zero amounts")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O C Na Cl Ca")) );
@@ -138,10 +139,10 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations == 14 );
+        CHECK( result.optima.iterations == 15 );
     }
 
-    WHEN("there is a more complicated aqueous solution")
+    SECTION("there is a more complicated aqueous solution")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
@@ -164,10 +165,10 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations == 27 );
+        CHECK( result.optima.iterations == 28 );
     }
 
-    WHEN("there is an aqueous solution and a gaseous solution")
+    SECTION("there is an aqueous solution and a gaseous solution")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
@@ -194,7 +195,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         CHECK( result.optima.iterations == 28 );
     }
 
-    WHEN("there is an aqueous solution, gaseous solution, several minerals")
+    SECTION("there is an aqueous solution, gaseous solution, several minerals")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
@@ -220,5 +221,81 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
         CHECK( result.optima.succeeded );
         CHECK( result.optima.iterations == 28 );
+    }
+
+    SECTION("there is only pure water with given pH")
+    {
+        Phases phases(db);
+        phases.add( AqueousPhase(speciate("H O")) );
+
+        ChemicalSystem system(phases);
+
+        ChemicalState state(system);
+        state.setTemperature(T, "celsius");
+        state.setPressure(P, "bar");
+        state.setSpeciesAmount("H2O", 55, "mol");
+
+        EquilibriumSpecs specs(system);
+        specs.temperature();
+        specs.pressure();
+        specs.pH();
+
+        EquilibriumSolver solver(specs);
+        solver.setOptions(options);
+
+        EquilibriumConditions conditions(specs);
+        conditions.temperature(50.0, "celsius");
+        conditions.pressure(80.0, "bar");
+        conditions.pH(3.0);
+
+        auto result = solver.solve(state, conditions);
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations == 17 );
+
+        CHECK( state.temperature() == Approx(50.0 + 273.15) );
+        CHECK( state.pressure() == Approx(80.0 * 1.0e+5) );
+        CHECK( state.speciesAmount("H+") == Approx(0.00099084) );
+    }
+
+    SECTION("there is an aqueous solution with given pH in equilibrium with a gaseous solution")
+    {
+        Phases phases(db);
+        phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
+        phases.add( GaseousPhase(speciate("H O C")) );
+
+        ChemicalSystem system(phases);
+
+        ChemicalState state(system);
+        state.setTemperature(T, "celsius");
+        state.setPressure(P, "bar");
+        state.setSpeciesAmount("H2O"   , 55.0 , "mol");
+        state.setSpeciesAmount("NaCl"  , 0.01 , "mol");
+        state.setSpeciesAmount("CO2"   , 10.0 , "mol");
+        state.setSpeciesAmount("CaCO3" , 0.01 , "mol");
+        state.setSpeciesAmount("MgCO3" , 0.02 , "mol");
+        state.setSpeciesAmount("SiO2"  , 0.01 , "mol");
+
+        EquilibriumSpecs specs(system);
+        specs.temperature();
+        specs.pressure();
+        specs.pH();
+
+        EquilibriumSolver solver(specs);
+        solver.setOptions(options);
+
+        EquilibriumConditions conditions(specs);
+        conditions.temperature(50.0, "celsius");
+        conditions.pressure(80.0, "bar");
+        conditions.pH(3.0);
+
+        auto result = solver.solve(state, conditions);
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations == 28 );
+
+        CHECK( state.temperature() == Approx(50.0 + 273.15) );
+        CHECK( state.pressure() == Approx(80.0 * 1.0e+5) );
+        CHECK( state.speciesAmount("H+") == Approx(0.00099125) );
     }
 }

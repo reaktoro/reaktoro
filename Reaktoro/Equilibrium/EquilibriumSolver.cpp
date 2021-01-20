@@ -98,7 +98,7 @@ struct EquilibriumSolver::Impl
         // Update the options of the equilibrium calculation
         options = opts;
 
-        // Pass along to the equilibrium problem the options used for the calculation
+        // Pass along the options used for the calculation to EquilibriumSetup object
         setup.setOptions(options);
 
         // Ensure some options have proper values
@@ -113,10 +113,17 @@ struct EquilibriumSolver::Impl
             // Define some auxiliary references to the variables names
             auto& xnames = options.optima.output.xnames;
 
-            // Initialize the names of the primal variables `n`
+            // Initialize the names of the variables corresponding to the species
             for(auto species : system.species())
                 xnames.push_back(species.name());
+
+            // Initialize the names of the variables corresponding to the implicit titrants
+            for(auto titrant : specs.namesTitrantsImplicit())
+                xnames.push_back(titrant);
         }
+
+        // Pass along the options used for the calculation to Optima::Solver object
+        optsolver.setOptions(options.optima);
     }
 
     /// Update the optimization problem before a new equilibrium calculation.
@@ -187,66 +194,17 @@ struct EquilibriumSolver::Impl
     }
 
     /// Update the initial state variables before the new equilibrium calculation.
-    auto updateChemicalState(ChemicalState& state)
+    auto updateChemicalState(ChemicalState& state, const EquilibriumConditions& conditions)
     {
+        const Params& params = conditions.params();
+        const VectorXdConstRef p = optstate.p;
+        const auto T = setup.extractTemperature(p, params);
+        const auto P = setup.extractPressure(p, params);
+        state.setTemperature(T);
+        state.setPressure(P);
         state.setSpeciesAmounts(optstate.x.head(dims.Nn));
         state.equilibrium().setOptimaState(optstate);
     }
-
-    // /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    // auto solve(ChemicalState& state0) -> EquilibriumResult
-    // {
-    //     EquilibriumConditions conditions(system);
-    //     conditions.temperature(state0.temperature());
-    //     conditions.pressure(state0.pressure());
-    //     return solve(state0, conditions);
-
-    //     // // The conservation matrix Cn in C = [Cn Cp Cq] corresponding to the
-    //     // // chemical species (not the control variables!)
-    //     // const auto Cn = optproblem.Aex.leftCols(dims.Nn);
-
-    //     // // The initial amounts of the species
-    //     // n0 = state0.speciesAmounts();
-
-    //     // // Compute the amounts of the components that need to be conserved
-    //     // optproblem.be = Cn * n0.matrix();
-
-    //     // // Solve the equilibrium problem
-    //     // return solve(state0, optproblem.be);
-    // }
-
-    // /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    // auto solve(ChemicalState& state0, ArrayXdConstRef b0) -> EquilibriumResult
-    // {
-    //     EquilibriumConditions conditions(system);
-    //     conditions.temperature(state0.temperature());
-    //     conditions.pressure(state0.pressure());
-    //     return solve(state0, conditions, b0);
-    // }
-
-    // /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    // auto solve(ChemicalState& state0, const EquilibriumConditions& conditions) -> EquilibriumResult
-    // {
-    //     const auto A = conditions.conservationMatrix();
-    //     n0 = state0.speciesAmounts();
-    //     optproblem.be = A * n0.matrix();
-    //     return solve(state0, conditions, optproblem.be);
-    // }
-
-    // /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    // auto solve(ChemicalState& state0, const EquilibriumConditions& conditions, ArrayXdConstRef b0) -> EquilibriumResult
-    // {
-    //     EquilibriumResult eqresult;
-
-    //     updateOptProblem(state0, conditions, b0);
-    //     updateOptState(state0);
-
-    //     eqresult.optima = optsolver.solve(optproblem, optstate);
-
-    //     updateChemicalState(state0);
-
-    //     return eqresult;
-    // }
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
     auto solve(ChemicalState& state0) -> EquilibriumResult
@@ -274,7 +232,7 @@ struct EquilibriumSolver::Impl
 
         eqresult.optima = optsolver.solve(optproblem, optstate);
 
-        updateChemicalState(state0);
+        updateChemicalState(state0, conditions);
 
         return eqresult;
     }
