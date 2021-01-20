@@ -106,6 +106,12 @@ auto createChemicalSystem() -> ChemicalSystem
             .withActivityPropsFn(activityPropsSolid)
             .withIdealActivityPropsFn(activityPropsSolid),
         Phase()
+            .withName("Magnesite")
+            .withSpecies({ db.species().get("MgCO3(s)") })
+            .withStateOfMatter(StateOfMatter::Solid)
+            .withActivityPropsFn(activityPropsSolid)
+            .withIdealActivityPropsFn(activityPropsSolid),
+        Phase()
             .withName("Quartz")
             .withSpecies({ db.species().get("SiO2(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
