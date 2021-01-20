@@ -216,7 +216,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
         }
     }
 
-    SECTION("Checking evalObjectiveValue function")
+    SECTION("Checking functions to evaluate objective and constraints")
     {
         const auto T = 0.7; // purely numerical value - not physically meaningful!
         const auto P = 1.3; // purely numerical value - not physically meaningful!
@@ -405,5 +405,10 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             CHECK( Vpx.isApprox(setup.evalEquationConstraintsGradX(x, p, params)) );
             CHECK( Vpp.isApprox(setup.evalEquationConstraintsGradP(x, p, params)) );
         }
+    }
+
+    SECTION("Checking functions to evaluate lower and upper bounds of the variables")
+    {
+        // TODO: Implement tests for functions to evaluate lower and upper bounds of the variables in EquilibriumSetup.
     }
 }

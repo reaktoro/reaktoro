@@ -54,6 +54,40 @@ auto numComponents(const EquilibriumSpecs& specs) -> Index
     return specs.system().elements().size() + 1;
 }
 
+/// Create the lambda function that extracts temperature value from either `p` or `params`.
+/// When the specifications of the equilibrium solver (`specs`) indicates that
+/// temperature in unknown, then temperature should be extracted from vector `p`.
+/// Otherwise, temperature is known and available in the Params object `params`.
+/// @param specs The specifications of the equilibrium solver
+auto createTemperatureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrConstRef, const Params&)>
+{
+    const auto unknownT = specs.isTemperatureUnknown();
+
+    if(unknownT)
+        return [](VectorXrConstRef p, const Params& params) { return p[0]; };
+
+    return [](VectorXrConstRef p, const Params& params) { return params.get("T").value(); };
+}
+
+/// Create the lambda function that extracts pressure value from either `p` or `params`.
+/// When the specifications of the equilibrium solver (`specs`) indicates that
+/// pressure in unknown, then pressure should be extracted from vector `p`.
+/// Otherwise, pressure is known and available in the Params object `params`.
+/// @param specs The specifications of the equilibrium solver
+auto createPressureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrConstRef, const Params&)>
+{
+    const auto unknownT = specs.isTemperatureUnknown();
+    const auto unknownP = specs.isPressureUnknown();
+
+    if(unknownT && unknownP)
+        return [](VectorXrConstRef p, const Params& params) { return p[1]; };
+
+    if(unknownP)
+        return [](VectorXrConstRef p, const Params& params) { return p[0]; };
+
+    return [](VectorXrConstRef p, const Params& params) { return params.get("P").value(); };
+}
+
 } // namespace
 
 using autodiff::jacobian;
@@ -70,6 +104,12 @@ struct EquilibriumSetup::Impl
 
     /// The dimensions of the variables in the equilibrium problem.
     const EquilibriumDims dims;
+
+    /// The temperature getter function for the given equilibrium specifications. @see createTemperatureGetterFn
+    const Fn<real(VectorXrConstRef, const Params&)> getT;
+
+    /// The pressure getter function for the given equilibrium specifications. @see createPressureGetterFn
+    const Fn<real(VectorXrConstRef, const Params&)> getP;
 
     /// The auxiliary chemical properties of the system.
     ChemicalProps props;
@@ -92,7 +132,8 @@ struct EquilibriumSetup::Impl
 
     /// Construct an EquilibriumSetup::Impl object
     Impl(const EquilibriumSpecs& specs)
-    : system(specs.system()), specs(specs), dims(specs), props(specs.system())
+    : system(specs.system()), specs(specs), dims(specs), props(specs.system()),
+      getT(createTemperatureGetterFn(specs)), getP(createPressureGetterFn(specs))
     {
         const auto Nn = system.species().size();
         const auto Np = numControlVariablesTypeP(specs);
@@ -189,6 +230,7 @@ struct EquilibriumSetup::Impl
         VectorXd xlower = constants(Nx, -inf);
         auto nlower = xlower.head(Nn);
         const auto n0 = state0.speciesAmounts();
+        nlower.fill(options.epsilon); // set base lower bounds for the species amounts
         for(auto [i, val] : restrictions.indicesSpeciesCannotDecreaseBelow()) nlower[i] = val;
         for(auto i : restrictions.indicesSpeciesCannotDecrease()) nlower[i] = n0[i]; // this comes after, in case a species cannot strictly decrease
         return xlower;
@@ -198,7 +240,7 @@ struct EquilibriumSetup::Impl
     auto assembleUpperBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd
     {
         const auto Nn = system.species().size();
-        const auto Nq = numControlVariablesTypeP(specs);
+        const auto Nq = numControlVariablesTypeQ(specs);
         const auto Nx = Nn + Nq;
         VectorXd xupper = constants(Nx, inf);
         auto nupper = xupper.head(Nn);
@@ -207,122 +249,6 @@ struct EquilibriumSetup::Impl
         for(auto i : restrictions.indicesSpeciesCannotIncrease()) nupper[i] = n0[i]; // this comes after, in case a species cannot strictly increase
         return xupper;
     }
-
-    // /// Assemble the matrix block S in the conservation matrix C.
-    // auto assembleMatrixS(MatrixXdRef S) const -> void
-    // {
-        // assert(S.rows() == dims.Nir);
-
-        // const auto& inert_reactions = conditions.details().restrictions.reactions_cannot_react;
-
-        // auto fill_matrix_row = [=](const auto& pairs, auto row)
-        // {
-        //     for(auto [ispecies, coeff] : pairs)
-        //         row[ispecies] = coeff;
-        // };
-
-        // auto i = 0;
-        // for(const auto& pairs : inert_reactions)
-        //     fill_matrix_row(pairs, S.row(i++));
-    // }
-
-    // /// Return the objective function to be minimized based on the given equilibrium conditions.
-    // auto objective(const ChemicalState& state0)
-    // {
-    //     // AUXILIARY REFERENCES
-    //     const auto& uconstraints = details.uconstraints;
-    //     const auto& econstraints = details.econstraints;
-    //     const auto& pconstraints = details.pconstraints;
-
-    //     const auto unknownT = specs.isTemperatureUnknown();
-    //     const auto unknownP = specs.isPressureUnknown();
-    //     const auto dims = this->dims;
-
-    //     const auto tau = options.epsilon * options.logarithm_barrier_factor;
-
-    //     // INITIALIZE TEMPERATURE AND PRESSURE IN CASE THEY ARE CONSTANT
-    //     T = state0.temperature();
-    //     P = state0.pressure();
-
-    //     // // INITIALIZE THE VALUES OF PROPERTIES THAT MUST BE PRESERVED
-    //     // for(auto i = 0; i < dims.Npp; ++i)
-    //     //     pp0[i] = pconstraints[i].fn(state0.props()); // property value from initial chemical properties (props0)
-
-    //     // DEFINE THE CHEMICAL PROPERTIES UPDATE FUNCTION
-    //     auto update_props = [unknownT, unknownP, dims](const VectorXr& npq)
-    //     {
-    //         const auto n = npq.head(dims.Nn);
-    //         const auto p = npq.segment(dims.Nn, dims.Np);
-
-    //         // Update temperature and pressure if they are unknowns
-    //         if(unknownT && unknownP) {
-    //             T = p[0];
-    //             P = p[1];
-    //         } else if(unknownT) {
-    //             T = p[0];
-    //         } else if(unknownP) {
-    //             P = p[0];
-    //         }
-
-    //         props.update(T, P, n);
-    //     };
-
-    //     // CREATE THE OBJECTIVE FUNCTION
-    //     auto objective_f = [=](const VectorXr& npq)
-    //     {
-    //         update_props(npq);
-    //         const auto& n = props.speciesAmounts();
-    //         const auto& u = props.chemicalPotentials();
-    //         const auto RT = universalGasConstant * T;
-    //         const auto barrier = -tau * n.log().sum();
-    //         return (n * u).sum()/RT + barrier;
-    //     };
-
-    //     // CREATE THE OBJECTIVE GRADIENT FUNCTION
-    //     auto objective_g = [=](const VectorXr& npq)
-    //     {
-    //         update_props(npq); // update the chemical properties of the system with updated n, p, q
-
-    //         const auto& n = props.speciesAmounts();
-    //         const auto& u = props.chemicalPotentials();
-    //         const auto RT = universalGasConstant * T;
-
-    //         auto gn = g.head(dims.Nn);        // where we set the chemical potentials of the species
-    //         auto gp = g.segment(dims.Nn, dims.Np); // where we set the residuals of functional conditions
-    //         auto gq = g.tail(dims.Nq);        // where we set the desired chemical potentials of certain substances
-
-    //         auto gpe = gp.head(dims.Npe); // where we set the residuals of the equation conditions
-    //         auto gpp = gp.tail(dims.Npp); // where we set the residuals of the property preservation conditions
-
-    //         gn = u/RT - tau/n; // set the current chemical potentials of species
-
-    //         for(auto i = 0; i < dims.Nq; ++i)
-    //             gq[i] = uconstraints[i].fn(T, P); // set the fixed chemical potentials using current T and P
-
-    //         for(auto i = 0; i < dims.Npe; ++i)
-    //             gpe[i] = econstraints[i].fn(props); // set the residuals of the equation conditions
-
-    //         for(auto i = 0; i < dims.Npp; ++i)
-    //             gpp[i] = pconstraints[i].fn(props) - pp0[i]; // set the residuals of the property preservation conditions
-
-    //         return g;
-    //     };
-
-    //     // CREATE THE OBJECTIVE HESSIAN FUNCTION
-    //     auto objective_H = [=](VectorXr& npq)
-    //     {
-    //         H = autodiff::jacobian(objective_g, autodiff::wrt(npq), autodiff::at(npq));
-    //         return H;
-    //     };
-
-    //     // CONSTRUCT THE OBJECTIVE FUNCTION, ITS GRADIENT AND HESSIAN
-    //     EquilibriumObjective obj;
-    //     obj.f = [=](VectorXdConstRef x) { npq = x; return objective_f(npq); };
-    //     obj.g = [=](VectorXdConstRef x, VectorXdRef res) { npq = x; res = objective_g(npq); };
-    //     obj.H = [=](VectorXdConstRef x, MatrixXdRef res) { npq = x; res = objective_H(npq); };
-
-    //     return obj;
-    // }
 
     /// Update the chemical properties of the system.
     auto updateChemicalProps(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> void
@@ -333,36 +259,11 @@ struct EquilibriumSetup::Impl
         // If temperature or pressure are unknowns, get their current values
         // from vector p. If not, they have been given in the params object.
         //======================================================================
-        const auto unknownT = specs.isTemperatureUnknown();
-        const auto unknownP = specs.isPressureUnknown();
+        T = getT(p, params);
+        P = getP(p, params);
 
-        // If  either from valuesif they are unknowns
-        if(unknownT && unknownP)
-        {
-            assert(p.size() >= 2);
-            T = p[0];
-            P = p[1];
-        }
-        else if(unknownT)
-        {
-            assert(p.size() >= 1);
-            T = p[0];
-            P = params.get("P").value();
-        }
-        else if(unknownP)
-        {
-            assert(p.size() >= 1);
-            T = params.get("T").value();
-            P = p[0];
-        }
-        else
-        {
-            T = params.get("T").value();
-            P = params.get("P").value();
-        }
-
-        assert(T > 0.0); // check if proper value for T was given in p or params
-        assert(P > 0.0); // check if proper value for P was given in p or params
+        assert(T > 0.0); // check if a proper value for T was given in p or params
+        assert(P > 0.0); // check if a proper value for P was given in p or params
 
         //======================================================================
         // Update chemical properties of the chemical system
@@ -407,7 +308,7 @@ struct EquilibriumSetup::Impl
         const auto& uconstraints = specs.constraintsChemicalPotentialType();
 
         for(auto i = 0; i < Nq; ++i)
-            gq[i] = uconstraints[i].fn(props, params);
+            gq[i] = uconstraints[i].fn(props, params)/RT;
 
         return gx;
     }
@@ -468,6 +369,16 @@ struct EquilibriumSetup::Impl
         };
         Vpp = jacobian(fn, wrt(p), at(x, p, params));
         return Vpp;
+    }
+
+    auto extractTemperature(VectorXrConstRef p, const Params& params) const -> real
+    {
+        return getT(p, params);
+    }
+
+    auto extractPressure(VectorXrConstRef p, const Params& params) const -> real
+    {
+        return getP(p, params);
     }
 };
 
@@ -561,6 +472,16 @@ auto EquilibriumSetup::evalEquationConstraintsGradX(VectorXrConstRef x, VectorXr
 auto EquilibriumSetup::evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
 {
     return pimpl->evalEquationConstraintsGradP(x, p, params);
+}
+
+auto EquilibriumSetup::extractTemperature(VectorXrConstRef p, const Params& params) const -> real
+{
+    return pimpl->extractTemperature(p, params);
+}
+
+auto EquilibriumSetup::extractPressure(VectorXrConstRef p, const Params& params) const -> real
+{
+    return pimpl->extractPressure(p, params);
 }
 
 } // namespace Reaktoro
