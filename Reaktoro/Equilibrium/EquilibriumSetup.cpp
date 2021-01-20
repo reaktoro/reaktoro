@@ -230,9 +230,9 @@ struct EquilibriumSetup::Impl
         VectorXd xlower = constants(Nx, -inf);
         auto nlower = xlower.head(Nn);
         const auto n0 = state0.speciesAmounts();
-        nlower.fill(options.epsilon); // set base lower bounds for the species amounts
-        for(auto [i, val] : restrictions.indicesSpeciesCannotDecreaseBelow()) nlower[i] = val;
-        for(auto i : restrictions.indicesSpeciesCannotDecrease()) nlower[i] = n0[i]; // this comes after, in case a species cannot strictly decrease
+        for(auto [i, val] : restrictions.speciesCannotDecreaseBelow()) nlower[i] = val;
+        for(auto i : restrictions.speciesCannotDecrease()) nlower[i] = n0[i]; // this comes after, in case a species cannot strictly decrease
+        for(auto& val : nlower) val = std::max(val, options.epsilon); // ensure the upper bounds of the species amounts are not below the minimum amount value given in EquilibriumOptions::epsilon. TODO: Issue a warning when lower/upper bound of a species amount is changed to EquilibriumOptions::epsilon.
         return xlower;
     }
 
@@ -245,8 +245,9 @@ struct EquilibriumSetup::Impl
         VectorXd xupper = constants(Nx, inf);
         auto nupper = xupper.head(Nn);
         const auto n0 = state0.speciesAmounts();
-        for(auto [i, val] : restrictions.indicesSpeciesCannotIncreaseAbove()) nupper[i] = val;
-        for(auto i : restrictions.indicesSpeciesCannotIncrease()) nupper[i] = n0[i]; // this comes after, in case a species cannot strictly increase
+        for(auto [i, val] : restrictions.speciesCannotIncreaseAbove()) nupper[i] = val;
+        for(auto i : restrictions.speciesCannotIncrease()) nupper[i] = n0[i]; // this comes after, in case a species cannot strictly increase
+        for(auto& val : nupper) val = std::max(val, options.epsilon); // ensure the upper bounds of the species amounts are not below the minimum amount value given in EquilibriumOptions::epsilon.
         return xupper;
     }
 
