@@ -19,6 +19,9 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
+// Optima includes
+#include <Optima/State.hpp>
+
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -27,6 +30,8 @@ using namespace Reaktoro;
 
 void exportChemicalState(py::module& m)
 {
+    const auto return_internal_ref = py::return_value_policy::reference_internal;
+
     py::class_<ChemicalState>(m, "ChemicalState")
         .def(py::init<const ChemicalSystem&>())
         .def("setTemperature", py::overload_cast<real>(&ChemicalState::setTemperature))
@@ -44,10 +49,10 @@ void exportChemicalState(py::module& m)
         .def("setSpeciesMass", py::overload_cast<Index, real, String>(&ChemicalState::setSpeciesMass))
         .def("setSpeciesMass", py::overload_cast<String, real>(&ChemicalState::setSpeciesMass))
         .def("setSpeciesMass", py::overload_cast<String, real, String>(&ChemicalState::setSpeciesMass))
-        .def("system", &ChemicalState::system, py::return_value_policy::reference_internal)
+        .def("system", &ChemicalState::system, return_internal_ref)
         .def("temperature", &ChemicalState::temperature)
         .def("pressure", &ChemicalState::pressure)
-        .def("speciesAmounts", &ChemicalState::speciesAmounts, py::return_value_policy::reference_internal)
+        .def("speciesAmounts", &ChemicalState::speciesAmounts, return_internal_ref)
         .def("elementAmounts", &ChemicalState::elementAmounts)
         .def("speciesAmount", py::overload_cast<Index>(&ChemicalState::speciesAmount, py::const_))
         .def("speciesAmount", py::overload_cast<Index, String>(&ChemicalState::speciesAmount, py::const_))
@@ -57,29 +62,26 @@ void exportChemicalState(py::module& m)
         .def("speciesMass", py::overload_cast<Index, String>(&ChemicalState::speciesMass, py::const_))
         .def("speciesMass", py::overload_cast<String>(&ChemicalState::speciesMass, py::const_))
         .def("speciesMass", py::overload_cast<String, String>(&ChemicalState::speciesMass, py::const_))
-        .def("equilibrium", py::overload_cast<>(&ChemicalState::equilibrium, py::const_), py::return_value_policy::reference_internal)
-        .def("equilibrium", py::overload_cast<>(&ChemicalState::equilibrium), py::return_value_policy::reference_internal)
+        .def("equilibrium", py::overload_cast<>(&ChemicalState::equilibrium, py::const_), return_internal_ref)
+        .def("equilibrium", py::overload_cast<>(&ChemicalState::equilibrium), return_internal_ref)
         ;
 
     py::class_<ChemicalState::Equilibrium>(m, "_ChemicalStateEquilibrium")
         .def(py::init<const ChemicalSystem&>())
+        .def("setOptimaState", &ChemicalState::Equilibrium::setOptimaState)
+        .def("optimaState", &ChemicalState::Equilibrium::optimaState)
         .def("setIndicesPrimarySecondarySpecies", &ChemicalState::Equilibrium::setIndicesPrimarySecondarySpecies)
         .def("setIndicesStrictlyUnstableElements", &ChemicalState::Equilibrium::setIndicesStrictlyUnstableElements)
         .def("setIndicesStrictlyUnstableSpecies", &ChemicalState::Equilibrium::setIndicesStrictlyUnstableSpecies)
-        .def("setLagrangeMultipliers", &ChemicalState::Equilibrium::setLagrangeMultipliers)
-        .def("setComplementarityVariables", &ChemicalState::Equilibrium::setComplementarityVariables)
-        .def("setControlVariables", &ChemicalState::Equilibrium::setControlVariables)
         .def("numPrimarySpecies", &ChemicalState::Equilibrium::numPrimarySpecies)
         .def("numSecondarySpecies", &ChemicalState::Equilibrium::numSecondarySpecies)
-        .def("indicesPrimarySpecies", &ChemicalState::Equilibrium::indicesPrimarySpecies, py::return_value_policy::reference_internal)
-        .def("indicesSecondarySpecies", &ChemicalState::Equilibrium::indicesSecondarySpecies, py::return_value_policy::reference_internal)
-        .def("indicesStrictlyUnstableElements", &ChemicalState::Equilibrium::indicesStrictlyUnstableElements, py::return_value_policy::reference_internal)
-        .def("indicesStrictlyUnstableSpecies", &ChemicalState::Equilibrium::indicesStrictlyUnstableSpecies, py::return_value_policy::reference_internal)
-        .def("lagrangeMultipliers", py::overload_cast<>(&ChemicalState::Equilibrium::lagrangeMultipliers, py::const_), py::return_value_policy::reference_internal)
-        .def("lagrangeMultipliers", py::overload_cast<>(&ChemicalState::Equilibrium::lagrangeMultipliers), py::return_value_policy::reference_internal)
-        .def("complementarityVariables", py::overload_cast<>(&ChemicalState::Equilibrium::complementarityVariables, py::const_), py::return_value_policy::reference_internal)
-        .def("complementarityVariables", py::overload_cast<>(&ChemicalState::Equilibrium::complementarityVariables), py::return_value_policy::reference_internal)
-        .def("controlVariables", py::overload_cast<>(&ChemicalState::Equilibrium::controlVariables, py::const_), py::return_value_policy::reference_internal)
-        .def("controlVariables", py::overload_cast<>(&ChemicalState::Equilibrium::controlVariables), py::return_value_policy::reference_internal)
+        .def("indicesPrimarySpecies", &ChemicalState::Equilibrium::indicesPrimarySpecies, return_internal_ref)
+        .def("indicesSecondarySpecies", &ChemicalState::Equilibrium::indicesSecondarySpecies, return_internal_ref)
+        .def("indicesStrictlyUnstableElements", &ChemicalState::Equilibrium::indicesStrictlyUnstableElements, return_internal_ref)
+        .def("indicesStrictlyUnstableSpecies", &ChemicalState::Equilibrium::indicesStrictlyUnstableSpecies, return_internal_ref)
+        .def("elementChemicalPotentials", &ChemicalState::Equilibrium::elementChemicalPotentials, return_internal_ref)
+        .def("speciesStabilities", &ChemicalState::Equilibrium::speciesStabilities, return_internal_ref)
+        .def("explicitTitrantAmounts", &ChemicalState::Equilibrium::explicitTitrantAmounts, return_internal_ref)
+        .def("implicitTitrantAmounts", &ChemicalState::Equilibrium::implicitTitrantAmounts, return_internal_ref)
         ;
 }

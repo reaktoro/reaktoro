@@ -23,20 +23,23 @@ namespace py = pybind11;
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 using namespace Reaktoro;
 
 void exportEquilibriumSolver(py::module& m)
 {
     py::class_<EquilibriumSolver>(m, "EquilibriumSolver")
         .def(py::init<const ChemicalSystem&>())
-        .def(py::init<const EquilibriumConstraints&>())
+        .def(py::init<const EquilibriumSpecs&>())
         .def("setOptions", &EquilibriumSolver::setOptions)
-        .def("constraints", py::overload_cast<>(&EquilibriumSolver::constraints, py::const_))
-        .def("constraints", py::overload_cast<>(&EquilibriumSolver::constraints))
-        .def("solve", &EquilibriumSolver::solve)
+        .def("solve", py::overload_cast<ChemicalState&>(&EquilibriumSolver::solve))
+        .def("solve", py::overload_cast<ChemicalState&, const EquilibriumRestrictions&>(&EquilibriumSolver::solve))
+        .def("solve", py::overload_cast<ChemicalState&, const EquilibriumConditions&>(&EquilibriumSolver::solve))
+        .def("solve", py::overload_cast<ChemicalState&, const EquilibriumConditions&, const EquilibriumRestrictions&>(&EquilibriumSolver::solve))
         ;
 }

@@ -20,24 +20,22 @@
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Equilibrium/EquilibriumConstraints.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 using namespace Reaktoro;
 
 void exportEquilibriumDims(py::module& m)
 {
     py::class_<EquilibriumDims>(m, "EquilibriumDims")
         .def(py::init<>())
-        .def(py::init<const EquilibriumConstraints&>())
+        .def(py::init<const EquilibriumSpecs&>())
         .def_readwrite("Ne", &EquilibriumDims::Ne)
+        .def_readwrite("Nc", &EquilibriumDims::Nc)
         .def_readwrite("Nn", &EquilibriumDims::Nn)
-        .def_readwrite("Npe", &EquilibriumDims::Npe)
-        .def_readwrite("Npp", &EquilibriumDims::Npp)
         .def_readwrite("Np", &EquilibriumDims::Np)
         .def_readwrite("Nq", &EquilibriumDims::Nq)
-        .def_readwrite("Nir", &EquilibriumDims::Nir)
-        .def_readwrite("Ncv", &EquilibriumDims::Ncv)
+        .def_readwrite("Nt", &EquilibriumDims::Nt)
         .def_readwrite("Nx", &EquilibriumDims::Nx)
-        .def_readwrite("Nc", &EquilibriumDims::Nc)
+        .def_readwrite("Nu", &EquilibriumDims::Nu)
         ;
 }

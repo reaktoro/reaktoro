@@ -17,50 +17,22 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
-#include <pybind11/functional.h>
-#include <pybind11/stl.h>
+#include <pybind11/eigen.h>
 namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProps.hpp>
-#include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 using namespace Reaktoro;
 
 void exportEquilibriumConditions(py::module& m)
 {
     const auto return_internal_ref = py::return_value_policy::reference_internal;
 
-    py::class_<EquilibriumConstraintEquation>(m, "EquilibriumConstraintEquation")
-        .def_readwrite("id", &EquilibriumConstraintEquation::id)
-        .def_readwrite("fn", &EquilibriumConstraintEquation::fn)
-        ;
-
-    py::class_<EquilibriumConstraintConstantProperty>(m, "EquilibriumConstraintConstantProperty")
-        .def_readwrite("id", &EquilibriumConstraintConstantProperty::id)
-        .def_readwrite("fn", &EquilibriumConstraintConstantProperty::fn)
-        ;
-
-    py::class_<EquilibriumConstraintChemicalPotential>(m, "EquilibriumConstraintChemicalPotential")
-        .def_readwrite("substance", &EquilibriumConstraintChemicalPotential::substance)
-        .def_readwrite("fn", &EquilibriumConstraintChemicalPotential::fn)
-        ;
-
-    py::class_<EquilibriumConditionsDetails>(m, "EquilibriumConditionsDetails")
-        .def_readwrite("unknownT", &EquilibriumConditionsDetails::unknownT)
-        .def_readwrite("unknownP", &EquilibriumConditionsDetails::unknownP)
-        .def_readwrite("constantT", &EquilibriumConditionsDetails::constantT)
-        .def_readwrite("constantP", &EquilibriumConditionsDetails::constantP)
-        .def_readwrite("T", &EquilibriumConditionsDetails::T)
-        .def_readwrite("P", &EquilibriumConditionsDetails::P)
-        .def_readwrite("b0", &EquilibriumConditionsDetails::b0)
-        .def_readwrite("titrants", &EquilibriumConditionsDetails::titrants)
-        .def_readwrite("econstraints", &EquilibriumConditionsDetails::econstraints)
-        .def_readwrite("pconstraints", &EquilibriumConditionsDetails::pconstraints)
-        .def_readwrite("uconstraints", &EquilibriumConditionsDetails::uconstraints)
-        ;
-
     py::class_<EquilibriumConditions>(m, "EquilibriumConditions")
+        .def(py::init<const EquilibriumSpecs>())
         .def("temperature", &EquilibriumConditions::temperature)
         .def("pressure", &EquilibriumConditions::pressure)
         .def("volume", &EquilibriumConditions::volume)
@@ -69,19 +41,8 @@ void exportEquilibriumConditions(py::module& m)
         .def("gibbsEnergy", &EquilibriumConditions::gibbsEnergy)
         .def("helmholtzEnergy", &EquilibriumConditions::helmholtzEnergy)
         .def("entropy", &EquilibriumConditions::entropy)
-        .def("constantTemperature", &EquilibriumConditions::constantTemperature)
-        .def("constantPressure", &EquilibriumConditions::constantPressure)
-        .def("constantVolume", &EquilibriumConditions::constantVolume)
-        .def("constantInternalEnergy", &EquilibriumConditions::constantInternalEnergy)
-        .def("constantEnthalpy", &EquilibriumConditions::constantEnthalpy)
-        .def("constantGibbsEnergy", &EquilibriumConditions::constantGibbsEnergy)
-        .def("constantHelmholtzEnergy", &EquilibriumConditions::constantHelmholtzEnergy)
-        .def("constantEntropy", &EquilibriumConditions::constantEntropy)
-        .def("constantProperty", &EquilibriumConditions::constantProperty)
-        .def("chemicalPotential", py::overload_cast<const ChemicalFormula&, const Fn<real(real,real)>&>(&EquilibriumConditions::chemicalPotential))
-        .def("chemicalPotential", py::overload_cast<String, real, String>(&EquilibriumConditions::chemicalPotential))
-        .def("lnActivity", py::overload_cast<const Species&, real>(&EquilibriumConditions::lnActivity))
-        .def("lnActivity", py::overload_cast<String, real>(&EquilibriumConditions::lnActivity))
+        .def("chemicalPotential", &EquilibriumConditions::chemicalPotential)
+        .def("lnActivity", &EquilibriumConditions::lnActivity)
         .def("lgActivity", &EquilibriumConditions::lgActivity)
         .def("activity", &EquilibriumConditions::activity)
         .def("fugacity", &EquilibriumConditions::fugacity)
@@ -89,10 +50,9 @@ void exportEquilibriumConditions(py::module& m)
         .def("pMg", &EquilibriumConditions::pMg)
         .def("pE", &EquilibriumConditions::pE)
         .def("Eh", &EquilibriumConditions::Eh)
-        .def("titrate", &EquilibriumConditions::titrate)
-        .def("titrateEither", &EquilibriumConditions::titrateEither)
-        .def("initialElementAmounts", &EquilibriumConditions::initialElementAmounts)
-        .def("enforce", &EquilibriumConditions::enforce)
-        .def("details", &EquilibriumConditions::details, return_internal_ref)
+        .def("initialComponentAmounts", py::overload_cast<VectorXrConstRef>(&EquilibriumConditions::initialComponentAmounts))
+        .def("initialComponentAmounts", py::overload_cast<>(&EquilibriumConditions::initialComponentAmounts, py::const_))
+        .def("system", &EquilibriumConditions::system)
+        .def("params", &EquilibriumConditions::params)
         ;
 }
