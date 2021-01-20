@@ -19,11 +19,9 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ReactionEquation.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 using namespace Reaktoro;
 
 namespace test { extern auto createChemicalSystem() -> ChemicalSystem; }
@@ -32,54 +30,118 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
 {
     ChemicalSystem system = test::createChemicalSystem();
 
-    // EquilibriumConditions conditions(system);
+    const auto Ne = system.elements().size() + 1;
+    const auto Nn = system.species().size();
 
-    // conditions.internalEnergy(1.0, "kJ");
-    // conditions.volume(1.0, "m3");
+    EquilibriumSpecs specs(system);
 
-    // conditions.constantTemperature();
-    // conditions.constantPressure();
-    // conditions.constantEntropy();
+    WHEN("temperature and pressure are input parameters - the Gibbs energy minimization formulation")
+    {
+        specs.temperature();
+        specs.pressure();
 
-    // conditions.pH(4.5);
-    // conditions.fugacity("O2(g)", 1.0, "bar");
+        EquilibriumDims dims(specs);
 
-    // conditions.titrate("CO2");
-    // conditions.titrate("CH4");
-    // conditions.titrate("H2S");
-    // conditions.titrate("H2");
-    // conditions.titrate("CO");
+        CHECK( dims.Ne == Ne ); // number of elements in the chemical system
+        CHECK( dims.Nc == Ne ); // number of components in the chemical equilibrium problem
+        CHECK( dims.Nn == Nn ); // number of species in the chemical system
+        CHECK( dims.Np == 0 );  // number of *p* control variables (temperature, pressure, and amounts of explicit titrants when these are introduced unknowns)
+        CHECK( dims.Nq == 0 );  // number of *q* control variables (the amounts of the implicit titrants when these are introduced unknowns)
+        CHECK( dims.Nt == 0 );  // number of substances for which the chemical system is open to
+        CHECK( dims.Nx == Nn ); // number of variables *x* in *x = (n, q)* (equivalent to `Nn + Nq`)
+        CHECK( dims.Nu == Nn ); // number of unknown variables in the chemical equilibrium problem (equivalent to `Nn + Np + Nq`)
+    }
 
-    // conditions.cannotIncrease("NaCl(aq)");
-    // conditions.cannotIncrease("H2(g)");
-    // conditions.cannotDecrease("SiO2(s)");
-    // conditions.cannotDecrease("O2(g)");
-    // conditions.cannotReact("CaCO3(s)");
-    // conditions.cannotReact("CO2(g)");
-    // conditions.cannotReact("O2(aq) + H2(aq) = H2O(aq)");
-    // conditions.cannotReact("CO2(g) = CO2(aq)");
+    WHEN("temperature and volume are input parameters - the Helmholtz energy minimization formulation")
+    {
+        specs.temperature();
+        specs.volume();
 
-    // auto dims = EquilibriumDims(conditions);
+        EquilibriumDims dims(specs);
 
-    // const auto Ne  = system.elements().size() + 1;
-    // const auto Nn  = system.species().size();
-    // const auto Npe = 2; // internalEnergy and volume - both equation constraints
-    // const auto Npp = 3; // constantTemperature, constantPressure, constantEntropy - constant property constraints
-    // const auto Np  = Npe + Npp;
-    // const auto Nq  = 2; // pH and fugacity - both chemical potential constraints
-    // const auto Nir = 2; // 2x calls to cannotReact(reaction)
-    // const auto Ncv = 7; // 2x from the chemical potential constraints, H+ and O2, and 5x from titrants CO2, CH4, H2S, H2, CO
-    // const auto Nx  = Nn + Np + Nq;
-    // const auto Nc  = Ne + Nir;
+        CHECK( dims.Ne == Ne );
+        CHECK( dims.Nc == Ne );
+        CHECK( dims.Nn == Nn );
+        CHECK( dims.Np == 1  ); // P
+        CHECK( dims.Nq == 0  );
+        CHECK( dims.Nt == 0  );
+        CHECK( dims.Nx == Nn );
+        CHECK( dims.Nu == Nn + 1 );
+    }
 
-    // REQUIRE( dims.Ne  == Ne  );
-    // REQUIRE( dims.Nn  == Nn  );
-    // REQUIRE( dims.Npe == Npe );
-    // REQUIRE( dims.Npp == Npp );
-    // REQUIRE( dims.Np  == Np  );
-    // REQUIRE( dims.Nq  == Nq  );
-    // REQUIRE( dims.Nir == Nir );
-    // REQUIRE( dims.Ncv == Ncv );
-    // REQUIRE( dims.Nx  == Nx  );
-    // REQUIRE( dims.Nc  == Nc  );
+    WHEN("volume and internal energy are input parameters - the entropy maximization formulation")
+    {
+        specs.volume();
+        specs.internalEnergy();
+
+        EquilibriumDims dims(specs);
+
+        CHECK( dims.Ne == Ne );
+        CHECK( dims.Nc == Ne );
+        CHECK( dims.Nn == Nn );
+        CHECK( dims.Np == 2  ); // T, P
+        CHECK( dims.Nq == 0  );
+        CHECK( dims.Nt == 0  );
+        CHECK( dims.Nx == Nn );
+        CHECK( dims.Nu == Nn + 2 );
+    }
+
+    WHEN("temperature, pressure, and pH are input parameters")
+    {
+        specs.temperature();
+        specs.pressure();
+        specs.pH();
+
+        EquilibriumDims dims(specs);
+
+        CHECK( dims.Ne == Ne );
+        CHECK( dims.Nc == Ne );
+        CHECK( dims.Nn == Nn );
+        CHECK( dims.Np == 0 );
+        CHECK( dims.Nq == 1 ); // [H+]
+        CHECK( dims.Nt == 1 ); // [H+]
+        CHECK( dims.Nx == Nn + 1 );
+        CHECK( dims.Nu == Nn + 1 );
+    }
+
+    WHEN("volume, entropy, and activity[CO2(g)] are input parameters")
+    {
+        specs.volume();
+        specs.entropy();
+        specs.activity("CO2(g)");
+
+        EquilibriumDims dims(specs);
+
+        CHECK( dims.Ne == Ne );
+        CHECK( dims.Nc == Ne );
+        CHECK( dims.Nn == Nn );
+        CHECK( dims.Np == 2  );
+        CHECK( dims.Nq == 1  ); // [CO2]
+        CHECK( dims.Nt == 1  ); // [CO2]
+        CHECK( dims.Nx == Nn + 1 );
+        CHECK( dims.Nu == Nn + 3 );
+    }
+
+    WHEN("temperature, pressure, volume, internal energy, pH, and pE are input parameters")
+    {
+        specs.temperature();
+        specs.pressure();
+        specs.volume();
+        specs.internalEnergy();
+        specs.pH();
+        specs.pE();
+        specs.openTo("CO2");
+        specs.openTo("CH4");
+
+        EquilibriumDims dims(specs);
+
+        CHECK( dims.Ne == Ne );
+        CHECK( dims.Nc == Ne );
+        CHECK( dims.Nn == Nn );
+        CHECK( dims.Np == 2  ); // [CO2], [CH4]
+        CHECK( dims.Nq == 2  ); // [H+], [e-]
+        CHECK( dims.Nt == 4  );
+        CHECK( dims.Nx == Nn + 2 );
+        CHECK( dims.Nu == Nn + 4 );
+    }
 }
