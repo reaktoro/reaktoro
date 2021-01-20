@@ -43,7 +43,7 @@ void exportEquilibriumRestrictions(py::module& m)
         .def("canDecrease", py::overload_cast<Index>(&EquilibriumRestrictions::canDecrease))
         .def("canDecrease", py::overload_cast<String>(&EquilibriumRestrictions::canDecrease))
         .def("system", &EquilibriumRestrictions::system, return_internal_ref)
-        .def("indicesSpeciesCannotIncrease", &EquilibriumRestrictions::indicesSpeciesCannotIncrease, return_internal_ref)
-        .def("indicesSpeciesCannotDecrease", &EquilibriumRestrictions::indicesSpeciesCannotDecrease, return_internal_ref)
+        .def("speciesCannotIncrease", &EquilibriumRestrictions::speciesCannotIncrease, return_internal_ref)
+        .def("speciesCannotDecrease", &EquilibriumRestrictions::speciesCannotDecrease, return_internal_ref)
         ;
 }

@@ -31,9 +31,9 @@ auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, double v
 
     if(units::convertible(unit, "kg"))
     {
-        const auto molarmass = system.species(ispecies).molarMass(); // in mol/kg
+        const auto molarmass = system.species(ispecies).molarMass(); // in kg/mol
         value = units::convert(value, unit, "kg"); // from some mass unit to kg
-        return value * molarmass; // from kg to mol
+        return value / molarmass; // from kg to mol
     }
     else return units::convert(value, unit, "mol"); // from some amount unit to mol
 }
@@ -59,7 +59,7 @@ auto EquilibriumRestrictions::cannotReact(String species) -> void
 auto EquilibriumRestrictions::cannotIncrease(Index ispecies) -> void
 {
     const auto numspecies = system().species().size();
-    error(ispecies < numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
+    errorif(ispecies >= numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
     species_cannot_increase.insert(ispecies);
 }
 
@@ -72,7 +72,7 @@ auto EquilibriumRestrictions::cannotIncrease(String species) -> void
 auto EquilibriumRestrictions::cannotIncreaseAbove(Index ispecies, double value, String unit) -> void
 {
     const auto numspecies = system().species().size();
-    error(ispecies < numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
+    errorif(ispecies >= numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
     value = computeSpeciesAmount(msystem, ispecies, value, unit);
     species_cannot_increase_above.insert_or_assign(ispecies, value);
 }
@@ -86,7 +86,7 @@ auto EquilibriumRestrictions::cannotIncreaseAbove(String species, double value, 
 auto EquilibriumRestrictions::cannotDecrease(Index ispecies) -> void
 {
     const auto numspecies = system().species().size();
-    error(ispecies < numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
+    errorif(ispecies >= numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
     species_cannot_decrease.insert(ispecies);
 }
 
@@ -99,7 +99,7 @@ auto EquilibriumRestrictions::cannotDecrease(String species) -> void
 auto EquilibriumRestrictions::cannotDecreaseBelow(Index ispecies, double value, String unit) -> void
 {
     const auto numspecies = system().species().size();
-    error(ispecies < numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
+    errorif(ispecies >= numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
     value = computeSpeciesAmount(msystem, ispecies, value, unit);
     species_cannot_decrease_below.insert_or_assign(ispecies, value);
 }
@@ -110,42 +110,44 @@ auto EquilibriumRestrictions::cannotDecreaseBelow(String species, double value, 
     cannotDecreaseBelow(ispecies, value, unit);
 }
 
-auto EquilibriumRestrictions::canReact(Index ispecies) -> void
+auto EquilibriumRestrictions::canReactFreely(Index ispecies) -> void
 {
-    canIncrease(ispecies);
-    canDecrease(ispecies);
+    canIncreaseFreely(ispecies);
+    canDecreaseFreely(ispecies);
 }
 
-auto EquilibriumRestrictions::canReact(String species) -> void
+auto EquilibriumRestrictions::canReactFreely(String species) -> void
 {
     const auto ispecies = system().species().indexWithName(species);
-    canReact(ispecies);
+    canReactFreely(ispecies);
 }
 
-auto EquilibriumRestrictions::canIncrease(Index ispecies) -> void
+auto EquilibriumRestrictions::canIncreaseFreely(Index ispecies) -> void
 {
     const auto numspecies = system().species().size();
-    error(ispecies < numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
+    errorif(ispecies >= numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
     species_cannot_increase.erase(ispecies);
+    species_cannot_increase_above.erase(ispecies);
 }
 
-auto EquilibriumRestrictions::canIncrease(String species) -> void
+auto EquilibriumRestrictions::canIncreaseFreely(String species) -> void
 {
     const auto ispecies = system().species().indexWithName(species);
-    species_cannot_increase.erase(ispecies);
+    canIncreaseFreely(ispecies);
 }
 
-auto EquilibriumRestrictions::canDecrease(Index ispecies) -> void
+auto EquilibriumRestrictions::canDecreaseFreely(Index ispecies) -> void
 {
     const auto numspecies = system().species().size();
-    error(ispecies < numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
+    errorif(ispecies >= numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
     species_cannot_decrease.erase(ispecies);
+    species_cannot_decrease_below.erase(ispecies);
 }
 
-auto EquilibriumRestrictions::canDecrease(String species) -> void
+auto EquilibriumRestrictions::canDecreaseFreely(String species) -> void
 {
     const auto ispecies = system().species().indexWithName(species);
-    species_cannot_decrease.erase(ispecies);
+    canDecreaseFreely(ispecies);
 }
 
 auto EquilibriumRestrictions::system() const -> const ChemicalSystem&
@@ -153,22 +155,22 @@ auto EquilibriumRestrictions::system() const -> const ChemicalSystem&
     return msystem;
 }
 
-auto EquilibriumRestrictions::indicesSpeciesCannotIncrease() const -> Set<Index> const&
+auto EquilibriumRestrictions::speciesCannotIncrease() const -> Set<Index> const&
 {
     return species_cannot_increase;
 }
 
-auto EquilibriumRestrictions::indicesSpeciesCannotDecrease() const -> Set<Index> const&
+auto EquilibriumRestrictions::speciesCannotDecrease() const -> Set<Index> const&
 {
     return species_cannot_decrease;
 }
 
-auto EquilibriumRestrictions::indicesSpeciesCannotIncreaseAbove() const -> Map<Index, double> const&
+auto EquilibriumRestrictions::speciesCannotIncreaseAbove() const -> Map<Index, double> const&
 {
     return species_cannot_increase_above;
 }
 
-auto EquilibriumRestrictions::indicesSpeciesCannotDecreaseBelow() const -> Map<Index, double> const&
+auto EquilibriumRestrictions::speciesCannotDecreaseBelow() const -> Map<Index, double> const&
 {
     return species_cannot_decrease_below;
 }
