@@ -85,9 +85,19 @@ int main()
     // Results
     ReactiveTransportResults results;
 
+    // ----------------------------------------------------------- //
     // Execute reactive transport with different solvers
-    //params.use_smart_equilibrium_solver = true; runReactiveTransport(params, results);
-    params.use_smart_equilibrium_solver = false; runReactiveTransport(params, results);
+    // ----------------------------------------------------------- //
+
+    // Smart equilibrium solver
+    params.use_smart_equilibrium_solver = true;
+    params.outputEquilibriumMethod();
+    runReactiveTransport(params, results);
+
+    // Conventional equilibrium solver
+    params.outputEquilibriumMethod();
+    params.use_smart_equilibrium_solver = false;
+    runReactiveTransport(params, results);
 
     // Collect the time spent for total simulation (excluding search and store procedures costs)
     results.conventional_total = results.equilibrium_timing.solve;
@@ -122,7 +132,7 @@ int main()
 auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResults& results) -> void
 {
     // Step **: Create the results folder
-    auto folder = params.makeResultsFolder("granite-diff-rock");
+    auto folder = params.makeResultsFolder("granite");
 
     // Step **: Define chemical equilibrium solver options
     EquilibriumOptions equilibrium_options;
