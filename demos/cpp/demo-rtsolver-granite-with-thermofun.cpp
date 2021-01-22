@@ -87,6 +87,7 @@ int main()
     // Results
     ReactiveTransportResults results;
 
+    // ----------------------------------------------------------- //
     // Execute reactive transport with different solvers
     params.use_smart_equilibrium_solver = true; runReactiveTransport(params, results);
     params.use_smart_equilibrium_solver = false; runReactiveTransport(params, results);
