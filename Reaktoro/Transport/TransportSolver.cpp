@@ -141,6 +141,12 @@ struct TransportSolver::Impl
                     c = -alpha;
                     break;
 
+                case FiniteVolumeMethod::ImplicitExplicit:
+                    a = -alpha;
+                    b = 1 + 2*alpha;
+                    c = -alpha;
+                    break;
+
                 case FiniteVolumeMethod::FluxLimitersImplicitExplicit:
                     a = -alpha;
                     b = 1 + 2*alpha;
@@ -157,6 +163,14 @@ struct TransportSolver::Impl
                 // Assemble the coefficient matrix A for the boundary cells
                 A.row(icell0) << 0.0, 1.0 + alpha + beta, -alpha;   // left boundary (flux = v * ul)
                 A.row(icelln) << - beta, 1.0 + beta, 0.0;           // right boundary (free)
+
+                break;
+
+            case FiniteVolumeMethod::ImplicitExplicit:
+
+                // Assemble the coefficient matrix A for the boundary cells
+                A.row(icell0) << 0.0, 1.0 + alpha, -alpha;            // forward difference approximation with first order error
+                A.row(icelln) << 0.0, 1.0, 0.0;                       // right boundary (free)
 
                 break;
 
@@ -196,6 +210,8 @@ struct TransportSolver::Impl
         const auto dx = mesh.dx();
         const auto beta = velocity*dt/dx;
         const auto icell0 = 0;
+        const auto num_cells = mesh.numCells();
+        const auto icelln = num_cells - 1;
 
         switch(options.finite_volume_method)
         {
@@ -204,10 +220,22 @@ struct TransportSolver::Impl
                 u[icell0] += beta * ul; // left boundary (flux = v * ul)
                 break;
 
-            case FiniteVolumeMethod::FluxLimitersImplicitExplicit:
+            case FiniteVolumeMethod::ImplicitExplicit:
 
-                const auto num_cells = mesh.numCells();
-                const auto icelln = num_cells - 1;
+                u0 = u;
+
+                // Compute contributions to u for the interior cells
+                for(Index icell = 1; icell < icelln; ++icell)
+                    u[icell] += beta * (u0[icell - 1] + u0[icell]);
+
+                // Handle the left boundary cell
+                u[icell0] += beta * (ul - u0[icell0]);
+                // Handle the right boundary cell
+                u[icelln] += beta * (u0[icelln - 1] - u0[icelln]);
+
+                break;
+
+            case FiniteVolumeMethod::FluxLimitersImplicitExplicit:
 
                 u0 = u;
 
