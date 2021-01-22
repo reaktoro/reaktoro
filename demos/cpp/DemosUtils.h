@@ -685,7 +685,9 @@ auto getSmartMethodTag(enum SmartKineticStrategy method) -> std::string
     switch(method)
     {
         case SmartKineticStrategy::Clustering: return "kin-clustering";
+        case SmartKineticStrategy::ClusteringExtended: return "kin-clustering-extended";
         case SmartKineticStrategy::PriorityQueue: return "kin-priority";
+        case SmartKineticStrategy::PriorityQueuePrimary: return "kin-priority-primary";
         case SmartKineticStrategy::NearestNeighbour: return "kin-nnsearch";
     }
     return "";
