@@ -62,12 +62,14 @@ if(NOT CMAKE_BUILD_TYPE)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
 endif()
 
+# Enable parallel build if MSVC is used
+add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
+
 # Set the list of compiler flags for MSVC compiler
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     add_compile_options(
         /D_SCL_SECURE_NO_WARNINGS
         /D_CRT_SECURE_NO_WARNINGS=1
-        /MP4
         /EHsc
         /D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
         /DNOMINMAX
@@ -148,14 +150,6 @@ add_custom_target(examples
 add_custom_target(utilities
     COMMAND ${CMAKE_MAKE_PROGRAM}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/utilities")
-
-# Copy database files to binary directory
-add_custom_target(databases ALL COMMENT "Copy database files to binary directory")
-add_custom_command(
-    TARGET databases POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${PROJECT_SOURCE_DIR}/databases
-            ${CMAKE_BINARY_DIR}/databases)
 
 # Add target "deps" for updating the external dependencies
 add_custom_target(deps

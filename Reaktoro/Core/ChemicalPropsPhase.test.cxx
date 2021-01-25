@@ -357,7 +357,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 
         auto dot = [](auto A, auto x)
         {
-            return (A.matrix().transpose() * x.matrix()).array();
+            return ((A.matrix().transpose() * x.matrix()).array()).eval();
         };
 
         const ArrayXd  G_n = dot(x_n,  G0) +  Gex_n;

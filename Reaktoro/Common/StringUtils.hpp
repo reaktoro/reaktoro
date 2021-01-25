@@ -102,8 +102,8 @@ inline auto uppercase(String str) -> String
 /// Trim the string from start (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
 inline auto trimleft(String str) -> String
 {
-    str.erase(str.begin(),
-        std::find_if(str.begin(), str.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+    str.erase(str.begin(), std::find_if(str.begin(), str.end(),
+        [](unsigned char ch) { return !std::isspace(ch); }));
     return str;
 }
 
@@ -111,7 +111,7 @@ inline auto trimleft(String str) -> String
 inline auto trimright(String str) -> String
 {
     str.erase(std::find_if(str.rbegin(), str.rend(),
-        std::not1(std::ptr_fun<int, int>(std::isspace))).base(), str.end());
+        [](unsigned char ch) { return !std::isspace(ch); }).base(), str.end());
     return str;
 }
 

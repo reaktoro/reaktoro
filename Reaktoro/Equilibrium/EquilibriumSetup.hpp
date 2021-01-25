@@ -28,10 +28,10 @@ class ChemicalState;
 class ChemicalSystem;
 class EquilibriumConditions;
 class EquilibriumDims;
-class EquilibriumOptions;
 class EquilibriumRestrictions;
 class EquilibriumSpecs;
 class Params;
+struct EquilibriumOptions;
 
 /// The class used to construct the optimization problem for a chemical equilibrium calculation.
 class EquilibriumSetup

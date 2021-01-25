@@ -37,6 +37,7 @@ inline auto operator<<(std::ostream& out, StateOfMatter option) -> std::ostream&
     case StateOfMatter::Liquid: out << "Liquid"; return out;
     case StateOfMatter::Gas:    out << "Gas";    return out;
     case StateOfMatter::Plasma: out << "Plasma"; return out;
+    default: out << "Solid"; return out;
     }
 }
 
