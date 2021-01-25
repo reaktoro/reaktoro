@@ -1,16 +1,61 @@
-{{ min_conda_devenv_version("1.1") }}
-
 name: reaktoro
 
 {% set python_version = os.environ.get("PY_VER", "3.7") %}
+{% set debug = os.environ.get("CONFIG", "").lower() == "debug" %}
+{% set use_openlibm = os.environ.get("REAKTORO_USE_OPENLIBM", "0").strip() != "0" %}
 
-includes:
-  - {{ root }}/.dependencies/compilers.devenv.yml
-  - {{ root }}/.dependencies/cpp.devenv.yml
-  - {{ root }}/.dependencies/python.devenv.yml
-  - {{ root }}/.dependencies/docs.devenv.yml
-  - {{ root }}/.dependencies/tests.devenv.yml
-  - {{ root }}/.dependencies/utilities.devenv.yml
+channels:
+  - conda-forge
+
+dependencies:
+  # C++ compilers
+  - gxx_linux-64=7.3.0  # [linux]
+  - clangxx=9.0.0  # [osx]
+
+  # C++ libraries
+  - pybind11>=2.5.0
+  - thermofun==0.3.3
+  - nlohmann_json==3.6.1
+  {% if not debug %}
+  - pugixml  # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
+  {% endif %}
+  {% if use_openlibm %}
+  - openlibm
+  {% endif %}
+
+  # Documentation dependencies
+  - doxygen=1.8.20                 # [linux]
+  - graphviz                       # [linux]
+  - sphinx==1.8.5
+  - sphinx-autobuild
+  - sphinx_rtd_theme
+  - pip:
+    - sphinxcontrib-images
+
+  # Python dependencies
+  - python={{ python_version }}
+  - numpy
+  - pandas
+  - pip
+  - tabulate
+
+  # Python test dependencies
+  - pytest
+  - pytest-cpp
+  - pytest-datadir
+  - pytest-lazy-fixture
+  - pytest-regressions
+  - pytest-timeout
+  - pytest-xdist
+
+  # Utilities dependencies
+  - cmake>=3.17
+  - git>=2.28
+  - ninja>=1.9.0
+  - ccache                         # [unix]
+  - clcache                        # [win]
+  - catch2
+  - invoke
 
 environment:
 
