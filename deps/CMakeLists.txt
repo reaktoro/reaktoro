@@ -13,12 +13,12 @@ include(CCache)
 include(ExternalProject)
 
 # Set the list of compiler flags for the external projects
-if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+if(WIN32)
+    set(CFLAGS "${CMAKE_C_FLAGS} /MP")
+    set(CXXFLAGS "${CMAKE_CXX_FLAGS} /MP") # Enable parallel build if MSVC is used with /MP
+else()
     set(CFLAGS "${CFLAGS} -fPIC")
     set(CXXFLAGS "${CXXFLAGS} -fPIC")
-else()
-    set(CFLAGS "${CMAKE_C_FLAGS}")
-    set(CXXFLAGS "${CMAKE_CXX_FLAGS}")
 endif()
 
 if(NOT ${REAKTORO_DEPS_EXTRA_BUILD_ARGS} STREQUAL "")
