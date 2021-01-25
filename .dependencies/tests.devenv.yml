@@ -1,8 +1,0 @@
-dependencies:
-  - pytest
-  - pytest-cpp
-  - pytest-datadir
-  - pytest-lazy-fixture
-  - pytest-regressions
-  - pytest-timeout
-  - pytest-xdist

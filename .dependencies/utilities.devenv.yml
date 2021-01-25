@@ -1,8 +1,0 @@
-dependencies:
-  - cmake=3.15
-  - git>=2.28
-  - ninja>=1.9.0
-  - ccache                         # [unix]
-  - clcache                        # [win]
-  - catch2
-  - invoke
