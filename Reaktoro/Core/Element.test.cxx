@@ -25,14 +25,7 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Element", "[Element]")
 {
-    Element element({
-        .symbol = "H",
-        .name = "Hydrogen",
-        .atomic_number = 1,
-        .atomic_weight = 0.001007940,
-        .electronegativity = 2.20,
-        .tags = {}
-    });
+    Element element({ "H", "Hydrogen", 1, 0.001007940, 2.20 });
 
     REQUIRE(element.symbol() == "H");
     REQUIRE(element.name() == "Hydrogen");

@@ -395,7 +395,7 @@ auto activePhasesInEquilibriumPhases(const PHREEQC& phreeqc) -> Vec<PhreeqcPhase
     Vec<PhreeqcPhase*> phases;
     unknown** x = phreeqc.x;
     for(auto i = 0; i < phreeqc.count_unknowns; ++i)
-        if(x[i]->type == PP && x[i]->phase->rxn_x != nullptr && x[i]->phase->in == true)
+        if(x[i]->type == PP && x[i]->phase->rxn_x != nullptr && x[i]->phase->in != 0)
             phases.push_back(x[i]->phase);
     return phases;
 }

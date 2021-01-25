@@ -428,7 +428,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             //----------------------------------------------------------------------------------------------------
             // Check the Jacobian of the gradient of the objective function at current conditions of [n, p, q]
             //----------------------------------------------------------------------------------------------------
-            auto gfn = [&system, &Nn, &Nx, &tau, &specs, &params](VectorXrConstRef x, VectorXrConstRef p)
+            auto gfn = [&system, &Nn, &Nq, &Nx, &tau, &specs, &params](ArrayXrConstRef x, ArrayXrConstRef p)
             {
                 ChemicalProps auxprops(system);
                 const auto T = p[0]; // in tested equilibrium specs, p[0] is temperature (this is not necessarily always true!)
@@ -475,7 +475,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             //----------------------------------------------------------------------------------------------------
             // Check the Jacobian of the constraint functions of equation type at current conditions of [n, p, q]
             //----------------------------------------------------------------------------------------------------
-            auto vfn = [&system, &Nn, &Np, &specs, &params](VectorXrConstRef x, VectorXrConstRef p)
+            auto vfn = [&system, &Nn, &Np, &specs, &params](ArrayXrConstRef x, ArrayXrConstRef p)
             {
                 ChemicalProps auxprops(system);
                 const auto T = p[0]; // in tested equilibrium specs, p[0] is temperature (this is not necessarily always true!)

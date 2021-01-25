@@ -218,6 +218,7 @@ struct AqueousProps::Impl
     auto alkalinity() const -> real
     {
         error(true, "AqueousProps::alkalinity is has not been implemented yet.");
+        return {};
     }
 
 };

@@ -110,20 +110,28 @@ auto error(bool condition, Args... items) -> void
 }
 
 /// Define a macro to print a warning messageif condition is true.
+/// @warning Note the use of ... and __VA_ARGS__ in the implementation.
+/// @warning The use of `#define macro(args...) function(args)` causes error in
+/// @warning MSVC compilers if compiler option `/Zc:preprocessor` (available in Visual
+/// @warning Studio 2019 v16.5) is not specified!
 /// @ingroup Common
-#define warningif(condition, args...) \
+#define warningif(condition, ...) \
     { \
         if((condition)) { \
-            std::cerr << "\033[1;33m***WARNING***\n" << str(args) << "\n\033[0m"; \
+            std::cerr << "\033[1;33m***WARNING***\n" << str(__VA_ARGS__) << "\n\033[0m"; \
         } \
     }
 
 /// Define a macro to raise a runtime exception if condition is true.
+/// @warning Note the use of ... and __VA_ARGS__ in the implementation.
+/// @warning The use of `#define macro(args...) function(args)` causes error in
+/// @warning MSVC compilers if compiler option `/Zc:preprocessor` (available in Visual
+/// @warning Studio 2019 v16.5) is not specified!
 /// @ingroup Common
-#define errorif(condition, args...) \
+#define errorif(condition, ...) \
     { \
         if((condition)) { \
-            throw std::runtime_error(str("\033[1;31m***ERROR***\n", str(args), "\n\033[0m")); \
+            throw std::runtime_error(str("\033[1;31m***ERROR***\n", str(__VA_ARGS__), "\n\033[0m")); \
         } \
     }
 

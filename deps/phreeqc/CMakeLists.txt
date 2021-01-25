@@ -7,6 +7,9 @@ project(phreeqc)
 # Replace the word Phreeqc by PHREEQC
 add_definitions(-DPhreeqc=PHREEQC)
 
+# Enable std::unique_ptr with Visual Studio 2019 (CXX17).
+add_compile_definitions($<$<CXX_COMPILER_ID:MSVC>:_HAS_AUTO_PTR_ETC=1>)
+
 # Recursively collect all header files from the current directory
 file(GLOB_RECURSE HEADER_FILES *.h)
 
