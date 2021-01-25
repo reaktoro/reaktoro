@@ -79,9 +79,6 @@ if(REAKTORO_BUILD_PYTHON)
     # Include the Eigen include path for pybind11
     include_directories(${PROJECT_SOURCE_DIR}/Reaktoro/deps/eigen3)
 
-    # Ensure pybind11 uses C++17 standard
-    set(PYBIND11_CPP_STANDARD -std=c++17)
-
     # Find pybind11, needed to compile the python bindings
     find_package(pybind11 REQUIRED)
 
