@@ -67,6 +67,7 @@ set_target_properties(Reaktoro PROPERTIES
 add_executable(tests ${TEST_CXX_FILES})
 target_link_libraries(tests Reaktoro)
 target_include_directories(tests PUBLIC ${PROJECT_SOURCE_DIR})
+target_compile_definitions(tests PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline>)  # use EIGEN_STRONG_INLINE=inline instead of EIGEN_STRONG_INLINE=__forceinline with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile
 
 #==============================================================================
 #
