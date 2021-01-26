@@ -107,11 +107,11 @@ ExternalProject_Add(PHREEQC
         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/private
 )
 
-# Build and install the Gems library
-ExternalProject_Add(GEMS
-    PREFIX etc
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gems
-    CMAKE_ARGS
-        ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/private
-)
+# # Build and install the Gems library
+# ExternalProject_Add(GEMS
+#     PREFIX etc
+#     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gems
+#     CMAKE_ARGS
+#         ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
+#         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/private
+# )

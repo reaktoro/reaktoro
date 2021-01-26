@@ -38,7 +38,7 @@ target_link_libraries(Reaktoro
     PRIVATE sundials_cvode
     PRIVATE sundials_nvecserial
     PRIVATE phreeqc
-    PRIVATE gems
+    # PRIVATE gems
     PRIVATE nlohmann_json::nlohmann_json
     PRIVATE Reaktoro::Databases
     PUBLIC autodiff::autodiff
