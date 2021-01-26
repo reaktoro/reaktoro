@@ -1,6 +1,7 @@
 # Build directories
 build/
 _build/
+.build/
 
 # Build directories
 deps/build/
