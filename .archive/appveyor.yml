@@ -1,0 +1,47 @@
+version: 1.0.{build}
+image:
+- Visual Studio 2017
+build:
+  parallel: true
+platform:
+  - x64
+environment:
+  CONDA_DIR: C:\Miniconda36-x64
+  CC: clcache
+  CXX: clcache
+  # Use shorter temporary dirs because of long path name problems
+  TMP: C:\temp
+  TEMP: C:\temp
+  matrix:
+  # Testing only Debug + Python 3.6 and Release + Python 3.7 so that the number of jobs is still 2 instead of 4.
+  - CONFIG: Debug
+    PY_VER: 3.6
+    #Temporally disabling regression tests, which otherwise would cause timeout failure (> 1 hour build time)
+    TEST_DIR: Reaktoro
+  - CONFIG: Release
+    PY_VER: 3.6
+    REAKTORO_USE_OPENLIBM: 1
+    TEST_DIR: .
+  - CONFIG: Release
+    PY_VER: 3.7
+    TEST_DIR: .
+cache:
+  - C:\Users\appveyor\clcache
+init:
+  - ps: mkdir C:\temp
+  - set PATH=%CONDA_DIR%;%CONDA_DIR%\Scripts;%CONDA_DIR%\Library\bin;%PATH%
+install:
+  - conda config --system --set always_yes yes --set changeps1 no
+  - conda config --system --append channels conda-forge
+  - conda install -n base conda-devenv
+  - conda devenv
+  - call activate reaktoro
+  - conda list
+  - clcache -s
+  - clcache -z
+build_script:
+  - inv -e compile --config=%CONFIG% --verbose
+  - clcache -s
+  - python ci\check_compiled_files.py
+test_script:
+  - pytest -n auto -ra -vv %TEST_DIR% --color=yes
