@@ -131,6 +131,9 @@ endif()
 # Build the utilities
 add_subdirectory(utilities EXCLUDE_FROM_ALL)
 
+# Process sub-directory scripts
+add_subdirectory(scripts)
+
 # Add target "python" for manual building of python wrappers, as `make python`, if REAKTORO_BUILD_PYTHON is OFF
 # add_custom_target(python
 #     COMMAND ${CMAKE_MAKE_PROGRAM}

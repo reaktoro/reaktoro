@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# This file will be copied by cmake to the root of the build directory.
+# Execute `source envs` from that directory and the environment variables
+# below will be update so that the python package and C++ libraries can
+# be found if necessary (e.g., to execute pytest).
+
+export PYTHONPATH=$PWD/python/package/build/lib:$PYTHONPATH
+export LD_LIBRARY_PATH=$PWD/lib:$LD_LIBRARY_PATH
+
+echo "The following environment variables have been updated:"
+echo "  PYTHONPATH = $PYTHONPATH"
+echo "  LD_LIBRARY_PATH = $LD_LIBRARY_PATH"
