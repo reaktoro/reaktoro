@@ -237,7 +237,7 @@ check_eqn(int association)
  */
 	if (equal(sumcharge, 0.0, TOL) == FALSE)
 	{
-		error_string = sformatf( "Equation is not charge balanced.");
+		error_string = sformatf( "Equation is not charge balanced, right - left = %7.4f moles charge", sumcharge);
 		error_msg(error_string, CONTINUE);
 		oops++;
 	}
@@ -250,8 +250,8 @@ check_eqn(int association)
 			strncmp((elt_list[i].elt)->name, "e", MAX_LENGTH) != 0)
 		{
 			error_string = sformatf(
-					"Equation does not balance for element, %s.",
-					(elt_list[i].elt)->name);
+				"Equation does not balance for element, %s: right - left = %7.4f moles",
+				(elt_list[i].elt)->name, elt_list[i].coef);
 			error_msg(error_string, CONTINUE);
 			oops++;
 		}

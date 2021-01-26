@@ -49,7 +49,7 @@ class cxxPPassemblage:public cxxNumKeyword
 	void Set_new_def(bool tf) {this->new_def = tf;}
 
 	cxxPPassemblageComp *Find(const std::string name);
-
+	std::set<std::string> GetPhases(Phreeqc * phreeqc_ptr);
 	void totalize(Phreeqc * phreeqc_ptr);
 	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
 	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);

@@ -94,11 +94,13 @@ class cxxStorageBin: public PHRQ_base
 	void dump_raw(std::ostream & s_oss, unsigned int indent) const;
 
 	void dump_raw(std::ostream & s_oss, int i, unsigned int indent, int *n_out=NULL);
+	void dump_raw_range(std::ostream & s_oss, int start, int end, unsigned int indent) const;
 
 	void read_raw(CParser & parser);
 	int read_raw_keyword(CParser & parser);
 
 	void Add(cxxStorageBin &src, int n);
+	void Add_uz(cxxStorageBin &uzbin);
 
 	//cxxSolution *mix_cxxSolutions(cxxMix &mixmap);
 	cxxExchange *mix_cxxExchange(cxxMix & mixmap);

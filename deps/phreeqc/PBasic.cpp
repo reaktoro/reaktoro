@@ -1405,6 +1405,10 @@ listtokens(FILE * f, tokenrec * l_buf)
 			output_msg("DESCRIPTION");
 			break;
 
+		case toktitle:
+			output_msg("TITLE");
+			break;
+
 		case toksys:
 			output_msg("SYS");
 			break;
@@ -1545,11 +1549,27 @@ listtokens(FILE * f, tokenrec * l_buf)
 		case tokcell_saturation:
 			output_msg("CELL_SATURATION");
 			break;
+		case tokvelocity_x:
+			output_msg("VELOCITY_X");
+			break;
+		case tokvelocity_y:
+			output_msg("VELOCITY_Y");
+			break;
+		case tokvelocity_z:
+			output_msg("VELOCITY_Z");
+			break;
+		case toktransport_cell_no:
+			output_msg("TRANSPORT_CELL_NO");
+			break;
 		case tokiso:
 			output_msg("ISO");
 			break;
 		case tokiso_unit:
 			output_msg("ISO_UNIT");
+			break;
+		case tokkinetics_formula:
+		case tokkinetics_formula_:
+			output_msg("KINETICS_FORMULA$");
 			break;
 		case tokphase_formula:
 		case tokphase_formula_:
@@ -1582,6 +1602,12 @@ listtokens(FILE * f, tokenrec * l_buf)
 			break;
  		case tokvm:
  			output_msg("VM"); // mole volume of aqueous solute
+ 			break;
+ 		case tokphase_vm:
+ 			output_msg("PHASE_VM"); // mole volume of a phase 
+ 			break;
+ 		case tokaphi:
+ 			output_msg("APHI"); // mole volume of a phase 
  			break;
  		case tokdh_a:
  			output_msg("DH_A"); // Debye-Hueckel A
@@ -1620,8 +1646,29 @@ listtokens(FILE * f, tokenrec * l_buf)
 		case tokdiff_c:
 			output_msg("DIFF_C");
 			break;
+		case toksetdiff_c:
+			output_msg("SETDIFF_C");
+			break;
 		case toksa_declercq:
 			output_msg("SA_DECLERCQ");
+			break;
+		case tokviscos:
+			output_msg("VISCOS");
+			break;
+		case tokviscos_0:
+			output_msg("VISCOS_0");
+			break;
+		case tokcurrent_a:
+			output_msg("CURRENT_A");
+			break;
+		case tokpot_v:
+			output_msg("POT_V");
+			break;
+		case tokt_sc:
+			output_msg("T_SC");
+			break;
+		case tokiterations:
+			output_msg("ITERATIONS");
 			break;
 		}
 		l_buf = l_buf->next;
@@ -1742,7 +1789,11 @@ void PBasic::
 		_ASSERTE(nIDErrPrompt == 0);
 		nIDErrPrompt = IDS_ERR_SYNTAX;
 	}
-	errormsg(strcat(str, l_s));
+	strcat(str, l_s);
+	strcat(str, " in line: ");
+	if (strcmp(inbuf, "run"))
+		strcat(str, inbuf);
+	errormsg(str);
 }
 
 void PBasic::
@@ -1755,7 +1806,11 @@ void PBasic::
 		_ASSERTE(nIDErrPrompt == 0);
 		nIDErrPrompt = IDS_ERR_MISMATCH;
 	}
-	errormsg(strcat(str, l_s));
+	strcat(str, l_s);
+	strcat(str, " in line: ");
+	if (strcmp(inbuf, "run"))
+		strcat(str, inbuf);
+	errormsg(str);
 }
 
 void PBasic::
@@ -2254,7 +2309,7 @@ factor(struct LOC_exec * LINK)
 					break;
 				}
 				else
-					n.UU.val = PhreeqcPtr->cell_data[i - 1].por;
+					n.UU.val = PhreeqcPtr->cell_data[i].por;
 				break;
 			}
 			else
@@ -2495,6 +2550,16 @@ factor(struct LOC_exec * LINK)
 		while (PhreeqcPtr->replace("\t", " ", n.UU.sval));
 		break;
 
+	case toktitle:
+		n.stringval = true;
+		if (strlen(PhreeqcPtr->last_title_x.c_str()) == 0)
+		{
+			PhreeqcPtr->last_title_x = " ";
+		}
+		n.UU.sval = PhreeqcPtr->string_duplicate(PhreeqcPtr->last_title_x.c_str());
+		while (PhreeqcPtr->replace("\t", " ", n.UU.sval));
+		break;
+
 	case tokinstr:
 		require(toklp, LINK);
 		string1 = stringfactor(STR1, LINK);
@@ -2712,7 +2777,7 @@ factor(struct LOC_exec * LINK)
 
 	case tokedl_species:
 		{
-			double area, thickness;
+			double area=0.0, thickness=0.0;
 			require(toklp, LINK);
 			const char *surf_name = stringfactor(STR1, LINK);
 			require(tokcomma, LINK);
@@ -2931,6 +2996,112 @@ factor(struct LOC_exec * LINK)
 			break;
 		}
 
+	case tokkinetics_formula:
+	case tokkinetics_formula_:
+		{
+			require(toklp, LINK);
+			std::string kinetics_name(stringfactor(STR1, LINK));
+			varrec *elts_varrec = NULL, *coef_varrec = NULL;
+			cxxNameDouble stoichiometry;
+			/*
+			*  Parse arguments
+			*/
+			if (LINK->t != NULL && LINK->t->kind == tokcomma)
+			{
+				/* kinetics_formula("calcite", count, elt, coef) */
+				/* return formula */
+				/*int c; */
+				/*  struct varrec *count_varrec, *names_varrec, *types_varrec, *moles_varrec; */
+				/*  struct varrec *count_varrec, *elt_varrec, *coef_varrec; */
+				/* return number of species */
+				LINK->t = LINK->t->next;
+				count_varrec = LINK->t->UU.vp;
+				if (LINK->t->kind != tokvar || count_varrec->stringvar != 0)
+					snerr(": Cannot find count variable");
+
+				/* return number of names of elements */
+				LINK->t = LINK->t->next;
+				require(tokcomma, LINK);
+				elts_varrec = LINK->t->UU.vp;
+				if (LINK->t->kind != tokvar || elts_varrec->stringvar != 1)
+					snerr(": Cannot find element string variable");
+
+				/* return coefficients of species */
+				LINK->t = LINK->t->next;
+				require(tokcomma, LINK);
+				coef_varrec = LINK->t->UU.vp;
+				if (LINK->t->kind != tokvar || coef_varrec->stringvar != 0)
+					snerr(": Cannot find coefficient variable");
+				LINK->t = LINK->t->next;
+				arg_num = 4;
+			}
+			else
+			{
+				arg_num = 1;
+			}
+			require(tokrp, LINK);
+
+			if (arg_num > 1)
+			{
+				free_dim_stringvar(elts_varrec);
+				PhreeqcPtr->free_check_null(coef_varrec->UU.U0.arr);
+				coef_varrec->UU.U0.arr = NULL;
+			}
+			/*
+			*  Call subroutine
+			*/
+			std::string form = PhreeqcPtr->kinetics_formula(kinetics_name, stoichiometry);
+
+			// put formula as return value
+			n.stringval = true;
+			n.UU.sval = PhreeqcPtr->string_duplicate(form.c_str());
+
+			/*
+			*  fill in varrec structure
+			*/
+
+			if (arg_num > 1)
+			{
+				size_t count = stoichiometry.size();
+				*count_varrec->UU.U0.val = (LDBLE) count;
+				/*
+				* malloc space
+				*/
+				elts_varrec->UU.U1.sarr = (char **) PhreeqcPtr->PHRQ_malloc((count + 1) * sizeof(char *));
+				if (elts_varrec->UU.U1.sarr == NULL)
+					PhreeqcPtr->malloc_error();
+				coef_varrec->UU.U0.arr = (LDBLE *) PhreeqcPtr->PHRQ_malloc((count + 1) * sizeof(LDBLE));
+				if (coef_varrec->UU.U0.arr == NULL)
+					PhreeqcPtr->malloc_error();
+
+				// first position not used
+				elts_varrec->UU.U1.sarr[0] = NULL;
+				coef_varrec->UU.U0.arr[0] = 0;
+
+				// set dims for Basic array
+				for (i = 0; i < maxdims; i++)
+				{
+					elts_varrec->dims[i] = 0;
+					coef_varrec->dims[i] = 0;
+				}
+				// set dims for first dimension and number of dims
+				elts_varrec->dims[0] = (long) (count + 1);
+				coef_varrec->dims[0] = (long) (count + 1);
+				elts_varrec->numdims = 1;
+				coef_varrec->numdims = 1;
+
+				// fill in arrays
+				i = 1;
+				for (cxxNameDouble::iterator it = stoichiometry.begin(); it != stoichiometry.end(); it++)
+				{
+					elts_varrec->UU.U1.sarr[i] = PhreeqcPtr->string_duplicate((it->first).c_str());
+					coef_varrec->UU.U0.arr[i] = it->second;
+					i++;
+				}
+
+			}
+			break;
+		}
 	case tokphase_formula:
 	case tokphase_formula_:
 		{
@@ -3155,7 +3326,7 @@ factor(struct LOC_exec * LINK)
 		}
 		else if (PhreeqcPtr->state == TRANSPORT)
 		{
-			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->cell_data[PhreeqcPtr->cell - 1].mid_cell_x;
+			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->cell_data[PhreeqcPtr->cell].mid_cell_x;
 		}
 		else if (PhreeqcPtr->state == ADVECTION)
 		{
@@ -3477,6 +3648,30 @@ factor(struct LOC_exec * LINK)
 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "cell_saturation");
 		}
 		break;
+	case tokvelocity_x:
+		{
+			double x1 = (double)PhreeqcPtr->solution_number();
+			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "velocity_x");
+		}
+		break;
+	case tokvelocity_y:
+		{
+			double x1 = (double)PhreeqcPtr->solution_number();
+			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "velocity_y");
+		}
+		break;
+	case tokvelocity_z:
+		{
+			double x1 = (double)PhreeqcPtr->solution_number();
+			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "velocity_z");
+		}
+		break;
+	case toktransport_cell_no:
+	{
+		double x1 = (double)PhreeqcPtr->solution_number();
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->basic_callback(x1, x1, "transport_cell_no");
+	}
+	break;
 	case toksc:
 		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_SC();
 		break;
@@ -3497,6 +3692,9 @@ factor(struct LOC_exec * LINK)
  		break;
 	case tokeps_r:
 		n.UU.val = PhreeqcPtr->eps_r;
+		break;
+	case tokaphi:
+		n.UU.val = PhreeqcPtr->A0;
 		break;
 	case tokdh_a:
 		n.UU.val = PhreeqcPtr->DH_A;
@@ -3524,6 +3722,45 @@ factor(struct LOC_exec * LINK)
   	case toksoln_vol:
  		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_solution_volume();
  		break;
+  	case tokvm:
+		{
+			const char * str = stringfactor(STR1, LINK);
+ 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->aqueous_vm(str);
+		}
+ 		break;
+  	case tokphase_vm:
+		{
+			const char * str = stringfactor(STR1, LINK);
+ 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->phase_vm(str);
+		}
+ 		break;
+  	case tokviscos:
+		{
+ 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->viscos;
+		}
+ 		break;
+  	case tokviscos_0:
+		{
+ 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->viscos_0;
+		}
+ 		break;
+	case tokcurrent_a:
+		//n.UU.val = (parse_all) ? 1 : PhreeqcPtr->current_x;
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->current_A;
+		break;
+	case tokpot_v:
+		n.UU.val = (parse_all) ? 1 : PhreeqcPtr->use.Get_solution_ptr()->Get_potV();
+		break;
+	case tokt_sc:
+		{
+			const char * str = stringfactor(STR1, LINK);
+			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->calc_t_sc(str);
+		}
+		break;
+	case tokiterations:
+		n.UU.val = (parse_all) ? 0 : PhreeqcPtr->overall_iterations;
+		break;
+
 	case toklog10:
 		{
 			LDBLE t = realfactor(LINK);
@@ -3537,13 +3774,6 @@ factor(struct LOC_exec * LINK)
 			//}
 		}
 		break;
-  	case tokvm:
-		{
-			const char * str = stringfactor(STR1, LINK);
- 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->aqueous_vm(str);
-		}
- 		break;
-
 	case toksin:
 		n.UU.val = sin(realfactor(LINK));
 		break;
@@ -3672,6 +3902,7 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 	case tokeq_frac:
+	case tokequiv_frac:
 		{			
 			// left parenthesis
 			require(toklp, LINK);
@@ -3794,6 +4025,24 @@ factor(struct LOC_exec * LINK)
 		}
 		break;
 			
+	case toksetdiff_c:
+		{
+			double d;
+
+			require(toklp, LINK);
+
+			const char * str = stringfactor(STR1, LINK);
+			require(tokcomma, LINK);
+
+			// double arugument
+			d = realexpr(LINK);
+			require(tokrp, LINK);
+
+ 			n.UU.val = (parse_all) ? 1 : PhreeqcPtr->setdiff_c(str, d);
+			
+			//PhreeqcPtr->PHRQ_free((void *) str);
+		}
+		break;
 	case tokval:
 		l_s = strfactor(LINK);
 		tok1 = LINK->t;
@@ -4513,7 +4762,7 @@ cmdchange_por(struct LOC_exec *LINK)
 	require(tokrp, LINK);
 	if (j > 0 && j <= PhreeqcPtr->count_cells * (1 + PhreeqcPtr->stag_data->count_stag) + 1
 		&& j != PhreeqcPtr->count_cells + 1)
-		PhreeqcPtr->cell_data[j - 1].por = TEMP;
+		PhreeqcPtr->cell_data[j].por = TEMP;
 }
 
 void PBasic::
@@ -5826,7 +6075,10 @@ exec(void)
 							_ASSERTE(nIDErrPrompt == 0);
 							nIDErrPrompt = IDS_ERR_ILLEGAL;
 						}
-						errormsg("Illegal command");
+						strcat(STR1, "Illegal command in line: ");
+						if (strcmp(inbuf, "run"))
+							strcat(STR1, inbuf);
+						errormsg(STR1);
 						break;
 					}
 				}
@@ -6216,7 +6468,7 @@ my_labs(long l_x)
 void *  PBasic::
 my_memmove(void * d, Const void * l_s, size_t n)
 {
-	register char *dd = (char *) d, *ss = (char *) l_s;
+	char *dd = (char *) d, *ss = (char *) l_s;
 	if (dd < ss || (unsigned int) (dd - ss) >= n)
 	{
 		memcpy(dd, ss, n);
@@ -6234,7 +6486,7 @@ my_memmove(void * d, Const void * l_s, size_t n)
 void *  PBasic::
 my_memcpy(void * d, Const void * l_s, size_t n)
 {
-	register char *ss = (char *) l_s, *dd = (char *) d;
+	char *ss = (char *) l_s, *dd = (char *) d;
 	while (n-- > 0)
 		*dd++ = *ss++;
 	return d;
@@ -6243,8 +6495,8 @@ my_memcpy(void * d, Const void * l_s, size_t n)
 int PBasic::
 my_memcmp(Const void * s1, Const void * s2, size_t n)
 {
-	register char *a = (char *) s1, *b = (char *) s2;
-	register int i;
+	char *a = (char *) s1, *b = (char *) s2;
+	int i;
 	while (n-- > 0)
 		if ((i = (*a++) - (*b++)) != 0)
 			return i;
@@ -6254,7 +6506,7 @@ my_memcmp(Const void * s1, Const void * s2, size_t n)
 void * PBasic::
 my_memset(void * d, int c, size_t n)
 {
-	register char *dd = (char *) d;
+	char *dd = (char *) d;
 	while (n-- > 0)
 		*dd++ = (char) c;
 	return d;
@@ -6306,10 +6558,10 @@ ipow(long a, long b)
 /* Store in "ret" the substring of length "len" starting from "pos" (1-based).
    Store a shorter or null string if out-of-range.  Return "ret". */
 char * PBasic::
-strsub(register char *ret, register char *l_s, register int pos,
-	   register int len)
+strsub(char *ret, char *l_s, int pos,
+	   int len)
 {
-	register char *s2;
+	char *s2;
 
 	if (--pos < 0 || len <= 0)
 	{
@@ -6339,10 +6591,10 @@ strsub(register char *ret, register char *l_s, register int pos,
    starting at index "pos" (1-based).  Result is 1-based, 0 if not found. */
 
 int PBasic::
-strpos2(char *l_s, register char *pat, register int pos)
+strpos2(char *l_s, char *pat, int pos)
 {
-	register char *cp, ch;
-	register int slen;
+	char *cp, ch;
+	int slen;
 
 	if (--pos < 0)
 		return 0;
@@ -6362,9 +6614,9 @@ strpos2(char *l_s, register char *pat, register int pos)
 
 /* Case-insensitive version of strcmp. */
 int PBasic::
-strcicmp(register char *s1, register char *s2)
+strcicmp(char *s1, char *s2)
 {
-	register unsigned char c1, c2;
+	unsigned char c1, c2;
 
 	while (*s1)
 	{
@@ -6387,7 +6639,7 @@ strcicmp(register char *s1, register char *s2)
 
 /* Trim blanks at left end of string. */
 char *  PBasic::
-strltrim(register char *l_s)
+strltrim(char *l_s)
 {
 	while (Isspace((int) *l_s++));
 	return l_s - 1;
@@ -6395,9 +6647,9 @@ strltrim(register char *l_s)
 
 /* Trim blanks at right end of string. */
 char * PBasic::
-strrtrim(register char *l_s)
+strrtrim(char *l_s)
 {
-	register char *s2 = l_s;
+	char *s2 = l_s;
 
 	if (!*l_s)
 		return l_s;
@@ -6413,8 +6665,8 @@ strrtrim(register char *l_s)
    to index "dpos" of "d", lengthening "d" if necessary.  Length and
    indices must be in-range. */
 void PBasic::
-strmove(register int len, register char *l_s, register int spos,
-		register char *d, register int dpos)
+strmove(int len, char *l_s, int spos,
+		char *d, int dpos)
 {
 	l_s += spos - 1;
 	d += dpos - 1;
@@ -6430,9 +6682,9 @@ strmove(register int len, register char *l_s, register int spos,
 
 /* Insert string "src" at index "pos" of "dst". */
 void PBasic::
-strinsert(register char *src, register char *dst, register int pos)
+strinsert(char *src, char *dst, int pos)
 {
-	register int slen, dlen;
+	int slen, dlen;
 
 	if (--pos < 0)
 		return;
@@ -6485,7 +6737,7 @@ P_eof(void)
 int PBasic::
 P_eoln(FILE * f)
 {
-	register int ch;
+	int ch;
 
 	ch = getc(f);
 	if (ch == EOF)
@@ -6553,9 +6805,9 @@ P_maxpos(FILE * f)
 
 /* Use packed array of char for a file name. */
 char * PBasic::
-P_trimname(register char * fn, register int len)
+P_trimname(char * fn, int len)
 {
-	register char *cp = fnbuf;
+	char *cp = fnbuf;
 
 	while (--len >= 0 && *fn && !isspace((int) *fn))
 		*cp++ = *fn++;
@@ -6587,10 +6839,10 @@ maxavail(void)
 
 /* (Sets with 32 or fewer elements are normally stored as plain longs.) */
 long * PBasic::
-P_setunion(register long *d, register long *s1, register long *s2)	/* d := s1 + s2 */
+P_setunion(long *d, long *s1, long *s2)	/* d := s1 + s2 */
 {
 	long *dbase = d++;
-	register int sz1 = *s1++, sz2 = *s2++;
+	int sz1 = *s1++, sz2 = *s2++;
 	while (sz1 > 0 && sz2 > 0)
 	{
 		*d++ = *s1++ | *s2++;
@@ -6605,10 +6857,10 @@ P_setunion(register long *d, register long *s1, register long *s2)	/* d := s1 + 
 }
 
 long * PBasic::
-P_setint(register long *d, register long *s1, register long *s2)	/* d := s1 * s2 */
+P_setint(long *d, long *s1, long *s2)	/* d := s1 * s2 */
 {
 	long *dbase = d++;
-	register int sz1 = *s1++, sz2 = *s2++;
+	int sz1 = *s1++, sz2 = *s2++;
 	while (--sz1 >= 0 && --sz2 >= 0)
 		*d++ = *s1++ & *s2++;
 	while (--d > dbase && !*d);
@@ -6617,10 +6869,10 @@ P_setint(register long *d, register long *s1, register long *s2)	/* d := s1 * s2
 }
 
 long * PBasic::
-P_setdiff(register long *d, register long *s1, register long *s2)	/* d := s1 - s2 */
+P_setdiff(long *d, long *s1, long *s2)	/* d := s1 - s2 */
 {
 	long *dbase = d++;
-	register int sz1 = *s1++, sz2 = *s2++;
+	int sz1 = *s1++, sz2 = *s2++;
 	while (--sz1 >= 0 && --sz2 >= 0)
 		*d++ = *s1++ & ~*s2++;
 	if (sz1 >= 0)
@@ -6634,10 +6886,10 @@ P_setdiff(register long *d, register long *s1, register long *s2)	/* d := s1 - s
 }
 
 long * PBasic::
-P_setxor(register long *d, register long *s1, register long *s2)	/* d := s1 / s2 */
+P_setxor(long *d, long *s1, long *s2)	/* d := s1 / s2 */
 {
 	long *dbase = d++;
-	register int sz1 = *s1++, sz2 = *s2++;
+	int sz1 = *s1++, sz2 = *s2++;
 	while (sz1 > 0 && sz2 > 0)
 	{
 		*d++ = *s1++ ^ *s2++;
@@ -6653,10 +6905,10 @@ P_setxor(register long *d, register long *s1, register long *s2)	/* d := s1 / s2
 }
 
 long * PBasic::
-P_addset(register long *l_s, register unsigned val)	/* s := s + [val] */
+P_addset(long *l_s, unsigned val)	/* s := s + [val] */
 {
-	register long *sbase = l_s;
-	register int bit, size;
+	long *sbase = l_s;
+	int bit, size;
 	bit = val % SETBITS;
 	val /= SETBITS;
 	size = *l_s;
@@ -6674,10 +6926,10 @@ P_addset(register long *l_s, register unsigned val)	/* s := s + [val] */
 }
 
 long * PBasic::
-P_addsetr(register long *l_s, register unsigned v1, register unsigned v2)	/* s := s + [v1..v2] */
+P_addsetr(long *l_s, unsigned v1, unsigned v2)	/* s := s + [v1..v2] */
 {
-	register long *sbase = l_s;
-	register int b1, b2, size;
+	long *sbase = l_s;
+	int b1, b2, size;
 	if ((int) v1 > (int) v2)
 		return sbase;
 	b1 = v1 % SETBITS;
@@ -6709,9 +6961,9 @@ P_addsetr(register long *l_s, register unsigned v1, register unsigned v2)	/* s :
 }
 
 long *  PBasic::
-P_remset(register long *l_s, register unsigned val)	/* s := s - [val] */
+P_remset(long *l_s, unsigned val)	/* s := s - [val] */
 {
-	register int bit;
+	int bit;
 	bit = val % SETBITS;
 	val /= SETBITS;
 	if ((long) ++val <= *l_s)
@@ -6724,9 +6976,9 @@ P_remset(register long *l_s, register unsigned val)	/* s := s - [val] */
 }
 
 int PBasic::
-P_setequal(register long *s1, register long *s2)	/* s1 = s2 */
+P_setequal(long *s1, long *s2)	/* s1 = s2 */
 {
-	register int size = *s1++;
+	int size = *s1++;
 	if (*s2++ != size)
 		return 0;
 	while (--size >= 0)
@@ -6738,9 +6990,9 @@ P_setequal(register long *s1, register long *s2)	/* s1 = s2 */
 }
 
 int PBasic::
-P_subset(register long *s1, register long *s2)	/* s1 <= s2 */
+P_subset(long *s1, long *s2)	/* s1 <= s2 */
 {
-	register int sz1 = *s1++, sz2 = *s2++;
+	int sz1 = *s1++, sz2 = *s2++;
 	if (sz1 > sz2)
 		return 0;
 	while (--sz1 >= 0)
@@ -6752,14 +7004,14 @@ P_subset(register long *s1, register long *s2)	/* s1 <= s2 */
 }
 
 long * PBasic::
-P_setcpy(register long *d, register long *l_s)	/* d := s */
+P_setcpy(long *d, long *l_s)	/* d := s */
 {
-	register long *save_d = d;
+	long *save_d = d;
 
 #ifdef SETCPY_MEMCPY
 	memcpy(d, l_s, (*l_s + 1) * sizeof(long));
 #else
-	register int i = *l_s + 1;
+	int i = *l_s + 1;
 	while (--i >= 0)
 		*d++ = *l_s++;
 #endif
@@ -6769,7 +7021,7 @@ P_setcpy(register long *d, register long *l_s)	/* d := s */
 /* s is a "smallset", i.e., a 32-bit or less set stored
    directly in a long. */
 long * PBasic::
-P_expset(register long *d, register long l_s)	/* d := s */
+P_expset(long *d, long l_s)	/* d := s */
 {
 	if (l_s)
 	{
@@ -6782,7 +7034,7 @@ P_expset(register long *d, register long l_s)	/* d := s */
 }
 
 long PBasic::
-P_packset(register long *l_s)		/* convert s to a small-set */
+P_packset(long *l_s)		/* convert s to a small-set */
 {
 	if (*l_s++)
 		return *l_s;
@@ -7054,6 +7306,7 @@ const std::map<const std::string, PBasic::BASIC_TOKEN>::value_type temp_tokens[]
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sum_s_s",            PBasic::toksum_s_s),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("calc_value",         PBasic::tokcalc_value),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("description",        PBasic::tokdescription),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("title",              PBasic::toktitle),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sys",                PBasic::toksys),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("instr",              PBasic::tokinstr),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("ltrim",              PBasic::tokltrim),
@@ -7090,6 +7343,10 @@ const std::map<const std::string, PBasic::BASIC_TOKEN>::value_type temp_tokens[]
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_pore_volume",   PBasic::tokcell_pore_volume),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_porosity",      PBasic::tokcell_porosity),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("cell_saturation",    PBasic::tokcell_saturation),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("velocity_x",         PBasic::tokvelocity_x),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("velocity_y",         PBasic::tokvelocity_y),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("velocity_z",         PBasic::tokvelocity_z),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("transport_cell_no",  PBasic::toktransport_cell_no),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmole",            PBasic::toktotmole),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmol",             PBasic::toktotmol),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("totmoles",           PBasic::toktotmoles),
@@ -7125,7 +7382,18 @@ const std::map<const std::string, PBasic::BASIC_TOKEN>::value_type temp_tokens[]
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("diff_c",             PBasic::tokdiff_c),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("sa_declercq",        PBasic::toksa_declercq),
 	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("edl_species",        PBasic::tokedl_species),
-	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rho_0",                PBasic::tokrho_0)
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("viscos",             PBasic::tokviscos),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("viscos_0",           PBasic::tokviscos_0),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("rho_0",              PBasic::tokrho_0),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kinetics_formula",   PBasic::tokkinetics_formula),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("kinetics_formula$",  PBasic::tokkinetics_formula),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("phase_vm",           PBasic::tokphase_vm),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("current_a",          PBasic::tokcurrent_a),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("pot_v",              PBasic::tokpot_v),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("t_sc",               PBasic::tokt_sc),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("setdiff_c",          PBasic::toksetdiff_c),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("aphi",               PBasic::tokaphi),
+	std::map<const std::string, PBasic::BASIC_TOKEN>::value_type("iterations",         PBasic::tokiterations)
 };
 std::map<const std::string, PBasic::BASIC_TOKEN> PBasic::command_tokens(temp_tokens, temp_tokens + sizeof temp_tokens / sizeof temp_tokens[0]);
 

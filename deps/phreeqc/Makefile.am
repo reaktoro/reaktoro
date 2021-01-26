@@ -6,6 +6,7 @@ EXTRA_DIST=\
 	CurveObject.cpp\
 	CurveObject.h\
 	Form1.h\
+	Form1.2005.resX\
 	Form1.resX\
 	ZedGraph.dll	
 
@@ -42,7 +43,6 @@ phreeqc_SOURCES=\
 	Dictionary.h\
 	dumper.cpp\
 	dumper.h\
-	dw.cpp\
 	Exchange.cxx\
 	Exchange.h\
 	ExchComp.cxx\

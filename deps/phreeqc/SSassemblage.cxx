@@ -319,7 +319,7 @@ cxxSSassemblage::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 		this->SSs.clear();
 		for (int n = 0; n < count; n++)
 		{
-			cxxSS ssc;
+			cxxSS ssc(this->io);
 			ssc.Deserialize(dictionary, ints, doubles, ii, dd);
 			std::string str(ssc.Get_name());
 			this->SSs[str] = ssc;

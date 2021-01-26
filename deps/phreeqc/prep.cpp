@@ -89,10 +89,10 @@ prep(void)
 		residual = (LDBLE *) PHRQ_malloc( (size_t) count_unknowns * sizeof( LDBLE ));
 		if (residual == NULL) malloc_error();
 */
-		array =
+		my_array =
 			(LDBLE *) PHRQ_malloc((size_t) (max_unknowns + 1) *
 								  max_unknowns * sizeof(LDBLE));
-		if (array == NULL)
+		if (my_array == NULL)
 			malloc_error();
 		delta = (LDBLE *) PHRQ_malloc((size_t) max_unknowns * sizeof(LDBLE));
 		if (delta == NULL)
@@ -120,12 +120,26 @@ prep(void)
  */
 		quick_setup();
 	}
+	if (debug_mass_balance)
+	{
+		output_msg(sformatf("\nTotals for the equation solver.\n"));
+		output_msg(sformatf("\n\tRow\tName           Type       Total moles\n"));
+		for (int i = 0; i < count_unknowns; i++)
+		{
+			if (x[i]->type == PITZER_GAMMA)
+				continue;
+			output_msg(sformatf("\t%3d\t%-17s%2d    %15.6e\n",
+				x[i]->number, x[i]->description, (int)x[i]->type, (double)x[i]->moles));
+		}
+		output_msg(sformatf("\n\n"));
+	}
 	if (get_input_errors() > 0)
 	{
 		error_msg("Program stopping due to input errors.", STOP);
 	}
 	if (sit_model) sit_make_lists();
-	if (pitzer_model) pitzer_make_lists();
+	if (pitzer_model) 
+		pitzer_make_lists();
 	return (OK);
 }
 
@@ -420,7 +434,7 @@ build_gas_phase(void)
  */
 		if (debug_prep == TRUE)
 		{
-			output_msg(sformatf( "\n\tMass balance summations %s.\n\n",
+			output_msg(sformatf( "\n\tMass balance summations. %s.\n",
 					   phase_ptr->name));
 		}
 
@@ -543,27 +557,27 @@ build_gas_phase(void)
 				}
 				col = master_ptr->unknown->number;
 				coef = coef_elt * rxn_ptr->coef;
-				store_jacob(&(phase_ptr->moles_x),
-							&(array[row + col]), coef);
 				if (debug_prep == TRUE)
 				{
-					output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d\n",
+					output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d",
 							   master_ptr->s->name, (double) coef,
 							   row / (count_unknowns + 1), col));
 				}
+				store_jacob(&(phase_ptr->moles_x),
+					&(my_array[row + col]), coef);
 			}
 			if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_PRESSURE)
 			{
 				/* derivative wrt total moles of gas */
-				store_jacob(&(phase_ptr->fraction_x),
-							&(array[row + gas_unknown->number]), coef_elt);
 				if (debug_prep == TRUE)
 				{
-					output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d\n",
+					output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d",
 							   "gas moles", (double) elt_list[j].coef,
 							   row / (count_unknowns + 1),
 							   gas_unknown->number));
 				}
+				store_jacob(&(phase_ptr->fraction_x),
+					&(my_array[row + gas_unknown->number]), coef_elt);
 			}
 		}
 /*
@@ -634,13 +648,13 @@ build_gas_phase(void)
 					}
 					col = master_ptr->unknown->number;
 					coef = rxn_ptr->coef;
-					store_jacob(&(phase_ptr->p_soln_x), &(array[row + col]), coef);
 					if (debug_prep == TRUE)
 					{
-						output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d\n",
+						output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d",
 							master_ptr->s->name, (double) coef,
 							row / (count_unknowns + 1), col));
 					}
+					store_jacob(&(phase_ptr->p_soln_x), &(my_array[row + col]), coef);
 				}
 			}
 		}
@@ -733,11 +747,11 @@ build_ss_assemblage(void)
 			{
 				col = x[i]->number - 1;
 			}
-			store_jacob(&(x[i]->phase->dnc), &(array[row + col]), -1);
+			store_jacob(&(x[i]->phase->dnc), &(my_array[row + col]), -1);
 
 			/* next dnb terms */
 			col++;
-			store_jacob(&(x[i]->phase->dnb), &(array[row + col]), -1);
+			store_jacob(&(x[i]->phase->dnb), &(my_array[row + col]), -1);
 		}
 		else
 		{
@@ -750,12 +764,12 @@ build_ss_assemblage(void)
 				if ((int) j != x[i]->ss_comp_number)
 				{
 /*					store_jacob (&(s_s_ptr->dn), &(array[row + col + j]), -1.0); */
-					store_jacob(&(x[i]->phase->dn), &(array[row + col + j]),
+					store_jacob(&(x[i]->phase->dn), &(my_array[row + col + j]),
 								-1.0);
 				}
 				else
 				{
-					store_jacob(&(x[i]->phase->dnb), &(array[row + col + j]),
+					store_jacob(&(x[i]->phase->dnb), &(my_array[row + col + j]),
 								-1.0);
 				}
 			}
@@ -892,7 +906,7 @@ build_jacobian_sums(int k)
 		}
 		coef = mb_unknowns[i].coef;
 		if (debug_prep == TRUE)
-			output_msg(sformatf( "\n\tMass balance eq:  %s\t%f\n",
+			output_msg(sformatf( "\n\tMass balance eq:  %-13s\t%f\trow\tcol\n",
 					   mb_unknowns[i].unknown->description, (double) coef));
 		store_dn(k, mb_unknowns[i].source, mb_unknowns[i].unknown->number,
 				 coef, mb_unknowns[i].gamma_source);
@@ -912,17 +926,17 @@ build_jacobian_sums(int k)
 				/* term for water, sum of all surfaces */
 				source = &s[k]->tot_dh2o_moles;
 				target =
-					&(array
+					&(my_array
 					  [mb_unknowns[i].unknown->number * (count_unknowns + 1) +
 					   mass_oxygen_unknown->number]);
-				store_jacob(source, target, coef);
 				if (debug_prep == TRUE)
 				{
-					output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d\n",
+					output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d",
 							   "sum[dn(i,s)/dlnwater]", (double) coef,
 							   mb_unknowns[i].unknown->number,
 							   mass_oxygen_unknown->number));
 				}
+				store_jacob(source, target, coef);
 			}
 
 			/* terms for psi, one for each surface */
@@ -933,15 +947,15 @@ build_jacobian_sums(int k)
 					continue;
 				cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[j]->surface_charge);
 				source = s_diff_layer[k][charge_ptr->Get_name()].Get_dx_moles_address();
-				target = &(array[mb_unknowns[i].unknown->number *
+				target = &(my_array[mb_unknowns[i].unknown->number *
 								 (count_unknowns + 1) + x[j]->number]);
-				store_jacob(source, target, coef);
 				if (debug_prep == TRUE)
 				{
-					output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d\n",
+					output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d",
 							   "dg/dlny", (double) coef,
 							   mb_unknowns[i].unknown->number, x[j]->number));
 				}
+				store_jacob(source, target, coef);
 				count_g++;
 				if (count_g >= (int) use.Get_surface_ptr()->Get_surface_charges().size())
 					break;
@@ -972,17 +986,17 @@ build_jacobian_sums(int k)
 				if (kk >= 0)
 				{
 					source = s_diff_layer[k][charge_ptr->Get_name()].Get_drelated_moles_address();
-					target = &(array[mb_unknowns[i].unknown->number *
+					target = &(my_array[mb_unknowns[i].unknown->number *
 									 (count_unknowns + 1) + x[kk]->number]);
-					store_jacob(source, target, coef);
 					if (debug_prep == TRUE)
 					{
 						output_msg(sformatf(
-								   "\t\t%-24s%10.3f\t%d\t%d\n", "dphase",
+								   "\t\t%-24s%10.3f\t%d\t%d", "dphase",
 								   (double) coef,
 								   mb_unknowns[i].unknown->number,
 								   x[kk]->number));
 					}
+					store_jacob(source, target, coef);
 				}
 				count_g++;
 				if (count_g >= (int) use.Get_surface_ptr()->Get_surface_charges().size())
@@ -1001,17 +1015,17 @@ build_jacobian_sums(int k)
 				if (mb_unknowns[i].unknown->number == x[j]->number)
 				{
 					source = s_diff_layer[k][charge_ptr->Get_name()].Get_dx_moles_address();
-					target = &(array[mb_unknowns[i].unknown->number *
+					target = &(my_array[mb_unknowns[i].unknown->number *
 									 (count_unknowns + 1) + x[j]->number]);
-					store_jacob(source, target, coef);
 					if (debug_prep == TRUE)
 					{
 						output_msg(sformatf(
-								   "\t\t%-24s%10.3f\t%d\t%d\n", "dg/dlny",
+								   "\t\t%-24s%10.3f\t%d\t%d", "dg/dlny",
 								   (double) coef,
 								   mb_unknowns[i].unknown->number,
 								   x[j]->number));
 					}
+					store_jacob(source, target, coef);
 
 					/* term for related phase */
 					/* has related phase */
@@ -1030,17 +1044,17 @@ build_jacobian_sums(int k)
 						if (kk >= 0)
 						{
 							source = s_diff_layer[k][charge_ptr->Get_name()].Get_drelated_moles_address();
-							target = &(array[mb_unknowns[i].unknown->number *
+							target = &(my_array[mb_unknowns[i].unknown->number *
 								   (count_unknowns + 1) + x[kk]->number]);
-							store_jacob(source, target, coef);
 							if (debug_prep == TRUE)
 							{
 								output_msg(sformatf(
-										   "\t\t%-24s%10.3f\t%d\t%d\n",
+										   "\t\t%-24s%10.3f\t%d\t%d",
 										   "dphase", (double) coef,
 										   mb_unknowns[i].unknown->number,
 										   x[kk]->number));
 							}
+							store_jacob(source, target, coef);
 						}
 					}
 
@@ -1048,18 +1062,18 @@ build_jacobian_sums(int k)
 					{
 						/* term for water, for same surfaces */
 						source = s_diff_layer[k][charge_ptr->Get_name()].Get_dh2o_moles_address();
-						target = &(array[mb_unknowns[i].unknown->number *
+						target = &(my_array[mb_unknowns[i].unknown->number *
 										 (count_unknowns + 1) +
 										 mass_oxygen_unknown->number]);
-						store_jacob(source, target, coef);
 						if (debug_prep == TRUE)
 						{
 							output_msg(sformatf(
-									   "\t\t%-24s%10.3f\t%d\t%d\n",
+									   "\t\t%-24s%10.3f\t%d\t%d",
 									   "dn(i,s)/dlnwater", (double) coef,
 									   mb_unknowns[i].unknown->number,
 									   mass_oxygen_unknown->number));
 						}
+						store_jacob(source, target, coef);
 					}
 					break;
 				}
@@ -1102,7 +1116,7 @@ build_mb_sums(void)
 
 	if (debug_prep == TRUE)
 	{
-		output_msg(sformatf( "\n\tMass balance summations.\n\n"));
+		output_msg(sformatf( "\n\tMass balance summations.\n"));
 	}
 	for (i = 0; i < count_mb_unknowns; i++)
 	{
@@ -1236,7 +1250,7 @@ build_model(void)
 			{
 				s[i]->dz[j] = s[i]->rxn_x->dz[j];
 			}
-			if (debug_prep == TRUE)
+			if (debug_mass_action == TRUE)
 			{
 				output_msg(sformatf( "\n%s\n\tMass-action equation\n",
 						   s[i]->name));
@@ -1265,7 +1279,7 @@ build_model(void)
 			}
 			if (debug_prep == TRUE)
 			{
-				output_msg(sformatf( "\tElement composition %s\n",
+				output_msg(sformatf( "\n%s, Element composition:\n",
 						   trxn.token[0].s->name));
 				for (j = 0; j < count_elts; j++)
 				{
@@ -1274,12 +1288,12 @@ build_model(void)
 							   (double) elt_list[j].coef));
 				}
 			}
-			if (debug_prep == TRUE)
-			{
-				output_msg(sformatf( "\n\tMass balance equation\n",
-						   s[i]->name));
-				trxn_print();
-			}
+			//if (debug_prep == TRUE)
+			//{
+			//	output_msg(sformatf( "\n\tMass balance equation\n",
+			//			   s[i]->name));
+			//	trxn_print();
+			//}
 			if (s[i]->type < EMINUS)
 			{
 				mb_for_species_aq(i);
@@ -1300,6 +1314,7 @@ build_model(void)
 				build_mb_sums();
 			}
 #endif
+
 			if (!pitzer_model && !sit_model)
 				build_jacobian_sums(i);
 /*
@@ -1317,7 +1332,7 @@ build_model(void)
 			build_species_list(i);
 		}
 	}
-	if (dl_type_x != cxxSurface::NO_DL && (pitzer_model == TRUE || sit_model == TRUE))
+	if (dl_type_x != cxxSurface::NO_DL && (/*pitzer_model == TRUE || */sit_model == TRUE)) //DL_pitz
 	{
 		error_msg("-diffuse_layer option not available for Pizer or SIT model",
 				  STOP);
@@ -1344,9 +1359,8 @@ build_model(void)
 		}
 	}
 /*
- *   For Pizer model add lg unknown for each aqueous species
+ *   For Pitzer model add lg unknown for each aqueous species
  */
-
 	if (pitzer_model == TRUE || sit_model == TRUE)
 	{
 		j0 = count_unknowns;
@@ -1366,7 +1380,7 @@ build_model(void)
 			count_unknowns++;
 		}
 	}
-/*
+	/*
  *   Rewrite phases to current master species
  */
 	for (i = 0; i < count_phases; i++)
@@ -1391,11 +1405,11 @@ build_model(void)
 			write_mass_action_eqn_x(STOP);
 			trxn_reverse_k();
 			rxn_free(phases[i]->rxn_x);
-			if (debug_prep == TRUE)
-			{
-				output_msg(sformatf( "\nPhase: %s\n", phases[i]->name));
-				trxn_print();
-			}
+			//if (debug_prep == TRUE)
+			//{
+			//	output_msg(sformatf( "\nPhase: %s\n", phases[i]->name));
+			//	trxn_print();
+			//}
 			phases[i]->rxn_x = rxn_alloc(count_trxn + 1);
 			trxn_copy(phases[i]->rxn_x);
 			write_phase_sys_total(i);
@@ -3727,7 +3741,7 @@ setup_surface(void)
 	 *   check related kinetics
 	 */
 	if (use.Get_surface_ptr()->Get_related_rate())
-	{		
+	{
 		cxxKinetics *kinetics_ptr = Utilities::Rxn_find(Rxn_kinetics_map, use.Get_n_surface_user());
 		for (size_t i = 0; i < use.Get_surface_ptr()->Get_surface_comps().size(); i++)
 		{
@@ -4010,8 +4024,16 @@ calc_PR(std::vector<struct phase *> phase_ptrs, LDBLE P, LDBLE TK, LDBLE V_m)
 					a_aa *= 0.81;
 				else if (!strcmp(phase_ptr1->name, "CH4(g)"))
 					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr1->name, "Mtg(g)"))
+					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr1->name, "Methane(g)"))
+					a_aa *= 0.51;
 				else if (!strcmp(phase_ptr1->name, "N2(g)"))
 					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr1->name, "Ethane(g)"))
+					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr1->name, "Propane(g)"))
+					a_aa *= 0.45;
 			}
 			if (!strcmp(phase_ptr1->name, "H2O(g)"))
 			{
@@ -4021,8 +4043,16 @@ calc_PR(std::vector<struct phase *> phase_ptrs, LDBLE P, LDBLE TK, LDBLE V_m)
 					a_aa *= 0.81;
 				else if (!strcmp(phase_ptr->name, "CH4(g)"))
 					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr->name, "Mtg(g)"))
+					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr->name, "Methane(g)"))
+					a_aa *= 0.51;
 				else if (!strcmp(phase_ptr->name, "N2(g)"))
 					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr->name, "Ethane(g)"))
+					a_aa *= 0.51;
+				else if (!strcmp(phase_ptr->name, "Propane(g)"))
+					a_aa *= 0.45;
 			}
 			a_aa_sum += phase_ptr->fraction_x * phase_ptr1->fraction_x * a_aa;
 			a_aa_sum2 += phase_ptr1->fraction_x * a_aa;
@@ -4096,9 +4126,11 @@ calc_PR(std::vector<struct phase *> phase_ptrs, LDBLE P, LDBLE TK, LDBLE V_m)
 			}
 		}
 		if (P <= 0) // iterations = -1
-			P = 1.;
+			P = 1;
 	} else
 	{
+		if (P < 1e-10)
+			P = 1e-10;
 		r3[1] = b_sum - R_TK / P;
 		r3_12 = r3[1] * r3[1];
 		r3[2] = -3.0 * b2 + (a_aa_sum - R_TK * 2.0 * b_sum) / P;
@@ -4141,11 +4173,6 @@ calc_PR(std::vector<struct phase *> phase_ptrs, LDBLE P, LDBLE TK, LDBLE V_m)
 			continue;
 		}
 		phase_ptr->pr_p = phase_ptr->fraction_x * P;
-		//if (phase_ptr->t_c == 0.0 || phase_ptr->p_c == 0.0)
-		//{
-		//	phase_ptr->pr_phi = 1;
-		//	continue;
-		//}
 		rz = P * V_m / R_TK;
 		A = a_aa_sum * P / (R_TK * R_TK);
 		B = b_sum * P / R_TK;
@@ -4153,12 +4180,18 @@ calc_PR(std::vector<struct phase *> phase_ptrs, LDBLE P, LDBLE TK, LDBLE V_m)
 		if (rz > B)
 		{
 			phi = B_r * (rz - 1) - log(rz - B) + A / (2.828427 * B) * (B_r - 2.0 * phase_ptr->pr_aa_sum2 / a_aa_sum) *
-				  log((rz + 2.41421356 * B) / (rz - 0.41421356 * B));
-			if (phi > 4.44)
-				phi = 4.44;
+				log((rz + 2.41421356 * B) / (rz - 0.41421356 * B));
+			phi = (phi > 4.44 ? 4.44 : (phi < -3 ? -3 : phi));
+			//if (phi > 4.44)
+			//	phi = 4.44;
 		}
 		else
 			phi = -3.0; // fugacity coefficient > 0.05
+		if (/*!strcmp(phase_ptr->name, "H2O(g)") && */phi < -3)
+		{
+			// avoid such phi...
+			phi = -3;
+		}
 		phase_ptr->pr_phi = exp(phi);
 		phase_ptr->pr_si_f = phi / LOG_10;
 		// for initial equilibrations, adapt log_k of the gas phase...
@@ -4873,14 +4906,14 @@ store_dn(int k, LDBLE * source, int row, LDBLE coef_in, LDBLE * gamma_source)
 	{
 		if (debug_prep == TRUE)
 		{
-			output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d\n",
+			output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d",
 					   "Activity coefficient", (double) (-1.0 * coef_in),
 					   row / (count_unknowns + 1), mu_unknown->number));
 		}
 		/* mu term */
 		if (gamma_source != NULL)
 		{
-			store_jacob(gamma_source, &array[row + mu_unknown->number],
+			store_jacob(gamma_source, &my_array[row + mu_unknown->number],
 						-1.0 * coef_in);
 		}
 	}
@@ -4891,12 +4924,12 @@ store_dn(int k, LDBLE * source, int row, LDBLE coef_in, LDBLE * gamma_source)
 	{
 		if (debug_prep == TRUE)
 		{
-			output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d\n",
+			output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d",
 					   mass_oxygen_unknown->master[0]->s->name,
 					   (double) coef_in, row / (count_unknowns + 1),
 					   mass_oxygen_unknown->number));
 		}
-		store_jacob(source, &(array[row + mass_oxygen_unknown->number]),
+		store_jacob(source, &(my_array[row + mass_oxygen_unknown->number]),
 					coef_in);
 	}
 	if (s[k] == s_h2o)
@@ -4912,21 +4945,21 @@ store_dn(int k, LDBLE * source, int row, LDBLE coef_in, LDBLE * gamma_source)
 		{
 			master_ptr = rxn_ptr->s->primary;
 		}
-		if (debug_prep == TRUE)
-		{
-			output_msg(sformatf( "\t\t%s\n", master_ptr->s->name));
-		}
+		//if (debug_prep == TRUE)
+		//{
+		//	output_msg(sformatf( "\t\t%s\n", master_ptr->s->name));
+		//}
 		if (master_ptr == NULL ||master_ptr->unknown == NULL)
 			continue;
 		col = master_ptr->unknown->number;
 		coef = coef_in * rxn_ptr->coef;
-		store_jacob(source, &(array[row + col]), coef);
 		if (debug_prep == TRUE)
 		{
-			output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d\n",
+			output_msg(sformatf( "\t\t%-24s%10.3f\t%d\t%d",
 					   master_ptr->s->name, (double) coef,
 					   row / (count_unknowns + 1), col));
 		}
+		store_jacob(source, &(my_array[row + col]), coef);
 	}
 	return (OK);
 }
@@ -4945,7 +4978,7 @@ store_jacob(LDBLE * source, LDBLE * target, LDBLE coef)
 	{
 		if (debug_prep == TRUE)
 		{
-			output_msg(sformatf( "\t\tjacob1 %d\n", count_sum_jacob1));
+			output_msg(sformatf( "\tjacob1 %d\n", count_sum_jacob1));
 		}
 		sum_jacob1[count_sum_jacob1].source = source;
 		sum_jacob1[count_sum_jacob1++].target = target;
@@ -4960,7 +4993,7 @@ store_jacob(LDBLE * source, LDBLE * target, LDBLE coef)
 	{
 		if (debug_prep == TRUE)
 		{
-			output_msg(sformatf( "\t\tjacob2 %d\n", count_sum_jacob2));
+			output_msg(sformatf( "\tjacob2 %d\n", count_sum_jacob2));
 		}
 		sum_jacob2[count_sum_jacob2].source = source;
 		sum_jacob2[count_sum_jacob2].target = target;
@@ -4984,7 +5017,7 @@ store_jacob0(int row, int column, LDBLE coef)
  *   Stores in list a constant coef which will be added into jacobian array
  */
 	sum_jacob0[count_sum_jacob0].target =
-		&(array[row * (count_unknowns + 1) + column]);
+		&(my_array[row * (count_unknowns + 1) + column]);
 	sum_jacob0[count_sum_jacob0++].coef = coef;
 	/*    Check space */
 	if (count_sum_jacob0 >= max_sum_jacob0)
@@ -5580,7 +5613,8 @@ calc_lk_phase(phase *p_ptr, LDBLE TK, LDBLE pa)
 				}
 			}
 		}
-		else if (s_x[i]->millero[0])
+		//else if (s_x[i]->millero[0])
+		else if (s_ptr->millero[0])
 		{
 		/* Millero volume at I = 0... */
 			d_v += s_ptr->millero[0] + tc * (s_ptr->millero[1] + tc * s_ptr->millero[2]);
@@ -5839,6 +5873,7 @@ save_model(void)
 	{
 		cxxGasPhase * gas_phase_ptr = use.Get_gas_phase_ptr();
 		last_model.count_gas_phase = (int) gas_phase_ptr->Get_gas_comps().size();
+		last_model.gas_phase_type = gas_phase_ptr->Get_type();
 		last_model.gas_phase =
 			(struct phase **) PHRQ_malloc((size_t) last_model.count_gas_phase *
 										  sizeof(struct phase *));
@@ -5856,6 +5891,7 @@ save_model(void)
 	else
 	{
 		last_model.count_gas_phase = 0;
+		last_model.gas_phase_type = cxxGasPhase::GP_UNKNOWN;
 		last_model.gas_phase = NULL;
 	}
 /*
@@ -5998,6 +6034,8 @@ check_same_model(void)
 		last_model.force_prep = FALSE;
 		return (FALSE);
 	}
+	if (state == TRANSPORT && cell_data[cell_no].same_model)
+		return TRUE;
 /*
  *   Check master species
  */
@@ -6037,6 +6075,8 @@ check_same_model(void)
 		if (last_model.numerical_fixed_volume != numerical_fixed_volume)
 			return (FALSE);
 		if (last_model.count_gas_phase != (int) gas_phase_ptr->Get_gas_comps().size())
+			return (FALSE);
+		if (last_model.gas_phase_type != gas_phase_ptr->Get_type())
 			return (FALSE);
 		for (i = 0; i < (int) gas_phase_ptr->Get_gas_comps().size(); i++)
 		{
@@ -6149,7 +6189,7 @@ check_same_model(void)
 					surf_ptr->Set_new_def(true);
 					this->tidy_min_surface();
 					return (FALSE);
-				}
+		}
 			}
 			if (use.Get_surface_ptr()->Get_surface_comps()[i].Get_rate_name().size() > 0)
 			{

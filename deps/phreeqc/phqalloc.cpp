@@ -141,7 +141,8 @@ PHRQ_calloc(size_t num, size_t size
 
 	assert((s_pTail == NULL) || (s_pTail->pNext == NULL));
 
-	p = (PHRQMemHeader *) malloc(sizeof(PHRQMemHeader) + size * num);
+	//p = (PHRQMemHeader *) malloc(sizeof(PHRQMemHeader) + size * num);
+	p = (PHRQMemHeader *) calloc(1, sizeof(PHRQMemHeader) + size * num); // appt
 
 	if (p == NULL)
 		return NULL;

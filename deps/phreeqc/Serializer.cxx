@@ -133,7 +133,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 			break;
 		case PT_GASPHASE:
 			{
-				cxxGasPhase entity;
+				cxxGasPhase entity(phreeqc_ref.Get_phrq_io());
 				entity.Deserialize(dictionary, ints, doubles, ii, dd);
 				int n_user = entity.Get_n_user();
 				phreeqc_ref.Get_Rxn_gas_phase_map()[n_user] = entity;
@@ -141,7 +141,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 			break;
 		case PT_KINETICS:	
 			{
-				cxxKinetics entity;
+				cxxKinetics entity(phreeqc_ref.Get_phrq_io());
 				entity.Deserialize(dictionary, ints, doubles, ii, dd);
 				int n_user = entity.Get_n_user();
 				phreeqc_ref.Get_Rxn_kinetics_map()[n_user] = entity;
@@ -158,7 +158,7 @@ Serializer::Deserialize(Phreeqc &phreeqc_ref, Dictionary &dictionary, std::vecto
 			break;
 		case PT_SSASSEMBLAGE:	
 			{
-				cxxSSassemblage entity;
+				cxxSSassemblage entity(phreeqc_ref.Get_phrq_io());
 				entity.Deserialize(dictionary, ints, doubles, ii, dd);
 				int n_user = entity.Get_n_user();
 				phreeqc_ref.Get_Rxn_ss_assemblage_map()[n_user] = entity;

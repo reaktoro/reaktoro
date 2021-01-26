@@ -395,7 +395,8 @@ cxxSurfaceComp::add(const cxxSurfaceComp & addee, LDBLE extensive)
 	this->totals.add_extensive(addee.totals, extensive);
 	this->la = f1 * this->la + f2 * addee.la;
 	this->charge_balance += addee.charge_balance * extensive;
-	if (this->phase_name != addee.phase_name)
+	//if (this->phase_name != addee.phase_name)
+	if (Phreeqc::strcmp_nocase(this->phase_name.c_str(),addee.phase_name.c_str()) != 0)
 	{
 		std::ostringstream oss;
 		oss <<
@@ -410,11 +411,12 @@ cxxSurfaceComp::add(const cxxSurfaceComp & addee, LDBLE extensive)
 			this->phase_proportion * f1 + addee.phase_proportion * f2;
 	}
 
-	if (this->rate_name != addee.rate_name)
+	//if (this->rate_name != addee.rate_name)
+	if (Phreeqc::strcmp_nocase(this->rate_name.c_str(), addee.rate_name.c_str()) != 0)
 	{
 		std::ostringstream oss;
 		oss <<
-			"Cannot mix two exchange components with same formula and different related kinetics, "
+			"Cannot mix two surface components with same formula and different related kinetics, "
 			<< this->formula;
 		error_msg(oss.str().c_str(), CONTINUE);
 		return;
@@ -430,7 +432,7 @@ cxxSurfaceComp::add(const cxxSurfaceComp & addee, LDBLE extensive)
 	{
 		std::ostringstream oss;
 		oss <<
-			"Cannot mix exchange components related to phase with exchange components related to kinetics, "
+			"Cannot mix surface components related to phase with exchange components related to kinetics, "
 			<< this->formula;
 		error_msg(oss.str().c_str(), CONTINUE);
 		return;

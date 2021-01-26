@@ -1134,7 +1134,8 @@ namespace zdg_ui2 {
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Form1::typeid));
 			try
 			{
-				this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
+				//this->Icon = gcnew System::Drawing::Icon("c:\\phreeqc\\phreex.ico");
+				this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			}
 			catch (...)
 			{

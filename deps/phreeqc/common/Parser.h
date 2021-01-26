@@ -279,22 +279,26 @@ class CParser: public PHRQ_base
 
 // Global functions
 static inline std::string &trim_left(std::string &s)
-{
-    //std::ptr_fun was removed from c++ 17. Replaced it by a lambda function.
-    auto is_not_space = [](char c) { return !std::isspace(c); };
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), is_not_space));
-    return s;
-}
+{ 
+#if (__GNUC__ && (__cplusplus >= 201103L)) || (_MSC_VER >= 1600)
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) {return !std::isspace(c);}));
+#else
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+#endif
+	return s; 
+} 
 static inline std::string &trim_right(std::string &s)
-{
-    //std::ptr_fun was removed from c++ 17. Replaced it by a lambda function.
-    auto is_not_space = [](char c) { return !std::isspace(c); };
-    s.erase(std::find_if(s.rbegin(), s.rend(), is_not_space).base(), s.end());
-    return s;
-}
+{ 
+#if (__GNUC__ && (__cplusplus >= 201103L)) || (_MSC_VER >= 1600)
+	s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) {return !std::isspace(c);}).base(), s.end());
+#else
+	s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+#endif
+	return s;
+} 
 static inline std::string &trim(std::string &s)
-{
-    return trim_left(trim_right(s));
-}
+{ 
+	return trim_left(trim_right(s)); 
+} 
 
 #endif // PARSER_H_INCLUDED

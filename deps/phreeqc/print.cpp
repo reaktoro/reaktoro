@@ -12,6 +12,7 @@
 #include "SSassemblage.h"
 #include "cxxKinetics.h"
 #include "Solution.h"
+#include "Surface.h"
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
 array_print(LDBLE * array_l, int row_count, int column_count,
@@ -195,7 +196,8 @@ punch_all(void)
 		/*
 		*   new line for punch_file
 		*/
-		punch_msg("\n");
+		if (current_selected_output->Get_new_line())
+			punch_msg("\n");
 
 		/*
 		*   signal end of row
@@ -259,7 +261,7 @@ print_diffuse_layer(cxxSurfaceCharge *charge_ptr)
 	output_msg(sformatf(
 			   "\tWater in diffuse layer: %8.3e kg, %4.1f%% of total DDL-water.\n",
 			   (double) charge_ptr->Get_mass_water(), (double) d));
-	if (use.Get_surface_ptr()->Get_debye_lengths() > 0)
+	if (use.Get_surface_ptr()->Get_debye_lengths() > 0 && d > 0)
 	{
 		sum_surfs = 0.0;
 		for (j = 0; j < count_unknowns; j++)
@@ -284,64 +286,66 @@ print_diffuse_layer(cxxSurfaceCharge *charge_ptr)
 		output_msg(sformatf(
 				   "\n\tSpecies     \t    Moles   \tMoles excess\t      g\n"));
 	}
-	mass_water_surface = charge_ptr->Get_mass_water();
-	count_elts = 0;
-	paren_count = 0;
-	for (j = 0; j < count_s_x; j++)
+	if ((mass_water_surface = charge_ptr->Get_mass_water()))
 	{
-		if (s_x[j]->type > HPLUS)
-			continue;
-		molality = under(s_x[j]->lm);
-		moles_excess = mass_water_aq_x * molality * (charge_ptr->Get_g_map()[s_x[j]->z].Get_g() *
-			s_x[j]->erm_ddl +
-			mass_water_surface /
-			mass_water_aq_x * (s_x[j]->erm_ddl - 1));
-		moles_surface = mass_water_surface * molality + moles_excess;
-		if (debug_diffuse_layer == TRUE)
+		count_elts = 0;
+		paren_count = 0;
+		for (j = 0; j < count_s_x; j++)
 		{
-			output_msg(sformatf("\t%-12s\t%12.3e\t%12.3e\t%12.3e\n",
-					   s_x[j]->name, moles_surface, moles_excess,
-					   charge_ptr->Get_g_map()[s_x[j]->z].Get_g()));
+			if (s_x[j]->type > HPLUS)
+				continue;
+			molality = under(s_x[j]->lm);
+			moles_excess = mass_water_aq_x * molality * (charge_ptr->Get_g_map()[s_x[j]->z].Get_g() *
+				s_x[j]->erm_ddl +
+				mass_water_surface /
+				mass_water_aq_x * (s_x[j]->erm_ddl - 1));
+			moles_surface = mass_water_surface * molality + moles_excess;
+			if (debug_diffuse_layer == TRUE)
+			{
+				output_msg(sformatf("\t%-12s\t%12.3e\t%12.3e\t%12.3e\n",
+					s_x[j]->name, moles_surface, moles_excess,
+					charge_ptr->Get_g_map()[s_x[j]->z].Get_g()));
+			}
+			/*
+			 *   Accumulate elements in diffuse layer
+			 */
+			add_elt_list(s_x[j]->next_elt, moles_surface);
 		}
-/*
- *   Accumulate elements in diffuse layer
- */
-		add_elt_list(s_x[j]->next_elt, moles_surface);
-	}
-/*
-	strcpy(token, s_h2o->name);
-	ptr = &(token[0]);
-	get_elts_in_species (&ptr, mass_water_surface / gfw_water);
- */
-	if (count_elts > 0)
-	{
-		qsort(elt_list, (size_t) count_elts,
-			  (size_t) sizeof(struct elt_list), elt_list_compare);
-		elt_list_combine();
-	}
-/*
- *   Print totals
- */
-	if (use.Get_surface_ptr()->Get_dl_type() != cxxSurface::DONNAN_DL)
-	{
-		output_msg(sformatf(
-				   "\n\tTotal moles in diffuse layer (excluding water)\n\n"));
-	}
-	else
-	{
-		LDBLE exp_g =  charge_ptr->Get_g_map()[1].Get_g() * mass_water_aq_x / mass_water_surface + 1;
-		LDBLE psi_DL = -log(exp_g) * R_KJ_DEG_MOL * tk_x / F_KJ_V_EQ;
-		output_msg(sformatf(
-				   "\n\tTotal moles in diffuse layer (excluding water), Donnan calculation."));
-		output_msg(sformatf(
-				   "\n\tDonnan Layer potential, psi_DL = %10.3e V.\n\tBoltzmann factor, exp(-psi_DL * F / RT) = %9.3e (= c_DL / c_free if z is +1).\n\n",
-					 psi_DL, exp_g));
-	}
-	output_msg(sformatf("\tElement       \t     Moles\n"));
-	for (j = 0; j < count_elts; j++)
-	{
-		output_msg(sformatf("\t%-14s\t%12.4e\n",
-				   elt_list[j].elt->name, (double) elt_list[j].coef));
+		/*
+			strcpy(token, s_h2o->name);
+			ptr = &(token[0]);
+			get_elts_in_species (&ptr, mass_water_surface / gfw_water);
+			*/
+		if (count_elts > 0)
+		{
+			qsort(elt_list, (size_t)count_elts,
+				(size_t) sizeof(struct elt_list), elt_list_compare);
+			elt_list_combine();
+		}
+		/*
+		 *   Print totals
+		 */
+		if (use.Get_surface_ptr()->Get_dl_type() != cxxSurface::DONNAN_DL)
+		{
+			output_msg(sformatf(
+				"\n\tTotal moles in diffuse layer (excluding water)\n\n"));
+		}
+		else
+		{
+			LDBLE exp_g = charge_ptr->Get_g_map()[1].Get_g() * mass_water_aq_x / mass_water_surface + 1;
+			LDBLE psi_DL = -log(exp_g) * R_KJ_DEG_MOL * tk_x / F_KJ_V_EQ;
+			output_msg(sformatf(
+				"\n\tTotal moles in diffuse layer (excluding water), Donnan calculation."));
+			output_msg(sformatf(
+				"\n\tDonnan Layer potential, psi_DL = %10.3e V.\n\tBoltzmann factor, exp(-psi_DL * F / RT) = %9.3e (= c_DL / c_free if z is +1).\n\n",
+				psi_DL, exp_g));
+		}
+		output_msg(sformatf("\tElement       \t     Moles\n"));
+		for (j = 0; j < count_elts; j++)
+		{
+			output_msg(sformatf("\t%-14s\t%12.4e\n",
+				elt_list[j].elt->name, (double)elt_list[j].coef));
+		}
 	}
 	return (OK);
 }
@@ -482,6 +486,13 @@ print_exchange(void)
 			output_msg(sformatf("%-14s%12.3e mol", name,
 					   (double) master_ptr->unknown->moles));
 			cxxExchange *exchange_ptr = (cxxExchange *) (use.Get_exchange_ptr());
+			if (master_ptr->unknown->exch_comp == NULL)
+			{		
+				error_string = sformatf("Exchange unknown has no exchange component for exchanger %s."
+					"\nIs the same name used for a SURFACE and an EXCHANGER?",
+					master_ptr->unknown->description);
+				error_msg(error_string, STOP);
+			}
 			const cxxExchComp *exchange_comp_ptr = exchange_ptr->Find_comp(master_ptr->unknown->exch_comp);
 			assert(exchange_comp_ptr);
 			if (exchange_comp_ptr->Get_phase_name().size() > 0)
@@ -509,8 +520,7 @@ print_exchange(void)
 /*
  *   Print species data
  */
-/* !!!!! */
-		if (master_ptr->total > 1.0e-10)
+		if (master_ptr->total > 1.0e-16)
 		{
 			if (species_list[i].s->equiv != 0.0)
 			{
@@ -1343,8 +1353,9 @@ print_pp_assemblage(void)
 	{
 		if (x[j]->type != PP)
 			continue;
+		//cxxPPassemblage * pp_assemblage_ptr = Utilities::Rxn_find(Rxn_pp_assemblage_map, use.Get_n_pp_assemblage_user());
 		//cxxPPassemblageComp * comp_ptr = pp_assemblage_ptr->Find(x[j]->pp_assemblage_comp_name);
-		cxxPPassemblageComp * comp_ptr = (cxxPPassemblageComp * ) x[j]->pp_assemblage_comp_ptr;
+		cxxPPassemblageComp * comp_ptr = (cxxPPassemblageComp * ) x[j]->pp_assemblage_comp_ptr; // appt, is sometimes lost??
 /*
  *   Print saturation index
  */
@@ -2108,7 +2119,7 @@ print_totals(void)
  *   Print total concentrations of elements, molality and moles.
  */
 	int i, pure_water;
-	LDBLE EC, dens;
+	LDBLE dens;
 
 	if (pr.totals == FALSE || pr.all == FALSE)
 		return (OK);
@@ -2217,15 +2228,15 @@ print_totals(void)
 /*
  *   Others
  */
-	EC = calc_SC();
-	if (EC > 0)
+	calc_SC();
+	if (SC > 0)
 	{
 		//output_msg(sformatf("%36s%i%7s%i\n",
 		output_msg(sformatf("%35s%3.0f%7s%i\n",
 #ifdef NO_UTF8_ENCODING
-				   "Specific Conductance (uS/cm, ", tc_x, "oC)  = ", (int) EC));
+				   "Specific Conductance (uS/cm, ", tc_x, "oC)  = ", (int) SC));
 #else
-				   "Specific Conductance (µS/cm, ", tc_x, "°C)  = ", (int) EC));
+				   "Specific Conductance (µS/cm, ", tc_x, "°C)  = ", (int) SC));
 #endif
 	}
 /* VP: Density Start */
@@ -2238,8 +2249,12 @@ print_totals(void)
 		output_msg(sformatf("%45s%9.5f", "Density (g/cm³)  = ",
 #endif
 			   (double) dens));
-		if (dens > 1.999) output_msg(sformatf("%18s\n", " (Program limit)"));
-		else output_msg(sformatf("\n"));
+		if (state == INITIAL_SOLUTION && use.Get_solution_ptr()->Get_initial_data()->Get_calc_density())
+		{
+			output_msg(sformatf(" (Iterated) "));
+		}		
+		if (dens > 1.999) output_msg(sformatf("%18s", " (Program limit)"));
+		output_msg(sformatf("\n"));
 		output_msg(sformatf("%45s%9.5f\n", "     Volume (L)  = ",
 			   (double) calc_solution_volume()));
 	}
@@ -2273,13 +2288,14 @@ print_totals(void)
 				   "Total alkalinity (eq/kg)  = ",
 				   (double) (total_alkalinity / mass_water_aq_x)));
 	}
-	if (carbon_unknown == NULL)
+	if (carbon_unknown == NULL && total_carbon)
 	{
 		output_msg(sformatf("%45s%11.3e\n",
 				   "Total carbon (mol/kg)  = ",
 				   (double) (total_carbon / mass_water_aq_x)));
 	}
-	output_msg(sformatf("%45s%11.3e\n", "Total CO2 (mol/kg)  = ",
+	if (total_co2)
+		output_msg(sformatf("%45s%11.3e\n", "Total CO2 (mol/kg)  = ",
 			   (double) (total_co2 / mass_water_aq_x)));
 #ifdef NO_UTF8_ENCODING
 	output_msg(sformatf("%45s%6.2f\n", "Temperature (oC)  = ",
@@ -2295,12 +2311,21 @@ print_totals(void)
 			(double) patm_x));
 	}
 
+	if (potV_x)
+	{
+		output_msg(sformatf("%45s%5.2f\n", "Electrical Potential (Volt)  = ",
+			(double)potV_x));
+	}
+
 	output_msg(sformatf("%45s%11.3e\n", "Electrical balance (eq)  = ",
 			   (double) cb_x));
 	output_msg(sformatf("%45s%6.2f\n",
 			   "Percent error, 100*(Cat-|An|)/(Cat+|An|)  = ",
 			   (double) (100 * cb_x / total_ions_x)));
-	output_msg(sformatf("%45s%3d\n", "Iterations  = ", iterations));
+	if (iterations == overall_iterations)
+		output_msg(sformatf("%45s%3d\n", "Iterations  = ", iterations));
+	else
+		output_msg(sformatf("%45s%3d (%d overall)\n", "Iterations  = ", iterations, overall_iterations));
 	if (pitzer_model == TRUE || sit_model == TRUE)
 	{
 		if (always_full_pitzer == FALSE)
@@ -2976,7 +3001,7 @@ punch_identifiers(void)
 		else if (state == TRANSPORT)
 		{
 			fpunchf(PHAST_NULL("dist_x"), gformat,
-					(double) cell_data[cell - 1].mid_cell_x);
+					(double) cell_data[cell].mid_cell_x);
 		}
 		else
 		{

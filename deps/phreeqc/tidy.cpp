@@ -20,6 +20,7 @@ tidy_model(void)
 	/*
 	 * Determine if any new elements, species, phases have been read
 	 */
+	overall_iterations = 0;
 	state = INITIALIZE;
 	new_model = FALSE;
 	new_pp_assemblage = FALSE;
@@ -924,7 +925,11 @@ tidy_gas_phase(void)
 						error_msg(error_string, CONTINUE);
 					}
 					/* calculate moles */
+#ifdef NPP
+					if (!isnan(gas_phase_ptr->Get_gas_comps()[j].Get_p_read()))
+#else
 					if (gas_phase_ptr->Get_gas_comps()[j].Get_p_read() != NAN)
+#endif
 					{
 						P += gas_phase_ptr->Get_gas_comps()[j].Get_p_read();
 						if (!PR)
@@ -948,7 +953,11 @@ tidy_gas_phase(void)
 					*/
 					if (!gas_phase_ptr->Get_solution_equilibria())
 					{
+#ifdef NPP
+						if (!isnan(gas_phase_ptr->Get_gas_comps()[j].Get_p_read()))
+#else
 						if (gas_phase_ptr->Get_gas_comps()[j].Get_p_read() != NAN)
+#endif
 						{
 							P += gas_phase_ptr->Get_gas_comps()[j].Get_p_read();
 							if (!PR)
@@ -1426,7 +1435,17 @@ tidy_inverse(void)
 			inverse[i].elts[j].master->in = TRUE;
 		}
 		s_eminus->primary->in = TRUE;	/* Include electrons */
+		if (master_alk_ptr)
+		{
 		master_alk_ptr->in = TRUE;	/* Include alkalinity */
+		}
+		else
+		{
+			input_error++;
+			error_string = sformatf(
+				"Alkalinity must be defined in SOLUTION_MASTER_SPECIES to be able to use INVERSE_MODELING.");
+			error_msg(error_string, CONTINUE);
+		}
 /*
  *   Unmark primary and mark secondary master species for redox elements
  */
@@ -1810,7 +1829,11 @@ tidy_ss_assemblage(void)
 					phase_ptr->moles_x = 0;
 					phase_ptr->fraction_x = 0;
 				}
+#ifdef NPP
+				if (isnan(comp_ptr->Get_moles()))
+#else
 				if (comp_ptr->Get_moles() == NAN)
+#endif
 				{
 					input_error++;
 					error_string = sformatf(
@@ -3053,6 +3076,8 @@ tidy_surface(void)
 		}
 		//if (!kit->second.Get_new_def()) continue;
 		surface_ptr = &(kit->second);
+		if (surface_ptr->Get_tidied()) continue;
+		surface_ptr->Set_tidied(true);
 		// ccm incompatible with Donnan or diffuse_layer
 		if (surface_ptr->Get_type() == cxxSurface::CCM)
 		{
@@ -3505,7 +3530,11 @@ tidy_isotopes(void)
 				temp_iso.Set_total(0);
 				temp_iso.Set_ratio(master[k]->isotope_ratio);
 				temp_iso.Set_ratio_uncertainty(master[k]->isotope_ratio_uncertainty);
+#ifdef NPP
+				if (!isnan(master[k]->isotope_ratio_uncertainty))
+#else
 				if (master[k]->isotope_ratio_uncertainty != NAN)
+#endif
 				{
 					temp_iso.Set_ratio_uncertainty_defined(true);
 				}
@@ -3762,11 +3791,21 @@ tidy_min_exchange(void)
 			}
 			int l;
 			struct phase *phase_ptr = phase_bsearch(jit->first.c_str(), &l, FALSE);
+			if (phase_ptr != NULL)
 			{
 				char * temp_formula = string_duplicate(phase_ptr->formula);
 				ptr = temp_formula;
 				get_elts_in_species(&ptr, 1.0);
 				free_check_null(temp_formula);
+			}
+			else
+			{
+				input_error++;
+				error_string = sformatf(
+						"Mineral, %s, related to exchanger, %s, not found in Equilibrium_Phases %d",
+						comp_ref.Get_phase_name().c_str(), comp_ref.Get_formula().c_str(), n);
+				error_msg(error_string, CONTINUE);
+				continue;
 			}
 			qsort(elt_list, (size_t) count_elts,
 				  (size_t) sizeof(struct elt_list), elt_list_compare);
@@ -3967,6 +4006,7 @@ tidy_min_surface(void)
 							error_string = sformatf("Unknown element definition in SURFACE \n\t for surface related to equilibrium_phase: SURFACE %d.", 
 								surface_ptr->Get_n_user());
 							error_msg(error_string);
+							free_check_null(temp_formula);
 							continue;
 						}
 						if (elt_ptr->master->s == NULL || elt_ptr->master->s->name == NULL)
@@ -3975,18 +4015,19 @@ tidy_min_surface(void)
 							error_string = sformatf("Unknown master species definition in SURFACE \n\t for surface related to equilibrium_phase: SURFACE %d.", 
 								surface_ptr->Get_n_user());
 							error_msg(error_string);
+							free_check_null(temp_formula);
 							continue;
 						}
-						if (strcmp(elt_ptr->master->s->name, temp_formula) != 0)
-						{
-							error_string = sformatf("Suggest using master species formula in SURFACE \n\t for surface related to equilibrium_phase: %s.", 
-								elt_ptr->master->s->name);
-							warning_msg(error_string);
-						}
-						if (elt_ptr->master->s->z != 0.0)
+						//if (strcmp(elt_ptr->master->s->name, temp_formula) != 0)
+						//{
+						//	error_string = sformatf("Suggest using master species formula in SURFACE \n\t for surface related to equilibrium_phase: %s.", 
+						//		elt_ptr->master->s->name);
+						//	warning_msg(error_string);
+						//}
+						if (elt_ptr->master->s->z != 0.0 && surface_ptr->Get_dl_type() != cxxSurface::DONNAN_DL)
 						{
 							error_string = sformatf(
-								"Suggest master species of surface, %s, be uncharged for surface related to equilibrium_phase.",
+								"Use the -donnan option when coupling surface %s to an equilibrium_phase, \n\t and note to give the equilibrium_phase the surface charge.",
 								elt_ptr->master->s->name);
 							warning_msg(error_string);
 						}	
@@ -4004,6 +4045,16 @@ tidy_min_surface(void)
 			   Further, if you precipitate Ca-Mont, make SurfCa, desorb
 			   all the Ca, then dissolve the "Ca-Mont", you must remove SurfCa, or you
 			   will end up with Ca in solution. H and O are excluded */
+			/* Example that makes montmorillonite a cation exchanger:
+			PHASES
+			Summ_Montmorillonite; Al2.33Si3.67O10(OH)2-0.33 + 12 H2O = 2.33 Al(OH)4- + 3.67 H4SiO4 + 2 H+; -log_k	-44.4
+			SURFACE_MASTER_SPECIES; Summ Summ-; SURFACE_SPECIES; Summ- = Summ-
+			SOLUTION 1; Na 1e1; Cl 1e1; pH 7 charge; C(4) 1 CO2(g) -2
+			EQUILIBRIUM_PHASES 1; Ca-Montmorillonite 0 1e-3
+			Summ_Montmorillonite 0 0
+			SURFACE 1; Summ Summ_Montmorillonite 0.33 3.11e5; -donnan; -equil 1
+			END
+			*/
 			for (int jj = 0; jj < count_elts; jj++)
 			{
 				if (elt_list[jj].elt->primary->s->type != SURF
@@ -5432,6 +5483,7 @@ reset_last_model(void)
 	last_model.exchange =
 		(struct master **) free_check_null(last_model.exchange);
 	last_model.count_gas_phase = 0;
+	last_model.gas_phase_type = cxxGasPhase::GP_UNKNOWN;
 	last_model.gas_phase =
 		(struct phase **) free_check_null(last_model.gas_phase);
 	last_model.count_ss_assemblage = 0;

@@ -580,7 +580,7 @@ cxxSS::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 		this->ss_comps.clear();
 		for (int i = 0; i < count; i++)
 		{
-			cxxSScomp ssc;
+			cxxSScomp ssc(this->io);
 			ssc.Deserialize(dictionary, ints, doubles, ii, dd);
 			this->ss_comps.push_back(ssc);
 		}

@@ -264,6 +264,7 @@ public:
 		toksum_s_s,
 		tokcalc_value,
 		tokdescription,
+		toktitle,
 		toksys,
 		tokinstr,
 		tokltrim,
@@ -284,6 +285,10 @@ public:
 		tokcell_pore_volume,
 		tokcell_porosity,
 		tokcell_saturation,
+		tokvelocity_x,
+		tokvelocity_y,
+		tokvelocity_z,
+		toktransport_cell_no,
 #if defined MULTICHART
 		tokplot_xy,
 #endif
@@ -295,6 +300,8 @@ public:
 		tokeol_,
 		tokceil,
 		tokfloor,
+		tokkinetics_formula,
+		tokkinetics_formula_,
 		tokphase_formula,
 		tokphase_formula_,
 		tokspecies_formula,
@@ -308,6 +315,7 @@ public:
 		tokerase,
 		tokeps_r,
 		tokvm,
+		tokphase_vm,
 		tokdh_a,
 		tokdh_b,
 		tokdh_av,
@@ -324,8 +332,16 @@ public:
 		tokequiv_frac,
 		tokcallback,
 		tokdiff_c,
+		toksetdiff_c,
 		toksa_declercq,
-		tokedl_species
+		tokedl_species,
+		tokviscos,
+		tokviscos_0,
+		tokcurrent_a,
+		tokpot_v,
+		tokt_sc,
+		tokaphi,
+		tokiterations
 	};
 
 #if !defined(PHREEQCI_GUI)
@@ -466,36 +482,36 @@ public:
 	int my_toupper(int c);
 	int my_tolower(int c);
 	long ipow(long a, long b);
-	char * strsub(register char *ret, register char *s, register int pos,
-		register int len);
-	int strpos2(char *s, register char *pat, register int pos);
-	int strcicmp(register char *s1, register char *s2);
-	char * strltrim(register char *s);
-	char * strrtrim(register char *s);
-	void strmove(register int len, register char *s, register int spos,
-		register char *d, register int dpos);
-	void strinsert(register char *src, register char *dst, register int pos);
+	char * strsub(char *ret, char *s, int pos,
+		int len);
+	int strpos2(char *s, char *pat, int pos);
+	int strcicmp(char *s1, char *s2);
+	char * strltrim(char *s);
+	char * strrtrim(char *s);
+	void strmove(int len, char *s, int spos,
+		char *d, int dpos);
+	void strinsert(char *src, char *dst, int pos);
 	int P_peek(FILE * f);
 	int P_eof(void);
 	int P_eoln(FILE * f);
 	void P_readpaoc(FILE * f, char *s, int len);
 	void P_readlnpaoc(FILE * f, char *s, int len);
 	long P_maxpos(FILE * f);
-	char * P_trimname(register char * fn, register int len);
+	char * P_trimname(char * fn, int len);
 	long memavail(void);
 	long maxavail(void);
-	long * P_setunion(register long *d, register long *s1, register long *s2);
-	long * P_setint(register long *d, register long *s1, register long *s2);
-	long * P_setdiff(register long *d, register long *s1, register long *s2);
-	long * P_setxor(register long *d, register long *s1, register long *s2);
-	long * P_addset(register long *s, register unsigned val);
-	long * P_addsetr(register long *s, register unsigned v1, register unsigned v2);
-	long * P_remset(register long *s, register unsigned val);
-	int P_setequal(register long *s1, register long *s2);
-	int P_subset(register long *s1, register long *s2);
-	long * P_setcpy(register long *d, register long *s);
-	long * P_expset(register long *d, register long s);
-	long P_packset(register long *s);	
+	long * P_setunion(long *d, long *s1, long *s2);
+	long * P_setint(long *d, long *s1, long *s2);
+	long * P_setdiff(long *d, long *s1, long *s2);
+	long * P_setxor(long *d, long *s1, long *s2);
+	long * P_addset(long *s, unsigned val);
+	long * P_addsetr(long *s, unsigned v1, unsigned v2);
+	long * P_remset(long *s, unsigned val);
+	int P_setequal(long *s1, long *s2);
+	int P_subset(long *s1, long *s2);
+	long * P_setcpy(long *d, long *s);
+	long * P_expset(long *d, long s);
+	long P_packset(long *s);	
 	int _OutMem(void);
 	int _CaseCheck(void);
 	int _NilCheck(void);

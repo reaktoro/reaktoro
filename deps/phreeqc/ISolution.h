@@ -33,6 +33,8 @@ class cxxISolution: public PHRQ_base
 	}
 	const char * Get_default_pe() const                {return default_pe;}
 	void Set_default_pe(const char * pe)               {default_pe = pe;}
+	bool Get_calc_density(void)                        {return this->calc_density;}
+	void Set_calc_density(bool calc)                   {this->calc_density = calc;}
 	std::map < std::string, cxxISolutionComp > &Get_comps(void) {return this->comps;}
 	const std::map < std::string, cxxISolutionComp > &Get_comps(void)const {return this->comps;}
 	void Set_comps(std::map < std::string, cxxISolutionComp > &c) {this->comps = c;}
@@ -44,6 +46,7 @@ class cxxISolution: public PHRQ_base
   protected:
 	friend class cxxISolutionComp;	// for this->pe access
 	std::string units;
+	bool calc_density;
 	std::map < std::string, cxxISolutionComp > comps;
 	std::map <std::string, cxxChemRxn > pe_reactions;
 	const char * default_pe;

@@ -7,6 +7,9 @@
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 #endif
+#ifndef boolean
+typedef unsigned char boolean;
+#endif
 /* ----------------------------------------------------------------------
 *   INCLUDE FILES
 * ---------------------------------------------------------------------- */
@@ -100,7 +103,9 @@ public:
 	LDBLE activity_coefficient(const char *species_name);
 	LDBLE log_activity_coefficient(const char *species_name);
 	LDBLE aqueous_vm(const char *species_name);
+	LDBLE phase_vm(const char *phase_name);
 	LDBLE diff_c(const char *species_name);
+	LDBLE setdiff_c(const char *species_name, double d);
 	LDBLE sa_declercq(double type, double sa, double d, double m, double m0, double gfw);
 	LDBLE calc_SC(void);
 	/* VP: Density Start */
@@ -110,6 +115,7 @@ public:
 	LDBLE calc_logk_p(const char *name);
 	LDBLE calc_logk_s(const char *name);
 	LDBLE calc_surface_charge(const char *surface_name);
+	LDBLE calc_t_sc(const char *name);
 	LDBLE diff_layer_total(const char *total_name, const char *surface_name);
 	LDBLE edl_species(const char *surf_name, LDBLE * count, char ***names, LDBLE ** moles, LDBLE * area, LDBLE * thickness);
 	int get_edl_species(cxxSurfaceCharge & charge_ref);
@@ -147,6 +153,7 @@ public:
 	static int system_species_compare(const void *ptr1, const void *ptr2);
 	LDBLE system_total(const char *total_name, LDBLE * count, char ***names,
 		char ***types, LDBLE ** moles);
+	std::string kinetics_formula(std::string kinetics_name, cxxNameDouble &stoichiometry);
 	std::string phase_formula(std::string phase_name, cxxNameDouble &stoichiometry);
 	std::string species_formula(std::string phase_name, cxxNameDouble &stoichiometry);
 	LDBLE list_ss(std::string ss_name, cxxNameDouble &composition);
@@ -157,6 +164,7 @@ public:
 	int system_total_surf(void);
 	int system_total_gas(void);
 	int system_total_equi(void);
+	int system_total_kin(void);
 	int system_total_ss(void);
 	int system_total_elt(const char *total_name);
 	int system_total_elt_secondary(const char *total_name);
@@ -485,6 +493,7 @@ public:
 	int calc_fixed_volume_gas_pressures(void);
 	int calc_ss_fractions(void);
 	int gammas(LDBLE mu);
+	int gammas_a_f(int i);
 	int initial_guesses(void);
 	int revise_guesses(void);
 	int ss_binary(cxxSS *ss_ptr);
@@ -527,7 +536,8 @@ public:
 	struct theta_param *theta_param_alloc(void);
 	int theta_param_init(struct theta_param *theta_param_ptr);
 	void pitzer_make_lists(void);
-	int gammas_pz(void);
+	//int gammas_pz(void);
+	int gammas_pz(bool exch_a_f);
 	int model_pz(void);
 	int pitzer(void);
 	int pitzer_clean_up(void);
@@ -702,6 +712,7 @@ public:
 	/* VP: Density Start */
 	int read_millero_abcdef (char *ptr, LDBLE * abcdef);
 	/* VP: Density End */
+	int read_viscosity_parms(char *ptr, LDBLE * Jones_Dole);
 	int read_copy(void);
 	int read_debug(void);
 	int read_delta_h_only(char *ptr, LDBLE * delta_h,
@@ -903,6 +914,7 @@ protected:
 public:
 	struct rate *rate_bsearch(char *ptr, int *j);
 	int rate_free(struct rate *rate_ptr);
+	struct rate * rate_copy(struct rate *rate_ptr);
 	struct rate *rate_search(const char *name, int *n);
 	int rate_sort(void);
 	struct reaction *rxn_alloc(int ntokens);
@@ -1043,6 +1055,7 @@ public:
 
 	// transport.cpp -------------------------------
 	int transport(void);
+	void print_punch(int i, boolean active);
 	int set_initial_moles(int i);
 	cxxSurface sum_surface_comp(cxxSurface *source1, LDBLE f1,
 		cxxSurface *source2, std::string charge_name, LDBLE f2,
@@ -1050,10 +1063,15 @@ public:
 	int reformat_surf(const char *comp_name, LDBLE fraction, const char *new_comp_name,
 		LDBLE new_Dw, int cell);
 	LDBLE viscosity(void);
+	LDBLE calc_vm_Cl(void);
 	int multi_D(LDBLE DDt, int mobile_cell, int stagnant);
-	int find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant);
-	int fill_spec(int cell_no);
-	int fill_m_s(struct J_ij *J_ij, int J_ij_count_spec);
+	LDBLE find_J(int icell, int jcell, LDBLE mixf, LDBLE DDt, int stagnant);
+	void diffuse_implicit(LDBLE DDt, int stagnant);
+	int fill_spec(int cell_no, int ref_cell);
+	LDBLE moles_from_redox_states(cxxSolution *sptr, const char *name);
+	LDBLE moles_from_donnan_layer(cxxSurface *sptr, const char *name, LDBLE moles_needed);
+	LDBLE add_MCD_moles(LDBLE moles, LDBLE min_mol, int i, cxxSolution *sptr, const char *name);
+	int fill_m_s(struct J_ij *J_ij, int J_ij_count_spec, int i, int stagnant);
 	static int sort_species_name(const void *ptr1, const void *ptr2);
 	int disp_surf(LDBLE stagkin_time);
 	int diff_stag_surf(int mobile_cell);
@@ -1061,6 +1079,7 @@ public:
 	cxxSurface mobile_surface_copy(cxxSurface *surface_old_ptr,
 		int n_user_new,
 		bool move_old);
+	void transport_cleanup(void);
 	int init_mix(void);
 	int init_heat_mix(int nmix);
 	int heat_mix(int heat_nmix);
@@ -1144,6 +1163,12 @@ public:
 	void set_phast(int);
 	int next_user_number(Keywords::KEYWORDS key);
 	size_t list_components(std::list<std::string> &list_c);
+	size_t list_EquilibriumPhases(std::list<std::string> &list_pp);
+	size_t list_GasComponents(std::list<std::string> &list_gc);
+	size_t list_KineticReactions(std::list<std::string> &list_kr);
+	size_t list_SolidSolutions(std::list<std::string> &list_comps, std::list<std::string> &list_names);
+	size_t list_Surfaces(std::list<std::string> &surftype, std::list<std::string> &surf);
+	size_t list_Exchangers(std::list<std::string> &ex);
 	PHRQ_io * Get_phrq_io(void) {return this->phrq_io;}
 	void Set_run_cells_one_step(const bool tf) {this->run_cells_one_step = tf;}
 
@@ -1342,12 +1367,14 @@ protected:
 	*   Global solution
 	*---------------------------------------------------------------------- */
 	char *title_x;
+	std::string last_title_x;
 	int new_x;
 	char *description_x;
 	LDBLE tc_x;
 	LDBLE tk_x;
 	LDBLE patm_x;
 	LDBLE last_patm_x;
+	LDBLE potV_x;
 	bool numerical_fixed_volume;
 	bool force_numerical_fixed_volume;
 	//bool switch_numerical;
@@ -1379,6 +1406,7 @@ protected:
 	*   Transport data
 	*---------------------------------------------------------------------- */
 	int count_cells;
+	int cell_data_max_cells;
 	int count_shifts;
 	int ishift;
 	int bcon_first;
@@ -1401,7 +1429,11 @@ protected:
 	int old_cells, max_cells, all_cells;
 	int multi_Dflag;		/* signals calc'n of multicomponent diffusion */
 	int interlayer_Dflag;	/* multicomponent diffusion and diffusion through interlayer porosity */
+	int implicit;	    /* implicit calculation of diffusion */
+	LDBLE max_mixf;     /* the maximum value of the implicit mixfactor = De * Dt / (Dx^2) */
+	LDBLE min_dif_LM;    /* the minimal log10(molality) for including a species in multicomponent diffusion */
 	LDBLE default_Dw;		/* default species diffusion coefficient in water at 25oC, m2/s */
+	int correct_Dw;         /* if true, Dw is adapted in calc_SC */
 	LDBLE multi_Dpor;		/* uniform porosity of free porewater in solid medium */
 	LDBLE interlayer_Dpor;	/* uniform porosity of interlayer space of montmorillonite in solid medium */
 	LDBLE multi_Dpor_lim;	/* limiting free porewater porosity where transport stops */
@@ -1608,7 +1640,7 @@ protected:
 	int count_strings;
 	int max_strings;
 
-	LDBLE *array;
+	LDBLE *my_array;
 	LDBLE *delta;
 	LDBLE *residual;
 
@@ -1620,6 +1652,7 @@ protected:
 	int iterations;
 	int gamma_iterations;
 	int run_reactions_iterations;
+	int overall_iterations;
 
 	int max_line;
 	char *line;
@@ -1629,6 +1662,8 @@ protected:
 
 	int debug_model;
 	int debug_prep;
+	int debug_mass_action;
+	int debug_mass_balance;
 	int debug_set;
 	int debug_diffuse_layer;
 	int debug_inverse;
@@ -1724,9 +1759,11 @@ protected:
 	int print_density;
 	/* VP: Density End */
 
+	int print_viscosity;
 	LDBLE *zeros;
 	int zeros_max;
 
+	LDBLE viscos, viscos_0, viscos_0_25; // viscosity of the solution, of pure water, of pure water at 25 C
 	LDBLE cell_pore_volume;
 	LDBLE cell_porosity;
 	LDBLE cell_volume;
@@ -1736,6 +1773,7 @@ protected:
 	LDBLE sys_tot;
 
 	LDBLE V_solutes, rho_0, rho_0_sat, kappa_0, p_sat/*, ah2o_x0*/;
+	LDBLE SC; // specific conductance mS/cm
 	LDBLE eps_r; // relative dielectric permittivity
 	LDBLE DH_A, DH_B, DH_Av; // Debye-Hueckel A, B and Av
 	LDBLE QBrn; // Born function d(ln(eps_r))/dP / eps_r * 41.84004, for supcrt calc'n of molal volume
@@ -1871,6 +1909,7 @@ protected:
 	int use_etheta;
 	LDBLE OTEMP, OPRESS;
 	LDBLE A0;
+	struct pitz_param *aphi;
 	struct species **spec, **cations, **anions, **neutrals;
 	int count_cations, count_anions, count_neutrals;
 	int MAXCATIONS, FIRSTANION, MAXNEUTRAL;
@@ -1952,6 +1991,7 @@ protected:
 	int nmix, heat_nmix;
 	LDBLE heat_mix_f_imm, heat_mix_f_m;
 	int warn_MCD_X, warn_fixed_Surf;
+	LDBLE current_x, current_A, fix_current; // current: coulomb / s, Ampere, fixed current (Ampere)
 
 #ifdef PHREEQ98
 	int AutoLoadOutputFile, CreateToC;
@@ -2003,7 +2043,11 @@ public:
 #endif /*defined (PHREEQ98) || defined (_MSC_VER)*/
 
 #if defined(HAVE_ISFINITE)
+#  if __GNUC__ && (__cplusplus >= 201103L)
+#    define PHR_ISFINITE(x) std::isfinite(x)
+#  else
 #  define PHR_ISFINITE(x) isfinite(x)
+#  endif
 #elif defined(HAVE_FINITE)
 #  define PHR_ISFINITE(x) finite(x)
 #elif defined(HAVE_ISNAN)
@@ -2028,6 +2072,22 @@ namespace Utilities
 		{
 			// Adding logic to dump only non-negative entities
 			if (it->second.Get_n_user() >= 0)
+			{
+				it->second.dump_raw(s_oss, indent);
+			}
+		}
+		return;
+	}
+
+	template < typename T >
+	void Rxn_dump_raw_range(const T & b, std::ostream & s_oss, int start, int end, unsigned int indent)
+	{
+		typename T::const_iterator it;
+		for (int i = start; i <= end; i++)
+		{
+			if (i < 0) continue;
+			it = b.find(i);
+			if (it != b.end())
 			{
 				it->second.dump_raw(s_oss, indent);
 			}
@@ -2190,6 +2250,40 @@ namespace Utilities
 		s.insert(entity_ptr->Get_n_user());
 
 		return phreeqc_cookie->cleanup_after_parser(parser);
+	}
+
+	template < typename T >
+	int SB_read_modify(std::map < int, T > &m, CParser &parser)
+	{
+		typename std::map < int, T >::iterator it;
+
+		std::string key_name;
+		std::string::iterator b = parser.line().begin();
+		std::string::iterator e = parser.line().end();
+		CParser::copy_token(key_name, b, e);
+
+		cxxNumKeyword nk;
+		nk.read_number_description(parser);
+		T * entity_ptr = Utilities::Rxn_find(m, nk.Get_n_user());
+		if (!entity_ptr)
+		{
+			std::ostringstream errstr;
+			errstr << "Could not find " << key_name << " " << nk.Get_n_user() << ", ignoring modify data.\n";
+			//io->warning_msg(errstr.str().c_str());
+
+			// Don't throw, read data into dummy entity, then ignore
+			T entity;
+			entity_ptr = &entity;
+			entity_ptr->read_raw(parser, false);
+			return FALSE;
+		}
+
+		entity_ptr->read_raw(parser, false);
+		entity_ptr->Set_n_user(nk.Get_n_user());
+		entity_ptr->Set_n_user_end(nk.Get_n_user_end());
+		entity_ptr->Set_description(nk.Get_description());
+
+		return TRUE;
 	}
 
 	template < typename T >

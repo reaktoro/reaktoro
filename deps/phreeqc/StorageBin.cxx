@@ -186,6 +186,155 @@ cxxStorageBin::Add(cxxStorageBin &src, int n)
 	}
 }
 void
+cxxStorageBin::Add_uz(cxxStorageBin &uzbin)
+{
+	cxxMix mx;
+	mx.Add(0, 1.0);
+	mx.Add(1, 1.0);
+
+	// Solution
+
+	// Exchange
+	{
+		std::map<int, cxxExchange>::iterator it_uz = uzbin.Get_Exchangers().begin();
+		std::map<int, cxxExchange> temp_map;
+		for (; it_uz != uzbin.Get_Exchangers().end(); it_uz++)
+		{
+			int n_user = it_uz->second.Get_n_user();
+			std::map < int, cxxExchange >::iterator it_sz = this->Exchangers.find(n_user);
+			if (it_sz == this->Exchangers.end())
+			{
+				this->Exchangers[n_user] = it_uz->second;
+			}
+			else
+			{
+				temp_map[0] = it_uz->second;
+				temp_map[1] = it_sz->second;
+				cxxExchange temp_entity(temp_map, mx, n_user);
+				this->Exchangers[n_user] = temp_entity;
+			}
+		}
+	}
+
+	// gas_phase
+	{
+		std::map<int, cxxGasPhase>::iterator it_uz = uzbin.Get_GasPhases().begin();
+		std::map<int, cxxGasPhase> temp_map;
+		for (; it_uz != uzbin.Get_GasPhases().end(); it_uz++)
+		{
+			int n_user = it_uz->second.Get_n_user();
+			std::map < int, cxxGasPhase >::iterator it_sz = this->GasPhases.find(n_user);
+			if (it_sz == this->GasPhases.end())
+			{
+				this->GasPhases[n_user] = it_uz->second;
+			}
+			else
+			{
+				temp_map[0] = it_uz->second;
+				temp_map[1] = it_sz->second;
+				cxxGasPhase temp_entity(temp_map, mx, n_user);
+				this->GasPhases[n_user] = temp_entity;
+			}
+		}
+	}
+
+	// kinetics
+	{
+		std::map<int, cxxKinetics>::iterator it_uz = uzbin.Get_Kinetics().begin();
+		std::map<int, cxxKinetics> temp_map;
+		for (; it_uz != uzbin.Get_Kinetics().end(); it_uz++)
+		{
+			int n_user = it_uz->second.Get_n_user();
+			std::map < int, cxxKinetics >::iterator it_sz = this->Kinetics.find(n_user);
+			if (it_sz == this->Kinetics.end())
+			{
+				this->Kinetics[n_user] = it_uz->second;
+			}
+			else
+			{
+				temp_map[0] = it_uz->second;
+				temp_map[1] = it_sz->second;
+				cxxKinetics temp_entity(temp_map, mx, n_user);
+				this->Kinetics[n_user] = temp_entity;
+			}
+		}
+	}
+
+	// pp_assemblage
+	{
+		std::map<int, cxxPPassemblage>::iterator it_uz = uzbin.Get_PPassemblages().begin();
+		std::map<int, cxxPPassemblage> temp_map;
+		for (; it_uz != uzbin.Get_PPassemblages().end(); it_uz++)
+		{
+			int n_user = it_uz->second.Get_n_user();
+			std::map < int, cxxPPassemblage >::iterator it_sz = this->PPassemblages.find(n_user);
+			if (it_sz == this->PPassemblages.end())
+			{
+				this->PPassemblages[n_user] = it_uz->second;
+			}
+			else
+			{
+				temp_map[0] = it_uz->second;
+				temp_map[1] = it_sz->second;
+				cxxPPassemblage temp_entity(temp_map, mx, n_user);
+				this->PPassemblages[n_user] = temp_entity;
+			}
+		}
+	}
+
+	// ss_assemblage
+	{
+		std::map<int, cxxSSassemblage>::iterator it_uz = uzbin.Get_SSassemblages().begin();
+		std::map<int, cxxSSassemblage> temp_map;
+		for (; it_uz != uzbin.Get_SSassemblages().end(); it_uz++)
+		{
+			int n_user = it_uz->second.Get_n_user();
+			std::map < int, cxxSSassemblage >::iterator it_sz = this->SSassemblages.find(n_user);
+			if (it_sz == this->SSassemblages.end())
+			{
+				this->SSassemblages[n_user] = it_uz->second;
+			}
+			else
+			{
+				temp_map[0] = it_uz->second;
+				temp_map[1] = it_sz->second;
+				cxxSSassemblage temp_entity(temp_map, mx, n_user);
+				this->SSassemblages[n_user] = temp_entity;
+			}
+		}
+	}
+
+	// surface
+	{
+		std::map<int, cxxSurface>::iterator it_uz = uzbin.Get_Surfaces().begin();
+		std::map<int, cxxSurface> temp_map;
+		for (; it_uz != uzbin.Get_Surfaces().end(); it_uz++)
+		{
+			int n_user = it_uz->second.Get_n_user();
+			std::map < int, cxxSurface >::iterator it_sz = this->Surfaces.find(n_user);
+			if (it_sz == this->Surfaces.end())
+			{
+				this->Surfaces[n_user] = it_uz->second;
+			}
+			else
+			{
+				temp_map[0] = it_uz->second;
+				temp_map[1] = it_sz->second;
+				cxxSurface temp_entity(temp_map, mx, n_user);
+				this->Surfaces[n_user] = temp_entity;
+			}
+		}
+	}
+
+	// mix
+
+	// reaction
+
+	// reaction temperature
+
+	// reaction pressure
+}
+void
 cxxStorageBin::Copy(int destination, int source)
 {
 	if (destination == source)
@@ -794,6 +943,43 @@ cxxStorageBin::dump_raw(std::ostream & s_oss, int n, unsigned int indent, int *n
 }
 
 void
+cxxStorageBin::dump_raw_range(std::ostream & s_oss, int start, int end, unsigned int indent) const
+{
+	// Dump all data
+	s_oss.precision(DBL_DIG - 1);
+
+	// Solutions
+	Utilities::Rxn_dump_raw_range(Solutions, s_oss, start, end, indent);
+
+	// Exchange
+	Utilities::Rxn_dump_raw_range(Exchangers, s_oss, start, end, indent);
+
+	// Gas Phases
+	Utilities::Rxn_dump_raw_range(GasPhases, s_oss, start, end, indent);
+
+	// Kinetics
+	Utilities::Rxn_dump_raw_range(Kinetics, s_oss, start, end, indent);
+
+	// PPassemblage
+	Utilities::Rxn_dump_raw_range(PPassemblages, s_oss, start, end, indent);
+
+	// SSassemblage
+	Utilities::Rxn_dump_raw_range(SSassemblages, s_oss, start, end, indent);
+
+	// Surface
+	Utilities::Rxn_dump_raw_range(Surfaces, s_oss, start, end, indent);
+
+	// Mix
+	Utilities::Rxn_dump_raw_range(Mixes, s_oss, start, end, indent);
+
+	// Reactions
+	Utilities::Rxn_dump_raw_range(Reactions, s_oss, start, end, indent);
+
+	// Temperature
+	Utilities::Rxn_dump_raw_range(Temperatures, s_oss, start, end, indent);
+}
+
+void
 cxxStorageBin::read_raw(CParser & parser)
 {
 	PHRQ_io::LINE_TYPE i;
@@ -820,11 +1006,21 @@ cxxStorageBin::read_raw(CParser & parser)
 				Solutions[entity.Get_n_user()] = entity;
 			}
 			break;
+		case Keywords::KEY_SOLUTION_MODIFY:
+			{
+				Utilities::SB_read_modify(this->Solutions, parser);
+			}
+			break;
 		case Keywords::KEY_EXCHANGE_RAW:
 			{
 				cxxExchange entity(this->Get_io());
 				entity.read_raw(parser);
 				Exchangers[entity.Get_n_user()] = entity;
+			}
+			break;
+		case Keywords::KEY_EXCHANGE_MODIFY:
+			{
+				Utilities::SB_read_modify(this->Exchangers, parser);
 			}
 			break;
 		case Keywords::KEY_GAS_PHASE_RAW:
@@ -834,6 +1030,11 @@ cxxStorageBin::read_raw(CParser & parser)
 				GasPhases[entity.Get_n_user()] = entity;
 			}
 			break;
+		case Keywords::KEY_GAS_PHASE_MODIFY:
+			{
+				Utilities::SB_read_modify(this->GasPhases, parser);
+			}
+			break;
 		case Keywords::KEY_KINETICS_RAW:
 			{
 				cxxKinetics entity(this->Get_io());
@@ -841,7 +1042,11 @@ cxxStorageBin::read_raw(CParser & parser)
 				Kinetics[entity.Get_n_user()] = entity;
 			}
 			break;
-
+		case Keywords::KEY_KINETICS_MODIFY:
+			{
+				Utilities::SB_read_modify(this->Kinetics, parser);
+			}
+			break;
 		case Keywords::KEY_EQUILIBRIUM_PHASES_RAW:
 			{
 				cxxPPassemblage entity(this->Get_io());
@@ -849,15 +1054,23 @@ cxxStorageBin::read_raw(CParser & parser)
 				PPassemblages[entity.Get_n_user()] = entity;
 			}
 			break;
-
+		case Keywords::KEY_EQUILIBRIUM_PHASES_MODIFY:
+			{
+				Utilities::SB_read_modify(this->PPassemblages, parser);
+			}
+			break;
 		case Keywords::KEY_SOLID_SOLUTIONS_RAW:
 			{
-				cxxSSassemblage entity;
+				cxxSSassemblage entity(this->Get_io());
 				entity.read_raw(parser);
 				SSassemblages[entity.Get_n_user()] = entity;
 			}
 			break;
-
+		case Keywords::KEY_SOLID_SOLUTIONS_MODIFY:
+			{
+				Utilities::SB_read_modify(this->SSassemblages, parser);
+			}
+			break;
 		case Keywords::KEY_SURFACE_RAW:
 			{
 				cxxSurface entity(this->Get_io());
@@ -865,7 +1078,11 @@ cxxStorageBin::read_raw(CParser & parser)
 				Surfaces[entity.Get_n_user()] = entity;
 			}
 			break;
-
+		case Keywords::KEY_SURFACE_MODIFY:
+			{
+				Utilities::SB_read_modify(this->Surfaces, parser);
+			}
+			break;
 		case Keywords::KEY_REACTION_TEMPERATURE_RAW:
 			{
 				cxxTemperature entity(this->Get_io());
@@ -873,7 +1090,6 @@ cxxStorageBin::read_raw(CParser & parser)
 				Temperatures[entity.Get_n_user()] = entity;
 			}
 			break;
-
 		case Keywords::KEY_REACTION_RAW:
 			{
 				cxxReaction entity;
@@ -881,6 +1097,11 @@ cxxStorageBin::read_raw(CParser & parser)
 				Reactions[entity.Get_n_user()] = entity;
 			}
 			break;
+		case Keywords::KEY_REACTION_MODIFY:
+		{
+			Utilities::SB_read_modify(this->Reactions, parser);
+		}
+		break;
 		case Keywords::KEY_MIX_RAW:
 			{
 				cxxMix entity;
@@ -974,7 +1195,7 @@ cxxStorageBin::read_raw_keyword(CParser & parser)
 
 	case Keywords::KEY_SOLID_SOLUTIONS_RAW:
 		{
-			cxxSSassemblage entity;
+			cxxSSassemblage entity(this->Get_io());
 			entity.read_raw(parser);
 			SSassemblages[entity.Get_n_user()] = entity;
 			entity_number = entity.Get_n_user();
