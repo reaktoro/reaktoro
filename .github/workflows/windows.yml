@@ -50,27 +50,17 @@ jobs:
         shell: powershell
         run: |
           conda activate reaktoro
-          set CC=clcache
-          set CXX=clcache
-          clcache -s
-          clcache -z
-          cmake -DGENERATOR=Ninja -DBUILD_TYPE=${{ env.configuration }} -P deps/install
-          clcache -s
+          cmake -P deps/install
       - name: Configuring Reaktoro
         shell: powershell
         run: |
           conda activate reaktoro
-          set CC=clcache
-          set CXX=clcache
-          cmake -GNinja -S . -B .build -DCMAKE_BUILD_TYPE=${{ env.configuration }}
+          cmake -S . -B .build
       - name: Building Reaktoro
         shell: powershell
         run: |
           conda activate reaktoro
-          clcache -s
-          clcache -z
           cmake --build .build --config ${{ env.configuration }}
-          clcache -s
       - name: Installing Reaktoro
         shell: powershell
         run: |
