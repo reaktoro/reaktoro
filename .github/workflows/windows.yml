@@ -1,0 +1,58 @@
+name: windows
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+
+  schedule:
+    - cron: "0 5 * * 1"  # runs at 05:00 UTC on Mondays
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    env:
+      configuration: Release
+
+    strategy:
+      fail-fast: true
+      max-parallel: 4
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: true
+          activate-environment: ''
+      - name: Configure
+        shell: powershell
+        run: |
+          conda config --set always_yes yes --set changeps1 no
+          conda config --add channels conda-forge
+          conda install conda-devenv
+          conda devenv
+          conda activate optima
+          cmake -S . -B .build
+      - name: Build
+        shell: powershell
+        run: |
+          conda activate optima
+          clcache -s
+          clcache -z
+          cmake --build .build --config ${{ env.configuration }}
+          clcache -s
+      - name: Install
+        shell: powershell
+        run: |
+          conda activate optima
+          cmake --build .build --config ${{ env.configuration }} --target install
+      - name: Tests
+        shell: powershell
+        run: |
+          conda activate optima
+          cmake --build .build --config ${{ env.configuration }} --target tests

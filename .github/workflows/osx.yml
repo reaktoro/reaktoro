@@ -1,0 +1,64 @@
+name: osx
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+
+  schedule:
+    - cron: "0 5 * * 1"  # runs at 05:00 UTC on Mondays
+
+jobs:
+  build:
+
+    runs-on: macOS-latest
+
+    env:
+      os: MacOSX-x86_64
+      configuration: Release
+
+    strategy:
+      fail-fast: true
+      max-parallel: 4
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+      - name: Configure
+        shell: bash -l {0}
+        run: |
+          conda config --set always_yes yes --set changeps1 no
+          conda config --add channels conda-forge
+          conda install conda-devenv
+          conda devenv
+          source activate optima
+          cmake -S . -B .build
+      - name: Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.ccache
+          key: ${{ runner.os }}-ccache-${{ hashFiles('hashFile.txt') }}  # https://github.community/t/caching-for-c-builds/124529/2
+          restore-keys: ${{ runner.os }}-ccache-
+      - name: Build
+        shell: bash -l {0}
+        run: |
+          source activate optima
+          ccache -s
+          ccache -z
+          cmake --build .build --config ${{ env.configuration }} --parallel
+          ccache -s
+      - name: Install
+        shell: bash -l {0}
+        run: |
+          source activate optima
+          cmake --build .build --config ${{ env.configuration }} --target install
+      - name: Tests
+        shell: bash -l {0}
+        run: |
+          source activate optima
+          cmake --build .build --config ${{ env.configuration }} --target tests
