@@ -28,37 +28,45 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
-      - name: Configure
+      - name: Configuring Conda Environment
         shell: bash -l {0}
         run: |
           conda config --set always_yes yes --set changeps1 no
           conda config --add channels conda-forge
           conda install conda-devenv
           conda devenv
-          source activate optima
-          cmake -S . -B .build
-      - name: Cache
+      - name: Configuring Cache
         id: cache
         uses: actions/cache@v2
         with:
           path: ~/.ccache
           key: ${{ runner.os }}-ccache-${{ hashFiles('hashFile.txt') }}  # https://github.community/t/caching-for-c-builds/124529/2
           restore-keys: ${{ runner.os }}-ccache-
-      - name: Build
+      - name: Installing Dependencies
         shell: bash -l {0}
         run: |
-          source activate optima
+          source activate reaktoro
+          cmake -P deps/install
+      - name: Configuring Reaktoro
+        shell: bash -l {0}
+        run: |
+          source activate reaktoro
+          cmake -S . -B .build
+      - name: Building Reaktoro
+        shell: bash -l {0}
+        run: |
+          source activate reaktoro
           ccache -s
           ccache -z
           cmake --build .build --config ${{ env.configuration }} --parallel 3
           ccache -s
-      - name: Install
+      - name: Installing Reaktoro
         shell: bash -l {0}
         run: |
-          source activate optima
+          source activate reaktoro
           cmake --build .build --config ${{ env.configuration }} --target install
-      - name: Tests
+      - name: Testing Reaktoro
         shell: bash -l {0}
         run: |
-          source activate optima
+          source activate reaktoro
           cmake --build .build --config ${{ env.configuration }} --target tests
