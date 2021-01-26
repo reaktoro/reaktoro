@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          submodules: `recursive`
+          submodules: recursive
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
