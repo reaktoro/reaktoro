@@ -22,7 +22,7 @@ jobs:
 
     strategy:
       fail-fast: true
-      max-parallel: 4
+      max-parallel: 10
 
     steps:
       - uses: actions/checkout@v2
@@ -51,7 +51,7 @@ jobs:
         shell: bash -l {0}
         run: |
           source activate reaktoro
-          cmake -P deps/install
+          cmake -DJOBS=9 -P deps/install
       - name: Configuring Reaktoro
         shell: bash -l {0}
         run: |
@@ -63,7 +63,7 @@ jobs:
           source activate reaktoro
           ccache -s
           ccache -z
-          cmake --build .build --config ${{ env.configuration }} --parallel 3
+          cmake --build .build --config ${{ env.configuration }} --parallel 9
           ccache -s
       - name: Installing Reaktoro
         shell: bash -l {0}
