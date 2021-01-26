@@ -1,7 +1,7 @@
 # Copy the bash/batch scripts to build directory for easy setup of environment variables.
 
 if(UNIX)
-    file(COPY envs DESTINATION ${CMAKE_BINARY_DIR})
+    configure_file(envs.in ${CMAKE_BINARY_DIR}/envs)
 endif()
 
 if(WIN32)
