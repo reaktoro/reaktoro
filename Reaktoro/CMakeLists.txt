@@ -64,10 +64,18 @@ set_target_properties(Reaktoro PROPERTIES
     CXX_EXTENSIONS OFF)
 
 # Create a test executable target for Reaktoro
-add_executable(tests ${TEST_CXX_FILES})
-target_link_libraries(tests Reaktoro)
-target_include_directories(tests PUBLIC ${PROJECT_SOURCE_DIR})
-target_compile_definitions(tests PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline>)  # use EIGEN_STRONG_INLINE=inline instead of EIGEN_STRONG_INLINE=__forceinline with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile
+add_executable(reaktoro-cpptests ${TEST_CXX_FILES})
+target_link_libraries(reaktoro-cpptests Reaktoro)
+target_include_directories(reaktoro-cpptests PUBLIC ${PROJECT_SOURCE_DIR})
+target_compile_definitions(reaktoro-cpptests PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline>)  # use EIGEN_STRONG_INLINE=inline instead of EIGEN_STRONG_INLINE=__forceinline with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile
+
+# Add target tests that performs all C++ and Python tests
+add_custom_target(tests
+    COMMENT "Running C++ tests..."
+    COMMAND $<TARGET_FILE:reaktoro-cpptests>
+    # COMMENT "Running Python tests..."  # TODO: Implement Python tests.
+    # COMMAND $<TARGET_FILE:reaktoro-pytests>
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 #==============================================================================
 #
