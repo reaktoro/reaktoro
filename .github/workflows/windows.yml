@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - v2.0-preview
 
   pull_request:
 
