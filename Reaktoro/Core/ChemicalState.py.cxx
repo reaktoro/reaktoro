@@ -17,6 +17,7 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
 namespace py = pybind11;
 
 // Optima includes
