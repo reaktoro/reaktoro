@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       fail-fast: true
-      max-parallel: 10
+      max-parallel: 4
 
     steps:
       - uses: actions/checkout@v2
@@ -40,6 +40,12 @@ jobs:
           conda config --add channels conda-forge
           conda install conda-devenv
           conda devenv
+      - name: Configuring Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: $HOME\clcache
+          key: ${{ runner.os }}-clcache
       - name: Installing Dependencies
         shell: powershell
         run: |
@@ -49,7 +55,9 @@ jobs:
         shell: powershell
         run: |
           conda activate reaktoro
-          cmake -S . -B .build
+          set CC=clcache
+          set CXX=clcache
+          cmake -GNinja -S . -B .build -DCMAKE_BUILD_TYPE=${{ env.configuration }}
       - name: Building Reaktoro
         shell: powershell
         run: |

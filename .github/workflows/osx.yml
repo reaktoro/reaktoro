@@ -22,7 +22,7 @@ jobs:
 
     strategy:
       fail-fast: true
-      max-parallel: 10
+      max-parallel: 4
 
     steps:
       - uses: actions/checkout@v2
@@ -43,14 +43,13 @@ jobs:
         id: cache
         uses: actions/cache@v2
         with:
-          path: ~/.ccache
-          key: ${{ runner.os }}-ccache-${{ hashFiles('hashFile.txt') }}  # https://github.community/t/caching-for-c-builds/124529/2
-          restore-keys: ${{ runner.os }}-ccache-
+          path: $HOME/.ccache
+          key: ${{ runner.os }}-ccache
       - name: Installing Dependencies
         shell: bash -l {0}
         run: |
           source activate reaktoro
-          cmake -DJOBS=9 -P deps/install
+          cmake -DJOBS=3 -P deps/install
       - name: Configuring Reaktoro
         shell: bash -l {0}
         run: |
@@ -62,7 +61,7 @@ jobs:
           source activate reaktoro
           ccache -s
           ccache -z
-          cmake --build .build --config ${{ env.configuration }} --parallel 9
+          cmake --build .build --config ${{ env.configuration }} --parallel 3
           ccache -s
       - name: Installing Reaktoro
         shell: bash -l {0}
