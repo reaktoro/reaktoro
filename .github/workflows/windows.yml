@@ -50,7 +50,12 @@ jobs:
         shell: powershell
         run: |
           conda activate reaktoro
-          cmake -P deps/install
+          set CC=clcache
+          set CXX=clcache
+          clcache -s
+          clcache -z
+          cmake -GNinja -DBUILD_TYPE=${{ env.configuration }} -P deps/install
+          clcache -s
       - name: Configuring Reaktoro
         shell: powershell
         run: |
