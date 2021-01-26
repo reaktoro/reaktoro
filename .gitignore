@@ -7,6 +7,9 @@ _build/
 deps/build/
 deps/git/
 
+# Files and directories with suffix -ignore
+*-ignore
+
 # Eclipse IDE files
 .settings
 .project
