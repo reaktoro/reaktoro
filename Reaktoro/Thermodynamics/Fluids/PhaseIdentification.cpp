@@ -56,8 +56,17 @@ auto pressureComparison(const real& Pressure, const real& Temperature, const rea
                         const real& bmix, const real& A, const real& B, const real& C,
                         const real epsilon, const real sigma) -> CubicEOSFluidType
 {
+    // WARNING: The use of Eigen::PolynomialSolver with real seems to cause
+    // errors in macOS:
+    //
+    // error: no matching function for call to
+    // '__libcpp_isfinite_or_builtin' else if ((__libcpp_isinf_or_builtin(__a)
+    // || __libcpp_isinf_or_builtin(__b)) && __libcpp_isfinite_or_builtin(__c)
+    // && __libcpp_isfinite_or_builtin(__d))
+    //
+    // Using double instead.
 
-    auto p = [&](real V) -> real
+    auto p = [&](double V) -> double
     {
         return ((universalGasConstant*Temperature) / (V - bmix)) - (amix / ((V + epsilon * bmix) * (V + sigma * bmix)));
     };
@@ -75,16 +84,16 @@ auto pressureComparison(const real& Pressure, const real& Temperature, const rea
     const double DP = 2 * R * T * (k1 * k2 * k2 + k1 * k1 * k2) - 2 * amix * (bmix * bmix - k2 * bmix - k1 * bmix);
     const double EP = R * T * k1 * k1 * k2 * k2 - amix * (k1 + k2) * bmix * bmix;
 
-    auto polynomial_solver = Eigen::PolynomialSolver<real, 4>(
-        Eigen::Matrix<real, 5, 1>{EP, DP, CP, BP, AP});
+    auto polynomial_solver = Eigen::PolynomialSolver<double, 4>(
+        Eigen::Matrix<double, 5, 1>{EP, DP, CP, BP, AP});
 
     constexpr auto abs_imaginary_threshold = 1e-15;
-    auto real_roots = std::vector<real>();
+    auto real_roots = std::vector<double>();
     real_roots.reserve(5);
     polynomial_solver.realRoots(real_roots, abs_imaginary_threshold);
 
     // removing roots lower than bmix, no physical meaning
-    auto new_end = std::remove_if(real_roots.begin(), real_roots.end(), [&](real r){
+    auto new_end = std::remove_if(real_roots.begin(), real_roots.end(), [&](double r){
         return r < bmix;
     });
     real_roots.resize(new_end - real_roots.begin());
@@ -94,7 +103,7 @@ auto pressureComparison(const real& Pressure, const real& Temperature, const rea
         return CubicEOSFluidType::Vapor;
     }
 
-    std::vector<real> pressures;
+    std::vector<double> pressures;
     for (const auto& volume : real_roots)
         pressures.push_back(p(volume));
 
