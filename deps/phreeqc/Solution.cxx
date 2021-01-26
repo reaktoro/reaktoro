@@ -30,6 +30,7 @@ cxxSolution::cxxSolution(PHRQ_io * io)
 	this->io = io;
 	this->new_def = false;
 	this->patm = 1.0;
+	this->potV = 0.0;
 	this->tc = 25.0;
 	this->ph = 7.0;
 	this->pe = 4.0;
@@ -63,6 +64,7 @@ cxxSolution::operator =(const cxxSolution &rhs)
 		this->description                = rhs.description;
 		this->new_def                    = rhs.new_def;
 		this->patm                       = rhs.patm;
+		this->potV                       = rhs.potV;
 		this->tc                         = rhs.tc;
 		this->ph                         = rhs.ph;
 		this->pe                         = rhs.pe;
@@ -229,6 +231,9 @@ cxxSolution::dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out) con
 
 	s_oss << indent1;
 	s_oss << "-pressure                  " << this->patm << "\n";
+
+	s_oss << indent1;
+	s_oss << "-potential                 " << this->potV << "\n";
 
 	// new identifier
 	s_oss << indent1;
@@ -997,6 +1002,18 @@ cxxSolution::read_raw(CParser & parser, bool check)
 				opt_save = 25;
 			}
 			break;
+
+		case 26:				// potential
+			if (!(parser.get_iss() >> this->potV))
+			{
+				this->potV = 0.0;
+				parser.incr_input_error();
+				parser.error_msg("Expected numeric value for potential (V).",
+					PHRQ_io::OT_CONTINUE);
+			}
+			opt_save = CParser::OPT_DEFAULT;
+			break;
+			
 		}
 		if (opt == CParser::OPT_EOF || opt == CParser::OPT_KEYWORD)
 			break;
@@ -1103,6 +1120,7 @@ cxxSolution::Update(LDBLE h_tot, LDBLE o_tot, LDBLE charge, const cxxNameDouble 
 	this->total_h = h_tot;
 	this->total_o = o_tot;
 	this->cb = charge;
+	this->mass_water = o_tot / 55.5;
 
 	// Don`t bother to update activities?
 	this->Update(const_nd);
@@ -1336,6 +1354,7 @@ cxxSolution::zero()
 	this->master_activity.type = cxxNameDouble::ND_SPECIES_LA;
 	this->species_gamma.type = cxxNameDouble::ND_SPECIES_GAMMA;
 	this->patm = 1.0;
+	this->potV = 0.0;
 	this->initial_data = NULL;
 }
 
@@ -1361,6 +1380,7 @@ cxxSolution::add(const cxxSolution & addee, LDBLE extensive)
 	this->cb += addee.cb * extensive;
 	this->density = f1 * this->density + f2 * addee.density;
 	this->patm = f1 * this->patm + f2 * addee.patm;
+	this->potV = f1 * this->potV + f2 * addee.potV;
 	this->mass_water += addee.mass_water * extensive;
 	this->soln_vol += addee.soln_vol * extensive;
 	this->total_alkalinity += addee.total_alkalinity * extensive;
@@ -1537,6 +1557,7 @@ cxxSolution::Serialize(Dictionary & dictionary, std::vector < int >&ints,
 	ints.push_back(this->n_user);
 	ints.push_back(this->new_def ? 1 : 0);
 	doubles.push_back(this->patm);
+	doubles.push_back(this->potV);
 	doubles.push_back(this->tc);
 	doubles.push_back(this->ph);
 	doubles.push_back(this->pe);
@@ -1610,6 +1631,7 @@ cxxSolution::Deserialize(Dictionary & dictionary, std::vector < int >&ints, std:
 
 	this->new_def = (ints[ii++] != 0);
 	this->patm = doubles[dd++];
+	this->potV = doubles[dd++];
 	this->tc = doubles[dd++];
 	this->ph = doubles[dd++];
 	this->pe = doubles[dd++];
@@ -1699,6 +1721,7 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("pressure"),	                            // 22
 	std::vector< std::string >::value_type("soln_vol"),	                            // 23
 	std::vector< std::string >::value_type("species_map"), 	                        // 24
-	std::vector< std::string >::value_type("log_gamma_map") 	                    // 25
+	std::vector< std::string >::value_type("log_gamma_map"), 	                    // 25
+	std::vector< std::string >::value_type("potential") 	                        // 26
 };									   
 const std::vector< std::string > cxxSolution::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	

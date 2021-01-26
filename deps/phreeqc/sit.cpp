@@ -312,7 +312,7 @@ sit(void)
 	   C     INITIALIZE
 	   C
 	 */
-	//CONV = 1.0 / log(10.0);
+	//CONV = 1.0 / LOG_10;
 	XI = 0.0e0;
 	XX = 0.0e0;
 	OSUM = 0.0e0;
@@ -367,7 +367,7 @@ sit(void)
 	   C
 	 */
 	AGAMMA = 3*sit_A0; /* Grenthe p 379 */
-	A = AGAMMA / log(10.0);
+	A = AGAMMA / LOG_10;
 	/*
 	*  F is now for log10 gamma
 	*/
@@ -445,7 +445,7 @@ sit(void)
 	   C
 	 */
 	/*COSMOT = 1.0e0 + 2.0e0 * OSMOT / OSUM;*/
-	COSMOT = 1.0e0 + OSMOT*log(10.0) / OSUM;
+	COSMOT = 1.0e0 + OSMOT*LOG_10 / OSUM;
 	/*
 	   C
 	   C     CALCULATE THE ACTIVITY OF WATER
@@ -490,7 +490,7 @@ sit(void)
 	   C     INITIALIZE
 	   C
 	 */
-	//CONV = 1.0 / log(10.0);
+	//CONV = 1.0 / LOG_10;
 	XI = 0.0e0;
 	XX = 0.0e0;
 	OSUM = 0.0e0;
@@ -566,7 +566,7 @@ sit(void)
 	   C
 	 */
 	AGAMMA = 3*sit_A0; /* Grenthe p 379 */
-	A = AGAMMA / log(10.0);
+	A = AGAMMA / LOG_10;
 	/*
 	*  F is now for log10 gamma
 	*/
@@ -652,7 +652,7 @@ sit(void)
 	   C
 	 */
 	/*COSMOT = 1.0e0 + 2.0e0 * OSMOT / OSUM;*/
-	COSMOT = 1.0e0 + OSMOT*log(10.0) / OSUM;
+	COSMOT = 1.0e0 + OSMOT*LOG_10 / OSUM;
 	/*
 	   C
 	   C     CALCULATE THE ACTIVITY OF WATER
@@ -697,6 +697,7 @@ sit_clean_up(void)
 	sit_LGAMMA = (LDBLE *) free_check_null(sit_LGAMMA);
 	sit_IPRSNT = (int *) free_check_null(sit_IPRSNT);
 	spec = (struct species **) free_check_null(spec);
+	aphi = (struct pitz_param *) free_check_null(aphi);
 	sit_M = (LDBLE *) free_check_null(sit_M);
 
 	return OK;
@@ -737,6 +738,7 @@ set_sit(int initial)
 	tk_x = tc_x + 273.15;
 
 	patm_x = solution_ptr->Get_patm(); // done in calc_rho_0(tc, pa)
+	potV_x = solution_ptr->Get_potV();
 
 /*
  *   H+, e-, H2O
@@ -1011,7 +1013,7 @@ Restart:
 		base[i] = residual[i];
 	}
 	d = 0.0001;
-	d1 = d * log(10.0);
+	d1 = d * LOG_10;
 	d2 = 0;
 	for (i = 0; i < count_unknowns; i++)
 	{
@@ -1094,7 +1096,7 @@ Restart:
 		residuals();
 		for (j = 0; j < count_unknowns; j++)
 		{
-			array[j * (count_unknowns + 1) + i] =
+			my_array[j * (count_unknowns + 1) + i] =
 				-(residual[j] - base[j]) / d2;
 		}
 		switch (x[i]->type)
@@ -1113,9 +1115,9 @@ Restart:
 			break;
 		case MH:
 			s_eminus->la -= d;
-			if (array[i * (count_unknowns + 1) + i] == 0)
+			if (my_array[i * (count_unknowns + 1) + i] == 0)
 			{
-				array[i * (count_unknowns + 1) + i] =
+				my_array[i * (count_unknowns + 1) + i] =
 					exp(s_h2->lm * LOG_10) * 2;
 			}
 			break;
@@ -1225,6 +1227,7 @@ model_sit(void)
 			PhreeqcIWait(this);
 #endif
 			iterations++;
+			overall_iterations++;
 			if (iterations > itmax - 1 && debug_model == FALSE
 				&& pr.logfile == TRUE)
 			{
@@ -1311,7 +1314,7 @@ model_sit(void)
 			{
 				
 				count_basis_change++;
-				count_unknowns -= (int) s_list.size();
+				count_unknowns -= count_s_x;
 				reprep();
 				full_pitzer = false;
 			}

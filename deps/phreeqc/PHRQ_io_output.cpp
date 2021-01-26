@@ -74,7 +74,7 @@ fpunchf(const char *name, const char *format, double d)
 	{
 		if (phrq_io) phrq_io->fpunchf(name, format, d);
 	}
-	catch(std::bad_alloc)
+	catch(const std::bad_alloc&)
 	{
 		malloc_error();
 	}
@@ -86,7 +86,7 @@ fpunchf(const char *name, const char *format, char * s)
 	{
 		if (phrq_io) phrq_io->fpunchf(name, format, s);
 	}
-	catch(std::bad_alloc)
+	catch(const std::bad_alloc&)
 	{
 		malloc_error();
 	}
@@ -98,7 +98,7 @@ fpunchf(const char *name, const char *format, int d)
 	{
 		if (phrq_io) phrq_io->fpunchf(name, format, d);
 	}
-	catch(std::bad_alloc)
+	catch(const std::bad_alloc&)
 	{
 		malloc_error();
 	}
@@ -136,7 +136,7 @@ fpunchf_user(int user_index, const char *format, double d)
 	{
 		if (phrq_io) phrq_io->fpunchf(name, format, (double) d);
 	}
-	catch(std::bad_alloc)
+	catch(const std::bad_alloc&)
 	{
 		malloc_error();
 	}
@@ -173,7 +173,7 @@ fpunchf_user(int user_index, const char *format, char * d)
 	{
 		if (phrq_io) phrq_io->fpunchf(name, format, d);
 	}
-	catch(std::bad_alloc)
+	catch(const std::bad_alloc&)
 	{
 		malloc_error();
 	}

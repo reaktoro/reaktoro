@@ -45,6 +45,7 @@ read_input(void)
 	Rxn_new_ss_assemblage.clear();
 	Rxn_new_surface.clear();
 	Rxn_new_temperature.clear();   // not used
+	phrq_io->Set_echo_on(true);
 /*
  *  Initialize keyword counters
  */
@@ -256,6 +257,8 @@ read_input(void)
 #if defined(SWIG_SHARED_OBJ)
 				warning_msg("DATABASE keyword is ignored by IPhreeqc.");
 #else
+				
+				user_database = (char *) free_check_null(user_database);
 				user_database = string_duplicate(ptr);
 				if (string_trim(user_database) == EMPTY)
 				{
@@ -1004,7 +1007,7 @@ read_exchange(void)
 					input_error++;
 					break;
 				}
-				cxxExchComp temp_comp;
+				cxxExchComp temp_comp(this->phrq_io);
 				temp_exchange.Get_exchange_comps().push_back(temp_comp);
 				comp_ptr = &(temp_exchange.Get_exchange_comps().back());
 				comp_ptr->Set_formula(token.c_str());
@@ -1265,7 +1268,7 @@ read_gas_phase(void)
 	char *ptr;
 	char *description;
 	char token[MAX_LENGTH];
-	cxxGasPhase temp_gas_phase;
+	cxxGasPhase temp_gas_phase(this->phrq_io);
 	int return_value, opt;
 	char *next_char;
 	const char *opt_list[] = {
@@ -2054,7 +2057,7 @@ read_kinetics(void)
  */
 	ptr = line;
 	read_number_description(ptr, &n_user, &n_user_end, &description);
-	cxxKinetics temp_kinetics;
+	cxxKinetics temp_kinetics(this->phrq_io);
 	temp_kinetics.Set_n_user(n_user);
 	temp_kinetics.Set_n_user_end(n_user_end);
 	temp_kinetics.Set_description(description);
@@ -2883,7 +2886,7 @@ read_aq_species_vm_parms(char *ptr, LDBLE * delta_v)
 	if (j < 1)
 	{
 		input_error++;
-		error_msg("Expecting numeric values for calculating the species molar volume from the supcrt database.",
+		error_msg("Expecting numeric values for calculating the species molar volume.",
 			CONTINUE);
 		return (ERROR);
 	}
@@ -3156,6 +3159,32 @@ read_millero_abcdef (char *ptr, LDBLE * abcdef)
   return (OK);
 }
 /* VP: Density End */
+
+/* ---------------------------------------------------------------------- */
+int Phreeqc::
+read_viscosity_parms(char *ptr, LDBLE * Jones_Dole)
+/* ---------------------------------------------------------------------- */
+{
+  int j;
+/*
+ *   Read .
+ */
+  for (j = 0; j <= 9; j++)
+  {
+    Jones_Dole[j] = 0.0;
+  }
+  j =
+    sscanf (ptr, SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT,
+	&(Jones_Dole[0]), &(Jones_Dole[1]), &(Jones_Dole[2]), &(Jones_Dole[3]), &(Jones_Dole[4]), &(Jones_Dole[5]), &(Jones_Dole[6]), &(Jones_Dole[7]), &(Jones_Dole[8]), &(Jones_Dole[9]));
+  if (j < 1)
+  {
+    input_error++;
+    error_msg ("Expecting numeric values for viscosity calculation.",
+	       CONTINUE);
+    return (ERROR);
+  }
+  return (OK);
+}
 
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
@@ -3718,6 +3747,14 @@ read_number_description(char *ptr, int *n_user,
 			n = sscanf(token, "%d%d", n_user, n_user_end);
 			if (n != 2)
 			{
+				if (n == 0)
+				{
+					*n_user_end = *n_user = 1;
+				}
+				else
+				{
+					*n_user_end = *n_user;
+				}
 				if (next_keyword >= 0)
 				{
 					error_string = sformatf( "Reading number range for %s.", Keywords::Keyword_name_search(next_keyword).c_str());
@@ -3803,7 +3840,6 @@ read_phases(void)
 		"vm"	/* 15, molar volume, must replace delta_v */
 	};
 	int count_opt_list = 16;
-
 	association = FALSE;
 /*
  *   Read eqn from file and call parser
@@ -3994,6 +4030,15 @@ read_phases(void)
 			if (j == EOF || j == KEYWORD)
 			{
 				return_value = j;
+				break;
+			}
+			if (j == OPTION)
+			{
+				parse_error++;
+				error_string = sformatf("Expecting equation for phase %s.", token);
+				error_msg(error_string, CONTINUE);
+				error_msg("Parsing equation.", CONTINUE);
+				error_msg(line_save, CONTINUE);
 				break;
 			}
 			if (parse_eq(line, &next_elt, association) == ERROR)
@@ -4712,9 +4757,10 @@ read_selected_output(void)
 		"isotopes",				/* 46 */
 		"calculate_values",		/* 47 */
 		"equilibrium_phase",    /* 48 */
-		"active"                /* 49 */
+		"active",               /* 49 */
+		"new_line"            /* 50 */
 	};
-	int count_opt_list = 50;
+	int count_opt_list = 51;
 
 	int i, l;
 	char file_name[MAX_LENGTH], token[MAX_LENGTH];
@@ -4740,6 +4786,7 @@ read_selected_output(void)
 		// n_user = 1, old definition, keep old definition
 		SelectedOutput & so_ref = so->second;
 		temp_selected_output.Set_active           ( so_ref.Get_active() );
+		temp_selected_output.Set_new_line         ( so_ref.Get_new_line() );
 		temp_selected_output.Set_inverse          ( so_ref.Get_inverse() );
 		temp_selected_output.Set_sim              ( so_ref.Get_sim() );
 		temp_selected_output.Set_state            ( so_ref.Get_state() );
@@ -4774,8 +4821,11 @@ read_selected_output(void)
 		// n_user != 1 then reset false
 
 		temp_selected_output.Reset(false);
+		if (so == SelectedOutput_map.end())
+		{
+			temp_selected_output.Set_new_def(true);
+		}
 	}
-
 	CParser parser(this->phrq_io);
 
 /*
@@ -5087,6 +5137,12 @@ read_selected_output(void)
 			{
 				so->second.Set_active(value!=FALSE);
 			}
+			opt_save = OPTION_ERROR;
+			break;
+		case 50:				/* new_line */
+			temp_selected_output.Set_new_def(true);
+			value = get_true_false(next_char, TRUE);
+			temp_selected_output.Set_new_line(value != FALSE);
 			opt_save = OPTION_ERROR;
 			break;
 		}
@@ -5629,9 +5685,10 @@ read_solution(void)
 		"isotope",				/* 9 */
 		"water",				/* 10 */
 		"press",				/* 11 */
-		"pressure"				/* 12 */
+		"pressure",				/* 12 */
+		"potential"				/* 13 */
 	};
-	int count_opt_list = 13;
+	int count_opt_list = 14;
 /*
  *   Read solution number and description
  */
@@ -5695,8 +5752,31 @@ read_solution(void)
 		case 2:				/* density */
 		case 3:
 			{
-				sscanf(next_char, SCANFORMAT, &dummy);
-				temp_solution.Set_density(dummy);
+				copy_token(token, &next_char);
+				if (sscanf(token.c_str(), SCANFORMAT, &dummy) != 1)
+				{
+						error_msg("Expecting numeric value for density.", PHRQ_io::OT_CONTINUE);
+						error_msg(line_save, PHRQ_io::OT_CONTINUE);
+						input_error++;
+				}
+				else
+				{
+					temp_solution.Set_density(dummy);
+				}
+				int j = copy_token(token, &next_char);
+				if (j != EMPTY)
+				{
+					if (token[0] != 'c' && token[0] != 'C')
+					{
+						error_msg("Only option following density is c[alculate].", PHRQ_io::OT_CONTINUE);
+						error_msg(line_save, PHRQ_io::OT_CONTINUE);
+						input_error++;
+					}
+					else
+					{
+						isoln_ptr->Set_calc_density(true);
+					}
+				}
 			}
 			break;
 		case 4:				/* units */
@@ -5870,6 +5950,18 @@ read_solution(void)
 				}
 			}
 			break;
+		case 13: /* potential, Volt */
+			{
+				if (sscanf(next_char, SCANFORMAT, &dummy) != 1)
+				{
+					temp_solution.Set_potV(0);
+				}
+				else
+				{
+					temp_solution.Set_potV(dummy);
+				}
+			}
+			break;
 		case OPTION_DEFAULT:
 /*
  *   Read concentration
@@ -5970,10 +6062,10 @@ read_species(void)
 /* VP: Density Start */
 		"millero",				/* 21 */
 /* VP: Density End */
-		"vm"		/* 22, parms for molar volume, a1..a4 and w_ref from supcrt, I terms */
+		"vm",		    /* 22, parms for molar volume, a1..a4 and w_ref, I terms */
+		"viscosity"		/* 23, b and d parms for viscosity, (b1 + b2 * exp(-b3 * tc)) * c + (d1 * exp(-d2 * tc)) * c ^ d3 */
 	};
-	int count_opt_list = 23;
-
+	int count_opt_list = 24;
 	association = TRUE;
 	s_ptr = NULL;
 /*
@@ -6279,7 +6371,10 @@ read_species(void)
 				input_error++;
 				break;
 			}
-			i = sscanf(next_char, SCANFORMAT, &s_ptr->dw);
+			s_ptr->dw_t = 0;  s_ptr->dw_a = 0; s_ptr->dw_a2 = 0; s_ptr->dw_a_visc = 0;
+			i = sscanf(next_char, SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT SCANFORMAT, &s_ptr->dw, &s_ptr->dw_t,
+				&s_ptr->dw_a, &s_ptr->dw_a2, &s_ptr->dw_a_visc);
+			s_ptr->dw_corr = s_ptr->dw;
 			opt_save = OPTION_DEFAULT;
 			break;
 		case 20:				/* enrichment factor in the DDL */
@@ -6337,6 +6432,20 @@ read_species(void)
 			read_aq_species_vm_parms(next_char, &s_ptr->logk[vma1]);
 			//vm_read = true;
 			print_density = OK;
+			opt_save = OPTION_DEFAULT;
+			break;
+		case 23:            /* viscosity parms for the Jones-Dole eqn */
+			if (s_ptr == NULL)
+			{
+				error_string = sformatf(
+					"No reaction defined before option, %s.",
+				opt_list[opt]);
+				error_msg(error_string, CONTINUE);
+				input_error++;
+				break;
+			}
+			read_viscosity_parms(next_char, &s_ptr->Jones_Dole[0]);
+			print_viscosity = OK;
 			opt_save = OPTION_DEFAULT;
 			break;
 		case OPTION_DEFAULT:
@@ -6718,7 +6827,6 @@ read_surface_species(void)
 		"vm"					/* 18 */
 	};
 	int count_opt_list = 19;
-
 	association = TRUE;
 	/*
 	 *   Read eqn from file and call parser
@@ -7142,9 +7250,10 @@ read_surface(void)
 		"constant_capacitance", /* 12 */
 		"ccm",                  /* 13 */
         "equilibrium",          /* 14 */
-		"site_units"            /* 15 */
+		"site_units",           /* 15 */
+		"ddl"                   /* 16 */
 	};
-	int count_opt_list = 16;
+	int count_opt_list = 17;
 	/*
 	 * kin_surf is for Surfaces, related to kinetically reacting minerals
 	 *    they are defined if "sites" is followed by mineral name:
@@ -7408,7 +7517,9 @@ read_surface(void)
 			/* constant capacitance model not implemented yet */
 			//error_msg("Constant capacitance model not implemented.", CONTINUE);
 			//input_error++;
-
+			break;
+		case 16:				/* ddl */
+			temp_surface.Set_type(cxxSurface::DDL);
 			break;
 		case OPTION_DEFAULT:
 			/*
@@ -7427,7 +7538,8 @@ read_surface(void)
 					break;
 				}
 
-				cxxSurfaceComp temp_comp;
+				cxxSurfaceComp temp_comp(this->phrq_io);
+
 				temp_surface.Get_surface_comps().push_back(temp_comp);
 				comp_ptr = &(temp_surface.Get_surface_comps().back());
 				comp_ptr->Set_formula(token.c_str());
@@ -7537,7 +7649,7 @@ read_surface(void)
 				formula = (char*)free_check_null(formula);
 				if (charge_ptr == NULL)
 				{
-					cxxSurfaceCharge temp_charge;
+					cxxSurfaceCharge temp_charge(this->phrq_io);
 					temp_charge.Set_name(name);
 					if (comp_ptr->Get_phase_name().size() == 0
 						&& comp_ptr->Get_rate_name().size() == 0)
@@ -7971,6 +8083,7 @@ read_title(void)
 		}
 		strcat(title_x, line);
 	}
+	last_title_x = title_x;
 	return (return_value);
 }
 
@@ -8274,9 +8387,11 @@ read_debug(void)
 		"force_numerical_fixed_volume",    /* 19 */
 		"equi_delay",                      /* 20 */
 		"minimum_total",                   /* 21 */  
-		"min_total"                        /* 22 */   
+		"min_total",                       /* 22 */   
+		"debug_mass_action",               /* 23 */
+		"debug_mass_balance"               /* 24 */
 	};
-	int count_opt_list = 23;
+	int count_opt_list = 25;
 /*
  *   Read parameters:
  *	ineq_tol;
@@ -8377,6 +8492,12 @@ read_debug(void)
 			sscanf(next_char, SCANFORMAT, &MIN_TOTAL);
 			MIN_TOTAL_SS = MIN_TOTAL/100;
 			MIN_RELATED_SURFACE = MIN_TOTAL*100;
+			break;
+		case 23:				/* debug_mass_action */
+			debug_mass_action = get_true_false(next_char, TRUE);
+			break;
+		case 24:				/* debug_mass_balance */
+			debug_mass_balance = get_true_false(next_char, TRUE);
 			break;
 		}
 		if (return_value == EOF || return_value == KEYWORD)
@@ -8592,6 +8713,10 @@ read_print(void)
 			break;
 		case 31:				/* echo_input */
 			pr.echo_input = get_true_false(next_char, TRUE);
+			if (pr.echo_input == 0)
+				phrq_io->Set_echo_on(false);
+			else
+				phrq_io->Set_echo_on(true);
 			break;
 		case 32:				/* warning */
 		case 33:				/* warnings */
@@ -9317,7 +9442,6 @@ read_user_print(void)
 		"end"					/* 1 */
 	};
 	int count_opt_list = 2;
-
 	opt_save = OPTION_DEFAULT;
 /*
  *   Read lines
@@ -9412,7 +9536,6 @@ read_user_punch(void)
 		"headings"				/* 3 */
 	};
 	int count_opt_list = 4;
-
 	opt_save = OPTION_DEFAULT;
 /*
  *   Read lines
@@ -9692,7 +9815,6 @@ read_user_graph(void)
 	};
 	int count_opt_list = 14;
 	int i;
-
 	opt_save = OPTION_DEFAULT;
 /*
  *   Read lines
@@ -10004,7 +10126,7 @@ read_solid_solutions(void)
 		case 0:				/* component */
 		case 1:				/* comp */
 			{
-				cxxSScomp comp;
+				cxxSScomp comp(this->phrq_io);
 				/*
 				*   Read phase name of component
 				*/

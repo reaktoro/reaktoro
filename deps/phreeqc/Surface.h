@@ -49,6 +49,8 @@ public:
 	void Set_surface_charges(std::vector < cxxSurfaceCharge > &sc) {this->surface_charges = sc;}
 	bool Get_new_def(void) {return new_def;}
 	void Set_new_def(bool tf) {new_def = tf;}
+	bool Get_tidied(void) { return tidied; }
+	void Set_tidied(bool tf) { tidied = tf; }
 	SURFACE_TYPE Get_type(void) const {return this->type;}
 	void Set_type(SURFACE_TYPE t) {this->type = t;}
 	DIFFUSE_LAYER_TYPE Get_dl_type(void) const {return dl_type;}
@@ -80,6 +82,7 @@ protected:
 	std::vector < cxxSurfaceComp > surface_comps;
 	std::vector < cxxSurfaceCharge > surface_charges;
 	bool new_def;
+	bool tidied;
 	SURFACE_TYPE type;
 	DIFFUSE_LAYER_TYPE dl_type;
 	SITES_UNITS sites_units;

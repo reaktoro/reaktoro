@@ -605,7 +605,7 @@ cxxKinetics::Deserialize(Dictionary & dictionary, std::vector < int >&ints,
 	this->kinetics_comps.clear();
 	for (int i = 0; i < n; i++)
 	{
-		cxxKineticsComp kc;
+		cxxKineticsComp kc(this->io);
 		kc.Deserialize(dictionary, ints, doubles, ii, dd);
 		this->kinetics_comps.push_back(kc);
 	}

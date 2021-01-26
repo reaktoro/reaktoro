@@ -169,9 +169,9 @@ cxxGasPhase::cxxGasPhase(std::map < int, cxxGasPhase > &entity_map,
 				this->pr_in = entity_ptr->pr_in;
 				this->temperature = entity_ptr->temperature;
 				first = false;
-				}
-				else
-				{
+			}
+			else
+			{
 				if (this->type != entity_ptr->type)
 				{
 					std::ostringstream oss;
@@ -180,9 +180,13 @@ cxxGasPhase::cxxGasPhase(std::map < int, cxxGasPhase > &entity_map,
 					return;
 				}
 
-				this->total_p += entity_ptr->total_p * it->second;
+				this->total_moles += entity_ptr->total_moles * it->second;
 				this->volume += entity_ptr->volume * it->second;
-				this->v_m += entity_ptr->v_m * it->second;
+				if (sum_fractions > 0.0)
+				{
+					this->v_m += entity_ptr->v_m * it->second / sum_fractions;
+					this->total_p += entity_ptr->total_p  * it->second / sum_fractions;
+				}
 			}
 		}
 		cxxGasPhase *gas_phase_ptr = Utilities::Rxn_find(entity_map, it->first);

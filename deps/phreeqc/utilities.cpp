@@ -172,8 +172,10 @@ calc_rho_0(LDBLE tc, LDBLE pa)
 		if (need_temp_msg < 1)
 		{
 			std::ostringstream w_msg;
-			w_msg << "Fitting range for density of pure water is 0-300 C.\n";
-			w_msg << "Using temperature of 350 C for density and dielectric calculation.";
+			w_msg << "Fitting range for dielectric constant of pure water is 0-350 C.\n";
+			w_msg << "Fitting range for density along the saturation pressure line is 0-374 C,\n";
+			w_msg << "                         for higher pressures up to 1000 atm    0-300 C.\n";
+			w_msg << "Using temperature of 350 C for dielectric and density calculation.";
 			warning_msg(w_msg.str().c_str());
 			need_temp_msg++;
 		}
@@ -255,6 +257,11 @@ calc_dielectrics(LDBLE tc, LDBLE pa)
 	if (pitzer_model || sit_model)
 	{
 		A0 = DH_B * e2_DkT / 6.0;
+		if (pitzer_model && aphi != NULL)
+		{
+			calc_pitz_param(aphi, T, 298.15);
+			A0 = aphi->p;
+		}
 	}
 
 	/* Debye-Hueckel limiting slope = DH_B *  e2_DkT * RT * (d(ln(eps_r)) / d(P) - compressibility) */
@@ -1508,7 +1515,7 @@ status(int count, const char *str, bool rk_string)
 			}
 			else
 			{
-				screen_string = sformatf("%-15s%-27s%1s%37s", sim_str, state_str, spin_str, stdstr.c_str());
+				screen_string = sformatf("%-15s%-27s%1s%45s", sim_str, state_str, spin_str, stdstr.c_str());
 				status_string = screen_string;
 			}
 		}
@@ -1730,7 +1737,7 @@ hsearch_multi(HashTable * Table, ENTRY item, ACTION action)
 Hash_multi(HashTable * Table, const char *Key)
 {
 	Address h, address;
-	register unsigned char *k = (unsigned char *) Key;
+	unsigned char *k = (unsigned char *) Key;
 
 	h = 0;
 	/*

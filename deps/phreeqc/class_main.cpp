@@ -277,7 +277,7 @@ write_banner(void)
 
 	/* version */
 #ifdef NPP
-	len = sprintf(buffer, "* PHREEQC-%s *", "3.0.5");
+	len = sprintf(buffer, "* PHREEQC-%s *", "3.5.2");
 #else
 	len = sprintf(buffer, "* PHREEQC-%s *", "@VERSION@");
 #endif
@@ -301,7 +301,7 @@ write_banner(void)
 
 	/* date */
 #ifdef NPP
-	len = sprintf(buffer, "%s", "May 11, 2013");
+	len = sprintf(buffer, "%s", "August 1, 2019");
 #else
 	len = sprintf(buffer, "%s", "@VER_DATE@");
 #endif
@@ -331,7 +331,7 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
  *   Prepare error handling
  */
 	try {
-		if (phrq_io == NULL) 
+		if (phrq_io == NULL)
 		{
 			std::cerr << "No PHRQ_io output handler defined in process_file_names" << "\n";
 		}
@@ -420,6 +420,7 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
 				copy_token(token, &ptr, &l);
 				if (strcmp_nocase(token, "database") == 0)
 				{
+					user_database = (char *) free_check_null(user_database);
 #ifdef PHREEQ98
 					user_database = string_duplicate(prefix_database_dir(ptr));
 #else
@@ -440,7 +441,7 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
 			error_string = sformatf( "Error opening file, %s.", in_file);
 			error_msg(error_string, STOP);
 		}
-		
+
 /*
  *   Open data base
  */
@@ -484,13 +485,16 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
 		}
 		local_database_file->close();
 		delete local_database_file;
+		
+		user_database = (char *) free_check_null(user_database);
+		user_database = string_duplicate(token);
 		screen_msg(sformatf("Database file: %s\n\n", token));
 		strcpy(db_file, token);
-#ifdef NPP
-		output_msg(sformatf("Using PHREEQC: version 3.0.5, compiled on May 29, 2013\n"));
-#endif
 		output_msg(sformatf("   Input file: %s\n", in_file));
 		output_msg(sformatf("  Output file: %s\n", out_file));
+#ifdef NPP
+		output_msg(sformatf("Using PHREEQC: version 3.5.2, compiled August 1, 2019\n"));
+#endif
 		output_msg(sformatf("Database file: %s\n\n", token));
 #ifdef NPP
 		output_flush();
@@ -528,7 +532,7 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
  *   Prepare error handling
  */
 	try {
-		if (phrq_io == NULL) 
+		if (phrq_io == NULL)
 		{
 			std::cerr << "No PHRQ_io output handler defined in process_file_names" << "\n";
 		}
@@ -616,6 +620,7 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
 				copy_token(token, &ptr, &l);
 				if (strcmp_nocase(token, "database") == 0)
 				{
+					user_database = (char *) free_check_null(user_database);
 #ifdef PHREEQ98
 					user_database = string_duplicate(prefix_database_dir(ptr));
 #else
@@ -636,7 +641,7 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
 			error_string = sformatf( "Error opening file, %s.", in_file);
 			error_msg(error_string, STOP);
 		}
-		
+
 /*
  *   Open data base
  */
@@ -690,6 +695,7 @@ process_file_names(int argc, char *argv[], std::istream **db_cookie,
 		*   local cleanup
 		*/
 		user_database = (char *) free_check_null(user_database);
+		user_database = string_duplicate(token);
 		line = (char *) free_check_null(line);
 		line_save = (char *) free_check_null(line_save);
 
@@ -740,6 +746,7 @@ open_input_stream(char *query, char *default_name, std::ios_base::openmode mode,
 			{
 			    std::cerr << "Failed defining name." << std::endl;
 			}
+
 			l = (int) strlen(name);
 			name[l - 1] = '\0';
 			if (name[0] == '\0')
@@ -766,7 +773,7 @@ open_input_stream(char *query, char *default_name, std::ios_base::openmode mode,
 #endif
 			error_flush();
 			batch = FALSE;
-			continue;		
+			continue;
 		}
 		break;
 	}
@@ -795,7 +802,7 @@ open_output_stream(char *query, char *default_name, std::ios_base::openmode mode
 #else
 	FILE * error_file_save = phrq_io->Get_error_file();
 #endif
-	
+
 	for (;;)
 	{
 /*
@@ -809,7 +816,7 @@ open_output_stream(char *query, char *default_name, std::ios_base::openmode mode
 #else
 			phrq_io->Set_error_file(stderr);
 #endif
-			
+
 			screen_msg(sformatf("%s\n", query));
 			if (default_name[0] != '\0')
 			{
@@ -820,6 +827,7 @@ open_output_stream(char *query, char *default_name, std::ios_base::openmode mode
 			{
 			    std::cerr << "Failed defining name." << std::endl;
 			}
+
 			l = (int) strlen(name);
 			name[l - 1] = '\0';
 			if (name[0] == '\0')
@@ -842,7 +850,7 @@ open_output_stream(char *query, char *default_name, std::ios_base::openmode mode
 			screen_msg(error_string);
 			error_flush();
 			batch = FALSE;
-			continue;		
+			continue;
 		}
 		break;
 	}
@@ -871,7 +879,7 @@ open_output_file(char *query, char *default_name, std::ios_base::openmode mode, 
 #else
 		FILE * error_file_save = phrq_io->Get_error_file();
 #endif
-	
+
 
 	for (;;)
 	{
@@ -896,6 +904,7 @@ open_output_file(char *query, char *default_name, std::ios_base::openmode mode, 
 			{
 			    std::cerr << "Failed defining name." << std::endl;
 			}
+
 			l = (int) strlen(name);
 			name[l - 1] = '\0';
 			if (name[0] == '\0')
@@ -918,7 +927,7 @@ open_output_file(char *query, char *default_name, std::ios_base::openmode mode, 
 			screen_msg(error_string);
 			error_flush();
 			batch = FALSE;
-			continue;		
+			continue;
 		}
 		break;
 	}

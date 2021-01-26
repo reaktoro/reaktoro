@@ -72,6 +72,7 @@
 #include "sundialsmath.h"
 
 #include "Phreeqc.h"
+
 #if !defined(WIN32_MEMORY_DEBUG)
 #define malloc MACHENV_MALLOC PHRQ_malloc
 #endif
@@ -405,8 +406,9 @@ static realtype CVYddNorm(CVodeMem cv_mem, realtype hg);
 
 static int CVStep(CVodeMem cv_mem);
 
+#ifdef ORIGINAL_CVBDFStab
 static int CVsldet(CVodeMem cv_mem);
-
+#endif
 static void CVAdjustParams(CVodeMem cv_mem);
 static void CVAdjustOrder(CVodeMem cv_mem, int deltaq);
 static void CVAdjustAdams(CVodeMem cv_mem, int deltaq);
@@ -1974,7 +1976,6 @@ CVStep(CVodeMem cv_mem)
 		}
 #endif
 		CVSet(cv_mem);
-
 		nflag = CVnls(cv_mem, nflag);
 		if (CVMEM cvode_error == TRUE || predict_fail)
 		{
@@ -2785,7 +2786,6 @@ CVnlsNewton(CVodeMem cv_mem, int nflag)
 
 	loop
 	{
-
 		f(N, tn, zn[0], ftemp, f_data);
 
 		nfe++;
@@ -3408,7 +3408,7 @@ CVHandleFailure(CVodeMem cv_mem, int kflag)
  size is reset accordingly.
 
 *****************************************************************/
-
+#ifdef ORIGINAL_CVBDFStab
 void
 CVBDFStab(CVodeMem cv_mem)
 {
@@ -3469,6 +3469,82 @@ CVBDFStab(CVodeMem cv_mem)
 		nscon = 0;
 	}
 }
+#endif
+void
+CVBDFStab(CVodeMem cv_mem)
+{
+	// appt try...
+	if (q >= 3 && qprime >= q)
+	{
+		if (tq[5] < saved_tq5)
+			qprime = 1;
+		//else
+			//nscon = 0;
+	}
+
+	//int i, k, ldflag, factorial;
+	//realtype sq, sqm1, sqm2;
+
+	///* If order is 3 or greater, then save scaled derivative data,
+ //  push old data down in i, then add current values to top.    */
+
+	//if (q >= 3)
+	//{
+	//	for (k = 1; k <= 3; k++)
+	//	{
+	//		for (i = 5; i >= 2; i--)
+	//			ssdat[i][k] = ssdat[i - 1][k];
+	//	}
+	//	factorial = 1;
+	//	for (i = 1; i <= q - 1; i++)
+	//		factorial *= i;
+	//	sq = factorial * q * (q + 1) * acnrm / MAX(tq[5], TINY);
+	//	sqm1 = factorial * q * N_VWrmsNorm(zn[q], ewt);
+	//	sqm2 = factorial * N_VWrmsNorm(zn[q - 1], ewt);
+	//	ssdat[1][1] = sqm2 * sqm2;
+	//	ssdat[1][2] = sqm1 * sqm1;
+	//	ssdat[1][3] = sq * sq;
+	//}
+
+	//if (qprime >= q)
+	//{
+
+	//	/* If order is 3 or greater, and enough ssdat has been saved,
+	//	   nscon >= q+5, then call stability limit detection routine.  */
+
+	//	if ((q >= 3) && (nscon >= q + 5))
+	//	{
+	//		ldflag = CVsldet(cv_mem);
+	//		//cv_mem->cv_machenv->phreeqc_ptr->set_forward_output_to_log(1); // appt
+	//		qprime = 1; // appt try
+	//		//CVMEM  warning_msg(CVMEM sformatf(
+	//		//	"CVBDFStab: ldflag = %d, order(q) = %d, qprime = %d, nst = %d, h = %8.2e, time = %8.2e\n",
+	//		//	ldflag, q, qprime, nst, h, CVMEM cvode_last_good_time));
+
+	//		if (ldflag > 3)
+	//		{
+	//			/* A stability limit violation is indicated by
+	//			   a return flag of 4, 5, or 6.
+	//			   Reduce new order.                     */
+	//			qprime = q - 1;
+	//			eta = etaqm1;
+	//			eta = MIN(eta, etamax);
+	//			eta = eta / MAX(ONE, ABS(h) * hmax_inv * eta);
+	//			hprime = h * eta;
+	//			iopt[NOR] = iopt[NOR] + 1;
+	//			 //CVMEM  warning_msg(CVMEM sformatf(
+	//			 //  " Order reduced to %d by CVBDFStab at nst = %d,\n    h = %e hnew = %e\n",
+	//			 //  qprime,nst,h,h*eta));
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	/* Otherwise, let order increase happen, and
+	//	   reset stability limit counter, nscon.     */
+	//	nscon = 0;
+	//}
+}
 
 /********************* CVsldet ************************************
   This routine detects stability limitation using stored scaled
@@ -3505,6 +3581,7 @@ CVBDFStab(CVodeMem cv_mem)
 
 ********************************************************************/
 
+#ifdef ORIGINAL_CVBDFStab
 static int
 CVsldet(CVodeMem cv_mem)
 {
@@ -3514,8 +3591,10 @@ CVsldet(CVodeMem cv_mem)
 	realtype rr, rrcut, vrrtol, vrrt2, sqtol, rrtol;
 	realtype smink, smaxk, sumrat, sumrsq, vmin, vmax, drrmax, adrr;
 	realtype /*small_cvode,*/ tem, sqmax, saqk, qp, s, sqmaxk, saqj, sqmin;
-	realtype rsa, rsb, rsc, rsd, rse, rd1a, rd1b, rd1c, rd1d;
-	realtype rd2a, rd2b, rd2c, rd3a, rd3b, cest1, corr1;
+	//realtype rsa, rsb, rsc, rsd, rse, rd1a, rd1b, rd1c, rd1d;
+	realtype rsa, rsb, rsc, rsd, rd1a, rd1b, rd1c;
+	//realtype rd2a, rd2b, rd2c, rd3a, rd3b, cest1, corr1;
+	realtype rd2a, rd2b, rd3a, cest1, corr1;
 	realtype ratp, ratm, qfac1, qfac2, bb, rrb;
 
 	/* The following are cutoffs and tolerances used by this routine */
@@ -3770,17 +3849,17 @@ CVsldet(CVodeMem cv_mem)
 		rsb = ssdat[2][k] * rr;
 		rsc = ssdat[3][k] * rr * rr;
 		rsd = ssdat[4][k] * rr * rr * rr;
-		rse = ssdat[5][k] * rr * rr * rr * rr;
+		//rse = ssdat[5][k] * rr * rr * rr * rr;
 		rd1a = rsa - rsb;
 		rd1b = rsb - rsc;
 		rd1c = rsc - rsd;
-		rd1d = rsd - rse;
+		//rd1d = rsd - rse;
 		rd2a = rd1a - rd1b;
 		rd2b = rd1b - rd1c;
-		rd2c = rd1c - rd1d;
+		//rd2c = rd1c - rd1d;
 		rd3a = rd2a - rd2b;
-		rd3b = rd2b - rd2c;
-		rd3b = rd3b;
+		//rd3b = rd2b - rd2c;
+		/* rd3b = rd3b; */
 
 		if (ABS(rd1b) < TINY * smax[k])
 		{
@@ -3841,7 +3920,7 @@ CVsldet(CVodeMem cv_mem)
 	return (kflag);
 
 }
-
+#endif
 
 /*******************************************************************/
 /********* END Private Helper Functions Implementation *************/

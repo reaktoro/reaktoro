@@ -24,7 +24,8 @@ class cxxGasPhase:public cxxNumKeyword
 	enum GP_TYPE
 	{
 		GP_PRESSURE = 0,
-		GP_VOLUME = 1
+		GP_VOLUME = 1,
+		GP_UNKNOWN = 2
 	};
 
 	//void dump_xml(std::ostream& os, unsigned int indent = 0)const;

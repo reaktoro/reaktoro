@@ -82,6 +82,7 @@ public:
 	inline bool Get_water(void)const                                  {return this->water;}
 	inline bool Get_charge_balance(void)const                         {return this->charge_balance;}
 	inline bool Get_percent_error(void)const                          {return this->percent_error;}
+	inline bool Get_new_line(void)const                               {return this->new_line; }
 
 	// as-is setters
 	inline void Set_user_punch(bool tf)                               {this->user_punch = tf;              this->set_user_punch = true;}
@@ -105,6 +106,7 @@ public:
 	inline void Set_water(bool tf)                                    {this->water = tf;                   this->set_water = true;}
 	inline void Set_charge_balance(bool tf)                           {this->charge_balance = tf;          this->set_charge_balance = true;}
 	inline void Set_percent_error(bool tf)                            {this->percent_error = tf;           this->set_percent_error = true;}
+	inline void Set_new_line(bool tf)                                 {this->new_line = tf;                this->set_new_line = true;}
 
 	// set flag getters
 	inline bool was_set_user_punch()const                             {return this->set_user_punch;}
@@ -128,7 +130,8 @@ public:
 	inline bool was_set_water()const                                  {return this->set_water;}
 	inline bool was_set_charge_balance()const                         {return this->set_charge_balance;}
 	inline bool was_set_percent_error()const                          {return this->set_percent_error;}
-	
+	inline bool was_set_new_line()const                               {return this->set_new_line;}
+
 protected:
 
 	// vectors
@@ -177,6 +180,7 @@ protected:
 	bool water;
 	bool charge_balance;
 	bool percent_error;
+	bool new_line;
 
 	// as-is set flags
 	bool set_user_punch;
@@ -200,5 +204,6 @@ protected:
 	bool set_water;
 	bool set_charge_balance;
 	bool set_percent_error;
+	bool set_new_line;
 };
 #endif // !defined(SELECTEDOUTPUT_H_INCLUDED)

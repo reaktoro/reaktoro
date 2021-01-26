@@ -1,4 +1,6 @@
+#ifndef boolean
 typedef unsigned char boolean;
+#endif
 #include "Phreeqc.h"
 #include "phqalloc.h"
 #include "Solution.h"
@@ -63,6 +65,7 @@ read_solution_spread(void)
  */
 	soln_defaults.temp = 25;
 	soln_defaults.density = 1.0;
+	soln_defaults.calc_density = false;
 	soln_defaults.units = string_hsave("mmol/kgw");
 	soln_defaults.redox = string_hsave("pe");
 	soln_defaults.ph = 7.0;
@@ -139,7 +142,7 @@ read_solution_spread(void)
 			copy_token(token, &ptr);
 			if (token[0] == '-')
 			{
-				opt = opt;
+				/* opt = opt; */
 			}
 			else
 			{
@@ -150,9 +153,9 @@ read_solution_spread(void)
 				case 2:		/* dens */
 				case 3:		/* density */
 				case 10:		/* water */
-					if (count == 2 && num == TRUE)
+					if ((count == 2 || count == 3) && num == TRUE)
 					{
-						opt = opt;
+						/* opt = opt; */
 					}
 					else
 					{
@@ -164,7 +167,7 @@ read_solution_spread(void)
 					if ((count == 2 || count == 3 || count == 4)
 						&& num == TRUE)
 					{
-						opt = opt;
+						/* opt = opt; */
 					}
 					else
 					{
@@ -176,7 +179,7 @@ read_solution_spread(void)
 				case 8:		/* unit */
 					if (count == 2)
 					{
-						opt = opt;
+						/* opt = opt; */
 					}
 					else
 					{
@@ -190,7 +193,7 @@ read_solution_spread(void)
 					}
 					else
 					{
-						opt = opt;
+						/* opt = opt; */
 					}
 					break;
 				case 11:		/* isotope_uncertainty */
@@ -202,7 +205,7 @@ read_solution_spread(void)
 					}
 					else
 					{
-						opt = opt;
+						/* opt = opt; */
 					}
 					break;
 				case 14: /* pressure */
@@ -270,7 +273,34 @@ read_solution_spread(void)
 			break;
 		case 2:				/* density */
 		case 3:
-			sscanf(next_char, SCANFORMAT, &(soln_defaults.density));
+			//sscanf(next_char, SCANFORMAT, &(soln_defaults.density));
+			{
+				copy_token(token, &next_char);
+				if (sscanf(token.c_str(), SCANFORMAT, &dummy) != 1)
+				{
+						error_msg("Expecting numeric value for density.", PHRQ_io::OT_CONTINUE);
+						error_msg(line_save, PHRQ_io::OT_CONTINUE);
+						input_error++;
+				}
+				else
+				{
+					soln_defaults.density = dummy;
+				}
+				int j = copy_token(token, &next_char);
+				if (j != EMPTY)
+				{
+					if (token[0] != 'c' && token[0] != 'C')
+					{
+						error_msg("Only option following density is c[alculate].", PHRQ_io::OT_CONTINUE);
+						error_msg(line_save, PHRQ_io::OT_CONTINUE);
+						input_error++;
+					}
+					else
+					{
+						soln_defaults.calc_density = true;
+					}
+				}
+			}
 			break;
 		case 4:				/* units */
 		case 8:				/* unit */
@@ -547,9 +577,10 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 		"desc",					/* 12 */
 		"descriptor",			/* 13 */
 		"pressure",				/* 14 */
-		"press"				    /* 15 */
+		"press",			    /* 15 */
+		"potential"			    /* 16 */
 	};
-	int count_opt_list = 16;
+	int count_opt_list = 17;
 
 /*
  *      look for solution number
@@ -613,8 +644,10 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 	temp_solution.Set_description(description);
 	temp_solution.Set_tc(defaults.temp);
 	temp_solution.Set_patm(defaults.pressure);
+	temp_solution.Set_potV(0);
 	temp_solution.Set_ph(defaults.ph);
 	temp_solution.Set_density(defaults.density);
+	initial_data_ptr->Set_calc_density(defaults.calc_density);
 	temp_solution.Set_pe(defaults.pe);
 	temp_solution.Set_mass_water(defaults.water);
 	temp_solution.Set_ah2o(1.0);
@@ -692,8 +725,25 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 			break;
 		case 2:				/* density */
 		case 3:
-			sscanf(next_char, SCANFORMAT, &dummy);
-			temp_solution.Set_density(dummy);
+			{
+				int j = copy_token(token, &next_char);
+				sscanf(token.c_str(), SCANFORMAT, &dummy);
+				temp_solution.Set_density(dummy);
+				j = copy_token(token, &next_char);
+				if (j != EMPTY)
+				{
+					if (token[0] != 'c' && token[0] != 'C')
+					{
+						error_msg("Only option following density is c[alculate].", PHRQ_io::OT_CONTINUE);
+						error_msg(line_save, PHRQ_io::OT_CONTINUE);
+						input_error++;
+					}
+					else
+					{
+						initial_data_ptr->Set_calc_density(true);
+					}
+				}
+			}
 			break;
 		case 4:				/* units */
 		case 8:				/* unit */
@@ -924,6 +974,14 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 				if (sscanf(next_char, SCANFORMAT, &dummy) == 1)
 				{
 					temp_solution.Set_patm(dummy);
+				}
+			}
+			break;
+		case 16:				/* pote, V */
+			{
+				if (sscanf(next_char, SCANFORMAT, &dummy) == 1)
+				{
+					temp_solution.Set_potV(dummy);
 				}
 			}
 			break;

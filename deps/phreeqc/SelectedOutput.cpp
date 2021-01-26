@@ -38,6 +38,7 @@ SelectedOutput::SelectedOutput(int n, PHRQ_io *io)
 	this->water            = false;
 	this->charge_balance   = false;
 	this->percent_error    = false;
+	this->new_line         = true;
 
 	// as-is set flags
 	//
@@ -62,6 +63,7 @@ SelectedOutput::SelectedOutput(int n, PHRQ_io *io)
 	this->set_water          = false;
 	this->set_charge_balance = false;
 	this->set_percent_error  = false;
+	this->set_new_line       = false;
 }
 
 SelectedOutput::~SelectedOutput(void)

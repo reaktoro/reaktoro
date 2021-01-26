@@ -397,6 +397,7 @@ zero_tally_table(void)
 	int i, j, k;
 	for (i = 0; i < count_tally_table_columns; i++)
 	{
+		tally_table[i].moles = 0.0;
 		for (j = 0; j < count_tally_table_rows; j++)
 		{
 			for (k = 0; k < 3; k++)

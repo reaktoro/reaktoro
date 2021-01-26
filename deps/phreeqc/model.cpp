@@ -96,6 +96,7 @@ model(void)
 			PhreeqcIWait(this);
 #endif
 			iterations++;
+			overall_iterations++;
 			if (iterations > itmax - 1 && debug_model == FALSE
 				&& pr.logfile == TRUE)
 			{
@@ -133,6 +134,7 @@ model(void)
 			{
 				jacobian_sums();
 				numerical_jacobian();
+
 			}
 /*
  *   Full matrix with pure phases
@@ -530,15 +532,15 @@ check_residuals(void)
 		{
 			if (x[i]->ss_in == FALSE)
 				continue;
-			if (x[i]->moles <= MIN_TOTAL_SS)
-				continue;
+			//if (x[i]->moles <= 1e2*MIN_TOTAL)
+			//	continue;
 			if (residual[i] >= epsilon
 				|| residual[i] <= -epsilon /* || stop_program == TRUE */ )
 			{
 				error_string = sformatf(
 						"%20s Total moles in solid solution has not converged. "
-						"\tResidual: %e\n", x[i]->description,
-						(double) residual[i]);
+						"\tResidual: %e  %e\n", x[i]->description,
+						(double) residual[i], x[i]->moles);
 				error_msg(error_string, CONTINUE);
 			}
 		}
@@ -561,14 +563,14 @@ gammas(LDBLE mu)
  */
 	int i, j;
 	int ifirst, ilast;
-	LDBLE d1, d2, d3, f, a_llnl, b_llnl, bdot_llnl, log_g_co2, dln_g_co2, c2_llnl;
+	LDBLE f, a_llnl, b_llnl, bdot_llnl, log_g_co2, dln_g_co2, c2_llnl;
 
 	LDBLE c1, c2, a, b;
 	LDBLE muhalf, equiv;
 	/* Initialize */
 	if (mu <= 0) mu = 1e-10;
 	if (pitzer_model == TRUE)
-		return gammas_pz();
+		return gammas_pz(true);
 	if (sit_model == TRUE)
 		return gammas_sit();
 	a_llnl = b_llnl = bdot_llnl = log_g_co2 = dln_g_co2 = c2_llnl = 0;
@@ -680,106 +682,103 @@ gammas(LDBLE mu)
 		case 4:				/* Exchange */
 /*
  *   Find CEC
- *   z contains valence of cation for exchange species, alk contains cec
+ *   z contains charge of cation for exchange species, alk contains cec
+ *   correct activity for Gapon-type exchange eqns: Ca0.5X uses (gamma_Ca)^0.5
  */
-/* !!!!! */
-			for (j = 1; s_x[i]->rxn_x->token[j].s != NULL; j++)
+			if (calculating_deriv)
+				continue;
 			{
-				if (s_x[i]->rxn_x->token[j].s->type == EX)
+				LDBLE coef = 0, z = 0;
+				for (j = 1; s_x[i]->rxn_x->token[j].s != NULL; j++)
 				{
-					s_x[i]->alk =
-						s_x[i]->rxn_x->token[j].s->primary->unknown->moles;
-					break;
+					if (s_x[i]->rxn_x->token[j].s->type == EX)
+					{
+						s_x[i]->alk =
+							s_x[i]->rxn_x->token[j].s->primary->unknown->moles;
+						//break;
+					}
+					else if (s_x[i]->rxn_x->token[j].s->type <= HPLUS)
+					{
+						coef = s_x[i]->rxn_x->token[j].coef;
+						z = s_x[i]->rxn_x->token[j].s->z;
+					}
 				}
-			}
-			if (s_x[i]->exch_gflag == 1 && s_x[i]->alk > 0)
-			{
-				/* Davies */
-				d1 = s_x[i]->lg;
-				s_x[i]->lg = -s_x[i]->equiv * s_x[i]->equiv * a *
-					(muhalf / (1.0 + muhalf) - 0.3 * mu) +
-					log10(fabs(s_x[i]->equiv) / s_x[i]->alk);
-				if (s_x[i]->a_f && s_x[i]->primary == NULL)
+				if (!use.Get_exchange_ptr()->Get_pitzer_exchange_gammas())
 				{
-					d2 = s_x[i]->moles * s_x[i]->equiv / s_x[i]->alk;
-					if (d2 > 1) d2 = 1;
-					d2 = s_x[i]->lg - s_x[i]->a_f * (1 - d2);
-					d3 = 0.89;
-					if (iterations < 10) d3 = 0.7; else d3 = 0.89;
-					s_x[i]->lg = d3 * d1 + (1 - d3) * d2;
-				}
-				s_x[i]->dg =
-					c1 * s_x[i]->equiv * s_x[i]->equiv * s_x[i]->moles;
-			}
-			else if (s_x[i]->exch_gflag == 2 && s_x[i]->alk > 0)
-			{
-				/* Extended D-H, WATEQ D-H */
-				d1 = s_x[i]->lg;
-				s_x[i]->lg = -a * muhalf * s_x[i]->equiv * s_x[i]->equiv /
-					(1.0 + s_x[i]->dha * b * muhalf) + s_x[i]->dhb * mu +
-					log10(fabs(s_x[i]->equiv) / s_x[i]->alk);
-				if (s_x[i]->a_f && s_x[i]->primary == NULL)
-				{
-					d2 = s_x[i]->moles * s_x[i]->equiv / s_x[i]->alk;
-					if (d2 > 1) d2 = 1;
-					d2 = s_x[i]->lg - s_x[i]->a_f * (1 - d2);
-					d3 = 0.89;
-					if (iterations < 10) d3 = 0.7; else d3 = 0.89;
-					s_x[i]->lg = d3 * d1 + (1 - d3) * d2;
-				}
-				s_x[i]->dg = (c2 * s_x[i]->equiv * s_x[i]->equiv /
-							  ((1.0 + s_x[i]->dha * b * muhalf) * (1.0 +
-																   s_x[i]->
-																   dha * b *
-																   muhalf)) +
-							  s_x[i]->dhb) * LOG_10 * s_x[i]->moles;
-			}
-			else if (s_x[i]->exch_gflag == 7 && s_x[i]->alk > 0)
-			{
-				if (llnl_count_temp > 0)
-				{
-					s_x[i]->lg =
-						-a_llnl * muhalf * s_x[i]->equiv * s_x[i]->equiv /
-						(1.0 + s_x[i]->dha * b_llnl * muhalf) +
-						bdot_llnl * mu +
-						log10(fabs(s_x[i]->equiv) / s_x[i]->alk);
-					s_x[i]->dg =
-						(c2_llnl * s_x[i]->equiv * s_x[i]->equiv /
-						 ((1.0 + s_x[i]->dha * b_llnl * muhalf) * (1.0 +
-																   s_x[i]->
-																   dha *
-																   b_llnl *
-																   muhalf)) +
-						 bdot_llnl) * LOG_10 * s_x[i]->moles;
-				}
-				else
-				{
-					error_msg("LLNL_AQUEOUS_MODEL_PARAMETERS not defined.",
-							  STOP);
-				}
-			}
-			else
-			{
-/*
- *   Master species is a dummy variable with meaningless activity and mass
- */
-				if (s_x[i]->primary != NULL)
-				{
-					s_x[i]->lg = 0.0;
-					s_x[i]->dg = 0.0;
-				}
-				else
-				{
-					if (s_x[i]->alk <= 0)
+					if (s_x[i]->primary != NULL)
 					{
 						s_x[i]->lg = 0.0;
+						s_x[i]->dg = 0.0;
 					}
 					else
 					{
-						s_x[i]->lg = log10(fabs(s_x[i]->equiv) / s_x[i]->alk);
+						if (s_x[i]->alk <= 0)
+							s_x[i]->lg = 0.0;
+						else
+							s_x[i]->lg = log10(fabs(s_x[i]->equiv) / s_x[i]->alk);
+						s_x[i]->dg = 0.0;
 					}
-					s_x[i]->dg = 0.0;
 				}
+				else if (s_x[i]->exch_gflag == 1 && s_x[i]->alk > 0)
+				{
+					/* Davies */
+					s_x[i]->lg = -coef * z * z * a *
+						(muhalf / (1.0 + muhalf) - 0.3 * mu) +
+						log10(fabs(s_x[i]->equiv) / s_x[i]->alk);
+					s_x[i]->dg =
+						c1 * coef * z * z * s_x[i]->moles;
+				}
+				else if (s_x[i]->exch_gflag == 2 && s_x[i]->alk > 0)
+				{
+					/* Extended D-H, WATEQ D-H */
+					s_x[i]->lg = coef * (-a * muhalf * z * z /
+						(1.0 + s_x[i]->dha * b * muhalf) + s_x[i]->dhb * mu) +
+						log10(fabs(s_x[i]->equiv) / s_x[i]->alk);
+					s_x[i]->dg = coef * (c2 * z * z /
+						((1.0 + s_x[i]->dha * b * muhalf) * (1.0 + s_x[i]->dha * b * muhalf)) +
+						s_x[i]->dhb) * LOG_10 * s_x[i]->moles;
+				}
+				else if (s_x[i]->exch_gflag == 7 && s_x[i]->alk > 0)
+				{
+					if (llnl_count_temp > 0)
+					{
+						s_x[i]->lg =
+							coef * (-a_llnl * muhalf * z * z /
+							(1.0 + s_x[i]->dha * b_llnl * muhalf) +
+								bdot_llnl * mu) +
+							log10(fabs(s_x[i]->equiv) / s_x[i]->alk);
+						s_x[i]->dg =
+							coef * (c2_llnl * z * z /
+							((1.0 + s_x[i]->dha * b_llnl * muhalf) * (1.0 + s_x[i]->dha * b_llnl * muhalf)) +
+								bdot_llnl) * LOG_10 * s_x[i]->moles;
+					}
+					else
+					{
+						error_msg("LLNL_AQUEOUS_MODEL_PARAMETERS not defined.",
+							STOP);
+					}
+				}
+				else
+				{
+					/*
+					 *   Master species is a dummy variable with meaningless activity and mass
+					 */
+					if (s_x[i]->primary != NULL)
+					{
+						s_x[i]->lg = 0.0;
+						s_x[i]->dg = 0.0;
+					}
+					else
+					{
+						if (s_x[i]->alk <= 0)
+							s_x[i]->lg = 0.0;
+						else
+							s_x[i]->lg = log10(fabs(s_x[i]->equiv) / s_x[i]->alk);
+						s_x[i]->dg = 0.0;
+					}
+				}
+				if (s_x[i]->a_f && s_x[i]->primary == NULL && s_x[i]->moles)
+					gammas_a_f(i); // appt
 			}
 			break;
 		case 5:				/* Always 1.0 */
@@ -877,6 +876,57 @@ gammas(LDBLE mu)
 	return (OK);
 }
 /* ------------------------------------------------------------------------------- */
+int Phreeqc::gammas_a_f(int i1)
+/* ------------------------------------------------------------------------------- */
+{
+	int i, j;
+	//LDBLE d2, d3, coef = 0, sum = 0;
+	LDBLE d2, d3, sum = 0;
+	char name[MAX_LENGTH];
+	//struct master *m_ptr;
+
+	i = i1;
+	for (j = 1; s_x[i]->rxn_x->token[j].s != NULL; j++)
+	{
+		if (s_x[i]->rxn_x->token[j].s->type == EX)
+		{
+			strcpy(name, s_x[i]->rxn_x->token[j].s->name);
+			//m_ptr = s_x[i]->rxn_x->token[j].s->primary->elt->master; // appt debug
+			break;
+		}
+	}
+
+	for (i = 0; i < count_s_x; i++)
+	{
+		if (s_x[i]->gflag != 4 || s_x[i]->primary)
+			continue;
+		for (j = 1; s_x[i]->rxn_x->token[j].s != NULL; j++)
+		{
+			if (s_x[i]->rxn_x->token[j].s->type == EX)
+			{
+				if (!strcmp(name, s_x[i]->rxn_x->token[j].s->name))
+					sum += s_x[i]->moles * s_x[i]->equiv;
+				break;
+			}
+		}
+	}
+	i = i1;
+	d2 = s_x[i]->moles * s_x[i]->equiv / sum;
+	if (d2 > 1) d2 = 1;
+	//if (iterations > 19)
+	//	i += 0; // appt debug
+
+	d3 = 0.5;
+	if (s_x[i]->a_f > 2)
+	{
+		d3 += (s_x[i]->a_f - 2) / 10; if (d3 > 0.8) d3 = 0.8;
+	}
+	d2 = s_x[i]->dw_a * d3 + (1 - d3) * d2;
+	s_x[i]->lg -= s_x[i]->a_f * (1 - d2);
+	s_x[i]->dw_a = d2;
+	return 0;
+}
+/* ------------------------------------------------------------------------------- */
 int Phreeqc::
 ineq(int in_kode)
 /* ------------------------------------------------------------------------------- */
@@ -971,11 +1021,11 @@ ineq(int in_kode)
 			{
 				for (j = 0; j < count_unknowns; j++)
 				{
-					array[j * (count_unknowns + 1) + i] = 0.0;
+					my_array[j * (count_unknowns + 1) + i] = 0.0;
 				}
 				for (j = 0; j < count_unknowns + 1; j++)
 				{
-					array[i * (count_unknowns + 1) + j] = 0.0;
+					my_array[i * (count_unknowns + 1) + j] = 0.0;
 				}
 			}
 		}
@@ -1013,24 +1063,24 @@ ineq(int in_kode)
 				if (x[i]->type == SURFACE_CB1 && x[j]->type == SURFACE_CB2)
 					continue;
 
-				if (fabs(array[j * (count_unknowns + 1) + i]) > max)
+				if (fabs(my_array[j * (count_unknowns + 1) + i]) > max)
 				{
-					max = fabs(array[j * (count_unknowns + 1) + i]);
+					max = fabs(my_array[j * (count_unknowns + 1) + i]);
 					if (max > min_value)
 						break;
 				}
 			}
 			if (diagonal_scale == TRUE)
 			{
-				if (fabs(array[i * (count_unknowns + 1) + i]) < min_value)
+				if (fabs(my_array[i * (count_unknowns + 1) + i]) < min_value)
 				{
-					max = fabs(array[i * (count_unknowns + 1) + i]);
+					max = fabs(my_array[i * (count_unknowns + 1) + i]);
 				}
 			}
 
 			if (max == 0)
 			{
-				array[i * (count_unknowns + 1) + i] = 1e-5 * x[i]->moles;
+				my_array[i * (count_unknowns + 1) + i] = 1e-5 * x[i]->moles;
 				max = fabs(1e-5 * x[i]->moles);
 			}
 		}
@@ -1041,11 +1091,11 @@ ineq(int in_kode)
 
 			min = 1e-12;
 			min = MIN_TOTAL;
-			array[x[i]->number * (count_unknowns + 1) + x[i]->number] += min;
+			my_array[x[i]->number * (count_unknowns + 1) + x[i]->number] += min;
 			if (fabs
-				(array[x[i]->number * (count_unknowns + 1) + x[i]->number]) <
+				(my_array[x[i]->number * (count_unknowns + 1) + x[i]->number]) <
 				min)
-				array[x[i]->number * (count_unknowns + 1) + x[i]->number] =
+				my_array[x[i]->number * (count_unknowns + 1) + x[i]->number] =
 					min;
 			max = 0.0;
 
@@ -1059,9 +1109,9 @@ ineq(int in_kode)
 					x[j]->type != EXCH && x[j]->type != MH
 					&& x[j]->type != MH2O)
 					continue;
-				if (fabs(array[j * (count_unknowns + 1) + i]) > max)
+				if (fabs(my_array[j * (count_unknowns + 1) + i]) > max)
 				{
-					max = fabs(array[j * (count_unknowns + 1) + i]);
+					max = fabs(my_array[j * (count_unknowns + 1) + i]);
 					if (max > min_value)
 						break;
 				}
@@ -1078,7 +1128,7 @@ ineq(int in_kode)
 			}
 			for (j = 0; j < count_unknowns; j++)
 			{
-				array[j * (count_unknowns + 1) + i] *= min_value / max;
+				my_array[j * (count_unknowns + 1) + i] *= min_value / max;
 			}
 			normal[i] = min_value / max;
 		}
@@ -1151,7 +1201,7 @@ ineq(int in_kode)
 			{
 				/*   Copy in saturation index equation (has mass or supersaturated) */
 				memcpy((void *) &(ineq_array[l_count_rows * max_column_count]),
-					   (void *) &(array[i * (count_unknowns + 1)]),
+					   (void *) &(my_array[i * (count_unknowns + 1)]),
 					   (size_t) (count_unknowns + 1) * sizeof(LDBLE));
 				back_eq[l_count_rows] = i;
 				//if (it->second.Get_add_formula().size() == 0
@@ -1185,7 +1235,7 @@ ineq(int in_kode)
  *   Alkalinity and solution phase boundary
  */
 			memcpy((void *) &(ineq_array[l_count_rows * max_column_count]),
-				   (void *) &(array[i * (count_unknowns + 1)]),
+				   (void *) &(my_array[i * (count_unknowns + 1)]),
 				   (size_t) (count_unknowns + 1) * sizeof(LDBLE));
 			back_eq[l_count_rows] = i;
 			l_count_rows++;
@@ -1196,7 +1246,7 @@ ineq(int in_kode)
 		else if (x[i]->type == GAS_MOLES && gas_in == TRUE)
 		{
 			memcpy((void *) &(ineq_array[l_count_rows * max_column_count]),
-				   (void *) &(array[i * (count_unknowns + 1)]),
+				   (void *) &(my_array[i * (count_unknowns + 1)]),
 				   (size_t) (count_unknowns + 1) * sizeof(LDBLE));
 			back_eq[l_count_rows] = i;
 
@@ -1213,7 +1263,7 @@ ineq(int in_kode)
 		else if (x[i]->type == SS_MOLES && x[i]->ss_in == TRUE)
 		{
 			memcpy((void *) &(ineq_array[l_count_rows * max_column_count]),
-				   (void *) &(array[i * (count_unknowns + 1)]),
+				   (void *) &(my_array[i * (count_unknowns + 1)]),
 				   (size_t) (count_unknowns + 1) * sizeof(LDBLE));
 			back_eq[l_count_rows] = i;
 			res[l_count_rows] = 1.0;
@@ -1258,6 +1308,7 @@ ineq(int in_kode)
 				continue;
 			if (x[i]->type == MH && pitzer_model == TRUE && pitzer_pe == FALSE)
 				continue;
+
 			if (mass_water_switch == TRUE && x[i] == mass_oxygen_unknown)
 				continue;
 /*
@@ -1294,7 +1345,7 @@ ineq(int in_kode)
 				}
 			}
 			memcpy((void *) &(ineq_array[l_count_rows * max_column_count]),
-				   (void *) &(array[i * (count_unknowns + 1)]),
+				   (void *) &(my_array[i * (count_unknowns + 1)]),
 				   (size_t) (count_unknowns + 1) * sizeof(LDBLE));
 			back_eq[l_count_rows] = i;
 			if (mass_water_switch == TRUE && x[i] == mass_hydrogen_unknown)
@@ -1303,7 +1354,7 @@ ineq(int in_kode)
 				for (j = 0; j < count_unknowns; j++)
 				{
 					ineq_array[l_count_rows * max_column_count + j] -=
-						2 * array[k * (count_unknowns + 1) + j];
+						2 * my_array[k * (count_unknowns + 1) + j];
 				}
 			}
 			l_count_rows++;
@@ -1311,7 +1362,7 @@ ineq(int in_kode)
 		else if (x[i]->type == PITZER_GAMMA && full_pitzer == TRUE)
 		{
 			memcpy((void *) &(ineq_array[l_count_rows * max_column_count]),
-				   (void *) &(array[i * (count_unknowns + 1)]),
+				   (void *) &(my_array[i * (count_unknowns + 1)]),
 				   (size_t) (count_unknowns + 1) * sizeof(LDBLE));
 			back_eq[l_count_rows] = i;
 			l_count_rows++;
@@ -1390,7 +1441,7 @@ ineq(int in_kode)
 			if (x[i]->type == MH2O)
 			{
 				memcpy((void *) &(ineq_array[l_count_rows * max_column_count]),
-					   (void *) &(array[i * (count_unknowns + 1)]),
+					   (void *) &(my_array[i * (count_unknowns + 1)]),
 					   (size_t) (count_unknowns + 1) * sizeof(LDBLE));
 				back_eq[l_count_rows] = i;
 				for (j = 0; j < count_unknowns; j++)
@@ -1617,7 +1668,7 @@ ineq(int in_kode)
 			if (x[i]->type == MB && x[i]->moles < 0.0)
 			{
 				memcpy((void *) &(ineq_array[l_count_rows * max_column_count]),
-					   (void *) &(array[i * (count_unknowns + 1)]),
+					   (void *) &(my_array[i * (count_unknowns + 1)]),
 					   (size_t) (count_unknowns + 1) * sizeof(LDBLE));
 				back_eq[l_count_rows] = i;
 				for (j = 0; j < count_unknowns; j++)
@@ -1647,7 +1698,7 @@ ineq(int in_kode)
  */
 	for (i = 0; i < count_unknowns; i++)
 	{
-		if ((x[i]->type == PP || x[i]->type == SS_MOLES)
+		if ((x[i]->type == PP || x[i]->type == SS_MOLES) && x[i]->phase->in == TRUE 
 			&& pp_column_scale != 1.0)
 		{
 			for (j = 0; j < l_count_rows; j++)
@@ -1679,19 +1730,19 @@ ineq(int in_kode)
 	}
 #define SHRINK_ARRAY
 #ifdef SHRINK_ARRAY
-	if (sit_model && full_pitzer == FALSE)
+	if ((sit_model || pitzer_model) && full_pitzer == FALSE)
 	{
 		n = count_unknowns - (int) s_list.size();
 		for (int i = 0; i < l_count_rows; i++)
 		{
-			//for (int j = 0; j < n; j++)
-			//{
-			//	ineq_array[i*(n+2) + j] = ineq_array[i*(count_unknowns+2) +j];
-			//}
-			if (i > 0)
+			for (int j = 0; j < n; j++)
 			{
-				memcpy((void *) &ineq_array[i*(n+2)], (void *) &ineq_array[i*(count_unknowns+2)], (size_t) (n) * sizeof(LDBLE));
+				ineq_array[i*(n+2) + j] = ineq_array[i*(count_unknowns+2) +j];
 			}
+			//if (i > 0)
+			//{
+			//	memcpy((void *) &ineq_array[i*(n+2)], (void *) &ineq_array[i*(count_unknowns+2)], (size_t) (n) * sizeof(LDBLE));
+			//}
 			ineq_array[i*(n+2) + n] = ineq_array[i*(count_unknowns+2) + count_unknowns];
 		}
 	}
@@ -1832,7 +1883,7 @@ ineq(int in_kode)
 		{
 			for (j = 0; j < count_unknowns; j++)
 			{
-				array[j * (count_unknowns + 1) + i] /= normal[i];
+				my_array[j * (count_unknowns + 1) + i] /= normal[i];
 			}
 		}
 	}
@@ -1909,12 +1960,12 @@ jacobian_sums(void)
  */
 	for (i = 0; i < count_unknowns; i++)
 	{
-		array[i] = 0.0;
+		my_array[i] = 0.0;
 	}
 	for (i = 1; i < count_unknowns; i++)
 	{
-		memcpy((void *) &(array[i * (count_unknowns + 1)]),
-			   (void *) &(array[0]), (size_t) count_unknowns * sizeof(LDBLE));
+		memcpy((void *) &(my_array[i * (count_unknowns + 1)]),
+			   (void *) &(my_array[0]), (size_t) count_unknowns * sizeof(LDBLE));
 	}
 /*
  *   Add constant terms
@@ -1948,9 +1999,9 @@ jacobian_sums(void)
 		for (i = 0; i < count_unknowns; i++)
 		{
 			// using straight mu equation
-			array[mu_unknown->number * (count_unknowns + 1) + i] *= 0.5;
+			my_array[mu_unknown->number * (count_unknowns + 1) + i] *= 0.5;
 		}
-		array[mu_unknown->number * (count_unknowns + 1) +
+		my_array[mu_unknown->number * (count_unknowns + 1) +
 			  mu_unknown->number] -= mass_water_aq_x;
 	}
 /*
@@ -1958,7 +2009,7 @@ jacobian_sums(void)
  */
 	if (mass_oxygen_unknown != NULL && mu_unknown != NULL)
 	{
-		array[mu_unknown->number * (count_unknowns + 1) +
+		my_array[mu_unknown->number * (count_unknowns + 1) +
 			  mass_oxygen_unknown->number] -= mu_x * mass_water_aq_x;
 	}
 /*
@@ -1978,16 +2029,16 @@ jacobian_sums(void)
 
 			for (i = 0; i < count_unknowns; i++)
 			{
-				array[ah2o_unknown->number * (count_unknowns + 1) + i] *= factor;
+				my_array[ah2o_unknown->number * (count_unknowns + 1) + i] *= factor;
 			}
 			// activity of water term
-			array[ah2o_unknown->number * (count_unknowns + 1) +
+			my_array[ah2o_unknown->number * (count_unknowns + 1) +
 				  ah2o_unknown->number] -= exp(s_h2o->la * LOG_10);
 
 			// mass of water term
 			if (mass_oxygen_unknown != NULL)
 			{
-				array[ah2o_unknown->number * (count_unknowns + 1) + mass_oxygen_unknown->number] -=
+				my_array[ah2o_unknown->number * (count_unknowns + 1) + mass_oxygen_unknown->number] -=
 					  a*y_sum*(x_h2o*(0.5*tanh(lim) + 0.5) + (47.5*x_h2o - 50.0*a*y_sum)/(cosh(lim)*cosh(lim))) / 
 					  (x_h2o*x_h2o*x_h2o);
 			}
@@ -1996,13 +2047,13 @@ jacobian_sums(void)
 		{
 			for (i = 0; i < count_unknowns; i++)
 			{
-				array[ah2o_unknown->number * (count_unknowns + 1) + i] *= -AH2O_FACTOR;
+				my_array[ah2o_unknown->number * (count_unknowns + 1) + i] *= -AH2O_FACTOR;
 			}
-			array[ah2o_unknown->number * (count_unknowns + 1) + ah2o_unknown->number] -=
+			my_array[ah2o_unknown->number * (count_unknowns + 1) + ah2o_unknown->number] -=
 				mass_water_aq_x * exp(s_h2o->la * LOG_10);
 			if (mass_oxygen_unknown != NULL)
 			{
-				array[ah2o_unknown->number * (count_unknowns + 1) + mass_oxygen_unknown->number] -=
+				my_array[ah2o_unknown->number * (count_unknowns + 1) + mass_oxygen_unknown->number] -=
 					(exp(s_h2o->la * LOG_10) - 1) * mass_water_aq_x;
 			}
 		}
@@ -2019,7 +2070,7 @@ jacobian_sums(void)
 				//sqrt(8 * EPSILON * EPSILON_ZERO * (R_KJ_DEG_MOL * 1000) * tk_x *
 				//	 1000);
 				sqrt(8 * eps_r * EPSILON_ZERO * (R_KJ_DEG_MOL * 1000) * tk_x *
-				1000);
+					1000);
 			for (i = 0; i < count_unknowns; i++)
 			{
 				cxxSurfaceCharge *charge_ptr = NULL;
@@ -2031,16 +2082,16 @@ jacobian_sums(void)
 				{
 					for (j = 0; j < count_unknowns; j++)
 					{
-						array[x[i]->number * (count_unknowns + 1) + j] *=
+						my_array[x[i]->number * (count_unknowns + 1) + j] *=
 							F_C_MOL / (charge_ptr->Get_specific_area() *
-							charge_ptr->Get_grams());
+								charge_ptr->Get_grams());
 					}
-					array[x[i]->number * (count_unknowns + 1) + x[i]->number] -=
+					my_array[x[i]->number * (count_unknowns + 1) + x[i]->number] -=
 						sinh_constant * sqrt(mu_x) *
 						cosh(x[i]->master[0]->s->la * LOG_10);
 					if (mu_unknown != NULL)
 					{
-						array[x[i]->number * (count_unknowns + 1) +
+						my_array[x[i]->number * (count_unknowns + 1) +
 							mu_unknown->number] -=
 							0.5 * sinh_constant / sqrt(mu_x) *
 							sinh(x[i]->master[0]->s->la * LOG_10);
@@ -2061,13 +2112,13 @@ jacobian_sums(void)
 				{
 					for (j = 0; j < count_unknowns; j++)
 					{
-						array[x[i]->number * (count_unknowns + 1) + j] *=
+						my_array[x[i]->number * (count_unknowns + 1) + j] *=
 							F_C_MOL / (charge_ptr->Get_specific_area() *
-							charge_ptr->Get_grams());
+								charge_ptr->Get_grams());
 					}
-					array[x[i]->number * (count_unknowns + 1) + x[i]->number] -=
+					my_array[x[i]->number * (count_unknowns + 1) + x[i]->number] -=
 						charge_ptr->Get_capacitance0() * 2 * R_KJ_DEG_MOL *
-								 tk_x * LOG_10 / F_KJ_V_EQ;
+						tk_x * LOG_10 / F_KJ_V_EQ;
 				}
 			}
 		}
@@ -2170,12 +2221,20 @@ mb_ss(void)
 	{
 		cxxSS *ss_ptr = ss_ptrs[i];
 		total_moles = 0;
+		//bool ss_in = true;
 		for (size_t j = 0; j < ss_ptr->Get_ss_comps().size(); j++)
 		{
+			int l;
+			struct phase *phase_ptr = phase_bsearch(ss_ptr->Get_ss_comps()[j].Get_name().c_str(), &l, FALSE);
+			if (phase_ptr->in == FALSE)
+			{
+				continue;
+			}
 			cxxSScomp *comp_ptr = &(ss_ptr->Get_ss_comps()[j]);
 			total_moles += comp_ptr->Get_moles();
+
 		}
-		if (total_moles > 1e-13)
+		if (total_moles > 1.e10*MIN_TOTAL)
 		{
 			ss_ptr->Set_ss_in(true);
 		}
@@ -2187,7 +2246,7 @@ mb_ss(void)
 			/*
 			 *  Calculate IAPc and IAPb
 			 */
-			if (phase0_ptr->rxn_x != NULL)
+			if (phase0_ptr->in == TRUE && phase0_ptr->rxn_x != NULL)
 			{
 				log10_iap = 0;
 				for (rxn_ptr = phase0_ptr->rxn_x->token + 1;
@@ -2201,7 +2260,7 @@ mb_ss(void)
 			{
 				iapc = 1e-99;
 			}
-			if (phase1_ptr->rxn_x != NULL)
+			if (phase1_ptr->in == TRUE && phase1_ptr->rxn_x != NULL)
 			{
 				log10_iap = 0;
 				for (rxn_ptr = phase1_ptr->rxn_x->token + 1;
@@ -2291,9 +2350,12 @@ mb_ss(void)
 	{
 		if (x[i]->type != SS_MOLES)
 			break;
-		//cxxSS *ss_ptr = use.Get_ss_assemblage_ptr()->Find(x[i]->ss_name);
 		cxxSS *ss_ptr = (cxxSS *) x[i]->ss_ptr;
-		x[i]->ss_in = ss_ptr->Get_ss_in() ? TRUE : FALSE;
+		x[i]->ss_in = FALSE;
+		if (x[i]->phase->in == TRUE && ss_ptr->Get_ss_in())
+		{
+			x[i]->ss_in = TRUE;
+		}
 	}
 	return (OK);
 }
@@ -2322,6 +2384,12 @@ molalities(int allow_overflow)
 	}
 	if (dl_type_x != cxxSurface::NO_DL)
 	{
+		//s_h2o->tot_g_moles = s_h2o->moles;
+		//s_h2o->tot_dh2o_moles = 0.0;
+
+		if (calculating_deriv && use.Get_surface_ptr() != NULL) // DL_pitz
+			if (use.Get_surface_ptr()->Get_debye_lengths() > 0)
+				s_h2o->moles = mass_water_bulk_x / gfw_water;
 		s_h2o->tot_g_moles = s_h2o->moles;
 		s_h2o->tot_dh2o_moles = 0.0;
 	}
@@ -2377,8 +2445,9 @@ molalities(int allow_overflow)
  *   other terms for diffuse layer model
  */
 	if (use.Get_surface_ptr() != NULL 
-		&& use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC
-		&& dl_type_x != cxxSurface::NO_DL)
+		&& dl_type_x != cxxSurface::NO_DL
+		&& (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC
+			|| pitzer_model || calculating_deriv)) // DL_pitz
 	{
 		calc_all_donnan();
 	}
@@ -2953,7 +3022,8 @@ ss_binary(cxxSS *ss_ptr)
 /* ---------------------------------------------------------------------- */
 {
 	LDBLE nb, nc, n_tot, xb, xc, dnb, dnc, l_a0, l_a1;
-	LDBLE xb2, xb3, xb4, xc2, xc3;
+	//LDBLE xb2, xb3, xb4, xc2, xc3;
+	LDBLE xb2, xc2;
 	LDBLE xb1, xc1;
 /*
  * component 0 is major component
@@ -3040,12 +3110,12 @@ ss_binary(cxxSS *ss_ptr)
 			comp1_ptr->Get_log10_lambda();
 
 		xc2 = xc * xc;
-		xc3 = xc2 * xc;
+		//xc3 = xc2 * xc;
 		xb2 = xb * xb;
-		xb3 = xb2 * xb;
-		xb4 = xb3 * xb;
-		xb4 = xb4;
-		xc3 = xc3;
+		//xb3 = xb2 * xb;
+		//xb4 = xb3 * xb;
+		/* xb4 = xb4; */
+		/* xc3 = xc3; */
 
 		/* used derivation that did not substitute x2 = 1-x1 */
 
@@ -3157,7 +3227,7 @@ reset(void)
  */
 		for (i = 0; i < count_unknowns; i++)
 		{
-			if (x[i]->type == PP || x[i]->type == SS_MOLES)
+			if ((x[i]->type == PP || x[i]->type == SS_MOLES) && x[i]->phase->in == TRUE)
 			{
 
 				if (delta[i] < -1e8)
@@ -3176,21 +3246,21 @@ reset(void)
 					assert(comp_ptr);
 					if ((delta[i] < 0.0)
 						&& (-delta[i] >
-							(comp_ptr->Get_initial_moles() - x[i]->moles)))
+						(comp_ptr->Get_initial_moles() - x[i]->moles)))
 					{
 						if ((comp_ptr->Get_initial_moles() - x[i]->moles) !=
 							0.0)
 						{
 							f0 = fabs(delta[i] /
-									  (comp_ptr->Get_initial_moles() -
-									   x[i]->moles));
+								(comp_ptr->Get_initial_moles() -
+									x[i]->moles));
 							if (f0 > factor)
 							{
 								if (debug_model == TRUE)
 								{
 									output_msg(sformatf(
-											   "%-10.10s, Precipitating too much dissolve_only mineral.\tDelta %e\tCurrent %e\tInitial %e\n",
-											   x[i]->description,
+										"%-10.10s, Precipitating too much dissolve_only mineral.\tDelta %e\tCurrent %e\tInitial %e\n",
+										x[i]->description,
 											   (double) delta[i],
 											   (double) x[i]->moles,
 											   (double) comp_ptr->Get_initial_moles()));
@@ -3203,9 +3273,9 @@ reset(void)
 							if (debug_model == TRUE)
 							{
 								output_msg(sformatf(
-										   "%-10.10s, Precipitating dissolve_only mineral.\tDelta %e\n",
-										   x[i]->description,
-										   (double) delta[i]));
+									"%-10.10s, Precipitating dissolve_only mineral.\tDelta %e\n",
+									x[i]->description,
+								    (double) delta[i]));
 							}
 							delta[i] = 0;
 						}
@@ -3220,7 +3290,7 @@ reset(void)
 						if (debug_model == TRUE)
 						{
 							output_msg(sformatf(
-									   "%-10.10s, Removing more than total mineral.\t%f\n",
+								"%-10.10s, Removing more than total mineral.\t%f\n",
 									   x[i]->description, (double) f0));
 						}
 						factor = f0;
@@ -3231,17 +3301,17 @@ reset(void)
 					if (debug_model == TRUE)
 					{
 						output_msg(sformatf(
-								   "%-10.10s\tDelta: %e\tMass: %e   "
-								   "Dissolving mineral with 0.0 mass.\n ",
+							"%-10.10s\tDelta: %e\tMass: %e   "
+							"Dissolving mineral with 0.0 mass.\n ",
 								   x[i]->description, (double) delta[i],
 								   (double) x[i]->moles));
 					}
 					delta[i] = 0.0;
 				}
 				else if (x[i]->ss_comp_name != NULL && delta[i] < -x[i]->phase->delta_max)
-				// Uses delta_max computed in step
-				// delta_max is the maximum amount of the mineral that could form based
-				// on the limiting element in the system
+					// Uses delta_max computed in step
+					// delta_max is the maximum amount of the mineral that could form based
+					// on the limiting element in the system
 				{
 					f0 = -delta[i] / x[i]->phase->delta_max;
 					if (f0 > factor)
@@ -3249,8 +3319,36 @@ reset(void)
 						if (debug_model == TRUE)
 						{
 							output_msg(sformatf(
-									   "%-10.10s, Precipitating too much mineral.\t%f\n",
+								"%-10.10s, Precipitating too much mineral.\t%f\n",
 									   x[i]->description, (double) f0));
+						}
+						factor = f0;
+					}
+				}
+				else if (x[i]->ss_comp_name != NULL && delta[i] < -pe_step_size*x[i]->moles)
+				{
+					f0 = (-delta[i]) / (pe_step_size*x[i]->moles);
+					if (f0 > factor)
+					{
+						if (debug_model == TRUE)
+						{
+							output_msg(sformatf(
+								"%-10.10s, Precipitating too much mineral.\t%f\n",
+								x[i]->description, (double)f0));
+						}
+						factor = f0;
+					}
+				}
+				else if (x[i]->ss_comp_name != NULL && delta[i] > x[i]->moles/ pe_step_size)
+				{
+					f0 = (delta[i]) / (x[i]->moles/ pe_step_size);
+					if (f0 > factor)
+					{
+						if (debug_model == TRUE)
+						{
+							output_msg(sformatf(
+								"%-10.10s, Precipitating too much mineral.\t%f\n",
+								x[i]->description, (double)f0));
 						}
 						factor = f0;
 					}
@@ -3724,7 +3822,9 @@ reset(void)
 		else if (x[i]->type == MH2O)
 		{
 			if (mass_water_switch == TRUE)
+			{
 				continue;
+			}
 			/*if (fabs(delta[i]) > epsilon * mass_water_aq_x) converge=FALSE; */
 			/* ln(gh2o) + delta, log(gh2o) + d, gh2o * 10**d */
 			d = exp(delta[i]);
@@ -3738,7 +3838,6 @@ reset(void)
 						   (double) delta[i], "10**d/c", (double) d));
 			}
 			mass_water_aq_x *= d;
-
 			mass_water_bulk_x = mass_water_aq_x + mass_water_surfaces_x;
 			if (debug_model == TRUE && dl_type_x != cxxSurface::NO_DL)
 			{
@@ -3749,7 +3848,7 @@ reset(void)
 						   (double) mass_water_surfaces_x));
 			}
 			x[i]->master[0]->s->moles = mass_water_aq_x / gfw_water;
-/*appt */
+
 			if (use.Get_surface_ptr() != NULL)
 			{
 				if (use.Get_surface_ptr()->Get_debye_lengths() > 0)
@@ -3837,7 +3936,7 @@ reset(void)
 			}
 			last_patm_x = patm_x;
 		}
-		else if (x[i]->type == SS_MOLES)
+		else if (x[i]->type == SS_MOLES && x[i]->ss_in == TRUE)
 		{
 
 			/*if (fabs(delta[i]) > epsilon) converge=FALSE; */
@@ -4195,8 +4294,10 @@ residuals(void)
 		}
 		else if (x[i]->type == SS_MOLES)
 		{
+			if (x[i]->ss_in == FALSE)
+				continue;
 			residual[i] = x[i]->f * LOG_10;
-			if (fabs(residual[i]) > l_toler && x[i]->ss_in == TRUE)
+			if (fabs(residual[i]) > l_toler)
 			{
 				if (print_fail)
 					output_msg(sformatf(
@@ -4293,27 +4394,22 @@ residuals(void)
 			}
 			else
 			{
-/*
- *   sinh_constant is (8 e e0 R T 1000)**1/2
- *				 = sqrt(8*EPSILON*EPSILON_ZERO*(R_KJ_DEG_MOL*1000)*t_x*1000)
- *				 ~ 0.1174 at 25C
- */
-				residual[i] =
-					sinh_constant * sqrt(mu_x) *
-					sinh(x[i]->master[0]->s->la * LOG_10) -
-					x[i]->f * F_C_MOL / (charge_ptr->Get_specific_area() *
-										 charge_ptr->Get_grams());
+				residual[i] = sinh_constant * sqrt(mu_x) * sinh(x[i]->master[0]->s->la * LOG_10) -
+					x[i]->f * F_C_MOL / (charge_ptr->Get_specific_area() * charge_ptr->Get_grams());
 			}
 			if (debug_model == TRUE)
 			{
 				output_msg(sformatf( "Charge/Potential\n"));
 				if (charge_ptr->Get_grams() > 0)
 				{
-					output_msg(sformatf(
-							   "\tSum of surface charge %e eq\n",
-							   (double) (x[i]->f
-										 /* F_C_MOL / (x[i]->surface_charge->specific_area * x[i]->surface_charge->grams) */
-							   )));
+					if (dl_type_x != cxxSurface::NO_DL)
+						output_msg(sformatf("\tSum of surface + diffuse layer charge %e eq\n", (double)(x[i]->f)));
+					else
+						output_msg(sformatf(
+							"\tSum of surface charge %e eq\n",
+							(double)(x[i]->f
+								/* F_C_MOL / (x[i]->surface_charge->specific_area * x[i]->surface_charge->grams) */
+								)));
 				}
 				else
 				{
@@ -4432,7 +4528,10 @@ residuals(void)
 				output_msg(sformatf( "Charge/Potential\n"));
 				if (charge_ptr->Get_grams() > 0)
 				{
-					output_msg(sformatf(
+					if (dl_type_x != cxxSurface::NO_DL)
+						output_msg(sformatf("\tSum of surface + diffuse layer charge %e eq\n", (double)(x[i]->f)));
+					else
+						output_msg(sformatf(
 							   "\tSum of surface charge %e eq\n",
 							   (double) (x[i]->f
 										 /* F_C_MOL / (x[i]->surface_charge->specific_area * x[i]->surface_charge->grams) */
@@ -4669,7 +4768,7 @@ residuals(void)
 /*
  *   Store residuals in array
  */
-		array[(i + 1) * (count_unknowns + 1) - 1] = residual[i];
+		my_array[(i + 1) * (count_unknowns + 1) - 1] = residual[i];
 		sum_residual += fabs(residual[i]);
 	}
 /*
@@ -4717,6 +4816,7 @@ set(int initial)
 	tk_x = tc_x + 273.15;
 
 	patm_x = solution_ptr->Get_patm();  // done in calc_rho_0(tc, pa)
+	potV_x = solution_ptr->Get_potV();
 
 /*
  *   H+, e-, H2O
@@ -4748,7 +4848,7 @@ initial_guesses(void)
  */
 	int i;
 	cxxSolution *solution_ptr;
-
+	// mu_x is reset here, but the real, already calculated mu_x must be used for INITIAL_EXCHANGE & _SURFACE appt
 	solution_ptr = use.Get_solution_ptr();
 	mu_x =
 		s_hplus->moles +
@@ -4799,9 +4899,9 @@ initial_guesses(void)
 			}
 		}
 		else if (x[i]->type == SURFACE_CB)
-		{
-			x[i]->master[0]->s->la = 0.0;
-		}
+			{
+				x[i]->master[0]->s->la = 0.0;
+			}
 	}
 	return (OK);
 }
@@ -5215,6 +5315,7 @@ surface_model(void)
 	}
 	if (model() == ERROR)
 		return (ERROR);
+	
 	g_iterations = 0;
 
 	if (use.Get_surface_ptr()->Get_dl_type() == cxxSurface::DONNAN_DL)
@@ -5229,6 +5330,7 @@ surface_model(void)
 			mb_sums();
 			if (model() == ERROR)
 				return (ERROR);
+			
 			if (!use.Get_surface_ptr()->Get_related_phases()
 				&& !use.Get_surface_ptr()->Get_related_rate())
 				initial_surface_water();
@@ -5302,7 +5404,7 @@ free_model_allocs(void)
 	}
 	x = (struct unknown **) free_check_null(x);
 	max_unknowns = 0;
-	array = (LDBLE *) free_check_null(array);
+	my_array = (LDBLE *) free_check_null(my_array);
 	delta = (LDBLE *) free_check_null(delta);
 	residual = (LDBLE *) free_check_null(residual);
 	s_x = (struct species **) free_check_null(s_x);
@@ -5465,11 +5567,11 @@ numerical_jacobian(void)
 	int i, j;
 	cxxGasPhase *gas_phase_ptr = use.Get_gas_phase_ptr();
 	if (!
-		(numerical_deriv || 
+		(numerical_deriv ||
 		(use.Get_surface_ptr() != NULL && use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC) ||
-		(gas_phase_ptr != NULL && gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME && 
-		(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) && numerical_fixed_volume) 
-		))
+			(gas_phase_ptr != NULL && gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME &&
+			(gas_phase_ptr->Get_pr_in() || force_numerical_fixed_volume) && numerical_fixed_volume)
+			))
 		return(OK);
 
 	calculating_deriv = TRUE;
@@ -5483,12 +5585,12 @@ numerical_jacobian(void)
 
 	for (i = 0; i < count_unknowns; i++)
 	{
-		array[i] = 0.0;
+		my_array[i] = 0.0;
 	}
 	for (i = 1; i < count_unknowns; i++)
 	{
-		memcpy((void *) &(array[i * (count_unknowns + 1)]),
-			   (void *) &(array[0]), (size_t) count_unknowns * sizeof(LDBLE));
+		memcpy((void *) &(my_array[i * (count_unknowns + 1)]),
+			   (void *) &(my_array[0]), (size_t) count_unknowns * sizeof(LDBLE));
 	}
 
 	base = (LDBLE *) PHRQ_malloc((size_t) count_unknowns * sizeof(LDBLE));
@@ -5499,7 +5601,7 @@ numerical_jacobian(void)
 		base[i] = residual[i];
 	}
 	d = 0.0001;
-	d1 = d * log(10.0);
+	d1 = d * LOG_10;
 	d2 = 0;
 	for (i = 0; i < count_unknowns; i++)
 	{
@@ -5515,24 +5617,32 @@ numerical_jacobian(void)
 		case SURFACE_CB1:
 		case SURFACE_CB2:
 			x[i]->master[0]->s->la += d;
-			d2 = d1;
+			d2 = d * LOG_10;
 			break;
 		case MH:
 			s_eminus->la += d;
-			d2 = d1;
+			d2 = d * LOG_10;
 			break;
 		case AH2O:
 			x[i]->master[0]->s->la += d;
-			d2 = d1;
+			d2 = d * LOG_10;
 			break;
 		case PITZER_GAMMA:
 			x[i]->s->lg += d;
 			d2 = d;
 			break;
 		case MH2O:
-			mass_water_aq_x *= (1.0 + d);
+			//mass_water_aq_x *= (1 + d);
+			//x[i]->master[0]->s->moles = mass_water_aq_x / gfw_water;
+			//d2 = log(1.0 + d);
+			//break;
+			// DL_pitz
+			d1 = mass_water_aq_x * d;
+			mass_water_aq_x += d1;
+			if (use.Get_surface_in() && dl_type_x == cxxSurface::DONNAN_DL)
+				mass_water_bulk_x += d1;
 			x[i]->master[0]->s->moles = mass_water_aq_x / gfw_water;
-			d2 = log(1.0 + d);
+			d2 = d1;
 			break;
 		case MU:
 			d2 = d * mu_x;
@@ -5557,8 +5667,8 @@ numerical_jacobian(void)
 				delta[j] = 0.0;
 			}
 			/*d2 = -1e-8; */
-			d2 = -d * x[i]->moles;
-			d2 = -.1 * x[i]->moles;
+			d2 = d * 10 * x[i]->moles;
+			//d2 = -.1 * x[i]->moles;
 			/*
 			   if (d2 > -1e-10) d2 = -1e-10;
 			   calculating_deriv = FALSE;
@@ -5595,11 +5705,13 @@ numerical_jacobian(void)
 			  LDBLE t = (LDBLE) pow((LDBLE) 10.0, (LDBLE) (DBL_MAX_10_EXP - 50.0));
 				if (residual[j]  > t)
 				{
-					array[j * (count_unknowns + 1) + i] = -pow(10.0, DBL_MAX_10_EXP - 50.0);
+					my_array[j * (count_unknowns + 1) + i] = -pow(10.0, DBL_MAX_10_EXP - 50.0);
 				}
 				else
 				{
-					array[j * (count_unknowns + 1) + i] = -(residual[j] - base[j]) / d2;
+					my_array[j * (count_unknowns + 1) + i] = -(residual[j] - base[j]) / d2;
+					if (x[i]->type == MH2O) // DL_pitz
+						my_array[j * (count_unknowns + 1) + i] *= mass_water_aq_x;
 				}
 			}
 			else if (residual[j] < -1.0e101)
@@ -5607,17 +5719,21 @@ numerical_jacobian(void)
 				LDBLE t = pow((LDBLE) 10.0, (LDBLE) (DBL_MIN_10_EXP + 50.0));
 				if (residual[j]  < -t)
 				{
-					array[j * (count_unknowns + 1) + i] = pow(10.0, DBL_MIN_10_EXP + 50.0);
+					my_array[j * (count_unknowns + 1) + i] = pow(10.0, DBL_MIN_10_EXP + 50.0);
 				}
 				else
 				{
-					array[j * (count_unknowns + 1) + i] = -(residual[j] - base[j]) / d2;
+					my_array[j * (count_unknowns + 1) + i] = -(residual[j] - base[j]) / d2;
+					if (x[i]->type == MH2O) // DL_pitz
+						my_array[j * (count_unknowns + 1) + i] *= mass_water_aq_x;
 				}
 			}
 			else
 			{
-				array[j * (count_unknowns + 1) + i] = -(residual[j] - base[j]) / d2;
-				if (!PHR_ISFINITE(array[j * (count_unknowns + 1) + i]))
+				my_array[j * (count_unknowns + 1) + i] = -(residual[j] - base[j]) / d2;
+				if (x[i]->type == MH2O) // DL_pitz
+					my_array[j * (count_unknowns + 1) + i] *= mass_water_aq_x;
+				if (!PHR_ISFINITE(my_array[j * (count_unknowns + 1) + i]))
 				{
 					//fprintf(stderr, "oops, got NaN: %e, %e, %e, %e\n", residual[j], base[j], d2, array[j * (count_unknowns + 1) + i]);
 				}
@@ -5641,10 +5757,10 @@ numerical_jacobian(void)
 			break;
 		case MH:
 			s_eminus->la -= d;
-			if (array[i * (count_unknowns + 1) + i] == 0)
+			if (my_array[i * (count_unknowns + 1) + i] == 0)
 			{
 				/*output_msg(sformatf( "Zero diagonal for MH\n")); */
-				array[i * (count_unknowns + 1) + i] =
+				my_array[i * (count_unknowns + 1) + i] =
 				  under(s_h2->lm) * 2;
 			}
 			break;
@@ -5652,7 +5768,13 @@ numerical_jacobian(void)
 			x[i]->s->lg -= d;
 			break;
 		case MH2O:
-			mass_water_aq_x /= (1 + d);
+			//mass_water_aq_x /= (1 + d);
+			//x[i]->master[0]->s->moles = mass_water_aq_x / gfw_water;
+			//break;
+			//DL_pitz
+			mass_water_aq_x -= d1;
+			if (use.Get_surface_in() && dl_type_x == cxxSurface::DONNAN_DL)
+				mass_water_bulk_x -= d1;
 			x[i]->master[0]->s->moles = mass_water_aq_x / gfw_water;
 			break;
 		case MU:

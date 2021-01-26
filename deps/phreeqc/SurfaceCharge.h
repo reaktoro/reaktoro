@@ -101,10 +101,12 @@ public:
 	void Set_sigma2(LDBLE d) {this->sigma2 = d;}
 	LDBLE Get_sigmaddl() const {return this->sigmaddl;}
 	void Set_sigmaddl(LDBLE d) {this->sigmaddl = d;}
-	const cxxNameDouble & Get_diffuse_layer_totals(void) const {return this->diffuse_layer_totals;}
+	cxxNameDouble & Get_diffuse_layer_totals(void) { return this->diffuse_layer_totals; }
+	const cxxNameDouble & Get_diffuse_layer_totals(void)const { return this->diffuse_layer_totals; }
 	void Set_diffuse_layer_totals(cxxNameDouble & nd) {this->diffuse_layer_totals = nd;}
 	std::map<LDBLE, cxxSurfDL> &Get_g_map(void) {return g_map;}
 	void Set_g_map(std::map<LDBLE, cxxSurfDL> & t) {g_map = t;}
+	std::map<LDBLE, LDBLE> &Get_z_gMCD_map(void) { return z_gMCD_map; } // z, exp(-zF Psi / RT) * fraction of dl water
 	std::map<int, double> & Get_dl_species_map(void)       {return this->dl_species_map;}
 	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
 	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
@@ -121,6 +123,7 @@ protected:
 	// workspace variables
 	LDBLE sigma0, sigma1, sigma2, sigmaddl;
 	std::map<LDBLE, cxxSurfDL> g_map;
+	std::map<LDBLE, LDBLE> z_gMCD_map;
 	const static std::vector < std::string > vopts;
 	std::map<int, double> dl_species_map;
 };

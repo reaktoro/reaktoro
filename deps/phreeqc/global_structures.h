@@ -1,6 +1,7 @@
 #ifndef _INC_GLOBAL_STRUCTURES_H
 #define _INC_GLOBAL_STRUCTURES_H
 #include "Surface.h"
+#include "GasPhase.h"
 /* ----------------------------------------------------------------------
  *   #define DEFINITIONS
  * ---------------------------------------------------------------------- */
@@ -132,19 +133,19 @@
 #define MAX_LM 3.0				/* maximum log molality allowed in intermediate iterations */
 #define MAX_M 1000.0
 #ifdef USE_DECIMAL128
-//#define MIN_LM -80.0			/* minimum log molality allowed before molality set to zero */
-//#define LOG_ZERO_MOLALITY -80	/* molalities <= LOG_ZERO_MOLALITY are considered equal to zero */
-//#define MIN_TOTAL 1e-60
-//#define MIN_TOTAL_SS MIN_TOTAL/100
-//#define MIN_RELATED_SURFACE MIN_TOTAL*100
-//#define MIN_RELATED_LOG_ACTIVITY -60
+// #define MIN_LM -80.0			/* minimum log molality allowed before molality set to zero */
+// #define LOG_ZERO_MOLALITY -80	/* molalities <= LOG_ZERO_MOLALITY are considered equal to zero */
+// #define MIN_TOTAL 1e-60
+// #define MIN_TOTAL_SS MIN_TOTAL/100
+// #define MIN_RELATED_SURFACE MIN_TOTAL*100
+// #define MIN_RELATED_LOG_ACTIVITY -60
 #else
-//#define MIN_LM -30.0			/* minimum log molality allowed before molality set to zero */
-//#define LOG_ZERO_MOLALITY -30	/* molalities <= LOG_ZERO_MOLALITY are considered equal to zero */
-//#define MIN_TOTAL 1e-25
-//#define MIN_TOTAL_SS MIN_TOTAL/100
-//#define MIN_RELATED_SURFACE MIN_TOTAL*100
-//#define MIN_RELATED_LOG_ACTIVITY -30
+// #define MIN_LM -30.0			/* minimum log molality allowed before molality set to zero */
+// #define LOG_ZERO_MOLALITY -30	/* molalities <= LOG_ZERO_MOLALITY are considered equal to zero */
+// #define MIN_TOTAL 1e-25
+// #define MIN_TOTAL_SS MIN_TOTAL/100
+// #define MIN_RELATED_SURFACE MIN_TOTAL*100
+// #define MIN_RELATED_LOG_ACTIVITY -30
 #endif
 #define REF_PRES_PASCAL 1.01325E5   /* Reference pressure: 1 atm */
 /*
@@ -246,6 +247,7 @@ struct model
 	struct kinetics *kinetics;
 
 	int count_gas_phase;
+	cxxGasPhase::GP_TYPE gas_phase_type;
 	struct phase **gas_phase;
 
 	int count_ss_assemblage;
@@ -540,10 +542,12 @@ struct cell_data
 	LDBLE mid_cell_x;
 	LDBLE disp;
 	LDBLE temp;
-	LDBLE por;					/* free (uncharged) porewater porosities */
-	LDBLE por_il;				/* interlayer water porosities */
+	LDBLE por;				/* free (uncharged) porewater porosities */
+	LDBLE por_il;			/* interlayer water porosities */
+	LDBLE potV;				/* potential (V) */
 	int punch;
 	int print;
+	int same_model;
 };
 
 /*----------------------------------------------------------------------
@@ -666,6 +670,12 @@ struct species
 	LDBLE gfw;					/* gram formula wt of species */
 	LDBLE z;					/* charge of species */
 	LDBLE dw;					/* tracer diffusion coefficient in water at 25oC, m2/s */
+	LDBLE dw_t;					/* correct Dw for temperature: Dw(TK) = Dw(298.15) * exp(dw_t / TK - dw_t / 298.15) */
+	LDBLE dw_a;					/* parms for calc'ng SC = SC0 * exp(-dw_a * z * mu^0.5 / (1 + DH_B * dw_a2 * mu^0.5)) */
+	LDBLE dw_a2;				/*  */
+	LDBLE dw_a_visc;			/* viscosity correction of SC */
+	LDBLE dw_t_SC;				/* contribution to SC, for calc'ng transport number with BASIC */
+	LDBLE dw_corr;				/* dw corrected for TK and mu */
 	LDBLE erm_ddl;				/* enrichment factor in DDL */
 	LDBLE equiv;				/* equivalents in exchange species */
 	LDBLE alk;					/* alkalinity of species, used for cec in exchange */
@@ -676,6 +686,7 @@ struct species
 	LDBLE dha, dhb, a_f;		/* WATEQ Debye Huckel a and b-dot; active_fraction coef for exchange species */
 	LDBLE lk;					/* log10 k at working temperature */
 	LDBLE logk[MAX_LOG_K_INDICES];				/* log kt0, delh, 6 coefficients analytical expression + volume terms */
+	LDBLE Jones_Dole[10];		/* 7 coefficients analytical expression for B, D, anion terms and pressure in Jones_Dole viscosity eqn */
 /* VP: Density Start */
 	LDBLE millero[7];		    /* regression coefficients to calculate temperature dependent phi_0 and b_v of Millero density model */
 	/* VP: Density End */
@@ -928,6 +939,7 @@ struct defaults
 {
 	LDBLE temp;
 	LDBLE density;
+	bool calc_density;
 	const char *units;
 	const char *redox;
 	LDBLE ph;
@@ -1026,30 +1038,33 @@ struct spec
 	LDBLE c;					/* concentration for AQ, equivalent fraction for EX */
 	LDBLE z;					/* charge number */
 	LDBLE Dwt;					/* temperature corrected free water diffusion coefficient, m2/s */
+	LDBLE dw_t;					/* temperature factor for Dw */
 	LDBLE erm_ddl;				/* enrichment factor in ddl */
 };
 struct sol_D
 {
 	int count_spec;				/* number of aqueous + exchange species */
 	int count_exch_spec;		/* number of exchange species */
-	LDBLE exch_total, x_max;	/* total moles of X-, max X- in transport step in sol_D[1] */
+	LDBLE exch_total, x_max, tk_x;	/* total moles of X-, max X- in transport step in sol_D[1], tk */
+	LDBLE viscos_f;	            /* (tk_x * viscos_0_25) / (298 * viscos) */
 	struct spec *spec;
+	int spec_size;
 };
 struct J_ij
 {
 	const char *name;
-	LDBLE tot1, tot2;
+	LDBLE tot1, tot2, tot_stag, charge;  /* species change in cells i and j */
 };
 struct M_S
 {
 	const char *name;
-	LDBLE tot1, tot2;
+	LDBLE tot1, tot2, tot_stag, charge; /* master species transport in cells i and j */
 };
 // Pitzer definitions
 typedef enum
 { TYPE_B0, TYPE_B1, TYPE_B2, TYPE_C0, TYPE_THETA, TYPE_LAMDA, TYPE_ZETA,
   TYPE_PSI, TYPE_ETHETA, TYPE_ALPHAS, TYPE_MU, TYPE_ETA, TYPE_Other,
-  TYPE_SIT_EPSILON, TYPE_SIT_EPSILON_MU
+  TYPE_SIT_EPSILON, TYPE_SIT_EPSILON_MU, TYPE_APHI
 } pitz_param_type;
 
 struct pitz_param
@@ -1071,8 +1086,9 @@ struct pitz_param
 		LDBLE alphas;
 		LDBLE mu;
 		LDBLE eta;
-	  LDBLE eps;
-	  LDBLE eps1;
+		LDBLE eps;
+		LDBLE eps1;
+		LDBLE aphi;
 	} U;
 	LDBLE a[6];
 	LDBLE alpha;

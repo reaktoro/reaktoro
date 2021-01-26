@@ -72,7 +72,7 @@ pitz_param_read(char *string, int n)
 	char token[2 * MAX_LENGTH];
 	struct pitz_param pzp, *pzp_ptr;
 
-	if (n != 2 && n != 3)
+	if (n != 2 && n != 3 && n != 0)
 		return (NULL);
 	if (string == NULL)
 		return (NULL);

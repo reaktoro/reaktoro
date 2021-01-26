@@ -467,7 +467,7 @@ cxxExchange::Deserialize(Dictionary & dictionary, std::vector < int >&ints, std:
 	this->exchange_comps.clear();
 	for (int n = 0; n < count; n++)
 	{
-		cxxExchComp ec;
+		cxxExchComp ec(this->io);
 		ec.Deserialize(dictionary, ints, doubles, ii, dd);
 		this->exchange_comps.push_back(ec);
 	}

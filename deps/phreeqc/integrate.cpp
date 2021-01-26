@@ -578,11 +578,20 @@ initial_surface_water(void)
 				charge_ptr->Get_specific_area() *
 				charge_ptr->Get_grams();
 		}
-
 		rd = debye_length * use.Get_surface_ptr()->Get_debye_lengths();
 		use.Get_surface_ptr()->Set_thickness(rd);
 
-		if (state == INITIAL_SURFACE)
+		if (!sum_surfs)
+		{
+			for (int i = 0; i < count_unknowns; i++)
+			{
+				if (x[i]->type != SURFACE_CB)
+					continue;
+				cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[i]->surface_charge);
+				charge_ptr->Set_mass_water(0);
+			}
+		}
+		else if (state == INITIAL_SURFACE)
 		{
 			/* distribute water over DDL (rd) and free pore (r - rd) */
 			/* find r: free pore (m3) = pi * (r - rd)^2 * L, where L = A / (2*pi*r),
@@ -595,8 +604,7 @@ initial_surface_water(void)
 			if (rd > rd_limit)
 			{
 				mass_water_surfaces_x =
-					use.Get_solution_ptr()->Get_mass_water() * ddl_limit / (1 -
-																ddl_limit);
+					use.Get_solution_ptr()->Get_mass_water() * ddl_limit / (1 - ddl_limit);
 				r = 0.002 * (mass_water_surfaces_x +
 							 use.Get_solution_ptr()->Get_mass_water()) / sum_surfs;
 				rd_limit = (1 - sqrt(1 - ddl_limit)) * r;
@@ -605,15 +613,13 @@ initial_surface_water(void)
 			}
 			else
 				mass_water_surfaces_x =
-					(r * r / pow(r - rd, 2) -
-					 1) * use.Get_solution_ptr()->Get_mass_water();
+					(r * r / pow(r - rd, 2) - 1) * use.Get_solution_ptr()->Get_mass_water();
 			for (int i = 0; i < count_unknowns; i++)
 			{
 				if (x[i]->type != SURFACE_CB)
 					continue;
 				cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[i]->surface_charge);
-				l_s =charge_ptr->Get_specific_area() *
-					charge_ptr->Get_grams();
+				l_s = charge_ptr->Get_specific_area() * charge_ptr->Get_grams();
 				charge_ptr->Set_mass_water(mass_water_surfaces_x * l_s / sum_surfs);
 			}
 		}
@@ -733,7 +739,7 @@ calc_all_donnan(void)
 {
 	bool converge; 
 	int cd_m;
-	LDBLE new_g, f_psi, surf_chrg_eq, psi_avg, f_sinh, A_surf, ratio_aq;
+	LDBLE new_g, f_psi, surf_chrg_eq, psi_avg, f_sinh, A_surf, ratio_aq, ratio_aq_tot;
 	LDBLE new_g2, f_psi2, surf_chrg_eq2, psi_avg2, dif, var1;
 
 	if (use.Get_surface_ptr() == NULL)
@@ -745,6 +751,8 @@ calc_all_donnan(void)
 /*
  *   calculate g for each surface...
  */
+	if (!calculating_deriv || use.Get_surface_ptr()->Get_debye_lengths()) // DL_pitz
+		initial_surface_water();
 	converge = TRUE;
 	for (int j = 0; j < count_unknowns; j++)
 	{
@@ -782,9 +790,9 @@ calc_all_donnan(void)
 			cd_m = -1;
 		}
 		surf_chrg_eq = A_surf * f_sinh * sinh(f_psi) / F_C_MOL;
-		if (surf_chrg_eq < -5e3)
+		if (fabs(surf_chrg_eq) > 5e3)
 		{
-			surf_chrg_eq = -5e3;
+			surf_chrg_eq = (surf_chrg_eq < 0 ? -5e3 : 5e3);
 			var1 = surf_chrg_eq / (A_surf * f_sinh / F_C_MOL);
 			var1 = (var1 + sqrt(var1 * var1 + 1));
 			f_psi = (var1 > 1e-8 ? log(var1) : -18.4);
@@ -804,21 +812,30 @@ calc_all_donnan(void)
 
 		/* fill in g's */
 		ratio_aq = charge_ptr->Get_mass_water() / mass_water_aq_x;
+		ratio_aq_tot = charge_ptr->Get_mass_water() / mass_water_bulk_x;
 
 		for (it = charge_group_map.begin(); it != charge_group_map.end(); it++)
 		{
 			LDBLE z = it->first;
+			if (!ratio_aq)
+			{
+				charge_ptr->Get_g_map()[z].Set_g(0);
+				charge_ptr->Get_g_map()[z].Set_dg(0);
+				charge_ptr->Get_z_gMCD_map()[z] = 0;
+				converge = true;
+				continue;
+			}
 			new_g = ratio_aq * (exp(cd_m * z * psi_avg) - 1);
-			if (use.Get_surface_ptr()->Get_only_counter_ions() &&
-				((surf_chrg_eq < 0 && z < 0)
-				 || (surf_chrg_eq > 0 && z > 0)))
+			if (use.Get_surface_ptr()->Get_only_counter_ions() && surf_chrg_eq * z > 0)
+				//((surf_chrg_eq < 0 && z < 0)
+				// || (surf_chrg_eq > 0 && z > 0)))
 				new_g = -ratio_aq;
 			if (new_g <= -ratio_aq)
 				new_g = -ratio_aq + G_TOL * 1e-3;
 			new_g2 = ratio_aq * (exp(cd_m * z * psi_avg2) - 1);
-			if (use.Get_surface_ptr()->Get_only_counter_ions() &&
-				((surf_chrg_eq < 0 && z < 0)
-				 || (surf_chrg_eq > 0 && z > 0)))
+			if (use.Get_surface_ptr()->Get_only_counter_ions() && surf_chrg_eq * z > 0)
+				//((surf_chrg_eq < 0 && z < 0)
+				// || (surf_chrg_eq > 0 && z > 0)))
 				new_g2 = -ratio_aq;
 			if (new_g2 <= -ratio_aq)
 				new_g2 = -ratio_aq + G_TOL * 1e-3;
@@ -845,7 +862,19 @@ calc_all_donnan(void)
 			{
 				charge_ptr->Get_g_map()[z].Set_dg(-z);
 			}
-			/* save g for species */
+			/* save Boltzmann factor * water fraction for MCD calc's in transport */
+			if (converge)
+			{
+				if (use.Get_surface_ptr()->Get_only_counter_ions())
+				{
+					if (surf_chrg_eq * z > 0) // co-ions are not in the DL
+						charge_ptr->Get_z_gMCD_map()[z] = 0;
+					else // assume that counter-ions have the free water conc for diffusion
+						charge_ptr->Get_z_gMCD_map()[z] = ratio_aq_tot;
+				}
+				else
+					charge_ptr->Get_z_gMCD_map()[z] = (new_g / ratio_aq + 1) * ratio_aq_tot;
+			}
 		}
 		if (debug_diffuse_layer == TRUE)
 		{
@@ -959,7 +988,6 @@ calc_init_donnan(void)
 			{
 				charge_ptr->Get_g_map()[z].Set_dg(-z);
 			}
-
 			/* save g for species */
 			for (int i = 0; i < count_s_x; i++)
 			{
@@ -1024,15 +1052,13 @@ calc_psi_avg(cxxSurfaceCharge *charge_ptr, LDBLE surf_chrg_eq)
 		for (it = charge_group_map.begin(); it != charge_group_map.end(); it++)
 		{
 			LDBLE z = it->first;
+			if (!z || (use.Get_surface_ptr()->Get_only_counter_ions() && surf_chrg_eq * z > 0))
+				continue;
 			LDBLE eq = it->second;
 			/*  multiply with ratio_aq for multiplier options cp and cm
 				in calc_all_donnan (not used now)...  */
 			temp = exp(-z * p) * ratio_aq;
 
-			if (use.Get_surface_ptr()->Get_only_counter_ions() &&
-				((surf_chrg_eq < 0 && z < 0)
-				 || (surf_chrg_eq > 0 && z > 0)))
-				temp = 0.0;
 			fd += eq * temp;
 			fd1 -= z * eq * temp;
 		}
@@ -1043,9 +1069,17 @@ calc_psi_avg(cxxSurfaceCharge *charge_ptr, LDBLE surf_chrg_eq)
 		l_iter++;
 		if (l_iter > 50)
 		{
+			pr.all = TRUE;
+			pr.exchange = TRUE;
+			pr.headings = TRUE;
+			pr.pp_assemblage = TRUE;
+			pr.species = TRUE;
+			pr.surface = TRUE;
+			pr.totals = TRUE;
+			print_all();
 			error_string = sformatf(
-					"\nToo many iterations in subroutine calc_psi_avg; surface charge = %12.4e; surface water = %12.4e.\n",
-					(double) surf_chrg_eq, (double) charge_ptr->Get_mass_water());
+				"\nToo many iterations in subroutine calc_psi_avg; surface charge = %12.4e; surface water = %12.4e.\n",
+				(double)surf_chrg_eq, (double)charge_ptr->Get_mass_water());
 			error_msg(error_string, STOP);
 		}
 	}

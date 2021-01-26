@@ -29,6 +29,8 @@ class cxxSolution:public cxxNumKeyword
 	void Set_new_def(bool p)  {this->new_def = p;}
 	LDBLE Get_patm() const    {return this->patm;}
 	void Set_patm(LDBLE p)    {this->patm = p;}
+	LDBLE Get_potV() const    {return this->potV;}
+	void Set_potV(LDBLE p)    {this->potV = p;}
 	LDBLE Get_tc() const      {return this->tc;}
 	void Set_tc(LDBLE l_tc)   {this->tc = l_tc;}
 	LDBLE Get_ph() const      {return this->ph;}
@@ -117,6 +119,7 @@ class cxxSolution:public cxxNumKeyword
   protected:
 	bool new_def;
 	LDBLE patm;
+	LDBLE potV;
 	LDBLE tc;
 	LDBLE ph;
 	LDBLE pe;
