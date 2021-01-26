@@ -16,66 +16,49 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      REAKTORO_USE_OPENLIBM: 1
-      NUMBER_OF_COMPILATION_JOBS: 2
+      os: Linux-x86_64
+      configuration: Release
 
     strategy:
       fail-fast: true
       max-parallel: 4
-      matrix:
-        PY_VER: [3.6, 3.7]
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-
-      - name: Configuring Cache
-        id: cache
-        uses: actions/cache@v2
-        env:
-          # Increase this value to reset cache and rebuild the env during the PR
-          CACHE_NUMBER: 1
-        with:
-          path: |
-            **/build
-            **/ccache
-            ~/conda_pkgs_dir
-          key:
-            ${{ runner.os }}-${{ matrix.PY_VER }}-${{ github.ref }}-${{ env.CACHE_NUMBER }}
-
+      - uses: actions/checkout@v1
       - uses: conda-incubator/setup-miniconda@v2
         with:
-          channels: conda-forge
-          channel-priority: true
-          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
-
-      - name: Configuring Conda Environment
+          auto-update-conda: true
+      - name: Configure
         shell: bash -l {0}
-        env:
-          PY_VER: ${{ matrix.PY_VER }}
         run: |
           conda config --set always_yes yes --set changeps1 no
           conda config --add channels conda-forge
           conda install conda-devenv
           conda devenv
-
-      - name: Building and Installing Reaktoro
+          source activate optima
+          cmake -S . -B .build
+      - name: Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.ccache
+          key: ${{ runner.os }}-ccache-${{ hashFiles('hashFile.txt') }}  # https://github.community/t/caching-for-c-builds/124529/2
+          restore-keys: ${{ runner.os }}-ccache-
+      - name: Build
         shell: bash -l {0}
-        env:
-          PY_VER: ${{ matrix.PY_VER }}
-          CC: ccache
-          CXX: ccache
         run: |
-          source activate reaktoro
+          source activate optima
           ccache -s
           ccache -z
-          inv -e compile -n ${{ env.NUMBER_OF_COMPILATION_JOBS }}
+          cmake --build .build --config ${{ env.configuration }} --parallel 3
           ccache -s
-          python ci/check_compiled_files.py
-
-      - name: Testing Reaktoro
+      - name: Install
         shell: bash -l {0}
         run: |
-          source activate reaktoro
-          pytest . -n auto
+          source activate optima
+          cmake --build .build --config ${{ env.configuration }} --target install
+      - name: Tests
+        shell: bash -l {0}
+        run: |
+          source activate optima
+          cmake --build .build --config ${{ env.configuration }} --target tests
