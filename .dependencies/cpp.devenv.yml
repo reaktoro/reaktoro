@@ -5,7 +5,7 @@ dependencies:
   # pybind11 version must match the version used to compile ThermoFun
   - pybind11 >=2.5.0
   - thermofun==0.3.3
-  - nlohmann_json==3.6.1
+  - nlohmann_json >=3.6.1,<4
   - openlibm
   {% if not debug %}
   - pugixml  # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
