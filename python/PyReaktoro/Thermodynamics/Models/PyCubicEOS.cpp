@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-void exportCubicEos(py::module& m)
+void exportCubicEOS(py::module& m)
 {
     py::enum_<CubicEOS::Model>(m, "CubicEOSModel")
         .value("None", CubicEOS::VanDerWaals)
