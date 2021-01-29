@@ -28,30 +28,6 @@ namespace Reaktoro {
 
 void exportFluidPhase(py::module& m)
 {
-    py::enum_<CubicEOS::Model>(m, "CubicEOSModel")
-        .value("None", CubicEOS::VanDerWaals)
-        .value("RedlichKwong", CubicEOS::RedlichKwong)
-        .value("SoaveRedlichKwong", CubicEOS::SoaveRedlichKwong)
-        .value("PengRobinson", CubicEOS::PengRobinson)
-        ;
-
-    py::enum_<PhaseIdentificationMethod>(m, "PhaseIdentificationMethod")
-        .value("None", PhaseIdentificationMethod::None)
-        .value("VolumeMethod", PhaseIdentificationMethod::VolumeMethod)
-        .value("IsothermalCompressibilityMethods", PhaseIdentificationMethod::IsothermalCompressibilityMethods)
-        .value("GibbsEnergyAndEquationOfStateMethod", PhaseIdentificationMethod::GibbsEnergyAndEquationOfStateMethod)
-        ;
-
-    py::class_<CubicEOS::Params>(m, "CubicEOSParams")
-        .def(
-            py::init<CubicEOS::Model, PhaseIdentificationMethod>(),
-            py::arg("model") = CubicEOS::PengRobinson,
-            py::arg("phase_identification_method") = PhaseIdentificationMethod::None
-        )
-        .def_readwrite("model", &CubicEOS::Params::model)
-        .def_readwrite("phase_identification_method", &CubicEOS::Params::phase_identification_method)
-        ;
-
     py::class_<FluidPhase, Phase>(m, "_FluidPhase")
         .def(py::init<const std::string&, PhaseType>())
         .def(py::init<const FluidMixture&, const std::string&, PhaseType>())
