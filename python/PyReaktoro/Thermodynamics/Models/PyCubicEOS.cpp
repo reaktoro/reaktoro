@@ -47,6 +47,18 @@ void exportCubicEOS(py::module& m)
         .def_readwrite("model", &CubicEOS::Params::model)
         .def_readwrite("phase_identification_method", &CubicEOS::Params::phase_identification_method)
         ;
+
+    py::class_<CubicEOS::InteractionParamsResult>(m, "BinaryInteractionParams")
+        .def(
+            py::init<MatrixXd, MatrixXd, MatrixXd>(),
+            py::arg("k"),
+            py::arg("kT"),
+            py::arg("kTT")
+        )
+        .def_readwrite("k", &CubicEOS::InteractionParamsResult::k)
+        .def_readwrite("kT", &CubicEOS::InteractionParamsResult::kT)
+        .def_readwrite("kTT", &CubicEOS::InteractionParamsResult::kTT)
+        ;
 }
 
 } // namespace Reaktoro
