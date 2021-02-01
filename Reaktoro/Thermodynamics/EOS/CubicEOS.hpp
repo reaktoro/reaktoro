@@ -57,12 +57,17 @@ public:
         PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
     };
 
+    /// Class to define or store Binary Interaction Parameters (BIPs) from a calculation or input.
+    /// Note that the BIPs can depend on the temperature, thus kT and kTT should be also provided.
     struct InteractionParamsResult
     {
+        /// The BIPs matrix. The size must be (n, n), where n is the number of species
         MatrixXd k;
 
+        /// The derivative of each k entry w.r.t T.
         MatrixXd kT;
 
+        /// The derivative of each kT entry w.r.t T.
         MatrixXd kTT;
     };
 
