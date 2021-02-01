@@ -1,9 +1,12 @@
+import numpy as np
+
 from reaktoro import (
     ChemicalEditor,
     ChemicalState,
     ChemicalSystem,
     Database,
     EquilibriumSolver,
+    BinaryInteractionParams
 )
 
 
@@ -47,3 +50,26 @@ def test_CubicEOS_multiple_roots():
 
     # check that it doesn't raise an exception
     state.properties()
+
+
+def test_bips_setup():
+    k = [
+        [0.00, 0.01, 0.50],
+        [0.01, 0.00, 0.40],
+        [0.50, 0.40, 0.00]
+    ]
+    kT = [
+        [0.00, 0.00, 0.00],
+        [0.00, 0.00, 0.00],
+        [0.00, 0.00, 0.00]
+    ]
+    kTT = [
+        [0.00, 0.00, 0.00],
+        [0.00, 0.00, 0.00],
+        [0.00, 0.00, 0.00]
+    ]
+
+    bips = BinaryInteractionParams(k, kT, kTT)
+    assert np.allclose(bips.k, k)
+    assert np.allclose(bips.kT, kT)
+    assert np.allclose(bips.kTT, kTT)

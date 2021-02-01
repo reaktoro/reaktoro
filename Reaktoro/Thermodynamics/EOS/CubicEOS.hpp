@@ -31,6 +31,7 @@
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Thermodynamics/EOS/PhaseIdentification.hpp>
 
 namespace Reaktoro {
@@ -58,28 +59,15 @@ public:
 
     struct InteractionParamsResult
     {
-        Table2D<ThermoScalar> k;
+        MatrixXd k;
 
-        Table2D<ThermoScalar> kT;
+        MatrixXd kT;
 
-        Table2D<ThermoScalar> kTT;
-    };
-
-    struct InteractionParamsArgs
-    {
-        const ThermoScalar& T;
-
-        const ThermoVector& a;
-
-        const ThermoVector& aT;
-
-        const ThermoVector& aTT;
-
-        VectorConstRef b;
+        MatrixXd kTT;
     };
 
     using InteractionParamsFunction =
-        std::function<InteractionParamsResult(const InteractionParamsArgs&)>;
+        std::function<InteractionParamsResult(const double&)>;
 
     struct Result
     {

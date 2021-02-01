@@ -248,10 +248,9 @@ struct CubicEOS::Impl
 
         // Calculate the table of binary interaction parameters and its temperature derivatives
         InteractionParamsResult kres;
-        InteractionParamsArgs kargs{T, a, aT, aTT, b};
 
         if(calculate_interaction_params)
-            kres = calculate_interaction_params(kargs);
+            kres = calculate_interaction_params(T.val);
         // Calculate the parameter `amix` of the phase and the partial molar parameters `abar` of each species
         ChemicalScalar amix(nspecies);
         ChemicalScalar amixT(nspecies);
@@ -262,9 +261,9 @@ struct CubicEOS::Impl
         {
             for(unsigned j = 0; j < nspecies; ++j)
             {
-                const ThermoScalar r = kres.k.empty() ? ThermoScalar(1.0) : 1.0 - kres.k[i][j];
-                const ThermoScalar rT = kres.kT.empty() ? ThermoScalar(0.0) : -kres.kT[i][j];
-                const ThermoScalar rTT = kres.kTT.empty() ? ThermoScalar(0.0) : -kres.kTT[i][j];
+                const double r = kres.k.size() ? 1.0 - kres.k(i, j) : 1.0;
+                const double rT = kres.kT.size() ? -kres.kT(i, j) : 0.0;
+                const double rTT = kres.kTT.size() ? -kres.kTT(i, j) : 0.0;
 
                 const ThermoScalar s = sqrt(a[i]*a[j]);
                 const ThermoScalar sT = 0.5*s/(a[i]*a[j]) * (aT[i]*a[j] + a[i]*aT[j]);
