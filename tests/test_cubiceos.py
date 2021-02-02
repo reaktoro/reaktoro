@@ -135,12 +135,7 @@ def test_bips_setup_without_derivatives():
 
     cubic_eos_params = CubicEOSParams(binary_interaction_values=bips_function)
     bips_calculated = cubic_eos_params.binary_interaction_values(T_dummy)
-
-    print(len(bips_calculated.kT))
     
     assert bips_calculated.k.all() == np.array(bips_expected.k).all()
     assert len(bips_calculated.kT) == 0
     assert len(bips_calculated.kTT) == 0
-
-
-test_bips_setup_without_derivatives()
