@@ -752,6 +752,17 @@ struct Database::Impl
                     liquid_species_map[liquid_species.name()] = liquid_species;
                 }
             }
+            else if(type == "Liquid")
+            {
+                LiquidSpecies liquid_species = parseFluidSpecies(node);
+                liquid_species.setName(name);
+                const auto liquid_species_suffix_size = 3;
+                liquid_species.setName(name.substr(0, name.size() - liquid_species_suffix_size) + "(liq)");
+                if(valid(liquid_species))
+                {
+                    liquid_species_map[liquid_species.name()] = liquid_species;
+                }
+            }
             else if(type == "Mineral")
             {
                 MineralSpecies species = parseMineralSpecies(node);
