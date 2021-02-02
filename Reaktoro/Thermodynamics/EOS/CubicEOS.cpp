@@ -589,7 +589,7 @@ auto CubicEOS::sanityCheckInteractionParamsFunction(const InteractionParamsFunct
     auto k_size = bips.k.size();
     auto k_num_of_rows = bips.k.rows();
     auto k_num_of_cols = bips.k.cols();
-    Assert(k_size != nspecies * nspecies || k_num_of_cols != nspecies || k_num_of_rows != nspecies,
+    Assert(k_size == nspecies * nspecies && k_num_of_cols == nspecies && k_num_of_rows == nspecies,
         "Could not set the binary interaction parameters (k) in the CubicEOS.",
         "Dimension mismatch between given BIP matrix and number of species.");
 
@@ -598,7 +598,7 @@ auto CubicEOS::sanityCheckInteractionParamsFunction(const InteractionParamsFunct
     if (kT_size > 0) {  // if kT is provided
         auto kT_num_of_rows = bips.kT.rows();
         auto kT_num_of_cols = bips.kT.cols();
-        Assert(kT_size != nspecies * nspecies || kT_num_of_cols != nspecies || kT_num_of_rows != nspecies,
+        Assert(kT_size == nspecies * nspecies && kT_num_of_cols == nspecies && kT_num_of_rows == nspecies,
             "Could not set the binary interaction parameters (kT) in the CubicEOS.",
             "Dimension mismatch between given BIP matrix and number of species.");
     }
@@ -608,7 +608,7 @@ auto CubicEOS::sanityCheckInteractionParamsFunction(const InteractionParamsFunct
     if (kTT_size > 0) {  // if kTT is provided
         auto kTT_num_of_rows = bips.kTT.rows();
         auto kTT_num_of_cols = bips.kTT.cols();
-        Assert(kTT_size != nspecies * nspecies || kTT_num_of_cols != nspecies || kTT_num_of_rows != nspecies,
+        Assert(kTT_size == nspecies * nspecies && kTT_num_of_cols == nspecies && kTT_num_of_rows == nspecies,
             "Could not set the binary interaction parameters (kTT) in the CubicEOS.",
             "Dimension mismatch between given BIP matrix and number of species.");
     }
