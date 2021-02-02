@@ -46,17 +46,6 @@ public:
         VanDerWaals, RedlichKwong, SoaveRedlichKwong, PengRobinson,
     };
 
-    /// Parameters to be passed to the Cubic Equation of State
-    struct Params
-    {
-        Model model = PengRobinson;
-
-        /// If both Gaseous and Liquid phases are in the system, it is recommended to configure a
-        /// robust phase identification method such as GibbsEnergyAndEquationOfStateMethod for BOTH
-        /// phases.
-        PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
-    };
-
     /// Class to define or store Binary Interaction Parameters (BIPs) from a calculation or input.
     /// Note that the BIPs can depend on the temperature, thus kT and kTT should be also provided.
     struct InteractionParamsResult
@@ -71,8 +60,26 @@ public:
         MatrixXd kTT;
     };
 
+    /// Function wrapper to calculate (temperature-dependent) binary interaction parameters.
     using InteractionParamsFunction =
         std::function<InteractionParamsResult(const double&)>;
+
+    /// Parameters to be passed to the Cubic Equation of State
+    struct Params
+    {
+        Model model = PengRobinson;
+
+        /// If both Gaseous and Liquid phases are in the system, it is recommended to configure a
+        /// robust phase identification method such as GibbsEnergyAndEquationOfStateMethod for BOTH
+        /// phases.
+        PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
+
+        /// Wrapper function to calculate binary interaction parameters for mixture rules using a 
+        /// Cubic EOS. This function should have the temperature T as input 
+        /// and should return a InteractionParamsResult.
+        /// @see InteractionParamsResult
+        InteractionParamsFunction binary_interaction_values;
+    };
 
     struct Result
     {

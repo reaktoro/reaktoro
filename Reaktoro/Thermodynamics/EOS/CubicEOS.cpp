@@ -497,6 +497,8 @@ CubicEOS::CubicEOS(unsigned nspecies, CubicEOS::Params params)
 {
     pimpl->model = params.model;
     pimpl->phase_identification_method = params.phase_identification_method;
+    if(params.binary_interaction_values)
+            pimpl->calculate_interaction_params = params.binary_interaction_values;
 }
 
 CubicEOS::CubicEOS(const CubicEOS& other)
