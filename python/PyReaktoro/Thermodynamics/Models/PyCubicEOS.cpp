@@ -53,9 +53,9 @@ void exportCubicEOS(py::module& m)
     py::class_<CubicEOS::InteractionParamsResult>(m, "BinaryInteractionParams")
         .def(
             py::init<MatrixXd, MatrixXd, MatrixXd>(),
-            py::arg("k"),
-            py::arg("kT"),
-            py::arg("kTT")
+            py::arg("k") = MatrixXd{},
+            py::arg("kT") = MatrixXd{},
+            py::arg("kTT") = MatrixXd{}
         )
         .def_readwrite("k", &CubicEOS::InteractionParamsResult::k)
         .def_readwrite("kT", &CubicEOS::InteractionParamsResult::kT)

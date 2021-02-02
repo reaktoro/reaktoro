@@ -105,3 +105,22 @@ def test_bips_calculation_function():
     assert np.allclose(bips_calculated.k, bips_expected.k)
     assert np.allclose(bips_calculated.kT, bips_expected.kT)
     assert np.allclose(bips_calculated.kTT, bips_expected.kTT)
+
+
+def test_bips_setup_without_derivatives():
+    def bips_function(T):
+        k = [
+            [0.00, 0.01, 0.50],
+            [0.01, 0.00, 0.40],
+            [0.50, 0.40, 0.00]
+        ]
+        bips_values = BinaryInteractionParams(k)
+        return bips_values
+
+    T_dummy = 2.0
+    bips_expected = bips_function(T_dummy)
+
+    cubic_eos_params = CubicEOSParams(binary_interaction_values=bips_function)
+    bips_calculated = cubic_eos_params.binary_interaction_values(T_dummy)
+    
+    assert np.allclose(bips_calculated.k, bips_expected.k)
