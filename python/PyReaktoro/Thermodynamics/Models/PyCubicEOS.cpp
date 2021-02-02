@@ -40,12 +40,14 @@ void exportCubicEOS(py::module& m)
 
     py::class_<CubicEOS::Params>(m, "CubicEOSParams")
         .def(
-            py::init<CubicEOS::Model, PhaseIdentificationMethod>(),
+            py::init<CubicEOS::Model, PhaseIdentificationMethod, CubicEOS::InteractionParamsFunction>(),
             py::arg("model") = CubicEOS::PengRobinson,
-            py::arg("phase_identification_method") = PhaseIdentificationMethod::None
+            py::arg("phase_identification_method") = PhaseIdentificationMethod::None,
+            py::arg("binary_interaction_values") = CubicEOS::InteractionParamsFunction{}
         )
         .def_readwrite("model", &CubicEOS::Params::model)
         .def_readwrite("phase_identification_method", &CubicEOS::Params::phase_identification_method)
+        .def_readwrite("binary_interaction_values", &CubicEOS::Params::binary_interaction_values)
         ;
 
     py::class_<CubicEOS::InteractionParamsResult>(m, "BinaryInteractionParams")
