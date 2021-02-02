@@ -153,9 +153,15 @@ public:
     /// Set the acentric factors of the species.
     auto setAcentricFactors(const std::vector<double>& values) -> void;
 
-    /// Set the function that calculates the interaction parameters kij and its temperature derivatives.
+    /// Set the function that calculates the interaction parameters kij (k) 
+    /// and its temperature derivatives (kT and kTT).
     /// @see InteractionParamFunction, InteractionParamArgs, InteractionParamResult
     auto setInteractionParamsFunction(const InteractionParamsFunction& func) -> void;
+
+    /// Sanity check to verify if BIPs matrices have proper dimensions. Considering that the phase has
+    /// n species, the BIP matricies k, kT and kTT should have (n, n) as dimensions.
+    /// @see setInteractionParamsFunction
+    auto sanityCheckInteractionParamsFunction(const InteractionParamsFunction& func) -> void;
 
     /// Calculate the thermodynamic properties of the phase.
     /// @param T The temperature of the phase (in units of K)
