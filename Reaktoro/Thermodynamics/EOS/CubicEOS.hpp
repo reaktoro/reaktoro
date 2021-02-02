@@ -155,6 +155,7 @@ public:
 
     /// Set the function that calculates the interaction parameters kij (k) 
     /// and its temperature derivatives (kT and kTT).
+    /// @param func A wrapper function to calculate the BIPs matrices
     /// @see InteractionParamFunction, InteractionParamArgs, InteractionParamResult
     auto setInteractionParamsFunction(const InteractionParamsFunction& func) -> void;
 
