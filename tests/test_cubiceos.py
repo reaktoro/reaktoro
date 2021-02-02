@@ -54,6 +54,9 @@ def test_CubicEOS_multiple_roots():
 
 
 def test_bips_setup():
+    """
+    Test the BIPs storage in a BinaryInteractionParams object.
+    """
     k = [
         [0.00, 0.01, 0.50],
         [0.01, 0.00, 0.40],
@@ -71,12 +74,17 @@ def test_bips_setup():
     ]
 
     bips = BinaryInteractionParams(k, kT, kTT)
-    assert np.allclose(bips.k, k)
-    assert np.allclose(bips.kT, kT)
-    assert np.allclose(bips.kTT, kTT)
+    assert bips.k.all() == np.array(k).all()
+    assert bips.kT.all() == np.array(kT).all()
+    assert bips.kTT.all() == np.array(kTT).all()
 
 
 def test_bips_calculation_function():
+    """
+    Test the wrapper for the function that calculates the BIPs for mixtures
+    modeled by a Cubic EOS. In this particular case, the BIPs depend on the
+    temperature.
+    """
     def bips_function(T):
         k = [
             [0.00 * T, 0.01 * T, 0.50 * T],
@@ -102,12 +110,17 @@ def test_bips_calculation_function():
     cubic_eos_params = CubicEOSParams(binary_interaction_values=bips_function)
     bips_calculated = cubic_eos_params.binary_interaction_values(T_dummy)
     
-    assert np.allclose(bips_calculated.k, bips_expected.k)
-    assert np.allclose(bips_calculated.kT, bips_expected.kT)
-    assert np.allclose(bips_calculated.kTT, bips_expected.kTT)
+    assert bips_calculated.k.all() == np.array(bips_expected.k).all()
+    assert bips_calculated.kT.all() == np.array(bips_expected.kT).all()
+    assert bips_calculated.kTT.all() == np.array(bips_expected.kTT).all()
 
 
 def test_bips_setup_without_derivatives():
+    """
+    This test takes into account the case where the BIPs are constants. In such a case, define
+    matrices for kT and kTT are not necessary since all entries would be zero. Thus, only k
+    should be defined.
+    """
     def bips_function(T):
         k = [
             [0.00, 0.01, 0.50],
@@ -123,4 +136,4 @@ def test_bips_setup_without_derivatives():
     cubic_eos_params = CubicEOSParams(binary_interaction_values=bips_function)
     bips_calculated = cubic_eos_params.binary_interaction_values(T_dummy)
     
-    assert np.allclose(bips_calculated.k, bips_expected.k)
+    assert bips_calculated.k.all() == np.array(bips_expected.k).all()
