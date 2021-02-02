@@ -1,0 +1,159 @@
+<?xml version="1.0" ?>
+<Database>
+  <Element>
+    <Name>C1</Name>
+    <MolarMass units="g/mol">16.0425</MolarMass>
+  </Element>
+  <Element>
+    <Name>C4</Name>
+    <MolarMass units="g/mol">58.12</MolarMass>
+  </Element>
+  <Element>
+    <Name>C10</Name>
+    <MolarMass units="g/mol">142.29</MolarMass>
+  </Element>
+  <Species>
+    <Name>C1(g)</Name>
+    <Formula>C1</Formula>
+    <Elements>C1(1)</Elements>
+    <Type>Gaseous</Type>
+    <MolarMass units="g/mol">16.0425</MolarMass>
+    <Gas>C1</Gas>
+    <CriticalTemperature units="K">190.6</CriticalTemperature>
+    <CriticalPressure units="bar">46.04</CriticalPressure>
+    <AcentricFactor>0.0115</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>None</References>
+        <Date>None</Date>
+        <Gf units="cal/mol">0</Gf>
+        <Hf units="cal/mol">0</Hf>
+        <Sr units="cal/(mol*K)">0</Sr>
+        <a units="cal/(mol*K)">0</a>
+        <b units="cal/(mol*K^2)">0</b>
+        <c units="(cal*K)/mol">0</c>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>C1(l)</Name>
+    <Formula>C1</Formula>
+    <Elements>C1(1)</Elements>
+    <Type>Liquid</Type>
+    <MolarMass units="g/mol">16.0425</MolarMass>
+    <Gas>C1</Gas>
+    <CriticalTemperature units="K">190.6</CriticalTemperature>
+    <CriticalPressure units="bar">46.04</CriticalPressure>
+    <AcentricFactor>0.0115</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>None</References>
+        <Date>None</Date>
+        <Gf units="cal/mol">0</Gf>
+        <Hf units="cal/mol">0</Hf>
+        <Sr units="cal/(mol*K)">0</Sr>
+        <a units="cal/(mol*K)">0</a>
+        <b units="cal/(mol*K^2)">0</b>
+        <c units="(cal*K)/mol">0</c>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>C4(g)</Name>
+    <Formula>C4</Formula>
+    <Elements>C4(1)</Elements>
+    <Type>Gaseous</Type>
+    <MolarMass units="g/mol">58.12</MolarMass>
+    <Gas>C4</Gas>
+    <CriticalTemperature units="K">425.16</CriticalTemperature>
+    <CriticalPressure units="bar">38.0</CriticalPressure>
+    <AcentricFactor>0.1928</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>None</References>
+        <Date>None</Date>
+        <Gf units="cal/mol">0</Gf>
+        <Hf units="cal/mol">0</Hf>
+        <Sr units="cal/(mol*K)">0</Sr>
+        <a units="cal/(mol*K)">0</a>
+        <b units="cal/(mol*K^2)">0</b>
+        <c units="(cal*K)/mol">0</c>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>C4(l)</Name>
+    <Formula>C4</Formula>
+    <Elements>C4(1)</Elements>
+    <Type>Liquid</Type>
+    <MolarMass units="g/mol">58.12</MolarMass>
+    <Gas>C4</Gas>
+    <CriticalTemperature units="K">425.16</CriticalTemperature>
+    <CriticalPressure units="bar">38.0</CriticalPressure>
+    <AcentricFactor>0.1928</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>None</References>
+        <Date>None</Date>
+        <Gf units="cal/mol">0</Gf>
+        <Hf units="cal/mol">0</Hf>
+        <Sr units="cal/(mol*K)">0</Sr>
+        <a units="cal/(mol*K)">0</a>
+        <b units="cal/(mol*K^2)">0</b>
+        <c units="(cal*K)/mol">0</c>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>C10(g)</Name>
+    <Formula>C10</Formula>
+    <Elements>C10(1)</Elements>
+    <Type>Gaseous</Type>
+    <MolarMass units="g/mol">142.29</MolarMass>
+    <Gas>C10</Gas>
+    <CriticalTemperature units="K">617.66</CriticalTemperature>
+    <CriticalPressure units="bar">21.04</CriticalPressure>
+    <AcentricFactor>0.4902</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>None</References>
+        <Date>None</Date>
+        <Gf units="cal/mol">0</Gf>
+        <Hf units="cal/mol">0</Hf>
+        <Sr units="cal/(mol*K)">0</Sr>
+        <a units="cal/(mol*K)">0</a>
+        <b units="cal/(mol*K^2)">0</b>
+        <c units="(cal*K)/mol">0</c>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>C10(l)</Name>
+    <Formula>C10</Formula>
+    <Elements>C10(1)</Elements>
+    <Type>Liquid</Type>
+    <MolarMass units="g/mol">142.29</MolarMass>
+    <Gas>C10</Gas>
+    <CriticalTemperature units="K">617.66</CriticalTemperature>
+    <CriticalPressure units="bar">21.04</CriticalPressure>
+    <AcentricFactor>0.4902</AcentricFactor>
+    <Thermo>
+      <HKF>
+        <References>None</References>
+        <Date>None</Date>
+        <Gf units="cal/mol">0</Gf>
+        <Hf units="cal/mol">0</Hf>
+        <Sr units="cal/(mol*K)">0</Sr>
+        <a units="cal/(mol*K)">0</a>
+        <b units="cal/(mol*K^2)">0</b>
+        <c units="(cal*K)/mol">0</c>
+        <Tmax units="K">1500.0</Tmax>
+      </HKF>
+    </Thermo>
+  </Species>
+</Database>
