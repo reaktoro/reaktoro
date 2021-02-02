@@ -289,6 +289,10 @@ def test_equilibrium_CH4_CO2_pedersen():
     liquid_phase_molar_fraction = state.phaseAmount('Liquid') / molar_base
     phase_fractions = np.array([liquid_phase_molar_fraction, gas_phase_molar_fraction])
     F_expected = np.array([0.197, 0.803])
+    assert phase_fractions == pytest.approx(
+        F_expected,
+        rel=2e-2
+    )
 
     ch4_gas_fraction = state.speciesAmount('CH4(g)') / phase_fractions[1]
     co2_gas_fraction = state.speciesAmount('CO2(g)') / phase_fractions[1]
