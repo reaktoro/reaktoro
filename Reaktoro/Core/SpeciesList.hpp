@@ -289,6 +289,10 @@ public:
     /// Append a new Species at the back of the container (for STL compatibility reasons).
     auto push_back(const Species& species) -> void { append(species); }
 
+    /// Insert a container of Species objects into this SpeciesList instance (for STL compatibility reasons).
+    template<typename Iterator, typename InputIterator>
+    auto insert(Iterator pos, InputIterator begin, InputIterator end) -> void { m_species.insert(pos, begin, end); }
+
     /// The type of the value stored in a SpeciesList (for STL compatibility reasons).
     using value_type = Species;
 };

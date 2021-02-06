@@ -213,6 +213,10 @@ public:
     /// Append a new Element at the back of the container (for STL compatibility reasons).
     auto push_back(const Element& elements) -> void { append(elements); }
 
+    /// Insert a container of Element objects into this ElementList instance (for STL compatibility reasons).
+    template<typename Iterator, typename InputIterator>
+    auto insert(Iterator pos, InputIterator begin, InputIterator end) -> void { m_elements.insert(pos, begin, end); }
+
     /// The type of the value stored in a ElementListBase (for STL compatibility reasons).
     using value_type = Element;
 };

@@ -225,6 +225,10 @@ public:
     /// Append a new Phase at the back of the container (for STL compatibility reasons).
     auto push_back(const Phase& species) -> void { append(species); }
 
+    /// Insert a container of Phase objects into this PhaseList instance (for STL compatibility reasons).
+    template<typename Iterator, typename InputIterator>
+    auto insert(Iterator pos, InputIterator begin, InputIterator end) -> void { m_phases.insert(pos, begin, end); }
+
     /// The type of the value stored in a PhaseList (for STL compatibility reasons).
     using value_type = Phase;
 };
