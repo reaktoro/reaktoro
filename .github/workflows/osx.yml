@@ -1,0 +1,65 @@
+name: osx
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+
+  schedule:
+    - cron: "0 5 * * 1"  # runs at 05:00 UTC on Mondays
+
+jobs:
+  build:
+
+    runs-on: macOS-latest
+
+    env:
+      os: MacOSX-x86_64
+      use_openlibm: 1
+
+    strategy:
+      fail-fast: true
+      max-parallel: 4
+      matrix:
+        PY_VER: ["36", "37"]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+      - name: Configuring Conda Environment
+        shell: bash -l {0}
+        env:
+          PY_VER: ${{ matrix.PY_VER }}
+        run: |
+          conda config --set always_yes yes --set changeps1 no
+          conda config --add channels conda-forge
+          conda install conda-devenv
+          conda devenv
+      - name: Configuring Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: $HOME/.ccache
+          key: ${{ runner.os }}-ccache
+      - name: Building and Installing Reaktoro
+        shell: bash -l {0}
+        env:
+          REAKTORO_USE_OPENLIBM: ${{ env.use_openlibm }}
+        run: |
+          source activate reaktoro
+          ccache -s
+          ccache -z
+          inv compile
+          ccache -s
+      - name: Testing Reaktoro
+        shell: bash -l {0}
+        run: |
+          source activate reaktoro
+          pytest . -n auto
