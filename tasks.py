@@ -8,7 +8,7 @@ import sys
 
 
 def _get_vcvars_paths():
-    template = r"%PROGRAMFILES(X86)%\Microsoft Visual Studio\2019\{edition}\VC\Auxiliary\Build\vcvarsall.bat"
+    template = r"%PROGRAMFILES(X86)%\Microsoft Visual Studio\2017\{edition}\VC\Auxiliary\Build\vcvarsall.bat"
     template = os.path.expandvars(template)
     editions = ('BuildTools', 'Professional', 'WDExpress', 'Community')
     return tuple(Path(template.format(edition=edition)) for edition in editions)
@@ -114,7 +114,7 @@ if sys.platform.startswith('win'):
             c,
             build_dir=build_dir,
             artifacts_dir=artifacts_dir,
-            cmake_generator="Visual Studio 16 2019",
+            cmake_generator="Visual Studio 15 2017",
             cmake_arch="x64",
             config=config,
         )
