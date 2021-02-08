@@ -53,6 +53,7 @@ jobs:
         shell: powershell
         env:
           REAKTORO_USE_OPENLIBM: ${{ env.use_openlibm }}
+          PY_VER: ${{ matrix.PY_VER }}
         run: |
           conda activate reaktoro
           clcache -s
