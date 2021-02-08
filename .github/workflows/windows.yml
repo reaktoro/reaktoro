@@ -54,10 +54,9 @@ jobs:
           cmake -S . -B .build
           cmake --build .build --config ${{ env.configuration }}
           cmake --build .build --config ${{ env.configuration }} --target install
-          python ci\check_compiled_files.py
+          conda info
       - name: Testing Reaktoro
         shell: pwsh
         run: |
           conda activate reaktoro
-          conda info
           pytest . -n auto
