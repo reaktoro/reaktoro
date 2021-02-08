@@ -34,6 +34,7 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
+          allow-softlinks: true
           activate-environment: ''
       - name: Configuring Conda Environment
         shell: powershell
@@ -56,7 +57,7 @@ jobs:
           cmake --build .build --config ${{ env.configuration }} --target install
           conda info
       - name: Testing Reaktoro
-        shell: pwsh
+        shell: powershell
         run: |
           conda activate reaktoro
           pytest . -n auto
