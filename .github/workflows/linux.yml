@@ -23,7 +23,7 @@ jobs:
       fail-fast: true
       max-parallel: 4
       matrix:
-        PY_VER: ["36", "37"]
+        PY_VER: ["3.6", "3.7"]
 
     steps:
       - uses: actions/checkout@v2
