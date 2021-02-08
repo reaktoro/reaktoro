@@ -44,12 +44,6 @@ jobs:
           conda config --add channels conda-forge
           conda install conda-devenv
           conda devenv
-      - name: Configuring Cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: $HOME\clcache
-          key: ${{ runner.os }}-clcache
       - name: Building and Installing Reaktoro
         shell: powershell
         env:
@@ -57,14 +51,13 @@ jobs:
           PY_VER: ${{ matrix.PY_VER }}
         run: |
           conda activate reaktoro
-          clcache -s
-          clcache -z
           cmake -S . -B .build
           cmake --build .build --config ${{ env.configuration }}
           cmake --build .build --config ${{ env.configuration }} --target install
-          clcache -s
+          python ci\check_compiled_files.py
       - name: Testing Reaktoro
-        shell: cmd
+        shell: pwsh
         run: |
-          call conda activate reaktoro || goto :eof
-          pytest . -n auto || goto :eof
+          conda activate reaktoro
+          conda info
+          pytest . -n auto
