@@ -64,7 +64,7 @@ jobs:
           cmake --build .build --config ${{ env.configuration }} --target install
           clcache -s
       - name: Testing Reaktoro
-        shell: powershell
+        shell: cmd
         run: |
-          conda activate reaktoro
-          pytest . -n auto
+          call conda activate reaktoro || goto :eof
+          pytest . -n auto || goto :eof
