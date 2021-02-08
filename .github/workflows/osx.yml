@@ -60,6 +60,7 @@ jobs:
           ccache -z
           inv -e compile -n ${{ env.NUMBER_OF_COMPILATION_JOBS }}
           ccache -s
+          python ci/check_compiled_files.py
       - name: Testing Reaktoro
         shell: bash -l {0}
         run: |
