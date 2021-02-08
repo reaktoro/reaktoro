@@ -22,7 +22,7 @@ jobs:
       fail-fast: true
       max-parallel: 4
       matrix:
-        PY_VER: ["3.6", "3.7"]
+        PY_VER: [3.6, 3.7]
 
     steps:
       - uses: actions/checkout@v2
@@ -32,7 +32,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
-          auto-activate-base: true
+          auto-activate-base: false
           activate-environment: ''
       - name: Configuring Conda Environment
         shell: powershell
@@ -61,7 +61,7 @@ jobs:
           inv compile
           clcache -s
       - name: Testing Reaktoro
-        shell: powershell
+        shell: cmd
         run: |
-          conda activate reaktoro
-          pytest . -n auto
+          call conda activate reaktoro || goto :eof
+          pytest . -n auto || goto :eof
