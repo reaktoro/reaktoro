@@ -17,6 +17,7 @@ jobs:
 
     env:
       use_openlibm: 1
+      configuration: Release
 
     strategy:
       fail-fast: true
@@ -58,7 +59,9 @@ jobs:
           conda activate reaktoro
           clcache -s
           clcache -z
-          inv -e compile --verbose
+          cmake -S . -B .build
+          cmake --build .build --config ${{ env.configuration }}
+          cmake --build .build --config ${{ env.configuration }} --target install
           clcache -s
       - name: Testing Reaktoro
         shell: powershell
