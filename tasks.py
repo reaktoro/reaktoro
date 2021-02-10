@@ -156,7 +156,6 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
             --config {config}
             --
                 {f"-j {number_of_jobs}" if number_of_jobs > 0 else ""}
-                {"-d keeprsp" if sys.platform.startswith("win") else ""}
     """)
 
     commands = [cmake_command, build_command]
