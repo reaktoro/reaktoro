@@ -45,6 +45,12 @@ jobs:
           conda config --add channels conda-forge
           conda install conda-devenv
           conda devenv
+      - name: Configuring Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: $HOME\clcache
+          key: ${{ runner.os }}-clcache
       - name: Building and Installing Reaktoro
         shell: powershell
         env:
