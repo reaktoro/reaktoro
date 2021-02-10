@@ -52,9 +52,7 @@ jobs:
           PY_VER: ${{ matrix.PY_VER }}
         run: |
           conda activate reaktoro
-          cmake -S . -B .build
-          cmake --build .build --config ${{ env.configuration }}
-          cmake --build .build --config ${{ env.configuration }} --target install
+          inv -e compile --verbose
       - name: Testing Reaktoro
         shell: powershell
         run: |
