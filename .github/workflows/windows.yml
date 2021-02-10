@@ -52,7 +52,7 @@ jobs:
           PY_VER: ${{ matrix.PY_VER }}
         run: |
           conda activate reaktoro
-          inv -e compile --verbose
+          inv -e compile -n 2 --verbose
       - name: Testing Reaktoro
         shell: powershell
         run: |

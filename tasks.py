@@ -138,6 +138,7 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
 
     if sys.platform.startswith('win'):
         cmake_generator = "Visual Studio 16 2019"
+        cmake_generator = "Ninja"
     else:
         cmake_generator = "Ninja"
 
