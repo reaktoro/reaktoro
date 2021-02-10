@@ -54,6 +54,8 @@ jobs:
         env:
           REAKTORO_USE_OPENLIBM: ${{ env.use_openlibm }}
           PY_VER: ${{ matrix.PY_VER }}
+          CC: ccache
+          CXX: ccache
         run: |
           source activate reaktoro
           ccache -s
