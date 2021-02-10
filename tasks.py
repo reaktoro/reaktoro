@@ -8,9 +8,9 @@ import sys
 
 
 def _get_vcvars_paths():
-    template = r"%PROGRAMFILES(X86)%\Microsoft Visual Studio\2019\{edition}\VC\Auxiliary\Build\vcvarsall.bat"
+    template = r"%PROGRAMFILES(X86)%\Microsoft Visual Studio\2017\{edition}\VC\Auxiliary\Build\vcvarsall.bat"
     template = os.path.expandvars(template)
-    editions = ('BuildTools', 'Professional', 'WDExpress', 'Community')
+    editions = ('BuildTools', 'Professional', 'WDExpress', 'Community', 'Enterprise')
     return tuple(Path(template.format(edition=edition)) for edition in editions)
 
 
@@ -114,7 +114,7 @@ if sys.platform.startswith('win'):
             c,
             build_dir=build_dir,
             artifacts_dir=artifacts_dir,
-            cmake_generator="Visual Studio 16 2019",
+            cmake_generator="Visual Studio 15 2017",
             cmake_arch="x64",
             config=config,
         )
@@ -136,11 +136,7 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
         build_subdirectory="build",
     )
 
-    if sys.platform.startswith('win'):
-        cmake_generator = "Visual Studio 15 2017"
-    else:
-        cmake_generator = "Ninja"
-
+    cmake_generator = "Ninja"
     cmake_command = _get_cmake_command(
         c,
         build_dir=build_dir,
@@ -159,6 +155,18 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
     """)
 
     commands = [cmake_command, build_command]
+
+    if sys.platform.startswith('win'):
+        for vcvars_path in _get_vcvars_paths():
+            if not vcvars_path.is_file():
+                continue
+            commands.insert(0, f'"{vcvars_path}" amd64')
+            break
+        else:
+            raise Exit(
+                'Error: Commands to configure MSVC environment variables not found.',
+                code=1,
+            )
 
     os.chdir(build_dir)
     c.run("&&".join(commands))
