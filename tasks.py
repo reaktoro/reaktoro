@@ -136,11 +136,16 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
         build_subdirectory="build",
     )
 
+    if sys.platform.startswith('win'):
+        cmake_generator = "Visual Studio 16 2019"
+    else:
+        cmake_generator = "Ninja"
+
     cmake_command = _get_cmake_command(
         c,
         build_dir=build_dir,
         artifacts_dir=artifacts_dir,
-        cmake_generator="Ninja",
+        cmake_generator=cmake_generator,
         config=config,
         verbose=verbose,
     )
@@ -156,17 +161,17 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
 
     commands = [cmake_command, build_command]
 
-    if sys.platform.startswith('win'):
-        for vcvars_path in _get_vcvars_paths():
-            if not vcvars_path.is_file():
-                continue
-            commands.insert(0, f'"{vcvars_path}" amd64')
-            break
-        else:
-            raise Exit(
-                'Error: Commands to configure MSVC environment variables not found.',
-                code=1,
-            )
+    # if sys.platform.startswith('win'):
+    #     for vcvars_path in _get_vcvars_paths():
+    #         if not vcvars_path.is_file():
+    #             continue
+    #         commands.insert(0, f'"{vcvars_path}" amd64')
+    #         break
+    #     else:
+    #         raise Exit(
+    #             'Error: Commands to configure MSVC environment variables not found.',
+    #             code=1,
+    #         )
 
     os.chdir(build_dir)
     c.run("&&".join(commands))

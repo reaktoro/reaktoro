@@ -1,0 +1,60 @@
+name: windows
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+
+  schedule:
+    - cron: "0 5 * * 1"  # runs at 05:00 UTC on Mondays
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    env:
+      use_openlibm: 1
+      configuration: Release
+
+    strategy:
+      fail-fast: true
+      max-parallel: 4
+      matrix:
+        PY_VER: [3.6, 3.7]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+          allow-softlinks: true
+          activate-environment: ''
+      - name: Configuring Conda Environment
+        shell: powershell
+        env:
+          PY_VER: ${{ matrix.PY_VER }}
+        run: |
+          conda config --set always_yes yes --set changeps1 no
+          conda config --add channels conda-forge
+          conda install conda-devenv
+          conda devenv
+      - name: Building and Installing Reaktoro
+        shell: powershell
+        env:
+          REAKTORO_USE_OPENLIBM: ${{ env.use_openlibm }}
+          PY_VER: ${{ matrix.PY_VER }}
+        run: |
+          conda activate reaktoro
+          inv -e compile --verbose
+      - name: Testing Reaktoro
+        shell: powershell
+        run: |
+          conda activate reaktoro
+          pytest . -n auto
