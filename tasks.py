@@ -145,13 +145,14 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
         config=config,
         verbose=verbose,
     )
+    parallel_flag = {f"--parallel" if sys.platform.startswith('win') else "-j"}
     build_command = strip_and_join(f"""
         cmake
             --build .
             --target install
             --config {config}
             --
-                {f"-j {number_of_jobs}" if number_of_jobs > 0 else ""}
+                {f"{parallel_flag} {number_of_jobs}" if number_of_jobs > 0 else ""}
     """)
 
     commands = [cmake_command, build_command]
