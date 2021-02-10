@@ -145,7 +145,7 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
         config=config,
         verbose=verbose,
     )
-    parallel_flag = {f"--parallel" if sys.platform.startswith('win') else "-j"}
+    parallel_flag = f"--parallel" if sys.platform.startswith('win') else "-j"
     build_command = strip_and_join(f"""
         cmake
             --build .
