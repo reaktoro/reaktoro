@@ -54,7 +54,7 @@ jobs:
           conda activate reaktoro
           clcache -s
           clcache -z
-          inv -e compile -n 2 --verbose
+          inv -e compile --verbose
           clcache -s
       - name: Testing Reaktoro
         shell: powershell
