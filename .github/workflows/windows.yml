@@ -52,7 +52,10 @@ jobs:
           PY_VER: ${{ matrix.PY_VER }}
         run: |
           conda activate reaktoro
+          clcache -s
+          clcache -z
           inv -e compile -n 2 --verbose
+          clcache -s
       - name: Testing Reaktoro
         shell: powershell
         run: |
