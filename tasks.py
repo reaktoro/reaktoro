@@ -150,7 +150,7 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
             --target install
             --config {config}
             --
-                {f"-j {number_of_jobs}" if number_of_jobs >= 0 else ""}
+                {f"-j {number_of_jobs}" if number_of_jobs > 0 else ""}
                 {"-d keeprsp" if sys.platform.startswith("win") else ""}
     """)
 
