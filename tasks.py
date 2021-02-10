@@ -81,7 +81,7 @@ def _get_cmake_command(
 
     return strip_and_join(f"""
         cmake
-            -G "{cmake_generator}"
+            {f'-G "{cmake_generator}"' if cmake_generator is not None else ""}
             {f'-A "{cmake_arch}"' if cmake_arch is not None else ""}
             -DPYBIND11_PYTHON_VERSION={os.environ.get("PY_VER", "3.7")}
             -DREAKTORO_BUILD_ALL=ON            
@@ -137,8 +137,8 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
     )
 
     if sys.platform.startswith('win'):
-        cmake_generator = "Visual Studio 16 2019"
-        cmake_generator = "Ninja"
+        # cmake_generator = "Visual Studio 16 2019"
+        cmake_generator = None
     else:
         cmake_generator = "Ninja"
 
