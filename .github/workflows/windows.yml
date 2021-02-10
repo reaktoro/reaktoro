@@ -18,7 +18,6 @@ jobs:
     env:
       use_openlibm: 1
       configuration: Release
-      NUMBER_OF_COMPILATION_JOBS: 4
 
     strategy:
       fail-fast: true
@@ -63,7 +62,7 @@ jobs:
           conda activate reaktoro
           clcache -s
           clcache -z
-          inv -e compile -n ${{ env.NUMBER_OF_COMPILATION_JOBS }} --verbose
+          inv -e compile --verbose
           clcache -s
           conda list
           echo ${env:PATH}
