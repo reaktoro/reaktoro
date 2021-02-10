@@ -49,7 +49,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: $HOME/.ccache
-          key: ${{ runner.os }}-ccache
+          key: ${{ runner.os }}-${{ matrix.PY_VER }}-ccache
       - name: Building and Installing Reaktoro
         shell: bash -l {0}
         env:

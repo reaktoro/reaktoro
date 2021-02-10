@@ -48,14 +48,12 @@ jobs:
         uses: actions/cache@v2
         with:
           path: $HOME/.ccache
-          key: ${{ runner.os }}-ccache
+          key: ${{ runner.os }}-${{ matrix.PY_VER }}-ccache
       - name: Building and Installing Reaktoro
         shell: bash -l {0}
         env:
           REAKTORO_USE_OPENLIBM: ${{ env.use_openlibm }}
           PY_VER: ${{ matrix.PY_VER }}
-          CC: ccache
-          CXX: ccache
         run: |
           source activate reaktoro
           ccache -s
