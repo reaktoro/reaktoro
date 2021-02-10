@@ -55,9 +55,10 @@ jobs:
           cmake -S . -B .build
           cmake --build .build --config ${{ env.configuration }}
           cmake --build .build --config ${{ env.configuration }} --target install
-          pytest . -n auto
       - name: Testing Reaktoro
         shell: powershell
         run: |
           conda activate reaktoro
+          conda list
+          which python
           pytest . -n auto
