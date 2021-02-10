@@ -64,9 +64,6 @@ jobs:
           clcache -z
           inv -e compile --verbose
           clcache -s
-          conda list
-          echo ${env:PATH}
-          python ci/check_compiled_files.py
       - name: Testing Reaktoro
         shell: cmd
         run: |
