@@ -48,7 +48,7 @@ jobs:
         id: cache
         uses: actions/cache@v2
         with:
-          path: $HOME/.ccache
+          path: .ccache
           key: ${{ runner.os }}-${{ matrix.PY_VER }}-ccache
       - name: Building and Installing Reaktoro
         shell: bash -l {0}
@@ -68,4 +68,4 @@ jobs:
         shell: bash -l {0}
         run: |
           source activate reaktoro
-          pytest . -n 2
+          pytest . -n auto

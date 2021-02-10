@@ -49,7 +49,7 @@ jobs:
         id: cache
         uses: actions/cache@v2
         with:
-          path: $HOME\clcache
+          path: .clcache
           key: ${{ runner.os }}-clcache
       - name: Building and Installing Reaktoro
         shell: powershell
@@ -68,4 +68,5 @@ jobs:
         shell: cmd
         run: |
           call conda activate reaktoro || goto :eof
+          python ci/check_compiled_files.py || goto :eof
           pytest . -n auto || goto :eof
