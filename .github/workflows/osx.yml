@@ -18,7 +18,7 @@ jobs:
     env:
       os: MacOSX-x86_64
       use_openlibm: 1
-      NUMBER_OF_COMPILATION_JOBS: 4
+      NUMBER_OF_COMPILATION_JOBS: 2
 
     strategy:
       fail-fast: true
@@ -48,7 +48,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .ccache
-          key: ${{ runner.os }}-${{ matrix.PY_VER }}-ccache
+          key: ${{ runner.os }}-${{ matrix.PY_VER }}-${{ github.ref }}
       - name: Building and Installing Reaktoro
         shell: bash -l {0}
         env:

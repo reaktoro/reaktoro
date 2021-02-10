@@ -23,7 +23,7 @@ jobs:
       fail-fast: true
       max-parallel: 4
       matrix:
-        PY_VER: [3.7]
+        PY_VER: [3.6, 3.7]
 
     steps:
       - uses: actions/checkout@v2
@@ -50,7 +50,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .clcache
-          key: ${{ runner.os }}-clcache
+          key: ${{ runner.os }}-${{ matrix.PY_VER }}-${{ github.ref }}
       - name: Building and Installing Reaktoro
         shell: powershell
         env:
