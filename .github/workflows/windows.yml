@@ -48,7 +48,7 @@ jobs:
         id: cache
         uses: actions/cache@v2
         with:
-          path: .clcache
+          path: ~/build
           key: ${{ runner.os }}-${{ matrix.PY_VER }}-${{ github.ref }}
       - name: Building and Installing Reaktoro
         shell: cmd
