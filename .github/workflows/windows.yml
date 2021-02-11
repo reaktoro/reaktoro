@@ -16,7 +16,7 @@ jobs:
     runs-on: windows-latest
 
     env:
-      use_openlibm: 1
+      REAKTORO_USE_OPENLIBM: 1
       configuration: Release
 
     strategy:
@@ -52,18 +52,17 @@ jobs:
           path: .clcache
           key: ${{ runner.os }}-${{ matrix.PY_VER }}-${{ github.ref }}
       - name: Building and Installing Reaktoro
-        shell: powershell
+        shell: cmd
         env:
-          REAKTORO_USE_OPENLIBM: ${{ env.use_openlibm }}
           PY_VER: ${{ matrix.PY_VER }}
           CC: clcache
           CXX: clcache
         run: |
-          conda activate reaktoro
-          clcache -s
-          clcache -z
-          inv -e compile --verbose
-          clcache -s
+          call conda activate reaktoro || goto :eof
+          clcache -s || goto :eof
+          clcache -z || goto :eof
+          inv -e compile --verbose || goto :eof
+          clcache -s || goto :eof
       - name: Testing Reaktoro
         shell: cmd
         run: |
