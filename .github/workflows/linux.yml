@@ -34,7 +34,7 @@ jobs:
         id: cache
         uses: actions/cache@v2
         env:
-          # Increase this value to reset cache and rebuild the env
+          # Increase this value to reset cache and rebuild the env during the PR
           CACHE_NUMBER: 0
         with:
           path: |
