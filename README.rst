@@ -2,17 +2,17 @@
 Reaktoro
 ========
 
-.. image:: https://github.com/reaktoro/reaktoro/workflows/linux/badge.svg
+.. image:: https://github.com/reaktoro/reaktoro/workflows/linux/badge.svg?branch=master
     :alt: Linux Build
     :scale: 100%
     :target: https://github.com/reaktoro/reaktoro/actions?query=workflow%3Alinux
 
-.. image:: https://github.com/reaktoro/reaktoro/workflows/osx/badge.svg
+.. image:: https://github.com/reaktoro/reaktoro/workflows/osx/badge.svg?branch=master
     :alt: OSX Build
     :scale: 100%
     :target: https://github.com/reaktoro/reaktoro/actions?query=workflow%3Aosx
 
-.. image:: https://github.com/reaktoro/reaktoro/workflows/windows/badge.svg
+.. image:: https://github.com/reaktoro/reaktoro/workflows/windows/badge.svg?branch=master
     :alt: Windows Build
     :scale: 100%
     :target: https://github.com/reaktoro/reaktoro/actions?query=workflow%3Awindows
