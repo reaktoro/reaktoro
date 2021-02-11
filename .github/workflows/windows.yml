@@ -29,6 +29,16 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Configuring Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            **/build
+            **/.clcache
+            $CONDA_PREFIX
+          key: ${{ runner.os }}-${{ matrix.PY_VER }}-${{ github.ref }}
+
       - uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
@@ -43,12 +53,6 @@ jobs:
           conda config --add channels conda-forge
           conda install conda-devenv
           conda devenv
-      - name: Configuring Cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: ~/build
-          key: ${{ runner.os }}-${{ matrix.PY_VER }}-${{ github.ref }}
       - name: Building and Installing Reaktoro
         shell: cmd
         env:
