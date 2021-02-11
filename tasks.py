@@ -136,12 +136,11 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
         build_subdirectory="build",
     )
 
-    cmake_generator = "Ninja"
     cmake_command = _get_cmake_command(
         c,
         build_dir=build_dir,
         artifacts_dir=artifacts_dir,
-        cmake_generator=cmake_generator,
+        cmake_generator="Ninja",
         config=config,
         verbose=verbose,
     )
