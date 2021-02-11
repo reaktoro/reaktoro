@@ -8,9 +8,9 @@ import sys
 
 
 def _get_vcvars_paths():
-    template = r"%PROGRAMFILES(X86)%\Microsoft Visual Studio\2017\{edition}\VC\Auxiliary\Build\vcvarsall.bat"
+    template = r"%PROGRAMFILES(X86)%\Microsoft Visual Studio\2019\{edition}\VC\Auxiliary\Build\vcvarsall.bat"
     template = os.path.expandvars(template)
-    editions = ('BuildTools', 'Professional', 'WDExpress', 'Community')
+    editions = ('BuildTools', 'Professional', 'WDExpress', 'Community', 'Enterprise')
     return tuple(Path(template.format(edition=edition)) for edition in editions)
 
 
@@ -81,7 +81,7 @@ def _get_cmake_command(
 
     return strip_and_join(f"""
         cmake
-            -G "{cmake_generator}"
+            {f'-G "{cmake_generator}"' if cmake_generator is not None else ""}
             {f'-A "{cmake_arch}"' if cmake_arch is not None else ""}
             -DPYBIND11_PYTHON_VERSION={os.environ.get("PY_VER", "3.7")}
             -DREAKTORO_BUILD_ALL=ON            
@@ -114,7 +114,7 @@ if sys.platform.startswith('win'):
             c,
             build_dir=build_dir,
             artifacts_dir=artifacts_dir,
-            cmake_generator="Visual Studio 15 2017",
+            cmake_generator="Visual Studio 16 2019",
             cmake_arch="x64",
             config=config,
         )
@@ -150,8 +150,7 @@ def compile(c, clean=False, config='Release', number_of_jobs=-1, verbose=False):
             --target install
             --config {config}
             --
-                {f"-j {number_of_jobs}" if number_of_jobs >= 0 else ""}
-                {"-d keeprsp" if sys.platform.startswith("win") else ""}
+                {f"-j {number_of_jobs}" if number_of_jobs > 0 else ""}
     """)
 
     commands = [cmake_command, build_command]
