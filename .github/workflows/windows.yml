@@ -36,7 +36,6 @@ jobs:
           allow-softlinks: true
           activate-environment: ''
       - name: Configuring Conda Environment
-        shell: powershell
         env:
           PY_VER: ${{ matrix.PY_VER }}
         run: |
