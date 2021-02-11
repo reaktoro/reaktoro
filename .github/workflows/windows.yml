@@ -17,7 +17,6 @@ jobs:
 
     env:
       REAKTORO_USE_OPENLIBM: 1
-      configuration: Release
 
     strategy:
       fail-fast: true
@@ -63,9 +62,9 @@ jobs:
           clcache -z || goto :eof
           inv -e compile --verbose || goto :eof
           clcache -s || goto :eof
+          python ci/check_compiled_files.py || goto :eof
       - name: Testing Reaktoro
         shell: cmd
         run: |
           call conda activate reaktoro || goto :eof
-          python ci/check_compiled_files.py || goto :eof
           pytest . -n auto || goto :eof
