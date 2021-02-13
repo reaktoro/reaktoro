@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.testing import assert_array_equal
 import pytest
 
 import reaktoro
@@ -83,9 +84,9 @@ def test_bips_setup():
     ]
 
     bips = BinaryInteractionParams(k, kT, kTT)
-    assert bips.k.all() == np.array(k).all()
-    assert bips.kT.all() == np.array(kT).all()
-    assert bips.kTT.all() == np.array(kTT).all()
+    assert_array_equal(bips.k, k)
+    assert_array_equal(bips.kT, kT)
+    assert_array_equal(bips.kTT, kTT)
 
 
 def test_bips_calculation_function():
@@ -119,9 +120,9 @@ def test_bips_calculation_function():
     cubic_eos_params = CubicEOSParams(binary_interaction_values=bips_function)
     bips_calculated = cubic_eos_params.binary_interaction_values(T_dummy)
     
-    assert bips_calculated.k.all() == np.array(bips_expected.k).all()
-    assert bips_calculated.kT.all() == np.array(bips_expected.kT).all()
-    assert bips_calculated.kTT.all() == np.array(bips_expected.kTT).all()
+    assert_array_equal(bips_calculated.k, bips_expected.k)
+    assert_array_equal(bips_calculated.kT, bips_expected.kT)
+    assert_array_equal(bips_calculated.kTT, bips_expected.kTT)
 
 
 def test_bips_setup_without_derivatives():
@@ -145,6 +146,6 @@ def test_bips_setup_without_derivatives():
     cubic_eos_params = CubicEOSParams(binary_interaction_values=bips_function)
     bips_calculated = cubic_eos_params.binary_interaction_values(T_dummy)
     
-    assert bips_calculated.k.all() == np.array(bips_expected.k).all()
+    assert_array_equal(bips_calculated.k, bips_expected.k)
     assert len(bips_calculated.kT) == 0
     assert len(bips_calculated.kTT) == 0
