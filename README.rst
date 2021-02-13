@@ -2,15 +2,20 @@
 Reaktoro
 ========
 
-.. image:: https://travis-ci.org/reaktoro/reaktoro.svg?branch=master
-    :alt: Travis Status
+.. image:: https://github.com/reaktoro/reaktoro/workflows/linux/badge.svg?branch=master
+    :alt: Linux Build
     :scale: 100%
-    :target: https://travis-ci.org/reaktoro/reaktoro
+    :target: https://github.com/reaktoro/reaktoro/actions?query=workflow%3Alinux
 
-.. image:: https://ci.appveyor.com/api/projects/status/github/reaktoro/reaktoro?branch=master&svg=true
-    :alt: AppVeyor Status
+.. image:: https://github.com/reaktoro/reaktoro/workflows/osx/badge.svg?branch=master
+    :alt: OSX Build
     :scale: 100%
-    :target: https://ci.appveyor.com/project/reaktoro/reaktoro
+    :target: https://github.com/reaktoro/reaktoro/actions?query=workflow%3Aosx
+
+.. image:: https://github.com/reaktoro/reaktoro/workflows/windows/badge.svg?branch=master
+    :alt: Windows Build
+    :scale: 100%
+    :target: https://github.com/reaktoro/reaktoro/actions?query=workflow%3Awindows
 
 
 Reaktoro is a unified framework for modeling chemically reactive systems. It provides methods for chemical equilibrium and kinetic calculations for multiphase systems. Reaktoro is mainly developed in C++ for performance reasons. A Python interface is available for a more convenient and simpler use. Currently, Reaktoro can interface with two widely used geochemical software: `PHREEQC <http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/>`_ and `GEMS <http://gems.web.psi.ch/>`_.

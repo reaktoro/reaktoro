@@ -1,0 +1,80 @@
+name: windows
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+
+  schedule:
+    - cron: "0 5 * * 1"  # runs at 05:00 UTC on Mondays
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    env:
+      REAKTORO_USE_OPENLIBM: 1
+
+    strategy:
+      fail-fast: true
+      max-parallel: 4
+      matrix:
+        PY_VER: [3.6, 3.7]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Configuring Cache
+        id: cache
+        uses: actions/cache@v2
+        env:
+          # Increase this value to reset cache and rebuild the env during the PR
+          CACHE_NUMBER: 0
+        with:
+          path: |
+            **/build
+            **/clcache
+            ~/conda_pkgs_dir
+          key: 
+            ${{ runner.os }}-${{ matrix.PY_VER }}-${{ github.ref }}-${{ env.CACHE_NUMBER }}
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-activate-base: false
+          allow-softlinks: true
+          activate-environment: ''
+          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
+
+      - name: Configuring Conda Environment
+        env:
+          PY_VER: ${{ matrix.PY_VER }}
+        run: |
+          conda config --set always_yes yes --set changeps1 no
+          conda config --add channels conda-forge
+          conda install conda-devenv
+          conda devenv
+
+      - name: Building and Installing Reaktoro
+        shell: cmd
+        env:
+          PY_VER: ${{ matrix.PY_VER }}
+          CC: clcache
+          CXX: clcache
+        run: |
+          call conda activate reaktoro || goto :eof
+          clcache -s || goto :eof
+          clcache -z || goto :eof
+          inv -e compile --verbose || goto :eof
+          clcache -s || goto :eof
+          python ci/check_compiled_files.py || goto :eof
+
+      - name: Testing Reaktoro
+        shell: cmd
+        run: |
+          call conda activate reaktoro || goto :eof
+          pytest . -n auto || goto :eof
