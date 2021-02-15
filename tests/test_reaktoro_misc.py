@@ -54,3 +54,19 @@ def test_VectorDouble():
     for i in range(10):
         assert vector[i] == i
 
+
+def test_ThermoScalar():
+    T_input = 273.15
+    T = ThermoScalar(T_input)
+
+    assert T.val == T_input
+    assert T.ddT == 0.0
+    assert T.ddP == 0.0
+
+    T_ddT = 10.0
+    T_ddP = 30.0
+    T_full = ThermoScalar(T_input, T_ddT, T_ddP)
+
+    assert T_full.val == T_input
+    assert T_full.ddT == T_ddT
+    assert T_full.ddP == T_ddP
