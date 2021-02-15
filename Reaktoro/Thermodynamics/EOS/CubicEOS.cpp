@@ -495,7 +495,7 @@ CubicEOS::Result::Result(unsigned nspecies)
 /// Sanity check free function to verify if BIPs matrices have proper dimensions. Considering that the phase has
 /// n species, the BIP matricies k, kT and kTT should have (n, n) as dimensions.
 /// @see CubicEOS::setInteractionParamsFunction
-auto sanityCheckInteractionParamsFunction(const unsigned nspecies, const CubicEOS::InteractionParamsFunction& func) -> void
+auto sanityCheckInteractionParamsFunction(const unsigned& nspecies, const CubicEOS::InteractionParamsFunction& func) -> void
 {
     auto T_for_sanity_check = 273.0;
     auto bips = func(T_for_sanity_check);
