@@ -492,13 +492,50 @@ CubicEOS::Result::Result(unsigned nspecies)
   ln_fugacity_coefficients(nspecies)
 {}
 
+/// Sanity check free function to verify if BIPs matrices have proper dimensions. Considering that the phase has
+/// n species, the BIP matricies k, kT and kTT should have (n, n) as dimensions.
+/// @see CubicEOS::setInteractionParamsFunction
+auto sanityCheckInteractionParamsFunction(const unsigned nspecies, const CubicEOS::InteractionParamsFunction& func) -> void
+{
+    auto T_for_sanity_check = 273.0;
+    auto bips = func(T_for_sanity_check);
+
+    // Check k's dimensions
+    auto k_size = bips.k.size();
+    auto k_num_of_rows = bips.k.rows();
+    auto k_num_of_cols = bips.k.cols();
+    Assert(k_size == nspecies * nspecies && k_num_of_cols == nspecies && k_num_of_rows == nspecies,
+        "Could not set the binary interaction parameters (k) in the CubicEOS.",
+        "Dimension mismatch between given BIP matrix and number of species.");
+
+    // Check kT's dimensions
+    auto kT_size = bips.kT.size();
+    if (kT_size > 0) {  // if kT is provided
+        auto kT_num_of_rows = bips.kT.rows();
+        auto kT_num_of_cols = bips.kT.cols();
+        Assert(kT_size == nspecies * nspecies && kT_num_of_cols == nspecies && kT_num_of_rows == nspecies,
+            "Could not set the binary interaction parameters (kT) in the CubicEOS.",
+            "Dimension mismatch between given BIP matrix and number of species.");
+    }
+
+    // Check kTT's dimensions
+    auto kTT_size = bips.kTT.size();
+    if (kTT_size > 0) {  // if kTT is provided
+        auto kTT_num_of_rows = bips.kTT.rows();
+        auto kTT_num_of_cols = bips.kTT.cols();
+        Assert(kTT_size == nspecies * nspecies && kTT_num_of_cols == nspecies && kTT_num_of_rows == nspecies,
+            "Could not set the binary interaction parameters (kTT) in the CubicEOS.",
+            "Dimension mismatch between given BIP matrix and number of species.");
+    }
+}
+
 CubicEOS::CubicEOS(unsigned nspecies, CubicEOS::Params params)
 : pimpl(new Impl(nspecies))
 {
     pimpl->model = params.model;
     pimpl->phase_identification_method = params.phase_identification_method;
     if(params.binary_interaction_values) {
-        sanityCheckInteractionParamsFunction(params.binary_interaction_values);
+        sanityCheckInteractionParamsFunction(nspecies, params.binary_interaction_values);
         setInteractionParamsFunction(params.binary_interaction_values);
     }
 }
@@ -577,41 +614,6 @@ auto CubicEOS::setAcentricFactors(const std::vector<double>& values) -> void
 auto CubicEOS::setInteractionParamsFunction(const InteractionParamsFunction& func) -> void
 {
     pimpl->calculate_interaction_params = func;
-}
-
-auto CubicEOS::sanityCheckInteractionParamsFunction(const InteractionParamsFunction& func) -> void
-{
-    auto nspecies = numSpecies();
-    auto T_for_sanity_check = 273.0;
-    auto bips = func(T_for_sanity_check);
-
-    // Check k's dimensions
-    auto k_size = bips.k.size();
-    auto k_num_of_rows = bips.k.rows();
-    auto k_num_of_cols = bips.k.cols();
-    Assert(k_size == nspecies * nspecies && k_num_of_cols == nspecies && k_num_of_rows == nspecies,
-        "Could not set the binary interaction parameters (k) in the CubicEOS.",
-        "Dimension mismatch between given BIP matrix and number of species.");
-
-    // Check kT's dimensions
-    auto kT_size = bips.kT.size();
-    if (kT_size > 0) {  // if kT is provided
-        auto kT_num_of_rows = bips.kT.rows();
-        auto kT_num_of_cols = bips.kT.cols();
-        Assert(kT_size == nspecies * nspecies && kT_num_of_cols == nspecies && kT_num_of_rows == nspecies,
-            "Could not set the binary interaction parameters (kT) in the CubicEOS.",
-            "Dimension mismatch between given BIP matrix and number of species.");
-    }
-
-    // Check kTT's dimensions
-    auto kTT_size = bips.kTT.size();
-    if (kTT_size > 0) {  // if kTT is provided
-        auto kTT_num_of_rows = bips.kTT.rows();
-        auto kTT_num_of_cols = bips.kTT.cols();
-        Assert(kTT_size == nspecies * nspecies && kTT_num_of_cols == nspecies && kTT_num_of_rows == nspecies,
-            "Could not set the binary interaction parameters (kTT) in the CubicEOS.",
-            "Dimension mismatch between given BIP matrix and number of species.");
-    }
 }
 
 auto CubicEOS::operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result
