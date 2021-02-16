@@ -56,7 +56,12 @@ def test_ternary_c1_c4_c10_bips_setup():
     editor.addLiquidPhase(oil_species).setChemicalModelCubicEOS(eos_params)
 
     def calculate_bips(T):
-        k = np.zeros((3, 3))
+        zero = reaktoro.ThermoScalar(0.0)
+        k = [
+            [zero, zero, zero],
+            [zero, zero, zero],
+            [zero, zero, zero]
+        ]
         bips = reaktoro.BinaryInteractionParams(k)
         return bips
 
@@ -243,8 +248,12 @@ def test_equilibrium_CH4_CO2_pedersen():
     editor = reaktoro.ChemicalEditor(db)
 
     def calculate_bips(T):
-        k = np.zeros((2, 2))
-        k[0, 1] = k[1, 0] = 0.12
+        k_00 = k_11 = reaktoro.ThermoScalar(0.0)
+        k_01 = k_10 = reaktoro.ThermoScalar(0.12)
+        k = [
+            [k_00, k_01],
+            [k_10, k_11],
+        ]
         bips = reaktoro.BinaryInteractionParams(k)
         return bips
 

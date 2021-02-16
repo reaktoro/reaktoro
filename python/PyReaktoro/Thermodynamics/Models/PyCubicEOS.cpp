@@ -52,10 +52,10 @@ void exportCubicEOS(py::module& m)
 
     py::class_<CubicEOS::InteractionParamsResult>(m, "BinaryInteractionParams")
         .def(
-            py::init<MatrixXd, MatrixXd, MatrixXd>(),
-            py::arg("k") = MatrixXd{},
-            py::arg("kT") = MatrixXd{},
-            py::arg("kTT") = MatrixXd{}
+            py::init<Table2D<ThermoScalar>, Table2D<ThermoScalar>, Table2D<ThermoScalar>>(),
+            py::arg("k") = Table2D<ThermoScalar>{},
+            py::arg("kT") = Table2D<ThermoScalar>{},
+            py::arg("kTT") = Table2D<ThermoScalar>{}
         )
         .def_readwrite("k", &CubicEOS::InteractionParamsResult::k)
         .def_readwrite("kT", &CubicEOS::InteractionParamsResult::kT)
