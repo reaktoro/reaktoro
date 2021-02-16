@@ -8,7 +8,8 @@ from reaktoro import (
     Database,
     EquilibriumSolver,
     BinaryInteractionParams,
-    CubicEOSParams
+    CubicEOSParams,
+    ThermoScalar
 )
 
 
@@ -65,26 +66,66 @@ def test_bips_setup():
     """
     Test the BIPs storage in a BinaryInteractionParams object.
     """
+    k_00 = k_11 = k_22 = ThermoScalar(0.0)
+    k_01 = k_10 = ThermoScalar(0.01)
+    k_02 = k_20 = ThermoScalar(0.50)
+    k_12 = k_21 = ThermoScalar(0.40)
     k = [
-        [0.00, 0.01, 0.50],
-        [0.01, 0.00, 0.40],
-        [0.50, 0.40, 0.00]
+        [k_00, k_01, k_02],
+        [k_10, k_11, k_12],
+        [k_20, k_21, k_22]
     ]
+
+    kT_00 = kT_11 = kT_22 = ThermoScalar(0.0)
+    kT_01 = kT_10 = ThermoScalar(0.0)
+    kT_02 = kT_20 = ThermoScalar(0.0)
+    kT_12 = kT_21 = ThermoScalar(0.0)
     kT = [
-        [0.00, 0.00, 0.00],
-        [0.00, 0.00, 0.00],
-        [0.00, 0.00, 0.00]
+        [kT_00, kT_01, kT_02],
+        [kT_10, kT_11, kT_12],
+        [kT_20, kT_21, kT_22]
     ]
+
+    kTT_00 = kTT_11 = kTT_22 = ThermoScalar(0.0)
+    kTT_01 = kTT_10 = ThermoScalar(0.0)
+    kTT_02 = kTT_20 = ThermoScalar(0.0)
+    kTT_12 = kTT_21 = ThermoScalar(0.0)
     kTT = [
-        [0.00, 0.00, 0.00],
-        [0.00, 0.00, 0.00],
-        [0.00, 0.00, 0.00]
+        [kTT_00, kTT_01, kTT_02],
+        [kTT_10, kTT_11, kTT_12],
+        [kTT_20, kTT_21, kTT_22]
     ]
 
     bips = BinaryInteractionParams(k, kT, kTT)
-    assert_array_equal(bips.k, k)
-    assert_array_equal(bips.kT, kT)
-    assert_array_equal(bips.kTT, kTT)
+
+    k_expected = np.array([
+        [k_00.val, k_01.val, k_02.val],
+        [k_10.val, k_11.val, k_12.val],
+        [k_20.val, k_21.val, k_22.val]
+    ])
+
+    kT_expected = np.array([
+        [kT_00.val, kT_01.val, kT_02.val],
+        [kT_10.val, kT_11.val, kT_12.val],
+        [kT_20.val, kT_21.val, kT_22.val]
+    ])
+
+    kTT_expected = np.array([
+        [kTT_00.val, kTT_01.val, kTT_02.val],
+        [kTT_10.val, kTT_11.val, kTT_12.val],
+        [kTT_20.val, kTT_21.val, kTT_22.val]
+    ])
+
+    bips_k = np.array(bips.k)
+    bips_kT = np.array(bips.kT)
+    bips_kTT = np.array(bips.kTT)
+
+    nspecies = bips_k.shape[0]
+    for i in range(nspecies):
+        for j in range(nspecies):
+            assert bips_k[i, j].val == k_expected[i, j]
+            assert bips_kT[i, j].val == kT_expected[i, j]
+            assert bips_kTT[i, j].val == kTT_expected[i, j]
 
 
 def test_bips_calculation_function():
@@ -94,33 +135,59 @@ def test_bips_calculation_function():
     temperature.
     """
     def bips_function(T):
+        k_00 = k_11 = k_22 = ThermoScalar(0.0 * T.val)
+        k_01 = k_10 = ThermoScalar(0.01 * T.val)
+        k_02 = k_20 = ThermoScalar(0.50 * T.val)
+        k_12 = k_21 = ThermoScalar(0.40 * T.val)
         k = [
-            [0.00 * T, 0.01 * T, 0.50 * T],
-            [0.01 * T, 0.00 * T, 0.40 * T],
-            [0.50 * T, 0.40 * T, 0.00 * T]
+            [k_00, k_01, k_02],
+            [k_10, k_11, k_12],
+            [k_20, k_21, k_22]
         ]
+
+        kT_00 = kT_11 = kT_22 = ThermoScalar(0.0)
+        kT_01 = kT_10 = ThermoScalar(0.01)
+        kT_02 = kT_20 = ThermoScalar(0.50)
+        kT_12 = kT_21 = ThermoScalar(0.40)
         kT = [
-            [0.00, 0.01, 0.50],
-            [0.01, 0.00, 0.40],
-            [0.50, 0.40, 0.00]
+            [kT_00, kT_01, kT_02],
+            [kT_10, kT_11, kT_12],
+            [kT_20, kT_21, kT_22]
         ]
+
+        kTT_00 = kTT_11 = kTT_22 = ThermoScalar(0.0)
+        kTT_01 = kTT_10 = ThermoScalar(0.0)
+        kTT_02 = kTT_20 = ThermoScalar(0.0)
+        kTT_12 = kTT_21 = ThermoScalar(0.0)
         kTT = [
-            [0.00, 0.00, 0.00],
-            [0.00, 0.00, 0.00],
-            [0.00, 0.00, 0.00]
+            [kTT_00, kTT_01, kTT_02],
+            [kTT_10, kTT_11, kTT_12],
+            [kTT_20, kTT_21, kTT_22]
         ]
         bips_values = BinaryInteractionParams(k, kT, kTT)
         return bips_values
 
     T_dummy = 2.0
-    bips_expected = bips_function(T_dummy)
+    T = ThermoScalar(T_dummy)
+    bips_expected = bips_function(T)
 
     cubic_eos_params = CubicEOSParams(binary_interaction_values=bips_function)
-    bips_calculated = cubic_eos_params.binary_interaction_values(T_dummy)
-    
-    assert_array_equal(bips_calculated.k, bips_expected.k)
-    assert_array_equal(bips_calculated.kT, bips_expected.kT)
-    assert_array_equal(bips_calculated.kTT, bips_expected.kTT)
+    bips_calculated = cubic_eos_params.binary_interaction_values(T)
+
+    bips_k_calculated = np.array(bips_calculated.k)
+    bips_kT_calculated = np.array(bips_calculated.kT)
+    bips_kTT_calculated = np.array(bips_calculated.kTT)
+
+    bips_k_expected = np.array(bips_expected.k)
+    bips_kT_expected = np.array(bips_expected.kT)
+    bips_kTT_expected = np.array(bips_expected.kTT)
+
+    nspecies = bips_k_calculated.shape[0]
+    for i in range(nspecies):
+        for j in range(nspecies):
+            assert bips_k_calculated[i, j].val == bips_k_expected[i, j].val
+            assert bips_kT_calculated[i, j].val == bips_kT_expected[i, j].val
+            assert bips_kTT_calculated[i, j].val == bips_kTT_expected[i, j].val
 
 
 def test_bips_setup_without_derivatives():
@@ -130,20 +197,33 @@ def test_bips_setup_without_derivatives():
     should be defined.
     """
     def bips_function(T):
+        k_00 = k_11 = k_22 = ThermoScalar(0.0)
+        k_01 = k_10 = ThermoScalar(0.01)
+        k_02 = k_20 = ThermoScalar(0.50)
+        k_12 = k_21 = ThermoScalar(0.40)
         k = [
-            [0.00, 0.01, 0.50],
-            [0.01, 0.00, 0.40],
-            [0.50, 0.40, 0.00]
+            [k_00, k_01, k_02],
+            [k_10, k_11, k_12],
+            [k_20, k_21, k_22]
         ]
         bips_values = BinaryInteractionParams(k)
         return bips_values
 
     T_dummy = 2.0
-    bips_expected = bips_function(T_dummy)
+    T = ThermoScalar(T_dummy)
+    bips_expected = bips_function(T)
 
     cubic_eos_params = CubicEOSParams(binary_interaction_values=bips_function)
-    bips_calculated = cubic_eos_params.binary_interaction_values(T_dummy)
+    bips_calculated = cubic_eos_params.binary_interaction_values(T)
+
+    bips_k_calculated = np.array(bips_calculated.k)
+
+    bips_k_expected = np.array(bips_expected.k)
+
+    nspecies = bips_k_calculated.shape[0]
+    for i in range(nspecies):
+        for j in range(nspecies):
+            assert bips_k_calculated[i, j].val == bips_k_expected[i, j].val
     
-    assert_array_equal(bips_calculated.k, bips_expected.k)
     assert len(bips_calculated.kT) == 0
     assert len(bips_calculated.kTT) == 0
