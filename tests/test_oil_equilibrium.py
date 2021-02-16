@@ -132,6 +132,38 @@ def test_ternary_c1_c4_c10_bips_setup():
     assert phase_fractions == pytest.approx(phase_fractions_bips)
 
 
+def test_error_bips_setup():
+    """
+    The goal of this test is to check a BIP input with incompatible dimensions.
+    The BIPs compose a symmetric matrix of size (n_species, n_species). This test checks
+    for the case where one of the rows of the BIP matrix has an incompatible dimension.
+    """
+    db = reaktoro.Database(str(get_test_data_dir() / 'hydrocarbons.xml'))
+
+    editor_bips = reaktoro.ChemicalEditor(db)
+
+    gaseous_species = ["C1(g)", "C4(g)", "C10(g)"]
+
+    def calculate_bips(T):
+        zero = reaktoro.ThermoScalar(0.0)
+        # Wrong BIP matrix
+        k = [
+            [zero, zero, zero],
+            [zero, zero, zero],
+            [zero, zero]
+        ]
+        bips = reaktoro.BinaryInteractionParams(k)
+        return bips
+
+    eos_params_bips = reaktoro.CubicEOSParams(
+        model=reaktoro.CubicEOSModel.PengRobinson,
+        phase_identification_method=reaktoro.PhaseIdentificationMethod.GibbsEnergyAndEquationOfStateMethod,
+        binary_interaction_values=calculate_bips
+    )
+    with pytest.raises(RuntimeError):
+        editor_bips.addGaseousPhase(gaseous_species).setChemicalModelCubicEOS(eos_params_bips)
+
+
 @pytest.mark.parametrize(
     "P, T, F_expected, x_expected, y_expected",
     [
