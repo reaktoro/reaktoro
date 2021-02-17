@@ -261,9 +261,9 @@ struct CubicEOS::Impl
         {
             for(unsigned j = 0; j < nspecies; ++j)
             {
-                const double r = kres.k.size() ? 1.0 - kres.k(i, j) : 1.0;
-                const double rT = kres.kT.size() ? -kres.kT(i, j) : 0.0;
-                const double rTT = kres.kTT.size() ? -kres.kTT(i, j) : 0.0;
+                const ThermoScalar r = kres.k.size() ? ThermoScalar(1.0 - kres.k(i, j)) : ThermoScalar(1.0);
+                const ThermoScalar rT = kres.kT.size() ? ThermoScalar(-kres.kT(i, j)) : ThermoScalar(0.0);
+                const ThermoScalar rTT = kres.kTT.size() ? ThermoScalar(-kres.kTT(i, j)) : ThermoScalar(0.0);
 
                 const ThermoScalar s = sqrt(a[i]*a[j]);
                 const ThermoScalar sT = 0.5*s/(a[i]*a[j]) * (aT[i]*a[j] + a[i]*aT[j]);
