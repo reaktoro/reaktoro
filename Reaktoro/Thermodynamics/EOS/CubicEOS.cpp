@@ -511,7 +511,7 @@ auto sanityCheckInteractionParamsFunction(const unsigned& nspecies, const CubicE
 
         // Check k's symmetry
         for (unsigned i = 0; i < k_num_of_rows; i++){
-            for (auto j = i; j < k_num_of_cols; j++){
+            for (auto j = i + 1; j < k_num_of_cols; j++){
                 Assert(bips.k(i, j) == bips.k(j, i),
                     "BIPs matrix k is not symmetric.", "Check your k BIPs matrix input."
                 );
@@ -536,7 +536,7 @@ auto sanityCheckInteractionParamsFunction(const unsigned& nspecies, const CubicE
 
         // Check kT's symmetry
         for (unsigned i = 0; i < kT_num_of_rows; i++){
-            for (auto j = i; j < kT_num_of_cols; j++){
+            for (auto j = i + 1; j < kT_num_of_cols; j++){
                 Assert(bips.kT(i, j) == bips.kT(j, i),
                     "BIPs matrix kT is not symmetric.", "Check your kT BIPs matrix input.");
             }
@@ -560,7 +560,7 @@ auto sanityCheckInteractionParamsFunction(const unsigned& nspecies, const CubicE
 
         // Check kTT's symmetry
         for (unsigned i = 0; i < kTT_num_of_rows; i++){
-            for (auto j = i; j < kTT_num_of_cols; j++){
+            for (auto j = i + 1; j < kTT_num_of_cols; j++){
                 Assert(bips.kT(i, j) == bips.kT(j, i),
                     "BIPs matrix kT is not symmetric.", "Check your kT BIPs matrix input."
                 );
