@@ -541,12 +541,6 @@ auto sanityCheckInteractionParamsFunction(const unsigned& nspecies, const CubicE
                     "BIPs matrix kT is not symmetric.", "Check your kT BIPs matrix input.");
             }
         }
-
-        // Check kT dimensions with k
-        Assert(kT_size == k_size, 
-            "BIPs matrices k and kT have different dimensions.",
-            "k dimensions (" + std::to_string(bips.k.rows()) + "," + std::to_string(bips.k.rows()) + "). " +
-            "kT dimensions (" + std::to_string(kT_num_of_rows) + "," + std::to_string(kT_num_of_rows) + ").");
     }
 
     // Check kTT's dimensions
@@ -566,12 +560,6 @@ auto sanityCheckInteractionParamsFunction(const unsigned& nspecies, const CubicE
                 );
             }
         }
-
-        // Check kTT dimensions with k
-        Assert(kTT_size == k_size, 
-            "BIPs matrices k and kTT have different dimensions.",
-            "k dimensions (" + std::to_string(bips.k.rows()) + "," + std::to_string(bips.k.rows()) + "). " +
-            "kT dimensions (" + std::to_string(kTT_num_of_rows) + "," + std::to_string(kTT_num_of_rows) + ").");
     }
 }
 
