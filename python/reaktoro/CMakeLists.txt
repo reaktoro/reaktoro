@@ -15,7 +15,7 @@ configure_file(${SETUP_PY_IN} ${SETUP_PY})
 add_custom_target(reaktoro ALL
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
         ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:PyReaktoro>
-    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} --quiet install --prefix=${CMAKE_BINARY_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=${CMAKE_BINARY_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 # Set dependencies of reaktoro target
@@ -25,14 +25,26 @@ add_dependencies(reaktoro PyReaktoro)
 if(NOT DEFINED REAKTORO_PYTHON_INSTALL_PREFIX)
     set(REAKTORO_PYTHON_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
 endif()
+
+# Set the path where the dist's source is installed to CMAKE_SOURCE_DIR/dist if not given
+if(NOT DEFINED REAKTORO_PYTHON_DIST_DIR)
+    set(REAKTORO_PYTHON_DIST_DIR ${CMAKE_SOURCE_DIR}/dist)
+endif()
+
+add_custom_target(dist ALL
+    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} sdist --dist-dir=${REAKTORO_PYTHON_DIST_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
 # If the path is already in Windows format (with backslashes), it can't be added directly
 # to the string below, otherwise CMake will later complain about "Invalid escape sequence".
 file(TO_CMAKE_PATH "${REAKTORO_PYTHON_INSTALL_PREFIX}" REAKTORO_PYTHON_INSTALL_PREFIX)
+file(TO_CMAKE_PATH "${REAKTORO_PYTHON_DIST_DIR}" REAKTORO_PYTHON_DIST_DIR)
 
 # Install the reaktoro python package using setuptools
 install(CODE
 "
     file(TO_NATIVE_PATH \"${REAKTORO_PYTHON_INSTALL_PREFIX}\" REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE)
+    file(TO_NATIVE_PATH \"${REAKTORO_PYTHON_DIST_DIR}\" REAKTORO_PYTHON_DIST_DIR_NATIVE)
 
     if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/../../lib/PyReaktoro.pdb)
         string(REPLACE .pyd .pdb REAKTORO_PDB_FILENAME \"${REAKTORO_PYTHON_MODULE_FILENAME}\")
@@ -42,8 +54,49 @@ install(CODE
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     endif()
 
+    # execute_process(
+    #     COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} bdist_wheel --dist-dir=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+    #     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+    # execute_process(
+    #     COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} 
+    #         install --prefix=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+    #     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+    # execute_process(
+    #     COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY}
+    #         install --prefix=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+    #         bdist_wheel --dist-dir=\${REAKTORO_PYTHON_DIST_DIR_NATIVE}
+    #         bdist_egg --bdist-dir=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+    #     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
     execute_process(
-        COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+        COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY}
+            install --prefix=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+            sdist --dist-dir=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}/../
+        COMMAND echo '${CMAKE_CURRENT_BINARY_DIR}'
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+    # execute_process(
+    #     COMMAND \${CMAKE_COMMAND} -E tar 
+    #         -xf reaktoro-${PROJECT_VERSION}.tar.gz
+    #     WORKING_DIRECTORY ${REAKTORO_PYTHON_INSTALL_PREFIX})
+
+    # execute_process(
+    #     COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY}
+    #         install_lib --install-dir=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+    #     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 "
 )
+#######################################################
+# bdist_wheel --dist-dir=\${REAKTORO_PYTHON_DIST_DIR_NATIVE}
+# bdist_wheel --dist-dir=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+# bdist_egg --dist-dir=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE} --bdist-dir=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+# install --prefix=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+# bdist --dist-dir=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+# sdist --dist-dir=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+#######################################################
+# COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} bdist_wheel --dist-dir=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+# Create a custom target to build reaktoro python package during build stage
+# COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} bdist_wheel --dist-dir=${CMAKE_BINARY_DIR}
+# COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} --help install
