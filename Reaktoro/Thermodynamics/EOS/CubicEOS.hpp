@@ -50,16 +50,16 @@ public:
     /// Note that the BIPs can depend on the temperature, thus kT and kTT should be also provided.
     struct InteractionParamsResult
     {
-        Table2D<ThermoScalar> k;
+        MatrixXd k;
 
-        Table2D<ThermoScalar> kT;
+        MatrixXd kT;
 
-        Table2D<ThermoScalar> kTT;
+        MatrixXd kTT;
     };
 
     /// Function wrapper to calculate (temperature-dependent) binary interaction parameters.
     using InteractionParamsFunction =
-        std::function<InteractionParamsResult(const ThermoScalar&)>;
+        std::function<InteractionParamsResult(const double&)>;
 
     /// Parameters to be passed to the Cubic Equation of State
     struct Params

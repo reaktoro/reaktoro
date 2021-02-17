@@ -56,7 +56,7 @@ def test_ternary_c1_c4_c10_bips_setup():
     editor.addLiquidPhase(oil_species).setChemicalModelCubicEOS(eos_params)
 
     def calculate_bips(T):
-        zero = reaktoro.ThermoScalar(0.0)
+        zero = 0.0
         k = [
             [zero, zero, zero],
             [zero, zero, zero],
@@ -136,7 +136,7 @@ def test_error_bips_setup():
     """
     The goal of this test is to check a BIP input with incompatible dimensions.
     The BIPs compose a symmetric matrix of size (n_species, n_species). This test checks
-    for the case where one of the rows of the BIP matrix has an incompatible dimension.
+    for the case where the k BIPs matrix is not symmetric.
     """
     db = reaktoro.Database(str(get_test_data_dir() / 'hydrocarbons.xml'))
 
@@ -145,12 +145,12 @@ def test_error_bips_setup():
     gaseous_species = ["C1(g)", "C4(g)", "C10(g)"]
 
     def calculate_bips(T):
-        zero = reaktoro.ThermoScalar(0.0)
+        one = 1.0
         # Wrong BIP matrix
         k = [
-            [zero, zero, zero],
-            [zero, zero, zero],
-            [zero, zero]
+            [one, one, one],
+            [one, one, one],
+            [-one, one, one],
         ]
         bips = reaktoro.BinaryInteractionParams(k)
         return bips
@@ -280,8 +280,8 @@ def test_equilibrium_CH4_CO2_pedersen():
     editor = reaktoro.ChemicalEditor(db)
 
     def calculate_bips(T):
-        k_00 = k_11 = reaktoro.ThermoScalar(0.0)
-        k_01 = k_10 = reaktoro.ThermoScalar(0.12)
+        k_00 = k_11 = 0.0
+        k_01 = k_10 = 0.12
         k = [
             [k_00, k_01],
             [k_10, k_11],

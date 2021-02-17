@@ -250,7 +250,7 @@ struct CubicEOS::Impl
         InteractionParamsResult kres;
 
         if(calculate_interaction_params)
-            kres = calculate_interaction_params(T);
+            kres = calculate_interaction_params(T.val);
         // Calculate the parameter `amix` of the phase and the partial molar parameters `abar` of each species
         ChemicalScalar amix(nspecies);
         ChemicalScalar amixT(nspecies);
@@ -261,9 +261,9 @@ struct CubicEOS::Impl
         {
             for(unsigned j = 0; j < nspecies; ++j)
             {
-                const ThermoScalar r = kres.k.empty() ? ThermoScalar(1.0) : 1.0 - kres.k[i][j];
-                const ThermoScalar rT = kres.kT.empty() ? ThermoScalar(0.0) : -kres.kT[i][j];
-                const ThermoScalar rTT = kres.kTT.empty() ? ThermoScalar(0.0) : -kres.kTT[i][j];
+                const double r = kres.k.size() ? 1.0 - kres.k(i, j) : 1.0;
+                const double rT = kres.kT.size() ? -kres.kT(i, j) : 0.0;
+                const double rTT = kres.kTT.size() ? -kres.kTT(i, j) : 0.0;
 
                 const ThermoScalar s = sqrt(a[i]*a[j]);
                 const ThermoScalar sT = 0.5*s/(a[i]*a[j]) * (aT[i]*a[j] + a[i]*aT[j]);
@@ -497,34 +497,81 @@ CubicEOS::Result::Result(unsigned nspecies)
 /// @see CubicEOS::setInteractionParamsFunction
 auto sanityCheckInteractionParamsFunction(const unsigned& nspecies, const CubicEOS::InteractionParamsFunction& func) -> void
 {
-    ThermoScalar T_for_sanity_check(273.0);
+    auto T_for_sanity_check = 273.0;
     auto bips = func(T_for_sanity_check);
 
     // Check k's dimensions
-    auto k_num_of_rows = bips.k.size();
-    for (const auto& bips_k_row : bips.k){
-        auto k_num_of_cols = bips_k_row.size();
-        Assert(k_num_of_cols == nspecies && k_num_of_rows == nspecies,
-        "Could not set the binary interaction parameters (k) in the CubicEOS.",
-        "Dimension mismatch between given BIP matrix and number of species.");
+    auto k_size = bips.k.size();
+    if (k_size > 0) {
+        auto k_num_of_rows = bips.k.rows();
+        auto k_num_of_cols = bips.k.cols();
+        Assert(k_size == nspecies * nspecies && k_num_of_cols == nspecies && k_num_of_rows == nspecies,
+            "Could not set the binary interaction parameters (k) in the CubicEOS.",
+            "Dimension mismatch between given BIP matrix and number of species.");
+
+        // Check k's symmetry
+        for (unsigned i = 0; i < k_num_of_rows; i++){
+            for (auto j = i; j < k_num_of_cols; j++){
+                Assert(bips.k(i, j) == bips.k(j, i),
+                    "BIPs matrix k is not symmetric.", "Check your k BIPs matrix input."
+                );
+            }
+        }
+    }
+    else {
+        Exception exception;
+        exception.error << "Invalid function to calculate the BIPs matrix k.";
+        exception.reason << "Logic error: the function is unable to return a BIP matrix k.";
+        RaiseError(exception);
     }
 
     // Check kT's dimensions
-    auto kT_num_of_rows = bips.kT.size();
-    for (const auto& bips_kT_row : bips.kT){
-        auto kT_num_of_cols = bips_kT_row.size();
-        Assert(kT_num_of_cols == nspecies && kT_num_of_rows == nspecies,
-        "Could not set the binary interaction parameters (kT) in the CubicEOS.",
-        "Dimension mismatch between given BIP matrix and number of species.");
+    auto kT_size = bips.kT.size();
+    if (kT_size > 0) {  // if kT is provided
+        auto kT_num_of_rows = bips.kT.rows();
+        auto kT_num_of_cols = bips.kT.cols();
+        Assert(kT_size == nspecies * nspecies && kT_num_of_cols == nspecies && kT_num_of_rows == nspecies,
+            "Could not set the binary interaction parameters (kT) in the CubicEOS.",
+            "Dimension mismatch between given BIP matrix and number of species.");
+
+        // Check kT's symmetry
+        for (unsigned i = 0; i < kT_num_of_rows; i++){
+            for (auto j = i; j < kT_num_of_cols; j++){
+                Assert(bips.kT(i, j) == bips.kT(j, i),
+                    "BIPs matrix kT is not symmetric.", "Check your kT BIPs matrix input.");
+            }
+        }
+
+        // Check kT dimensions with k
+        Assert(kT_size == k_size, 
+            "BIPs matrices k and kT have different dimensions.",
+            "k dimensions (" + std::to_string(bips.k.rows()) + "," + std::to_string(bips.k.rows()) + "). " +
+            "kT dimensions (" + std::to_string(kT_num_of_rows) + "," + std::to_string(kT_num_of_rows) + ").");
     }
 
     // Check kTT's dimensions
-    auto kTT_num_of_rows = bips.kTT.size();
-    for (const auto& bips_kTT_row : bips.kTT){
-        auto kTT_num_of_cols = bips_kTT_row.size();
-        Assert(kTT_num_of_cols == nspecies && kTT_num_of_rows == nspecies,
-        "Could not set the binary interaction parameters (kTT) in the CubicEOS.",
-        "Dimension mismatch between given BIP matrix and number of species.");
+    auto kTT_size = bips.kTT.size();
+    if (kTT_size > 0) {  // if kTT is provided
+        auto kTT_num_of_rows = bips.kTT.rows();
+        auto kTT_num_of_cols = bips.kTT.cols();
+        Assert(kTT_size == nspecies * nspecies && kTT_num_of_cols == nspecies && kTT_num_of_rows == nspecies,
+            "Could not set the binary interaction parameters (kTT) in the CubicEOS.",
+            "Dimension mismatch between given BIP matrix and number of species.");
+
+        // Check kTT's symmetry
+        for (unsigned i = 0; i < kTT_num_of_rows; i++){
+            for (auto j = i; j < kTT_num_of_cols; j++){
+                Assert(bips.kT(i, j) == bips.kT(j, i),
+                    "BIPs matrix kT is not symmetric.", "Check your kT BIPs matrix input."
+                );
+            }
+        }
+
+        // Check kTT dimensions with k
+        Assert(kTT_size == k_size, 
+            "BIPs matrices k and kTT have different dimensions.",
+            "k dimensions (" + std::to_string(bips.k.rows()) + "," + std::to_string(bips.k.rows()) + "). " +
+            "kT dimensions (" + std::to_string(kTT_num_of_rows) + "," + std::to_string(kTT_num_of_rows) + ").");
     }
 }
 
