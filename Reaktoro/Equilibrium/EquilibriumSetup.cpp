@@ -126,9 +126,12 @@ struct EquilibriumSetup::Impl
     VectorXr gx;   ///< The gradient of the objective function with respect to x = (n, q).
     MatrixXd Hxx;  ///< The Jacobian of the objective gradient function with respect to x = (n, q).
     MatrixXd Hxp;  ///< The Jacobian of the objective gradient function with respect to p.
+    MatrixXd Hxc;  ///< The Jacobian of the objective gradient function with respect to params (Optima uses `c` for these parameter variables).
     VectorXr vp;   ///< The residuals of the equation constraints.
     MatrixXd Vpx;  ///< The Jacobian of the residuals of the equation constraints with respect to x = (n, q).
     MatrixXd Vpp;  ///< The Jacobian of the residuals of the equation constraints with respect to p.
+    MatrixXd Vpc;  ///< The Jacobian of the residuals of the equation constraints with respect to params (Optima uses `c` for these parameter variables).
+    Params params; ///< The current values of the input parameters for the equilibrium calculation (e.g, T, P, pH, pE, V, etc.).
 
     /// Construct an EquilibriumSetup::Impl object
     Impl(const EquilibriumSpecs& specs)
@@ -336,6 +339,17 @@ struct EquilibriumSetup::Impl
         return Hxp;
     }
 
+    auto evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& paramsconst) -> MatrixXdConstRef
+    {
+        params = paramsconst;
+        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXr
+        {
+            return evalObjectiveGradX(x, p, params);
+        };
+        // Hxc = jacobian(fn, wrt(params), at(x, p, params)); // TODO: wrt(params) make no sense - I'll revisit this later.
+        return Hxc;
+    }
+
     auto evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXrConstRef
     {
         updateChemicalProps(x, p, params);
@@ -370,6 +384,17 @@ struct EquilibriumSetup::Impl
         };
         Vpp = jacobian(fn, wrt(p), at(x, p, params));
         return Vpp;
+    }
+
+    auto evalEquationConstraintsGradParams(VectorXrConstRef x, VectorXrConstRef p, const Params& paramsconst) -> MatrixXdConstRef
+    {
+        params = paramsconst;
+        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXr
+        {
+            return evalEquationConstraints(x, p, params);
+        };
+        // Vpc = jacobian(fn, wrt(params), at(x, p, params)); // TODO: wrt(params) make no sense - I'll revisit this later.
+        return Vpc;
     }
 
     auto extractTemperature(VectorXrConstRef p, const Params& params) const -> real
@@ -460,6 +485,11 @@ auto EquilibriumSetup::evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRe
     return pimpl->evalObjectiveHessianP(x, p, params);
 }
 
+auto EquilibriumSetup::evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
+{
+    return pimpl->evalObjectiveHessianParams(x, p, params);
+}
+
 auto EquilibriumSetup::evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXrConstRef
 {
     return pimpl->evalEquationConstraints(x, p, params);
@@ -473,6 +503,11 @@ auto EquilibriumSetup::evalEquationConstraintsGradX(VectorXrConstRef x, VectorXr
 auto EquilibriumSetup::evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
 {
     return pimpl->evalEquationConstraintsGradP(x, p, params);
+}
+
+auto EquilibriumSetup::evalEquationConstraintsGradParams(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
+{
+    return pimpl->evalEquationConstraintsGradParams(x, p, params);
 }
 
 auto EquilibriumSetup::extractTemperature(VectorXrConstRef p, const Params& params) const -> real

@@ -142,7 +142,7 @@ struct EquilibriumSolver::Impl
         optproblem = Optima::Problem(optdims);
 
         // Set the objective function in the Optima::Problem object
-        optproblem.f = [=](Optima::ObjectiveResultRef res, VectorXdConstRef x, VectorXdConstRef p, Optima::ObjectiveOptions opts) mutable
+        optproblem.f = [=](Optima::ObjectiveResultRef res, VectorXdConstRef x, VectorXdConstRef p, VectorXdConstRef c, Optima::ObjectiveOptions opts) mutable
         {
             res.f = setup.evalObjectiveValue(x, p, params);
             res.fx = setup.evalObjectiveGradX(x, p, params);
@@ -153,11 +153,14 @@ struct EquilibriumSolver::Impl
             if(opts.eval.fxp)
                 res.fxp = setup.evalObjectiveHessianP(x, p, params);
 
+            if(opts.eval.fxc)
+                res.fxc = setup.evalObjectiveHessianParams(x, p, params);
+
             res.succeeded = true;
         };
 
         // Set the external constraint function in the Optima::Problem object
-        optproblem.v = [=](Optima::ConstraintResultRef res, VectorXdConstRef x, VectorXdConstRef p, Optima::ConstraintOptions opts) mutable
+        optproblem.v = [=](Optima::ConstraintResultRef res, VectorXdConstRef x, VectorXdConstRef p, VectorXdConstRef c, Optima::ConstraintOptions opts) mutable
         {
             res.val = setup.evalEquationConstraints(x, p, params);
 
@@ -166,6 +169,9 @@ struct EquilibriumSolver::Impl
 
             if(opts.eval.ddp)
                 res.ddp = setup.evalEquationConstraintsGradP(x, p, params);
+
+            if(opts.eval.ddc)
+                res.ddp = setup.evalEquationConstraintsGradParams(x, p, params);
 
             res.succeeded = true;
         };
