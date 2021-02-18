@@ -32,18 +32,22 @@ void exportParam(py::module& m)
         .def(py::init<const real&>())
         .def(py::init<const double&>())
         .def(py::init<const long&>())
+        .def(py::init<const Param&>())
 
-        .def("value", [](Param& self, const real& val) { return self.value(val); }, return_internal_ref)
-        .def("value", [](const Param& self) { return self.value(); }, return_internal_ref)
+        .def("value", py::overload_cast<const real&>(&Param::value)[], return_internal_ref)
+        .def("value", py::overload_cast<>(&Param::value, py::const_), return_internal_ref)
 
-        .def("lowerbound", [](Param& self, const real& val) { return self.lowerbound(val); }, return_internal_ref)
-        .def("lowerbound", [](const Param& self) { return self.lowerbound(); })
+        .def("name", py::overload_cast<String>(&Param::name), return_internal_ref)
+        .def("name", py::overload_cast<>(&Param::name, py::const_), return_internal_ref)
 
-        .def("upperbound", [](Param& self, const real& val) { return self.upperbound(val); }, return_internal_ref)
-        .def("upperbound", [](const Param& self) { return self.upperbound(); })
+        .def("lowerbound", py::overload_cast<double>(&Param::lowerbound)[], return_internal_ref)
+        .def("lowerbound", py::overload_cast<>(&Param::lowerbound, py::const_))
 
-        .def("isconst", [](Param& self, bool val) { return self.isconst(val); }, return_internal_ref)
-        .def("isconst", [](const Param& self) { return self.isconst(); })
+        .def("upperbound", py::overload_cast<double>(&Param::upperbound)[], return_internal_ref)
+        .def("upperbound", py::overload_cast<>(&Param::upperbound, py::const_))
+
+        .def("isconst", py::overload_cast<bool>(&Param::isconst)[], return_internal_ref)
+        .def("isconst", py::overload_cast<>(&Param::isconst, py::const_))
 
         .def_static("Constant", &Param::Constant)
         ;

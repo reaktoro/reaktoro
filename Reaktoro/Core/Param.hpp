@@ -21,9 +21,9 @@
 #include <limits>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
+#include <Reaktoro/Common/Types.hpp>
 
 namespace Reaktoro {
 
@@ -32,60 +32,58 @@ class Param
 {
 public:
     /// Construct a default Param object.
-    Param() {}
+    Param();
 
     /// Construct a Param object with given value.
-    Param(const real& val) : m_value(val) {}
+    Param(const real& val);
 
     /// Construct a Param object with given value.
     template<typename T, EnableIf<isArithmetic<T>>...>
-    Param(const T& val) : m_value(val) {}
+    Param(const T& val) : Param(real(val)) {}
 
     /// Set the value of the parameter.
-    auto value(const real& val) -> Param& { warning(val <= m_lowerbound || val >= m_upperbound, "Setting parameter with value ", val, " violates either its lower bound (", m_lowerbound, ") or its upper bound (", m_upperbound, ")."); m_value = val; return *this; }
+    auto value(const real& val) -> Param&;
 
     /// Return the value of the parameter.
-    auto value() const -> const real& { return m_value; }
+    auto value() const -> const real&;
+
+    /// Set the value of the parameter.
+    auto name(String name) -> Param&;
+
+    /// Return the value of the parameter.
+    auto name() const -> const String&;
 
     /// Set the lower bound of the parameter.
-    auto lowerbound(double val) -> Param& { m_lowerbound = val; return *this; }
+    auto lowerbound(double val) -> Param&;
 
     /// Return the lower bound of the parameter.
-    auto lowerbound() const -> double { return m_lowerbound; }
+    auto lowerbound() const -> double;
 
     /// Set the upper bound of the parameter.
-    auto upperbound(double val) -> Param& { m_upperbound = val; return *this; }
+    auto upperbound(double val) -> Param&;
 
     /// Return the upper bound of the parameter.
-    auto upperbound() const -> double { return m_upperbound; }
+    auto upperbound() const -> double;
 
     /// Set the parameter to constant or non-constant modes.
-    auto isconst(bool val) -> Param& { m_isconst = val; return *this; }
+    auto isconst(bool val) -> Param&;
 
     /// Return true if the parameter is constant.
-    auto isconst() const -> bool { return m_isconst; }
+    auto isconst() const -> bool;
 
     /// Assign a real value to this parameter value.
-    auto operator=(const real& val) -> Param& { value(val); return *this; }
+    auto operator=(const real& val) -> Param&;
 
     /// Convert this Param object into its value type.
-    operator const real&() const { return m_value; }
+    operator const real&() const;
 
     /// Return a Param object that represents a constant parameter.
-    static auto Constant(const real& val) -> Param { Param param(val); param.isconst(true); return param; }
+    static auto Constant(const real& val) -> Param;
 
 private:
-    /// The parameter value.
-    real m_value = {};
+    struct Impl;
 
-    /// The parameter lower bound value (default: -inf).
-    double m_lowerbound = -std::numeric_limits<double>::infinity();
-
-    /// The parameter upper bound value (default: +inf).
-    double m_upperbound = +std::numeric_limits<double>::infinity();
-
-    /// The boolean flag that indicates if this parameter is constant.
-    double m_isconst = false;
+    SharedPtr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
