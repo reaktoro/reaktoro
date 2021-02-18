@@ -27,6 +27,7 @@ TEST_CASE("Testing Param class", "[Param]")
     Param x;
 
     CHECK( x.value() == 0.0 );
+    CHECK( x.name() == "" );
     CHECK( x.lowerbound() < 0.0 );
     CHECK( x.upperbound() > 0.0 );
     CHECK( std::isinf(x.lowerbound()) );
@@ -36,29 +37,46 @@ TEST_CASE("Testing Param class", "[Param]")
     x = Param(1.0);
 
     CHECK( x.value() == 1.0 );
+    CHECK( x.name() == "" );
     CHECK( x.lowerbound() < 0.0 );
     CHECK( x.upperbound() > 0.0 );
     CHECK( std::isinf(x.lowerbound()) );
     CHECK( std::isinf(x.upperbound()) );
     CHECK( x.isconst() == false );
 
-    x = Param().value(3.0).lowerbound(1.0).upperbound(7.0).isconst(true);
+    x = Param().value(3.0).name("x").lowerbound(1.0).upperbound(7.0).isconst(true);
 
     CHECK( x.value() == 3.0 );
+    CHECK( x.name() == "x" );
     CHECK( x.lowerbound() == 1.0 );
     CHECK( x.upperbound() == 7.0 );
     CHECK( x.isconst() == true );
 
-    x.lowerbound(0.0).upperbound(17.0).value(9.0).isconst(false);
+    x.lowerbound(0.0).name("y").upperbound(17.0).value(9.0).isconst(false);
 
     CHECK( x.value() == 9.0 );
+    CHECK( x.name() == "y" );
     CHECK( x.lowerbound() == 0.0 );
     CHECK( x.upperbound() == 17.0 );
     CHECK( x.isconst() == false );
 
+    Param z = x; // z points to x
+
+    CHECK( z.value() == 9.0 );
+    CHECK( z.name() == "y" );
+    CHECK( z.lowerbound() == 0.0 );
+    CHECK( z.upperbound() == 17.0 );
+    CHECK( z.isconst() == false );
+
+    z.value(10.0).name("zzz"); // changing Param z here actually changes underlying Param x
+
+    CHECK( x.value() == 10.0 ); // x.value() changed with z.value(10.0)
+    CHECK( x.name() == "zzz" );   // x.name() changed with z.name("z")
+
     x = Param::Constant(11.0);
 
     CHECK( x.value() == 11.0 );
+    CHECK( x.name() == "" );
     CHECK( x.lowerbound() < 0.0 );
     CHECK( x.upperbound() > 0.0 );
     CHECK( std::isinf(x.lowerbound()) );
