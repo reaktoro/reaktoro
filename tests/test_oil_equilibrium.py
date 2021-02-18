@@ -160,7 +160,7 @@ def test_error_bips_setup():
         phase_identification_method=reaktoro.PhaseIdentificationMethod.GibbsEnergyAndEquationOfStateMethod,
         binary_interaction_values=calculate_bips
     )
-    with pytest.raises(RuntimeError):
+    with pytest.raises(RuntimeError, match='k is not symmetric'):
         editor_bips.addGaseousPhase(gaseous_species).setChemicalModelCubicEOS(eos_params_bips)
 
 
