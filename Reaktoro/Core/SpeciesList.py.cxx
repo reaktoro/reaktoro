@@ -60,5 +60,6 @@ void exportSpeciesList(py::module& m)
         .def("withElements", &SpeciesList::withElements)
         .def("withElementsOf", &SpeciesList::withElementsOf)
         .def("__getitem__", __getitem__, py::return_value_policy::reference_internal)
+        .def("__iter__", [](const SpeciesList& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()); // keep object alive while iterator exists;
         ;
 }
