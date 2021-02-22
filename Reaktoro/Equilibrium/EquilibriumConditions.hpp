@@ -165,14 +165,11 @@ public:
     auto system() const -> const ChemicalSystem&;
 
     /// Return the input parameters associated with the equilibrium conditions.
-    auto params() const -> const Params&;
+    auto params() const -> Params;
 
 private:
     /// The chemical system associated with the given equilibrium specifications.
     const ChemicalSystem m_system;
-
-    /// The list of input parameter names registered in the given equilibrium specifications.
-    const Strings m_parameters;
 
     /// The input parameters defining the equilibrium conditions according to given equilibrium specifications.
     Params m_params;
