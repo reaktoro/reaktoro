@@ -55,5 +55,6 @@ void exportPhaseList(py::module& m)
         .def("withAggregateState", &PhaseList::withAggregateState)
         .def("numSpeciesUntilPhase", &PhaseList::numSpeciesUntilPhase)
         .def("__getitem__", __getitem__, py::return_value_policy::reference_internal)
+        .def("__iter__", [](const PhaseList& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()); // keep object alive while iterator exists;
         ;
 }
