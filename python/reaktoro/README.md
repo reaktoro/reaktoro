@@ -1,3 +1,5 @@
-# Test
+# Reaktoro's Python interface
 
-Just a test.
+This package provides Python bindings to use Reaktoro through Python.
+
+For additional information and documentation, please see [Reaktoro's website](https://reaktoro.org/).

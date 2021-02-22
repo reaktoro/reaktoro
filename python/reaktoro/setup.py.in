@@ -1,10 +1,24 @@
 from setuptools import setup
 
+
+def get_readme_file_path():
+    from pathlib import Path
+    import os
+    return Path(os.path.abspath(__file__)).parents[0] / "README.md"
+
+
+readme_filepath = get_readme_file_path()
+with open(readme_filepath, "r") as fh:
+    long_description = fh.read()
+
+
 requirements = ["numpy", "pandas"]
 
 setup(name='reaktoro',
       version='${PROJECT_VERSION}',
       description='The Python interface of the Reaktoro library.',
+      long_description=long_description,
+      long_description_content_type="text/markdown",
       author='Allan Leal',
       author_email='allan.leal@erdw.ethz.ch',
       url='http://www.reaktoro.org',
