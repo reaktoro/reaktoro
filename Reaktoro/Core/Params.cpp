@@ -26,6 +26,10 @@ namespace Reaktoro {
 Params::Params()
 {}
 
+Params::Params(const std::initializer_list<Param>& params)
+: m_data(params)
+{}
+
 auto Params::append(const Param& param) -> Param&
 {
     m_data.push_back(param);
