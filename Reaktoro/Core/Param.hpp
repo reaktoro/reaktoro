@@ -41,7 +41,13 @@ public:
     template<typename T, EnableIf<isArithmetic<T>>...>
     Param(const T& val) : Param(real(val)) {}
 
+    /// Construct a Param object with identifier @p id and value @p val.
+    Param(const String& id, const real& val);
+
     /// Set the value of the parameter.
+    auto assign(const real& val) -> Param&;
+
+    /// Set the value of the parameter. Equivalent to method @ref assign.
     auto value(const real& val) -> Param&;
 
     /// Return the value of the parameter.
@@ -72,7 +78,8 @@ public:
     auto isconst() const -> bool;
 
     /// Assign a real value to this parameter value.
-    auto operator=(const real& val) -> Param&;
+    template<typename T, EnableIf<isArithmetic<T> || isSame<T, real>>...>
+    auto operator=(const T& val) -> Param& { return value(val); }
 
     /// Convert this Param object into its value type.
     operator const real&() const;
@@ -85,5 +92,18 @@ private:
 
     SharedPtr<Impl> pimpl;
 };
+
+template<typename T>
+constexpr auto isNumeric = isArithmetic<T> || isOneOf<T, real, Param>;
+
+template<typename T, EnableIf<isNumeric<T>>...> auto operator+(const Param& p, const T& x) { return p.value() + x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator-(const Param& p, const T& x) { return p.value() - x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator*(const Param& p, const T& x) { return p.value() * x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator/(const Param& p, const T& x) { return p.value() / x; }
+
+template<typename T, EnableIf<isNumeric<T>>...> auto operator+(const T& x, const Param& p) { return x + p.value(); }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator-(const T& x, const Param& p) { return x - p.value(); }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator*(const T& x, const Param& p) { return x * p.value(); }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator/(const T& x, const Param& p) { return x / p.value(); }
 
 } // namespace Reaktoro
