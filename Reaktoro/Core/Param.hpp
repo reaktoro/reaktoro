@@ -47,11 +47,11 @@ public:
     /// Return the value of the parameter.
     auto value() const -> const real&;
 
-    /// Set the value of the parameter.
-    auto name(String name) -> Param&;
+    /// Set the unique identifier of the parameter.
+    auto id(String id) -> Param&;
 
-    /// Return the value of the parameter.
-    auto name() const -> const String&;
+    /// Return the unique identifier of the parameter.
+    auto id() const -> const String&;
 
     /// Set the lower bound of the parameter.
     auto lowerbound(double val) -> Param&;
