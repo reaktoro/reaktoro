@@ -29,6 +29,7 @@ void exportParams(py::module& m)
 
     py::class_<Params>(m, "Params")
         .def(py::init<>())
+        .def(py::init<const std::initializer_list<Param>&>())
         .def("append", py::overload_cast<const Param&>(&Params::append), return_internal_ref)
         .def("append", py::overload_cast<const String&, const real&>(&Params::append), return_internal_ref)
         .def("size", &Params::size)

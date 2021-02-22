@@ -31,6 +31,9 @@ public:
     /// Construct a default Params instance.
     Params();
 
+    /// Construct a default Params instance.
+    Params(const std::initializer_list<Param>& params);
+
     /// Append a new parameter to the list of parameters.
     /// @warning A runtime error is thrown if parameter id is not unique among other parameters already in the list.
     auto append(const Param& param) -> Param&;

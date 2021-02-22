@@ -24,29 +24,37 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Params class", "[Params]")
 {
-    Params foo;
-    foo.append(Param().id("A").value(1.0));
-    foo.append("B", 2.0);
+    Params params;
+    params.append(Param().id("A").value(1.0));
+    params.append("B", 2.0);
 
-    CHECK( foo.size() == 2 );
+    CHECK( params.size() == 2 );
 
-    CHECK( foo.find("A") == 0 );
-    CHECK( foo.find("B") == 1 );
-    CHECK( foo.find("C") == 2 );
-    CHECK( foo.find("D") == 2 );
+    CHECK( params.find("A") == 0 );
+    CHECK( params.find("B") == 1 );
+    CHECK( params.find("C") == 2 );
+    CHECK( params.find("D") == 2 );
 
-    CHECK( foo.index("A") == 0 );
-    CHECK( foo.index("B") == 1 );
-    CHECK_THROWS( foo.index("C") );
-    CHECK_THROWS( foo.index("D") );
+    CHECK( params.index("A") == 0 );
+    CHECK( params.index("B") == 1 );
+    CHECK_THROWS( params.index("C") );
+    CHECK_THROWS( params.index("D") );
 
-    CHECK( foo.get("A").value() == 1.0 );
-    CHECK( foo.get("B").value() == 2.0 );
-    CHECK_THROWS( foo.get("C") );
-    CHECK_THROWS( foo.get("D") );
+    CHECK( params.get("A").value() == 1.0 );
+    CHECK( params.get("B").value() == 2.0 );
+    CHECK_THROWS( params.get("C") );
+    CHECK_THROWS( params.get("D") );
 
-    CHECK( foo.exists("A") == true );
-    CHECK( foo.exists("B") == true );
-    CHECK( foo.exists("C") == false );
-    CHECK( foo.exists("D") == false );
+    CHECK( params.exists("A") == true );
+    CHECK( params.exists("B") == true );
+    CHECK( params.exists("C") == false );
+    CHECK( params.exists("D") == false );
+
+    params = { Param("C", 4.0), 6.0 };
+
+    CHECK( params.size() == 2 );
+    CHECK( params[0].id() == "C" );
+    CHECK( params[0].value() == 4.0 );
+    CHECK( params[1].id() == "" );
+    CHECK( params[1].value() == 6.0 );
 }
