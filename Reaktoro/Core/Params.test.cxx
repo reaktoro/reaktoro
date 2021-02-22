@@ -25,45 +25,28 @@ using namespace Reaktoro;
 TEST_CASE("Testing Params class", "[Params]")
 {
     Params foo;
-    foo.set("A", 1.0);
-    foo.set("B", 2.0);
-
-    Params bar;
-    bar.set("C", 5.0);
-    bar.set("D", 6.0);
-    bar.set("E", 7.0);
-
-    Params params;
-    params.set("Foo", foo);
-    params.set("Bar", bar);
+    foo.append(Param().id("A").value(1.0));
+    foo.append("B", 2.0);
 
     CHECK( foo.size() == 2 );
+
+    CHECK( foo.find("A") == 0 );
+    CHECK( foo.find("B") == 1 );
+    CHECK( foo.find("C") == 2 );
+    CHECK( foo.find("D") == 2 );
+
+    CHECK( foo.index("A") == 0 );
+    CHECK( foo.index("B") == 1 );
+    CHECK_THROWS( foo.index("C") );
+    CHECK_THROWS( foo.index("D") );
+
     CHECK( foo.get("A").value() == 1.0 );
     CHECK( foo.get("B").value() == 2.0 );
+    CHECK_THROWS( foo.get("C") );
+    CHECK_THROWS( foo.get("D") );
+
     CHECK( foo.exists("A") == true );
     CHECK( foo.exists("B") == true );
     CHECK( foo.exists("C") == false );
-
-    CHECK( bar.size() == 3 );
-    CHECK( bar.get("C").value() == 5.0 );
-    CHECK( bar.get("D").value() == 6.0 );
-    CHECK( bar.get("E").value() == 7.0 );
-    CHECK( bar.exists("C") == true );
-    CHECK( bar.exists("D") == true );
-    CHECK( bar.exists("E") == true );
-    CHECK( bar.exists("F") == false );
-
-    CHECK( params.size() == 5 );
-    CHECK( params.at("Foo").get("A").value() == 1.0 );
-    CHECK( params.at("Foo").get("B").value() == 2.0 );
-    CHECK( params.at("Bar").get("C").value() == 5.0 );
-    CHECK( params.at("Bar").get("D").value() == 6.0 );
-    CHECK( params.at("Bar").get("E").value() == 7.0 );
-    CHECK( params.exists("Foo") == true );
-    CHECK( params.exists("Bar") == true );
-    CHECK( params.exists("Joe") == false );
-    CHECK( params.at("Foo").exists("A") == true );
-    CHECK( params.at("Foo").exists("Z") == false );
-    CHECK( params.at("Bar").exists("C") == true );
-    CHECK( params.at("Bar").exists("Z") == false );
+    CHECK( foo.exists("D") == false );
 }
