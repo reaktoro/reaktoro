@@ -18,6 +18,7 @@
 #include "Params.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 
 namespace Reaktoro {
@@ -25,46 +26,58 @@ namespace Reaktoro {
 Params::Params()
 {}
 
+auto Params::append(const Param& param) -> Param&
+{
+    m_data.push_back(param);
+    return m_data.back();
+}
+
+auto Params::append(const String& id, const real& value) -> Param&
+{
+    return append( Param(value).id(id) );
+}
+
 auto Params::size() const -> Index
 {
-    auto count = 0;
-    for(auto const& [key, val] : tree)
-        if(val.type() == typeid(Params))
-            count += std::any_cast<const Params&>(val).size();
-        else count += 1;
-    return count;
+    return m_data.size();
 }
 
-auto Params::at(const String& key) const -> const Params&
+auto Params::operator[](Index i) -> Param&
 {
-    const auto it = tree.find(key);
-    error(it == tree.end(), "Could not find a node in the Params object with key `", key, "`.");
-    return std::any_cast<const Params&>(it->second);
+    return m_data[i];
 }
 
-auto Params::get(const String& key) const -> const Param&
+auto Params::operator[](Index i) const -> const Param&
 {
-    error(tree.empty(), "Could not find a parameter in the empty Params object with key `", key, "`.");
-    const auto it = tree.find(key);
-    error(it == tree.end(), "Could not find a parameter in the Params object with key `", key, "`.");
-    return std::any_cast<const Param&>(it->second);
+    return m_data[i];
 }
 
-auto Params::exists(const String& key) const -> bool
+auto Params::find(const String& id) const -> Index
 {
-    const auto it = tree.find(key);
-    return it != tree.end();
+    return indexfn(m_data, RKT_LAMBDA(x, x.id() == id));
 }
 
-auto Params::set(const String& key, const Params& node) -> void
+auto Params::index(const String& id) const -> Index
 {
-    tree[key] = node;
+    const auto idx = indexfn(m_data, RKT_LAMBDA(x, x.id() == id));
+    errorif(idx >= m_data.size(), "Could not find a parameter with "
+        "id `", id, "` in this Params object.");
+    return idx;
 }
 
-auto Params::set(const String& key, const Param& param) -> void
+auto Params::get(const String& id) -> Param&
 {
-    tree[key] = param;
+    return m_data[index(id)];
+}
+
+auto Params::get(const String& id) const -> const Param&
+{
+    return m_data[index(id)];
+}
+
+auto Params::exists(const String& id) const -> bool
+{
+    return containsfn(m_data, RKT_LAMBDA(x, x.id() == id));
 }
 
 } // namespace Reaktoro
-

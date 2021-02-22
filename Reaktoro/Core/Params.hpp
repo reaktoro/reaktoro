@@ -23,7 +23,7 @@
 
 namespace Reaktoro {
 
-/// The class used to store and retrieve thermodynamic parameters.
+/// The class used to store and retrieve model parameters.
 /// @ingroup Core
 class Params
 {
@@ -31,26 +31,67 @@ public:
     /// Construct a default Params instance.
     Params();
 
+    /// Append a new parameter to the list of parameters.
+    /// @warning A runtime error is thrown if parameter id is not unique among other parameters already in the list.
+    auto append(const Param& param) -> Param&;
+
+    /// Append a new parameter to the list of parameters with given @p id and @p value.
+    /// @warning A runtime error is thrown if parameter id is not unique among other parameters already in the list.
+    auto append(const String& id, const real& value) -> Param&;
+
     /// Return the number of child parameters.
     auto size() const -> Index;
 
-    /// Return the child block of parameters with given key.
-    auto at(const String& key) const -> const Params&;
+    /// Return the parameter with given index.
+    auto operator[](Index i) -> Param&;
 
-    /// Return the child parameter with given key.
-    auto get(const String& key) const -> const Param&;
+    /// Return the parameter with given index.
+    auto operator[](Index i) const -> const Param&;
 
-    /// Return true if a child parameter exists with given key.
-    auto exists(const String& key) const -> bool;
+    /// Return the index of the first parameter with given identifier or the number of parameters if not found.
+    auto find(const String& id) const -> Index;
 
-    /// Set the child block of parameters with given key to a given block of parameters.
-    auto set(const String& key, const Params& node) -> void;
+    /// Return the index of the first parameter with given identifier or throw a runtime error if not found.
+    auto index(const String& id) const -> Index;
 
-    /// Set the child parameter with given key to a given parameter value.
-    auto set(const String& key, const Param& param) -> void;
+    /// Return the first parameter with given identifier or throw a runtime error if not found.
+    auto get(const String& id) -> Param&;
+
+    /// Return the first parameter with given identifier or throw a runtime error if not found.
+    auto get(const String& id) const -> const Param&;
+
+    /// Return true if a parameter exists with given identifier.
+    auto exists(const String& id) const -> bool;
 
 private:
-    Map<String, Any> tree;
+    Vec<Param> m_data;
+
+public:
+    /// Construct an Params object with given begin and end iterators.
+    template<typename InputIterator>
+    Params(InputIterator begin, InputIterator end) : m_data(begin, end) {}
+
+    /// Return begin const iterator of this Params instance (for STL compatibility reasons).
+    auto begin() const { return m_data.begin(); }
+
+    /// Return begin iterator of this Params instance (for STL compatibility reasons).
+    auto begin() { return m_data.begin(); }
+
+    /// Return end const iterator of this Params instance (for STL compatibility reasons).
+    auto end() const { return m_data.end(); }
+
+    /// Return end iterator of this Params instance (for STL compatibility reasons).
+    auto end() { return m_data.end(); }
+
+    /// Append a new Param at the back of the container (for STL compatibility reasons).
+    auto push_back(const Param& param) -> void { append(param); }
+
+    /// Insert a container of Param objects into this Params instance (for STL compatibility reasons).
+    template<typename Iterator, typename InputIterator>
+    auto insert(Iterator pos, InputIterator begin, InputIterator end) -> void { m_data.insert(pos, begin, end); }
+
+    /// The type of the value stored in a Params (for STL compatibility reasons).
+    using value_type = Param;
 };
 
 } // namespace Reaktoro
