@@ -420,8 +420,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             fn = u/RT - tau/n;
 
-            fq[0] = specs.constraintsChemicalPotentialType()[0].fn(props, params)/RT; // the pH constraint
-            fq[1] = specs.constraintsChemicalPotentialType()[1].fn(props, params)/RT; // the pE constraint
+            fq[0] = specs.constraintsChemicalPotentialType()[0].fn(props)/RT; // the pH constraint
+            fq[1] = specs.constraintsChemicalPotentialType()[1].fn(props)/RT; // the pE constraint
 
             CHECK( fx.isApprox(setup.evalObjectiveGradX(x, p, params)) );
 
@@ -445,8 +445,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
                 gn = u/RT - tau/n.array();
 
-                gq[0] = specs.constraintsChemicalPotentialType()[0].fn(auxprops, params)/RT; // the pH constraint
-                gq[1] = specs.constraintsChemicalPotentialType()[1].fn(auxprops, params)/RT; // the pE constraint
+                gq[0] = specs.constraintsChemicalPotentialType()[0].fn(auxprops)/RT; // the pH constraint
+                gq[1] = specs.constraintsChemicalPotentialType()[1].fn(auxprops)/RT; // the pE constraint
 
                 return g;
             };
@@ -466,9 +466,9 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             //-------------------------------------------------------------------------------------------------
             VectorXr v(Np);
 
-            v[0] = specs.constraintsEquationType()[0].fn(props, params); // the volume constraint equation
-            v[1] = specs.constraintsEquationType()[1].fn(props, params); // the internal energy constraint equation
-            v[2] = specs.constraintsEquationType()[2].fn(props, params); // the enthalpy constraint equation
+            v[0] = specs.constraintsEquationType()[0].fn(props); // the volume constraint equation
+            v[1] = specs.constraintsEquationType()[1].fn(props); // the internal energy constraint equation
+            v[2] = specs.constraintsEquationType()[2].fn(props); // the enthalpy constraint equation
 
             CHECK( v.isApprox(setup.evalEquationConstraints(x, p, params)) );
 
@@ -484,9 +484,9 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
                 auxprops.update(T, P, n);
 
                 VectorXr v(Np);
-                v[0] = specs.constraintsEquationType()[0].fn(auxprops, params); // the volume constraint equation
-                v[1] = specs.constraintsEquationType()[1].fn(auxprops, params); // the internal energy constraint equation
-                v[2] = specs.constraintsEquationType()[2].fn(auxprops, params); // the enthalpy constraint equation
+                v[0] = specs.constraintsEquationType()[0].fn(auxprops); // the volume constraint equation
+                v[1] = specs.constraintsEquationType()[1].fn(auxprops); // the internal energy constraint equation
+                v[2] = specs.constraintsEquationType()[2].fn(auxprops); // the enthalpy constraint equation
 
                 return v;
             };

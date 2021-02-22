@@ -312,7 +312,7 @@ struct EquilibriumSetup::Impl
         const auto& uconstraints = specs.constraintsChemicalPotentialType();
 
         for(auto i = 0; i < Nq; ++i)
-            gq[i] = uconstraints[i].fn(props, params)/RT;
+            gq[i] = uconstraints[i].fn(props)/RT;
 
         return gx;
     }
@@ -346,7 +346,7 @@ struct EquilibriumSetup::Impl
         {
             return evalObjectiveGradX(x, p, params);
         };
-        // Hxc = jacobian(fn, wrt(params), at(x, p, params)); // TODO: wrt(params) make no sense - I'll revisit this later.
+        Hxc = jacobian(fn, wrt(params), at(x, p, params));
         return Hxc;
     }
 
@@ -359,7 +359,7 @@ struct EquilibriumSetup::Impl
         const auto& econstraints = specs.constraintsEquationType();
 
         for(auto i = 0; i < Np; ++i)
-            vp[i] = econstraints[i].fn(props, params);
+            vp[i] = econstraints[i].fn(props);
 
         return vp;
     }
@@ -393,7 +393,7 @@ struct EquilibriumSetup::Impl
         {
             return evalEquationConstraints(x, p, params);
         };
-        // Vpc = jacobian(fn, wrt(params), at(x, p, params)); // TODO: wrt(params) make no sense - I'll revisit this later.
+        Vpc = jacobian(fn, wrt(params), at(x, p, params));
         return Vpc;
     }
 
