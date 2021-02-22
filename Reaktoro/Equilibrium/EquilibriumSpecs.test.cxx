@@ -196,14 +196,6 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
     {
         const auto& econstraints = specs.constraintsEquationType();
 
-        Params params;
-        const auto V = 1.0; params.append("V", V);
-        const auto U = 2.0; params.append("U", U);
-        const auto H = 3.0; params.append("H", H);
-        const auto G = 4.0; params.append("G", G);
-        const auto A = 5.0; params.append("A", A);
-        const auto S = 6.0; params.append("S", S);
-
         specs.volume();
         specs.internalEnergy();
         specs.enthalpy();
@@ -211,28 +203,25 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.helmholtzEnergy();
         specs.entropy();
 
-        CHECK( econstraints[0].fn(props, params) == props.volume() - V );
-        CHECK( econstraints[1].fn(props, params) == props.internalEnergy() - U );
-        CHECK( econstraints[2].fn(props, params) == props.enthalpy() - H );
-        CHECK( econstraints[3].fn(props, params) == props.gibbsEnergy() - G );
-        CHECK( econstraints[4].fn(props, params) == props.helmholtzEnergy() - A );
-        CHECK( econstraints[5].fn(props, params) == props.entropy() - S );
+        Params params;
+        const auto V = 1.0; specs.params().get("V") = V;
+        const auto U = 2.0; specs.params().get("U") = U;
+        const auto H = 3.0; specs.params().get("H") = H;
+        const auto G = 4.0; specs.params().get("G") = G;
+        const auto A = 5.0; specs.params().get("A") = A;
+        const auto S = 6.0; specs.params().get("S") = S;
+
+        CHECK( econstraints[0].fn(props) == props.volume() - V );
+        CHECK( econstraints[1].fn(props) == props.internalEnergy() - U );
+        CHECK( econstraints[2].fn(props) == props.enthalpy() - H );
+        CHECK( econstraints[3].fn(props) == props.gibbsEnergy() - G );
+        CHECK( econstraints[4].fn(props) == props.helmholtzEnergy() - A );
+        CHECK( econstraints[5].fn(props) == props.entropy() - S );
     }
 
     SECTION("Checking lambda functions in chemical potential constraints")
     {
         const auto& uconstraints = specs.constraintsChemicalPotentialType();
-
-        Params params;
-        const auto p0 = 1.0; params.append("u[H2O(aq)]", p0);
-        const auto p1 = 2.0; params.append("lnActivity[CH4(g)]", p1);
-        const auto p2 = 3.0; params.append("lnActivity[CO2(g)]", p2);
-        const auto p3 = 4.0; params.append("lnActivity[Ca++(aq)]", p3);
-        const auto p4 = 5.0; params.append("f[O2]", p4);
-        const auto p5 = 6.0; params.append("pH", p5);
-        const auto p6 = 7.0; params.append("pMg", p6);
-        const auto p7 = 8.0; params.append("pE", p7);
-        const auto p8 = 9.0; params.append("Eh", p8);
 
         specs.chemicalPotential("H2O(aq)");
         specs.lnActivity("CH4(g)");
@@ -241,6 +230,15 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.fugacity("O2");
         specs.pH();
         specs.pMg();
+
+        Params params;
+        const auto p0 = 1.0; specs.params().get("u[H2O(aq)]") = p0;
+        const auto p1 = 2.0; specs.params().get("lnActivity[CH4(g)]") = p1;
+        const auto p2 = 3.0; specs.params().get("lnActivity[CO2(g)]") = p2;
+        const auto p3 = 4.0; specs.params().get("lnActivity[Ca++(aq)]") = p3;
+        const auto p4 = 5.0; specs.params().get("f[O2]") = p4;
+        const auto p5 = 6.0; specs.params().get("pH") = p5;
+        const auto p6 = 7.0; specs.params().get("pMg") = p6;
 
         const auto T = props.temperature();
         const auto P = props.pressure();
@@ -253,28 +251,31 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         const auto u0Hp   = system.species().get("H+(aq)").props(T, P).G0;
         const auto u0Mgpp = system.species().get("Mg++(aq)").props(T, P).G0;
 
-        CHECK( uconstraints[0].fn(props, params) == p0 );
-        CHECK( uconstraints[1].fn(props, params) == u0CH4 + RT*p1 );
-        CHECK( uconstraints[2].fn(props, params) == u0CO2 + RT*p2 );
-        CHECK( uconstraints[3].fn(props, params) == u0Capp + RT*p3 );
-        CHECK( uconstraints[4].fn(props, params) == u0O2 + RT*log(p4) );
-        CHECK( uconstraints[5].fn(props, params) == u0Hp + RT*p5 * (-ln10) );
-        CHECK( uconstraints[6].fn(props, params) == u0Mgpp + RT*p6 * (-ln10) );
+        CHECK( uconstraints[0].fn(props) == Approx(p0) );
+        CHECK( uconstraints[1].fn(props) == Approx(u0CH4 + RT*p1) );
+        CHECK( uconstraints[2].fn(props) == Approx(u0CO2 + RT*p2) );
+        CHECK( uconstraints[3].fn(props) == Approx(u0Capp + RT*p3) );
+        CHECK( uconstraints[4].fn(props) == Approx(u0O2 + RT*log(p4)) );
+        CHECK( uconstraints[5].fn(props) == Approx(u0Hp + RT*p5 * (-ln10)) );
+        CHECK( uconstraints[6].fn(props) == Approx(u0Mgpp + RT*p6 * (-ln10)) );
 
         WHEN("pE is imposed instead of Eh")
         {
             specs.pE();
 
-            CHECK( uconstraints.back().fn(props, params) == RT*p7 * (-ln10) );
+            const auto p7 = 8.0; specs.params().get("pE") = p7;
+
+            CHECK( uconstraints.back().fn(props) == RT*p7 * (-ln10) );
         }
 
         WHEN("Eh is imposed instead of pE")
         {
             specs.Eh();
 
+            const auto p8 = 9.0; specs.params().get("Eh") = p8;
             const auto F = faradayConstant;
 
-            CHECK( uconstraints.back().fn(props, params) == -F * p8 );
+            CHECK( uconstraints.back().fn(props) == -F * p8 );
         }
     }
 }

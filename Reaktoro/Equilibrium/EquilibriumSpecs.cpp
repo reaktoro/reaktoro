@@ -53,7 +53,7 @@ auto getGaseousSpecies(const Database& db, const String& formula) -> Species
 } // namespace
 
 EquilibriumSpecs::EquilibriumSpecs(const ChemicalSystem& system)
-: msystem(system)
+: m_system(system)
 {
 }
 
@@ -79,8 +79,8 @@ auto EquilibriumSpecs::volume() -> void
 {
     EquilibriumConstraintEquation constraint;
     constraint.name = "volume";
-    constraint.fn = [=](const ChemicalProps& props, const Params& params) { return props.volume() - params.get("V").value(); };
-    addParameter("V");
+    auto V = addParameter("V");
+    constraint.fn = [=](const ChemicalProps& props) { return props.volume() - V; };
     addConstraint(constraint);
 }
 
@@ -88,8 +88,8 @@ auto EquilibriumSpecs::internalEnergy() -> void
 {
     EquilibriumConstraintEquation constraint;
     constraint.name = "internalEnergy";
-    constraint.fn = [=](const ChemicalProps& props, const Params& params) { return props.internalEnergy() - params.get("U").value(); };
-    addParameter("U");
+    auto U = addParameter("U");
+    constraint.fn = [=](const ChemicalProps& props) { return props.internalEnergy() - U; };
     addConstraint(constraint);
 }
 
@@ -97,8 +97,8 @@ auto EquilibriumSpecs::enthalpy() -> void
 {
     EquilibriumConstraintEquation constraint;
     constraint.name = "enthalpy";
-    constraint.fn = [=](const ChemicalProps& props, const Params& params) { return props.enthalpy() - params.get("H").value(); };
-    addParameter("H");
+    auto H = addParameter("H");
+    constraint.fn = [=](const ChemicalProps& props) { return props.enthalpy() - H; };
     addConstraint(constraint);
 }
 
@@ -106,8 +106,8 @@ auto EquilibriumSpecs::gibbsEnergy() -> void
 {
     EquilibriumConstraintEquation constraint;
     constraint.name = "gibbsEnergy";
-    constraint.fn = [=](const ChemicalProps& props, const Params& params) { return props.gibbsEnergy() - params.get("G").value(); };
-    addParameter("G");
+    auto G = addParameter("G");
+    constraint.fn = [=](const ChemicalProps& props) { return props.gibbsEnergy() - G; };
     addConstraint(constraint);
 }
 
@@ -115,8 +115,8 @@ auto EquilibriumSpecs::helmholtzEnergy() -> void
 {
     EquilibriumConstraintEquation constraint;
     constraint.name = "helmholtzEnergy";
-    constraint.fn = [=](const ChemicalProps& props, const Params& params) { return props.helmholtzEnergy() - params.get("A").value(); };
-    addParameter("A");
+    auto A = addParameter("A");
+    constraint.fn = [=](const ChemicalProps& props) { return props.helmholtzEnergy() - A; };
     addConstraint(constraint);
 }
 
@@ -124,8 +124,8 @@ auto EquilibriumSpecs::entropy() -> void
 {
     EquilibriumConstraintEquation constraint;
     constraint.name = "entropy";
-    constraint.fn = [=](const ChemicalProps& props, const Params& params) { return props.entropy() - params.get("S").value(); };
-    addParameter("S");
+    auto S = addParameter("S");
+    constraint.fn = [=](const ChemicalProps& props) { return props.entropy() - S; };
     addConstraint(constraint);
 }
 
@@ -137,33 +137,32 @@ auto EquilibriumSpecs::entropy() -> void
 
 auto EquilibriumSpecs::chemicalPotential(String substance) -> void
 {
-    const auto paramname = "u[" + substance + "]";
+    const auto pid = "u[" + substance + "]";
     EquilibriumConstraintChemicalPotential constraint;
-    constraint.name = paramname;
+    constraint.name = pid;
     constraint.substance = substance;
-    constraint.fn = [=](const ChemicalProps& props, const Params& params) { return params.get(paramname).value(); };
-    addParameter(paramname);
+    auto u = addParameter(pid);
+    constraint.fn = [=](const ChemicalProps& props) { return u; };
     addConstraint(constraint);
 }
 
 /// Create a chemical potential constraint from activity constraint.
 /// @param species The Species object in the database for which activity value is given.
-/// @param paramname The name of the input parameter used to store the given activity value.
+/// @param param The input parameter used to store the given activity value.
 /// @param convert_to_lna The function that converts the activity value to natural log (e.g., convert lg(a[Ca+2]) to ln(a[Ca+2]), or pH to ln(a[H+]))
 /// @return EquilibriumConstraintChemicalPotential
- auto createActivityConstraint(const Species& species, const String paramname, const Fn<real(real)>& convert_to_lna) -> EquilibriumConstraintChemicalPotential
+ auto createActivityConstraint(const Species& species, Param param, const Fn<real(real)>& convert_to_lna) -> EquilibriumConstraintChemicalPotential
 {
     EquilibriumConstraintChemicalPotential constraint;
-    constraint.name = paramname;
+    constraint.name = param.id();
     constraint.substance = species.formula();
-    constraint.fn = [=](const ChemicalProps& props, const Params& params)
+    constraint.fn = [=](const ChemicalProps& props)
     {
         const auto T = props.temperature();
         const auto P = props.pressure();
         const auto R = universalGasConstant;
         const auto u0 = species.props(T, P).G0;
-        const auto paramvalue = params.get(paramname).value();
-        const auto lna = convert_to_lna(paramvalue);
+        const auto lna = convert_to_lna(param);
         return u0 + R*T*lna;
     };
     return constraint;
@@ -171,16 +170,16 @@ auto EquilibriumSpecs::chemicalPotential(String substance) -> void
 
 auto EquilibriumSpecs::lnActivity(const Species& species) -> void
 {
-    const auto paramname = "lnActivity[" + species.name() + "]";
+    const auto pid = "lnActivity[" + species.name() + "]";
     const auto convert_to_lna = [](real paramvalue) { return paramvalue; };
-    const auto constraint = createActivityConstraint(species, paramname, convert_to_lna);
-    addParameter(paramname);
+    auto lna = addParameter(pid);
+    const auto constraint = createActivityConstraint(species, lna, convert_to_lna);
     addConstraint(constraint);
 }
 
 auto EquilibriumSpecs::lnActivity(String name) -> void
 {
-    const auto specieslist = msystem.database().species();
+    const auto specieslist = m_system.database().species();
     const auto idx = specieslist.findWithName(name);
     error(idx >= specieslist.size(),
         "Could not impose an activity constraint for species with name `", name, "` "
@@ -201,40 +200,38 @@ auto EquilibriumSpecs::activity(String name) -> void
 
 auto EquilibriumSpecs::fugacity(String gas) -> void
 {
-    const auto species = getGaseousSpecies(msystem.database(), gas);
+    const auto species = getGaseousSpecies(m_system.database(), gas);
     error(species.name().empty(),
         "Could not impose the fugacity constraint for gas `", gas, "` because "
         "there is no gaseous species in the database with this chemical formula.");
-    const auto paramname = "f[" + gas + "]";
-    const auto convert_to_lna = [](real paramvalue) { return log(paramvalue); };
-    const auto constraint = createActivityConstraint(species, paramname, convert_to_lna);
-    addParameter(paramname);
+    const auto pid = "f[" + gas + "]";
+    auto fgas = addParameter(pid);
+    const auto convert_to_lna = [](real fgas) { return log(fgas); };
+    const auto constraint = createActivityConstraint(species, fgas, convert_to_lna);
     addConstraint(constraint);
 }
 
 auto EquilibriumSpecs::pH() -> void
 {
-    const auto species = getAqueousSpecies(msystem.database(), "H+");
+    const auto species = getAqueousSpecies(m_system.database(), "H+");
     error(species.name().empty(),
         "Could not impose pH constraint because the database has "
         "no aqueous species with chemical formula `H+`.");
-    const auto paramname = "pH";
-    const auto convert_to_lna = [](real paramvalue) { return -paramvalue * ln10; };
-    const auto constraint = createActivityConstraint(species, paramname, convert_to_lna);
-    addParameter(paramname);
+    auto pH = addParameter("pH");
+    const auto convert_to_lna = [](real pH) { return -pH * ln10; };
+    const auto constraint = createActivityConstraint(species, pH, convert_to_lna);
     addConstraint(constraint);
 }
 
 auto EquilibriumSpecs::pMg() -> void
 {
-    const auto species = getAqueousSpecies(msystem.database(), "Mg+2");
+    const auto species = getAqueousSpecies(m_system.database(), "Mg+2");
     error(species.name().empty(),
         "Could not impose pMg constraint because the database has "
         "no aqueous species with chemical formula `Mg+2`.");
-    const auto paramname = "pMg";
-    const auto convert_to_lna = [](real paramvalue) { return -paramvalue * ln10; };
-    const auto constraint = createActivityConstraint(species, paramname, convert_to_lna);
-    addParameter(paramname);
+    auto pMg = addParameter("pMg");
+    const auto convert_to_lna = [](real pMg) { return -pMg * ln10; };
+    const auto constraint = createActivityConstraint(species, pMg, convert_to_lna);
     addConstraint(constraint);
 }
 
@@ -245,14 +242,13 @@ auto EquilibriumSpecs::pE() -> void
     EquilibriumConstraintChemicalPotential constraint;
     constraint.name = "pE";
     constraint.substance = ChemicalFormula("e-");
-    constraint.fn = [=](const ChemicalProps& props, const Params& params)
+    auto pE = addParameter("pE");
+    constraint.fn = [=](const ChemicalProps& props)
     {
         const auto T = props.temperature();
-        const auto pE = params.get("pE").value();
         const auto lnae = -pE * ln10; // the ln activity of the electron species
         return ue0 + R*T*lnae;
     };
-    addParameter("pE");
     addConstraint(constraint);
 }
 
@@ -262,12 +258,11 @@ auto EquilibriumSpecs::Eh() -> void
     EquilibriumConstraintChemicalPotential constraint;
     constraint.name = "Eh";
     constraint.substance = ChemicalFormula("e-");
-    constraint.fn = [=](const ChemicalProps& props, const Params& params)
+    auto Eh = addParameter("Eh");
+    constraint.fn = [=](const ChemicalProps& props)
     {
-        const auto Eh = params.get("Eh").value();
         return -F * Eh; // in J/mol (chemical potential of electron)
     };
-    addParameter("Eh");
     addConstraint(constraint);
 }
 
@@ -291,7 +286,7 @@ auto EquilibriumSpecs::openTo(const ChemicalFormula& substance) -> void
 
 auto EquilibriumSpecs::numParameters() const -> Index
 {
-    return parameters.size();
+    return m_params.size();
 }
 
 auto EquilibriumSpecs::numControlVariables() const -> Index
@@ -337,7 +332,7 @@ auto EquilibriumSpecs::numConstraintsChemicalPotentialType() const -> Index
 
 auto EquilibriumSpecs::namesParameters() const -> Strings
 {
-    return parameters;
+    return vectorize(m_params, RKT_LAMBDA(x, x.id()));
 }
 
 auto EquilibriumSpecs::namesControlVariables() const -> Strings
@@ -404,10 +399,20 @@ auto EquilibriumSpecs::addConstraint(const EquilibriumConstraintChemicalPotentia
     titrants_implicit.push_back(constraint.substance);
 }
 
-auto EquilibriumSpecs::addParameter(String param) -> void
+auto EquilibriumSpecs::addParameter(String param) -> Param&
 {
-    if(!contains(parameters, param))
-        parameters.push_back(param);
+    errorif(m_params.exists(param), "Could not add parameter with identifier `", param, "` to the "
+        "list of input parameters for the equilibrium problem because "
+        "another parameter already exists with same identifier.");
+    return m_params.append(param, 0.0);
+}
+
+auto EquilibriumSpecs::addParameter(Param param) -> Param&
+{
+    errorif(m_params.exists(param.id()), "Could not add parameter with identifier `", param.id(), "` to the "
+        "list of input parameters for the equilibrium problem because "
+        "another parameter already exists with same identifier.");
+    return m_params.append(param);
 }
 
 //=================================================================================================
@@ -418,7 +423,12 @@ auto EquilibriumSpecs::addParameter(String param) -> void
 
 auto EquilibriumSpecs::system() const -> const ChemicalSystem&
 {
-    return msystem;
+    return m_system;
+}
+
+auto EquilibriumSpecs::params() const -> Params
+{
+    return m_params;
 }
 
 auto EquilibriumSpecs::isTemperatureUnknown() const -> bool
