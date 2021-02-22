@@ -30,11 +30,11 @@ namespace {
 
 /// Throw an error if an input parameter has not been registered in the equilibrium specifications.
 /// @param params The list of registered input parameters in the equilibrium specifications (e.g., {"T", "P", "pH"}).
-/// @param param The input parameter that needs to be checked in the equilibrium specifications (e.g., "T").
+/// @param pid The id of the parameter that needs to be checked in the equilibrium specifications (e.g., "T").
 /// @param propertymsg The message about the property being constrained (e.g., "temperature").
-auto throwErrorIfNotRegisteredParam(const Strings& params, const String& param, const String& propertymsg) -> void
+auto throwErrorIfNotRegisteredParam(const Strings& params, const String& pid, const String& propertymsg) -> void
 {
-    const auto registered = contains(params, param);
+    const auto registered = contains(params, pid);
     error(!registered, "Cannot set ", propertymsg, " for the equilibrium calculation "
         "because it is not a registered input parameter in the equilibrium specifications.");
 }
@@ -50,117 +50,117 @@ auto EquilibriumConditions::temperature(real value, String unit) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "T", "temperature");
     value = units::convert(value, unit, "K");
-    m_params.set("T", value);
+    m_params.append("T", value);
 }
 
 auto EquilibriumConditions::pressure(real value, String unit) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "P", "pressure");
     value = units::convert(value, unit, "Pa");
-    m_params.set("P", value);
+    m_params.append("P", value);
 }
 
 auto EquilibriumConditions::volume(real value, String unit) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "V", "volume");
     value = units::convert(value, unit, "m3");
-    m_params.set("V", value);
+    m_params.append("V", value);
 }
 
 auto EquilibriumConditions::internalEnergy(real value, String unit) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "U", "internal energy");
     value = units::convert(value, unit, "J");
-    m_params.set("U", value);
+    m_params.append("U", value);
 }
 
 auto EquilibriumConditions::enthalpy(real value, String unit) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "H", "enthalpy");
     value = units::convert(value, unit, "J");
-    m_params.set("H", value);
+    m_params.append("H", value);
 }
 
 auto EquilibriumConditions::gibbsEnergy(real value, String unit) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "G", "Gibbs energy");
     value = units::convert(value, unit, "J");
-    m_params.set("G", value);
+    m_params.append("G", value);
 }
 
 auto EquilibriumConditions::helmholtzEnergy(real value, String unit) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "A", "Helmholtz energy");
     value = units::convert(value, unit, "J");
-    m_params.set("A", value);
+    m_params.append("A", value);
 }
 
 auto EquilibriumConditions::entropy(real value, String unit) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "S", "entropy");
     value = units::convert(value, unit, "J/K");
-    m_params.set("S", value);
+    m_params.append("S", value);
 }
 
 auto EquilibriumConditions::chemicalPotential(String substance, real value, String unit) -> void
 {
-    const auto paramname = "u[" + substance + "]";
-    throwErrorIfNotRegisteredParam(m_parameters, paramname, "the chemical potential of " + substance);
+    const auto pid = "u[" + substance + "]";
+    throwErrorIfNotRegisteredParam(m_parameters, pid, "the chemical potential of " + substance);
     value = units::convert(value, unit, "J/mol");
-    m_params.set(paramname, value);
+    m_params.append(pid, value);
 }
 
 auto EquilibriumConditions::lnActivity(String species, real value) -> void
 {
-    const auto paramname = "lnActivity[" + species + "]";
-    throwErrorIfNotRegisteredParam(m_parameters, paramname, "the activity of " + species);
-    m_params.set(paramname, value);
+    const auto pid = "lnActivity[" + species + "]";
+    throwErrorIfNotRegisteredParam(m_parameters, pid, "the activity of " + species);
+    m_params.append(pid, value);
 }
 
 auto EquilibriumConditions::lgActivity(String species, real value) -> void
 {
-    const auto paramname = "lnActivity[" + species + "]";
-    throwErrorIfNotRegisteredParam(m_parameters, paramname, "the activity of " + species);
-    m_params.set(paramname, value * ln10);
+    const auto pid = "lnActivity[" + species + "]";
+    throwErrorIfNotRegisteredParam(m_parameters, pid, "the activity of " + species);
+    m_params.append(pid, value * ln10);
 }
 
 auto EquilibriumConditions::activity(String species, real value) -> void
 {
-    const auto paramname = "lnActivity[" + species + "]";
-    throwErrorIfNotRegisteredParam(m_parameters, paramname, "the activity of " + species);
-    m_params.set(paramname, log(value));
+    const auto pid = "lnActivity[" + species + "]";
+    throwErrorIfNotRegisteredParam(m_parameters, pid, "the activity of " + species);
+    m_params.append(pid, log(value));
 }
 
 auto EquilibriumConditions::fugacity(String gas, real value, String unit) -> void
 {
-    const auto paramname = "f[" + gas + "]";
-    throwErrorIfNotRegisteredParam(m_parameters, paramname, "the fugacity of " + gas);
+    const auto pid = "f[" + gas + "]";
+    throwErrorIfNotRegisteredParam(m_parameters, pid, "the fugacity of " + gas);
     value = units::convert(value, unit, "bar");
-    m_params.set(paramname, value);
+    m_params.append(pid, value);
 }
 
 auto EquilibriumConditions::pH(real value) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "pH", "pH");
-    m_params.set("pH", value);
+    m_params.append("pH", value);
 }
 
 auto EquilibriumConditions::pMg(real value) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "pMg", "pMg");
-    m_params.set("pMg", value);
+    m_params.append("pMg", value);
 }
 
 auto EquilibriumConditions::pE(real value) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "pE", "pE");
-    m_params.set("pE", value);
+    m_params.append("pE", value);
 }
 
 auto EquilibriumConditions::Eh(real value, String unit) -> void
 {
     throwErrorIfNotRegisteredParam(m_parameters, "Eh", "Eh");
-    m_params.set("Eh", value);
+    m_params.append("Eh", value);
 }
 
 auto EquilibriumConditions::initialComponentAmounts(VectorXrConstRef values) -> void

@@ -336,8 +336,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             EquilibriumSetup setup(specs);
 
             Params params;
-            params.set("T", T);
-            params.set("P", P);
+            params.append("T", T);
+            params.append("P", P);
 
             ChemicalProps props(system);
             props.update(T, P, n);
@@ -388,11 +388,11 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             EquilibriumSetup setup(specs);
 
             Params params;
-            params.set("V", 1.0);
-            params.set("U", 2.0);
-            params.set("H", 3.0);
-            params.set("pH", 4.0);
-            params.set("pE", 5.0);
+            params.append("V", 1.0);
+            params.append("U", 2.0);
+            params.append("H", 3.0);
+            params.append("pH", 4.0);
+            params.append("pE", 5.0);
 
             ChemicalProps props(system);
             props.update(T, P, n);
