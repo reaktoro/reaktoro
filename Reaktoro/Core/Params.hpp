@@ -98,3 +98,22 @@ public:
 };
 
 } // namespace Reaktoro
+
+
+namespace autodiff {
+namespace detail {
+
+/// Implementation of VectorTraits for Reaktoro::Params.
+template<>
+struct VectorTraits<Reaktoro::Params>
+{
+    using ValueType = Reaktoro::Param;
+
+    template<typename NewValueType>
+    using ReplaceValueType = std::vector<NewValueType>;
+};
+
+} // namespace autodiff
+} // namespace detail
+
+
