@@ -60,11 +60,20 @@ Param::Param(const real& val)
 : pimpl(new Impl({ val }))
 {}
 
-auto Param::value(const real& val) -> Param&
+Param::Param(const String& id, const real& val)
+: pimpl(new Impl({ val, id }))
+{}
+
+auto Param::assign(const real& val) -> Param&
 {
     warningIfOutOfBounds(*this, val);
     pimpl->value = val;
     return *this;
+}
+
+auto Param::value(const real& val) -> Param&
+{
+    return assign(val);;
 }
 
 auto Param::value() const -> const real&
@@ -114,12 +123,6 @@ auto Param::isconst(bool val) -> Param&
 auto Param::isconst() const -> bool
 {
     return pimpl->isconst;
-}
-
-auto Param::operator=(const real& val) -> Param&
-{
-    value(val);
-    return *this;
 }
 
 Param::operator const real&() const

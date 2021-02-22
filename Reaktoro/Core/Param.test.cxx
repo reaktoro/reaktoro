@@ -34,20 +34,20 @@ TEST_CASE("Testing Param class", "[Param]")
     CHECK( std::isinf(x.upperbound()) );
     CHECK( x.isconst() == false );
 
-    x = Param(1.0);
+    x = Param("x", 1.0);
 
     CHECK( x.value() == 1.0 );
-    CHECK( x.id() == "" );
+    CHECK( x.id() == "x" );
     CHECK( x.lowerbound() < 0.0 );
     CHECK( x.upperbound() > 0.0 );
     CHECK( std::isinf(x.lowerbound()) );
     CHECK( std::isinf(x.upperbound()) );
     CHECK( x.isconst() == false );
 
-    x = Param().value(3.0).id("x").lowerbound(1.0).upperbound(7.0).isconst(true);
+    x = Param().value(3.0).id("xx").lowerbound(1.0).upperbound(7.0).isconst(true);
 
     CHECK( x.value() == 3.0 );
-    CHECK( x.id() == "x" );
+    CHECK( x.id() == "xx" );
     CHECK( x.lowerbound() == 1.0 );
     CHECK( x.upperbound() == 7.0 );
     CHECK( x.isconst() == true );
