@@ -37,8 +37,7 @@ struct EquilibriumConstraintEquation
 
     /// The function defining the equation to be satisfied at chemical equilibrium.
     /// @param props The chemical properties of the system.
-    /// @param params The parameters of the chemical equilibrium calculation.
-    Fn<real(const ChemicalProps& props, const Params& params)> fn;
+    Fn<real(const ChemicalProps& props)> fn;
 };
 
 /// The details of a chemical potential constraint in a chemical equilibrium calculation.
@@ -52,8 +51,7 @@ struct EquilibriumConstraintChemicalPotential
 
     /// The function that evaluates the constrained chemical potential value.
     /// @param props The chemical properties of the system.
-    /// @param params The parameters of the chemical equilibrium calculation.
-    Fn<real(const ChemicalProps& props, const Params& params)> fn;
+    Fn<real(const ChemicalProps& props)> fn;
 };
 
 /// The class used to define conditions to be satisfied at chemical equilibrium.
@@ -448,7 +446,10 @@ public:
     auto addConstraint(const EquilibriumConstraintChemicalPotential& constraint) -> void;
 
     /// Add a new input parameter for the chemical equilibrium problem.
-    auto addParameter(String param) -> void;
+    auto addParameter(String param) -> Param&;
+
+    /// Add a new input parameter for the chemical equilibrium problem.
+    auto addParameter(Param param) -> Param&;
 
     //=================================================================================================
     //
@@ -458,6 +459,9 @@ public:
 
     /// Return the chemical system associated with the equilibrium conditions.
     auto system() const -> const ChemicalSystem&;
+
+    /// Return the input parameters for the chemical equilibrium specifications.
+    auto params() const -> Params;
 
     /// Return true if temperature is unknown in the chemical equilibrium specifications.
     auto isTemperatureUnknown() const -> bool;
@@ -482,16 +486,16 @@ public:
 
 private:
     /// The chemical system associated with the equilibrium conditions.
-    ChemicalSystem msystem;
+    ChemicalSystem m_system;
+
+    /// The input parameters in the chemical equilibrium calculation.
+    Params m_params;
 
     /// The boolean flag that indicates whether temperature is unknown.
     bool unknownT = true;
 
     /// The boolean flag that indicates whether pressure is unknown.
     bool unknownP = true;
-
-    /// The input parameters in the chemical equilibrium calculation.
-    Strings parameters;
 
     /// The chemical formulas of the explicit titrants whose amounts are unknown.
     Vec<ChemicalFormula> titrants_explicit;
