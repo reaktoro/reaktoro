@@ -54,7 +54,7 @@ public:
     /// @ref withProductStandardVolumeModel and @ref withReactionThermoModel.
     ///
     /// @param lgK0 The equilibrium constant of the reaction (in log base 10)
-    auto withEquilibriumConstant(real lgK0) const -> FormationReaction;
+    auto withEquilibriumConstant(Param lgK0) const -> FormationReaction;
 
     /// Return a duplicate of this FormationReaction object with new standard
     /// molar volume function for the product species.
@@ -68,7 +68,7 @@ public:
     /// product species, but to zero.
     ///
     /// @param V0p The constant standard molar volume of the product species (in m3/mol).
-    auto withProductStandardVolume(real V0p) const -> FormationReaction;
+    auto withProductStandardVolume(Param V0p) const -> FormationReaction;
 
     /// Return a duplicate of this FormationReaction object with new standard
     /// molar volume function for the product species.
