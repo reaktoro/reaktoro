@@ -130,7 +130,7 @@ auto FormationReaction::withReactants(Pairs<Species, double> reactants) const ->
     return copy;
 }
 
-auto FormationReaction::withEquilibriumConstant(real lgK0) const -> FormationReaction
+auto FormationReaction::withEquilibriumConstant(Param lgK0) const -> FormationReaction
 {
     FormationReaction copy = clone();
     copy = copy.withReactionThermoModel(ReactionThermoModelConstLgK(lgK0));
@@ -138,9 +138,9 @@ auto FormationReaction::withEquilibriumConstant(real lgK0) const -> FormationRea
     return copy;
 }
 
-auto FormationReaction::withProductStandardVolume(real V0p) const -> FormationReaction
+auto FormationReaction::withProductStandardVolume(Param V0p) const -> FormationReaction
 {
-    return withProductStandardVolumeModel(Model<real(real,real)>::Constant(V0p, "V0"));
+    return withProductStandardVolumeModel(Model<real(real,real)>::Constant(V0p));
 }
 
 auto FormationReaction::withProductStandardVolumeModel(Model<real(real,real)> fn) const -> FormationReaction
