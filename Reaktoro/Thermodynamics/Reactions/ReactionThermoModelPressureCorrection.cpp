@@ -22,22 +22,19 @@
 
 namespace Reaktoro {
 
-auto ReactionThermoModelPressureCorrection(real Pr) -> ReactionThermoModel
+auto ReactionThermoModelPressureCorrection(Param Pr) -> ReactionThermoModel
 {
-    auto creatorfn = [Pr](const Params& params)
+    auto evalfn = [=](ReactionThermoProps& props, ReactionThermoArgs args)
     {
-        return [=](ReactionThermoProps& props, ReactionThermoArgs args)
-        {
-            ReactionThermoArgsDecl(args);
-            const auto dE = (P - Pr) * dV0; // delta energy (in J/mol)
-            props.dG0 += dE;
-            props.dH0 += dE;
-        };
+        ReactionThermoArgsDecl(args);
+        const auto dE = (P - Pr) * dV0; // delta energy (in J/mol)
+        props.dG0 += dE;
+        props.dH0 += dE;
     };
 
-    Params params;
+    Params params = { Pr };
 
-    return ReactionThermoModel(creatorfn, params);
+    return ReactionThermoModel(evalfn, params);
 }
 
 } // namespace Reaktoro

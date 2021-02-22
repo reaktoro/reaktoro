@@ -22,37 +22,21 @@
 
 namespace Reaktoro {
 
-auto ReactionThermoModelAnalyticalPHREEQC(real A1, real A2, real A3, real A4, real A5, real A6) -> ReactionThermoModel
+auto ReactionThermoModelAnalyticalPHREEQC(Param A1, Param A2, Param A3, Param A4, Param A5, Param A6) -> ReactionThermoModel
 {
-    auto creatorfn = [](const Params& params)
+    auto evalfn = [=](ReactionThermoProps& props, ReactionThermoArgs args)
     {
-        const real A1 = params.get("A1");
-        const real A2 = params.get("A2");
-        const real A3 = params.get("A3");
-        const real A4 = params.get("A4");
-        const real A5 = params.get("A5");
-        const real A6 = params.get("A6");
-
-        return [=](ReactionThermoProps& props, ReactionThermoArgs args)
-        {
-            ReactionThermoArgsDecl(args);
-            const auto R = universalGasConstant;
-            const auto T2 = T*T;
-            const auto T3 = T*T2;
-            props.dG0 = -R*T * (A1 + A2*T + A3/T + A4*log10(T) + A5/T2 + A6*T2) * ln10;
-            props.dH0 = R * (A2*T2 - A3 + A4*T/ln10 - 2*A5/T + 2*A6*T3) * ln10;
-        };
+        ReactionThermoArgsDecl(args);
+        const auto R = universalGasConstant;
+        const auto T2 = T*T;
+        const auto T3 = T*T2;
+        props.dG0 = -R*T * (A1 + A2*T + A3/T + A4*log10(T) + A5/T2 + A6*T2) * ln10;
+        props.dH0 = R * (A2*T2 - A3 + A4*T/ln10 - 2*A5/T + 2*A6*T3) * ln10;
     };
 
-    Params params;
-    params.set("A1", A1);
-    params.set("A2", A2);
-    params.set("A3", A3);
-    params.set("A4", A4);
-    params.set("A5", A5);
-    params.set("A6", A6);
+    Params params = { A1, A2, A3, A4, A5, A6 };
 
-    return ReactionThermoModel(creatorfn, params);
+    return ReactionThermoModel(evalfn, params);
 }
 
 } // namespace Reaktoro

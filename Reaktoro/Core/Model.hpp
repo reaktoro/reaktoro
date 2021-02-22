@@ -36,10 +36,6 @@ using ModelEvaluator = Fn<void(ResultRef res, Args... args)>;
 template<typename Result, typename... Args>
 using ModelCalculator = Fn<Result(Args... args)>;
 
-/// The functional signature of functions that creates ModelEvaluator function objects.
-template<typename ResultRef, typename... Args>
-using ModelCreator = Fn<ModelEvaluator<ResultRef, Args...>(const Params& params)>;
-
 /// The class used to represent a model function and its parameters.
 /// @ingroup Core
 template<typename Result, typename... Args>
@@ -55,15 +51,13 @@ public:
     Model()
     {}
 
-    /// Construct a Model function object with given model creator and parameters.
-    /// @param creatorfn The function that creates the underlying model function.
-    /// @param params The parameters used to initialize the underlying model function.
-    Model(const ModelCreator<ResultRef, Args...>& creatorfn, const Params& params)
-    : _creatorfn(creatorfn), _params(params), _evalfn(creatorfn(params))
+    /// Construct a Model function object with given model evaluator function and its parameters.
+    /// @param evalfn The function that evaluates the model.
+    /// @param params The parameters of the underlying model function.
+    Model(const ModelEvaluator<ResultRef, Args...>& evalfn, const Params& params = {})
+    : _params(params), _evalfn(evalfn)
     {
-        assert(_creatorfn);
-        assert(_evalfn);
-        const auto evalfn = _evalfn; // create copy of  to be used in _calcfn
+        assert(evalfn);
         _calcfn = [evalfn](const Args&... args) -> Result
         {
             Result res;
@@ -72,23 +66,20 @@ public:
         };
     }
 
-    /// Construct a Model function object with given model evaluator.
-    /// This method exists to permit a lambda function to be converted into a Model function object.
-    /// The created Model function object does not depend on Params. This means that
-    /// the underlying model creator function will always return the same evaluator.
-    /// @param evalfn The function that evaluates the properties without dependence on Params.
-    Model(const ModelEvaluator<ResultRef, Args...>& evalfn)
-    : Model([=](const Params&) { return evalfn; }, Params())
-    {}
-
-    /// Construct a Model function object with given direct model evaluator that returns the calculated result.
-    /// @param fn The function that evaluates the properties and return them.
-    Model(const ModelCalculator<Result, Args...>& calcfn)
-    : Model([=](ResultRef res, const Args&... args) { res = calcfn(args...); })
-    {}
+    /// Construct a Model function object with given direct model calculator and its parameters.
+    /// @param calcfn The function that calculates the model properties and return them.
+    /// @param params The parameters of the underlying model function.
+    Model(const ModelCalculator<Result, Args...>& calcfn, const Params& params = {})
+    : _params(params), _calcfn(calcfn)
+    {
+        assert(calcfn);
+        _evalfn = [calcfn](ResultRef res, const Args&... args)
+        {
+            res = calcfn(args...);
+        };
+    }
 
     /// Construct a Model function object with either a model evaluator or a model calculator function.
-
     /// This constructor exists so that functions that are not wrapped
     /// into an `std::function` object can be used to construct a Model
     /// function object. Without this constructor, an explicit wrap must
@@ -100,12 +91,6 @@ public:
     Model(const Fun& f)
     : Model(std::function(f))
     {}
-
-    /// Return a new Model function object with updated parameters.
-    auto withParams(const Params& params) const -> Model
-    {
-        return Model(_creatorfn, params);
-    }
 
     /// Return a new Model function object with memoization for the model calculator.
     auto withMemoization() const -> Model
@@ -132,19 +117,13 @@ public:
     /// Return true if this Model function object has been initialized.
     auto initialized() const -> bool
     {
-        return _creatorfn != nullptr;
+        return _evalfn != nullptr;
     }
 
     /// Return true if this Model function object has been initialized.
     operator bool() const
     {
         return initialized();
-    }
-
-    /// Return the model creator function of this Model function object.
-    auto creatorFn() const -> const ModelCreator<ResultRef, Args...>&
-    {
-        return _creatorfn;
     }
 
     /// Return the model evaluator function of this Model function object.
@@ -166,30 +145,15 @@ public:
     }
 
     /// Return a constant Model function object.
-    /// @param value The constant value always returned by the Model function object.
-    /// @param parname The name of the constant parameter.
-    static auto Constant(const Result& value, const String& parname) -> Model
+    /// @param param The parameter with the constant value always returned by the Model function object.
+    static auto Constant(const Param& param) -> Model
     {
-        auto creatorfn = [parname](const Params& params)
-        {
-            const real constval = params.get(parname);
-
-            return [constval](ResultRef res, const Args&... args)
-            {
-                res = constval;
-            };
-        };
-
-        Params params;
-        params.set(parname, Param::Constant(value));
-
-        return Model(creatorfn, params);
+        auto calcfn = [param](const Args&... args) { return param; };
+        Params params = { param };
+        return Model(calcfn, params);
     }
 
 private:
-    /// The function that creates the underlying model function.
-    ModelCreator<ResultRef, Args...> _creatorfn;
-
     /// The parameters used to initialize the underlying model function.
     Params _params;
 
@@ -206,28 +170,20 @@ auto chain(const Vec<Model<Result(Args...)>>& models) -> Model<Result(Args...)>
 {
     using ResultRef = Ref<Result>;
 
-    auto creatorfn = [=](const Params& params)
+    const auto evalfns = vectorize(models, RKT_LAMBDA(model, model.evaluatorFn()));
+
+    auto evalfn = [=](ResultRef res, const Args&... args)
     {
-        Vec<Model<Result(Args...)>> updated_models;
-
-        for(auto i = 0; i < models.size(); ++i)
-            updated_models.push_back(models[i].withParams(params.at(str(i))));
-
-        const auto evalfns = vectorize(updated_models, RKT_LAMBDA(model, model.evaluatorFn()));
-
-        return [=](ResultRef res, const Args&... args)
-        {
-            for(auto i = 0; i < evalfns.size(); ++i)
-                evalfns[i](res, args...);
-        };
+        for(auto i = 0; i < evalfns.size(); ++i)
+            evalfns[i](res, args...);
     };
 
     Params params;
+    for(const auto& model : models)
+        for(const auto& param : model.params())
+            params.append(param);
 
-    for(auto i = 0; i < models.size(); ++i)
-        params.set(str(i), models[i].params());
-
-    return Model<Result(Args...)>(creatorfn, params);
+    return Model<Result(Args...)>(evalfn, params);
 }
 
 /// Return a reaction thermodynamic model resulting from chaining other models.

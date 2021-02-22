@@ -53,6 +53,6 @@ namespace Reaktoro {
 /// @param A5 The coefficient @eq{A_5} in the reaction thermodynamic model.
 /// @param A6 The coefficient @eq{A_6} in the reaction thermodynamic model.
 /// @return ReactionThermoModel
-auto ReactionThermoModelAnalyticalPHREEQC(real A1, real A2, real A3, real A4, real A5, real A6) -> ReactionThermoModel;
+auto ReactionThermoModelAnalyticalPHREEQC(Param A1, Param A2, Param A3, Param A4, Param A5, Param A6) -> ReactionThermoModel;
 
 } // namespace Reaktoro
