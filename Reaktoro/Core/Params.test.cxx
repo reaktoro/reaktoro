@@ -57,4 +57,6 @@ TEST_CASE("Testing Params class", "[Params]")
     CHECK( params[0].value() == 4.0 );
     CHECK( params[1].id() == "" );
     CHECK( params[1].value() == 6.0 );
+
+    CHECK( autodiff::detail::isVector<Params> );
 }
