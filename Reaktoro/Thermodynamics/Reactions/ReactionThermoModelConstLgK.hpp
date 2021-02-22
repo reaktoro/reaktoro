@@ -39,6 +39,6 @@ namespace Reaktoro {
 /// @eqc{\Delta H^{\circ}=0.}
 ///
 /// @param lgK0 The equilibrium constant (log base 10) of the reaction.
-auto ReactionThermoModelConstLgK(real lgK0) -> ReactionThermoModel;
+auto ReactionThermoModelConstLgK(Param lgK0) -> ReactionThermoModel;
 
 } // namespace Reaktoro

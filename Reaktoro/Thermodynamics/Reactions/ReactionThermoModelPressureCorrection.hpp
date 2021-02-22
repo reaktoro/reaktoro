@@ -34,6 +34,6 @@ namespace Reaktoro {
 /// function of the reaction.
 ///
 /// @param Pr The reference pressure for the pressure correction (in Pa).
-auto ReactionThermoModelPressureCorrection(real Pr) -> ReactionThermoModel;
+auto ReactionThermoModelPressureCorrection(Param Pr) -> ReactionThermoModel;
 
 } // namespace Reaktoro

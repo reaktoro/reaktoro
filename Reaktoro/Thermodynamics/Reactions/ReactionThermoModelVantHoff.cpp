@@ -22,30 +22,22 @@
 
 namespace Reaktoro {
 
-auto ReactionThermoModelVantHoff(real lgK0, real dH0, real Tr) -> ReactionThermoModel
+auto ReactionThermoModelVantHoff(Param lgK0, Param dH0, Param Tr) -> ReactionThermoModel
 {
-    auto creatorfn = [Tr](const Params& params)
+    auto evalfn = [=](ReactionThermoProps& props, ReactionThermoArgs args)
     {
-        const real lgK0 = params.get("lgK0");
-        const real dH0  = params.get("dH0");
-
-        return [=](ReactionThermoProps& props, ReactionThermoArgs args)
-        {
-            ReactionThermoArgsDecl(args);
-            const auto R = universalGasConstant;
-            const auto RT = R*T;
-            const auto lnK0 = lgK0 * ln10;
-            const auto lnK = lnK0 - dH0 * (Tr - T)/(RT*Tr);
-            props.dG0 = -RT * lnK;
-            props.dH0 = dH0;
-        };
+        ReactionThermoArgsDecl(args);
+        const auto R = universalGasConstant;
+        const auto RT = R*T;
+        const auto lnK0 = lgK0 * ln10;
+        const auto lnK = lnK0 - dH0 * (Tr - T)/(RT*Tr);
+        props.dG0 = -RT * lnK;
+        props.dH0 = dH0;
     };
 
-    Params params;
-    params.set("lgK0", lgK0);
-    params.set("dH0", dH0);
+    Params params = { lgK0, dH0 };
 
-    return ReactionThermoModel(creatorfn, params);
+    return ReactionThermoModel(evalfn, params);
 }
 
 } // namespace Reaktoro
