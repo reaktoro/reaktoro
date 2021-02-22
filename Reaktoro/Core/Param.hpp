@@ -101,6 +101,9 @@ private:
 template<typename T>
 constexpr auto isNumeric = isArithmetic<T> || isOneOf<T, real, Param>;
 
+inline auto operator+(const Param& p) { return  p.value(); }
+inline auto operator-(const Param& p) { return -p.value(); }
+
 template<typename T, EnableIf<isNumeric<T>>...> auto operator+(const Param& p, const T& x) { return p.value() + x; }
 template<typename T, EnableIf<isNumeric<T>>...> auto operator-(const Param& p, const T& x) { return p.value() - x; }
 template<typename T, EnableIf<isNumeric<T>>...> auto operator*(const Param& p, const T& x) { return p.value() * x; }
