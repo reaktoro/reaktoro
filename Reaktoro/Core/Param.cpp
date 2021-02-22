@@ -25,9 +25,9 @@ auto warningIfOutOfBounds(const Param& param, const real& val) -> void
 {
     const auto lb = param.lowerbound();
     const auto ub = param.upperbound();
-    const auto name = param.name();
+    const auto id = param.id();
     warningif(val <= lb || val >= ub,
-        "Setting parameter with value ", val, " and name `", name, "` violates "
+        "Setting parameter with value ", val, " and id `", id, "` violates "
         "either its lower bound (", lb, ") or its upper bound (", ub, ").")
 }
 
@@ -39,8 +39,8 @@ struct Param::Impl
     /// The parameter value.
     real value = 0.0;
 
-    /// The parameter name.
-    String name;
+    /// The parameter id.
+    String id;
 
     /// The parameter lower bound value (default: -inf).
     double lowerbound = -std::numeric_limits<double>::infinity();
@@ -72,15 +72,15 @@ auto Param::value() const -> const real&
     return pimpl->value;
 }
 
-auto Param::name(String name) -> Param&
+auto Param::id(String id) -> Param&
 {
-    pimpl->name = name;
+    pimpl->id = id;
     return *this;
 }
 
-auto Param::name() const -> const String&
+auto Param::id() const -> const String&
 {
-    return pimpl->name;
+    return pimpl->id;
 }
 
 auto Param::lowerbound(double val) -> Param&

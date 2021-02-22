@@ -37,8 +37,8 @@ void exportParam(py::module& m)
         .def("value", py::overload_cast<const real&>(&Param::value)[], return_internal_ref)
         .def("value", py::overload_cast<>(&Param::value, py::const_), return_internal_ref)
 
-        .def("name", py::overload_cast<String>(&Param::name), return_internal_ref)
-        .def("name", py::overload_cast<>(&Param::name, py::const_), return_internal_ref)
+        .def("id", py::overload_cast<String>(&Param::id), return_internal_ref)
+        .def("id", py::overload_cast<>(&Param::id, py::const_), return_internal_ref)
 
         .def("lowerbound", py::overload_cast<double>(&Param::lowerbound)[], return_internal_ref)
         .def("lowerbound", py::overload_cast<>(&Param::lowerbound, py::const_))
