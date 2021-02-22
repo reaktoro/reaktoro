@@ -38,8 +38,7 @@ public:
     Param(const real& val);
 
     /// Construct a Param object with given value.
-    template<typename T, EnableIf<isArithmetic<T>>...>
-    Param(const T& val) : Param(real(val)) {}
+    Param(double val);
 
     /// Construct a Param object with identifier @p id and value @p val.
     Param(const String& id, const real& val);
@@ -52,6 +51,9 @@ public:
 
     /// Return the value of the parameter.
     auto value() const -> const real&;
+
+    /// Return the value of the parameter.
+    auto value() -> real&;
 
     /// Set the unique identifier of the parameter.
     auto id(String id) -> Param&;
@@ -84,6 +86,9 @@ public:
     /// Convert this Param object into its value type.
     operator const real&() const;
 
+    /// Convert this Param object into its value type.
+    operator real&();
+
     /// Return a Param object that represents a constant parameter.
     static auto Constant(const real& val) -> Param;
 
@@ -106,4 +111,27 @@ template<typename T, EnableIf<isNumeric<T>>...> auto operator-(const T& x, const
 template<typename T, EnableIf<isNumeric<T>>...> auto operator*(const T& x, const Param& p) { return x * p.value(); }
 template<typename T, EnableIf<isNumeric<T>>...> auto operator/(const T& x, const Param& p) { return x / p.value(); }
 
+template<size_t order, typename U>
+auto seed(Param& param, U&& seedval)
+{
+    autodiff::detail::seed<order>(param.value(), seedval);
+}
+
 } // namespace Reaktoro
+
+
+namespace autodiff {
+namespace detail {
+
+template<>
+struct NumberTraits<Reaktoro::Param>
+{
+    /// The underlying floating point type of Param.
+    using NumericType = double;
+
+    /// The order of Param.
+    static constexpr auto Order = 1;
+};
+
+} // namespace autodiff
+} // namespace detail

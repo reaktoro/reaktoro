@@ -30,17 +30,16 @@ void exportParam(py::module& m)
     py::class_<Param>(m, "Param")
         .def(py::init<>())
         .def(py::init<const real&>())
-        .def(py::init<const double&>())
-        .def(py::init<const long&>())
+        .def(py::init<double>())
         .def(py::init<const Param&>())
         .def(py::init<const String&, const real&>())
         .def(py::init<const String&, double>())
-        .def(py::init<const String&, long>())
 
-        .def("assign", &Param::assign, return_internal_ref);
+        .def("assign", &Param::assign, return_internal_ref)
 
         .def("value", py::overload_cast<const real&>(&Param::value), return_internal_ref)
         .def("value", py::overload_cast<>(&Param::value, py::const_), return_internal_ref)
+        .def("value", py::overload_cast<>(&Param::value), return_internal_ref)
 
         .def("id", py::overload_cast<String>(&Param::id), return_internal_ref)
         .def("id", py::overload_cast<>(&Param::id, py::const_), return_internal_ref)

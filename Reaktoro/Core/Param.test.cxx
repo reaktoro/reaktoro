@@ -82,4 +82,6 @@ TEST_CASE("Testing Param class", "[Param]")
     CHECK( std::isinf(x.lowerbound()) );
     CHECK( std::isinf(x.upperbound()) );
     CHECK( x.isconst() == true );
+
+    CHECK( autodiff::detail::Order<Param> == 1 );
 }

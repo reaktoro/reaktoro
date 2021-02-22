@@ -60,6 +60,10 @@ Param::Param(const real& val)
 : pimpl(new Impl({ val }))
 {}
 
+Param::Param(double val)
+: pimpl(new Impl({ val }))
+{}
+
 Param::Param(const String& id, const real& val)
 : pimpl(new Impl({ val, id }))
 {}
@@ -77,6 +81,11 @@ auto Param::value(const real& val) -> Param&
 }
 
 auto Param::value() const -> const real&
+{
+    return pimpl->value;
+}
+
+auto Param::value() -> real&
 {
     return pimpl->value;
 }
@@ -126,6 +135,11 @@ auto Param::isconst() const -> bool
 }
 
 Param::operator const real&() const
+{
+    return pimpl->value;
+}
+
+Param::operator real&()
 {
     return pimpl->value;
 }
