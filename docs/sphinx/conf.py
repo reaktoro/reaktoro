@@ -155,7 +155,7 @@ pygments.styles.STYLE_MAP['reaktoro'] = 'reaktoro::ReaktoroStyle'
 # -- Project information -----------------------------------------------------
 
 project = 'Reaktoro'
-copyright = '2018, Allan Leal and Reaktoro contributors'
+copyright = '2021, Allan Leal and Reaktoro contributors'
 author = 'Allan Leal'
 
 # The short X.Y version
