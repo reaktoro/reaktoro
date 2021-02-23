@@ -175,5 +175,3 @@ PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 .. _Reaktoro's GitHub Issues: https://github.com/reaktoro/Reaktoro/issues/new
 .. _Minimum Reproducible Example: https://stackoverflow.com/help/mcve>
 .. _Markdown: https://guides.github.com/features/mastering-markdown/
-
-__ `Reaktoro's GitHub Issues`_

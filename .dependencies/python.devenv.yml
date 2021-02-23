@@ -7,3 +7,4 @@ dependencies:
   - tabulate
   - colorama
   - python={{ python_version }}
+  - twine

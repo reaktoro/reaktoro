@@ -1,13 +1,39 @@
-from distutils.core import setup
+from setuptools import setup
+
+
+def get_readme_file_path():
+    from pathlib import Path
+    import os
+    return Path(os.path.abspath(__file__)).parents[0] / "README.md"
+
+
+readme_filepath = get_readme_file_path()
+with open(readme_filepath, "r") as fh:
+    long_description = fh.read()
+
+
+requirements = ["numpy", "pandas"]
 
 setup(name='reaktoro',
       version='${PROJECT_VERSION}',
       description='The Python interface of the Reaktoro library.',
+      classifiers=[
+            "Topic :: Scientific/Engineering",
+            "Topic :: Scientific/Engineering :: Chemistry",
+            "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
+            "Operating System :: OS Independent",
+      ],
+      long_description=long_description,
+      long_description_content_type="text/markdown",
       author='Allan Leal',
       author_email='allan.leal@erdw.ethz.ch',
-      url='www.reaktoro.org',
+      url='https://www.reaktoro.org',
       license='LGPLv2.1',
       package_dir={'reaktoro': ''},
       packages=['reaktoro', 'reaktoro._extensions'],
-      package_data={'reaktoro': ['@REAKTORO_PYTHON_MODULE_FILENAME@', '*.pdb']}
+      package_data={'reaktoro': ['@REAKTORO_PYTHON_MODULE_FILENAME@', '*.pdb']},
+      python_requires='>=3.6, <4',
+      install_requires=requirements,
+      zip_safe=False
       )
