@@ -34,13 +34,13 @@ jobs:
         uses: actions/cache@v2
         env:
           # Increase this value to reset cache and rebuild the env during the PR
-          CACHE_NUMBER: 0
+          CACHE_NUMBER: 1
         with:
           path: |
             **/build
             **/clcache
             ~/conda_pkgs_dir
-          key: 
+          key:
             ${{ runner.os }}-${{ matrix.PY_VER }}-${{ github.ref }}-${{ env.CACHE_NUMBER }}
 
       - uses: conda-incubator/setup-miniconda@v2
