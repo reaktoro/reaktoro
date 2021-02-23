@@ -53,6 +53,7 @@ install(CODE
     execute_process(
         COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY}
             sdist --dist-dir=\${REAKTORO_PYTHON_DIST_DIR_NATIVE}
+            bdist_wheel --dist-dir=\${REAKTORO_PYTHON_DIST_DIR_NATIVE}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
     execute_process(
