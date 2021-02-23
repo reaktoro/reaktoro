@@ -79,7 +79,7 @@ jobs:
           pytest . -n auto
 
       - name: Publish Reaktoro to PyPI
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && ${{ matrix.PY_VER }} == '3.7'
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && ${{ matrix.PY_VER }} == '3.7'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
