@@ -85,4 +85,3 @@ jobs:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
           packages_dir: artifacts/python/dist
-          skip_existing: true  # to guarantee that we are uploading a new version
