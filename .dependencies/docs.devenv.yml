@@ -1,4 +1,5 @@
 dependencies:
+  - doxygen=1.8.20                 # [linux]
   - graphviz                       # [linux]
   - sphinx==1.8.5
   - sphinx-autobuild
