@@ -58,7 +58,7 @@ install(CODE
 
     execute_process(
         COMMAND ${PYTHON_EXECUTABLE} -m pip
-            install reaktoro --prefix=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
+            install reaktoro3 --prefix=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
             --find-links=\${REAKTORO_PYTHON_DIST_DIR_NATIVE}
         WORKING_DIRECTORY ${REAKTORO_PYTHON_INSTALL_PREFIX})
 "
