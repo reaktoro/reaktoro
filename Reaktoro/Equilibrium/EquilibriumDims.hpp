@@ -46,7 +46,7 @@ class EquilibriumSpecs;
 struct EquilibriumDims
 {
     Index Ne = 0; ///< The number of elements in the chemical system.
-    Index Nc = 0; ///< The number of components in the chemical equilibrium problem (`Nc = Ne` if no inert reactions are specified).
+    Index Nb = 0; ///< The number of components in the chemical equilibrium problem (`Nb = Ne` if no inert reactions are specified).
     Index Nn = 0; ///< The number of species in the chemical system.
     Index Np = 0; ///< The number of *p* control variables (temperature, pressure, and amounts of explicit titrants when these are introduced unknowns).
     Index Nq = 0; ///< The number of *q* control variables (the amounts of the implicit titrants when these are introduced unknowns).

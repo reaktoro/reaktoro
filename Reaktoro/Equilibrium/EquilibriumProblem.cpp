@@ -105,12 +105,12 @@
 //         const auto Ne = system.elements().size() + 1;
 //         const auto Nn = system.species().size();
 //         const auto Nq = dims.Nq;
-//         const auto Nc = dims.Nc;
+//         const auto Nb = dims.Nb;
 //         const auto Nx = Nn + Nq;
 
-//         assert(Nc == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
+//         assert(Nb == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
 
-//         MatrixXd Aex = zeros(Nc, Nx);
+//         MatrixXd Aex = zeros(Nb, Nx);
 
 //         auto Wn = Aex.topLeftCorner(Ne, Nn);  // the formula matrix of the species
 //         auto Wq = Aex.topRightCorner(Ne, Nq); // the formula matrix of the implicit titrants
@@ -129,11 +129,11 @@
 //     {
 //         const auto Ne = system.elements().size() + 1;
 //         const auto Np = dims.Np;
-//         const auto Nc = dims.Nc;
+//         const auto Nb = dims.Nb;
 
-//         assert(Nc == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
+//         assert(Nb == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
 
-//         MatrixXd Aep = zeros(Nc, Np);
+//         MatrixXd Aep = zeros(Nb, Np);
 
 //         auto Wp = Aep.topRows(Ne); // the formula matrix of temperature, pressure and explicit titrants
 
