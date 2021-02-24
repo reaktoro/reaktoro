@@ -78,10 +78,10 @@ jobs:
           source activate reaktoro
           pytest . -n auto
 
-      - name: Publish Reaktoro to PyPI
-        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && ${{ matrix.PY_VER }} == '3.7'
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
-          packages_dir: artifacts/python/dist
+      # - name: Publish Reaktoro to PyPI
+      #   if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && ${{ matrix.PY_VER }} == '3.7'
+      #   uses: pypa/gh-action-pypi-publish@release/v1
+      #   with:
+      #     user: __token__
+      #     password: ${{ secrets.PYPI_API_TOKEN }}
+      #     packages_dir: artifacts/python/dist
