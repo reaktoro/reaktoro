@@ -44,8 +44,20 @@ public:
     /// Construct a default EquilibriumSensitivity object.
     EquilibriumSensitivity();
 
-    /// Construct a default EquilibriumSensitivity object.
+    /// Construct an EquilibriumSensitivity object with given equilibrium problem specifications.
     EquilibriumSensitivity(const EquilibriumSpecs& specs);
+
+    /// Construct a copy of an EquilibriumSensitivity object.
+    EquilibriumSensitivity(const EquilibriumSensitivity& other);
+
+    /// Destroy this EquilibriumSensitivity object.
+    ~EquilibriumSensitivity();
+
+    /// Assign a copy of an EquilibriumSensitivity object to this.
+    auto operator=(EquilibriumSensitivity other) -> EquilibriumSensitivity&;
+
+    /// Initialize this EquilibriumSensitivity object with given equilibrium problem specifications.
+    auto initialize(const EquilibriumSpecs& specs) -> void;
 
     //======================================================================
     // DERIVATIVES OF SPECIES AMOUNTS WITH RESPECT TO INPUT PARAMETERS
@@ -109,14 +121,32 @@ public:
     auto dndb() const -> MatrixXdConstRef;
 
     /// Set the derivatives of the species amounts *n* with respect to component amounts *b*.
-    auto dndb(MatrixXdConstRef data) const -> MatrixXdConstRef;
+    auto dndb(MatrixXdConstRef data) -> void;
+
+    //======================================================================
+    // DERIVATIVES OF p-CONTROL VARIABLES WITH RESPECT TO COMPONENT AMOUNTS
+    //======================================================================
+
+    /// Return the derivatives of the control variables *p* with respect to component amounts *b*.
+    auto dpdb() const -> MatrixXdConstRef;
+
+    /// Set the derivatives of the control variables *p* with respect to component amounts *b*.
+    auto dpdb(MatrixXdConstRef data) -> void;
+
+    //======================================================================
+    // DERIVATIVES OF q-CONTROL VARIABLES WITH RESPECT TO COMPONENT AMOUNTS
+    //======================================================================
+
+    /// Return the derivatives of the control variables *q* with respect to component amounts *b*.
+    auto dqdb() const -> MatrixXdConstRef;
+
+    /// Set the derivatives of the control variables *q* with respect to component amounts *b*.
+    auto dqdb(MatrixXdConstRef data) -> void;
 
 private:
     struct Impl;
 
-    SharedPtr<Impl> pimpl;
-
-
+    Ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
