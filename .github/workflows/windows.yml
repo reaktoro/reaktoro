@@ -34,7 +34,7 @@ jobs:
         uses: actions/cache@v2
         env:
           # Increase this value to reset cache and rebuild the env during the PR
-          CACHE_NUMBER: 2
+          CACHE_NUMBER: 0
         with:
           path: |
             **/build
@@ -48,6 +48,8 @@ jobs:
           auto-activate-base: false
           allow-softlinks: true
           activate-environment: ''
+          channels: conda-forge
+          channel-priority: true
           use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
 
       - name: Configuring Conda Environment

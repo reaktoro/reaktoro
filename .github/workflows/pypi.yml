@@ -29,6 +29,8 @@ jobs:
         with:
           auto-activate-base: true
           activate-environment: ""
+          channels: conda-forge
+          channel-priority: true
 
       - name: Configuring Conda Environment
         shell: bash -l {0}
