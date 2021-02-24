@@ -16,7 +16,7 @@ requirements = ["numpy", "pandas"]
 
 setup(name='reaktoro3',
       # version='${PROJECT_VERSION}',
-      version=0.0.3,
+      version='0.0.3',
       description='The Python interface of the Reaktoro library.',
       classifiers=[
             "Topic :: Scientific/Engineering",
