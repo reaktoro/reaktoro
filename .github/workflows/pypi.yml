@@ -82,5 +82,5 @@ jobs:
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          password: ${{ secrets.PYPI_API_TOKEN }}
           packages_dir: artifacts/python/dist
