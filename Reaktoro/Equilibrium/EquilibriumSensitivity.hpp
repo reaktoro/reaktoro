@@ -19,34 +19,104 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/Types.hpp>
 
 namespace Reaktoro {
 
-/// A type that contains the sensitivity data of the equilibrium state.
-/// The sensitivity of the equilibrium state contains derivatives of the species
-/// amounts with respect to temperature, pressure, and amounts of the elements.
-/// It is an important information for implicit numerical methods, since these
-/// derivatives allow the calculation to converge faster to the solution.
-struct EquilibriumSensitivity
+// Forward declarations
+class ChemicalSystem;
+class EquilibriumSpecs;
+class Param;
+class Params;
+
+/// The sensitivity derivatives of a chemical equilibrium state.
+/// This class stores the sensitivity derivatives of a chemical equilibrium
+/// state. These are partial derivatives of the species amounts with respect to
+/// input parameters, such as temperature, pressure, amounts of the elements.
+/// If the chemical equilibrium state is computed with other given conditions,
+/// for example, given volume and internal energy, derivatives with respect to
+/// these input conditions will be available. These sensitivity derivatives are
+/// important for implicit numerical methods, since they enable faster
+/// convergence rates.
+class EquilibriumSensitivity
 {
-    /// The partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$ (in units of mol/K).
-    /// These derivatives provide a measure of how much the equilibrium amounts of the species,
-    /// @f$n@f$, change with an infinitesimal change in temperature, @f$T@f$. They are useful when solving
-    /// non-linear problems that involve equilibrium calculations and derivatives with respect to temperature.
-    VectorXr dndT;
+public:
+    /// Construct a default EquilibriumSensitivity object.
+    EquilibriumSensitivity();
 
-    /// The partial derivatives @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$ (in units of mol/Pa).
-    /// These derivatives provide a measure of how much the equilibrium amounts of the species,
-    /// @f$n@f$, change with an infinitesimal change in pressure, @f$P@f$. They are useful when solving
-    /// non-linear problems that involve equilibrium calculations and derivatives with respect to pressure.
-    VectorXr dndP;
+    /// Construct a default EquilibriumSensitivity object.
+    EquilibriumSensitivity(const EquilibriumSpecs& specs);
 
-    /// The partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$ (in units of mol/mol).
-    /// These derivatives provide a measure of how much the equilibrium amounts of the species,
-    /// @f$n@f$, change with an infinitesimal change in the amounts of elements, @f$b@f$. They are
-    /// useful when solving non-linear problems that involve equilibrium calculations and derivatives with respect
-    /// to the amounts of elements.
-    MatrixXd dndb;
+    //======================================================================
+    // DERIVATIVES OF SPECIES AMOUNTS WITH RESPECT TO INPUT PARAMETERS
+    //======================================================================
+
+    /// Return the derivatives of the species amounts *n* with respect to an input parameter in *c*.
+    /// @param cid The identifier of the input parameter in *c* (e.g., "T", "P", "pH", it depends on what is input).
+    auto dndc(const String& cid) const -> VectorXdConstRef;
+
+    /// Return the derivatives of the species amounts *n* with respect to an input parameter in *c*.
+    /// @param param The input parameter in *c* as a Param object.
+    auto dndc(const Param& param) const -> VectorXdConstRef;
+
+    /// Return the derivatives of the species amounts *n* with respect to the input parameters *c*.
+    auto dndc() const -> MatrixXdConstRef;
+
+    /// Set the derivatives of the species amounts *n* with respect to the input parameters *c*.
+    auto dndc(MatrixXdConstRef data) -> void;
+
+    //======================================================================
+    // DERIVATIVES OF p-CONTROL VARIABLES WITH RESPECT TO INPUT PARAMETERS
+    //======================================================================
+
+    /// Return the derivatives of the *p* control variables with respect to an input parameter in *c*.
+    /// @param cid The identifier of the input parameter in *c* (e.g., "T", "P", "pH", it depends on what is input).
+    auto dpdc(const String& cid) const -> VectorXdConstRef;
+
+    /// Return the derivatives of the *p* control variables with respect to an input parameter in *c*.
+    /// @param param The input parameter in *c* as a Param object.
+    auto dpdc(const Param& param) const -> VectorXdConstRef;
+
+    /// Return the derivatives of the *p* control variables with respect to the input parameters *c*.
+    auto dpdc() const -> MatrixXdConstRef;
+
+    /// Set the derivatives of the *p* control variables with respect to the input parameters *c*.
+    auto dpdc(MatrixXdConstRef data) -> void;
+
+    //======================================================================
+    // DERIVATIVES OF q-CONTROL VARIABLES WITH RESPECT TO INPUT PARAMETERS
+    //======================================================================
+
+    /// Return the derivatives of the *q* control variables with respect to an input parameter in *c*.
+    /// @param cid The identifier of the input parameter in *c* (e.g., "T", "P", "pH", it depends on what is input).
+    auto dqdc(const String& cid) const -> VectorXdConstRef;
+
+    /// Return the derivatives of the *q* control variables with respect to an input parameter in *c*.
+    /// @param param The input parameter in *c* as a Param object.
+    auto dqdc(const Param& param) const -> VectorXdConstRef;
+
+    /// Return the derivatives of the *q* control variables with respect to the input parameters *c*.
+    auto dqdc() const -> MatrixXdConstRef;
+
+    /// Set the derivatives of the *q* control variables with respect to the input parameters *c*.
+    auto dqdc(MatrixXdConstRef data) -> void;
+
+    //======================================================================
+    // DERIVATIVES OF SPECIES AMOUNTS WITH RESPECT TO COMPONENT AMOUNTS
+    //======================================================================
+
+    /// Return the derivatives of the species amounts *n* with respect to component amounts *b*.
+    auto dndb() const -> MatrixXdConstRef;
+
+    /// Set the derivatives of the species amounts *n* with respect to component amounts *b*.
+    auto dndb(MatrixXdConstRef data) const -> MatrixXdConstRef;
+
+private:
+    struct Impl;
+
+    SharedPtr<Impl> pimpl;
+
+
 };
 
 } // namespace Reaktoro
