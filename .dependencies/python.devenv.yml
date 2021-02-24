@@ -7,4 +7,4 @@ dependencies:
   - tabulate
   - colorama
   - python={{ python_version }}
-  - setuptools<49.6
+  - setuptools<=49.6
