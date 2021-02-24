@@ -29,7 +29,7 @@ EquilibriumDims::EquilibriumDims(const EquilibriumSpecs& specs)
     const auto& system = specs.system();
 
     Ne = system.elements().size() + 1;
-    Nc = Ne; // TODO: Currently, this is chemical elements + electric charge. But we should change this when using EquilibriumReactions, where we will define the components (possibly fictitious ones if reactions are prevented in the equilibrium calculation).
+    Nb = Ne; // TODO: Currently, this is chemical elements + electric charge. But we should change this when using EquilibriumReactions, where we will define the components (possibly fictitious ones if reactions are prevented in the equilibrium calculation).
     Nn = system.species().size();
     Np = specs.numControlVariables() - specs.numTitrantsImplicit();
     Nq = specs.numTitrantsImplicit();

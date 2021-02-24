@@ -60,7 +60,7 @@
 
 //     const auto C = problem.conservationMatrix();
 
-//     REQUIRE( C.rows() == dims.Nc ); // the number of components
+//     REQUIRE( C.rows() == dims.Nb ); // the number of components
 //     REQUIRE( C.cols() == dims.Nx ); // the number of variables
 
 //     const auto Cx = MatrixXd // the expected conservation matrix!

@@ -43,7 +43,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         EquilibriumDims dims(specs);
 
         CHECK( dims.Ne == Ne ); // number of elements in the chemical system
-        CHECK( dims.Nc == Ne ); // number of components in the chemical equilibrium problem
+        CHECK( dims.Nb == Ne ); // number of components in the chemical equilibrium problem
         CHECK( dims.Nn == Nn ); // number of species in the chemical system
         CHECK( dims.Np == 0 );  // number of *p* control variables (temperature, pressure, and amounts of explicit titrants when these are introduced unknowns)
         CHECK( dims.Nq == 0 );  // number of *q* control variables (the amounts of the implicit titrants when these are introduced unknowns)
@@ -60,7 +60,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         EquilibriumDims dims(specs);
 
         CHECK( dims.Ne == Ne );
-        CHECK( dims.Nc == Ne );
+        CHECK( dims.Nb == Ne );
         CHECK( dims.Nn == Nn );
         CHECK( dims.Np == 1  ); // P
         CHECK( dims.Nq == 0  );
@@ -77,7 +77,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         EquilibriumDims dims(specs);
 
         CHECK( dims.Ne == Ne );
-        CHECK( dims.Nc == Ne );
+        CHECK( dims.Nb == Ne );
         CHECK( dims.Nn == Nn );
         CHECK( dims.Np == 2  ); // T, P
         CHECK( dims.Nq == 0  );
@@ -95,7 +95,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         EquilibriumDims dims(specs);
 
         CHECK( dims.Ne == Ne );
-        CHECK( dims.Nc == Ne );
+        CHECK( dims.Nb == Ne );
         CHECK( dims.Nn == Nn );
         CHECK( dims.Np == 0 );
         CHECK( dims.Nq == 1 ); // [H+]
@@ -113,7 +113,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         EquilibriumDims dims(specs);
 
         CHECK( dims.Ne == Ne );
-        CHECK( dims.Nc == Ne );
+        CHECK( dims.Nb == Ne );
         CHECK( dims.Nn == Nn );
         CHECK( dims.Np == 2  );
         CHECK( dims.Nq == 1  ); // [CO2]
@@ -136,7 +136,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         EquilibriumDims dims(specs);
 
         CHECK( dims.Ne == Ne );
-        CHECK( dims.Nc == Ne );
+        CHECK( dims.Nb == Ne );
         CHECK( dims.Nn == Nn );
         CHECK( dims.Np == 2  ); // [CO2], [CH4]
         CHECK( dims.Nq == 2  ); // [H+], [e-]
