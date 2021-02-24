@@ -21,6 +21,7 @@
 #include <Optima/Options.hpp>
 #include <Optima/Problem.hpp>
 #include <Optima/Result.hpp>
+#include <Optima/Sensitivity.hpp>
 #include <Optima/Solver.hpp>
 #include <Optima/State.hpp>
 
@@ -35,6 +36,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSetup.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
@@ -80,6 +82,9 @@ struct EquilibriumSolver::Impl
 
     /// The optimization state of the calculation.
     Optima::State optstate;
+
+    /// The optimization sensitivity of the calculation.
+    Optima::Sensitivity optsensitivity;
 
     /// The solver for the optimization calculations.
     Optima::Solver optsolver;
@@ -136,7 +141,7 @@ struct EquilibriumSolver::Impl
         optdims = Optima::Dims();
         optdims.x  = dims.Nx;
         optdims.p  = dims.Np;
-        optdims.be = dims.Nc;
+        optdims.be = dims.Nb;
 
         // Recreate a new Optima::Problem problem (TODO: Avoid recreation of Optima::Problem object for each equilibrium calculation)
         optproblem = Optima::Problem(optdims);
@@ -171,7 +176,7 @@ struct EquilibriumSolver::Impl
                 res.ddp = setup.evalEquationConstraintsGradP(x, p, params);
 
             if(opts.eval.ddc)
-                res.ddp = setup.evalEquationConstraintsGradParams(x, p, params);
+                res.ddc = setup.evalEquationConstraintsGradParams(x, p, params);
 
             res.succeeded = true;
         };
@@ -199,7 +204,7 @@ struct EquilibriumSolver::Impl
         optstate.x.head(dims.Nn) = state0.speciesAmounts();
     }
 
-    /// Update the initial state variables before the new equilibrium calculation.
+    /// Update the chemical state object with computed optimization state.
     auto updateChemicalState(ChemicalState& state, const EquilibriumConditions& conditions)
     {
         const Params& params = conditions.params();
@@ -210,6 +215,16 @@ struct EquilibriumSolver::Impl
         state.setPressure(P);
         state.setSpeciesAmounts(optstate.x.head(dims.Nn));
         state.equilibrium().setOptimaState(optstate);
+    }
+
+    /// Update the equilibrium sensitivity object with computed optimization sensitivity.
+    auto updateEquilibriumSensitivity(EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions)
+    {
+        const auto Nn = dims.Nn;
+        const auto Nq = dims.Nq;
+        sensitivity.dndc(optsensitivity.xc.topRows(Nn));
+        sensitivity.dqdc(optsensitivity.xc.bottomRows(Nq));
+        sensitivity.dpdc(optsensitivity.pc);
     }
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
@@ -246,6 +261,45 @@ struct EquilibriumSolver::Impl
         eqresult.optima = optsolver.solve(optproblem, optstate);
 
         updateChemicalState(state0, conditions);
+
+        return eqresult;
+    }
+
+    /// Solve an equilibrium problem with given chemical state in disequilibrium.
+    auto solve(ChemicalState& state0, EquilibriumSensitivity& sensitivity) -> EquilibriumResult
+    {
+        EquilibriumRestrictions restrictions(system);
+        return solve(state0, sensitivity, restrictions);
+    }
+
+    /// Solve an equilibrium problem with given chemical state in disequilibrium.
+    auto solve(ChemicalState& state0, EquilibriumSensitivity& sensitivity, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
+    {
+        EquilibriumConditions conditions(specs);
+        conditions.temperature(state0.temperature());
+        conditions.pressure(state0.pressure());
+        return solve(state0, sensitivity, conditions, restrictions);
+    }
+
+    /// Solve an equilibrium problem with given chemical state in disequilibrium.
+    auto solve(ChemicalState& state0, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions) -> EquilibriumResult
+    {
+        EquilibriumRestrictions restrictions(system);
+        return solve(state0, sensitivity, conditions, restrictions);
+    }
+
+    /// Solve an equilibrium problem with given chemical state in disequilibrium.
+    auto solve(ChemicalState& state0, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
+    {
+        EquilibriumResult eqresult;
+
+        updateOptProblem(state0, conditions, restrictions);
+        updateOptState(state0);
+
+        eqresult.optima = optsolver.solve(optproblem, optstate, optsensitivity);
+
+        updateChemicalState(state0, conditions);
+        updateEquilibriumSensitivity(sensitivity, conditions);
 
         return eqresult;
     }
@@ -295,6 +349,26 @@ auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumConditions&
 auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
 {
     return pimpl->solve(state, conditions, restrictions);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity, restrictions);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity, conditions);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity, conditions, restrictions);
 }
 
 } // namespace Reaktoro
