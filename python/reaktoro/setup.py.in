@@ -14,9 +14,8 @@ with open(readme_filepath, "r") as fh:
 
 requirements = ["numpy", "pandas"]
 
-setup(name='reaktoro3',
-      # version='${PROJECT_VERSION}',
-      version='0.0.3',
+setup(name='reaktoro',
+      version='${PROJECT_VERSION}',
       description='The Python interface of the Reaktoro library.',
       classifiers=[
             "Topic :: Scientific/Engineering",
