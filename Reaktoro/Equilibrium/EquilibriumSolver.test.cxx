@@ -28,6 +28,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 using namespace Reaktoro;
@@ -95,6 +96,13 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
         CHECK( result.optima.succeeded );
         CHECK( result.optima.iterations == 15 );
+
+        EquilibriumSensitivity sensitivity;
+
+        result = solver.solve(state, sensitivity);
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations == 0 );
     }
 
     SECTION("there is only pure water with allowed extremely tiny species amounts")

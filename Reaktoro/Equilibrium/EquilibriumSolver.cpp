@@ -142,6 +142,7 @@ struct EquilibriumSolver::Impl
         optdims.x  = dims.Nx;
         optdims.p  = dims.Np;
         optdims.be = dims.Nb;
+        optdims.c  = params.size() + dims.Nb; // the input parameters are those in params + the amounts of components (this is needed for computation of sensitivity derivatives with respect to these parameters)
 
         // Recreate a new Optima::Problem problem (TODO: Avoid recreation of Optima::Problem object for each equilibrium calculation)
         optproblem = Optima::Problem(optdims);
@@ -191,6 +192,14 @@ struct EquilibriumSolver::Impl
         // Set the lower bounds of the species amounts
         optproblem.xlower = setup.assembleLowerBoundsVector(restrictions, state0);
         optproblem.xupper = setup.assembleUpperBoundsVector(restrictions, state0);
+
+        // Set the values of the input parameters for sensitivity derivatives (due to the use of Param, a wrapper to a shared pointer, the actual values of c here are not important, because the Param objects are embedded in the models)
+        optproblem.c = zeros(optdims.c);
+
+        // Set the Jacobian matrix d(be)/dc = [d(be)/d(params) d(be)/db]
+        // The left Nw x Nb block is zero. The right Nb x Nb block is identity!
+        optproblem.bec.setZero();
+        optproblem.bec.rightCols(dims.Nb).diagonal().setOnes();
     }
 
     /// Update the initial state variables before the new equilibrium calculation.
@@ -220,11 +229,20 @@ struct EquilibriumSolver::Impl
     /// Update the equilibrium sensitivity object with computed optimization sensitivity.
     auto updateEquilibriumSensitivity(EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions)
     {
-        const auto Nn = dims.Nn;
-        const auto Nq = dims.Nq;
-        sensitivity.dndc(optsensitivity.xc.topRows(Nn));
-        sensitivity.dqdc(optsensitivity.xc.bottomRows(Nq));
-        sensitivity.dpdc(optsensitivity.pc);
+        const auto& params = conditions.params();
+        const auto& Nn = dims.Nn;
+        const auto& Nb = dims.Nb;
+        const auto& Nq = dims.Nq;
+        const auto& Nc = params.size();
+        const auto& xc = optsensitivity.xc;
+        const auto& pc = optsensitivity.pc;
+        sensitivity.initialize(specs);
+        sensitivity.dndc(xc.topLeftCorner(Nn, Nc));
+        sensitivity.dqdc(xc.bottomLeftCorner(Nq, Nc));
+        sensitivity.dpdc(pc.leftCols(Nc));
+        sensitivity.dndb(xc.topRightCorner(Nn, Nb));
+        sensitivity.dqdb(xc.bottomRightCorner(Nq, Nb));
+        sensitivity.dpdb(pc.rightCols(Nb));
     }
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.

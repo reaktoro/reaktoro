@@ -136,12 +136,15 @@ struct EquilibriumSetup::Impl
     /// Construct an EquilibriumSetup::Impl object
     Impl(const EquilibriumSpecs& specs)
     : system(specs.system()), specs(specs), dims(specs), props(specs.system()),
-      getT(createTemperatureGetterFn(specs)), getP(createPressureGetterFn(specs))
+      getT(createTemperatureGetterFn(specs)), getP(createPressureGetterFn(specs)),
+      params(specs.params())
     {
         const auto Nn = system.species().size();
         const auto Np = numControlVariablesTypeP(specs);
         const auto Nq = numControlVariablesTypeQ(specs);
         const auto Nx = Nn + Nq;
+        const auto Nb = numComponents(specs);
+        const auto Nc = params.size() + Nb;
 
         n.resize(Nn);
         p.resize(Np);
@@ -150,9 +153,11 @@ struct EquilibriumSetup::Impl
         gx.resize(Nx);
         Hxx.resize(Nx, Nx);
         Hxp.resize(Nx, Np);
+        Hxc.resize(Nx, Nc);
         vp.resize(Np);
         Vpx.resize(Np, Nx);
         Vpp.resize(Np, Np);
+        Vpc.resize(Np, Nc);
     }
 
     /// Assemble the vector with the element and charge coefficients of a chemical formula.
@@ -174,12 +179,12 @@ struct EquilibriumSetup::Impl
         const auto Ne = system.elements().size() + 1;
         const auto Nn = system.species().size();
         const auto Nq = numControlVariablesTypeQ(specs);
-        const auto Nc = numComponents(specs);
+        const auto Nb = numComponents(specs);
         const auto Nx = Nn + Nq;
 
-        assert(Nc == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
+        assert(Nb == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
 
-        MatrixXd Aex = zeros(Nc, Nx);
+        MatrixXd Aex = zeros(Nb, Nx);
 
         auto Wn = Aex.topLeftCorner(Ne, Nn);  // the formula matrix of the species
         auto Wq = Aex.topRightCorner(Ne, Nq); // the formula matrix of the implicit titrants
@@ -198,11 +203,11 @@ struct EquilibriumSetup::Impl
     {
         const auto Ne = system.elements().size() + 1;
         const auto Np = numControlVariablesTypeP(specs);
-        const auto Nc = numComponents(specs);
+        const auto Nb = numComponents(specs);
 
-        assert(Nc == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
+        assert(Nb == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
 
-        MatrixXd Aep = zeros(Nc, Np);
+        MatrixXd Aep = zeros(Nb, Np);
 
         auto Wp = Aep.topRows(Ne); // the formula matrix of temperature, pressure and explicit titrants
 
@@ -346,7 +351,8 @@ struct EquilibriumSetup::Impl
         {
             return evalObjectiveGradX(x, p, params);
         };
-        Hxc = jacobian(fn, wrt(params), at(x, p, params));
+        Hxc.leftCols(params.size()) = jacobian(fn, wrt(params), at(x, p, params));
+        Hxc.rightCols(dims.Nb).setZero(); // these are derivatives wrt amounts of components
         return Hxc;
     }
 
@@ -393,7 +399,8 @@ struct EquilibriumSetup::Impl
         {
             return evalEquationConstraints(x, p, params);
         };
-        Vpc = jacobian(fn, wrt(params), at(x, p, params));
+        Vpc.leftCols(params.size()) = jacobian(fn, wrt(params), at(x, p, params));
+        Vpc.rightCols(dims.Nb).setZero(); // these are derivatives wrt amounts of components
         return Vpc;
     }
 
