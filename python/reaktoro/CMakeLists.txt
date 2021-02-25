@@ -60,6 +60,7 @@ install(CODE
         COMMAND ${PYTHON_EXECUTABLE} -m pip
             install reaktoro --prefix=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
             --find-links=\${REAKTORO_PYTHON_DIST_DIR_NATIVE}
+            --no-index
         WORKING_DIRECTORY ${REAKTORO_PYTHON_INSTALL_PREFIX})
 "
 )

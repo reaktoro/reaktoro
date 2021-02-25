@@ -14,7 +14,13 @@ pdb_suffix = '.'.join(ext_suffix.split('.')[:-1] + ['pdb'])
 artifacts = (Path(__file__).parent / '../artifacts').absolute()
 
 if sys.platform.startswith('linux'):
-    assert (artifacts / 'lib/libReaktoro.so').is_file()
+    if (artifacts / 'lib64').is_dir():
+        assert (artifacts / 'lib64/libReaktoro.so').is_file()
+    elif (artifacts / 'lib').is_dir():
+        assert (artifacts / 'lib/libReaktoro.so').is_file()
+    else:
+        raise RuntimeError(f"Both {artifacts / 'lib64/libReaktoro.so'} " 
+            f"and {artifacts / 'lib/libReaktoro.so'} are not found.")
     assert (artifacts / 'include/Reaktoro/Reaktoro.hpp').is_file()
 
 elif sys.platform == 'win32':

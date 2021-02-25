@@ -1,18 +1,15 @@
-name: linux
+name: PyPI
 
 on:
   push:
     branches:
       - master
-
-  pull_request:
-
-  schedule:
-    - cron: "0 5 * * 1"  # runs at 05:00 UTC on Mondays
+    tags:
+      - v*
 
 jobs:
-  build:
-
+  publish:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     runs-on: ubuntu-latest
 
     env:
@@ -22,38 +19,23 @@ jobs:
     strategy:
       fail-fast: true
       max-parallel: 4
-      matrix:
-        PY_VER: [3.6, 3.7]
 
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
 
-      - name: Configuring Cache
-        id: cache
-        uses: actions/cache@v2
-        env:
-          # Increase this value to reset cache and rebuild the env during the PR
-          CACHE_NUMBER: 1
-        with:
-          path: |
-            **/build
-            **/ccache
-            ~/conda_pkgs_dir
-          key:
-            ${{ runner.os }}-${{ matrix.PY_VER }}-${{ github.ref }}-${{ env.CACHE_NUMBER }}
-
       - uses: conda-incubator/setup-miniconda@v2
         with:
+          auto-activate-base: true
+          activate-environment: ""
           channels: conda-forge
           channel-priority: true
-          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
 
       - name: Configuring Conda Environment
         shell: bash -l {0}
         env:
-          PY_VER: ${{ matrix.PY_VER }}
+          PY_VER: 3.7
         run: |
           conda config --set always_yes yes --set changeps1 no
           conda config --add channels conda-forge
@@ -62,16 +44,9 @@ jobs:
 
       - name: Building and Installing Reaktoro
         shell: bash -l {0}
-        env:
-          PY_VER: ${{ matrix.PY_VER }}
-          CC: ccache
-          CXX: ccache
         run: |
           source activate reaktoro
-          ccache -s
-          ccache -z
           inv -e compile -n ${{ env.NUMBER_OF_COMPILATION_JOBS }}
-          ccache -s
           python ci/check_compiled_files.py
 
       - name: Testing Reaktoro
@@ -79,3 +54,10 @@ jobs:
         run: |
           source activate reaktoro
           pytest . -n auto
+
+      - name: Publish Reaktoro to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          packages_dir: artifacts/python/dist

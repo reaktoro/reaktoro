@@ -8,7 +8,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CCache)
 
 # Set the name of the project
-project(Reaktoro VERSION 1.2.1 LANGUAGES CXX)
+project(Reaktoro VERSION 1.2.2 LANGUAGES CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
