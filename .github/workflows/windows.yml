@@ -39,7 +39,6 @@ jobs:
           path: |
             **/build
             **/clcache
-            ~/conda_pkgs_dir
           key:
             ${{ runner.os }}-${{ matrix.PY_VER }}-${{ github.ref }}-${{ env.CACHE_NUMBER }}
 
@@ -50,7 +49,7 @@ jobs:
           activate-environment: ''
           channels: conda-forge
           channel-priority: true
-          use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
+          # use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
 
       - name: Configuring Conda Environment
         env:
@@ -69,6 +68,7 @@ jobs:
           CXX: clcache
         run: |
           call conda activate reaktoro || goto :eof
+          conda list || goto :eof
           clcache -s || goto :eof
           clcache -z || goto :eof
           inv -e compile --verbose || goto :eof
