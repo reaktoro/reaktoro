@@ -69,7 +69,6 @@ jobs:
           CXX: clcache
         run: |
           call conda activate reaktoro || goto :eof
-          conda list || goto :eof
           clcache -s || goto :eof
           clcache -z || goto :eof
           inv -e compile --verbose || goto :eof
