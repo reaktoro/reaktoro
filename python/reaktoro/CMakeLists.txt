@@ -15,7 +15,13 @@ configure_file(${SETUP_PY_IN} ${SETUP_PY})
 add_custom_target(reaktoro ALL
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
         ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:PyReaktoro>
-    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} --quiet install --prefix=${CMAKE_BINARY_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} --quiet
+        sdist --dist-dir=${CMAKE_CURRENT_BINARY_DIR}/dist
+        bdist_wheel --dist-dir=${CMAKE_CURRENT_BINARY_DIR}/dist
+    COMMAND ${PYTHON_EXECUTABLE} -m pip install
+        reaktoro --prefix=${CMAKE_BINARY_DIR}
+        --find-links=\${CMAKE_CURRENT_BINARY_DIR}/dist
+        --no-index
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 # Set dependencies of reaktoro target
