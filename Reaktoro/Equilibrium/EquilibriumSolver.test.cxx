@@ -18,6 +18,11 @@
 // Catch includes
 #include <catch2/catch.hpp>
 
+
+
+#include <iostream>
+#include <iomanip>
+
 // Reaktoro includes
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -97,12 +102,40 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         CHECK( result.optima.succeeded );
         CHECK( result.optima.iterations == 15 );
 
-        EquilibriumSensitivity sensitivity;
+        SECTION("and sensitivity derivatives are considered")
+        {
+            EquilibriumSensitivity sensitivity;
 
-        result = solver.solve(state, sensitivity);
+            result = solver.solve(state, sensitivity);
 
-        CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations == 0 );
+            CHECK( result.optima.succeeded );
+            CHECK( result.optima.iterations == 0 );
+
+            const auto dndT = sensitivity.dndc("T");
+            const auto dndP = sensitivity.dndc("P");
+            const auto dndb = sensitivity.dndb();
+
+            CHECK( dndT == VectorXd({{
+                -2.3437508072278416e-08,
+                 2.3437508072278416e-08,
+                 2.3437508072278413e-08,
+                 0.0000000000000000e+00,
+                -1.5530798350377789e-34 }}));
+
+            CHECK( dndP == VectorXd({{
+                 0.0000000000000000e+00,
+                 0.0000000000000000e+00,
+                 0.0000000000000000e+00,
+                 0.0000000000000000e+00,
+                 0.0000000000000000e+00 }}));
+
+            CHECK( dndb == MatrixXd({
+                {4.9999999507732190e-01,  0.0000000000000000e+00, -1.1102230246251565e-16},
+                {4.9226781169203182e-09, -0.0000000000000000e+00,  5.0000000000000011e-01},
+                {4.9226781169203190e-09, -0.0000000000000000e+00, -5.0000000000000000e-01},
+                {0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00},
+                {4.5454545454545456e-19, -0.0000000000000000e+00, -8.6736173798840353e-35} }));
+        }
     }
 
     SECTION("there is only pure water with allowed extremely tiny species amounts")
@@ -286,6 +319,49 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         CHECK( state.temperature() == Approx(50.0 + 273.15) );
         CHECK( state.pressure() == Approx(80.0 * 1.0e+5) );
         CHECK( state.speciesAmount("H+") == Approx(0.00099084) );
+
+        SECTION("and sensitivity derivatives are considered")
+        {
+            EquilibriumSensitivity sensitivity;
+
+            result = solver.solve(state, sensitivity);
+
+            CHECK( result.optima.succeeded );
+            CHECK( result.optima.iterations == 1 );
+
+            const auto dndT  = sensitivity.dndc("T");
+            const auto dndP  = sensitivity.dndc("P");
+            const auto dndpH = sensitivity.dndc("pH");
+            const auto dndb  = sensitivity.dndb();
+
+            CHECK( dndT == VectorXd({{
+                -1.1153479332073412e-11,
+                -2.0093291929976324e-16,
+                 1.1153479332073412e-11,
+                 0.0000000000000000e+00,
+                -6.7948459196321255e-35 }}));
+
+            CHECK( dndP == VectorXd({{
+                 0.0000000000000000e+00,
+                -0.0000000000000000e+00,
+                -0.0000000000000000e+00,
+                 0.0000000000000000e+00,
+                -0.0000000000000000e+00 }}));
+
+            CHECK( dndpH == VectorXd({{
+                -2.7913561385420770e-10,
+                -2.2814928148700941e-03,
+                 2.7913561385420770e-10,
+                 0.0000000000000000e+00,
+                 8.0779356694631607e-44 }}));
+
+            CHECK( dndb == MatrixXd({
+                { 4.9999999999889794e-01,  0.0000000000000000e+00, -4.9999999999889794e-01},
+                { 9.0076339999801367e-06, -0.0000000000000000e+00, -9.0076339999801367e-06},
+                { 1.1020442994623840e-12, -0.0000000000000000e+00, -1.1020442994623840e-12},
+                { 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00},
+                { 4.5454545454545466e-19, -0.0000000000000000e+00, -4.5454545454545466e-19} }));
+        }
     }
 
     SECTION("there is an aqueous solution with given pH in equilibrium with a gaseous solution")
