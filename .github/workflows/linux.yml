@@ -68,7 +68,6 @@ jobs:
           CXX: ccache
         run: |
           source activate reaktoro
-          conda list
           ccache -s
           ccache -z
           inv -e compile -n ${{ env.NUMBER_OF_COMPILATION_JOBS }}
