@@ -20,7 +20,7 @@ add_custom_target(reaktoro ALL
         bdist_wheel --dist-dir=${CMAKE_CURRENT_BINARY_DIR}/dist
     COMMAND ${PYTHON_EXECUTABLE} -m pip install
         reaktoro --prefix=${CMAKE_BINARY_DIR}
-        --find-links=\${CMAKE_CURRENT_BINARY_DIR}/dist
+        --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist
         --no-index
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
