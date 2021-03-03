@@ -153,6 +153,9 @@ struct EquilibriumSolver::Impl
             res.f = setup.evalObjectiveValue(x, p, params);
             res.fx = setup.evalObjectiveGradX(x, p, params);
 
+            if(opts.eval.fxx && opts.eval.fxp && opts.eval.fxc)
+                setup.assembleChemicalPropsJacobianBegin();
+
             if(opts.eval.fxx)
                 res.fxx = setup.evalObjectiveHessianX(x, p, params); // TODO: Implement diagonal approximation mode for Hessian matrix in EquilibriumSolver.
 
@@ -161,6 +164,9 @@ struct EquilibriumSolver::Impl
 
             if(opts.eval.fxc)
                 res.fxc = setup.evalObjectiveHessianParams(x, p, params);
+
+            if(opts.eval.fxx && opts.eval.fxp && opts.eval.fxc)
+                setup.assembleChemicalPropsJacobianEnd();
 
             res.succeeded = true;
         };
@@ -214,12 +220,10 @@ struct EquilibriumSolver::Impl
     }
 
     /// Update the chemical state object with computed optimization state.
-    auto updateChemicalState(ChemicalState& state, const EquilibriumConditions& conditions)
+    auto updateChemicalState(ChemicalState& state)
     {
-        const Params& params = conditions.params();
-        const VectorXdConstRef p = optstate.p;
-        const auto T = setup.extractTemperature(p, params);
-        const auto P = setup.extractPressure(p, params);
+        const auto T = setup.chemicalProps().temperature();
+        const auto P = setup.chemicalProps().pressure();
         state.setTemperature(T);
         state.setPressure(P);
         state.setSpeciesAmounts(optstate.x.head(dims.Nn));
@@ -227,13 +231,12 @@ struct EquilibriumSolver::Impl
     }
 
     /// Update the equilibrium sensitivity object with computed optimization sensitivity.
-    auto updateEquilibriumSensitivity(EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions)
+    auto updateEquilibriumSensitivity(EquilibriumSensitivity& sensitivity)
     {
-        const auto& params = conditions.params();
         const auto& Nn = dims.Nn;
         const auto& Nb = dims.Nb;
         const auto& Nq = dims.Nq;
-        const auto& Nc = params.size();
+        const auto& Nc = dims.Nw;
         const auto& xc = optsensitivity.xc;
         const auto& pc = optsensitivity.pc;
         sensitivity.initialize(specs);
@@ -278,7 +281,7 @@ struct EquilibriumSolver::Impl
 
         eqresult.optima = optsolver.solve(optproblem, optstate);
 
-        updateChemicalState(state0, conditions);
+        updateChemicalState(state0);
 
         return eqresult;
     }
@@ -316,8 +319,8 @@ struct EquilibriumSolver::Impl
 
         eqresult.optima = optsolver.solve(optproblem, optstate, optsensitivity);
 
-        updateChemicalState(state0, conditions);
-        updateEquilibriumSensitivity(sensitivity, conditions);
+        updateChemicalState(state0);
+        updateEquilibriumSensitivity(sensitivity);
 
         return eqresult;
     }
