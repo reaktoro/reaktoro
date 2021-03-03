@@ -289,9 +289,9 @@ struct EquilibriumSetup::Impl
         return Hxp;
     }
 
-    auto evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& paramsconst) -> MatrixXdConstRef
+    auto evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& wconst) -> MatrixXdConstRef
     {
-        w = paramsconst;
+        w = wconst;
         auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
         {
             return evalObjectiveGradX(x, p, w);
@@ -338,15 +338,15 @@ struct EquilibriumSetup::Impl
         return Vpp;
     }
 
-    auto evalEquationConstraintsGradParams(VectorXrConstRef x, VectorXrConstRef p, const Params& paramsconst) -> MatrixXdConstRef
+    auto evalEquationConstraintsGradParams(VectorXrConstRef x, VectorXrConstRef p, const Params& wconst) -> MatrixXdConstRef
     {
-        w = paramsconst;
+        w = wconst;
         auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
         {
             return evalEquationConstraints(x, p, w);
         };
-        Vpc.leftCols(w.size()) = jacobian(fn, wrt(w), at(x, p, w));
-        Vpc.rightCols(dims.Nb).setZero(); // these are derivatives wrt amounts of components
+        Vpc.leftCols(dims.Nw) = jacobian(fn, wrt(w), at(x, p, w));
+        Vpc.rightCols(dims.Nb).setZero(); // these are derivatives wrt amounts of components, which are zero
         return Vpc;
     }
 };
