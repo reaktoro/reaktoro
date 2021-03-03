@@ -36,6 +36,7 @@ EquilibriumDims::EquilibriumDims(const EquilibriumSpecs& specs)
     Nt = specs.numTitrants();
     Nx = Nn + Nq;
     Nu = Nn + Np + Nq;
+    Nw = specs.numParameters();
 
     error(Np + Nq != specs.numConstraints(),
         "The number of introduced control variables (e.g., temperature, pressure, amounts of titrants) is ", Np + Nq, ". "

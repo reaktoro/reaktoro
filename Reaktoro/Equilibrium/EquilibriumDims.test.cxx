@@ -50,6 +50,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 0 );  // number of substances for which the chemical system is open to
         CHECK( dims.Nx == Nn ); // number of variables *x* in *x = (n, q)* (equivalent to `Nn + Nq`)
         CHECK( dims.Nu == Nn ); // number of unknown variables in the chemical equilibrium problem (equivalent to `Nn + Np + Nq`)
+        CHECK( dims.Nw == 2  ); // number of input parameters in the chemical equilibrium problem.
     }
 
     WHEN("temperature and volume are input parameters - the Helmholtz energy minimization formulation")
@@ -67,6 +68,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 0  );
         CHECK( dims.Nx == Nn );
         CHECK( dims.Nu == Nn + 1 );
+        CHECK( dims.Nw == 2  ); // T, V
     }
 
     WHEN("volume and internal energy are input parameters - the entropy maximization formulation")
@@ -84,6 +86,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 0  );
         CHECK( dims.Nx == Nn );
         CHECK( dims.Nu == Nn + 2 );
+        CHECK( dims.Nw == 2  ); // V, U
     }
 
     WHEN("temperature, pressure, and pH are input parameters")
@@ -102,6 +105,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 1 ); // [H+]
         CHECK( dims.Nx == Nn + 1 );
         CHECK( dims.Nu == Nn + 1 );
+        CHECK( dims.Nw == 3  ); // T, P, pH
     }
 
     WHEN("volume, entropy, and activity[CO2(g)] are input parameters")
@@ -120,6 +124,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 1  ); // [CO2]
         CHECK( dims.Nx == Nn + 1 );
         CHECK( dims.Nu == Nn + 3 );
+        CHECK( dims.Nw == 3  ); // T, P, a(CO2)
     }
 
     WHEN("temperature, pressure, volume, internal energy, pH, and pE are input parameters")
@@ -143,5 +148,6 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 4  );
         CHECK( dims.Nx == Nn + 2 );
         CHECK( dims.Nu == Nn + 4 );
+        CHECK( dims.Nw == 6 ); // T, P, V, U, pH, pE
     }
 }
