@@ -45,6 +45,11 @@ TEST_CASE("Testing Params class", "[Params]")
     CHECK_THROWS( params.get("C") );
     CHECK_THROWS( params.get("D") );
 
+    CHECK( params["A"].value() == 1.0 );
+    CHECK( params["B"].value() == 2.0 );
+    CHECK_THROWS( params["C"] );
+    CHECK_THROWS( params["D"] );
+
     CHECK( params.exists("A") == true );
     CHECK( params.exists("B") == true );
     CHECK( params.exists("C") == false );
@@ -57,6 +62,15 @@ TEST_CASE("Testing Params class", "[Params]")
     CHECK( params[0].value() == 4.0 );
     CHECK( params[1].id() == "" );
     CHECK( params[1].value() == 6.0 );
+
+    params.resize(3);
+    CHECK( params.size() == 3 );
+    CHECK( params[0].id() == "C" );
+    CHECK( params[0].value() == 4.0 );
+    CHECK( params[1].id() == "" );
+    CHECK( params[1].value() == 6.0 );
+    CHECK( params[2].id()    == ""  ); // the id of the newly added Param object!
+    CHECK( params[2].value() == 0.0 ); // the value of the newly added Param object!
 
     CHECK( autodiff::detail::isVector<Params> );
 }

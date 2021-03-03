@@ -34,15 +34,20 @@ public:
     /// Construct a default Params instance.
     Params(const std::initializer_list<Param>& params);
 
+    /// Return a deep copy of this Params object.
+    auto clone() const -> Params;
+
     /// Append a new parameter to the list of parameters.
-    /// @warning A runtime error is thrown if parameter id is not unique among other parameters already in the list.
     auto append(const Param& param) -> Param&;
 
     /// Append a new parameter to the list of parameters with given @p id and @p value.
-    /// @warning A runtime error is thrown if parameter id is not unique among other parameters already in the list.
+    /// @warning A runtime error is thrown if @p id is not unique among other parameters already in the list.
     auto append(const String& id, const real& value) -> Param&;
 
-    /// Return the number of child parameters.
+    /// Resize this container of parameters.
+    auto resize(Index size) -> void;
+
+    /// Return the number of parameters.
     auto size() const -> Index;
 
     /// Return the parameter with given index.
@@ -50,6 +55,14 @@ public:
 
     /// Return the parameter with given index.
     auto operator[](Index i) const -> const Param&;
+
+    /// Return the parameter with given identifier.
+    /// @warning A runtime error is thrown if there is no parameter with identifier @p id.
+    auto operator[](const String& id) -> Param&;
+
+    /// Return the parameter with given identifier.
+    /// @warning A runtime error is thrown if there is no parameter with identifier @p id.
+    auto operator[](const String& id) const -> const Param&;
 
     /// Return the index of the first parameter with given identifier or the number of parameters if not found.
     auto find(const String& id) const -> Index;
@@ -99,6 +112,56 @@ public:
 
 } // namespace Reaktoro
 
+//======================================================================
+// CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING PARAMS
+//======================================================================
+
+namespace Reaktoro {
+namespace detail {
+
+template<typename T> struct SameValue;
+template<typename T> struct AssignValue;
+template<typename T> struct CloneValue;
+
+template<>
+struct SameValue<Params>
+{
+    static auto check(const Params& a, const Params& b)
+    {
+        errorif(a.size() != b.size(), "Expecting same size for both Params objects");
+        for(auto i = 0; i < a.size(); ++i)
+            if(a[i].value() != b[i].value()) // for memoization sake, a and b are equal if they Param objects with same real values (including seed numbers!)
+                return false;
+        return true;
+    }
+};
+
+template<>
+struct AssignValue<Params>
+{
+    static auto apply(Params& a, const Params& b)
+    {
+        a.resize(b.size());
+        for(auto i = 0; i < b.size(); ++i)
+            a[i].value() = b[i].value();
+    }
+};
+
+template<>
+struct CloneValue<Params>
+{
+    static auto apply(const Params& params) -> Params
+    {
+        return params.clone();
+    }
+};
+
+} // namespace detail
+} // namespace Reaktoro
+
+//======================================================================
+// CODE BELOW NEEDED FOR AUTOMATIC DIFFERENTIATION INVOLVING PARAMS
+//======================================================================
 
 namespace autodiff {
 namespace detail {
