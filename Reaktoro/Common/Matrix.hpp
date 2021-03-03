@@ -427,4 +427,25 @@ auto log10(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().log10(
 
 } // namespace Reaktoro
 
+//=========================================================================
+// CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING EIGEN::ARRAYBASE
+//=========================================================================
+namespace Reaktoro {
+namespace detail {
+
+template<typename T>
+struct SameValue;
+
+template<typename Derived>
+struct SameValue<Eigen::ArrayBase<Derived>>
+{
+    static auto check(const Eigen::ArrayBase<Derived>& a, const Eigen::ArrayBase<Derived>& b)
+    {
+        return (a == b).all(); // for memoization sake, a and b are equal if all array elements are equal
+    }
+};
+
+} // namespace detail
+} // namespace Reaktoro
+
 #include "Matrix.hxx"
