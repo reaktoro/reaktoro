@@ -18,11 +18,6 @@
 // Catch includes
 #include <catch2/catch.hpp>
 
-
-
-#include <iostream>
-#include <iomanip>
-
 // Reaktoro includes
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
