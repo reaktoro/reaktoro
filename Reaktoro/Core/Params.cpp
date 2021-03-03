@@ -30,6 +30,14 @@ Params::Params(const std::initializer_list<Param>& params)
 : m_data(params)
 {}
 
+auto Params::clone() const -> Params
+{
+    Params res;
+    for(const auto& param : m_data)
+        res.append(param.clone());
+    return res;
+}
+
 auto Params::append(const Param& param) -> Param&
 {
     m_data.push_back(param);
@@ -39,6 +47,11 @@ auto Params::append(const Param& param) -> Param&
 auto Params::append(const String& id, const real& value) -> Param&
 {
     return append( Param(value).id(id) );
+}
+
+auto Params::resize(Index size) -> void
+{
+    m_data.resize(size);
 }
 
 auto Params::size() const -> Index
@@ -54,6 +67,16 @@ auto Params::operator[](Index i) -> Param&
 auto Params::operator[](Index i) const -> const Param&
 {
     return m_data[i];
+}
+
+auto Params::operator[](const String& id) -> Param&
+{
+    return get(id);
+}
+
+auto Params::operator[](const String& id) const -> const Param&
+{
+    return get(id);
 }
 
 auto Params::find(const String& id) const -> Index
