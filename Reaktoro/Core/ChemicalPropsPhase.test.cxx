@@ -209,7 +209,9 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const double Utot_T = U_T * nsum;
         const double Atot_T = A_T * nsum;
 
-        CHECK_NOTHROW( props.update(T, P, n, wrt(T)) );
+        autodiff::seed(T);
+        props.update(T, P, n);
+        autodiff::unseed(T);
 
         CHECK( grad(props.temperature()) == 1.0 );
         CHECK( grad(props.pressure())    == 0.0 );
@@ -291,7 +293,9 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const double Utot_P = U_P * nsum;
         const double Atot_P = A_P * nsum;
 
-        CHECK_NOTHROW( props.update(T, P, n, wrt(P)) );
+        autodiff::seed(P);
+        props.update(T, P, n);
+        autodiff::unseed(P);
 
         CHECK( grad(props.temperature()) == 0.0 );
         CHECK( grad(props.pressure())    == 1.0 );
@@ -383,7 +387,9 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 
         for(auto i = 0; i < 4; ++i)
         {
-            CHECK_NOTHROW( props.update(T, P, n, wrt(n[i])) );
+            autodiff::seed(n[i]);
+            props.update(T, P, n);
+            autodiff::unseed(n[i]);
 
             CHECK( grad(props.temperature()) == 0.0 );
             CHECK( grad(props.pressure())    == 0.0 );
