@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <cstddef>
+#include <utility>
 
 namespace Reaktoro {
 namespace detail {
@@ -32,11 +33,11 @@ struct Counter
 };
 
 template<size_t i, size_t ibegin, size_t iend, typename Function>
-constexpr auto For(Function&& f)
+constexpr auto AuxFor(Function&& f)
 {
     if constexpr (i < iend) {
         f(Counter<i>{});
-        For<i + 1, ibegin, iend>(std::forward<Function>(f));
+        AuxFor<i + 1, ibegin, iend>(std::forward<Function>(f));
     }
 }
 
@@ -46,7 +47,7 @@ constexpr auto For(Function&& f)
 template<size_t ibegin, size_t iend, typename Function>
 constexpr auto For(Function&& f)
 {
-    detail::For<ibegin, ibegin, iend>(std::forward<Function>(f));
+    detail::AuxFor<ibegin, ibegin, iend>(std::forward<Function>(f));
 }
 
 /// Generate evaluation statements `f(0); f(1); ...; f(iend-1);` at compile time.
