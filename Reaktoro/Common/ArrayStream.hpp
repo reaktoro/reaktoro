@@ -122,7 +122,7 @@ public:
 
     /// Transfer this ArrayStream object data to given list of scalars and/or arrays.
     template<typename Arg, typename... Args>
-    auto to(Arg& x, Args&... xs)
+    auto to(Arg& x, Args&... xs) const
     {
         detail::to(array, 0, x, xs...);
     }
