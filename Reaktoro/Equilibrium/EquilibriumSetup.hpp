@@ -24,10 +24,12 @@
 namespace Reaktoro {
 
 // Forward declarations
+class ChemicalProps;
 class ChemicalState;
 class ChemicalSystem;
 class EquilibriumConditions;
 class EquilibriumDims;
+class EquilibriumProps;
 class EquilibriumRestrictions;
 class EquilibriumSpecs;
 class Params;
@@ -80,72 +82,79 @@ public:
     /// Evaluate the objective function of the chemical equilibrium problem.
     /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
     /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param params The input parameters in the chemical equilibrium problem.
-    auto evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> real;
+    /// @param w The input parameters in the chemical equilibrium problem.
+    auto evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> real;
 
     /// Evaluate the gradient of the objective function of the chemical equilibrium problem.
     /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
     /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param params The input parameters in the chemical equilibrium problem.
-    auto evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXrConstRef;
+    /// @param w The input parameters in the chemical equilibrium problem.
+    auto evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXrConstRef;
 
     /// Evaluate the Hessian of the objective function of the chemical equilibrium problem with respect to @p x and @p x.
     /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
     /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param params The input parameters in the chemical equilibrium problem.
-    auto evalObjectiveHessianX(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef;
+    /// @param w The input parameters in the chemical equilibrium problem.
+    auto evalObjectiveHessianX(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef;
 
     /// Evaluate the Hessian of the objective function of the chemical equilibrium problem with respect to @p x and @p p.
     /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
     /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param params The input parameters in the chemical equilibrium problem.
-    auto evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef;
+    /// @param w The input parameters in the chemical equilibrium problem.
+    auto evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef;
 
-    /// Evaluate the Hessian of the objective function of the chemical equilibrium problem with respect to @p x and @p params.
+    /// Evaluate the Hessian of the objective function of the chemical equilibrium problem with respect to @p x and @p w.
     /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
     /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param params The input parameters in the chemical equilibrium problem.
-    auto evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef;
+    /// @param w The input parameters in the chemical equilibrium problem.
+    auto evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef;
 
     /// Evaluate the equation constraints of the chemical equilibrium problem.
     /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
     /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param params The input parameters in the chemical equilibrium problem.
-    auto evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXrConstRef;
+    /// @param w The input parameters in the chemical equilibrium problem.
+    auto evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXrConstRef;
 
     /// Evaluate the Jacobian of the equation constraints of the chemical equilibrium problem with respect to @p x.
     /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
     /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param params The input parameters in the chemical equilibrium problem.
-    auto evalEquationConstraintsGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef;
+    /// @param w The input parameters in the chemical equilibrium problem.
+    auto evalEquationConstraintsGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef;
 
     /// Evaluate the Jacobian of the equation constraints of the chemical equilibrium problem with respect to @p p.
     /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
     /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param params The input parameters in the chemical equilibrium problem.
-    auto evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef;
+    /// @param w The input parameters in the chemical equilibrium problem.
+    auto evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef;
 
-    /// Evaluate the Jacobian of the equation constraints of the chemical equilibrium problem with respect to @p params.
+    /// Evaluate the Jacobian of the equation constraints of the chemical equilibrium problem with respect to @p w.
     /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
     /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param params The input parameters in the chemical equilibrium problem.
-    auto evalEquationConstraintsGradParams(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef;
+    /// @param w The input parameters in the chemical equilibrium problem.
+    auto evalEquationConstraintsGradParams(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef;
 
-    /// Extract temperature from either vector `p` or `params`.
-    /// If temperature in unknown in the specifications of the equilibrium
-    /// problem, then it is extracted from `p`. Otherwise, temperature is known
-    /// and available in the Params object `params`.
-    /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param params The input parameters in the chemical equilibrium problem.
-    auto extractTemperature(VectorXrConstRef p, const Params& params) const -> real;
+    /// Enable recording of derivatives of the chemical properties with respect
+    /// to *(n, p, w)* to contruct its full Jacobian matrix.
+    /// Consider a series of forward automatic differentiation passes to
+    /// compute the partial derivatives of the chemical properties with respect
+    /// to the variables *(n, p, w)*. Use this method before these operations
+    /// so that these derivatives are recorded in this EquilibriumProps object.
+    /// At the end of all forward passes, the full Jacobian of the chemical
+    /// properties will have been constructed.
+    /// @note Call @ref assembleChemicalPropsJacobianEnd after these forward passes
+    /// have ended to eliminates the minor overhead of recording derivatives.
+    auto assembleChemicalPropsJacobianBegin() -> void;
 
-    /// Extract pressure from either vector `p` or `params`.
-    /// If pressure in unknown in the specifications of the equilibrium
-    /// problem, then it is extracted from `p`. Otherwise, pressure is known
-    /// and available in the Params object `params`.
-    /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param params The input parameters in the chemical equilibrium problem.
-    auto extractPressure(VectorXrConstRef p, const Params& params) const -> real;
+    /// Disable recording of derivatives of the chemical properties with
+    /// respect to *(n, p, w)* to indicate the end of the full Jacobian matrix
+    /// construction.
+    auto assembleChemicalPropsJacobianEnd() -> void;
+
+    /// Return the current chemical properties of the system as an EquilibriumProps object.
+    auto equilibriumProps() const -> const EquilibriumProps&;
+
+    /// Return the current chemical properties of the system as a ChemicalProps object.
+    auto chemicalProps() const -> const ChemicalProps&;
 
 private:
     struct Impl;

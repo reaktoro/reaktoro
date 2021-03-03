@@ -27,6 +27,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProps.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
@@ -54,40 +55,6 @@ auto numComponents(const EquilibriumSpecs& specs) -> Index
     return specs.system().elements().size() + 1;
 }
 
-/// Create the lambda function that extracts temperature value from either `p` or `params`.
-/// When the specifications of the equilibrium solver (`specs`) indicates that
-/// temperature in unknown, then temperature should be extracted from vector `p`.
-/// Otherwise, temperature is known and available in the Params object `params`.
-/// @param specs The specifications of the equilibrium solver
-auto createTemperatureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrConstRef, const Params&)>
-{
-    const auto unknownT = specs.isTemperatureUnknown();
-
-    if(unknownT)
-        return [](VectorXrConstRef p, const Params& params) { return p[0]; };
-
-    return [](VectorXrConstRef p, const Params& params) { return params.get("T").value(); };
-}
-
-/// Create the lambda function that extracts pressure value from either `p` or `params`.
-/// When the specifications of the equilibrium solver (`specs`) indicates that
-/// pressure in unknown, then pressure should be extracted from vector `p`.
-/// Otherwise, pressure is known and available in the Params object `params`.
-/// @param specs The specifications of the equilibrium solver
-auto createPressureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrConstRef, const Params&)>
-{
-    const auto unknownT = specs.isTemperatureUnknown();
-    const auto unknownP = specs.isPressureUnknown();
-
-    if(unknownT && unknownP)
-        return [](VectorXrConstRef p, const Params& params) { return p[1]; };
-
-    if(unknownP)
-        return [](VectorXrConstRef p, const Params& params) { return p[0]; };
-
-    return [](VectorXrConstRef p, const Params& params) { return params.get("P").value(); };
-}
-
 } // namespace
 
 using autodiff::jacobian;
@@ -105,14 +72,8 @@ struct EquilibriumSetup::Impl
     /// The dimensions of the variables in the equilibrium problem.
     const EquilibriumDims dims;
 
-    /// The temperature getter function for the given equilibrium specifications. @see createTemperatureGetterFn
-    const Fn<real(VectorXrConstRef, const Params&)> getT;
-
-    /// The pressure getter function for the given equilibrium specifications. @see createPressureGetterFn
-    const Fn<real(VectorXrConstRef, const Params&)> getP;
-
     /// The auxiliary chemical properties of the system.
-    ChemicalProps props;
+    EquilibriumProps props;
 
     /// The options for the solution of the equilibrium problem.
     EquilibriumOptions options;
@@ -126,25 +87,24 @@ struct EquilibriumSetup::Impl
     VectorXr gx;   ///< The gradient of the objective function with respect to x = (n, q).
     MatrixXd Hxx;  ///< The Jacobian of the objective gradient function with respect to x = (n, q).
     MatrixXd Hxp;  ///< The Jacobian of the objective gradient function with respect to p.
-    MatrixXd Hxc;  ///< The Jacobian of the objective gradient function with respect to params (Optima uses `c` for these parameter variables).
+    MatrixXd Hxc;  ///< The Jacobian of the objective gradient function with respect to w (Optima uses `c` for these parameter variables).
     VectorXr vp;   ///< The residuals of the equation constraints.
     MatrixXd Vpx;  ///< The Jacobian of the residuals of the equation constraints with respect to x = (n, q).
     MatrixXd Vpp;  ///< The Jacobian of the residuals of the equation constraints with respect to p.
-    MatrixXd Vpc;  ///< The Jacobian of the residuals of the equation constraints with respect to params (Optima uses `c` for these parameter variables).
-    Params params; ///< The current values of the input parameters for the equilibrium calculation (e.g, T, P, pH, pE, V, etc.).
+    MatrixXd Vpc;  ///< The Jacobian of the residuals of the equation constraints with respect to w (Optima uses `c` for these parameter variables).
+    Params w; ///< The current values of the input parameters for the equilibrium calculation (e.g, T, P, pH, pE, V, etc.).
 
     /// Construct an EquilibriumSetup::Impl object
     Impl(const EquilibriumSpecs& specs)
-    : system(specs.system()), specs(specs), dims(specs), props(specs.system()),
-      getT(createTemperatureGetterFn(specs)), getP(createPressureGetterFn(specs)),
-      params(specs.params())
+    : system(specs.system()), specs(specs), dims(specs), props(specs),
+      w(specs.params())
     {
         const auto Nn = system.species().size();
         const auto Np = numControlVariablesTypeP(specs);
         const auto Nq = numControlVariablesTypeQ(specs);
         const auto Nx = Nn + Nq;
         const auto Nb = numComponents(specs);
-        const auto Nc = params.size() + Nb;
+        const auto Nc = w.size() + Nb;
 
         n.resize(Nn);
         p.resize(Np);
@@ -260,51 +220,36 @@ struct EquilibriumSetup::Impl
     }
 
     /// Update the chemical properties of the system.
-    auto updateChemicalProps(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> void
+    auto updateChemicalProps(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> void
     {
-        //======================================================================
-        // Update temperature (T) and pressure (P)
-        //----------------------------------------------------------------------
-        // If temperature or pressure are unknowns, get their current values
-        // from vector p. If not, they have been given in the params object.
-        //======================================================================
-        T = getT(p, params);
-        P = getP(p, params);
-
-        assert(T > 0.0); // check if a proper value for T was given in p or params
-        assert(P > 0.0); // check if a proper value for P was given in p or params
-
-        //======================================================================
-        // Update chemical properties of the chemical system
-        //======================================================================
-        const auto Nn = system.species().size();
-        const auto n = x.head(Nn);
-
-        props.update(T, P, n);
+        const auto n = x.head(dims.Nn);
+        props.update(n, p, w);
     }
 
-    auto evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> real
+    auto evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> real
     {
-        updateChemicalProps(x, p, params);
-        const auto& T = props.temperature();
-        const auto& n = props.speciesAmounts();
-        const auto& u = props.chemicalPotentials();
+        updateChemicalProps(x, p, w);
+        const auto& cprops = props.chemicalProps();
+        const auto& T = cprops.temperature();
+        const auto& n = cprops.speciesAmounts();
+        const auto& u = cprops.chemicalPotentials();
         const auto RT = universalGasConstant * T;
         const auto tau = options.epsilon * options.logarithm_barrier_factor;
         const auto barrier = -tau * n.log().sum();
         return (n * u).sum()/RT + barrier; // the current Gibbs energy of the system (normalized by RT)
     }
 
-    auto evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXrConstRef
+    auto evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXrConstRef
     {
-        updateChemicalProps(x, p, params);
+        updateChemicalProps(x, p, w);
 
         const auto Nn = system.species().size();
         const auto Nq = numControlVariablesTypeQ(specs);
 
-        const auto& T = props.temperature();
-        const auto& n = props.speciesAmounts();
-        const auto& u = props.chemicalPotentials();
+        const auto& cprops = props.chemicalProps();
+        const auto& T = cprops.temperature();
+        const auto& n = cprops.speciesAmounts();
+        const auto& u = cprops.chemicalPotentials();
 
         const auto RT = universalGasConstant * T;
         const auto tau = options.epsilon * options.logarithm_barrier_factor;
@@ -317,101 +262,92 @@ struct EquilibriumSetup::Impl
         const auto& uconstraints = specs.constraintsChemicalPotentialType();
 
         for(auto i = 0; i < Nq; ++i)
-            gq[i] = uconstraints[i].fn(props)/RT;
+            gq[i] = uconstraints[i].fn(cprops)/RT;
 
         return gx;
     }
 
-    auto evalObjectiveHessianX(VectorXrConstRef xconst, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
+    auto evalObjectiveHessianX(VectorXrConstRef xconst, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
     {
         x = xconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXr
+        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
         {
-            return evalObjectiveGradX(x, p, params);
+            return evalObjectiveGradX(x, p, w);
         };
-        Hxx = jacobian(fn, wrt(x), at(x, p, params));
+        Hxx = jacobian(fn, wrt(x), at(x, p, w));
         return Hxx;
     }
 
-    auto evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef pconst, const Params& params) -> MatrixXdConstRef
+    auto evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef pconst, const Params& w) -> MatrixXdConstRef
     {
         p = pconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXr
+        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
         {
-            return evalObjectiveGradX(x, p, params);
+            return evalObjectiveGradX(x, p, w);
         };
-        Hxp = jacobian(fn, wrt(p), at(x, p, params));
+        Hxp = jacobian(fn, wrt(p), at(x, p, w));
         return Hxp;
     }
 
     auto evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& paramsconst) -> MatrixXdConstRef
     {
-        params = paramsconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXr
+        w = paramsconst;
+        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
         {
-            return evalObjectiveGradX(x, p, params);
+            return evalObjectiveGradX(x, p, w);
         };
-        Hxc.leftCols(params.size()) = jacobian(fn, wrt(params), at(x, p, params));
+        Hxc.leftCols(w.size()) = jacobian(fn, wrt(w), at(x, p, w));
         Hxc.rightCols(dims.Nb).setZero(); // these are derivatives wrt amounts of components
         return Hxc;
     }
 
-    auto evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXrConstRef
+    auto evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXrConstRef
     {
-        updateChemicalProps(x, p, params);
+        updateChemicalProps(x, p, w);
 
         const auto Np = numControlVariablesTypeP(specs);
 
         const auto& econstraints = specs.constraintsEquationType();
+        const auto& cprops = props.chemicalProps();
 
         for(auto i = 0; i < Np; ++i)
-            vp[i] = econstraints[i].fn(props);
+            vp[i] = econstraints[i].fn(cprops);
 
         return vp;
     }
 
-    auto evalEquationConstraintsGradX(VectorXrConstRef xconst, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
+    auto evalEquationConstraintsGradX(VectorXrConstRef xconst, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
     {
         x = xconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXr
+        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
         {
-            return evalEquationConstraints(x, p, params);
+            return evalEquationConstraints(x, p, w);
         };
-        Vpx = jacobian(fn, wrt(x), at(x, p, params));
+        Vpx = jacobian(fn, wrt(x), at(x, p, w));
         return Vpx;
     }
 
-    auto evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef pconst, const Params& params) -> MatrixXdConstRef
+    auto evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef pconst, const Params& w) -> MatrixXdConstRef
     {
         p = pconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXr
+        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
         {
-            return evalEquationConstraints(x, p, params);
+            return evalEquationConstraints(x, p, w);
         };
-        Vpp = jacobian(fn, wrt(p), at(x, p, params));
+        Vpp = jacobian(fn, wrt(p), at(x, p, w));
         return Vpp;
     }
 
     auto evalEquationConstraintsGradParams(VectorXrConstRef x, VectorXrConstRef p, const Params& paramsconst) -> MatrixXdConstRef
     {
-        params = paramsconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXr
+        w = paramsconst;
+        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
         {
-            return evalEquationConstraints(x, p, params);
+            return evalEquationConstraints(x, p, w);
         };
-        Vpc.leftCols(params.size()) = jacobian(fn, wrt(params), at(x, p, params));
+        Vpc.leftCols(w.size()) = jacobian(fn, wrt(w), at(x, p, w));
         Vpc.rightCols(dims.Nb).setZero(); // these are derivatives wrt amounts of components
         return Vpc;
-    }
-
-    auto extractTemperature(VectorXrConstRef p, const Params& params) const -> real
-    {
-        return getT(p, params);
-    }
-
-    auto extractPressure(VectorXrConstRef p, const Params& params) const -> real
-    {
-        return getP(p, params);
     }
 };
 
@@ -472,59 +408,69 @@ auto EquilibriumSetup::assembleUpperBoundsVector(const EquilibriumRestrictions& 
     return pimpl->assembleUpperBoundsVector(restrictions, state0);
 }
 
-auto EquilibriumSetup::evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> real
+auto EquilibriumSetup::evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> real
 {
-    return pimpl->evalObjectiveValue(x, p, params);
+    return pimpl->evalObjectiveValue(x, p, w);
 }
 
-auto EquilibriumSetup::evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXrConstRef
+auto EquilibriumSetup::evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXrConstRef
 {
-    return pimpl->evalObjectiveGradX(x, p, params);
+    return pimpl->evalObjectiveGradX(x, p, w);
 }
 
-auto EquilibriumSetup::evalObjectiveHessianX(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
+auto EquilibriumSetup::evalObjectiveHessianX(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
 {
-    return pimpl->evalObjectiveHessianX(x, p, params);
+    return pimpl->evalObjectiveHessianX(x, p, w);
 }
 
-auto EquilibriumSetup::evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
+auto EquilibriumSetup::evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
 {
-    return pimpl->evalObjectiveHessianP(x, p, params);
+    return pimpl->evalObjectiveHessianP(x, p, w);
 }
 
-auto EquilibriumSetup::evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
+auto EquilibriumSetup::evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
 {
-    return pimpl->evalObjectiveHessianParams(x, p, params);
+    return pimpl->evalObjectiveHessianParams(x, p, w);
 }
 
-auto EquilibriumSetup::evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> VectorXrConstRef
+auto EquilibriumSetup::evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXrConstRef
 {
-    return pimpl->evalEquationConstraints(x, p, params);
+    return pimpl->evalEquationConstraints(x, p, w);
 }
 
-auto EquilibriumSetup::evalEquationConstraintsGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
+auto EquilibriumSetup::evalEquationConstraintsGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
 {
-    return pimpl->evalEquationConstraintsGradX(x, p, params);
+    return pimpl->evalEquationConstraintsGradX(x, p, w);
 }
 
-auto EquilibriumSetup::evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
+auto EquilibriumSetup::evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
 {
-    return pimpl->evalEquationConstraintsGradP(x, p, params);
+    return pimpl->evalEquationConstraintsGradP(x, p, w);
 }
 
-auto EquilibriumSetup::evalEquationConstraintsGradParams(VectorXrConstRef x, VectorXrConstRef p, const Params& params) -> MatrixXdConstRef
+auto EquilibriumSetup::evalEquationConstraintsGradParams(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
 {
-    return pimpl->evalEquationConstraintsGradParams(x, p, params);
+    return pimpl->evalEquationConstraintsGradParams(x, p, w);
 }
 
-auto EquilibriumSetup::extractTemperature(VectorXrConstRef p, const Params& params) const -> real
+auto EquilibriumSetup::assembleChemicalPropsJacobianBegin() -> void
 {
-    return pimpl->extractTemperature(p, params);
+    pimpl->props.assembleFullJacobianBegin();
 }
 
-auto EquilibriumSetup::extractPressure(VectorXrConstRef p, const Params& params) const -> real
+auto EquilibriumSetup::assembleChemicalPropsJacobianEnd() -> void
 {
-    return pimpl->extractPressure(p, params);
+    pimpl->props.assembleFullJacobianEnd();
+}
+
+auto EquilibriumSetup::equilibriumProps() const -> const EquilibriumProps&
+{
+    return pimpl->props;
+}
+
+auto EquilibriumSetup::chemicalProps() const -> const ChemicalProps&
+{
+    return pimpl->props.chemicalProps();
 }
 
 } // namespace Reaktoro
