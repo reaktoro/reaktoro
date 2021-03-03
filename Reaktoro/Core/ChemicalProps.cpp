@@ -156,14 +156,6 @@ struct ChemicalProps::Impl
         }
     }
 
-    /// Update the chemical properties of the chemical system.
-    auto update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void
-    {
-        autodiff::seed(wrtvar);
-        update(T, P, n);
-        autodiff::unseed(wrtvar);
-    }
-
     /// Update the chemical properties of the chemical system using ideal activity models.
     auto updateIdeal(const ChemicalState& state) -> void
     {
@@ -189,12 +181,16 @@ struct ChemicalProps::Impl
         }
     }
 
-    /// Update the chemical properties of the chemical system using ideal activity models.
-    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void
+    /// Serialize the chemical properties into the array stream @p stream.
+    auto serialize(ArrayStream<real>& stream) const -> void
     {
-        autodiff::seed(wrtvar);
-        updateIdeal(T, P, n);
-        autodiff::unseed(wrtvar);
+        stream.from(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    }
+
+    /// Update the chemical properties of the system using the array stream @p stream.
+    auto deserialize(const ArrayStream<real>& stream) -> void
+    {
+        stream.to(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
     }
 
     /// Return the chemical properties of a phase with given index.
@@ -260,11 +256,6 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
     pimpl->update(T, P, n);
 }
 
-auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void
-{
-    pimpl->update(T, P, n, wrtvar);
-}
-
 auto ChemicalProps::updateIdeal(const ChemicalState& state) -> void
 {
     pimpl->updateIdeal(state);
@@ -275,9 +266,14 @@ auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n)
     pimpl->updateIdeal(T, P, n);
 }
 
-auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void
+auto ChemicalProps::serialize(ArrayStream<real>& stream) const -> void
 {
-    pimpl->updateIdeal(T, P, n, wrtvar);
+    pimpl->serialize(stream);
+}
+
+auto ChemicalProps::deserialize(const ArrayStream<real>& stream) -> void
+{
+    pimpl->deserialize(stream);
 }
 
 auto ChemicalProps::system() const -> const ChemicalSystem&

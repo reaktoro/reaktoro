@@ -18,6 +18,7 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/ArrayStream.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
@@ -46,39 +47,33 @@ public:
     /// Assign a ChemicalProps object to this.
     auto operator=(ChemicalProps other) -> ChemicalProps&;
 
-    /// Update the chemical properties of the chemical system.
+    /// Update the chemical properties of the system.
     /// @param state The chemical state of the system
     auto update(const ChemicalState& state) -> void;
 
-    /// Update the chemical properties of the chemical system.
+    /// Update the chemical properties of the system.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
     auto update(const real& T, const real& P, ArrayXrConstRef n) -> void;
 
-    /// Update the chemical properties of the chemical system.
-    /// @param T The temperature condition (in K)
-    /// @param P The pressure condition (in Pa)
-    /// @param n The amounts of the species in the system (in mol)
-    /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
-    auto update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void;
-
-    /// Update the chemical properties of the chemical system using ideal activity models.
+    /// Update the chemical properties of the system using ideal activity models.
     /// @param state The chemical state of the system
     auto updateIdeal(const ChemicalState& state) -> void;
 
-    /// Update the chemical properties of the chemical system using ideal activity models.
+    /// Update the chemical properties of the system using ideal activity models.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
     auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void;
 
-    /// Update the chemical properties of the chemical system using ideal activity models.
-    /// @param T The temperature condition (in K)
-    /// @param P The pressure condition (in Pa)
-    /// @param n The amounts of the species in the system (in mol)
-    /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
-    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar) -> void;
+    /// Serialize the chemical properties into the array stream @p stream.
+    /// @param stream The array stream used to serialize the chemical properties.
+    auto serialize(ArrayStream<real>& stream) const -> void;
+
+    /// Update the chemical properties of the system using the array stream @p stream.
+    /// @param stream The array stream containing the serialized chemical properties.
+    auto deserialize(const ArrayStream<real>& stream) -> void;
 
     /// Return the chemical system associated with these chemical properties.
     auto system() const -> const ChemicalSystem&;

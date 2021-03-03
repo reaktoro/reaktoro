@@ -18,6 +18,7 @@
 #include "EquilibriumHessian.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/AutoDiff.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/MoleFractionUtils.hpp>
@@ -69,7 +70,9 @@ struct EquilibriumHessian::Impl
     {
         update(props);
         for(auto i = 0; i < N; ++i) {
-            props.update(T, P, n, wrt(n[i]));
+            autodiff::seed(n[i]);
+            props.update(T, P, n);
+            autodiff::unseed(n[i]);
             H.row(i) = grad(props.chemicalPotentials());
         }
         return H;
@@ -83,8 +86,11 @@ struct EquilibriumHessian::Impl
 
         /// Overwrite the approximations for those species with given indices.
         update(props);
-        for(auto i : indices) {
-            props.update(T, P, n, wrt(n[i]));
+        for(auto i : indices)
+        {
+            autodiff::seed(n[i]);
+            props.update(T, P, n);
+            autodiff::unseed(n[i]);
             H.row(i) = grad(props.chemicalPotentials());
         }
 
