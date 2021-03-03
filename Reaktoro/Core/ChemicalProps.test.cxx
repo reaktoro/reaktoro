@@ -19,6 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/AutoDiff.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -208,7 +209,9 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const double Utot_T = Htot_T - P*Vtot_T;
         const double Atot_T = Gtot_T - P*Vtot_T;
 
-        REQUIRE_NOTHROW( props.update(T, P, n, wrt(T)) );
+        autodiff::seed(T);
+        props.update(T, P, n);
+        autodiff::unseed(T);
 
         REQUIRE( grad(props.temperature()) == 1.0 );
         REQUIRE( grad(props.pressure())    == 0.0 );
@@ -270,7 +273,9 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const double Utot_P = Htot_P - Vtot - P*Vtot_P;
         const double Atot_P = Gtot_P - Vtot - P*Vtot_P;
 
-        REQUIRE_NOTHROW( props.update(T, P, n, wrt(P)) );
+        autodiff::seed(P);
+        props.update(T, P, n);
+        autodiff::unseed(P);
 
         REQUIRE( grad(props.temperature()) == 0.0 );
         REQUIRE( grad(props.pressure())    == 1.0 );
@@ -359,7 +364,9 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
         for(auto i = 0; i < 3; ++i)
         {
-            REQUIRE_NOTHROW( props.update(T, P, n, wrt(n[i])) );
+            autodiff::seed(n[i]);
+            props.update(T, P, n);
+            autodiff::unseed(n[i]);
 
             REQUIRE( grad(props.temperature()) == 0.0 );
             REQUIRE( grad(props.pressure())    == 0.0 );

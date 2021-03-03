@@ -37,11 +37,6 @@ void exportChemicalProps(py::module& m)
         self.update(T, P, n);
     };
 
-    auto update3 = [](ChemicalProps& self, const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar)
-    {
-        self.update(T, P, n, wrtvar);
-    };
-
     auto updateIdeal1 = [](ChemicalProps& self, const ChemicalState& state)
     {
         self.updateIdeal(state);
@@ -52,20 +47,13 @@ void exportChemicalProps(py::module& m)
         self.updateIdeal(T, P, n);
     };
 
-    auto updateIdeal3 = [](ChemicalProps& self, const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar)
-    {
-        self.updateIdeal(T, P, n, wrtvar);
-    };
-
     py::class_<ChemicalProps>(m, "ChemicalProps")
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ChemicalState&>())
         .def("update", update1)
         .def("update", update2)
-        .def("update", update3)
         .def("updateIdeal", updateIdeal1)
         .def("updateIdeal", updateIdeal2)
-        .def("updateIdeal", updateIdeal3)
         .def("system", &ChemicalProps::system, py::return_value_policy::reference_internal)
         .def("phaseProps", &ChemicalProps::phaseProps, py::return_value_policy::reference_internal)
         .def("temperature", &ChemicalProps::temperature, py::return_value_policy::reference_internal)
