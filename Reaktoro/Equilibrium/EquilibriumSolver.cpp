@@ -134,15 +134,15 @@ struct EquilibriumSolver::Impl
     /// Update the optimization problem before a new equilibrium calculation.
     auto updateOptProblem(ChemicalState& state0, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions)
     {
-        // Auxiliary data
-        const auto params = conditions.params();
+        // The input parameters for the equilibrium calculation
+        const Params w = conditions.params();
 
         // Create the Optima::Dims object with dimension info of the optimization problem
         optdims = Optima::Dims();
         optdims.x  = dims.Nx;
         optdims.p  = dims.Np;
         optdims.be = dims.Nb;
-        optdims.c  = params.size() + dims.Nb; // the input parameters are those in params + the amounts of components (this is needed for computation of sensitivity derivatives with respect to these parameters)
+        optdims.c  = dims.Nw + dims.Nb; // c = (w, b) where w are the input parameters and b are the amounts of components
 
         // Recreate a new Optima::Problem problem (TODO: Avoid recreation of Optima::Problem object for each equilibrium calculation)
         optproblem = Optima::Problem(optdims);
@@ -150,20 +150,20 @@ struct EquilibriumSolver::Impl
         // Set the objective function in the Optima::Problem object
         optproblem.f = [=](Optima::ObjectiveResultRef res, VectorXdConstRef x, VectorXdConstRef p, VectorXdConstRef c, Optima::ObjectiveOptions opts) mutable
         {
-            res.f = setup.evalObjectiveValue(x, p, params);
-            res.fx = setup.evalObjectiveGradX(x, p, params);
+            res.f = setup.evalObjectiveValue(x, p, w);
+            res.fx = setup.evalObjectiveGradX(x, p, w);
 
             if(opts.eval.fxx && opts.eval.fxp && opts.eval.fxc)
                 setup.assembleChemicalPropsJacobianBegin();
 
             if(opts.eval.fxx)
-                res.fxx = setup.evalObjectiveHessianX(x, p, params); // TODO: Implement diagonal approximation mode for Hessian matrix in EquilibriumSolver.
+                res.fxx = setup.evalObjectiveHessianX(x, p, w); // TODO: Implement diagonal approximation mode for Hessian matrix in EquilibriumSolver.
 
             if(opts.eval.fxp)
-                res.fxp = setup.evalObjectiveHessianP(x, p, params);
+                res.fxp = setup.evalObjectiveHessianP(x, p, w);
 
             if(opts.eval.fxc)
-                res.fxc = setup.evalObjectiveHessianParams(x, p, params);
+                res.fxc = setup.evalObjectiveHessianParams(x, p, w);
 
             if(opts.eval.fxx && opts.eval.fxp && opts.eval.fxc)
                 setup.assembleChemicalPropsJacobianEnd();
@@ -174,16 +174,16 @@ struct EquilibriumSolver::Impl
         // Set the external constraint function in the Optima::Problem object
         optproblem.v = [=](Optima::ConstraintResultRef res, VectorXdConstRef x, VectorXdConstRef p, VectorXdConstRef c, Optima::ConstraintOptions opts) mutable
         {
-            res.val = setup.evalEquationConstraints(x, p, params);
+            res.val = setup.evalEquationConstraints(x, p, w);
 
             if(opts.eval.ddx)
-                res.ddx = setup.evalEquationConstraintsGradX(x, p, params);
+                res.ddx = setup.evalEquationConstraintsGradX(x, p, w);
 
             if(opts.eval.ddp)
-                res.ddp = setup.evalEquationConstraintsGradP(x, p, params);
+                res.ddp = setup.evalEquationConstraintsGradP(x, p, w);
 
             if(opts.eval.ddc)
-                res.ddc = setup.evalEquationConstraintsGradParams(x, p, params);
+                res.ddc = setup.evalEquationConstraintsGradParams(x, p, w);
 
             res.succeeded = true;
         };
@@ -202,7 +202,7 @@ struct EquilibriumSolver::Impl
         // Set the values of the input parameters for sensitivity derivatives (due to the use of Param, a wrapper to a shared pointer, the actual values of c here are not important, because the Param objects are embedded in the models)
         optproblem.c = zeros(optdims.c);
 
-        // Set the Jacobian matrix d(be)/dc = [d(be)/d(params) d(be)/db]
+        // Set the Jacobian matrix d(be)/dc = [d(be)/dw d(be)/db]
         // The left Nw x Nb block is zero. The right Nb x Nb block is identity!
         optproblem.bec.setZero();
         optproblem.bec.rightCols(dims.Nb).diagonal().setOnes();
