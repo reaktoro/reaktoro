@@ -31,27 +31,15 @@ void exportChemicalPropsPhase(py::module& m)
         self.update(T, P, n);
     };
 
-    auto update2 = [](ChemicalPropsPhase& self, const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar)
-    {
-        self.update(T, P, n, wrtvar);
-    };
-
     auto updateIdeal1 = [](ChemicalPropsPhase& self, const real& T, const real& P, ArrayXrConstRef n)
     {
         self.updateIdeal(T, P, n);
     };
 
-    auto updateIdeal2 = [](ChemicalPropsPhase& self, const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar)
-    {
-        self.updateIdeal(T, P, n, wrtvar);
-    };
-
     py::class_<ChemicalPropsPhase>(m, "ChemicalPropsPhase")
         .def(py::init<const Phase&>())
         .def("update", update1)
-        .def("update", update2)
         .def("updateIdeal", updateIdeal1)
-        .def("updateIdeal", updateIdeal2)
         .def("phase", &ChemicalPropsPhase::phase, py::return_value_policy::reference_internal)
         .def("data", &ChemicalPropsPhase::data, py::return_value_policy::reference_internal)
         .def("temperature", &ChemicalPropsPhase::temperature)

@@ -19,7 +19,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ArrayStream.hpp>
-#include <Reaktoro/Common/AutoDiff.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 
@@ -206,18 +205,6 @@ public:
     }
 
     /// Update the chemical properties of the phase.
-    /// @param T The temperature condition (in K)
-    /// @param P The pressure condition (in Pa)
-    /// @param n The amounts of the species in the phase (in mol)
-    /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
-    auto update(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar)
-    {
-        autodiff::seed(wrtvar);
-        update(T, P, n);
-        autodiff::unseed(wrtvar);
-    }
-
-    /// Update the chemical properties of the phase.
     auto update(const ChemicalPropsPhaseBaseData<Real, Array>& data)
     {
         _data = data;
@@ -236,12 +223,9 @@ public:
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the phase (in mol)
-    /// @param wrtvar The variable with respect to automatic differentiation should be carried out.
-    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n, Wrt<real&> wrtvar)
+    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n, const Params& w)
     {
-        autodiff::seed(wrtvar);
-        updateIdeal(T, P, n);
-        autodiff::unseed(wrtvar);
+        _update<true>(T, P, n);
     }
 
     /// Return the underlying Phase object.
@@ -493,10 +477,6 @@ private:
     template<bool use_ideal_activity_model>
     auto _update(const real& T, const real& P, ArrayXrConstRef n)
     {
-        // Check if this update call can be skipped if T, P, n conditions remain the same
-        if(T == _data.T && P == _data.P && (n == _data.n).all())
-            return;
-
         _data.T = T;
         _data.P = P;
         _data.n = n;
