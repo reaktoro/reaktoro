@@ -55,10 +55,11 @@ public:
     /// @param evalfn The function that evaluates the model.
     /// @param params The parameters of the underlying model function.
     Model(const ModelEvaluator<ResultRef, Args...>& evalfn, const Params& params = {})
-    : _params(params), _evalfn(evalfn)
+    : m_params(params), m_evalfn(evalfn)
     {
         assert(evalfn);
-        _calcfn = [evalfn](const Args&... args) -> Result
+
+        m_calcfn = [evalfn](const Args&... args, const Params& w) -> Result
         {
             Result res;
             evalfn(res, args...);
@@ -70,12 +71,18 @@ public:
     /// @param calcfn The function that calculates the model properties and return them.
     /// @param params The parameters of the underlying model function.
     Model(const ModelCalculator<Result, Args...>& calcfn, const Params& params = {})
-    : _params(params), _calcfn(calcfn)
+    : m_params(params)
     {
         assert(calcfn);
-        _evalfn = [calcfn](ResultRef res, const Args&... args)
+
+        m_evalfn = [calcfn](ResultRef res, const Args&... args)
         {
             res = calcfn(args...);
+        };
+
+        m_calcfn = [calcfn](const Args&... args, const Params& w) -> Result
+        {
+            return calcfn(args...);
         };
     }
 
@@ -96,28 +103,28 @@ public:
     auto withMemoization() const -> Model
     {
         Model copy = *this;
-        copy._calcfn = memoizeLast(copy._calcfn);
+        copy.m_calcfn = memoizeLast(copy.m_calcfn); // Here, if `m_calcfn` did not consider `const Params&` as argument, memoization would not know when the parameters have been changed externally!
         return copy;
     }
 
     /// Evaluate the model with given arguments.
     auto apply(ResultRef res, const Args&... args) const -> void
     {
-        assert(_evalfn);
-        _evalfn(res, args...);
+        assert(m_evalfn);
+        m_evalfn(res, args...);
     }
 
     /// Evaluate the model with given arguments and return the result of the evaluation.
     auto operator()(const Args&... args) const -> Result
     {
-        assert(_calcfn);
-        return _calcfn(args...);
+        assert(m_calcfn);
+        return m_calcfn(args..., m_params);
     }
 
     /// Return true if this Model function object has been initialized.
     auto initialized() const -> bool
     {
-        return _evalfn != nullptr;
+        return m_evalfn != nullptr;
     }
 
     /// Return true if this Model function object has been initialized.
@@ -129,39 +136,56 @@ public:
     /// Return the model evaluator function of this Model function object.
     auto evaluatorFn() const -> const ModelEvaluator<ResultRef, Args...>&
     {
-        return _evalfn;
+        return m_evalfn;
     }
 
     /// Return the model calculator function of this Model function object.
-    auto calculatorFn() const -> const ModelCalculator<Result, Args...>&
+    auto calculatorFn() const -> const ModelCalculator<Result, Args..., const Params&>&
     {
-        return _calcfn;
+        return m_calcfn;
     }
 
     /// Return the model parameters of this Model function object.
     auto params() const -> const Params&
     {
-        return _params;
+        return m_params;
     }
 
     /// Return a constant Model function object.
     /// @param param The parameter with the constant value always returned by the Model function object.
     static auto Constant(const Param& param) -> Model
     {
-        auto calcfn = [param](const Args&... args) { return param; };
+        auto calcfn = [param](const Args&... args) { return param; }; // no need to have `const Params&` in the lambda function here. This is added in the constructor call below!
         Params params = { param };
         return Model(calcfn, params);
     }
 
 private:
     /// The parameters used to initialize the underlying model function.
-    Params _params;
+    /// These parameters can be changed externally and affect the model result.
+    /// This is possible because their data is wrapped in a shared pointer.
+    /// Care must be taken when memoization is applied to the Model object.
+    /// Otherwise, the memoized model cannot realize that embedded Param
+    /// objects have been externally modified. For example, consider a model
+    /// that depends on temperature and pressure only. In this model, one or
+    /// more Param objects may have been captured (e.g., via lambda capture).
+    /// If temperature and pressure in a new calculation are the same as last
+    /// time, but these captured Param objects have been changed externally,
+    /// the memoized version of the Model object will return the cached result
+    /// (from last calculation). To prevent this, #m_calcfn below have its
+    /// functional signature extended with `const Params&`. By doing this, and
+    /// passing along #m_params to its call, its memoized version (@see
+    /// withMemoization) will be able to detect if these Param objects have
+    /// been changed externally.
+    Params m_params;
 
     /// The underlying model function that performs property evaluations.
-    ModelEvaluator<ResultRef, Args...> _evalfn;
+    ModelEvaluator<ResultRef, Args...> m_evalfn;
 
     /// The underlying model function that performs property calculations.
-    ModelCalculator<Result, Args...> _calcfn;
+    /// Note the added dependency on `const Params&`.
+    /// This is needed for proper memoization optimization!
+    ModelCalculator<Result, Args..., const Params&> m_calcfn;
 };
 
 /// Return a reaction thermodynamic model resulting from chaining other models.
