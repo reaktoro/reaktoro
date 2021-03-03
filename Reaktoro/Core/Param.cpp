@@ -68,6 +68,13 @@ Param::Param(const String& id, const real& val)
 : pimpl(new Impl({ val, id }))
 {}
 
+auto Param::clone() const -> Param
+{
+    Param param;
+    *param.pimpl = *pimpl;
+    return param;
+}
+
 auto Param::assign(const real& val) -> Param&
 {
     warningIfOutOfBounds(*this, val);

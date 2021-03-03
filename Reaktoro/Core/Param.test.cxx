@@ -60,9 +60,23 @@ TEST_CASE("Testing Param class", "[Param]")
     CHECK( x.upperbound() == 17.0 );
     CHECK( x.isconst() == false );
 
+    Param xclone = x.clone();
+
+    CHECK( xclone.value() == x.value() );
+    CHECK( xclone.id() == x.id() );
+    CHECK( xclone.lowerbound() == x.lowerbound() );
+    CHECK( xclone.upperbound() == x.upperbound() );
+    CHECK( xclone.isconst() == x.isconst() );
+
+    x.value(16.0);
+    xclone.value(13.0);
+
+    CHECK( x.value() == 16.0 ); // changing xclone does not change x since they have independent underlying data!
+    CHECK( xclone.value() == 13.0 );
+
     Param z = x; // z points to x
 
-    CHECK( z.value() == 9.0 );
+    CHECK( z.value() == 16.0 );
     CHECK( z.id() == "y" );
     CHECK( z.lowerbound() == 0.0 );
     CHECK( z.upperbound() == 17.0 );

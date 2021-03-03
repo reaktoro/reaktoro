@@ -43,6 +43,9 @@ public:
     /// Construct a Param object with identifier @p id and value @p val.
     Param(const String& id, const real& val);
 
+    /// Return a deep copy of this Param object.
+    auto clone() const -> Param;
+
     /// Set the value of the parameter.
     auto assign(const real& val) -> Param&;
 
@@ -98,6 +101,14 @@ private:
     SharedPtr<Impl> pimpl;
 };
 
+} // namespace Reaktoro
+
+//======================================================================
+// CODE BELOW NEEDED FOR ARITHMETIC OPERATIONS INVOLVING PARAM
+//======================================================================
+
+namespace Reaktoro {
+
 template<typename T>
 constexpr auto isNumeric = isArithmetic<T> || isOneOf<T, real, Param>;
 
@@ -114,6 +125,55 @@ template<typename T, EnableIf<isNumeric<T>>...> auto operator-(const T& x, const
 template<typename T, EnableIf<isNumeric<T>>...> auto operator*(const T& x, const Param& p) { return x * p.value(); }
 template<typename T, EnableIf<isNumeric<T>>...> auto operator/(const T& x, const Param& p) { return x / p.value(); }
 
+} // namespace Reaktoro
+
+//======================================================================
+// CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING PARAM
+//======================================================================
+
+namespace Reaktoro {
+namespace detail {
+
+template<typename T> struct SameValue;
+template<typename T> struct AssignValue;
+template<typename T> struct CloneValue;
+
+template<>
+struct SameValue<Param>
+{
+    static auto check(const Param& a, const Param& b)
+    {
+        return a.value() == b.value(); // for memoization sake, a and b are equal if they have same values (and not same underlying pointer in Param!)
+    }
+};
+
+template<>
+struct AssignValue<Param>
+{
+    static auto apply(Param& a, const Param& b)
+    {
+        a.value() = b.value(); // for memoization sake, assign the value of b to a (not the underlying pointer in Param!)
+    }
+};
+
+template<>
+struct CloneValue<Param>
+{
+    static auto apply(const Param& a) -> Param
+    {
+        return a.clone();
+    }
+};
+
+} // namespace detail
+} // namespace Reaktoro
+
+//======================================================================
+// CODE BELOW NEEDED FOR AUTOMATIC DIFFERENTIATION INVOLVING PARAM
+//======================================================================
+
+namespace Reaktoro {
+
 template<size_t order, typename U>
 auto seed(Param& param, U&& seedval)
 {
@@ -122,10 +182,10 @@ auto seed(Param& param, U&& seedval)
 
 } // namespace Reaktoro
 
-
 namespace autodiff {
 namespace detail {
 
+/// Implementation of NumberTraits for Reaktoro::Param.
 template<>
 struct NumberTraits<Reaktoro::Param>
 {

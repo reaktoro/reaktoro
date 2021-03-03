@@ -35,6 +35,7 @@ void exportParam(py::module& m)
         .def(py::init<const String&, const real&>())
         .def(py::init<const String&, double>())
 
+        .def("clone", &Param::clone)
         .def("assign", &Param::assign, return_internal_ref)
 
         .def("value", py::overload_cast<const real&>(&Param::value), return_internal_ref)
