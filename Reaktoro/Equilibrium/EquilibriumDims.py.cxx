@@ -37,5 +37,6 @@ void exportEquilibriumDims(py::module& m)
         .def_readwrite("Nt", &EquilibriumDims::Nt)
         .def_readwrite("Nx", &EquilibriumDims::Nx)
         .def_readwrite("Nu", &EquilibriumDims::Nu)
+        .def_readwrite("Nw", &EquilibriumDims::Nw)
         ;
 }
