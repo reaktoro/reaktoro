@@ -236,13 +236,13 @@ struct EquilibriumSolver::Impl
         const auto& Nn = dims.Nn;
         const auto& Nb = dims.Nb;
         const auto& Nq = dims.Nq;
-        const auto& Nc = dims.Nw;
+        const auto& Nw = dims.Nw;
         const auto& xc = optsensitivity.xc;
         const auto& pc = optsensitivity.pc;
         sensitivity.initialize(specs);
-        sensitivity.dndc(xc.topLeftCorner(Nn, Nc));
-        sensitivity.dqdc(xc.bottomLeftCorner(Nq, Nc));
-        sensitivity.dpdc(pc.leftCols(Nc));
+        sensitivity.dndw(xc.topLeftCorner(Nn, Nw));
+        sensitivity.dqdw(xc.bottomLeftCorner(Nq, Nw));
+        sensitivity.dpdw(pc.leftCols(Nw));
         sensitivity.dndb(xc.topRightCorner(Nn, Nb));
         sensitivity.dqdb(xc.bottomRightCorner(Nq, Nb));
         sensitivity.dpdb(pc.rightCols(Nb));

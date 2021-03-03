@@ -106,8 +106,8 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             CHECK( result.optima.succeeded );
             CHECK( result.optima.iterations == 0 );
 
-            const auto dndT = sensitivity.dndc("T");
-            const auto dndP = sensitivity.dndc("P");
+            const auto dndT = sensitivity.dndw("T");
+            const auto dndP = sensitivity.dndw("P");
             const auto dndb = sensitivity.dndb();
 
             CHECK( dndT == VectorXd({{
@@ -324,9 +324,9 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             CHECK( result.optima.succeeded );
             CHECK( result.optima.iterations == 1 );
 
-            const auto dndT  = sensitivity.dndc("T");
-            const auto dndP  = sensitivity.dndc("P");
-            const auto dndpH = sensitivity.dndc("pH");
+            const auto dndT  = sensitivity.dndw("T");
+            const auto dndP  = sensitivity.dndw("P");
+            const auto dndpH = sensitivity.dndw("pH");
             const auto dndb  = sensitivity.dndb();
 
             CHECK( dndT == VectorXd({{

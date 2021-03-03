@@ -63,55 +63,55 @@ public:
     // DERIVATIVES OF SPECIES AMOUNTS WITH RESPECT TO INPUT PARAMETERS
     //======================================================================
 
-    /// Return the derivatives of the species amounts *n* with respect to an input parameter in *c*.
-    /// @param cid The identifier of the input parameter in *c* (e.g., "T", "P", "pH", it depends on what is input).
-    auto dndc(const String& cid) const -> VectorXdConstRef;
+    /// Return the derivatives of the species amounts *n* with respect to an input parameter in *w*.
+    /// @param wid The identifier of the input parameter in *w* (e.g., "T", "P", "pH", it depends on what is input).
+    auto dndw(const String& wid) const -> VectorXdConstRef;
 
-    /// Return the derivatives of the species amounts *n* with respect to an input parameter in *c*.
-    /// @param param The input parameter in *c* as a Param object.
-    auto dndc(const Param& param) const -> VectorXdConstRef;
+    /// Return the derivatives of the species amounts *n* with respect to an input parameter in *w*.
+    /// @param param The input parameter in *w* as a Param object.
+    auto dndw(const Param& param) const -> VectorXdConstRef;
 
-    /// Return the derivatives of the species amounts *n* with respect to the input parameters *c*.
-    auto dndc() const -> MatrixXdConstRef;
+    /// Return the derivatives of the species amounts *n* with respect to the input parameters *w*.
+    auto dndw() const -> MatrixXdConstRef;
 
-    /// Set the derivatives of the species amounts *n* with respect to the input parameters *c*.
-    auto dndc(MatrixXdConstRef data) -> void;
+    /// Set the derivatives of the species amounts *n* with respect to the input parameters *w*.
+    auto dndw(MatrixXdConstRef data) -> void;
 
     //======================================================================
     // DERIVATIVES OF p-CONTROL VARIABLES WITH RESPECT TO INPUT PARAMETERS
     //======================================================================
 
-    /// Return the derivatives of the *p* control variables with respect to an input parameter in *c*.
-    /// @param cid The identifier of the input parameter in *c* (e.g., "T", "P", "pH", it depends on what is input).
-    auto dpdc(const String& cid) const -> VectorXdConstRef;
+    /// Return the derivatives of the *p* control variables with respect to an input parameter in *w*.
+    /// @param wid The identifier of the input parameter in *w* (e.g., "T", "P", "pH", it depends on what is input).
+    auto dpdw(const String& wid) const -> VectorXdConstRef;
 
-    /// Return the derivatives of the *p* control variables with respect to an input parameter in *c*.
-    /// @param param The input parameter in *c* as a Param object.
-    auto dpdc(const Param& param) const -> VectorXdConstRef;
+    /// Return the derivatives of the *p* control variables with respect to an input parameter in *w*.
+    /// @param param The input parameter in *w* as a Param object.
+    auto dpdw(const Param& param) const -> VectorXdConstRef;
 
-    /// Return the derivatives of the *p* control variables with respect to the input parameters *c*.
-    auto dpdc() const -> MatrixXdConstRef;
+    /// Return the derivatives of the *p* control variables with respect to the input parameters *w*.
+    auto dpdw() const -> MatrixXdConstRef;
 
-    /// Set the derivatives of the *p* control variables with respect to the input parameters *c*.
-    auto dpdc(MatrixXdConstRef data) -> void;
+    /// Set the derivatives of the *p* control variables with respect to the input parameters *w*.
+    auto dpdw(MatrixXdConstRef data) -> void;
 
     //======================================================================
     // DERIVATIVES OF q-CONTROL VARIABLES WITH RESPECT TO INPUT PARAMETERS
     //======================================================================
 
-    /// Return the derivatives of the *q* control variables with respect to an input parameter in *c*.
-    /// @param cid The identifier of the input parameter in *c* (e.g., "T", "P", "pH", it depends on what is input).
-    auto dqdc(const String& cid) const -> VectorXdConstRef;
+    /// Return the derivatives of the *q* control variables with respect to an input parameter in *w*.
+    /// @param wid The identifier of the input parameter in *w* (e.g., "T", "P", "pH", it depends on what is input).
+    auto dqdw(const String& wid) const -> VectorXdConstRef;
 
-    /// Return the derivatives of the *q* control variables with respect to an input parameter in *c*.
-    /// @param param The input parameter in *c* as a Param object.
-    auto dqdc(const Param& param) const -> VectorXdConstRef;
+    /// Return the derivatives of the *q* control variables with respect to an input parameter in *w*.
+    /// @param param The input parameter in *w* as a Param object.
+    auto dqdw(const Param& param) const -> VectorXdConstRef;
 
-    /// Return the derivatives of the *q* control variables with respect to the input parameters *c*.
-    auto dqdc() const -> MatrixXdConstRef;
+    /// Return the derivatives of the *q* control variables with respect to the input parameters *w*.
+    auto dqdw() const -> MatrixXdConstRef;
 
-    /// Set the derivatives of the *q* control variables with respect to the input parameters *c*.
-    auto dqdc(MatrixXdConstRef data) -> void;
+    /// Set the derivatives of the *q* control variables with respect to the input parameters *w*.
+    auto dqdw(MatrixXdConstRef data) -> void;
 
     //======================================================================
     // DERIVATIVES OF SPECIES AMOUNTS WITH RESPECT TO COMPONENT AMOUNTS
@@ -142,6 +142,22 @@ public:
 
     /// Set the derivatives of the control variables *q* with respect to component amounts *b*.
     auto dqdb(MatrixXdConstRef data) -> void;
+
+    //======================================================================
+    // TOTAL DERIVATIVES OF CHEMICAL PROPERTIES
+    //======================================================================
+
+    /// Return the total derivatives of the chemical properties *u* with respect to input parameters *w*.
+    auto dudw() const -> MatrixXdConstRef;
+
+    /// Return the total derivatives of the chemical properties *u* with respect to component amounts *b*.
+    auto dudb() const -> MatrixXdConstRef;
+
+    /// Set the total derivatives of the chemical properties *u* with respect to input parameters *w*.
+    auto dudw(MatrixXdConstRef data) -> void;
+
+    /// Set the total derivatives of the chemical properties *u* with respect to component amounts *b*.
+    auto dudb(MatrixXdConstRef data) -> void;
 
 private:
     struct Impl;
