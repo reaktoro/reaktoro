@@ -52,6 +52,12 @@ struct EquilibriumSensitivity::Impl
     /// The derivatives of the control variables *q* with respect to component amounts *b*.
     MatrixXd dqdb;
 
+    /// The total derivatives of the chemical properties *u* with respect to input parameters *w*.
+    MatrixXd dudw;
+
+    /// The total derivatives of the chemical properties *u* with respect to component amounts *b*.
+    MatrixXd dudb;
+
     /// Construct a default Impl object.
     Impl()
     {}
@@ -224,21 +230,22 @@ auto EquilibriumSensitivity::dqdb(MatrixXdConstRef data) -> void
 
 auto EquilibriumSensitivity::dudw() const -> MatrixXdConstRef
 {
-    return MatrixXd();
+    return pimpl->dudw;
 }
 
 auto EquilibriumSensitivity::dudb() const -> MatrixXdConstRef
 {
-    return MatrixXd();
+    return pimpl->dudb;
 }
 
 auto EquilibriumSensitivity::dudw(MatrixXdConstRef data) -> void
 {
-    // TODO: Implement this method.
+    pimpl->dudw = data;
 }
 
 auto EquilibriumSensitivity::dudb(MatrixXdConstRef data) -> void
 {
-
+    pimpl->dudb = data;
 }
+
 } // namespace Reaktoro
