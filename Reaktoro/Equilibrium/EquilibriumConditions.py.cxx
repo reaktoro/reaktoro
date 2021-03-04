@@ -54,6 +54,7 @@ void exportEquilibriumConditions(py::module& m)
         .def("Eh", &EquilibriumConditions::Eh)
         .def("initialComponentAmounts", py::overload_cast<VectorXrConstRef>(&EquilibriumConditions::initialComponentAmounts))
         .def("initialComponentAmounts", py::overload_cast<>(&EquilibriumConditions::initialComponentAmounts, py::const_))
+        .def("initialComponentAmountsCompute", &EquilibriumConditions::initialComponentAmountsCompute)
         .def("system", &EquilibriumConditions::system)
         .def("params", &EquilibriumConditions::params)
         ;

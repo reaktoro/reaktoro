@@ -183,10 +183,7 @@ struct EquilibriumSetup::Impl
     {
         if(conditions.initialComponentAmounts().size())
             return conditions.initialComponentAmounts();
-        const auto Wn = system.formulaMatrix();
-        const auto n0 = state0.speciesAmounts();
-        const auto be = Wn * n0.matrix();
-        return be;
+        else return conditions.initialComponentAmountsCompute(state0.speciesAmounts());
     }
 
     /// Assemble the lower bound vector `xlower` in the optimization problem where *x = (n, q)*.
