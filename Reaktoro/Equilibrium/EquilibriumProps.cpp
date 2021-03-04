@@ -131,13 +131,14 @@ struct EquilibriumProps::Impl
             const auto Nnpw = dims.Nn + dims.Np + dims.Nw;
             const auto Nu = stream.data().rows();
             const auto idx = indexOfSeededVariable(n, p, w);
-            errorif(idx >= Nnpw, "Expecting an autodiff seeded variable in (n, p, w) "
-                "when assemblying the full Jacobian matrix of the chemical properties.");
-            dudnpw.resize(Nu, Nnpw);
-            auto col = dudnpw.col(idx);
-            const auto size = col.size();
-            for(auto i = 0; i < size; ++i)
-                col[i] = grad(stream.data()[i]);
+            if(idx < Nnpw) // check if there is any seeded var in n, p, w - maybe there isn't, e.g., the current seeded var is in q of x = (n, q), where q are the amounts of implicit titrants
+            {
+                dudnpw.resize(Nu, Nnpw);
+                auto col = dudnpw.col(idx);
+                const auto size = col.size();
+                for(auto i = 0; i < size; ++i)
+                    col[i] = grad(stream.data()[i]);
+            }
         }
     }
 
