@@ -270,7 +270,7 @@ struct EquilibriumSetup::Impl
     auto evalObjectiveHessianX(VectorXrConstRef xconst, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
     {
         x = xconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
+        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
         {
             return evalObjectiveGradX(x, p, w);
         };
@@ -281,7 +281,7 @@ struct EquilibriumSetup::Impl
     auto evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef pconst, const Params& w) -> MatrixXdConstRef
     {
         p = pconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
+        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
         {
             return evalObjectiveGradX(x, p, w);
         };
@@ -292,7 +292,7 @@ struct EquilibriumSetup::Impl
     auto evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& wconst) -> MatrixXdConstRef
     {
         w = wconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
+        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
         {
             return evalObjectiveGradX(x, p, w);
         };
