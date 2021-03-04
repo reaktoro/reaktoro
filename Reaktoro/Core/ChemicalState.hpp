@@ -17,13 +17,10 @@
 
 #pragma once
 
-// C++ includes
-#include <memory>
-#include <string>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 
 // Forward declarations (Optima)
 namespace Optima { class State; }
@@ -33,6 +30,12 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalSystem;
 
+//=================================================================================================
+//
+// ChemicalState
+//
+//=================================================================================================
+
 /// The chemical state of a chemical system.
 /// @see ChemicalSystem
 /// @ingroup Core
@@ -41,6 +44,7 @@ class ChemicalState
 public:
     // Forward declarations
     class Equilibrium;
+    class Props;
 
     /// Construct a ChemicalState instance with standard conditions.
     /// This constructor creates an instance of ChemicalState with temperature
@@ -146,11 +150,29 @@ public:
     /// Return the equilibrium properties of a calculated chemical equilibrium state.
     auto equilibrium() -> Equilibrium&;
 
+    /// Return the chemical properties of the system.
+    /// @warning For performance reasons, the stored chemical properties are
+    /// not updated at every change in the chemical state. For a ChemicalState
+    /// object `state`, update its chemical properties using `state.props().update()`.
+    auto props() const -> const Props&;
+
+    /// Return the chemical properties of the system.
+    /// @warning For performance reasons, the stored chemical properties are
+    /// not updated at every change in the chemical state. For a ChemicalState
+    /// object `state`, update its chemical properties using `state.props().update()`.
+    auto props() -> Props&;
+
 private:
     struct Impl;
 
     Ptr<Impl> pimpl;
 };
+
+//=================================================================================================
+//
+// ChemicalState::Equilibrium
+//
+//=================================================================================================
 
 /// The access to the properties related to an equilibrium state in a ChemicalState object.
 class ChemicalState::Equilibrium
@@ -219,6 +241,37 @@ public:
 
     /// Return the amounts of the implicit titrants in the equilibrium state (in unit of mol).
     auto implicitTitrantAmounts() const -> ArrayXdConstRef;
+
+private:
+    struct Impl;
+
+    Ptr<Impl> pimpl;
+};
+
+//=================================================================================================
+//
+// ChemicalState::Props
+//
+//=================================================================================================
+
+/// The access to the chemical properties of the system.
+class ChemicalState::Props : public ChemicalProps
+{
+public:
+    /// Construct a ChemicalState::Props instance with given associated chemical state.
+    Props(const ChemicalSystem& system, const ChemicalState& state);
+
+    /// Construct a copy of a ChemicalState::Props instance
+    Props(const Props& other);
+
+    /// Destroy this ChemicalState::Props instance
+    virtual ~Props();
+
+    /// Assign a ChemicalState::Props instance to this instance
+    auto operator=(Props other) -> Props&;
+
+    /// Update the chemical properties in the system according to its current state.
+    auto update() -> void;
 
 private:
     struct Impl;

@@ -65,10 +65,11 @@ void exportChemicalState(py::module& m)
         .def("speciesMass", py::overload_cast<String, String>(&ChemicalState::speciesMass, py::const_))
         .def("equilibrium", py::overload_cast<>(&ChemicalState::equilibrium, py::const_), return_internal_ref)
         .def("equilibrium", py::overload_cast<>(&ChemicalState::equilibrium), return_internal_ref)
+        .def("props", py::overload_cast<>(&ChemicalState::props, py::const_), return_internal_ref)
+        .def("props", py::overload_cast<>(&ChemicalState::props), return_internal_ref)
         ;
 
     py::class_<ChemicalState::Equilibrium>(m, "_ChemicalStateEquilibrium")
-        .def(py::init<const ChemicalSystem&>())
         .def("setOptimaState", &ChemicalState::Equilibrium::setOptimaState)
         .def("optimaState", &ChemicalState::Equilibrium::optimaState)
         .def("setIndicesPrimarySecondarySpecies", &ChemicalState::Equilibrium::setIndicesPrimarySecondarySpecies)
@@ -84,5 +85,9 @@ void exportChemicalState(py::module& m)
         .def("speciesStabilities", &ChemicalState::Equilibrium::speciesStabilities, return_internal_ref)
         .def("explicitTitrantAmounts", &ChemicalState::Equilibrium::explicitTitrantAmounts, return_internal_ref)
         .def("implicitTitrantAmounts", &ChemicalState::Equilibrium::implicitTitrantAmounts, return_internal_ref)
+        ;
+
+    py::class_<ChemicalState::Props, ChemicalProps>(m, "_ChemicalStateProps")
+        .def("update", &ChemicalState::Props::update)
         ;
 }
