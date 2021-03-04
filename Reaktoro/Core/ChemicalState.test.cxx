@@ -169,4 +169,38 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     state.setSpeciesMass("CaCO3(s)", 7.0, "g");
     CHECK( state.speciesMass(idx("CaCO3(s)")) == 0.007 );
     CHECK( state.speciesMass(idx("CaCO3(s)"), "g") == 7.0 );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::props()
+    //-------------------------------------------------------------------------
+    state.props().update();
+    CHECK(  state.props().temperature() == state.temperature() );
+    CHECK(  state.props().pressure() == state.pressure() );
+    CHECK( (state.props().speciesAmounts() == state.speciesAmounts()).all() );
+
+    ChemicalProps props = state.props();
+
+    CHECK(  props.temperature() == state.temperature() );
+    CHECK(  props.pressure() == state.pressure() );
+    CHECK( (props.speciesAmounts() == state.speciesAmounts()).all() );
+
+    auto createChemicalProps = [system]()
+    {
+        ChemicalState state(system);
+        state.setTemperature(288.0);
+        state.setPressure(1.3e5);
+        state.setSpeciesAmounts(0.1);
+        state.props().update();
+
+        CHECK(  state.props().temperature() == 288.0 );
+        CHECK(  state.props().pressure() == 1.3e5 );
+        CHECK( (state.props().speciesAmounts() == 0.1).all() );
+        return state.props();
+    };
+
+    props = createChemicalProps(); // checking here if a returned ChemicalState::Props from a function scope works!
+
+    CHECK(  props.temperature() == 288.0 );
+    CHECK(  props.pressure() == 1.3e5 );
+    CHECK( (props.speciesAmounts() == 0.1).all() );
 }
