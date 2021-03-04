@@ -34,6 +34,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProps.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
@@ -153,8 +154,8 @@ struct EquilibriumSolver::Impl
             res.f = setup.evalObjectiveValue(x, p, w);
             res.fx = setup.evalObjectiveGradX(x, p, w);
 
-            if(opts.eval.fxx && opts.eval.fxp && opts.eval.fxc)
-                setup.assembleChemicalPropsJacobianBegin();
+            if(opts.eval.fxc) // if true, this means we are now at the step of computing sensitivity derivatives
+                setup.assembleChemicalPropsJacobianBegin(); // start recording the derivatives of the chemical properties with respect to n, p, w
 
             if(opts.eval.fxx)
                 res.fxx = setup.evalObjectiveHessianX(x, p, w); // TODO: Implement diagonal approximation mode for Hessian matrix in EquilibriumSolver.
@@ -165,8 +166,8 @@ struct EquilibriumSolver::Impl
             if(opts.eval.fxc)
                 res.fxc = setup.evalObjectiveHessianParams(x, p, w);
 
-            if(opts.eval.fxx && opts.eval.fxp && opts.eval.fxc)
-                setup.assembleChemicalPropsJacobianEnd();
+            if(opts.eval.fxc)
+                setup.assembleChemicalPropsJacobianEnd(); // finalize recording of the derivatives of the chemical properties with respect to n, p, w
 
             res.succeeded = true;
         };
@@ -239,13 +240,28 @@ struct EquilibriumSolver::Impl
         const auto& Nw = dims.Nw;
         const auto& xc = optsensitivity.xc;
         const auto& pc = optsensitivity.pc;
+
+        const auto& props = setup.equilibriumProps();
+
+        const auto dndw = xc.topLeftCorner(Nn, Nw);
+        const auto dqdw = xc.bottomLeftCorner(Nq, Nw);
+        const auto dpdw = pc.leftCols(Nw);
+        const auto dndb = xc.topRightCorner(Nn, Nb);
+        const auto dqdb = xc.bottomRightCorner(Nq, Nb);
+        const auto dpdb = pc.rightCols(Nb);
+        const auto dudn = props.dudn();
+        const auto dudp = props.dudp();
+        const auto dudw = props.dudw();
+
         sensitivity.initialize(specs);
-        sensitivity.dndw(xc.topLeftCorner(Nn, Nw));
-        sensitivity.dqdw(xc.bottomLeftCorner(Nq, Nw));
-        sensitivity.dpdw(pc.leftCols(Nw));
-        sensitivity.dndb(xc.topRightCorner(Nn, Nb));
-        sensitivity.dqdb(xc.bottomRightCorner(Nq, Nb));
-        sensitivity.dpdb(pc.rightCols(Nb));
+        sensitivity.dndw(dndw);
+        sensitivity.dqdw(dqdw);
+        sensitivity.dpdw(dpdw);
+        sensitivity.dndb(dndb);
+        sensitivity.dqdb(dqdb);
+        sensitivity.dpdb(dpdb);
+        sensitivity.dudw(dudw + dudn*dndw + dudp*dpdw);
+        sensitivity.dudb(dudn*dndb + dudp*dpdb);
     }
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
