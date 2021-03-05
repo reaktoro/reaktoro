@@ -107,4 +107,20 @@ auto Params::exists(const String& id) const -> bool
     return containsfn(m_data, RKT_LAMBDA(x, x.id() == id));
 }
 
+Params::operator VectorXr() const
+{
+    VectorXr res(size());
+    for(auto i = 0; i < size(); ++i)
+        res[i] = m_data[i].value();
+    return res;
+}
+
+Params::operator VectorXd() const
+{
+    VectorXd res(size());
+    for(auto i = 0; i < size(); ++i)
+        res[i] = m_data[i].value();
+    return res;
+}
+
 } // namespace Reaktoro
