@@ -72,9 +72,6 @@ struct EquilibriumSolver::Impl
     /// The options of the equilibrium solver.
     EquilibriumOptions options;
 
-    /// The auxiliary vector to store the amounts of the species.
-    ArrayXd n0;
-
     /// The dimensions of the variables and constraints in the optimization problem.
     Optima::Dims optdims;
 
@@ -135,6 +132,10 @@ struct EquilibriumSolver::Impl
     /// Update the optimization problem before a new equilibrium calculation.
     auto updateOptProblem(ChemicalState& state0, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions)
     {
+        // If initial species amounts have been given in the equilibrium conditions, use these as initial guess for the calculation
+        if(conditions.initialSpeciesAmounts().size())
+            state0.setSpeciesAmounts(conditions.initialSpeciesAmounts());
+
         // The input parameters for the equilibrium calculation
         const Params w = conditions.params();
 
@@ -221,13 +222,15 @@ struct EquilibriumSolver::Impl
     }
 
     /// Update the chemical state object with computed optimization state.
-    auto updateChemicalState(ChemicalState& state)
+    auto updateChemicalState(ChemicalState& state, const EquilibriumConditions& conditions)
     {
         const auto T = setup.chemicalProps().temperature();
         const auto P = setup.chemicalProps().pressure();
         state.setTemperature(T);
         state.setPressure(P);
         state.setSpeciesAmounts(optstate.x.head(dims.Nn));
+        state.equilibrium().setParams(conditions.params());
+        state.equilibrium().setInitialComponentAmounts(optproblem.be);
         state.equilibrium().setOptimaState(optstate);
     }
 
@@ -277,6 +280,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs);
         conditions.temperature(state0.temperature());
         conditions.pressure(state0.pressure());
+        conditions.startWith(state0);
         return solve(state0, conditions, restrictions);
     }
 
@@ -297,7 +301,7 @@ struct EquilibriumSolver::Impl
 
         eqresult.optima = optsolver.solve(optproblem, optstate);
 
-        updateChemicalState(state0);
+        updateChemicalState(state0, conditions);
 
         return eqresult;
     }
@@ -315,6 +319,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs);
         conditions.temperature(state0.temperature());
         conditions.pressure(state0.pressure());
+        conditions.startWith(state0);
         return solve(state0, sensitivity, conditions, restrictions);
     }
 
@@ -335,7 +340,7 @@ struct EquilibriumSolver::Impl
 
         eqresult.optima = optsolver.solve(optproblem, optstate, optsensitivity);
 
-        updateChemicalState(state0);
+        updateChemicalState(state0, conditions);
         updateEquilibriumSensitivity(sensitivity);
 
         return eqresult;

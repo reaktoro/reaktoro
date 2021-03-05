@@ -188,9 +188,11 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
         conditions.pressure(100.0, "bar");
         conditions.pH(3.0);
 
-        WHEN("component amounts are not provided to EquilibriumConditions object")
+        WHEN("initial species amounts are provided to EquilibriumConditions object")
         {
             EquilibriumSetup setup(specs);
+
+            conditions.startWith(state);
 
             const auto n = state.speciesAmounts();
             const auto be_expected = Wn * n.matrix();
@@ -201,12 +203,12 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             CHECK( be_expected.isApprox(be_actual) );
         }
 
-        WHEN("component amounts are provided to EquilibriumConditions object")
+        WHEN("initial component amounts are provided to EquilibriumConditions object")
         {
             EquilibriumSetup setup(specs);
 
             const VectorXr be = VectorXr::Random(Ne);
-            conditions.initialComponentAmounts(be);
+            conditions.startWithComponentAmounts(be);
 
             const auto be_expected = be;
             const auto be_actual = setup.assembleVectorBe(conditions, state);

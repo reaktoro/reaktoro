@@ -181,9 +181,7 @@ struct EquilibriumSetup::Impl
     /// Assemble the right-hand side vector `be` in the optimization problem.
     auto assembleVectorBe(const EquilibriumConditions& conditions, const ChemicalState& state0) -> VectorXr
     {
-        if(conditions.initialComponentAmounts().size())
-            return conditions.initialComponentAmounts();
-        else return conditions.initialComponentAmountsCompute(state0.speciesAmounts());
+        return conditions.initialComponentAmounts();
     }
 
     /// Assemble the lower bound vector `xlower` in the optimization problem where *x = (n, q)*.

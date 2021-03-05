@@ -288,11 +288,6 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
         ChemicalSystem system(phases);
 
-        ChemicalState state(system);
-        state.setTemperature(T, "celsius");
-        state.setPressure(P, "bar");
-        state.setSpeciesAmount("H2O", 55, "mol");
-
         EquilibriumSpecs specs(system);
         specs.temperature();
         specs.pressure();
@@ -304,7 +299,10 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         EquilibriumConditions conditions(specs);
         conditions.temperature(50.0, "celsius");
         conditions.pressure(80.0, "bar");
+        conditions.startWith("H2O", 55, "mol");
         conditions.pH(3.0);
+
+        ChemicalState state(system);
 
         auto result = solver.solve(state, conditions);
 
@@ -367,16 +365,6 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
         ChemicalSystem system(phases);
 
-        ChemicalState state(system);
-        state.setTemperature(T, "celsius");
-        state.setPressure(P, "bar");
-        state.setSpeciesAmount("H2O"   , 55.0 , "mol");
-        state.setSpeciesAmount("NaCl"  , 0.01 , "mol");
-        state.setSpeciesAmount("CO2"   , 10.0 , "mol");
-        state.setSpeciesAmount("CaCO3" , 0.01 , "mol");
-        state.setSpeciesAmount("MgCO3" , 0.02 , "mol");
-        state.setSpeciesAmount("SiO2"  , 0.01 , "mol");
-
         EquilibriumSpecs specs(system);
         specs.temperature();
         specs.pressure();
@@ -388,7 +376,15 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         EquilibriumConditions conditions(specs);
         conditions.temperature(50.0, "celsius");
         conditions.pressure(80.0, "bar");
+        conditions.startWith("H2O"   , 55.0 , "mol");
+        conditions.startWith("NaCl"  , 0.01 , "mol");
+        conditions.startWith("CO2"   , 10.0 , "mol");
+        conditions.startWith("CaCO3" , 0.01 , "mol");
+        conditions.startWith("MgCO3" , 0.02 , "mol");
+        conditions.startWith("SiO2"  , 0.01 , "mol");
         conditions.pH(3.0);
+
+        ChemicalState state(system);
 
         auto result = solver.solve(state, conditions);
 
