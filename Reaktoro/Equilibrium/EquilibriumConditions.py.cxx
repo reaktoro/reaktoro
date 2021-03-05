@@ -24,6 +24,7 @@ namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
@@ -43,6 +44,10 @@ void exportEquilibriumConditions(py::module& m)
         .def("gibbsEnergy", &EquilibriumConditions::gibbsEnergy)
         .def("helmholtzEnergy", &EquilibriumConditions::helmholtzEnergy)
         .def("entropy", &EquilibriumConditions::entropy)
+        .def("startWith", py::overload_cast<String, real, String>(&EquilibriumConditions::startWith))
+        .def("startWith", py::overload_cast<Index, real, String>(&EquilibriumConditions::startWith))
+        .def("startWith", py::overload_cast<const ChemicalState&>(&EquilibriumConditions::startWith))
+        .def("startWithComponentAmounts", &EquilibriumConditions::startWithComponentAmounts)
         .def("chemicalPotential", &EquilibriumConditions::chemicalPotential)
         .def("lnActivity", &EquilibriumConditions::lnActivity)
         .def("lgActivity", &EquilibriumConditions::lgActivity)
@@ -52,11 +57,9 @@ void exportEquilibriumConditions(py::module& m)
         .def("pMg", &EquilibriumConditions::pMg)
         .def("pE", &EquilibriumConditions::pE)
         .def("Eh", &EquilibriumConditions::Eh)
-        .def("initialComponentAmounts", py::overload_cast<VectorXrConstRef>(&EquilibriumConditions::initialComponentAmounts))
-        .def("initialComponentAmounts", py::overload_cast<>(&EquilibriumConditions::initialComponentAmounts, py::const_))
-        .def("initialComponentAmountsCompute", &EquilibriumConditions::initialComponentAmountsCompute)
-        .def("initialComponentAmountsComputeOrRetrieve", &EquilibriumConditions::initialComponentAmountsComputeOrRetrieve)
-        .def("system", &EquilibriumConditions::system)
+        .def("initialSpeciesAmounts", &EquilibriumConditions::initialSpeciesAmounts, return_internal_ref)
+        .def("initialComponentAmounts", &EquilibriumConditions::initialComponentAmounts, return_internal_ref)
+        .def("system", &EquilibriumConditions::system, return_internal_ref)
         .def("params", &EquilibriumConditions::params)
         ;
 }

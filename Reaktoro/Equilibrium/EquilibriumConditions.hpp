@@ -22,6 +22,9 @@
 
 namespace Reaktoro {
 
+// Forward declarations
+class ChemicalState;
+
 /// The class used to define conditions to be satisfied at chemical equilibrium.
 class EquilibriumConditions
 {
@@ -77,7 +80,49 @@ public:
 
     //=================================================================================================
     //
-    // METHODS TO SPECIFY CHEMICAL POTENTIAL CONSTRAINTS
+    // METHODS TO SPECIFY STARTING COMPOSITIONAL CONDITIONS
+    //
+    //=================================================================================================
+
+    /// Specify an initial condition for the abundance of a chemical species.
+    /// @param species The name of the chemical species in the chemical system.
+    /// @param value The abundance value of the chemical species.
+    /// @param unit The abundance unit (must be convertible to mol or kg).
+    /// @warning An error is thrown if the chemical system has no species with name @p species.
+    auto startWith(String species, real value, String unit="mol") -> void;
+
+    /// Specify an initial condition for the abundance of a chemical species.
+    /// @param ispecies The index of the chemical species in the chemical system.
+    /// @param value The abundance value of the chemical species.
+    /// @param unit The abundance unit (must be convertible to mol or kg).
+    auto startWith(Index ispecies, real value, String unit="mol") -> void;
+
+    /// Specify an initial condition for the abundance of the chemical species with a given chemical state.
+    /// @param state The chemical state containing the initial condition for the amounts of all species in the system.
+    /// @note This method overwrites all previous `startWith` method calls.
+    auto startWith(const ChemicalState& state) -> void;
+
+    /// Specify the initial condition for the amounts of the conservative components.
+    /// These component amounts are conserved at chemical equilibrium only if
+    /// the system is closed. If the system is open to one or more substances,
+    /// these given initial component amounts will differ from those computed
+    /// at chemical equilibrium. The difference correspond to how much each
+    /// titrant (i.e., the substance for which the system is open to) entered
+    /// or leaved the system.
+    ///
+    /// @note This method clears off all previous `startWith` method calls
+    /// since these component amounts are the most fundamental parameters for
+    /// the equilibrium calculation. When the `startWith` methods are used
+    /// instead, this vector is computed from the specified initial amounts of
+    /// the species. If a call to any `startWith` method is made, the given
+    /// component amounts here are then cleared off.
+    ///
+    /// @param b The initial amounts of the components (in mol)
+    auto startWithComponentAmounts(ArrayXrConstRef b) -> void;
+
+    //=================================================================================================
+    //
+    // METHODS TO SPECIFY CHEMICAL POTENTIAL CONDITIONS
     //
     //=================================================================================================
 
@@ -149,28 +194,11 @@ public:
     //
     //=================================================================================================
 
-    /// Set the initial amounts of the conservative components in the equilibrium calculation.
-    /// These amounts are conserved at chemical equilibrium if the system is
-    /// closed. If the system is open to one or more substances, these initial
-    /// amounts will differ from those computed at chemical equilibrium. The
-    /// difference correspond to how much each titrant (i.e., the substance for
-    /// which the system is open to) entered/leaved the system.
-    /// @param values The initial amounts of the components in the system.
-    auto initialComponentAmounts(VectorXrConstRef values) -> void;
+    /// Return the initial amounts of the species in the equilibrium calculation.
+    auto initialSpeciesAmounts() const -> ArrayXrConstRef;
 
     /// Return the initial amounts of the conservative components in the equilibrium calculation.
-    auto initialComponentAmounts() const -> VectorXrConstRef;
-
-    /// Compute the initial amounts of the conservative components in the equilibrium calculation.
-    /// @param n0 The initial species amounts before undergoing changes towards an equilibrium state.
-    auto initialComponentAmountsCompute(VectorXrConstRef n0) const -> VectorXr;
-
-    /// Compute or retrieve the initial amounts of the conservative components in the equilibrium calculation.
-    /// This methods retrieves the given initial amounts components if given via
-    /// initialComponentAmounts(VectorXrConstRef). Otherwise it computes using
-    /// initialComponentAmountsCompute(VectorXrConstRef).
-    /// @param n0 The initial species amounts before undergoing changes towards an equilibrium state.
-    auto initialComponentAmountsComputeOrRetrieve(VectorXrConstRef n0) const -> VectorXr;
+    auto initialComponentAmounts() const -> ArrayXr;
 
     /// Return the chemical system associated with the equilibrium conditions.
     auto system() const -> const ChemicalSystem&;
@@ -185,8 +213,11 @@ private:
     /// The input parameters defining the equilibrium conditions according to given equilibrium specifications.
     Params m_params;
 
+    /// The initial amounts of the species in the equilibrium calculation.
+    ArrayXr m_initial_species_amounts;
+
     /// The initial amounts of the conservative components in the equilibrium calculation.
-    VectorXr m_initial_component_amounts;
+    ArrayXr m_initial_component_amounts;
 };
 
 } // namespace Reaktoro
