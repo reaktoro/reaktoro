@@ -24,6 +24,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Params.hpp>
 
 namespace Reaktoro {
 
@@ -388,8 +389,14 @@ struct ChemicalState::Equilibrium::Impl
     /// The number of species in the chemical system.
     const Index Nn;
 
-    /// The number of elements in the chemical system.
-    const Index Ne;
+    /// The number of components in the equilibrium state.
+    const Index Nb;
+
+    /// The input parameters used for the calculation of the equilibrium state.
+    Params w;
+
+    /// The initial component amounts for the calculation of the equilibrium state.
+    ArrayXd b;
 
     /// The Optima::State object used for warm start Optima optimization calculations.
     Optima::State optstate;
@@ -408,7 +415,7 @@ struct ChemicalState::Equilibrium::Impl
 
     /// Construct a default ChemicalState::Equilibrium::Impl instance
     Impl(const ChemicalSystem& system)
-    : Nn(system.species().size()), Ne(system.elements().size() + 1)
+    : Nn(system.species().size()), Nb(system.elements().size() + 1)
     {}
 };
 
@@ -427,6 +434,16 @@ auto ChemicalState::Equilibrium::operator=(ChemicalState::Equilibrium other) -> 
 {
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto ChemicalState::Equilibrium::setParams(const Params& w) -> void
+{
+    pimpl->w = w;
+}
+
+auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef b) -> void
+{
+    pimpl->b = b;
 }
 
 auto ChemicalState::Equilibrium::setOptimaState(const Optima::State& state) -> void
@@ -488,7 +505,7 @@ auto ChemicalState::Equilibrium::indicesStrictlyUnstableSpecies() const -> Array
 auto ChemicalState::Equilibrium::elementChemicalPotentials() const -> ArrayXdConstRef
 {
     if(pimpl->optstate.ye.size())
-        return pimpl->optstate.ye.head(pimpl->Ne);
+        return pimpl->optstate.ye.head(pimpl->Nb);
     else return pimpl->optstate.ye;
 }
 
@@ -501,17 +518,38 @@ auto ChemicalState::Equilibrium::speciesStabilities() const -> ArrayXdConstRef
 
 auto ChemicalState::Equilibrium::explicitTitrantAmounts() const -> ArrayXdConstRef
 {
-    return pimpl->optstate.p;
+    return p();
 }
 
 auto ChemicalState::Equilibrium::implicitTitrantAmounts() const -> ArrayXdConstRef
 {
-    const auto Nx = pimpl->optstate.x.size();
+    return q();
+}
+
+auto ChemicalState::Equilibrium::p() const -> ArrayXdConstRef
+{
+    return pimpl->optstate.p;
+}
+
+auto ChemicalState::Equilibrium::q() const -> ArrayXdConstRef
+{
+    const auto& x = pimpl->optstate.x;
     const auto Nn = pimpl->Nn;
+    const auto Nx = x.size();
     const auto Nq = Nx - Nn;
-    if(pimpl->optstate.x.size())
-        return pimpl->optstate.x.tail(Nq);
-    else return pimpl->optstate.x;
+    if(x.size())
+        return x.tail(Nq);
+    else return x;
+}
+
+auto ChemicalState::Equilibrium::w() const -> const Params&
+{
+    return pimpl->w;
+}
+
+auto ChemicalState::Equilibrium::b() const -> ArrayXdConstRef
+{
+    return pimpl->b;
 }
 
 //=================================================================================================
