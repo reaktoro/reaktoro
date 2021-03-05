@@ -29,6 +29,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
+class Params;
 
 //=================================================================================================
 //
@@ -190,6 +191,12 @@ public:
     /// Assign a ChemicalState::Equilibrium instance to this instance
     auto operator=(Equilibrium other) -> Equilibrium&;
 
+    /// Set the input parameters representing the conditions used for the calculation of the equilibrium state.
+    auto setParams(const Params& w) -> void;
+
+    /// Set initial component amounts for the calculation of the equilibrium state.
+    auto setInitialComponentAmounts(ArrayXdConstRef b) -> void;
+
     /// Set the Optima::State object obtained during an Optima optimization calculation.
     auto setOptimaState(const Optima::State& state) -> void;
 
@@ -242,6 +249,18 @@ public:
     /// Return the amounts of the implicit titrants in the equilibrium state (in unit of mol).
     auto implicitTitrantAmounts() const -> ArrayXdConstRef;
 
+    /// Return the control variables *p* in the equilibrium state.
+    auto p() const -> ArrayXdConstRef;
+
+    /// Return the control variables *q* in the equilibrium state.
+    auto q() const -> ArrayXdConstRef;
+
+    /// Return the input parameters for the calculation of the equilibrium state.
+    auto w() const -> const Params&;
+
+    /// Return the initial component amounts for the calculation of the equilibrium state.
+    auto b() const -> ArrayXdConstRef;
+
 private:
     struct Impl;
 
@@ -272,6 +291,9 @@ public:
 
     /// Update the chemical properties in the system according to its current state.
     auto update() -> void;
+
+    // Inherit all other update methods.
+    using ChemicalProps::update;
 
 private:
     struct Impl;

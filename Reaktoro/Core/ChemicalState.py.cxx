@@ -70,6 +70,8 @@ void exportChemicalState(py::module& m)
         ;
 
     py::class_<ChemicalState::Equilibrium>(m, "_ChemicalStateEquilibrium")
+        .def("setParams", &ChemicalState::Equilibrium::setParams)
+        .def("setInitialComponentAmounts", &ChemicalState::Equilibrium::setInitialComponentAmounts)
         .def("setOptimaState", &ChemicalState::Equilibrium::setOptimaState)
         .def("optimaState", &ChemicalState::Equilibrium::optimaState)
         .def("setIndicesPrimarySecondarySpecies", &ChemicalState::Equilibrium::setIndicesPrimarySecondarySpecies)
@@ -85,9 +87,13 @@ void exportChemicalState(py::module& m)
         .def("speciesStabilities", &ChemicalState::Equilibrium::speciesStabilities, return_internal_ref)
         .def("explicitTitrantAmounts", &ChemicalState::Equilibrium::explicitTitrantAmounts, return_internal_ref)
         .def("implicitTitrantAmounts", &ChemicalState::Equilibrium::implicitTitrantAmounts, return_internal_ref)
+        .def("p", &ChemicalState::Equilibrium::p, return_internal_ref)
+        .def("q", &ChemicalState::Equilibrium::q, return_internal_ref)
+        .def("w", &ChemicalState::Equilibrium::w, return_internal_ref)
+        .def("b", &ChemicalState::Equilibrium::b, return_internal_ref)
         ;
 
     py::class_<ChemicalState::Props, ChemicalProps>(m, "_ChemicalStateProps")
-        .def("update", &ChemicalState::Props::update)
+        .def("update", py::overload_cast<>(&ChemicalState::Props::update))
         ;
 }
