@@ -18,27 +18,9 @@
 #include "EquilibriumRestrictions.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
-namespace {
-
-/// Compute the amount of a species given a value in mass or in amount.
-auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, double value, const String& unit)
-{
-    if(unit == "mol")
-        return value;
-
-    if(units::convertible(unit, "kg"))
-    {
-        const auto molarmass = system.species(ispecies).molarMass(); // in kg/mol
-        value = units::convert(value, unit, "kg"); // from some mass unit to kg
-        return value / molarmass; // from kg to mol
-    }
-    else return units::convert(value, unit, "mol"); // from some amount unit to mol
-}
-
-} // namespace
 
 EquilibriumRestrictions::EquilibriumRestrictions(const ChemicalSystem& system)
 : msystem(system)
@@ -74,7 +56,7 @@ auto EquilibriumRestrictions::cannotIncreaseAbove(Index ispecies, double value, 
 {
     const auto numspecies = system().species().size();
     errorif(ispecies >= numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
-    value = computeSpeciesAmount(msystem, ispecies, value, unit);
+    value = detail::computeSpeciesAmount(msystem, ispecies, value, unit);
     species_cannot_increase.erase(ispecies); // remove possible strict upper bound restriction set before
     species_cannot_increase_above.insert_or_assign(ispecies, value);
 }
@@ -103,7 +85,7 @@ auto EquilibriumRestrictions::cannotDecreaseBelow(Index ispecies, double value, 
 {
     const auto numspecies = system().species().size();
     errorif(ispecies >= numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
-    value = computeSpeciesAmount(msystem, ispecies, value, unit);
+    value = detail::computeSpeciesAmount(msystem, ispecies, value, unit);
     species_cannot_decrease.erase(ispecies); // remove possible strict lower bound restriction set before
     species_cannot_decrease_below.insert_or_assign(ispecies, value);
 }
