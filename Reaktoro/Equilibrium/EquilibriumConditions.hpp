@@ -165,6 +165,13 @@ public:
     /// @param n0 The initial species amounts before undergoing changes towards an equilibrium state.
     auto initialComponentAmountsCompute(VectorXrConstRef n0) const -> VectorXr;
 
+    /// Compute or retrieve the initial amounts of the conservative components in the equilibrium calculation.
+    /// This methods retrieves the given initial amounts components if given via
+    /// initialComponentAmounts(VectorXrConstRef). Otherwise it computes using
+    /// initialComponentAmountsCompute(VectorXrConstRef).
+    /// @param n0 The initial species amounts before undergoing changes towards an equilibrium state.
+    auto initialComponentAmountsComputeOrRetrieve(VectorXrConstRef n0) const -> VectorXr;
+
     /// Return the chemical system associated with the equilibrium conditions.
     auto system() const -> const ChemicalSystem&;
 
