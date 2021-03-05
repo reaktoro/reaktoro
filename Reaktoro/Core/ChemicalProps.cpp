@@ -181,14 +181,23 @@ struct ChemicalProps::Impl
         }
     }
 
+    /// Update the chemical properties of the system with serialized data.
+    template<typename Array>
+    auto update(const Array& data) -> void
+    {
+        detail::to(data, T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    }
+
     /// Serialize the chemical properties into the array stream @p stream.
-    auto serialize(ArrayStream<real>& stream) const -> void
+    template<typename Type>
+    auto serialize(ArrayStream<Type>& stream) const -> void
     {
         stream.from(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
     }
 
     /// Update the chemical properties of the system using the array stream @p stream.
-    auto deserialize(const ArrayStream<real>& stream) -> void
+    template<typename Type>
+    auto deserialize(const ArrayStream<Type>& stream) -> void
     {
         stream.to(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
     }
@@ -264,6 +273,16 @@ auto ChemicalProps::updateIdeal(const ChemicalState& state) -> void
 auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void
 {
     pimpl->updateIdeal(T, P, n);
+}
+
+auto ChemicalProps::update(ArrayXrConstRef u) -> void
+{
+    pimpl->update(u);
+}
+
+auto ChemicalProps::update(ArrayXdConstRef u) -> void
+{
+    pimpl->update(u);
 }
 
 auto ChemicalProps::serialize(ArrayStream<real>& stream) const -> void
@@ -395,6 +414,20 @@ auto ChemicalProps::helmholtzEnergy() const -> real
 {
     const auto iend = system().phases().size();
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).helmholtzEnergy(); });
+}
+
+ChemicalProps::operator VectorXr() const
+{
+    ArrayStream<real> stream;
+    pimpl->serialize(stream);
+    return stream.data();
+}
+
+ChemicalProps::operator VectorXd() const
+{
+    ArrayStream<double> stream;
+    pimpl->serialize(stream);
+    return stream.data();
 }
 
 } // namespace Reaktoro

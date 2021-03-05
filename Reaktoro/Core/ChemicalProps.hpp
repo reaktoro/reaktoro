@@ -67,6 +67,14 @@ public:
     /// @param n The amounts of the species in the system (in mol)
     auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void;
 
+    /// Update the chemical properties of the system with serialized data.
+    /// @param u The chemical properties of the system serialized in an array of real numbers.
+    auto update(ArrayXrConstRef u) -> void;
+
+    /// Update the chemical properties of the system with serialized data.
+    /// @param u The chemical properties of the system serialized in an array of double numbers.
+    auto update(ArrayXdConstRef u) -> void;
+
     /// Serialize the chemical properties into the array stream @p stream.
     /// @param stream The array stream used to serialize the chemical properties.
     auto serialize(ArrayStream<real>& stream) const -> void;
@@ -143,6 +151,12 @@ public:
 
     /// Return the Helmholtz energy of the system (in J).
     auto helmholtzEnergy() const -> real;
+
+    /// Return the chemical properties in this object serialized in an array of real numbers.
+    operator VectorXr() const;
+
+    /// Return the chemical properties in this object serialized in an array of double numbers.
+    operator VectorXd() const;
 
 private:
     struct Impl;
