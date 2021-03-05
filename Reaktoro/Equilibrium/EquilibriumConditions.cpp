@@ -24,6 +24,7 @@
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -101,6 +102,39 @@ auto EquilibriumConditions::entropy(real value, String unit) -> void
     m_params.get("S") = value;
 }
 
+auto EquilibriumConditions::startWith(String species, real value, String unit) -> void
+{
+    const auto ispecies = m_system.species().index(species);
+    startWith(ispecies, value, unit);
+}
+
+auto EquilibriumConditions::startWith(Index ispecies, real value, String unit) -> void
+{
+    const auto size = m_system.species().size();
+    errorif(ispecies >= size, "Given species index (", ispecies, ") is out-of-bounds (number of species is ", size, ").");
+    const auto amount = detail::computeSpeciesAmount(m_system, ispecies, value, unit);
+    m_initial_species_amounts.resize(size);
+    m_initial_species_amounts[ispecies] = amount;
+    m_initial_component_amounts.resize(0);
+}
+
+auto EquilibriumConditions::startWith(const ChemicalState& state) -> void
+{
+    const auto n = state.speciesAmounts();
+    const auto size = m_system.species().size();
+    errorif(n.size() != size, "Given chemical state does not have compatible number of species (", n.size(), ") with number of species in the system (", size, ")");
+    m_initial_species_amounts = n;
+    m_initial_component_amounts.resize(0);
+}
+
+auto EquilibriumConditions::startWithComponentAmounts(ArrayXrConstRef b) -> void
+{
+    const auto Nb = m_system.elements().size() + 1;
+    errorif(b.size() != Nb, "The number of conservative components is ", Nb, " but only ", b.size(), " values have been given for their initial amounts.");
+    m_initial_species_amounts.resize(0);
+    m_initial_component_amounts = b;
+}
+
 auto EquilibriumConditions::chemicalPotential(String substance, real value, String unit) -> void
 {
     const auto pid = "u[" + substance + "]";
@@ -162,32 +196,22 @@ auto EquilibriumConditions::Eh(real value, String unit) -> void
     m_params.get("Eh") = value;
 }
 
-auto EquilibriumConditions::initialComponentAmounts(VectorXrConstRef values) -> void
+auto EquilibriumConditions::initialSpeciesAmounts() const -> ArrayXrConstRef
 {
-    const auto numcomponents = m_system.elements().size() + 1;
-    error(values.size() != 0 && values.size() != numcomponents, "The number of conservative "
-        "components is ", numcomponents, " but only ", values.size(), " values "
-        "have been given for their amounts.");
-    m_initial_component_amounts = values;
+    return m_initial_species_amounts;
 }
 
-auto EquilibriumConditions::initialComponentAmounts() const -> VectorXrConstRef
+auto EquilibriumConditions::initialComponentAmounts() const -> ArrayXr
 {
-    return m_initial_component_amounts;
-}
+    if(m_initial_component_amounts.size())
+        return m_initial_component_amounts;
 
-auto EquilibriumConditions::initialComponentAmountsCompute(VectorXrConstRef n0) const -> VectorXr
-{
+    errorif(m_initial_species_amounts.size() == 0, "Initial conditions for species amounts or components amounts have not been given.");
+
     const auto Wn = m_system.formulaMatrix();
+    const auto n0 = m_initial_species_amounts.matrix();
     const auto b = Wn * n0;
     return b;
-}
-
-auto EquilibriumConditions::initialComponentAmountsComputeOrRetrieve(VectorXrConstRef n0) const -> VectorXr
-{
-    if(initialComponentAmounts().size())
-        return initialComponentAmounts();
-    else return initialComponentAmountsCompute(n0);
 }
 
 auto EquilibriumConditions::system() const -> const ChemicalSystem&
