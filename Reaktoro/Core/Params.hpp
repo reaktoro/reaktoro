@@ -18,6 +18,7 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Param.hpp>
 
@@ -78,6 +79,12 @@ public:
 
     /// Return true if a parameter exists with given identifier.
     auto exists(const String& id) const -> bool;
+
+    /// Convert this Params object into a VectorXr object.
+    operator VectorXr() const;
+
+    /// Convert this Params object into a VectorXd object.
+    operator VectorXd() const;
 
 private:
     Vec<Param> m_data;
