@@ -179,8 +179,15 @@ auto EquilibriumConditions::initialComponentAmounts() const -> VectorXrConstRef
 auto EquilibriumConditions::initialComponentAmountsCompute(VectorXrConstRef n0) const -> VectorXr
 {
     const auto Wn = m_system.formulaMatrix();
-    const auto be = Wn * n0;
-    return be;
+    const auto b = Wn * n0;
+    return b;
+}
+
+auto EquilibriumConditions::initialComponentAmountsComputeOrRetrieve(VectorXrConstRef n0) const -> VectorXr
+{
+    if(initialComponentAmounts().size())
+        return initialComponentAmounts();
+    else return initialComponentAmountsCompute(n0);
 }
 
 auto EquilibriumConditions::system() const -> const ChemicalSystem&
