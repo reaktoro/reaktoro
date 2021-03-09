@@ -20,19 +20,30 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumPredictor.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 using namespace Reaktoro;
 
+auto createStandardThermoModelH2O() -> StandardThermoModel
+{
+    return [](real T, real P)
+    {
+        StandardThermoProps props;
+        props.G0 = -237181.72; // in J/mol
+        props.V0 = 1.80694885e-5; // in m3/mol
+        return props;
+    };
+}
+
 TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
 {
     const auto db = Database({
-        Species("H2O"           ).withStandardGibbsEnergy( -237181.72),
+        Species("H2O"           ).withStandardThermoModel(createStandardThermoModelH2O()),
         Species("H+"            ).withStandardGibbsEnergy(       0.00),
         Species("OH-"           ).withStandardGibbsEnergy( -157297.48),
         Species("H2"            ).withStandardGibbsEnergy(   17723.42),
@@ -66,18 +77,24 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
     });
 
     Phases phases(db);
-    phases.add( AqueousPhase("H2O H+ OH- H2 O2") );
+    phases.add( AqueousPhase("H2O H+ OH- H2 O2 Na+ Cl- NaCl HCl NaOH") );
 
     ChemicalSystem system(phases);
 
     EquilibriumSpecs specs(system);
-    specs.temperature();
-    specs.pressure();
+    specs.temperature(); // specify temperature is constrained
+    specs.pressure();    // specify pressure is constrained
+    specs.volume();      // specify volume is constrained
+    specs.pH();          // specify pH is constrained (this creates a q control variable n[H+])
+    specs.openTo("H2O"); // specify the system is open to H2O (this creates a p control variable n[H2O])
 
     EquilibriumConditions conditions0(specs);
     conditions0.temperature(300.0);
     conditions0.pressure(1.0e5);
-    conditions0.startWith("H2O", 55.0, "mol");
+    conditions0.volume(2.0, "liter"); // H2O will be added as much as needed to fulfil this volume
+    conditions0.pH(4.0); // H+ will be added as much as needed to achieve this pH
+    conditions0.startWith("H2O", 1.0, "kg");
+    conditions0.startWith("NaCl", 0.1, "mol");
 
     ChemicalState state0(system);
     EquilibriumSensitivity sensitivity0(specs);
@@ -85,6 +102,7 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
     EquilibriumSolver solver(specs);
     solver.solve(state0, sensitivity0, conditions0);
 
+    state0.props().update();
     EquilibriumPredictor predictor(state0, sensitivity0);
 
     ChemicalState state(system);
@@ -92,46 +110,40 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
     EquilibriumConditions conditions(specs);
     conditions.temperature(330.0);
     conditions.pressure(1.1e5);
-    conditions.startWith("H2O", 55.1, "mol");
+    conditions.volume(2.1, "liter"); // H2O will be added as much as needed to fulfil this volume
+    conditions.pH(4.2); // H+ will be added as much as needed to achieve this pH
+    conditions.startWith("H2O", 1.1, "kg");
+    conditions.startWith("NaCl", 0.15, "mol");
 
     predictor.predict(state, conditions);
 
-    const auto dndb = sensitivity0.dndb();
-    const auto dndw = sensitivity0.dndw();
-    const auto dpdw = sensitivity0.dpdw();
-    const auto dqdw = sensitivity0.dqdw();
-    const auto dpdb = sensitivity0.dpdb();
-    const auto dqdb = sensitivity0.dqdb();
-    const auto dudw = sensitivity0.dudw();
-    const auto dudb = sensitivity0.dudb();
+    const auto dndb0 = sensitivity0.dndb();
+    const auto dndw0 = sensitivity0.dndw();
+    const auto dpdw0 = sensitivity0.dpdw();
+    const auto dqdw0 = sensitivity0.dqdw();
+    const auto dpdb0 = sensitivity0.dpdb();
+    const auto dqdb0 = sensitivity0.dqdb();
+    const auto dudw0 = sensitivity0.dudw();
+    const auto dudb0 = sensitivity0.dudb();
 
-    // conditions.initialComponentAmountsCompute(n)
-    // conditions.initialComponentAmountsComputeOrRetrieve(n)
+    const VectorXd n0 = state0.speciesAmounts();
+    const VectorXd p0 = state0.equilibrium().p();
+    const VectorXd q0 = state0.equilibrium().q();
+    const VectorXd u0 = state0.props();
 
-    // EquilibriumDims dims(specs);
+    const VectorXd b = conditions.initialComponentAmounts();
+    const VectorXd w = conditions.inputValues();
 
-    // const MatrixXd dndb = random(dims.Nn, dims.Nb);
-    // const MatrixXd dndw = random(dims.Nn, dims.Nw);
-    // const MatrixXd dpdw = random(dims.Np, dims.Nw);
-    // const MatrixXd dqdw = random(dims.Nq, dims.Nw);
-    // const MatrixXd dndb = random(dims.Nn, dims.Nb);
-    // const MatrixXd dpdb = random(dims.Np, dims.Nb);
-    // const MatrixXd dqdb = random(dims.Nq, dims.Nb);
-    // const MatrixXd dudw = random(dims.Nu, dims.Nw);
-    // const MatrixXd dudb = random(dims.Nu, dims.Nb);
+    const VectorXd b0 = conditions0.initialComponentAmounts();
+    const VectorXd w0 = conditions0.inputValues();
 
-    // EquilibriumSensitivity sensitivity0(specs);
-    // sensitivity0.dndb(dndb);
-    // sensitivity0.dndw(dndw);
-    // sensitivity0.dpdw(dpdw);
-    // sensitivity0.dqdw(dqdw);
-    // sensitivity0.dndb(dndb);
-    // sensitivity0.dpdb(dpdb);
-    // sensitivity0.dqdb(dqdb);
-    // sensitivity0.dudw(dudw);
-    // sensitivity0.dudb(dudb);
+    const VectorXd n = n0 + dndb0*(b - b0) + dndw0*(w - w0);
+    const VectorXd p = p0 + dpdb0*(b - b0) + dpdw0*(w - w0);
+    const VectorXd q = q0 + dqdb0*(b - b0) + dqdw0*(w - w0);
+    const VectorXd u = u0 + dudb0*(b - b0) + dudw0*(w - w0);
 
-    // EquilibriumPredictor predictor(state0, sensitivity0);
-
-
+    CHECK( n.isApprox(VectorXd(state.speciesAmounts())) );
+    CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
+    CHECK( q.isApprox(VectorXd(state.equilibrium().q())) );
+    CHECK( u.isApprox(VectorXd(state.props())) );
 }
