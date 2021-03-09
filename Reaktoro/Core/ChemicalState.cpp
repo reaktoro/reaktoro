@@ -400,6 +400,9 @@ struct ChemicalState::Equilibrium::Impl
     /// The initial component amounts in the equilibrium calculation.
     ArrayXd b;
 
+    /// The computed control variables *q* in the equilibrium calculation.
+    ArrayXd q;
+
     /// The Optima::State object used for warm start Optima optimization calculations.
     Optima::State optstate;
 
@@ -443,19 +446,31 @@ auto ChemicalState::Equilibrium::setInputNames(const Strings& names) -> void
     pimpl->inputs = names;
 }
 
-auto ChemicalState::Equilibrium::setInputValues(VectorXdConstRef values) -> void
+auto ChemicalState::Equilibrium::setInputValues(VectorXdConstRef w) -> void
 {
-    pimpl->w = values;
+    pimpl->w = w;
 }
 
-auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef values) -> void
+auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef b) -> void
 {
-    pimpl->b = values;
+    pimpl->b = b;
+}
+
+auto ChemicalState::Equilibrium::setControlVariablesP(ArrayXdConstRef p) -> void
+{
+    pimpl->optstate.p = p;
+}
+
+auto ChemicalState::Equilibrium::setControlVariablesQ(ArrayXdConstRef q) -> void
+{
+    pimpl->q = q;
 }
 
 auto ChemicalState::Equilibrium::setOptimaState(const Optima::State& state) -> void
 {
     pimpl->optstate = state;
+    const auto Nq = state.x.size() - pimpl->Nn;
+    pimpl->q = state.x.tail(Nq);
 }
 
 auto ChemicalState::Equilibrium::setIndicesPrimarySecondarySpecies(ArrayXlConstRef ips, Index kp) -> void
@@ -543,6 +558,16 @@ auto ChemicalState::Equilibrium::initialComponentAmounts() const -> ArrayXdConst
     return pimpl->b;
 }
 
+auto ChemicalState::Equilibrium::controlVariablesP() const -> ArrayXdConstRef
+{
+    return pimpl->optstate.p;
+}
+
+auto ChemicalState::Equilibrium::controlVariablesQ() const -> ArrayXdConstRef
+{
+    return pimpl->q;
+}
+
 auto ChemicalState::Equilibrium::p() const -> ArrayXdConstRef
 {
     return pimpl->optstate.p;
@@ -550,13 +575,7 @@ auto ChemicalState::Equilibrium::p() const -> ArrayXdConstRef
 
 auto ChemicalState::Equilibrium::q() const -> ArrayXdConstRef
 {
-    const auto& x = pimpl->optstate.x;
-    const auto Nn = pimpl->Nn;
-    const auto Nx = x.size();
-    const auto Nq = Nx - Nn;
-    if(x.size())
-        return x.tail(Nq);
-    else return x;
+    return pimpl->q;
 }
 
 auto ChemicalState::Equilibrium::w() const -> VectorXdConstRef
