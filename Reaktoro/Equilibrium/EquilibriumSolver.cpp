@@ -129,22 +129,32 @@ struct EquilibriumSolver::Impl
         optsolver.setOptions(options.optima);
     }
 
-    /// Update the optimization problem before a new equilibrium calculation.
-    auto updateOptProblem(ChemicalState& state0, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions)
+    /// Update the initial chemical state before a new equilibrium calculation.
+    auto updateInitialState(ChemicalState& state0, const EquilibriumConditions& conditions)
     {
-        // If initial species amounts have been given in the equilibrium conditions, use these as initial guess for the calculation
-        if(conditions.initialSpeciesAmounts().size())
-            state0.setSpeciesAmounts(conditions.initialSpeciesAmounts());
+        const auto n0 = conditions.initialSpeciesAmounts();
+        const auto uninitialized = state0.speciesAmounts().maxCoeff() == 0.0;
+        const auto has_n0 = n0.size() > 0;
 
-        // The input parameters for the equilibrium calculation
-        const Params w = conditions.params();
+        errorif(uninitialized && !has_n0, "Provide an initialized chemical state as initial guess for the calculation when initial component amounts are given.");
+
+        // Change species amounts only if all amounts are zero
+        if(uninitialized && has_n0)
+            state0.setSpeciesAmounts(n0);
+    }
+
+    /// Update the optimization problem before a new equilibrium calculation.
+    auto updateOptProblem(const ChemicalState& state0, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions)
+    {
+        // The input variables for the equilibrium calculation
+        const VectorXr w = conditions.inputValues();
 
         // Create the Optima::Dims object with dimension info of the optimization problem
         optdims = Optima::Dims();
         optdims.x  = dims.Nx;
         optdims.p  = dims.Np;
         optdims.be = dims.Nb;
-        optdims.c  = dims.Nw + dims.Nb; // c = (w, b) where w are the input parameters and b are the amounts of components
+        optdims.c  = dims.Nw + dims.Nb; // c = (w, b) where w are the input variables and b are the amounts of components
 
         // Recreate a new Optima::Problem problem (TODO: Avoid recreation of Optima::Problem object for each equilibrium calculation)
         optproblem = Optima::Problem(optdims);
@@ -165,7 +175,7 @@ struct EquilibriumSolver::Impl
                 res.fxp = setup.evalObjectiveHessianP(x, p, w);
 
             if(opts.eval.fxc)
-                res.fxc = setup.evalObjectiveHessianParams(x, p, w);
+                res.fxc = setup.evalObjectiveHessianW(x, p, w);
 
             if(opts.eval.fxc)
                 setup.assembleChemicalPropsJacobianEnd(); // finalize recording of the derivatives of the chemical properties with respect to n, p, w
@@ -185,7 +195,7 @@ struct EquilibriumSolver::Impl
                 res.ddp = setup.evalEquationConstraintsGradP(x, p, w);
 
             if(opts.eval.ddc)
-                res.ddc = setup.evalEquationConstraintsGradParams(x, p, w);
+                res.ddc = setup.evalEquationConstraintsGradW(x, p, w);
 
             res.succeeded = true;
         };
@@ -195,13 +205,13 @@ struct EquilibriumSolver::Impl
         optproblem.Aep = setup.assembleMatrixAep();
 
         /// Set the right-hand side vector be of the linear equality constraints.
-        optproblem.be = setup.assembleVectorBe(conditions, state0);
+        optproblem.be = setup.assembleVectorBe(conditions);
 
         // Set the lower bounds of the species amounts
         optproblem.xlower = setup.assembleLowerBoundsVector(restrictions, state0);
         optproblem.xupper = setup.assembleUpperBoundsVector(restrictions, state0);
 
-        // Set the values of the input parameters for sensitivity derivatives (due to the use of Param, a wrapper to a shared pointer, the actual values of c here are not important, because the Param objects are embedded in the models)
+        // Set the values of the input variables for sensitivity derivatives (due to the use of Param, a wrapper to a shared pointer, the actual values of c here are not important, because the Param objects are embedded in the models)
         optproblem.c = zeros(optdims.c);
 
         // Set the Jacobian matrix d(be)/dc = [d(be)/dw d(be)/db]
@@ -229,7 +239,8 @@ struct EquilibriumSolver::Impl
         state.setTemperature(T);
         state.setPressure(P);
         state.setSpeciesAmounts(optstate.x.head(dims.Nn));
-        state.equilibrium().setParams(conditions.params());
+        state.equilibrium().setInputNames(conditions.inputNames());
+        state.equilibrium().setInputValues(conditions.inputValues());
         state.equilibrium().setInitialComponentAmounts(optproblem.be);
         state.equilibrium().setOptimaState(optstate);
     }
@@ -296,6 +307,7 @@ struct EquilibriumSolver::Impl
     {
         EquilibriumResult eqresult;
 
+        updateInitialState(state0, conditions);
         updateOptProblem(state0, conditions, restrictions);
         updateOptState(state0);
 
@@ -335,6 +347,7 @@ struct EquilibriumSolver::Impl
     {
         EquilibriumResult eqresult;
 
+        updateInitialState(state0, conditions);
         updateOptProblem(state0, conditions, restrictions);
         updateOptState(state0);
 
