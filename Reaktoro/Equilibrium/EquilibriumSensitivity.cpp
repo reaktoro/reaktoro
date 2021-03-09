@@ -19,8 +19,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Param.hpp>
-#include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
@@ -31,16 +29,16 @@ struct EquilibriumSensitivity::Impl
     /// The chemical system associated with the sensitivity derivatives.
     ChemicalSystem system;
 
-    /// The input parameters *w* in the chemical equilibrium problem specifications.
-    Params w;
+    /// The input variables *w* in the chemical equilibrium problem specifications.
+    Strings inputs;
 
-    /// The derivatives of the species amounts *n* with respect to input parameters *w*.
+    /// The derivatives of the species amounts *n* with respect to input variables *w*.
     MatrixXd dndw;
 
-    /// The derivatives of the control variables *p* with respect to input parameters *w*.
+    /// The derivatives of the control variables *p* with respect to input variables *w*.
     MatrixXd dpdw;
 
-    /// The derivatives of the control variables *q* with respect to input parameters *w*.
+    /// The derivatives of the control variables *q* with respect to input variables *w*.
     MatrixXd dqdw;
 
     /// The derivatives of the species amounts *n* with respect to component amounts *b*.
@@ -52,7 +50,7 @@ struct EquilibriumSensitivity::Impl
     /// The derivatives of the control variables *q* with respect to component amounts *b*.
     MatrixXd dqdb;
 
-    /// The total derivatives of the chemical properties *u* with respect to input parameters *w*.
+    /// The total derivatives of the chemical properties *u* with respect to input variables *w*.
     MatrixXd dudw;
 
     /// The total derivatives of the chemical properties *u* with respect to component amounts *b*.
@@ -72,7 +70,7 @@ struct EquilibriumSensitivity::Impl
     auto initialize(const EquilibriumSpecs& specs) -> void
     {
         system = specs.system();
-        w = specs.params();
+        inputs = specs.inputs();
 
         const EquilibriumDims dims(specs);
 
@@ -117,9 +115,9 @@ auto EquilibriumSensitivity::initialize(const EquilibriumSpecs& specs) -> void
     pimpl->initialize(specs);
 }
 
-auto EquilibriumSensitivity::dndw(const String& cid) const -> VectorXdConstRef
+auto EquilibriumSensitivity::dndw(const String& wid) const -> VectorXdConstRef
 {
-    const auto idx = pimpl->w.index(cid);
+    const auto idx = index(pimpl->inputs, wid);
     return pimpl->dndw.col(idx);
 }
 
@@ -141,9 +139,9 @@ auto EquilibriumSensitivity::dndw(MatrixXdConstRef data) -> void
     dndw = data;
 }
 
-auto EquilibriumSensitivity::dpdw(const String& cid) const -> VectorXdConstRef
+auto EquilibriumSensitivity::dpdw(const String& wid) const -> VectorXdConstRef
 {
-    const auto idx = pimpl->w.index(cid);
+    const auto idx = index(pimpl->inputs, wid);
     return pimpl->dpdw.col(idx);
 }
 
@@ -165,9 +163,9 @@ auto EquilibriumSensitivity::dpdw(MatrixXdConstRef data) -> void
     dpdw = data;
 }
 
-auto EquilibriumSensitivity::dqdw(const String& cid) const -> VectorXdConstRef
+auto EquilibriumSensitivity::dqdw(const String& wid) const -> VectorXdConstRef
 {
-    const auto idx = pimpl->w.index(cid);
+    const auto idx = index(pimpl->inputs, wid);
     return pimpl->dqdw.col(idx);
 }
 
