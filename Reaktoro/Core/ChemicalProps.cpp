@@ -156,6 +156,13 @@ struct ChemicalProps::Impl
         }
     }
 
+    /// Update the chemical properties of the system with serialized data.
+    template<typename Array>
+    auto update(const Array& data) -> void
+    {
+        ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    }
+
     /// Update the chemical properties of the chemical system using ideal activity models.
     auto updateIdeal(const ChemicalState& state) -> void
     {
@@ -179,13 +186,6 @@ struct ChemicalProps::Impl
             phaseProps(i).updateIdeal(T, P, np);
             offset += size;
         }
-    }
-
-    /// Update the chemical properties of the system with serialized data.
-    template<typename Array>
-    auto update(const Array& data) -> void
-    {
-        detail::to(data, T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
     }
 
     /// Serialize the chemical properties into the array stream @p stream.
@@ -265,16 +265,6 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
     pimpl->update(T, P, n);
 }
 
-auto ChemicalProps::updateIdeal(const ChemicalState& state) -> void
-{
-    pimpl->updateIdeal(state);
-}
-
-auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void
-{
-    pimpl->updateIdeal(T, P, n);
-}
-
 auto ChemicalProps::update(ArrayXrConstRef u) -> void
 {
     pimpl->update(u);
@@ -283,6 +273,16 @@ auto ChemicalProps::update(ArrayXrConstRef u) -> void
 auto ChemicalProps::update(ArrayXdConstRef u) -> void
 {
     pimpl->update(u);
+}
+
+auto ChemicalProps::updateIdeal(const ChemicalState& state) -> void
+{
+    pimpl->updateIdeal(state);
+}
+
+auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void
+{
+    pimpl->updateIdeal(T, P, n);
 }
 
 auto ChemicalProps::serialize(ArrayStream<real>& stream) const -> void
