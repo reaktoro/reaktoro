@@ -194,6 +194,10 @@ public:
     //
     //=================================================================================================
 
+    /// Set the input variable with name @p input to the value in @p val.
+    /// @warning An error is thrown if there are no input variables with name @p input.
+    auto set(const String& input, const real& val) -> void;
+
     /// Return the initial amounts of the species in the equilibrium calculation.
     auto initialSpeciesAmounts() const -> ArrayXrConstRef;
 
@@ -203,15 +207,21 @@ public:
     /// Return the chemical system associated with the equilibrium conditions.
     auto system() const -> const ChemicalSystem&;
 
-    /// Return the input parameters associated with the equilibrium conditions.
-    auto params() const -> Params;
+    /// Return the names of the input variables associated with the equilibrium conditions.
+    auto inputNames() const -> const Strings&;
+
+    /// Return the values of the input variables associated with the equilibrium conditions.
+    auto inputValues() const -> VectorXrConstRef;
 
 private:
-    /// The chemical system associated with the given equilibrium specifications.
+    /// The chemical system associated with the equilibrium problem specifications.
     const ChemicalSystem m_system;
 
-    /// The input parameters defining the equilibrium conditions according to given equilibrium specifications.
-    Params m_params;
+    /// The names of the input variables in the equilibrium problem specifications.
+    const Strings m_inputs;
+
+    /// The current values of the input variables.
+    VectorXr m_inputs_values;
 
     /// The initial amounts of the species in the equilibrium calculation.
     ArrayXr m_initial_species_amounts;

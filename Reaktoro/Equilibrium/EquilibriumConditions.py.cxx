@@ -25,7 +25,6 @@ namespace py = pybind11;
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 using namespace Reaktoro;
@@ -57,9 +56,11 @@ void exportEquilibriumConditions(py::module& m)
         .def("pMg", &EquilibriumConditions::pMg)
         .def("pE", &EquilibriumConditions::pE)
         .def("Eh", &EquilibriumConditions::Eh)
+        .def("set", &EquilibriumConditions::set)
         .def("initialSpeciesAmounts", &EquilibriumConditions::initialSpeciesAmounts, return_internal_ref)
         .def("initialComponentAmounts", &EquilibriumConditions::initialComponentAmounts, return_internal_ref)
         .def("system", &EquilibriumConditions::system, return_internal_ref)
-        .def("params", &EquilibriumConditions::params)
+        .def("inputNames", &EquilibriumConditions::inputNames, return_internal_ref)
+        .def("inputValues", &EquilibriumConditions::inputValues, return_internal_ref)
         ;
 }
