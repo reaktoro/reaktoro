@@ -19,10 +19,9 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Params.hpp>
+#include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Core/Phases.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProps.hpp>
@@ -76,10 +75,9 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
     for(auto [key, value] : G0)
         db.addSpecies( Species(key).withStandardGibbsEnergy(value) );
 
-    SECTION("there is only pure water")
+    WHEN("there is an aqueous and gaseous solution")
     {
         Phases phases(db);
-        // phases.add( AqueousPhase(speciate("H O C")) );
         phases.add( AqueousPhase("H2O H+ OH- O2 H2 HCO3- CO2 CO3--" ) );
         phases.add( GaseousPhase("CO2(g) H2O(g) CH4(g)") );
 
@@ -107,21 +105,26 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         specs.volume();
         specs.pH();
         specs.openTo("O2"); // this introduces a *p* control variable n[O2] with the amount of O2 in/out
-        specs.addParameter(G0["H2O"]); // do this to enable sensitivity derivatives with respect to G0 param of H2O
-        specs.addParameter(G0["HCO3-"]); // do this to enable sensitivity derivatives with respect to G0 param of HCO3-
+        specs.addInput(G0["H2O"]); // do this to enable sensitivity derivatives with respect to G0 param of H2O
+        specs.addInput(G0["HCO3-"]); // do this to enable sensitivity derivatives with respect to G0 param of HCO3-
 
         EquilibriumDims dims(specs);
 
         const auto Nn = dims.Nn; // number of species in {H2O, H+, OH-, H2, O2, ...}
         const auto Np = dims.Np; // number of control variables in p = (n[O2])
-        const auto Nw = dims.Nw; // number of input parameters in w = (T, P, V, pH, G0[H2O], G0[HCO3-])
+        const auto Nw = dims.Nw; // number of input variables in w = (T, P, V, pH, G0[H2O], G0[HCO3-])
 
-        VectorXr p = zeros(Np);
         VectorXr n = state.speciesAmounts();
-        Params w = specs.params();
+        VectorXr p = zeros(Np);
 
-        w["T"] = 300.0; // in K
-        w["P"] = 1.0e5; // in Pa
+        const auto T  = 300.0; // in K
+        const auto P  = 1.0e5; // in Pa
+        const auto V  = 1.0;   // in m3
+        const auto pH = 6.0;
+        const auto G0H2O = G0["H2O"] + 2000.0;
+        const auto G0HCO3 = G0["HCO3-"] + 1000.0;
+
+        VectorXr w{{T, P, V, pH, G0H2O, G0HCO3}};
 
         EquilibriumProps eprops(specs);
 
@@ -157,15 +160,15 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         eprops.assembleFullJacobianEnd();
 
         // Construct the u = u(n, p, w) function that returns all chemical properties in a vector
-        auto u = [&](VectorXrConstRef n, VectorXrConstRef p, const Params& w) -> VectorXr
+        auto u = [&](VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
         {
-            const auto T = w.get("T");
-            const auto P = w.get("P");
+            const auto T = w[0];
+            const auto P = w[1];
+            G0["H2O"] = w[4]; // set G0 of H2O according to input value in w (before update below!)
+            G0["HCO3-"] = w[5]; // set G0 of HCO3- according to input value in w (before update below!)
             ChemicalProps props(system);
             props.update(T, P, n);
-            ArrayStream<real> stream;
-            props.serialize(stream);
-            return stream.data();
+            return props;
         };
 
         // Calculate the expected Jacobian matrices of chemical properties u wrt n, p, w
@@ -174,12 +177,103 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         const auto dudw = jacobian(u, wrt(w), at(n, p, w));
 
         // Compare to those recorded inside the EquilibriumProps object
-        INFO("eprops.dudn()\n" << eprops.dudn());
-        INFO("dudn\n" << dudn);
-        INFO("eprops.dudp()\n" << eprops.dudp());
-        INFO("dudp\n" << dudp);
-        INFO("eprops.dudw()\n" << eprops.dudw());
-        INFO("dudw\n" << dudw);
+        CHECK( eprops.dudn().isApprox(dudn) );
+        CHECK( eprops.dudp().isApprox(dudp) );
+        CHECK( eprops.dudw().isApprox(dudw) );
+    }
+
+    WHEN("there is an aqueous and gaseous solution -- temperature and pressure are unknown")
+    {
+        Phases phases(db);
+        phases.add( AqueousPhase("H2O H+ OH- O2 H2 HCO3- CO2 CO3--" ) );
+        phases.add( GaseousPhase("CO2(g) H2O(g) CH4(g)") );
+
+        ChemicalSystem system(phases);
+
+        ChemicalState state(system);
+        state.setTemperature(50.0, "celsius");
+        state.setPressure(100.0, "bar");
+        state.setSpeciesAmounts(1e-16); // don't let zeros for amounts
+        state.setSpeciesAmount("H2O",    55.0,    "mol");
+        state.setSpeciesAmount("H+",     1.0e-7,  "mol");
+        state.setSpeciesAmount("OH-",    1.0e-7,  "mol");
+        state.setSpeciesAmount("O2",     1.0e-31, "mol");
+        state.setSpeciesAmount("H2",     2.0e-31, "mol");
+        state.setSpeciesAmount("HCO3-",  1.0e-3,  "mol");
+        state.setSpeciesAmount("CO2",    1.0e-1,  "mol");
+        state.setSpeciesAmount("CO3--",  1.0e-5,  "mol");
+        state.setSpeciesAmount("CO2(g)", 1.0,     "mol");
+        state.setSpeciesAmount("H2O(g)", 1.0e-3,  "mol");
+        state.setSpeciesAmount("CH4(g)", 1.0e-6,  "mol");
+
+        EquilibriumSpecs specs(system);
+        specs.volume();
+        specs.internalEnergy();
+
+        EquilibriumDims dims(specs);
+
+        const auto Nn = dims.Nn; // number of species in {H2O, H+, OH-, H2, O2, ...}
+        const auto Np = dims.Np; // number of control variables in p = (n[O2])
+        const auto Nw = dims.Nw; // number of input variables in w = (T, P, V, pH, G0[H2O], G0[HCO3-])
+
+        const auto T = 330.0; // in K
+        const auto P = 1.2e5; // in Pa
+        const auto V = 1.0;   // in m3
+        const auto U = 1.0e4; // in J
+
+        VectorXr n = state.speciesAmounts();
+        VectorXr p{{T, P}};
+        VectorXr w{{V, U}};
+
+        EquilibriumProps eprops(specs);
+
+        // Start recording derivatives of the chemical properties
+        // with respect to seeded variables in n, p, w
+        eprops.assembleFullJacobianBegin();
+
+        // Start a series of updates call with seeded n[i] variables
+        for(auto i = 0; i < Nn; ++i)
+        {
+            autodiff::seed(n[i]);
+            eprops.update(n, p, w);
+            autodiff::unseed(n[i]);
+        }
+
+        // Start a series of updates call with seeded p[i] variables
+        for(auto i = 0; i < Np; ++i)
+        {
+            autodiff::seed(p[i]);
+            eprops.update(n, p, w);
+            autodiff::unseed(p[i]);
+        }
+
+        // Start a series of updates call with seeded w[i] variables
+        for(auto i = 0; i < Nw; ++i)
+        {
+            autodiff::seed(w[i]);
+            eprops.update(n, p, w);
+            autodiff::unseed(w[i]);
+        }
+
+        // End the recording of derivatives in further calls to EquilibriumProps::update.
+        eprops.assembleFullJacobianEnd();
+
+        // Construct the u = u(n, p, w) function that returns all chemical properties in a vector
+        auto u = [&](VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
+        {
+            const auto T = p[0]; // T is in p[0] because it is unknown - input variables w = (V, U)
+            const auto P = p[1]; // P is in p[1] because it is unknown - input variables w = (V, U)
+            ChemicalProps props(system);
+            props.update(T, P, n);
+            return props;
+        };
+
+        // Calculate the expected Jacobian matrices of chemical properties u wrt n, p, w
+        const auto dudn = jacobian(u, wrt(n), at(n, p, w));
+        const auto dudp = jacobian(u, wrt(p), at(n, p, w));
+        const auto dudw = jacobian(u, wrt(w), at(n, p, w));
+
+        // Compare to those recorded inside the EquilibriumProps object
         CHECK( eprops.dudn().isApprox(dudn) );
         CHECK( eprops.dudp().isApprox(dudp) );
         CHECK( eprops.dudw().isApprox(dudw) );
