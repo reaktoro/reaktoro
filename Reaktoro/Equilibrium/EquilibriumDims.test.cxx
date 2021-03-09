@@ -35,7 +35,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
 
     EquilibriumSpecs specs(system);
 
-    WHEN("temperature and pressure are input parameters - the Gibbs energy minimization formulation")
+    WHEN("temperature and pressure are input variables - the Gibbs energy minimization formulation")
     {
         specs.temperature();
         specs.pressure();
@@ -50,10 +50,10 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 0 );  // number of substances for which the chemical system is open to
         CHECK( dims.Nx == Nn ); // number of variables *x* in *x = (n, q)* (equivalent to `Nn + Nq`)
         CHECK( dims.Nu == Nn ); // number of unknown variables in the chemical equilibrium problem (equivalent to `Nn + Np + Nq`)
-        CHECK( dims.Nw == 2  ); // number of input parameters in the chemical equilibrium problem.
+        CHECK( dims.Nw == 2  ); // number of input variables in the chemical equilibrium problem.
     }
 
-    WHEN("temperature and volume are input parameters - the Helmholtz energy minimization formulation")
+    WHEN("temperature and volume are input variables - the Helmholtz energy minimization formulation")
     {
         specs.temperature();
         specs.volume();
@@ -71,7 +71,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nw == 2  ); // T, V
     }
 
-    WHEN("volume and internal energy are input parameters - the entropy maximization formulation")
+    WHEN("volume and internal energy are input variables - the entropy maximization formulation")
     {
         specs.volume();
         specs.internalEnergy();
@@ -89,7 +89,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nw == 2  ); // V, U
     }
 
-    WHEN("temperature, pressure, and pH are input parameters")
+    WHEN("temperature, pressure, and pH are input variables")
     {
         specs.temperature();
         specs.pressure();
@@ -108,7 +108,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nw == 3  ); // T, P, pH
     }
 
-    WHEN("volume, entropy, and activity[CO2(g)] are input parameters")
+    WHEN("volume, entropy, and activity[CO2(g)] are input variables")
     {
         specs.volume();
         specs.entropy();
@@ -127,7 +127,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nw == 3  ); // T, P, a(CO2)
     }
 
-    WHEN("temperature, pressure, volume, internal energy, pH, and pE are input parameters")
+    WHEN("temperature, pressure, volume, internal energy, pH, and pE are input variables")
     {
         specs.temperature();
         specs.pressure();

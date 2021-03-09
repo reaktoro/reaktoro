@@ -53,7 +53,7 @@ struct EquilibriumDims
     Index Nt = 0; ///< The number of substances for which the chemical system is open to (the number of explicit and implicit titrants).
     Index Nx = 0; ///< The number of variables *x* in *x = (n, q)* (equivalent to `Nn + Nq`).
     Index Nu = 0; ///< The number of unknown variables in the chemical equilibrium problem (equivalent to `Nn + Np + Nq`).
-    Index Nw = 0; ///< The number of input parameters in the chemical equilibrium problem.
+    Index Nw = 0; ///< The number of input variables *w* in the chemical equilibrium problem.
 
     /// Construct a default EquilibriumDims object.
     EquilibriumDims() = default;
