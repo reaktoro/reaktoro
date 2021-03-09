@@ -18,80 +18,9 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/TraitsUtils.hpp>
-#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/ArraySerialization.hpp>
 
 namespace Reaktoro {
-namespace detail {
-
-template<typename T>
-struct isArrayAux;
-
-template<typename T>
-constexpr auto isArray = isArrayAux<Decay<T>>::value;
-
-template<typename T>
-struct isArrayAux : std::false_type {};
-
-template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-struct isArrayAux<Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>> : std::true_type {};
-
-template<typename Vec, int Size>
-struct isArrayAux<Eigen::VectorBlock<Vec, Size>> : isArrayAux<Decay<Vec>> {};
-
-template<typename Vec>
-struct isArrayAux<Eigen::Ref<Vec>> : isArrayAux<Decay<Vec>> {};
-
-/// Return the length of an argument (array size if array, 1 otherwise).
-template<typename Arg>
-constexpr auto length(const Arg& x)
-{
-    if constexpr(isArray<Arg>)
-        return x.size();
-    else return 1;
-}
-
-template<typename Arg, typename... Args>
-constexpr auto length(const Arg& x, const Args&... xs)
-{
-    if constexpr(sizeof...(Args) > 0)
-        return length(x) + length(xs...);
-    else return length(x);
-}
-
-template<typename Array, typename Arg>
-constexpr auto from(Array& array, std::size_t pos, const Arg& x)
-{
-    if constexpr(isArray<Arg>)
-        array.segment(pos, x.size()) = x;
-    else array[pos] = x;
-}
-
-template<typename Array, typename Arg, typename... Args>
-constexpr auto from(Array& array, std::size_t pos, const Arg& x, const Args&... xs)
-{
-    from(array, pos, x);
-    if constexpr(sizeof...(Args) > 0)
-        from(array, pos + length(x), xs...);
-}
-
-template<typename Array, typename Arg>
-constexpr auto to(const Array& array, std::size_t pos, Arg& x)
-{
-    if constexpr(isArray<Arg>)
-        x = array.segment(pos, x.size());
-    else x = array[pos];
-}
-
-template<typename Array, typename Arg, typename... Args>
-constexpr auto to(const Array& array, std::size_t pos, Arg& x, Args&... xs)
-{
-    to(array, pos, x);
-    if constexpr(sizeof...(Args) > 0)
-        to(array, pos + length(x), xs...);
-}
-
-} // namespace detail
 
 /// The class used to serialize/deserialize data using array.
 template<typename T>
@@ -105,26 +34,26 @@ public:
     ArrayStream() = default;
 
     /// Construct an ArrayStream object with given list of scalars and/or arrays.
-    template<typename Arg, typename... Args>
-    ArrayStream(const Arg& x, const Args&... xs)
-    : array(detail::length(x, xs...))
+    template<typename... Args>
+    ArrayStream(const Args&... args)
     {
-        detail::from(array, 0, x, xs...);
+        ArraySerialization::resize(array, args...);
+        ArraySerialization::serialize(array, args...);
     }
 
     /// Initialize this ArrayStream object with given list of scalars and/or arrays.
-    template<typename Arg, typename... Args>
-    auto from(const Arg& x, const Args&... xs)
+    template<typename... Args>
+    auto from(const Args&... args)
     {
-        array.resize(detail::length(x, xs...));
-        detail::from(array, 0, x, xs...);
+        ArraySerialization::resize(array, args...);
+        ArraySerialization::serialize(array, args...);
     }
 
     /// Transfer this ArrayStream object data to given list of scalars and/or arrays.
-    template<typename Arg, typename... Args>
-    auto to(Arg& x, Args&... xs) const
+    template<typename... Args>
+    auto to(Args&... args) const
     {
-        detail::to(array, 0, x, xs...);
+        ArraySerialization::deserialize(array, args...);
     }
 
     auto data() const -> const ArrayType&
