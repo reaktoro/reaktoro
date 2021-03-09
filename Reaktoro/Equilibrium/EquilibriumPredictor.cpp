@@ -18,8 +18,8 @@
 #include "EquilibriumPredictor.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 
@@ -30,44 +30,42 @@ namespace {
 using GetterFn = Fn<double(VectorXdConstRef, VectorXdConstRef)>;
 
 /// Create the lambda function that extracts temperature from either `p` or `w`.
-auto getTemperatureFn(const Params& w) -> GetterFn
+auto getTemperatureFn(const Strings& inputs) -> GetterFn
 {
-    const auto idxT = w.find("T");
-    const auto knownT = idxT < w.size(); // T is known if in w (vector of input parameters)
+    const auto idxT = index(inputs, "T");
+    const auto knownT = idxT < inputs.size(); // T is known if it is an input variable (it then lives in w)
     if(knownT) return [idxT](VectorXdConstRef p, VectorXdConstRef w) { return w[idxT]; };
     else return [](VectorXdConstRef p, VectorXdConstRef w) { return p[0]; };
 }
 
 /// Create the lambda function that extracts pressure from either `p` or `w`.
-auto getPressureFn(const Params& w) -> GetterFn
+auto getPressureFn(const Strings& inputs) -> GetterFn
 {
-    const auto idxP = w.find("P");
-    const auto knownP = idxP < w.size(); // P is known if in w (vector of input parameters)
+    const auto idxP = index(inputs, "P");
+    const auto knownP = idxP < inputs.size(); // P is known if it is an input variable (it then lives in w)
     if(knownP) return [idxP](VectorXdConstRef p, VectorXdConstRef w) { return w[idxP]; };
-    const auto idxT = w.find("T");
-    const auto knownT = idxT < w.size(); // T is known if in w (vector of input parameters)
-    if(knownT) return [](VectorXdConstRef p, VectorXdConstRef w) { return p[0]; };
-    else return [](VectorXdConstRef p, VectorXdConstRef w) { return p[1]; };
+    const auto idxT = index(inputs, "T");
+    const auto knownT = idxT < inputs.size(); // T is known if it is an input variable (it then lives in w)
+    if(knownT) return [](VectorXdConstRef p, VectorXdConstRef w) { return p[0]; }; // if T is known, then P is in p[0]
+    else return [](VectorXdConstRef p, VectorXdConstRef w) { return p[1]; }; // if T is unknown, then P is in p[1]
 }
 
 } // namespace
 
 struct EquilibriumPredictor::Impl
 {
+    const ChemicalState state0;
+    const EquilibriumSensitivity sensitivity0;
     const VectorXd n0;    ///< The species amounts *n* at the reference equilibrium state.
     const VectorXd p0;    ///< The control variables *p* at the reference equilibrium state.
-    const VectorXd w0;    ///< The input parameters *w* at the reference equilibrium state.
+    const VectorXd q0;    ///< The control variables *q* at the reference equilibrium state.
+    const VectorXd w0;    ///< The input variables *w* at the reference equilibrium state.
     const VectorXd b0;    ///< The component amounts *b* at the reference equilibrium state.
     const VectorXd u0;    ///< The chemical properties *u* at the reference equilibrium state.
-    const MatrixXd dndw0; ///< The derivatives *dn/dw* at the reference equilibrium state
-    const MatrixXd dpdw0; ///< The derivatives *dp/dw* at the reference equilibrium state
-    const MatrixXd dudw0; ///< The derivatives *du/dw* at the reference equilibrium state
-    const MatrixXd dndb0; ///< The derivatives *dn/db* at the reference equilibrium state
-    const MatrixXd dpdb0; ///< The derivatives *dp/db* at the reference equilibrium state
-    const MatrixXd dudb0; ///< The derivatives *du/db* at the reference equilibrium state
     VectorXd n;           ///< The species amounts *n* at the predicted equilibrium state.
     VectorXd p;           ///< The control variables *p* at the predicted equilibrium state.
-    VectorXd w;           ///< The input parameters *w* at the predicted equilibrium state.
+    VectorXd q;           ///< The control variables *q* at the predicted equilibrium state.
+    VectorXd w;           ///< The input variables *w* at the predicted equilibrium state.
     VectorXd b;           ///< The component amounts *b* at the predicted equilibrium state.
     VectorXd u;           ///< The chemical properties *u* at the predicted equilibrium state.
     GetterFn getT;        ///< The function that gets temperature from either *p* or *w* depending if it is known or unwknon in the equilibrium calculation.
@@ -75,38 +73,54 @@ struct EquilibriumPredictor::Impl
 
     /// Construct a EquilibriumPredictor object.
     Impl(const ChemicalState& state0, const EquilibriumSensitivity& sensitivity0)
-    : n0(state0.speciesAmounts()),
+    : state0(state0), sensitivity0(sensitivity0),
+      n0(state0.speciesAmounts()),
       p0(state0.equilibrium().p()),
+      q0(state0.equilibrium().q()),
       w0(state0.equilibrium().w()),
       b0(state0.equilibrium().b()),
       u0(state0.props()),
-      dndw0(sensitivity0.dndw()),
-      dpdw0(sensitivity0.dpdw()),
-      dudw0(sensitivity0.dudw()),
-      dndb0(sensitivity0.dndb()),
-      dpdb0(sensitivity0.dpdb()),
-      dudb0(sensitivity0.dudb()),
-      getT(getTemperatureFn(state0.equilibrium().w())),
-      getP(getPressureFn(state0.equilibrium().w()))
+      getT(getTemperatureFn(state0.equilibrium().inputNames())),
+      getP(getPressureFn(state0.equilibrium().inputNames()))
     {
+        errorif(state0.equilibrium().inputNames().empty(),
+            "EquilibriumPredictor expects a ChemicalState object that "
+            "has been used in a call to EquilibriumSolver::solve.");
     }
 
     /// Perform a first-order Taylor prediction of the chemical state at given conditions.
     auto predict(ChemicalState& state, const EquilibriumConditions& conditions) -> void
     {
-        w = conditions.params();
+        const auto dndw0 = sensitivity0.dndw(); // The derivatives *dn/dw* at the reference equilibrium state.
+        const auto dpdw0 = sensitivity0.dpdw(); // The derivatives *dp/dw* at the reference equilibrium state.
+        const auto dqdw0 = sensitivity0.dqdw(); // The derivatives *dq/dw* at the reference equilibrium state.
+        const auto dudw0 = sensitivity0.dudw(); // The derivatives *du/dw* at the reference equilibrium state.
+        const auto dndb0 = sensitivity0.dndb(); // The derivatives *dn/db* at the reference equilibrium state.
+        const auto dpdb0 = sensitivity0.dpdb(); // The derivatives *dp/db* at the reference equilibrium state.
+        const auto dqdb0 = sensitivity0.dqdb(); // The derivatives *dq/db* at the reference equilibrium state.
+        const auto dudb0 = sensitivity0.dudb(); // The derivatives *du/db* at the reference equilibrium state.
+
+        w = conditions.inputValues();
         b = conditions.initialComponentAmounts();
+
         const auto dw = w - w0;
         const auto db = b - b0;
+
         n.noalias() = n0 + dndw0*dw + dndb0*db;
         p.noalias() = p0 + dpdw0*dw + dpdb0*db;
+        q.noalias() = q0 + dqdw0*dw + dqdb0*db;
         u.noalias() = u0 + dudw0*dw + dudb0*db;
+
         const auto T = getT(p, w); // get temperature from predicted *p* or given *w*
         const auto P = getP(p, w); // get pressure from predicted *p* or given *w*
+
         state.setTemperature(T);
         state.setPressure(P);
         state.setSpeciesAmounts(n);
         state.props().update(u);
+        state.equilibrium() = state0.equilibrium();
+        state.equilibrium().setControlVariablesP(p);
+        state.equilibrium().setControlVariablesQ(q);
     }
 };
 
