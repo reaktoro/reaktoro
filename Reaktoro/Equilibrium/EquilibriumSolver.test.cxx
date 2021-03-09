@@ -97,11 +97,16 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         CHECK( result.optima.succeeded );
         CHECK( result.optima.iterations == 15 );
 
+        result = solver.solve(state); // check a recalculation converges in 0 iterations
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations == 0 );
+
         SECTION("and sensitivity derivatives are considered")
         {
             EquilibriumSensitivity sensitivity;
 
-            result = solver.solve(state, sensitivity);
+            result = solver.solve(state, sensitivity); // check a recalculation converges in 0 iterations (even if sensitivity derivatives need to be computed!)
 
             CHECK( result.optima.succeeded );
             CHECK( result.optima.iterations == 0 );
@@ -156,6 +161,11 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
         CHECK( result.optima.succeeded );
         CHECK( result.optima.iterations == 29 );
+
+        result = solver.solve(state); // check a recalculation converges in 0 iterations
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations == 0 );
     }
 
     SECTION("there is only pure water but there are other elements besides H and O with zero amounts")
@@ -177,6 +187,11 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
         CHECK( result.optima.succeeded );
         CHECK( result.optima.iterations == 15 );
+
+        result = solver.solve(state); // check a recalculation converges in 0 iterations
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations == 0 );
     }
 
     SECTION("there is a more complicated aqueous solution")
@@ -203,6 +218,11 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
         CHECK( result.optima.succeeded );
         CHECK( result.optima.iterations == 28 );
+
+        result = solver.solve(state); // check a recalculation converges in 0 iterations
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations == 0 );
     }
 
     SECTION("there is an aqueous solution and a gaseous solution")
@@ -230,6 +250,11 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
         CHECK( result.optima.succeeded );
         CHECK( result.optima.iterations == 28 );
+
+        result = solver.solve(state); // check a recalculation converges in 0 iterations
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations == 0 );
     }
 
     SECTION("there is an aqueous solution, gaseous solution, several minerals")
@@ -261,6 +286,11 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             CHECK( result.optima.succeeded );
             CHECK( result.optima.iterations == 30 );
+
+            result = solver.solve(state); // check a recalculation converges in 0 iterations
+
+            CHECK( result.optima.succeeded );
+            CHECK( result.optima.iterations == 0 );
         }
 
         WHEN("reactivity restrictions are imposed")
@@ -274,6 +304,11 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             CHECK( result.optima.succeeded );
             CHECK( result.optima.iterations == 28 );
+
+            result = solver.solve(state, restrictions); // check a recalculation converges in 0 iterations
+
+            CHECK( result.optima.succeeded );
+            CHECK( result.optima.iterations == 0 );
 
             CHECK( state.speciesAmount("Quartz") == Approx(0.007) );
             CHECK( state.speciesAmount("MgCO3")  == Approx(0.1) );
@@ -309,6 +344,11 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         CHECK( result.optima.succeeded );
         CHECK( result.optima.iterations == 17 );
 
+        result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations == 0 );
+
         CHECK( state.temperature() == Approx(50.0 + 273.15) );
         CHECK( state.pressure() == Approx(80.0 * 1.0e+5) );
         CHECK( state.speciesAmount("H+") == Approx(0.00099084) );
@@ -317,10 +357,10 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         {
             EquilibriumSensitivity sensitivity;
 
-            result = solver.solve(state, sensitivity);
+            result = solver.solve(state, sensitivity, conditions); // check a recalculation converges in 0 iterations (even if sensitivity derivatives need to be computed!)
 
             CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 1 );
+            CHECK( result.optima.iterations == 0 );
 
             const auto dndT  = sensitivity.dndw("T");
             const auto dndP  = sensitivity.dndw("P");
@@ -328,11 +368,11 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             const auto dndb  = sensitivity.dndb();
 
             CHECK( dndT == VectorXd({{
-                -1.1153479332073412e-11,
-                -2.0093291929976324e-16,
-                 1.1153479332073412e-11,
+                -1.1153479332073403e-11,
+                -2.0093291929976317e-16,
+                 1.1153479332073403e-11,
                  0.0000000000000000e+00,
-                -6.7948459196321255e-35 }}));
+                -6.7948459188748201e-35 }}));
 
             CHECK( dndP == VectorXd({{
                  0.0000000000000000e+00,
@@ -342,18 +382,18 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                 -0.0000000000000000e+00 }}));
 
             CHECK( dndpH == VectorXd({{
-                -2.7913561385420770e-10,
+                -2.7913561385420755e-10,
                 -2.2814928148700941e-03,
-                 2.7913561385420770e-10,
+                 2.7913561385420755e-10,
                  0.0000000000000000e+00,
-                 8.0779356694631607e-44 }}));
+                 0.0000000000000000e+00 }}));
 
             CHECK( dndb == MatrixXd({
-                { 4.9999999999889794e-01,  0.0000000000000000e+00, -4.9999999999889794e-01},
-                { 9.0076339999801367e-06, -0.0000000000000000e+00, -9.0076339999801367e-06},
-                { 1.1020442994623840e-12, -0.0000000000000000e+00, -1.1020442994623840e-12},
-                { 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00},
-                { 4.5454545454545466e-19, -0.0000000000000000e+00, -4.5454545454545466e-19} }));
+                { 4.9999999999889794e-01,  0.0000000000000000e+00, -4.9999999999889794e-01 },
+                { 9.0076339999801367e-06, -0.0000000000000000e+00, -9.0076339999801367e-06 },
+                { 1.1020442994623832e-12, -0.0000000000000000e+00, -1.1020442994623832e-12 },
+                { 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00 },
+                { 4.5454545454545456e-19, -0.0000000000000000e+00, -4.5454545454545456e-19 }}));
         }
     }
 
@@ -390,6 +430,11 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
         CHECK( result.optima.succeeded );
         CHECK( result.optima.iterations == 28 );
+
+        result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations == 0 );
 
         CHECK( state.temperature() == Approx(50.0 + 273.15) );
         CHECK( state.pressure() == Approx(80.0 * 1.0e+5) );
