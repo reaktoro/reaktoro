@@ -29,7 +29,6 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
-class Params;
 
 //=================================================================================================
 //
@@ -191,17 +190,17 @@ public:
     /// Assign a ChemicalState::Equilibrium instance to this instance
     auto operator=(Equilibrium other) -> Equilibrium&;
 
-    /// Set the input parameters representing the conditions used for the calculation of the equilibrium state.
-    auto setParams(const Params& w) -> void;
+    /// Set the names of the input variables used in the equilibrium calculation.
+    auto setInputNames(const Strings& names) -> void;
 
-    /// Set initial component amounts for the calculation of the equilibrium state.
-    auto setInitialComponentAmounts(ArrayXdConstRef b) -> void;
+    /// Set the values of the input variables used in the equilibrium calculation.
+    auto setInputValues(VectorXdConstRef values) -> void;
 
-    /// Set the Optima::State object obtained during an Optima optimization calculation.
+    /// Set initial component amounts used in the equilibrium calculation.
+    auto setInitialComponentAmounts(ArrayXdConstRef values) -> void;
+
+    /// Set the Optima::State object computed as part of the equilibrium calculation.
     auto setOptimaState(const Optima::State& state) -> void;
-
-    /// Return the last set Optima::State object.
-    auto optimaState() const -> const Optima::State&;
 
     /// Set the indices of the primary and secondary species at the equilibrium state.
     /// @param ips The indices of the equilibrium species ordered as (primary, secondary)
@@ -249,17 +248,29 @@ public:
     /// Return the amounts of the implicit titrants in the equilibrium state (in unit of mol).
     auto implicitTitrantAmounts() const -> ArrayXdConstRef;
 
-    /// Return the control variables *p* in the equilibrium state.
+    /// Return the names of the input variables used in the equilibrium calculation.
+    auto inputNames() const -> const Strings&;
+
+    /// Return the values of the input variables used in the equilibrium calculation.
+    auto inputValues() const -> VectorXdConstRef;
+
+    /// Return the initial component amounts used in the equilibrium calculation.
+    auto initialComponentAmounts() const -> ArrayXdConstRef;
+
+    /// Return the control variables *p* computed in the equilibrium calculation.
     auto p() const -> ArrayXdConstRef;
 
-    /// Return the control variables *q* in the equilibrium state.
+    /// Return the control variables *q* computed in the equilibrium calculation.
     auto q() const -> ArrayXdConstRef;
 
-    /// Return the input parameters for the calculation of the equilibrium state.
-    auto w() const -> const Params&;
+    /// Return the values of the input variables used in the equilibrium calculation.
+    auto w() const -> VectorXdConstRef;
 
-    /// Return the initial component amounts for the calculation of the equilibrium state.
+    /// Return the initial component amounts used in the equilibrium calculation.
     auto b() const -> ArrayXdConstRef;
+
+    /// Return the Optima::State object computed as part of the equilibrium calculation.
+    auto optimaState() const -> const Optima::State&;
 
 private:
     struct Impl;
