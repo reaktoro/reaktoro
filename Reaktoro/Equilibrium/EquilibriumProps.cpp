@@ -19,7 +19,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ArrayStream.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -29,14 +32,14 @@ namespace {
 /// temperature in unknown, then temperature should be extracted from vector `p`.
 /// Otherwise, temperature is known and available in the Params object `w`.
 /// @param specs The specifications of the equilibrium solver
-auto createTemperatureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrConstRef, const Params&)>
+auto createTemperatureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrConstRef, VectorXrConstRef)>
 {
-    const auto unknownT = specs.isTemperatureUnknown();
-
-    if(unknownT)
-        return [](VectorXrConstRef p, const Params& w) { return p[0]; };
-
-    return [](VectorXrConstRef p, const Params& w) { return w.get("T").value(); };
+    const auto iTw = index(specs.namesInputs(), "T");
+    const auto iTp = index(specs.namesControlVariables(), "T");
+    const auto Nw = specs.numInputs();
+    if(iTw < Nw)
+        return [iTw](VectorXrConstRef p, VectorXrConstRef w) { return w[iTw]; };
+    return [iTp](VectorXrConstRef p, VectorXrConstRef w) { return p[iTp]; };
 }
 
 /// Create the lambda function that extracts pressure from either `p` or `w`.
@@ -44,22 +47,18 @@ auto createTemperatureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorX
 /// pressure in unknown, then pressure should be extracted from vector `p`.
 /// Otherwise, pressure is known and available in the Params object `w`.
 /// @param specs The specifications of the equilibrium solver
-auto createPressureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrConstRef, const Params&)>
+auto createPressureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrConstRef, VectorXrConstRef)>
 {
-    const auto unknownT = specs.isTemperatureUnknown();
-    const auto unknownP = specs.isPressureUnknown();
-
-    if(unknownT && unknownP)
-        return [](VectorXrConstRef p, const Params& params) { return p[1]; };
-
-    if(unknownP)
-        return [](VectorXrConstRef p, const Params& params) { return p[0]; };
-
-    return [](VectorXrConstRef p, const Params& params) { return params.get("P").value(); };
+    const auto iPw = index(specs.namesInputs(), "P");
+    const auto iPp = index(specs.namesControlVariables(), "P");
+    const auto Nw = specs.numInputs();
+    if(iPw < Nw)
+        return [iPw](VectorXrConstRef p, VectorXrConstRef w) { return w[iPw]; };
+    return [iPp](VectorXrConstRef p, VectorXrConstRef w) { return p[iPp]; };
 }
 
 /// Determine the index of the variable in `(n, p, w)` that has been seeded by autodiff.
-auto indexOfSeededVariable(VectorXrConstRef n, VectorXrConstRef p, const Params& w)
+auto indexOfSeededVariable(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w)
 {
     using autodiff::grad;
 
@@ -78,7 +77,7 @@ auto indexOfSeededVariable(VectorXrConstRef n, VectorXrConstRef p, const Params&
     // Check for a variable v in w so that grad(v) == 1 (v has been seeded!)
     offset += p.size();
     for(auto j = 0; j < w.size(); ++j)
-        if(grad(w[j].value()) == 1.0)
+        if(grad(w[j]) == 1.0)
             return offset + j;
 
     // There was no seeded variable in (n, p, w)
@@ -93,14 +92,20 @@ struct EquilibriumProps::Impl
     /// The chemical properties of the system computed at given *(n, p, w)*.
     ChemicalProps props;
 
+    /// The specifications of the equilibrium problem
+    const EquilibriumSpecs specs;
+
     /// The dimension variables in a chemical equilibrium problem specification.
     const EquilibriumDims dims;
 
     /// The temperature getter function for the given equilibrium specifications. @see createTemperatureGetterFn
-    const Fn<real(VectorXrConstRef, const Params&)> getT;
+    const Fn<real(VectorXrConstRef, VectorXrConstRef)> getT;
 
     /// The pressure getter function for the given equilibrium specifications. @see createPressureGetterFn
-    const Fn<real(VectorXrConstRef, const Params&)> getP;
+    const Fn<real(VectorXrConstRef, VectorXrConstRef)> getP;
+
+    /// The values of the model parameters before they are altered in the update method.
+    VectorXr params0;
 
     /// The partial derivatives of the serialized chemical properties *u* with respect to *(n, p, w)*.
     MatrixXd dudnpw;
@@ -113,18 +118,40 @@ struct EquilibriumProps::Impl
 
     /// Construct an EquilibriumProps::Impl object.
     Impl(const EquilibriumSpecs& specs)
-    : props(specs.system()), dims(specs),
+    : props(specs.system()), specs(specs), dims(specs),
       getT(createTemperatureGetterFn(specs)), getP(createPressureGetterFn(specs))
     {}
 
     /// Update the chemical properties of the chemical system.
-    auto update(VectorXrConstRef n, VectorXrConstRef p, const Params& w) -> void
+    auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w) -> void
     {
         const auto T = getT(p, w);
         const auto P = getP(p, w);
 
+        // The model parameters considered inputs in the equilibrium calculation.
+        auto params = specs.params();
+
+        // The indices of the model params among the inputs.
+        const auto& iparams = specs.indicesParams();
+
+        // Store the current values of the model parameters
+        params0 = params;
+
+        // Before updating the chemical properties, change the model parameters
+        // that are input in the chemical equilibrium calculation.
+        for(auto i = 0; i < params0.size(); ++i)
+            params[i].value() = w[iparams[i]];
+
+        // Perform the update of the chemical properties of the system.
+        // If there were model parameters changed above, the chemical
+        // properties computed below will be affected.
         props.update(T, P, n);
 
+        // Recover here the original state of the model parameters changed above.
+        for(auto i = 0; i < params0.size(); ++i)
+            params[i].value() = params0[i];
+
+        // Collect the derivatives of the chemical properties wrt some seeded variable in n, p, w.
         if(assemblying_jacobian)
         {
             props.serialize(stream);
@@ -178,7 +205,7 @@ auto EquilibriumProps::operator=(EquilibriumProps other) -> EquilibriumProps&
     return *this;
 }
 
-auto EquilibriumProps::update(VectorXrConstRef n, VectorXrConstRef p, const Params& w) -> void
+auto EquilibriumProps::update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w) -> void
 {
     pimpl->update(n, p, w);
 }

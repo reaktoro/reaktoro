@@ -18,10 +18,14 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalProps.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/Types.hpp>
 
 namespace Reaktoro {
+
+// Forward declarations
+class ChemicalProps;
+class EquilibriumSpecs;
 
 /// The class that computes chemical properties of a system during equilibrium calculations.
 /// This class exists to allow derivatives of these chemical properties to be
@@ -52,8 +56,8 @@ public:
     /// can be obtained with methods @ref dudn, @ref dudp, and @ref dudw.
     /// @param n The amounts of the species.
     /// @param p The values of the *p* control variables (e.g., T, P, n[H+] in case U, V and pH are given).
-    /// @param w The input parameters in the chemical equilibrium problem (e.g., U, V, pH).
-    auto update(VectorXrConstRef n, VectorXrConstRef p, const Params& w) -> void;
+    /// @param w The input variables *w* in the chemical equilibrium problem (e.g., U, V, pH).
+    auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w) -> void;
 
     /// Enable recording of derivatives of the chemical properties with respect
     /// to *(n, p, w)* to contruct its full Jacobian matrix.
@@ -85,7 +89,7 @@ public:
     auto dudp() const -> MatrixXdConstRef;
 
     /// Return the partial derivatives of the serialized chemical properties
-    /// *u* with respect to input parameter variables *w*.
+    /// *u* with respect to input variables *w*.
     auto dudw() const -> MatrixXdConstRef;
 
 private:
