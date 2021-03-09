@@ -31,7 +31,7 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
     EquilibriumSpecs specs(system);
 
-    WHEN("temperature and pressure are input parameters - the Gibbs energy minimization formulation")
+    WHEN("temperature and pressure are input variables - the Gibbs energy minimization formulation")
     {
         specs.temperature();
         specs.pressure();
@@ -41,16 +41,16 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         conditions.temperature(50, "celsius");
         conditions.pressure(100, "bar");
 
-        auto params = conditions.params();
+        auto w = conditions.inputValues();
 
-        CHECK( params.size() == 2 );
-        CHECK( params.get("T").value() ==  50.0 + 273.15 ); // in K
-        CHECK( params.get("P").value() == 100.0 * 1.0e+5 ); // in Pa
+        CHECK( w.size() == 2 );
+        CHECK( w[0] ==  50.0 + 273.15 ); // T in K
+        CHECK( w[1] == 100.0 * 1.0e+5 ); // P in Pa
 
         CHECK_THROWS( conditions.volume(1, "m3") );
     }
 
-    WHEN("temperature and volume are input parameters - the Helmholtz energy minimization formulation")
+    WHEN("temperature and volume are input variables - the Helmholtz energy minimization formulation")
     {
         specs.temperature();
         specs.volume();
@@ -60,16 +60,16 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         conditions.temperature(40, "celsius");
         conditions.volume(2.0, "m3");
 
-        auto params = conditions.params();
+        auto w = conditions.inputValues();
 
-        CHECK( params.size() == 2 );
-        CHECK( params.get("T").value() == 40.0 + 273.15 ); // in K
-        CHECK( params.get("V").value() == 2.0 ); // in m3
+        CHECK( w.size() == 2 );
+        CHECK( w[0] == 40.0 + 273.15 ); // T in K
+        CHECK( w[1] == 2.0 ); // V in m3
 
         CHECK_THROWS( conditions.entropy(1, "J/K") );
     }
 
-    WHEN("volume and internal energy are input parameters - the entropy maximization formulation")
+    WHEN("volume and internal energy are input variables - the entropy maximization formulation")
     {
         specs.volume();
         specs.internalEnergy();
@@ -79,16 +79,16 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         conditions.volume(1, "cm3");
         conditions.internalEnergy(1, "kJ");
 
-        auto params = conditions.params();
+        auto w = conditions.inputValues();
 
-        CHECK( params.size() == 2 );
-        CHECK( params.get("V").value() == Approx(1.0e-6) ); // in m3
-        CHECK( params.get("U").value() == Approx(1.0e+3) ); // in J
+        CHECK( w.size() == 2 );
+        CHECK( w[0] == Approx(1.0e-6) ); // V in m3
+        CHECK( w[1] == Approx(1.0e+3) ); // U in J
 
         CHECK_THROWS( conditions.enthalpy(1, "J") );
     }
 
-    WHEN("temperature, pressure, and pH are input parameters")
+    WHEN("temperature, pressure, and pH are input variables")
     {
         specs.temperature();
         specs.pressure();
@@ -100,17 +100,17 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         conditions.pressure(23, "bar");
         conditions.pH(3.5);
 
-        auto params = conditions.params();
+        auto w = conditions.inputValues();
 
-        CHECK( params.size() == 3 );
-        CHECK( params.get("T").value()  == Approx(35.0 + 273.15) ); // in K
-        CHECK( params.get("P").value()  == Approx(23.0 * 1.0e+5) ); // in Pa
-        CHECK( params.get("pH").value() == 3.5 );
+        CHECK( w.size() == 3 );
+        CHECK( w[0]  == Approx(35.0 + 273.15) ); // T in K
+        CHECK( w[1]  == Approx(23.0 * 1.0e+5) ); // P in Pa
+        CHECK( w[2] == 3.5 );                    // pH
 
         CHECK_THROWS( conditions.pE(5.0) );
     }
 
-    WHEN("volume, entropy, and activity[CO2(g)] are input parameters")
+    WHEN("volume, entropy, and activity[CO2(g)] are input variables")
     {
         specs.volume();
         specs.entropy();
@@ -122,17 +122,17 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         conditions.entropy(1.0, "kJ/K");
         conditions.activity("CO2(g)", 40.0);
 
-        auto params = conditions.params();
+        auto w = conditions.inputValues();
 
-        CHECK( params.size() == 3 );
-        CHECK( params.get("V").value() == Approx(2.3 * 1.0e-3) ); // in m3
-        CHECK( params.get("S").value() == Approx(1.0e+3) );       // in J/K
-        CHECK( params.get("lnActivity[CO2(g)]").value() == Approx(log(40.0)) );
+        CHECK( w.size() == 3 );
+        CHECK( w[0] == Approx(2.3 * 1.0e-3) ); // V in m3
+        CHECK( w[1] == Approx(1.0e+3) );       // S in J/K
+        CHECK( w[2] == Approx(log(40.0)) );    // lnActivity[CO2(g)]
 
         CHECK_THROWS( conditions.chemicalPotential("H2O(aq)", 100.0, "J/mol") );
     }
 
-    WHEN("temperature, pressure, volume, internal energy, pH, and pE are input parameters")
+    WHEN("temperature, pressure, volume, internal energy, pH, and pE are input variables")
     {
         specs.temperature();
         specs.pressure();
@@ -152,16 +152,69 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         conditions.pH(2.7);
         conditions.pE(4.0);
 
-        auto params = conditions.params();
+        auto w = conditions.inputValues();
 
-        CHECK( params.size() == 6 );
-        CHECK( params.get("T").value()  == Approx(60.0 + 273.15) );  // in K
-        CHECK( params.get("P").value()  == Approx(200.0 * 1.0e+6) ); // in Pa
-        CHECK( params.get("V").value()  == Approx(5.0 * 1.0e-9) );   // in m3
-        CHECK( params.get("U").value()  == Approx(2.0e+6) );         // in J
-        CHECK( params.get("pH").value() == 2.7 );
-        CHECK( params.get("pE").value() == 4.0 );
+        CHECK( w.size() == 6 );
+        CHECK( w[0] == Approx(60.0 + 273.15) );  // T in K
+        CHECK( w[1] == Approx(200.0 * 1.0e+6) ); // P in Pa
+        CHECK( w[2] == Approx(5.0 * 1.0e-9) );   // V in m3
+        CHECK( w[3] == Approx(2.0e+6) );         // U in J
+        CHECK( w[4] == 2.7 );                    // pH
+        CHECK( w[5] == 4.0 );                    // pE
 
         CHECK_THROWS( conditions.Eh(14.0, "mV") );
+    }
+
+    WHEN("there are Param objects among the input variables")
+    {
+        // This test exists to ensure that an EquilibriumConditions object does
+        // not change the values of the model parameters. These Param objects
+        // are wrapper to shared pointers. Changing these objects should be
+        // restricted to just a few classes to avoid unexpected side effects.
+
+        Param K0("K0", 1.0);
+        Param K1("K1", 2.0);
+
+        specs.temperature();
+        specs.pressure();
+        specs.addInput(K0);
+        specs.addInput(K1);
+
+        EquilibriumConditions conditions(specs);
+        conditions.temperature(300.0);
+        conditions.pressure(1e6);
+
+        VectorXr w = conditions.inputValues();
+
+        CHECK( w.size() == 4 );
+        CHECK( w[0] == 300.0 );      // T in K
+        CHECK( w[1] == 1e6 );        // P in Pa
+        CHECK( w[2] == K0.value() ); // K0
+        CHECK( w[3] == K1.value() ); // K1
+
+        // Check that changing K0 and K1 does not change the input values in object conditions!
+        K0 = 7.0;
+        K1 = 8.0;
+
+        w = conditions.inputValues();
+
+        CHECK( w[2] == 1.0 ); // K0 at previous value
+        CHECK( w[3] == 2.0 ); // K1 at previous value
+
+        // Check that changing input variables "K0" and "K1" in object conditions
+        // does not change Param objects K0 and K1!
+        conditions.set("K0", 11.0);
+        conditions.set("K1", 12.0);
+
+        CHECK( K0.value() == 7.0 ); // recent values of K0 set previously
+        CHECK( K1.value() == 8.0 ); // recent values of K1 set previously
+
+        w = conditions.inputValues();
+
+        CHECK( w.size() == 4 );
+        CHECK( w[0] == 300.0 ); // corresponding to T
+        CHECK( w[1] == 1e6 );   // corresponding to P
+        CHECK( w[2] == 11.0 );  // corresponding to K0
+        CHECK( w[3] == 12.0 );  // corresponding to K1
     }
 }

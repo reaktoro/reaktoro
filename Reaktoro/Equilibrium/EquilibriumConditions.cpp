@@ -29,77 +29,91 @@
 namespace Reaktoro {
 namespace {
 
-/// Throw an error if an input parameter has not been registered in the equilibrium specifications.
-/// @param params The list of registered input parameters in the equilibrium specifications (e.g., {"T", "P", "pH"}).
-/// @param pid The id of the parameter that needs to be checked in the equilibrium specifications (e.g., "T").
+/// Throw an error if an input variable has not been registered in the equilibrium specifications.
+/// @param inputs The list of registered input variables in the equilibrium specifications (e.g., {"T", "P", "pH"}).
+/// @param wid The id of the input variable that needs to be checked in the equilibrium specifications (e.g., "T").
 /// @param propertymsg The message about the property being constrained (e.g., "temperature").
-auto throwErrorIfNotRegisteredParam(const Params& params, const String& pid, const String& propertymsg) -> void
+auto throwErrorIfNotRegisteredInput(const Strings& inputs, const String& wid, const String& propertymsg) -> void
 {
-    const auto registered = containsfn(params, RKT_LAMBDA(x, x.id() == pid));
-    error(!registered, "Cannot set ", propertymsg, " for the equilibrium calculation "
-        "because it is not a registered input parameter in the equilibrium specifications.");
+    const auto registered = contains(inputs, wid);
+    errorif(!registered, "Cannot set ", propertymsg, " for the equilibrium calculation "
+        "because it is not a registered input variable in the equilibrium specifications.");
 }
 
 } // namespace
 
 EquilibriumConditions::EquilibriumConditions(const EquilibriumSpecs& specs)
-: m_system(specs.system()), m_params(specs.params())
-{}
+: m_system(specs.system()), m_inputs(specs.inputs())
+{
+    // Initialize the values of the input variables to zero
+    m_inputs_values = zeros(specs.numInputs());
+
+    // Initialize the values of the input variables that are model parameters to their current values
+    m_inputs_values(specs.indicesParams()) = VectorXr(specs.params());
+}
 
 auto EquilibriumConditions::temperature(real value, String unit) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "T", "temperature");
+    throwErrorIfNotRegisteredInput(m_inputs, "T", "temperature");
     value = units::convert(value, unit, "K");
-    m_params.get("T") = value;
+    const auto idx = index(m_inputs, "T");
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::pressure(real value, String unit) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "P", "pressure");
+    throwErrorIfNotRegisteredInput(m_inputs, "P", "pressure");
     value = units::convert(value, unit, "Pa");
-    m_params.get("P") = value;
+    const auto idx = index(m_inputs, "P");
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::volume(real value, String unit) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "V", "volume");
+    throwErrorIfNotRegisteredInput(m_inputs, "V", "volume");
     value = units::convert(value, unit, "m3");
-    m_params.get("V") = value;
+    const auto idx = index(m_inputs, "V");
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::internalEnergy(real value, String unit) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "U", "internal energy");
+    throwErrorIfNotRegisteredInput(m_inputs, "U", "internal energy");
     value = units::convert(value, unit, "J");
-    m_params.get("U") = value;
+    const auto idx = index(m_inputs, "U");
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::enthalpy(real value, String unit) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "H", "enthalpy");
+    throwErrorIfNotRegisteredInput(m_inputs, "H", "enthalpy");
     value = units::convert(value, unit, "J");
-    m_params.get("H") = value;
+    const auto idx = index(m_inputs, "H");
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::gibbsEnergy(real value, String unit) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "G", "Gibbs energy");
+    throwErrorIfNotRegisteredInput(m_inputs, "G", "Gibbs energy");
     value = units::convert(value, unit, "J");
-    m_params.get("G") = value;
+    const auto idx = index(m_inputs, "G");
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::helmholtzEnergy(real value, String unit) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "A", "Helmholtz energy");
+    throwErrorIfNotRegisteredInput(m_inputs, "A", "Helmholtz energy");
     value = units::convert(value, unit, "J");
-    m_params.get("A") = value;
+    const auto idx = index(m_inputs, "A");
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::entropy(real value, String unit) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "S", "entropy");
+    throwErrorIfNotRegisteredInput(m_inputs, "S", "entropy");
     value = units::convert(value, unit, "J/K");
-    m_params.get("S") = value;
+    const auto idx = index(m_inputs, "S");
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::startWith(String species, real value, String unit) -> void
@@ -138,62 +152,79 @@ auto EquilibriumConditions::startWithComponentAmounts(ArrayXrConstRef b) -> void
 auto EquilibriumConditions::chemicalPotential(String substance, real value, String unit) -> void
 {
     const auto pid = "u[" + substance + "]";
-    throwErrorIfNotRegisteredParam(m_params, pid, "the chemical potential of " + substance);
+    throwErrorIfNotRegisteredInput(m_inputs, pid, "the chemical potential of " + substance);
     value = units::convert(value, unit, "J/mol");
-    m_params.get(pid) = value;
+    const auto idx = index(m_inputs, pid);
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::lnActivity(String species, real value) -> void
 {
     const auto pid = "lnActivity[" + species + "]";
-    throwErrorIfNotRegisteredParam(m_params, pid, "the activity of " + species);
-    m_params.get(pid) = value;
+    throwErrorIfNotRegisteredInput(m_inputs, pid, "the activity of " + species);
+    const auto idx = index(m_inputs, pid);
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::lgActivity(String species, real value) -> void
 {
     const auto pid = "lnActivity[" + species + "]";
-    throwErrorIfNotRegisteredParam(m_params, pid, "the activity of " + species);
-    m_params.get(pid) = value * ln10;
+    throwErrorIfNotRegisteredInput(m_inputs, pid, "the activity of " + species);
+    const auto idx = index(m_inputs, pid);
+    m_inputs_values[idx] = value * ln10;
 }
 
 auto EquilibriumConditions::activity(String species, real value) -> void
 {
     const auto pid = "lnActivity[" + species + "]";
-    throwErrorIfNotRegisteredParam(m_params, pid, "the activity of " + species);
-    m_params.get(pid) = log(value);
+    throwErrorIfNotRegisteredInput(m_inputs, pid, "the activity of " + species);
+    const auto idx = index(m_inputs, pid);
+    m_inputs_values[idx] = log(value);
 }
 
 auto EquilibriumConditions::fugacity(String gas, real value, String unit) -> void
 {
     const auto pid = "f[" + gas + "]";
-    throwErrorIfNotRegisteredParam(m_params, pid, "the fugacity of " + gas);
+    throwErrorIfNotRegisteredInput(m_inputs, pid, "the fugacity of " + gas);
     value = units::convert(value, unit, "bar");
-    m_params.get(pid) = value;
+    const auto idx = index(m_inputs, pid);
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::pH(real value) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "pH", "pH");
-    m_params.get("pH") = value;
+    throwErrorIfNotRegisteredInput(m_inputs, "pH", "pH");
+    const auto idx = index(m_inputs, "pH");
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::pMg(real value) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "pMg", "pMg");
-    m_params.get("pMg") = value;
+    throwErrorIfNotRegisteredInput(m_inputs, "pMg", "pMg");
+    const auto idx = index(m_inputs, "pMg");
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::pE(real value) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "pE", "pE");
-    m_params.get("pE") = value;
+    throwErrorIfNotRegisteredInput(m_inputs, "pE", "pE");
+    const auto idx = index(m_inputs, "pE");
+    m_inputs_values[idx] = value;
 }
 
 auto EquilibriumConditions::Eh(real value, String unit) -> void
 {
-    throwErrorIfNotRegisteredParam(m_params, "Eh", "Eh");
-    m_params.get("Eh") = value;
+    throwErrorIfNotRegisteredInput(m_inputs, "Eh", "Eh");
+    const auto idx = index(m_inputs, "Eh");
+    m_inputs_values[idx] = value;
+}
+
+auto EquilibriumConditions::set(const String& input, const real& val) -> void
+{
+    const auto idx = index(m_inputs, input);
+    const auto size = m_inputs.size();
+    errorif(idx >= size, "There is no input variable with name `", input, "` in this EquilibriumConditions object.");
+    m_inputs_values[idx] = val;
 }
 
 auto EquilibriumConditions::initialSpeciesAmounts() const -> ArrayXrConstRef
@@ -219,9 +250,14 @@ auto EquilibriumConditions::system() const -> const ChemicalSystem&
     return m_system;
 }
 
-auto EquilibriumConditions::params() const -> Params
+auto EquilibriumConditions::inputNames() const -> const Strings&
 {
-    return m_params;
+    return m_inputs;
+}
+
+auto EquilibriumConditions::inputValues() const -> VectorXrConstRef
+{
+    return m_inputs_values;
 }
 
 
