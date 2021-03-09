@@ -55,7 +55,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
     SECTION("Checking matrices `Aex` and `Aep` of the optimization problem")
     {
-        WHEN("temperature and pressure are input parameters - the Gibbs energy minimization formulation")
+        WHEN("temperature and pressure are input variables - the Gibbs energy minimization formulation")
         {
             specs.temperature();
             specs.pressure();
@@ -69,7 +69,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             CHECK( Aep.size() == 0 );
         }
 
-        WHEN("temperature and volume are input parameters - the Helmholtz energy minimization formulation")
+        WHEN("temperature and volume are input variables - the Helmholtz energy minimization formulation")
         {
             specs.temperature();
             specs.volume();
@@ -85,7 +85,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             CHECK( Aep == zeros(Ne, Np) );
         }
 
-        WHEN("volume and internal energy are input parameters - the entropy maximization formulation")
+        WHEN("volume and internal energy are input variables - the entropy maximization formulation")
         {
             specs.volume();
             specs.internalEnergy();
@@ -101,7 +101,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             CHECK( Aep == zeros(Ne, Np) );
         }
 
-        WHEN("temperature, pressure, and pH are input parameters")
+        WHEN("temperature, pressure, and pH are input variables")
         {
             specs.temperature();
             specs.pressure();
@@ -123,7 +123,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             CHECK( Aep == zeros(Ne, Np) );
         }
 
-        WHEN("volume, entropy, and activity[CO2(g)] are input parameters")
+        WHEN("volume, entropy, and activity[CO2(g)] are input variables")
         {
             specs.volume();
             specs.entropy();
@@ -145,7 +145,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             CHECK( Aep == zeros(Ne, Np) );
         }
 
-        WHEN("temperature, pressure, volume, internal energy, pH, and pE are input parameters")
+        WHEN("temperature, pressure, volume, internal energy, pH, and pE are input variables")
         {
             specs.temperature();
             specs.pressure();
@@ -196,7 +196,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             const auto n = state.speciesAmounts();
             const auto be_expected = Wn * n.matrix();
-            const auto be_actual = setup.assembleVectorBe(conditions, state);
+            const auto be_actual = setup.assembleVectorBe(conditions);
 
             INFO("be_expected = " << be_expected);
             INFO("be_actual   = " << be_actual);
@@ -211,7 +211,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             conditions.startWithComponentAmounts(be);
 
             const auto be_expected = be;
-            const auto be_actual = setup.assembleVectorBe(conditions, state);
+            const auto be_actual = setup.assembleVectorBe(conditions);
 
             INFO("be_expected = " << be_expected);
             INFO("be_actual   = " << be_actual);
@@ -319,7 +319,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
         const auto T = 0.7; // purely numerical value - not physically meaningful!
         const auto P = 1.3; // purely numerical value - not physically meaningful!
 
-        WHEN("temperature and pressure are given parameters")
+        WHEN("temperature and pressure are input variables")
         {
             EquilibriumSpecs specs(system);
             specs.temperature();
@@ -337,9 +337,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             EquilibriumSetup setup(specs);
 
-            Params params;
-            params.append("T", T);
-            params.append("P", P);
+            VectorXr w{{T, P}};
 
             ChemicalProps props(system);
             props.update(T, P, n);
@@ -355,14 +353,14 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             const auto f  = G/RT - tau * n.log().sum();
             const VectorXr fn = u/RT - tau/n;
 
-            CHECK( f  == Approx(setup.evalObjectiveValue(x, p, params)) );
-            CHECK( fn.isApprox(setup.evalObjectiveGradX(x, p, params)) );
+            CHECK( f  == Approx(setup.evalObjectiveValue(x, p, w)) );
+            CHECK( fn.isApprox(setup.evalObjectiveGradX(x, p, w)) );
 
-            CHECK( setup.evalEquationConstraintsGradX(x, p, params).size() == 0 );
-            CHECK( setup.evalEquationConstraintsGradP(x, p, params).size() == 0 );
+            CHECK( setup.evalEquationConstraintsGradX(x, p, w).size() == 0 );
+            CHECK( setup.evalEquationConstraintsGradP(x, p, w).size() == 0 );
         }
 
-        WHEN("temperature and pressure are not given parameters")
+        WHEN("temperature and pressure are not input variables")
         {
             EquilibriumSpecs specs(system);
             specs.volume();
@@ -389,12 +387,13 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             EquilibriumSetup setup(specs);
 
-            Params params;
-            params.append("V", 1.0);
-            params.append("U", 2.0);
-            params.append("H", 3.0);
-            params.append("pH", 4.0);
-            params.append("pE", 5.0);
+            const real V = 1.0;
+            const real U = 2.0;
+            const real H = 3.0;
+            const real pH = 4.0;
+            const real pE = 5.0;
+
+            VectorXr w{{V, U, H, pH, pE}};
 
             ChemicalProps props(system);
             props.update(T, P, n);
@@ -411,7 +410,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             // Check the value of the objective function at current conditions of [n, p, q]
             //-------------------------------------------------------------------------------
             const real f = G/RT - tau * n.log().sum();
-            CHECK( f == Approx(setup.evalObjectiveValue(x, p, params)) );
+            CHECK( f == Approx(setup.evalObjectiveValue(x, p, w)) );
 
             //------------------------------------------------------------------------------------------------------------
             // Check the gradient of the objective function at current conditions of [n, p, q] with respect to x = (n, q)
@@ -422,15 +421,15 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             fn = u/RT - tau/n;
 
-            fq[0] = specs.constraintsChemicalPotentialType()[0].fn(props)/RT; // the pH constraint
-            fq[1] = specs.constraintsChemicalPotentialType()[1].fn(props)/RT; // the pE constraint
+            fq[0] = specs.constraintsChemicalPotentialType()[0].fn(props, w)/RT; // the pH constraint
+            fq[1] = specs.constraintsChemicalPotentialType()[1].fn(props, w)/RT; // the pE constraint
 
-            CHECK( fx.isApprox(setup.evalObjectiveGradX(x, p, params)) );
+            CHECK( fx.isApprox(setup.evalObjectiveGradX(x, p, w)) );
 
             //----------------------------------------------------------------------------------------------------
             // Check the Jacobian of the gradient of the objective function at current conditions of [n, p, q]
             //----------------------------------------------------------------------------------------------------
-            auto gfn = [&system, &Nn, &Nq, &Nx, &tau, &specs, &params](ArrayXrConstRef x, ArrayXrConstRef p)
+            auto gfn = [&system, &Nn, &Nq, &Nx, &tau, &specs, &w](ArrayXrConstRef x, ArrayXrConstRef p)
             {
                 ChemicalProps auxprops(system);
                 const auto T = p[0]; // in tested equilibrium specs, p[0] is temperature (this is not necessarily always true!)
@@ -447,8 +446,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
                 gn = u/RT - tau/n.array();
 
-                gq[0] = specs.constraintsChemicalPotentialType()[0].fn(auxprops)/RT; // the pH constraint
-                gq[1] = specs.constraintsChemicalPotentialType()[1].fn(auxprops)/RT; // the pE constraint
+                gq[0] = specs.constraintsChemicalPotentialType()[0].fn(auxprops, w)/RT; // the pH constraint
+                gq[1] = specs.constraintsChemicalPotentialType()[1].fn(auxprops, w)/RT; // the pE constraint
 
                 return g;
             };
@@ -460,24 +459,24 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             const MatrixXd Hxx = jacobian(gfn, wrt(x), at(x, p));
             const MatrixXd Hxp = jacobian(gfn, wrt(p), at(x, p));
 
-            CHECK( Hxx.isApprox(setup.evalObjectiveHessianX(x, p, params)) );
-            CHECK( Hxp.isApprox(setup.evalObjectiveHessianP(x, p, params)) );
+            CHECK( Hxx.isApprox(setup.evalObjectiveHessianX(x, p, w)) );
+            CHECK( Hxp.isApprox(setup.evalObjectiveHessianP(x, p, w)) );
 
             //-------------------------------------------------------------------------------------------------
             // Check the value of the constraint functions of equation type at current conditions of [n, p, q]
             //-------------------------------------------------------------------------------------------------
             VectorXr v(Np);
 
-            v[0] = specs.constraintsEquationType()[0].fn(props); // the volume constraint equation
-            v[1] = specs.constraintsEquationType()[1].fn(props); // the internal energy constraint equation
-            v[2] = specs.constraintsEquationType()[2].fn(props); // the enthalpy constraint equation
+            v[0] = specs.constraintsEquationType()[0].fn(props, w); // the volume constraint equation
+            v[1] = specs.constraintsEquationType()[1].fn(props, w); // the internal energy constraint equation
+            v[2] = specs.constraintsEquationType()[2].fn(props, w); // the enthalpy constraint equation
 
-            CHECK( v.isApprox(setup.evalEquationConstraints(x, p, params)) );
+            CHECK( v.isApprox(setup.evalEquationConstraints(x, p, w)) );
 
             //----------------------------------------------------------------------------------------------------
             // Check the Jacobian of the constraint functions of equation type at current conditions of [n, p, q]
             //----------------------------------------------------------------------------------------------------
-            auto vfn = [&system, &Nn, &Np, &specs, &params](ArrayXrConstRef x, ArrayXrConstRef p)
+            auto vfn = [&system, &Nn, &Np, &specs, &w](ArrayXrConstRef x, ArrayXrConstRef p)
             {
                 ChemicalProps auxprops(system);
                 const auto T = p[0]; // in tested equilibrium specs, p[0] is temperature (this is not necessarily always true!)
@@ -486,9 +485,9 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
                 auxprops.update(T, P, n);
 
                 VectorXr v(Np);
-                v[0] = specs.constraintsEquationType()[0].fn(auxprops); // the volume constraint equation
-                v[1] = specs.constraintsEquationType()[1].fn(auxprops); // the internal energy constraint equation
-                v[2] = specs.constraintsEquationType()[2].fn(auxprops); // the enthalpy constraint equation
+                v[0] = specs.constraintsEquationType()[0].fn(auxprops, w); // the volume constraint equation
+                v[1] = specs.constraintsEquationType()[1].fn(auxprops, w); // the internal energy constraint equation
+                v[2] = specs.constraintsEquationType()[2].fn(auxprops, w); // the enthalpy constraint equation
 
                 return v;
             };
@@ -500,8 +499,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             const MatrixXd Vpx = jacobian(vfn, wrt(x), at(x, p));
             const MatrixXd Vpp = jacobian(vfn, wrt(p), at(x, p));
 
-            CHECK( Vpx.isApprox(setup.evalEquationConstraintsGradX(x, p, params)) );
-            CHECK( Vpp.isApprox(setup.evalEquationConstraintsGradP(x, p, params)) );
+            CHECK( Vpx.isApprox(setup.evalEquationConstraintsGradX(x, p, w)) );
+            CHECK( Vpp.isApprox(setup.evalEquationConstraintsGradP(x, p, w)) );
         }
     }
 }

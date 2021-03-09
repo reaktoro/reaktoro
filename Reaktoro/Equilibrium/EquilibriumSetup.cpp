@@ -23,7 +23,6 @@
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
@@ -83,6 +82,7 @@ struct EquilibriumSetup::Impl
     ArrayXr n;     ///< The current amounts of the species (in mol).
     ArrayXr p;     ///< The current values of the introduced *p* control variables (temperature, pressure, amounts of explicit titrants).
     ArrayXr q;     ///< The current values of the introduced *q* control variables (amounts of implicit titrants whose chemical potentials are constrained).
+    ArrayXr w;     ///< The current values of the input variables for the equilibrium calculation (e.g, T, P, pH, pE, V, etc.).
     VectorXr x;    ///< The auxiliary vector x = (n, q).
     VectorXr gx;   ///< The gradient of the objective function with respect to x = (n, q).
     MatrixXd Hxx;  ///< The Jacobian of the objective gradient function with respect to x = (n, q).
@@ -92,23 +92,23 @@ struct EquilibriumSetup::Impl
     MatrixXd Vpx;  ///< The Jacobian of the residuals of the equation constraints with respect to x = (n, q).
     MatrixXd Vpp;  ///< The Jacobian of the residuals of the equation constraints with respect to p.
     MatrixXd Vpc;  ///< The Jacobian of the residuals of the equation constraints with respect to w (Optima uses `c` for these parameter variables).
-    Params w; ///< The current values of the input parameters for the equilibrium calculation (e.g, T, P, pH, pE, V, etc.).
 
     /// Construct an EquilibriumSetup::Impl object
     Impl(const EquilibriumSpecs& specs)
-    : system(specs.system()), specs(specs), dims(specs), props(specs),
-      w(specs.params())
+    : system(specs.system()), specs(specs), dims(specs), props(specs)
     {
         const auto Nn = system.species().size();
         const auto Np = numControlVariablesTypeP(specs);
         const auto Nq = numControlVariablesTypeQ(specs);
         const auto Nx = Nn + Nq;
         const auto Nb = numComponents(specs);
-        const auto Nc = w.size() + Nb;
+        const auto Nw = dims.Nw;
+        const auto Nc = Nw + Nb;
 
         n.resize(Nn);
         p.resize(Np);
         q.resize(Nq);
+        w.resize(Nw);
         x.resize(Nx);
         gx.resize(Nx);
         Hxx.resize(Nx, Nx);
@@ -179,7 +179,7 @@ struct EquilibriumSetup::Impl
     }
 
     /// Assemble the right-hand side vector `be` in the optimization problem.
-    auto assembleVectorBe(const EquilibriumConditions& conditions, const ChemicalState& state0) -> VectorXr
+    auto assembleVectorBe(const EquilibriumConditions& conditions) -> VectorXr
     {
         return conditions.initialComponentAmounts();
     }
@@ -215,13 +215,13 @@ struct EquilibriumSetup::Impl
     }
 
     /// Update the chemical properties of the system.
-    auto updateChemicalProps(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> void
+    auto updateChemicalProps(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> void
     {
         const auto n = x.head(dims.Nn);
         props.update(n, p, w);
     }
 
-    auto evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> real
+    auto evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> real
     {
         updateChemicalProps(x, p, w);
         const auto& cprops = props.chemicalProps();
@@ -234,7 +234,7 @@ struct EquilibriumSetup::Impl
         return (n * u).sum()/RT + barrier; // the current Gibbs energy of the system (normalized by RT)
     }
 
-    auto evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXrConstRef
+    auto evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXrConstRef
     {
         updateChemicalProps(x, p, w);
 
@@ -257,15 +257,15 @@ struct EquilibriumSetup::Impl
         const auto& uconstraints = specs.constraintsChemicalPotentialType();
 
         for(auto i = 0; i < Nq; ++i)
-            gq[i] = uconstraints[i].fn(cprops)/RT;
+            gq[i] = uconstraints[i].fn(cprops, w)/RT;
 
         return gx;
     }
 
-    auto evalObjectiveHessianX(VectorXrConstRef xconst, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
+    auto evalObjectiveHessianX(VectorXrConstRef xconst, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
     {
         x = xconst;
-        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
+        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
         {
             return evalObjectiveGradX(x, p, w);
         };
@@ -273,10 +273,10 @@ struct EquilibriumSetup::Impl
         return Hxx;
     }
 
-    auto evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef pconst, const Params& w) -> MatrixXdConstRef
+    auto evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef pconst, VectorXrConstRef w) -> MatrixXdConstRef
     {
         p = pconst;
-        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
+        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
         {
             return evalObjectiveGradX(x, p, w);
         };
@@ -284,10 +284,10 @@ struct EquilibriumSetup::Impl
         return Hxp;
     }
 
-    auto evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& wconst) -> MatrixXdConstRef
+    auto evalObjectiveHessianW(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef wconst) -> MatrixXdConstRef
     {
         w = wconst;
-        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
+        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
         {
             return evalObjectiveGradX(x, p, w);
         };
@@ -296,7 +296,7 @@ struct EquilibriumSetup::Impl
         return Hxc;
     }
 
-    auto evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXrConstRef
+    auto evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXrConstRef
     {
         updateChemicalProps(x, p, w);
 
@@ -306,15 +306,15 @@ struct EquilibriumSetup::Impl
         const auto& cprops = props.chemicalProps();
 
         for(auto i = 0; i < Np; ++i)
-            vp[i] = econstraints[i].fn(cprops);
+            vp[i] = econstraints[i].fn(cprops, w);
 
         return vp;
     }
 
-    auto evalEquationConstraintsGradX(VectorXrConstRef xconst, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
+    auto evalEquationConstraintsGradX(VectorXrConstRef xconst, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
     {
         x = xconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
+        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
         {
             return evalEquationConstraints(x, p, w);
         };
@@ -322,10 +322,10 @@ struct EquilibriumSetup::Impl
         return Vpx;
     }
 
-    auto evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef pconst, const Params& w) -> MatrixXdConstRef
+    auto evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef pconst, VectorXrConstRef w) -> MatrixXdConstRef
     {
         p = pconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
+        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
         {
             return evalEquationConstraints(x, p, w);
         };
@@ -333,10 +333,10 @@ struct EquilibriumSetup::Impl
         return Vpp;
     }
 
-    auto evalEquationConstraintsGradParams(VectorXrConstRef x, VectorXrConstRef p, const Params& wconst) -> MatrixXdConstRef
+    auto evalEquationConstraintsGradW(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef wconst) -> MatrixXdConstRef
     {
         w = wconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXr
+        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
         {
             return evalEquationConstraints(x, p, w);
         };
@@ -388,9 +388,9 @@ auto EquilibriumSetup::assembleMatrixAep() const -> MatrixXd
     return pimpl->assembleMatrixAep();
 }
 
-auto EquilibriumSetup::assembleVectorBe(const EquilibriumConditions& conditions, const ChemicalState& state0) -> VectorXr
+auto EquilibriumSetup::assembleVectorBe(const EquilibriumConditions& conditions) -> VectorXr
 {
-    return pimpl->assembleVectorBe(conditions, state0);
+    return pimpl->assembleVectorBe(conditions);
 }
 
 auto EquilibriumSetup::assembleLowerBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd
@@ -403,49 +403,49 @@ auto EquilibriumSetup::assembleUpperBoundsVector(const EquilibriumRestrictions& 
     return pimpl->assembleUpperBoundsVector(restrictions, state0);
 }
 
-auto EquilibriumSetup::evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> real
+auto EquilibriumSetup::evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> real
 {
     return pimpl->evalObjectiveValue(x, p, w);
 }
 
-auto EquilibriumSetup::evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXrConstRef
+auto EquilibriumSetup::evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXrConstRef
 {
     return pimpl->evalObjectiveGradX(x, p, w);
 }
 
-auto EquilibriumSetup::evalObjectiveHessianX(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
+auto EquilibriumSetup::evalObjectiveHessianX(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
 {
     return pimpl->evalObjectiveHessianX(x, p, w);
 }
 
-auto EquilibriumSetup::evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
+auto EquilibriumSetup::evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
 {
     return pimpl->evalObjectiveHessianP(x, p, w);
 }
 
-auto EquilibriumSetup::evalObjectiveHessianParams(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
+auto EquilibriumSetup::evalObjectiveHessianW(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
 {
-    return pimpl->evalObjectiveHessianParams(x, p, w);
+    return pimpl->evalObjectiveHessianW(x, p, w);
 }
 
-auto EquilibriumSetup::evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> VectorXrConstRef
+auto EquilibriumSetup::evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXrConstRef
 {
     return pimpl->evalEquationConstraints(x, p, w);
 }
 
-auto EquilibriumSetup::evalEquationConstraintsGradX(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
+auto EquilibriumSetup::evalEquationConstraintsGradX(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
 {
     return pimpl->evalEquationConstraintsGradX(x, p, w);
 }
 
-auto EquilibriumSetup::evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
+auto EquilibriumSetup::evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
 {
     return pimpl->evalEquationConstraintsGradP(x, p, w);
 }
 
-auto EquilibriumSetup::evalEquationConstraintsGradParams(VectorXrConstRef x, VectorXrConstRef p, const Params& w) -> MatrixXdConstRef
+auto EquilibriumSetup::evalEquationConstraintsGradW(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
 {
-    return pimpl->evalEquationConstraintsGradParams(x, p, w);
+    return pimpl->evalEquationConstraintsGradW(x, p, w);
 }
 
 auto EquilibriumSetup::assembleChemicalPropsJacobianBegin() -> void
