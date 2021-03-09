@@ -24,7 +24,6 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Params.hpp>
 
 namespace Reaktoro {
 
@@ -392,10 +391,13 @@ struct ChemicalState::Equilibrium::Impl
     /// The number of components in the equilibrium state.
     const Index Nb;
 
-    /// The input parameters used for the calculation of the equilibrium state.
-    Params w;
+    /// The names of the the input variables *w* used in the equilibrium calculation.
+    Strings inputs;
 
-    /// The initial component amounts for the calculation of the equilibrium state.
+    /// The values of the input variables *w* used in the equilibrium calculation.
+    ArrayXd w;
+
+    /// The initial component amounts in the equilibrium calculation.
     ArrayXd b;
 
     /// The Optima::State object used for warm start Optima optimization calculations.
@@ -436,24 +438,24 @@ auto ChemicalState::Equilibrium::operator=(ChemicalState::Equilibrium other) -> 
     return *this;
 }
 
-auto ChemicalState::Equilibrium::setParams(const Params& w) -> void
+auto ChemicalState::Equilibrium::setInputNames(const Strings& names) -> void
 {
-    pimpl->w = w;
+    pimpl->inputs = names;
 }
 
-auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef b) -> void
+auto ChemicalState::Equilibrium::setInputValues(VectorXdConstRef values) -> void
 {
-    pimpl->b = b;
+    pimpl->w = values;
+}
+
+auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef values) -> void
+{
+    pimpl->b = values;
 }
 
 auto ChemicalState::Equilibrium::setOptimaState(const Optima::State& state) -> void
 {
     pimpl->optstate = state;
-}
-
-auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&
-{
-    return pimpl->optstate;
 }
 
 auto ChemicalState::Equilibrium::setIndicesPrimarySecondarySpecies(ArrayXlConstRef ips, Index kp) -> void
@@ -526,6 +528,21 @@ auto ChemicalState::Equilibrium::implicitTitrantAmounts() const -> ArrayXdConstR
     return q();
 }
 
+auto ChemicalState::Equilibrium::inputNames() const -> const Strings&
+{
+    return pimpl->inputs;
+}
+
+auto ChemicalState::Equilibrium::inputValues() const -> VectorXdConstRef
+{
+    return pimpl->w;
+}
+
+auto ChemicalState::Equilibrium::initialComponentAmounts() const -> ArrayXdConstRef
+{
+    return pimpl->b;
+}
+
 auto ChemicalState::Equilibrium::p() const -> ArrayXdConstRef
 {
     return pimpl->optstate.p;
@@ -542,7 +559,7 @@ auto ChemicalState::Equilibrium::q() const -> ArrayXdConstRef
     else return x;
 }
 
-auto ChemicalState::Equilibrium::w() const -> const Params&
+auto ChemicalState::Equilibrium::w() const -> VectorXdConstRef
 {
     return pimpl->w;
 }
@@ -550,6 +567,11 @@ auto ChemicalState::Equilibrium::w() const -> const Params&
 auto ChemicalState::Equilibrium::b() const -> ArrayXdConstRef
 {
     return pimpl->b;
+}
+
+auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&
+{
+    return pimpl->optstate;
 }
 
 //=================================================================================================
