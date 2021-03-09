@@ -29,47 +29,47 @@ TEST_CASE("Testing ArrayStream", "[ArrayStream]")
 
     array = ArrayStream<double>();
 
-    REQUIRE( array.size() == 0 );
+    CHECK( array.size() == 0 );
 
     array = ArrayStream<double>(1.0, 2.0);
 
-    REQUIRE( array.size() == 2 );
-    REQUIRE( array[0] == 1.0 );
-    REQUIRE( array[1] == 2.0 );
+    CHECK( array.size() == 2 );
+    CHECK( array[0] == 1.0 );
+    CHECK( array[1] == 2.0 );
 
     array = ArrayStream<double>(1.0, 2.0, ArrayXd{{3.0, 4.0, 5.0}}, 6.0, 7.0);
 
-    REQUIRE( array.size() == 7 );
-    REQUIRE( array[0] == 1.0 );
-    REQUIRE( array[1] == 2.0 );
-    REQUIRE( array[2] == 3.0 );
-    REQUIRE( array[3] == 4.0 );
-    REQUIRE( array[4] == 5.0 );
-    REQUIRE( array[5] == 6.0 );
-    REQUIRE( array[6] == 7.0 );
+    CHECK( array.size() == 7 );
+    CHECK( array[0] == 1.0 );
+    CHECK( array[1] == 2.0 );
+    CHECK( array[2] == 3.0 );
+    CHECK( array[3] == 4.0 );
+    CHECK( array[4] == 5.0 );
+    CHECK( array[5] == 6.0 );
+    CHECK( array[6] == 7.0 );
 
     stream.from(ArrayXd{{1.0, 2.0}}, ArrayXd{{3.0, 4.0, 5.0}}, 6.0, 7.0);
     array = stream.data();
 
-    REQUIRE( array.size() == 7 );
-    REQUIRE( array[0] == 1.0 );
-    REQUIRE( array[1] == 2.0 );
-    REQUIRE( array[2] == 3.0 );
-    REQUIRE( array[3] == 4.0 );
-    REQUIRE( array[4] == 5.0 );
-    REQUIRE( array[5] == 6.0 );
-    REQUIRE( array[6] == 7.0 );
+    CHECK( array.size() == 7 );
+    CHECK( array[0] == 1.0 );
+    CHECK( array[1] == 2.0 );
+    CHECK( array[2] == 3.0 );
+    CHECK( array[3] == 4.0 );
+    CHECK( array[4] == 5.0 );
+    CHECK( array[5] == 6.0 );
+    CHECK( array[6] == 7.0 );
 
     double a, c, d;
     ArrayXd b(4);
 
     stream.to(a, b, c, d);
 
-    REQUIRE( a    == 1.0 );
-    REQUIRE( b[0] == 2.0 );
-    REQUIRE( b[1] == 3.0 );
-    REQUIRE( b[2] == 4.0 );
-    REQUIRE( b[3] == 5.0 );
-    REQUIRE( c    == 6.0 );
-    REQUIRE( d    == 7.0 );
+    CHECK( a    == 1.0 );
+    CHECK( b[0] == 2.0 );
+    CHECK( b[1] == 3.0 );
+    CHECK( b[2] == 4.0 );
+    CHECK( b[3] == 5.0 );
+    CHECK( c    == 6.0 );
+    CHECK( d    == 7.0 );
 }
