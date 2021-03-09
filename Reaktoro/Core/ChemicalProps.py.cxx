@@ -27,33 +27,15 @@ using namespace Reaktoro;
 
 void exportChemicalProps(py::module& m)
 {
-    auto update1 = [](ChemicalProps& self, const ChemicalState& state)
-    {
-        self.update(state);
-    };
-
-    auto update2 = [](ChemicalProps& self, const real& T, const real& P, ArrayXrConstRef n)
-    {
-        self.update(T, P, n);
-    };
-
-    auto updateIdeal1 = [](ChemicalProps& self, const ChemicalState& state)
-    {
-        self.updateIdeal(state);
-    };
-
-    auto updateIdeal2 = [](ChemicalProps& self, const real& T, const real& P, ArrayXrConstRef n)
-    {
-        self.updateIdeal(T, P, n);
-    };
-
     py::class_<ChemicalProps>(m, "ChemicalProps")
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ChemicalState&>())
-        .def("update", update1)
-        .def("update", update2)
-        .def("updateIdeal", updateIdeal1)
-        .def("updateIdeal", updateIdeal2)
+        .def("update", py::overload_cast<const ChemicalState&>(&ChemicalProps::update))
+        .def("update", py::overload_cast<const real&, const real&, ArrayXrConstRef>(&ChemicalProps::update))
+        .def("update", py::overload_cast<ArrayXrConstRef>(&ChemicalProps::update))
+        .def("update", py::overload_cast<ArrayXdConstRef>(&ChemicalProps::update))
+        .def("updateIdeal", py::overload_cast<const ChemicalState&>(&ChemicalProps::updateIdeal))
+        .def("updateIdeal", py::overload_cast<const real&, const real&, ArrayXrConstRef>(&ChemicalProps::updateIdeal))
         .def("system", &ChemicalProps::system, py::return_value_policy::reference_internal)
         .def("phaseProps", &ChemicalProps::phaseProps, py::return_value_policy::reference_internal)
         .def("temperature", &ChemicalProps::temperature, py::return_value_policy::reference_internal)

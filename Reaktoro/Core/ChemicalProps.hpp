@@ -57,6 +57,14 @@ public:
     /// @param n The amounts of the species in the system (in mol)
     auto update(const real& T, const real& P, ArrayXrConstRef n) -> void;
 
+    /// Update the chemical properties of the system with serialized data.
+    /// @param u The chemical properties of the system serialized in an array of real numbers.
+    auto update(ArrayXrConstRef u) -> void;
+
+    /// Update the chemical properties of the system with serialized data.
+    /// @param u The chemical properties of the system serialized in an array of double numbers.
+    auto update(ArrayXdConstRef u) -> void;
+
     /// Update the chemical properties of the system using ideal activity models.
     /// @param state The chemical state of the system
     auto updateIdeal(const ChemicalState& state) -> void;
@@ -66,14 +74,6 @@ public:
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
     auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void;
-
-    /// Update the chemical properties of the system with serialized data.
-    /// @param u The chemical properties of the system serialized in an array of real numbers.
-    auto update(ArrayXrConstRef u) -> void;
-
-    /// Update the chemical properties of the system with serialized data.
-    /// @param u The chemical properties of the system serialized in an array of double numbers.
-    auto update(ArrayXdConstRef u) -> void;
 
     /// Serialize the chemical properties into the array stream @p stream.
     /// @param stream The array stream used to serialize the chemical properties.
