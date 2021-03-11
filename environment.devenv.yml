@@ -16,6 +16,7 @@ dependencies:
   - pybind11>=2.5.0
   - thermofun==0.3.3
   - nlohmann_json==3.6.1
+  - yaml-cpp
   {% if not debug %}
   - pugixml  # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
   {% endif %}
@@ -31,6 +32,7 @@ dependencies:
   - sphinx_rtd_theme
   - pip:
     - sphinxcontrib-images
+    - oyaml
 
   # Python dependencies
   - python={{ python_version }}
