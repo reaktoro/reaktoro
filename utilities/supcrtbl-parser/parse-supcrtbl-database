@@ -1,0 +1,414 @@
+#!/usr/bin/env python3
+
+# Reaktoro is a unified framework for modeling chemically reactive systems.
+#
+# Copyright (C) 2014-2021 Allan Leal
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+# Execute:
+#
+#   parse-supcrtbl-database -i supcrtbl.dat -ojson supcrtbl.json -oyaml supcrtbl.yaml
+#
+# to parse the database file supcrtbl.dat and produce files supcrtbl.json and supcrtbl.yaml.
+
+import sys
+import argparse
+import json
+import oyaml as yaml
+
+
+def strdict(d):
+    """Auxiliary function used to get single-line dictionaries in  json/yaml"""
+    return f"&{d}&"
+
+
+def groupLinesBySection(lines):
+    """Group the list of lines according to their sections:
+         * minerals that do not undergo phase transitions
+         * minerals that use Landau theory
+         * minerals that use Bragg-Williams theory
+         * gas species
+         * aqueous species
+
+    Args:
+        lines (list(str)): The lines of the database file.
+
+    Returns:
+        list(list(str)): The lines grouped according to the sections above.
+    """
+    isection1 = 0  # minerals that do not undergo phase transitions
+    isection2 = 0  # minerals that use Landau theory
+    isection3 = 0  # minerals that use Bragg-Williams theory
+    isection4 = 0  # gas species
+    isection5 = 0  # aqueous species
+
+    isection1end = 0
+    isection2end = 0
+    isection3end = 0
+    isection4end = 0
+    isection5end = 0
+
+    for i, line in enumerate(lines):
+        if "minerals that do not undergo phase transitions" in line:
+            isection1 = i + 2
+            continue
+        if "minerals that use Landau theory" in line:
+            isection2 = i + 2
+            continue
+        if "minerals that use Bragg-Williams theory" in line:
+            isection3 = i + 2
+            continue
+        if "gas species" in line:
+            isection4 = i + 2
+            continue
+        if "aqueous species" in line:
+            isection5 = i + 2
+            continue
+        if "***************" in line:
+            if isection1 != 0 and i > isection1 and isection1end == 0: isection1end = i; continue
+            if isection2 != 0 and i > isection2 and isection2end == 0: isection2end = i; continue
+            if isection3 != 0 and i > isection3 and isection3end == 0: isection3end = i; continue
+            if isection4 != 0 and i > isection4 and isection4end == 0: isection4end = i; continue
+        if line.strip() == "":
+            if isection5 != 0 and isection5end == 0: isection5end = i; break
+
+    return [ lines[isection1:isection1end],
+             lines[isection2:isection2end],
+             lines[isection3:isection3end],
+             lines[isection4:isection4end],
+             lines[isection5:isection5end] ]
+
+
+def parseElements(word):
+    """Parse a string such as "Fe(3)Al(2)Si(3)O(12)" to extract element symbols and coefficients
+
+    Applying this method in the following strings produce the corresponding results:
+        * "Ca(1)C(1)O(3)" produces { "Ca": 1, "C": 1, "O": 3 }
+        * "Ag(1)+(2)"     produces { "Ag": 1, "E": -2 }
+        * "Cl(1)-(1)"     produces { "Cl": 1, "E": 1 }
+    where E above denotes an "element" symbol to represent electron.
+
+    Args:
+        word (str): The string containing the elemental formula of a substance
+
+    Returns:
+        dict: A dictionary containing the element symbols and their coefficients.
+    """
+    # Split the elemental formula in words delimited by ( or )
+    words = word.replace(")", "(").split("(")  # split on ( or )
+    words = [x for x in words if x != ""]  # remove empty string ""
+
+    # Check if the elemental formula contains only one element
+    if len(words) == 1:
+        return [ words[0] ], [ 1 ]
+
+    # Collect the pairs (element, coefficient) in the list of elements
+    elements = []
+    coefficients = []
+    for i in range(0, len(words), 2):
+        name = words[i]
+        number = float(words[i + 1])
+        if name in ["+", "-"]:  # check if element is charge + or -
+            if number != 0:
+                elements.append("E")  # electron element
+                coefficients.append(-number if name == "+" else number)  # inverted sign because of electron!
+        else:
+            elements.append(name)
+            coefficients.append(number)
+
+    return { element: coeff for element, coeff in zip(elements, coefficients) }
+
+
+def getCommonSpeciesData(lines):
+    assert(len(lines) == 3)
+    data = {}
+    data["Name"] = lines[0][:21].strip()
+    data["Formula"] = lines[0][21:].strip()
+    data["Abbrev"] = lines[1][:21].strip()
+    data["Elements"] = strdict(parseElements(lines[1][21:].strip()))
+    data["Reference"] = lines[2][:21].strip()
+    data["Date"] = lines[2][21:].strip()
+    return data
+
+
+def getParamsMineralHollandPowell(lines):
+    assert(len(lines) == 4)
+    line = "".join(lines)
+    numbers = line.strip().split()
+    numbers = [float(x) for x in numbers]
+    assert(len(numbers) == 14)
+    params = {}
+    params["Model"]    = "SupcrtblMineralHollandPowell"
+    params["Gf"]       = numbers[0]   # in kJ/mol
+    params["Hf"]       = numbers[1]   # in kJ/mol
+    params["Sr"]       = numbers[2]   # in J/mol/K
+    params["Vr"]       = numbers[3]   # in J/bar
+    params["a"]        = numbers[4]   # in kJ/mol/K
+    params["b"]        = numbers[5]   # in 1e5*kJ/mol/K^2
+    params["c"]        = numbers[6]   # in kJ*K/mol
+    params["d"]        = numbers[7]   # in kJ/mol/K^(-0.5)
+    params["alpha"]    = numbers[8]   # in 1e5/K
+    params["kappa"]    = numbers[9]   # in kbar
+    params["kappap"]   = numbers[10]  # dimensionless
+    params["kappapp"]  = numbers[11]  # in 1/kbar
+    params["numatoms"] = numbers[12]  # dimensionless
+    params["Tmax"]     = numbers[13]  # in K
+    return params
+
+
+def getParamsMineralHollandPowellLandau(lines):
+    assert(len(lines) == 5)
+    line = "".join(lines)
+    numbers = line.strip().split()
+    numbers = [float(x) for x in numbers]
+    assert(len(numbers) == 17)
+    params = {}
+    params["Model"]    = "SupcrtblMineralHollandPowellLandau"
+    params["Gf"]       = numbers[0]   # in kJ/mol
+    params["Hf"]       = numbers[1]   # in kJ/mol
+    params["Sr"]       = numbers[2]   # in J/mol/K
+    params["Vr"]       = numbers[3]   # in J/bar
+    params["a"]        = numbers[4]   # in kJ/mol/K
+    params["b"]        = numbers[5]   # in 1e5*kJ/mol/K^2
+    params["c"]        = numbers[6]   # in kJ*K/mol
+    params["d"]        = numbers[7]   # in kJ/mol/K^(-0.5)
+    params["alpha"]    = numbers[8]   # in 1e5/K
+    params["kappa"]    = numbers[9]   # in kbar
+    params["kappap"]   = numbers[10]  # dimensionless
+    params["kappapp"]  = numbers[11]  # in 1/kbar
+    params["numatoms"] = numbers[12]  # dimensionless
+    params["Tcr"]      = numbers[13]  # in K
+    params["Smax"]     = numbers[14]  # in J/mol/K
+    params["Vmax"]     = numbers[15]  # in J/bar
+    params["Tmax"]     = numbers[16]  # in K
+    return params
+
+
+def getParamsMineralHollandPowellBraggWilliams(lines):
+    assert(len(lines) == 5)
+    line = "".join(lines)
+    numbers = line.strip().split()
+    numbers = [float(x) for x in numbers]
+    assert(len(numbers) == 20)
+    params = {}
+    params["Model"]     = "SupcrtblMineralHollandPowellBraggWilliams"
+    params["Gf"]        = numbers[0]   # in kJ/mol
+    params["Hf"]        = numbers[1]   # in kJ/mol
+    params["Sr"]        = numbers[2]   # in J/mol/K
+    params["Vr"]        = numbers[3]   # in J/bar
+    params["a"]         = numbers[4]   # in kJ/mol/K
+    params["b"]         = numbers[5]   # in 1e5*kJ/mol/K^2
+    params["c"]         = numbers[6]   # in kJ*K/mol
+    params["d"]         = numbers[7]   # in kJ/mol/K^(-0.5)
+    params["alpha"]     = numbers[8]   # in 1e5/K
+    params["kappa"]     = numbers[9]   # in kbar
+    params["kappap"]    = numbers[10]  # dimensionless
+    params["kappapp"]   = numbers[11]  # in 1/kbar
+    params["numatoms"]  = numbers[12]  # dimensionless
+    params["unknonwn0"] = numbers[13]  # in ??? Needs to be checked with Chen Zhu...
+    params["unknonwn1"] = numbers[14]  # in ??? Needs to be checked with Chen Zhu...
+    params["unknonwn2"] = numbers[15]  # in ??? Needs to be checked with Chen Zhu...
+    params["unknonwn3"] = numbers[16]  # in ??? Needs to be checked with Chen Zhu...
+    params["unknonwn4"] = numbers[17]  # in ??? Needs to be checked with Chen Zhu...
+    params["unknonwn5"] = numbers[18]  # in ??? Needs to be checked with Chen Zhu...
+    params["Tmax"]      = numbers[19]  # in K
+    return params
+
+
+def getParamsGaseousSpecies(lines):
+    assert(len(lines) == 3)
+    line = "".join(lines)
+    numbers = line.strip().split()
+    numbers = [float(x) for x in numbers]
+    assert(len(numbers) == 9)
+    params = {}
+    params["Model"]    = "SupcrtblFluidHollandPowell"
+    params["Gf"]       = numbers[0]  # in kJ/mol
+    params["Hf"]       = numbers[1]  # in kJ/mol
+    params["Sr"]       = numbers[2]  # in J/mol/K
+    params["Vr"]       = numbers[3]  # in J/bar
+    params["a"]        = numbers[4]  # in kJ/mol/K
+    params["b"]        = numbers[5]  # in 1e5*kJ/mol/K^2
+    params["c"]        = numbers[6]  # in kJ*K/mol
+    params["d"]        = numbers[7]  # in kJ/mol/K^(-0.5)
+    params["Tmax"]     = numbers[8]  # in K
+    return params
+
+
+def getParamsAqueousSolute(lines):
+    assert(len(lines) == 3)
+    line = "".join(lines)
+    numbers = line.strip().split()
+    numbers = [float(x) for x in numbers]
+    assert(len(numbers) == 11)
+    params = {}
+    params["Model"] = "SupcrtblAqueousSoluteHKF"
+    params["Gf"]    = numbers[0]   # in kJ/mol
+    params["Hf"]    = numbers[1]   # in kJ/mol
+    params["Sr"]    = numbers[2]   # in J/mol/K
+    params["a1"]    = numbers[3]   # in kJ/mol/bar (multiplied by 10)
+    params["a2"]    = numbers[4]   # in kJ/mol (multiplied by 1e-2)
+    params["a3"]    = numbers[5]   # in kJ/mol/K/bar
+    params["a4"]    = numbers[6]   # in kJ/mol/K (multiplied by 1e-4)
+    params["c1"]    = numbers[7]   # in kJ/mol/K
+    params["c2"]    = numbers[8]   # in kJ*K/mol (multiplied by 1e-4)
+    params["w"]     = numbers[9]   # in kJ/mol (multiplied by 1e-5)
+    params["z"]     = numbers[10]  # charge
+    return params
+
+
+def getMineralSpeciesData(lines, group):
+    data = getCommonSpeciesData(lines[:3])
+    data["AggregateState"] = "Solid"
+    if group == 1: # minerals that do not undergo phase transitions
+        data["Params"] = getParamsMineralHollandPowell(lines[3:])
+    if group == 2: # minerals that use Landau theory
+        data["Params"] = getParamsMineralHollandPowellLandau(lines[3:])
+    if group == 3: # minerals that use Bragg-Williams theory
+        data["Params"] = getParamsMineralHollandPowellBraggWilliams(lines[3:])
+    return data
+
+
+def getGaseousSpeciesData(lines):
+    data = getCommonSpeciesData(lines[:3])
+    data["AggregateState"] = "Gas"
+    data["Params"] = getParamsGaseousSpecies(lines[3:])
+    return data
+
+
+def getAqueousSoluteData(lines):
+    data = getCommonSpeciesData(lines[:3])
+    data["AggregateState"] = "Aqueous"
+    data["Params"] = getParamsAqueousSolute(lines[3:])
+    return data
+
+
+def createMineralsWithoutPhaseTransitions(lines):
+    assert(len(lines) % 7 == 0)
+    minerals = []
+    for i in range(0, len(lines), 7):
+        minerals.append(getMineralSpeciesData(lines[i:i + 7], 1))
+    return minerals
+
+
+def createMineralsWithPhaseTransitionsLandau(lines):
+    assert(len(lines) % 8 == 0)
+    minerals = []
+    for i in range(0, len(lines), 8):
+        minerals.append(getMineralSpeciesData(lines[i:i + 8], 2))
+    return minerals
+
+
+def createMineralsWithPhaseTransitionsBraggWilliams(lines):
+    assert(len(lines) % 8 == 0)
+    minerals = []
+    for i in range(0, len(lines), 8):
+        minerals.append(getMineralSpeciesData(lines[i:i + 8], 3))
+    return minerals
+
+
+def createGaseousSpecies(lines):
+    assert(len(lines) % 6 == 0)
+    solutes = []
+    for i in range(0, len(lines), 6):
+        solutes.append(getGaseousSpeciesData(lines[i:i + 6]))
+    return solutes
+
+
+def createAqueousSolutes(lines):
+    assert(len(lines) % 6 == 0)
+    gases = []
+    for i in range(0, len(lines), 6):
+        gases.append(getAqueousSoluteData(lines[i:i + 6]))
+    return gases
+
+
+def createSpecies(groups):
+    assert(len(groups) == 5)
+    return \
+        createMineralsWithoutPhaseTransitions(groups[0]) + \
+        createMineralsWithPhaseTransitionsLandau(groups[1]) + \
+        createMineralsWithPhaseTransitionsBraggWilliams(groups[2]) + \
+        createGaseousSpecies(groups[3]) + \
+        createAqueousSolutes(groups[4])
+
+
+def createDatabase(species):
+    for obj in species:
+        obj.pop("Abbrev")
+        obj.pop("Reference")
+        obj.pop("Date")
+        params = obj.pop("Params")
+        modelname = params.pop("Model")
+        model = obj["StandardThermoModel"] = {}
+        model[modelname] = params
+    db = { "Species": species }
+    return db
+
+
+if __name__ == "__main__":
+    # Create a command-line argument parser
+    parser = argparse.ArgumentParser(prog="ReaktoroParserSUPCRTBL")
+
+    # Add the input argument
+    parser.add_argument("-i", "--input", type=str, \
+        help="the path to the original SUPCRTBL database file",
+        required=True)
+
+    # Add the output argument for json
+    parser.add_argument("-ojson", "--outputjson", type=str, \
+        help="the path where the json file should be the output",
+        required=True)
+
+    # Add the output argument for yaml
+    parser.add_argument("-oyaml", "--outputyaml", type=str, \
+        help="the path where the yaml file should be the output",
+        required=True)
+
+    # Add the debug option (optional)
+    # parser.add_argument("-e", "--exclude", type=str, nargs="?", \
+    #     help="the relative path to a file containing the names of species \
+    #         to be excluded from the final database")
+
+    # Parse the command-line arguments (remove the first argument, which is the name of this file
+    args = parser.parse_args(sys.argv[1:])
+
+    with open(args.input) as f:
+        content = f.readlines()
+
+    groups = groupLinesBySection(content)
+    species = createSpecies(groups)
+    db = createDatabase(species)
+
+    # Perform a json dump
+    jdump = json.dumps(db, sort_keys=False, indent=2, separators=(',', ': '))
+
+    # Perform a yaml dump
+    ydump = yaml.dump(db)
+
+    # Clean both json and yaml dumps from, for example, @ surrounding dictionaries (e.g., &{...}&)
+    jdump = jdump.replace("\"&{", "{ ").replace("}&\"", " }").replace("'", "\"")
+    ydump = ydump.replace("&{", "{ ").replace("}&", " }").replace("'", "")
+
+    # Output the database in json format
+    with open(args.outputjson, 'w') as f:
+        f.write(jdump)
+
+    # Output the database in yaml format
+    with open(args.outputyaml, 'w') as f:
+        f.write(ydump)
+
+    # print(f"File {args.output} has been successfully written!")
+    print(f"Files {args.outputjson} and {args.outputyaml} have been successfully written!")
