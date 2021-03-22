@@ -1,0 +1,177 @@
+// Reaktoro is a unified framework for modeling chemically reactive systems.
+//
+// Copyright (C) 2014-2021 Allan Leal
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+#include "StandardThermoModelHKF.hpp"
+
+// Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Memoization.hpp>
+#include <Reaktoro/Thermodynamics/Standard/Support/SpeciesElectroProps.hpp>
+#include <Reaktoro/Thermodynamics/Standard/Support/SpeciesElectroPropsHKF.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+
+namespace Reaktoro {
+namespace {
+
+/// The reference temperature assumed in the HKF equations of state (in units of K)
+const auto Tr = 298.15;
+
+/// The reference temperature assumed in the HKF equations of state (in units of Pa)
+const auto Pr = 1.0e+05;
+
+/// The reference Born function Z (dimensionless)
+const auto Zr = -1.278055636e-02;
+
+/// The reference Born function Y (dimensionless)
+const auto Yr = -5.795424563e-05;
+
+/// The constant characteristics @eq{\Theta} of the solvent (in units of K)
+const auto theta = 228.0;
+
+/// The constant characteristics @eq{\Psi} of the solvent (in units of Pa)
+const auto psi = 2600.0e+05;
+
+/// Return a memoized function that computes thermodynamic properties of water using HGK (1984) model.
+auto createMemoizedWaterThermoPropsFnHGK()
+{
+    Fn<WaterThermoState(const real&, const real&)> fn = [](const real& T, const real& P)
+    {
+        return Reaktoro::waterThermoStateHGK(T, P, StateOfMatter::Liquid);
+    };
+    return memoizeLast(fn);
+}
+
+/// Return the computed thermodynamic properties of water at @p T and @p P using HGK (1984) model.
+auto memoizedWaterThermoPropsHGK(const real& T, const real& P) -> WaterThermoState
+{
+    static thread_local auto fn = createMemoizedWaterThermoPropsFnHGK();
+    return fn(T, P);
+}
+
+/// Return a memoized function that computes thermodynamic properties of water using Wagner & Pruss (1999) model.
+auto createMemoizedWaterThermoPropsFnWagnerPruss()
+{
+    Fn<WaterThermoState(const real&, const real&)> fn = [](const real& T, const real& P)
+    {
+        return Reaktoro::waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
+    };
+    return memoizeLast(fn);
+}
+
+/// Return the computed thermodynamic properties of water at @p T and @p P using Wagner & Pruss (1999) model.
+auto memoizedWaterThermoPropsWagnerPruss(const real& T, const real& P) -> WaterThermoState
+{
+    static thread_local auto fn = createMemoizedWaterThermoPropsFnWagnerPruss();
+    return fn(T, P);
+}
+
+/// Return a memoized function that computes thermodynamic properties of water using Wagner & Pruss (1999) model.
+auto createMemoizedWaterElectroPropsFnJohnsonNorton()
+{
+    Fn<WaterElectroState(const real&, const real&)> fn = [](const real& T, const real& P)
+    {
+        const auto wts = memoizedWaterThermoPropsWagnerPruss(T, P);
+        return Reaktoro::waterElectroStateJohnsonNorton(T, P, wts);
+    };
+    return memoizeLast(fn);
+}
+
+/// Return the computed electrostatic properties of water at @p T and @p P using Johnson and Norton (1991) model.
+auto memoizedWaterElectroPropsJohnsonNorton(const real& T, const real& P) -> WaterElectroState
+{
+    static thread_local auto fn = createMemoizedWaterElectroPropsFnJohnsonNorton();
+    return fn(T, P);
+}
+
+} // namespace
+
+using std::log;
+using std::pow;
+
+/// Return a Params object containing all Param objects in @p params.
+auto extractParams(const StandardThermoModelParamsHKF& params) -> Params
+{
+    const auto& [ Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wref, charge, formula ] = params;
+    return { Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wref };
+}
+
+auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> StandardThermoModel
+{
+    auto evalfn = [=](StandardThermoProps& props, real T, real P)
+    {
+        auto& [G0, H0, V0, Cp0, Cv0] = props;
+        const auto& [ Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wr, charge, formula ] = params;
+
+        const auto wts = memoizedWaterThermoPropsWagnerPruss(T, P);
+        const auto wes = memoizedWaterElectroPropsJohnsonNorton(T, P);
+        const auto gstate = gHKF::compute(T, P, wts);
+        const auto aes = speciesElectroPropsHKF(gstate, params);
+
+        // Auxiliary variables
+        const auto w   = aes.w;
+        const auto wT  = aes.wT;
+        const auto wP  = aes.wP;
+        const auto wTT = aes.wTT;
+        const auto Z   = wes.bornZ;
+        const auto Y   = wes.bornY;
+        const auto Q   = wes.bornQ;
+        const auto X   = wes.bornX;
+
+        const auto Tth  = T - theta;
+        const auto Tth2 = Tth*Tth;
+        const auto Tth3 = Tth*Tth2;
+
+        // Calculate the standard molal thermodynamic properties of the aqueous species
+        V0 = a1 + a2/(psi + P)
+            + (a3 + a4/(psi + P))/(T - theta)
+            - w*Q - (Z + 1)*wP;
+
+        G0 = Gf - Sr*(T - Tr) - c1*(T*log(T/Tr) - T + Tr)
+            + a1*(P - Pr) + a2*log((psi + P)/(psi + Pr))
+            - c2*((1.0/(T - theta) - 1.0/(Tr - theta))*(theta - T)/theta
+            - T/(theta*theta)*log(Tr/T * (T - theta)/(Tr - theta)))
+            + 1.0/(T - theta)*(a3*(P - Pr) + a4*log((psi + P)/(psi + Pr)))
+            - w*(Z + 1) + wr*(Zr + 1) + wr*Yr*(T - Tr);
+
+        H0 = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
+            + a1*(P - Pr) + a2*log((psi + P)/(psi + Pr))
+            + (2.0*T - theta)/pow(T - theta, 2)*(a3*(P - Pr)
+            + a4*log((psi + P)/(psi + Pr)))
+            - w*(Z + 1) + w*T*Y + T*(Z + 1)*wT + wr*(Zr + 1) - wr*Tr*Yr;
+
+        // S0 = Sr + c1*log(T/Tr)
+        //     - c2/theta*(1.0/(T - theta)
+        //     - 1.0/(Tr - theta) + log(Tr/T * (T - theta)/(Tr - theta))/theta)
+        //     + 1.0/pow(T - theta, 2)*(a3*(P - Pr)
+        //     + a4*log((psi + P)/(psi + Pr)))
+        //     + w*Y + (Z + 1)*wT - wr*Yr;
+
+        Cp0 = c1 + c2/pow(T - theta, 2)
+            - (2.0*T/pow(T - theta, 3))*(a3*(P - Pr)
+            + a4*log((psi + P)/(psi + Pr)))
+            + w*T*X + 2.0*T*Y*wT + T*(Z + 1.0)*wTT;
+
+        Cv0 = Cp0; // approximate Cp = Cv for an aqueous solution
+    };
+
+    return StandardThermoModel(evalfn, extractParams(params));
+}
+
+} // namespace Reaktoro
