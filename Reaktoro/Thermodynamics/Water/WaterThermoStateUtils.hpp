@@ -27,7 +27,7 @@ namespace Reaktoro {
 struct WaterThermoState;
 struct WaterHelmholtzState;
 
-/// Calculate the thermodynamic state of water using the Haar--Gallagher--Kell (1984) equation of state.
+/// Calculate the thermodynamic state of water using the Haar-Gallagher-Kell (1984) equation of state.
 /// **References:**
 /// - Haar, L., Gallagher, J. S., Kell, G. S. (1984). NBS/NRC Steam Tables: Thermodynamic and
 ///   Transport Properties and Computer Program for Vapor and Liquid States of Water in SI Units.
@@ -37,6 +37,11 @@ struct WaterHelmholtzState;
 /// @return The thermodynamic state of water
 /// @see WaterThermoState
 auto waterThermoStateHGK(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState;
+
+/// Calculate the thermodynamic state of water using the Haar-Gallagher-Kell (1984) equation of state.
+/// @note This function will skip the computation if given arguments are the same as
+/// in its last invocation. The cached result will be returned, thus improving performance.
+auto waterThermoStateHGKMemoized(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState;
 
 /// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state.
 /// **References:**
@@ -48,6 +53,11 @@ auto waterThermoStateHGK(real T, real P, StateOfMatter stateofmatter) -> WaterTh
 /// @return The thermodynamic state of water
 /// @see WaterThermoState
 auto waterThermoStateWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState;
+
+/// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state.
+/// @note This function will skip the computation if given arguments are the same as
+/// in its last invocation. The cached result will be returned, thus improving performance.
+auto waterThermoStateWagnerPrussMemoized(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState;
 
 /// Calculate the thermodynamic state of water.
 /// This is a general method that uses the Helmholtz free energy state

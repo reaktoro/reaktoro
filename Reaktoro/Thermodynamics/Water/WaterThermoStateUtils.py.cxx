@@ -29,5 +29,7 @@ void exportWaterThermoStateUtils(py::module& m)
 {
     m.def("waterThermoStateHGK", waterThermoStateHGK);
     m.def("waterThermoStateWagnerPruss", waterThermoStateWagnerPruss);
+    m.def("waterThermoStateHGKMemoized", waterThermoStateHGKMemoized);
+    m.def("waterThermoStateWagnerPrussMemoized", waterThermoStateWagnerPrussMemoized);
     m.def("waterThermoState", waterThermoState);
 }
