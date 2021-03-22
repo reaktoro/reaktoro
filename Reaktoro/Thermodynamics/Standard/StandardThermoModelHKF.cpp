@@ -17,6 +17,10 @@
 
 #include "StandardThermoModelHKF.hpp"
 
+// C++ includes
+#include <cmath>
+using std::log;
+
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Memoization.hpp>
@@ -48,46 +52,12 @@ const auto theta = 228.0;
 /// The constant characteristics @eq{\Psi} of the solvent (in units of Pa)
 const auto psi = 2600.0e+05;
 
-/// Return a memoized function that computes thermodynamic properties of water using HGK (1984) model.
-auto createMemoizedWaterThermoPropsFnHGK()
-{
-    Fn<WaterThermoState(const real&, const real&)> fn = [](const real& T, const real& P)
-    {
-        return Reaktoro::waterThermoStateHGK(T, P, StateOfMatter::Liquid);
-    };
-    return memoizeLast(fn);
-}
-
-/// Return the computed thermodynamic properties of water at @p T and @p P using HGK (1984) model.
-auto memoizedWaterThermoPropsHGK(const real& T, const real& P) -> WaterThermoState
-{
-    static thread_local auto fn = createMemoizedWaterThermoPropsFnHGK();
-    return fn(T, P);
-}
-
-/// Return a memoized function that computes thermodynamic properties of water using Wagner & Pruss (1999) model.
-auto createMemoizedWaterThermoPropsFnWagnerPruss()
-{
-    Fn<WaterThermoState(const real&, const real&)> fn = [](const real& T, const real& P)
-    {
-        return Reaktoro::waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
-    };
-    return memoizeLast(fn);
-}
-
-/// Return the computed thermodynamic properties of water at @p T and @p P using Wagner & Pruss (1999) model.
-auto memoizedWaterThermoPropsWagnerPruss(const real& T, const real& P) -> WaterThermoState
-{
-    static thread_local auto fn = createMemoizedWaterThermoPropsFnWagnerPruss();
-    return fn(T, P);
-}
-
 /// Return a memoized function that computes thermodynamic properties of water using Wagner & Pruss (1999) model.
 auto createMemoizedWaterElectroPropsFnJohnsonNorton()
 {
     Fn<WaterElectroState(const real&, const real&)> fn = [](const real& T, const real& P)
     {
-        const auto wts = memoizedWaterThermoPropsWagnerPruss(T, P);
+        const auto wts = waterThermoStateWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
         return Reaktoro::waterElectroStateJohnsonNorton(T, P, wts);
     };
     return memoizeLast(fn);
@@ -101,9 +71,6 @@ auto memoizedWaterElectroPropsJohnsonNorton(const real& T, const real& P) -> Wat
 }
 
 } // namespace
-
-using std::log;
-using std::pow;
 
 /// Return a Params object containing all Param objects in @p params.
 auto extractParams(const StandardThermoModelParamsHKF& params) -> Params
@@ -119,26 +86,23 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
         auto& [G0, H0, V0, Cp0, Cv0] = props;
         const auto& [ Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wr, charge, formula ] = params;
 
-        const auto wts = memoizedWaterThermoPropsWagnerPruss(T, P);
+        const auto wts = waterThermoStateWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
         const auto wes = memoizedWaterElectroPropsJohnsonNorton(T, P);
         const auto gstate = gHKF::compute(T, P, wts);
         const auto aes = speciesElectroPropsHKF(gstate, params);
 
-        // Auxiliary variables
-        const auto w   = aes.w;
-        const auto wT  = aes.wT;
-        const auto wP  = aes.wP;
-        const auto wTT = aes.wTT;
-        const auto Z   = wes.bornZ;
-        const auto Y   = wes.bornY;
-        const auto Q   = wes.bornQ;
-        const auto X   = wes.bornX;
-
+        const auto& w   = aes.w;
+        const auto& wT  = aes.wT;
+        const auto& wP  = aes.wP;
+        const auto& wTT = aes.wTT;
+        const auto& Z   = wes.bornZ;
+        const auto& Y   = wes.bornY;
+        const auto& Q   = wes.bornQ;
+        const auto& X   = wes.bornX;
         const auto Tth  = T - theta;
         const auto Tth2 = Tth*Tth;
         const auto Tth3 = Tth*Tth2;
 
-        // Calculate the standard molal thermodynamic properties of the aqueous species
         V0 = a1 + a2/(psi + P)
             + (a3 + a4/(psi + P))/(T - theta)
             - w*Q - (Z + 1)*wP;
@@ -152,23 +116,22 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
 
         H0 = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
             + a1*(P - Pr) + a2*log((psi + P)/(psi + Pr))
-            + (2.0*T - theta)/pow(T - theta, 2)*(a3*(P - Pr)
+            + (2.0*T - theta)/Tth2*(a3*(P - Pr)
             + a4*log((psi + P)/(psi + Pr)))
             - w*(Z + 1) + w*T*Y + T*(Z + 1)*wT + wr*(Zr + 1) - wr*Tr*Yr;
+
+        Cp0 = c1 + c2/Tth2
+            - 2.0*T/Tth3*(a3*(P - Pr) + a4*log((psi + P)/(psi + Pr)))
+            + w*T*X + 2.0*T*Y*wT + T*(Z + 1.0)*wTT;
+
+        Cv0 = Cp0; // approximate Cp = Cv for an aqueous solution
 
         // S0 = Sr + c1*log(T/Tr)
         //     - c2/theta*(1.0/(T - theta)
         //     - 1.0/(Tr - theta) + log(Tr/T * (T - theta)/(Tr - theta))/theta)
-        //     + 1.0/pow(T - theta, 2)*(a3*(P - Pr)
+        //     + 1.0/Tth2*(a3*(P - Pr)
         //     + a4*log((psi + P)/(psi + Pr)))
         //     + w*Y + (Z + 1)*wT - wr*Yr;
-
-        Cp0 = c1 + c2/pow(T - theta, 2)
-            - (2.0*T/pow(T - theta, 3))*(a3*(P - Pr)
-            + a4*log((psi + P)/(psi + Pr)))
-            + w*T*X + 2.0*T*Y*wT + T*(Z + 1.0)*wTT;
-
-        Cv0 = Cp0; // approximate Cp = Cv for an aqueous solution
     };
 
     return StandardThermoModel(evalfn, extractParams(params));
