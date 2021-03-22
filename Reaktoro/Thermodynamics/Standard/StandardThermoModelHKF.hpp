@@ -19,7 +19,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalFormula.hpp>
-#include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 
 namespace Reaktoro {
@@ -64,9 +63,7 @@ struct StandardThermoModelParamsHKF
     ChemicalFormula formula;
 };
 
-/// Return a function that calculates thermodynamic properties of an aqueous solute using HKF model.
-/// @param params The HKF parameters for the aqueous solute.
-/// @return StandardThermoModel
+/// Return a function that calculates thermodynamic properties of an aqueous solute using the HKF model.
 auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> StandardThermoModel;
 
 } // namespace Reaktoro

@@ -18,8 +18,6 @@
 #include "StandardThermoModelWaterHKF.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
@@ -49,7 +47,7 @@ auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params
 
         // See Helgeson and Kirkham (1974), page 1098.
         H0  = Hw + Htr;
-        G0  = Hw - T * (Sw + Str) + Ttr * Str + Gtr;
+        G0  = Hw - T*(Sw + Str) + Ttr*Str + Gtr;
         V0  = wtp.volume * waterMolarMass;
         Cp0 = wtp.cp * waterMolarMass;
         Cv0 = wtp.cv * waterMolarMass;

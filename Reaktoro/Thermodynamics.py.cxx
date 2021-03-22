@@ -53,6 +53,7 @@ void exportActivityModelVanLaar(py::module& m);
 
 // Thermodynamics/Standard
 void exportStandardThermoModelHKF(py::module& m);
+void exportStandardThermoModelMaierKelley(py::module& m);
 void exportStandardThermoModelWaterHKF(py::module& m);
 
 // Thermodynamics/Water
@@ -102,6 +103,7 @@ void exportThermodynamics(py::module& m)
 
     // Thermodynamics/Standard
     exportStandardThermoModelHKF(m);
+    exportStandardThermoModelMaierKelley(m);
     exportStandardThermoModelWaterHKF(m);
 
     // Thermodynamics/Water

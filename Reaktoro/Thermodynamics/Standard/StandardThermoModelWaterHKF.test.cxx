@@ -27,7 +27,7 @@ TEST_CASE("Testing StandardThermoModelWaterHKF class", "[StandardThermoModelWate
     const auto T = 75.0 + 273.15; // 75 degC (in K)
     const auto P = 1000.0 * 1e5;  // 1kbar (in Pa)
 
-    // Check Oelkers et al. (1995), page 1442, table for H2O.
+    // Check Oelkers et al. (1995), page 1542, table for H2O.
     SECTION("testing standard thermodynamic properties for H2O")
     {
         // Parameters for H2O from slop98.dat (converted to SI units)
