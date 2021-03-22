@@ -23,6 +23,7 @@ using std::sqrt;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateHGK.hpp>
@@ -31,6 +32,29 @@ using std::sqrt;
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
 
 namespace Reaktoro {
+namespace {
+
+/// Return a memoized function that computes thermodynamic properties of water using HGK (1984) model.
+auto createMemoizedWaterThermoPropsFnHGK()
+{
+    Fn<WaterThermoState(const real&, const real&, StateOfMatter)> fn = [](const real& T, const real& P, StateOfMatter som)
+    {
+        return waterThermoStateHGK(T, P, som);
+    };
+    return memoizeLast(fn);
+}
+
+/// Return a memoized function that computes thermodynamic properties of water using Wagner & Pruss (1999) model.
+auto createMemoizedWaterThermoPropsFnWagnerPruss()
+{
+    Fn<WaterThermoState(const real&, const real&, StateOfMatter)> fn = [](const real& T, const real& P, StateOfMatter som)
+    {
+        return waterThermoStateWagnerPruss(T, P, som);
+    };
+    return memoizeLast(fn);
+}
+
+} // namespace
 
 auto waterThermoStateHGK(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState
 {
@@ -39,11 +63,23 @@ auto waterThermoStateHGK(real T, real P, StateOfMatter stateofmatter) -> WaterTh
     return waterThermoState(T, P, whs);
 }
 
+auto waterThermoStateHGKMemoized(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState
+{
+    static thread_local auto fn = createMemoizedWaterThermoPropsFnHGK();
+    return fn(T, P, stateofmatter);
+}
+
 auto waterThermoStateWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState
 {
     const real D = waterDensityWagnerPruss(T, P, stateofmatter);
     const WaterHelmholtzState whs = waterHelmholtzStateWagnerPruss(T, D);
     return waterThermoState(T, P, whs);
+}
+
+auto waterThermoStateWagnerPrussMemoized(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState
+{
+    static thread_local auto fn = createMemoizedWaterThermoPropsFnWagnerPruss();
+    return fn(T, P, stateofmatter);
 }
 
 auto waterThermoState(real T, real P, const WaterHelmholtzState& whs) -> WaterThermoState
