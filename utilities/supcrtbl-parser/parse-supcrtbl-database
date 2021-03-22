@@ -153,7 +153,7 @@ def getParamsMineralHollandPowell(lines):
     params["Model"]    = "SupcrtblMineralHollandPowell"
     params["Gf"]       = numbers[0]   # in kJ/mol
     params["Hf"]       = numbers[1]   # in kJ/mol
-    params["Sr"]       = numbers[2]   # in J/mol/K
+    params["Sr"]       = numbers[2]   # in J/(mol*K)
     params["Vr"]       = numbers[3]   # in J/bar
     params["a"]        = numbers[4]   # in kJ/mol/K
     params["b"]        = numbers[5]   # in 1e5*kJ/mol/K^2
@@ -178,13 +178,13 @@ def getParamsMineralHollandPowellLandau(lines):
     params["Model"]    = "SupcrtblMineralHollandPowellLandau"
     params["Gf"]       = numbers[0]   # in kJ/mol
     params["Hf"]       = numbers[1]   # in kJ/mol
-    params["Sr"]       = numbers[2]   # in J/mol/K
+    params["Sr"]       = numbers[2]   # in J/(mol*K)
     params["Vr"]       = numbers[3]   # in J/bar
     params["a"]        = numbers[4]   # in kJ/mol/K
     params["b"]        = numbers[5]   # in 1e5*kJ/mol/K^2
     params["c"]        = numbers[6]   # in kJ*K/mol
     params["d"]        = numbers[7]   # in kJ/mol/K^(-0.5)
-    params["alpha"]    = numbers[8]   # in 1e5/K
+    params["alpha"]    = numbers[8]   # in 1/K (multiplied by 1e+5)
     params["kappa"]    = numbers[9]   # in kbar
     params["kappap"]   = numbers[10]  # dimensionless
     params["kappapp"]  = numbers[11]  # in 1/kbar
@@ -206,7 +206,7 @@ def getParamsMineralHollandPowellBraggWilliams(lines):
     params["Model"]     = "SupcrtblMineralHollandPowellBraggWilliams"
     params["Gf"]        = numbers[0]   # in kJ/mol
     params["Hf"]        = numbers[1]   # in kJ/mol
-    params["Sr"]        = numbers[2]   # in J/mol/K
+    params["Sr"]        = numbers[2]   # in J/(mol*K)
     params["Vr"]        = numbers[3]   # in J/bar
     params["a"]         = numbers[4]   # in kJ/mol/K
     params["b"]         = numbers[5]   # in 1e5*kJ/mol/K^2
@@ -237,12 +237,12 @@ def getParamsGaseousSpecies(lines):
     params["Model"]    = "SupcrtblFluidHollandPowell"
     params["Gf"]       = numbers[0]  # in kJ/mol
     params["Hf"]       = numbers[1]  # in kJ/mol
-    params["Sr"]       = numbers[2]  # in J/mol/K
+    params["Sr"]       = numbers[2]  # in J/(mol*K)
     params["Vr"]       = numbers[3]  # in J/bar
-    params["a"]        = numbers[4]  # in kJ/mol/K
-    params["b"]        = numbers[5]  # in 1e5*kJ/mol/K^2
-    params["c"]        = numbers[6]  # in kJ*K/mol
-    params["d"]        = numbers[7]  # in kJ/mol/K^(-0.5)
+    params["a"]        = numbers[4]  # in kJ/(mol·K)
+    params["b"]        = numbers[5]  # in kJ/(mol·K²) (multiplied by 1e+5)
+    params["c"]        = numbers[6]  # in (kJ·K)/mol
+    params["d"]        = numbers[7]  # in kJ/(mol·K½)
     params["Tmax"]     = numbers[8]  # in K
     return params
 
@@ -257,13 +257,13 @@ def getParamsAqueousSolute(lines):
     params["Model"] = "SupcrtblAqueousSoluteHKF"
     params["Gf"]    = numbers[0]   # in kJ/mol
     params["Hf"]    = numbers[1]   # in kJ/mol
-    params["Sr"]    = numbers[2]   # in J/mol/K
-    params["a1"]    = numbers[3]   # in kJ/mol/bar (multiplied by 10)
+    params["Sr"]    = numbers[2]   # in J/(mol*K)
+    params["a1"]    = numbers[3]   # in kJ/(mol*bar) (multiplied by 10)
     params["a2"]    = numbers[4]   # in kJ/mol (multiplied by 1e-2)
-    params["a3"]    = numbers[5]   # in kJ/mol/K/bar
-    params["a4"]    = numbers[6]   # in kJ/mol/K (multiplied by 1e-4)
-    params["c1"]    = numbers[7]   # in kJ/mol/K
-    params["c2"]    = numbers[8]   # in kJ*K/mol (multiplied by 1e-4)
+    params["a3"]    = numbers[5]   # in (kJ*K)/(mol*bar)
+    params["a4"]    = numbers[6]   # in (kJ*K)/mol (multiplied by 1e-4)
+    params["c1"]    = numbers[7]   # in kJ/(mol*K)
+    params["c2"]    = numbers[8]   # in (kJ*K)/mol (multiplied by 1e-4)
     params["w"]     = numbers[9]   # in kJ/mol (multiplied by 1e-5)
     params["z"]     = numbers[10]  # charge
     return params
