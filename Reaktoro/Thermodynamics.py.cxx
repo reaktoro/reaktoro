@@ -51,6 +51,10 @@ void exportReactionThermoModelVantHoff(py::module& m);
 void exportActivityModelRedlichKister(py::module& m);
 void exportActivityModelVanLaar(py::module& m);
 
+// Thermodynamics/Standard
+void exportStandardThermoModelHKF(py::module& m);
+void exportStandardThermoModelWaterHKF(py::module& m);
+
 // Thermodynamics/Water
 void exportWaterConstants(py::module& m);
 void exportWaterElectroState(py::module& m);
@@ -95,6 +99,10 @@ void exportThermodynamics(py::module& m)
     // Thermodynamics/Solids
     exportActivityModelRedlichKister(m);
     exportActivityModelVanLaar(m);
+
+    // Thermodynamics/Standard
+    exportStandardThermoModelHKF(m);
+    exportStandardThermoModelWaterHKF(m);
 
     // Thermodynamics/Water
     exportWaterConstants(m);
