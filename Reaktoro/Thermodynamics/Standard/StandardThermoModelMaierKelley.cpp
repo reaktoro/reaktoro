@@ -1,0 +1,62 @@
+// Reaktoro is a unified framework for modeling chemically reactive systems.
+//
+// Copyright (C) 2014-2021 Allan Leal
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+#include "StandardThermoModelMaierKelley.hpp"
+
+// C++ includes
+#include <cmath>
+using std::log;
+
+// Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
+
+namespace Reaktoro {
+
+/// Return a Params object containing all Param objects in @p params.
+auto extractParams(const StandardThermoModelParamsMaierKelley& params) -> Params
+{
+    const auto& [Gf, Hf, Sr, Vr, a, b, c, Tmax] = params;
+    return {Gf, Hf, Sr, Vr, a, b, c};
+}
+
+auto StandardThermoModelMaierKelley(const StandardThermoModelParamsMaierKelley& params) -> StandardThermoModel
+{
+    const auto isgas = params.Vr.value() == 0.0;
+
+    auto evalfn = [=](StandardThermoProps& props, real T, real P)
+    {
+        auto& [G0, H0, V0, Cp0, Cv0] = props;
+        const auto& [Gf, Hf, Sr, Vr, a, b, c, Tmax] = params;
+
+        const auto Tr = 298.15;
+        const auto R  = universalGasConstant;
+
+        const auto CpdT   = a*(T - Tr) + 0.5*b*(T*T - Tr*Tr) - c*(1.0/T - 1.0/Tr);
+        const auto CpdlnT = a*log(T/Tr) + b*(T - Tr) - 0.5*c*(1.0/(T*T) - 1.0/(Tr*Tr));
+
+        V0  = Vr;
+        G0  = Gf - Sr*(T - Tr) + CpdT - T*CpdlnT;
+        H0  = Hf + CpdT;
+        Cp0 = a + b*T + c/(T*T);
+        Cv0 = isgas ? Cp0 - R : Cp0;
+        // S0  = Sr + CpdlnT;
+    };
+
+    return StandardThermoModel(evalfn, extractParams(params));
+}
+
+} // namespace Reaktoro
