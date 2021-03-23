@@ -59,9 +59,12 @@ struct ThermoFunEngine::Impl
     /// Return the standard thermodynamic properties of a chemical species with given name.
     auto props(const real& T, const real& P, const String& species) const -> StandardThermoProps
     {
+        double Tval = T.val();
+        double Pval = P.val();
+
         if(database.containsSubstance(species))
         {
-            const auto props = engine.thermoPropertiesSubstance(T, P, species);
+            const auto props = engine.thermoPropertiesSubstance(Tval, Pval, species);
             return convertProps(props);
         }
         error("Cannot evaluate the standard thermodynamic properties of species with "
