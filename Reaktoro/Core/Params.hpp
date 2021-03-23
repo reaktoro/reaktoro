@@ -42,7 +42,6 @@ public:
     auto append(const Param& param) -> Param&;
 
     /// Append a new parameter to the list of parameters with given @p id and @p value.
-    /// @warning A runtime error is thrown if @p id is not unique among other parameters already in the list.
     auto append(const String& id, const real& value) -> Param&;
 
     /// Resize this container of parameters.
