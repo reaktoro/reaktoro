@@ -84,11 +84,10 @@ template<class SupcrtParamsType>
 auto checkTemperatureValidityHKF(real& T, const SupcrtParamsType& params) -> void
 {
     // Check if temperature bounds should be enforced
-    Assert(T >= 0.0 && T <= params.Tmax, "Unable to calculate the "
-        "thermodynamic properties of species" + params.name + "using the "
-            "revised HKF equations of state.", "The provided temperature `" +
-                std::to_string(T) + " K` is either negative or greater than the "
-                    "maximum allowed `" + std::to_string(params.Tmax) + " K`.");
+    errorif(T <= 0.0 || T > params.Tmax, "Unable to calculate the "
+        "thermodynamic properties of species ", params.name, " using the "
+        "revised HKF equations of state. The provided temperature ", T, " K "
+        "is either negative or greater than the maximum allowed ", params.Tmax, " K.");
 
     // Ensure temperature is not above the maximum allowed
     T = min(T, params.Tmax);
