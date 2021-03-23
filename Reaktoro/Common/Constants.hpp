@@ -49,6 +49,9 @@ constexpr auto ln10 = 2.30258509299404590109361379290930926799774169921875;
 /// The value of infinity
 constexpr auto inf = std::numeric_limits<double>::infinity();
 
+/// The value of NaN
+constexpr auto NaN = std::numeric_limits<double>::quiet_NaN();
+
 /// The value of machine precision epsilon
 constexpr auto epsilon = std::numeric_limits<double>::epsilon();
 
