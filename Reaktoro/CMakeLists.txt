@@ -45,6 +45,9 @@ target_link_libraries(Reaktoro
     PUBLIC Optima::Optima
 )
 
+# Enable implicit conversion of autodiff::real to double
+target_compile_definitions(Reaktoro PUBLIC AUTODIFF_ENABLE_IMPLICIT_CONVERSION_REAL=1)
+
 if(REAKTORO_USE_OPENLIBM)
     configure_target_to_use_openlibm(Reaktoro)
     target_compile_definitions(Reaktoro PUBLIC REAKTORO_USE_OPENLIBM=1)
