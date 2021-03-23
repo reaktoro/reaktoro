@@ -103,6 +103,7 @@ auto lnMoleFractionsJacobian(ArrayConstRef&& n, MatrixRef&& J) -> void
     //-----------------------------------------------------------------------------------------------------
     // \frac{\partial\ln x_{i}}{\partial n_{j}}=\frac{\delta_{ij}}{n_{i}}-\frac{1}{n_{\Sigma}}=\frac{1}{n_{i}}\left(\delta_{ij}-x_{i}\right)
     //-----------------------------------------------------------------------------------------------------
+    using T = Decay<decltype(J(0, 0))>;
     const auto N = n.size();
     assert(J.rows() == N);
     assert(J.cols() == N);
@@ -113,8 +114,8 @@ auto lnMoleFractionsJacobian(ArrayConstRef&& n, MatrixRef&& J) -> void
         const auto xi = ni/nsum;
         const auto aux = -xi/ni;
         for(auto j = 0; j < N; ++j)
-            J(i, j) = aux; // J(i, j) = -xi/ni
-        J(i, i) = (1 - xi)/ni; // J(i, i) = (1 - xi)/ni
+            J(i, j) = static_cast<T>(aux); // J(i, j) = -xi/ni
+        J(i, i) = static_cast<T>((1 - xi)/ni); // J(i, i) = (1 - xi)/ni
     }
 }
 
