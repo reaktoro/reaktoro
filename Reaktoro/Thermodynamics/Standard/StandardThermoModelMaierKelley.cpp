@@ -42,14 +42,16 @@ auto StandardThermoModelMaierKelley(const StandardThermoModelParamsMaierKelley& 
         auto& [G0, H0, V0, Cp0, Cv0] = props;
         const auto& [Gf, Hf, Sr, Vr, a, b, c, Tmax] = params;
 
-        const auto Tr = 298.15;
+        const auto Tr = 298.15; // the reference temperature of 25 C (in K)
+        const auto Pr = 1.0e5;  // the reference pressure of 1 bar (in Pa)
         const auto R  = universalGasConstant;
 
         const auto CpdT   = a*(T - Tr) + 0.5*b*(T*T - Tr*Tr) - c*(1.0/T - 1.0/Tr);
         const auto CpdlnT = a*log(T/Tr) + b*(T - Tr) - 0.5*c*(1.0/(T*T) - 1.0/(Tr*Tr));
+        const auto VdP    = Vr*(P - Pr);
 
         V0  = Vr;
-        G0  = Gf - Sr*(T - Tr) + CpdT - T*CpdlnT;
+        G0  = Gf - Sr*(T - Tr) + CpdT - T*CpdlnT + VdP;
         H0  = Hf + CpdT;
         Cp0 = a + b*T + c/(T*T);
         Cv0 = isgas ? Cp0 - R : Cp0;
