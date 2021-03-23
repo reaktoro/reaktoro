@@ -138,7 +138,7 @@ auto waterElectroProps(real T, real P, PhreeqcWaterThermoProps wtp) -> PhreeqcWa
 
     eps_r = d1000 + c * log((b + pb) / (b + 1e3)); // relative dielectric constant
 
-    if(eps_r <= 0)
+    if(eps_r <= 0.0)
     {
         eps_r = 10.0;
         warning(true, "Relative dielectric constant is negative. "

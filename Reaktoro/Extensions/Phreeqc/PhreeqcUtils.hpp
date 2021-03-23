@@ -211,12 +211,12 @@ auto activePhasesInSaturationList(const PHREEQC& phreeqc) -> Vec<PhreeqcPhase*>;
 /// Return the amounts of Phreeqc species.
 /// @param phreeqc The Phreeqc instance
 /// @param species The pointers to Phreeqc species instances
-auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcSpecies*>& species) -> ArrayXr;
+auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcSpecies*>& species) -> ArrayXd;
 
 /// Return the amounts of Phreeqc phases.
 /// @param phreeqc The Phreeqc instance
 /// @param phases The pointers to Phreeqc phase instances
-auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcPhase*>& phases) -> ArrayXr;
+auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcPhase*>& phases) -> ArrayXd;
 
 } // namespace PhreeqcUtils
 } // namespace Reaktoro
