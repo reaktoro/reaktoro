@@ -68,8 +68,8 @@ TEST_CASE("Testing Memoization - memoizeLast with return", "[Memoization]")
 /// The result of the function tested in the next test case.
 struct DummyResult
 {
-    double r;
-    double s;
+    real r;
+    real s;
 };
 
 TEST_CASE("Testing Memoization - memoizeLast without return", "[Memoization]")
