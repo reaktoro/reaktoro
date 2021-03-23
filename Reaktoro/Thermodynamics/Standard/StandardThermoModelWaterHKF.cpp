@@ -27,8 +27,7 @@ namespace Reaktoro {
 /// Return a Params object containing all Param objects in @p params.
 auto extractParams(const StandardThermoModelParamsWaterHKF& params) -> Params
 {
-    const auto& [Ttr, Str, Gtr, Htr] = params;
-    return {Ttr, Str, Gtr, Htr};
+    return {}; // there are no Param members in StandardThermoModelParamsWaterHKF
 }
 
 auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params) -> StandardThermoModel

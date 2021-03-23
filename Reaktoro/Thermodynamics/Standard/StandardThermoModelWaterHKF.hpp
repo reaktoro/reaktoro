@@ -26,16 +26,16 @@ namespace Reaktoro {
 /// The default values below were taken from Helgeson and Kirkham (1974), page 1098.
 struct StandardThermoModelParamsWaterHKF
 {
-    /// The temperature of liquid water at the triple point (in unit of K).
+    /// The temperature of liquid water at the triple point (in K).
     real Ttr = 273.16;
 
-    /// The molar entropy of liquid water at the triple point (in unit of J/(mol·K)).
+    /// The molar entropy of liquid water at the triple point (in J/(mol·K)).
     real Str = 63.312288;
 
-    /// The molar Gibbs energy of liquid water at the triple point (in unit of J/mol).
+    /// The molar Gibbs energy of liquid water at the triple point (in J/mol).
     real Gtr = -235517.36;
 
-    /// The molar enthalpy of liquid water at the triple point (in unit of J/mol).
+    /// The molar enthalpy of liquid water at the triple point (in J/mol).
     real Htr = -287721.128;
 };
 
