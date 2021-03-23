@@ -82,9 +82,11 @@ public:
     /// Return true if the parameter is constant.
     auto isconst() const -> bool;
 
-    /// Assign a real value to this parameter value.
-    template<typename T, EnableIf<isArithmetic<T> || isSame<T, real>>...>
-    auto operator=(const T& val) -> Param& { return value(val); }
+    /// Assign a value to this parameter value.
+    auto operator=(double val) -> Param&;
+
+    /// Assign a value to this parameter value.
+    auto operator=(const real& val) -> Param&;
 
     /// Convert this Param object into its value type.
     operator const real&() const;
@@ -124,6 +126,28 @@ template<typename T, EnableIf<isNumeric<T>>...> auto operator+(const T& x, const
 template<typename T, EnableIf<isNumeric<T>>...> auto operator-(const T& x, const Param& p) { return x - p.value(); }
 template<typename T, EnableIf<isNumeric<T>>...> auto operator*(const T& x, const Param& p) { return x * p.value(); }
 template<typename T, EnableIf<isNumeric<T>>...> auto operator/(const T& x, const Param& p) { return x / p.value(); }
+
+} // namespace Reaktoro
+
+//======================================================================
+// CODE BELOW NEEDED FOR COMPARISON OPERATIONS INVOLVING PARAM
+//======================================================================
+
+namespace Reaktoro {
+
+template<typename T, EnableIf<isNumeric<T>>...> auto operator==(const Param& p, const T& x) { return p.value() == x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator!=(const Param& p, const T& x) { return p.value() != x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator< (const Param& p, const T& x) { return p.value()  < x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator> (const Param& p, const T& x) { return p.value()  > x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator<=(const Param& p, const T& x) { return p.value() <= x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator>=(const Param& p, const T& x) { return p.value() >= x; }
+
+template<typename T, EnableIf<isNumeric<T>>...> auto operator==(const T& x, const Param& p) { return p.value() == x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator!=(const T& x, const Param& p) { return p.value() != x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator< (const T& x, const Param& p) { return p.value()  < x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator> (const T& x, const Param& p) { return p.value()  > x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator<=(const T& x, const Param& p) { return p.value() <= x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator>=(const T& x, const Param& p) { return p.value() >= x; }
 
 } // namespace Reaktoro
 

@@ -141,6 +141,16 @@ auto Param::isconst() const -> bool
     return pimpl->isconst;
 }
 
+auto Param::operator=(double val) -> Param&
+{
+    return value(val);
+}
+
+auto Param::operator=(const real& val) -> Param&
+{
+    return value(val);
+}
+
 Param::operator const real&() const
 {
     return pimpl->value;
