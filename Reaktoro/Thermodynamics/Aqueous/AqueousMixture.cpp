@@ -168,7 +168,7 @@ struct AqueousMixture::Impl
     auto initializeDissociationMatrix() -> void
     {
         // Return the stoichiometry of the i-th charged species in the j-th neutral species
-        auto stoichiometry = [&](Index i, Index j) -> real
+        auto stoichiometry = [&](Index i, Index j)
         {
             const auto ineutral = idx_neutral_species[i];
             const auto icharged = idx_charged_species[j];
