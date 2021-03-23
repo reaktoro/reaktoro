@@ -44,7 +44,7 @@ auto convertible(const std::string& from, const std::string& to) -> bool;
 /// @param to The string representing the unit to which the conversion is made
 /// @return The converted value
 template<typename T>
-auto convert(const T& value, const std::string& from, const std::string& to) -> double
+auto convert(const T& value, const std::string& from, const std::string& to) -> T
 {
     return (from == to) ? value : value * slope(from, to) + intercept(from, to);
 }
