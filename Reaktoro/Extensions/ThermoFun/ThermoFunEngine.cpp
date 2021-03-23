@@ -57,7 +57,7 @@ struct ThermoFunEngine::Impl
     }
 
     /// Return the standard thermodynamic properties of a chemical species with given name.
-    auto props(double T, double P, const String& species) const -> StandardThermoProps
+    auto props(const real& T, const real& P, const String& species) const -> StandardThermoProps
     {
         if(database.containsSubstance(species))
         {
@@ -80,7 +80,7 @@ auto ThermoFunEngine::database() const -> const ThermoFun::Database&
     return pimpl->database;
 }
 
-auto ThermoFunEngine::props(real T, real P, const String& species) const -> StandardThermoProps
+auto ThermoFunEngine::props(const real& T, const real& P, const String& species) const -> StandardThermoProps
 {
     return pimpl->props(T, P, species);
 }
