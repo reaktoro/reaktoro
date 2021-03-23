@@ -37,7 +37,7 @@ namespace {
 /// The reference temperature assumed in the HKF equations of state (in units of K)
 const auto Tr = 298.15;
 
-/// The reference temperature assumed in the HKF equations of state (in units of Pa)
+/// The reference pressure assumed in the HKF equations of state (in units of Pa)
 const auto Pr = 1.0e+05;
 
 /// The reference Born function Z (dimensionless)
