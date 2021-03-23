@@ -71,15 +71,17 @@ constexpr auto length(const Arg& x, const Args&... xs) -> std::size_t
 template<typename Array, typename Arg>
 constexpr auto serialize(Array& array, std::size_t pos, const Arg& x) -> void
 {
+    using U = Decay<decltype(array[0])>;
+
     if constexpr(isArray<Arg>)
     {
         assert(array.size() >= pos + x.size());
-        array.segment(pos, x.size()) = x;
+        array.segment(pos, x.size()) = x.template cast<U>();
     }
     else
     {
         assert(array.size() >= pos + 1);
-        array[pos] = x;
+        array[pos] = static_cast<U>(x);
     }
 }
 
