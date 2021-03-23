@@ -112,10 +112,15 @@ private:
 namespace Reaktoro {
 
 template<typename T>
-constexpr auto isNumeric = isArithmetic<T> || isOneOf<T, real, Param>;
+constexpr auto isNumeric = isArithmetic<T> || isSame<T, real>;
 
 inline auto operator+(const Param& p) { return  p.value(); }
 inline auto operator-(const Param& p) { return -p.value(); }
+
+inline auto operator+(const Param& p, const Param& q) { return p.value() + q.value(); }
+inline auto operator-(const Param& p, const Param& q) { return p.value() - q.value(); }
+inline auto operator*(const Param& p, const Param& q) { return p.value() * q.value(); }
+inline auto operator/(const Param& p, const Param& q) { return p.value() / q.value(); }
 
 template<typename T, EnableIf<isNumeric<T>>...> auto operator+(const Param& p, const T& x) { return p.value() + x; }
 template<typename T, EnableIf<isNumeric<T>>...> auto operator-(const Param& p, const T& x) { return p.value() - x; }
