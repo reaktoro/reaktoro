@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <cmath>
+using std::abs;
 using std::log;
 using std::pow;
 
@@ -148,9 +149,9 @@ auto speciesElectroStateHKF(const FunctionG& g, const SupcrtParamsAqueousSoluteH
         const auto wref = params.wref;
 
         const auto reref = z*z/(wref/eta + z/3.082);
-        const auto re    = reref + std::abs(z) * g.g;
+        const auto re    = reref + abs(z) * g.g;
 
-        const auto X1 =  -eta * (std::abs(z*z*z)/(re*re) - z/pow(3.082 + g.g, 2));
+        const auto X1 =  -eta * (abs(z*z*z)/(re*re) - z/pow(3.082 + g.g, 2));
         const auto X2 = 2*eta * (z*z*z*z/(re*re*re) - z/pow(3.082 + g.g, 3));
 
         se.re    = re;
