@@ -104,7 +104,7 @@ struct EquilibriumHessian::Impl
         const auto n = props0.speciesAmounts();
         const auto R = universalGasConstant;
 
-        const double RT = R*T; // the use of double is intentional!
+        const auto RT = R*T;
 
         H.fill(0.0); // clear previous state of H
 
@@ -131,12 +131,16 @@ struct EquilibriumHessian::Impl
         const auto n = props0.speciesAmounts();
         const auto R = universalGasConstant;
 
-        const double RT = R*T; // the use of double is intentional!
+        const auto RT = R*T;
 
         H.fill(0.0); // clear previous state of H
 
         for(auto i = 0; i < N; ++i)
-            H(i, i) = RT * (1 - x[i])/n[i];
+        {
+            const double xi = x[i]; // use double as no need for autodiff below
+            const double ni = n[i]; // use double as no need for autodiff below
+            H(i, i) = RT * (1 - xi)/ni;
+        }
 
         return H;
     }
