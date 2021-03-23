@@ -39,25 +39,25 @@ TEST_CASE("Testing MoleFractionUtils module", "[MoleFractionUtils]")
 
     x = moleFractions(n);
 
-    REQUIRE( x[0] == Approx(0.1) );
-    REQUIRE( x[1] == Approx(0.2) );
-    REQUIRE( x[2] == Approx(0.3) );
-    REQUIRE( x[3] == Approx(0.4) );
+    CHECK( x[0] == Approx(0.1) );
+    CHECK( x[1] == Approx(0.2) );
+    CHECK( x[2] == Approx(0.3) );
+    CHECK( x[3] == Approx(0.4) );
 
     x = moleFractions(nzero);
 
-    REQUIRE( x[0] == Approx(0.0) );
-    REQUIRE( x[1] == Approx(0.0) );
-    REQUIRE( x[2] == Approx(0.0) );
-    REQUIRE( x[3] == Approx(0.0) );
+    CHECK( x[0] == Approx(0.0) );
+    CHECK( x[1] == Approx(0.0) );
+    CHECK( x[2] == Approx(0.0) );
+    CHECK( x[3] == Approx(0.0) );
 
     x = moleFractions(nsingle);
 
-    REQUIRE( x[0] == Approx(1.0) );
+    CHECK( x[0] == Approx(1.0) );
 
     x = moleFractions(nsinglezero);
 
-    REQUIRE( x[0] == Approx(1.0) );
+    CHECK( x[0] == Approx(1.0) );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: moleFractionsJacobian
@@ -72,7 +72,7 @@ TEST_CASE("Testing MoleFractionUtils module", "[MoleFractionUtils]")
     }};
 
     INFO("dxdn = \n" << dxdn);
-    REQUIRE( dxdn.isApprox(MatrixXd{{
+    CHECK( dxdn.isApprox(MatrixXd{{
         { 0.09, -0.01, -0.01, -0.01},
         {-0.02,  0.08, -0.02, -0.02},
         {-0.03, -0.03,  0.07, -0.03},
@@ -82,17 +82,17 @@ TEST_CASE("Testing MoleFractionUtils module", "[MoleFractionUtils]")
     dxdn = moleFractionsJacobian(nzero);
 
     INFO("dxdn = \n" << dxdn);
-    REQUIRE( dxdn.isApprox(MatrixXd::Zero(4, 4)) );
+    CHECK( dxdn.isApprox(MatrixXd::Zero(4, 4)) );
 
     dxdn = moleFractionsJacobian(nsingle);
 
     INFO("dxdn = \n" << dxdn);
-    REQUIRE( dxdn.isApprox(MatrixXd::Zero(1, 1)) );
+    CHECK( dxdn.isApprox(MatrixXd::Zero(1, 1)) );
 
     dxdn = moleFractionsJacobian(nsinglezero);
 
     INFO("dxdn = \n" << dxdn);
-    REQUIRE( dxdn.isApprox(MatrixXd::Zero(1, 1)) );
+    CHECK( dxdn.isApprox(MatrixXd::Zero(1, 1)) );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: lnMoleFractionsJacobian
@@ -100,7 +100,7 @@ TEST_CASE("Testing MoleFractionUtils module", "[MoleFractionUtils]")
     dlnxdn = lnMoleFractionsJacobian(n);
 
     INFO("dlnxdn = \n" << dlnxdn);
-    REQUIRE( dlnxdn.isApprox(MatrixXd{{
+    CHECK( dlnxdn.isApprox(MatrixXd{{
         { 0.9/1,   -0.1,   -0.1,   -0.1},
         {  -0.1,  0.8/2,   -0.1,   -0.1},
         {  -0.1,   -0.1,  0.7/3,   -0.1},
@@ -110,15 +110,15 @@ TEST_CASE("Testing MoleFractionUtils module", "[MoleFractionUtils]")
     dlnxdn = lnMoleFractionsJacobian(nzero);
 
     INFO("dlnxdn = \n" << dlnxdn);
-    REQUIRE( dlnxdn.isApprox(MatrixXd::Zero(4, 4)) );
+    CHECK( dlnxdn.isApprox(MatrixXd::Zero(4, 4)) );
 
     dlnxdn = lnMoleFractionsJacobian(nsingle);
 
     INFO("dlnxdn = \n" << dlnxdn);
-    REQUIRE( dlnxdn.isApprox(MatrixXd::Zero(1, 1)) );
+    CHECK( dlnxdn.isApprox(MatrixXd::Zero(1, 1)) );
 
     dlnxdn = lnMoleFractionsJacobian(nsinglezero);
 
     INFO("dlnxdn = \n" << dlnxdn);
-    REQUIRE( dlnxdn.isApprox(MatrixXd::Zero(1, 1)) );
+    CHECK( dlnxdn.isApprox(MatrixXd::Zero(1, 1)) );
 }
