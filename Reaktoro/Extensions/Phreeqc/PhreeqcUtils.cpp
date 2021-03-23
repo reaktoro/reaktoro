@@ -409,20 +409,20 @@ auto activePhasesInSaturationList(const PHREEQC& phreeqc) -> Vec<PhreeqcPhase*>
     return phases;
 }
 
-auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcSpecies*>& species) -> ArrayXr
+auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcSpecies*>& species) -> ArrayXd
 {
     const auto num_species = species.size();
-    ArrayXr n(num_species);
+    ArrayXd n(num_species);
     for(auto i = 0; i < num_species; ++i)
         n[i] = species[i]->moles;
     return n;
 }
 
-auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcPhase*>& phases) -> ArrayXr
+auto speciesAmounts(const PHREEQC& phreeqc, const Vec<PhreeqcPhase*>& phases) -> ArrayXd
 {
     const auto num_phases = phases.size();
     const auto num_unknowns = phreeqc.count_unknowns;
-    ArrayXr n(num_phases);
+    ArrayXd n(num_phases);
     for(auto i = 0; i < num_phases; ++i)
     {
         n[i] = phases[i]->moles_x;

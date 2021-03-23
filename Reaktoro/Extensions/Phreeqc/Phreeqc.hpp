@@ -49,7 +49,7 @@ public:
     virtual auto pressure() const -> double;
 
     /// Return the amounts of the species (in units of mol)
-    virtual auto speciesAmounts() const -> ArrayXr;
+    virtual auto speciesAmounts() const -> ArrayXd;
 
     /// Return the number of elements
     virtual auto numElements() const -> unsigned;
@@ -88,7 +88,7 @@ public:
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The amounts of the species (in units of mol)
-    // virtual auto properties(ChemicalModelResult& res, double T, double P, ArrayXrConstRef n) -> void;
+    // virtual auto properties(ChemicalModelResult& res, double T, double P, ArrayXdConstRef n) -> void;
 
     /// Set the temperature and pressure of the interfaced code.
     /// This method should be used to update all thermodynamic properties
@@ -106,7 +106,7 @@ public:
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The composition of the species (in units of mol)
-    auto set(double T, double P, ArrayXrConstRef n) -> void;
+    auto set(double T, double P, ArrayXdConstRef n) -> void;
 
     /// Load a PHREEQC database.
     /// This method will initialize the Phreeqc instance with all species and reactions
@@ -142,34 +142,34 @@ public:
     auto stoichiometricMatrix() const -> MatrixXd;
 
     /// Return the standard molar Gibbs free energies of the species (in units of J/mol)
-    auto standardMolarGibbsEnergies() const -> ArrayXr;
+    auto standardMolarGibbsEnergies() const -> ArrayXd;
 
     /// Return the standard molar enthalpies of the species (in units of J/mol)
-    auto standardMolarEnthalpies() const -> ArrayXr;
+    auto standardMolarEnthalpies() const -> ArrayXd;
 
     /// Return the standard molar volumes of the species (in units of m3/mol)
-    auto standardMolarVolumes() const -> ArrayXr;
+    auto standardMolarVolumes() const -> ArrayXd;
 
     /// Return the standard molar isobaric heat capacities of the species (in units of J/(mol*K))
-    auto standardMolarHeatCapacitiesConstP() const -> ArrayXr;
+    auto standardMolarHeatCapacitiesConstP() const -> ArrayXd;
 
     /// Return the standard molar isochoric heat capacities of the species (in units of J/(mol*K))
-    auto standardMolarHeatCapacitiesConstV() const -> ArrayXr;
+    auto standardMolarHeatCapacitiesConstV() const -> ArrayXd;
 
     /// Return the ln activity coefficients of the species
-    auto lnActivityCoefficients() const -> ArrayXr;
+    auto lnActivityCoefficients() const -> ArrayXd;
 
     /// Return the ln activity contants of the species
-    auto lnActivityConstants() const -> ArrayXr;
+    auto lnActivityConstants() const -> ArrayXd;
 
     /// Return the ln activities of the species
-    auto lnActivities() const -> ArrayXr;
+    auto lnActivities() const -> ArrayXd;
 
     /// Return the ln equilibrium constants of the reactions
-    auto lnEquilibriumConstants() const -> ArrayXr;
+    auto lnEquilibriumConstants() const -> ArrayXd;
 
     /// Return the molar volumes of the phases
-    auto phaseMolarVolumes() const -> ArrayXr;
+    auto phaseMolarVolumes() const -> ArrayXd;
 
     /// Return a reference to the low-level Phreeqc instance
     auto phreeqc() -> PHREEQC&;
