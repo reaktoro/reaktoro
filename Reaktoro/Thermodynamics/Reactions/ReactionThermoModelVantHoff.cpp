@@ -35,7 +35,7 @@ auto ReactionThermoModelVantHoff(Param lgK0, Param dH0, Param Tr) -> ReactionThe
         props.dH0 = dH0;
     };
 
-    Params params = { lgK0, dH0 };
+    Params params = { lgK0, dH0, Tr };
 
     return ReactionThermoModel(evalfn, params);
 }
