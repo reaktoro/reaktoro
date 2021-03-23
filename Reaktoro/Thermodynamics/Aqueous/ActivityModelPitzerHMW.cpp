@@ -663,13 +663,14 @@ auto createZetaTable(const Vec<ChemicalFormula>& neutrals, const Vec<ChemicalFor
     return table;
 }
 
-auto interpolate(real x, real x0, real x1, const Vec<double>& ypoints) -> real
+auto interpolate(real x, double x0, double x1, const Vec<double>& ypoints) -> real
 {
-    const auto n  = ypoints.size();
-    const auto dx = (x1 - x0)/(n - 1);
-    const auto i  = (x - x0)/dx;
+    const auto N  = ypoints.size();
+    const auto dx = (x1 - x0)/(N - 1);
 
-    return (i < 0) ? ypoints.front() : (i > n) ? ypoints.back() : ypoints[i];
+    const auto i = Index((x - x0)/dx);
+
+    return (i < 0) ? ypoints.front() : (i > N) ? ypoints.back() : ypoints[i];
 }
 
 auto J0(real x) -> real

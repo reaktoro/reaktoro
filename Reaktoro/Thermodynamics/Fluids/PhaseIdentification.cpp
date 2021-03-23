@@ -52,9 +52,16 @@ auto identifyPhaseUsingIsothermalCompressibility(
     return {};
 }
 
-auto pressureComparison(const real& Pressure, const real& Temperature, const real& amix,
-                        const real& bmix, const real& A, const real& B, const real& C,
-                        const real epsilon, const real sigma) -> CubicEOSFluidType
+auto pressureComparison(
+    double Pressure,
+    double Temperature,
+    double amix,
+    double bmix,
+    double A,
+    double B,
+    double C,
+    double epsilon,
+    double sigma) -> CubicEOSFluidType
 {
     // WARNING: The use of Eigen::PolynomialSolver with real seems to cause
     // errors in macOS:
@@ -76,13 +83,13 @@ auto pressureComparison(const real& Pressure, const real& Temperature, const rea
 
     // Computing parameters AP, BP, CP, DP and EP of equation AP*P^4 + BP*P^3 + CP*P^2 + DP*P + EP = 0,
     // which gives the values of P where the EoS changes slope (Local max and min)
-    const double R = universalGasConstant;
-    const double T = Temperature;
-    const double AP = R * T;
-    const double BP = 2 * R * T * (k2 + k1) - 2 * amix;
-    const double CP = R * T * (k2 * k2 + 4.0 * k1 * k2 + k1 * k1) - amix * (k1 + k2 - 4 * bmix);
-    const double DP = 2 * R * T * (k1 * k2 * k2 + k1 * k1 * k2) - 2 * amix * (bmix * bmix - k2 * bmix - k1 * bmix);
-    const double EP = R * T * k1 * k1 * k2 * k2 - amix * (k1 + k2) * bmix * bmix;
+    const auto R = universalGasConstant;
+    const auto T = Temperature;
+    const auto AP = R * T;
+    const auto BP = 2 * R * T * (k2 + k1) - 2 * amix;
+    const auto CP = R * T * (k2 * k2 + 4.0 * k1 * k2 + k1 * k1) - amix * (k1 + k2 - 4 * bmix);
+    const auto DP = 2 * R * T * (k1 * k2 * k2 + k1 * k1 * k2) - 2 * amix * (bmix * bmix - k2 * bmix - k1 * bmix);
+    const auto EP = R * T * k1 * k1 * k2 * k2 - amix * (k1 + k2) * bmix * bmix;
 
     auto polynomial_solver = Eigen::PolynomialSolver<double, 4>(
         Eigen::Matrix<double, 5, 1>{EP, DP, CP, BP, AP});

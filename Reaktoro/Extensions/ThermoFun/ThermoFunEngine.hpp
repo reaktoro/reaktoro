@@ -38,7 +38,7 @@ public:
     auto database() const -> const ThermoFun::Database&;
 
     /// Return the standard thermodynamic properties of a chemical species with given name.
-    auto props(real T, real P, const String& species) const -> StandardThermoProps;
+    auto props(const real& T, const real& P, const String& species) const -> StandardThermoProps;
 
 private:
     struct Impl;
