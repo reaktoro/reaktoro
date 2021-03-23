@@ -142,12 +142,12 @@ template<typename T, EnableIf<isNumeric<T>>...> auto operator> (const Param& p, 
 template<typename T, EnableIf<isNumeric<T>>...> auto operator<=(const Param& p, const T& x) { return p.value() <= x; }
 template<typename T, EnableIf<isNumeric<T>>...> auto operator>=(const Param& p, const T& x) { return p.value() >= x; }
 
-template<typename T, EnableIf<isNumeric<T>>...> auto operator==(const T& x, const Param& p) { return p.value() == x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator!=(const T& x, const Param& p) { return p.value() != x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator< (const T& x, const Param& p) { return p.value()  < x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator> (const T& x, const Param& p) { return p.value()  > x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator<=(const T& x, const Param& p) { return p.value() <= x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator>=(const T& x, const Param& p) { return p.value() >= x; }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator==(const T& x, const Param& p) { return x == p.value(); }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator!=(const T& x, const Param& p) { return x != p.value(); }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator< (const T& x, const Param& p) { return x  < p.value(); }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator> (const T& x, const Param& p) { return x  > p.value(); }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator<=(const T& x, const Param& p) { return x <= p.value(); }
+template<typename T, EnableIf<isNumeric<T>>...> auto operator>=(const T& x, const Param& p) { return x >= p.value(); }
 
 } // namespace Reaktoro
 
