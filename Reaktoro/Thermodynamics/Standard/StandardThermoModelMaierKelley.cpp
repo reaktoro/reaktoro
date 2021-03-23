@@ -52,7 +52,7 @@ auto StandardThermoModelMaierKelley(const StandardThermoModelParamsMaierKelley& 
 
         V0  = Vr;
         G0  = Gf - Sr*(T - Tr) + CpdT - T*CpdlnT + VdP;
-        H0  = Hf + CpdT;
+        H0  = Hf + CpdT + VdP;
         Cp0 = a + b*T + c/(T*T);
         Cv0 = isgas ? Cp0 - R : Cp0;
         // S0  = Sr + CpdlnT;
