@@ -32,8 +32,8 @@ TEST_CASE("Testing CoreUtils", "[CoreUtils]")
     const auto mmH2O = system.species().get("H2O(aq)").molarMass(); // kg/mol
     const auto iH2O = system.species().index("H2O(aq)");
 
-    double actual = {};
-    double expected = {};
+    real actual = {};
+    real expected = {};
 
     //======================================================================
     // Testing computeSpeciesAmount
