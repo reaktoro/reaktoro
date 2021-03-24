@@ -107,6 +107,11 @@ auto Params::exists(const String& id) const -> bool
     return containsfn(m_data, RKT_LAMBDA(x, x.id() == id));
 }
 
+auto Params::data() const -> const Vec<Param>&
+{
+    return m_data;
+}
+
 Params::operator VectorXr() const
 {
     VectorXr res(size());

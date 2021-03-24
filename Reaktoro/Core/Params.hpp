@@ -79,6 +79,9 @@ public:
     /// Return true if a parameter exists with given identifier.
     auto exists(const String& id) const -> bool;
 
+    /// Return the container of parameters.
+    auto data() const -> const Vec<Param>&;
+
     /// Convert this Params object into a VectorXr object.
     operator VectorXr() const;
 
