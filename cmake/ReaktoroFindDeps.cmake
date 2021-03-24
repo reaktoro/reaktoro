@@ -10,6 +10,8 @@ endif()
 find_package(autodiff REQUIRED)
 find_package(Optima REQUIRED)
 find_package(ThermoFun REQUIRED)
+find_package(nlohmann_json 3.4.0 REQUIRED)
+find_package(yaml-cpp 0.6.3 REQUIRED)
 
 if(ThermoFun_FOUND)
     add_compile_definitions(REAKTORO_USING_THERMOFUN)
