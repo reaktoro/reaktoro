@@ -117,31 +117,27 @@ auto reactionThermoModelAux(const SpeciesType* s, double sign) -> ReactionThermo
         return false;
     };
 
-    ReactionThermoModel basemodel;
-
     if(use_analytic_expression())
     {
-        const auto A1 = sign * logk[T_A1];
-        const auto A2 = sign * logk[T_A2];
-        const auto A3 = sign * logk[T_A3];
-        const auto A4 = sign * logk[T_A4];
-        const auto A5 = sign * logk[T_A5];
-        const auto A6 = sign * logk[T_A6];
-        basemodel = ReactionThermoModelAnalyticalPHREEQC(A1, A2, A3, A4, A5, A6);
+        ReactionThermoModelParamsPhreeqcAnalytical params;
+        params.A1 = sign * logk[T_A1];
+        params.A2 = sign * logk[T_A2];
+        params.A3 = sign * logk[T_A3];
+        params.A4 = sign * logk[T_A4];
+        params.A5 = sign * logk[T_A5];
+        params.A6 = sign * logk[T_A6];
+        params.Pr = 101325; // reference pressure (1 atm = 101325 Pa)
+        return ReactionThermoModelAnalyticalPHREEQC(params);
     }
     else
     {
-        const auto lgK0 = sign * logk[logK_T0];
-        const auto dH0 = sign * logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
-        const auto Tref = 298.15; // reference temperature (in K)
-        basemodel = ReactionThermoModelVantHoff(lgK0, dH0, Tref);
+        ReactionThermoModelParamsVantHoff params;
+        params.lgKr = sign * logk[logK_T0];
+        params.dHr = sign * logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
+        params.Tr = 298.15; // reference temperature (in K)
+        params.Pr = 101325; // reference pressure (1 atm = 101325 Pa)
+        return ReactionThermoModelVantHoff(params);
     }
-
-    const auto Pref = 101325; // Pref = 1 atm = 101325 Pa
-
-    ReactionThermoModel pcorrectionmodel = ReactionThermoModelPressureCorrection(Pref);
-
-    return chain(basemodel, pcorrectionmodel);
 }
 
 auto reactionThermoModel(const PhreeqcSpecies* species) -> ReactionThermoModel
