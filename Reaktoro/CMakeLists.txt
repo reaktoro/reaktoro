@@ -43,6 +43,7 @@ target_link_libraries(Reaktoro
     PRIVATE Reaktoro::Databases
     PUBLIC autodiff::autodiff
     PUBLIC Optima::Optima
+    PUBLIC yaml-cpp
 )
 
 # Enable implicit conversion of autodiff::real to double
