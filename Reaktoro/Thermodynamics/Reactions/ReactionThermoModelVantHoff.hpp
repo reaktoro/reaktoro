@@ -22,26 +22,42 @@
 
 namespace Reaktoro {
 
+/// The parameters in a van't Hoff thermodynamic model for a formation reaction.
+struct ReactionThermoModelParamsVantHoff
+{
+    /// The equilibrium constant @eq{\lg K_{\mathrm{r}}} (log base 10) of the reaction at @eq{T_{\mathrm{r}}} and @eq{P_{\mathrm{r}}}.
+    Param lgKr;
+
+    /// The change in standard molar enthalpy @eq{\Delta H_{\mathrm{r}}^{\circ}} of the reaction (in J/mol) at @eq{T_{\mathrm{r}}} and @eq{P_{\mathrm{r}}}.
+    Param dHr;
+
+    /// The reference temperature @eq{T_{\mathrm{r}}} (in K).
+    real Tr = 298.15;
+
+    /// The reference pressure @eq{P_{\mathrm{r}}} (in Pa).
+    real Pr = 1.0e5;
+};
+
 /// Return a function that calculates thermodynamic properties of a reaction using van't Hoff's model.
 ///
 /// In this model, the equilibrium constant of the reaction
 /// is computed at a given temperature with:
 ///
-/// @eqc{\ln K=\ln K_{0}-\frac{\Delta H_{0}^{\circ}}{R}\left(\frac{1}{T}-\frac{1}{T_{0}}\right),}
+/// @eqc{\ln K=\ln K_{\mathrm{r}}-\frac{\Delta H_{\mathrm{r}}^{\circ}}{R}\left(\frac{1}{T}-\frac{1}{T_{\mathrm{r}}}\right),}
 ///
-/// where @eq{\ln K_{0}} and @eq{\Delta H_{0}^{\circ}} are the equilibrium constant and
-/// enthalpy of reaction at reference temperature @eq{T_0}. From this model, we can calculate
+/// where @eq{\ln K_{\mathrm{r}}} and @eq{\Delta H_{\mathrm{r}}^{\circ}} are the equilibrium constant and
+/// enthalpy of reaction at reference temperature @eq{T_\mathrm{r}}. From this model, we can calculate
 /// the standard Gibbs energy of reaction using:
 ///
-/// @eqc{\Delta G^{\circ}=-RT\ln K}
+/// @eqc{\Delta G^{\circ}=-RT\ln K_{\mathrm{r}}+\Delta V^{\circ}(P-P_{\mathrm{r}})}
 ///
-/// while the standard enthalpy of reaction is assumed constant:
+/// while the standard enthalpy of reaction is:
 ///
-/// @eqc{\Delta H^{\circ}=\Delta H_{0}^{\circ}.}
+/// @eqc{\Delta H^{\circ}=\Delta H_{\mathrm{r}}^{\circ}+\Delta V^{\circ}(P-P_{\mathrm{r}}).}
 ///
-/// @param lgK0 The equilibrium constant (log base 10) of the reaction at reference temperature.
-/// @param dH0 The change in standard molar enthalpy of the reaction at reference temperature (in J/mol).
-/// @param Tr The reference temperature (in K).
-auto ReactionThermoModelVantHoff(Param lgK0, Param dH0, Param Tr) -> ReactionThermoModel;
+/// Note that a pressure correction is introduced above, where @eq{\Delta V^{\circ}}
+/// is the change of standard molar volume of the reaction at @eq{T} and @eq{P},
+/// with @eq{P_{\mathrm{r}}} denoting a given reference pressure.
+auto ReactionThermoModelVantHoff(const ReactionThermoModelParamsVantHoff& params) -> ReactionThermoModel;
 
 } // namespace Reaktoro

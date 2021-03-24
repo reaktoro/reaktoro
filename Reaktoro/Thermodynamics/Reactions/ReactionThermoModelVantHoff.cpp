@@ -22,22 +22,33 @@
 
 namespace Reaktoro {
 
-auto ReactionThermoModelVantHoff(Param lgK0, Param dH0, Param Tr) -> ReactionThermoModel
+/// Return a Params object containing all Param objects in @p params.
+auto extractParams(const ReactionThermoModelParamsVantHoff& params) -> Params
+{
+    const auto& [lgKr, dHr, Tr, Pr] = params;
+    return {lgKr, dHr};
+}
+
+auto ReactionThermoModelVantHoff(const ReactionThermoModelParamsVantHoff& params) -> ReactionThermoModel
 {
     auto evalfn = [=](ReactionThermoProps& props, ReactionThermoArgs args)
     {
-        ReactionThermoArgsDecl(args);
+        // Unpack the arguments for the evaluation of this model
+        const auto& [T, P, dV0] = args;
+
+        // Unpack the model parameters
+        const auto& [lgKr, dHr, Tr, Pr] = params;
+
         const auto R = universalGasConstant;
         const auto RT = R*T;
-        const auto lnK0 = lgK0 * ln10;
-        const auto lnK = lnK0 - dH0 * (Tr - T)/(RT*Tr);
-        props.dG0 = -RT * lnK;
-        props.dH0 = dH0;
+        const auto lnKr = lgKr * ln10;
+        const auto lnK = lnKr - dHr * (Tr - T)/(RT*Tr);
+        const auto dE = dV0 * (P - Pr); // delta energy (in J/mol)
+        props.dG0 = -RT * lnK + dE;
+        props.dH0 = dHr + dE;
     };
 
-    Params params = { lgK0, dH0, Tr };
-
-    return ReactionThermoModel(evalfn, params);
+    return ReactionThermoModel(evalfn, extractParams(params));
 }
 
 } // namespace Reaktoro
