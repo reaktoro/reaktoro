@@ -49,8 +49,8 @@ public:
     yaml(const Node& node);
 
     /// Implicitly convert this yaml object into another type.
-    template <typename T>
-    operator T() { return as<T>(); }
+    template<typename T>
+    operator T() const { return as<T>(); }
 };
 
 /// Return a child node with given key. Check if key exists and raises error if it does not.
@@ -61,7 +61,7 @@ inline auto operator&(const Node& node, const std::string& key)
     return child;
 }
 
-template <typename T>
+template<typename T>
 auto set(const Node& node, const std::string& key, T& value) -> void
 {
     auto child = node & key;
@@ -73,7 +73,24 @@ auto set(const Node& node, const std::string& key, T& value) -> void
     }
 }
 
-template <typename Type>
+template<typename T>
+auto get(const Node& node, const std::string& key, const T& ifempty = T{})
+{
+    auto child = node[key];
+    if(!child) return ifempty;
+    return child.as<T>();
+}
+
+template<typename T>
+auto appendIfNotDefault(Node& node, const std::string& key, const T& value, const T& defaultval = T{}) -> void
+{
+    if(value != defaultval)
+    {
+        node["key"] = value;
+    }
+}
+
+template<typename Type>
 struct convert
 {
     static auto encode(const Type& obj)
