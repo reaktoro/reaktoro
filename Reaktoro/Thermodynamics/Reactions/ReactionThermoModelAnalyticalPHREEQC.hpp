@@ -22,6 +22,31 @@
 
 namespace Reaktoro {
 
+/// The parameters in the thermodynamic model for a formation reaction based on PHREEQC's analytical expression.
+struct ReactionThermoModelParamsPhreeqcAnalytical
+{
+    /// The coefficient @eq{A_1} in the reaction thermodynamic model.
+    Param A1;
+
+    /// The coefficient @eq{A_2} in the reaction thermodynamic model.
+    Param A2;
+
+    /// The coefficient @eq{A_3} in the reaction thermodynamic model.
+    Param A3;
+
+    /// The coefficient @eq{A_4} in the reaction thermodynamic model.
+    Param A4;
+
+    /// The coefficient @eq{A_5} in the reaction thermodynamic model.
+    Param A5;
+
+    /// The coefficient @eq{A_6} in the reaction thermodynamic model.
+    Param A6;
+
+    /// The reference pressure @eq{P_{\mathrm{r}}} (in Pa).
+    real Pr = 1.0e5;
+};
+
 /// Return a function that calculates thermodynamic properties of a reaction using PHREEQC's analytical expression.
 ///
 /// In this model, the equilibrium constant of the reaction
@@ -32,27 +57,19 @@ namespace Reaktoro {
 /// where @eq{A_i} are given coefficients. From this model, we can calculate
 /// the standard Gibbs energy of reaction using:
 ///
-/// @eqc{\Delta G^{\circ}=-RT\left(A_{1}+A_{2}T+A_{3}T^{-1}+A_{4}\log_{10}T+A_{5}T^{-2}+A_{6}T^{2}\right)\ln_{10}}
+/// @eqc{\Delta G^{\circ}=-RT\left(A_{1}+A_{2}T+A_{3}T^{-1}+A_{4}\log_{10}T+A_{5}T^{-2}+A_{6}T^{2}\right)\ln_{10}+\Delta V^{\circ}(P-P_{\mathrm{r}})}
 ///
 /// and the standard enthalpy of reaction using:
 ///
-/// @eqc{\Delta H^{\circ}=R\left(A_{2}T^{2}-A_{3}+\frac{A_{4}}{\ln10}T-2A_{5}T^{-1}+2A_{6}T^{3}\right)\ln_{10},}
+/// @eqc{\Delta H^{\circ}=R\left(A_{2}T^{2}-A_{3}+\frac{A_{4}}{\ln10}T-2A_{5}T^{-1}+2A_{6}T^{3}\right)\ln_{10}+\Delta V^{\circ}(P-P_{\mathrm{r}}),}
 ///
 /// considering that:
 ///
-/// @eqc{\Delta G^{\circ}=-RT\ln K}
+/// @eqc{\Delta G^{\circ}=-RT\ln K+\Delta V^{\circ}(P-P_{\mathrm{r}})}
 ///
 /// and
 ///
-/// @eqc{\Delta H^{\circ}\equiv T^{2}\frac{\partial}{\partial T}\left(-\frac{\Delta G^{\circ}}{T}\right)=RT^{2}\frac{\partial\ln K}{\partial T}.}
-///
-/// @param A1 The coefficient @eq{A_1} in the reaction thermodynamic model.
-/// @param A2 The coefficient @eq{A_2} in the reaction thermodynamic model.
-/// @param A3 The coefficient @eq{A_3} in the reaction thermodynamic model.
-/// @param A4 The coefficient @eq{A_4} in the reaction thermodynamic model.
-/// @param A5 The coefficient @eq{A_5} in the reaction thermodynamic model.
-/// @param A6 The coefficient @eq{A_6} in the reaction thermodynamic model.
-/// @return ReactionThermoModel
-auto ReactionThermoModelAnalyticalPHREEQC(Param A1, Param A2, Param A3, Param A4, Param A5, Param A6) -> ReactionThermoModel;
+/// @eqc{\Delta H^{\circ}\equiv T^{2}\frac{\partial}{\partial T}\left(-\frac{\Delta G^{\circ}}{T}\right)=RT^{2}\frac{\partial\ln K}{\partial T}+\Delta V^{\circ}(P-P_{\mathrm{r}}).}
+auto ReactionThermoModelAnalyticalPHREEQC(const ReactionThermoModelParamsPhreeqcAnalytical& params) -> ReactionThermoModel;
 
 } // namespace Reaktoro
