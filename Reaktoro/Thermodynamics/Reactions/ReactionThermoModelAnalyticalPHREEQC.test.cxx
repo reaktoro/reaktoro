@@ -35,8 +35,9 @@ TEST_CASE("Testing ReactionThermoModelAnalyticalPHREEQC class", "[ReactionThermo
     const auto A4 = 4.0;
     const auto A5 = 5.0;
     const auto A6 = 6.0;
+    const auto Pr = 7.0;
 
-    const auto model = ReactionThermoModelAnalyticalPHREEQC(A1, A2, A3, A4, A5, A6);
+    const auto model = ReactionThermoModelAnalyticalPHREEQC({A1, A2, A3, A4, A5, A6, Pr});
 
     const auto R = universalGasConstant;
 
@@ -46,8 +47,10 @@ TEST_CASE("Testing ReactionThermoModelAnalyticalPHREEQC class", "[ReactionThermo
     const auto lnK   = ln10 * lgK;
     const auto lnK_T = ln10 * lgK_T;
 
-    const auto dG0x = -R*T*lnK;     // expected dG0 at (T, P)
-    const auto dH0x =  R*T*T*lnK_T; // expected dH0 at (T, P)
+    const auto dE = dV0 * (P - Pr);
+
+    const auto dG0x = -R*T*lnK + dE;     // expected dG0 at (T, P)
+    const auto dH0x =  R*T*T*lnK_T + dE; // expected dH0 at (T, P)
 
     ReactionThermoProps rprops = model({T, P, dV0});
 

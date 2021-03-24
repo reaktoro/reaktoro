@@ -22,21 +22,32 @@
 
 namespace Reaktoro {
 
-auto ReactionThermoModelAnalyticalPHREEQC(Param A1, Param A2, Param A3, Param A4, Param A5, Param A6) -> ReactionThermoModel
+/// Return a Params object containing all Param objects in @p params.
+auto extractParams(const ReactionThermoModelParamsPhreeqcAnalytical& params) -> Params
+{
+    const auto& [A1, A2, A3, A4, A5, A6, Pr] = params;
+    return {A1, A2, A3, A4, A5, A6};
+}
+
+auto ReactionThermoModelAnalyticalPHREEQC(const ReactionThermoModelParamsPhreeqcAnalytical& params) -> ReactionThermoModel
 {
     auto evalfn = [=](ReactionThermoProps& props, ReactionThermoArgs args)
     {
-        ReactionThermoArgsDecl(args);
+        // Unpack the arguments for the evaluation of this model
+        const auto& [T, P, dV0] = args;
+
+        // Unpack the model parameters
+        const auto& [A1, A2, A3, A4, A5, A6, Pr] = params;
+
         const auto R = universalGasConstant;
         const auto T2 = T*T;
         const auto T3 = T*T2;
-        props.dG0 = -R*T * (A1 + A2*T + A3/T + A4*log10(T) + A5/T2 + A6*T2) * ln10;
-        props.dH0 = R * (A2*T2 - A3 + A4*T/ln10 - 2*A5/T + 2*A6*T3) * ln10;
+        const auto dE = dV0 * (P - Pr); // delta energy (in J/mol)
+        props.dG0 = -R*T * (A1 + A2*T + A3/T + A4*log10(T) + A5/T2 + A6*T2)*ln10 + dE;
+        props.dH0 = R * (A2*T2 - A3 + A4*T/ln10 - 2*A5/T + 2*A6*T3)*ln10 + dE;
     };
 
-    Params params = { A1, A2, A3, A4, A5, A6 };
-
-    return ReactionThermoModel(evalfn, params);
+    return ReactionThermoModel(evalfn, extractParams(params));
 }
 
 } // namespace Reaktoro
