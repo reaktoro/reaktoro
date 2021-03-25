@@ -61,6 +61,22 @@ struct FormationReaction::Impl
 
         const auto num_reactants = reactants.size();
 
+        // Consider the special case of a trivial reaction A <=> A for some
+        // species A. Because it is not possible to construct Species A and its
+        // FormationReaction that contains a reactant that it is A itself, we
+        // are forced below to make certain decisions to be able to compute the
+        // standard thermodynamic properties of A in the absense of a
+        // non-trivial reaction (e.g., G0(A) = 0).
+        if(num_reactants == 0)
+            return [=](real T, real P) mutable -> StandardThermoProps
+            {
+                StandardThermoProps props;
+                props.V0 = std_volume_model(T, P);
+                props.G0 = 0.0; // G0 = dG0 + sum(vr * G0r), but dG0=0 and G0r=G0p=0
+                props.H0 = 0.0; // H0 = dH0 + sum(vr * H0r), but dH0=0 and H0r=H0p=0
+                return props;
+            };
+
         Vec<StandardThermoProps> reactants_props(num_reactants);
 
         return [=](real T, real P) mutable -> StandardThermoProps
@@ -133,7 +149,7 @@ auto FormationReaction::withReactants(Pairs<Species, double> reactants) const ->
 auto FormationReaction::withEquilibriumConstant(Param lgK0) const -> FormationReaction
 {
     FormationReaction copy = clone();
-    copy = copy.withReactionThermoModel(ReactionThermoModelConstLgK(lgK0));
+    copy = copy.withReactionThermoModel(ReactionThermoModelConstLgK({lgK0}));
     copy = copy.withProductStandardVolume(0.0);
     return copy;
 }
