@@ -81,6 +81,13 @@ auto get(const Node& node, const std::string& key, const T& ifempty = T{})
     return child.as<T>();
 }
 
+inline auto getChildWithKeyOrError(const Node& node, const std::string& key) -> Node
+{
+    auto child = node[key];
+    Reaktoro::error(!child, "Expecting YAML node to contain an object with key `", key, "`.");
+    return child;
+}
+
 template<typename T>
 auto appendIfNotDefault(Node& node, const std::string& key, const T& value, const T& defaultval = T{}) -> void
 {
