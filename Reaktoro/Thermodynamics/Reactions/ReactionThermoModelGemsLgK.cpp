@@ -15,30 +15,41 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ReactionThermoModelAnalyticalGEMS.hpp"
+#include "ReactionThermoModelGemsLgK.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 
 namespace Reaktoro {
 
-auto ReactionThermoModelAnalyticalGEMS(Param A0, Param A1, Param A2, Param A3, Param A4, Param A5, Param A6) -> ReactionThermoModel
+/// Return a Params object containing all Param objects in @p params.
+auto extractParams(const ReactionThermoModelParamsGemsLgK& params) -> Params
+{
+    const auto& [A0, A1, A2, A3, A4, A5, A6, Pr] = params;
+    return {A0, A1, A2, A3, A4, A5, A6};
+}
+
+auto ReactionThermoModelGemsLgK(const ReactionThermoModelParamsGemsLgK& params) -> ReactionThermoModel
 {
     auto evalfn = [=](ReactionThermoProps& props, ReactionThermoArgs args)
     {
-        ReactionThermoArgsDecl(args);
+        // Unpack the arguments for the evaluation of this model
+        const auto& [T, P, dV0] = args;
+
+        // Unpack the model parameters
+        const auto& [A0, A1, A2, A3, A4, A5, A6, Pr] = params;
+
         const auto R = universalGasConstant;
         const auto T2 = T*T;
         const auto T3 = T*T2;
         const auto T05 = sqrt(T);
+        const auto dE = dV0 * (P - Pr); // delta energy (in J/mol)
 
-        props.dG0 = -R*T * (A0 + A1*T + A2/T + A3*log(T) + A4/T2 + A5*T2 + A6/T05) * ln10;
-        props.dH0 = R * (A1*T2 - A2 + A3*T - 2*A4/T + 2*A5*T3 - 0.5*A6*T05) * ln10;
+        props.dG0 = -R*T * (A0 + A1*T + A2/T + A3*log(T) + A4/T2 + A5*T2 + A6/T05)*ln10 + dE;
+        props.dH0 = R * (A1*T2 - A2 + A3*T - 2*A4/T + 2*A5*T3 - 0.5*A6*T05)*ln10 + dE;
     };
 
-    Params params = { A0, A1, A2, A3, A4, A5, A6 };
-
-    return ReactionThermoModel(evalfn, params);
+    return ReactionThermoModel(evalfn, extractParams(params));
 }
 
 } // namespace Reaktoro
