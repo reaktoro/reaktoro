@@ -24,6 +24,7 @@ void exportReactionThermoModelGemsLgK(py::module& m);
 void exportReactionThermoModelPhreeqcLgK(py::module& m);
 void exportReactionThermoModelPressureCorrection(py::module& m);
 void exportReactionThermoModelVantHoff(py::module& m);
+void exportReactionThermoModelYAML(py::module& m);
 
 void exportStandardThermoModelHKF(py::module& m);
 void exportStandardThermoModelHollandPowell(py::module& m);
@@ -39,6 +40,7 @@ void exportModels(py::module& m)
     exportReactionThermoModelPhreeqcLgK(m);
     exportReactionThermoModelPressureCorrection(m);
     exportReactionThermoModelVantHoff(m);
+    exportReactionThermoModelYAML(m);
 
     exportStandardThermoModelHKF(m);
     exportStandardThermoModelHollandPowell(m);
