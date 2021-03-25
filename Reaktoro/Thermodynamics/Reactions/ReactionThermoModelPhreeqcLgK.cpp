@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ReactionThermoModelAnalyticalPHREEQC.hpp"
+#include "ReactionThermoModelPhreeqcLgK.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
@@ -23,13 +23,13 @@
 namespace Reaktoro {
 
 /// Return a Params object containing all Param objects in @p params.
-auto extractParams(const ReactionThermoModelParamsPhreeqcAnalytical& params) -> Params
+auto extractParams(const ReactionThermoModelParamsPhreeqcLgK& params) -> Params
 {
     const auto& [A1, A2, A3, A4, A5, A6, Pr] = params;
     return {A1, A2, A3, A4, A5, A6};
 }
 
-auto ReactionThermoModelAnalyticalPHREEQC(const ReactionThermoModelParamsPhreeqcAnalytical& params) -> ReactionThermoModel
+auto ReactionThermoModelPhreeqcLgK(const ReactionThermoModelParamsPhreeqcLgK& params) -> ReactionThermoModel
 {
     auto evalfn = [=](ReactionThermoProps& props, ReactionThermoArgs args)
     {

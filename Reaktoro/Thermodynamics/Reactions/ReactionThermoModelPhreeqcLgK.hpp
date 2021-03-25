@@ -22,8 +22,8 @@
 
 namespace Reaktoro {
 
-/// The parameters in the thermodynamic model for a formation reaction based on PHREEQC's analytical expression.
-struct ReactionThermoModelParamsPhreeqcAnalytical
+/// The parameters in the thermodynamic model for a formation reaction based on PHREEQC's expression for @eq{\lg K(T)}.
+struct ReactionThermoModelParamsPhreeqcLgK
 {
     /// The coefficient @eq{A_1} in the reaction thermodynamic model.
     Param A1;
@@ -70,6 +70,13 @@ struct ReactionThermoModelParamsPhreeqcAnalytical
 /// and
 ///
 /// @eqc{\Delta H^{\circ}\equiv T^{2}\frac{\partial}{\partial T}\left(-\frac{\Delta G^{\circ}}{T}\right)=RT^{2}\frac{\partial\ln K}{\partial T}+\Delta V^{\circ}(P-P_{\mathrm{r}}).}
-auto ReactionThermoModelAnalyticalPHREEQC(const ReactionThermoModelParamsPhreeqcAnalytical& params) -> ReactionThermoModel;
+///
+/// Reference:
+/// - Parkhurst, D.L., Appelo, C.A.J. (2013). Description of input and examples
+///   for PHREEQC version 3—A computer program for speciation, batch-reaction,
+///   one-dimensional transport, and inverse geochemical calculations. In
+///   Groundwater Book 6, Modeling Techniques (p. 497). U.S. Geological Survey
+///   Techniques and Methods. http://pubs.usgs.gov/tm/06/a43
+auto ReactionThermoModelPhreeqcLgK(const ReactionThermoModelParamsPhreeqcLgK& params) -> ReactionThermoModel;
 
 } // namespace Reaktoro

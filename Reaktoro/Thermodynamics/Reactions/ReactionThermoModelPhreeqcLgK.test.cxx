@@ -20,10 +20,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelAnalyticalPHREEQC.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPhreeqcLgK.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing ReactionThermoModelAnalyticalPHREEQC class", "[ReactionThermoModelAnalyticalPHREEQC]")
+TEST_CASE("Testing ReactionThermoModelPhreeqcLgK class", "[ReactionThermoModelPhreeqcLgK]")
 {
     const auto T = 5.0;
     const auto P = 7.0;
@@ -37,7 +37,7 @@ TEST_CASE("Testing ReactionThermoModelAnalyticalPHREEQC class", "[ReactionThermo
     const auto A6 = 6.0;
     const auto Pr = 7.0;
 
-    const auto model = ReactionThermoModelAnalyticalPHREEQC({A1, A2, A3, A4, A5, A6, Pr});
+    const auto model = ReactionThermoModelPhreeqcLgK({A1, A2, A3, A4, A5, A6, Pr});
 
     const auto R = universalGasConstant;
 
