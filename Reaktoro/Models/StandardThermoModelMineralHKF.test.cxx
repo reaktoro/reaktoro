@@ -20,7 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Thermodynamics/Standard/StandardThermoModelMineralHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing StandardThermoModelMineralHKF class", "[StandardThermoModelMineralHKF]")

@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Standard/StandardThermoModelWaterHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing StandardThermoModelWaterHKF class", "[StandardThermoModelWaterHKF]")

@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Standard/StandardThermoModelHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelHKF.hpp>
 using namespace Reaktoro;
 
 //======================================================================
