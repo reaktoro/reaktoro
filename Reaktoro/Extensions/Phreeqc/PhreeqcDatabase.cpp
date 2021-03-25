@@ -30,7 +30,7 @@ CMRC_DECLARE(ReaktoroDatabases);
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcThermo.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelVantHoff.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelAnalyticalPHREEQC.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPhreeqcLgK.hpp>
 
 namespace Reaktoro {
 namespace detail {

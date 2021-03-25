@@ -22,9 +22,8 @@
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelAnalyticalPHREEQC.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPhreeqcLgK.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelConstLgK.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPressureCorrection.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelVantHoff.hpp>
 
 namespace Reaktoro {
@@ -119,7 +118,7 @@ auto reactionThermoModelAux(const SpeciesType* s, double sign) -> ReactionThermo
 
     if(use_analytic_expression())
     {
-        ReactionThermoModelParamsPhreeqcAnalytical params;
+        ReactionThermoModelParamsPhreeqcLgK params;
         params.A1 = sign * logk[T_A1];
         params.A2 = sign * logk[T_A2];
         params.A3 = sign * logk[T_A3];
@@ -127,7 +126,7 @@ auto reactionThermoModelAux(const SpeciesType* s, double sign) -> ReactionThermo
         params.A5 = sign * logk[T_A5];
         params.A6 = sign * logk[T_A6];
         params.Pr = 101325; // reference pressure (1 atm = 101325 Pa)
-        return ReactionThermoModelAnalyticalPHREEQC(params);
+        return ReactionThermoModelPhreeqcLgK(params);
     }
     else
     {

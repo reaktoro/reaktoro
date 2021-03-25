@@ -21,20 +21,20 @@
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelAnalyticalPHREEQC.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPhreeqcLgK.hpp>
 using namespace Reaktoro;
 
-void exportReactionThermoModelAnalyticalPHREEQC(py::module& m)
+void exportReactionThermoModelPhreeqcLgK(py::module& m)
 {
-    py::class_<ReactionThermoModelParamsPhreeqcAnalytical>(m, "ReactionThermoModelParamsPhreeqcAnalytical")
-        .def_readwrite("A1", &ReactionThermoModelParamsPhreeqcAnalytical::A1)
-        .def_readwrite("A2", &ReactionThermoModelParamsPhreeqcAnalytical::A2)
-        .def_readwrite("A3", &ReactionThermoModelParamsPhreeqcAnalytical::A3)
-        .def_readwrite("A4", &ReactionThermoModelParamsPhreeqcAnalytical::A4)
-        .def_readwrite("A5", &ReactionThermoModelParamsPhreeqcAnalytical::A5)
-        .def_readwrite("A6", &ReactionThermoModelParamsPhreeqcAnalytical::A6)
-        .def_readwrite("Pr", &ReactionThermoModelParamsPhreeqcAnalytical::Pr)
+    py::class_<ReactionThermoModelParamsPhreeqcLgK>(m, "ReactionThermoModelParamsPhreeqcLgK")
+        .def_readwrite("A1", &ReactionThermoModelParamsPhreeqcLgK::A1)
+        .def_readwrite("A2", &ReactionThermoModelParamsPhreeqcLgK::A2)
+        .def_readwrite("A3", &ReactionThermoModelParamsPhreeqcLgK::A3)
+        .def_readwrite("A4", &ReactionThermoModelParamsPhreeqcLgK::A4)
+        .def_readwrite("A5", &ReactionThermoModelParamsPhreeqcLgK::A5)
+        .def_readwrite("A6", &ReactionThermoModelParamsPhreeqcLgK::A6)
+        .def_readwrite("Pr", &ReactionThermoModelParamsPhreeqcLgK::Pr)
         ;
 
-    m.def("ReactionThermoModelAnalyticalPHREEQC", ReactionThermoModelAnalyticalPHREEQC);
+    m.def("ReactionThermoModelPhreeqcLgK", ReactionThermoModelPhreeqcLgK);
 }
