@@ -49,8 +49,8 @@ public:
     yaml(const YAML::Node& node);
 
     /// Append a child node with a given value only if value is not default value.
-    template<typename T>
-    auto appendIfNotDefault(const std::string& key, const T& value, const T& defaultval = T{}) -> void {
+    template<typename T, typename U = T>
+    auto appendIfNotDefault(const std::string& key, const T& value, const U& defaultval = U{}) -> void {
         if(value != defaultval) (*this)[key] = value; }
 
     /// Return a child node with given key if found, otherwise raise an error.
