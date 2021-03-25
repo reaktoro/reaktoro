@@ -39,6 +39,10 @@ TEST_CASE("Testing StandardThermoModelWaterHKF class", "[StandardThermoModelWate
 
         auto model = StandardThermoModelWaterHKF(params);
 
+        //======================================================================
+        // Test method Model::operator()(T, P)
+        //======================================================================
+
         StandardThermoProps props;
         props = model(T, P);
 
@@ -47,5 +51,23 @@ TEST_CASE("Testing StandardThermoModelWaterHKF class", "[StandardThermoModelWate
         CHECK( props.V0  == Approx(1.77559e-05) );
         CHECK( props.Cp0 == Approx(72.4980)     );
         CHECK( props.Cv0 == Approx(67.2659)     );
+
+        //======================================================================
+        // Test method Model::params()
+        //======================================================================
+
+        CHECK( model.params().size() == 0 );
+
+        //======================================================================
+        // Test method Model::serialize()
+        //======================================================================
+
+        yaml node;
+
+        node = model.serialize();
+        CHECK( double(node.at("WaterHKF").at("Ttr")) == params.Ttr );
+        CHECK( double(node.at("WaterHKF").at("Str")) == params.Str );
+        CHECK( double(node.at("WaterHKF").at("Gtr")) == params.Gtr );
+        CHECK( double(node.at("WaterHKF").at("Htr")) == params.Htr );
     }
 }

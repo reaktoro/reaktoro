@@ -45,6 +45,10 @@ TEST_CASE("Testing StandardThermoModelMineralHKF class", "[StandardThermoModelMi
 
         auto model = StandardThermoModelMineralHKF(params);
 
+        //======================================================================
+        // Test method Model::operator()(T, P)
+        //======================================================================
+
         StandardThermoProps props;
 
         T = 75.0 + 273.15; // 75 degC (in K)
@@ -66,6 +70,39 @@ TEST_CASE("Testing StandardThermoModelMineralHKF class", "[StandardThermoModelMi
         CHECK( props.V0  == Approx(0.00010007)   );
         CHECK( props.Cp0 == Approx(328.322)      );
         CHECK( props.Cv0 == Approx(328.322)      );
+
+        //======================================================================
+        // Test method Model::params()
+        //======================================================================
+
+        CHECK( model.params().size() == 7 );
+        CHECK( model.params()[0]  == params.Gf );
+        CHECK( model.params()[1]  == params.Hf );
+        CHECK( model.params()[2]  == params.Sr );
+        CHECK( model.params()[3]  == params.Vr );
+        CHECK( model.params()[4]  == params.a[0] );
+        CHECK( model.params()[5]  == params.b[0] );
+        CHECK( model.params()[6]  == params.c[0] );
+
+        //======================================================================
+        // Test method Model::serialize()
+        //======================================================================
+
+        yaml node;
+
+        node = model.serialize();
+        CHECK( double(node.at("MineralHKF").at("Gf"))   == params.Gf );
+        CHECK( double(node.at("MineralHKF").at("Hf"))   == params.Hf );
+        CHECK( double(node.at("MineralHKF").at("Sr"))   == params.Sr );
+        CHECK( double(node.at("MineralHKF").at("Vr"))   == params.Vr );
+        CHECK( double(node.at("MineralHKF").at("a")[0]) == params.a[0] );
+        CHECK( double(node.at("MineralHKF").at("b")[0]) == params.b[0] );
+        CHECK( double(node.at("MineralHKF").at("c")[0]) == params.c[0] );
+
+        params.Gf = 1234.0; // change value of Param object and check if new serialize call reflects this change
+
+        node = model.serialize();
+        CHECK( double(node.at("MineralHKF").at("Gf")) == 1234.0 );
     }
 
     // Check Oelkers et al. (1995), page 1544, table for Albite.
@@ -88,6 +125,10 @@ TEST_CASE("Testing StandardThermoModelMineralHKF class", "[StandardThermoModelMi
 
         auto model = StandardThermoModelMineralHKF(params);
 
+        //======================================================================
+        // Test method Model::operator()(T, P)
+        //======================================================================
+
         StandardThermoProps props;
 
         T = 75.0 + 273.15; // 75 degC (in K)
@@ -109,5 +150,52 @@ TEST_CASE("Testing StandardThermoModelMineralHKF class", "[StandardThermoModelMi
         CHECK( props.V0  == Approx(0.00010025)   );
         CHECK( props.Cp0 == Approx(348.572)      );
         CHECK( props.Cv0 == Approx(348.572)      );
+
+        //======================================================================
+        // Test method Model::params()
+        //======================================================================
+
+        CHECK( model.params().size() == 14 );
+        CHECK( model.params()[0]  == params.Gf );
+        CHECK( model.params()[1]  == params.Hf );
+        CHECK( model.params()[2]  == params.Sr );
+        CHECK( model.params()[3]  == params.Vr );
+        CHECK( model.params()[4]  == params.a[0] );
+        CHECK( model.params()[5]  == params.a[1] );
+        CHECK( model.params()[6]  == params.b[0] );
+        CHECK( model.params()[7]  == params.b[1] );
+        CHECK( model.params()[8]  == params.c[0] );
+        CHECK( model.params()[9]  == params.c[1] );
+        CHECK( model.params()[10] == params.Ttr[0] );
+        CHECK( model.params()[11] == params.Htr[0] );
+        CHECK( model.params()[12] == params.Vtr[0] );
+        CHECK( model.params()[13] == params.dPdTtr[0] );
+
+        //======================================================================
+        // Test method Model::serialize()
+        //======================================================================
+
+        yaml node;
+
+        node = model.serialize();
+        CHECK( double(node.at("MineralHKF").at("Gf"))        == params.Gf );
+        CHECK( double(node.at("MineralHKF").at("Hf"))        == params.Hf );
+        CHECK( double(node.at("MineralHKF").at("Sr"))        == params.Sr );
+        CHECK( double(node.at("MineralHKF").at("Vr"))        == params.Vr );
+        CHECK( double(node.at("MineralHKF").at("a")[0])      == params.a[0] );
+        CHECK( double(node.at("MineralHKF").at("a")[1])      == params.a[1] );
+        CHECK( double(node.at("MineralHKF").at("b")[0])      == params.b[0] );
+        CHECK( double(node.at("MineralHKF").at("b")[1])      == params.b[1] );
+        CHECK( double(node.at("MineralHKF").at("c")[0])      == params.c[0] );
+        CHECK( double(node.at("MineralHKF").at("c")[1])      == params.c[1] );
+        CHECK( double(node.at("MineralHKF").at("Ttr")[0])    == params.Ttr[0] );
+        CHECK( double(node.at("MineralHKF").at("Htr")[0])    == params.Htr[0] );
+        CHECK( double(node.at("MineralHKF").at("Vtr")[0])    == params.Vtr[0] );
+        CHECK( double(node.at("MineralHKF").at("dPdTtr")[0]) == params.dPdTtr[0] );
+
+        params.Gf = 1234.0; // change value of Param object and check if new serialize call reflects this change
+
+        node = model.serialize();
+        CHECK( double(node.at("MineralHKF").at("Gf")) == 1234.0 );
     }
 }

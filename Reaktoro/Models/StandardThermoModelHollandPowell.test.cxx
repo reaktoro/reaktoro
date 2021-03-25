@@ -48,6 +48,10 @@ TEST_CASE("Testing StandardThermoModelHollandPowell class", "[StandardThermoMode
 
         auto model = StandardThermoModelHollandPowell(params);
 
+        //======================================================================
+        // Test method Model::operator()(T, P)
+        //======================================================================
+
         WHEN("temperature is 75 C and pressure is 500 bar")
         {
             const auto T = 75.0 + 273.15; // in K
@@ -78,6 +82,49 @@ TEST_CASE("Testing StandardThermoModelHollandPowell class", "[StandardThermoMode
             CHECK( props.Cp0 == Approx(71.5722) );
             CHECK( props.Cv0 == Approx(71.5722) );
         }
+
+        //======================================================================
+        // Test method Model::params()
+        //======================================================================
+
+        CHECK( model.params().size() == 12 );
+        CHECK( model.params()[0]  == params.Gf );
+        CHECK( model.params()[1]  == params.Hf );
+        CHECK( model.params()[2]  == params.Sr );
+        CHECK( model.params()[3]  == params.Vr );
+        CHECK( model.params()[4]  == params.a );
+        CHECK( model.params()[5]  == params.b );
+        CHECK( model.params()[6]  == params.c );
+        CHECK( model.params()[7]  == params.d );
+        CHECK( model.params()[8]  == params.alpha0 );
+        CHECK( model.params()[9]  == params.kappa0 );
+        CHECK( model.params()[10] == params.kappa0p );
+        CHECK( model.params()[11] == params.kappa0pp );
+
+        //======================================================================
+        // Test method Model::serialize()
+        //======================================================================
+
+        yaml node;
+
+        node = model.serialize();
+        CHECK( double(node.at("HollandPowell").at("Gf"))       == params.Gf );
+        CHECK( double(node.at("HollandPowell").at("Hf"))       == params.Hf );
+        CHECK( double(node.at("HollandPowell").at("Sr"))       == params.Sr );
+        CHECK( double(node.at("HollandPowell").at("Vr"))       == params.Vr );
+        CHECK( double(node.at("HollandPowell").at("a"))        == params.a );
+        CHECK( double(node.at("HollandPowell").at("b"))        == params.b );
+        CHECK( double(node.at("HollandPowell").at("c"))        == params.c );
+        CHECK( double(node.at("HollandPowell").at("d"))        == params.d );
+        CHECK( double(node.at("HollandPowell").at("alpha0"))   == params.alpha0 );
+        CHECK( double(node.at("HollandPowell").at("kappa0"))   == params.kappa0 );
+        CHECK( double(node.at("HollandPowell").at("kappa0p"))  == params.kappa0p );
+        CHECK( double(node.at("HollandPowell").at("kappa0pp")) == params.kappa0pp );
+
+        params.Gf = 1234.0; // change value of Param object and check if new serialize call reflects this change
+
+        node = model.serialize();
+        CHECK( double(node.at("HollandPowell").at("Gf")) == 1234.0 );
     }
 
     // Check Oelkers et al. (1995), page 1544, table for Albite computed standard Gibbs energy.
