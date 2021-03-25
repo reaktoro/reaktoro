@@ -30,7 +30,11 @@
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
-// Reaktoro includes (StandardThermoModels)
+// Reaktoro includes (Models)
+#include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelGemsLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
 #include <Reaktoro/Models/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
@@ -167,7 +171,89 @@ auto operator>>(const yaml& node, Species& obj) -> void
 }
 
 //=====================================================================================================================
-// StandardThermoModel
+// Models
+//=====================================================================================================================
+
+auto operator<<(yaml& node, const ReactionThermoModelParamsConstLgK& obj) -> void
+{
+    node["lgKr"] = obj.lgKr;
+    node.appendIfNotDefault("Pr", obj.Pr, 100'000);
+}
+
+auto operator>>(const yaml& node, ReactionThermoModelParamsConstLgK& obj) -> void
+{
+    node.at("lgKr").to(obj.lgKr);
+    obj.Pr = node["Pr"].value(100'000);
+}
+
+//=====================================================================================================================
+
+auto operator<<(yaml& node, const ReactionThermoModelParamsGemsLgK& obj) -> void
+{
+    node["A0"] = obj.A0;
+    node["A1"] = obj.A1;
+    node["A2"] = obj.A2;
+    node["A3"] = obj.A3;
+    node["A4"] = obj.A4;
+    node["A5"] = obj.A5;
+    node["A6"] = obj.A6;
+    node.appendIfNotDefault("Pr", obj.Pr, 100'000);
+}
+
+auto operator>>(const yaml& node, ReactionThermoModelParamsGemsLgK& obj) -> void
+{
+    node.at("A0").to(obj.A0);
+    node.at("A1").to(obj.A1);
+    node.at("A2").to(obj.A2);
+    node.at("A3").to(obj.A3);
+    node.at("A4").to(obj.A4);
+    node.at("A5").to(obj.A5);
+    node.at("A6").to(obj.A6);
+    obj.Pr = node["Pr"].value(100'000);
+}
+
+//=====================================================================================================================
+
+auto operator<<(yaml& node, const ReactionThermoModelParamsPhreeqcLgK& obj) -> void
+{
+    node["A1"] = obj.A1;
+    node["A2"] = obj.A2;
+    node["A3"] = obj.A3;
+    node["A4"] = obj.A4;
+    node["A5"] = obj.A5;
+    node["A6"] = obj.A6;
+    node.appendIfNotDefault("Pr", obj.Pr, 100'000);
+}
+
+auto operator>>(const yaml& node, ReactionThermoModelParamsPhreeqcLgK& obj) -> void
+{
+    node.at("A1").to(obj.A1);
+    node.at("A2").to(obj.A2);
+    node.at("A3").to(obj.A3);
+    node.at("A4").to(obj.A4);
+    node.at("A5").to(obj.A5);
+    node.at("A6").to(obj.A6);
+    obj.Pr = node["Pr"].value(100'000);
+}
+
+//=====================================================================================================================
+
+auto operator<<(yaml& node, const ReactionThermoModelParamsVantHoff& obj) -> void
+{
+    node["lgKr"] = obj.lgKr;
+    node["dHr"] = obj.dHr;
+    node.appendIfNotDefault("Tr", obj.Tr, 298.15);
+    node.appendIfNotDefault("Pr", obj.Pr, 100'000);
+}
+
+auto operator>>(const yaml& node, ReactionThermoModelParamsVantHoff& obj) -> void
+{
+    node.at("lgKr").to(obj.lgKr);
+    node.at("dHr").to(obj.dHr);
+    obj.Tr = node["Tr"].value(298.15);
+    obj.Pr = node["Pr"].value(100'000);
+}
+
 //=====================================================================================================================
 
 auto operator<<(yaml& node, const StandardThermoModelParamsHKF& obj) -> void
