@@ -17,7 +17,7 @@
 
 #include "YAML.hpp"
 
-namespace YAML {
+namespace Reaktoro {
 
 yaml::yaml()
 : YAML::Node()
@@ -39,4 +39,11 @@ yaml::yaml(const Node& node)
 : YAML::Node(node)
 {}
 
-} // namespace YAML
+auto yaml::at(const std::string& key) const -> yaml
+{
+    auto child = (*this)[key];
+    errorif(!child, "Could not get YAML node with key ", key, " .");
+    return child;
+}
+
+} // namespace Reaktoro
