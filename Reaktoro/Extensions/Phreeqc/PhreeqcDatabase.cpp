@@ -27,10 +27,10 @@ CMRC_DECLARE(ReaktoroDatabases);
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
-#include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcThermo.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPhreeqcLgK.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
+#include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
 
 namespace Reaktoro {
 namespace detail {

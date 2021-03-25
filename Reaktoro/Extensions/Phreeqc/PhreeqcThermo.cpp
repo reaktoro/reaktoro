@@ -22,9 +22,9 @@
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPhreeqcLgK.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelConstLgK.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
 
 namespace Reaktoro {
 namespace PhreeqcUtils {

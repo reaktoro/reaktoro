@@ -20,37 +20,34 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing ReactionThermoModelPhreeqcLgK class", "[ReactionThermoModelPhreeqcLgK]")
+TEST_CASE("Testing ReactionThermoModelVantHoff class", "[ReactionThermoModelVantHoff]")
 {
+    const auto lgKr = 1.0;
+    const auto dHr  = 2.0;
+    const auto Tr   = 3.0;
+    const auto Pr   = 4.0;
+
     const auto T = 5.0;
     const auto P = 7.0;
     const auto dV0 = 9.0;
 
-    const auto A1 = 1.0;
-    const auto A2 = 2.0;
-    const auto A3 = 3.0;
-    const auto A4 = 4.0;
-    const auto A5 = 5.0;
-    const auto A6 = 6.0;
-    const auto Pr = 7.0;
+    const auto model = ReactionThermoModelVantHoff({lgKr, dHr, Tr, Pr});
 
-    const auto model = ReactionThermoModelPhreeqcLgK({A1, A2, A3, A4, A5, A6, Pr});
+    const auto rpropsfn = model;
 
     const auto R = universalGasConstant;
 
-    const auto lgK   = A1 + A2*T + A3/T + A4*log10(T) + A5/(T*T) + A6*T*T;
-    const auto lgK_T = A2 - A3/(T*T) + A4/(ln10*T) - 2*A5/(T*T*T) + 2*A6*T;
+    const auto lnKr = lgKr * ln10;
 
-    const auto lnK   = ln10 * lgK;
-    const auto lnK_T = ln10 * lgK_T;
+    const auto lnK = lnKr - dHr/R * (1.0/T - 1.0/Tr);
 
-    const auto dE = dV0 * (P - Pr);
+    const auto dE = dV0*(P - Pr);
 
-    const auto dG0x = -R*T*lnK + dE;     // expected dG0 at (T, P)
-    const auto dH0x =  R*T*T*lnK_T + dE; // expected dH0 at (T, P)
+    const auto dG0x = -R*T*lnK + dE; // expected dG0 at (T, P)
+    const auto dH0x = dHr + dE; // expected dH0 at (T, P)
 
     ReactionThermoProps rprops = model({T, P, dV0});
 

@@ -20,30 +20,29 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelGemsLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing ReactionThermoModelGemsLgK class", "[ReactionThermoModelGemsLgK]")
+TEST_CASE("Testing ReactionThermoModelPhreeqcLgK class", "[ReactionThermoModelPhreeqcLgK]")
 {
     const auto T = 5.0;
     const auto P = 7.0;
     const auto dV0 = 9.0;
 
-    const auto A0 = 1.0;
-    const auto A1 = 2.0;
-    const auto A2 = 3.0;
-    const auto A3 = 4.0;
-    const auto A4 = 5.0;
-    const auto A5 = 6.0;
-    const auto A6 = 7.0;
+    const auto A1 = 1.0;
+    const auto A2 = 2.0;
+    const auto A3 = 3.0;
+    const auto A4 = 4.0;
+    const auto A5 = 5.0;
+    const auto A6 = 6.0;
     const auto Pr = 7.0;
 
-    const auto model = ReactionThermoModelGemsLgK({A0, A1, A2, A3, A4, A5, A6, Pr});
+    const auto model = ReactionThermoModelPhreeqcLgK({A1, A2, A3, A4, A5, A6, Pr});
 
     const auto R = universalGasConstant;
 
-    const auto lgK   = A0 + A1*T + A2/T + A3*log(T) + A4/(T*T) + A5*(T*T) + A6/sqrt(T);
-    const auto lgK_T = A1 - A2/(T*T) + A3/T - 2*A4/(T*T*T) + 2*A5*T - 0.5*A6/(T*sqrt(T));
+    const auto lgK   = A1 + A2*T + A3/T + A4*log10(T) + A5/(T*T) + A6*T*T;
+    const auto lgK_T = A2 - A3/(T*T) + A4/(ln10*T) - 2*A5/(T*T*T) + 2*A6*T;
 
     const auto lnK   = ln10 * lgK;
     const auto lnK_T = ln10 * lgK_T;
