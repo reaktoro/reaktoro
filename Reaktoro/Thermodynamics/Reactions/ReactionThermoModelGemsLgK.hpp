@@ -22,10 +22,37 @@
 
 namespace Reaktoro {
 
-/// Return a function that calculates thermodynamic properties of a reaction using GEMS's analytical expression.
+/// The parameters in the thermodynamic model for a formation reaction based on GEM-Selektor's expression for @eq{\lg K(T)}.
+struct ReactionThermoModelParamsGemsLgK
+{
+    /// The coefficient @eq{A_0} in the reaction thermodynamic model.
+    Param A0;
+
+    /// The coefficient @eq{A_1} in the reaction thermodynamic model.
+    Param A1;
+
+    /// The coefficient @eq{A_2} in the reaction thermodynamic model.
+    Param A2;
+
+    /// The coefficient @eq{A_3} in the reaction thermodynamic model.
+    Param A3;
+
+    /// The coefficient @eq{A_4} in the reaction thermodynamic model.
+    Param A4;
+
+    /// The coefficient @eq{A_5} in the reaction thermodynamic model.
+    Param A5;
+
+    /// The coefficient @eq{A_6} in the reaction thermodynamic model.
+    Param A6;
+
+    /// The reference pressure @eq{P_{\mathrm{r}}} (in Pa).
+    real Pr = 1.0e5;
+};
+
+/// Return a function that calculates thermodynamic properties of a reaction using GEM-Selektor's expression for @eq{\lg K(T)}.
 ///
-/// In this model, the equilibrium constant of the reaction
-/// is computed at a given temperature with:
+/// In this model, the equilibrium constant of the reaction is computed at a given temperature with:
 ///
 /// @eqc{\log_{10}K=A_{0}+A_{1}T+A_{2}T^{-1}+A_{3}\ln T+A_{4}T^{-2}+A_{5}T^{2}+A_{6}T^{-0.5},}
 ///
@@ -46,15 +73,13 @@ namespace Reaktoro {
 ///
 /// @eqc{\Delta H^{\circ}\equiv T^{2}\frac{\partial}{\partial T}\left(-\frac{\Delta G^{\circ}}{T}\right)=RT^{2}\frac{\partial\ln K}{\partial T}.}
 ///
-/// @param A0 The coefficient @eq{A_0} in the reaction thermodynamic model.
-/// @param A1 The coefficient @eq{A_1} in the reaction thermodynamic model.
-/// @param A2 The coefficient @eq{A_2} in the reaction thermodynamic model.
-/// @param A3 The coefficient @eq{A_3} in the reaction thermodynamic model.
-/// @param A4 The coefficient @eq{A_4} in the reaction thermodynamic model.
-/// @param A5 The coefficient @eq{A_5} in the reaction thermodynamic model.
-/// @param A6 The coefficient @eq{A_6} in the reaction thermodynamic model.
-/// @return ReactionThermoModel
-///
-auto ReactionThermoModelAnalyticalGEMS(Param A0, Param A1, Param A2, Param A3, Param A4, Param A5, Param A6) -> ReactionThermoModel;
+/// Reference:
+/// - Kulik, D., Wagner T. (2010) Part 3. Temperature corrections of
+///   standard molar (partial molal) thermodynamic properties of substances and
+///   reactions using data in ReacDC records of GEM-Selektor.
+/// - Haas, J.L., Fisher, J.R. (1976). Simultaneous evaluation and correlation
+///   of thermodynamic data. In American Journal of Science (Vol. 276, Issue 4,
+///   pp. 525–545). https://doi.org/10.2475/ajs.276.4.525
+auto ReactionThermoModelGemsLgK(const ReactionThermoModelParamsGemsLgK& params) -> ReactionThermoModel;
 
 } // namespace Reaktoro
