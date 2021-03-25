@@ -105,7 +105,7 @@ TEST_CASE("Testing Species class", "[Species]")
                 .withProductStandardVolume(0.1)
                 .withReactionThermoModel(
                     [](ReactionThermoProps& props, ReactionThermoArgs args) {
-                        ReactionThermoArgsDecl(args);
+                        const auto& [T, P, dV0] = args;
                         props.dG0 = T + P;
                         props.dH0 = T - P;
                         return props;

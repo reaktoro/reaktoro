@@ -53,10 +53,6 @@ struct ReactionThermoArgs
     const real& dV0;
 };
 
-/// Convenience macro to expand the structured bindings of a ReactionThermoArgs members.
-#define ReactionThermoArgsDecl(args) \
-    [[maybe_unused]] const auto& [T, P, dV0] = args;
-
 /// The function type for calculation of standard thermodynamic properties of a reaction.
 using ReactionThermoModel = Model<ReactionThermoProps(ReactionThermoArgs)>;
 
