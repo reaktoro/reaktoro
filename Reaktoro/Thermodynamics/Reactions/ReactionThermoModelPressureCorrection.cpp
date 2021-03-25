@@ -26,7 +26,9 @@ auto ReactionThermoModelPressureCorrection(Param Pr) -> ReactionThermoModel
 {
     auto evalfn = [=](ReactionThermoProps& props, ReactionThermoArgs args)
     {
-        ReactionThermoArgsDecl(args);
+        // Unpack the arguments for the evaluation of this model
+        const auto& [T, P, dV0] = args;
+
         const auto dE = (P - Pr) * dV0; // delta energy (in J/mol)
         props.dG0 += dE;
         props.dH0 += dE;

@@ -26,7 +26,9 @@ auto ReactionThermoModelConstLgK(Param lgK0) -> ReactionThermoModel
 {
     auto evalfn = [=](ReactionThermoProps& props, ReactionThermoArgs args)
     {
-        ReactionThermoArgsDecl(args);
+        // Unpack the arguments for the evaluation of this model
+        const auto& [T, P, dV0] = args;
+
         const auto R = universalGasConstant;
         const auto lnK0 = lgK0 * ln10;
         props.dG0 = -R*T*lnK0;
