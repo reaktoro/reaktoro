@@ -24,8 +24,8 @@ using std::log;
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Memoization.hpp>
-#include <Reaktoro/Thermodynamics/Standard/Support/SpeciesElectroProps.hpp>
-#include <Reaktoro/Thermodynamics/Standard/Support/SpeciesElectroPropsHKF.hpp>
+#include <Reaktoro/Models/Support/SpeciesElectroProps.hpp>
+#include <Reaktoro/Models/Support/SpeciesElectroPropsHKF.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>

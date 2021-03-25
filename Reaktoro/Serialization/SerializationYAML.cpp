@@ -30,12 +30,12 @@
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
-// Reaktoro includes (StandardThermoModel)
-#include <Reaktoro/Thermodynamics/Standard/StandardThermoModelHKF.hpp>
-#include <Reaktoro/Thermodynamics/Standard/StandardThermoModelHollandPowell.hpp>
-#include <Reaktoro/Thermodynamics/Standard/StandardThermoModelMaierKelley.hpp>
-#include <Reaktoro/Thermodynamics/Standard/StandardThermoModelMineralHKF.hpp>
-#include <Reaktoro/Thermodynamics/Standard/StandardThermoModelWaterHKF.hpp>
+// Reaktoro includes (StandardThermoModels)
+#include <Reaktoro/Models/StandardThermoModelHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
+#include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
+#include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
 
 namespace Reaktoro {
 

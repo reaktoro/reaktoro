@@ -21,10 +21,10 @@
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Standard/StandardThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
 using namespace Reaktoro;
 
-void exportStandardThermoModelYAML(py::module& m)
+void exportStandardThermoModelWaterHKF(py::module& m)
 {
-    m.def("StandardThermoModelYAML", StandardThermoModelYAML);
+    m.def("StandardThermoModelWaterHKF", StandardThermoModelWaterHKF);
 }
