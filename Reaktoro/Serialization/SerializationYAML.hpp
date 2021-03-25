@@ -37,16 +37,16 @@ class Species;
 template<typename Signature>
 class Model;
 
-// Forward declarations (StandardThermoModel)
+// Forward declarations (Models)
+struct ReactionThermoModelParamsConstLgK;
+struct ReactionThermoModelParamsGemsLgK;
+struct ReactionThermoModelParamsPhreeqcLgK;
+struct ReactionThermoModelParamsVantHoff;
 struct StandardThermoModelParamsHKF;
 struct StandardThermoModelParamsHollandPowell;
 struct StandardThermoModelParamsMaierKelley;
 struct StandardThermoModelParamsMineralHKF;
 struct StandardThermoModelParamsWaterHKF;
-
-} // namespace Reaktoro
-
-namespace Reaktoro {
 
 //=====================================================================================================================
 // Common
@@ -80,24 +80,21 @@ auto operator>>(const yaml& node, Phase& obj) -> void;
 auto operator<<(yaml& node, const Species& obj) -> void;
 auto operator>>(const yaml& node, Species& obj) -> void;
 
-// template<typename Signature>
-// auto operator<<(yaml& node, const Model<Signature>& obj) -> void
-// {
-//     node = obj.yaml();
-// }
-
-
-// auto operator<<(yaml& node, const std::any& params) -> void
-
-// // template<typename Signature>
-// // auto operator>>(const yaml& node, Model<Signature>& obj) -> void
-// // {
-
-// // }
-
 //=====================================================================================================================
-// StandardThermoModel
+// Models
 //=====================================================================================================================
+
+auto operator<<(yaml& node, const ReactionThermoModelParamsConstLgK& obj) -> void;
+auto operator>>(const yaml& node, ReactionThermoModelParamsConstLgK& obj) -> void;
+
+auto operator<<(yaml& node, const ReactionThermoModelParamsGemsLgK& obj) -> void;
+auto operator>>(const yaml& node, ReactionThermoModelParamsGemsLgK& obj) -> void;
+
+auto operator<<(yaml& node, const ReactionThermoModelParamsPhreeqcLgK& obj) -> void;
+auto operator>>(const yaml& node, ReactionThermoModelParamsPhreeqcLgK& obj) -> void;
+
+auto operator<<(yaml& node, const ReactionThermoModelParamsVantHoff& obj) -> void;
+auto operator>>(const yaml& node, ReactionThermoModelParamsVantHoff& obj) -> void;
 
 auto operator<<(yaml& node, const StandardThermoModelParamsHKF& obj) -> void;
 auto operator>>(const yaml& node, StandardThermoModelParamsHKF& obj) -> void;
