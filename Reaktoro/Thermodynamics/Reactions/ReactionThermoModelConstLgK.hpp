@@ -22,23 +22,36 @@
 
 namespace Reaktoro {
 
-/// Return a function that calculates thermodynamic properties of a reaction using a constant lg(K) model.
+/// The parameters in a thermodynamic model for a formation reaction based on constant @eq{\lg K(T)}.
+struct ReactionThermoModelParamsConstLgK
+{
+    /// The equilibrium constant @eq{\lg K_{\mathrm{r}}} (log base 10) of the reaction at @eq{T_{\mathrm{r}}} and @eq{P_{\mathrm{r}}}.
+    Param lgKr;
+
+    /// The reference pressure @eq{P_{\mathrm{r}}} (in Pa).
+    real Pr = 100'000;
+};
+
+/// Return a function that calculates thermodynamic properties of a reaction using a constant model for @eq{\lg K(T)}.
 ///
-/// In this model, the equilibrium constant of the reaction remains constant at all temperatures.
-/// is computed at a given temperature with:
+/// In this model, the equilibrium constant of the reaction remains constant:
 ///
-/// @eqc{\log_10 K=\log_10 K_{0},}
+/// @eqc{\lg K(T)=\lg K_{\mathrm{r}},}
 ///
-/// where @eq{\ln K_{0}} is a given equilibrium constant.
-/// The standard Gibbs energy of reaction is computed using:
+/// where @eq{\lg K_{\mathrm{r}}} is a given equilibrium constant at a
+/// reference temperature and pressure.
 ///
-/// @eqc{\Delta G^{\circ}=-RT\ln K_{0}}
+/// The standard Gibbs energy of the reaction is computed using:
 ///
-/// while the standard enthalpy of reaction is assumed zero:
+/// @eqc{\Delta G^{\circ}(T,P)=-RT\ln K_{\mathrm{r}}+\Delta V^{\circ}(P-P_{\mathrm{r}})}
 ///
-/// @eqc{\Delta H^{\circ}=0.}
+/// while the standard enthalpy of the reaction is:
 ///
-/// @param lgK0 The equilibrium constant (log base 10) of the reaction.
-auto ReactionThermoModelConstLgK(Param lgK0) -> ReactionThermoModel;
+/// @eqc{\Delta H^{\circ}(T,P)=\Delta V^{\circ}(P-P_{\mathrm{r}}).}
+///
+/// Note that a pressure correction is introduced above, where @eq{\Delta V^{\circ}}
+/// is the change of standard molar volume of the reaction at @eq{T} and @eq{P},
+/// with @eq{P_{\mathrm{r}}} denoting a given reference pressure.
+auto ReactionThermoModelConstLgK(const ReactionThermoModelParamsConstLgK& params) -> ReactionThermoModel;
 
 } // namespace Reaktoro
