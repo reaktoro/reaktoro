@@ -258,43 +258,40 @@ auto operator>>(const yaml& node, ReactionThermoModelParamsVantHoff& obj) -> voi
 
 auto operator<<(yaml& node, const StandardThermoModelParamsHKF& obj) -> void
 {
-    auto child = node["HKF"]; // use shorter name instead of full type name (just the last distinct words)!
-    child["Gf"] = obj.Gf;
-    child["Hf"] = obj.Hf;
-    child["Sr"] = obj.Sr;
-    child["a1"] = obj.a1;
-    child["a2"] = obj.a2;
-    child["a3"] = obj.a3;
-    child["a4"] = obj.a4;
-    child["c1"] = obj.c1;
-    child["c2"] = obj.c2;
-    child["wref"] = obj.wref;
-    child["charge"] = obj.charge;
-    child["formula"] = obj.formula;
+    node["Gf"] = obj.Gf;
+    node["Hf"] = obj.Hf;
+    node["Sr"] = obj.Sr;
+    node["a1"] = obj.a1;
+    node["a2"] = obj.a2;
+    node["a3"] = obj.a3;
+    node["a4"] = obj.a4;
+    node["c1"] = obj.c1;
+    node["c2"] = obj.c2;
+    node["wref"] = obj.wref;
+    node["charge"] = obj.charge;
+    node["formula"] = obj.formula;
 }
 
 auto operator>>(const yaml& node, StandardThermoModelParamsHKF& obj) -> void
 {
-    auto child = node.at("HKF"); // use shorter name instead of full type name (just the last distinct words)!
-    child.at("Gf").to(obj.Gf);
-    child.at("Hf").to(obj.Hf);
-    child.at("Sr").to(obj.Sr);
-    child.at("a1").to(obj.a1);
-    child.at("a2").to(obj.a2);
-    child.at("a3").to(obj.a3);
-    child.at("a4").to(obj.a4);
-    child.at("c1").to(obj.c1);
-    child.at("c2").to(obj.c2);
-    child.at("wref").to(obj.wref);
-    child.at("charge").to(obj.charge);
-    child.at("formula").to(obj.formula);
+    node.at("Gf").to(obj.Gf);
+    node.at("Hf").to(obj.Hf);
+    node.at("Sr").to(obj.Sr);
+    node.at("a1").to(obj.a1);
+    node.at("a2").to(obj.a2);
+    node.at("a3").to(obj.a3);
+    node.at("a4").to(obj.a4);
+    node.at("c1").to(obj.c1);
+    node.at("c2").to(obj.c2);
+    node.at("wref").to(obj.wref);
+    node.at("charge").to(obj.charge);
+    node.at("formula").to(obj.formula);
 }
 
 //=====================================================================================================================
 
 auto operator<<(yaml& node, const StandardThermoModelParamsHollandPowell& obj) -> void
 {
-    auto child = node["HollandPowell"]; // use shorter name instead of full type name (just the last distinct words)!
     node["Gf"]       = obj.Gf;
     node["Hf"]       = obj.Hf;
     node["Sr"]       = obj.Sr;
@@ -316,31 +313,29 @@ auto operator<<(yaml& node, const StandardThermoModelParamsHollandPowell& obj) -
 
 auto operator>>(const yaml& node, StandardThermoModelParamsHollandPowell& obj) -> void
 {
-    auto child = node.at("HollandPowell"); // use shorter name instead of full type name (just the last distinct words)!
-    child.at("Gf").to(obj.Gf);
-    child.at("Hf").to(obj.Hf);
-    child.at("Sr").to(obj.Sr);
-    child.at("Vr").to(obj.Vr);
-    child.at("a").to(obj.a);
-    child.at("b").to(obj.b);
-    child.at("c").to(obj.c);
-    child.at("d").to(obj.d);
-    child.at("alpha0").to(obj.alpha0);
-    child.at("kappa0").to(obj.kappa0);
-    child.at("kappa0p").to(obj.kappa0p);
-    child.at("kappa0pp").to(obj.kappa0pp);
-    child.at("numatoms").to(obj.numatoms);
-    child.at("Tcr").to(obj.Tcr);
-    child.at("Smax").to(obj.Smax);
-    child.at("Vmax").to(obj.Vmax);
-    child.at("Tmax").to(obj.Tmax);
+    node.at("Gf").to(obj.Gf);
+    node.at("Hf").to(obj.Hf);
+    node.at("Sr").to(obj.Sr);
+    node.at("Vr").to(obj.Vr);
+    node.at("a").to(obj.a);
+    node.at("b").to(obj.b);
+    node.at("c").to(obj.c);
+    node.at("d").to(obj.d);
+    node.at("alpha0").to(obj.alpha0);
+    node.at("kappa0").to(obj.kappa0);
+    node.at("kappa0p").to(obj.kappa0p);
+    node.at("kappa0pp").to(obj.kappa0pp);
+    node.at("numatoms").to(obj.numatoms);
+    node.at("Tcr").to(obj.Tcr);
+    node.at("Smax").to(obj.Smax);
+    node.at("Vmax").to(obj.Vmax);
+    node.at("Tmax").to(obj.Tmax);
 }
 
 //=====================================================================================================================
 
 auto operator<<(yaml& node, const StandardThermoModelParamsMaierKelley& obj) -> void
 {
-    auto child = node["MaierKelley"]; // use shorter name instead of full type name (just the last distinct words)!
     node["Gf"]   = obj.Gf;
     node["Hf"]   = obj.Hf;
     node["Sr"]   = obj.Sr;
@@ -353,22 +348,20 @@ auto operator<<(yaml& node, const StandardThermoModelParamsMaierKelley& obj) -> 
 
 auto operator>>(const yaml& node, StandardThermoModelParamsMaierKelley& obj) -> void
 {
-    auto child = node.at("MaierKelley"); // use shorter name instead of full type name (just the last distinct words)!
-    child.at("Gf").to(obj.Gf);
-    child.at("Hf").to(obj.Hf);
-    child.at("Sr").to(obj.Sr);
-    child.at("Vr").to(obj.Vr);
-    child.at("a").to(obj.a);
-    child.at("b").to(obj.b);
-    child.at("c").to(obj.c);
-    child.at("Tmax").to(obj.Tmax);
+    node.at("Gf").to(obj.Gf);
+    node.at("Hf").to(obj.Hf);
+    node.at("Sr").to(obj.Sr);
+    node.at("Vr").to(obj.Vr);
+    node.at("a").to(obj.a);
+    node.at("b").to(obj.b);
+    node.at("c").to(obj.c);
+    node.at("Tmax").to(obj.Tmax);
 }
 
 //=====================================================================================================================
 
 auto operator<<(yaml& node, const StandardThermoModelParamsMineralHKF& obj) -> void
 {
-    auto child = node["MineralHKF"]; // use shorter name instead of full type name (just the last distinct words)!
     node["Gf"]     = obj.Gf;
     node["Hf"]     = obj.Hf;
     node["Sr"]     = obj.Sr;
@@ -386,27 +379,25 @@ auto operator<<(yaml& node, const StandardThermoModelParamsMineralHKF& obj) -> v
 
 auto operator>>(const yaml& node, StandardThermoModelParamsMineralHKF& obj) -> void
 {
-    auto child = node.at("MineralHKF"); // use shorter name instead of full type name (just the last distinct words)!
-    child.at("Gf").to(obj.Gf);
-    child.at("Hf").to(obj.Hf);
-    child.at("Sr").to(obj.Sr);
-    child.at("Vr").to(obj.Vr);
-    child.at("ntr").to(obj.ntr);
-    child.at("a").to(obj.a);
-    child.at("b").to(obj.b);
-    child.at("c").to(obj.c);
-    child.at("Ttr").to(obj.Ttr);
-    child.at("Htr").to(obj.Htr);
-    child.at("Vtr").to(obj.Vtr);
-    child.at("dPdTtr").to(obj.dPdTtr);
-    child.at("Tmax").to(obj.Tmax);
+    node.at("Gf").to(obj.Gf);
+    node.at("Hf").to(obj.Hf);
+    node.at("Sr").to(obj.Sr);
+    node.at("Vr").to(obj.Vr);
+    node.at("ntr").to(obj.ntr);
+    node.at("a").to(obj.a);
+    node.at("b").to(obj.b);
+    node.at("c").to(obj.c);
+    node.at("Ttr").to(obj.Ttr);
+    node.at("Htr").to(obj.Htr);
+    node.at("Vtr").to(obj.Vtr);
+    node.at("dPdTtr").to(obj.dPdTtr);
+    node.at("Tmax").to(obj.Tmax);
 }
 
 //=====================================================================================================================
 
 auto operator<<(yaml& node, const StandardThermoModelParamsWaterHKF& obj) -> void
 {
-    auto child = node["WaterHKF"]; // use shorter name instead of full type name (just the last distinct words)!
     node["Ttr"] = obj.Ttr;
     node["Str"] = obj.Str;
     node["Gtr"] = obj.Gtr;
@@ -415,11 +406,10 @@ auto operator<<(yaml& node, const StandardThermoModelParamsWaterHKF& obj) -> voi
 
 auto operator>>(const yaml& node, StandardThermoModelParamsWaterHKF& obj) -> void
 {
-    auto child = node.at("WaterHKF"); // use shorter name instead of full type name (just the last distinct words)!
-    child.at("Ttr").to(obj.Ttr);
-    child.at("Str").to(obj.Str);
-    child.at("Gtr").to(obj.Gtr);
-    child.at("Htr").to(obj.Htr);
+    node.at("Ttr").to(obj.Ttr);
+    node.at("Str").to(obj.Str);
+    node.at("Gtr").to(obj.Gtr);
+    node.at("Htr").to(obj.Htr);
 }
 
 } // namespace YAML
