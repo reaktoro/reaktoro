@@ -25,18 +25,20 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ReactionThermoModelVantHoff class", "[ReactionThermoModelVantHoff]")
 {
-    const auto lgKr = 1.0;
-    const auto dHr  = 2.0;
-    const auto Tr   = 3.0;
-    const auto Pr   = 4.0;
+    Param lgKr = 1.0;
+    Param dHr  = 2.0;
+    real  Tr   = 3.0;
+    real  Pr   = 4.0;
+
+    const auto model = ReactionThermoModelVantHoff({lgKr, dHr, Tr, Pr});
+
+    //======================================================================
+    // Test method Model::operator()(T, P, dV0)
+    //======================================================================
 
     const auto T = 5.0;
     const auto P = 7.0;
     const auto dV0 = 9.0;
-
-    const auto model = ReactionThermoModelVantHoff({lgKr, dHr, Tr, Pr});
-
-    const auto rpropsfn = model;
 
     const auto R = universalGasConstant;
 
@@ -53,4 +55,29 @@ TEST_CASE("Testing ReactionThermoModelVantHoff class", "[ReactionThermoModelVant
 
     CHECK( rprops.dG0 == Approx(dG0x) );
     CHECK( rprops.dH0 == Approx(dH0x) );
+
+    //======================================================================
+    // Test method Model::params()
+    //======================================================================
+
+    CHECK( model.params().size() == 2 );
+    CHECK( model.params()[0] == lgKr );
+    CHECK( model.params()[1] == dHr );
+
+    //======================================================================
+    // Test method Model::serialize()
+    //======================================================================
+
+    yaml node;
+
+    node = model.serialize();
+    CHECK( double(node.at("VantHoff").at("lgKr")) == lgKr );
+    CHECK( double(node.at("VantHoff").at("dHr"))  == dHr );
+    CHECK( double(node.at("VantHoff").at("Tr"))   == Tr );
+    CHECK( double(node.at("VantHoff").at("Pr"))   == Pr );
+
+    dHr = 1234.0; // change value of Param object and check if new serialize call reflects this change
+
+    node = model.serialize();
+    CHECK( double(node.at("VantHoff").at("dHr")) == 1234.0 );
 }

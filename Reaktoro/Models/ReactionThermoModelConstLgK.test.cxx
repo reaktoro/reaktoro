@@ -25,16 +25,18 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ReactionThermoModelConstLgK class", "[ReactionThermoModelConstLgK]")
 {
-    const auto lgKr = 1.0;
-    const auto Pr   = 2.0;
+    Param lgKr = 1.0;
+    real  Pr   = 2.0;
+
+    const auto model = ReactionThermoModelConstLgK({lgKr, Pr});
+
+    //======================================================================
+    // Test method Model::operator()(T, P, dV0)
+    //======================================================================
 
     const auto T = 5.0;
     const auto P = 7.0;
     const auto dV0 = 9.0;
-
-    const auto model = ReactionThermoModelConstLgK({lgKr, Pr});
-
-    const auto rpropsfn = model;
 
     const auto R = universalGasConstant;
 
@@ -49,4 +51,26 @@ TEST_CASE("Testing ReactionThermoModelConstLgK class", "[ReactionThermoModelCons
 
     CHECK( rprops.dG0 == Approx(dG0x) );
     CHECK( rprops.dH0 == Approx(dH0x) );
+
+    //======================================================================
+    // Test method Model::params()
+    //======================================================================
+
+    CHECK( model.params().size() == 1 );
+    CHECK( model.params()[0] == lgKr );
+
+    //======================================================================
+    // Test method Model::serialize()
+    //======================================================================
+
+    yaml node;
+
+    node = model.serialize();
+    CHECK( double(node.at("ConstLgK").at("lgKr")) == lgKr );
+    CHECK( double(node.at("ConstLgK").at("Pr")) == Pr );
+
+    lgKr = 1234.0; // change value of Param object and check if new serialize call reflects this change
+
+    node = model.serialize();
+    CHECK( double(node.at("ConstLgK").at("lgKr")) == 1234.0 );
 }
