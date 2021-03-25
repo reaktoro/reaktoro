@@ -25,22 +25,25 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ReactionThermoModelConstLgK class", "[ReactionThermoModelConstLgK]")
 {
-    const auto lgK0 = 1.0;
+    const auto lgKr = 1.0;
+    const auto Pr   = 2.0;
 
     const auto T = 5.0;
     const auto P = 7.0;
     const auto dV0 = 9.0;
 
-    const auto model = ReactionThermoModelConstLgK(lgK0);
+    const auto model = ReactionThermoModelConstLgK({lgKr, Pr});
 
     const auto rpropsfn = model;
 
     const auto R = universalGasConstant;
 
-    const auto lnK0 = lgK0 * ln10;
+    const auto lnKr = lgKr * ln10;
 
-    const auto dG0x = -R*T*lnK0; // expected dG0 at (T, P)
-    const auto dH0x = 0.0; // expected dH0 at (T, P)
+    const auto dE = dV0 * (P - Pr);
+
+    const auto dG0x = -R*T*lnKr + dE; // expected dG0 at (T, P)
+    const auto dH0x = dE;             // expected dH0 at (T, P)
 
     ReactionThermoProps rprops = model({T, P, dV0});
 

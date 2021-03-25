@@ -104,7 +104,12 @@ template<typename SpeciesType>
 auto reactionThermoModelAux(const SpeciesType* s, double sign) -> ReactionThermoModel
 {
     if(PhreeqcUtils::reactants(s).empty())
-        return ReactionThermoModelConstLgK(0.0);
+    {
+        ReactionThermoModelParamsConstLgK params;
+        params.lgKr = 0.0;
+        params.Pr = 101'325; // reference pressure (1 atm = 101325 Pa)
+        return ReactionThermoModelConstLgK(params);
+    }
 
     const auto logk = s->logk;
 
@@ -125,7 +130,7 @@ auto reactionThermoModelAux(const SpeciesType* s, double sign) -> ReactionThermo
         params.A4 = sign * logk[T_A4];
         params.A5 = sign * logk[T_A5];
         params.A6 = sign * logk[T_A6];
-        params.Pr = 101325; // reference pressure (1 atm = 101325 Pa)
+        params.Pr = 101'325; // reference pressure (1 atm = 101325 Pa)
         return ReactionThermoModelPhreeqcLgK(params);
     }
     else
@@ -134,7 +139,7 @@ auto reactionThermoModelAux(const SpeciesType* s, double sign) -> ReactionThermo
         params.lgKr = sign * logk[logK_T0];
         params.dHr = sign * logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
         params.Tr = 298.15; // reference temperature (in K)
-        params.Pr = 101325; // reference pressure (1 atm = 101325 Pa)
+        params.Pr = 101'325; // reference pressure (1 atm = 101325 Pa)
         return ReactionThermoModelVantHoff(params);
     }
 }

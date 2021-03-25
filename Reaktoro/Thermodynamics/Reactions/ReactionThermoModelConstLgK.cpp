@@ -22,21 +22,33 @@
 
 namespace Reaktoro {
 
-auto ReactionThermoModelConstLgK(Param lgK0) -> ReactionThermoModel
+/// Return a Params object containing all Param objects in @p params.
+auto extractParams(const ReactionThermoModelParamsConstLgK& params) -> Params
+{
+    const auto& [lgKr, Pr] = params;
+    return {lgKr};
+}
+
+auto ReactionThermoModelConstLgK(const ReactionThermoModelParamsConstLgK& params) -> ReactionThermoModel
 {
     auto evalfn = [=](ReactionThermoProps& props, ReactionThermoArgs args)
     {
         // Unpack the arguments for the evaluation of this model
         const auto& [T, P, dV0] = args;
 
+        // Unpack the model parameters
+        const auto& [lgKr, Pr] = params;
+
         const auto R = universalGasConstant;
-        const auto lnK0 = lgK0 * ln10;
-        props.dG0 = -R*T*lnK0;
+        const auto RT = R*T;
+        const auto lnKr = lgKr * ln10;
+        const auto dE = dV0 * (P - Pr); // delta energy (in J/mol)
+
+        props.dG0 = -RT*lnKr + dE;
+        props.dH0 = dE;
     };
 
-    Params params { lgK0 };
-
-    return ReactionThermoModel(evalfn, params);
+    return ReactionThermoModel(evalfn, extractParams(params));
 }
 
 } // namespace Reaktoro
