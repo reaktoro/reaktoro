@@ -23,6 +23,7 @@ using std::log;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Serialization/SerializationYAML.hpp>
 
 namespace Reaktoro {
 
@@ -31,6 +32,17 @@ auto extractParams(const StandardThermoModelParamsMaierKelley& params) -> Params
 {
     const auto& [Gf, Hf, Sr, Vr, a, b, c, Tmax] = params;
     return {Gf, Hf, Sr, Vr, a, b, c};
+}
+
+/// Return a ModelSerializer for given model parameters in @p params.
+auto createModelSerializer(const StandardThermoModelParamsMaierKelley& params) -> ModelSerializer
+{
+    return [=]()
+    {
+        yaml node;
+        node["MaierKelley"] = params;
+        return node;
+    };
 }
 
 auto StandardThermoModelMaierKelley(const StandardThermoModelParamsMaierKelley& params) -> StandardThermoModel
@@ -58,7 +70,7 @@ auto StandardThermoModelMaierKelley(const StandardThermoModelParamsMaierKelley& 
         // S0  = Sr + CpdlnT;
     };
 
-    return StandardThermoModel(evalfn, extractParams(params));
+    return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
 }
 
 } // namespace Reaktoro

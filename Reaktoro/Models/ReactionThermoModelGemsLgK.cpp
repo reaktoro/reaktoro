@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Serialization/SerializationYAML.hpp>
 
 namespace Reaktoro {
 
@@ -27,6 +28,17 @@ auto extractParams(const ReactionThermoModelParamsGemsLgK& params) -> Params
 {
     const auto& [A0, A1, A2, A3, A4, A5, A6, Pr] = params;
     return {A0, A1, A2, A3, A4, A5, A6};
+}
+
+/// Return a ModelSerializer for given model parameters in @p params.
+auto createModelSerializer(const ReactionThermoModelParamsGemsLgK& params) -> ModelSerializer
+{
+    return [=]()
+    {
+        yaml node;
+        node["GemsLgK"] = params;
+        return node;
+    };
 }
 
 auto ReactionThermoModelGemsLgK(const ReactionThermoModelParamsGemsLgK& params) -> ReactionThermoModel
@@ -49,7 +61,7 @@ auto ReactionThermoModelGemsLgK(const ReactionThermoModelParamsGemsLgK& params) 
         props.dH0 = R * (A1*T2 - A2 + A3*T - 2*A4/T + 2*A5*T3 - 0.5*A6*T05)*ln10 + dE;
     };
 
-    return ReactionThermoModel(evalfn, extractParams(params));
+    return ReactionThermoModel(evalfn, extractParams(params), createModelSerializer(params));
 }
 
 } // namespace Reaktoro

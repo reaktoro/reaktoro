@@ -21,6 +21,7 @@
 #include <cmath>
 
 // Reaktoro includes
+#include <Reaktoro/Serialization/SerializationYAML.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
@@ -37,6 +38,17 @@ auto extractParams(const StandardThermoModelParamsHollandPowell& params) -> Para
 {
     const auto& [Gf, Hf, Sr, Vr, a, b, c, d, alpha0, kappa0, kappa0p, kappa0pp, numatoms, Tcr, Smax, Vmax, Tmax] = params;
     return {Gf, Hf, Sr, Vr, a, b, c, d, alpha0, kappa0, kappa0p, kappa0pp};
+}
+
+/// Return a ModelSerializer for given model parameters in @p params.
+auto createModelSerializer(const StandardThermoModelParamsHollandPowell& params) -> ModelSerializer
+{
+    return [=]()
+    {
+        yaml node;
+        node["HollandPowell"] = params;
+        return node;
+    };
 }
 
 auto StandardThermoModelHollandPowell(const StandardThermoModelParamsHollandPowell& params) -> StandardThermoModel
@@ -139,7 +151,7 @@ auto StandardThermoModelHollandPowell(const StandardThermoModelParamsHollandPowe
         // S0 = STrPr + CpdlnT;
     };
 
-    return StandardThermoModel(evalfn, extractParams(params));
+    return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
 }
 
 } // namespace Reaktoro

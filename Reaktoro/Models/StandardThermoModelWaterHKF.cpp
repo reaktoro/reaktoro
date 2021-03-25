@@ -21,6 +21,7 @@
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Serialization/SerializationYAML.hpp>
 
 namespace Reaktoro {
 
@@ -28,6 +29,17 @@ namespace Reaktoro {
 auto extractParams(const StandardThermoModelParamsWaterHKF& params) -> Params
 {
     return {}; // there are no Param members in StandardThermoModelParamsWaterHKF
+}
+
+/// Return a ModelSerializer for given model parameters in @p params.
+auto createModelSerializer(const StandardThermoModelParamsWaterHKF& params) -> ModelSerializer
+{
+    return [=]()
+    {
+        yaml node;
+        node["WaterHKF"] = params;
+        return node;
+    };
 }
 
 auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params) -> StandardThermoModel
@@ -55,7 +67,7 @@ auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params
         // A0  = Uw - T * (Sw + Str) + Ttr * Str + Atr;
     };
 
-    return StandardThermoModel(evalfn, extractParams(params));
+    return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
 }
 
 } // namespace Reaktoro
