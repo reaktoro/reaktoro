@@ -44,7 +44,7 @@ struct ReactionThermoModelParamsPhreeqcLgK
     Param A6;
 
     /// The reference pressure @eq{P_{\mathrm{r}}} (in Pa).
-    real Pr = 1.0e5;
+    real Pr = 100'000;
 };
 
 /// Return a function that calculates thermodynamic properties of a reaction using PHREEQC's analytical expression.
