@@ -26,6 +26,7 @@ using std::log;
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Models/Support/SpeciesElectroProps.hpp>
 #include <Reaktoro/Models/Support/SpeciesElectroPropsHKF.hpp>
+#include <Reaktoro/Serialization/SerializationYAML.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
@@ -77,6 +78,17 @@ auto extractParams(const StandardThermoModelParamsHKF& params) -> Params
 {
     const auto& [ Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wref, charge, formula ] = params;
     return { Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wref };
+}
+
+/// Return a ModelSerializer for given model parameters in @p params.
+auto createModelSerializer(const StandardThermoModelParamsHKF& params) -> ModelSerializer
+{
+    return [=]()
+    {
+        yaml node;
+        node["HKF"] = params;
+        return node;
+    };
 }
 
 auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> StandardThermoModel
@@ -134,7 +146,7 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
         //     + w*Y + (Z + 1)*wT - wr*Yr;
     };
 
-    return StandardThermoModel(evalfn, extractParams(params));
+    return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
 }
 
 } // namespace Reaktoro
