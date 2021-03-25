@@ -37,30 +37,30 @@
 #include <Reaktoro/Thermodynamics/Standard/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Thermodynamics/Standard/StandardThermoModelWaterHKF.hpp>
 
-namespace YAML {
+namespace Reaktoro {
 
 //======================================================================
 // Common
 //======================================================================
 
 // Needed to avoid ambiguous overloaded operator '<<' error.
-auto operator<<(Node& node, double obj) -> void
+auto operator<<(yaml& node, double obj) -> void
 {
     node = obj;
 }
 
 // Needed to avoid ambiguous overloaded operator '>>' error.
-auto operator>>(const Node& node, double& obj) -> void
+auto operator>>(const yaml& node, double& obj) -> void
 {
     obj = node.as<double>();
 }
 
-auto operator<<(Node& node, const real& obj) -> void
+auto operator<<(yaml& node, const real& obj) -> void
 {
     node = obj.val();
 }
 
-auto operator>>(const Node& node, real& obj) -> void
+auto operator>>(const yaml& node, real& obj) -> void
 {
     obj = node.as<double>();
 }
@@ -69,74 +69,74 @@ auto operator>>(const Node& node, real& obj) -> void
 // Core
 //=====================================================================================================================
 
-auto operator<<(Node& node, const ChemicalFormula& obj) -> void
+auto operator<<(yaml& node, const ChemicalFormula& obj) -> void
 {
     node = obj.str();
 }
 
-auto operator>>(const Node& node, ChemicalFormula& obj) -> void
+auto operator>>(const yaml& node, ChemicalFormula& obj) -> void
 {
     obj = ChemicalFormula(node.as<std::string>());
 }
 
 //=====================================================================================================================
 
-auto operator<<(Node& node, const ChemicalSystem& obj) -> void
+auto operator<<(yaml& node, const ChemicalSystem& obj) -> void
 {
-    errorif(true, "`auto operator<<(Node& node, const ChemicalSystem& obj) -> void` not implemented!");
+    errorif(true, "`auto operator<<(yaml& node, const ChemicalSystem& obj) -> void` not implemented!");
 }
 
-auto operator>>(const Node& node, ChemicalSystem& obj) -> void
+auto operator>>(const yaml& node, ChemicalSystem& obj) -> void
 {
     errorif(true,  "`auto operator<<=(ChemicalSystem& obj) -> void` not implemented!");
 }
 
 //=====================================================================================================================
 
-auto operator<<(Node& node, const Element& obj) -> void
+auto operator<<(yaml& node, const Element& obj) -> void
 {
-    appendIfNotDefault(node, "Symbol",            obj.symbol());
-    appendIfNotDefault(node, "Name",              obj.name());
-    appendIfNotDefault(node, "AtomicNumber",      obj.atomicNumber());
-    appendIfNotDefault(node, "AtomicWeight",      obj.atomicWeight());
-    appendIfNotDefault(node, "MolarMass",         obj.molarMass());
-    appendIfNotDefault(node, "Electronegativity", obj.electronegativity());
-    appendIfNotDefault(node, "Tags",              obj.tags());
+    node.appendIfNotDefault("Symbol",            obj.symbol());
+    node.appendIfNotDefault("Name",              obj.name());
+    node.appendIfNotDefault("AtomicNumber",      obj.atomicNumber());
+    node.appendIfNotDefault("AtomicWeight",      obj.atomicWeight());
+    node.appendIfNotDefault("MolarMass",         obj.molarMass());
+    node.appendIfNotDefault("Electronegativity", obj.electronegativity());
+    node.appendIfNotDefault("Tags",              obj.tags());
 }
 
-auto operator>>(const Node& node, Element& obj) -> void
+auto operator>>(const yaml& node, Element& obj) -> void
 {
     Element::Args args;
-    args.symbol            = get(node, "Symbol", String{});
-    args.name              = get(node, "Name", String{});
-    args.atomic_number     = get(node, "AtomicNumber", 0);
-    args.atomic_weight     = get(node, "AtomicWeight", 0.0);
-    args.electronegativity = get(node, "Electronegativity", 0.0);
-    args.tags              = get(node, "Tags", Strings{});
+    args.symbol            = node["Symbol"].value(String{});
+    args.name              = node["Name"].value(String{});
+    args.atomic_number     = node["AtomicNumber"].value(0);
+    args.atomic_weight     = node["AtomicWeight"].value(0.0);
+    args.electronegativity = node["Electronegativity"].value(0.0);
+    args.tags              = node["Tags"].value(Strings{});
 
     obj = Element(args);
 }
 
 //=====================================================================================================================
 
-auto operator<<(Node& node, const Param& obj) -> void
+auto operator<<(yaml& node, const Param& obj) -> void
 {
     node = obj.value();
 }
 
-auto operator>>(const Node& node, Param& obj) -> void
+auto operator>>(const yaml& node, Param& obj) -> void
 {
     obj = node.as<double>();
 }
 
 //=====================================================================================================================
 
-auto operator<<(Node& node, const Params& obj) -> void
+auto operator<<(yaml& node, const Params& obj) -> void
 {
     node = obj.data();
 }
 
-auto operator>>(const Node& node, Params& obj) -> void
+auto operator>>(const yaml& node, Params& obj) -> void
 {
     auto values = node.as<Vec<double>>();
     obj = Params(values.begin(), values.end());
@@ -144,24 +144,24 @@ auto operator>>(const Node& node, Params& obj) -> void
 
 //=====================================================================================================================
 
-auto operator<<(Node& node, const Phase& obj) -> void
+auto operator<<(yaml& node, const Phase& obj) -> void
 {
-    errorif(true, "`auto operator<<(Node& node, const Phase& obj) -> void` not implemented!");
+    errorif(true, "`auto operator<<(yaml& node, const Phase& obj) -> void` not implemented!");
 }
 
-auto operator>>(const Node& node, Phase& obj) -> void
+auto operator>>(const yaml& node, Phase& obj) -> void
 {
     errorif(true,  "`auto operator<<=(Phase& obj) -> void` not implemented!");
 }
 
 //=====================================================================================================================
 
-auto operator<<(Node& node, const Species& obj) -> void
+auto operator<<(yaml& node, const Species& obj) -> void
 {
 
 }
 
-auto operator>>(const Node& node, Species& obj) -> void
+auto operator>>(const yaml& node, Species& obj) -> void
 {
 
 }
@@ -170,42 +170,45 @@ auto operator>>(const Node& node, Species& obj) -> void
 // StandardThermoModel
 //=====================================================================================================================
 
-auto operator<<(Node& node, const StandardThermoModelParamsHKF& obj) -> void
+auto operator<<(yaml& node, const StandardThermoModelParamsHKF& obj) -> void
 {
-    node["Gf"] = obj.Gf;
-    node["Hf"] = obj.Hf;
-    node["Sr"] = obj.Sr;
-    node["a1"] = obj.a1;
-    node["a2"] = obj.a2;
-    node["a3"] = obj.a3;
-    node["a4"] = obj.a4;
-    node["c1"] = obj.c1;
-    node["c2"] = obj.c2;
-    node["wref"] = obj.wref;
-    node["charge"] = obj.charge;
-    node["formula"] = obj.formula;
+    auto child = node["HKF"]; // use shorter name instead of full type name (just the last distinct words)!
+    child["Gf"] = obj.Gf;
+    child["Hf"] = obj.Hf;
+    child["Sr"] = obj.Sr;
+    child["a1"] = obj.a1;
+    child["a2"] = obj.a2;
+    child["a3"] = obj.a3;
+    child["a4"] = obj.a4;
+    child["c1"] = obj.c1;
+    child["c2"] = obj.c2;
+    child["wref"] = obj.wref;
+    child["charge"] = obj.charge;
+    child["formula"] = obj.formula;
 }
 
-auto operator>>(const Node& node, StandardThermoModelParamsHKF& obj) -> void
+auto operator>>(const yaml& node, StandardThermoModelParamsHKF& obj) -> void
 {
-    YAML::set(node, "Gf", obj.Gf);
-    YAML::set(node, "Hf", obj.Hf);
-    YAML::set(node, "Sr", obj.Sr);
-    YAML::set(node, "a1", obj.a1);
-    YAML::set(node, "a2", obj.a2);
-    YAML::set(node, "a3", obj.a3);
-    YAML::set(node, "a4", obj.a4);
-    YAML::set(node, "c1", obj.c1);
-    YAML::set(node, "c2", obj.c2);
-    YAML::set(node, "wref", obj.wref);
-    YAML::set(node, "charge", obj.charge);
-    YAML::set(node, "formula", obj.formula);
+    auto child = node.at("HKF"); // use shorter name instead of full type name (just the last distinct words)!
+    child.at("Gf").to(obj.Gf);
+    child.at("Hf").to(obj.Hf);
+    child.at("Sr").to(obj.Sr);
+    child.at("a1").to(obj.a1);
+    child.at("a2").to(obj.a2);
+    child.at("a3").to(obj.a3);
+    child.at("a4").to(obj.a4);
+    child.at("c1").to(obj.c1);
+    child.at("c2").to(obj.c2);
+    child.at("wref").to(obj.wref);
+    child.at("charge").to(obj.charge);
+    child.at("formula").to(obj.formula);
 }
 
 //=====================================================================================================================
 
-auto operator<<(Node& node, const StandardThermoModelParamsHollandPowell& obj) -> void
+auto operator<<(yaml& node, const StandardThermoModelParamsHollandPowell& obj) -> void
 {
+    auto child = node["HollandPowell"]; // use shorter name instead of full type name (just the last distinct words)!
     node["Gf"]       = obj.Gf;
     node["Hf"]       = obj.Hf;
     node["Sr"]       = obj.Sr;
@@ -225,31 +228,33 @@ auto operator<<(Node& node, const StandardThermoModelParamsHollandPowell& obj) -
     node["Tmax"]     = obj.Tmax;
 }
 
-auto operator>>(const Node& node, StandardThermoModelParamsHollandPowell& obj) -> void
+auto operator>>(const yaml& node, StandardThermoModelParamsHollandPowell& obj) -> void
 {
-    YAML::set(node, "Gf",       obj.Gf);
-    YAML::set(node, "Hf",       obj.Hf);
-    YAML::set(node, "Sr",       obj.Sr);
-    YAML::set(node, "Vr",       obj.Vr);
-    YAML::set(node, "a",        obj.a);
-    YAML::set(node, "b",        obj.b);
-    YAML::set(node, "c",        obj.c);
-    YAML::set(node, "d",        obj.d);
-    YAML::set(node, "alpha0",   obj.alpha0);
-    YAML::set(node, "kappa0",   obj.kappa0);
-    YAML::set(node, "kappa0p",  obj.kappa0p);
-    YAML::set(node, "kappa0pp", obj.kappa0pp);
-    YAML::set(node, "numatoms", obj.numatoms);
-    YAML::set(node, "Tcr",      obj.Tcr);
-    YAML::set(node, "Smax",     obj.Smax);
-    YAML::set(node, "Vmax",     obj.Vmax);
-    YAML::set(node, "Tmax",     obj.Tmax);
+    auto child = node.at("HollandPowell"); // use shorter name instead of full type name (just the last distinct words)!
+    child.at("Gf").to(obj.Gf);
+    child.at("Hf").to(obj.Hf);
+    child.at("Sr").to(obj.Sr);
+    child.at("Vr").to(obj.Vr);
+    child.at("a").to(obj.a);
+    child.at("b").to(obj.b);
+    child.at("c").to(obj.c);
+    child.at("d").to(obj.d);
+    child.at("alpha0").to(obj.alpha0);
+    child.at("kappa0").to(obj.kappa0);
+    child.at("kappa0p").to(obj.kappa0p);
+    child.at("kappa0pp").to(obj.kappa0pp);
+    child.at("numatoms").to(obj.numatoms);
+    child.at("Tcr").to(obj.Tcr);
+    child.at("Smax").to(obj.Smax);
+    child.at("Vmax").to(obj.Vmax);
+    child.at("Tmax").to(obj.Tmax);
 }
 
 //=====================================================================================================================
 
-auto operator<<(Node& node, const StandardThermoModelParamsMaierKelley& obj) -> void
+auto operator<<(yaml& node, const StandardThermoModelParamsMaierKelley& obj) -> void
 {
+    auto child = node["MaierKelley"]; // use shorter name instead of full type name (just the last distinct words)!
     node["Gf"]   = obj.Gf;
     node["Hf"]   = obj.Hf;
     node["Sr"]   = obj.Sr;
@@ -260,22 +265,24 @@ auto operator<<(Node& node, const StandardThermoModelParamsMaierKelley& obj) -> 
     node["Tmax"] = obj.Tmax;
 }
 
-auto operator>>(const Node& node, StandardThermoModelParamsMaierKelley& obj) -> void
+auto operator>>(const yaml& node, StandardThermoModelParamsMaierKelley& obj) -> void
 {
-    YAML::set(node, "Gf",   obj.Gf);
-    YAML::set(node, "Hf",   obj.Hf);
-    YAML::set(node, "Sr",   obj.Sr);
-    YAML::set(node, "Vr",   obj.Vr);
-    YAML::set(node, "a",    obj.a);
-    YAML::set(node, "b",    obj.b);
-    YAML::set(node, "c",    obj.c);
-    YAML::set(node, "Tmax", obj.Tmax);
+    auto child = node.at("MaierKelley"); // use shorter name instead of full type name (just the last distinct words)!
+    child.at("Gf").to(obj.Gf);
+    child.at("Hf").to(obj.Hf);
+    child.at("Sr").to(obj.Sr);
+    child.at("Vr").to(obj.Vr);
+    child.at("a").to(obj.a);
+    child.at("b").to(obj.b);
+    child.at("c").to(obj.c);
+    child.at("Tmax").to(obj.Tmax);
 }
 
 //=====================================================================================================================
 
-auto operator<<(Node& node, const StandardThermoModelParamsMineralHKF& obj) -> void
+auto operator<<(yaml& node, const StandardThermoModelParamsMineralHKF& obj) -> void
 {
+    auto child = node["MineralHKF"]; // use shorter name instead of full type name (just the last distinct words)!
     node["Gf"]     = obj.Gf;
     node["Hf"]     = obj.Hf;
     node["Sr"]     = obj.Sr;
@@ -291,39 +298,42 @@ auto operator<<(Node& node, const StandardThermoModelParamsMineralHKF& obj) -> v
     node["Tmax"]   = obj.Tmax;
 }
 
-auto operator>>(const Node& node, StandardThermoModelParamsMineralHKF& obj) -> void
+auto operator>>(const yaml& node, StandardThermoModelParamsMineralHKF& obj) -> void
 {
-    YAML::set(node, "Gf",     obj.Gf);
-    YAML::set(node, "Hf",     obj.Hf);
-    YAML::set(node, "Sr",     obj.Sr);
-    YAML::set(node, "Vr",     obj.Vr);
-    YAML::set(node, "ntr",    obj.ntr);
-    YAML::set(node, "a",      obj.a);
-    YAML::set(node, "b",      obj.b);
-    YAML::set(node, "c",      obj.c);
-    YAML::set(node, "Ttr",    obj.Ttr);
-    YAML::set(node, "Htr",    obj.Htr);
-    YAML::set(node, "Vtr",    obj.Vtr);
-    YAML::set(node, "dPdTtr", obj.dPdTtr);
-    YAML::set(node, "Tmax",   obj.Tmax);
+    auto child = node.at("MineralHKF"); // use shorter name instead of full type name (just the last distinct words)!
+    child.at("Gf").to(obj.Gf);
+    child.at("Hf").to(obj.Hf);
+    child.at("Sr").to(obj.Sr);
+    child.at("Vr").to(obj.Vr);
+    child.at("ntr").to(obj.ntr);
+    child.at("a").to(obj.a);
+    child.at("b").to(obj.b);
+    child.at("c").to(obj.c);
+    child.at("Ttr").to(obj.Ttr);
+    child.at("Htr").to(obj.Htr);
+    child.at("Vtr").to(obj.Vtr);
+    child.at("dPdTtr").to(obj.dPdTtr);
+    child.at("Tmax").to(obj.Tmax);
 }
 
 //=====================================================================================================================
 
-auto operator<<(Node& node, const StandardThermoModelParamsWaterHKF& obj) -> void
+auto operator<<(yaml& node, const StandardThermoModelParamsWaterHKF& obj) -> void
 {
+    auto child = node["WaterHKF"]; // use shorter name instead of full type name (just the last distinct words)!
     node["Ttr"] = obj.Ttr;
     node["Str"] = obj.Str;
     node["Gtr"] = obj.Gtr;
     node["Htr"] = obj.Htr;
 }
 
-auto operator>>(const Node& node, StandardThermoModelParamsWaterHKF& obj) -> void
+auto operator>>(const yaml& node, StandardThermoModelParamsWaterHKF& obj) -> void
 {
-    YAML::set(node, "Ttr", obj.Ttr);
-    YAML::set(node, "Str", obj.Str);
-    YAML::set(node, "Gtr", obj.Gtr);
-    YAML::set(node, "Htr", obj.Htr);
+    auto child = node.at("WaterHKF"); // use shorter name instead of full type name (just the last distinct words)!
+    child.at("Ttr").to(obj.Ttr);
+    child.at("Str").to(obj.Str);
+    child.at("Gtr").to(obj.Gtr);
+    child.at("Htr").to(obj.Htr);
 }
 
 } // namespace YAML
