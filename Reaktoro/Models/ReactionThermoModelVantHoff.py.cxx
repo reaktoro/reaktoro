@@ -15,28 +15,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// Catch includes
-#include <catch2/catch.hpp>
+// pybind11 includes
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPressureCorrection.hpp>
+#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing ReactionThermoModelPressureCorrection class", "[ReactionThermoModelPressureCorrection]")
+void exportReactionThermoModelVantHoff(py::module& m)
 {
-    const auto Pref = 4.0;
+    py::class_<ReactionThermoModelParamsVantHoff>(m, "ReactionThermoModelParamsVantHoff")
+        .def_readwrite("lgKr", &ReactionThermoModelParamsVantHoff::lgKr)
+        .def_readwrite("dHr", &ReactionThermoModelParamsVantHoff::dHr)
+        .def_readwrite("Tr", &ReactionThermoModelParamsVantHoff::Tr)
+        .def_readwrite("Pr", &ReactionThermoModelParamsVantHoff::Pr)
+        ;
 
-    const auto T = 5.0;
-    const auto P = 7.0;
-    const auto dV0 = 9.0;
-
-    const auto model = ReactionThermoModelPressureCorrection(Pref);
-
-    ReactionThermoProps rprops = model({T, P, dV0});
-
-    const auto dG0x = (P - Pref) * dV0; // expected dG0 at (T, P)
-    const auto dH0x = (P - Pref) * dV0; // expected dH0 at (T, P)
-
-    CHECK( rprops.dG0 == Approx(dG0x) );
-    CHECK( rprops.dH0 == Approx(dH0x) );
+    m.def("ReactionThermoModelVantHoff", ReactionThermoModelVantHoff);
 }

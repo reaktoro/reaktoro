@@ -17,18 +17,18 @@
 
 #pragma once
 
-#include <Reaktoro/Common.hpp>
-#include <Reaktoro/Core.hpp>
-#include <Reaktoro/Equilibrium.hpp>
-#include <Reaktoro/Extensions.hpp>
-#include <Reaktoro/Kinetics.hpp>
-#include <Reaktoro/Math.hpp>
-#include <Reaktoro/Models.hpp>
-#include <Reaktoro/Thermodynamics.hpp>
-#include <Reaktoro/Transport.hpp>
-#include <Reaktoro/Utils.hpp>
+#include <Reaktoro/Models/Support/SpeciesElectroProps.hpp>
+#include <Reaktoro/Models/Support/SpeciesElectroPropsHKF.hpp>
 
-/// The namespace containing all components of the Reaktoro library.
-namespace Reaktoro {
+#include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelGemsLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelPressureCorrection.hpp>
+#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
 
-} // namespace Reaktoro
+#include <Reaktoro/Models/StandardThermoModelHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
+#include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
+#include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelYAML.hpp>

@@ -21,17 +21,10 @@
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/ReactionThermoModelPressureCorrection.hpp>
 using namespace Reaktoro;
 
-void exportReactionThermoModelVantHoff(py::module& m)
+void exportReactionThermoModelPressureCorrection(py::module& m)
 {
-    py::class_<ReactionThermoModelParamsVantHoff>(m, "ReactionThermoModelParamsVantHoff")
-        .def_readwrite("lgKr", &ReactionThermoModelParamsVantHoff::lgKr)
-        .def_readwrite("dHr", &ReactionThermoModelParamsVantHoff::dHr)
-        .def_readwrite("Tr", &ReactionThermoModelParamsVantHoff::Tr)
-        .def_readwrite("Pr", &ReactionThermoModelParamsVantHoff::Pr)
-        ;
-
-    m.def("ReactionThermoModelVantHoff", ReactionThermoModelVantHoff);
+    m.def("ReactionThermoModelPressureCorrection", ReactionThermoModelPressureCorrection);
 }

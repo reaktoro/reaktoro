@@ -23,6 +23,7 @@ void exportCommon(py::module& m);
 void exportCore(py::module& m);
 void exportEquilibrium(py::module& m);
 void exportExtensions(py::module& m);
+void exportModels(py::module& m);
 void exportThermodynamics(py::module& m);
 
 PYBIND11_MODULE(reaktoro4py, m)
@@ -31,5 +32,6 @@ PYBIND11_MODULE(reaktoro4py, m)
     exportCore(m);
     exportEquilibrium(m);
     exportExtensions(m);
+    exportModels(m);
     exportThermodynamics(m);
 }

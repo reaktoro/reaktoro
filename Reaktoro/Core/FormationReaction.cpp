@@ -22,7 +22,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
 
 namespace Reaktoro {
 

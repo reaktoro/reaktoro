@@ -21,10 +21,21 @@
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPressureCorrection.hpp>
+#include <Reaktoro/Models/ReactionThermoModelGemsLgK.hpp>
 using namespace Reaktoro;
 
-void exportReactionThermoModelPressureCorrection(py::module& m)
+void exportReactionThermoModelGemsLgK(py::module& m)
 {
-    m.def("ReactionThermoModelPressureCorrection", ReactionThermoModelPressureCorrection);
+    py::class_<ReactionThermoModelParamsGemsLgK>(m, "ReactionThermoModelParamsGemsLgK")
+        .def_readwrite("A0", &ReactionThermoModelParamsGemsLgK::A0)
+        .def_readwrite("A1", &ReactionThermoModelParamsGemsLgK::A1)
+        .def_readwrite("A2", &ReactionThermoModelParamsGemsLgK::A2)
+        .def_readwrite("A3", &ReactionThermoModelParamsGemsLgK::A3)
+        .def_readwrite("A4", &ReactionThermoModelParamsGemsLgK::A4)
+        .def_readwrite("A5", &ReactionThermoModelParamsGemsLgK::A5)
+        .def_readwrite("A6", &ReactionThermoModelParamsGemsLgK::A6)
+        .def_readwrite("Pr", &ReactionThermoModelParamsGemsLgK::Pr)
+        ;
+
+    m.def("ReactionThermoModelGemsLgK", ReactionThermoModelGemsLgK);
 }
