@@ -22,6 +22,9 @@
 
 namespace Reaktoro {
 
+// Forward declarations (Common)
+class yaml;
+
 // Forward declarations (Core)
 class ChemicalFormula;
 class ChemicalSystem;
@@ -30,6 +33,9 @@ class Param;
 class Params;
 class Phase;
 class Species;
+
+template<typename Signature>
+class Model;
 
 // Forward declarations (StandardThermoModel)
 struct StandardThermoModelParamsHKF;
@@ -40,62 +46,72 @@ struct StandardThermoModelParamsWaterHKF;
 
 } // namespace Reaktoro
 
-namespace YAML {
-
-using namespace Reaktoro;
-
-// Forward declaration
-class Node;
+namespace Reaktoro {
 
 //=====================================================================================================================
 // Common
 //=====================================================================================================================
 
-auto operator<<(Node& node, const real& obj) -> void;
-auto operator>>(const Node& node, real& obj) -> void;
+auto operator<<(yaml& node, const real& obj) -> void;
+auto operator>>(const yaml& node, real& obj) -> void;
 
 //=====================================================================================================================
 // Core
 //=====================================================================================================================
 
-auto operator<<(Node& node, const ChemicalFormula& obj) -> void;
-auto operator>>(const Node& node, ChemicalFormula& obj) -> void;
+auto operator<<(yaml& node, const ChemicalFormula& obj) -> void;
+auto operator>>(const yaml& node, ChemicalFormula& obj) -> void;
 
-auto operator<<(Node& node, const ChemicalSystem& obj) -> void;
-auto operator>>(const Node& node, ChemicalSystem& obj) -> void;
+auto operator<<(yaml& node, const ChemicalSystem& obj) -> void;
+auto operator>>(const yaml& node, ChemicalSystem& obj) -> void;
 
-auto operator<<(Node& node, const Element& obj) -> void;
-auto operator>>(const Node& node, Element& obj) -> void;
+auto operator<<(yaml& node, const Element& obj) -> void;
+auto operator>>(const yaml& node, Element& obj) -> void;
 
-auto operator<<(Node& node, const Param& obj) -> void;
-auto operator>>(const Node& node, Param& obj) -> void;
+auto operator<<(yaml& node, const Param& obj) -> void;
+auto operator>>(const yaml& node, Param& obj) -> void;
 
-auto operator<<(Node& node, const Params& obj) -> void;
-auto operator>>(const Node& node, Params& obj) -> void;
+auto operator<<(yaml& node, const Params& obj) -> void;
+auto operator>>(const yaml& node, Params& obj) -> void;
 
-auto operator<<(Node& node, const Phase& obj) -> void;
-auto operator>>(const Node& node, Phase& obj) -> void;
+auto operator<<(yaml& node, const Phase& obj) -> void;
+auto operator>>(const yaml& node, Phase& obj) -> void;
 
-auto operator<<(Node& node, const Species& obj) -> void;
-auto operator>>(const Node& node, Species& obj) -> void;
+auto operator<<(yaml& node, const Species& obj) -> void;
+auto operator>>(const yaml& node, Species& obj) -> void;
+
+// template<typename Signature>
+// auto operator<<(yaml& node, const Model<Signature>& obj) -> void
+// {
+//     node = obj.yaml();
+// }
+
+
+// auto operator<<(yaml& node, const std::any& params) -> void
+
+// // template<typename Signature>
+// // auto operator>>(const yaml& node, Model<Signature>& obj) -> void
+// // {
+
+// // }
 
 //=====================================================================================================================
 // StandardThermoModel
 //=====================================================================================================================
 
-auto operator<<(Node& node, const StandardThermoModelParamsHKF& obj) -> void;
-auto operator>>(const Node& node, StandardThermoModelParamsHKF& obj) -> void;
+auto operator<<(yaml& node, const StandardThermoModelParamsHKF& obj) -> void;
+auto operator>>(const yaml& node, StandardThermoModelParamsHKF& obj) -> void;
 
-auto operator<<(Node& node, const StandardThermoModelParamsHollandPowell& obj) -> void;
-auto operator>>(const Node& node, StandardThermoModelParamsHollandPowell& obj) -> void;
+auto operator<<(yaml& node, const StandardThermoModelParamsHollandPowell& obj) -> void;
+auto operator>>(const yaml& node, StandardThermoModelParamsHollandPowell& obj) -> void;
 
-auto operator<<(Node& node, const StandardThermoModelParamsMaierKelley& obj) -> void;
-auto operator>>(const Node& node, StandardThermoModelParamsMaierKelley& obj) -> void;
+auto operator<<(yaml& node, const StandardThermoModelParamsMaierKelley& obj) -> void;
+auto operator>>(const yaml& node, StandardThermoModelParamsMaierKelley& obj) -> void;
 
-auto operator<<(Node& node, const StandardThermoModelParamsMineralHKF& obj) -> void;
-auto operator>>(const Node& node, StandardThermoModelParamsMineralHKF& obj) -> void;
+auto operator<<(yaml& node, const StandardThermoModelParamsMineralHKF& obj) -> void;
+auto operator>>(const yaml& node, StandardThermoModelParamsMineralHKF& obj) -> void;
 
-auto operator<<(Node& node, const StandardThermoModelParamsWaterHKF& obj) -> void;
-auto operator>>(const Node& node, StandardThermoModelParamsWaterHKF& obj) -> void;
+auto operator<<(yaml& node, const StandardThermoModelParamsWaterHKF& obj) -> void;
+auto operator>>(const yaml& node, StandardThermoModelParamsWaterHKF& obj) -> void;
 
 } // namespace YAML
