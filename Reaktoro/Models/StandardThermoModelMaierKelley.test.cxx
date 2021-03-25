@@ -43,6 +43,10 @@ TEST_CASE("Testing StandardThermoModelMaierKelley class", "[StandardThermoModelM
 
         auto model = StandardThermoModelMaierKelley(params);
 
+        //======================================================================
+        // Test method Model::operator()(T, P)
+        //======================================================================
+
         StandardThermoProps props;
         props = model(T, P);
 
@@ -51,6 +55,39 @@ TEST_CASE("Testing StandardThermoModelMaierKelley class", "[StandardThermoModelM
         CHECK( props.V0  == Approx(0.0)       );
         CHECK( props.Cp0 == Approx(40.1729)   );
         CHECK( props.Cv0 == Approx(31.8585)   );
+
+        //======================================================================
+        // Test method Model::params()
+        //======================================================================
+
+        CHECK( model.params().size() == 7 );
+        CHECK( model.params()[0]  == params.Gf );
+        CHECK( model.params()[1]  == params.Hf );
+        CHECK( model.params()[2]  == params.Sr );
+        CHECK( model.params()[3]  == params.Vr );
+        CHECK( model.params()[4]  == params.a );
+        CHECK( model.params()[5]  == params.b );
+        CHECK( model.params()[6]  == params.c );
+
+        //======================================================================
+        // Test method Model::serialize()
+        //======================================================================
+
+        yaml node;
+
+        node = model.serialize();
+        CHECK( double(node.at("MaierKelley").at("Gf")) == params.Gf );
+        CHECK( double(node.at("MaierKelley").at("Hf")) == params.Hf );
+        CHECK( double(node.at("MaierKelley").at("Sr")) == params.Sr );
+        CHECK( double(node.at("MaierKelley").at("Vr")) == params.Vr );
+        CHECK( double(node.at("MaierKelley").at("a"))  == params.a );
+        CHECK( double(node.at("MaierKelley").at("b"))  == params.b );
+        CHECK( double(node.at("MaierKelley").at("c"))  == params.c );
+
+        params.Gf = 1234.0; // change value of Param object and check if new serialize call reflects this change
+
+        node = model.serialize();
+        CHECK( double(node.at("MaierKelley").at("Gf")) == 1234.0 );
     }
 
     // Check Oelkers et al. (1995), page 1553, table for NH3(g).
