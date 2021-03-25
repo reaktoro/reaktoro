@@ -18,11 +18,11 @@
 #include "StandardThermoModelYAML.hpp"
 
 // Reaktoro includes
-#include "StandardThermoModelHKF.hpp"
-#include "StandardThermoModelHollandPowell.hpp"
-#include "StandardThermoModelMaierKelley.hpp"
-#include "StandardThermoModelMineralHKF.hpp"
-#include "StandardThermoModelWaterHKF.hpp"
+#include <Reaktoro/Models/StandardThermoModelHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
+#include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
+#include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
 #include <Reaktoro/Serialization/SerializationYAML.hpp>
 
 namespace Reaktoro {
