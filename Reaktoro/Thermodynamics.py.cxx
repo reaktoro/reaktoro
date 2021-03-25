@@ -41,9 +41,9 @@ void exportActivityModelIdealGas(py::module& m);
 void exportActivityModelIdealSolution(py::module& m);
 
 // Thermodynamics/Reactions
-void exportReactionThermoModelAnalyticalGEMS(py::module& m);
-void exportReactionThermoModelAnalyticalPHREEQC(py::module& m);
 void exportReactionThermoModelConstLgK(py::module& m);
+void exportReactionThermoModelGemsLgK(py::module& m);
+void exportReactionThermoModelPhreeqcLgK(py::module& m);
 void exportReactionThermoModelPressureCorrection(py::module& m);
 void exportReactionThermoModelVantHoff(py::module& m);
 
@@ -93,9 +93,9 @@ void exportThermodynamics(py::module& m)
     exportActivityModelIdealSolution(m);
 
     // Thermodynamics/Reactions
-    exportReactionThermoModelAnalyticalGEMS(m);
-    exportReactionThermoModelAnalyticalPHREEQC(m);
     exportReactionThermoModelConstLgK(m);
+    exportReactionThermoModelGemsLgK(m);
+    exportReactionThermoModelPhreeqcLgK(m);
     exportReactionThermoModelPressureCorrection(m);
     exportReactionThermoModelVantHoff(m);
 
