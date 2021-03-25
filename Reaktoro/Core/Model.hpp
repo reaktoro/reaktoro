@@ -21,6 +21,7 @@
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Common/YAML.hpp>
 #include <Reaktoro/Core/Params.hpp>
 
 namespace Reaktoro {
@@ -35,6 +36,9 @@ using ModelEvaluator = Fn<void(ResultRef res, Args... args)>;
 /// The functional signature of functions that calculates properties.
 template<typename Result, typename... Args>
 using ModelCalculator = Fn<Result(Args... args)>;
+
+/// The functional signature of functions that serialize a Model object.
+using ModelSerializer = Fn<yaml()>;
 
 /// The class used to represent a model function and its parameters.
 /// @ingroup Core
@@ -54,8 +58,9 @@ public:
     /// Construct a Model function object with given model evaluator function and its parameters.
     /// @param evalfn The function that evaluates the model.
     /// @param params The parameters of the underlying model function.
-    Model(const ModelEvaluator<ResultRef, Args...>& evalfn, const Params& params = {})
-    : m_params(params), m_evalfn(evalfn)
+    /// @param serializerfn The function that serializes the underlying model function to yaml format.
+    Model(const ModelEvaluator<ResultRef, Args...>& evalfn, const Params& params = {}, const ModelSerializer& serializerfn = {})
+    : m_params(params), m_evalfn(evalfn), m_serializerfn(serializerfn)
     {
         assert(evalfn);
 
@@ -70,8 +75,9 @@ public:
     /// Construct a Model function object with given direct model calculator and its parameters.
     /// @param calcfn The function that calculates the model properties and return them.
     /// @param params The parameters of the underlying model function.
-    Model(const ModelCalculator<Result, Args...>& calcfn, const Params& params = {})
-    : m_params(params)
+    /// @param serializerfn The function that serializes the underlying model function to yaml format.
+    Model(const ModelCalculator<Result, Args...>& calcfn, const Params& params = {}, const ModelSerializer& serializerfn = {})
+    : m_params(params), m_serializerfn(serializerfn)
     {
         assert(calcfn);
 
@@ -145,10 +151,22 @@ public:
         return m_calcfn;
     }
 
+    /// Return the function that serializes the underlying model function to yaml format.
+    auto serializerFn() const -> const ModelSerializer
+    {
+        return m_serializerfn;
+    }
+
     /// Return the model parameters of this Model function object.
     auto params() const -> const Params&
     {
         return m_params;
+    }
+
+    /// Return serialization of the underlying model function to yaml format.
+    auto serialize() const -> yaml
+    {
+        return m_serializerfn(); // evaluate because Param objects may have changed
     }
 
     /// Return a constant Model function object.
@@ -186,6 +204,14 @@ private:
     /// Note the added dependency on `const Params&`.
     /// This is needed for proper memoization optimization!
     ModelCalculator<Result, Args..., const Params&> m_calcfn;
+
+    /// The function that serializes the underlying model function to yaml format.
+    /// This has to be a function because if we stored the serialization of the
+    /// model at construction and the Param objects associated to it changed at
+    /// some point later, then the stored serialization would be out of sync
+    /// with the Param objects. By storing a function, the serialization can be
+    /// computed at any point, say, after the changes in the Param objects.
+    ModelSerializer m_serializerfn;
 };
 
 /// Return a reaction thermodynamic model resulting from chaining other models.
@@ -195,11 +221,20 @@ auto chain(const Vec<Model<Result(Args...)>>& models) -> Model<Result(Args...)>
     using ResultRef = Ref<Result>;
 
     const auto evalfns = vectorize(models, RKT_LAMBDA(model, model.evaluatorFn()));
+    const auto serializerfns = vectorize(models, RKT_LAMBDA(model, model.serializerFn()));
 
     auto evalfn = [=](ResultRef res, const Args&... args)
     {
         for(auto i = 0; i < evalfns.size(); ++i)
             evalfns[i](res, args...);
+    };
+
+    auto serializerfn = [serializerfns]() -> yaml
+    {
+        yaml result;
+        for(auto i = 0; i < serializerfns.size(); ++i)
+            result.push_back(serializerfns[i]());
+        return result;
     };
 
     Params params;
