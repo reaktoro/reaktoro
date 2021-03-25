@@ -29,8 +29,8 @@ CMRC_DECLARE(ReaktoroDatabases);
 #include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcThermo.hpp>
-#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelVantHoff.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/ReactionThermoModelVantHoff.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -47,7 +47,7 @@ struct PhreeqcDatabaseHelper
     ElementList elements;
 
     /// The list of species in the database
-    SpeciesList species;
+    SpeciesList species_list;
 
     /// The symbols of the elements already in the database (needed for fast existence check)
     Set<String> element_symbols;
@@ -115,7 +115,7 @@ struct PhreeqcDatabaseHelper
         if(containsSpecies(PhreeqcUtils::name(s)))
             return;
 
-        species.append(Species()
+        species_list.append(Species()
             .withName(PhreeqcUtils::name(s))
             .withFormula(PhreeqcUtils::formula(s))
             .withElements(createElements(s))
@@ -165,10 +165,10 @@ struct PhreeqcDatabaseHelper
         Pairs<Species, double> pairs;
         for(const auto& [reactant, coeff] : PhreeqcUtils::reactants(s))
         {
-            const auto idx = species.find(PhreeqcUtils::name(reactant));
-            if(idx == species.size())
+            const auto idx = species_list.find(PhreeqcUtils::name(reactant));
+            if(idx == species_list.size())
                 addSpecies(reactant); // create and append a Species object for this PHREEQC reactant species first!
-            pairs.emplace_back(species[idx], coeff);
+            pairs.emplace_back(species_list[idx], coeff);
         }
         return pairs;
     }
@@ -210,7 +210,7 @@ auto getPhreeqcDatabaseContent(String name) -> String
 auto createSpeciesWithDatabaseContentOrPath(String database)
 {
     PhreeqcDatabaseHelper helper(database);
-    return helper.species;
+    return helper.species_list;
 }
 
 } // namespace detail
@@ -233,7 +233,7 @@ auto PhreeqcDatabase::withName(std::string name) -> PhreeqcDatabase
     PhreeqcDatabase db;
     const auto content = detail::getPhreeqcDatabaseContent(name);
     detail::PhreeqcDatabaseHelper helper(content);
-    db.addSpecies(helper.species);
+    db.addSpecies(helper.species_list);
     db.attachData(helper);
     return db;
 }
@@ -247,7 +247,7 @@ auto PhreeqcDatabase::fromFile(std::string path) -> PhreeqcDatabase
 
     detail::PhreeqcDatabaseHelper helper(path);
     PhreeqcDatabase db;
-    db.addSpecies(helper.species);
+    db.addSpecies(helper.species_list);
     db.attachData(helper);
     return db;
 }
@@ -260,7 +260,7 @@ auto PhreeqcDatabase::load(String filename) -> PhreeqcDatabase&
     // return *this;
     detail::PhreeqcDatabaseHelper helper(filename);
     Database::clear();
-    Database::addSpecies(helper.species);
+    Database::addSpecies(helper.species_list);
     Database::attachData(helper);
     return *this;
 }
