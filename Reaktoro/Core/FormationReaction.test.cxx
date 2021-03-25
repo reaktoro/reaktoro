@@ -74,7 +74,7 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
                 .withProductStandardVolume(V0_D)
                 .withReactionThermoModel(
                     [=](ReactionThermoProps& res, ReactionThermoArgs args) {
-                        ReactionThermoArgsDecl(args);
+                        const auto& [T, P, dV0] = args;
                         res.dG0 = -R*T*ln10*lgK_D;
                         res.dH0 = dH0_D;
                         return res;
@@ -90,7 +90,7 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
                 .withProductStandardVolume(V0_E)
                 .withReactionThermoModel(
                     [=](ReactionThermoProps& res, ReactionThermoArgs args) {
-                        ReactionThermoArgsDecl(args);
+                        const auto& [T, P, dV0] = args;
                         res.dG0 = -R*T*ln10*lgK_E;
                         res.dH0 = dH0_E;
                         return res;
