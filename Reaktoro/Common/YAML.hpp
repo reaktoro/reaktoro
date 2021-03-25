@@ -27,10 +27,10 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 
-namespace YAML {
+namespace Reaktoro {
 
 /// A class used to serialize/deserialize other types based on yaml format.
-class yaml : public Node
+class yaml : public YAML::Node
 {
 public:
     /// Construct an object of type yaml.
@@ -46,79 +46,68 @@ public:
     yaml(std::istream& input);
 
     /// Construct an object of type yaml from a given Node object.
-    yaml(const Node& node);
+    yaml(const YAML::Node& node);
+
+    /// Append a child node with a given value only if value is not default value.
+    template<typename T>
+    auto appendIfNotDefault(const std::string& key, const T& value, const T& defaultval = T{}) -> void {
+        if(value != defaultval) (*this)[key] = value; }
+
+    /// Return a child node with given key if found, otherwise raise an error.
+    auto at(const std::string& key) const -> yaml;
+
+    /// Return the value of the node if not empty, otherwise a given fallback value.
+    template<typename T>
+    auto value(const T& fallback = T{}) const -> T { return IsDefined() ? as<T>() : fallback; }
+
+    /// Return child with given key.
+    template<typename Key>
+    auto operator[](const Key& key) const -> const yaml { return YAML::Node::operator[](key); }
+
+    /// Return child with given key.
+    template<typename Key>
+    auto operator[](const Key& key) -> yaml { return YAML::Node::operator[](key); }
+
+    /// Assign this yaml node with given value.
+    template<typename T>
+    auto operator=(const T& value) { YAML::Node::operator=(value); return *this; }
 
     /// Implicitly convert this yaml object into another type.
     template<typename T>
     operator T() const { return as<T>(); }
+
+    /// Transfer the value at this yaml node to argument @p value.
+    template<typename T>
+    auto to(T& value) -> void
+    {
+        try {
+            value = as<T>();
+        }
+        catch(...) {
+            errorif(true, "Could not convert YAML node to requested value type.");
+        }
+    }
 };
 
-/// Return a child node with given key. Check if key exists and raises error if it does not.
-inline auto operator&(const Node& node, const std::string& key)
-{
-    auto child = node[key];
-    Reaktoro::error(!child, "Could not get YAML node with key ", key, " .");
-    return child;
-}
+} // namespace Reaktoro
 
-template<typename T>
-auto set(const Node& node, const std::string& key, T& value) -> void
-{
-    auto child = node & key;
-    try {
-        value = child.as<T>();
-    }
-    catch(...) {
-        Reaktoro::error(true, "Could not convert YAML node with key ", key, " to requested value type.");
-    }
-}
-
-template<typename T>
-auto get(const Node& node, const std::string& key, const T& ifempty = T{})
-{
-    auto child = node[key];
-    if(!child) return ifempty;
-    return child.as<T>();
-}
-
-inline auto getChildWithKeyOrError(const Node& node, const std::string& key) -> Node
-{
-    auto child = node[key];
-    Reaktoro::error(!child, "Expecting YAML node to contain an object with key `", key, "`.");
-    return child;
-}
-
-template<typename T>
-auto appendIfNotDefault(Node& node, const std::string& key, const T& value, const T& defaultval = T{}) -> void
-{
-    if(value != defaultval)
-    {
-        node["key"] = value;
-    }
-}
+namespace YAML {
 
 template<typename Type>
 struct convert
 {
     static auto encode(const Type& obj)
     {
-        Node node;
+        Reaktoro::yaml node;
         node << obj;
         return node;
     }
 
     static auto decode(const Node& node, Type& obj)
     {
-        node >> obj;
+        Reaktoro::yaml(node) >> obj;
         return true;
     }
 };
 
 } // namespace YAML
-
-namespace Reaktoro {
-
-// Ensure YAML namespace is resolved when using Reaktoro namespace.
-using namespace YAML;
-
-} // namespace Reaktoro
