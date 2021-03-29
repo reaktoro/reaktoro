@@ -94,6 +94,9 @@ public:
     /// Convert this Param object into its value type.
     operator real&();
 
+    /// Convert this Param object into its value type.
+    operator double() const;
+
     /// Return a Param object that represents a constant parameter.
     static auto Constant(const real& val) -> Param;
 

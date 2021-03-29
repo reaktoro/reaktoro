@@ -161,6 +161,11 @@ Param::operator real&()
     return pimpl->value;
 }
 
+Param::operator double() const
+{
+    return pimpl->value;
+}
+
 auto Param::Constant(const real& val) -> Param
 {
     Param param(val);
