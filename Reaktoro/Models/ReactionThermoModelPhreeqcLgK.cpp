@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Serialization/SerializationYAML.hpp>
+#include <Reaktoro/Serialization/Serialization.yaml.hpp>
 
 namespace Reaktoro {
 
