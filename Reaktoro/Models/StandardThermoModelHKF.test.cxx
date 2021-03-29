@@ -55,7 +55,6 @@ TEST_CASE("Testing StandardThermoModelHKF class", "[StandardThermoModelHKF]")
         params.c2     =  368208.74;
         params.wref   = -8368.0;
         params.charge =  0.0;
-        params.formula = "CO2";
 
         auto model = StandardThermoModelHKF(params);
 
@@ -66,7 +65,7 @@ TEST_CASE("Testing StandardThermoModelHKF class", "[StandardThermoModelHKF]")
         StandardThermoProps props;
         props = model(T, P);
 
-        CHECK( props.G0  == Approx(-389346.0)   ); // converted to J/mol from -93.06 kcal/mol as in table
+        CHECK( props.G0/4184 == Approx(-93.055927342) ); // converted to J/mol from -93.06 kcal/mol as in table
         CHECK( props.H0  == Approx(-400560.0)   );
         CHECK( props.V0  == Approx(3.28667e-05) );
         CHECK( props.Cp0 == Approx(205.903)     );
@@ -127,14 +126,13 @@ TEST_CASE("Testing StandardThermoModelHKF class", "[StandardThermoModelHKF]")
         params.c2     = -719300.73;
         params.wref   =  1418961.8;
         params.charge = -2.0;
-        params.formula = "CO3-2";
 
         auto model = StandardThermoModelHKF(params);
 
         StandardThermoProps props;
         props = model(T, P);
 
-        CHECK( props.G0  == Approx(-524990.0)   ); // converted to J/mol from -125.48 kcal/mol as in table
+        CHECK( props.G0/4184 == Approx(-125.475621415) ); // converted to J/mol from -125.48 kcal/mol as in table
         CHECK( props.H0  == Approx(-685294.0)   );
         CHECK( props.V0  == Approx(-2.3192e-06) );
         CHECK( props.Cp0 == Approx(-189.733)    );
@@ -156,17 +154,23 @@ TEST_CASE("Testing StandardThermoModelHKF class", "[StandardThermoModelHKF]")
         params.c2     = 0.0;
         params.wref   = 0.0;
         params.charge = 1.0;
-        params.formula = "H+";
 
         auto model = StandardThermoModelHKF(params);
 
-        StandardThermoProps props;
-        props = model(T, P);
+        const auto Ts = Vec<double>{25, 50, 80};
+        const auto Ps = Vec<double>{1, 50, 100};
 
-        CHECK( props.G0  == Approx(0.0) ); // converted to J/mol from 0.0 kcal/mol as in table
-        CHECK( props.H0  == Approx(0.0) );
-        CHECK( props.V0  == Approx(0.0) );
-        CHECK( props.Cp0 == Approx(0.0) );
+        // Check standard thermo props are zero for H+ for a variety of T and P
+        for(auto T : Ts) for(auto P : Ps)
+        {
+            StandardThermoProps props;
+            props = model(T + 273.15, P * 1e5);
+
+            CHECK( props.G0  == Approx(0.0).scale(1.0) ); // converted to J/mol from 0.0 kcal/mol as in table
+            CHECK( props.H0  == Approx(0.0).scale(1.0) );
+            CHECK( props.V0  == Approx(0.0).scale(1.0) );
+            CHECK( props.Cp0 == Approx(0.0).scale(1.0) );
+        }
     }
 
     // Check Oelkers et al. (1995), page 1489, table for Mg+2.
@@ -185,14 +189,13 @@ TEST_CASE("Testing StandardThermoModelHKF class", "[StandardThermoModelHKF]")
         params.c2     = -246521.28;
         params.wref   =  643164.48;
         params.charge =  2.0;
-        params.formula = "Mg+2";
 
         auto model = StandardThermoModelHKF(params);
 
         StandardThermoProps props;
         props = model(T, P);
 
-        CHECK( props.G0  == Approx(-449027.0)    ); // converted to J/mol from -107.32 kcal/mol as in table
+        CHECK( props.G0/4184 == Approx(-107.320028681) ); // converted to J/mol from -107.32 kcal/mol as in table
         CHECK( props.H0  == Approx(-466977.0)    );
         CHECK( props.V0  == Approx(-1.70501e-05) );
         CHECK( props.Cp0 == Approx(10.2122)      );

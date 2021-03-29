@@ -18,7 +18,6 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 
 namespace Reaktoro {
@@ -58,9 +57,6 @@ struct StandardThermoModelParamsHKF
 
     /// The electrical charge of the aqueous solute.
     real charge = {};
-
-    /// The chemical formula of the aqueous solute.
-    ChemicalFormula formula;
 };
 
 /// Return a function that calculates thermodynamic properties of an aqueous solute using the HKF model.
