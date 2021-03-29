@@ -21,7 +21,6 @@
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/Species.hpp>
 using namespace Reaktoro;
 

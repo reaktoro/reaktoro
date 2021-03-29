@@ -39,7 +39,7 @@ auto defaultStandardThermoModel() -> StandardThermoModel
 {
     return [](real T, real P) -> StandardThermoProps
     {
-        error(true, "Cannot compute the standard thermodynamic properties of this Species object. \n"
+        errorif(true, "Cannot compute the standard thermodynamic properties of this Species object. \n"
             "To fix this error, use one of the methods below in this Species object: \n"
             "    1) Species::withStandardThermoModel\n"
             "    2) Species::withStandardGibbsEnergy\n"
@@ -71,7 +71,7 @@ struct Species::Impl
     FormationReaction reaction;
 
     /// The aggregate state of the species.
-    AggregateState aggregatestate;
+    AggregateState aggregate_state;
 
     /// The standard thermodynamic model function of the species (if any).
     StandardThermoModel propsfn = detail::defaultStandardThermoModel();
@@ -93,8 +93,30 @@ struct Species::Impl
       substance(detail::removeSuffix(formula)),
       elements(formula.elements()),
       charge(formula.charge()),
-      aggregatestate(identifyAggregateState(formula))
+      aggregate_state(identifyAggregateState(formula))
     {}
+
+    /// Construct a Species::Impl instance with given attributes
+    Impl(const Attribs& attribs)
+    : name(attribs.name),
+      formula(attribs.formula),
+      substance(attribs.substance),
+      elements(attribs.elements),
+      charge(attribs.charge),
+      aggregate_state(attribs.aggregate_state),
+      tags(attribs.tags)
+    {
+        if(attribs.std_thermo_model.initialized())
+        {
+            propsfn = attribs.std_thermo_model.withMemoization();
+        }
+        else if(attribs.formation_reaction.reactionThermoModel().initialized())
+        {
+            reaction = attribs.formation_reaction;
+            propsfn = reaction.standardThermoModel();
+            propsfn = propsfn.withMemoization();
+        }
+    }
 };
 
 Species::Species()
@@ -103,6 +125,10 @@ Species::Species()
 
 Species::Species(String formula)
 : pimpl(new Impl(formula))
+{}
+
+Species::Species(const Attribs& attribs)
+: pimpl(new Impl(attribs))
 {}
 
 auto Species::clone() const -> Species
@@ -150,7 +176,7 @@ auto Species::withCharge(double charge) const -> Species
 auto Species::withAggregateState(AggregateState option) const -> Species
 {
     Species copy = clone();
-    copy.pimpl->aggregatestate = option;
+    copy.pimpl->aggregate_state = option;
     return copy;
 }
 
@@ -228,9 +254,9 @@ auto Species::charge() const -> double
 
 auto Species::aggregateState() const -> AggregateState
 {
-    if(pimpl->aggregatestate == AggregateState::Undefined)
+    if(pimpl->aggregate_state == AggregateState::Undefined)
         return identifyAggregateState(name());
-    return pimpl->aggregatestate;
+    return pimpl->aggregate_state;
 }
 
 auto Species::reaction() const -> const FormationReaction&

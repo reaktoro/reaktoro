@@ -22,22 +22,54 @@
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/ElementalComposition.hpp>
+#include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 
 namespace Reaktoro {
-
-// Forward declaration
-class FormationReaction;
 
 /// A type used to represent a chemical species and its attributes.
 class Species
 {
 public:
+    /// The attributes of a Species object.
+    struct Attribs
+    {
+        /// The name that uniquely identifies the species.
+        String name;
+
+        /// The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
+        String formula;
+
+        /// The case insensitive substance name (e.g. `WATER`, `CARBON-MONOXIDE`).
+        String substance;
+
+        /// The elements that compose the species (e.g., `{{"H", 2}, {"O", 1}}`).
+        ElementalComposition elements;
+
+        /// The electric charge of the species.
+        double charge;
+
+        /// The aggregate state of the species.
+        AggregateState aggregate_state = AggregateState::Undefined;
+
+        /// The formation reaction of the species.
+        FormationReaction formation_reaction;
+
+        /// The standard thermodynamic model of the species.
+        StandardThermoModel std_thermo_model;
+
+        /// The tags of the species.
+        Strings tags;
+    };
+
     /// Construct a default Species object.
     Species();
 
     /// Construct a Species object with given chemical formula (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
     explicit Species(String formula);
+
+    /// Construct a Species object with given attributes.
+    explicit Species(const Attribs& attribs);
 
     /// Return a deep copy of this Species object.
     auto clone() const -> Species;
