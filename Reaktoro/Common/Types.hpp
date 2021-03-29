@@ -21,6 +21,7 @@
 #include <any>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -78,6 +79,10 @@ using SharedPtr = std::shared_ptr<T>;
 /// Convenient alias for `std::function<R(Args...)>`.
 template<typename F>
 using Fn = std::function<F>;
+
+/// Convenient alias for `std::optional`.
+template<typename T>
+using Optional = std::optional<T>;
 
 /// Convenient alias for `std::any`.
 using Any = std::any;
