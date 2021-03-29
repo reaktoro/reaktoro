@@ -51,7 +51,7 @@ auto waterDensity(real T, real P, const HelmholtsModel& model, StateOfMatter sta
 
     // Compute initial guess for density (kg/m3)
 //    const auto Dwc_liquid = waterMolarMass / Vwc_liquid;
-    const auto Dwc_liquid = 10.0 * waterCriticalDensity;
+    const auto Dwc_liquid = 10.0 * waterCriticalDensity; // TODO: 10x too much (try 2x or 3x, Ian Bell)
     const auto Dwc_vapor = waterMolarMass / Vwc_vapor;
 
     // Determine an adequate initial guess for (dimensionless) density based on the physical state of water
