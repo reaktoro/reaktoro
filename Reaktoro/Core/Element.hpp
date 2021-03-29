@@ -26,8 +26,8 @@ namespace Reaktoro {
 class Element
 {
 public:
-    /// A type used to represent the arguments to construct an Element object.
-    struct Args
+    /// The attributes of an Element object.
+    struct Attribs
     {
         /// The symbol of the element (e.g., "H", "O", "C", "Na").
         String symbol;
@@ -54,8 +54,8 @@ public:
     /// Construct an Element object by looking up to the periodic table with given symbol.
     explicit Element(String symbol);
 
-    /// Construct an Element object with given data.
-    explicit Element(const Args& args);
+    /// Construct an Element object with given attributes.
+    explicit Element(const Attribs& attribs);
 
     /// Return a deep copy of this Element object.
     auto clone() const -> Element;

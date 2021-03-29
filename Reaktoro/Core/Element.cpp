@@ -64,13 +64,13 @@ struct Element::Impl
     {}
 
     /// Construct an Element::Impl object with given attributes.
-    Impl(const Args& args)
-    : symbol(args.symbol),
-      name(args.name),
-      atomic_number(args.atomic_number),
-      atomic_weight(args.atomic_weight),
-      electronegativity(args.electronegativity),
-      tags(args.tags)
+    Impl(const Attribs& attribs)
+    : symbol(attribs.symbol),
+      name(attribs.name),
+      atomic_number(attribs.atomic_number),
+      atomic_weight(attribs.atomic_weight),
+      electronegativity(attribs.electronegativity),
+      tags(attribs.tags)
     {}
 };
 
@@ -82,8 +82,8 @@ Element::Element(String symbol)
  : Element(detail::getElementFromPeriodicTable(symbol))
 {}
 
-Element::Element(const Args& attributes)
- : pimpl(new Impl(attributes))
+Element::Element(const Attribs& attribs)
+ : pimpl(new Impl(attribs))
 {}
 
 auto Element::clone() const -> Element
