@@ -76,7 +76,7 @@ auto memoizedWaterElectroPropsJohnsonNorton(const real& T, const real& P) -> Wat
 /// Return a Params object containing all Param objects in @p params.
 auto extractParams(const StandardThermoModelParamsHKF& params) -> Params
 {
-    const auto& [ Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wref, charge, formula ] = params;
+    const auto& [ Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wref, charge ] = params;
     return { Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wref };
 }
 
@@ -96,7 +96,7 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
         auto& [G0, H0, V0, Cp0, Cv0] = props;
-        const auto& [ Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wr, charge, formula ] = params;
+        const auto& [ Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wr, charge ] = params;
 
         const auto wts = waterThermoStateWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
         const auto wes = memoizedWaterElectroPropsJohnsonNorton(T, P);

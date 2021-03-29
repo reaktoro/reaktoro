@@ -130,8 +130,12 @@ auto speciesElectroPropsHKF(const gHKF& gstate, const StandardThermoModelParamsH
     // Auxiliary references
     const auto& [g, gT, gP, gTT, gTP, gPP] = gstate;
 
-    // Check if the aqueous species is neutral or H+, and set its electrostatic data accordingly
-    if(params.charge == 0.0 || params.formula.equivalent("H+"))
+    // Check if the aqueous species is neutral set its electrostatic data
+    // accordingly. Formely, this check also considered if the species was H+,
+    // to set the properties below to zero as well. However, this required the
+    // chemical formula in the list of params, which was cumbersome. It turns
+    // out that the next branch produces zero properties for H+, since its wref=0.
+    if(params.charge == 0.0)
     {
         se.w   = params.wref;
         se.wT  = 0.0;
