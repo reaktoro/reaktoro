@@ -47,18 +47,6 @@ namespace Reaktoro {
 // Common
 //======================================================================
 
-// Needed to avoid ambiguous overloaded operator '<<' error.
-auto operator<<(yaml& node, double obj) -> void
-{
-    node = obj;
-}
-
-// Needed to avoid ambiguous overloaded operator '>>' error.
-auto operator>>(const yaml& node, double& obj) -> void
-{
-    obj = node.as<double>();
-}
-
 auto operator<<(yaml& node, const real& obj) -> void
 {
     node = obj.val();
@@ -99,25 +87,24 @@ auto operator>>(const yaml& node, ChemicalSystem& obj) -> void
 
 auto operator<<(yaml& node, const Element& obj) -> void
 {
-    node.appendIfNotDefault("Symbol",            obj.symbol());
-    node.appendIfNotDefault("Name",              obj.name());
-    node.appendIfNotDefault("AtomicNumber",      obj.atomicNumber());
-    node.appendIfNotDefault("AtomicWeight",      obj.atomicWeight());
-    node.appendIfNotDefault("MolarMass",         obj.molarMass());
-    node.appendIfNotDefault("Electronegativity", obj.electronegativity());
-    node.appendIfNotDefault("Tags",              obj.tags());
+    node["Symbol"]            = obj.symbol();
+    node["Name"]              = obj.name();
+    node["AtomicNumber"]      = obj.atomicNumber();
+    node["AtomicWeight"]      = obj.atomicWeight();
+    node["MolarMass"]         = obj.molarMass();
+    node["Electronegativity"] = obj.electronegativity();
+    node["Tags"]              = obj.tags();
 }
 
 auto operator>>(const yaml& node, Element& obj) -> void
 {
     Element::Args args;
-    args.symbol            = node["Symbol"].value(String{});
-    args.name              = node["Name"].value(String{});
-    args.atomic_number     = node["AtomicNumber"].value(0);
-    args.atomic_weight     = node["AtomicWeight"].value(0.0);
-    args.electronegativity = node["Electronegativity"].value(0.0);
-    args.tags              = node["Tags"].value(Strings{});
-
+    node.at("Symbol").to(args.symbol);
+    node.at("Name").to(args.name);
+    node.at("AtomicNumber").to(args.atomic_number);
+    node.at("AtomicWeight").to(args.atomic_weight);
+    node.at("Electronegativity").to(args.electronegativity);
+    node.at("Tags").to(args.tags);
     obj = Element(args);
 }
 
@@ -177,13 +164,13 @@ auto operator>>(const yaml& node, Species& obj) -> void
 auto operator<<(yaml& node, const ReactionThermoModelParamsConstLgK& obj) -> void
 {
     node["lgKr"] = obj.lgKr;
-    node.appendIfNotDefault("Pr", obj.Pr, 100'000);
+    node["Pr"]   = obj.Pr;
 }
 
 auto operator>>(const yaml& node, ReactionThermoModelParamsConstLgK& obj) -> void
 {
     node.at("lgKr").to(obj.lgKr);
-    obj.Pr = node["Pr"].value(100'000);
+    node.at("Pr").to(obj.Pr);
 }
 
 //=====================================================================================================================
@@ -197,7 +184,7 @@ auto operator<<(yaml& node, const ReactionThermoModelParamsGemsLgK& obj) -> void
     node["A4"] = obj.A4;
     node["A5"] = obj.A5;
     node["A6"] = obj.A6;
-    node.appendIfNotDefault("Pr", obj.Pr, 100'000);
+    node["Pr"] = obj.Pr;
 }
 
 auto operator>>(const yaml& node, ReactionThermoModelParamsGemsLgK& obj) -> void
@@ -209,7 +196,7 @@ auto operator>>(const yaml& node, ReactionThermoModelParamsGemsLgK& obj) -> void
     node.at("A4").to(obj.A4);
     node.at("A5").to(obj.A5);
     node.at("A6").to(obj.A6);
-    obj.Pr = node["Pr"].value(100'000);
+    node.at("Pr").to(obj.Pr);
 }
 
 //=====================================================================================================================
@@ -222,7 +209,7 @@ auto operator<<(yaml& node, const ReactionThermoModelParamsPhreeqcLgK& obj) -> v
     node["A4"] = obj.A4;
     node["A5"] = obj.A5;
     node["A6"] = obj.A6;
-    node.appendIfNotDefault("Pr", obj.Pr, 100'000);
+    node["Pr"] = obj.Pr;
 }
 
 auto operator>>(const yaml& node, ReactionThermoModelParamsPhreeqcLgK& obj) -> void
@@ -233,7 +220,7 @@ auto operator>>(const yaml& node, ReactionThermoModelParamsPhreeqcLgK& obj) -> v
     node.at("A4").to(obj.A4);
     node.at("A5").to(obj.A5);
     node.at("A6").to(obj.A6);
-    obj.Pr = node["Pr"].value(100'000);
+    node.at("Pr").to(obj.Pr);
 }
 
 //=====================================================================================================================
@@ -241,35 +228,35 @@ auto operator>>(const yaml& node, ReactionThermoModelParamsPhreeqcLgK& obj) -> v
 auto operator<<(yaml& node, const ReactionThermoModelParamsVantHoff& obj) -> void
 {
     node["lgKr"] = obj.lgKr;
-    node["dHr"] = obj.dHr;
-    node.appendIfNotDefault("Tr", obj.Tr, 298.15);
-    node.appendIfNotDefault("Pr", obj.Pr, 100'000);
+    node["dHr"]  = obj.dHr;
+    node["Tr"]   = obj.Tr;
+    node["Pr"]   = obj.Pr;
 }
 
 auto operator>>(const yaml& node, ReactionThermoModelParamsVantHoff& obj) -> void
 {
     node.at("lgKr").to(obj.lgKr);
     node.at("dHr").to(obj.dHr);
-    obj.Tr = node["Tr"].value(298.15);
-    obj.Pr = node["Pr"].value(100'000);
+    node.at("Tr").to(obj.Tr);
+    node.at("Pr").to(obj.Pr);
 }
 
 //=====================================================================================================================
 
 auto operator<<(yaml& node, const StandardThermoModelParamsHKF& obj) -> void
 {
-    node["Gf"] = obj.Gf;
-    node["Hf"] = obj.Hf;
-    node["Sr"] = obj.Sr;
-    node["a1"] = obj.a1;
-    node["a2"] = obj.a2;
-    node["a3"] = obj.a3;
-    node["a4"] = obj.a4;
-    node["c1"] = obj.c1;
-    node["c2"] = obj.c2;
-    node["wref"] = obj.wref;
+    node["Gf"]     = obj.Gf;
+    node["Hf"]     = obj.Hf;
+    node["Sr"]     = obj.Sr;
+    node["a1"]     = obj.a1;
+    node["a2"]     = obj.a2;
+    node["a3"]     = obj.a3;
+    node["a4"]     = obj.a4;
+    node["c1"]     = obj.c1;
+    node["c2"]     = obj.c2;
+    node["wref"]   = obj.wref;
     node["charge"] = obj.charge;
-    node["formula"] = obj.formula;
+    node["Tmax"]   = obj.Tmax;
 }
 
 auto operator>>(const yaml& node, StandardThermoModelParamsHKF& obj) -> void
@@ -285,7 +272,6 @@ auto operator>>(const yaml& node, StandardThermoModelParamsHKF& obj) -> void
     node.at("c2").to(obj.c2);
     node.at("wref").to(obj.wref);
     node.at("charge").to(obj.charge);
-    node.at("formula").to(obj.formula);
 }
 
 //=====================================================================================================================
@@ -305,9 +291,6 @@ auto operator<<(yaml& node, const StandardThermoModelParamsHollandPowell& obj) -
     node["kappa0p"]  = obj.kappa0p;
     node["kappa0pp"] = obj.kappa0pp;
     node["numatoms"] = obj.numatoms;
-    node["Tcr"]      = obj.Tcr;
-    node["Smax"]     = obj.Smax;
-    node["Vmax"]     = obj.Vmax;
     node["Tmax"]     = obj.Tmax;
 }
 
@@ -326,9 +309,6 @@ auto operator>>(const yaml& node, StandardThermoModelParamsHollandPowell& obj) -
     node.at("kappa0p").to(obj.kappa0p);
     node.at("kappa0pp").to(obj.kappa0pp);
     node.at("numatoms").to(obj.numatoms);
-    node.at("Tcr").to(obj.Tcr);
-    node.at("Smax").to(obj.Smax);
-    node.at("Vmax").to(obj.Vmax);
     node.at("Tmax").to(obj.Tmax);
 }
 
