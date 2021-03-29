@@ -17,6 +17,9 @@
 
 #include "YAML.hpp"
 
+// C++ includes
+#include <sstream>
+
 namespace Reaktoro {
 
 yaml::yaml()
@@ -42,8 +45,15 @@ yaml::yaml(const Node& node)
 auto yaml::at(const std::string& key) const -> yaml
 {
     auto child = (*this)[key];
-    errorif(!child, "Could not get YAML node with key ", key, " .");
+    errorif(!child, "Could not get YAML child node with key `", key, "` in:\n", repr());
     return child;
+}
+
+auto yaml::repr() const -> std::string
+{
+    std::stringstream ss;
+    ss << *this;
+    return ss.str();
 }
 
 } // namespace Reaktoro
