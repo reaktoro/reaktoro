@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/Element.hpp>
@@ -245,5 +246,70 @@ TEST_CASE("Testing Species class", "[Species]")
         REQUIRE(species.tags().empty());
 
         REQUIRE_THROWS( Species("RrGgHh") ); // Elements Rr Gg and Hh were not previously appended in the PeriodicTable
+    }
+
+    SECTION("Testing construction of chemical species with given Species::Attribs")
+    {
+        Species::Attribs attribs;
+        attribs.name = "CO3--";
+        attribs.formula = "CO3--";
+        attribs.substance = "CARBONATE";
+        attribs.elements = { {Element("C"), 1}, {Element("O"), 3} };
+        attribs.charge = -2;
+        attribs.aggregate_state = AggregateState::Aqueous;
+        attribs.tags = {"aqueous", "solvent"};
+
+        species = Species(attribs);
+
+        REQUIRE(species.name() == "CO3--");
+        REQUIRE(species.formula() == "CO3--");
+        REQUIRE(species.substance() == "CARBONATE");
+        REQUIRE(species.elements().size() == 2);
+        REQUIRE(species.elements().coefficient("C") == 1);
+        REQUIRE(species.elements().coefficient("O") == 3);
+        REQUIRE(species.charge() == -2);
+        REQUIRE(species.aggregateState() == AggregateState::Aqueous);
+        REQUIRE(species.tags() == attribs.tags);
+
+        const auto T = 300.0;
+        const auto P = 1e5;
+
+        REQUIRE_THROWS(species.props(T, P)); // no standard thermo model or formation reaction were set!
+
+        WHEN("when providing StandardThermoModel")
+        {
+            attribs.std_thermo_model = [](real T, real P)
+            {
+                StandardThermoProps props;
+                props.G0 = 1.234;
+                props.H0 = 2.345;
+                return props;
+            };
+
+            species = Species(attribs);
+
+            REQUIRE(species.props(T, P).G0 == 1.234);
+            REQUIRE(species.props(T, P).H0 == 2.345);
+        }
+
+        WHEN("when providing FormationReaction")
+        {
+            const auto H  = Species("H+").withStandardGibbsEnergy(0.0);
+            const auto OH = Species("OH-").withStandardGibbsEnergy(0.0);
+
+            attribs.formation_reaction = FormationReaction()
+                .withProduct("H2O")
+                .withReactants({{H, 2.0}, {OH, 1.0}})
+                .withEquilibriumConstant(14.0)
+                .withProductStandardVolume(1e-5)
+                ;
+
+            species = Species(attribs);
+
+            const auto RT = universalGasConstant * T;
+
+            REQUIRE(species.props(T, P).G0 == Approx(-RT*ln10 * 14.0));
+            REQUIRE(species.props(T, P).H0 == 0.0);
+        }
     }
 }
