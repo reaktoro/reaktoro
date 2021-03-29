@@ -98,21 +98,26 @@ struct Species::Impl
 
     /// Construct a Species::Impl instance with given attributes
     Impl(const Attribs& attribs)
-    : name(attribs.name),
-      formula(attribs.formula),
-      substance(attribs.substance),
-      elements(attribs.elements),
-      charge(attribs.charge),
-      aggregate_state(attribs.aggregate_state),
-      tags(attribs.tags)
+    : formula(detail::removeSuffix(attribs.formula))
     {
-        if(attribs.std_thermo_model.initialized())
+        errorif(attribs.formula.empty(),
+            "Species::Attribs::formula cannot be empty.");
+        errorif(attribs.std_thermo_model && attribs.formation_reaction,
+            "Species::Attribs for ", attribs.formula, " cannot contain both a FormationReaction object and a StandardThermoModel object.");
+        name = attribs.name.value_or(attribs.formula);
+        substance = attribs.substance.value_or(formula);
+        elements = attribs.elements.value_or(parseChemicalFormula(formula));
+        charge = attribs.charge.value_or(parseElectricCharge(formula));
+        aggregate_state = attribs.aggregate_state.value_or(identifyAggregateState(attribs.formula));
+        tags = attribs.tags.value_or(Strings{});
+        if(attribs.std_thermo_model)
         {
-            propsfn = attribs.std_thermo_model.withMemoization();
+            propsfn = attribs.std_thermo_model.value();
+            propsfn = propsfn.withMemoization();
         }
-        else if(attribs.formation_reaction.reactionThermoModel().initialized())
+        if(attribs.formation_reaction)
         {
-            reaction = attribs.formation_reaction;
+            reaction = attribs.formation_reaction.value();
             propsfn = reaction.standardThermoModel();
             propsfn = propsfn.withMemoization();
         }

@@ -34,32 +34,32 @@ public:
     /// The attributes of a Species object.
     struct Attribs
     {
-        /// The name that uniquely identifies the species.
-        String name;
+        /// The name that uniquely identifies the species (e.g., `CO2(g)`, `CaCO3(aq)`).
+        Optional<String> name;
 
         /// The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
         String formula;
 
-        /// The case insensitive substance name (e.g. `WATER`, `CARBON-MONOXIDE`).
-        String substance;
+        /// The underlying substance name (e.g. `WATER`, `CARBON-MONOXIDE`).
+        Optional<String> substance;
 
         /// The elements that compose the species (e.g., `{{"H", 2}, {"O", 1}}`).
-        ElementalComposition elements;
+        Optional<ElementalComposition> elements;
 
         /// The electric charge of the species.
-        double charge;
+        Optional<double> charge;
 
         /// The aggregate state of the species.
-        AggregateState aggregate_state = AggregateState::Undefined;
+        Optional<AggregateState> aggregate_state;
 
         /// The formation reaction of the species.
-        FormationReaction formation_reaction;
+        Optional<FormationReaction> formation_reaction;
 
         /// The standard thermodynamic model of the species.
-        StandardThermoModel std_thermo_model;
+        Optional<StandardThermoModel> std_thermo_model;
 
         /// The tags of the species.
-        Strings tags;
+        Optional<Strings> tags;
     };
 
     /// Construct a default Species object.
