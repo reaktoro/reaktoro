@@ -39,12 +39,12 @@ auto createStandardThermoModel(const ThermoFunEngine& engine, const String& spec
 }
 
 /// Convert a ThermoFun::Element object into a Reaktoro::Element object
-auto createSpecies(const ThermoFun::Element& element) -> Element
+auto createElement(const ThermoFun::Element& element) -> Element
 {
     Element converted;
     converted = converted.withName(element.name());
     converted = converted.withSymbol(element.symbol());
-    converted = converted.withMolarMass(element.molarMass());
+    converted = converted.withMolarMass(element.molarMass() * 1e-3); // from g/mol to kg/mol
     return converted;
 }
 
@@ -57,7 +57,7 @@ auto createElements(const ThermoFunEngine& engine, const ThermoFun::Substance& s
     {
         if(element.symbol() == "Zz")
             continue; // skip charge element in ThermoFun (charge is explicitly accessed in Reaktoro::Species)
-        elements[createSpecies(element)] = coeff;
+        elements[createElement(element)] = coeff;
     }
     return elements;
 }
