@@ -26,5 +26,10 @@ using namespace Reaktoro;
 
 void exportReactionThermoModelConstLgK(py::module& m)
 {
+    py::class_<ReactionThermoModelParamsConstLgK>(m, "ReactionThermoModelParamsConstLgK")
+        .def_readwrite("lgKr", &ReactionThermoModelParamsConstLgK::lgKr)
+        .def_readwrite("Pr", &ReactionThermoModelParamsConstLgK::Pr)
+        ;
+
     m.def("ReactionThermoModelConstLgK", ReactionThermoModelConstLgK);
 }

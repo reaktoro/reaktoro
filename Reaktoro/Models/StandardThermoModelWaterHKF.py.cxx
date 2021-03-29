@@ -26,5 +26,12 @@ using namespace Reaktoro;
 
 void exportStandardThermoModelWaterHKF(py::module& m)
 {
+    py::class_<StandardThermoModelParamsWaterHKF>(m, "StandardThermoModelParamsWaterHKF")
+        .def_readwrite("Ttr", &StandardThermoModelParamsWaterHKF::Ttr)
+        .def_readwrite("Str", &StandardThermoModelParamsWaterHKF::Str)
+        .def_readwrite("Gtr", &StandardThermoModelParamsWaterHKF::Gtr)
+        .def_readwrite("Htr", &StandardThermoModelParamsWaterHKF::Htr)
+        ;
+
     m.def("StandardThermoModelWaterHKF", StandardThermoModelWaterHKF);
 }
