@@ -42,9 +42,6 @@ TEST_CASE("Testing StandardThermoModelHollandPowell class", "[StandardThermoMode
         params.kappa0p  =  6.0;
         params.kappa0pp = -8.2e-11;
         params.numatoms =  3.0;
-        params.Tcr      =  847.0;
-        params.Smax     =  4.95;
-        params.Vmax     =  1.188e-06;
 
         auto model = StandardThermoModelHollandPowell(params);
 
@@ -145,9 +142,6 @@ TEST_CASE("Testing StandardThermoModelHollandPowell class", "[StandardThermoMode
         params.kappa0p  =  5.91;
         params.kappa0pp = -1.09e-10;
         params.numatoms =  13.0;
-        params.Tcr      =  950.0;
-        params.Smax     =  16.0;
-        params.Vmax     =  1.24e-06;
 
         auto model = StandardThermoModelHollandPowell(params);
 

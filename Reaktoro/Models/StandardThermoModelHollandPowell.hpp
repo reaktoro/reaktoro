@@ -64,17 +64,21 @@ struct StandardThermoModelParamsHollandPowell
     /// The number of atoms in the chemical formula of the mineral.
     real numatoms;
 
-    /// The critical temperature of the mineral at 1 bar (in K).
-    real Tcr;
-
-    /// The entropy of disordering of the mineral at the critical temperature above (in J/(mol·K)).
-    real Smax;
-
-    /// The volume of disordering of the mineral at the critical temperature above (in m³/mol).
-    real Vmax;
-
-    /// The maximum temperature at which the Holland and Powell (2011) model can be applied for the species (in K).
+    /// The maximum temperature at which the Holland and Powell (2011) model can be applied for the substance (optional, in K).
     real Tmax;
+
+    // TODO: The following data, although provided in SUPCRTBL for some
+    // minerals, is from HP98, and not HP11, and thus not actually used. Decide
+    // to remove this.
+
+    // /// The critical temperature of the mineral at 1 bar (in K).
+    // real Tcr;
+
+    // /// The entropy of disordering of the mineral at the critical temperature above (in J/(mol·K)).
+    // real Smax;
+
+    // /// The volume of disordering of the mineral at the critical temperature above (in m³/mol).
+    // real Vmax;
 };
 
 /// Return a function that calculates thermodynamic properties of a fluid or mineral species using the Holland-Powell model.
