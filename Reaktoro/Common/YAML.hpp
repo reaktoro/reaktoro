@@ -60,6 +60,9 @@ public:
     template<typename T>
     auto value(const T& fallback = T{}) const -> T { return IsDefined() ? as<T>() : fallback; }
 
+    /// Return a string representation of this yaml object.
+    auto repr() const -> std::string;
+
     /// Return child with given key.
     template<typename Key>
     auto operator[](const Key& key) const -> const yaml { return YAML::Node::operator[](key); }
@@ -84,8 +87,16 @@ public:
             value = as<T>();
         }
         catch(...) {
-            errorif(true, "Could not convert YAML node to requested value type.");
+            errorif(true, "Could not convert YAML node to requested value type. The node is:\n", repr());
         }
+    }
+
+    /// Transfer the value at this yaml node to argument @p value. Use fallback in case there of empty node.
+    template<typename T, typename U>
+    auto to(T& value, const U& fallback) -> void
+    {
+        if(!IsDefined()) value = fallback;
+        else to(value);
     }
 };
 
