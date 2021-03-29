@@ -39,11 +39,11 @@ using namespace Catch;
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
-#include <Reaktoro/Serialization/SerializationYAML.hpp>
+#include <Reaktoro/Serialization/Serialization.yaml.hpp>
 
 using namespace Reaktoro;
 
-TEST_CASE("Testing SerializationYAML", "[SerializationYAML]")
+TEST_CASE("Testing Models.yaml", "[Models.yaml]")
 {
 
 }

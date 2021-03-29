@@ -21,7 +21,7 @@
 #include <cmath>
 
 // Reaktoro includes
-#include <Reaktoro/Serialization/SerializationYAML.hpp>
+#include <Reaktoro/Serialization/Serialization.yaml.hpp>
 
 namespace Reaktoro {
 

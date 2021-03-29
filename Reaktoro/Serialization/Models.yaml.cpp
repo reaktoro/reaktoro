@@ -15,22 +15,10 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "SerializationYAML.hpp"
+#include "Models.yaml.hpp"
 
-// Reaktoro includes (Common)
-#include <Reaktoro/Common/Exception.hpp>
+// Reaktoro includes
 #include <Reaktoro/Common/YAML.hpp>
-
-// Reaktoro includes (Core)
-#include <Reaktoro/Core/ChemicalFormula.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Core/Param.hpp>
-#include <Reaktoro/Core/Params.hpp>
-#include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/Species.hpp>
-
-// Reaktoro includes (Models)
 #include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModelGemsLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
@@ -40,126 +28,9 @@
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
+#include <Reaktoro/Serialization/Common.yaml.hpp>
 
 namespace Reaktoro {
-
-//======================================================================
-// Common
-//======================================================================
-
-auto operator<<(yaml& node, const real& obj) -> void
-{
-    node = obj.val();
-}
-
-auto operator>>(const yaml& node, real& obj) -> void
-{
-    obj = node.as<double>();
-}
-
-//=====================================================================================================================
-// Core
-//=====================================================================================================================
-
-auto operator<<(yaml& node, const ChemicalFormula& obj) -> void
-{
-    node = obj.str();
-}
-
-auto operator>>(const yaml& node, ChemicalFormula& obj) -> void
-{
-    obj = ChemicalFormula(node.as<std::string>());
-}
-
-//=====================================================================================================================
-
-auto operator<<(yaml& node, const ChemicalSystem& obj) -> void
-{
-    errorif(true, "`auto operator<<(yaml& node, const ChemicalSystem& obj) -> void` not implemented!");
-}
-
-auto operator>>(const yaml& node, ChemicalSystem& obj) -> void
-{
-    errorif(true,  "`auto operator<<=(ChemicalSystem& obj) -> void` not implemented!");
-}
-
-//=====================================================================================================================
-
-auto operator<<(yaml& node, const Element& obj) -> void
-{
-    node["Symbol"]            = obj.symbol();
-    node["Name"]              = obj.name();
-    node["AtomicNumber"]      = obj.atomicNumber();
-    node["AtomicWeight"]      = obj.atomicWeight();
-    node["MolarMass"]         = obj.molarMass();
-    node["Electronegativity"] = obj.electronegativity();
-    node["Tags"]              = obj.tags();
-}
-
-auto operator>>(const yaml& node, Element& obj) -> void
-{
-    Element::Args args;
-    node.at("Symbol").to(args.symbol);
-    node.at("Name").to(args.name);
-    node.at("AtomicNumber").to(args.atomic_number);
-    node.at("AtomicWeight").to(args.atomic_weight);
-    node.at("Electronegativity").to(args.electronegativity);
-    node.at("Tags").to(args.tags);
-    obj = Element(args);
-}
-
-//=====================================================================================================================
-
-auto operator<<(yaml& node, const Param& obj) -> void
-{
-    node = obj.value();
-}
-
-auto operator>>(const yaml& node, Param& obj) -> void
-{
-    obj = node.as<double>();
-}
-
-//=====================================================================================================================
-
-auto operator<<(yaml& node, const Params& obj) -> void
-{
-    node = obj.data();
-}
-
-auto operator>>(const yaml& node, Params& obj) -> void
-{
-    auto values = node.as<Vec<double>>();
-    obj = Params(values.begin(), values.end());
-}
-
-//=====================================================================================================================
-
-auto operator<<(yaml& node, const Phase& obj) -> void
-{
-    errorif(true, "`auto operator<<(yaml& node, const Phase& obj) -> void` not implemented!");
-}
-
-auto operator>>(const yaml& node, Phase& obj) -> void
-{
-    errorif(true,  "`auto operator<<=(Phase& obj) -> void` not implemented!");
-}
-
-//=====================================================================================================================
-
-auto operator<<(yaml& node, const Species& obj) -> void
-{
-
-}
-
-auto operator>>(const yaml& node, Species& obj) -> void
-{
-
-}
-
-//=====================================================================================================================
-// Models
-//=====================================================================================================================
 
 auto operator<<(yaml& node, const ReactionThermoModelParamsConstLgK& obj) -> void
 {
