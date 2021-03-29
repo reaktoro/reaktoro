@@ -57,6 +57,9 @@ struct StandardThermoModelParamsHKF
 
     /// The electrical charge of the aqueous solute.
     real charge = {};
+
+    /// The maximum temperature at which the HKF model can be applied for the substance (optional, in K).
+    real Tmax;
 };
 
 /// Return a function that calculates thermodynamic properties of an aqueous solute using the HKF model.

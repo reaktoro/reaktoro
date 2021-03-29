@@ -37,16 +37,16 @@ struct StandardThermoModelParamsMaierKelley
     /// The standard molar volume of the mineral substance at reference temperature and pressure (in unit of m³/mol)
     Param Vr;
 
-    /// The coefficient `a` of the Maier-Kelley equation of state (in J/(mol·K)).
+    /// The coefficient `a` of the Maier-Kelley model (in J/(mol·K)).
     Param a;
 
-    /// The coefficient `b` of the Maier-Kelley equation of state (in J/(mol·K²)).
+    /// The coefficient `b` of the Maier-Kelley model (in J/(mol·K²)).
     Param b;
 
-    /// The coefficient `c` of the Maier-Kelley equation of state (in (J·K)/mol).
+    /// The coefficient `c` of the Maier-Kelley model (in (J·K)/mol).
     Param c;
 
-    /// The maximum temperature at which the Maier-Kelley equation of state can be applied for the substance (in K).
+    /// The maximum temperature at which the Maier-Kelley model can be applied for the substance (optional, in K).
     real Tmax;
 };
 

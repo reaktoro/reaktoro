@@ -61,7 +61,7 @@ struct StandardThermoModelParamsMineralHKF
     /// The Clapeyron slote at each mineral phase transition (in Pa/K).
     Vec<Param> dPdTtr;
 
-    /// The maximum temperature for which the Maier-Kelley-HKF thermodynamic model equation is valid (in K).
+    /// The maximum temperature at which the Maier-Kelley-HKF model can be applied for the substance (optional, in K).
     real Tmax;
 };
 

@@ -22,9 +22,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Serialization/SerializationYAML.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 
 namespace Reaktoro {
 
@@ -36,7 +33,7 @@ using std::sqrt;
 /// Return a Params object containing all Param objects in @p params.
 auto extractParams(const StandardThermoModelParamsHollandPowell& params) -> Params
 {
-    const auto& [Gf, Hf, Sr, Vr, a, b, c, d, alpha0, kappa0, kappa0p, kappa0pp, numatoms, Tcr, Smax, Vmax, Tmax] = params;
+    const auto& [Gf, Hf, Sr, Vr, a, b, c, d, alpha0, kappa0, kappa0p, kappa0pp, numatoms, Tmax] = params;
     return {Gf, Hf, Sr, Vr, a, b, c, d, alpha0, kappa0, kappa0p, kappa0pp};
 }
 
@@ -59,7 +56,7 @@ auto StandardThermoModelHollandPowell(const StandardThermoModelParamsHollandPowe
         auto& [G0, H0, V0, Cp0, Cv0] = props;
 
         // Unpack the model parameters
-        const auto& [Gf, Hf, Sr, Vr, MKa, MKb, MKc, MKd, alpha0, kappa0, kappa0p, kappa0pp, numatoms, Tcr, Smax, Vmax, Tmax] = params;
+        const auto& [Gf, Hf, Sr, Vr, MKa, MKb, MKc, MKd, alpha0, kappa0, kappa0p, kappa0pp, numatoms, Tmax] = params;
 
         // Auxiliary variables related to reference pressure Pr and reference temperature Tr
         const auto Pr   = 1.0e5;
