@@ -26,5 +26,22 @@ using namespace Reaktoro;
 
 void exportStandardThermoModelHollandPowell(py::module& m)
 {
+    py::class_<StandardThermoModelParamsHollandPowell>(m, "StandardThermoModelParamsHollandPowell")
+        .def_readwrite("Gf",       &StandardThermoModelParamsHollandPowell::Gf)
+        .def_readwrite("Hf",       &StandardThermoModelParamsHollandPowell::Hf)
+        .def_readwrite("Sr",       &StandardThermoModelParamsHollandPowell::Sr)
+        .def_readwrite("Vr",       &StandardThermoModelParamsHollandPowell::Vr)
+        .def_readwrite("a",        &StandardThermoModelParamsHollandPowell::a)
+        .def_readwrite("b",        &StandardThermoModelParamsHollandPowell::b)
+        .def_readwrite("c",        &StandardThermoModelParamsHollandPowell::c)
+        .def_readwrite("d",        &StandardThermoModelParamsHollandPowell::d)
+        .def_readwrite("alpha0",   &StandardThermoModelParamsHollandPowell::alpha0)
+        .def_readwrite("kappa0",   &StandardThermoModelParamsHollandPowell::kappa0)
+        .def_readwrite("kappa0p",  &StandardThermoModelParamsHollandPowell::kappa0p)
+        .def_readwrite("kappa0pp", &StandardThermoModelParamsHollandPowell::kappa0pp)
+        .def_readwrite("numatoms", &StandardThermoModelParamsHollandPowell::numatoms)
+        .def_readwrite("Tmax",     &StandardThermoModelParamsHollandPowell::Tmax)
+        ;
+
     m.def("StandardThermoModelHollandPowell", StandardThermoModelHollandPowell);
 }

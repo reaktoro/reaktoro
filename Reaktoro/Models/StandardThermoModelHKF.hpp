@@ -26,37 +26,37 @@ namespace Reaktoro {
 struct StandardThermoModelParamsHKF
 {
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in J/mol).
-    Param Gf = {};
+    Param Gf;
 
     /// The apparent standard molal enthalpy of formation of the species from its elements (in J/mol).
-    Param Hf = {};
+    Param Hf;
 
     /// The standard molal entropy of the species at reference temperature and pressure (in J/(mol·K)).
-    Param Sr = {};
+    Param Sr;
 
     /// The coefficient `a1` of the HKF equation of state of the aqueous solute (in J/(mol·Pa)).
-    Param a1 = {};
+    Param a1;
 
     /// The coefficient `a2` of the HKF equation of state of the aqueous solute (in J/mol).
-    Param a2 = {};
+    Param a2;
 
     /// The coefficient `a3` of the HKF equation of state of the aqueous solute (in (J·K)/(mol·Pa)).
-    Param a3 = {};
+    Param a3;
 
     /// The coefficient `a4` of the HKF equation of state of the aqueous solute (in (J·K)/mol).
-    Param a4 = {};
+    Param a4;
 
     /// The coefficient `c1` of the HKF equation of state of the aqueous solute (in J/(mol·K)).
-    Param c1 = {};
+    Param c1;
 
     /// The coefficient `c2` of the HKF equation of state of the aqueous solute (in (J·K)/mol).
-    Param c2 = {};
+    Param c2;
 
     /// The conventional Born coefficient of the aqueous solute at reference temperature 298.15 K and pressure 1 bar (in J/mol).
-    Param wref = {};
+    Param wref;
 
     /// The electrical charge of the aqueous solute.
-    real charge = {};
+    real charge;
 
     /// The maximum temperature at which the HKF model can be applied for the substance (optional, in K).
     real Tmax;

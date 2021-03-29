@@ -26,5 +26,16 @@ using namespace Reaktoro;
 
 void exportStandardThermoModelMaierKelley(py::module& m)
 {
+    py::class_<StandardThermoModelParamsMaierKelley>(m, "StandardThermoModelParamsMaierKelley")
+        .def_readwrite("Gf",       &StandardThermoModelParamsMaierKelley::Gf)
+        .def_readwrite("Hf",       &StandardThermoModelParamsMaierKelley::Hf)
+        .def_readwrite("Sr",       &StandardThermoModelParamsMaierKelley::Sr)
+        .def_readwrite("Vr",       &StandardThermoModelParamsMaierKelley::Vr)
+        .def_readwrite("a",        &StandardThermoModelParamsMaierKelley::a)
+        .def_readwrite("b",        &StandardThermoModelParamsMaierKelley::b)
+        .def_readwrite("c",        &StandardThermoModelParamsMaierKelley::c)
+        .def_readwrite("Tmax",     &StandardThermoModelParamsMaierKelley::Tmax)
+        ;
+
     m.def("StandardThermoModelMaierKelley", StandardThermoModelMaierKelley);
 }
