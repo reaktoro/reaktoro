@@ -21,12 +21,14 @@
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/YAML.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
+#include <Reaktoro/Core/ElementList.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalFormula;
 class ChemicalSystem;
+class Database;
 class Element;
 class ElementalComposition;
 class FormationReaction;
@@ -44,6 +46,9 @@ REAKTORO_YAML_DECODE_DECLARE(ChemicalFormula);
 
 REAKTORO_YAML_ENCODE_DECLARE(ChemicalSystem);
 REAKTORO_YAML_DECODE_DECLARE(ChemicalSystem);
+
+REAKTORO_YAML_ENCODE_DECLARE(Database);
+REAKTORO_YAML_DECODE_DECLARE(Database);
 
 REAKTORO_YAML_ENCODE_DECLARE(Element);
 REAKTORO_YAML_DECODE_DECLARE(Element);
@@ -65,6 +70,8 @@ REAKTORO_YAML_DECODE_DECLARE(Phase);
 
 REAKTORO_YAML_ENCODE_DECLARE(Species);
 REAKTORO_YAML_DECODE_DECLARE(Species);
+
+auto decodeSpecies(const yaml& node, const ElementList& elements) -> Species;
 
 } // namespace Reaktoro
 
