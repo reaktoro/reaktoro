@@ -19,13 +19,11 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Common/YAML.hpp>
 
 namespace Reaktoro {
 
-// Forward declarations
-class yaml;
-
-auto operator<<(yaml& node, const real& obj) -> void;
-auto operator>>(const yaml& node, real& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(real);
+REAKTORO_YAML_DECODE_DECLARE(real);
 
 } // namespace YAML

@@ -117,7 +117,25 @@ public:
         errorif(!child.IsDefined(), "Could not find a required YAML node with key `", key, "` in parent node:\n", repr());
         child.to(obj);
     }
+
+    template<typename T>
+    struct encode;
+
+    template<typename T>
+    struct decode;
 };
+
+#define REAKTORO_YAML_ENCODE_DECLARE(Type) \
+    template<> struct yaml::encode<Type> { static auto eval(yaml& node, const Type& obj) -> void; };
+
+#define REAKTORO_YAML_ENCODE_DEFINE(Type) \
+    auto yaml::encode<Type>::eval(yaml& node, const Type& obj) -> void
+
+#define REAKTORO_YAML_DECODE_DECLARE(Type) \
+    template<> struct yaml::decode<Type> { static auto eval(const yaml& node, Type& obj) -> void; };
+
+#define REAKTORO_YAML_DECODE_DEFINE(Type) \
+    auto yaml::decode<Type>::eval(const yaml& node, Type& obj) -> void
 
 } // namespace Reaktoro
 
@@ -129,13 +147,13 @@ struct convert
     static auto encode(const Type& obj)
     {
         Reaktoro::yaml node;
-        node << obj;
+        Reaktoro::yaml::encode<Type>::eval(node, obj);
         return node;
     }
 
     static auto decode(const Node& node, Type& obj)
     {
-        Reaktoro::yaml(node) >> obj;
+        Reaktoro::yaml::decode<Type>::eval(node, obj);
         return true;
     }
 };

@@ -18,7 +18,6 @@
 #include "Core.yaml.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/YAML.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Element.hpp>
@@ -33,45 +32,45 @@ namespace Reaktoro {
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const AggregateState& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(AggregateState)
 {
     std::stringstream ss;
     ss << obj;
     node = ss.str();
 }
 
-auto operator>>(const yaml& node, AggregateState& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(AggregateState)
 {
     obj = parseAggregateState(node.as<std::string>());
 }
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const ChemicalFormula& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(ChemicalFormula)
 {
     node = obj.str();
 }
 
-auto operator>>(const yaml& node, ChemicalFormula& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(ChemicalFormula)
 {
     obj = ChemicalFormula(node.as<std::string>());
 }
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const ChemicalSystem& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(ChemicalSystem)
 {
-    errorif(true, "`auto operator<<(yaml& node, const ChemicalSystem& obj) -> void` not implemented!");
+    errorif(true, "Implement REAKTORO_YAML_ENCODE_DEFINE(ChemicalSystem)");
 }
 
-auto operator>>(const yaml& node, ChemicalSystem& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(ChemicalSystem)
 {
-    errorif(true,  "`auto operator<<=(ChemicalSystem& obj) -> void` not implemented!");
+    errorif(true, "Implement REAKTORO_YAML_DECODE_DEFINE(ChemicalSystem)");
 }
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const Element& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(Element)
 {
     node["Symbol"]            = obj.symbol();
     node["Name"]              = obj.name();
@@ -81,7 +80,7 @@ auto operator<<(yaml& node, const Element& obj) -> void
     node["Tags"]              = obj.tags();
 }
 
-auto operator>>(const yaml& node, Element& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(Element)
 {
     Element::Attribs attribs;
     node.required("Symbol", attribs.symbol);
@@ -95,48 +94,48 @@ auto operator>>(const yaml& node, Element& obj) -> void
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const ElementalComposition& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(ElementalComposition)
 {
-    errorif(true, "`auto operator<<(yaml& node, const ElementalComposition& obj) -> void` not implemented!");
+    errorif(true, "Implement REAKTORO_YAML_ENCODE_DEFINE(ElementalComposition)");
 }
 
-auto operator>>(const yaml& node, ElementalComposition& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(ElementalComposition)
 {
-    errorif(true, "`auto operator>>(const yaml& node, ElementalComposition& obj) -> void` not implemented!");
-}
-
-//=====================================================================================================================
-
-auto operator<<(yaml& node, const FormationReaction& obj) -> void
-{
-    errorif(true, "`auto operator<<(yaml& node, const FormationReaction& obj) -> void` not implemented!");
-}
-
-auto operator>>(const yaml& node, FormationReaction& obj) -> void
-{
-    errorif(true, "`auto operator>>(const yaml& node, FormationReaction& obj) -> void` not implemented!");
+    errorif(true, "Implement REAKTORO_YAML_DECODE_DEFINE(ElementalComposition)");
 }
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const Param& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(FormationReaction)
+{
+    errorif(true, "Implement REAKTORO_YAML_ENCODE_DEFINE(FormationReaction)");
+}
+
+REAKTORO_YAML_DECODE_DEFINE(FormationReaction)
+{
+    errorif(true, "Implement REAKTORO_YAML_DECODE_DEFINE(FormationReaction)");
+}
+
+//=====================================================================================================================
+
+REAKTORO_YAML_ENCODE_DEFINE(Param)
 {
     node = obj.value();
 }
 
-auto operator>>(const yaml& node, Param& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(Param)
 {
     obj = node.as<double>();
 }
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const Params& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(Params)
 {
     node = obj.data();
 }
 
-auto operator>>(const yaml& node, Params& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(Params)
 {
     auto values = node.as<Vec<double>>();
     obj = Params(values.begin(), values.end());
@@ -144,24 +143,24 @@ auto operator>>(const yaml& node, Params& obj) -> void
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const Phase& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(Phase)
 {
-    errorif(true, "`auto operator<<(yaml& node, const Phase& obj) -> void` not implemented!");
+    errorif(true, "Implement REAKTORO_YAML_ENCODE_DEFINE(Phase)");
 }
 
-auto operator>>(const yaml& node, Phase& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(Phase)
 {
-    errorif(true,  "`auto operator<<=(Phase& obj) -> void` not implemented!");
+    errorif(true, "Implement REAKTORO_YAML_DECODE_DEFINE(Phase)");
 }
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const Species& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(Species)
 {
-    errorif(true, "`auto operator<<(yaml& node, const Species& obj) -> void` not implemented!");
+    errorif(true, "Implement REAKTORO_YAML_ENCODE_DEFINE(Species)");
 }
 
-auto operator>>(const yaml& node, Species& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(Species)
 {
     Species::Attribs attribs;
     node.optional("Name", attribs.name);
