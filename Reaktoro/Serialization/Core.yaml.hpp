@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/AggregateState.hpp>
 
 namespace Reaktoro {
 
@@ -27,11 +28,16 @@ class yaml;
 class ChemicalFormula;
 class ChemicalSystem;
 class Element;
+class ElementalComposition;
+class FormationReaction;
 class Param;
 class Params;
 class Phase;
 class Species;
 template<typename Signature> class Model;
+
+auto operator<<(yaml& node, const AggregateState& obj) -> void;
+auto operator>>(const yaml& node, AggregateState& obj) -> void;
 
 auto operator<<(yaml& node, const ChemicalFormula& obj) -> void;
 auto operator>>(const yaml& node, ChemicalFormula& obj) -> void;
@@ -41,6 +47,12 @@ auto operator>>(const yaml& node, ChemicalSystem& obj) -> void;
 
 auto operator<<(yaml& node, const Element& obj) -> void;
 auto operator>>(const yaml& node, Element& obj) -> void;
+
+auto operator<<(yaml& node, const ElementalComposition& obj) -> void;
+auto operator>>(const yaml& node, ElementalComposition& obj) -> void;
+
+auto operator<<(yaml& node, const FormationReaction& obj) -> void;
+auto operator>>(const yaml& node, FormationReaction& obj) -> void;
 
 auto operator<<(yaml& node, const Param& obj) -> void;
 auto operator>>(const yaml& node, Param& obj) -> void;
