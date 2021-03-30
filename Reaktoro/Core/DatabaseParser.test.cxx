@@ -19,10 +19,37 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/YAML.hpp>
 #include <Reaktoro/Core/DatabaseParser.hpp>
 using namespace Reaktoro;
 
+std::string doc = R"(
+Elements:
+  - Symbol: A
+    AtomicWeight: 1.0
+  - Symbol: B
+    AtomicWeight: 2.0
+Species:
+  - Name: A2B
+    Formula: A2B
+    Elements: {A: 2, B: 1}
+    Charge: 0.0
+    AggregateState: Liquid
+    StandardThermoModel:
+      MaierKelley:
+        Gf: 1.234
+        Hf: 2.345
+        Sr: 0.0
+        Vr: 0.0
+        a: 0.0
+        b: 0.0
+        c: 0.0
+        Tmax: 0.0
+)";
+
 TEST_CASE("Testing DatabaseParser class", "[DatabaseParser]")
 {
+    yaml node(doc);
+    DatabaseParser dbparser(node);
 
 }
