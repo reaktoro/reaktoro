@@ -18,7 +18,6 @@
 #include "Models.yaml.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/YAML.hpp>
 #include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModelGemsLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
@@ -29,16 +28,17 @@
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
 #include <Reaktoro/Serialization/Common.yaml.hpp>
+#include <Reaktoro/Serialization/Core.yaml.hpp>
 
 namespace Reaktoro {
 
-auto operator<<(yaml& node, const ReactionThermoModelParamsConstLgK& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsConstLgK)
 {
     node["lgKr"] = obj.lgKr;
     node["Pr"]   = obj.Pr;
 }
 
-auto operator>>(const yaml& node, ReactionThermoModelParamsConstLgK& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsConstLgK)
 {
     node.at("lgKr").to(obj.lgKr);
     node.at("Pr").to(obj.Pr);
@@ -46,7 +46,7 @@ auto operator>>(const yaml& node, ReactionThermoModelParamsConstLgK& obj) -> voi
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const ReactionThermoModelParamsGemsLgK& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsGemsLgK)
 {
     node["A0"] = obj.A0;
     node["A1"] = obj.A1;
@@ -58,7 +58,7 @@ auto operator<<(yaml& node, const ReactionThermoModelParamsGemsLgK& obj) -> void
     node["Pr"] = obj.Pr;
 }
 
-auto operator>>(const yaml& node, ReactionThermoModelParamsGemsLgK& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsGemsLgK)
 {
     node.at("A0").to(obj.A0);
     node.at("A1").to(obj.A1);
@@ -72,7 +72,7 @@ auto operator>>(const yaml& node, ReactionThermoModelParamsGemsLgK& obj) -> void
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const ReactionThermoModelParamsPhreeqcLgK& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsPhreeqcLgK)
 {
     node["A1"] = obj.A1;
     node["A2"] = obj.A2;
@@ -83,7 +83,7 @@ auto operator<<(yaml& node, const ReactionThermoModelParamsPhreeqcLgK& obj) -> v
     node["Pr"] = obj.Pr;
 }
 
-auto operator>>(const yaml& node, ReactionThermoModelParamsPhreeqcLgK& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsPhreeqcLgK)
 {
     node.at("A1").to(obj.A1);
     node.at("A2").to(obj.A2);
@@ -96,7 +96,7 @@ auto operator>>(const yaml& node, ReactionThermoModelParamsPhreeqcLgK& obj) -> v
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const ReactionThermoModelParamsVantHoff& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsVantHoff)
 {
     node["lgKr"] = obj.lgKr;
     node["dHr"]  = obj.dHr;
@@ -104,7 +104,7 @@ auto operator<<(yaml& node, const ReactionThermoModelParamsVantHoff& obj) -> voi
     node["Pr"]   = obj.Pr;
 }
 
-auto operator>>(const yaml& node, ReactionThermoModelParamsVantHoff& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsVantHoff)
 {
     node.at("lgKr").to(obj.lgKr);
     node.at("dHr").to(obj.dHr);
@@ -114,7 +114,7 @@ auto operator>>(const yaml& node, ReactionThermoModelParamsVantHoff& obj) -> voi
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const StandardThermoModelParamsHKF& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsHKF)
 {
     node["Gf"]     = obj.Gf;
     node["Hf"]     = obj.Hf;
@@ -130,7 +130,7 @@ auto operator<<(yaml& node, const StandardThermoModelParamsHKF& obj) -> void
     node["Tmax"]   = obj.Tmax;
 }
 
-auto operator>>(const yaml& node, StandardThermoModelParamsHKF& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsHKF)
 {
     node.at("Gf").to(obj.Gf);
     node.at("Hf").to(obj.Hf);
@@ -147,7 +147,7 @@ auto operator>>(const yaml& node, StandardThermoModelParamsHKF& obj) -> void
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const StandardThermoModelParamsHollandPowell& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsHollandPowell)
 {
     node["Gf"]       = obj.Gf;
     node["Hf"]       = obj.Hf;
@@ -165,7 +165,7 @@ auto operator<<(yaml& node, const StandardThermoModelParamsHollandPowell& obj) -
     node["Tmax"]     = obj.Tmax;
 }
 
-auto operator>>(const yaml& node, StandardThermoModelParamsHollandPowell& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsHollandPowell)
 {
     node.at("Gf").to(obj.Gf);
     node.at("Hf").to(obj.Hf);
@@ -185,7 +185,7 @@ auto operator>>(const yaml& node, StandardThermoModelParamsHollandPowell& obj) -
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const StandardThermoModelParamsMaierKelley& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsMaierKelley)
 {
     node["Gf"]   = obj.Gf;
     node["Hf"]   = obj.Hf;
@@ -197,7 +197,7 @@ auto operator<<(yaml& node, const StandardThermoModelParamsMaierKelley& obj) -> 
     node["Tmax"] = obj.Tmax;
 }
 
-auto operator>>(const yaml& node, StandardThermoModelParamsMaierKelley& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsMaierKelley)
 {
     node.at("Gf").to(obj.Gf);
     node.at("Hf").to(obj.Hf);
@@ -211,7 +211,7 @@ auto operator>>(const yaml& node, StandardThermoModelParamsMaierKelley& obj) -> 
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const StandardThermoModelParamsMineralHKF& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsMineralHKF)
 {
     node["Gf"]     = obj.Gf;
     node["Hf"]     = obj.Hf;
@@ -228,7 +228,7 @@ auto operator<<(yaml& node, const StandardThermoModelParamsMineralHKF& obj) -> v
     node["Tmax"]   = obj.Tmax;
 }
 
-auto operator>>(const yaml& node, StandardThermoModelParamsMineralHKF& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsMineralHKF)
 {
     node.at("Gf").to(obj.Gf);
     node.at("Hf").to(obj.Hf);
@@ -247,7 +247,7 @@ auto operator>>(const yaml& node, StandardThermoModelParamsMineralHKF& obj) -> v
 
 //=====================================================================================================================
 
-auto operator<<(yaml& node, const StandardThermoModelParamsWaterHKF& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsWaterHKF)
 {
     node["Ttr"] = obj.Ttr;
     node["Str"] = obj.Str;
@@ -255,7 +255,7 @@ auto operator<<(yaml& node, const StandardThermoModelParamsWaterHKF& obj) -> voi
     node["Htr"] = obj.Htr;
 }
 
-auto operator>>(const yaml& node, StandardThermoModelParamsWaterHKF& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsWaterHKF)
 {
     node.at("Ttr").to(obj.Ttr);
     node.at("Str").to(obj.Str);

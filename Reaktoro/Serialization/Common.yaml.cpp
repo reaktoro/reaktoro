@@ -17,17 +17,14 @@
 
 #include "Common.yaml.hpp"
 
-// Reaktoro includes
-#include <Reaktoro/Common/YAML.hpp>
-
 namespace Reaktoro {
 
-auto operator<<(yaml& node, const real& obj) -> void
+REAKTORO_YAML_ENCODE_DEFINE(real)
 {
     node = obj.val();
 }
 
-auto operator>>(const yaml& node, real& obj) -> void
+REAKTORO_YAML_DECODE_DEFINE(real)
 {
     obj = node.as<double>();
 }

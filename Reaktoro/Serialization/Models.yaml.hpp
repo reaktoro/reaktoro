@@ -19,11 +19,9 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Common/YAML.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-class yaml;
 
 struct ReactionThermoModelParamsConstLgK;
 struct ReactionThermoModelParamsGemsLgK;
@@ -35,31 +33,31 @@ struct StandardThermoModelParamsMaierKelley;
 struct StandardThermoModelParamsMineralHKF;
 struct StandardThermoModelParamsWaterHKF;
 
-auto operator<<(yaml& node, const ReactionThermoModelParamsConstLgK& obj) -> void;
-auto operator>>(const yaml& node, ReactionThermoModelParamsConstLgK& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsConstLgK);
+REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsConstLgK);
 
-auto operator<<(yaml& node, const ReactionThermoModelParamsGemsLgK& obj) -> void;
-auto operator>>(const yaml& node, ReactionThermoModelParamsGemsLgK& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsGemsLgK);
+REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsGemsLgK);
 
-auto operator<<(yaml& node, const ReactionThermoModelParamsPhreeqcLgK& obj) -> void;
-auto operator>>(const yaml& node, ReactionThermoModelParamsPhreeqcLgK& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsPhreeqcLgK);
+REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsPhreeqcLgK);
 
-auto operator<<(yaml& node, const ReactionThermoModelParamsVantHoff& obj) -> void;
-auto operator>>(const yaml& node, ReactionThermoModelParamsVantHoff& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsVantHoff);
+REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsVantHoff);
 
-auto operator<<(yaml& node, const StandardThermoModelParamsHKF& obj) -> void;
-auto operator>>(const yaml& node, StandardThermoModelParamsHKF& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsHKF);
+REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsHKF);
 
-auto operator<<(yaml& node, const StandardThermoModelParamsHollandPowell& obj) -> void;
-auto operator>>(const yaml& node, StandardThermoModelParamsHollandPowell& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsHollandPowell);
+REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsHollandPowell);
 
-auto operator<<(yaml& node, const StandardThermoModelParamsMaierKelley& obj) -> void;
-auto operator>>(const yaml& node, StandardThermoModelParamsMaierKelley& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsMaierKelley);
+REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsMaierKelley);
 
-auto operator<<(yaml& node, const StandardThermoModelParamsMineralHKF& obj) -> void;
-auto operator>>(const yaml& node, StandardThermoModelParamsMineralHKF& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsMineralHKF);
+REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsMineralHKF);
 
-auto operator<<(yaml& node, const StandardThermoModelParamsWaterHKF& obj) -> void;
-auto operator>>(const yaml& node, StandardThermoModelParamsWaterHKF& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsWaterHKF);
+REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsWaterHKF);
 
 } // namespace YAML

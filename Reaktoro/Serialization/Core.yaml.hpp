@@ -19,12 +19,12 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Common/YAML.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-class yaml;
 class ChemicalFormula;
 class ChemicalSystem;
 class Element;
@@ -36,35 +36,35 @@ class Phase;
 class Species;
 template<typename Signature> class Model;
 
-auto operator<<(yaml& node, const AggregateState& obj) -> void;
-auto operator>>(const yaml& node, AggregateState& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(AggregateState);
+REAKTORO_YAML_DECODE_DECLARE(AggregateState);
 
-auto operator<<(yaml& node, const ChemicalFormula& obj) -> void;
-auto operator>>(const yaml& node, ChemicalFormula& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(ChemicalFormula);
+REAKTORO_YAML_DECODE_DECLARE(ChemicalFormula);
 
-auto operator<<(yaml& node, const ChemicalSystem& obj) -> void;
-auto operator>>(const yaml& node, ChemicalSystem& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(ChemicalSystem);
+REAKTORO_YAML_DECODE_DECLARE(ChemicalSystem);
 
-auto operator<<(yaml& node, const Element& obj) -> void;
-auto operator>>(const yaml& node, Element& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(Element);
+REAKTORO_YAML_DECODE_DECLARE(Element);
 
-auto operator<<(yaml& node, const ElementalComposition& obj) -> void;
-auto operator>>(const yaml& node, ElementalComposition& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(ElementalComposition);
+REAKTORO_YAML_DECODE_DECLARE(ElementalComposition);
 
-auto operator<<(yaml& node, const FormationReaction& obj) -> void;
-auto operator>>(const yaml& node, FormationReaction& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(FormationReaction);
+REAKTORO_YAML_DECODE_DECLARE(FormationReaction);
 
-auto operator<<(yaml& node, const Param& obj) -> void;
-auto operator>>(const yaml& node, Param& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(Param);
+REAKTORO_YAML_DECODE_DECLARE(Param);
 
-auto operator<<(yaml& node, const Params& obj) -> void;
-auto operator>>(const yaml& node, Params& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(Params);
+REAKTORO_YAML_DECODE_DECLARE(Params);
 
-auto operator<<(yaml& node, const Phase& obj) -> void;
-auto operator>>(const yaml& node, Phase& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(Phase);
+REAKTORO_YAML_DECODE_DECLARE(Phase);
 
-auto operator<<(yaml& node, const Species& obj) -> void;
-auto operator>>(const yaml& node, Species& obj) -> void;
+REAKTORO_YAML_ENCODE_DECLARE(Species);
+REAKTORO_YAML_DECODE_DECLARE(Species);
 
 } // namespace Reaktoro
 
