@@ -38,13 +38,13 @@ public:
     yaml();
 
     /// Construct an object of type yaml from a given input string.
-    yaml(const char* input);
+    explicit yaml(const char* input);
 
     /// Construct an object of type yaml from a given input string.
-    yaml(const std::string& input);
+    explicit yaml(const std::string& input);
 
     /// Construct an object of type yaml from a given input stream.
-    yaml(std::istream& input);
+    explicit yaml(std::istream& input);
 
     /// Construct an object of type yaml from a given Node object.
     yaml(const YAML::Node& node);
