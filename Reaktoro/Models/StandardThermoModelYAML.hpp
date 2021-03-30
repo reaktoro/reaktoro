@@ -24,7 +24,7 @@
 
 namespace Reaktoro {
 
-/// Return a standard thermodynamic model with given @p model name and parameters @p params.
-auto StandardThermoModelYAML(const String& model, const yaml& params) -> StandardThermoModel;
+/// Return a standard thermodynamic model with given yaml @p node.
+auto StandardThermoModelYAML(const yaml& node) -> StandardThermoModel;
 
 } // namespace Reaktoro
