@@ -27,7 +27,7 @@ TEST_CASE("Testing AggregateState module", "[AggregateState]")
     CHECK( parseAggregateState("g")   == AggregateState::Gas              );
     CHECK( parseAggregateState("l")   == AggregateState::Liquid           );
     CHECK( parseAggregateState("s")   == AggregateState::Solid            );
-    CHECK( parseAggregateState("pl")  == AggregateState::Plasma );
+    CHECK( parseAggregateState("pl")  == AggregateState::Plasma           );
     CHECK( parseAggregateState("cd")  == AggregateState::CondensedPhase   );
     CHECK( parseAggregateState("fl")  == AggregateState::Fluid            );
     CHECK( parseAggregateState("lc")  == AggregateState::LiquidCrystal    );
@@ -42,11 +42,30 @@ TEST_CASE("Testing AggregateState module", "[AggregateState]")
     CHECK( parseAggregateState("aq")  == AggregateState::Aqueous          );
     CHECK( parseAggregateState("xy")  == AggregateState::Undefined        );
 
+    CHECK( parseAggregateState("Gas")              == AggregateState::Gas              );
+    CHECK( parseAggregateState("Liquid")           == AggregateState::Liquid           );
+    CHECK( parseAggregateState("Solid")            == AggregateState::Solid            );
+    CHECK( parseAggregateState("Plasma")           == AggregateState::Plasma           );
+    CHECK( parseAggregateState("CondensedPhase")   == AggregateState::CondensedPhase   );
+    CHECK( parseAggregateState("Fluid")            == AggregateState::Fluid            );
+    CHECK( parseAggregateState("LiquidCrystal")    == AggregateState::LiquidCrystal    );
+    CHECK( parseAggregateState("CrystallineSolid") == AggregateState::CrystallineSolid );
+    CHECK( parseAggregateState("AmorphousSolid")   == AggregateState::AmorphousSolid   );
+    CHECK( parseAggregateState("Vitreous")         == AggregateState::Vitreous         );
+    CHECK( parseAggregateState("Adsorbed")         == AggregateState::Adsorbed         );
+    CHECK( parseAggregateState("Monomeric")        == AggregateState::Monomeric        );
+    CHECK( parseAggregateState("Polymeric")        == AggregateState::Polymeric        );
+    CHECK( parseAggregateState("SolidSolution")    == AggregateState::SolidSolution    );
+    CHECK( parseAggregateState("IonExchange")      == AggregateState::IonExchange      );
+    CHECK( parseAggregateState("Aqueous")          == AggregateState::Aqueous          );
+    CHECK( parseAggregateState("Undefined")        == AggregateState::Undefined        );
+    CHECK( parseAggregateState("XYZ")              == AggregateState::Undefined        );
+
     CHECK( identifyAggregateState("XYZ(g)")       == AggregateState::Gas              );
     CHECK( identifyAggregateState("XYZ(l)")       == AggregateState::Liquid           );
     CHECK( identifyAggregateState("XYZ(s)")       == AggregateState::Solid            );
     CHECK( identifyAggregateState("XYZ(s, xyz)")  == AggregateState::Solid            );
-    CHECK( identifyAggregateState("XYZ(pl)")      == AggregateState::Plasma );
+    CHECK( identifyAggregateState("XYZ(pl)")      == AggregateState::Plasma           );
     CHECK( identifyAggregateState("XYZ(cd)")      == AggregateState::CondensedPhase   );
     CHECK( identifyAggregateState("XYZ(fl)")      == AggregateState::Fluid            );
     CHECK( identifyAggregateState("XYZ(lc)")      == AggregateState::LiquidCrystal    );

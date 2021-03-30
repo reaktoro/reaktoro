@@ -52,7 +52,7 @@ enum class AggregateState
 /// Output an AggregateState value.
 auto operator<<(std::ostream& out, AggregateState option) -> std::ostream&;
 
-/// Return the AggregateState value from given aggregate state symbol.
+/// Return the AggregateState value from given aggregate state @p symbol.
 /// The following table maps a symbol to an aggregate state value.
 ///
 /// | Symbol | AggregateState                   |
@@ -74,7 +74,10 @@ auto operator<<(std::ostream& out, AggregateState option) -> std::ostream&;
 /// | `ex`   | AggregateState::IonExchange      |
 /// | `aq`   | AggregateState::Aqueous          |
 ///
-/// AggregateState::Undefined is returned if symbol is none of above.
+/// @note @p symbol can also be a string containing the aggregate state name.
+/// For example, @p symbol can be `"Gas"`, `"Aqueous"`, `"Solid"`, etc.
+///
+/// AggregateState::Undefined is returned if @p symbol is none of above.
 auto parseAggregateState(const std::string& symbol) -> AggregateState;
 
 /// Identify the aggregate state in the name of a substance or chemical species.

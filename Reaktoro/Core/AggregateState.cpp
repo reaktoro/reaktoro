@@ -51,22 +51,22 @@ auto operator<<(std::ostream& out, AggregateState option) -> std::ostream&
 
 auto parseAggregateState(const std::string& symbol) -> AggregateState
 {
-    if(symbol == "g")   return AggregateState::Gas;
-    if(symbol == "l")   return AggregateState::Liquid;
-    if(symbol == "s")   return AggregateState::Solid;
-    if(symbol == "pl")  return AggregateState::Plasma;
-    if(symbol == "cd")  return AggregateState::CondensedPhase;
-    if(symbol == "fl")  return AggregateState::Fluid;
-    if(symbol == "lc")  return AggregateState::LiquidCrystal;
-    if(symbol == "cr")  return AggregateState::CrystallineSolid;
-    if(symbol == "am")  return AggregateState::AmorphousSolid;
-    if(symbol == "vit") return AggregateState::Vitreous;
-    if(symbol == "ads") return AggregateState::Adsorbed;
-    if(symbol == "mon") return AggregateState::Monomeric;
-    if(symbol == "pol") return AggregateState::Polymeric;
-    if(symbol == "ss")  return AggregateState::SolidSolution;
-    if(symbol == "ex")  return AggregateState::IonExchange;
-    if(symbol == "aq")  return AggregateState::Aqueous;
+    if(symbol == "g"   || symbol == "Gas"             ) return AggregateState::Gas;
+    if(symbol == "l"   || symbol == "Liquid"          ) return AggregateState::Liquid;
+    if(symbol == "s"   || symbol == "Solid"           ) return AggregateState::Solid;
+    if(symbol == "pl"  || symbol == "Plasma"          ) return AggregateState::Plasma;
+    if(symbol == "cd"  || symbol == "CondensedPhase"  ) return AggregateState::CondensedPhase;
+    if(symbol == "fl"  || symbol == "Fluid"           ) return AggregateState::Fluid;
+    if(symbol == "lc"  || symbol == "LiquidCrystal"   ) return AggregateState::LiquidCrystal;
+    if(symbol == "cr"  || symbol == "CrystallineSolid") return AggregateState::CrystallineSolid;
+    if(symbol == "am"  || symbol == "AmorphousSolid"  ) return AggregateState::AmorphousSolid;
+    if(symbol == "vit" || symbol == "Vitreous"        ) return AggregateState::Vitreous;
+    if(symbol == "ads" || symbol == "Adsorbed"        ) return AggregateState::Adsorbed;
+    if(symbol == "mon" || symbol == "Monomeric"       ) return AggregateState::Monomeric;
+    if(symbol == "pol" || symbol == "Polymeric"       ) return AggregateState::Polymeric;
+    if(symbol == "ss"  || symbol == "SolidSolution"   ) return AggregateState::SolidSolution;
+    if(symbol == "ex"  || symbol == "IonExchange"     ) return AggregateState::IonExchange;
+    if(symbol == "aq"  || symbol == "Aqueous"         ) return AggregateState::Aqueous;
     return AggregateState::Undefined;
 }
 
