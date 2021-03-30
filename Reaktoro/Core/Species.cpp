@@ -98,13 +98,14 @@ struct Species::Impl
 
     /// Construct a Species::Impl instance with given attributes
     Impl(const Attribs& attribs)
-    : formula(detail::removeSuffix(attribs.formula))
     {
-        errorif(attribs.formula.empty(),
-            "Species::Attribs::formula cannot be empty.");
+        errorif(attribs.name.empty(), "Species::Attribs::name cannot be empty.");
+        errorif(attribs.formula.empty(), "Species::Attribs::formula cannot be empty.");
         errorif(attribs.std_thermo_model && attribs.formation_reaction,
-            "Species::Attribs for ", attribs.formula, " cannot contain both a FormationReaction object and a StandardThermoModel object.");
-        name = attribs.name.value_or(attribs.formula);
+            "Species::Attribs for ", attribs.formula, " cannot contain both a "
+            "FormationReaction object and a StandardThermoModel object.");
+        name = attribs.name;
+        formula = detail::removeSuffix(attribs.formula);
         substance = attribs.substance.value_or(formula);
         elements = attribs.elements.value_or(parseChemicalFormula(formula));
         charge = attribs.charge.value_or(parseElectricCharge(formula));

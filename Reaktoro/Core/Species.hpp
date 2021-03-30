@@ -35,7 +35,7 @@ public:
     struct Attribs
     {
         /// The name that uniquely identifies the species (e.g., `CO2(g)`, `CaCO3(aq)`).
-        Optional<String> name;
+        String name;
 
         /// The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
         String formula;
