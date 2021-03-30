@@ -256,7 +256,8 @@ TEST_CASE("Testing Species class", "[Species]")
         WHEN("only formula is provided")
         {
             Species::Attribs attribs;
-            attribs.formula = "CO3--(aq)";
+            attribs.name = "CO3--(aq)";
+            attribs.formula = "CO3--";
 
             species = Species(attribs);
 
