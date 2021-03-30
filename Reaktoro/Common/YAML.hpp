@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <istream>
+#include <optional>
 #include <string>
 
 // yaml-cpp includes
@@ -81,7 +82,7 @@ public:
 
     /// Transfer the value at this yaml node to argument @p value.
     template<typename T>
-    auto to(T& value) -> void
+    auto to(T& value) const -> void
     {
         try {
             value = as<T>();
@@ -93,10 +94,28 @@ public:
 
     /// Transfer the value at this yaml node to argument @p value. Use fallback in case there of empty node.
     template<typename T, typename U>
-    auto to(T& value, const U& fallback) -> void
+    auto to(T& value, const U& fallback) const -> void
     {
         if(!IsDefined()) value = fallback;
         else to(value);
+    }
+
+    /// Transfer the value at optional child node with @p key to optional object @p obj.
+    template<typename T>
+    auto optional(const std::string& key, std::optional<T>& obj) const
+    {
+        auto child = (*this)[key];
+        if(child.IsDefined())
+            child.to(obj.value());
+    }
+
+    /// Transfer the value at required child node with @p key to object @p obj.
+    template<typename T>
+    auto required(const std::string& key, T& obj) const
+    {
+        auto child = (*this)[key];
+        errorif(!child.IsDefined(), "Could not find a required YAML node with key `", key, "` in parent node:\n", repr());
+        child.to(obj);
     }
 };
 
