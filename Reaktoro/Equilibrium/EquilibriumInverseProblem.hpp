@@ -240,6 +240,21 @@ public:
     /// @param titrant The titrant that control the solution alkalinity.
     auto alkalinity(double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
+    /// Fix the volume of the system at equilibrium.
+    /// @param value The value of the volume
+    /// @param units The units of the volume (must be convertible to m3)
+    auto fixVolume(double value, std::string units) -> EquilibriumInverseProblem&;
+
+    /// Fix the internal energy of the system at equilibrium.
+    /// @param value The value of the internal energy
+    /// @param units The units of the internal energy (must be convertible to J)
+    auto fixInternalEnergy(double value, std::string units) -> EquilibriumInverseProblem&;
+
+    /// Fix the enthalpy of the system at equilibrium.
+    /// @param value The value of the enthalpy
+    /// @param units The units of the enthalpy (must be convertible to J)
+    auto fixEnthalpy(double value, std::string units) -> EquilibriumInverseProblem&;
+
     /// Set temperature at chemical equilibrium to be unknown.
     auto unknownTemperature() -> void;
 
@@ -294,6 +309,9 @@ public:
     /// @param x The amounts of the titrants (in units of mol)
     /// @param state The chemical state of the system
     auto residualEquilibriumConstraints(VectorConstRef x, const ChemicalState& state, const ChemicalProperties& properties) const -> ResidualEquilibriumConstraints;
+
+    /// Return the initial guess for the unknowns in the inverse chemical equilibrium problem.
+    auto initialGuessUnknowns() const -> Vector;
 
 private:
     struct Impl;

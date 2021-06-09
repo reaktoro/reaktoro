@@ -336,6 +336,36 @@ struct EquilibriumInverseProblem::Impl
         constraints.push_back(f);
     }
 
+    auto addVolumeConstraint(double value) -> void
+    {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state, const ChemicalProperties& properties) mutable
+        {
+            return properties.volume() - value;
+        };
+
+        constraints.push_back(f);
+    }
+
+    auto addInternalEnergyConstraint(double value) -> void
+    {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state, const ChemicalProperties& properties) mutable
+        {
+            return properties.internalEnergy() - value;
+        };
+
+        constraints.push_back(f);
+    }
+
+    auto addEnthalpyConstraint(double value) -> void
+    {
+        EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state, const ChemicalProperties& properties) mutable
+        {
+            return properties.enthalpy() - value;
+        };
+
+        constraints.push_back(f);
+    }
+
     /// Add a phase amount constraint to the inverse equilibrium problem.
     auto addPhaseAmountConstraint(std::string phase, double value) -> void
     {
@@ -549,6 +579,26 @@ struct EquilibriumInverseProblem::Impl
                 res.ddn.row(i) = aux.ddn;
         }
         return res;
+    }
+
+    /// Return the initial guess for the unknowns in the inverse chemical equilibrium problem.
+    auto initialGuessUnknowns() const -> Vector
+    {
+        Vector x = zeros(unknowns.size());
+
+        for(auto pair : unknowns)
+        {
+            if(pair.first == "Temperature")
+                x[0] = 0.0; // x[0] = dT = 0 as initial guess
+            else if(pair.first == "Pressure")
+                x[1] = 0.0; // x[1] = dP = 0 as initial guess
+            else {
+                const auto i = indexTitrant(pair.first);
+                x[pair.second] = titrant_initial_amounts[i];
+            }
+        }
+
+        return x;
     }
 
     /// Return the coefficient matrix that relates forward input variables with the unknowns in the problem.
@@ -803,6 +853,27 @@ auto EquilibriumInverseProblem::alkalinity(double value, std::string units, std:
     return *this;
 }
 
+auto EquilibriumInverseProblem::fixVolume(double value, std::string units) -> EquilibriumInverseProblem&
+{
+    value = units::convert(value, units, "m3");
+    pimpl->addVolumeConstraint(value);
+    return *this;
+}
+
+auto EquilibriumInverseProblem::fixInternalEnergy(double value, std::string units) -> EquilibriumInverseProblem&
+{
+    value = units::convert(value, units, "J");
+    pimpl->addInternalEnergyConstraint(value);
+    return *this;
+}
+
+auto EquilibriumInverseProblem::fixEnthalpy(double value, std::string units) -> EquilibriumInverseProblem&
+{
+    value = units::convert(value, units, "J");
+    pimpl->addEnthalpyConstraint(value);
+    return *this;
+}
+
 auto EquilibriumInverseProblem::unknownTemperature() -> void
 {
     pimpl->addUnknown("Temperature");
@@ -886,6 +957,11 @@ auto EquilibriumInverseProblem::titrantInitialAmounts() const -> Vector
 auto EquilibriumInverseProblem::residualEquilibriumConstraints(VectorConstRef x, const ChemicalState& state, const ChemicalProperties& properties) const -> ResidualEquilibriumConstraints
 {
     return pimpl->residualEquilibriumConstraints(x, state, properties);
+}
+
+auto EquilibriumInverseProblem::initialGuessUnknowns() const -> Vector
+{
+    return pimpl->initialGuessUnknowns();
 }
 
 } // namespace Reaktoro

@@ -141,8 +141,17 @@ struct EquilibriumInverseSolver::Impl
             const auto P = u[1];
             const auto be = u.tail(Ee);
 
+            if(T <= 0.0 || P <= 0.0)
+            {
+                nonlinear_residual.succeeded = false;
+                return nonlinear_residual;
+            }
+
             // Solve the equilibrium problem with update `be`
-            result += solver.solve(state, T, P, be);
+            auto fcep_res = solver.solve(state, T, P, be);
+
+            result += fcep_res;
+            result.inverse.fcep_iterations_per_icep_iteration.push_back(fcep_res.optimum.iterations);
 
             // Update the chemical properties
             properties = solver.properties();
@@ -152,7 +161,10 @@ struct EquilibriumInverseSolver::Impl
             {
                 // If not, solve using cold start
                 state.setSpeciesAmounts(0.0);
-                result += solver.solve(state, T, P, be);
+                auto fcep_res = solver.solve(state, T, P, be);
+
+                result += fcep_res;
+                result.inverse.fcep_iterations_per_icep_iteration.push_back(fcep_res.optimum.iterations);
             }
 
             // Check if the function evaluation was successful
@@ -182,11 +194,18 @@ struct EquilibriumInverseSolver::Impl
             J += res.ddu * C;
             J += res.ddn * dndu * C;
 
+            nonlinear_residual.succeeded = true;
+
+            result.inverse.x_per_icep_iteration.push_back(x);
+            result.inverse.F_per_icep_iteration.push_back(F);
+            result.inverse.E_per_icep_iteration.push_back(norminf(F));
+
             return nonlinear_residual;
         };
 
         // Initialize the initial guess of the titrant amounts
-        Vector x = problem.titrantInitialAmounts();
+        // Vector x = problem.titrantInitialAmounts();
+        Vector x = problem.initialGuessUnknowns();
 
         // Replace zeros in x by small molar amounts
         x = (x.array() > 0.0).select(x, 1e-6);
