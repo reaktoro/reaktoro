@@ -18,7 +18,6 @@
 #include "EquilibriumInverseProblem.hpp"
 
 // C++ includes
-#include <map>
 #include <unordered_map>
 
 // Reaktoro includes
@@ -88,7 +87,7 @@ struct Titrant
 };
 
 /// Return the elemental formula of a titrant given as a single compound or as a mixture of compounds.
-auto titrantElementalFormula(std::string titrant) -> std::map<std::string, double>
+auto titrantElementalFormula(std::string titrant) -> std::unordered_map<std::string, double>
 {
     // First, split on `;` to check if titrant has mixture format like `1 kg H2O; 1 mol NaCl`
     const auto words = split(titrant, ";");
@@ -98,7 +97,7 @@ auto titrantElementalFormula(std::string titrant) -> std::map<std::string, doubl
         return Reaktoro::elements(split(titrant).back());
 
     // The elemntal formula of the titrant in solution format
-    std::map<std::string, double> formula;
+    std::unordered_map<std::string, double> formula;
 
     // Otherwise, process each word
     for(auto word : words)
