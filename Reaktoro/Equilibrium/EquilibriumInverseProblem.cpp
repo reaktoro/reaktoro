@@ -644,6 +644,7 @@ auto EquilibriumInverseProblem::fixSpeciesAmount(std::string species, double val
 {
     value = units::convert(value, units, "mol");
     pimpl->addSpeciesAmountConstraint(species, value);
+    pimpl->addUnknown(titrant);
     pimpl->addTitrant(titrant);
     pimpl->setTitrantInitialAmount(titrant, value);
     return *this;
@@ -671,6 +672,7 @@ auto EquilibriumInverseProblem::fixSpeciesChemicalPotential(std::string species,
 auto EquilibriumInverseProblem::fixSpeciesActivity(std::string species, double value) -> EquilibriumInverseProblem&
 {
     pimpl->addSpeciesActivityConstraint(species, value);
+    pimpl->addUnknown(species);
     pimpl->addTitrant(species);
     return *this;
 }
@@ -678,6 +680,7 @@ auto EquilibriumInverseProblem::fixSpeciesActivity(std::string species, double v
 auto EquilibriumInverseProblem::fixSpeciesActivity(std::string species, double value, std::string titrant) -> EquilibriumInverseProblem&
 {
     pimpl->addSpeciesActivityConstraint(species, value);
+    pimpl->addUnknown(titrant);
     pimpl->addTitrant(titrant);
     return *this;
 }
@@ -685,6 +688,8 @@ auto EquilibriumInverseProblem::fixSpeciesActivity(std::string species, double v
 auto EquilibriumInverseProblem::fixSpeciesActivity(std::string species, double value, std::string titrant1, std::string titrant2) -> EquilibriumInverseProblem&
 {
     pimpl->addSpeciesActivityConstraint(species, value);
+    pimpl->addUnknown(titrant1);
+    pimpl->addUnknown(titrant2);
     pimpl->addTitrant(titrant1);
     pimpl->addTitrant(titrant2);
     pimpl->setAsMutuallyExclusive(titrant1, titrant2);
@@ -709,6 +714,7 @@ auto EquilibriumInverseProblem::fixPhaseAmount(std::string phase, double value, 
 {
     value = units::convert(value, units, "mol");
     pimpl->addPhaseAmountConstraint(phase, value);
+    pimpl->addUnknown(titrant);
     pimpl->addTitrant(titrant);
     pimpl->setTitrantInitialAmount(titrant, value);
     return *this;
@@ -718,6 +724,7 @@ auto EquilibriumInverseProblem::fixPhaseMass(std::string phase, double value, st
 {
     value = units::convert(value, units, "kg");
     pimpl->addPhaseMassConstraint(phase, value);
+    pimpl->addUnknown(titrant);
     pimpl->addTitrant(titrant);
 //    pimpl->setTitrantInitialAmount(titrant, value); // access to molar mass of titrant is needed here for setting adequate initial guess
     return *this;
@@ -727,6 +734,7 @@ auto EquilibriumInverseProblem::fixPhaseVolume(std::string phase, double value, 
 {
     value = units::convert(value, units, "m3");
     pimpl->addPhaseVolumeConstraint(phase, value);
+    pimpl->addUnknown(titrant);
     pimpl->addTitrant(titrant);
     pimpl->setTitrantInitialAmount(titrant, 1e3);
     return *this;
@@ -736,6 +744,7 @@ auto EquilibriumInverseProblem::fixPhaseSetVolume(const std::vector<std::string>
 {
     value = units::convert(value, units, "m3");
     pimpl->addSumPhaseVolumesConstraint(phases, value);
+    pimpl->addUnknown(titrant);
     pimpl->addTitrant(titrant);
     pimpl->setTitrantInitialAmount(titrant, 1e3);
     return *this;
@@ -767,6 +776,7 @@ auto EquilibriumInverseProblem::pE(double value) -> EquilibriumInverseProblem&
 auto EquilibriumInverseProblem::pE(double value, std::string titrant) -> EquilibriumInverseProblem&
 {
     pimpl->add_pE_Constraint(value);
+    pimpl->addUnknown(titrant);
     pimpl->addTitrant(titrant);
     return *this;
 }
@@ -780,6 +790,7 @@ auto EquilibriumInverseProblem::Eh(double value, std::string units, std::string 
 {
     value = units::convert(value, units, "V");
     pimpl->addEhConstraint(value);
+    pimpl->addUnknown(titrant);
     pimpl->addTitrant(titrant);
     return *this;
 }
@@ -788,6 +799,7 @@ auto EquilibriumInverseProblem::alkalinity(double value, std::string units, std:
 {
     value = units::convert(value, units, "eq/L");
     pimpl->addAlkalinityConstraint(value);
+    pimpl->addUnknown(titrant);
     pimpl->addTitrant(titrant);
     return *this;
 }
@@ -814,6 +826,7 @@ auto EquilibriumInverseProblem::unknownAmountOfEither(std::string titrant1, std:
     pimpl->addUnknown(titrant2);
     pimpl->addTitrant(titrant1);
     pimpl->addTitrant(titrant2);
+    pimpl->setAsMutuallyExclusive(titrant1, titrant2);
 }
 
 auto EquilibriumInverseProblem::system() const -> const ChemicalSystem&
