@@ -165,14 +165,10 @@ struct EquilibriumInverseSolver::Impl
             const auto& dndP = sensitivity.dndP;
             const auto& dndb = sensitivity.dndb;
 
-
-
             Matrix dndu = zeros(Ne, Nu);
             dndu.col(0) = dndT;
             dndu.col(1) = dndP;
             dndu.rightCols(Ee) = dndb;
-
-
 
             // Calculate the residuals of the equilibrium constraints
             res = problem.residualEquilibriumConstraints(x, state);
@@ -189,7 +185,7 @@ struct EquilibriumInverseSolver::Impl
         };
 
         // Initialize the initial guess of the titrant amounts
-        Vector x = zeros(Nx);
+        Vector x = problem.titrantInitialAmounts();
 
         // Replace zeros in x by small molar amounts
         x = (x.array() > 0.0).select(x, 1e-6);
