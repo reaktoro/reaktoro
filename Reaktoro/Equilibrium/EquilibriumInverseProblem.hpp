@@ -25,10 +25,13 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class ChemicalSystem;
+// Forward declarations (class)
+class ChemicalProperties;
 class ChemicalState;
+class ChemicalSystem;
 class Partition;
+
+// Forward declarations (struct)
 struct EquilibriumResult;
 
 /// A type used to define the result of the evaluation of a system of equilibrium constraints.
@@ -290,7 +293,7 @@ public:
     /// Return the residuals of the equilibrium constraints and their partial derivatives.
     /// @param x The amounts of the titrants (in units of mol)
     /// @param state The chemical state of the system
-    auto residualEquilibriumConstraints(VectorConstRef x, const ChemicalState& state) const -> ResidualEquilibriumConstraints;
+    auto residualEquilibriumConstraints(VectorConstRef x, const ChemicalState& state, const ChemicalProperties& properties) const -> ResidualEquilibriumConstraints;
 
 private:
     struct Impl;

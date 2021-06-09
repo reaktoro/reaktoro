@@ -129,8 +129,6 @@ struct EquilibriumInverseSolver::Impl
         // Set the linear inequality constraints of the titrant molar amounts
         nonlinear_problem.n = Nc;
         nonlinear_problem.m = Nc;
-        // nonlinear_problem.A = C; // Removed this but not sure yet if we need to
-        // nonlinear_problem.b = -be0;
 
         // Set the non-linear function of the non-linear problem
         nonlinear_problem.f = [&](VectorConstRef x) mutable
@@ -145,6 +143,9 @@ struct EquilibriumInverseSolver::Impl
 
             // Solve the equilibrium problem with update `be`
             result += solver.solve(state, T, P, be);
+
+            // Update the chemical properties
+            properties = solver.properties();
 
             // Check if the equilibrium calculation converged
             if(!result.optimum.succeeded)
@@ -171,7 +172,7 @@ struct EquilibriumInverseSolver::Impl
             dndu.rightCols(Ee) = dndb;
 
             // Calculate the residuals of the equilibrium constraints
-            res = problem.residualEquilibriumConstraints(x, state);
+            res = problem.residualEquilibriumConstraints(x, state, properties);
 
             // Calculate the residual vector `F` and its Jacobian `J`
             F = res.val;
