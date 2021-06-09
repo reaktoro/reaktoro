@@ -40,6 +40,9 @@ struct ResidualEquilibriumConstraints
     /// The partial derivatives of the residuals w.r.t. titrant amounts x.
     Matrix ddx;
 
+    /// The partial derivatives of the residuals w.r.t. the forward input variables.
+    Matrix ddu;
+
     /// The partial derivatives of the residuals w.r.t. species amounts n.
     Matrix ddn;
 };
@@ -129,6 +132,11 @@ public:
     /// @param units The units of the species mass (must be convertible to kg)
     /// @param titrant The titrant that controls the species mass.
     auto fixSpeciesMass(std::string species, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
+
+    /// Fix the chemical potential of a species at equilibrium.
+    /// @param species The name of the species for which its chemical potential is given.
+    /// @param value The value of the species chemical potential.
+    auto fixSpeciesChemicalPotential(std::string species, double value) -> EquilibriumInverseProblem&;
 
     /// Fix the activity of a species at equilibrium.
     /// @param species The name of the species for which its activity is given.
@@ -229,6 +237,18 @@ public:
     /// @param titrant The titrant that control the solution alkalinity.
     auto alkalinity(double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
+    /// Set temperature at chemical equilibrium to be unknown.
+    auto unknownTemperature() -> void;
+
+    /// Set pressure at chemical equilibrium to be unknown.
+    auto unknownPressure() -> void;
+
+    /// Set the added or removed amount of a titrant to be unknown.
+    auto unknownAmountOf(std::string titrant) -> void;
+
+    /// Set the added or removed amount of either one or the other titrant to be unknown.
+    auto unknownAmountOfEither(std::string titrant1, std::string titrant2) -> void;
+
     /// Return a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
     auto system() const -> const ChemicalSystem&;
 
@@ -244,6 +264,9 @@ public:
     /// Return the number of constraints used in the inverse equilibrium problem.
     auto numConstraints() const -> Index;
 
+    /// Return the number of unknowns used in the inverse equilibrium problem.
+    auto numUnknowns() const -> Index;
+
     /// Return the number of titrants used in the inverse equilibrium problem.
     auto numTitrants() const -> Index;
 
@@ -252,6 +275,9 @@ public:
     /// contains the stoichiometric coefficient of jth element in the ith titrant.
     /// Its dimension is `E x T`, where `T` is the number of titrants.
     auto formulaMatrixTitrants() const -> Matrix;
+
+    /// Return the coefficient matrix that relates forward input variables with the unknowns in the problem.
+    auto unknownsCoefficientMatrix() const -> Matrix;
 
     /// Return the initial amounts of elements in the equilibrium partition.
     /// These are the values of element amounts in the equilibrium partition
@@ -265,10 +291,6 @@ public:
     /// @param x The amounts of the titrants (in units of mol)
     /// @param state The chemical state of the system
     auto residualEquilibriumConstraints(VectorConstRef x, const ChemicalState& state) const -> ResidualEquilibriumConstraints;
-
-    /// Solve the inverse equilibrium problem.
-    /// @param state The initial guess for the final chemical state solution.
-    auto solve(ChemicalState& state) -> EquilibriumResult;
 
 private:
     struct Impl;
