@@ -164,7 +164,7 @@ struct EquilibriumInverseSolver::Impl
                 auto fcep_res = solver.solve(state, T, P, be);
 
                 result += fcep_res;
-                result.inverse.fcep_iterations_per_icep_iteration.push_back(fcep_res.optimum.iterations);
+                result.inverse.fcep_iterations_per_icep_iteration.back() += fcep_res.optimum.iterations;
             }
 
             // Check if the function evaluation was successful

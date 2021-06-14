@@ -589,9 +589,9 @@ struct EquilibriumInverseProblem::Impl
         for(auto pair : unknowns)
         {
             if(pair.first == "Temperature")
-                x[0] = 0.0; // x[0] = dT = 0 as initial guess
+                x[pair.second] = 0.0; // x[0] = dT = 0 as initial guess
             else if(pair.first == "Pressure")
-                x[1] = 0.0; // x[1] = dP = 0 as initial guess
+                x[pair.second] = 0.0; // x[1] = dP = 0 as initial guess
             else {
                 const auto i = indexTitrant(pair.first);
                 x[pair.second] = titrant_initial_amounts[i];
