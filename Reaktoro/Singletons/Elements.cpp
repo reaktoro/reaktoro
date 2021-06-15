@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PeriodicTable.hpp"
+#include "Elements.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
@@ -25,7 +25,7 @@
 namespace Reaktoro {
 namespace detail {
 
-/// The default elements for the PeriodicTable object.
+/// The default elements for the Elements object.
 const Vec<Element> default_elements =
 {
     Element({ "H"  , 0.001007940 , "Hydrogen"      }),
@@ -150,75 +150,75 @@ const Vec<Element> default_elements =
 
 } // namespace detail
 
-PeriodicTable::PeriodicTable()
+Elements::Elements()
 : m_elements(detail::default_elements)
 {}
 
-PeriodicTable::~PeriodicTable()
+Elements::~Elements()
 {}
 
-auto PeriodicTable::instance() -> PeriodicTable&
+auto Elements::instance() -> Elements&
 {
-    static PeriodicTable obj;
+    static Elements obj;
     return obj;
 }
 
-auto PeriodicTable::elements() -> const Vec<Element>&
+auto Elements::elements() -> const Vec<Element>&
 {
     return instance().m_elements;
 }
 
-auto PeriodicTable::append(Element element) -> void
+auto Elements::append(Element element) -> void
 {
     auto& elements = instance().m_elements;
     elements.emplace_back(std::move(element));
 }
 
-auto PeriodicTable::size() -> std::size_t
+auto Elements::size() -> std::size_t
 {
     return elements().size();
 }
 
-auto PeriodicTable::elementWithSymbol(String symbol) -> Optional<Element>
+auto Elements::withSymbol(String symbol) -> Optional<Element>
 {
     const auto idx = indexfn(elements(), [&](auto&& e) { return e.symbol() == symbol; });
     if(idx < size()) return elements()[idx];
     return {};
 }
 
-auto PeriodicTable::elementWithName(String name) -> Optional<Element>
+auto Elements::withName(String name) -> Optional<Element>
 {
     const auto idx = indexfn(elements(), [&](auto&& e) { return e.name() == name; });
     if(idx < size()) return elements()[idx];
     return {};
 }
 
-auto PeriodicTable::elementsWithTag(String tag) -> Vec<Element>
+auto Elements::withTag(String tag) -> Vec<Element>
 {
     return filter(elements(), [&](auto&& e) { return contains(e.tags(), tag); });
 }
 
-auto PeriodicTable::elementsWithTags(const StringList& tags) -> Vec<Element>
+auto Elements::withTags(const StringList& tags) -> Vec<Element>
 {
     return filter(elements(), [&](auto&& e) { return contained(tags, e.tags()); });
 }
 
-auto PeriodicTable::begin() const
+auto Elements::begin() const
 {
     return m_elements.begin();
 }
 
-auto PeriodicTable::begin()
+auto Elements::begin()
 {
     return m_elements.begin();
 }
 
-auto PeriodicTable::end() const
+auto Elements::end() const
 {
     return m_elements.end();
 }
 
-auto PeriodicTable::end()
+auto Elements::end()
 {
     return m_elements.end();
 }

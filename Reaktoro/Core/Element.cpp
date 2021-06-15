@@ -20,18 +20,18 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Singletons/PeriodicTable.hpp>
+#include <Reaktoro/Singletons/Elements.hpp>
 
 namespace Reaktoro {
 namespace detail {
 
-/// Return an Element object from PeriodicTable with given symbol.
-auto getElementFromPeriodicTable(String symbol) -> Element
+/// Return an Element object from Elements with given symbol.
+auto getDefaultElement(String symbol) -> Element
 {
-    const auto element = PeriodicTable::elementWithSymbol(symbol);
-    error(!element.has_value(), "Cannot proceed with Element(symbol) constructor. "
-        "PeriodicTable contains no element with symbol ", symbol, ". "
-        "Use method PeriodicTable::append (in C++) or PeriodicTable.append (in Python) "
+    const auto element = Elements::withSymbol(symbol);
+    errorif(!element.has_value(), "Cannot proceed with Element(symbol) constructor. "
+        "Could not find an element in Elements with symbol ", symbol, ". "
+        "Use method Elements::append (in C++) or Elements.append (in Python) "
         "to add a new Element with this symbol. Or construct the Element object without "
         "using this special constructor.");
     return element.value();
@@ -72,7 +72,7 @@ Element::Element()
 {}
 
 Element::Element(String symbol)
- : Element(detail::getElementFromPeriodicTable(symbol))
+ : Element(detail::getDefaultElement(symbol))
 {}
 
 Element::Element(const Attribs& attribs)

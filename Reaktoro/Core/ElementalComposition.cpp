@@ -38,7 +38,7 @@ ElementalComposition::ElementalComposition(Pairs<Element, double> const& element
 ElementalComposition::ElementalComposition(Pairs<String, double> const& elements)
 {
     for(const auto& [symbol, coeff] : elements)
-        m_elements.emplace_back(Element(symbol), coeff); // TODO: Use DefaultElements.get(symbol)
+        m_elements.emplace_back(Element(symbol), coeff);
 }
 
 auto ElementalComposition::size() const -> Index
