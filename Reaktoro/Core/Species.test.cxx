@@ -113,8 +113,8 @@ TEST_CASE("Testing Species class", "[Species]")
                     })
             );
 
-        REQUIRE( species.props(T, P).G0 == species.reaction().standardThermoModel()(T, P).G0 );
-        REQUIRE( species.props(T, P).H0 == species.reaction().standardThermoModel()(T, P).H0 );
+        REQUIRE( species.props(T, P).G0 == species.reaction().createStandardThermoModel()(T, P).G0 );
+        REQUIRE( species.props(T, P).H0 == species.reaction().createStandardThermoModel()(T, P).H0 );
     }
 
     SECTION("Testing automatic construction of chemical species with given chemical formula")
@@ -317,7 +317,6 @@ TEST_CASE("Testing Species class", "[Species]")
                 const auto OH = Species("OH-").withStandardGibbsEnergy(0.0);
 
                 attribs.formation_reaction = FormationReaction()
-                    .withProduct("H2O")
                     .withReactants({{H, 1.0}, {OH, 1.0}})
                     .withEquilibriumConstant(14.0)
                     .withProductStandardVolume(1e-5)

@@ -148,7 +148,6 @@ struct PhreeqcDatabaseHelper
     auto createFormationReaction(const SpeciesType* s) -> FormationReaction
     {
         return FormationReaction()
-            .withProduct(PhreeqcUtils::name(s))
             .withReactants(createReactants(s))
             .withProductStandardVolumeModel(PhreeqcUtils::standardVolumeModel(s))
             .withReactionThermoModel(PhreeqcUtils::reactionThermoModel(s));

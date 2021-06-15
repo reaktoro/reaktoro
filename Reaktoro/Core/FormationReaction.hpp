@@ -38,9 +38,6 @@ public:
     /// Return a deep copy of this FormationReaction object.
     auto clone() const -> FormationReaction;
 
-    /// Return a duplicate of this FormationReaction object with new name of the product species in the formation reaction.
-    auto withProduct(String product) const -> FormationReaction;
-
     /// Return a duplicate of this FormationReaction object with new reactant species in the formation reaction.
     auto withReactants(Pairs<Species, double> reactants) const -> FormationReaction;
 
@@ -87,11 +84,11 @@ public:
     /// Return a duplicate of this FormationReaction object with new reaction thermodynamic model function.
     auto withReactionThermoModel(const ReactionThermoModel& fn) const -> FormationReaction;
 
-    /// Return the name of the product species in the formation reaction.
-    auto product() const -> String;
-
     /// Return the reactant species in the formation reaction.
     auto reactants() const -> const Pairs<Species, double>&;
+
+    /// Return the stoichiometric coefficient of a reactant with given name in the formation reaction.
+    auto stoichiometry(String reactant) const -> double;
 
     /// Return the standard molar volume function of the product species.
     auto productStandardVolumeModel() const -> const Model<real(real,real)>&;
@@ -99,7 +96,7 @@ public:
     /// Return the reaction thermodynamic model function of the formation reaction.
     auto reactionThermoModel() const -> const ReactionThermoModel&;
 
-    /// Return the standard thermodynamic model function of the product species.
+    /// Construct the standard thermodynamic model function of the product species.
     ///
     /// This method constructs a standard thermodynamic model function for the
     /// product species using the assigned thermodynamic model of the formation
@@ -108,11 +105,8 @@ public:
     ///
     /// @warning This method will throw a runtime error if methods
     /// @ref withProductStandardVolumeModel and @ref withReactionThermoModel
-    /// are not
-    auto standardThermoModel() const -> StandardThermoModel;
-
-    /// Return the stoichiometric coefficient of a reactant with given name in the formation reaction.
-    auto stoichiometry(String reactant) const -> double;
+    /// have not been invoked.
+    auto createStandardThermoModel() const -> StandardThermoModel;
 
 private:
     struct Impl;

@@ -28,9 +28,6 @@ namespace Reaktoro {
 
 struct FormationReaction::Impl
 {
-    /// The name of the product species in the formation reaction.
-    String product;
-
     /// The reactant species in the formation reaction.
     Pairs<Species, double> reactants;
 
@@ -45,17 +42,17 @@ struct FormationReaction::Impl
     {}
 
     /// Return the standard thermodynamic model function of the product species.
-    auto standardThermoModel() const -> StandardThermoModel
+    auto createStandardThermoModel() const -> StandardThermoModel
     {
         error(!rxn_thermo_model.initialized(), "Could not create the standard thermodynamic "
-            "model function of species ", product, " because no reaction thermodynamic "
-            "model has been set. Use one of the methods below to correct this: \n"
+            "model function because no reaction thermodynamic model has been set "
+            "in the FormationReaction object. Use one of the methods below to correct this: \n"
             "    1) FormationReaction::withEquilibriumConstant\n"
             "    2) FormationReaction::withReactionThermoModel");
 
         error(!std_volume_model.initialized(), "Could not create the standard thermodynamic "
-            "model function of species ", product, " because no standard molar volume "
-            "constant or function has been set. Use one of the methods below to correct this: \n"
+            "model function because no standard molar volume constant or function "
+            "has been set in the FormationReaction object. Use one of the methods below to correct this: \n"
             "    1) FormationReaction::withProductStandardVolume\n"
             "    2) FormationReaction::withProductStandardVolumeModel");
 
@@ -132,13 +129,6 @@ auto FormationReaction::clone() const -> FormationReaction
     return copy;
 }
 
-auto FormationReaction::withProduct(String product) const -> FormationReaction
-{
-    FormationReaction copy = clone();
-    copy.pimpl->product = product;
-    return copy;
-}
-
 auto FormationReaction::withReactants(Pairs<Species, double> reactants) const -> FormationReaction
 {
     FormationReaction copy = clone();
@@ -173,14 +163,17 @@ auto FormationReaction::withReactionThermoModel(const ReactionThermoModel& fn) c
     return copy;
 }
 
-auto FormationReaction::product() const -> String
-{
-    return pimpl->product;
-}
-
 auto FormationReaction::reactants() const -> const Pairs<Species, double>&
 {
     return pimpl->reactants;
+}
+
+auto FormationReaction::stoichiometry(String reactant) const -> double
+{
+    for(const auto& [species, coeff] : reactants())
+        if(reactant == species.name())
+            return coeff;
+    return 0.0;
 }
 
 auto FormationReaction::productStandardVolumeModel() const -> const Model<real(real,real)>&
@@ -193,17 +186,9 @@ auto FormationReaction::reactionThermoModel() const -> const ReactionThermoModel
     return pimpl->rxn_thermo_model;
 }
 
-auto FormationReaction::standardThermoModel() const -> StandardThermoModel
+auto FormationReaction::createStandardThermoModel() const -> StandardThermoModel
 {
-    return pimpl->standardThermoModel();
-}
-
-auto FormationReaction::stoichiometry(String reactant) const -> double
-{
-    for(const auto& [species, coeff] : reactants())
-        if(reactant == species.name())
-            return coeff;
-    return 0.0;
+    return pimpl->createStandardThermoModel();
 }
 
 } // namespace Reaktoro
