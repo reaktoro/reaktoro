@@ -32,20 +32,14 @@ public:
         /// The symbol of the element (e.g., "H", "O", "C", "Na").
         String symbol;
 
+        /// The molar mass of the element (in kg/mol).
+        double molar_mass;
+
         /// The name of the element (e.g., "Hydrogen", "Oxygen").
-        String name;
-
-        /// The atomic number of the element.
-        Index atomic_number = {};
-
-        /// The atomic weight (or molar mass) of the element (in kg/mol).
-        double atomic_weight = {};
-
-        /// The electronegativity of the element.
-        double electronegativity = {};
+        Optional<String> name;
 
         /// The tags of the element.
-        Strings tags;
+        Optional<Strings> tags;
     };
 
     /// Construct a default Element object.
@@ -63,22 +57,11 @@ public:
     /// Return a duplicate of this Element object with replaced symbol attribute.
     auto withSymbol(String symbol) const -> Element;
 
-    /// Return a duplicate of this Element object with replaced name attribute.
-    auto withName(String name) const -> Element;
-
-    /// Return a duplicate of this Element object with replaced atomic number attribute.
-    auto withAtomicNumber(Index value) const -> Element;
-
-    /// Return a duplicate of this Element object with replaced atomic weight attribute (in kg/mol).
-    /// @note This method is equivalent to withMolarMass
-    auto withAtomicWeight(double value) const -> Element;
-
     /// Return a duplicate of this Element object with replaced molar mass attribute (in kg/mol).
-    /// @note This method is equivalent to withAtomicWeight
     auto withMolarMass(double value) const -> Element;
 
-    /// Return a duplicate of this Element object with replaced electronegativity attribute.
-    auto withElectronegativity(double value) const -> Element;
+    /// Return a duplicate of this Element object with replaced name attribute.
+    auto withName(String name) const -> Element;
 
     /// Return a duplicate of this Element object with replaced tags attribute.
     auto withTags(Strings tags) const -> Element;
@@ -86,22 +69,11 @@ public:
     /// Return the symbol of the element (e.g., "H", "O", "C", "Na").
     auto symbol() const -> String;
 
-    /// Return the name of the element (e.g., "Hydrogen", "Oxygen").
-    auto name() const -> String;
-
-    /// Return the atomic number of the element.
-    auto atomicNumber() const -> Index;
-
-    /// Return the atomic weight of the element (in kg/mol).
-    /// @note This method is equivalent to molarMass
-    auto atomicWeight() const -> double;
-
     /// Return the molar mass of the element (in kg/mol).
-    /// @note This method is equivalent to atomicWeight
     auto molarMass() const -> double;
 
-    /// Return the electronegativity of the element.
-    auto electronegativity() const -> double;
+    /// Return the name of the element (e.g., "Hydrogen", "Oxygen").
+    auto name() const -> String;
 
     /// Return the tags of the element.
     auto tags() const -> const Strings&;
@@ -109,7 +81,7 @@ public:
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    SharedPtr<Impl> pimpl;
 };
 
 /// Compare two Element objects for less than.

@@ -28,13 +28,11 @@ void exportElement(py::module& m)
 {
     auto createElement = [](
         String symbol,
-        String name,
-        Index atomic_number,
-        double atomic_weight,
-        double electronegativity,
-        Strings tags)
+        double molar_mass,
+        Optional<String> name,
+        Optional<Strings> tags)
     {
-        return Element({symbol, name, atomic_number, atomic_weight, electronegativity, tags});
+        return Element({symbol, molar_mass, name, tags});
     };
 
     py::class_<Element>(m, "Element")
@@ -42,25 +40,17 @@ void exportElement(py::module& m)
         .def(py::init<String>())
         .def(py::init(createElement),
             py::arg("symbol"),
+            py::arg("molar_mass"),
             py::arg("name"),
-            py::arg("atomic_number"),
-            py::arg("atomic_weight"),
-            py::arg("electronegativity"),
             py::arg("tags"))
         .def("clone", &Element::clone)
         .def("withSymbol", &Element::withSymbol)
-        .def("withName", &Element::withName)
-        .def("withAtomicNumber", &Element::withAtomicNumber)
-        .def("withAtomicWeight", &Element::withAtomicWeight)
         .def("withMolarMass", &Element::withMolarMass)
-        .def("withElectronegativity", &Element::withElectronegativity)
+        .def("withName", &Element::withName)
         .def("withTags", &Element::withTags)
         .def("symbol", &Element::symbol)
-        .def("name", &Element::name)
-        .def("atomicNumber", &Element::atomicNumber)
-        .def("atomicWeight", &Element::atomicWeight)
         .def("molarMass", &Element::molarMass)
-        .def("electronegativity", &Element::electronegativity)
+        .def("name", &Element::name)
         .def("tags", &Element::tags, py::return_value_policy::reference_internal)
         ;
 }

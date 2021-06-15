@@ -44,17 +44,11 @@ struct Element::Impl
     /// The symbol of the element (e.g., "H", "O", "C", "Na").
     String symbol;
 
+    /// The molar mass of the element (in kg/mol).
+    double molar_mass = {};
+
     /// The name of the element (e.g., "Hydrogen", "Oxygen").
     String name;
-
-    /// The atomic number of the element.
-    Index atomic_number = {};
-
-    /// The atomic weight (or molar mass) of the element (in kg/mol).
-    double atomic_weight = {};
-
-    /// The electronegativity of the element.
-    double electronegativity = {};
 
     /// The tags of the element.
     Strings tags;
@@ -65,13 +59,12 @@ struct Element::Impl
 
     /// Construct an Element::Impl object with given attributes.
     Impl(const Attribs& attribs)
-    : symbol(attribs.symbol),
-      name(attribs.name),
-      atomic_number(attribs.atomic_number),
-      atomic_weight(attribs.atomic_weight),
-      electronegativity(attribs.electronegativity),
-      tags(attribs.tags)
-    {}
+    {
+        symbol = attribs.symbol;
+        molar_mass = attribs.molar_mass;
+        name = attribs.name.value_or(symbol);
+        tags = attribs.tags.value_or(Strings{});
+    }
 };
 
 Element::Element()
@@ -107,31 +100,13 @@ auto Element::withName(String name) const -> Element
     return copy;
 }
 
-auto Element::withAtomicNumber(Index atomic_number) const -> Element
-{
-    Element copy = clone();
-    copy.pimpl->atomic_number = atomic_number;
-    return copy;
-}
-
-auto Element::withAtomicWeight(double atomic_weight) const -> Element
-{
-    Element copy = clone();
-    copy.pimpl->atomic_weight = atomic_weight;
-    return copy;
-}
-
 auto Element::withMolarMass(double molar_mass) const -> Element
 {
-    return withAtomicWeight(molar_mass);
-}
-
-auto Element::withElectronegativity(double electronegativity) const -> Element
-{
     Element copy = clone();
-    copy.pimpl->electronegativity = electronegativity;
+    copy.pimpl->molar_mass = molar_mass;
     return copy;
 }
+
 
 auto Element::withTags(Strings tags) const -> Element
 {
@@ -145,29 +120,14 @@ auto Element::symbol() const -> String
     return pimpl->symbol;
 }
 
+auto Element::molarMass() const -> double
+{
+    return pimpl->molar_mass;
+}
+
 auto Element::name() const -> String
 {
     return pimpl->name;
-}
-
-auto Element::atomicNumber() const -> Index
-{
-    return pimpl->atomic_number;
-}
-
-auto Element::atomicWeight() const -> double
-{
-    return pimpl->atomic_weight;
-}
-
-auto Element::molarMass() const -> double
-{
-    return atomicWeight();
-}
-
-auto Element::electronegativity() const -> double
-{
-    return pimpl->electronegativity;
 }
 
 auto Element::tags() const -> const Strings&
@@ -177,16 +137,14 @@ auto Element::tags() const -> const Strings&
 
 auto operator<(const Element& lhs, const Element& rhs) -> bool
 {
-    return lhs.atomicNumber() < rhs.atomicNumber();
+    return lhs.symbol() < rhs.symbol();
 }
 
 auto operator==(const Element& lhs, const Element& rhs) -> bool
 {
     return lhs.symbol()            == rhs.symbol()            &&
+           lhs.molarMass()         == rhs.molarMass()         &&
            lhs.name()              == rhs.name()              &&
-           lhs.atomicNumber()      == rhs.atomicNumber()      &&
-           lhs.atomicWeight()      == rhs.atomicWeight()      &&
-           lhs.electronegativity() == rhs.electronegativity() &&
            lhs.tags()              == rhs.tags()
            ;
 }

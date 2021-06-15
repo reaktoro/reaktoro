@@ -25,14 +25,11 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Element", "[Element]")
 {
-    Element element({ "H", "Hydrogen", 1, 0.001007940, 2.20 });
+    Element element({ "H", 0.001007940, "Hydrogen" });
 
     REQUIRE(element.symbol() == "H");
     REQUIRE(element.name() == "Hydrogen");
-    REQUIRE(element.atomicNumber() == 1);
-    REQUIRE(element.atomicWeight() == 0.001007940);
-    REQUIRE(element.electronegativity() == 2.20);
-    REQUIRE(element.molarMass() == element.atomicWeight());
+    REQUIRE(element.molarMass() == 0.001007940);
 
     element = element.withSymbol("Na");
     REQUIRE(element.symbol() == "Na");
@@ -40,14 +37,8 @@ TEST_CASE("Testing Element", "[Element]")
     element = element.withName("Sodium");
     REQUIRE(element.name() == "Sodium");
 
-    element = element.withAtomicNumber(11);
-    REQUIRE(element.atomicNumber() == 11);
-
-    element = element.withAtomicWeight(0.022989768);
-    REQUIRE(element.atomicWeight() == 0.022989768);
-
-    element = element.withElectronegativity(0.93);
-    REQUIRE(element.electronegativity() == 0.93);
+    element = element.withMolarMass(0.022989768);
+    REQUIRE(element.molarMass() == 0.022989768);
 
     element = element.withTags({"tag1", "tag2"});
     REQUIRE(element.tags().size() == 2);
