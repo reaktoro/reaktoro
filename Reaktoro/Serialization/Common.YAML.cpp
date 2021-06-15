@@ -15,25 +15,18 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// Catch includes
-#include <catch2/catch.hpp>
-using namespace Catch;
+#include "Common.YAML.hpp"
 
-// Reaktoro includes
-#include <Reaktoro/Common/YAML.hpp>
-#include <Reaktoro/Core/ChemicalFormula.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Core/Param.hpp>
-#include <Reaktoro/Core/Params.hpp>
-#include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Serialization/Common.yaml.hpp>
-#include <Reaktoro/Serialization/Core.yaml.hpp>
+namespace Reaktoro {
 
-using namespace Reaktoro;
-
-TEST_CASE("Testing Core.yaml", "[Core.yaml]")
+REAKTORO_YAML_ENCODE_DEFINE(real)
 {
-
+    node = obj.val();
 }
+
+REAKTORO_YAML_DECODE_DEFINE(real)
+{
+    obj = node.as<double>();
+}
+
+} // namespace YAML

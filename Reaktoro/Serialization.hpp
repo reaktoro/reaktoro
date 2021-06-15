@@ -17,4 +17,4 @@
 
 #pragma once
 
-#include <Reaktoro/Serialization/Serialization.yaml.hpp>
+#include <Reaktoro/Serialization/Serialization.YAML.hpp>

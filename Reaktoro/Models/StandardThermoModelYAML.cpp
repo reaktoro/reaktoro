@@ -23,7 +23,7 @@
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
-#include <Reaktoro/Serialization/Serialization.yaml.hpp>
+#include <Reaktoro/Serialization/Serialization.YAML.hpp>
 
 namespace Reaktoro {
 

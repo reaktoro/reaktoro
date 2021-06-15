@@ -20,7 +20,7 @@
 using namespace Catch;
 
 // Reaktoro includes
-#include <Reaktoro/Serialization/Common.yaml.hpp>
+#include <Reaktoro/Serialization/Common.YAML.hpp>
 
 using namespace Reaktoro;
 
