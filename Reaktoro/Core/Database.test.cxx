@@ -177,4 +177,25 @@ TEST_CASE("Testing Database class", "[Database]")
 
     REQUIRE( db.elements().size() == 0 );
     REQUIRE( db.species().size()  == 0 );
+
+    //-------------------------------------------------------------------------
+    // TESTING CONSTRUCTORS: Database(species) and Database(elements, species)
+    //-------------------------------------------------------------------------
+    auto check_same_contents_in_databases = [](const Database& db1, const Database& db2)
+    {
+        CHECK( db1.species().size() == db2.species().size() );
+        CHECK( db1.elements().size() == db2.elements().size() );
+
+        for(auto obj : db1.elements())
+            CHECK( containsfn(db2.elements(), RKT_LAMBDA(x, x.name() == obj.symbol())) );
+
+        for(auto obj : db1.species())
+            CHECK( containsfn(db2.species(), RKT_LAMBDA(x, x.name() == obj.name())) );
+    };
+
+    Database new_db1(db.species());
+    Database new_db2(db.elements(), db.species());
+
+    check_same_contents_in_databases(db, new_db1);
+    check_same_contents_in_databases(db, new_db2);
 }

@@ -36,7 +36,10 @@ public:
     /// Construct a copy of a Database instance.
     Database(const Database& other);
 
-    /// Construct a Database instance with given species.
+    /// Construct a Database instance with given elements and species.
+    Database(const Vec<Element>& elements, const Vec<Species>& species);
+
+    /// Construct a Database instance with given species (elements extracted from them).
     explicit Database(const Vec<Species>& species);
 
     /// Destroy this Database instance.
@@ -48,7 +51,14 @@ public:
     /// Remove all species and elements from the database.
     auto clear() -> void;
 
+    /// Add an element in the database.
+    /// @note If an Element object with same symbol already exists in the
+    /// Database container, the given Element object is not added.
+    auto addElement(const Element& element) -> void;
+
     /// Add a species in the database.
+    /// @note If a Species object with same name already exists in the Database
+    /// container, the added Species object has its name slightly changed (e.g. `H2O` becomes `H2O!`).
     auto addSpecies(const Species& species) -> void;
 
     /// Add a list of species in the database.
