@@ -212,13 +212,13 @@ auto parseParams(const xml_node& node) -> std::any
 }
 
 /// Return the pairs of element symbols and their coefficients in an xml node.
-auto parseElements(const xml_node& node) -> Map<String, double>
+auto parseElements(const xml_node& node) -> Pairs<String, double>
 {
     const auto nodetext = as_text(node, "Elements");
     auto words = split(nodetext, "()");
-    Map<String, double> symbols;
+    Pairs<String, double> symbols;
     for(unsigned i = 0; i < words.size(); i += 2)
-        symbols.emplace(words[i], tofloat(words[i + 1]));
+        symbols.emplace_back(words[i], tofloat(words[i + 1]));
     return symbols;
 }
 

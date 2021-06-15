@@ -34,10 +34,10 @@ public:
     ElementalComposition(std::initializer_list<Pair<Element, double>> const& elements);
 
     /// Construct an ElementalComposition object with given elements and respective coefficients.
-    ElementalComposition(Map<Element, double> const& elements);
+    ElementalComposition(Pairs<Element, double> const& elements);
 
     /// Construct an ElementalComposition object with given element symbols and respective coefficients.
-    ElementalComposition(Map<String, double> const& elements);
+    ElementalComposition(Pairs<String, double> const& elements);
 
     /// Return the number of elements.
     auto size() const -> Index;
@@ -57,18 +57,18 @@ public:
     /// Return a string representation of the elemental composition.
     auto repr() const -> String;
 
-    /// Convert this ElementalComposition object into a Map<Element, double> object.
-    operator Map<Element, double>() const;
+    /// Convert this ElementalComposition object into a Pairs<Element, double> object.
+    operator Pairs<Element, double>() const;
 
-    /// Convert this ElementalComposition object into a Map<String, double> object.
-    operator Map<String, double>() const;
+    /// Convert this ElementalComposition object into a Pairs<String, double> object.
+    operator Pairs<String, double>() const;
 
     /// Convert this ElementalComposition object into a String representation object.
     operator String() const;
 
 private:
     /// The elements and their coefficients.
-    Map<Element, double> m_elements;
+    Pairs<Element, double> m_elements;
 
 public:
     /// Return begin const iterator of this ElementalComposition instance (for STL compatibility reasons).

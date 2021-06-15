@@ -57,16 +57,12 @@ TEST_CASE("Testing ElementalComposition", "[ElementalComposition]")
     //-----------------------------------------------------------------
     // Testing method ElementalComposition::repr()
     //-----------------------------------------------------------------
-    REQUIRE( elements.repr() == "3:O 2:C 1:H" );
+    REQUIRE( elements.repr() == "1:H 2:C 3:O" );
 
     //-----------------------------------------------------------------
     // Testing constructor ElementalComposition(Map<String, double>)
     //-----------------------------------------------------------------
-    elements = ElementalComposition(Map<String, double>{
-        { "Ca", 4.0 },
-        { "Mg", 5.0 },
-        { "F",  6.0 },
-    });
+    elements = ElementalComposition({{"Ca", 4.0}, {"Mg", 5.0}, {"F",  6.0}});
 
     //-----------------------------------------------------------------
     // Testing method ElementalComposition::symbols()
