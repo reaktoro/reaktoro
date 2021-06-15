@@ -119,7 +119,7 @@ struct Species::Impl
         if(attribs.formation_reaction)
         {
             reaction = attribs.formation_reaction.value();
-            propsfn = reaction.standardThermoModel();
+            propsfn = reaction.createStandardThermoModel();
             propsfn = propsfn.withMemoization();
         }
     }
@@ -190,7 +190,7 @@ auto Species::withFormationReaction(const FormationReaction& reaction) const -> 
 {
     Species copy = clone();
     copy.pimpl->reaction = reaction;
-    copy = copy.withStandardThermoModel(reaction.standardThermoModel());
+    copy = copy.withStandardThermoModel(reaction.createStandardThermoModel());
     return copy;
 }
 

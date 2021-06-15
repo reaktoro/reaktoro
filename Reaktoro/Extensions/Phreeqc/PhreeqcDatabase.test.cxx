@@ -196,7 +196,6 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.elements().size() == 2                        );
     CHECK( species.elements().coefficient("H") == 2              );
     CHECK( species.elements().coefficient("O") == 1              );
-    CHECK( species.reaction().product() == "H2O"                 );
     CHECK( species.reaction().reactants().size() == 0            );
 
     species = db.species().get("e-");
@@ -209,7 +208,6 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.molarMass() == Approx(0.0)                    );
     CHECK( species.elements().size() == 1                        );
     CHECK( species.elements().coefficient("e") == 1              );
-    CHECK( species.reaction().product() == "e-"                  );
     CHECK( species.reaction().reactants().size() == 0            );
 
     species = db.species().get("CO2");
@@ -223,7 +221,6 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.elements().size() == 2                        );
     CHECK( species.elements().coefficient("C") == 1              );
     CHECK( species.elements().coefficient("O") == 2              );
-    CHECK( species.reaction().product() == "CO2"                 );
     CHECK( species.reaction().reactants().size() == 3            );
     CHECK( species.reaction().stoichiometry("CO3-2") == 1        );
     CHECK( species.reaction().stoichiometry("H+") == 2           );
@@ -240,7 +237,6 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.elements().size() == 2                        );
     CHECK( species.elements().coefficient("C") == 1              );
     CHECK( species.elements().coefficient("O") == 3              );
-    CHECK( species.reaction().product() == "CO3-2"               );
     CHECK( species.reaction().reactants().size() == 0            );
 
     species = db.species().get("Pb2OH+3");
@@ -255,7 +251,6 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.elements().coefficient("Pb") == 2             );
     CHECK( species.elements().coefficient("O") == 1              );
     CHECK( species.elements().coefficient("H") == 1              );
-    CHECK( species.reaction().product() == "Pb2OH+3"             );
     CHECK( species.reaction().reactants().size() == 3            );
     CHECK( species.reaction().stoichiometry("Pb+2") == 2         );
     CHECK( species.reaction().stoichiometry("H2O") == 1          );
@@ -272,7 +267,6 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.elements().size() == 2                        );
     CHECK( species.elements().coefficient("C") == 1              );
     CHECK( species.elements().coefficient("O") == 2              );
-    CHECK( species.reaction().product() == "CO2(g)"              );
     CHECK( species.reaction().reactants().size() == 1            );
     CHECK( species.reaction().stoichiometry("CO2") == 1          );
 
@@ -287,7 +281,6 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.elements().size() == 2                        );
     CHECK( species.elements().coefficient("H") == 2              );
     CHECK( species.elements().coefficient("S") == 1              );
-    CHECK( species.reaction().product() == "H2S(g)"              );
     CHECK( species.reaction().reactants().size() == 2            );
     CHECK( species.reaction().stoichiometry("H+") == 1           );
     CHECK( species.reaction().stoichiometry("HS-") == 1          );
@@ -304,7 +297,6 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.elements().coefficient("Ca") == 1             );
     CHECK( species.elements().coefficient("C") == 1              );
     CHECK( species.elements().coefficient("O") == 3              );
-    CHECK( species.reaction().product() == "Calcite"             );
     CHECK( species.reaction().reactants().size() == 2            );
     CHECK( species.reaction().stoichiometry("Ca+2") == 1         );
     CHECK( species.reaction().stoichiometry("CO3-2") == 1        );
@@ -322,7 +314,6 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.elements().coefficient("P") == 3              );
     CHECK( species.elements().coefficient("O") == 13             );
     CHECK( species.elements().coefficient("H") == 1              );
-    CHECK( species.reaction().product() == "Hydroxyapatite"      );
     CHECK( species.reaction().reactants().size() == 4            );
     CHECK( species.reaction().stoichiometry("H2O") == 1          );
     CHECK( species.reaction().stoichiometry("HPO4-2") == 3       );
