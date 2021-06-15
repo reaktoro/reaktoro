@@ -29,17 +29,17 @@ class StringList;
 
 /// A type used store a collection of elements.
 /// @see Element
-class PeriodicTable
+class Elements
 {
 public:
-    /// Construct a copy of a PeriodicTable object [deleted].
-    PeriodicTable(const PeriodicTable&) = delete;
+    /// Construct a copy of a Elements object [deleted].
+    Elements(const Elements&) = delete;
 
-    /// Assign a PeriodicTable object to this [deleted].
-    auto operator=(const PeriodicTable&) -> PeriodicTable& = delete;
+    /// Assign a Elements object to this [deleted].
+    auto operator=(const Elements&) -> Elements& = delete;
 
-    /// Return the single PeriodicTable object.
-    static auto instance() -> PeriodicTable&;
+    /// Return the single Elements object.
+    static auto instance() -> Elements&;
 
     /// Return the elements in the periodic table.
     static auto elements() -> const Vec<Element>&;
@@ -51,27 +51,27 @@ public:
     static auto size() -> std::size_t;
 
     /// Return the element with given symbol.
-    static auto elementWithSymbol(String symbol) -> Optional<Element>;
+    static auto withSymbol(String symbol) -> Optional<Element>;
 
     /// Return the element with given name.
-    static auto elementWithName(String name) -> Optional<Element>;
+    static auto withName(String name) -> Optional<Element>;
 
     /// Return the elements with a given tag.
-    static auto elementsWithTag(String tag) -> Vec<Element>;
+    static auto withTag(String tag) -> Vec<Element>;
 
     /// Return the elements with given tags.
-    static auto elementsWithTags(const StringList& tags) -> Vec<Element>;
+    static auto withTags(const StringList& tags) -> Vec<Element>;
 
-    /// Return begin const iterator of this PeriodicTable instance
+    /// Return begin const iterator of this Elements instance
     auto begin() const;
 
-    /// Return begin iterator of this PeriodicTable instance
+    /// Return begin iterator of this Elements instance
     auto begin();
 
-    /// Return end const iterator of this PeriodicTable instance
+    /// Return end const iterator of this Elements instance
     auto end() const;
 
-    /// Return end iterator of this PeriodicTable instance
+    /// Return end iterator of this Elements instance
     auto end();
 
 private:
@@ -79,11 +79,11 @@ private:
     Vec<Element> m_elements;
 
 private:
-    /// Construct a default PeriodicTable object [private].
-    PeriodicTable();
+    /// Construct a default Elements object [private].
+    Elements();
 
-    /// Destroy this PeriodicTable object [private].
-    ~PeriodicTable();
+    /// Destroy this Elements object [private].
+    ~Elements();
 };
 
 } // namespace Reaktoro

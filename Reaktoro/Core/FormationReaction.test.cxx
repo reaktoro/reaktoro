@@ -22,7 +22,6 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Singletons/PeriodicTable.hpp>
 using namespace Reaktoro;
 
 

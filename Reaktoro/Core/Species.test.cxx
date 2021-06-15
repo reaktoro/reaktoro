@@ -26,7 +26,7 @@
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Singletons/PeriodicTable.hpp>
+#include <Reaktoro/Singletons/Elements.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing Species class", "[Species]")
@@ -230,8 +230,8 @@ TEST_CASE("Testing Species class", "[Species]")
 
     SECTION("Testing automatic construction of chemical species with given chemical formula containing unknown elements")
     {
-        PeriodicTable::append(Element().withSymbol("Aa"));
-        PeriodicTable::append(Element().withSymbol("Bb"));
+        Elements::append(Element().withSymbol("Aa"));
+        Elements::append(Element().withSymbol("Bb"));
 
         species = Species("AaBb2+");
         REQUIRE(species.name() == "AaBb2+");
@@ -245,7 +245,7 @@ TEST_CASE("Testing Species class", "[Species]")
         REQUIRE(species.elements().coefficient("Bb") == 2);
         REQUIRE(species.tags().empty());
 
-        REQUIRE_THROWS( Species("RrGgHh") ); // Elements Rr Gg and Hh were not previously appended in the PeriodicTable
+        REQUIRE_THROWS( Species("RrGgHh") ); // Elements Rr Gg and Hh were not previously appended in the Elements
     }
 
     SECTION("Testing construction of chemical species with given Species::Attribs")
