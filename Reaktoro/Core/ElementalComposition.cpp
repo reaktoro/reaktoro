@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
 
 namespace Reaktoro {
 
@@ -36,7 +37,7 @@ ElementalComposition::ElementalComposition(Map<Element, double> const& elements)
 
 ElementalComposition::ElementalComposition(Map<String, double> const& elements)
 {
-    for(auto&& [symbol, coeff] : elements)
+    for(const auto& [symbol, coeff] : elements)
         m_elements.emplace(Element(symbol), coeff);
 }
 
@@ -57,7 +58,7 @@ auto ElementalComposition::coefficients() const -> Vec<double>
 
 auto ElementalComposition::coefficient(const String& symbol) const -> double
 {
-    for(auto&& [element, coeff] : m_elements)
+    for(const auto& [element, coeff] : m_elements)
         if(element.symbol() == symbol)
             return coeff;
     return 0.0;
@@ -66,9 +67,18 @@ auto ElementalComposition::coefficient(const String& symbol) const -> double
 auto ElementalComposition::molarMass() const -> double
 {
     double molar_mass = 0.0;
-    for(auto&& [element, coeff] : m_elements)
+    for(const auto& [element, coeff] : m_elements)
         molar_mass += element.molarMass() * coeff;
     return molar_mass;
+}
+
+auto ElementalComposition::repr() const -> String
+{
+    std::stringstream ss;
+    auto i = 0;
+    for(const auto& [element, coeff] : m_elements)
+        ss << (i++ == 0 ? "" : " ") << coeff << ":" << element.symbol();
+    return ss.str();
 }
 
 ElementalComposition::operator Map<Element, double>() const
@@ -79,9 +89,32 @@ ElementalComposition::operator Map<Element, double>() const
 ElementalComposition::operator Map<String, double>() const
 {
     Map<String, double> map;
-    for(auto&& [element, coeff] : m_elements)
+    for(const auto& [element, coeff] : m_elements)
         map[element.symbol()] = coeff;
     return map;
+}
+
+ElementalComposition::operator String() const
+{
+    return repr();
+}
+
+auto parseElementalFormula(const String& formula) -> Pairs<String, double>
+{
+    auto words = split(formula);
+    Pairs<String, double> pairs;
+    pairs.reserve(words.size());
+    for(auto const& word : words)
+    {
+        const auto i = word.find(":");
+        const auto coeff = tofloat(word.substr(0, i));
+        const auto symbol = word.substr(i + 1);
+        const auto j = indexfn(pairs, RKT_LAMBDA(x, x.first == symbol)); // check if symbol is already in pairs
+        if(j < pairs.size())
+            pairs[j].second += coeff; // if symbol alredy in pairs, increment coeff
+        else pairs.push_back({symbol, coeff}); // otherwise, insert symbol and its coefficient
+    }
+    return pairs;
 }
 
 } // namespace Reaktoro

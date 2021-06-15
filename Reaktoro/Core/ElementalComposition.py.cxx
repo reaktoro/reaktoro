@@ -36,5 +36,8 @@ void exportElementalComposition(py::module& m)
         .def("coefficients", &ElementalComposition::coefficients)
         .def("coefficient", &ElementalComposition::coefficient)
         .def("molarMass", &ElementalComposition::molarMass)
+        .def("repr", &ElementalComposition::repr)
         ;
+
+    m.def("parseElementalFormula", parseElementalFormula);
 }
