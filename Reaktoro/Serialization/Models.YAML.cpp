@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Models.yaml.hpp"
+#include "Models.YAML.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
@@ -27,8 +27,8 @@
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
-#include <Reaktoro/Serialization/Common.yaml.hpp>
-#include <Reaktoro/Serialization/Core.yaml.hpp>
+#include <Reaktoro/Serialization/Common.YAML.hpp>
+#include <Reaktoro/Serialization/Core.YAML.hpp>
 
 namespace Reaktoro {
 
