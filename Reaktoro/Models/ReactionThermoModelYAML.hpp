@@ -24,7 +24,7 @@
 
 namespace Reaktoro {
 
-/// Return a reaction thermodynamic model with given @p model name and parameters @p params.
-auto ReactionThermoModelYAML(const String& model, const yaml& params) -> ReactionThermoModel;
+/// Return a reaction thermodynamic model with given yaml @p node.
+auto ReactionThermoModelYAML(const yaml& node) -> ReactionThermoModel;
 
 } // namespace Reaktoro

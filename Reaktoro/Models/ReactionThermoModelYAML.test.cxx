@@ -24,4 +24,5 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ReactionThermoModelYAML class", "[ReactionThermoModelYAML]")
 {
+    // TODO: Implement tests for ReactionThermoModelYAML, similar to those for StandardThermoModelYAML.
 }

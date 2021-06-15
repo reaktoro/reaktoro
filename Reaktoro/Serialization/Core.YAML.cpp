@@ -217,36 +217,5 @@ REAKTORO_YAML_DECODE_DEFINE(SpeciesList)
 }
 
 //=====================================================================================================================
-auto decodeElementalComposition(const yaml& node, const ElementList& elementlist) -> ElementalComposition
-{
-    const auto parsed = node.as<std::map<String, double>>();
-    Pairs<Element, double> elements;
-    for(const auto& [key, val] : parsed)
-        elements.emplace_back(elementlist.getWithSymbol(key), val);
-
-    // Map<Element, double> elements;
-    // for(auto it = node.begin(); it != node.end(); ++it)
-    // {
-    //     const auto key = it->first.as<std::string>();
-    //     const auto val = it->second.as<double>();
-    //     elements.emplace(elementlist.getWithSymbol(key), val);
-    // }
-    return ElementalComposition(elements);
-}
-
-// auto decodeSpecies(const yaml& node, const ElementList& elementlist) -> Species
-// {
-//     Species::Attribs attribs;
-//     node.optional("Name", attribs.name);
-//     node.required("Formula", attribs.formula);
-//     node.optional("Substance", attribs.substance);
-//     // node.optional("Elements", attribs.elements);
-//     // attribs.elements = decodeElementList(node.optional("Elements", attribs.elements);
-//     node.optional("Charge", attribs.charge);
-//     node.optional("AggregateState", attribs.aggregate_state);
-//     node.optional("FormationReaction", attribs.formation_reaction);
-//     // node.optional("StandardThermoModel", attribs.std_thermo_model);
-//     node.optional("Tags", attribs.tags);
-// }
 
 } // namespace YAML

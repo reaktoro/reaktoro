@@ -29,9 +29,11 @@ namespace Reaktoro {
 
 auto StandardThermoModelYAML(const yaml& node) -> StandardThermoModel
 {
-    errorif(!(node.IsMap() && node.size() == 1), "Expecting the following yaml node to contain a single StandardThermoModel child:\n", node.repr());
+    errorif(!(node.IsMap() && node.size() == 1),
+        "Expecting the following yaml node to contain a single "
+        "StandardThermoModel child:\n", node.repr());
 
-    auto model = node.begin()->first.as<std::string>();
+    auto model = node.begin()->first.as<String>();
     yaml params = node.begin()->second;
 
     if(model == "HKF")
@@ -44,7 +46,8 @@ auto StandardThermoModelYAML(const yaml& node) -> StandardThermoModel
         return StandardThermoModelMineralHKF(params);
     if(model == "WaterHKF")
         return StandardThermoModelWaterHKF(params);
-    errorif(true, "Cannot create a StandardThermoModel with unsupported model name `", model, "` in yaml node:\n", node.repr());
+    errorif(true, "Cannot create a StandardThermoModel with "
+        "unsupported model name `", model, "` in yaml node:\n", node.repr());
 }
 
 } // namespace Reaktoro
