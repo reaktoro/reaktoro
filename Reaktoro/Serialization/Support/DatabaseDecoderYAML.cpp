@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Common/YAML.hpp>
 #include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Models/StandardThermoModelYAML.hpp>
@@ -134,7 +135,7 @@ struct DatabaseDecoderYAML::Impl
         auto child = node["Elements"];
         if(!child) return; // there is no explicit info about the elements of the species (this is in the chemical formula)
         Pairs<Element, double> pairs;
-        const auto symbols_and_coeffs = parseElementalFormula(child.as<String>());
+        const auto symbols_and_coeffs = parseNumberStringPairs(child.as<String>());
         for(const auto& [symbol, coeff] : symbols_and_coeffs)
         {
             const auto idx = element_list.find(symbol);
