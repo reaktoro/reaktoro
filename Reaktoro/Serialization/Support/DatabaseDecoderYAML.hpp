@@ -19,33 +19,34 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/ElementList.hpp>
-#include <Reaktoro/Core/SpeciesList.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
+class Database;
 class yaml;
 
-/// The class used to parse databases and construct a Database object.
-/// @ingroup Core
-class DatabaseParser
+/// The auxiliary class used to construct a Database object from an YAML document (decoder).
+class DatabaseDecoderYAML
 {
 public:
-    /// Construct a default DatabaseParser object.
-    DatabaseParser();
+    /// Construct a default DatabaseDecoderYAML object.
+    DatabaseDecoderYAML();
 
-    /// Construct a copy of a DatabaseParser object.
-    DatabaseParser(const DatabaseParser& other);
+    /// Construct a copy of a DatabaseDecoderYAML object.
+    DatabaseDecoderYAML(const DatabaseDecoderYAML& other);
 
-    /// Construct a DatabaseParser object with given YAML node.
-    explicit DatabaseParser(const yaml& node);
+    /// Construct a DatabaseDecoderYAML object with given YAML node.
+    explicit DatabaseDecoderYAML(const yaml& node);
 
-    /// Destroy this DatabaseParser object.
-    ~DatabaseParser();
+    /// Destroy this DatabaseDecoderYAML object.
+    ~DatabaseDecoderYAML();
 
-    /// Assign another DatabaseParser object to this.
-    auto operator=(DatabaseParser other) -> DatabaseParser&;
+    /// Assign another DatabaseDecoderYAML object to this.
+    auto operator=(DatabaseDecoderYAML other) -> DatabaseDecoderYAML&;
+
+    /// Convert this DatabaseDecoderYAML object into a Database object.
+    operator Database() const;
 
 private:
     struct Impl;

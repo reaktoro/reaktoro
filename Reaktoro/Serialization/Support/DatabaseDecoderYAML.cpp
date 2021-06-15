@@ -15,19 +15,20 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "DatabaseParser.hpp"
+#include "DatabaseDecoderYAML.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/YAML.hpp>
+#include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Models/StandardThermoModelYAML.hpp>
-#include <Reaktoro/Serialization/Common.yaml.hpp>
-#include <Reaktoro/Serialization/Core.yaml.hpp>
-#include <Reaktoro/Serialization/Models.yaml.hpp>
+#include <Reaktoro/Serialization/Common.YAML.hpp>
+#include <Reaktoro/Serialization/Core.YAML.hpp>
+#include <Reaktoro/Serialization/Models.YAML.hpp>
 
 namespace Reaktoro {
 
-struct DatabaseParser::Impl
+struct DatabaseDecoderYAML::Impl
 {
     /// The Species objects in the database.
     SpeciesList species_list;
@@ -38,14 +39,19 @@ struct DatabaseParser::Impl
     /// The document in yaml format with the database contents.
     yaml doc;
 
-    /// Construct a default DatabaseParser::Impl object.
+    /// Construct a default DatabaseDecoderYAML::Impl object.
     Impl()
     {}
 
-    /// Construct a DatabaseParser::Impl object with given YAML node.
+    /// Construct a DatabaseDecoderYAML::Impl object with given YAML node.
     Impl(const yaml& doc)
+    : doc(doc)
     {
+        for(auto child : doc["Elements"])
+            addElement(child);
 
+        for(auto child : doc["Species"])
+            addSpecies(child);
     }
 
     /// Return the yaml node among element nodes with given unique @p symbol.
@@ -70,7 +76,7 @@ struct DatabaseParser::Impl
         return {};
     }
 
-    /// Add a new element with given symbol. Check if an element yaml node exists if such symbol first.
+    /// Add a new element with given symbol. Check if an element yaml node exists with such symbol first.
     auto addElement(const String& symbol) -> Element
     {
         const auto node = getElementNode(symbol);
@@ -86,12 +92,10 @@ struct DatabaseParser::Impl
     {
         assert(node.IsDefined());
         Element::Attribs attribs;
-        node.required("Symbol", attribs.symbol);
-        node.required("Name", attribs.name);
-        node.required("AtomicNumber", attribs.atomic_number);
-        node.required("AtomicWeight", attribs.atomic_weight);
-        node.required("Electronegativity", attribs.electronegativity);
-        node.required("Tags", attribs.tags);
+        node.copyRequiredChildValueTo("Symbol", attribs.symbol);
+        node.copyRequiredChildValueTo("MolarMass", attribs.molar_mass);
+        node.copyOptionalChildValueTo("Name", attribs.name);
+        node.copyOptionalChildValueTo("Tags", attribs.tags);
         Element element(attribs);
         element_list.append(element);
         return element;
@@ -110,14 +114,15 @@ struct DatabaseParser::Impl
     {
         assert(node.IsDefined());
         Species::Attribs attribs;
-        node.required("Name", attribs.name);
-        node.required("Formula", attribs.formula);
-        node.optional("Substance", attribs.substance);
-        node.optional("Charge", attribs.charge);
-        node.optional("AggregateState", attribs.aggregate_state);
+        node.copyRequiredChildValueTo("Name", attribs.name);
+        node.copyRequiredChildValueTo("Formula", attribs.formula);
+        node.copyOptionalChildValueTo("Substance", attribs.substance);
+        node.copyOptionalChildValueTo("Charge", attribs.charge);
+        node.copyOptionalChildValueTo("AggregateState", attribs.aggregate_state);
         createElementalComposition(node, attribs.elements);
         createFormationReaction(node, attribs.formation_reaction);
         createStandardThermoModel(node, attribs.std_thermo_model);
+        node.copyOptionalChildValueTo("Tags", attribs.tags);
         Species species(attribs);
         species_list.append(species);
         return species;
@@ -126,9 +131,10 @@ struct DatabaseParser::Impl
     /// Create the elemental composition of the species in the given yaml @p node.
     auto createElementalComposition(const yaml& node, Optional<ElementalComposition>& elements) -> void
     {
-        if(!node) return; // there is no explicit info about the elements of the species (this is in the chemical formula)
+        auto child = node["Elements"];
+        if(!child) return; // there is no explicit info about the elements of the species (this is in the chemical formula)
         Map<Element, double> elementMap;
-        const auto pairs = node.as<std::map<String, double>>();
+        const auto pairs = parseElementalFormula(child.as<String>());
         for(const auto& [symbol, coeff] : pairs)
         {
             const auto idx = element_list.find(symbol);
@@ -196,26 +202,30 @@ struct DatabaseParser::Impl
 
 };
 
-DatabaseParser::DatabaseParser()
+DatabaseDecoderYAML::DatabaseDecoderYAML()
 : pimpl(new Impl())
 {}
 
-DatabaseParser::DatabaseParser(const DatabaseParser& other)
+DatabaseDecoderYAML::DatabaseDecoderYAML(const DatabaseDecoderYAML& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-DatabaseParser::DatabaseParser(const yaml& doc)
+DatabaseDecoderYAML::DatabaseDecoderYAML(const yaml& doc)
 : pimpl(new Impl(doc))
 {}
 
-DatabaseParser::~DatabaseParser()
+DatabaseDecoderYAML::~DatabaseDecoderYAML()
 {}
 
-auto DatabaseParser::operator=(DatabaseParser other) -> DatabaseParser&
+auto DatabaseDecoderYAML::operator=(DatabaseDecoderYAML other) -> DatabaseDecoderYAML&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-} // namespace Reaktoro
+DatabaseDecoderYAML::operator Database() const
+{
+    return Database(pimpl->element_list, pimpl->species_list);
+}
 
+} // namespace Reaktoro
