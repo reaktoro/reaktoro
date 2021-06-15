@@ -129,15 +129,15 @@ struct PhreeqcDatabaseHelper
 
     /// Create the elements of a Species object with given Phreeqc species pointer
     template<typename SpeciesType>
-    auto createElements(const SpeciesType* s) -> Map<Element, double>
+    auto createElements(const SpeciesType* s) -> Pairs<Element, double>
     {
-        Map<Element, double> pairs;
+        Pairs<Element, double> pairs;
         for(auto&& [element, coeff] : PhreeqcUtils::elements(s))
         {
             const auto idx = elements.find(PhreeqcUtils::symbol(element));
             if(idx == elements.size())
                 addElement(element); // create and append an Element object for this PHREEQC element first!
-            pairs.emplace(elements[idx], coeff);
+            pairs.emplace_back(elements[idx], coeff);
         }
 
         return pairs;

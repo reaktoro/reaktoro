@@ -133,20 +133,20 @@ struct DatabaseDecoderYAML::Impl
     {
         auto child = node["Elements"];
         if(!child) return; // there is no explicit info about the elements of the species (this is in the chemical formula)
-        Map<Element, double> elementMap;
-        const auto pairs = parseElementalFormula(child.as<String>());
-        for(const auto& [symbol, coeff] : pairs)
+        Pairs<Element, double> pairs;
+        const auto symbols_and_coeffs = parseElementalFormula(child.as<String>());
+        for(const auto& [symbol, coeff] : symbols_and_coeffs)
         {
             const auto idx = element_list.find(symbol);
             if(idx < element_list.size())
-                elementMap.emplace(element_list[idx], coeff);
+                pairs.emplace_back(element_list[idx], coeff);
             else
             {
                 const auto new_element = addElement(symbol);
-                elementMap.emplace(new_element, coeff);
+                pairs.emplace_back(new_element, coeff);
             }
         }
-        elements = ElementalComposition(elementMap);
+        elements = ElementalComposition(pairs);
     }
 
     /// Create a standard thermodynamic model with given yaml @p node for a species.

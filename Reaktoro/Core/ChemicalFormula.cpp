@@ -73,7 +73,7 @@ auto findMatchedParenthesisReverse(StringIterator begin, StringIterator end) -> 
     return begin;
 }
 
-auto parseChemicalFormulaAux(StringIterator begin, StringIterator end, Map<String, double>& result, double scalar) -> void
+auto parseChemicalFormulaAux(StringIterator begin, StringIterator end, Pairs<String, double>& result, double scalar) -> void
 {
     if(begin == end) return;
 
@@ -115,8 +115,11 @@ auto parseChemicalFormulaAux(StringIterator begin, StringIterator end, Map<Strin
         String element = res1.first;
         double natoms  = res2.first;
 
-        if(result.count(element)) result[element] += scalar * natoms;
-        else result[element] = scalar * natoms;
+        auto i = indexfn(result, RKT_LAMBDA(x, x.first == element));
+
+        if(i < result.size()) // check if element symbol already exists in the result container
+            result[i].second += scalar * natoms; // if so, increment coefficient
+        else result.emplace_back(element, scalar * natoms); // otherwise, add into the container
 
         StringIterator begin1 = res2.second;
         StringIterator end1   = end;
@@ -125,10 +128,10 @@ auto parseChemicalFormulaAux(StringIterator begin, StringIterator end, Map<Strin
     }
 }
 
-auto parseChemicalFormula(String formula) -> Map<String, double>
+auto parseChemicalFormula(String formula) -> Pairs<String, double>
 {
     // Parse the formula for elements and their coefficients (without charge)
-    Map<String, double> result;
+    Pairs<String, double> result;
     parseChemicalFormulaAux(formula.begin(), formula.end(), result, 1.0);
     return result;
 }
@@ -202,7 +205,7 @@ auto parseElectricCharge(String formula) -> double
 
 } // namespace detail
 
-auto parseChemicalFormula(const String& formula) -> Map<String, double>
+auto parseChemicalFormula(const String& formula) -> Pairs<String, double>
 {
     return detail::parseChemicalFormula(formula);
 }
@@ -218,7 +221,7 @@ struct ChemicalFormula::Impl
     String formula;
 
     /// The element symbols and their coefficients (e.g., `{{"H", 1}, {"C", 1}, {"O", 3}}` for `HCO3-`).
-    Map<String, double> elements;
+    Pairs<String, double> elements;
 
     /// The electric charge in the chemical formula (e.g., `-1` for `HCO3-`).
     double charge = {};
@@ -233,7 +236,7 @@ struct ChemicalFormula::Impl
     {}
 
     /// Construct an object of type Impl with given data.
-    Impl(String formula, Map<String, double> elements, double charge)
+    Impl(String formula, Pairs<String, double> elements, double charge)
     : formula(formula), elements(elements), charge(charge)
     {}
 
@@ -252,8 +255,9 @@ struct ChemicalFormula::Impl
     /// Return the coefficient of an element symbol in the chemical formula.
     auto coefficient(const String& symbol) const -> double
     {
-        const auto iter = elements.find(symbol);
-        if(iter != elements.end()) return iter->second;
+        for(auto const& element : elements)
+            if(element.first == symbol)
+                return element.second;
         return 0.0;
     }
 };
@@ -270,7 +274,7 @@ ChemicalFormula::ChemicalFormula(String formula)
 : pimpl(new Impl(formula))
 {}
 
-ChemicalFormula::ChemicalFormula(String formula, Map<String, double> symbols, double charge)
+ChemicalFormula::ChemicalFormula(String formula, Pairs<String, double> symbols, double charge)
 : pimpl(new Impl(formula, symbols, charge))
 {}
 
@@ -279,7 +283,7 @@ auto ChemicalFormula::str() const -> const String&
     return pimpl->formula;
 }
 
-auto ChemicalFormula::elements() const -> const Map<String, double>&
+auto ChemicalFormula::elements() const -> const Pairs<String, double>&
 {
     return pimpl->elements;
 }
@@ -306,7 +310,9 @@ auto ChemicalFormula::charge() const -> double
 
 auto ChemicalFormula::equivalent(const ChemicalFormula& other) const -> bool
 {
-    return elements() == other.elements() && charge() == other.charge();
+    return elements().size() == other.elements().size() &&
+        contained(elements(), other.elements()) &&
+        charge() == other.charge();
 }
 
 auto ChemicalFormula::equivalent(const ChemicalFormula& f1, const ChemicalFormula& f2) -> bool
@@ -319,7 +325,7 @@ ChemicalFormula::operator String() const
     return str();
 }
 
-ChemicalFormula::operator Map<String, double>() const
+ChemicalFormula::operator Pairs<String, double>() const
 {
     return pimpl->elements;
 }

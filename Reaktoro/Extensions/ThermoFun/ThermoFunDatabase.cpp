@@ -49,15 +49,15 @@ auto createElement(const ThermoFun::Element& element) -> Element
 }
 
 /// Return the elements and their coefficients in a species a ThermoFun::Substance object
-auto createElements(const ThermoFunEngine& engine, const ThermoFun::Substance& substance) -> Map<Element, double>
+auto createElements(const ThermoFunEngine& engine, const ThermoFun::Substance& substance) -> Pairs<Element, double>
 {
     auto db = engine.database();
-    Map<Element, double> elements;
+    Pairs<Element, double> elements;
     for(auto&& [element, coeff] : db.parseSubstanceFormula(substance.formula()))
     {
         if(element.symbol() == "Zz")
             continue; // skip charge element in ThermoFun (charge is explicitly accessed in Reaktoro::Species)
-        elements[createElement(element)] = coeff;
+        elements.emplace_back(createElement(element), coeff);
     }
     return elements;
 }

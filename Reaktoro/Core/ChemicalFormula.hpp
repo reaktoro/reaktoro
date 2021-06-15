@@ -41,13 +41,13 @@ public:
     /// @param formula The chemical formula of the species (e.g., `HCO3-`).
     /// @param symbols The element symbols and their coefficients (e.g., `{{"H", 1}, {"C", 1}, {"O", 3}}` for `HCO3-`).
     /// @param charge The electric charge in the chemical formula (e.g., `-1` for `HCO3-`).
-    ChemicalFormula(String formula, Map<String, double> symbols, double charge);
+    ChemicalFormula(String formula, Pairs<String, double> symbols, double charge);
 
     /// Return the chemical formula of the substance as a string.
     auto str() const -> const String&;
 
     /// Return the element symbols and their coefficients in the chemical formula.
-    auto elements() const -> const Map<String, double>&;
+    auto elements() const -> const Pairs<String, double>&;
 
     /// Return the element symbols in the chemical formula.
     auto symbols() const -> Strings;
@@ -75,8 +75,8 @@ public:
     /// Convert this ChemicalFormula object into a string.
     operator String() const;
 
-    /// Convert this ChemicalFormula object into a Map<String, double>.
-    operator Map<String, double>() const;
+    /// Convert this ChemicalFormula object into a Pairs<String, double>.
+    operator Pairs<String, double>() const;
 
 private:
     struct Impl;
@@ -90,7 +90,7 @@ auto operator<(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool;
 /// Compare two ChemicalFormula objects for equality
 auto operator==(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool;
 
-/// Return a map from element symbol to its coefficient in a chemical formula.
+/// Return the element symbols and their coefficients in a chemical formula.
 /// Successfully parsing a chemical formula requires that the first letter in
 /// the formula is uppercase and all others in lowercase. Thus, even chemical
 /// formulas such as `AaBbb` or `(Aa2Bbb4)Cc6` are supported.
@@ -114,7 +114,7 @@ auto operator==(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool;
 /// auto formula10 = parseChemicalFormula("CO3--");
 /// auto formula11 = parseChemicalFormula("CO3-2");
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-auto parseChemicalFormula(const String& formula) -> Map<String, double>;
+auto parseChemicalFormula(const String& formula) -> Pairs<String, double>;
 
 /// Return the electric charge in a chemical formula.
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

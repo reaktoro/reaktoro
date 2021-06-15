@@ -220,9 +220,9 @@ REAKTORO_YAML_DECODE_DEFINE(SpeciesList)
 auto decodeElementalComposition(const yaml& node, const ElementList& elementlist) -> ElementalComposition
 {
     const auto parsed = node.as<std::map<String, double>>();
-    Map<Element, double> elements;
+    Pairs<Element, double> elements;
     for(const auto& [key, val] : parsed)
-        elements.emplace(elementlist.getWithSymbol(key), val);
+        elements.emplace_back(elementlist.getWithSymbol(key), val);
 
     // Map<Element, double> elements;
     // for(auto it = node.begin(); it != node.end(); ++it)

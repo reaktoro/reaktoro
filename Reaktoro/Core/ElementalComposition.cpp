@@ -31,14 +31,14 @@ ElementalComposition::ElementalComposition(std::initializer_list<Pair<Element, d
 : m_elements(elements.begin(), elements.end())
 {}
 
-ElementalComposition::ElementalComposition(Map<Element, double> const& elements)
+ElementalComposition::ElementalComposition(Pairs<Element, double> const& elements)
 : m_elements(elements)
 {}
 
-ElementalComposition::ElementalComposition(Map<String, double> const& elements)
+ElementalComposition::ElementalComposition(Pairs<String, double> const& elements)
 {
     for(const auto& [symbol, coeff] : elements)
-        m_elements.emplace(Element(symbol), coeff);
+        m_elements.emplace_back(Element(symbol), coeff); // TODO: Use DefaultElements.get(symbol)
 }
 
 auto ElementalComposition::size() const -> Index
@@ -81,17 +81,17 @@ auto ElementalComposition::repr() const -> String
     return ss.str();
 }
 
-ElementalComposition::operator Map<Element, double>() const
+ElementalComposition::operator Pairs<Element, double>() const
 {
     return m_elements;
 }
 
-ElementalComposition::operator Map<String, double>() const
+ElementalComposition::operator Pairs<String, double>() const
 {
-    Map<String, double> map;
+    Pairs<String, double> pairs;
     for(const auto& [element, coeff] : m_elements)
-        map[element.symbol()] = coeff;
-    return map;
+        pairs.emplace_back(element.symbol(), coeff);
+    return pairs;
 }
 
 ElementalComposition::operator String() const
