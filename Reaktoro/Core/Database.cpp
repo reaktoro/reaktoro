@@ -43,6 +43,16 @@ struct Database::Impl
     /// The species in the database grouped in terms of their aggregate state
     Map<AggregateState, SpeciesList> species_with_aggregate_state;
 
+    /// Add an element in the database.
+    auto addElement(const Element& element) -> void
+    {
+        if(element_symbols.find(element.symbol()) == element_symbols.end())
+        {
+            elements.append(element);
+            element_symbols.insert(element.symbol());
+        }
+    }
+
     /// Add a species in the database.
     auto addSpecies(Species newspecies) -> void
     {
@@ -79,12 +89,8 @@ struct Database::Impl
         species_names.insert(newspecies.name());
 
         // Update the container of elements with the Element objects in this new species.
-        for(auto&& [element, coeff] : newspecies.elements()) {
-            if(!contains(element_symbols, element.symbol())) {
-               elements.append(element);
-               element_symbols.insert(element.symbol());
-            }
-        }
+        for(auto&& [element, coeff] : newspecies.elements())
+            addElement(element);
 
         // Add the new species in the group of species with same aggregate state
         species_with_aggregate_state[newspecies.aggregateState()].push_back(newspecies);
@@ -98,6 +104,15 @@ Database::Database()
 Database::Database(const Database& other)
 : pimpl(new Impl(*other.pimpl))
 {}
+
+Database::Database(const Vec<Element>& elements, const Vec<Species>& species)
+: Database()
+{
+    for(const auto& x : elements)
+        addElement(x);
+    for(const auto& x : species)
+        addSpecies(x);
+}
 
 Database::Database(const Vec<Species>& species)
 : Database()
@@ -118,6 +133,11 @@ auto Database::operator=(Database other) -> Database&
 auto Database::clear() -> void
 {
     *pimpl = Database::Impl();
+}
+
+auto Database::addElement(const Element& element) -> void
+{
+    pimpl->addElement(element);
 }
 
 auto Database::addSpecies(const Species& species) -> void
