@@ -26,8 +26,15 @@
 
 namespace Reaktoro {
 
-auto ReactionThermoModelYAML(const String& model, const yaml& params) -> ReactionThermoModel
+auto ReactionThermoModelYAML(const yaml& node) -> ReactionThermoModel
 {
+    errorif(!(node.IsMap() && node.size() == 1),
+        "Expecting the following yaml node to contain a single "
+        "StandardThermoModel child:\n", node.repr());
+
+    auto model = node.begin()->first.as<String>();
+    yaml params = node.begin()->second;
+
     if(model == "ConstLgK")
         return ReactionThermoModelConstLgK(params);
     if(model == "GemsLgK")
@@ -36,7 +43,8 @@ auto ReactionThermoModelYAML(const String& model, const yaml& params) -> Reactio
         return ReactionThermoModelPhreeqcLgK(params);
     if(model == "VantHoff")
         return ReactionThermoModelVantHoff(params);
-    errorif(true, "Cannot create ReactionThermoModel with not supported model name `", model, "`.");
+    errorif(true, "Cannot create a ReactionThermoModel with "
+        "unsupported model name `", model, "` in yaml node:\n", node.repr());
 }
 
 } // namespace Reaktoro

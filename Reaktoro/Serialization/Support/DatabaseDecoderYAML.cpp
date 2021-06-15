@@ -22,6 +22,7 @@
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Common/YAML.hpp>
 #include <Reaktoro/Core/Database.hpp>
+#include <Reaktoro/Models/ReactionThermoModelYAML.hpp>
 #include <Reaktoro/Models/StandardThermoModelYAML.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 #include <Reaktoro/Serialization/Core.YAML.hpp>
@@ -59,9 +60,9 @@ struct DatabaseDecoderYAML::Impl
     auto getElementNode(const String& symbol) -> yaml
     {
         const auto node = doc["Elements"];
-        if(!node.IsDefined()) return node;
+        if(!node.IsDefined()) return {};
         for(auto i = 0; i < node.size(); ++i)
-            if(node[i].at("Symbol").as<std::string>() == symbol)
+            if(node[i].at("Symbol").as<String>() == symbol)
                 return node[i];
         return {};
     }
@@ -70,9 +71,9 @@ struct DatabaseDecoderYAML::Impl
     auto getSpeciesNode(const String& name) -> yaml
     {
         const auto node = doc["Species"];
-        if(!node.IsDefined()) return node;
+        if(!node.IsDefined()) return {};
         for(auto i = 0; i < node.size(); ++i)
-            if(node[i].at("Name").as<std::string>() == name)
+            if(node[i].at("Name").as<String>() == name)
                 return node[i];
         return {};
     }
@@ -83,7 +84,7 @@ struct DatabaseDecoderYAML::Impl
         const auto node = getElementNode(symbol);
         if(node.IsDefined())
             return addElement(node); // create an element using info in the database file.
-        Element element(symbol); // create an element using info from periodic table.
+        Element element(symbol); // create an element using info from default elements in Elements.
         element_list.append(element);
         return element;
     }
@@ -106,7 +107,8 @@ struct DatabaseDecoderYAML::Impl
     auto addSpecies(const String& name) -> Species
     {
         const auto node = getSpeciesNode(name);
-        errorif(!node.IsDefined(), "Cannot create a Species object with name `", name, "` without an yaml node with its data.");
+        errorif(!node.IsDefined(), "Cannot create a Species object "
+            "with name `", name, "` without an yaml node with its data.");
         return addSpecies(node);
     }
 
@@ -173,17 +175,17 @@ struct DatabaseDecoderYAML::Impl
     /// Create the list of reactant species in given formation reaction yaml @p node.
     auto createReactants(const yaml& node) -> Pairs<Species, double>
     {
+        auto child = node["Reactants"];
+        const auto names_and_coeffs = parseNumberStringPairs(child.as<String>());
         Pairs<Species, double> reactants;
-
-        auto pairs = node.as<std::map<String, double>>();
-        for(const auto& [name, coeff] : pairs)
+        for(const auto& [name, coeff] : names_and_coeffs)
         {
             const auto idx = species_list.find(name);
-            if(idx < species_list.size())
-                reactants.emplace_back(species_list[idx], coeff);
-            else
+            if(idx < species_list.size()) // check if there is a Species object with current name
+                reactants.emplace_back(species_list[idx], coeff); // if so, add it to the list of reactants
+            else // otherwise, add a new Species object
             {
-                const auto new_species = addSpecies(name);
+                const auto new_species = addSpecies(name); // Note potential recursivity: addSpecies may also need to call createReactants! This is needed in case reactions are defined recursively.
                 reactants.emplace_back(new_species, coeff);
             }
         }
@@ -191,16 +193,17 @@ struct DatabaseDecoderYAML::Impl
     }
 
     /// Create a standard thermodynamic model with given yaml @p node for a species.
-    auto createReactionThermoModel(const yaml& child) -> ReactionThermoModel
+    auto createReactionThermoModel(const yaml& node) -> ReactionThermoModel
     {
-        return {};
+        auto child = node["ReactionThermoModel"];
+        errorif(!child, "Missing ReactionThermoModel information in yaml node:\n", node.repr());
+        return ReactionThermoModelYAML(child);
     }
 
     // auto createStandardVolumeModel(const yaml& child) -> StandardVolumeModel
     // {
 
     // }
-
 };
 
 DatabaseDecoderYAML::DatabaseDecoderYAML()
