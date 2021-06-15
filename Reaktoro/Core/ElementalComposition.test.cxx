@@ -81,41 +81,4 @@ TEST_CASE("Testing ElementalComposition", "[ElementalComposition]")
     REQUIRE( elements.coefficient("Mg") == 5.0 );
     REQUIRE( elements.coefficient("F")  == 6.0 );
     REQUIRE( elements.coefficient("X")  == 0.0 );
-
-    //-----------------------------------------------------------------
-    // Testing method parseElementalFormula
-    //-----------------------------------------------------------------
-    Pairs<String, double> pairs;
-    pairs = parseElementalFormula("2:H 1:O");
-    CHECK( pairs == Pairs<String, double>{{"H", 2}, {"O", 1}} );
-
-    pairs = parseElementalFormula("1:Ca 2:Cl");
-    CHECK( pairs == Pairs<String, double>{{"Ca", 1}, {"Cl", 2}} );
-
-    pairs = parseElementalFormula("1:Mg 1:C 3:O");
-    CHECK( pairs == Pairs<String, double>{{"Mg", 1}, {"C", 1}, {"O", 3}} );
-
-    pairs = parseElementalFormula("1:Ca 1:Mg 2:C 6:O");
-    CHECK( pairs == Pairs<String, double>{{"Ca", 1}, {"Mg", 1}, {"C", 2}, {"O", 6}} );
-
-    pairs = parseElementalFormula("3:Fe 2:Al 3:Si 12:O");
-    CHECK( pairs == Pairs<String, double>{{"Fe", 3}, {"Al", 2}, {"Si", 3}, {"O", 12}} );
-
-    pairs = parseElementalFormula("1:Fe 1:Al 1:Fe 3:Si 1:Fe 1:Al 4:O 4:O 4:O");
-    CHECK( pairs == Pairs<String, double>{{"Fe", 3}, {"Al", 2}, {"Si", 3}, {"O", 12}} );
-
-    pairs = parseElementalFormula("1:Na -1:E");
-    CHECK( pairs == Pairs<String, double>{{"Na", 1}, {"E", -1}} );
-
-    pairs = parseElementalFormula("1:Na -1:E -3:E 3:E");
-    CHECK( pairs == Pairs<String, double>{{"Na", 1}, {"E", -1}} );
-
-    pairs = parseElementalFormula("1:Ca -2:E");
-    CHECK( pairs == Pairs<String, double>{{"Ca", 1}, {"E", -2}} );
-
-    pairs = parseElementalFormula("1:Fe -3:E");
-    CHECK( pairs == Pairs<String, double>{{"Fe", 1}, {"E", -3}} );
-
-    pairs = parseElementalFormula("1:C 3:O 2:E");
-    CHECK( pairs == Pairs<String, double>{{"C", 1}, {"O", 3}, {"E", 2}} );
 }

@@ -17,13 +17,26 @@
 
 #pragma once
 
-// C++ includes
-#include <map>
-#include <string>
+// Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 
 namespace Reaktoro {
 
 /// Parse a reaction equation
-auto parseReaction(std::string equation) -> std::map<std::string, double>;
+auto parseReaction(const String& equation) -> Pairs<String, double>;
+
+/// Parse a formatted string containing pairs of numbers and strings.
+/// See below several examples of parsing different formatted strings:
+/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// using namespace Reaktoro;
+/// auto pairs0 = parseNumberStringPairs("2:H 1:O");
+/// auto pairs1 = parseNumberStringPairs("1:Ca 2:Cl");
+/// auto pairs2 = parseNumberStringPairs("1:Mg 1:C 3:O");
+/// auto pairs3 = parseNumberStringPairs("1:Ca 1:Mg 2:C 6:O");
+/// auto pairs4 = parseNumberStringPairs("3:Fe 2:Al 3:Si 12:O");
+/// auto pairs5 = parseNumberStringPairs("1:Na+ 1:Cl-");
+/// auto pairs6 = parseNumberStringPairs("1:Ca++ 1:CO3--");
+/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+auto parseNumberStringPairs(const String& str) -> Pairs<String, double>;
 
 } // namespace Reaktoro

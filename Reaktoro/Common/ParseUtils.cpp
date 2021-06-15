@@ -17,29 +17,40 @@
 
 #include "ParseUtils.hpp"
 
-// C++ includes
-#include <vector>
-
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 
 namespace Reaktoro {
 
-auto parseReaction(std::string reaction) -> std::map<std::string, double>
+auto parseReaction(const String& reaction) -> Pairs<String, double>
 {
-    std::map<std::string, double> equation;
-
-    // Split the participating species in the reaction in words delimited by space
-    std::vector<std::string> words = split(reaction, " ");
-
-    // Create the pair entries
-    for(const std::string& word : words)
+    Pairs<String, double> equation;
+    auto words = split(reaction);
+    for(const String& word : words)
     {
-        std::vector<std::string> pair = split(word, ":");
-        equation.emplace(pair[1], tofloat(pair[0]));
+        Vec<String> pair = split(word, ":");
+        equation.emplace_back(pair[1], tofloat(pair[0]));
     }
-
     return equation;
+}
+
+auto parseNumberStringPairs(const String& str) -> Pairs<String, double>
+{
+    auto words = split(str);
+    Pairs<String, double> pairs;
+    pairs.reserve(words.size());
+    for(auto const& word : words)
+    {
+        const auto i = word.find(":");
+        const auto coeff = tofloat(word.substr(0, i));
+        const auto symbol = word.substr(i + 1);
+        const auto j = indexfn(pairs, RKT_LAMBDA(x, x.first == symbol)); // check if symbol is already in pairs
+        if(j < pairs.size())
+            pairs[j].second += coeff; // if symbol alredy in pairs, increment coeff
+        else pairs.push_back({symbol, coeff}); // otherwise, insert symbol and its coefficient
+    }
+    return pairs;
 }
 
 } // namespace Reaktoro

@@ -84,20 +84,4 @@ public:
     inline auto end() { return m_elements.end(); }
 };
 
-/// Return a vector of pairs with element symbols and their respective coefficients in an elemental formula.
-/// See below several examples of parsing different elemental formulas:
-/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// using namespace Reaktoro;
-/// auto pairs0 = parseElementalFormula("2:H 1:O");             // H2O
-/// auto pairs1 = parseElementalFormula("1:Ca 2:Cl");           // CaCl2
-/// auto pairs2 = parseElementalFormula("1:Mg 1:C 3:O");        // MgCO3
-/// auto pairs3 = parseElementalFormula("1:Ca 1:Mg 2:C 6:O");   // (CaMg)(CO3)2
-/// auto pairs4 = parseElementalFormula("3:Fe 2:Al 3:Si 12:O"); // Fe3Al2Si3O12
-/// auto pairs5 = parseElementalFormula("1:Na -1:E");           // Na+
-/// auto pairs6 = parseElementalFormula("1:Ca -2:E");           // Ca++
-/// auto pairs7 = parseElementalFormula("1:Fe -3:E");           // Fe+++
-/// auto pairs8 = parseElementalFormula("1:C 3:O 2:E");         // CO3--
-/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-auto parseElementalFormula(const String& formula) -> Pairs<String, double>;
-
 } // namespace Reaktoro

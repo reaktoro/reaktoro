@@ -99,22 +99,4 @@ ElementalComposition::operator String() const
     return repr();
 }
 
-auto parseElementalFormula(const String& formula) -> Pairs<String, double>
-{
-    auto words = split(formula);
-    Pairs<String, double> pairs;
-    pairs.reserve(words.size());
-    for(auto const& word : words)
-    {
-        const auto i = word.find(":");
-        const auto coeff = tofloat(word.substr(0, i));
-        const auto symbol = word.substr(i + 1);
-        const auto j = indexfn(pairs, RKT_LAMBDA(x, x.first == symbol)); // check if symbol is already in pairs
-        if(j < pairs.size())
-            pairs[j].second += coeff; // if symbol alredy in pairs, increment coeff
-        else pairs.push_back({symbol, coeff}); // otherwise, insert symbol and its coefficient
-    }
-    return pairs;
-}
-
 } // namespace Reaktoro
