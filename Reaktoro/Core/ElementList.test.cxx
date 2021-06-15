@@ -31,15 +31,15 @@ TEST_CASE("Testing ElementList", "[ElementList]")
     // TESTING CONSTRUCTOR: ElementList(formulas)
     //-------------------------------------------------------------------------
     elements = {
-        Element({ "H"  , "Hydrogen"      , 1   , 0.001007940 , 2.20, {"tag1"} }),
-        Element({ "He" , "Helium"        , 2   , 0.004002602 , 0.00, {"tag1"} }),
-        Element({ "Li" , "Lithium"       , 3   , 0.006941000 , 0.98, {"tag1"} }),
-        Element({ "Be" , "Beryllium"     , 4   , 0.009012180 , 1.57, {"tag2"} }),
-        Element({ "B"  , "Boron"         , 5   , 0.010811000 , 2.04, {"tag2"} }),
-        Element({ "C"  , "Carbon"        , 6   , 0.012011000 , 2.55, {"tag2"} }),
-        Element({ "N"  , "Nitrogen"      , 7   , 0.014006740 , 3.04, {"tag3"} }),
-        Element({ "O"  , "Oxygen"        , 8   , 0.015999400 , 3.44, {"tag3"} }),
-        Element({ "F"  , "Fluorine"      , 9   , 0.018998403 , 3.98, {"tag1", "tag3"} }),
+        Element({ "H" , 0.001007940, "Hydrogen" , Strings{"tag1"} }),
+        Element({ "He", 0.004002602, "Helium"   , Strings{"tag1"} }),
+        Element({ "Li", 0.006941000, "Lithium"  , Strings{"tag1"} }),
+        Element({ "Be", 0.009012180, "Beryllium", Strings{"tag2"} }),
+        Element({ "B" , 0.010811000, "Boron"    , Strings{"tag2"} }),
+        Element({ "C" , 0.012011000, "Carbon"   , Strings{"tag2"} }),
+        Element({ "N" , 0.014006740, "Nitrogen" , Strings{"tag3"} }),
+        Element({ "O" , 0.015999400, "Oxygen"   , Strings{"tag3"} }),
+        Element({ "F" , 0.018998403, "Fluorine" , Strings{"tag1", "tag3"} }),
     };
 
     REQUIRE( elements.size() == 9 );

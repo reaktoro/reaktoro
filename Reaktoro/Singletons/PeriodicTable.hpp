@@ -17,15 +17,10 @@
 
 #pragma once
 
-// C++ includes
-#include <memory>
-#include <optional>
-#include <string>
-#include <vector>
-
 // Reaktoro includes
-#include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/Element.hpp>
 
 namespace Reaktoro {
 
@@ -47,7 +42,7 @@ public:
     static auto instance() -> PeriodicTable&;
 
     /// Return the elements in the periodic table.
-    static auto elements() -> const std::vector<Element>&;
+    static auto elements() -> const Vec<Element>&;
 
     /// Append a custom element to the periodic table.
     static auto append(Element element) -> void;
@@ -55,17 +50,17 @@ public:
     /// Return the number of elements in the periodic table.
     static auto size() -> std::size_t;
 
-    /// Return the element with given name.
-    static auto elementWithName(std::string name) -> std::optional<Element>;
-
     /// Return the element with given symbol.
-    static auto elementWithSymbol(std::string symbol) -> std::optional<Element>;
+    static auto elementWithSymbol(String symbol) -> Optional<Element>;
+
+    /// Return the element with given name.
+    static auto elementWithName(String name) -> Optional<Element>;
 
     /// Return the elements with a given tag.
-    static auto elementsWithTag(std::string tag) -> std::vector<Element>;
+    static auto elementsWithTag(String tag) -> Vec<Element>;
 
     /// Return the elements with given tags.
-    static auto elementsWithTags(const StringList& tags) -> std::vector<Element>;
+    static auto elementsWithTags(const StringList& tags) -> Vec<Element>;
 
     /// Return begin const iterator of this PeriodicTable instance
     auto begin() const;
@@ -81,7 +76,7 @@ public:
 
 private:
     /// The elements stored in the periodic table.
-    std::vector<Element> m_elements;
+    Vec<Element> m_elements;
 
 private:
     /// Construct a default PeriodicTable object [private].
