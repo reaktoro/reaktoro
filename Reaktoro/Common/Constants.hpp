@@ -22,11 +22,14 @@
 
 namespace Reaktoro {
 
-/// The universal gas constant (in units of J/(mol*K))
+/// The universal gas constant (in J/(mol*K))
 constexpr auto universalGasConstant = 8.3144621;
 
-/// The Faraday constant (in units of C/mol)
+/// The Faraday constant (in C/mol)
 constexpr auto faradayConstant = 96485.3329;
+
+/// The molar mass of an electron (in kg/mol)
+constexpr auto molarMassElectron = 5.4857990888E-07;
 
 /// The constant factor that converts joule to calorie
 constexpr auto jouleToCalorie = 0.239005736;
