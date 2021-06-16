@@ -60,10 +60,14 @@ struct Element::Impl
     /// Construct an Element::Impl object with given attributes.
     Impl(const Attribs& attribs)
     {
+        errorif(attribs.symbol.empty(), "Could not construct Element object with constructor Element(Element::Attribs). "
+            "Element::Attribs::symbol cannot be empty.");
+        errorif(attribs.molar_mass < 0.0, "Could not construct Element object with constructor Element(Element::Attribs). "
+            "Element::Attribs::molar_mass cannot be negative.");
         symbol = attribs.symbol;
         molar_mass = attribs.molar_mass;
-        name = attribs.name.value_or(symbol);
-        tags = attribs.tags.value_or(Strings{});
+        name = attribs.name.empty() ? symbol : attribs.name;
+        tags = attribs.tags;
     }
 };
 
@@ -102,6 +106,7 @@ auto Element::withName(String name) const -> Element
 
 auto Element::withMolarMass(double molar_mass) const -> Element
 {
+    errorif(molar_mass < 0.0, "Cannot set the molar mass of an Element to a negative value");
     Element copy = clone();
     copy.pimpl->molar_mass = molar_mass;
     return copy;

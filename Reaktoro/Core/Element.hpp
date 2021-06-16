@@ -30,16 +30,22 @@ public:
     struct Attribs
     {
         /// The symbol of the element (e.g., "H", "O", "C", "Na").
+        /// @note This is a required attribute. The element symbol must be unique among all other elements.
         String symbol;
 
         /// The molar mass of the element (in kg/mol).
-        double molar_mass;
+        /// @note This is a required attribute. Zero is allowed, but this
+        /// prevents conversion from amount to mass values for chemical species
+        /// containing elements with zero molar mass.
+        double molar_mass = 0.0;
 
         /// The name of the element (e.g., "Hydrogen", "Oxygen").
-        Optional<String> name;
+        /// @note This is an optional attribute. If not provided, assumed equal to `symbol`.
+        String name;
 
         /// The tags of the element.
-        Optional<Strings> tags;
+        /// @note This is an optional attribute.
+        Strings tags;
     };
 
     /// Construct a default Element object.
