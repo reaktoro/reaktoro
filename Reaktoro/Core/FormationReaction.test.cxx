@@ -94,12 +94,14 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
             );
 
     REQUIRE(  A.reaction().reactants().size() == 0 );
-    REQUIRE( !A.reaction().reactionThermoModel()   );
+    REQUIRE( !A.reaction().reactionThermoModel() );
+    REQUIRE(  A.reaction().initialized() == false );
 
     REQUIRE_THROWS( A.reaction().createStandardThermoModel() );
 
     REQUIRE(  B.reaction().reactants().size() == 0 );
     REQUIRE( !B.reaction().reactionThermoModel()   );
+    REQUIRE(  B.reaction().initialized() == false );
 
     REQUIRE_THROWS( B.reaction().createStandardThermoModel() );
 
@@ -112,6 +114,7 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     REQUIRE( C.reaction().createStandardThermoModel()           );
     REQUIRE( C.reaction().stoichiometry("A") == 1.0             );
     REQUIRE( C.reaction().stoichiometry("B") == 2.0             );
+    REQUIRE( C.reaction().initialized() == true                 );
 
     REQUIRE( D.reaction().reactants().size() == 2               );
     REQUIRE( D.reaction().reactants().at(0).first.name() == "B" );
@@ -122,6 +125,7 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     REQUIRE( D.reaction().createStandardThermoModel()           );
     REQUIRE( D.reaction().stoichiometry("B") == 1.0             );
     REQUIRE( D.reaction().stoichiometry("C") == 3.0             );
+    REQUIRE( D.reaction().initialized() == true                 );
 
     REQUIRE( E.reaction().reactants().size() == 2               );
     REQUIRE( E.reaction().reactants().at(0).first.name() == "C" );
@@ -132,6 +136,7 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     REQUIRE( E.reaction().createStandardThermoModel()           );
     REQUIRE( E.reaction().stoichiometry("C") ==  1.0            );
     REQUIRE( E.reaction().stoichiometry("D") == -2.0            );
+    REQUIRE( E.reaction().initialized() == true                 );
 
     const auto T = 300.0;
     const auto P = 1.0e5;
