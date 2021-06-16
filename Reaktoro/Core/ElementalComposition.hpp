@@ -70,6 +70,9 @@ private:
     /// The elements and their coefficients.
     Pairs<Element, double> m_elements;
 
+    /// The molar mass of the elemental formula
+    double m_molar_mass = {};
+
 public:
     /// Return begin const iterator of this ElementalComposition instance (for STL compatibility reasons).
     inline auto begin() const { return m_elements.begin(); }
