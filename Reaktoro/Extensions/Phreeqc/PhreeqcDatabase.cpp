@@ -160,8 +160,10 @@ struct PhreeqcDatabaseHelper
         for(auto&& [element, coeff] : PhreeqcUtils::elements(s))
         {
             const auto idx = elements.find(PhreeqcUtils::symbol(element));
-            if(idx == elements.size())
-                addElement(element); // create and append an Element object for this PHREEQC element first!
+            errorif(idx >= elements.size(), "Unknown PHREEQC element "
+                "with symbol `", PhreeqcUtils::symbol(element), "` in PHREEQC species "
+                "with name `", PhreeqcUtils::name(s), "`. "
+                "The element may also be invalid (e.g., without molar mass information).");
             pairs.emplace_back(elements[idx], coeff);
         }
 
