@@ -31,10 +31,9 @@ Elements:
   - Symbol: B
     MolarMass: 2.0
 Species:
-  - Name: A2B
+  - Name: A2B(l)
     Formula: A2B
     Elements: 2:A 1:B
-    Charge: 0.0
     AggregateState: Liquid
     StandardThermoModel:
       MaierKelley:
@@ -46,10 +45,9 @@ Species:
         b: 0.0
         c: 0.0
         Tmax: 0.0
-  - Name: A2B3
+  - Name: A2B3(aq)
     Formula: A2B3
     Elements: 2:A 3:B
-    Charge: 1.0
     AggregateState: Aqueous
     StandardThermoModel:
       HKF:
@@ -65,6 +63,25 @@ Species:
         wref: 1.0
         charge: 1.0
         Tmax: 1.2
+  - Name: A2B(g)
+    Formula: A2B
+    Elements: 2:A 1:B
+    AggregateState: Gas
+    FormationReaction:
+      Reactants: 1:A2B(l)
+      ReactionThermoModel:
+        ConstLgK:
+          lgKr: 3.0
+  - Name: A6B7(aq)
+    Formula: A6B7
+    Elements: 6:A 7:B
+    AggregateState: Aqueous
+    FormationReaction:
+      Reactants: 1:A2B(l) 2:A2B3(aq)
+      ReactionThermoModel:
+        VantHoff:
+          lgKr: 7.0
+          dHr: 77.0
 )";
 
 TEST_CASE("Testing DatabaseDecoderYAML class", "[DatabaseDecoderYAML]")
@@ -83,19 +100,36 @@ TEST_CASE("Testing DatabaseDecoderYAML class", "[DatabaseDecoderYAML]")
     CHECK( elements[1].symbol() == "B" );
     CHECK( elements[1].molarMass() == 2.0 );
 
-    CHECK( species.size() == 2 );
+    CHECK( species.size() == 4 );
 
-    CHECK( species[0].name() == "A2B" );
+    CHECK( species[0].name() == "A2B(l)" );
     CHECK( species[0].formula() == "A2B" );
     CHECK( species[0].elements().coefficient("A") == 2.0 );
     CHECK( species[0].elements().coefficient("B") == 1.0 );
     CHECK( species[0].aggregateState() == AggregateState::Liquid );
     CHECK( species[0].standardThermoModel().serialize()["MaierKelley"].IsDefined() );
 
-    CHECK( species[1].name() == "A2B3" );
+    CHECK( species[1].name() == "A2B3(aq)" );
     CHECK( species[1].formula() == "A2B3" );
     CHECK( species[1].elements().coefficient("A") == 2.0 );
     CHECK( species[1].elements().coefficient("B") == 3.0 );
     CHECK( species[1].aggregateState() == AggregateState::Aqueous );
     CHECK( species[1].standardThermoModel().serialize()["HKF"].IsDefined() );
+
+    CHECK( species[2].name() == "A2B(g)" );
+    CHECK( species[2].formula() == "A2B" );
+    CHECK( species[2].elements().coefficient("A") == 2.0 );
+    CHECK( species[2].elements().coefficient("B") == 1.0 );
+    CHECK( species[2].aggregateState() == AggregateState::Gas );
+    CHECK( species[2].reaction().reactants().size() == 1 );
+    CHECK( species[2].reaction().stoichiometry("A2B(l)") == 1 );
+
+    CHECK( species[3].name() == "A6B7(aq)" );
+    CHECK( species[3].formula() == "A6B7" );
+    CHECK( species[3].elements().coefficient("A") == 6.0 );
+    CHECK( species[3].elements().coefficient("B") == 7.0 );
+    CHECK( species[3].aggregateState() == AggregateState::Aqueous );
+    CHECK( species[3].reaction().reactants().size() == 2 );
+    CHECK( species[3].reaction().stoichiometry("A2B(l)") == 1 );
+    CHECK( species[3].reaction().stoichiometry("A2B3(aq)") == 2 );
 }
