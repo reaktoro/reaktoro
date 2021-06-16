@@ -31,7 +31,7 @@ struct FormationReaction::Impl
     /// The reactant species in the formation reaction.
     Pairs<Species, double> reactants;
 
-    /// The function that computes the standard molar volume of the product species.
+    /// The function that computes the standard molar volume of the product species (zero by default).
     Model<real(real,real)> std_volume_model;
 
     /// The function that computes the standard thermodynamic properties of this reaction.
@@ -54,12 +54,6 @@ struct FormationReaction::Impl
             "    1) FormationReaction::withEquilibriumConstant\n"
             "    2) FormationReaction::withReactionThermoModel");
 
-        errorif(!std_volume_model.initialized(), "Could not create the standard thermodynamic "
-            "model function because no standard molar volume constant or function "
-            "has been set in the FormationReaction object. Use one of the methods below to correct this: \n"
-            "    1) FormationReaction::withProductStandardVolume\n"
-            "    2) FormationReaction::withProductStandardVolumeModel");
-
         const auto num_reactants = reactants.size();
 
         Vec<StandardThermoProps> reactants_props(num_reactants);
@@ -74,7 +68,7 @@ struct FormationReaction::Impl
             }
 
             // Compute the standard molar volume of the product species
-            const auto V0p = std_volume_model(T, P);
+            const auto V0p = std_volume_model ? std_volume_model(T, P) : real{0.0};
 
             // Compute the standard molar volume change of the reaction
             auto dV0 = V0p;
