@@ -101,4 +101,7 @@ auto parseAggregateState(const std::string& symbol) -> AggregateState;
 /// @see AggregateState, parseAggregateState
 auto identifyAggregateState(const std::string& name) -> AggregateState;
 
+/// Return a string containing the supported string values for AggregateState.
+auto supportedAggregateStateValues() -> std::string;
+
 } // namespace Reaktoro

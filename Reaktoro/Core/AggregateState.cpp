@@ -19,9 +19,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
+#include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
-#include <Reaktoro/Core/ChemicalFormula.hpp>
 
 namespace Reaktoro {
 
@@ -93,6 +94,31 @@ auto identifyAggregateState(const std::string& substance) -> AggregateState
     if(contains(words, "aq"))  return AggregateState::Aqueous;
     if(charged(name)) return AggregateState::Aqueous;
     return AggregateState::Undefined;
+}
+
+auto supportedAggregateStateValues() -> std::string
+{
+    return R"(/-----------------------------------\
+| Short Notation | Long Notation    |
+\-----------------------------------/
+| g              | Gas              |
+| l              | Liquid           |
+| s              | Solid            |
+| pl             | Plasma           |
+| cd             | CondensedPhase   |
+| fl             | Fluid            |
+| lc             | LiquidCrystal    |
+| cr             | CrystallineSolid |
+| am             | AmorphousSolid   |
+| vit            | Vitreous         |
+| ads            | Adsorbed         |
+| mon            | Monomeric        |
+| pol            | Polymeric        |
+| ss             | SolidSolution    |
+| ex             | IonExchange      |
+| aq             | Aqueous          |
+|                | Undefined        |
+\-----------------------------------/)";
 }
 
 } // namespace Reaktoro
