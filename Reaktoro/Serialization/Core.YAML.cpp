@@ -107,8 +107,8 @@ REAKTORO_YAML_DECODE_DEFINE(Element)
     Element::Attribs attribs;
     node.copyRequiredChildValueTo("Symbol", attribs.symbol);
     node.copyRequiredChildValueTo("MolarMass", attribs.molar_mass);
-    node.copyOptionalChildValueTo("Name", attribs.name);
-    node.copyOptionalChildValueTo("Tags", attribs.tags);
+    node.copyOptionalChildValueTo("Name", attribs.name, {});
+    node.copyOptionalChildValueTo("Tags", attribs.tags, {});
     obj = Element(attribs);
 }
 
