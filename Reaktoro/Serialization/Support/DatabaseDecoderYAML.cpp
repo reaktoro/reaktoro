@@ -107,8 +107,9 @@ struct DatabaseDecoderYAML::Impl
     auto addSpecies(const String& name) -> Species
     {
         const auto node = getSpeciesNode(name);
-        errorif(!node.IsDefined(), "Cannot create a Species object "
-            "with name `", name, "` without an yaml node with its data.");
+        errorif(node.IsNull(), "Cannot create a Species object with "
+            "name `", name, "` without an yaml node with its data. "
+            "Are you sure this name is correct and there is a species with this name in the database?");
         return addSpecies(node);
     }
 
@@ -116,17 +117,20 @@ struct DatabaseDecoderYAML::Impl
     auto addSpecies(const yaml& node) -> Species
     {
         assert(node.IsDefined());
-        errorif(!node["Name"], "Missing `Name` specification in:\n", node.repr());
-        errorif(!node["Formula"], "Missing `Formula` specification in:\n", node.repr());
-        errorif(!node["AggregateState"], "Missing `AggregateState` specification in:\n", node.repr());
-        errorif(!node["Elements"], "Missing `Elements` specification in:\n", node.repr());
-        errorif(!node["FormationReaction"] && !node["StandardThermoModel"], "Missing `FormationReaction` or `StandardThermoModel` specification in:\n", node.repr());
+        errorif(!node["Name"], "Missing `Name` specification in:\n\n", node.repr());
+        errorif(!node["Formula"], "Missing `Formula` specification in:\n\n", node.repr());
+        errorif(!node["AggregateState"], "Missing `AggregateState` specification in:\n\n", node.repr());
+        errorif(!node["Elements"], "Missing `Elements` specification in:\n\n", node.repr());
+        errorif(!node["FormationReaction"] && !node["StandardThermoModel"], "Missing `FormationReaction` or `StandardThermoModel` specification in:\n\n", node.repr());
         Species::Attribs attribs;
         node.copyRequiredChildValueTo("Name", attribs.name);
         node.copyRequiredChildValueTo("Formula", attribs.formula);
         node.copyOptionalChildValueTo("Substance", attribs.substance, {});
         node.copyOptionalChildValueTo("Charge", attribs.charge, 0.0);
         node.copyRequiredChildValueTo("AggregateState", attribs.aggregate_state);
+        errorif(attribs.aggregate_state == AggregateState::Undefined,
+            "Unsupported AggregateState value `", node["AggregateState"].as<String>(), "` in:\n\n", node.repr(), "\n\n"
+            "The supported values are given below:\n\n", supportedAggregateStateValues());
         attribs.elements = createElementalComposition(node);
         attribs.formation_reaction = createFormationReaction(node);
         attribs.std_thermo_model = createStandardThermoModel(node);
@@ -201,7 +205,7 @@ struct DatabaseDecoderYAML::Impl
     auto createReactionThermoModel(const yaml& node) -> ReactionThermoModel
     {
         auto child = node["ReactionThermoModel"];
-        errorif(!child, "Missing `ReactionThermoModel` specification in:\n", node.repr());
+        errorif(!child, "Missing `ReactionThermoModel` specification in:\n\n", node.repr());
         return ReactionThermoModelYAML(child);
     }
 
