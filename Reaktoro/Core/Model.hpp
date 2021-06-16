@@ -166,7 +166,7 @@ public:
     /// Return serialization of the underlying model function to yaml format.
     auto serialize() const -> yaml
     {
-        return m_serializerfn(); // evaluate because Param objects may have changed
+        return m_serializerfn ? m_serializerfn() : yaml{}; // evaluate m_serializerfn because Param objects may have changed
     }
 
     /// Return a constant Model function object.
