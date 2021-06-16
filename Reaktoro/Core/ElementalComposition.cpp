@@ -23,22 +23,37 @@
 #include <Reaktoro/Common/StringUtils.hpp>
 
 namespace Reaktoro {
+namespace detail {
+
+/// Return the molar mass of the elemental formula.
+auto computeMolarMass(Pairs<Element, double> const& elements) -> double
+{
+    double molar_mass = 0.0;
+    for(auto const& [element, coeff] : elements)
+        molar_mass += element.molarMass() * coeff;
+    return molar_mass;
+}
+
+} // namespace detail
 
 ElementalComposition::ElementalComposition()
 {}
 
 ElementalComposition::ElementalComposition(std::initializer_list<Pair<Element, double>> const& elements)
-: m_elements(elements.begin(), elements.end())
+: m_elements(elements.begin(), elements.end()),
+  m_molar_mass(detail::computeMolarMass(m_elements))
 {}
 
 ElementalComposition::ElementalComposition(Pairs<Element, double> const& elements)
-: m_elements(elements)
+: m_elements(elements),
+  m_molar_mass(detail::computeMolarMass(m_elements))
 {}
 
 ElementalComposition::ElementalComposition(Pairs<String, double> const& elements)
 {
     for(const auto& [symbol, coeff] : elements)
         m_elements.emplace_back(Element(symbol), coeff);
+    m_molar_mass = detail::computeMolarMass(m_elements);
 }
 
 auto ElementalComposition::size() const -> Index
@@ -66,10 +81,7 @@ auto ElementalComposition::coefficient(const String& symbol) const -> double
 
 auto ElementalComposition::molarMass() const -> double
 {
-    double molar_mass = 0.0;
-    for(const auto& [element, coeff] : m_elements)
-        molar_mass += element.molarMass() * coeff;
-    return molar_mass;
+    return m_molar_mass;
 }
 
 auto ElementalComposition::repr() const -> String
