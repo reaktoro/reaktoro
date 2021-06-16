@@ -22,7 +22,7 @@
 #include <Reaktoro/Models/ReactionThermoModelGemsLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
-#include <Reaktoro/Serialization/Serialization.YAML.hpp>
+#include <Reaktoro/Serialization/Models.YAML.hpp>
 
 namespace Reaktoro {
 

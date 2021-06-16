@@ -21,7 +21,7 @@
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
-#include <Reaktoro/Serialization/Serialization.YAML.hpp>
+#include <Reaktoro/Serialization/Models.YAML.hpp>
 
 namespace Reaktoro {
 
