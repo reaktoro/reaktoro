@@ -18,12 +18,13 @@
 #include "StandardThermoModelYAML.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Models/StandardThermoModelConstant.hpp>
 #include <Reaktoro/Models/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
-#include <Reaktoro/Serialization/Serialization.YAML.hpp>
+#include <Reaktoro/Serialization/Models.YAML.hpp>
 
 namespace Reaktoro {
 
@@ -36,6 +37,8 @@ auto StandardThermoModelYAML(const yaml& node) -> StandardThermoModel
     auto model = node.begin()->first.as<String>();
     yaml params = node.begin()->second;
 
+    if(model == "Constant")
+        return StandardThermoModelConstant(params);
     if(model == "HKF")
         return StandardThermoModelHKF(params);
     if(model == "HollandPowell")
