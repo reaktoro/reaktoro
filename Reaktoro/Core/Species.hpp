@@ -34,32 +34,46 @@ public:
     /// The attributes of a Species object.
     struct Attribs
     {
-        /// The name that uniquely identifies the species (e.g., `CO2(g)`, `CaCO3(aq)`).
+        /// The name of the species (e.g., `CO2(g)`, `CaCO3(aq)`).
+        /// @note This is a required attribute. The species name must be unique among all other species.
         String name;
 
         /// The chemical formula of the species (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
+        /// @note This is a required attribute.
         String formula;
 
-        /// The underlying substance name (e.g. `WATER`, `CARBON-MONOXIDE`).
-        Optional<String> substance;
+        /// The underlying substance name (e.g. `WATER`, `CARBON-MONOXIDE`) of the species.
+        /// @note This is an optional attribute. If empty, `formula` is used instead.
+        String substance;
 
         /// The elements that compose the species (e.g., `{{"H", 2}, {"O", 1}}`).
-        Optional<ElementalComposition> elements;
+        /// @note This is a required attribute.
+        ElementalComposition elements;
 
         /// The electric charge of the species.
-        Optional<double> charge;
+        /// @note This is an optional attribute. If not provided, zero assumed.
+        double charge = 0.0;
 
         /// The aggregate state of the species.
-        Optional<AggregateState> aggregate_state;
+        /// @note This is a required attribute. AggregateState::Undefined is not accepted.
+        AggregateState aggregate_state = AggregateState::Undefined;
 
         /// The formation reaction of the species.
-        Optional<FormationReaction> formation_reaction;
+        /// @note This is an optional attribute. This should be set only if the
+        /// standard thermodynamic model of the species is to be constructed
+        /// according to a thermodynamic model for a formation reaction.
+        /// Otherwise, set `std_thermo_model`.
+        FormationReaction formation_reaction;
 
         /// The standard thermodynamic model of the species.
-        Optional<StandardThermoModel> std_thermo_model;
+        /// @note This is an optional attribute. If empty, `formation_reaction`
+        /// is used to construct the standard thermodynamic model of the
+        /// species. An error is raised if `formation_reaction` is also empty.
+        StandardThermoModel std_thermo_model;
 
         /// The tags of the species.
-        Optional<Strings> tags;
+        /// @note This is an optional attribute.
+        Strings tags;
     };
 
     /// Construct a default Species object.
