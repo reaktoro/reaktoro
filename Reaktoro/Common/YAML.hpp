@@ -81,11 +81,11 @@ public:
     operator T() const { return as<T>(); }
 
     /// Transfer the value at this yaml node to argument @p value.
-    template<typename T, typename U = T>
+    template<typename T>
     auto to(T& value) const -> void
     {
         try {
-            value = as<U>();
+            value = as<T>();
         }
         catch(...) {
             errorif(true, "Could not convert YAML node to requested value type. The node is:\n", repr());
@@ -102,11 +102,12 @@ public:
 
     /// Transfer the value at optional child node with @p key to optional object @p obj.
     template<typename T>
-    auto copyOptionalChildValueTo(const std::string& key, std::optional<T>& obj) const
+    auto copyOptionalChildValueTo(const std::string& key, T& obj, const T& defaultval) const
     {
         auto child = (*this)[key];
         if(child.IsDefined())
-            child.to<std::optional<T>, T>(obj);
+            child.to<T>(obj);
+        else obj = defaultval;
     }
 
     /// Transfer the value at required child node with @p key to object @p obj.
