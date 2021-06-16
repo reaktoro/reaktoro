@@ -78,13 +78,10 @@ REAKTORO_YAML_DECODE_DEFINE(ChemicalSystem)
 
 REAKTORO_YAML_ENCODE_DEFINE(Database)
 {
-    auto child = node["Elements"];
-    for(const auto& element : obj.elements())
-        child.push_back(element);
-
-    child = node["Species"];
-    for(const auto& species : obj.species())
-        child.push_back(species);
+    auto elements_node = node["Elements"];
+    auto species_node = node["Species"];
+    elements_node = obj.elements();
+    species_node = obj.species();
 }
 
 REAKTORO_YAML_DECODE_DEFINE(Database)
@@ -123,6 +120,14 @@ REAKTORO_YAML_ENCODE_DEFINE(ElementList)
 REAKTORO_YAML_DECODE_DEFINE(ElementList)
 {
     obj = node.as<Vec<Element>>();
+}
+
+//=====================================================================================================================
+
+REAKTORO_YAML_ENCODE_DEFINE(ElementListConstRef)
+{
+    for(const auto& element : obj)
+        node.push_back(element);
 }
 
 //=====================================================================================================================
@@ -213,6 +218,7 @@ REAKTORO_YAML_ENCODE_DEFINE(Species)
 {
     node["Name"] = obj.name();
     node["Formula"] = obj.formula();
+    node["Substance"] = obj.substance();
     node["Elements"] = obj.elements();
     node.appendIfNotDefault("Charge", obj.charge(), 0.0);
     node["AggregateState"] = obj.aggregateState();
@@ -238,6 +244,14 @@ REAKTORO_YAML_ENCODE_DEFINE(SpeciesList)
 REAKTORO_YAML_DECODE_DEFINE(SpeciesList)
 {
     errorif(true, "Converting YAML to SpeciesList is not supported directly."); // because only element symbols are present in YAML representation of Species
+}
+
+//=====================================================================================================================
+
+REAKTORO_YAML_ENCODE_DEFINE(SpeciesListConstRef)
+{
+    for(const auto& species : obj)
+        node.push_back(species);
 }
 
 //=====================================================================================================================
