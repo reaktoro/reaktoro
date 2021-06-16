@@ -72,25 +72,16 @@ REAKTORO_YAML_DECODE_DECLARE(Params);
 REAKTORO_YAML_ENCODE_DECLARE(Phase);
 REAKTORO_YAML_DECODE_DECLARE(Phase);
 
+REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModel);
+REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModel);
+
 REAKTORO_YAML_ENCODE_DECLARE(Species);
 REAKTORO_YAML_DECODE_DECLARE(Species);
 
 REAKTORO_YAML_ENCODE_DECLARE(SpeciesList);
 REAKTORO_YAML_DECODE_DECLARE(SpeciesList);
 
-auto decodeSpecies(const yaml& node, const ElementList& elements) -> Species;
+REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModel);
+REAKTORO_YAML_DECODE_DECLARE(StandardThermoModel);
 
 } // namespace Reaktoro
-
-// REAKTORO_DECLARE_CONVERT_YAML(ChemicalFormula);
-
-// namespace YAML {
-
-// template<>
-// struct convert<ChemicalFormula>
-// {
-//     static auto encode(const ChemicalFormula& obj);
-//     static auto decode(const Node& node, ChemicalFormula& obj);
-// };
-
-// } // namespace YAML

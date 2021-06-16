@@ -29,6 +29,7 @@
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
+#include <Reaktoro/Models/ReactionThermoModelYAML.hpp>
 #include <Reaktoro/Models/StandardThermoModelYAML.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 #include <Reaktoro/Serialization/Support/DatabaseDecoderYAML.hpp>
@@ -187,6 +188,18 @@ REAKTORO_YAML_DECODE_DEFINE(Phase)
 
 //=====================================================================================================================
 
+REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModel)
+{
+    node = obj.serialize();
+}
+
+REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModel)
+{
+    obj = ReactionThermoModelYAML(node);
+}
+
+//=====================================================================================================================
+
 REAKTORO_YAML_ENCODE_DEFINE(Species)
 {
     node["Name"] = obj.name();
@@ -194,7 +207,9 @@ REAKTORO_YAML_ENCODE_DEFINE(Species)
     node["Elements"] = obj.elements();
     node.appendIfNotDefault("Charge", obj.charge(), 0.0);
     node["AggregateState"] = obj.aggregateState();
-    node["StandardThermoModel"] = obj.standardThermoModel().serialize();
+    if(obj.reaction().reactants().size())
+        node["FormationReaction"] = obj.reaction();
+    else node["StandardThermoModel"] = obj.standardThermoModel();
     node.appendIfNotDefault("Tags", obj.tags(), Strings{});
 }
 
@@ -214,6 +229,18 @@ REAKTORO_YAML_ENCODE_DEFINE(SpeciesList)
 REAKTORO_YAML_DECODE_DEFINE(SpeciesList)
 {
     errorif(true, "Converting YAML to SpeciesList is not supported directly."); // because only element symbols are present in YAML representation of Species
+}
+
+//=====================================================================================================================
+
+REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModel)
+{
+    node = obj.serialize();
+}
+
+REAKTORO_YAML_DECODE_DEFINE(StandardThermoModel)
+{
+    obj = StandardThermoModelYAML(node);
 }
 
 //=====================================================================================================================
