@@ -34,12 +34,13 @@ using namespace Catch;
 #include <Reaktoro/Models/ReactionThermoModelGemsLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/StandardThermoModelConstant.hpp>
 #include <Reaktoro/Models/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
-#include <Reaktoro/Serialization/Serialization.YAML.hpp>
+#include <Reaktoro/Serialization/Models.YAML.hpp>
 
 using namespace Reaktoro;
 
@@ -47,6 +48,14 @@ TEST_CASE("Testing Models.yaml", "[Models.yaml]")
 {
 
 }
+
+std::string params_const = R"(
+G0: 1.0
+H0: 2.0
+V0: 3.0
+Cp0: 4.0
+Cv0: 5.0
+)";
 
 std::string params_mk = R"(
 Gf: -3679250.6
@@ -193,6 +202,16 @@ auto allNaN(const VecType& v)
 TEST_CASE("Testing Serialization", "[Serialization]")
 {
     const double nan = std::numeric_limits<double>::quiet_NaN();
+
+    SECTION("Testing YAML serialization of StandardThermoModelParamsConstant")
+    {
+        StandardThermoModelParamsConstant params = yaml(params_const);
+        CHECK( params.G0  == 1.0 );
+        CHECK( params.H0  == 2.0 );
+        CHECK( params.V0  == 3.0 );
+        CHECK( params.Cp0 == 4.0 );
+        CHECK( params.Cv0 == 5.0 );
+    }
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsMaierKelley")
     {
