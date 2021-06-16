@@ -122,6 +122,10 @@ struct DatabaseDecoderYAML::Impl
         errorif(!node["AggregateState"], "Missing `AggregateState` specification in:\n\n", node.repr());
         errorif(!node["Elements"], "Missing `Elements` specification in:\n\n", node.repr());
         errorif(!node["FormationReaction"] && !node["StandardThermoModel"], "Missing `FormationReaction` or `StandardThermoModel` specification in:\n\n", node.repr());
+        const String name = node["Name"];
+        const auto idx = species_list.find(name);
+        if(idx < species_list.size())
+            return species_list[idx]; // Do not add a species that has already been added! Return existing one.
         Species::Attribs attribs;
         node.copyRequiredChildValueTo("Name", attribs.name);
         node.copyRequiredChildValueTo("Formula", attribs.formula);
