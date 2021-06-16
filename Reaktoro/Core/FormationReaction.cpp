@@ -44,35 +44,23 @@ struct FormationReaction::Impl
     /// Return the standard thermodynamic model function of the product species.
     auto createStandardThermoModel() const -> StandardThermoModel
     {
-        error(!rxn_thermo_model.initialized(), "Could not create the standard thermodynamic "
+        errorif(reactants.empty(), "Could not create the standard thermodynamic "
+            "model function because no reactants have been provided in the FormationReaction "
+            "object. Use method FormationReaction::withReactants to correct this.");
+
+        errorif(!rxn_thermo_model.initialized(), "Could not create the standard thermodynamic "
             "model function because no reaction thermodynamic model has been set "
             "in the FormationReaction object. Use one of the methods below to correct this: \n"
             "    1) FormationReaction::withEquilibriumConstant\n"
             "    2) FormationReaction::withReactionThermoModel");
 
-        error(!std_volume_model.initialized(), "Could not create the standard thermodynamic "
+        errorif(!std_volume_model.initialized(), "Could not create the standard thermodynamic "
             "model function because no standard molar volume constant or function "
             "has been set in the FormationReaction object. Use one of the methods below to correct this: \n"
             "    1) FormationReaction::withProductStandardVolume\n"
             "    2) FormationReaction::withProductStandardVolumeModel");
 
         const auto num_reactants = reactants.size();
-
-        // Consider the special case of a trivial reaction A <=> A for some
-        // species A. Because it is not possible to construct Species A and its
-        // FormationReaction that contains a reactant that it is A itself, we
-        // are forced below to make certain decisions to be able to compute the
-        // standard thermodynamic properties of A in the absense of a
-        // non-trivial reaction (e.g., G0(A) = 0).
-        if(num_reactants == 0)
-            return [=](real T, real P) mutable -> StandardThermoProps
-            {
-                StandardThermoProps props;
-                props.V0 = std_volume_model(T, P);
-                props.G0 = 0.0; // G0 = dG0 + sum(vr * G0r), but dG0=0 and G0r=G0p=0
-                props.H0 = 0.0; // H0 = dH0 + sum(vr * H0r), but dH0=0 and H0r=H0p=0
-                return props;
-            };
 
         Vec<StandardThermoProps> reactants_props(num_reactants);
 

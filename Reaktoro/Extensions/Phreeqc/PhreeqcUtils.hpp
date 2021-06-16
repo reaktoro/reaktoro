@@ -174,6 +174,14 @@ auto reactants(const PhreeqcSpecies* species) -> Pairs<PhreeqcSpecies*, double>;
 /// @param phase The pointer to the Phreeqc phase
 auto reactants(const PhreeqcPhase* phase) -> Pairs<PhreeqcSpecies*, double>;
 
+/// Return true if the given PHREEQC species is a master species.
+/// @param species The pointer to the Phreeqc species
+auto isMasterSpecies(const PhreeqcSpecies* species) -> bool;
+
+/// Return true if the given PHREEQC phase species is a master species.
+/// @param phase The pointer to the Phreeqc phase
+auto isMasterSpecies(const PhreeqcPhase* phase) -> bool;
+
 /// Return the index of a Phreeqc species in a set of species.
 /// @param name The name of the Phreeqc species
 /// @param species The pointers to Phreeqc species instances
