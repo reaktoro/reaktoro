@@ -287,8 +287,8 @@ auto reactionEquation(const PhreeqcPhase* phase) -> Pairs<String, double>
 
 auto reactants(const PhreeqcSpecies* species) -> Pairs<PhreeqcSpecies*, double>
 {
-    // Check if there is any reaction defined by this species.
-    if(species->rxn == nullptr) return {};
+    // Assert there is a reaction defined for this species (even if a master species).
+    assert(species->rxn != nullptr);
 
     // The reactants in the formation reaction of the species (and their stoichiometric coefficients)
     Pairs<PhreeqcSpecies*, double> reactants;
@@ -306,8 +306,8 @@ auto reactants(const PhreeqcSpecies* species) -> Pairs<PhreeqcSpecies*, double>
 
 auto reactants(const PhreeqcPhase* phase) -> Pairs<PhreeqcSpecies*, double>
 {
-    // Check if there is any reaction defined by this species.
-    if(phase->rxn == nullptr) return {};
+    // Assert there is a reaction defined for this species.
+    assert(phase->rxn != nullptr);
 
     // The reactants in the formation reaction of the species (and their stoichiometric coefficients)
     Pairs<PhreeqcSpecies*, double> reactants;
@@ -320,6 +320,16 @@ auto reactants(const PhreeqcPhase* phase) -> Pairs<PhreeqcSpecies*, double>
     // is skiped from the list of reactants.
 
     return reactants;
+}
+
+auto isMasterSpecies(const PhreeqcSpecies* species) -> bool
+{
+    return reactants(species).empty();
+}
+
+auto isMasterSpecies(const PhreeqcPhase* phase) -> bool
+{
+    return reactants(phase).empty();
 }
 
 auto index(String name, const Vec<PhreeqcSpecies*>& species) -> std::size_t

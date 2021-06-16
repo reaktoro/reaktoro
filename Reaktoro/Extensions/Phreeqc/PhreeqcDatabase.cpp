@@ -115,16 +115,41 @@ struct PhreeqcDatabaseHelper
         if(containsSpecies(PhreeqcUtils::name(s)))
             return;
 
-        species_list.append(Species()
+        if(PhreeqcUtils::isMasterSpecies(s))
+            species_list.append(createMasterSpecies(s));
+        else species_list.append(createProductSpecies(s));
+
+        species_names.insert(PhreeqcUtils::name(s));
+    }
+
+    /// Create a Species object representing the given Phreeqc master species.
+    template<typename SpeciesType>
+    auto createMasterSpecies(const SpeciesType* s) -> Species
+    {
+        assert(PhreeqcUtils::isMasterSpecies(s));
+        return Species()
             .withName(PhreeqcUtils::name(s))
             .withFormula(PhreeqcUtils::formula(s))
             .withElements(createElements(s))
             .withCharge(PhreeqcUtils::charge(s))
             .withAggregateState(PhreeqcUtils::aggregateState(s))
-            .withFormationReaction(createFormationReaction(s))
-            .withAttachedData(s));
+            .withStandardThermoModel(createMasterSpeciesStandardThermoModel(s))
+            .withAttachedData(s);
+    }
 
-        species_names.insert(PhreeqcUtils::name(s));
+    /// Create a Species object representing the given Phreeqc product species (aqueous species or phase species).
+    template<typename SpeciesType>
+    auto createProductSpecies(const SpeciesType* s) -> Species
+    {
+        assert(!PhreeqcUtils::isMasterSpecies(s));
+        return Species()
+            .withName(PhreeqcUtils::name(s))
+            .withFormula(PhreeqcUtils::formula(s))
+            .withElements(createElements(s))
+            .withCharge(PhreeqcUtils::charge(s))
+            .withAggregateState(PhreeqcUtils::aggregateState(s))
+            .withFormationReaction(createProductSpeciesFormationReaction(s))
+            .withAttachedData(s);
     }
 
     /// Create the elements of a Species object with given Phreeqc species pointer
@@ -145,12 +170,27 @@ struct PhreeqcDatabaseHelper
 
     /// Create the formation reaction of a product species.
     template<typename SpeciesType>
-    auto createFormationReaction(const SpeciesType* s) -> FormationReaction
+    auto createProductSpeciesFormationReaction(const SpeciesType* s) -> FormationReaction
     {
         return FormationReaction()
             .withReactants(createReactants(s))
             .withProductStandardVolumeModel(PhreeqcUtils::standardVolumeModel(s))
             .withReactionThermoModel(PhreeqcUtils::reactionThermoModel(s));
+    }
+
+    /// Create the standard thermo model of a master species (which does not have a formation reaction).
+    template<typename SpeciesType>
+    auto createMasterSpeciesStandardThermoModel(const SpeciesType* s) -> StandardThermoModel
+    {
+        auto V0fn = PhreeqcUtils::standardVolumeModel(s);
+        return [=](real T, real P)
+        {
+            StandardThermoProps props;
+            props.G0 = 0.0;
+            props.H0 = 0.0;
+            props.V0 = V0fn(T, P);
+            return props;
+        };
     }
 
     /// Create the reactant species and their stoichiometries in a formation reaction.
@@ -160,7 +200,7 @@ struct PhreeqcDatabaseHelper
         // Note: This method may introduce recursion on purpose with the
         // addSpecies method call below, when a Species object for one of its
         // reactants in its formation reaction does not yet exist.
-
+        assert(!PhreeqcUtils::isMasterSpecies(s));
         Pairs<Species, double> pairs;
         for(const auto& [reactant, coeff] : PhreeqcUtils::reactants(s))
         {
