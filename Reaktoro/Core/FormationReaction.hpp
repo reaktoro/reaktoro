@@ -84,6 +84,9 @@ public:
     /// Return a duplicate of this FormationReaction object with new reaction thermodynamic model function.
     auto withReactionThermoModel(const ReactionThermoModel& fn) const -> FormationReaction;
 
+    /// Return true if this FormationReaction object has been initialized with reactants and a reaction thermodynamic model.
+    auto initialized() const -> bool;
+
     /// Return the reactant species in the formation reaction.
     auto reactants() const -> const Pairs<Species, double>&;
 

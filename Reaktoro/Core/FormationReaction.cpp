@@ -151,6 +151,11 @@ auto FormationReaction::withReactionThermoModel(const ReactionThermoModel& fn) c
     return copy;
 }
 
+auto FormationReaction::initialized() const -> bool
+{
+    return pimpl->reactants.size() && pimpl->rxn_thermo_model.initialized();
+}
+
 auto FormationReaction::reactants() const -> const Pairs<Species, double>&
 {
     return pimpl->reactants;
