@@ -56,9 +56,12 @@ struct FormationReaction::Impl
 
         const auto num_reactants = reactants.size();
 
+        // Collect Param objects from both rxn_thermo_model and std_volume_model.
+        Params params = concatenate(rxn_thermo_model.params(), std_volume_model.params());
+
         Vec<StandardThermoProps> reactants_props(num_reactants);
 
-        return [=](real T, real P) mutable -> StandardThermoProps
+        auto calcfn = [=](real T, real P) mutable -> StandardThermoProps
         {
             // Precompute the standard thermo properties of each reactant species
             for(auto i = 0; i < num_reactants; ++i)
@@ -97,6 +100,8 @@ struct FormationReaction::Impl
             }
             return props;
         };
+
+        return StandardThermoModel(calcfn, params);
     }
 };
 
