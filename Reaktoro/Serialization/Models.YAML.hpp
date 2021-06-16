@@ -27,6 +27,7 @@ struct ReactionThermoModelParamsConstLgK;
 struct ReactionThermoModelParamsGemsLgK;
 struct ReactionThermoModelParamsPhreeqcLgK;
 struct ReactionThermoModelParamsVantHoff;
+struct StandardThermoModelParamsConstant;
 struct StandardThermoModelParamsHKF;
 struct StandardThermoModelParamsHollandPowell;
 struct StandardThermoModelParamsMaierKelley;
@@ -44,6 +45,9 @@ REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsPhreeqcLgK);
 
 REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsVantHoff);
 REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsVantHoff);
+
+REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsConstant);
+REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsConstant);
 
 REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsHKF);
 REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsHKF);

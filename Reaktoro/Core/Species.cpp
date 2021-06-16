@@ -24,6 +24,7 @@
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/ElementalComposition.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
+#include <Reaktoro/Models/StandardThermoModelConstant.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -207,16 +208,7 @@ auto Species::withFormationReaction(const FormationReaction& reaction) const -> 
 
 auto Species::withStandardGibbsEnergy(Param G0) const -> Species
 {
-    auto calcfn = [=](real T, real P)
-    {
-        StandardThermoProps props = {};
-        props.G0 = G0;
-        return props;
-    };
-
-    Params params = { G0 };
-
-    return withStandardThermoModel({ calcfn, params });
+    return withStandardThermoModel(StandardThermoModelConstant({ G0 }));
 }
 
 auto Species::withStandardThermoModel(const StandardThermoModel& model) const -> Species
