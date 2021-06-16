@@ -90,48 +90,4 @@ auto operator<(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool;
 /// Compare two ChemicalFormula objects for equality
 auto operator==(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool;
 
-/// Return the element symbols and their coefficients in a chemical formula.
-/// Successfully parsing a chemical formula requires that the first letter in
-/// the formula is uppercase and all others in lowercase. Thus, even chemical
-/// formulas such as `AaBbb` or `(Aa2Bbb4)Cc6` are supported.
-/// There are two ways for specifying electric charge in a chemical formula:
-///   1. as a suffix containing as many symbols `+` and `-` as there are charges (e.g., `Fe+++`, `Ca++`, `CO3--`); or
-///   2. as a suffix containing the symbol `+` or `-` followed by the number of charges (e.g., `Fe+3`, `Ca+2`, `Na+`)
-/// Note that number 1 is optional for the second format (e.g., `Na+` and `Na+1` are equivalent).
-/// In both formats, (1) and (2), the symbol `+` is used for positively charged substances, and `-` for negatively charged ones.
-/// See below several examples of parsing different chemical formulas:
-/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// using namespace Reaktoro;
-/// auto formula01 = parseChemicalFormula("H2O");
-/// auto formula02 = parseChemicalFormula("CaCl2");
-/// auto formula03 = parseChemicalFormula("MgCO3");
-/// auto formula04 = parseChemicalFormula("(CaMg)(CO3)2");
-/// auto formula05 = parseChemicalFormula("Fe3Al2Si3O12");
-/// auto formula06 = parseChemicalFormula("Na+");
-/// auto formula07 = parseChemicalFormula("Ca++");
-/// auto formula08 = parseChemicalFormula("Fe+++");
-/// auto formula09 = parseChemicalFormula("Fe+3");
-/// auto formula10 = parseChemicalFormula("CO3--");
-/// auto formula11 = parseChemicalFormula("CO3-2");
-/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-auto parseChemicalFormula(const String& formula) -> Pairs<String, double>;
-
-/// Return the electric charge in a chemical formula.
-/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// using namespace Reaktoro;
-/// auto charge01 = parseElectricCharge("H2O");          \\ charge01 ===  0
-/// auto charge02 = parseElectricCharge("CaCl2");        \\ charge02 ===  0
-/// auto charge03 = parseElectricCharge("MgCO3");        \\ charge03 ===  0
-/// auto charge04 = parseElectricCharge("(CaMg)(CO3)2"); \\ charge04 ===  0
-/// auto charge05 = parseElectricCharge("Fe3Al2Si3O12"); \\ charge05 ===  0
-/// auto charge06 = parseElectricCharge("Na+");          \\ charge06 ===  1
-/// auto charge07 = parseElectricCharge("Ca++");         \\ charge07 ===  2
-/// auto charge08 = parseElectricCharge("Fe+++");        \\ charge08 ===  3
-/// auto charge09 = parseElectricCharge("Fe+3");         \\ charge09 ===  3
-/// auto charge10 = parseElectricCharge("CO3--");        \\ charge10 === -2
-/// auto charge11 = parseElectricCharge("CO3-2");        \\ charge11 === -2
-/// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/// @see parseChemicalFormula
-auto parseElectricCharge(const String& formula) -> double;
-
 } // namespace Reaktoro
