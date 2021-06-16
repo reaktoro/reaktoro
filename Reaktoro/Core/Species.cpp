@@ -99,26 +99,37 @@ struct Species::Impl
     /// Construct a Species::Impl instance with given attributes
     Impl(const Attribs& attribs)
     {
-        errorif(attribs.name.empty(), "Species::Attribs::name cannot be empty.");
-        errorif(attribs.formula.empty(), "Species::Attribs::formula cannot be empty.");
-        errorif(attribs.std_thermo_model && attribs.formation_reaction,
-            "Species::Attribs for ", attribs.formula, " cannot contain both a "
-            "FormationReaction object and a StandardThermoModel object.");
+        errorif(attribs.name.empty(), "Could not construct Species object with constructor Species(Species::Attribs). "
+            "Species::Attribs::name cannot be empty.");
+        errorif(attribs.formula.empty(), "Could not construct Species object with constructor Species(Species::Attribs). "
+            "Species::Attribs::formula cannot be empty.");
+        errorif(attribs.elements.size() == 0, "Could not construct Species object with constructor Species(Species::Attribs). "
+            "Species::Attribs::elements cannot be empty.");
+        errorif(attribs.aggregate_state == AggregateState::Undefined, "Could not construct Species object with constructor Species(Species::Attribs). "
+            "Species::Attribs::aggregate_state cannot be AggregateState::Undefined.");
+        errorif(!attribs.std_thermo_model.initialized() && !attribs.formation_reaction.initialized(),
+            "Could not construct Species object with constructor Species(Species::Attribs). "
+            "Species::Attribs::std_thermo_model and Species::Attribs::formation_reaction "
+            "cannot be both uninitialized.");
+        errorif(attribs.std_thermo_model.initialized() && attribs.formation_reaction.initialized(),
+            "Could not construct Species object with constructor Species(Species::Attribs). "
+            "Species::Attribs::std_thermo_model and Species::Attribs::formation_reaction "
+            "cannot be both initialized.");
         name = attribs.name;
         formula = detail::removeSuffix(attribs.formula);
-        substance = attribs.substance.value_or(formula);
-        elements = attribs.elements.value_or(parseChemicalFormula(formula));
-        charge = attribs.charge.value_or(parseElectricCharge(formula));
-        aggregate_state = attribs.aggregate_state.value_or(identifyAggregateState(attribs.formula));
-        tags = attribs.tags.value_or(Strings{});
-        if(attribs.std_thermo_model)
+        substance = attribs.substance.empty() ? formula : attribs.substance;
+        elements = attribs.elements;
+        charge = attribs.charge;
+        aggregate_state = attribs.aggregate_state;
+        tags = attribs.tags;
+        if(attribs.std_thermo_model.initialized())
         {
-            propsfn = attribs.std_thermo_model.value();
+            propsfn = attribs.std_thermo_model;
             propsfn = propsfn.withMemoization();
         }
-        if(attribs.formation_reaction)
+        if(attribs.formation_reaction.initialized())
         {
-            reaction = attribs.formation_reaction.value();
+            reaction = attribs.formation_reaction;
             propsfn = reaction.createStandardThermoModel();
             propsfn = propsfn.withMemoization();
         }
