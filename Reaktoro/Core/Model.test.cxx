@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/Model.hpp>
+#include <Reaktoro/Serialization/Common.YAML.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing Model class", "[Model]")
@@ -79,6 +80,35 @@ TEST_CASE("Testing Model class", "[Model]")
         K = 5.0;
 
         CHECK( model(x, y) == Approx(5.0 * x * y) );
+    }
+
+    SECTION("Using ModelCalculator, Params, and ModelSerializer")
+    {
+        Params params = { Param("A", 1.0), Param("B", 2.0) };
+
+        auto serializerfn = [=]()
+        {
+            yaml node;
+            node["A"] = params.get("A").value();
+            node["B"] = params.get("B").value();
+            return node;
+        };
+
+        auto calcfn = [=](real x, real y)
+        {
+            auto A = params["A"];
+            auto B = params["B"];
+            return A*x + B*y;
+        };
+
+        auto model = Model<real(real, real)>(calcfn, params, serializerfn);
+
+        CHECK( model.serialize().IsDefined() == true );
+
+        yaml node = model.serialize();
+
+        CHECK( node["A"].as<double>() == 1.0 );
+        CHECK( node["B"].as<double>() == 2.0 );
     }
 
     SECTION("Using Model::Constant")
