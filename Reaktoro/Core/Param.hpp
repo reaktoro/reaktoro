@@ -46,10 +46,10 @@ public:
     /// Return a deep copy of this Param object.
     auto clone() const -> Param;
 
-    /// Set the value of the parameter.
-    auto assign(const real& val) -> Param&;
+    /// Assign the attributes of another Param object to this.
+    auto assign(const Param& other) -> Param&;
 
-    /// Set the value of the parameter. Equivalent to method @ref assign.
+    /// Set the value of the parameter.
     auto value(const real& val) -> Param&;
 
     /// Return the value of the parameter.
@@ -82,10 +82,10 @@ public:
     /// Return true if the parameter is constant.
     auto isconst() const -> bool;
 
-    /// Assign a value to this parameter value.
+    /// Assign a value to this Param object.
     auto operator=(double val) -> Param&;
 
-    /// Assign a value to this parameter value.
+    /// Assign a value to this Param object.
     auto operator=(const real& val) -> Param&;
 
     /// Convert this Param object into its value type.

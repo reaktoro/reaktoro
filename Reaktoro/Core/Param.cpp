@@ -75,16 +75,17 @@ auto Param::clone() const -> Param
     return param;
 }
 
-auto Param::assign(const real& val) -> Param&
+auto Param::assign(const Param& other) -> Param&
 {
-    warningIfOutOfBounds(*this, val);
-    pimpl->value = val;
+    *pimpl = *other.pimpl;
     return *this;
 }
 
 auto Param::value(const real& val) -> Param&
 {
-    return assign(val);;
+    warningIfOutOfBounds(*this, val);
+    pimpl->value = val;
+    return *this;
 }
 
 auto Param::value() const -> const real&
