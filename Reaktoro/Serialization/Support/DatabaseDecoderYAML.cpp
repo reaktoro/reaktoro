@@ -96,8 +96,8 @@ struct DatabaseDecoderYAML::Impl
         Element::Attribs attribs;
         node.copyRequiredChildValueTo("Symbol", attribs.symbol);
         node.copyRequiredChildValueTo("MolarMass", attribs.molar_mass);
-        node.copyOptionalChildValueTo("Name", attribs.name);
-        node.copyOptionalChildValueTo("Tags", attribs.tags);
+        node.copyOptionalChildValueTo("Name", attribs.name, {});
+        node.copyOptionalChildValueTo("Tags", attribs.tags, {});
         Element element(attribs);
         element_list.append(element);
         return element;
@@ -116,26 +116,31 @@ struct DatabaseDecoderYAML::Impl
     auto addSpecies(const yaml& node) -> Species
     {
         assert(node.IsDefined());
+        errorif(!node["Name"], "Missing `Name` specification in:\n", node.repr());
+        errorif(!node["Formula"], "Missing `Formula` specification in:\n", node.repr());
+        errorif(!node["AggregateState"], "Missing `AggregateState` specification in:\n", node.repr());
+        errorif(!node["Elements"], "Missing `Elements` specification in:\n", node.repr());
+        errorif(!node["FormationReaction"] && !node["StandardThermoModel"], "Missing `FormationReaction` or `StandardThermoModel` specification in:\n", node.repr());
         Species::Attribs attribs;
         node.copyRequiredChildValueTo("Name", attribs.name);
         node.copyRequiredChildValueTo("Formula", attribs.formula);
-        node.copyOptionalChildValueTo("Substance", attribs.substance);
-        node.copyOptionalChildValueTo("Charge", attribs.charge);
-        node.copyOptionalChildValueTo("AggregateState", attribs.aggregate_state);
-        createElementalComposition(node, attribs.elements);
-        createFormationReaction(node, attribs.formation_reaction);
-        createStandardThermoModel(node, attribs.std_thermo_model);
-        node.copyOptionalChildValueTo("Tags", attribs.tags);
+        node.copyOptionalChildValueTo("Substance", attribs.substance, {});
+        node.copyOptionalChildValueTo("Charge", attribs.charge, 0.0);
+        node.copyRequiredChildValueTo("AggregateState", attribs.aggregate_state);
+        attribs.elements = createElementalComposition(node);
+        attribs.formation_reaction = createFormationReaction(node);
+        attribs.std_thermo_model = createStandardThermoModel(node);
+        node.copyOptionalChildValueTo("Tags", attribs.tags, {});
         Species species(attribs);
         species_list.append(species);
         return species;
     }
 
     /// Create the elemental composition of the species in the given yaml @p node.
-    auto createElementalComposition(const yaml& node, Optional<ElementalComposition>& elements) -> void
+    auto createElementalComposition(const yaml& node) -> ElementalComposition
     {
         auto child = node["Elements"];
-        if(!child) return; // there is no explicit info about the elements of the species (this is in the chemical formula)
+        assert(child.IsDefined());
         Pairs<Element, double> pairs;
         const auto symbols_and_coeffs = parseNumberStringPairs(child.as<String>());
         for(const auto& [symbol, coeff] : symbols_and_coeffs)
@@ -149,23 +154,23 @@ struct DatabaseDecoderYAML::Impl
                 pairs.emplace_back(new_element, coeff);
             }
         }
-        elements = ElementalComposition(pairs);
+        return ElementalComposition(pairs);
     }
 
     /// Create a standard thermodynamic model with given yaml @p node for a species.
-    auto createStandardThermoModel(const yaml& node, Optional<StandardThermoModel>& model) -> void
+    auto createStandardThermoModel(const yaml& node) -> StandardThermoModel
     {
         auto child = node["StandardThermoModel"];
-        if(!child) return;
-        model = StandardThermoModelYAML(child);
+        if(!child.IsDefined()) return {};
+        return StandardThermoModelYAML(child);
     }
 
     /// Create a formation reaction with given yaml @p node for a species.
-    auto createFormationReaction(const yaml& node, Optional<FormationReaction>& reaction) -> void
+    auto createFormationReaction(const yaml& node) -> FormationReaction
     {
         auto child = node["FormationReaction"];
-        if(!child) return;
-        reaction = FormationReaction()
+        if(!child.IsDefined()) return {};
+        return FormationReaction()
             .withReactants(createReactants(child))
             .withReactionThermoModel(createReactionThermoModel(child))
             // .withProductStandardVolumeModel(createStandardVolumeModel(child))
@@ -196,7 +201,7 @@ struct DatabaseDecoderYAML::Impl
     auto createReactionThermoModel(const yaml& node) -> ReactionThermoModel
     {
         auto child = node["ReactionThermoModel"];
-        errorif(!child, "Missing ReactionThermoModel information in yaml node:\n", node.repr());
+        errorif(!child, "Missing `ReactionThermoModel` specification in:\n", node.repr());
         return ReactionThermoModelYAML(child);
     }
 
