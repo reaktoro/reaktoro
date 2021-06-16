@@ -205,7 +205,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.substance() == "e-"                           );
     CHECK( species.charge() == -1                                );
     CHECK( species.aggregateState() == AggregateState::Aqueous   );
-    CHECK( species.molarMass() == Approx(0.0)                    );
+    CHECK( species.molarMass() == Approx(5.4857990888E-07)       );
     CHECK( species.elements().size() == 1                        );
     CHECK( species.elements().coefficient("e") == 1              );
     CHECK( species.reaction().reactants().size() == 0            );
@@ -233,7 +233,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.substance() == "CO3-2"                        );
     CHECK( species.charge() == -2                                );
     CHECK( species.aggregateState() == AggregateState::Aqueous   );
-    CHECK( species.molarMass() == Approx(0.0600111)              );
+    CHECK( species.molarMass() == Approx(0.0600121972)           );
     CHECK( species.elements().size() == 2                        );
     CHECK( species.elements().coefficient("C") == 1              );
     CHECK( species.elements().coefficient("O") == 3              );

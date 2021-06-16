@@ -136,7 +136,7 @@ TEST_CASE("Testing Species class", "[Species]")
         CHECK(species.formula() == "Na+");
         CHECK(species.substance() == "Na+");
         CHECK(species.charge() == 1);
-        CHECK(species.molarMass() == Approx(0.022989769));
+        CHECK(species.molarMass() == Approx(0.0229892194));
         CHECK(species.aggregateState() == AggregateState::Aqueous);
         CHECK(species.elements().size() == 1);
         CHECK(species.elements().coefficient("Na") == 1);
@@ -164,7 +164,7 @@ TEST_CASE("Testing Species class", "[Species]")
         CHECK(species.formula() == "CO3--");
         CHECK(species.substance() == "CO3--");
         CHECK(species.charge() == -2);
-        CHECK(species.molarMass() == Approx(0.0600092));
+        CHECK(species.molarMass() == Approx(0.0600102972));
         CHECK(species.aggregateState() == AggregateState::Aqueous);
         CHECK(species.elements().size() == 2);
         CHECK(species.elements().coefficient("C") == 1);
@@ -192,7 +192,7 @@ TEST_CASE("Testing Species class", "[Species]")
         CHECK(species.formula() == "H+");
         CHECK(species.substance() == "H+");
         CHECK(species.charge() == 1);
-        CHECK(species.molarMass() == Approx(0.00100794));
+        CHECK(species.molarMass() == Approx(0.0010073914));
         CHECK(species.aggregateState() == AggregateState::Aqueous);
         CHECK(species.elements().size() == 1);
         CHECK(species.elements().coefficient("H") == 1);
@@ -203,7 +203,7 @@ TEST_CASE("Testing Species class", "[Species]")
         CHECK(species.formula() == "HCO3-");
         CHECK(species.substance() == "HCO3-");
         CHECK(species.charge() == -1);
-        CHECK(species.molarMass() == Approx(0.0610168));
+        CHECK(species.molarMass() == Approx(0.0610176886));
         CHECK(species.aggregateState() == AggregateState::Aqueous);
         CHECK(species.elements().size() == 3);
         CHECK(species.elements().coefficient("C") == 1);
@@ -217,7 +217,7 @@ TEST_CASE("Testing Species class", "[Species]")
         CHECK(species.formula() == "Fe+++");
         CHECK(species.substance() == "Fe+++");
         CHECK(species.charge() == 3);
-        CHECK(species.molarMass() == Approx(0.055847));
+        CHECK(species.molarMass() == Approx(0.0558453543));
         CHECK(species.aggregateState() == AggregateState::Aqueous);
         CHECK(species.elements().size() == 1);
         CHECK(species.elements().coefficient("Fe") == 1);
@@ -230,15 +230,15 @@ TEST_CASE("Testing Species class", "[Species]")
 
     SECTION("Testing automatic construction of chemical species with given chemical formula containing unknown elements")
     {
-        Elements::append(Element().withSymbol("Aa"));
-        Elements::append(Element().withSymbol("Bb"));
+        Elements::append(Element().withSymbol("Aa").withMolarMass(0.01));
+        Elements::append(Element().withSymbol("Bb").withMolarMass(0.02));
 
         species = Species("AaBb2+");
         CHECK(species.name() == "AaBb2+");
         CHECK(species.formula() == "AaBb2+");
         CHECK(species.substance() == "AaBb2+");
         CHECK(species.charge() == 1);
-        CHECK(species.molarMass() == Approx(0.0));
+        CHECK(species.molarMass() == Approx(0.0499994514));
         CHECK(species.aggregateState() == AggregateState::Aqueous);
         CHECK(species.elements().size() == 2);
         CHECK(species.elements().coefficient("Aa") == 1);
@@ -259,7 +259,7 @@ TEST_CASE("Testing Species class", "[Species]")
             attribs.name = "CO3--";
             attribs.formula = "CO3--";
             attribs.substance = "CARBONATE";
-            attribs.elements = { {Element("C"), 1}, {Element("O"), 3} };
+            attribs.elements = {{Element("C"), 1}, {Element("O"), 3}};
             attribs.charge = -2;
             attribs.aggregate_state = AggregateState::Aqueous;
             attribs.tags = {"aqueous", "carbonate"};
@@ -295,8 +295,8 @@ TEST_CASE("Testing Species class", "[Species]")
             attribs.name = "H2O(aq)";
             attribs.formula = "H2O";
             attribs.substance = ""; // empty substance should result in substance equal to formula!
-            attribs.elements = { {Element("H"), 2}, {Element("O"), 1} };
-            attribs.charge = 0;
+            attribs.elements = {{Element("H"), 2}, {Element("O"), 1}};
+            attribs.charge = 0.0;
             attribs.aggregate_state = AggregateState::Aqueous;
             attribs.tags = {"aqueous", "solvent"};
             attribs.formation_reaction = FormationReaction()
@@ -338,7 +338,7 @@ TEST_CASE("Testing Species class", "[Species]")
             attribs.formula = "H2O";
 
             CHECK_THROWS_WITH( Species(attribs), Contains("Species::Attribs::elements cannot be empty") );
-            attribs.elements = { {Element("H"), 2}, {Element("O"), 1} };
+            attribs.elements = {{Element("H"), 2}, {Element("O"), 1}};
 
             CHECK_THROWS_WITH( Species(attribs), Contains("Species::Attribs::aggregate_state cannot be AggregateState::Undefined") );
             attribs.aggregate_state = AggregateState::Aqueous;

@@ -154,8 +154,8 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     // TESTING METHOD: ChemicalState::setSpeciesMass(ispecies, mass, unit)
     //-------------------------------------------------------------------------
     state.setSpeciesMass(5, 15.0, "g");
-    CHECK( state.speciesMass(5) == 0.015 );
-    CHECK( state.speciesMass(5, "g") == 15.0 );
+    CHECK( state.speciesMass(5) == Approx(0.015) );
+    CHECK( state.speciesMass(5, "g") == Approx(15.0) );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesMass(name, mass)
