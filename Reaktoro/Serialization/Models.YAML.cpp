@@ -40,8 +40,9 @@ REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsConstLgK)
 
 REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsConstLgK)
 {
+    static const ReactionThermoModelParamsConstLgK defaultstate;
     node.at("lgKr").to(obj.lgKr);
-    node.at("Pr").to(obj.Pr);
+    node["Pr"].to(obj.Pr, defaultstate.Pr);
 }
 
 //=====================================================================================================================
@@ -60,6 +61,7 @@ REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsGemsLgK)
 
 REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsGemsLgK)
 {
+    static const ReactionThermoModelParamsGemsLgK defaultstate;
     node.at("A0").to(obj.A0);
     node.at("A1").to(obj.A1);
     node.at("A2").to(obj.A2);
@@ -67,7 +69,7 @@ REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsGemsLgK)
     node.at("A4").to(obj.A4);
     node.at("A5").to(obj.A5);
     node.at("A6").to(obj.A6);
-    node.at("Pr").to(obj.Pr);
+    node["Pr"].to(obj.Pr, defaultstate.Pr);
 }
 
 //=====================================================================================================================
@@ -85,13 +87,14 @@ REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsPhreeqcLgK)
 
 REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsPhreeqcLgK)
 {
+    static const ReactionThermoModelParamsPhreeqcLgK defaultstate;
     node.at("A1").to(obj.A1);
     node.at("A2").to(obj.A2);
     node.at("A3").to(obj.A3);
     node.at("A4").to(obj.A4);
     node.at("A5").to(obj.A5);
     node.at("A6").to(obj.A6);
-    node.at("Pr").to(obj.Pr);
+    node["Pr"].to(obj.Pr, defaultstate.Pr);
 }
 
 //=====================================================================================================================
@@ -106,10 +109,11 @@ REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsVantHoff)
 
 REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsVantHoff)
 {
+    static const ReactionThermoModelParamsVantHoff defaultstate;
     node.at("lgKr").to(obj.lgKr);
     node.at("dHr").to(obj.dHr);
-    node.at("Tr").to(obj.Tr);
-    node.at("Pr").to(obj.Pr);
+    node["Tr"].to(obj.Tr, defaultstate.Tr);
+    node["Pr"].to(obj.Pr, defaultstate.Pr);
 }
 
 //=====================================================================================================================
