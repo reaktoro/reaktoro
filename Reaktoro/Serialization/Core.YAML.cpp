@@ -141,12 +141,21 @@ REAKTORO_YAML_DECODE_DEFINE(ElementalComposition)
 
 REAKTORO_YAML_ENCODE_DEFINE(FormationReaction)
 {
-    errorif(true, "Implement REAKTORO_YAML_ENCODE_DEFINE(FormationReaction)");
+    std::stringstream repr;
+    auto i = 0;
+    for(const auto& [species, coeff] : obj.reactants())
+        repr << (i++ == 0 ? "" : " ") << coeff << ":" << species.name();
+
+    node["Reactants"] = repr.str();
+    if(obj.reactionThermoModel())
+        node["ReactionThermoModel"] = obj.reactionThermoModel().serialize();
+    if(obj.productStandardVolumeModel())
+        node["StandardVolumeModel"] = obj.productStandardVolumeModel().serialize();
 }
 
 REAKTORO_YAML_DECODE_DEFINE(FormationReaction)
 {
-    errorif(true, "Implement REAKTORO_YAML_DECODE_DEFINE(FormationReaction)");
+    errorif(true, "Converting YAML to FormationReaction is not supported directly."); // because only species names are present in YAML representation of Reactants
 }
 
 //=====================================================================================================================
