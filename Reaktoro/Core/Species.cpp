@@ -18,6 +18,7 @@
 #include "Species.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
@@ -290,7 +291,7 @@ auto Species::attachedData() const -> const Any&
 
 auto Species::molarMass() const -> double
 {
-    return elements().molarMass();
+    return elements().molarMass() - charge() * molarMassElectron; // for charged species, consider the electrons in it when computing molar mass.
 }
 
 auto Species::props(real T, real P) const -> StandardThermoProps

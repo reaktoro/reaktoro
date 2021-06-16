@@ -51,7 +51,7 @@ public:
         ElementalComposition elements;
 
         /// The electric charge of the species.
-        /// @note This is an optional attribute. If not provided, zero assumed.
+        /// @note This is an optional attribute. If not provided, it's assumed zero.
         double charge = 0.0;
 
         /// The aggregate state of the species.
@@ -167,7 +167,7 @@ public:
     /// Return the attached data of the species whose type is known at runtime only.
     auto attachedData() const -> const Any&;
 
-    /// Return the molar mass of the species (in unit of kg/mol).
+    /// Return the molar mass of the species (in kg/mol).
     auto molarMass() const -> double;
 
     /// Return the standard thermodynamic properties of the species at given temperature (in K) and pressure (in Pa).
@@ -176,7 +176,7 @@ public:
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    SharedPtr<Impl> pimpl;
 };
 
 /// Return true if a Species object is less than another for sorting reasons.
