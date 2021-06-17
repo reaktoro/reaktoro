@@ -86,7 +86,7 @@ Species:
 
 TEST_CASE("Testing DatabaseDecoderYAML class", "[DatabaseDecoderYAML]")
 {
-    yaml node(doc);
+    yaml node = yaml::parse(doc);
 
     Database db = DatabaseDecoderYAML(node);
 

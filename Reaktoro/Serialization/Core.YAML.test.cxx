@@ -132,7 +132,7 @@ Species:
           lgKr: 7.0
 )";
 
-    yaml node = yaml(contents);
+    yaml node = yaml::parse(contents);
 
     Database db = node;
 
@@ -214,8 +214,7 @@ TEST_CASE("Testing YAML encoder/decoder for ElementList", "[Core.yaml]")
         Element("N")
     };
 
-    yaml node;
-    node = elements;
+    yaml node = elements;
 
     for(auto i = 0; i < elements.size(); ++i)
     {
@@ -267,8 +266,7 @@ TEST_CASE("Testing YAML encoder/decoder for FormationReaction", "[Core.yaml]")
         .withReactants({{A, 1}, {B, 1}, {C, 2}})
         .withEquilibriumConstant(1.0);
 
-    yaml node;
-    node = reaction;
+    yaml node = reaction;
 
     yaml expected = yaml::parse(R"(
 Reactants: 1:Ca++ 1:Mg++ 2:CO3--

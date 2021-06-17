@@ -120,7 +120,7 @@ TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
 
     WHEN("StandardThermoModel name is HKF")
     {
-        auto model =  StandardThermoModelYAML(yaml(hkf));
+        auto model =  StandardThermoModelYAML(yaml::parse(hkf));
         auto props = model(T, P);
 
         CHECK(props.G0 == 1.0);
@@ -129,7 +129,7 @@ TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
 
     WHEN("StandardThermoModel name is MaierKelley")
     {
-        auto model =  StandardThermoModelYAML(yaml(mk));
+        auto model =  StandardThermoModelYAML(yaml::parse(mk));
         auto props = model(T, P);
 
         CHECK(props.G0 == 3.0);
@@ -138,7 +138,7 @@ TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
 
     WHEN("StandardThermoModel name is HollandPowell")
     {
-        auto model =  StandardThermoModelYAML(yaml(hp));
+        auto model =  StandardThermoModelYAML(yaml::parse(hp));
         auto props = model(T, P);
 
         CHECK(props.G0 == 5.0);
@@ -147,7 +147,7 @@ TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
 
     WHEN("StandardThermoModel name is MineralHKF")
     {
-        auto model =  StandardThermoModelYAML(yaml(mineral_hkf));
+        auto model =  StandardThermoModelYAML(yaml::parse(mineral_hkf));
         auto props = model(T, P);
 
         CHECK(props.G0 == 7.0);
@@ -156,7 +156,7 @@ TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
 
     WHEN("StandardThermoModel name is WaterHKF")
     {
-        auto model =  StandardThermoModelYAML(yaml(water_hkf));
+        auto model =  StandardThermoModelYAML(yaml::parse(water_hkf));
         auto props = model(T, P);
 
         CHECK(props.G0 == Approx(-237182));
@@ -165,8 +165,8 @@ TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
 
     WHEN("yaml node is not valid")
     {
-        CHECK_THROWS( StandardThermoModelYAML(yaml(non_existing_model)) );
-        CHECK_THROWS( StandardThermoModelYAML(yaml(not_dict)) );
-        CHECK_THROWS( StandardThermoModelYAML(yaml(dict_but_not_single)) );
+        CHECK_THROWS( StandardThermoModelYAML(yaml::parse(non_existing_model)) );
+        CHECK_THROWS( StandardThermoModelYAML(yaml::parse(not_dict)) );
+        CHECK_THROWS( StandardThermoModelYAML(yaml::parse(dict_but_not_single)) );
     }
 }

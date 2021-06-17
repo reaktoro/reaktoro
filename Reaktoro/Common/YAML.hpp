@@ -34,20 +34,24 @@ namespace Reaktoro {
 class yaml : public YAML::Node
 {
 public:
+    /// Parse a given input string in YAML format.
+    static auto parse(const char* input) -> yaml;
+
+    /// Parse a given input string in YAML format.
+    static auto parse(const std::string& input) -> yaml;
+
+    /// Parse a given input stream in YAML format.
+    static auto parse(std::istream& input) -> yaml;
+
     /// Construct an object of type yaml.
     yaml();
 
-    /// Construct an object of type yaml from a given input string.
-    explicit yaml(const char* input);
-
-    /// Construct an object of type yaml from a given input string.
-    explicit yaml(const std::string& input);
-
-    /// Construct an object of type yaml from a given input stream.
-    explicit yaml(std::istream& input);
-
     /// Construct an object of type yaml from a given Node object.
     yaml(const YAML::Node& node);
+
+    /// Construct an object of type yaml from a given object of type @p T.
+    template<typename T>
+    yaml(const T& obj) : YAML::Node(obj) {}
 
     /// Append a child node with a given value only if value is not default value.
     template<typename T, typename U = T>

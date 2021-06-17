@@ -22,20 +22,23 @@
 
 namespace Reaktoro {
 
+auto yaml::parse(const char* input) -> yaml
+{
+    return yaml(YAML::Load(input));
+}
+
+auto yaml::parse(const std::string& input) -> yaml
+{
+    return yaml(YAML::Load(input));
+}
+
+auto yaml::parse(std::istream& input) -> yaml
+{
+    return yaml(YAML::Load(input));
+}
+
 yaml::yaml()
 : YAML::Node()
-{}
-
-yaml::yaml(const char* input)
-: YAML::Node(YAML::Load(input))
-{}
-
-yaml::yaml(const std::string& input)
-: YAML::Node(YAML::Load(input))
-{}
-
-yaml::yaml(std::istream& input)
-: YAML::Node(YAML::Load(input))
 {}
 
 yaml::yaml(const Node& node)
