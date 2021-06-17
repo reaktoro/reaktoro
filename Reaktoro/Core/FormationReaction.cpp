@@ -23,6 +23,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/StandardVolumeModelConstant.hpp>
 
 namespace Reaktoro {
 
@@ -133,7 +134,7 @@ auto FormationReaction::withEquilibriumConstant(Param lgK0) const -> FormationRe
 
 auto FormationReaction::withProductStandardVolume(Param V0p) const -> FormationReaction
 {
-    return withProductStandardVolumeModel(Model<real(real,real)>::Constant(V0p));
+    return withProductStandardVolumeModel(StandardVolumeModelConstant({0.0}));
 }
 
 auto FormationReaction::withProductStandardVolumeModel(Model<real(real,real)> fn) const -> FormationReaction
