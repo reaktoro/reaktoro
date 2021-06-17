@@ -28,10 +28,15 @@
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
+#include <Reaktoro/Models/StandardVolumeModelConstant.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 #include <Reaktoro/Serialization/Core.YAML.hpp>
 
 namespace Reaktoro {
+
+//======================================================================
+// ReactionThermoModel Types
+//======================================================================
 
 REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsConstLgK)
 {
@@ -46,7 +51,7 @@ REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsConstLgK)
     node["Pr"].to(obj.Pr, defaultstate.Pr);
 }
 
-//=====================================================================================================================
+//----------------------------------------------------------------------
 
 REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsGemsLgK)
 {
@@ -73,7 +78,7 @@ REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsGemsLgK)
     node["Pr"].to(obj.Pr, defaultstate.Pr);
 }
 
-//=====================================================================================================================
+//----------------------------------------------------------------------
 
 REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsPhreeqcLgK)
 {
@@ -98,7 +103,7 @@ REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsPhreeqcLgK)
     node["Pr"].to(obj.Pr, defaultstate.Pr);
 }
 
-//=====================================================================================================================
+//----------------------------------------------------------------------
 
 REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsVantHoff)
 {
@@ -117,7 +122,9 @@ REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsVantHoff)
     node["Pr"].to(obj.Pr, defaultstate.Pr);
 }
 
-//=====================================================================================================================
+//======================================================================
+// StandardThermoModel Types
+//======================================================================
 
 REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsConstant)
 {
@@ -137,7 +144,7 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsConstant)
     node["Cv0"].to(obj.Cv0, 0.0);
 }
 
-//=====================================================================================================================
+//----------------------------------------------------------------------
 
 REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsHKF)
 {
@@ -170,7 +177,7 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsHKF)
     node.at("charge").to(obj.charge);
 }
 
-//=====================================================================================================================
+//----------------------------------------------------------------------
 
 REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsHollandPowell)
 {
@@ -208,7 +215,7 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsHollandPowell)
     node.at("Tmax").to(obj.Tmax);
 }
 
-//=====================================================================================================================
+//----------------------------------------------------------------------
 
 REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsMaierKelley)
 {
@@ -234,7 +241,7 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsMaierKelley)
     node.at("Tmax").to(obj.Tmax);
 }
 
-//=====================================================================================================================
+//----------------------------------------------------------------------
 
 REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsMineralHKF)
 {
@@ -270,7 +277,7 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsMineralHKF)
     node.at("Tmax").to(obj.Tmax);
 }
 
-//=====================================================================================================================
+//----------------------------------------------------------------------
 
 REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsWaterHKF)
 {
@@ -286,6 +293,20 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsWaterHKF)
     node.at("Str").to(obj.Str);
     node.at("Gtr").to(obj.Gtr);
     node.at("Htr").to(obj.Htr);
+}
+
+//======================================================================
+// StandardVolumeModel Types
+//======================================================================
+
+REAKTORO_YAML_ENCODE_DEFINE(StandardVolumeModelParamsConstant)
+{
+    node["V0"] = obj.V0;
+}
+
+REAKTORO_YAML_DECODE_DEFINE(StandardVolumeModelParamsConstant)
+{
+    node.at("V0").to(obj.V0);
 }
 
 } // namespace YAML

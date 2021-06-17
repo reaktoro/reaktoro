@@ -23,16 +23,13 @@
 
 namespace Reaktoro {
 
+//======================================================================
+// ReactionThermoModel Types
+//======================================================================
 struct ReactionThermoModelParamsConstLgK;
 struct ReactionThermoModelParamsGemsLgK;
 struct ReactionThermoModelParamsPhreeqcLgK;
 struct ReactionThermoModelParamsVantHoff;
-struct StandardThermoModelParamsConstant;
-struct StandardThermoModelParamsHKF;
-struct StandardThermoModelParamsHollandPowell;
-struct StandardThermoModelParamsMaierKelley;
-struct StandardThermoModelParamsMineralHKF;
-struct StandardThermoModelParamsWaterHKF;
 
 REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsConstLgK);
 REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsConstLgK);
@@ -45,6 +42,16 @@ REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsPhreeqcLgK);
 
 REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsVantHoff);
 REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsVantHoff);
+
+//======================================================================
+// StandardThermoModel Types
+//======================================================================
+struct StandardThermoModelParamsConstant;
+struct StandardThermoModelParamsHKF;
+struct StandardThermoModelParamsHollandPowell;
+struct StandardThermoModelParamsMaierKelley;
+struct StandardThermoModelParamsMineralHKF;
+struct StandardThermoModelParamsWaterHKF;
 
 REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsConstant);
 REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsConstant);
@@ -63,5 +70,13 @@ REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsMineralHKF);
 
 REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsWaterHKF);
 REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsWaterHKF);
+
+//======================================================================
+// StandardVolumeModel Types
+//======================================================================
+struct StandardVolumeModelParamsConstant;
+
+REAKTORO_YAML_ENCODE_DECLARE(StandardVolumeModelParamsConstant);
+REAKTORO_YAML_DECODE_DECLARE(StandardVolumeModelParamsConstant);
 
 } // namespace YAML
