@@ -33,7 +33,7 @@ tags: [ group1 ]
 
 TEST_CASE("Testing YAML", "[YAML]")
 {
-    yaml y(element);
+    yaml y = yaml::parse(element);
 
     CHECK( y["symbol"].as<std::string>() == "H" );
     CHECK( y["name"].as<std::string>() == "Hydrogen" );

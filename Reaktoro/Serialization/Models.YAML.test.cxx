@@ -208,7 +208,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsConstant")
     {
-        StandardThermoModelParamsConstant params = yaml(params_stm_const);
+        StandardThermoModelParamsConstant params = yaml::parse(params_stm_const);
         CHECK( params.G0  == 1.0 );
         CHECK( params.H0  == 2.0 );
         CHECK( params.V0  == 3.0 );
@@ -218,7 +218,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsMaierKelley")
     {
-        StandardThermoModelParamsMaierKelley params = yaml(params_stm_mk);
+        StandardThermoModelParamsMaierKelley params = yaml::parse(params_stm_mk);
         CHECK( params.Gf   == -3679250.6 );
         CHECK( params.Hf   == -3876463.4 );
         CHECK( params.Sr   ==  209.32552 );
@@ -231,7 +231,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsMineralHKF")
     {
-        StandardThermoModelParamsMineralHKF params = yaml(params_stm_hkfmk1);
+        StandardThermoModelParamsMineralHKF params = yaml::parse(params_stm_hkfmk1);
         CHECK( params.Gf     == -3708312.7   );
         CHECK( params.Hf     == -3931621.1   );
         CHECK( params.Sr     ==  207.14984   );
@@ -251,7 +251,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsMineralHKF")
     {
-        StandardThermoModelParamsMineralHKF params = yaml(params_stm_hkfmk2);
+        StandardThermoModelParamsMineralHKF params = yaml::parse(params_stm_hkfmk2);
         CHECK( params.Gf     == -39522.064 );
         CHECK( params.Hf     == -31589.2   );
         CHECK( params.Sr     ==  143.5112  );
@@ -276,7 +276,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsMineralHKF")
     {
-        StandardThermoModelParamsMineralHKF params = yaml(params_stm_hkfmk3);
+        StandardThermoModelParamsMineralHKF params = yaml::parse(params_stm_hkfmk3);
         CHECK( std::isnan( params.Gf )     );
         CHECK( std::isnan( params.Hf )     );
         CHECK( params.Sr     == 286.604    );
@@ -304,7 +304,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsWaterHKF")
     {
-        StandardThermoModelParamsWaterHKF params = yaml(params_stm_whkf);
+        StandardThermoModelParamsWaterHKF params = yaml::parse(params_stm_whkf);
         CHECK( params.Ttr == 273.16 );
         CHECK( params.Str == 63.312288 );
         CHECK( params.Gtr == -235517.36 );
@@ -313,7 +313,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsHKF")
     {
-        StandardThermoModelParamsHKF params = yaml(params_stm_hkf);
+        StandardThermoModelParamsHKF params = yaml::parse(params_stm_hkf);
         CHECK( params.Gf     == 39371.44      );
         CHECK( params.Hf     == -151084.24    );
         CHECK( params.Sr     == 197.4848      );
@@ -330,7 +330,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsHollandPowell")
     {
-        StandardThermoModelParamsHollandPowell params = yaml(params_stm_hp);
+        StandardThermoModelParamsHollandPowell params = yaml::parse(params_stm_hp);
         CHECK( params.Gf       == -4937500.0     );
         CHECK( params.Hf       == -5260650.0     );
         CHECK( params.Sr       == 342.0          );
@@ -349,7 +349,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsHollandPowell")
     {
-        StandardThermoModelParamsHollandPowell params = yaml(params_stm_hpg);
+        StandardThermoModelParamsHollandPowell params = yaml::parse(params_stm_hpg);
         CHECK( params.Gf == -50710.0  );
         CHECK( params.Hf == -74810.0  );
         CHECK( params.Sr == 186.26    );
@@ -362,7 +362,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsHollandPowell")
     {
-        StandardThermoModelParamsHollandPowell params = yaml(params_stm_hpl);
+        StandardThermoModelParamsHollandPowell params = yaml::parse(params_stm_hpl);
         CHECK( params.Gf       == -2192340.0    );
         CHECK( params.Hf       == -2307040.0    );
         CHECK( params.Sr       == 127.6         );
