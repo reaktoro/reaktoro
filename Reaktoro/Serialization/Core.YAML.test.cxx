@@ -28,6 +28,12 @@ using namespace Catch;
 #include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/ReactionThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
+#include <Reaktoro/Models/StandardThermoModelHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardVolumeModelConstant.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 #include <Reaktoro/Serialization/Core.YAML.hpp>
 using namespace Reaktoro;
@@ -283,18 +289,39 @@ StandardVolumeModel:
 
 TEST_CASE("Testing YAML encoder/decoder for Param", "[Core.yaml]")
 {
-    yaml node;
     Param param;
+    yaml node;
 
-    // TODO: Implement YAML encoding/decoding test for Param.
+    param = 1.0;
+    node = param;
+
+    CHECK( node.as<double>() == 1.0 );
+
+    node = 10.0;
+    param = node.as<double>();
+
+    CHECK( param.value() == 10.0 );
 }
 
 TEST_CASE("Testing YAML encoder/decoder for Params", "[Core.yaml]")
 {
-    yaml node;
-    Params params;
+    yaml node = Vec<double>{1.0, 2.0, 3.0};
 
-    // TODO: Implement YAML encoding/decoding test for Params.
+    Params params = node;
+
+    CHECK( params[0].value() == 1.0 );
+    CHECK( params[1].value() == 2.0 );
+    CHECK( params[2].value() == 3.0 );
+
+    params[0] = 10.0;
+    params[1] = 20.0;
+    params[2] = 30.0;
+
+    node = params;
+
+    CHECK( node[0].as<double>() == 10.0 );
+    CHECK( node[1].as<double>() == 20.0 );
+    CHECK( node[2].as<double>() == 30.0 );
 }
 
 TEST_CASE("Testing YAML encoder/decoder for Phase", "[Core.yaml]")
@@ -307,32 +334,226 @@ TEST_CASE("Testing YAML encoder/decoder for Phase", "[Core.yaml]")
 
 TEST_CASE("Testing YAML encoder/decoder for ReactionThermoModel", "[Core.yaml]")
 {
-    yaml node;
-    ReactionThermoModel reactionthermomodel;
+    yaml node, expected;
 
-    // TODO: Implement YAML encoding/decoding test for ReactionThermoModel.
+    Param lgKr = 1.0;
+    Param dHr  = 2.0;
+    Param Tr   = 3.0;
+    Param Pr   = 4.0;
+
+    node = ReactionThermoModelVantHoff({lgKr, dHr, Tr, Pr});
+
+    expected = yaml::parse(R"(
+        VantHoff:
+          lgKr: 1
+          dHr: 2
+          Tr: 3
+          Pr: 4
+    )");
+
+    CHECK( node.repr() == expected.repr() );
+
+    auto model = ReactionThermoModelYAML(node);
+
+    CHECK( model.serialize().repr() == expected.repr() );
 }
 
 TEST_CASE("Testing YAML encoder/decoder for Species", "[Core.yaml]")
 {
-    yaml node;
     Species species;
+    yaml node, expected;
 
-    // TODO: Implement YAML encoding/decoding test for Species.
+    WHEN("using constructor Species(formula)")
+    {
+        node = Species("CaCO3(aq)")
+            .withStandardGibbsEnergy(10.0);
+
+        expected = yaml::parse(R"(
+            Name: CaCO3(aq)
+            Formula: CaCO3
+            Substance: CaCO3
+            Elements: 1:Ca 1:C 3:O
+            AggregateState: Aqueous
+            StandardThermoModel:
+              Constant:
+                  G0: 10
+                  H0: 0
+                  V0: 0
+                  Cp0: 0
+                  Cv0: 0
+        )");
+
+        CHECK( node.repr() == expected.repr() );
+    }
+
+    WHEN("using constructor Species(formula) with HKF standard thermodynamic model and charged species")
+    {
+        StandardThermoModelParamsHKF params;
+        params.Gf = 1.0;
+        params.Hf = 2.0;
+        params.Sr = 3.0;
+        params.a1 = 4.0;
+        params.a2 = 5.0;
+        params.a3 = 6.0;
+        params.a4 = 7.0;
+        params.c1 = 8.0;
+        params.c2 = 9.0;
+        params.wref = 10.0;
+        params.charge = 11.0;
+        params.Tmax = 12.0;
+
+        node = Species("CO3--(aq)")
+            .withSubstance("CARBONATE")
+            .withStandardThermoModel(StandardThermoModelHKF(params));
+
+        expected = yaml::parse(R"(
+            Name: CO3--(aq)
+            Formula: CO3--
+            Substance: CARBONATE
+            Elements: 1:C 3:O
+            Charge: -2
+            AggregateState: Aqueous
+            StandardThermoModel:
+              HKF:
+                Gf: 1
+                Hf: 2
+                Sr: 3
+                a1: 4
+                a2: 5
+                a3: 6
+                a4: 7
+                c1: 8
+                c2: 9
+                wref: 10
+                charge: 11
+                Tmax: 12
+        )");
+
+        CHECK( node.repr() == expected.repr() );
+    }
+
+    WHEN("using constructor Species(formula) with FormationReaction")
+    {
+        auto A = Species("Ca++(aq)").withStandardGibbsEnergy(0.0);
+        auto B = Species("CO3--(aq)").withStandardGibbsEnergy(0.0);
+
+        Param lgKr = 1.0;
+        Param dHr  = 2.0;
+        Param Tr   = 3.0;
+        Param Pr   = 4.0;
+        Param V0   = 5.0;
+
+        auto reaction = FormationReaction()
+            .withReactants({{A, 1}, {B, 1}})
+            .withReactionThermoModel(ReactionThermoModelVantHoff({lgKr, dHr, Tr, Pr}))
+            .withProductStandardVolumeModel(StandardVolumeModelConstant({V0}));
+
+        node = Species("CaCO3(s)").withFormationReaction(reaction);
+
+        expected = yaml::parse(R"(
+            Name: CaCO3(s)
+            Formula: CaCO3
+            Substance: CaCO3
+            Elements: 1:Ca 1:C 3:O
+            AggregateState: Solid
+            FormationReaction:
+              Reactants: 1:Ca++(aq) 1:CO3--(aq)
+              ReactionThermoModel:
+                VantHoff:
+                  lgKr: 1
+                  dHr: 2
+                  Tr: 3
+                  Pr: 4
+              StandardVolumeModel:
+                Constant:
+                  V0: 5
+        )");
+
+        CHECK( node.repr() == expected.repr() );
+    }
 }
 
 TEST_CASE("Testing YAML encoder/decoder for SpeciesList", "[Core.yaml]")
 {
-    yaml node;
-    SpeciesList specieslist;
+    yaml node = SpeciesList({
+        Species("Ca++(aq)").withStandardGibbsEnergy(0.0),
+        Species("CO3--(aq)").withStandardGibbsEnergy(0.0),
+        Species("CaCO3(aq)").withStandardGibbsEnergy(0.0)
+    });
 
-    // TODO: Implement YAML encoding/decoding test for SpeciesList.
+    yaml expected = yaml::parse(R"(
+        - Name: Ca++(aq)
+          Formula: Ca++
+          Substance: Ca++
+          Elements: 1:Ca
+          Charge: 2
+          AggregateState: Aqueous
+          StandardThermoModel:
+            Constant:
+              G0: 0
+              H0: 0
+              V0: 0
+              Cp0: 0
+              Cv0: 0
+        - Name: CO3--(aq)
+          Formula: CO3--
+          Substance: CO3--
+          Elements: 1:C 3:O
+          Charge: -2
+          AggregateState: Aqueous
+          StandardThermoModel:
+            Constant:
+              G0: 0
+              H0: 0
+              V0: 0
+              Cp0: 0
+              Cv0: 0
+        - Name: CaCO3(aq)
+          Formula: CaCO3
+          Substance: CaCO3
+          Elements: 1:Ca 1:C 3:O
+          AggregateState: Aqueous
+          StandardThermoModel:
+            Constant:
+              G0: 0
+              H0: 0
+              V0: 0
+              Cp0: 0
+              Cv0: 0
+    )");
+
+    CHECK( node.repr() == expected.repr() );
 }
 
 TEST_CASE("Testing YAML encoder/decoder for StandardThermoModel", "[Core.yaml]")
 {
-    yaml node;
-    StandardThermoModel standardthermomodel;
+    StandardThermoModelParamsMaierKelley params;
+    params.Gf = 1.0;
+    params.Hf = 2.0;
+    params.Sr = 3.0;
+    params.Vr = 4.0;
+    params.a = 5.0;
+    params.b = 6.0;
+    params.c = 7.0;
+    params.Tmax = 8.0;
 
-    // TODO: Implement YAML encoding/decoding test for StandardThermoModel.
+    yaml node = StandardThermoModelMaierKelley(params);
+
+    yaml expected = yaml::parse(R"(
+        MaierKelley:
+          Gf: 1
+          Hf: 2
+          Sr: 3
+          Vr: 4
+          a: 5
+          b: 6
+          c: 7
+          Tmax: 8
+    )");
+
+    CHECK( node.repr() == expected.repr() );
+
+    auto model = StandardThermoModelYAML(node);
+
+    CHECK( model.serialize().repr() == expected.repr() );
 }
