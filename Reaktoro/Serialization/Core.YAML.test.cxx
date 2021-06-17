@@ -30,7 +30,6 @@ using namespace Catch;
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 #include <Reaktoro/Serialization/Core.YAML.hpp>
-
 using namespace Reaktoro;
 
 TEST_CASE("Testing YAML encoder/decoder for AggregateState", "[Core.yaml]")
