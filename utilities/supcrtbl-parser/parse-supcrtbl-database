@@ -28,10 +28,31 @@ import argparse
 import json
 import oyaml as yaml
 
+# Auxiliary constants
+kJ_to_J = 1e3
+bar_to_Pa = 1e5
+kbar_to_Pa = 1e8
+
 
 def strdict(d):
     """Auxiliary function used to get single-line dictionaries in  json/yaml"""
     return f"&{d}&"
+
+
+def cleanFormulaFromOnes(formula):
+    """Replace formulas such as Ca1C1O3 into CaCO3 (by removing 1)
+
+    Args:
+        formula (str): The chemical formula of a species
+    """
+    newformula = formula[0]
+    for i in range(1, len(formula) - 1):
+        if formula[i] == '1' and formula[i - 1].isalpha() and formula[i + 1].isalpha():
+            continue
+        else: newformula += formula[i]
+    if formula[-1] != '1':
+        newformula += formula[-1]
+    return newformula
 
 
 def groupLinesBySection(lines):
@@ -91,7 +112,7 @@ def groupLinesBySection(lines):
              lines[isection5:isection5end] ]
 
 
-def parseElements(word):
+def parseElementsToDict(word):
     """Parse a string such as "Fe(3)Al(2)Si(3)O(12)" to extract element symbols and coefficients
 
     Applying this method in the following strings produce the corresponding results:
@@ -118,26 +139,79 @@ def parseElements(word):
     elements = []
     coefficients = []
     for i in range(0, len(words), 2):
-        name = words[i]
+        symbol = words[i]
         number = float(words[i + 1])
-        if name in ["+", "-"]:  # check if element is charge + or -
-            if number != 0:
-                elements.append("E")  # electron element
-                coefficients.append(-number if name == "+" else number)  # inverted sign because of electron!
-        else:
-            elements.append(name)
-            coefficients.append(number)
+        if symbol in ["+", "-"]:  # check if element is charge + or -
+            break
+        elements.append(symbol)
+        coefficients.append(number)
 
-    return { element: coeff for element, coeff in zip(elements, coefficients) }
+    return strdict({ element: coeff for element, coeff in zip(elements, coefficients) })
+
+
+def parseElements(word):
+    """Parse a string such as "Fe(3)Al(2)Si(3)O(12)" to extract element symbols and coefficients
+
+    Applying this method in the following strings produce the corresponding results:
+        * H(2)O(1)      produces 2:H 1:O
+        * Ca(1)C(1)O(3) produces 1:Ca 1:C 3:O
+        * Ag(1)+(2)     produces 1:Ag
+        * Cl(1)-(1)     produces 1:Cl
+    where E above denotes an "element" symbol to represent electron.
+
+    Args:
+        word (str): The string containing the elemental formula of a substance
+
+    Returns:
+        str: A string containing the element symbols and their coefficients.
+    """
+    # Split the elemental formula in words delimited by ( or )
+    words = word.replace(")", "(").split("(")  # split on ( or )
+    words = [x for x in words if x != ""]  # remove empty string ""
+
+    # Check if the elemental formula contains only one element
+    if len(words) == 1:
+        return f"1:{words[0]}"
+
+    # Collect the pairs (element, coefficient) in the list of elements
+    res = ""
+    for i in range(0, len(words), 2):
+        symbol = words[i]
+        number = words[i + 1]
+        if symbol in ["+", "-"]:  # check if element is charge + or -
+            break
+        res += f"{number}:{symbol} "
+
+    return res[:-1]
+
+
+def parseCharge(word):
+    """Parse a string such as "Fe(1)C(5)H(9)O(2)+(1)" to extract electric charge
+
+    Args:
+        word (str): The string containing the elemental formula of a substance.
+
+    Returns:
+        float: The electric charge of the species.
+    """
+    i = word.find('-(')
+    if i != -1:
+        return -float(word[i + 2:-1])
+    else:
+        i = word.find('+(')
+        if i != -1:
+            return float(word[i + 2:-1])
+        else: return 0.0
 
 
 def getCommonSpeciesData(lines):
     assert(len(lines) == 3)
     data = {}
     data["Name"] = lines[0][:21].strip()
-    data["Formula"] = lines[0][21:].strip()
+    data["Formula"] = cleanFormulaFromOnes(lines[0][21:].strip())
     data["Abbrev"] = lines[1][:21].strip()
-    data["Elements"] = strdict(parseElements(lines[1][21:].strip()))
+    data["Elements"] = parseElements(lines[1][21:].strip())
+    data["Charge"] = parseCharge(lines[1][21:].strip())
     data["Reference"] = lines[2][:21].strip()
     data["Date"] = lines[2][21:].strip()
     return data
@@ -150,21 +224,34 @@ def getParamsMineralHollandPowell(lines):
     numbers = [float(x) for x in numbers]
     assert(len(numbers) == 14)
     params = {}
-    params["Model"]    = "SupcrtblMineralHollandPowell"
+    params["Model"]    = "HollandPowell"
     params["Gf"]       = numbers[0]   # in kJ/mol
     params["Hf"]       = numbers[1]   # in kJ/mol
-    params["Sr"]       = numbers[2]   # in J/(mol*K)
+    params["Sr"]       = numbers[2]   # in J/(mol·K)
     params["Vr"]       = numbers[3]   # in J/bar
     params["a"]        = numbers[4]   # in kJ/mol/K
-    params["b"]        = numbers[5]   # in 1e5*kJ/mol/K^2
-    params["c"]        = numbers[6]   # in kJ*K/mol
-    params["d"]        = numbers[7]   # in kJ/mol/K^(-0.5)
-    params["alpha"]    = numbers[8]   # in 1e5/K
+    params["b"]        = numbers[5]   # in kJ/(mol·K²) (multiplied by 1e+5)
+    params["c"]        = numbers[6]   # in kJ·K/mol
+    params["d"]        = numbers[7]   # in kJ/(mol·K½)
+    params["alpha"]    = numbers[8]   # in 1/K (multiplied by 1e+5)
     params["kappa"]    = numbers[9]   # in kbar
     params["kappap"]   = numbers[10]  # dimensionless
     params["kappapp"]  = numbers[11]  # in 1/kbar
     params["numatoms"] = numbers[12]  # dimensionless
     params["Tmax"]     = numbers[13]  # in K
+    # Convert above parameters to SI units
+    params["Gf"]      *= kJ_to_J        # from kJ/mol to J/mol
+    params["Hf"]      *= kJ_to_J        # from kJ/mol to J/mol
+    params["Sr"]      *= 1.0            # from J/(mol·K) to J/(mol·K)
+    params["Vr"]      *= 1.0/bar_to_Pa  # from J/bar to J/Pa
+    params["a"]       *= kJ_to_J        # from kJ/mol/K to J/mol/K
+    params["b"]       *= kJ_to_J/1e+5   # from kJ/(mol·K²) to J/(mol·K²) (without 1e+5 factor!)
+    params["c"]       *= kJ_to_J        # from kJ·K/mol to J·K/mol
+    params["d"]       *= kJ_to_J        # from kJ/(mol·K½) to J/(mol·K½)
+    params["alpha"]   *= 1.0/1e+5       # from 1/K to 1/K (without 1e+5 factor!)
+    params["kappa"]   *= kbar_to_Pa     # from kbar to Pa
+    params["kappap"]  *= 1.0            # dimensionless
+    params["kappapp"] *= 1.0/kbar_to_Pa # from 1/kbar to 1/Pa
     return params
 
 
@@ -175,15 +262,15 @@ def getParamsMineralHollandPowellLandau(lines):
     numbers = [float(x) for x in numbers]
     assert(len(numbers) == 17)
     params = {}
-    params["Model"]    = "SupcrtblMineralHollandPowellLandau"
+    params["Model"]    = "HollandPowell"
     params["Gf"]       = numbers[0]   # in kJ/mol
     params["Hf"]       = numbers[1]   # in kJ/mol
-    params["Sr"]       = numbers[2]   # in J/(mol*K)
+    params["Sr"]       = numbers[2]   # in J/(mol·K)
     params["Vr"]       = numbers[3]   # in J/bar
     params["a"]        = numbers[4]   # in kJ/mol/K
-    params["b"]        = numbers[5]   # in 1e5*kJ/mol/K^2
-    params["c"]        = numbers[6]   # in kJ*K/mol
-    params["d"]        = numbers[7]   # in kJ/mol/K^(-0.5)
+    params["b"]        = numbers[5]   # in kJ/(mol·K²) (multiplied by 1e+5)
+    params["c"]        = numbers[6]   # in kJ·K/mol
+    params["d"]        = numbers[7]   # in kJ/(mol·K½)
     params["alpha"]    = numbers[8]   # in 1/K (multiplied by 1e+5)
     params["kappa"]    = numbers[9]   # in kbar
     params["kappap"]   = numbers[10]  # dimensionless
@@ -193,6 +280,21 @@ def getParamsMineralHollandPowellLandau(lines):
     params["Smax"]     = numbers[14]  # in J/mol/K
     params["Vmax"]     = numbers[15]  # in J/bar
     params["Tmax"]     = numbers[16]  # in K
+    # Convert above parameters to SI units
+    params["Gf"]      *= kJ_to_J        # from kJ/mol to J/mol
+    params["Hf"]      *= kJ_to_J        # from kJ/mol to J/mol
+    params["Sr"]      *= 1.0            # from J/(mol·K) to J/(mol·K)
+    params["Vr"]      *= 1.0/bar_to_Pa  # from J/bar to J/Pa
+    params["a"]       *= kJ_to_J        # from kJ/mol/K to J/mol/K
+    params["b"]       *= kJ_to_J/1e+5   # from kJ/(mol·K²) to J/(mol·K²) (without 1e+5 factor!)
+    params["c"]       *= kJ_to_J        # from kJ·K/mol to J·K/mol
+    params["d"]       *= kJ_to_J        # from kJ/(mol·K½) to J/(mol·K½)
+    params["alpha"]   *= 1.0/1e+5       # from 1/K to 1/K (without 1e+5 factor!)
+    params["kappa"]   *= kbar_to_Pa     # from kbar to Pa
+    params["kappap"]  *= 1.0            # dimensionless
+    params["kappapp"] *= 1.0/kbar_to_Pa # from 1/kbar to 1/Pa
+    params["Vmax"]    *= 1/bar_to_Pa    # from J/bar to J/Pa
+
     return params
 
 
@@ -203,27 +305,40 @@ def getParamsMineralHollandPowellBraggWilliams(lines):
     numbers = [float(x) for x in numbers]
     assert(len(numbers) == 20)
     params = {}
-    params["Model"]     = "SupcrtblMineralHollandPowellBraggWilliams"
+    params["Model"]     = "HollandPowell"
     params["Gf"]        = numbers[0]   # in kJ/mol
     params["Hf"]        = numbers[1]   # in kJ/mol
-    params["Sr"]        = numbers[2]   # in J/(mol*K)
+    params["Sr"]        = numbers[2]   # in J/(mol·K)
     params["Vr"]        = numbers[3]   # in J/bar
     params["a"]         = numbers[4]   # in kJ/mol/K
-    params["b"]         = numbers[5]   # in 1e5*kJ/mol/K^2
-    params["c"]         = numbers[6]   # in kJ*K/mol
-    params["d"]         = numbers[7]   # in kJ/mol/K^(-0.5)
+    params["b"]         = numbers[5]   # in kJ/(mol·K²) (multiplied by 1e+5)
+    params["c"]         = numbers[6]   # in kJ·K/mol
+    params["d"]         = numbers[7]   # in kJ/(mol·K½)
     params["alpha"]     = numbers[8]   # in 1e5/K
     params["kappa"]     = numbers[9]   # in kbar
     params["kappap"]    = numbers[10]  # dimensionless
     params["kappapp"]   = numbers[11]  # in 1/kbar
     params["numatoms"]  = numbers[12]  # dimensionless
-    params["unknonwn0"] = numbers[13]  # in ??? Needs to be checked with Chen Zhu...
-    params["unknonwn1"] = numbers[14]  # in ??? Needs to be checked with Chen Zhu...
-    params["unknonwn2"] = numbers[15]  # in ??? Needs to be checked with Chen Zhu...
-    params["unknonwn3"] = numbers[16]  # in ??? Needs to be checked with Chen Zhu...
-    params["unknonwn4"] = numbers[17]  # in ??? Needs to be checked with Chen Zhu...
-    params["unknonwn5"] = numbers[18]  # in ??? Needs to be checked with Chen Zhu...
+    # params["unknonwn0"] = numbers[13]  # in ??? Needs to be checked with Chen Zhu...
+    # params["unknonwn1"] = numbers[14]  # in ??? Needs to be checked with Chen Zhu...
+    # params["unknonwn2"] = numbers[15]  # in ??? Needs to be checked with Chen Zhu...
+    # params["unknonwn3"] = numbers[16]  # in ??? Needs to be checked with Chen Zhu...
+    # params["unknonwn4"] = numbers[17]  # in ??? Needs to be checked with Chen Zhu...
+    # params["unknonwn5"] = numbers[18]  # in ??? Needs to be checked with Chen Zhu...
     params["Tmax"]      = numbers[19]  # in K
+    # Convert above parameters to SI units
+    params["Gf"]       *= kJ_to_J        # from kJ/mol to J/mol
+    params["Hf"]       *= kJ_to_J        # from kJ/mol to J/mol
+    params["Sr"]       *= 1.0            # from J/(mol·K) to J/(mol·K)
+    params["Vr"]       *= 1.0/bar_to_Pa  # from J/bar to J/Pa
+    params["a"]        *= kJ_to_J        # from kJ/mol/K to J/mol/K
+    params["b"]        *= kJ_to_J/1e+5   # from kJ/(mol·K²) to J/(mol·K²) (without 1e+5 factor!)
+    params["c"]        *= kJ_to_J        # from kJ·K/mol to J·K/mol
+    params["d"]        *= kJ_to_J        # from kJ/(mol·K½) to J/(mol·K½)
+    params["alpha"]    *= 1.0/1e+5       # from 1/K to 1/K (without 1e+5 factor!)
+    params["kappa"]    *= kbar_to_Pa     # from kbar to Pa
+    params["kappap"]   *= 1.0            # dimensionless
+    params["kappapp"]  *= 1.0/kbar_to_Pa # from 1/kbar to 1/Pa
     return params
 
 
@@ -234,16 +349,25 @@ def getParamsGaseousSpecies(lines):
     numbers = [float(x) for x in numbers]
     assert(len(numbers) == 9)
     params = {}
-    params["Model"]    = "SupcrtblFluidHollandPowell"
-    params["Gf"]       = numbers[0]  # in kJ/mol
-    params["Hf"]       = numbers[1]  # in kJ/mol
-    params["Sr"]       = numbers[2]  # in J/(mol*K)
-    params["Vr"]       = numbers[3]  # in J/bar
-    params["a"]        = numbers[4]  # in kJ/(mol·K)
-    params["b"]        = numbers[5]  # in kJ/(mol·K²) (multiplied by 1e+5)
-    params["c"]        = numbers[6]  # in (kJ·K)/mol
-    params["d"]        = numbers[7]  # in kJ/(mol·K½)
-    params["Tmax"]     = numbers[8]  # in K
+    params["Model"] = "HollandPowell"
+    params["Gf"]    = numbers[0]  # in kJ/mol
+    params["Hf"]    = numbers[1]  # in kJ/mol
+    params["Sr"]    = numbers[2]  # in J/(mol·K)
+    params["Vr"]    = numbers[3]  # in J/bar
+    params["a"]     = numbers[4]  # in kJ/(mol·K)
+    params["b"]     = numbers[5]  # in kJ/(mol·K²) (multiplied by 1e+5)
+    params["c"]     = numbers[6]  # in (kJ·K)/mol
+    params["d"]     = numbers[7]  # in kJ/(mol·K½)
+    params["Tmax"]  = numbers[8]  # in K
+    # Convert above parameters to SI units
+    params["Gf"]   *= kJ_to_J        # from kJ/mol to J/mol
+    params["Hf"]   *= kJ_to_J        # from kJ/mol to J/mol
+    params["Sr"]   *= 1.0            # from J/(mol·K) to J/(mol·K)
+    params["Vr"]   *= 1.0/bar_to_Pa  # from J/bar to J/Pa
+    params["a"]    *= kJ_to_J        # from kJ/mol/K to J/mol/K
+    params["b"]    *= kJ_to_J/1e+5   # from kJ/(mol·K²) to J/(mol·K²) (without 1e+5 factor!)
+    params["c"]    *= kJ_to_J        # from kJ·K/mol to J·K/mol
+    params["d"]    *= kJ_to_J        # from kJ/(mol·K½) to J/(mol·K½)
     return params
 
 
@@ -254,18 +378,29 @@ def getParamsAqueousSolute(lines):
     numbers = [float(x) for x in numbers]
     assert(len(numbers) == 11)
     params = {}
-    params["Model"] = "SupcrtblAqueousSoluteHKF"
-    params["Gf"]    = numbers[0]   # in kJ/mol
-    params["Hf"]    = numbers[1]   # in kJ/mol
-    params["Sr"]    = numbers[2]   # in J/(mol*K)
-    params["a1"]    = numbers[3]   # in kJ/(mol*bar) (multiplied by 10)
-    params["a2"]    = numbers[4]   # in kJ/mol (multiplied by 1e-2)
-    params["a3"]    = numbers[5]   # in (kJ*K)/(mol*bar)
-    params["a4"]    = numbers[6]   # in (kJ*K)/mol (multiplied by 1e-4)
-    params["c1"]    = numbers[7]   # in kJ/(mol*K)
-    params["c2"]    = numbers[8]   # in (kJ*K)/mol (multiplied by 1e-4)
-    params["w"]     = numbers[9]   # in kJ/mol (multiplied by 1e-5)
-    params["z"]     = numbers[10]  # charge
+    params["Model"]  = "HKF"
+    params["Gf"]     = numbers[0]  # in kJ/mol
+    params["Hf"]     = numbers[1]  # in kJ/mol
+    params["Sr"]     = numbers[2]  # in J/(mol·K)
+    params["a1"]     = numbers[3]  # in J/(mol·bar) (multiplied by 10)
+    params["a2"]     = numbers[4]  # in J/mol (multiplied by 1e-2)
+    params["a3"]     = numbers[5]  # in (J·K)/(mol·bar)
+    params["a4"]     = numbers[6]  # in (J·K)/mol (multiplied by 1e-4)
+    params["c1"]     = numbers[7]  # in J/(mol·K)
+    params["c2"]     = numbers[8]  # in (J·K)/mol (multiplied by 1e-4)
+    params["wref"]   = numbers[9]  # in J/mol (multiplied by 1e-5)
+    params["charge"] = numbers[10] # dimensionless
+    # Convert above parameters to SI units
+    params["Gf"]   *= kJ_to_J           # from kJ/mol to J/mol
+    params["Hf"]   *= kJ_to_J           # from kJ/mol to J/mol
+    params["Sr"]   *= 1.0               # from J/(mol·K) to J/(mol·K)
+    params["a1"]   *= 1.0/bar_to_Pa/10  # from J/(mol·bar) to J/(mol·Pa) (without 10 factor!)
+    params["a2"]   *= 1.0/1e-2          # from J/mol to J/mol (without 1e-2 factor!)
+    params["a3"]   *= 1.0/bar_to_Pa     # from (J·K)/(mol·bar) to (J·K)/(mol·Pa)
+    params["a4"]   *= 1.0/1e-4          # from (J·K)/mol to (J·K)/mol (without 1e-4 factor!)
+    params["c1"]   *= 1.0               # from J/(mol·K) to J/(mol·K)
+    params["c2"]   *= 1.0/1e-4          # from (J·K)/mol to (J·K)/mol (without 1e-4 factor!)
+    params["wref"] *= 1.0/1e-5          # from J/mol to J/mol (without 1e-5 factor!)
     return params
 
 
@@ -321,18 +456,18 @@ def createMineralsWithPhaseTransitionsBraggWilliams(lines):
 
 def createGaseousSpecies(lines):
     assert(len(lines) % 6 == 0)
-    solutes = []
+    gases = []
     for i in range(0, len(lines), 6):
-        solutes.append(getGaseousSpeciesData(lines[i:i + 6]))
-    return solutes
+        gases.append(getGaseousSpeciesData(lines[i:i + 6]))
+    return gases
 
 
 def createAqueousSolutes(lines):
     assert(len(lines) % 6 == 0)
-    gases = []
+    solutes = []
     for i in range(0, len(lines), 6):
-        gases.append(getAqueousSoluteData(lines[i:i + 6]))
-    return gases
+        solutes.append(getAqueousSoluteData(lines[i:i + 6]))
+    return solutes
 
 
 def createSpecies(groups):
@@ -350,12 +485,25 @@ def createDatabase(species):
         obj.pop("Abbrev")
         obj.pop("Reference")
         obj.pop("Date")
+        if obj["AggregateState"] != "Aqueous" and obj["Charge"] == 0.0:
+            obj.pop("Charge")
         params = obj.pop("Params")
         modelname = params.pop("Model")
         model = obj["StandardThermoModel"] = {}
         model[modelname] = params
+        if "charge" in params:
+            params["charge"] = obj["Charge"]  # there are charge inconsistencies in SUPCRTBL -- use the charge from the elemental formula in the HKF block
+
     db = { "Species": species }
     return db
+
+
+def round_floats(o, sigfigures):
+    n = sigfigures
+    if isinstance(o, float): return float(f'%.{n}g' % o)
+    if isinstance(o, dict): return {k: round_floats(v, n) for k, v in o.items()}
+    if isinstance(o, (list, tuple)): return [round_floats(x, n) for x in o]
+    return o
 
 
 if __name__ == "__main__":
@@ -391,6 +539,9 @@ if __name__ == "__main__":
     groups = groupLinesBySection(content)
     species = createSpecies(groups)
     db = createDatabase(species)
+
+    # Preserve only 8 significant figures in the float numbers
+    db = round_floats(db, sigfigures=8)
 
     # Perform a json dump
     jdump = json.dumps(db, sort_keys=False, indent=2, separators=(',', ': '))
