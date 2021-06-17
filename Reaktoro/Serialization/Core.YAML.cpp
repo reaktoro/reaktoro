@@ -152,9 +152,9 @@ REAKTORO_YAML_ENCODE_DEFINE(FormationReaction)
         repr << (i++ == 0 ? "" : " ") << coeff << ":" << species.name();
 
     node["Reactants"] = repr.str();
-    if(obj.reactionThermoModel())
+    if(obj.reactionThermoModel().initialized())
         node["ReactionThermoModel"] = obj.reactionThermoModel().serialize();
-    if(obj.productStandardVolumeModel())
+    if(obj.productStandardVolumeModel().initialized())
         node["StandardVolumeModel"] = obj.productStandardVolumeModel().serialize();
 }
 

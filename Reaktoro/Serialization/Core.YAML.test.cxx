@@ -207,26 +207,81 @@ TEST_CASE("Testing YAML encoder/decoder for Element", "[Core.yaml]")
 
 TEST_CASE("Testing YAML encoder/decoder for ElementList", "[Core.yaml]")
 {
-    yaml node;
-    ElementList elementlist;
+    ElementList elements = {
+        Element("H"),
+        Element("O"),
+        Element("C"),
+        Element("N")
+    };
 
-    // TODO: Implement YAML encoding/decoding test for ElementList.
+    yaml node;
+    node = elements;
+
+    for(auto i = 0; i < elements.size(); ++i)
+    {
+        CHECK( node[i]["Symbol"].IsDefined() );
+        CHECK( node[i]["MolarMass"].IsDefined() );
+        CHECK( node[i]["Name"].IsDefined() );
+
+        CHECK( elements[i].symbol()    == node[i]["Symbol"].as<String>()    );
+        CHECK( elements[i].molarMass() == node[i]["MolarMass"].as<double>() );
+        CHECK( elements[i].name()      == node[i]["Name"].as<String>()      );
+
+        if(node[i]["Tags"].IsDefined())
+            CHECK( elements[i].tags() == node[i]["Tags"].as<Strings>()     );
+    }
+
+    ElementList elementlist = node;
+
+    for(auto i = 0; i < elements.size(); ++i)
+    {
+        CHECK( elementlist[i].symbol() == elements[i].symbol() );
+        CHECK( elementlist[i].molarMass() == elements[i].molarMass() );
+        CHECK( elementlist[i].name() == elements[i].name() );
+        CHECK( elementlist[i].tags() == elements[i].tags() );
+    }
 }
 
 TEST_CASE("Testing YAML encoder/decoder for ElementalComposition", "[Core.yaml]")
 {
     yaml node;
-    ElementalComposition elementalcomposition;
+    ElementalComposition elements;
 
-    // TODO: Implement YAML encoding/decoding test for ElementalComposition.
+    elements = {{Element("H"), 2}, {Element("O"), 1}};
+    node = elements;
+    CHECK(node.as<String>() == "2:H 1:O");
+
+    elements = {{Element("Ca"), 1}, {Element("C"), 1}, {Element("O"), 3}};
+    node = elements;
+
+    CHECK(node.as<String>() == "1:Ca 1:C 3:O");
 }
 
 TEST_CASE("Testing YAML encoder/decoder for FormationReaction", "[Core.yaml]")
 {
-    yaml node;
-    FormationReaction formationreaction;
+    auto A = Species("Ca++").withStandardGibbsEnergy(0.0);
+    auto B = Species("Mg++").withStandardGibbsEnergy(0.0);
+    auto C = Species("CO3--").withStandardGibbsEnergy(0.0);
 
-    // TODO: Implement YAML encoding/decoding test for FormationReaction.
+    auto reaction = FormationReaction()
+        .withReactants({{A, 1}, {B, 1}, {C, 2}})
+        .withEquilibriumConstant(1.0);
+
+    yaml node;
+    node = reaction;
+
+    yaml expected = yaml::parse(R"(
+Reactants: 1:Ca++ 1:Mg++ 2:CO3--
+ReactionThermoModel:
+  ConstLgK:
+    lgKr: 1
+    Pr: 100000
+StandardVolumeModel:
+  Constant:
+    V0: 0
+)");
+
+    CHECK( node.repr() == expected.repr() );
 }
 
 TEST_CASE("Testing YAML encoder/decoder for Param", "[Core.yaml]")
