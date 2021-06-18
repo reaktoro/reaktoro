@@ -19,9 +19,9 @@
 
 # Execute:
 #
-#   parse-supcrtbl-database -i supcrtbl.dat -ojson supcrtbl.json -oyaml supcrtbl.yaml
+#   generate-supcrtbl-databases -i supcrtbl.dat -ojson supcrtbl.json -oyaml supcrtbl.yaml
 #
-# to parse the database file supcrtbl.dat and produce files supcrtbl.json and supcrtbl.yaml.
+# to parse the database file supcrtbl.dat and generate files supcrtbl.json and supcrtbl.yaml.
 
 import sys
 import argparse
@@ -178,7 +178,7 @@ def parseElements(word):
     for i in range(0, len(words), 2):
         symbol = words[i]
         number = words[i + 1]
-        if symbol in ["+", "-"]:  # check if element is charge + or -
+        if symbol in ["+", "-"]:  # check if symbol is charge sign + or -
             break
         res += f"{number}:{symbol} "
 
@@ -498,11 +498,20 @@ def createDatabase(species):
     return db
 
 
-def round_floats(o, sigfigures):
+def roundFloats(o, sigfigures=8):
+    """Recursivelly round float numbers in an object to given significant figures
+
+    Args:
+        o (object): The object within which all float values are rounded.
+        sigfigures (int, optional): The number of significant figures. Defaults to 8.
+
+    Returns:
+        object: The given objected with all float values rounded
+    """
     n = sigfigures
     if isinstance(o, float): return float(f'%.{n}g' % o)
-    if isinstance(o, dict): return {k: round_floats(v, n) for k, v in o.items()}
-    if isinstance(o, (list, tuple)): return [round_floats(x, n) for x in o]
+    if isinstance(o, dict): return {k: roundFloats(v, n) for k, v in o.items()}
+    if isinstance(o, (list, tuple)): return [roundFloats(x, n) for x in o]
     return o
 
 
@@ -541,7 +550,7 @@ if __name__ == "__main__":
     db = createDatabase(species)
 
     # Preserve only 8 significant figures in the float numbers
-    db = round_floats(db, sigfigures=8)
+    db = roundFloats(db, sigfigures=8)
 
     # Perform a json dump
     jdump = json.dumps(db, sort_keys=False, indent=2, separators=(',', ': '))
@@ -555,11 +564,12 @@ if __name__ == "__main__":
 
     # Output the database in json format
     with open(args.outputjson, 'w') as f:
+        print(f"Creating ouptut file {args.outputjson} ...")
         f.write(jdump)
 
     # Output the database in yaml format
     with open(args.outputyaml, 'w') as f:
+        print(f"Creating ouptut file {args.outputyaml} ...")
         f.write(ydump)
 
-    # print(f"File {args.output} has been successfully written!")
     print(f"Files {args.outputjson} and {args.outputyaml} have been successfully written!")
