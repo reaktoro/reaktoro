@@ -29,7 +29,8 @@ import json
 import oyaml as yaml
 
 from supcrtbl_customization import (
-    supcrtbl_customized_species_name
+    supcrtbl_customized_species_name,
+    supcrtbl_organic_species
 )
 
 # Auxiliary constants
@@ -208,20 +209,30 @@ def parseCharge(word):
         else: return 0.0
 
 
-def determineSpeciesName(name):
-    return supcrtbl_customized_species_name.get(name, name)
+def determineSpeciesName(originalname):
+    return supcrtbl_customized_species_name.get(originalname, originalname)
+
+
+def determineTags(originalname):
+    tags = ""
+    if originalname in supcrtbl_organic_species:
+        tags += "organic "
+    return tags.strip()
 
 
 def getCommonSpeciesData(lines):
     assert(len(lines) == 3)
     data = {}
-    data["Name"] = determineSpeciesName(lines[0][:21].strip())
+    originalname = lines[0][:21].strip()
+    data["Name"] = determineSpeciesName(originalname)
     data["Formula"] = cleanFormulaFromOnes(lines[0][21:].strip())
     data["Abbrev"] = lines[1][:21].strip()
     data["Elements"] = parseElements(lines[1][21:].strip())
     data["Charge"] = parseCharge(lines[1][21:].strip())
     data["Reference"] = lines[2][:21].strip()
     data["Date"] = lines[2][21:].strip()
+    data["Tags"] = determineTags(originalname)
+    if data["Tags"] == "": data.pop("Tags")
     return data
 
 
