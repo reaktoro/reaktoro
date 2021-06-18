@@ -1,0 +1,527 @@
+#!/usr/bin/env python3
+
+# Reaktoro is a unified framework for modeling chemically reactive systems.
+#
+# Copyright (C) 2014-2021 Allan Leal
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+# This script converts SUPCRT and SUPCRTBL databases to YAML and JSON formats.
+# It expects the database files in a linearized format as shown below:
+#
+# Calcite CaCO3 Ca(1)C(1)O(3) min mk -269880.0 -288552.0 22.150 36.934 24.980000 5.240000 -6.200000 1200.00
+# Quartz SiO2 Si(1)O(2) min hkfmk 1 -204646.0 -217650.0 9.880 22.688 11.220000 8.200000 -2.700000 848.00 290.0 0.372 38.500 14.410000 1.940000 0.000000 2000.00
+# Enstatite MgSiO3 Mg(1)Si(1)O(3) min hkfmk 2 -348930.0 -369686.0 16.200 31.276 24.550000 4.740000 -6.280000 903.00 166.0 0.020 384.615 28.765000 0.000000 0.000000 1258.00 390.0 1.090 11.900 29.260000 0.000000 0.000000 1800.00
+# CH4(g) CH4 C(1)H(4) gas mk -12122.4 -17880.0 44.518 0.000 5.650000 11.440000 -0.460000 1500.00
+# CO2(g) CO2 C(1)O(2) gas mk -94254.0 -94051.0 51.085 0.000 10.570000 2.100000 -2.060000 2500.00
+# H2O(aq) H2O H(2)O(1) aq whkf 273.16 15.132 -56290 -68767 -67887 -55415
+# CO2(aq) CO2 C(1)O(2) aq hkf -92250. -98900. 28.100 15.2964 -10.0382 -55.4493 7.4092 36.8069 3.5851 -0.3107 0
+# Ca+2(aq) Ca+2 Ca(1)+(2) aq hkf -132120. -129800. -13.50 -0.1947 -7.2520 5.2966 -2.4792 9.00 -2.522 1.2366 2
+# Almandine Fe3Al2Si3O12 Fe(3)Al(2)Si(3)O(12) min hp -4937.50 -5260.65 342.00 11.525 0.6773 0.0000 -3772.70 -5.0440 2.12 1900.0 2.98 -0.0016 20.000
+# Muscovite KAl3Si3O12H2 K(1)Al(3)Si(3)O(12)H(2) min hp -5596.24 -5976.56 292.00 14.083 0.7564 -1.9840 -2170.00 -6.9792 3.07 490.0 4.15 -0.0085 21.000
+# Calcite CaCO3 Ca(1)C(1)O(3) min hpl -1129.60 -1207.88 92.50 3.689 0.1409 0.5029 -950.70 -0.8584 2.52 733.0 4.06 -0.0055 5.000 1240.00 10.00 0.0400
+# Quartz SiO2 Si(1)O(2) min hpl -856.28 -910.70 41.43 2.269 0.0929 -0.0642 -714.90 -0.7161 0.00 730.0 6.00 -0.0082 3.000 847.00 4.95 0.1188
+# Nepheline NaAlSiO4 Na(1)Al(1)Si(1)O(4) min hpl -1979.96 -2094.54 124.40 5.419 0.2727 -1.2398 0.00 -2.7631 4.63 465.0 4.16 -0.0089 7.000 467.00 10.00 0.0800
+# H2S(g) H2S H(2)S(1) gas hpg -33.13 -20.30 205.77 0.000 0.0474 1.0240 615.90 -0.3978
+# O2(g) O2 O(2) gas hpg -0.01 0.00 205.20 0.000 0.0483 -0.0691 499.20 -0.4207
+# H2O(aq) H2O H(2)O(1) aq whkfbl 273.16 63.312288 -235.51736 -287.721128 -284.039208 -231.85636
+# H2PO4-(aq) H2PO4- H(2)P(1)O(4)-(1) aq hkfbl -1130.266 -1296.287 90.374 27.1437 33.7205 10.8043 -13.0214 58.7580 -18.6627 5.4405 -1
+# H2S(aq) H2S H(2)S(1)+(0) aq hkfbl -27.920 -37.660 125.520 27.2366 28.3357 24.9559 -12.7989 135.1432 19.7903 -0.4184 0
+# HAsO4-2(aq) HAsO4-2 H(1)As(1)O(4)-(2) aq hkfbl -713.732 -908.409 11.422 418.3996 418.3996 418.3996 418.3996 418.3996 418.3996 418.3996 -2
+# HCO3-(aq) HCO3- H(1)C(1)O(3)-(1) aq hkfbl -586.940 -689.933 98.450 31.6398 4.8137 5.1656 -11.8265 54.1389 -19.9071 5.3275 -1
+#
+# The linearized format is organized as follows. Each line contains, in this order:
+#   - species name
+#   - species chemical formula
+#   - species elemental formula
+#   - species aggregate state code (`aq` for aqueous, `gas` for gases, `min` for minerals)
+#   - thermodynamic model code
+#   - thermodynamic model parameters
+#
+# The supported thermodynamic model codes are:
+#   - hkf:    denoting the HKF thermodynamic model for aqueous solutes (using calorie-based units for the parameters, as in classic SUPCRT files such as slop98.dat, slop07.dat, and slop16.dat)
+#   - hkfbl:  denoting the HKF thermodynamic model for aqueous solutes (using joule-based units for the parameters, as in SUPCRTBL file supcrtbl.dat)
+#   - whkf:   denoting the HKF thermodynamic model for aqueous solvent (using calorie-based units for the parameters)
+#   - whkfbl: denoting the HKF thermodynamic model for aqueous solvent (using joule-based units for the parameters)
+#   - hkfmk:  denoting the HKF-modified Maier-Kelley thermodynamic model for minerals with phase transitions
+#   - mk:     denoting the Maier-Kelley thermodynamic model for gases and minerals without phase transitions
+#   - hp:     denoting the Holland and Powel (2011) thermodynamic model for minerals without phase transitions
+#   - hpl:    denoting the Holland and Powel (2011) thermodynamic model for minerals with phase transitions using Landau theory
+#   - hpg:    denoting the Holland and Powel (2011) thermodynamic model for gases
+#
+# Following the thermodynamic model code hkf:
+#   - Gf, the apparent standard molal Gibbs free energy of formation of the aqueous solute from its elements (in unit of cal/mol)
+#   - Hf, the apparent standard molal enthalpy of formation of the aqueous solute from its elements (in unit of cal/mol)
+#   - Sr, the standard molal entropy of the aqueous solute at reference temperature and pressure (in unit of cal/(mol·K))
+#   - a1, the coefficient `a1` of the HKF thermodynamic model (in unit of 10¹·cal/(mol·bar))
+#   - a2, the coefficient `a2` of the HKF thermodynamic model (in unit of 10⁻²·cal/mol)
+#   - a3, the coefficient `a3` of the HKF thermodynamic model (in unit of (cal·K)/(mol·bar))
+#   - a4, the coefficient `a4` of the HKF thermodynamic model (in unit of 10⁻⁴·(cal·K)/mol)
+#   - c1, the coefficient `c1` of the HKF thermodynamic model (in unit of cal/(mol·K))
+#   - c2, the coefficient `c2` of the HKF thermodynamic model (in unit of 10⁻⁴·(cal·K)/mol)
+#   - wref, the conventional Born coefficient of the aqueous solute at reference temperature 298.15 K and pressure 1 bar (in unit of 10⁻⁵·cal/mol)
+#   - charge, the electric charge of the aqueous species
+#
+# Following the thermodynamic model code hkfbl:
+#   - Gf, the apparent standard molal Gibbs free energy of formation of the aqueous solute from its elements (in unit of kJ/mol)
+#   - Hf, the apparent standard molal enthalpy of formation of the aqueous solute from its elements (in unit of kJ/mol)
+#   - Sr, the standard molal entropy of the aqueous solute at reference temperature and pressure (in unit of J/(mol·K))
+#   - a1, the coefficient `a1` of the HKF thermodynamic model (in unit of 10¹·J/(mol·bar))
+#   - a2, the coefficient `a2` of the HKF thermodynamic model (in unit of 10⁻²·J/mol)
+#   - a3, the coefficient `a3` of the HKF thermodynamic model (in unit of (J·K)/(mol·bar))
+#   - a4, the coefficient `a4` of the HKF thermodynamic model (in unit of 10⁻⁴·(J·K)/mol)
+#   - c1, the coefficient `c1` of the HKF thermodynamic model (in unit of J/(mol·K))
+#   - c2, the coefficient `c2` of the HKF thermodynamic model (in unit of 10⁻⁴·(J·K)/mol)
+#   - wref, the conventional Born coefficient of the aqueous solute at reference temperature 298.15 K and pressure 1 bar (in unit of 10⁻⁵·J/mol)
+#   - charge, the electric charge of the aqueous species
+#
+# Following the thermodynamic model code whkf:
+#   - Ttr, the temperature of liquid water at the triple point (in unit of K)
+#   - Str, the molar entropy of liquid water at the triple point (in unit of cal/(mol·K))
+#   - Gtr, the molar Gibbs energy of liquid water at the triple point (in unit of cal/mol)
+#   - Htr, the molar enthalpy of liquid water at the triple point (in unit of cal/mol)
+#   - Utr, the molar internal energy of liquid water at the triple point (in unit of cal/mol)
+#   - Atr, the molar Helmholtz energy of liquid water at the triple point (in unit of cal/mol)
+#
+# Following the thermodynamic model code whkfbl:
+#   - Ttr, the temperature of liquid water at the triple point (in unit of K)
+#   - Str, the molar entropy of liquid water at the triple point (in unit of J/(mol·K))
+#   - Gtr, the molar Gibbs energy of liquid water at the triple point (in unit of kJ/mol)
+#   - Htr, the molar enthalpy of liquid water at the triple point (in unit of kJ/mol)
+#   - Utr, the molar internal energy of liquid water at the triple point (in unit of kJ/mol)
+#   - Atr, the molar Helmholtz energy of liquid water at the triple point (in unit of kJ/mol)
+#
+# Following the thermodynamic model code hkfmk:
+#   - ntr, the number of phase transitions the mineral species can undergo (minimum 0, maximum 3).
+#   - Gf, the apparent standard molal Gibbs free energy of formation of the mineral species from its elements (in unit of cal/mol)
+#   - Hf, the apparent standard molal enthalpy of formation of the mineral species from its elements (in unit of cal/mol)
+#   - Sr, the standard molal entropy of the mineral species at reference temperature and pressure (in unit of cal/(mol·K))
+#   - Vr, the standard molal volume of the mineral species at reference temperature and pressure (in unit of cm³/mol)
+#   - a(i), the coefficient a for the i-th phase region (in unit of cal/(mol·K))
+#   - b(i), the coefficient b for the i-th phase region (in unit of 10³·cal/(mol·K²))
+#   - c(i), the coefficient c for the i-th phase region (in unit of 10⁻⁵·(cal·K)/mol)
+#   - Ttr(i), the temperature at which the mineral experiences phase transition along the line of reference pressure (in unit of K)
+#   - Htr(i), the change in the standard molal enthalpy for the i-th phase region (in unit of cal/mol)
+#   - Vtr(i), the change in the standard molal volume for the i-th phase region (in unit of cm³/mol)
+#   - dPdTtr(i), the Clapeyron slote for the i-th phase region (in unit of bar/K)
+#   - a(n), the coefficient a for the last phase region (in unit of cal/(mol·K))
+#   - b(n), the coefficient b for the last phase region (in unit of 10³·cal/(mol·K²))
+#   - c(n), the coefficient c for the last phase region (in unit of 10⁻⁵·(cal·K)/mol)
+#   - Tmax, the maximum temperature for which the HKF-modified Maier-Kelley thermodynamic model equation is valid (in unit of K)
+#
+# Following the thermodynamic model code mk:
+#   - Gf, the apparent standard molal Gibbs free energy of formation of the species from its elements (in unit of cal/mol)
+#   - Hf, the apparent standard molal enthalpy of formation of the species from its elements (in unit of cal/mol)
+#   - Sr, the standard molal entropy of the species at reference temperature and pressure (in unit of cal/(mol·K))
+#   - Vr, the standard molal volume of the species at reference temperature and pressure (in unit of cm³/mol)
+#   - a, the coefficient `a` of the Maier--Kelley equation of state (in unit of cal/(mol·K))
+#   - b, the coefficient `b` of the Maier--Kelley equation of state (in unit of 10³·cal/(mol·K²))
+#   - c, the coefficient `c` of the Maier--Kelley equation of state (in unit of 10⁻⁵·(cal·K)/mol)
+#   - Tmax, the maximum temperature at which the Maier--Kelley equation of state can be applied for the species (in unit of K)
+#
+# Following the thermodynamic model code hp:
+#   - Gf, the apparent standard molal Gibbs free energy of formation of the mineral species from its elements (in unit of kJ/mol)
+#   - Hf, the apparent standard molal enthalpy of formation of the mineral species from its elements (in unit of kJ/mol)
+#   - Sr, the standard molal entropy of the mineral species at reference temperature and pressure (in unit of J/(mol·K))
+#   - Vr, the standard molal volume of the mineral species at reference temperature and pressure (in unit of J/(mol·bar))
+#   - a, the coefficient `a` of the Holland and Powell (2011) thermodynamic model (in unit of kJ/(mol·K))
+#   - b, the coefficient `b` of the Holland and Powell (2011) thermodynamic model (in unit of 10⁵·kJ/(mol·K²))
+#   - c, the coefficient `c` of the Holland and Powell (2011) thermodynamic model (in unit of (kJ·K)/mol)
+#   - d, the coefficient `d` of the Holland and Powell (2011) thermodynamic model (in unit of kJ/(mol·K½)
+#   - alpha, the coefficient `α` of the Holland and Powell (2011) thermodynamic model (in unit of 10⁵·1/K)
+#   - kappa, the coefficient `κ` of the Holland and Powell (2011) thermodynamic model (in unit of kbar)
+#   - kappap, the coefficient `κ"` of the Holland and Powell (2011) thermodynamic model (dimensionless)
+#   - kappapp, the coefficient `κ""` of the Holland and Powell (2011) thermodynamic model (in unit 1/kbar)
+#   - numatoms, the number of atoms in the chemical formula of the mineral
+#   - Tmax, the maximum temperature for which the Holland and Powell (2011) thermodynamic model is valid (in unit of K)
+#
+# Following the thermodynamic model code hpl:
+#   - Gf, the apparent standard molal Gibbs free energy of formation of the mineral species from its elements (in unit of kJ/mol)
+#   - Hf, the apparent standard molal enthalpy of formation of the mineral species from its elements (in unit of kJ/mol)
+#   - Sr, the standard molal entropy of the mineral species at reference temperature and pressure (in unit of J/(mol·K))
+#   - Vr, the standard molal volume of the mineral species at reference temperature and pressure (in unit of J/(mol·bar))
+#   - a, the coefficient `a` of the Holland and Powell (2011) thermodynamic model (in unit of kJ/(mol·K))
+#   - b, the coefficient `b` of the Holland and Powell (2011) thermodynamic model (in unit of 10⁵·kJ/(mol·K²))
+#   - c, the coefficient `c` of the Holland and Powell (2011) thermodynamic model (in unit of (kJ·K)/mol)
+#   - d, the coefficient `d` of the Holland and Powell (2011) thermodynamic model (in unit of kJ/(mol·K½)
+#   - alpha, the coefficient `α` of the Holland and Powell (2011) thermodynamic model (in unit of 10⁵·1/K)
+#   - kappa, the coefficient `κ` of the Holland and Powell (2011) thermodynamic model (in unit of kbar)
+#   - kappap, the coefficient `κ"` of the Holland and Powell (2011) thermodynamic model (dimensionless)
+#   - kappapp, the coefficient `κ""` of the Holland and Powell (2011) thermodynamic model (in unit 1/kbar)
+#   - numatoms, the number of atoms in the chemical formula of the mineral
+#   - Tcr, the critical temperature of the mineral at 1 bar (in unit of K)
+#   - Smax, the entropy of disordering of the mineral at the critical temperature above (in unit of J/(mol·K))
+#   - Vmax, the volume of disordering of the mineral at the critical temperature above (in unit of J/(mol·bar))
+#   - Tmax, the maximum temperature for which the Holland and Powell (2011) thermodynamic model is valid (in unit of K)
+#
+# Following the thermodynamic model code hpg:
+#   - Gf, the apparent standard molal Gibbs free energy of formation of the gas from its elements (in unit of kJ/mol)
+#   - Hf, the apparent standard molal enthalpy of formation of the gas from its elements (in unit of kJ/mol)
+#   - Sr, the standard molal entropy of the gas at reference temperature and pressure (in unit of J/(mol·K))
+#   - Vr, the standard molal volume of the gas at reference temperature and pressure (in unit of J/(mol·bar))
+#   - a, the coefficient `a` of the Holland and Powell (2011) thermodynamic model (in unit of kJ/(mol·K))
+#   - b, the coefficient `b` of the Holland and Powell (2011) thermodynamic model (in unit of 10⁵·kJ/(mol·K²))
+#   - c, the coefficient `c` of the Holland and Powell (2011) thermodynamic model (in unit of (kJ·K)/mol)
+#   - d, the coefficient `d` of the Holland and Powell (2011) thermodynamic model (in unit of kJ/(mol·K½)
+#   - Tmax, the maximum temperature for which the Holland and Powell (2011) thermodynamic model is valid (in unit of K)
+
+
+import os
+import fire
+import json
+import oyaml as yaml
+
+
+cal_to_J        = 4.184     # from cal to J
+cal_to_kJ       = 4.184e-3  # from cal to kJ
+cm3_to_m3       = 1.0e-6    # from cm³ to m³
+J_per_bar_to_m3 = 1.0e-5    # from J/bar to m³
+bar_to_Pa       = 1.0e+5    # from bar to Pa
+kbar_to_Pa      = 1.0e+8    # from kbar to Pa
+kJ_to_J         = 1.0e+3    # from kJ to J
+
+
+nan = float("nan")
+
+
+def nextval(iteritem):
+    val = next(iteritem)
+    return float(val) if val != "null" else nan
+
+
+def roundFloats(o, sigfigures=8):
+    """Recursivelly round float numbers in an object to given significant figures
+
+    Args:
+        o (object): The object within which all float values are rounded.
+        sigfigures (int, optional): The number of significant figures. Defaults to 8.
+
+    Returns:
+        object: The given objected with all float values rounded
+    """
+    n = sigfigures
+    if isinstance(o, float): return float(f'%.{n}g' % o)
+    if isinstance(o, dict): return {k: roundFloats(v, n) for k, v in o.items()}
+    if isinstance(o, (list, tuple)): return [roundFloats(x, n) for x in o]
+    return o
+
+
+def raiseErrorModelCodeNotSupported(code):
+    raise RuntimeError(
+        "The provided thermodynamic model code `{}` is not supported.\n"
+        "Supported codes for SUPCRT-based databases are:\n"
+        " - hkf, whkf, mk, and hkfmk.\n"
+        "Supported codes for SUPCRTBL-based databases are:\n"
+        " - hkfbl, whkfbl, hp, hpg, hpl.\n".format(code))
+
+
+def parseElements(word):
+    """Parse a string such as "Fe(3)Al(2)Si(3)O(12)" to extract element symbols and coefficients
+
+    Applying this method in the following strings produce the corresponding results:
+        * H(2)O(1)      produces 2:H 1:O
+        * Ca(1)C(1)O(3) produces 1:Ca 1:C 3:O
+        * Ag(1)+(2)     produces 1:Ag
+        * Cl(1)-(1)     produces 1:Cl
+    where E above denotes an "element" symbol to represent electron.
+
+    Args:
+        word (str): The string containing the elemental formula of a species
+
+    Returns:
+        str: A string containing the element symbols and their coefficients.
+    """
+    # Split the elemental formula in words delimited by ( or )
+    words = word.replace(")", "(").split("(")  # split on ( or )
+    words = [x for x in words if x != ""]  # remove empty string ""
+
+    # Check if the elemental formula contains only one element
+    if len(words) == 1:
+        return f"1:{words[0]}"
+
+    # Collect the pairs (element, coefficient) in the list of elements
+    res = ""
+    for i in range(0, len(words), 2):
+        symbol = words[i]
+        number = words[i + 1]
+        if symbol in ["+", "-"]:  # check if symbol is charge sign + or -
+            break
+        res += f"{number}:{symbol} "
+
+    return res[:-1]
+
+
+def parseCharge(word):
+    """Parse a string such as "Fe(1)C(5)H(9)O(2)+(1)" to extract electric charge
+
+    Args:
+        word (str): The string containing the elemental formula of a species.
+
+    Returns:
+        float: The electric charge of the species.
+    """
+    i = word.find('-(')
+    if i != -1:
+        return -float(word[i + 2:-1])
+    else:
+        i = word.find('+(')
+        if i != -1:
+            return float(word[i + 2:-1])
+        else: return 0.0
+
+
+def determineAggregateState(agcode):
+    """Return the aggregate state of the species with given thermodynamic model"""
+    if agcode == "aq": return "Aqueous"
+    if agcode == "gas": return "Gaseous"
+    if agcode == "min": return "Mineral"
+    raise RuntimeError(f"The aggregate state code `{agcode}` is not supported (must be one of: `aq`, `min`, `gas`")
+
+
+def createStandardThermoModel(entries):
+    """
+    Create the StandardThermoModel object with given linearized parameter values in list form.
+    """
+    mcode = next(entries)
+
+    model = {}
+
+    if mcode == "hkf":
+        params = {}
+        params["Gf"] = nextval(entries) * cal_to_J                       # from cal/mol to J/mol
+        params["Hf"] = nextval(entries) * cal_to_J                       # from cal/mol to J/mol
+        params["Sr"] = nextval(entries) * cal_to_J                       # from cal/(mol·K) to J/(mol·K)
+        params["a1"] = nextval(entries) * cal_to_J / bar_to_Pa * 1.0e-01 # from 10¹·cal/(mol·bar) to J/(mol·Pa)
+        params["a2"] = nextval(entries) * cal_to_J * 1.0e+02             # from 10⁻²·cal/mol to J/mol
+        params["a3"] = nextval(entries) * cal_to_J / bar_to_Pa           # from (cal·K)/(mol·bar) to (J·K)/(mol·Pa)
+        params["a4"] = nextval(entries) * cal_to_J * 1.0e+04             # from 10⁻⁴·(cal·K)/mol to (J·K)/mol
+        params["c1"] = nextval(entries) * cal_to_J                       # from cal/(mol·K) to J/(mol·K)
+        params["c2"] = nextval(entries) * cal_to_J * 1.0e+04             # from 10⁻⁴·(cal·K)/mol to (J·K)/mol
+        params["wref"] = nextval(entries) * cal_to_J  * 1.0e+05          # from 10⁻⁵·cal/mol to J/mol
+        params["charge"] = nextval(entries)
+        model["HKF"] = params
+
+    elif mcode == "hkfbl":
+        params = {}
+        params["Gf"] = nextval(entries) * kJ_to_J             # from kJ/mol to J/mol
+        params["Hf"] = nextval(entries) * kJ_to_J             # from kJ/mol to J/mol
+        params["Sr"] = nextval(entries)                       # in J/(mol·K)
+        params["a1"] = nextval(entries) / bar_to_Pa * 1.0e-01 # from 10¹·J/(mol·bar) to J/(mol·Pa)
+        params["a2"] = nextval(entries) * 1.0e+02             # from 10⁻²·J/mol to J/mol
+        params["a3"] = nextval(entries) / bar_to_Pa           # from (J·K)/(mol·bar) to (J·K)/(mol·Pa)
+        params["a4"] = nextval(entries) * 1.0e+04             # from 10⁻⁴·(J·K)/mol to (J·K)/mol
+        params["c1"] = nextval(entries)                       # in J/(mol·K)
+        params["c2"] = nextval(entries) * 1.0e+04             # from 10⁻⁴·(J·K)/mol to (J·K)/mol
+        params["wref"] = nextval(entries)  * 1.0e+05          # from 10⁻⁵·J/mol to J/mol
+        params["charge"] = nextval(entries)
+        model["HKF"] = params
+
+    elif mcode == "whkf":
+        params = {}
+        params["Ttr"] = nextval(entries)            # in K
+        params["Str"] = nextval(entries) * cal_to_J # from cal/(mol·K) to J/(mol·K)
+        params["Gtr"] = nextval(entries) * cal_to_J # from cal/mol to J/mol
+        params["Htr"] = nextval(entries) * cal_to_J # from cal/mol to J/mol
+        model["WaterHKF"] = params
+
+    elif mcode == "whkfbl":
+        params = {}
+        params["Ttr"] = nextval(entries)           # in K
+        params["Str"] = nextval(entries)           # in J/(mol·K)
+        params["Gtr"] = nextval(entries) * kJ_to_J # from kJ/mol to J/mol
+        params["Htr"] = nextval(entries) * kJ_to_J # from kJ/mol to J/mol
+        model["WaterHKF"] = params
+
+    elif mcode == "mk":
+        params = {}
+        params["Gf"] = nextval(entries) * cal_to_J          # from cal/mol to J/mol
+        params["Hf"] = nextval(entries) * cal_to_J          # from cal/mol to J/mol
+        params["Sr"] = nextval(entries) * cal_to_J          # from cal/(mol·K) to J/(mol·K)
+        params["Vr"] = nextval(entries) * cm3_to_m3         # from cm³/mol to m³/mol
+        params["a"] = nextval(entries) * cal_to_J           # from cal/(mol·K) to J/(mol·K)
+        params["b"] = nextval(entries) * cal_to_J * 1.0e-03 # from 10³·cal/(mol·K²) to J/(mol·K²)
+        params["c"] = nextval(entries) * cal_to_J * 1.0e+05 # from 10⁻⁵·(cal·K)/mol to (J·K)/mol
+        params["Tmax"] = nextval(entries)                   # in K
+        model["MaierKelley"] = params
+
+    elif mcode == "hkfmk":
+        params = {}
+        params["ntr"] = int(next(entries))
+        params["Gf"] = nextval(entries) * cal_to_J  # from cal/mol to J/mol
+        params["Hf"] = nextval(entries) * cal_to_J  # from cal/mol to J/mol
+        params["Sr"] = nextval(entries) * cal_to_J  # from cal/mol to J/mol
+        params["Vr"] = nextval(entries) * cm3_to_m3 # from cm³/mol to m³/mol
+        params["a"] = []
+        params["b"] = []
+        params["c"] = []
+
+        if params["ntr"] > 0:
+            params["Ttr"] = []
+            params["Htr"] = []
+            params["Vtr"] = []
+            params["dPdTtr"] = []
+            for i in range(params["ntr"]):
+                params["a"].append(nextval(entries) * cal_to_J)           # from cal/(mol·K) to J/(mol·K)
+                params["b"].append(nextval(entries) * cal_to_J * 1.0e-03) # from 10³·cal/(mol·K²) to J/(mol·K²)
+                params["c"].append(nextval(entries) * cal_to_J * 1.0e+05) # from 10⁻⁵·(cal·K)/mol to (J·K)/mol
+                params["Ttr"].append(nextval(entries))                    # in K
+                params["Htr"].append(nextval(entries) * cal_to_J)         # from cal/mol to J/mol
+                params["Vtr"].append(nextval(entries) * cm3_to_m3)        # from cm³/mol to m³/mol
+                params["dPdTtr"].append(nextval(entries) * bar_to_Pa)     # from bar/K to Pa/K
+            params["a"].append(nextval(entries) * cal_to_J)               # from cal/(mol·K) to J/(mol·K)
+            params["b"].append(nextval(entries) * cal_to_J * 1.0e-03)     # from 10³·cal/(mol·K²) to J/(mol·K²)
+            params["c"].append(nextval(entries) * cal_to_J * 1.0e+05)     # from 10⁻⁵·(cal·K)/mol to (J·K)/mol
+        params["Tmax"] = nextval(entries)                             # in K
+        model["MineralHKF"] = params
+
+    elif mcode in ["hp", "hpg", "hpl"]:
+        params = {}
+        params["Gf"] = nextval(entries) * kJ_to_J             # from kJ/mol to J/mol
+        params["Hf"] = nextval(entries) * kJ_to_J             # from kJ/mol to J/mol
+        params["Sr"] = nextval(entries)                       # in J/(mol·K)
+        params["Vr"] = nextval(entries) * J_per_bar_to_m3     # from J/(mol·bar) to m³/mol
+        params["a"] = nextval(entries) * kJ_to_J              # from kJ/(mol·K) to J/(mol·K)
+        params["b"] = nextval(entries) * kJ_to_J * 1.0e-05    # from 10⁵·kJ/(mol·K²) to J/(mol·K²)
+        params["c"] = nextval(entries) * kJ_to_J              # from (kJ·K)/mol to (J·K)/mol
+        params["d"] = nextval(entries) * kJ_to_J              # from kJ/(mol·K½) to J/(mol·K½)
+
+        if mcode in ["hp", "hpl"]:
+            params["alpha"] = nextval(entries) * 1.0e-05      # from 10⁵·1/K to 1/K
+            params["kappa"] = nextval(entries) * kbar_to_Pa   # from kbar to Pa
+            params["kappap"] = nextval(entries)               # dimensionless
+            params["kappapp"] = nextval(entries) / kbar_to_Pa # from 1/kbar to 1/Pa
+            params["numatoms"] = nextval(entries)
+
+        if mcode == "hpl":
+            params["Tcr"] = nextval(entries)
+            params["Smax"] = nextval(entries)                   # in J/(mol·K)
+            params["Vmax"] = nextval(entries) * J_per_bar_to_m3 # from J/(mol·bar) to m³/mol
+        model["HollandPowell"] = params
+
+    else: raiseErrorModelCodeNotSupported(mcode)
+
+    model = roundFloats(model)
+
+    return model
+
+
+def createSpecies(splitline):
+    """
+    Create a species object (as a dict) with given linearized data in list form.
+    """
+
+    entries = iter(splitline)
+
+    species = {}
+    species["Name"] = next(entries)
+    species["Formula"] = next(entries)
+    strucformula = next(entries)
+    species["Elements"] = parseElements(strucformula)
+    species["Charge"] = parseCharge(strucformula)
+    agcode = next(entries) # the aggregate state code (e.g., min, gas, aq)
+    species["AggregateState"] = determineAggregateState(agcode)
+    species["StandardThermoModel"] = createStandardThermoModel(entries)
+
+    return species
+
+
+def clean(dump):
+    """
+    Clean a YAML or JSON dump from occurrences of @[...]@ for lists.
+    Also, converts nan to null value.
+    """
+    return dump \
+         .replace('\"@[', '[').replace(']@\"', ']') \
+         .replace('\'@[', '[').replace(']@\'', ']') \
+         .replace('\"@{', '{').replace('}@\"', '}') \
+         .replace('\'@{', '{').replace('}@\'', '}') \
+         .replace("'", '"') \
+         .replace('""', '') \
+         .replace('.nan', 'null') \
+         .replace('nan', 'null') \
+         .replace('NaN', 'null')
+
+
+def convert(filename, outdir):
+    """
+    Convert a SUPCRT database in a pre-linearized format into YAML, JSON, or final linearized format.
+
+    This file will convert a SUPCRT or SUPCRTBL database file in a pre linearized
+    format (files linearized.supcrt**.dat where ** is 98, 07, 16) into files with
+    extension: yaml and json.
+
+    Here is an explanation for them:
+
+    - yaml: the contents of the linearized database format coverted to an YAML format.
+    - json: the contents of the linearized database format coverted to a JSON format.
+
+    If `filename` is `linearized.supcrt98.dat`, for example, the files `supcrt98.yaml`
+    and `supcrt98.json` will be output.
+
+    Remark: The input format (linearized.slop*.dat) is currently generated manually,
+    using SublimeText and/or VisualStudioCode editor multi-line editing capabilities
+    together with regex search. By putting each species in a single line, it is
+    easier to quickly inspect errors in the original databases (e.g., formulas
+    with wrong element names, duplicate aqueous species, species with wrong
+    electric charge, species names without charge suffix, etc.).
+
+    :param str filename: The name of the input file (e.g., linearized.supcrt98.dat)
+    :param str outdir: The directory where to output the database files.
+    """
+
+    # Create the list of species in each line of the pre linearized database file
+    species = []
+
+    with open(filename, "r") as f:
+        for line in f:
+            s = createSpecies(line.split())
+            species.append(s)
+
+    # The base name taken from the input file (e.g., supcrt98 for linearized.supcrt98.dat)
+    basename = os.path.basename(filename)
+    basename = basename.split(".")[1]  # "linearized.supcrt98.dat" => ["linearized", "supcrt98", "dat"] get array entry at index 1
+
+    # The names of the json and yaml databases
+    jname = outdir + "/" + basename + ".json"
+    yname = outdir + "/" + basename + ".yaml"
+
+    # Create output directories if they do not exist
+    if not os.path.exists(outdir): os.makedirs(outdir)
+    if not os.path.exists(outdir): os.makedirs(outdir)
+
+    # Perform a json dump
+    jdump = json.dumps(species, sort_keys=False, indent=2, separators=(",", ": "))
+
+    # Perform a yaml dump
+    ydump = yaml.dump(species, width=float("inf"))
+
+    # Clean both json and yaml dumps from, for example, @ surrounding lists (e.g., @[...]@)
+    jdump = clean(jdump)
+    ydump = clean(ydump)
+
+    # Output the database in json format
+    with open(jname, "w") as f:
+        print(f"Creating ouptut file {jname} ...")
+        f.write(jdump)
+
+    # Output the database in yaml format
+    with open(yname, "w") as f:
+        print(f"Creating ouptut file {yname} ...")
+        f.write(ydump)
+
+    print(f"Files {yname} and {jname} have been successfully written!")
+
+
+if __name__ == "__main__":
+    fire.Fire(convert)
