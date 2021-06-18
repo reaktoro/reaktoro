@@ -28,6 +28,10 @@ import argparse
 import json
 import oyaml as yaml
 
+from supcrtbl_customization import (
+    supcrtbl_customized_species_name
+)
+
 # Auxiliary constants
 kJ_to_J = 1e3
 bar_to_Pa = 1e5
@@ -204,10 +208,14 @@ def parseCharge(word):
         else: return 0.0
 
 
+def determineSpeciesName(name):
+    return supcrtbl_customized_species_name.get(name, name)
+
+
 def getCommonSpeciesData(lines):
     assert(len(lines) == 3)
     data = {}
-    data["Name"] = lines[0][:21].strip()
+    data["Name"] = determineSpeciesName(lines[0][:21].strip())
     data["Formula"] = cleanFormulaFromOnes(lines[0][21:].strip())
     data["Abbrev"] = lines[1][:21].strip()
     data["Elements"] = parseElements(lines[1][21:].strip())
