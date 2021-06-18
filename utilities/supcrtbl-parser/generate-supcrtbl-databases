@@ -513,6 +513,7 @@ def createDatabase(species):
         if "charge" in params:
             params["charge"] = obj["Charge"]  # there are charge inconsistencies in SUPCRTBL -- use the charge from the elemental formula in the HKF block
 
+    species = [organizeSpeciesDataBlock(x) for x in species]
     db = { "Species": species }
     return db
 
@@ -532,6 +533,19 @@ def roundFloats(o, sigfigures=8):
     if isinstance(o, dict): return {k: roundFloats(v, n) for k, v in o.items()}
     if isinstance(o, (list, tuple)): return [roundFloats(x, n) for x in o]
     return o
+
+
+def organizeSpeciesDataBlock(species):
+    """Ensure a certain ordering in the YAML nodes of species"""
+    newspecies = {}
+    newspecies["Name"] = species["Name"]
+    newspecies["Formula"] = species["Formula"]
+    newspecies["Elements"] = species["Elements"]
+    if "Charge" in species: newspecies["Charge"] = species["Charge"]
+    if "Tags" in species: newspecies["Tags"] = species["Tags"]
+    newspecies["AggregateState"] = species["AggregateState"]
+    newspecies["StandardThermoModel"] = species["StandardThermoModel"]
+    return newspecies
 
 
 if __name__ == "__main__":

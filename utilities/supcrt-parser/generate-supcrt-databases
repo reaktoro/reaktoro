@@ -182,6 +182,9 @@ import fire
 import json
 import oyaml as yaml
 
+from supcrt_customization import (
+    supcrt_organic_species
+)
 
 cal_to_J        = 4.184     # from cal to J
 cal_to_kJ       = 4.184e-3  # from cal to kJ
@@ -287,6 +290,13 @@ def determineAggregateState(agcode):
     if agcode == "gas": return "Gaseous"
     if agcode == "min": return "Mineral"
     raise RuntimeError(f"The aggregate state code `{agcode}` is not supported (must be one of: `aq`, `min`, `gas`")
+
+
+def determineTags(name):
+    tags = ""
+    if name in supcrt_organic_species:
+        tags += "organic "
+    return tags.strip()
 
 
 def createStandardThermoModel(entries):
@@ -431,8 +441,10 @@ def createSpecies(splitline):
     species["Elements"] = parseElements(strucformula)
     if agcode == "aq":
         species["Charge"] = parseCharge(strucformula)
+    species["Tags"] = determineTags(species["Name"])
     species["AggregateState"] = determineAggregateState(agcode)
     species["StandardThermoModel"] = createStandardThermoModel(entries)
+    if species["Tags"] == "": species.pop("Tags")
 
     return species
 

@@ -5151,6 +5151,7 @@
     "Formula": "C4H9NH2",
     "Elements": "4:C 11:H 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5173,6 +5174,7 @@
     "Formula": "C4H9OH",
     "Elements": "4:C 10:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5195,6 +5197,7 @@
     "Formula": "C4H8",
     "Elements": "4:C 8:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5217,6 +5220,7 @@
     "Formula": "C4H6",
     "Elements": "4:C 6:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5239,6 +5243,7 @@
     "Formula": "C7H15NH2",
     "Elements": "7:C 17:H 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5261,6 +5266,7 @@
     "Formula": "C7H15OH",
     "Elements": "7:C 16:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5283,6 +5289,7 @@
     "Formula": "C7H14",
     "Elements": "7:C 14:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5305,6 +5312,7 @@
     "Formula": "C7H12",
     "Elements": "7:C 12:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5327,6 +5335,7 @@
     "Formula": "C6H13NH2",
     "Elements": "6:C 15:H 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5349,6 +5358,7 @@
     "Formula": "C6H13OH",
     "Elements": "6:C 14:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5371,6 +5381,7 @@
     "Formula": "C6H12",
     "Elements": "6:C 12:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5393,6 +5404,7 @@
     "Formula": "C6H10",
     "Elements": "6:C 10:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5415,6 +5427,7 @@
     "Formula": "C8H17NH2",
     "Elements": "8:C 19:H 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5437,6 +5450,7 @@
     "Formula": "C8H17OH",
     "Elements": "8:C 18:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5459,6 +5473,7 @@
     "Formula": "C8H16",
     "Elements": "8:C 16:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5481,6 +5496,7 @@
     "Formula": "C8H14",
     "Elements": "8:C 14:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5503,6 +5519,7 @@
     "Formula": "C5H11NH2",
     "Elements": "5:C 13:H 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5525,6 +5542,7 @@
     "Formula": "C5H11OH",
     "Elements": "5:C 12:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5547,6 +5565,7 @@
     "Formula": "C5H10",
     "Elements": "5:C 10:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5569,6 +5588,7 @@
     "Formula": "C5H8",
     "Elements": "5:C 8:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5591,6 +5611,7 @@
     "Formula": "C3H7NH2",
     "Elements": "3:C 9:H 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5613,6 +5634,7 @@
     "Formula": "C3H7OH",
     "Elements": "3:C 8:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5635,6 +5657,7 @@
     "Formula": "C3H6",
     "Elements": "3:C 6:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5657,6 +5680,7 @@
     "Formula": "C3H4",
     "Elements": "3:C 4:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5679,6 +5703,7 @@
     "Formula": "C4H8O",
     "Elements": "4:C 8:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5701,6 +5726,7 @@
     "Formula": "C7H14O",
     "Elements": "7:C 14:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5723,6 +5749,7 @@
     "Formula": "C6H12O",
     "Elements": "6:C 12:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5745,6 +5772,7 @@
     "Formula": "C4H7O3-",
     "Elements": "4:C 7:H 3:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5767,6 +5795,7 @@
     "Formula": "C4H8O3",
     "Elements": "4:C 8:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5789,6 +5818,7 @@
     "Formula": "C10H19O3-",
     "Elements": "10:C 19:H 3:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5811,6 +5841,7 @@
     "Formula": "C10H20O3",
     "Elements": "10:C 20:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5833,6 +5864,7 @@
     "Formula": "C7H13O3-",
     "Elements": "7:C 13:H 3:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5855,6 +5887,7 @@
     "Formula": "C7H14O3",
     "Elements": "7:C 14:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5877,6 +5910,7 @@
     "Formula": "C6H11O3-",
     "Elements": "6:C 11:H 3:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5899,6 +5933,7 @@
     "Formula": "C6H12O3",
     "Elements": "6:C 12:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5965,6 +6000,7 @@
     "Formula": "C8H15O3-",
     "Elements": "8:C 15:H 3:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -5987,6 +6023,7 @@
     "Formula": "C8H16O3",
     "Elements": "8:C 16:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6009,6 +6046,7 @@
     "Formula": "C5H9O3-",
     "Elements": "5:C 9:H 3:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6031,6 +6069,7 @@
     "Formula": "C5H10O3",
     "Elements": "5:C 10:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6053,6 +6092,7 @@
     "Formula": "C8H16O",
     "Elements": "8:C 16:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6075,6 +6115,7 @@
     "Formula": "C5H10O",
     "Elements": "5:C 10:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6097,6 +6138,7 @@
     "Formula": "C4H9NO2",
     "Elements": "4:C 9:H 2:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6119,6 +6161,7 @@
     "Formula": "CH3CONH2",
     "Elements": "2:C 5:H 1:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6141,6 +6184,7 @@
     "Formula": "C2H3O2-",
     "Elements": "2:C 3:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6163,6 +6207,7 @@
     "Formula": "C2H4O2",
     "Elements": "2:C 4:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6185,6 +6230,7 @@
     "Formula": "C3H6O",
     "Elements": "3:C 6:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6207,6 +6253,7 @@
     "Formula": "C6H8O4-2",
     "Elements": "6:C 8:H 4:O",
     "Charge": -2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6229,6 +6276,7 @@
     "Formula": "C6H10O4",
     "Elements": "6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6251,6 +6299,7 @@
     "Formula": "C3H7NO2",
     "Elements": "3:C 7:H 2:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6273,6 +6322,7 @@
     "Formula": "C3H6NO2-",
     "Elements": "3:C 6:H 2:O 1:N",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6295,6 +6345,7 @@
     "Formula": "C5H10N2O3",
     "Elements": "5:C 10:H 2:N 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6317,6 +6368,7 @@
     "Formula": "C4H8N2O3",
     "Elements": "4:C 8:H 3:O 2:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6339,6 +6391,7 @@
     "Formula": "C4H7NO4",
     "Elements": "4:C 7:H 4:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6361,6 +6414,7 @@
     "Formula": "C9H16O4",
     "Elements": "9:C 16:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6383,6 +6437,7 @@
     "Formula": "C9H14O4-2",
     "Elements": "9:C 14:H 4:O",
     "Charge": -2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6823,6 +6878,7 @@
     "Formula": "C6H6",
     "Elements": "6:C 6:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6845,6 +6901,7 @@
     "Formula": "C7H5O2-",
     "Elements": "7:C 5:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6867,6 +6924,7 @@
     "Formula": "C7H6O2",
     "Elements": "7:C 6:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6933,6 +6991,7 @@
     "Formula": "C4H10",
     "Elements": "4:C 10:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -6955,6 +7014,7 @@
     "Formula": "C4H8O2",
     "Elements": "4:C 8:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8033,6 +8093,7 @@
     "Formula": "C6H4OHCH3",
     "Elements": "7:C 8:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8055,6 +8116,7 @@
     "Formula": "C6H4OHCH3",
     "Elements": "7:C 8:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8077,6 +8139,7 @@
     "Formula": "C6H4OHCH3",
     "Elements": "7:C 8:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8385,6 +8448,7 @@
     "Formula": "C10H19O2-",
     "Elements": "10:C 19:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8407,6 +8471,7 @@
     "Formula": "C10H20O2",
     "Elements": "10:C 20:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8429,6 +8494,7 @@
     "Formula": "C4H6N2O2",
     "Elements": "4:C 6:H 2:N 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8451,6 +8517,7 @@
     "Formula": "C6H3OHCH3CH3",
     "Elements": "8:C 10:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8473,6 +8540,7 @@
     "Formula": "C6H3OHCH3CH3",
     "Elements": "8:C 10:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8495,6 +8563,7 @@
     "Formula": "C6H3OHCH3CH3",
     "Elements": "8:C 10:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8517,6 +8586,7 @@
     "Formula": "C6H3OHCH3CH3",
     "Elements": "8:C 10:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8539,6 +8609,7 @@
     "Formula": "C6H3OHCH3CH3",
     "Elements": "8:C 10:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8561,6 +8632,7 @@
     "Formula": "C6H3OHCH3CH3",
     "Elements": "8:C 10:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8583,6 +8655,7 @@
     "Formula": "C12H23O2-",
     "Elements": "12:C 23:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8605,6 +8678,7 @@
     "Formula": "C12H24O2",
     "Elements": "12:C 24:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8693,6 +8767,7 @@
     "Formula": "C2H5NH2",
     "Elements": "2:C 7:H 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8715,6 +8790,7 @@
     "Formula": "C2H6",
     "Elements": "2:C 6:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8737,6 +8813,7 @@
     "Formula": "C2H5OH",
     "Elements": "2:C 6:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8759,6 +8836,7 @@
     "Formula": "CH3COOCH2CH3",
     "Elements": "4:C 8:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8781,6 +8859,7 @@
     "Formula": "C6H5C2H5",
     "Elements": "8:C 10:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8803,6 +8882,7 @@
     "Formula": "C2H4",
     "Elements": "2:C 4:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -8825,6 +8905,7 @@
     "Formula": "C2H2",
     "Elements": "2:C 2:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9001,6 +9082,7 @@
     "Formula": "HCO2-",
     "Elements": "1:H 1:C 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9023,6 +9105,7 @@
     "Formula": "H2CO2",
     "Elements": "1:C 2:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9287,6 +9370,7 @@
     "Formula": "C5H9NO4",
     "Elements": "5:C 9:H 4:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9309,6 +9393,7 @@
     "Formula": "C5H10N2O3",
     "Elements": "5:C 10:H 3:O 2:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9331,6 +9416,7 @@
     "Formula": "C5H6O4-2",
     "Elements": "5:C 6:H 4:O",
     "Charge": -2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9353,6 +9439,7 @@
     "Formula": "C5H8O4",
     "Elements": "5:C 8:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9375,6 +9462,7 @@
     "Formula": "C2H5NO2",
     "Elements": "2:C 5:H 2:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9397,6 +9485,7 @@
     "Formula": "C2H4NO2-",
     "Elements": "2:C 4:H 2:O 1:N",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9419,6 +9508,7 @@
     "Formula": "C2H3O3-",
     "Elements": "2:C 3:H 3:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9441,6 +9531,7 @@
     "Formula": "C2H4O3",
     "Elements": "2:C 4:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9463,6 +9554,7 @@
     "Formula": "C4H8N2O3",
     "Elements": "4:C 8:H 2:N 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9683,6 +9775,7 @@
     "Formula": "C6H9O4-",
     "Elements": "6:C 9:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9705,6 +9798,7 @@
     "Formula": "C9H15O4-",
     "Elements": "9:C 15:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9727,6 +9821,7 @@
     "Formula": "C5H7O4-",
     "Elements": "5:C 7:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9749,6 +9844,7 @@
     "Formula": "C3H3O4-",
     "Elements": "3:C 3:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9771,6 +9867,7 @@
     "Formula": "C2HO4-",
     "Elements": "2:C 1:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9793,6 +9890,7 @@
     "Formula": "C7H11O4-",
     "Elements": "7:C 11:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9815,6 +9913,7 @@
     "Formula": "C10H17O4-",
     "Elements": "10:C 17:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9837,6 +9936,7 @@
     "Formula": "C8H13O4-",
     "Elements": "8:C 13:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -9859,6 +9959,7 @@
     "Formula": "C4H504-",
     "Elements": "4:C 5:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -10167,6 +10268,7 @@
     "Formula": "C7H16",
     "Elements": "7:C 16:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -10189,6 +10291,7 @@
     "Formula": "C7H1302-",
     "Elements": "7:C 13:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -10211,6 +10314,7 @@
     "Formula": "C7H14O2",
     "Elements": "7:C 14:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -10233,6 +10337,7 @@
     "Formula": "C6H14",
     "Elements": "6:C 14:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -10255,6 +10360,7 @@
     "Formula": "C6H11O2-",
     "Elements": "6:C 11:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -10277,6 +10383,7 @@
     "Formula": "C6H12O2",
     "Elements": "6:C 12:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -10959,6 +11066,7 @@
     "Formula": "C6H13NO2",
     "Elements": "6:C 13:H 2:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11267,6 +11375,7 @@
     "Formula": "C3H5O3-",
     "Elements": "3:C 5:H 3:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11289,6 +11398,7 @@
     "Formula": "C3H6O3",
     "Elements": "3:C 6:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11311,6 +11421,7 @@
     "Formula": "C6H13NO2",
     "Elements": "6:C 13:H 2:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11377,6 +11488,7 @@
     "Formula": "LiCl",
     "Elements": "1:Li 1:Cl",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11399,6 +11511,7 @@
     "Formula": "LiOH",
     "Elements": "1:Li 1:O 1:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11465,6 +11578,7 @@
     "Formula": "C8H7O2-",
     "Elements": "8:C 7:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11487,6 +11601,7 @@
     "Formula": "C8H8O2",
     "Elements": "8:C 8:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11509,6 +11624,7 @@
     "Formula": "C3H2O4-2",
     "Elements": "3:C 2:H 4:O",
     "Charge": -2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11531,6 +11647,7 @@
     "Formula": "C3H4O4",
     "Elements": "3:C 4:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11553,6 +11670,7 @@
     "Formula": "CH3NH2",
     "Elements": "1:C 5:H 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11575,6 +11693,7 @@
     "Formula": "CH4",
     "Elements": "1:C 4:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11597,6 +11716,7 @@
     "Formula": "CH3OH",
     "Elements": "1:C 4:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -11619,6 +11739,7 @@
     "Formula": "C5H11NO2S",
     "Elements": "5:C 11:H 2:O 1:N 1:S",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12015,6 +12136,7 @@
     "Formula": "C4H10",
     "Elements": "4:C 10:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12037,6 +12159,7 @@
     "Formula": "C4H7O2-",
     "Elements": "4:C 7:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12059,6 +12182,7 @@
     "Formula": "C6H5C4H9",
     "Elements": "10:C 14:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12081,6 +12205,7 @@
     "Formula": "C7H16",
     "Elements": "7:C 16:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12103,6 +12228,7 @@
     "Formula": "C6H5C7H15",
     "Elements": "13:C 20:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12125,6 +12251,7 @@
     "Formula": "C6H14",
     "Elements": "6:C 14:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12147,6 +12274,7 @@
     "Formula": "C6H5C6H13",
     "Elements": "12:C 18:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12169,6 +12297,7 @@
     "Formula": "C8H18",
     "Elements": "8:C 18:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12191,6 +12320,7 @@
     "Formula": "C6H5C8H17",
     "Elements": "14:C 22:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12213,6 +12343,7 @@
     "Formula": "C5H12",
     "Elements": "5:C 12:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12235,6 +12366,7 @@
     "Formula": "C6H5C5H11",
     "Elements": "11:C 16:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12257,6 +12389,7 @@
     "Formula": "C6H5C3H7",
     "Elements": "9:C 12:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12807,6 +12940,7 @@
     "Formula": "C8H7O2-",
     "Elements": "8:C 7:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12829,6 +12963,7 @@
     "Formula": "C8H8O2",
     "Elements": "8:C 8:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12873,6 +13008,7 @@
     "Formula": "C8H18",
     "Elements": "8:C 18:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12895,6 +13031,7 @@
     "Formula": "C8H15O2-",
     "Elements": "8:C 15:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12917,6 +13054,7 @@
     "Formula": "C8H16O2",
     "Elements": "8:C 16:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12961,6 +13099,7 @@
     "Formula": "C2O4-2",
     "Elements": "2:C 4:O",
     "Charge": -2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -12983,6 +13122,7 @@
     "Formula": "C2H2O4",
     "Elements": "2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13005,6 +13145,7 @@
     "Formula": "C8H7O2-",
     "Elements": "8:C 7:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13027,6 +13168,7 @@
     "Formula": "C8H8O2",
     "Elements": "8:C 8:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13049,6 +13191,7 @@
     "Formula": "C5H12",
     "Elements": "5:C 12:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13071,6 +13214,7 @@
     "Formula": "C5H9O2-",
     "Elements": "5:C 9:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13093,6 +13237,7 @@
     "Formula": "C5H10O2",
     "Elements": "5:C 10:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13115,6 +13260,7 @@
     "Formula": "C6H5OH",
     "Elements": "6:C 6:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13137,6 +13283,7 @@
     "Formula": "C9H11NO2",
     "Elements": "9:C 11:H 2:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13159,6 +13306,7 @@
     "Formula": "C7H10O4-2",
     "Elements": "7:C 10:H 4:O",
     "Charge": -2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13181,6 +13329,7 @@
     "Formula": "C7H12O4",
     "Elements": "7:C 12:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13225,6 +13374,7 @@
     "Formula": "C3H8",
     "Elements": "3:C 8:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13247,6 +13397,7 @@
     "Formula": "C3H7NH2",
     "Elements": "3:C 9:H 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13269,6 +13420,7 @@
     "Formula": "C3H5O2-",
     "Elements": "3:C 5:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13291,6 +13443,7 @@
     "Formula": "C3H6O2",
     "Elements": "3:C 6:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -13313,6 +13466,7 @@
     "Formula": "C3H7OH",
     "Elements": "3:C 8:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -15513,6 +15667,7 @@
     "Formula": "C10H16O4-2",
     "Elements": "10:C 16:H 4:O",
     "Charge": -2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -15535,6 +15690,7 @@
     "Formula": "C10H18O4",
     "Elements": "10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -15557,6 +15713,7 @@
     "Formula": "C3H7NO3",
     "Elements": "3:C 7:H 3:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -15645,6 +15802,7 @@
     "Formula": "C8H12O4-2",
     "Elements": "8:C 12:H 4:O",
     "Charge": -2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -15667,6 +15825,7 @@
     "Formula": "C8H14O4",
     "Elements": "8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -15689,6 +15848,7 @@
     "Formula": "C4H4O4-2",
     "Elements": "4:C 4:H 4:O",
     "Charge": -2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -15711,6 +15871,7 @@
     "Formula": "C4H6O4",
     "Elements": "4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -16195,6 +16356,7 @@
     "Formula": "C4H9NO3",
     "Elements": "4:C 9:H 3:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -16217,6 +16379,7 @@
     "Formula": "C6H5CH3",
     "Elements": "7:C 8:H",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -16239,6 +16402,7 @@
     "Formula": "C11H12N2O2",
     "Elements": "11:C 12:H 2:O 2:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -16261,6 +16425,7 @@
     "Formula": "C9H11NO3",
     "Elements": "9:C 11:H 3:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -16591,6 +16756,7 @@
     "Formula": "C11H21O2-",
     "Elements": "11:C 21:H 2:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -16613,6 +16779,7 @@
     "Formula": "C11H22O2",
     "Elements": "11:C 22:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -16635,6 +16802,7 @@
     "Formula": "H2NCONH2",
     "Elements": "4:H 2:N 1:C 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -16745,6 +16913,7 @@
     "Formula": "C5H11NO2",
     "Elements": "5:C 11:H 2:O 1:N",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17317,6 +17486,7 @@
     "Formula": "BiCH3COO+2",
     "Elements": "1:Bi 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17339,6 +17509,7 @@
     "Formula": "Bi(CH3COO)2+",
     "Elements": "1:Bi 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17361,6 +17532,7 @@
     "Formula": "Bi(CH3COO)3",
     "Elements": "1:Bi 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17383,6 +17555,7 @@
     "Formula": "DyCH3COO+2",
     "Elements": "1:Dy 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17405,6 +17578,7 @@
     "Formula": "Dy(CH3COO)2+",
     "Elements": "1:Dy 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17427,6 +17601,7 @@
     "Formula": "Dy(CH3COO)3",
     "Elements": "1:Dy 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17449,6 +17624,7 @@
     "Formula": "HoCH3COO+2",
     "Elements": "1:Ho 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17471,6 +17647,7 @@
     "Formula": "Ho(CH3COO)2+",
     "Elements": "1:Ho 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17493,6 +17670,7 @@
     "Formula": "Ho(CH3COO)3",
     "Elements": "1:Ho 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17515,6 +17693,7 @@
     "Formula": "ErCH3COO+2",
     "Elements": "1:Er 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17537,6 +17716,7 @@
     "Formula": "Er(CH3COO)2+",
     "Elements": "1:Er 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17559,6 +17739,7 @@
     "Formula": "Er(CH3COO)3",
     "Elements": "1:Er 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17581,6 +17762,7 @@
     "Formula": "TmCH3COO+2",
     "Elements": "1:Tm 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17603,6 +17785,7 @@
     "Formula": "Tm(CH3COO)2+",
     "Elements": "1:Tm 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17625,6 +17808,7 @@
     "Formula": "Tm(CH3COO)3",
     "Elements": "1:Tm 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17647,6 +17831,7 @@
     "Formula": "BeCH3COO+",
     "Elements": "1:Be 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17669,6 +17854,7 @@
     "Formula": "Be(CH3COO)2",
     "Elements": "1:Be 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17691,6 +17877,7 @@
     "Formula": "RaCH3COO+",
     "Elements": "1:Ra 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17713,6 +17900,7 @@
     "Formula": "Ra(CH3COO)2",
     "Elements": "1:Ra 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17735,6 +17923,7 @@
     "Formula": "AuCH3COO",
     "Elements": "1:Au 2:C 3:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17757,6 +17946,7 @@
     "Formula": "Au(CH3COO)2-",
     "Elements": "1:Au 4:C 6:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17779,6 +17969,7 @@
     "Formula": "LiCH3COO",
     "Elements": "1:Li 2:C 3:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17801,6 +17992,7 @@
     "Formula": "Li(CH3COO)2-",
     "Elements": "1:Li 4:C 6:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17823,6 +18015,7 @@
     "Formula": "NaCH3COO",
     "Elements": "1:Na 2:C 3:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17845,6 +18038,7 @@
     "Formula": "Na(CH3COO)2-",
     "Elements": "1:Na 4:C 6:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17867,6 +18061,7 @@
     "Formula": "KCH3COO",
     "Elements": "1:K 2:C 3:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17889,6 +18084,7 @@
     "Formula": "K(CH3COO)2-",
     "Elements": "1:K 4:C 6:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17911,6 +18107,7 @@
     "Formula": "MgCH3COO+",
     "Elements": "1:Mg 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17933,6 +18130,7 @@
     "Formula": "Mg(CH3COO)2",
     "Elements": "1:Mg 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17955,6 +18153,7 @@
     "Formula": "SrCH3COO+",
     "Elements": "1:Sr 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17977,6 +18176,7 @@
     "Formula": "Sr(CH3COO)2",
     "Elements": "1:Sr 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -17999,6 +18199,7 @@
     "Formula": "BaCH3COO+",
     "Elements": "1:Ba 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18021,6 +18222,7 @@
     "Formula": "Ba(CH3COO)2",
     "Elements": "1:Ba 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18043,6 +18245,7 @@
     "Formula": "CuCH3COO",
     "Elements": "1:Cu 2:C 3:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18065,6 +18268,7 @@
     "Formula": "Cu(CH3COO)2-",
     "Elements": "1:Cu 4:C 6:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18087,6 +18291,7 @@
     "Formula": "RbCH3COO",
     "Elements": "1:Rb 2:C 3:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18109,6 +18314,7 @@
     "Formula": "Rb(CH3COO)2-",
     "Elements": "1:Rb 4:C 6:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18131,6 +18337,7 @@
     "Formula": "TlCH3COO",
     "Elements": "1:Tl 2:C 3:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18153,6 +18360,7 @@
     "Formula": "Tl(CH3COO)2-",
     "Elements": "1:Tl 4:C 6:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18175,6 +18383,7 @@
     "Formula": "CsCH3COO",
     "Elements": "1:Cs 2:C 3:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18197,6 +18406,7 @@
     "Formula": "Cs(CH3COO)2-",
     "Elements": "1:Cs 4:C 6:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18219,6 +18429,7 @@
     "Formula": "PbCH3COO+",
     "Elements": "1:Pb 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18241,6 +18452,7 @@
     "Formula": "Pb(CH3COO)2",
     "Elements": "1:Pb 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18263,6 +18475,7 @@
     "Formula": "MnCH3COO+",
     "Elements": "1:Mn 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18285,6 +18498,7 @@
     "Formula": "Mn(CH3COO)2",
     "Elements": "1:Mn 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18307,6 +18521,7 @@
     "Formula": "Mn(CH3COO)3-",
     "Elements": "1:Mn 6:C 9:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18329,6 +18544,7 @@
     "Formula": "CoCH3COO+",
     "Elements": "1:Co 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18351,6 +18567,7 @@
     "Formula": "Co(CH3COO)2",
     "Elements": "1:Co 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18373,6 +18590,7 @@
     "Formula": "Co(CH3COO)3-",
     "Elements": "1:Co 6:C 9:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18395,6 +18613,7 @@
     "Formula": "NiCH3COO+",
     "Elements": "1:Ni 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18417,6 +18636,7 @@
     "Formula": "Ni(CH3COO)2",
     "Elements": "1:Ni 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18439,6 +18659,7 @@
     "Formula": "Ni(CH3COO)3-",
     "Elements": "1:Ni 6:C 9:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18461,6 +18682,7 @@
     "Formula": "CuCH3COO+",
     "Elements": "1:Cu 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18483,6 +18705,7 @@
     "Formula": "Cu(CH3COO)2",
     "Elements": "1:Cu 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18505,6 +18728,7 @@
     "Formula": "Cu(CH3COO)3-",
     "Elements": "1:Cu 6:C 9:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18527,6 +18751,7 @@
     "Formula": "NH4CH3COO",
     "Elements": "1:N 2:C 7:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18549,6 +18774,7 @@
     "Formula": "NH4(CH3COO)2-",
     "Elements": "1:N 4:C 10:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18571,6 +18797,7 @@
     "Formula": "UO2CH3COO+",
     "Elements": "1:U 2:C 3:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18593,6 +18820,7 @@
     "Formula": "UO2(CH3COO)2",
     "Elements": "1:U 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18615,6 +18843,7 @@
     "Formula": "UO2(CH3COO)3-",
     "Elements": "1:U 6:C 9:H 8:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18637,6 +18866,7 @@
     "Formula": "AgCH3COO",
     "Elements": "1:Ag 2:C 3:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18659,6 +18889,7 @@
     "Formula": "Ag(CH3COO)2-",
     "Elements": "1:Ag 4:C 6:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18681,6 +18912,7 @@
     "Formula": "CdCH3COO+",
     "Elements": "1:Cd 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18703,6 +18935,7 @@
     "Formula": "Cd(CH3COO)2",
     "Elements": "1:Cd 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18725,6 +18958,7 @@
     "Formula": "Cd(CH3COO)3-",
     "Elements": "1:Cd 6:C 9:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18747,6 +18981,7 @@
     "Formula": "HgCH3COO+",
     "Elements": "1:Hg 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18769,6 +19004,7 @@
     "Formula": "Hg(CH3COO)2",
     "Elements": "1:Hg 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18791,6 +19027,7 @@
     "Formula": "Hg(CH3COO)3-",
     "Elements": "1:Hg 6:C 9:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18813,6 +19050,7 @@
     "Formula": "ScCH3COO+2",
     "Elements": "1:Sc 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18835,6 +19073,7 @@
     "Formula": "Sc(CH3COO)2+",
     "Elements": "1:Sc 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18857,6 +19096,7 @@
     "Formula": "Sc(CH3COO)3",
     "Elements": "1:Sc 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18879,6 +19119,7 @@
     "Formula": "UCH3COO+2",
     "Elements": "1:U 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18901,6 +19142,7 @@
     "Formula": "U(CH3COO)2+",
     "Elements": "1:U 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18923,6 +19165,7 @@
     "Formula": "U(CH3COO)3",
     "Elements": "1:U 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18945,6 +19188,7 @@
     "Formula": "PrCH3COO+2",
     "Elements": "1:Pr 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18967,6 +19211,7 @@
     "Formula": "Pr(CH3COO)2+",
     "Elements": "1:Pr 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -18989,6 +19234,7 @@
     "Formula": "Pr(CH3COO)3",
     "Elements": "1:Pr 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19011,6 +19257,7 @@
     "Formula": "LaCH3COO+2",
     "Elements": "1:La 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19033,6 +19280,7 @@
     "Formula": "La(CH3COO)2+",
     "Elements": "1:La 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19055,6 +19303,7 @@
     "Formula": "La(CH3COO)3",
     "Elements": "1:La 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19077,6 +19326,7 @@
     "Formula": "NdCH3COO+2",
     "Elements": "1:Nd 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19099,6 +19349,7 @@
     "Formula": "Nd(CH3COO)2+",
     "Elements": "1:Nd 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19121,6 +19372,7 @@
     "Formula": "Nd(CH3COO)3",
     "Elements": "1:Nd 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19143,6 +19395,7 @@
     "Formula": "CeCH3COO+2",
     "Elements": "1:Ce 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19165,6 +19418,7 @@
     "Formula": "Ce(CH3COO)2+",
     "Elements": "1:Ce 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19187,6 +19441,7 @@
     "Formula": "Ce(CH3COO)3",
     "Elements": "1:Ce 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19209,6 +19464,7 @@
     "Formula": "GdCH3COO+2",
     "Elements": "1:Gd 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19231,6 +19487,7 @@
     "Formula": "Gd(CH3COO)2+",
     "Elements": "1:Gd 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19253,6 +19510,7 @@
     "Formula": "Gd(CH3COO)3",
     "Elements": "1:Gd 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19275,6 +19533,7 @@
     "Formula": "SmCH3COO+2",
     "Elements": "1:Sm 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19297,6 +19556,7 @@
     "Formula": "Sm(CH3COO)2+",
     "Elements": "1:Sm 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19319,6 +19579,7 @@
     "Formula": "Sm(CH3COO)3",
     "Elements": "1:Sm 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19341,6 +19602,7 @@
     "Formula": "YbCH3COO+2",
     "Elements": "1:Yb 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19363,6 +19625,7 @@
     "Formula": "Yb(CH3COO)2+",
     "Elements": "1:Yb 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19385,6 +19648,7 @@
     "Formula": "Yb(CH3COO)3",
     "Elements": "1:Yb 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19407,6 +19671,7 @@
     "Formula": "EuCH3COO+2",
     "Elements": "1:Eu 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19429,6 +19694,7 @@
     "Formula": "Eu(CH3COO)2+",
     "Elements": "1:Eu 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19451,6 +19717,7 @@
     "Formula": "Eu(CH3COO)3",
     "Elements": "1:Eu 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19473,6 +19740,7 @@
     "Formula": "YCH3COO+2",
     "Elements": "1:Y 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19495,6 +19763,7 @@
     "Formula": "Y(CH3COO)2+",
     "Elements": "1:Y 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19517,6 +19786,7 @@
     "Formula": "Y(CH3COO)3",
     "Elements": "1:Y 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19539,6 +19809,7 @@
     "Formula": "LuCH3COO+2",
     "Elements": "1:Lu 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19561,6 +19832,7 @@
     "Formula": "Lu(CH3COO)2+",
     "Elements": "1:Lu 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19583,6 +19855,7 @@
     "Formula": "Lu(CH3COO)3",
     "Elements": "1:Lu 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19605,6 +19878,7 @@
     "Formula": "TbCH3COO+2",
     "Elements": "1:Tb 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19627,6 +19901,7 @@
     "Formula": "Tb(CH3COO)2+",
     "Elements": "1:Tb 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19649,6 +19924,7 @@
     "Formula": "Tb(CH3COO)3",
     "Elements": "1:Tb 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19671,6 +19947,7 @@
     "Formula": "Pb(CH3COO)3-",
     "Elements": "1:Pb 6:C 9:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19693,6 +19970,7 @@
     "Formula": "FeCH3COO+",
     "Elements": "1:Fe 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19715,6 +19993,7 @@
     "Formula": "Fe(CH3COO)2",
     "Elements": "1:Fe 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19737,6 +20016,7 @@
     "Formula": "ZnCH3COO+",
     "Elements": "1:Zn 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19759,6 +20039,7 @@
     "Formula": "Zn(CH3COO)2",
     "Elements": "1:Zn 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19781,6 +20062,7 @@
     "Formula": "Zn(CH3COO)3-",
     "Elements": "1:Zn 6:C 9:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19803,6 +20085,7 @@
     "Formula": "CaCH3COO+",
     "Elements": "1:Ca 2:C 3:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19825,6 +20108,7 @@
     "Formula": "Ca(CH3COO)2",
     "Elements": "1:Ca 4:C 6:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19847,6 +20131,7 @@
     "Formula": "AlCH3COO+2",
     "Elements": "1:Al 2:C 3:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19869,6 +20154,7 @@
     "Formula": "Al(CH3COO)2+",
     "Elements": "1:Al 4:C 6:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19891,6 +20177,7 @@
     "Formula": "Al(CH3COO)3",
     "Elements": "1:Al 6:C 9:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19913,6 +20200,7 @@
     "Formula": "CH3CHO",
     "Elements": "2:C 4:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19935,6 +20223,7 @@
     "Formula": "CH3(CH2)2CHO",
     "Elements": "4:C 8:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19957,6 +20246,7 @@
     "Formula": "CH3(CH2)8CHO",
     "Elements": "10:C 20:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -19979,6 +20269,7 @@
     "Formula": "HCHO",
     "Elements": "1:C 2:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -20001,6 +20292,7 @@
     "Formula": "CH3(CH2)5CHO",
     "Elements": "7:C 14:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -20023,6 +20315,7 @@
     "Formula": "CH3(CH2)4CHO",
     "Elements": "6:C 12:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -20067,6 +20360,7 @@
     "Formula": "CH3(CH2)6CHO",
     "Elements": "8:C 16:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -20089,6 +20383,7 @@
     "Formula": "CH3(CH2)3CHO",
     "Elements": "5:C 10:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -20111,6 +20406,7 @@
     "Formula": "CH3CH2CHO",
     "Elements": "3:C 6:H 1:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27239,6 +27535,7 @@
     "Formula": "LiCH3CH2OCO2",
     "Elements": "1:Li 3:C 5:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27261,6 +27558,7 @@
     "Formula": "MgCH3CH2OCO2+",
     "Elements": "1:Mg 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27283,6 +27581,7 @@
     "Formula": "Mg(CH3CH2OCO2)2",
     "Elements": "1:Mg 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27305,6 +27604,7 @@
     "Formula": "CaCH3CH2OCO2+",
     "Elements": "1:Ca 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27327,6 +27627,7 @@
     "Formula": "Ca(CH3CH2OCO2)2",
     "Elements": "1:Ca 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27349,6 +27650,7 @@
     "Formula": "SrCH3CH2OCO2+",
     "Elements": "1:Sr 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27371,6 +27673,7 @@
     "Formula": "Sr(CH3CH2OCO2)2",
     "Elements": "1:Sr 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27393,6 +27696,7 @@
     "Formula": "BaCH3CH2OCO2+",
     "Elements": "1:Ba 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27415,6 +27719,7 @@
     "Formula": "Ba(CH3CH2OCO2)2",
     "Elements": "1:Ba 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27437,6 +27742,7 @@
     "Formula": "MnCH3CH2OCO2+",
     "Elements": "1:Mn 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27459,6 +27765,7 @@
     "Formula": "Mn(CH3CH2OCO2)2",
     "Elements": "1:Mn 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27481,6 +27788,7 @@
     "Formula": "CoCH3CH2OCO2+",
     "Elements": "1:Co 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27503,6 +27811,7 @@
     "Formula": "Co(CH3CH2OCO2)2",
     "Elements": "1:Co 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27525,6 +27834,7 @@
     "Formula": "NiCH3CH2OCO2+",
     "Elements": "1:Ni 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27547,6 +27857,7 @@
     "Formula": "Ni(CH3CH2OCO2)2",
     "Elements": "1:Ni 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27569,6 +27880,7 @@
     "Formula": "CuCH3CH2OCO2+",
     "Elements": "1:Cu 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27591,6 +27903,7 @@
     "Formula": "Cu(CH3CH2OCO2)2",
     "Elements": "1:Cu 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27613,6 +27926,7 @@
     "Formula": "ZnCH3CH2OCO2+",
     "Elements": "1:Zn 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27635,6 +27949,7 @@
     "Formula": "Zn(CH3CH2OCO2)2",
     "Elements": "1:Zn 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27657,6 +27972,7 @@
     "Formula": "CdCH3CH2OCO2+",
     "Elements": "1:Cd 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27679,6 +27995,7 @@
     "Formula": "Cd(CH3CH2OCO2)2",
     "Elements": "1:Cd 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27701,6 +28018,7 @@
     "Formula": "LaCH3CH2OCO2+2",
     "Elements": "1:La 3:C 5:H 3:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27723,6 +28041,7 @@
     "Formula": "LuCH3CH2OCO2+2",
     "Elements": "1:Lu 3:C 5:H 3:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27745,6 +28064,7 @@
     "Formula": "NaCH3CH2OCO2",
     "Elements": "1:Na 3:C 5:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27767,6 +28087,7 @@
     "Formula": "Na(CH3CH2OCO2)2-",
     "Elements": "1:Na 6:C 10:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27789,6 +28110,7 @@
     "Formula": "KCH3CH2OCO2",
     "Elements": "1:K 3:C 5:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27811,6 +28133,7 @@
     "Formula": "K(CH3CH2OCO2)2-",
     "Elements": "1:K 6:C 10:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27833,6 +28156,7 @@
     "Formula": "PbCH3CH2OCO2+",
     "Elements": "1:Pb 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27855,6 +28179,7 @@
     "Formula": "Pb(CH3CH2OCO2)2",
     "Elements": "1:Pb 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27877,6 +28202,7 @@
     "Formula": "FeCH3CH2OCO2+",
     "Elements": "1:Fe 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27899,6 +28225,7 @@
     "Formula": "Fe(CH3CH2OCO2)2",
     "Elements": "1:Fe 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27921,6 +28248,7 @@
     "Formula": "Eu(CH3CH2OCO2)+",
     "Elements": "1:Eu 3:C 5:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27943,6 +28271,7 @@
     "Formula": "Eu(CH3CH2OCO2)2",
     "Elements": "1:Eu 6:C 10:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27965,6 +28294,7 @@
     "Formula": "LiCH3OCO2",
     "Elements": "1:Li 2:C 3:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -27987,6 +28317,7 @@
     "Formula": "MgCH3OCO2+",
     "Elements": "1:Mg 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28009,6 +28340,7 @@
     "Formula": "Mg(CH3OCO2)2",
     "Elements": "1:Mg 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28031,6 +28363,7 @@
     "Formula": "CaCH3OCO2+",
     "Elements": "1:Ca 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28053,6 +28386,7 @@
     "Formula": "Ca(CH3OCO2)2",
     "Elements": "1:Ca 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28075,6 +28409,7 @@
     "Formula": "SrCH3OCO2+",
     "Elements": "1:Sr 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28097,6 +28432,7 @@
     "Formula": "Sr(CH3OCO2)2",
     "Elements": "1:Sr 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28119,6 +28455,7 @@
     "Formula": "BaCH3OCO2+",
     "Elements": "1:Ba 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28141,6 +28478,7 @@
     "Formula": "Ba(CH3OCO2)2",
     "Elements": "1:Ba 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28163,6 +28501,7 @@
     "Formula": "MnCH3OCO2+",
     "Elements": "1:Mn 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28185,6 +28524,7 @@
     "Formula": "Mn(CH3OCO2)2",
     "Elements": "1:Mn 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28207,6 +28547,7 @@
     "Formula": "CoCH3OCO2+",
     "Elements": "1:Co 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28229,6 +28570,7 @@
     "Formula": "Co(CH3OCO2)2",
     "Elements": "1:Co 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28251,6 +28593,7 @@
     "Formula": "NiCH3OCO2+",
     "Elements": "1:Ni 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28273,6 +28616,7 @@
     "Formula": "Ni(CH3OCO2)2",
     "Elements": "1:Ni 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28295,6 +28639,7 @@
     "Formula": "CuCH3OCO2+",
     "Elements": "1:Cu 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28317,6 +28662,7 @@
     "Formula": "Cu(CH3OCO2)2",
     "Elements": "1:Cu 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28339,6 +28685,7 @@
     "Formula": "ZnCH3OCO2+",
     "Elements": "1:Zn 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28361,6 +28708,7 @@
     "Formula": "Zn(CH3OCO2)2",
     "Elements": "1:Zn 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28383,6 +28731,7 @@
     "Formula": "CdCH3OCO2+",
     "Elements": "1:Cd 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28405,6 +28754,7 @@
     "Formula": "Cd(CH3OCO2)2",
     "Elements": "1:Cd 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28427,6 +28777,7 @@
     "Formula": "EuCH3OCO2+",
     "Elements": "1:Eu 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28449,6 +28800,7 @@
     "Formula": "Eu(CH3OCO2)2",
     "Elements": "1:Eu 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28471,6 +28823,7 @@
     "Formula": "Na(CH3OCO2)",
     "Elements": "1:Na 2:C 3:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28493,6 +28846,7 @@
     "Formula": "Na(CH3OCO2)2-",
     "Elements": "1:Na 4:C 6:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28515,6 +28869,7 @@
     "Formula": "KCH3OCO2",
     "Elements": "1:K 2:C 3:H 3:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28537,6 +28892,7 @@
     "Formula": "K(CH3OCO2)2-",
     "Elements": "1:K 4:C 6:H 6:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28559,6 +28915,7 @@
     "Formula": "PbCH3OCO2+",
     "Elements": "1:Pb 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28581,6 +28938,7 @@
     "Formula": "Pb(CH3OCO2)2",
     "Elements": "1:Pb 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28603,6 +28961,7 @@
     "Formula": "FeCH3OCO2+",
     "Elements": "1:Fe 2:C 3:H 3:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28625,6 +28984,7 @@
     "Formula": "Fe(CH3OCO2)2",
     "Elements": "1:Fe 4:C 6:H 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28647,6 +29007,7 @@
     "Formula": "Cd(C3H6NO2)+",
     "Elements": "1:Cd 3:C 6:H 2:O 1:N",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28669,6 +29030,7 @@
     "Formula": "Cd(C3H6NO2)2",
     "Elements": "1:Cd 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28691,6 +29053,7 @@
     "Formula": "Ca(C3H6NO2)+",
     "Elements": "1:Ca 3:C 6:H 2:O 1:N",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28713,6 +29076,7 @@
     "Formula": "Ca(C3H6NO2)2",
     "Elements": "1:Ca 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28735,6 +29099,7 @@
     "Formula": "Pb(C3H6NO2)+",
     "Elements": "1:Pb 3:C 6:H 2:O 1:N",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28757,6 +29122,7 @@
     "Formula": "Pb(C3H6NO2)2",
     "Elements": "1:Pb 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28779,6 +29145,7 @@
     "Formula": "Mg(C3H6NO2)+",
     "Elements": "1:Mg 3:C 6:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28801,6 +29168,7 @@
     "Formula": "Mg(C3H6NO2)2",
     "Elements": "1:Mg 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28823,6 +29191,7 @@
     "Formula": "Sr(C3H6NO2)+",
     "Elements": "1:Sr 3:C 6:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28845,6 +29214,7 @@
     "Formula": "Sr(C3H6NO2)2",
     "Elements": "1:Sr 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28867,6 +29237,7 @@
     "Formula": "Mn(C3H6NO2)+",
     "Elements": "1:Mn 3:C 6:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28889,6 +29260,7 @@
     "Formula": "Mn(C3H6NO2)2",
     "Elements": "1:Mn 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28911,6 +29283,7 @@
     "Formula": "Co(C3H6NO2)+",
     "Elements": "1:Co 3:C 6:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28933,6 +29306,7 @@
     "Formula": "Co(C3H6NO2)2",
     "Elements": "1:Co 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28955,6 +29329,7 @@
     "Formula": "Ni(C3H6NO2)+",
     "Elements": "1:Ni 3:C 6:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28977,6 +29352,7 @@
     "Formula": "Ni(C3H6NO2)2",
     "Elements": "1:Ni 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -28999,6 +29375,7 @@
     "Formula": "Cu(C3H6NO2)+",
     "Elements": "1:Cu 3:C 6:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29021,6 +29398,7 @@
     "Formula": "Cu(C3H6NO2)2",
     "Elements": "1:Cu 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29043,6 +29421,7 @@
     "Formula": "Zn(C3H6NO2)+",
     "Elements": "1:Zn 3:C 6:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29065,6 +29444,7 @@
     "Formula": "Zn(C3H6NO3)2",
     "Elements": "1:Zn 6:C 12:H 2:N 6:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29087,6 +29467,7 @@
     "Formula": "Ba(C3H6NO2)+",
     "Elements": "1:Ba 3:C 6:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29109,6 +29490,7 @@
     "Formula": "Ba(C3H6NO2)2",
     "Elements": "1:Ba 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29131,6 +29513,7 @@
     "Formula": "Fe(C3H6NO2)+",
     "Elements": "1:Fe 3:C 6:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29153,6 +29536,7 @@
     "Formula": "Fe(C3H6NO2)2",
     "Elements": "1:Fe 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29175,6 +29559,7 @@
     "Formula": "Eu(C3H6NO2)+",
     "Elements": "1:Eu 3:C 6:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29197,6 +29582,7 @@
     "Formula": "Eu(C3H6NO2)2",
     "Elements": "1:Eu 6:C 12:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29219,6 +29605,7 @@
     "Formula": "Cd(C2H4NO2)+",
     "Elements": "1:Cd 2:C 4:H 2:O 1:N",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29241,6 +29628,7 @@
     "Formula": "Cd(C2H4NO2)2",
     "Elements": "1:Cd 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29263,6 +29651,7 @@
     "Formula": "Ca(C2H4NO2)+",
     "Elements": "1:Ca 2:C 4:H 2:O 1:N",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29285,6 +29674,7 @@
     "Formula": "Ca(C2H4NO2)2",
     "Elements": "1:Ca 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29307,6 +29697,7 @@
     "Formula": "Sr(C2H4NO2)+",
     "Elements": "1:Sr 2:C 4:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29329,6 +29720,7 @@
     "Formula": "Sr(C2H4NO2)2",
     "Elements": "1:Sr 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29351,6 +29743,7 @@
     "Formula": "Mn(C2H4NO2)+",
     "Elements": "1:Mn 2:C 4:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29373,6 +29766,7 @@
     "Formula": "Mn(C2H4NO2)2",
     "Elements": "1:Mn 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29395,6 +29789,7 @@
     "Formula": "Fe(C2H4NO2)+",
     "Elements": "1:Fe 2:C 4:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29417,6 +29812,7 @@
     "Formula": "Fe(C2H4NO2)2",
     "Elements": "1:Fe 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29439,6 +29835,7 @@
     "Formula": "Co(C2H4NO2)+",
     "Elements": "1:Co 2:C 4:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29461,6 +29858,7 @@
     "Formula": "Co(C2H4NO2)2",
     "Elements": "1:Co 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29483,6 +29881,7 @@
     "Formula": "Pb(C2H4NO2)+",
     "Elements": "1:Pb 2:C 4:H 2:O 1:N",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29505,6 +29904,7 @@
     "Formula": "Pb(C2H4NO2)2",
     "Elements": "1:Pb 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29527,6 +29927,7 @@
     "Formula": "Mg(C2H4NO2)+",
     "Elements": "1:Mg 2:C 4:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29549,6 +29950,7 @@
     "Formula": "Mg(C2H4NO2)2",
     "Elements": "1:Mg 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29571,6 +29973,7 @@
     "Formula": "Ni(C2H4NO2)+",
     "Elements": "1:Ni 2:C 4:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29593,6 +29996,7 @@
     "Formula": "Ni(C2H4NO2)2",
     "Elements": "1:Ni 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29615,6 +30019,7 @@
     "Formula": "Cu(C2H4NO2)+",
     "Elements": "1:Cu 2:C 4:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29637,6 +30042,7 @@
     "Formula": "Cu(C2H4NO2)2",
     "Elements": "1:Cu 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29659,6 +30065,7 @@
     "Formula": "Zn(C2H4NO2)+",
     "Elements": "1:Zn 2:C 4:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29681,6 +30088,7 @@
     "Formula": "Zn(C2H4NO2)2",
     "Elements": "1:Zn 2:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29703,6 +30111,7 @@
     "Formula": "Eu(C2H4NO2)+",
     "Elements": "1:Eu 2:C 4:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29725,6 +30134,7 @@
     "Formula": "Eu(C2H4NO2)2",
     "Elements": "1:Eu 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29747,6 +30157,7 @@
     "Formula": "Ba(C2H4NO2)+",
     "Elements": "1:Ba 2:C 4:H 1:N 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29769,6 +30180,7 @@
     "Formula": "Ba(C2H4NO2)2",
     "Elements": "1:Ba 4:C 8:H 2:N 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29791,6 +30203,7 @@
     "Formula": "MgCHO2+",
     "Elements": "1:Mg 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29813,6 +30226,7 @@
     "Formula": "Mg(CHO2)2",
     "Elements": "1:Mg 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29835,6 +30249,7 @@
     "Formula": "CaCHO2+",
     "Elements": "1:Ca 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29857,6 +30272,7 @@
     "Formula": "Ca(CHO2)2",
     "Elements": "1:Ca 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29879,6 +30295,7 @@
     "Formula": "SrCHO2+",
     "Elements": "1:Sr 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29901,6 +30318,7 @@
     "Formula": "Sr(CHO2)2",
     "Elements": "1:Sr 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29923,6 +30341,7 @@
     "Formula": "BaCHO2+",
     "Elements": "1:Ba 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29945,6 +30364,7 @@
     "Formula": "Ba(CHO2)2",
     "Elements": "1:Ba 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29967,6 +30387,7 @@
     "Formula": "CuCHO2+",
     "Elements": "1:Cu 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -29989,6 +30410,7 @@
     "Formula": "Cu(CHO2)2",
     "Elements": "1:Cu 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30011,6 +30433,7 @@
     "Formula": "CdCHO2+",
     "Elements": "1:Cd 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30033,6 +30456,7 @@
     "Formula": "Cd(CHO2)2",
     "Elements": "1:Cd 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30055,6 +30479,7 @@
     "Formula": "NaCHO2",
     "Elements": "1:Na 1:C 1:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30077,6 +30502,7 @@
     "Formula": "Na(CH02)2-",
     "Elements": "1:Na 2:C 2:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30099,6 +30525,7 @@
     "Formula": "KCHO2",
     "Elements": "1:K 1:C 1:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30121,6 +30548,7 @@
     "Formula": "K(CHO2)2-",
     "Elements": "1:K 2:C 2:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30143,6 +30571,7 @@
     "Formula": "LaCHO2+2",
     "Elements": "1:La 1:C 1:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30165,6 +30594,7 @@
     "Formula": "La(CHO2)2+",
     "Elements": "1:La 2:C 2:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30187,6 +30617,7 @@
     "Formula": "EuCHO2+",
     "Elements": "1:Eu 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30209,6 +30640,7 @@
     "Formula": "Eu(CHO2)2",
     "Elements": "1:Eu 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30231,6 +30663,7 @@
     "Formula": "UCHO2+2",
     "Elements": "1:U 1:C 1:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30253,6 +30686,7 @@
     "Formula": "U(CHO2)2+",
     "Elements": "1:U 2:C 2:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30275,6 +30709,7 @@
     "Formula": "EuCHO2+2",
     "Elements": "1:Eu 1:C 1:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30297,6 +30732,7 @@
     "Formula": "Eu(CHO2)2+",
     "Elements": "1:Eu 2:C 2:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30319,6 +30755,7 @@
     "Formula": "GdCHO2+2",
     "Elements": "1:Gd 1:C 1:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30341,6 +30778,7 @@
     "Formula": "Gd(CHO2)2+",
     "Elements": "1:Gd 2:C 2:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30363,6 +30801,7 @@
     "Formula": "YbCHO2+2",
     "Elements": "1:Yb 1:C 1:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30385,6 +30824,7 @@
     "Formula": "Yb(CHO2)2+",
     "Elements": "1:Yb 2:C 2:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30407,6 +30847,7 @@
     "Formula": "PbCHO2+",
     "Elements": "1:Pb 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30429,6 +30870,7 @@
     "Formula": "Pb(CHO2)2",
     "Elements": "1:Pb 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30451,6 +30893,7 @@
     "Formula": "MnCHO2+",
     "Elements": "1:Mn 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30473,6 +30916,7 @@
     "Formula": "Mn(CHO2)2",
     "Elements": "1:Mn 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30495,6 +30939,7 @@
     "Formula": "CoCHO2+",
     "Elements": "1:Co 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30517,6 +30962,7 @@
     "Formula": "Co(CHO2)2",
     "Elements": "1:Co 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30539,6 +30985,7 @@
     "Formula": "NiCHO2+",
     "Elements": "1:Ni 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30561,6 +31008,7 @@
     "Formula": "Ni(CHO2)2",
     "Elements": "1:Ni 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30583,6 +31031,7 @@
     "Formula": "ZnCHO2+",
     "Elements": "1:Zn 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30605,6 +31054,7 @@
     "Formula": "Zn(CHO2)2",
     "Elements": "1:Zn 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30627,6 +31077,7 @@
     "Formula": "FeCHO2+",
     "Elements": "1:Fe 1:C 1:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30649,6 +31100,7 @@
     "Formula": "Fe(CHO2)2",
     "Elements": "1:Fe 2:C 2:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30671,6 +31123,7 @@
     "Formula": "MgCH3CH2CO2+",
     "Elements": "1:Mg 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30693,6 +31146,7 @@
     "Formula": "Mg(CH3CH2CO2)2",
     "Elements": "1:Mg 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30715,6 +31169,7 @@
     "Formula": "CaCH3CH2CO2+",
     "Elements": "1:Ca 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30737,6 +31192,7 @@
     "Formula": "Ca(CH3CH2CO2)2",
     "Elements": "1:Ca 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30759,6 +31215,7 @@
     "Formula": "SrCH3CH2CO2+",
     "Elements": "1:Sr 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30781,6 +31238,7 @@
     "Formula": "Sr(CH3CH2CO2)2",
     "Elements": "1:Sr 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30803,6 +31261,7 @@
     "Formula": "BaCH3CH2CO2+",
     "Elements": "1:Ba 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30825,6 +31284,7 @@
     "Formula": "Ba(CH3CH2CO2)2",
     "Elements": "1:Ba 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30847,6 +31307,7 @@
     "Formula": "EuCH3CH2CO2+",
     "Elements": "1:Eu 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30869,6 +31330,7 @@
     "Formula": "Eu(CH3CH2CO2)2",
     "Elements": "1:Eu 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30891,6 +31353,7 @@
     "Formula": "CuCH3CH2CO2+",
     "Elements": "1:Cu 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30913,6 +31376,7 @@
     "Formula": "Cu(CH3CH2CO2)2",
     "Elements": "1:Cu 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30935,6 +31399,7 @@
     "Formula": "CdCH3CH2CO2+",
     "Elements": "1:Cd 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30957,6 +31422,7 @@
     "Formula": "Cd(CH3CH2CO2)2",
     "Elements": "1:Cd 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -30979,6 +31445,7 @@
     "Formula": "PbCH3CH2CO2+",
     "Elements": "1:Pb 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31001,6 +31468,7 @@
     "Formula": "Pb(CH3CH2CO2)2",
     "Elements": "1:Pb 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31023,6 +31491,7 @@
     "Formula": "NaCH3CH2CO2",
     "Elements": "1:Na 3:C 5:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31045,6 +31514,7 @@
     "Formula": "Na(CH3CH2CO2)2-",
     "Elements": "1:Na 6:C 10:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31067,6 +31537,7 @@
     "Formula": "KCH3CH2CO2",
     "Elements": "1:K 3:C 5:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31089,6 +31560,7 @@
     "Formula": "K(CH3CH2CO2)2-",
     "Elements": "1:K 6:C 10:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31111,6 +31583,7 @@
     "Formula": "LaCH3CH2CO2+2",
     "Elements": "1:La 3:C 5:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31133,6 +31606,7 @@
     "Formula": "La(CH3CH2CO2)2+",
     "Elements": "1:La 6:C 10:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31155,6 +31629,7 @@
     "Formula": "EuCH3CH2CO2+2",
     "Elements": "1:Eu 3:C 5:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31177,6 +31652,7 @@
     "Formula": "Eu(CH3CH2CO2)2+",
     "Elements": "1:Eu 6:C 10:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31199,6 +31675,7 @@
     "Formula": "GdCH3CH2CO2+2",
     "Elements": "1:Gd 3:C 5:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31221,6 +31698,7 @@
     "Formula": "Gd(CH3CH2CO2)2+",
     "Elements": "1:Gd 6:C 10:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31243,6 +31721,7 @@
     "Formula": "YbCH3CH2CO2+2",
     "Elements": "1:Yb 3:C 5:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31265,6 +31744,7 @@
     "Formula": "Yb(CH3CH2CO2)2+",
     "Elements": "1:Yb 6:C 10:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31287,6 +31767,7 @@
     "Formula": "UCH3CH2CO2+2",
     "Elements": "1:U 3:C 5:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31309,6 +31790,7 @@
     "Formula": "U(CH3CH2CO2)2+",
     "Elements": "1:U 6:C 10:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31331,6 +31813,7 @@
     "Formula": "CoCH3CH2CO2+",
     "Elements": "1:Co 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31353,6 +31836,7 @@
     "Formula": "Co(CH3CH2CO2)2",
     "Elements": "1:Co 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31375,6 +31859,7 @@
     "Formula": "NiCH3CH2CO2+",
     "Elements": "1:Ni 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31397,6 +31882,7 @@
     "Formula": "Ni(CH3CH2CO2)2",
     "Elements": "1:Ni 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31419,6 +31905,7 @@
     "Formula": "ZnCH3CH2CO2+",
     "Elements": "1:Zn 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31441,6 +31928,7 @@
     "Formula": "Zn(CH3CH2CO2)2",
     "Elements": "1:Zn 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31463,6 +31951,7 @@
     "Formula": "FeCH3CH2CO2+",
     "Elements": "1:Fe 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31485,6 +31974,7 @@
     "Formula": "Fe(CH3CH2CO2)2",
     "Elements": "1:Fe 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31507,6 +31997,7 @@
     "Formula": "MnCH3CH2CO2+",
     "Elements": "1:Mn 3:C 5:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31529,6 +32020,7 @@
     "Formula": "Mn(CH3CH2CO2)2",
     "Elements": "1:Mn 6:C 10:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31551,6 +32043,7 @@
     "Formula": "UCH3(CH2)2CO2+2",
     "Elements": "1:U 4:C 7:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31573,6 +32066,7 @@
     "Formula": "U(CH3CH2CH2CO2)2+",
     "Elements": "1:U 8:C 14:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31595,6 +32089,7 @@
     "Formula": "EuCH3(CH2)2CO2+",
     "Elements": "1:Eu 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31617,6 +32112,7 @@
     "Formula": "Eu(CH3CH2CH2CO2)2",
     "Elements": "1:Eu 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31639,6 +32135,7 @@
     "Formula": "MgCH3(CH2)2CO2+",
     "Elements": "1:Mg 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31661,6 +32158,7 @@
     "Formula": "Mg(CH3CH2CH2CO2)2",
     "Elements": "1:Mg 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31683,6 +32181,7 @@
     "Formula": "CaCH3(CH2)2CO2+",
     "Elements": "1:Ca 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31705,6 +32204,7 @@
     "Formula": "Ca(CH3CH2CH2CO2)2",
     "Elements": "1:Ca 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31727,6 +32227,7 @@
     "Formula": "SrCH3(CH2)2CO2+",
     "Elements": "1:Sr 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31749,6 +32250,7 @@
     "Formula": "Sr(CH3CH2CH2CO2)2",
     "Elements": "1:Sr 8:C 17:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31771,6 +32273,7 @@
     "Formula": "BaCH3(CH2)2CO2+",
     "Elements": "1:Ba 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31793,6 +32296,7 @@
     "Formula": "Ba(CH3CH2CH2CO2)2",
     "Elements": "1:Ba 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31815,6 +32319,7 @@
     "Formula": "CuCH3(CH2)2CO2+",
     "Elements": "1:Cu 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31837,6 +32342,7 @@
     "Formula": "Cu(CH3CH2CH2CO2)2",
     "Elements": "1:Cu 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31859,6 +32365,7 @@
     "Formula": "CdCH3(CH2)2CO2+",
     "Elements": "1:Cd 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31881,6 +32388,7 @@
     "Formula": "Cd(CH3CH2CH2CO2)2",
     "Elements": "1:Cd 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31903,6 +32411,7 @@
     "Formula": "NaCH3(CH2)2CO2",
     "Elements": "1:Na 4:C 7:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31925,6 +32434,7 @@
     "Formula": "Na(CH3CH2CH2CO2)2-",
     "Elements": "1:Na 8:C 14:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31947,6 +32457,7 @@
     "Formula": "KCH3(CH2)2CO2",
     "Elements": "1:K 4:C 7:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31969,6 +32480,7 @@
     "Formula": "K(CH3CH2CH2CO2)2-",
     "Elements": "1:K 8:C 14:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -31991,6 +32503,7 @@
     "Formula": "LaCH3(CH2)2CO2+2",
     "Elements": "1:La 4:C 7:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32013,6 +32526,7 @@
     "Formula": "La(CH3CH2CH2CO2)2+",
     "Elements": "1:La 8:C 14:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32035,6 +32549,7 @@
     "Formula": "EuCH3(CH2)2CO2+2",
     "Elements": "1:Eu 4:C 7:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32057,6 +32572,7 @@
     "Formula": "Eu(CH3CH2CH2CO2)2+",
     "Elements": "1:Eu 8:C 14:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32079,6 +32595,7 @@
     "Formula": "GdCH3(CH2)2CO2+2",
     "Elements": "1:Gd 4:C 7:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32101,6 +32618,7 @@
     "Formula": "Gd(CH3CH2CH2CO2)2+",
     "Elements": "1:Gd 8:C 14:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32123,6 +32641,7 @@
     "Formula": "YbCH3(CH2)2CO2+2",
     "Elements": "1:Yb 4:C 7:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32145,6 +32664,7 @@
     "Formula": "Yb(CH3CH2CH2CO2)2+",
     "Elements": "1:Yb 8:C 14:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32167,6 +32687,7 @@
     "Formula": "PbCH3(CH2)2CO2+",
     "Elements": "1:Pb 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32189,6 +32710,7 @@
     "Formula": "Pb(CH3CH2CH2CO2)2",
     "Elements": "1:Pb 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32211,6 +32733,7 @@
     "Formula": "MnCH3(CH2)2CO2+",
     "Elements": "1:Mn 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32233,6 +32756,7 @@
     "Formula": "Mn(CH3CH2CH2CO2)2",
     "Elements": "1:Mn 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32255,6 +32779,7 @@
     "Formula": "NiCH3(CH2)2CO2+",
     "Elements": "1:Ni 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32277,6 +32802,7 @@
     "Formula": "Ni(CH3CH2CH2CO2)2",
     "Elements": "1:Ni 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32299,6 +32825,7 @@
     "Formula": "ZnCH3(CH2)2CO2+",
     "Elements": "1:Zn 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32321,6 +32848,7 @@
     "Formula": "Zn(CH3CH2CH2CO2)2",
     "Elements": "1:Zn 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32343,6 +32871,7 @@
     "Formula": "FeCH3(CH2)2CO2+",
     "Elements": "1:Fe 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32365,6 +32894,7 @@
     "Formula": "Fe(CH3CH2CH2CO2)2",
     "Elements": "1:Fe 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32387,6 +32917,7 @@
     "Formula": "CoCH3(CH2)2CO2+",
     "Elements": "1:Co 4:C 7:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32409,6 +32940,7 @@
     "Formula": "Co(CH3CH2CH2CO2)2",
     "Elements": "1:Co 8:C 14:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32431,6 +32963,7 @@
     "Formula": "CaCH3(CH2)3CO2+",
     "Elements": "1:Ca 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32453,6 +32986,7 @@
     "Formula": "Ca(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Ca 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32475,6 +33009,7 @@
     "Formula": "SrCH3(CH2)3CO2+",
     "Elements": "1:Sr 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32497,6 +33032,7 @@
     "Formula": "Sr(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Sr 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32519,6 +33055,7 @@
     "Formula": "BaCH3(CH2)3CO2+",
     "Elements": "1:Ba 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32541,6 +33078,7 @@
     "Formula": "Ba(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Ba 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32563,6 +33101,7 @@
     "Formula": "CuCH3(CH2)3CO2+",
     "Elements": "1:Cu 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32585,6 +33124,7 @@
     "Formula": "Cu(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Cu 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32607,6 +33147,7 @@
     "Formula": "NaCH3(CH2)3CO2",
     "Elements": "1:Na 5:C 9:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32629,6 +33170,7 @@
     "Formula": "Na(CH3CH2CH2CH2CO2)2-",
     "Elements": "1:Na 10:C 18:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32651,6 +33193,7 @@
     "Formula": "KCH3(CH2)3CO2",
     "Elements": "1:K 5:C 9:H 2:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32673,6 +33216,7 @@
     "Formula": "K(CH3CH2CH2CH2CO2)2-",
     "Elements": "1:K 10:C 18:H 4:O",
     "Charge": -1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32695,6 +33239,7 @@
     "Formula": "LaCH3(CH2)3CO2+2",
     "Elements": "1:La 5:C 9:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32717,6 +33262,7 @@
     "Formula": "La(CH3CH2CH2CH2CO2)2+",
     "Elements": "1:La 10:C 18:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32739,6 +33285,7 @@
     "Formula": "EuCH3(CH2)3CO2+2",
     "Elements": "1:Eu 5:C 9:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32761,6 +33308,7 @@
     "Formula": "Eu(CH3CH2CH2CH2CO2)2+",
     "Elements": "1:Eu 10:C 18:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32783,6 +33331,7 @@
     "Formula": "UCH3(CH2)3CO2+2",
     "Elements": "1:U 5:C 9:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32805,6 +33354,7 @@
     "Formula": "EuCH3(CH2)3CO2+",
     "Elements": "1:Eu 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32827,6 +33377,7 @@
     "Formula": "GdCH3(CH2)3CO2+2",
     "Elements": "1:Gd 5:C 9:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32849,6 +33400,7 @@
     "Formula": "Gd(CH3CH2CH2CH2CO2)2+",
     "Elements": "1:Gd 10:C 18:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32871,6 +33423,7 @@
     "Formula": "YbCH3(CH2)3CO2+2",
     "Elements": "1:Yb 5:C 9:H 2:O",
     "Charge": 2.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32893,6 +33446,7 @@
     "Formula": "Yb(CH3CH2CH2CH2CO2)2+",
     "Elements": "1:Yb 10:C 18:H 4:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32915,6 +33469,7 @@
     "Formula": "MgCH3(CH2)3CO2+",
     "Elements": "1:Mg 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32937,6 +33492,7 @@
     "Formula": "Mg(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Mg 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32959,6 +33515,7 @@
     "Formula": "PbCH3(CH2)3CO2+",
     "Elements": "1:Pb 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -32981,6 +33538,7 @@
     "Formula": "Pb(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Pb 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33003,6 +33561,7 @@
     "Formula": "CoCH3(CH2)3CO2+",
     "Elements": "1:Co 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33025,6 +33584,7 @@
     "Formula": "Co(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Co 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33047,6 +33607,7 @@
     "Formula": "NiCH3(CH2)3CO2+",
     "Elements": "1:Ni 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33069,6 +33630,7 @@
     "Formula": "Ni(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Ni 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33091,6 +33653,7 @@
     "Formula": "ZnCH3(CH2)3CO2+",
     "Elements": "1:Zn 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33113,6 +33676,7 @@
     "Formula": "Zn(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Zn 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33135,6 +33699,7 @@
     "Formula": "CdCH3(CH2)3CO2+",
     "Elements": "1:Cd 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33157,6 +33722,7 @@
     "Formula": "Cd(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Cd 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33179,6 +33745,7 @@
     "Formula": "FeCH3(CH2)3CO2+",
     "Elements": "1:Fe 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33201,6 +33768,7 @@
     "Formula": "Fe(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Fe 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33223,6 +33791,7 @@
     "Formula": "MnCH3(CH2)3CO2+",
     "Elements": "1:Mn 5:C 9:H 2:O",
     "Charge": 1.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
@@ -33245,6 +33814,7 @@
     "Formula": "Mn(CH3CH2CH2CH2CO2)2",
     "Elements": "1:Mn 10:C 18:H 4:O",
     "Charge": 0.0,
+    "Tags": "organic",
     "AggregateState": "Aqueous",
     "StandardThermoModel": {
       "HKF": {
