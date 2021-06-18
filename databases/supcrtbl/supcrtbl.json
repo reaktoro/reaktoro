@@ -1,7 +1,7 @@
 {
   "Species": [
     {
-      "Name": "ALMANDINE",
+      "Name": "Almandine",
       "Formula": "Fe3Al2Si3O12",
       "Elements": "3:Fe 2:Al 3:Si 12:O",
       "AggregateState": "Solid",
@@ -25,7 +25,7 @@
       }
     },
     {
-      "Name": "ANDRADITE",
+      "Name": "Andradite",
       "Formula": "Ca3Fe2Si3O12",
       "Elements": "3:Ca 2:Fe 3:Si 12:O",
       "AggregateState": "Solid",
@@ -49,7 +49,7 @@
       }
     },
     {
-      "Name": "GROSSULAR",
+      "Name": "Grossular",
       "Formula": "Ca3Al2Si3O12",
       "Elements": "3:Ca 2:Al 3:Si 12:O",
       "AggregateState": "Solid",
@@ -73,7 +73,7 @@
       }
     },
     {
-      "Name": "KNORRINGITE",
+      "Name": "Knorringite",
       "Formula": "Mg3Cr2Si3O12",
       "Elements": "3:Mg 2:Cr 3:Si 12:O",
       "AggregateState": "Solid",
@@ -97,7 +97,7 @@
       }
     },
     {
-      "Name": "MAJORITE",
+      "Name": "Majorite",
       "Formula": "Mg4Si4O12",
       "Elements": "4:Mg 4:Si 12:O",
       "AggregateState": "Solid",
@@ -121,7 +121,7 @@
       }
     },
     {
-      "Name": "PYROPE",
+      "Name": "Pyrope",
       "Formula": "Mg3Al2Si3O12",
       "Elements": "3:Mg 2:Al 3:Si 12:O",
       "AggregateState": "Solid",
@@ -145,7 +145,7 @@
       }
     },
     {
-      "Name": "SPESSARTINE",
+      "Name": "Spessartine",
       "Formula": "Mn3Al2Si3O12",
       "Elements": "3:Mn 2:Al 3:Si 12:O",
       "AggregateState": "Solid",
@@ -169,7 +169,7 @@
       }
     },
     {
-      "Name": "CLINOHUMITE",
+      "Name": "Clinohumite",
       "Formula": "Mg9Si4O18H2",
       "Elements": "9:Mg 4:Si 18:O 2:H",
       "AggregateState": "Solid",
@@ -193,7 +193,7 @@
       }
     },
     {
-      "Name": "FAYALITE",
+      "Name": "Fayalite",
       "Formula": "Fe2SiO4",
       "Elements": "2:Fe 1:Si 4:O",
       "AggregateState": "Solid",
@@ -217,7 +217,7 @@
       }
     },
     {
-      "Name": "FORSTERITE",
+      "Name": "Forsterite",
       "Formula": "Mg2SiO4",
       "Elements": "2:Mg 1:Si 4:O",
       "AggregateState": "Solid",
@@ -241,7 +241,7 @@
       }
     },
     {
-      "Name": "MONTICELLITE",
+      "Name": "Monticellite",
       "Formula": "CaMgSiO4",
       "Elements": "1:Ca 1:Mg 1:Si 4:O",
       "AggregateState": "Solid",
@@ -265,7 +265,7 @@
       }
     },
     {
-      "Name": "TEPHROITE",
+      "Name": "Tephroite",
       "Formula": "Mn2SiO4",
       "Elements": "2:Mn 1:Si 4:O",
       "AggregateState": "Solid",
@@ -289,7 +289,7 @@
       }
     },
     {
-      "Name": "ANDALUSITE",
+      "Name": "Andalusite",
       "Formula": "Al2SiO5",
       "Elements": "2:Al 1:Si 5:O",
       "AggregateState": "Solid",
@@ -313,7 +313,7 @@
       }
     },
     {
-      "Name": "KYANITE",
+      "Name": "Kyanite",
       "Formula": "Al2SiO5",
       "Elements": "2:Al 1:Si 5:O",
       "AggregateState": "Solid",
@@ -337,7 +337,7 @@
       }
     },
     {
-      "Name": "Al-MULLITE",
+      "Name": "Al-Mullite",
       "Formula": "Al2.5Si0.5O4.75",
       "Elements": "2.5:Al 0.5:Si 4.75:O",
       "AggregateState": "Solid",
@@ -361,7 +361,7 @@
       }
     },
     {
-      "Name": "Si-MULLITE",
+      "Name": "Si-Mullite",
       "Formula": "Al2SiO5",
       "Elements": "2:Al 1:Si 5:O",
       "AggregateState": "Solid",
@@ -385,7 +385,7 @@
       }
     },
     {
-      "Name": "Fe-CHLORITOID",
+      "Name": "Fe-Chloritoid",
       "Formula": "FeAl2SiO7H2",
       "Elements": "1:Fe 2:Al 1:Si 7:O 2:H",
       "AggregateState": "Solid",
@@ -409,7 +409,7 @@
       }
     },
     {
-      "Name": "Mg-CHLORITOID",
+      "Name": "Mg-Chloritoid",
       "Formula": "MgAl2SiO7H2",
       "Elements": "1:Mg 2:Al 1:Si 7:O 2:H",
       "AggregateState": "Solid",
@@ -433,7 +433,7 @@
       }
     },
     {
-      "Name": "Mn-CHLORITOID",
+      "Name": "Mn-Chloritoid",
       "Formula": "MnAl2SiO7H2",
       "Elements": "1:Mn 2:Al 1:Si 7:O 2:H",
       "AggregateState": "Solid",
@@ -457,7 +457,7 @@
       }
     },
     {
-      "Name": "Fe-STAUROLITE",
+      "Name": "Fe-Staurolite",
       "Formula": "Fe4Al18Si7.5O48H4",
       "Elements": "4:Fe 18:Al 7.5:Si 48:O 4:H",
       "AggregateState": "Solid",
@@ -481,7 +481,7 @@
       }
     },
     {
-      "Name": "Mg-STAUROLITE",
+      "Name": "Mg-Staurolite",
       "Formula": "Mg4Al18Si7.5O48H4",
       "Elements": "4:Mg 18:Al 7.5:Si 48:O 4:H",
       "AggregateState": "Solid",
@@ -505,7 +505,7 @@
       }
     },
     {
-      "Name": "Mn-STAUROLITE",
+      "Name": "Mn-Staurolite",
       "Formula": "Mn4Al18Si7.5O48H4",
       "Elements": "4:Mn 18:Al 7.5:Si 48:O 4:H",
       "AggregateState": "Solid",
@@ -529,7 +529,7 @@
       }
     },
     {
-      "Name": "HYDROXY-TOPAZ",
+      "Name": "Hydroxy-Topaz",
       "Formula": "Al2SiO6H2",
       "Elements": "2:Al 1:Si 6:O 2:H",
       "AggregateState": "Solid",
@@ -553,7 +553,7 @@
       }
     },
     {
-      "Name": "AKERMANITE",
+      "Name": "Akermanite",
       "Formula": "Ca2MgSi2O7",
       "Elements": "2:Ca 1:Mg 2:Si 7:O",
       "AggregateState": "Solid",
@@ -577,7 +577,7 @@
       }
     },
     {
-      "Name": "JULGOLDITE(FeFe)",
+      "Name": "Julgoldite-FeFe",
       "Formula": "Ca4Fe6Si6O28H7",
       "Elements": "4:Ca 6:Fe 6:Si 28:O 7:H",
       "AggregateState": "Solid",
@@ -601,7 +601,7 @@
       }
     },
     {
-      "Name": "MERWINITE",
+      "Name": "Merwinite",
       "Formula": "Ca3MgSi2O8",
       "Elements": "3:Ca 1:Mg 2:Si 8:O",
       "AggregateState": "Solid",
@@ -625,7 +625,7 @@
       }
     },
     {
-      "Name": "PUMPELLYITE(FeAl)",
+      "Name": "Pumpellyite-FeAl",
       "Formula": "Ca4FeAl5Si6O28H7",
       "Elements": "4:Ca 1:Fe 5:Al 6:Si 28:O 7:H",
       "AggregateState": "Solid",
@@ -649,7 +649,7 @@
       }
     },
     {
-      "Name": "PUMPELLYITE(MgAl)",
+      "Name": "Pumpellyite-MgAl",
       "Formula": "Ca4MgAl5Si6O28H7",
       "Elements": "4:Ca 1:Mg 5:Al 6:Si 28:O 7:H",
       "AggregateState": "Solid",
@@ -673,7 +673,7 @@
       }
     },
     {
-      "Name": "RANKINITE",
+      "Name": "Rankinite",
       "Formula": "Ca3Si2O7",
       "Elements": "3:Ca 2:Si 7:O",
       "AggregateState": "Solid",
@@ -697,7 +697,7 @@
       }
     },
     {
-      "Name": "SPURRITE",
+      "Name": "Spurrite",
       "Formula": "Ca5Si2CO1",
       "Elements": "5:Ca 2:Si 1:C 11:O",
       "AggregateState": "Solid",
@@ -721,7 +721,7 @@
       }
     },
     {
-      "Name": "TILLEYITE",
+      "Name": "Tilleyite",
       "Formula": "Ca5Si2C2O13",
       "Elements": "5:Ca 2:Si 2:C 13:O",
       "AggregateState": "Solid",
@@ -745,7 +745,7 @@
       }
     },
     {
-      "Name": "ZIRCON",
+      "Name": "Zircon",
       "Formula": "ZrSiO4",
       "Elements": "1:Zr 1:Si 4:O",
       "AggregateState": "Solid",
@@ -769,7 +769,7 @@
       }
     },
     {
-      "Name": "CLINOZOISITE",
+      "Name": "Clinozoisite",
       "Formula": "Ca2Al3Si3O13H",
       "Elements": "2:Ca 3:Al 3:Si 13:O 1:H",
       "AggregateState": "Solid",
@@ -793,7 +793,7 @@
       }
     },
     {
-      "Name": "EPIDOTE(ORDERED)",
+      "Name": "Epidote,ordered",
       "Formula": "Ca2FeAl2Si3O13H",
       "Elements": "2:Ca 1:Fe 2:Al 3:Si 13:O 1:H",
       "AggregateState": "Solid",
@@ -817,7 +817,7 @@
       }
     },
     {
-      "Name": "Fe-EPIDOTE",
+      "Name": "Fe-Epidote",
       "Formula": "Ca2Fe2AlSi3O13H",
       "Elements": "2:Ca 2:Fe 1:Al 3:Si 13:O 1:H",
       "AggregateState": "Solid",
@@ -841,7 +841,7 @@
       }
     },
     {
-      "Name": "LAWSONITE",
+      "Name": "Lawsonite",
       "Formula": "CaAl2Si2O10H4",
       "Elements": "1:Ca 2:Al 2:Si 10:O 4:H",
       "AggregateState": "Solid",
@@ -865,7 +865,7 @@
       }
     },
     {
-      "Name": "PIEMONTITE(ORDERED)",
+      "Name": "Piemontite,ordered",
       "Formula": "Ca2MnAl2Si3O13H",
       "Elements": "2:Ca 1:Mn 2:Al 3:Si 13:O 1:H",
       "AggregateState": "Solid",
@@ -889,7 +889,7 @@
       }
     },
     {
-      "Name": "ZOISITE",
+      "Name": "Zoisite",
       "Formula": "Ca2Al3Si3O13H",
       "Elements": "2:Ca 3:Al 3:Si 13:O 1:H",
       "AggregateState": "Solid",
@@ -913,7 +913,7 @@
       }
     },
     {
-      "Name": "VESUVIANITE",
+      "Name": "Vesuvianite",
       "Formula": "Ca19Mg2Al11Si18O78H9",
       "Elements": "19:Ca 2:Mg 11:Al 18:Si 78:O 9:H",
       "AggregateState": "Solid",
@@ -937,7 +937,7 @@
       }
     },
     {
-      "Name": "Fe-OSUMILITE",
+      "Name": "Fe-Osumilite",
       "Formula": "KFe2Al5Si10O30",
       "Elements": "1:K 2:Fe 5:Al 10:Si 30:O",
       "AggregateState": "Solid",
@@ -961,7 +961,7 @@
       }
     },
     {
-      "Name": "OSUMILITE(1)",
+      "Name": "Osumilite,1",
       "Formula": "KMg2Al5Si10O30",
       "Elements": "1:K 2:Mg 5:Al 10:Si 30:O",
       "AggregateState": "Solid",
@@ -985,7 +985,7 @@
       }
     },
     {
-      "Name": "OSUMILITE(2)",
+      "Name": "Osumilite,2",
       "Formula": "KMg3Al3Si11O30",
       "Elements": "1:K 3:Mg 3:Al 11:Si 30:O",
       "AggregateState": "Solid",
@@ -1009,7 +1009,7 @@
       }
     },
     {
-      "Name": "Fe-AKIMOTOITE",
+      "Name": "Fe-Akimotoite",
       "Formula": "FeSiO3",
       "Elements": "1:Fe 1:Si 3:O",
       "AggregateState": "Solid",
@@ -1033,7 +1033,7 @@
       }
     },
     {
-      "Name": "AKIMOTOITE",
+      "Name": "Akimotoite",
       "Formula": "MgSiO3",
       "Elements": "1:Mg 1:Si 3:O",
       "AggregateState": "Solid",
@@ -1057,7 +1057,7 @@
       }
     },
     {
-      "Name": "CaSi-TITANITE",
+      "Name": "CaSi-Titanite",
       "Formula": "CaSi2O5",
       "Elements": "1:Ca 2:Si 5:O",
       "AggregateState": "Solid",
@@ -1081,7 +1081,7 @@
       }
     },
     {
-      "Name": "Al-PEROVSKITE",
+      "Name": "Al-Perovskite",
       "Formula": "Al2O3",
       "Elements": "2:Al 3:O",
       "AggregateState": "Solid",
@@ -1105,7 +1105,7 @@
       }
     },
     {
-      "Name": "Ca-PEROVSKITE",
+      "Name": "Ca-Perovskite",
       "Formula": "CaSiO3",
       "Elements": "1:Ca 1:Si 3:O",
       "AggregateState": "Solid",
@@ -1129,7 +1129,7 @@
       }
     },
     {
-      "Name": "Fe-PEROVSKITE",
+      "Name": "Fe-Perovskite",
       "Formula": "FeSiO3",
       "Elements": "1:Fe 1:Si 3:O",
       "AggregateState": "Solid",
@@ -1153,7 +1153,7 @@
       }
     },
     {
-      "Name": "Mg-PEROVSKITE",
+      "Name": "Mg-Perovskite",
       "Formula": "MgSiO3",
       "Elements": "1:Mg 1:Si 3:O",
       "AggregateState": "Solid",
@@ -1177,7 +1177,7 @@
       }
     },
     {
-      "Name": "PHASEA",
+      "Name": "Phasea",
       "Formula": "Mg7Si2O14H6",
       "Elements": "7:Mg 2:Si 14:O 6:H",
       "AggregateState": "Solid",
@@ -1201,7 +1201,7 @@
       }
     },
     {
-      "Name": "Fe-RINGWOODITE",
+      "Name": "Fe-Ringwoodite",
       "Formula": "Fe2SiO4",
       "Elements": "2:Fe 1:Si 4:O",
       "AggregateState": "Solid",
@@ -1225,7 +1225,7 @@
       }
     },
     {
-      "Name": "Mg-RINGWOODITE",
+      "Name": "Mg-Ringwoodite",
       "Formula": "Mg2SiO4",
       "Elements": "2:Mg 1:Si 4:O",
       "AggregateState": "Solid",
@@ -1249,7 +1249,7 @@
       }
     },
     {
-      "Name": "Fe-WADSLEYITE",
+      "Name": "Fe-Wadsleyite",
       "Formula": "Fe2SiO4",
       "Elements": "2:Fe 1:Si 4:O",
       "AggregateState": "Solid",
@@ -1273,7 +1273,7 @@
       }
     },
     {
-      "Name": "Mg-WADSLEYITE",
+      "Name": "Mg-Wadsleyite",
       "Formula": "Mg2SiO4",
       "Elements": "2:Mg 1:Si 4:O",
       "AggregateState": "Solid",
@@ -1297,7 +1297,7 @@
       }
     },
     {
-      "Name": "ACMITE",
+      "Name": "Acmite",
       "Formula": "NaFeSi2O6",
       "Elements": "1:Na 1:Fe 2:Si 6:O",
       "AggregateState": "Solid",
@@ -1321,7 +1321,7 @@
       }
     },
     {
-      "Name": "Ca-ESKOLA_PYROXENE",
+      "Name": "Ca-Eskola-Pyroxene",
       "Formula": "Ca0.5AlSi2O6",
       "Elements": "0.5:Ca 1:Al 2:Si 6:O",
       "AggregateState": "Solid",
@@ -1345,7 +1345,7 @@
       }
     },
     {
-      "Name": "CLINO_ENSTATITE",
+      "Name": "Clino-Enstatite",
       "Formula": "Mg2Si2O6",
       "Elements": "2:Mg 2:Si 6:O",
       "AggregateState": "Solid",
@@ -1369,7 +1369,7 @@
       }
     },
     {
-      "Name": "HI-P_CLINOENSTATITE",
+      "Name": "Hi-P-Clinoenstatite",
       "Formula": "Mg2Si2O6",
       "Elements": "2:Mg 2:Si 6:O",
       "AggregateState": "Solid",
@@ -1393,7 +1393,7 @@
       }
     },
     {
-      "Name": "DIOPSIDE",
+      "Name": "Diopside",
       "Formula": "CaMgSi2O6",
       "Elements": "1:Ca 1:Mg 2:Si 6:O",
       "AggregateState": "Solid",
@@ -1417,7 +1417,7 @@
       }
     },
     {
-      "Name": "ENSTATITE",
+      "Name": "Enstatite",
       "Formula": "Mg2Si2O6",
       "Elements": "2:Mg 2:Si 6:O",
       "AggregateState": "Solid",
@@ -1441,7 +1441,7 @@
       }
     },
     {
-      "Name": "FERROSILITE",
+      "Name": "Ferrosilite",
       "Formula": "Fe2Si2O6",
       "Elements": "2:Fe 2:Si 6:O",
       "AggregateState": "Solid",
@@ -1465,7 +1465,7 @@
       }
     },
     {
-      "Name": "HEDENBERGITE",
+      "Name": "Hedenbergite",
       "Formula": "CaFeSi2O6",
       "Elements": "1:Ca 1:Fe 2:Si 6:O",
       "AggregateState": "Solid",
@@ -1489,7 +1489,7 @@
       }
     },
     {
-      "Name": "JADEITE",
+      "Name": "Jadeite",
       "Formula": "NaAlSi2O6",
       "Elements": "1:Na 1:Al 2:Si 6:O",
       "AggregateState": "Solid",
@@ -1513,7 +1513,7 @@
       }
     },
     {
-      "Name": "KOSMOCHLOR",
+      "Name": "Kosmochlor",
       "Formula": "NaCrSi2O6",
       "Elements": "1:Na 1:Cr 2:Si 6:O",
       "AggregateState": "Solid",
@@ -1537,7 +1537,7 @@
       }
     },
     {
-      "Name": "Mg-TSCHERMAKS_PX",
+      "Name": "Mg-Tschermaks-Px",
       "Formula": "MgAl2SiO6",
       "Elements": "1:Mg 2:Al 1:Si 6:O",
       "AggregateState": "Solid",
@@ -1561,7 +1561,7 @@
       }
     },
     {
-      "Name": "PROTOENSTATITE",
+      "Name": "Protoenstatite",
       "Formula": "Mg2Si2O6",
       "Elements": "2:Mg 2:Si 6:O",
       "AggregateState": "Solid",
@@ -1585,7 +1585,7 @@
       }
     },
     {
-      "Name": "PSEUDOWOLLASTONITE",
+      "Name": "Pseudowollastonite",
       "Formula": "CaSiO3",
       "Elements": "1:Ca 1:Si 3:O",
       "AggregateState": "Solid",
@@ -1609,7 +1609,7 @@
       }
     },
     {
-      "Name": "PYROXMANGITE",
+      "Name": "Pyroxmangite",
       "Formula": "MnSiO3",
       "Elements": "1:Mn 1:Si 3:O",
       "AggregateState": "Solid",
@@ -1633,7 +1633,7 @@
       }
     },
     {
-      "Name": "RHODONITE",
+      "Name": "Rhodonite",
       "Formula": "MnSiO3",
       "Elements": "1:Mn 1:Si 3:O",
       "AggregateState": "Solid",
@@ -1657,7 +1657,7 @@
       }
     },
     {
-      "Name": "WALSTROMITE",
+      "Name": "Walstromite",
       "Formula": "CaSiO3",
       "Elements": "1:Ca 1:Si 3:O",
       "AggregateState": "Solid",
@@ -1681,7 +1681,7 @@
       }
     },
     {
-      "Name": "WOLLASTONITE",
+      "Name": "Wollastonite",
       "Formula": "CaSiO3",
       "Elements": "1:Ca 1:Si 3:O",
       "AggregateState": "Solid",
@@ -1705,7 +1705,7 @@
       }
     },
     {
-      "Name": "ANTHOPHYLLITE",
+      "Name": "Anthophyllite",
       "Formula": "Mg7Si8O24H2",
       "Elements": "7:Mg 8:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -1729,7 +1729,7 @@
       }
     },
     {
-      "Name": "Fe-ANTHOPHYLLITE",
+      "Name": "Fe-Anthophyllite",
       "Formula": "Fe7Si8O24H2",
       "Elements": "7:Fe 8:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -1753,7 +1753,7 @@
       }
     },
     {
-      "Name": "CUMMINGTONITE",
+      "Name": "Cummingtonite",
       "Formula": "Mg7Si8O24H2",
       "Elements": "7:Mg 8:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -1777,7 +1777,7 @@
       }
     },
     {
-      "Name": "FERROACTINOLITE",
+      "Name": "Ferroactinolite",
       "Formula": "Ca2Fe5Si8O24H2",
       "Elements": "2:Ca 5:Fe 8:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -1801,7 +1801,7 @@
       }
     },
     {
-      "Name": "FERROGLAUCOPHANE",
+      "Name": "Ferroglaucophane",
       "Formula": "Na2Fe3Al2Si8O24H2",
       "Elements": "2:Na 3:Fe 2:Al 8:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -1825,7 +1825,7 @@
       }
     },
     {
-      "Name": "GLAUCOPHANE",
+      "Name": "Glaucophane",
       "Formula": "Na2Mg3Al2Si8O24H2",
       "Elements": "2:Na 3:Mg 2:Al 8:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -1849,7 +1849,7 @@
       }
     },
     {
-      "Name": "GRUNERITE",
+      "Name": "Grunerite",
       "Formula": "Fe7Si8O24H2",
       "Elements": "7:Fe 8:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -1873,7 +1873,7 @@
       }
     },
     {
-      "Name": "PARGASITE",
+      "Name": "Pargasite",
       "Formula": "NaCa2Mg4Al3Si6O24H2",
       "Elements": "1:Na 2:Ca 4:Mg 3:Al 6:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -1897,7 +1897,7 @@
       }
     },
     {
-      "Name": "RIEBECKITE",
+      "Name": "Riebeckite",
       "Formula": "Na2Fe5Si8O24H2",
       "Elements": "2:Na 5:Fe 8:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -1921,7 +1921,7 @@
       }
     },
     {
-      "Name": "TREMOLITE",
+      "Name": "Tremolite",
       "Formula": "Ca2Mg5Si8O24H2",
       "Elements": "2:Ca 5:Mg 8:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -1945,7 +1945,7 @@
       }
     },
     {
-      "Name": "TSCHERMAKITE",
+      "Name": "Tschermakite",
       "Formula": "Ca2Mg3Al4Si6O24H2",
       "Elements": "2:Ca 3:Mg 4:Al 6:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -1969,7 +1969,7 @@
       }
     },
     {
-      "Name": "DEERITE",
+      "Name": "Deerite",
       "Formula": "Fe18Si12O50H10",
       "Elements": "18:Fe 12:Si 50:O 10:H",
       "AggregateState": "Solid",
@@ -1993,7 +1993,7 @@
       }
     },
     {
-      "Name": "FERROCARPHOLITE",
+      "Name": "Ferrocarpholite",
       "Formula": "FeAl2Si2O10H4",
       "Elements": "1:Fe 2:Al 2:Si 10:O 4:H",
       "AggregateState": "Solid",
@@ -2017,7 +2017,7 @@
       }
     },
     {
-      "Name": "MAGNESIOCARPHOLITE",
+      "Name": "Magnesiocarpholite",
       "Formula": "MgAl2Si2O10H4",
       "Elements": "1:Mg 2:Al 2:Si 10:O 4:H",
       "AggregateState": "Solid",
@@ -2041,7 +2041,7 @@
       }
     },
     {
-      "Name": "Fe-SAPPHIRINE(221)",
+      "Name": "Fe-Sapphirine,221",
       "Formula": "Fe4Al8Si2O20",
       "Elements": "4:Fe 8:Al 2:Si 20:O",
       "AggregateState": "Solid",
@@ -2065,7 +2065,7 @@
       }
     },
     {
-      "Name": "SAPPHIRINE(221)",
+      "Name": "Sapphirine,221",
       "Formula": "Mg4Al8Si2O20",
       "Elements": "4:Mg 8:Al 2:Si 20:O",
       "AggregateState": "Solid",
@@ -2089,7 +2089,7 @@
       }
     },
     {
-      "Name": "SAPPHIRINE(351)",
+      "Name": "Sapphirine,351",
       "Formula": "Mg3Al10SiO20",
       "Elements": "3:Mg 10:Al 1:Si 20:O",
       "AggregateState": "Solid",
@@ -2113,7 +2113,7 @@
       }
     },
     {
-      "Name": "ANNITE",
+      "Name": "Annite",
       "Formula": "KFe3AlSi3O12H2",
       "Elements": "1:K 3:Fe 1:Al 3:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2137,7 +2137,7 @@
       }
     },
     {
-      "Name": "CELADONITE",
+      "Name": "Celadonite",
       "Formula": "KMgAlSi4O12H2",
       "Elements": "1:K 1:Mg 1:Al 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2161,7 +2161,7 @@
       }
     },
     {
-      "Name": "FERROCELADONITE",
+      "Name": "Ferroceladonite",
       "Formula": "KFeAlSi4O12H2",
       "Elements": "1:K 1:Fe 1:Al 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2185,7 +2185,7 @@
       }
     },
     {
-      "Name": "EASTONITE",
+      "Name": "Eastonite",
       "Formula": "KMg2Al3Si2O12H2",
       "Elements": "1:K 2:Mg 3:Al 2:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2209,7 +2209,7 @@
       }
     },
     {
-      "Name": "MARGARITE",
+      "Name": "Margarite",
       "Formula": "CaAl4Si2O12H2",
       "Elements": "1:Ca 4:Al 2:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2233,7 +2233,7 @@
       }
     },
     {
-      "Name": "Mn-BIOTITE",
+      "Name": "Mn-Biotite",
       "Formula": "KMn3AlSi3O12H2",
       "Elements": "1:K 3:Mn 1:Al 3:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2257,7 +2257,7 @@
       }
     },
     {
-      "Name": "MUSCOVITE",
+      "Name": "Muscovite",
       "Formula": "KAl3Si3O12H2",
       "Elements": "1:K 3:Al 3:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2281,7 +2281,7 @@
       }
     },
     {
-      "Name": "SODAPHLOGOPITE",
+      "Name": "Sodaphlogopite",
       "Formula": "NaMg3AlSi3O12H2",
       "Elements": "1:Na 3:Mg 1:Al 3:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2305,7 +2305,7 @@
       }
     },
     {
-      "Name": "PARAGONITE",
+      "Name": "Paragonite",
       "Formula": "NaAl3Si3O12H2",
       "Elements": "1:Na 3:Al 3:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2329,7 +2329,7 @@
       }
     },
     {
-      "Name": "PHLOGOPITE",
+      "Name": "Phlogopite",
       "Formula": "KMg3AlSi3O12H2",
       "Elements": "1:K 3:Mg 1:Al 3:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2353,7 +2353,7 @@
       }
     },
     {
-      "Name": "Al-FREE_CHLORITE",
+      "Name": "Al-Free-Chlorite",
       "Formula": "Mg6Si4O18H8",
       "Elements": "6:Mg 4:Si 18:O 8:H",
       "AggregateState": "Solid",
@@ -2377,7 +2377,7 @@
       }
     },
     {
-      "Name": "AMESITE(14A)",
+      "Name": "Amesite,14A",
       "Formula": "Mg4Al4Si2O18H8",
       "Elements": "4:Mg 4:Al 2:Si 18:O 8:H",
       "AggregateState": "Solid",
@@ -2401,7 +2401,7 @@
       }
     },
     {
-      "Name": "CLINOCHLORE(ORDERED)",
+      "Name": "Clinochlore,ordered",
       "Formula": "Mg5Al2Si3O18H8",
       "Elements": "5:Mg 2:Al 3:Si 18:O 8:H",
       "AggregateState": "Solid",
@@ -2425,7 +2425,7 @@
       }
     },
     {
-      "Name": "DAPHNITE",
+      "Name": "Daphnite",
       "Formula": "Fe5Al2Si3O18H8",
       "Elements": "5:Fe 2:Al 3:Si 18:O 8:H",
       "AggregateState": "Solid",
@@ -2449,7 +2449,7 @@
       }
     },
     {
-      "Name": "Mn-CHLORITE",
+      "Name": "Mn-Chlorite",
       "Formula": "Mn5Al2Si3O18H8",
       "Elements": "5:Mn 2:Al 3:Si 18:O 8:H",
       "AggregateState": "Solid",
@@ -2473,7 +2473,7 @@
       }
     },
     {
-      "Name": "FERROSUDOITE",
+      "Name": "Ferrosudoite",
       "Formula": "Fe2Al4Si3O18H8",
       "Elements": "2:Fe 4:Al 3:Si 18:O 8:H",
       "AggregateState": "Solid",
@@ -2497,7 +2497,7 @@
       }
     },
     {
-      "Name": "SUDOITE",
+      "Name": "Sudoite",
       "Formula": "Mg2Al4Si3O18H8",
       "Elements": "2:Mg 4:Al 3:Si 18:O 8:H",
       "AggregateState": "Solid",
@@ -2521,7 +2521,7 @@
       }
     },
     {
-      "Name": "ANTIGORITE",
+      "Name": "Antigorite",
       "Formula": "Mg48Si34O147H62",
       "Elements": "48:Mg 34:Si 147:O 62:H",
       "AggregateState": "Solid",
@@ -2545,7 +2545,7 @@
       }
     },
     {
-      "Name": "CHRYSOTILE",
+      "Name": "Chrysotile",
       "Formula": "Mg3Si2O9H4",
       "Elements": "3:Mg 2:Si 9:O 4:H",
       "AggregateState": "Solid",
@@ -2569,7 +2569,7 @@
       }
     },
     {
-      "Name": "FERROTALC",
+      "Name": "Ferrotalc",
       "Formula": "Fe3Si4O12H2",
       "Elements": "3:Fe 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2593,7 +2593,7 @@
       }
     },
     {
-      "Name": "GREENALITE",
+      "Name": "Greenalite",
       "Formula": "Fe3Si2O9H4",
       "Elements": "3:Fe 2:Si 9:O 4:H",
       "AggregateState": "Solid",
@@ -2617,7 +2617,7 @@
       }
     },
     {
-      "Name": "KAOLINITE",
+      "Name": "Kaolinite",
       "Formula": "Al2Si2O9H4",
       "Elements": "2:Al 2:Si 9:O 4:H",
       "AggregateState": "Solid",
@@ -2641,7 +2641,7 @@
       }
     },
     {
-      "Name": "LIZARDITE",
+      "Name": "Lizardite",
       "Formula": "Mg3Si2O9H4",
       "Elements": "3:Mg 2:Si 9:O 4:H",
       "AggregateState": "Solid",
@@ -2665,7 +2665,7 @@
       }
     },
     {
-      "Name": "MINNESOTAITE",
+      "Name": "Minnesotaite",
       "Formula": "Fe3Si4O12H2",
       "Elements": "3:Fe 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2689,7 +2689,7 @@
       }
     },
     {
-      "Name": "Mg-MINNESOTAITE",
+      "Name": "Mg-Minnesotaite",
       "Formula": "Mg3Si4O12H2",
       "Elements": "3:Mg 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2713,7 +2713,7 @@
       }
     },
     {
-      "Name": "PREHNITE",
+      "Name": "Prehnite",
       "Formula": "Ca2Al2Si3O12H2",
       "Elements": "2:Ca 2:Al 3:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2737,7 +2737,7 @@
       }
     },
     {
-      "Name": "PRL-TALC",
+      "Name": "PRL-Talc",
       "Formula": "Al2Si4O12H2",
       "Elements": "2:Al 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2761,7 +2761,7 @@
       }
     },
     {
-      "Name": "PYROPHYLLITE",
+      "Name": "Pyrophyllite",
       "Formula": "Al2Si4O12H2",
       "Elements": "2:Al 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2785,7 +2785,7 @@
       }
     },
     {
-      "Name": "FERROSTILPNOMELANE",
+      "Name": "Ferrostilpnomelane",
       "Formula": "K0.5Fe5Al2Si8O30.5H12.5",
       "Elements": "0.5:K 5:Fe 2:Al 8:Si 30.5:O 12.5:H",
       "AggregateState": "Solid",
@@ -2809,7 +2809,7 @@
       }
     },
     {
-      "Name": "Mg-STILPNOMELANE",
+      "Name": "Mg-Stilpnomelane",
       "Formula": "K0.5Mg5Al2Si8O30.5H12.5",
       "Elements": "0.5:K 5:Mg 2:Al 8:Si 30.5:O 12.5:H",
       "AggregateState": "Solid",
@@ -2833,7 +2833,7 @@
       }
     },
     {
-      "Name": "TALC",
+      "Name": "Talc",
       "Formula": "Mg3Si4O12H2",
       "Elements": "3:Mg 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2857,7 +2857,7 @@
       }
     },
     {
-      "Name": "TSCHERMAK-TALC",
+      "Name": "Tschermak-Talc",
       "Formula": "Mg2Al2Si3O12H2",
       "Elements": "2:Mg 2:Al 3:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2881,7 +2881,7 @@
       }
     },
     {
-      "Name": "FERRI-PREHNITE",
+      "Name": "Ferri-Prehnite",
       "Formula": "Ca2FeAlSi3O12H2",
       "Elements": "2:Ca 1:Fe 1:Al 3:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -2905,7 +2905,7 @@
       }
     },
     {
-      "Name": "ALBITE(HIGH)",
+      "Name": "Albite,high",
       "Formula": "NaAlSi3O8",
       "Elements": "1:Na 1:Al 3:Si 8:O",
       "AggregateState": "Solid",
@@ -2929,7 +2929,7 @@
       }
     },
     {
-      "Name": "ANALCITE",
+      "Name": "Analcite",
       "Formula": "NaAlSi2O7H2",
       "Elements": "1:Na 1:Al 2:Si 7:O 2:H",
       "AggregateState": "Solid",
@@ -2953,7 +2953,7 @@
       }
     },
     {
-      "Name": "CARNEGIEITE(HIGH)",
+      "Name": "Carnegieite,high",
       "Formula": "NaAlSiO4",
       "Elements": "1:Na 1:Al 1:Si 4:O",
       "AggregateState": "Solid",
@@ -2977,7 +2977,7 @@
       }
     },
     {
-      "Name": "CARNEGIEITE(LOW)",
+      "Name": "Carnegieite,low",
       "Formula": "NaAlSiO4",
       "Elements": "1:Na 1:Al 1:Si 4:O",
       "AggregateState": "Solid",
@@ -3001,7 +3001,7 @@
       }
     },
     {
-      "Name": "K-CYMRITE",
+      "Name": "K-Cymrite",
       "Formula": "KAlSi3O9H2",
       "Elements": "1:K 1:Al 3:Si 9:O 2:H",
       "AggregateState": "Solid",
@@ -3025,7 +3025,7 @@
       }
     },
     {
-      "Name": "KALSILITE",
+      "Name": "Kalsilite",
       "Formula": "KAlSiO4",
       "Elements": "1:K 1:Al 1:Si 4:O",
       "AggregateState": "Solid",
@@ -3049,7 +3049,7 @@
       }
     },
     {
-      "Name": "MICROCLINE",
+      "Name": "Microcline",
       "Formula": "KAlSi3O8",
       "Elements": "1:K 1:Al 3:Si 8:O",
       "AggregateState": "Solid",
@@ -3073,7 +3073,7 @@
       }
     },
     {
-      "Name": "COESITE",
+      "Name": "Coesite",
       "Formula": "SiO2",
       "Elements": "1:Si 2:O",
       "AggregateState": "Solid",
@@ -3097,7 +3097,7 @@
       }
     },
     {
-      "Name": "CRISTOBALITE(HIGH)",
+      "Name": "Cristobalite,high",
       "Formula": "SiO2",
       "Elements": "1:Si 2:O",
       "AggregateState": "Solid",
@@ -3121,7 +3121,7 @@
       }
     },
     {
-      "Name": "STISHOVITE",
+      "Name": "Stishovite",
       "Formula": "SiO2",
       "Elements": "1:Si 2:O",
       "AggregateState": "Solid",
@@ -3145,7 +3145,7 @@
       }
     },
     {
-      "Name": "TRIDYMITE(HIGH)",
+      "Name": "Tridymite,high",
       "Formula": "SiO2",
       "Elements": "1:Si 2:O",
       "AggregateState": "Solid",
@@ -3169,7 +3169,7 @@
       }
     },
     {
-      "Name": "HEULANDITE",
+      "Name": "Heulandite",
       "Formula": "CaAl2Si7O24H12",
       "Elements": "1:Ca 2:Al 7:Si 24:O 12:H",
       "AggregateState": "Solid",
@@ -3193,7 +3193,7 @@
       }
     },
     {
-      "Name": "HOLLANDITE",
+      "Name": "Hollandite",
       "Formula": "KAlSi3O8",
       "Elements": "1:K 1:Al 3:Si 8:O",
       "AggregateState": "Solid",
@@ -3217,7 +3217,7 @@
       }
     },
     {
-      "Name": "LAUMONTITE",
+      "Name": "Laumontite",
       "Formula": "CaAl2Si4O16H8",
       "Elements": "1:Ca 2:Al 4:Si 16:O 8:H",
       "AggregateState": "Solid",
@@ -3241,7 +3241,7 @@
       }
     },
     {
-      "Name": "MEIONITE",
+      "Name": "Meionite",
       "Formula": "Ca4Al6Si6CO27",
       "Elements": "4:Ca 6:Al 6:Si 1:C 27:O",
       "AggregateState": "Solid",
@@ -3265,7 +3265,7 @@
       }
     },
     {
-      "Name": "SODALITE",
+      "Name": "Sodalite",
       "Formula": "Na8Al6Si6O24Cl2",
       "Elements": "8:Na 6:Al 6:Si 24:O 2:Cl",
       "AggregateState": "Solid",
@@ -3289,7 +3289,7 @@
       }
     },
     {
-      "Name": "STILBITE",
+      "Name": "Stilbite",
       "Formula": "CaAl2Si7O25H14",
       "Elements": "1:Ca 2:Al 7:Si 25:O 14:H",
       "AggregateState": "Solid",
@@ -3313,7 +3313,7 @@
       }
     },
     {
-      "Name": "Si-WADEITE",
+      "Name": "Si-Wadeite",
       "Formula": "K2Si4O9",
       "Elements": "2:K 4:Si 9:O",
       "AggregateState": "Solid",
@@ -3337,7 +3337,7 @@
       }
     },
     {
-      "Name": "WAIRAKITE",
+      "Name": "Wairakite",
       "Formula": "CaAl2Si4O14H4",
       "Elements": "1:Ca 2:Al 4:Si 14:O 4:H",
       "AggregateState": "Solid",
@@ -3361,7 +3361,7 @@
       }
     },
     {
-      "Name": "BADDELEYITE",
+      "Name": "Baddeleyite",
       "Formula": "ZrO2",
       "Elements": "1:Zr 2:O",
       "AggregateState": "Solid",
@@ -3385,7 +3385,7 @@
       }
     },
     {
-      "Name": "BIXBYITE",
+      "Name": "Bixbyite",
       "Formula": "Mn2O3",
       "Elements": "2:Mn 3:O",
       "AggregateState": "Solid",
@@ -3409,7 +3409,7 @@
       }
     },
     {
-      "Name": "CORUNDUM",
+      "Name": "Corundum",
       "Formula": "Al2O3",
       "Elements": "2:Al 3:O",
       "AggregateState": "Solid",
@@ -3433,7 +3433,7 @@
       }
     },
     {
-      "Name": "CUPRITE",
+      "Name": "Cuprite",
       "Formula": "Cu2O",
       "Elements": "2:Cu 1:O",
       "AggregateState": "Solid",
@@ -3457,7 +3457,7 @@
       }
     },
     {
-      "Name": "ESKOLAITE",
+      "Name": "Eskolaite",
       "Formula": "Cr2O3",
       "Elements": "2:Cr 3:O",
       "AggregateState": "Solid",
@@ -3481,7 +3481,7 @@
       }
     },
     {
-      "Name": "GEIKIELITE",
+      "Name": "Geikielite",
       "Formula": "MgTiO3",
       "Elements": "1:Mg 1:Ti 3:O",
       "AggregateState": "Solid",
@@ -3505,7 +3505,7 @@
       }
     },
     {
-      "Name": "LIME",
+      "Name": "Lime",
       "Formula": "CaO",
       "Elements": "1:Ca 1:O",
       "AggregateState": "Solid",
@@ -3529,7 +3529,7 @@
       }
     },
     {
-      "Name": "MANGANOSITE",
+      "Name": "Manganosite",
       "Formula": "MnO",
       "Elements": "1:Mn 1:O",
       "AggregateState": "Solid",
@@ -3553,7 +3553,7 @@
       }
     },
     {
-      "Name": "MgSi-CORUNDUM",
+      "Name": "MgSi-Corundum",
       "Formula": "MgSiO3",
       "Elements": "1:Mg 1:Si 3:O",
       "AggregateState": "Solid",
@@ -3577,7 +3577,7 @@
       }
     },
     {
-      "Name": "PERICLASE",
+      "Name": "Periclase",
       "Formula": "MgO",
       "Elements": "1:Mg 1:O",
       "AggregateState": "Solid",
@@ -3601,7 +3601,7 @@
       }
     },
     {
-      "Name": "FERROPERICLASE",
+      "Name": "Ferropericlase",
       "Formula": "FeO",
       "Elements": "1:Fe 1:O",
       "AggregateState": "Solid",
@@ -3625,7 +3625,7 @@
       }
     },
     {
-      "Name": "PYROPHANITE",
+      "Name": "Pyrophanite",
       "Formula": "MnTiO3",
       "Elements": "1:Mn 1:Ti 3:O",
       "AggregateState": "Solid",
@@ -3649,7 +3649,7 @@
       }
     },
     {
-      "Name": "RUTILE",
+      "Name": "Rutile",
       "Formula": "TiO2",
       "Elements": "1:Ti 2:O",
       "AggregateState": "Solid",
@@ -3673,7 +3673,7 @@
       }
     },
     {
-      "Name": "TENORITE",
+      "Name": "Tenorite",
       "Formula": "CuO",
       "Elements": "1:Cu 1:O",
       "AggregateState": "Solid",
@@ -3697,7 +3697,7 @@
       }
     },
     {
-      "Name": "ULVOSPINEL",
+      "Name": "Ulvospinel",
       "Formula": "Fe2TiO4",
       "Elements": "2:Fe 1:Ti 4:O",
       "AggregateState": "Solid",
@@ -3721,7 +3721,7 @@
       }
     },
     {
-      "Name": "BRUCITE",
+      "Name": "Brucite",
       "Formula": "MgO2H2",
       "Elements": "1:Mg 2:O 2:H",
       "AggregateState": "Solid",
@@ -3745,7 +3745,7 @@
       }
     },
     {
-      "Name": "DIASPORE",
+      "Name": "Diaspore",
       "Formula": "AlO2H",
       "Elements": "1:Al 2:O 1:H",
       "AggregateState": "Solid",
@@ -3769,7 +3769,7 @@
       }
     },
     {
-      "Name": "GOETHITE",
+      "Name": "Goethite",
       "Formula": "FeO2H",
       "Elements": "1:Fe 2:O 1:H",
       "AggregateState": "Solid",
@@ -3793,7 +3793,7 @@
       }
     },
     {
-      "Name": "MAGNESITE",
+      "Name": "Magnesite",
       "Formula": "MgCO3",
       "Elements": "1:Mg 1:C 3:O",
       "AggregateState": "Solid",
@@ -3817,7 +3817,7 @@
       }
     },
     {
-      "Name": "RHODOCHROSITE",
+      "Name": "Rhodochrosite",
       "Formula": "MnCO3",
       "Elements": "1:Mn 1:C 3:O",
       "AggregateState": "Solid",
@@ -3841,7 +3841,7 @@
       }
     },
     {
-      "Name": "SIDERITE",
+      "Name": "Siderite",
       "Formula": "FeCO3",
       "Elements": "1:Fe 1:C 3:O",
       "AggregateState": "Solid",
@@ -3865,7 +3865,7 @@
       }
     },
     {
-      "Name": "ANHYDRITE",
+      "Name": "Anhydrite",
       "Formula": "CaSO4",
       "Elements": "1:Ca 1:S 4:O",
       "AggregateState": "Solid",
@@ -3889,7 +3889,7 @@
       }
     },
     {
-      "Name": "HALITE",
+      "Name": "Halite",
       "Formula": "NaCl",
       "Elements": "1:Na 1:Cl",
       "AggregateState": "Solid",
@@ -3913,7 +3913,7 @@
       }
     },
     {
-      "Name": "PYRITE",
+      "Name": "Pyrite",
       "Formula": "FeS2",
       "Elements": "1:Fe 2:S",
       "AggregateState": "Solid",
@@ -3937,7 +3937,7 @@
       }
     },
     {
-      "Name": "SYLVITE",
+      "Name": "Sylvite",
       "Formula": "KCl",
       "Elements": "1:K 1:Cl",
       "AggregateState": "Solid",
@@ -3961,7 +3961,7 @@
       }
     },
     {
-      "Name": "COPPER",
+      "Name": "Copper",
       "Formula": "Cu",
       "Elements": "1:Cu",
       "AggregateState": "Solid",
@@ -3985,7 +3985,7 @@
       }
     },
     {
-      "Name": "DIAMOND",
+      "Name": "Diamond",
       "Formula": "C",
       "Elements": "1:C",
       "AggregateState": "Solid",
@@ -4009,7 +4009,7 @@
       }
     },
     {
-      "Name": "GRAPHITE",
+      "Name": "Graphite",
       "Formula": "C",
       "Elements": "1:C",
       "AggregateState": "Solid",
@@ -4033,7 +4033,7 @@
       }
     },
     {
-      "Name": "SULPHUR",
+      "Name": "Sulphur",
       "Formula": "S",
       "Elements": "1:S",
       "AggregateState": "Solid",
@@ -4057,7 +4057,7 @@
       }
     },
     {
-      "Name": "GIBBSITE",
+      "Name": "Gibbsite",
       "Formula": "AlO3H3",
       "Elements": "1:Al 3:O 3:H",
       "AggregateState": "Solid",
@@ -4081,7 +4081,7 @@
       }
     },
     {
-      "Name": "BOEHMITE",
+      "Name": "Boehmite",
       "Formula": "AlO2H",
       "Elements": "1:Al 2:O 1:H",
       "AggregateState": "Solid",
@@ -4105,7 +4105,7 @@
       }
     },
     {
-      "Name": "FLUORPHLOGOPITE",
+      "Name": "Fluorphlogopite",
       "Formula": "KMg3AlSi3O10F2",
       "Elements": "1:K 3:Mg 1:Al 3:Si 10:O 2:F",
       "AggregateState": "Solid",
@@ -4129,7 +4129,7 @@
       }
     },
     {
-      "Name": "HYDROXYAPATITE",
+      "Name": "Hydroxyapatite",
       "Formula": "Ca5P3O13H",
       "Elements": "5:Ca 3:P 13:O 1:H",
       "AggregateState": "Solid",
@@ -4153,7 +4153,7 @@
       }
     },
     {
-      "Name": "FLUORAPATITE",
+      "Name": "Fluorapatite",
       "Formula": "Ca5P3O12F",
       "Elements": "5:Ca 3:P 12:O 1:F",
       "AggregateState": "Solid",
@@ -4177,7 +4177,7 @@
       }
     },
     {
-      "Name": "CHLORAPATITE",
+      "Name": "Chlorapatite",
       "Formula": "Ca5P3O12Cl",
       "Elements": "5:Ca 3:P 12:O 1:Cl",
       "AggregateState": "Solid",
@@ -4201,7 +4201,7 @@
       }
     },
     {
-      "Name": "ARSENIC",
+      "Name": "Arsenic",
       "Formula": "As",
       "Elements": "1:As",
       "AggregateState": "Solid",
@@ -4225,7 +4225,7 @@
       }
     },
     {
-      "Name": "ARSENOLITE",
+      "Name": "Arsenolite",
       "Formula": "As2O3",
       "Elements": "2:As 3:O",
       "AggregateState": "Solid",
@@ -4249,7 +4249,7 @@
       }
     },
     {
-      "Name": "CLAUDETITE",
+      "Name": "Claudetite",
       "Formula": "As2O3",
       "Elements": "2:As 3:O",
       "AggregateState": "Solid",
@@ -4273,7 +4273,7 @@
       }
     },
     {
-      "Name": "As2O5,s",
+      "Name": "As2O5(s)",
       "Formula": "As2O5",
       "Elements": "2:As 5:O",
       "AggregateState": "Solid",
@@ -4297,7 +4297,7 @@
       }
     },
     {
-      "Name": "REALGAR(ALPHA)",
+      "Name": "Realgar,alpha",
       "Formula": "AsS",
       "Elements": "1:As 1:S",
       "AggregateState": "Solid",
@@ -4321,7 +4321,7 @@
       }
     },
     {
-      "Name": "REALGAR(BETA)",
+      "Name": "Realgar,beta",
       "Formula": "AsS",
       "Elements": "1:As 1:S",
       "AggregateState": "Solid",
@@ -4345,7 +4345,7 @@
       }
     },
     {
-      "Name": "ORPIMENT",
+      "Name": "Orpiment",
       "Formula": "As2S3",
       "Elements": "2:As 3:S",
       "AggregateState": "Solid",
@@ -4369,7 +4369,7 @@
       }
     },
     {
-      "Name": "ORPIMENT(AM)",
+      "Name": "Orpiment(am)",
       "Formula": "As2S3",
       "Elements": "2:As 3:S",
       "AggregateState": "Solid",
@@ -4393,7 +4393,7 @@
       }
     },
     {
-      "Name": "ARSENOPYRITE",
+      "Name": "Arsenopyrite",
       "Formula": "FeAsS",
       "Elements": "1:Fe 1:As 1:S",
       "AggregateState": "Solid",
@@ -4417,7 +4417,7 @@
       }
     },
     {
-      "Name": "SCORODITE",
+      "Name": "Scorodite",
       "Formula": "FeAsH4O6",
       "Elements": "1:Fe 1:As 4:H 6:O",
       "AggregateState": "Solid",
@@ -4441,7 +4441,7 @@
       }
     },
     {
-      "Name": "FERRIC-As(AM)",
+      "Name": "Ferric-As(am)",
       "Formula": "FeAsH4O6",
       "Elements": "1:Fe 1:As 4:H 6:O",
       "AggregateState": "Solid",
@@ -4465,7 +4465,7 @@
       }
     },
     {
-      "Name": "BARIUM-As",
+      "Name": "Barium-As",
       "Formula": "Ba3As2O8",
       "Elements": "3:Ba 2:As 8:O",
       "AggregateState": "Solid",
@@ -4489,7 +4489,7 @@
       }
     },
     {
-      "Name": "BARIUM-H-As",
+      "Name": "Barium-H-As",
       "Formula": "BaAsH3O5",
       "Elements": "1:Ba 1:As 3:H 5:O",
       "AggregateState": "Solid",
@@ -4537,7 +4537,7 @@
       }
     },
     {
-      "Name": "DAWSONITE",
+      "Name": "Dawsonite",
       "Formula": "NaAlCO5H2",
       "Elements": "1:Na 1:Al 1:C 5:O 2:H",
       "AggregateState": "Solid",
@@ -4561,7 +4561,7 @@
       }
     },
     {
-      "Name": "SAPPHIRINE(793)",
+      "Name": "Sapphirine,793",
       "Formula": "Mg3.5Al9Si1.5O20",
       "Elements": "3.5:Mg 9:Al 1.5:Si 20:O",
       "AggregateState": "Solid",
@@ -4585,7 +4585,7 @@
       }
     },
     {
-      "Name": "Fe-SAPPHIRINE(793)",
+      "Name": "Fe-Sapphirine,793",
       "Formula": "Fe3.5Al9Si1.5O20",
       "Elements": "3.5:Fe 9:Al 1.5:Si 20:O",
       "AggregateState": "Solid",
@@ -4609,7 +4609,7 @@
       }
     },
     {
-      "Name": "GEDRITE",
+      "Name": "Gedrite",
       "Formula": "Mg5Al4Si6O24H2",
       "Elements": "5:Mg 4:Al 6:Si 24:O 2:H",
       "AggregateState": "Solid",
@@ -4633,7 +4633,7 @@
       }
     },
     {
-      "Name": "BEIDELLITE-Ca",
+      "Name": "Beidellite-Ca",
       "Formula": "Ca.165Al2.33Si3.67O12H2",
       "Elements": ".165:Ca 2.33:Al 3.67:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4657,7 +4657,7 @@
       }
     },
     {
-      "Name": "BEIDELLITE-H",
+      "Name": "Beidellite-H",
       "Formula": "H.33Al2.33Si3.67O12H2",
       "Elements": "2.33:Al 3.67:Si 12:O 2.33:H",
       "AggregateState": "Solid",
@@ -4681,7 +4681,7 @@
       }
     },
     {
-      "Name": "BEIDELLITE-K",
+      "Name": "Beidellite-K",
       "Formula": "K.33Al2.33Si3.67O12H2",
       "Elements": ".33:K 2.33:Al 3.67:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4705,7 +4705,7 @@
       }
     },
     {
-      "Name": "BEIDELLITE-Mg",
+      "Name": "Beidellite-Mg",
       "Formula": "Mg.165Al2.33Si3.67O12H2",
       "Elements": ".165:Mg 2.33:Al 3.67:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4729,7 +4729,7 @@
       }
     },
     {
-      "Name": "BEIDELLITE-Na",
+      "Name": "Beidellite-Na",
       "Formula": "Na.33Al2.33Si3.67O12H2",
       "Elements": ".33:Na 2.33:Al 3.67:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4753,7 +4753,7 @@
       }
     },
     {
-      "Name": "MONTMORILLONITE-Ca",
+      "Name": "Montmorillonite-Ca",
       "Formula": "Ca.165Mg.33Al1.67Si4O12H2",
       "Elements": ".165:Ca .33:Mg 1.67:Al 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4777,7 +4777,7 @@
       }
     },
     {
-      "Name": "MONTMORILLONITE-K",
+      "Name": "Montmorillonite-K",
       "Formula": "K.33Mg.33Al1.67Si4O12H2",
       "Elements": ".33:K .33:Mg 1.67:Al 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4801,7 +4801,7 @@
       }
     },
     {
-      "Name": "MONTMORILLONITE-Mg",
+      "Name": "Montmorillonite-Mg",
       "Formula": "Mg.495Al1.67Si4O12H2",
       "Elements": ".495:Mg 1.67:Al 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4825,7 +4825,7 @@
       }
     },
     {
-      "Name": "MONTMORILLONITE-Na",
+      "Name": "Montmorillonite-Na",
       "Formula": "Na.33Mg.33Al1.67Si4O12H2",
       "Elements": ".33:Na .33:Mg 1.67:Al 4:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4849,7 +4849,7 @@
       }
     },
     {
-      "Name": "NONTRONITE-Ca",
+      "Name": "Nontronite-Ca",
       "Formula": "Ca.165Fe2Al.33Si3.67O12H2",
       "Elements": ".165:Ca 2:Fe .33:Al 3.67:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4873,7 +4873,7 @@
       }
     },
     {
-      "Name": "NONTRONITE-Mg",
+      "Name": "Nontronite-Mg",
       "Formula": "Mg.165Fe2Al.33Si3.67O12H2",
       "Elements": ".165:Mg 2:Fe .33:Al 3.67:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4897,7 +4897,7 @@
       }
     },
     {
-      "Name": "NONTRONITE-H",
+      "Name": "Nontronite-H",
       "Formula": "H.33Fe2Al.33Si3.67O12H2",
       "Elements": "2:Fe .33:Al 3.67:Si 12:O 2.33:H",
       "AggregateState": "Solid",
@@ -4921,7 +4921,7 @@
       }
     },
     {
-      "Name": "NONTRONITE-K",
+      "Name": "Nontronite-K",
       "Formula": "K.33Fe2Al.33Si3.67O12H2",
       "Elements": ".33:K 2:Fe .33:Al 3.67:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4945,7 +4945,7 @@
       }
     },
     {
-      "Name": "NONTRONITE-Na",
+      "Name": "Nontronite-Na",
       "Formula": "Na.33Fe2Al.33Si3.67O12H2",
       "Elements": ".33:Na 2:Fe .33:Al 3.67:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4969,7 +4969,7 @@
       }
     },
     {
-      "Name": "SAPONITE-Mg",
+      "Name": "Saponite-Mg",
       "Formula": "Mg3.165Al.33Si3.67O10(OH)2",
       "Elements": "3.165:Mg .33:Al 3.67:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -4993,7 +4993,7 @@
       }
     },
     {
-      "Name": "ILLITE",
+      "Name": "Illite",
       "Formula": "K.6Mg.25Al1.8Al.5Si3.5O10(OH)2",
       "Elements": "0.6:K 0.25:Mg 2.3:Al 3.5:Si 12:O 2:H",
       "AggregateState": "Solid",
@@ -5017,7 +5017,7 @@
       }
     },
     {
-      "Name": "DOLOMITE-DIS",
+      "Name": "Dolomite,disordered",
       "Formula": "CaMg(CO3)2",
       "Elements": "1:Ca 1:Mg 2:C 6:O",
       "AggregateState": "Solid",
@@ -5041,7 +5041,7 @@
       }
     },
     {
-      "Name": "DOLOMITE-ORD",
+      "Name": "Dolomite,ordered",
       "Formula": "CaMg(CO3)2",
       "Elements": "1:Ca 1:Mg 2:C 6:O",
       "AggregateState": "Solid",
@@ -5065,7 +5065,7 @@
       }
     },
     {
-      "Name": "GALENA",
+      "Name": "Galena",
       "Formula": "PbS",
       "Elements": "1:Pb 1:S",
       "AggregateState": "Solid",
@@ -5089,7 +5089,7 @@
       }
     },
     {
-      "Name": "BARITE",
+      "Name": "Barite",
       "Formula": "BaSO4",
       "Elements": "1:Ba 1:S 4:O",
       "AggregateState": "Solid",
@@ -5113,7 +5113,7 @@
       }
     },
     {
-      "Name": "FLUORITE",
+      "Name": "Fluorite",
       "Formula": "CaF2",
       "Elements": "1:Ca 2:F",
       "AggregateState": "Solid",
@@ -5137,7 +5137,7 @@
       }
     },
     {
-      "Name": "CELESTITE",
+      "Name": "Celestite",
       "Formula": "SrSO4",
       "Elements": "1:Sr 1:S 4:O",
       "AggregateState": "Solid",
@@ -5161,7 +5161,7 @@
       }
     },
     {
-      "Name": "ANGLESITE",
+      "Name": "Anglesite",
       "Formula": "PbSO4",
       "Elements": "1:Pb 1:S 4:O",
       "AggregateState": "Solid",
@@ -5185,7 +5185,7 @@
       }
     },
     {
-      "Name": "CHALCEDONY",
+      "Name": "Chalcedony",
       "Formula": "SiO2",
       "Elements": "1:Si 2:O",
       "AggregateState": "Solid",
@@ -5233,7 +5233,7 @@
       }
     },
     {
-      "Name": "LARNITE",
+      "Name": "Larnite",
       "Formula": "Ca2SiO4",
       "Elements": "2:Ca 1:Si 4:O",
       "AggregateState": "Solid",
@@ -5260,7 +5260,7 @@
       }
     },
     {
-      "Name": "SPHENE",
+      "Name": "Sphene",
       "Formula": "CaTiSiO5",
       "Elements": "1:Ca 1:Ti 1:Si 5:O",
       "AggregateState": "Solid",
@@ -5287,7 +5287,7 @@
       }
     },
     {
-      "Name": "QUARTZ",
+      "Name": "Quartz",
       "Formula": "SiO2",
       "Elements": "1:Si 2:O",
       "AggregateState": "Solid",
@@ -5314,7 +5314,7 @@
       }
     },
     {
-      "Name": "NEPHELINE",
+      "Name": "Nepheline",
       "Formula": "NaAlSiO4",
       "Elements": "1:Na 1:Al 1:Si 4:O",
       "AggregateState": "Solid",
@@ -5341,7 +5341,7 @@
       }
     },
     {
-      "Name": "HEMATITE",
+      "Name": "Hematite",
       "Formula": "Fe2O3",
       "Elements": "2:Fe 3:O",
       "AggregateState": "Solid",
@@ -5368,7 +5368,7 @@
       }
     },
     {
-      "Name": "NICKEL_OXIDE",
+      "Name": "Nickel-Oxide",
       "Formula": "NiO",
       "Elements": "1:Ni 1:O",
       "AggregateState": "Solid",
@@ -5395,7 +5395,7 @@
       }
     },
     {
-      "Name": "ILMENITE",
+      "Name": "Ilmenite",
       "Formula": "FeTiO3",
       "Elements": "1:Fe 1:Ti 3:O",
       "AggregateState": "Solid",
@@ -5422,7 +5422,7 @@
       }
     },
     {
-      "Name": "MAGNETITE",
+      "Name": "Magnetite",
       "Formula": "Fe3O4",
       "Elements": "3:Fe 4:O",
       "AggregateState": "Solid",
@@ -5449,7 +5449,7 @@
       }
     },
     {
-      "Name": "MAGNESIOFERRITE",
+      "Name": "Magnesioferrite",
       "Formula": "MgFe2O4",
       "Elements": "1:Mg 2:Fe 4:O",
       "AggregateState": "Solid",
@@ -5476,7 +5476,7 @@
       }
     },
     {
-      "Name": "CALCITE",
+      "Name": "Calcite",
       "Formula": "CaCO3",
       "Elements": "1:Ca 1:C 3:O",
       "AggregateState": "Solid",
@@ -5503,7 +5503,7 @@
       }
     },
     {
-      "Name": "ARAGONITE",
+      "Name": "Aragonite",
       "Formula": "CaCO3",
       "Elements": "1:Ca 1:C 3:O",
       "AggregateState": "Solid",
@@ -5530,7 +5530,7 @@
       }
     },
     {
-      "Name": "PYRRHOTITE(TROT)",
+      "Name": "Pyrrhotite,trot",
       "Formula": "FeS",
       "Elements": "1:Fe 1:S",
       "AggregateState": "Solid",
@@ -5557,7 +5557,7 @@
       }
     },
     {
-      "Name": "TROILITE",
+      "Name": "Troilite",
       "Formula": "FeS",
       "Elements": "1:Fe 1:S",
       "AggregateState": "Solid",
@@ -5584,7 +5584,7 @@
       }
     },
     {
-      "Name": "LOW_TROILITE",
+      "Name": "Troilite,low",
       "Formula": "FeS",
       "Elements": "1:Fe 1:S",
       "AggregateState": "Solid",
@@ -5611,7 +5611,7 @@
       }
     },
     {
-      "Name": "PYRRHOTITE(TROV)",
+      "Name": "Pyrrhotite,trov",
       "Formula": "Fe0.875S",
       "Elements": "0.875:Fe 1:S",
       "AggregateState": "Solid",
@@ -5638,7 +5638,7 @@
       }
     },
     {
-      "Name": "IRON",
+      "Name": "Iron",
       "Formula": "Fe",
       "Elements": "1:Fe",
       "AggregateState": "Solid",
@@ -5665,7 +5665,7 @@
       }
     },
     {
-      "Name": "NICKEL",
+      "Name": "Nickel",
       "Formula": "Ni",
       "Elements": "1:Ni",
       "AggregateState": "Solid",
@@ -5692,7 +5692,7 @@
       }
     },
     {
-      "Name": "SILLIMANITE",
+      "Name": "Sillimanite",
       "Formula": "Al2SiO5",
       "Elements": "2:Al 1:Si 5:O",
       "AggregateState": "Solid",
@@ -5716,7 +5716,7 @@
       }
     },
     {
-      "Name": "GEHLENITE",
+      "Name": "Gehlenite",
       "Formula": "Ca2Al2SiO7",
       "Elements": "2:Ca 2:Al 1:Si 7:O",
       "AggregateState": "Solid",
@@ -5740,7 +5740,7 @@
       }
     },
     {
-      "Name": "CORDIERITE",
+      "Name": "Cordierite",
       "Formula": "Mg2Al4Si5O18",
       "Elements": "2:Mg 4:Al 5:Si 18:O",
       "AggregateState": "Solid",
@@ -5764,7 +5764,7 @@
       }
     },
     {
-      "Name": "HYDROUS-CORDIERITE",
+      "Name": "Hydrous-Cordierite",
       "Formula": "Mg2Al4Si5O19H2",
       "Elements": "2:Mg 4:Al 5:Si 19:O 2:H",
       "AggregateState": "Solid",
@@ -5788,7 +5788,7 @@
       }
     },
     {
-      "Name": "Fe-CORDIERITE",
+      "Name": "Fe-Cordierite",
       "Formula": "Fe2Al4Si5O18",
       "Elements": "2:Fe 4:Al 5:Si 18:O",
       "AggregateState": "Solid",
@@ -5812,7 +5812,7 @@
       }
     },
     {
-      "Name": "Mn-CORDIERITE",
+      "Name": "Mn-Cordierite",
       "Formula": "Mn2Al4Si5O18",
       "Elements": "2:Mn 4:Al 5:Si 18:O",
       "AggregateState": "Solid",
@@ -5836,7 +5836,7 @@
       }
     },
     {
-      "Name": "Ca-TSCHERMAKS_PX",
+      "Name": "Ca-Tschermaks-Px",
       "Formula": "CaAl2SiO6",
       "Elements": "1:Ca 2:Al 1:Si 6:O",
       "AggregateState": "Solid",
@@ -5860,7 +5860,7 @@
       }
     },
     {
-      "Name": "ALBITE",
+      "Name": "Albite",
       "Formula": "NaAlSi3O8",
       "Elements": "1:Na 1:Al 3:Si 8:O",
       "AggregateState": "Solid",
@@ -5884,7 +5884,7 @@
       }
     },
     {
-      "Name": "SANIDINE",
+      "Name": "Sanidine",
       "Formula": "KAlSi3O8",
       "Elements": "1:K 1:Al 3:Si 8:O",
       "AggregateState": "Solid",
@@ -5908,7 +5908,7 @@
       }
     },
     {
-      "Name": "ANORTHITE",
+      "Name": "Anorthite",
       "Formula": "CaAl2Si2O8",
       "Elements": "1:Ca 2:Al 2:Si 8:O",
       "AggregateState": "Solid",
@@ -5932,7 +5932,7 @@
       }
     },
     {
-      "Name": "LEUCITE",
+      "Name": "Leucite",
       "Formula": "KAlSi2O6",
       "Elements": "1:K 1:Al 2:Si 6:O",
       "AggregateState": "Solid",
@@ -5956,7 +5956,7 @@
       }
     },
     {
-      "Name": "SPINEL",
+      "Name": "Spinel",
       "Formula": "MgAl2O4",
       "Elements": "1:Mg 2:Al 4:O",
       "AggregateState": "Solid",
@@ -5980,7 +5980,7 @@
       }
     },
     {
-      "Name": "HERCYNITE",
+      "Name": "Hercynite",
       "Formula": "FeAl2O4",
       "Elements": "1:Fe 2:Al 4:O",
       "AggregateState": "Solid",
@@ -6004,7 +6004,7 @@
       }
     },
     {
-      "Name": "PICROCHROMITE",
+      "Name": "Picrochromite",
       "Formula": "MgCr2O4",
       "Elements": "1:Mg 2:Cr 4:O",
       "AggregateState": "Solid",
@@ -6028,7 +6028,7 @@
       }
     },
     {
-      "Name": "DOLOMITE",
+      "Name": "Dolomite",
       "Formula": "CaMgC2O6",
       "Elements": "1:Ca 1:Mg 2:C 6:O",
       "AggregateState": "Solid",
@@ -6052,7 +6052,7 @@
       }
     },
     {
-      "Name": "ANKERITE",
+      "Name": "Ankerite",
       "Formula": "CaFeC2O6",
       "Elements": "1:Ca 1:Fe 2:C 6:O",
       "AggregateState": "Solid",
@@ -6076,7 +6076,7 @@
       }
     },
     {
-      "Name": "CH4,g",
+      "Name": "CH4(g)",
       "Formula": "CH4",
       "Elements": "1:C 4:H",
       "AggregateState": "Gas",
@@ -6095,7 +6095,7 @@
       }
     },
     {
-      "Name": "CO,g",
+      "Name": "CO(g)",
       "Formula": "CO",
       "Elements": "1:C 1:O",
       "AggregateState": "Gas",
@@ -6114,7 +6114,7 @@
       }
     },
     {
-      "Name": "CO2,g",
+      "Name": "CO2(g)",
       "Formula": "CO2",
       "Elements": "1:C 2:O",
       "AggregateState": "Gas",
@@ -6133,7 +6133,7 @@
       }
     },
     {
-      "Name": "H2,g",
+      "Name": "H2(g)",
       "Formula": "H2",
       "Elements": "2:H",
       "AggregateState": "Gas",
@@ -6152,7 +6152,7 @@
       }
     },
     {
-      "Name": "H2S,g",
+      "Name": "H2S(g)",
       "Formula": "H2S",
       "Elements": "2:H 1:S",
       "AggregateState": "Gas",
@@ -6171,7 +6171,7 @@
       }
     },
     {
-      "Name": "O2,g",
+      "Name": "O2(g)",
       "Formula": "O2",
       "Elements": "2:O",
       "AggregateState": "Gas",
@@ -6190,7 +6190,7 @@
       }
     },
     {
-      "Name": "S2,g",
+      "Name": "S2(g)",
       "Formula": "S2",
       "Elements": "2:S",
       "AggregateState": "Gas",
@@ -6209,7 +6209,7 @@
       }
     },
     {
-      "Name": "H2O,g",
+      "Name": "H2O(g)",
       "Formula": "H2O",
       "Elements": "2:H 1:O",
       "AggregateState": "Gas",
@@ -6228,7 +6228,7 @@
       }
     },
     {
-      "Name": "Ar,g",
+      "Name": "Ar(g)",
       "Formula": "Ar",
       "Elements": "1:Ar",
       "AggregateState": "Gas",
@@ -6247,7 +6247,7 @@
       }
     },
     {
-      "Name": "PHENOL,g",
+      "Name": "Phenol(g)",
       "Formula": "C6H5OH",
       "Elements": "6:C 6:H 1:O",
       "AggregateState": "Gas",
@@ -6266,7 +6266,7 @@
       }
     },
     {
-      "Name": "ORTHO-CRESOL,g",
+      "Name": "o-Cresol(g)",
       "Formula": "CH3C6H4(OH)",
       "Elements": "7:C 8:H 1:O",
       "AggregateState": "Gas",
@@ -6285,7 +6285,7 @@
       }
     },
     {
-      "Name": "META-CRESOL,g",
+      "Name": "m-Cresol(g)",
       "Formula": "CH3C6H4(OH)",
       "Elements": "7:C 8:H 1:O",
       "AggregateState": "Gas",
@@ -6304,7 +6304,7 @@
       }
     },
     {
-      "Name": "PARA-CRESOL,g",
+      "Name": "p-Cresol(g)",
       "Formula": "CH3C6H4(OH)",
       "Elements": "7:C 8:H 1:O",
       "AggregateState": "Gas",
@@ -6323,7 +6323,7 @@
       }
     },
     {
-      "Name": "ETHYLENE,g",
+      "Name": "Ethylene(g)",
       "Formula": "C2H4",
       "Elements": "2:C 4:H",
       "AggregateState": "Gas",
@@ -6342,7 +6342,7 @@
       }
     },
     {
-      "Name": "He,g",
+      "Name": "He(g)",
       "Formula": "He",
       "Elements": "1:He",
       "AggregateState": "Gas",
@@ -6361,7 +6361,7 @@
       }
     },
     {
-      "Name": "Kr,g",
+      "Name": "Kr(g)",
       "Formula": "Kr",
       "Elements": "1:Kr",
       "AggregateState": "Gas",
@@ -6380,7 +6380,7 @@
       }
     },
     {
-      "Name": "N2,g",
+      "Name": "N2(g)",
       "Formula": "N2",
       "Elements": "2:N",
       "AggregateState": "Gas",
@@ -6399,7 +6399,7 @@
       }
     },
     {
-      "Name": "Ne,g",
+      "Name": "Ne(g)",
       "Formula": "Ne",
       "Elements": "1:Ne",
       "AggregateState": "Gas",
@@ -6418,7 +6418,7 @@
       }
     },
     {
-      "Name": "NH3,g",
+      "Name": "NH3(g)",
       "Formula": "NH3",
       "Elements": "1:N 3:H",
       "AggregateState": "Gas",
@@ -6437,7 +6437,7 @@
       }
     },
     {
-      "Name": "Rn,g",
+      "Name": "Rn(g)",
       "Formula": "Rn",
       "Elements": "1:Rn",
       "AggregateState": "Gas",
@@ -6456,7 +6456,7 @@
       }
     },
     {
-      "Name": "SO2,g",
+      "Name": "SO2(g)",
       "Formula": "SO2",
       "Elements": "1:S 2:O",
       "AggregateState": "Gas",
@@ -6475,7 +6475,7 @@
       }
     },
     {
-      "Name": "Xe,g",
+      "Name": "Xe(g)",
       "Formula": "Xe",
       "Elements": "1:Xe",
       "AggregateState": "Gas",
@@ -6494,7 +6494,7 @@
       }
     },
     {
-      "Name": "NO,g",
+      "Name": "NO(g)",
       "Formula": "NO",
       "Elements": "1:N 1:O",
       "AggregateState": "Gas",
@@ -6513,7 +6513,7 @@
       }
     },
     {
-      "Name": "N2O,g",
+      "Name": "N2O(g)",
       "Formula": "N2O",
       "Elements": "2:N 1:O",
       "AggregateState": "Gas",
@@ -6620,7 +6620,7 @@
       }
     },
     {
-      "Name": "AgCl,aq",
+      "Name": "AgCl(aq)",
       "Formula": "AgCl",
       "Elements": "1:Ag 1:Cl",
       "Charge": 0.0,
@@ -6708,7 +6708,7 @@
       }
     },
     {
-      "Name": "AgOH,aq",
+      "Name": "AgOH(aq)",
       "Formula": "AgOH",
       "Elements": "1:Ag 1:O 1:H",
       "Charge": 0.0,
@@ -6752,7 +6752,7 @@
       }
     },
     {
-      "Name": "AgNO3,aq",
+      "Name": "AgNO3(aq)",
       "Formula": "AgNO3",
       "Elements": "1:Ag 1:N 3:O",
       "Charge": 0.0,
@@ -6840,7 +6840,7 @@
       }
     },
     {
-      "Name": "Al(OH)3,aq",
+      "Name": "Al(OH)3(aq)",
       "Formula": "Al(OH)3",
       "Elements": "1:Al 3:O 3:H",
       "Charge": 0.0,
@@ -6950,7 +6950,7 @@
       }
     },
     {
-      "Name": "B(OH)3,aq",
+      "Name": "B(OH)3(aq)",
       "Formula": "B(OH)3",
       "Elements": "1:B 3:O 3:H",
       "Charge": 0.0,
@@ -7148,7 +7148,7 @@
       }
     },
     {
-      "Name": "BeO,aq",
+      "Name": "BeO(aq)",
       "Formula": "BeO",
       "Elements": "1:Be 1:O",
       "Charge": 0.0,
@@ -7258,7 +7258,7 @@
       }
     },
     {
-      "Name": "HBrO,aq",
+      "Name": "HBrO(aq)",
       "Formula": "HBrO",
       "Elements": "1:H 1:Br 1:O",
       "Charge": 0.0,
@@ -7390,7 +7390,7 @@
       }
     },
     {
-      "Name": "CO,aq",
+      "Name": "CO(aq)",
       "Formula": "CO",
       "Elements": "1:C 1:O",
       "Charge": 0.0,
@@ -7412,7 +7412,7 @@
       }
     },
     {
-      "Name": "CO2,aq",
+      "Name": "CO2(aq)",
       "Formula": "CO2",
       "Elements": "1:C 2:O",
       "Charge": 0.0,
@@ -7522,7 +7522,7 @@
       }
     },
     {
-      "Name": "CaCl2,aq",
+      "Name": "CaCl2(aq)",
       "Formula": "CaCl2",
       "Elements": "1:Ca 2:Cl",
       "Charge": 0.0,
@@ -7566,7 +7566,7 @@
       }
     },
     {
-      "Name": "CaSO4,aq",
+      "Name": "CaSO4(aq)",
       "Formula": "CaSO4",
       "Elements": "1:Ca 1:S 4:O",
       "Charge": 0.0,
@@ -7632,7 +7632,7 @@
       }
     },
     {
-      "Name": "CdO,aq",
+      "Name": "CdO(aq)",
       "Formula": "CdO",
       "Elements": "1:Cd 1:O",
       "Charge": 0.0,
@@ -7764,7 +7764,7 @@
       }
     },
     {
-      "Name": "HClO,aq",
+      "Name": "HClO(aq)",
       "Formula": "HClO",
       "Elements": "1:H 1:Cl 1:O",
       "Charge": 0.0,
@@ -7940,7 +7940,7 @@
       }
     },
     {
-      "Name": "CoO,aq",
+      "Name": "CoO(aq)",
       "Formula": "CoO",
       "Elements": "1:Co 1:O",
       "Charge": 0.0,
@@ -8094,7 +8094,7 @@
       }
     },
     {
-      "Name": "CsBr,aq",
+      "Name": "CsBr(aq)",
       "Formula": "CsBr",
       "Elements": "1:Cs 1:Br",
       "Charge": 0.0,
@@ -8116,7 +8116,7 @@
       }
     },
     {
-      "Name": "CsCl,aq",
+      "Name": "CsCl(aq)",
       "Formula": "CsCl",
       "Elements": "1:Cs 1:Cl",
       "Charge": 0.0,
@@ -8138,7 +8138,7 @@
       }
     },
     {
-      "Name": "CsI,aq",
+      "Name": "CsI(aq)",
       "Formula": "CsI",
       "Elements": "1:Cs 1:I",
       "Charge": 0.0,
@@ -8160,7 +8160,7 @@
       }
     },
     {
-      "Name": "CsOH,aq",
+      "Name": "CsOH(aq)",
       "Formula": "CsOH",
       "Elements": "1:Cs 1:O 1:H",
       "Charge": 0.0,
@@ -8248,7 +8248,7 @@
       }
     },
     {
-      "Name": "CuO,aq",
+      "Name": "CuO(aq)",
       "Formula": "CuO",
       "Elements": "1:Cu 1:O",
       "Charge": 0.0,
@@ -8600,7 +8600,7 @@
       }
     },
     {
-      "Name": "FeCl2,aq",
+      "Name": "FeCl2(aq)",
       "Formula": "FeCl2",
       "Elements": "1:Fe 2:Cl",
       "Charge": 0.0,
@@ -8688,7 +8688,7 @@
       }
     },
     {
-      "Name": "FeO,aq",
+      "Name": "FeO(aq)",
       "Formula": "FeO",
       "Elements": "1:Fe 1:O",
       "Charge": 0.0,
@@ -8732,7 +8732,7 @@
       }
     },
     {
-      "Name": "HFeO2,aq",
+      "Name": "HFeO2(aq)",
       "Formula": "HFeO2",
       "Elements": "1:H 1:Fe 2:O",
       "Charge": 0.0,
@@ -8842,7 +8842,7 @@
       }
     },
     {
-      "Name": "HGaO2,aq",
+      "Name": "HGaO2(aq)",
       "Formula": "HGaO2",
       "Elements": "1:H 1:Ga 2:O",
       "Charge": 0.0,
@@ -8974,7 +8974,7 @@
       }
     },
     {
-      "Name": "H2,aq",
+      "Name": "H2(aq)",
       "Formula": "H2",
       "Elements": "2:H",
       "Charge": 0.0,
@@ -8996,7 +8996,7 @@
       }
     },
     {
-      "Name": "NaH2AsO4,aq",
+      "Name": "NaH2AsO4(aq)",
       "Formula": "NaH2AsO4",
       "Elements": "1:Na 2:H 1:As 4:O",
       "Charge": 0.0,
@@ -9018,7 +9018,7 @@
       }
     },
     {
-      "Name": "KH2AsO4,aq",
+      "Name": "KH2AsO4(aq)",
       "Formula": "KH2AsO4",
       "Elements": "1:K 2:H 1:As 4:O",
       "Charge": 0.0,
@@ -9348,7 +9348,7 @@
       }
     },
     {
-      "Name": "MgHAsO4,aq",
+      "Name": "MgHAsO4(aq)",
       "Formula": "MgHAsO4",
       "Elements": "1:Mg 1:H 1:As 4:O",
       "Charge": 0.0,
@@ -9370,7 +9370,7 @@
       }
     },
     {
-      "Name": "CaHAsO4,aq",
+      "Name": "CaHAsO4(aq)",
       "Formula": "CaHAsO4",
       "Elements": "1:Ca 1:H 1:As 4:O",
       "Charge": 0.0,
@@ -9392,7 +9392,7 @@
       }
     },
     {
-      "Name": "SrHAsO4,aq",
+      "Name": "SrHAsO4(aq)",
       "Formula": "SrHAsO4",
       "Elements": "1:Sr 1:H 1:As 4:O",
       "Charge": 0.0,
@@ -9414,7 +9414,7 @@
       }
     },
     {
-      "Name": "MnHAsO4,aq",
+      "Name": "MnHAsO4(aq)",
       "Formula": "MnHAsO4",
       "Elements": "1:Mn 1:H 1:As 4:O",
       "Charge": 0.0,
@@ -9436,7 +9436,7 @@
       }
     },
     {
-      "Name": "FeHAsO4,aq",
+      "Name": "FeHAsO4(aq)",
       "Formula": "FeHAsO4",
       "Elements": "1:Fe 1:H 1:As 4:O",
       "Charge": 0.0,
@@ -9458,7 +9458,7 @@
       }
     },
     {
-      "Name": "CoHAsO4,aq",
+      "Name": "CoHAsO4(aq)",
       "Formula": "CoHAsO4",
       "Elements": "1:Co 1:H 1:As 4:O",
       "Charge": 0.0,
@@ -9480,7 +9480,7 @@
       }
     },
     {
-      "Name": "NiHAsO4,aq",
+      "Name": "NiHAsO4(aq)",
       "Formula": "NiHAsO4",
       "Elements": "1:Ni 1:H 1:As 4:O",
       "Charge": 0.0,
@@ -9502,7 +9502,7 @@
       }
     },
     {
-      "Name": "CuHAsO4,aq",
+      "Name": "CuHAsO4(aq)",
       "Formula": "CuHAsO4",
       "Elements": "1:Cu 1:H 1:As 4:O",
       "Charge": 0.0,
@@ -9524,7 +9524,7 @@
       }
     },
     {
-      "Name": "ZnHAsO4,aq",
+      "Name": "ZnHAsO4(aq)",
       "Formula": "ZnHAsO4",
       "Elements": "1:Zn 1:H 1:As 4:O",
       "Charge": 0.0,
@@ -9546,7 +9546,7 @@
       }
     },
     {
-      "Name": "PbHAsO4,aq",
+      "Name": "PbHAsO4(aq)",
       "Formula": "PbHAsO4",
       "Elements": "1:Pb 1:H 1:As 4:O",
       "Charge": 0.0,
@@ -9876,7 +9876,7 @@
       }
     },
     {
-      "Name": "AlAsO4,aq",
+      "Name": "AlAsO4(aq)",
       "Formula": "AlAsO4",
       "Elements": "1:Al 1:As 4:O",
       "Charge": 0.0,
@@ -9898,7 +9898,7 @@
       }
     },
     {
-      "Name": "FeAsO4,aq",
+      "Name": "FeAsO4(aq)",
       "Formula": "FeAsO4",
       "Elements": "1:Fe 1:As 4:O",
       "Charge": 0.0,
@@ -9920,7 +9920,7 @@
       }
     },
     {
-      "Name": "NaH2AsO3,aq",
+      "Name": "NaH2AsO3(aq)",
       "Formula": "NaH2AsO3",
       "Elements": "1:Na 2:H 1:As 3:O",
       "Charge": 0.0,
@@ -9942,7 +9942,7 @@
       }
     },
     {
-      "Name": "AgH2AsO3,aq",
+      "Name": "AgH2AsO3(aq)",
       "Formula": "AgH2AsO3",
       "Elements": "1:Ag 2:H 1:As 3:O",
       "Charge": 0.0,
@@ -10184,7 +10184,7 @@
       }
     },
     {
-      "Name": "H2S,aq",
+      "Name": "H2S(aq)",
       "Formula": "H2S",
       "Elements": "2:H 1:S",
       "Charge": 0.0,
@@ -10206,7 +10206,7 @@
       }
     },
     {
-      "Name": "H3VO4,aq",
+      "Name": "H3VO4(aq)",
       "Formula": "H3VO4",
       "Elements": "3:H 1:V 4:O",
       "Charge": 0.0,
@@ -10272,7 +10272,7 @@
       }
     },
     {
-      "Name": "H3PO4,aq",
+      "Name": "H3PO4(aq)",
       "Formula": "H3PO4",
       "Elements": "3:H 1:P 4:O",
       "Charge": 0.0,
@@ -10338,7 +10338,7 @@
       }
     },
     {
-      "Name": "HF,aq",
+      "Name": "HF(aq)",
       "Formula": "HF",
       "Elements": "1:H 1:F",
       "Charge": 0.0,
@@ -10382,7 +10382,7 @@
       }
     },
     {
-      "Name": "HNO3,aq",
+      "Name": "HNO3(aq)",
       "Formula": "HNO3",
       "Elements": "1:H 1:N 3:O",
       "Charge": 0.0,
@@ -10558,7 +10558,7 @@
       }
     },
     {
-      "Name": "H2SeO3,aq",
+      "Name": "H2SeO3(aq)",
       "Formula": "H2SeO3",
       "Elements": "2:H 1:Se 3:O",
       "Charge": 0.0,
@@ -10668,7 +10668,7 @@
       }
     },
     {
-      "Name": "He,aq",
+      "Name": "He(aq)",
       "Formula": "He",
       "Elements": "1:He",
       "Charge": 0.0,
@@ -10734,7 +10734,7 @@
       }
     },
     {
-      "Name": "HgO,aq",
+      "Name": "HgO(aq)",
       "Formula": "HgO",
       "Elements": "1:Hg 1:O",
       "Charge": 0.0,
@@ -10910,7 +10910,7 @@
       }
     },
     {
-      "Name": "HIO,aq",
+      "Name": "HIO(aq)",
       "Formula": "HIO",
       "Elements": "1:H 1:I 1:O",
       "Charge": 0.0,
@@ -11064,7 +11064,7 @@
       }
     },
     {
-      "Name": "HInO2,aq",
+      "Name": "HInO2(aq)",
       "Formula": "HInO2",
       "Elements": "1:H 1:In 2:O",
       "Charge": 0.0,
@@ -11130,7 +11130,7 @@
       }
     },
     {
-      "Name": "KBr,aq",
+      "Name": "KBr(aq)",
       "Formula": "KBr",
       "Elements": "1:K 1:Br",
       "Charge": 0.0,
@@ -11152,7 +11152,7 @@
       }
     },
     {
-      "Name": "KCl,aq",
+      "Name": "KCl(aq)",
       "Formula": "KCl",
       "Elements": "1:K 1:Cl",
       "Charge": 0.0,
@@ -11174,7 +11174,7 @@
       }
     },
     {
-      "Name": "KAlO2,aq",
+      "Name": "KAlO2(aq)",
       "Formula": "KAlO2",
       "Elements": "1:K 1:Al 2:O",
       "Charge": 0.0,
@@ -11196,7 +11196,7 @@
       }
     },
     {
-      "Name": "KHSO4,aq",
+      "Name": "KhSO4(aq)",
       "Formula": "KHSO4",
       "Elements": "1:K 1:H 1:S 4:O",
       "Charge": 0.0,
@@ -11218,7 +11218,7 @@
       }
     },
     {
-      "Name": "KI,aq",
+      "Name": "KI(aq)",
       "Formula": "KI",
       "Elements": "1:K 1:I",
       "Charge": 0.0,
@@ -11240,7 +11240,7 @@
       }
     },
     {
-      "Name": "KOH,aq",
+      "Name": "KOH(aq)",
       "Formula": "KOH",
       "Elements": "1:K 1:O 1:H",
       "Charge": 0.0,
@@ -11284,7 +11284,7 @@
       }
     },
     {
-      "Name": "Kr,aq",
+      "Name": "Kr(aq)",
       "Formula": "Kr",
       "Elements": "1:Kr",
       "Charge": 0.0,
@@ -11350,7 +11350,7 @@
       }
     },
     {
-      "Name": "LiCl,aq",
+      "Name": "LiCl(aq)",
       "Formula": "LiCl",
       "Elements": "1:Li 1:Cl",
       "Charge": 0.0,
@@ -11372,7 +11372,7 @@
       }
     },
     {
-      "Name": "LiOH,aq",
+      "Name": "LiOH(aq)",
       "Formula": "LiOH",
       "Elements": "1:Li 1:O 1:H",
       "Charge": 0.0,
@@ -11636,7 +11636,7 @@
       }
     },
     {
-      "Name": "MnO,aq",
+      "Name": "MnO(aq)",
       "Formula": "MnO",
       "Elements": "1:Mn 1:O",
       "Charge": 0.0,
@@ -11746,7 +11746,7 @@
       }
     },
     {
-      "Name": "MnSO4,aq",
+      "Name": "MnSO4(aq)",
       "Formula": "MnSO4",
       "Elements": "1:Mn 1:S 4:O",
       "Charge": 0.0,
@@ -11812,7 +11812,7 @@
       }
     },
     {
-      "Name": "N2,aq",
+      "Name": "N2(aq)",
       "Formula": "N2",
       "Elements": "2:N",
       "Charge": 0.0,
@@ -11834,7 +11834,7 @@
       }
     },
     {
-      "Name": "NH3,aq",
+      "Name": "NH3(aq)",
       "Formula": "NH3",
       "Elements": "1:N 3:H",
       "Charge": 0.0,
@@ -11944,7 +11944,7 @@
       }
     },
     {
-      "Name": "NaAl(OH)4,aq",
+      "Name": "NaAl(OH)4(aq)",
       "Formula": "NaAl(OH)4",
       "Elements": "1:Na 1:Al 4:O 4:H",
       "Charge": 0.0,
@@ -11966,7 +11966,7 @@
       }
     },
     {
-      "Name": "NaBr,aq",
+      "Name": "NaBr(aq)",
       "Formula": "NaBr",
       "Elements": "1:Na 1:Br",
       "Charge": 0.0,
@@ -11988,7 +11988,7 @@
       }
     },
     {
-      "Name": "NaCl,aq",
+      "Name": "NaCl(aq)",
       "Formula": "NaCl",
       "Elements": "1:Na 1:Cl",
       "Charge": 0.0,
@@ -12010,7 +12010,7 @@
       }
     },
     {
-      "Name": "NaF,aq",
+      "Name": "NaF(aq)",
       "Formula": "NaF",
       "Elements": "1:Na 1:F",
       "Charge": 0.0,
@@ -12032,7 +12032,7 @@
       }
     },
     {
-      "Name": "NaHSiO3,aq",
+      "Name": "NaHSiO3(aq)",
       "Formula": "NaHSiO3",
       "Elements": "1:Na 1:H 1:Si 3:O",
       "Charge": 0.0,
@@ -12054,7 +12054,7 @@
       }
     },
     {
-      "Name": "NaI,aq",
+      "Name": "NaI(aq)",
       "Formula": "NaI",
       "Elements": "1:Na 1:I",
       "Charge": 0.0,
@@ -12076,7 +12076,7 @@
       }
     },
     {
-      "Name": "NaOH,aq",
+      "Name": "NaOH(aq)",
       "Formula": "NaOH",
       "Elements": "1:Na 1:O 1:H",
       "Charge": 0.0,
@@ -12164,7 +12164,7 @@
       }
     },
     {
-      "Name": "Ne,aq",
+      "Name": "Ne(aq)",
       "Formula": "Ne",
       "Elements": "1:Ne",
       "Charge": 0.0,
@@ -12252,7 +12252,7 @@
       }
     },
     {
-      "Name": "NiO,aq",
+      "Name": "NiO(aq)",
       "Formula": "NiO",
       "Elements": "1:Ni 1:O",
       "Charge": 0.0,
@@ -12318,7 +12318,7 @@
       }
     },
     {
-      "Name": "O2,aq",
+      "Name": "O2(aq)",
       "Formula": "O2",
       "Elements": "2:O",
       "Charge": 0.0,
@@ -12428,7 +12428,7 @@
       }
     },
     {
-      "Name": "PbCl2,aq",
+      "Name": "PbCl2(aq)",
       "Formula": "PbCl2",
       "Elements": "1:Pb 2:Cl",
       "Charge": 0.0,
@@ -12516,7 +12516,7 @@
       }
     },
     {
-      "Name": "PbO,aq",
+      "Name": "PbO(aq)",
       "Formula": "PbO",
       "Elements": "1:Pb 1:O",
       "Charge": 0.0,
@@ -12582,7 +12582,7 @@
       }
     },
     {
-      "Name": "PdSO4,aq",
+      "Name": "PdSO4(aq)",
       "Formula": "PdSO4",
       "Elements": "1:Pd 1:S 4:O",
       "Charge": 0.0,
@@ -12692,7 +12692,7 @@
       }
     },
     {
-      "Name": "PdCl2,aq",
+      "Name": "PdCl2(aq)",
       "Formula": "PdCl2",
       "Elements": "1:Pd 2:Cl",
       "Charge": 0.0,
@@ -12758,7 +12758,7 @@
       }
     },
     {
-      "Name": "PdO,aq",
+      "Name": "PdO(aq)",
       "Formula": "PdO",
       "Elements": "1:Pd 1:O",
       "Charge": 0.0,
@@ -12868,7 +12868,7 @@
       }
     },
     {
-      "Name": "PtSO4,aq",
+      "Name": "PtSO4(aq)",
       "Formula": "PtSO4",
       "Elements": "1:Pt 1:S 4:O",
       "Charge": 0.0,
@@ -12978,7 +12978,7 @@
       }
     },
     {
-      "Name": "PtCl2,aq",
+      "Name": "PtCl2(aq)",
       "Formula": "PtCl2",
       "Elements": "1:Pt 2:Cl",
       "Charge": 0.0,
@@ -13044,7 +13044,7 @@
       }
     },
     {
-      "Name": "PtO,aq",
+      "Name": "PtO(aq)",
       "Formula": "PtO",
       "Elements": "1:Pt 1:O",
       "Charge": 0.0,
@@ -13110,7 +13110,7 @@
       }
     },
     {
-      "Name": "RbBr,aq",
+      "Name": "RbBr(aq)",
       "Formula": "RbBr",
       "Elements": "1:Rb 1:Br",
       "Charge": 0.0,
@@ -13132,7 +13132,7 @@
       }
     },
     {
-      "Name": "RbCl,aq",
+      "Name": "RbCl(aq)",
       "Formula": "RbCl",
       "Elements": "1:Rb 1:Cl",
       "Charge": 0.0,
@@ -13154,7 +13154,7 @@
       }
     },
     {
-      "Name": "RbF,aq",
+      "Name": "RbF(aq)",
       "Formula": "RbF",
       "Elements": "1:Rb 1:F",
       "Charge": 0.0,
@@ -13176,7 +13176,7 @@
       }
     },
     {
-      "Name": "RbI,aq",
+      "Name": "RbI(aq)",
       "Formula": "RbI",
       "Elements": "1:Rb 1:I",
       "Charge": 0.0,
@@ -13198,7 +13198,7 @@
       }
     },
     {
-      "Name": "RbOH,aq",
+      "Name": "RbOH(aq)",
       "Formula": "RbOH",
       "Elements": "1:Rb 1:O 1:H",
       "Charge": 0.0,
@@ -13286,7 +13286,7 @@
       }
     },
     {
-      "Name": "RhSO4,aq",
+      "Name": "RhSO4(aq)",
       "Formula": "RhSO4",
       "Elements": "1:Rh 1:S 4:O",
       "Charge": 0.0,
@@ -13506,7 +13506,7 @@
       }
     },
     {
-      "Name": "RhCl2,aq",
+      "Name": "RhCl2(aq)",
       "Formula": "RhCl2",
       "Elements": "1:Rh 2:Cl",
       "Charge": 0.0,
@@ -13550,7 +13550,7 @@
       }
     },
     {
-      "Name": "RhCl3,aq",
+      "Name": "RhCl3(aq)",
       "Formula": "RhCl3",
       "Elements": "1:Rh 3:Cl",
       "Charge": 0.0,
@@ -13638,7 +13638,7 @@
       }
     },
     {
-      "Name": "RhO,aq",
+      "Name": "RhO(aq)",
       "Formula": "RhO",
       "Elements": "1:Rh 1:O",
       "Charge": 0.0,
@@ -13682,7 +13682,7 @@
       }
     },
     {
-      "Name": "Rn,aq",
+      "Name": "Rn(aq)",
       "Formula": "Rn",
       "Elements": "1:Rn",
       "Charge": 0.0,
@@ -13770,7 +13770,7 @@
       }
     },
     {
-      "Name": "RuSO4,aq",
+      "Name": "RuSO4(aq)",
       "Formula": "RuSO4",
       "Elements": "1:Ru 1:S 4:O",
       "Charge": 0.0,
@@ -13990,7 +13990,7 @@
       }
     },
     {
-      "Name": "RuCl2,aq",
+      "Name": "RuCl2(aq)",
       "Formula": "RuCl2",
       "Elements": "1:Ru 2:Cl",
       "Charge": 0.0,
@@ -14034,7 +14034,7 @@
       }
     },
     {
-      "Name": "RuCl3,aq",
+      "Name": "RuCl3(aq)",
       "Formula": "RuCl3",
       "Elements": "1:Ru 3:Cl",
       "Charge": 0.0,
@@ -14166,7 +14166,7 @@
       }
     },
     {
-      "Name": "RuO,aq",
+      "Name": "RuO(aq)",
       "Formula": "RuO",
       "Elements": "1:Ru 1:O",
       "Charge": 0.0,
@@ -14276,7 +14276,7 @@
       }
     },
     {
-      "Name": "H2S2O3,aq",
+      "Name": "H2S2O3(aq)",
       "Formula": "H2S2O3",
       "Elements": "2:H 2:S 3:O",
       "Charge": 0.0,
@@ -14342,7 +14342,7 @@
       }
     },
     {
-      "Name": "H2S2O4,aq",
+      "Name": "H2S2O4(aq)",
       "Formula": "H2S2O4",
       "Elements": "2:H 2:S 4:O",
       "Charge": 0.0,
@@ -14562,7 +14562,7 @@
       }
     },
     {
-      "Name": "SO2,aq",
+      "Name": "SO2(aq)",
       "Formula": "SO2",
       "Elements": "1:S 2:O",
       "Charge": 0.0,
@@ -14694,7 +14694,7 @@
       }
     },
     {
-      "Name": "HScO2,aq",
+      "Name": "HScO2(aq)",
       "Formula": "HScO2",
       "Elements": "1:H 1:Sc 2:O",
       "Charge": 0.0,
@@ -14804,7 +14804,7 @@
       }
     },
     {
-      "Name": "SiO2,aq",
+      "Name": "SiO2(aq)",
       "Formula": "SiO2",
       "Elements": "1:Si 2:O",
       "Charge": 0.0,
@@ -14914,7 +14914,7 @@
       }
     },
     {
-      "Name": "SnO,aq",
+      "Name": "SnO(aq)",
       "Formula": "SnO",
       "Elements": "1:Sn 1:O",
       "Charge": 0.0,
@@ -15222,7 +15222,7 @@
       }
     },
     {
-      "Name": "TlOH,aq",
+      "Name": "TlOH(aq)",
       "Formula": "TlOH",
       "Elements": "1:Tl 1:O 1:H",
       "Charge": 0.0,
@@ -15288,7 +15288,7 @@
       }
     },
     {
-      "Name": "HTlO2,aq",
+      "Name": "HTlO2(aq)",
       "Formula": "HTlO2",
       "Elements": "1:H 1:Tl 2:O",
       "Charge": 0.0,
@@ -15596,7 +15596,7 @@
       }
     },
     {
-      "Name": "VOOH+",
+      "Name": "Vooh+",
       "Formula": "VOOH+",
       "Elements": "1:V 2:O 1:H",
       "Charge": 1.0,
@@ -15662,7 +15662,7 @@
       }
     },
     {
-      "Name": "Xe,aq",
+      "Name": "Xe(aq)",
       "Formula": "Xe",
       "Elements": "1:Xe",
       "Charge": 0.0,
@@ -15750,7 +15750,7 @@
       }
     },
     {
-      "Name": "HYO2,aq",
+      "Name": "HYO2(aq)",
       "Formula": "HYO2",
       "Elements": "1:H 1:Y 2:O",
       "Charge": 0.0,
@@ -15904,7 +15904,7 @@
       }
     },
     {
-      "Name": "ZnCl2,aq",
+      "Name": "ZnCl2(aq)",
       "Formula": "ZnCl2",
       "Elements": "1:Zn 2:Cl",
       "Charge": 0.0,
@@ -15970,7 +15970,7 @@
       }
     },
     {
-      "Name": "ZnO,aq",
+      "Name": "ZnO(aq)",
       "Formula": "ZnO",
       "Elements": "1:Zn 1:O",
       "Charge": 0.0,
@@ -16080,7 +16080,7 @@
       }
     },
     {
-      "Name": "HUO2,aq",
+      "Name": "HUO2(aq)",
       "Formula": "HUO2",
       "Elements": "1:U 2:O 1:H",
       "Charge": 0.0,
@@ -16168,7 +16168,7 @@
       }
     },
     {
-      "Name": "UO2,aq",
+      "Name": "UO2(aq)",
       "Formula": "UO2",
       "Elements": "1:U 2:O",
       "Charge": 0.0,
@@ -16212,7 +16212,7 @@
       }
     },
     {
-      "Name": "UO2OH,aq",
+      "Name": "UO2OH(aq)",
       "Formula": "UO2OH",
       "Elements": "1:U 3:O 1:H",
       "Charge": 0.0,
@@ -16278,7 +16278,7 @@
       }
     },
     {
-      "Name": "UO3,aq",
+      "Name": "UO3(aq)",
       "Formula": "UO3",
       "Elements": "1:U 3:O",
       "Charge": 0.0,
@@ -16366,7 +16366,7 @@
       }
     },
     {
-      "Name": "HNO2,aq",
+      "Name": "HNO2(aq)",
       "Formula": "HNO2",
       "Elements": "1:H 1:N 2:O",
       "Charge": 0.0,
@@ -16388,7 +16388,7 @@
       }
     },
     {
-      "Name": "H2N2O2,aq",
+      "Name": "H2N2O2(aq)",
       "Formula": "H2N2O2",
       "Elements": "2:H 2:N 2:O",
       "Charge": 0.0,
@@ -16498,7 +16498,7 @@
       }
     },
     {
-      "Name": "H3PO2,aq",
+      "Name": "H3PO2(aq)",
       "Formula": "H3PO2",
       "Elements": "3:H 1:P 2:O",
       "Charge": 0.0,
@@ -16542,7 +16542,7 @@
       }
     },
     {
-      "Name": "H3PO3,aq",
+      "Name": "H3PO3(aq)",
       "Formula": "H3PO3",
       "Elements": "3:H 1:P 3:O",
       "Charge": 0.0,
@@ -16652,7 +16652,7 @@
       }
     },
     {
-      "Name": "H4P2O7,aq",
+      "Name": "H4P2O7(aq)",
       "Formula": "H4P2O7",
       "Elements": "4:H 2:P 7:O",
       "Charge": 0.0,
@@ -16696,7 +16696,7 @@
       }
     },
     {
-      "Name": "H3AsO4,aq",
+      "Name": "H3AsO4(aq)",
       "Formula": "H3AsO4",
       "Elements": "3:H 1:As 4:O",
       "Charge": 0.0,
@@ -16762,7 +16762,7 @@
       }
     },
     {
-      "Name": "HAsO2,aq",
+      "Name": "HAsO2(aq)",
       "Formula": "HAsO2",
       "Elements": "1:H 1:As 2:O",
       "Charge": 0.0,
@@ -16872,7 +16872,7 @@
       }
     },
     {
-      "Name": "HSbO2,aq",
+      "Name": "HSbO2(aq)",
       "Formula": "HSbO2",
       "Elements": "1:H 1:Sb 2:O",
       "Charge": 0.0,
@@ -16982,7 +16982,7 @@
       }
     },
     {
-      "Name": "HBiO2,aq",
+      "Name": "HBiO2(aq)",
       "Formula": "HBiO2",
       "Elements": "1:H 1:Bi 2:O",
       "Charge": 0.0,
@@ -17026,7 +17026,7 @@
       }
     },
     {
-      "Name": "H2O2,aq",
+      "Name": "H2O2(aq)",
       "Formula": "H2O2",
       "Elements": "2:H 2:O",
       "Charge": 0.0,
@@ -17048,7 +17048,7 @@
       }
     },
     {
-      "Name": "HClO2,aq",
+      "Name": "HClO2(aq)",
       "Formula": "HClO2",
       "Elements": "1:H 1:Cl 2:O",
       "Charge": 0.0,
@@ -17070,7 +17070,7 @@
       }
     },
     {
-      "Name": "HIO3,aq",
+      "Name": "HIO3(aq)",
       "Formula": "HIO3",
       "Elements": "1:H 1:I 3:O",
       "Charge": 0.0,
@@ -17246,7 +17246,7 @@
       }
     },
     {
-      "Name": "HCrO2,aq",
+      "Name": "HCrO2(aq)",
       "Formula": "HCrO2",
       "Elements": "1:H 1:Cr 2:O",
       "Charge": 0.0,
@@ -17378,7 +17378,7 @@
       }
     },
     {
-      "Name": "ZrO2,aq",
+      "Name": "ZrO2(aq)",
       "Formula": "ZrO2",
       "Elements": "1:Zr 2:O",
       "Charge": 0.0,
@@ -17422,7 +17422,7 @@
       }
     },
     {
-      "Name": "HNbO3,aq",
+      "Name": "HNbO3(aq)",
       "Formula": "HNbO3",
       "Elements": "1:H 1:Nb 3:O",
       "Charge": 0.0,
@@ -17642,7 +17642,7 @@
       }
     },
     {
-      "Name": "HfO2,aq",
+      "Name": "HfO2(aq)",
       "Formula": "HfO2",
       "Elements": "1:Hf 2:O",
       "Charge": 0.0,
@@ -17796,7 +17796,7 @@
       }
     },
     {
-      "Name": "LaO2H,aq",
+      "Name": "LaO2H(aq)",
       "Formula": "LaO2H",
       "Elements": "1:La 2:O 1:H",
       "Charge": 0.0,
@@ -17884,7 +17884,7 @@
       }
     },
     {
-      "Name": "LaCl3,aq",
+      "Name": "LaCl3(aq)",
       "Formula": "LaCl3",
       "Elements": "1:La 3:Cl",
       "Charge": 0.0,
@@ -17994,7 +17994,7 @@
       }
     },
     {
-      "Name": "LaF3,aq",
+      "Name": "LaF3(aq)",
       "Formula": "LaF3",
       "Elements": "1:La 3:F",
       "Charge": 0.0,
@@ -18170,7 +18170,7 @@
       }
     },
     {
-      "Name": "CeO2H,aq",
+      "Name": "CeO2H(aq)",
       "Formula": "CeO2H",
       "Elements": "1:Ce 2:O 1:H",
       "Charge": 0.0,
@@ -18258,7 +18258,7 @@
       }
     },
     {
-      "Name": "CeCl3,aq",
+      "Name": "CeCl3(aq)",
       "Formula": "CeCl3",
       "Elements": "1:Ce 3:Cl",
       "Charge": 0.0,
@@ -18390,7 +18390,7 @@
       }
     },
     {
-      "Name": "CeF3,aq",
+      "Name": "CeF3(aq)",
       "Formula": "CeF3",
       "Elements": "1:Ce 3:F",
       "Charge": 0.0,
@@ -18610,7 +18610,7 @@
       }
     },
     {
-      "Name": "PrCl3,aq",
+      "Name": "PrCl3(aq)",
       "Formula": "PrCl3",
       "Elements": "1:Pr 3:Cl",
       "Charge": 0.0,
@@ -18742,7 +18742,7 @@
       }
     },
     {
-      "Name": "PrF3,aq",
+      "Name": "PrF3(aq)",
       "Formula": "PrF3",
       "Elements": "1:Pr 3:F",
       "Charge": 0.0,
@@ -18830,7 +18830,7 @@
       }
     },
     {
-      "Name": "PrO2H,aq",
+      "Name": "PrO2H(aq)",
       "Formula": "PrO2H",
       "Elements": "1:Pr 2:O 1:H",
       "Charge": 0.0,
@@ -18984,7 +18984,7 @@
       }
     },
     {
-      "Name": "NdO2H,aq",
+      "Name": "NdO2H(aq)",
       "Formula": "NdO2H",
       "Elements": "1:Nd 2:O 1:H",
       "Charge": 0.0,
@@ -19072,7 +19072,7 @@
       }
     },
     {
-      "Name": "NdCl3,aq",
+      "Name": "NdCl3(aq)",
       "Formula": "NdCl3",
       "Elements": "1:Nd 3:Cl",
       "Charge": 0.0,
@@ -19204,7 +19204,7 @@
       }
     },
     {
-      "Name": "NdF3,aq",
+      "Name": "NdF3(aq)",
       "Formula": "NdF3",
       "Elements": "1:Nd 3:F",
       "Charge": 0.0,
@@ -19336,7 +19336,7 @@
       }
     },
     {
-      "Name": "SmO2H,aq",
+      "Name": "SmO2H(aq)",
       "Formula": "SmO2H",
       "Elements": "1:Sm 2:O 1:H",
       "Charge": 0.0,
@@ -19446,7 +19446,7 @@
       }
     },
     {
-      "Name": "SmCl3,aq",
+      "Name": "SmCl3(aq)",
       "Formula": "SmCl3",
       "Elements": "1:Sm 3:Cl",
       "Charge": 0.0,
@@ -19578,7 +19578,7 @@
       }
     },
     {
-      "Name": "SmF3,aq",
+      "Name": "SmF3(aq)",
       "Formula": "SmF3",
       "Elements": "1:Sm 3:F",
       "Charge": 0.0,
@@ -19710,7 +19710,7 @@
       }
     },
     {
-      "Name": "EuO2H,aq",
+      "Name": "EuO2H(aq)",
       "Formula": "EuO2H",
       "Elements": "1:Eu 2:O 1:H",
       "Charge": 0.0,
@@ -19820,7 +19820,7 @@
       }
     },
     {
-      "Name": "EuCl3,aq",
+      "Name": "EuCl3(aq)",
       "Formula": "EuCl3",
       "Elements": "1:Eu 3:Cl",
       "Charge": 0.0,
@@ -19886,7 +19886,7 @@
       }
     },
     {
-      "Name": "EuF2,aq",
+      "Name": "EuF2(aq)",
       "Formula": "EuF2",
       "Elements": "1:Eu 2:F",
       "Charge": 0.0,
@@ -19974,7 +19974,7 @@
       }
     },
     {
-      "Name": "EuCl2,aq",
+      "Name": "EuCl2(aq)",
       "Formula": "EuCl2",
       "Elements": "1:Eu 2:Cl",
       "Charge": 0.0,
@@ -20128,7 +20128,7 @@
       }
     },
     {
-      "Name": "EuF3,aq",
+      "Name": "EuF3(aq)",
       "Formula": "EuF3",
       "Elements": "1:Eu 3:F",
       "Charge": 0.0,
@@ -20260,7 +20260,7 @@
       }
     },
     {
-      "Name": "GdO2H,aq",
+      "Name": "GdO2H(aq)",
       "Formula": "GdO2H",
       "Elements": "1:Gd 2:O 1:H",
       "Charge": 0.0,
@@ -20370,7 +20370,7 @@
       }
     },
     {
-      "Name": "GdCl3,aq",
+      "Name": "GdCl3(aq)",
       "Formula": "GdCl3",
       "Elements": "1:Gd 3:Cl",
       "Charge": 0.0,
@@ -20502,7 +20502,7 @@
       }
     },
     {
-      "Name": "GdF3,aq",
+      "Name": "GdF3(aq)",
       "Formula": "GdF3",
       "Elements": "1:Gd 3:F",
       "Charge": 0.0,
@@ -20634,7 +20634,7 @@
       }
     },
     {
-      "Name": "TbO2H,aq",
+      "Name": "TbO2H(aq)",
       "Formula": "TbO2H",
       "Elements": "1:Tb 2:O 1:H",
       "Charge": 0.0,
@@ -20744,7 +20744,7 @@
       }
     },
     {
-      "Name": "TbCl3,aq",
+      "Name": "TbCl3(aq)",
       "Formula": "TbCl3",
       "Elements": "1:Tb 3:Cl",
       "Charge": 0.0,
@@ -20876,7 +20876,7 @@
       }
     },
     {
-      "Name": "TbF3,aq",
+      "Name": "TbF3(aq)",
       "Formula": "TbF3",
       "Elements": "1:Tb 3:F",
       "Charge": 0.0,
@@ -21030,7 +21030,7 @@
       }
     },
     {
-      "Name": "DyCl3,aq",
+      "Name": "DyCl3(aq)",
       "Formula": "DyCl3",
       "Elements": "1:Dy 3:Cl",
       "Charge": 0.0,
@@ -21162,7 +21162,7 @@
       }
     },
     {
-      "Name": "DyF3,aq",
+      "Name": "DyF3(aq)",
       "Formula": "DyF3",
       "Elements": "1:Dy 3:F",
       "Charge": 0.0,
@@ -21250,7 +21250,7 @@
       }
     },
     {
-      "Name": "DyO2H,aq",
+      "Name": "DyO2H(aq)",
       "Formula": "DyO2H",
       "Elements": "1:Dy 2:O 1:H",
       "Charge": 0.0,
@@ -21404,7 +21404,7 @@
       }
     },
     {
-      "Name": "HoCl3,aq",
+      "Name": "HoCl3(aq)",
       "Formula": "HoCl3",
       "Elements": "1:Ho 3:Cl",
       "Charge": 0.0,
@@ -21536,7 +21536,7 @@
       }
     },
     {
-      "Name": "HoF3,aq",
+      "Name": "HoF3(aq)",
       "Formula": "HoF3",
       "Elements": "1:Ho 3:F",
       "Charge": 0.0,
@@ -21624,7 +21624,7 @@
       }
     },
     {
-      "Name": "HoO2H,aq",
+      "Name": "HoO2H(aq)",
       "Formula": "HoO2H",
       "Elements": "1:Ho 2:O 1:H",
       "Charge": 0.0,
@@ -21778,7 +21778,7 @@
       }
     },
     {
-      "Name": "ErCl3,aq",
+      "Name": "ErCl3(aq)",
       "Formula": "ErCl3",
       "Elements": "1:Er 3:Cl",
       "Charge": 0.0,
@@ -21910,7 +21910,7 @@
       }
     },
     {
-      "Name": "ErF3,aq",
+      "Name": "ErF3(aq)",
       "Formula": "ErF3",
       "Elements": "1:Er 3:F",
       "Charge": 0.0,
@@ -21998,7 +21998,7 @@
       }
     },
     {
-      "Name": "ErO2H,aq",
+      "Name": "ErO2H(aq)",
       "Formula": "ErO2H",
       "Elements": "1:Er 2:O 1:H",
       "Charge": 0.0,
@@ -22152,7 +22152,7 @@
       }
     },
     {
-      "Name": "TmCl3,aq",
+      "Name": "TmCl3(aq)",
       "Formula": "TmCl3",
       "Elements": "1:Tm 3:Cl",
       "Charge": 0.0,
@@ -22284,7 +22284,7 @@
       }
     },
     {
-      "Name": "TmF3,aq",
+      "Name": "TmF3(aq)",
       "Formula": "TmF3",
       "Elements": "1:Tm 3:F",
       "Charge": 0.0,
@@ -22372,7 +22372,7 @@
       }
     },
     {
-      "Name": "TmO2H,aq",
+      "Name": "TmO2H(aq)",
       "Formula": "TmO2H",
       "Elements": "1:Tm 2:O 1:H",
       "Charge": 0.0,
@@ -22504,7 +22504,7 @@
       }
     },
     {
-      "Name": "YbO2H,aq",
+      "Name": "YbO2H(aq)",
       "Formula": "YbO2H",
       "Elements": "1:Yb 2:O 1:H",
       "Charge": 0.0,
@@ -22614,7 +22614,7 @@
       }
     },
     {
-      "Name": "YbCl3,aq",
+      "Name": "YbCl3(aq)",
       "Formula": "YbCl3",
       "Elements": "1:Yb 3:Cl",
       "Charge": 0.0,
@@ -22746,7 +22746,7 @@
       }
     },
     {
-      "Name": "YbF3,aq",
+      "Name": "YbF3(aq)",
       "Formula": "YbF3",
       "Elements": "1:Yb 3:F",
       "Charge": 0.0,
@@ -22878,7 +22878,7 @@
       }
     },
     {
-      "Name": "LuO2H,aq",
+      "Name": "LuO2H(aq)",
       "Formula": "LuO2H",
       "Elements": "1:Lu 2:O 1:H",
       "Charge": 0.0,
@@ -22988,7 +22988,7 @@
       }
     },
     {
-      "Name": "LuCl3,aq",
+      "Name": "LuCl3(aq)",
       "Formula": "LuCl3",
       "Elements": "1:Lu 3:Cl",
       "Charge": 0.0,
@@ -23120,7 +23120,7 @@
       }
     },
     {
-      "Name": "LuF3,aq",
+      "Name": "LuF3(aq)",
       "Formula": "LuF3",
       "Elements": "1:Lu 3:F",
       "Charge": 0.0,
@@ -23208,7 +23208,7 @@
       }
     },
     {
-      "Name": "MgSO4,aq",
+      "Name": "MgSO4(aq)",
       "Formula": "MgSO4",
       "Elements": "1:Mg 1:S 4:O",
       "Charge": 0.0,
@@ -23230,7 +23230,7 @@
       }
     },
     {
-      "Name": "HCl,aq",
+      "Name": "HCl(aq)",
       "Formula": "HCl",
       "Elements": "1:H 1:Cl",
       "Charge": 0.0,
@@ -23252,7 +23252,7 @@
       }
     },
     {
-      "Name": "MgCO3,aq",
+      "Name": "MgCO3(aq)",
       "Formula": "MgCO3",
       "Elements": "1:Mg 1:C 3:O",
       "Charge": 0.0,
@@ -23274,7 +23274,7 @@
       }
     },
     {
-      "Name": "CaCO3,aq",
+      "Name": "CaCO3(aq)",
       "Formula": "CaCO3",
       "Elements": "1:Ca 1:C 3:O",
       "Charge": 0.0,
@@ -23296,7 +23296,7 @@
       }
     },
     {
-      "Name": "SrCO3,aq",
+      "Name": "SrCO3(aq)",
       "Formula": "SrCO3",
       "Elements": "1:Sr 1:C 3:O",
       "Charge": 0.0,
@@ -23318,7 +23318,7 @@
       }
     },
     {
-      "Name": "BaCO3,aq",
+      "Name": "BaCO3(aq)",
       "Formula": "BaCO3",
       "Elements": "1:Ba 1:C 3:O",
       "Charge": 0.0,
@@ -23362,7 +23362,7 @@
       }
     },
     {
-      "Name": "BeCl2,aq",
+      "Name": "BeCl2(aq)",
       "Formula": "BeCl2",
       "Elements": "1:Be 2:Cl",
       "Charge": 0.0,
@@ -23428,7 +23428,7 @@
       }
     },
     {
-      "Name": "CuCl,aq",
+      "Name": "CuCl(aq)",
       "Formula": "CuCl",
       "Elements": "1:Cu 1:Cl",
       "Charge": 0.0,
@@ -23516,7 +23516,7 @@
       }
     },
     {
-      "Name": "CuCl2,aq",
+      "Name": "CuCl2(aq)",
       "Formula": "CuCl2",
       "Elements": "1:Cu 2:Cl",
       "Charge": 0.0,
@@ -23604,7 +23604,7 @@
       }
     },
     {
-      "Name": "CdCl2,aq",
+      "Name": "CdCl2(aq)",
       "Formula": "CdCl2",
       "Elements": "1:Cd 2:Cl",
       "Charge": 0.0,
@@ -23670,7 +23670,7 @@
       }
     },
     {
-      "Name": "TlCl,aq",
+      "Name": "TlCl(aq)",
       "Formula": "TlCl",
       "Elements": "1:Tl 1:Cl",
       "Charge": 0.0,
@@ -23714,7 +23714,7 @@
       }
     },
     {
-      "Name": "AuCl,aq",
+      "Name": "AuCl(aq)",
       "Formula": "AuCl",
       "Elements": "1:Au 1:Cl",
       "Charge": 0.0,
@@ -23824,7 +23824,7 @@
       }
     },
     {
-      "Name": "HgCl2,aq",
+      "Name": "HgCl2(aq)",
       "Formula": "HgCl2",
       "Elements": "1:Hg 2:Cl",
       "Charge": 0.0,
@@ -23934,7 +23934,7 @@
       }
     },
     {
-      "Name": "BeF2,aq",
+      "Name": "BeF2(aq)",
       "Formula": "BeF2",
       "Elements": "1:Be 2:F",
       "Charge": 0.0,
@@ -24154,7 +24154,7 @@
       }
     },
     {
-      "Name": "AgF,aq",
+      "Name": "AgF(aq)",
       "Formula": "AgF",
       "Elements": "1:Ag 1:F",
       "Charge": 0.0,
@@ -24198,7 +24198,7 @@
       }
     },
     {
-      "Name": "CdF2,aq",
+      "Name": "CdF2(aq)",
       "Formula": "CdF2",
       "Elements": "1:Cd 2:F",
       "Charge": 0.0,
@@ -24242,7 +24242,7 @@
       }
     },
     {
-      "Name": "TlF,aq",
+      "Name": "TlF(aq)",
       "Formula": "TlF",
       "Elements": "1:Tl 1:F",
       "Charge": 0.0,
@@ -24330,7 +24330,7 @@
       }
     },
     {
-      "Name": "PbF2,aq",
+      "Name": "PbF2(aq)",
       "Formula": "PbF2",
       "Elements": "1:Pb 2:F",
       "Charge": 0.0,
@@ -24396,7 +24396,7 @@
       }
     },
     {
-      "Name": "Pb(HS)2,aq",
+      "Name": "Pb(HS)2(aq)",
       "Formula": "Pb(HS)2",
       "Elements": "1:Pb 2:H 2:S",
       "Charge": 0.0,
@@ -24528,7 +24528,7 @@
       }
     },
     {
-      "Name": "AlF3,aq",
+      "Name": "AlF3(aq)",
       "Formula": "AlF3",
       "Elements": "1:Al 3:F",
       "Charge": 0.0,
@@ -24594,7 +24594,7 @@
       }
     },
     {
-      "Name": "Al(OH)2F,aq",
+      "Name": "Al(OH)2F(aq)",
       "Formula": "Al(OH)2F",
       "Elements": "1:Al 2:O 2:H 1:F",
       "Charge": 0.0,
@@ -24616,7 +24616,7 @@
       }
     },
     {
-      "Name": "Al(OH)F2,aq",
+      "Name": "Al(OH)F2(aq)",
       "Formula": "Al(OH)F2",
       "Elements": "1:Al 1:O 1:H 2:F",
       "Charge": 0.0,
@@ -24660,7 +24660,7 @@
       }
     },
     {
-      "Name": "NaAl(OH)3F,aq",
+      "Name": "NaAl(OH)3F(aq)",
       "Formula": "NaAl(OH)3F",
       "Elements": "1:Na 1:Al 3:O 3:H 1:F",
       "Charge": 0.0,
@@ -24682,7 +24682,7 @@
       }
     },
     {
-      "Name": "NaAl(OH)2F2,aq",
+      "Name": "NaAl(OH)2F2(aq)",
       "Formula": "NaAl(OH)2F2",
       "Elements": "1:Na 1:Al 2:O 2:H 2:F",
       "Charge": 0.0,
@@ -24704,7 +24704,7 @@
       }
     },
     {
-      "Name": "CH4,aq",
+      "Name": "CH4(aq)",
       "Formula": "CH4",
       "Elements": "1:C 4:H",
       "Charge": 0.0,
@@ -24726,7 +24726,7 @@
       }
     },
     {
-      "Name": "HAcetate,aq",
+      "Name": "H-Acetate(aq)",
       "Formula": "C2H4O2",
       "Elements": "2:C 4:H 2:O",
       "Charge": 0.0,
@@ -24770,7 +24770,7 @@
       }
     },
     {
-      "Name": "1-BUTANAMINE,aq",
+      "Name": "1-Butanamine(aq)",
       "Formula": "C4H9NH2",
       "Elements": "4:C 11:H 1:N",
       "Charge": 0.0,
@@ -24792,7 +24792,7 @@
       }
     },
     {
-      "Name": "1-BUTANOL,aq",
+      "Name": "1-Butanol(aq)",
       "Formula": "C4H9OH",
       "Elements": "4:C 10:H 1:O",
       "Charge": 0.0,
@@ -24814,7 +24814,7 @@
       }
     },
     {
-      "Name": "1-BUTENE,aq",
+      "Name": "1-Butene(aq)",
       "Formula": "C4H8",
       "Elements": "4:C 8:H",
       "Charge": 0.0,
@@ -24836,7 +24836,7 @@
       }
     },
     {
-      "Name": "1-BUTYNE,aq",
+      "Name": "1-Butyne(aq)",
       "Formula": "C4H6",
       "Elements": "4:C 6:H",
       "Charge": 0.0,
@@ -24858,7 +24858,7 @@
       }
     },
     {
-      "Name": "1-HEPTANAMINE,aq",
+      "Name": "1-Heptanamine(aq)",
       "Formula": "C7H15NH2",
       "Elements": "7:C 17:H 1:N",
       "Charge": 0.0,
@@ -24880,7 +24880,7 @@
       }
     },
     {
-      "Name": "1-HEPTANOL,aq",
+      "Name": "1-Heptanol(aq)",
       "Formula": "C7H15OH",
       "Elements": "7:C 16:H 1:O",
       "Charge": 0.0,
@@ -24902,7 +24902,7 @@
       }
     },
     {
-      "Name": "1-HEPTENE,aq",
+      "Name": "1-Heptene(aq)",
       "Formula": "C7H14",
       "Elements": "7:C 14:H",
       "Charge": 0.0,
@@ -24924,7 +24924,7 @@
       }
     },
     {
-      "Name": "1-HEPTYNE,aq",
+      "Name": "1-Heptyne(aq)",
       "Formula": "C7H12",
       "Elements": "7:C 12:H",
       "Charge": 0.0,
@@ -24946,7 +24946,7 @@
       }
     },
     {
-      "Name": "1-HEXANAMINE,aq",
+      "Name": "1-Hexanamine(aq)",
       "Formula": "C6H13NH2",
       "Elements": "6:C 15:H 1:N",
       "Charge": 0.0,
@@ -24968,7 +24968,7 @@
       }
     },
     {
-      "Name": "1-HEXANOL,aq",
+      "Name": "1-Hexanol(aq)",
       "Formula": "C6H13OH",
       "Elements": "6:C 14:H 1:O",
       "Charge": 0.0,
@@ -24990,7 +24990,7 @@
       }
     },
     {
-      "Name": "1-HEXENE,aq",
+      "Name": "1-Hexene(aq)",
       "Formula": "C6H12",
       "Elements": "6:C 12:H",
       "Charge": 0.0,
@@ -25012,7 +25012,7 @@
       }
     },
     {
-      "Name": "1-HEXYNE,aq",
+      "Name": "1-Hexyne(aq)",
       "Formula": "C6H10",
       "Elements": "6:C 10:H",
       "Charge": 0.0,
@@ -25034,7 +25034,7 @@
       }
     },
     {
-      "Name": "1-OCTANAMINE,aq",
+      "Name": "1-Octanamine(aq)",
       "Formula": "C8H17NH2",
       "Elements": "8:C 19:H 1:N",
       "Charge": 0.0,
@@ -25056,7 +25056,7 @@
       }
     },
     {
-      "Name": "1-OCTANOL,aq",
+      "Name": "1-Octanol(aq)",
       "Formula": "C8H17OH",
       "Elements": "8:C 18:H 1:O",
       "Charge": 0.0,
@@ -25078,7 +25078,7 @@
       }
     },
     {
-      "Name": "1-OCTENE,aq",
+      "Name": "1-Octene(aq)",
       "Formula": "C8H16",
       "Elements": "8:C 16:H",
       "Charge": 0.0,
@@ -25100,7 +25100,7 @@
       }
     },
     {
-      "Name": "1-OCTYNE,aq",
+      "Name": "1-Octyne(aq)",
       "Formula": "C8H14",
       "Elements": "8:C 14:H",
       "Charge": 0.0,
@@ -25122,7 +25122,7 @@
       }
     },
     {
-      "Name": "1-PENTANAMINE,aq",
+      "Name": "1-Pentanamine(aq)",
       "Formula": "C5H11NH2",
       "Elements": "5:C 13:H 1:N",
       "Charge": 0.0,
@@ -25144,7 +25144,7 @@
       }
     },
     {
-      "Name": "1-PENTANOL,aq",
+      "Name": "1-Pentanol(aq)",
       "Formula": "C5H11OH",
       "Elements": "5:C 12:H 1:O",
       "Charge": 0.0,
@@ -25166,7 +25166,7 @@
       }
     },
     {
-      "Name": "1-PENTENE,aq",
+      "Name": "1-Pentene(aq)",
       "Formula": "C5H10",
       "Elements": "5:C 10:H",
       "Charge": 0.0,
@@ -25188,7 +25188,7 @@
       }
     },
     {
-      "Name": "1-PENTYNE,aq",
+      "Name": "1-Pentyne(aq)",
       "Formula": "C5H8",
       "Elements": "5:C 8:H",
       "Charge": 0.0,
@@ -25210,7 +25210,7 @@
       }
     },
     {
-      "Name": "1-PROPANAMINE,aq",
+      "Name": "1-Propanamine(aq)",
       "Formula": "C3H7NH2",
       "Elements": "3:C 9:H 1:N",
       "Charge": 0.0,
@@ -25232,7 +25232,7 @@
       }
     },
     {
-      "Name": "1-PROPANOL,aq",
+      "Name": "1-Propanol(aq)",
       "Formula": "C3H7OH",
       "Elements": "3:C 8:H 1:O",
       "Charge": 0.0,
@@ -25254,7 +25254,7 @@
       }
     },
     {
-      "Name": "1-PROPENE,aq",
+      "Name": "1-Propene(aq)",
       "Formula": "C3H6",
       "Elements": "3:C 6:H",
       "Charge": 0.0,
@@ -25276,7 +25276,7 @@
       }
     },
     {
-      "Name": "1-PROPYNE,aq",
+      "Name": "1-Propyne(aq)",
       "Formula": "C3H4",
       "Elements": "3:C 4:H",
       "Charge": 0.0,
@@ -25298,7 +25298,7 @@
       }
     },
     {
-      "Name": "2-BUTANONE,aq",
+      "Name": "2-Butanone(aq)",
       "Formula": "C4H8O",
       "Elements": "4:C 8:H 1:O",
       "Charge": 0.0,
@@ -25320,7 +25320,7 @@
       }
     },
     {
-      "Name": "2-HEPTANONE,aq",
+      "Name": "2-Heptanone(aq)",
       "Formula": "C7H14O",
       "Elements": "7:C 14:H 1:O",
       "Charge": 0.0,
@@ -25342,7 +25342,7 @@
       }
     },
     {
-      "Name": "2-HEXANONE,aq",
+      "Name": "2-Hexanone(aq)",
       "Formula": "C6H12O",
       "Elements": "6:C 12:H 1:O",
       "Charge": 0.0,
@@ -25364,7 +25364,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYBUTANOATE",
+      "Name": "2-Hydroxybutanoate",
       "Formula": "C4H7O3-",
       "Elements": "4:C 7:H 3:O",
       "Charge": -1.0,
@@ -25386,7 +25386,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYBUTANOIC,aq",
+      "Name": "2-Hydroxybutanoic(aq)",
       "Formula": "C4H8O3",
       "Elements": "4:C 8:H 3:O",
       "Charge": 0.0,
@@ -25408,7 +25408,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYDECANOATE",
+      "Name": "2-Hydroxydecanoate",
       "Formula": "C10H19O3-",
       "Elements": "10:C 19:H 3:O",
       "Charge": -1.0,
@@ -25430,7 +25430,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYDECANOIC,aq",
+      "Name": "2-Hydroxydecanoic(aq)",
       "Formula": "C10H20O3",
       "Elements": "10:C 20:H 3:O",
       "Charge": 0.0,
@@ -25452,7 +25452,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYHEPTANOIC",
+      "Name": "2-Hydroxyheptanoic",
       "Formula": "C7H14O3",
       "Elements": "7:C 14:H 3:O",
       "Charge": 0.0,
@@ -25474,7 +25474,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYHEXANOATE",
+      "Name": "2-Hydroxyhexanoate",
       "Formula": "C6H11O3-",
       "Elements": "6:C 11:H 3:O",
       "Charge": -1.0,
@@ -25496,7 +25496,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYHEXANOIC,aq",
+      "Name": "2-Hydroxyhexanoic(aq)",
       "Formula": "C6H12O3",
       "Elements": "6:C 12:H 3:O",
       "Charge": 0.0,
@@ -25518,7 +25518,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYNONANOATE",
+      "Name": "2-Hydroxynonanoate",
       "Formula": "C9H17O3-",
       "Elements": "9:C 17:H 3:O",
       "Charge": -1.0,
@@ -25540,7 +25540,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYNONANOIC,aq",
+      "Name": "2-Hydroxynonanoic(aq)",
       "Formula": "C9H18O3",
       "Elements": "9:C 18:H 3:O",
       "Charge": 0.0,
@@ -25562,7 +25562,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYOCTANOATE",
+      "Name": "2-Hydroxyoctanoate",
       "Formula": "C8H15O3-",
       "Elements": "8:C 15:H 3:O",
       "Charge": -1.0,
@@ -25584,7 +25584,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYOCTANOIC,aq",
+      "Name": "2-Hydroxyoctanoic(aq)",
       "Formula": "C8H16O3",
       "Elements": "8:C 16:H 3:O",
       "Charge": 0.0,
@@ -25606,7 +25606,7 @@
       }
     },
     {
-      "Name": "2-HYDROXYPENTANOIC",
+      "Name": "2-Hydroxypentanoic",
       "Formula": "C5H10O3",
       "Elements": "5:C 10:H 3:O",
       "Charge": 0.0,
@@ -25628,7 +25628,7 @@
       }
     },
     {
-      "Name": "2-OCTANONE,aq",
+      "Name": "2-Octanone(aq)",
       "Formula": "C8H16O",
       "Elements": "8:C 16:H 1:O",
       "Charge": 0.0,
@@ -25650,7 +25650,7 @@
       }
     },
     {
-      "Name": "2-PENTANONE,aq",
+      "Name": "2-Pentanone(aq)",
       "Formula": "C5H10O",
       "Elements": "5:C 10:H 1:O",
       "Charge": 0.0,
@@ -25672,7 +25672,7 @@
       }
     },
     {
-      "Name": "A-AMINOBUTYRIC,aq",
+      "Name": "A-Aminobutyric(aq)",
       "Formula": "C4H9NO2",
       "Elements": "4:C 9:H 2:O 1:N",
       "Charge": 0.0,
@@ -25694,7 +25694,7 @@
       }
     },
     {
-      "Name": "ACETAMIDE,aq",
+      "Name": "Acetamide(aq)",
       "Formula": "CH3CONH2",
       "Elements": "2:C 5:H 1:O 1:N",
       "Charge": 0.0,
@@ -25716,7 +25716,7 @@
       }
     },
     {
-      "Name": "ACETONE,aq",
+      "Name": "Acetone(aq)",
       "Formula": "C3H6O",
       "Elements": "3:C 6:H 1:O",
       "Charge": 0.0,
@@ -25738,7 +25738,7 @@
       }
     },
     {
-      "Name": "ADIPATE",
+      "Name": "Adipate",
       "Formula": "C6H8O4-2",
       "Elements": "6:C 8:H 4:O",
       "Charge": -2.0,
@@ -25760,7 +25760,7 @@
       }
     },
     {
-      "Name": "ADIPIC-ACID,aq",
+      "Name": "Adipic-Acid(aq)",
       "Formula": "C6H10O4",
       "Elements": "6:C 10:H 4:O",
       "Charge": 0.0,
@@ -25782,7 +25782,7 @@
       }
     },
     {
-      "Name": "ALANYLGLYCINE,aq",
+      "Name": "Alanylglycine(aq)",
       "Formula": "C5H10N2O3",
       "Elements": "5:C 10:H 2:N 3:O",
       "Charge": 0.0,
@@ -25804,7 +25804,7 @@
       }
     },
     {
-      "Name": "ASPARAGINE,aq",
+      "Name": "Asparagine(aq)",
       "Formula": "C4H8N2O3",
       "Elements": "4:C 8:H 3:O 2:N",
       "Charge": 0.0,
@@ -25826,7 +25826,7 @@
       }
     },
     {
-      "Name": "ASPARTIC-ACID,aq",
+      "Name": "Aspartic-Acid(aq)",
       "Formula": "C4H7NO4",
       "Elements": "4:C 7:H 4:O 1:N",
       "Charge": 0.0,
@@ -25848,7 +25848,7 @@
       }
     },
     {
-      "Name": "AZELAIC-ACID,aq",
+      "Name": "Azelaic-Acid(aq)",
       "Formula": "C9H16O4",
       "Elements": "9:C 16:H 4:O",
       "Charge": 0.0,
@@ -25870,7 +25870,7 @@
       }
     },
     {
-      "Name": "AZELATE",
+      "Name": "Azelate",
       "Formula": "C9H14O4-2",
       "Elements": "9:C 14:H 4:O",
       "Charge": -2.0,
@@ -25892,7 +25892,7 @@
       }
     },
     {
-      "Name": "BENZENE,aq",
+      "Name": "Benzene(aq)",
       "Formula": "C6H6",
       "Elements": "6:C 6:H",
       "Charge": 0.0,
@@ -25914,7 +25914,7 @@
       }
     },
     {
-      "Name": "BENZOATE",
+      "Name": "Benzoate",
       "Formula": "C7H5O2-",
       "Elements": "7:C 5:H 2:O",
       "Charge": -1.0,
@@ -25936,7 +25936,7 @@
       }
     },
     {
-      "Name": "BENZOIC-ACID,aq",
+      "Name": "Benzoic-Acid(aq)",
       "Formula": "C7H6O2",
       "Elements": "7:C 6:H 2:O",
       "Charge": 0.0,
@@ -25958,7 +25958,7 @@
       }
     },
     {
-      "Name": "o-CRESOL,aq",
+      "Name": "o-Cresol(aq)",
       "Formula": "C6H4OHCH3",
       "Elements": "7:C 8:H 1:O",
       "Charge": 0.0,
@@ -25980,7 +25980,7 @@
       }
     },
     {
-      "Name": "m-CRESOL,aq",
+      "Name": "m-Cresol(aq)",
       "Formula": "C6H4OHCH3",
       "Elements": "7:C 8:H 1:O",
       "Charge": 0.0,
@@ -26002,7 +26002,7 @@
       }
     },
     {
-      "Name": "p-CRESOL,aq",
+      "Name": "p-Cresol(aq)",
       "Formula": "C6H4OHCH3",
       "Elements": "7:C 8:H 1:O",
       "Charge": 0.0,
@@ -26024,7 +26024,7 @@
       }
     },
     {
-      "Name": "DECANOATE",
+      "Name": "Decanoate",
       "Formula": "C10H19O2-",
       "Elements": "10:C 19:H 2:O",
       "Charge": -1.0,
@@ -26046,7 +26046,7 @@
       }
     },
     {
-      "Name": "DECANOIC-ACID,aq",
+      "Name": "Decanoic-Acid(aq)",
       "Formula": "C10H20O2",
       "Elements": "10:C 20:H 2:O",
       "Charge": 0.0,
@@ -26068,7 +26068,7 @@
       }
     },
     {
-      "Name": "2,3-DMP,aq",
+      "Name": "2,3-DMP(aq)",
       "Formula": "C6H3OHCH3CH3",
       "Elements": "8:C 10:H 1:O",
       "Charge": 0.0,
@@ -26090,7 +26090,7 @@
       }
     },
     {
-      "Name": "2,4-DMP,aq",
+      "Name": "2,4-DMP(aq)",
       "Formula": "C6H3OHCH3CH3",
       "Elements": "8:C 10:H 1:O",
       "Charge": 0.0,
@@ -26112,7 +26112,7 @@
       }
     },
     {
-      "Name": "2,5-DMP,aq",
+      "Name": "2,5-DMP(aq)",
       "Formula": "C6H3OHCH3CH3",
       "Elements": "8:C 10:H 1:O",
       "Charge": 0.0,
@@ -26134,7 +26134,7 @@
       }
     },
     {
-      "Name": "2,6-DMP,aq",
+      "Name": "2,6-DMP(aq)",
       "Formula": "C6H3OHCH3CH3",
       "Elements": "8:C 10:H 1:O",
       "Charge": 0.0,
@@ -26156,7 +26156,7 @@
       }
     },
     {
-      "Name": "3,4-DMP,aq",
+      "Name": "3,4-DMP(aq)",
       "Formula": "C6H3OHCH3CH3",
       "Elements": "8:C 10:H 1:O",
       "Charge": 0.0,
@@ -26178,7 +26178,7 @@
       }
     },
     {
-      "Name": "3,5-DMP,aq",
+      "Name": "3,5-DMP(aq)",
       "Formula": "C6H3OHCH3CH3",
       "Elements": "8:C 10:H 1:O",
       "Charge": 0.0,
@@ -26200,7 +26200,7 @@
       }
     },
     {
-      "Name": "DODECANOATE",
+      "Name": "Dodecanoate",
       "Formula": "C12H23O2-",
       "Elements": "12:C 23:H 2:O",
       "Charge": -1.0,
@@ -26222,7 +26222,7 @@
       }
     },
     {
-      "Name": "DODECANOIC-ACID,aq",
+      "Name": "Dodecanoic-Acid(aq)",
       "Formula": "C12H24O2",
       "Elements": "12:C 24:H 2:O",
       "Charge": 0.0,
@@ -26244,7 +26244,7 @@
       }
     },
     {
-      "Name": "ETHANAMINE,aq",
+      "Name": "Ethanamine(aq)",
       "Formula": "C2H5NH2",
       "Elements": "2:C 7:H 1:N",
       "Charge": 0.0,
@@ -26266,7 +26266,7 @@
       }
     },
     {
-      "Name": "ETHANE,aq",
+      "Name": "Ethane(aq)",
       "Formula": "C2H6",
       "Elements": "2:C 6:H",
       "Charge": 0.0,
@@ -26288,7 +26288,7 @@
       }
     },
     {
-      "Name": "ETHANOL,aq",
+      "Name": "Ethanol(aq)",
       "Formula": "C2H5OH",
       "Elements": "2:C 6:H 1:O",
       "Charge": 0.0,
@@ -26310,7 +26310,7 @@
       }
     },
     {
-      "Name": "ETHYLACETATE,aq",
+      "Name": "Ethylacetate(aq)",
       "Formula": "CH3COOCH2CH3",
       "Elements": "4:C 8:H 2:O",
       "Charge": 0.0,
@@ -26332,7 +26332,7 @@
       }
     },
     {
-      "Name": "ETHYLBENZENE,aq",
+      "Name": "Ethylbenzene(aq)",
       "Formula": "C6H5C2H5",
       "Elements": "8:C 10:H",
       "Charge": 0.0,
@@ -26354,7 +26354,7 @@
       }
     },
     {
-      "Name": "ETHYLENE,aq",
+      "Name": "Ethylene(aq)",
       "Formula": "C2H4",
       "Elements": "2:C 4:H",
       "Charge": 0.0,
@@ -26376,7 +26376,7 @@
       }
     },
     {
-      "Name": "ETHYNE,aq",
+      "Name": "Ethyne(aq)",
       "Formula": "C2H2",
       "Elements": "2:C 2:H",
       "Charge": 0.0,
@@ -26398,7 +26398,7 @@
       }
     },
     {
-      "Name": "GLUTAMIC-ACID,aq",
+      "Name": "Glutamic-Acid(aq)",
       "Formula": "C5H9NO4",
       "Elements": "5:C 9:H 4:O 1:N",
       "Charge": 0.0,
@@ -26420,7 +26420,7 @@
       }
     },
     {
-      "Name": "GLUTAMINE,aq",
+      "Name": "Glutamine(aq)",
       "Formula": "C5H10N2O3",
       "Elements": "5:C 10:H 3:O 2:N",
       "Charge": 0.0,
@@ -26442,7 +26442,7 @@
       }
     },
     {
-      "Name": "GLUTARATE",
+      "Name": "Glutarate",
       "Formula": "C5H6O4-2",
       "Elements": "5:C 6:H 4:O",
       "Charge": -2.0,
@@ -26464,7 +26464,7 @@
       }
     },
     {
-      "Name": "GLUTARIC-ACID,aq",
+      "Name": "Glutaric-Acid(aq)",
       "Formula": "C5H8O4",
       "Elements": "5:C 8:H 4:O",
       "Charge": 0.0,
@@ -26486,7 +26486,7 @@
       }
     },
     {
-      "Name": "DIGLYCINE,aq",
+      "Name": "Diglycine(aq)",
       "Formula": "C4H8N2O3",
       "Elements": "4:C 8:H 2:N 3:O",
       "Charge": 0.0,
@@ -26508,7 +26508,7 @@
       }
     },
     {
-      "Name": "H-ADIPATE",
+      "Name": "H-Adipate",
       "Formula": "C6H9O4-",
       "Elements": "6:C 9:H 4:O",
       "Charge": -1.0,
@@ -26530,7 +26530,7 @@
       }
     },
     {
-      "Name": "H-AZELATE",
+      "Name": "H-Azelate",
       "Formula": "C9H15O4-",
       "Elements": "9:C 15:H 4:O",
       "Charge": -1.0,
@@ -26552,7 +26552,7 @@
       }
     },
     {
-      "Name": "H-GLUTARATE",
+      "Name": "H-Glutarate",
       "Formula": "C5H7O4-",
       "Elements": "5:C 7:H 4:O",
       "Charge": -1.0,
@@ -26574,7 +26574,7 @@
       }
     },
     {
-      "Name": "H-MALONATE",
+      "Name": "H-Malonate",
       "Formula": "C3H3O4-",
       "Elements": "3:C 3:H 4:O",
       "Charge": -1.0,
@@ -26596,7 +26596,7 @@
       }
     },
     {
-      "Name": "H-OXALATE",
+      "Name": "H-Oxalate",
       "Formula": "C2HO4-",
       "Elements": "2:C 1:H 4:O",
       "Charge": -1.0,
@@ -26618,7 +26618,7 @@
       }
     },
     {
-      "Name": "H-PIMELATE",
+      "Name": "H-Pimelate",
       "Formula": "C7H11O4-",
       "Elements": "7:C 11:H 4:O",
       "Charge": -1.0,
@@ -26640,7 +26640,7 @@
       }
     },
     {
-      "Name": "H-SEBACATE",
+      "Name": "H-Sebacate",
       "Formula": "C10H17O4-",
       "Elements": "10:C 17:H 4:O",
       "Charge": -1.0,
@@ -26662,7 +26662,7 @@
       }
     },
     {
-      "Name": "H-SUBERATE",
+      "Name": "H-Suberate",
       "Formula": "C8H13O4-",
       "Elements": "8:C 13:H 4:O",
       "Charge": -1.0,
@@ -26684,7 +26684,7 @@
       }
     },
     {
-      "Name": "H-SUCCINATE",
+      "Name": "H-Succinate",
       "Formula": "C4H5O4-",
       "Elements": "4:C 5:H 4:O",
       "Charge": -1.0,
@@ -26706,7 +26706,7 @@
       }
     },
     {
-      "Name": "HEPTANOATE",
+      "Name": "Heptanoate",
       "Formula": "C7H13O2-",
       "Elements": "7:C 13:H 2:O",
       "Charge": -1.0,
@@ -26728,7 +26728,7 @@
       }
     },
     {
-      "Name": "HEPTANOIC-ACID,aq",
+      "Name": "Heptanoic-Acid(aq)",
       "Formula": "C7H14O2",
       "Elements": "7:C 14:H 2:O",
       "Charge": 0.0,
@@ -26750,7 +26750,7 @@
       }
     },
     {
-      "Name": "HEXANOATE",
+      "Name": "Hexanoate",
       "Formula": "C6H11O2-",
       "Elements": "6:C 11:H 2:O",
       "Charge": -1.0,
@@ -26772,7 +26772,7 @@
       }
     },
     {
-      "Name": "HEXANOIC-ACID,aq",
+      "Name": "Hexanoic-Acid(aq)",
       "Formula": "C6H12O2",
       "Elements": "6:C 12:H 2:O",
       "Charge": 0.0,
@@ -26794,7 +26794,7 @@
       }
     },
     {
-      "Name": "ISOLEUCINE,aq",
+      "Name": "Isoleucine(aq)",
       "Formula": "C6H13NO2",
       "Elements": "6:C 13:H 2:O 1:N",
       "Charge": 0.0,
@@ -26816,7 +26816,7 @@
       }
     },
     {
-      "Name": "LEUCINE,aq",
+      "Name": "Leucine(aq)",
       "Formula": "C6H13NO2",
       "Elements": "6:C 13:H 2:O 1:N",
       "Charge": 0.0,
@@ -26838,7 +26838,7 @@
       }
     },
     {
-      "Name": "m-TOLUATE",
+      "Name": "m-Toluate",
       "Formula": "C8H7O2-",
       "Elements": "8:C 7:H 2:O",
       "Charge": -1.0,
@@ -26860,7 +26860,7 @@
       }
     },
     {
-      "Name": "m-TOLUIC-ACID,aq",
+      "Name": "m-Toluic-Acid(aq)",
       "Formula": "C8H8O2",
       "Elements": "8:C 8:H 2:O",
       "Charge": 0.0,
@@ -26882,7 +26882,7 @@
       }
     },
     {
-      "Name": "MALONATE",
+      "Name": "Malonate",
       "Formula": "C3H2O4-2",
       "Elements": "3:C 2:H 4:O",
       "Charge": -2.0,
@@ -26904,7 +26904,7 @@
       }
     },
     {
-      "Name": "MALONIC-ACID,aq",
+      "Name": "Malonic-Acid(aq)",
       "Formula": "C3H4O4",
       "Elements": "3:C 4:H 4:O",
       "Charge": 0.0,
@@ -26926,7 +26926,7 @@
       }
     },
     {
-      "Name": "METHANAMINE,aq",
+      "Name": "Methanamine(aq)",
       "Formula": "CH3NH2",
       "Elements": "1:C 5:H 1:N",
       "Charge": 0.0,
@@ -26948,7 +26948,7 @@
       }
     },
     {
-      "Name": "METHANOL,aq",
+      "Name": "Methanol(aq)",
       "Formula": "CH3OH",
       "Elements": "1:C 4:H 1:O",
       "Charge": 0.0,
@@ -26970,7 +26970,7 @@
       }
     },
     {
-      "Name": "METHIONINE,aq",
+      "Name": "Methionine(aq)",
       "Formula": "C5H11NO2S",
       "Elements": "5:C 11:H 2:O 1:N 1:S",
       "Charge": 0.0,
@@ -26992,7 +26992,7 @@
       }
     },
     {
-      "Name": "N-BUTANE,aq",
+      "Name": "n-Butane(aq)",
       "Formula": "C4H10",
       "Elements": "4:C 10:H",
       "Charge": 0.0,
@@ -27014,7 +27014,7 @@
       }
     },
     {
-      "Name": "N-BUTYLBENZENE,aq",
+      "Name": "n-Butylbenzene(aq)",
       "Formula": "C6H5C4H9",
       "Elements": "10:C 14:H",
       "Charge": 0.0,
@@ -27036,7 +27036,7 @@
       }
     },
     {
-      "Name": "N-HEPTANE,aq",
+      "Name": "n-Heptane(aq)",
       "Formula": "C7H16",
       "Elements": "7:C 16:H",
       "Charge": 0.0,
@@ -27058,7 +27058,7 @@
       }
     },
     {
-      "Name": "N-HEPTYLBENZENE,aq",
+      "Name": "n-Heptylbenzene(aq)",
       "Formula": "C6H5C7H15",
       "Elements": "13:C 20:H",
       "Charge": 0.0,
@@ -27080,7 +27080,7 @@
       }
     },
     {
-      "Name": "N-HEXANE,aq",
+      "Name": "n-Hexane(aq)",
       "Formula": "C6H14",
       "Elements": "6:C 14:H",
       "Charge": 0.0,
@@ -27102,7 +27102,7 @@
       }
     },
     {
-      "Name": "N-HEXYLBENZENE,aq",
+      "Name": "n-Hexylbenzene(aq)",
       "Formula": "C6H5C6H13",
       "Elements": "12:C 18:H",
       "Charge": 0.0,
@@ -27124,7 +27124,7 @@
       }
     },
     {
-      "Name": "N-OCTANE,aq",
+      "Name": "n-Octane(aq)",
       "Formula": "C8H18",
       "Elements": "8:C 18:H",
       "Charge": 0.0,
@@ -27146,7 +27146,7 @@
       }
     },
     {
-      "Name": "N-OCTYLBENZENE,aq",
+      "Name": "n-Octylbenzene(aq)",
       "Formula": "C6H5C8H17",
       "Elements": "14:C 22:H",
       "Charge": 0.0,
@@ -27168,7 +27168,7 @@
       }
     },
     {
-      "Name": "N-PENTANE,aq",
+      "Name": "n-Pentane(aq)",
       "Formula": "C5H12",
       "Elements": "5:C 12:H",
       "Charge": 0.0,
@@ -27190,7 +27190,7 @@
       }
     },
     {
-      "Name": "N-PENTYLBENZENE,aq",
+      "Name": "n-Pentylbenzene(aq)",
       "Formula": "C6H5C5H1",
       "Elements": "11:C 16:H",
       "Charge": 0.0,
@@ -27212,7 +27212,7 @@
       }
     },
     {
-      "Name": "N-PROPYLBENZENE,aq",
+      "Name": "n-Propylbenzene(aq)",
       "Formula": "C6H5C3H7",
       "Elements": "9:C 12:H",
       "Charge": 0.0,
@@ -27234,7 +27234,7 @@
       }
     },
     {
-      "Name": "NONANOATE",
+      "Name": "Nonanoate",
       "Formula": "C9H17O2-",
       "Elements": "9:C 17:H 2:O",
       "Charge": -1.0,
@@ -27256,7 +27256,7 @@
       }
     },
     {
-      "Name": "NONANOIC-ACID,aq",
+      "Name": "Nonanoic-Acid(aq)",
       "Formula": "C9H18O2",
       "Elements": "9:C 18:H 2:O",
       "Charge": 0.0,
@@ -27278,7 +27278,7 @@
       }
     },
     {
-      "Name": "o-TOLUATE",
+      "Name": "o-Toluate",
       "Formula": "C8H7O2-",
       "Elements": "8:C 7:H 2:O",
       "Charge": -1.0,
@@ -27300,7 +27300,7 @@
       }
     },
     {
-      "Name": "o-TOLUIC-ACID,aq",
+      "Name": "o-Toluic-Acid(aq)",
       "Formula": "C8H8O2",
       "Elements": "8:C 8:H 2:O",
       "Charge": 0.0,
@@ -27322,7 +27322,7 @@
       }
     },
     {
-      "Name": "OCTANOATE",
+      "Name": "Octanoate",
       "Formula": "C8H15O2-",
       "Elements": "8:C 15:H 2:O",
       "Charge": -1.0,
@@ -27344,7 +27344,7 @@
       }
     },
     {
-      "Name": "OCTANOIC-ACID,aq",
+      "Name": "Octanoic-Acid(aq)",
       "Formula": "C8H16O2",
       "Elements": "8:C 16:H 2:O",
       "Charge": 0.0,
@@ -27366,7 +27366,7 @@
       }
     },
     {
-      "Name": "OXALATE",
+      "Name": "Oxalate",
       "Formula": "C2O4-2",
       "Elements": "2:C 4:O",
       "Charge": -2.0,
@@ -27388,7 +27388,7 @@
       }
     },
     {
-      "Name": "OXALIC-ACID,aq",
+      "Name": "Oxalic-Acid(aq)",
       "Formula": "C2H2O4",
       "Elements": "2:C 2:H 4:O",
       "Charge": 0.0,
@@ -27410,7 +27410,7 @@
       }
     },
     {
-      "Name": "p-TOLUATE",
+      "Name": "p-Toluate",
       "Formula": "C8H7O2-",
       "Elements": "8:C 7:H 2:O",
       "Charge": -1.0,
@@ -27432,7 +27432,7 @@
       }
     },
     {
-      "Name": "p-TOLUIC-ACID,aq",
+      "Name": "p-Toluic-Acid(aq)",
       "Formula": "C8H8O2",
       "Elements": "8:C 8:H 2:O",
       "Charge": 0.0,
@@ -27454,7 +27454,7 @@
       }
     },
     {
-      "Name": "PHENOL,aq",
+      "Name": "Phenol(aq)",
       "Formula": "C6H5OH",
       "Elements": "6:C 6:H 1:O",
       "Charge": 0.0,
@@ -27476,7 +27476,7 @@
       }
     },
     {
-      "Name": "PHENYLALANINE,aq",
+      "Name": "Phenylalanine(aq)",
       "Formula": "C9H11NO2",
       "Elements": "9:C 11:H 2:O 1:N",
       "Charge": 0.0,
@@ -27498,7 +27498,7 @@
       }
     },
     {
-      "Name": "PIMELATE",
+      "Name": "Pimelate",
       "Formula": "C7H10O4-2",
       "Elements": "7:C 10:H 4:O",
       "Charge": -2.0,
@@ -27520,7 +27520,7 @@
       }
     },
     {
-      "Name": "PIMELIC-ACID,aq",
+      "Name": "Pimelic-Acid(aq)",
       "Formula": "C7H12O4",
       "Elements": "7:C 12:H 4:O",
       "Charge": 0.0,
@@ -27542,7 +27542,7 @@
       }
     },
     {
-      "Name": "PROPANE,aq",
+      "Name": "Propane(aq)",
       "Formula": "C3H8",
       "Elements": "3:C 8:H",
       "Charge": 0.0,
@@ -27564,7 +27564,7 @@
       }
     },
     {
-      "Name": "SEBACATE",
+      "Name": "Sebacate",
       "Formula": "C10H16O4-2",
       "Elements": "10:C 16:H 4:O",
       "Charge": -2.0,
@@ -27586,7 +27586,7 @@
       }
     },
     {
-      "Name": "SEBACIC-ACID,aq",
+      "Name": "Sebacic-Acid(aq)",
       "Formula": "C10H18O4",
       "Elements": "10:C 18:H 4:O",
       "Charge": 0.0,
@@ -27608,7 +27608,7 @@
       }
     },
     {
-      "Name": "SERINE,aq",
+      "Name": "Serine(aq)",
       "Formula": "C3H7NO3",
       "Elements": "3:C 7:H 3:O 1:N",
       "Charge": 0.0,
@@ -27630,7 +27630,7 @@
       }
     },
     {
-      "Name": "SUBERATE",
+      "Name": "Suberate",
       "Formula": "C8H12O4-2",
       "Elements": "8:C 12:H 4:O",
       "Charge": -2.0,
@@ -27652,7 +27652,7 @@
       }
     },
     {
-      "Name": "SUBERIC-ACID,aq",
+      "Name": "Suberic-Acid(aq)",
       "Formula": "C8H14O4",
       "Elements": "8:C 14:H 4:O",
       "Charge": 0.0,
@@ -27674,7 +27674,7 @@
       }
     },
     {
-      "Name": "SUCCINATE",
+      "Name": "Succinate",
       "Formula": "C4H4O4-2",
       "Elements": "4:C 4:H 4:O",
       "Charge": -2.0,
@@ -27696,7 +27696,7 @@
       }
     },
     {
-      "Name": "SUCCINIC-ACID,aq",
+      "Name": "Succinic-Acid(aq)",
       "Formula": "C4H6O4",
       "Elements": "4:C 6:H 4:O",
       "Charge": 0.0,
@@ -27718,7 +27718,7 @@
       }
     },
     {
-      "Name": "THREONINE,aq",
+      "Name": "Threonine(aq)",
       "Formula": "C4H9NO3",
       "Elements": "4:C 9:H 3:O 1:N",
       "Charge": 0.0,
@@ -27740,7 +27740,7 @@
       }
     },
     {
-      "Name": "TOLUENE,aq",
+      "Name": "Toluene(aq)",
       "Formula": "C6H5CH3",
       "Elements": "7:C 8:H",
       "Charge": 0.0,
@@ -27762,7 +27762,7 @@
       }
     },
     {
-      "Name": "TRYPTOPHAN,aq",
+      "Name": "Tryptophan(aq)",
       "Formula": "C11H12N2O2",
       "Elements": "11:C 12:H 2:O 2:N",
       "Charge": 0.0,
@@ -27784,7 +27784,7 @@
       }
     },
     {
-      "Name": "TYROSINE,aq",
+      "Name": "Tyrosine(aq)",
       "Formula": "C9H11NO3",
       "Elements": "9:C 11:H 3:O 1:N",
       "Charge": 0.0,
@@ -27806,7 +27806,7 @@
       }
     },
     {
-      "Name": "UNDECANOATE",
+      "Name": "Undecanoate",
       "Formula": "C11H21O2-",
       "Elements": "11:C 21:H 2:O",
       "Charge": -1.0,
@@ -27828,7 +27828,7 @@
       }
     },
     {
-      "Name": "UNDECANOIC-ACID,aq",
+      "Name": "Undecanoic-Acid(aq)",
       "Formula": "C11H22O2",
       "Elements": "11:C 22:H 2:O",
       "Charge": 0.0,
@@ -27850,7 +27850,7 @@
       }
     },
     {
-      "Name": "UREA,aq",
+      "Name": "Urea(aq)",
       "Formula": "H2NCONH2",
       "Elements": "4:H 2:N 1:C 1:O",
       "Charge": 0.0,
@@ -27872,7 +27872,7 @@
       }
     },
     {
-      "Name": "VALINE,aq",
+      "Name": "Valine(aq)",
       "Formula": "C5H11NO2",
       "Elements": "5:C 11:H 2:O 1:N",
       "Charge": 0.0,
@@ -27894,7 +27894,7 @@
       }
     },
     {
-      "Name": "ACETALDEHYDE,aq",
+      "Name": "Acetaldehyde(aq)",
       "Formula": "CH3CHO",
       "Elements": "2:C 4:H 1:O",
       "Charge": 0.0,
@@ -27916,7 +27916,7 @@
       }
     },
     {
-      "Name": "BUTANAL,aq",
+      "Name": "Butanal(aq)",
       "Formula": "CH3(CH2)2CHO",
       "Elements": "4:C 8:H 1:O",
       "Charge": 0.0,
@@ -27938,7 +27938,7 @@
       }
     },
     {
-      "Name": "DECANAL,aq",
+      "Name": "Decanal(aq)",
       "Formula": "CH3(CH2)8CHO",
       "Elements": "10:C 20:H 1:O",
       "Charge": 0.0,
@@ -27960,7 +27960,7 @@
       }
     },
     {
-      "Name": "FORMALDEHYDE,aq",
+      "Name": "Formaldehyde(aq)",
       "Formula": "HCHO",
       "Elements": "1:C 2:H 1:O",
       "Charge": 0.0,
@@ -27982,7 +27982,7 @@
       }
     },
     {
-      "Name": "HEPTANAL,aq",
+      "Name": "Heptanal(aq)",
       "Formula": "CH3(CH2)5CHO",
       "Elements": "7:C 14:H 1:O",
       "Charge": 0.0,
@@ -28004,7 +28004,7 @@
       }
     },
     {
-      "Name": "HEXANAL,aq",
+      "Name": "Hexanal(aq)",
       "Formula": "CH3(CH2)4CHO",
       "Elements": "6:C 12:H 1:O",
       "Charge": 0.0,
@@ -28026,7 +28026,7 @@
       }
     },
     {
-      "Name": "NONANAL,aq",
+      "Name": "Nonanal(aq)",
       "Formula": "CH3(CH2)7CHO",
       "Elements": "9:C 18:H 1:O",
       "Charge": 0.0,
@@ -28048,7 +28048,7 @@
       }
     },
     {
-      "Name": "OCTANAL,aq",
+      "Name": "Octanal(aq)",
       "Formula": "CH3(CH2)6CHO",
       "Elements": "8:C 16:H 1:O",
       "Charge": 0.0,
@@ -28070,7 +28070,7 @@
       }
     },
     {
-      "Name": "PENTANAL,aq",
+      "Name": "Pentanal(aq)",
       "Formula": "CH3(CH2)3CHO",
       "Elements": "5:C 10:H 1:O",
       "Charge": 0.0,
@@ -28092,7 +28092,7 @@
       }
     },
     {
-      "Name": "PROPANAL,aq",
+      "Name": "Propanal(aq)",
       "Formula": "CH3CH2CHO",
       "Elements": "3:C 6:H 1:O",
       "Charge": 0.0,
@@ -28114,7 +28114,7 @@
       }
     },
     {
-      "Name": "HCN,aq",
+      "Name": "HCN(aq)",
       "Formula": "HCN",
       "Elements": "1:H 1:C 1:N",
       "Charge": 0.0,
@@ -28268,7 +28268,7 @@
       }
     },
     {
-      "Name": "Bi(Ac)3,aq",
+      "Name": "Bi(Ac)3(aq)",
       "Formula": "Bi(CH3COO)3",
       "Elements": "1:Bi 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -28334,7 +28334,7 @@
       }
     },
     {
-      "Name": "Dy(Ac)3,aq",
+      "Name": "Dy(Ac)3(aq)",
       "Formula": "Dy(CH3COO)3",
       "Elements": "1:Dy 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -28400,7 +28400,7 @@
       }
     },
     {
-      "Name": "Ho(Ac)3,aq",
+      "Name": "Ho(Ac)3(aq)",
       "Formula": "Ho(CH3COO)3",
       "Elements": "1:Ho 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -28466,7 +28466,7 @@
       }
     },
     {
-      "Name": "Er(Ac)3,aq",
+      "Name": "Er(Ac)3(aq)",
       "Formula": "Er(CH3COO)3",
       "Elements": "1:Er 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -28532,7 +28532,7 @@
       }
     },
     {
-      "Name": "Tm(Ac)3,aq",
+      "Name": "Tm(Ac)3(aq)",
       "Formula": "Tm(CH3COO)3",
       "Elements": "1:Tm 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -28576,7 +28576,7 @@
       }
     },
     {
-      "Name": "Be(Ac)2,aq",
+      "Name": "Be(Ac)2(aq)",
       "Formula": "Be(CH3COO)2",
       "Elements": "1:Be 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -28620,7 +28620,7 @@
       }
     },
     {
-      "Name": "Ra(Ac)2,aq",
+      "Name": "Ra(Ac)2(aq)",
       "Formula": "Ra(CH3COO)2",
       "Elements": "1:Ra 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -28642,7 +28642,7 @@
       }
     },
     {
-      "Name": "Au(Ac),aq",
+      "Name": "Au(Ac)(aq)",
       "Formula": "AuCH3COO",
       "Elements": "1:Au 2:C 3:H 2:O",
       "Charge": 0.0,
@@ -28686,7 +28686,7 @@
       }
     },
     {
-      "Name": "Li(Ac),aq",
+      "Name": "Li(Ac)(aq)",
       "Formula": "LiCH3COO",
       "Elements": "1:Li 2:C 3:H 2:O",
       "Charge": 0.0,
@@ -28730,7 +28730,7 @@
       }
     },
     {
-      "Name": "Na(Ac),aq",
+      "Name": "Na(Ac)(aq)",
       "Formula": "NaCH3COO",
       "Elements": "1:Na 2:C 3:H 2:O",
       "Charge": 0.0,
@@ -28774,7 +28774,7 @@
       }
     },
     {
-      "Name": "K(Ac),aq",
+      "Name": "K(Ac)(aq)",
       "Formula": "KCH3COO",
       "Elements": "1:K 2:C 3:H 2:O",
       "Charge": 0.0,
@@ -28840,7 +28840,7 @@
       }
     },
     {
-      "Name": "Mg(Ac)2,aq",
+      "Name": "Mg(Ac)2(aq)",
       "Formula": "Mg(CH3COO)2",
       "Elements": "1:Mg 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -28884,7 +28884,7 @@
       }
     },
     {
-      "Name": "Sr(Ac)2,aq",
+      "Name": "Sr(Ac)2(aq)",
       "Formula": "Sr(CH3COO)2",
       "Elements": "1:Sr 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -28928,7 +28928,7 @@
       }
     },
     {
-      "Name": "Ba(Ac)2,aq",
+      "Name": "Ba(Ac)2(aq)",
       "Formula": "Ba(CH3COO)2",
       "Elements": "1:Ba 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -28950,7 +28950,7 @@
       }
     },
     {
-      "Name": "Cu(Ac),aq",
+      "Name": "Cu(Ac)(aq)",
       "Formula": "CuCH3COO",
       "Elements": "1:Cu 2:C 3:H 2:O",
       "Charge": 0.0,
@@ -28994,7 +28994,7 @@
       }
     },
     {
-      "Name": "Rb(Ac),aq",
+      "Name": "Rb(Ac)(aq)",
       "Formula": "RbCH3COO",
       "Elements": "1:Rb 2:C 3:H 2:O",
       "Charge": 0.0,
@@ -29038,7 +29038,7 @@
       }
     },
     {
-      "Name": "Tl(Ac),aq",
+      "Name": "Tl(Ac)(aq)",
       "Formula": "TlCH3COO",
       "Elements": "1:Tl 2:C 3:H 2:O",
       "Charge": 0.0,
@@ -29082,7 +29082,7 @@
       }
     },
     {
-      "Name": "Cs(Ac),aq",
+      "Name": "Cs(Ac)(aq)",
       "Formula": "CsCH3COO",
       "Elements": "1:Cs 2:C 3:H 2:O",
       "Charge": 0.0,
@@ -29148,7 +29148,7 @@
       }
     },
     {
-      "Name": "Pb(Ac)2,aq",
+      "Name": "Pb(Ac)2(aq)",
       "Formula": "Pb(CH3COO)2",
       "Elements": "1:Pb 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -29192,7 +29192,7 @@
       }
     },
     {
-      "Name": "Mn(Ac)2,aq",
+      "Name": "Mn(Ac)2(aq)",
       "Formula": "Mn(CH3COO)2",
       "Elements": "1:Mn 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -29258,7 +29258,7 @@
       }
     },
     {
-      "Name": "Co(Ac)2,aq",
+      "Name": "Co(Ac)2(aq)",
       "Formula": "Co(CH3COO)2",
       "Elements": "1:Co 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -29324,7 +29324,7 @@
       }
     },
     {
-      "Name": "Ni(Ac)2,aq",
+      "Name": "Ni(Ac)2(aq)",
       "Formula": "Ni(CH3COO)2",
       "Elements": "1:Ni 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -29390,7 +29390,7 @@
       }
     },
     {
-      "Name": "Cu(Ac)2,aq",
+      "Name": "Cu(Ac)2(aq)",
       "Formula": "Cu(CH3COO)2",
       "Elements": "1:Cu 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -29434,7 +29434,7 @@
       }
     },
     {
-      "Name": "NH4(Ac),aq",
+      "Name": "NH4(Ac)(aq)",
       "Formula": "NH4CH3COO",
       "Elements": "1:N 2:C 7:H 2:O",
       "Charge": 0.0,
@@ -29500,7 +29500,7 @@
       }
     },
     {
-      "Name": "UO2(Ac)2,aq",
+      "Name": "UO2(Ac)2(aq)",
       "Formula": "UO2(CH3COO)2",
       "Elements": "1:U 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -29544,7 +29544,7 @@
       }
     },
     {
-      "Name": "Ag(Ac),aq",
+      "Name": "Ag(Ac)(aq)",
       "Formula": "AgCH3COO",
       "Elements": "1:Ag 2:C 3:H 2:O",
       "Charge": 0.0,
@@ -29610,7 +29610,7 @@
       }
     },
     {
-      "Name": "Cd(Ac)2,aq",
+      "Name": "Cd(Ac)2(aq)",
       "Formula": "Cd(CH3COO)2",
       "Elements": "1:Cd 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -29676,7 +29676,7 @@
       }
     },
     {
-      "Name": "Hg(Ac)2,aq",
+      "Name": "Hg(Ac)2(aq)",
       "Formula": "Hg(CH3COO)2",
       "Elements": "1:Hg 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -29764,7 +29764,7 @@
       }
     },
     {
-      "Name": "Sc(Ac)3,aq",
+      "Name": "Sc(Ac)3(aq)",
       "Formula": "Sc(CH3COO)3",
       "Elements": "1:Sc 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -29830,7 +29830,7 @@
       }
     },
     {
-      "Name": "U(Ac)3,aq",
+      "Name": "U(Ac)3(aq)",
       "Formula": "U(CH3COO)3",
       "Elements": "1:U 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -29896,7 +29896,7 @@
       }
     },
     {
-      "Name": "Pr(Ac)3,aq",
+      "Name": "Pr(Ac)3(aq)",
       "Formula": "Pr(CH3COO)3",
       "Elements": "1:Pr 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -29962,7 +29962,7 @@
       }
     },
     {
-      "Name": "La(Ac)3,aq",
+      "Name": "La(Ac)3(aq)",
       "Formula": "La(CH3COO)3",
       "Elements": "1:La 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -30028,7 +30028,7 @@
       }
     },
     {
-      "Name": "Nd(Ac)3,aq",
+      "Name": "Nd(Ac)3(aq)",
       "Formula": "Nd(CH3COO)3",
       "Elements": "1:Nd 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -30094,7 +30094,7 @@
       }
     },
     {
-      "Name": "Ce(Ac)3,aq",
+      "Name": "Ce(Ac)3(aq)",
       "Formula": "Ce(CH3COO)3",
       "Elements": "1:Ce 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -30160,7 +30160,7 @@
       }
     },
     {
-      "Name": "Gd(Ac)3,aq",
+      "Name": "Gd(Ac)3(aq)",
       "Formula": "Gd(CH3COO)3",
       "Elements": "1:Gd 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -30226,7 +30226,7 @@
       }
     },
     {
-      "Name": "Sm(Ac)3,aq",
+      "Name": "Sm(Ac)3(aq)",
       "Formula": "Sm(CH3COO)3",
       "Elements": "1:Sm 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -30292,7 +30292,7 @@
       }
     },
     {
-      "Name": "Yb(Ac)3,aq",
+      "Name": "Yb(Ac)3(aq)",
       "Formula": "Yb(CH3COO)3",
       "Elements": "1:Yb 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -30358,7 +30358,7 @@
       }
     },
     {
-      "Name": "Eu(Ac)3,aq",
+      "Name": "Eu(Ac)3(aq)",
       "Formula": "Eu(CH3COO)3",
       "Elements": "1:Eu 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -30424,7 +30424,7 @@
       }
     },
     {
-      "Name": "Y(Ac)3,aq",
+      "Name": "Y(Ac)3(aq)",
       "Formula": "Y(CH3COO)3",
       "Elements": "1:Y 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -30490,7 +30490,7 @@
       }
     },
     {
-      "Name": "Lu(Ac)3,aq",
+      "Name": "Lu(Ac)3(aq)",
       "Formula": "Lu(CH3COO)3",
       "Elements": "1:Lu 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -30556,7 +30556,7 @@
       }
     },
     {
-      "Name": "Tb(Ac)3,aq",
+      "Name": "Tb(Ac)3(aq)",
       "Formula": "Tb(CH3COO)3",
       "Elements": "1:Tb 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -30622,7 +30622,7 @@
       }
     },
     {
-      "Name": "Fe(Ac)2,aq",
+      "Name": "Fe(Ac)2(aq)",
       "Formula": "Fe(CH3COO)2",
       "Elements": "1:Fe 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -30666,7 +30666,7 @@
       }
     },
     {
-      "Name": "Zn(Ac)2,aq",
+      "Name": "Zn(Ac)2(aq)",
       "Formula": "Zn(CH3COO)2",
       "Elements": "1:Zn 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -30732,7 +30732,7 @@
       }
     },
     {
-      "Name": "Ca(Ac)2,aq",
+      "Name": "Ca(Ac)2(aq)",
       "Formula": "Ca(CH3COO)2",
       "Elements": "1:Ca 4:C 6:H 4:O",
       "Charge": 0.0,
@@ -30798,7 +30798,7 @@
       }
     },
     {
-      "Name": "Al(Ac)3,aq",
+      "Name": "Al(Ac)3(aq)",
       "Formula": "Al(CH3COO)3",
       "Elements": "1:Al 6:C 9:H 6:O",
       "Charge": 0.0,
@@ -30820,7 +30820,7 @@
       }
     },
     {
-      "Name": "LACTATE",
+      "Name": "Lactate",
       "Formula": "C3H5O3-",
       "Elements": "3:C 5:H 3:O",
       "Charge": -1.0,
@@ -30842,7 +30842,7 @@
       }
     },
     {
-      "Name": "LACTIC-ACID,aq",
+      "Name": "Lactic-Acid(aq)",
       "Formula": "C3H6O3",
       "Elements": "3:C 6:H 3:O",
       "Charge": 0.0,
@@ -30864,7 +30864,7 @@
       }
     },
     {
-      "Name": "Li(Lac),aq",
+      "Name": "Li(Lac)(aq)",
       "Formula": "LiCH3CH2OCO2",
       "Elements": "1:Li 3:C 5:H 3:O",
       "Charge": 0.0,
@@ -30908,7 +30908,7 @@
       }
     },
     {
-      "Name": "Mg(Lac)2,aq",
+      "Name": "Mg(Lac)2(aq)",
       "Formula": "Mg(CH3CH2OCO2)2",
       "Elements": "1:Mg 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -30952,7 +30952,7 @@
       }
     },
     {
-      "Name": "Ca(Lac)2,aq",
+      "Name": "Ca(Lac)2(aq)",
       "Formula": "Ca(CH3CH2OCO2)2",
       "Elements": "1:Ca 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -30996,7 +30996,7 @@
       }
     },
     {
-      "Name": "Sr(Lac)2,aq",
+      "Name": "Sr(Lac)2(aq)",
       "Formula": "Sr(CH3CH2OCO2)2",
       "Elements": "1:Sr 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -31040,7 +31040,7 @@
       }
     },
     {
-      "Name": "Ba(Lac)2,aq",
+      "Name": "Ba(Lac)2(aq)",
       "Formula": "Ba(CH3CH2OCO2)2",
       "Elements": "1:Ba 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -31084,7 +31084,7 @@
       }
     },
     {
-      "Name": "Mn(Lac)2,aq",
+      "Name": "Mn(Lac)2(aq)",
       "Formula": "Mn(CH3CH2OCO2)2",
       "Elements": "1:Mn 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -31128,7 +31128,7 @@
       }
     },
     {
-      "Name": "Co(Lac)2,aq",
+      "Name": "Co(Lac)2(aq)",
       "Formula": "Co(CH3CH2OCO2)2",
       "Elements": "1:Co 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -31172,7 +31172,7 @@
       }
     },
     {
-      "Name": "Ni(Lac)2,aq",
+      "Name": "Ni(Lac)2(aq)",
       "Formula": "Ni(CH3CH2OCO2)2",
       "Elements": "1:Ni 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -31216,7 +31216,7 @@
       }
     },
     {
-      "Name": "Cu(Lac)2,aq",
+      "Name": "Cu(Lac)2(aq)",
       "Formula": "Cu(CH3CH2OCO2)2",
       "Elements": "1:Cu 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -31260,7 +31260,7 @@
       }
     },
     {
-      "Name": "Zn(Lac)2,aq",
+      "Name": "Zn(Lac)2(aq)",
       "Formula": "Zn(CH3CH2OCO2)2",
       "Elements": "1:Zn 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -31304,7 +31304,7 @@
       }
     },
     {
-      "Name": "Cd(Lac)2,aq",
+      "Name": "Cd(Lac)2(aq)",
       "Formula": "Cd(CH3CH2OCO2)2",
       "Elements": "1:Cd 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -31370,7 +31370,7 @@
       }
     },
     {
-      "Name": "Na(Lac),aq",
+      "Name": "Na(Lac)(aq)",
       "Formula": "NaCH3CH2OCO2",
       "Elements": "1:Na 3:C 5:H 3:O",
       "Charge": 0.0,
@@ -31414,7 +31414,7 @@
       }
     },
     {
-      "Name": "K(Lac),aq",
+      "Name": "K(Lac)(aq)",
       "Formula": "KCH3CH2OCO2",
       "Elements": "1:K 3:C 5:H 3:O",
       "Charge": 0.0,
@@ -31480,7 +31480,7 @@
       }
     },
     {
-      "Name": "Pb(Lac)2,aq",
+      "Name": "Pb(Lac)2(aq)",
       "Formula": "Pb(CH3CH2OCO2)2",
       "Elements": "1:Pb 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -31524,7 +31524,7 @@
       }
     },
     {
-      "Name": "Fe(Lac)2,aq",
+      "Name": "Fe(Lac)2(aq)",
       "Formula": "Fe(CH3CH2OCO2)2",
       "Elements": "1:Fe 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -31568,7 +31568,7 @@
       }
     },
     {
-      "Name": "Eu(Lac)2,aq",
+      "Name": "Eu(Lac)2(aq)",
       "Formula": "Eu(CH3CH2OCO2)2",
       "Elements": "1:Eu 6:C 10:H 6:O",
       "Charge": 0.0,
@@ -31590,7 +31590,7 @@
       }
     },
     {
-      "Name": "GLYCOLIC-ACID,aq",
+      "Name": "Glycolic-Acid(aq)",
       "Formula": "C2H4O3",
       "Elements": "2:C 4:H 3:O",
       "Charge": 0.0,
@@ -31612,7 +31612,7 @@
       }
     },
     {
-      "Name": "GLYCOLATE",
+      "Name": "Glycolate",
       "Formula": "C2H3O3-",
       "Elements": "2:C 3:H 3:O",
       "Charge": -1.0,
@@ -31634,7 +31634,7 @@
       }
     },
     {
-      "Name": "Li(Glyc),aq",
+      "Name": "Li(Glyc)(aq)",
       "Formula": "LiCH3OCO2",
       "Elements": "1:Li 2:C 3:H 3:O",
       "Charge": 0.0,
@@ -31678,7 +31678,7 @@
       }
     },
     {
-      "Name": "Mg(Glyc)2,aq",
+      "Name": "Mg(Glyc)2(aq)",
       "Formula": "Mg(CH3OCO2)2",
       "Elements": "1:Mg 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -31722,7 +31722,7 @@
       }
     },
     {
-      "Name": "Ca(Glyc)2,aq",
+      "Name": "Ca(Glyc)2(aq)",
       "Formula": "Ca(CH3OCO2)2",
       "Elements": "1:Ca 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -31766,7 +31766,7 @@
       }
     },
     {
-      "Name": "Sr(Glyc)2,aq",
+      "Name": "Sr(Glyc)2(aq)",
       "Formula": "Sr(CH3OCO2)2",
       "Elements": "1:Sr 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -31810,7 +31810,7 @@
       }
     },
     {
-      "Name": "Ba(Glyc)2,aq",
+      "Name": "Ba(Glyc)2(aq)",
       "Formula": "Ba(CH3OCO2)2",
       "Elements": "1:Ba 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -31854,7 +31854,7 @@
       }
     },
     {
-      "Name": "Mn(Glyc)2,aq",
+      "Name": "Mn(Glyc)2(aq)",
       "Formula": "Mn(CH3OCO2)2",
       "Elements": "1:Mn 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -31898,7 +31898,7 @@
       }
     },
     {
-      "Name": "Co(Glyc)2,aq",
+      "Name": "Co(Glyc)2(aq)",
       "Formula": "Co(CH3OCO2)2",
       "Elements": "1:Co 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -31942,7 +31942,7 @@
       }
     },
     {
-      "Name": "Ni(Glyc)2,aq",
+      "Name": "Ni(Glyc)2(aq)",
       "Formula": "Ni(CH3OCO2)2",
       "Elements": "1:Ni 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -31986,7 +31986,7 @@
       }
     },
     {
-      "Name": "Cu(Glyc)2,aq",
+      "Name": "Cu(Glyc)2(aq)",
       "Formula": "Cu(CH3OCO2)2",
       "Elements": "1:Cu 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -32030,7 +32030,7 @@
       }
     },
     {
-      "Name": "Zn(Glyc)2,aq",
+      "Name": "Zn(Glyc)2(aq)",
       "Formula": "Zn(CH3OCO2)2",
       "Elements": "1:Zn 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -32074,7 +32074,7 @@
       }
     },
     {
-      "Name": "Cd(Glyc)2,aq",
+      "Name": "Cd(Glyc)2(aq)",
       "Formula": "Cd(CH3OCO2)2",
       "Elements": "1:Cd 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -32118,7 +32118,7 @@
       }
     },
     {
-      "Name": "Eu(Glyc)2,aq",
+      "Name": "Eu(Glyc)2(aq)",
       "Formula": "Eu(CH3OCO2)2",
       "Elements": "1:Eu 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -32140,7 +32140,7 @@
       }
     },
     {
-      "Name": "Na(Glyc),aq",
+      "Name": "Na(Glyc)(aq)",
       "Formula": "Na(CH3OCO2)",
       "Elements": "1:Na 2:C 3:H 3:O",
       "Charge": 0.0,
@@ -32184,7 +32184,7 @@
       }
     },
     {
-      "Name": "K(Glyc),aq",
+      "Name": "K(Glyc)(aq)",
       "Formula": "KCH3OCO2",
       "Elements": "1:K 2:C 3:H 3:O",
       "Charge": 0.0,
@@ -32250,7 +32250,7 @@
       }
     },
     {
-      "Name": "Pb(Glyc)2,aq",
+      "Name": "Pb(Glyc)2(aq)",
       "Formula": "Pb(CH3OCO2)2",
       "Elements": "1:Pb 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -32294,7 +32294,7 @@
       }
     },
     {
-      "Name": "Fe(Glyc)2,aq",
+      "Name": "Fe(Glyc)2(aq)",
       "Formula": "Fe(CH3OCO2)2",
       "Elements": "1:Fe 4:C 6:H 6:O",
       "Charge": 0.0,
@@ -32316,7 +32316,7 @@
       }
     },
     {
-      "Name": "ALANINE,aq",
+      "Name": "Alanine(aq)",
       "Formula": "C3H7NO2",
       "Elements": "3:C 7:H 2:O 1:N",
       "Charge": 0.0,
@@ -32338,7 +32338,7 @@
       }
     },
     {
-      "Name": "ALANATE",
+      "Name": "Alanate",
       "Formula": "C3H6NO2-",
       "Elements": "3:C 6:H 2:O 1:N",
       "Charge": -1.0,
@@ -32382,7 +32382,7 @@
       }
     },
     {
-      "Name": "Cd(Alan)2,aq",
+      "Name": "Cd(Alan)2(aq)",
       "Formula": "Cd(C3H6NO2)2",
       "Elements": "1:Cd 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32426,7 +32426,7 @@
       }
     },
     {
-      "Name": "Ca(Alan)2,aq",
+      "Name": "Ca(Alan)2(aq)",
       "Formula": "Ca(C3H6NO2)2",
       "Elements": "1:Ca 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32470,7 +32470,7 @@
       }
     },
     {
-      "Name": "Pb(Alan)2,aq",
+      "Name": "Pb(Alan)2(aq)",
       "Formula": "Pb(C3H6NO2)2",
       "Elements": "1:Pb 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32514,7 +32514,7 @@
       }
     },
     {
-      "Name": "Mg(Alan)2,aq",
+      "Name": "Mg(Alan)2(aq)",
       "Formula": "Mg(C3H6NO2)2",
       "Elements": "1:Mg 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32558,7 +32558,7 @@
       }
     },
     {
-      "Name": "Sr(Alan)2,aq",
+      "Name": "Sr(Alan)2(aq)",
       "Formula": "Sr(C3H6NO2)2",
       "Elements": "1:Sr 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32602,7 +32602,7 @@
       }
     },
     {
-      "Name": "Mn(Alan)2,aq",
+      "Name": "Mn(Alan)2(aq)",
       "Formula": "Mn(C3H6NO2)2",
       "Elements": "1:Mn 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32646,7 +32646,7 @@
       }
     },
     {
-      "Name": "Co(Alan)2,aq",
+      "Name": "Co(Alan)2(aq)",
       "Formula": "Co(C3H6NO2)2",
       "Elements": "1:Co 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32690,7 +32690,7 @@
       }
     },
     {
-      "Name": "Ni(Alan)2,aq",
+      "Name": "Ni(Alan)2(aq)",
       "Formula": "Ni(C3H6NO2)2",
       "Elements": "1:Ni 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32734,7 +32734,7 @@
       }
     },
     {
-      "Name": "Cu(Alan)2,aq",
+      "Name": "Cu(Alan)2(aq)",
       "Formula": "Cu(C3H6NO2)2",
       "Elements": "1:Cu 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32778,7 +32778,7 @@
       }
     },
     {
-      "Name": "Zn(Alan)2,aq",
+      "Name": "Zn(Alan)2(aq)",
       "Formula": "Zn(C3H6NO3)2",
       "Elements": "1:Zn 6:C 12:H 2:N 6:O",
       "Charge": 0.0,
@@ -32822,7 +32822,7 @@
       }
     },
     {
-      "Name": "Ba(Alan)2,aq",
+      "Name": "Ba(Alan)2(aq)",
       "Formula": "Ba(C3H6NO2)2",
       "Elements": "1:Ba 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32866,7 +32866,7 @@
       }
     },
     {
-      "Name": "Fe(Alan)2,aq",
+      "Name": "Fe(Alan)2(aq)",
       "Formula": "Fe(C3H6NO2)2",
       "Elements": "1:Fe 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32910,7 +32910,7 @@
       }
     },
     {
-      "Name": "Eu(Alan)2,aq",
+      "Name": "Eu(Alan)2(aq)",
       "Formula": "Eu(C3H6NO2)2",
       "Elements": "1:Eu 6:C 12:H 2:N 4:O",
       "Charge": 0.0,
@@ -32932,7 +32932,7 @@
       }
     },
     {
-      "Name": "GLYCINE,aq",
+      "Name": "Glycine(aq)",
       "Formula": "C2H5NO2",
       "Elements": "2:C 5:H 2:O 1:N",
       "Charge": 0.0,
@@ -32954,7 +32954,7 @@
       }
     },
     {
-      "Name": "GLYCINATE",
+      "Name": "Glycinate",
       "Formula": "C2H4NO2-",
       "Elements": "2:C 4:H 2:O 1:N",
       "Charge": -1.0,
@@ -32998,7 +32998,7 @@
       }
     },
     {
-      "Name": "Cd(Gly)2,aq",
+      "Name": "Cd(Gly)2(aq)",
       "Formula": "Cd(C2H4NO2)2",
       "Elements": "1:Cd 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33042,7 +33042,7 @@
       }
     },
     {
-      "Name": "Ca(Gly)2,aq",
+      "Name": "Ca(Gly)2(aq)",
       "Formula": "Ca(C2H4NO2)2",
       "Elements": "1:Ca 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33086,7 +33086,7 @@
       }
     },
     {
-      "Name": "Sr(Gly)2,aq",
+      "Name": "Sr(Gly)2(aq)",
       "Formula": "Sr(C2H4NO2)2",
       "Elements": "1:Sr 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33130,7 +33130,7 @@
       }
     },
     {
-      "Name": "Mn(Gly)2,aq",
+      "Name": "Mn(Gly)2(aq)",
       "Formula": "Mn(C2H4NO2)2",
       "Elements": "1:Mn 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33174,7 +33174,7 @@
       }
     },
     {
-      "Name": "Fe(Gly)2,aq",
+      "Name": "Fe(Gly)2(aq)",
       "Formula": "Fe(C2H4NO2)2",
       "Elements": "1:Fe 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33218,7 +33218,7 @@
       }
     },
     {
-      "Name": "Co(Gly)2,aq",
+      "Name": "Co(Gly)2(aq)",
       "Formula": "Co(C2H4NO2)2",
       "Elements": "1:Co 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33262,7 +33262,7 @@
       }
     },
     {
-      "Name": "Pb(Gly)2,aq",
+      "Name": "Pb(Gly)2(aq)",
       "Formula": "Pb(C2H4NO2)2",
       "Elements": "1:Pb 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33306,7 +33306,7 @@
       }
     },
     {
-      "Name": "Mg(Gly)2,aq",
+      "Name": "Mg(Gly)2(aq)",
       "Formula": "Mg(C2H4NO2)2",
       "Elements": "1:Mg 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33350,7 +33350,7 @@
       }
     },
     {
-      "Name": "Ni(Gly)2,aq",
+      "Name": "Ni(Gly)2(aq)",
       "Formula": "Ni(C2H4NO2)2",
       "Elements": "1:Ni 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33394,7 +33394,7 @@
       }
     },
     {
-      "Name": "Cu(Gly)2,aq",
+      "Name": "Cu(Gly)2(aq)",
       "Formula": "Cu(C2H4NO2)2",
       "Elements": "1:Cu 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33438,7 +33438,7 @@
       }
     },
     {
-      "Name": "Zn(Gly)2,aq",
+      "Name": "Zn(Gly)2(aq)",
       "Formula": "Zn(C2H4NO2)2",
       "Elements": "1:Zn 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33482,7 +33482,7 @@
       }
     },
     {
-      "Name": "Eu(Gly)2,aq",
+      "Name": "Eu(Gly)2(aq)",
       "Formula": "Eu(C2H4NO2)2",
       "Elements": "1:Eu 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33526,7 +33526,7 @@
       }
     },
     {
-      "Name": "Ba(Gly)2,aq",
+      "Name": "Ba(Gly)2(aq)",
       "Formula": "Ba(C2H4NO2)2",
       "Elements": "1:Ba 4:C 8:H 2:N 4:O",
       "Charge": 0.0,
@@ -33548,7 +33548,7 @@
       }
     },
     {
-      "Name": "FORMIC-ACID,aq",
+      "Name": "Formic-Acid(aq)",
       "Formula": "H2CO2",
       "Elements": "1:C 2:H 2:O",
       "Charge": 0.0,
@@ -33570,7 +33570,7 @@
       }
     },
     {
-      "Name": "FORMATE",
+      "Name": "Formate",
       "Formula": "HCO2-",
       "Elements": "1:H 1:C 2:O",
       "Charge": -1.0,
@@ -33614,7 +33614,7 @@
       }
     },
     {
-      "Name": "Mg(For)2,aq",
+      "Name": "Mg(For)2(aq)",
       "Formula": "Mg(CHO2)2",
       "Elements": "1:Mg 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -33658,7 +33658,7 @@
       }
     },
     {
-      "Name": "Ca(For)2,aq",
+      "Name": "Ca(For)2(aq)",
       "Formula": "Ca(CHO2)2",
       "Elements": "1:Ca 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -33702,7 +33702,7 @@
       }
     },
     {
-      "Name": "Sr(For)2,aq",
+      "Name": "Sr(For)2(aq)",
       "Formula": "Sr(CHO2)2",
       "Elements": "1:Sr 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -33746,7 +33746,7 @@
       }
     },
     {
-      "Name": "Ba(For)2,aq",
+      "Name": "Ba(For)2(aq)",
       "Formula": "Ba(CHO2)2",
       "Elements": "1:Ba 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -33790,7 +33790,7 @@
       }
     },
     {
-      "Name": "Cu(For)2,aq",
+      "Name": "Cu(For)2(aq)",
       "Formula": "Cu(CHO2)2",
       "Elements": "1:Cu 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -33834,7 +33834,7 @@
       }
     },
     {
-      "Name": "Cd(For)2,aq",
+      "Name": "Cd(For)2(aq)",
       "Formula": "Cd(CHO2)2",
       "Elements": "1:Cd 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -33856,7 +33856,7 @@
       }
     },
     {
-      "Name": "Na(For),aq",
+      "Name": "Na(For)(aq)",
       "Formula": "NaCHO2",
       "Elements": "1:Na 1:C 1:H 2:O",
       "Charge": 0.0,
@@ -33900,7 +33900,7 @@
       }
     },
     {
-      "Name": "K(For),aq",
+      "Name": "K(For)(aq)",
       "Formula": "KCHO2",
       "Elements": "1:K 1:C 1:H 2:O",
       "Charge": 0.0,
@@ -34010,7 +34010,7 @@
       }
     },
     {
-      "Name": "Eu(For)2,aq",
+      "Name": "Eu(For)2(aq)",
       "Formula": "Eu(CHO2)2",
       "Elements": "1:Eu 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -34230,7 +34230,7 @@
       }
     },
     {
-      "Name": "Pb(For)2,aq",
+      "Name": "Pb(For)2(aq)",
       "Formula": "Pb(CHO2)2",
       "Elements": "1:Pb 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -34274,7 +34274,7 @@
       }
     },
     {
-      "Name": "Mn(For)2,aq",
+      "Name": "Mn(For)2(aq)",
       "Formula": "Mn(CHO2)2",
       "Elements": "1:Mn 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -34318,7 +34318,7 @@
       }
     },
     {
-      "Name": "Co(For)2,aq",
+      "Name": "Co(For)2(aq)",
       "Formula": "Co(CHO2)2",
       "Elements": "1:Co 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -34362,7 +34362,7 @@
       }
     },
     {
-      "Name": "Ni(For)2,aq",
+      "Name": "Ni(For)2(aq)",
       "Formula": "Ni(CHO2)2",
       "Elements": "1:Ni 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -34406,7 +34406,7 @@
       }
     },
     {
-      "Name": "Zn(For)2,aq",
+      "Name": "Zn(For)2(aq)",
       "Formula": "Zn(CHO2)2",
       "Elements": "1:Zn 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -34450,7 +34450,7 @@
       }
     },
     {
-      "Name": "Fe(For)2,aq",
+      "Name": "Fe(For)2(aq)",
       "Formula": "Fe(CHO2)2",
       "Elements": "1:Fe 2:C 2:H 4:O",
       "Charge": 0.0,
@@ -34472,7 +34472,7 @@
       }
     },
     {
-      "Name": "PROPANOIC-ACID,aq",
+      "Name": "Propanoic-Acid(aq)",
       "Formula": "C3H6O2",
       "Elements": "3:C 6:H 2:O",
       "Charge": 0.0,
@@ -34494,7 +34494,7 @@
       }
     },
     {
-      "Name": "PROPANOATE",
+      "Name": "Propanoate",
       "Formula": "C3H5O2-",
       "Elements": "3:C 5:H 2:O",
       "Charge": -1.0,
@@ -34538,7 +34538,7 @@
       }
     },
     {
-      "Name": "Mg(Prop)2,aq",
+      "Name": "Mg(Prop)2(aq)",
       "Formula": "Mg(CH3CH2CO2)2",
       "Elements": "1:Mg 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -34582,7 +34582,7 @@
       }
     },
     {
-      "Name": "Ca(Prop)2,aq",
+      "Name": "Ca(Prop)2(aq)",
       "Formula": "Ca(CH3CH2CO2)2",
       "Elements": "1:Ca 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -34626,7 +34626,7 @@
       }
     },
     {
-      "Name": "Sr(Prop)2,aq",
+      "Name": "Sr(Prop)2(aq)",
       "Formula": "Sr(CH3CH2CO2)2",
       "Elements": "1:Sr 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -34670,7 +34670,7 @@
       }
     },
     {
-      "Name": "Ba(Prop)2,aq",
+      "Name": "Ba(Prop)2(aq)",
       "Formula": "Ba(CH3CH2CO2)2",
       "Elements": "1:Ba 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -34714,7 +34714,7 @@
       }
     },
     {
-      "Name": "Eu(Prop)2,aq",
+      "Name": "Eu(Prop)2(aq)",
       "Formula": "Eu(CH3CH2CO2)2",
       "Elements": "1:Eu 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -34758,7 +34758,7 @@
       }
     },
     {
-      "Name": "Cu(Prop)2,aq",
+      "Name": "Cu(Prop)2(aq)",
       "Formula": "Cu(CH3CH2CO2)2",
       "Elements": "1:Cu 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -34802,7 +34802,7 @@
       }
     },
     {
-      "Name": "Cd(Prop)2,aq",
+      "Name": "Cd(Prop)2(aq)",
       "Formula": "Cd(CH3CH2CO2)2",
       "Elements": "1:Cd 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -34846,7 +34846,7 @@
       }
     },
     {
-      "Name": "Pb(Prop)2,aq",
+      "Name": "Pb(Prop)2(aq)",
       "Formula": "Pb(CH3CH2CO2)2",
       "Elements": "1:Pb 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -34868,7 +34868,7 @@
       }
     },
     {
-      "Name": "Na(Prop),aq",
+      "Name": "Na(Prop)(aq)",
       "Formula": "NaCH3CH2CO2",
       "Elements": "1:Na 3:C 5:H 2:O",
       "Charge": 0.0,
@@ -34912,7 +34912,7 @@
       }
     },
     {
-      "Name": "K(Prop),aq",
+      "Name": "K(Prop)(aq)",
       "Formula": "KCH3CH2CO2",
       "Elements": "1:K 3:C 5:H 2:O",
       "Charge": 0.0,
@@ -35198,7 +35198,7 @@
       }
     },
     {
-      "Name": "Co(Prop)2,aq",
+      "Name": "Co(Prop)2(aq)",
       "Formula": "Co(CH3CH2CO2)2",
       "Elements": "1:Co 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -35242,7 +35242,7 @@
       }
     },
     {
-      "Name": "Ni(Prop)2,aq",
+      "Name": "Ni(Prop)2(aq)",
       "Formula": "Ni(CH3CH2CO2)2",
       "Elements": "1:Ni 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -35286,7 +35286,7 @@
       }
     },
     {
-      "Name": "Zn(Prop)2,aq",
+      "Name": "Zn(Prop)2(aq)",
       "Formula": "Zn(CH3CH2CO2)2",
       "Elements": "1:Zn 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -35330,7 +35330,7 @@
       }
     },
     {
-      "Name": "Fe(Prop)2,aq",
+      "Name": "Fe(Prop)2(aq)",
       "Formula": "Fe(CH3CH2CO2)2",
       "Elements": "1:Fe 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -35374,7 +35374,7 @@
       }
     },
     {
-      "Name": "Mn(Prop)2,aq",
+      "Name": "Mn(Prop)2(aq)",
       "Formula": "Mn(CH3CH2CO2)2",
       "Elements": "1:Mn 6:C 10:H 4:O",
       "Charge": 0.0,
@@ -35396,7 +35396,7 @@
       }
     },
     {
-      "Name": "BUTANOIC-ACID,aq",
+      "Name": "Butanoic-Acid(aq)",
       "Formula": "C4H8O2",
       "Elements": "4:C 8:H 2:O",
       "Charge": 0.0,
@@ -35418,7 +35418,7 @@
       }
     },
     {
-      "Name": "BUTANOATE",
+      "Name": "Butanoate",
       "Formula": "C4H7O2-",
       "Elements": "4:C 7:H 2:O",
       "Charge": -1.0,
@@ -35506,7 +35506,7 @@
       }
     },
     {
-      "Name": "Eu(But)2,aq",
+      "Name": "Eu(But)2(aq)",
       "Formula": "Eu(CH3CH2CH2CO2)2",
       "Elements": "1:Eu 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -35572,7 +35572,7 @@
       }
     },
     {
-      "Name": "Ca(But)2,aq",
+      "Name": "Ca(But)2(aq)",
       "Formula": "Ca(CH3CH2CH2CO2)2",
       "Elements": "1:Ca 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -35616,7 +35616,7 @@
       }
     },
     {
-      "Name": "Sr(But)2,aq",
+      "Name": "Sr(But)2(aq)",
       "Formula": "Sr(CH3CH2CH2CO2)2",
       "Elements": "1:Sr 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -35660,7 +35660,7 @@
       }
     },
     {
-      "Name": "Ba(But)2,aq",
+      "Name": "Ba(But)2(aq)",
       "Formula": "Ba(CH3CH2CH2CO2)2",
       "Elements": "1:Ba 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -35704,7 +35704,7 @@
       }
     },
     {
-      "Name": "Cu(But)2,aq",
+      "Name": "Cu(But)2(aq)",
       "Formula": "Cu(CH3CH2CH2CO2)2",
       "Elements": "1:Cu 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -35748,7 +35748,7 @@
       }
     },
     {
-      "Name": "Cd(But)2,aq",
+      "Name": "Cd(But)2(aq)",
       "Formula": "Cd(CH3CH2CH2CO2)2",
       "Elements": "1:Cd 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -35770,7 +35770,7 @@
       }
     },
     {
-      "Name": "Na(But),aq",
+      "Name": "Na(But)(aq)",
       "Formula": "NaCH3(CH2)2CO2",
       "Elements": "1:Na 4:C 7:H 2:O",
       "Charge": 0.0,
@@ -35814,7 +35814,7 @@
       }
     },
     {
-      "Name": "K(But),aq",
+      "Name": "K(But)(aq)",
       "Formula": "KCH3(CH2)2CO2",
       "Elements": "1:K 4:C 7:H 2:O",
       "Charge": 0.0,
@@ -36056,7 +36056,7 @@
       }
     },
     {
-      "Name": "Pb(But)2,aq",
+      "Name": "Pb(But)2(aq)",
       "Formula": "Pb(CH3CH2CH2CO2)2",
       "Elements": "1:Pb 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -36100,7 +36100,7 @@
       }
     },
     {
-      "Name": "Mn(But)2,aq",
+      "Name": "Mn(But)2(aq)",
       "Formula": "Mn(CH3CH2CH2CO2)2",
       "Elements": "1:Mn 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -36144,7 +36144,7 @@
       }
     },
     {
-      "Name": "Ni(But)2,aq",
+      "Name": "Ni(But)2(aq)",
       "Formula": "Ni(CH3CH2CH2CO2)2",
       "Elements": "1:Ni 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -36188,7 +36188,7 @@
       }
     },
     {
-      "Name": "Zn(But)2,aq",
+      "Name": "Zn(But)2(aq)",
       "Formula": "Zn(CH3CH2CH2CO2)2",
       "Elements": "1:Zn 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -36232,7 +36232,7 @@
       }
     },
     {
-      "Name": "Fe(But)2,aq",
+      "Name": "Fe(But)2(aq)",
       "Formula": "Fe(CH3CH2CH2CO2)2",
       "Elements": "1:Fe 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -36276,7 +36276,7 @@
       }
     },
     {
-      "Name": "Co(But)2,aq",
+      "Name": "Co(But)2(aq)",
       "Formula": "Co(CH3CH2CH2CO2)2",
       "Elements": "1:Co 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -36298,7 +36298,7 @@
       }
     },
     {
-      "Name": "PENTANOIC-ACID,aq",
+      "Name": "Pentanoic-Acid(aq)",
       "Formula": "C5H10O2",
       "Elements": "5:C 10:H 2:O",
       "Charge": 0.0,
@@ -36320,7 +36320,7 @@
       }
     },
     {
-      "Name": "PENTANOATE",
+      "Name": "Pentanoate",
       "Formula": "C5H9O2-",
       "Elements": "5:C 9:H 2:O",
       "Charge": -1.0,
@@ -36364,7 +36364,7 @@
       }
     },
     {
-      "Name": "Ca(Pent)2,aq",
+      "Name": "Ca(Pent)2(aq)",
       "Formula": "Ca(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Ca 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -36408,7 +36408,7 @@
       }
     },
     {
-      "Name": "Sr(Pent)2,aq",
+      "Name": "Sr(Pent)2(aq)",
       "Formula": "Sr(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Sr 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -36452,7 +36452,7 @@
       }
     },
     {
-      "Name": "Ba(Pent)2,aq",
+      "Name": "Ba(Pent)2(aq)",
       "Formula": "Ba(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Ba 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -36496,7 +36496,7 @@
       }
     },
     {
-      "Name": "Cu(Pent)2,aq",
+      "Name": "Cu(Pent)2(aq)",
       "Formula": "Cu(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Cu 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -36518,7 +36518,7 @@
       }
     },
     {
-      "Name": "Na(Pent),aq",
+      "Name": "Na(Pent)(aq)",
       "Formula": "NaCH3(CH2)3CO2",
       "Elements": "1:Na 5:C 9:H 2:O",
       "Charge": 0.0,
@@ -36562,7 +36562,7 @@
       }
     },
     {
-      "Name": "K(Pent),aq",
+      "Name": "K(Pent)(aq)",
       "Formula": "KCH3(CH2)3CO2",
       "Elements": "1:K 5:C 9:H 2:O",
       "Charge": 0.0,
@@ -36848,7 +36848,7 @@
       }
     },
     {
-      "Name": "Mg(Pent)2,aq",
+      "Name": "Mg(Pent)2(aq)",
       "Formula": "Mg(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Mg 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -36892,7 +36892,7 @@
       }
     },
     {
-      "Name": "Pb(Pent)2,aq",
+      "Name": "Pb(Pent)2(aq)",
       "Formula": "Pb(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Pb 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -36936,7 +36936,7 @@
       }
     },
     {
-      "Name": "Co(Pent)2,aq",
+      "Name": "Co(Pent)2(aq)",
       "Formula": "Co(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Co 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -36980,7 +36980,7 @@
       }
     },
     {
-      "Name": "Ni(Pent)2,aq",
+      "Name": "Ni(Pent)2(aq)",
       "Formula": "Ni(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Ni 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -37024,7 +37024,7 @@
       }
     },
     {
-      "Name": "Zn(Pent)2,aq",
+      "Name": "Zn(Pent)2(aq)",
       "Formula": "Zn(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Zn 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -37068,7 +37068,7 @@
       }
     },
     {
-      "Name": "Cd(Pent)2,aq",
+      "Name": "Cd(Pent)2(aq)",
       "Formula": "Cd(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Cd 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -37112,7 +37112,7 @@
       }
     },
     {
-      "Name": "Fe(Pent)2,aq",
+      "Name": "Fe(Pent)2(aq)",
       "Formula": "Fe(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Fe 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -37156,7 +37156,7 @@
       }
     },
     {
-      "Name": "Mn(Pent)2,aq",
+      "Name": "Mn(Pent)2(aq)",
       "Formula": "Mn(CH3CH2CH2CH2CO2)2",
       "Elements": "1:Mn 10:C 18:H 4:O",
       "Charge": 0.0,
@@ -37178,7 +37178,7 @@
       }
     },
     {
-      "Name": "Mg(But)2,aq",
+      "Name": "Mg(But)2(aq)",
       "Formula": "Mg(CH3CH2CH2CO2)2",
       "Elements": "1:Mg 8:C 14:H 4:O",
       "Charge": 0.0,
@@ -37200,7 +37200,7 @@
       }
     },
     {
-      "Name": "H4SiO4,aq",
+      "Name": "H4SiO4(aq)",
       "Formula": "H4SiO4(0)",
       "Elements": "1:Si 4:O 4:H",
       "Charge": 0.0,
