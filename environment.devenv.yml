@@ -39,6 +39,7 @@ dependencies:
   - numpy
   - pandas
   - pip
+  - fire
   - tabulate
 
   # Python test dependencies
