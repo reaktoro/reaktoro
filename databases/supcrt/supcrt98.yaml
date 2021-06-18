@@ -4410,7 +4410,7 @@
       c2: 177707.03
       wref: -259449.84
       charge: 0.0
-- Name: 2-Hydroxybutanoate-(aq)
+- Name: 2-Hydroxybutanoate-
   Formula: C4H7O3-
   Elements: 4:C 7:H 3:O
   Charge: -1.0
@@ -4446,7 +4446,7 @@
       c2: 155791.24
       wref: -89035.52
       charge: 0.0
-- Name: 2-Hydroxydecanoate-(aq)
+- Name: 2-Hydroxydecanoate-
   Formula: C10H19O3-
   Elements: 10:C 19:H 3:O
   Charge: -1.0
@@ -4482,7 +4482,7 @@
       c2: 681611.26
       wref: 22468.08
       charge: 0.0
-- Name: 2-Hydroxyheptanoate-(aq)
+- Name: 2-Hydroxyheptanoate-
   Formula: C7H13O3-
   Elements: 7:C 13:H 3:O
   Charge: -1.0
@@ -4518,7 +4518,7 @@
       c2: 418701.25
       wref: -33262.8
       charge: 0.0
-- Name: 2-Hydroxyhexanoate-(aq)
+- Name: 2-Hydroxyhexanoate-
   Formula: C6H11O3-
   Elements: 6:C 11:H 3:O
   Charge: -1.0
@@ -4554,7 +4554,7 @@
       c2: 331063.18
       wref: -51881.6
       charge: 0.0
-- Name: 2-Hydroxynonulloate-(aq)
+- Name: 2-Hydroxynonulloate-
   Formula: C9H17O3-
   Elements: 9:C 17:H 3:O
   Charge: -1.0
@@ -4590,7 +4590,7 @@
       c2: 593973.19
       wref: 3891.12
       charge: 0.0
-- Name: 2-Hydroxyoctanoate-(aq)
+- Name: 2-Hydroxyoctanoate-
   Formula: C8H15O3-
   Elements: 8:C 15:H 3:O
   Charge: -1.0
@@ -4626,7 +4626,7 @@
       c2: 506339.31
       wref: -14685.84
       charge: 0.0
-- Name: 2-Hydroxypentanoate-(aq)
+- Name: 2-Hydroxypentanoate-
   Formula: C5H9O3-
   Elements: 5:C 9:H 3:O
   Charge: -1.0
@@ -4734,7 +4734,7 @@
       c2: -49651.528
       wref: -136189.2
       charge: 0.0
-- Name: Acetate-(aq)
+- Name: Acetate-
   Formula: C2H3O2-
   Elements: 2:C 3:H 2:O
   Charge: -1.0
@@ -4788,7 +4788,7 @@
       c2: -6418.256
       wref: -139076.16
       charge: 0.0
-- Name: Adipate-2(aq)
+- Name: Adipate-2
   Formula: C6H8O4-2
   Elements: 6:C 8:H 4:O
   Charge: -2.0
@@ -4842,7 +4842,7 @@
       c2: -74270.184
       wref: -111210.72
       charge: 0.0
-- Name: Alanate-(aq)
+- Name: Alanate-
   Formula: C3H6NO2-
   Elements: 3:C 6:H 2:O 1:N
   Charge: -1.0
@@ -4932,7 +4932,7 @@
       c2: 386869.38
       wref: 36066.08
       charge: 0.0
-- Name: Azelate-2(aq)
+- Name: Azelate-2
   Formula: C9H14O4-2
   Elements: 9:C 14:H 4:O
   Charge: -2.0
@@ -4950,7 +4950,7 @@
       c2: -151506.82
       wref: 1008762.4
       charge: -2.0
-- Name: Ag(CO3)-(aq)
+- Name: Ag(CO3)-
   Formula: Ag(CO3)-
   Elements: 1:Ag 1:C 3:O
   Charge: -1.0
@@ -4968,7 +4968,7 @@
       c2: -213898.63
       wref: 682410.4
       charge: -1.0
-- Name: Ag(CO3)2-3(aq)
+- Name: Ag(CO3)2-3
   Formula: Ag(CO3)2-3
   Elements: 1:Ag 2:C 6:O
   Charge: -3.0
@@ -4986,7 +4986,7 @@
       c2: -368162.71
       wref: 2133505.3
       charge: -3.0
-- Name: Ag+(aq)
+- Name: Ag+
   Formula: Ag+
   Elements: 1:Ag
   Charge: 1.0
@@ -5004,7 +5004,7 @@
       c2: -59638.736
       wref: 90374.4
       charge: 1.0
-- Name: Ag+2(aq)
+- Name: Ag+2
   Formula: Ag+2
   Elements: 1:Ag
   Charge: 2.0
@@ -5040,7 +5040,7 @@
       c2: -69864.432
       wref: -12552.0
       charge: 0.0
-- Name: AgCl2-(aq)
+- Name: AgCl2-
   Formula: AgCl2-
   Elements: 1:Ag 2:Cl
   Charge: -1.0
@@ -5058,7 +5058,7 @@
       c2: -60488.088
       wref: 383630.96
       charge: -1.0
-- Name: AgCl3-2(aq)
+- Name: AgCl3-2
   Formula: AgCl3-2
   Elements: 1:Ag 3:Cl
   Charge: -2.0
@@ -5076,7 +5076,7 @@
       c2: -35856.88
       wref: 1062819.7
       charge: -2.0
-- Name: AgCl4-3(aq)
+- Name: AgCl4-3
   Formula: AgCl4-3
   Elements: 1:Ag 4:Cl
   Charge: -3.0
@@ -5112,7 +5112,7 @@
       c2: -217304.41
       wref: -12552.0
       charge: 0.0
-- Name: AgO-(aq)
+- Name: AgO-
   Formula: AgO-
   Elements: 1:Ag 1:O
   Charge: -1.0
@@ -5148,7 +5148,7 @@
       c2: 139628.45
       wref: -15899.2
       charge: 0.0
-- Name: Al+3(aq)
+- Name: Al+3
   Formula: Al+3
   Elements: 1:Al
   Charge: 3.0
@@ -5166,7 +5166,7 @@
       c2: -337230.4
       wref: 1151855.2
       charge: 3.0
-- Name: AlO+(aq)
+- Name: AlO+
   Formula: AlO+
   Elements: 1:Al 1:O
   Charge: 1.0
@@ -5184,7 +5184,7 @@
       c2: -382647.72
       wref: 400408.8
       charge: 1.0
-- Name: AlOH+2(aq)
+- Name: AlOH+2
   Formula: AlOH+2
   Elements: 1:Al 1:O 1:H
   Charge: 2.0
@@ -5220,7 +5220,7 @@
       c2: -553103.88
       wref: -12552.0
       charge: 0.0
-- Name: AlO2-(aq)
+- Name: AlO2-
   Formula: AlO2-
   Elements: 1:Al 2:O
   Charge: -1.0
@@ -5238,7 +5238,7 @@
       c2: -228383.64
       wref: 728769.12
       charge: -1.0
-- Name: Au+(aq)
+- Name: Au+
   Formula: Au+
   Elements: 1:Au
   Charge: 1.0
@@ -5256,7 +5256,7 @@
       c2: -129519.9
       wref: 68952.32
       charge: 1.0
-- Name: Au+3(aq)
+- Name: Au+3
   Formula: Au+3
   Elements: 1:Au
   Charge: 3.0
@@ -5310,7 +5310,7 @@
       c2: 74471.016
       wref: -82675.84
       charge: 0.0
-- Name: Benzoate-(aq)
+- Name: Benzoate-
   Formula: C7H5O2-
   Elements: 7:C 5:H 2:O
   Charge: -1.0
@@ -5346,7 +5346,7 @@
       c2: 160339.25
       wref: -92926.64
       charge: 0.0
-- Name: BF4-(aq)
+- Name: BF4-
   Formula: BF4-
   Elements: 1:B 4:F
   Charge: -1.0
@@ -5364,7 +5364,7 @@
       c2: -174694.55
       wref: 409153.36
       charge: -1.0
-- Name: BO2-(aq)
+- Name: BO2-
   Formula: BO2-
   Elements: 1:B 2:O
   Charge: -1.0
@@ -5418,7 +5418,7 @@
       c2: 125202.02
       wref: -90165.2
       charge: 0.0
-- Name: Ba(HCO3)+(aq)
+- Name: Ba(HCO3)+
   Formula: Ba(HCO3)+
   Elements: 1:Ba 1:H 1:C 3:O
   Charge: 1.0
@@ -5436,7 +5436,7 @@
       c2: 186606.4
       wref: -66107.2
       charge: 1.0
-- Name: Ba+2(aq)
+- Name: Ba+2
   Formula: Ba+2
   Elements: 1:Ba
   Charge: 2.0
@@ -5454,7 +5454,7 @@
       c2: -144348.0
       wref: 412124.0
       charge: 2.0
-- Name: BaCl+(aq)
+- Name: BaCl+
   Formula: BaCl+
   Elements: 1:Ba 1:Cl
   Charge: 1.0
@@ -5472,7 +5472,7 @@
       c2: -70119.656
       wref: 79286.8
       charge: 1.0
-- Name: BaOH+(aq)
+- Name: BaOH+
   Formula: BaOH+
   Elements: 1:Ba 1:O 1:H
   Charge: 1.0
@@ -5490,7 +5490,7 @@
       c2: -317875.22
       wref: 56986.08
       charge: 1.0
-- Name: Be+2(aq)
+- Name: Be+2
   Formula: Be+2
   Elements: 1:Be
   Charge: 2.0
@@ -5508,7 +5508,7 @@
       c2: -176397.44
       wref: 647474.0
       charge: 2.0
-- Name: BeOH+(aq)
+- Name: BeOH+
   Formula: BeOH+
   Elements: 1:Be 1:O 1:H
   Charge: 1.0
@@ -5544,7 +5544,7 @@
       c2: -15313.44
       wref: -12552.0
       charge: 0.0
-- Name: HBeO2-(aq)
+- Name: HBeO2-
   Formula: HBeO2-
   Elements: 1:H 1:Be 2:O
   Charge: -1.0
@@ -5562,7 +5562,7 @@
       c2: 315364.82
       wref: 893325.84
       charge: -1.0
-- Name: BeO2-2(aq)
+- Name: BeO2-2
   Formula: BeO2-2
   Elements: 1:Be 2:O
   Charge: -2.0
@@ -5580,7 +5580,7 @@
       c2: -235203.56
       wref: 1603727.2
       charge: -2.0
-- Name: Br-(aq)
+- Name: Br-
   Formula: Br-
   Elements: 1:Br
   Charge: -1.0
@@ -5598,7 +5598,7 @@
       c2: -284972.24
       wref: 579818.72
       charge: -1.0
-- Name: Br3-(aq)
+- Name: Br3-
   Formula: Br3-
   Elements: 3:Br
   Charge: -1.0
@@ -5634,7 +5634,7 @@
       c2: -50258.208
       wref: -71922.96
       charge: 0.0
-- Name: BrO-(aq)
+- Name: BrO-
   Formula: BrO-
   Elements: 1:Br 1:O
   Charge: -1.0
@@ -5652,7 +5652,7 @@
       c2: -365602.1
       wref: 620068.8
       charge: -1.0
-- Name: BrO3-(aq)
+- Name: BrO3-
   Formula: BrO3-
   Elements: 1:Br 3:O
   Charge: -1.0
@@ -5670,7 +5670,7 @@
       c2: -302536.67
       wref: 436516.72
       charge: -1.0
-- Name: BrO4-(aq)
+- Name: BrO4-
   Formula: BrO4-
   Elements: 1:Br 4:O
   Charge: -1.0
@@ -5688,7 +5688,7 @@
       c2: -171280.41
       wref: 380116.4
       charge: -1.0
-- Name: CaOH+(aq)
+- Name: CaOH+
   Formula: CaOH+
   Elements: 1:Ca 1:O 1:H
   Charge: 1.0
@@ -5706,7 +5706,7 @@
       c2: -115030.71
       wref: 188112.64
       charge: 1.0
-- Name: Ce+4(aq)
+- Name: Ce+4
   Formula: Ce+4
   Elements: 1:Ce
   Charge: 4.0
@@ -5742,7 +5742,7 @@
       c2: 219911.04
       wref: -46567.92
       charge: 0.0
-- Name: CN-(aq)
+- Name: CN-
   Formula: CN-
   Elements: 1:C 1:N
   Charge: -1.0
@@ -5796,7 +5796,7 @@
       c2: 368208.74
       wref: -8368.0
       charge: 0.0
-- Name: CO3-2(aq)
+- Name: CO3-2
   Formula: CO3-2
   Elements: 1:C 3:O
   Charge: -2.0
@@ -5814,7 +5814,7 @@
       c2: -719300.73
       wref: 1418961.8
       charge: -2.0
-- Name: Ca(HCO3)+(aq)
+- Name: Ca(HCO3)+
   Formula: Ca(HCO3)+
   Elements: 1:Ca 1:H 1:C 3:O
   Charge: 1.0
@@ -5832,7 +5832,7 @@
       c2: 348778.24
       wref: 128867.2
       charge: 1.0
-- Name: Ca+2(aq)
+- Name: Ca+2
   Formula: Ca+2
   Elements: 1:Ca
   Charge: 2.0
@@ -5850,7 +5850,7 @@
       c2: -105520.48
       wref: 517393.44
       charge: 2.0
-- Name: CaCl+(aq)
+- Name: CaCl+
   Formula: CaCl+
   Elements: 1:Ca 1:Cl
   Charge: 1.0
@@ -5886,7 +5886,7 @@
       c2: 136900.48
       wref: -15899.2
       charge: 0.0
-- Name: CaF+(aq)
+- Name: CaF+
   Formula: CaF+
   Elements: 1:Ca 1:F
   Charge: 1.0
@@ -5922,7 +5922,7 @@
       c2: -340037.86
       wref: -418.4
       charge: 0.0
-- Name: Cd+2(aq)
+- Name: Cd+2
   Formula: Cd+2
   Elements: 1:Cd
   Charge: 2.0
@@ -5940,7 +5940,7 @@
       c2: -156799.58
       wref: 524171.52
       charge: 2.0
-- Name: CdOH+(aq)
+- Name: CdOH+
   Formula: CdOH+
   Elements: 1:Cd 1:O 1:H
   Charge: 1.0
@@ -5976,7 +5976,7 @@
       c2: -218157.94
       wref: -12552.0
       charge: 0.0
-- Name: HCdO2-(aq)
+- Name: HCdO2-
   Formula: HCdO2-
   Elements: 1:H 1:Cd 2:O
   Charge: -1.0
@@ -5994,7 +5994,7 @@
       c2: -119294.21
       wref: 751655.6
       charge: -1.0
-- Name: CdO2-2(aq)
+- Name: CdO2-2
   Formula: CdO2-2
   Elements: 1:Cd 2:O
   Charge: -2.0
@@ -6012,7 +6012,7 @@
       c2: -637478.42
       wref: 1472349.6
       charge: -2.0
-- Name: Ce+2(aq)
+- Name: Ce+2
   Formula: Ce+2
   Elements: 1:Ce
   Charge: 2.0
@@ -6030,7 +6030,7 @@
       c2: -230940.06
       wref: 434131.84
       charge: 2.0
-- Name: Ce+3(aq)
+- Name: Ce+3
   Formula: Ce+3
   Elements: 1:Ce
   Charge: 3.0
@@ -6048,7 +6048,7 @@
       c2: -533501.84
       wref: 973407.6
       charge: 3.0
-- Name: Cl-(aq)
+- Name: Cl-
   Formula: Cl-
   Elements: 1:Cl
   Charge: -1.0
@@ -6084,7 +6084,7 @@
       c2: -49404.672
       wref: -72550.56
       charge: 0.0
-- Name: ClO-(aq)
+- Name: ClO-
   Formula: ClO-
   Elements: 1:Cl 1:O
   Charge: -1.0
@@ -6102,7 +6102,7 @@
       c2: -363899.22
       wref: 617851.28
       charge: -1.0
-- Name: ClO2-(aq)
+- Name: ClO2-
   Formula: ClO2-
   Elements: 1:Cl 2:O
   Charge: -1.0
@@ -6120,7 +6120,7 @@
       c2: -291453.26
       wref: 528732.08
       charge: -1.0
-- Name: ClO3-(aq)
+- Name: ClO3-
   Formula: ClO3-
   Elements: 1:Cl 3:O
   Charge: -1.0
@@ -6138,7 +6138,7 @@
       c2: -231797.78
       wref: 435889.12
       charge: -1.0
-- Name: ClO4-(aq)
+- Name: ClO4-
   Formula: ClO4-
   Elements: 1:Cl 4:O
   Charge: -1.0
@@ -6156,7 +6156,7 @@
       c2: -274888.8
       wref: 405806.16
       charge: -1.0
-- Name: Co+2(aq)
+- Name: Co+2
   Formula: Co+2
   Elements: 1:Co
   Charge: 2.0
@@ -6174,7 +6174,7 @@
       c2: -193443.06
       wref: 617934.96
       charge: 2.0
-- Name: Co+3(aq)
+- Name: Co+3
   Formula: Co+3
   Elements: 1:Co
   Charge: 3.0
@@ -6192,7 +6192,7 @@
       c2: -337477.26
       wref: 1125537.8
       charge: 3.0
-- Name: CoOH+(aq)
+- Name: CoOH+
   Formula: CoOH+
   Elements: 1:Co 1:O 1:H
   Charge: 1.0
@@ -6228,7 +6228,7 @@
       c2: -86052.328
       wref: -12552.0
       charge: 0.0
-- Name: HCoO2-(aq)
+- Name: HCoO2-
   Formula: HCoO2-
   Elements: 1:H 1:Co 2:O
   Charge: -1.0
@@ -6246,7 +6246,7 @@
       c2: 163661.34
       wref: 845628.24
       charge: -1.0
-- Name: CoO2-2(aq)
+- Name: CoO2-2
   Formula: CoO2-2
   Elements: 1:Co 2:O
   Charge: -2.0
@@ -6264,7 +6264,7 @@
       c2: -396283.38
       wref: 1553435.5
       charge: -2.0
-- Name: CoOH+2(aq)
+- Name: CoOH+2
   Formula: CoOH+2
   Elements: 1:Co 1:O 1:H
   Charge: 2.0
@@ -6336,7 +6336,7 @@
       c2: 171912.19
       wref: -108449.28
       charge: 0.0
-- Name: Cr2O7-2(aq)
+- Name: Cr2O7-2
   Formula: Cr2O7-2
   Elements: 2:Cr 7:O
   Charge: -2.0
@@ -6354,7 +6354,7 @@
       c2: -374978.45
       wref: 887677.44
       charge: -2.0
-- Name: CrO4-2(aq)
+- Name: CrO4-2
   Formula: CrO4-2
   Elements: 1:Cr 4:O
   Charge: -2.0
@@ -6372,7 +6372,7 @@
       c2: -660490.42
       wref: 1256204.2
       charge: -2.0
-- Name: Cs+(aq)
+- Name: Cs+
   Formula: Cs+
   Elements: 1:Cs
   Charge: 1.0
@@ -6462,7 +6462,7 @@
       c2: -398839.8
       wref: -12552.0
       charge: 0.0
-- Name: Cu+(aq)
+- Name: Cu+
   Formula: Cu+
   Elements: 1:Cu
   Charge: 1.0
@@ -6480,7 +6480,7 @@
       c2: -10200.592
       wref: 169284.64
       charge: 1.0
-- Name: Cu+2(aq)
+- Name: Cu+2
   Formula: Cu+2
   Elements: 1:Cu
   Charge: 2.0
@@ -6498,7 +6498,7 @@
       c2: -183677.6
       wref: 617934.96
       charge: 2.0
-- Name: CuOH+(aq)
+- Name: CuOH+
   Formula: CuOH+
   Elements: 1:Cu 1:O 1:H
   Charge: 1.0
@@ -6534,7 +6534,7 @@
       c2: -138896.25
       wref: 308946.56
       charge: 0.0
-- Name: HCuO2-(aq)
+- Name: HCuO2-
   Formula: HCuO2-
   Elements: 1:H 1:Cu 2:O
   Charge: -1.0
@@ -6552,7 +6552,7 @@
       c2: -337477.26
       wref: 228613.76
       charge: -1.0
-- Name: CuO2-2(aq)
+- Name: CuO2-2
   Formula: CuO2-2
   Elements: 1:Cu 2:O
   Charge: -2.0
@@ -6570,7 +6570,7 @@
       c2: -582935.8
       wref: 1491470.5
       charge: -2.0
-- Name: Decanoate-(aq)
+- Name: Decanoate-
   Formula: C10H19O2-
   Elements: 10:C 19:H 2:O
   Charge: -1.0
@@ -6732,7 +6732,7 @@
       c2: 293859.06
       wref: -109830.0
       charge: 0.0
-- Name: Dodecanoate-(aq)
+- Name: Dodecanoate-
   Formula: C12H23O2-
   Elements: 12:C 23:H 2:O
   Charge: -1.0
@@ -6768,7 +6768,7 @@
       c2: 834975.78
       wref: 58534.16
       charge: 0.0
-- Name: Dy+2(aq)
+- Name: Dy+2
   Formula: Dy+2
   Elements: 1:Dy
   Charge: 2.0
@@ -6786,7 +6786,7 @@
       c2: -222417.26
       wref: 466264.96
       charge: 2.0
-- Name: Dy+3(aq)
+- Name: Dy+3
   Formula: Dy+3
   Elements: 1:Dy
   Charge: 3.0
@@ -6804,7 +6804,7 @@
       c2: -397141.1
       wref: 995457.28
       charge: 3.0
-- Name: Dy+4(aq)
+- Name: Dy+4
   Formula: Dy+4
   Elements: 1:Dy
   Charge: 4.0
@@ -6948,7 +6948,7 @@
       c2: 324741.16
       wref: -190079.12
       charge: 0.0
-- Name: Er+2(aq)
+- Name: Er+2
   Formula: Er+2
   Elements: 1:Er
   Charge: 2.0
@@ -6966,7 +6966,7 @@
       c2: -219860.83
       wref: 478524.08
       charge: 2.0
-- Name: Er+3(aq)
+- Name: Er+3
   Formula: Er+3
   Elements: 1:Er
   Charge: 3.0
@@ -6984,7 +6984,7 @@
       c2: -419299.56
       wref: 1008971.6
       charge: 3.0
-- Name: Er+4(aq)
+- Name: Er+4
   Formula: Er+4
   Elements: 1:Er
   Charge: 4.0
@@ -7002,7 +7002,7 @@
       c2: -138896.25
       wref: 1573811.6
       charge: 4.0
-- Name: Eu+2(aq)
+- Name: Eu+2
   Formula: Eu+2
   Elements: 1:Eu
   Charge: 2.0
@@ -7020,7 +7020,7 @@
       c2: -224124.33
       wref: 457269.36
       charge: 2.0
-- Name: Eu+3(aq)
+- Name: Eu+3
   Formula: Eu+3
   Elements: 1:Eu
   Charge: 3.0
@@ -7038,7 +7038,7 @@
       c2: -438901.6
       wref: 969056.24
       charge: 3.0
-- Name: Eu+4(aq)
+- Name: Eu+4
   Formula: Eu+4
   Elements: 1:Eu
   Charge: 4.0
@@ -7056,7 +7056,7 @@
       c2: -134632.75
       wref: 1562849.5
       charge: 4.0
-- Name: F-(aq)
+- Name: F-
   Formula: F-
   Elements: 1:F
   Charge: -1.0
@@ -7074,7 +7074,7 @@
       c2: -313297.92
       wref: 747680.8
       charge: -1.0
-- Name: Formate-(aq)
+- Name: Formate-
   Formula: HCO2-
   Elements: 1:H 1:C 2:O
   Charge: -1.0
@@ -7110,7 +7110,7 @@
       c2: -129704.0
       wref: -138072.0
       charge: 0.0
-- Name: Fe+2(aq)
+- Name: Fe+2
   Formula: Fe+2
   Elements: 1:Fe
   Charge: 2.0
@@ -7128,7 +7128,7 @@
       c2: -194292.41
       wref: 601742.88
       charge: 2.0
-- Name: Fe+3(aq)
+- Name: Fe+3
   Formula: Fe+3
   Elements: 1:Fe
   Charge: 3.0
@@ -7146,7 +7146,7 @@
       c2: -285486.87
       wref: 1079974.1
       charge: 3.0
-- Name: FeCl+(aq)
+- Name: FeCl+
   Formula: FeCl+
   Elements: 1:Fe 1:Cl
   Charge: 1.0
@@ -7182,7 +7182,7 @@
       c2: 121900.84
       wref: -15899.2
       charge: 0.0
-- Name: FeOH+2(aq)
+- Name: FeOH+2
   Formula: FeOH+2
   Elements: 1:Fe 1:O 1:H
   Charge: 2.0
@@ -7200,7 +7200,7 @@
       c2: -196848.83
       wref: 601742.88
       charge: 2.0
-- Name: FeOH+(aq)
+- Name: FeOH+
   Formula: FeOH+
   Elements: 1:Fe 1:O 1:H
   Charge: 1.0
@@ -7218,7 +7218,7 @@
       c2: 874.456
       wref: 293005.52
       charge: 1.0
-- Name: FeO+(aq)
+- Name: FeO+
   Formula: FeO+
   Elements: 1:Fe 1:O
   Charge: 1.0
@@ -7254,7 +7254,7 @@
       c2: -126963.48
       wref: -12552.0
       charge: 0.0
-- Name: HFeO2-(aq)
+- Name: HFeO2-
   Formula: HFe2O-
   Elements: 1:H 1:Fe 2:O
   Charge: -1.0
@@ -7290,7 +7290,7 @@
       c2: -762764.12
       wref: -12552.0
       charge: 0.0
-- Name: FeO2-(aq)
+- Name: FeO2-
   Formula: FeO2-
   Elements: 1:Fe 2:O
   Charge: -1.0
@@ -7344,7 +7344,7 @@
       c2: -43187.248
       wref: -249952.16
       charge: 0.0
-- Name: Glutarate-2(aq)
+- Name: Glutarate-2
   Formula: C5H6O4-2
   Elements: 5:C 6:H 4:O
   Charge: -2.0
@@ -7398,7 +7398,7 @@
       c2: -173401.7
       wref: -97487.2
       charge: 0.0
-- Name: Glycinate-(aq)
+- Name: Glycinate-
   Formula: C2H4NO2-
   Elements: 2:C 4:H 2:O 1:N
   Charge: -1.0
@@ -7416,7 +7416,7 @@
       c2: -175138.06
       wref: 501034.0
       charge: -1.0
-- Name: Glycolate-(aq)
+- Name: Glycolate-
   Formula: C2H3O3-
   Elements: 2:C 3:H 3:O
   Charge: -1.0
@@ -7470,7 +7470,7 @@
       c2: -57207.832
       wref: -201166.72
       charge: 0.0
-- Name: Ga+3(aq)
+- Name: Ga+3
   Formula: Ga+3
   Elements: 1:Ga
   Charge: 3.0
@@ -7488,7 +7488,7 @@
       c2: -352819.98
       wref: 1162608.1
       charge: 3.0
-- Name: GaOH+2(aq)
+- Name: GaOH+2
   Formula: GaOH+2
   Elements: 1:Ga 1:O 1:H
   Charge: 2.0
@@ -7506,7 +7506,7 @@
       c2: 209681.16
       wref: 866088.0
       charge: 2.0
-- Name: GaO+(aq)
+- Name: GaO+
   Formula: GaO+
   Elements: 1:Ga 1:O
   Charge: 1.0
@@ -7542,7 +7542,7 @@
       c2: -387760.57
       wref: -18367.76
       charge: 0.0
-- Name: GaO2-(aq)
+- Name: GaO2-
   Formula: GaO2-
   Elements: 1:Ga 2:O
   Charge: -1.0
@@ -7560,7 +7560,7 @@
       c2: -245429.26
       wref: 743789.68
       charge: -1.0
-- Name: Gd+2(aq)
+- Name: Gd+2
   Formula: Gd+2
   Elements: 1:Gd
   Charge: 2.0
@@ -7578,7 +7578,7 @@
       c2: -221567.9
       wref: 469277.44
       charge: 2.0
-- Name: Gd+3(aq)
+- Name: Gd+3
   Formula: Gd+3
   Elements: 1:Gd
   Charge: 3.0
@@ -7596,7 +7596,7 @@
       c2: -432935.22
       wref: 973407.6
       charge: 3.0
-- Name: Gd+4(aq)
+- Name: Gd+4
   Formula: Gd+4
   Elements: 1:Gd
   Charge: 4.0
@@ -7614,7 +7614,7 @@
       c2: -146565.52
       wref: 1590463.9
       charge: 4.0
-- Name: H+(aq)
+- Name: H+
   Formula: H+
   Elements: 1:H
   Charge: 1.0
@@ -7632,7 +7632,7 @@
       c2: 0.0
       wref: 0.0
       charge: 1.0
-- Name: H-Adipate-(aq)
+- Name: H-Adipate-
   Formula: C6H9O4-
   Elements: 6:C 9:H 4:O
   Charge: -1.0
@@ -7650,7 +7650,7 @@
       c2: -153485.86
       wref: 302670.56
       charge: -1.0
-- Name: H-Azelate-(aq)
+- Name: H-Azelate-
   Formula: C9H15O4-
   Elements: 9:C 15:H 4:O
   Charge: -1.0
@@ -7668,7 +7668,7 @@
       c2: -121181.19
       wref: 174640.16
       charge: -1.0
-- Name: H-Glutarate-(aq)
+- Name: H-Glutarate-
   Formula: C5H7O4-
   Elements: 5:C 7:H 4:O
   Charge: -1.0
@@ -7686,7 +7686,7 @@
       c2: -161598.63
       wref: 346393.36
       charge: -1.0
-- Name: H-Malonate-(aq)
+- Name: H-Malonate-
   Formula: C3H3O4-
   Elements: 3:C 3:H 4:O
   Charge: -1.0
@@ -7704,7 +7704,7 @@
       c2: -174631.79
       wref: 411119.84
       charge: -1.0
-- Name: H-Oxalate-(aq)
+- Name: H-Oxalate-
   Formula: C2HO4-
   Elements: 2:C 1:H 4:O
   Charge: -1.0
@@ -7722,7 +7722,7 @@
       c2: -265884.83
       wref: 453169.04
       charge: -1.0
-- Name: H-Pimelate-(aq)
+- Name: H-Pimelate-
   Formula: C7H11O4-
   Elements: 7:C 11:H 4:O
   Charge: -1.0
@@ -7740,7 +7740,7 @@
       c2: -144406.58
       wref: 253926.96
       charge: -1.0
-- Name: H-Sebacate-(aq)
+- Name: H-Sebacate-
   Formula: C10H17O4-
   Elements: 10:C 17:H 4:O
   Charge: -1.0
@@ -7758,7 +7758,7 @@
       c2: -110432.5
       wref: 132130.72
       charge: -1.0
-- Name: H-Suberate-(aq)
+- Name: H-Suberate-
   Formula: C8H13O4-
   Elements: 8:C 13:H 4:O
   Charge: -1.0
@@ -7776,7 +7776,7 @@
       c2: -131934.07
       wref: 217777.2
       charge: -1.0
-- Name: H-Succinate-(aq)
+- Name: H-Succinate-
   Formula: C4H504-
   Elements: 4:C 5:H 4:O
   Charge: -1.0
@@ -7812,7 +7812,7 @@
       c2: 213091.12
       wref: -87445.6
       charge: 0.0
-- Name: H2AsO3-(aq)
+- Name: H2AsO3-
   Formula: H2AsO3-
   Elements: 2:H 1:As 3:O
   Charge: -1.0
@@ -7830,7 +7830,7 @@
       c2: -151682.55
       wref: 514841.2
       charge: -1.0
-- Name: H2AsO4-(aq)
+- Name: H2AsO4-
   Formula: H2AsO4-
   Elements: 2:H 1:As 4:O
   Charge: -1.0
@@ -7848,7 +7848,7 @@
       c2: -132076.33
       wref: 504381.2
       charge: -1.0
-- Name: H2P2O7-2(aq)
+- Name: H2P2O7-2
   Formula: H2P2O7-2
   Elements: 2:H 2:P 7:O
   Charge: -2.0
@@ -7866,7 +7866,7 @@
       c2: 23032.92
       wref: 1096961.1
       charge: -2.0
-- Name: H2PO4-(aq)
+- Name: H2PO4-
   Formula: H2PO4-
   Elements: 2:H 1:P 4:O
   Charge: -1.0
@@ -7920,7 +7920,7 @@
       c2: 35819.224
       wref: -92801.12
       charge: 0.0
-- Name: H2VO4-(aq)
+- Name: H2VO4-
   Formula: H2VO4-
   Elements: 2:H 1:V 4:O
   Charge: -1.0
@@ -7938,7 +7938,7 @@
       c2: 178150.54
       wref: 497812.32
       charge: -1.0
-- Name: H3P2O7-(aq)
+- Name: H3P2O7-
   Formula: H3P2O7-
   Elements: 3:H 2:P 7:O
   Charge: -1.0
@@ -7974,7 +7974,7 @@
       c2: 74169.768
       wref: -92048.0
       charge: 0.0
-- Name: HAsO4-2(aq)
+- Name: HAsO4-2
   Formula: HAsO4-2
   Elements: 1:H 1:As 4:O
   Charge: -2.0
@@ -7992,7 +7992,7 @@
       c2: -531794.77
       wref: 1347122.5
       charge: -2.0
-- Name: HCO3-(aq)
+- Name: HCO3-
   Formula: HCO3-
   Elements: 1:H 1:C 3:O
   Charge: -1.0
@@ -8010,7 +8010,7 @@
       c2: -199070.54
       wref: 532748.72
       charge: -1.0
-- Name: HCrO4-(aq)
+- Name: HCrO4-
   Formula: HCrO4-
   Elements: 1:H 1:Cr 4:O
   Charge: -1.0
@@ -8046,7 +8046,7 @@
       c2: 1546912.7
       wref: -380158.24
       charge: 0.0
-- Name: Heptanoate-(aq)
+- Name: Heptanoate-
   Formula: C7H1302-
   Elements: 7:C 13:H 2:O
   Charge: -1.0
@@ -8100,7 +8100,7 @@
       c2: 1366226.6
       wref: -335180.24
       charge: 0.0
-- Name: Hexanoate-(aq)
+- Name: Hexanoate-
   Formula: C6H11O2-
   Elements: 6:C 11:H 2:O
   Charge: -1.0
@@ -8154,7 +8154,7 @@
       c2: -7648.352
       wref: -292.88
       charge: 0.0
-- Name: HF2-(aq)
+- Name: HF2-
   Formula: HF2-
   Elements: 1:H 2:F
   Charge: -1.0
@@ -8190,7 +8190,7 @@
       c2: 26442.88
       wref: -128281.44
       charge: 0.0
-- Name: HO2-(aq)
+- Name: HO2-
   Formula: HO2-
   Elements: 1:H 2:O
   Charge: -1.0
@@ -8208,7 +8208,7 @@
       c2: -445717.34
       wref: 646386.16
       charge: -1.0
-- Name: HPO4-2(aq)
+- Name: HPO4-2
   Formula: HPO4-2
   Elements: 1:H 1:P 4:O
   Charge: -2.0
@@ -8226,7 +8226,7 @@
       c2: -623846.95
       wref: 1395907.9
       charge: -2.0
-- Name: HS-(aq)
+- Name: HS-
   Formula: HS-
   Elements: 1:H 1:S
   Charge: -1.0
@@ -8244,7 +8244,7 @@
       c2: -262336.8
       wref: 602914.4
       charge: -1.0
-- Name: HSO3-(aq)
+- Name: HSO3-
   Formula: HSO3-
   Elements: 1:H 1:S 3:O
   Charge: -1.0
@@ -8262,7 +8262,7 @@
       c2: -138900.43
       wref: 469988.72
       charge: -1.0
-- Name: HSO4-(aq)
+- Name: HSO4-
   Formula: HSO4-
   Elements: 1:H 1:S 4:O
   Charge: -1.0
@@ -8280,7 +8280,7 @@
       c2: -81797.2
       wref: 491536.32
       charge: -1.0
-- Name: HSO5-(aq)
+- Name: HSO5-
   Formula: HSO5-
   Elements: 1:H 1:S 5:O
   Charge: -1.0
@@ -8298,7 +8298,7 @@
       c2: 187522.7
       wref: 360284.24
       charge: -1.0
-- Name: HSe-(aq)
+- Name: HSe-
   Formula: HSe-
   Elements: 1:H 1:Se
   Charge: -1.0
@@ -8334,7 +8334,7 @@
       c2: 173033.5
       wref: -172673.68
       charge: 0.0
-- Name: HSeO3-(aq)
+- Name: HSeO3-
   Formula: HSeO3-
   Elements: 1:H 1:Se 3:O
   Charge: -1.0
@@ -8352,7 +8352,7 @@
       c2: -71567.32
       wref: 477059.68
       charge: -1.0
-- Name: HSeO4-(aq)
+- Name: HSeO4-
   Formula: HSeO4-
   Elements: 1:H 1:Se 4:O
   Charge: -1.0
@@ -8370,7 +8370,7 @@
       c2: -23836.248
       wref: 455428.4
       charge: -1.0
-- Name: HSiO3-(aq)
+- Name: HSiO3-
   Formula: HSiO3-
   Elements: 1:H 1:Si 3:O
   Charge: -1.0
@@ -8388,7 +8388,7 @@
       c2: -305946.63
       wref: 648980.24
       charge: -1.0
-- Name: HVO4-2(aq)
+- Name: HVO4-2
   Formula: HVO4-2
   Elements: 1:H 1:V 4:O
   Charge: -2.0
@@ -8424,7 +8424,7 @@
       c2: 190932.66
       wref: -88826.32
       charge: 0.0
-- Name: Hg+2(aq)
+- Name: Hg+2
   Formula: Hg+2
   Elements: 1:Hg
   Charge: 2.0
@@ -8442,7 +8442,7 @@
       c2: -108219.16
       wref: 481662.08
       charge: 2.0
-- Name: HgOH+(aq)
+- Name: HgOH+
   Formula: HgOH+
   Elements: 1:Hg 1:O 1:H
   Charge: 1.0
@@ -8478,7 +8478,7 @@
       c2: -338330.79
       wref: -12552.0
       charge: 0.0
-- Name: HHgO2-(aq)
+- Name: HHgO2-
   Formula: HHgO2-
   Elements: 1:H 1:Hg 2:O
   Charge: -1.0
@@ -8496,7 +8496,7 @@
       c2: -375827.8
       wref: 667850.08
       charge: -1.0
-- Name: Hg2+2(aq)
+- Name: Hg2+2
   Formula: Hg2+2
   Elements: 2:Hg
   Charge: 2.0
@@ -8514,7 +8514,7 @@
       c2: -9347.056
       wref: 343129.84
       charge: 2.0
-- Name: Ho+2(aq)
+- Name: Ho+2
   Formula: Ho+2
   Elements: 1:Ho
   Charge: 2.0
@@ -8532,7 +8532,7 @@
       c2: -221567.9
       wref: 469277.44
       charge: 2.0
-- Name: Ho+3(aq)
+- Name: Ho+3
   Formula: Ho+3
   Elements: 1:Ho
   Charge: 3.0
@@ -8550,7 +8550,7 @@
       c2: -410776.75
       wref: 999934.16
       charge: 3.0
-- Name: Ho+4(aq)
+- Name: Ho+4
   Formula: Ho+4
   Elements: 1:Ho
   Charge: 4.0
@@ -8568,7 +8568,7 @@
       c2: -137189.18
       wref: 1568330.6
       charge: 4.0
-- Name: I-(aq)
+- Name: I-
   Formula: I-
   Elements: 1:I
   Charge: -1.0
@@ -8586,7 +8586,7 @@
       c2: -206856.96
       wref: 541158.56
       charge: -1.0
-- Name: I3-(aq)
+- Name: I3-
   Formula: I3-
   Elements: 3:I
   Charge: -1.0
@@ -8622,7 +8622,7 @@
       c2: -205371.64
       wref: -2217.52
       charge: 0.0
-- Name: IO-(aq)
+- Name: IO-
   Formula: IO-
   Elements: 1:I 1:O
   Charge: -1.0
@@ -8640,7 +8640,7 @@
       c2: -421851.8
       wref: 691615.2
       charge: -1.0
-- Name: IO3-(aq)
+- Name: IO3-
   Formula: IO3-
   Elements: 1:I 3:O
   Charge: -1.0
@@ -8658,7 +8658,7 @@
       c2: -265035.48
       wref: 502163.68
       charge: -1.0
-- Name: IO4-(aq)
+- Name: IO4-
   Formula: IO4-
   Elements: 1:I 4:O
   Charge: -1.0
@@ -8694,7 +8694,7 @@
       c2: 89462.288
       wref: -192296.64
       charge: 0.0
-- Name: In+3(aq)
+- Name: In+3
   Formula: In+3
   Elements: 1:In
   Charge: 3.0
@@ -8712,7 +8712,7 @@
       c2: -259918.45
       wref: 1060476.6
       charge: 3.0
-- Name: InOH+2(aq)
+- Name: InOH+2
   Formula: InOH+2
   Elements: 1:In 1:O 1:H
   Charge: 2.0
@@ -8730,7 +8730,7 @@
       c2: -9347.056
       wref: 726593.44
       charge: 2.0
-- Name: InO+(aq)
+- Name: InO+
   Formula: InO+
   Elements: 1:In 1:O
   Charge: 1.0
@@ -8766,7 +8766,7 @@
       c2: -859924.97
       wref: -12552.0
       charge: 0.0
-- Name: InO2-(aq)
+- Name: InO2-
   Formula: InO2-
   Elements: 1:In 2:O
   Charge: -1.0
@@ -8784,7 +8784,7 @@
       c2: -700548.04
       wref: 581617.84
       charge: -1.0
-- Name: K+(aq)
+- Name: K+
   Formula: K+
   Elements: 1:K
   Charge: 1.0
@@ -8892,7 +8892,7 @@
       c2: -301683.14
       wref: -12552.0
       charge: 0.0
-- Name: KSO4-(aq)
+- Name: KSO4-
   Formula: KSO4-
   Elements: 1:K 1:S 4:O
   Charge: -1.0
@@ -8928,7 +8928,7 @@
       c2: 363945.24
       wref: -95437.04
       charge: 0.0
-- Name: Lactate-(aq)
+- Name: Lactate-
   Formula: C3H5O3-
   Elements: 3:C 5:H 3:O
   Charge: -1.0
@@ -8982,7 +8982,7 @@
       c2: 174765.68
       wref: -184054.16
       charge: 0.0
-- Name: La+3(aq)
+- Name: La+3
   Formula: La+3
   Elements: 1:La
   Charge: 3.0
@@ -9000,7 +9000,7 @@
       c2: -444014.45
       wref: 902572.48
       charge: 3.0
-- Name: Li+(aq)
+- Name: Li+
   Formula: Li+
   Elements: 1:Li
   Charge: 1.0
@@ -9054,7 +9054,7 @@
       c2: -69006.712
       wref: -12552.0
       charge: 0.0
-- Name: Lu+3(aq)
+- Name: Lu+3
   Formula: Lu+3
   Elements: 1:Lu
   Charge: 3.0
@@ -9072,7 +9072,7 @@
       c2: -406517.44
       wref: 1027339.4
       charge: 3.0
-- Name: Lu+4(aq)
+- Name: Lu+4
   Formula: Lu+4
   Elements: 1:Lu
   Charge: 4.0
@@ -9090,7 +9090,7 @@
       c2: -147419.06
       wref: 1596070.5
       charge: 4.0
-- Name: m-Toluate-(aq)
+- Name: m-Toluate-
   Formula: C8H7O2-
   Elements: 8:C 7:H 2:O
   Charge: -1.0
@@ -9126,7 +9126,7 @@
       c2: 296754.38
       wref: -81253.28
       charge: 0.0
-- Name: Malonate-2(aq)
+- Name: Malonate-2
   Formula: C3H2O4-2
   Elements: 3:C 2:H 4:O
   Charge: -2.0
@@ -9234,7 +9234,7 @@
       c2: 28367.52
       wref: -274052.0
       charge: 0.0
-- Name: Mg(HCO3)+(aq)
+- Name: Mg(HCO3)+
   Formula: Mg(HCO3)+
   Elements: 1:Mg 1:H 1:C 3:O
   Charge: 1.0
@@ -9252,7 +9252,7 @@
       c2: 390785.6
       wref: 250621.6
       charge: 1.0
-- Name: Mg+2(aq)
+- Name: Mg+2
   Formula: Mg+2
   Elements: 1:Mg
   Charge: 2.0
@@ -9270,7 +9270,7 @@
       c2: -246521.28
       wref: 643164.48
       charge: 2.0
-- Name: MgCl+(aq)
+- Name: MgCl+
   Formula: MgCl+
   Elements: 1:Mg 1:Cl
   Charge: 1.0
@@ -9288,7 +9288,7 @@
       c2: 86106.72
       wref: 353506.16
       charge: 1.0
-- Name: MgF+(aq)
+- Name: MgF+
   Formula: MgF+
   Elements: 1:Mg 1:F
   Charge: 1.0
@@ -9306,7 +9306,7 @@
       c2: 206275.38
       wref: 406099.04
       charge: 1.0
-- Name: MgOH+(aq)
+- Name: MgOH+
   Formula: MgOH+
   Elements: 1:Mg 1:O 1:H
   Charge: 1.0
@@ -9324,7 +9324,7 @@
       c2: 135536.5
       wref: 353506.16
       charge: 1.0
-- Name: Mn+2(aq)
+- Name: Mn+2
   Formula: Mn+2
   Elements: 1:Mn
   Charge: 2.0
@@ -9342,7 +9342,7 @@
       c2: -161908.25
       wref: 586011.04
       charge: 2.0
-- Name: Mn+3(aq)
+- Name: Mn+3
   Formula: Mn+3
   Elements: 1:Mn
   Charge: 3.0
@@ -9360,7 +9360,7 @@
       c2: -345146.53
       wref: 1130726.0
       charge: 3.0
-- Name: MnCl+(aq)
+- Name: MnCl+
   Formula: MnCl+
   Elements: 1:Mn 1:Cl
   Charge: 1.0
@@ -9378,7 +9378,7 @@
       c2: 87127.616
       wref: 154222.24
       charge: 1.0
-- Name: MnOH+(aq)
+- Name: MnOH+
   Formula: MnOH+
   Elements: 1:Mn 1:O 1:H
   Charge: 1.0
@@ -9414,7 +9414,7 @@
       c2: -235203.56
       wref: -12552.0
       charge: 0.0
-- Name: HMnO2-(aq)
+- Name: HMnO2-
   Formula: HMnO2-
   Elements: 1:H 1:Mn 2:O
   Charge: -1.0
@@ -9432,7 +9432,7 @@
       c2: -155088.33
       wref: 739940.4
       charge: -1.0
-- Name: MnO2-2(aq)
+- Name: MnO2-2
   Formula: MnO2-2
   Elements: 1:Mn 2:O
   Charge: -2.0
@@ -9450,7 +9450,7 @@
       c2: -736346.34
       wref: 1439630.7
       charge: -2.0
-- Name: MnO4-(aq)
+- Name: MnO4-
   Formula: MnO4-
   Elements: 1:Mn 4:O
   Charge: -1.0
@@ -9468,7 +9468,7 @@
       c2: -142306.21
       wref: 386936.32
       charge: -1.0
-- Name: MnO4-2(aq)
+- Name: MnO4-2
   Formula: MnO4-2
   Elements: 1:Mn 4:O
   Charge: -2.0
@@ -9504,7 +9504,7 @@
       c2: -302536.67
       wref: -15899.2
       charge: 0.0
-- Name: HMoO4-(aq)
+- Name: HMoO4-
   Formula: HMoO4-
   Elements: 1:H 1:Mo 4:O
   Charge: -1.0
@@ -9522,7 +9522,7 @@
       c2: 116783.81
       wref: 475260.56
       charge: -1.0
-- Name: MoO4-2(aq)
+- Name: MoO4-2
   Formula: MoO4-2
   Elements: 1:Mo 4:O
   Charge: -2.0
@@ -9558,7 +9558,7 @@
       c2: 1014235.1
       wref: -253592.24
       charge: 0.0
-- Name: Butanoate-(aq)
+- Name: Butanoate-
   Formula: C4H7O2-
   Elements: 4:C 7:H 2:O
   Charge: -1.0
@@ -9792,7 +9792,7 @@
       c2: -48952.8
       wref: -20920.0
       charge: 0.0
-- Name: NH4+(aq)
+- Name: NH4+
   Formula: NH4+
   Elements: 1:N 4:H
   Charge: 1.0
@@ -9810,7 +9810,7 @@
       c2: -878.64
       wref: 62843.68
       charge: 1.0
-- Name: NO2-(aq)
+- Name: NO2-
   Formula: NO2-
   Elements: 1:N 2:O
   Charge: -1.0
@@ -9828,7 +9828,7 @@
       c2: -325548.67
       wref: 495678.48
       charge: -1.0
-- Name: NO3-(aq)
+- Name: NO3-
   Formula: NO3-
   Elements: 1:N 3:O
   Charge: -1.0
@@ -9846,7 +9846,7 @@
       c2: -281374.0
       wref: 459277.68
       charge: -1.0
-- Name: Nonulloate-(aq)
+- Name: Nonulloate-
   Formula: C9H17O2-
   Elements: 9:C 17:H 2:O
   Charge: -1.0
@@ -9882,7 +9882,7 @@
       c2: 572065.77
       wref: 2761.44
       charge: 0.0
-- Name: Na+(aq)
+- Name: Na+
   Formula: Na+
   Elements: 1:Na
   Charge: 1.0
@@ -10008,7 +10008,7 @@
       c2: -154234.79
       wref: -12552.0
       charge: 0.0
-- Name: Nd+2(aq)
+- Name: Nd+2
   Formula: Nd+2
   Elements: 1:Nd
   Charge: 2.0
@@ -10026,7 +10026,7 @@
       c2: -227534.29
       wref: 445554.16
       charge: 2.0
-- Name: Nd+3(aq)
+- Name: Nd+3
   Formula: Nd+3
   Elements: 1:Nd
   Charge: 3.0
@@ -10044,7 +10044,7 @@
       c2: -495151.3
       wref: 943492.0
       charge: 3.0
-- Name: Nd+4(aq)
+- Name: Nd+4
   Formula: Nd+4
   Elements: 1:Nd
   Charge: 4.0
@@ -10080,7 +10080,7 @@
       c2: 211388.23
       wref: -106064.4
       charge: 0.0
-- Name: Ni+2(aq)
+- Name: Ni+2
   Formula: Ni+2
   Elements: 1:Ni
   Charge: 2.0
@@ -10098,7 +10098,7 @@
       c2: -226684.94
       wref: 630403.28
       charge: 2.0
-- Name: NiCl+(aq)
+- Name: NiCl+
   Formula: NiCl+
   Elements: 1:Ni 1:Cl
   Charge: 1.0
@@ -10116,7 +10116,7 @@
       c2: -57931.664
       wref: 339364.24
       charge: 1.0
-- Name: NiOH+(aq)
+- Name: NiOH+
   Formula: NiOH+
   Elements: 1:Ni 1:O 1:H
   Charge: 1.0
@@ -10152,7 +10152,7 @@
       c2: -41735.4
       wref: -12552.0
       charge: 0.0
-- Name: HNiO2-(aq)
+- Name: HNiO2-
   Formula: HNiO2-
   Elements: 1:H 1:Ni 2:O
   Charge: -1.0
@@ -10170,7 +10170,7 @@
       c2: 282127.12
       wref: 906421.76
       charge: -1.0
-- Name: NiO2-2(aq)
+- Name: NiO2-2
   Formula: NiO2-2
   Elements: 1:Ni 2:O
   Charge: -2.0
@@ -10188,7 +10188,7 @@
       c2: -276114.71
       wref: 1589585.3
       charge: -2.0
-- Name: o-Toluate-(aq)
+- Name: o-Toluate-
   Formula: C8H7O2-
   Elements: 8:C 7:H 2:O
   Charge: -1.0
@@ -10260,7 +10260,7 @@
       c2: 1727594.5
       wref: -404258.08
       charge: 0.0
-- Name: Octanoate-(aq)
+- Name: Octanoate-
   Formula: C8H15O2-
   Elements: 8:C 15:H 2:O
   Charge: -1.0
@@ -10296,7 +10296,7 @@
       c2: 484427.7
       wref: -15815.52
       charge: 0.0
-- Name: OH-(aq)
+- Name: OH-
   Formula: OH-
   Elements: 1:O 1:H
   Charge: -1.0
@@ -10314,7 +10314,7 @@
       c2: -432876.64
       wref: 721572.64
       charge: -1.0
-- Name: Oxalate-2(aq)
+- Name: Oxalate-2
   Formula: C2O4-2
   Elements: 2:C 4:O
   Charge: -2.0
@@ -10350,7 +10350,7 @@
       c2: -113725.3
       wref: -123720.88
       charge: 0.0
-- Name: p-Toluate-(aq)
+- Name: p-Toluate-
   Formula: C8H7O2-
   Elements: 8:C 7:H 2:O
   Charge: -1.0
@@ -10404,7 +10404,7 @@
       c2: 1177022.0
       wref: -300955.12
       charge: 0.0
-- Name: Pentanoate-(aq)
+- Name: Pentanoate-
   Formula: C5H9O2-
   Elements: 5:C 9:H 2:O
   Charge: -1.0
@@ -10476,7 +10476,7 @@
       c2: 90027.128
       wref: -192924.24
       charge: 0.0
-- Name: Pimelate-2(aq)
+- Name: Pimelate-2
   Formula: C7H10O4-2
   Elements: 7:C 10:H 4:O
   Charge: -2.0
@@ -10512,7 +10512,7 @@
       c2: 197543.38
       wref: 1380.72
       charge: 0.0
-- Name: PO4-3(aq)
+- Name: PO4-3
   Formula: PO4-3
   Elements: 1:P 4:O
   Charge: -3.0
@@ -10566,7 +10566,7 @@
       c2: 50994.592
       wref: -116273.36
       charge: 0.0
-- Name: Propanoate-(aq)
+- Name: Propanoate-
   Formula: C3H5O2-
   Elements: 3:C 5:H 2:O
   Charge: -1.0
@@ -10620,7 +10620,7 @@
       c2: 68814.248
       wref: -120038.96
       charge: 0.0
-- Name: Pb+2(aq)
+- Name: Pb+2
   Formula: Pb+2
   Elements: 1:Pb
   Charge: 2.0
@@ -10638,7 +10638,7 @@
       c2: -235207.74
       wref: 451369.92
       charge: 2.0
-- Name: PbCl+(aq)
+- Name: PbCl+
   Formula: PbCl+
   Elements: 1:Pb 1:Cl
   Charge: 1.0
@@ -10674,7 +10674,7 @@
       c2: -109922.05
       wref: -15899.2
       charge: 0.0
-- Name: PbCl3-(aq)
+- Name: PbCl3-
   Formula: PbCl3-
   Elements: 1:Pb 3:Cl
   Charge: -1.0
@@ -10692,7 +10692,7 @@
       c2: -228387.82
       wref: 307775.04
       charge: -1.0
-- Name: PbCl4-2(aq)
+- Name: PbCl4-2
   Formula: PbCl4-2
   Elements: 1:Pb 4:Cl
   Charge: -2.0
@@ -10710,7 +10710,7 @@
       c2: -426797.29
       wref: 925751.84
       charge: -2.0
-- Name: PbOH+(aq)
+- Name: PbOH+
   Formula: PbOH+
   Elements: 1:Pb 1:O 1:H
   Charge: 1.0
@@ -10746,7 +10746,7 @@
       c2: -484921.42
       wref: -12552.0
       charge: 0.0
-- Name: HPbO2-(aq)
+- Name: HPbO2-
   Formula: HPbO2-
   Elements: 1:H 1:Pb 2:O
   Charge: -1.0
@@ -10764,7 +10764,7 @@
       c2: -723560.04
       wref: 567601.44
       charge: -1.0
-- Name: PdOH+(aq)
+- Name: PdOH+
   Formula: Pd(OH)+
   Elements: 1:Pd 1:O 1:H
   Charge: 1.0
@@ -10800,7 +10800,7 @@
       c2: -297930.09
       wref: -12552.0
       charge: 0.0
-- Name: Pd(SO4)2-2(aq)
+- Name: Pd(SO4)2-2
   Formula: Pd(SO4)2-2
   Elements: 1:Pd 2:S 8:O
   Charge: -2.0
@@ -10818,7 +10818,7 @@
       c2: -420148.91
       wref: 1222606.6
       charge: -2.0
-- Name: Pd(SO4)3-4(aq)
+- Name: Pd(SO4)3-4
   Formula: Pd(SO4)3-4
   Elements: 1:Pd 3:S 12:O
   Charge: -4.0
@@ -10836,7 +10836,7 @@
       c2: -537761.15
       wref: 2464794.4
       charge: -4.0
-- Name: Pd+2(aq)
+- Name: Pd+2
   Formula: Pd+2
   Elements: 1:Pd
   Charge: 2.0
@@ -10854,7 +10854,7 @@
       c2: -175372.36
       wref: 651825.36
       charge: 2.0
-- Name: PdCl+(aq)
+- Name: PdCl+
   Formula: PdCl+
   Elements: 1:Pd 1:Cl
   Charge: 1.0
@@ -10890,7 +10890,7 @@
       c2: 195183.6
       wref: -12552.0
       charge: 0.0
-- Name: PdCl3-(aq)
+- Name: PdCl3-
   Formula: PdCl3-
   Elements: 1:Pd 3:Cl
   Charge: -1.0
@@ -10908,7 +10908,7 @@
       c2: 253094.34
       wref: 665046.8
       charge: -1.0
-- Name: PdCl4-2(aq)
+- Name: PdCl4-2
   Formula: PdCl4-2
   Elements: 1:Pd 4:Cl
   Charge: -2.0
@@ -10944,7 +10944,7 @@
       c2: -167021.1
       wref: -12552.0
       charge: 0.0
-- Name: Pr+2(aq)
+- Name: Pr+2
   Formula: Pr+2
   Elements: 1:Pr
   Charge: 2.0
@@ -10962,7 +10962,7 @@
       c2: -229237.18
       wref: 436976.96
       charge: 2.0
-- Name: Pr+3(aq)
+- Name: Pr+3
   Formula: Pr+3
   Elements: 1:Pr
   Charge: 3.0
@@ -10980,7 +10980,7 @@
       c2: -472139.3
       wref: 977758.96
       charge: 3.0
-- Name: Pr+4(aq)
+- Name: Pr+4
   Formula: Pr+4
   Elements: 1:Pr
   Charge: 4.0
@@ -10998,7 +10998,7 @@
       c2: -121850.63
       wref: 1535820.9
       charge: 4.0
-- Name: PtOH+(aq)
+- Name: PtOH+
   Formula: Pt(OH)+
   Elements: 1:Pt 1:O 1:H
   Charge: 1.0
@@ -11034,7 +11034,7 @@
       c2: -309264.54
       wref: -12552.0
       charge: 0.0
-- Name: Pt(SO4)2-2(aq)
+- Name: Pt(SO4)2-2
   Formula: Pt(SO4)2-2
   Elements: 1:Pt 2:S 8:O
   Charge: -2.0
@@ -11052,7 +11052,7 @@
       c2: -431822.27
       wref: 1240179.4
       charge: -2.0
-- Name: Pt(SO4)3-4(aq)
+- Name: Pt(SO4)3-4
   Formula: Pt(SO4)3-4
   Elements: 1:Pt 3:S 12:O
   Charge: -4.0
@@ -11070,7 +11070,7 @@
       c2: -554384.18
       wref: 2482576.4
       charge: -4.0
-- Name: Pt+2(aq)
+- Name: Pt+2
   Formula: Pt+2
   Elements: 1:Pt
   Charge: 2.0
@@ -11088,7 +11088,7 @@
       c2: -186706.82
       wref: 669649.2
       charge: 2.0
-- Name: PtCl+(aq)
+- Name: PtCl+
   Formula: PtCl+
   Elements: 1:Pt 1:Cl
   Charge: 1.0
@@ -11124,7 +11124,7 @@
       c2: 146544.6
       wref: -12552.0
       charge: 0.0
-- Name: PtCl3-(aq)
+- Name: PtCl3-
   Formula: PtCl3-
   Elements: 1:Pt 3:Cl
   Charge: -1.0
@@ -11142,7 +11142,7 @@
       c2: 170882.93
       wref: 701196.56
       charge: -1.0
-- Name: PtCl4-2(aq)
+- Name: PtCl4-2
   Formula: PtCl4-2
   Elements: 1:Pt 4:Cl
   Charge: -2.0
@@ -11178,7 +11178,7 @@
       c2: -132929.86
       wref: -12552.0
       charge: 0.0
-- Name: Ra+2(aq)
+- Name: Ra+2
   Formula: Ra+2
   Elements: 1:Ra
   Charge: 2.0
@@ -11196,7 +11196,7 @@
       c2: -248839.22
       wref: 361664.96
       charge: 2.0
-- Name: Rb+(aq)
+- Name: Rb+
   Formula: Rb+
   Elements: 1:Rb
   Charge: 1.0
@@ -11304,7 +11304,7 @@
       c2: -361342.79
       wref: -12552.0
       charge: 0.0
-- Name: ReO4-(aq)
+- Name: ReO4-
   Formula: ReO4-
   Elements: 1:Re 4:O
   Charge: -1.0
@@ -11322,7 +11322,7 @@
       c2: -296227.2
       wref: 376727.36
       charge: -1.0
-- Name: RhOH+(aq)
+- Name: RhOH+
   Formula: Rh(OH)+
   Elements: 1:Rh 1:O 1:H
   Charge: 1.0
@@ -11340,7 +11340,7 @@
       c2: 72466.88
       wref: 308946.56
       charge: 1.0
-- Name: RhOH+2(aq)
+- Name: RhOH+2
   Formula: Rh(OH)+2
   Elements: 1:Rh 1:O 1:H
   Charge: 2.0
@@ -11376,7 +11376,7 @@
       c2: -329548.58
       wref: -12552.0
       charge: 0.0
-- Name: RhSO4+(aq)
+- Name: RhSO4+
   Formula: Rh(SO4)+
   Elements: 1:Rh 1:S 4:O
   Charge: 1.0
@@ -11394,7 +11394,7 @@
       c2: -506908.34
       wref: 455637.6
       charge: 1.0
-- Name: Rh(SO4)2-(aq)
+- Name: Rh(SO4)2-
   Formula: Rh(SO4)2-
   Elements: 1:Rh 2:S 8:O
   Charge: -1.0
@@ -11412,7 +11412,7 @@
       c2: -629470.25
       wref: 673540.32
       charge: -1.0
-- Name: Rh(SO4)2-2(aq)
+- Name: Rh(SO4)2-2
   Formula: Rh(SO4)2-2
   Elements: 1:Rh 2:S 8:O
   Charge: -2.0
@@ -11430,7 +11430,7 @@
       c2: -452110.49
       wref: 1272856.5
       charge: -2.0
-- Name: Rh(SO4)3-3(aq)
+- Name: Rh(SO4)3-3
   Formula: Rh(SO4)3-3
   Elements: 1:Rh 3:S 12:O
   Charge: -3.0
@@ -11448,7 +11448,7 @@
       c2: -752027.98
       wref: 1773011.8
       charge: -3.0
-- Name: Rh(SO4)3-4(aq)
+- Name: Rh(SO4)3-4
   Formula: Rh(SO4)3-4
   Elements: 1:Rh 3:S 12:O
   Charge: -4.0
@@ -11466,7 +11466,7 @@
       c2: -574668.22
       wref: 2519395.6
       charge: -4.0
-- Name: Rh+2(aq)
+- Name: Rh+2
   Formula: Rh+2
   Elements: 1:Rh
   Charge: 2.0
@@ -11484,7 +11484,7 @@
       c2: -206990.85
       wref: 617934.96
       charge: 2.0
-- Name: Rh+3(aq)
+- Name: Rh+3
   Formula: Rh+3
   Elements: 1:Rh
   Charge: 3.0
@@ -11502,7 +11502,7 @@
       c2: -384350.61
       wref: 1115203.4
       charge: 3.0
-- Name: RhCl+(aq)
+- Name: RhCl+
   Formula: RhCl+
   Elements: 1:Rh 1:Cl
   Charge: 1.0
@@ -11520,7 +11520,7 @@
       c2: -18643.904
       wref: 308946.56
       charge: 1.0
-- Name: RhCl+2(aq)
+- Name: RhCl+2
   Formula: RhCl+2
   Elements: 1:Rh 1:Cl
   Charge: 2.0
@@ -11556,7 +11556,7 @@
       c2: 56747.592
       wref: -12552.0
       charge: 0.0
-- Name: RhCl2+(aq)
+- Name: RhCl2+
   Formula: RhCl2+
   Elements: 1:Rh 2:Cl
   Charge: 1.0
@@ -11592,7 +11592,7 @@
       c2: -138013.42
       wref: -12552.0
       charge: 0.0
-- Name: RhCl3-(aq)
+- Name: RhCl3-
   Formula: RhCl3-
   Elements: 1:Rh 3:Cl
   Charge: -1.0
@@ -11610,7 +11610,7 @@
       c2: 19112.512
       wref: 763872.88
       charge: -1.0
-- Name: RhCl4-(aq)
+- Name: RhCl4-
   Formula: RhCl4-
   Elements: 1:Rh 4:Cl
   Charge: -1.0
@@ -11628,7 +11628,7 @@
       c2: -597521.22
       wref: 1062317.6
       charge: -1.0
-- Name: RhCl4-2(aq)
+- Name: RhCl4-2
   Formula: RhCl4-2
   Elements: 1:Rh 4:Cl
   Charge: -2.0
@@ -11664,7 +11664,7 @@
       c2: -70713.784
       wref: -12552.0
       charge: 0.0
-- Name: RhO+(aq)
+- Name: RhO+
   Formula: RhO+
   Elements: 1:Rh 1:O
   Charge: 1.0
@@ -11700,7 +11700,7 @@
       c2: 580425.4
       wref: -101378.32
       charge: 0.0
-- Name: RuOH+(aq)
+- Name: RuOH+
   Formula: Ru(OH)+
   Elements: 1:Ru 1:O 1:H
   Charge: 1.0
@@ -11718,7 +11718,7 @@
       c2: 52864.84
       wref: 296896.64
       charge: 1.0
-- Name: RuOH+2(aq)
+- Name: RuOH+2
   Formula: Ru(OH)+2
   Elements: 1:Ru 1:O 1:H
   Charge: 2.0
@@ -11736,7 +11736,7 @@
       c2: -138042.71
       wref: 643164.48
       charge: 2.0
-- Name: RuO4-2(aq)
+- Name: RuO4-2
   Formula: RuO4-2
   Elements: 1:Ru 4:O
   Charge: -2.0
@@ -11772,7 +11772,7 @@
       c2: -322816.52
       wref: -12552.0
       charge: 0.0
-- Name: RuSO4+(aq)
+- Name: RuSO4+
   Formula: Ru(SO4)+
   Elements: 1:Ru 1:S 4:O
   Charge: 1.0
@@ -11790,7 +11790,7 @@
       c2: -494126.22
       wref: 449026.88
       charge: 1.0
-- Name: Ru(SO4)2-(aq)
+- Name: Ru(SO4)2-
   Formula: Ru(SO4)2-
   Elements: 1:Ru 2:S 8:O
   Charge: -1.0
@@ -11808,7 +11808,7 @@
       c2: -616683.94
       wref: 667850.08
       charge: -1.0
-- Name: Ru(SO4)2-2(aq)
+- Name: Ru(SO4)2-2
   Formula: Ru(SO4)2-2
   Elements: 1:Ru 2:S 8:O
   Charge: -2.0
@@ -11826,7 +11826,7 @@
       c2: -445374.25
       wref: 1263233.3
       charge: -2.0
-- Name: Ru(SO4)3-3(aq)
+- Name: Ru(SO4)3-3
   Formula: Ru(SO4)3-3
   Elements: 1:Ru 3:S 12:O
   Charge: -3.0
@@ -11844,7 +11844,7 @@
       c2: -739241.67
       wref: 1767279.8
       charge: -3.0
-- Name: Ru(SO4)3-4(aq)
+- Name: Ru(SO4)3-4
   Formula: Ru(SO4)3-4
   Elements: 1:Ru 3:S 12:O
   Charge: -4.0
@@ -11862,7 +11862,7 @@
       c2: -567931.98
       wref: 2507722.2
       charge: -4.0
-- Name: Ru+2(aq)
+- Name: Ru+2
   Formula: Ru+2
   Elements: 1:Ru
   Charge: 2.0
@@ -11880,7 +11880,7 @@
       c2: -200258.79
       wref: 609776.16
       charge: 2.0
-- Name: Ru+3(aq)
+- Name: Ru+3
   Formula: Ru+3
   Elements: 1:Ru
   Charge: 3.0
@@ -11898,7 +11898,7 @@
       c2: -320686.86
       wref: 1110098.9
       charge: 3.0
-- Name: RuCl+(aq)
+- Name: RuCl+
   Formula: RuCl+
   Elements: 1:Ru 1:Cl
   Charge: 1.0
@@ -11916,7 +11916,7 @@
       c2: -3301.176
       wref: 300871.44
       charge: 1.0
-- Name: RuCl+2(aq)
+- Name: RuCl+2
   Formula: RuCl+2
   Elements: 1:Ru 1:Cl
   Charge: 2.0
@@ -11952,7 +11952,7 @@
       c2: 86679.928
       wref: -12552.0
       charge: 0.0
-- Name: RuCl2+(aq)
+- Name: RuCl2+
   Formula: RuCl2+
   Elements: 1:Ru 2:Cl
   Charge: 1.0
@@ -11988,7 +11988,7 @@
       c2: 336276.45
       wref: -12552.0
       charge: 0.0
-- Name: RuCl3-(aq)
+- Name: RuCl3-
   Formula: RuCl3-
   Elements: 1:Ru 3:Cl
   Charge: -1.0
@@ -12006,7 +12006,7 @@
       c2: 69701.256
       wref: 743789.68
       charge: -1.0
-- Name: RuCl4-(aq)
+- Name: RuCl4-
   Formula: RuCl4-
   Elements: 1:Ru 4:Cl
   Charge: -1.0
@@ -12024,7 +12024,7 @@
       c2: 127340.04
       wref: 1052359.7
       charge: -1.0
-- Name: RuCl4-2(aq)
+- Name: RuCl4-2
   Formula: RuCl4-2
   Elements: 1:Ru 4:Cl
   Charge: -2.0
@@ -12042,7 +12042,7 @@
       c2: -54241.376
       wref: 1531971.6
       charge: -2.0
-- Name: RuCl5-2(aq)
+- Name: RuCl5-2
   Formula: RuCl5-2
   Elements: 1:Ru 5:Cl
   Charge: -2.0
@@ -12060,7 +12060,7 @@
       c2: 71186.576
       wref: 2094928.8
       charge: -2.0
-- Name: RuCl6-3(aq)
+- Name: RuCl6-3
   Formula: RuCl6-3
   Elements: 1:Ru 6:Cl
   Charge: -3.0
@@ -12096,7 +12096,7 @@
       c2: -91169.36
       wref: -12552.0
       charge: 0.0
-- Name: RuO+(aq)
+- Name: RuO+
   Formula: RuO+
   Elements: 1:Ru 1:O
   Charge: 1.0
@@ -12114,7 +12114,7 @@
       c2: -475545.07
       wref: 344008.48
       charge: 1.0
-- Name: S2-2(aq)
+- Name: S2-2
   Formula: S2-2
   Elements: 2:S
   Charge: -2.0
@@ -12132,7 +12132,7 @@
       c2: -681803.72
       wref: 1300512.7
       charge: -2.0
-- Name: S2O3-2(aq)
+- Name: S2O3-2
   Formula: S2O3-2
   Elements: 2:S 3:O
   Charge: -2.0
@@ -12150,7 +12150,7 @@
       c2: -615324.14
       wref: 1242397.0
       charge: -2.0
-- Name: HS2O3-(aq)
+- Name: HS2O3-
   Formula: HS2O3-
   Elements: 1:H 2:S 3:O
   Charge: -1.0
@@ -12186,7 +12186,7 @@
       c2: 107411.65
       wref: -142883.6
       charge: 0.0
-- Name: S2O4-2(aq)
+- Name: S2O4-2
   Formula: S2O4-2
   Elements: 2:S 4:O
   Charge: -2.0
@@ -12204,7 +12204,7 @@
       c2: -553957.42
       wref: 1203820.5
       charge: -2.0
-- Name: HS2O4-(aq)
+- Name: HS2O4-
   Formula: HS2O4-
   Elements: 1:H 2:S 4:O
   Charge: -1.0
@@ -12240,7 +12240,7 @@
       c2: 191786.19
       wref: -180874.32
       charge: 0.0
-- Name: S2O5-2(aq)
+- Name: S2O5-2
   Formula: S2O5-2
   Elements: 2:S 5:O
   Charge: -2.0
@@ -12258,7 +12258,7 @@
       c2: -538614.69
       wref: 1185871.1
       charge: -2.0
-- Name: S2O6-2(aq)
+- Name: S2O6-2
   Formula: S2O6-2
   Elements: 2:S 6:O
   Charge: -2.0
@@ -12276,7 +12276,7 @@
       c2: -513046.26
       wref: 1154240.1
       charge: -2.0
-- Name: S2O8-2(aq)
+- Name: S2O8-2
   Formula: S2O8-2
   Elements: 2:S 8:O
   Charge: -2.0
@@ -12294,7 +12294,7 @@
       c2: -340037.86
       wref: 974077.04
       charge: -2.0
-- Name: S3-2(aq)
+- Name: S3-2
   Formula: S3-2
   Elements: 3:S
   Charge: -2.0
@@ -12312,7 +12312,7 @@
       c2: -620436.99
       wref: 1244698.2
       charge: -2.0
-- Name: S3O6-2(aq)
+- Name: S3O6-2
   Formula: S3O6-2
   Elements: 3:S 6:O
   Charge: -2.0
@@ -12330,7 +12330,7 @@
       c2: -497703.54
       wref: 1135161.0
       charge: -2.0
-- Name: S4-2(aq)
+- Name: S4-2
   Formula: S4-2
   Elements: 4:S
   Charge: -2.0
@@ -12348,7 +12348,7 @@
       c2: -559074.45
       wref: 1187837.6
       charge: -2.0
-- Name: S4O6-2(aq)
+- Name: S4O6-2
   Formula: S4O6-2
   Elements: 4:S 6:O
   Charge: -2.0
@@ -12366,7 +12366,7 @@
       c2: -351966.45
       wref: 954161.2
       charge: -2.0
-- Name: S5-2(aq)
+- Name: S5-2
   Formula: S5-2
   Elements: 5:S
   Charge: -2.0
@@ -12384,7 +12384,7 @@
       c2: -498561.26
       wref: 1131813.8
       charge: -2.0
-- Name: S5O6-2(aq)
+- Name: S5O6-2
   Formula: S5O6-2
   Elements: 5:S 6:O
   Charge: -2.0
@@ -12402,7 +12402,7 @@
       c2: -461909.42
       wref: 1091019.8
       charge: -2.0
-- Name: Sebacate-2(aq)
+- Name: Sebacate-2
   Formula: C10H16O4-2
   Elements: 10:C 16:H 4:O
   Charge: -2.0
@@ -12474,7 +12474,7 @@
       c2: 270194.35
       wref: -102968.24
       charge: 0.0
-- Name: SO3-2(aq)
+- Name: SO3-2
   Formula: SO3-2
   Elements: 1:S 3:O
   Charge: -2.0
@@ -12492,7 +12492,7 @@
       c2: -702255.11
       wref: 1389506.4
       charge: -2.0
-- Name: SO4-2(aq)
+- Name: SO4-2
   Formula: SO4-2
   Elements: 1:S 4:O
   Charge: -2.0
@@ -12510,7 +12510,7 @@
       c2: -753036.32
       wref: 1316411.9
       charge: -2.0
-- Name: Suberate-2(aq)
+- Name: Suberate-2
   Formula: C8H12O4-2
   Elements: 8:C 12:H 4:O
   Charge: -2.0
@@ -12546,7 +12546,7 @@
       c2: 299235.5
       wref: 18033.04
       charge: 0.0
-- Name: Succinate-2(aq)
+- Name: Succinate-2
   Formula: C4H4O4-2
   Elements: 4:C 4:H 4:O
   Charge: -2.0
@@ -12582,7 +12582,7 @@
       c2: 12761.2
       wref: -72968.96
       charge: 0.0
-- Name: Sc+3(aq)
+- Name: Sc+3
   Formula: Sc+3
   Elements: 1:Sc
   Charge: 3.0
@@ -12600,7 +12600,7 @@
       c2: -244579.9
       wref: 1046125.5
       charge: 3.0
-- Name: ScOH+2(aq)
+- Name: ScOH+2
   Formula: ScOH+2
   Elements: 1:Sc 1:O 1:H
   Charge: 2.0
@@ -12618,7 +12618,7 @@
       c2: -291453.26
       wref: 541576.96
       charge: 2.0
-- Name: ScO+(aq)
+- Name: ScO+
   Formula: ScO+
   Elements: 1:Sc 1:O
   Charge: 1.0
@@ -12654,7 +12654,7 @@
       c2: -910208.28
       wref: -12552.0
       charge: 0.0
-- Name: ScO2-(aq)
+- Name: ScO2-
   Formula: ScO2-
   Elements: 1:Sc 2:O
   Charge: -1.0
@@ -12672,7 +12672,7 @@
       c2: -758504.81
       wref: 559358.96
       charge: -1.0
-- Name: SeO3-2(aq)
+- Name: SeO3-2
   Formula: SeO3-2
   Elements: 1:Se 3:O
   Charge: -2.0
@@ -12690,7 +12690,7 @@
       c2: -650264.73
       wref: 1324570.7
       charge: -2.0
-- Name: SeO4-2(aq)
+- Name: SeO4-2
   Formula: SeO4-2
   Elements: 1:Se 4:O
   Charge: -2.0
@@ -12708,7 +12708,7 @@
       c2: -600830.77
       wref: 1263233.3
       charge: -2.0
-- Name: SiF6-2(aq)
+- Name: SiF6-2
   Formula: SiF6-2
   Elements: 1:Si 6:F
   Charge: -2.0
@@ -12744,7 +12744,7 @@
       c2: -2142208.0
       wref: 54015.44
       charge: 0.0
-- Name: Sm+2(aq)
+- Name: Sm+2
   Formula: Sm+2
   Elements: 1:Sm
   Charge: 2.0
@@ -12762,7 +12762,7 @@
       c2: -218157.94
       wref: 481662.08
       charge: 2.0
-- Name: Sm+3(aq)
+- Name: Sm+3
   Formula: Sm+3
   Elements: 1:Sm
   Charge: 3.0
@@ -12780,7 +12780,7 @@
       c2: -496004.83
       wref: 960437.2
       charge: 3.0
-- Name: Sm+4(aq)
+- Name: Sm+4
   Formula: Sm+4
   Elements: 1:Sm
   Charge: 4.0
@@ -12798,7 +12798,7 @@
       c2: -128666.37
       wref: 1551971.1
       charge: 4.0
-- Name: Sn+2(aq)
+- Name: Sn+2
   Formula: Sn+2
   Elements: 1:Sn
   Charge: 2.0
@@ -12834,7 +12834,7 @@
       c2: -403103.3
       wref: -12552.0
       charge: 0.0
-- Name: SnOH+(aq)
+- Name: SnOH+
   Formula: SnOH+
   Elements: 1:Sn 1:O 1:H
   Charge: 1.0
@@ -12852,7 +12852,7 @@
       c2: -236906.45
       wref: 108574.8
       charge: 1.0
-- Name: HSnO2-(aq)
+- Name: HSnO2-
   Formula: HSnO2-
   Elements: 1:H 1:Sn 2:O
   Charge: -1.0
@@ -12870,7 +12870,7 @@
       c2: -513899.8
       wref: 622328.16
       charge: -1.0
-- Name: Sr(HCO3)+(aq)
+- Name: Sr(HCO3)+
   Formula: Sr(HCO3)+
   Elements: 1:Sr 1:H 1:C 3:O
   Charge: 1.0
@@ -12888,7 +12888,7 @@
       c2: 300453.04
       wref: -9623.2
       charge: 1.0
-- Name: Sr+2(aq)
+- Name: Sr+2
   Formula: Sr+2
   Elements: 1:Sr
   Charge: 2.0
@@ -12906,7 +12906,7 @@
       c2: -212622.51
       wref: 475427.92
       charge: 2.0
-- Name: SrCl+(aq)
+- Name: SrCl+
   Formula: SrCl+
   Elements: 1:Sr 1:Cl
   Charge: 1.0
@@ -12924,7 +12924,7 @@
       c2: -26053.768
       wref: 160540.08
       charge: 1.0
-- Name: SrF+(aq)
+- Name: SrF+
   Formula: SrF+
   Elements: 1:Sr 1:F
   Charge: 1.0
@@ -12942,7 +12942,7 @@
       c2: 10338.664
       wref: 270788.48
       charge: 1.0
-- Name: SrOH+(aq)
+- Name: SrOH+
   Formula: SrOH+
   Elements: 1:Sr 1:O 1:H
   Charge: 1.0
@@ -13032,7 +13032,7 @@
       c2: 32610.096
       wref: -146021.6
       charge: 0.0
-- Name: Tb+2(aq)
+- Name: Tb+2
   Formula: Tb+2
   Elements: 1:Tb
   Charge: 2.0
@@ -13050,7 +13050,7 @@
       c2: -223270.79
       wref: 460240.0
       charge: 2.0
-- Name: Tb+3(aq)
+- Name: Tb+3
   Formula: Tb+3
   Elements: 1:Tb
   Charge: 3.0
@@ -13068,7 +13068,7 @@
       c2: -433784.57
       wref: 1004452.9
       charge: 3.0
-- Name: Tb+4(aq)
+- Name: Tb+4
   Formula: Tb+4
   Elements: 1:Tb
   Charge: 4.0
@@ -13086,7 +13086,7 @@
       c2: -137189.18
       wref: 1568330.6
       charge: 4.0
-- Name: Th+4(aq)
+- Name: Th+4
   Formula: Th+4
   Elements: 1:Th
   Charge: 4.0
@@ -13104,7 +13104,7 @@
       c2: -128666.37
       wref: 1551971.1
       charge: 4.0
-- Name: Tl+(aq)
+- Name: Tl+
   Formula: Tl+
   Elements: 1:Tl
   Charge: 1.0
@@ -13122,7 +13122,7 @@
       c2: -162757.6
       wref: 40752.16
       charge: 1.0
-- Name: Tl+3(aq)
+- Name: Tl+3
   Formula: Tl+3
   Elements: 1:Tl
   Charge: 3.0
@@ -13158,7 +13158,7 @@
       c2: -366455.64
       wref: -12552.0
       charge: 0.0
-- Name: TlOH+2(aq)
+- Name: TlOH+2
   Formula: TlOH+2
   Elements: 1:Tl 1:O 1:H
   Charge: 2.0
@@ -13176,7 +13176,7 @@
       c2: -213894.45
       wref: 593793.28
       charge: 2.0
-- Name: TlO+(aq)
+- Name: TlO+
   Formula: TlO+
   Elements: 1:Tl 1:O
   Charge: 1.0
@@ -13212,7 +13212,7 @@
       c2: -1363624.2
       wref: -12552.0
       charge: 0.0
-- Name: TlO2-(aq)
+- Name: TlO2-
   Formula: TlO2-
   Elements: 1:Tl 2:O
   Charge: -1.0
@@ -13230,7 +13230,7 @@
       c2: -1184645.2
       wref: 405806.16
       charge: -1.0
-- Name: Tm+2(aq)
+- Name: Tm+2
   Formula: Tm+2
   Elements: 1:Tm
   Charge: 2.0
@@ -13248,7 +13248,7 @@
       c2: -217304.41
       wref: 484800.08
       charge: 2.0
-- Name: Tm+3(aq)
+- Name: Tm+3
   Formula: Tm+3
   Elements: 1:Tm
   Charge: 3.0
@@ -13266,7 +13266,7 @@
       c2: -419299.56
       wref: 1018092.7
       charge: 3.0
-- Name: Tm+4(aq)
+- Name: Tm+4
   Formula: Tm+4
   Elements: 1:Tm
   Charge: 4.0
@@ -13284,7 +13284,7 @@
       c2: -140599.14
       wref: 1579334.5
       charge: 4.0
-- Name: Undecanoate-(aq)
+- Name: Undecanoate-
   Formula: C11H21O2-
   Elements: 11:C 21:H 2:O
   Charge: -1.0
@@ -13338,7 +13338,7 @@
       c2: -110219.11
       wref: -125771.04
       charge: 0.0
-- Name: U+3(aq)
+- Name: U+3
   Formula: U+3
   Elements: 1:U
   Charge: 3.0
@@ -13356,7 +13356,7 @@
       c2: -437194.53
       wref: 951943.68
       charge: 3.0
-- Name: U+4(aq)
+- Name: U+4
   Formula: U+4
   Elements: 1:U
   Charge: 4.0
@@ -13374,7 +13374,7 @@
       c2: -125260.59
       wref: 1541176.4
       charge: 4.0
-- Name: UO2+(aq)
+- Name: UO2+
   Formula: UO2+
   Elements: 1:U 2:O
   Charge: 1.0
@@ -13392,7 +13392,7 @@
       c2: -315318.79
       wref: 267273.92
       charge: 1.0
-- Name: UO2+2(aq)
+- Name: UO2+2
   Formula: UO2+2
   Elements: 1:U 2:O
   Charge: 2.0
@@ -13428,7 +13428,7 @@
       c2: 34589.128
       wref: -127653.84
       charge: 0.0
-- Name: VO+(aq)
+- Name: VO+
   Formula: VO+
   Elements: 1:V 1:O
   Charge: 1.0
@@ -13446,7 +13446,7 @@
       c2: -692878.77
       wref: 200790.16
       charge: 1.0
-- Name: VO+2(aq)
+- Name: VO+2
   Formula: VO+2
   Elements: 1:V 1:O
   Charge: 2.0
@@ -13464,7 +13464,7 @@
       c2: 140649.34
       wref: 647474.0
       charge: 2.0
-- Name: VOH+(aq)
+- Name: VOH+
   Formula: VOH+
   Elements: 1:V 1:O 1:H
   Charge: 1.0
@@ -13482,7 +13482,7 @@
       c2: 109114.54
       wref: 334803.68
       charge: 1.0
-- Name: VOH+2(aq)
+- Name: VOH+2
   Formula: VOH+2
   Elements: 1:V 1:O 1:H
   Charge: 2.0
@@ -13500,7 +13500,7 @@
       c2: -340887.22
       wref: 510699.04
       charge: 2.0
-- Name: VO2+(aq)
+- Name: VO2+
   Formula: VO2+
   Elements: 1:V 2:O
   Charge: 1.0
@@ -13518,7 +13518,7 @@
       c2: -243726.37
       wref: 293005.52
       charge: 1.0
-- Name: VOOH+(aq)
+- Name: VOOH+
   Formula: VOOH+
   Elements: 1:V 2:O 1:H
   Charge: 1.0
@@ -13536,7 +13536,7 @@
       c2: 121896.66
       wref: 344008.48
       charge: 1.0
-- Name: WO4-2(aq)
+- Name: WO4-2
   Formula: WO4-2
   Elements: 1:W 4:O
   Charge: -2.0
@@ -13554,7 +13554,7 @@
       c2: -506226.34
       wref: 1282688.9
       charge: -2.0
-- Name: HWO4-(aq)
+- Name: HWO4-
   Formula: HWO4-
   Elements: 1:H 1:W 4:O
   Charge: -1.0
@@ -13590,7 +13590,7 @@
       c2: 425311.97
       wref: -92633.76
       charge: 0.0
-- Name: Y+3(aq)
+- Name: Y+3
   Formula: Y+3
   Elements: 1:Y
   Charge: 3.0
@@ -13608,7 +13608,7 @@
       c2: -236906.45
       wref: 1041397.6
       charge: 3.0
-- Name: YOH+2(aq)
+- Name: YOH+2
   Formula: YOH+2
   Elements: 1:Y 1:O 1:H
   Charge: 2.0
@@ -13626,7 +13626,7 @@
       c2: -276964.06
       wref: 552329.84
       charge: 2.0
-- Name: YO+(aq)
+- Name: YO+
   Formula: YO+
   Elements: 1:Y 1:O
   Charge: 1.0
@@ -13662,7 +13662,7 @@
       c2: -949416.54
       wref: -12552.0
       charge: 0.0
-- Name: YO2-(aq)
+- Name: YO2-
   Formula: YO2-
   Elements: 1:Y 2:O
   Charge: -1.0
@@ -13680,7 +13680,7 @@
       c2: -785776.12
       wref: 549986.8
       charge: -1.0
-- Name: Yb+2(aq)
+- Name: Yb+2
   Formula: Yb+2
   Elements: 1:Yb
   Charge: 2.0
@@ -13698,7 +13698,7 @@
       c2: -210488.67
       wref: 514004.4
       charge: 2.0
-- Name: Yb+3(aq)
+- Name: Yb+3
   Formula: Yb+3
   Elements: 1:Yb
   Charge: 3.0
@@ -13716,7 +13716,7 @@
       c2: -437198.71
       wref: 1022695.1
       charge: 3.0
-- Name: Yb+4(aq)
+- Name: Yb+4
   Formula: Yb+4
   Elements: 1:Yb
   Charge: 4.0
@@ -13734,7 +13734,7 @@
       c2: -143155.56
       wref: 1584899.2
       charge: 4.0
-- Name: Zn+2(aq)
+- Name: Zn+2
   Formula: Zn+2
   Elements: 1:Zn
   Charge: 2.0
@@ -13752,7 +13752,7 @@
       c2: -224680.8
       wref: 609776.16
       charge: 2.0
-- Name: ZnCl+(aq)
+- Name: ZnCl+
   Formula: ZnCl+
   Elements: 1:Zn 1:Cl
   Charge: 1.0
@@ -13788,7 +13788,7 @@
       c2: 168774.19
       wref: -15899.2
       charge: 0.0
-- Name: ZnCl3-(aq)
+- Name: ZnCl3-
   Formula: ZnCl3-
   Elements: 1:Zn 3:Cl
   Charge: -1.0
@@ -13806,7 +13806,7 @@
       c2: 230735.05
       wref: 523543.92
       charge: -1.0
-- Name: ZnOH+(aq)
+- Name: ZnOH+
   Formula: ZnOH+
   Elements: 1:Zn 1:O 1:H
   Charge: 1.0
@@ -13842,7 +13842,7 @@
       c2: -212191.56
       wref: -12552.0
       charge: 0.0
-- Name: HZnO2-(aq)
+- Name: HZnO2-
   Formula: HZnO2-
   Elements: 1:H 1:Zn 2:O
   Charge: -1.0
@@ -13860,7 +13860,7 @@
       c2: 43488.496
       wref: 781110.96
       charge: -1.0
-- Name: ZnO2-2(aq)
+- Name: ZnO2-2
   Formula: ZnO2-2
   Elements: 1:Zn 2:O
   Charge: -2.0
@@ -13878,7 +13878,7 @@
       c2: -254805.6
       wref: 1598957.4
       charge: -2.0
-- Name: Bi(Ac)+2(aq)
+- Name: Bi(Ac)+2
   Formula: BiCH3COO+2
   Elements: 1:Bi 2:C 3:H 2:O
   Charge: 2.0
@@ -13896,7 +13896,7 @@
       c2: 1180875.4
       wref: 538062.4
       charge: 2.0
-- Name: Bi(Ac)2+(aq)
+- Name: Bi(Ac)2+
   Formula: Bi(CH3COO)2+
   Elements: 1:Bi 4:C 6:H 4:O
   Charge: 1.0
@@ -13932,7 +13932,7 @@
       c2: 4348138.3
       wref: -12552.0
       charge: 0.0
-- Name: Dy(Ac)+2(aq)
+- Name: Dy(Ac)+2
   Formula: DyCH3COO+2
   Elements: 1:Dy 2:C 3:H 2:O
   Charge: 2.0
@@ -13950,7 +13950,7 @@
       c2: 503569.5
       wref: 660653.6
       charge: 2.0
-- Name: Dy(Ac)2+(aq)
+- Name: Dy(Ac)2+
   Formula: Dy(CH3COO)2+
   Elements: 1:Dy 4:C 6:H 4:O
   Charge: 1.0
@@ -13986,7 +13986,7 @@
       c2: 2114526.7
       wref: -12552.0
       charge: 0.0
-- Name: Ho(Ac)+2(aq)
+- Name: Ho(Ac)+2
   Formula: HoCH3COO+2
   Elements: 1:Ho 2:C 3:H 2:O
   Charge: 2.0
@@ -14004,7 +14004,7 @@
       c2: 472888.23
       wref: 651825.36
       charge: 2.0
-- Name: Ho(Ac)2+(aq)
+- Name: Ho(Ac)2+
   Formula: Ho(CH3COO)2+
   Elements: 1:Ho 4:C 6:H 4:O
   Charge: 1.0
@@ -14040,7 +14040,7 @@
       c2: 2013345.0
       wref: -12552.0
       charge: 0.0
-- Name: Er(Ac)+2(aq)
+- Name: Er(Ac)+2
   Formula: ErCH3COO+2
   Elements: 1:Er 2:C 3:H 2:O
   Charge: 2.0
@@ -14058,7 +14058,7 @@
       c2: 453708.78
       wref: 688016.96
       charge: 2.0
-- Name: Er(Ac)2+(aq)
+- Name: Er(Ac)2+
   Formula: Er(CH3COO)2+
   Elements: 1:Er 4:C 6:H 4:O
   Charge: 1.0
@@ -14094,7 +14094,7 @@
       c2: 1950103.8
       wref: -12552.0
       charge: 0.0
-- Name: Tm(Ac)+2(aq)
+- Name: Tm(Ac)+2
   Formula: TmCH3COO+2
   Elements: 1:Tm 2:C 3:H 2:O
   Charge: 2.0
@@ -14112,7 +14112,7 @@
       c2: 453708.78
       wref: 683330.88
       charge: 2.0
-- Name: Tm(Ac)2+(aq)
+- Name: Tm(Ac)2+
   Formula: Tm(CH3COO)2+
   Elements: 1:Tm 4:C 6:H 4:O
   Charge: 1.0
@@ -14148,7 +14148,7 @@
       c2: 1950103.8
       wref: -12552.0
       charge: 0.0
-- Name: Be(Ac)+(aq)
+- Name: Be(Ac)+
   Formula: BeCH3COO+
   Elements: 1:Be 2:C 3:H 2:O
   Charge: 1.0
@@ -14184,7 +14184,7 @@
       c2: 1706042.7
       wref: -12552.0
       charge: 0.0
-- Name: Ra(Ac)+(aq)
+- Name: Ra(Ac)+
   Formula: RaCH3COO+
   Elements: 1:Ra 2:C 3:H 2:O
   Charge: 1.0
@@ -14238,7 +14238,7 @@
       c2: 350799.11
       wref: -12552.0
       charge: 0.0
-- Name: Au(Ac)2-(aq)
+- Name: Au(Ac)2-
   Formula: Au(CH3COO)2-
   Elements: 1:Au 4:C 6:H 4:O
   Charge: -1.0
@@ -14274,7 +14274,7 @@
       c2: 611596.2
       wref: -12552.0
       charge: 0.0
-- Name: Li(Ac)2-(aq)
+- Name: Li(Ac)2-
   Formula: Li(CH3COO)2-
   Elements: 1:Li 4:C 6:H 4:O
   Charge: -1.0
@@ -14310,7 +14310,7 @@
       c2: 513029.53
       wref: -12552.0
       charge: 0.0
-- Name: Na(Ac)2-(aq)
+- Name: Na(Ac)2-
   Formula: Na(CH3COO)2-
   Elements: 1:Na 4:C 6:H 4:O
   Charge: -1.0
@@ -14346,7 +14346,7 @@
       c2: 377258.73
       wref: -12552.0
       charge: 0.0
-- Name: K(Ac)2-(aq)
+- Name: K(Ac)2-
   Formula: K(CH3COO)2-
   Elements: 1:K 4:C 6:H 4:O
   Charge: -1.0
@@ -14364,7 +14364,7 @@
       c2: 1056598.1
       wref: 296938.48
       charge: -1.0
-- Name: Mg(Ac)+(aq)
+- Name: Mg(Ac)+
   Formula: MgCH3COO+
   Elements: 1:Mg 2:C 3:H 2:O
   Charge: 1.0
@@ -14400,7 +14400,7 @@
       c2: 1554887.4
       wref: -12552.0
       charge: 0.0
-- Name: Sr(Ac)+(aq)
+- Name: Sr(Ac)+
   Formula: SrCH3COO+
   Elements: 1:Sr 2:C 3:H 2:O
   Charge: 1.0
@@ -14436,7 +14436,7 @@
       c2: 1378661.5
       wref: -12552.0
       charge: 0.0
-- Name: Ba(Ac)+(aq)
+- Name: Ba(Ac)+
   Formula: BaCH3COO+
   Elements: 1:Ba 2:C 3:H 2:O
   Charge: 1.0
@@ -14490,7 +14490,7 @@
       c2: 602006.47
       wref: -12552.0
       charge: 0.0
-- Name: Cu(Ac)2-(aq)
+- Name: Cu(Ac)2-
   Formula: Cu(CH3COO)2-
   Elements: 1:Cu 4:C 6:H 4:O
   Charge: -1.0
@@ -14526,7 +14526,7 @@
       c2: 281763.11
       wref: -12552.0
       charge: 0.0
-- Name: Rb(Ac)2-(aq)
+- Name: Rb(Ac)2-
   Formula: Rb(CH3COO)2-
   Elements: 1:Rb 4:C 6:H 4:O
   Charge: -1.0
@@ -14562,7 +14562,7 @@
       c2: 258751.11
       wref: -12552.0
       charge: 0.0
-- Name: Tl(Ac)2-(aq)
+- Name: Tl(Ac)2-
   Formula: Tl(CH3COO)2-
   Elements: 1:Tl 4:C 6:H 4:O
   Charge: -1.0
@@ -14598,7 +14598,7 @@
       c2: 218672.58
       wref: -12552.0
       charge: 0.0
-- Name: Cs(Ac)2-(aq)
+- Name: Cs(Ac)2-
   Formula: Cs(CH3COO)2-
   Elements: 1:Cs 4:C 6:H 4:O
   Charge: -1.0
@@ -14616,7 +14616,7 @@
       c2: 747178.72
       wref: 217902.72
       charge: -1.0
-- Name: Pb(Ac)+(aq)
+- Name: Pb(Ac)+
   Formula: PbCH3COO+
   Elements: 1:Pb 2:C 3:H 2:O
   Charge: 1.0
@@ -14652,7 +14652,7 @@
       c2: 1279513.2
       wref: -12552.0
       charge: 0.0
-- Name: Mn(Ac)+(aq)
+- Name: Mn(Ac)+
   Formula: MnCH3COO+
   Elements: 1:Mn 2:C 3:H 2:O
   Charge: 1.0
@@ -14688,7 +14688,7 @@
       c2: 1601283.7
       wref: -12552.0
       charge: 0.0
-- Name: Mn(Ac)3-(aq)
+- Name: Mn(Ac)3-
   Formula: Mn(CH3COO)3-
   Elements: 1:Mn 6:C 9:H 6:O
   Charge: -1.0
@@ -14706,7 +14706,7 @@
       c2: 2701679.9
       wref: 482666.24
       charge: -1.0
-- Name: Co(Ac)+(aq)
+- Name: Co(Ac)+
   Formula: CoCH3COO+
   Elements: 1:Co 2:C 3:H 2:O
   Charge: 1.0
@@ -14742,7 +14742,7 @@
       c2: 1462847.7
       wref: -12552.0
       charge: 0.0
-- Name: Co(Ac)3-(aq)
+- Name: Co(Ac)3-
   Formula: Co(CH3COO)3-
   Elements: 1:Co 6:C 9:H 6:O
   Charge: -1.0
@@ -14760,7 +14760,7 @@
       c2: 2467693.9
       wref: 615633.76
       charge: -1.0
-- Name: Ni(Ac)+(aq)
+- Name: Ni(Ac)+
   Formula: NiCH3COO+
   Elements: 1:Ni 2:C 3:H 2:O
   Charge: 1.0
@@ -14796,7 +14796,7 @@
       c2: 1316926.6
       wref: -12552.0
       charge: 0.0
-- Name: Ni(Ac)3-(aq)
+- Name: Ni(Ac)3-
   Formula: Ni(CH3COO)3-
   Elements: 1:Ni 6:C 9:H 6:O
   Charge: -1.0
@@ -14814,7 +14814,7 @@
       c2: 2221063.8
       wref: 670695.2
       charge: -1.0
-- Name: Cu(Ac)+(aq)
+- Name: Cu(Ac)+
   Formula: CuCH3COO+
   Elements: 1:Cu 2:C 3:H 2:O
   Charge: 1.0
@@ -14850,7 +14850,7 @@
       c2: 1541419.1
       wref: -12552.0
       charge: 0.0
-- Name: Cu(Ac)3-(aq)
+- Name: Cu(Ac)3-
   Formula: Cu(CH3COO)3-
   Elements: 1:Cu 6:C 9:H 6:O
   Charge: -1.0
@@ -14886,7 +14886,7 @@
       c2: 641126.87
       wref: -12552.0
       charge: 0.0
-- Name: NH4(Ac)2-(aq)
+- Name: NH4(Ac)2-
   Formula: NH4(CH3COO)2-
   Elements: 1:N 4:C 10:H 4:O
   Charge: -1.0
@@ -14904,7 +14904,7 @@
       c2: 1571430.9
       wref: 271750.8
       charge: -1.0
-- Name: UO2(Ac)+(aq)
+- Name: UO2(Ac)+
   Formula: UO2CH3COO+
   Elements: 1:U 2:C 3:H 4:O
   Charge: 1.0
@@ -14940,7 +14940,7 @@
       c2: 2136316.9
       wref: -12552.0
       charge: 0.0
-- Name: UO2(Ac)3-(aq)
+- Name: UO2(Ac)3-
   Formula: UO2(CH3COO)3-
   Elements: 1:U 6:C 9:H 8:O
   Charge: -1.0
@@ -14976,7 +14976,7 @@
       c2: 490783.2
       wref: -12552.0
       charge: 0.0
-- Name: Ag(Ac)2-(aq)
+- Name: Ag(Ac)2-
   Formula: Ag(CH3COO)2-
   Elements: 1:Ag 4:C 6:H 4:O
   Charge: -1.0
@@ -14994,7 +14994,7 @@
       c2: 1278099.0
       wref: 365723.44
       charge: -1.0
-- Name: Cd(Ac)+(aq)
+- Name: Cd(Ac)+
   Formula: CdCH3COO+
   Elements: 1:Cd 2:C 3:H 2:O
   Charge: 1.0
@@ -15030,7 +15030,7 @@
       c2: 1623730.9
       wref: -12552.0
       charge: 0.0
-- Name: Cd(Ac)3-(aq)
+- Name: Cd(Ac)3-
   Formula: Cd(CH3COO)3-
   Elements: 1:Cd 6:C 9:H 6:O
   Charge: -1.0
@@ -15048,7 +15048,7 @@
       c2: 2739624.6
       wref: 479862.96
       charge: -1.0
-- Name: Hg(Ac)+(aq)
+- Name: Hg(Ac)+
   Formula: HgCH3COO+
   Elements: 1:Hg 2:C 3:H 2:O
   Charge: 1.0
@@ -15084,7 +15084,7 @@
       c2: 1836997.8
       wref: -12552.0
       charge: 0.0
-- Name: Hg(Ac)3-(aq)
+- Name: Hg(Ac)3-
   Formula: Hg(CH3COO)3-
   Elements: 1:Hg 6:C 9:H 6:O
   Charge: -1.0
@@ -15102,7 +15102,7 @@
       c2: 3100088.8
       wref: 355974.72
       charge: -1.0
-- Name: Sc(Ac)+2(aq)
+- Name: Sc(Ac)+2
   Formula: ScCH3COO+2
   Elements: 1:Sc 2:C 3:H 2:O
   Charge: 2.0
@@ -15120,7 +15120,7 @@
       c2: 432617.23
       wref: 711823.92
       charge: 2.0
-- Name: Sc(Ac)2+(aq)
+- Name: Sc(Ac)2+
   Formula: Sc(CH3COO)2+
   Elements: 1:Sc 4:C 6:H 4:O
   Charge: 1.0
@@ -15156,7 +15156,7 @@
       c2: 1880540.6
       wref: -12552.0
       charge: 0.0
-- Name: U(Ac)+2(aq)
+- Name: U(Ac)+2
   Formula: UCH3COO+2
   Elements: 1:U 2:C 3:H 2:O
   Charge: 2.0
@@ -15174,7 +15174,7 @@
       c2: 1105722.4
       wref: 578354.32
       charge: 2.0
-- Name: U(Ac)2+(aq)
+- Name: U(Ac)2+
   Formula: U(CH3COO)2+
   Elements: 1:U 4:C 6:H 4:O
   Charge: 1.0
@@ -15210,7 +15210,7 @@
       c2: 4100303.3
       wref: -12552.0
       charge: 0.0
-- Name: Pr(Ac)+2(aq)
+- Name: Pr(Ac)+2
   Formula: PrCH3COO+2
   Elements: 1:Pr 2:C 3:H 2:O
   Charge: 2.0
@@ -15228,7 +15228,7 @@
       c2: 196748.42
       wref: 613834.64
       charge: 2.0
-- Name: Pr(Ac)2+(aq)
+- Name: Pr(Ac)2+
   Formula: Pr(CH3COO)2+
   Elements: 1:Pr 4:C 6:H 4:O
   Charge: 1.0
@@ -15264,7 +15264,7 @@
       c2: 1102701.6
       wref: -12552.0
       charge: 0.0
-- Name: La(Ac)+2(aq)
+- Name: La(Ac)+2
   Formula: LaCH3COO+2
   Elements: 1:La 2:C 3:H 2:O
   Charge: 2.0
@@ -15282,7 +15282,7 @@
       c2: 398099.23
       wref: 630403.28
       charge: 2.0
-- Name: La(Ac)2+(aq)
+- Name: La(Ac)2+
   Formula: La(CH3COO)2+
   Elements: 1:La 4:C 6:H 4:O
   Charge: 1.0
@@ -15318,7 +15318,7 @@
       c2: 1766710.7
       wref: -12552.0
       charge: 0.0
-- Name: Nd(Ac)+2(aq)
+- Name: Nd(Ac)+2
   Formula: NdCH3COO+2
   Elements: 1:Nd 2:C 3:H 2:O
   Charge: 2.0
@@ -15336,7 +15336,7 @@
       c2: 283039.23
       wref: 609776.16
       charge: 2.0
-- Name: Nd(Ac)2+(aq)
+- Name: Nd(Ac)2+
   Formula: Nd(CH3COO)2+
   Elements: 1:Nd 4:C 6:H 4:O
   Charge: 1.0
@@ -15372,7 +15372,7 @@
       c2: 1387276.3
       wref: -12552.0
       charge: 0.0
-- Name: Ce(Ac)+2(aq)
+- Name: Ce(Ac)+2
   Formula: CeCH3COO+2
   Elements: 1:Ce 2:C 3:H 2:O
   Charge: 2.0
@@ -15390,7 +15390,7 @@
       c2: 371250.5
       wref: 601742.88
       charge: 2.0
-- Name: Ce(Ac)2+(aq)
+- Name: Ce(Ac)2+
   Formula: Ce(CH3COO)2+
   Elements: 1:Ce 4:C 6:H 4:O
   Charge: 1.0
@@ -15426,7 +15426,7 @@
       c2: 1678177.3
       wref: -12552.0
       charge: 0.0
-- Name: Gd(Ac)+2(aq)
+- Name: Gd(Ac)+2
   Formula: GdCH3COO+2
   Elements: 1:Gd 2:C 3:H 2:O
   Charge: 2.0
@@ -15444,7 +15444,7 @@
       c2: 423027.5
       wref: 605717.68
       charge: 2.0
-- Name: Gd(Ac)2+(aq)
+- Name: Gd(Ac)2+
   Formula: Gd(CH3COO)2+
   Elements: 1:Gd 4:C 6:H 4:O
   Charge: 1.0
@@ -15480,7 +15480,7 @@
       c2: 1848922.2
       wref: -12552.0
       charge: 0.0
-- Name: Sm(Ac)+2(aq)
+- Name: Sm(Ac)+2
   Formula: SmCH3COO+2
   Elements: 1:Sm 2:C 3:H 2:O
   Charge: 2.0
@@ -15498,7 +15498,7 @@
       c2: 281122.96
       wref: 617934.96
       charge: 2.0
-- Name: Sm(Ac)2+(aq)
+- Name: Sm(Ac)2+
   Formula: Sm(CH3COO)2+
   Elements: 1:Sm 4:C 6:H 4:O
   Charge: 1.0
@@ -15534,7 +15534,7 @@
       c2: 1380954.3
       wref: -12552.0
       charge: 0.0
-- Name: Yb(Ac)+2(aq)
+- Name: Yb(Ac)+2
   Formula: YbCH3COO+2
   Elements: 1:Yb 2:C 3:H 2:O
   Charge: 2.0
@@ -15552,7 +15552,7 @@
       c2: 413437.78
       wref: 674167.92
       charge: 2.0
-- Name: Yb(Ac)2+(aq)
+- Name: Yb(Ac)2+
   Formula: Yb(CH3COO)2+
   Elements: 1:Yb 4:C 6:H 4:O
   Charge: 1.0
@@ -15588,7 +15588,7 @@
       c2: 1817303.7
       wref: -12552.0
       charge: 0.0
-- Name: Eu(Ac)+2(aq)
+- Name: Eu(Ac)+2
   Formula: EuCH3COO+2
   Elements: 1:Eu 2:C 3:H 2:O
   Charge: 2.0
@@ -15606,7 +15606,7 @@
       c2: 409605.23
       wref: 638854.96
       charge: 2.0
-- Name: Eu(Ac)2+(aq)
+- Name: Eu(Ac)2+
   Formula: Eu(CH3COO)2+
   Elements: 1:Eu 4:C 6:H 4:O
   Charge: 1.0
@@ -15642,7 +15642,7 @@
       c2: 1804655.4
       wref: -12552.0
       charge: 0.0
-- Name: Y(Ac)+2(aq)
+- Name: Y(Ac)+2
   Formula: YCH3COO+2
   Elements: 1:Y 2:C 3:H 2:O
   Charge: 2.0
@@ -15660,7 +15660,7 @@
       c2: 426864.23
       wref: 702158.88
       charge: 2.0
-- Name: Y(Ac)2+(aq)
+- Name: Y(Ac)2+
   Formula: Y(CH3COO)2+
   Elements: 1:Y 4:C 6:H 4:O
   Charge: 1.0
@@ -15696,7 +15696,7 @@
       c2: 1861570.4
       wref: -12552.0
       charge: 0.0
-- Name: Lu(Ac)+2(aq)
+- Name: Lu(Ac)+2
   Formula: LuCH3COO+2
   Elements: 1:Lu 2:C 3:H 2:O
   Charge: 2.0
@@ -15714,7 +15714,7 @@
       c2: 497816.5
       wref: 731614.24
       charge: 2.0
-- Name: Lu(Ac)2+(aq)
+- Name: Lu(Ac)2+
   Formula: Lu(CH3COO)2+
   Elements: 1:Lu 4:C 6:H 4:O
   Charge: 1.0
@@ -15750,7 +15750,7 @@
       c2: 2095556.4
       wref: -12552.0
       charge: 0.0
-- Name: Tb(Ac)+2(aq)
+- Name: Tb(Ac)+2
   Formula: TbCH3COO+2
   Elements: 1:Tb 2:C 3:H 2:O
   Charge: 2.0
@@ -15768,7 +15768,7 @@
       c2: 334816.23
       wref: 647474.0
       charge: 2.0
-- Name: Tb(Ac)2+(aq)
+- Name: Tb(Ac)2+
   Formula: Tb(CH3COO)2+
   Elements: 1:Tb 4:C 6:H 4:O
   Charge: 1.0
@@ -15804,7 +15804,7 @@
       c2: 1558021.2
       wref: -12552.0
       charge: 0.0
-- Name: Pb(Ac)3-(aq)
+- Name: Pb(Ac)3-
   Formula: Pb(CH3COO)3-
   Elements: 1:Pb 6:C 9:H 6:O
   Charge: -1.0
@@ -15822,7 +15822,7 @@
       c2: 2157822.7
       wref: 120122.64
       charge: -1.0
-- Name: Fe(Ac)+(aq)
+- Name: Fe(Ac)+
   Formula: FeCH3COO+
   Elements: 1:Fe 2:C 3:H 2:O
   Charge: 1.0
@@ -15858,7 +15858,7 @@
       c2: 1442936.1
       wref: -15899.2
       charge: 0.0
-- Name: Zn(Ac)+(aq)
+- Name: Zn(Ac)+
   Formula: ZnCH3COO+
   Elements: 1:Zn 2:C 3:H 2:O
   Charge: 1.0
@@ -15894,7 +15894,7 @@
       c2: 1520494.9
       wref: -15899.2
       charge: 0.0
-- Name: Zn(Ac)3-(aq)
+- Name: Zn(Ac)3-
   Formula: Zn(CH3COO)3-
   Elements: 1:Zn 6:C 9:H 6:O
   Charge: -1.0
@@ -15912,7 +15912,7 @@
       c2: 2570503.2
       wref: 523543.92
       charge: -1.0
-- Name: Ca(Ac)+(aq)
+- Name: Ca(Ac)+
   Formula: CaCH3COO+
   Elements: 1:Ca 2:C 3:H 2:O
   Charge: 1.0
@@ -15948,7 +15948,7 @@
       c2: 1472947.9
       wref: -12552.0
       charge: 0.0
-- Name: Al(Ac)+2(aq)
+- Name: Al(Ac)+2
   Formula: AlCH3COO+2
   Elements: 1:Al 2:C 3:H 2:O
   Charge: 2.0
@@ -15966,7 +15966,7 @@
       c2: 488226.78
       wref: 841611.6
       charge: 2.0
-- Name: Al(Ac)2+(aq)
+- Name: Al(Ac)2+
   Formula: Al(CH3COO)2+
   Elements: 1:Al 4:C 6:H 4:O
   Charge: 1.0
@@ -16182,7 +16182,7 @@
       c2: 24338.328
       wref: -135645.28
       charge: 0.0
-- Name: UOH+2(aq)
+- Name: UOH+2
   Formula: U(OH)+2
   Elements: 1:U 1:O 1:H
   Charge: 2.0
@@ -16200,7 +16200,7 @@
       c2: -455943.03
       wref: 434131.84
       charge: 2.0
-- Name: UO+(aq)
+- Name: UO+
   Formula: UO+
   Elements: 1:U 1:O
   Charge: 1.0
@@ -16236,7 +16236,7 @@
       c2: -1359360.7
       wref: -12552.0
       charge: 0.0
-- Name: U(OH)+3(aq)
+- Name: U(OH)+3
   Formula: U(OH)+3
   Elements: 1:U 1:O 1:H
   Charge: 3.0
@@ -16254,7 +16254,7 @@
       c2: 20476.496
       wref: 964746.72
       charge: 3.0
-- Name: UO+2(aq)
+- Name: UO+2
   Formula: UO+2
   Elements: 1:U 1:O
   Charge: 2.0
@@ -16272,7 +16272,7 @@
       c2: -320431.64
       wref: 656218.56
       charge: 2.0
-- Name: HUO2+(aq)
+- Name: HUO2+
   Formula: HUO2+
   Elements: 1:U 2:O 1:H
   Charge: 1.0
@@ -16308,7 +16308,7 @@
       c2: 35819.224
       wref: -12552.0
       charge: 0.0
-- Name: HUO3-(aq)
+- Name: HUO3-
   Formula: HUO3-
   Elements: 1:U 3:O 1:H
   Charge: -1.0
@@ -16344,7 +16344,7 @@
       c2: 84399.648
       wref: -12552.0
       charge: 0.0
-- Name: UO3-(aq)
+- Name: UO3-
   Formula: UO3-
   Elements: 1:U 3:O
   Charge: -1.0
@@ -16362,7 +16362,7 @@
       c2: -69860.248
       wref: 804290.32
       charge: -1.0
-- Name: UO2OH+(aq)
+- Name: UO2OH+
   Formula: UO2OH+
   Elements: 1:U 3:O 1:H
   Charge: 1.0
@@ -16398,7 +16398,7 @@
       c2: -133783.4
       wref: -12552.0
       charge: 0.0
-- Name: HUO4-(aq)
+- Name: HUO4-
   Formula: HUO4-
   Elements: 1:U 4:O 1:H
   Charge: -1.0
@@ -16416,7 +16416,7 @@
       c2: 61387.648
       wref: 809143.76
       charge: -1.0
-- Name: UO4-2(aq)
+- Name: UO4-2
   Formula: UO4-2
   Elements: 1:U 4:O
   Charge: -2.0
@@ -16434,7 +16434,7 @@
       c2: -505376.99
       wref: 1515403.0
       charge: -2.0
-- Name: Fr+(aq)
+- Name: Fr+
   Formula: Fr+
   Elements: 1:Fr
   Charge: 1.0
@@ -16452,7 +16452,7 @@
       c2: -182363.82
       wref: 8493.52
       charge: 1.0
-- Name: OCN-(aq)
+- Name: OCN-
   Formula: OCN-
   Elements: 1:O 1:C 1:N
   Charge: -1.0
@@ -16470,7 +16470,7 @@
       c2: -261625.52
       wref: 519736.48
       charge: -1.0
-- Name: SCN-(aq)
+- Name: SCN-
   Formula: SCN-
   Elements: 1:S 1:C 1:N
   Charge: -1.0
@@ -16488,7 +16488,7 @@
       c2: -208781.6
       wref: 463294.32
       charge: -1.0
-- Name: SeCN-(aq)
+- Name: SeCN-
   Formula: SeCN-
   Elements: 1:Se 1:C 1:N
   Charge: -1.0
@@ -16542,7 +16542,7 @@
       c2: 205421.85
       wref: -187234.0
       charge: 0.0
-- Name: HN2O2-(aq)
+- Name: HN2O2-
   Formula: HNO2-
   Elements: 1:H 2:N 2:O
   Charge: -1.0
@@ -16560,7 +16560,7 @@
       c2: -47701.784
       wref: 465762.88
       charge: -1.0
-- Name: N2O2-2(aq)
+- Name: N2O2-2
   Formula: N2O2-2
   Elements: 2:N 2:O
   Charge: -2.0
@@ -16578,7 +16578,7 @@
       c2: -632365.58
       wref: 1303106.8
       charge: -2.0
-- Name: N2H5+(aq)
+- Name: N2H5+
   Formula: N2H5+
   Elements: 2:N 5:H
   Charge: 1.0
@@ -16596,7 +16596,7 @@
       c2: 16217.184
       wref: 2384.88
       charge: 1.0
-- Name: N2H6+2(aq)
+- Name: N2H6+2
   Formula: N2H6+2
   Elements: 2:N 6:H
   Charge: 2.0
@@ -16632,7 +16632,7 @@
       c2: -6790.632
       wref: -91545.92
       charge: 0.0
-- Name: H2PO2-(aq)
+- Name: H2PO2-
   Formula: H2PO2-
   Elements: 2:H 1:P 2:O
   Charge: -1.0
@@ -16668,7 +16668,7 @@
       c2: 86956.072
       wref: -134013.52
       charge: 0.0
-- Name: H2PO3-(aq)
+- Name: H2PO3-
   Formula: H2PO3-
   Elements: 2:H 1:P 3:O
   Charge: -1.0
@@ -16686,7 +16686,7 @@
       c2: -80090.128
       wref: 480783.44
       charge: -1.0
-- Name: HPO3-2(aq)
+- Name: HPO3-2
   Formula: HPO3-2
   Elements: 1:H 1:P 3:O
   Charge: -2.0
@@ -16704,7 +16704,7 @@
       c2: -469578.69
       wref: 1319089.7
       charge: -2.0
-- Name: P2O7-4(aq)
+- Name: P2O7-4
   Formula: P2O7-4
   Elements: 2:P 7:O
   Charge: -4.0
@@ -16722,7 +16722,7 @@
       c2: -1312487.3
       wref: 2889847.0
       charge: -4.0
-- Name: HP2O7-3(aq)
+- Name: HP2O7-3
   Formula: HP2O7-3
   Elements: 1:H 2:P 7:O
   Charge: -3.0
@@ -16758,7 +16758,7 @@
       c2: 374175.12
       wref: -263257.28
       charge: 0.0
-- Name: AsO4-3(aq)
+- Name: AsO4-3
   Formula: AsO4-3
   Elements: 1:As 4:O
   Charge: -3.0
@@ -16794,7 +16794,7 @@
       c2: 92922.456
       wref: -136523.92
       charge: 0.0
-- Name: AsO2-(aq)
+- Name: AsO2-
   Formula: AsO2-
   Elements: 1:As 2:O
   Charge: -1.0
@@ -16848,7 +16848,7 @@
       c2: -369865.6
       wref: 71922.96
       charge: 0.0
-- Name: SbO2-(aq)
+- Name: SbO2-
   Formula: SbO2-
   Elements: 1:Sb 2:O
   Charge: -1.0
@@ -16866,7 +16866,7 @@
       c2: -502820.57
       wref: 790148.4
       charge: -1.0
-- Name: Bi+3(aq)
+- Name: Bi+3
   Formula: Bi+3
   Elements: 1:Bi
   Charge: 3.0
@@ -16884,7 +16884,7 @@
       c2: -120143.56
       wref: 947717.84
       charge: 3.0
-- Name: BiO+(aq)
+- Name: BiO+
   Formula: BiO+
   Elements: 1:Bi 1:O
   Charge: 1.0
@@ -16902,7 +16902,7 @@
       c2: -830946.58
       wref: 110206.56
       charge: 1.0
-- Name: BiOH+2(aq)
+- Name: BiOH+2
   Formula: BiOH+2
   Elements: 1:Bi 1:O 1:H
   Charge: 2.0
@@ -16938,7 +16938,7 @@
       c2: -1392602.6
       wref: -12552.0
       charge: 0.0
-- Name: BiO2-(aq)
+- Name: BiO2-
   Formula: BiO2-
   Elements: 1:Bi 2:O
   Charge: -1.0
@@ -17010,7 +17010,7 @@
       c2: 34965.688
       wref: -110541.28
       charge: 0.0
-- Name: V+2(aq)
+- Name: V+2
   Formula: V+2
   Elements: 1:V
   Charge: 2.0
@@ -17028,7 +17028,7 @@
       c2: -219860.83
       wref: 638854.96
       charge: 2.0
-- Name: V+3(aq)
+- Name: V+3
   Formula: V+3
   Elements: 1:V
   Charge: 3.0
@@ -17046,7 +17046,7 @@
       c2: -198555.9
       wref: 1008971.6
       charge: 3.0
-- Name: VO4-3(aq)
+- Name: VO4-3
   Formula: VO4-3
   Elements: 1:V 4:O
   Charge: -3.0
@@ -17064,7 +17064,7 @@
       c2: 196899.04
       wref: 2235260.2
       charge: -3.0
-- Name: Cr+2(aq)
+- Name: Cr+2
   Formula: Cr+2
   Elements: 1:Cr
   Charge: 2.0
@@ -17082,7 +17082,7 @@
       c2: -189179.56
       wref: 597768.08
       charge: 2.0
-- Name: Cr+3(aq)
+- Name: Cr+3
   Formula: Cr+3
   Elements: 1:Cr
   Charge: 3.0
@@ -17100,7 +17100,7 @@
       c2: -322134.53
       wref: 1146541.5
       charge: 3.0
-- Name: CrOH+2(aq)
+- Name: CrOH+2
   Formula: CrOH+2
   Elements: 1:Cr 1:O 1:H
   Charge: 2.0
@@ -17118,7 +17118,7 @@
       c2: 4284.416
       wref: 736676.88
       charge: 2.0
-- Name: CrO+(aq)
+- Name: CrO+
   Formula: CrO+
   Elements: 1:Cr 1:O
   Charge: 1.0
@@ -17154,7 +17154,7 @@
       c2: -448273.76
       wref: -12552.0
       charge: 0.0
-- Name: CrO2-(aq)
+- Name: CrO2-
   Formula: CrO2-
   Elements: 1:Cr 2:O
   Charge: -1.0
@@ -17172,7 +17172,7 @@
       c2: -303386.02
       wref: 725129.04
       charge: -1.0
-- Name: Zr+4(aq)
+- Name: Zr+4
   Formula: Zr+4
   Elements: 1:Zr
   Charge: 4.0
@@ -17190,7 +17190,7 @@
       c2: -153385.44
       wref: 1607367.3
       charge: 4.0
-- Name: ZrOH+3(aq)
+- Name: ZrOH+3
   Formula: Zr(OH)+3
   Elements: 1:Zr 1:O 1:H
   Charge: 3.0
@@ -17208,7 +17208,7 @@
       c2: 251445.85
       wref: 1115203.4
       charge: 3.0
-- Name: ZrO+2(aq)
+- Name: ZrO+2
   Formula: ZrO+2
   Elements: 1:Zr 1:O
   Charge: 2.0
@@ -17226,7 +17226,7 @@
       c2: -126109.94
       wref: 778684.24
       charge: 2.0
-- Name: HZrO2+(aq)
+- Name: HZrO2+
   Formula: HZrO2+
   Elements: 1:Zr 2:O 1:H
   Charge: 1.0
@@ -17262,7 +17262,7 @@
       c2: 346050.27
       wref: -12552.0
       charge: 0.0
-- Name: HZrO3-(aq)
+- Name: HZrO3-
   Formula: HZrO3-
   Elements: 1:Zr 3:O 1:H
   Charge: -1.0
@@ -17298,7 +17298,7 @@
       c2: 140649.34
       wref: -197066.4
       charge: 0.0
-- Name: NbO3-(aq)
+- Name: NbO3-
   Formula: NbO3-
   Elements: 1:Nb 3:O
   Charge: -1.0
@@ -17316,7 +17316,7 @@
       c2: -477252.14
       wref: 662285.36
       charge: -1.0
-- Name: TcO4-(aq)
+- Name: TcO4-
   Formula: TcO4-
   Elements: 1:Tc 4:O
   Charge: -1.0
@@ -17334,7 +17334,7 @@
       c2: -248948.0
       wref: 380785.84
       charge: -1.0
-- Name: Pm+2(aq)
+- Name: Pm+2
   Formula: Pm+2
   Elements: 1:Pm
   Charge: 2.0
@@ -17352,7 +17352,7 @@
       c2: -224977.86
       wref: 454298.72
       charge: 2.0
-- Name: Pm+3(aq)
+- Name: Pm+3
   Formula: Pm+3
   Elements: 1:Pm
   Charge: 3.0
@@ -17370,7 +17370,7 @@
       c2: -507079.88
       wref: 977758.96
       charge: 3.0
-- Name: Pm+4(aq)
+- Name: Pm+4
   Formula: Pm+4
   Elements: 1:Pm
   Charge: 4.0
@@ -17388,7 +17388,7 @@
       c2: -125260.59
       wref: 1541176.4
       charge: 4.0
-- Name: Hf+4(aq)
+- Name: Hf+4
   Formula: Hf+4
   Elements: 1:Hf
   Charge: 4.0
@@ -17406,7 +17406,7 @@
       c2: -155941.86
       wref: 1613015.7
       charge: 4.0
-- Name: HfOH+3(aq)
+- Name: HfOH+3
   Formula: HfOH+3
   Elements: 1:Hf 1:O 1:H
   Charge: 3.0
@@ -17424,7 +17424,7 @@
       c2: 263378.62
       wref: 1120349.7
       charge: 3.0
-- Name: HfO+2(aq)
+- Name: HfO+2
   Formula: HfO+2
   Elements: 1:Hf 1:O
   Charge: 2.0
@@ -17442,7 +17442,7 @@
       c2: -195999.48
       wref: 736676.88
       charge: 2.0
-- Name: HHfO2+(aq)
+- Name: HHfO2+
   Formula: HHfO2+
   Elements: 1:H 1:Hf 2:O
   Charge: 1.0
@@ -17478,7 +17478,7 @@
       c2: 370765.16
       wref: -12552.0
       charge: 0.0
-- Name: HHfO3-(aq)
+- Name: HHfO3-
   Formula: HHfO3-
   Elements: 1:H 1:Hf 3:O
   Charge: -1.0
@@ -17496,7 +17496,7 @@
       c2: 334966.86
       wref: 899811.04
       charge: -1.0
-- Name: La+2(aq)
+- Name: La+2
   Formula: La+2
   Elements: 1:La
   Charge: 2.0
@@ -17514,7 +17514,7 @@
       c2: -229237.18
       wref: 436976.96
       charge: 2.0
-- Name: LaCO3+(aq)
+- Name: LaCO3+
   Formula: LaCO3+
   Elements: 1:La 1:C 3:O
   Charge: 1.0
@@ -17532,7 +17532,7 @@
       c2: -673276.73
       wref: 513586.0
       charge: 1.0
-- Name: LaHCO3+2(aq)
+- Name: LaHCO3+2
   Formula: LaHCO3+2
   Elements: 1:La 1:H 1:C 3:O
   Charge: 2.0
@@ -17550,7 +17550,7 @@
       c2: 166201.03
       wref: 531075.12
       charge: 2.0
-- Name: LaOH+2(aq)
+- Name: LaOH+2
   Formula: LaOH+2
   Elements: 1:La 1:O 1:H
   Charge: 2.0
@@ -17568,7 +17568,7 @@
       c2: -379237.76
       wref: 484758.24
       charge: 2.0
-- Name: LaO+(aq)
+- Name: LaO+
   Formula: LaO+
   Elements: 1:La 1:O
   Charge: 1.0
@@ -17604,7 +17604,7 @@
       c2: -1185494.6
       wref: -12552.0
       charge: 0.0
-- Name: LaO2-(aq)
+- Name: LaO2-
   Formula: LaO2-
   Elements: 1:La 2:O
   Charge: -1.0
@@ -17622,7 +17622,7 @@
       c2: -1013335.5
       wref: 467436.48
       charge: -1.0
-- Name: LaCl+2(aq)
+- Name: LaCl+2
   Formula: LaCl+2
   Elements: 1:La 1:Cl
   Charge: 2.0
@@ -17640,7 +17640,7 @@
       c2: -165661.3
       wref: 605717.68
       charge: 2.0
-- Name: LaCl2+(aq)
+- Name: LaCl2+
   Formula: LaCl2+
   Elements: 1:La 2:Cl
   Charge: 1.0
@@ -17676,7 +17676,7 @@
       c2: -580684.81
       wref: -12552.0
       charge: 0.0
-- Name: LaCl4-(aq)
+- Name: LaCl4-
   Formula: LaCl4-
   Elements: 1:La 4:Cl
   Charge: -1.0
@@ -17694,7 +17694,7 @@
       c2: -1274061.5
       wref: 732451.04
       charge: -1.0
-- Name: LaNO3+2(aq)
+- Name: LaNO3+2
   Formula: LaNO3+2
   Elements: 1:La 1:N 3:O
   Charge: 2.0
@@ -17712,7 +17712,7 @@
       c2: 40605.72
       wref: 683330.88
       charge: 2.0
-- Name: LaF+2(aq)
+- Name: LaF+2
   Formula: LaF+2
   Elements: 1:La 1:F
   Charge: 2.0
@@ -17730,7 +17730,7 @@
       c2: -130703.98
       wref: 545133.36
       charge: 2.0
-- Name: LaF2+(aq)
+- Name: LaF2+
   Formula: LaF2+
   Elements: 1:La 2:F
   Charge: 1.0
@@ -17766,7 +17766,7 @@
       c2: -435127.63
       wref: -12552.0
       charge: 0.0
-- Name: LaF4-(aq)
+- Name: LaF4-
   Formula: LaF4-
   Elements: 1:La 4:F
   Charge: -1.0
@@ -17784,7 +17784,7 @@
       c2: -1052857.6
       wref: 997214.56
       charge: -1.0
-- Name: LaH2PO4+2(aq)
+- Name: LaH2PO4+2
   Formula: LaH2PO4+2
   Elements: 1:La 2:H 1:P 4:O
   Charge: 2.0
@@ -17802,7 +17802,7 @@
       c2: 189296.71
       wref: 634629.12
       charge: 2.0
-- Name: LaSO4+(aq)
+- Name: LaSO4+
   Formula: LaSO4+
   Elements: 1:La 1:S 4:O
   Charge: 1.0
@@ -17820,7 +17820,7 @@
       c2: -629813.34
       wref: 330326.8
       charge: 1.0
-- Name: CeCO3+(aq)
+- Name: CeCO3+
   Formula: CeCO3+
   Elements: 1:Ce 1:C 3:O
   Charge: 1.0
@@ -17838,7 +17838,7 @@
       c2: -685209.5
       wref: 490741.36
       charge: 1.0
-- Name: CeHCO3+2(aq)
+- Name: CeHCO3+2
   Formula: CeHCO3+2
   Elements: 1:Ce 1:H 1:C 3:O
   Charge: 2.0
@@ -17856,7 +17856,7 @@
       c2: 139356.49
       wref: 504088.32
       charge: 2.0
-- Name: CeOH+2(aq)
+- Name: CeOH+2
   Formula: CeOH+2
   Elements: 1:Ce 1:O 1:H
   Charge: 2.0
@@ -17874,7 +17874,7 @@
       c2: -417592.49
       wref: 460240.0
       charge: 2.0
-- Name: CeO+(aq)
+- Name: CeO+
   Formula: CeO+
   Elements: 1:Ce 1:O
   Charge: 1.0
@@ -17910,7 +17910,7 @@
       c2: -1274132.6
       wref: -12552.0
       charge: 0.0
-- Name: CeO2-(aq)
+- Name: CeO2-
   Formula: CeO2-
   Elements: 1:Ce 2:O
   Charge: -1.0
@@ -17928,7 +17928,7 @@
       c2: -1099417.1
       wref: 437186.16
       charge: -1.0
-- Name: CeCl+2(aq)
+- Name: CeCl+2
   Formula: CeCl+2
   Elements: 1:Ce 1:Cl
   Charge: 2.0
@@ -17946,7 +17946,7 @@
       c2: -192510.02
       wref: 582161.76
       charge: 2.0
-- Name: CeCl2+(aq)
+- Name: CeCl2+
   Formula: CeCl2+
   Elements: 1:Ce 2:Cl
   Charge: 1.0
@@ -17982,7 +17982,7 @@
       c2: -669222.43
       wref: -12552.0
       charge: 0.0
-- Name: CeCl4-(aq)
+- Name: CeCl4-
   Formula: CeCl4-
   Elements: 1:Ce 4:Cl
   Charge: -1.0
@@ -18000,7 +18000,7 @@
       c2: -1409367.8
       wref: 679397.92
       charge: -1.0
-- Name: CeH2PO4+2(aq)
+- Name: CeH2PO4+2
   Formula: CeH2PO4+2
   Elements: 1:Ce 2:H 1:P 4:O
   Charge: 2.0
@@ -18018,7 +18018,7 @@
       c2: 162447.98
       wref: 605717.68
       charge: 2.0
-- Name: CeNO3+2(aq)
+- Name: CeNO3+2
   Formula: CeNO3+2
   Elements: 1:Ce 1:N 3:O
   Charge: 2.0
@@ -18036,7 +18036,7 @@
       c2: 13756.992
       wref: 647474.0
       charge: 2.0
-- Name: CeF+2(aq)
+- Name: CeF+2
   Formula: CeF+2
   Elements: 1:Ce 1:F
   Charge: 2.0
@@ -18054,7 +18054,7 @@
       c2: -157552.7
       wref: 534547.84
       charge: 2.0
-- Name: CeF2+(aq)
+- Name: CeF2+
   Formula: CeF2+
   Elements: 1:Ce 2:F
   Charge: 1.0
@@ -18090,7 +18090,7 @@
       c2: -523661.07
       wref: -12552.0
       charge: 0.0
-- Name: CeF4-(aq)
+- Name: CeF4-
   Formula: CeF4-
   Elements: 1:Ce 4:F
   Charge: -1.0
@@ -18108,7 +18108,7 @@
       c2: -1188164.0
       wref: 972319.76
       charge: -1.0
-- Name: CeBr+2(aq)
+- Name: CeBr+2
   Formula: CeBr+2
   Elements: 1:Ce 1:Br
   Charge: 2.0
@@ -18126,7 +18126,7 @@
       c2: -208011.74
       wref: 601742.88
       charge: 2.0
-- Name: CeIO3+2(aq)
+- Name: CeIO3+2
   Formula: CeIO3+2
   Elements: 1:Ce 1:I 3:O
   Charge: 2.0
@@ -18144,7 +18144,7 @@
       c2: 16920.096
       wref: 626219.28
       charge: 2.0
-- Name: CeClO4+2(aq)
+- Name: CeClO4+2
   Formula: CeClO4+2
   Elements: 1:Ce 1:Cl 4:O
   Charge: 2.0
@@ -18162,7 +18162,7 @@
       c2: 186175.45
       wref: 669649.2
       charge: 2.0
-- Name: CeSO4+(aq)
+- Name: CeSO4+
   Formula: CeSO4+
   Elements: 1:Ce 1:S 4:O
   Charge: 1.0
@@ -18180,7 +18180,7 @@
       c2: -641741.92
       wref: 308946.56
       charge: 1.0
-- Name: PrCO3+(aq)
+- Name: PrCO3+
   Formula: PrCO3+
   Elements: 1:Pr 1:C 3:O
   Charge: 1.0
@@ -18198,7 +18198,7 @@
       c2: -701401.58
       wref: 498188.88
       charge: 1.0
-- Name: PrHCO3+2(aq)
+- Name: PrHCO3+2
   Formula: PrHCO3+2
   Elements: 1:Pr 1:H 1:C 3:O
   Charge: 2.0
@@ -18216,7 +18216,7 @@
       c2: 102918.03
       wref: 622035.28
       charge: 2.0
-- Name: PrCl+2(aq)
+- Name: PrCl+2
   Formula: PrCl+2
   Elements: 1:Pr 1:Cl
   Charge: 2.0
@@ -18234,7 +18234,7 @@
       c2: -228944.3
       wref: 589902.16
       charge: 2.0
-- Name: PrCl2+(aq)
+- Name: PrCl2+
   Formula: PrCl2+
   Elements: 1:Pr 2:Cl
   Charge: 1.0
@@ -18270,7 +18270,7 @@
       c2: -789374.36
       wref: -12552.0
       charge: 0.0
-- Name: PrCl4-(aq)
+- Name: PrCl4-
   Formula: PrCl4-
   Elements: 1:Pr 4:Cl
   Charge: -1.0
@@ -18288,7 +18288,7 @@
       c2: -1592999.4
       wref: 697933.04
       charge: -1.0
-- Name: PrH2PO4+2(aq)
+- Name: PrH2PO4+2
   Formula: PrH2PO4+2
   Elements: 1:Pr 2:H 1:P 4:O
   Charge: 2.0
@@ -18306,7 +18306,7 @@
       c2: 126013.71
       wref: 613834.64
       charge: 2.0
-- Name: PrNO3+2(aq)
+- Name: PrNO3+2
   Formula: PrNO3+2
   Elements: 1:Pr 1:N 3:O
   Charge: 2.0
@@ -18324,7 +18324,7 @@
       c2: -22673.096
       wref: 656218.56
       charge: 2.0
-- Name: PrF+2(aq)
+- Name: PrF+2
   Formula: PrF+2
   Elements: 1:Pr 1:F
   Charge: 2.0
@@ -18342,7 +18342,7 @@
       c2: -193986.98
       wref: 538062.4
       charge: 2.0
-- Name: PrF2+(aq)
+- Name: PrF2+
   Formula: PrF2+
   Elements: 1:Pr 2:F
   Charge: 1.0
@@ -18378,7 +18378,7 @@
       c2: -643817.18
       wref: -12552.0
       charge: 0.0
-- Name: PrF4-(aq)
+- Name: PrF4-
   Formula: PrF4-
   Elements: 1:Pr 4:F
   Charge: -1.0
@@ -18396,7 +18396,7 @@
       c2: -1371795.5
       wref: 980436.72
       charge: -1.0
-- Name: PrOH+2(aq)
+- Name: PrOH+2
   Formula: PrOH+2
   Elements: 1:Pr 1:O 1:H
   Charge: 2.0
@@ -18414,7 +18414,7 @@
       c2: -404806.18
       wref: 469277.44
       charge: 2.0
-- Name: PrO+(aq)
+- Name: PrO+
   Formula: PrO+
   Elements: 1:Pr 1:O
   Charge: 1.0
@@ -18450,7 +18450,7 @@
       c2: -1245154.2
       wref: -12552.0
       charge: 0.0
-- Name: PrO2-(aq)
+- Name: PrO2-
   Formula: PrO2-
   Elements: 1:Pr 2:O
   Charge: -1.0
@@ -18468,7 +18468,7 @@
       c2: -1070438.7
       wref: 447311.44
       charge: -1.0
-- Name: PrSO4+(aq)
+- Name: PrSO4+
   Formula: PrSO4+
   Elements: 1:Pr 1:S 4:O
   Charge: 1.0
@@ -18486,7 +18486,7 @@
       c2: -657938.18
       wref: 313088.72
       charge: 1.0
-- Name: NdCO3+(aq)
+- Name: NdCO3+
   Formula: NdCO3+
   Elements: 1:Nd 1:C 3:O
   Charge: 1.0
@@ -18504,7 +18504,7 @@
       c2: -724413.58
       wref: 490741.36
       charge: 1.0
-- Name: NdHCO3+2(aq)
+- Name: NdHCO3+2
   Formula: NdHCO3+2
   Elements: 1:Nd 1:H 1:C 3:O
   Charge: 2.0
@@ -18522,7 +18522,7 @@
       c2: 51145.216
       wref: 507351.84
       charge: 2.0
-- Name: NdOH+2(aq)
+- Name: NdOH+2
   Formula: NdOH+2
   Elements: 1:Nd 1:O 1:H
   Charge: 2.0
@@ -18540,7 +18540,7 @@
       c2: -411626.1
       wref: 463252.48
       charge: 2.0
-- Name: NdO+(aq)
+- Name: NdO+
   Formula: NdO+
   Elements: 1:Nd 1:O
   Charge: 1.0
@@ -18576,7 +18576,7 @@
       c2: -1259643.4
       wref: -12552.0
       charge: 0.0
-- Name: NdO2-(aq)
+- Name: NdO2-
   Formula: NdO2-
   Elements: 1:Nd 2:O
   Charge: -1.0
@@ -18594,7 +18594,7 @@
       c2: -1084927.9
       wref: 441788.56
       charge: -1.0
-- Name: NdCl+2(aq)
+- Name: NdCl+2
   Formula: NdCl+2
   Elements: 1:Nd 1:Cl
   Charge: 2.0
@@ -18612,7 +18612,7 @@
       c2: -280721.3
       wref: 586011.04
       charge: 2.0
-- Name: NdCl2+(aq)
+- Name: NdCl2+
   Formula: NdCl2+
   Elements: 1:Nd 2:Cl
   Charge: 1.0
@@ -18648,7 +18648,7 @@
       c2: -960123.4
       wref: -12552.0
       charge: 0.0
-- Name: NdCl4-(aq)
+- Name: NdCl4-
   Formula: NdCl4-
   Elements: 1:Nd 4:Cl
   Charge: -1.0
@@ -18666,7 +18666,7 @@
       c2: -1853951.3
       wref: 688477.2
       charge: -1.0
-- Name: NdH2PO4+2(aq)
+- Name: NdH2PO4+2
   Formula: NdH2PO4+2
   Elements: 1:Nd 2:H 1:P 4:O
   Charge: 2.0
@@ -18684,7 +18684,7 @@
       c2: 74236.712
       wref: 609776.16
       charge: 2.0
-- Name: NdNO3+2(aq)
+- Name: NdNO3+2
   Formula: NdNO3+2
   Elements: 1:Nd 1:N 3:O
   Charge: 2.0
@@ -18702,7 +18702,7 @@
       c2: -74450.096
       wref: 651825.36
       charge: 2.0
-- Name: NdF+2(aq)
+- Name: NdF+2
   Formula: NdF+2
   Elements: 1:Nd 1:F
   Charge: 2.0
@@ -18720,7 +18720,7 @@
       c2: -245759.79
       wref: 534547.84
       charge: 2.0
-- Name: NdF2+(aq)
+- Name: NdF2+
   Formula: NdF2+
   Elements: 1:Nd 2:F
   Charge: 1.0
@@ -18756,7 +18756,7 @@
       c2: -814562.04
       wref: -12552.0
       charge: 0.0
-- Name: NdF4-(aq)
+- Name: NdF4-
   Formula: NdF4-
   Elements: 1:Nd 4:F
   Charge: -1.0
@@ -18774,7 +18774,7 @@
       c2: -1632747.4
       wref: 980436.72
       charge: -1.0
-- Name: NdSO4+(aq)
+- Name: NdSO4+
   Formula: NdSO4+
   Elements: 1:Nd 1:S 4:O
   Charge: 1.0
@@ -18792,7 +18792,7 @@
       c2: -680950.18
       wref: 313130.56
       charge: 1.0
-- Name: SmCO3+(aq)
+- Name: SmCO3+
   Formula: SmCO3+
   Elements: 1:Sm 1:C 3:O
   Charge: 1.0
@@ -18810,7 +18810,7 @@
       c2: -725262.93
       wref: 498188.88
       charge: 1.0
-- Name: SmOH+2(aq)
+- Name: SmOH+2
   Formula: SmOH+2
   Elements: 1:Sm 1:O 1:H
   Charge: 2.0
@@ -18828,7 +18828,7 @@
       c2: -396283.38
       wref: 472331.76
       charge: 2.0
-- Name: SmO+(aq)
+- Name: SmO+
   Formula: SmO+
   Elements: 1:Sm 1:O
   Charge: 1.0
@@ -18864,7 +18864,7 @@
       c2: -1223849.3
       wref: -125520.0
       charge: 0.0
-- Name: SmO2-(aq)
+- Name: SmO2-
   Formula: SmO2-
   Elements: 1:Sm 2:O
   Charge: -1.0
@@ -18882,7 +18882,7 @@
       c2: -1050836.7
       wref: 453880.32
       charge: -1.0
-- Name: SmHCO3+2(aq)
+- Name: SmHCO3+2
   Formula: SmHCO3+2
   Elements: 1:Sm 1:H 1:C 3:O
   Charge: 2.0
@@ -18900,7 +18900,7 @@
       c2: 49224.76
       wref: 517393.44
       charge: 2.0
-- Name: SmCl+2(aq)
+- Name: SmCl+2
   Formula: SmCl+2
   Elements: 1:Sm 1:Cl
   Charge: 2.0
@@ -18918,7 +18918,7 @@
       c2: -282637.57
       wref: 593793.28
       charge: 2.0
-- Name: SmCl2+(aq)
+- Name: SmCl2+
   Formula: SmCl2+
   Elements: 1:Sm 2:Cl
   Charge: 1.0
@@ -18954,7 +18954,7 @@
       c2: -966445.42
       wref: -12552.0
       charge: 0.0
-- Name: SmCl4-(aq)
+- Name: SmCl4-
   Formula: SmCl4-
   Elements: 1:Sm 4:Cl
   Charge: -1.0
@@ -18972,7 +18972,7 @@
       c2: -1863616.4
       wref: 707807.28
       charge: -1.0
-- Name: SmH2PO4+2(aq)
+- Name: SmH2PO4+2
   Formula: SmH2PO4+2
   Elements: 1:Sm 2:H 1:P 4:O
   Charge: 2.0
@@ -18990,7 +18990,7 @@
       c2: 72320.44
       wref: 622035.28
       charge: 2.0
-- Name: SmNO3+2(aq)
+- Name: SmNO3+2
   Formula: SmNO3+2
   Elements: 1:Sm 1:N 3:O
   Charge: 2.0
@@ -19008,7 +19008,7 @@
       c2: -76366.368
       wref: 665130.48
       charge: 2.0
-- Name: SmF+2(aq)
+- Name: SmF+2
   Formula: SmF+2
   Elements: 1:Sm 1:F
   Charge: 2.0
@@ -19026,7 +19026,7 @@
       c2: -247680.25
       wref: 541576.96
       charge: 2.0
-- Name: SmF2+(aq)
+- Name: SmF2+
   Formula: SmF2+
   Elements: 1:Sm 2:F
   Charge: 1.0
@@ -19062,7 +19062,7 @@
       c2: -820884.06
       wref: -12552.0
       charge: 0.0
-- Name: SmF4-(aq)
+- Name: SmF4-
   Formula: SmF4-
   Elements: 1:Sm 4:F
   Charge: -1.0
@@ -19080,7 +19080,7 @@
       c2: -1642412.5
       wref: 988762.88
       charge: -1.0
-- Name: SmSO4+(aq)
+- Name: SmSO4+
   Formula: SmSO4+
   Elements: 1:Sm 1:S 4:O
   Charge: 1.0
@@ -19098,7 +19098,7 @@
       c2: -681799.54
       wref: 313088.72
       charge: 1.0
-- Name: EuCO3+(aq)
+- Name: EuCO3+
   Formula: EuCO3+
   Elements: 1:Eu 1:C 3:O
   Charge: 1.0
@@ -19116,7 +19116,7 @@
       c2: -668163.88
       wref: 521535.6
       charge: 1.0
-- Name: EuOH+2(aq)
+- Name: EuOH+2
   Formula: EuOH+2
   Elements: 1:Eu 1:O 1:H
   Charge: 2.0
@@ -19134,7 +19134,7 @@
       c2: -366455.64
       wref: 494339.6
       charge: 2.0
-- Name: EuO+(aq)
+- Name: EuO+
   Formula: EuO+
   Elements: 1:Eu 1:O
   Charge: 1.0
@@ -19170,7 +19170,7 @@
       c2: -1156520.4
       wref: -125520.0
       charge: 0.0
-- Name: EuO2-(aq)
+- Name: EuO2-
   Formula: EuO2-
   Elements: 1:Eu 2:O
   Charge: -1.0
@@ -19188,7 +19188,7 @@
       c2: -985210.66
       wref: 477980.16
       charge: -1.0
-- Name: EuHCO3+2(aq)
+- Name: EuHCO3+2
   Formula: EuHCO3+2
   Elements: 1:Eu 1:H 1:C 3:O
   Charge: 2.0
@@ -19206,7 +19206,7 @@
       c2: 177707.03
       wref: 538062.4
       charge: 2.0
-- Name: EuCl+2(aq)
+- Name: EuCl+2
   Formula: EuCl+2
   Elements: 1:Eu 1:Cl
   Charge: 2.0
@@ -19224,7 +19224,7 @@
       c2: -154155.3
       wref: 613834.64
       charge: 2.0
-- Name: EuCl2+(aq)
+- Name: EuCl2+
   Formula: EuCl2+
   Elements: 1:Eu 2:Cl
   Charge: 1.0
@@ -19260,7 +19260,7 @@
       c2: -542744.3
       wref: -12552.0
       charge: 0.0
-- Name: EuCl4-(aq)
+- Name: EuCl4-
   Formula: EuCl4-
   Elements: 1:Eu 4:Cl
   Charge: -1.0
@@ -19278,7 +19278,7 @@
       c2: -1216071.2
       wref: 747680.8
       charge: -1.0
-- Name: EuF+(aq)
+- Name: EuF+
   Formula: EuF+
   Elements: 1:Eu 1:F
   Charge: 1.0
@@ -19314,7 +19314,7 @@
       c2: 716422.14
       wref: -12552.0
       charge: 0.0
-- Name: EuF3-(aq)
+- Name: EuF3-
   Formula: EuF3-
   Elements: 1:Eu 3:F
   Charge: -1.0
@@ -19332,7 +19332,7 @@
       c2: 1138554.3
       wref: 809143.76
       charge: -1.0
-- Name: EuF4-2(aq)
+- Name: EuF4-2
   Formula: EuF4-2
   Elements: 1:Eu 4:F
   Charge: -2.0
@@ -19350,7 +19350,7 @@
       c2: 1578029.1
       wref: 1713808.2
       charge: -2.0
-- Name: EuCl+(aq)
+- Name: EuCl+
   Formula: EuCl+
   Elements: 1:Eu 1:Cl
   Charge: 1.0
@@ -19386,7 +19386,7 @@
       c2: 632942.97
       wref: -12552.0
       charge: 0.0
-- Name: EuCl3-(aq)
+- Name: EuCl3-
   Formula: EuCl3-
   Elements: 1:Eu 3:Cl
   Charge: -1.0
@@ -19404,7 +19404,7 @@
       c2: 992992.9
       wref: 398609.68
       charge: -1.0
-- Name: EuCl4-2(aq)
+- Name: EuCl4-2
   Formula: EuCl4-2
   Elements: 1:Eu 4:Cl
   Charge: -2.0
@@ -19422,7 +19422,7 @@
       c2: 1356825.2
       wref: 1035749.2
       charge: -2.0
-- Name: EuH2PO4+2(aq)
+- Name: EuH2PO4+2
   Formula: EuH2PO4+2
   Elements: 1:Eu 2:H 1:P 4:O
   Charge: 2.0
@@ -19440,7 +19440,7 @@
       c2: 200802.71
       wref: 643164.48
       charge: 2.0
-- Name: EuNO3+2(aq)
+- Name: EuNO3+2
   Formula: EuNO3+2
   Elements: 1:Eu 1:N 3:O
   Charge: 2.0
@@ -19458,7 +19458,7 @@
       c2: 52111.72
       wref: 692703.04
       charge: 2.0
-- Name: EuF+2(aq)
+- Name: EuF+2
   Formula: EuF+2
   Elements: 1:Eu 1:F
   Charge: 2.0
@@ -19476,7 +19476,7 @@
       c2: -119197.98
       wref: 548731.6
       charge: 2.0
-- Name: EuF2+(aq)
+- Name: EuF2+
   Formula: EuF2+
   Elements: 1:Eu 2:F
   Charge: 1.0
@@ -19512,7 +19512,7 @@
       c2: -397182.94
       wref: -12552.0
       charge: 0.0
-- Name: EuF4-(aq)
+- Name: EuF4-
   Formula: EuF4-
   Elements: 1:Eu 4:F
   Charge: -1.0
@@ -19530,7 +19530,7 @@
       c2: -994867.34
       wref: 1005917.3
       charge: -1.0
-- Name: EuSO4+(aq)
+- Name: EuSO4+
   Formula: EuSO4+
   Elements: 1:Eu 1:S 4:O
   Charge: 1.0
@@ -19548,7 +19548,7 @@
       c2: -624696.3
       wref: 325933.6
       charge: 1.0
-- Name: GdCO3+(aq)
+- Name: GdCO3+
   Formula: GdCO3+
   Elements: 1:Gd 1:C 3:O
   Charge: 1.0
@@ -19566,7 +19566,7 @@
       c2: -662197.5
       wref: 490741.36
       charge: 1.0
-- Name: GdOH+2(aq)
+- Name: GdOH+2
   Formula: GdOH+2
   Elements: 1:Gd 1:O 1:H
   Charge: 2.0
@@ -19584,7 +19584,7 @@
       c2: -415036.06
       wref: 460240.0
       charge: 2.0
-- Name: GdO+(aq)
+- Name: GdO+
   Formula: GdO+
   Elements: 1:Gd 1:O
   Charge: 1.0
@@ -19620,7 +19620,7 @@
       c2: -1268166.2
       wref: -12552.0
       charge: 0.0
-- Name: GdO2-(aq)
+- Name: GdO2-
   Formula: GdO2-
   Elements: 1:Gd 2:O
   Charge: -1.0
@@ -19638,7 +19638,7 @@
       c2: -1093450.7
       wref: 439110.8
       charge: -1.0
-- Name: GdHCO3+2(aq)
+- Name: GdHCO3+2
   Formula: GdHCO3+2
   Elements: 1:Gd 1:H 1:C 3:O
   Charge: 2.0
@@ -19656,7 +19656,7 @@
       c2: 191129.3
       wref: 504088.32
       charge: 2.0
-- Name: GdCl+2(aq)
+- Name: GdCl+2
   Formula: GdCl+2
   Elements: 1:Gd 1:Cl
   Charge: 2.0
@@ -19674,7 +19674,7 @@
       c2: -140733.02
       wref: 586011.04
       charge: 2.0
-- Name: GdCl2+(aq)
+- Name: GdCl2+
   Formula: GdCl2+
   Elements: 1:Gd 2:Cl
   Charge: 1.0
@@ -19710,7 +19710,7 @@
       c2: -498473.39
       wref: -12552.0
       charge: 0.0
-- Name: GdCl4-(aq)
+- Name: GdCl4-
   Formula: GdCl4-
   Elements: 1:Gd 4:Cl
   Charge: -1.0
@@ -19728,7 +19728,7 @@
       c2: -1148416.0
       wref: 682410.4
       charge: -1.0
-- Name: GdH2PO4+2(aq)
+- Name: GdH2PO4+2
   Formula: GdH2PO4+2
   Elements: 1:Gd 2:H 1:P 4:O
   Charge: 2.0
@@ -19746,7 +19746,7 @@
       c2: 214224.98
       wref: 609776.16
       charge: 2.0
-- Name: GdNO3+2(aq)
+- Name: GdNO3+2
   Formula: GdNO3+2
   Elements: 1:Gd 1:N 3:O
   Charge: 2.0
@@ -19764,7 +19764,7 @@
       c2: 65533.992
       wref: 647474.0
       charge: 2.0
-- Name: GdF+2(aq)
+- Name: GdF+2
   Formula: GdF+2
   Elements: 1:Gd 1:F
   Charge: 2.0
@@ -19782,7 +19782,7 @@
       c2: -105775.7
       wref: 534547.84
       charge: 2.0
-- Name: GdF2+(aq)
+- Name: GdF2+
   Formula: GdF2+
   Elements: 1:Gd 2:F
   Charge: 1.0
@@ -19818,7 +19818,7 @@
       c2: -352916.22
       wref: -12552.0
       charge: 0.0
-- Name: GdF4-(aq)
+- Name: GdF4-
   Formula: GdF4-
   Elements: 1:Gd 4:F
   Charge: -1.0
@@ -19836,7 +19836,7 @@
       c2: -927212.06
       wref: 972319.76
       charge: -1.0
-- Name: GdSO4+(aq)
+- Name: GdSO4+
   Formula: GdSO4+
   Elements: 1:Gd 1:S 4:O
   Charge: 1.0
@@ -19854,7 +19854,7 @@
       c2: -618729.92
       wref: 304888.08
       charge: 1.0
-- Name: TbCO3+(aq)
+- Name: TbCO3+
   Formula: TbCO3+
   Elements: 1:Tb 1:C 3:O
   Charge: 1.0
@@ -19872,7 +19872,7 @@
       c2: -619583.46
       wref: 334803.68
       charge: 1.0
-- Name: TbOH+2(aq)
+- Name: TbOH+2
   Formula: TbOH+2
   Elements: 1:Tb 1:O 1:H
   Charge: 2.0
@@ -19890,7 +19890,7 @@
       c2: -353669.34
       wref: 500782.96
       charge: 2.0
-- Name: TbO+(aq)
+- Name: TbO+
   Formula: TbO+
   Elements: 1:Tb 1:O
   Charge: 1.0
@@ -19926,7 +19926,7 @@
       c2: -1126688.4
       wref: -12552.0
       charge: 0.0
-- Name: TbO2-(aq)
+- Name: TbO2-
   Formula: TbO2-
   Elements: 1:Tb 2:O
   Charge: -1.0
@@ -19944,7 +19944,7 @@
       c2: -957085.82
       wref: 488523.84
       charge: -1.0
-- Name: TbHCO3+2(aq)
+- Name: TbHCO3+2
   Formula: TbHCO3+2
   Elements: 1:Tb 1:H 1:C 3:O
   Charge: 2.0
@@ -19962,7 +19962,7 @@
       c2: 189213.03
       wref: 660653.6
       charge: 2.0
-- Name: TbCl+2(aq)
+- Name: TbCl+2
   Formula: TbCl+2
   Elements: 1:Tb 1:Cl
   Charge: 2.0
@@ -19980,7 +19980,7 @@
       c2: -142649.3
       wref: 622035.28
       charge: 2.0
-- Name: TbCl2+(aq)
+- Name: TbCl2+
   Formula: TbCl2+
   Elements: 1:Tb 2:Cl
   Charge: 1.0
@@ -20016,7 +20016,7 @@
       c2: -504799.6
       wref: -12552.0
       charge: 0.0
-- Name: TbCl4-(aq)
+- Name: TbCl4-
   Formula: TbCl4-
   Elements: 1:Tb 4:Cl
   Charge: -1.0
@@ -20034,7 +20034,7 @@
       c2: -1158081.0
       wref: 763872.88
       charge: -1.0
-- Name: TbH2PO4+2(aq)
+- Name: TbH2PO4+2
   Formula: TbH2PO4+2
   Elements: 1:Tb 2:H 1:P 4:O
   Charge: 2.0
@@ -20052,7 +20052,7 @@
       c2: 212308.71
       wref: 651825.36
       charge: 2.0
-- Name: TbNO3+2(aq)
+- Name: TbNO3+2
   Formula: TbNO3+2
   Elements: 1:Tb 1:N 3:O
   Charge: 2.0
@@ -20070,7 +20070,7 @@
       c2: 63617.72
       wref: 706970.48
       charge: 2.0
-- Name: TbF+2(aq)
+- Name: TbF+2
   Formula: TbF+2
   Elements: 1:Tb 1:F
   Charge: 2.0
@@ -20088,7 +20088,7 @@
       c2: -107691.98
       wref: 555969.92
       charge: 2.0
-- Name: TbF2+(aq)
+- Name: TbF2+
   Formula: TbF2+
   Elements: 1:Tb 2:F
   Charge: 1.0
@@ -20124,7 +20124,7 @@
       c2: -359238.24
       wref: -12552.0
       charge: 0.0
-- Name: TbF4-(aq)
+- Name: TbF4-
   Formula: TbF4-
   Elements: 1:Tb 4:F
   Charge: -1.0
@@ -20142,7 +20142,7 @@
       c2: -936877.1
       wref: 1014787.4
       charge: -1.0
-- Name: TbSO4+(aq)
+- Name: TbSO4+
   Formula: TbSO4+
   Elements: 1:Tb 1:S 4:O
   Charge: 1.0
@@ -20160,7 +20160,7 @@
       c2: -619583.46
       wref: 339364.24
       charge: 1.0
-- Name: DyCO3+(aq)
+- Name: DyCO3+
   Formula: DyCO3+
   Elements: 1:Dy 1:C 3:O
   Charge: 1.0
@@ -20178,7 +20178,7 @@
       c2: -626399.19
       wref: 537978.72
       charge: 1.0
-- Name: DyHCO3+2(aq)
+- Name: DyHCO3+2
   Formula: DyHCO3+2
   Elements: 1:Dy 1:H 1:C 3:O
   Charge: 2.0
@@ -20196,7 +20196,7 @@
       c2: 271671.3
       wref: 559610.0
       charge: 2.0
-- Name: DyCl+2(aq)
+- Name: DyCl+2
   Formula: DyCl+2
   Elements: 1:Dy 1:Cl
   Charge: 2.0
@@ -20214,7 +20214,7 @@
       c2: -60191.024
       wref: 630403.28
       charge: 2.0
-- Name: DyCl2+(aq)
+- Name: DyCl2+
   Formula: DyCl2+
   Elements: 1:Dy 2:Cl
   Charge: 1.0
@@ -20250,7 +20250,7 @@
       c2: -232868.89
       wref: -12552.0
       charge: 0.0
-- Name: DyCl4-(aq)
+- Name: DyCl4-
   Formula: DyCl4-
   Elements: 1:Dy 4:Cl
   Charge: -1.0
@@ -20268,7 +20268,7 @@
       c2: -742492.64
       wref: 785587.84
       charge: -1.0
-- Name: DyH2PO4+2(aq)
+- Name: DyH2PO4+2
   Formula: DyH2PO4+2
   Elements: 1:Dy 2:H 1:P 4:O
   Charge: 2.0
@@ -20286,7 +20286,7 @@
       c2: 294766.98
       wref: 665130.48
       charge: 2.0
-- Name: DyNO3+2(aq)
+- Name: DyNO3+2
   Formula: DyNO3+2
   Elements: 1:Dy 1:N 3:O
   Charge: 2.0
@@ -20304,7 +20304,7 @@
       c2: 146075.99
       wref: 721614.48
       charge: 2.0
-- Name: DyF+2(aq)
+- Name: DyF+2
   Formula: DyF+2
   Elements: 1:Dy 1:F
   Charge: 2.0
@@ -20322,7 +20322,7 @@
       c2: -25233.704
       wref: 559610.0
       charge: 2.0
-- Name: DyF2+(aq)
+- Name: DyF2+
   Formula: DyF2+
   Elements: 1:Dy 2:F
   Charge: 1.0
@@ -20358,7 +20358,7 @@
       c2: -87311.712
       wref: -12552.0
       charge: 0.0
-- Name: DyF4-(aq)
+- Name: DyF4-
   Formula: DyF4-
   Elements: 1:Dy 4:F
   Charge: -1.0
@@ -20376,7 +20376,7 @@
       c2: -521288.74
       wref: 1033113.3
       charge: -1.0
-- Name: DyOH+2(aq)
+- Name: DyOH+2
   Formula: DyOH+2
   Elements: 1:Dy 1:O 1:H
   Charge: 2.0
@@ -20394,7 +20394,7 @@
       c2: -338330.79
       wref: 510699.04
       charge: 2.0
-- Name: DyO+(aq)
+- Name: DyO+
   Formula: DyO+
   Elements: 1:Dy 1:O
   Charge: 1.0
@@ -20430,7 +20430,7 @@
       c2: -1090894.3
       wref: -12552.0
       charge: 0.0
-- Name: DyO2-(aq)
+- Name: DyO2-
   Formula: DyO2-
   Elements: 1:Dy 2:O
   Charge: -1.0
@@ -20448,7 +20448,7 @@
       c2: -922994.58
       wref: 499946.16
       charge: -1.0
-- Name: DySO4+(aq)
+- Name: DySO4+
   Formula: DySO4+
   Elements: 1:Dy 1:S 4:O
   Charge: 1.0
@@ -20466,7 +20466,7 @@
       c2: -582935.8
       wref: 344008.48
       charge: 1.0
-- Name: HoCO3+(aq)
+- Name: HoCO3+
   Formula: HoCO3+
   Elements: 1:Ho 1:C 3:O
   Charge: 1.0
@@ -20484,7 +20484,7 @@
       c2: -640034.85
       wref: 529652.56
       charge: 1.0
-- Name: HoHCO3+2(aq)
+- Name: HoHCO3+2
   Formula: HoHCO3+2
   Elements: 1:Ho 1:H 1:C 3:O
   Charge: 2.0
@@ -20502,7 +20502,7 @@
       c2: 240990.03
       wref: 548731.6
       charge: 2.0
-- Name: HoCl+2(aq)
+- Name: HoCl+2
   Formula: HoCl+2
   Elements: 1:Ho 1:Cl
   Charge: 2.0
@@ -20520,7 +20520,7 @@
       c2: -90876.48
       wref: 622035.28
       charge: 2.0
-- Name: HoCl2+(aq)
+- Name: HoCl2+
   Formula: HoCl2+
   Elements: 1:Ho 2:Cl
   Charge: 1.0
@@ -20556,7 +20556,7 @@
       c2: -334054.74
       wref: -12552.0
       charge: 0.0
-- Name: HoCl4-(aq)
+- Name: HoCl4-
   Formula: HoCl4-
   Elements: 1:Ho 4:Cl
   Charge: -1.0
@@ -20574,7 +20574,7 @@
       c2: -897129.1
       wref: 772366.4
       charge: -1.0
-- Name: HoH2PO4+2(aq)
+- Name: HoH2PO4+2
   Formula: HoH2PO4+2
   Elements: 1:Ho 2:H 1:P 4:O
   Charge: 2.0
@@ -20592,7 +20592,7 @@
       c2: 264085.71
       wref: 656218.56
       charge: 2.0
-- Name: HoNO3+2(aq)
+- Name: HoNO3+2
   Formula: HoNO3+2
   Elements: 1:Ho 1:N 3:O
   Charge: 2.0
@@ -20610,7 +20610,7 @@
       c2: 115390.54
       wref: 711823.92
       charge: 2.0
-- Name: HoF+2(aq)
+- Name: HoF+2
   Formula: HoF+2
   Elements: 1:Ho 1:F
   Charge: 2.0
@@ -20628,7 +20628,7 @@
       c2: -55914.976
       wref: 555969.92
       charge: 2.0
-- Name: HoF2+(aq)
+- Name: HoF2+
   Formula: HoF2+
   Elements: 1:Ho 2:F
   Charge: 1.0
@@ -20664,7 +20664,7 @@
       c2: -188493.38
       wref: -12552.0
       charge: 0.0
-- Name: HoF4-(aq)
+- Name: HoF4-
   Formula: HoF4-
   Elements: 1:Ho 4:F
   Charge: -1.0
@@ -20682,7 +20682,7 @@
       c2: -675925.2
       wref: 1023866.6
       charge: -1.0
-- Name: HoOH+2(aq)
+- Name: HoOH+2
   Formula: HoOH+2
   Elements: 1:Ho 1:O 1:H
   Charge: 2.0
@@ -20700,7 +20700,7 @@
       c2: -350259.38
       wref: 504088.32
       charge: 2.0
-- Name: HoO+(aq)
+- Name: HoO+
   Formula: HoO+
   Elements: 1:Ho 1:O
   Charge: 1.0
@@ -20736,7 +20736,7 @@
       c2: -1118165.6
       wref: -12552.0
       charge: 0.0
-- Name: HoO2-(aq)
+- Name: HoO2-
   Formula: HoO2-
   Elements: 1:Ho 2:O
   Charge: -1.0
@@ -20754,7 +20754,7 @@
       c2: -948563.01
       wref: 491536.32
       charge: -1.0
-- Name: HoSO4+(aq)
+- Name: HoSO4+
   Formula: HoSO4+
   Elements: 1:Ho 1:S 4:O
   Charge: 1.0
@@ -20772,7 +20772,7 @@
       c2: -596571.46
       wref: 339364.24
       charge: 1.0
-- Name: ErCO3+(aq)
+- Name: ErCO3+
   Formula: ErCO3+
   Elements: 1:Er 1:C 3:O
   Charge: 1.0
@@ -20790,7 +20790,7 @@
       c2: -648557.66
       wref: 564003.2
       charge: 1.0
-- Name: ErHCO3+2(aq)
+- Name: ErHCO3+2
   Formula: ErHCO3+2
   Elements: 1:Er 1:H 1:C 3:O
   Charge: 2.0
@@ -20808,7 +20808,7 @@
       c2: 221814.76
       wref: 586011.04
       charge: 2.0
-- Name: ErCl+2(aq)
+- Name: ErCl+2
   Formula: ErCl+2
   Elements: 1:Er 1:Cl
   Charge: 2.0
@@ -20826,7 +20826,7 @@
       c2: -110051.75
       wref: 651825.36
       charge: 2.0
-- Name: ErCl2+(aq)
+- Name: ErCl2+
   Formula: ErCl2+
   Elements: 1:Er 2:Cl
   Charge: 1.0
@@ -20862,7 +20862,7 @@
       c2: -397291.72
       wref: -12552.0
       charge: 0.0
-- Name: ErCl4-(aq)
+- Name: ErCl4-
   Formula: ErCl4-
   Elements: 1:Er 4:Cl
   Charge: -1.0
@@ -20880,7 +20880,7 @@
       c2: -993779.5
       wref: 840147.2
       charge: -1.0
-- Name: ErH2PO4+2(aq)
+- Name: ErH2PO4+2
   Formula: ErH2PO4+2
   Elements: 1:Er 2:H 1:P 4:O
   Charge: 2.0
@@ -20898,7 +20898,7 @@
       c2: 244906.26
       wref: 692703.04
       charge: 2.0
-- Name: ErNO3+2(aq)
+- Name: ErNO3+2
   Formula: ErNO3+2
   Elements: 1:Er 1:N 3:O
   Charge: 2.0
@@ -20916,7 +20916,7 @@
       c2: 96215.264
       wref: 757304.0
       charge: 2.0
-- Name: ErF+2(aq)
+- Name: ErF+2
   Formula: ErF+2
   Elements: 1:Er 1:F
   Charge: 2.0
@@ -20934,7 +20934,7 @@
       c2: -75094.432
       wref: 570781.28
       charge: 2.0
-- Name: ErF2+(aq)
+- Name: ErF2+
   Formula: ErF2+
   Elements: 1:Er 2:F
   Charge: 1.0
@@ -20970,7 +20970,7 @@
       c2: -251734.54
       wref: -12552.0
       charge: 0.0
-- Name: ErF4-(aq)
+- Name: ErF4-
   Formula: ErF4-
   Elements: 1:Er 4:F
   Charge: -1.0
@@ -20988,7 +20988,7 @@
       c2: -772575.6
       wref: 1062317.6
       charge: -1.0
-- Name: ErOH+2(aq)
+- Name: ErOH+2
   Formula: ErOH+2
   Elements: 1:Er 1:O 1:H
   Charge: 2.0
@@ -21006,7 +21006,7 @@
       c2: -302532.49
       wref: 534547.84
       charge: 2.0
-- Name: ErO+(aq)
+- Name: ErO+
   Formula: ErO+
   Elements: 1:Er 1:O
   Charge: 1.0
@@ -21042,7 +21042,7 @@
       c2: -1008222.7
       wref: -12552.0
       charge: 0.0
-- Name: ErO2-(aq)
+- Name: ErO2-
   Formula: ErO2-
   Elements: 1:Er 2:O
   Charge: -1.0
@@ -21060,7 +21060,7 @@
       c2: -842879.35
       wref: 530070.96
       charge: -1.0
-- Name: ErSO4+(aq)
+- Name: ErSO4+
   Formula: ErSO4+
   Elements: 1:Er 1:S 4:O
   Charge: 1.0
@@ -21078,7 +21078,7 @@
       c2: -605094.26
       wref: 363296.72
       charge: 1.0
-- Name: TmCO3+(aq)
+- Name: TmCO3+
   Formula: TmCO3+
   Elements: 1:Tm 1:C 3:O
   Charge: 1.0
@@ -21096,7 +21096,7 @@
       c2: -648557.66
       wref: 555133.12
       charge: 1.0
-- Name: TmHCO3+2(aq)
+- Name: TmHCO3+2
   Formula: TmHCO3+2
   Elements: 1:Tm 1:H 1:C 3:O
   Charge: 2.0
@@ -21114,7 +21114,7 @@
       c2: 221814.76
       wref: 586011.04
       charge: 2.0
-- Name: TmCl+2(aq)
+- Name: TmCl+2
   Formula: TmCl+2
   Elements: 1:Tm 1:Cl
   Charge: 2.0
@@ -21132,7 +21132,7 @@
       c2: -110051.75
       wref: 651825.36
       charge: 2.0
-- Name: TmCl2+(aq)
+- Name: TmCl2+
   Formula: TmCl2+
   Elements: 1:Tm 2:Cl
   Charge: 1.0
@@ -21168,7 +21168,7 @@
       c2: -397291.72
       wref: -12552.0
       charge: 0.0
-- Name: TmCl4-(aq)
+- Name: TmCl4-
   Formula: TmCl4-
   Elements: 1:Tm 4:Cl
   Charge: -1.0
@@ -21186,7 +21186,7 @@
       c2: -993779.5
       wref: 834749.84
       charge: -1.0
-- Name: TmH2PO4+2(aq)
+- Name: TmH2PO4+2
   Formula: TmH2PO4+2
   Elements: 1:Tm 2:H 1:P 4:O
   Charge: 2.0
@@ -21204,7 +21204,7 @@
       c2: 244906.26
       wref: 688016.96
       charge: 2.0
-- Name: TmNO3+2(aq)
+- Name: TmNO3+2
   Formula: TmNO3+2
   Elements: 1:Tm 1:N 3:O
   Charge: 2.0
@@ -21222,7 +21222,7 @@
       c2: 96215.264
       wref: 757304.0
       charge: 2.0
-- Name: TmF+2(aq)
+- Name: TmF+2
   Formula: TmF+2
   Elements: 1:Tm 1:F
   Charge: 2.0
@@ -21240,7 +21240,7 @@
       c2: -75094.432
       wref: 570781.28
       charge: 2.0
-- Name: TmF2+(aq)
+- Name: TmF2+
   Formula: TmF2+
   Elements: 1:Tm 2:F
   Charge: 1.0
@@ -21276,7 +21276,7 @@
       c2: -251734.54
       wref: -12552.0
       charge: 0.0
-- Name: TmF4-(aq)
+- Name: TmF4-
   Formula: TmF4-
   Elements: 1:Tm 4:F
   Charge: -1.0
@@ -21294,7 +21294,7 @@
       c2: -772575.6
       wref: 1052359.7
       charge: -1.0
-- Name: TmOH+2(aq)
+- Name: TmOH+2
   Formula: TmOH+2
   Elements: 1:Tm 1:O 1:H
   Charge: 2.0
@@ -21312,7 +21312,7 @@
       c2: -301683.14
       wref: 534547.84
       charge: 2.0
-- Name: TmO+(aq)
+- Name: TmO+
   Formula: TmO+
   Elements: 1:Tm 1:O
   Charge: 1.0
@@ -21348,7 +21348,7 @@
       c2: -1005666.2
       wref: -12552.0
       charge: 0.0
-- Name: TmO2-(aq)
+- Name: TmO2-
   Formula: TmO2-
   Elements: 1:Tm 2:O
   Charge: -1.0
@@ -21366,7 +21366,7 @@
       c2: -840322.93
       wref: 530070.96
       charge: -1.0
-- Name: TmSO4+(aq)
+- Name: TmSO4+
   Formula: TmSO4+
   Elements: 1:Tm 1:S 4:O
   Charge: 1.0
@@ -21384,7 +21384,7 @@
       c2: -605094.26
       wref: 363296.72
       charge: 1.0
-- Name: YbCO3+(aq)
+- Name: YbCO3+
   Formula: YbCO3+
   Elements: 1:Yb 1:C 3:O
   Charge: 1.0
@@ -21402,7 +21402,7 @@
       c2: -648557.66
       wref: 555133.12
       charge: 1.0
-- Name: YbOH+2(aq)
+- Name: YbOH+2
   Formula: YbOH+2
   Elements: 1:Yb 1:O 1:H
   Charge: 2.0
@@ -21420,7 +21420,7 @@
       c2: -317021.68
       wref: 524171.52
       charge: 2.0
-- Name: YbO+(aq)
+- Name: YbO+
   Formula: YbO+
   Elements: 1:Yb 1:O
   Charge: 1.0
@@ -21456,7 +21456,7 @@
       c2: -1040606.8
       wref: -12552.0
       charge: 0.0
-- Name: YbO2-(aq)
+- Name: YbO2-
   Formula: YbO2-
   Elements: 1:Yb 2:O
   Charge: -1.0
@@ -21474,7 +21474,7 @@
       c2: -874414.16
       wref: 518481.28
       charge: -1.0
-- Name: YbHCO3+2(aq)
+- Name: YbHCO3+2
   Formula: YbHCO3+2
   Elements: 1:Yb 1:H 1:C 3:O
   Charge: 2.0
@@ -21492,7 +21492,7 @@
       c2: 181543.76
       wref: 574546.88
       charge: 2.0
-- Name: YbCl+2(aq)
+- Name: YbCl+2
   Formula: YbCl+2
   Elements: 1:Yb 1:Cl
   Charge: 2.0
@@ -21510,7 +21510,7 @@
       c2: -150322.75
       wref: 643164.48
       charge: 2.0
-- Name: YbCl2+(aq)
+- Name: YbCl2+
   Formula: YbCl2+
   Elements: 1:Yb 2:Cl
   Charge: 1.0
@@ -21546,7 +21546,7 @@
       c2: -530096.06
       wref: -12552.0
       charge: 0.0
-- Name: YbCl4-(aq)
+- Name: YbCl4-
   Formula: YbCl4-
   Elements: 1:Yb 4:Cl
   Charge: -1.0
@@ -21564,7 +21564,7 @@
       c2: -1196741.2
       wref: 814080.88
       charge: -1.0
-- Name: YbH2PO4+2(aq)
+- Name: YbH2PO4+2
   Formula: YbH2PO4+2
   Elements: 1:Yb 2:H 1:P 4:O
   Charge: 2.0
@@ -21582,7 +21582,7 @@
       c2: 204639.44
       wref: 678728.48
       charge: 2.0
-- Name: YbNO3+2(aq)
+- Name: YbNO3+2
   Formula: YbNO3+2
   Elements: 1:Yb 1:N 3:O
   Charge: 2.0
@@ -21600,7 +21600,7 @@
       c2: 55944.264
       wref: 741739.52
       charge: 2.0
-- Name: YbF+2(aq)
+- Name: YbF+2
   Formula: YbF+2
   Elements: 1:Yb 1:F
   Charge: 2.0
@@ -21618,7 +21618,7 @@
       c2: -115361.25
       wref: 567015.68
       charge: 2.0
-- Name: YbF2+(aq)
+- Name: YbF2+
   Formula: YbF2+
   Elements: 1:Yb 2:F
   Charge: 1.0
@@ -21654,7 +21654,7 @@
       c2: -384534.7
       wref: -12552.0
       charge: 0.0
-- Name: YbF4-(aq)
+- Name: YbF4-
   Formula: YbF4-
   Elements: 1:Yb 4:F
   Charge: -1.0
@@ -21672,7 +21672,7 @@
       c2: -975537.26
       wref: 1042652.8
       charge: -1.0
-- Name: YbSO4+(aq)
+- Name: YbSO4+
   Formula: YbSO4+
   Elements: 1:Yb 1:S 4:O
   Charge: 1.0
@@ -21690,7 +21690,7 @@
       c2: -622993.42
       wref: 358359.6
       charge: 1.0
-- Name: LuCO3+(aq)
+- Name: LuCO3+
   Formula: LuCO3+
   Elements: 1:Lu 1:C 3:O
   Charge: 1.0
@@ -21708,7 +21708,7 @@
       c2: -628955.62
       wref: 591868.64
       charge: 1.0
-- Name: LuOH+2(aq)
+- Name: LuOH+2
   Formula: LuOH+2
   Elements: 1:Lu 1:O 1:H
   Charge: 2.0
@@ -21726,7 +21726,7 @@
       c2: -236906.45
       wref: 578354.32
       charge: 2.0
-- Name: LuO+(aq)
+- Name: LuO+
   Formula: LuO+
   Elements: 1:Lu 1:O
   Charge: 1.0
@@ -21762,7 +21762,7 @@
       c2: -858222.08
       wref: -12552.0
       charge: 0.0
-- Name: LuO2-(aq)
+- Name: LuO2-
   Formula: LuO2-
   Elements: 1:Lu 2:O
   Charge: -1.0
@@ -21780,7 +21780,7 @@
       c2: -697991.62
       wref: 581617.84
       charge: -1.0
-- Name: LuHCO3+2(aq)
+- Name: LuHCO3+2
   Formula: LuHCO3+2
   Elements: 1:Lu 1:H 1:C 3:O
   Charge: 2.0
@@ -21798,7 +21798,7 @@
       c2: 265918.3
       wref: 630403.28
       charge: 2.0
-- Name: LuCl+2(aq)
+- Name: LuCl+2
   Formula: LuCl+2
   Elements: 1:Lu 1:Cl
   Charge: 2.0
@@ -21816,7 +21816,7 @@
       c2: -65944.024
       wref: 688016.96
       charge: 2.0
-- Name: LuCl2+(aq)
+- Name: LuCl2+
   Formula: LuCl2+
   Elements: 1:Lu 2:Cl
   Charge: 1.0
@@ -21852,7 +21852,7 @@
       c2: -251843.33
       wref: -12552.0
       charge: 0.0
-- Name: LuCl4-(aq)
+- Name: LuCl4-
   Formula: LuCl4-
   Elements: 1:Lu 4:Cl
   Charge: -1.0
@@ -21870,7 +21870,7 @@
       c2: -771487.76
       wref: 920061.6
       charge: -1.0
-- Name: LuH2PO4+2(aq)
+- Name: LuH2PO4+2
   Formula: LuH2PO4+2
   Elements: 1:Lu 1:H 1:P 4:O
   Charge: 2.0
@@ -21888,7 +21888,7 @@
       c2: 289013.98
       wref: 736676.88
       charge: 2.0
-- Name: LuNO3+2(aq)
+- Name: LuNO3+2
   Formula: LuNO3+2
   Elements: 1:Lu 1:N 3:O
   Charge: 2.0
@@ -21906,7 +21906,7 @@
       c2: 140322.99
       wref: 812239.92
       charge: 2.0
-- Name: LuF+2(aq)
+- Name: LuF+2
   Formula: LuF+2
   Elements: 1:Lu 1:F
   Charge: 2.0
@@ -21924,7 +21924,7 @@
       c2: -30986.704
       wref: 593793.28
       charge: 2.0
-- Name: LuF2+(aq)
+- Name: LuF2+
   Formula: LuF2+
   Elements: 1:Lu 2:F
   Charge: 1.0
@@ -21960,7 +21960,7 @@
       c2: -106281.97
       wref: -12552.0
       charge: 0.0
-- Name: LuF4-(aq)
+- Name: LuF4-
   Formula: LuF4-
   Elements: 1:Lu 4:F
   Charge: -1.0
@@ -21978,7 +21978,7 @@
       c2: -550283.86
       wref: 1104701.5
       charge: -1.0
-- Name: LuSO4+(aq)
+- Name: LuSO4+
   Formula: LuSO4+
   Elements: 1:Lu 1:S 4:O
   Charge: 1.0
@@ -22014,7 +22014,7 @@
       c2: 935868.75
       wref: -12552.0
       charge: 0.0
-- Name: Mg(Lac)+(aq)
+- Name: Mg(Lac)+
   Formula: MgCH3CH2OCO2+
   Elements: 1:Mg 3:C 5:H 3:O
   Charge: 1.0
@@ -22050,7 +22050,7 @@
       c2: 2329237.0
       wref: -12552.0
       charge: 0.0
-- Name: Ca(Lac)+(aq)
+- Name: Ca(Lac)+
   Formula: CaCH3CH2OCO2+
   Elements: 1:Ca 3:C 5:H 3:O
   Charge: 1.0
@@ -22086,7 +22086,7 @@
       c2: 2247297.5
       wref: -12552.0
       charge: 0.0
-- Name: Sr(Lac)+(aq)
+- Name: Sr(Lac)+
   Formula: SrCH3CH2OCO2+
   Elements: 1:Sr 3:C 5:H 3:O
   Charge: 1.0
@@ -22122,7 +22122,7 @@
       c2: 2153011.1
       wref: -12552.0
       charge: 0.0
-- Name: Ba(Lac)+(aq)
+- Name: Ba(Lac)+
   Formula: BaCH3CH2OCO2+
   Elements: 1:Ba 3:C 5:H 3:O
   Charge: 1.0
@@ -22158,7 +22158,7 @@
       c2: 2068824.8
       wref: -12552.0
       charge: 0.0
-- Name: Mn(Lac)+(aq)
+- Name: Mn(Lac)+
   Formula: MnCH3CH2OCO2+
   Elements: 1:Mn 3:C 5:H 3:O
   Charge: 1.0
@@ -22194,7 +22194,7 @@
       c2: 2375629.2
       wref: -12552.0
       charge: 0.0
-- Name: Co(Lac)+(aq)
+- Name: Co(Lac)+
   Formula: CoCH3CH2OCO2+
   Elements: 1:Co 3:C 5:H 3:O
   Charge: 1.0
@@ -22230,7 +22230,7 @@
       c2: 2237193.2
       wref: -12552.0
       charge: 0.0
-- Name: Ni(Lac)+(aq)
+- Name: Ni(Lac)+
   Formula: NiCH3CH2OCO2+
   Elements: 1:Ni 3:C 5:H 3:O
   Charge: 1.0
@@ -22266,7 +22266,7 @@
       c2: 2091276.2
       wref: -12552.0
       charge: 0.0
-- Name: Cu(Lac)+(aq)
+- Name: Cu(Lac)+
   Formula: CuCH3CH2OCO2+
   Elements: 1:Cu 3:C 5:H 3:O
   Charge: 1.0
@@ -22302,7 +22302,7 @@
       c2: 2315764.5
       wref: -12552.0
       charge: 0.0
-- Name: Zn(Lac)+(aq)
+- Name: Zn(Lac)+
   Formula: ZnCH3CH2OCO2+
   Elements: 1:Zn 3:C 5:H 3:O
   Charge: 1.0
@@ -22338,7 +22338,7 @@
       c2: 2293317.3
       wref: -12552.0
       charge: 0.0
-- Name: Cd(Lac)+(aq)
+- Name: Cd(Lac)+
   Formula: CdCH3CH2OCO2+
   Elements: 1:Cd 3:C 5:H 3:O
   Charge: 1.0
@@ -22374,7 +22374,7 @@
       c2: 2398080.5
       wref: -12552.0
       charge: 0.0
-- Name: La(Lac)+2(aq)
+- Name: La(Lac)+2
   Formula: LaCH3CH2OCO2+2
   Elements: 1:La 3:C 5:H 3:O
   Charge: 2.0
@@ -22392,7 +22392,7 @@
       c2: 722375.97
       wref: 559610.0
       charge: 2.0
-- Name: Lu(Lac)+2(aq)
+- Name: Lu(Lac)+2
   Formula: LuCH3CH2OCO2+2
   Elements: 1:Lu 3:C 5:H 3:O
   Charge: 2.0
@@ -22428,7 +22428,7 @@
       c2: 837306.26
       wref: -12552.0
       charge: 0.0
-- Name: Na(Lac)2-(aq)
+- Name: Na(Lac)2-
   Formula: Na(CH3CH2OCO2)2-
   Elements: 1:Na 6:C 10:H 6:O
   Charge: -1.0
@@ -22464,7 +22464,7 @@
       c2: 701535.46
       wref: -12552.0
       charge: 0.0
-- Name: K(Lac)2-(aq)
+- Name: K(Lac)2-
   Formula: K(CH3CH2OCO2)2-
   Elements: 1:K 6:C 10:H 6:O
   Charge: -1.0
@@ -22482,7 +22482,7 @@
       c2: 1830947.7
       wref: 135394.24
       charge: -1.0
-- Name: Pb(Lac)+(aq)
+- Name: Pb(Lac)+
   Formula: PbCH3CH2OCO2+
   Elements: 1:Pb 3:C 5:H 3:O
   Charge: 1.0
@@ -22518,7 +22518,7 @@
       c2: 2053858.7
       wref: -12552.0
       charge: 0.0
-- Name: Fe(Lac)+(aq)
+- Name: Fe(Lac)+
   Formula: FeCH3CH2OCO2+
   Elements: 1:Fe 3:C 5:H 3:O
   Charge: 1.0
@@ -22554,7 +22554,7 @@
       c2: 2225971.7
       wref: -12552.0
       charge: 0.0
-- Name: Eu(Lac)+(aq)
+- Name: Eu(Lac)+
   Formula: Eu(CH3CH2OCO2)+
   Elements: 1:Eu 3:C 5:H 3:O
   Charge: 1.0
@@ -22608,7 +22608,7 @@
       c2: 616340.86
       wref: -12552.0
       charge: 0.0
-- Name: Mg(Glyc)+(aq)
+- Name: Mg(Glyc)+
   Formula: MgCH3OCO2+
   Elements: 1:Mg 2:C 3:H 3:O
   Charge: 1.0
@@ -22644,7 +22644,7 @@
       c2: 1566217.6
       wref: -12552.0
       charge: 0.0
-- Name: Ca(Glyc)+(aq)
+- Name: Ca(Glyc)+
   Formula: CaCH3OCO2+
   Elements: 1:Ca 2:C 3:H 3:O
   Charge: 1.0
@@ -22680,7 +22680,7 @@
       c2: 1484278.2
       wref: -12552.0
       charge: 0.0
-- Name: Sr(Glyc)+(aq)
+- Name: Sr(Glyc)+
   Formula: SrCH3OCO2+
   Elements: 1:Sr 2:C 3:H 3:O
   Charge: 1.0
@@ -22716,7 +22716,7 @@
       c2: 1389995.9
       wref: -12552.0
       charge: 0.0
-- Name: Ba(Glyc)+(aq)
+- Name: Ba(Glyc)+
   Formula: BaCH3OCO2+
   Elements: 1:Ba 2:C 3:H 3:O
   Charge: 1.0
@@ -22752,7 +22752,7 @@
       c2: 1305809.7
       wref: -12552.0
       charge: 0.0
-- Name: Mn(Glyc)+(aq)
+- Name: Mn(Glyc)+
   Formula: MnCH3OCO2+
   Elements: 1:Mn 2:C 3:H 3:O
   Charge: 1.0
@@ -22788,7 +22788,7 @@
       c2: 1612614.0
       wref: -12552.0
       charge: 0.0
-- Name: Co(Glyc)+(aq)
+- Name: Co(Glyc)+
   Formula: CoCH3OCO2+
   Elements: 1:Co 2:C 3:H 3:O
   Charge: 1.0
@@ -22824,7 +22824,7 @@
       c2: 1474178.0
       wref: -12552.0
       charge: 0.0
-- Name: Ni(Glyc)+(aq)
+- Name: Ni(Glyc)+
   Formula: NiCH3OCO2+
   Elements: 1:Ni 2:C 3:H 3:O
   Charge: 1.0
@@ -22860,7 +22860,7 @@
       c2: 1328261.0
       wref: -12552.0
       charge: 0.0
-- Name: Cu(Glyc)+(aq)
+- Name: Cu(Glyc)+
   Formula: CuCH3OCO2+
   Elements: 1:Cu 2:C 3:H 3:O
   Charge: 1.0
@@ -22896,7 +22896,7 @@
       c2: 1552749.3
       wref: -12552.0
       charge: 0.0
-- Name: Zn(Glyc)+(aq)
+- Name: Zn(Glyc)+
   Formula: ZnCH3OCO2+
   Elements: 1:Zn 2:C 3:H 3:O
   Charge: 1.0
@@ -22932,7 +22932,7 @@
       c2: 1530302.2
       wref: -12552.0
       charge: 0.0
-- Name: Cd(Glyc)+(aq)
+- Name: Cd(Glyc)+
   Formula: CdCH3OCO2+
   Elements: 1:Cd 2:C 3:H 3:O
   Charge: 1.0
@@ -22968,7 +22968,7 @@
       c2: 1635061.2
       wref: -12552.0
       charge: 0.0
-- Name: Eu(Glyc)+(aq)
+- Name: Eu(Glyc)+
   Formula: EuCH3OCO2+
   Elements: 1:Eu 2:C 3:H 3:O
   Charge: 1.0
@@ -23022,7 +23022,7 @@
       c2: 517774.18
       wref: -12552.0
       charge: 0.0
-- Name: Na(Glyc)2-(aq)
+- Name: Na(Glyc)2-
   Formula: Na(CH3OCO2)2-
   Elements: 1:Na 4:C 6:H 6:O
   Charge: -1.0
@@ -23058,7 +23058,7 @@
       c2: 382007.57
       wref: -12552.0
       charge: 0.0
-- Name: K(Glyc)2-(aq)
+- Name: K(Glyc)2-
   Formula: K(CH3OCO2)2-
   Elements: 1:K 4:C 6:H 6:O
   Charge: -1.0
@@ -23076,7 +23076,7 @@
       c2: 1067932.5
       wref: 216940.4
       charge: -1.0
-- Name: Pb(Glyc)+(aq)
+- Name: Pb(Glyc)+
   Formula: PbCH3OCO2+
   Elements: 1:Pb 2:C 3:H 3:O
   Charge: 1.0
@@ -23112,7 +23112,7 @@
       c2: 1290843.5
       wref: -12552.0
       charge: 0.0
-- Name: Fe(Glyc)+(aq)
+- Name: Fe(Glyc)+
   Formula: FeCH3OCO2+
   Elements: 1:Fe 2:C 3:H 3:O
   Charge: 1.0
@@ -23148,7 +23148,7 @@
       c2: 1462952.3
       wref: -12552.0
       charge: 0.0
-- Name: Cd(Alan)+(aq)
+- Name: Cd(Alan)+
   Formula: Cd(C3H6NO2)+
   Elements: 1:Cd 3:C 6:H 2:O 1:N
   Charge: 1.0
@@ -23184,7 +23184,7 @@
       c2: 2061900.3
       wref: -12552.0
       charge: 0.0
-- Name: Ca(Alan)+(aq)
+- Name: Ca(Alan)+
   Formula: Ca(C3H6NO2)+
   Elements: 1:Ca 3:C 6:H 2:O 1:N
   Charge: 1.0
@@ -23220,7 +23220,7 @@
       c2: 1911117.3
       wref: -12552.0
       charge: 0.0
-- Name: Pb(Alan)+(aq)
+- Name: Pb(Alan)+
   Formula: Pb(C3H6NO2)+
   Elements: 1:Pb 3:C 6:H 2:O 1:N
   Charge: 1.0
@@ -23256,7 +23256,7 @@
       c2: 1717678.4
       wref: -12552.0
       charge: 0.0
-- Name: Mg(Alan)+(aq)
+- Name: Mg(Alan)+
   Formula: Mg(C3H6NO2)+
   Elements: 1:Mg 3:C 6:H 1:N 2:O
   Charge: 1.0
@@ -23292,7 +23292,7 @@
       c2: 1993056.8
       wref: -12552.0
       charge: 0.0
-- Name: Sr(Alan)+(aq)
+- Name: Sr(Alan)+
   Formula: Sr(C3H6NO2)+
   Elements: 1:Sr 3:C 6:H 1:N 2:O
   Charge: 1.0
@@ -23328,7 +23328,7 @@
       c2: 1816830.9
       wref: -12552.0
       charge: 0.0
-- Name: Mn(Alan)+(aq)
+- Name: Mn(Alan)+
   Formula: Mn(C3H6NO2)+
   Elements: 1:Mn 3:C 6:H 1:N 2:O
   Charge: 1.0
@@ -23364,7 +23364,7 @@
       c2: 2039449.0
       wref: -12552.0
       charge: 0.0
-- Name: Co(Alan)+(aq)
+- Name: Co(Alan)+
   Formula: Co(C3H6NO2)+
   Elements: 1:Co 3:C 6:H 1:N 2:O
   Charge: 1.0
@@ -23400,7 +23400,7 @@
       c2: 1901013.0
       wref: -12552.0
       charge: 0.0
-- Name: Ni(Alan)+(aq)
+- Name: Ni(Alan)+
   Formula: Ni(C3H6NO2)+
   Elements: 1:Ni 3:C 6:H 1:N 2:O
   Charge: 1.0
@@ -23436,7 +23436,7 @@
       c2: 1755096.0
       wref: -12552.0
       charge: 0.0
-- Name: Cu(Alan)+(aq)
+- Name: Cu(Alan)+
   Formula: Cu(C3H6NO2)+
   Elements: 1:Cu 3:C 6:H 1:N 2:O
   Charge: 1.0
@@ -23472,7 +23472,7 @@
       c2: 1979584.3
       wref: -12552.0
       charge: 0.0
-- Name: Zn(Alan)+(aq)
+- Name: Zn(Alan)+
   Formula: Zn(C3H6NO2)+
   Elements: 1:Zn 3:C 6:H 1:N 2:O
   Charge: 1.0
@@ -23508,7 +23508,7 @@
       c2: 1957137.1
       wref: -12552.0
       charge: 0.0
-- Name: Ba(Alan)+(aq)
+- Name: Ba(Alan)+
   Formula: Ba(C3H6NO2)+
   Elements: 1:Ba 3:C 6:H 1:N 2:O
   Charge: 1.0
@@ -23544,7 +23544,7 @@
       c2: 1732644.6
       wref: -12552.0
       charge: 0.0
-- Name: Fe(Alan)+(aq)
+- Name: Fe(Alan)+
   Formula: Fe(C3H6NO2)+
   Elements: 1:Fe 3:C 6:H 1:N 2:O
   Charge: 1.0
@@ -23580,7 +23580,7 @@
       c2: 1889791.5
       wref: -12552.0
       charge: 0.0
-- Name: Eu(Alan)+(aq)
+- Name: Eu(Alan)+
   Formula: Eu(C3H6NO2)+
   Elements: 1:Eu 3:C 6:H 1:N 2:O
   Charge: 1.0
@@ -23616,7 +23616,7 @@
       c2: 2417343.7
       wref: -12552.0
       charge: 0.0
-- Name: Cd(Gly)+(aq)
+- Name: Cd(Gly)+
   Formula: Cd(C2H4NO2)+
   Elements: 1:Cd 2:C 4:H 2:O 1:N
   Charge: 1.0
@@ -23652,7 +23652,7 @@
       c2: 1140236.2
       wref: -12552.0
       charge: 0.0
-- Name: Ca(Gly)+(aq)
+- Name: Ca(Gly)+
   Formula: Ca(C2H4NO2)+
   Elements: 1:Ca 2:C 4:H 2:O 1:N
   Charge: 1.0
@@ -23688,7 +23688,7 @@
       c2: 989453.24
       wref: -12552.0
       charge: 0.0
-- Name: Sr(Gly)+(aq)
+- Name: Sr(Gly)+
   Formula: Sr(C2H4NO2)+
   Elements: 1:Sr 2:C 4:H 1:N 2:O
   Charge: 1.0
@@ -23724,7 +23724,7 @@
       c2: 895166.8
       wref: -12552.0
       charge: 0.0
-- Name: Mn(Gly)+(aq)
+- Name: Mn(Gly)+
   Formula: Mn(C2H4NO2)+
   Elements: 1:Mn 2:C 4:H 1:N 2:O
   Charge: 1.0
@@ -23760,7 +23760,7 @@
       c2: 1117784.9
       wref: -12552.0
       charge: 0.0
-- Name: Fe(Gly)+(aq)
+- Name: Fe(Gly)+
   Formula: Fe(C2H4NO2)+
   Elements: 1:Fe 2:C 4:H 1:N 2:O
   Charge: 1.0
@@ -23796,7 +23796,7 @@
       c2: 968127.39
       wref: -12552.0
       charge: 0.0
-- Name: Co(Gly)+(aq)
+- Name: Co(Gly)+
   Formula: Co(C2H4NO2)+
   Elements: 1:Co 2:C 4:H 1:N 2:O
   Charge: 1.0
@@ -23832,7 +23832,7 @@
       c2: 979348.88
       wref: -12552.0
       charge: 0.0
-- Name: Pb(Gly)+(aq)
+- Name: Pb(Gly)+
   Formula: Pb(C2H4NO2)+
   Elements: 1:Pb 2:C 4:H 2:O 1:N
   Charge: 1.0
@@ -23868,7 +23868,7 @@
       c2: 796018.55
       wref: -12552.0
       charge: 0.0
-- Name: Mg(Gly)+(aq)
+- Name: Mg(Gly)+
   Formula: Mg(C2H4NO2)+
   Elements: 1:Mg 2:C 4:H 1:N 2:O
   Charge: 1.0
@@ -23904,7 +23904,7 @@
       c2: 1071392.7
       wref: -12552.0
       charge: 0.0
-- Name: Ni(Gly)+(aq)
+- Name: Ni(Gly)+
   Formula: Ni(C2H4NO2)+
   Elements: 1:Ni 2:C 4:H 1:N 2:O
   Charge: 1.0
@@ -23940,7 +23940,7 @@
       c2: 833431.88
       wref: -12552.0
       charge: 0.0
-- Name: Cu(Gly)+(aq)
+- Name: Cu(Gly)+
   Formula: Cu(C2H4NO2)+
   Elements: 1:Cu 2:C 4:H 1:N 2:O
   Charge: 1.0
@@ -23976,7 +23976,7 @@
       c2: 1057924.4
       wref: -12552.0
       charge: 0.0
-- Name: Zn(Gly)+(aq)
+- Name: Zn(Gly)+
   Formula: Zn(C2H4NO2)+
   Elements: 1:Zn 2:C 4:H 1:N 2:O
   Charge: 1.0
@@ -24012,7 +24012,7 @@
       c2: 1035473.1
       wref: -12552.0
       charge: 0.0
-- Name: Eu(Gly)+(aq)
+- Name: Eu(Gly)+
   Formula: Eu(C2H4NO2)+
   Elements: 1:Eu 2:C 4:H 1:N 2:O
   Charge: 1.0
@@ -24048,7 +24048,7 @@
       c2: 1495679.6
       wref: -12552.0
       charge: 0.0
-- Name: Ba(Gly)+(aq)
+- Name: Ba(Gly)+
   Formula: Ba(C2H4NO2)+
   Elements: 1:Ba 2:C 4:H 1:N 2:O
   Charge: 1.0
@@ -24084,7 +24084,7 @@
       c2: 810984.72
       wref: -12552.0
       charge: 0.0
-- Name: Mg(For)+(aq)
+- Name: Mg(For)+
   Formula: MgCHO2+
   Elements: 1:Mg 1:C 1:H 2:O
   Charge: 1.0
@@ -24120,7 +24120,7 @@
       c2: 489686.99
       wref: -12552.0
       charge: 0.0
-- Name: Ca(For)+(aq)
+- Name: Ca(For)+
   Formula: CaCHO2+
   Elements: 1:Ca 1:C 1:H 2:O
   Charge: 1.0
@@ -24156,7 +24156,7 @@
       c2: 407747.54
       wref: -12552.0
       charge: 0.0
-- Name: Sr(For)+(aq)
+- Name: Sr(For)+
   Formula: SrCHO2+
   Elements: 1:Sr 1:C 1:H 2:O
   Charge: 1.0
@@ -24192,7 +24192,7 @@
       c2: 313461.1
       wref: -12552.0
       charge: 0.0
-- Name: Ba(For)+(aq)
+- Name: Ba(For)+
   Formula: BaCHO2+
   Elements: 1:Ba 1:C 1:H 2:O
   Charge: 1.0
@@ -24228,7 +24228,7 @@
       c2: 229279.02
       wref: -12552.0
       charge: 0.0
-- Name: Cu(For)+(aq)
+- Name: Cu(For)+
   Formula: CuCHO2+
   Elements: 1:Cu 1:C 1:H 2:O
   Charge: 1.0
@@ -24264,7 +24264,7 @@
       c2: 476218.7
       wref: -12552.0
       charge: 0.0
-- Name: Cd(For)+(aq)
+- Name: Cd(For)+
   Formula: CdCHO2+
   Elements: 1:Cd 1:C 1:H 2:O
   Charge: 1.0
@@ -24318,7 +24318,7 @@
       c2: 66952.368
       wref: -12552.0
       charge: 0.0
-- Name: Na(For)2-(aq)
+- Name: Na(For)2-
   Formula: Na(CH02)2-
   Elements: 1:Na 2:C 2:H 4:O
   Charge: -1.0
@@ -24354,7 +24354,7 @@
       c2: -68814.248
       wref: -12552.0
       charge: 0.0
-- Name: K(For)2-(aq)
+- Name: K(For)2-
   Formula: K(CHO2)2-
   Elements: 1:K 2:C 2:H 4:O
   Charge: -1.0
@@ -24372,7 +24372,7 @@
       c2: -8598.12
       wref: 281206.64
       charge: -1.0
-- Name: La(For)+2(aq)
+- Name: La(For)+2
   Formula: LaCHO2+2
   Elements: 1:La 1:C 1:H 2:O
   Charge: 2.0
@@ -24390,7 +24390,7 @@
       c2: -47973.744
       wref: 622035.28
       charge: 2.0
-- Name: La(For)2+(aq)
+- Name: La(For)2+
   Formula: La(CHO2)2+
   Elements: 1:La 2:C 2:H 4:O
   Charge: 1.0
@@ -24408,7 +24408,7 @@
       c2: 69805.856
       wref: 277984.96
       charge: 1.0
-- Name: Eu(For)+(aq)
+- Name: Eu(For)+
   Formula: EuCHO2+
   Elements: 1:Eu 1:C 1:H 2:O
   Charge: 1.0
@@ -24444,7 +24444,7 @@
       c2: 913973.88
       wref: -12552.0
       charge: 0.0
-- Name: U(For)+2(aq)
+- Name: U(For)+2
   Formula: UCHO2+2
   Elements: 1:U 1:C 1:H 2:O
   Charge: 2.0
@@ -24462,7 +24462,7 @@
       c2: -42220.744
       wref: 570781.28
       charge: 2.0
-- Name: U(For)2+(aq)
+- Name: U(For)2+
   Formula: U(CHO2)2+
   Elements: 1:U 2:C 2:H 4:O
   Charge: 1.0
@@ -24480,7 +24480,7 @@
       c2: 81031.528
       wref: 206062.0
       charge: 1.0
-- Name: Eu(For)+2(aq)
+- Name: Eu(For)+2
   Formula: EuCHO2+2
   Elements: 1:Eu 1:C 1:H 2:O
   Charge: 2.0
@@ -24498,7 +24498,7 @@
       c2: -36467.744
       wref: 630403.28
       charge: 2.0
-- Name: Eu(For)2+(aq)
+- Name: Eu(For)2+
   Formula: Eu(CHO2)2+
   Elements: 1:Eu 2:C 2:H 4:O
   Charge: 1.0
@@ -24516,7 +24516,7 @@
       c2: 92257.2
       wref: 289156.24
       charge: 1.0
-- Name: Gd(For)+2(aq)
+- Name: Gd(For)+2
   Formula: GdCHO2+2
   Elements: 1:Gd 1:C 1:H 2:O
   Charge: 2.0
@@ -24534,7 +24534,7 @@
       c2: -23045.472
       wref: 597768.08
       charge: 2.0
-- Name: Gd(For)2+(aq)
+- Name: Gd(For)2+
   Formula: Gd(CHO2)2+
   Elements: 1:Gd 2:C 2:H 4:O
   Charge: 1.0
@@ -24552,7 +24552,7 @@
       c2: 118444.86
       wref: 243969.04
       charge: 1.0
-- Name: Yb(For)+2(aq)
+- Name: Yb(For)+2
   Formula: YbCHO2+2
   Elements: 1:Yb 1:C 1:H 2:O
   Charge: 2.0
@@ -24570,7 +24570,7 @@
       c2: -32631.016
       wref: 669649.2
       charge: 2.0
-- Name: Yb(For)2+(aq)
+- Name: Yb(For)2+
   Formula: Yb(CHO2)2+
   Elements: 1:Yb 2:C 2:H 4:O
   Charge: 1.0
@@ -24588,7 +24588,7 @@
       c2: 99738.192
       wref: 339364.24
       charge: 1.0
-- Name: Pb(For)+(aq)
+- Name: Pb(For)+
   Formula: PbCHO2+
   Elements: 1:Pb 1:C 1:H 2:O
   Charge: 1.0
@@ -24624,7 +24624,7 @@
       c2: 214312.85
       wref: -12552.0
       charge: 0.0
-- Name: Mn(For)+(aq)
+- Name: Mn(For)+
   Formula: MnCHO2+
   Elements: 1:Mn 1:C 1:H 2:O
   Charge: 1.0
@@ -24660,7 +24660,7 @@
       c2: 536079.18
       wref: -12552.0
       charge: 0.0
-- Name: Co(For)+(aq)
+- Name: Co(For)+
   Formula: CoCHO2+
   Elements: 1:Co 1:C 1:H 2:O
   Charge: 1.0
@@ -24696,7 +24696,7 @@
       c2: 397643.18
       wref: -12552.0
       charge: 0.0
-- Name: Ni(For)+(aq)
+- Name: Ni(For)+
   Formula: NiCHO2+
   Elements: 1:Ni 1:C 1:H 2:O
   Charge: 1.0
@@ -24732,7 +24732,7 @@
       c2: 251726.18
       wref: -12552.0
       charge: 0.0
-- Name: Zn(For)+(aq)
+- Name: Zn(For)+
   Formula: ZnCHO2+
   Elements: 1:Zn 1:C 1:H 2:O
   Charge: 1.0
@@ -24768,7 +24768,7 @@
       c2: 453767.35
       wref: -12552.0
       charge: 0.0
-- Name: Fe(For)+(aq)
+- Name: Fe(For)+
   Formula: FeCHO2+
   Elements: 1:Fe 1:C 1:H 2:O
   Charge: 1.0
@@ -24804,7 +24804,7 @@
       c2: 386421.69
       wref: -12552.0
       charge: 0.0
-- Name: Mg(Prop)+(aq)
+- Name: Mg(Prop)+
   Formula: MgCH3CH2CO2+
   Elements: 1:Mg 3:C 5:H 2:O
   Charge: 1.0
@@ -24840,7 +24840,7 @@
       c2: 2487881.7
       wref: -12552.0
       charge: 0.0
-- Name: Ca(Prop)+(aq)
+- Name: Ca(Prop)+
   Formula: CaCH3CH2CO2+
   Elements: 1:Ca 3:C 5:H 2:O
   Charge: 1.0
@@ -24876,7 +24876,7 @@
       c2: 2405942.3
       wref: -12552.0
       charge: 0.0
-- Name: Sr(Prop)+(aq)
+- Name: Sr(Prop)+
   Formula: SrCH3CH2CO2+
   Elements: 1:Sr 3:C 5:H 2:O
   Charge: 1.0
@@ -24912,7 +24912,7 @@
       c2: 2311655.8
       wref: -12552.0
       charge: 0.0
-- Name: Ba(Prop)+(aq)
+- Name: Ba(Prop)+
   Formula: BaCH3CH2CO2+
   Elements: 1:Ba 3:C 5:H 2:O
   Charge: 1.0
@@ -24948,7 +24948,7 @@
       c2: 2227473.7
       wref: -12552.0
       charge: 0.0
-- Name: Eu(Prop)+(aq)
+- Name: Eu(Prop)+
   Formula: EuCH3CH2CO2+
   Elements: 1:Eu 3:C 5:H 2:O
   Charge: 1.0
@@ -24984,7 +24984,7 @@
       c2: 2912168.6
       wref: -12552.0
       charge: 0.0
-- Name: Cu(Prop)+(aq)
+- Name: Cu(Prop)+
   Formula: CuCH3CH2CO2+
   Elements: 1:Cu 3:C 5:H 2:O
   Charge: 1.0
@@ -25020,7 +25020,7 @@
       c2: 2474413.4
       wref: -12552.0
       charge: 0.0
-- Name: Cd(Prop)+(aq)
+- Name: Cd(Prop)+
   Formula: CdCH3CH2CO2+
   Elements: 1:Cd 3:C 5:H 2:O
   Charge: 1.0
@@ -25056,7 +25056,7 @@
       c2: 2556725.2
       wref: -12552.0
       charge: 0.0
-- Name: Pb(Prop)+(aq)
+- Name: Pb(Prop)+
   Formula: PbCH3CH2CO2+
   Elements: 1:Pb 3:C 5:H 2:O
   Charge: 1.0
@@ -25110,7 +25110,7 @@
       c2: 903739.82
       wref: -12552.0
       charge: 0.0
-- Name: Na(Prop)2-(aq)
+- Name: Na(Prop)2-
   Formula: Na(CH3CH2CO2)2-
   Elements: 1:Na 6:C 10:H 4:O
   Charge: -1.0
@@ -25146,7 +25146,7 @@
       c2: 767973.2
       wref: -12552.0
       charge: 0.0
-- Name: K(Prop)2-(aq)
+- Name: K(Prop)2-
   Formula: K(CH3CH2CO2)2-
   Elements: 1:K 6:C 10:H 4:O
   Charge: -1.0
@@ -25164,7 +25164,7 @@
       c2: 1989596.6
       wref: 212630.88
       charge: -1.0
-- Name: La(Prop)+2(aq)
+- Name: La(Prop)+2
   Formula: LaCH3CH2CO2+2
   Elements: 1:La 3:C 5:H 2:O
   Charge: 2.0
@@ -25182,7 +25182,7 @@
       c2: 788809.52
       wref: 593793.28
       charge: 2.0
-- Name: La(Prop)2+(aq)
+- Name: La(Prop)2+
   Formula: La(CH3CH2CO2)2+
   Elements: 1:La 6:C 10:H 4:O
   Charge: 1.0
@@ -25200,7 +25200,7 @@
       c2: 2068004.8
       wref: 206062.0
       charge: 1.0
-- Name: Eu(Prop)+2(aq)
+- Name: Eu(Prop)+2
   Formula: EuCH3CH2CO2+2
   Elements: 1:Eu 3:C 5:H 2:O
   Charge: 2.0
@@ -25218,7 +25218,7 @@
       c2: 800315.52
       wref: 601742.88
       charge: 2.0
-- Name: Eu(Prop)2+(aq)
+- Name: Eu(Prop)2+
   Formula: Eu(CH3CH2CO2)2+
   Elements: 1:Eu 6:C 10:H 4:O
   Charge: 1.0
@@ -25236,7 +25236,7 @@
       c2: 2090451.9
       wref: 219911.04
       charge: 1.0
-- Name: Gd(Prop)+2(aq)
+- Name: Gd(Prop)+2
   Formula: GdCH3CH2CO2+2
   Elements: 1:Gd 3:C 5:H 2:O
   Charge: 2.0
@@ -25254,7 +25254,7 @@
       c2: 813741.98
       wref: 567015.68
       charge: 2.0
-- Name: Gd(Prop)2+(aq)
+- Name: Gd(Prop)2+
   Formula: Gd(CH3CH2CO2)2+
   Elements: 1:Gd 6:C 10:H 4:O
   Charge: 1.0
@@ -25272,7 +25272,7 @@
       c2: 2116643.8
       wref: 171544.0
       charge: 1.0
-- Name: Yb(Prop)+2(aq)
+- Name: Yb(Prop)+2
   Formula: YbCH3CH2CO2+2
   Elements: 1:Yb 3:C 5:H 2:O
   Charge: 2.0
@@ -25290,7 +25290,7 @@
       c2: 804152.25
       wref: 638854.96
       charge: 2.0
-- Name: Yb(Prop)2+(aq)
+- Name: Yb(Prop)2+
   Formula: Yb(CH3CH2CO2)2+
   Elements: 1:Yb 6:C 10:H 4:O
   Charge: 1.0
@@ -25308,7 +25308,7 @@
       c2: 2097937.1
       wref: 267273.92
       charge: 1.0
-- Name: U(Prop)+2(aq)
+- Name: U(Prop)+2
   Formula: UCH3CH2CO2+2
   Elements: 1:U 3:C 5:H 2:O
   Charge: 2.0
@@ -25326,7 +25326,7 @@
       c2: 794562.52
       wref: 541576.96
       charge: 2.0
-- Name: U(Prop)2+(aq)
+- Name: U(Prop)2+
   Formula: U(CH3CH2CO2)2+
   Elements: 1:U 6:C 10:H 4:O
   Charge: 1.0
@@ -25344,7 +25344,7 @@
       c2: 2079226.2
       wref: 134515.6
       charge: 1.0
-- Name: Co(Prop)+(aq)
+- Name: Co(Prop)+
   Formula: CoCH3CH2CO2+
   Elements: 1:Co 3:C 5:H 2:O
   Charge: 1.0
@@ -25380,7 +25380,7 @@
       c2: 2395842.1
       wref: -12552.0
       charge: 0.0
-- Name: Ni(Prop)+(aq)
+- Name: Ni(Prop)+
   Formula: NiCH3CH2CO2+
   Elements: 1:Ni 3:C 5:H 2:O
   Charge: 1.0
@@ -25416,7 +25416,7 @@
       c2: 2249920.9
       wref: -12552.0
       charge: 0.0
-- Name: Zn(Prop)+(aq)
+- Name: Zn(Prop)+
   Formula: ZnCH3CH2CO2+
   Elements: 1:Zn 3:C 5:H 2:O
   Charge: 1.0
@@ -25452,7 +25452,7 @@
       c2: 2451962.1
       wref: -12552.0
       charge: 0.0
-- Name: Fe(Prop)+(aq)
+- Name: Fe(Prop)+
   Formula: FeCH3CH2CO2+
   Elements: 1:Fe 3:C 5:H 2:O
   Charge: 1.0
@@ -25488,7 +25488,7 @@
       c2: 2384616.4
       wref: -12552.0
       charge: 0.0
-- Name: Mn(Prop)+(aq)
+- Name: Mn(Prop)+
   Formula: MnCH3CH2CO2+
   Elements: 1:Mn 3:C 5:H 2:O
   Charge: 1.0
@@ -25524,7 +25524,7 @@
       c2: 2534278.1
       wref: -12552.0
       charge: 0.0
-- Name: U(But)+2(aq)
+- Name: U(But)+2
   Formula: UCH3(CH2)2CO2+2
   Elements: 1:U 4:C 7:H 2:O
   Charge: 2.0
@@ -25542,7 +25542,7 @@
       c2: 1009695.4
       wref: 507351.84
       charge: 2.0
-- Name: U(But)2+(aq)
+- Name: U(But)2+
   Formula: U(CH3CH2CH2CO2)2+
   Elements: 1:U 8:C 14:H 4:O
   Charge: 1.0
@@ -25560,7 +25560,7 @@
       c2: 2592942.0
       wref: 54726.72
       charge: 1.0
-- Name: Eu(But)+(aq)
+- Name: Eu(But)+
   Formula: EuCH3(CH2)2CO2+
   Elements: 1:Eu 4:C 7:H 2:O
   Charge: 1.0
@@ -25596,7 +25596,7 @@
       c2: 3425884.3
       wref: -12552.0
       charge: 0.0
-- Name: Mg(But)+(aq)
+- Name: Mg(But)+
   Formula: MgCH3(CH2)2CO2+
   Elements: 1:Mg 4:C 7:H 2:O
   Charge: 1.0
@@ -25632,7 +25632,7 @@
       c2: 3001597.4
       wref: -12552.0
       charge: 0.0
-- Name: Ca(But)+(aq)
+- Name: Ca(But)+
   Formula: CaCH3(CH2)2CO2+
   Elements: 1:Ca 4:C 7:H 2:O
   Charge: 1.0
@@ -25668,7 +25668,7 @@
       c2: 2919658.0
       wref: -12552.0
       charge: 0.0
-- Name: Sr(But)+(aq)
+- Name: Sr(But)+
   Formula: SrCH3(CH2)2CO2+
   Elements: 1:Sr 4:C 7:H 2:O
   Charge: 1.0
@@ -25704,7 +25704,7 @@
       c2: 2825371.5
       wref: -12552.0
       charge: 0.0
-- Name: Ba(But)+(aq)
+- Name: Ba(But)+
   Formula: BaCH3(CH2)2CO2+
   Elements: 1:Ba 4:C 7:H 2:O
   Charge: 1.0
@@ -25740,7 +25740,7 @@
       c2: 2741185.3
       wref: -12552.0
       charge: 0.0
-- Name: Cu(But)+(aq)
+- Name: Cu(But)+
   Formula: CuCH3(CH2)2CO2+
   Elements: 1:Cu 4:C 7:H 2:O
   Charge: 1.0
@@ -25776,7 +25776,7 @@
       c2: 2988129.1
       wref: -12552.0
       charge: 0.0
-- Name: Cd(But)+(aq)
+- Name: Cd(But)+
   Formula: CdCH3(CH2)2CO2+
   Elements: 1:Cd 4:C 7:H 2:O
   Charge: 1.0
@@ -25830,7 +25830,7 @@
       c2: 1118872.7
       wref: -12552.0
       charge: 0.0
-- Name: Na(But)2-(aq)
+- Name: Na(But)2-
   Formula: Na(CH3CH2CH2CO2)2-
   Elements: 1:Na 8:C 14:H 4:O
   Charge: -1.0
@@ -25866,7 +25866,7 @@
       c2: 983101.93
       wref: -12552.0
       charge: 0.0
-- Name: K(But)2-(aq)
+- Name: K(But)2-
   Formula: K(CH3CH2CH2CO2)2-
   Elements: 1:K 8:C 14:H 4:O
   Charge: -1.0
@@ -25884,7 +25884,7 @@
       c2: 2503308.1
       wref: 136900.48
       charge: -1.0
-- Name: La(But)+2(aq)
+- Name: La(But)+2
   Formula: LaCH3(CH2)2CO2+2
   Elements: 1:La 4:C 7:H 2:O
   Charge: 2.0
@@ -25902,7 +25902,7 @@
       c2: 1003942.4
       wref: 559610.0
       charge: 2.0
-- Name: La(But)2+(aq)
+- Name: La(But)2+
   Formula: La(CH3CH2CH2CO2)2+
   Elements: 1:La 8:C 14:H 4:O
   Charge: 1.0
@@ -25920,7 +25920,7 @@
       c2: 2581716.3
       wref: 127235.44
       charge: 1.0
-- Name: Eu(But)+2(aq)
+- Name: Eu(But)+2
   Formula: EuCH3(CH2)2CO2+2
   Elements: 1:Eu 4:C 7:H 2:O
   Charge: 2.0
@@ -25938,7 +25938,7 @@
       c2: 1015448.4
       wref: 567015.68
       charge: 2.0
-- Name: Eu(But)2+(aq)
+- Name: Eu(But)2+
   Formula: Eu(CH3CH2CH2CO2)2+
   Elements: 1:Eu 8:C 14:H 4:O
   Charge: 1.0
@@ -25956,7 +25956,7 @@
       c2: 2604167.6
       wref: 140205.84
       charge: 1.0
-- Name: Gd(But)+2(aq)
+- Name: Gd(But)+2
   Formula: GdCH3(CH2)2CO2+2
   Elements: 1:Gd 4:C 7:H 2:O
   Charge: 2.0
@@ -25974,7 +25974,7 @@
       c2: 1028870.7
       wref: 534547.84
       charge: 2.0
-- Name: Gd(But)2+(aq)
+- Name: Gd(But)2+
   Formula: Gd(CH3CH2CH2CO2)2+
   Elements: 1:Gd 8:C 14:H 4:O
   Charge: 1.0
@@ -25992,7 +25992,7 @@
       c2: 2630355.3
       wref: 93261.36
       charge: 1.0
-- Name: Yb(But)+2(aq)
+- Name: Yb(But)+2
   Formula: YbCH3(CH2)2CO2+2
   Elements: 1:Yb 4:C 7:H 2:O
   Charge: 2.0
@@ -26010,7 +26010,7 @@
       c2: 1019281.0
       wref: 601742.88
       charge: 2.0
-- Name: Yb(But)2+(aq)
+- Name: Yb(But)2+
   Formula: Yb(CH3CH2CH2CO2)2+
   Elements: 1:Yb 8:C 14:H 4:O
   Charge: 1.0
@@ -26028,7 +26028,7 @@
       c2: 2611648.6
       wref: 188112.64
       charge: 1.0
-- Name: Pb(But)+(aq)
+- Name: Pb(But)+
   Formula: PbCH3(CH2)2CO2+
   Elements: 1:Pb 4:C 7:H 2:O
   Charge: 1.0
@@ -26064,7 +26064,7 @@
       c2: 2726223.3
       wref: -12552.0
       charge: 0.0
-- Name: Mn(But)+(aq)
+- Name: Mn(But)+
   Formula: MnCH3(CH2)2CO2+
   Elements: 1:Mn 4:C 7:H 2:O
   Charge: 1.0
@@ -26100,7 +26100,7 @@
       c2: 3047989.6
       wref: -12552.0
       charge: 0.0
-- Name: Ni(But)+(aq)
+- Name: Ni(But)+
   Formula: NiCH3(CH2)2CO2+
   Elements: 1:Ni 4:C 7:H 2:O
   Charge: 1.0
@@ -26136,7 +26136,7 @@
       c2: 2763636.6
       wref: -12552.0
       charge: 0.0
-- Name: Zn(But)+(aq)
+- Name: Zn(But)+
   Formula: ZnCH3(CH2)2CO2+
   Elements: 1:Zn 4:C 7:H 2:O
   Charge: 1.0
@@ -26172,7 +26172,7 @@
       c2: 2965677.8
       wref: -12552.0
       charge: 0.0
-- Name: Fe(But)+(aq)
+- Name: Fe(But)+
   Formula: FeCH3(CH2)2CO2+
   Elements: 1:Fe 4:C 7:H 2:O
   Charge: 1.0
@@ -26208,7 +26208,7 @@
       c2: 2898332.1
       wref: -12552.0
       charge: 0.0
-- Name: Co(But)+(aq)
+- Name: Co(But)+
   Formula: CoCH3(CH2)2CO2+
   Elements: 1:Co 4:C 7:H 2:O
   Charge: 1.0
@@ -26244,7 +26244,7 @@
       c2: 2909553.6
       wref: -12552.0
       charge: 0.0
-- Name: Ca(Pent)+(aq)
+- Name: Ca(Pent)+
   Formula: CaCH3(CH2)3CO2+
   Elements: 1:Ca 5:C 9:H 2:O
   Charge: 1.0
@@ -26280,7 +26280,7 @@
       c2: 4215275.4
       wref: -12552.0
       charge: 0.0
-- Name: Sr(Pent)+(aq)
+- Name: Sr(Pent)+
   Formula: SrCH3(CH2)3CO2+
   Elements: 1:Sr 5:C 9:H 2:O
   Charge: 1.0
@@ -26316,7 +26316,7 @@
       c2: 4120989.0
       wref: -12552.0
       charge: 0.0
-- Name: Ba(Pent)+(aq)
+- Name: Ba(Pent)+
   Formula: BaCH3(CH2)3CO2+
   Elements: 1:Ba 5:C 9:H 2:O
   Charge: 1.0
@@ -26352,7 +26352,7 @@
       c2: 4036802.7
       wref: -12552.0
       charge: 0.0
-- Name: Cu(Pent)+(aq)
+- Name: Cu(Pent)+
   Formula: CuCH3(CH2)3CO2+
   Elements: 1:Cu 5:C 9:H 2:O
   Charge: 1.0
@@ -26406,7 +26406,7 @@
       c2: 1661441.3
       wref: -12552.0
       charge: 0.0
-- Name: Na(Pent)2-(aq)
+- Name: Na(Pent)2-
   Formula: Na(CH3CH2CH2CH2CO2)2-
   Elements: 1:Na 10:C 18:H 4:O
   Charge: -1.0
@@ -26442,7 +26442,7 @@
       c2: 1525670.5
       wref: -12552.0
       charge: 0.0
-- Name: K(Pent)2-(aq)
+- Name: K(Pent)2-
   Formula: K(CH3CH2CH2CH2CO2)2-
   Elements: 1:K 10:C 18:H 4:O
   Charge: -1.0
@@ -26460,7 +26460,7 @@
       c2: 3798925.6
       wref: 43555.44
       charge: -1.0
-- Name: La(Pent)+2(aq)
+- Name: La(Pent)+2
   Formula: LaCH3(CH2)3CO2+2
   Elements: 1:La 5:C 9:H 2:O
   Charge: 2.0
@@ -26478,7 +26478,7 @@
       c2: 1546511.0
       wref: 517393.44
       charge: 2.0
-- Name: La(Pent)2+(aq)
+- Name: La(Pent)2+
   Formula: La(CH3CH2CH2CH2CO2)2+
   Elements: 1:La 10:C 18:H 4:O
   Charge: 1.0
@@ -26496,7 +26496,7 @@
       c2: 3877333.7
       wref: 29999.28
       charge: 1.0
-- Name: Eu(Pent)+2(aq)
+- Name: Eu(Pent)+2
   Formula: EuCH3(CH2)3CO2+2
   Elements: 1:Eu 5:C 9:H 2:O
   Charge: 2.0
@@ -26514,7 +26514,7 @@
       c2: 1558017.0
       wref: 527602.4
       charge: 2.0
-- Name: Eu(Pent)2+(aq)
+- Name: Eu(Pent)2+
   Formula: Eu(CH3CH2CH2CH2CO2)2+
   Elements: 1:Eu 10:C 18:H 4:O
   Charge: 1.0
@@ -26532,7 +26532,7 @@
       c2: 3899785.1
       wref: 41798.16
       charge: 1.0
-- Name: U(Pent)+2(aq)
+- Name: U(Pent)+2
   Formula: UCH3(CH2)3CO2+2
   Elements: 1:U 5:C 9:H 2:O
   Charge: 2.0
@@ -26550,7 +26550,7 @@
       c2: 1552264.0
       wref: 466264.96
       charge: 2.0
-- Name: Eu(Pent)+(aq)
+- Name: Eu(Pent)+
   Formula: EuCH3(CH2)3CO2+
   Elements: 1:Eu 5:C 9:H 2:O
   Charge: 1.0
@@ -26568,7 +26568,7 @@
       c2: 1988843.5
       wref: -52592.88
       charge: 1.0
-- Name: Gd(Pent)+2(aq)
+- Name: Gd(Pent)+2
   Formula: GdCH3(CH2)3CO2+2
   Elements: 1:Gd 5:C 9:H 2:O
   Charge: 2.0
@@ -26586,7 +26586,7 @@
       c2: 1571439.3
       wref: 494339.6
       charge: 2.0
-- Name: Gd(Pent)2+(aq)
+- Name: Gd(Pent)2+
   Formula: Gd(CH3CH2CH2CH2CO2)2+
   Elements: 1:Gd 10:C 18:H 4:O
   Charge: 1.0
@@ -26604,7 +26604,7 @@
       c2: 3925972.7
       wref: -4853.44
       charge: 1.0
-- Name: Yb(Pent)+2(aq)
+- Name: Yb(Pent)+2
   Formula: YbCH3(CH2)3CO2+2
   Elements: 1:Yb 5:C 9:H 2:O
   Charge: 2.0
@@ -26622,7 +26622,7 @@
       c2: 1561849.5
       wref: 563333.76
       charge: 2.0
-- Name: Yb(Pent)2+(aq)
+- Name: Yb(Pent)2+
   Formula: Yb(CH3CH2CH2CH2CO2)2+
   Elements: 1:Yb 10:C 18:H 4:O
   Charge: 1.0
@@ -26640,7 +26640,7 @@
       c2: 3907266.1
       wref: 90374.4
       charge: 1.0
-- Name: Mg(Pent)+(aq)
+- Name: Mg(Pent)+
   Formula: MgCH3(CH2)3CO2+
   Elements: 1:Mg 5:C 9:H 2:O
   Charge: 1.0
@@ -26676,7 +26676,7 @@
       c2: 4297214.9
       wref: -12552.0
       charge: 0.0
-- Name: Pb(Pent)+(aq)
+- Name: Pb(Pent)+
   Formula: PbCH3(CH2)3CO2+
   Elements: 1:Pb 5:C 9:H 2:O
   Charge: 1.0
@@ -26712,7 +26712,7 @@
       c2: 4021836.5
       wref: -12552.0
       charge: 0.0
-- Name: Co(Pent)+(aq)
+- Name: Co(Pent)+
   Formula: CoCH3(CH2)3CO2+
   Elements: 1:Co 5:C 9:H 2:O
   Charge: 1.0
@@ -26748,7 +26748,7 @@
       c2: 4205171.0
       wref: -12552.0
       charge: 0.0
-- Name: Ni(Pent)+(aq)
+- Name: Ni(Pent)+
   Formula: NiCH3(CH2)3CO2+
   Elements: 1:Ni 5:C 9:H 2:O
   Charge: 1.0
@@ -26784,7 +26784,7 @@
       c2: 4059254.0
       wref: -12552.0
       charge: 0.0
-- Name: Zn(Pent)+(aq)
+- Name: Zn(Pent)+
   Formula: ZnCH3(CH2)3CO2+
   Elements: 1:Zn 5:C 9:H 2:O
   Charge: 1.0
@@ -26820,7 +26820,7 @@
       c2: 4261295.2
       wref: -12552.0
       charge: 0.0
-- Name: Cd(Pent)+(aq)
+- Name: Cd(Pent)+
   Formula: CdCH3(CH2)3CO2+
   Elements: 1:Cd 5:C 9:H 2:O
   Charge: 1.0
@@ -26856,7 +26856,7 @@
       c2: 4366058.4
       wref: -12552.0
       charge: 0.0
-- Name: Fe(Pent)+(aq)
+- Name: Fe(Pent)+
   Formula: FeCH3(CH2)3CO2+
   Elements: 1:Fe 5:C 9:H 2:O
   Charge: 1.0
@@ -26892,7 +26892,7 @@
       c2: 4193949.6
       wref: -12552.0
       charge: 0.0
-- Name: Mn(Pent)+(aq)
+- Name: Mn(Pent)+
   Formula: MnCH3(CH2)3CO2+
   Elements: 1:Mn 5:C 9:H 2:O
   Charge: 1.0
@@ -26928,7 +26928,7 @@
       c2: 4343607.0
       wref: -12552.0
       charge: 0.0
-- Name: NaSO4-(aq)
+- Name: NaSO4-
   Formula: NaSO4-
   Elements: 1:Na 1:S 4:O
   Charge: -1.0
@@ -27054,7 +27054,7 @@
       c2: -420148.91
       wref: -15899.2
       charge: 0.0
-- Name: BeCl+(aq)
+- Name: BeCl+
   Formula: BeCl+
   Elements: 1:Be 1:Cl
   Charge: 1.0
@@ -27090,7 +27090,7 @@
       c2: 365104.21
       wref: -15899.2
       charge: 0.0
-- Name: FeCl+2(aq)
+- Name: FeCl+2
   Formula: FeCl+2
   Elements: 1:Fe 1:Cl
   Charge: 2.0
@@ -27108,7 +27108,7 @@
       c2: -98248.688
       wref: 711823.92
       charge: 2.0
-- Name: CoCl+(aq)
+- Name: CoCl+
   Formula: CoCl+
   Elements: 1:Co 1:Cl
   Charge: 1.0
@@ -27144,7 +27144,7 @@
       c2: 40459.28
       wref: -15899.2
       charge: 0.0
-- Name: CuCl2-(aq)
+- Name: CuCl2-
   Formula: CuCl2-
   Elements: 1:Cu 2:Cl
   Charge: -1.0
@@ -27162,7 +27162,7 @@
       c2: 154163.66
       wref: 511242.96
       charge: -1.0
-- Name: CuCl3-2(aq)
+- Name: CuCl3-2
   Formula: CuCl3-2
   Elements: 1:Cu 3:Cl
   Charge: -2.0
@@ -27180,7 +27180,7 @@
       c2: 330908.38
       wref: 1195745.4
       charge: -2.0
-- Name: CuCl+(aq)
+- Name: CuCl+
   Formula: CuCl+
   Elements: 1:Cu 1:Cl
   Charge: 1.0
@@ -27216,7 +27216,7 @@
       c2: 335171.87
       wref: -15899.2
       charge: 0.0
-- Name: CuCl3-(aq)
+- Name: CuCl3-
   Formula: CuCl3-
   Elements: 1:Cu 3:Cl
   Charge: -1.0
@@ -27234,7 +27234,7 @@
       c2: 489979.87
       wref: 694753.2
       charge: -1.0
-- Name: CuCl4-2(aq)
+- Name: CuCl4-2
   Formula: CuCl4-2
   Elements: 1:Cu 4:Cl
   Charge: -2.0
@@ -27252,7 +27252,7 @@
       c2: 587985.89
       wref: 1461178.3
       charge: -2.0
-- Name: CdCl+(aq)
+- Name: CdCl+
   Formula: CdCl+
   Elements: 1:Cd 1:Cl
   Charge: 1.0
@@ -27288,7 +27288,7 @@
       c2: 286528.69
       wref: -15899.2
       charge: 0.0
-- Name: CdCl3-(aq)
+- Name: CdCl3-
   Formula: CdCl3-
   Elements: 1:Cd 3:Cl
   Charge: -1.0
@@ -27306,7 +27306,7 @@
       c2: 407768.46
       wref: 613458.08
       charge: -1.0
-- Name: CdCl4-2(aq)
+- Name: CdCl4-2
   Formula: CdCl4-2
   Elements: 1:Cd 4:Cl
   Charge: -2.0
@@ -27342,7 +27342,7 @@
       c2: -302796.08
       wref: -15899.2
       charge: 0.0
-- Name: TlCl+2(aq)
+- Name: TlCl+2
   Formula: TlCl+2
   Elements: 1:Tl 1:Cl
   Charge: 2.0
@@ -27378,7 +27378,7 @@
       c2: -210752.26
       wref: -15899.2
       charge: 0.0
-- Name: AuCl2-(aq)
+- Name: AuCl2-
   Formula: AuCl2-
   Elements: 1:Au 2:Cl
   Charge: -1.0
@@ -27396,7 +27396,7 @@
       c2: -335975.2
       wref: 341958.32
       charge: -1.0
-- Name: AuCl3-2(aq)
+- Name: AuCl3-2
   Formula: AuCl3-2
   Elements: 1:Au 3:Cl
   Charge: -2.0
@@ -27414,7 +27414,7 @@
       c2: -497519.44
       wref: 955081.68
       charge: -2.0
-- Name: AuCl4-(aq)
+- Name: AuCl4-
   Formula: AuCl4-
   Elements: 1:Au 4:Cl
   Charge: -1.0
@@ -27432,7 +27432,7 @@
       c2: -138519.69
       wref: 651825.36
       charge: -1.0
-- Name: HgCl+(aq)
+- Name: HgCl+
   Formula: HgCl+
   Elements: 1:Hg 1:Cl
   Charge: 1.0
@@ -27468,7 +27468,7 @@
       c2: 496055.04
       wref: -15899.2
       charge: 0.0
-- Name: HgCl3-(aq)
+- Name: HgCl3-
   Formula: HgCl3-
   Elements: 1:Hg 3:Cl
   Charge: -1.0
@@ -27486,7 +27486,7 @@
       c2: 761910.58
       wref: 488523.84
       charge: -1.0
-- Name: HgCl4-2(aq)
+- Name: HgCl4-2
   Formula: HgCl4-2
   Elements: 1:Hg 4:Cl
   Charge: -2.0
@@ -27504,7 +27504,7 @@
       c2: 1003574.2
       wref: 1165076.6
       charge: -2.0
-- Name: InCl+2(aq)
+- Name: InCl+2
   Formula: InCl+2
   Elements: 1:In 1:Cl
   Charge: 2.0
@@ -27522,7 +27522,7 @@
       c2: -113591.42
       wref: 688016.96
       charge: 2.0
-- Name: BeF+(aq)
+- Name: BeF+
   Formula: BeF+
   Elements: 1:Be 1:F
   Charge: 1.0
@@ -27558,7 +27558,7 @@
       c2: 451980.78
       wref: -15899.2
       charge: 0.0
-- Name: BeF3-(aq)
+- Name: BeF3-
   Formula: BeF3-
   Elements: 1:Be 3:F
   Charge: -1.0
@@ -27576,7 +27576,7 @@
       c2: 692058.7
       wref: 16777.84
       charge: -1.0
-- Name: BeF4-2(aq)
+- Name: BeF4-2
   Formula: BeF4-2
   Elements: 1:Be 4:F
   Charge: -2.0
@@ -27594,7 +27594,7 @@
       c2: 895514.07
       wref: 139285.36
       charge: -2.0
-- Name: MnF+(aq)
+- Name: MnF+
   Formula: MnF+
   Elements: 1:Mn 1:F
   Charge: 1.0
@@ -27612,7 +27612,7 @@
       c2: 123503.31
       wref: 313088.72
       charge: 1.0
-- Name: FeF+(aq)
+- Name: FeF+
   Formula: FeF+
   Elements: 1:Fe 1:F
   Charge: 1.0
@@ -27630,7 +27630,7 @@
       c2: 50634.768
       wref: 363296.72
       charge: 1.0
-- Name: FeF+2(aq)
+- Name: FeF+2
   Formula: FeF+2
   Elements: 1:Fe 1:F
   Charge: 2.0
@@ -27648,7 +27648,7 @@
       c2: -61868.808
       wref: 605717.68
       charge: 2.0
-- Name: CoF+(aq)
+- Name: CoF+
   Formula: CoF+
   Elements: 1:Co 1:F
   Charge: 1.0
@@ -27666,7 +27666,7 @@
       c2: -54467.312
       wref: 373463.84
       charge: 1.0
-- Name: NiF+(aq)
+- Name: NiF+
   Formula: NiF+
   Elements: 1:Ni 1:F
   Charge: 1.0
@@ -27684,7 +27684,7 @@
       c2: -20321.688
       wref: 400408.8
       charge: 1.0
-- Name: CuF+(aq)
+- Name: CuF+
   Formula: CuF+
   Elements: 1:Cu 1:F
   Charge: 1.0
@@ -27702,7 +27702,7 @@
       c2: 159937.58
       wref: 348694.56
       charge: 1.0
-- Name: ZnF+(aq)
+- Name: ZnF+
   Formula: ZnF+
   Elements: 1:Zn 1:F
   Charge: 1.0
@@ -27738,7 +27738,7 @@
       c2: -34384.112
       wref: -15899.2
       charge: 0.0
-- Name: CdF+(aq)
+- Name: CdF+
   Formula: CdF+
   Elements: 1:Cd 1:F
   Charge: 1.0
@@ -27774,7 +27774,7 @@
       c2: 373409.45
       wref: -15899.2
       charge: 0.0
-- Name: BaF+(aq)
+- Name: BaF+
   Formula: BaF+
   Elements: 1:Ba 1:F
   Charge: 1.0
@@ -27810,7 +27810,7 @@
       c2: -266416.2
       wref: -15899.2
       charge: 0.0
-- Name: HgF+(aq)
+- Name: HgF+
   Formula: HgF+
   Elements: 1:Hg 1:F
   Charge: 1.0
@@ -27828,7 +27828,7 @@
       c2: 242395.86
       wref: 260370.32
       charge: 1.0
-- Name: InF+2(aq)
+- Name: InF+2
   Formula: InF+2
   Elements: 1:In 1:F
   Charge: 2.0
@@ -27846,7 +27846,7 @@
       c2: -77207.352
       wref: 589902.16
       charge: 2.0
-- Name: PbF+(aq)
+- Name: PbF+
   Formula: PbF+
   Elements: 1:Pb 1:F
   Charge: 1.0
@@ -27882,7 +27882,7 @@
       c2: 29187.584
       wref: -15899.2
       charge: 0.0
-- Name: Ag(HS)2-(aq)
+- Name: Ag(HS)2-
   Formula: Ag(HS)2-
   Elements: 1:Ag 2:H 2:S
   Charge: -1.0
@@ -27900,7 +27900,7 @@
       c2: 197790.23
       wref: 398609.68
       charge: -1.0
-- Name: Au(HS)2-(aq)
+- Name: Au(HS)2-
   Formula: Au(HS)2-
   Elements: 1:Au 2:H 2:S
   Charge: -1.0
@@ -27936,7 +27936,7 @@
       c2: 202944.92
       wref: -15899.2
       charge: 0.0
-- Name: Pb(HS)3-(aq)
+- Name: Pb(HS)3-
   Formula: Pb(HS)3-
   Elements: 1:Pb 3:H 3:S
   Charge: -1.0
@@ -27954,7 +27954,7 @@
       c2: 280432.6
       wref: 250203.2
       charge: -1.0
-- Name: Mg(HSiO3)+(aq)
+- Name: Mg(HSiO3)+
   Formula: Mg(HSiO3)+
   Elements: 1:Mg 1:H 1:Si 3:O
   Charge: 1.0
@@ -27972,7 +27972,7 @@
       c2: 195401.17
       wref: 383965.68
       charge: 1.0
-- Name: Ca(HSiO3)+(aq)
+- Name: Ca(HSiO3)+
   Formula: Ca(HSiO3)+
   Elements: 1:Ca 1:H 1:Si 3:O
   Charge: 1.0
