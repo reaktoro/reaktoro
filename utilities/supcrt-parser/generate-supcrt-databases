@@ -427,9 +427,10 @@ def createSpecies(splitline):
     species["Name"] = next(entries)
     species["Formula"] = next(entries)
     strucformula = next(entries)
-    species["Elements"] = parseElements(strucformula)
-    species["Charge"] = parseCharge(strucformula)
     agcode = next(entries) # the aggregate state code (e.g., min, gas, aq)
+    species["Elements"] = parseElements(strucformula)
+    if agcode == "aq":
+        species["Charge"] = parseCharge(strucformula)
     species["AggregateState"] = determineAggregateState(agcode)
     species["StandardThermoModel"] = createStandardThermoModel(entries)
 
