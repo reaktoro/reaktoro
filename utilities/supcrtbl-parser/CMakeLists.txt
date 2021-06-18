@@ -1,4 +1,4 @@
-add_custom_target(update-supcrtbl-databases
+add_custom_target(update-databases-supcrtbl
     COMMENT "Updating supcrtbl json and yaml databases..."
     COMMAND ${CMAKE_COMMAND} -E echo "This operation expects databases/supcrtbl/spronsbl.dat has been updated!"
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/generate-supcrtbl-databases
