@@ -220,6 +220,20 @@ def roundFloats(o, sigfigures=8):
     return o
 
 
+def stringfylists(data):
+    """
+    Recursively modifies a data structure, changind lists to strings surrounded by @.
+    This method is used to ensure that lists in yaml and json outputs are in a single line.
+    """
+    if type(data) is list:
+        return "@" + str(data) + "@"
+    elif type(data) is dict:
+        return { key: stringfylists(val) for key, val in data.items() }
+    elif type(data) in [float, int, str]:
+        return data
+    else: raise RuntimeError("Argument has type `{}`, which is not supported.".format(type(data)))
+
+
 def raiseErrorModelCodeNotSupported(code):
     raise RuntimeError(
         "The provided thermodynamic model code `{}` is not supported.\n"
@@ -288,7 +302,7 @@ def determineAggregateState(agcode):
     """Return the aggregate state of the species with given thermodynamic model"""
     if agcode == "aq": return "Aqueous"
     if agcode == "gas": return "Gaseous"
-    if agcode == "min": return "Mineral"
+    if agcode == "min": return "Solid"
     raise RuntimeError(f"The aggregate state code `{agcode}` is not supported (must be one of: `aq`, `min`, `gas`")
 
 
@@ -501,6 +515,9 @@ def convert(filename, outdir):
             s = createSpecies(line.split())
             species.append(s)
 
+    # Transform all list values to strings surrounded by @
+    species = [stringfylists(subs) for subs in species]
+
     # The base name taken from the input file (e.g., supcrt98 for linearized.supcrt98.dat)
     basename = os.path.basename(filename)
     basename = basename.split(".")[1]  # "linearized.supcrt98.dat" => ["linearized", "supcrt98", "dat"] get array entry at index 1
@@ -513,11 +530,15 @@ def convert(filename, outdir):
     if not os.path.exists(outdir): os.makedirs(outdir)
     if not os.path.exists(outdir): os.makedirs(outdir)
 
+    # Create database
+    db = {}
+    db["Species"] = species
+
     # Perform a json dump
-    jdump = json.dumps(species, sort_keys=False, indent=2, separators=(",", ": "))
+    jdump = json.dumps(db, sort_keys=False, indent=2, separators=(",", ": "))
 
     # Perform a yaml dump
-    ydump = yaml.dump(species, width=float("inf"))
+    ydump = yaml.dump(db, width=float("inf"))
 
     # Clean both json and yaml dumps from, for example, @ surrounding lists (e.g., @[...]@)
     jdump = clean(jdump)

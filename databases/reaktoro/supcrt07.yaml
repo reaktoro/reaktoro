@@ -1,7 +1,8 @@
+Species:
 - Name: Akermanite
   Formula: Ca2MgSi2O7
   Elements: 2:Ca 1:Mg 2:Si 7:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -3679250.6
@@ -15,7 +16,7 @@
 - Name: Alabandite
   Formula: MnS
   Elements: 1:Mn 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -218312.75
@@ -29,7 +30,7 @@
 - Name: Albite,low
   Formula: Na(AlSi3)O8
   Elements: 1:Na 1:Al 3:Si 8:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -3708312.7
@@ -43,7 +44,7 @@
 - Name: Alunite
   Formula: KAl3(OH)6(SO4)2
   Elements: 1:K 3:Al 2:S 14:O 6:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -4659302.4
@@ -57,7 +58,7 @@
 - Name: Amesite,7A
   Formula: Mg2Al(AlSi)O5(OH)4
   Elements: 2:Mg 2:Al 1:Si 9:O 4:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -71,7 +72,7 @@
 - Name: Amorphous-Silica
   Formula: SiO2
   Elements: 1:Si 2:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -848900.13
@@ -85,7 +86,7 @@
 - Name: Analcime
   Formula: NaAlSi2O6(H2O)
   Elements: 1:Na 1:Al 2:Si 7:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -3088202.0
@@ -99,7 +100,7 @@
 - Name: Analcime,dehydrated
   Formula: NaAlSi2O6
   Elements: 1:Na 1:Al 2:Si 6:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2824154.0
@@ -113,7 +114,7 @@
 - Name: Andalusite
   Formula: Al2SiO5
   Elements: 2:Al 1:Si 5:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2429176.0
@@ -127,7 +128,7 @@
 - Name: Andradite
   Formula: Ca3Fe2Si3O12
   Elements: 3:Ca 2:Fe 3:Si 12:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -5425890.7
@@ -141,7 +142,7 @@
 - Name: Anglesite
   Formula: PbSO4
   Elements: 1:Pb 1:S 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -813172.95
@@ -155,7 +156,7 @@
 - Name: Anhydrite
   Formula: CaSO4
   Elements: 1:Ca 1:S 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1321830.2
@@ -169,7 +170,7 @@
 - Name: Annite
   Formula: KFe3(AlSi3)O10(OH)2
   Elements: 1:K 3:Fe 1:Al 3:Si 12:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -4799700.7
@@ -183,7 +184,7 @@
 - Name: Anorthite
   Formula: Ca(Al2Si2)O8
   Elements: 1:Ca 2:Al 2:Si 8:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -3991862.4
@@ -197,7 +198,7 @@
 - Name: Aragonite
   Formula: CaCO3
   Elements: 1:Ca 1:C 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1128353.7
@@ -211,7 +212,7 @@
 - Name: Artinite
   Formula: Mg2(OH)2(CO3)(H2O)3
   Elements: 2:Mg 1:C 8:O 8:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2568620.4
@@ -225,7 +226,7 @@
 - Name: Azurite
   Formula: Cu3(OH)2(CO3)2
   Elements: 3:Cu 2:C 8:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1399200.7
@@ -239,7 +240,7 @@
 - Name: Barite
   Formula: BaSO4
   Elements: 1:Ba 1:S 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1362155.6
@@ -253,7 +254,7 @@
 - Name: Berndtite
   Formula: SnS2
   Elements: 1:Sn 2:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -145394.0
@@ -267,7 +268,7 @@
 - Name: Boehmite
   Formula: AlO(OH)
   Elements: 1:Al 2:O 1:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -908974.0
@@ -281,7 +282,7 @@
 - Name: Bromellite
   Formula: BeO
   Elements: 1:Be 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -295,7 +296,7 @@
 - Name: Brucite
   Formula: Mg(OH)2
   Elements: 1:Mg 2:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -835318.86
@@ -309,7 +310,7 @@
 - Name: Ca-Al-Pyroxene
   Formula: CaAl(AlSi)O6
   Elements: 1:Ca 2:Al 1:Si 6:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -3104808.3
@@ -323,7 +324,7 @@
 - Name: Calcite
   Formula: CaCO3
   Elements: 1:Ca 1:C 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1129177.9
@@ -337,7 +338,7 @@
 - Name: Cassiterite
   Formula: SnO2
   Elements: 1:Sn 2:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -519903.84
@@ -351,7 +352,7 @@
 - Name: Celadonite
   Formula: K(MgAl)Si4O10(OH)2
   Elements: 1:K 1:Mg 1:Al 4:Si 12:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -365,7 +366,7 @@
 - Name: Celestite
   Formula: SrSO4
   Elements: 1:Sr 1:S 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1340700.0
@@ -379,7 +380,7 @@
 - Name: Cerussite
   Formula: PbCO3
   Elements: 1:Pb 1:C 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -629148.08
@@ -393,7 +394,7 @@
 - Name: Chabazite
   Formula: Ca(Al2Si4)O12(H2O)6
   Elements: 1:Ca 2:Al 4:Si 18:O 12:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -407,7 +408,7 @@
 - Name: Chalcedony
   Formula: SiO2
   Elements: 1:Si 2:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -854690.78
@@ -421,7 +422,7 @@
 - Name: Chlorargyrite
   Formula: AgCl
   Elements: 1:Ag 1:Cl
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -109817.45
@@ -435,7 +436,7 @@
 - Name: Chloritoid
   Formula: FeAl2SiO5(OH)2
   Elements: 1:Fe 2:Al 1:Si 7:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -449,7 +450,7 @@
 - Name: Chrysotile
   Formula: Mg3Si2O5(OH)4
   Elements: 3:Mg 2:Si 9:O 4:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -4037020.3
@@ -463,7 +464,7 @@
 - Name: Cinnabar
   Formula: HgS
   Elements: 1:Hg 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -45772.96
@@ -477,7 +478,7 @@
 - Name: Clinochlore,14A
   Formula: Mg5Al(AlSi3)O10(OH)8
   Elements: 5:Mg 2:Al 3:Si 18:O 8:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -8207765.4
@@ -491,7 +492,7 @@
 - Name: Clinozoisite
   Formula: Ca2Al3Si3O12(OH)
   Elements: 2:Ca 3:Al 3:Si 13:O 1:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -6482020.2
@@ -505,7 +506,7 @@
 - Name: Copper
   Formula: Cu
   Elements: 1:Cu
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: 0.0
@@ -519,7 +520,7 @@
 - Name: Cordierite
   Formula: Mg2Al3(AlSi5)O18
   Elements: 2:Mg 4:Al 5:Si 18:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -8624391.3
@@ -533,7 +534,7 @@
 - Name: Cordierite,hydrous
   Formula: Mg2Al3(AlSi5)O18(H2O)
   Elements: 2:Mg 4:Al 5:Si 19:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -8875728.4
@@ -547,7 +548,7 @@
 - Name: Corundum
   Formula: Al2O3
   Elements: 2:Al 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1568263.6
@@ -561,7 +562,7 @@
 - Name: Covellite
   Formula: CuS
   Elements: 1:Cu 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -52768.608
@@ -575,7 +576,7 @@
 - Name: Cristobalite,alpha
   Formula: SiO2
   Elements: 1:Si 2:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -853096.68
@@ -589,7 +590,7 @@
 - Name: Cristobalite,beta
   Formula: SiO2
   Elements: 1:Si 2:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -850565.36
@@ -603,7 +604,7 @@
 - Name: Cummingtonite
   Formula: Mg7Si8O22(OH)2
   Elements: 7:Mg 8:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -617,7 +618,7 @@
 - Name: Cuprite
   Formula: Cu2O
   Elements: 2:Cu 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -148046.66
@@ -631,7 +632,7 @@
 - Name: Daphnite,14A
   Formula: Fe5Al(AlSi3)O10(OH)8
   Elements: 5:Fe 2:Al 3:Si 18:O 8:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -6487216.7
@@ -645,7 +646,7 @@
 - Name: Diaspore
   Formula: AlO(OH)
   Elements: 1:Al 2:O 1:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -913793.97
@@ -659,7 +660,7 @@
 - Name: Dickite
   Formula: Al2Si2O5(OH)4
   Elements: 2:Al 2:Si 9:O 4:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -673,7 +674,7 @@
 - Name: Diopside
   Formula: CaMg(SiO3)2
   Elements: 1:Ca 1:Mg 2:Si 6:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -3028295.5
@@ -687,7 +688,7 @@
 - Name: Dolomite
   Formula: CaMg(CO3)2
   Elements: 1:Ca 1:Mg 2:C 6:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2166307.8
@@ -701,7 +702,7 @@
 - Name: Dolomite,disordered
   Formula: CaMg(CO3)2
   Elements: 1:Ca 1:Mg 2:C 6:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2157492.2
@@ -715,7 +716,7 @@
 - Name: Dolomite,ordered
   Formula: CaMg(CO3)2
   Elements: 1:Ca 1:Mg 2:C 6:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2166307.8
@@ -729,7 +730,7 @@
 - Name: Epidote
   Formula: Ca2FeAl2Si3O12(OH)
   Elements: 2:Ca 1:Fe 2:Al 3:Si 13:O 1:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -6070590.7
@@ -743,7 +744,7 @@
 - Name: Epidote,ordered
   Formula: Ca2FeAl2Si3O12(OH)
   Elements: 2:Ca 1:Fe 2:Al 3:Si 13:O 1:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -6070590.7
@@ -757,7 +758,7 @@
 - Name: Fayalite
   Formula: Fe2SiO4
   Elements: 2:Fe 1:Si 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1381694.9
@@ -771,7 +772,7 @@
 - Name: Ferropargasite
   Formula: Na(Ca2Fe4Al)(Al2Si6)O22(OH)2
   Elements: 1:Na 2:Ca 4:Fe 3:Al 6:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -10569566.0
@@ -785,7 +786,7 @@
 - Name: Ferrotremolite
   Formula: (Ca2Fe5)Si8O22(OH)2
   Elements: 2:Ca 5:Fe 8:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -9828634.4
@@ -799,7 +800,7 @@
 - Name: Ferrous-Oxide
   Formula: FeO
   Elements: 1:Fe 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -251445.85
@@ -813,7 +814,7 @@
 - Name: Fluorite
   Formula: CaF2
   Elements: 1:Ca 2:F
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1173582.7
@@ -827,7 +828,7 @@
 - Name: Fluorphlogopite
   Formula: KMg3(AlSi3)O10(F)2
   Elements: 1:K 3:Mg 1:Al 3:Si 10:O 2:F
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -841,7 +842,7 @@
 - Name: Fluortremolite
   Formula: (Ca2Mg5)Si8O22(F)2
   Elements: 2:Ca 5:Mg 8:Si 22:O 2:F
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -855,7 +856,7 @@
 - Name: Forsterite
   Formula: Mg2SiO4
   Elements: 2:Mg 1:Si 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2056703.8
@@ -869,7 +870,7 @@
 - Name: Galena
   Formula: PbS
   Elements: 1:Pb 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -96713.16
@@ -883,7 +884,7 @@
 - Name: Gehlenite
   Formula: Ca2(Al2Si)O7
   Elements: 2:Ca 2:Al 1:Si 7:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -3778771.2
@@ -897,7 +898,7 @@
 - Name: Gibbsite
   Formula: Al(OH)3
   Elements: 1:Al 3:O 3:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1155486.9
@@ -911,7 +912,7 @@
 - Name: Glaucophane
   Formula: Na2(Mg3Al2)Si8O22(OH)2
   Elements: 2:Na 3:Mg 2:Al 8:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -925,7 +926,7 @@
 - Name: Goethite
   Formula: FeOOH
   Elements: 1:Fe 2:O 1:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -491620.0
@@ -939,7 +940,7 @@
 - Name: Gold
   Formula: Au
   Elements: 1:Au
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: 0.0
@@ -953,7 +954,7 @@
 - Name: Graphite
   Formula: C
   Elements: 1:C
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: 0.0
@@ -967,7 +968,7 @@
 - Name: Greenalite
   Formula: Fe3Si2O5(OH)4
   Elements: 3:Fe 2:Si 9:O 4:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2992982.6
@@ -981,7 +982,7 @@
 - Name: Grossular
   Formula: Ca3Al2Si3O12
   Elements: 3:Ca 2:Al 3:Si 12:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -6260548.5
@@ -995,7 +996,7 @@
 - Name: Grunerite
   Formula: Fe7Si8O22(OH)2
   Elements: 7:Fe 8:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -1009,7 +1010,7 @@
 - Name: Halite
   Formula: NaCl
   Elements: 1:Na 1:Cl
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -384120.49
@@ -1023,7 +1024,7 @@
 - Name: Halloysite
   Formula: Al2Si2O5(OH)4
   Elements: 2:Al 2:Si 9:O 4:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -1037,7 +1038,7 @@
 - Name: Hedenbergite
   Formula: CaFe(SiO3)2
   Elements: 1:Ca 1:Fe 2:Si 6:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2673567.6
@@ -1051,7 +1052,7 @@
 - Name: Huntite
   Formula: CaMg3(CO3)4
   Elements: 1:Ca 3:Mg 4:C 12:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -4203706.6
@@ -1065,7 +1066,7 @@
 - Name: Hydromagnesite
   Formula: Mg5(OH)2(CO3)4(H2O)4
   Elements: 5:Mg 4:C 18:O 10:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -5864658.4
@@ -1079,7 +1080,7 @@
 - Name: Jadeite
   Formula: NaAl(SiO3)2
   Elements: 1:Na 1:Al 2:Si 6:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2842797.9
@@ -1093,7 +1094,7 @@
 - Name: K-Feldspar
   Formula: K(AlSi3)O8
   Elements: 1:K 1:Al 3:Si 8:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -3746244.8
@@ -1107,7 +1108,7 @@
 - Name: Kaolinite
   Formula: Al2Si2O5(OH)4
   Elements: 2:Al 2:Si 9:O 4:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -3789089.0
@@ -1121,7 +1122,7 @@
 - Name: Kyanite
   Formula: Al2SiO5
   Elements: 2:Al 1:Si 5:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2430719.9
@@ -1135,7 +1136,7 @@
 - Name: Laurite
   Formula: RuS2
   Elements: 1:Ru 2:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -188405.52
@@ -1149,7 +1150,7 @@
 - Name: Laumontite
   Formula: Ca(Al2Si4)O12(H2O)4
   Elements: 1:Ca 2:Al 4:Si 16:O 8:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -6681107.4
@@ -1163,7 +1164,7 @@
 - Name: Leonhardite
   Formula: Ca2(Al4Si8)O24(H2O)7
   Elements: 2:Ca 4:Al 8:Si 31:O 14:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -1177,7 +1178,7 @@
 - Name: Lime
   Formula: CaO
   Elements: 1:Ca 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -604027.34
@@ -1191,7 +1192,7 @@
 - Name: Litharge
   Formula: PbO
   Elements: 1:Pb 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -189200.48
@@ -1205,7 +1206,7 @@
 - Name: Magnesite
   Formula: MgCO3
   Elements: 1:Mg 1:C 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1027833.1
@@ -1219,7 +1220,7 @@
 - Name: Malachite
   Formula: Cu2(OH)2(CO3)
   Elements: 2:Cu 1:C 5:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -896229.54
@@ -1233,7 +1234,7 @@
 - Name: Manganosite
   Formula: MnO
   Elements: 1:Mn 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -362899.24
@@ -1247,7 +1248,7 @@
 - Name: Merwinite
   Formula: Ca3Mg(SiO4)2
   Elements: 3:Ca 1:Mg 2:Si 8:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -4336824.8
@@ -1261,7 +1262,7 @@
 - Name: Metacinnabar
   Formula: HgS
   Elements: 1:Hg 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -43668.408
@@ -1275,7 +1276,7 @@
 - Name: Microcline
   Formula: K(AlSi3)O8
   Elements: 1:K 1:Al 3:Si 8:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -3746244.8
@@ -1289,7 +1290,7 @@
 - Name: Minnesotaite
   Formula: Fe3Si4O10(OH)2
   Elements: 3:Fe 4:Si 12:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -1303,7 +1304,7 @@
 - Name: Molybdenite
   Formula: MoS2
   Elements: 1:Mo 2:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -262955.61
@@ -1317,7 +1318,7 @@
 - Name: Monticellite
   Formula: CaMgSiO4
   Elements: 1:Ca 1:Mg 1:Si 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2145676.5
@@ -1331,7 +1332,7 @@
 - Name: Muscovite
   Formula: KAl2(AlSi3)O10(OH)2
   Elements: 1:K 3:Al 3:Si 12:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -5591083.4
@@ -1345,7 +1346,7 @@
 - Name: Nepheline
   Formula: Na(AlSi)O4
   Elements: 1:Na 1:Al 1:Si 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1978496.4
@@ -1359,7 +1360,7 @@
 - Name: Palladium
   Formula: Pd
   Elements: 1:Pd
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: 0.0
@@ -1373,7 +1374,7 @@
 - Name: Paragonite
   Formula: NaAl2(AlSi3)O10(OH)2
   Elements: 1:Na 3:Al 3:Si 12:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -5548034.2
@@ -1387,7 +1388,7 @@
 - Name: Pargasite
   Formula: Na(Ca2Mg4Al)(Al2Si6)O22(OH)2
   Elements: 1:Na 2:Ca 4:Mg 3:Al 6:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -11910710.0
@@ -1401,7 +1402,7 @@
 - Name: Periclase
   Formula: MgO
   Elements: 1:Mg 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -569383.82
@@ -1415,7 +1416,7 @@
 - Name: Phlogopite
   Formula: KMg3(AlSi3)O10(OH)2
   Elements: 1:K 3:Mg 1:Al 3:Si 12:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -5841646.4
@@ -1429,7 +1430,7 @@
 - Name: Platinum
   Formula: Pt
   Elements: 1:Pt
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: 0.0
@@ -1443,7 +1444,7 @@
 - Name: Potassium-Oxide
   Formula: K2O
   Elements: 2:K 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -322402.3
@@ -1457,7 +1458,7 @@
 - Name: Pyrite
   Formula: FeS2
   Elements: 1:Fe 2:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -160217.91
@@ -1471,7 +1472,7 @@
 - Name: Pyrophyllite
   Formula: Al2Si4O10(OH)2
   Elements: 2:Al 4:Si 12:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -5255091.4
@@ -1485,7 +1486,7 @@
 - Name: Pd(OH)2
   Formula: Pd(OH)2
   Elements: 1:Pd 2:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -301248.0
@@ -1499,7 +1500,7 @@
 - Name: Pd4S
   Formula: Pd4S
   Elements: 4:Pd 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -68199.2
@@ -1513,7 +1514,7 @@
 - Name: PdO
   Formula: PdO
   Elements: 1:Pd 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -59956.72
@@ -1527,7 +1528,7 @@
 - Name: Vysotskite
   Formula: PdS
   Elements: 1:Pd 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -66944.0
@@ -1541,7 +1542,7 @@
 - Name: Cooperite
   Formula: PtS
   Elements: 1:Pt 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -77822.4
@@ -1555,7 +1556,7 @@
 - Name: PtS2
   Formula: PtS2
   Elements: 1:Pt 2:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -101252.8
@@ -1569,7 +1570,7 @@
 - Name: Rhodium
   Formula: Rh
   Elements: 1:Rh
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: 0.0
@@ -1583,7 +1584,7 @@
 - Name: Rhodochrosite
   Formula: MnCO3
   Elements: 1:Mn 1:C 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -816068.28
@@ -1597,7 +1598,7 @@
 - Name: Richterite
   Formula: Na2(CaMg5)Si8O22(OH)2
   Elements: 2:Na 1:Ca 5:Mg 8:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -1611,7 +1612,7 @@
 - Name: Romarchite
   Formula: SnO
   Elements: 1:Sn 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -257144.46
@@ -1625,7 +1626,7 @@
 - Name: Ruthenium
   Formula: Ru
   Elements: 1:Ru
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: 0.0
@@ -1639,7 +1640,7 @@
 - Name: Rutile
   Formula: TiO2
   Elements: 1:Ti 2:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -890702.47
@@ -1653,7 +1654,7 @@
 - Name: Rh2O
   Formula: RhO2
   Elements: 2:Rh 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -79914.4
@@ -1667,7 +1668,7 @@
 - Name: Rh2O3
   Formula: Rh2O3
   Elements: 2:Rh 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -202087.2
@@ -1681,7 +1682,7 @@
 - Name: RuO2
   Formula: RuO2
   Elements: 1:Ru 2:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -253090.16
@@ -1695,7 +1696,7 @@
 - Name: Sanidine
   Formula: K(AlSi3)O8
   Elements: 1:K 1:Al 3:Si 8:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -3739399.8
@@ -1709,7 +1710,7 @@
 - Name: Sepiolite
   Formula: Mg4Si6O15(OH)2(H2O)2(H2O)4
   Elements: 4:Mg 6:Si 23:O 14:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -9251627.3
@@ -1723,7 +1724,7 @@
 - Name: Siderite
   Formula: FeCO3
   Elements: 1:Fe 1:C 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -679540.18
@@ -1737,7 +1738,7 @@
 - Name: Sillimanite
   Formula: Al2SiO5
   Elements: 2:Al 1:Si 5:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2427100.7
@@ -1751,7 +1752,7 @@
 - Name: Silver
   Formula: Ag
   Elements: 1:Ag
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: 0.0
@@ -1765,7 +1766,7 @@
 - Name: Smithsonite
   Formula: ZnCO3
   Elements: 1:Zn 1:C 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -731572.4
@@ -1779,7 +1780,7 @@
 - Name: Sodium-Oxide
   Formula: Na2O
   Elements: 2:Na 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -376070.47
@@ -1793,7 +1794,7 @@
 - Name: Sphalerite
   Formula: ZnS
   Elements: 1:Zn 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -200610.25
@@ -1807,7 +1808,7 @@
 - Name: Spinel
   Formula: MgAl2O4
   Elements: 1:Mg 2:Al 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2163153.1
@@ -1821,7 +1822,7 @@
 - Name: Staurolite
   Formula: Fe2Al9Si4O23(OH)
   Elements: 2:Fe 9:Al 4:Si 24:O 1:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: null
@@ -1835,7 +1836,7 @@
 - Name: Strontianite
   Formula: SrCO3
   Elements: 1:Sr 1:C 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1152566.5
@@ -1849,7 +1850,7 @@
 - Name: Sylvite
   Formula: KCl
   Elements: 1:K 1:Cl
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -408923.24
@@ -1863,7 +1864,7 @@
 - Name: Talc
   Formula: Mg3Si4O10(OH)2
   Elements: 3:Mg 4:Si 12:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -5523666.6
@@ -1877,7 +1878,7 @@
 - Name: Tenorite
   Formula: CuO
   Elements: 1:Cu 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -127896.51
@@ -1891,7 +1892,7 @@
 - Name: Titanite
   Formula: CaTiSiO5
   Elements: 1:Ca 1:Ti 1:Si 5:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -2457468.2
@@ -1905,7 +1906,7 @@
 - Name: Tremolite
   Formula: (Ca2Mg5)Si8O22(OH)2
   Elements: 2:Ca 5:Mg 8:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -11590705.0
@@ -1919,7 +1920,7 @@
 - Name: Uraninite
   Formula: UO2
   Elements: 1:U 2:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1031816.2
@@ -1933,7 +1934,7 @@
 - Name: PdS2
   Formula: PdS2
   Elements: 1:Pd 2:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -74056.8
@@ -1947,7 +1948,7 @@
 - Name: Wairakite
   Formula: Ca(Al2Si4)O12(H2O)2
   Elements: 1:Ca 2:Al 4:Si 14:O 4:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -6181575.5
@@ -1961,7 +1962,7 @@
 - Name: Wollastonite
   Formula: CaSiO3
   Elements: 1:Ca 1:Si 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -1544837.4
@@ -1975,7 +1976,7 @@
 - Name: Wurtzite
   Formula: ZnS
   Elements: 1:Zn 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -187485.04
@@ -1989,7 +1990,7 @@
 - Name: Zincite
   Formula: ZnO
   Elements: 1:Zn 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -320477.66
@@ -2003,7 +2004,7 @@
 - Name: Zoisite
   Formula: Ca2Al3Si3O12(OH)
   Elements: 2:Ca 3:Al 3:Si 13:O 1:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MaierKelley:
       Gf: -6481764.9
@@ -2017,7 +2018,7 @@
 - Name: Albite
   Formula: Na(AlSi3)O8
   Elements: 1:Na 1:Al 3:Si 8:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2025,28 +2026,18 @@
       Hf: -3931621.1
       Sr: 207.14984
       Vr: 0.00010025
-      a:
-      - 258.1528
-      - 342.58592
-      b:
-      - 0.0581576
-      - 0.014869936
-      c:
-      - -6280184.0
-      - -20984434.0
-      Ttr:
-      - 473.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [258.1528, 342.58592]
+      b: [0.0581576, 0.014869936]
+      c: [-6280184.0, -20984434.0]
+      Ttr: [473.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1200.0
 - Name: Albite,high
   Formula: NaAlSi3O8
   Elements: 1:Na 1:Al 3:Si 8:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2054,28 +2045,18 @@
       Hf: -3920617.2
       Sr: 218.8232
       Vr: 0.00010043
-      a:
-      - 258.1528
-      - 268.48728
-      b:
-      - 0.0581576
-      - 0.0581576
-      c:
-      - -6280184.0
-      - -6280184.0
-      Ttr:
-      - 623.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [258.1528, 268.48728]
+      b: [0.0581576, 0.0581576]
+      c: [-6280184.0, -6280184.0]
+      Ttr: [623.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1400.0
 - Name: Almandine
   Formula: Fe3Al2Si3O12
   Elements: 3:Fe 2:Al 3:Si 12:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2083,28 +2064,18 @@
       Hf: null
       Sr: 316.3104
       Vr: 0.00011528
-      a:
-      - 408.02368
-      - 448.06456
-      b:
-      - 0.14074976
-      - 0.06217424
-      c:
-      - -7836632.0
-      - -4447592.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [408.02368, 448.06456]
+      b: [0.14074976, 0.06217424]
+      c: [-7836632.0, -4447592.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1600.0
 - Name: Amesite,14A
   Formula: Mg4Al2(Al2Si2)O10(OH)8
   Elements: 4:Mg 4:Al 2:Si 18:O 8:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2112,28 +2083,18 @@
       Hf: null
       Sr: 455.6376
       Vr: 0.0002054
-      a:
-      - 722.11656
-      - 708.7696
-      b:
-      - 0.14635632
-      - 0.17254816
-      c:
-      - -17434728.0
-      - -18564408.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [722.11656, 708.7696]
+      b: [0.14635632, 0.17254816]
+      c: [-17434728.0, -18564408.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Antigorite
   Formula: Mg48Si34O85(OH)62
   Elements: 48:Mg 34:Si 147:O 62:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2141,28 +2102,18 @@
       Hf: -71424608.0
       Sr: 3603.9302
       Vr: 0.00174913
-      a:
-      - 5139.8348
-      - 5166.5287
-      b:
-      - 2.1495718
-      - 2.0971882
-      c:
-      - -119946910.0
-      - -117687550.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [5139.8348, 5166.5287]
+      b: [2.1495718, 2.0971882]
+      c: [-119946910.0, -117687550.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Clinochlore,7A
   Formula: Mg5Al(AlSi3)O10(OH)8
   Elements: 5:Mg 2:Al 3:Si 18:O 8:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2170,28 +2121,18 @@
       Hf: -8841616.2
       Sr: 445.596
       Vr: 0.0002115
-      a:
-      - 681.23888
-      - 694.58584
-      b:
-      - 0.21179408
-      - 0.18560224
-      c:
-      - -17104192.0
-      - -15974512.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [681.23888, 694.58584]
+      b: [0.21179408, 0.18560224]
+      c: [-17104192.0, -15974512.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 900.0
 - Name: Coesite
   Formula: SiO2
   Elements: 1:Si 2:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2199,28 +2140,18 @@
       Hf: -906312.98
       Sr: 40.3756
       Vr: 2.0641e-05
-      a:
-      - 46.024
-      - 59.37096
-      b:
-      - 0.0343088
-      - 0.00811696
-      c:
-      - -1129680.0
-      - 0.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [46.024, 59.37096]
+      b: [0.0343088, 0.00811696]
+      c: [-1129680.0, 0.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 2000.0
 - Name: Cristobalite
   Formula: SiO2
   Elements: 1:Si 2:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2228,28 +2159,18 @@
       Hf: -906902.92
       Sr: 43.396448
       Vr: 2.574e-05
-      a:
-      - 58.49232
-      - 72.75976
-      b:
-      - 0.01397456
-      - 0.00129704
-      c:
-      - -1594104.0
-      - -4137976.0
-      Ttr:
-      - 543.0
-      Htr:
-      - 1343.064
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [58.49232, 72.75976]
+      b: [0.01397456, 0.00129704]
+      c: [-1594104.0, -4137976.0]
+      Ttr: [543.0]
+      Htr: [1343.064]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 2000.0
 - Name: Daphnite,7A
   Formula: Fe5Al(AlSi3)O10(OH)8
   Elements: 5:Fe 2:Al 3:Si 18:O 8:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2257,28 +2178,18 @@
       Hf: null
       Sr: 581.1576
       Vr: 0.0002212
-      a:
-      - 721.86552
-      - 735.21248
-      b:
-      - 0.21873952
-      - 0.19254768
-      c:
-      - -15577032.0
-      - -14489192.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [721.86552, 735.21248]
+      b: [0.21873952, 0.19254768]
+      c: [-15577032.0, -14489192.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Edenite
   Formula: Na(Ca2Mg5)(AlSi7)O22(OH2)
   Elements: 1:Na 2:Ca 5:Mg 1:Al 7:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2286,28 +2197,18 @@
       Hf: null
       Sr: 673.624
       Vr: 0.000271
-      a:
-      - 835.58664
-      - 848.9336
-      b:
-      - 0.20409552
-      - 0.17790368
-      c:
-      - -19250584.0
-      - -18120904.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [835.58664, 848.9336]
+      b: [0.20409552, 0.17790368]
+      c: [-19250584.0, -18120904.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Epistilbite
   Formula: Ca(Al2Si6)O16(H2O)5
   Elements: 1:Ca 2:Al 6:Si 21:O 10:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2315,28 +2216,18 @@
       Hf: null
       Sr: 639.7336
       Vr: 0.00026756
-      a:
-      - 657.05536
-      - 683.74928
-      b:
-      - 0.25468008
-      - 0.2022964
-      c:
-      - -9133672.0
-      - -6874312.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [657.05536, 683.74928]
+      b: [0.25468008, 0.2022964]
+      c: [-9133672.0, -6874312.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Ferroedenite
   Formula: Na(Ca2Fe5)(AlSi7)O22(OH)2
   Elements: 1:Na 2:Ca 5:Fe 1:Al 7:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2344,28 +2235,18 @@
       Hf: null
       Sr: 810.4408
       Vr: 0.0002809
-      a:
-      - 876.21328
-      - 889.56024
-      b:
-      - 0.21104096
-      - 0.18484912
-      c:
-      - -17723424.0
-      - -16593744.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [876.21328, 889.56024]
+      b: [0.21104096, 0.18484912]
+      c: [-17723424.0, -16593744.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Ferrosilite
   Formula: FeSiO3
   Elements: 1:Fe 1:Si 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2373,28 +2254,18 @@
       Hf: -1195193.1
       Sr: 90.49992
       Vr: 3.2952e-05
-      a:
-      - 110.83416
-      - 99.85116
-      b:
-      - 0.02121288
-      - 0.03673552
-      c:
-      - -2322120.0
-      - -1966480.0
-      Ttr:
-      - 413.0
-      Htr:
-      - 154.808
-      Vtr:
-      - 5.6e-08
-      dPdTtr:
-      - 6700000.0
+      a: [110.83416, 99.85116]
+      b: [0.02121288, 0.03673552]
+      c: [-2322120.0, -1966480.0]
+      Ttr: [413.0]
+      Htr: [154.808]
+      Vtr: [5.6e-08]
+      dPdTtr: [6700000.0]
       Tmax: 1400.0
 - Name: Fluoredenite
   Formula: Na(Ca2Mg5)(AlSi7)O22(F)2
   Elements: 1:Na 2:Ca 5:Mg 1:Al 7:Si 22:O 2:F
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2402,28 +2273,18 @@
       Hf: null
       Sr: 613.7928
       Vr: 0.0002725
-      a:
-      - 816.84232
-      - 830.18928
-      b:
-      - 0.19556016
-      - 0.16936832
-      c:
-      - -18794528.0
-      - -17664848.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [816.84232, 830.18928]
+      b: [0.19556016, 0.16936832]
+      c: [-18794528.0, -17664848.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Heulandite
   Formula: Ca(Al2Si7)O18(H2O)6
   Elements: 1:Ca 2:Al 7:Si 24:O 12:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2431,28 +2292,18 @@
       Hf: null
       Sr: 763.1616
       Vr: 0.00031637
-      a:
-      - 751.69744
-      - 791.73832
-      b:
-      - 0.28898888
-      - 0.21041336
-      c:
-      - -10263352.0
-      - -6874312.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [751.69744, 791.73832]
+      b: [0.28898888, 0.21041336]
+      c: [-10263352.0, -6874312.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Kalsilite
   Formula: K(AlSi)O4
   Elements: 1:K 1:Al 1:Si 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2460,28 +2311,18 @@
       Hf: -2131363.1
       Sr: 133.2604
       Vr: 5.989e-05
-      a:
-      - 123.13512
-      - 177.82
-      b:
-      - 0.07263424
-      - 0.0
-      c:
-      - -2225888.0
-      - 0.0
-      Ttr:
-      - 810.0
-      Htr:
-      - 669.44
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [123.13512, 177.82]
+      b: [0.07263424, 0.0]
+      c: [-2225888.0, 0.0]
+      Ttr: [810.0]
+      Htr: [669.44]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1800.0
 - Name: Lawsonite
   Formula: CaAl2Si2O7(OH)2(H2O)
   Elements: 1:Ca 2:Al 2:Si 10:O 4:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2489,28 +2330,18 @@
       Hf: -4845507.1
       Sr: 233.4672
       Vr: 0.00010132
-      a:
-      - 342.2512
-      - 355.59816
-      b:
-      - 0.09773824
-      - 0.0715464
-      c:
-      - -6803184.0
-      - -5673504.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [342.2512, 355.59816]
+      b: [0.09773824, 0.0715464]
+      c: [-6803184.0, -5673504.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Magnetite
   Formula: Fe3O4
   Elements: 3:Fe 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2518,28 +2349,18 @@
       Hf: -1118174.0
       Sr: 145.72872
       Vr: 4.4524e-05
-      a:
-      - 91.54592
-      - 200.832
-      b:
-      - 0.2016688
-      - 0.0
-      c:
-      - 0.0
-      - 0.0
-      Ttr:
-      - 900.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [91.54592, 200.832]
+      b: [0.2016688, 0.0]
+      c: [0.0, 0.0]
+      Ttr: [900.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1800.0
 - Name: Margarite
   Formula: CaAl2(Al2Si2)O10(OH)2
   Elements: 1:Ca 4:Al 2:Si 12:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2547,28 +2368,18 @@
       Hf: -6216599.8
       Sr: 266.9392
       Vr: 0.0001294
-      a:
-      - 428.86
-      - 415.51304
-      b:
-      - 0.0684084
-      - 0.09460024
-      c:
-      - -11736120.0
-      - -12865800.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [428.86, 415.51304]
+      b: [0.0684084, 0.09460024]
+      c: [-11736120.0, -12865800.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Natrolite
   Formula: Na2(Al2Si3)O10(H2O)2
   Elements: 2:Na 2:Al 3:Si 12:O 4:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2576,28 +2387,18 @@
       Hf: null
       Sr: 425.0944
       Vr: 0.00016972
-      a:
-      - 400.65984
-      - 387.31288
-      b:
-      - 0.16769472
-      - 0.19388656
-      c:
-      - -6301104.0
-      - -7430784.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [400.65984, 387.31288]
+      b: [0.16769472, 0.19388656]
+      c: [-6301104.0, -7430784.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Nesquehonite
   Formula: MgCO3(H2O)3
   Elements: 1:Mg 1:C 6:O 6:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2605,28 +2406,18 @@
       Hf: -1977258.0
       Sr: 195.64384
       Vr: 7.479e-05
-      a:
-      - -6588.9799
-      - 105.62926
-      b:
-      - 16.31414
-      - 0.38195318
-      c:
-      - -174608780.0
-      - -1766484.8
-      Ttr:
-      - 306.5
-      Htr:
-      - 769.856
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [-6588.9799, 105.62926]
+      b: [16.31414, 0.38195318]
+      c: [-174608780.0, -1766484.8]
+      Ttr: [306.5]
+      Htr: [769.856]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 340.0
 - Name: Nickel
   Formula: Ni
   Elements: 1:Ni
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2634,28 +2425,18 @@
       Hf: 0.0
       Sr: 29.87376
       Vr: 6.588e-06
-      a:
-      - 16.98704
-      - 25.104
-      b:
-      - 0.02945536
-      - 0.0075312
-      c:
-      - 0.0
-      - 0.0
-      Ttr:
-      - 633.0
-      Htr:
-      - 0.0
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [16.98704, 25.104]
+      b: [0.02945536, 0.0075312]
+      c: [0.0, 0.0]
+      Ttr: [633.0]
+      Htr: [0.0]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1725.0
 - Name: Phillipsite,Ca
   Formula: Ca(Al2Si5)O14(H2O)5
   Elements: 1:Ca 2:Al 5:Si 19:O 10:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2663,28 +2444,18 @@
       Hf: null
       Sr: 697.0544
       Vr: 0.000265
-      a:
-      - 610.11088
-      - 623.45784
-      b:
-      - 0.22037128
-      - 0.19417944
-      c:
-      - -8003992.0
-      - -6874312.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [610.11088, 623.45784]
+      b: [0.22037128, 0.19417944]
+      c: [-8003992.0, -6874312.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Phillipsite,K
   Formula: K2(Al2Si5)O14(H2O)5
   Elements: 2:K 2:Al 5:Si 19:O 10:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2692,28 +2463,18 @@
       Hf: null
       Sr: 720.0664
       Vr: 0.000265
-      a:
-      - 638.72944
-      - 652.0764
-      b:
-      - 0.25204416
-      - 0.22585232
-      c:
-      - -7719480.0
-      - -6589800.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [638.72944, 652.0764]
+      b: [0.25204416, 0.22585232]
+      c: [-7719480.0, -6589800.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Phillipsite,Na
   Formula: Na2(Al2Si5)O14(H2O)5
   Elements: 2:Na 2:Al 5:Si 19:O 10:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2721,28 +2482,18 @@
       Hf: null
       Sr: 721.3216
       Vr: 0.000265
-      a:
-      - 637.6416
-      - 650.98856
-      b:
-      - 0.23631232
-      - 0.21012048
-      c:
-      - -8560464.0
-      - -7430784.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [637.6416, 650.98856]
+      b: [0.23631232, 0.21012048]
+      c: [-8560464.0, -7430784.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Prehnite
   Formula: Ca2Al2Si3O10(OH)2
   Elements: 2:Ca 2:Al 3:Si 12:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2750,28 +2501,18 @@
       Hf: -6199219.4
       Sr: 271.96
       Vr: 0.00014033
-      a:
-      - 383.2544
-      - 423.29528
-      b:
-      - 0.15823888
-      - 0.07966336
-      c:
-      - -8200640.0
-      - -4811600.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [383.2544, 423.29528]
+      b: [0.15823888, 0.07966336]
+      c: [-8200640.0, -4811600.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Pyrope
   Formula: Mg3Al2Si3O12
   Elements: 3:Mg 2:Al 3:Si 12:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2779,28 +2520,18 @@
       Hf: null
       Sr: 260.6632
       Vr: 0.00011327
-      a:
-      - 383.63096
-      - 423.67184
-      b:
-      - 0.13656576
-      - 0.05799024
-      c:
-      - -8752928.0
-      - -5363888.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [383.63096, 423.67184]
+      b: [0.13656576, 0.05799024]
+      c: [-8752928.0, -5363888.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1800.0
 - Name: Quartz
   Formula: SiO2
   Elements: 1:Si 2:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2808,28 +2539,18 @@
       Hf: -910647.6
       Sr: 41.33792
       Vr: 2.2688e-05
-      a:
-      - 46.94448
-      - 60.29144
-      b:
-      - 0.0343088
-      - 0.00811696
-      c:
-      - -1129680.0
-      - 0.0
-      Ttr:
-      - 848.0
-      Htr:
-      - 1213.36
-      Vtr:
-      - 3.72e-07
-      dPdTtr:
-      - 3850000.0
+      a: [46.94448, 60.29144]
+      b: [0.0343088, 0.00811696]
+      c: [-1129680.0, 0.0]
+      Ttr: [848.0]
+      Htr: [1213.36]
+      Vtr: [3.72e-07]
+      dPdTtr: [3850000.0]
       Tmax: 2000.0
 - Name: Quicksilver
   Formula: Hg
   Elements: 1:Hg
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2837,28 +2558,18 @@
       Hf: 0.0
       Sr: 76.02328
       Vr: 1.4822e-05
-      a:
-      - 26.94496
-      - 20.79448
-      b:
-      - 0.0
-      - 0.0
-      c:
-      - 79496.0
-      - 0.0
-      Ttr:
-      - 629.0
-      Htr:
-      - 59161.76
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [26.94496, 20.79448]
+      b: [0.0, 0.0]
+      c: [79496.0, 0.0]
+      Ttr: [629.0]
+      Htr: [59161.76]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 3000.0
 - Name: Selenium
   Formula: Se
   Elements: 1:Se
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2866,28 +2577,18 @@
       Hf: 0.0
       Sr: 42.270952
       Vr: 1.642e-05
-      a:
-      - 25.444578
-      - 18.879882
-      b:
-      - 0.0051940176
-      - 0.013380432
-      c:
-      - -173326.38
-      - 2576339.8
-      Ttr:
-      - 494.0
-      Htr:
-      - 6160.1032
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [25.444578, 18.879882]
+      b: [0.0051940176, 0.013380432]
+      c: [-173326.38, 2576339.8]
+      Ttr: [494.0]
+      Htr: [6160.1032]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 957.0
 - Name: Spessartine
   Formula: Mn3Al2Si3O12
   Elements: 3:Mn 2:Al 3:Si 12:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2895,28 +2596,18 @@
       Hf: null
       Sr: 311.708
       Vr: 0.0001179
-      a:
-      - 395.30432
-      - 435.3452
-      b:
-      - 0.13907616
-      - 0.06050064
-      c:
-      - -7999808.0
-      - -4610768.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [395.30432, 435.3452]
+      b: [0.13907616, 0.06050064]
+      c: [-7999808.0, -4610768.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1800.0
 - Name: Stilbite
   Formula: NaCa2(Al5Si13)O36(H2O)14
   Elements: 1:Na 2:Ca 5:Al 13:Si 50:O 28:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2924,28 +2615,18 @@
       Hf: null
       Sr: 1670.6712
       Vr: 0.00064991
-      a:
-      - 1634.0612
-      - 1674.1021
-      b:
-      - 0.57605312
-      - 0.4974776
-      c:
-      - -20853056.0
-      - -17464016.0
-      Ttr:
-      - 848.0
-      Htr:
-      - null
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [1634.0612, 1674.1021]
+      b: [0.57605312, 0.4974776]
+      c: [-20853056.0, -17464016.0]
+      Ttr: [848.0]
+      Htr: [null]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 1000.0
 - Name: Tin
   Formula: Sn
   Elements: 1:Sn
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 1
@@ -2953,28 +2634,18 @@
       Hf: 0.0
       Sr: 51.21216
       Vr: 1.6289e-05
-      a:
-      - 18.49328
-      - 30.5432
-      b:
-      - 0.0263592
-      - 0.0
-      c:
-      - 0.0
-      - 0.0
-      Ttr:
-      - 505.06
-      Htr:
-      - 7029.12
-      Vtr:
-      - null
-      dPdTtr:
-      - null
+      a: [18.49328, 30.5432]
+      b: [0.0263592, 0.0]
+      c: [0.0, 0.0]
+      Ttr: [505.06]
+      Htr: [7029.12]
+      Vtr: [null]
+      dPdTtr: [null]
       Tmax: 3000.0
 - Name: Acanthite
   Formula: Ag2S
   Elements: 2:Ag 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -2982,35 +2653,18 @@
       Hf: -31589.2
       Sr: 143.5112
       Vr: 3.42e-05
-      a:
-      - 65.39592
-      - 7.610696
-      - 90.3744
-      b:
-      - 0.0359824
-      - 0.221752
-      - 0.0
-      c:
-      - 0.0
-      - 0.0
-      - 0.0
-      Ttr:
-      - 450.0
-      - 620.0
-      Htr:
-      - 3974.8
-      - 2510.4
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [65.39592, 7.610696, 90.3744]
+      b: [0.0359824, 0.221752, 0.0]
+      c: [0.0, 0.0, 0.0]
+      Ttr: [450.0, 620.0]
+      Htr: [3974.8, 2510.4]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1000.0
 - Name: Aegerine
   Formula: NaFe(SiO3)2
   Elements: 1:Na 1:Fe 2:Si 6:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3018,35 +2672,18 @@
       Hf: null
       Sr: 153.5528
       Vr: 6.437e-05
-      a:
-      - 193.13344
-      - 219.32528
-      - 210.32968
-      b:
-      - 0.08079304
-      - 0.04188184
-      - 0.04556376
-      c:
-      - -3958064.0
-      - -3213312.0
-      - -3213312.0
-      Ttr:
-      - 950.0
-      - 1050.0
-      Htr:
-      - null
-      - null
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [193.13344, 219.32528, 210.32968]
+      b: [0.08079304, 0.04188184, 0.04556376]
+      c: [-3958064.0, -3213312.0, -3213312.0]
+      Ttr: [950.0, 1050.0]
+      Htr: [null, null]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1400.0
 - Name: Anthophyllite
   Formula: Mg7Si8O22(OH)2
   Elements: 7:Mg 8:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3054,35 +2691,18 @@
       Hf: -12086526.0
       Sr: 538.0624
       Vr: 0.0002644
-      a:
-      - 755.97349
-      - 826.51573
-      - 834.80005
-      b:
-      - 0.25344162
-      - 0.17411298
-      - 0.17411298
-      c:
-      - -16092501.0
-      - -5582292.8
-      - -5582292.8
-      Ttr:
-      - 903.0
-      - 1258.0
-      Htr:
-      - null
-      - null
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [755.97349, 826.51573, 834.80005]
+      b: [0.25344162, 0.17411298, 0.17411298]
+      c: [-16092501.0, -5582292.8, -5582292.8]
+      Ttr: [903.0, 1258.0]
+      Htr: [null, null]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1800.0
 - Name: Bornite
   Formula: Cu5FeS4
   Elements: 5:Cu 1:Fe 4:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3090,35 +2710,18 @@
       Hf: -334393.65
       Sr: 415.42936
       Vr: 9.86e-05
-      a:
-      - 208.19584
-      - -143.55304
-      - 336.10072
-      b:
-      - 0.14677472
-      - 1.033448
-      - -0.00853536
-      c:
-      - -564840.0
-      - 0.0
-      - 0.0
-      Ttr:
-      - 485.0
-      - 540.0
-      Htr:
-      - 5983.12
-      - 0.0
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [208.19584, -143.55304, 336.10072]
+      b: [0.14677472, 1.033448, -0.00853536]
+      c: [-564840.0, 0.0, 0.0]
+      Ttr: [485.0, 540.0]
+      Htr: [5983.12, 0.0]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1200.0
 - Name: Bunsenite
   Formula: NiO
   Elements: 1:Ni 1:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3126,35 +2729,18 @@
       Hf: -239743.2
       Sr: 37.99072
       Vr: 1.097e-05
-      a:
-      - -20.87816
-      - 58.07392
-      - 46.77712
-      b:
-      - 0.15723472
-      - 0.0
-      - 0.00845168
-      c:
-      - 1627576.0
-      - 0.0
-      - 0.0
-      Ttr:
-      - 525.0
-      - 565.0
-      Htr:
-      - 0.0
-      - 0.0
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [-20.87816, 58.07392, 46.77712]
+      b: [0.15723472, 0.0, 0.00845168]
+      c: [1627576.0, 0.0, 0.0]
+      Ttr: [525.0, 565.0]
+      Htr: [0.0, 0.0]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 2000.0
 - Name: Chalcocite
   Formula: Cu2S
   Elements: 2:Cu 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3162,35 +2748,18 @@
       Hf: -79496.0
       Sr: 120.9176
       Vr: 2.748e-05
-      a:
-      - 52.84392
-      - 112.04752
-      - 85.01888
-      b:
-      - 0.07874288
-      - -0.0307524
-      - 0.0
-      c:
-      - 0.0
-      - 0.0
-      - 0.0
-      Ttr:
-      - 376.0
-      - 717.0
-      Htr:
-      - 3849.28
-      - 1200.808
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [52.84392, 112.04752, 85.01888]
+      b: [0.07874288, -0.0307524, 0.0]
+      c: [0.0, 0.0, 0.0]
+      Ttr: [376.0, 717.0]
+      Htr: [3849.28, 1200.808]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1400.0
 - Name: Chalcopyrite
   Formula: CuFeS2
   Elements: 1:Cu 1:Fe 2:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3198,35 +2767,18 @@
       Hf: -185991.35
       Sr: 130.3316
       Vr: 4.283e-05
-      a:
-      - 86.98536
-      - -591.6176
-      - 172.46448
-      b:
-      - 0.0535552
-      - 0.87864
-      - 0.0
-      c:
-      - -560656.0
-      - 0.0
-      - 0.0
-      Ttr:
-      - 830.0
-      - 930.0
-      Htr:
-      - 10062.52
-      - 0.0
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [86.98536, -591.6176, 172.46448]
+      b: [0.0535552, 0.87864, 0.0]
+      c: [-560656.0, 0.0, 0.0]
+      Ttr: [830.0, 930.0]
+      Htr: [10062.52, 0.0]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1200.0
 - Name: Cronstedtite,7A
   Formula: Fe2Fe(FeSi)O5(OH)4
   Elements: 4:Fe 1:Si 9:O 4:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3234,35 +2786,18 @@
       Hf: null
       Sr: 307.524
       Vr: 0.0001109
-      a:
-      - 354.76136
-      - 407.1032
-      - 389.15384
-      b:
-      - 0.17505856
-      - 0.09723616
-      - 0.1046
-      c:
-      - -5219958.4
-      - -3736312.0
-      - -3736312.0
-      Ttr:
-      - 950.0
-      - 1050.0
-      Htr:
-      - null
-      - null
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [354.76136, 407.1032, 389.15384]
+      b: [0.17505856, 0.09723616, 0.1046]
+      c: [-5219958.4, -3736312.0, -3736312.0]
+      Ttr: [950.0, 1050.0]
+      Htr: [null, null]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1500.0
 - Name: Enstatite
   Formula: MgSiO3
   Elements: 1:Mg 1:Si 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3270,35 +2805,18 @@
       Hf: -1546766.2
       Sr: 67.7808
       Vr: 3.1276e-05
-      a:
-      - 102.7172
-      - 120.35276
-      - 122.42384
-      b:
-      - 0.01983216
-      - 0.0
-      - 0.0
-      c:
-      - -2627552.0
-      - 0.0
-      - 0.0
-      Ttr:
-      - 903.0
-      - 1258.0
-      Htr:
-      - 694.544
-      - 1631.76
-      Vtr:
-      - 2.0e-08
-      - 1.09e-06
-      dPdTtr:
-      - 38461500.0
-      - 1190000.0
+      a: [102.7172, 120.35276, 122.42384]
+      b: [0.01983216, 0.0, 0.0]
+      c: [-2627552.0, 0.0, 0.0]
+      Ttr: [903.0, 1258.0]
+      Htr: [694.544, 1631.76]
+      Vtr: [2e-08, 1.09e-06]
+      dPdTtr: [38461500.0, 1190000.0]
       Tmax: 1800.0
 - Name: Ferrogedrite
   Formula: (Fe5Al2)(Al2Si6)O22(OH)2
   Elements: 5:Fe 4:Al 6:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3306,35 +2824,18 @@
       Hf: null
       Sr: 642.244
       Vr: 0.0002659
-      a:
-      - 821.19368
-      - 856.4648
-      - 860.60696
-      b:
-      - 0.24430376
-      - 0.20463944
-      - 0.20463944
-      c:
-      - -16321784.0
-      - -11066680.0
-      - -11066680.0
-      Ttr:
-      - 903.0
-      - 1258.0
-      Htr:
-      - null
-      - null
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [821.19368, 856.4648, 860.60696]
+      b: [0.24430376, 0.20463944, 0.20463944]
+      c: [-16321784.0, -11066680.0, -11066680.0]
+      Ttr: [903.0, 1258.0]
+      Htr: [null, null]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1500.0
 - Name: Hastingsite
   Formula: Na(Ca2Fe4Fe)(Al2Si6)O22(OH)2
   Elements: 1:Na 2:Ca 5:Fe 2:Al 6:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3342,35 +2843,18 @@
       Hf: null
       Sr: 791.6128
       Vr: 0.0002803
-      a:
-      - 885.20888
-      - 911.35888
-      - 902.40512
-      b:
-      - 0.21288192
-      - 0.17397072
-      - 0.17765264
-      c:
-      - -18777792.0
-      - -18033040.0
-      - -18033040.0
-      Ttr:
-      - 950.0
-      - 1050.0
-      Htr:
-      - null
-      - null
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [885.20888, 911.35888, 902.40512]
+      b: [0.21288192, 0.17397072, 0.17765264]
+      c: [-18777792.0, -18033040.0, -18033040.0]
+      Ttr: [950.0, 1050.0]
+      Htr: [null, null]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1500.0
 - Name: Hematite
   Formula: Fe2O3
   Elements: 2:Fe 3:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3378,35 +2862,18 @@
       Hf: -827260.48
       Sr: 87.61296
       Vr: 3.0274e-05
-      a:
-      - 98.28216
-      - 150.624
-      - 132.67464
-      b:
-      - 0.0778224
-      - 0.0
-      - 0.00736384
-      c:
-      - -1485320.0
-      - 0.0
-      - 0.0
-      Ttr:
-      - 950.0
-      - 1050.0
-      Htr:
-      - 669.44
-      - 0.0
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [98.28216, 150.624, 132.67464]
+      b: [0.0778224, 0.0, 0.00736384]
+      c: [-1485320.0, 0.0, 0.0]
+      Ttr: [950.0, 1050.0]
+      Htr: [669.44, 0.0]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1800.0
 - Name: Larnite
   Formula: Ca2SiO4
   Elements: 2:Ca 1:Si 4:O
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3414,35 +2881,18 @@
       Hf: null
       Sr: 127.612
       Vr: 5.16e-05
-      a:
-      - 145.89608
-      - 134.55744
-      - 205.016
-      b:
-      - 0.04075216
-      - 0.04610768
-      - 0.0
-      c:
-      - -2619184.0
-      - 0.0
-      - 0.0
-      Ttr:
-      - 970.0
-      - 1710.0
-      Htr:
-      - 1840.96
-      - 14183.76
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [145.89608, 134.55744, 205.016]
+      b: [0.04075216, 0.04610768, 0.0]
+      c: [-2619184.0, 0.0, 0.0]
+      Ttr: [970.0, 1710.0]
+      Htr: [1840.96, 14183.76]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 2000.0
 - Name: Magnesiohastingsite
   Formula: Na(Ca2Mg4Fe)(Al2Si6)O22(OH)2
   Elements: 1:Na 2:Ca 4:Mg 1:Fe 2:Al 6:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3450,35 +2900,18 @@
       Hf: null
       Sr: 685.3392
       Vr: 0.0002738
-      a:
-      - 852.6992
-      - 878.89104
-      - 869.89544
-      b:
-      - 0.2073172
-      - 0.168406
-      - 0.17208792
-      c:
-      - -19999520.0
-      - -19254768.0
-      - -19254768.0
-      Ttr:
-      - 950.0
-      - 1050.0
-      Htr:
-      - null
-      - null
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [852.6992, 878.89104, 869.89544]
+      b: [0.2073172, 0.168406, 0.17208792]
+      c: [-19999520.0, -19254768.0, -19254768.0]
+      Ttr: [950.0, 1050.0]
+      Htr: [null, null]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1500.0
 - Name: Magnesioriebeckite
   Formula: Na2(Mg3Fe2)Si8O22(OH)2
   Elements: 2:Na 3:Mg 2:Fe 8:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3486,35 +2919,18 @@
       Hf: null
       Sr: 577.392
       Vr: 0.0002713
-      a:
-      - 779.31184
-      - 831.65368
-      - 813.70432
-      b:
-      - 0.31438576
-      - 0.23656336
-      - 0.2439272
-      c:
-      - -18903312.0
-      - -17417992.0
-      - -17417992.0
-      Ttr:
-      - 950.0
-      - 1050.0
-      Htr:
-      - null
-      - null
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [779.31184, 831.65368, 813.70432]
+      b: [0.31438576, 0.23656336, 0.2439272]
+      c: [-18903312.0, -17417992.0, -17417992.0]
+      Ttr: [950.0, 1050.0]
+      Htr: [null, null]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1500.0
 - Name: Pyrrhotite
   Formula: FeS
   Elements: 1:Fe 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3522,35 +2938,18 @@
       Hf: -100416.0
       Sr: 60.29144
       Vr: 1.82e-05
-      a:
-      - 21.71496
-      - 72.8016
-      - 51.0448
-      b:
-      - 0.1104576
-      - 0.0
-      - 0.00995792
-      c:
-      - 0.0
-      - 0.0
-      - 0.0
-      Ttr:
-      - 411.0
-      - 598.0
-      Htr:
-      - 2384.88
-      - 502.08
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [21.71496, 72.8016, 51.0448]
+      b: [0.1104576, 0.0, 0.00995792]
+      c: [0.0, 0.0, 0.0]
+      Ttr: [411.0, 598.0]
+      Htr: [2384.88, 502.08]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1468.0
 - Name: Riebeckite
   Formula: Na2(Fe3Fe2)Si8O22(OH)2
   Elements: 2:Na 5:Fe 8:Si 24:O 2:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3558,35 +2957,18 @@
       Hf: null
       Sr: 655.2144
       Vr: 0.0002749
-      a:
-      - 803.70456
-      - 856.0464
-      - 838.09704
-      b:
-      - 0.31856976
-      - 0.24074736
-      - 0.2481112
-      c:
-      - -17987016.0
-      - -16501696.0
-      - -16501696.0
-      Ttr:
-      - 950.0
-      - 1050.0
-      Htr:
-      - null
-      - null
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [803.70456, 856.0464, 838.09704]
+      b: [0.31856976, 0.24074736, 0.2481112]
+      c: [-17987016.0, -16501696.0, -16501696.0]
+      Ttr: [950.0, 1050.0]
+      Htr: [null, null]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 1500.0
 - Name: Sulfur
   Formula: S
   Elements: 1:S
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 2
@@ -3594,35 +2976,18 @@
       Hf: 0.0
       Sr: 31.7984
       Vr: 1.561e-05
-      a:
-      - 14.97872
-      - 25.9408
-      - 36.52632
-      b:
-      - 0.02610816
-      - 0.0
-      - 0.0
-      c:
-      - 0.0
-      - 0.0
-      - 0.0
-      Ttr:
-      - 368.6
-      - 392.0
-      Htr:
-      - 355.64
-      - 1401.64
-      Vtr:
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
+      a: [14.97872, 25.9408, 36.52632]
+      b: [0.02610816, 0.0, 0.0]
+      c: [0.0, 0.0, 0.0]
+      Ttr: [368.6, 392.0]
+      Htr: [355.64, 1401.64]
+      Vtr: [null, null]
+      dPdTtr: [null, null]
       Tmax: 717.8
 - Name: Iron
   Formula: Fe
   Elements: 1:Fe
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 3
@@ -3630,42 +2995,18 @@
       Hf: 0.0
       Sr: 27.27968
       Vr: 7.092e-06
-      a:
-      - 12.71936
-      - 46.56792
-      - 24.2672
-      - 28.20016
-      b:
-      - 0.03171472
-      - 0.0
-      - 0.00828432
-      - 0.0066944
-      c:
-      - 251040.0
-      - 0.0
-      - 0.0
-      - 0.0
-      Ttr:
-      - 1033.0
-      - 1183.0
-      - 1673.0
-      Htr:
-      - 1363.984
-      - 899.56
-      - 690.36
-      Vtr:
-      - null
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
-      - null
+      a: [12.71936, 46.56792, 24.2672, 28.20016]
+      b: [0.03171472, 0.0, 0.00828432, 0.0066944]
+      c: [251040.0, 0.0, 0.0, 0.0]
+      Ttr: [1033.0, 1183.0, 1673.0]
+      Htr: [1363.984, 899.56, 690.36]
+      Vtr: [null, null, null]
+      dPdTtr: [null, null, null]
       Tmax: 1812.0
 - Name: Pd-Oxyannite
   Formula: KFe3(AlSi3)O10(OH)O
   Elements: 1:K 3:Fe 1:Al 3:Si 12:O 1:H
-  AggregateState: Mineral
+  AggregateState: Solid
   StandardThermoModel:
     MineralHKF:
       ntr: 3
@@ -3673,37 +3014,13 @@
       Hf: null
       Sr: 286.604
       Vr: 0.0001432
-      a:
-      - 369.61456
-      - 409.65544
-      - 488.18912
-      - 461.24416
-      b:
-      - 0.22643808
-      - 0.14786256
-      - 0.03112896
-      - 0.04217472
-      c:
-      - -7556304.0
-      - -4167264.0
-      - -1937192.0
-      - -1937192.0
-      Ttr:
-      - 848.0
-      - 950.0
-      - 1050.0
-      Htr:
-      - null
-      - null
-      - null
-      Vtr:
-      - null
-      - null
-      - null
-      dPdTtr:
-      - null
-      - null
-      - null
+      a: [369.61456, 409.65544, 488.18912, 461.24416]
+      b: [0.22643808, 0.14786256, 0.03112896, 0.04217472]
+      c: [-7556304.0, -4167264.0, -1937192.0, -1937192.0]
+      Ttr: [848.0, 950.0, 1050.0]
+      Htr: [null, null, null]
+      Vtr: [null, null, null]
+      dPdTtr: [null, null, null]
       Tmax: 1100.0
 - Name: Ar(g)
   Formula: Ar
