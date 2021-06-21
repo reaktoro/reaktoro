@@ -203,6 +203,17 @@ def nextval(iteritem):
     return float(val) if val != "null" else nan
 
 
+def replaceNaNs(o):
+    """Recursivelly replace NaN values to 9999999999999999 (16 digits)
+    The reason for this is because json do not support NaN and Inf.
+    It supports null, but parsing null nodes into numbers leads to runtime errors.
+    """
+    if isinstance(o, float): return o if o == o else 9999999999999999
+    if isinstance(o, dict): return {k: replaceNaNs(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)): return [replaceNaNs(x) for x in o]
+    return o
+
+
 def roundFloats(o, sigfigures=8):
     """Recursivelly round float numbers in an object to given significant figures
 
@@ -301,7 +312,7 @@ def parseCharge(word):
 def determineAggregateState(agcode):
     """Return the aggregate state of the species with given thermodynamic model"""
     if agcode == "aq": return "Aqueous"
-    if agcode == "gas": return "Gaseous"
+    if agcode == "gas": return "Gas"
     if agcode == "min": return "Solid"
     raise RuntimeError(f"The aggregate state code `{agcode}` is not supported (must be one of: `aq`, `min`, `gas`")
 
@@ -436,6 +447,7 @@ def createStandardThermoModel(entries):
     else: raiseErrorModelCodeNotSupported(mcode)
 
     model = roundFloats(model)
+    model = replaceNaNs(model)
 
     return model
 
@@ -466,7 +478,6 @@ def createSpecies(splitline):
 def clean(dump):
     """
     Clean a YAML or JSON dump from occurrences of @[...]@ for lists.
-    Also, converts nan to null value.
     """
     return dump \
          .replace('\"@[', '[').replace(']@\"', ']') \
@@ -474,10 +485,7 @@ def clean(dump):
          .replace('\"@{', '{').replace('}@\"', '}') \
          .replace('\'@{', '{').replace('}@\'', '}') \
          .replace("'", '"') \
-         .replace('""', '') \
-         .replace('.nan', 'null') \
-         .replace('nan', 'null') \
-         .replace('NaN', 'null')
+         .replace('""', '')
 
 
 def convert(filename, outdir):
