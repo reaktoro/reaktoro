@@ -252,25 +252,25 @@ def getParamsMineralHollandPowell(lines):
     params["b"]        = numbers[5]   # in kJ/(mol·K²) (multiplied by 1e+5)
     params["c"]        = numbers[6]   # in kJ·K/mol
     params["d"]        = numbers[7]   # in kJ/(mol·K½)
-    params["alpha"]    = numbers[8]   # in 1/K (multiplied by 1e+5)
-    params["kappa"]    = numbers[9]   # in kbar
-    params["kappap"]   = numbers[10]  # dimensionless
-    params["kappapp"]  = numbers[11]  # in 1/kbar
+    params["alpha0"]   = numbers[8]   # in 1/K (multiplied by 1e+5)
+    params["kappa0"]   = numbers[9]   # in kbar
+    params["kappa0p"]  = numbers[10]  # dimensionless
+    params["kappa0pp"] = numbers[11]  # in 1/kbar
     params["numatoms"] = numbers[12]  # dimensionless
     params["Tmax"]     = numbers[13]  # in K
     # Convert above parameters to SI units
-    params["Gf"]      *= kJ_to_J        # from kJ/mol to J/mol
-    params["Hf"]      *= kJ_to_J        # from kJ/mol to J/mol
-    params["Sr"]      *= 1.0            # from J/(mol·K) to J/(mol·K)
-    params["Vr"]      *= 1.0/bar_to_Pa  # from J/bar to J/Pa
-    params["a"]       *= kJ_to_J        # from kJ/mol/K to J/mol/K
-    params["b"]       *= kJ_to_J/1e+5   # from kJ/(mol·K²) to J/(mol·K²) (without 1e+5 factor!)
-    params["c"]       *= kJ_to_J        # from kJ·K/mol to J·K/mol
-    params["d"]       *= kJ_to_J        # from kJ/(mol·K½) to J/(mol·K½)
-    params["alpha"]   *= 1.0/1e+5       # from 1/K to 1/K (without 1e+5 factor!)
-    params["kappa"]   *= kbar_to_Pa     # from kbar to Pa
-    params["kappap"]  *= 1.0            # dimensionless
-    params["kappapp"] *= 1.0/kbar_to_Pa # from 1/kbar to 1/Pa
+    params["Gf"]       *= kJ_to_J        # from kJ/mol to J/mol
+    params["Hf"]       *= kJ_to_J        # from kJ/mol to J/mol
+    params["Sr"]       *= 1.0            # from J/(mol·K) to J/(mol·K)
+    params["Vr"]       *= 1.0/bar_to_Pa  # from J/bar to J/Pa
+    params["a"]        *= kJ_to_J        # from kJ/mol/K to J/mol/K
+    params["b"]        *= kJ_to_J/1e+5   # from kJ/(mol·K²) to J/(mol·K²) (without 1e+5 factor!)
+    params["c"]        *= kJ_to_J        # from kJ·K/mol to J·K/mol
+    params["d"]        *= kJ_to_J        # from kJ/(mol·K½) to J/(mol·K½)
+    params["alpha0"]   *= 1.0/1e+5       # from 1/K to 1/K (without 1e+5 factor!)
+    params["kappa0"]   *= kbar_to_Pa     # from kbar to Pa
+    params["kappa0p"]  *= 1.0            # dimensionless
+    params["kappa0pp"] *= 1.0/kbar_to_Pa # from 1/kbar to 1/Pa
     return params
 
 
@@ -290,29 +290,29 @@ def getParamsMineralHollandPowellLandau(lines):
     params["b"]        = numbers[5]   # in kJ/(mol·K²) (multiplied by 1e+5)
     params["c"]        = numbers[6]   # in kJ·K/mol
     params["d"]        = numbers[7]   # in kJ/(mol·K½)
-    params["alpha"]    = numbers[8]   # in 1/K (multiplied by 1e+5)
-    params["kappa"]    = numbers[9]   # in kbar
-    params["kappap"]   = numbers[10]  # dimensionless
-    params["kappapp"]  = numbers[11]  # in 1/kbar
+    params["alpha0"]   = numbers[8]   # in 1/K (multiplied by 1e+5)
+    params["kappa0"]   = numbers[9]   # in kbar
+    params["kappa0p"]  = numbers[10]  # dimensionless
+    params["kappa0pp"] = numbers[11]  # in 1/kbar
     params["numatoms"] = numbers[12]  # dimensionless
     params["Tcr"]      = numbers[13]  # in K
     params["Smax"]     = numbers[14]  # in J/mol/K
     params["Vmax"]     = numbers[15]  # in J/bar
     params["Tmax"]     = numbers[16]  # in K
     # Convert above parameters to SI units
-    params["Gf"]      *= kJ_to_J        # from kJ/mol to J/mol
-    params["Hf"]      *= kJ_to_J        # from kJ/mol to J/mol
-    params["Sr"]      *= 1.0            # from J/(mol·K) to J/(mol·K)
-    params["Vr"]      *= 1.0/bar_to_Pa  # from J/bar to J/Pa
-    params["a"]       *= kJ_to_J        # from kJ/mol/K to J/mol/K
-    params["b"]       *= kJ_to_J/1e+5   # from kJ/(mol·K²) to J/(mol·K²) (without 1e+5 factor!)
-    params["c"]       *= kJ_to_J        # from kJ·K/mol to J·K/mol
-    params["d"]       *= kJ_to_J        # from kJ/(mol·K½) to J/(mol·K½)
-    params["alpha"]   *= 1.0/1e+5       # from 1/K to 1/K (without 1e+5 factor!)
-    params["kappa"]   *= kbar_to_Pa     # from kbar to Pa
-    params["kappap"]  *= 1.0            # dimensionless
-    params["kappapp"] *= 1.0/kbar_to_Pa # from 1/kbar to 1/Pa
-    params["Vmax"]    *= 1/bar_to_Pa    # from J/bar to J/Pa
+    params["Gf"]       *= kJ_to_J        # from kJ/mol to J/mol
+    params["Hf"]       *= kJ_to_J        # from kJ/mol to J/mol
+    params["Sr"]       *= 1.0            # from J/(mol·K) to J/(mol·K)
+    params["Vr"]       *= 1.0/bar_to_Pa  # from J/bar to J/Pa
+    params["a"]        *= kJ_to_J        # from kJ/mol/K to J/mol/K
+    params["b"]        *= kJ_to_J/1e+5   # from kJ/(mol·K²) to J/(mol·K²) (without 1e+5 factor!)
+    params["c"]        *= kJ_to_J        # from kJ·K/mol to J·K/mol
+    params["d"]        *= kJ_to_J        # from kJ/(mol·K½) to J/(mol·K½)
+    params["alpha0"]   *= 1.0/1e+5       # from 1/K to 1/K (without 1e+5 factor!)
+    params["kappa0"]   *= kbar_to_Pa     # from kbar to Pa
+    params["kappa0p"]  *= 1.0            # dimensionless
+    params["kappa0pp"] *= 1.0/kbar_to_Pa # from 1/kbar to 1/Pa
+    params["Vmax"]     *= 1/bar_to_Pa    # from J/bar to J/Pa
 
     return params
 
@@ -333,10 +333,10 @@ def getParamsMineralHollandPowellBraggWilliams(lines):
     params["b"]         = numbers[5]   # in kJ/(mol·K²) (multiplied by 1e+5)
     params["c"]         = numbers[6]   # in kJ·K/mol
     params["d"]         = numbers[7]   # in kJ/(mol·K½)
-    params["alpha"]     = numbers[8]   # in 1e5/K
-    params["kappa"]     = numbers[9]   # in kbar
-    params["kappap"]    = numbers[10]  # dimensionless
-    params["kappapp"]   = numbers[11]  # in 1/kbar
+    params["alpha0"]    = numbers[8]   # in 1e5/K
+    params["kappa0"]    = numbers[9]   # in kbar
+    params["kappa0p"]   = numbers[10]  # dimensionless
+    params["kappa0pp"]  = numbers[11]  # in 1/kbar
     params["numatoms"]  = numbers[12]  # dimensionless
     # params["unknonwn0"] = numbers[13]  # in ??? Needs to be checked with Chen Zhu...
     # params["unknonwn1"] = numbers[14]  # in ??? Needs to be checked with Chen Zhu...
@@ -354,10 +354,10 @@ def getParamsMineralHollandPowellBraggWilliams(lines):
     params["b"]        *= kJ_to_J/1e+5   # from kJ/(mol·K²) to J/(mol·K²) (without 1e+5 factor!)
     params["c"]        *= kJ_to_J        # from kJ·K/mol to J·K/mol
     params["d"]        *= kJ_to_J        # from kJ/(mol·K½) to J/(mol·K½)
-    params["alpha"]    *= 1.0/1e+5       # from 1/K to 1/K (without 1e+5 factor!)
-    params["kappa"]    *= kbar_to_Pa     # from kbar to Pa
-    params["kappap"]   *= 1.0            # dimensionless
-    params["kappapp"]  *= 1.0/kbar_to_Pa # from 1/kbar to 1/Pa
+    params["alpha0"]   *= 1.0/1e+5       # from 1/K to 1/K (without 1e+5 factor!)
+    params["kappa0"]   *= kbar_to_Pa     # from kbar to Pa
+    params["kappa0p"]  *= 1.0            # dimensionless
+    params["kappa0pp"] *= 1.0/kbar_to_Pa # from 1/kbar to 1/Pa
     return params
 
 
@@ -432,6 +432,13 @@ def getMineralSpeciesData(lines, group):
         data["Params"] = getParamsMineralHollandPowellLandau(lines[3:])
     if group == 3: # minerals that use Bragg-Williams theory
         data["Params"] = getParamsMineralHollandPowellBraggWilliams(lines[3:])
+    if data["Params"]["kappa0"] == 0.0:
+        data["Params"].pop("alpha0")
+        data["Params"].pop("kappa0")
+        data["Params"].pop("kappa0p")
+        data["Params"].pop("kappa0pp")
+        data["Params"].pop("numatoms")
+
     return data
 
 
