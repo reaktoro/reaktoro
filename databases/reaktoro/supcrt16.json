@@ -15937,7 +15937,7 @@
     {
       "Name": "Ru(SO4)2-2",
       "Formula": "Ru(SO4)2-2",
-      "Elements": "1:RU 2:S 8:O",
+      "Elements": "1:Ru 2:S 8:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
       "StandardThermoModel": {
