@@ -20,11 +20,12 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/YAML.hpp>
-#include <Reaktoro/Core/Database.hpp>
-#include <Reaktoro/Serialization/Support/DatabaseDecoderYAML.hpp>
+#include <Reaktoro/Core/Support/DatabaseParserYAML.hpp>
 using namespace Reaktoro;
 
-std::string doc = R"(
+namespace {
+
+String doc = R"(
 Elements:
   - Symbol: A
     MolarMass: 1.0
@@ -84,11 +85,13 @@ Species:
           dHr: 77.0
 )";
 
-TEST_CASE("Testing DatabaseDecoderYAML class", "[DatabaseDecoderYAML]")
+} // namespace (anonymous)
+
+TEST_CASE("Testing DatabaseParserYAML class", "[DatabaseParserYAML]")
 {
     yaml node = yaml::parse(doc);
 
-    Database db = DatabaseDecoderYAML(node);
+    DatabaseParserYAML db(node);
 
     auto elements = db.elements();
     auto species = db.species();
