@@ -21,19 +21,42 @@
 #include <sstream>
 
 namespace Reaktoro {
+namespace {
+
+/// An auxiliary type to change locale and ensure its return to original.
+/// This is needed to avoid certain issues with pugixml related to how decimal numbers are represented in different languages.
+struct ChangeLocale
+{
+    const String old_locale;
+
+    explicit ChangeLocale(const char* new_locale) : old_locale(std::setlocale(LC_NUMERIC, nullptr))
+    {
+        std::setlocale(LC_NUMERIC, new_locale);
+    }
+
+    ~ChangeLocale()
+    {
+        std::setlocale(LC_NUMERIC, old_locale.c_str());
+    }
+};
+
+} // namespace (anonymous)
 
 auto yaml::parse(const char* input) -> yaml
 {
+    const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     return yaml(YAML::Load(input));
 }
 
 auto yaml::parse(const std::string& input) -> yaml
 {
+    const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     return yaml(YAML::Load(input));
 }
 
 auto yaml::parse(std::istream& input) -> yaml
 {
+    const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     return yaml(YAML::Load(input));
 }
 
