@@ -78,7 +78,8 @@ auto yaml::at(const std::string& key) const -> yaml
 auto yaml::repr() const -> std::string
 {
     std::stringstream ss;
-    ss << *this;
+    if(IsNull()) ss << "null";
+    else ss << *this;
     return ss.str();
 }
 
