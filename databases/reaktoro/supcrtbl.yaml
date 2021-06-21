@@ -13,10 +13,10 @@ Species:
       b: 0.0
       c: -3772700.0
       d: -5044.0
-      alpha: 2.12e-05
-      kappa: 190000000000.0
-      kappap: 2.98
-      kappapp: -1.6e-11
+      alpha0: 2.12e-05
+      kappa0: 190000000000.0
+      kappa0p: 2.98
+      kappa0pp: -1.6e-11
       numatoms: 20.0
       Tmax: 9999.0
 - Name: Andradite
@@ -33,10 +33,10 @@ Species:
       b: 0.0
       c: -4955100.0
       d: -3989.2
-      alpha: 2.86e-05
-      kappa: 158800000000.0
-      kappap: 5.68
-      kappapp: -3.6e-11
+      alpha0: 2.86e-05
+      kappa0: 158800000000.0
+      kappa0p: 5.68
+      kappa0pp: -3.6e-11
       numatoms: 20.0
       Tmax: 9999.0
 - Name: Grossular
@@ -53,10 +53,10 @@ Species:
       b: 0.0
       c: -5779200.0
       d: -4002.9
-      alpha: 2.2e-05
-      kappa: 172000000000.0
-      kappap: 5.53
-      kappapp: -3.2e-11
+      alpha0: 2.2e-05
+      kappa0: 172000000000.0
+      kappa0p: 5.53
+      kappa0pp: -3.2e-11
       numatoms: 20.0
       Tmax: 9999.0
 - Name: Knorringite
@@ -73,10 +73,10 @@ Species:
       b: 0.003606
       c: -4178000.0
       d: -3729.4
-      alpha: 2.37e-05
-      kappa: 174300000000.0
-      kappap: 4.05
-      kappapp: -2.3e-11
+      alpha0: 2.37e-05
+      kappa0: 174300000000.0
+      kappa0p: 4.05
+      kappa0pp: -2.3e-11
       numatoms: 20.0
       Tmax: 9999.0
 - Name: Majorite
@@ -93,10 +93,10 @@ Species:
       b: -0.000997
       c: -1158200.0
       d: -6622.3
-      alpha: 1.83e-05
-      kappa: 160000000000.0
-      kappap: 4.56
-      kappapp: -2.8e-11
+      alpha0: 1.83e-05
+      kappa0: 160000000000.0
+      kappa0p: 4.56
+      kappa0pp: -2.8e-11
       numatoms: 20.0
       Tmax: 9999.0
 - Name: Pyrope
@@ -113,10 +113,10 @@ Species:
       b: 0.0
       c: -5196100.0
       d: -4315.2
-      alpha: 2.37e-05
-      kappa: 174300000000.0
-      kappap: 4.05
-      kappapp: -2.3e-11
+      alpha0: 2.37e-05
+      kappa0: 174300000000.0
+      kappa0p: 4.05
+      kappa0pp: -2.3e-11
       numatoms: 20.0
       Tmax: 9999.0
 - Name: Spessartine
@@ -133,10 +133,10 @@ Species:
       b: 0.0
       c: -4525800.0
       d: -4452.8
-      alpha: 2.27e-05
-      kappa: 174000000000.0
-      kappap: 6.68
-      kappapp: -3.8e-11
+      alpha0: 2.27e-05
+      kappa0: 174000000000.0
+      kappa0p: 6.68
+      kappa0pp: -3.8e-11
       numatoms: 20.0
       Tmax: 9999.0
 - Name: Clinohumite
@@ -153,10 +153,10 @@ Species:
       b: -0.016533
       c: -7899600.0
       d: -7373.9
-      alpha: 2.91e-05
-      kappa: 119400000000.0
-      kappap: 4.79
-      kappapp: -4.0e-11
+      alpha0: 2.91e-05
+      kappa0: 119400000000.0
+      kappa0p: 4.79
+      kappa0pp: -4.0e-11
       numatoms: 33.0
       Tmax: 9999.0
 - Name: Fayalite
@@ -173,10 +173,10 @@ Species:
       b: 0.01733
       c: -1960600.0
       d: -900.9
-      alpha: 2.82e-05
-      kappa: 125600000000.0
-      kappap: 4.68
-      kappapp: -3.7e-11
+      alpha0: 2.82e-05
+      kappa0: 125600000000.0
+      kappa0p: 4.68
+      kappa0pp: -3.7e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Forsterite
@@ -193,10 +193,10 @@ Species:
       b: 0.001494
       c: -603800.0
       d: -1869.7
-      alpha: 2.85e-05
-      kappa: 128500000000.0
-      kappap: 3.84
-      kappapp: -3.0e-11
+      alpha0: 2.85e-05
+      kappa0: 128500000000.0
+      kappa0p: 3.84
+      kappa0pp: -3.0e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Monticellite
@@ -213,10 +213,10 @@ Species:
       b: -0.010433
       c: -797200.0
       d: -1996.1
-      alpha: 2.87e-05
-      kappa: 113400000000.0
-      kappap: 3.87
-      kappapp: -3.4e-11
+      alpha0: 2.87e-05
+      kappa0: 113400000000.0
+      kappa0p: 3.87
+      kappa0pp: -3.4e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Tephroite
@@ -233,10 +233,10 @@ Species:
       b: 0.0
       c: -1292700.0
       d: -1308.3
-      alpha: 2.86e-05
-      kappa: 125600000000.0
-      kappap: 4.68
-      kappapp: -3.7e-11
+      alpha0: 2.86e-05
+      kappa0: 125600000000.0
+      kappa0p: 4.68
+      kappa0pp: -3.7e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Andalusite
@@ -253,10 +253,10 @@ Species:
       b: -0.006588
       c: -1914100.0
       d: -2265.6
-      alpha: 1.81e-05
-      kappa: 144200000000.0
-      kappap: 6.89
-      kappapp: -4.8e-11
+      alpha0: 1.81e-05
+      kappa0: 144200000000.0
+      kappa0p: 6.89
+      kappa0pp: -4.8e-11
       numatoms: 8.0
       Tmax: 9999.0
 - Name: Kyanite
@@ -273,10 +273,10 @@ Species:
       b: -0.007124
       c: -2055600.0
       d: -2289.4
-      alpha: 1.92e-05
-      kappa: 160100000000.0
-      kappap: 4.05
-      kappapp: -2.5e-11
+      alpha0: 1.92e-05
+      kappa0: 160100000000.0
+      kappa0p: 4.05
+      kappa0pp: -2.5e-11
       numatoms: 8.0
       Tmax: 9999.0
 - Name: Al-Mullite
@@ -293,10 +293,10 @@ Species:
       b: 0.000968
       c: -2533300.0
       d: -1641.6
-      alpha: 1.36e-05
-      kappa: 174000000000.0
-      kappap: 4.0
-      kappapp: -2.3e-11
+      alpha0: 1.36e-05
+      kappa0: 174000000000.0
+      kappa0p: 4.0
+      kappa0pp: -2.3e-11
       numatoms: 7.75
       Tmax: 9999.0
 - Name: Si-Mullite
@@ -313,10 +313,10 @@ Species:
       b: -0.0069
       c: -1375700.0
       d: -2399.4
-      alpha: 1.36e-05
-      kappa: 174000000000.0
-      kappap: 4.0
-      kappapp: -2.3e-11
+      alpha0: 1.36e-05
+      kappa0: 174000000000.0
+      kappa0p: 4.0
+      kappa0pp: -2.3e-11
       numatoms: 8.0
       Tmax: 9999.0
 - Name: Fe-Chloritoid
@@ -333,10 +333,10 @@ Species:
       b: -0.003477
       c: -2835900.0
       d: -3360.3
-      alpha: 2.8e-05
-      kappa: 145600000000.0
-      kappap: 4.06
-      kappapp: -2.8e-11
+      alpha0: 2.8e-05
+      kappa0: 145600000000.0
+      kappa0p: 4.06
+      kappa0pp: -2.8e-11
       numatoms: 13.0
       Tmax: 9999.0
 - Name: Mg-Chloritoid
@@ -353,10 +353,10 @@ Species:
       b: -0.003771
       c: -2920600.0
       d: -3417.8
-      alpha: 2.63e-05
-      kappa: 145600000000.0
-      kappap: 4.06
-      kappapp: -2.8e-11
+      alpha0: 2.63e-05
+      kappa0: 145600000000.0
+      kappa0p: 4.06
+      kappa0pp: -2.8e-11
       numatoms: 13.0
       Tmax: 9999.0
 - Name: Mn-Chloritoid
@@ -373,10 +373,10 @@ Species:
       b: -0.012654
       c: -1147200.0
       d: -4341.0
-      alpha: 2.6e-05
-      kappa: 145600000000.0
-      kappap: 4.06
-      kappapp: -2.8e-11
+      alpha0: 2.6e-05
+      kappa0: 145600000000.0
+      kappa0p: 4.06
+      kappa0pp: -2.8e-11
       numatoms: 13.0
       Tmax: 9999.0
 - Name: Fe-Staurolite
@@ -393,10 +393,10 @@ Species:
       b: -0.056595
       c: -10642000.0
       d: -25373.0
-      alpha: 1.83e-05
-      kappa: 180000000000.0
-      kappap: 4.76
-      kappapp: -2.6e-11
+      alpha0: 1.83e-05
+      kappa0: 180000000000.0
+      kappa0p: 4.76
+      kappa0pp: -2.6e-11
       numatoms: 81.5
       Tmax: 9999.0
 - Name: Mg-Staurolite
@@ -413,10 +413,10 @@ Species:
       b: -0.059366
       c: -13774000.0
       d: -24126.0
-      alpha: 1.81e-05
-      kappa: 168400000000.0
-      kappap: 4.05
-      kappapp: -2.4e-11
+      alpha0: 1.81e-05
+      kappa0: 168400000000.0
+      kappa0p: 4.05
+      kappa0pp: -2.4e-11
       numatoms: 81.5
       Tmax: 9999.0
 - Name: Mn-Staurolite
@@ -433,10 +433,10 @@ Species:
       b: -0.089064
       c: -12688000.0
       d: -24749.0
-      alpha: 2.09e-05
-      kappa: 180000000000.0
-      kappap: 4.76
-      kappapp: -2.6e-11
+      alpha0: 2.09e-05
+      kappa0: 180000000000.0
+      kappa0p: 4.76
+      kappa0pp: -2.6e-11
       numatoms: 81.5
       Tmax: 9999.0
 - Name: Hydroxy-Topaz
@@ -453,10 +453,10 @@ Species:
       b: -0.00712
       c: -857200.0
       d: -3744.2
-      alpha: 1.57e-05
-      kappa: 131500000000.0
-      kappap: 4.06
-      kappapp: -3.1e-11
+      alpha0: 1.57e-05
+      kappa0: 131500000000.0
+      kappa0p: 4.06
+      kappa0pp: -3.1e-11
       numatoms: 11.0
       Tmax: 9999.0
 - Name: Akermanite
@@ -473,10 +473,10 @@ Species:
       b: 0.003209
       c: -247500.0
       d: -2889.9
-      alpha: 2.57e-05
-      kappa: 142000000000.0
-      kappap: 4.06
-      kappapp: -2.9e-11
+      alpha0: 2.57e-05
+      kappa0: 142000000000.0
+      kappa0p: 4.06
+      kappa0pp: -2.9e-11
       numatoms: 12.0
       Tmax: 9999.0
 - Name: Julgoldite-FeFe
@@ -493,10 +493,10 @@ Species:
       b: -0.037986
       c: -4455700.0
       d: -14888.0
-      alpha: 2.49e-05
-      kappa: 161500000000.0
-      kappap: 4.05
-      kappapp: -2.5e-11
+      alpha0: 2.49e-05
+      kappa0: 161500000000.0
+      kappa0p: 4.05
+      kappa0pp: -2.5e-11
       numatoms: 51.0
       Tmax: 9999.0
 - Name: Merwinite
@@ -513,10 +513,10 @@ Species:
       b: 0.008117
       c: -2923000.0
       d: -2320.3
-      alpha: 3.19e-05
-      kappa: 120000000000.0
-      kappap: 4.07
-      kappapp: -3.4e-11
+      alpha0: 3.19e-05
+      kappa0: 120000000000.0
+      kappa0p: 4.07
+      kappa0pp: -3.4e-11
       numatoms: 14.0
       Tmax: 9999.0
 - Name: Pumpellyite-FeAl
@@ -533,10 +533,10 @@ Species:
       b: -0.024582
       c: -5161100.0
       d: -14963.0
-      alpha: 2.49e-05
-      kappa: 161500000000.0
-      kappap: 4.05
-      kappapp: -2.5e-11
+      alpha0: 2.49e-05
+      kappa0: 161500000000.0
+      kappa0p: 4.05
+      kappa0pp: -2.5e-11
       numatoms: 51.0
       Tmax: 9999.0
 - Name: Pumpellyite-MgAl
@@ -553,10 +553,10 @@ Species:
       b: -0.024928
       c: -5998700.0
       d: -14620.3
-      alpha: 2.47e-05
-      kappa: 161500000000.0
-      kappap: 4.05
-      kappapp: -2.5e-11
+      alpha0: 2.47e-05
+      kappa0: 161500000000.0
+      kappa0p: 4.05
+      kappa0pp: -2.5e-11
       numatoms: 51.0
       Tmax: 9999.0
 - Name: Rankinite
@@ -573,10 +573,10 @@ Species:
       b: -0.002893
       c: -2462400.0
       d: -2181.3
-      alpha: 3.28e-05
-      kappa: 95000000000.0
-      kappap: 4.09
-      kappapp: -4.3e-11
+      alpha0: 3.28e-05
+      kappa0: 95000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.3e-11
       numatoms: 12.0
       Tmax: 9999.0
 - Name: Spurrite
@@ -593,10 +593,10 @@ Species:
       b: -0.003508
       c: -2493100.0
       d: -4168.0
-      alpha: 3.4e-05
-      kappa: 95000000000.0
-      kappap: 4.09
-      kappapp: -4.3e-11
+      alpha0: 3.4e-05
+      kappa0: 95000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.3e-11
       numatoms: 19.0
       Tmax: 9999.0
 - Name: Tilleyite
@@ -613,10 +613,10 @@ Species:
       b: -0.005345
       c: -1434600.0
       d: -5878.5
-      alpha: 3.41e-05
-      kappa: 95000000000.0
-      kappap: 4.09
-      kappapp: -4.3e-11
+      alpha0: 3.41e-05
+      kappa0: 95000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.3e-11
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Zircon
@@ -633,10 +633,10 @@ Species:
       b: -0.014405
       c: 0.0
       d: -2238.2
-      alpha: 1.25e-05
-      kappa: 230100000000.0
-      kappap: 4.04
-      kappapp: -1.8e-11
+      alpha0: 1.25e-05
+      kappa0: 230100000000.0
+      kappa0p: 4.04
+      kappa0pp: -1.8e-11
       numatoms: 6.0
       Tmax: 9999.0
 - Name: Clinozoisite
@@ -653,10 +653,10 @@ Species:
       b: 0.013693
       c: -6645800.0
       d: -3731.1
-      alpha: 2.33e-05
-      kappa: 119700000000.0
-      kappap: 4.07
-      kappapp: -3.4e-11
+      alpha0: 2.33e-05
+      kappa0: 119700000000.0
+      kappa0p: 4.07
+      kappa0pp: -3.4e-11
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Epidote,ordered
@@ -673,10 +673,10 @@ Species:
       b: 0.02207
       c: -7160000.0
       d: -2987.7
-      alpha: 2.34e-05
-      kappa: 134000000000.0
-      kappap: 4.0
-      kappapp: -3.0e-11
+      alpha0: 2.34e-05
+      kappa0: 134000000000.0
+      kappa0p: 4.0
+      kappa0pp: -3.0e-11
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Fe-Epidote
@@ -693,10 +693,10 @@ Species:
       b: 0.030447
       c: -7674200.0
       d: -2244.3
-      alpha: 2.31e-05
-      kappa: 151300000000.0
-      kappap: 4.0
-      kappapp: -2.6e-11
+      alpha0: 2.31e-05
+      kappa0: 151300000000.0
+      kappa0p: 4.0
+      kappa0pp: -2.6e-11
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Lawsonite
@@ -713,10 +713,10 @@ Species:
       b: 0.001566
       c: 375900.0
       d: -7179.2
-      alpha: 2.65e-05
-      kappa: 122900000000.0
-      kappap: 5.45
-      kappapp: -4.4e-11
+      alpha0: 2.65e-05
+      kappa0: 122900000000.0
+      kappa0p: 5.45
+      kappa0pp: -4.4e-11
       numatoms: 19.0
       Tmax: 9999.0
 - Name: Piemontite,ordered
@@ -733,10 +733,10 @@ Species:
       b: 0.02779
       c: -5442900.0
       d: -2812.6
-      alpha: 2.38e-05
-      kappa: 119700000000.0
-      kappap: 4.07
-      kappapp: -3.4e-11
+      alpha0: 2.38e-05
+      kappa0: 119700000000.0
+      kappa0p: 4.07
+      kappa0pp: -3.4e-11
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Zoisite
@@ -753,10 +753,10 @@ Species:
       b: 0.010416
       c: -6006400.0
       d: -4260.7
-      alpha: 3.12e-05
-      kappa: 104400000000.0
-      kappap: 4.0
-      kappapp: -3.8e-11
+      alpha0: 3.12e-05
+      kappa0: 104400000000.0
+      kappa0p: 4.0
+      kappa0pp: -3.8e-11
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Vesuvianite
@@ -773,10 +773,10 @@ Species:
       b: -0.057952
       c: -22269300.0
       d: -33478.0
-      alpha: 2.75e-05
-      kappa: 125500000000.0
-      kappap: 4.8
-      kappapp: -3.8e-11
+      alpha0: 2.75e-05
+      kappa0: 125500000000.0
+      kappa0p: 4.8
+      kappa0pp: -3.8e-11
       numatoms: 137.0
       Tmax: 9999.0
 - Name: Fe-Osumilite
@@ -793,10 +793,10 @@ Species:
       b: -0.034163
       c: -6497700.0
       d: -14114.3
-      alpha: 4.9e-06
-      kappa: 80000000000.0
-      kappap: 4.1
-      kappapp: -5.1e-11
+      alpha0: 4.9e-06
+      kappa0: 80000000000.0
+      kappa0p: 4.1
+      kappa0pp: -5.1e-11
       numatoms: 48.0
       Tmax: 9999.0
 - Name: Osumilite,1
@@ -813,10 +813,10 @@ Species:
       b: -0.035548
       c: -8063500.0
       d: -13490.9
-      alpha: 4.7e-06
-      kappa: 81000000000.0
-      kappap: 4.1
-      kappapp: -5.1e-11
+      alpha0: 4.7e-06
+      kappa0: 81000000000.0
+      kappa0p: 4.1
+      kappa0pp: -5.1e-11
       numatoms: 48.0
       Tmax: 9999.0
 - Name: Osumilite,2
@@ -833,10 +833,10 @@ Species:
       b: -0.034457
       c: -8262100.0
       d: -13128.8
-      alpha: 4.7e-06
-      kappa: 81000000000.0
-      kappap: 4.1
-      kappapp: -5.1e-11
+      alpha0: 4.7e-06
+      kappa0: 81000000000.0
+      kappa0p: 4.1
+      kappa0pp: -5.1e-11
       numatoms: 48.0
       Tmax: 9999.0
 - Name: Fe-Akimotoite
@@ -853,10 +853,10 @@ Species:
       b: 0.013328
       c: -4364900.0
       d: 419.8
-      alpha: 2.12e-05
-      kappa: 218000000000.0
-      kappap: 4.55
-      kappapp: -2.2e-11
+      alpha0: 2.12e-05
+      kappa0: 218000000000.0
+      kappa0p: 4.55
+      kappa0pp: -2.2e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Akimotoite
@@ -873,10 +873,10 @@ Species:
       b: 0.002015
       c: -2395000.0
       d: -801.8
-      alpha: 2.12e-05
-      kappa: 211000000000.0
-      kappap: 4.55
-      kappapp: -2.2e-11
+      alpha0: 2.12e-05
+      kappa0: 211000000000.0
+      kappa0p: 4.55
+      kappa0pp: -2.2e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: CaSi-Titanite
@@ -893,10 +893,10 @@ Species:
       b: 0.006034
       c: -5517700.0
       d: -352.6
-      alpha: 1.58e-05
-      kappa: 178200000000.0
-      kappap: 4.0
-      kappapp: -2.2e-11
+      alpha0: 1.58e-05
+      kappa0: 178200000000.0
+      kappa0p: 4.0
+      kappa0pp: -2.2e-11
       numatoms: 8.0
       Tmax: 9999.0
 - Name: Al-Perovskite
@@ -913,10 +913,10 @@ Species:
       b: 0.00589
       c: -2460600.0
       d: -589.2
-      alpha: 1.8e-05
-      kappa: 203000000000.0
-      kappap: 4.0
-      kappapp: -2.0e-11
+      alpha0: 1.8e-05
+      kappa0: 203000000000.0
+      kappa0p: 4.0
+      kappa0pp: -2.0e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Ca-Perovskite
@@ -933,10 +933,10 @@ Species:
       b: 0.0
       c: -967300.0
       d: -1075.4
-      alpha: 1.87e-05
-      kappa: 236000000000.0
-      kappap: 3.9
-      kappapp: -1.6e-11
+      alpha0: 1.87e-05
+      kappa0: 236000000000.0
+      kappa0p: 3.9
+      kappa0pp: -1.6e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Fe-Perovskite
@@ -953,10 +953,10 @@ Species:
       b: 0.01083
       c: -3661400.0
       d: -314.7
-      alpha: 1.87e-05
-      kappa: 281000000000.0
-      kappap: 4.14
-      kappapp: -1.6e-11
+      alpha0: 1.87e-05
+      kappa0: 281000000000.0
+      kappa0p: 4.14
+      kappa0pp: -1.6e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Mg-Perovskite
@@ -973,10 +973,10 @@ Species:
       b: 0.002918
       c: -2983000.0
       d: -799.1
-      alpha: 1.87e-05
-      kappa: 251000000000.0
-      kappap: 4.14
-      kappapp: -1.6e-11
+      alpha0: 1.87e-05
+      kappa0: 251000000000.0
+      kappa0p: 4.14
+      kappa0pp: -1.6e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Phasea
@@ -993,10 +993,10 @@ Species:
       b: -0.011521
       c: -4517800.0
       d: -7724.7
-      alpha: 3.79e-05
-      kappa: 145000000000.0
-      kappap: 4.06
-      kappapp: -2.8e-11
+      alpha0: 3.79e-05
+      kappa0: 145000000000.0
+      kappa0p: 4.06
+      kappa0pp: -2.8e-11
       numatoms: 29.0
       Tmax: 9999.0
 - Name: Fe-Ringwoodite
@@ -1013,10 +1013,10 @@ Species:
       b: 0.04261
       c: -1705400.0
       d: -541.4
-      alpha: 2.22e-05
-      kappa: 197700000000.0
-      kappap: 4.92
-      kappapp: -2.5e-11
+      alpha0: 2.22e-05
+      kappa0: 197700000000.0
+      kappa0p: 4.92
+      kappa0pp: -2.5e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Mg-Ringwoodite
@@ -1033,10 +1033,10 @@ Species:
       b: 0.00269
       c: -1410400.0
       d: -1495.9
-      alpha: 2.01e-05
-      kappa: 178100000000.0
-      kappap: 4.35
-      kappapp: -2.4e-11
+      alpha0: 2.01e-05
+      kappa0: 178100000000.0
+      kappa0p: 4.35
+      kappa0pp: -2.4e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Fe-Wadsleyite
@@ -1053,10 +1053,10 @@ Species:
       b: 0.01733
       c: -1960600.0
       d: -900.9
-      alpha: 2.73e-05
-      kappa: 169000000000.0
-      kappap: 4.35
-      kappapp: -2.6e-11
+      alpha0: 2.73e-05
+      kappa0: 169000000000.0
+      kappa0p: 4.35
+      kappa0pp: -2.6e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Mg-Wadsleyite
@@ -1073,10 +1073,10 @@ Species:
       b: 0.003942
       c: -1709500.0
       d: -1302.8
-      alpha: 2.37e-05
-      kappa: 172600000000.0
-      kappap: 3.84
-      kappapp: -2.2e-11
+      alpha0: 2.37e-05
+      kappa0: 172600000000.0
+      kappa0p: 3.84
+      kappa0pp: -2.2e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Acmite
@@ -1093,10 +1093,10 @@ Species:
       b: 0.016758
       c: -1685500.0
       d: -2125.8
-      alpha: 2.11e-05
-      kappa: 106000000000.0
-      kappap: 4.08
-      kappapp: -3.8e-11
+      alpha0: 2.11e-05
+      kappa0: 106000000000.0
+      kappa0p: 4.08
+      kappa0pp: -3.8e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Ca-Eskola-Pyroxene
@@ -1113,10 +1113,10 @@ Species:
       b: -0.016944
       c: -175900.0
       d: -3565.7
-      alpha: 2.31e-05
-      kappa: 119200000000.0
-      kappap: 5.19
-      kappapp: -4.4e-11
+      alpha0: 2.31e-05
+      kappa0: 119200000000.0
+      kappa0p: 5.19
+      kappa0pp: -4.4e-11
       numatoms: 9.5
       Tmax: 9999.0
 - Name: Clino-Enstatite
@@ -1133,10 +1133,10 @@ Species:
       b: -0.003793
       c: -3041700.0
       d: -1852.1
-      alpha: 2.11e-05
-      kappa: 105900000000.0
-      kappap: 8.65
-      kappapp: -8.2e-11
+      alpha0: 2.11e-05
+      kappa0: 105900000000.0
+      kappa0p: 8.65
+      kappa0pp: -8.2e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Hi-P-Clinoenstatite
@@ -1153,10 +1153,10 @@ Species:
       b: -0.00299
       c: -596900.0
       d: -3185.3
-      alpha: 2.26e-05
-      kappa: 150000000000.0
-      kappap: 5.5
-      kappapp: -3.6e-11
+      alpha0: 2.26e-05
+      kappa0: 150000000000.0
+      kappa0p: 5.5
+      kappa0pp: -3.6e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Diopside
@@ -1173,10 +1173,10 @@ Species:
       b: 4.1e-05
       c: -2745900.0
       d: -2020.1
-      alpha: 2.73e-05
-      kappa: 119200000000.0
-      kappap: 5.19
-      kappapp: -4.4e-11
+      alpha0: 2.73e-05
+      kappa0: 119200000000.0
+      kappa0p: 5.19
+      kappa0pp: -4.4e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Enstatite
@@ -1193,10 +1193,10 @@ Species:
       b: -0.00299
       c: -596900.0
       d: -3185.3
-      alpha: 2.27e-05
-      kappa: 105900000000.0
-      kappap: 8.65
-      kappapp: -8.2e-11
+      alpha0: 2.27e-05
+      kappa0: 105900000000.0
+      kappa0p: 8.65
+      kappa0pp: -8.2e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Ferrosilite
@@ -1213,10 +1213,10 @@ Species:
       b: -0.006579
       c: 1290100.0
       d: -4058.0
-      alpha: 3.26e-05
-      kappa: 101000000000.0
-      kappap: 4.08
-      kappapp: -4.0e-11
+      alpha0: 3.26e-05
+      kappa0: 101000000000.0
+      kappa0p: 4.08
+      kappa0pp: -4.0e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Hedenbergite
@@ -1233,10 +1233,10 @@ Species:
       b: 0.000812
       c: -1047800.0
       d: -2646.7
-      alpha: 2.38e-05
-      kappa: 119200000000.0
-      kappap: 3.97
-      kappapp: -3.3e-11
+      alpha0: 2.38e-05
+      kappa0: 119200000000.0
+      kappa0p: 3.97
+      kappa0pp: -3.3e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Jadeite
@@ -1253,10 +1253,10 @@ Species:
       b: 0.003616
       c: -1173900.0
       d: -2469.5
-      alpha: 2.1e-05
-      kappa: 128100000000.0
-      kappap: 3.81
-      kappapp: -3.0e-11
+      alpha0: 2.1e-05
+      kappa0: 128100000000.0
+      kappa0p: 3.81
+      kappa0pp: -3.0e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Kosmochlor
@@ -1273,10 +1273,10 @@ Species:
       b: 0.005419
       c: -664600.0
       d: -2176.6
-      alpha: 1.94e-05
-      kappa: 130800000000.0
-      kappap: 3.0
-      kappapp: -2.3e-11
+      alpha0: 1.94e-05
+      kappa0: 130800000000.0
+      kappa0p: 3.0
+      kappa0pp: -2.3e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Mg-Tschermaks-Px
@@ -1293,10 +1293,10 @@ Species:
       b: -0.004082
       c: -398400.0
       d: -3547.1
-      alpha: 2.17e-05
-      kappa: 102800000000.0
-      kappap: 8.55
-      kappapp: -8.3e-11
+      alpha0: 2.17e-05
+      kappa0: 102800000000.0
+      kappa0p: 8.55
+      kappa0pp: -8.3e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Protoenstatite
@@ -1313,10 +1313,10 @@ Species:
       b: -0.00299
       c: -596900.0
       d: -3185.3
-      alpha: 2.3e-05
-      kappa: 105900000000.0
-      kappap: 8.65
-      kappapp: -8.2e-11
+      alpha0: 2.3e-05
+      kappa0: 105900000000.0
+      kappa0p: 8.65
+      kappa0pp: -8.2e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Pseudowollastonite
@@ -1333,10 +1333,10 @@ Species:
       b: 0.0
       c: -967300.0
       d: -1075.4
-      alpha: 2.85e-05
-      kappa: 110000000000.0
-      kappap: 4.08
-      kappapp: -3.7e-11
+      alpha0: 2.85e-05
+      kappa0: 110000000000.0
+      kappa0p: 4.08
+      kappa0pp: -3.7e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Pyroxmangite
@@ -1353,10 +1353,10 @@ Species:
       b: 0.004088
       c: -1936000.0
       d: -538.9
-      alpha: 2.8e-05
-      kappa: 84000000000.0
-      kappap: 4.0
-      kappapp: -4.8e-11
+      alpha0: 2.8e-05
+      kappa0: 84000000000.0
+      kappa0p: 4.0
+      kappa0pp: -4.8e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Rhodonite
@@ -1373,10 +1373,10 @@ Species:
       b: 0.004088
       c: -1936000.0
       d: -538.9
-      alpha: 2.81e-05
-      kappa: 84000000000.0
-      kappap: 4.0
-      kappapp: -4.8e-11
+      alpha0: 2.81e-05
+      kappa0: 84000000000.0
+      kappa0p: 4.0
+      kappa0pp: -4.8e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Walstromite
@@ -1393,10 +1393,10 @@ Species:
       b: 0.0
       c: -967300.0
       d: -1075.4
-      alpha: 2.54e-05
-      kappa: 79500000000.0
-      kappap: 4.1
-      kappapp: -5.2e-11
+      alpha0: 2.54e-05
+      kappa0: 79500000000.0
+      kappa0p: 4.1
+      kappa0pp: -5.2e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Wollastonite
@@ -1413,10 +1413,10 @@ Species:
       b: 0.0
       c: -967300.0
       d: -1075.4
-      alpha: 2.54e-05
-      kappa: 79500000000.0
-      kappap: 4.1
-      kappapp: -5.2e-11
+      alpha0: 2.54e-05
+      kappa0: 79500000000.0
+      kappa0p: 4.1
+      kappa0pp: -5.2e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Anthophyllite
@@ -1433,10 +1433,10 @@ Species:
       b: 0.025825
       c: -9704600.0
       d: -9074.7
-      alpha: 2.52e-05
-      kappa: 70000000000.0
-      kappap: 4.11
-      kappapp: -5.9e-11
+      alpha0: 2.52e-05
+      kappa0: 70000000000.0
+      kappa0p: 4.11
+      kappa0pp: -5.9e-11
       numatoms: 41.0
       Tmax: 9999.0
 - Name: Fe-Anthophyllite
@@ -1453,10 +1453,10 @@ Species:
       b: 0.030669
       c: -4224700.0
       d: -11257.6
-      alpha: 2.74e-05
-      kappa: 70000000000.0
-      kappap: 4.11
-      kappapp: -5.9e-11
+      alpha0: 2.74e-05
+      kappa0: 70000000000.0
+      kappa0p: 4.11
+      kappa0pp: -5.9e-11
       numatoms: 41.0
       Tmax: 9999.0
 - Name: Cummingtonite
@@ -1473,10 +1473,10 @@ Species:
       b: 0.025825
       c: -9704600.0
       d: -9074.7
-      alpha: 2.52e-05
-      kappa: 70000000000.0
-      kappap: 4.11
-      kappapp: -5.9e-11
+      alpha0: 2.52e-05
+      kappa0: 70000000000.0
+      kappa0p: 4.11
+      kappa0pp: -5.9e-11
       numatoms: 41.0
       Tmax: 9999.0
 - Name: Ferroactinolite
@@ -1493,10 +1493,10 @@ Species:
       b: 0.029992
       c: -8447500.0
       d: -8947.0
-      alpha: 2.88e-05
-      kappa: 76000000000.0
-      kappap: 4.1
-      kappapp: -5.4e-11
+      alpha0: 2.88e-05
+      kappa0: 76000000000.0
+      kappa0p: 4.1
+      kappa0pp: -5.4e-11
       numatoms: 41.0
       Tmax: 9999.0
 - Name: Ferroglaucophane
@@ -1513,10 +1513,10 @@ Species:
       b: -0.118992
       c: 9423700.0
       d: -20207.1
-      alpha: 1.83e-05
-      kappa: 89000000000.0
-      kappap: 4.09
-      kappapp: -4.6e-11
+      alpha0: 1.83e-05
+      kappa0: 89000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.6e-11
       numatoms: 41.0
       Tmax: 9999.0
 - Name: Glaucophane
@@ -1533,10 +1533,10 @@ Species:
       b: -0.12107
       c: 7075000.0
       d: -19272.0
-      alpha: 1.49e-05
-      kappa: 88300000000.0
-      kappap: 4.09
-      kappapp: -4.6e-11
+      alpha0: 1.49e-05
+      kappa0: 88300000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.6e-11
       numatoms: 41.0
       Tmax: 9999.0
 - Name: Grunerite
@@ -1553,10 +1553,10 @@ Species:
       b: 0.030669
       c: -4224700.0
       d: -11257.6
-      alpha: 2.74e-05
-      kappa: 64800000000.0
-      kappap: 4.12
-      kappapp: -6.4e-11
+      alpha0: 2.74e-05
+      kappa0: 64800000000.0
+      kappa0p: 4.12
+      kappa0pp: -6.4e-11
       numatoms: 41.0
       Tmax: 9999.0
 - Name: Pargasite
@@ -1573,10 +1573,10 @@ Species:
       b: 0.022997
       c: -12359500.0
       d: -8065.8
-      alpha: 2.8e-05
-      kappa: 91200000000.0
-      kappap: 4.09
-      kappapp: -4.5e-11
+      alpha0: 2.8e-05
+      kappa0: 91200000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.5e-11
       numatoms: 42.0
       Tmax: 9999.0
 - Name: Riebeckite
@@ -1593,10 +1593,10 @@ Species:
       b: -0.124882
       c: 9627100.0
       d: -20275.5
-      alpha: 1.8e-05
-      kappa: 89000000000.0
-      kappap: 4.09
-      kappapp: -4.6e-11
+      alpha0: 1.8e-05
+      kappa0: 89000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.6e-11
       numatoms: 41.0
       Tmax: 9999.0
 - Name: Tremolite
@@ -1613,10 +1613,10 @@ Species:
       b: 0.00383
       c: -11455000.0
       d: -8237.6
-      alpha: 2.61e-05
-      kappa: 76200000000.0
-      kappap: 4.1
-      kappapp: -5.4e-11
+      alpha0: 2.61e-05
+      kappa0: 76200000000.0
+      kappa0p: 4.1
+      kappa0pp: -5.4e-11
       numatoms: 41.0
       Tmax: 9999.0
 - Name: Tschermakite
@@ -1633,10 +1633,10 @@ Species:
       b: 0.024348
       c: -11965000.0
       d: -8112.1
-      alpha: 2.66e-05
-      kappa: 76000000000.0
-      kappap: 4.1
-      kappapp: -5.4e-11
+      alpha0: 2.66e-05
+      kappa0: 76000000000.0
+      kappa0p: 4.1
+      kappa0pp: -5.4e-11
       numatoms: 41.0
       Tmax: 9999.0
 - Name: Deerite
@@ -1653,10 +1653,10 @@ Species:
       b: -0.027883
       c: -5039100.0
       d: -26721.0
-      alpha: 2.75e-05
-      kappa: 63000000000.0
-      kappap: 4.12
-      kappapp: -6.5e-11
+      alpha0: 2.75e-05
+      kappa0: 63000000000.0
+      kappa0p: 4.12
+      kappa0pp: -6.5e-11
       numatoms: 90.0
       Tmax: 9999.0
 - Name: Ferrocarpholite
@@ -1673,10 +1673,10 @@ Species:
       b: -0.012415
       c: 186000.0
       d: -6884.0
-      alpha: 2.21e-05
-      kappa: 52500000000.0
-      kappap: 4.14
-      kappapp: -7.9e-11
+      alpha0: 2.21e-05
+      kappa0: 52500000000.0
+      kappa0p: 4.14
+      kappa0pp: -7.9e-11
       numatoms: 19.0
       Tmax: 9999.0
 - Name: Magnesiocarpholite
@@ -1693,10 +1693,10 @@ Species:
       b: -0.014054
       c: 291000.0
       d: -6976.4
-      alpha: 2.43e-05
-      kappa: 52500000000.0
-      kappap: 4.14
-      kappapp: -7.9e-11
+      alpha0: 2.43e-05
+      kappa0: 52500000000.0
+      kappa0p: 4.14
+      kappa0pp: -7.9e-11
       numatoms: 19.0
       Tmax: 9999.0
 - Name: Fe-Sapphirine,221
@@ -1713,10 +1713,10 @@ Species:
       b: -0.007348
       c: -10420200.0
       d: -7036.6
-      alpha: 1.96e-05
-      kappa: 250000000000.0
-      kappap: 4.04
-      kappapp: -1.7e-11
+      alpha0: 1.96e-05
+      kappa0: 250000000000.0
+      kappa0p: 4.04
+      kappa0pp: -1.7e-11
       numatoms: 34.0
       Tmax: 9999.0
 - Name: Sapphirine,221
@@ -1733,10 +1733,10 @@ Species:
       b: -0.007596
       c: -8816600.0
       d: -8180.6
-      alpha: 2.05e-05
-      kappa: 250000000000.0
-      kappap: 4.04
-      kappapp: -1.6e-11
+      alpha0: 2.05e-05
+      kappa0: 250000000000.0
+      kappa0p: 4.04
+      kappa0pp: -1.6e-11
       numatoms: 34.0
       Tmax: 9999.0
 - Name: Sapphirine,351
@@ -1753,10 +1753,10 @@ Species:
       b: 0.001015
       c: -10957000.0
       d: -7409.2
-      alpha: 2.06e-05
-      kappa: 250000000000.0
-      kappap: 4.04
-      kappapp: -1.6e-11
+      alpha0: 2.06e-05
+      kappa0: 250000000000.0
+      kappa0p: 4.04
+      kappa0pp: -1.6e-11
       numatoms: 34.0
       Tmax: 9999.0
 - Name: Annite
@@ -1773,10 +1773,10 @@ Species:
       b: -0.034861
       c: 19800.0
       d: -7466.7
-      alpha: 3.8e-05
-      kappa: 51300000000.0
-      kappap: 7.33
-      kappapp: -1.43e-10
+      alpha0: 3.8e-05
+      kappa0: 51300000000.0
+      kappa0p: 7.33
+      kappa0pp: -1.43e-10
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Celadonite
@@ -1793,10 +1793,10 @@ Species:
       b: -0.018748
       c: -2368800.0
       d: -6616.9
-      alpha: 3.07e-05
-      kappa: 70000000000.0
-      kappap: 4.11
-      kappapp: -5.9e-11
+      alpha0: 3.07e-05
+      kappa0: 70000000000.0
+      kappa0p: 4.11
+      kappa0pp: -5.9e-11
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Ferroceladonite
@@ -1813,10 +1813,10 @@ Species:
       b: -0.019147
       c: -1586100.0
       d: -6928.7
-      alpha: 3.18e-05
-      kappa: 70000000000.0
-      kappap: 4.11
-      kappapp: -5.9e-11
+      alpha0: 3.18e-05
+      kappa0: 70000000000.0
+      kappa0p: 4.11
+      kappa0pp: -5.9e-11
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Eastonite
@@ -1833,10 +1833,10 @@ Species:
       b: -0.038031
       c: -2130300.0
       d: -6893.7
-      alpha: 3.8e-05
-      kappa: 53000000000.0
-      kappap: 7.33
-      kappapp: -1.43e-10
+      alpha0: 3.8e-05
+      kappa0: 53000000000.0
+      kappa0p: 7.33
+      kappa0pp: -1.43e-10
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Margarite
@@ -1853,10 +1853,10 @@ Species:
       b: -0.0168
       c: -2074400.0
       d: -6783.2
-      alpha: 2.33e-05
-      kappa: 100000000000.0
-      kappap: 4.08
-      kappapp: -4.1e-11
+      alpha0: 2.33e-05
+      kappa0: 100000000000.0
+      kappa0p: 4.08
+      kappa0pp: -4.1e-11
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Mn-Biotite
@@ -1873,10 +1873,10 @@ Species:
       b: -0.059213
       c: -1514400.0
       d: -6998.7
-      alpha: 3.8e-05
-      kappa: 53000000000.0
-      kappap: 7.33
-      kappapp: -1.43e-10
+      alpha0: 3.8e-05
+      kappa0: 53000000000.0
+      kappa0p: 7.33
+      kappa0pp: -1.43e-10
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Muscovite
@@ -1893,10 +1893,10 @@ Species:
       b: -0.01984
       c: -2170000.0
       d: -6979.2
-      alpha: 3.07e-05
-      kappa: 49000000000.0
-      kappap: 4.15
-      kappapp: -8.5e-11
+      alpha0: 3.07e-05
+      kappa0: 49000000000.0
+      kappa0p: 4.15
+      kappa0pp: -8.5e-11
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Sodaphlogopite
@@ -1913,10 +1913,10 @@ Species:
       b: -0.040229
       c: -2597900.0
       d: -6512.6
-      alpha: 3.28e-05
-      kappa: 51300000000.0
-      kappap: 7.33
-      kappapp: -1.43e-10
+      alpha0: 3.28e-05
+      kappa0: 51300000000.0
+      kappa0p: 7.33
+      kappa0pp: -1.43e-10
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Paragonite
@@ -1933,10 +1933,10 @@ Species:
       b: -0.03158
       c: 217000.0
       d: -8151.0
-      alpha: 3.7e-05
-      kappa: 51500000000.0
-      kappap: 6.51
-      kappapp: -1.26e-10
+      alpha0: 3.7e-05
+      kappa0: 51500000000.0
+      kappa0p: 6.51
+      kappa0pp: -1.26e-10
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Phlogopite
@@ -1953,10 +1953,10 @@ Species:
       b: -0.036939
       c: -2328900.0
       d: -6531.6
-      alpha: 3.8e-05
-      kappa: 51300000000.0
-      kappap: 7.33
-      kappapp: -1.43e-10
+      alpha0: 3.8e-05
+      kappa0: 51300000000.0
+      kappa0p: 7.33
+      kappa0pp: -1.43e-10
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Al-Free-Chlorite
@@ -1973,10 +1973,10 @@ Species:
       b: -0.000417
       c: -4024400.0
       d: -9952.9
-      alpha: 2.04e-05
-      kappa: 87000000000.0
-      kappap: 4.09
-      kappapp: -4.7e-11
+      alpha0: 2.04e-05
+      kappa0: 87000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.7e-11
       numatoms: 36.0
       Tmax: 9999.0
 - Name: Amesite,14A
@@ -1993,10 +1993,10 @@ Species:
       b: -0.002599
       c: -3627200.0
       d: -10677.0
-      alpha: 2.0e-05
-      kappa: 87000000000.0
-      kappap: 4.09
-      kappapp: -4.7e-11
+      alpha0: 2.0e-05
+      kappa0: 87000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.7e-11
       numatoms: 36.0
       Tmax: 9999.0
 - Name: Clinochlore,ordered
@@ -2013,10 +2013,10 @@ Species:
       b: -0.001508
       c: -3825800.0
       d: -10315.0
-      alpha: 2.04e-05
-      kappa: 87000000000.0
-      kappap: 4.09
-      kappapp: -4.7e-11
+      alpha0: 2.04e-05
+      kappa0: 87000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.7e-11
       numatoms: 36.0
       Tmax: 9999.0
 - Name: Daphnite
@@ -2033,10 +2033,10 @@ Species:
       b: -0.00594
       c: -4826400.0
       d: -9768.3
-      alpha: 2.27e-05
-      kappa: 87000000000.0
-      kappap: 4.09
-      kappapp: -4.7e-11
+      alpha0: 2.27e-05
+      kappa0: 87000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.7e-11
       numatoms: 36.0
       Tmax: 9999.0
 - Name: Mn-Chlorite
@@ -2053,10 +2053,10 @@ Species:
       b: -0.005243
       c: -5548100.0
       d: -8911.5
-      alpha: 2.23e-05
-      kappa: 87000000000.0
-      kappap: 4.09
-      kappapp: -4.7e-11
+      alpha0: 2.23e-05
+      kappa0: 87000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.7e-11
       numatoms: 36.0
       Tmax: 9999.0
 - Name: Ferrosudoite
@@ -2073,10 +2073,10 @@ Species:
       b: -0.047365
       c: -1182800.0
       d: -14388.0
-      alpha: 2.08e-05
-      kappa: 87000000000.0
-      kappap: 4.09
-      kappapp: -4.7e-11
+      alpha0: 2.08e-05
+      kappa0: 87000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.7e-11
       numatoms: 35.0
       Tmax: 9999.0
 - Name: Sudoite
@@ -2093,10 +2093,10 @@ Species:
       b: -0.048749
       c: -2748500.0
       d: -13764.0
-      alpha: 1.99e-05
-      kappa: 87000000000.0
-      kappap: 4.09
-      kappapp: -4.7e-11
+      alpha0: 1.99e-05
+      kappa0: 87000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.7e-11
       numatoms: 35.0
       Tmax: 9999.0
 - Name: Antigorite
@@ -2113,10 +2113,10 @@ Species:
       b: -0.091183
       c: -35941600.0
       d: -83034.2
-      alpha: 2.6e-05
-      kappa: 49600000000.0
-      kappap: 6.31
-      kappapp: -1.27e-10
+      alpha0: 2.6e-05
+      kappa0: 49600000000.0
+      kappa0p: 6.31
+      kappa0pp: -1.27e-10
       numatoms: 291.0
       Tmax: 9999.0
 - Name: Chrysotile
@@ -2133,10 +2133,10 @@ Species:
       b: -0.02077
       c: -1721800.0
       d: -5619.4
-      alpha: 2.2e-05
-      kappa: 62800000000.0
-      kappap: 4.0
-      kappapp: -6.4e-11
+      alpha0: 2.2e-05
+      kappa0: 62800000000.0
+      kappa0p: 4.0
+      kappa0pp: -6.4e-11
       numatoms: 18.0
       Tmax: 9999.0
 - Name: Ferrotalc
@@ -2153,10 +2153,10 @@ Species:
       b: 0.039494
       c: -6459300.0
       d: -3088.1
-      alpha: 1.8e-05
-      kappa: 43000000000.0
-      kappap: 6.17
-      kappapp: -1.44e-10
+      alpha0: 1.8e-05
+      kappa0: 43000000000.0
+      kappa0p: 6.17
+      kappa0pp: -1.44e-10
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Greenalite
@@ -2173,10 +2173,10 @@ Species:
       b: 0.002984
       c: -3757000.0
       d: -4166.2
-      alpha: 2.28e-05
-      kappa: 63000000000.0
-      kappap: 4.0
-      kappapp: -6.3e-11
+      alpha0: 2.28e-05
+      kappa0: 63000000000.0
+      kappa0p: 4.0
+      kappa0pp: -6.3e-11
       numatoms: 18.0
       Tmax: 9999.0
 - Name: Kaolinite
@@ -2193,10 +2193,10 @@ Species:
       b: -0.034295
       c: -4055900.0
       d: -2699.1
-      alpha: 2.51e-05
-      kappa: 64500000000.0
-      kappap: 4.12
-      kappapp: -6.4e-11
+      alpha0: 2.51e-05
+      kappa0: 64500000000.0
+      kappa0p: 4.12
+      kappa0pp: -6.4e-11
       numatoms: 17.0
       Tmax: 9999.0
 - Name: Lizardite
@@ -2213,10 +2213,10 @@ Species:
       b: -0.02077
       c: -1721800.0
       d: -5619.4
-      alpha: 2.2e-05
-      kappa: 71000000000.0
-      kappap: 3.2
-      kappapp: -4.5e-11
+      alpha0: 2.2e-05
+      kappa0: 71000000000.0
+      kappa0p: 3.2
+      kappa0pp: -4.5e-11
       numatoms: 18.0
       Tmax: 9999.0
 - Name: Minnesotaite
@@ -2233,10 +2233,10 @@ Species:
       b: 0.039494
       c: -6459300.0
       d: -3088.1
-      alpha: 1.8e-05
-      kappa: 43000000000.0
-      kappap: 6.17
-      kappapp: -1.44e-10
+      alpha0: 1.8e-05
+      kappa0: 43000000000.0
+      kappa0p: 6.17
+      kappa0pp: -1.44e-10
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Mg-Minnesotaite
@@ -2253,10 +2253,10 @@ Species:
       b: 0.0
       c: -6385500.0
       d: -3916.3
-      alpha: 1.8e-05
-      kappa: 43000000000.0
-      kappap: 6.17
-      kappapp: -1.44e-10
+      alpha0: 1.8e-05
+      kappa0: 43000000000.0
+      kappa0p: 6.17
+      kappa0pp: -1.44e-10
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Prehnite
@@ -2273,10 +2273,10 @@ Species:
       b: -0.013865
       c: -2059000.0
       d: -6323.9
-      alpha: 1.58e-05
-      kappa: 109300000000.0
-      kappap: 4.01
-      kappapp: -3.7e-11
+      alpha0: 1.58e-05
+      kappa0: 109300000000.0
+      kappa0p: 4.01
+      kappa0pp: -3.7e-11
       numatoms: 21.0
       Tmax: 9999.0
 - Name: PRL-Talc
@@ -2293,10 +2293,10 @@ Species:
       b: -0.042948
       c: 1251000.0
       d: -8495.9
-      alpha: 4.5e-05
-      kappa: 37000000000.0
-      kappap: 10.0
-      kappapp: -2.71e-10
+      alpha0: 4.5e-05
+      kappa0: 37000000000.0
+      kappa0p: 10.0
+      kappa0pp: -2.71e-10
       numatoms: 20.0
       Tmax: 9999.0
 - Name: Pyrophyllite
@@ -2313,10 +2313,10 @@ Species:
       b: -0.042948
       c: 1251000.0
       d: -8495.9
-      alpha: 4.5e-05
-      kappa: 37000000000.0
-      kappap: 10.0
-      kappapp: -2.71e-10
+      alpha0: 4.5e-05
+      kappa0: 37000000000.0
+      kappa0p: 10.0
+      kappa0pp: -2.71e-10
       numatoms: 20.0
       Tmax: 9999.0
 - Name: Ferrostilpnomelane
@@ -2333,10 +2333,10 @@ Species:
       b: -0.012289
       c: -4840200.0
       d: -16635.0
-      alpha: 3.68e-05
-      kappa: 51300000000.0
-      kappap: 7.33
-      kappapp: -1.43e-10
+      alpha0: 3.68e-05
+      kappa0: 51300000000.0
+      kappa0p: 7.33
+      kappa0pp: -1.43e-10
       numatoms: 58.5
       Tmax: 9999.0
 - Name: Mg-Stilpnomelane
@@ -2353,10 +2353,10 @@ Species:
       b: -0.014018
       c: -8983100.0
       d: -14923.0
-      alpha: 3.71e-05
-      kappa: 51300000000.0
-      kappap: 7.33
-      kappapp: -1.43e-10
+      alpha0: 3.71e-05
+      kappa0: 51300000000.0
+      kappa0p: 7.33
+      kappa0pp: -1.43e-10
       numatoms: 58.5
       Tmax: 9999.0
 - Name: Talc
@@ -2373,10 +2373,10 @@ Species:
       b: 0.0
       c: -6385500.0
       d: -3916.3
-      alpha: 1.8e-05
-      kappa: 43000000000.0
-      kappap: 6.17
-      kappapp: -1.44e-10
+      alpha0: 1.8e-05
+      kappa0: 43000000000.0
+      kappa0p: 6.17
+      kappa0pp: -1.44e-10
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Tschermak-Talc
@@ -2393,10 +2393,10 @@ Species:
       b: 0.036324
       c: -8606600.0
       d: -2515.3
-      alpha: 1.8e-05
-      kappa: 43000000000.0
-      kappap: 6.17
-      kappapp: -1.44e-10
+      alpha0: 1.8e-05
+      kappa0: 43000000000.0
+      kappa0p: 6.17
+      kappa0pp: -1.44e-10
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Ferri-Prehnite
@@ -2413,10 +2413,10 @@ Species:
       b: -0.01681
       c: -1957300.0
       d: -6358.1
-      alpha: 1.58e-05
-      kappa: 109300000000.0
-      kappap: 4.01
-      kappapp: -3.7e-11
+      alpha0: 1.58e-05
+      kappa0: 109300000000.0
+      kappa0p: 4.01
+      kappa0pp: -3.7e-11
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Albite,high
@@ -2433,10 +2433,10 @@ Species:
       b: -0.013364
       c: -1275900.0
       d: -3953.6
-      alpha: 2.4e-05
-      kappa: 54100000000.0
-      kappap: 5.91
-      kappapp: -1.09e-10
+      alpha0: 2.4e-05
+      kappa0: 54100000000.0
+      kappa0p: 5.91
+      kappa0pp: -1.09e-10
       numatoms: 13.0
       Tmax: 9999.0
 - Name: Analcite
@@ -2453,10 +2453,10 @@ Species:
       b: -0.016067
       c: 9302300.0
       d: -9179.6
-      alpha: 2.76e-05
-      kappa: 40000000000.0
-      kappap: 4.18
-      kappapp: -1.04e-10
+      alpha0: 2.76e-05
+      kappa0: 40000000000.0
+      kappa0p: 4.18
+      kappa0pp: -1.04e-10
       numatoms: 13.0
       Tmax: 9999.0
 - Name: Carnegieite,high
@@ -2473,10 +2473,10 @@ Species:
       b: 0.011876
       c: 0.0
       d: -1970.7
-      alpha: 4.67e-05
-      kappa: 46500000000.0
-      kappap: 4.16
-      kappapp: -8.9e-11
+      alpha0: 4.67e-05
+      kappa0: 46500000000.0
+      kappa0p: 4.16
+      kappa0pp: -8.9e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Carnegieite,low
@@ -2493,10 +2493,10 @@ Species:
       b: 0.086021
       c: -1992700.0
       d: 0.0
-      alpha: 4.5e-05
-      kappa: 46500000000.0
-      kappap: 4.16
-      kappapp: -8.9e-11
+      alpha0: 4.5e-05
+      kappa0: 46500000000.0
+      kappa0p: 4.16
+      kappa0pp: -8.9e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: K-Cymrite
@@ -2513,10 +2513,10 @@ Species:
       b: -0.01009
       c: -980400.0
       d: -4735.0
-      alpha: 3.21e-05
-      kappa: 42500000000.0
-      kappap: 2.0
-      kappapp: -4.7e-11
+      alpha0: 3.21e-05
+      kappa0: 42500000000.0
+      kappa0p: 2.0
+      kappa0pp: -4.7e-11
       numatoms: 16.0
       Tmax: 9999.0
 - Name: Kalsilite
@@ -2533,10 +2533,10 @@ Species:
       b: -0.004482
       c: -895800.0
       d: -1935.8
-      alpha: 3.16e-05
-      kappa: 51400000000.0
-      kappap: 2.0
-      kappapp: -3.9e-11
+      alpha0: 3.16e-05
+      kappa0: 51400000000.0
+      kappa0p: 2.0
+      kappa0pp: -3.9e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Microcline
@@ -2553,10 +2553,10 @@ Species:
       b: -0.010075
       c: -1007300.0
       d: -3973.1
-      alpha: 1.65e-05
-      kappa: 58300000000.0
-      kappap: 4.02
-      kappapp: -6.9e-11
+      alpha0: 1.65e-05
+      kappa0: 58300000000.0
+      kappa0p: 4.02
+      kappa0pp: -6.9e-11
       numatoms: 13.0
       Tmax: 9999.0
 - Name: Coesite
@@ -2573,10 +2573,10 @@ Species:
       b: -0.003279
       c: -190300.0
       d: -1041.6
-      alpha: 1.23e-05
-      kappa: 97900000000.0
-      kappap: 4.19
-      kappapp: -4.3e-11
+      alpha0: 1.23e-05
+      kappa0: 97900000000.0
+      kappa0p: 4.19
+      kappa0pp: -4.3e-11
       numatoms: 3.0
       Tmax: 9999.0
 - Name: Cristobalite,high
@@ -2593,10 +2593,10 @@ Species:
       b: 0.001304
       c: -4129000.0
       d: 0.0
-      alpha: 0.0
-      kappa: 16000000000.0
-      kappap: 4.35
-      kappapp: -2.72e-10
+      alpha0: 0.0
+      kappa0: 16000000000.0
+      kappa0p: 4.35
+      kappa0pp: -2.72e-10
       numatoms: 3.0
       Tmax: 9999.0
 - Name: Stishovite
@@ -2613,10 +2613,10 @@ Species:
       b: 0.00601
       c: -1978200.0
       d: -82.1
-      alpha: 1.58e-05
-      kappa: 309000000000.0
-      kappap: 4.6
-      kappapp: -1.5e-11
+      alpha0: 1.58e-05
+      kappa0: 309000000000.0
+      kappa0p: 4.6
+      kappa0pp: -1.5e-11
       numatoms: 3.0
       Tmax: 9999.0
 - Name: Tridymite,high
@@ -2633,10 +2633,10 @@ Species:
       b: 0.0031
       c: -1174000.0
       d: -236.7
-      alpha: 0.0
-      kappa: 15000000000.0
-      kappap: 4.36
-      kappapp: -2.91e-10
+      alpha0: 0.0
+      kappa0: 15000000000.0
+      kappa0p: 4.36
+      kappa0pp: -2.91e-10
       numatoms: 3.0
       Tmax: 9999.0
 - Name: Heulandite
@@ -2653,10 +2653,10 @@ Species:
       b: -0.033224
       c: -2959300.0
       d: -13297.2
-      alpha: 1.57e-05
-      kappa: 27400000000.0
-      kappap: 4.0
-      kappapp: -1.46e-10
+      alpha0: 1.57e-05
+      kappa0: 27400000000.0
+      kappa0p: 4.0
+      kappa0pp: -1.46e-10
       numatoms: 46.0
       Tmax: 9999.0
 - Name: Hollandite
@@ -2673,10 +2673,10 @@ Species:
       b: -0.003617
       c: -4748100.0
       d: -2819.9
-      alpha: 2.8e-05
-      kappa: 180000000000.0
-      kappap: 4.0
-      kappapp: -2.2e-11
+      alpha0: 2.8e-05
+      kappa0: 180000000000.0
+      kappa0p: 4.0
+      kappa0pp: -2.2e-11
       numatoms: 13.0
       Tmax: 9999.0
 - Name: Laumontite
@@ -2693,10 +2693,10 @@ Species:
       b: -0.021413
       c: -2235800.0
       d: -8806.7
-      alpha: 1.37e-05
-      kappa: 86000000000.0
-      kappap: 4.09
-      kappapp: -4.8e-11
+      alpha0: 1.37e-05
+      kappa0: 86000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.8e-11
       numatoms: 31.0
       Tmax: 9999.0
 - Name: Meionite
@@ -2713,10 +2713,10 @@ Species:
       b: 0.036442
       c: -8594700.0
       d: -9598.2
-      alpha: 1.82e-05
-      kappa: 87000000000.0
-      kappap: 4.09
-      kappapp: -4.7e-11
+      alpha0: 1.82e-05
+      kappa0: 87000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.7e-11
       numatoms: 44.0
       Tmax: 9999.0
 - Name: Sodalite
@@ -2733,10 +2733,10 @@ Species:
       b: 0.047747
       c: -2972800.0
       d: -12427.0
-      alpha: 4.63e-05
-      kappa: 46500000000.0
-      kappap: 4.16
-      kappapp: -8.9e-11
+      alpha0: 4.63e-05
+      kappa0: 46500000000.0
+      kappa0p: 4.16
+      kappa0pp: -8.9e-11
       numatoms: 46.0
       Tmax: 9999.0
 - Name: Stilbite
@@ -2753,10 +2753,10 @@ Species:
       b: -0.032043
       c: -3071600.0
       d: -13966.9
-      alpha: 1.51e-05
-      kappa: 86000000000.0
-      kappap: 4.09
-      kappapp: -4.8e-11
+      alpha0: 1.51e-05
+      kappa0: 86000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.8e-11
       numatoms: 49.0
       Tmax: 9999.0
 - Name: Si-Wadeite
@@ -2773,10 +2773,10 @@ Species:
       b: 0.0
       c: 0.0
       d: -4350.1
-      alpha: 2.66e-05
-      kappa: 90000000000.0
-      kappap: 4.0
-      kappapp: -4.4e-11
+      alpha0: 2.66e-05
+      kappa0: 90000000000.0
+      kappa0p: 4.0
+      kappa0pp: -4.4e-11
       numatoms: 15.0
       Tmax: 9999.0
 - Name: Wairakite
@@ -2793,10 +2793,10 @@ Species:
       b: -0.02146
       c: -2272000.0
       d: -7292.3
-      alpha: 1.49e-05
-      kappa: 86000000000.0
-      kappap: 4.09
-      kappapp: -4.8e-11
+      alpha0: 1.49e-05
+      kappa0: 86000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.8e-11
       numatoms: 25.0
       Tmax: 9999.0
 - Name: Baddeleyite
@@ -2813,10 +2813,10 @@ Species:
       b: -0.004547
       c: -416200.0
       d: -713.6
-      alpha: 2.0e-05
-      kappa: 95300000000.0
-      kappap: 3.88
-      kappapp: -4.1e-11
+      alpha0: 2.0e-05
+      kappa0: 95300000000.0
+      kappa0p: 3.88
+      kappa0pp: -4.1e-11
       numatoms: 3.0
       Tmax: 9999.0
 - Name: Bixbyite
@@ -2833,10 +2833,10 @@ Species:
       b: 0.023534
       c: 721600.0
       d: -1008.4
-      alpha: 2.91e-05
-      kappa: 223000000000.0
-      kappap: 4.04
-      kappapp: -1.8e-11
+      alpha0: 2.91e-05
+      kappa0: 223000000000.0
+      kappa0p: 4.04
+      kappa0pp: -1.8e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Corundum
@@ -2853,10 +2853,10 @@ Species:
       b: 0.00589
       c: -2460600.0
       d: -589.2
-      alpha: 1.8e-05
-      kappa: 254000000000.0
-      kappap: 4.34
-      kappapp: -1.7e-11
+      alpha0: 1.8e-05
+      kappa0: 254000000000.0
+      kappa0p: 4.34
+      kappa0pp: -1.7e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Cuprite
@@ -2873,10 +2873,10 @@ Species:
       b: 0.0
       c: 0.0
       d: -674.8
-      alpha: 3.33e-05
-      kappa: 131000000000.0
-      kappap: 5.7
-      kappapp: -4.3e-11
+      alpha0: 3.33e-05
+      kappa0: 131000000000.0
+      kappa0p: 5.7
+      kappa0pp: -4.3e-11
       numatoms: 3.0
       Tmax: 9999.0
 - Name: Eskolaite
@@ -2893,10 +2893,10 @@ Species:
       b: 0.009496
       c: -1442000.0
       d: -3.4
-      alpha: 1.59e-05
-      kappa: 238000000000.0
-      kappap: 4.0
-      kappapp: -1.7e-11
+      alpha0: 1.59e-05
+      kappa0: 238000000000.0
+      kappa0p: 4.0
+      kappa0pp: -1.7e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Geikielite
@@ -2913,10 +2913,10 @@ Species:
       b: 0.0
       c: -1890400.0
       d: -652.2
-      alpha: 2.15e-05
-      kappa: 170000000000.0
-      kappap: 8.3
-      kappapp: -4.9e-11
+      alpha0: 2.15e-05
+      kappa0: 170000000000.0
+      kappa0p: 8.3
+      kappa0pp: -4.9e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Lime
@@ -2933,10 +2933,10 @@ Species:
       b: 0.003673
       c: -750700.0
       d: -51.0
-      alpha: 3.41e-05
-      kappa: 113000000000.0
-      kappap: 3.87
-      kappapp: -3.4e-11
+      alpha0: 3.41e-05
+      kappa0: 113000000000.0
+      kappa0p: 3.87
+      kappa0pp: -3.4e-11
       numatoms: 2.0
       Tmax: 9999.0
 - Name: Manganosite
@@ -2953,10 +2953,10 @@ Species:
       b: 0.0036
       c: -31400.0
       d: -282.6
-      alpha: 3.69e-05
-      kappa: 164500000000.0
-      kappap: 4.46
-      kappapp: -2.7e-11
+      alpha0: 3.69e-05
+      kappa0: 164500000000.0
+      kappa0p: 4.46
+      kappa0pp: -2.7e-11
       numatoms: 2.0
       Tmax: 9999.0
 - Name: MgSi-Corundum
@@ -2973,10 +2973,10 @@ Species:
       b: 0.002015
       c: -2395000.0
       d: -801.8
-      alpha: 2.12e-05
-      kappa: 211000000000.0
-      kappap: 4.55
-      kappapp: -2.2e-11
+      alpha0: 2.12e-05
+      kappa0: 211000000000.0
+      kappa0p: 4.55
+      kappa0pp: -2.2e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Periclase
@@ -2993,10 +2993,10 @@ Species:
       b: 0.000362
       c: -535800.0
       d: -299.2
-      alpha: 3.11e-05
-      kappa: 161600000000.0
-      kappap: 3.95
-      kappapp: -2.4e-11
+      alpha0: 3.11e-05
+      kappa0: 161600000000.0
+      kappa0p: 3.95
+      kappa0pp: -2.4e-11
       numatoms: 2.0
       Tmax: 9999.0
 - Name: Ferropericlase
@@ -3013,10 +3013,10 @@ Species:
       b: 0.00828
       c: -1214200.0
       d: 185.2
-      alpha: 7.43e-05
-      kappa: 152000000000.0
-      kappap: 4.9
-      kappapp: -3.2e-11
+      alpha0: 7.43e-05
+      kappa0: 152000000000.0
+      kappa0p: 4.9
+      kappa0pp: -3.2e-11
       numatoms: 2.0
       Tmax: 9999.0
 - Name: Pyrophanite
@@ -3033,10 +3033,10 @@ Species:
       b: 0.003373
       c: -1940700.0
       d: -407.6
-      alpha: 2.4e-05
-      kappa: 170000000000.0
-      kappap: 8.3
-      kappapp: -4.9e-11
+      alpha0: 2.4e-05
+      kappa0: 170000000000.0
+      kappa0p: 8.3
+      kappa0pp: -4.9e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Rutile
@@ -3053,10 +3053,10 @@ Species:
       b: 0.0029
       c: 0.0
       d: -623.8
-      alpha: 2.24e-05
-      kappa: 222000000000.0
-      kappap: 4.24
-      kappapp: -1.9e-11
+      alpha0: 2.24e-05
+      kappa0: 222000000000.0
+      kappa0p: 4.24
+      kappa0pp: -1.9e-11
       numatoms: 3.0
       Tmax: 9999.0
 - Name: Tenorite
@@ -3073,10 +3073,10 @@ Species:
       b: 0.01374
       c: -1258000.0
       d: 369.3
-      alpha: 3.57e-05
-      kappa: 200000000000.0
-      kappap: 3.94
-      kappapp: -2.0e-11
+      alpha0: 3.57e-05
+      kappa0: 200000000000.0
+      kappa0p: 3.94
+      kappa0pp: -2.0e-11
       numatoms: 2.0
       Tmax: 9999.0
 - Name: Ulvospinel
@@ -3093,10 +3093,10 @@ Species:
       b: 0.14252
       c: -9144500.0
       d: 5270.7
-      alpha: 3.86e-05
-      kappa: 185700000000.0
-      kappap: 4.05
-      kappapp: -2.2e-11
+      alpha0: 3.86e-05
+      kappa0: 185700000000.0
+      kappa0p: 4.05
+      kappa0pp: -2.2e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Brucite
@@ -3113,10 +3113,10 @@ Species:
       b: -0.004076
       c: -1052300.0
       d: -1171.3
-      alpha: 6.2e-05
-      kappa: 41500000000.0
-      kappap: 6.45
-      kappapp: -1.55e-10
+      alpha0: 6.2e-05
+      kappa0: 41500000000.0
+      kappa0p: 6.45
+      kappa0pp: -1.55e-10
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Diaspore
@@ -3133,10 +3133,10 @@ Species:
       b: 0.008709
       c: 584400.0
       d: -1741.1
-      alpha: 3.57e-05
-      kappa: 228000000000.0
-      kappap: 4.04
-      kappapp: -1.8e-11
+      alpha0: 3.57e-05
+      kappa0: 228000000000.0
+      kappa0p: 4.04
+      kappa0pp: -1.8e-11
       numatoms: 4.0
       Tmax: 9999.0
 - Name: Goethite
@@ -3153,10 +3153,10 @@ Species:
       b: 0.000147
       c: -212700.0
       d: -1077.8
-      alpha: 4.35e-05
-      kappa: 250000000000.0
-      kappap: 4.03
-      kappapp: -1.6e-11
+      alpha0: 4.35e-05
+      kappa0: 250000000000.0
+      kappa0p: 4.03
+      kappa0pp: -1.6e-11
       numatoms: 4.0
       Tmax: 9999.0
 - Name: Magnesite
@@ -3173,10 +3173,10 @@ Species:
       b: -0.003772
       c: 0.0
       d: -1886.2
-      alpha: 3.38e-05
-      kappa: 102800000000.0
-      kappap: 5.41
-      kappapp: -5.3e-11
+      alpha0: 3.38e-05
+      kappa0: 102800000000.0
+      kappa0p: 5.41
+      kappa0pp: -5.3e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Rhodochrosite
@@ -3193,10 +3193,10 @@ Species:
       b: 0.0
       c: 0.0
       d: -1534.3
-      alpha: 2.44e-05
-      kappa: 95300000000.0
-      kappap: 3.88
-      kappapp: -4.1e-11
+      alpha0: 2.44e-05
+      kappa0: 95300000000.0
+      kappa0p: 3.88
+      kappa0pp: -4.1e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Siderite
@@ -3213,10 +3213,10 @@ Species:
       b: 0.0
       c: 0.0
       d: -1483.6
-      alpha: 4.39e-05
-      kappa: 120000000000.0
-      kappap: 4.07
-      kappapp: -3.4e-11
+      alpha0: 4.39e-05
+      kappa0: 120000000000.0
+      kappa0p: 4.07
+      kappa0pp: -3.4e-11
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Anhydrite
@@ -3233,10 +3233,10 @@ Species:
       b: 0.048545
       c: -1223000.0
       d: -560.5
-      alpha: 4.18e-05
-      kappa: 54380000000.0
-      kappap: 4.19
-      kappapp: -7.7e-11
+      alpha0: 4.18e-05
+      kappa0: 54380000000.0
+      kappa0p: 4.19
+      kappa0pp: -7.7e-11
       numatoms: 6.0
       Tmax: 9999.0
 - Name: Halite
@@ -3253,10 +3253,10 @@ Species:
       b: 0.01797
       c: 0.0
       d: 0.0
-      alpha: 0.0001147
-      kappa: 23800000000.0
-      kappap: 5.0
-      kappapp: -2.1e-10
+      alpha0: 0.0001147
+      kappa0: 23800000000.0
+      kappa0p: 5.0
+      kappa0pp: -2.1e-10
       numatoms: 2.0
       Tmax: 9999.0
 - Name: Pyrite
@@ -3273,10 +3273,10 @@ Species:
       b: 0.026715
       c: -1817000.0
       d: 649.3
-      alpha: 3.1e-05
-      kappa: 139500000000.0
-      kappap: 4.09
-      kappapp: -2.9e-11
+      alpha0: 3.1e-05
+      kappa0: 139500000000.0
+      kappa0p: 4.09
+      kappa0pp: -2.9e-11
       numatoms: 3.0
       Tmax: 9999.0
 - Name: Sylvite
@@ -3293,10 +3293,10 @@ Species:
       b: 0.01797
       c: 0.0
       d: 0.0
-      alpha: 0.0001109
-      kappa: 17000000000.0
-      kappap: 5.0
-      kappapp: -2.94e-10
+      alpha0: 0.0001109
+      kappa0: 17000000000.0
+      kappa0p: 5.0
+      kappa0pp: -2.94e-10
       numatoms: 2.0
       Tmax: 9999.0
 - Name: Copper
@@ -3313,10 +3313,10 @@ Species:
       b: 0.00922
       c: -379900.0
       d: 233.5
-      alpha: 3.58e-05
-      kappa: 162500000000.0
-      kappap: 4.24
-      kappapp: -2.6e-11
+      alpha0: 3.58e-05
+      kappa0: 162500000000.0
+      kappa0p: 4.24
+      kappa0pp: -2.6e-11
       numatoms: 1.0
       Tmax: 9999.0
 - Name: Diamond
@@ -3333,10 +3333,10 @@ Species:
       b: 0.006272
       c: -377400.0
       d: -273.4
-      alpha: 4.9e-06
-      kappa: 446500000000.0
-      kappap: 1.61
-      kappapp: -4.0e-12
+      alpha0: 4.9e-06
+      kappa0: 446500000000.0
+      kappa0p: 1.61
+      kappa0pp: -4.0e-12
       numatoms: 1.0
       Tmax: 9999.0
 - Name: Graphite
@@ -3353,10 +3353,10 @@ Species:
       b: -0.004429
       c: 488600.0
       d: -805.5
-      alpha: 1.67e-05
-      kappa: 31200000000.0
-      kappap: 3.9
-      kappapp: -1.25e-10
+      alpha0: 1.67e-05
+      kappa0: 31200000000.0
+      kappa0p: 3.9
+      kappa0pp: -1.25e-10
       numatoms: 1.0
       Tmax: 9999.0
 - Name: Sulphur
@@ -3373,10 +3373,10 @@ Species:
       b: -0.004557
       c: 638000.0
       d: -681.8
-      alpha: 6.4e-05
-      kappa: 14500000000.0
-      kappap: 7.0
-      kappapp: -6.3e-11
+      alpha0: 6.4e-05
+      kappa0: 14500000000.0
+      kappa0p: 7.0
+      kappa0pp: -6.3e-11
       numatoms: 1.0
       Tmax: 9999.0
 - Name: Gibbsite
@@ -3393,10 +3393,10 @@ Species:
       b: 0.189438
       c: 133870.0
       d: -1034.3
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Boehmite
@@ -3413,10 +3413,10 @@ Species:
       b: -0.0172
       c: 291310.0
       d: -1955.6
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 4.0
       Tmax: 9999.0
 - Name: Fluorphlogopite
@@ -3433,10 +3433,10 @@ Species:
       b: 0.049103
       c: -6598700.0
       d: -1568.8
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.0
       Tmax: 9999.0
 - Name: Hydroxyapatite
@@ -3453,10 +3453,10 @@ Species:
       b: -0.005384
       c: 2807300.0
       d: -7097.4
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 22.0
       Tmax: 9999.0
 - Name: Fluorapatite
@@ -3473,10 +3473,10 @@ Species:
       b: 0.011758
       c: -4949800.0
       d: -3329.7
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Chlorapatite
@@ -3493,10 +3493,10 @@ Species:
       b: 0.01185
       c: -4669800.0
       d: -3260.5
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 21.0
       Tmax: 9999.0
 - Name: Arsenic
@@ -3513,10 +3513,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 1.0
       Tmax: 9999.0
 - Name: Arsenolite
@@ -3533,10 +3533,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Claudetite
@@ -3553,10 +3553,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 5.0
       Tmax: 9999.0
 - Name: As2O5(s)
@@ -3573,10 +3573,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Realgar,alpha
@@ -3593,10 +3593,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 2.0
       Tmax: 9999.0
 - Name: Realgar,beta
@@ -3613,10 +3613,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 2.0
       Tmax: 9999.0
 - Name: Orpiment
@@ -3633,10 +3633,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Orpiment(am)
@@ -3653,10 +3653,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Arsenopyrite
@@ -3673,10 +3673,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 3.0
       Tmax: 9999.0
 - Name: Scorodite
@@ -3693,10 +3693,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 12.0
       Tmax: 9999.0
 - Name: Ferric-As(am)
@@ -3713,10 +3713,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 12.0
       Tmax: 9999.0
 - Name: Barium-As
@@ -3733,10 +3733,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 13.0
       Tmax: 9999.0
 - Name: Barium-H-As
@@ -3753,10 +3753,10 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 10.0
       Tmax: 9999.0
 - Name: a-GaOOH
@@ -3773,10 +3773,10 @@ Species:
       b: 0.064183
       c: 1129680.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 4.0
       Tmax: 9999.0
 - Name: Dawsonite
@@ -3793,10 +3793,10 @@ Species:
       b: 0.48643
       c: 1060.0
       d: -89.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Sapphirine,793
@@ -3813,10 +3813,10 @@ Species:
       b: -0.02487
       c: -7607300.0
       d: -9155.3
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 34.0
       Tmax: 9999.0
 - Name: Fe-Sapphirine,793
@@ -3833,10 +3833,10 @@ Species:
       b: -0.022171
       c: -1664000.0
       d: -11348.4
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 34.0
       Tmax: 9999.0
 - Name: Gedrite
@@ -3853,10 +3853,10 @@ Species:
       b: 0.023642
       c: -9307400.0
       d: -9799.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 41.0
       Tmax: 9999.0
 - Name: Beidellite-Ca
@@ -3873,10 +3873,10 @@ Species:
       b: 0.155436
       c: -7543750.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.165
       Tmax: 9999.0
 - Name: Beidellite-H
@@ -3893,10 +3893,10 @@ Species:
       b: 0.160373
       c: -7434970.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.33
       Tmax: 9999.0
 - Name: Beidellite-K
@@ -3913,10 +3913,10 @@ Species:
       b: 0.160666
       c: -7497730.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.33
       Tmax: 9999.0
 - Name: Beidellite-Mg
@@ -3933,10 +3933,10 @@ Species:
       b: 0.155896
       c: -7539570.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.165
       Tmax: 9999.0
 - Name: Beidellite-Na
@@ -3953,10 +3953,10 @@ Species:
       b: 0.158072
       c: -7635800.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.33
       Tmax: 9999.0
 - Name: Montmorillonite-Ca
@@ -3973,10 +3973,10 @@ Species:
       b: 0.165268
       c: -6966360.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.165
       Tmax: 9999.0
 - Name: Montmorillonite-K
@@ -3993,10 +3993,10 @@ Species:
       b: 0.170498
       c: -6916150.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.33
       Tmax: 9999.0
 - Name: Montmorillonite-Mg
@@ -4013,10 +4013,10 @@ Species:
       b: 0.165728
       c: -6957990.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.165
       Tmax: 9999.0
 - Name: Montmorillonite-Na
@@ -4033,10 +4033,10 @@ Species:
       b: 0.167904
       c: -7058410.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.33
       Tmax: 9999.0
 - Name: Nontronite-Ca
@@ -4053,10 +4053,10 @@ Species:
       b: 0.221459
       c: -5522880.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.165
       Tmax: 9999.0
 - Name: Nontronite-Mg
@@ -4073,10 +4073,10 @@ Species:
       b: 0.221919
       c: -5518700.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.165
       Tmax: 9999.0
 - Name: Nontronite-H
@@ -4093,10 +4093,10 @@ Species:
       b: 0.226396
       c: -5414100.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.33
       Tmax: 9999.0
 - Name: Nontronite-K
@@ -4113,10 +4113,10 @@ Species:
       b: 0.226689
       c: -5476860.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.33
       Tmax: 9999.0
 - Name: Nontronite-Na
@@ -4133,10 +4133,10 @@ Species:
       b: 0.224095
       c: -5614930.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.33
       Tmax: 9999.0
 - Name: Saponite-Mg
@@ -4153,10 +4153,10 @@ Species:
       b: 0.165937
       c: -5891070.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 21.165
       Tmax: 9999.0
 - Name: Illite
@@ -4173,10 +4173,10 @@ Species:
       b: 0.161377
       c: -7455890.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 20.65
       Tmax: 9999.0
 - Name: Dolomite,disordered
@@ -4193,10 +4193,10 @@ Species:
       b: 0.07439
       c: -4580640.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Dolomite,ordered
@@ -4213,10 +4213,10 @@ Species:
       b: 0.07439
       c: -4580640.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Galena
@@ -4233,10 +4233,10 @@ Species:
       b: 0.0092
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 2.0
       Tmax: 9999.0
 - Name: Barite
@@ -4253,10 +4253,10 @@ Species:
       b: 0.0
       c: -3527110.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 6.0
       Tmax: 9999.0
 - Name: Fluorite
@@ -4273,10 +4273,10 @@ Species:
       b: 0.03046
       c: 196640.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 3.0
       Tmax: 9999.0
 - Name: Celestite
@@ -4293,10 +4293,10 @@ Species:
       b: 0.05565
       c: 0.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 5.0
       Tmax: 9999.0
 - Name: Anglesite
@@ -4313,10 +4313,10 @@ Species:
       b: 0.1297
       c: 1757280.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 6.0
       Tmax: 9999.0
 - Name: Chalcedony
@@ -4333,10 +4333,10 @@ Species:
       b: 0.03431
       c: -1129680.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 3.0
       Tmax: 9999.0
 - Name: SiO2(a)
@@ -4353,10 +4353,10 @@ Species:
       b: 0.19748
       c: -9531150.0
       d: 0.0
-      alpha: 0.0
-      kappa: 0.0
-      kappap: 0.0
-      kappapp: 0.0
+      alpha0: 0.0
+      kappa0: 0.0
+      kappa0p: 0.0
+      kappa0pp: 0.0
       numatoms: 3.0
       Tmax: 9999.0
 - Name: Larnite
@@ -4373,10 +4373,10 @@ Species:
       b: -0.003206
       c: 0.0
       d: -2051.9
-      alpha: 2.9e-05
-      kappa: 98500000000.0
-      kappap: 4.07
-      kappapp: -4.1e-11
+      alpha0: 2.9e-05
+      kappa0: 98500000000.0
+      kappa0p: 4.07
+      kappa0pp: -4.1e-11
       numatoms: 7.0
       Tcr: 1710.0
       Smax: 10.03
@@ -4396,10 +4396,10 @@ Species:
       b: 0.002924
       c: -3539500.0
       d: -894.3
-      alpha: 1.58e-05
-      kappa: 101700000000.0
-      kappap: 9.85
-      kappapp: -9.7e-11
+      alpha0: 1.58e-05
+      kappa0: 101700000000.0
+      kappa0p: 9.85
+      kappa0pp: -9.7e-11
       numatoms: 8.0
       Tcr: 485.0
       Smax: 0.4
@@ -4419,10 +4419,10 @@ Species:
       b: -0.000642
       c: -714900.0
       d: -716.1
-      alpha: 0.0
-      kappa: 73000000000.0
-      kappap: 6.0
-      kappapp: -8.2e-11
+      alpha0: 0.0
+      kappa0: 73000000000.0
+      kappa0p: 6.0
+      kappa0pp: -8.2e-11
       numatoms: 3.0
       Tcr: 847.0
       Smax: 4.95
@@ -4442,10 +4442,10 @@ Species:
       b: -0.012398
       c: 0.0
       d: -2763.1
-      alpha: 4.63e-05
-      kappa: 46500000000.0
-      kappap: 4.16
-      kappapp: -8.9e-11
+      alpha0: 4.63e-05
+      kappa0: 46500000000.0
+      kappa0p: 4.16
+      kappa0pp: -8.9e-11
       numatoms: 7.0
       Tcr: 467.0
       Smax: 10.0
@@ -4465,10 +4465,10 @@ Species:
       b: 0.0
       c: -2257200.0
       d: -657.6
-      alpha: 2.79e-05
-      kappa: 223000000000.0
-      kappap: 4.04
-      kappapp: -1.8e-11
+      alpha0: 2.79e-05
+      kappa0: 223000000000.0
+      kappa0p: 4.04
+      kappa0pp: -1.8e-11
       numatoms: 5.0
       Tcr: 955.0
       Smax: 15.6
@@ -4488,10 +4488,10 @@ Species:
       b: 0.007824
       c: -392500.0
       d: 0.0
-      alpha: 3.3e-05
-      kappa: 200000000000.0
-      kappap: 3.94
-      kappapp: -2.0e-11
+      alpha0: 3.3e-05
+      kappa0: 200000000000.0
+      kappa0p: 3.94
+      kappa0pp: -2.0e-11
       numatoms: 2.0
       Tcr: 520.0
       Smax: 5.7
@@ -4511,10 +4511,10 @@ Species:
       b: 0.005081
       c: -1288800.0
       d: -463.7
-      alpha: 2.4e-05
-      kappa: 170000000000.0
-      kappap: 8.3
-      kappapp: -4.9e-11
+      alpha0: 2.4e-05
+      kappa0: 170000000000.0
+      kappa0p: 8.3
+      kappa0pp: -4.9e-11
       numatoms: 5.0
       Tcr: 1900.0
       Smax: 12.0
@@ -4534,10 +4534,10 @@ Species:
       b: -0.007205
       c: -1926200.0
       d: -1655.7
-      alpha: 3.71e-05
-      kappa: 185700000000.0
-      kappap: 4.05
-      kappapp: -2.2e-11
+      alpha0: 3.71e-05
+      kappa0: 185700000000.0
+      kappa0p: 4.05
+      kappa0pp: -2.2e-11
       numatoms: 7.0
       Tcr: 848.0
       Smax: 35.0
@@ -4557,10 +4557,10 @@ Species:
       b: -0.007505
       c: -999200.0
       d: -2022.4
-      alpha: 3.63e-05
-      kappa: 185700000000.0
-      kappap: 4.05
-      kappapp: -2.2e-11
+      alpha0: 3.63e-05
+      kappa0: 185700000000.0
+      kappa0p: 4.05
+      kappa0pp: -2.2e-11
       numatoms: 7.0
       Tcr: 665.0
       Smax: 17.0
@@ -4580,10 +4580,10 @@ Species:
       b: 0.005029
       c: -950700.0
       d: -858.4
-      alpha: 2.52e-05
-      kappa: 73300000000.0
-      kappap: 4.06
-      kappapp: -5.5e-11
+      alpha0: 2.52e-05
+      kappa0: 73300000000.0
+      kappa0p: 4.06
+      kappa0pp: -5.5e-11
       numatoms: 5.0
       Tcr: 1240.0
       Smax: 10.0
@@ -4603,10 +4603,10 @@ Species:
       b: -0.003052
       c: 1149700.0
       d: -2118.3
-      alpha: 6.14e-05
-      kappa: 61400000000.0
-      kappap: 5.87
-      kappapp: -9.6e-11
+      alpha0: 6.14e-05
+      kappa0: 61400000000.0
+      kappa0p: 5.87
+      kappa0pp: -9.6e-11
       numatoms: 5.0
       Tcr: 1240.0
       Smax: 9.0
@@ -4626,10 +4626,10 @@ Species:
       b: 0.011052
       c: -940000.0
       d: 0.0
-      alpha: 5.68e-05
-      kappa: 65800000000.0
-      kappap: 4.17
-      kappapp: -6.3e-11
+      alpha0: 5.68e-05
+      kappa0: 65800000000.0
+      kappa0p: 4.17
+      kappa0pp: -6.3e-11
       numatoms: 2.0
       Tcr: 598.0
       Smax: 12.0
@@ -4649,10 +4649,10 @@ Species:
       b: 0.011052
       c: -940000.0
       d: 0.0
-      alpha: 5.73e-05
-      kappa: 65800000000.0
-      kappap: 4.17
-      kappapp: -6.3e-11
+      alpha0: 5.73e-05
+      kappa0: 65800000000.0
+      kappa0p: 4.17
+      kappa0pp: -6.3e-11
       numatoms: 2.0
       Tcr: 598.0
       Smax: 12.0
@@ -4672,10 +4672,10 @@ Species:
       b: 0.011052
       c: -940000.0
       d: 0.0
-      alpha: 4.93e-05
-      kappa: 65800000000.0
-      kappap: 4.17
-      kappapp: -6.3e-11
+      alpha0: 4.93e-05
+      kappa0: 65800000000.0
+      kappa0p: 4.17
+      kappa0pp: -6.3e-11
       numatoms: 2.0
       Tcr: 420.0
       Smax: 10.0
@@ -4695,10 +4695,10 @@ Species:
       b: 0.008307
       c: -669700.0
       d: 0.0
-      alpha: 5.94e-05
-      kappa: 65800000000.0
-      kappap: 4.17
-      kappapp: -6.3e-11
+      alpha0: 5.94e-05
+      kappa0: 65800000000.0
+      kappa0p: 4.17
+      kappa0pp: -6.3e-11
       numatoms: 1.875
       Tcr: 595.0
       Smax: 10.0
@@ -4718,10 +4718,10 @@ Species:
       b: 0.005159
       c: 723100.0
       d: -556.2
-      alpha: 3.56e-05
-      kappa: 164000000000.0
-      kappap: 5.16
-      kappapp: -3.1e-11
+      alpha0: 3.56e-05
+      kappa0: 164000000000.0
+      kappa0p: 5.16
+      kappa0pp: -3.1e-11
       numatoms: 1.0
       Tcr: 1042.0
       Smax: 8.3
@@ -4741,10 +4741,10 @@ Species:
       b: 0.0
       c: 585900.0
       d: -533.9
-      alpha: 4.28e-05
-      kappa: 190500000000.0
-      kappap: 4.25
-      kappapp: -2.2e-11
+      alpha0: 4.28e-05
+      kappa0: 190500000000.0
+      kappa0p: 4.25
+      kappa0pp: -2.2e-11
       numatoms: 1.0
       Tcr: 631.0
       Smax: 3.0
@@ -4764,10 +4764,10 @@ Species:
       b: -0.0069
       c: -1375700.0
       d: -2399.4
-      alpha: 1.12e-05
-      kappa: 164000000000.0
-      kappap: 5.06
-      kappapp: -3.1e-11
+      alpha0: 1.12e-05
+      kappa0: 164000000000.0
+      kappa0p: 5.06
+      kappa0pp: -3.1e-11
       numatoms: 8.0
       Tmax: 9999.0
 - Name: Gehlenite
@@ -4784,10 +4784,10 @@ Species:
       b: -0.007099
       c: -1188300.0
       d: -3174.4
-      alpha: 2.23e-05
-      kappa: 108000000000.0
-      kappap: 4.08
-      kappapp: -3.8e-11
+      alpha0: 2.23e-05
+      kappa0: 108000000000.0
+      kappa0p: 4.08
+      kappa0pp: -3.8e-11
       numatoms: 12.0
       Tmax: 9999.0
 - Name: Cordierite
@@ -4804,10 +4804,10 @@ Species:
       b: 0.0
       c: -7902000.0
       d: -6293.4
-      alpha: 6.8e-06
-      kappa: 129000000000.0
-      kappap: 4.1
-      kappapp: -3.1e-11
+      alpha0: 6.8e-06
+      kappa0: 129000000000.0
+      kappa0p: 4.1
+      kappa0pp: -3.1e-11
       numatoms: 29.0
       Tmax: 9999.0
 - Name: Hydrous-Cordierite
@@ -4824,10 +4824,10 @@ Species:
       b: 0.0
       c: -7035900.0
       d: -6680.8
-      alpha: 6.7e-06
-      kappa: 129000000000.0
-      kappap: 4.1
-      kappapp: -3.1e-11
+      alpha0: 6.7e-06
+      kappa0: 129000000000.0
+      kappa0p: 4.1
+      kappa0pp: -3.1e-11
       numatoms: 32.0
       Tmax: 9999.0
 - Name: Fe-Cordierite
@@ -4844,10 +4844,10 @@ Species:
       b: 0.0
       c: -7039400.0
       d: -6439.6
-      alpha: 6.7e-06
-      kappa: 129000000000.0
-      kappap: 4.1
-      kappapp: -3.1e-11
+      alpha0: 6.7e-06
+      kappa0: 129000000000.0
+      kappa0p: 4.1
+      kappa0pp: -3.1e-11
       numatoms: 29.0
       Tmax: 9999.0
 - Name: Mn-Cordierite
@@ -4864,10 +4864,10 @@ Species:
       b: 0.0
       c: -8840000.0
       d: -5590.4
-      alpha: 6.9e-06
-      kappa: 129000000000.0
-      kappap: 4.1
-      kappapp: -3.1e-11
+      alpha0: 6.9e-06
+      kappa0: 129000000000.0
+      kappa0p: 4.1
+      kappa0pp: -3.1e-11
       numatoms: 29.0
       Tmax: 9999.0
 - Name: Ca-Tschermaks-Px
@@ -4884,10 +4884,10 @@ Species:
       b: -0.006974
       c: -1781600.0
       d: -2757.5
-      alpha: 2.08e-05
-      kappa: 119200000000.0
-      kappap: 5.19
-      kappapp: -4.4e-11
+      alpha0: 2.08e-05
+      kappa0: 119200000000.0
+      kappa0p: 5.19
+      kappa0pp: -4.4e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Albite
@@ -4904,10 +4904,10 @@ Species:
       b: -0.013364
       c: -1275900.0
       d: -3953.6
-      alpha: 2.36e-05
-      kappa: 54100000000.0
-      kappap: 5.91
-      kappapp: -1.09e-10
+      alpha0: 2.36e-05
+      kappa0: 54100000000.0
+      kappa0p: 5.91
+      kappa0pp: -1.09e-10
       numatoms: 13.0
       Tmax: 9999.0
 - Name: Sanidine
@@ -4924,10 +4924,10 @@ Species:
       b: -0.010075
       c: -1007300.0
       d: -3973.1
-      alpha: 1.65e-05
-      kappa: 58300000000.0
-      kappap: 4.02
-      kappapp: -6.9e-11
+      alpha0: 1.65e-05
+      kappa0: 58300000000.0
+      kappa0p: 4.02
+      kappa0pp: -6.9e-11
       numatoms: 13.0
       Tmax: 9999.0
 - Name: Anorthite
@@ -4944,10 +4944,10 @@ Species:
       b: 0.01001
       c: -4339100.0
       d: -1960.6
-      alpha: 1.41e-05
-      kappa: 86000000000.0
-      kappap: 4.09
-      kappapp: -4.8e-11
+      alpha0: 1.41e-05
+      kappa0: 86000000000.0
+      kappa0p: 4.09
+      kappa0pp: -4.8e-11
       numatoms: 13.0
       Tmax: 9999.0
 - Name: Leucite
@@ -4964,10 +4964,10 @@ Species:
       b: -0.016332
       c: 684700.0
       d: -3683.1
-      alpha: 1.85e-05
-      kappa: 45000000000.0
-      kappap: 5.7
-      kappapp: -1.27e-10
+      alpha0: 1.85e-05
+      kappa0: 45000000000.0
+      kappa0p: 5.7
+      kappa0pp: -1.27e-10
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Spinel
@@ -4984,10 +4984,10 @@ Species:
       b: 0.006127
       c: -1686000.0
       d: -1551.0
-      alpha: 1.93e-05
-      kappa: 192200000000.0
-      kappap: 4.04
-      kappapp: -2.1e-11
+      alpha0: 1.93e-05
+      kappa0: 192200000000.0
+      kappa0p: 4.04
+      kappa0pp: -2.1e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Hercynite
@@ -5004,10 +5004,10 @@ Species:
       b: 0.005868
       c: -2430200.0
       d: -1178.3
-      alpha: 2.06e-05
-      kappa: 192200000000.0
-      kappap: 4.04
-      kappapp: -2.1e-11
+      alpha0: 2.06e-05
+      kappa0: 192200000000.0
+      kappa0p: 4.04
+      kappa0pp: -2.1e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Picrochromite
@@ -5024,10 +5024,10 @@ Species:
       b: 0.005398
       c: -3126000.0
       d: -616.9
-      alpha: 1.8e-05
-      kappa: 192200000000.0
-      kappap: 4.04
-      kappapp: -2.1e-11
+      alpha0: 1.8e-05
+      kappa0: 192200000000.0
+      kappa0p: 4.04
+      kappa0pp: -2.1e-11
       numatoms: 7.0
       Tmax: 9999.0
 - Name: Dolomite
@@ -5044,10 +5044,10 @@ Species:
       b: -0.004905
       c: 0.0
       d: -3456.2
-      alpha: 3.28e-05
-      kappa: 94300000000.0
-      kappap: 3.74
-      kappapp: -4.0e-11
+      alpha0: 3.28e-05
+      kappa0: 94300000000.0
+      kappa0p: 3.74
+      kappa0pp: -4.0e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: Ankerite
@@ -5064,10 +5064,10 @@ Species:
       b: -0.001161
       c: 0.0
       d: -3054.8
-      alpha: 3.46e-05
-      kappa: 91400000000.0
-      kappap: 3.88
-      kappapp: -4.3e-11
+      alpha0: 3.46e-05
+      kappa0: 91400000000.0
+      kappa0p: 3.88
+      kappa0pp: -4.3e-11
       numatoms: 10.0
       Tmax: 9999.0
 - Name: CH4(g)
