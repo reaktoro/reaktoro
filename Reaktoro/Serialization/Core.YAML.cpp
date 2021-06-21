@@ -29,10 +29,10 @@
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
+#include <Reaktoro/Core/Support/DatabaseParserYAML.hpp>
 #include <Reaktoro/Models/ReactionThermoModelYAML.hpp>
 #include <Reaktoro/Models/StandardThermoModelYAML.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
-#include <Reaktoro/Serialization/Support/DatabaseDecoderYAML.hpp>
 
 namespace Reaktoro {
 
@@ -86,7 +86,8 @@ REAKTORO_YAML_ENCODE_DEFINE(Database)
 
 REAKTORO_YAML_DECODE_DEFINE(Database)
 {
-    obj = DatabaseDecoderYAML(node);
+    obj = DatabaseParserYAML(node);
+    obj = DatabaseParserYAML(node);
 }
 
 //=====================================================================================================================
