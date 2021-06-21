@@ -3393,11 +3393,6 @@ Species:
       b: 0.189438
       c: 133870.0
       d: -1034.3
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 7.0
       Tmax: 9999.0
 - Name: Boehmite
   Formula: AlO2H
@@ -3413,11 +3408,6 @@ Species:
       b: -0.0172
       c: 291310.0
       d: -1955.6
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 4.0
       Tmax: 9999.0
 - Name: Fluorphlogopite
   Formula: KMg3AlSi3O10F2
@@ -3433,11 +3423,6 @@ Species:
       b: 0.049103
       c: -6598700.0
       d: -1568.8
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.0
       Tmax: 9999.0
 - Name: Hydroxyapatite
   Formula: Ca5P3O13H
@@ -3453,11 +3438,6 @@ Species:
       b: -0.005384
       c: 2807300.0
       d: -7097.4
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 22.0
       Tmax: 9999.0
 - Name: Fluorapatite
   Formula: Ca5P3O12F
@@ -3473,11 +3453,6 @@ Species:
       b: 0.011758
       c: -4949800.0
       d: -3329.7
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 21.0
       Tmax: 9999.0
 - Name: Chlorapatite
   Formula: Ca5P3O12Cl
@@ -3493,11 +3468,6 @@ Species:
       b: 0.01185
       c: -4669800.0
       d: -3260.5
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 21.0
       Tmax: 9999.0
 - Name: Arsenic
   Formula: As
@@ -3513,11 +3483,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 1.0
       Tmax: 9999.0
 - Name: Arsenolite
   Formula: As2O3
@@ -3533,11 +3498,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 5.0
       Tmax: 9999.0
 - Name: Claudetite
   Formula: As2O3
@@ -3553,11 +3513,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 5.0
       Tmax: 9999.0
 - Name: As2O5(s)
   Formula: As2O5
@@ -3573,11 +3528,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 7.0
       Tmax: 9999.0
 - Name: Realgar,alpha
   Formula: AsS
@@ -3593,11 +3543,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 2.0
       Tmax: 9999.0
 - Name: Realgar,beta
   Formula: AsS
@@ -3613,11 +3558,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 2.0
       Tmax: 9999.0
 - Name: Orpiment
   Formula: As2S3
@@ -3633,11 +3573,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 5.0
       Tmax: 9999.0
 - Name: Orpiment(am)
   Formula: As2S3
@@ -3653,11 +3588,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 5.0
       Tmax: 9999.0
 - Name: Arsenopyrite
   Formula: FeAsS
@@ -3673,11 +3603,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 3.0
       Tmax: 9999.0
 - Name: Scorodite
   Formula: FeAsH4O6
@@ -3693,11 +3618,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 12.0
       Tmax: 9999.0
 - Name: Ferric-As(am)
   Formula: FeAsH4O6
@@ -3713,11 +3633,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 12.0
       Tmax: 9999.0
 - Name: Barium-As
   Formula: Ba3As2O8
@@ -3733,11 +3648,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 13.0
       Tmax: 9999.0
 - Name: Barium-H-As
   Formula: BaAsH3O5
@@ -3753,11 +3663,6 @@ Species:
       b: 0.0
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 10.0
       Tmax: 9999.0
 - Name: a-GaOOH
   Formula: GaO2H
@@ -3773,11 +3678,6 @@ Species:
       b: 0.064183
       c: 1129680.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 4.0
       Tmax: 9999.0
 - Name: Dawsonite
   Formula: NaAlCO5H2
@@ -3793,11 +3693,6 @@ Species:
       b: 0.48643
       c: 1060.0
       d: -89.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 10.0
       Tmax: 9999.0
 - Name: Sapphirine,793
   Formula: Mg3.5Al9Si1.5O20
@@ -3813,11 +3708,6 @@ Species:
       b: -0.02487
       c: -7607300.0
       d: -9155.3
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 34.0
       Tmax: 9999.0
 - Name: Fe-Sapphirine,793
   Formula: Fe3.5Al9Si1.5O20
@@ -3833,11 +3723,6 @@ Species:
       b: -0.022171
       c: -1664000.0
       d: -11348.4
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 34.0
       Tmax: 9999.0
 - Name: Gedrite
   Formula: Mg5Al4Si6O24H2
@@ -3853,11 +3738,6 @@ Species:
       b: 0.023642
       c: -9307400.0
       d: -9799.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 41.0
       Tmax: 9999.0
 - Name: Beidellite-Ca
   Formula: Ca.165Al2.33Si3.67O12H2
@@ -3873,11 +3753,6 @@ Species:
       b: 0.155436
       c: -7543750.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.165
       Tmax: 9999.0
 - Name: Beidellite-H
   Formula: H.33Al2.33Si3.67O12H2
@@ -3893,11 +3768,6 @@ Species:
       b: 0.160373
       c: -7434970.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.33
       Tmax: 9999.0
 - Name: Beidellite-K
   Formula: K.33Al2.33Si3.67O12H2
@@ -3913,11 +3783,6 @@ Species:
       b: 0.160666
       c: -7497730.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.33
       Tmax: 9999.0
 - Name: Beidellite-Mg
   Formula: Mg.165Al2.33Si3.67O12H2
@@ -3933,11 +3798,6 @@ Species:
       b: 0.155896
       c: -7539570.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.165
       Tmax: 9999.0
 - Name: Beidellite-Na
   Formula: Na.33Al2.33Si3.67O12H2
@@ -3953,11 +3813,6 @@ Species:
       b: 0.158072
       c: -7635800.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.33
       Tmax: 9999.0
 - Name: Montmorillonite-Ca
   Formula: Ca.165Mg.33Al1.67Si4O12H2
@@ -3973,11 +3828,6 @@ Species:
       b: 0.165268
       c: -6966360.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.165
       Tmax: 9999.0
 - Name: Montmorillonite-K
   Formula: K.33Mg.33Al1.67Si4O12H2
@@ -3993,11 +3843,6 @@ Species:
       b: 0.170498
       c: -6916150.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.33
       Tmax: 9999.0
 - Name: Montmorillonite-Mg
   Formula: Mg.495Al1.67Si4O12H2
@@ -4013,11 +3858,6 @@ Species:
       b: 0.165728
       c: -6957990.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.165
       Tmax: 9999.0
 - Name: Montmorillonite-Na
   Formula: Na.33Mg.33Al1.67Si4O12H2
@@ -4033,11 +3873,6 @@ Species:
       b: 0.167904
       c: -7058410.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.33
       Tmax: 9999.0
 - Name: Nontronite-Ca
   Formula: Ca.165Fe2Al.33Si3.67O12H2
@@ -4053,11 +3888,6 @@ Species:
       b: 0.221459
       c: -5522880.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.165
       Tmax: 9999.0
 - Name: Nontronite-Mg
   Formula: Mg.165Fe2Al.33Si3.67O12H2
@@ -4073,11 +3903,6 @@ Species:
       b: 0.221919
       c: -5518700.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.165
       Tmax: 9999.0
 - Name: Nontronite-H
   Formula: H.33Fe2Al.33Si3.67O12H2
@@ -4093,11 +3918,6 @@ Species:
       b: 0.226396
       c: -5414100.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.33
       Tmax: 9999.0
 - Name: Nontronite-K
   Formula: K.33Fe2Al.33Si3.67O12H2
@@ -4113,11 +3933,6 @@ Species:
       b: 0.226689
       c: -5476860.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.33
       Tmax: 9999.0
 - Name: Nontronite-Na
   Formula: Na.33Fe2Al.33Si3.67O12H2
@@ -4133,11 +3948,6 @@ Species:
       b: 0.224095
       c: -5614930.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.33
       Tmax: 9999.0
 - Name: Saponite-Mg
   Formula: Mg3.165Al.33Si3.67O10(OH)2
@@ -4153,11 +3963,6 @@ Species:
       b: 0.165937
       c: -5891070.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 21.165
       Tmax: 9999.0
 - Name: Illite
   Formula: K.6Mg.25Al1.8Al.5Si3.5O10(OH)2
@@ -4173,11 +3978,6 @@ Species:
       b: 0.161377
       c: -7455890.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 20.65
       Tmax: 9999.0
 - Name: Dolomite,disordered
   Formula: CaMg(CO3)2
@@ -4193,11 +3993,6 @@ Species:
       b: 0.07439
       c: -4580640.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 10.0
       Tmax: 9999.0
 - Name: Dolomite,ordered
   Formula: CaMg(CO3)2
@@ -4213,11 +4008,6 @@ Species:
       b: 0.07439
       c: -4580640.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 10.0
       Tmax: 9999.0
 - Name: Galena
   Formula: PbS
@@ -4233,11 +4023,6 @@ Species:
       b: 0.0092
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 2.0
       Tmax: 9999.0
 - Name: Barite
   Formula: BaSO4
@@ -4253,11 +4038,6 @@ Species:
       b: 0.0
       c: -3527110.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 6.0
       Tmax: 9999.0
 - Name: Fluorite
   Formula: CaF2
@@ -4273,11 +4053,6 @@ Species:
       b: 0.03046
       c: 196640.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 3.0
       Tmax: 9999.0
 - Name: Celestite
   Formula: SrSO4
@@ -4293,11 +4068,6 @@ Species:
       b: 0.05565
       c: 0.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 5.0
       Tmax: 9999.0
 - Name: Anglesite
   Formula: PbSO4
@@ -4313,11 +4083,6 @@ Species:
       b: 0.1297
       c: 1757280.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 6.0
       Tmax: 9999.0
 - Name: Chalcedony
   Formula: SiO2
@@ -4333,11 +4098,6 @@ Species:
       b: 0.03431
       c: -1129680.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 3.0
       Tmax: 9999.0
 - Name: SiO2(a)
   Formula: SiO2
@@ -4353,11 +4113,6 @@ Species:
       b: 0.19748
       c: -9531150.0
       d: 0.0
-      alpha0: 0.0
-      kappa0: 0.0
-      kappa0p: 0.0
-      kappa0pp: 0.0
-      numatoms: 3.0
       Tmax: 9999.0
 - Name: Larnite
   Formula: Ca2SiO4
