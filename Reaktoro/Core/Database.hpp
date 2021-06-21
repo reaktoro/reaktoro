@@ -30,22 +30,41 @@ namespace Reaktoro {
 class Database
 {
 public:
-    /// Construct a default Database instance.
+    /// Return a Database object initialized using an embedded database file.
+    /// The currently supported database file names are:
+    /// - `supcrt98`
+    /// - `supcrt07`
+    /// - `supcrt16`
+    /// - `supcrtbl`
+    /// @warning An exception is thrown if `name` is not one of the above names.
+    /// @param name The name of the embedded database.
+    static auto withName(const String& name) -> Database;
+
+    /// Return a Database object initialized using a given path to a database file.
+    /// @warning An exception is thrown if `path` does not point to a valid database file.
+    /// @param path The path, including file name, to the database file.
+    static auto fromFile(const String& path) -> Database;
+
+    /// Construct a default Database object.
     Database();
 
-    /// Construct a copy of a Database instance.
+    /// Construct a copy of a Database object.
     Database(const Database& other);
 
-    /// Construct a Database instance with given elements and species.
+    /// Construct a Database object with given elements and species.
     Database(const Vec<Element>& elements, const Vec<Species>& species);
 
-    /// Construct a Database instance with given species (elements extracted from them).
+    /// Construct a Database object with given species (elements extracted from them).
     explicit Database(const Vec<Species>& species);
 
-    /// Destroy this Database instance.
+    /// Construct a Database object with given name of embedded database file.
+    /// For a list of currently supported names for embedded databases, see @ref Database::withName.
+    explicit Database(const String& name);
+
+    /// Destroy this Database object.
     ~Database();
 
-    /// Assign another Database instance to this.
+    /// Assign another Database object to this.
     auto operator=(Database other) -> Database&;
 
     /// Remove all species and elements from the database.
@@ -82,7 +101,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    Ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
