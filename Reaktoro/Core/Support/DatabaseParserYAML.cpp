@@ -60,7 +60,7 @@ struct DatabaseParserYAML::Impl
     auto getElementNode(const String& symbol) -> yaml
     {
         const auto node = doc["Elements"];
-        if(!node.IsDefined()) return {};
+        if(!node) return {};
         for(auto i = 0; i < node.size(); ++i)
             if(node[i].at("Symbol").as<String>() == symbol)
                 return node[i];
@@ -82,7 +82,7 @@ struct DatabaseParserYAML::Impl
     auto addElement(const String& symbol) -> Element
     {
         const auto node = getElementNode(symbol);
-        if(node.IsDefined())
+        if(!node.IsNull())
             return addElement(node); // create an element using info in the database file.
         Element element(symbol); // create an element using info from default elements in Elements.
         element_list.append(element);
@@ -92,7 +92,7 @@ struct DatabaseParserYAML::Impl
     /// Add a new element with given yaml @p node.
     auto addElement(const yaml& node) -> Element
     {
-        assert(node.IsDefined());
+        assert(!node.IsNull());
         Element::Attribs attribs;
         node.copyRequiredChildValueTo("Symbol", attribs.symbol);
         node.copyRequiredChildValueTo("MolarMass", attribs.molar_mass);
@@ -138,7 +138,7 @@ struct DatabaseParserYAML::Impl
         attribs.elements = createElementalComposition(node);
         attribs.formation_reaction = createFormationReaction(node);
         attribs.std_thermo_model = createStandardThermoModel(node);
-        node.copyOptionalChildValueTo("Tags", attribs.tags, {});
+        attribs.tags = createTags(node);
         Species species(attribs);
         species_list.append(species);
         return species;
@@ -148,7 +148,7 @@ struct DatabaseParserYAML::Impl
     auto createElementalComposition(const yaml& node) -> ElementalComposition
     {
         auto child = node["Elements"];
-        assert(child.IsDefined());
+        assert(!child.IsNull());
         Pairs<Element, double> pairs;
         const auto symbols_and_coeffs = parseNumberStringPairs(child.as<String>());
         for(const auto& [symbol, coeff] : symbols_and_coeffs)
@@ -163,6 +163,15 @@ struct DatabaseParserYAML::Impl
             }
         }
         return ElementalComposition(pairs);
+    }
+
+    /// Create the vector of tags with given yaml @p node for a species.
+    auto createTags(const yaml& node) -> Strings
+    {
+        auto child = node["Tags"];
+        if(!child.IsDefined()) return {};
+        if(child.IsSequence()) return child.as<Strings>();
+        return split(child.as<String>());
     }
 
     /// Create a standard thermodynamic model with given yaml @p node for a species.
