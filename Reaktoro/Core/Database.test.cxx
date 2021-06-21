@@ -199,3 +199,11 @@ TEST_CASE("Testing Database class", "[Database]")
     check_same_contents_in_databases(db, new_db1);
     check_same_contents_in_databases(db, new_db2);
 }
+
+TEST_CASE("Testing Database object creation using embedded or local yaml files", "[Database]")
+{
+    CHECK_NOTHROW( Database("supcrt98.yaml") );
+    CHECK_NOTHROW( Database("supcrt07.yaml") );
+    CHECK_NOTHROW( Database("supcrt16.yaml") );
+    CHECK_NOTHROW( Database("supcrtbl.yaml") );
+}
