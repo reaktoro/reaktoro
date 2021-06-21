@@ -162,11 +162,6 @@ a: 150.1
 b: 0.002063
 c: 3427700.0
 d: -2650.4
-alpha0: 0.0
-kappa0: 0.0
-kappa0p: 0.0
-kappa0pp: 0.0
-numatoms: 0.0
 Tmax: 0.0
 )";
 
@@ -350,14 +345,19 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
     SECTION("Testing YAML serialization of StandardThermoModelParamsHollandPowell")
     {
         StandardThermoModelParamsHollandPowell params = yaml::parse(params_stm_hpg);
-        CHECK( params.Gf == -50710.0  );
-        CHECK( params.Hf == -74810.0  );
-        CHECK( params.Sr == 186.26    );
-        CHECK( params.Vr == 0.0       );
-        CHECK( params.a  == 150.1     );
-        CHECK( params.b  == 0.002063  );
-        CHECK( params.c  == 3427700.0 );
-        CHECK( params.d  == -2650.4   );
+        CHECK( params.Gf       == -50710.0  );
+        CHECK( params.Hf       == -74810.0  );
+        CHECK( params.Sr       == 186.26    );
+        CHECK( params.Vr       == 0.0       );
+        CHECK( params.a        == 150.1     );
+        CHECK( params.b        == 0.002063  );
+        CHECK( params.c        == 3427700.0 );
+        CHECK( params.d        == -2650.4   );
+        CHECK( params.alpha0   == 0.0       );
+        CHECK( params.kappa0   == 0.0       );
+        CHECK( params.kappa0p  == 0.0       );
+        CHECK( params.kappa0pp == 0.0       );
+        CHECK( params.numatoms == 0.0       );
     }
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsHollandPowell")

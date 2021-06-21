@@ -181,20 +181,23 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsHKF)
 
 REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsHollandPowell)
 {
-    node["Gf"]       = obj.Gf;
-    node["Hf"]       = obj.Hf;
-    node["Sr"]       = obj.Sr;
-    node["Vr"]       = obj.Vr;
-    node["a"]        = obj.a;
-    node["b"]        = obj.b;
-    node["c"]        = obj.c;
-    node["d"]        = obj.d;
-    node["alpha0"]   = obj.alpha0;
-    node["kappa0"]   = obj.kappa0;
-    node["kappa0p"]  = obj.kappa0p;
-    node["kappa0pp"] = obj.kappa0pp;
-    node["numatoms"] = obj.numatoms;
-    node["Tmax"]     = obj.Tmax;
+    node["Gf"] = obj.Gf;
+    node["Hf"] = obj.Hf;
+    node["Sr"] = obj.Sr;
+    node["Vr"] = obj.Vr;
+    node["a"]  = obj.a;
+    node["b"]  = obj.b;
+    node["c"]  = obj.c;
+    node["d"]  = obj.d;
+    if(obj.kappa0 != 0.0)
+    {
+        node["alpha0"]   = obj.alpha0;
+        node["kappa0"]   = obj.kappa0;
+        node["kappa0p"]  = obj.kappa0p;
+        node["kappa0pp"] = obj.kappa0pp;
+        node["numatoms"] = obj.numatoms;
+    }
+    node["Tmax"] = obj.Tmax;
 }
 
 REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsHollandPowell)
@@ -207,11 +210,14 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsHollandPowell)
     node.at("b").to(obj.b);
     node.at("c").to(obj.c);
     node.at("d").to(obj.d);
-    node.at("alpha0").to(obj.alpha0);
-    node.at("kappa0").to(obj.kappa0);
-    node.at("kappa0p").to(obj.kappa0p);
-    node.at("kappa0pp").to(obj.kappa0pp);
-    node.at("numatoms").to(obj.numatoms);
+    if(node["kappa0"].IsDefined())
+    {
+        node.at("alpha0").to(obj.alpha0);
+        node.at("kappa0").to(obj.kappa0);
+        node.at("kappa0p").to(obj.kappa0p);
+        node.at("kappa0pp").to(obj.kappa0pp);
+        node.at("numatoms").to(obj.numatoms);
+    }
     node.at("Tmax").to(obj.Tmax);
 }
 
