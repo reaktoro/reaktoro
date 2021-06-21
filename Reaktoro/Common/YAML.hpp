@@ -55,8 +55,11 @@ public:
 
     /// Append a child node with a given value only if value is not default value.
     template<typename T, typename U = T>
-    auto appendIfNotDefault(const std::string& key, const T& value, const U& defaultval = U{}) -> void {
-        if(value != defaultval) (*this)[key] = value; }
+    auto appendIfNotDefault(const std::string& key, const T& value, const U& defaultval = U{}) -> void
+    {
+        if(value != defaultval)
+        (*this)[key] = value;
+    }
 
     /// Return a child node with given key if found, otherwise raise an error.
     auto at(const std::string& key) const -> yaml;
@@ -75,6 +78,9 @@ public:
     /// Return child with given key.
     template<typename Key>
     auto operator[](const Key& key) -> yaml { return YAML::Node::operator[](key); }
+
+    /// Assign this yaml node with given YAML::Node object.
+    auto operator=(const YAML::Node& node) { YAML::Node::operator=(node); return *this; }
 
     /// Assign this yaml node with given value.
     template<typename T>

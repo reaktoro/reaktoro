@@ -66,7 +66,8 @@ yaml::yaml()
 
 yaml::yaml(const Node& node)
 : YAML::Node(node)
-{}
+{
+}
 
 auto yaml::at(const std::string& key) const -> yaml
 {
