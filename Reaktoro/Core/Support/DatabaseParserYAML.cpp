@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "DatabaseDecoderYAML.hpp"
+#include "DatabaseParserYAML.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -30,7 +30,7 @@
 
 namespace Reaktoro {
 
-struct DatabaseDecoderYAML::Impl
+struct DatabaseParserYAML::Impl
 {
     /// The Species objects in the database.
     SpeciesList species_list;
@@ -41,11 +41,11 @@ struct DatabaseDecoderYAML::Impl
     /// The document in yaml format with the database contents.
     yaml doc;
 
-    /// Construct a default DatabaseDecoderYAML::Impl object.
+    /// Construct a default DatabaseParserYAML::Impl object.
     Impl()
     {}
 
-    /// Construct a DatabaseDecoderYAML::Impl object with given YAML node.
+    /// Construct a DatabaseParserYAML::Impl object with given YAML node.
     Impl(const yaml& doc)
     : doc(doc)
     {
@@ -219,30 +219,40 @@ struct DatabaseDecoderYAML::Impl
     // }
 };
 
-DatabaseDecoderYAML::DatabaseDecoderYAML()
+DatabaseParserYAML::DatabaseParserYAML()
 : pimpl(new Impl())
 {}
 
-DatabaseDecoderYAML::DatabaseDecoderYAML(const DatabaseDecoderYAML& other)
+DatabaseParserYAML::DatabaseParserYAML(const DatabaseParserYAML& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-DatabaseDecoderYAML::DatabaseDecoderYAML(const yaml& doc)
+DatabaseParserYAML::DatabaseParserYAML(const yaml& doc)
 : pimpl(new Impl(doc))
 {}
 
-DatabaseDecoderYAML::~DatabaseDecoderYAML()
+DatabaseParserYAML::~DatabaseParserYAML()
 {}
 
-auto DatabaseDecoderYAML::operator=(DatabaseDecoderYAML other) -> DatabaseDecoderYAML&
+auto DatabaseParserYAML::operator=(DatabaseParserYAML other) -> DatabaseParserYAML&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-DatabaseDecoderYAML::operator Database() const
+auto DatabaseParserYAML::elements() const -> ElementListConstRef
 {
-    return Database(pimpl->element_list, pimpl->species_list);
+    return pimpl->element_list;
+}
+
+auto DatabaseParserYAML::species() const -> SpeciesListConstRef
+{
+    return pimpl->species_list;
+}
+
+DatabaseParserYAML::operator Database() const
+{
+    return Database(elements(), species());
 }
 
 } // namespace Reaktoro
