@@ -240,7 +240,7 @@ def getParamsMineralHollandPowell(lines):
     assert(len(lines) == 4)
     line = "".join(lines)
     numbers = line.strip().split()
-    numbers = [float(x) for x in numbers]
+    numbers = [float(x) if x != "999.9999" else float("nan") for x in numbers]
     assert(len(numbers) == 14)
     params = {}
     params["Model"]    = "HollandPowell"
@@ -278,7 +278,7 @@ def getParamsMineralHollandPowellLandau(lines):
     assert(len(lines) == 5)
     line = "".join(lines)
     numbers = line.strip().split()
-    numbers = [float(x) for x in numbers]
+    numbers = [float(x) if x != "999.9999" else float("nan") for x in numbers]
     assert(len(numbers) == 17)
     params = {}
     params["Model"]    = "HollandPowell"
@@ -321,7 +321,7 @@ def getParamsMineralHollandPowellBraggWilliams(lines):
     assert(len(lines) == 5)
     line = "".join(lines)
     numbers = line.strip().split()
-    numbers = [float(x) for x in numbers]
+    numbers = [float(x) if x != "999.9999" else float("nan") for x in numbers]
     assert(len(numbers) == 20)
     params = {}
     params["Model"]     = "HollandPowell"
@@ -365,7 +365,7 @@ def getParamsGaseousSpecies(lines):
     assert(len(lines) == 3)
     line = "".join(lines)
     numbers = line.strip().split()
-    numbers = [float(x) for x in numbers]
+    numbers = [float(x) if x != "999.9999" else float("nan") for x in numbers]
     assert(len(numbers) == 9)
     params = {}
     params["Model"] = "HollandPowell"
@@ -394,7 +394,7 @@ def getParamsAqueousSolute(lines):
     assert(len(lines) == 3)
     line = "".join(lines)
     numbers = line.strip().split()
-    numbers = [float(x) for x in numbers]
+    numbers = [float(x) if x != "999.9999" else float("nan") for x in numbers]
     assert(len(numbers) == 11)
     params = {}
     params["Model"]  = "HKF"
@@ -525,6 +525,17 @@ def createDatabase(species):
     return db
 
 
+def replaceNaNs(o):
+    """Recursivelly replace NaN values to 9999999999999999 (16 digits)
+    The reason for this is because json do not support NaN and Inf.
+    It supports null, but parsing null nodes into numbers leads to runtime errors.
+    """
+    if isinstance(o, float): return o if o == o else 9999999999999999
+    if isinstance(o, dict): return {k: replaceNaNs(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)): return [replaceNaNs(x) for x in o]
+    return o
+
+
 def roundFloats(o, sigfigures=8):
     """Recursivelly round float numbers in an object to given significant figures
 
@@ -591,6 +602,9 @@ if __name__ == "__main__":
 
     # Preserve only 8 significant figures in the float numbers
     db = roundFloats(db, sigfigures=8)
+
+    # Replace NaN for 9999999999999999 (16 digits) as a sign of lacking parameter values
+    db = replaceNaNs(db)
 
     # Perform a json dump
     jdump = json.dumps(db, sort_keys=False, indent=2, separators=(',', ': '))
