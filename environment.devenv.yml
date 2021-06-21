@@ -16,7 +16,7 @@ dependencies:
   - pybind11>=2.5.0
   - thermofun==0.3.3
   - nlohmann_json==3.6.1
-  - yaml-cpp
+  # - yaml-cpp  # current version on conda-forge, v0.63, has no support for enconding nan and inf values (using master version with git submodule)
   {% if not debug %}
   - pugixml  # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
   {% endif %}

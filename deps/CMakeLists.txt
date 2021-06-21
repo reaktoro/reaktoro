@@ -87,6 +87,21 @@ ExternalProject_Add(AUTODIFF
         -DAUTODIFF_BUILD_TESTS=OFF
 )
 
+# Build yaml-cpp library
+ExternalProject_Add(YAMLCPP
+    PREFIX etc
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp
+    BUILD_ALWAYS ON
+    CMAKE_ARGS
+        ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
+        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/public
+        -DBUILD_SHARED_LIBS=ON
+        -DYAML_BUILD_SHARED_LIBS=ON
+        -DYAML_CPP_BUILD_TESTS=OFF
+        -DYAML_CPP_BUILD_TOOLS=OFF
+        -DCMAKE_BUILD_TYPE=Release
+)
+
 # Build and install the cvode library
 ExternalProject_Add(CVODE
     PREFIX etc

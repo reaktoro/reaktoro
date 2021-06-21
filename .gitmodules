@@ -6,3 +6,6 @@
 	path = deps/autodiff
 	url = https://github.com/allanleal/autodiff
 	branch = develop
+[submodule "deps/yaml-cpp"]
+	path = deps/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git

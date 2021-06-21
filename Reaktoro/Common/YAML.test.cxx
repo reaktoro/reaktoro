@@ -35,6 +35,7 @@ TEST_CASE("Testing YAML", "[YAML]")
 {
     yaml y = yaml::parse(element);
 
+
     CHECK( y["symbol"].as<std::string>() == "H" );
     CHECK( y["name"].as<std::string>() == "Hydrogen" );
     CHECK( y["atomicNumber"].as<int>() == 1 );
@@ -44,3 +45,21 @@ TEST_CASE("Testing YAML", "[YAML]")
     CHECK( y["tags"][0].as<std::string>() == "group1" );
 }
 
+TEST_CASE("Testing YAML for NaN", "[YAML]")
+{
+    yaml y = yaml::parse("[.nan, .nan, .nan]");
+
+    auto vals = y.as<Vec<double>>();
+
+    CHECK(vals[0] != vals[0]);
+    CHECK(vals[1] != vals[1]);
+    CHECK(vals[2] != vals[2]);
+
+    y = vals;
+
+    vals = y.as<Vec<double>>();
+
+    CHECK(vals[0] != vals[0]);
+    CHECK(vals[1] != vals[1]);
+    CHECK(vals[2] != vals[2]);
+}
