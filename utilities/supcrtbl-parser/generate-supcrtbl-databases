@@ -603,9 +603,6 @@ if __name__ == "__main__":
     # Preserve only 8 significant figures in the float numbers
     db = roundFloats(db, sigfigures=8)
 
-    # Replace NaN for 9999999999999999 (16 digits) as a sign of lacking parameter values
-    db = replaceNaNs(db)
-
     # Perform a json dump
     jdump = json.dumps(db, sort_keys=False, indent=2, separators=(',', ': '))
 

@@ -203,17 +203,6 @@ def nextval(iteritem):
     return float(val) if val != "null" else nan
 
 
-def replaceNaNs(o):
-    """Recursivelly replace NaN values to 9999999999999999 (16 digits)
-    The reason for this is because json do not support NaN and Inf.
-    It supports null, but parsing null nodes into numbers leads to runtime errors.
-    """
-    if isinstance(o, float): return o if o == o else 9999999999999999
-    if isinstance(o, dict): return {k: replaceNaNs(v) for k, v in o.items()}
-    if isinstance(o, (list, tuple)): return [replaceNaNs(x) for x in o]
-    return o
-
-
 def roundFloats(o, sigfigures=8):
     """Recursivelly round float numbers in an object to given significant figures
 
@@ -237,7 +226,7 @@ def stringfylists(data):
     This method is used to ensure that lists in yaml and json outputs are in a single line.
     """
     if type(data) is list:
-        return "@" + str(data) + "@"
+        return  ("@" + str(data) + "@").replace("nan", ".nan")
     elif type(data) is dict:
         return { key: stringfylists(val) for key, val in data.items() }
     elif type(data) in [float, int, str]:
@@ -447,7 +436,6 @@ def createStandardThermoModel(entries):
     else: raiseErrorModelCodeNotSupported(mcode)
 
     model = roundFloats(model)
-    model = replaceNaNs(model)
 
     return model
 
