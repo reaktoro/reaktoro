@@ -130,6 +130,10 @@ Database::Database(const Vec<Species>& species)
         addSpecies(x);
 }
 
+Database::Database(const String& name)
+: Database(Database::withName(name))
+{}
+
 Database::~Database()
 {}
 
