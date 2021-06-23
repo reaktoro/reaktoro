@@ -62,7 +62,11 @@ TEST_CASE("Testing ElementalComposition", "[ElementalComposition]")
     //-----------------------------------------------------------------
     // Testing constructor ElementalComposition(Map<String, double>)
     //-----------------------------------------------------------------
-    elements = ElementalComposition({{"Ca", 4.0}, {"Mg", 5.0}, {"F",  6.0}});
+    elements = ElementalComposition({
+        { Element("Ca"), 4.0 },
+        { Element("Mg"), 5.0 },
+        { Element("F"),  6.0 },
+    });
 
     //-----------------------------------------------------------------
     // Testing method ElementalComposition::symbols()

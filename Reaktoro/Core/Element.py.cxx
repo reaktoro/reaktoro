@@ -26,11 +26,7 @@ using namespace Reaktoro;
 
 void exportElement(py::module& m)
 {
-    auto createElement = [](
-        String symbol,
-        double molar_mass,
-        Optional<String> name,
-        Optional<Strings> tags)
+    auto createElement = [](String symbol, double molar_mass, String name, Strings tags)
     {
         return Element({symbol, molar_mass, name, tags});
     };

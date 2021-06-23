@@ -39,7 +39,7 @@ void exportChemicalFormula(py::module& m)
     py::class_<ChemicalFormula>(m, "ChemicalFormula")
         .def(py::init<>())
         .def(py::init<String>())
-        .def(py::init<String, Map<String, double>, double>(),
+        .def(py::init<String, Pairs<String, double>, double>(),
             py::arg("formula"),
             py::arg("symbols"),
             py::arg("charge"))
