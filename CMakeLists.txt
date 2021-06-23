@@ -54,11 +54,9 @@ option(BUILD_SHARED_LIBS "Build shared libraries." ON)
 option(ENABLE_TESTING "Enable testing." on)
 
 # Set the default build type to Release
-if(NOT CMAKE_BUILD_TYPE)
-    # The build type selection for the project
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to Release as none was specified.")
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the build type for ${PROJECT_NAME}." FORCE)
-
-    # The build type options for the project
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
 endif()
 
