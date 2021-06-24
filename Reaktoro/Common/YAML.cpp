@@ -18,6 +18,7 @@
 #include "YAML.hpp"
 
 // C++ includes
+#include <clocale>
 #include <sstream>
 
 namespace Reaktoro {
