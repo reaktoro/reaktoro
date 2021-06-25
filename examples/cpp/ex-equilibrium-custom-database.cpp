@@ -111,7 +111,6 @@ auto createCustomDatabase() -> Database
         .withAggregateState(AggregateState::Aqueous)
         .withFormationReaction(
             FormationReaction()
-                .withProduct("H2O")
                 .withReactants({
                     {primaryspecies.get("H+"),  1.0},
                     {primaryspecies.get("OH-"), 1.0} })

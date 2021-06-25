@@ -67,23 +67,36 @@ set_target_properties(Reaktoro PROPERTIES
     POSITION_INDEPENDENT_CODE ON
     CXX_EXTENSIONS OFF)
 
-# Create a test executable target for Reaktoro
-add_executable(reaktoro-cpptests ${TEST_CXX_FILES})
-target_link_libraries(reaktoro-cpptests Reaktoro)
-target_include_directories(reaktoro-cpptests PUBLIC ${PROJECT_SOURCE_DIR})
-target_compile_definitions(reaktoro-cpptests PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline>)  # use EIGEN_STRONG_INLINE=inline instead of EIGEN_STRONG_INLINE=__forceinline with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile
+#==============================================================================
+#
+# COMPILATION CONFIGURATION FOR C++ TESTS
+#
+#==============================================================================
 
-# Add target tests that performs all C++ and Python tests
-add_custom_target(tests
-    COMMENT "Running C++ tests..."
-    COMMAND $<TARGET_FILE:reaktoro-cpptests>
-    # COMMENT "Running Python tests..."  # TODO: Implement Python tests.
-    # COMMAND $<TARGET_FILE:reaktoro-pytests>
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+if(REAKTORO_BUILD_TESTS)
+
+    # Find catch2, which is used as the testing framework for Reaktoro
+    find_package(Catch2 REQUIRED)
+
+    # Create a test executable target for Reaktoro
+    add_executable(reaktoro-cpptests ${TEST_CXX_FILES})
+    target_link_libraries(reaktoro-cpptests Reaktoro Catch2::Catch2)
+    target_include_directories(reaktoro-cpptests PUBLIC ${PROJECT_SOURCE_DIR})
+    target_compile_definitions(reaktoro-cpptests PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline>)  # use EIGEN_STRONG_INLINE=inline instead of EIGEN_STRONG_INLINE=__forceinline with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile
+
+    # Add target tests that performs all C++ and Python tests
+    add_custom_target(tests
+        COMMENT "Running C++ tests..."
+        COMMAND $<TARGET_FILE:reaktoro-cpptests>
+        # COMMENT "Running Python tests..."  # TODO: Implement Python tests.
+        # COMMAND $<TARGET_FILE:reaktoro-pytests>
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+endif()
 
 #==============================================================================
 #
-# PYTHON BINDINGS COMPILATION CONFIGURATION
+# COMPILATION CONFIGURATION FOR PYTHON BINDINGS
 #
 #==============================================================================
 

@@ -33,7 +33,7 @@ option(REAKTORO_BUILD_EXAMPLES    "Build examples." OFF)
 option(REAKTORO_BUILD_DOCS        "Build documentation." OFF)
 option(REAKTORO_BUILD_INTERPRETER "Build the interpreter executable reaktoro." OFF)
 option(REAKTORO_BUILD_PYTHON      "Build the python wrappers and python package reaktoro." ON)
-option(REAKTORO_BUILD_TESTS       "Build tests." OFF)
+option(REAKTORO_BUILD_TESTS       "Build tests." ON)
 
 # Modify the REAKTORO_BUILD_* variables accordingly to BUILD_ALL
 if(REAKTORO_BUILD_ALL MATCHES ON)
