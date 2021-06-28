@@ -2,7 +2,7 @@
 set(REAKTORO_LIBRARY_DIR ${CMAKE_BINARY_DIR}/Reaktoro)
 
 # Set variable with the directory where the python package reaktoro is built
-set(REAKTORO_PYTHON_PACKAGE_DIR ${CMAKE_BINARY_DIR}/python/package/installed/$<CONFIG>/Lib/site-packages)
+set(REAKTORO_PYTHON_PACKAGE_DIR ${CMAKE_BINARY_DIR}/python/package/build/lib)
 
 # Set variable with the directory where the python package autodiff is built
 set(AUTODIFF_PYTHON_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/deps/build/etc/src/AUTODIFF-build/python/package/autodiff/build/lib)
