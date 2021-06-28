@@ -40,23 +40,9 @@ void exportActivityModelIdealAqueous(py::module& m);
 void exportActivityModelIdealGas(py::module& m);
 void exportActivityModelIdealSolution(py::module& m);
 
-// Thermodynamics/Reactions
-void exportReactionThermoModelConstLgK(py::module& m);
-void exportReactionThermoModelGemsLgK(py::module& m);
-void exportReactionThermoModelPhreeqcLgK(py::module& m);
-void exportReactionThermoModelPressureCorrection(py::module& m);
-void exportReactionThermoModelVantHoff(py::module& m);
-
 // Thermodynamics/Solids
 void exportActivityModelRedlichKister(py::module& m);
 void exportActivityModelVanLaar(py::module& m);
-
-// Thermodynamics/Standard
-void exportStandardThermoModelHKF(py::module& m);
-void exportStandardThermoModelHollandPowell(py::module& m);
-void exportStandardThermoModelMaierKelley(py::module& m);
-void exportStandardThermoModelMineralHKF(py::module& m);
-void exportStandardThermoModelWaterHKF(py::module& m);
 
 // Thermodynamics/Water
 void exportWaterConstants(py::module& m);
@@ -92,23 +78,9 @@ void exportThermodynamics(py::module& m)
     exportActivityModelIdealGas(m);
     exportActivityModelIdealSolution(m);
 
-    // Thermodynamics/Reactions
-    exportReactionThermoModelConstLgK(m);
-    exportReactionThermoModelGemsLgK(m);
-    exportReactionThermoModelPhreeqcLgK(m);
-    exportReactionThermoModelPressureCorrection(m);
-    exportReactionThermoModelVantHoff(m);
-
     // Thermodynamics/Solids
     exportActivityModelRedlichKister(m);
     exportActivityModelVanLaar(m);
-
-    // Thermodynamics/Standard
-    exportStandardThermoModelHKF(m);
-    exportStandardThermoModelHollandPowell(m);
-    exportStandardThermoModelMaierKelley(m);
-    exportStandardThermoModelMineralHKF(m);
-    exportStandardThermoModelWaterHKF(m);
 
     // Thermodynamics/Water
     exportWaterConstants(m);
