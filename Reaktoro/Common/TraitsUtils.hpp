@@ -23,16 +23,6 @@
 
 namespace Reaktoro {
 
-namespace detail {
-
-template<typename T>
-struct isFunction { static constexpr auto value = false; };
-
-template<typename Signature>
-struct isFunction<std::function<Signature>> { static constexpr auto value = true; };
-
-} // namespace detail
-
 template<bool value>
 using EnableIf = std::enable_if_t<value>;
 
@@ -47,6 +37,24 @@ constexpr auto isSame = std::is_same_v<Decay<T>, Decay<U>>;
 
 namespace detail {
 
+template<typename T>
+struct isFunction { static constexpr auto value = false; };
+
+template<typename Signature>
+struct isFunction<std::function<Signature>> { static constexpr auto value = true; };
+
+template<typename T>
+struct asFunction : public asFunction<decltype(&T::operator())> {};
+
+template<typename Ret, typename... Args>
+struct asFunction<Ret(Args...)> { using type = std::function<Ret(Args...)>; };
+
+template<typename Ret, typename... Args>
+struct asFunction<Ret(*)(Args...)> { using type = std::function<Ret(Args...)>; };
+
+template<typename Class, typename Ret, typename... Args>
+struct asFunction<Ret(Class::*)(Args...) const> { using type = std::function<Ret(Args...)>; };
+
 template<typename T, typename U, typename... Us>
 constexpr auto isOneOf()
 {
@@ -57,11 +65,18 @@ constexpr auto isOneOf()
 
 } // namespace detail
 
-template<typename T, typename U, typename... Us>
-constexpr auto isOneOf = detail::isOneOf<T, U, Us...>();
-
 template<typename T>
 constexpr auto isFunction = detail::isFunction<Decay<T>>::value;
+
+/// Convert lambda/function pointers/member functions to `std::function`.
+/// This exists in Reaktoro because AppleClang 9.0/10.0/11.0 do not perform
+/// template type deduction for `std::function`. Instead of just writting
+/// `std::function(f)`, we need to use instead `asFunction(f)`.
+template<typename Fun>
+constexpr auto asFunction(const Fun& f) { return typename detail::asFunction<Fun>::type{f}; } // Reference: https://stackoverflow.com/a/39182901/418875
+
+template<typename T, typename U, typename... Us>
+constexpr auto isOneOf = detail::isOneOf<T, U, Us...>();
 
 //======================================================================
 // Reference type traits

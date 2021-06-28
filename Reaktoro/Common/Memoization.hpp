@@ -150,7 +150,7 @@ auto memoize(Fn<Ret(Args...)> f) -> Fn<Ret(Args...)>
 template<typename Fun, EnableIf<!isFunction<Fun>>...>
 auto memoize(Fun f)
 {
-    return memoize(std::function(f));
+    return memoize(asFunction(f));
 }
 
 /// Return a memoized version of given function @p f that caches only the arguments used in the last call.
@@ -176,7 +176,7 @@ auto memoizeLast(Fn<Ret(Args...)> f) -> Fn<Ret(Args...)>
 template<typename Fun, EnableIf<!isFunction<Fun>>...>
 auto memoizeLast(Fun f)
 {
-    return memoizeLast(std::function(f));
+    return memoizeLast(asFunction(f));
 }
 
 /// Return a memoized version of given function @p f that caches only the arguments used in the last call.
@@ -208,7 +208,7 @@ auto memoizeLastUsingRef(Fn<void(RetRef, Args...)> f) -> Fn<void(RetRef, Args...
 template<typename Ret, typename Fun, EnableIf<!isFunction<Fun>>...>
 auto memoizeLastUsingRef(Fun f)
 {
-    return memoizeLastUsingRef<Ret>(std::function(f));
+    return memoizeLastUsingRef<Ret>(asFunction(f));
 }
 
 /// Return a memoized version of given function @p f that caches only the arguments used in the last call.
@@ -225,7 +225,7 @@ auto memoizeLastUsingRef(Fn<void(Ret&, Args...)> f) -> Fn<void(Ret&, Args...)>
 template<typename Fun, EnableIf<!isFunction<Fun>>...>
 auto memoizeLastUsingRef(Fun f)
 {
-    return memoizeLastUsingRef(std::function(f));
+    return memoizeLastUsingRef(asFunction(f));
 }
 
 } // namespace Reaktoro

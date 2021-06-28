@@ -102,7 +102,7 @@ public:
     /// @param f A model evaluator or a model calculator function.
     template<typename Fun, EnableIf<!isFunction<Fun>>...>
     Model(const Fun& f)
-    : Model(std::function(f))
+    : Model(asFunction(f))
     {}
 
     /// Return a new Model function object with memoization for the model calculator.
