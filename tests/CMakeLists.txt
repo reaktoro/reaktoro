@@ -5,16 +5,16 @@ set(REAKTORO_LIBRARY_DIR ${CMAKE_BINARY_DIR}/Reaktoro)
 set(REAKTORO_PYTHON_PACKAGE_DIR ${CMAKE_BINARY_DIR}/python/package/build/lib)
 
 # Set variable with the directory where the python package autodiff is built
-set(AUTODIFF_PYTHON_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/deps/build/etc/src/AUTODIFF-build/python/package/autodiff/build/lib)
+set(AUTODIFF_PYTHON_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/deps/build/etc/src/AUTODIFF-build/python/package/build/lib)
 
 # Set variable with the directory where the python package optima is built
 set(OPTIMA_PYTHON_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/deps/build/etc/src/OPTIMA-build/python/package/build/lib)
 
 # Correct the above paths if in Windows (e.g., slashes / to backslashes \)
-file(TO_NATIVE_PATH ${REAKTORO_LIBRARY_DIR}        REAKTORO_LIBRARY_DIR)
+file(TO_NATIVE_PATH ${REAKTORO_LIBRARY_DIR} REAKTORO_LIBRARY_DIR)
 file(TO_NATIVE_PATH ${REAKTORO_PYTHON_PACKAGE_DIR} REAKTORO_PYTHON_PACKAGE_DIR)
 file(TO_NATIVE_PATH ${AUTODIFF_PYTHON_PACKAGE_DIR} AUTODIFF_PYTHON_PACKAGE_DIR)
-file(TO_NATIVE_PATH ${OPTIMA_PYTHON_PACKAGE_DIR}   OPTIMA_PYTHON_PACKAGE_DIR)
+file(TO_NATIVE_PATH ${OPTIMA_PYTHON_PACKAGE_DIR} OPTIMA_PYTHON_PACKAGE_DIR)
 
 # Create cmake variables containing PATH and PYTHONPATH for Windows and Unix systems (Linux and macOS)
 if(WIN32)
