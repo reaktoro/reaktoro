@@ -1,49 +1,33 @@
-# Set variable with the directory where the Reaktoro C++ library is located
-set(REAKTORO_LIBRARY_DIR ${CMAKE_BINARY_DIR}/Reaktoro)
+# Configure local pytest.ini file to permit pytest execution without path specification
+configure_file(pytest.ini.in ${CMAKE_BINARY_DIR}/pytest.ini)
 
-# Set variable with the directory where the python package reaktoro is built
-set(REAKTORO_PYTHON_PACKAGE_DIR ${CMAKE_BINARY_DIR}/python/package/build/lib)
+# Create cache variable with the number of parallel jobs to be used when executing pytest
+set(REAKTORO_PYTEST_PARALLEL_JOBS 1 CACHE STRING "The number of parallel jobs when executing pytest.")
 
-# Set variable with the directory where the python package autodiff is built
-set(AUTODIFF_PYTHON_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/deps/build/etc/src/AUTODIFF-build/python/package/build/lib)
-
-# Set variable with the directory where the python package optima is built
-set(OPTIMA_PYTHON_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/deps/build/etc/src/OPTIMA-build/python/package/build/lib)
-
-# Correct the above paths if in Windows (e.g., slashes / to backslashes \)
-file(TO_NATIVE_PATH ${REAKTORO_LIBRARY_DIR} REAKTORO_LIBRARY_DIR)
-file(TO_NATIVE_PATH ${REAKTORO_PYTHON_PACKAGE_DIR} REAKTORO_PYTHON_PACKAGE_DIR)
-file(TO_NATIVE_PATH ${AUTODIFF_PYTHON_PACKAGE_DIR} AUTODIFF_PYTHON_PACKAGE_DIR)
-file(TO_NATIVE_PATH ${OPTIMA_PYTHON_PACKAGE_DIR} OPTIMA_PYTHON_PACKAGE_DIR)
-
-# Create cmake variables containing PATH and PYTHONPATH for Windows and Unix systems (Linux and macOS)
-if(WIN32)
-    set(CUSTOM_PATH "${REAKTORO_LIBRARY_DIR}\\$<CONFIG>\;${REAKTORO_DEPS_PATH}\\public\\bin\;$ENV{PATH}")
-    set(CUSTOM_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR};${AUTODIFF_PYTHON_PACKAGE_DIR};${OPTIMA_PYTHON_PACKAGE_DIR};$ENV{PYTHONPATH}")
-elseif(UNIX)
-    set(CUSTOM_PATH "$ENV{PATH}")
-    set(CUSTOM_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR}:${AUTODIFF_PYTHON_PACKAGE_DIR}:${OPTIMA_PYTHON_PACKAGE_DIR}:$ENV{PYTHONPATH}")
+# Create auxiliary variable with parallel specification for pytest command
+if(REAKTORO_PYTEST_PARALLEL_JOBS MATCHES 1)
+    set(REAKTORO_PYTEST_PARALLEL_OPTION "")  # avoid passing "-n 1" to pytest to avoid overhead in creating a single parallel job
 else()
-    message(FATAL_ERROR "Could not create cmake targets tests-cpp and tests-py. Expecting Unix or Windows systems.")
+    set(REAKTORO_PYTEST_PARALLEL_OPTION "-n ${REAKTORO_PYTEST_PARALLEL_JOBS}")
 endif()
 
 # Create target `tests-cpp` to execute C++ tests
 add_custom_target(tests-cpp
     COMMENT "Running C++ tests..."
     COMMAND ${CMAKE_COMMAND} -E env
-        "PATH=${CUSTOM_PATH}"
+        "PATH=${REAKTORO_PATH}"
             $<TARGET_FILE:reaktoro-cpptests>
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 
 # Create target `tests-py` to execute Python tests
 add_custom_target(tests-py
     COMMENT "Running Python tests..."
     COMMENT "Starting parallel execution of pytest..."
     COMMAND ${CMAKE_COMMAND} -E env
-        "PATH=${CUSTOM_PATH}"
-        "PYTHONPATH=${CUSTOM_PYTHONPATH}"
-            pytest ${CMAKE_SOURCE_DIR}/Reaktoro -n auto -x
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+        "PATH=${REAKTORO_PATH}"
+        "PYTHONPATH=${REAKTORO_PYTHONPATH}"
+            pytest -x ${REAKTORO_PYTEST_PARALLEL_OPTION}
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 
 # Combine both targets `tests-cpp` and `tests-py` to create target `tests`
 add_custom_target(tests DEPENDS tests-py tests-cpp)
