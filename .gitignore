@@ -19,8 +19,9 @@ deps/git/
 .ptp-sync/
 
 # Visual Studio Code related files
-.vscode
+.env
 .history
+.vscode
 
 # JetBrains related files
 .idea
