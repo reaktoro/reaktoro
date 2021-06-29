@@ -16,6 +16,9 @@ file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR} CMAKE_BINARY_DIR_NATIVE)
 add_custom_target(reaktoro-setuptools ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/reaktoro ${CMAKE_CURRENT_BINARY_DIR}/reaktoro
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:reaktoro4py> ${CMAKE_CURRENT_BINARY_DIR}/reaktoro
+    COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${REAKTORO_PYTHONPATH}"
+        pybind11-stubgen --ignore-invalid=all --no-setup-py --log-level=ERROR reaktoro
+    COMMAND ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro-stubs/ reaktoro
     COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} --quiet install --force --no-compile --prefix=installed/$<CONFIG>
     COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_BINARY_DIR}/reaktoro/$<TARGET_FILE_NAME:reaktoro4py>
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

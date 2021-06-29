@@ -33,6 +33,7 @@ dependencies:
   - pip:
     - sphinxcontrib-images
     - oyaml
+    - pybind11-stubgen  # used to generate pyi file for the compiled python package (for better IntelliSense)
 
   # Python dependencies
   - python={{ python_version }}

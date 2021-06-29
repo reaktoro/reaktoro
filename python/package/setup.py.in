@@ -14,25 +14,20 @@ with open(readme_filepath, "r") as fh:
 
 requirements = ["numpy", "pandas"]
 
-setup(name='Reaktoro',
-      version='${PROJECT_VERSION}',
-      description='The Python interface of the Reaktoro library.',
-      classifiers=[
-            "Topic :: Scientific/Engineering",
-            "Topic :: Scientific/Engineering :: Chemistry",
-            "Programming Language :: Python :: 3.6",
-            "Programming Language :: Python :: 3.7",
-            "Operating System :: OS Independent",
-      ],
-      long_description=long_description,
-      long_description_content_type="text/markdown",
-      author='Allan Leal',
-      author_email='allan.leal@erdw.ethz.ch',
-      url='www.reaktoro.org',
-      license='GNU LGPL v2.1',
-      packages=['reaktoro', 'reaktoro._extensions'],
-      package_data={'reaktoro': ['@REAKTORO_PYTHON_MODULE_FILENAME@', '*.pdb']},
-      python_requires='>=3.6, <4',
-      install_requires=requirements,
-      zip_safe=False
-      )
+setup(
+    name='Reaktoro',
+    version='${PROJECT_VERSION}',
+    description='The Python interface of the Reaktoro library.',
+    author='Allan Leal',
+    author_email='allan.leal@erdw.ethz.ch',
+    url='https://reaktoro.org',
+    license='GNU LGPL v2.1',
+    packages=['reaktoro', 'reaktoro.extensions'],
+    package_data={
+        'reaktoro': [
+            '${REAKTORO_PYTHON_MODULE_FILENAME}',
+            'reaktoro4py/*'
+            '*.pyi',
+        ],
+    }
+)
