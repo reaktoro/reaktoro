@@ -12,7 +12,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 
 # Add the library path of the external dependencies to link directories
 # Note: cmake v3.13 is needed to use target_link_directories command!
-link_directories(${REAKTORO_DEPS_LIBRARY_PATH})
+link_directories(${REAKTORO_DEPS_INSTALL_LIBRARY_DIRS})
 
 # Create a library target for Reaktoro
 add_library(Reaktoro ${HPP_FILES} ${CPP_FILES})
@@ -30,7 +30,7 @@ target_include_directories(Reaktoro
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/eigen3>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro/deps/eigen3>
-    PRIVATE ${REAKTORO_INCLUDE_PATH_DEPS})
+    PRIVATE ${REAKTORO_DEPS_INSTALL_INCLUDE_DIRS})
 
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro

@@ -1,7 +1,7 @@
 # Append the path to the installed dependency libraries to CMAKE_PREFIX_PATH
 list(APPEND CMAKE_PREFIX_PATH
-    ${REAKTORO_DEPS_PATH}/public
-    ${REAKTORO_DEPS_PATH}/private)
+    ${REAKTORO_DEPS_INSTALL_DIR_PUBLIC}
+    ${REAKTORO_DEPS_INSTALL_DIR_PRIVATE})
 
 if(REAKTORO_USE_OPENLIBM)
     find_package(openlibm REQUIRED)
