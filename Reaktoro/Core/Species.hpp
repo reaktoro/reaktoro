@@ -18,6 +18,7 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
@@ -132,7 +133,7 @@ public:
     auto withStandardThermoModel(const StandardThermoModel& model) const -> Species;
 
     /// Return a duplicate of this Species object with new tags attribute.
-    auto withTags(const Strings& tags) const -> Species;
+    auto withTags(const StringList& tags) const -> Species;
 
     /// Return a duplicate of this Species object with new attached data whose type is known at runtime only.
     auto withAttachedData(Any data) const -> Species;

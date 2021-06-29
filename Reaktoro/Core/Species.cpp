@@ -219,7 +219,7 @@ auto Species::withStandardThermoModel(const StandardThermoModel& model) const ->
     return copy;
 }
 
-auto Species::withTags(const Strings& tags) const -> Species
+auto Species::withTags(const StringList& tags) const -> Species
 {
     Species copy = clone();
     copy.pimpl->tags = tags;

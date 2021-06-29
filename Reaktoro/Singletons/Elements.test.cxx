@@ -19,7 +19,6 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Singletons/Elements.hpp>
 using namespace Reaktoro;
 

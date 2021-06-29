@@ -148,11 +148,11 @@ auto correctNames(Strings names) -> Strings
 
 } // namespace detail
 
-SubstanceCriticalProps::SubstanceCriticalProps(Strings names)
+SubstanceCriticalProps::SubstanceCriticalProps(const StringList& names)
 : SubstanceCriticalProps({}, names)
 {}
 
-SubstanceCriticalProps::SubstanceCriticalProps(SubstanceCriticalPropsData data, Strings names)
+SubstanceCriticalProps::SubstanceCriticalProps(const SubstanceCriticalPropsData& data, const StringList& names)
 : m_data(std::move(data)), m_names(detail::correctNames(names))
 {}
 
@@ -271,7 +271,7 @@ auto CriticalProps::size() -> Index
     return substances().size();
 }
 
-auto CriticalProps::get(String name) -> std::optional<SubstanceCriticalProps>
+auto CriticalProps::get(String name) -> Optional<SubstanceCriticalProps>
 {
     name = detail::correctName(name);
     const auto idx = indexfn(substances(), [&](auto&& s) { return contains(s.names(), name); });
@@ -279,7 +279,7 @@ auto CriticalProps::get(String name) -> std::optional<SubstanceCriticalProps>
     return {};
 }
 
-auto CriticalProps::get(Strings names) -> std::optional<SubstanceCriticalProps>
+auto CriticalProps::get(const StringList& names) -> Optional<SubstanceCriticalProps>
 {
     for(auto&& name : names)
         if(const auto subs = get(name); subs)

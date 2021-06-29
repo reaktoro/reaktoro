@@ -97,13 +97,6 @@ auto Element::withSymbol(String symbol) const -> Element
     return copy;
 }
 
-auto Element::withName(String name) const -> Element
-{
-    Element copy = clone();
-    copy.pimpl->name = name;
-    return copy;
-}
-
 auto Element::withMolarMass(double molar_mass) const -> Element
 {
     errorif(molar_mass < 0.0, "Cannot set the molar mass of an Element to a negative value");
@@ -112,8 +105,14 @@ auto Element::withMolarMass(double molar_mass) const -> Element
     return copy;
 }
 
+auto Element::withName(String name) const -> Element
+{
+    Element copy = clone();
+    copy.pimpl->name = name;
+    return copy;
+}
 
-auto Element::withTags(Strings tags) const -> Element
+auto Element::withTags(const StringList& tags) const -> Element
 {
     Element copy = clone();
     copy.pimpl->tags = tags;

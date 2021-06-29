@@ -18,6 +18,7 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/Types.hpp>
 
 namespace Reaktoro {
@@ -70,7 +71,7 @@ public:
     auto withName(String name) const -> Element;
 
     /// Return a duplicate of this Element object with replaced tags attribute.
-    auto withTags(Strings tags) const -> Element;
+    auto withTags(const StringList& tags) const -> Element;
 
     /// Return the symbol of the element (e.g., "H", "O", "C", "Na").
     auto symbol() const -> String;

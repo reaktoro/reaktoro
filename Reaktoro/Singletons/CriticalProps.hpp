@@ -19,14 +19,11 @@
 
 // C++ includes
 #include <deque>
-#include <optional>
-#include <string>
-#include <vector>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/ChemicalFormula.hpp>
 
 namespace Reaktoro {
 
@@ -48,7 +45,7 @@ class SubstanceCriticalProps
 {
 public:
     /// Construct a SubstanceCriticalProps instance.
-    SubstanceCriticalProps(Strings names);
+    SubstanceCriticalProps(const StringList& names);
 
     /// Construct a SubstanceCriticalProps instance with given data.
     /// The given names will be converted to uppercase, suffix will be removed,
@@ -56,7 +53,7 @@ public:
     /// `carbon dioxide` is replaced by `CARBON-DIOXIDE` and `HCl(g)` by `HCL`.
     /// @param data The critical property data of the substance
     /// @param names The names that can uniquely identify the substance *(case-insensitive)*
-    SubstanceCriticalProps(SubstanceCriticalPropsData data, Strings names);
+    SubstanceCriticalProps(const SubstanceCriticalPropsData& data, const StringList& names);
 
     /// Set the critical temperature of the substance (in K)
     auto setTemperature(real value) -> void;
@@ -125,10 +122,10 @@ public:
     static auto size() -> Index;
 
     /// Return the substance and its critical properties with given name (e.g. "WATER", "CARBON-DIOXIDE", "HYDROGEN-SULFIDE", etc.).
-    static auto get(String name) -> std::optional<SubstanceCriticalProps>;
+    static auto get(String name) -> Optional<SubstanceCriticalProps>;
 
     /// Return the substance and its critical properties with given alternative names.
-    static auto get(Strings names) -> std::optional<SubstanceCriticalProps>;
+    static auto get(const StringList& names) -> Optional<SubstanceCriticalProps>;
 
     /// Return begin const iterator of this CriticalProps instance
     auto begin() const;

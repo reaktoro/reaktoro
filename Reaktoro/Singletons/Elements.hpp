@@ -19,13 +19,11 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Element.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-class StringList;
 
 /// A type used store a collection of elements.
 /// @see Element
