@@ -38,6 +38,9 @@ void exportDatabase(py::module& m)
 
     py::class_<Database>(m, "Database")
         .def(py::init<>())
+        .def(py::init<const Vec<Element>&, const Vec<Species>&>())
+        .def(py::init<const Vec<Species>&>())
+        .def(py::init<const String&>())
         .def("clear", &Database::clear)
         .def("addElement", &Database::addElement)
         .def("addSpecies", addSpecies1)
@@ -47,5 +50,7 @@ void exportDatabase(py::module& m)
         .def("species", &Database::species)
         .def("speciesWithAggregateState", &Database::speciesWithAggregateState)
         .def("attachedData", &Database::attachedData)
+        .def_static("withName", &Database::withName)
+        .def_static("fromFile", &Database::fromFile)
         ;
 }
