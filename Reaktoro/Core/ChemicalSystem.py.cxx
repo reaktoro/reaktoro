@@ -25,6 +25,13 @@ namespace py = pybind11;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 using namespace Reaktoro;
 
+PYBIND11_MAKE_OPAQUE(ArrayXr);
+PYBIND11_MAKE_OPAQUE(ArrayXrRef);
+PYBIND11_MAKE_OPAQUE(ArrayXrConstRef);
+PYBIND11_MAKE_OPAQUE(VectorXr);
+PYBIND11_MAKE_OPAQUE(VectorXrRef);
+PYBIND11_MAKE_OPAQUE(VectorXrConstRef);
+
 void exportChemicalSystem(py::module& m)
 {
     py::class_<ChemicalSystem>(m, "ChemicalSystem")
