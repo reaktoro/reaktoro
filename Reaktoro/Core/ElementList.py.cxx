@@ -24,35 +24,40 @@ namespace py = pybind11;
 #include <Reaktoro/Core/ElementList.hpp>
 using namespace Reaktoro;
 
+template<typename ElementListType>
+auto createCommonElementList(py::module& m, const char* name)
+{
+    return
+    py::class_<ElementListType>(m, name)
+        .def("data", &ElementListType::data)
+        .def("size", &ElementListType::size)
+        .def("find", &ElementListType::find)
+        .def("findWithSymbol", &ElementListType::findWithSymbol)
+        .def("findWithName", &ElementListType::findWithName)
+        .def("index", &ElementListType::index)
+        .def("indexWithSymbol", &ElementListType::indexWithSymbol)
+        .def("indexWithName", &ElementListType::indexWithName)
+        .def("get", &ElementListType::get, py::return_value_policy::reference_internal)
+        .def("getWithSymbol", &ElementListType::getWithSymbol, py::return_value_policy::reference_internal)
+        .def("getWithName", &ElementListType::getWithName, py::return_value_policy::reference_internal)
+        .def("withSymbols", &ElementListType::withSymbols)
+        .def("withNames", &ElementListType::withNames)
+        .def("withTag", &ElementListType::withTag)
+        .def("withoutTag", &ElementListType::withoutTag)
+        .def("withTags", &ElementListType::withTags)
+        .def("withoutTags", &ElementListType::withoutTags)
+        .def("__getitem__", [](const ElementListType& self, Index i) { return self[i]; }, py::return_value_policy::reference_internal)
+        .def("__iter__", [](const ElementListType& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()); // keep object alive while iterator exists;
+        ;
+}
+
 void exportElementList(py::module& m)
 {
-    auto __getitem__ = [](const ElementList& self, Index i)
-    {
-        return self[i];
-    };
-
-    py::class_<ElementList>(m, "ElementList")
+    createCommonElementList<ElementList>(m, "ElementList")
         .def(py::init<>())
         .def(py::init<const Vec<Element>&>())
         .def("append", &ElementList::append)
-        .def("data", &ElementList::data)
-        .def("size", &ElementList::size)
-        .def("find", &ElementList::find)
-        .def("findWithSymbol", &ElementList::findWithSymbol)
-        .def("findWithName", &ElementList::findWithName)
-        .def("index", &ElementList::index)
-        .def("indexWithSymbol", &ElementList::indexWithSymbol)
-        .def("indexWithName", &ElementList::indexWithName)
-        .def("get", &ElementList::get, py::return_value_policy::reference_internal)
-        .def("getWithSymbol", &ElementList::getWithSymbol, py::return_value_policy::reference_internal)
-        .def("getWithName", &ElementList::getWithName, py::return_value_policy::reference_internal)
-        .def("withSymbols", &ElementList::withSymbols)
-        .def("withNames", &ElementList::withNames)
-        .def("withTag", &ElementList::withTag)
-        .def("withoutTag", &ElementList::withoutTag)
-        .def("withTags", &ElementList::withTags)
-        .def("withoutTags", &ElementList::withoutTags)
-        .def("__getitem__", __getitem__, py::return_value_policy::reference_internal)
-        .def("__iter__", [](const ElementList& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()); // keep object alive while iterator exists;
         ;
+
+    createCommonElementList<ElementListConstRef>(m, "ElementListConstRef");
 }
