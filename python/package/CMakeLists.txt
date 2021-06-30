@@ -19,6 +19,7 @@ add_custom_target(reaktoro-setuptools ALL
     COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${REAKTORO_PYTHONPATH}"
         pybind11-stubgen --ignore-invalid=all --no-setup-py --log-level=ERROR reaktoro
     COMMAND ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro-stubs/ reaktoro
+    COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_CURRENT_BINARY_DIR}/build  # remove build dir created by previous `python setup.py install` commands (see next) to ensure fresh rebuild since changed python files are not overwritten even with --force option
     COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} --quiet install --force --no-compile --prefix=installed/$<CONFIG>
     COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_BINARY_DIR}/reaktoro/$<TARGET_FILE_NAME:reaktoro4py>
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
