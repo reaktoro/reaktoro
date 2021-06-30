@@ -496,6 +496,26 @@ def createAqueousSolutes(lines):
     return solutes
 
 
+def createAqueousSolvent():
+    data = {}
+    data["Name"] = "H2O(aq)"
+    data["Formula"] = "H2O"
+    data["Elements"] = "2:H 1:O"
+    data["Charge"] = 0.0
+    data["AggregateState"] = "Aqueous"
+    data["Params"] = {}
+    data["Params"]["Model"] = "WaterHKF"
+    data["Params"]["Ttr"] = 273.16
+    data["Params"]["Ttr"] = 273.16
+    data["Params"]["Str"] = 63.312288
+    data["Params"]["Gtr"] = -235517.36
+    data["Params"]["Htr"] = -287721.13
+    data["Abbrev"] = ""
+    data["Date"] = ""
+    data["Reference"] = ""
+    return [data]
+
+
 def createSpecies(groups):
     assert(len(groups) == 5)
     return \
@@ -503,6 +523,7 @@ def createSpecies(groups):
         createMineralsWithPhaseTransitionsLandau(groups[1]) + \
         createMineralsWithPhaseTransitionsBraggWilliams(groups[2]) + \
         createGaseousSpecies(groups[3]) + \
+        createAqueousSolvent() + \
         createAqueousSolutes(groups[4])
 
 

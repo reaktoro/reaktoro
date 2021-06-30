@@ -6287,6 +6287,21 @@
       }
     },
     {
+      "Name": "H2O(aq)",
+      "Formula": "H2O",
+      "Elements": "2:H 1:O",
+      "Charge": 0.0,
+      "AggregateState": "Aqueous",
+      "StandardThermoModel": {
+        "WaterHKF": {
+          "Ttr": 273.16,
+          "Str": 63.312288,
+          "Gtr": -235517.36,
+          "Htr": -287721.13
+        }
+      }
+    },
+    {
       "Name": "Ag(CO3)-",
       "Formula": "Ag(CO3)-",
       "Elements": "1:Ag 1:C 3:O",
