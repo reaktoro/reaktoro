@@ -38,4 +38,7 @@ void exportElementalComposition(py::module& m)
         .def("molarMass", &ElementalComposition::molarMass)
         .def("repr", &ElementalComposition::repr)
         ;
+
+    py::implicitly_convertible<Pairs<Element, double>, ElementalComposition>();
+    py::implicitly_convertible<Pairs<String, double>, ElementalComposition>();
 }
