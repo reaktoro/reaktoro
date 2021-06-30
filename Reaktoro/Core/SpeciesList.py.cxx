@@ -24,42 +24,47 @@ namespace py = pybind11;
 #include <Reaktoro/Core/SpeciesList.hpp>
 using namespace Reaktoro;
 
+template<typename SpeciesListType>
+auto createCommonSpeciesList(py::module& m, const char* name)
+{
+    return
+    py::class_<SpeciesListType>(m, name)
+        .def("data", &SpeciesListType::data)
+        .def("size", &SpeciesListType::size)
+        .def("find", &SpeciesListType::find)
+        .def("findWithName", &SpeciesListType::findWithName)
+        .def("findWithFormula", &SpeciesListType::findWithFormula)
+        .def("findWithSubstance", &SpeciesListType::findWithSubstance)
+        .def("index", &SpeciesListType::index)
+        .def("indexWithName", &SpeciesListType::indexWithName)
+        .def("indexWithFormula", &SpeciesListType::indexWithFormula)
+        .def("indexWithSubstance", &SpeciesListType::indexWithSubstance)
+        .def("get", &SpeciesListType::get, py::return_value_policy::reference_internal)
+        .def("getWithName", &SpeciesListType::getWithName, py::return_value_policy::reference_internal)
+        .def("getWithFormula", &SpeciesListType::getWithFormula, py::return_value_policy::reference_internal)
+        .def("getWithSubstance", &SpeciesListType::getWithSubstance, py::return_value_policy::reference_internal)
+        .def("withNames", &SpeciesListType::withNames)
+        .def("withFormulas", &SpeciesListType::withFormulas)
+        .def("withSubstances", &SpeciesListType::withSubstances)
+        .def("withAggregateState", &SpeciesListType::withAggregateState)
+        .def("withTag", &SpeciesListType::withTag)
+        .def("withoutTag", &SpeciesListType::withoutTag)
+        .def("withTags", &SpeciesListType::withTags)
+        .def("withoutTags", &SpeciesListType::withoutTags)
+        .def("withElements", &SpeciesListType::withElements)
+        .def("withElementsOf", &SpeciesListType::withElementsOf)
+        .def("__getitem__", [](const SpeciesListType& self, Index i) { return self[i]; }, py::return_value_policy::reference_internal)
+        .def("__iter__", [](const SpeciesListType& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()); // keep object alive while iterator exists;
+        ;
+}
+
 void exportSpeciesList(py::module& m)
 {
-    auto __getitem__ = [](const SpeciesList& self, Index i)
-    {
-        return self[i];
-    };
-
-    py::class_<SpeciesList>(m, "SpeciesList")
+    createCommonSpeciesList<SpeciesList>(m, "SpeciesList")
         .def(py::init<>())
         .def(py::init<const Vec<Species>&>())
         .def("append", &SpeciesList::append)
-        .def("data", &SpeciesList::data)
-        .def("size", &SpeciesList::size)
-        .def("find", &SpeciesList::find)
-        .def("findWithName", &SpeciesList::findWithName)
-        .def("findWithFormula", &SpeciesList::findWithFormula)
-        .def("findWithSubstance", &SpeciesList::findWithSubstance)
-        .def("index", &SpeciesList::index)
-        .def("indexWithName", &SpeciesList::indexWithName)
-        .def("indexWithFormula", &SpeciesList::indexWithFormula)
-        .def("indexWithSubstance", &SpeciesList::indexWithSubstance)
-        .def("get", &SpeciesList::get, py::return_value_policy::reference_internal)
-        .def("getWithName", &SpeciesList::getWithName, py::return_value_policy::reference_internal)
-        .def("getWithFormula", &SpeciesList::getWithFormula, py::return_value_policy::reference_internal)
-        .def("getWithSubstance", &SpeciesList::getWithSubstance, py::return_value_policy::reference_internal)
-        .def("withNames", &SpeciesList::withNames)
-        .def("withFormulas", &SpeciesList::withFormulas)
-        .def("withSubstances", &SpeciesList::withSubstances)
-        .def("withAggregateState", &SpeciesList::withAggregateState)
-        .def("withTag", &SpeciesList::withTag)
-        .def("withoutTag", &SpeciesList::withoutTag)
-        .def("withTags", &SpeciesList::withTags)
-        .def("withoutTags", &SpeciesList::withoutTags)
-        .def("withElements", &SpeciesList::withElements)
-        .def("withElementsOf", &SpeciesList::withElementsOf)
-        .def("__getitem__", __getitem__, py::return_value_policy::reference_internal)
-        .def("__iter__", [](const SpeciesList& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()); // keep object alive while iterator exists;
         ;
+
+    createCommonSpeciesList<SpeciesListConstRef>(m, "SpeciesListConstRef");
 }
