@@ -35,7 +35,6 @@ void exportFormationReaction(py::module& m);
 void exportPhase(py::module& m);
 void exportPhaseList(py::module& m);
 void exportPhases(py::module& m);
-void exportModel(py::module& m);
 void exportParam(py::module& m);
 void exportParams(py::module& m);
 void exportReactionEquation(py::module& m);
@@ -65,7 +64,6 @@ void exportCore(py::module& m)
     exportPhase(m);
     exportPhaseList(m);
     exportPhases(m);
-    exportModel(m);
     exportParam(m);
     exportParams(m);
     exportReactionEquation(m);

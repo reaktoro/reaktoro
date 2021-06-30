@@ -25,6 +25,17 @@ namespace py = pybind11;
 #include <Reaktoro/Core/Model.hpp>
 using namespace Reaktoro;
 
-void exportModel(py::module& m)
+template<typename Result, typename... Args>
+void exportModel(py::module& m, const char* modelname)
 {
+    using ResultRef = Ref<Result>;
+    using ModelType = Model<Result(Args...)>;
+
+    py::class_<ModelType>(m, modelname)
+        .def(py::init<>())
+        // .def(py::init<const Fn<void(ResultRef, Args...)>&>())  // At the moment, only one possibility of function call is possible.
+        .def(py::init<const Fn<Result(Args...)>&>())
+        .def("params", &ModelType::params, py::return_value_policy::reference_internal)
+        .def("__call__", &ModelType::operator())
+        ;
 }
