@@ -21,6 +21,7 @@
 namespace py = pybind11;
 
 // Reaktoro includes
+#include <Reaktoro/Core/Model.py.hxx>
 #include <Reaktoro/Core/ReactionThermoProps.hpp>
 using namespace Reaktoro;
 
@@ -31,4 +32,12 @@ void exportReactionThermoProps(py::module& m)
         .def_readwrite("dG0", &ReactionThermoProps::dG0)
         .def_readwrite("dH0", &ReactionThermoProps::dH0)
         ;
+
+    py::class_<ReactionThermoArgs>(m, "ReactionThermoArgs")
+        .def_property_readonly("T", [](const ReactionThermoArgs& self) { return self.T; })
+        .def_property_readonly("P", [](const ReactionThermoArgs& self) { return self.P; })
+        .def_property_readonly("dV0", [](const ReactionThermoArgs& self) { return self.dV0; })
+        ;
+
+    exportModel<ReactionThermoProps, ReactionThermoArgs>(m, "ReactionThermoModel");
 }
