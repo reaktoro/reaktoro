@@ -21,6 +21,7 @@
 namespace py = pybind11;
 
 // Reaktoro includes
+#include <Reaktoro/Core/Model.py.hxx>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 using namespace Reaktoro;
 
@@ -34,4 +35,6 @@ void exportStandardThermoProps(py::module& m)
         .def_readwrite("Cp0", &StandardThermoProps::Cp0)
         .def_readwrite("Cv0", &StandardThermoProps::Cv0)
         ;
+
+    exportModel<StandardThermoProps, real, real>(m, "StandardThermoModel");
 }
