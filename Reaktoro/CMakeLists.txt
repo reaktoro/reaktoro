@@ -1,5 +1,5 @@
 # Recursively collect all header files from the current directory
-file(GLOB_RECURSE HPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp *.hxx)
+file(GLOB_RECURSE HPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)
 
 # Recursively collect all source files from the current directory
 file(GLOB_RECURSE CPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
@@ -145,7 +145,7 @@ endif()
 # Install Reaktoro header files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers
-    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
+    FILES_MATCHING PATTERN "*.hpp")
 
 # Install Reaktoro/deps header files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro/deps

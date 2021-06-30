@@ -448,4 +448,318 @@ struct SameValue<Eigen::ArrayBase<Derived>>
 } // namespace detail
 } // namespace Reaktoro
 
-#include "Matrix.hxx"
+namespace Reaktoro {
+
+inline auto zeros(Index rows) -> decltype(VectorXd::Zero(rows))
+{
+    return VectorXd::Zero(rows);
+}
+
+inline auto ones(Index rows) -> decltype(VectorXd::Ones(rows))
+{
+    return VectorXd::Ones(rows);
+}
+
+inline auto constants(Index rows, double val) -> decltype(VectorXd::Constant(rows, val))
+{
+    return VectorXd::Constant(rows, val);
+}
+
+inline auto random(Index rows) -> decltype(VectorXd::Random(rows))
+{
+    return VectorXd::Random(rows);
+}
+
+inline auto linspace(Index rows, double start, double stop) -> decltype(VectorXd::LinSpaced(rows, start, stop))
+{
+    return VectorXd::LinSpaced(rows, start, stop);
+}
+
+inline auto unit(Index rows, Index i) -> decltype(VectorXd::Unit(rows, i))
+{
+    return VectorXd::Unit(rows, i);
+}
+
+inline auto unitcol(Index rows, Index i) -> decltype(unit(rows, i))
+{
+    return unit(rows, i);
+}
+
+inline auto unitrow(Index cols, Index i) -> decltype(RowVectorXd::Unit(cols, i))
+{
+    return RowVectorXd::Unit(cols, i);
+}
+
+inline auto zeros(Index rows, Index cols) -> decltype(MatrixXd::Zero(rows, cols))
+{
+    return MatrixXd::Zero(rows, cols);
+}
+
+inline auto ones(Index rows, Index cols) -> decltype(MatrixXd::Ones(rows, cols))
+{
+    return MatrixXd::Ones(rows, cols);
+}
+
+inline auto random(Index rows, Index cols) -> decltype(MatrixXd::Random(rows, cols))
+{
+    return MatrixXd::Random(rows, cols);
+}
+
+inline auto identity(Index rows, Index cols) -> decltype(MatrixXd::Identity(rows, cols))
+{
+    return MatrixXd::Identity(rows, cols);
+}
+
+template<typename Derived>
+auto rows(Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decltype(mat.middleRows(start, num))
+{
+    return mat.middleRows(start, num);
+}
+
+template<typename Derived>
+auto rows(const Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decltype(mat.middleRows(start, num))
+{
+    return mat.middleRows(start, num);
+}
+
+template<typename Derived, typename Indices>
+auto rows(Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::all))
+{
+    return mat(irows, Eigen::all);
+}
+
+template<typename Derived, typename Indices>
+auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::all))
+{
+    return mat(irows, Eigen::all);
+}
+
+template<typename Derived>
+auto cols(Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decltype(mat.middleCols(start, num))
+{
+    return mat.middleCols(start, num);
+}
+
+template<typename Derived>
+auto cols(const Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decltype(mat.middleCols(start, num))
+{
+    return mat.middleCols(start, num);
+}
+
+template<typename Derived, typename Indices>
+auto cols(Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::all, icols))
+{
+    return mat(Eigen::all, icols);
+}
+
+template<typename Derived, typename Indices>
+auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::all, icols))
+{
+    return mat(Eigen::all, icols);
+}
+
+template<typename Derived>
+auto segment(Eigen::MatrixBase<Derived>& vec, Index irow, Index nrows) -> decltype(vec.segment(irow, nrows))
+{
+    return vec.segment(irow, nrows);
+}
+
+template<typename Derived>
+auto segment(const Eigen::MatrixBase<Derived>& vec, Index irow, Index nrows) -> decltype(vec.segment(irow, nrows))
+{
+    return vec.segment(irow, nrows);
+}
+
+template<typename Derived>
+auto block(Eigen::MatrixBase<Derived>& mat, Index irow, Index icol, Index nrows, Index ncols) -> decltype(mat.block(irow, icol, nrows, ncols))
+{
+    return mat.block(irow, icol, nrows, ncols);
+}
+
+template<typename Derived>
+auto block(const Eigen::MatrixBase<Derived>& mat, Index irow, Index icol, Index nrows, Index ncols) -> decltype(mat.block(irow, icol, nrows, ncols))
+{
+    return mat.block(irow, icol, nrows, ncols);
+}
+
+template<typename Derived, typename Indices>
+auto submatrix(Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> decltype(mat(irows, icols))
+{
+    return mat(irows, icols);
+}
+
+template<typename Derived, typename Indices>
+auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> decltype(mat(irows, icols))
+{
+    return mat(irows, icols);
+}
+
+template<typename Derived>
+auto tr(Eigen::MatrixBase<Derived>& mat) -> decltype(mat.transpose())
+{
+    return mat.transpose();
+}
+
+template<typename Derived>
+auto tr(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.transpose())
+{
+    return mat.transpose();
+}
+
+template<typename Derived>
+auto inv(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseInverse())
+{
+    return mat.cwiseInverse();
+}
+
+template<typename Derived>
+auto diag(const Eigen::MatrixBase<Derived>& vec) -> decltype(vec.asDiagonal())
+{
+    return vec.asDiagonal();
+}
+
+template<typename Derived>
+auto diagonal(Eigen::MatrixBase<Derived>& mat) -> decltype(mat.diagonal())
+{
+    return mat.diagonal();
+}
+
+template<typename Derived>
+auto diagonal(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.diagonal())
+{
+    return mat.diagonal();
+}
+
+template<int p, typename Derived>
+auto norm(const Eigen::MatrixBase<Derived>& mat) -> double
+{
+    return mat.template lpNorm<p>();
+}
+
+template<typename Derived>
+auto norm(const Eigen::MatrixBase<Derived>& mat) -> double
+{
+    return mat.norm();
+}
+
+template<typename Derived>
+auto norminf(const Eigen::MatrixBase<Derived>& mat) -> double
+{
+    return mat.template lpNorm<Eigen::Infinity>();
+}
+
+template<typename Derived>
+auto sum(const Eigen::DenseBase<Derived>& mat) -> typename Derived::Scalar
+{
+    return mat.sum();
+}
+
+template<typename DerivedLHS, typename DerivedRHS>
+auto dot(const Eigen::MatrixBase<DerivedLHS>& lhs, const Eigen::MatrixBase<DerivedRHS>& rhs) -> decltype(lhs.dot(rhs))
+{
+    return lhs.dot(rhs);
+}
+
+template<typename Derived>
+auto min(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.minCoeff())
+{
+    return mat.minCoeff();
+}
+
+template<typename DerivedLHS, typename DerivedRHS>
+auto min(const Eigen::MatrixBase<DerivedLHS>& lhs, const Eigen::MatrixBase<DerivedRHS>& rhs) -> decltype(lhs.cwiseMin(rhs))
+{
+    return lhs.cwiseMin(rhs);
+}
+
+template<typename Derived>
+auto max(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.maxCoeff())
+{
+    return mat.maxCoeff();
+}
+
+template<typename DerivedLHS, typename DerivedRHS>
+auto max(const Eigen::MatrixBase<DerivedLHS>& lhs, const Eigen::MatrixBase<DerivedRHS>& rhs) -> decltype(lhs.cwiseMax(rhs))
+{
+    return lhs.cwiseMax(rhs);
+}
+
+template<typename DerivedLHS, typename DerivedRHS>
+auto operator%(const Eigen::MatrixBase<DerivedLHS>& lhs, const Eigen::MatrixBase<DerivedRHS>& rhs) -> decltype(lhs.cwiseProduct(rhs))
+{
+    return lhs.cwiseProduct(rhs);
+}
+
+template<typename DerivedLHS, typename DerivedRHS>
+auto operator/(const Eigen::MatrixBase<DerivedLHS>& lhs, const Eigen::MatrixBase<DerivedRHS>& rhs) -> decltype(lhs.cwiseQuotient(rhs))
+{
+    return lhs.cwiseQuotient(rhs);
+}
+
+template<typename Derived>
+auto operator/(const typename Derived::Scalar& scalar, const Eigen::MatrixBase<Derived>& mat) -> decltype(scalar*mat.cwiseInverse())
+{
+    return scalar*mat.cwiseInverse();
+}
+
+template<typename Derived>
+auto operator+(const typename Derived::Scalar& scalar, const Eigen::MatrixBase<Derived>& mat) -> decltype((scalar + mat.array()).matrix())
+{
+    return (scalar + mat.array()).matrix();
+}
+
+template<typename Derived>
+auto operator+(const Eigen::MatrixBase<Derived>& mat, const typename Derived::Scalar& scalar) -> decltype((scalar + mat.array()).matrix())
+{
+    return (scalar + mat.array()).matrix();
+}
+
+template<typename Derived>
+auto operator-(const typename Derived::Scalar& scalar, const Eigen::MatrixBase<Derived>& mat) -> decltype((scalar - mat.array()).matrix())
+{
+    return (scalar - mat.array()).matrix();
+}
+
+template<typename Derived>
+auto operator-(const Eigen::MatrixBase<Derived>& mat, const typename Derived::Scalar& scalar) -> decltype((mat.array() - scalar).matrix())
+{
+    return (mat.array() - scalar).matrix();
+}
+
+template<typename Derived>
+auto abs(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseAbs())
+{
+    return mat.cwiseAbs();
+}
+
+template<typename Derived>
+auto sqrt(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseSqrt())
+{
+    return mat.cwiseSqrt();
+}
+
+template<typename Derived>
+auto pow(const Eigen::MatrixBase<Derived>& mat, double power) -> decltype(mat.array().pow(power).matrix())
+{
+    return mat.array().pow(power).matrix();
+}
+
+template<typename Derived>
+auto exp(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().exp().matrix())
+{
+    return mat.array().exp().matrix();
+}
+
+template<typename Derived>
+auto log(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().log().matrix())
+{
+    return mat.array().log().matrix();
+}
+
+template<typename Derived>
+auto log10(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().log10().matrix())
+{
+    return mat.array().log10().matrix();
+}
+
+} // namespace Reaktoro
