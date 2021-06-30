@@ -37,8 +37,8 @@ void exportElement(py::module& m)
         .def(py::init(createElement),
             py::arg("symbol"),
             py::arg("molar_mass"),
-            py::arg("name"),
-            py::arg("tags"))
+            py::arg("name") = "",
+            py::arg("tags") = Strings{})
         .def("clone", &Element::clone)
         .def("withSymbol", &Element::withSymbol)
         .def("withMolarMass", &Element::withMolarMass)
