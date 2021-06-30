@@ -181,12 +181,14 @@ add_custom_target(deps
 
 # Add target "autodiff" for updating external dependency autodiff
 add_custom_target(autodiff
+    COMMAND ${CMAKE_COMMAND} .
     COMMAND ${CMAKE_COMMAND} --build . --parallel
     COMMAND ${CMAKE_COMMAND} --install .
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/deps/build/etc/src/AUTODIFF-build")
 
 # Add target "optima" for updating external dependency Optima
 add_custom_target(optima
+    COMMAND ${CMAKE_COMMAND} .
     COMMAND ${CMAKE_COMMAND} --build . --parallel
     COMMAND ${CMAKE_COMMAND} --install .
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/deps/build/etc/src/OPTIMA-build")
