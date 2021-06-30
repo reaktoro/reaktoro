@@ -232,6 +232,9 @@ public:
     auto database() const -> const Database&;
 
     /// Convert this Phases object into a vector of Phase objects.
+    auto convert() const -> Vec<Phase>;
+
+    /// Convert this Phases object into a vector of Phase objects.
     operator Vec<Phase>() const;
 
 private:

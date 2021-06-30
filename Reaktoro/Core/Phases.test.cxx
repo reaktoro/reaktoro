@@ -335,7 +335,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         Phases phases(db);
         phases.add( AqueousPhase("H2O(aq) H+ OH- Na+ Cl- HCO3- CO3-- CO2(aq)") );
 
-        Vec<Phase> phasevec = phases;
+        Vec<Phase> phasevec = phases.convert();
 
         REQUIRE( phasevec.size() == 1 );
 
@@ -350,7 +350,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         phases.add( GaseousPhase("H2O(g) CO2(g)") );
         phases.add( MineralPhase("Halite") );
 
-        Vec<Phase> phasevec = phases;
+        Vec<Phase> phasevec = phases.convert();
 
         REQUIRE( phasevec.size() == 3 );
 
@@ -367,7 +367,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         phases.add( GaseousPhase(speciate("H O C")) );
         phases.add( MineralPhases("Halite Calcite Magnesite Dolomite Quartz") );
 
-        Vec<Phase> phasevec = phases;
+        Vec<Phase> phasevec = phases.convert();
 
         REQUIRE( phasevec.size() == 7 );
 
@@ -388,7 +388,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         phases.add( GaseousPhase(speciate("H O C")) );
         phases.add( MineralPhases() );
 
-        Vec<Phase> phasevec = phases;
+        Vec<Phase> phasevec = phases.convert();
 
         REQUIRE( phasevec.size() == 4 );
 
@@ -405,7 +405,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         phases.add( AqueousPhase("H2O(aq) H+ OH- Na+ Cl- CO2(aq) Ca++") );
         phases.add( MineralPhases() );
 
-        Vec<Phase> phasevec = phases;
+        Vec<Phase> phasevec = phases.convert();
 
         REQUIRE( phasevec.size() == 3 );
 
@@ -422,7 +422,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         phases.add( GaseousPhase(speciate("H O C")) );
         phases.add( MineralPhases() ); // no mineral should be collected because there is none with elements {H, O, C}
 
-        Vec<Phase> phasevec = phases;
+        Vec<Phase> phasevec = phases.convert();
 
         REQUIRE( phasevec.size() == 2 );
 

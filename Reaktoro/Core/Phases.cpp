@@ -277,7 +277,7 @@ auto Phases::database() const -> const Database&
     return db;
 }
 
-Phases::operator Vec<Phase>() const
+auto Phases::convert() const -> Vec<Phase>
 {
     // Return the element symbols in all stored GenericPhase and GenericPhasesGenerator objects.
     auto collect_all_element_symbols = [&]() -> Strings
@@ -340,6 +340,11 @@ Phases::operator Vec<Phase>() const
         phases.push_back(genericphase.convert(db, symbols));
 
     return phases;
+}
+
+Phases::operator Vec<Phase>() const
+{
+    return convert();
 }
 
 } // namespace Reaktoro

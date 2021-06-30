@@ -41,6 +41,7 @@ void exportPhases(py::module& m)
         .def("add", py::overload_cast<const GenericPhase&>(&Phases::add))
         .def("add", py::overload_cast<const GenericPhasesGenerator&>(&Phases::add))
         .def("database", &Phases::database)
+        .def("convert", &Phases::convert)
         ;
 
     py::class_<GenericPhase>(m, "GenericPhase")
