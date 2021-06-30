@@ -22,39 +22,43 @@ namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/PhaseList.hpp>
-#include <Reaktoro/Core/Species.hpp>
 using namespace Reaktoro;
+
+template<typename PhaseListType>
+auto createCommonPhaseList(py::module& m, const char* name)
+{
+    return
+    py::class_<PhaseListType>(m, name)
+        .def("data", &PhaseListType::data)
+        .def("size", &PhaseListType::size)
+        .def("find", &PhaseListType::find)
+        .def("findWithName", &PhaseListType::findWithName)
+        .def("findWithSpecies", py::overload_cast<Index>(&PhaseListType::findWithSpecies, py::const_))
+        .def("findWithSpecies", py::overload_cast<const String&>(&PhaseListType::findWithSpecies, py::const_))
+        .def("findWithAggregateState", &PhaseListType::findWithAggregateState)
+        .def("findWithStateOfMatter", &PhaseListType::findWithStateOfMatter)
+        .def("index", &PhaseListType::index)
+        .def("indexWithName", &PhaseListType::indexWithName)
+        .def("indexWithSpecies", py::overload_cast<Index>(&PhaseListType::indexWithSpecies, py::const_))
+        .def("indexWithSpecies", py::overload_cast<const String&>(&PhaseListType::indexWithSpecies, py::const_))
+        .def("indexWithAggregateState", &PhaseListType::indexWithAggregateState)
+        .def("indexWithStateOfMatter", &PhaseListType::indexWithStateOfMatter)
+        .def("withNames", &PhaseListType::withNames)
+        .def("withStateOfMatter", &PhaseListType::withStateOfMatter)
+        .def("withAggregateState", &PhaseListType::withAggregateState)
+        .def("numSpeciesUntilPhase", &PhaseListType::numSpeciesUntilPhase)
+        .def("__getitem__", [](const PhaseListType& self, Index i) { return self[i]; }, py::return_value_policy::reference_internal)
+        .def("__iter__", [](const PhaseListType& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()); // keep object alive while iterator exists;
+        ;
+}
 
 void exportPhaseList(py::module& m)
 {
-    auto __getitem__ = [](const PhaseList& self, Index i)
-    {
-        return self[i];
-    };
-
-    py::class_<PhaseList>(m, "PhaseList")
+    createCommonPhaseList<PhaseList>(m, "PhaseList")
         .def(py::init<>())
         .def(py::init<const Vec<Phase>&>())
         .def("append", &PhaseList::append)
-        .def("data", &PhaseList::data)
-        .def("size", &PhaseList::size)
-        .def("find", &PhaseList::find)
-        .def("findWithName", &PhaseList::findWithName)
-        .def("findWithSpecies", py::overload_cast<Index>(&PhaseList::findWithSpecies, py::const_))
-        .def("findWithSpecies", py::overload_cast<const String&>(&PhaseList::findWithSpecies, py::const_))
-        .def("findWithAggregateState", &PhaseList::findWithAggregateState)
-        .def("findWithStateOfMatter", &PhaseList::findWithStateOfMatter)
-        .def("index", &PhaseList::index)
-        .def("indexWithName", &PhaseList::indexWithName)
-        .def("indexWithSpecies", py::overload_cast<Index>(&PhaseList::indexWithSpecies, py::const_))
-        .def("indexWithSpecies", py::overload_cast<const String&>(&PhaseList::indexWithSpecies, py::const_))
-        .def("indexWithAggregateState", &PhaseList::indexWithAggregateState)
-        .def("indexWithStateOfMatter", &PhaseList::indexWithStateOfMatter)
-        .def("withNames", &PhaseList::withNames)
-        .def("withStateOfMatter", &PhaseList::withStateOfMatter)
-        .def("withAggregateState", &PhaseList::withAggregateState)
-        .def("numSpeciesUntilPhase", &PhaseList::numSpeciesUntilPhase)
-        .def("__getitem__", __getitem__, py::return_value_policy::reference_internal)
-        .def("__iter__", [](const PhaseList& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()); // keep object alive while iterator exists;
         ;
+
+    createCommonPhaseList<PhaseListConstRef>(m, "PhaseListConstRef");
 }
