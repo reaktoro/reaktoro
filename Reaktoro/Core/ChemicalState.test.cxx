@@ -173,7 +173,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::props()
     //-------------------------------------------------------------------------
-    state.props().update();
+    state.props().update(state);
     CHECK(  state.props().temperature() == state.temperature() );
     CHECK(  state.props().pressure() == state.pressure() );
     CHECK( (state.props().speciesAmounts() == state.speciesAmounts()).all() );
@@ -190,7 +190,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
         state.setTemperature(288.0);
         state.setPressure(1.3e5);
         state.setSpeciesAmounts(0.1);
-        state.props().update();
+        state.props().update(state);
 
         CHECK(  state.props().temperature() == 288.0 );
         CHECK(  state.props().pressure() == 1.3e5 );

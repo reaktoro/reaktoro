@@ -102,7 +102,7 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
     EquilibriumSolver solver(specs);
     solver.solve(state0, sensitivity0, conditions0);
 
-    state0.props().update();
+    state0.props().update(state0);
     EquilibriumPredictor predictor(state0, sensitivity0);
 
     ChemicalState state(system);

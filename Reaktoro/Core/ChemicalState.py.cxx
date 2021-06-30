@@ -17,7 +17,7 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
+#include <pybind11/numpy.h>
 namespace py = pybind11;
 
 // Optima includes
@@ -39,9 +39,14 @@ void exportChemicalState(py::module& m)
         .def("setTemperature", py::overload_cast<real, String>(&ChemicalState::setTemperature))
         .def("setPressure", py::overload_cast<real>(&ChemicalState::setPressure))
         .def("setPressure", py::overload_cast<real, String>(&ChemicalState::setPressure))
-        .def("setSpeciesAmounts", py::overload_cast<real>(&ChemicalState::setSpeciesAmounts))
-        .def("setSpeciesAmounts", py::overload_cast<ArrayXrConstRef>(&ChemicalState::setSpeciesAmounts))
-        .def("setSpeciesAmounts", py::overload_cast<ArrayXdConstRef>(&ChemicalState::setSpeciesAmounts))
+        .def("setSpeciesAmounts", [](ChemicalState& s, double val) { s.setSpeciesAmounts(val); })
+        .def("setSpeciesAmounts", [](ChemicalState& s, const real& val) { s.setSpeciesAmounts(val); })
+        .def("setSpeciesAmounts", [](ChemicalState& s, ArrayXrConstRef vals) { s.setSpeciesAmounts(vals); })
+        .def("setSpeciesAmounts", [](ChemicalState& s, const py::array_t<double>& vals) { s.setSpeciesAmounts(ArrayXd::Map(vals.data(), vals.size())); })
+        // .def("setSpeciesAmounts", [](ChemicalState& s, VectorXdConstRef vals) { s.setSpeciesAmounts(vals.array()); })
+        // .def("setSpeciesAmounts", py::overload_cast<real>(&ChemicalState::setSpeciesAmounts))
+        // .def("setSpeciesAmounts", py::overload_cast<ArrayXrConstRef>(&ChemicalState::setSpeciesAmounts))
+        // .def("setSpeciesAmounts", py::overload_cast<ArrayXdConstRef>(&ChemicalState::setSpeciesAmounts))
         .def("setSpeciesAmount", py::overload_cast<Index, real>(&ChemicalState::setSpeciesAmount))
         .def("setSpeciesAmount", py::overload_cast<Index, real, String>(&ChemicalState::setSpeciesAmount))
         .def("setSpeciesAmount", py::overload_cast<String, real>(&ChemicalState::setSpeciesAmount))
@@ -99,9 +104,5 @@ void exportChemicalState(py::module& m)
         .def("w", &ChemicalState::Equilibrium::w, return_internal_ref)
         .def("b", &ChemicalState::Equilibrium::b, return_internal_ref)
         .def("optimaState", &ChemicalState::Equilibrium::optimaState, return_internal_ref)
-        ;
-
-    py::class_<ChemicalState::Props, ChemicalProps>(m, "_ChemicalStateProps")
-        .def("update", py::overload_cast<>(&ChemicalState::Props::update))
         ;
 }

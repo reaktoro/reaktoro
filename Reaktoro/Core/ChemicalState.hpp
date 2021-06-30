@@ -44,7 +44,6 @@ class ChemicalState
 public:
     // Forward declarations
     class Equilibrium;
-    class Props;
 
     /// Construct a ChemicalState instance with standard conditions.
     /// This constructor creates an instance of ChemicalState with temperature
@@ -153,14 +152,14 @@ public:
     /// Return the chemical properties of the system.
     /// @warning For performance reasons, the stored chemical properties are
     /// not updated at every change in the chemical state. For a ChemicalState
-    /// object `state`, update its chemical properties using `state.props().update()`.
-    auto props() const -> const Props&;
+    /// object `state`, update its chemical properties using `state.props().update(state)`.
+    auto props() const -> const ChemicalProps&;
 
     /// Return the chemical properties of the system.
     /// @warning For performance reasons, the stored chemical properties are
     /// not updated at every change in the chemical state. For a ChemicalState
-    /// object `state`, update its chemical properties using `state.props().update()`.
-    auto props() -> Props&;
+    /// object `state`, update its chemical properties using `state.props().update(state)`.
+    auto props() -> ChemicalProps&;
 
 private:
     struct Impl;
@@ -283,40 +282,6 @@ public:
 
     /// Return the Optima::State object computed as part of the equilibrium calculation.
     auto optimaState() const -> const Optima::State&;
-
-private:
-    struct Impl;
-
-    Ptr<Impl> pimpl;
-};
-
-//=================================================================================================
-//
-// ChemicalState::Props
-//
-//=================================================================================================
-
-/// The access to the chemical properties of the system.
-class ChemicalState::Props : public ChemicalProps
-{
-public:
-    /// Construct a ChemicalState::Props instance with given associated chemical state.
-    Props(const ChemicalSystem& system, const ChemicalState& state);
-
-    /// Construct a copy of a ChemicalState::Props instance
-    Props(const Props& other);
-
-    /// Destroy this ChemicalState::Props instance
-    virtual ~Props();
-
-    /// Assign a ChemicalState::Props instance to this instance
-    auto operator=(Props other) -> Props&;
-
-    /// Update the chemical properties in the system according to its current state.
-    auto update() -> void;
-
-    // Inherit all other update methods.
-    using ChemicalProps::update;
 
 private:
     struct Impl;

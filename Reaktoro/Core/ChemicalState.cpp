@@ -42,7 +42,7 @@ struct ChemicalState::Impl
     Equilibrium equilibrium;
 
     /// The chemical properties of the system associated to this chemical state.
-    Props props;
+    ChemicalProps props;
 
     /// The temperature state of the chemical system (in K)
     real T = 298.15;
@@ -54,10 +54,11 @@ struct ChemicalState::Impl
     ArrayXr n;
 
     /// Construct a ChemicalState::Impl instance with given chemical system.
-    Impl(const ChemicalSystem& system, const ChemicalState& parent)
-    : system(system), equilibrium(system), props(system, parent),
-      n(ArrayXr::Zero(system.species().size()))
-    {}
+    Impl(const ChemicalSystem& system)
+    : system(system), equilibrium(system), props(system)
+    {
+        n.setZero(system.species().size());
+    }
 
     auto setTemperature(real val) -> void
     {
@@ -201,7 +202,7 @@ struct ChemicalState::Impl
 };
 
 ChemicalState::ChemicalState(const ChemicalSystem& system)
-: pimpl(new Impl(system, *this))
+: pimpl(new Impl(system))
 {}
 
 ChemicalState::ChemicalState(const ChemicalState& other)
@@ -367,12 +368,12 @@ auto ChemicalState::equilibrium() -> Equilibrium&
     return pimpl->equilibrium;
 }
 
-auto ChemicalState::props() const -> const Props&
+auto ChemicalState::props() const -> const ChemicalProps&
 {
     return pimpl->props;
 }
 
-auto ChemicalState::props() -> Props&
+auto ChemicalState::props() -> ChemicalProps&
 {
     return pimpl->props;
 }
@@ -591,50 +592,6 @@ auto ChemicalState::Equilibrium::b() const -> ArrayXdConstRef
 auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&
 {
     return pimpl->optstate;
-}
-
-//=================================================================================================
-//
-// ChemicalState::Props
-//
-//=================================================================================================
-
-struct ChemicalState::Props::Impl
-{
-    /// The chemical state associated with this Props object.
-    const ChemicalState& m_state;
-
-    /// Construct an Impl object with given chemical state.
-    Impl(const ChemicalState& state)
-    : m_state(state)
-    {}
-};
-
-ChemicalState::Props::Props(const ChemicalSystem& system, const ChemicalState& state)
-: ChemicalProps(system), pimpl(new Impl(state))
-{}
-
-ChemicalState::Props::Props(const Props& other)
-: ChemicalProps(other), pimpl(new Impl(*other.pimpl))
-{}
-
-ChemicalState::Props::~Props()
-{}
-
-auto ChemicalState::Props::operator=(Props other) -> Props&
-{
-    ChemicalProps::operator=(other);
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
-auto ChemicalState::Props::update() -> void
-{
-    const auto& state = pimpl->m_state;
-    const auto& T = state.temperature();
-    const auto& P = state.pressure();
-    const auto& n = state.speciesAmounts();
-    ChemicalProps::update(T, P, n);
 }
 
 } // namespace Reaktoro
