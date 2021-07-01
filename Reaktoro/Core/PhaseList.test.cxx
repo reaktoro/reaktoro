@@ -65,18 +65,18 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     //-------------------------------------------------------------------------
     REQUIRE( phases[0].name() == "AqueousPhase" );
     REQUIRE( phases[1].name() == "GaseousPhase" );
-    REQUIRE( phases[2].name() == "Calcite"         );
-    REQUIRE( phases[3].name() == "Halite"          );
-    REQUIRE( phases[4].name() == "Magnesite"       );
+    REQUIRE( phases[2].name() == "Calcite"      );
+    REQUIRE( phases[3].name() == "Halite"       );
+    REQUIRE( phases[4].name() == "Magnesite"    );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: PhaseList::find
     //-------------------------------------------------------------------------
     REQUIRE( phases.find("AqueousPhase") == 0 );
     REQUIRE( phases.find("GaseousPhase") == 1 );
-    REQUIRE( phases.find("Calcite")         == 2 );
-    REQUIRE( phases.find("Halite")          == 3 );
-    REQUIRE( phases.find("Magnesite")       == 4 );
+    REQUIRE( phases.find("Calcite")      == 2 );
+    REQUIRE( phases.find("Halite")       == 3 );
+    REQUIRE( phases.find("Magnesite")    == 4 );
 
     REQUIRE( phases.find("@#$") >= phases.size() );
 
@@ -85,9 +85,9 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     //-------------------------------------------------------------------------
     REQUIRE( phases.findWithName("AqueousPhase") == 0 );
     REQUIRE( phases.findWithName("GaseousPhase") == 1 );
-    REQUIRE( phases.findWithName("Calcite")         == 2 );
-    REQUIRE( phases.findWithName("Halite")          == 3 );
-    REQUIRE( phases.findWithName("Magnesite")       == 4 );
+    REQUIRE( phases.findWithName("Calcite")      == 2 );
+    REQUIRE( phases.findWithName("Halite")       == 3 );
+    REQUIRE( phases.findWithName("Magnesite")    == 4 );
 
     REQUIRE( phases.findWithName("@#$") >= phases.size() );
 
@@ -140,9 +140,9 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     //-------------------------------------------------------------------------
     REQUIRE( phases.index("AqueousPhase") == 0 );
     REQUIRE( phases.index("GaseousPhase") == 1 );
-    REQUIRE( phases.index("Calcite")         == 2 );
-    REQUIRE( phases.index("Halite")          == 3 );
-    REQUIRE( phases.index("Magnesite")         == 4 );
+    REQUIRE( phases.index("Calcite")      == 2 );
+    REQUIRE( phases.index("Halite")       == 3 );
+    REQUIRE( phases.index("Magnesite")    == 4 );
 
     REQUIRE_THROWS( phases.index("@#$") );
 
@@ -151,9 +151,9 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     //-------------------------------------------------------------------------
     REQUIRE( phases.indexWithName("AqueousPhase") == 0 );
     REQUIRE( phases.indexWithName("GaseousPhase") == 1 );
-    REQUIRE( phases.indexWithName("Calcite")         == 2 );
-    REQUIRE( phases.indexWithName("Halite")          == 3 );
-    REQUIRE( phases.indexWithName("Magnesite")         == 4 );
+    REQUIRE( phases.indexWithName("Calcite")      == 2 );
+    REQUIRE( phases.indexWithName("Halite")       == 3 );
+    REQUIRE( phases.indexWithName("Magnesite")    == 4 );
 
     REQUIRE_THROWS( phases.indexWithName("@#$") );
 
@@ -173,12 +173,12 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: PhaseList::indexWithSpecies(name)
     //-------------------------------------------------------------------------
-    REQUIRE( phases.indexWithSpecies("H2O(aq)") == 0 );
-    REQUIRE( phases.indexWithSpecies("Na+")     == 0 );
-    REQUIRE( phases.indexWithSpecies("H2O(g)")  == 1 );
-    REQUIRE( phases.indexWithSpecies("CO(g)")   == 1 );
-    REQUIRE( phases.indexWithSpecies("Calcite") == 2 );
-    REQUIRE( phases.indexWithSpecies("Halite")  == 3 );
+    REQUIRE( phases.indexWithSpecies("H2O(aq)")   == 0 );
+    REQUIRE( phases.indexWithSpecies("Na+")       == 0 );
+    REQUIRE( phases.indexWithSpecies("H2O(g)")    == 1 );
+    REQUIRE( phases.indexWithSpecies("CO(g)")     == 1 );
+    REQUIRE( phases.indexWithSpecies("Calcite")   == 2 );
+    REQUIRE( phases.indexWithSpecies("Halite")    == 3 );
     REQUIRE( phases.indexWithSpecies("Magnesite") == 4 );
 
     REQUIRE_THROWS( phases.indexWithSpecies("@#$") );
