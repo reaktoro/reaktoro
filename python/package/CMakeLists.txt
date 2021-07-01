@@ -12,6 +12,13 @@ configure_file(${SETUP_PY_IN} ${SETUP_PY})
 # This is needed in Windows so that the next step produces the python package in CMAKE_BINARY_DIR\Lib\site-packages\reaktoro
 file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR} CMAKE_BINARY_DIR_NATIVE)
 
+# Create pybind11-stubgen command string depending if this program has been found or not
+if(PYBIND11_STUBGEN)
+    set(PYBIND11_STUBGEN_COMMAND ${PYBIND11_STUBGEN} --ignore-invalid=all --no-setup-py --log-level=ERROR reaktoro)
+else()
+    set(PYBIND11_STUBGEN_COMMAND ${CMAKE_COMMAND} -E true)  # do nothing when it it's time to generate python stubs for reaktoro in the target below
+endif()
+
 # Create a custom target to build the python package during build stage
 add_custom_target(reaktoro-setuptools ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/reaktoro ${CMAKE_CURRENT_BINARY_DIR}/reaktoro
@@ -19,7 +26,7 @@ add_custom_target(reaktoro-setuptools ALL
     COMMAND ${CMAKE_COMMAND} -E env
         "PATH=${REAKTORO_PATH}"
         "PYTHONPATH=${REAKTORO_PYTHONPATH}"
-            pybind11-stubgen --ignore-invalid=all --no-setup-py --log-level=ERROR reaktoro
+            ${PYBIND11_STUBGEN_COMMAND}
     COMMAND ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro-stubs/ reaktoro
     COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_CURRENT_BINARY_DIR}/build  # remove build dir created by previous `python setup.py install` commands (see next) to ensure fresh rebuild since changed python files are not overwritten even with --force option
     COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} --quiet install --force --no-compile --prefix=installed/$<CONFIG>
