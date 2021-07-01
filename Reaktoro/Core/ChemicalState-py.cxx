@@ -16,9 +16,7 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 // pybind11 includes
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-namespace py = pybind11;
+#include <Reaktoro/pybind11.hxx>
 
 // Optima includes
 #include <Optima/State.hpp>

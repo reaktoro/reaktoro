@@ -15,14 +15,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+#pragma once
+
 // pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/eigen.h>
+#include <pybind11/functional.h>
+#include <pybind11/numpy.h>
+#include <pybind11/operators.h>
+namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Solids/ActivityModelRedlichKister.hpp>
-using namespace Reaktoro;
+#include <Reaktoro/Common/Matrix.hpp>
 
-void exportActivityModelRedlichKister(py::module& m)
-{
-    m.def("ActivityModelRedlichKister", ActivityModelRedlichKister);
-}
+PYBIND11_MAKE_OPAQUE(Reaktoro::ArrayXr);
+PYBIND11_MAKE_OPAQUE(Reaktoro::ArrayXrRef);
+PYBIND11_MAKE_OPAQUE(Reaktoro::ArrayXrConstRef);
+PYBIND11_MAKE_OPAQUE(Reaktoro::VectorXr);
+PYBIND11_MAKE_OPAQUE(Reaktoro::VectorXrRef);
+PYBIND11_MAKE_OPAQUE(Reaktoro::VectorXrConstRef);

@@ -16,8 +16,7 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 // pybind11 includes
-#include <pybind11/pybind11.h>
-namespace py = pybind11;
+#include <Reaktoro/pybind11.hxx>
 
 void exportReactionThermoModelConstLgK(py::module& m);
 void exportReactionThermoModelGemsLgK(py::module& m);

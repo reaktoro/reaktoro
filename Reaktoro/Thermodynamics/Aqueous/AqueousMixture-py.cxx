@@ -16,21 +16,11 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 // pybind11 includes
-#include <pybind11/pybind11.h>
-#include <pybind11/functional.h>
-#include <pybind11/eigen.h>
-namespace py = pybind11;
+#include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 using namespace Reaktoro;
-
-PYBIND11_MAKE_OPAQUE(ArrayXr);
-PYBIND11_MAKE_OPAQUE(ArrayXrRef);
-PYBIND11_MAKE_OPAQUE(ArrayXrConstRef);
-PYBIND11_MAKE_OPAQUE(VectorXr);
-PYBIND11_MAKE_OPAQUE(VectorXrRef);
-PYBIND11_MAKE_OPAQUE(VectorXrConstRef);
 
 void exportAqueousMixture(py::module& m)
 {

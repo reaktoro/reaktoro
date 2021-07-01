@@ -16,9 +16,7 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 // pybind11 includes
-#include <pybind11/pybind11.h>
-#include <pybind11/functional.h>
-namespace py = pybind11;
+#include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
 #include <Reaktoro/Models/ReactionThermoModelGemsLgK.hpp>
