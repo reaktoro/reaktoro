@@ -66,7 +66,7 @@ int main()
     for(auto i = 0; i < n.size(); ++i)
     {
         // Print only species with nonzero amounts
-        if (n[i] > 1e-16)
+        if(n[i] > 1e-16)
             std::cout << std::setw(20) << system.species(i).name()
                       << std::setw(20) << n[i] << std::endl;
     }
