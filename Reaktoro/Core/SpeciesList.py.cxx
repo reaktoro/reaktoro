@@ -62,6 +62,7 @@ void exportSpeciesList(py::module& m)
 {
     createCommonSpeciesList<SpeciesList>(m, "SpeciesList")
         .def(py::init<>())
+        .def(py::init<const StringList&>())
         .def(py::init<const Vec<Species>&>())
         .def("append", &SpeciesList::append)
         ;
