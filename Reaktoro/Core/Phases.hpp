@@ -284,10 +284,10 @@ public:
     explicit AqueousPhase(Speciate elements) : GenericPhase(elements += {"H", "O"}) { initialize(); }
 
     /// Construct an AqueousPhase object with given element symbols and tags indicating which species must be excluded from the final list.
-    explicit AqueousPhase(Speciate elements, Exclude withtags) : GenericPhase(elements += {"H", "O"}) { initialize(); }
+    explicit AqueousPhase(Speciate elements, Exclude withtags) : GenericPhase(elements += {"H", "O"}, withtags) { initialize(); }
 
     /// Construct an AqueousPhase object with tags indicating which species must be excluded from the final list.
-    explicit AqueousPhase(Exclude withtags) : GenericPhase() { initialize(); }
+    explicit AqueousPhase(Exclude withtags) : GenericPhase(withtags) { initialize(); }
 
     /// Initialize the default attributes of this AqueousPhase object.
     auto initialize() -> void
@@ -312,12 +312,6 @@ public:
 
     /// Construct a GaseousPhase object with given element symbols.
     explicit GaseousPhase(const Speciate& elements) : GenericPhase(elements) { initialize(); }
-
-    /// Construct an GaseousPhase object with given element symbols excluding the species with provided tags
-    explicit GaseousPhase(const Speciate& elements, const Exclude& withtags) { initialize(); }
-
-    /// Construct an GaseousPhase object excluding the species with provided tags
-    explicit GaseousPhase(const Exclude& withtags) { initialize(); }
 
     /// Initialize the default attributes of this GaseousPhase object.
     auto initialize() -> void

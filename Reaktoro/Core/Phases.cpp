@@ -139,10 +139,23 @@ auto GenericPhase::convert(const Database& db, const Strings& elements) const ->
 
     Phase phase;
     phase = phase.withName(phasename);
-    phase = phase.withSpecies(species);
     phase = phase.withStateOfMatter(stateofmatter);
-    phase = phase.withActivityPropsFn(activity_model(species));
-    phase = phase.withIdealActivityPropsFn(ideal_activity_model(species));
+
+    if(aggregatestate == AggregateState::Aqueous and excludetags.size())
+    {
+        // Filter gaseous species from the selected tags
+        auto specieswithouttags = species.withoutTags(excludetags);
+
+        phase = phase.withSpecies(specieswithouttags);
+        phase = phase.withActivityPropsFn(activity_model(specieswithouttags));
+        phase = phase.withIdealActivityPropsFn(ideal_activity_model(specieswithouttags));
+    }
+    else
+    {
+        phase = phase.withSpecies(species);
+        phase = phase.withActivityPropsFn(activity_model(species));
+        phase = phase.withIdealActivityPropsFn(ideal_activity_model(species));
+    }
 
     return phase;
 }
