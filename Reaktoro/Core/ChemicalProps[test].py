@@ -18,8 +18,32 @@
 
 from reaktoro import *
 import pytest
+from math import *
 
 
-# TODO Implement tests for the python bindings of component ChemicalProps in ChemicalProps[test].py
 def testChemicalProps():
-    pass
+    db = Database([
+        Species("H2O(g)").withStandardGibbsEnergy(0.0),
+        Species("CO2(g)").withStandardGibbsEnergy(0.0),
+    ])
+
+    phases = Phases(db)
+    phases.add( GaseousPhase("H2O(g) CO2(g)") )
+
+    system = ChemicalSystem(phases)
+    state = ChemicalState(system)
+
+    state.setTemperature(100.0, "celsius")
+    state.setPressure(1.0, "MPa")
+    state.setSpeciesAmounts([3.0, 7.0])
+
+    props = ChemicalProps(state)
+
+    assert props.temperature() == state.temperature()
+    assert props.pressure() == state.pressure()
+    assert props.speciesAmounts() == state.speciesAmounts()
+    assert props.speciesAmounts() == [3.0, 7.0]
+
+    assert props.moleFractions() == [0.3, 0.7]
+    assert props.lnActivities().asarray() == pytest.approx([log(3.0), log(7.0)])
+

@@ -112,6 +112,4 @@ def testChemicalState():
 
     assert props.temperature() == state.temperature()
     assert props.pressure() == state.pressure()
-
-    for i in range(N):
-        assert props.speciesAmounts()[i] == state.speciesAmounts()[i]
+    assert props.speciesAmounts() == state.speciesAmounts()
