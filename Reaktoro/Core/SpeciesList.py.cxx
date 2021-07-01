@@ -68,4 +68,8 @@ void exportSpeciesList(py::module& m)
         ;
 
     createCommonSpeciesList<SpeciesListConstRef>(m, "SpeciesListConstRef");
+
+    py::implicitly_convertible<Vec<Species>, SpeciesList>();
+    py::implicitly_convertible<Vec<Species>, SpeciesListConstRef>();
+    py::implicitly_convertible<SpeciesList, SpeciesListConstRef>();
 }
