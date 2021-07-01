@@ -118,6 +118,8 @@ struct ChemicalSystem::Impl
     /// Construct a ChemicalSystem::Impl object with given phases.
     Impl(const Database& database, const Vec<Phase>& phaselist)
     : database(database), phases(phaselist)
+
+
     {
         species = detail::collectSpecies(phases);
         elements = detail::collectElements(species);

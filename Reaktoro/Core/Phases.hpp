@@ -43,6 +43,19 @@ struct Speciate
 /// The auxiliary function used to specify phase species to be determined from element symbols.
 inline auto speciate(const StringList& symbols) { return Speciate{symbols}; };
 
+/// The auxiliary type used to specify phase tags to be excluded from the list of species.
+struct Exclude
+{
+    /// The symbols of the elements composing the species in a phase.
+    Strings tags;
+
+    /// Add other tags symbols into the speciation list.
+    auto operator+=(const Strings& othersymbols) -> Exclude& { tags = merge(tags, othersymbols); return *this; }
+};
+
+/// The auxiliary function used to specify phase tags to be excluded from the list of species.
+inline auto exclude(const StringList& tags) { return Exclude{tags}; };
+
 /// The base type for all other classes defining more specific phases.
 /// @ingroup Core
 class GenericPhase
@@ -56,6 +69,12 @@ public:
 
     /// Construct a GenericPhase object with given element symbols.
     explicit GenericPhase(const Speciate& elements);
+
+    /// Construct a GenericPhase object with given element symbols excluding the species with provided tags.
+    explicit GenericPhase(const Speciate& elements, const Exclude& withtags);
+
+    /// Construct a GenericPhase object excluding the species with provided tags.
+    explicit GenericPhase(const Exclude& withtags);
 
     /// Destroy this GenericPhase object.
     virtual ~GenericPhase();
@@ -126,6 +145,9 @@ private:
 
     /// The element symbols for automatic selection of the species composing the phase.
     Strings symbols;
+
+    /// The tags that indicate species to be excluded from the phase.
+    Strings excludetags;
 
     /// The activity model of the phase.
     ActivityModel activity_model;
@@ -255,11 +277,17 @@ public:
     /// Construct a default AqueousPhase object.
     AqueousPhase() : GenericPhase() { initialize(); }
 
-    /// Construct a AqueousPhase object with given species names.
+    /// Construct an AqueousPhase object with given species names.
     explicit AqueousPhase(const StringList& species) : GenericPhase(species) { initialize(); }
 
-    /// Construct a AqueousPhase object with given element symbols.
+    /// Construct an AqueousPhase object with given element symbols.
     explicit AqueousPhase(Speciate elements) : GenericPhase(elements += {"H", "O"}) { initialize(); }
+
+    /// Construct an AqueousPhase object with given element symbols and tags indicating which species must be excluded from the final list.
+    explicit AqueousPhase(Speciate elements, Exclude withtags) : GenericPhase(elements += {"H", "O"}) { initialize(); }
+
+    /// Construct an AqueousPhase object with tags indicating which species must be excluded from the final list.
+    explicit AqueousPhase(Exclude withtags) : GenericPhase() { initialize(); }
 
     /// Initialize the default attributes of this AqueousPhase object.
     auto initialize() -> void
@@ -285,6 +313,12 @@ public:
     /// Construct a GaseousPhase object with given element symbols.
     explicit GaseousPhase(const Speciate& elements) : GenericPhase(elements) { initialize(); }
 
+    /// Construct an GaseousPhase object with given element symbols excluding the species with provided tags
+    explicit GaseousPhase(const Speciate& elements, const Exclude& withtags) { initialize(); }
+
+    /// Construct an GaseousPhase object excluding the species with provided tags
+    explicit GaseousPhase(const Exclude& withtags) { initialize(); }
+
     /// Initialize the default attributes of this GaseousPhase object.
     auto initialize() -> void
     {
@@ -308,6 +342,12 @@ public:
 
     /// Construct a LiquidPhase object with given element symbols.
     explicit LiquidPhase(const Speciate& elements) : GenericPhase(elements) { initialize(); }
+
+    /// Construct an LiquidPhase object with given element symbols excluding the species with provided tags
+    explicit LiquidPhase(const Speciate& elements, const Exclude& withtags) { initialize(); };
+
+    /// Construct an LiquidPhase object excluding the species with provided tags
+    explicit LiquidPhase(const Exclude& withtags) { initialize(); };
 
     /// Initialize the default attributes of this LiquidPhase object.
     auto initialize() -> void

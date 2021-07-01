@@ -33,6 +33,9 @@ GenericPhase::GenericPhase(const Speciate& elements)
 : symbols(elements.symbols)
 {}
 
+GenericPhase::GenericPhase(const Speciate& elements, const Exclude& withtags)
+: symbols(elements.symbols), excludetags(withtags.tags)
+{}
 GenericPhase::~GenericPhase()
 {}
 
