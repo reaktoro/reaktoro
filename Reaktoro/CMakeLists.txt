@@ -1,11 +1,19 @@
-# Recursively collect all header files from the current directory
+# Recursively collect all hpp files from the current directory
 file(GLOB_RECURSE HPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)
 
-# Recursively collect all source files from the current directory
+# Recursively collect all cpp files from the current directory
 file(GLOB_RECURSE CPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
-# Recursively collect all test files from the current directory
-file(GLOB_RECURSE TEST_CXX_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.test.cxx)
+# Recursively collect all cxx files from the current directory
+file(GLOB_RECURSE CXX_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cxx)
+
+# Create a list of *[test].cxx files from all cxx files
+set(CXX_FILES_TEST ${CXX_FILES})
+list(FILTER CXX_FILES_TEST INCLUDE REGEX "\\[test\\]")
+
+# Create a list of *[py].cxx files from all cxx files
+set(CXX_FILES_PY ${CXX_FILES})
+list(FILTER CXX_FILES_PY INCLUDE REGEX "\\[py\\]")
 
 # Enable automatic creation of a module definition (.def) file for a SHARED library on Windows.
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
@@ -79,7 +87,7 @@ if(REAKTORO_BUILD_TESTS)
     find_package(Catch2 REQUIRED)
 
     # Create a test executable target for Reaktoro
-    add_executable(reaktoro-cpptests ${TEST_CXX_FILES})
+    add_executable(reaktoro-cpptests ${CXX_FILES_TEST})
     target_link_libraries(reaktoro-cpptests Reaktoro Catch2::Catch2)
     target_include_directories(reaktoro-cpptests PUBLIC ${PROJECT_SOURCE_DIR})
     target_compile_definitions(reaktoro-cpptests PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline>)  # use EIGEN_STRONG_INLINE=inline instead of EIGEN_STRONG_INLINE=__forceinline with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile
@@ -100,11 +108,8 @@ if(REAKTORO_BUILD_PYTHON)
     # Find pybind11, needed to compile the python bindings
     find_package(pybind11 REQUIRED)
 
-    # Recursively collect all python binding files from the current directory
-    file(GLOB_RECURSE PY_CXX_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.py.cxx)
-
     # Compile Reaktoro *.py.cxx files into a Python module
-    pybind11_add_module(reaktoro4py ${PY_CXX_FILES})
+    pybind11_add_module(reaktoro4py ${CXX_FILES_PY})
 
     # Add the root directory of the project to the include list
     target_include_directories(reaktoro4py PRIVATE ${PROJECT_SOURCE_DIR})
