@@ -17,6 +17,7 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
+#include <pybind11/operators.h>
 #include <pybind11/stl.h>
 namespace py = pybind11;
 
@@ -51,6 +52,7 @@ void exportChemicalFormula(py::module& m)
         .def("charge", &ChemicalFormula::charge)
         .def("equivalent", equivalent1)  // pybind11 does not support overloading both static and instance methods
         // .def_static("equivalent", equivalent2)
+        .def(py::self == py::self)
         ;
 
     py::implicitly_convertible<String, ChemicalFormula>();
