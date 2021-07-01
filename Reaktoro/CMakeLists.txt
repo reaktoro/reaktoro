@@ -4,16 +4,11 @@ file(GLOB_RECURSE HPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)
 # Recursively collect all cpp files from the current directory
 file(GLOB_RECURSE CPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
-# Recursively collect all cxx files from the current directory
-file(GLOB_RECURSE CXX_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cxx)
+# Recursively collect all -test.cxx files from the current directory
+file(GLOB_RECURSE CXX_FILES_TEST RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *-test.cxx)
 
-# Create a list of *[test].cxx files from all cxx files
-set(CXX_FILES_TEST ${CXX_FILES})
-list(FILTER CXX_FILES_TEST INCLUDE REGEX "\\[test\\]")
-
-# Create a list of *[py].cxx files from all cxx files
-set(CXX_FILES_PY ${CXX_FILES})
-list(FILTER CXX_FILES_PY INCLUDE REGEX "\\[py\\]")
+# Recursively collect all -py.cxx files from the current directory
+file(GLOB_RECURSE CXX_FILES_PY RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *-py.cxx)
 
 # Enable automatic creation of a module definition (.def) file for a SHARED library on Windows.
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
