@@ -84,7 +84,7 @@ auto Phase::withName(String name) -> Phase
     return copy;
 }
 
-auto Phase::withSpecies(const SpeciesList& species) -> Phase
+auto Phase::withSpecies(SpeciesList species) -> Phase
 {
     detail::ensureCommonAggregateState(species);
     Phase copy = clone();

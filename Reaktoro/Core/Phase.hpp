@@ -41,7 +41,7 @@ public:
     auto withName(String name) -> Phase;
 
     /// Return a copy of this Phase object with new list of species.
-    auto withSpecies(const SpeciesList& species) -> Phase;
+    auto withSpecies(SpeciesList species) -> Phase;
 
     /// Return a copy of this Phase object with a new state of matter.
     auto withStateOfMatter(StateOfMatter state) -> Phase;
