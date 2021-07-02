@@ -21,8 +21,8 @@
 #define Phreeqc PHREEQC
 #define protected public
 
-#include <phreeqc/Phreeqc.h>
-#include <phreeqc/GasPhase.h>
+#include <phreeqc4rkt/Phreeqc.h>
+#include <phreeqc4rkt/GasPhase.h>
 
 using PhreeqcElement = element;
 using PhreeqcSpecies = species;

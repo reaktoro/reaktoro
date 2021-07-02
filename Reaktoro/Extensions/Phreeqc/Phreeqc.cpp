@@ -31,13 +31,6 @@
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
-// Phreeqc includes
-// #define Phreeqc PHREEQC
-// #define protected public
-// #include <phreeqc/Phreeqc.h>
-// #include <phreeqc/GasPhase.h>
-// #undef Phreeqc
-
 namespace Reaktoro {
 namespace {
 

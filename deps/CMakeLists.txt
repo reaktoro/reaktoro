@@ -50,25 +50,10 @@ set(REAKTORO_DEPS_COMMON_INSTALL_ARGS
 execute_process(COMMAND git submodule update --init --recursive
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Build Eigen library
-ExternalProject_Add(EIGEN
-    PREFIX etc
-    GIT_REPOSITORY  https://gitlab.com/libeigen/eigen.git
-    # GIT_TAG master
-    # GIT_SHALLOW true
-    # GIT_TAG 9a4d04c05fbaad6e6de750b13cfeab9edeb71c90  # 10 Oct 2020
-    GIT_TAG 1f4c0311cda3403999b702c996898af5707973a9  # 18 Apr 2021
-    CMAKE_ARGS
-        ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/public
-        -DBUILD_TESTING=FALSE
-)
-
 # Build Optima library
 ExternalProject_Add(OPTIMA
     PREFIX etc
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/optima
-    DEPENDS EIGEN
     BUILD_ALWAYS ON
     CMAKE_ARGS
         ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
@@ -81,7 +66,6 @@ ExternalProject_Add(OPTIMA
 ExternalProject_Add(AUTODIFF
     PREFIX etc
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/autodiff
-    DEPENDS EIGEN
     BUILD_ALWAYS ON
     CMAKE_ARGS
         ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
@@ -105,21 +89,3 @@ ExternalProject_Add(YAMLCPP
         -DYAML_CPP_BUILD_TOOLS=OFF
         -DCMAKE_BUILD_TYPE=Release
 )
-
-# Build and install the Phreeqc library
-ExternalProject_Add(PHREEQC
-    PREFIX etc
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/phreeqc
-    CMAKE_ARGS
-        ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/private
-)
-
-# # Build and install the Gems library
-# ExternalProject_Add(GEMS
-#     PREFIX etc
-#     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gems
-#     CMAKE_ARGS
-#         ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
-#         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/private
-# )
