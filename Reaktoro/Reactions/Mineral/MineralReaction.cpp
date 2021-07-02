@@ -21,7 +21,7 @@
 // #include <cmath>
 
 // // Eigen includes
-// #include <Reaktoro/deps/eigen3/Eigen/LU>
+// #include <Eigen/LU>
 
 // // Reaktoro includes
 // #include <Reaktoro/Common/Algorithms.hpp>

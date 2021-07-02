@@ -18,7 +18,7 @@
 #include "Phreeqc.hpp"
 
 // Eigen includes
-#include <Reaktoro/deps/eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>

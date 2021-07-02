@@ -18,7 +18,7 @@
 #pragma once
 
 // Eigen includes
-#include <Reaktoro/deps/eigen3/Eigen/Core>
+#include <Eigen/Core>
 
 // autodiff includes
 #include <autodiff/forward/real/eigen.hpp>

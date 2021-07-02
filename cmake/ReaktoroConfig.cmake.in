@@ -10,6 +10,7 @@ endif()
 list(APPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX})
 
 # Find all dependencies below.
+find_package(Eigen3 3.3.90 REQUIRED)
 find_package(autodiff REQUIRED)
 find_package(nlohmann_json 3.4.0 REQUIRED)
 find_package(Optima REQUIRED)

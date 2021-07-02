@@ -24,8 +24,8 @@
 #include <Reaktoro/Math/Roots.hpp>
 
 // Eigen includes
-#include <Reaktoro/deps/eigen3/Eigen/Dense>
-#include <Reaktoro/deps/eigen3/unsupported/Eigen/Polynomials>
+#include <Eigen/Dense>
+#include <unsupported/Eigen/Polynomials>
 
 namespace Reaktoro {
 

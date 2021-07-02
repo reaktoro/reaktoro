@@ -38,12 +38,11 @@ target_include_directories(Reaktoro
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro
     PRIVATE pugixml
-    PRIVATE sundials_cvode
-    PRIVATE sundials_nvecserial
     PRIVATE phreeqc
     # PRIVATE gems
     PRIVATE nlohmann_json::nlohmann_json
     PRIVATE Reaktoro::Databases
+    PUBLIC Eigen3::Eigen
     PUBLIC autodiff::autodiff
     PUBLIC Optima::Optima
     PUBLIC yaml-cpp
