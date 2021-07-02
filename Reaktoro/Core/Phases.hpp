@@ -43,17 +43,17 @@ struct Speciate
 /// The auxiliary function used to specify phase species to be determined from element symbols.
 inline auto speciate(const StringList& symbols) { return Speciate{symbols}; };
 
-/// The auxiliary type used to specify phase tags to be excluded from the list of species.
+/// The auxiliary type used to specify species that should be filtered out when contructing a phase.
 struct Exclude
 {
-    /// The symbols of the elements composing the species in a phase.
+    /// The tags which species cannot have when populating the species in a phase.
     Strings tags;
 
-    /// Add other tags symbols into the speciation list.
-    auto operator+=(const Strings& othersymbols) -> Exclude& { tags = merge(tags, othersymbols); return *this; }
+    /// Add other tags symbols into the exclude list.
+    auto operator+=(const Strings& othertags) -> Exclude& { tags = merge(tags, othertags); return *this; }
 };
 
-/// The auxiliary function used to specify phase tags to be excluded from the list of species.
+/// The auxiliary function used to specify species that should be filtered out when contructing a phase.
 inline auto exclude(const StringList& tags) { return Exclude{tags}; };
 
 /// The base type for all other classes defining more specific phases.
@@ -337,10 +337,10 @@ public:
     /// Construct a LiquidPhase object with given element symbols.
     explicit LiquidPhase(const Speciate& elements) : GenericPhase(elements) { initialize(); }
 
-    /// Construct an LiquidPhase object with given element symbols excluding the species with provided tags
+    /// Construct a LiquidPhase object with given element symbols excluding the species with provided tags.
     explicit LiquidPhase(const Speciate& elements, const Exclude& withtags) { initialize(); };
 
-    /// Construct an LiquidPhase object excluding the species with provided tags
+    /// Construct a LiquidPhase object excluding the species with provided tags.
     explicit LiquidPhase(const Exclude& withtags) { initialize(); };
 
     /// Initialize the default attributes of this LiquidPhase object.
