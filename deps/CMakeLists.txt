@@ -53,7 +53,11 @@ execute_process(COMMAND git submodule update --init --recursive
 # Build Eigen library
 ExternalProject_Add(EIGEN
     PREFIX etc
-    URL ${CMAKE_CURRENT_SOURCE_DIR}/eigen/eigen-master-9a4d04c05fbaad6e6de750b13cfeab9edeb71c90.tar.gz
+    GIT_REPOSITORY  https://gitlab.com/libeigen/eigen.git
+    # GIT_TAG master
+    # GIT_SHALLOW true
+    # GIT_TAG 9a4d04c05fbaad6e6de750b13cfeab9edeb71c90  # 10 Oct 2020
+    GIT_TAG 1f4c0311cda3403999b702c996898af5707973a9  # 18 Apr 2021
     CMAKE_ARGS
         ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/public
@@ -100,17 +104,6 @@ ExternalProject_Add(YAMLCPP
         -DYAML_CPP_BUILD_TESTS=OFF
         -DYAML_CPP_BUILD_TOOLS=OFF
         -DCMAKE_BUILD_TYPE=Release
-)
-
-# Build and install the cvode library
-ExternalProject_Add(CVODE
-    PREFIX etc
-    URL ${CMAKE_CURRENT_SOURCE_DIR}/cvode/cvode-2.8.2.tar.gz
-    CMAKE_ARGS
-        ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/private
-        -DEXAMPLES_ENABLE=OFF
-        -DEXAMPLES_INSTALL=OFF
 )
 
 # Build and install the Phreeqc library
