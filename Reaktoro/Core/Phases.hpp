@@ -408,6 +408,12 @@ public:
     /// Construct a MineralPhases object with given element symbols.
     explicit MineralPhases(const Speciate& elements) : GenericPhasesGenerator(elements) { initialize(); }
 
+    /// Construct a MineralPhases object with given element symbols excluding the species with provided tags
+    explicit MineralPhases(const Speciate& elements, const Exclude& withtags) { initialize(); };
+
+    /// Construct a MineralPhases object excluding the species with provided tags
+    explicit MineralPhases(const Exclude& withtags) { initialize(); };
+
     /// Initialize the default attributes of this MineralPhases object.
     auto initialize() -> void
     {
