@@ -321,6 +321,13 @@ auto ChemicalProperties::phaseSpecificVolumes() const -> ChemicalVector
     return phaseAmounts()/phaseMasses() % phaseMolarVolumes();
 }
 
+auto ChemicalProperties::phaseCompressibilityFactors() const -> ChemicalVector
+{
+    const auto& R = universalGasConstant;
+    const auto& v = phaseMolarVolumes();
+    return P * v / (R * T);
+}
+
 auto ChemicalProperties::phaseSpecificEntropies() const -> ChemicalVector
 {
     return phaseAmounts()/phaseMasses() % phaseMolarEntropies();

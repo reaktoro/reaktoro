@@ -21,7 +21,7 @@ add_custom_target(reaktoro ALL
     COMMAND ${PYTHON_EXECUTABLE} -m pip install
         reaktoro --prefix=${CMAKE_BINARY_DIR}
         --find-links=${CMAKE_CURRENT_BINARY_DIR}/dist
-        --no-index --no-deps --no-cache-dir
+        --no-index --no-deps --no-cache-dir --force-reinstall
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 # Set dependencies of reaktoro target
@@ -66,7 +66,7 @@ install(CODE
         COMMAND ${PYTHON_EXECUTABLE} -m pip
             install reaktoro --prefix=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
             --find-links=\${REAKTORO_PYTHON_DIST_DIR_NATIVE}
-	    --no-index --no-deps --no-cache-dir
+	    --no-index --no-deps --no-cache-dir --force-reinstall
         WORKING_DIRECTORY ${REAKTORO_PYTHON_INSTALL_PREFIX})
 "
 )

@@ -151,6 +151,9 @@ public:
     /// Return the specific volumes of the phases (in units of m3/kg).
     auto phaseSpecificVolumes() const -> ChemicalVector;
 
+    /// Return the compressibility factor of the phases.
+    auto phaseCompressibilityFactors() const -> ChemicalVector;
+
     /// Return the specific entropies of the phases (in units of J/(kg*K)).
     auto phaseSpecificEntropies() const -> ChemicalVector;
 
