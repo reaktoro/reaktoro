@@ -1,21 +1,16 @@
-# Append the path to the installed dependency libraries to CMAKE_PREFIX_PATH
-list(APPEND CMAKE_PREFIX_PATH
-    ${REAKTORO_DEPS_INSTALL_DIR_PUBLIC}
-    ${REAKTORO_DEPS_INSTALL_DIR_PRIVATE})
-
 if(REAKTORO_ENABLE_OPENLIBM)
     find_package(openlibm REQUIRED)
 endif()
 
-set(REAKTORO_USE_autodiff "" CACHE PATH "Specify this option in case a specific autodiff library should be used.")
-set(REAKTORO_USE_Catch2 "" CACHE PATH "Specify this option in case a specific Catch2 library should be used.")
-set(REAKTORO_USE_Eigen3 "" CACHE PATH "Specify this option in case a specific Eigen library should be used.")
+set(REAKTORO_USE_autodiff      "" CACHE PATH "Specify this option in case a specific autodiff library should be used.")
+set(REAKTORO_USE_Catch2        "" CACHE PATH "Specify this option in case a specific Catch2 library should be used.")
+set(REAKTORO_USE_Eigen3        "" CACHE PATH "Specify this option in case a specific Eigen library should be used.")
 set(REAKTORO_USE_nlohmann_json "" CACHE PATH "Specify this option in case a specific nlohmann-json library should be used.")
-set(REAKTORO_USE_Optima "" CACHE PATH "Specify this option in case a specific Optima library should be used.")
-set(REAKTORO_USE_phreeqc4rkt "" CACHE PATH "Specify this option in case a specific Phreeqc library should be used.")
-set(REAKTORO_USE_pybind11 "" CACHE PATH "Specify this option in case a specific pybind11 library should be used.")
-set(REAKTORO_USE_ThermoFun "" CACHE PATH "Specify this option in case a specific ThermoFun library should be used.")
-set(REAKTORO_USE_yaml-cpp "" CACHE PATH "Specify this option in case a specific yaml-cpp library should be used.")
+set(REAKTORO_USE_Optima        "" CACHE PATH "Specify this option in case a specific Optima library should be used.")
+set(REAKTORO_USE_phreeqc4rkt   "" CACHE PATH "Specify this option in case a specific Phreeqc library should be used.")
+set(REAKTORO_USE_pybind11      "" CACHE PATH "Specify this option in case a specific pybind11 library should be used.")
+set(REAKTORO_USE_ThermoFun     "" CACHE PATH "Specify this option in case a specific ThermoFun library should be used.")
+set(REAKTORO_USE_yaml-cpp      "" CACHE PATH "Specify this option in case a specific yaml-cpp library should be used.")
 
 function(ReaktoroFindPackage package)
     # ARGV0: package name (required)
