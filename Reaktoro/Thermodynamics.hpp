@@ -61,6 +61,7 @@
 #include <Reaktoro/Thermodynamics/Species/FluidSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/ThermoData.hpp>
+#include <Reaktoro/Thermodynamics/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
