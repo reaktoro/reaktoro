@@ -59,7 +59,7 @@ def test_equilibrium_CH4_liq_gas(temperature, pressure, num_regression):
     
     options = EquilibriumOptions()
     options.hessian = GibbsHessian.Exact
-    options.optimum.max_iterations = 2000
+    options.optimum.max_iterations = 200
     options.optimum.tolerance = 1e-12
     solver.setOptions(options)
             
