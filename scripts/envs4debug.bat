@@ -3,5 +3,8 @@
 @REM below will be update so that the python package and C++ libraries can
 @REM be found if necessary (e.g., to execute pytest).
 
-set PYTHONPATH=%CD%\python\package\installed\Debug\Lib\site-packages;%CD%\..\deps\build\install\public\lib\site-packages;%PYTHONPATH%
-set PATH=%CD%\bin\Debug;%CD%\..\deps\build\install\public\lib;%PATH%
+if not defined REAKTORO_BACKUP_PYTHONPATH set REAKTORO_BACKUP_PYTHONPATH=%PYTHONPATH%
+if not defined REAKTORO_BACKUP_PATH set REAKTORO_BACKUP_PATH=%PATH%
+
+set PYTHONPATH=%CD%\python\package\installed\Debug\Lib\site-packages;%CD%\python\package\installed\Lib\site-packages;%REAKTORO_BACKUP_PYTHONPATH%
+set PATH=%CD%\Reaktoro\Debug;%CD%\Reaktoro;%REAKTORO_BACKUP_PATH%
