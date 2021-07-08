@@ -1,71 +1,45 @@
 name: reaktoro
 
 {% set python_version = os.environ.get("PY_VER", "3.7") %}
-{% set debug = os.environ.get("CONFIG", "").lower() == "debug" %}
-{% set use_openlibm = os.environ.get("REAKTORO_USE_OPENLIBM", "0").strip() != "0" %}
 
 channels:
   - conda-forge
 
 dependencies:
-  # C++ compilers
-  - gxx_linux-64=7.3.0  # [linux]
-  - clangxx=9.0.0  # [osx]
-
-  # C++ libraries
-  - pybind11>=2.5.0
-  - thermofun==0.3.7
-  - nlohmann_json==3.6.1
-  - eigen4rkt
-  - phreeqc4rkt
-  - optima
-  # - yaml-cpp  # current version on conda-forge, v0.63, has no support for enconding nan and inf values (using master version with git submodule)
-  {% if not debug %}
-  - pugixml  # cannot link the Release version of `pugixml` (from conda) to the Debug version of Reaktoro
-  {% endif %}
-  {% if use_openlibm %}
-  - openlibm
-  {% endif %}
-
-  # Documentation dependencies
-  - doxygen=1.8.20                 # [linux]
-  - graphviz                       # [linux]
-  - sphinx==1.8.5
-  - sphinx-autobuild
-  - sphinx_rtd_theme
-  - pip:
-    - sphinxcontrib-images
-    - oyaml
-    - pybind11-stubgen  # used to generate pyi file for the compiled python package (for better IntelliSense)
-
-  # Python dependencies
-  - python={{ python_version }}
-  - numpy
-  - pandas
-  - pip
-  - fire
-  - tabulate
-
-  # Python test dependencies
-  - pytest
-  - pytest-cpp
-  - pytest-datadir
-  - pytest-lazy-fixture
-  - pytest-regressions
-  - pytest-timeout
-  - pytest-xdist
-
-  # Utilities dependencies
-  - cmake>=3.17
-  - git>=2.28
-  - ninja>=1.9.0
-  - ccache                         # [unix]
-  - clcache                        # [win]
+  - autodiff
   - catch2
-  - invoke
-
-environment:                                # [win]
-  CC: clcache                               # [win]
-  CXX: clcache                              # [win]
-  CLCACHE_BASEDIR: {{ root }}               # [win]
-  CLCACHE_OBJECT_CACHE_TIMEOUT_MS: 3600000  # [win] # Improves CLCACHE robustness, minimizing the chance of a race condition
+  - ccache  # [unix]
+  - clangxx_osx-64  # [osx]
+  - clcache  # [win]
+  - cmake
+  - doxygen=1.8.20  # [linux]
+  - eigen4rkt
+  - fire
+  - git
+  - graphviz  # [linux]
+  - gxx_linux-64  # [linux]
+  - ninja
+  - nlohmann_json
+  - numpy
+  - openlibm
+  - optima
+  - pandas
+  - phreeqc4rkt
+  - pip
+  - pugixml
+  - pybind11
+  - pybind11-abi
+  - pybind11-stubgen
+  - pytest
+  - pytest-regressions
+  - pytest-xdist
+  - python={{ python_version }}
+  - sphinx_rtd_theme
+  - sphinx-autobuild
+  - sphinx==1.8.5
+  - thermofun==0.3.7
+  - vs2019_win-64  # [win]
+  - yaml-cpp4rkt
+  - pip:
+    - oyaml
+    - sphinxcontrib-images
