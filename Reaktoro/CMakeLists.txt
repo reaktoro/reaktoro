@@ -13,10 +13,6 @@ file(GLOB_RECURSE CXX_FILES_PY RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *-py.cxx)
 # Enable automatic creation of a module definition (.def) file for a SHARED library on Windows.
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 
-# Add the library path of the external dependencies to link directories
-# Note: cmake v3.13 is needed to use target_link_directories command!
-link_directories(${REAKTORO_DEPS_INSTALL_LIBRARY_DIRS})
-
 # Create a library target for Reaktoro
 add_library(Reaktoro ${HPP_FILES} ${CPP_FILES})
 
@@ -28,12 +24,8 @@ add_dependencies(Reaktoro Reaktoro::Databases)
 
 # Add the include paths to Reaktoro library target
 target_include_directories(Reaktoro
-    PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/deps/eigen3>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro/deps/eigen3>
-    PRIVATE ${REAKTORO_DEPS_INSTALL_INCLUDE_DIRS})
+    PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>)
 
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro

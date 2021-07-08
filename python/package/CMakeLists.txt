@@ -1,16 +1,10 @@
 # The name of the compiled python module file as defined by pybind11 used in setup.py.in
 set(REAKTORO_PYTHON_MODULE_FILENAME reaktoro4py${PYTHON_MODULE_EXTENSION})
 
-# The path in the binary dir where the python package is assembled before it is built
-set(REAKTORO_PYTHON_PACKAGE_PATH ${CMAKE_CURRENT_BINARY_DIR}/reaktoro)
-
 # Configure the setup.py file
 set(SETUP_PY_IN ${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in)
 set(SETUP_PY ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
 configure_file(${SETUP_PY_IN} ${SETUP_PY})
-
-# This is needed in Windows so that the next step produces the python package in CMAKE_BINARY_DIR\Lib\site-packages\reaktoro
-file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR} CMAKE_BINARY_DIR_NATIVE)
 
 # Create pybind11-stubgen command string depending if this program has been found or not
 if(PYBIND11_STUBGEN)
@@ -21,6 +15,7 @@ endif()
 
 # Create a custom target to build the python package during build stage
 add_custom_target(reaktoro-setuptools ALL
+    DEPENDS reaktoro4py
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/reaktoro ${CMAKE_CURRENT_BINARY_DIR}/reaktoro
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:reaktoro4py> ${CMAKE_CURRENT_BINARY_DIR}/reaktoro
     COMMAND ${CMAKE_COMMAND} -E env
@@ -32,9 +27,6 @@ add_custom_target(reaktoro-setuptools ALL
     COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} --quiet install --force --no-compile --prefix=installed/$<CONFIG>
     COMMAND ${CMAKE_COMMAND} -E rm ${CMAKE_CURRENT_BINARY_DIR}/reaktoro/$<TARGET_FILE_NAME:reaktoro4py>
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-
-# Set dependencies of the python package target
-add_dependencies(reaktoro-setuptools reaktoro4py)
 
 # Ensure the path where the python package is installed is not empty
 if(NOT DEFINED REAKTORO_PYTHON_INSTALL_PREFIX)

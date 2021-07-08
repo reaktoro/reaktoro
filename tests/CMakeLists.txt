@@ -13,6 +13,7 @@ endif()
 
 # Create target `tests-cpp` to execute C++ tests
 add_custom_target(tests-cpp
+    DEPENDS reaktoro-cpptests
     COMMENT "Running C++ tests..."
     COMMAND ${CMAKE_COMMAND} -E env
         "PATH=${REAKTORO_PATH}"
@@ -21,6 +22,7 @@ add_custom_target(tests-cpp
 
 # Create target `tests-py` to execute Python tests
 add_custom_target(tests-py
+    DEPENDS reaktoro4py
     COMMENT "Running Python tests..."
     COMMENT "Starting parallel execution of pytest..."
     COMMAND ${CMAKE_COMMAND} -E env

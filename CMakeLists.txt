@@ -13,9 +13,6 @@ include(CMakeRC)
 # Set the name of the projectw
 project(Reaktoro VERSION 2.0 LANGUAGES CXX)
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
-
 # Check if a conda environment is active
 include(CondaAware)
 
@@ -45,9 +42,6 @@ option(REAKTORO_ENABLE_OPENLIBM "Build linking with openlibm." OFF)
 # Define if shared library should be build instead of static.
 option(BUILD_SHARED_LIBS "Build shared libraries." ON)
 
-# Define custom options
-option(ENABLE_TESTING "Enable testing." on)
-
 # Set the default build type to Release
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     message(STATUS "Setting build type to Release as none was specified.")
@@ -70,23 +64,6 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     )
 endif()
 
-# The directory where the external dependency libraries are installed
-set(REAKTORO_DEPS_INSTALL_DIR ${PROJECT_SOURCE_DIR}/deps/build/install)
-
-# The directories where the public and private external dependency libraries are installed
-set(REAKTORO_DEPS_INSTALL_DIR_PUBLIC ${REAKTORO_DEPS_INSTALL_DIR}/public)
-set(REAKTORO_DEPS_INSTALL_DIR_PRIVATE ${REAKTORO_DEPS_INSTALL_DIR}/private)
-
-# The directories where the include directory of the external dependencies are installed
-set(REAKTORO_DEPS_INSTALL_INCLUDE_DIRS
-    ${REAKTORO_DEPS_INSTALL_DIR_PUBLIC}/include
-    ${REAKTORO_DEPS_INSTALL_DIR_PRIVATE}/include)
-
-# The directories where the lib directory of the external dependencies are installed
-set(REAKTORO_DEPS_INSTALL_LIBRARY_DIRS
-    ${REAKTORO_DEPS_INSTALL_DIR_PUBLIC}/lib
-    ${REAKTORO_DEPS_INSTALL_DIR_PRIVATE}/lib)
-
 # The relative path where site-packages directory is located for current platform
 execute_process(
     COMMAND "${PYTHON_EXECUTABLE}" -c "if True:
@@ -98,21 +75,17 @@ execute_process(
 # The directory where the python package reaktoro is built
 set(REAKTORO_PYTHON_PACKAGE_DIR ${CMAKE_BINARY_DIR}/python/package/build/lib)
 
-# The directory where the python packages of the managed dependencies have been previously installed
-set(REAKTORO_DEPS_INSTALL_PYTHON_PACKAGES_DIR
-    ${REAKTORO_DEPS_INSTALL_DIR_PUBLIC}/${PYTHON_SITE_PACKAGES_DIR})
-
 # Define variables REAKTORO_PATH and REAKTORO_PYTHONPATH used to set environment variables PATH and PYTHONPATH.
 if(WIN32)
-    set(REAKTORO_PATH "${CMAKE_BINARY_DIR}/Reaktoro/$<CONFIG>\;${REAKTORO_DEPS_INSTALL_DIR_PUBLIC}/bin")
-    set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR}\;${REAKTORO_DEPS_INSTALL_PYTHON_PACKAGES_DIR}")
+    set(REAKTORO_PATH "${CMAKE_BINARY_DIR}/Reaktoro/$<CONFIG>")
+    set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR}")
     file(TO_NATIVE_PATH ${REAKTORO_PATH} REAKTORO_PATH)
     file(TO_NATIVE_PATH ${REAKTORO_PYTHONPATH} REAKTORO_PYTHONPATH)
     set(REAKTORO_PATH "${REAKTORO_PATH}\;$ENV{PATH}")
     set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHONPATH}\;$ENV{PYTHONPATH}")
 else()
     set(REAKTORO_PATH "$ENV{PATH}")
-    set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR}:${REAKTORO_DEPS_INSTALL_PYTHON_PACKAGES_DIR}:$ENV{PYTHONPATH}")
+    set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR}:$ENV{PYTHONPATH}")
 endif()
 
 # Find all Reaktoro dependencies
