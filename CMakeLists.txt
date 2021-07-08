@@ -40,7 +40,7 @@ if(REAKTORO_BUILD_ALL MATCHES ON)
 endif()
 
 # Define is Reaktoro should be built linking against openlibm instead of system's default libm
-option(REAKTORO_USE_OPENLIBM "Build linking with openlibm." OFF)
+option(REAKTORO_ENABLE_OPENLIBM "Build linking with openlibm." OFF)
 
 # Define if shared library should be build instead of static.
 option(BUILD_SHARED_LIBS "Build shared libraries." ON)

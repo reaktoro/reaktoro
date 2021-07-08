@@ -45,19 +45,15 @@ target_link_libraries(Reaktoro
     PUBLIC Optima::Optima
     PUBLIC yaml-cpp
     PUBLIC phreeqc4rkt::phreeqc4rkt
+    PUBLIC ThermoFun::ThermoFun
 )
 
 # Enable implicit conversion of autodiff::real to double
 target_compile_definitions(Reaktoro PUBLIC AUTODIFF_ENABLE_IMPLICIT_CONVERSION_REAL=1)
 
-if(REAKTORO_USE_OPENLIBM)
+if(REAKTORO_ENABLE_OPENLIBM)
     configure_target_to_use_openlibm(Reaktoro)
-    target_compile_definitions(Reaktoro PUBLIC REAKTORO_USE_OPENLIBM=1)
-endif()
-
-# Link Reaktoro library against ThermoFun if found
-if(ThermoFun_FOUND)
-    target_link_libraries(Reaktoro PUBLIC ThermoFun::ThermoFun)
+    target_compile_definitions(Reaktoro PUBLIC REAKTORO_ENABLE_OPENLIBM=1)
 endif()
 
 # Set compilation features to be propagated to dependent codes.
