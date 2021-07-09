@@ -27,16 +27,24 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Timestamp  # Idea from https://tinyurl.com/47wz7vpv
+          id: timestamp
+          shell: cmake -P {0}
+          run: |
+            string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+            message("::set-output name=now::${current_date}")
+
       - name: Configuring Cache
         id: cache
         uses: actions/cache@v2
-        env:
-          cache-number: 0  # If build fails possibly because of cache, increase this number to create a new empty cache directory
         with:
           path: |
             C:\Users\runneradmin\clcache
             C:\Users\runneradmin\conda_pkgs_dir
-          key: ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-${{ env.cache-number }}-clcache
+          key:
+            ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-clcache-${ { steps.timestamp.outputs.now } }
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-clcache-
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
