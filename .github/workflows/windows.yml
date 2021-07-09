@@ -63,9 +63,7 @@ jobs:
           clcache -s || goto :eof
           clcache -z || goto :eof
           mkdir .build && cd .build || goto :eof
-          cmake -GNinja .. ^
-              -DCMAKE_CXX_COMPILER=clcache ^
-              -DCMAKE_BUILD_TYPE=${{ matrix.config }} || goto :eof
+          cmake -GNinja .. -DCMAKE_BUILD_TYPE=${{ matrix.config }} || goto :eof
           ninja || goto :eof
           ninja install || goto :eof
           ninja tests || goto :eof
