@@ -28,11 +28,11 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Timestamp  # Idea from https://tinyurl.com/47wz7vpv
-          id: timestamp
-          shell: cmake -P {0}
-          run: |
-            string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-            message("::set-output name=now::${current_date}")
+        id: timestamp
+        shell: cmake -P {0}
+        run: |
+          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+          message("::set-output name=now::${current_date}")
 
       - name: Configuring Cache
         id: cache
