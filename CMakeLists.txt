@@ -23,7 +23,6 @@ include(GNUInstallDirs)
 option(REAKTORO_BUILD_ALL         "Build everything." OFF)
 option(REAKTORO_BUILD_EXAMPLES    "Build examples." OFF)
 option(REAKTORO_BUILD_DOCS        "Build documentation." OFF)
-option(REAKTORO_BUILD_INTERPRETER "Build the interpreter executable reaktoro." OFF)
 option(REAKTORO_BUILD_PYTHON      "Build the python wrappers and python package reaktoro." ON)
 option(REAKTORO_BUILD_TESTS       "Build tests." ON)
 
@@ -102,11 +101,6 @@ if(REAKTORO_BUILD_PYTHON)
     add_subdirectory(python)
 endif()
 
-# Build the Python package ireaktoro, the Reaktoro interpreter
-if(REAKTORO_BUILD_INTERPRETER)
-    add_subdirectory(interpreter)
-endif()
-
 # Build the examples
 if(REAKTORO_BUILD_EXAMPLES)
     add_subdirectory(examples)
@@ -122,51 +116,11 @@ if(REAKTORO_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
-# Build the utilities
-add_subdirectory(utilities EXCLUDE_FROM_ALL)
-
 # Process sub-directory scripts
 add_subdirectory(scripts)
 
-# Add target "python" for manual building of python wrappers, as `make python`, if REAKTORO_BUILD_PYTHON is OFF
-# add_custom_target(python
-#     COMMAND ${CMAKE_MAKE_PROGRAM}
-#     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/python")
-
-# Add target "interpreter" for manual building of interpreter, as `make interpreter`, if REAKTORO_BUILD_INTERPRETER is OFF
-add_custom_target(interpreter
-    COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${CURRENT_BINARY_DIR}/interpreter")
-
-# Add target "examples" for manual building of examples, as `make examples`, if REAKTORO_BUILD_EXAMPLES is OFF
-add_custom_target(examples
-    COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/demos")
-
-# Add target "utilities" for manual building of utilities, as `make utilities`, if REAKTORO_BUILD_UTILITIES is OFF
-add_custom_target(utilities
-    COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/utilities")
-
-# Add target "deps" for updating the external dependencies
-add_custom_target(deps
-    COMMAND ${CMAKE_COMMAND} --build . --parallel
-    COMMAND ${CMAKE_COMMAND} --install .
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/deps/build")
-
-# Add target "autodiff" for updating external dependency autodiff
-add_custom_target(autodiff
-    COMMAND ${CMAKE_COMMAND} .
-    COMMAND ${CMAKE_COMMAND} --build . --parallel
-    COMMAND ${CMAKE_COMMAND} --install .
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/deps/build/etc/src/AUTODIFF-build")
-
-# Add target "optima" for updating external dependency Optima
-add_custom_target(optima
-    COMMAND ${CMAKE_COMMAND} .
-    COMMAND ${CMAKE_COMMAND} --build . --parallel
-    COMMAND ${CMAKE_COMMAND} --install .
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/deps/build/etc/src/OPTIMA-build")
+# Build the utilities
+add_subdirectory(utilities)
 
 # Package Reaktoro
 include(PackageReaktoro)
