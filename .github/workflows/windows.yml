@@ -46,28 +46,12 @@ jobs:
         with:
           path: $HOME\clcache
           key: ${{ runner.os }}-clcache
-      - name: Installing Dependencies
+      - name: Building, Testing & Installing Reaktoro
         shell: powershell
         run: |
-          conda activate reaktoro
-          cmake -P deps/install
-      - name: Configuring Reaktoro
-        shell: powershell
-        run: |
-          conda activate reaktoro
-          cmake -S . -B .build
-      - name: Building Reaktoro
-        shell: powershell
-        run: |
-          conda activate reaktoro
-          cmake --build .build --config ${{ env.configuration }}
-      - name: Installing Reaktoro
-        shell: powershell
-        run: |
-          conda activate reaktoro
-          cmake --build .build --config ${{ env.configuration }} --target install
-      - name: Testing Reaktoro
-        shell: powershell
-        run: |
-          conda activate reaktoro
-          cmake --build .build --config ${{ env.configuration }} --target tests
+          source activate reaktoro
+          mkdir .build && cd .build
+          cmake -GNinja .. -DCMAKE_BUILD_TYPE=${{ env.configuration }}
+          ninja
+          ninja tests
+          ninja install

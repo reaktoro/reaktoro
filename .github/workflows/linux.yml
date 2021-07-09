@@ -46,31 +46,15 @@ jobs:
         with:
           path: $HOME/.ccache
           key: ${{ runner.os }}-ccache
-      - name: Installing Dependencies
-        shell: bash -l {0}
-        run: |
-          source activate reaktoro
-          cmake -DJOBS=3 -P deps/install
-      - name: Configuring Reaktoro
-        shell: bash -l {0}
-        run: |
-          source activate reaktoro
-          cmake -S . -B .build
-      - name: Building Reaktoro
+      - name: Building, Testing & Installing Reaktoro
         shell: bash -l {0}
         run: |
           source activate reaktoro
           ccache -s
           ccache -z
-          cmake --build .build --config ${{ env.configuration }} --parallel 3
+          mkdir .build && cd .build
+          cmake -GNinja .. -DCMAKE_BUILD_TYPE=${{ env.configuration }}
+          ninja
+          ninja tests
+          ninja install
           ccache -s
-      - name: Installing Reaktoro
-        shell: bash -l {0}
-        run: |
-          source activate reaktoro
-          cmake --build .build --config ${{ env.configuration }} --target install
-      - name: Testing Reaktoro
-        shell: bash -l {0}
-        run: |
-          source activate reaktoro
-          cmake --build .build --config ${{ env.configuration }} --target tests
