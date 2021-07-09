@@ -1,6 +1,6 @@
 name: reaktoro
 
-{% set python_version = os.environ.get("PY_VER", "3.7") %}
+{% set python_version = os.environ.get("PYTHON_VERSION", "3.9") %}
 
 channels:
   - conda-forge
