@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${env:CONDA_PREFIX}/**"
+            ],
+            "defines": [
+                "AUTODIFF_ENABLE_IMPLICIT_CONVERSION_REAL=1"
+            ],
+            "compilerPath": "${env:CXX}",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}
