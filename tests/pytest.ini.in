@@ -1,4 +1,4 @@
 [pytest]
 testpaths        = ${CMAKE_SOURCE_DIR}/Reaktoro
-python_files     = *-test.py
+python_files     = *.py
 python_functions = test*

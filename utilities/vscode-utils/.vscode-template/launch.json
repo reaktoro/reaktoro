@@ -27,7 +27,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${env:CONDA_PREFIX}/bin/python",
-            "args": ["-m", "pytest", "Reaktoro/Core/ChemicalProps-test.py"],
+            "args": ["-m", "pytest", "Reaktoro/Core/ChemicalProps.py"],
             "preLaunchTask": "Build",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

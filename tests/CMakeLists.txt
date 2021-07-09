@@ -25,8 +25,6 @@ add_custom_target(tests-py
     DEPENDS reaktoro-setuptools
     COMMENT "Running Python tests..."
     COMMENT "Starting parallel execution of pytest..."
-    COMMAND ${CMAKE_COMMAND} -E echo "PATH=${REAKTORO_PATH}"
-    COMMAND ${CMAKE_COMMAND} -E echo "PYTHONPATH=${REAKTORO_PYTHONPATH}"
     COMMAND ${CMAKE_COMMAND} -E env
         "PATH=${REAKTORO_PATH}"
         "PYTHONPATH=${REAKTORO_PYTHONPATH}"

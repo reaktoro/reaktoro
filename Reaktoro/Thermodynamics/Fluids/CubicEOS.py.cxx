@@ -38,7 +38,7 @@ void exportCubicEOS(py::module& m)
         .value("GibbsEnergyAndEquationOfStateMethod", PhaseIdentificationMethod::GibbsEnergyAndEquationOfStateMethod)
         ;
 
-    // TODO: Implement CubicEOS-py.cxx (previous implementation in v1.0 no longer valid in v2.0)
+    // TODO: Implement CubicEOS.py.cxx (previous implementation in v1.0 no longer valid in v2.0)
     // py::class_<CubicEOSInteractionParams>(m, "CubicEOSInteractionParams")
     //     .def(
     //         py::init<CubicEOS::Model, PhaseIdentificationMethod, CubicEOS::InteractionParamsFunction>(),
