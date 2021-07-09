@@ -4,6 +4,7 @@
 if(UNIX)
     configure_file(envs.in ${PROJECT_BINARY_DIR}/envs)
     add_custom_target(envs
+        COMMENT "ATTENTION: Execute `source envs` instead! CMake will not propagate the changes below to its parent process."
         COMMAND bash -c "source envs"
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 endif()
