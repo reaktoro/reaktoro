@@ -1,4 +1,4 @@
-name: unix
+name: osx
 
 on:
   push:
