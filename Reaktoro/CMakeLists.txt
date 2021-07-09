@@ -118,25 +118,17 @@ install(TARGETS Reaktoro
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT libraries)
 
-# Install debug symbols
+# Install Reaktoro debug symbols for MSVC builds
 if(MSVC)
-    install(
-        FILES $<TARGET_PDB_FILE:Reaktoro>
+    install(FILES $<TARGET_PDB_FILE:Reaktoro>
         DESTINATION ${CMAKE_INSTALL_BINDIR}
         COMPONENT libraries
-        OPTIONAL
-    )
+        OPTIONAL)
 endif()
 
 # Install Reaktoro header files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers
-    FILES_MATCHING PATTERN "*.hpp")
-
-# Install Reaktoro/deps header files
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro/deps
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro COMPONENT headers)
-
-# Install public external deps libraries
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/deps/build/install/public/
-    DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT libraries)
+    FILES_MATCHING
+        PATTERN "*.hpp"
+        PATTERN "__pycache__" EXCLUDE)
