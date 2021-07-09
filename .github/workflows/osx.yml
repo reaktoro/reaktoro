@@ -1,0 +1,69 @@
+name: unix
+
+on:
+  push:
+    branches:
+      - master
+      - v2.0-preview
+
+  pull_request:
+
+  schedule:
+    - cron: "0 5 * * 1"  # runs at 05:00 UTC on Mondays
+
+jobs:
+  build:
+    name: ${{ matrix.config }} build on ${{ matrix.os }} (Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      max-parallel: 4
+      matrix:
+        os: ["macos-latest"]
+        python-version: [3.9]
+        config: ["Release"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Configuring Cache
+        id: cache
+        uses: actions/cache@v2
+        env:
+          cache-number: 0  # If build fails possibly because of cache, increase this number to create a new empty cache directory
+        with:
+          path: |
+            ~/.ccache
+            ~/conda_pkgs_dir
+          key: ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-${{ env.cache-number }}-ccache
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge
+          channel-priority: true
+          use-only-tar-bz2: true  # IMPORTANT: This needs to be set true for caching of miniconda packages to work properly!
+
+      - name: Configuring Conda Environment
+        shell: bash -l {0}
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
+        run: |
+          conda config --set always_yes yes --set changeps1 no
+          conda config --add channels conda-forge
+          conda install conda-devenv
+          conda devenv
+
+      - name: Building, Testing & Installing Reaktoro
+        shell: bash -l {0}
+        run: |
+          source activate reaktoro
+          ccache -s
+          ccache -z
+          mkdir .build && cd .build
+          cmake -GNinja .. -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+          ninja
+          ninja tests
+          ninja install
+          ccache -s
