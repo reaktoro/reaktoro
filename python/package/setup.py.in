@@ -25,7 +25,7 @@ setup(
     packages=['reaktoro', 'reaktoro.extensions'],
     package_data={
         'reaktoro': [
-            '${REAKTORO_PYTHON_MODULE_FILENAME}',
+            'reaktoro4py${PYTHON_MODULE_EXTENSION}',
             'reaktoro4py/*'
             '*.pyi',
         ],
