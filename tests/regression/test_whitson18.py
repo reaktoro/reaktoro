@@ -6,8 +6,6 @@ import reaktoro
 
 from numpy.testing import assert_allclose
 
-is_debug_plots_on = False
-
 
 @pytest.fixture
 def data_dir():
@@ -21,7 +19,35 @@ def whitson_pvtlib_results(data_dir):
     df_pvtlib_result = pd.read_csv(
         data_dir / "pvtlib_table_whitson18_fixed_T.csv",
     )
-    return df_pvtlib_result
+
+    whitson_results = dict()
+
+    df_pressures = df_pvtlib_result["P"].copy()
+    df_pressures.drop_duplicates(inplace=True)
+
+    whitson_results["Simulated Pressure [psi]"] = np.array(df_pressures.values)
+
+    df_pvtlib_result_gas = df_pvtlib_result[df_pvtlib_result.phase_id == 1]
+    whitson_results["Phase Fraction - gas"] = np.array(df_pvtlib_result_gas.F.values)
+    whitson_results["Pressure - gas [psi]"] = np.array(df_pvtlib_result_gas.P.values)
+    whitson_results["C1(g)"] = np.array(df_pvtlib_result_gas.x0)
+    whitson_results["C4(g)"] = np.array(df_pvtlib_result_gas.x1)
+    whitson_results["C10(g)"] = np.array(df_pvtlib_result_gas.x2)
+    whitson_results["fugacities C1(g)"] = np.array(df_pvtlib_result_gas.fugacity_0)
+    whitson_results["fugacities C4(g)"] = np.array(df_pvtlib_result_gas.fugacity_1)
+    whitson_results["fugacities C10(g)"] = np.array(df_pvtlib_result_gas.fugacity_2)
+
+    df_pvtlib_result_liq = df_pvtlib_result[df_pvtlib_result.phase_id == 0]
+    whitson_results["Phase Fraction - liq"] = np.array(df_pvtlib_result_liq.F.values)
+    whitson_results["Pressure - liq [psi]"] = np.array(df_pvtlib_result_liq.P.values)
+    whitson_results["C1(liq)"] = np.array(df_pvtlib_result_liq.x0)
+    whitson_results["C4(liq)"] = np.array(df_pvtlib_result_liq.x1)
+    whitson_results["C10(liq)"] = np.array(df_pvtlib_result_liq.x2)
+    whitson_results["fugacities C1(liq)"] = np.array(df_pvtlib_result_liq.fugacity_0)
+    whitson_results["fugacities C4(liq)"] = np.array(df_pvtlib_result_liq.fugacity_1)
+    whitson_results["fugacities C10(liq)"] = np.array(df_pvtlib_result_liq.fugacity_2)
+
+    return whitson_results
 
 
 @pytest.fixture
@@ -30,22 +56,12 @@ def composition():
 
 
 @pytest.fixture
-def gaseous_species():
-    return ["C1(g)", "C4(g)", "C10(g)"]
-
-
-@pytest.fixture
-def oil_species():
-    return ["C1(liq)", "C4(liq)", "C10(liq)"]
-
-
-@pytest.fixture
 def custom_hydrocarbon_db(data_dir):
     return reaktoro.Database(str(data_dir / 'hydrocarbons.xml'))
 
 
 @pytest.fixture
-def whitson_chemical_system(gaseous_species, oil_species, custom_hydrocarbon_db):
+def whitson_chemical_system(custom_hydrocarbon_db):
 
     editor = reaktoro.ChemicalEditor(custom_hydrocarbon_db)
 
@@ -53,8 +69,8 @@ def whitson_chemical_system(gaseous_species, oil_species, custom_hydrocarbon_db)
         model=reaktoro.CubicEOSModel.PengRobinson,
     )
 
-    editor.addGaseousPhase(gaseous_species).setChemicalModelCubicEOS(eos_params)
-    editor.addLiquidPhase(oil_species).setChemicalModelCubicEOS(eos_params)
+    editor.addGaseousPhase(["C1(g)", "C4(g)", "C10(g)"]).setChemicalModelCubicEOS(eos_params)
+    editor.addLiquidPhase(["C1(liq)", "C4(liq)", "C10(liq)"]).setChemicalModelCubicEOS(eos_params)
 
     system = reaktoro.ChemicalSystem(editor)
 
@@ -67,15 +83,7 @@ def test_composition_results(
     whitson_pvtlib_results,
     num_regression
 ):
-    temperature = 280  # degF
-
     system = whitson_chemical_system
-    problem = reaktoro.EquilibriumProblem(system)
-
-    problem.setTemperature(temperature, 'degF')
-    problem.setElementAmount('C1', composition[0])
-    problem.setElementAmount('C4', composition[1])
-    problem.setElementAmount('C10', composition[2])
 
     options = reaktoro.EquilibriumOptions()
     options.hessian = reaktoro.GibbsHessian.Exact  # required change for this case
@@ -90,30 +98,29 @@ def test_composition_results(
     state.setSpeciesAmount("C4(g)", composition[1])  
     state.setSpeciesAmount("C10(g)", composition[2])
 
-    # Retrieve pvtlib solution
-    df_pvtlib_result = whitson_pvtlib_results
+    temperature = 280  # degF
 
-    df_pressures = df_pvtlib_result["P"].copy()
-    df_pressures.drop_duplicates(inplace=True)
+    problem = reaktoro.EquilibriumProblem(system)
+    problem.setTemperature(temperature, 'degF')
+    problem.setElementAmount('C1', composition[0])
+    problem.setElementAmount('C4', composition[1])
+    problem.setElementAmount('C10', composition[2])
 
-    df_pvtlib_result_gas = df_pvtlib_result[df_pvtlib_result.phase_id == 1]
-    pvtlib_phase_fractions_gas = df_pvtlib_result_gas.F.values
-    pvtlib_pressure_values_gas = df_pvtlib_result_gas.P.values
-
-    df_pvtlib_result_liq = df_pvtlib_result[df_pvtlib_result.phase_id == 0]
-    pvtlib_phase_fractions_liquid = df_pvtlib_result_liq.F.values
-    pvtlib_pressure_values_liquid = df_pvtlib_result_liq.P.values
-
-    pressure_values = df_pressures.values
-    num_of_components = len(composition)
-    num_of_phases = 2
     phase_fractions_liquid = list()
     phase_fractions_gas = list()
-    composition_liq = list()
-    composition_gas = list()
-    pressure_values_converged = list()
-    for P in pressure_values:
-        problem.setPressure(P, 'psi')
+    reaktoro_composition_liq = {
+        'C1(liq)': list(),
+        'C4(liq)': list(),
+        'C10(liq)': list(),
+    }
+    reaktoro_composition_gas = {
+        'C1(g)': list(),
+        'C4(g)': list(),
+        'C10(g)': list(),
+    }
+    pressure_values = whitson_pvtlib_results["Simulated Pressure [psi]"]
+    for pressure in pressure_values:
+        problem.setPressure(pressure, 'psi')
         has_converged = solver.solve(state, problem)
         assert has_converged
 
@@ -126,119 +133,56 @@ def test_composition_results(
         phase_fractions_liquid.append(liquid_phase_molar_fraction)
 
         mixture_properties = state.properties()
-        x_gas = mixture_properties.moleFractions().val[0:num_of_components]
-        composition_gas.append(x_gas)
-        x_liq = mixture_properties.moleFractions().val[num_of_components:num_of_phases * num_of_components]
-        composition_liq.append(x_liq)
+        if (pressure in whitson_pvtlib_results["Pressure - gas [psi]"]):
+            reaktoro_composition_gas["C1(g)"].append(
+                mixture_properties.moleFractions().val[state.system().indexSpecies("C1(g)")])
+            reaktoro_composition_gas["C4(g)"].append(
+                mixture_properties.moleFractions().val[state.system().indexSpecies("C4(g)")])
+            reaktoro_composition_gas["C10(g)"].append(
+                mixture_properties.moleFractions().val[state.system().indexSpecies("C10(g)")])
 
-        pressure_values_converged.append(P)
+        if (pressure in whitson_pvtlib_results["Pressure - liq [psi]"]):
+            reaktoro_composition_liq["C1(liq)"].append(
+                mixture_properties.moleFractions().val[state.system().indexSpecies("C1(liq)")])
+            reaktoro_composition_liq["C4(liq)"].append(
+                mixture_properties.moleFractions().val[state.system().indexSpecies("C4(liq)")])
+            reaktoro_composition_liq["C10(liq)"].append(
+                mixture_properties.moleFractions().val[state.system().indexSpecies("C10(liq)")])
 
     phase_fractions_gas = np.array(phase_fractions_gas)
     phase_fractions_liquid = np.array(phase_fractions_liquid)
-    composition_gas = np.array(composition_gas)
-    composition_liq = np.array(composition_liq)
-    pressure_values_converged = np.array(pressure_values_converged)
 
     zero_threshold = 1e-5
 
-    # Phase fractions
+    # Component Phase fractions
     reaktoro_phase_fractions_liquid = phase_fractions_liquid[phase_fractions_liquid > zero_threshold]
     reaktoro_phase_fractions_gas = phase_fractions_gas[phase_fractions_gas > zero_threshold]
 
-    assert_allclose(reaktoro_phase_fractions_liquid, pvtlib_phase_fractions_liquid, atol=1e-2)
-    assert_allclose(reaktoro_phase_fractions_gas, pvtlib_phase_fractions_gas, atol=1e-2)
+    assert_allclose(reaktoro_phase_fractions_liquid, whitson_pvtlib_results["Phase Fraction - liq"], atol=1e-2)
+    assert_allclose(reaktoro_phase_fractions_gas, whitson_pvtlib_results["Phase Fraction - gas"], atol=1e-2)
 
-    # Component molar fractions
-    n_points_gas_pvtlib = pvtlib_pressure_values_gas.shape[0]
-    reaktoro_c1_gas_composition = composition_gas[:n_points_gas_pvtlib, 0]
-    reaktoro_c4_gas_composition = composition_gas[:n_points_gas_pvtlib, 1]
-    reaktoro_c10_gas_composition = composition_gas[:n_points_gas_pvtlib, 2]
-    assert_allclose(reaktoro_c1_gas_composition, df_pvtlib_result_gas.x0, rtol=2e-3)
-    assert_allclose(reaktoro_c4_gas_composition, df_pvtlib_result_gas.x1, rtol=1e-3)
-    assert_allclose(reaktoro_c10_gas_composition, df_pvtlib_result_gas.x2, rtol=3e-3)
+    # Compare phase fractions with results computed by pvtlib
+    assert_allclose(reaktoro_composition_gas["C1(g)"], whitson_pvtlib_results["C1(g)"], rtol=2e-3)
+    assert_allclose(reaktoro_composition_gas["C4(g)"], whitson_pvtlib_results["C4(g)"], rtol=1e-3)
+    assert_allclose(reaktoro_composition_gas["C10(g)"], whitson_pvtlib_results["C10(g)"], rtol=3e-3)
 
-    n_points_liq_pvtlib = pvtlib_pressure_values_liquid.shape[0]
-    reaktoro_c1_liq_composition = composition_liq[-n_points_liq_pvtlib:, 0]
-    reaktoro_c4_liq_composition = composition_liq[-n_points_liq_pvtlib:, 1]
-    reaktoro_c10_liq_composition = composition_liq[-n_points_liq_pvtlib:, 2]
-    assert_allclose(reaktoro_c1_liq_composition, df_pvtlib_result_liq.x0, rtol=5e-3)
-    assert_allclose(reaktoro_c4_liq_composition, df_pvtlib_result_liq.x1, rtol=2e-3)
-    assert_allclose(reaktoro_c10_liq_composition, df_pvtlib_result_liq.x2, rtol=2e-3)
+    assert_allclose(reaktoro_composition_liq["C1(liq)"], whitson_pvtlib_results["C1(liq)"], rtol=5e-3)
+    assert_allclose(reaktoro_composition_liq["C4(liq)"], whitson_pvtlib_results["C4(liq)"], rtol=2e-3)
+    assert_allclose(reaktoro_composition_liq["C10(liq)"], whitson_pvtlib_results["C10(liq)"], rtol=2e-3)
 
     molar_fractions = {
         "liquid_phase": reaktoro_phase_fractions_liquid,
         "gas_phase": reaktoro_phase_fractions_gas,
-        "C1(g)": reaktoro_c1_gas_composition,
-        "C4(g)": reaktoro_c4_gas_composition,
-        "C10(g)": reaktoro_c10_gas_composition,
-        "C1(liq)": reaktoro_c1_liq_composition,
-        "C4(liq)": reaktoro_c4_liq_composition,
-        "C10(liq)": reaktoro_c10_liq_composition,
+        "C1(g)": reaktoro_composition_gas["C1(g)"],
+        "C4(g)": reaktoro_composition_gas["C4(g)"],
+        "C10(g)": reaktoro_composition_gas["C10(g)"],
+        "C1(liq)": reaktoro_composition_liq["C1(liq)"],
+        "C4(liq)": reaktoro_composition_liq["C4(liq)"],
+        "C10(liq)": reaktoro_composition_liq["C10(liq)"],
     }
     num_regression.check(molar_fractions)
 
-    if is_debug_plots_on:
-        import matplotlib.pyplot as plt
-
-        plt.figure(figsize=(8, 6))
-        plt.plot(pressure_values_converged, phase_fractions_liquid, "-x", label="Liquid (Reaktoro)")
-        plt.plot(pvtlib_pressure_values_liquid, pvtlib_phase_fractions_liquid, "-x", label="Liquid (pvtlib)")
-
-        plt.plot(pressure_values_converged, phase_fractions_gas, "-o", label="Gas (Reaktoro)")
-        plt.plot(pvtlib_pressure_values_gas, pvtlib_phase_fractions_gas, "-o", label="Gas (pvtlib)")
-
-        plt.xlabel("Pressure [psi]")
-        plt.ylabel("Phase molar fraction [mol / mol]")
-        plt.title(f"Fixed T = {temperature} degF")
-        plt.legend(shadow=True)
-
-        plt.grid(True)
-
-        # plt.savefig("reaktoro_pvtlib_using_prev.png", dpi=300)
-        plt.show()
-
-        plt.figure(figsize=(8, 6))
-        plt.plot(pressure_values_converged, composition_gas[:, 0], "-x", label="C1(g) - Reaktoro")
-        plt.plot(pvtlib_pressure_values_gas, df_pvtlib_result_gas.x0, "-x", label="C1(g) - pvtlib")
-        plt.plot(pressure_values_converged, composition_gas[:, 1], "-x", label="C4(g) - Reaktoro")
-        plt.plot(pvtlib_pressure_values_gas, df_pvtlib_result_gas.x1, "-x", label="C4(g) - pvtlib")
-        plt.plot(pressure_values_converged, composition_gas[:, 2], "-x", label="C10(g) - Reaktoro")
-        plt.plot(pvtlib_pressure_values_gas, df_pvtlib_result_gas.x2, "-x", label="C10(g) - pvtlib")
-
-        plt.ylim([0, 1])
-        plt.grid(True)
-
-        plt.xlabel("Pressure [bar]")
-        plt.ylabel("Molar fraction [mol / mol]")
-        plt.title(f"Fixed T = {temperature} degC")
-        plt.legend(shadow=True, ncol=3)
-
-        # plt.savefig("reaktoro_pvtlib_compositions_whitson_gas.png", dpi=300)
-        plt.show()
-
-        plt.figure(figsize=(8, 6))
-        plt.plot(pressure_values_converged, composition_liq[:, 0], "-x", label="C1(liq) - Reaktoro")
-        plt.plot(pvtlib_pressure_values_liquid, df_pvtlib_result_liq.x0, "-x", label="C1(liq) - pvtlib")
-        plt.plot(pressure_values_converged, composition_liq[:, 1], "-x", label="C4(liq) - Reaktoro")
-        plt.plot(pvtlib_pressure_values_liquid, df_pvtlib_result_liq.x1, "-x", label="C4(liq) - pvtlib")
-        plt.plot(pressure_values_converged, composition_liq[:, 2], "-x", label="C10(liq) - Reaktoro")
-        plt.plot(pvtlib_pressure_values_liquid, df_pvtlib_result_liq.x2, "-x", label="C10(liq) - pvtlib")
-
-        plt.ylim([0, 1])
-        plt.grid(True)
-
-        plt.xlabel("Pressure [bar]")
-        plt.ylabel("Molar fraction [mol / mol]")
-        plt.title(f"Fixed T = {temperature} degC")
-        plt.legend(shadow=True, ncol=3)
-
-        # plt.savefig("reaktoro_pvtlib_compositions_whitson_liq.png", dpi=300)
-        plt.show()
-
-
 def test_fugacities_result(
-    oil_species,
-    gaseous_species,
     whitson_chemical_system,
     whitson_pvtlib_results,
     num_regression
@@ -249,126 +193,64 @@ def test_fugacities_result(
     state = reaktoro.ChemicalState(system)
     state.setTemperature(temperature, 'degF')
 
-    # Gathering pvtlib results
-    df_pvtlib_result = whitson_pvtlib_results
-    df_pvtlib_result_gas = df_pvtlib_result[df_pvtlib_result.phase_id == 1]
-    df_pvtlib_result_liq = df_pvtlib_result[df_pvtlib_result.phase_id == 0]
-
     # Properties' calculation loop for gas phase
-    activities_gas = list()
-    pvtlib_fugacities_gas = list()
-    for _, df_row in df_pvtlib_result_gas.iterrows():
-        P = df_row.P
-        composition_0 = df_row.x0
-        composition_1 = df_row.x1
-        composition_2 = df_row.x2
-        state.setPressure(P, 'psi')
-        state.setSpeciesAmount(gaseous_species[0], composition_0)
-        state.setSpeciesAmount(gaseous_species[1], composition_1)
-        state.setSpeciesAmount(gaseous_species[2], composition_2)
-
-        fugacity_0 = df_row.fugacity_0
-        fugacity_1 = df_row.fugacity_1
-        fugacity_2 = df_row.fugacity_2
-        fugacities = np.array([fugacity_0, fugacity_1, fugacity_2])
+    reaktoro_activities_gas = {
+        'C1(g)': list(),
+        'C4(g)': list(),
+        'C10(g)': list(),
+    }
+    for index in range(len(whitson_pvtlib_results["Pressure - gas [psi]"])):
+        pressure = whitson_pvtlib_results["Pressure - gas [psi]"][index]
+        c1_g = whitson_pvtlib_results["C1(g)"][index]
+        c4_g = whitson_pvtlib_results["C4(g)"][index]
+        c10_g = whitson_pvtlib_results["C10(g)"][index]
+        state.setPressure(pressure, 'psi')
+        state.setSpeciesAmount("C1(g)", c1_g)
+        state.setSpeciesAmount("C4(g)", c4_g)
+        state.setSpeciesAmount("C10(g)", c10_g)
 
         gas_properties = state.properties()
         activities = np.exp(gas_properties.lnActivities().val)
-        activities_gas.append(activities)
-        pvtlib_fugacities_gas.append(fugacities)
+        reaktoro_activities_gas['C1(g)'].append(activities[0])
+        reaktoro_activities_gas['C4(g)'].append(activities[1])
+        reaktoro_activities_gas['C10(g)'].append(activities[2])
 
-    activities_gas = np.array(activities_gas)
-    pvtlib_fugacities_gas = np.array(pvtlib_fugacities_gas)
-
-    reaktoro_c1_activity_gas = activities_gas[:, 0]
-    reaktoro_c4_activity_gas = activities_gas[:, 1]
-    reaktoro_c10_activity_gas = activities_gas[:, 2]
-    assert_allclose(reaktoro_c1_activity_gas, pvtlib_fugacities_gas[:, 0], rtol=2e-2)
-    assert_allclose(reaktoro_c4_activity_gas, pvtlib_fugacities_gas[:, 1], rtol=2e-2)
-    assert_allclose(reaktoro_c10_activity_gas, pvtlib_fugacities_gas[:, 2], rtol=2e-2)
+    assert_allclose(reaktoro_activities_gas['C1(g)'], whitson_pvtlib_results["fugacities C1(g)"], rtol=2e-2)
+    assert_allclose(reaktoro_activities_gas['C4(g)'], whitson_pvtlib_results["fugacities C4(g)"], rtol=2e-2)
+    assert_allclose(reaktoro_activities_gas['C10(g)'], whitson_pvtlib_results["fugacities C10(g)"], rtol=2e-2)
 
     # Properties' calculation loop for liq phase
-    activities_liq = list()
-    pvtlib_fugacities_liq = list()
-    for _, df_row in df_pvtlib_result_liq.iterrows():
-        P = df_row.P
-        composition_0 = df_row.x0
-        composition_1 = df_row.x1
-        composition_2 = df_row.x2
-        state.setPressure(P, 'psi')
-        state.setSpeciesAmount(oil_species[0], composition_0)
-        state.setSpeciesAmount(oil_species[1], composition_1)
-        state.setSpeciesAmount(oil_species[2], composition_2)
+    reaktoro_activities_liq = {
+        'C1(liq)': list(),
+        'C4(liq)': list(),
+        'C10(liq)': list(),
+    }
+    for index in range(len(whitson_pvtlib_results["Pressure - liq [psi]"])):
+        pressure = whitson_pvtlib_results["Pressure - liq [psi]"][index]
+        c1_liq = whitson_pvtlib_results["C1(liq)"][index]
+        c4_liq = whitson_pvtlib_results["C4(liq)"][index]
+        c10_liq = whitson_pvtlib_results["C10(liq)"][index]
+        state.setPressure(pressure, 'psi')
+        state.setSpeciesAmount('C1(liq)', c1_liq)
+        state.setSpeciesAmount('C4(liq)', c4_liq)
+        state.setSpeciesAmount('C10(liq)', c10_liq)
 
-        fugacity_0 = df_row.fugacity_0
-        fugacity_1 = df_row.fugacity_1
-        fugacity_2 = df_row.fugacity_2
-        fugacities = np.array([fugacity_0, fugacity_1, fugacity_2])
+        liq_properties = state.properties()
+        activities = np.exp(liq_properties.lnActivities().val)
+        reaktoro_activities_liq['C1(liq)'].append(activities[3])
+        reaktoro_activities_liq['C4(liq)'].append(activities[4])
+        reaktoro_activities_liq['C10(liq)'].append(activities[5])
 
-        gas_properties = state.properties()
-        activities = np.exp(gas_properties.lnActivities().val)
-        activities_liq.append(activities)
-        pvtlib_fugacities_liq.append(fugacities)
-
-    activities_liq = np.array(activities_liq)
-    pvtlib_fugacities_liq = np.array(pvtlib_fugacities_liq)
-
-    reaktoro_c1_activity_liq = activities_liq[:, 3]
-    reaktoro_c4_activity_liq = activities_liq[:, 4]
-    reaktoro_c10_activity_liq = activities_liq[:, 5]
-    assert_allclose(reaktoro_c1_activity_liq, pvtlib_fugacities_liq[:, 0], rtol=2e-2)
-    assert_allclose(reaktoro_c4_activity_liq, pvtlib_fugacities_liq[:, 1], rtol=2e-2)
-    assert_allclose(reaktoro_c10_activity_liq, pvtlib_fugacities_liq[:, 2], rtol=2e-2)
+    assert_allclose(reaktoro_activities_liq['C1(liq)'], whitson_pvtlib_results["fugacities C1(liq)"], rtol=2e-2)
+    assert_allclose(reaktoro_activities_liq['C4(liq)'], whitson_pvtlib_results["fugacities C4(liq)"], rtol=2e-2)
+    assert_allclose(reaktoro_activities_liq['C10(liq)'], whitson_pvtlib_results["fugacities C10(liq)"], rtol=2e-2)
 
     components_activities = {
-        "c1_activities_liq": reaktoro_c1_activity_liq,
-        "c4_activities_liq": reaktoro_c4_activity_liq,
-        "c10_activities_liq": reaktoro_c10_activity_liq,
-        "c1_activities_gas": reaktoro_c1_activity_gas,
-        "c4_activities_gas": reaktoro_c4_activity_gas,
-        "c10_activities_gas": reaktoro_c10_activity_gas,
+        "c1_activities_liq": reaktoro_activities_liq['C1(liq)'],
+        "c4_activities_liq": reaktoro_activities_liq['C4(liq)'],
+        "c10_activities_liq": reaktoro_activities_liq['C10(liq)'],
+        "c1_activities_gas": reaktoro_activities_gas['C1(g)'],
+        "c4_activities_gas": reaktoro_activities_gas['C4(g)'],
+        "c10_activities_gas": reaktoro_activities_gas['C10(g)'],
     }
     num_regression.check(components_activities)
-
-    if is_debug_plots_on:
-        import matplotlib.pyplot as plt
-
-        plt.figure(figsize=(8, 6))
-
-        pressure_values_gas = df_pvtlib_result_gas.P.values
-        plt.plot(pressure_values_gas, activities_gas[:, 0], "-x", label="C1(g) - Reaktoro")
-        plt.plot(pressure_values_gas, pvtlib_fugacities_gas[:, 0], "-o", label="C1(g) - pvtlib")
-        plt.plot(pressure_values_gas, activities_gas[:, 1], "-x", label="C4(g) - Reaktoro")
-        plt.plot(pressure_values_gas, pvtlib_fugacities_gas[:, 1], "-o", label="C4(g) - pvtlib")
-        plt.plot(pressure_values_gas, activities_gas[:, 2], "-x", label="C10(g) - Reaktoro")
-        plt.plot(pressure_values_gas, pvtlib_fugacities_gas[:, 2], "-o", label="C10(g) - pvtlib")
-
-        plt.xlabel("Pressure [psi]")
-        plt.ylabel("Fugacities [psi]")
-        plt.title(f"Fixed T = {temperature} degF")
-        plt.legend(shadow=True)
-
-        plt.grid(True)
-
-        # plt.savefig("reaktoro_pvtlib_fugacities_gas_whitson.png", dpi=300)
-        plt.show()
-
-        plt.figure(figsize=(8, 6))
-
-        pressure_values_liq = df_pvtlib_result_liq.P.values
-        plt.plot(pressure_values_liq, activities_liq[:, 3], "-x", label="C1(liq) - Reaktoro")
-        plt.plot(pressure_values_liq, pvtlib_fugacities_liq[:, 0], "-o", label="C1(liq) - pvtlib")
-        plt.plot(pressure_values_liq, activities_liq[:, 4], "-x", label="C4(liq) - Reaktoro")
-        plt.plot(pressure_values_liq, pvtlib_fugacities_liq[:, 1], "-o", label="C4(liq) - pvtlib")
-        plt.plot(pressure_values_liq, activities_liq[:, 5], "-x", label="C10(liq) - Reaktoro")
-        plt.plot(pressure_values_liq, pvtlib_fugacities_liq[:, 2], "-o", label="C10(liq) - pvtlib")
-
-        plt.xlabel("Pressure [psi]")
-        plt.ylabel("Fugacities [psi]")
-        plt.title(f"Fixed T = {temperature} degF")
-        plt.legend(shadow=True)
-
-        plt.grid(True)
-
-        # plt.savefig("reaktoro_pvtlib_fugacities_liq_whitson.png", dpi=300)
-        plt.show()
