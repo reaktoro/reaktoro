@@ -16,6 +16,7 @@ find_package(nlohmann_json 3.4.0 REQUIRED)
 find_package(Optima REQUIRED)
 find_package(ThermoFun REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(phreeqc4rkt REQUIRED)
 
 # Recommended check at the end of a cmake config file.
 check_required_components(Reaktoro)
