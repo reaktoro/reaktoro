@@ -45,10 +45,9 @@ jobs:
           activate-environment: ''
           channels: conda-forge
           channel-priority: true
-          use-only-tar-bz2: true # IMPORTANT: This needs to be set true for caching of miniconda packages to work properly!
+          use-only-tar-bz2: true  # IMPORTANT: This needs to be set true for caching of miniconda packages to work properly!
 
       - name: Configuring Conda Environment
-        shell: cmd
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
