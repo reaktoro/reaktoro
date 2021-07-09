@@ -1,4 +1,4 @@
-name: windows
+name: unix
 
 on:
   push:
@@ -14,13 +14,12 @@ on:
 jobs:
   build:
     name: ${{ matrix.config }} build on ${{ matrix.os }} (Python ${{ matrix.python-version }})
-    runs-on: windows-latest
-
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
       max-parallel: 4
       matrix:
-        os: ["windows-latest"]
+        os: ["ubuntu-latest", "macos-latest"]
         python-version: [3.9]
         config: ["Release"]
 
@@ -34,21 +33,20 @@ jobs:
           cache-number: 0  # If build fails possibly because of cache, increase this number to create a new empty cache directory
         with:
           path: |
-            C:\Users\runneradmin\clcache
-            C:\Users\runneradmin\conda_pkgs_dir
-          key: ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-${{ env.cache-number }}-clcache
+            ~/.ccache
+            ~/conda_pkgs_dir
+          key: ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-${{ env.cache-number }}-ccache
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
-          auto-activate-base: false
-          allow-softlinks: true
-          activate-environment: ''
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
           channels: conda-forge
           channel-priority: true
-          use-only-tar-bz2: true # IMPORTANT: This needs to be set true for caching of miniconda packages to work properly!
+          use-only-tar-bz2: true  # IMPORTANT: This needs to be set true for caching of miniconda packages to work properly!
 
       - name: Configuring Conda Environment
-        shell: cmd
+        shell: bash -l {0}
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
@@ -58,17 +56,14 @@ jobs:
           conda devenv
 
       - name: Building, Testing & Installing Reaktoro
-        shell: cmd
-        env:
-          CC: clcache
-          CXX: clcache
+        shell: bash -l {0}
         run: |
-          call conda activate reaktoro || goto :eof
-          clcache -s || goto :eof
-          clcache -z || goto :eof
-          mkdir .build && cd .build || goto :eof
-          cmake -GNinja .. -DCMAKE_BUILD_TYPE=${{ matrix.config }} || goto :eof
-          ninja || goto :eof
-          ninja install || goto :eof
-          ninja tests || goto :eof
-          clcache -s || goto :eof
+          source activate reaktoro
+          ccache -s
+          ccache -z
+          mkdir .build && cd .build
+          cmake -GNinja .. -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+          ninja
+          ninja tests
+          ninja install
+          ccache -s
