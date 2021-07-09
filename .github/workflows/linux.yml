@@ -33,8 +33,8 @@ jobs:
           cache-number: 0  # If build fails possibly because of cache, increase this number to create a new empty cache directory
         with:
           path: |
-            ~/.ccache
-            ~/conda_pkgs_dir
+            /home/runner/.cache
+            /home/runner/conda_pkgs_dir
           key: ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-${{ env.cache-number }}-ccache
 
       - uses: conda-incubator/setup-miniconda@v2
