@@ -3,10 +3,6 @@ build/
 _build/
 .build/
 
-# Build directories
-deps/build/
-deps/git/
-
 # Files and directories with suffix -ignore
 *-ignore
 
