@@ -39,6 +39,3 @@ _build/
 .DS_Store
 .directory
 ~lock.*
-
-# temp files created by tests
-tests/IW

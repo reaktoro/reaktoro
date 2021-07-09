@@ -355,7 +355,7 @@ struct CubicEOS::Impl
         }
         else
         {
-            if (cubic_size != 3) {
+            if (cubicEOS_roots.size() != 3) {
                 Exception exception;
                 exception.error << "Could not calculate the cubic equation of state.";
                 exception.reason << "Logic error: it was expected Z roots of size 3, but got: " << Zs.size();

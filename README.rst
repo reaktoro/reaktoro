@@ -17,7 +17,7 @@ Reaktoro
     :scale: 100%
     :target: https://github.com/reaktoro/reaktoro/actions?query=workflow%3Awindows
 
-.. image:: https://anaconda.org/conda-forge/reaktoro/badges/installer/conda.svg   
+.. image:: https://anaconda.org/conda-forge/reaktoro/badges/installer/conda.svg
     :scale: 100%
     :target: https://conda.anaconda.org/conda-forge
 
@@ -161,7 +161,6 @@ Reaktoro using Conda, these are the steps:
 #. Create an environment for Reaktoro, from the repository root directory: ``conda devenv``
 #. Activate the environment: ``source activate reaktoro`` from Linux/macOS or ``activate reaktoro`` from Windows
 #. Create a ``build`` directory and call ``cmake`` from it (for now check the `.travis.yml` file for an example on CMake parameters), OR, on Windows, call the ``inv msvc`` task to generate a project under ``build\msvc`` directory, open it in the IDE and build the ``INSTALL`` project. (``inv`` is short for ``invoke``, from the `Invoke <https://www.pyinvoke.org/>`_ tool.)
-
 
 License
 =======

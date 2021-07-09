@@ -30,6 +30,7 @@ void exportActivityModelRumpf(py::module& m);
 void exportAqueousMixture(py::module& m);
 
 // Thermodynamics/Fluids
+void exportCubicEOS(py::module& m);
 void exportActivityModelCubicEOS(py::module& m);
 void exportActivityModelSpycherPruessEnnis(py::module& m);
 void exportActivityModelSpycherReed(py::module& m);
@@ -68,6 +69,7 @@ void exportThermodynamics(py::module& m)
     exportAqueousMixture(m);
 
     // Thermodynamics/Fluids
+    exportCubicEOS(m);
     exportActivityModelCubicEOS(m);
     exportActivityModelSpycherPruessEnnis(m);
     exportActivityModelSpycherReed(m);
