@@ -38,7 +38,7 @@ void exportPhases(py::module& m)
             .def_readwrite("tags", &Exclude::tags)
             ;
 
-    m.def("speciate", speciate);
+    m.def("exclude", exclude);
 
 
     py::class_<Phases>(m, "Phases")
