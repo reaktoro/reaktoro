@@ -97,7 +97,7 @@ def testPhases():
     assert phase0_species_list[0:-1] == "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 Cl- HClO(aq) ClO- ClO2- ClO3- ClO4- H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) Na+ NaCl(aq) NaOH(aq) O2(aq) OH- Nonanal(aq) H2O2(aq) HClO2(aq) HCl(aq)"
 
     phase1_species_list = ""
-    for species in phases[0].species():
+    for species in phases[1].species():
         phase1_species_list += species.name() + " "
     assert phase1_species_list[0:-1] == "CO2(g)"
 
@@ -121,7 +121,7 @@ def testPhases():
     assert phase0_species_list[0:-1] == "H2O(aq) H+ H2(aq) HO2- O2(aq) OH- H2O2(aq)"
 
     phase1_species_list = ""
-    for species in phases[0].species():
+    for species in phases[1].species():
         phase1_species_list += species.name() + " "
     assert phase1_species_list[0:-1] == "CO2(g)"
 
@@ -147,12 +147,12 @@ def testPhases():
     assert phase0_species_list[0:-1] == "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) O2(aq) OH- Nonanal(aq) H2O2(aq)"
 
     phase1_species_list = ""
-    for species in phases[0].species():
+    for species in phases[1].species():
         phase1_species_list += species.name() + " "
     assert phase1_species_list[0:-1] == "H2O(g) CO2(g)"
 
     phase2_species_list = ""
-    for species in phases[0].species():
+    for species in phases[2].species():
         phase2_species_list += species.name() + " "
     assert phase2_species_list[0:-1] == "Graphite"
 
@@ -178,12 +178,12 @@ def testPhases():
     assert phase0_species_list[0:-1] == "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) O2(aq) OH- Nonanal(aq) H2O2(aq)"
 
     phase1_species_list = ""
-    for species in phases[0].species():
+    for species in phases[1].species():
         phase1_species_list += species.name() + " "
     assert phase1_species_list[0:-1] == "CH4(g) C6H6O(g) o-Cresol(g) m-Cresol(g) p-Cresol(g) CO(g) CO2(g) C2H4(g) H2(g) H2O(g) O2(g)"
 
     phase2_species_list = ""
-    for species in phases[0].species():
+    for species in phases[2].species():
         phase2_species_list += species.name() + " "
     assert phase2_species_list[0:-1] == "Graphite"
 
@@ -211,21 +211,21 @@ def testPhases():
     assert phase0_species_list[0:-1] == "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 Cl- HClO(aq) ClO- ClO2- ClO3- ClO4- H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) Na+ NaCl(aq) NaOH(aq) O2(aq) OH- Nonanal(aq) H2O2(aq) HClO2(aq) HCl(aq)"
 
     phase1_species_list = ""
-    for species in phases[0].species():
+    for species in phases[1].species():
         phase1_species_list += species.name() + " "
     assert phase1_species_list[0:-1] == "CH4(g) C6H6O(g) o-Cresol(g) m-Cresol(g) p-Cresol(g) CO(g) CO2(g) C2H4(g) H2(g) H2O(g) O2(g)"
 
     phase2_species_list = ""
-    for species in phases[0].species():
+    for species in phases[2].species():
         phase2_species_list += species.name() + " "
     assert phase2_species_list[0:-1] == "Graphite"
 
     phase3_species_list = ""
-    for species in phases[0].species():
+    for species in phases[3].species():
         phase3_species_list += species.name() + " "
     assert phase3_species_list[0:-1] == "Halite"
 
     phase4_species_list = ""
-    for species in phases[0].species():
+    for species in phases[4].species():
         phase4_species_list += species.name() + " "
     assert phase4_species_list[0:-1] == "Sodium-Oxide"
