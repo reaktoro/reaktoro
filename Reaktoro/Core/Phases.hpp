@@ -313,6 +313,12 @@ public:
     /// Construct a GaseousPhase object with given element symbols.
     explicit GaseousPhase(const Speciate& elements) : GenericPhase(elements) { initialize(); }
 
+    /// Construct a GaseousPhase object with given element symbols and tags indicating which species must be excluded from the final list.
+    explicit GaseousPhase(const Speciate& elements, const Exclude& withtags) : GenericPhase(elements, withtags) { initialize(); }
+
+    /// Construct a GaseousPhase object with tags indicating which species must be excluded from the final list.
+    explicit GaseousPhase(const Exclude& withtags) : GenericPhase(withtags) { initialize(); }
+
     /// Initialize the default attributes of this GaseousPhase object.
     auto initialize() -> void
     {
