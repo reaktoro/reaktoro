@@ -34,8 +34,6 @@ int main()
     GaseousPhase gasphase("CO2(g)");
     gasphase.setActivityModel(ActivityModelPengRobinson());
 
-    std::cout << "Phases with organics" << std::endl;
-
     // Collecting all above-defined phases
     Phases phases(db);
     phases.add(aqphase);
