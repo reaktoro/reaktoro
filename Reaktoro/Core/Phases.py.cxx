@@ -33,6 +33,14 @@ void exportPhases(py::module& m)
 
     m.def("speciate", speciate);
 
+    py::class_<Exclude>(m, "Exclude")
+            .def(py::init<>())
+            .def_readwrite("tags", &Exclude::tags)
+            ;
+
+    m.def("speciate", speciate);
+
+
     py::class_<Phases>(m, "Phases")
         .def(py::init<const Database&>())
         .def("add", py::overload_cast<const GenericPhase&>(&Phases::add))
@@ -45,6 +53,8 @@ void exportPhases(py::module& m)
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
+        .def(py::init<const Speciate&, const Exclude&>())
+        .def(py::init<const Exclude&>())
         .def("setName", &GenericPhase::setName, return_internal_ref)
         .def("setStateOfMatter", &GenericPhase::setStateOfMatter, return_internal_ref)
         .def("setAggregateState", &GenericPhase::setAggregateState, return_internal_ref)
@@ -88,18 +98,24 @@ void exportPhases(py::module& m)
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<Speciate>())
+        .def(py::init<Speciate, const Exclude&>())
+        .def(py::init<const Exclude&>())
         ;
 
     py::class_<GaseousPhase, GenericPhase>(m, "GaseousPhase")
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
+        .def(py::init<const Speciate&, const Exclude&>())
+        .def(py::init<const Exclude&>())
         ;
 
     py::class_<LiquidPhase, GenericPhase>(m, "LiquidPhase")
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
+        .def(py::init<const Speciate&, const Exclude&>())
+        .def(py::init<const Exclude&>())
         ;
 
     py::class_<SolidPhase, GenericPhase>(m, "SolidPhase")
@@ -114,5 +130,7 @@ void exportPhases(py::module& m)
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
+        .def(py::init<const Speciate&, const Exclude&>())
+        .def(py::init<const Exclude&>())
         ;
 }
