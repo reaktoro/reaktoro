@@ -429,4 +429,122 @@ TEST_CASE("Testing Phases", "[Phases]")
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3--");
         checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
     }
+
+    //=================================================================================================================
+    //-----------------------------------------------------------------------------------------------------------------
+    // TESTING CLASS: AqueousPhase with provided speciates and tags, so that species possessing them are excluded
+    //-----------------------------------------------------------------------------------------------------------------
+    //=================================================================================================================
+    SECTION("Testing AqueousPhase::AqueousPhase(Speciate, Exclude)")
+    {
+        Database db("supcrt98.yaml");
+
+        Phases phases(db);
+
+        phases.add( AqueousPhase(speciate("H O C Na Cl"), exclude("organic")) );
+        phases.add( GaseousPhase("CO2(g)") );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        REQUIRE( phasevec.size() == 2 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 Cl- HClO(aq) ClO- ClO2- ClO3- ClO4- H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) Na+ NaCl(aq) NaOH(aq) O2(aq) OH- Nonanal(aq) H2O2(aq) HClO2(aq) HCl(aq)");
+        checkGaseousPhase(phasevec[1], "CO2(g)");
+    }
+
+    //=================================================================================================================
+    //-----------------------------------------------------------------------------------------------------------------
+    // TESTING CLASS: AqueousPhase with provided tags, so that species possessing them are excluded
+    //-----------------------------------------------------------------------------------------------------------------
+    //=================================================================================================================
+    SECTION("Testing AqueousPhase::AqueousPhase(Exclude)")
+    {
+        Database db("supcrt98.yaml");
+
+        Phases phases(db);
+
+        phases.add( AqueousPhase(exclude("organic")) );
+        phases.add( GaseousPhase("CO2(g)") );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        REQUIRE( phasevec.size() == 2 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ H2(aq) HO2- O2(aq) OH- H2O2(aq)");
+        checkGaseousPhase(phasevec[1], "CO2(g)");
+    }
+
+    //=================================================================================================================
+    //-----------------------------------------------------------------------------------------------------------------
+    // TESTING CLASS: MineralPhases with provided tags, so that species possessing them are excluded
+    //-----------------------------------------------------------------------------------------------------------------
+    //=================================================================================================================
+    SECTION("Testing MineralPhases::MineralPhases(Exclude)")
+    {
+        Database db("supcrt98.yaml");
+
+        Phases phases(db);
+
+        phases.add( AqueousPhase(speciate("H O C"), exclude("organic")) );
+        phases.add( GaseousPhase("H2O(g) CO2(g)") );
+        phases.add( MineralPhases(exclude("carbonate")) );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        REQUIRE( phasevec.size() == 3 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) O2(aq) OH- Nonanal(aq) H2O2(aq)");
+        checkGaseousPhase(phasevec[1], "H2O(g) CO2(g)");
+        checkMineralPhase(phasevec[2], "Graphite");
+    }
+
+    //=================================================================================================================
+    //-----------------------------------------------------------------------------------------------------------------
+    // TESTING CLASS: GaseousPhases with provided speciates and tags, so that species possessing them are excluded
+    //-----------------------------------------------------------------------------------------------------------------
+    //=================================================================================================================
+    SECTION("Testing GaseousPhases::GaseousPhases(Speciate, Exclude)")
+    {
+        Database db("supcrt98.yaml");
+
+        Phases phases(db);
+
+        phases.add( AqueousPhase(speciate("H O C"), exclude("organic")) );
+        phases.add( GaseousPhase(speciate("H O C"), exclude("inert")) );
+        phases.add( MineralPhases(exclude("carbonate")) );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        REQUIRE( phasevec.size() == 3 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) O2(aq) OH- Nonanal(aq) H2O2(aq)");
+        checkGaseousPhase(phasevec[1], "CH4(g) C6H6O(g) o-Cresol(g) m-Cresol(g) p-Cresol(g) CO(g) CO2(g) C2H4(g) H2(g) H2O(g) O2(g)");
+        checkMineralPhase(phasevec[2], "Graphite");
+    }
+
+    //=================================================================================================================
+    //-----------------------------------------------------------------------------------------------------------------
+    // TESTING CLASS: GaseousPhases with provided tags, so that species possessing them are excluded
+    //-----------------------------------------------------------------------------------------------------------------
+    //=================================================================================================================
+    SECTION("Testing GaseousPhases::GaseousPhases(Exclude)")
+    {
+        Database db("supcrt98.yaml");
+
+        Phases phases(db);
+
+        phases.add( AqueousPhase(speciate("H O C Na Cl"), exclude("organic")) );
+        phases.add( GaseousPhase(exclude("inert")) );
+        phases.add( MineralPhases(exclude("carbonate")) );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        REQUIRE( phasevec.size() == 5 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 Cl- HClO(aq) ClO- ClO2- ClO3- ClO4- H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) Na+ NaCl(aq) NaOH(aq) O2(aq) OH- Nonanal(aq) H2O2(aq) HClO2(aq) HCl(aq)");
+        checkGaseousPhase(phasevec[1], "CH4(g) C6H6O(g) o-Cresol(g) m-Cresol(g) p-Cresol(g) CO(g) CO2(g) C2H4(g) H2(g) H2O(g) O2(g)");
+        checkMineralPhase(phasevec[2], "Graphite");
+        checkMineralPhase(phasevec[3], "Halite");
+        checkMineralPhase(phasevec[4], "Sodium-Oxide");
+    }
 }
