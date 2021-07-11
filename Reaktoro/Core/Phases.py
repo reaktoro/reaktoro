@@ -79,6 +79,7 @@ def testPhases():
     # Testing AqueousPhase with provided speciates and tags, so that species possessing them are excluded
     # -----------------------------------------------------------------------------------------------------------------
 
+    db = Database("supcrt98.yaml")
     phases = Phases(db)
     phases.add( AqueousPhase(speciate("H O C Na Cl"), exclude("organic")) )
     phases.add( GaseousPhase("CO2(g)") )
@@ -102,6 +103,7 @@ def testPhases():
 
     # AqueousPhase with provided tags, so that species possessing them are excluded
 
+    db = Database("supcrt98.yaml")
     phases = Phases(db)
     phases.add( AqueousPhase(exclude("organic")) )
     phases.add( GaseousPhase("CO2(g)") )
@@ -125,6 +127,7 @@ def testPhases():
 
     # Testing MineralPhases with provided tags, so that species possessing them are excluded
 
+    db = Database("supcrt98.yaml")
     phases = Phases(db)
     phases.add( AqueousPhase(speciate("H O C"), exclude("organic")) )
     phases.add( GaseousPhase("H2O(g) CO2(g)") )
@@ -155,6 +158,7 @@ def testPhases():
 
     # Testing GaseousPhases with provided speciates and tags, so that species possessing them are excluded
 
+    db = Database("supcrt98.yaml")
     phases = Phases(db)
     phases.add( AqueousPhase(speciate("H O C"), exclude("organic")) )
     phases.add( GaseousPhase(speciate("H O C"), exclude("inert")) )
@@ -185,6 +189,7 @@ def testPhases():
 
     # Testing GaseousPhases with provided tags, so that species possessing them are excluded
 
+    db = Database("supcrt98.yaml")
     phases = Phases(db)
     phases.add( AqueousPhase(speciate("H O C Na Cl"), exclude("organic")) )
     phases.add( GaseousPhase(exclude("inert")) )
