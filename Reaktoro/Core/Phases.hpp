@@ -287,7 +287,7 @@ public:
     explicit AqueousPhase(Speciate elements, Exclude withtags) : GenericPhase(elements += {"H", "O"}, withtags) { initialize(); }
 
     /// Construct an AqueousPhase object with tags indicating which species must be excluded from the final list.
-    explicit AqueousPhase(Exclude withtags) : GenericPhase(withtags) { initialize(); }
+    explicit AqueousPhase(Exclude withtags) : GenericPhase(speciate("H O"), withtags) { initialize(); }
 
     /// Initialize the default attributes of this AqueousPhase object.
     auto initialize() -> void
