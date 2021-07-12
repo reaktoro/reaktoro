@@ -17,9 +17,9 @@
 
 #include "ChemicalState.hpp"
 
-// C++ includes
-#include <iostream>
-#include <iomanip>
+// cpp-tabulate includes
+#include <tabulate/table.hpp>
+using namespace tabulate;
 
 // Optima includes
 #include <Optima/State.hpp>
@@ -600,24 +600,33 @@ auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
-    const String bar(50, '=');
-    out << "Temperature [K]: " << state.temperature() << "\n";
-    out << "Pressure [Pa]: " << state.pressure() << "\n";
-    out << bar << "\n";
-    out << std::left << std::setw(25) << "Species";
-    out << std::left << std::setw(20) << "Amount [mol]";
-    out << std::left << std::setw(6)  << "Index" << "\n";
-    out << bar << "\n";
+    Table table;
+    table.add_row({ "Property", "Value", "Unit" });
+    table.add_row({ "Temperature", str(state.temperature()), "K" });
+    table.add_row({ "Pressure", str(state.pressure()), "Pa" });
+    table.add_row({ "Amount:", "", "" });
     const auto species = state.system().species();
     const auto n = state.speciesAmounts();
     for(auto i = 0; i < n.size(); ++i)
+        table.add_row({ ":: " + species[i].name(), str(n[i]), "mol" });
+
+    auto i = 0;
+    for(auto& row : table)
     {
-        out << std::left << std::setw(25) << species[i].name();
-        out << std::left << std::setw(20) << n[i];
-        out << std::left << std::setw(6)  << i;
-        out << "\n";
+        if(i >= 2)  // apply from the third row
+            table[i].format()
+                .border_top("")
+                .column_separator("")
+                .corner_top_left("")
+                .corner_top_right("");
+        i += 1;
     }
-    out << bar << "\n";
+
+    table.row(0).format().font_style({FontStyle::bold});  // Bold face for header
+    table.column(1).format().font_align(FontAlign::right); // Value column with right alignment
+    table.column(2).format().font_align(FontAlign::right); // Unit column with right alignment
+
+    out << table;
     return out;
 }
 
