@@ -39,6 +39,10 @@ TEST_CASE("Testing Phase", "[Phase]")
 
         REQUIRE( phase.name() == "AqueousPhase" );
         REQUIRE( phase.stateOfMatter() == StateOfMatter::Liquid );
+        REQUIRE( phase.elements().size() == 3 );
+        REQUIRE( phase.element(0).symbol() == "H" );
+        REQUIRE( phase.element(1).symbol() == "C" );
+        REQUIRE( phase.element(2).symbol() == "O" );
         REQUIRE( phase.species().size() == 8 );
         REQUIRE( phase.species(0).name() == "H2O(aq)" );
         REQUIRE( phase.species(1).name() == "H+"      );
@@ -60,6 +64,10 @@ TEST_CASE("Testing Phase", "[Phase]")
 
         REQUIRE( phase.name() == "GaseousPhase" );
         REQUIRE( phase.stateOfMatter() == StateOfMatter::Gas );
+        REQUIRE( phase.elements().size() == 3 );
+        REQUIRE( phase.element(0).symbol() == "H" );
+        REQUIRE( phase.element(1).symbol() == "C" );
+        REQUIRE( phase.element(2).symbol() == "O" );
         REQUIRE( phase.species().size() == 5 );
         REQUIRE( phase.species(0).name() == "H2O(g)" );
         REQUIRE( phase.species(1).name() == "CO2(g)" );
@@ -77,6 +85,10 @@ TEST_CASE("Testing Phase", "[Phase]")
 
         REQUIRE( phase.name() == "Calcite" );
         REQUIRE( phase.stateOfMatter() == StateOfMatter::Solid );
+        REQUIRE( phase.elements().size() == 3 );
+        REQUIRE( phase.element(0).symbol() == "C" );
+        REQUIRE( phase.element(1).symbol() == "O" );
+        REQUIRE( phase.element(2).symbol() == "Ca" );
         REQUIRE( phase.species().size() == 1 );
         REQUIRE( phase.species(0).name() == "Calcite" );
     }
