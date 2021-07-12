@@ -142,15 +142,16 @@ auto GenericPhase::convert(const Database& db, const Strings& elements) const ->
         symbols.size() ? species.withElements(symbols) :
             species.withElements(elements);
 
-    // Filter out species with provided tags
-    auto specieswithouttags = species.withoutTags(excludetags);
+    // Filter out species with provided tags in the exclude function
+    if(excludetags.size())
+        species = species.withoutTags(excludetags);
 
     Phase phase;
     phase = phase.withName(phasename);
     phase = phase.withStateOfMatter(stateofmatter);
-    phase = phase.withSpecies(specieswithouttags);
-    phase = phase.withActivityPropsFn(activity_model(specieswithouttags));
-    phase = phase.withIdealActivityPropsFn(ideal_activity_model(specieswithouttags));
+    phase = phase.withSpecies(species);
+    phase = phase.withActivityPropsFn(activity_model(species));
+    phase = phase.withIdealActivityPropsFn(ideal_activity_model(species));
 
     return phase;
 }
