@@ -185,7 +185,8 @@ struct AqueousProps::Impl
     /// Return the pH of the aqueous phase.
     auto pH() const -> real
     {
-        return props.lnActivities()[iH];
+        const auto ln_aH = props.lnActivities()[iH];
+        return -ln_aH/ln10;
     }
 
     /// Return the pE of the aqueous phase.
