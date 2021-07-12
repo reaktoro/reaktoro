@@ -12,6 +12,7 @@ dependencies:
   - clangxx_osx-64  # [osx]
   - clcache  # [win]
   - cmake
+  - cpp-tabulate
   - doxygen=1.8.20  # [linux]
   - eigen4rkt
   - fire
