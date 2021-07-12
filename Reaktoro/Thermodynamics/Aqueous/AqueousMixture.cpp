@@ -273,27 +273,27 @@ auto AqueousMixture::species(Index idx) const -> const Species&
     return pimpl->species[idx];
 }
 
-auto AqueousMixture::species() const -> SpeciesListConstRef
+auto AqueousMixture::species() const -> const SpeciesList&
 {
     return pimpl->species;
 }
 
-auto AqueousMixture::neutral() const -> SpeciesListConstRef
+auto AqueousMixture::neutral() const -> const SpeciesList&
 {
     return pimpl->neutral;
 }
 
-auto AqueousMixture::charged() const -> SpeciesListConstRef
+auto AqueousMixture::charged() const -> const SpeciesList&
 {
     return pimpl->charged;
 }
 
-auto AqueousMixture::cations() const -> SpeciesListConstRef
+auto AqueousMixture::cations() const -> const SpeciesList&
 {
     return pimpl->cations;
 }
 
-auto AqueousMixture::anions() const -> SpeciesListConstRef
+auto AqueousMixture::anions() const -> const SpeciesList&
 {
     return pimpl->anions;
 }

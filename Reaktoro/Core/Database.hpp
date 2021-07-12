@@ -87,10 +87,10 @@ public:
     auto attachData(const Any& data) -> void;
 
     /// Return all elements in the database.
-    auto elements() const -> ElementListConstRef;
+    auto elements() const -> const ElementList&;
 
     /// Return all species in the database.
-    auto species() const -> SpeciesListConstRef;
+    auto species() const -> const SpeciesList&;
 
     /// Return all species in the database with given aggregate state.
     auto speciesWithAggregateState(AggregateState option) const -> SpeciesList;

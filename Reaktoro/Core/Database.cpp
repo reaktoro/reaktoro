@@ -169,12 +169,12 @@ auto Database::attachData(const Any& data) -> void
     pimpl->attached_data = data;
 }
 
-auto Database::elements() const -> ElementListConstRef
+auto Database::elements() const -> const ElementList&
 {
     return pimpl->elements;
 }
 
-auto Database::species() const -> SpeciesListConstRef
+auto Database::species() const -> const SpeciesList&
 {
     return pimpl->species;
 }

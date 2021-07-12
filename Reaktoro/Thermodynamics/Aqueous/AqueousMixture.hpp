@@ -84,19 +84,19 @@ public:
     auto species(Index idx) const -> const Species&;
 
     /// Return the aqueous species in the mixture.
-    auto species() const -> SpeciesListConstRef;
+    auto species() const -> const SpeciesList&;
 
     /// Return the neutral aqueous solutes in the mixture.
-    auto neutral() const -> SpeciesListConstRef;
+    auto neutral() const -> const SpeciesList&;
 
     /// Return the charged aqueous solutes in the mixture.
-    auto charged() const -> SpeciesListConstRef;
+    auto charged() const -> const SpeciesList&;
 
     /// Return the cation solutes in the mixture.
-    auto cations() const -> SpeciesListConstRef;
+    auto cations() const -> const SpeciesList&;
 
     /// Return the anion solutes in the mixture.
-    auto anions() const -> SpeciesListConstRef;
+    auto anions() const -> const SpeciesList&;
 
     /// Return the indices of the neutral aqueous solutes in the mixture.
     auto indicesNeutral() const -> const Indices&;

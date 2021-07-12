@@ -249,12 +249,12 @@ auto DatabaseParserYAML::operator=(DatabaseParserYAML other) -> DatabaseParserYA
     return *this;
 }
 
-auto DatabaseParserYAML::elements() const -> ElementListConstRef
+auto DatabaseParserYAML::elements() const -> const ElementList&
 {
     return pimpl->element_list;
 }
 
-auto DatabaseParserYAML::species() const -> SpeciesListConstRef
+auto DatabaseParserYAML::species() const -> const SpeciesList&
 {
     return pimpl->species_list;
 }

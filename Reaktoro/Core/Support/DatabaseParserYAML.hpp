@@ -47,10 +47,10 @@ public:
     auto operator=(DatabaseParserYAML other) -> DatabaseParserYAML&;
 
     /// Return the parsed Element objects in the database file.
-    auto elements() const -> ElementListConstRef;
+    auto elements() const -> const ElementList&;
 
     /// Return the parsed Species objects in the database file.
-    auto species() const -> SpeciesListConstRef;
+    auto species() const -> const SpeciesList&;
 
     /// Return the parsed Element objects in the database file.
     operator Database() const;
