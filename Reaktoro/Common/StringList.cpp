@@ -114,6 +114,11 @@ StringList::StringList(std::string strings, char token)
 : m_strings(convertStringToStrings(trim(strings), token))
 {}
 
+auto StringList::empty() const -> bool
+{
+    return m_strings.empty();
+}
+
 auto StringList::size() const -> std::size_t
 {
     return m_strings.size();

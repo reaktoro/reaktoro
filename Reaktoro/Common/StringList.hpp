@@ -66,6 +66,9 @@ public:
     /// @param token The token used to separate the words in `str`.
     StringList(std::string str, char token);
 
+    /// Return true if the string list is empty.
+    auto empty() const -> bool;
+
     /// Return the number of strings.
     auto size() const -> std::size_t;
 
