@@ -237,7 +237,12 @@ auto EquilibriumConditions::initialComponentAmounts() const -> ArrayXr
     if(m_initial_component_amounts.size())
         return m_initial_component_amounts;
 
-    errorif(m_initial_species_amounts.size() == 0, "Initial conditions for species amounts or components amounts have not been given.");
+    errorif(m_initial_species_amounts.size() == 0,
+        "While executing EquilibriumConditions::initialComponentAmounts, it was found "
+        "that initial conditions for species or component amounts have not been given. "
+        "You need to use one of the methods below (check their overloaded versions):\n"
+        " * EquilibriumConditions::startWith\n"
+        " * EquilibriumConditions::startWithComponentAmounts");
 
     const auto Wn = m_system.formulaMatrix();
     const auto n0 = m_initial_species_amounts.matrix();
