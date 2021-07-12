@@ -196,55 +196,33 @@ public:
     /// Return all species with a given tag.
     auto withTag(String tag) const -> SpeciesList
     {
-        // Filter only if the tag is not empty, otherwise return the same list of species
-        if(tag.size())
-        {
-            // Filter out species that have tags and contain a provided one
-            return filter(m_species, RKT_LAMBDA(s, s.tags().size() and contains(s.tags(), tag)));
-        }
-        else
-            return m_species;
+        if(tag.empty())
+            return {};
+        return filter(m_species, RKT_LAMBDA(s, contains(s.tags(), tag)));
     }
 
     /// Return all species without a given tag.
     auto withoutTag(String tag) const -> SpeciesList
     {
-        // Filter only if the tag is not empty, otherwise return the same list of species
-        if(tag.size())
-        {
-            // Filter out species that either have tags but do not contain a provided one or
-            // do not have tags at all
-            return filter(m_species, RKT_LAMBDA(s, (s.tags().size() and !contains(s.tags(), tag)) or !s.tags().size()));
-        }
-        else
+        if(tag.empty())
             return m_species;
+        return filter(m_species, RKT_LAMBDA(s, !contains(s.tags(), tag)));
     }
 
     /// Return all species with given tags.
     auto withTags(const StringList& tags) const -> SpeciesList
     {
-        // Filter only if the tags are not empty, otherwise return the same list of species
-        if(tags.size())
-        {
-            // Filter out species that have tags and contain the provided ones
-            return filter(m_species, RKT_LAMBDA(s, s.tags().size() and contained(tags, s.tags())));
-        }
-        else
-            return m_species;
+        if(tag.empty())
+            return {};
+        return filter(m_species, RKT_LAMBDA(s, contained(tags, s.tags())));
     }
 
     /// Return all species without given tags.
     auto withoutTags(const StringList& tags) const -> SpeciesList
     {
-        // Filter only if the tags are not empty, otherwise return the same list of species
-        if(tags.size())
-        {
-            // Filter out species that either have tags but do not contain the provided ones or
-            // do not have tags at all
-            return filter(m_species, RKT_LAMBDA(s, (s.tags().size() and !contained(tags, s.tags())) or !s.tags().size()));
-        }
-        else
+        if(tag.empty())
             return m_species;
+        return filter(m_species, RKT_LAMBDA(s, !contained(tags, s.tags())));
     }
 
     /// Return all species with a certain elemental composition.
