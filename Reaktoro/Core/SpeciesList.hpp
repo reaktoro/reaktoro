@@ -212,7 +212,7 @@ public:
     /// Return all species with given tags.
     auto withTags(const StringList& tags) const -> SpeciesList
     {
-        if(tag.empty())
+        if(tags.empty())
             return {};
         return filter(m_species, RKT_LAMBDA(s, contained(tags, s.tags())));
     }
@@ -220,7 +220,7 @@ public:
     /// Return all species without given tags.
     auto withoutTags(const StringList& tags) const -> SpeciesList
     {
-        if(tag.empty())
+        if(tags.empty())
             return m_species;
         return filter(m_species, RKT_LAMBDA(s, !contained(tags, s.tags())));
     }
