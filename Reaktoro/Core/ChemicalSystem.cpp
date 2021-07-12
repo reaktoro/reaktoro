@@ -31,54 +31,27 @@ namespace Reaktoro {
 namespace detail {
 
 /// Replace duplicate phase names with unique names.
-auto fixDuplicatePhaseNames(Vec<Phase>& phases)
+auto fixDuplicatePhaseNames(PhaseList& phaselist)
 {
-    Strings phasenames = vectorize(phases, RKT_LAMBDA(x, x.name()));
+    Strings phasenames = vectorize(phaselist, RKT_LAMBDA(x, x.name()));
     phasenames = makeunique(phasenames, "!");
-    for(auto i = 0; i < phases.size(); ++i)
-        if(phases[i].name() != phasenames[i])
-            phases[i] = phases[i].withName(phasenames[i]);
+    for(auto i = 0; i < phaselist.size(); ++i)
+        if(phaselist[i].name() != phasenames[i])
+            phaselist[i] = phaselist[i].withName(phasenames[i]);
 }
 
 /// Replace duplicate species names with unique names.
-auto fixDuplicateSpeciesNames(Vec<Species>& species)
+auto fixDuplicateSpeciesNames(SpeciesList& specieslist)
 {
-    Strings speciesnames = vectorize(species, RKT_LAMBDA(x, x.name()));
+    Strings speciesnames = vectorize(specieslist, RKT_LAMBDA(x, x.name()));
     speciesnames = makeunique(speciesnames, "!");
-    for(auto i = 0; i < species.size(); ++i)
-        if(species[i].name() != speciesnames[i])
-            species[i] = species[i].withName(speciesnames[i]);
-}
-
-/// Collect all Element objects in the given Species objects.
-auto collectElements(const Vec<Species>& species) -> Vec<Element>
-{
-    Map<String, Element> collected;
-    for(const auto& s : species)
-        for(const auto& [element, coeff] : s.elements())
-            collected.emplace(element.symbol(), element);
-    auto elements = vectorize(collected, RKT_LAMBDA(x, x.second));
-    std::sort(elements.begin(), elements.end(),
-        [](auto l, auto r) { return l.molarMass() < r.molarMass(); }); // sort in ascending order of molar mass (atomic weight)
-    return elements;
-}
-
-/// Collect all Species objects in the given Phase objects.
-auto collectSpecies(const Vec<Phase>& phases) -> Vec<Species>
-{
-    auto num_species = 0;
-    for(const auto& phase : phases)
-        num_species += phase.species().size();
-
-    Vec<Species> species;
-    species.reserve(num_species);
-    for(const auto& phase : phases)
-        species = concatenate(species, phase.species().data());
-    return species;
+    for(auto i = 0; i < specieslist.size(); ++i)
+        if(specieslist[i].name() != speciesnames[i])
+            specieslist[i] = specieslist[i].withName(speciesnames[i]);
 }
 
 /// Return the formula matrix of the species with respect to given elements.
-auto formulaMatrix(const Vec<Species>& species, const Vec<Element>& elements) -> MatrixXd
+auto formulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd
 {
     const auto num_elements = elements.size();
     const auto num_components = num_elements + 1;
@@ -100,13 +73,13 @@ struct ChemicalSystem::Impl
     Database database;
 
     /// The list of phases in the system.
-    Vec<Phase> phases;
+    PhaseList phases;
 
     /// The list of species in the system.
-    Vec<Species> species;
+    SpeciesList species;
 
     /// The list of elements in the system.
-    Vec<Element> elements;
+    ElementList elements;
 
     /// The formula matrix of the system.
     MatrixXd formula_matrix;
@@ -119,8 +92,8 @@ struct ChemicalSystem::Impl
     Impl(const Database& database, const Vec<Phase>& phaselist)
     : database(database), phases(phaselist)
     {
-        species = detail::collectSpecies(phases);
-        elements = detail::collectElements(species);
+        species = phases.species();
+        elements = species.elements();
         formula_matrix = detail::formulaMatrix(species, elements);
 
         detail::fixDuplicatePhaseNames(phases);
@@ -150,7 +123,7 @@ auto ChemicalSystem::element(Index index) const -> const Element&
     return elements()[index];
 }
 
-auto ChemicalSystem::elements() const -> ElementListConstRef
+auto ChemicalSystem::elements() const -> const ElementList&
 {
     return pimpl->elements;
 }
@@ -160,7 +133,7 @@ auto ChemicalSystem::species(Index index) const -> const Species&
     return species()[index];
 }
 
-auto ChemicalSystem::species() const -> SpeciesListConstRef
+auto ChemicalSystem::species() const -> const SpeciesList&
 {
     return pimpl->species;
 }
@@ -170,7 +143,7 @@ auto ChemicalSystem::phase(Index index) const -> const Phase&
     return phases()[index];
 }
 
-auto ChemicalSystem::phases() const -> PhaseListConstRef
+auto ChemicalSystem::phases() const -> const PhaseList&
 {
     return pimpl->phases;
 }

@@ -51,19 +51,19 @@ public:
     auto element(Index index) const -> const Element&;
 
     /// Return the list of elements in the system.
-    auto elements() const -> ElementListConstRef;
+    auto elements() const -> const ElementList&;
 
     /// Return the species in the system with given index.
     auto species(Index index) const -> const Species&;
 
     /// Return the list of species in the system.
-    auto species() const -> SpeciesListConstRef;
+    auto species() const -> const SpeciesList&;
 
     /// Return the phase in the system with given index.
     auto phase(Index index) const -> const Phase&;
 
     /// Return the list of phases in the system.
-    auto phases() const -> PhaseListConstRef;
+    auto phases() const -> const PhaseList&;
 
     /// Return the formula matrix of the system.
     /// The formula matrix is defined as the matrix whose entry *(j, i)* is
