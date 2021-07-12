@@ -18,197 +18,102 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Algorithms.hpp>
-#include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/SpeciesList.hpp>
 
 namespace Reaktoro {
 
-// Forward declaration of PhaseListBase
-template<typename Data>
-class PhaseListBase;
-
-/// The specialized container to deal with a collection of Phase objects.
-using PhaseList = PhaseListBase<Vec<Phase>>;
-
-/// The specialized container to deal with a const reference view of a collection of Phase objects.
-using PhaseListConstRef = PhaseListBase<const Vec<Phase>&>;
-
 /// A type used as a collection of phases.
-template<typename Data>
-class PhaseListBase
+class PhaseList
 {
 public:
-    /// Construct a default PhaseListBase object.
-    PhaseListBase()
-    {}
+    /// Construct a default PhaseList object.
+    PhaseList();
 
-    /// Construct an PhaseListBase object with given phase.
-    PhaseListBase(const Vec<Phase>& phase)
-    : m_phases(phase)
-    {}
-
-    /// Construct an PhaseListBase object with given another one.
-    template<typename OtherData>
-    PhaseListBase(const PhaseListBase<OtherData>& other)
-    : m_phases(other.m_phases)
-    {}
+    /// Construct an PhaseList object with given phase.
+    PhaseList(const Vec<Phase>& phase);
 
     /// Append a new phase to the list of phase.
-    auto append(const Phase& phase)
-    {
-        m_phases.push_back(phase);
-    }
+    auto append(const Phase& phase) -> void;
 
     /// Return the internal collection of Phase objects.
-    auto data() const -> const Data&
-    {
-        return m_phases;
-    }
+    auto data() const -> const Vec<Phase>&;
 
     /// Return the number of phases in the collection.
-    auto size() const -> Index
-    {
-        return m_phases.size();
-    }
+    auto size() const -> Index;
+
+    /// Return the species that compose the phases in the collection.
+    auto species() const -> Vec<Species>;
 
     /// Return the Phase object with given index.
-    auto operator[](Index i) const -> const Phase&
-    {
-        return m_phases[i];
-    }
+    auto operator[](Index i) const -> const Phase&;
+
+    /// Return the Phase object with given index.
+    auto operator[](Index i) -> Phase&;
 
     /// Return the index of the phase with given unique name or the number of phases if not found.
-    auto find(const String& name) const -> Index
-    {
-        return findWithName(name);
-    }
+    auto find(const String& name) const -> Index;
 
     /// Return the index of the phase with given unique name or the number of phases if not found.
-    auto findWithName(const String& name) const -> Index
-    {
-        return indexfn(m_phases, RKT_LAMBDA(p, p.name() == name));
-    }
+    auto findWithName(const String& name) const -> Index;
 
     /// Return the index of the phase containing the species with given index or number of phases if not found.
-    auto findWithSpecies(Index index) const -> Index
-    {
-        auto counter = 0;
-        for(auto i = 0; i < size(); ++i) {
-            counter += m_phases[i].species().size();
-            if(counter > index)
-                return i;
-        }
-        return size();
-    }
+    auto findWithSpecies(Index index) const -> Index;
 
     /// Return the index of the phase with given unique species name or the number of phases if not found.
-    auto findWithSpecies(const String& name) const -> Index
-    {
-        return indexfn(m_phases, RKT_LAMBDA(p, containsfn(p.species(), RKT_LAMBDA(s, s.name() == name))));
-    }
+    auto findWithSpecies(const String& name) const -> Index;
 
     /// Return the index of the first phase with given aggregate state of species or the number of phases if not found.
-    auto findWithAggregateState(AggregateState option) const -> Index
-    {
-        return indexfn(m_phases, RKT_LAMBDA(p, p.aggregateState() == option));
-    }
+    auto findWithAggregateState(AggregateState option) const -> Index;
 
     /// Return the index of the first phase with given state of matter or the number of phases if not found.
-    auto findWithStateOfMatter(StateOfMatter option) const -> Index
-    {
-        return indexfn(m_phases, RKT_LAMBDA(p, p.stateOfMatter() == option));
-    }
+    auto findWithStateOfMatter(StateOfMatter option) const -> Index;
 
     /// Return the index of the phase with given unique name or throw a runtime error if not found.
-    auto index(const String& name) const -> Index
-    {
-        return indexWithName(name);
-    }
+    auto index(const String& name) const -> Index;
 
     /// Return the index of the phase with given unique name or throw a runtime error if not found.
-    auto indexWithName(const String& name) const -> Index
-    {
-        const auto idx = findWithName(name);
-        error(idx >= size(), "Could not find any Phase object with name ", name, ".");
-        return idx;
-    }
+    auto indexWithName(const String& name) const -> Index;
 
     /// Return the index of the phase containing the species with given index or throw a runtime error if not found.
-    auto indexWithSpecies(Index index) const -> Index
-    {
-        const auto idx = findWithSpecies(index);
-        error(idx >= size(), "Could not find any Phase object containing a Species object with index ", index, ".");
-        return idx;
-    }
+    auto indexWithSpecies(Index index) const -> Index;
 
     /// Return the index of the phase with given unique species name or throw a runtime error if not found.
-    auto indexWithSpecies(const String& name) const -> Index
-    {
-        const auto idx = findWithSpecies(name);
-        error(idx >= size(), "Could not find any Phase object containing a Species object with name ", name, ".");
-        return idx;
-    }
+    auto indexWithSpecies(const String& name) const -> Index;
 
     /// Return the index of the first phase with given aggregate state of species or throw a runtime error if not found.
-    auto indexWithAggregateState(AggregateState option) const -> Index
-    {
-        const auto idx = findWithAggregateState(option);
-        error(idx >= size(), "Could not find any Phase object whose species have aggregate state ", option, ".");
-        return idx;
-    }
+    auto indexWithAggregateState(AggregateState option) const -> Index;
 
     /// Return the index of the first phase with given state of matter or throw a runtime error if not found.
-    auto indexWithStateOfMatter(StateOfMatter option) const -> Index
-    {
-        const auto idx = findWithStateOfMatter(option);
-        error(idx >= size(), "Could not find any Phase object with state of matter ", option, ".");
-        return idx;
-    }
+    auto indexWithStateOfMatter(StateOfMatter option) const -> Index;
 
     /// Return all phases with given names.
-    auto withNames(const StringList& names) const -> PhaseList
-    {
-        return vectorize(names, RKT_LAMBDA(name, m_phases[indexWithName(name)]));
-    }
+    auto withNames(const StringList& names) const -> PhaseList;
 
     /// Return all phases with given state of matter.
-    auto withStateOfMatter(StateOfMatter option) const -> PhaseList
-    {
-        return filter(m_phases, RKT_LAMBDA(p, p.stateOfMatter() == option));
-    }
+    auto withStateOfMatter(StateOfMatter option) const -> PhaseList;
 
     /// Return all phases whose species have the given aggregate state.
-    auto withAggregateState(AggregateState option) const -> PhaseList
-    {
-        return filter(m_phases, RKT_LAMBDA(p, p.aggregateState() == option));
-    }
+    auto withAggregateState(AggregateState option) const -> PhaseList;
 
     /// Return the number of species over all phases up to the one with given index.
-    auto numSpeciesUntilPhase(Index iphase) const -> Index
-    {
-        auto sum = 0;
-        for(auto i = 0; i < iphase; ++i)
-            sum += m_phases[i].species().size();
-        return sum;
-    }
+    auto numSpeciesUntilPhase(Index iphase) const -> Index;
 
-    /// Convert this PhaseListBase object into its Data.
-    operator Data() { return m_phases; }
+    /// Convert this PhaseList object into its Vec<Phase>.
+    operator Vec<Phase>&();
 
-    /// Convert this PhaseListBase object into its Data.
-    operator Data() const { return m_phases; }
+    /// Convert this PhaseList object into its Vec<Phase>.
+    operator Vec<Phase>const&() const;
 
 private:
     /// The species stored in the list.
-    Data m_phases;
+    Vec<Phase> m_phases;
 
 public:
     /// Construct an PhaseList object with given begin and end iterators.
     template<typename InputIterator>
-    PhaseListBase(InputIterator begin, InputIterator end) : m_phases(begin, end) {}
+    PhaseList(InputIterator begin, InputIterator end) : m_phases(begin, end) {}
 
     /// Return begin const iterator of this PhaseList instance (for STL compatibility reasons).
     auto begin() const { return data().begin(); }
