@@ -192,26 +192,6 @@ auto SpeciesList::withoutTags(const StringList& tags) const -> SpeciesList
     return filter(m_species, RKT_LAMBDA(s, !contained(tags, s.tags())));
 }
 
-auto SpeciesList::withTag(String tag) const -> SpeciesList
-{
-    return filter(m_species, RKT_LAMBDA(s, contains(s.tags(), tag)));
-}
-
-auto SpeciesList::withoutTag(String tag) const -> SpeciesList
-{
-    return filter(m_species, RKT_LAMBDA(s, !contains(s.tags(), tag)));
-}
-
-auto SpeciesList::withTags(const StringList& tags) const -> SpeciesList
-{
-    return filter(m_species, RKT_LAMBDA(s, contained(tags, s.tags())));
-}
-
-auto SpeciesList::withoutTags(const StringList& tags) const -> SpeciesList
-{
-    return filter(m_species, RKT_LAMBDA(s, !contained(tags, s.tags())));
-}
-
 auto SpeciesList::withElements(const StringList& symbols) const -> SpeciesList
 {
     return filter(m_species, RKT_LAMBDA(s, contained(s.elements().symbols(), symbols)));
