@@ -103,14 +103,14 @@ auto vectorize(const Container& c, const Function& f)
 template<typename Container, typename T>
 auto contains(const Container& c, const T& x)
 {
-    return std::find(c.begin(), c.end(), x) != c.end();
+    return c.size() && std::find(c.begin(), c.end(), x) != c.end();
 }
 
 /// Return true if container `a` contains item `x` for which `pred(x)` evaluates to true.
 template<typename Container, typename Predicate>
 auto containsfn(const Container& c, const Predicate& pred)
 {
-    return std::find_if(c.begin(), c.end(), pred) != c.end();
+    return c.size() && std::find_if(c.begin(), c.end(), pred) != c.end();
 }
 
 /// Return true if items in container `a` are also in container `b`.
