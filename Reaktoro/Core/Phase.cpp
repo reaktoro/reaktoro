@@ -56,6 +56,9 @@ struct Phase::Impl
     /// The list of Species instances defining the phase
     SpeciesList species;
 
+    /// The list of Element instances defining the species in the phase
+    ElementList elements;
+
     /// The activity model function of the phase.
     ActivityPropsFn activity_props_fn;
 
@@ -88,6 +91,7 @@ auto Phase::withSpecies(SpeciesList species) -> Phase
 {
     detail::ensureCommonAggregateState(species);
     Phase copy = clone();
+    copy.pimpl->elements = species.elements();
     copy.pimpl->species = std::move(species);
     copy.pimpl->species_molar_masses = detail::molarMasses(copy.pimpl->species);
     return copy;
@@ -129,7 +133,17 @@ auto Phase::aggregateState() const -> AggregateState
     return species().size() ? species()[0].aggregateState() : AggregateState::Undefined;
 }
 
-auto Phase::species() const -> SpeciesListConstRef
+auto Phase::elements() const -> const ElementList&
+{
+    return pimpl->elements;
+}
+
+auto Phase::element(Index idx) const -> const Element&
+{
+    return pimpl->elements[idx];
+}
+
+auto Phase::species() const -> const SpeciesList&
 {
     return pimpl->species;
 }

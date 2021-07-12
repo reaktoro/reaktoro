@@ -61,8 +61,14 @@ public:
     /// Return the common aggregate state of the species in the phase.
     auto aggregateState() const -> AggregateState;
 
+    /// Return the elements of the phase.
+    auto elements() const -> const ElementList&;
+
+    /// Return the element in the phase with given index.
+    auto element(Index idx) const -> const Element&;
+
     /// Return the species of the phase.
-    auto species() const -> SpeciesListConstRef;
+    auto species() const -> const SpeciesList&;
 
     /// Return the species in the phase with given index.
     auto species(Index idx) const -> const Species&;
