@@ -61,6 +61,30 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     REQUIRE( phases.size() == 5 );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: PhaseList::species
+    //-------------------------------------------------------------------------
+    const auto species = phases.species();
+
+    REQUIRE( species.size() == 17 );
+    REQUIRE( species[0].name()  == "H2O(aq)"   );
+    REQUIRE( species[1].name()  == "H+"        );
+    REQUIRE( species[2].name()  == "OH-"       );
+    REQUIRE( species[3].name()  == "H2(aq)"    );
+    REQUIRE( species[4].name()  == "O2(aq)"    );
+    REQUIRE( species[5].name()  == "Na+"       );
+    REQUIRE( species[6].name()  == "Cl-"       );
+    REQUIRE( species[7].name()  == "NaCl(aq)"  );
+    REQUIRE( species[8].name()  == "H2O(g)"    );
+    REQUIRE( species[9].name()  == "CO2(g)"    );
+    REQUIRE( species[10].name() == "CH4(g)"    );
+    REQUIRE( species[11].name() == "O2(g)"     );
+    REQUIRE( species[12].name() == "H2(g)"     );
+    REQUIRE( species[13].name() == "CO(g)"     );
+    REQUIRE( species[14].name() == "Calcite"   );
+    REQUIRE( species[15].name() == "Halite"    );
+    REQUIRE( species[16].name() == "Magnesite" );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: PhaseList::operator[](Index)
     //-------------------------------------------------------------------------
     REQUIRE( phases[0].name() == "AqueousPhase" );
