@@ -34,12 +34,11 @@ void exportPhases(py::module& m)
     m.def("speciate", speciate);
 
     py::class_<Exclude>(m, "Exclude")
-            .def(py::init<>())
-            .def_readwrite("tags", &Exclude::tags)
-            ;
+        .def(py::init<>())
+        .def_readwrite("tags", &Exclude::tags)
+        ;
 
     m.def("exclude", exclude);
-
 
     py::class_<Phases>(m, "Phases")
         .def(py::init<const Database&>())
