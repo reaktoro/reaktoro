@@ -17,6 +17,10 @@
 
 #include "AqueousProps.hpp"
 
+// cpp-tabulate includes
+#include <tabulate/table.hpp>
+using namespace tabulate;
+
 // Optima includes
 #include <Optima/Echelonizer.hpp>
 
@@ -54,28 +58,31 @@ auto indexAqueousPhase(const ChemicalSystem& system) -> Index
 struct AqueousProps::Impl
 {
     /// The chemical system in which the aqueous phase is.
-    ChemicalSystem system;
+    const ChemicalSystem system;
 
     /// The index of the underlying Phase object for the aqueous phase in the system.
-    Index iphase;
+    const Index iphase;
 
     /// The underlying Phase object for the aqueous phase in the system.
-    Phase phase;
+    const Phase phase;
+
+    /// The phase as an aqueous solution.
+    const AqueousMixture aqsolution;
+
+    /// The index of the aqueous solvent species H2O
+    const Index iH2O;
+
+    /// The index of the aqueous solute species H+
+    const Index iH;
 
     /// The chemical properties of the aqueous phase.
     ChemicalPropsPhase props;
 
-    /// The phase as an aqueous solution.
-    AqueousMixture aqsolution;
+    /// The amounts of the species in the aqueous phase.
+    VectorXr naq;
 
     /// The state of the aqueous solution.
     AqueousMixtureState aqstate;
-
-    /// The index of the aqueous solvent species H2O
-    Index iH2O;
-
-    /// The index of the aqueous solute species H+
-    Index iH;
 
     /// The formula matrix of the aqueous species.
     MatrixXd Aaq;
@@ -83,20 +90,18 @@ struct AqueousProps::Impl
     /// The echelon form of the formula matrix of the aqueous species.
     Optima::Echelonizer echelonizer;
 
-    /// Construct an AqueousProps::Impl object.
     Impl(const ChemicalSystem& system)
     : system(system),
       iphase(indexAqueousPhase(system)),
       phase(system.phase(iphase)),
       props(phase),
-      aqsolution(phase.species())
+      aqsolution(phase.species()),
+      iH2O(phase.species().findWithFormula("H2O")),
+      iH(phase.species().findWithFormula("H+"))
     {
         assert(phase.species().size() > 0);
         assert(phase.species().size() == props.phase().species().size());
         assert(phase.species().size() == aqsolution.species().size());
-
-        iH2O = phase.species().findWithFormula("H2O");
-        iH = phase.species().findWithFormula("H+");
 
         const auto size = phase.species().size();
 
@@ -114,21 +119,18 @@ struct AqueousProps::Impl
         echelonizer.compute(Aaq); // echelon form of Aaq (columns of A corresponding to aqueous species)
     }
 
-    /// Construct an AqueousProps::Impl object.
     Impl(const ChemicalSystem& system, const ChemicalState& state)
     : Impl(system)
     {
         update(state);
     }
 
-    /// Construct an AqueousProps::Impl object.
     Impl(const ChemicalSystem& system, const ChemicalProps& props)
     : Impl(system)
     {
         update(props);
     }
 
-    /// Update the aqueous properties with given chemical state of the system.
     auto update(const ChemicalState& state) -> void
     {
         const auto T = state.temperature();
@@ -136,60 +138,80 @@ struct AqueousProps::Impl
         const auto n = state.speciesAmounts();
         const auto ifirst = system.phases().numSpeciesUntilPhase(iphase);
         const auto size = phase.species().size();
-        const auto naq = n.segment(ifirst, size);
+        naq = n.segment(ifirst, size);
         props.update(T, P, naq);
+        const auto& x = props.moleFractions();
+        aqstate = aqsolution.state(T, P, x);
+        echelonizer.updateWithPriorityWeights(naq);
     }
 
-    /// Update the aqueous properties with given chemical properties of the system.
+    auto update(const ChemicalPropsPhase& aqprops) -> void
+    {
+        props = aqprops;
+        naq = props.speciesAmounts();
+        const auto& T = props.temperature();
+        const auto& P = props.pressure();
+        const auto& x = props.moleFractions();
+        aqstate = aqsolution.state(T, P, x);
+        echelonizer.updateWithPriorityWeights(naq);
+    }
+
     auto update(const ChemicalProps& sysprops) -> void
     {
-        props.update(sysprops.phaseProps(iphase).data());
+        update(sysprops.phaseProps(iphase));
     }
 
-    /// Return the molality of an element (in molal).
+    auto temperature() const -> real
+    {
+        return props.temperature();
+    }
+
+    auto pressure() const -> real
+    {
+        return props.pressure();
+    }
+
     auto elementMolality(const String& symbol) const -> real
     {
         const auto idx = system.elements().indexWithSymbol(symbol);
-        const auto naq = props.speciesAmounts();
-        real bi = {};
-        for(auto i = 0; i < naq.size(); ++i)
-            bi += Aaq(idx, i) * naq[i];
-        const auto nH2O = naq[iH2O];
-        const auto molality = bi/(waterMolarMass * nH2O);
-        return molality;
+        const auto& m = aqstate.m.matrix();
+        return Aaq.row(idx) * m;
     }
 
-    /// Return the molality of an aqueous solute species (in molal).
+    auto elementMolalities() const -> VectorXr
+    {
+        const auto E = system.elements().size();
+        const auto& m = aqstate.m.matrix();
+        return Aaq.topRows(E) * m;
+    }
+
     auto speciesMolality(const String& name) const -> real
     {
         const auto idx = phase.species().indexWithName(name);
-        const auto naq = props.speciesAmounts();
-        const auto ni = naq[idx];
-        const auto nH2O = naq[iH2O];
-        const auto molality = ni/(waterMolarMass * nH2O);
-        return molality;
+        return aqstate.m[idx];
     }
 
-    /// Return the effective ionic strength of the aqueous phase (in molal).
+    auto speciesMolalities() const -> VectorXr
+    {
+        return aqstate.m;
+    }
+
     auto ionicStrength() const -> real
     {
         return aqstate.Ie;
     }
 
-    /// Return the stoichiometric ionic strength of the aqueous phase (in molal).
     auto ionicStrengthStoichiometric() const -> real
     {
         return aqstate.Is;
     }
 
-    /// Return the pH of the aqueous phase.
     auto pH() const -> real
     {
         const auto ln_aH = props.lnActivities()[iH];
         return -ln_aH/ln10;
     }
 
-    /// Return the pE of the aqueous phase.
     auto pE() const -> real
     {
         const auto T = props.temperature();
@@ -205,7 +227,6 @@ struct AqueousProps::Impl
         return res;
     }
 
-    /// Return the reduction potential of the aqueous phase (in V).
     auto Eh() const -> real
     {
         const auto T = props.temperature();
@@ -215,13 +236,11 @@ struct AqueousProps::Impl
         return res;
     }
 
-    /// Return the total alkalinity of the aqueous phase (in eq/L).
     auto alkalinity() const -> real
     {
-        error(true, "AqueousProps::alkalinity is has not been implemented yet.");
+        error(true, "AqueousProps::alkalinity has not been implemented yet.");
         return {};
     }
-
 };
 
 AqueousProps::AqueousProps(const ChemicalSystem& system)
@@ -259,9 +278,24 @@ auto AqueousProps::update(const ChemicalProps& props) -> void
     pimpl->update(props);
 }
 
+auto AqueousProps::temperature() const -> real
+{
+    return pimpl->temperature();
+}
+
+auto AqueousProps::pressure() const -> real
+{
+    return pimpl->pressure();
+}
+
 auto AqueousProps::elementMolality(const String& symbol) const -> real
 {
     return pimpl->elementMolality(symbol);
+}
+
+auto AqueousProps::elementMolalities() const -> VectorXr
+{
+    return pimpl->elementMolalities();
 }
 
 auto AqueousProps::speciesMolality(const String& name) const -> real
@@ -269,7 +303,17 @@ auto AqueousProps::speciesMolality(const String& name) const -> real
     return pimpl->speciesMolality(name);
 }
 
+auto AqueousProps::speciesMolalities() const -> VectorXr
+{
+    return pimpl->speciesMolalities();
+}
+
 auto AqueousProps::ionicStrength() const -> real
+{
+    return pimpl->ionicStrength();
+}
+
+auto AqueousProps::ionicStrengthEffective() const -> real
 {
     return pimpl->ionicStrength();
 }
@@ -302,6 +346,50 @@ auto AqueousProps::alkalinity() const -> real
 auto AqueousProps::phase() const -> const Phase&
 {
     return pimpl->phase;
+}
+
+auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
+{
+    const auto elements = props.phase().elements();
+    const auto species = props.phase().species();
+    const auto ms = props.speciesMolalities();
+    const auto me = props.elementMolalities();
+    Table table;
+    table.add_row({ "Property", "Value", "Unit" });
+    table.add_row({ "Temperature", str(props.temperature()), "K" });
+    table.add_row({ "Pressure", str(props.pressure()), "Pa" });
+    table.add_row({ "Ionic Strength (Effect.)", str(props.ionicStrength()), "molal" });
+    table.add_row({ "Ionic Strength (Stoich.)", str(props.ionicStrengthStoichiometric()), "molal" });
+    table.add_row({ "pH", str(props.pH()), "" });
+    table.add_row({ "pE", str(props.pE()), "" });
+    table.add_row({ "Eh", str(props.Eh()), "V" });
+    table.add_row({ "Element Molality:" });
+    for(auto i = 0; i < me.size(); ++i)
+        if(elements[i].symbol() != "H" && elements[i].symbol() != "O")
+            table.add_row({ ":: " + elements[i].symbol(), str(me[i]), "molal" });
+    table.add_row({ "Species Molality:" });
+    for(auto i = 0; i < ms.size(); ++i)
+        if(species[i].formula().str() != "H2O")
+            table.add_row({ ":: " + species[i].name(), str(ms[i]), "molal" });
+
+    auto i = 0;
+    for(auto& row : table)
+    {
+        if(i >= 2)  // apply from the third row
+            table[i].format()
+                .border_top("")
+                .column_separator("")
+                .corner_top_left("")
+                .corner_top_right("");
+        i += 1;
+    }
+
+    table.row(0).format().font_style({FontStyle::bold});  // Bold face for header
+    table.column(1).format().font_align(FontAlign::right); // Value column with right alignment
+    table.column(2).format().font_align(FontAlign::right); // Unit column with right alignment
+
+    out << table;
+    return out;
 }
 
 } // namespace Reaktoro

@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -56,14 +57,29 @@ public:
     /// Update the aqueous properties with given chemical properties of the system.
     auto update(const ChemicalProps& props) -> void;
 
+    /// Return the temperature of the aqueous phase (in K).
+    auto temperature() const -> real;
+
+    /// Return the pressure of the aqueous phase (in Pa).
+    auto pressure() const -> real;
+
     /// Return the molality of an element (in molal).
     auto elementMolality(const String& symbol) const -> real;
+
+    /// Return the molality concentrations of the elements in  (in molal).
+    auto elementMolalities() const -> VectorXr;
 
     /// Return the molality of an aqueous solute species (in molal).
     auto speciesMolality(const String& name) const -> real;
 
-    /// Return the effective ionic strength of the aqueous phase (in molal).
+    /// Return the molality concentrations of the species (in molal).
+    auto speciesMolalities() const -> VectorXr;
+
+    /// Return the effective ionic strength of the aqueous phase (in molal). Equivalent to @ref ionicStrengthEffective.
     auto ionicStrength() const -> real;
+
+    /// Return the effective ionic strength of the aqueous phase (in molal).
+    auto ionicStrengthEffective() const -> real;
 
     /// Return the stoichiometric ionic strength of the aqueous phase (in molal).
     auto ionicStrengthStoichiometric() const -> real;
@@ -98,7 +114,7 @@ private:
     std::unique_ptr<Impl> pimpl;
 };
 
-/// Output a AqueousProps object.
+/// Output an AqueousProps object to an output stream.
 auto operator<<(std::ostream& out, const AqueousProps& state) -> std::ostream&;
 
 } // namespace Reaktoro
