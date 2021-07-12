@@ -18,212 +18,105 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Algorithms.hpp>
-#include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/ChemicalFormula.hpp>
+#include <Reaktoro/Core/ElementList.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
 
-// Forward declaration of SpeciesListBase
-template<typename Data>
-class SpeciesListBase;
-
-/// The specialized container to deal with a collection of Species objects.
-using SpeciesList = SpeciesListBase<Vec<Species>>;
-
-/// The specialized container to deal with a const reference view of a collection of Species objects.
-using SpeciesListConstRef = SpeciesListBase<const Vec<Species>&>;
-
 /// A type used as a collection of species.
-template<typename Data>
-class SpeciesListBase
+class SpeciesList
 {
 public:
-    /// Construct a default SpeciesListBase object.
-    SpeciesListBase()
-    {}
+    /// Construct a default SpeciesList object.
+    SpeciesList();
 
-    /// Construct an SpeciesListBase object with given species.
-    SpeciesListBase(std::initializer_list<Species> species)
-     : m_species(std::move(species))
-    {}
+    /// Construct an SpeciesList object with given species.
+    SpeciesList(std::initializer_list<Species> species);
 
-    /// Construct an SpeciesListBase object with given species.
-    SpeciesListBase(const Vec<Species>& species)
-     : m_species(species)
-    {}
+    /// Construct an SpeciesList object with given species.
+    SpeciesList(const Vec<Species>& species);
 
-    /// Construct an SpeciesListBase object with given species formulas.
-    SpeciesListBase(const StringList& formulas)
-     : m_species(vectorize(formulas, RKT_LAMBDA(x, Species(x))))
-    {}
-
-    /// Construct an SpeciesListBase object with given another one.
-    template<typename OtherData>
-    SpeciesListBase(const SpeciesListBase<OtherData>& other)
-     : m_species(other.data())
-    {}
+    /// Construct an SpeciesList object with given species formulas.
+    SpeciesList(const StringList& formulas);
 
     /// Append a new species to the list of species.
-    auto append(const Species& species)
-    {
-        m_species.push_back(species);
-    }
+    auto append(const Species& species) -> void;
 
     /// Return the internal collection of Species objects.
-    auto data() const -> const Data&
-    {
-        return m_species;
-    }
+    auto data() const -> const Vec<Species>&;
 
     /// Return the number of species in the collection.
-    auto size() const -> Index
-    {
-        return m_species.size();
-    }
+    auto size() const -> Index;
+
+    /// Return the elements that compose the species in the collection sorted in ascending order of molar mass.
+    auto elements() const -> ElementList;
 
     /// Return the Species object with given index.
-    auto operator[](Index i) const -> const Species&
-    {
-        return m_species[i];
-    }
+    auto operator[](Index i) const -> const Species&;
+
+    /// Return the Species object with given index.
+    auto operator[](Index i) -> Species&;
 
     /// Return the index of the first species with given unique name or the number of species if not found.
-    auto find(const String& name) const -> Index
-    {
-        return findWithName(name);
-    }
+    auto find(const String& name) const -> Index;
 
     /// Return the index of the first species with given unique name or the number of species if not found.
-    auto findWithName(const String& name) const -> Index
-    {
-        return indexfn(m_species, RKT_LAMBDA(s, s.name() == name));
-    }
+    auto findWithName(const String& name) const -> Index;
 
     /// Return the index of the first species with equivalent formula or the number of species if not found.
-    auto findWithFormula(const ChemicalFormula& formula) const -> Index
-    {
-        return indexfn(m_species, RKT_LAMBDA(s, formula.equivalent(s.formula())));
-    }
+    auto findWithFormula(const ChemicalFormula& formula) const -> Index;
 
     /// Return the index of the first species with given substance name or the number of species if not found.
-    auto findWithSubstance(const String& substance) const -> Index
-    {
-        return indexfn(m_species, RKT_LAMBDA(s, s.substance() == substance));
-    }
+    auto findWithSubstance(const String& substance) const -> Index;
 
     /// Return the index of the first species with given unique name or throw a runtime error if not found.
-    auto index(const String& name) const -> Index
-    {
-        return indexWithName(name);
-    }
+    auto index(const String& name) const -> Index;
 
     /// Return the index of the species with given unique name or throw a runtime error if not found.
-    auto indexWithName(const String& name) const -> Index
-    {
-        const auto idx = findWithName(name);
-        error(idx >= size(), "Could not find any Species object with name ", name, ".");
-        return idx;
-    }
+    auto indexWithName(const String& name) const -> Index;
 
     /// Return the index of the first species with equivalent formula or throw a runtime error if not found.
-    auto indexWithFormula(const ChemicalFormula& formula) const -> Index
-    {
-        const auto idx = findWithFormula(formula);
-        error(idx >= size(), "Could not find any Species object with formula ", formula.str(), ".");
-        return idx;
-    }
+    auto indexWithFormula(const ChemicalFormula& formula) const -> Index;
 
     /// Return the index of the first species with given substance name or throw a runtime error if not found.
-    auto indexWithSubstance(const String& substance) const -> Index
-    {
-        const auto idx = findWithSubstance(substance);
-        error(idx >= size(), "Could not find any Species object with substance ", substance, ".");
-        return idx;
-    }
+    auto indexWithSubstance(const String& substance) const -> Index;
 
     /// Return the species with given name.
-    auto get(const String& name) const -> const Species&
-    {
-        return getWithName(name);
-    }
+    auto get(const String& name) const -> const Species&;
 
     /// Return the species with given name.
-    auto getWithName(const String& name) const -> const Species&
-    {
-        return m_species[indexWithName(name)];
-    }
+    auto getWithName(const String& name) const -> const Species&;
 
     /// Return the species with given formula.
-    auto getWithFormula(const ChemicalFormula& formula) const -> const Species&
-    {
-        return m_species[indexWithFormula(formula)];
-    }
+    auto getWithFormula(const ChemicalFormula& formula) const -> const Species&;
 
     /// Return the species with given substance name.
-    auto getWithSubstance(const String substance) const -> const Species&
-    {
-        return m_species[indexWithSubstance(substance)];
-    }
+    auto getWithSubstance(const String substance) const -> const Species&;
 
     /// Return all species with given names.
-    auto withNames(const StringList& names) const -> SpeciesList
-    {
-        return vectorize(names, RKT_LAMBDA(name, m_species[indexWithName(name)]));
-    }
+    auto withNames(const StringList& names) const -> SpeciesList;
 
     /// Return all species with given substance formulas.
-    auto withFormulas(const StringList& formulas) const -> SpeciesList
-    {
-        return vectorize(formulas, RKT_LAMBDA(formula, m_species[indexWithFormula(formula)]));
-    }
+    auto withFormulas(const StringList& formulas) const -> SpeciesList;
 
     /// Return all species with given substance names.
-    auto withSubstances(const StringList& substances) const -> SpeciesList
-    {
-        return vectorize(substances, RKT_LAMBDA(substance, m_species[indexWithSubstance(substance)]));
-    }
+    auto withSubstances(const StringList& substances) const -> SpeciesList;
 
     /// Return all species with given aggregate state.
-    auto withAggregateState(AggregateState state) const -> SpeciesList
-    {
-        return filter(m_species, RKT_LAMBDA(s, s.aggregateState() == state));
-    }
+    auto withAggregateState(AggregateState state) const -> SpeciesList;
 
     /// Return all species with a given tag.
-    auto withTag(String tag) const -> SpeciesList
-    {
-        if(tag.empty())
-            return {};
-        return filter(m_species, RKT_LAMBDA(s, contains(s.tags(), tag)));
-    }
+    auto withTag(String tag) const -> SpeciesList;
 
     /// Return all species without a given tag.
-    auto withoutTag(String tag) const -> SpeciesList
-    {
-        if(tag.empty())
-            return m_species;
-        return filter(m_species, RKT_LAMBDA(s, !contains(s.tags(), tag)));
-    }
+    auto withoutTag(String tag) const -> SpeciesList;
 
     /// Return all species with given tags.
-    auto withTags(const StringList& tags) const -> SpeciesList
-    {
-        if(tags.empty())
-            return {};
-        return filter(m_species, RKT_LAMBDA(s, contained(tags, s.tags())));
-    }
+    auto withTags(const StringList& tags) const -> SpeciesList;
 
     /// Return all species without given tags.
-    auto withoutTags(const StringList& tags) const -> SpeciesList
-    {
-        if(tags.empty())
-            return m_species;
-        return filter(m_species, RKT_LAMBDA(s, !contained(tags, s.tags())));
-    }
+    auto withoutTags(const StringList& tags) const -> SpeciesList;
 
     /// Return all species with a certain elemental composition.
     /// This method filters the species composed of one or more given elements, as shown below.
@@ -237,10 +130,7 @@ public:
     /// ~~~
     /// @param symbols The element symbols of interest.
     /// @see SpeciesList::withElementsOf
-    auto withElements(const StringList& symbols) const -> SpeciesList
-    {
-        return filter(m_species, RKT_LAMBDA(s, contained(s.elements().symbols(), symbols)));
-    }
+    auto withElements(const StringList& symbols) const -> SpeciesList;
 
     /// Return all species with a certain elemental composition.
     /// This method extracts the elements from a given set of chemical formulas and
@@ -255,32 +145,22 @@ public:
     /// ~~~
     /// @param formulas The formulas of the species from which elements are extracted.
     /// @see SpeciesList::withElements
-    auto withElementsOf(const StringList& formulas) const -> SpeciesList
-    {
-        Strings symbols;
-        for(ChemicalFormula formula : formulas)
-            symbols = merge(symbols, formula.symbols());
-        return withElements(symbols);
-    }
+    auto withElementsOf(const StringList& formulas) const -> SpeciesList;
 
-    /// Convert this SpeciesListBase object into its Data.
-    operator Data() { return m_species; }
+    /// Convert this SpeciesList object into its Data.
+    operator Vec<Species>&();
 
-    /// Convert this SpeciesListBase object into its Data.
-    operator Data() const { return m_species; }
-
-    // Ensure other SpeciesListBase types are friend among themselves.
-    template<typename DataOther>
-    friend class SpeciesListBase;
+    /// Convert this SpeciesList object into its Data.
+    operator Vec<Species>const&() const;
 
 private:
     /// The species stored in the list.
-    Data m_species;
+    Vec<Species> m_species;
 
 public:
     /// Construct an SpeciesList object with given begin and end iterators.
     template<typename InputIterator>
-    SpeciesListBase(InputIterator begin, InputIterator end) : m_species(begin, end) {}
+    SpeciesList(InputIterator begin, InputIterator end) : m_species(begin, end) {}
 
     /// Return begin const iterator of this SpeciesList instance (for STL compatibility reasons).
     auto begin() const { return data().begin(); }
