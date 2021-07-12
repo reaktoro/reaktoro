@@ -344,10 +344,10 @@ public:
     explicit LiquidPhase(const Speciate& elements) : GenericPhase(elements) { initialize(); }
 
     /// Construct a LiquidPhase object with given element symbols excluding the species with provided tags.
-    explicit LiquidPhase(const Speciate& elements, const Exclude& withtags) { initialize(); };
+    explicit LiquidPhase(const Speciate& elements, const Exclude& withtags) : GenericPhase(elements, withtags) { initialize(); };
 
     /// Construct a LiquidPhase object excluding the species with provided tags.
-    explicit LiquidPhase(const Exclude& withtags) { initialize(); };
+    explicit LiquidPhase(const Exclude& withtags) : GenericPhase(withtags) { initialize(); };
 
     /// Initialize the default attributes of this LiquidPhase object.
     auto initialize() -> void
