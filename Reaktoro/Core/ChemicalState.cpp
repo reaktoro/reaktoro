@@ -17,6 +17,10 @@
 
 #include "ChemicalState.hpp"
 
+// C++ includes
+#include <iostream>
+#include <iomanip>
+
 // Optima includes
 #include <Optima/State.hpp>
 
@@ -592,6 +596,29 @@ auto ChemicalState::Equilibrium::b() const -> ArrayXdConstRef
 auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&
 {
     return pimpl->optstate;
+}
+
+auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
+{
+    const String bar(50, '=');
+    out << "Temperature [K]: " << state.temperature() << "\n";
+    out << "Pressure [Pa]: " << state.pressure() << "\n";
+    out << bar << "\n";
+    out << std::left << std::setw(25) << "Species";
+    out << std::left << std::setw(20) << "Amount [mol]";
+    out << std::left << std::setw(6)  << "Index" << "\n";
+    out << bar << "\n";
+    const auto species = state.system().species();
+    const auto n = state.speciesAmounts();
+    for(auto i = 0; i < n.size(); ++i)
+    {
+        out << std::left << std::setw(25) << species[i].name();
+        out << std::left << std::setw(20) << n[i];
+        out << std::left << std::setw(6)  << i;
+        out << "\n";
+    }
+    out << bar << "\n";
+    return out;
 }
 
 } // namespace Reaktoro

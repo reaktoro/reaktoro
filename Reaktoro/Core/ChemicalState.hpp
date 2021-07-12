@@ -289,4 +289,7 @@ private:
     Ptr<Impl> pimpl;
 };
 
+/// Output a ChemicalState object to an output stream.
+auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&;
+
 } // namespace Reaktoro
