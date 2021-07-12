@@ -17,6 +17,10 @@
 
 #include "ChemicalProps.hpp"
 
+// cpp-tabulate includes
+#include <tabulate/table.hpp>
+using namespace tabulate;
+
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
@@ -428,6 +432,70 @@ ChemicalProps::operator VectorXd() const
     ArrayStream<double> stream;
     pimpl->serialize(stream);
     return stream.data();
+}
+
+auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&
+{
+    const auto species = props.system().species();
+    const auto n   = props.speciesAmounts();
+    const auto x   = props.moleFractions();
+    const auto lng = props.lnActivityCoefficients();
+    const auto lna = props.lnActivities();
+    const auto mu  = props.chemicalPotentials();
+    const auto G0  = props.standardGibbsEnergies();
+    const auto H0  = props.standardEnthalpies();
+    const auto V0  = props.standardVolumes();
+    const auto S0  = props.standardEntropies();
+    const auto U0  = props.standardInternalEnergies();
+    const auto A0  = props.standardHelmholtzEnergies();
+    const auto Cp0 = props.standardHeatCapacitiesConstP();
+    const auto Cv0 = props.standardHeatCapacitiesConstV();
+
+    Table table;
+    table.add_row({ "Property", "Value", "Unit" });
+    table.add_row({ "Temperature", str(props.temperature()), "K" });
+    table.add_row({ "Pressure", str(props.pressure()), "Pa" });
+    table.add_row({ "Gibbs Energy", str(props.gibbsEnergy()), "J" });
+    table.add_row({ "Enthalpy", str(props.enthalpy()), "J" });
+    table.add_row({ "Volume", str(props.volume()), "m3" });
+    table.add_row({ "Entropy", str(props.entropy()), "J/K" });
+    table.add_row({ "Internal Energy", str(props.internalEnergy()), "J" });
+    table.add_row({ "Helmholtz Energy", str(props.helmholtzEnergy()), "J" });
+
+    table.add_row({ "Amount" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(n[i]), "mol" });
+    table.add_row({ "Mole Fraction", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(x[i]), "mol/mol" });
+    table.add_row({ "Activity Coefficient", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(exp(lng[i])), "-" });
+    table.add_row({ "Activity", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(exp(lna[i])), "-" });
+    table.add_row({ "lg(Activity)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(lna[i]/ln10), "-" });
+    table.add_row({ "ln(Activity)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(lna[i]), "-" });
+    table.add_row({ "Chemical Potential", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(mu[i]), "J/mol" });
+    table.add_row({ "Standard Gibbs Energy", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(G0[i]), "J/mol" });
+    table.add_row({ "Standard Enthalpy", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(H0[i]), "J/mol" });
+    table.add_row({ "Standard Volume", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(V0[i]), "m3/mol" });
+    table.add_row({ "Standard Entropy", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(S0[i]), "J/(mol*K)" });
+    table.add_row({ "Standard Internal Energy", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(U0[i]), "J/mol" });
+    table.add_row({ "Standard Helmholtz Energy", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(A0[i]), "J/mol" });
+    table.add_row({ "Standard Heat Capacity (Const P)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(Cp0[i]), "J/(mol*K)" });
+    table.add_row({ "Standard Heat Capacity (Const V)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(Cv0[i]), "J/(mol*K)" });
+
+    auto i = 0;
+    for(auto& row : table)
+    {
+        if(i >= 2)  // apply from the third row
+            table[i].format()
+                .border_top("")
+                .column_separator("")
+                .corner_top_left("")
+                .corner_top_right("");
+        i += 1;
+    }
+
+    table.row(0).format().font_style({FontStyle::bold});  // Bold face for header
+    table.column(1).format().font_align(FontAlign::right); // Value column with right alignment
+    table.column(2).format().font_align(FontAlign::right); // Unit column with right alignment
+
+    out << table;
+    return out;
 }
 
 } // namespace Reaktoro
