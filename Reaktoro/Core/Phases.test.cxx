@@ -49,11 +49,11 @@ TEST_CASE("Testing Phases", "[Phases]")
     db.addSpecies( Species("CaCl2(aq)")                          );
     db.addSpecies( Species("MgCl2(aq)")                          );
     db.addSpecies( Species("SiO2(aq)")                           );
-    db.addSpecies( Species("NaCl(s)").withName("Halite")         );
-    db.addSpecies( Species("CaCO3(s)").withName("Calcite")       );
-    db.addSpecies( Species("MgCO3(s)").withName("Magnesite")     );
-    db.addSpecies( Species("CaMg(CO3)2(s)").withName("Dolomite") );
-    db.addSpecies( Species("SiO2(s)").withName("Quartz")         );
+    db.addSpecies( Species("NaCl(s)").withName("Halite")                                );
+    db.addSpecies( Species("CaCO3(s)").withName("Calcite").withTags("carbonate")  );
+    db.addSpecies( Species("MgCO3(s)").withName("Magnesite").withTags("carbonate")      );
+    db.addSpecies( Species("CaMg(CO3)2(s)").withName("Dolomite").withTags("carbonate")  );
+    db.addSpecies( Species("SiO2(s)").withName("Quartz")                                );
     db.addSpecies( Species("CO2(g)")                             );
     db.addSpecies( Species("O2(g)")                              );
     db.addSpecies( Species("H2(g)")                              );
@@ -430,6 +430,51 @@ TEST_CASE("Testing Phases", "[Phases]")
         checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
     }
 
+    //-----------------------------------------------------------------------------------------------------------------
+    // Create database with species with tags
+    //-----------------------------------------------------------------------------------------------------------------
+
+    Database db_withtags;
+    db_withtags.addSpecies( Species("H2O(aq)")                            );
+    db_withtags.addSpecies( Species("H+")                                 );
+    db_withtags.addSpecies( Species("OH-")                                );
+    db_withtags.addSpecies( Species("H2(aq)")                             );
+    db_withtags.addSpecies( Species("O2(aq)")                             );
+    db_withtags.addSpecies( Species("Na+")                                );
+    db_withtags.addSpecies( Species("Cl-")                                );
+    db_withtags.addSpecies( Species("NaCl(aq)")                           );
+    db_withtags.addSpecies( Species("HCl(aq)")                            );
+    db_withtags.addSpecies( Species("NaOH(aq)")                           );
+    db_withtags.addSpecies( Species("Ca++")                               );
+    db_withtags.addSpecies( Species("Mg++")                               );
+    db_withtags.addSpecies( Species("CO2(aq)")                            );
+    db_withtags.addSpecies( Species("HCO3-")                              );
+    db_withtags.addSpecies( Species("CO3--")                              );
+    db_withtags.addSpecies( Species("CaCl2(aq)")                          );
+    db_withtags.addSpecies( Species("MgCl2(aq)")                          );
+    db_withtags.addSpecies( Species("SiO2(aq)")                           );
+    db_withtags.addSpecies( Species("NaCl(s)").withName("Halite")  );
+    db_withtags.addSpecies( Species("SiO2(s)").withName("Quartz")  );
+    db_withtags.addSpecies( Species("CO2(g)")                             );
+    db_withtags.addSpecies( Species("O2(g)")                              );
+    db_withtags.addSpecies( Species("H2(g)")                              );
+    db_withtags.addSpecies( Species("H2O(g)")                             );
+    db_withtags.addSpecies( Species("CH4(g)")                             );
+    db_withtags.addSpecies( Species("CO(g)")                              );
+
+    db_withtags.addSpecies( Species("CaCO3(s)").withName("Calcite").withTags("carbonate")      );
+    db_withtags.addSpecies( Species("MgCO3(s)").withName("Magnesite").withTags("carbonate")    );
+    db_withtags.addSpecies( Species("CaMg(CO3)2(s)").withName("Dolomite").withTags("carbonate"));
+    db_withtags.addSpecies( Species("C(s)").withName("Graphite"));
+    db_withtags.addSpecies( Species("CaO(s)").withName("Lime")  );
+    db_withtags.addSpecies( Species("N2(g)").withTags("inert")   );
+    db_withtags.addSpecies( Species("C4H9OH").withTags("organic").withName("1-Butanol(aq)"));
+    db_withtags.addSpecies( Species("C4H8").withTags("organic").withName("1-Butene(aq)")   );
+    db_withtags.addSpecies( Species("BaSO4(s)").withName("Barite").withTags("sulfate")     );
+    db_withtags.addSpecies( Species("SrSO4(s)").withName("Celestite").withTags("sulfate")  );
+    db_withtags.addSpecies( Species("PbSO4(s)").withName("Anglesite").withTags("sulfate")  );
+    db_withtags.addSpecies( Species("CaSO4(s)").withName("Anhydrite").withTags("sulfate")  );
+
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
     // TESTING CLASS: AqueousPhase with provided speciates and tags, so that species possessing them are excluded
@@ -437,9 +482,27 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing AqueousPhase::AqueousPhase(Speciate, Exclude)")
     {
-        Database db("supcrt98.yaml");
+        Phases phases(db_withtags);
 
-        Phases phases(db);
+        phases.add( AqueousPhase(speciate("H O C Na Cl")) );
+        phases.add( GaseousPhase("CO2(g)") );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        REQUIRE( phasevec.size() == 2 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
+        checkGaseousPhase(phasevec[1], "CO2(g)");
+    }
+
+    //=================================================================================================================
+    //-----------------------------------------------------------------------------------------------------------------
+    // TESTING CLASS: AqueousPhase with provided speciates and tags, so that species possessing them are excluded
+    //-----------------------------------------------------------------------------------------------------------------
+    //=================================================================================================================
+    SECTION("Testing AqueousPhase::AqueousPhase(Speciate, Exclude)")
+    {
+        Phases phases(db_withtags);
 
         phases.add( AqueousPhase(speciate("H O C Na Cl"), exclude("organic")) );
         phases.add( GaseousPhase("CO2(g)") );
@@ -448,7 +511,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         REQUIRE( phasevec.size() == 2 );
 
-        checkAqueousPhase(phasevec[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 Cl- HClO(aq) ClO- ClO2- ClO3- ClO4- H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) Na+ NaCl(aq) NaOH(aq) O2(aq) OH- Nonanal(aq) H2O2(aq) HClO2(aq) HCl(aq)");
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3--");
         checkGaseousPhase(phasevec[1], "CO2(g)");
     }
 
@@ -459,9 +522,7 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing AqueousPhase::AqueousPhase(Exclude)")
     {
-        Database db("supcrt98.yaml");
-
-        Phases phases(db);
+        Phases phases(db_withtags);
 
         phases.add( AqueousPhase(exclude("organic")) );
         phases.add( GaseousPhase("CO2(g)") );
@@ -470,7 +531,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         REQUIRE( phasevec.size() == 2 );
 
-        checkAqueousPhase(phasevec[0], "H2O(aq) H+ H2(aq) HO2- O2(aq) OH- H2O2(aq)");
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq)");
         checkGaseousPhase(phasevec[1], "CO2(g)");
     }
 
@@ -481,9 +542,7 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing MineralPhases::MineralPhases(Exclude)")
     {
-        Database db("supcrt98.yaml");
-
-        Phases phases(db);
+        Phases phases(db_withtags);
 
         phases.add( AqueousPhase(speciate("H O C"), exclude("organic")) );
         phases.add( GaseousPhase("H2O(g) CO2(g)") );
@@ -493,11 +552,11 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         REQUIRE( phasevec.size() == 3 );
 
-        checkAqueousPhase(phasevec[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) O2(aq) OH- Nonanal(aq) H2O2(aq)");
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3--");
         checkGaseousPhase(phasevec[1], "H2O(g) CO2(g)");
         checkMineralPhase(phasevec[2], "Graphite");
     }
-
+//
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
     // TESTING CLASS: MineralPhases with provided speciate symbols and tags, so that species possessing them are excluded
@@ -505,22 +564,18 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing MineralPhases::MineralPhases(Speciate, Exclude)")
     {
-        Database db("supcrt98.yaml");
-
-        Phases phases(db);
+        Phases phases(db_withtags);
 
         phases.add( AqueousPhase(speciate("H O"), exclude("organic")) );
         phases.add( MineralPhases(speciate("C Ca O"), exclude("carbonate")) );
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 5 );
+        REQUIRE( phasevec.size() == 3 );
 
-        checkAqueousPhase(phasevec[0], "H2O(aq) H+ H2(aq) HO2- O2(aq) OH- H2O2(aq)");
-        checkMineralPhase(phasevec[1], "Aragonite");
-        checkMineralPhase(phasevec[2], "Calcite");
-        checkMineralPhase(phasevec[3], "Graphite");
-        checkMineralPhase(phasevec[4], "Lime");
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq)");
+        checkMineralPhase(phasevec[1], "Graphite");
+        checkMineralPhase(phasevec[2], "Lime");
     }
 
     //=================================================================================================================
@@ -530,9 +585,7 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing GaseousPhases::GaseousPhases(Speciate, Exclude)")
     {
-        Database db("supcrt98.yaml");
-
-        Phases phases(db);
+        Phases phases(db_withtags);
 
         phases.add( AqueousPhase(speciate("H O C"), exclude("organic")) );
         phases.add( GaseousPhase(speciate("H O C"), exclude("inert")) );
@@ -542,8 +595,8 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         REQUIRE( phasevec.size() == 3 );
 
-        checkAqueousPhase(phasevec[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) O2(aq) OH- Nonanal(aq) H2O2(aq)");
-        checkGaseousPhase(phasevec[1], "CH4(g) C6H6O(g) o-Cresol(g) m-Cresol(g) p-Cresol(g) CO(g) CO2(g) C2H4(g) H2(g) H2O(g) O2(g)");
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3--");
+        checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
         checkMineralPhase(phasevec[2], "Graphite");
     }
 
@@ -554,9 +607,7 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing GaseousPhases::GaseousPhases(Exclude)")
     {
-        Database db("supcrt98.yaml");
-
-        Phases phases(db);
+        Phases phases(db_withtags);
 
         phases.add( AqueousPhase(speciate("H O C Na Cl"), exclude("organic")) );
         phases.add( GaseousPhase(exclude("inert")) );
@@ -564,12 +615,11 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 5 );
+        REQUIRE( phasevec.size() == 4 );
 
-        checkAqueousPhase(phasevec[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 Cl- HClO(aq) ClO- ClO2- ClO3- ClO4- H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) Na+ NaCl(aq) NaOH(aq) O2(aq) OH- Nonanal(aq) H2O2(aq) HClO2(aq) HCl(aq)");
-        checkGaseousPhase(phasevec[1], "CH4(g) C6H6O(g) o-Cresol(g) m-Cresol(g) p-Cresol(g) CO(g) CO2(g) C2H4(g) H2(g) H2O(g) O2(g)");
-        checkMineralPhase(phasevec[2], "Graphite");
-        checkMineralPhase(phasevec[3], "Halite");
-        checkMineralPhase(phasevec[4], "Sodium-Oxide");
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3--");
+        checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
+        checkMineralPhase(phasevec[2], "Halite");
+        checkMineralPhase(phasevec[3], "Graphite");
     }
 }
