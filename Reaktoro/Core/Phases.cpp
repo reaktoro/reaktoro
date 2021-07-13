@@ -261,6 +261,10 @@ auto GenericPhasesGenerator::convert(const Database& db, const Strings& elements
         symbols.size() ? species.withElements(symbols) :
             species.withElements(elements);
 
+    // Filter out species with provided tags in the exclude function
+    if(excludetags.size())
+        species = species.withoutTags(excludetags);
+
     Vec<GenericPhase> phases;
     phases.reserve(species.size());
     for(auto&& s : species)
