@@ -82,10 +82,72 @@ def testPhases():
     assert phases[8].name() == "Quartz"
 
     # -----------------------------------------------------------------------------------------------------------------
+    # Testing Exclude tags functionality
+    # -----------------------------------------------------------------------------------------------------------------
+
+    db = Database()
+    db.addSpecies( Species("H2O(aq)")                            )
+    db.addSpecies( Species("H+")                                 )
+    db.addSpecies( Species("OH-")                                )
+    db.addSpecies( Species("H2(aq)")                             )
+    db.addSpecies( Species("O2(aq)")                             )
+    db.addSpecies( Species("Na+")                                )
+    db.addSpecies( Species("Cl-")                                )
+    db.addSpecies( Species("NaCl(aq)")                           )
+    db.addSpecies( Species("HCl(aq)")                            )
+    db.addSpecies( Species("NaOH(aq)")                           )
+    db.addSpecies( Species("Ca++")                               )
+    db.addSpecies( Species("Mg++")                               )
+    db.addSpecies( Species("CO2(aq)")                            )
+    db.addSpecies( Species("HCO3-")                              )
+    db.addSpecies( Species("CO3--")                              )
+    db.addSpecies( Species("CaCl2(aq)")                          )
+    db.addSpecies( Species("MgCl2(aq)")                          )
+    db.addSpecies( Species("SiO2(aq)")                           )
+    db.addSpecies( Species("NaCl(s)").withName("Halite")         )
+    db.addSpecies( Species("SiO2(s)").withName("Quartz")         )
+    db.addSpecies( Species("CO2(g)")                             )
+    db.addSpecies( Species("O2(g)")                              )
+    db.addSpecies( Species("H2(g)")                              )
+    db.addSpecies( Species("H2O(g)")                             )
+    db.addSpecies( Species("CH4(g)")                             )
+    db.addSpecies( Species("CO(g)")                              )
+
+    db.addSpecies( Species("CaCO3(s)").withName("Calcite").withTags("carbonate")        )
+    db.addSpecies( Species("MgCO3(s)").withName("Magnesite").withTags("carbonate")      )
+    db.addSpecies( Species("CaMg(CO3)2(s)").withName("Dolomite").withTags("carbonate")  )
+    db.addSpecies( Species("C(s)").withName("Graphite")                                 )
+    db.addSpecies( Species("CaO(s)").withName("Lime")                                   )
+    db.addSpecies( Species("N2(g)").withTags("inert")                                   )
+    db.addSpecies( Species("C4H9OH").withTags("organic").withName("1-Butanol(aq)")      )
+    db.addSpecies( Species("C4H8").withTags("organic").withName("1-Butene(aq)")         )
+    db.addSpecies( Species("BaSO4(s)").withName("Barite").withTags("sulfate")           )
+    db.addSpecies( Species("SrSO4(s)").withName("Celestite").withTags("sulfate")        )
+    db.addSpecies( Species("PbSO4(s)").withName("Anglesite").withTags("sulfate")        )
+    db.addSpecies( Species("CaSO4(s)").withName("Anhydrite").withTags("sulfate")        )
+
+    # -----------------------------------------------------------------------------------------------------------------
+    # Testing AqueousPhase with provided speciates
+    # -----------------------------------------------------------------------------------------------------------------
+
+    phases = Phases(db)
+    phases.add( AqueousPhase(speciate("H O C Na Cl")) )
+    phases.add( GaseousPhase("CO2(g)") )
+
+    phases = phases.convert()
+
+    assert len(phases) == 2
+
+    assert phases[0].name() == "AqueousPhase"
+    assert phases[1].name() == "GaseousPhase"
+
+    checkSpeicesInPhase(phases[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)")
+    checkSpeicesInPhase(phases[1], "CO2(g)")
+
+    # -----------------------------------------------------------------------------------------------------------------
     # Testing AqueousPhase with provided speciates and tags, so that species possessing them are excluded
     # -----------------------------------------------------------------------------------------------------------------
 
-    db = Database("supcrt98.yaml")
     phases = Phases(db)
     phases.add( AqueousPhase(speciate("H O C Na Cl"), exclude("organic")) )
     phases.add( GaseousPhase("CO2(g)") )
@@ -97,10 +159,12 @@ def testPhases():
     assert phases[0].name() == "AqueousPhase"
     assert phases[1].name() == "GaseousPhase"
 
-    checkSpeicesInPhase(phases[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 Cl- HClO(aq) ClO- ClO2- ClO3- ClO4- H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) Na+ NaCl(aq) NaOH(aq) O2(aq) OH- Nonanal(aq) H2O2(aq) HClO2(aq) HCl(aq)")
+    checkSpeicesInPhase(phases[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3--")
     checkSpeicesInPhase(phases[1], "CO2(g)")
 
+    # -----------------------------------------------------------------------------------------------------------------
     # AqueousPhase with provided tags, so that species possessing them are excluded
+    # -----------------------------------------------------------------------------------------------------------------
 
     phases = Phases(db)
     phases.add( AqueousPhase(exclude("organic")) )
@@ -113,10 +177,12 @@ def testPhases():
     assert phases[0].name() == "AqueousPhase"
     assert phases[1].name() == "GaseousPhase"
 
-    checkSpeicesInPhase(phases[0], "H2O(aq) H+ H2(aq) HO2- O2(aq) OH- H2O2(aq)")
+    checkSpeicesInPhase(phases[0], "H2O(aq) H+ OH- H2(aq) O2(aq)")
     checkSpeicesInPhase(phases[1], "CO2(g)")
 
+    # -----------------------------------------------------------------------------------------------------------------
     # Testing MineralPhases with provided speciate symbols and tags, so that species possessing them are excluded
+    # -----------------------------------------------------------------------------------------------------------------
 
     phases = Phases(db)
     phases.add( AqueousPhase(speciate("H O"), exclude("organic")))
@@ -124,21 +190,19 @@ def testPhases():
 
     phases = phases.convert()
 
-    assert len(phases) == 5
+    assert len(phases) == 3
 
     assert phases[0].name() == "AqueousPhase"
-    assert phases[1].name() == "Aragonite"
-    assert phases[2].name() == "Calcite"
-    assert phases[3].name() == "Graphite"
-    assert phases[4].name() == "Lime"
+    assert phases[1].name() == "Graphite"
+    assert phases[2].name() == "Lime"
 
-    checkSpeicesInPhase(phases[0], "H2O(aq) H+ H2(aq) HO2- O2(aq) OH- H2O2(aq)")
-    checkSpeicesInPhase(phases[1], "Aragonite")
-    checkSpeicesInPhase(phases[2], "Calcite")
-    checkSpeicesInPhase(phases[3], "Graphite")
-    checkSpeicesInPhase(phases[4], "Lime")
+    checkSpeicesInPhase(phases[0], "H2O(aq) H+ OH- H2(aq) O2(aq)")
+    checkSpeicesInPhase(phases[1], "Graphite")
+    checkSpeicesInPhase(phases[2], "Lime")
 
+    # -----------------------------------------------------------------------------------------------------------------
     # Testing MineralPhases with provided tags, so that species possessing them are excluded
+    # -----------------------------------------------------------------------------------------------------------------
 
     phases = Phases(db)
     phases.add( AqueousPhase(speciate("H O C"), exclude("organic")) )
@@ -153,15 +217,17 @@ def testPhases():
     assert phases[1].name() == "GaseousPhase"
     assert phases[2].name() == "Graphite"
 
-    checkSpeicesInPhase(phases[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) O2(aq) OH- Nonanal(aq) H2O2(aq)")
+    checkSpeicesInPhase(phases[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3--")
     checkSpeicesInPhase(phases[1], "H2O(g) CO2(g)")
     checkSpeicesInPhase(phases[2], "Graphite")
 
+    # -----------------------------------------------------------------------------------------------------------------
     # Testing GaseousPhases with provided speciates and tags, so that species possessing them are excluded
+    # -----------------------------------------------------------------------------------------------------------------
 
     phases = Phases(db)
     phases.add( AqueousPhase(speciate("H O C"), exclude("organic")) )
-    phases.add( GaseousPhase(speciate("H O C"), exclude("inert")) )
+    phases.add( GaseousPhase(speciate("H O C N"), exclude("inert")) )
     phases.add( MineralPhases(exclude("carbonate")) )
 
     phases = phases.convert()
@@ -172,11 +238,13 @@ def testPhases():
     assert phases[1].name() == "GaseousPhase"
     assert phases[2].name() == "Graphite"
 
-    checkSpeicesInPhase(phases[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) O2(aq) OH- Nonanal(aq) H2O2(aq)")
-    checkSpeicesInPhase(phases[1], "CH4(g) C6H6O(g) o-Cresol(g) m-Cresol(g) p-Cresol(g) CO(g) CO2(g) C2H4(g) H2(g) H2O(g) O2(g)")
+    checkSpeicesInPhase(phases[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3--")
+    checkSpeicesInPhase(phases[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)")
     checkSpeicesInPhase(phases[2], "Graphite")
 
+    # -----------------------------------------------------------------------------------------------------------------
     # Testing GaseousPhases with provided tags, so that species possessing them are excluded
+    # -----------------------------------------------------------------------------------------------------------------
 
     phases = Phases(db)
     phases.add( AqueousPhase(speciate("H O C Na Cl"), exclude("organic")) )
@@ -185,16 +253,14 @@ def testPhases():
 
     phases = phases.convert()
 
-    assert len(phases) == 5
+    assert len(phases) == 4
 
     assert phases[0].name() == "AqueousPhase"
     assert phases[1].name() == "GaseousPhase"
-    assert phases[2].name() == "Graphite"
-    assert phases[3].name() == "Halite"
-    assert phases[4].name() == "Sodium-Oxide"
+    assert phases[2].name() == "Halite"
+    assert phases[3].name() == "Graphite"
 
-    checkSpeicesInPhase(phases[0], "H2O(aq) 2-Hydroxynonanoate- 2-Hydroxynonanoic(aq) CO(aq) CO2(aq) CO3-2 Cl- HClO(aq) ClO- ClO2- ClO3- ClO4- H+ H2(aq) HCO3- HO2- Nonanoate- Nonanoic-Acid(aq) Na+ NaCl(aq) NaOH(aq) O2(aq) OH- Nonanal(aq) H2O2(aq) HClO2(aq) HCl(aq)")
-    checkSpeicesInPhase(phases[1], "CH4(g) C6H6O(g) o-Cresol(g) m-Cresol(g) p-Cresol(g) CO(g) CO2(g) C2H4(g) H2(g) H2O(g) O2(g)")
-    checkSpeicesInPhase(phases[2], "Graphite")
-    checkSpeicesInPhase(phases[3], "Halite")
-    checkSpeicesInPhase(phases[4], "Sodium-Oxide")
+    checkSpeicesInPhase(phases[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3--")
+    checkSpeicesInPhase(phases[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)")
+    checkSpeicesInPhase(phases[2], "Halite")
+    checkSpeicesInPhase(phases[3], "Graphite")
