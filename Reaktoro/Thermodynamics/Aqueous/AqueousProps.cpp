@@ -78,14 +78,14 @@ struct AqueousProps::Impl
     /// The chemical properties of the aqueous phase.
     ChemicalPropsPhase props;
 
-    /// The amounts of the species in the aqueous phase.
-    VectorXr naq;
-
     /// The state of the aqueous solution.
     AqueousMixtureState aqstate;
 
     /// The formula matrix of the aqueous species.
     MatrixXd Aaq;
+
+    /// The amounts of the species in the aqueous phase (to be used with echelonizer - not for any computation, since it does not have autodiff propagation!).
+    VectorXd naq;
 
     /// The echelon form of the formula matrix of the aqueous species.
     Optima::Echelonizer echelonizer;
@@ -138,21 +138,18 @@ struct AqueousProps::Impl
         const auto n = state.speciesAmounts();
         const auto ifirst = system.phases().numSpeciesUntilPhase(iphase);
         const auto size = phase.species().size();
-        naq = n.segment(ifirst, size);
-        props.update(T, P, naq);
-        const auto& x = props.moleFractions();
-        aqstate = aqsolution.state(T, P, x);
-        echelonizer.updateWithPriorityWeights(naq);
+        props.update(T, P, n.segment(ifirst, size));
+        update(props);
     }
 
     auto update(const ChemicalPropsPhase& aqprops) -> void
     {
         props = aqprops;
-        naq = props.speciesAmounts();
         const auto& T = props.temperature();
         const auto& P = props.pressure();
         const auto& x = props.moleFractions();
         aqstate = aqsolution.state(T, P, x);
+        naq = props.speciesAmounts();
         echelonizer.updateWithPriorityWeights(naq);
     }
 
