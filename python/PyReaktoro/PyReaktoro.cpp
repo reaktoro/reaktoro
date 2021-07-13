@@ -110,7 +110,6 @@ extern void exportMineralSpecies(py::module& m);
 extern void exportWater(py::module& m);
 extern void exportThermoData(py::module& m);
 extern void exportThermoDataProperties(py::module& m);
-extern void exportThemodynamicsUtils(py::module& m);
 
 // Transport module
 extern void exportChemicalField(py::module& m);
@@ -213,7 +212,6 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportWater(m);
     exportThermoData(m);
     exportThermoDataProperties(m);
-    exportThemodynamicsUtils(m);
 
     // Transport module
     exportChemicalField(m);
