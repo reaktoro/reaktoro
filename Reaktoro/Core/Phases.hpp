@@ -170,6 +170,12 @@ public:
     /// Construct a GenericPhasesGenerator object with given element symbols.
     explicit GenericPhasesGenerator(const Speciate& elements);
 
+    /// Construct a GenericPhasesGenerator object with given element symbols excluding the species with provided tags.
+    explicit GenericPhasesGenerator(const Speciate& elements, const Exclude& withtags);
+
+    /// Construct a GenericPhasesGenerator object excluding the species with provided tags.
+    explicit GenericPhasesGenerator(const Exclude& withtags);
+
     /// Destroy this GenericPhasesGenerator object.
     virtual ~GenericPhasesGenerator();
 
@@ -227,6 +233,9 @@ private:
 
     /// The element symbols for automatic selection of the species composing the generated phases.
     Strings symbols;
+
+    /// The tags that indicate species to be excluded from the phase.
+    Strings excludetags;
 
     /// The common activity model of the generated phases.
     ActivityModel activity_model;
@@ -415,10 +424,10 @@ public:
     explicit MineralPhases(const Speciate& elements) : GenericPhasesGenerator(elements) { initialize(); }
 
     /// Construct a MineralPhases object with given element symbols excluding the species with provided tags
-    explicit MineralPhases(const Speciate& elements, const Exclude& withtags) { initialize(); };
+    explicit MineralPhases(const Speciate& elements, const Exclude& withtags) : GenericPhasesGenerator(elements, withtags) { initialize(); };
 
     /// Construct a MineralPhases object excluding the species with provided tags
-    explicit MineralPhases(const Exclude& withtags) { initialize(); };
+    explicit MineralPhases(const Exclude& withtags) : GenericPhasesGenerator(withtags) { initialize(); };
 
     /// Initialize the default attributes of this MineralPhases object.
     auto initialize() -> void

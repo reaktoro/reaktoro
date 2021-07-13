@@ -168,6 +168,14 @@ GenericPhasesGenerator::GenericPhasesGenerator(const Speciate& elements)
 : symbols(elements.symbols)
 {}
 
+GenericPhasesGenerator::GenericPhasesGenerator(const Speciate& elements, const Exclude& withtags)
+: symbols(elements.symbols), excludetags(withtags.tags)
+{}
+
+GenericPhasesGenerator::GenericPhasesGenerator(const Exclude& withtags)
+: excludetags(withtags.tags)
+{}
+
 GenericPhasesGenerator::~GenericPhasesGenerator()
 {}
 
