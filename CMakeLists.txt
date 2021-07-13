@@ -72,7 +72,7 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 # The directory where the python package reaktoro is built
-set(REAKTORO_PYTHON_PACKAGE_DIR ${CMAKE_BINARY_DIR}/python/package/build/lib)
+set(REAKTORO_PYTHON_PACKAGE_DIR ${CMAKE_BINARY_DIR}/python/package)
 
 # Define variables REAKTORO_PATH and REAKTORO_PYTHONPATH used to set environment variables PATH and PYTHONPATH.
 if(WIN32)
