@@ -44,6 +44,9 @@ def testChemicalState():
     state.setTemperature(30.0, "celsius")
     state.setPressure(1.0, "MPa")
 
+    state.setTemperature(30, "celsius")  # testing with int argument
+    state.setPressure(1, "MPa")  # testing with int argument
+
     assert state.temperature() == pytest.approx(303.15)
     assert state.pressure() == pytest.approx(1e6)
 
