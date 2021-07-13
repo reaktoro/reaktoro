@@ -500,6 +500,31 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
+    // TESTING CLASS: MineralPhases with provided speciate symbols and tags, so that species possessing them are excluded
+    //-----------------------------------------------------------------------------------------------------------------
+    //=================================================================================================================
+    SECTION("Testing MineralPhases::MineralPhases(Speciate, Exclude)")
+    {
+        Database db("supcrt98.yaml");
+
+        Phases phases(db);
+
+        phases.add( AqueousPhase(speciate("H O"), exclude("organic")) );
+        phases.add( MineralPhases(speciate("C Ca O"), exclude("carbonate")) );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        REQUIRE( phasevec.size() == 5 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ H2(aq) HO2- O2(aq) OH- H2O2(aq)");
+        checkMineralPhase(phasevec[1], "Aragonite");
+        checkMineralPhase(phasevec[2], "Calcite");
+        checkMineralPhase(phasevec[3], "Graphite");
+        checkMineralPhase(phasevec[4], "Lime");
+    }
+
+    //=================================================================================================================
+    //-----------------------------------------------------------------------------------------------------------------
     // TESTING CLASS: GaseousPhases with provided speciates and tags, so that species possessing them are excluded
     //-----------------------------------------------------------------------------------------------------------------
     //=================================================================================================================
