@@ -62,6 +62,32 @@ auto createElements(const ThermoFunEngine& engine, const ThermoFun::Substance& s
     return elements;
 }
 
+/// Convert aggregate state value from ThermoFun to Reaktoro::AggregateState
+auto convertAggregateState(const ThermoFun::AggregateState::type& value)
+{
+    switch(value)
+    {
+    case ThermoFun::AggregateState::GAS:            return AggregateState::Gas;
+    case ThermoFun::AggregateState::LIQUID:         return AggregateState::Liquid;
+    case ThermoFun::AggregateState::GLASS:          return AggregateState::Vitreous;
+    case ThermoFun::AggregateState::CRYSTAL:        return AggregateState::CrystallineSolid;
+    case ThermoFun::AggregateState::AQUEOUS:        return AggregateState::Aqueous;
+    case ThermoFun::AggregateState::SURFACE:        return AggregateState::Adsorbed;
+    case ThermoFun::AggregateState::IONEX:          return AggregateState::IonExchange;
+    case ThermoFun::AggregateState::PLASMA:         return AggregateState::Plasma;
+    case ThermoFun::AggregateState::SOLID:          return AggregateState::Solid;
+    case ThermoFun::AggregateState::CONDENSED:      return AggregateState::CondensedPhase;
+    case ThermoFun::AggregateState::FLUID:          return AggregateState::Fluid;
+    case ThermoFun::AggregateState::LIQUIDCRYSTAL:  return AggregateState::LiquidCrystal;
+    case ThermoFun::AggregateState::AMORPHOUSSOLID: return AggregateState::AmorphousSolid;
+    case ThermoFun::AggregateState::MONOMERIC:      return AggregateState::Monomeric;
+    case ThermoFun::AggregateState::POLYMERIC:      return AggregateState::Polymeric;
+    case ThermoFun::AggregateState::SOLIDSOLUTION:  return AggregateState::SolidSolution;
+    case ThermoFun::AggregateState::OTHER:          return AggregateState::Undefined;
+    default:                                        return AggregateState::Undefined;
+    }
+}
+
 /// Convert a ThermoFun::Substance object into a Reaktoro::Species object
 auto createSpecies(const ThermoFunEngine& engine, const ThermoFun::Substance& substance) -> Species
 {
@@ -71,7 +97,7 @@ auto createSpecies(const ThermoFunEngine& engine, const ThermoFun::Substance& su
     species = species.withSubstance(substance.name());
     species = species.withElements(createElements(engine, substance));
     species = species.withCharge(substance.charge());
-    // species = species.withAggregateState(aggregateState(substance));
+    species = species.withAggregateState(convertAggregateState(substance.aggregateState()));
     species = species.withStandardThermoModel(createStandardThermoModel(engine, substance.symbol()));
     species = species.withAttachedData(substance);
     return species;
