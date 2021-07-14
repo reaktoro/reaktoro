@@ -23,24 +23,33 @@ auto createCustomDatabase() -> Database;
 
 int main()
 {
+    // Create custom thermodynamic database
     Database db = createCustomDatabase();
 
+    // Create phases with only aqueous phase
     Phases phases(db);
     phases.add( AqueousPhase("H2O H+ OH-") );
 
+    // Construct the chemical system
     ChemicalSystem system(phases);
 
+    // Define initial equilibrium state
     ChemicalState state(system);
     state.setTemperature(25.0, "celsius");
     state.setPressure(1.0, "bar");
     state.setSpeciesMass("H2O", 1.0, "kg");
 
+    // Define equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
-
     solver.solve(state);
 
+    // Obtain species composition from the equilibrated state
     const auto n = state.speciesAmounts();
 
+    // Print the species and theirs amounts
+    // Print the species and theirs amounts
+    std::cout << std::setw(20) << "Species"
+              << std::setw(20) << "Amount" << std::endl;
     for(auto i = 0; i < n.size(); ++i)
     {
         std::cout << std::setw(20) << system.species(i).name();
