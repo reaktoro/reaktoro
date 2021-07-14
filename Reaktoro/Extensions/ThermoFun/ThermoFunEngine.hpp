@@ -43,7 +43,7 @@ public:
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    SharedPtr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
