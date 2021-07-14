@@ -31,35 +31,44 @@ TEST_CASE("Testing Phases", "[Phases]")
     };
 
     Database db;
-    db.addSpecies( Species("H2O(aq)")                            );
-    db.addSpecies( Species("H+")                                 );
-    db.addSpecies( Species("OH-")                                );
-    db.addSpecies( Species("H2(aq)")                             );
-    db.addSpecies( Species("O2(aq)")                             );
-    db.addSpecies( Species("Na+")                                );
-    db.addSpecies( Species("Cl-")                                );
-    db.addSpecies( Species("NaCl(aq)")                           );
-    db.addSpecies( Species("HCl(aq)")                            );
-    db.addSpecies( Species("NaOH(aq)")                           );
-    db.addSpecies( Species("Ca++")                               );
-    db.addSpecies( Species("Mg++")                               );
-    db.addSpecies( Species("CO2(aq)")                            );
-    db.addSpecies( Species("HCO3-")                              );
-    db.addSpecies( Species("CO3--")                              );
-    db.addSpecies( Species("CaCl2(aq)")                          );
-    db.addSpecies( Species("MgCl2(aq)")                          );
-    db.addSpecies( Species("SiO2(aq)")                           );
-    db.addSpecies( Species("NaCl(s)").withName("Halite")                                );
-    db.addSpecies( Species("CaCO3(s)").withName("Calcite").withTags("carbonate")  );
-    db.addSpecies( Species("MgCO3(s)").withName("Magnesite").withTags("carbonate")      );
-    db.addSpecies( Species("CaMg(CO3)2(s)").withName("Dolomite").withTags("carbonate")  );
-    db.addSpecies( Species("SiO2(s)").withName("Quartz")                                );
-    db.addSpecies( Species("CO2(g)")                             );
-    db.addSpecies( Species("O2(g)")                              );
-    db.addSpecies( Species("H2(g)")                              );
-    db.addSpecies( Species("H2O(g)")                             );
-    db.addSpecies( Species("CH4(g)")                             );
-    db.addSpecies( Species("CO(g)")                              );
+    db.addSpecies( Species("H2O(aq)") );
+    db.addSpecies( Species("H+") );
+    db.addSpecies( Species("OH-") );
+    db.addSpecies( Species("H2(aq)") );
+    db.addSpecies( Species("O2(aq)") );
+    db.addSpecies( Species("Na+") );
+    db.addSpecies( Species("Cl-") );
+    db.addSpecies( Species("NaCl(aq)") );
+    db.addSpecies( Species("HCl(aq)") );
+    db.addSpecies( Species("NaOH(aq)") );
+    db.addSpecies( Species("Ca++") );
+    db.addSpecies( Species("Mg++") );
+    db.addSpecies( Species("CO2(aq)") );
+    db.addSpecies( Species("HCO3-") );
+    db.addSpecies( Species("CO3--") );
+    db.addSpecies( Species("CaCl2(aq)") );
+    db.addSpecies( Species("MgCl2(aq)") );
+    db.addSpecies( Species("SiO2(aq)") );
+    db.addSpecies( Species("C4H9OH(aq)").withTags("organic").withName("1-Butanol(aq)") );
+    db.addSpecies( Species("C4H8(aq)").withTags("organic").withName("1-Butene(aq)") );
+    db.addSpecies( Species("NaCl(s)").withName("Halite") );
+    db.addSpecies( Species("CaCO3(s)").withName("Calcite").withTags("carbonate") );
+    db.addSpecies( Species("MgCO3(s)").withName("Magnesite").withTags("carbonate") );
+    db.addSpecies( Species("CaMg(CO3)2(s)").withName("Dolomite").withTags("carbonate") );
+    db.addSpecies( Species("SiO2(s)").withName("Quartz") );
+    db.addSpecies( Species("C(s)").withName("Graphite") );
+    db.addSpecies( Species("CaO(s)").withName("Lime") );
+    db.addSpecies( Species("N2(g)").withTags("inert") );
+    db.addSpecies( Species("BaSO4(s)").withName("Barite").withTags("sulfate") );
+    db.addSpecies( Species("SrSO4(s)").withName("Celestite").withTags("sulfate") );
+    db.addSpecies( Species("PbSO4(s)").withName("Anglesite").withTags("sulfate") );
+    db.addSpecies( Species("CaSO4(s)").withName("Anhydrite").withTags("sulfate") );
+    db.addSpecies( Species("CO2(g)") );
+    db.addSpecies( Species("O2(g)") );
+    db.addSpecies( Species("H2(g)") );
+    db.addSpecies( Species("H2O(g)") );
+    db.addSpecies( Species("CH4(g)") );
+    db.addSpecies( Species("CO(g)") );
 
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
@@ -77,14 +86,14 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
-        REQUIRE( phase.name() == "AqueousPhase" );
-        REQUIRE( phase.stateOfMatter() == StateOfMatter::Liquid );
-        REQUIRE( phase.species().size() == 3 );
-        REQUIRE( phase.species(0).name() == "H2O(aq)" );
-        REQUIRE( phase.species(1).name() == "H+"      );
-        REQUIRE( phase.species(2).name() == "OH-"     );
-        REQUIRE( phase.activityPropsFn() );
-        REQUIRE( phase.idealActivityPropsFn() );
+        CHECK( phase.name() == "AqueousPhase" );
+        CHECK( phase.stateOfMatter() == StateOfMatter::Liquid );
+        CHECK( phase.species().size() == 3 );
+        CHECK( phase.species(0).name() == "H2O(aq)" );
+        CHECK( phase.species(1).name() == "H+"      );
+        CHECK( phase.species(2).name() == "OH-"     );
+        CHECK( phase.activityPropsFn() );
+        CHECK( phase.idealActivityPropsFn() );
     }
 
     SECTION("Testing GenericPhase::GenericPhase(const Speciate&)")
@@ -98,16 +107,16 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
-        REQUIRE( phase.name() == "AqueousPhase" );
-        REQUIRE( phase.stateOfMatter() == StateOfMatter::Liquid );
-        REQUIRE( phase.species().size() == 5 );
-        REQUIRE( phase.species(0).name() == "H2O(aq)" );
-        REQUIRE( phase.species(1).name() == "H+"      );
-        REQUIRE( phase.species(2).name() == "OH-"     );
-        REQUIRE( phase.species(3).name() == "H2(aq)"  );
-        REQUIRE( phase.species(4).name() == "O2(aq)"  );
-        REQUIRE( phase.activityPropsFn() );
-        REQUIRE( phase.idealActivityPropsFn() );
+        CHECK( phase.name() == "AqueousPhase" );
+        CHECK( phase.stateOfMatter() == StateOfMatter::Liquid );
+        CHECK( phase.species().size() == 5 );
+        CHECK( phase.species(0).name() == "H2O(aq)" );
+        CHECK( phase.species(1).name() == "H+"      );
+        CHECK( phase.species(2).name() == "OH-"     );
+        CHECK( phase.species(3).name() == "H2(aq)"  );
+        CHECK( phase.species(4).name() == "O2(aq)"  );
+        CHECK( phase.activityPropsFn() );
+        CHECK( phase.idealActivityPropsFn() );
     }
 
     SECTION("Testing GenericPhase::GenericPhase() with all elements during phase conversion process")
@@ -121,29 +130,31 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
-        REQUIRE( phase.name() == "AqueousPhase" );
-        REQUIRE( phase.stateOfMatter() == StateOfMatter::Liquid );
-        REQUIRE( phase.species().size() == 18 );
-        REQUIRE( phase.species(0).name()  == "H2O(aq)"   );
-        REQUIRE( phase.species(1).name()  == "H+"        );
-        REQUIRE( phase.species(2).name()  == "OH-"       );
-        REQUIRE( phase.species(3).name()  == "H2(aq)"    );
-        REQUIRE( phase.species(4).name()  == "O2(aq)"    );
-        REQUIRE( phase.species(5).name()  == "Na+"       );
-        REQUIRE( phase.species(6).name()  == "Cl-"       );
-        REQUIRE( phase.species(7).name()  == "NaCl(aq)"  );
-        REQUIRE( phase.species(8).name()  == "HCl(aq)"   );
-        REQUIRE( phase.species(9).name()  == "NaOH(aq)"  );
-        REQUIRE( phase.species(10).name() == "Ca++"      );
-        REQUIRE( phase.species(11).name() == "Mg++"      );
-        REQUIRE( phase.species(12).name() == "CO2(aq)"   );
-        REQUIRE( phase.species(13).name() == "HCO3-"     );
-        REQUIRE( phase.species(14).name() == "CO3--"     );
-        REQUIRE( phase.species(15).name() == "CaCl2(aq)" );
-        REQUIRE( phase.species(16).name() == "MgCl2(aq)" );
-        REQUIRE( phase.species(17).name() == "SiO2(aq)"  );
-        REQUIRE( phase.activityPropsFn() );
-        REQUIRE( phase.idealActivityPropsFn() );
+        CHECK( phase.name() == "AqueousPhase" );
+        CHECK( phase.stateOfMatter() == StateOfMatter::Liquid );
+        CHECK( phase.species().size() == 20 );
+        CHECK( phase.species(0).name()  == "H2O(aq)"       );
+        CHECK( phase.species(1).name()  == "H+"            );
+        CHECK( phase.species(2).name()  == "OH-"           );
+        CHECK( phase.species(3).name()  == "H2(aq)"        );
+        CHECK( phase.species(4).name()  == "O2(aq)"        );
+        CHECK( phase.species(5).name()  == "Na+"           );
+        CHECK( phase.species(6).name()  == "Cl-"           );
+        CHECK( phase.species(7).name()  == "NaCl(aq)"      );
+        CHECK( phase.species(8).name()  == "HCl(aq)"       );
+        CHECK( phase.species(9).name()  == "NaOH(aq)"      );
+        CHECK( phase.species(10).name() == "Ca++"          );
+        CHECK( phase.species(11).name() == "Mg++"          );
+        CHECK( phase.species(12).name() == "CO2(aq)"       );
+        CHECK( phase.species(13).name() == "HCO3-"         );
+        CHECK( phase.species(14).name() == "CO3--"         );
+        CHECK( phase.species(15).name() == "CaCl2(aq)"     );
+        CHECK( phase.species(16).name() == "MgCl2(aq)"     );
+        CHECK( phase.species(17).name() == "SiO2(aq)"      );
+        CHECK( phase.species(18).name() == "1-Butanol(aq)" );
+        CHECK( phase.species(19).name() == "1-Butene(aq)"  );
+        CHECK( phase.activityPropsFn() );
+        CHECK( phase.idealActivityPropsFn() );
     }
 
     SECTION("Testing GenericPhase::GenericPhase() with H, O, and Cl elements during phase conversion process")
@@ -157,18 +168,18 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Phase phase = genericphase.convert(db, {"H", "O", "Cl"});
 
-        REQUIRE( phase.name() == "AqueousPhase" );
-        REQUIRE( phase.stateOfMatter() == StateOfMatter::Liquid );
-        REQUIRE( phase.species().size() == 7 );
-        REQUIRE( phase.species(0).name() == "H2O(aq)"  );
-        REQUIRE( phase.species(1).name() == "H+"       );
-        REQUIRE( phase.species(2).name() == "OH-"      );
-        REQUIRE( phase.species(3).name() == "H2(aq)"   );
-        REQUIRE( phase.species(4).name() == "O2(aq)"   );
-        REQUIRE( phase.species(5).name() == "Cl-"      );
-        REQUIRE( phase.species(6).name() == "HCl(aq)"  );
-        REQUIRE( phase.activityPropsFn() );
-        REQUIRE( phase.idealActivityPropsFn() );
+        CHECK( phase.name() == "AqueousPhase" );
+        CHECK( phase.stateOfMatter() == StateOfMatter::Liquid );
+        CHECK( phase.species().size() == 7 );
+        CHECK( phase.species(0).name() == "H2O(aq)"  );
+        CHECK( phase.species(1).name() == "H+"       );
+        CHECK( phase.species(2).name() == "OH-"      );
+        CHECK( phase.species(3).name() == "H2(aq)"   );
+        CHECK( phase.species(4).name() == "O2(aq)"   );
+        CHECK( phase.species(5).name() == "Cl-"      );
+        CHECK( phase.species(6).name() == "HCl(aq)"  );
+        CHECK( phase.activityPropsFn() );
+        CHECK( phase.idealActivityPropsFn() );
     }
 
     //=================================================================================================================
@@ -186,19 +197,19 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<GenericPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
-        REQUIRE( phases.size() == 2 );
+        CHECK( phases.size() == 2 );
 
-        REQUIRE( phases[0].name() == "Calcite" );
-        REQUIRE( phases[0].stateOfMatter() == StateOfMatter::Solid );
-        REQUIRE( phases[0].aggregateState() == AggregateState::Solid );
-        REQUIRE( phases[0].activityModel() );
-        REQUIRE( phases[0].idealActivityModel() );
+        CHECK( phases[0].name() == "Calcite" );
+        CHECK( phases[0].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[0].aggregateState() == AggregateState::Solid );
+        CHECK( phases[0].activityModel() );
+        CHECK( phases[0].idealActivityModel() );
 
-        REQUIRE( phases[1].name() == "Magnesite" );
-        REQUIRE( phases[1].stateOfMatter() == StateOfMatter::Solid );
-        REQUIRE( phases[1].aggregateState() == AggregateState::Solid );
-        REQUIRE( phases[1].activityModel() );
-        REQUIRE( phases[1].idealActivityModel() );
+        CHECK( phases[1].name() == "Magnesite" );
+        CHECK( phases[1].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[1].aggregateState() == AggregateState::Solid );
+        CHECK( phases[1].activityModel() );
+        CHECK( phases[1].idealActivityModel() );
     }
 
     SECTION("Testing GenericPhasesGenerator::GenericPhasesGenerator(const Speciate&)")
@@ -211,25 +222,37 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<GenericPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
-        REQUIRE( phases.size() == 3 );
+        CHECK( phases.size() == 5 );
 
-        REQUIRE( phases[0].name() == "Calcite" );
-        REQUIRE( phases[0].stateOfMatter() == StateOfMatter::Solid );
-        REQUIRE( phases[0].aggregateState() == AggregateState::Solid );
-        REQUIRE( phases[0].activityModel() );
-        REQUIRE( phases[0].idealActivityModel() );
+        CHECK( phases[0].name() == "Calcite" );
+        CHECK( phases[0].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[0].aggregateState() == AggregateState::Solid );
+        CHECK( phases[0].activityModel() );
+        CHECK( phases[0].idealActivityModel() );
 
-        REQUIRE( phases[1].name() == "Magnesite" );
-        REQUIRE( phases[1].stateOfMatter() == StateOfMatter::Solid );
-        REQUIRE( phases[1].aggregateState() == AggregateState::Solid );
-        REQUIRE( phases[1].activityModel() );
-        REQUIRE( phases[1].idealActivityModel() );
+        CHECK( phases[1].name() == "Magnesite" );
+        CHECK( phases[1].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[1].aggregateState() == AggregateState::Solid );
+        CHECK( phases[1].activityModel() );
+        CHECK( phases[1].idealActivityModel() );
 
-        REQUIRE( phases[2].name() == "Dolomite" );
-        REQUIRE( phases[2].stateOfMatter() == StateOfMatter::Solid );
-        REQUIRE( phases[2].aggregateState() == AggregateState::Solid );
-        REQUIRE( phases[2].activityModel() );
-        REQUIRE( phases[2].idealActivityModel() );
+        CHECK( phases[2].name() == "Dolomite" );
+        CHECK( phases[2].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[2].aggregateState() == AggregateState::Solid );
+        CHECK( phases[2].activityModel() );
+        CHECK( phases[2].idealActivityModel() );
+
+        CHECK( phases[3].name() == "Graphite" );
+        CHECK( phases[3].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[3].aggregateState() == AggregateState::Solid );
+        CHECK( phases[3].activityModel() );
+        CHECK( phases[3].idealActivityModel() );
+
+        CHECK( phases[4].name() == "Lime" );
+        CHECK( phases[4].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[4].aggregateState() == AggregateState::Solid );
+        CHECK( phases[4].activityModel() );
+        CHECK( phases[4].idealActivityModel() );
     }
 
     SECTION("Testing GenericPhasesGenerator::GenericPhasesGenerator() with all elements during phase conversion process")
@@ -242,37 +265,49 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<GenericPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
-        REQUIRE( phases.size() == 5 );
+        CHECK( phases.size() == 7 );
 
-        REQUIRE( phases[0].name() == "Halite" );
-        REQUIRE( phases[0].stateOfMatter() == StateOfMatter::Solid );
-        REQUIRE( phases[0].aggregateState() == AggregateState::Solid );
-        REQUIRE( phases[0].activityModel() );
-        REQUIRE( phases[0].idealActivityModel() );
+        CHECK( phases[0].name() == "Halite" );
+        CHECK( phases[0].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[0].aggregateState() == AggregateState::Solid );
+        CHECK( phases[0].activityModel() );
+        CHECK( phases[0].idealActivityModel() );
 
-        REQUIRE( phases[1].name() == "Calcite" );
-        REQUIRE( phases[1].stateOfMatter() == StateOfMatter::Solid );
-        REQUIRE( phases[1].aggregateState() == AggregateState::Solid );
-        REQUIRE( phases[1].activityModel() );
-        REQUIRE( phases[1].idealActivityModel() );
+        CHECK( phases[1].name() == "Calcite" );
+        CHECK( phases[1].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[1].aggregateState() == AggregateState::Solid );
+        CHECK( phases[1].activityModel() );
+        CHECK( phases[1].idealActivityModel() );
 
-        REQUIRE( phases[2].name() == "Magnesite" );
-        REQUIRE( phases[2].stateOfMatter() == StateOfMatter::Solid );
-        REQUIRE( phases[2].aggregateState() == AggregateState::Solid );
-        REQUIRE( phases[2].activityModel() );
-        REQUIRE( phases[2].idealActivityModel() );
+        CHECK( phases[2].name() == "Magnesite" );
+        CHECK( phases[2].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[2].aggregateState() == AggregateState::Solid );
+        CHECK( phases[2].activityModel() );
+        CHECK( phases[2].idealActivityModel() );
 
-        REQUIRE( phases[3].name() == "Dolomite" );
-        REQUIRE( phases[3].stateOfMatter() == StateOfMatter::Solid );
-        REQUIRE( phases[3].aggregateState() == AggregateState::Solid );
-        REQUIRE( phases[3].activityModel() );
-        REQUIRE( phases[3].idealActivityModel() );
+        CHECK( phases[3].name() == "Dolomite" );
+        CHECK( phases[3].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[3].aggregateState() == AggregateState::Solid );
+        CHECK( phases[3].activityModel() );
+        CHECK( phases[3].idealActivityModel() );
 
-        REQUIRE( phases[4].name() == "Quartz" );
-        REQUIRE( phases[4].stateOfMatter() == StateOfMatter::Solid );
-        REQUIRE( phases[4].aggregateState() == AggregateState::Solid );
-        REQUIRE( phases[4].activityModel() );
-        REQUIRE( phases[4].idealActivityModel() );
+        CHECK( phases[4].name() == "Quartz" );
+        CHECK( phases[4].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[4].aggregateState() == AggregateState::Solid );
+        CHECK( phases[4].activityModel() );
+        CHECK( phases[4].idealActivityModel() );
+
+        CHECK( phases[5].name() == "Graphite" );
+        CHECK( phases[5].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[5].aggregateState() == AggregateState::Solid );
+        CHECK( phases[5].activityModel() );
+        CHECK( phases[5].idealActivityModel() );
+
+        CHECK( phases[6].name() == "Lime" );
+        CHECK( phases[6].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[6].aggregateState() == AggregateState::Solid );
+        CHECK( phases[6].activityModel() );
+        CHECK( phases[6].idealActivityModel() );
     }
 
     SECTION("Testing GenericPhasesGenerator::GenericPhasesGenerator() with Na and Cl elements during phase conversion process")
@@ -285,13 +320,13 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<GenericPhase> phases = generator.convert(db, {"Na", "Cl"});
 
-        REQUIRE( phases.size() == 1 );
+        CHECK( phases.size() == 1 );
 
-        REQUIRE( phases[0].name() == "Halite" );
-        REQUIRE( phases[0].stateOfMatter() == StateOfMatter::Solid );
-        REQUIRE( phases[0].aggregateState() == AggregateState::Solid );
-        REQUIRE( phases[0].activityModel() );
-        REQUIRE( phases[0].idealActivityModel() );
+        CHECK( phases[0].name() == "Halite" );
+        CHECK( phases[0].stateOfMatter() == StateOfMatter::Solid );
+        CHECK( phases[0].aggregateState() == AggregateState::Solid );
+        CHECK( phases[0].activityModel() );
+        CHECK( phases[0].idealActivityModel() );
     }
 
     //=================================================================================================================
@@ -302,16 +337,16 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     auto checkPhase = [&](Phase phase, String name, StringList species, StateOfMatter stateofmatter, AggregateState aggregatestate)
     {
-        REQUIRE( phase.name() == name );
-        REQUIRE( phase.stateOfMatter() == stateofmatter );
-        REQUIRE( phase.aggregateState() == aggregatestate );
-        REQUIRE( phase.activityPropsFn() );
-        REQUIRE( phase.idealActivityPropsFn() );
-        REQUIRE( phase.species().size() == species.size() );
+        CHECK( phase.name() == name );
+        CHECK( phase.stateOfMatter() == stateofmatter );
+        CHECK( phase.aggregateState() == aggregatestate );
+        CHECK( phase.activityPropsFn() );
+        CHECK( phase.idealActivityPropsFn() );
+        CHECK( phase.species().size() == species.size() );
         for(auto i = 0; i < species.size(); ++i)
         {
             INFO(str("phase name = ", name, ", species index = ", i));
-            REQUIRE( phase.species(i).name() == species[i] );
+            CHECK( phase.species(i).name() == species[i] );
         }
     };
 
@@ -337,7 +372,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 1 );
+        CHECK( phasevec.size() == 1 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- Na+ Cl- HCO3- CO3-- CO2(aq)");
     }
@@ -352,9 +387,9 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 3 );
+        CHECK( phasevec.size() == 3 );
 
-        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3--");
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
         checkGaseousPhase(phasevec[1], "H2O(g) CO2(g)");
         checkMineralPhase(phasevec[2], "Halite");
     }
@@ -369,9 +404,9 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 7 );
+        CHECK( phasevec.size() == 7 );
 
-        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) Ca++ Mg++ CO2(aq) HCO3- CO3-- CaCl2(aq) MgCl2(aq) SiO2(aq)");
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) Ca++ Mg++ CO2(aq) HCO3- CO3-- CaCl2(aq) MgCl2(aq) SiO2(aq) 1-Butanol(aq) 1-Butene(aq)");
         checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
         checkMineralPhase(phasevec[2], "Halite");
         checkMineralPhase(phasevec[3], "Calcite");
@@ -390,12 +425,14 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 4 );
+        CHECK( phasevec.size() == 6 );
 
-        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) Ca++ CO2(aq) HCO3- CO3-- CaCl2(aq)");
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) Ca++ CO2(aq) HCO3- CO3-- CaCl2(aq) 1-Butanol(aq) 1-Butene(aq)");
         checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
         checkMineralPhase(phasevec[2], "Halite");
         checkMineralPhase(phasevec[3], "Calcite");
+        checkMineralPhase(phasevec[4], "Graphite");
+        checkMineralPhase(phasevec[5], "Lime");
     }
 
     SECTION("Testing Phases with minerals collected automatically from given aqueous species names")
@@ -407,11 +444,13 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 3 );
+        CHECK( phasevec.size() == 5 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- Na+ Cl- CO2(aq) Ca++");
         checkMineralPhase(phasevec[1], "Halite");
         checkMineralPhase(phasevec[2], "Calcite");
+        checkMineralPhase(phasevec[3], "Graphite");
+        checkMineralPhase(phasevec[4], "Lime");
     }
 
     SECTION("Testing Phases with no minerals collected because none exist with H, O, C elements")
@@ -424,56 +463,12 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 2 );
+        CHECK( phasevec.size() == 3 );
 
-        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3--");
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
         checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
+        checkMineralPhase(phasevec[2], "Graphite");
     }
-
-    //-----------------------------------------------------------------------------------------------------------------
-    // Create database with species with tags
-    //-----------------------------------------------------------------------------------------------------------------
-
-    Database db_withtags;
-    db_withtags.addSpecies( Species("H2O(aq)")                            );
-    db_withtags.addSpecies( Species("H+")                                 );
-    db_withtags.addSpecies( Species("OH-")                                );
-    db_withtags.addSpecies( Species("H2(aq)")                             );
-    db_withtags.addSpecies( Species("O2(aq)")                             );
-    db_withtags.addSpecies( Species("Na+")                                );
-    db_withtags.addSpecies( Species("Cl-")                                );
-    db_withtags.addSpecies( Species("NaCl(aq)")                           );
-    db_withtags.addSpecies( Species("HCl(aq)")                            );
-    db_withtags.addSpecies( Species("NaOH(aq)")                           );
-    db_withtags.addSpecies( Species("Ca++")                               );
-    db_withtags.addSpecies( Species("Mg++")                               );
-    db_withtags.addSpecies( Species("CO2(aq)")                            );
-    db_withtags.addSpecies( Species("HCO3-")                              );
-    db_withtags.addSpecies( Species("CO3--")                              );
-    db_withtags.addSpecies( Species("CaCl2(aq)")                          );
-    db_withtags.addSpecies( Species("MgCl2(aq)")                          );
-    db_withtags.addSpecies( Species("SiO2(aq)")                           );
-    db_withtags.addSpecies( Species("NaCl(s)").withName("Halite")  );
-    db_withtags.addSpecies( Species("SiO2(s)").withName("Quartz")  );
-    db_withtags.addSpecies( Species("CO2(g)")                             );
-    db_withtags.addSpecies( Species("O2(g)")                              );
-    db_withtags.addSpecies( Species("H2(g)")                              );
-    db_withtags.addSpecies( Species("H2O(g)")                             );
-    db_withtags.addSpecies( Species("CH4(g)")                             );
-    db_withtags.addSpecies( Species("CO(g)")                              );
-
-    db_withtags.addSpecies( Species("CaCO3(s)").withName("Calcite").withTags("carbonate")      );
-    db_withtags.addSpecies( Species("MgCO3(s)").withName("Magnesite").withTags("carbonate")    );
-    db_withtags.addSpecies( Species("CaMg(CO3)2(s)").withName("Dolomite").withTags("carbonate"));
-    db_withtags.addSpecies( Species("C(s)").withName("Graphite"));
-    db_withtags.addSpecies( Species("CaO(s)").withName("Lime")  );
-    db_withtags.addSpecies( Species("N2(g)").withTags("inert")   );
-    db_withtags.addSpecies( Species("C4H9OH").withTags("organic").withName("1-Butanol(aq)"));
-    db_withtags.addSpecies( Species("C4H8").withTags("organic").withName("1-Butene(aq)")   );
-    db_withtags.addSpecies( Species("BaSO4(s)").withName("Barite").withTags("sulfate")     );
-    db_withtags.addSpecies( Species("SrSO4(s)").withName("Celestite").withTags("sulfate")  );
-    db_withtags.addSpecies( Species("PbSO4(s)").withName("Anglesite").withTags("sulfate")  );
-    db_withtags.addSpecies( Species("CaSO4(s)").withName("Anhydrite").withTags("sulfate")  );
 
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
@@ -482,14 +477,14 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing AqueousPhase::AqueousPhase(Speciate, Exclude)")
     {
-        Phases phases(db_withtags);
+        Phases phases(db);
 
         phases.add( AqueousPhase(speciate("H O C Na Cl")) );
         phases.add( GaseousPhase("CO2(g)") );
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 2 );
+        CHECK( phasevec.size() == 2 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
         checkGaseousPhase(phasevec[1], "CO2(g)");
@@ -502,14 +497,14 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing AqueousPhase::AqueousPhase(Speciate, Exclude)")
     {
-        Phases phases(db_withtags);
+        Phases phases(db);
 
         phases.add( AqueousPhase(speciate("H O C Na Cl"), exclude("organic")) );
         phases.add( GaseousPhase("CO2(g)") );
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 2 );
+        CHECK( phasevec.size() == 2 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3--");
         checkGaseousPhase(phasevec[1], "CO2(g)");
@@ -522,14 +517,14 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing AqueousPhase::AqueousPhase(Exclude)")
     {
-        Phases phases(db_withtags);
+        Phases phases(db);
 
         phases.add( AqueousPhase(exclude("organic")) );
         phases.add( GaseousPhase("CO2(g)") );
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 2 );
+        CHECK( phasevec.size() == 2 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq)");
         checkGaseousPhase(phasevec[1], "CO2(g)");
@@ -542,7 +537,7 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing MineralPhases::MineralPhases(Exclude)")
     {
-        Phases phases(db_withtags);
+        Phases phases(db);
 
         phases.add( AqueousPhase(speciate("H O C"), exclude("organic")) );
         phases.add( GaseousPhase("H2O(g) CO2(g)") );
@@ -550,7 +545,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 3 );
+        CHECK( phasevec.size() == 3 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3--");
         checkGaseousPhase(phasevec[1], "H2O(g) CO2(g)");
@@ -564,14 +559,14 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing MineralPhases::MineralPhases(Speciate, Exclude)")
     {
-        Phases phases(db_withtags);
+        Phases phases(db);
 
         phases.add( AqueousPhase(speciate("H O"), exclude("organic")) );
         phases.add( MineralPhases(speciate("C Ca O"), exclude("carbonate")) );
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 3 );
+        CHECK( phasevec.size() == 3 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq)");
         checkMineralPhase(phasevec[1], "Graphite");
@@ -585,7 +580,7 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing GaseousPhases::GaseousPhases(Speciate, Exclude)")
     {
-        Phases phases(db_withtags);
+        Phases phases(db);
 
         phases.add( AqueousPhase(speciate("H O C"), exclude("organic")) );
         phases.add( GaseousPhase(speciate("H O C"), exclude("inert")) );
@@ -593,7 +588,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 3 );
+        CHECK( phasevec.size() == 3 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3--");
         checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
@@ -607,7 +602,7 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
     SECTION("Testing GaseousPhases::GaseousPhases(Exclude)")
     {
-        Phases phases(db_withtags);
+        Phases phases(db);
 
         phases.add( AqueousPhase(speciate("H O C Na Cl"), exclude("organic")) );
         phases.add( GaseousPhase(exclude("inert")) );
@@ -615,7 +610,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         Vec<Phase> phasevec = phases.convert();
 
-        REQUIRE( phasevec.size() == 4 );
+        CHECK( phasevec.size() == 4 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3--");
         checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
