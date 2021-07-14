@@ -26,8 +26,8 @@ void exportThermoFunDatabase(py::module& m)
 {
     py::class_<ThermoFunDatabase, Database>(m, "ThermoFunDatabase")
         .def(py::init<>())
-        // .def(py::init<String>())
-        // .def_static("withName", &ThermoFunDatabase::withName)
+        .def(py::init<const String&>())
+        .def_static("withName", &ThermoFunDatabase::withName)
         .def_static("fromFile", &ThermoFunDatabase::fromFile)
         ;
 }
