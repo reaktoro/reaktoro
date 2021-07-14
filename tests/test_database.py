@@ -28,7 +28,7 @@ import sys
 
 
 def get_test_data_dir():
-    return Path(os.path.abspath(__file__)).parents[3] / "tests/data"
+    return Path(os.path.abspath(__file__)).parents[0] / "data"
 
 
 LANGUAGES = {

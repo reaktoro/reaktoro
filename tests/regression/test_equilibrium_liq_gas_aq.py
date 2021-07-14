@@ -62,12 +62,13 @@ def test_equilibrium_CH4_H2S_CO2_H2O_liq_gas_aq(temperature, pressure, num_regre
     
     problem = EquilibriumProblem(system)
 
+    overall_composition = np.array([0.05, 0.05, 0.40, 0.50])
     problem.setTemperature(temperature, "K")
     problem.setPressure(pressure, "bar")
-    problem.add("H2O(g)", 0.50, "mol")
-    problem.add("CO2(g)", 0.05, "mol")
-    problem.add("H2S(g)", 0.40, "mol")
-    problem.add("CH4(g)", 0.05, "mol")
+    problem.add("CH4(g)", overall_composition[0], "mol")
+    problem.add("CO2(g)", overall_composition[1], "mol")
+    problem.add("H2S(g)", overall_composition[2], "mol")
+    problem.add("H2O(g)", overall_composition[3], "mol")
     
     # This is a workaround to avoid an Eigen assertion when in Debug:
     # `DenseBase::resize() does not actually allow to resize.`, triggered by `y(iee) = optimum_state.y * RT;`
@@ -77,13 +78,14 @@ def test_equilibrium_CH4_H2S_CO2_H2O_liq_gas_aq(temperature, pressure, num_regre
     
     options = EquilibriumOptions()
     options.hessian = GibbsHessian.Exact
-    options.nonlinear.max_iterations = 100
-    options.optimum.max_iterations = 200
-    options.optimum.ipnewton.step = StepMode.Conservative
-    options.optimum.tolerance = 1e-14
     solver.setOptions(options)
             
     state = ChemicalState(system)
+    state.setSpeciesAmounts(0.001)  # start will all having 0.001 moles
+    state.setSpeciesAmount("CH4(g)", overall_composition[0])  # overwrite amount of C1(g) (same below)
+    state.setSpeciesAmount("CO2(g)", overall_composition[1])
+    state.setSpeciesAmount("H2S(g)", overall_composition[2])
+    state.setSpeciesAmount("H2O(g)", overall_composition[3])
     
     result = solver.solve(state, problem)
     

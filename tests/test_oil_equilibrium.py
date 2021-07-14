@@ -56,12 +56,7 @@ def test_ternary_c1_c4_c10_bips_setup():
     editor.addLiquidPhase(oil_species).setChemicalModelCubicEOS(eos_params)
 
     def calculate_bips(T):
-        zero = 0.0
-        k = [
-            [zero, zero, zero],
-            [zero, zero, zero],
-            [zero, zero, zero]
-        ]
+        k = np.zeros((3, 3))
         bips = reaktoro.BinaryInteractionParams(k)
         return bips
 
@@ -169,8 +164,7 @@ def test_error_bips_setup():
     [
         # psi, degF, [mol / mol], [mol / mol], [mol / mol]
         (500, 280, [0.853401, 1 - 0.853401], [0.08588, 0.46349, 0.45064], [0.57114, 0.41253, 0.01633]),
-        # The case below is currently failing. Modifications in the Cubic EOS fugacities is required.
-        # (1500, 280, [0.566844, 1 - 0.566844], [0.330082, 0.513307, 0.156611], [0.629843, 0.348699, 0.021457]),
+        (1500, 280, [0.566844, 1 - 0.566844], [0.330082, 0.513307, 0.156611], [0.629843, 0.348699, 0.021457]),
     ]
 )
 def test_ternary_c1_c4_c10_mixture(P, T, F_expected, x_expected, y_expected):
@@ -197,7 +191,6 @@ def test_ternary_c1_c4_c10_mixture(P, T, F_expected, x_expected, y_expected):
 
     eos_params = reaktoro.CubicEOSParams(
         model=reaktoro.CubicEOSModel.PengRobinson,
-        phase_identification_method=reaktoro.PhaseIdentificationMethod.GibbsEnergyAndEquationOfStateMethod,
     )
 
     editor.addGaseousPhase(gaseous_species).setChemicalModelCubicEOS(eos_params)
@@ -280,12 +273,8 @@ def test_equilibrium_CH4_CO2_pedersen():
     editor = reaktoro.ChemicalEditor(db)
 
     def calculate_bips(T):
-        k_00 = k_11 = 0.0
-        k_01 = k_10 = 0.12
-        k = [
-            [k_00, k_01],
-            [k_10, k_11],
-        ]
+        k = np.zeros((2, 2))
+        k[0, 1] = k[1, 0] = 0.12
         bips = reaktoro.BinaryInteractionParams(k)
         return bips
 

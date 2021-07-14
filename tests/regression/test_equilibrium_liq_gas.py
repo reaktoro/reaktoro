@@ -59,13 +59,13 @@ def test_equilibrium_CH4_liq_gas(temperature, pressure, num_regression):
     
     options = EquilibriumOptions()
     options.hessian = GibbsHessian.Exact
-    options.nonlinear.max_iterations = 100
     options.optimum.max_iterations = 200
-    options.optimum.ipnewton.step = StepMode.Conservative
-    options.optimum.tolerance = 1e-17
+    options.optimum.tolerance = 1e-12
     solver.setOptions(options)
             
     state = ChemicalState(system)
+    state.setSpeciesAmounts(0.001)  # start will all having 0.001 moles
+    state.setSpeciesAmount("CH4(g)", 1.0) 
     
     result = solver.solve(state, problem)
 
@@ -110,7 +110,6 @@ def test_equilibrium_H2S_liq_gas(temperature, pressure, num_regression):
     system = ChemicalSystem(editor)
     
     problem = EquilibriumProblem(system)
-    
     
     problem.setTemperature(temperature, "K")
     problem.setPressure(pressure, "Pa")
@@ -313,10 +312,6 @@ def test_equilibrium_CH4_H2S_liq_gas(temperature, pressure, num_regression):
     
     options = EquilibriumOptions()
     options.hessian = GibbsHessian.Exact
-    options.nonlinear.max_iterations = 100
-    options.optimum.max_iterations = 200
-    options.optimum.ipnewton.step = StepMode.Conservative
-    options.optimum.tolerance = 1e-17
     solver.setOptions(options)
             
     state = ChemicalState(system)
@@ -372,24 +367,25 @@ def test_equilibrium_CH4_CO2_H2S_liq_gas(temperature, pressure, num_regression):
     
     problem = EquilibriumProblem(system)
     
-    
+    overall_composition = np.array([0.60, 0.35, 0.05])
     problem.setTemperature(temperature, "K")
     problem.setPressure(pressure, "bar")
-    problem.add("CH4(g)", 0.60, "mol")
-    problem.add("H2S(g)", 0.35, "mol")
-    problem.add("CO2(g)", 0.05, "mol")
+    problem.add("CH4(g)", overall_composition[0], "mol")
+    problem.add("H2S(g)", overall_composition[1], "mol")
+    problem.add("CO2(g)", overall_composition[2], "mol")
     
     solver = EquilibriumSolver(problem.system())
     
     options = EquilibriumOptions()
     options.hessian = GibbsHessian.Exact
-    options.nonlinear.max_iterations = 100
-    options.optimum.max_iterations = 200
-    options.optimum.ipnewton.step = StepMode.Conservative
     
     solver.setOptions(options)
             
     state = ChemicalState(system)
+    state.setSpeciesAmounts(0.001)  # start will all having 0.001 moles
+    state.setSpeciesAmount("CH4(g)", overall_composition[0])  # overwrite amount of C1(g) (same below)
+    state.setSpeciesAmount("H2S(g)", overall_composition[1])  
+    state.setSpeciesAmount("CO2(g)", overall_composition[2])
     
     result = solver.solve(state, problem)
     
