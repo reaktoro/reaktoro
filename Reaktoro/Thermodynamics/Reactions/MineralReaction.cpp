@@ -489,14 +489,11 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
     }
     else
     {
-        // The molar surface area of the mineral
-        const double molar_surface_area = molarSurfaceArea(mineralrxn, system);
-
-        // The surface area of the mineral
-        const double surface_area = mineralrxn.surfaceArea();
-
         rate = [=](const ChemicalProperties& properties) mutable
         {
+            // The molar surface area of the mineral
+            const double molar_surface_area = molarSurfaceArea(mineralrxn, system);
+
             // The composition of the chemical system
             const auto n = properties.composition();
 
