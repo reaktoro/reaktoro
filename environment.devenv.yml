@@ -35,7 +35,7 @@ dependencies:
   - pytest-regressions
   - pytest-xdist
   - python={{ python_version }}
-  - thermofun==0.3.7
+  - thermofun==0.3.8
   - vs2019_win-64  # [win]
   - yaml-cpp4rkt
   - pip:
