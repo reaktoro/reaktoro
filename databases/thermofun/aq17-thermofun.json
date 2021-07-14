@@ -1,4 +1,11 @@
-[
+{
+  "thermodataset": "aq17-gem",
+  "datasources": [
+    "db.thermohub.org",
+    "[2017MIR/WAG]"
+  ],
+  "date": "10.12.2019 12:58:35",
+  "substances": [
     {
       "name": "Water HGK",
       "symbol": "H2O@",
@@ -79,7 +86,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1992JOH/OEL]"
+      ]
     },
     {
       "name": "Al(OH)2+",
@@ -176,7 +185,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2001TAG/SCH]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "Al(OH)3 (aq)",
@@ -273,7 +285,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2016MIR/WAG]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "Al(OH)4-",
@@ -370,7 +385,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[2001TAG/SCH]"
+      ]
     },
     {
       "name": "Al+3 ion",
@@ -467,7 +485,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2001TAG/SCH]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "AlH3SiO4+2",
@@ -564,7 +585,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2001TAG/SCH]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "AlOH+2",
@@ -661,7 +685,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2001TAG/SCH]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "CH4 (aq)",
@@ -792,7 +819,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[2003AKI/DIA]"
+      ]
     },
     {
       "name": "CO (aq)",
@@ -889,7 +919,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1993SHO/MCK]"
+      ]
     },
     {
       "name": "Ca+2 ion",
@@ -986,7 +1018,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[1997SHO/SAS]"
+      ]
     },
     {
       "name": "CaCl+",
@@ -1083,7 +1118,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "CaCl2 (aq)",
@@ -1180,7 +1217,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "CaCO3 (aq)",
@@ -1277,7 +1316,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "CaHCO3+",
@@ -1374,7 +1415,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "CaHSiO3+",
@@ -1471,7 +1514,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1997SVE/SHO]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "CaOH+",
@@ -1568,7 +1614,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "CaSiO3@",
@@ -1665,7 +1713,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "Cl- ion",
@@ -1762,7 +1812,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1988SHO/HEL]",
+        "[1988SHO/HEL]"
+      ]
     },
     {
       "name": "CO2 (aq)",
@@ -1893,7 +1946,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[2003AKI/DIA]"
+      ]
     },
     {
       "name": "CO3-2 carbonate ion",
@@ -1990,7 +2046,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[1997SHO/SAS]"
+      ]
     },
     {
       "name": "H+",
@@ -2036,7 +2095,9 @@
           0
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1988SHO/HEL]"
+      ]
     },
     {
       "name": "H2 (aq)",
@@ -2167,7 +2228,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[2003AKI/DIA]"
+      ]
     },
     {
       "name": "HCl (aq)",
@@ -2264,7 +2328,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1997TAG/ZOT]"
+      ]
     },
     {
       "name": "HCO3- bicarbonate ion",
@@ -2361,7 +2427,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "HSiO3-",
@@ -2458,7 +2526,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[2016MIR/WAG]"
+      ]
     },
     {
       "name": "K+ ion",
@@ -2555,7 +2626,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1988SHO/HEL]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "KAlO2 (aq)",
@@ -2652,7 +2726,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[1997POK/HEL]"
+      ]
     },
     {
       "name": "KCl (aq)",
@@ -2749,7 +2826,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2016MIR/WAG]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "KCO3-           ",
@@ -2846,104 +2926,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
-    },
-    {
-      "name": "KCO3-           ",
-      "symbol": "NaCO3-",
-      "formula": "KCO3-",
-      "formula_charge": -1,
-      "aggregate_state": {
-        "4": "AS_AQUEOUS"
-      },
-      "class_": {
-        "2": "SC_AQSOLUTE"
-      },
-      "Tst": 298.15,
-      "Pst": 100000,
-      "TPMethods": [
-        {
-          "method": {
-            "3": "solute_hkf88_reaktoro"
-          },
-          "eos_hkf_coeffs": {
-            "values": [
-              0.20000000298023,
-              -233.5,
-              6.6714000701904,
-              -26825,
-              7.7692999839783,
-              -71095,
-              142650,
-              0
-            ],
-            "units": [
-              "cal/(mol*bar)",
-              "cal/mol",
-              "(cal*K)/mol",
-              "cal/(mol*K)",
-              "(cal*K)/mol",
-              "cal/mol"
-            ],
-            "names": [
-              "a1",
-              "a2",
-              "a3",
-              "a4",
-              "c1",
-              "c2",
-              "wref"
-            ]
-          }
-        }
-      ],
-      "sm_heat_capacity_p": {
-        "values": [
-          -82.314514160156
-        ],
-        "errors": [
-          0
-        ],
-        "units": [
-          "J/(mol*K)"
-        ]
-      },
-      "sm_gibbs_energy": {
-        "values": [
-          -789833
-        ],
-        "units": [
-          "J/mol"
-        ]
-      },
-      "sm_enthalpy": {
-        "values": [
-          -905329
-        ],
-        "units": [
-          "J/mol"
-        ]
-      },
-      "sm_entropy_abs": {
-        "values": [
-          56.090000152588
-        ],
-        "units": [
-          "J/(mol*K)"
-        ]
-      },
-      "sm_volume": {
-        "values": [
-          -0.15198731422424
-        ],
-        "errors": [
-          0
-        ],
-        "units": [
-          "J/bar"
-        ]
-      },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "KHCO3@           ",
@@ -3040,7 +3025,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "KOH (aq)",
@@ -3137,7 +3124,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2016MIR/WAG]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "Mg+2 ion",
@@ -3234,7 +3224,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[1997SHO/SAS]"
+      ]
     },
     {
       "name": "MgCl+",
@@ -3331,7 +3324,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "MgCl2 (aq)",
@@ -3428,7 +3423,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "MgCO3 (aq)",
@@ -3525,7 +3522,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "MgHCO3+",
@@ -3622,7 +3621,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "MgHSiO3+",
@@ -3719,7 +3720,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[1997SVE/SHO]"
+      ]
     },
     {
       "name": "MgOH+",
@@ -3816,7 +3820,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "MgSiO3@",
@@ -3913,7 +3919,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "Na+ ion",
@@ -4010,7 +4018,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1988SHO/HEL]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "NaAl(OH)4 (aq)",
@@ -4107,7 +4118,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2001TAG/SCH]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "NaCl (aq)",
@@ -4204,7 +4218,109 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2016MIR/WAG]",
+        "[2017MIR/WAG]"
+      ]
+    },
+    {
+      "name": "NaCO3-",
+      "symbol": "NaCO3-",
+      "formula": "NaCO3-",
+      "formula_charge": -1,
+      "aggregate_state": {
+        "4": "AS_AQUEOUS"
+      },
+      "class_": {
+        "2": "SC_AQSOLUTE"
+      },
+      "Tst": 298.15,
+      "Pst": 100000,
+      "TPMethods": [
+        {
+          "method": {
+            "3": "solute_hkf88_reaktoro"
+          },
+          "eos_hkf_coeffs": {
+            "values": [
+              0.20000000298023,
+              -233.5,
+              6.6714000701904,
+              -26825,
+              7.7692999839783,
+              -71095,
+              142650,
+              0
+            ],
+            "units": [
+              "cal/(mol*bar)",
+              "cal/mol",
+              "(cal*K)/mol",
+              "cal/(mol*K)",
+              "(cal*K)/mol",
+              "cal/mol"
+            ],
+            "names": [
+              "a1",
+              "a2",
+              "a3",
+              "a4",
+              "c1",
+              "c2",
+              "wref"
+            ]
+          }
+        }
+      ],
+      "sm_heat_capacity_p": {
+        "values": [
+          -82.314514160156
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_gibbs_energy": {
+        "values": [
+          -789833
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_enthalpy": {
+        "values": [
+          -901340
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_entropy_abs": {
+        "values": [
+          56.090000152588
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_volume": {
+        "values": [
+          -0.15198731422424
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/bar"
+        ]
+      },
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "NaHCO3@",
@@ -4301,7 +4417,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "NaHSiO3 (aq)",
@@ -4398,7 +4516,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "NaOH (aq)",
@@ -4495,7 +4615,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2016MIR/WAG]",
+        "[2017MIR/WAG]"
+      ]
     },
     {
       "name": "O2 (aq)",
@@ -4626,7 +4749,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[2003AKI/DIA]"
+      ]
     },
     {
       "name": "OH- hydroxyl ion",
@@ -4723,7 +4849,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1988SHO/HEL]",
+        "[1988SHO/HEL]"
+      ]
     },
     {
       "name": "SiO2 (aq)",
@@ -4820,7 +4949,10 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[2017MIR/WAG]",
+        "[1989SHO/HEL]"
+      ]
     },
     {
       "name": "Gibbsite (gbs) Cp coeff from Pokrovskii and Helgeson (1995)",
@@ -4949,7 +5081,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Corundum (cor)",
@@ -5085,7 +5219,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Kaolinite (kao)",
@@ -5221,7 +5357,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Pyrophyllite (prl)",
@@ -5357,7 +5495,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Topaz-OH (tpz)",
@@ -5493,7 +5633,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Sillimanite (sill)",
@@ -5641,7 +5783,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Andalusite (and)",
@@ -5777,7 +5921,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Kyanite (ky)",
@@ -5913,7 +6059,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Boehmite (bhm)",
@@ -6042,7 +6190,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Diaspore (dsp)",
@@ -6178,7 +6328,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Graphite (gph)",
@@ -6314,7 +6466,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Diamond (diam)",
@@ -6450,7 +6604,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Portlandite",
@@ -6570,7 +6726,9 @@
           "J/bar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Dolomite-od (odo)",
@@ -6718,7 +6876,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Omphacite-Mg (om)",
@@ -6854,7 +7014,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Vesuvianite (vsv)",
@@ -6990,7 +7152,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Prehnite (pre)",
@@ -7126,7 +7290,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Gehlenite (geh)",
@@ -7274,7 +7440,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Clinozoisite (cz)",
@@ -7410,7 +7578,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Zoisite (zo)",
@@ -7546,7 +7716,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Tschermakite-Mg (ts)",
@@ -7682,7 +7854,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Tremolite-Mg (tr)",
@@ -7818,7 +7992,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Akermanite (ak)",
@@ -7954,7 +8130,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Larnite (lrn)",
@@ -8102,7 +8280,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Grossular (gr)",
@@ -8238,7 +8418,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Merwinite (merw)",
@@ -8374,7 +8556,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Rankinite (rnk)",
@@ -8510,7 +8694,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Meionite-Ca (me)",
@@ -8646,7 +8832,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Pumpellyite-Mg (pump)",
@@ -8782,7 +8970,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Tilleyite (ty)",
@@ -8918,7 +9108,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Spurrite (spu)",
@@ -9054,7 +9246,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Lawsonite (law)",
@@ -9190,7 +9384,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Anorthite (an)",
@@ -9338,7 +9534,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Wairakite (wrk)",
@@ -9474,7 +9672,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Laumontite (lmt)",
@@ -9610,7 +9810,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Heulandite (heu)",
@@ -9746,7 +9948,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Stilbite (stlb)",
@@ -9882,7 +10086,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Tschermak-Ca (cats)",
@@ -10018,7 +10224,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Margarite (ma)",
@@ -10154,7 +10362,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Aragonite (arag)",
@@ -10302,7 +10512,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Calcite (cc)",
@@ -10450,7 +10662,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Dolomite (dol)",
@@ -10598,7 +10812,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Cceladonite-Mg (ccel)",
@@ -10734,7 +10950,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Diopside (di)",
@@ -10870,7 +11088,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Monticellite (mont)",
@@ -11006,7 +11226,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Lime (lime)",
@@ -11142,7 +11364,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Wollastonite (wo)",
@@ -11278,7 +11502,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Pseudowollastonite (pswo)",
@@ -11414,7 +11640,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Stilpnomelane-Mg (msti)",
@@ -11550,7 +11778,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Muscovite (mu)",
@@ -11686,7 +11916,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Leucite (lc)",
@@ -11834,7 +12066,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Microcline (mic)",
@@ -11970,7 +12204,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Sanidine (san)",
@@ -12106,7 +12342,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Kalsilite (kals)",
@@ -12242,7 +12480,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Sylvite (syv)",
@@ -12378,7 +12618,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Eastonite (east)",
@@ -12514,7 +12756,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Osumilite1-Mg (osm1)",
@@ -12650,7 +12894,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Osumilite2-Mg (osm2)",
@@ -12786,7 +13032,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Phlogopite (phl)",
@@ -12922,7 +13170,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Celadonite-Mg (cel)",
@@ -13058,7 +13308,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Brucite (br)",
@@ -13194,7 +13446,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Ttalc-Mg (tats)",
@@ -13330,7 +13584,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Sudoite-Mg (sud)",
@@ -13466,7 +13722,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Cordierite-Mg (crd)",
@@ -13614,7 +13872,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Hcordierite-Mg (hcrd)",
@@ -13762,7 +14022,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Enstatite (en)",
@@ -13898,7 +14160,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Forsterite (fo)",
@@ -14034,7 +14298,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Sapphirine5-Mg (spr5)",
@@ -14170,7 +14436,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Pyrope (py)",
@@ -14306,7 +14574,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Chrysotile (chr)",
@@ -14442,7 +14712,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Talc-Mg (ta)",
@@ -14578,7 +14850,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Antigorite (atg)",
@@ -14714,7 +14988,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Staurolite-Mg (mst)",
@@ -14850,7 +15126,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Amesite-Mg (ames)",
@@ -14986,7 +15264,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Sapphirine4-Mg (spr4)",
@@ -15122,7 +15402,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Clinochlore (clin)",
@@ -15258,7 +15540,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Gedrite-Mg (ged)",
@@ -15394,7 +15678,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Chlorite-Mg (afchl)",
@@ -15530,7 +15816,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Anthophyllite-Mg (anth)",
@@ -15666,7 +15954,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Cummingtonite (cumm)",
@@ -15802,7 +16092,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Clinohumite (chum)",
@@ -15938,7 +16230,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Spinel (sp)",
@@ -16074,7 +16368,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Carpholite-Mg (mcar)",
@@ -16210,7 +16506,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Chloritoid-Mg (mctd)",
@@ -16346,7 +16644,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Tschermak-Mg (mgts)",
@@ -16482,7 +16782,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Magnesite (mag)",
@@ -16618,7 +16920,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Periclase (per)",
@@ -16754,7 +17058,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Glaucophane-Mg (gl)",
@@ -16890,7 +17196,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Meionite-Na (coma)",
@@ -17026,7 +17334,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Paragonite (pa)",
@@ -17162,7 +17472,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Jadeite (jd)",
@@ -17298,7 +17610,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Analcite (anl)",
@@ -17434,7 +17748,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Albite (ab)",
@@ -17582,7 +17898,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Albite high (abh)",
@@ -17718,7 +18036,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Nepheline (ne)",
@@ -17866,7 +18186,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Pargasite-Mg (parg)",
@@ -18002,7 +18324,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Edenite-Mg (ed)",
@@ -18138,7 +18462,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Mizzonite (mizz)",
@@ -18274,7 +18600,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Halite (hlt)",
@@ -18410,7 +18738,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Phlogopite-Na (naph)",
@@ -18546,7 +18876,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Nceladonite-Mg (ncel)",
@@ -18682,7 +19014,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Cristobalite (crst)",
@@ -18818,7 +19152,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Tridymite (trd)",
@@ -18954,7 +19290,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Quartz (q)",
@@ -19102,7 +19440,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Coesite (coe)",
@@ -19238,7 +19578,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Stishovite (stv)",
@@ -19374,7 +19716,9 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Methane (CH4)",
@@ -19521,7 +19865,10 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]",
+        "[1991HOL/POW]"
+      ]
     },
     {
       "name": "Carbon monoxide (CO)",
@@ -19668,7 +20015,10 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]",
+        "[1991HOL/POW]"
+      ]
     },
     {
       "name": "Carbon dioxide (CO2)",
@@ -19815,7 +20165,10 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1991HOL/POW]",
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Hydrogen (H2)",
@@ -19962,7 +20315,10 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1991HOL/POW]",
+        "[1998HOL/POW]"
+      ]
     },
     {
       "name": "Water (H2O)",
@@ -20109,7 +20465,10 @@
           "kbar"
         ]
       },
-      "_label": "substance"
+      "datasources": [
+        "[1998HOL/POW]",
+        "[1991HOL/POW]"
+      ]
     },
     {
       "name": "Oxygen (O2)",
@@ -20256,8 +20615,14 @@
           "kbar"
         ]
       },
-      "_label": "substance"
-    },
+      "datasources": [
+        "[1998HOL/POW]",
+        "[1991HOL/POW]"
+      ]
+    }
+  ],
+  "reactions": [],
+  "elements": [
     {
       "symbol": "Zz",
       "class_": {
@@ -20275,7 +20640,9 @@
         ],
         "name": "M0i"
       },
-      "_label": "element"
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
     },
     {
       "symbol": "H",
@@ -20294,7 +20661,9 @@
         ],
         "name": "M0i"
       },
-      "_label": "element"
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
     },
     {
       "symbol": "C",
@@ -20313,7 +20682,9 @@
         ],
         "name": "M0i"
       },
-      "_label": "element"
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
     },
     {
       "symbol": "O",
@@ -20332,7 +20703,9 @@
         ],
         "name": "M0i"
       },
-      "_label": "element"
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
     },
     {
       "symbol": "Na",
@@ -20351,7 +20724,9 @@
         ],
         "name": "M0i"
       },
-      "_label": "element"
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
     },
     {
       "symbol": "Mg",
@@ -20370,7 +20745,9 @@
         ],
         "name": "M0i"
       },
-      "_label": "element"
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
     },
     {
       "symbol": "Al",
@@ -20389,7 +20766,9 @@
         ],
         "name": "M0i"
       },
-      "_label": "element"
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
     },
     {
       "symbol": "Si",
@@ -20408,7 +20787,9 @@
         ],
         "name": "M0i"
       },
-      "_label": "element"
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
     },
     {
       "symbol": "Cl",
@@ -20427,7 +20808,9 @@
         ],
         "name": "M0i"
       },
-      "_label": "element"
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
     },
     {
       "symbol": "K",
@@ -20446,7 +20829,9 @@
         ],
         "name": "M0i"
       },
-      "_label": "element"
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
     },
     {
       "symbol": "Ca",
@@ -20465,6 +20850,9 @@
         ],
         "name": "M0i"
       },
-      "_label": "element"
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
     }
   ]
+}
