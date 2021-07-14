@@ -71,20 +71,29 @@ execute_process(
     OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_DIR
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+# The directory where the C++ library is built
+set(REAKTORO_LIBRARY_DIR $<TARGET_FILE_DIR:Reaktoro>)
+file(TO_NATIVE_PATH ${REAKTORO_LIBRARY_DIR} REAKTORO_LIBRARY_DIR)
+
 # The directory where the python package reaktoro is built
-set(REAKTORO_PYTHON_PACKAGE_DIR ${CMAKE_BINARY_DIR}/python/package)
+# Note: This needs improvement. The complication below is due to the need of
+# pybind11-stubgen in importing reaktoro, and this is done before running
+# python setup.y install in reaktoro-setuptools target.
+# Once the package is built with setuptools, the directory
+# REAKTORO_PYTHON_PACKAGE_DIR_1 is created. But directory
+# REAKTORO_PYTHON_PACKAGE_DIR_2 always exist and its used by pybind11-stubgen.
+set(REAKTORO_PYTHON_PACKAGE_DIR_1 ${CMAKE_BINARY_DIR}/python/package/build/lib)
+set(REAKTORO_PYTHON_PACKAGE_DIR_2 ${CMAKE_BINARY_DIR}/python/package)
+file(TO_NATIVE_PATH ${REAKTORO_PYTHON_PACKAGE_DIR_1} REAKTORO_PYTHON_PACKAGE_DIR_1)
+file(TO_NATIVE_PATH ${REAKTORO_PYTHON_PACKAGE_DIR_2} REAKTORO_PYTHON_PACKAGE_DIR_2)
 
 # Define variables REAKTORO_PATH and REAKTORO_PYTHONPATH used to set environment variables PATH and PYTHONPATH.
 if(WIN32)
-    set(REAKTORO_PATH "$<TARGET_FILE_DIR:Reaktoro>")
-    set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR}")
-    file(TO_NATIVE_PATH ${REAKTORO_PATH} REAKTORO_PATH)
-    file(TO_NATIVE_PATH ${REAKTORO_PYTHONPATH} REAKTORO_PYTHONPATH)
-    set(REAKTORO_PATH "${REAKTORO_PATH}\;$ENV{PATH}")
-    set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHONPATH}\;$ENV{PYTHONPATH}")
+    set(REAKTORO_PATH "${REAKTORO_LIBRARY_DIR}\;$ENV{PATH}")
+    set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR_1}\;${REAKTORO_PYTHON_PACKAGE_DIR_2}\;$ENV{PYTHONPATH}")
 else()
     set(REAKTORO_PATH "$ENV{PATH}")
-    set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR}:$ENV{PYTHONPATH}")
+    set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR_1}:${REAKTORO_PYTHON_PACKAGE_DIR_2}:$ENV{PYTHONPATH}")
 endif()
 
 # Find all Reaktoro dependencies
