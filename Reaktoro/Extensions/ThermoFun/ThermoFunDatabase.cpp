@@ -17,7 +17,13 @@
 
 #include "ThermoFunDatabase.hpp"
 
+// CMakeRC includes
+#include <cmrc/cmrc.hpp>
+
+CMRC_DECLARE(ReaktoroDatabases);
+
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
@@ -108,17 +114,44 @@ auto createSpecies(const ThermoFunEngine& engine, const ThermoFun::Substance& su
 ThermoFunDatabase::ThermoFunDatabase()
 {}
 
-auto ThermoFunDatabase::fromFile(const String& path) ->  ThermoFunDatabase
+ThermoFunDatabase::ThermoFunDatabase(const String& name)
+: ThermoFunDatabase(ThermoFunDatabase::withName(name))
+{}
+
+auto ThermoFunDatabase::withName(const String& name) -> ThermoFunDatabase
 {
-    ThermoFun::Database database(path);
+    errorif(!oneof(name,
+        "aq17",
+        "cemdata18",
+        "heracles",
+        "mines16",
+        "psinagra-12-07",
+        "slop98-organic",
+        "slop98"),
+        "Could not load embedded ThermoFun database file with name `", name, "`. ",
+        "The currently supported names are: \n"
+        "    - aq17            (corresponding file: aq17-thermofun.json)      \n",
+        "    - cemdata18       (corresponding file: cemdata18-thermofun.json) \n",
+        "    - heracles        (corresponding file: heracles-thermofun.json)  \n",
+        "    - mines16         (corresponding file: mines16-thermofun.json)   \n",
+        "    - psinagra-12-07  (corresponding file: psinagra-thermofun.json)  \n",
+        "    - slop98-organic  (corresponding file: slop98-thermofun.json)    \n",
+        "    - slop98          (corresponding file: slop98-thermofun.json)    \n",
+        "");
+    auto fs = cmrc::ReaktoroDatabases::get_filesystem();
+    auto file = fs.open("databases/thermofun/" + name + "-thermofun.json");
+    String text(file.begin(), file.end());
+    return fromFile(text);
+}
 
+auto ThermoFunDatabase::fromFile(const String& file) ->  ThermoFunDatabase
+{
+    ThermoFun::Database database(file);
     ThermoFunEngine engine(database);
-
     ThermoFunDatabase db;
     db.attachData(engine);
     for(auto [_, subs] : database.mapSubstances())
         db.addSpecies(createSpecies(engine, subs));
-
     return db;
 }
 
