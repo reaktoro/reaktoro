@@ -109,6 +109,12 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
     ChemicalProps props(system);
 
+    const auto molar_masses = ArrayXd{{
+        system.species(0).molarMass(),
+        system.species(1).molarMass(),
+        system.species(2).molarMass(),
+    }};
+
     SECTION("testing when species have non-zero amounts")
     {
         real T = 300.0;
@@ -140,6 +146,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXr ln_a = ArrayXr{{ 9.0*x[0], 9.0*x[1], 9.1*x[2] }};
         const ArrayXr u    = G0 + R*T*ln_a;
 
+        const real Ntot = n.sum();
+        const real Mtot = (n * molar_masses).sum();
         const real Gtot = (G0 * n).sum() + (nsumphases * Gex).sum();
         const real Htot = (H0 * n).sum() + (nsumphases * Hex).sum();
         const real Vtot = (V0 * n).sum() + (nsumphases * Vex).sum();
@@ -147,31 +155,33 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const real Utot = Htot - P*Vtot;
         const real Atot = Gtot - P*Vtot;
 
-        REQUIRE_NOTHROW( props.update(T, P, n) );
+        CHECK_NOTHROW( props.update(T, P, n) );
 
-        REQUIRE( props.temperature() == T );
-        REQUIRE( props.pressure()    == P );
+        CHECK( props.temperature() == T );
+        CHECK( props.pressure()    == P );
 
-        REQUIRE( props.speciesAmounts()              .isApprox(n)    );
-        REQUIRE( props.moleFractions()               .isApprox(x)    );
-        REQUIRE( props.lnActivityCoefficients()      .isApprox(ln_g) );
-        REQUIRE( props.lnActivities()                .isApprox(ln_a) );
-        REQUIRE( props.chemicalPotentials()          .isApprox(u)    );
-        REQUIRE( props.standardGibbsEnergies()       .isApprox(G0)   );
-        REQUIRE( props.standardEnthalpies()          .isApprox(H0)   );
-        REQUIRE( props.standardVolumes()             .isApprox(V0)   );
-        REQUIRE( props.standardEntropies()           .isApprox(S0)   );
-        REQUIRE( props.standardInternalEnergies()    .isApprox(U0)   );
-        REQUIRE( props.standardHelmholtzEnergies()   .isApprox(A0)   );
-        REQUIRE( props.standardHeatCapacitiesConstP().isApprox(Cp0)  );
-        REQUIRE( props.standardHeatCapacitiesConstV().isApprox(Cv0)  );
+        CHECK( props.speciesAmounts()              .isApprox(n)    );
+        CHECK( props.moleFractions()               .isApprox(x)    );
+        CHECK( props.lnActivityCoefficients()      .isApprox(ln_g) );
+        CHECK( props.lnActivities()                .isApprox(ln_a) );
+        CHECK( props.chemicalPotentials()          .isApprox(u)    );
+        CHECK( props.standardVolumes()             .isApprox(V0)   );
+        CHECK( props.standardGibbsEnergies()       .isApprox(G0)   );
+        CHECK( props.standardEnthalpies()          .isApprox(H0)   );
+        CHECK( props.standardEntropies()           .isApprox(S0)   );
+        CHECK( props.standardInternalEnergies()    .isApprox(U0)   );
+        CHECK( props.standardHelmholtzEnergies()   .isApprox(A0)   );
+        CHECK( props.standardHeatCapacitiesConstP().isApprox(Cp0)  );
+        CHECK( props.standardHeatCapacitiesConstV().isApprox(Cv0)  );
 
-        REQUIRE( props.gibbsEnergy()     == Approx(Gtot) );
-        REQUIRE( props.enthalpy()        == Approx(Htot) );
-        REQUIRE( props.volume()          == Approx(Vtot) );
-        REQUIRE( props.entropy()         == Approx(Stot) );
-        REQUIRE( props.internalEnergy()  == Approx(Utot) );
-        REQUIRE( props.helmholtzEnergy() == Approx(Atot) );
+        CHECK( props.amount()          == Approx(Ntot) );
+        CHECK( props.mass()            == Approx(Mtot) );
+        CHECK( props.volume()          == Approx(Vtot) );
+        CHECK( props.gibbsEnergy()     == Approx(Gtot) );
+        CHECK( props.enthalpy()        == Approx(Htot) );
+        CHECK( props.entropy()         == Approx(Stot) );
+        CHECK( props.internalEnergy()  == Approx(Utot) );
+        CHECK( props.helmholtzEnergy() == Approx(Atot) );
 
         //---------------------------------------------------------------------
         // Testing temperature derivatives of the properties
@@ -202,6 +212,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXd ln_a_T = ArrayXd{{ 0.0, 0.0, 0.0 }};
         const ArrayXd    u_T = G0_T + R*ln_a;
 
+        const double Ntot_T = 0.0;
+        const double Mtot_T = 0.0;
         const double Gtot_T = (G0_T * n).sum() + (nsumphases * Gex_T).sum();
         const double Htot_T = (H0_T * n).sum() + (nsumphases * Hex_T).sum();
         const double Vtot_T = (V0_T * n).sum() + (nsumphases * Vex_T).sum();
@@ -213,29 +225,31 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.update(T, P, n);
         autodiff::unseed(T);
 
-        REQUIRE( grad(props.temperature()) == 1.0 );
-        REQUIRE( grad(props.pressure())    == 0.0 );
+        CHECK( grad(props.temperature()) == 1.0 );
+        CHECK( grad(props.pressure())    == 0.0 );
 
-        REQUIRE( grad(props.speciesAmounts())               .isApprox(n_T)    );
-        REQUIRE( grad(props.moleFractions())                .isApprox(x_T)    );
-        REQUIRE( grad(props.lnActivityCoefficients())       .isApprox(ln_g_T) );
-        REQUIRE( grad(props.lnActivities())                 .isApprox(ln_a_T) );
-        REQUIRE( grad(props.chemicalPotentials())           .isApprox(u_T)    );
-        REQUIRE( grad(props.standardGibbsEnergies())        .isApprox(G0_T)   );
-        REQUIRE( grad(props.standardEnthalpies())           .isApprox(H0_T)   );
-        REQUIRE( grad(props.standardVolumes())              .isApprox(V0_T)   );
-        REQUIRE( grad(props.standardEntropies())            .isApprox(S0_T)   );
-        REQUIRE( grad(props.standardInternalEnergies())     .isApprox(U0_T)   );
-        REQUIRE( grad(props.standardHelmholtzEnergies())    .isApprox(A0_T)   );
-        REQUIRE( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_T)  );
-        REQUIRE( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_T)  );
+        CHECK( grad(props.speciesAmounts())               .isApprox(n_T)    );
+        CHECK( grad(props.moleFractions())                .isApprox(x_T)    );
+        CHECK( grad(props.lnActivityCoefficients())       .isApprox(ln_g_T) );
+        CHECK( grad(props.lnActivities())                 .isApprox(ln_a_T) );
+        CHECK( grad(props.chemicalPotentials())           .isApprox(u_T)    );
+        CHECK( grad(props.standardVolumes())              .isApprox(V0_T)   );
+        CHECK( grad(props.standardGibbsEnergies())        .isApprox(G0_T)   );
+        CHECK( grad(props.standardEnthalpies())           .isApprox(H0_T)   );
+        CHECK( grad(props.standardEntropies())            .isApprox(S0_T)   );
+        CHECK( grad(props.standardInternalEnergies())     .isApprox(U0_T)   );
+        CHECK( grad(props.standardHelmholtzEnergies())    .isApprox(A0_T)   );
+        CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_T)  );
+        CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_T)  );
 
-        REQUIRE( grad(props.gibbsEnergy())     == Approx(Gtot_T) );
-        REQUIRE( grad(props.enthalpy())        == Approx(Htot_T) );
-        REQUIRE( grad(props.volume())          == Approx(Vtot_T) );
-        REQUIRE( grad(props.entropy())         == Approx(Stot_T) );
-        REQUIRE( grad(props.internalEnergy())  == Approx(Utot_T) );
-        REQUIRE( grad(props.helmholtzEnergy()) == Approx(Atot_T) );
+        CHECK( grad(props.amount())          == Approx(Ntot_T) );
+        CHECK( grad(props.mass())            == Approx(Mtot_T) );
+        CHECK( grad(props.volume())          == Approx(Vtot_T) );
+        CHECK( grad(props.gibbsEnergy())     == Approx(Gtot_T) );
+        CHECK( grad(props.enthalpy())        == Approx(Htot_T) );
+        CHECK( grad(props.entropy())         == Approx(Stot_T) );
+        CHECK( grad(props.internalEnergy())  == Approx(Utot_T) );
+        CHECK( grad(props.helmholtzEnergy()) == Approx(Atot_T) );
 
         //---------------------------------------------------------------------
         // Testing pressure derivatives of the properties
@@ -266,6 +280,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXd ln_a_P = ArrayXd{{ 0.0, 0.0, 0.0 }};
         const ArrayXd    u_P = G0_P;
 
+        const double Ntot_P = 0.0;
+        const double Mtot_P = 0.0;
         const double Gtot_P = (G0_P * n).sum() + (nsumphases * Gex_P).sum();
         const double Htot_P = (H0_P * n).sum() + (nsumphases * Hex_P).sum();
         const double Vtot_P = (V0_P * n).sum() + (nsumphases * Vex_P).sum();
@@ -277,29 +293,31 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.update(T, P, n);
         autodiff::unseed(P);
 
-        REQUIRE( grad(props.temperature()) == 0.0 );
-        REQUIRE( grad(props.pressure())    == 1.0 );
+        CHECK( grad(props.temperature()) == 0.0 );
+        CHECK( grad(props.pressure())    == 1.0 );
 
-        REQUIRE( grad(props.speciesAmounts())               .isApprox(n_P)    );
-        REQUIRE( grad(props.moleFractions())                .isApprox(x_P)    );
-        REQUIRE( grad(props.lnActivityCoefficients())       .isApprox(ln_g_P) );
-        REQUIRE( grad(props.lnActivities())                 .isApprox(ln_a_P) );
-        REQUIRE( grad(props.chemicalPotentials())           .isApprox(u_P)    );
-        REQUIRE( grad(props.standardGibbsEnergies())        .isApprox(G0_P)   );
-        REQUIRE( grad(props.standardEnthalpies())           .isApprox(H0_P)   );
-        REQUIRE( grad(props.standardVolumes())              .isApprox(V0_P)   );
-        REQUIRE( grad(props.standardEntropies())            .isApprox(S0_P)   );
-        REQUIRE( grad(props.standardInternalEnergies())     .isApprox(U0_P)   );
-        REQUIRE( grad(props.standardHelmholtzEnergies())    .isApprox(A0_P)   );
-        REQUIRE( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_P)  );
-        REQUIRE( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_P)  );
+        CHECK( grad(props.speciesAmounts())               .isApprox(n_P)    );
+        CHECK( grad(props.moleFractions())                .isApprox(x_P)    );
+        CHECK( grad(props.lnActivityCoefficients())       .isApprox(ln_g_P) );
+        CHECK( grad(props.lnActivities())                 .isApprox(ln_a_P) );
+        CHECK( grad(props.standardVolumes())              .isApprox(V0_P)   );
+        CHECK( grad(props.chemicalPotentials())           .isApprox(u_P)    );
+        CHECK( grad(props.standardGibbsEnergies())        .isApprox(G0_P)   );
+        CHECK( grad(props.standardEnthalpies())           .isApprox(H0_P)   );
+        CHECK( grad(props.standardEntropies())            .isApprox(S0_P)   );
+        CHECK( grad(props.standardInternalEnergies())     .isApprox(U0_P)   );
+        CHECK( grad(props.standardHelmholtzEnergies())    .isApprox(A0_P)   );
+        CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_P)  );
+        CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_P)  );
 
-        REQUIRE( grad(props.gibbsEnergy())     == Approx(Gtot_P) );
-        REQUIRE( grad(props.enthalpy())        == Approx(Htot_P) );
-        REQUIRE( grad(props.volume())          == Approx(Vtot_P) );
-        REQUIRE( grad(props.entropy())         == Approx(Stot_P) );
-        REQUIRE( grad(props.internalEnergy())  == Approx(Utot_P) );
-        REQUIRE( grad(props.helmholtzEnergy()) == Approx(Atot_P) );
+        CHECK( grad(props.amount())          == Approx(Ntot_P) );
+        CHECK( grad(props.mass())            == Approx(Mtot_P) );
+        CHECK( grad(props.volume())          == Approx(Vtot_P) );
+        CHECK( grad(props.gibbsEnergy())     == Approx(Gtot_P) );
+        CHECK( grad(props.enthalpy())        == Approx(Htot_P) );
+        CHECK( grad(props.entropy())         == Approx(Stot_P) );
+        CHECK( grad(props.internalEnergy())  == Approx(Utot_P) );
+        CHECK( grad(props.helmholtzEnergy()) == Approx(Atot_P) );
 
         //---------------------------------------------------------------------
         // Testing compositional derivatives of the properties
@@ -355,6 +373,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
             return ((A.matrix().transpose() * x.matrix()).array()).eval();
         };
 
+        const ArrayXd Ntot_n = ArrayXd::Ones(3);
+        const ArrayXd Mtot_n = molar_masses;
         const ArrayXd Gtot_n = dot(n_n, G0) + dot(nsumphases_n, Gex);
         const ArrayXd Htot_n = dot(n_n, H0) + dot(nsumphases_n, Hex);
         const ArrayXd Vtot_n = dot(n_n, V0) + dot(nsumphases_n, Vex);
@@ -368,29 +388,31 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
             props.update(T, P, n);
             autodiff::unseed(n[i]);
 
-            REQUIRE( grad(props.temperature()) == 0.0 );
-            REQUIRE( grad(props.pressure())    == 0.0 );
+            CHECK( grad(props.temperature()) == 0.0 );
+            CHECK( grad(props.pressure())    == 0.0 );
 
-            REQUIRE( grad(props.speciesAmounts())               .isApprox(    n_n.col(i)) );
-            REQUIRE( grad(props.moleFractions())                .isApprox(    x_n.col(i)) );
-            REQUIRE( grad(props.lnActivityCoefficients())       .isApprox( ln_g_n.col(i)) );
-            REQUIRE( grad(props.lnActivities())                 .isApprox( ln_a_n.col(i)) );
-            REQUIRE( grad(props.chemicalPotentials())           .isApprox(    u_n.col(i)) );
-            REQUIRE( grad(props.standardGibbsEnergies())        .isApprox(   G0_n.col(i)) );
-            REQUIRE( grad(props.standardEnthalpies())           .isApprox(   H0_n.col(i)) );
-            REQUIRE( grad(props.standardVolumes())              .isApprox(   V0_n.col(i)) );
-            REQUIRE( grad(props.standardEntropies())            .isApprox(   S0_n.col(i)) );
-            REQUIRE( grad(props.standardInternalEnergies())     .isApprox(   U0_n.col(i)) );
-            REQUIRE( grad(props.standardHelmholtzEnergies())    .isApprox(   A0_n.col(i)) );
-            REQUIRE( grad(props.standardHeatCapacitiesConstP()) .isApprox(  Cp0_n.col(i)) );
-            REQUIRE( grad(props.standardHeatCapacitiesConstV()) .isApprox(  Cv0_n.col(i)) );
+            CHECK( grad(props.speciesAmounts())               .isApprox(    n_n.col(i)) );
+            CHECK( grad(props.moleFractions())                .isApprox(    x_n.col(i)) );
+            CHECK( grad(props.lnActivityCoefficients())       .isApprox( ln_g_n.col(i)) );
+            CHECK( grad(props.lnActivities())                 .isApprox( ln_a_n.col(i)) );
+            CHECK( grad(props.chemicalPotentials())           .isApprox(    u_n.col(i)) );
+            CHECK( grad(props.standardVolumes())              .isApprox(   V0_n.col(i)) );
+            CHECK( grad(props.standardGibbsEnergies())        .isApprox(   G0_n.col(i)) );
+            CHECK( grad(props.standardEnthalpies())           .isApprox(   H0_n.col(i)) );
+            CHECK( grad(props.standardEntropies())            .isApprox(   S0_n.col(i)) );
+            CHECK( grad(props.standardInternalEnergies())     .isApprox(   U0_n.col(i)) );
+            CHECK( grad(props.standardHelmholtzEnergies())    .isApprox(   A0_n.col(i)) );
+            CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(  Cp0_n.col(i)) );
+            CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(  Cv0_n.col(i)) );
 
-            REQUIRE( grad(props.gibbsEnergy())     == Approx(Gtot_n[i]) );
-            REQUIRE( grad(props.enthalpy())        == Approx(Htot_n[i]) );
-            REQUIRE( grad(props.volume())          == Approx(Vtot_n[i]) );
-            REQUIRE( grad(props.entropy())         == Approx(Stot_n[i]) );
-            REQUIRE( grad(props.internalEnergy())  == Approx(Utot_n[i]) );
-            REQUIRE( grad(props.helmholtzEnergy()) == Approx(Atot_n[i]) );
+            CHECK( grad(props.amount())          == Approx(Ntot_n[i]) );
+            CHECK( grad(props.mass())            == Approx(Mtot_n[i]) );
+            CHECK( grad(props.gibbsEnergy())     == Approx(Gtot_n[i]) );
+            CHECK( grad(props.enthalpy())        == Approx(Htot_n[i]) );
+            CHECK( grad(props.volume())          == Approx(Vtot_n[i]) );
+            CHECK( grad(props.entropy())         == Approx(Stot_n[i]) );
+            CHECK( grad(props.internalEnergy())  == Approx(Utot_n[i]) );
+            CHECK( grad(props.helmholtzEnergy()) == Approx(Atot_n[i]) );
         }
     }
 
@@ -402,11 +424,11 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         // The gas phase has last species with zero mole fraction!
         const ArrayXr n1 = ArrayXr{{ 1.0, 0.0, 1.0 }};
 
-        REQUIRE_THROWS( props.update(T, P, n1) );
+        CHECK_THROWS( props.update(T, P, n1) );
 
         // The single-species solid phase has unit mole fraction!
         const ArrayXr n2 = ArrayXr{{ 1.0, 1.0, 0.0 }};
 
-        REQUIRE_NOTHROW( props.update(T, P, n2) );
+        CHECK_NOTHROW( props.update(T, P, n2) );
     }
 }
