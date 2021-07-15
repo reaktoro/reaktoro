@@ -375,6 +375,12 @@ public:
     /// @param substance The chemical formula of the substance.
     auto openTo(const ChemicalFormula& substance) -> void;
 
+    /// Specify that the chemical system is open to a given chemical state. // TODO: Implement EquilibriumSpecs::auto openTo(const ChemicalState& state).
+    // auto openTo(const ChemicalState& state) -> void;
+
+    /// Specify that the chemical system is open to a given material. // TODO: Implement EquilibriumSpecs::auto openTo(const Material& material).
+    // auto openTo(const Material& material) -> void;
+
     //=================================================================================================
     //
     // METHODS TO GET THE NUMBER OF INTRODUCED CONSTRAINTS, INPUT VARIABLES, AND CONTROL VARIABLES
