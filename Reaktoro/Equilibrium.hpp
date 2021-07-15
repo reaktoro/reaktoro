@@ -28,4 +28,3 @@
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>

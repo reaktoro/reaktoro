@@ -23,7 +23,6 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/Gnuplot.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
 #include <Reaktoro/Common/Json.hpp>
@@ -32,7 +31,6 @@
 #include <Reaktoro/Common/Meta.hpp>
 #include <Reaktoro/Common/MoleFractionUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Common/Outputter.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/StringList.hpp>
