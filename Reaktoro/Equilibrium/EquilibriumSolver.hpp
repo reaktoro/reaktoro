@@ -56,45 +56,45 @@ public:
     auto setOptions(const EquilibriumOptions& options) -> void;
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
+    /// @param[in,out] state The initial guess and the final state of the equilibrium calculation
     auto solve(ChemicalState& state) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
+    /// @param[in,out] state The initial guess and the final state of the equilibrium calculation
     /// @param restrictions The restrictions on the reactivity amounts of the species
     auto solve(ChemicalState& state, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium and equilibrium conditions.
-    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
+    /// @param[in,out] state The initial guess and the final state of the equilibrium calculation
     /// @param conditions The conditions to be attained at chemical equilibrium
     auto solve(ChemicalState& state, const EquilibriumConditions& conditions) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium and equilibrium conditions.
-    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
+    /// @param[in,out] state The initial guess and the final state of the equilibrium calculation
     /// @param conditions The conditions to be attained at chemical equilibrium
     /// @param restrictions The restrictions on the reactivity amounts of the species
     auto solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
-    /// @param sensitivity[out] The sensitivity of the equilibrium state with respect to its input conditions
+    /// @param[in,out] state The initial guess and the final state of the equilibrium calculation
+    /// @param[out] sensitivity The sensitivity of the equilibrium state with respect to its input conditions
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
-    /// @param sensitivity[out] The sensitivity of the equilibrium state with respect to its input conditions
+    /// @param[in,out] state The initial guess and the final state of the equilibrium calculation
+    /// @param[out] sensitivity The sensitivity of the equilibrium state with respect to its input conditions
     /// @param restrictions The restrictions on the reactivity amounts of the species
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium and equilibrium conditions.
-    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
-    /// @param sensitivity[out] The sensitivity of the equilibrium state with respect to its input conditions
+    /// @param[in,out] state The initial guess and the final state of the equilibrium calculation
+    /// @param[out] sensitivity The sensitivity of the equilibrium state with respect to its input conditions
     /// @param conditions The conditions to be attained at chemical equilibrium
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given chemical state in disequilibrium and equilibrium conditions.
-    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
-    /// @param sensitivity[out] The sensitivity of the equilibrium state with respect to its input conditions
+    /// @param[in,out] state The initial guess and the final state of the equilibrium calculation
+    /// @param[out] sensitivity The sensitivity of the equilibrium state with respect to its input conditions
     /// @param conditions The conditions to be attained at chemical equilibrium
     /// @param restrictions The restrictions on the reactivity amounts of the species
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
