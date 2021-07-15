@@ -219,15 +219,6 @@ public:
         _update<true>(T, P, n);
     }
 
-    /// Update the chemical properties of the phase using ideal activity models.
-    /// @param T The temperature condition (in K)
-    /// @param P The pressure condition (in Pa)
-    /// @param n The amounts of the species in the phase (in mol)
-    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n, const Params& w)
-    {
-        _update<true>(T, P, n);
-    }
-
     /// Return the underlying Phase object.
     auto phase() const -> const Phase&
     {
