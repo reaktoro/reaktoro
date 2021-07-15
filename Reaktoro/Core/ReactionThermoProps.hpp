@@ -26,11 +26,10 @@ namespace Reaktoro {
 /// The primary standard thermodynamic properties of a chemical reaction.
 /// In this type, the primary standard thermodynamic properties of a chemical
 /// reaction are stored. This is a type to be used as the return type of a
-/// function that calculates such properties of reactions. See @ref
-/// ReactionThermoModel. See also @ref FormationReaction. Note there is no
-/// standard molar volume property stored here. This is because a standard
-/// molar volume model needs to be assigned to each individual @ref Species
-/// object.
+/// function that calculates such properties of reactions. See
+/// @ref ReactionThermoModel. See also FormationReaction. Note there is no standard
+/// molar volume property stored here. This is because a standard molar volume
+/// model needs to be assigned to each individual Species object.
 struct ReactionThermoProps
 {
     /// The standard molar Gibbs energy change @f$\Delta G^{\circ}@f$ of the reaction (in J/mol).
