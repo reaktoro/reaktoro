@@ -379,7 +379,7 @@ public:
     auto molarDensity() const -> real
     {
         const auto V = molarVolume();
-        return V ? 1.0/V : Real(0.0);
+        return V ? 1.0/V : real(0.0);
     }
 
     /// Return the sum of species amounts in the phase (in mol).
@@ -391,7 +391,7 @@ public:
     /// Return the sum of species masses in the phase (in kg).
     auto mass() const -> real
     {
-        Real sum = 0.0;
+        real sum = 0.0;
         for(auto i = 0; i < phase().species().size(); ++i)
             sum += mdata.n[i] * phase().species(i).molarMass();
         return sum;
