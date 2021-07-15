@@ -50,6 +50,8 @@ state.setSpeciesAmount("Cl-", 1.0, "mol")
 solver = EquilibriumSolver(system)
 solver.solve(state)
 
+print(state)
+
 # Obtain species composition from the equilibrated state
 n = state.speciesAmounts()
 

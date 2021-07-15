@@ -70,6 +70,7 @@ void exportChemicalState(py::module& m)
         .def("equilibrium", py::overload_cast<>(&ChemicalState::equilibrium), return_internal_ref)
         .def("props", py::overload_cast<>(&ChemicalState::props, py::const_), return_internal_ref)
         .def("props", py::overload_cast<>(&ChemicalState::props), return_internal_ref)
+        .def("__repr__", [](const ChemicalState& self) { std::stringstream ss; ss << self; return ss.str(); })
         ;
 
     py::class_<ChemicalState::Equilibrium>(m, "_ChemicalStateEquilibrium")
