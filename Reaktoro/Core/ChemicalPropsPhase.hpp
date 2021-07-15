@@ -164,18 +164,18 @@ public:
     explicit ChemicalPropsPhaseBase(const Phase& phase)
     : mphase(phase)
     {
-        const auto numspecies = phase.species().size();
+        const auto N = phase.species().size();
 
-        mdata.n    = ArrayXr::Zero(numspecies);
-        mdata.x    = ArrayXr::Zero(numspecies);
-        mdata.G0   = ArrayXr::Zero(numspecies);
-        mdata.H0   = ArrayXr::Zero(numspecies);
-        mdata.V0   = ArrayXr::Zero(numspecies);
-        mdata.Cp0  = ArrayXr::Zero(numspecies);
-        mdata.Cv0  = ArrayXr::Zero(numspecies);
-        mdata.ln_g = ArrayXr::Zero(numspecies);
-        mdata.ln_a = ArrayXr::Zero(numspecies);
-        mdata.u    = ArrayXr::Zero(numspecies);
+        mdata.n    = ArrayXr::Zero(N);
+        mdata.x    = ArrayXr::Zero(N);
+        mdata.G0   = ArrayXr::Zero(N);
+        mdata.H0   = ArrayXr::Zero(N);
+        mdata.V0   = ArrayXr::Zero(N);
+        mdata.Cp0  = ArrayXr::Zero(N);
+        mdata.Cv0  = ArrayXr::Zero(N);
+        mdata.ln_g = ArrayXr::Zero(N);
+        mdata.ln_a = ArrayXr::Zero(N);
+        mdata.u    = ArrayXr::Zero(N);
     }
 
     /// Construct a ChemicalPropsPhaseBase instance.
@@ -490,21 +490,21 @@ private:
         auto& u    = mdata.u;
 
         const auto& species = phase().species();
-        const auto size = species.size();
+        const auto N = species.size();
 
-        assert(    n.size() == size );
-        assert(   G0.size() == size );
-        assert(   H0.size() == size );
-        assert(   V0.size() == size );
-        assert(  Cp0.size() == size );
-        assert(  Cv0.size() == size );
-        assert( ln_g.size() == size );
-        assert( ln_a.size() == size );
-        assert(    u.size() == size );
+        assert(    n.size() == N );
+        assert(   G0.size() == N );
+        assert(   H0.size() == N );
+        assert(   V0.size() == N );
+        assert(  Cp0.size() == N );
+        assert(  Cv0.size() == N );
+        assert( ln_g.size() == N );
+        assert( ln_a.size() == N );
+        assert(    u.size() == N );
 
         // Compute the standard thermodynamic properties of the species in the phase.
         StandardThermoProps aux;
-        for(auto i = 0; i < size; ++i)
+        for(auto i = 0; i < N; ++i)
         {
             aux = species[i].props(T, P);
             G0[i]  = aux.G0;
@@ -518,7 +518,7 @@ private:
         nsum = n.sum();
 
         if(nsum == 0.0)
-            x = (size == 1) ? 1.0 : 0.0;
+            x = (N == 1) ? 1.0 : 0.0;
         else x = n / nsum;
 
         // Ensure there are no zero mole fractions
