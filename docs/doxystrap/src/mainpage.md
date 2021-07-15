@@ -77,13 +77,12 @@ want to read about.
 
 - @ref Reaktoro::ActivityModelIdealSolution
 - @ref Reaktoro::ActivityModelRedlichKister
-- @ref Reaktoro::mineralChemicalModelVanLaar
+- @ref Reaktoro::ActivityModelVanLaar (*needs adaptation to v2.0*)
 
 ### Standard thermodynamic properties and models
 
 - @ref Reaktoro::StandardThermoProps
 - @ref Reaktoro::StandardThermoModelConstant
-- @ref Reaktoro::StandardThermoModelConstG0
 - @ref Reaktoro::StandardThermoModelHKF
 - @ref Reaktoro::StandardThermoModelHollandPowell
 - @ref Reaktoro::StandardThermoModelMaierKelley
@@ -117,7 +116,7 @@ want to read about.
 - @ref Reaktoro::waterSaturatedPressureWagnerPruss
 - @ref Reaktoro::waterSaturatedLiquidDensityWagnerPruss
 - @ref Reaktoro::waterSaturatedVapourDensityWagnerPruss
-- @ref Reaktoro::waterElectroStateJohnsonNorton (to be renamed `waterElectroStatePropsNorton` in a future release)
+- @ref Reaktoro::waterElectroStateJohnsonNorton (to be renamed `waterElectroPropsJohnsonNorton` in a future release)
 - @ref Reaktoro::waterThermoStateHGK (to be renamed `waterThermoPropsHGK` in a future release)
 - @ref Reaktoro::waterThermoStateWagnerPruss (to be renamed `waterThermoPropsWagnerPruss` in a future release)
 - @ref Reaktoro::waterHelmholtzStateHGK (to be renamed `waterHelmholtzPropsHGK` in a future release)
@@ -130,6 +129,7 @@ want to read about.
 - @ref Reaktoro::SpeciesList
 - @ref Reaktoro::FormationReaction
 - @ref Reaktoro::ChemicalFormula
+- @ref Reaktoro::Elements
 - @ref Reaktoro::CriticalProps
 - @ref Reaktoro::DissociationReactions
 - @ref Reaktoro::ReactionEquation
