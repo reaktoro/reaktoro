@@ -55,20 +55,8 @@ int main()
     EquilibriumSolver solver(system);
     solver.solve(state);
 
-    // Obtain species composition from the equilibrated state
-    const auto n = state.speciesAmounts();
-
-    // Print the species and theirs amounts
-    std::cout << std::setw(20) << "Species"
-              << std::setw(20) << "Amount" << std::endl;
-
-    for(auto i = 0; i < n.size(); ++i)
-    {
-        // Print only species with nonzero amounts
-        if (n[i] > 1e-16)
-            std::cout << std::setw(20) << system.species(i).name()
-                      << std::setw(20) << n[i] << std::endl;
-    }
+    // Output temperature, pressure, and species amounts of the chemical state
+    std::cout << state << std::endl;
 
     return 0;
 }
