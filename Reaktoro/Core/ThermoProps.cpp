@@ -40,10 +40,10 @@ struct ThermoProps::Impl
     /// The pressures of each phase (in Pa).
     ArrayXr Ps;
 
-    /// The standard molar Gibbs energies of the species in the system (in J/mol).
+    /// The standard molar Gibbs energies of formation of the species in the system (in J/mol).
     ArrayXr G0;
 
-    /// The standard molar enthalpies of the species in the system (in J/mol).
+    /// The standard molar enthalpies of formation of the species in the system (in J/mol).
     ArrayXr H0;
 
     /// The standard molar volumes of the species in the system (in m3/mol).
@@ -155,6 +155,11 @@ auto ThermoProps::pressure() const -> const real&
     return pimpl->P;
 }
 
+auto ThermoProps::standardVolumes() const -> ArrayXrConstRef
+{
+    return pimpl->V0;
+}
+
 auto ThermoProps::standardGibbsEnergies() const -> ArrayXrConstRef
 {
     return pimpl->G0;
@@ -163,11 +168,6 @@ auto ThermoProps::standardGibbsEnergies() const -> ArrayXrConstRef
 auto ThermoProps::standardEnthalpies() const -> ArrayXrConstRef
 {
     return pimpl->H0;
-}
-
-auto ThermoProps::standardVolumes() const -> ArrayXrConstRef
-{
-    return pimpl->V0;
 }
 
 auto ThermoProps::standardEntropies() const -> ArrayXr

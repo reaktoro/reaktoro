@@ -110,22 +110,22 @@ public:
     /// Return the chemical potentials of the species in the system (in J/mol).
     auto chemicalPotentials() const -> ArrayXrConstRef;
 
-    /// Return the standard partial molar Gibbs energies of the species in the system (in J/mol).
-    auto standardGibbsEnergies() const -> ArrayXrConstRef;
-
-    /// Return the standard partial molar enthalpies of the species in the system (in J/mol).
-    auto standardEnthalpies() const -> ArrayXrConstRef;
-
     /// Return the standard partial molar volumes of the species in the system (in m3/mol).
     auto standardVolumes() const -> ArrayXrConstRef;
 
-    /// Return the standard partial molar entropies of the species in the system (in J/(mol*K)).
+    /// Return the standard partial molar Gibbs energies of formation of the species in the system (in J/mol).
+    auto standardGibbsEnergies() const -> ArrayXrConstRef;
+
+    /// Return the standard partial molar enthalpies of formation of the species in the system (in J/mol).
+    auto standardEnthalpies() const -> ArrayXrConstRef;
+
+    /// Return the standard partial molar entropies of formation of the species in the system (in J/(mol*K)).
     auto standardEntropies() const -> ArrayXr;
 
-    /// Return the standard partial molar internal energies of the species in the system (in J/mol).
+    /// Return the standard partial molar internal energies of formation of the species in the system (in J/mol).
     auto standardInternalEnergies() const -> ArrayXr;
 
-    /// Return the standard partial molar Helmholtz energies of the species in the system (in J/mol).
+    /// Return the standard partial molar Helmholtz energies of formation of the species in the system (in J/mol).
     auto standardHelmholtzEnergies() const -> ArrayXr;
 
     /// Return the standard partial molar isobaric heat capacities of the species in the system (in J/(mol*K)).
@@ -134,22 +134,22 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol*K)).
     auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef;
 
-    /// Return the Gibbs energy of the system (in J).
-    auto gibbsEnergy() const -> real;
-
-    /// Return the enthalpy of the system (in J).
-    auto enthalpy() const -> real;
-
     /// Return the volume of the system (in m3).
     auto volume() const -> real;
 
-    /// Return the entropy of the system (in J/K).
+    /// Return the Gibbs energy of formation of the system (in J).
+    auto gibbsEnergy() const -> real;
+
+    /// Return the enthalpy of formation of the system (in J).
+    auto enthalpy() const -> real;
+
+    /// Return the entropy of formation of the system (in J/K).
     auto entropy() const -> real;
 
-    /// Return the internal energy of the system (in J).
+    /// Return the internal energy of formation of the system (in J).
     auto internalEnergy() const -> real;
 
-    /// Return the Helmholtz energy of the system (in J).
+    /// Return the Helmholtz energy of formation of the system (in J).
     auto helmholtzEnergy() const -> real;
 
     /// Return the chemical properties in this object serialized in an array of real numbers.

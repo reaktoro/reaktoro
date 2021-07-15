@@ -34,10 +34,10 @@ struct ThermoPropsPhaseBaseData
     /// The pressure of the phase (in Pa).
     Real P;
 
-    /// The standard molar Gibbs energies of the species in the phase (in J/mol)
+    /// The standard molar Gibbs energies of formation of the species in the phase (in J/mol)
     Array G0;
 
-    /// The standard molar enthalpies of the species in the phase (in J/mol)
+    /// The standard molar enthalpies of formation of the species in the phase (in J/mol)
     Array H0;
 
     /// The standard molar volumes of the species in the phase (in m3/mol)
@@ -110,32 +110,32 @@ class ThermoPropsPhaseBase
 public:
     /// Construct a ThermoPropsPhaseBase instance.
     explicit ThermoPropsPhaseBase(const Phase& phase)
-    : _phase(phase)
+    : mphase(phase)
     {
         const auto numspecies = phase.species().size();
 
-        _data.G0   = ArrayXr::Zero(numspecies);
-        _data.H0   = ArrayXr::Zero(numspecies);
-        _data.V0   = ArrayXr::Zero(numspecies);
-        _data.Cp0  = ArrayXr::Zero(numspecies);
-        _data.Cv0  = ArrayXr::Zero(numspecies);
+        mdata.G0   = ArrayXr::Zero(numspecies);
+        mdata.H0   = ArrayXr::Zero(numspecies);
+        mdata.V0   = ArrayXr::Zero(numspecies);
+        mdata.Cp0  = ArrayXr::Zero(numspecies);
+        mdata.Cv0  = ArrayXr::Zero(numspecies);
     }
 
     /// Construct a ThermoPropsPhaseBase instance.
     ThermoPropsPhaseBase(const Phase& phase, const ThermoPropsPhaseBaseData<Real, Array>& data)
-    : _phase(phase), _data(data)
+    : mphase(phase), mdata(data)
     {}
 
     /// Construct a ThermoPropsPhaseBase instance.
     template<typename RX, typename AX>
     ThermoPropsPhaseBase(ThermoPropsPhaseBase<RX, AX>& other)
-    : _phase(other._phase), _data(other._data)
+    : mphase(other.mphase), mdata(other.mdata)
     {}
 
     /// Construct a ThermoPropsPhaseBase instance.
     template<typename RX, typename AX>
     ThermoPropsPhaseBase(const ThermoPropsPhaseBase<RX, AX>& other)
-    : _phase(other._phase), _data(other._data)
+    : mphase(other.mphase), mdata(other.mdata)
     {}
 
     /// Update the standard thermodynamic properties of the phase.
@@ -144,19 +144,19 @@ public:
     auto update(const real& T, const real& P)
     {
         // Check if this update call can be skipped if T, P conditions remain the same
-        if(T == _data.T && P == _data.P)
+        if(T == mdata.T && P == mdata.P)
             return;
 
-        _data.T = T;
-        _data.P = P;
+        mdata.T = T;
+        mdata.P = P;
 
-        auto& G0   = _data.G0;
-        auto& H0   = _data.H0;
-        auto& V0   = _data.V0;
-        auto& Cp0  = _data.Cp0;
-        auto& Cv0  = _data.Cv0;
+        auto& G0   = mdata.G0;
+        auto& H0   = mdata.H0;
+        auto& V0   = mdata.V0;
+        auto& Cp0  = mdata.Cp0;
+        auto& Cv0  = mdata.Cv0;
 
-        const auto& species = _phase.species();
+        const auto& species = mphase.species();
         const auto size = species.size();
 
         assert(G0.size()   == size);
@@ -169,7 +169,7 @@ public:
         StandardThermoProps aux;
         for(auto i = 0; i < size; ++i)
         {
-            const auto& standard_thermo_model = _phase.species(i).standardThermoModel();
+            const auto& standard_thermo_model = mphase.species(i).standardThermoModel();
             aux = standard_thermo_model ? standard_thermo_model(T, P) : StandardThermoProps{};
             G0[i]  = aux.G0;
             H0[i]  = aux.H0;
@@ -193,86 +193,86 @@ public:
     /// Return the underlying Phase object.
     auto phase() const -> const Phase&
     {
-        return _phase;
+        return mphase;
     }
 
     /// Return the primary standard thermodynamic property data of the phase from which others are calculated.
     auto data() const -> const ThermoPropsPhaseBaseData<Real, Array>&
     {
-        return _data;
+        return mdata;
     }
 
     /// Return the temperature of the phase (in K).
     auto temperature() const -> real
     {
-        return _data.T;
+        return mdata.T;
     }
 
     /// Return the pressure of the phase (in Pa).
     auto pressure() const -> real
     {
-        return _data.P;
-    }
-
-    /// Return the standard partial molar Gibbs energies of the species (in J/mol).
-    auto standardGibbsEnergies() const -> ArrayXrConstRef
-    {
-        return _data.G0;
-    }
-
-    /// Return the standard partial molar enthalpies of the species (in J/mol).
-    auto standardEnthalpies() const -> ArrayXrConstRef
-    {
-        return _data.H0;
+        return mdata.P;
     }
 
     /// Return the standard partial molar volumes of the species (in m3/mol).
     auto standardVolumes() const -> ArrayXrConstRef
     {
-        return _data.V0;
+        return mdata.V0;
     }
 
-    /// Return the standard partial molar entropies of the species (in J/(mol*K)).
+    /// Return the standard partial molar Gibbs energies of formation of the species (in J/mol).
+    auto standardGibbsEnergies() const -> ArrayXrConstRef
+    {
+        return mdata.G0;
+    }
+
+    /// Return the standard partial molar enthalpies of formation of the species (in J/mol).
+    auto standardEnthalpies() const -> ArrayXrConstRef
+    {
+        return mdata.H0;
+    }
+
+    /// Return the standard partial molar entropies of formation of the species (in J/(mol*K)).
     auto standardEntropies() const -> ArrayXr
     {
-        return (_data.H0 - _data.G0)/_data.T; // from G0 = H0 - T*S0
+        return (mdata.H0 - mdata.G0)/mdata.T; // from G0 = H0 - T*S0
     }
 
-    /// Return the standard partial molar internal energies of the species (in J/mol).
+    /// Return the standard partial molar internal energies of formation of the species (in J/mol).
     auto standardInternalEnergies() const -> ArrayXr
     {
-        return _data.H0 - _data.P * _data.V0; // from H0 = U0 + P*V0
+        return mdata.H0 - mdata.P * mdata.V0; // from H0 = U0 + P*V0
     }
 
-    /// Return the standard partial molar Helmholtz energies of the species (in J/mol).
+    /// Return the standard partial molar Helmholtz energies of formation of the species (in J/mol).
     auto standardHelmholtzEnergies() const -> ArrayXr
     {
-        return _data.G0 - _data.P * _data.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
+        return mdata.G0 - mdata.P * mdata.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
     }
 
     /// Return the standard partial molar isobaric heat capacities of the species (in J/(mol*K)).
     auto standardHeatCapacitiesConstP() const -> ArrayXrConstRef
     {
-        return _data.Cp0;
+        return mdata.Cp0;
     }
 
     /// Return the standard partial molar isochoric heat capacities of the species (in J/(mol*K)).
     auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef
     {
-        return _data.Cv0;
+        return mdata.Cv0;
     }
 
     /// Assign the given array data to this ThermoPropsPhaseBase object.
     auto operator=(const ArrayStream<Real>& array)
     {
-        _data = array;
+        mdata = array;
         return *this;
     }
 
     /// Convert this ThermoPropsPhaseBase object into an array.
     operator ArrayStream<Real>() const
     {
-        return _data;
+        return mdata;
     }
 
     // Ensure other ThermoPropsPhaseBase types are friend among themselves.
@@ -281,10 +281,10 @@ public:
 
 private:
     /// The phase associated with these primary standard thermodynamic properties.
-    Phase _phase;
+    Phase mphase;
 
     /// The primary standard thermodynamic property data of the phase from which others are calculated.
-    ThermoPropsPhaseBaseData<Real, Array> _data;
+    ThermoPropsPhaseBaseData<Real, Array> mdata;
 };
 
 /// The standard thermodynamic properties of a phase and its species.

@@ -43,10 +43,10 @@ struct ChemicalPropsPhaseBaseData
     /// The mole fractions of the species in the phase (in mol/mol).
     Array x;
 
-    /// The standard molar Gibbs energies of the species in the phase (in J/mol)
+    /// The standard molar Gibbs energies of formation of the species in the phase (in J/mol)
     Array G0;
 
-    /// The standard molar enthalpies of the species in the phase (in J/mol)
+    /// The standard molar enthalpies of formation of the species in the phase (in J/mol)
     Array H0;
 
     /// The standard molar volumes of the species in the phase (in m3/mol)
@@ -162,37 +162,37 @@ class ChemicalPropsPhaseBase
 public:
     /// Construct a ChemicalPropsPhaseBase instance.
     explicit ChemicalPropsPhaseBase(const Phase& phase)
-    : _phase(phase)
+    : mphase(phase)
     {
         const auto numspecies = phase.species().size();
 
-        _data.n    = ArrayXr::Zero(numspecies);
-        _data.x    = ArrayXr::Zero(numspecies);
-        _data.G0   = ArrayXr::Zero(numspecies);
-        _data.H0   = ArrayXr::Zero(numspecies);
-        _data.V0   = ArrayXr::Zero(numspecies);
-        _data.Cp0  = ArrayXr::Zero(numspecies);
-        _data.Cv0  = ArrayXr::Zero(numspecies);
-        _data.ln_g = ArrayXr::Zero(numspecies);
-        _data.ln_a = ArrayXr::Zero(numspecies);
-        _data.u    = ArrayXr::Zero(numspecies);
+        mdata.n    = ArrayXr::Zero(numspecies);
+        mdata.x    = ArrayXr::Zero(numspecies);
+        mdata.G0   = ArrayXr::Zero(numspecies);
+        mdata.H0   = ArrayXr::Zero(numspecies);
+        mdata.V0   = ArrayXr::Zero(numspecies);
+        mdata.Cp0  = ArrayXr::Zero(numspecies);
+        mdata.Cv0  = ArrayXr::Zero(numspecies);
+        mdata.ln_g = ArrayXr::Zero(numspecies);
+        mdata.ln_a = ArrayXr::Zero(numspecies);
+        mdata.u    = ArrayXr::Zero(numspecies);
     }
 
     /// Construct a ChemicalPropsPhaseBase instance.
     ChemicalPropsPhaseBase(const Phase& phase, const ChemicalPropsPhaseBaseData<Real, Array>& data)
-    : _phase(phase), _data(data)
+    : mphase(phase), mdata(data)
     {}
 
     /// Construct a ChemicalPropsPhaseBase instance.
     template<typename RX, typename AX>
     ChemicalPropsPhaseBase(ChemicalPropsPhaseBase<RX, AX>& other)
-    : _phase(other._phase), _data(other._data)
+    : mphase(other.mphase), mdata(other.mdata)
     {}
 
     /// Construct a ChemicalPropsPhaseBase instance.
     template<typename RX, typename AX>
     ChemicalPropsPhaseBase(const ChemicalPropsPhaseBase<RX, AX>& other)
-    : _phase(other._phase), _data(other._data)
+    : mphase(other.mphase), mdata(other.mdata)
     {}
 
     /// Update the chemical properties of the phase.
@@ -207,7 +207,7 @@ public:
     /// Update the chemical properties of the phase.
     auto update(const ChemicalPropsPhaseBaseData<Real, Array>& data)
     {
-        _data = data;
+        mdata = data;
     }
 
     /// Update the chemical properties of the phase using ideal activity models.
@@ -222,160 +222,157 @@ public:
     /// Return the underlying Phase object.
     auto phase() const -> const Phase&
     {
-        return _phase;
+        return mphase;
     }
 
     /// Return the primary chemical property data of the phase from which others are calculated.
     auto data() const -> const ChemicalPropsPhaseBaseData<Real, Array>&
     {
-        return _data;
+        return mdata;
     }
 
     /// Return the temperature of the phase (in K).
     auto temperature() const -> real
     {
-        return _data.T;
+        return mdata.T;
     }
 
     /// Return the pressure of the phase (in Pa).
     auto pressure() const -> real
     {
-        return _data.P;
+        return mdata.P;
     }
 
     /// Return the amounts of the species in the phase (in mol).
     auto speciesAmounts() const -> ArrayXrConstRef
     {
-        return _data.n;
+        return mdata.n;
     }
 
     /// Return the mole fractions of the species in the phase.
     auto moleFractions() const -> ArrayXrConstRef
     {
-        return _data.x;
+        return mdata.x;
     }
 
     /// Return the ln activity coefficients of the species in the phase.
     auto lnActivityCoefficients() const -> ArrayXrConstRef
     {
-        return _data.ln_g;
+        return mdata.ln_g;
     }
 
     /// Return the ln activities of the species in the phase.
     auto lnActivities() const -> ArrayXrConstRef
     {
-        return _data.ln_a;
+        return mdata.ln_a;
     }
 
     /// Return the chemical potentials of the species (in J/mol).
     auto chemicalPotentials() const -> ArrayXrConstRef
     {
-        return _data.u;
-    }
-
-    /// Return the standard partial molar Gibbs energies of the species (in J/mol).
-    auto standardGibbsEnergies() const -> ArrayXrConstRef
-    {
-        return _data.G0;
-    }
-
-    /// Return the standard partial molar enthalpies of the species (in J/mol).
-    auto standardEnthalpies() const -> ArrayXrConstRef
-    {
-        return _data.H0;
+        return mdata.u;
     }
 
     /// Return the standard partial molar volumes of the species (in m3/mol).
     auto standardVolumes() const -> ArrayXrConstRef
     {
-        return _data.V0;
+        return mdata.V0;
     }
 
-    /// Return the standard partial molar entropies of the species (in J/(mol*K)).
+    /// Return the standard partial molar Gibbs energies of formation of the species (in J/mol).
+    auto standardGibbsEnergies() const -> ArrayXrConstRef
+    {
+        return mdata.G0;
+    }
+
+    /// Return the standard partial molar enthalpies of formation of the species (in J/mol).
+    auto standardEnthalpies() const -> ArrayXrConstRef
+    {
+        return mdata.H0;
+    }
+
+    /// Return the standard partial molar entropies of formation of the species (in J/(mol*K)).
     auto standardEntropies() const -> ArrayXr
     {
-        return (_data.H0 - _data.G0)/_data.T; // from G0 = H0 - T*S0
+        return (mdata.H0 - mdata.G0)/mdata.T; // from G0 = H0 - T*S0
     }
 
-    /// Return the standard partial molar internal energies of the species (in J/mol).
+    /// Return the standard partial molar internal energies of formation of the species (in J/mol).
     auto standardInternalEnergies() const -> ArrayXr
     {
-        return _data.H0 - _data.P * _data.V0; // from H0 = U0 + P*V0
+        return mdata.H0 - mdata.P * mdata.V0; // from H0 = U0 + P*V0
     }
 
-    /// Return the standard partial molar Helmholtz energies of the species (in J/mol).
+    /// Return the standard partial molar Helmholtz energies of formation of the species (in J/mol).
     auto standardHelmholtzEnergies() const -> ArrayXr
     {
-        return _data.G0 - _data.P * _data.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
+        return mdata.G0 - mdata.P * mdata.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
     }
 
     /// Return the standard partial molar isobaric heat capacities of the species (in J/(mol*K)).
     auto standardHeatCapacitiesConstP() const -> ArrayXrConstRef
     {
-        return _data.Cp0;
+        return mdata.Cp0;
     }
 
     /// Return the standard partial molar isochoric heat capacities of the species (in J/(mol*K)).
     auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef
     {
-        return _data.Cv0;
-    }
-
-    /// Return the molar Gibbs energy of the phase (in J/mol).
-    auto molarGibbsEnergy() const -> real
-    {
-        return (_data.x * _data.G0).sum() + _data.Gex;
-    }
-
-    /// Return the molar enthalpy of the phase (in J/mol).
-    auto molarEnthalpy() const -> real
-    {
-        return (_data.x * _data.H0).sum() + _data.Hex;
+        return mdata.Cv0;
     }
 
     /// Return the molar volume of the phase (in m3/mol).
     auto molarVolume() const -> real
     {
-        return (_data.x * _data.V0).sum() + _data.Vex;
+        return (mdata.x * mdata.V0).sum() + mdata.Vex;
     }
 
-    /// Return the molar entropy of the phase (in J/(mol*K)).
+    /// Return the molar Gibbs energy of formation of the phase (in J/mol).
+    auto molarGibbsEnergy() const -> real
+    {
+        return (mdata.x * mdata.G0).sum() + mdata.Gex;
+    }
+
+    /// Return the molar enthalpy of formation of the phase (in J/mol).
+    auto molarEnthalpy() const -> real
+    {
+        return (mdata.x * mdata.H0).sum() + mdata.Hex;
+    }
+
+    /// Return the molar entropy of formation of the phase (in J/(mol*K)).
     auto molarEntropy() const -> real
     {
-        const auto T = temperature();
-        const auto G = molarGibbsEnergy();
-        const auto H = molarEnthalpy();
-        return (H - G)/T;
+        const auto S0 = (mdata.H0 - mdata.G0)/mdata.T; // from G0 = H0 - T*S0
+        const auto Sx = (mdata.Hex - mdata.Gex)/mdata.T; // from Gx = Hx - T*Sx
+        return (mdata.x * S0).sum() + Sx;
     }
 
-    /// Return the molar internal energy of the phase (in J/mol).
+    /// Return the molar internal energy of formation of the phase (in J/mol).
     auto molarInternalEnergy() const -> real
     {
-        const auto P = pressure();
-        const auto H = molarEnthalpy();
-        const auto V = molarVolume();
-        return H - P*V;
+        const auto U0 = mdata.H0 - mdata.P * mdata.V0; // from H0 = U0 + P*V0
+        const auto Ux = mdata.Hex - mdata.P * mdata.Vex; // from Hx = U0 + P*Vx
+        return (mdata.x * U0).sum() + Ux;
     }
 
-    /// Return the molar Helmholtz energy of the phase (in J/mol).
+    /// Return the molar Helmholtz energy of formation of the phase (in J/mol).
     auto molarHelmholtzEnergy() const -> real
     {
-        const auto T = temperature();
-        const auto U = molarInternalEnergy();
-        const auto S = molarEntropy();
-        return U - T*S;
+        const auto A0 = mdata.G0 - mdata.P * mdata.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
+        const auto Ax = mdata.Gex - mdata.P * mdata.Vex; // from Ax = U0 - T*Sx = (Hx - P*Vx) + (Gx - Hx) = Gx - P*Vx
+        return (mdata.x * A0).sum() + Ax;
     }
 
     /// Return the molar isobaric heat capacity of the phase (in J/(mol*K)).
     auto molarHeatCapacityConstP() const -> real
     {
-        return (_data.x * _data.Cp0).sum() + _data.Cpex;
+        return (mdata.x * mdata.Cp0).sum() + mdata.Cpex;
     }
 
     /// Return the molar isochoric heat capacity of the phase (in J/(mol*K)).
     auto molarHeatCapacityConstV() const -> real
     {
-        return (_data.x * _data.Cv0).sum() + _data.Cvex;
+        return (mdata.x * mdata.Cv0).sum() + mdata.Cvex;
     }
 
     /// Return the density of the phase (in kg/m3).
@@ -388,7 +385,7 @@ public:
     /// Return the sum of species amounts in the phase (in mol).
     auto amount() const -> real
     {
-        return _data.nsum;
+        return mdata.nsum;
     }
 
     /// Return the sum of species masses in the phase (in kg).
@@ -396,8 +393,14 @@ public:
     {
         Real sum = 0.0;
         for(auto i = 0; i < phase().species().size(); ++i)
-            sum += _data.n[i] * phase().species(i).molarMass();
+            sum += mdata.n[i] * phase().species(i).molarMass();
         return sum;
+    }
+
+    /// Return the volume of the phase (in m3).
+    auto volume() const -> real
+    {
+        return molarVolume() * amount();
     }
 
     /// Return the Gibbs energy of the phase (in J).
@@ -410,12 +413,6 @@ public:
     auto enthalpy() const -> real
     {
         return molarEnthalpy() * amount();
-    }
-
-    /// Return the volume of the phase (in m3).
-    auto volume() const -> real
-    {
-        return molarVolume() * amount();
     }
 
     /// Return the entropy of the phase (in J/K).
@@ -439,14 +436,14 @@ public:
     /// Assign the given array data to this ChemicalPropsPhaseBase object.
     auto operator=(const ArrayStream<Real>& array)
     {
-        _data = array;
+        mdata = array;
         return *this;
     }
 
     /// Convert this ChemicalPropsPhaseBase object into an array.
     operator ArrayStream<Real>() const
     {
-        return _data;
+        return mdata;
     }
 
     // Ensure other ChemicalPropsPhaseBase types are friend among themselves.
@@ -455,10 +452,10 @@ public:
 
 private:
     /// The phase associated with these primary chemical properties.
-    Phase _phase;
+    Phase mphase;
 
     /// The primary chemical property data of the phase from which others are calculated.
-    ChemicalPropsPhaseBaseData<Real, Array> _data;
+    ChemicalPropsPhaseBaseData<Real, Array> mdata;
 
 private:
     /// Update the chemical properties of the phase.
@@ -468,29 +465,29 @@ private:
     template<bool use_ideal_activity_model>
     auto _update(const real& T, const real& P, ArrayXrConstRef n)
     {
-        _data.T = T;
-        _data.P = P;
-        _data.n = n;
+        mdata.T = T;
+        mdata.P = P;
+        mdata.n = n;
 
         const auto R = universalGasConstant;
 
-        auto& nsum = _data.nsum;
-        auto& x    = _data.x;
-        auto& G0   = _data.G0;
-        auto& H0   = _data.H0;
-        auto& V0   = _data.V0;
-        auto& Cp0  = _data.Cp0;
-        auto& Cv0  = _data.Cv0;
-        auto& Vex  = _data.Vex;
-        auto& VexT = _data.VexT;
-        auto& VexP = _data.VexP;
-        auto& Gex  = _data.Gex;
-        auto& Hex  = _data.Hex;
-        auto& Cpex = _data.Cpex;
-        auto& Cvex = _data.Cvex;
-        auto& ln_g = _data.ln_g;
-        auto& ln_a = _data.ln_a;
-        auto& u    = _data.u;
+        auto& nsum = mdata.nsum;
+        auto& x    = mdata.x;
+        auto& G0   = mdata.G0;
+        auto& H0   = mdata.H0;
+        auto& V0   = mdata.V0;
+        auto& Cp0  = mdata.Cp0;
+        auto& Cv0  = mdata.Cv0;
+        auto& Vex  = mdata.Vex;
+        auto& VexT = mdata.VexT;
+        auto& VexP = mdata.VexP;
+        auto& Gex  = mdata.Gex;
+        auto& Hex  = mdata.Hex;
+        auto& Cpex = mdata.Cpex;
+        auto& Cvex = mdata.Cvex;
+        auto& ln_g = mdata.ln_g;
+        auto& ln_a = mdata.ln_a;
+        auto& u    = mdata.u;
 
         const auto& species = phase().species();
         const auto size = species.size();

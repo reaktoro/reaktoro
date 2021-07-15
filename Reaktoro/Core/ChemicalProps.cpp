@@ -54,10 +54,10 @@ struct ChemicalProps::Impl
     /// The mole fractions of the species in the system (in mol/mol).
     ArrayXr x;
 
-    /// The standard molar Gibbs energies of the species in the system (in J/mol).
+    /// The standard molar Gibbs energies of formation of the species in the system (in J/mol).
     ArrayXr G0;
 
-    /// The standard molar enthalpies of the species in the system (in J/mol).
+    /// The standard molar enthalpies of formation of the species in the system (in J/mol).
     ArrayXr H0;
 
     /// The standard molar volumes of the species in the system (in m3/mol).
@@ -344,6 +344,11 @@ auto ChemicalProps::chemicalPotentials() const -> ArrayXrConstRef
     return pimpl->u;
 }
 
+auto ChemicalProps::standardVolumes() const -> ArrayXrConstRef
+{
+    return pimpl->V0;
+}
+
 auto ChemicalProps::standardGibbsEnergies() const -> ArrayXrConstRef
 {
     return pimpl->G0;
@@ -352,11 +357,6 @@ auto ChemicalProps::standardGibbsEnergies() const -> ArrayXrConstRef
 auto ChemicalProps::standardEnthalpies() const -> ArrayXrConstRef
 {
     return pimpl->H0;
-}
-
-auto ChemicalProps::standardVolumes() const -> ArrayXrConstRef
-{
-    return pimpl->V0;
 }
 
 auto ChemicalProps::standardEntropies() const -> ArrayXr
@@ -384,6 +384,12 @@ auto ChemicalProps::standardHeatCapacitiesConstV() const -> ArrayXrConstRef
     return pimpl->Cv0;
 }
 
+auto ChemicalProps::volume() const -> real
+{
+    const auto iend = system().phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).volume(); });
+}
+
 auto ChemicalProps::gibbsEnergy() const -> real
 {
     const auto iend = system().phases().size();
@@ -394,12 +400,6 @@ auto ChemicalProps::enthalpy() const -> real
 {
     const auto iend = system().phases().size();
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).enthalpy(); });
-}
-
-auto ChemicalProps::volume() const -> real
-{
-    const auto iend = system().phases().size();
-    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).volume(); });
 }
 
 auto ChemicalProps::entropy() const -> real
@@ -455,9 +455,9 @@ auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&
     table.add_row({ "Property", "Value", "Unit" });
     table.add_row({ "Temperature", str(props.temperature()), "K" });
     table.add_row({ "Pressure", str(props.pressure()), "Pa" });
+    table.add_row({ "Volume", str(props.volume()), "m3" });
     table.add_row({ "Gibbs Energy", str(props.gibbsEnergy()), "J" });
     table.add_row({ "Enthalpy", str(props.enthalpy()), "J" });
-    table.add_row({ "Volume", str(props.volume()), "m3" });
     table.add_row({ "Entropy", str(props.entropy()), "J/K" });
     table.add_row({ "Internal Energy", str(props.internalEnergy()), "J" });
     table.add_row({ "Helmholtz Energy", str(props.helmholtzEnergy()), "J" });
@@ -469,14 +469,14 @@ auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&
     table.add_row({ "lg(Activity)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(lna[i]/ln10), "-" });
     table.add_row({ "ln(Activity)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(lna[i]), "-" });
     table.add_row({ "Chemical Potential", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(mu[i]), "J/mol" });
-    table.add_row({ "Standard Gibbs Energy", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(G0[i]), "J/mol" });
-    table.add_row({ "Standard Enthalpy", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(H0[i]), "J/mol" });
     table.add_row({ "Standard Volume", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(V0[i]), "m3/mol" });
-    table.add_row({ "Standard Entropy", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(S0[i]), "J/(mol*K)" });
-    table.add_row({ "Standard Internal Energy", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(U0[i]), "J/mol" });
-    table.add_row({ "Standard Helmholtz Energy", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(A0[i]), "J/mol" });
-    table.add_row({ "Standard Heat Capacity (Const P)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(Cp0[i]), "J/(mol*K)" });
-    table.add_row({ "Standard Heat Capacity (Const V)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(Cv0[i]), "J/(mol*K)" });
+    table.add_row({ "Standard Gibbs Energy (formation)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(G0[i]), "J/mol" });
+    table.add_row({ "Standard Enthalpy (formation)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(H0[i]), "J/mol" });
+    table.add_row({ "Standard Entropy (formation)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(S0[i]), "J/(mol*K)" });
+    table.add_row({ "Standard Internal Energy (formation)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(U0[i]), "J/mol" });
+    table.add_row({ "Standard Helmholtz Energy (formation)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(A0[i]), "J/mol" });
+    table.add_row({ "Standard Heat Capacity (constant P)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(Cp0[i]), "J/(mol*K)" });
+    table.add_row({ "Standard Heat Capacity (constant V)", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(Cv0[i]), "J/(mol*K)" });
 
     auto i = 0;
     for(auto& row : table)

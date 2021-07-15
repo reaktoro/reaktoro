@@ -63,22 +63,22 @@ public:
     /// Return the pressure of the system (in Pa).
     auto pressure() const -> const real&;
 
-    /// Return the standard partial molar Gibbs energies of the species in the system (in J/mol).
-    auto standardGibbsEnergies() const -> ArrayXrConstRef;
-
-    /// Return the standard partial molar enthalpies of the species in the system (in J/mol).
-    auto standardEnthalpies() const -> ArrayXrConstRef;
-
     /// Return the standard partial molar volumes of the species in the system (in m3/mol).
     auto standardVolumes() const -> ArrayXrConstRef;
 
-    /// Return the standard partial molar entropies of the species in the system (in J/(mol*K)).
+    /// Return the standard partial molar Gibbs energies of formation of the species in the system (in J/mol).
+    auto standardGibbsEnergies() const -> ArrayXrConstRef;
+
+    /// Return the standard partial molar enthalpies of formation of the species in the system (in J/mol).
+    auto standardEnthalpies() const -> ArrayXrConstRef;
+
+    /// Return the standard partial molar entropies of formation of the species in the system (in J/(mol*K)).
     auto standardEntropies() const -> ArrayXr;
 
-    /// Return the standard partial molar internal energies of the species in the system (in J/mol).
+    /// Return the standard partial molar internal energies of formation of the species in the system (in J/mol).
     auto standardInternalEnergies() const -> ArrayXr;
 
-    /// Return the standard partial molar Helmholtz energies of the species in the system (in J/mol).
+    /// Return the standard partial molar Helmholtz energies of formation of the species in the system (in J/mol).
     auto standardHelmholtzEnergies() const -> ArrayXr;
 
     /// Return the standard partial molar isobaric heat capacities of the species in the system (in J/(mol*K)).
