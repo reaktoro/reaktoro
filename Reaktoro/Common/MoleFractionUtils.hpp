@@ -23,7 +23,7 @@
 
 namespace Reaktoro {
 
-/// Return the mole fractions of the species with given amounts.
+/// Compute the mole fractions of the species with given species amounts.
 /// @param n The vector with the species amounts.
 /// @param[out] x The vector of species mole fractions.
 template<typename ArrayConstRef, typename ArrayRef>
@@ -39,7 +39,7 @@ auto moleFractions(ArrayConstRef&& n, ArrayRef&& x)
     else x.fill(0.0);
 }
 
-/// Return the mole fractions of the species with given amounts.
+/// Compute the mole fractions of the species with given species amounts.
 /// @param n The vector with the species amounts.
 template<typename ArrayConstRef>
 auto moleFractions(ArrayConstRef&& n)
@@ -51,9 +51,8 @@ auto moleFractions(ArrayConstRef&& n)
     return x;
 }
 
-/// Return the molar derivatives of the species mole fractions.
+/// Compute the Jacobian matrix of the species mole fractions (@eq{J=\frac{\partial x}{\partial n}}).
 /// @param n The vector with the species amounts.
-/// @param x The vector with the computed species mole fractions.
 /// @param[out] J The output Jacobian matrix.
 template<typename ArrayConstRef, typename MatrixRef>
 auto moleFractionsJacobian(ArrayConstRef&& n, MatrixRef&& J)
@@ -78,9 +77,8 @@ auto moleFractionsJacobian(ArrayConstRef&& n, MatrixRef&& J)
     }
 }
 
-/// Return the molar derivatives of the species mole fractions.
+/// Compute the Jacobian matrix of the species mole fractions (@eq{J=\frac{\partial x}{\partial n}}).
 /// @param n The vector with the species amounts.
-/// @param x The vector with the computed species mole fractions.
 template<typename ArrayConstRef>
 auto moleFractionsJacobian(ArrayConstRef&& n)
 {
@@ -91,9 +89,8 @@ auto moleFractionsJacobian(ArrayConstRef&& n)
     return J;
 }
 
-/// Return the molar derivatives of the species mole fractions (natural log).
+/// Compute the Jacobian matrix of the species mole fractions in natural log (@eq{J=\frac{\partial\ln x}{\partial n}}).
 /// @param n The vector with the species amounts.
-/// @param x The vector with the computed species mole fractions.
 /// @param[out] J The output Jacobian matrix.
 template<typename ArrayConstRef, typename MatrixRef>
 auto lnMoleFractionsJacobian(ArrayConstRef&& n, MatrixRef&& J) -> void
@@ -119,9 +116,8 @@ auto lnMoleFractionsJacobian(ArrayConstRef&& n, MatrixRef&& J) -> void
     }
 }
 
-/// Return the molar derivatives of the species mole fractions (natural log).
+/// Compute the Jacobian matrix of the species mole fractions in natural log (@eq{J=\frac{\partial\ln x}{\partial n}}).
 /// @param n The vector with the species amounts.
-/// @param x The vector with the computed species mole fractions.
 template<typename ArrayConstRef>
 auto lnMoleFractionsJacobian(ArrayConstRef&& n)
 {
