@@ -34,8 +34,8 @@ public:
     /// - `cemdata18`       (corresponding file: `cemdata18-thermofun.json`)
     /// - `heracles`        (corresponding file: `heracles-thermofun.json`)
     /// - `mines16`         (corresponding file: `mines16-thermofun.json`)
-    /// - `psinagra-12-07`  (corresponding file: `psinagra-thermofun.json`)
-    /// - `slop98-organic`  (corresponding file: `slop98-thermofun.json`)
+    /// - `psinagra-12-07`  (corresponding file: `psinagra-12-07-thermofun.json`)
+    /// - `slop98-organic`  (corresponding file: `slop98-organic-thermofun.json`)
     /// - `slop98`          (corresponding file: `slop98-thermofun.json`)
     /// @warning An exception is thrown if `name` is not one of the above names.
     /// @param name The name of the embedded ThermoFun database.
@@ -46,7 +46,7 @@ public:
     /// database in JSON format or it is not a path to a valid local database
     /// file, an exception is thrown.
     /// @param file The contents or a path to a local file containing the database contents.
-    static auto fromFile(const String& path) ->  ThermoFunDatabase;
+    static auto fromFile(const String& file) ->  ThermoFunDatabase;
 
     /// Construct a default ThermoFunDatabase object.
     ThermoFunDatabase();
