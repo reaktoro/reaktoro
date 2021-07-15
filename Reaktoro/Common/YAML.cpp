@@ -65,7 +65,7 @@ yaml::yaml()
 : YAML::Node()
 {}
 
-yaml::yaml(const Node& node)
+yaml::yaml(const YAML::Node& node)
 : YAML::Node(node)
 {
 }

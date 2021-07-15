@@ -140,9 +140,11 @@ public:
     template<> struct yaml::encode<Type> { static auto eval(yaml& node, const Type& obj) -> void; };
 
 #define REAKTORO_YAML_ENCODE_DEFINE(Type) \
+    /// Used to encode/serialize an instance of Type into an YAML node.
     auto yaml::encode<Type>::eval(yaml& node, const Type& obj) -> void
 
 #define REAKTORO_YAML_DECODE_DECLARE(Type) \
+    /// Used to decode/deserialize an YAML node into an instance of Type.
     template<> struct yaml::decode<Type> { static auto eval(const yaml& node, Type& obj) -> void; };
 
 #define REAKTORO_YAML_DECODE_DEFINE(Type) \
@@ -152,9 +154,11 @@ public:
 
 namespace YAML {
 
+/// Used for more convenient YAML encoding/decoding of Reaktoro types.
 template<typename Type>
 struct convert
 {
+    /// Return an yaml node containing serialized data of object of type `Type`.
     static auto encode(const Type& obj)
     {
         Reaktoro::yaml node;
@@ -162,6 +166,7 @@ struct convert
         return node;
     }
 
+    /// Initialize an object of type `Type` from given yaml node.
     static auto decode(const Node& node, Type& obj)
     {
         Reaktoro::yaml::decode<Type>::eval(node, obj);
