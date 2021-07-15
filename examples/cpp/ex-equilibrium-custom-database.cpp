@@ -53,7 +53,7 @@ int main()
     EquilibriumSolver solver(system);
     solver.solve(state);
 
-    // Output chemical state to the txt-file
+    // Output chemical state to a text file
     state.output("state.txt");
 
     return 0;
