@@ -39,16 +39,16 @@ struct PhreeqcWaterElectroProps
     /// The relative dielectric constant of water.
     real eps_r = {};
 
-    // The Debye-Hueckel A coefficient (in (mol/kg)^-0.5).
+    /// The Debye-Hueckel A coefficient (in (mol/kg)^-0.5).
     real DH_A = {};
 
-    // The Debye-Hueckel B coefficient (in 1/Angstrom(mol/kg)^-0.5).
+    /// The Debye-Hueckel B coefficient (in 1/Angstrom(mol/kg)^-0.5).
     real DH_B = {};
 
-    // The Debye-Hueckel limiting slope (in (cm3/mol)(mol/kg)^-0.5).
+    /// The Debye-Hueckel limiting slope (in (cm3/mol)(mol/kg)^-0.5).
     real DH_Av = {};
 
-    // The Born function (-1/eps_r + 1) * 41.84004, for supcrt calc'n of molal volume
+    /// The Born function (-1/eps_r + 1) * 41.84004, for supcrt calc'n of molal volume
     real ZBrn = {};
 
     // The Born function d(ln(eps_r))/dP / eps_r * 41.84004, for supcrt calc'n of molal volume
