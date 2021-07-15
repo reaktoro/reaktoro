@@ -29,6 +29,7 @@ namespace Reaktoro {
 // Forward declarations
 class ReactionEquation;
 
+// Used to execute PHREEQC from C++/Python and inspect its internal state.
 class Phreeqc
 {
 public:
