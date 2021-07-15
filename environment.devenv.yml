@@ -13,7 +13,7 @@ dependencies:
   - clcache  # [win]
   - cmake
   - cpp-tabulate
-  - doxygen=1.8.20  # [linux]
+  - doxygen=1.9.1  # [linux]
   - eigen4rkt
   - fire
   - git
