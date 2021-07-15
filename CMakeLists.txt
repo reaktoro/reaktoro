@@ -20,20 +20,10 @@ include(CondaAware)
 include(GNUInstallDirs)
 
 # Define which components of Reaktoro to build
-option(REAKTORO_BUILD_ALL         "Build everything." OFF)
-option(REAKTORO_BUILD_EXAMPLES    "Build examples." OFF)
-option(REAKTORO_BUILD_DOCS        "Build documentation." OFF)
-option(REAKTORO_BUILD_PYTHON      "Build the python wrappers and python package reaktoro." ON)
-option(REAKTORO_BUILD_TESTS       "Build tests." ON)
-
-# Modify the REAKTORO_BUILD_* variables accordingly to BUILD_ALL
-if(REAKTORO_BUILD_ALL MATCHES ON)
-    set(REAKTORO_BUILD_DOCS        ON)
-    set(REAKTORO_BUILD_EXAMPLES    ON)
-    set(REAKTORO_BUILD_INTERPRETER ON)
-    set(REAKTORO_BUILD_PYTHON      ON)
-    set(REAKTORO_BUILD_TESTS       ON)
-endif()
+option(REAKTORO_BUILD_EXAMPLES "Build the C++ examples." ON)
+option(REAKTORO_BUILD_DOCS     "Build the documentation." ON)
+option(REAKTORO_BUILD_PYTHON   "Build the Python package." ON)
+option(REAKTORO_BUILD_TESTS    "Build the C++ tests." ON)
 
 # Define is Reaktoro should be built linking against openlibm instead of system's default libm
 option(REAKTORO_ENABLE_OPENLIBM "Build linking with openlibm." OFF)
