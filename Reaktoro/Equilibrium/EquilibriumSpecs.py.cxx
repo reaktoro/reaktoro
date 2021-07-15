@@ -28,11 +28,13 @@ void exportEquilibriumSpecs(py::module& m)
     const auto return_internal_ref = py::return_value_policy::reference_internal;
 
     py::class_<EquilibriumConstraintEquation>(m, "EquilibriumConstraintEquation")
+        .def(py::init<>())
         .def_readwrite("name", &EquilibriumConstraintEquation::name)
         .def_readwrite("fn", &EquilibriumConstraintEquation::fn)
         ;
 
     py::class_<EquilibriumConstraintChemicalPotential>(m, "EquilibriumConstraintChemicalPotential")
+        .def(py::init<>())
         .def_readwrite("name", &EquilibriumConstraintChemicalPotential::name)
         .def_readwrite("substance", &EquilibriumConstraintChemicalPotential::substance)
         .def_readwrite("fn", &EquilibriumConstraintChemicalPotential::fn)
