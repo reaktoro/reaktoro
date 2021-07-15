@@ -134,6 +134,12 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol*K)).
     auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef;
 
+    /// Return the sum of species amounts in the system (in mol).
+    auto amount() const -> real;
+
+    /// Return the sum of species masses in the system (in kg).
+    auto mass() const -> real;
+
     /// Return the volume of the system (in m3).
     auto volume() const -> real;
 

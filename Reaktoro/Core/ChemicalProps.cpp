@@ -384,6 +384,18 @@ auto ChemicalProps::standardHeatCapacitiesConstV() const -> ArrayXrConstRef
     return pimpl->Cv0;
 }
 
+auto ChemicalProps::amount() const -> real
+{
+    const auto iend = system().phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).amount(); });
+}
+
+auto ChemicalProps::mass() const -> real
+{
+    const auto iend = system().phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).mass(); });
+}
+
 auto ChemicalProps::volume() const -> real
 {
     const auto iend = system().phases().size();
