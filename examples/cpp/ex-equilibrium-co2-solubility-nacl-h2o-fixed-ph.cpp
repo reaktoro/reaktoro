@@ -68,22 +68,18 @@ int main()
     // Equilibrate given initial state
     solver.solve(state, conditions);
 
-    // Obtain species composition from the equilibrated state
-    const auto n = state.speciesAmounts();
-
-    // Print the species and theirs amounts
-    std::cout << std::setw(20) << "Species"
-              << std::setw(20) << "Amount" << std::endl;
-
-    for(auto i = 0; i < n.size(); ++i)
-    {
-        // Print only species with nonzero amounts
-        if(n[i] > 1e-16)
-            std::cout << std::setw(20) << system.species(i).name()
-                      << std::setw(20) << n[i] << std::endl;
-    }
-
+    // Output temperature, pressure, and species amounts of the chemical state
     std::cout << state << std::endl;
+
+    // Compute chemical and thermodynamic properties at equilibrium state
+    ChemicalProps props(state);
+    // Output these properties
+    std::cout << props << std::endl;
+
+    // Compute chemical properties for the aqueous phase at equilibrium state
+    AqueousProps aqprops(props);
+    // Output these properties
+    std::cout << aqprops << std::endl;
 
     return 0;
 }
