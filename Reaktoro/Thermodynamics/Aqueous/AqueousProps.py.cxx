@@ -49,5 +49,6 @@ void exportAqueousProps(py::module& m)
         .def("Eh", &AqueousProps::Eh)
         .def("alkalinity", &AqueousProps::alkalinity)
         .def("phase", &AqueousProps::phase, py::return_value_policy::reference_internal)
+        .def("__repr__", [](const AqueousProps& self) { std::stringstream ss; ss << self; return ss.str(); })
         ;
 }
