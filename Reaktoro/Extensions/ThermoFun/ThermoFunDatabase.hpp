@@ -21,6 +21,9 @@
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Database.hpp>
 
+// Forward declaration of ThermoFun classes
+namespace ThermoFun { class Database; }
+
 namespace Reaktoro {
 
 /// The class used to store and retrieve data of chemical species from ThermoFun databases.
@@ -54,6 +57,9 @@ public:
     /// Construct a ThermoFunDatabase object with given name of embedded database file.
     /// For a list of currently supported names for embedded ThermoFun databases, see @ref ThermoFunDatabase::withName.
     explicit ThermoFunDatabase(const String& name);
+
+    /// Construct a ThermoFunDatabase object with given object of class ThermoFun::Database.
+    explicit ThermoFunDatabase(const ThermoFun::Database& db);
 };
 
 } // namespace Reaktoro

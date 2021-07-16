@@ -118,6 +118,14 @@ ThermoFunDatabase::ThermoFunDatabase(const String& name)
 : ThermoFunDatabase(ThermoFunDatabase::withName(name))
 {}
 
+ThermoFunDatabase::ThermoFunDatabase(const ThermoFun::Database& db)
+{
+    ThermoFunEngine engine(db);
+    attachData(engine);
+    for(auto [_, subs] : db.mapSubstances())
+        addSpecies(createSpecies(engine, subs));
+}
+
 auto ThermoFunDatabase::withName(const String& name) -> ThermoFunDatabase
 {
     errorif(!oneof(name,
@@ -146,13 +154,8 @@ auto ThermoFunDatabase::withName(const String& name) -> ThermoFunDatabase
 
 auto ThermoFunDatabase::fromFile(const String& file) ->  ThermoFunDatabase
 {
-    ThermoFun::Database database(file);
-    ThermoFunEngine engine(database);
-    ThermoFunDatabase db;
-    db.attachData(engine);
-    for(auto [_, subs] : database.mapSubstances())
-        db.addSpecies(createSpecies(engine, subs));
-    return db;
+    ThermoFun::Database db(file);
+    return ThermoFunDatabase(db);
 }
 
 } // namespace Reaktoro
