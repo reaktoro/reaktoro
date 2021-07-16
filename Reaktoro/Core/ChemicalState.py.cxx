@@ -31,6 +31,9 @@ void exportChemicalState(py::module& m)
 {
     const auto return_internal_ref = py::return_value_policy::reference_internal;
 
+    auto output1 = static_cast<void(ChemicalState::*)(std::ostream&) const>(&ChemicalState::output);
+    auto output2 = static_cast<void(ChemicalState::*)(std::string const&) const>(&ChemicalState::output);
+
     py::class_<ChemicalState>(m, "ChemicalState")
         .def(py::init<const ChemicalSystem&>())
         .def("temperature", py::overload_cast<real>(&ChemicalState::temperature))
@@ -81,6 +84,8 @@ void exportChemicalState(py::module& m)
         .def("output", py::overload_cast<std::ostream&>(&ChemicalState::output, py::const_))
         .def("output", py::overload_cast<const String&>(&ChemicalState::output, py::const_))
         .def("__repr__", [](const ChemicalState& self) { std::stringstream ss; ss << self; return ss.str(); })
+        .def("output", output1, py::arg("out"))
+        .def("output", output2, py::arg("out"))
         ;
 
     py::class_<ChemicalState::Equilibrium>(m, "_ChemicalStateEquilibrium")
