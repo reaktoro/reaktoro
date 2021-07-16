@@ -227,7 +227,7 @@ know](https://github.com/reaktoro/reaktoro/issues/new).
 
 LGPL v2.1
 
-Copyright (C) 2014-2021 Allan Leal
+Copyright © 2014-2021 Allan Leal
 
 Reaktoro is free software; you can redistribute it and/or modify it
 under the terms of the GNU Lesser General Public License as published by
