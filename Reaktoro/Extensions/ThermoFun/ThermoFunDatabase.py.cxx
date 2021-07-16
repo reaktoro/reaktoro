@@ -18,6 +18,9 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
+// ThermoFun includes
+#include <ThermoFun/Database.h>
+
 // Reaktoro includes
 #include <Reaktoro/Extensions/ThermoFun/ThermoFunDatabase.hpp>
 using namespace Reaktoro;
@@ -27,6 +30,7 @@ void exportThermoFunDatabase(py::module& m)
     py::class_<ThermoFunDatabase, Database>(m, "ThermoFunDatabase")
         .def(py::init<>())
         .def(py::init<const String&>())
+        .def(py::init<const ThermoFun::Database&>())
         .def_static("withName", &ThermoFunDatabase::withName)
         .def_static("fromFile", &ThermoFunDatabase::fromFile)
         ;
