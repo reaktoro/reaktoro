@@ -67,11 +67,18 @@ if(REAKTORO_BUILD_TESTS)
     # Find catch2, which is used as the testing framework for Reaktoro
     find_package(Catch2 REQUIRED)
 
+    # The global path to the databases directory (used below as a compile definition for the C++ tests)
+    set(REAKTORO_DATABASES_DIR ${PROJECT_SOURCE_DIR}/databases)
+    file(TO_NATIVE_PATH ${REAKTORO_DATABASES_DIR} REAKTORO_DATABASES_DIR)
+
     # Create a test executable target for Reaktoro
     add_executable(reaktoro-cpptests ${CXX_FILES_TEST})
     target_link_libraries(reaktoro-cpptests Reaktoro Catch2::Catch2)
     target_include_directories(reaktoro-cpptests PUBLIC ${PROJECT_SOURCE_DIR})
-    target_compile_definitions(reaktoro-cpptests PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline>)  # use EIGEN_STRONG_INLINE=inline instead of EIGEN_STRONG_INLINE=__forceinline with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile
+    target_compile_definitions(reaktoro-cpptests
+        PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline>  # This is needed (`EIGEN_STRONG_INLINE=inline` instead of `EIGEN_STRONG_INLINE=__forceinline`) with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile.
+        PRIVATE REAKTORO_DATABASES_DIR="${REAKTORO_DATABASES_DIR}"     # This permits the C++ tests to load database files using global paths so that the tests can be executed from anywhere without errors.
+    )
 
 endif()
 
