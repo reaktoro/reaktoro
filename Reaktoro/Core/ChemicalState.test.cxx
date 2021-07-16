@@ -171,6 +171,25 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK( state.speciesMass(idx("CaCO3(s)"), "g") == 7.0 );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::add(name, value, unit)
+    //-------------------------------------------------------------------------
+    state.setSpeciesAmount("SiO2(s)", 0.0);
+    state.add("SiO2(s)", 1.0, "mol");
+    CHECK( state.speciesAmount("SiO2(s)") == Approx(1.0) );
+    state.add("SiO2(s)", 2.0, "mol");
+    CHECK( state.speciesAmount("SiO2(s)") == Approx(3.0) );
+    state.add("SiO2(s)", 5.0, "mmol");
+    CHECK( state.speciesAmount("SiO2(s)") == Approx(3.005) );
+
+    state.setSpeciesAmount("SiO2(s)", 0.0);
+    state.add("SiO2(s)", 2000.0, "g");
+    CHECK( state.speciesMass("SiO2(s)") == Approx(2.0) ); // in kg
+    state.add("SiO2(s)", 3000.0, "g");
+    CHECK( state.speciesMass("SiO2(s)") == Approx(5.0) ); // in kg
+    state.add("SiO2(s)", 5000.0, "mg");
+    CHECK( state.speciesMass("SiO2(s)") == Approx(5.005) ); // in kg
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::props()
     //-------------------------------------------------------------------------
     state.props().update(state);
