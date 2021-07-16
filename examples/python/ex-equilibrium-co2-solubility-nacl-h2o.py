@@ -1,6 +1,6 @@
 # Reaktoro is a unified framework for modeling chemically reactive systems.
 #
-# Copyright (C) 2014-2021
+# Copyright (C) 2014-2021 Allan Leal
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,7 +15,17 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-# Import reaktoro python package
+# -----------------------------------------------------------------------------
+# 👏 Acknowledgements 👏
+# -----------------------------------------------------------------------------
+# This example was originally authored by:
+#   • Svetlana Kyas (14 July 2021)
+#
+# and since revised by:
+#   •
+# -----------------------------------------------------------------------------
+
+
 from reaktoro import *
 import numpy as np
 

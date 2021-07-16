@@ -15,7 +15,17 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-# Import reaktoro python package
+# -----------------------------------------------------------------------------
+# 👏 Acknowledgements 👏
+# -----------------------------------------------------------------------------
+# This example was originally authored by:
+#   • Svetlana Kyas (14 July 2021)
+#
+# and since revised by:
+#   •
+# -----------------------------------------------------------------------------
+
+
 from reaktoro import *
 
 # Initialize a thermodynamic database

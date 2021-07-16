@@ -15,6 +15,16 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+// -----------------------------------------------------------------------------
+// 👏 Acknowledgements 👏
+// -----------------------------------------------------------------------------
+// This example was originally authored by:
+//   • Allan Leal (06 Feb 2021)
+//
+// and since revised by:
+//   • Svetlana Kyas (14 July 2021)
+// -----------------------------------------------------------------------------
+
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
 
