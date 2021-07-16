@@ -59,20 +59,74 @@ public:
     /// Assign a ChemicalState instance to this instance.
     auto operator=(ChemicalState other) -> ChemicalState&;
 
-    /// Set the temperature of the chemical state (in K).
-    auto setTemperature(real val) -> void;
+    /// Set the temperature of the chemical state.
+    /// @param value The temperature value (in K).
+    auto temperature(real value) -> void;
 
     /// Set the temperature of the chemical state with given unit.
-    auto setTemperature(real val, String unit) -> void;
+    /// @param value The temperature value.
+    /// @param unit The temperature unit (convertible to K).
+    auto temperature(real value, String unit) -> void;
 
-    /// Set the pressure of the chemical state (in Pa).
-    auto setPressure(real val) -> void;
+    /// Set the pressure of the chemical state.
+    /// @param value The pressure value (in Pa).
+    auto pressure(real value) -> void;
 
     /// Set the pressure of the chemical state with given unit.
-    auto setPressure(real val, String unit) -> void;
+    /// @param value The pressure value.
+    /// @param unit The pressure unit (convertible to Pa).
+    auto pressure(real value, String unit) -> void;
+
+    /// Add a specified amount or mass of a chemical species in the chemical state.
+    /// @param species The name of the species in the chemical system.
+    /// @param value The amount or mass value of the added species.
+    /// @param unit The amount or mass unit (must be convertible to mol or kg).
+    /// @warning An error is thrown if the chemical system has no species with name @p species.
+    auto add(String species, real value, String unit) -> void;
+
+    /// Add a specified amount or mass of a chemical species in the chemical state.
+    /// @param ispecies The index of the species in the chemical system.
+    /// @param value The amount or mass value of the added species.
+    /// @param unit The amount or mass unit (must be convertible to mol or kg).
+    auto add(Index ispecies, real value, String unit) -> void;
+
+    /// Set a specified amount or mass of a chemical species in the chemical state.
+    /// @param species The name of the species in the chemical system.
+    /// @param value The amount or mass value of the added species.
+    /// @param unit The amount or mass unit (must be convertible to mol or kg).
+    /// @warning An error is thrown if the chemical system has no species with name @p species.
+    auto set(String species, real value, String unit) -> void;
+
+    /// Set a specified amount or mass of a chemical species in the chemical state.
+    /// @param ispecies The index of the species in the chemical system.
+    /// @param value The amount or mass value of the added species.
+    /// @param unit The amount or mass unit (must be convertible to mol or kg).
+    auto set(Index ispecies, real value, String unit) -> void;
+
+    /// Set the temperature of the chemical state.
+    /// @param value The temperature value (in K).
+    /// @note This method is equivalent to ChemicalState::temperature(real)
+    auto setTemperature(real value) -> void;
+
+    /// Set the temperature of the chemical state with given unit.
+    /// @param value The temperature value.
+    /// @param unit The temperature unit (convertible to K).
+    /// @note This method is equivalent to ChemicalState::temperature(real, String)
+    auto setTemperature(real value, String unit) -> void;
+
+    /// Set the pressure of the chemical state.
+    /// @param value The pressure value (in Pa).
+    /// @note This method is equivalent to ChemicalState::pressure(real)
+    auto setPressure(real value) -> void;
+
+    /// Set the pressure of the chemical state with given unit.
+    /// @param value The pressure value.
+    /// @param unit The pressure unit (convertible to Pa).
+    /// @note This method is equivalent to ChemicalState::pressure(real, String)
+    auto setPressure(real value, String unit) -> void;
 
     /// Set the amounts of all species in the chemical state to a common value (in mol).
-    auto setSpeciesAmounts(real val) -> void;
+    auto setSpeciesAmounts(real value) -> void;
 
     /// Set the amounts of the species in the chemical state (in mol).
     auto setSpeciesAmounts(ArrayXrConstRef n) -> void;
@@ -103,19 +157,6 @@ public:
 
     /// Set the mass of a species with given name and mass unit (convertible to kg).
     auto setSpeciesMass(String name, real mass, String unit) -> void;
-
-    /// Add a specified amount or mass of a chemical species in the chemical state.
-    /// @param species The name of the species in the chemical system.
-    /// @param value The amount or mass value of the added species.
-    /// @param unit The amount or mass unit (must be convertible to mol or kg).
-    /// @warning An error is thrown if the chemical system has no species with name @p species.
-    auto add(String species, real value, String unit) -> void;
-
-    /// Add a specified amount or mass of a chemical species in the chemical state.
-    /// @param ispecies The index of the species in the chemical system.
-    /// @param value The amount or mass value of the added species.
-    /// @param unit The amount or mass unit (must be convertible to mol or kg).
-    auto add(Index ispecies, real value, String unit) -> void;
 
     /// Return the underlying chemical system for this chemical state.
     auto system() const -> const ChemicalSystem&;
@@ -164,14 +205,16 @@ public:
 
     /// Return the chemical properties of the system.
     /// @warning For performance reasons, the stored chemical properties are
-    /// not updated at every change in the chemical state. For a ChemicalState
-    /// object `state`, update its chemical properties using `state.props().update(state)`.
+    /// @warning not updated at every change in the chemical state.
+    /// @warning For a ChemicalState object `state`, update its chemical
+    /// @warning properties using `state.props().update(state)`.
     auto props() const -> const ChemicalProps&;
 
     /// Return the chemical properties of the system.
     /// @warning For performance reasons, the stored chemical properties are
-    /// not updated at every change in the chemical state. For a ChemicalState
-    /// object `state`, update its chemical properties using `state.props().update(state)`.
+    /// @warning not updated at every change in the chemical state.
+    /// @warning For a ChemicalState object `state`, update its chemical
+    /// @warning properties using `state.props().update(state)`.
     auto props() -> ChemicalProps&;
 
     /// Output this ChemicalState instance to a stream.

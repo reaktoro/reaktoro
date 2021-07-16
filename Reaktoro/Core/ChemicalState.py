@@ -37,29 +37,42 @@ def testChemicalState():
 
     state = ChemicalState(system)
 
+    N = system.species().size()
+    n = npy.arange(N)
+
     assert state.temperature() == 298.15
     assert state.pressure() == 1e5
     assert npy.max(state.speciesAmounts()) == 0.0
 
-    state.setTemperature(30.0, "celsius")
-    state.setPressure(1.0, "MPa")
-
-    state.setTemperature(30, "celsius")  # testing with int argument
-    state.setPressure(1, "MPa")  # testing with int argument
-
+    state.temperature(30.0, "celsius")
     assert state.temperature() == pytest.approx(303.15)
+
+    state.pressure(1.0, "MPa")
     assert state.pressure() == pytest.approx(1e6)
 
-    state.setSpeciesAmounts(1.0)
+    state.temperature(40, "celsius")  # testing with int argument
+    assert state.temperature() == pytest.approx(313.15)
 
+    state.pressure(2, "MPa")  # testing with int argument
+    assert state.pressure() == pytest.approx(2e6)
+
+    state.setTemperature(30.0, "celsius")
+    assert state.temperature() == pytest.approx(303.15)
+
+    state.setPressure(1.0, "MPa")
+    assert state.pressure() == pytest.approx(1e6)
+
+    state.setTemperature(40, "celsius")  # testing with int argument
+    assert state.temperature() == pytest.approx(313.15)
+
+    state.setPressure(2, "MPa")  # testing with int argument
+    assert state.pressure() == pytest.approx(2e6)
+
+    state.setSpeciesAmounts(1.0)
     assert npy.min(state.speciesAmounts()) == 1.0
     assert npy.max(state.speciesAmounts()) == 1.0
 
-    N = system.species().size()
-    n = npy.arange(N)
-
     state.setSpeciesAmounts(n)
-
     assert npy.all(state.speciesAmounts() == n)
 
     state.setSpeciesAmount(0, 3.1)
@@ -129,6 +142,12 @@ def testChemicalState():
 
     state.add("Calcite", 5000.0, "mg")
     assert state.speciesMass("Calcite") == 5.005  # in kg
+
+    state.set("Calcite", 3.0, "mol")
+    assert state.speciesAmount("Calcite") == 3.0  # in kg
+
+    state.set("Calcite", 5000.0, "mg")
+    assert state.speciesMass("Calcite") == 0.005  # in kg
 
     props = state.props()
     props.update(state)

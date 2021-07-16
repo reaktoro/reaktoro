@@ -80,13 +80,58 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
             .withActivityPropsFn(activity_props_fn)
     };
 
-
     // Create the ChemicalSystem object
     ChemicalSystem system(db, phases);
 
     ChemicalState state(system);
 
     auto idx = [&](String name) { return system.species().index(name); };
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::temperature
+    //-------------------------------------------------------------------------
+    state.temperature(200.0);
+    CHECK( state.temperature() == 200.0 );
+
+    state.temperature(33.0, "celsius");
+    CHECK( state.temperature() == 273.15 + 33.0 );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::pressure
+    //-------------------------------------------------------------------------
+    state.pressure(234.0e5);
+    CHECK( state.pressure() == 234.0e5 );
+
+    state.pressure(40.0, "bar");
+    CHECK( state.pressure() == 40.0 * 1e5 );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::add(name, value, unit)
+    //-------------------------------------------------------------------------
+    state.setSpeciesAmount("SiO2(s)", 0.0);
+    state.add("SiO2(s)", 1.0, "mol");
+    CHECK( state.speciesAmount("SiO2(s)") == Approx(1.0) );
+    state.add("SiO2(s)", 2.0, "mol");
+    CHECK( state.speciesAmount("SiO2(s)") == Approx(3.0) );
+    state.add("SiO2(s)", 5.0, "mmol");
+    CHECK( state.speciesAmount("SiO2(s)") == Approx(3.005) );
+
+    state.setSpeciesAmount("SiO2(s)", 0.0);
+    state.add("SiO2(s)", 2000.0, "g");
+    CHECK( state.speciesMass("SiO2(s)") == Approx(2.0) ); // in kg
+    state.add("SiO2(s)", 3000.0, "g");
+    CHECK( state.speciesMass("SiO2(s)") == Approx(5.0) ); // in kg
+    state.add("SiO2(s)", 5000.0, "mg");
+    CHECK( state.speciesMass("SiO2(s)") == Approx(5.005) ); // in kg
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::set(name, value, unit)
+    //-------------------------------------------------------------------------
+    state.set("NaCl(s)", 1.0, "mol");
+    CHECK( state.speciesAmount("NaCl(s)") == Approx(1.0) );
+
+    state.set("NaCl(s)", 3000.0, "g");
+    CHECK( state.speciesMass("NaCl(s)") == Approx(3.0) ); // in kg
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setTemperature
@@ -169,25 +214,6 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     state.setSpeciesMass("CaCO3(s)", 7.0, "g");
     CHECK( state.speciesMass(idx("CaCO3(s)")) == 0.007 );
     CHECK( state.speciesMass(idx("CaCO3(s)"), "g") == 7.0 );
-
-    //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::add(name, value, unit)
-    //-------------------------------------------------------------------------
-    state.setSpeciesAmount("SiO2(s)", 0.0);
-    state.add("SiO2(s)", 1.0, "mol");
-    CHECK( state.speciesAmount("SiO2(s)") == Approx(1.0) );
-    state.add("SiO2(s)", 2.0, "mol");
-    CHECK( state.speciesAmount("SiO2(s)") == Approx(3.0) );
-    state.add("SiO2(s)", 5.0, "mmol");
-    CHECK( state.speciesAmount("SiO2(s)") == Approx(3.005) );
-
-    state.setSpeciesAmount("SiO2(s)", 0.0);
-    state.add("SiO2(s)", 2000.0, "g");
-    CHECK( state.speciesMass("SiO2(s)") == Approx(2.0) ); // in kg
-    state.add("SiO2(s)", 3000.0, "g");
-    CHECK( state.speciesMass("SiO2(s)") == Approx(5.0) ); // in kg
-    state.add("SiO2(s)", 5000.0, "mg");
-    CHECK( state.speciesMass("SiO2(s)") == Approx(5.005) ); // in kg
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::props()

@@ -68,30 +68,56 @@ struct ChemicalState::Impl
         n.setZero(system.species().size());
     }
 
-    auto setTemperature(real val) -> void
+    auto temperature(real val) -> void
     {
-        error(val <= 0.0, "Cannot set a non-positive temperature "
-            "value, ", val, "K, in a ChemicalState object.");
+        error(val <= 0.0, "Cannot set a non-positive temperature value, ", val, "K, in a ChemicalState object.");
         T = val;
     }
 
-    auto setTemperature(real val, String unit) -> void
+    auto temperature(real val, String unit) -> void
     {
-        setTemperature(units::convert(val, unit, "K"));
+        temperature(units::convert(val, unit, "K"));
     }
 
-    auto setPressure(real val) -> void
+    auto pressure(real val) -> void
     {
-        error(val <= 0.0, "Cannot set a non-positive pressure "
-            "value, ", val, "Pa, in a ChemicalState object.");
+        error(val <= 0.0, "Cannot set a non-positive pressure value, ", val, "Pa, in a ChemicalState object.");
         P = val;
     }
 
-    auto setPressure(real val, String unit) -> void
+    auto pressure(real val, String unit) -> void
     {
         error(val <= 0.0, "Cannot set a non-positive pressure "
             "value, ", val, unit, ", in a ChemicalState object.");
-        setPressure(units::convert(val, unit, "Pa"));
+        pressure(units::convert(val, unit, "Pa"));
+    }
+
+    auto add(String species, real value, String unit) -> void
+    {
+        const auto ispecies = system.species().index(species);
+        add(ispecies, value, unit);
+    }
+
+    auto add(Index ispecies, real value, String unit) -> void
+    {
+        const auto size = system.species().size();
+        errorif(ispecies >= size, "Given species index (", ispecies, ") is out-of-bounds (number of species is ", size, ").");
+        const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
+        n[ispecies] += amount;
+    }
+
+    auto set(String species, real value, String unit) -> void
+    {
+        const auto ispecies = system.species().index(species);
+        set(ispecies, value, unit);
+    }
+
+    auto set(Index ispecies, real value, String unit) -> void
+    {
+        const auto size = system.species().size();
+        errorif(ispecies >= size, "Given species index (", ispecies, ") is out-of-bounds (number of species is ", size, ").");
+        const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
+        n[ispecies] = amount;
     }
 
     auto setSpeciesAmounts(real val) -> void
@@ -158,20 +184,6 @@ struct ChemicalState::Impl
     auto setSpeciesMass(String name, real mass, String unit) -> void
     {
         setSpeciesMass(system.species().index(name), mass, unit);
-    }
-
-    auto add(String species, real value, String unit) -> void
-    {
-        const auto ispecies = system.species().index(species);
-        add(ispecies, value, unit);
-    }
-
-    auto add(Index ispecies, real value, String unit) -> void
-    {
-        const auto size = system.species().size();
-        errorif(ispecies >= size, "Given species index (", ispecies, ") is out-of-bounds (number of species is ", size, ").");
-        const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
-        n[ispecies] += amount;
     }
 
     auto speciesAmount(Index ispecies) const -> real
@@ -277,29 +289,69 @@ auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
     return *this;
 }
 
-auto ChemicalState::setTemperature(real val) -> void
+auto ChemicalState::temperature(real value) -> void
 {
-    pimpl->setTemperature(val);
+    pimpl->temperature(value);
 }
 
-auto ChemicalState::setTemperature(real val, String unit) -> void
+auto ChemicalState::temperature(real value, String unit) -> void
 {
-    pimpl->setTemperature(val, unit);
+    pimpl->temperature(value, unit);
 }
 
-auto ChemicalState::setPressure(real val) -> void
+auto ChemicalState::pressure(real value) -> void
 {
-    pimpl->setPressure(val);
+    pimpl->pressure(value);
 }
 
-auto ChemicalState::setPressure(real val, String unit) -> void
+auto ChemicalState::pressure(real value, String unit) -> void
 {
-    pimpl->setPressure(val, unit);
+    pimpl->pressure(value, unit);
 }
 
-auto ChemicalState::setSpeciesAmounts(real val) -> void
+auto ChemicalState::add(String species, real value, String unit) -> void
 {
-    pimpl->setSpeciesAmounts(val);
+    pimpl->add(species, value, unit);
+}
+
+auto ChemicalState::add(Index ispecies, real value, String unit) -> void
+{
+    pimpl->add(ispecies, value, unit);
+}
+
+auto ChemicalState::set(String species, real value, String unit) -> void
+{
+    pimpl->set(species, value, unit);
+}
+
+auto ChemicalState::set(Index ispecies, real value, String unit) -> void
+{
+    pimpl->set(ispecies, value, unit);
+}
+
+auto ChemicalState::setTemperature(real value) -> void
+{
+    pimpl->temperature(value);
+}
+
+auto ChemicalState::setTemperature(real value, String unit) -> void
+{
+    pimpl->temperature(value, unit);
+}
+
+auto ChemicalState::setPressure(real value) -> void
+{
+    pimpl->pressure(value);
+}
+
+auto ChemicalState::setPressure(real value, String unit) -> void
+{
+    pimpl->pressure(value, unit);
+}
+
+auto ChemicalState::setSpeciesAmounts(real value) -> void
+{
+    pimpl->setSpeciesAmounts(value);
 }
 
 auto ChemicalState::setSpeciesAmounts(ArrayXrConstRef n) -> void
@@ -350,16 +402,6 @@ auto ChemicalState::setSpeciesMass(String name, real mass) -> void
 auto ChemicalState::setSpeciesMass(String name, real mass, String unit) -> void
 {
     pimpl->setSpeciesMass(name, mass, unit);
-}
-
-auto ChemicalState::add(String species, real value, String unit) -> void
-{
-    pimpl->add(species, value, unit);
-}
-
-auto ChemicalState::add(Index ispecies, real value, String unit) -> void
-{
-    pimpl->add(ispecies, value, unit);
 }
 
 auto ChemicalState::system() const -> const ChemicalSystem&
