@@ -54,8 +54,8 @@ int main()
     EquilibriumSolver solver(system);
     solver.solve(state);
 
-    // Print chemical state content
-    std::cout << state << std::endl;
+    // Output chemical state to the txt-file
+    state.output("state.txt");
 
     return 0;
 }
