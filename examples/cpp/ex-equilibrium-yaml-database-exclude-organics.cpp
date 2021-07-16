@@ -26,8 +26,8 @@ int main()
     // Create an aqueous phase without organic species
     AqueousPhase aqphase(speciate("H O C Na Cl"), exclude("organic"));
     aqphase.setActivityModel(chain(
-            ActivityModelHKF(),
-            ActivityModelDrummond("CO2")
+        ActivityModelHKF(),
+        ActivityModelDrummond("CO2")
     ));
 
     // Create a gaseous phase
