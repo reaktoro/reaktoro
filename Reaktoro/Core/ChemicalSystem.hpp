@@ -44,6 +44,11 @@ public:
     /// Construct a ChemicalSystem instance with given database and phases.
     ChemicalSystem(const Database& database, const Vec<Phase>& phases);
 
+    /// Construct a ChemicalSystem instance with given database and one or more generic phases.
+    template<typename... GenericPhases>
+    ChemicalSystem(const Database& database, const GenericPhases&... genericPhases)
+    : ChemicalSystem(Phases(database, genericPhases...)) {}
+
     /// Return the database used to construct the chemical system.
     auto database() const -> const Database&;
 
