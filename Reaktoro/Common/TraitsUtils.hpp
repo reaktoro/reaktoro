@@ -35,6 +35,9 @@ constexpr auto isArithmetic = std::is_arithmetic_v<Decay<T>>;
 template<typename T, typename U>
 constexpr auto isSame = std::is_same_v<Decay<T>, Decay<U>>;
 
+template<typename T, typename U>
+constexpr auto isBaseOf = std::is_base_of_v<Decay<T>, Decay<U>>;
+
 namespace detail {
 
 template<typename T>
