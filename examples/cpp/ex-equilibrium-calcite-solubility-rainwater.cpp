@@ -26,8 +26,8 @@ int main()
     // Create an aqueous phase automatically selecting all species with provided elements
     AqueousPhase aqueousphase(speciate("H O C Ca Mg K Cl Na S N"), exclude("organic"));
     aqueousphase.setActivityModel(chain(
-            ActivityModelHKF(),
-            ActivityModelDrummond("CO2")
+        ActivityModelHKF(),
+        ActivityModelDrummond("CO2")
     ));
 
     // Create a gaseous phase
