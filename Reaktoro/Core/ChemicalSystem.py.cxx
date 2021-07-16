@@ -24,10 +24,30 @@ using namespace Reaktoro;
 
 void exportChemicalSystem(py::module& m)
 {
+    auto createChemicalSystem = [](const Database& db, py::args gphases)
+    {
+        Phases phases(db);
+        for(auto phase : gphases)
+        {
+            try { phases.add(phase.cast<const GenericPhase&>()); }
+            catch(...)
+            {
+                try { phases.add(phase.cast<const GenericPhasesGenerator&>()); }
+                catch(...)
+                {
+                    errorif(true, "Could not create ChemicalSystem with phase object:\n", phase);
+                }
+            }
+        }
+
+        return ChemicalSystem(phases);
+    };
+
     py::class_<ChemicalSystem>(m, "ChemicalSystem")
         .def(py::init<>())
         .def(py::init<const Phases&>())
         .def(py::init<const Database&, const Vec<Phase>&>())
+        .def(py::init(createChemicalSystem))
         .def("database", &ChemicalSystem::database)
         .def("element", &ChemicalSystem::element)
         .def("elements", &ChemicalSystem::elements)
