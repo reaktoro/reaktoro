@@ -59,5 +59,6 @@ void exportChemicalProps(py::module& m)
         .def("entropy", &ChemicalProps::entropy)
         .def("internalEnergy", &ChemicalProps::internalEnergy)
         .def("helmholtzEnergy", &ChemicalProps::helmholtzEnergy)
+        .def("__repr__", [](const ChemicalProps& self) { std::stringstream ss; ss << self; return ss.str(); })
         ;
 }
