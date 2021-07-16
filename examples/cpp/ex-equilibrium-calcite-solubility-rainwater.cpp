@@ -74,7 +74,7 @@ int main()
     solver.solve(state);
 
     // Output temperature, pressure, and species amounts of the chemical state
-    std::cout << "Solubility of the Calcite in the rainwater : " << (m0Calcite - state.speciesAmount("Calcite")) / state.speciesMass("H2O(aq)") << std::endl;
+    std::cout << "Solubility of the Calcite in the rainwater : " << (m0Calcite - state.speciesAmount("Calcite")) / state.speciesMass("H2O(aq)") << " molal"<< std::endl;
 
     return 0;
 }
