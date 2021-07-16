@@ -104,6 +104,19 @@ public:
     /// Set the mass of a species with given name and mass unit (convertible to kg).
     auto setSpeciesMass(String name, real mass, String unit) -> void;
 
+    /// Add a specified amount or mass of a chemical species in the chemical state.
+    /// @param species The name of the species in the chemical system.
+    /// @param value The amount or mass value of the added species.
+    /// @param unit The amount or mass unit (must be convertible to mol or kg).
+    /// @warning An error is thrown if the chemical system has no species with name @p species.
+    auto add(String species, real value, String unit) -> void;
+
+    /// Add a specified amount or mass of a chemical species in the chemical state.
+    /// @param ispecies The index of the species in the chemical system.
+    /// @param value The amount or mass value of the added species.
+    /// @param unit The amount or mass unit (must be convertible to mol or kg).
+    auto add(Index ispecies, real value, String unit) -> void;
+
     /// Return the underlying chemical system for this chemical state.
     auto system() const -> const ChemicalSystem&;
 

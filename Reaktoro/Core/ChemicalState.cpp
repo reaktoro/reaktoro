@@ -31,6 +31,7 @@ using namespace tabulate;
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 
@@ -157,6 +158,20 @@ struct ChemicalState::Impl
     auto setSpeciesMass(String name, real mass, String unit) -> void
     {
         setSpeciesMass(system.species().index(name), mass, unit);
+    }
+
+    auto add(String species, real value, String unit) -> void
+    {
+        const auto ispecies = system.species().index(species);
+        add(ispecies, value, unit);
+    }
+
+    auto add(Index ispecies, real value, String unit) -> void
+    {
+        const auto size = system.species().size();
+        errorif(ispecies >= size, "Given species index (", ispecies, ") is out-of-bounds (number of species is ", size, ").");
+        const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
+        n[ispecies] += amount;
     }
 
     auto speciesAmount(Index ispecies) const -> real
@@ -335,6 +350,16 @@ auto ChemicalState::setSpeciesMass(String name, real mass) -> void
 auto ChemicalState::setSpeciesMass(String name, real mass, String unit) -> void
 {
     pimpl->setSpeciesMass(name, mass, unit);
+}
+
+auto ChemicalState::add(String species, real value, String unit) -> void
+{
+    pimpl->add(species, value, unit);
+}
+
+auto ChemicalState::add(Index ispecies, real value, String unit) -> void
+{
+    pimpl->add(ispecies, value, unit);
 }
 
 auto ChemicalState::system() const -> const ChemicalSystem&
