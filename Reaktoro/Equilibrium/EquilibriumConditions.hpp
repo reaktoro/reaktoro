@@ -85,16 +85,16 @@ public:
     //=================================================================================================
 
     /// Specify an initial condition for the abundance of a chemical species.
-    /// @param species The name of the chemical species in the chemical system.
-    /// @param value The abundance value of the chemical species.
-    /// @param unit The abundance unit (must be convertible to mol or kg).
+    /// @param species The name of the species in the chemical system.
+    /// @param value The amount or mass value of the species.
+    /// @param unit The amount or mass unit (must be convertible to mol or kg).
     /// @warning An error is thrown if the chemical system has no species with name @p species.
     auto startWith(String species, real value, String unit="mol") -> void;
 
     /// Specify an initial condition for the abundance of a chemical species.
-    /// @param ispecies The index of the chemical species in the chemical system.
-    /// @param value The abundance value of the chemical species.
-    /// @param unit The abundance unit (must be convertible to mol or kg).
+    /// @param ispecies The index of the species in the chemical system.
+    /// @param value The amount or mass value of the species.
+    /// @param unit The amount or mass unit (must be convertible to mol or kg).
     auto startWith(Index ispecies, real value, String unit="mol") -> void;
 
     /// Specify an initial condition for the abundance of the chemical species with a given chemical state.
