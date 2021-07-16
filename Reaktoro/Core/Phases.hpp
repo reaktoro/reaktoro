@@ -253,6 +253,17 @@ public:
     /// @param db The database used to construct the species and elements in the phases.
     Phases(const Database& db);
 
+    /// Construct a Phases object with given database and generic phases.
+    /// @param db The database used to construct the species and elements in the phases.
+    /// @param gphases The generic phases that will be converted into Phase objects.
+    template<typename... GenericPhases>
+    Phases(const Database& db, const GenericPhases&... gphases)
+    : Phases(db)
+    {
+        static_assert(sizeof...(gphases) > 0);
+        addAux(gphases...);
+    }
+
     /// Add a GenericPhase object into the Phases container.
     auto add(const GenericPhase& phase) -> void;
 
@@ -277,6 +288,15 @@ private:
 
     /// The GenericPhaseGenerator objects collected so far with each call to Phases::add method.
     Vec<GenericPhasesGenerator> generators;
+
+    /// Add one or more GenericPhase or GenericPhasesGenerator objects into the Phases container.
+    template<typename Arg, typename... Args>
+    auto addAux(const Arg& arg, const Args&... args) -> void
+    {
+        add(arg);
+        if constexpr (sizeof...(Args))
+            addAux(args...);
+    }
 };
 
 /// The class used to configure an aqueous solution phase.
