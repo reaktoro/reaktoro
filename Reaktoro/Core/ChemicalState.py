@@ -110,6 +110,26 @@ def testChemicalState():
     state.setSpeciesMass("Quartz", 10.0, "mg")
     assert state.speciesMass("Quartz")[0] == pytest.approx(10e-6)
 
+    state.setSpeciesAmount("Calcite", 0.0)
+    state.add("Calcite", 1.0, "mol")
+    assert state.speciesAmount("Calcite") == 1.0
+
+    state.add("Calcite", 2.0, "mol")
+    assert state.speciesAmount("Calcite") == 3.0
+
+    state.add("Calcite", 5.0, "mmol")
+    assert state.speciesAmount("Calcite") == 3.005
+
+    state.setSpeciesAmount("Calcite", 0.0)
+    state.add("Calcite", 2000.0, "g")
+    assert state.speciesMass("Calcite") == 2.0  # in kg
+
+    state.add("Calcite", 3000.0, "g")
+    assert state.speciesMass("Calcite") == 5.0  # in kg
+
+    state.add("Calcite", 5000.0, "mg")
+    assert state.speciesMass("Calcite") == 5.005  # in kg
+
     props = state.props()
     props.update(state)
 
