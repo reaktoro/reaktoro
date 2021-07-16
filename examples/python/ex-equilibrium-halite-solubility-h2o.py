@@ -50,4 +50,7 @@ state.setSpeciesAmount("Halite", m0Halite, "mol")
 solver = EquilibriumSolver(system)
 solver.solve(state)
 
+# Output chemical state into the txt-file
+state.output("state.txt")
+
 print(f"Solubility of Halite in water is {(m0Halite - state.speciesAmount('Halite')) / state.speciesMass('H2O(aq)')} molal")
