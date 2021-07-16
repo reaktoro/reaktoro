@@ -18,12 +18,24 @@
 // Catch includes
 #include <catch2/catch.hpp>
 
+// ThermoFun includes
+#include <ThermoFun/Database.h>
+
 // Reaktoro includes
 #include <Reaktoro/Extensions/ThermoFun/ThermoFunDatabase.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
 {
+    const auto T = 298.15;
+    const auto P = 1.0e5;
+
+    Species species;
+    StandardThermoProps props;
+
+    //-------------------------------------------------------------------
+    // Testing constructor ThermoFunDatabase(name)
+    //-------------------------------------------------------------------
     ThermoFunDatabase aq17("aq17");
     ThermoFunDatabase cemdata18("cemdata18");
     ThermoFunDatabase heracles("heracles");
@@ -32,16 +44,17 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     ThermoFunDatabase slop98organic("slop98-organic");
     ThermoFunDatabase slop98("slop98");
 
-    const auto T = 298.15;
-    const auto P = 1.0e5;
+    //-------------------------------------------------------------------
+    // Testing constructor ThermoFunDatabase(ThermoFun::Database)
+    //-------------------------------------------------------------------
+    ThermoFun::Database tdb(REAKTORO_DATABASES_DIR"/thermofun/aq17-thermofun.json");
 
-    Species species;
-    StandardThermoProps props;
+    ThermoFunDatabase db(tdb);
 
     //-------------------------------------------------------------------
     // Testing attributes and thermodynamic properties of H2O@
     //-------------------------------------------------------------------
-    species = aq17.species().get("H2O@");
+    species = db.species().get("H2O@");
     CHECK( species.formula().equivalent("H2O") );
     CHECK( species.substance() == "Water HGK" );
     CHECK( species.aggregateState() == AggregateState::Aqueous );
@@ -58,7 +71,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     //-------------------------------------------------------------------
     // Testing attributes and thermodynamic properties of CO3-2
     //-------------------------------------------------------------------
-    species = aq17.species().get("CO3-2");
+    species = db.species().get("CO3-2");
     CHECK( species.formula().equivalent("CO3-2") );
     CHECK( species.substance() == "CO3-2 carbonate ion" );
     CHECK( species.aggregateState() == AggregateState::Aqueous );
@@ -75,7 +88,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     //-------------------------------------------------------------------
     // Testing attributes and thermodynamic properties of Ca+2
     //-------------------------------------------------------------------
-    species = aq17.species().get("Ca+2");
+    species = db.species().get("Ca+2");
     CHECK( species.formula().equivalent("Ca+2") );
     CHECK( species.substance() == "Ca+2 ion" );
     CHECK( species.aggregateState() == AggregateState::Aqueous );
@@ -92,7 +105,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     //-------------------------------------------------------------------
     // Testing attributes and thermodynamic properties of CO2
     //-------------------------------------------------------------------
-    species = aq17.species().get("CO2");
+    species = db.species().get("CO2");
     CHECK( species.formula().equivalent("CO2") );
     CHECK( species.substance() == "Carbon dioxide (CO2)" );
     CHECK( species.aggregateState() == AggregateState::Gas );
@@ -109,7 +122,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     //-------------------------------------------------------------------
     // Testing attributes and thermodynamic properties of Calcite
     //-------------------------------------------------------------------
-    species = aq17.species().get("Calcite");
+    species = db.species().get("Calcite");
     CHECK( species.formula().equivalent("CaCO3") );
     CHECK( species.substance() == "Calcite (cc)" );
     CHECK( species.aggregateState() == AggregateState::CrystallineSolid );
