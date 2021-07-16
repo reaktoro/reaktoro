@@ -470,6 +470,23 @@ TEST_CASE("Testing Phases", "[Phases]")
         checkMineralPhase(phasevec[2], "Graphite");
     }
 
+    SECTION("Testing Phases variadic template constructor")
+    {
+        Phases phases(db,
+            AqueousPhase(),
+            GaseousPhase(speciate("H O C")),
+            MineralPhases()
+        );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        CHECK( phasevec.size() == 3 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
+        checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
+        checkMineralPhase(phasevec[2], "Graphite");
+    }
+
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
     // TESTING CLASS: AqueousPhase with provided speciates and tags, so that species possessing them are excluded
