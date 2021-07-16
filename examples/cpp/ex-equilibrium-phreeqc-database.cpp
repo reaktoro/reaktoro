@@ -15,6 +15,16 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+// -----------------------------------------------------------------------------
+// 👏 Acknowledgements 👏
+// -----------------------------------------------------------------------------
+// This example was originally authored by:
+//   • Svetlana Kyas (14 July 2021)
+//
+// and since revised by:
+//   • Allan Leal (16 July 2021)
+// -----------------------------------------------------------------------------
+
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
 
@@ -46,10 +56,10 @@ int main()
     ChemicalState state(system);
     state.setTemperature(25.0, "celsius");
     state.setPressure(1.0, "bar");
-    state.setSpeciesMass("H2O", 1.0, "kg");
+    state.setSpeciesMass("H2O"     , 1.00, "kg");
     state.setSpeciesAmount("CO2(g)", 10.0, "mol");
-    state.setSpeciesAmount("Na+", 4.0, "mol");
-    state.setSpeciesAmount("Cl-", 4.0, "mol");
+    state.setSpeciesAmount("Na+"   , 4.00, "mol");
+    state.setSpeciesAmount("Cl-"   , 4.00, "mol");
 
     // Define equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
