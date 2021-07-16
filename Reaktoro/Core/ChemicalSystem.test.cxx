@@ -246,4 +246,18 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     };
 
     CHECK( Atr.transpose() == system.formulaMatrix() );
+
+    //-------------------------------------------------------------------------
+    // TESTING CONSTRUCTOR: ChemicalSystem::ChemicalSystem(db, phases...)
+    //-------------------------------------------------------------------------
+    auto db = test::createDatabase();
+    system = ChemicalSystem(db,
+        AqueousPhase("H2O(aq) H+(aq) OH-(aq) Na+(aq) Cl-(aq)"),
+        GaseousPhase("H2O(g)"),
+        MineralPhase("NaCl(s)"),
+        MineralPhases("CaCO3(s) MgCO3(s) SiO2(s)"));
+
+    CHECK( system.elements().size() == 8 );
+    CHECK( system.species().size() == 10 );
+    CHECK( system.phases().size() == 6 );
 }
