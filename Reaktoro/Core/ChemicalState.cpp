@@ -17,8 +17,10 @@
 
 #include "ChemicalState.hpp"
 
-// cpp-tabulate includes
+// C++ includes
 #include <fstream>
+
+// cpp-tabulate includes
 #include <tabulate/table.hpp>
 using namespace tabulate;
 
@@ -220,11 +222,12 @@ struct ChemicalState::Impl
         for(auto& row : table)
         {
             if(i >= 2)  // apply from the third row
-                table[i].format()
-                        .border_top("")
-                        .column_separator("")
-                        .corner_top_left("")
-                        .corner_top_right("");
+                table[i]
+                    .format()
+                    .border_top("")
+                    .column_separator("")
+                    .corner_top_left("")
+                    .corner_top_right("");
             i += 1;
         }
 
@@ -235,7 +238,7 @@ struct ChemicalState::Impl
         out << table;
     }
 
-    auto output(std::string const& filename) const -> void
+    auto output(const String& filename) const -> void
     {
         auto out = std::ofstream(filename);
         this->output(out);
@@ -424,7 +427,7 @@ auto ChemicalState::output(std::ostream& out) const -> void
     return pimpl->output(out);
 }
 
-auto ChemicalState::output(std::string const& filename) const -> void
+auto ChemicalState::output(const String& filename) const -> void
 {
     return pimpl->output(filename);
 }
@@ -649,35 +652,6 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
     state.output(out);
     return out;
-
-//    Table table;
-//    table.add_row({ "Property", "Value", "Unit" });
-//    table.add_row({ "Temperature", str(state.temperature()), "K" });
-//    table.add_row({ "Pressure", str(state.pressure()), "Pa" });
-//    table.add_row({ "Amount:", "", "" });
-//    const auto species = state.system().species();
-//    const auto n = state.speciesAmounts();
-//    for(auto i = 0; i < n.size(); ++i)
-//        table.add_row({ ":: " + species[i].name(), str(n[i]), "mol" });
-//
-//    auto i = 0;
-//    for(auto& row : table)
-//    {
-//        if(i >= 2)  // apply from the third row
-//            table[i].format()
-//                .border_top("")
-//                .column_separator("")
-//                .corner_top_left("")
-//                .corner_top_right("");
-//        i += 1;
-//    }
-//
-//    table.row(0).format().font_style({FontStyle::bold});  // Bold face for header
-//    table.column(1).format().font_align(FontAlign::right); // Value column with right alignment
-//    table.column(2).format().font_align(FontAlign::right); // Unit column with right alignment
-//
-//    out << table;
-//    return out;
 }
 
 } // namespace Reaktoro
