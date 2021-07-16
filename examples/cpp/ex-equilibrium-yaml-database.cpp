@@ -55,8 +55,8 @@ int main()
     EquilibriumSolver solver(system);
     solver.solve(state);
 
-    // Output temperature, pressure, and species amounts of the chemical state
-    std::cout << state << std::endl;
+    // Output chemical state to the txt-file
+    state.output("state.txt");
 
     return 0;
 }

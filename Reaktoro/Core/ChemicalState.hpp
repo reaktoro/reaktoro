@@ -161,6 +161,12 @@ public:
     /// object `state`, update its chemical properties using `state.props().update(state)`.
     auto props() -> ChemicalProps&;
 
+    /// Output the ChemicalState instance to a stream.
+    auto output(std::ostream& out) const -> void;
+
+    /// Output the ChemicalState instance to a file.
+    auto output(std::string const& filename) const -> void;
+
 private:
     struct Impl;
 
