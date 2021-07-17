@@ -38,15 +38,6 @@ public:
     /// Construct a ChemicalProps object with given chemical state of the system.
     explicit ChemicalProps(const ChemicalState& state);
 
-    /// Construct a copy of a ChemicalProps object.
-    ChemicalProps(const ChemicalProps& other);
-
-    /// Destroy this ChemicalProps object.
-    ~ChemicalProps();
-
-    /// Assign a ChemicalProps object to this.
-    auto operator=(ChemicalProps other) -> ChemicalProps&;
-
     /// Update the chemical properties of the system.
     /// @param state The chemical state of the system
     auto update(const ChemicalState& state) -> void;
@@ -79,15 +70,26 @@ public:
     /// @param stream The array stream used to serialize the chemical properties.
     auto serialize(ArrayStream<real>& stream) const -> void;
 
+    /// Serialize the chemical properties into the array stream @p stream.
+    /// @param stream The array stream used to serialize the chemical properties.
+    auto serialize(ArrayStream<double>& stream) const -> void;
+
     /// Update the chemical properties of the system using the array stream @p stream.
     /// @param stream The array stream containing the serialized chemical properties.
     auto deserialize(const ArrayStream<real>& stream) -> void;
+
+    /// Update the chemical properties of the system using the array stream @p stream.
+    /// @param stream The array stream containing the serialized chemical properties.
+    auto deserialize(const ArrayStream<double>& stream) -> void;
 
     /// Return the chemical system associated with these chemical properties.
     auto system() const -> const ChemicalSystem&;
 
     /// Return the chemical properties of a phase with given index.
-    auto phaseProps(Index idx) const -> ChemicalPropsPhaseConstRef;
+    auto phaseProps(Index iphase) -> ChemicalPropsPhaseRef;
+
+    /// Return the chemical properties of a phase with given index.
+    auto phaseProps(Index iphase) const -> ChemicalPropsPhaseConstRef;
 
     /// Return the temperature of the system (in K).
     auto temperature() const -> const real&;
@@ -95,8 +97,108 @@ public:
     /// Return the pressure of the system (in Pa).
     auto pressure() const -> const real&;
 
-    /// Return the amounts of each species in the system (in mol).
+    /// Return the amount of an element in the system (in mol).
+    /// @param element The symbol or index of the element in the system.
+    auto elementAmount(const StringOrIndex& element) const -> real;
+
+    /// Return the amount of an element in the system (in mol).
+    /// @param element The symbol or index of the element in the system.
+    /// @param phase The name or index of the phase in the system.
+    auto elementAmountInPhase(const StringOrIndex& element, const StringOrIndex& phase) const -> real;
+
+    /// Return the amount of an element among a group of species in the system (in mol).
+    /// @param element The symbol or index of the element in the system.
+    /// @param indices The indices of the species in the system.
+    auto elementAmountAmongSpecies(const StringOrIndex& element, ArrayXlConstRef indices) const -> real;
+
+    /// Return the amount of a species in the system (in mol).
+    /// @param species The name or index of the species in the system.
+    auto speciesAmount(const StringOrIndex& species) const -> real;
+
+    /// Return the mass of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesMass(const StringOrIndex& species) const -> real;
+
+    /// Return the mole fraction of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto moleFraction(const StringOrIndex& species) const -> real;
+
+    /// Return the activity coefficient of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto activityCoefficient(const StringOrIndex& species) const -> real;
+
+    /// Return the lg activity coefficient of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto lgActivityCoefficient(const StringOrIndex& species) const -> real;
+
+    /// Return the ln activity coefficient of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto lnActivityCoefficient(const StringOrIndex& species) const -> real;
+
+    /// Return the activity of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto activity(const StringOrIndex& species) const -> real;
+
+    /// Return the lg activity of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto lgActivity(const StringOrIndex& species) const -> real;
+
+    /// Return the ln activity of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto lnActivity(const StringOrIndex& species) const -> real;
+
+    /// Return the chemical potential of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto chemicalPotential(const StringOrIndex& species) const -> real;
+
+    /// Return the standard partial molar volume of a species in the system (in m3/mol).
+    /// @param species The name or index of the species in the system.
+    auto standardVolume(const StringOrIndex& species) const -> real;
+
+    /// Return the standard partial molar Gibbs energy of formation of a species in the system (in J/mol).
+    /// @param species The name or index of the species in the system.
+    auto standardGibbsEnergy(const StringOrIndex& species) const -> real;
+
+    /// Return the standard partial molar enthalpy of formation of a species in the system (in J/mol).
+    /// @param species The name or index of the species in the system.
+    auto standardEnthalpy(const StringOrIndex& species) const -> real;
+
+    /// Return the standard partial molar entropy of formation of the species a the system (in J/(mol*K)).
+    /// @param species The name or index of the species in the system.
+    auto standardEntropy(const StringOrIndex& species) const -> real;
+
+    /// Return the standard partial molar internal energy of formation of a species in the system (in J/mol).
+    /// @param species The name or index of the species in the system.
+    auto standardInternalEnergy(const StringOrIndex& species) const -> real;
+
+    /// Return the standard partial molar Helmholtz energy of formation of a species in the system (in J/mol).
+    /// @param species The name or index of the species in the system.
+    auto standardHelmholtzEnergy(const StringOrIndex& species) const -> real;
+
+    /// Return the standard partial molar isobaric heat capacity of the species a the system (in J/(mol*K)).
+    /// @param species The name or index of the species in the system.
+    auto standardHeatCapacityConstP(const StringOrIndex& species) const -> real;
+
+    /// Return the standard partial molar isochoric heat capacity of the species a the system (in J/(mol*K)).
+    /// @param species The name or index of the species in the system.
+    auto standardHeatCapacityConstV(const StringOrIndex& species) const -> real;
+
+    /// Return the amounts of the elements in the system (in mol).
+    auto elementAmounts() const -> ArrayXr;
+
+    /// Return the amounts of the elements in a phase of the system (in mol).
+    /// @param phase The name or index of the phase in the system.
+    auto elementAmountsInPhase(const StringOrIndex& phase) const -> ArrayXr;
+
+    /// Return the amounts of the elements among a group of species in the system (in mol).
+    /// @param indices The indices of the species in the system.
+    auto elementAmountsAmongSpecies(ArrayXlConstRef indices) const -> ArrayXr;
+
+    /// Return the amounts of the species in the system (in mol).
     auto speciesAmounts() const -> ArrayXrConstRef;
+
+    /// Return the masses of the species in the system (in kg).
+    auto speciesMasses() const -> ArrayXr;
 
     /// Return the mole fractions of the species in the system.
     auto moleFractions() const -> ArrayXrConstRef;
@@ -165,9 +267,74 @@ public:
     operator VectorXd() const;
 
 private:
-    struct Impl;
+    /// The chemical system associated with these chemical properties.
+    ChemicalSystem msystem;
 
-    Ptr<Impl> pimpl;
+    /// The temperature of the system (in K).
+    real T = 0.0;
+
+    /// The pressure of the system (in Pa).
+    real P = 0.0;
+
+    /// The temperatures of each phase (in K).
+    ArrayXr Ts;
+
+    /// The pressures of each phase (in Pa).
+    ArrayXr Ps;
+
+    /// The amounts of each species in the system (in mol).
+    ArrayXr n;
+
+    /// The sum of species amounts in each phase of the system (in mol).
+    ArrayXr nsum;
+
+    /// The mole fractions of the species in the system (in mol/mol).
+    ArrayXr x;
+
+    /// The standard molar Gibbs energies of formation of the species in the system (in J/mol).
+    ArrayXr G0;
+
+    /// The standard molar enthalpies of formation of the species in the system (in J/mol).
+    ArrayXr H0;
+
+    /// The standard molar volumes of the species in the system (in m3/mol).
+    ArrayXr V0;
+
+    /// The standard molar isobaric heat capacities of the species in the system (in J/(mol·K)).
+    ArrayXr Cp0;
+
+    /// The standard molar isochoric heat capacities of the species in the system (in J/(mol·K)).
+    ArrayXr Cv0;
+
+    /// The excess molar volume of each phase in the system (in m3/mol).
+    ArrayXr Vex;
+
+    /// The temperature derivative at constant pressure of the excess molar volume of each phase in the system (in m3/(mol*K)).
+    ArrayXr VexT;
+
+    /// The pressure derivative at constant temperature of the excess molar volume of each phase in the system (in m3/(mol*Pa)).
+    ArrayXr VexP;
+
+    /// The excess molar Gibbs energy of each phase in the system (in J/mol).
+    ArrayXr Gex;
+
+    /// The excess molar enthalpy of each phase in the system (in J/mol).
+    ArrayXr Hex;
+
+    /// The excess molar isobaric heat capacity of each phase in the system (in J/(mol*K)).
+    ArrayXr Cpex;
+
+    /// The excess molar isochoric heat capacity of each phase in the system (in J/(mol*K)).
+    ArrayXr Cvex;
+
+    /// The activity coefficients (natural log) of the species in the system.
+    ArrayXr ln_g;
+
+    /// The activities (natural log) of the species in the system.
+    ArrayXr ln_a;
+
+    /// The chemical potentials of the species in the system.
+    ArrayXr u;
 };
 
 /// Output a ChemicalProps object to an output stream.
