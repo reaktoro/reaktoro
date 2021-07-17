@@ -25,6 +25,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <variant>
 #include <vector>
 
 // Reaktoro includes
@@ -41,8 +42,11 @@ using Indices = std::vector<Index>;
 /// Convenient alias for `std::string`.
 using String = std::string;
 
-/// Convenient alias for `std::vector<std::string>`.
+/// Convenient alias for `std::vector<String>`.
 using Strings = std::vector<std::string>;
+
+/// Convenient alias for `std::variant<String, Index>`.
+using StringOrIndex = std::variant<String, Index>;
 
 /// Convenient alias for `std::vector<T>`.
 template<typename T>
