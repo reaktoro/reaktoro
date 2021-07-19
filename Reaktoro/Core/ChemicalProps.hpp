@@ -92,10 +92,10 @@ public:
     auto phaseProps(Index iphase) const -> ChemicalPropsPhaseConstRef;
 
     /// Return the temperature of the system (in K).
-    auto temperature() const -> const real&;
+    auto temperature() const -> real;
 
     /// Return the pressure of the system (in Pa).
-    auto pressure() const -> const real&;
+    auto pressure() const -> real;
 
     /// Return the amount of an element in the system (in mol).
     /// @param element The symbol or index of the element in the system.

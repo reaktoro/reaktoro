@@ -226,12 +226,12 @@ auto ChemicalProps::phaseProps(Index iphase) -> ChemicalPropsPhaseRef
     });
 }
 
-auto ChemicalProps::temperature() const -> const real&
+auto ChemicalProps::temperature() const -> real
 {
     return T;
 }
 
-auto ChemicalProps::pressure() const -> const real&
+auto ChemicalProps::pressure() const -> real
 {
     return P;
 }
@@ -239,7 +239,7 @@ auto ChemicalProps::pressure() const -> const real&
 auto ChemicalProps::elementAmount(const StringOrIndex& element) const -> real
 {
     const auto ielement = detail::getElementIndex(msystem, element);
-    const auto A = msystem.formulaMatrix();
+    const auto A = msystem.formulaMatrixElements();
     return A.row(ielement) * n.matrix();
 }
 
@@ -249,7 +249,7 @@ auto ChemicalProps::elementAmountInPhase(const StringOrIndex& element, const Str
     const auto iphase = detail::getPhaseIndex(msystem, phase);
     const auto offset = msystem.phases().numSpeciesUntilPhase(iphase);
     const auto length = msystem.phase(iphase).species().size();
-    const auto A = msystem.formulaMatrix();
+    const auto A = msystem.formulaMatrixElements();
     const auto np = n.matrix().segment(offset, length);
     const auto Aep = A.row(ielement).segment(offset, length);
     return Aep * np;
@@ -258,7 +258,7 @@ auto ChemicalProps::elementAmountInPhase(const StringOrIndex& element, const Str
 auto ChemicalProps::elementAmountAmongSpecies(const StringOrIndex& element, ArrayXlConstRef indices) const -> real
 {
     const auto ielement = detail::getElementIndex(msystem, element);
-    const auto A = msystem.formulaMatrix();
+    const auto A = msystem.formulaMatrixElements();
     const auto Aei = A.row(ielement)(indices);
     const auto ni = n(indices).matrix();
     return Aei * ni;
@@ -374,7 +374,7 @@ auto ChemicalProps::standardHeatCapacityConstV(const StringOrIndex& species) con
 
 auto ChemicalProps::elementAmounts() const -> ArrayXr
 {
-    const auto A = msystem.formulaMatrix();
+    const auto A = msystem.formulaMatrixElements();
     return A * n.matrix();
 }
 
@@ -383,23 +383,31 @@ auto ChemicalProps::elementAmountsInPhase(const StringOrIndex& phase) const -> A
     const auto iphase = detail::getPhaseIndex(msystem, phase);
     const auto offset = msystem.phases().numSpeciesUntilPhase(iphase);
     const auto length = msystem.phase(iphase).species().size();
-    const auto A = msystem.formulaMatrix();
-    const VectorXd Ap = A.middleCols(offset, length);
-    const VectorXr np = n.matrix().segment(offset, length);
-    return Ap * np;
+    const auto A = msystem.formulaMatrixElements();
+    const auto Ap = A.middleCols(offset, length);
+    const auto np = n.matrix().segment(offset, length);
+    return (Ap * np).array();
 }
 
 auto ChemicalProps::elementAmountsAmongSpecies(ArrayXlConstRef indices) const -> ArrayXr
 {
-    const auto A = msystem.formulaMatrix();
-    const VectorXd Ai = A(Eigen::all, indices);
-    const VectorXr ni = n(indices).matrix();
-    return Ai * ni;
+    const auto A = msystem.formulaMatrixElements();
+    const auto Ai = A(Eigen::all, indices);
+    const auto ni = n(indices).matrix();
+    return (Ai * ni).array();
 }
 
 auto ChemicalProps::speciesAmounts() const -> ArrayXrConstRef
 {
     return n;
+}
+
+auto ChemicalProps::speciesMasses() const -> ArrayXr
+{
+    ArrayXr m(n);
+    auto i = 0; for(const auto& species : system().species())
+        m[i++] *= species.molarMass();
+    return m;
 }
 
 auto ChemicalProps::moleFractions() const -> ArrayXrConstRef
