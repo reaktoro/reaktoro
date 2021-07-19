@@ -108,10 +108,16 @@ public:
     /// Return the underlying Phase object for the aqueous phase.
     auto phase() const -> const Phase&;
 
+    /// Output the properties of the aqueous phase to a stream.
+    auto output(std::ostream& out) const -> void;
+
+    /// Output the properties of the aqueous phase to a file.
+    auto output(const String& filename) const -> void;
+
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    Ptr<Impl> pimpl;
 };
 
 /// Output an AqueousProps object to an output stream.

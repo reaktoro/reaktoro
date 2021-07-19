@@ -17,6 +17,9 @@
 
 #include "AqueousProps.hpp"
 
+// C++ includes
+#include <fstream>
+
 // cpp-tabulate includes
 #include <tabulate/table.hpp>
 using namespace tabulate;
@@ -345,6 +348,17 @@ auto AqueousProps::phase() const -> const Phase&
     return pimpl->phase;
 }
 
+auto AqueousProps::output(std::ostream& out) const -> void
+{
+    out << *this;
+}
+
+auto AqueousProps::output(const String& filename) const -> void
+{
+    auto out = std::ofstream(filename);
+    out << *this;
+}
+
 auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
 {
     const auto elements = props.phase().elements();
@@ -373,7 +387,8 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     for(auto& row : table)
     {
         if(i >= 2)  // apply from the third row
-            table[i].format()
+            table[i]
+                .format()
                 .border_top("")
                 .column_separator("")
                 .corner_top_left("")
