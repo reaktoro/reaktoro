@@ -85,6 +85,8 @@ void exportChemicalProps(py::module& m)
         .def("entropy", &ChemicalProps::entropy)
         .def("internalEnergy", &ChemicalProps::internalEnergy)
         .def("helmholtzEnergy", &ChemicalProps::helmholtzEnergy)
+        .def("output", py::overload_cast<std::ostream&>(&ChemicalProps::output, py::const_))
+        .def("output", py::overload_cast<const String&>(&ChemicalProps::output, py::const_))
         .def("__repr__", [](const ChemicalProps& self) { std::stringstream ss; ss << self; return ss.str(); })
         ;
 }
