@@ -115,6 +115,11 @@ auto GenericPhase::aggregateState() const -> AggregateState
     return aggregatestate;
 }
 
+auto GenericPhase::additionalAggregateStates() const -> const Vec<AggregateState>&
+{
+    return other_aggregate_states;
+}
+
 auto GenericPhase::species() const -> const Strings&
 {
     return names;
@@ -248,6 +253,11 @@ auto GenericPhasesGenerator::aggregateState() const -> AggregateState
     return aggregatestate;
 }
 
+auto GenericPhasesGenerator::additionalAggregateStates() const -> const Vec<AggregateState>&
+{
+    return other_aggregate_states;
+}
+
 auto GenericPhasesGenerator::species() const -> const Strings&
 {
     return names;
@@ -301,6 +311,7 @@ auto GenericPhasesGenerator::convert(const Database& db, const Strings& elements
         phase.setName(s.name());
         phase.setStateOfMatter(stateOfMatter());
         phase.setAggregateState(aggregateState());
+        phase.setAdditionalAggregateStates(additionalAggregateStates());
         phase.setActivityModel(activityModel());
         phase.setIdealActivityModel(idealActivityModel());
 

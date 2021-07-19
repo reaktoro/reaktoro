@@ -88,7 +88,7 @@ public:
     /// Set the aggregate state of the species in the phase.
     auto setAggregateState(AggregateState option) -> GenericPhase&;
 
-    /// Set additional aggregate states to be considered when search for species in a database.
+    /// Set additional aggregate states to be considered when searching for species in a database.
     auto setAdditionalAggregateStates(const Vec<AggregateState>& options) -> GenericPhase&;
 
     /// Set the activity model of the phase.
@@ -117,6 +117,9 @@ public:
 
     /// Return the common aggregate state of the species composing the phase.
     auto aggregateState() const -> AggregateState;
+
+    /// Return the additional aggregate states to be considered when searching for species in a database.
+    auto additionalAggregateStates() const -> const Vec<AggregateState>&;
 
     /// Return the names of the selected species to compose the phase (empty if not given).
     auto species() const -> const Strings&;
@@ -191,7 +194,7 @@ public:
     /// Set the common aggregate state of the species in the generated phases.
     auto setAggregateState(AggregateState option) -> GenericPhasesGenerator&;
 
-    /// Set additional aggregate states to be considered when search for species in a database.
+    /// Set additional aggregate states to be considered when searching for species in a database.
     auto setAdditionalAggregateStates(const Vec<AggregateState>& options) -> GenericPhasesGenerator&;
 
     /// Set the common activity model of the generated phases.
@@ -214,6 +217,9 @@ public:
 
     /// Return the common aggregate state of the species composing the generated phases.
     auto aggregateState() const -> AggregateState;
+
+    /// Return the additional aggregate states to be considered when searching for species in a database.
+    auto additionalAggregateStates() const -> const Vec<AggregateState>&;
 
     /// Return the names of the selected species to compose the generated phase (empty if not given).
     auto species() const -> const Strings&;
