@@ -392,8 +392,8 @@ public:
     auto mass() const -> real
     {
         real sum = 0.0;
-        for(auto i = 0; i < phase().species().size(); ++i)
-            sum += mdata.n[i] * phase().species(i).molarMass();
+        auto i = 0; for(const auto& species : phase().species())
+            sum += mdata.n[i++] * species.molarMass();
         return sum;
     }
 
