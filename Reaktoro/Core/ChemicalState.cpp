@@ -230,7 +230,7 @@ struct ChemicalState::Impl
 
     auto elementAmounts() const -> ArrayXr
     {
-        const auto& A = system.formulaMatrix();
+        const auto& A = system.formulaMatrixElements();
         return A * n.matrix();
     }
 
