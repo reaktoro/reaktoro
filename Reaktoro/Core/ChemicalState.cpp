@@ -233,43 +233,6 @@ struct ChemicalState::Impl
         const auto& A = system.formulaMatrixElements();
         return A * n.matrix();
     }
-
-    auto output(std::ostream& out) const -> void
-    {
-        Table table;
-        table.add_row({ "Property", "Value", "Unit" });
-        table.add_row({ "Temperature", str(T), "K" });
-        table.add_row({ "Pressure", str(P), "Pa" });
-        table.add_row({ "Amount:", "", "" });
-        const auto species = system.species();
-        for(auto i = 0; i < n.size(); ++i)
-            table.add_row({ ":: " + species[i].name(), str(n[i]), "mol" });
-
-        auto i = 0;
-        for(auto& row : table)
-        {
-            if(i >= 2)  // apply from the third row
-                table[i]
-                    .format()
-                    .border_top("")
-                    .column_separator("")
-                    .corner_top_left("")
-                    .corner_top_right("");
-            i += 1;
-        }
-
-        table.row(0).format().font_style({FontStyle::bold});  // Bold face for header
-        table.column(1).format().font_align(FontAlign::right); // Value column with right alignment
-        table.column(2).format().font_align(FontAlign::right); // Unit column with right alignment
-
-        out << table;
-    }
-
-    auto output(const String& filename) const -> void
-    {
-        auto out = std::ofstream(filename);
-        this->output(out);
-    }
 };
 
 ChemicalState::ChemicalState(const ChemicalSystem& system)
@@ -491,12 +454,13 @@ auto ChemicalState::props() -> ChemicalProps&
 
 auto ChemicalState::output(std::ostream& out) const -> void
 {
-    return pimpl->output(out);
+    out << *this;
 }
 
 auto ChemicalState::output(const String& filename) const -> void
 {
-    return pimpl->output(filename);
+    auto out = std::ofstream(filename);
+    out << *this;
 }
 
 //=================================================================================================
@@ -717,7 +681,37 @@ auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
-    state.output(out);
+    const auto T = state.temperature();
+    const auto P = state.pressure();
+    const auto n = state.speciesAmounts();
+    const auto species = state.system().species();
+
+    Table table;
+    table.add_row({ "Property", "Value", "Unit" });
+    table.add_row({ "Temperature", str(T), "K" });
+    table.add_row({ "Pressure", str(P), "Pa" });
+    table.add_row({ "Amount:", "", "" });
+    for(auto i = 0; i < n.size(); ++i)
+        table.add_row({ ":: " + species[i].name(), str(n[i]), "mol" });
+
+    auto i = 0;
+    for(auto& row : table)
+    {
+        if(i >= 2)  // apply from the third row
+            table[i]
+                .format()
+                .border_top("")
+                .column_separator("")
+                .corner_top_left("")
+                .corner_top_right("");
+        i += 1;
+    }
+
+    table.row(0).format().font_style({FontStyle::bold});  // Bold face for header
+    table.column(1).format().font_align(FontAlign::right); // Value column with right alignment
+    table.column(2).format().font_align(FontAlign::right); // Unit column with right alignment
+
+    out << table;
     return out;
 }
 
