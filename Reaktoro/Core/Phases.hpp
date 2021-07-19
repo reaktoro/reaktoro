@@ -88,6 +88,9 @@ public:
     /// Set the aggregate state of the species in the phase.
     auto setAggregateState(AggregateState option) -> GenericPhase&;
 
+    /// Set additional aggregate states to be considered when search for species in a database.
+    auto setAdditionalAggregateStates(const Vec<AggregateState>& options) -> GenericPhase&;
+
     /// Set the activity model of the phase.
     auto setActivityModel(const ActivityModel& model) -> GenericPhase&;
 
@@ -140,6 +143,9 @@ private:
     /// The aggregate state of the species in the phase.
     AggregateState aggregatestate = AggregateState::Undefined;
 
+    /// The additional aggregate states used for searching species in the database.
+    Vec<AggregateState> other_aggregate_states;
+
     /// The names of the selected species to compose the phase.
     Strings names;
 
@@ -185,6 +191,9 @@ public:
     /// Set the common aggregate state of the species in the generated phases.
     auto setAggregateState(AggregateState option) -> GenericPhasesGenerator&;
 
+    /// Set additional aggregate states to be considered when search for species in a database.
+    auto setAdditionalAggregateStates(const Vec<AggregateState>& options) -> GenericPhasesGenerator&;
+
     /// Set the common activity model of the generated phases.
     auto setActivityModel(const ActivityModel& model) -> GenericPhasesGenerator&;
 
@@ -227,6 +236,9 @@ private:
 
     /// The common aggregate state of the species composing the generated phases.
     AggregateState aggregatestate = AggregateState::Undefined;
+
+    /// The additional aggregate states used for searching species in the database.
+    Vec<AggregateState> other_aggregate_states;
 
     /// The names of the selected species to compose each generated phase.
     Strings names;
@@ -425,6 +437,9 @@ public:
         setName(species().front());
         setStateOfMatter(StateOfMatter::Solid);
         setAggregateState(AggregateState::Solid);
+        setAdditionalAggregateStates({
+            AggregateState::CrystallineSolid,
+            AggregateState::AmorphousSolid});
         setActivityModel(ActivityModelIdealSolution());
         setIdealActivityModel(ActivityModelIdealSolution());
     }
@@ -454,6 +469,9 @@ public:
     {
         setStateOfMatter(StateOfMatter::Solid);
         setAggregateState(AggregateState::Solid);
+        setAdditionalAggregateStates({
+            AggregateState::CrystallineSolid,
+            AggregateState::AmorphousSolid});
         setActivityModel(ActivityModelIdealSolution());
         setIdealActivityModel(ActivityModelIdealSolution());
     }

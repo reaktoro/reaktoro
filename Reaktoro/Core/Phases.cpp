@@ -62,6 +62,12 @@ auto GenericPhase::setAggregateState(AggregateState option) -> GenericPhase&
     return *this;
 }
 
+auto GenericPhase::setAdditionalAggregateStates(const Vec<AggregateState>& options) -> GenericPhase&
+{
+    other_aggregate_states = options;
+    return *this;
+}
+
 auto GenericPhase::setActivityModel(const ActivityModel& model) -> GenericPhase&
 {
     activity_model = model;
@@ -137,6 +143,14 @@ auto GenericPhase::convert(const Database& db, const Strings& elements) const ->
 
     auto species = db.speciesWithAggregateState(aggregatestate);
 
+    // If additional aggregate states provided, consider also other species in the database
+    for(auto other_aggregate_state : other_aggregate_states)
+    {
+        auto other_species = db.speciesWithAggregateState(other_aggregate_state);
+        if(other_species.size())
+            species = concatenate(species, other_species);
+    }
+
     species =
         names.size() ? species.withNames(names) :
         symbols.size() ? species.withElements(symbols) :
@@ -188,6 +202,12 @@ auto GenericPhasesGenerator::setStateOfMatter(StateOfMatter option) -> GenericPh
 auto GenericPhasesGenerator::setAggregateState(AggregateState option) -> GenericPhasesGenerator&
 {
     aggregatestate = option;
+    return *this;
+}
+
+auto GenericPhasesGenerator::setAdditionalAggregateStates(const Vec<AggregateState>& options) -> GenericPhasesGenerator&
+{
+    other_aggregate_states = options;
     return *this;
 }
 
@@ -255,6 +275,14 @@ auto GenericPhasesGenerator::convert(const Database& db, const Strings& elements
         "Use method GenericPhasesGenerator::set(AggregateState) to fix this.");
 
     auto species = db.speciesWithAggregateState(aggregatestate);
+
+    // If additional aggregate states provided, consider also other species in the database
+    for(auto other_aggregate_state : other_aggregate_states)
+    {
+        auto other_species = db.speciesWithAggregateState(other_aggregate_state);
+        if(other_species.size())
+            species = concatenate(species, other_species);
+    }
 
     species =
         names.size() ? species.withNames(names) :
