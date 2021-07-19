@@ -19,6 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 using namespace Reaktoro;
 
