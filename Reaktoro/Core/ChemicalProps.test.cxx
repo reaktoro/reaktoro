@@ -418,8 +418,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
     SECTION("testing when species have zero mole fractions")
     {
-        const real T = 300.0;
-        const real P = 123.0e5;
+        const real T = 11.0;
+        const real P = 13.0;
 
         // The gas phase has last species with zero mole fraction!
         const ArrayXr n1 = ArrayXr{{ 1.0, 0.0, 1.0 }};
@@ -430,5 +430,107 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXr n2 = ArrayXr{{ 1.0, 1.0, 0.0 }};
 
         CHECK_NOTHROW( props.update(T, P, n2) );
+    }
+
+    SECTION("testing convenience methods")
+    {
+        const real T = 11.0;
+        const real P = 13.0;
+        const ArrayXr n = ArrayXr{{ 1.0, 2.0, 3.0 }};
+
+        props.update(T, P, n);
+
+        const auto A = system.formulaMatrixElements();
+
+        const auto idxElement = [&](auto symbol) { return system.elements().index(symbol); };
+        const auto idxSpecies = [&](auto name) { return system.species().index(name); };
+
+        const VectorXr b = A * n.matrix();
+        const VectorXr b0 = A.leftCols(2) * n.head(2).matrix();  // element amounts in phase 0: H2O(g) CO2(g)
+        const VectorXr b1 = A.rightCols(1) * n.tail(1).matrix(); // element amounts in phase 1: CaCO3(s)
+
+        CHECK( props.elementAmounts().matrix().isApprox(b) );
+        CHECK( props.elementAmountsInPhase(0).matrix().isApprox(b0) );
+        CHECK( props.elementAmountsInPhase(1).matrix().isApprox(b1) );
+        CHECK( props.elementAmountsInPhase("SomeGas").matrix().isApprox(b0) );
+        CHECK( props.elementAmountsInPhase("SomeSolid").matrix().isApprox(b1) );
+        CHECK( props.elementAmountsAmongSpecies(ArrayXl{{0, 1}}).matrix().isApprox(b0) );
+        CHECK( props.elementAmountsAmongSpecies(ArrayXl{{2}}).matrix().isApprox(b1) );
+
+        CHECK( props.elementAmount("H")  == Approx(b[idxElement("H")]) );
+        CHECK( props.elementAmount("O")  == Approx(b[idxElement("O")]) );
+        CHECK( props.elementAmount("C")  == Approx(b[idxElement("C")]) );
+        CHECK( props.elementAmount("Ca") == Approx(b[idxElement("Ca")]) );
+
+        CHECK( props.elementAmount(0) == Approx(b[0]) );
+        CHECK( props.elementAmount(1) == Approx(b[1]) );
+        CHECK( props.elementAmount(2) == Approx(b[2]) );
+        CHECK( props.elementAmount(3) == Approx(b[3]) );
+
+        CHECK( props.elementAmountInPhase("H", "SomeGas")  == Approx(b0[idxElement("H")]) );
+        CHECK( props.elementAmountInPhase("O", "SomeGas")  == Approx(b0[idxElement("O")]) );
+        CHECK( props.elementAmountInPhase("C", "SomeGas")  == Approx(b0[idxElement("C")]) );
+        CHECK( props.elementAmountInPhase("Ca", "SomeGas") == Approx(b0[idxElement("Ca")]) );
+
+        CHECK( props.elementAmountInPhase("H", "SomeSolid")  == Approx(b1[idxElement("H")]) );
+        CHECK( props.elementAmountInPhase("O", "SomeSolid")  == Approx(b1[idxElement("O")]) );
+        CHECK( props.elementAmountInPhase("C", "SomeSolid")  == Approx(b1[idxElement("C")]) );
+        CHECK( props.elementAmountInPhase("Ca", "SomeSolid") == Approx(b1[idxElement("Ca")]) );
+
+        CHECK( props.elementAmountInPhase(0, 0) == Approx(b0[0]) );
+        CHECK( props.elementAmountInPhase(1, 0) == Approx(b0[1]) );
+        CHECK( props.elementAmountInPhase(2, 0) == Approx(b0[2]) );
+        CHECK( props.elementAmountInPhase(3, 0) == Approx(b0[3]) );
+
+        CHECK( props.elementAmountInPhase(0, 1) == Approx(b1[0]) );
+        CHECK( props.elementAmountInPhase(1, 1) == Approx(b1[1]) );
+        CHECK( props.elementAmountInPhase(2, 1) == Approx(b1[2]) );
+        CHECK( props.elementAmountInPhase(3, 1) == Approx(b1[3]) );
+
+        auto i = 0;
+        for(auto species : system.species())
+        {
+            const auto name = species.name();
+            const auto idx = system.species().index(name);
+            CHECK( props.speciesAmount(name)              == Approx(props.speciesAmounts()[idx])               );
+            CHECK( props.speciesMass(name)                == Approx(props.speciesMasses()[idx])                );
+            CHECK( props.moleFraction(name)               == Approx(props.moleFractions()[idx])                );
+            CHECK( props.activityCoefficient(name)        == Approx(exp(props.lnActivityCoefficients()[idx]))  );
+            CHECK( props.lgActivityCoefficient(name)      == Approx(props.lnActivityCoefficients()[idx]/ln10)  );
+            CHECK( props.lnActivityCoefficient(name)      == Approx(props.lnActivityCoefficients()[idx])       );
+            CHECK( props.activity(name)                   == Approx(exp(props.lnActivities()[idx]))            );
+            CHECK( props.lgActivity(name)                 == Approx(props.lnActivities()[idx]/ln10)            );
+            CHECK( props.lnActivity(name)                 == Approx(props.lnActivities()[idx])                 );
+            CHECK( props.chemicalPotential(name)          == Approx(props.chemicalPotentials()[idx])           );
+            CHECK( props.standardVolume(name)             == Approx(props.standardVolumes()[idx])              );
+            CHECK( props.standardGibbsEnergy(name)        == Approx(props.standardGibbsEnergies()[idx])        );
+            CHECK( props.standardEnthalpy(name)           == Approx(props.standardEnthalpies()[idx])           );
+            CHECK( props.standardEntropy(name)            == Approx(props.standardEntropies()[idx])            );
+            CHECK( props.standardInternalEnergy(name)     == Approx(props.standardInternalEnergies()[idx])     );
+            CHECK( props.standardHelmholtzEnergy(name)    == Approx(props.standardHelmholtzEnergies()[idx])    );
+            CHECK( props.standardHeatCapacityConstP(name) == Approx(props.standardHeatCapacitiesConstP()[idx]) );
+            CHECK( props.standardHeatCapacityConstV(name) == Approx(props.standardHeatCapacitiesConstV()[idx]) );
+
+            CHECK( props.speciesAmount(i)              == Approx(props.speciesAmounts()[idx])               );
+            CHECK( props.speciesMass(i)                == Approx(props.speciesMasses()[idx])                );
+            CHECK( props.moleFraction(i)               == Approx(props.moleFractions()[idx])                );
+            CHECK( props.activityCoefficient(i)        == Approx(exp(props.lnActivityCoefficients()[idx]))  );
+            CHECK( props.lgActivityCoefficient(i)      == Approx(props.lnActivityCoefficients()[idx]/ln10)  );
+            CHECK( props.lnActivityCoefficient(i)      == Approx(props.lnActivityCoefficients()[idx])       );
+            CHECK( props.activity(i)                   == Approx(exp(props.lnActivities()[idx]))            );
+            CHECK( props.lgActivity(i)                 == Approx(props.lnActivities()[idx]/ln10)            );
+            CHECK( props.lnActivity(i)                 == Approx(props.lnActivities()[idx])                 );
+            CHECK( props.chemicalPotential(i)          == Approx(props.chemicalPotentials()[idx])           );
+            CHECK( props.standardVolume(i)             == Approx(props.standardVolumes()[idx])              );
+            CHECK( props.standardGibbsEnergy(i)        == Approx(props.standardGibbsEnergies()[idx])        );
+            CHECK( props.standardEnthalpy(i)           == Approx(props.standardEnthalpies()[idx])           );
+            CHECK( props.standardEntropy(i)            == Approx(props.standardEntropies()[idx])            );
+            CHECK( props.standardInternalEnergy(i)     == Approx(props.standardInternalEnergies()[idx])     );
+            CHECK( props.standardHelmholtzEnergy(i)    == Approx(props.standardHelmholtzEnergies()[idx])    );
+            CHECK( props.standardHeatCapacityConstP(i) == Approx(props.standardHeatCapacitiesConstP()[idx]) );
+            CHECK( props.standardHeatCapacityConstV(i) == Approx(props.standardHeatCapacitiesConstV()[idx]) );
+
+            i += 1;
+        }
     }
 }
