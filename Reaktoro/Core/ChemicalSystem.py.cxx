@@ -55,6 +55,8 @@ void exportChemicalSystem(py::module& m)
         .def("species", py::overload_cast<Index>(&ChemicalSystem::species, py::const_), py::return_value_policy::reference_internal)
         .def("phase", &ChemicalSystem::phase)
         .def("phases", &ChemicalSystem::phases)
-        .def("formulaMatrix", &ChemicalSystem::formulaMatrix)
+        .def("formulaMatrix", &ChemicalSystem::formulaMatrix, py::return_value_policy::reference_internal)
+        .def("formulaMatrixElements", &ChemicalSystem::formulaMatrixElements, py::return_value_policy::reference_internal)
+        .def("formulaMatrixCharge", &ChemicalSystem::formulaMatrixCharge, py::return_value_policy::reference_internal)
         ;
 }

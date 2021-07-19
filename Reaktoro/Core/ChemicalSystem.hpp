@@ -76,6 +76,12 @@ public:
     /// last row of this matrix contains the electric charge of each species.
     auto formulaMatrix() const -> MatrixXdConstRef;
 
+    /// Return the top rows of the formula matrix corresponding to elements.
+    auto formulaMatrixElements() const -> MatrixXdConstRef;
+
+    /// Return the bottom row of the formula matrix corresponding to electric charge.
+    auto formulaMatrixCharge() const -> MatrixXdConstRef;
+
 private:
     struct Impl;
 

@@ -153,6 +153,16 @@ auto ChemicalSystem::formulaMatrix() const -> MatrixXdConstRef
     return pimpl->formula_matrix;
 }
 
+auto ChemicalSystem::formulaMatrixElements() const -> MatrixXdConstRef
+{
+    return pimpl->formula_matrix.topRows(pimpl->elements.size());
+}
+
+auto ChemicalSystem::formulaMatrixCharge() const -> MatrixXdConstRef
+{
+    return pimpl->formula_matrix.bottomRows(1);
+}
+
 auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&
 {
     // const auto& phases = system.phases();
