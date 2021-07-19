@@ -260,6 +260,12 @@ public:
     /// Return the Helmholtz energy of formation of the system (in J).
     auto helmholtzEnergy() const -> real;
 
+    /// Output the chemical properties of the system to a stream.
+    auto output(std::ostream& out) const -> void;
+
+    /// Output the chemical properties of the system to a file.
+    auto output(const String& filename) const -> void;
+
     /// Return the chemical properties in this object serialized in an array of real numbers.
     operator VectorXr() const;
 

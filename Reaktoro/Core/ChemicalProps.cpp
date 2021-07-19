@@ -17,6 +17,9 @@
 
 #include "ChemicalProps.hpp"
 
+// C++ includes
+#include <fstream>
+
 // cpp-tabulate includes
 #include <tabulate/table.hpp>
 using namespace tabulate;
@@ -518,6 +521,17 @@ auto ChemicalProps::helmholtzEnergy() const -> real
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).helmholtzEnergy(); });
 }
 
+auto ChemicalProps::output(std::ostream& out) const -> void
+{
+    out << *this;
+}
+
+auto ChemicalProps::output(const String& filename) const -> void
+{
+    auto out = std::ofstream(filename);
+    out << *this;
+}
+
 ChemicalProps::operator VectorXr() const
 {
     ArrayStream<real> stream;
@@ -580,7 +594,8 @@ auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&
     for(auto& row : table)
     {
         if(i >= 2)  // apply from the third row
-            table[i].format()
+            table[i]
+                .format()
                 .border_top("")
                 .column_separator("")
                 .corner_top_left("")
