@@ -31,7 +31,7 @@ using namespace Reaktoro;
 int main()
 {
     // Initialize a thermodynamic database
-    Database db("supcrt98.yaml");
+    Database db("supcrtbl.yaml");
 
     // Create an aqueous phase automatically selecting all species with provided elements
     AqueousPhase aqueousphase(speciate("H O C Na Cl"));
@@ -66,7 +66,7 @@ int main()
     solver.solve(state);
 
     // Output the chemical state to a text file
-    state.output("state.txt");
+    state.output("state-tbl.txt");
 
     return 0;
 }
