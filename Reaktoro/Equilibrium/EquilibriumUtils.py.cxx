@@ -15,29 +15,19 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "EquilibriumUtils.hpp"
+// pybind11 includes
+#include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
+using namespace Reaktoro;
 
-namespace Reaktoro {
-
-auto equilibrate(ChemicalState& state) -> EquilibriumResult
+void exportEquilibriumUtils(py::module& m)
 {
-    EquilibriumOptions options;
-    return equilibrate(state, options);
+    m.def("equilibrate", py::overload_cast<ChemicalState&>(equilibrate));
+    m.def("equilibrate", py::overload_cast<ChemicalState&, const EquilibriumOptions&>(equilibrate));
 }
-
-auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> EquilibriumResult
-{
-    EquilibriumSolver solver(state.system());
-    solver.setOptions(options);
-    return solver.solve(state);
-}
-
-} // namespace Reaktoro
